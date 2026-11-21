@@ -1,0 +1,40 @@
+# Workflow: Let Claude run a command over its stream, with Claude Code itself
+# Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
+# axClaude, docs/axClaude/stream-mode.md SM-7 and section 13 (the audit of 2026-11-21). The other stream scripts play
+# recordings through the stand-in; this one runs Claude Code itself over its stream, so that what the stand-in cannot
+# show is checked: that Claude Code works unchanged inside the job that ties it to the window, that its own start of
+# axKit's relay (AxKit.exe ask) reaches the window's pipe now that the relay asks which program serves it, and that a
+# real question for a command is asked, answered and obeyed.
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+# Claude Code's own default permission mode is named for the run: a user whose settings choose another one (auto,
+# which allows a harmless command by itself) would get no question here, and the question is what this script checks.
+start claude {temp}\st --source stream -- --model haiku --permission-mode default
+
+# Goal: Start Claude Code over its stream in a folder
+expect said Start Claude Code in this folder?
+# A notice the user did not open holds its keys for a moment.
+wait 1500
+keys tab
+expect focus Start Claude Code
+keys enter
+expect said Ready
+
+# Goal: Answer Claude Code's own question for a command
+type Use your shell tool to run exactly this command, then tell me in one short sentence what happened: ping -n 2 127.0.0.1
+keys enter
+expect said Sent
+expect said Claude asks to use
+expect state Claude: waiting for your answer
+expect focus 1. No
+# A question the user did not cause holds its answering keys for a moment.
+wait 1500
+keys down
+expect focus 2. Yes, once
+keys enter
+expect said Sent: 2, Yes, once
+expect said Done
+expect state Claude: ready
+do Conversation
+expect text ping -n 2 127.0.0.1

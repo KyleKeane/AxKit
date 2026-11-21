@@ -276,8 +276,11 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Allow the first of two calls that read the same
     - Hear the second call asked anew, with no first
 45. **Hear a reply spoken in a new install**
-46. **Have a short exchange with Claude**
-47. **Answer a set of two questions from Claude**
+46. **Let Claude run a command over its stream, with Claude Code itself**
+    - Start Claude Code over its stream in a folder
+    - Answer Claude Code's own question for a command
+47. **Have a short exchange with Claude**
+48. **Answer a set of two questions from Claude**
 
 ## axClip
 

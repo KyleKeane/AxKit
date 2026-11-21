@@ -537,6 +537,14 @@ first review had missed. Repaired the same day, each with its test:
 Open, on the item "axClaude: the stream source's repairs from the audit of 2026-11-21": that "Yes, and do not ask
 again" covers the whole tool for the session and nothing shows afterwards that such a rule is in force; that the
 model may call the relay's tool itself and make the window ask a question it wrote (it grants nothing); that
-Claude's own questions carry no word that an AI asks; and, to be measured with a live Claude Code, whether a server
-named `axask` in a folder's own `.mcp.json` can take the relay's place, and that Claude Code works unchanged inside
-the job.
+Claude's own questions carry no word that an AI asks.
+
+**Measured with Claude Code 2.1.330 itself, the same day** (`tests/scripts/axClaude/48-stream-live.txt`, the first
+script that runs the stream with Claude Code and not the stand-in). Claude Code works unchanged inside the job: it
+starts, starts the relay, runs a command and ends. Its question for a command reaches the window through the relay
+that asks which program serves the pipe, is answered, and is obeyed. A folder whose own `.mcp.json` names a server
+`axask` does not get that server started in the relay's place: the question still came to the window, and the
+folder's program was never run (a folder whose servers the user approved in Claude Code before was not measured). And
+one thing that is no fault and is worth knowing: Claude Code over its stream follows the user's own settings as with
+the screen, so a user whose Claude Code runs in auto mode is not asked about a command that mode allows by itself;
+the script names the default mode for its run.

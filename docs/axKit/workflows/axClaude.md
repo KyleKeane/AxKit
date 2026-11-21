@@ -1822,6 +1822,29 @@ You hear: Ready.
     You hear: Done.
 3. Press Alt+2 (Conversation; Navigation menu).
 
+## Let Claude run a command over its stream, with Claude Code itself
+
+Starts with: Open axClaude with the folder st --source stream.
+
+### Start Claude Code over its stream in a folder
+
+You hear: Start Claude Code in this folder?
+1. Press Tab.
+2. Press Enter.
+    You hear: Ready.
+
+### Answer Claude Code's own question for a command
+
+1. Type: Use your shell tool to run exactly this command, then tell me in one short sentence what happened: ping -n 2 127.0.0.1
+2. Press Enter.
+    You hear: Sent.
+    You hear: Claude asks to use.
+3. Press Down.
+4. Press Enter.
+    You hear: Sent: 2, Yes, once.
+    You hear: Done.
+5. Press Alt+2 (Conversation; Navigation menu).
+
 ## Have a short exchange with Claude
 
 Starts with: Open axClaude with the folder a.
