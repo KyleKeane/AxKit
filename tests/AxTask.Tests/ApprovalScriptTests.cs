@@ -28,11 +28,18 @@ public sealed class ApprovalScriptTests
             Outside = Directory.CreateDirectory(Path.Combine(Management, OutsideReports.FolderName)).FullName;
             Repository = Directory.CreateDirectory(Path.Combine(_temp.Path, "repository")).FullName;
             Directory.CreateDirectory(Path.Combine(Repository, "docs", "axKit"));
+            // A repository of git's own, as the commit hook asks git what the commit changes in it.
+            Git(Repository, "init", "-q");
             var (keyFile, publicKey) = Approvals.MakeKey(Passphrase, 1000);
             KeyFile = keyFile;
-            File.WriteAllText(Path.Combine(Repository, "docs", "axKit", "approval-key.pub"), Approvals.PinnedText(publicKey));
+            PublicKey = publicKey;
+            File.WriteAllText(PinnedPath, Approvals.PinnedText(publicKey));
             EntryPath = Path.Combine(Outside, "axStart said nothing.json");
         }
+
+        public ApprovalPublicKey PublicKey { get; }
+
+        public string PinnedPath => Path.Combine(Repository, "docs", "axKit", "approval-key.pub");
 
         public string Management { get; }
 
@@ -88,6 +95,28 @@ public sealed class ApprovalScriptTests
         var result = ProcessRun.Run(start, [], TimeSpan.FromSeconds(60));
         Assert.False(result.TimedOut, $"{script} did not end");
         return result;
+    }
+
+    /// <summary>git in the test's repository, with a name of the test's own for its commits.</summary>
+    private static void Git(string repository, params string[] arguments)
+    {
+        var start = new ProcessStartInfo("git");
+        foreach (var argument in new[] { "-C", repository, "-c", "user.name=test", "-c", "user.email=test" }.Concat(arguments))
+        {
+            start.ArgumentList.Add(argument);
+        }
+
+        var result = ProcessRun.Run(start, [], TimeSpan.FromSeconds(60));
+        Assert.True(!result.TimedOut && result.ExitCode == 0, $"git {string.Join(' ', arguments)}: {result.Output}");
+    }
+
+    /// <summary>The commit hook on a message about the pinned key alone, with its change staged.</summary>
+    private static ProcessResult CommitKey(Setup setup, string extraLine = "")
+    {
+        Git(setup.Repository, "add", "docs/axKit/approval-key.pub");
+        var message = Path.Combine(setup.Management, "message.txt");
+        File.WriteAllText(message, $"Pin the approval key\n\nItem: none, the test's key\n{extraLine}");
+        return Script("item-of-commit.ps1", message, "-Lists", setup.Priorities, "-PinnedFrom", setup.Repository, "-Check");
     }
 
     private static ProcessResult NewItem(Setup setup, string title) =>
@@ -162,6 +191,27 @@ public sealed class ApprovalScriptTests
         var committed = Commit(setup);
         Assert.Equal(1, committed.ExitCode);
         Assert.Contains("comes from outside (report 15)", committed.Output, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void The_first_key_is_pinned_and_a_new_one_only_with_the_old_ones_signature()
+    {
+        // OR-6.3. The first pin failed in the real hook on 2026-11-21: git's error for the key missing from HEAD
+        // stopped the script.
+        using var setup = new Setup();
+        var first = CommitKey(setup);
+        Assert.True(first.ExitCode == 0, first.Output);
+        Git(setup.Repository, "commit", "-q", "-m", "Pin the approval key");
+
+        var (_, newPublic) = Approvals.MakeKey("a new long passphrase", 1000);
+        File.WriteAllText(setup.PinnedPath, Approvals.PinnedText(newPublic));
+        var unsigned = CommitKey(setup);
+        Assert.Equal(1, unsigned.ExitCode);
+        Assert.Contains("changes or removes the pinned approval key", unsigned.Output, StringComparison.Ordinal);
+
+        var signature = Approvals.Sign(Approvals.ChangeText(newPublic), setup.KeyFile, Passphrase);
+        var signed = CommitKey(setup, $"Approval key changed: {signature}\n");
+        Assert.True(signed.ExitCode == 0, signed.Output);
     }
 
     [Fact]

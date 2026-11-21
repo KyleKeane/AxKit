@@ -90,18 +90,20 @@ $items = @(Get-ListItems $Lists)
 # report needs the maintainer's approval of an entry of that report naming the item, verified with the key pinned in
 # this repository; and a change of that key needs the old key's signature over the new one's fingerprint.
 . (Join-Path $PSScriptRoot 'approvals.ps1')
-$repositoryRoot = Split-Path $PSScriptRoot -Parent
-$pinnedKey = Get-PinnedApprovalKey $(if ($PinnedFrom) { $PinnedFrom } else { $repositoryRoot })
+$repositoryRoot = if ($PinnedFrom) { $PinnedFrom } else { Split-Path $PSScriptRoot -Parent }
+$pinnedKey = Get-PinnedApprovalKey $repositoryRoot
 $outsideEntries = @(Get-OutsideEntries (Join-Path (Split-Path $Lists -Parent) 'outside-reports') $pinnedKey)
 
 $pinnedPath = 'docs/axKit/approval-key.pub'
 $keyStaged = "$(& git -C $repositoryRoot diff --cached --name-only -- $pinnedPath 2>$null)".Trim()
 if ($keyStaged) {
-    $before = (& git -C $repositoryRoot show "HEAD:$pinnedPath" 2>$null) -join "`n"
-    $oldKey = if ($LASTEXITCODE -eq 0) { Read-PinnedApprovalKeyText $before } else { $null }
+    # Asked with ls-tree and ls-files first, which print nothing for a missing path: git show writes an error for one
+    # (the first pin has no key in HEAD), and Windows PowerShell made that error stop the hook (2026-11-21).
+    $inHead = "$(& git -C $repositoryRoot ls-tree --name-only HEAD -- $pinnedPath)".Trim()
+    $oldKey = if ($inHead) { Read-PinnedApprovalKeyText ((& git -C $repositoryRoot show "HEAD:$pinnedPath") -join "`n") } else { $null }
     if ($null -ne $oldKey) {
-        $after = (& git -C $repositoryRoot show ":$pinnedPath" 2>$null) -join "`n"
-        $newKey = if ($LASTEXITCODE -eq 0) { Read-PinnedApprovalKeyText $after } else { $null }
+        $inIndex = "$(& git -C $repositoryRoot ls-files -- $pinnedPath)".Trim()
+        $newKey = if ($inIndex) { Read-PinnedApprovalKeyText ((& git -C $repositoryRoot show ":$pinnedPath") -join "`n") } else { $null }
         $signed = @($lines | Where-Object { $_ -match '^\s*Approval key changed:\s*(\S+)\s*$' } | ForEach-Object { $Matches[1] })
         $ok = $null -ne $newKey -and $signed.Count -eq 1 -and (Test-ApprovalSignature (Get-ApprovalChangeText $newKey.Fingerprint) $signed[0] $oldKey)
         if (-not $ok) {
