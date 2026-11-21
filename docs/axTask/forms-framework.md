@@ -1,7 +1,8 @@
 # axTask: actions and forms of a list (specification)
 
 Specified on 2026-11-21 from the maintainer's requests of that day, which section 1 keeps word for word. Not built
-yet. The decisions taken in writing it are listed in section 9, for him to change before or after the build. The
+yet, and not to be built before what is pending is stable (section 10). Section 9 lists the decisions: four he
+took the same day, asked one by one, and four taken in the writing, his to change. The
 priorities list's item "axTask: a general framework of buttons and forms in items that build and run a command, a
 request or a tool call" points here. Requirement ids are AF-n.m. It grows out of the action keys (`SPEC.md` TK-7a,
 `docs/axKit/reports.md` RP-8), which it takes in whole; its first relative is the approval of outside reports
@@ -33,6 +34,15 @@ request or a tool call" points here. Requirement ids are AF-n.m. It grows out of
 6. "please ensure the queued messages i have been sending get recordedinto a record so that we can discuss the more
    general build out of axtask with the user configurable form specifications for an item that can be built out per
    task list in the task list configuration. also please let me know if fable is helpful for all of this"
+7. After the specification below was written, the same day: "walk me through the decisions that you want my input
+   on. i do want you to ensure that a list specification is json so that i can easily edit it in axjson and that
+   should be an option on the context menu of a list. we need to handle edits to the list config in a graveful way
+   such as keeping old fields with their values so that they are restored if later enabled again. we should also
+   have a bery simple schema for the list config with a simple set of options for the values that axjson will be
+   able to load so that editing does not require a lot of memory of field values. much of this might already be
+   true; i haven;t configured a list yet because i want you to stabilizze things before i commit things to memory.
+   let me know when you think that things are ready for me to work with. i think when we get to that point we will
+   quickly get to needing to mature axjson so i do want us to stabilize the other stuff that is pending first."
 
 
 ## 2. What it is, in one paragraph
@@ -129,8 +139,9 @@ so that a person and the assistant can both write an action by hand and know wha
   keys: actions act in a list.
 - **AF-6.2 Every action is in the menu.** Context, Actions of this list, lists each action by its name with its key,
   so that the command palette and F1 hold them; an action without a key is run from there.
-- **AF-6.3 The user gives the key** in Actions, Actions of this list (AF-10.3): a key two actions would share is
-  refused there, with the name of the action that has it.
+- **AF-6.3 The user gives the key** in the list's configuration (section 11), as one of eighteen options. Where two
+  actions name one key, the first in the file has it, and the second is shown as "<name>, not understood: Ctrl+1 is
+  <the first's name>'s" and still runs from the menu.
 
 ## 7. What is said, asked and trusted
 
@@ -140,9 +151,9 @@ so that a person and the assistant can both write an action by hand and know wha
 - **AF-7.2 An action that starts a program is asked about before its first run.** A `set` is one undo step and is
   never asked about. `move` and `open` are asked about as today (TK-7a.3: said at the first press, done at the
   second). `run` and `terminal` open a notice before the first run on this computer, and again whenever anything of
-  the action changed in the file: its title "Run <name>?"; its text, who wrote it ("This action came with the list's
-  file. axKit did not write it and checked nothing of it; another program or an AI may have written it." or, for an
-  action made in axTask's own form on this computer, "You made this action here."), the sentence of AF-7.1, the
+  the action changed in the file: its title "Run <name>?"; its text, where it comes from ("This action is in the list's
+  configuration file. axKit did not write it and checked nothing of it; you, another program or an AI may have
+  written it."), the sentence of AF-7.1, the
   program as it was found with its full path, and every argument as it is filled for the item selected, one on a
   line, with hidden characters written out (`DisplayText.Visible`); "axKit does not know what this program does or
   reaches". The answers: Cancel, where Enter is; Run it once; Run it, and do not ask again for this action. The
@@ -183,32 +194,108 @@ so that a person and the assistant can both write an action by hand and know wha
   Context, so that the user finds one place, and are no actions of the file.
 - **AF-8.5 An axAutomate workflow as an action.** Later, a kind `workflow` that starts one in axAutomate.
 
-## 9. Decisions taken in writing this, for the maintainer to change
+## 9. The decisions
 
-1. **Per list, in `list.json`** (his message 6), never per item: every item of a list has the same actions.
-2. **Five kinds at first**: the three there are, `run` and `terminal`. .NET has all it needs for these built in
-   (`System.Diagnostics.Process`, through the bundle's `ProcessRun`); no new protocol code.
-3. **Arguments, not command text** (AF-4.2). It costs the convenience of typing a command line as one text, and
+Decided by the maintainer on 2026-11-21, asked one by one after the specification was written:
+
+1. **A list's configuration decides which fields its items show: hide, keep, restore** (section 11). A field the
+   configuration no longer names is hidden, kept in each file with its value, and shown again when it is named
+   again. Until then a configuration shaped new items only.
+2. **Eighteen fixed keys** (AF-6.1), not any key combination: no collision can be made, no key of the bundle can be
+   lost to a list's file, and the choice is a short list of options.
+3. **A program is asked about once, and again after a change** (AF-7.2), not at every run.
+4. **`run` and `terminal` first** (five kinds in all); a web request goes through a program the action names, so
+   that axTask's own code still makes no network request (AF-8.1); a kind for a protocol comes later, each by his
+   decision.
+
+Taken in writing this, his to change:
+
+5. **Per list, in `list.json`** (his message 6), never per item: every item of a list has the same actions.
+6. **Arguments, not command text** (AF-4.2). It costs the convenience of typing a command line as one text, and
    buys that no item's content can ever change what runs. A command line as text is what `terminal` is for, where
    the user reads it before he sends it.
-4. **Eighteen fixed keys** (AF-6.1) in place of any key the user likes: no collision can be made, and no key of the
-   bundle can be lost to a list's file.
-5. **A program is asked about once, with everything shown** (AF-7.2), not at every run: a question at every run is
-   answered without being read.
-6. **The approval stays code** (AF-8.4), and no web request of axTask's own (AF-8.1).
-7. **The name is "actions"**; the action keys become actions with a key, and their files keep working (AF-3.3).
+7. **The approval stays code** (AF-8.4).
+8. **The name is "actions"**; the action keys become actions with a key, and their files keep working (AF-3.3).
 
 ## 10. Build order
 
-1. `AxTask.Core`: `ListActions` (the file read and written, `"keys"` read on), `ActionValues` (the placeholders and
+Not before what is pending is stable (his word in message 7): the checks of the audit's repairs with a live Claude
+Code, the NVDA pass of the windows that changed, and the open items of axClaude. Then, in this order, each step
+usable by itself:
+
+1. The configuration as a file a person edits (section 11): the fields a list shows, hide, keep and restore; a
+   configuration that does not read; Edit the list's configuration in the Context menu. `AxTask.Core`, the item
+   window's detail pane, their tests and a window script. This is useful before any action exists, and it is what
+   makes a list safe to configure by hand.
+2. `AxTask.Core`: `ListActions` (the file read and written, `"keys"` read on), `ActionValues` (the placeholders and
    their refusals), the acceptance over a whole action; `AxKit.Core/ShellQuote`. All pure, each with its tests.
-2. The window: Context, Actions of this list; the eighteen keys; the form of an action's fields; the question of
+3. The window: Context, Actions of this list; the eighteen keys; the form of an action's fields; the question of
    AF-7.2; the run off the UI thread with its words, its output and its stop; the hand-over to axTerminal.
-3. Actions, Actions of this list: the form that makes and changes an action. Name, key, kind and the kind's members
-   as lines, as Action keys' form has them today; an action's form fields are written in the list's file with axJSON
-   at first, one Enter away (Open the list's file in axJSON), and get controls of their own when that proves too
-   little.
 4. `SPEC.md` section 7a rewritten for actions, the user guide, the NVDA plan, the outside-calls page, `PRIVACY.md`
-   and `SECURITY.md`; window scripts; an NVDA pass.
-5. The first uses, in the management lists: Answer the report on GitHub in the outside reports list (after an entry
+   and `SECURITY.md`; window scripts; an NVDA pass. From here a list can be configured and worked with.
+5. axJSON learns the options (section 12): the table of the configuration's members and their values, and
+   axJSON's two commands that offer them. With axJSON's own maturing, which the maintainer expects to follow.
+6. The first uses, in the management lists: Answer the report on GitHub in the outside reports list (after an entry
    is Done), and what the maintainer asks for next.
+
+There is no form of axTask's own for making an action: the configuration is the file, edited in axJSON (his message
+7). Action keys' form of today (Actions, Action keys) stays for the three kinds it knows.
+
+## 11. The configuration is a file a person edits
+
+- **AF-11.1 One JSON file, opened from the list.** A list's configuration is its `list.json`, plain JSON, and
+  nothing of a list is configured anywhere else. Context, on a list: **Edit the list's configuration** (Ctrl+J, the
+  item "Open in axJSON" of today, named for what it is on a list) opens it in axJSON. A list that has no file yet
+  gets one written first, with its fields as they are and an empty list of actions, so that there is something to
+  edit and its members are there to be filled in. axTask reads the file again when its window comes to the front,
+  as it reads every file, and says what changed in one line ("The list's configuration changed: 2 actions, 5
+  fields").
+- **AF-11.2 The members**, all there are:
+  - `"format"`: `axkit-list 1`.
+  - `"fields"`: the list's own details (Notes, Section), as today.
+  - `"new item"`: **the fields of the list's items**, in the order they are shown; each a `title`, a `type` and the
+    `value` a new item starts with, a choice with its `options`. The member keeps its name, so that every file
+    written until now reads as it did.
+  - `"actions"`: section 3. `"keys"`: read on (AF-3.3).
+  - Anything else is kept as it is and means nothing (IA-4), as today.
+- **AF-11.3 Hide, keep, restore** (the maintainer's decision of 2026-11-21). An item of a list shows its Title and
+  then the fields the list's configuration names, in the configuration's order. A field the configuration names and
+  the item's file does not hold is shown empty, and is written into the file when it is first given a value. A
+  field the file holds and the configuration does not name is **kept**: it stays in the file with its value, is
+  not shown among the fields, and is shown again, with the value it had, as soon as the configuration names it
+  again. Nothing a change of the configuration does ever removes or rewrites a value in an item's file.
+- **AF-11.4 What is kept is said.** The detail pane's last line of such an item is "2 more fields kept: Sprint,
+  Old priority"; Enter on it reads them with their values, read-only. So a hidden value is never a surprise, and a
+  field renamed in the configuration (a new name is a new field) is seen at once: the old name stands among the
+  kept ones.
+- **AF-11.5 A list without named fields shows every field**, as all lists did until now: a folder with no
+  `list.json`, or one whose `"new item"` is empty. So do the gathering lists (All tasks, the date lists, a search),
+  item by item, each by its own list's configuration.
+- **AF-11.6 A type that changed.** A value the field's new type cannot hold is shown as its text with "kept as
+  text: the field is now a date", is not changed, and is replaced only when the user gives the field a new value.
+- **AF-11.7 A configuration that does not read** (a comma too many after an edit) changes nothing in the folder:
+  the list is shown as one without a configuration (every field, no actions), its row and its detail pane say "The
+  list's configuration does not read: <what>, line 12. Ctrl+J opens it", and axTask writes nothing into that file
+  until it reads again. A member of the wrong kind (actions that are no list) is passed over in the same way, with
+  its own sentence, and the rest of the file counts.
+- **AF-11.8 axPass is left as it is**: its entries are KeePassXC's and have no list configuration. The item
+  window's shared code learns a list's field order from the app (`ItemForm`), and only axTask gives one.
+
+## 12. The options, for axJSON
+
+- **AF-12.1 A small table, written once.** Every member of the configuration and the values it can take are one
+  table in code (`AxTask.Core/ListConfigOptions`), from which axTask reads a configuration and by which a test
+  holds this document's lists. Where a value is one of a few, the table names them: a field's `type` (`text`,
+  `longtext`, `date`, `datetime`, `check`, `choice`, `link`), an action's `does` (`set`, `move`, `open`, `run`,
+  `terminal`), its `key` (the eighteen), `folder` (`list`, or a path), `required` and `hidden` (`true`, `false`).
+- **AF-12.2 As a file axJSON loads.** The table is written out as one small JSON file of axKit's own shape,
+  `axkit-list 1.options.json`, shipped with axKit: for each kind of object (the configuration, a field, an action,
+  a form's field) its members in order, each with a line that says what it is and, where it has them, its values.
+  It is not JSON Schema, which stays a non-goal of axJSON (its SPEC, G3): a list of names and choices, nothing that
+  validates.
+- **AF-12.3 What axJSON does with it** (built with axJSON's maturing, step 5 of the build order). For a file whose
+  `"format"` axJSON has such a table for: at a value that has choices, a command lists them and writes the one
+  chosen; in an object, a command lists the members it can have and does not have yet, with what each is, and adds
+  the one chosen with a first value. So a configuration is written by choosing, and nothing has to be remembered.
+  Until then axJSON edits the file as any JSON, and the file axTask writes for a new configuration (AF-11.1) holds
+  every member with a first value, which is the next best thing to a list of choices.
