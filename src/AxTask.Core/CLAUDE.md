@@ -59,7 +59,8 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
   file (RSA 3072, the private half under AES-GCM with a key from the passphrase by PBKDF2, the public half as
   associated data), `Sign`, `Verify` (never throws), `ChangeText` for a change of key, `PinnedText` and `ReadPinned`
   for `docs/axKit/approval-key.pub`. `OutsideReports` is the list's side: `IsList`, `KeyFileOf`, `Field`, `EntryOf`,
-  `Refusal`, `NoticeText`, `Signed`. `tools/approvals.ps1` makes the same text and verifies in Windows PowerShell:
+  `Refusal` (with `Unheard`: an entry holding a character a screen reader does not speak is not signed, OR-5.6),
+  `NoticeText`, `Signed`. `tools/approvals.ps1` makes the same text and verifies in Windows PowerShell:
   a change to `Text` is a change to that script too, and `ApprovalScriptTests` fails when the two part. Tested in
   `ApprovalsTests` and `ApprovalScriptTests`.
 

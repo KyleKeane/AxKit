@@ -49,7 +49,45 @@ public static class OutsideReports
             return state.Length == 0 ? "This item is no entry of the outside reports list" : $"This entry is {state}, not awaiting your approval";
         }
 
-        return Field(entry, "Report").Length == 0 ? "This entry names no report" : null;
+        return Field(entry, "Report").Length == 0 ? "This entry names no report" : Unheard(entry);
+    }
+
+    /// <summary>The fields an approval signs (OR-5.3), by their titles; the Title is the entry's own.</summary>
+    private static readonly string[] SignedFields = ["Title", "Report", "Category", "Item", "Proposed priority", "Proposed", "Harm review"];
+
+    /// <summary>
+    /// What is signed is what was heard (OR-5.6): the refusal for an entry whose signed fields hold a character a
+    /// screen reader does not speak (a control character other than a line end or a tab, a zero-width or direction
+    /// character, a separator or a character of private use), or null. Such a character could hide words from the
+    /// maintainer's ear inside the scope he signs.
+    /// </summary>
+    public static string? Unheard(ItemDocument entry)
+    {
+        foreach (var title in SignedFields)
+        {
+            var text = title == "Title" ? entry.Title : Field(entry, title);
+            // By code point, not by char: the invisible tag characters are beyond the first plane (U+E0000 and on).
+            var i = 0;
+            while (i < text.Length)
+            {
+                var whole = System.Text.Rune.DecodeFromUtf16(text.AsSpan(i), out var rune, out var length) == System.Buffers.OperationStatus.Done;
+                var category = System.Text.Rune.GetUnicodeCategory(rune);
+                var spoken = rune.Value is '\r' or '\n' or '\t' || (whole
+                    && category is not (System.Globalization.UnicodeCategory.Control or System.Globalization.UnicodeCategory.Format
+                        or System.Globalization.UnicodeCategory.LineSeparator or System.Globalization.UnicodeCategory.ParagraphSeparator
+                        or System.Globalization.UnicodeCategory.PrivateUse or System.Globalization.UnicodeCategory.OtherNotAssigned
+                        or System.Globalization.UnicodeCategory.Surrogate));
+                if (!spoken)
+                {
+                    var code = whole ? rune.Value : text[i];
+                    return $"The field {title} holds a character that is not spoken (U+{code:X4}, character {i + 1}): nothing is signed. Have the entry written again without it";
+                }
+
+                i += Math.Max(1, length);
+            }
+        }
+
+        return null;
     }
 
     /// <summary>The notice's text: everything the approval covers, the review whole, in the order the maintainer reads it.</summary>

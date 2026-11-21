@@ -251,8 +251,13 @@ public static class Approvals
     /// <summary>The associated data of the encrypted private half: the format and the public half, so that a private half put beside another public key does not open.</summary>
     private static byte[] Associated(ApprovalPublicKey key) => [.. Encoding.UTF8.GetBytes(KeyFormat), .. key.Modulus, .. key.Exponent];
 
+    /// <summary>
+    /// One line of the text. A backslash is doubled before a line end becomes backslash-n, so that two different
+    /// values never make the same line (a line end, and the two characters backslash and n, 2026-11-21 audit).
+    /// </summary>
     private static void Line(StringBuilder lines, string name, string value) =>
-        lines.Append(name).Append(": ").Append(value.Replace("\r\n", "\n", StringComparison.Ordinal).Replace("\n", "\\n", StringComparison.Ordinal).Trim()).Append('\n');
+        lines.Append(name).Append(": ").Append(value.Replace("\r\n", "\n", StringComparison.Ordinal).Trim()
+            .Replace("\\", "\\\\", StringComparison.Ordinal).Replace("\n", "\\n", StringComparison.Ordinal)).Append('\n');
 
     private static string Long(string value) => value.Replace("\r\n", "\n", StringComparison.Ordinal).Trim();
 }

@@ -163,11 +163,14 @@ approval, as `tools\outside-report.ps1` writes it.
    nothing changed". Again with a long one, Enter: "Confirm the approval passphrase. Re-enter the new approval
    passphrase to confirm it" is said at once, the focus still in the field. The same once more: "Approval passphrase set. The key's fingerprint
    is" and four groups of four.
-2. On the entry, Context, Approve this report: the notice reads the report, the category, the item, the proposed
-   priority, the scope, the harm review and the last sentence; the field "Type your approval passphrase to approve",
-   read as protected. A wrong passphrase, Enter: the refusal sound and "That is not the approval passphrase"; the
-   entry's State is still Awaiting approval.
+2. On the entry, Context, Approve this report: the focus is in the notice's text, at its top ("Approve:" and the
+   entry's title); Down reads the report, the category, the item, the proposed priority, the scope, the harm review
+   and the last sentence. Enter there: "Type your approval passphrase to approve", and the focus is in the field.
+   Tab from the text reaches the same field, read as protected. A wrong passphrase, Enter: the refusal sound and
+   "That is not the approval passphrase"; the entry's State is still Awaiting approval.
 3. Again with the right passphrase: "Approved:" and the entry's title; Tab reads State Approved, Approved on today,
    Approval a long string. Approve on it once more: "This entry is Approved, not awaiting your approval".
 4. On a priorities item, Approve this report: "Approve and Decline act on an entry of the outside reports list".
 5. With an AI tool paired and allowed to run commands, ask it to approve the entry: it does not see the command.
+6. Options, Approval passphrase with the key set up: the notice's text says the fingerprint of the key in use and
+   where the key file is kept; Escape leaves and nothing changes.

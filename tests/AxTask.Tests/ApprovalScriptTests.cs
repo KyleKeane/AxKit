@@ -30,6 +30,8 @@ public sealed class ApprovalScriptTests
             Directory.CreateDirectory(Path.Combine(Repository, "docs", "axKit"));
             // A repository of git's own, as the commit hook asks git what the commit changes in it.
             Git(Repository, "init", "-q");
+            Git(Repository, "config", "user.name", "test");
+            Git(Repository, "config", "user.email", "test");
             var (keyFile, publicKey) = Approvals.MakeKey(Passphrase, 1000);
             KeyFile = keyFile;
             PublicKey = publicKey;
@@ -75,6 +77,24 @@ public sealed class ApprovalScriptTests
             var text = Approvals.Text(OutsideReports.EntryOf(entry, Approvals.Approved, "2026-11-21"));
             var signed = OutsideReports.Signed(entry, approve: true, Approvals.Sign(text, KeyFile, Passphrase), "2026-11-21");
             File.WriteAllText(EntryPath, signed.ToText());
+        }
+
+        /// <summary>The entry's State written as the scripts or a hand would, the signature left as it is.</summary>
+        public void SetState(string state)
+        {
+            var entry = ItemDocument.Parse(File.ReadAllText(EntryPath));
+            File.WriteAllText(EntryPath, entry.WithValue(entry.IndexOf("State"), System.Text.Json.Nodes.JsonValue.Create(state)).ToText());
+        }
+
+        /// <summary>A key as axTask writes it beside the lists: the key file, its public half, and for a change the line the old key signed.</summary>
+        public void WriteKeyBesideLists(string keyFile, ApprovalPublicKey publicKey, string? changeSignature = null)
+        {
+            File.WriteAllText(Path.Combine(Management, OutsideReports.KeyFileName), keyFile);
+            File.WriteAllText(Path.Combine(Management, OutsideReports.PinnedFileName), Approvals.PinnedText(publicKey));
+            if (changeSignature is not null)
+            {
+                File.WriteAllText(Path.Combine(Management, OutsideReports.ChangeFileName), $"Approval key changed: {changeSignature}\r\n");
+            }
         }
 
         /// <summary>One sentence added to the approved scope, as a later edit of the file would.</summary>
@@ -213,6 +233,115 @@ public sealed class ApprovalScriptTests
         var signed = CommitKey(setup, $"Approval key changed: {signature}\n");
         Assert.True(signed.ExitCode == 0, signed.Output);
     }
+
+    [Fact]
+    public void After_a_change_of_key_a_closed_entry_stays_his_and_an_approval_in_force_is_offered_again()
+    {
+        // OR-6.5: the key history comes from git. The approval in force must be the pinned key's own.
+        using var setup = new Setup();
+        setup.WriteApprovedEntry();
+        Git(setup.Repository, "add", "docs/axKit/approval-key.pub");
+        Git(setup.Repository, "commit", "-q", "-m", "Pin the approval key");
+        var (_, newPublic) = Approvals.MakeKey("a new long passphrase", 1000);
+        File.WriteAllText(setup.PinnedPath, Approvals.PinnedText(newPublic));
+        Git(setup.Repository, "add", "docs/axKit/approval-key.pub");
+        Git(setup.Repository, "commit", "-q", "-m", $"Change the key\n\nApproval key changed: {Approvals.Sign(Approvals.ChangeText(newPublic), setup.KeyFile, Passphrase)}");
+
+        var inForce = Check(setup);
+        Assert.Equal(1, inForce.ExitCode);
+        Assert.Contains("signed with a key pinned before this one", inForce.Output, StringComparison.Ordinal);
+
+        // Closed under the old key: still what he signed, and nothing is named.
+        setup.SetState("Done");
+        var closed = Check(setup);
+        Assert.True(closed.ExitCode == 0, closed.Output);
+        Assert.DoesNotContain("replaced without", closed.Output, StringComparison.Ordinal);
+
+        // In force again: offered to him anew, never while the pinned key verifies it.
+        setup.SetState("Approved");
+        var reopened = Script("outside-report.ps1", "reopen", "-Name", "said nothing", "-Management", setup.Management, "-Repository", setup.Repository);
+        Assert.True(reopened.ExitCode == 0, reopened.Output);
+        Assert.Equal(OutsideReports.AwaitingApproval, OutsideReports.Field(ItemDocument.Parse(File.ReadAllText(setup.EntryPath)), "State"));
+        Assert.Equal(string.Empty, OutsideReports.Field(ItemDocument.Parse(File.ReadAllText(setup.EntryPath)), "Approval"));
+        Assert.Equal(0, Check(setup).ExitCode);
+    }
+
+    [Fact]
+    public void An_entry_closed_by_hand_and_a_key_replaced_without_a_signature_are_both_said()
+    {
+        using var setup = new Setup();
+        setup.WriteApprovedEntry();
+        Git(setup.Repository, "add", "docs/axKit/approval-key.pub");
+        Git(setup.Repository, "commit", "-q", "-m", "Pin the approval key");
+
+        // Declined without his signature of a decline: the approval's signature does not cover it.
+        setup.SetState("Declined");
+        var byHand = Check(setup);
+        Assert.Equal(1, byHand.ExitCode);
+        Assert.Contains("holds no approval of a key this repository pinned", byHand.Output, StringComparison.Ordinal);
+        setup.SetState("Done");
+
+        // A key put in place of the pinned one by a commit nobody signed: said every time, with the commit.
+        var (_, other) = Approvals.MakeKey("someone else's passphrase", 1000);
+        File.WriteAllText(setup.PinnedPath, Approvals.PinnedText(other));
+        Git(setup.Repository, "add", "docs/axKit/approval-key.pub");
+        Git(setup.Repository, "commit", "-q", "-m", "Replace the key");
+        var replaced = Check(setup);
+        Assert.True(replaced.ExitCode == 0, replaced.Output);
+        Assert.Contains("replaced without the old key's signature in commit", replaced.Output, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void The_pin_script_pins_the_first_key_and_a_changed_one_with_its_signed_line()
+    {
+        using var setup = new Setup();
+        File.Delete(setup.PinnedPath);
+        setup.WriteKeyBesideLists(setup.KeyFile, setup.PublicKey);
+
+        // Waiting to be pinned: the check says so.
+        var waiting = Check(setup);
+        Assert.Equal(1, waiting.ExitCode);
+        Assert.Contains("Outside reports: pin:", waiting.Output, StringComparison.Ordinal);
+
+        var first = Pin(setup);
+        Assert.True(first.ExitCode == 0, first.Output);
+        Assert.Equal(setup.PublicKey.Fingerprint, Approvals.ReadPinned(File.ReadAllText(setup.PinnedPath))!.Fingerprint);
+        Assert.Equal(0, Check(setup).ExitCode);
+        Assert.Equal(1, Pin(setup).ExitCode);
+
+        // A change without the line the old key signed is not pinned, and the pinned key stays.
+        var (newKeyFile, newPublic) = Approvals.MakeKey("a new long passphrase", 1000);
+        setup.WriteKeyBesideLists(newKeyFile, newPublic);
+        var unsigned = Pin(setup);
+        Assert.Equal(1, unsigned.ExitCode);
+        Assert.Equal(setup.PublicKey.Fingerprint, Approvals.ReadPinned(File.ReadAllText(setup.PinnedPath))!.Fingerprint);
+
+        setup.WriteKeyBesideLists(newKeyFile, newPublic, Approvals.Sign(Approvals.ChangeText(newPublic), setup.KeyFile, Passphrase));
+        var changed = Pin(setup);
+        Assert.True(changed.ExitCode == 0, changed.Output);
+        Assert.Equal(newPublic.Fingerprint, Approvals.ReadPinned(File.ReadAllText(setup.PinnedPath))!.Fingerprint);
+        Assert.False(File.Exists(Path.Combine(setup.Management, OutsideReports.ChangeFileName)));
+        var after = Check(setup);
+        Assert.True(after.ExitCode == 0, after.Output);
+        Assert.DoesNotContain("replaced without", after.Output, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void A_report_is_known_by_its_words_in_any_case_and_in_a_list_of_numbers()
+    {
+        using var setup = new Setup();
+        setup.WriteApprovedEntry();
+
+        var third = Script("item.ps1", "new", "-Title", ItemTitle, "-App", "axStart", "-Priority", "High",
+            "-Where", "kylekeane/axkit-reports issues 15, #15 and 16", "-Notes", "From the approved entry.",
+            "-Lists", setup.Priorities, "-PinnedFrom", setup.Repository);
+
+        Assert.Equal(1, third.ExitCode);
+        Assert.Contains("report 16 is outside work", third.Output, StringComparison.Ordinal);
+    }
+
+    private static ProcessResult Pin(Setup setup) =>
+        Script("pin-approval-key.ps1", "-Management", setup.Management, "-Repository", setup.Repository, "-Trailer", "Signed-off-by: the test");
 
     [Fact]
     public void A_key_of_its_own_beside_the_repository_approves_nothing()

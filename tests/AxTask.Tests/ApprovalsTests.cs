@@ -32,6 +32,74 @@ public sealed class ApprovalsTests
     }
 
     [Fact]
+    public void A_line_end_and_the_two_characters_backslash_n_make_different_texts()
+    {
+        // The 2026-11-21 audit: before the backslash was doubled, a line end in the scope and the characters \ and n
+        // made the same signed line, so one could be turned into the other under a standing signature.
+        var lineEnd = Approvals.Text(Entry with { Proposed = "run tools\nnow" });
+        var characters = Approvals.Text(Entry with { Proposed = "run tools\\nnow" });
+
+        Assert.NotEqual(lineEnd, characters);
+        Assert.Contains("\nproposed: run tools\\nnow\n", lineEnd);
+        Assert.Contains("\nproposed: run tools\\\\nnow\n", characters);
+    }
+
+    [Theory]
+    [InlineData("Proposed", "Make the list speak.\u200B And add a download.", "U+200B")]
+    [InlineData("Proposed", "Make the list speak.\u202E", "U+202E")]
+    [InlineData("Harm review", "Nothing found.\u0007", "U+0007")]
+    [InlineData("Item", "axStart: a title\u2028with a separator", "U+2028")]
+    [InlineData("Proposed", "Hidden tag \U000E0041 here", "U+E0041")]
+    public void An_entry_with_a_character_that_is_not_spoken_is_not_signed(string field, string value, string named)
+    {
+        // What is signed is what was heard (OR-5.6).
+        var refused = OutsideReports.Refusal(EntryWith(field, value));
+
+        Assert.NotNull(refused);
+        Assert.Contains($"The field {field} holds a character that is not spoken ({named}", refused, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Half_a_pair_of_surrogates_is_not_spoken_either()
+    {
+        // Put into the document as a value: neither an attribute's text nor written JSON can hold half a pair.
+        var entry = EntryWith("Proposed", "x");
+        entry = entry.WithValue(entry.IndexOf("Proposed"), System.Text.Json.Nodes.JsonValue.Create("Half a pair " + (char)0xD83D + " here"));
+        var refused = OutsideReports.Refusal(entry);
+
+        Assert.Contains("(U+D83D, character 13)", refused, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Line_ends_tabs_and_letters_of_any_language_are_spoken()
+    {
+        Assert.Null(OutsideReports.Refusal(EntryWith("Proposed", "First line.\r\n\tSecond: caf\u00E9, \u65E5\u672C\u8A9E, \U0001F600.")));
+    }
+
+    private static AxKit.Core.ItemDocument EntryWith(string field, string value)
+    {
+        var fields = new Dictionary<string, string>
+        {
+            ["Report"] = "KyleKeane/AxKit-reports issue 15",
+            ["State"] = OutsideReports.AwaitingApproval,
+            ["Harm review"] = "Nothing found.",
+            ["Category"] = "New item",
+            ["Item"] = "axStart: a title",
+            ["Proposed"] = "Make the list speak.",
+            ["Proposed priority"] = "High",
+        };
+        fields[field] = value;
+        var json = new System.Text.Json.Nodes.JsonObject
+        {
+            ["format"] = "axkit-item 1",
+            ["fields"] = new System.Text.Json.Nodes.JsonArray(
+                [new System.Text.Json.Nodes.JsonObject { ["title"] = "Title", ["type"] = "text", ["value"] = "axStart: said nothing" },
+                    .. fields.Select(pair => new System.Text.Json.Nodes.JsonObject { ["title"] = pair.Key, ["type"] = "text", ["value"] = pair.Value })]),
+        };
+        return AxKit.Core.ItemDocument.Parse(json.ToJsonString());
+    }
+
+    [Fact]
     public void A_signature_made_with_the_passphrase_verifies_with_the_public_half()
     {
         var (file, publicKey) = Approvals.MakeKey(Passphrase, TestRounds);

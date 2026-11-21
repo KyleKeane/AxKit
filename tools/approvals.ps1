@@ -19,8 +19,9 @@ $script:ApprovalTextFormat = 'axkit-approval 1'
 $script:ApprovalKeyFormat = 'axkit-approval-key 1'
 $script:ApprovalChangeFormat = 'axkit-approval-key-change 1'
 
-# The words that name a report, as an item's Where it is written and an entry's Report hold them.
-$script:ReportWordsPattern = 'KyleKeane/AxKit-reports issues? (\d+)(?: and (\d+))?'
+# The words that name a report, as an item's Where it is written and an entry's Report hold them: "AxKit-reports
+# issue 8", "issues 8 and 9", "issues 8, 9 and 10", whatever their case, with or without a # before a number.
+$script:ReportWordsPattern = '(?i)AxKit-reports\s+issues?\s+((?:#?\d+)(?:\s*(?:,|and|&)\s*#?\d+)*)'
 
 function Get-ApprovalLongText([string]$value) {
     if ($null -eq $value) { $value = '' }
@@ -29,7 +30,8 @@ function Get-ApprovalLongText([string]$value) {
 
 function Get-ApprovalLine([string]$name, [string]$value) {
     if ($null -eq $value) { $value = '' }
-    $one = $value.Replace("`r`n", "`n").Replace("`n", '\n').Trim()
+    # A backslash doubled before a line end becomes \n, as Approvals.Line: two values never make the same line.
+    $one = $value.Replace("`r`n", "`n").Trim().Replace('\', '\\').Replace("`n", '\n')
     return "${name}: $one`n"
 }
 
@@ -83,14 +85,102 @@ function Read-PinnedApprovalKeyText([string]$text) {
     } catch {
         return $null
     }
+    $fingerprint = Get-ApprovalFingerprint $modulus $exponent
+    if ($fingerprint -ne $values['fingerprint']) { return $null }
+    return [pscustomobject]@{ Modulus = $modulus; Exponent = $exponent; Fingerprint = $fingerprint }
+}
+
+# A key's fingerprint: the first sixteen hexadecimal characters of the SHA-256 of the modulus and the exponent.
+function Get-ApprovalFingerprint([byte[]]$modulus, [byte[]]$exponent) {
     $both = New-Object byte[] ($modulus.Length + $exponent.Length)
     [Array]::Copy($modulus, 0, $both, 0, $modulus.Length)
     [Array]::Copy($exponent, 0, $both, $modulus.Length, $exponent.Length)
     $sha = [System.Security.Cryptography.SHA256]::Create()
     try { $hash = $sha.ComputeHash($both) } finally { $sha.Dispose() }
-    $fingerprint = ((($hash | ForEach-Object { $_.ToString('x2') }) -join '')).Substring(0, 16)
-    if ($fingerprint -ne $values['fingerprint']) { return $null }
-    return [pscustomobject]@{ Modulus = $modulus; Exponent = $exponent; Fingerprint = $fingerprint }
+    return ((($hash | ForEach-Object { $_.ToString('x2') }) -join '')).Substring(0, 16)
+}
+
+# A fingerprint as it is said and printed: in groups of four.
+function Get-SpokenFingerprint([string]$fingerprint) {
+    return (($fingerprint -split '(.{4})' | Where-Object { $_ }) -join ' ')
+}
+
+# The public half of the key file beside the lists (approval-key.json, the one the maintainer's passphrase opens), as
+# Get-PinnedApprovalKey gives the pinned one; $null when there is none or it does not read.
+function Get-ApprovalKeyBesideLists([string]$management) {
+    $path = Join-Path $management 'approval-key.json'
+    if (-not (Test-Path -LiteralPath $path)) { return $null }
+    try {
+        $json = [IO.File]::ReadAllText($path) | ConvertFrom-Json
+        $modulus = [Convert]::FromBase64String([string]$json.modulus)
+        $exponent = [Convert]::FromBase64String([string]$json.exponent)
+    } catch {
+        return $null
+    }
+    return [pscustomobject]@{ Modulus = $modulus; Exponent = $exponent; Fingerprint = (Get-ApprovalFingerprint $modulus $exponent) }
+}
+
+# git asked in a repository, its lines given, or $null when git fails (a path a commit does not hold, no repository,
+# no git). Its error text is dropped here: under 'Stop', Windows PowerShell makes a native program's error line end
+# the script (the first pin, 2026-11-21).
+function Invoke-ApprovalGit([string]$repositoryRoot, [string[]]$arguments) {
+    $ErrorActionPreference = 'Continue'
+    try {
+        $out = @(& git -C $repositoryRoot @arguments 2>$null)
+    } catch {
+        return $null
+    }
+    if ($LASTEXITCODE -ne 0) { return $null }
+    return , $out
+}
+
+# Every key the code repository pinned, oldest first, from git's history of docs\axKit\approval-key.pub: Key, Commit
+# (short) and Signed, whether the commit that replaced the key before it carries that key's signature of the change
+# (OR-6.3; the first is signed by nothing and counts as signed). Empty where there is no history to read.
+function Get-ApprovalKeyHistory([string]$repositoryRoot) {
+    $history = @()
+    $path = 'docs/axKit/approval-key.pub'
+    $commits = Invoke-ApprovalGit $repositoryRoot @('log', '--reverse', '--format=%H', '--', $path)
+    if ($null -eq $commits) { return $history }
+    $previous = $null
+    foreach ($commit in $commits) {
+        $text = Invoke-ApprovalGit $repositoryRoot @('show', "${commit}:$path")
+        $key = if ($null -ne $text) { Read-PinnedApprovalKeyText ($text -join "`n") } else { $null }
+        if ($null -eq $key) { continue }
+        if ($null -ne $previous -and $previous.Fingerprint -eq $key.Fingerprint) { continue }
+        $signed = $true
+        if ($null -ne $previous) {
+            $message = Invoke-ApprovalGit $repositoryRoot @('show', '-s', '--format=%B', $commit)
+            $signatures = @($message | Where-Object { $_ -match '^\s*Approval key changed:\s*(\S+)\s*$' } | ForEach-Object { $Matches[1] })
+            $signed = $signatures.Count -eq 1 -and (Test-ApprovalSignature (Get-ApprovalChangeText $key.Fingerprint) $signatures[0] $previous)
+        }
+        $history += [pscustomobject]@{ Key = $key; Commit = $commit.Substring(0, 8); Signed = $signed }
+        $previous = $key
+    }
+    return $history
+}
+
+# The first character of a text that a screen reader does not speak, as "U+200B, character 57", or $null: a control
+# character other than a line end or a tab, a zero-width or direction character, a separator, a character of private
+# use or one that is none. AxTask.Core's OutsideReports.Unheard refuses to sign such an entry (OR-5.6); the entry is
+# checked here already when it is made ready.
+function Get-UnheardCharacter([string]$text) {
+    if ([string]::IsNullOrEmpty($text)) { return $null }
+    $unheard = @('Control', 'Format', 'LineSeparator', 'ParagraphSeparator', 'PrivateUse', 'OtherNotAssigned', 'Surrogate')
+    $i = 0
+    while ($i -lt $text.Length) {
+        $one = $text[$i]
+        $pair = [char]::IsHighSurrogate($one) -and ($i + 1) -lt $text.Length -and [char]::IsLowSurrogate($text[$i + 1])
+        if ($one -ne [char]13 -and $one -ne [char]10 -and $one -ne [char]9) {
+            $category = [Globalization.CharUnicodeInfo]::GetUnicodeCategory($text, $i).ToString()
+            if ($unheard -contains $category) {
+                $code = if ($pair) { [char]::ConvertToUtf32($text, $i) } else { [int]$one }
+                return ('U+{0:X4}, character {1}' -f $code, ($i + 1))
+            }
+        }
+        $i += $(if ($pair) { 2 } else { 1 })
+    }
+    return $null
 }
 
 # Whether a signature (base64) is the pinned key's over the text. Never throws: anything unreadable is no signature.
@@ -155,15 +245,16 @@ function Get-ReportNumbers([string]$words) {
     $numbers = @()
     if ([string]::IsNullOrEmpty($words)) { return $numbers }
     foreach ($match in [regex]::Matches($words, $script:ReportWordsPattern)) {
-        $numbers += [int]$match.Groups[1].Value
-        if ($match.Groups[2].Success) { $numbers += [int]$match.Groups[2].Value }
+        foreach ($number in [regex]::Matches($match.Groups[1].Value, '\d+')) { $numbers += [int]$number.Value }
     }
     return $numbers
 }
 
-# Every entry of the outside reports list: Path, Fields, Reports (numbers), State, and Valid, whether an Approved or
-# Declined entry's signature verifies against the pinned key for its State's decision.
-function Get-OutsideEntries([string]$listFolder, $key) {
+# Every entry of the outside reports list: Path, Fields, Reports (numbers), State, Valid, whether an Approved, Declined
+# or Done entry's signature verifies against the pinned key for its State's decision, and ValidEver, whether it
+# verifies against the pinned key or one of the keys pinned before it ($formerKeys, from Get-ApprovalKeyHistory): an
+# entry closed under an earlier key stays what the maintainer signed, and only Valid lets work be done (OR-6.5).
+function Get-OutsideEntries([string]$listFolder, $key, $formerKeys = @()) {
     $entries = @()
     if (-not (Test-Path -LiteralPath $listFolder)) { return $entries }
     foreach ($file in @(Get-ChildItem -LiteralPath $listFolder -Filter *.json -File | Where-Object { $_.Name -ne 'list.json' })) {
@@ -171,9 +262,15 @@ function Get-OutsideEntries([string]$listFolder, $key) {
         if ($null -eq $fields) { continue }
         $state = [string]$fields['State']
         $valid = $false
-        if ($state -eq 'Approved' -or $state -eq 'Declined' -or ($state -eq 'Done' -and $fields['Approval'])) {
+        $validEver = $false
+        if ($state -eq 'Approved' -or $state -eq 'Declined' -or $state -eq 'Done') {
             $decision = if ($state -eq 'Declined') { 'declined' } else { 'approved' }
-            $valid = Test-ApprovalSignature (Get-ApprovalText $fields $decision) $fields['Approval'] $key
+            $text = Get-ApprovalText $fields $decision
+            $valid = Test-ApprovalSignature $text $fields['Approval'] $key
+            $validEver = $valid
+            foreach ($former in @($formerKeys)) {
+                if (-not $validEver) { $validEver = Test-ApprovalSignature $text $fields['Approval'] $former }
+            }
         }
         $entries += [pscustomobject]@{
             Path = $file.FullName
@@ -181,6 +278,7 @@ function Get-OutsideEntries([string]$listFolder, $key) {
             Reports = @(Get-ReportNumbers $fields['Report'])
             State = $state
             Valid = $valid
+            ValidEver = $validEver
         }
     }
     return $entries

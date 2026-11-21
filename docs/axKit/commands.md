@@ -232,6 +232,14 @@ page by hand; run its script and commit the page.
   with an item not done); or one line saying they agree. It changes nothing. Exit code 0 when they agree, 1 when
   something is named, 2 when GitHub or the lists could not be read. `tools/sync-repos.ps1` runs it with every push,
   without minding its exit code; run it at the start of a session. `-Lists` and `-IssuesFile` name other sources.
+  Since 2026-11-21 a report with an entry in the outside reports list is judged by that entry, and a new report is
+  named by its number alone.
+- The outside reports' scripts (`docs/axKit/outside-reports.md`, section 7): `tools/outside-report.ps1` writes a
+  report's triage entry (`new`, `review`, `ready`, `done`, `reopen`) and never an approval; `tools/outside-check.ps1`
+  holds the work to the maintainer's signed approvals, asks no network, and is run by the pre-push hook, which refuses
+  the push when it names anything, and by `tools/session-start.ps1`; `tools/pin-approval-key.ps1 -Trailer <line>` pins
+  the approval key the maintainer set or changed in axTask, in a commit of its own; `tools/approvals.ps1` is the
+  functions they share and runs nothing.
   It reads numbers, states and titles alone and needs no key; a report's text is read with `tools/ReportKey`.
 - `tools/ReportKey` (`dotnet run --project tools\ReportKey -c Release -- <command>`): the maintainer's key for the
   sealed reports, one command per run (`reports-setup.md` section 5, `reports.md` RP-6.1a). `issues` prints every

@@ -11,8 +11,14 @@
     unapproved   an item not done whose Where it is written names a report, with no approved entry of that report
                  naming the item by its title (it was written around the process, or its entry changed after the
                  approval and no longer verifies)
-    signature    an entry Approved, Declined or Done whose approval does not verify against the pinned key
-    approved?    an entry whose State is Approved or Declined while no key is pinned
+    signature    an entry Approved whose approval does not verify against the pinned key (an approval in force is
+                 the pinned key's own); an entry Declined or Done that holds no approval of the pinned key or of a
+                 key pinned before it (git's history of the pinned file): closed without him, or changed after
+    pin          the key beside the lists (approval-key.json, the one his passphrase opens) is not the pinned one:
+                 a new key or a change waits for tools\pin-approval-key.ps1
+
+  Its one line when nothing is named says the pinned key's fingerprint, and names every commit that replaced a
+  pinned key without the old key's signature (OR-6.3), which stays said and refuses nothing.
 
   The pre-push hook runs it and refuses the push when it names anything; tools\session-start.ps1 says its result.
   Where the lists are not beside the repository (another person's clone, the build service), it says nothing and
@@ -41,15 +47,30 @@ if (-not (Test-Path -LiteralPath $priorities)) {
 }
 
 $key = Get-PinnedApprovalKey $Repository
-$entries = @(Get-OutsideEntries (Join-Path $Management 'outside-reports') $key)
+# The keys pinned before this one, from git's history: an entry closed under one of them is still his (OR-6.5).
+$history = @(Get-ApprovalKeyHistory $Repository)
+$former = @($history | ForEach-Object { $_.Key } | Where-Object { $null -eq $key -or $_.Fingerprint -ne $key.Fingerprint })
+$entries = @(Get-OutsideEntries (Join-Path $Management 'outside-reports') $key $former)
 
 $lines = @()
+
+# The key beside the lists is the one his passphrase opens; the pinned key is the one the checks trust. They are the
+# same key, or a change waits to be pinned (OR-6.6).
+$beside = Get-ApprovalKeyBesideLists $Management
+if ($null -ne $beside -and ($null -eq $key -or $key.Fingerprint -ne $beside.Fingerprint)) {
+    $now = if ($null -eq $key) { 'no key is pinned' } else { "the pinned key is $(Get-SpokenFingerprint $key.Fingerprint)" }
+    $lines += "Outside reports: pin: the approval key beside the lists is $(Get-SpokenFingerprint $beside.Fingerprint) and ${now}: pin it with tools\pin-approval-key.ps1."
+}
+
 foreach ($entry in $entries) {
     $name = [IO.Path]::GetFileNameWithoutExtension($entry.Path)
-    if ($entry.State -in @('Approved', 'Declined') -and $null -eq $key) {
-        $lines += "Outside reports: approved?: '$name' is $($entry.State) and no approval key is pinned (docs\axKit\approval-key.pub)."
-    } elseif (($entry.State -in @('Approved', 'Declined') -or ($entry.State -eq 'Done' -and $entry.Fields['Approval'])) -and -not $entry.Valid) {
-        $lines += "Outside reports: signature: '$name' is $($entry.State) and its approval does not verify: it was changed after the maintainer signed it, or signed with another key."
+    if ($entry.State -eq 'Approved' -and -not $entry.Valid) {
+        $why = if ($null -eq $key) { 'no approval key is pinned (docs\axKit\approval-key.pub)' }
+               elseif ($entry.ValidEver) { 'it was signed with a key pinned before this one: tools\outside-report.ps1 reopen offers it to the maintainer again' }
+               else { 'it was changed after the maintainer signed it, or signed with a key never pinned' }
+        $lines += "Outside reports: signature: '$name' is Approved and its approval does not verify: $why."
+    } elseif ($entry.State -in @('Declined', 'Done') -and -not $entry.ValidEver) {
+        $lines += "Outside reports: signature: '$name' is $($entry.State) and holds no approval of a key this repository pinned: it was closed without the maintainer, or changed after he signed it."
     }
 }
 foreach ($one in @(Get-UnapprovedOutsideItems $priorities $entries)) {
@@ -57,7 +78,13 @@ foreach ($one in @(Get-UnapprovedOutsideItems $priorities $entries)) {
 }
 
 if ($lines.Count -eq 0) {
-    $pinned = if ($null -eq $key) { 'no approval key pinned yet' } else { "approval key $(($key.Fingerprint -split '(.{4})' | Where-Object { $_ }) -join ' ')" }
+    $pinned = if ($null -eq $key) { 'no approval key pinned yet' } else { "approval key $(Get-SpokenFingerprint $key.Fingerprint)" }
+    # Said every time, never a refusal: a key that replaced another without the old key's signature (a passphrase
+    # forgotten and set up anew by the maintainer's own commit, OR-6.3, or a change nobody signed).
+    $unsigned = @($history | Where-Object { -not $_.Signed })
+    if ($unsigned.Count -gt 0) {
+        $pinned += "; replaced without the old key's signature in commit $(($unsigned | ForEach-Object { $_.Commit }) -join ', '): the maintainer knows why, or is told"
+    }
     Write-Host "Outside reports: no item from outside without an approval ($($entries.Count) entries; $pinned)."
     exit 0
 }

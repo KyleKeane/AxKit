@@ -222,13 +222,21 @@ window is open, once you have turned the AI tools on and allowed it (axKit menu,
 Reports that people send with F4 are never worked on until you approve them. Each one has an entry in the list
 "outside-reports": the assistant's review of it for harm, what kind of matter it is, and exactly what it proposes to
 do. Open an entry, read it, then choose Approve this report or Decline this report from the Context menu (Shift+F10).
-The notice reads everything your approval covers, then asks your approval passphrase. Your passphrase signs exactly
-what you read; if anything of it changes afterwards, the approval no longer counts, and the work stops.
+The notice opens on its text: read down through everything your approval covers, then press Tab for the passphrase
+field, type your approval passphrase and press Enter. Your passphrase signs exactly what you read; if anything of it
+changes afterwards, the approval no longer counts, and the work stops. If an entry holds a character that a screen
+reader does not speak, axTask signs nothing and says which field holds it: have the entry written again.
 
 The first time, set up your passphrase: open the outside reports list, then Options, Approval passphrase. Type a
-passphrase of at least 12 characters, twice. axKit then says the key's fingerprint, sixteen letters and digits in
-groups of four. axKit never keeps your passphrase and cannot show it again, so keep it in your password manager. The
-same item later changes it: the current passphrase first, then the new one twice.
+passphrase of at least 12 characters, twice. The notice says where the key file is kept. axKit then says the key's
+fingerprint, sixteen letters and digits in groups of four. axKit never keeps your passphrase and cannot show it
+again. Make it long, use it nowhere else, and tell it to nobody and no program: it is what protects the key file,
+which is backed up with your lists.
+
+The same item later changes it: the current passphrase first, then the new one twice. Its first notice says the
+fingerprint of the key in use, which is how you hear your own key at any time (Escape leaves without a change). A
+change makes a new key. Approvals you gave before and that are still in force are offered to you again; what is
+finished stays as you signed it.
 
 ## Keys
 

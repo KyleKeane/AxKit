@@ -94,7 +94,9 @@ foreach ($issue in ($issues | Sort-Object number)) {
     if ($pointing.ContainsKey([int]$issue.number)) { $items = @($pointing[[int]$issue.number]) }
     $notDone = @($items | Where-Object { -not $_.Done })
     if ($open -and $items.Count -eq 0) {
-        $lines += "Reports: new: report $($issue.number), '$($issue.title)', has no entry in the outside reports list: read it and write its entry (tools\outside-report.ps1)."
+        # The report's title is not printed: it is outside text, and this line is read by the assistant at the start of
+        # a session (docs/axKit/outside-reports.md OR-4.2); the report is read with tools/ReportKey, as data.
+        $lines += "Reports: new: report $($issue.number) has no entry in the outside reports list: read it and write its entry (tools\outside-report.ps1)."
     } elseif ($open -and $notDone.Count -eq 0) {
         $lines += "Reports: close it: report $($issue.number) is open and its item is done: '$($items[0].Title)'."
     } elseif (-not $open -and $notDone.Count -gt 0) {

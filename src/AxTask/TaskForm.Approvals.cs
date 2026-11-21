@@ -62,6 +62,8 @@ public sealed partial class TaskForm
         ])
         {
             Input = new OverlayInput("Passphrase:", $"Type your approval passphrase to {verb}", string.Empty, $"Type your approval passphrase to {verb}", Hidden: true),
+            // The entry is read before it is signed: the focus starts in the text, the passphrase field is the next stop (OR-5.1).
+            FocusText = true,
         });
     }
 
@@ -122,23 +124,36 @@ public sealed partial class TaskForm
             return;
         }
 
-        ShowNotice(new Notice("Change the approval passphrase", "A new key replaces the old one, and the old one signs the change. Type the current passphrase first.",
+        // One change at a time (OR-6.3): the line the last change wrote is still beside the key, so that change is not
+        // pinned yet, and a second one would be signed by a key the code repository never pinned.
+        if (File.Exists(Path.Combine(Path.GetDirectoryName(keyFile)!, OutsideReports.ChangeFileName)))
+        {
+            EventDoor.Raise(EventKind.Refused);
+            Announce("The last change of the approval passphrase is not pinned in the code repository yet: have it pinned first, then change it again", true);
+            return;
+        }
+
+        string oldKeyText;
+        string fingerprint;
+        try
+        {
+            oldKeyText = File.ReadAllText(keyFile);
+            fingerprint = SpokenFingerprint(Approvals.PublicKeyOf(oldKeyText));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ApprovalException)
+        {
+            Fail("The approval key could not be read: " + ex.Message);
+            return;
+        }
+
+        ShowNotice(new Notice("Change the approval passphrase",
+            $"The key now in use has the fingerprint {fingerprint}. It is kept in {keyFile}.\r\n\r\n"
+            + "A new key replaces it, and the old one signs the change. Approvals given with the old key and still in force are given again afterwards. Type the current passphrase first.",
         [
             new OverlayChoice("&Next", () =>
             {
                 var old = Overlay.InputText;
                 Overlay.SetInputText(string.Empty);
-                string oldKeyText;
-                try
-                {
-                    oldKeyText = File.ReadAllText(keyFile);
-                }
-                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-                {
-                    Fail("The approval key could not be read: " + ex.Message);
-                    return;
-                }
-
                 AskNewPassphrase(keyFile, oldKeyText, old);
             }, IsDefault: true),
             new OverlayChoice("&Cancel", IsCancel: true),
@@ -150,7 +165,9 @@ public sealed partial class TaskForm
 
     private void AskNewPassphrase(string keyFile, string? oldKeyText, string? oldPassphrase)
     {
-        ShowNotice(new Notice("New approval passphrase", $"At least {Approvals.MinimumPassphrase} characters that only you know. axKit never keeps it and cannot show it again; a forgotten one cannot be got back.",
+        ShowNotice(new Notice("New approval passphrase",
+            $"At least {Approvals.MinimumPassphrase} characters that only you know. axKit never keeps it and cannot show it again; a forgotten one cannot be got back.\r\n\r\n"
+            + $"The key it locks is kept in {keyFile}.",
         [
             new OverlayChoice("&Next", () =>
             {
@@ -204,21 +221,21 @@ public sealed partial class TaskForm
                 change = await Task.Run(() => Approvals.Sign(Approvals.ChangeText(publicKey), oldKeyText, oldPassphrase ?? string.Empty));
             }
 
+            // The change's line and the public half first, the key itself last and by a move: whatever fails on the
+            // way, the key file is the old one whole or the new one whole, never half, and the old key is not lost
+            // before its signature of the change is on disk.
             var folder = Path.GetDirectoryName(keyFile)!;
-            await File.WriteAllTextAsync(keyFile, file);
-            await File.WriteAllTextAsync(Path.Combine(folder, OutsideReports.PinnedFileName), Approvals.PinnedText(publicKey));
-            var changeFile = Path.Combine(folder, OutsideReports.ChangeFileName);
             if (change is not null)
             {
-                await File.WriteAllTextAsync(changeFile, $"Approval key changed: {change}\r\n");
-            }
-            else if (File.Exists(changeFile))
-            {
-                File.Delete(changeFile);
+                await File.WriteAllTextAsync(Path.Combine(folder, OutsideReports.ChangeFileName), $"Approval key changed: {change}\r\n");
             }
 
-            var spaced = string.Join(' ', publicKey.Fingerprint.Chunk(4).Select(part => new string(part)));
-            Announce($"Approval passphrase set. The key's fingerprint is {spaced}", true);
+            await File.WriteAllTextAsync(Path.Combine(folder, OutsideReports.PinnedFileName), Approvals.PinnedText(publicKey));
+            var written = keyFile + ".new";
+            await File.WriteAllTextAsync(written, file);
+            File.Move(written, keyFile, overwrite: true);
+
+            Announce($"Approval passphrase set. The key's fingerprint is {SpokenFingerprint(publicKey)}", true);
         }
         catch (ApprovalException ex)
         {
@@ -235,4 +252,7 @@ public sealed partial class TaskForm
             Announce(failed, true);
         }
     }
+
+    /// <summary>A key's fingerprint as it is said: sixteen characters in groups of four.</summary>
+    private static string SpokenFingerprint(ApprovalPublicKey key) => string.Join(' ', key.Fingerprint.Chunk(4).Select(part => new string(part)));
 }

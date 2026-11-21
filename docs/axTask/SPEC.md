@@ -356,9 +356,13 @@ The process is `docs/axKit/outside-reports.md` (OR-n.m); axTask's part of it:
 
 - **TK-9.1 Approve and Decline.** The Item menu (and so Context) has "Approve this report..." and "Decline this
   report...", for an entry of the list `outside-reports` that is `Awaiting approval` (OR-5.1, OR-5.2; `TaskForm.Approvals.cs`,
-  `AxTask.Core/OutsideReports`). Anywhere else, or on another state, the refusal sound and why.
+  `AxTask.Core/OutsideReports`). Anywhere else, or on another state, the refusal sound and why. The notice starts
+  with the focus in its text, so that the entry is read first, and Tab goes to the passphrase field (OR-5.1); an entry
+  with a character that is not spoken is not signed, and the refusal names the field and the character (OR-5.6).
 - **TK-9.2 Approval passphrase.** Options, "Approval passphrase...", with the outside reports list open, sets up the
-  key the first time and changes its passphrase after (OR-6.1, OR-6.3).
+  key the first time and changes its passphrase after (OR-6.1, OR-6.3). Its notices say where the key file is kept,
+  and for a change the fingerprint of the key in use; a change is refused while the last one is not pinned yet
+  ("The last change of the approval passphrase is not pinned in the code repository yet").
 - **TK-9.3 Never for the AI tools.** The three items are withheld from them (`CommandPalette.NeverForAiTools`) and
   marked act; the passphrase field is hidden, and nothing of it is kept (OR-5.4, OR-5.5). They are the first instance
   of the buttons and forms in items the maintainer asked for the same day (the priorities list, "a general framework

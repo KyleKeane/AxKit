@@ -19,6 +19,10 @@ expect focus axStart: said nothing on its first launch
 # Goal: A wrong passphrase approves nothing
 menu Approve this report
 expect state "notice":"Approve: axStart: said nothing on its first launch"
+# The entry is read before it is signed: the focus starts in the text, the passphrase field is the next stop (OR-5.1).
+expect focus Approve: axStart: said nothing on its first launch
+keys tab
+expect focus Type your approval passphrase to approve
 type not the passphrase at all
 keys enter
 expect said ♪ Edge
@@ -26,6 +30,7 @@ expect said That is not the approval passphrase
 # Goal: Approve an entry with the passphrase
 menu Approve this report
 expect state "notice":"Approve: axStart: said nothing on its first launch"
+keys tab
 type a long test passphrase
 keys enter
 expect said Approved: axStart: said nothing on its first launch

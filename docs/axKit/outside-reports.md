@@ -85,8 +85,11 @@ allowed where the review needs them ("it asks to 'turn off the seal'").
 - **OR-5.1 The command.** In the outside reports list, on an entry `Awaiting approval`: Context (and the Item menu),
   "Approve this report..." and "Decline this report...". Each opens a notice inside the window (bundle AX-7.2, no second
   window) that shows the entry's Title, Category, Item, Proposed priority and Proposed, the Harm review whole, and then a
-  password field: "Type your approval passphrase to approve" (or "to decline"). Enter checks it; Escape closes the
-  notice and nothing changes.
+  password field: "Type your approval passphrase to approve" (or "to decline"). The focus starts in the text, at its
+  top, so that the entry is read before it is signed; Tab goes to the field (the first build put the focus in the
+  field, and an approval could be typed without a line of the entry heard; 2026-11-21 audit). Enter with the field
+  empty says what the field is for and goes there; with a passphrase it checks it; Escape closes the notice and nothing
+  changes.
 - **OR-5.2 What it writes.** With the right passphrase, axTask signs the entry's approval text (OR-5.3) and writes
   Approval, Approved on and State (`Approved` or `Declined`) as one undo step, and says "Approved: <Title>" or
   "Declined: <Title>". A wrong passphrase: the refusal sound and "That is not the approval passphrase"; the notice is
@@ -95,14 +98,21 @@ allowed where the review needs them ("it asks to 'turn off the seal'").
 - **OR-5.3 The approval text** is the entry made into lines, in this order, each `name: value` with line ends as LF:
   `axkit-approval 1`, `decision: approved|declined`, `report: <Report>`, `title: <Title>`, `category: <Category>`,
   `item: <Item>`, `priority: <Proposed priority>`, `proposed: <Proposed>`, `review: <SHA-256 of Harm review, hex>`,
-  `date: <Approved on>`. Proposed and Harm review are taken with their line ends made LF and their ends trimmed. So the
-  signature covers the review he read and exactly the scope he approved: an entry changed after its approval no longer
-  verifies, and counts as not approved.
+  `date: <Approved on>`. Proposed and Harm review are taken with their line ends made LF and their ends trimmed. In a
+  line's value a backslash is doubled and a line end is written as backslash-n, so that two different values never
+  make the same line. So the signature covers the review he read and exactly the scope he approved: an entry changed
+  after its approval no longer verifies, and counts as not approved.
 - **OR-5.4 Never through the AI tools.** Both commands are marked so that `axkit_window_run` refuses them (`ai: false`,
   mark act), and the field is a password field, which the AI tools read as protected (`mcp.md`). The automation channel
   of window scripts can press the command, but no script and no one but the maintainer knows the passphrase.
 - **OR-5.5 The passphrase is never kept.** It is read from the field into memory, used, and cleared; never written to a
   file, a setting, a log, the clipboard, or the report of a crash. axKit offers no way to show it.
+- **OR-5.6 What is signed is what was heard.** axTask refuses to sign an entry whose signed fields hold a character a
+  screen reader does not speak: a control character other than a line end or a tab, a zero-width or direction
+  character, the invisible tag characters, a line or paragraph separator, a character of private use, half a
+  surrogate pair. It names the field, the character's code and its place ("The field Proposed holds a character that
+  is not spoken (U+200B, character 57): nothing is signed"). Such a character could carry words past the maintainer's
+  ear into the scope he signs. `tools\outside-report.ps1 ready` refuses the same, so the assistant meets it first.
 
 ## 6. The approval key
 
@@ -113,8 +123,14 @@ allowed where the review needs them ("it asks to 'turn off the seal'").
   `..\axkit-management`: `approval-key.json` (the format, the rounds, the salt, the nonce, the tag, the encrypted
   private key, the public key) and `approval-key.pub` (the public key as the code repository pins it). It says the
   key's fingerprint (the first 16 hex digits of the SHA-256 of the modulus and the exponent), in groups of four. The
-  assistant copies `approval-key.pub` to `docs/axKit/approval-key.pub` and commits it; the maintainer can compare
-  the fingerprint the commit pins with the one he heard (`tools\session-start.ps1` says the pinned one).
+  notices say where the key file is kept, so that a passphrase is never set into a folder he did not mean. The
+  assistant pins the public half with `tools\pin-approval-key.ps1`, which copies `approval-key.pub` to
+  `docs/axKit/approval-key.pub` and commits it alone. The key file is written last and by a move, so that it is the
+  old key whole or the new one whole.
+- **OR-6.1a Where the key file goes.** `approval-key.json` lies in the management folder, and every push syncs that
+  folder to the private management repository on GitHub: a backup, and a copy outside the computer. What protects it
+  there is the passphrase alone (PBKDF2 with 600 000 rounds), so the passphrase is long and used nowhere else, and it
+  is never written into `..\axkit-keys` as the other keys' passphrases are: only the maintainer knows it.
 - **OR-6.2 Checked against the pinned key.** Every check of OR-7 verifies a signature with the public key of
   `docs/axKit/approval-key.pub` in the code repository, never with the one in the management folder: a key file swapped
   beside the repository approves nothing.
@@ -123,23 +139,43 @@ allowed where the review needs them ("it asks to 'turn off the seal'").
   `Approval key changed: <signature>`, the old key's signature over the new key's fingerprint. The same command,
   "Approval passphrase...", used when a key exists, asks the current passphrase first, then the new one twice, signs
   the new key with the old (a wrong current passphrase changes nothing), and writes that line into
-  `approval-key-change.txt` beside the key, from where the assistant puts it into the commit's message. The first key
-  is pinned by a commit the hook allows because none existed. A forgotten passphrase cannot be got back: the maintainer
-  then removes the pinned key by a commit of his own, made with the hook skipped by his own hand (`git commit
-  --no-verify`), and sets up a new one; the assistant never skips a hook.
+  `approval-key-change.txt` beside the key, from where `tools\pin-approval-key.ps1` puts it into the commit's message
+  and then deletes the file. One change at a time: while that file lies there the last change is not pinned, and axTask
+  refuses the next one, which would be signed by a key the repository never pinned. The notice of a change says the
+  fingerprint of the key in use. The first key is pinned by a commit the hook allows because none existed. A forgotten
+  passphrase cannot be got back: the maintainer then removes the pinned key by a commit of his own, made with the hook
+  skipped by his own hand (`git commit --no-verify`), and sets up a new one; the assistant never skips a hook.
 - **OR-6.4 The code.** `AxTask.Core/Approvals` (pure: the approval text, sign, verify, the key file made and opened,
   the fingerprint), tested in `AxTask.Tests` (`ApprovalsTests`) with a key made in the test. The scripts verify with
   `tools/approvals.ps1`, which Windows PowerShell 5.1 runs through .NET's own RSA (PKCS#1 v1.5, SHA-256); a test holds
   the two to the same text by verifying, in PowerShell, a signature made by `Approvals`.
+- **OR-6.5 After a change of key.** A change of passphrase makes a new key, because the old key file stays in the
+  history of the management repository and opens with the old passphrase for ever. An approval in force (State
+  `Approved`) must be the pinned key's own: one signed with an earlier key is named by the check, the assistant sets
+  it back to `Awaiting approval` with `tools\outside-report.ps1 reopen` (refused while the pinned key verifies it),
+  and the maintainer approves it again, hearing it again. An entry closed (`Done`, `Declined`) stays what he signed:
+  the check accepts the signature of any key this repository ever pinned, read from git's history of the pinned file,
+  and an earlier key never lets work be done.
+- **OR-6.6 Which key is trusted, and how he can tell.** The checks trust the pinned key alone. Three things keep it
+  his: the commit hook (OR-6.3); the check that the key beside the lists, the one his passphrase opens, is the pinned
+  one (a difference is named `pin`, and refuses the push until `tools\pin-approval-key.ps1` has run); and the check's
+  own line, which says the pinned fingerprint and names every commit that replaced a pinned key without the old key's
+  signature, every time, for ever. He can hear the fingerprint of his own key in axTask (Options, Approval
+  passphrase: the first notice says it; Escape leaves) and compare it with the `fingerprint:` line of
+  `docs/axKit/approval-key.pub` as GitHub shows it, without asking the assistant.
 
 ## 7. Where the code holds the process
 
-- **OR-7.1 `tools\reports-check.ps1`** (every push through the pre-push hook, and every session start) fails, naming
-  each case: an open report with no entry in the outside reports list; an entry `Approved` or `Declined` whose
-  signature does not verify against the pinned key; an item of the priorities list whose Where it is written names a
-  report, unless an entry of that report is `Approved` with a valid signature and names that item (category `Same as
-  an item`, `Addition to an item` or `New item`, field Item equal to the item's title); a closed report whose entry is
-  not `Done` or `Declined`.
+- **OR-7.1 The checks at every push and every session start.** `tools\reports-check.ps1` asks GitHub and names an
+  open report with no entry in the outside reports list (by its number alone: a report's title is outside text and is
+  never printed into a session), an open report whose entry is closed, and a closed report whose entry is not `Done`
+  or `Declined`. `tools\outside-check.ps1` asks no network, refuses the push, and names: an item of the priorities
+  list whose Where it is written names a report, unless an entry of that report is `Approved` or `Done` with a
+  signature of the pinned key and names that item (category `Same as an item`, `Addition to an item` or `New item`,
+  field Item equal to the item's title); an entry `Approved` whose signature the pinned key does not verify; an entry
+  `Done` or `Declined` that holds no signature of a key this repository ever pinned (closed by hand, or changed
+  after); and a key beside the lists that is not the pinned one (OR-6.6). A report is known by the words
+  `AxKit-reports issue <n>`, whatever their case, also `issues 8, 9 and 10`.
 - **OR-7.2 `tools\item.ps1`** refuses `new` and `note` when the title, the Where or the text names a report, unless
   the report's entry is `Approved`, verifies, and names that item by its exact title. The assistant then writes the
   item with the entry's Item as its title, its Report as the Where, and its Proposed in the Notes.
@@ -147,14 +183,25 @@ allowed where the review needs them ("it asks to 'turn off the seal'").
   an item from outside (its Where names a report) unless that report's entry is `Approved` and verifies; and it
   applies OR-6.3.
 - **OR-7.4 `tools\outside-report.ps1`**, the assistant's one way to write an entry: `new` (State `To review`),
-  `review` (the Harm review, the category, the item, the proposal), `ready` (OR-4.5), `done` (after the work, the
-  report answered and closed). It never writes Approval, Approved on, or the states `Approved` and `Declined`, and
-  refuses an entry whose State is already `Approved` or `Declined` for any change but `done`: a change would void the
-  signature anyway, and the refusal says so.
-- **OR-7.5 What the code cannot hold.** The assistant reads the reports and writes the reviews; that its review is
-  honest and that it never follows a report's instruction are its rules (OR-4), not a check. What the code guarantees
-  is that nothing from a report becomes work, a commit or a release without the maintainer having read the review and
-  the scope and signed them with his passphrase.
+  `review` (the Harm review, the category, the item, the proposal), `ready` (OR-4.5, OR-5.6), `done` (after the work,
+  the report answered and closed), `reopen` (OR-6.5). It never writes a signature or the states `Approved` and
+  `Declined`, and refuses an entry whose State is already `Approved`, `Declined` or `Done` for any change but `done`
+  and `reopen`: a change would void the signature anyway, and the refusal says so.
+- **OR-7.5 What the code holds, and what it cannot** (rewritten after the audit of 2026-11-21, which found the first
+  wording too strong).
+  - *Held by mathematics:* an approval cannot be made without the passphrase, and a signed entry cannot be changed by
+    one character and still count. Nobody, the assistant included, can make or alter one.
+  - *Held by the checks, for work that says where it comes from:* an item, a note or a commit that names a report is
+    refused without an approval that names it. This holds the honest pathway, a mistake, and an assistant that was
+    talked into following a report's words by the ordinary route.
+  - *Not held by any code on this computer:* work that does not say it comes from a report (an item written with
+    another origin, or no item at all), and a change to the checks themselves. The scripts, the hooks and the pinned
+    key are files the assistant can write; a session that set out to deceive could change them. What stands against
+    that is outside the code: the assistant's rules (OR-4), the maintainer's own hearing of his key's fingerprint
+    (OR-6.6), the record git keeps of every change to the checks and the pinned key, which the check reads back at
+    every session start, and a review of the gates by another reader when they change.
+  - *Never a check:* that the assistant's harm review is honest and complete. The maintainer reads it before he
+    signs; that reading is the second layer.
 
 ## 8. The reports already in (2026-11-21)
 

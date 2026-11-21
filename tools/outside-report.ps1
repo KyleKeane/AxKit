@@ -5,7 +5,7 @@
 
 .DESCRIPTION
   The list is <parent>\axkit-management\outside-reports, one JSON item per report, made with its list.json when
-  missing. Four forms:
+  missing. Five forms:
 
     new -Title <the app and the matter, in the assistant's words> -Report 'KyleKeane/AxKit-reports issue <n>'
         a new entry, State "To review", Received today. Refused when an entry already names the report.
@@ -23,7 +23,11 @@
     done -Name <words>
         State "Done", for an entry Approved whose approval verifies, once its work is finished and the report answered.
 
-  An entry that is Approved, Declined or Done is refused every change but done: a change would void the signature
+    reopen -Name <words>
+        State "Awaiting approval" again, its approval emptied, for an entry Approved whose approval the pinned key
+        does not verify (the approval key changed, OR-6.5). Refused while the approval verifies.
+
+  An entry that is Approved, Declined or Done is refused every change but done and reopen: a change would void the signature
   (OR-5.3). Approval, Approved on and the states Approved and Declined are written by axTask alone, with the
   maintainer's passphrase. Exit code 0 when written, 1 when refused. The script stays ASCII.
 
@@ -34,7 +38,7 @@
 #>
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory = $true, Position = 0)][ValidateSet('new', 'review', 'ready', 'done')][string]$Form,
+    [Parameter(Mandatory = $true, Position = 0)][ValidateSet('new', 'review', 'ready', 'done', 'reopen')][string]$Form,
     [string]$Title,
     [string]$Report,
     [string]$Name,
@@ -158,6 +162,21 @@ if ($Form -eq 'done') {
     exit 0
 }
 
+if ($Form -eq 'reopen') {
+    # After a change of the approval key (OR-6.5): an approval in force that the pinned key no longer verifies is
+    # offered to the maintainer again. Nothing he signed with the pinned key is ever taken back this way.
+    $key = Get-PinnedApprovalKey $Repository
+    $checked = @(Get-OutsideEntries $outside $key | Where-Object { $_.Path -eq $entry.File })
+    if ($state -ne 'Approved' -or $checked.Count -ne 1) { Refuse "only an Approved entry is offered again; this one is '$state'." }
+    if ($checked[0].Valid) { Refuse 'its approval verifies with the pinned key: it stands, and nothing is taken back.' }
+    (Get-Field $entry.Document 'State').value = 'Awaiting approval'
+    (Get-Field $entry.Document 'Approval').value = ''
+    (Get-Field $entry.Document 'Approved on').value = ''
+    Save-ListItem $entry.File $entry.Document
+    Write-Host "Outside reports, awaiting the maintainer's approval again: $($entry.Title)"
+    exit 0
+}
+
 if ($state -in @('Approved', 'Declined', 'Done')) {
     Refuse "the entry is ${state}: a change would void the maintainer's signature. A new matter gets a new entry."
 }
@@ -187,6 +206,12 @@ $itemTitle = [string](Get-Field $entry.Document 'Item').value
 $scope = [string](Get-Field $entry.Document 'Proposed').value
 $proposedPriority = [string](Get-Field $entry.Document 'Proposed priority').value
 if (-not $harm.Trim()) { Refuse 'the Harm review is empty; "Nothing found." is a finding and is written.' }
+# What he signs is what he hears (OR-5.6): axTask refuses to sign an entry with a character that is not spoken, so it
+# is named here already.
+foreach ($signedField in @('Title', 'Report', 'Category', 'Item', 'Proposed priority', 'Proposed', 'Harm review')) {
+    $unheard = Get-UnheardCharacter ([string](Get-Field $entry.Document $signedField).value)
+    if ($unheard) { Refuse "the field $signedField holds a character that is not spoken ($unheard): write it again without it." }
+}
 if ($categories -notcontains $chosen) { Refuse 'the entry has no category.' }
 if ($acting -contains $chosen) {
     if (-not $scope.Trim()) { Refuse "a category that acts ($chosen) needs Proposed: exactly what would be done." }
