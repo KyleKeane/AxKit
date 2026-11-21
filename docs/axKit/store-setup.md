@@ -34,7 +34,7 @@ section 6.
 
 Microsoft requires the first publication to go through Partner Center's website, and every later one goes the same
 way (section 5), by hand or through section 6's tool. The first
-submission (Submission 1, `AxKit-5.2.1.msix`, "In certification" since 2026-11-08, Pacific time) was made by the
+submission (Submission 1, `AxKit-5.2.1.msix`, "In certification" since 2026-11-08) was made by the
 assistant with `tools/EdgeDrive` while the maintainer was away, every section as below; he only signed in. The texts
 are `store-listing.md`; the files to upload are in the repository's `publish\store` folder (the six screenshots,
 `1-axdown.png` to `6-axprocess.png`) and `publish\msix` (the logo `StoreLogo-300.png`).
@@ -172,7 +172,7 @@ route was removed on 2026-11-13 (section 2), so the request is no longer needed.
 - Where things stand: Submission 1 (`AxKit-5.2.1.msix`, every section Complete: Free in all markets, Developer
   tools, the accessibility and generative AI declarations, 3+/Everyone, the English listing with six screenshots
   and their captions, seven keywords and the 300 pixel logo, publish as soon as certified, the `runFullTrust`
-  reason) was submitted for certification on 2026-11-08 in the afternoon, Pacific time. The overview page
+  reason) was submitted for certification on 2026-11-08. The overview page
   (`https://partner.microsoft.com/en-us/dashboard/products/9PK01L2K5000/overview`) shows the step it is at:
   Pre-processing, Certification, Publishing; certification usually takes hours, up to three business days. When it
   is live: `winget install 9PK01L2K5000 -s msstore` on this computer beside the development copy, then the NVDA pass
@@ -184,7 +184,7 @@ route was removed on 2026-11-13 (section 2), so the request is no longer needed.
   presence (Submission 2: Last modified on 11/14/2026)", so the Store holds 5.8.0. `winget show` gives no version
   for a Store product, so Partner Center's overview is where a submission's state is read.
 - Submission 4 (`AxKit-5.10.0.msix`, the listing's What's new rewritten for 5.10.0, everything else unchanged) was
-  submitted for certification on 2026-11-18 at about 01:52, Pacific time, at the maintainer's word; the overview showed
+  submitted for certification on 2026-11-18, at the maintainer's word; the overview showed
   "Product update: In certification (Submission 4)", at Pre-processing, to publish as soon as it passes. Submission 3
   (`AxKit-5.9.1.msix`, 2026-11-15) had been live before it.
 - The last published and the pending submission, with the status and the Store's error and warning codes, are in

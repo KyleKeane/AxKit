@@ -11,4 +11,8 @@
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
+  <ItemGroup>
+    <!-- The bundle's redaction, for what a page's text is printed through. -->
+    <ProjectReference Include="..\..\src\AxKit.Core\AxKit.Core.csproj" />
+  </ItemGroup>
 </Project>

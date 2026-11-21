@@ -96,6 +96,37 @@ public partial class PrivacyTests
     }
 
     /// <summary>
+    /// The public documents say that the maintainer was away, never why or when in his day: whether he slept, when he
+    /// woke, which time zone he lives in (the 2026-11-21 audit found ten such lines in the records of the NVDA passes
+    /// and the Store's submissions; nothing above can see this kind). "The user away at his own word" says all a
+    /// record needs.
+    /// </summary>
+    [Fact]
+    public void The_documents_do_not_say_when_the_maintainer_sleeps_or_where_his_clock_is()
+    {
+        var root = LayoutTests.RepositoryRoot();
+        var found = new List<string>();
+        foreach (var file in Directory.EnumerateFiles(Path.Combine(root, "docs"), "*.md", SearchOption.AllDirectories)
+            .Where(file => !file.Contains(Path.Combine("docs", "background_info"), StringComparison.OrdinalIgnoreCase)))
+        {
+            var lines = File.ReadAllLines(file);
+            for (var i = 0; i < lines.Length; i++)
+            {
+                if (DayOfTheMaintainer().IsMatch(lines[i]))
+                {
+                    found.Add($"{Path.GetRelativePath(root, file)}:{i + 1}");
+                }
+            }
+        }
+
+        Assert.True(found.Count == 0, "A line about the maintainer's sleep or time zone (write that he was away, nothing more): " + string.Join("; ", found));
+    }
+
+    /// <summary>Words about a person's sleep, and the names of time zones beside the word time.</summary>
+    [GeneratedRegex(@"(?i)\b(asleep|in bed|went to bed|woke|wakes up|(pacific|mountain|central|eastern|european|greenwich) (standard |daylight |summer )?time)\b")]
+    private static partial Regex DayOfTheMaintainer();
+
+    /// <summary>
     /// Text files outside build output and git's own folder, which is what a commit can carry. The Claude Code folder
     /// .claude is read too (the shared settings and the skills are committed), but for the two things in it that never
     /// are: the worktrees, each a checkout of its own, and settings.local.json, the computer's own permissions, which

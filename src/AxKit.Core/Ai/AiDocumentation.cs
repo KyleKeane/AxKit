@@ -291,6 +291,11 @@ public static class AiDocumentation
         var current = !rewrite && before.Length > 0 && before[0].Trim() == version;
         var files = Files(version);
         var written = new List<string>();
+        // The files axKit wrote before, by the marker's word. A marker of an early axKit held the version alone: then
+        // nothing tells whose a file is, and every name of the list counts as axKit's, as it did then.
+        var listed = before.Skip(1).Select(line => line.Trim()).Where(line => line.Length > 0).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var tellsWhose = before.Length == 0 || listed.Count > 0;
+        var usersOwn = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var (name, text) in files)
         {
             var path = Path.Combine(workingFolder, name);
@@ -302,6 +307,16 @@ public static class AiDocumentation
                 continue;
             }
 
+            // A file that is there, that no marker says axKit wrote and that does not hold axKit's text is the user's
+            // own, whatever its name (a CHANGELOG.md of a project the working folder was pointed at, a name this
+            // version claims for the first time): never written over, and never put on the marker, so that it is never
+            // deleted either (AH-7.1; the 2026-11-21 audit found it written over).
+            if (tellsWhose && !listed.Contains(name) && File.Exists(path) && !Holds(path, AsWritten(text)))
+            {
+                usersOwn.Add(name);
+                continue;
+            }
+
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             File.WriteAllText(path, AsWritten(text));
             written.Add(name);
@@ -309,7 +324,7 @@ public static class AiDocumentation
 
         if (!current)
         {
-            var names = files.Select(file => file.Path).ToList();
+            var names = files.Select(file => file.Path).Where(name => !usersOwn.Contains(name)).ToList();
             foreach (var old in before.Skip(1).Select(line => line.Trim()).Where(line => IsOurs(line) && !names.Contains(line, StringComparer.OrdinalIgnoreCase)))
             {
                 File.Delete(Path.Combine(workingFolder, old));

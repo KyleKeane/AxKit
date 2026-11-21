@@ -1667,7 +1667,7 @@ what it was before. One item of the priorities list holds them all for the user 
   merges when its checks have passed, and a change to key handling is checked with NVDA. So the work is on the
   branch `workflows`; `main` does not move while the packages land; the merge follows a whole `.\test.ps1`, the
   window runs and a pass of `nvda-pass.ps1`, made by the session that integrates the night's work while the user is
-  away (he is asleep and was told that NVDA would speak; were he at the keyboard, the pass would wait for his word).
+  away (he was told that NVDA would speak; were he at the keyboard, the pass would wait for his word).
   The merge does not wait for his word beyond that: he asked to find the work done in the morning, and his word
   gates a release, not a merge. If no pass can be made, the branch waits and the pass stays written down as owed.
   (Taken by the assistant on 2026-11-15 for the user to confirm.)
@@ -2598,7 +2598,7 @@ every wave's end is a place to stop: the repository is whole after each, and WP-
 - Steps, in this order:
   1. On the branch, with what `main` has gained merged in: `.\test.ps1` whole, and `tests\scripts` whole on the
      hidden desktop with `--record` (a script that needs a live model or a missing program is judged as 9.0 says).
-  2. The NVDA pass: `.\nvda-pass.ps1`, every app. Only with the user away: tonight he is asleep and was told that
+  2. The NVDA pass: `.\nvda-pass.ps1`, every app. Only with the user away: he is away and was told that
      NVDA would speak; at any other time, only after he was asked through the question tool and has stepped away.
      A failure is read, fixed where it is this work's, and its scripts are run again.
   3. `docs/axKit/nvda-test-record.md`: the pass's own section in place of the "Owed" section WP-B4 wrote: what it

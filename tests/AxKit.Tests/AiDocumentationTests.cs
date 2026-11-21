@@ -417,6 +417,31 @@ public sealed class AiDocumentationTests
     }
 
     [Fact]
+    public void A_file_of_the_users_with_a_name_axKit_claims_is_never_written_over()
+    {
+        // The 2026-11-21 audit: a working folder pointed at a project of the user's own, or a name a new version
+        // claims for the first time (changelog.md, privacy.md), was written over with no check whose the file was.
+        using var temp = new TempFolder("axkit-ai-documentation");
+        var folder = Path.Combine(temp.Path, "documentation");
+        var theirs = temp.File(Path.Combine("documentation", "CHANGELOG.md"), "my project's changes");
+
+        // No marker yet: the file is the user's, stays, and is not put on the marker.
+        var written = AiDocumentation.Write(temp.Path, "1.2.3");
+        Assert.Equal("my project's changes", File.ReadAllText(theirs));
+        Assert.DoesNotContain(written, name => name.EndsWith("changelog.md", StringComparison.OrdinalIgnoreCase));
+        Assert.DoesNotContain(File.ReadAllLines(Path.Combine(folder, "axkit-version.txt")), line => line.EndsWith("changelog.md", StringComparison.OrdinalIgnoreCase));
+
+        // The same at the next use and under the next version, which would delete what the marker names and it lacks.
+        Assert.Empty(AiDocumentation.Write(temp.Path, "1.2.3"));
+        AiDocumentation.Write(temp.Path, "1.3.0");
+        Assert.Equal("my project's changes", File.ReadAllText(theirs));
+
+        // A file the marker does name is axKit's, and a change to it is put right as before (AH-7.7).
+        File.WriteAllText(Path.Combine(folder, "axFile.md"), "changed");
+        Assert.Equal([Path.Combine("documentation", "axFile.md")], AiDocumentation.Write(temp.Path, "1.3.0"));
+    }
+
+    [Fact]
     public void A_file_an_earlier_version_wrote_and_this_one_no_longer_has_is_deleted_by_the_markers_list_alone()
     {
         using var temp = new TempFolder("axkit-ai-documentation");

@@ -500,8 +500,16 @@ internal static class StreamProbe
 
             foreach (var session in sessions.Distinct())
             {
+                // The id comes from Claude Code's output: only one that names a session file of this store is acted on,
+                // for the file and for the folder beside it alike (an id of ".." or with a separator would have deleted
+                // a folder elsewhere; 2026-11-21 audit).
                 var file = Path.Combine(project, session + ClaudeCodeTranscript.SessionFileExtension);
-                if (ClaudeCodeTranscript.IsSessionFile(file, [projects]) && File.Exists(file))
+                if (!ClaudeCodeTranscript.IsSessionFile(file, [projects]))
+                {
+                    continue;
+                }
+
+                if (File.Exists(file))
                 {
                     File.Delete(file);
                     removed++;

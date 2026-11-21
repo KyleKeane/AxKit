@@ -27,6 +27,18 @@ internal static class Program
 {
     private static readonly string Port = Environment.GetEnvironmentVariable("EDGEDRIVE_PORT") ?? "9222";
     private static readonly string TargetFile = Path.Combine(Path.GetTempPath(), "edgedrive-target.txt");
+
+    /// <summary>
+    /// What a page says is printed through the bundle's redaction (root CLAUDE.md rule 6: no personal data in a
+    /// session's output; the 2026-11-21 audit found a signed-in page's text printed as it was): e-mail addresses,
+    /// account paths, ids and the Windows account name are replaced. EDGEDRIVE_REDACT holds further words to replace,
+    /// separated by semicolons (a street, a telephone number), kept on the computer and never in the repository.
+    /// </summary>
+    private static void Say(string text)
+    {
+        var further = (Environment.GetEnvironmentVariable("EDGEDRIVE_REDACT") ?? string.Empty).Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Console.WriteLine(AxKit.Core.Redaction.Redact(text, [Environment.UserName, .. further]));
+    }
     private static readonly HttpClient Http = new();
 
     private static async Task<int> Main(string[] args)
@@ -46,7 +58,7 @@ internal static class Program
                     {
                         if (target is not null)
                         {
-                            Console.WriteLine($"{target["id"]}  {target["type"]}  {target["title"]}  {target["url"]}");
+                            Say($"{target["id"]}  {target["type"]}  {target["title"]}  {target["url"]}");
                         }
                     }
 
@@ -55,7 +67,7 @@ internal static class Program
                 {
                     var created = JsonNode.Parse(await Http.GetStringAsync($"http://localhost:{Port}/json/new?{Uri.EscapeDataString(Arg(args, 1))}").ContinueWith(t => t.Result))!;
                     File.WriteAllText(TargetFile, created["id"]!.ToString());
-                    Console.WriteLine($"Opened {created["id"]} on {created["url"]}");
+                    Say($"Opened {created["id"]} on {created["url"]}");
                     return 0;
                 }
                 case "use":
@@ -72,30 +84,30 @@ internal static class Program
                     await page.CallAsync("Page.navigate", new JsonObject { ["url"] = Arg(args, 1) });
                     await page.WaitForEventAsync("Page.loadEventFired", TimeSpan.FromSeconds(60));
                     await Task.Delay(1500);
-                    Console.WriteLine(await page.EvalAsync("document.title + ' | ' + location.href"));
+                    Say(await page.EvalAsync("document.title + ' | ' + location.href"));
                     return 0;
                 case "eval":
-                    Console.WriteLine(await page.EvalAsync(Arg(args, 1)));
+                    Say(await page.EvalAsync(Arg(args, 1)));
                     return 0;
                 case "evalfile":
                     // A script from a file: a shell's quoting mangles any JavaScript of size.
-                    Console.WriteLine(await page.EvalAsync(File.ReadAllText(Arg(args, 1))));
+                    Say(await page.EvalAsync(File.ReadAllText(Arg(args, 1))));
                     return 0;
                 case "text":
-                    Console.WriteLine(await page.EvalAsync("document.body.innerText"));
+                    Say(await page.EvalAsync("document.body.innerText"));
                     return 0;
                 case "find":
-                    Console.WriteLine(await page.EvalAsync(FindScript(Arg(args, 1), click: false, index: 0)));
+                    Say(await page.EvalAsync(FindScript(Arg(args, 1), click: false, index: 0)));
                     return 0;
                 case "click":
                 {
                     var index = args.Length > 2 ? int.Parse(args[2]) : 1;
-                    Console.WriteLine(await page.EvalAsync(FindScript(Arg(args, 1), click: true, index)));
+                    Say(await page.EvalAsync(FindScript(Arg(args, 1), click: true, index)));
                     await Task.Delay(1000);
                     return 0;
                 }
                 case "focus":
-                    Console.WriteLine(await page.EvalAsync($"(() => {{ const e = document.querySelector({JsonSerializer.Serialize(Arg(args, 1))}); if (!e) return 'not found'; e.focus(); return 'focused ' + (e.tagName + ' ' + (e.getAttribute('aria-label') || e.id || e.name || '')).trim(); }})()"));
+                    Say(await page.EvalAsync($"(() => {{ const e = document.querySelector({JsonSerializer.Serialize(Arg(args, 1))}); if (!e) return 'not found'; e.focus(); return 'focused ' + (e.tagName + ' ' + (e.getAttribute('aria-label') || e.id || e.name || '')).trim(); }})()"));
                     return 0;
                 case "type":
                     await page.CallAsync("Input.insertText", new JsonObject { ["text"] = Arg(args, 1) });
@@ -114,7 +126,7 @@ internal static class Program
                 {
                     // Any protocol method with its parameters as JSON, for what the commands above do not cover; the answer as JSON.
                     var parameters = args.Length > 2 ? JsonNode.Parse(args[2]) as JsonObject : null;
-                    Console.WriteLine((await page.CallAsync(Arg(args, 1), parameters)).ToJsonString());
+                    Say((await page.CallAsync(Arg(args, 1), parameters)).ToJsonString());
                     return 0;
                 }
                 case "close":

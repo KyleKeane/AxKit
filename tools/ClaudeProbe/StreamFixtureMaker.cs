@@ -198,10 +198,13 @@ internal static class StreamFixtureMaker
         var written = File.ReadAllText(path);
         var (emails, paths, names) = FixtureMaker.Check(written, masker.Names);
         var own = written.Contains("axkit-stream-probe", StringComparison.OrdinalIgnoreCase) ? 1 : 0;
-        if (emails + paths + names + own > 0)
+        // An id of Claude Code's own (a session, a request) quoted inside a text the fields' whitelist keeps whole: a
+        // reply, an error, a tool's input (2026-11-21 audit). The ids of the fields themselves are already session-1.
+        var ids = System.Text.RegularExpressions.Regex.Matches(written, @"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b").Count;
+        if (emails + paths + names + own + ids > 0)
         {
             File.Delete(path);
-            Console.WriteLine($"  fixture refused, and deleted: {emails} e-mail addresses, {paths} account paths, {names} names, {own} of the probe's own folder");
+            Console.WriteLine($"  fixture refused, and deleted: {emails} e-mail addresses, {paths} account paths, {names} names, {own} of the probe's own folder, {ids} ids");
             return false;
         }
 

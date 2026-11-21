@@ -224,7 +224,10 @@ simple and manageable." Both uses of the working folder get it: Shift+F1 (AH-6) 
   written where it is missing, and all are written again when `documentation\axkit-version.txt`, the marker, does not
   hold this axKit's version, so that they follow each release (a development build writes them once in each process,
   since its guides change without its version). A changed copy is overwritten by the next version, which `index.md` and
-  the rule file say; a file of the user's own in the folder is never read, changed or deleted. The marker's
+  the rule file say; a file of the user's own in the folder is never read, changed or deleted, and that holds for a
+  file with a name axKit uses too: a file that is there, that the marker does not name and that does not hold axKit's
+  text is the user's, is left as it is and is not put on the marker (2026-11-21; until then a `changelog.md` of the
+  user's own in a working folder of their choosing was written over). The marker's
   first line is the version; its other lines name every file axKit wrote. A file an earlier version wrote and this
   one no longer has (an app that left the bundle) is deleted on the next version's write, by that list alone and only
   when it names a Markdown file directly in `documentation` or the rule file (`AiDocumentation.IsOurs`): a marker is a

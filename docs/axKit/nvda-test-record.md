@@ -8,11 +8,11 @@ Add a section under this one, above the earlier passes, so that the newest comes
 
 ## 2026-11-18: every app, before 5.10.0; by the assistant with NVDA listening (`main` 4830f1f0, then e10f28cf for ten scripts)
 
-`.\nvda-pass.ps1` in the night of 2026-11-17 to 18, the user in bed at his own word ("do the nvda pass"), NVDA
+`.\nvda-pass.ps1` of 2026-11-17 to 18, the user away at his own word ("do the nvda pass"), NVDA
 2025.3.3 with the OneCore voice, Windows 11 Pro 10.0.26200, the build 5.9.1 of commit 4830f1f0: the 167 scripts of
 `tests/scripts` and the five of `tests/nvda-scripts`, 172 in all, in an hour and a quarter. 164 passed with every
 announcement also spoken by NVDA; 1102 goals and checks passed, 6 failed and 25 were not run after them. Then, with
-the user awake and away from the keys at the question's answer, two short runs at e10f28cf (no window's code lies
+the user away from the keys at the question's answer, two short runs at e10f28cf (no window's code lies
 between the two commits): `.\nvda-pass.ps1 -Only '*-stream-*', 'axMedia\03-playing.txt'`, the eight scripts of the
 stream and axMedia's, 38 goals, all passed; and `.\nvda-pass.ps1 axHelp -Only '01-start.txt' -Inventory write`, for
 the command inventory. Every goal and check of the record, 1133, now has a pass with NVDA as its last result. The
@@ -38,10 +38,10 @@ What it found:
   apart and NVDA spoke both. The script and axMedia are as they were when the step passed on 2026-11-16: of two
   announcements some tens of milliseconds apart, NVDA sometimes speaks only the first. No user's two key presses
   come that close; a key held down could, and that is on the priorities list.
-- The pass told nobody how long it would take: the user woke into it and waited without a word of its length.
+- The pass told nobody how long it would take: the user came back into it and waited without a word of its length.
   Windows' voice now says the test's number, how many remain and about how long they take (e10f28cf; section 3 of
   `automation.md`), heard by him in the second run. And the second run was first started without the question, on
-  the belief that he was asleep; it refused by itself when it saw his keys, which is what its guard is for. Every
+  the belief that he was away; it refused by itself when it saw his keys, which is what its guard is for. Every
   NVDA run is asked for through the question tool again.
 - `nvda-pass.ps1` gained `-Only`, by which the second run took two and a half minutes where the whole pass takes
   an hour and a quarter.
@@ -96,7 +96,7 @@ What it found:
 
 ## 2026-11-15, night: every app, after the workflows work and axClaude's event sources; by the assistant with NVDA listening (branch `workflows` 2ef04f4)
 
-`.\nvda-pass.ps1`, the user away at his own word (asleep, and told that NVDA would speak), Windows 11 Pro
+`.\nvda-pass.ps1`, the user away at his own word (told that NVDA would speak), Windows 11 Pro
 10.0.26200, NVDA 2025.3.3, Claude Code 2.1.325, the build 5.9.1 of commit 2ef04f4: 135 scripts of `tests/scripts`
 and the four of `tests/nvda-scripts`, 139 in all (3650 s). All 139 passed in the one full run, with every
 announcement also spoken by NVDA, and with them every section the scripts mark: 576 goals (15 of them scripts that

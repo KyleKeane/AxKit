@@ -494,7 +494,7 @@ The assistant runs this tier itself to hear a change as NVDA speaks it, in the s
 4. The run records "Running NVDA tests. Please do not touch the keyboard or mouse." in Windows' own voice (SAPI, not
    NVDA, so the capture holds only what the windows made NVDA say, and no window takes the focus) into a wave file and
    plays it in a loop (the user's ask), then takes the foreground and the keys. From the first script on the warning
-   says where the pass is (the user's ask of 2026-11-18, who woke into a pass and could not tell how long it would
+   says where the pass is (the user's ask of 2026-11-18, who came back into a pass and could not tell how long it would
    keep the keyboard): "Running NVDA test 3 of 172. Please do not touch the keyboard or mouse. 169 tests remaining.
    About 1 hour 10 minutes left.", recorded anew for every script and looped until the next one's; the last script
    says "This is the last test." The time is what the scripts still to come took the last time they passed with NVDA
