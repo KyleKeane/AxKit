@@ -43,6 +43,33 @@ request or a tool call" points here. Requirement ids are AF-n.m. It grows out of
    true; i haven;t configured a list yet because i want you to stabilizze things before i commit things to memory.
    let me know when you think that things are ready for me to work with. i think when we get to that point we will
    quickly get to needing to mature axjson so i do want us to stabilize the other stuff that is pending first."
+8. "ok and i am thinking we should make the item details for a task into a standard form that opens on enter. i
+   want us to have tree and form navigation; i do not think there is anything else needed, but maybe i am missing
+   something perhaps the single text rename and input prompts are something different. but i am thinking the details
+   of a list are complex enough that we will want basic doem controls like radio buttons and date input that will
+   require the more complex keyboard controls that would overlap with tree nac like arrows.  we might add tabular
+   nav at some point or even graph navigation when those become essential, but for now let us try to fit everything
+   we can into these simpler data structures and interaction models. this would be true across the axkit suite.
+   within axtask and other apps whenever possible and meaningful i want any user configurable form to be a simple
+   json config as a template and json for the actual data. so that any item has an inheritence from a schema config
+   and then has its actaul values. this should allow us to constantly allow quick and easy reconfiguration and user
+   configurable elements. honestly json is not the only text based key balue store and i am open to using something
+   like yaml instead so that the underlying text document is easier to read as raw text, but i think any reliance
+   on tabs for semantic grouping will be very tricky; but please do let me know if json is not the best option
+   here."
+9. Asked whether an item's file should become flat, as he had agreed on 2026-11-10: "yes you should have an item
+   just be the key balue pairs for any fields. it should always hold a link to the schema that is meant to be
+   interpreted through. this is definitely the most efficient method and keeps item files very simple, but will
+   have implications for ensuring that a list of items is interpreted by the right schema. m but i think the
+   alternative of having every field in an item have its own type and control and other things would be  a nearly
+   impossible task . do you agree? if so do it this way. we should just convert any items or configs that are not
+   updated into the new schema and format so that we do not try to maintain code to render both, just detect if it
+   does not match and then offer a conversion. then all the converter code is modular and separated from the core
+   code of the app"
+10. "we will want to eventually have axjson be able to read a linked json that has allowed options and allow for a
+    simple form editing view that takes the place of the text editor mode as an option or let's the user cycle
+    options or open pickers from the text view; i am not sure how the simplest way to handle this will be, but it
+    will be really nive to have simple json hold the options and field types and control types."
 
 
 ## 2. What it is, in one paragraph
@@ -86,9 +113,9 @@ so that a person and the assistant can both write an action by hand and know wha
     it may take (60 by default, 600 at most); `"then"`, with `"set"`: fields written when the program ended with exit
     code 0, as one undo step.
   - `terminal`: `"command"`, a list of texts, the program first; `"folder"` as for `run`.
-- **AF-3.3 The action keys are read on.** `"keys"` (RP-8.1) is still read: the action of digit n is an action with
-  the key Ctrl+n. Where both name a key, `"actions"` counts. The first time axTask writes a list's actions, the keys
-  are written as actions and `"keys"` is removed, as one undo step.
+- **AF-3.3 The action keys become actions.** The `"keys"` of a configuration written before this (RP-8.1) are made
+  actions by the conversion (AF-13.6): the action of digit n is an action with the key Ctrl+n. The app reads
+  `"actions"` alone.
 - **AF-3.4 What is not understood is never run.** An action with a kind this version does not know, a member of the
   wrong type or a missing one is shown in the menu and the form as "<name>, not understood: <why>", does nothing,
   and is kept in the file as it is (IA-4). One bad action leaves the others working.
@@ -207,15 +234,23 @@ Decided by the maintainer on 2026-11-21, asked one by one after the specificatio
 4. **`run` and `terminal` first** (five kinds in all); a web request goes through a program the action names, so
    that axTask's own code still makes no network request (AF-8.1); a kind for a protocol comes later, each by his
    decision.
+5. **An item's file is its names and values, and a link to the configuration it is read through** (section 13;
+   his message 9, and his agreement of 2026-11-10): the types, the controls and everything else of a field are
+   written once, in the list's configuration.
+6. **One format, and a conversion** (his message 9): the app reads the one shape. A file of the earlier shape is
+   recognised and its conversion offered; the converter is a module of its own, apart from the app's core.
+7. **An item's details open as a standard form on Enter** (section 14; his message 8), and the bundle keeps to few
+   ways of moving: a tree, a form, a text; a table or a graph only when one becomes essential.
+8. **JSON stays** (his question in message 8; section 14).
 
 Taken in writing this, his to change:
 
-5. **Per list, in `list.json`** (his message 6), never per item: every item of a list has the same actions.
-6. **Arguments, not command text** (AF-4.2). It costs the convenience of typing a command line as one text, and
-   buys that no item's content can ever change what runs. A command line as text is what `terminal` is for, where
-   the user reads it before he sends it.
-7. **The approval stays code** (AF-8.4).
-8. **The name is "actions"**; the action keys become actions with a key, and their files keep working (AF-3.3).
+9. **Per list, in `list.json`** (his message 6), never per item: every item of a list has the same actions.
+10. **Arguments, not command text** (AF-4.2). It costs the convenience of typing a command line as one text, and
+    buys that no item's content can ever change what runs. A command line as text is what `terminal` is for, where
+    the user reads it before he sends it.
+11. **The approval stays code** (AF-8.4).
+12. **The name is "actions"**; the action keys become actions with a key in the conversion (AF-3.3).
 
 ## 10. Build order
 
@@ -223,23 +258,26 @@ Not before what is pending is stable (his word in message 7): the checks of the 
 Code, the NVDA pass of the windows that changed, and the open items of axClaude. Then, in this order, each step
 usable by itself:
 
-1. The configuration as a file a person edits (section 11): the fields a list shows, hide, keep and restore; a
-   configuration that does not read; Edit the list's configuration in the Context menu. `AxTask.Core`, the item
-   window's detail pane, their tests and a window script. This is useful before any action exists, and it is what
-   makes a list safe to configure by hand.
-2. `AxTask.Core`: `ListActions` (the file read and written, `"keys"` read on), `ActionValues` (the placeholders and
-   their refusals), the acceptance over a whole action; `AxKit.Core/ShellQuote`. All pure, each with its tests.
-3. The window: Context, Actions of this list; the eighteen keys; the form of an action's fields; the question of
+1. The flat item and the configuration that is its schema (sections 11 and 13): the one format the app reads; hide,
+   keep and restore; a configuration that does not read; Edit the list's configuration in the Context menu; the
+   converter as a module of its own, and the maintainer's lists and every script of `tools` moved with it.
+   `AxTask.Core`, the item window's detail pane, their tests and window scripts. This is useful before any action
+   exists, and it is what makes a list safe to configure by hand: **from here the maintainer can configure a list's
+   fields.**
+2. The item's form on Enter (section 14).
+3. `AxTask.Core`: `ListActions`, `ActionValues` (the placeholders and their refusals), the acceptance over a whole
+   action; `AxKit.Core/ShellQuote`. All pure, each with its tests.
+4. The window: Context, Actions of this list; the eighteen keys; the form of an action's fields; the question of
    AF-7.2; the run off the UI thread with its words, its output and its stop; the hand-over to axTerminal.
-4. `SPEC.md` section 7a rewritten for actions, the user guide, the NVDA plan, the outside-calls page, `PRIVACY.md`
-   and `SECURITY.md`; window scripts; an NVDA pass. From here a list can be configured and worked with.
-5. axJSON learns the options (section 12): the table of the configuration's members and their values, and
+5. `SPEC.md` rewritten for all of it, the user guide, the NVDA plan, the outside-calls page, `PRIVACY.md` and
+   `SECURITY.md`; window scripts; an NVDA pass. **From here a list's actions can be configured and worked with.**
+6. axJSON learns the options (section 12): the table of the configuration's members and their values, and
    axJSON's two commands that offer them. With axJSON's own maturing, which the maintainer expects to follow.
-6. The first uses, in the management lists: Answer the report on GitHub in the outside reports list (after an entry
+7. The first uses, in the management lists: Answer the report on GitHub in the outside reports list (after an entry
    is Done), and what the maintainer asks for next.
 
 There is no form of axTask's own for making an action: the configuration is the file, edited in axJSON (his message
-7). Action keys' form of today (Actions, Action keys) stays for the three kinds it knows.
+7). Action keys' form of today (Actions, Action keys) goes with the action keys, which the conversion makes actions.
 
 ## 11. The configuration is a file a person edits
 
@@ -251,12 +289,11 @@ There is no form of axTask's own for making an action: the configuration is the 
   as it reads every file, and says what changed in one line ("The list's configuration changed: 2 actions, 5
   fields").
 - **AF-11.2 The members**, all there are:
-  - `"format"`: `axkit-list 1`.
-  - `"fields"`: the list's own details (Notes, Section), as today.
-  - `"new item"`: **the fields of the list's items**, in the order they are shown; each a `title`, a `type` and the
-    `value` a new item starts with, a choice with its `options`. The member keeps its name, so that every file
-    written until now reads as it did.
-  - `"actions"`: section 3. `"keys"`: read on (AF-3.3).
+  - `"format"`: `axkit-list 2` (section 13: the shape before it is converted, never read beside this one).
+  - `"details"`: the list's own values, by name: `"Notes"`, `"Section"`.
+  - `"item fields"`: **the fields of the list's items**, in the order they are shown; each a `title`, a `type` and
+    the `value` a new item starts with, a choice with its `options` (`"new item"` until the conversion).
+  - `"actions"`: section 3 (the `"keys"` of the action keys become actions in the conversion, AF-13.6).
   - Anything else is kept as it is and means nothing (IA-4), as today.
 - **AF-11.3 Hide, keep, restore** (the maintainer's decision of 2026-11-21). An item of a list shows its Title and
   then the fields the list's configuration names, in the configuration's order. A field the configuration names and
@@ -299,3 +336,107 @@ There is no form of axTask's own for making an action: the configuration is the 
   the one chosen with a first value. So a configuration is written by choosing, and nothing has to be remembered.
   Until then axJSON edits the file as any JSON, and the file axTask writes for a new configuration (AF-11.1) holds
   every member with a first value, which is the next best thing to a list of choices.
+- **AF-12.4 One link, followed by both apps** (his message 10: "a linked json that has allowed options"). The link
+  is the one an item already carries: axJSON, opening a file with a `"schema"` member, reads the file it names and
+  knows each member's type and options from it, as axTask does. For an item that is its list's configuration; for
+  a configuration it is the options table of AF-12.2, which the configuration names the same way. So the options,
+  the field types and the kinds of control are held in plain JSON, in one place, for every program that reads the
+  data.
+- **AF-12.5 How axJSON offers them: the proposal, to be settled when axJSON is taken up.** His message names three
+  ways and leaves the choice open. Proposed, simplest first: (1) in the text, on a value that has options, a key
+  steps to the next and the previous option, as Right and Left do on a choice in axTask's fields, and a command
+  opens the list of them; a date takes `today` and `+3`. This needs no new view and is where to begin. (2) A form
+  view of the whole file in place of the text, one command to go there and back: the same form axTask opens on
+  Enter (AF-14.1), built from the same linked file by the same shared code, so that it is written once. The text
+  stays the truth, and the form is another way to change it.
+
+
+## 13. An item is its values, read through its list's configuration
+
+The maintainer's decision (messages 8 and 9; agreed in principle on 2026-11-10 and not built then). Giving every
+field of every item its own type, control and options, as the files do now, is what he calls a nearly impossible
+task to keep right, and it is: the same fact written in a thousand files cannot be changed in one place.
+
+- **AF-13.1 The file.** An item is one JSON object of names and values, and one link:
+
+  ```json
+  {
+    "schema": "list.json",
+    "Title": "Fix the tap",
+    "Done": false,
+    "Due": "2026-11-30",
+    "Notes": "Under the sink.\nBring the wrench."
+  }
+  ```
+
+  Title first, then the configuration's fields in its order, then what is kept (AF-11.3), one member a line. A
+  value is JSON's own: a text, `true` or `false` for a check, a date as `2026-11-30`, a choice as its option's text,
+  a link as a path relative to the file.
+- **AF-13.2 The link.** `"schema"` is always there: the path, relative to the item's file, of the configuration it
+  is read through. For an item of a list that is `list.json`, its folder's own. It is the one name a field cannot
+  have. An item moved to another list keeps the same words and is therefore read through its new list's
+  configuration; what that one does not name is kept, and comes back if the item returns (AF-11.3).
+- **AF-13.3 Everything of a field but its value is the configuration's**: its type, its options, the value a new
+  item starts with, its place in the order. A change there holds for every item at once, and no item's file is
+  touched by it.
+- **AF-13.4 Read through the right configuration, or not at all.** An item whose `"schema"` names a file that is
+  not there or does not read is shown with its names and values as plain text, read-only, with one line that says
+  why ("Its configuration, list.json, is not there"); nothing is guessed from the values, and nothing is written.
+  The gathering lists read each item through its own list's configuration (AF-11.5). An item's kind of file is
+  known by the `"schema"` member, as it was by `"format"`.
+- **AF-13.5 One format in the app.** axTask reads and writes this shape and no other. There is no second reader
+  kept beside it.
+- **AF-13.6 The conversion.** A list in the earlier shape (`"format": "axkit-list 1"`, items with `title`, `type`
+  and `value` objects, `"new item"`, `"keys"`) is recognised when it is met: its row says "earlier format", and
+  opening it asks once, "This list is written in axTask's earlier format. Convert it? A copy is kept beside it."
+  Convert copies the folder to `<name>, before conversion`, then writes the configuration and every item anew:
+  the fields of `"new item"` and of the items themselves become `"item fields"` (the configuration's own first; a
+  field only some items hold is added after them, so that nothing is hidden by the conversion), every item becomes
+  its values, the list's `"fields"` become `"details"`, and `"keys"` become actions. A list not converted is not
+  opened. The converter is a module of its own (`AxTask.Convert`, a folder and a namespace apart, with its own
+  tests and the earlier shape's reader inside it): the app's core calls it at this one place and knows nothing of
+  the earlier shape. A later change of format gets a converter of its own beside it, and the app still reads one.
+- **AF-13.7 What moves with it**, in the same step: the scripts of `tools` that read and write the lists
+  (`items.ps1`, `item.ps1`, `approvals.ps1`, `outside-report.ps1`, `reports-check.ps1`), the AI tools of axTask
+  (`TaskTools`), the smart lists' conditions, the links between items, and the maintainer's own lists, converted
+  once with the same converter and committed. An approval's signature is over a report's values, not over the
+  file's shape (OR-5.3), so the approvals given stand.
+- **AF-13.8 axPass is not touched**: its entries are KeePassXC's. The shared item window (`ItemForm`) is handed
+  fields and values by each app as before.
+
+## 14. The item's form, and the few ways of moving
+
+- **AF-14.1 Enter on an item opens its form** (his message 8): one standard control for each field of the list's
+  configuration, in its order, by the bundle's rules for forms (bundle SPEC AX-8.10): the focus in the first
+  field, Tab and Shift+Tab between the controls, each read by NVDA as what it is, Ctrl+Enter saves the whole form
+  as one undo step, Escape leaves and nothing is changed. By type: a text box; a box of several lines; a check
+  box; a date as a text box that takes a date, `today` or `+3` and says the day back; a choice as a list of its
+  options. A choice is a list and not a group of radio buttons, by the maintainer's own earlier decision: in a
+  radio group the arrows choose as they move, in a list they explore and nothing is chosen until one leaves it
+  (AX-8.10 rule 2). The fields that are kept and not shown are named in the form's last line.
+- **AF-14.2 The detail pane stays for reading.** Tab from the list still reaches the item's fields as lines, read
+  without opening anything, with the one-key changes it has (Right and Left on a choice or a check, Space on a
+  check). Enter on one of its lines opens the same form with the focus on that field. The separate notice for each
+  field's change goes: one form in its place.
+- **AF-14.3 The few ways of moving, in every app** (the direction, his message 8; to be written into the bundle's
+  SPEC when the first app follows it). A window is made of three things and no more:
+  - a **tree**: lines one moves through with the arrows, Right into a level and Left out of it (the navigators,
+    the lists of every app);
+  - a **form**: standard controls with Tab between them, where the arrows belong to the control one is in, which is
+    why a form is its own place and never part of a tree. A question that takes one text (a new name, words to
+    find, a passphrase) is a form of one field, with the same keys, and is not a third thing;
+  - a **text**: read and written with the caret (the editors, a conversation, the text of a notice). This is the
+    one his message does not name, and axKit has had it from the start.
+  A table and a graph have ways of moving of their own, and come when something cannot be done without them.
+- **AF-14.4 A form the user can change is a template and its values, both JSON**, wherever it is possible and has
+  a point: a list's items (section 13), an action's form (section 5), and what comes later. One shape for a field
+  everywhere: `title`, `type`, `value`, `options`, `required`, `hidden`.
+- **AF-14.5 JSON, not YAML** (his question). JSON stays, for four reasons. Its structure is said by characters that
+  are there, braces and brackets, while YAML's is said by how far a line is indented, which a screen reader does
+  not speak unless asked and which a single space changes without a sound: his own worry, and the deciding one. A
+  JSON file that is wrong does not read, and says where; a YAML file that is indented wrongly reads, as something
+  else. YAML guesses types (`no` is false, `1.10` is a number, a date becomes a date), and JSON never does. And
+  .NET reads JSON by itself, while a YAML reader would be a package, which the bundle does not take, or a parser
+  of our own. What made the files hard to read was not JSON but their shape: three members for every field. The
+  flat item of section 13 reads as a list of names and values, nearly what YAML would give, without its risks; and
+  axJSON is the tool that moves through it by structure.

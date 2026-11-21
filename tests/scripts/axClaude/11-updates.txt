@@ -3,6 +3,8 @@
 # axClaude, docs/axClaude/nvda-test-plan.md section 11: updates. This script asks GitHub (the update check at start is
 # on, as it is by default); GitHub's limit for unsigned requests, sixty an hour, can make the check fail, and the
 # window then logs an ERROR, which fails the run after its steps.
+# The options this script was written with, named: a new install's defaults differ since 2026-11-21 (SPEC.md D10).
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
 mkdir upd
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
