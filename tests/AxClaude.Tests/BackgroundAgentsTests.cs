@@ -181,4 +181,68 @@ public class BackgroundAgentsTests
             ],
             seen);
     }
+
+    /// <summary>
+    /// Shells left running when the turn ends, with Claude Code 2.1.330 (tests/fixtures/timelines/background-shells-330,
+    /// recorded 2026-11-21 for the maintainer's report of 2026-11-18 that nothing told him a background command still
+    /// ran): a PowerShell command, then a Bash command beside it. The mode line names them while Claude works and
+    /// after the turn has ended, which is what the status bar and the closing question read. And the recording's own
+    /// find: a remark of Claude Code's under the mode line ("Removed 1 invisible character from your prompt"), which,
+    /// unknown, made the mode line a line of the reply and the turn idle while it ran.
+    /// </summary>
+    [Fact]
+    public void The_recording_with_shells_left_running_keeps_their_count_after_the_turn_and_no_interface_row_in_the_reply()
+    {
+        const string fixture = "timelines/background-shells-330/pty.vt";
+        var model = new SessionModel(240, 50);
+        var bytes = Fixture(fixture);
+        var seen = new List<string>();
+        var leaked = new List<string>();
+        var previousMs = 0;
+
+        void Look()
+        {
+            model.EndFrame();
+            var now = model.Background ?? "none";
+            if (seen.Count == 0 || seen[^1] != now)
+            {
+                seen.Add(now);
+            }
+
+            leaked.AddRange(model.Lines.Where(line => !line.Hidden
+                && (ClaudeCodeTexts.ModeLine().IsMatch(line.Text) || ClaudeCodeTexts.RemovedFromPrompt().IsMatch(line.Text))).Select(line => line.Text));
+        }
+
+        foreach (var chunk in Chunks(fixture))
+        {
+            if (chunk.Ms - previousMs >= 100)
+            {
+                Look();
+            }
+
+            model.Feed(bytes.AsSpan(chunk.Offset, chunk.Length));
+            previousMs = chunk.Ms;
+        }
+
+        Look();
+        // None, then one shell from the moment the first command is in the background, through the end of its turn
+        // and the idle prompt after it, then two.
+        Assert.Equal(["none", "1 shell", "2 shells"], seen.Take(3));
+        // The count still stands at the recording's end, the turn over and both commands running: what the closing
+        // question asks about.
+        Assert.Equal("2 shells", model.Background);
+        Assert.Empty(leaked.Distinct());
+    }
+
+    [Theory]
+    [InlineData("auto mode on  ·  1 shell  ·  esc to interrupt · ↓ to manage")]
+    [InlineData("auto mode on  ·  1 shell  ·  ↓ to manage")]
+    [InlineData("auto mode on  ·  1 shell")]
+    [InlineData("auto mode on (shift+tab to cycle)  ·  esc to interrupt")]
+    [InlineData("Removed 1 invisible character from your prompt")]
+    [InlineData("Removed 12 invisible characters from your prompt")]
+    public void The_rows_of_2_1_330_around_a_background_shell_are_interface(string row)
+    {
+        Assert.True(LineClassifier.IsChrome(row));
+    }
 }

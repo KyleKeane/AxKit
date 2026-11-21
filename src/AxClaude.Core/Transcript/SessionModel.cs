@@ -932,7 +932,12 @@ public sealed partial class SessionModel : ClaudeModel
 
                     anchor = line;
                     spinner ??= LineClassifier.SpinnerText(line.Text);
-                    if (LineClassifier.ModeText(line.Text) is { } m)
+                    // The lowest mode line is the one Claude Code draws now, and it alone is read. An earlier one can
+                    // stand on the screen above it, kept hidden by its remembered text (Claude Code 2.1.330 leaves the
+                    // first one where it was; the fixture background-shells-330): read after the current one, it took
+                    // the shells the current one counts away again, and neither the status bar nor the closing
+                    // question knew of work in the background (the maintainer's report of 2026-11-18).
+                    if (mode is null && LineClassifier.ModeText(line.Text) is { } m)
                     {
                         mode = m;
                         background = LineClassifier.BackgroundText(line.Text);

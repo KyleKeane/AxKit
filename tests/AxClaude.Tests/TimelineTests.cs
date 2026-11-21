@@ -64,11 +64,11 @@ public class TimelineTests
         [.. replay.Decisions.Where(d => d.Decision is StateChanged).Select(d => (d.At, ((StateChanged)d.Decision).State))];
 
     [Fact]
-    public void The_fifteen_recordings_are_there()
+    public void The_sixteen_recordings_are_there()
     {
         Assert.Equal(
             [
-                "background-agents", "background-shell", "clear", "compact", "continue", "interrupts", "long-reply", "no-hooks",
+                "background-agents", "background-shell", "background-shells-330", "clear", "compact", "continue", "interrupts", "long-reply", "no-hooks",
                 "plain-turns", "questions", "queued-one", "queued-two", "send-now", "text-tool-text", "tool-question",
             ],
             TimelineReplay.Names());

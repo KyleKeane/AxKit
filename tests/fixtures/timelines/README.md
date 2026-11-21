@@ -35,6 +35,7 @@ All were recorded on 2026-11-15 with Claude Code 2.1.325 in screen reader mode a
 | `questions` | `r2/c1` | auto | Claude's own questions: one, two in one call, several answers |
 | `background-shell` | `r2/d1` | auto, `--allowedTools Bash(ping:*)` | a shell in the background and its end |
 | `background-agents` | `r2/e1` | auto, `--allowedTools Bash(echo:*) Bash(ping:*)` | two agents, each listed by a Stop event as running in the background, and their hand-backs |
+| `background-shells-330` | `bg-ps`, 2026-11-21, Claude Code 2.1.330 | auto, `--allowedTools PowerShell(Start-Sleep:*) Bash(sleep:*)` | two turns that each leave a command running, a PowerShell one and a Bash one beside it, and end while they run: the mode line's `1 shell` and `2 shells` while Claude works and after the turn (`· 1 shell still running` ends the turn's summary row); the first mode line of the session still on the screen above the current one; and the row `Removed 1 invisible character from your prompt` under the mode line. Recorded for the maintainer's report that nothing said a background command still ran |
 | `continue` | `r3/c2` | both, `--continue` | `--continue`: the old conversation redrawn before SessionStart, then one turn |
 | `clear` | `r3/d0` | http | `/hooks`, `/clear` (a new session id and file: SessionEnd and SessionStart), `/exit` |
 | `compact` | `r3/e` | both | two turns, `/compact`, `/exit` |

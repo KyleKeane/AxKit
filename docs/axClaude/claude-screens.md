@@ -96,6 +96,20 @@ The agent rows end in the word `running` and name no time and no token count, un
 
 The panel is read as well as hidden, for a window that tells the user about it without speech (the window's signals are SPEC.md FR-7.10, since 2026-11-15: the number in the status bar, a start and a finish sound, a recurring sound, Ctrl+B; their rules are `BackgroundWork`, which adds the shells the mode line counts, `1 shell`, to the agents and takes the largest of the rows, the waiting row's number and a mode line's own count of agents, `1 shell, 2 agents`, a form assumed and not yet seen with agents). Each agent row, in either form, gives the agent's type, its first word, and its description, the words after it without the mark, the word `running` or the time and the tokens (`LineClassifier.AgentOf`, from the named groups of `AgentRow` and `IdleAgentRow`); the waiting row gives its number (`LineClassifier.BackgroundWaitCount`). `SessionModel.BackgroundAgents` is the list the latest frame with a mode line shows, top to bottom, empty when the panel is gone, and `SessionModel.BackgroundAgentsAwaited` the waiting row's number, zero without the row; both are kept while a screen such as `/tasks` covers the mode line, as the background count is. `AgentPanel.Changes(before, after)` says which agents were newly shown and which are no longer shown, compared by type and description, so a redraw, another order or a new time is no change. Assumed until a recording says otherwise: a type is one word (a custom agent's name with a space would give its first word as the type and the rest in the description).
 
+## A command left running when the turn ends (Claude Code 2.1.330)
+
+Recorded on 2026-11-21 (the timeline fixture `background-shells-330`), for the maintainer's report of 2026-11-18 that nothing told him a background command still ran, by which he nearly closed the window on a release. The rows, while Claude works and after the turn:
+
+```
+Sautéed for 2s · done 2:16 PM · 1 shell still running
+auto mode on  ·  1 shell  ·  esc to interrupt · ↓ to manage        (while Claude works)
+auto mode on  ·  1 shell  ·  ↓ to manage                            (the turn over)
+auto mode on  ·  1 shell                                            (while a message is typed)
+Removed 1 invisible character from your prompt                      (under the mode line, when the message held one)
+```
+
+Three things the recording showed. A PowerShell command in the background is counted as a shell, as a Bash one is: `2 shells` with both. The row `Removed 1 invisible character from your prompt` is Claude Code's own remark and an interface row (`ClaudeCodeTexts.RemovedFromPrompt`); unknown, it closed the block of interface rows, the mode line above it became a line of the reply, and the turn read as idle while it ran. And the fault behind the report: Claude Code leaves the session's first mode line where it was drawn, higher on the screen, kept hidden by its remembered text; the rows are read from the bottom, and that old line, read after the current one, took the count away again. Only the lowest mode line is read now (`SessionModel.ApplyChrome`). With the count read, the status bar says "1 shell in the background" and Close axClaude? says that Claude has work running in the background and that closing stops it (SPEC.md FR-1.7, FR-7.10), as they always did when they knew.
+
 ## A dynamic workflow's live row
 
 Seen in the user's own axClaude window on 2026-11-15, Claude Code 2.1.325 in screen reader mode; no recording yet, a fixture is owed (the `record-fixture` skill: a turn that starts a dynamic workflow and ends while it runs, then the workflow to its end). While a workflow runs in the background, Claude Code draws one live row as the lowest row of the screen, under the spinner and the mode line, and redraws it as the workflow goes on. Exactly as the window held them, at two moments, and the row after the turn had ended:

@@ -1,0 +1,93 @@
+[?9001h[?1004h[?25l[2J[m[H]0;claude[?25h[Screen Reader Mode: on via flag]
+[?2004h[?2031h[?1004h]0;✳ Claude CodeClaude Code v2.1.330
+Haiku 5.5 · Claude Ultra
+C:\Temp\axclaude-fixture\bg-ps
+auto mode on (shift+tab to cycle)
+effort: medium · /effort
+$[>0q[?u]7501;?$  Use the PowerShell tool with run_in_background set to true to run the command: Start-Sleep -Seconds 45. Do not wait for it. Then reply with exactly: started[K
+Claude Code v2.1.330
+Haiku 5.5 · Claude Ultra
+C:\Temp\axclaude-fixture\bg-ps
+you: Use the PowerShell tool with run_in_background set to true to run the command: Start-Sleep -Seconds 45. Do not wait for it. Then reply with exactly: started
+Grooving…   ( running UserPromptSubmit hook )
+auto mode on (shift+tab to cycle)  ·  esc to interrupt
+Removed 1 invisible character from your prompt
+$]0;◐ Claude Code]133;A;redraw=0[?25l[12;1HGrooving…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+Removed 1 invisible character from your prompt[K
+$[K[?25h]0;◑ Claude Code]0;◑ Background PowerShell sleep test[?25l[12;10H   ( running PreToolUse hook )[15;2H[?25h[?25l[12;1Htool: PowerShell (Start-Sleep -Seconds 45)[K
+Waiting…[K
+Grooving…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+Removed 1 invisible character from your prompt
+$[?25h[?25l[13;1HRunning…[K
+Grooving…[K
+auto mode on (shift+tab to cycle)  ·  esc to interrupt[K
+Removed 1 invisible character from your prompt[K
+$[K[?25h[?25l[14;1HGrooving…   ( running PostToolUse hook )[K
+auto mode on  ·  1 shell  ·  esc to interrupt · ↓ to manage[K
+Removed 1 invisible character from your prompt[K
+$[K[?25h]0;◐ Background PowerShell sleep test[?25l[13;1HWaiting…[K
+Grooving…   ( running PostToolBatch hook )[K
+auto mode on  ·  1 shell  ·  esc to interrupt · ↓ to manage[K
+Removed 1 invisible character from your prompt[K
+$[K[?25h[?25l[14;1HGrooving…[K
+auto mode on  ·  1 shell  ·  esc to interrupt · ↓ to manage[K
+Removed 1 invisible character from your prompt[K
+$[K[?25h[?25l[13;1HRunning in the background (↓ to manage)[K
+Allowed by auto mode[K
+Grooving…[K
+auto mode on  ·  1 shell  ·  esc to interrupt · ↓ to manage[K
+Removed 1 invisible character from your prompt[K
+$[?25h[?25l[15;10H   ( running Stop hook )[18;2H[?25h]133;C]133;D[?25l[15;1Hclaude: started[K
+Grooving…   ( running Stop hook )[K
+auto mode on  ·  1 shell  ·  esc to interrupt · ↓ to manage[K
+Removed 1 invisible character from your prompt[K
+$[?25h[?25l[16;1HSautéed for 2s · done 2:16 PM · 1 shell still running[K
+auto mode on  ·  1 shell  ·  ↓ to manage[K
+Removed 1 invisible character from your prompt[K
+$[K]0;✳ Background PowerShell sleep test[?25h[?25l[18;1Heffort: medium · /effort[K
+$[K[?25h[?2004h[?25l[17;1Hauto mode on  ·  1 shell[K
+effort: medium · /effort[K
+$  Use the Bash tool with run_in_background set to true to run the command: sleep 30. Do not wait for it. Then reply with exactly: started too[K[?25h]0;◐ Background PowerShell sleep test[?25l[16;1HSautéed for 2s · done 2:16 PM[K
+you: Use the Bash tool with run_in_background set to true to run the command: sleep 30. Do not wait for it. Then reply with exactly: started too[K
+Bootstrapping…   ( running UserPromptSubmit hook )[K
+auto mode on  ·  1 shell  ·  esc to interrupt · ↓ to manage[K
+effort: medium · /effort
+$[?25h]133;A;redraw=0[?25l[18;1HBootstrapping…[K
+auto mode on  ·  1 shell  ·  esc to interrupt · ↓ to manage[K
+effort: medium · /effort[K
+$[K[?25h]0;◑ Background PowerShell sleep test[?25l[18;15H   ( running PreToolUse hook )[21;2H[?25h[?25l[18;1HBootstrapping…[K
+auto mode on  ·  1 shell  ·  esc to interrupt · ↓ to manage[K
+effort: medium · /effort[K
+$[K[?25h[?25l[18;1Htool: Bash (sleep 30)[K
+Running…[K
+Bootstrapping…[K
+auto mode on  ·  1 shell  ·  esc to interrupt · ↓ to manage[K
+effort: medium · /effort
+$[?25h[?25l[20;1HBootstrapping…   ( running PostToolUse hook )[K
+auto mode on  ·  2 shells  ·  esc to interrupt · ↓ to manage[K
+effort: medium · /effort[K
+$[K[?25h[?25l[19;1HWaiting…[K
+Bootstrapping…   ( running PostToolBatch hook )[K
+auto mode on  ·  2 shells  ·  esc to interrupt · ↓ to manage[K
+effort: medium · /effort[K
+$[K[?25h[?25l[20;1HBootstrapping…[K
+auto mode on  ·  2 shells  ·  esc to interrupt · ↓ to manage[K
+effort: medium · /effort[K
+$[K[?25h[?25l[19;1HRunning in the background (↓ to manage)[K
+Bootstrapping…[K
+auto mode on  ·  2 shells  ·  esc to interrupt · ↓ to manage[K
+effort: medium · /effort[K
+$[K[?25h]0;◐ Background PowerShell sleep test[?25l[20;15H   ( running Stop hook )[23;2H[?25h]133;C]133;D[?25l[20;1Hclaude: started too[K
+Bootstrapping…   ( running Stop hook )[K
+auto mode on  ·  2 shells  ·  esc to interrupt · ↓ to manage[K
+effort: medium · /effort[K
+$]0;✳ Background PowerShell sleep test[?25h[?25l[21;1HWorked for 2s · done 2:16 PM · 2 shells still running[K
+auto mode on  ·  2 shells  ·  ↓ to manage[K
+effort: medium · /effort[K
+$[K[?25h[?25l[23;1H$[K
+[K[23;2H[?25h[?1006l[?1003l[?1002l[?1000l[>4m[?2031l[?2004l[?1016l
+Resume this session with:
+claude --resume a56e43e8-62af-44b8-8595-d79ae9050026
+]0;]0;◐ Background PowerShell sleep test]0;◑ Background PowerShell sleep test[?9001l[?1004l

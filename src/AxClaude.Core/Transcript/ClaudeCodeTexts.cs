@@ -238,6 +238,16 @@ public static partial class ClaudeCodeTexts
     [GeneratedRegex(@"^effort: .* · /effort$")]
     public static partial Regex EffortHint();
 
+    /// <summary>
+    /// A row under the mode line while a turn runs, when the message sent held characters that are not seen (a
+    /// zero-width character in pasted text): "Removed 1 invisible character from your prompt" (Claude Code 2.1.330,
+    /// the timeline fixture background-shells-330, 2026-11-21). The program's own remark and no line of the
+    /// conversation. Unknown, it closed the block of interface rows under it, so that the mode line above it was
+    /// read as a line of the reply and the turn as idle while it ran.
+    /// </summary>
+    [GeneratedRegex(@"^Removed \d+ invisible characters? from your prompt$")]
+    public static partial Regex RemovedFromPrompt();
+
     /// <summary>The slash-command completion list: "/name    description" rows.</summary>
     [GeneratedRegex(@"^/\S*\s{2,}\S")]
     public static partial Regex CompletionRow();

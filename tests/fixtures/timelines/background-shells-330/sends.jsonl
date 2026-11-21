@@ -1,0 +1,2 @@
+{"t":1114,"kind":"message","text":"Use the PowerShell tool with run_in_background set to true to run the command: Start-Sleep -Seconds 45. Do not wait for it. Then reply with exactly: started"}
+{"t":11114.7,"kind":"message","text":"Use the Bash tool with run_in_background set to true to run the command: sleep 30. Do not wait for it. Then reply with exactly: started too"}

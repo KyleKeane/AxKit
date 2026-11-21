@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axClaude: a command Claude left running in the background is counted again. The status bar says "1 shell in the background", and closing the window asks first and says that the background work would stop. With recent versions of Claude Code the count could be lost, so that nothing told you a command still ran, and closing ended it without a word. Also with Claude Code 2.1.330: when a message you sent held an invisible character, Claude Code's remark about it made axClaude show "ready" while Claude was still working; that row is now known.
 - axClaude: answering one of Claude's questions in your own words plays the sound of sending once, when your words go. Before, it also played when you chose Other, so that one answer sounded like two.
 - axClaude: a new install now speaks Claude's replies as they arrive, every line ("Speak replies: all lines" in Options, Speech). It also starts with the background music while Claude works and the louder alert for a window in the background turned on, and with questions waiting until NVDA has finished what it was reading ("Go to them at once, interrupting speech" off). These are the options the maintainer uses himself. If you installed axKit before, your settings stay as they are: turn Speak replies on in Options, Speech.
 
