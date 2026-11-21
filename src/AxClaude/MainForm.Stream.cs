@@ -441,7 +441,13 @@ internal sealed partial class MainForm
     {
         if (_asking is { } asking)
         {
+            // A yes that stops the asking for a tool leaves its line in the conversation, where it can be found again.
+            var standing = asking.StandingWords(given);
             StreamAnswered(asking, asking.Answer(given));
+            if (standing is not null)
+            {
+                _model.AddSystemLine(standing);
+            }
         }
     }
 

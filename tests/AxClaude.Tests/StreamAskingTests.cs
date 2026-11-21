@@ -175,6 +175,18 @@ public sealed class StreamAskingTests
     }
 
     [Fact]
+    public void The_answer_that_stops_the_asking_leaves_a_line_that_says_so_and_no_other_answer_does()
+    {
+        Assert.Equal(
+            "You allowed Claude to use Bash without asking for the rest of this session. A new start of Claude Code asks again.",
+            Asking("tool").StandingWords(StreamAsking.AlwaysKey));
+        Assert.Null(Asking("tool").StandingWords(StreamAsking.OnceKey));
+        Assert.Null(Asking("tool").StandingWords(StreamAsking.RefuseKey));
+        // A question of Claude's own has no such answer: its third choice is a choice.
+        Assert.Null(Asking("two-questions").StandingWords("3"));
+    }
+
+    [Fact]
     public void A_question_with_a_value_of_another_kind_is_read_as_none_and_never_thrown_on()
     {
         Assert.Null(ClaudeCodeStream.ReadAsk(Encoding.UTF8.GetBytes("{\"tool_name\":\"Bash\",\"input\":{\"command\":\"cut \\ud83d\"}}")));

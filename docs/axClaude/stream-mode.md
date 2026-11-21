@@ -534,10 +534,18 @@ first review had missed. Repaired the same day, each with its test:
 - *A request with no answer.* A call nested deeper than 64 levels was not read by the relay and got no answer; it
   reads to 1,024 now. A call over 1 MB is refused in words that say so.
 
-Open, on the item "axClaude: the stream source's repairs from the audit of 2026-11-21": that "Yes, and do not ask
-again" covers the whole tool for the session and nothing shows afterwards that such a rule is in force; that the
-model may call the relay's tool itself and make the window ask a question it wrote (it grants nothing); that
-Claude's own questions carry no word that an AI asks.
+The three smaller points, settled the same day:
+
+- *"Yes, and do not ask again" left no trace.* It covers the whole tool for the session, as its answer says. The
+  answer now leaves a line in the conversation: "System: You allowed Claude to use Bash without asking for the rest
+  of this session. A new start of Claude Code asks again." (`StreamAsking.StandingWords`), so that what was given can
+  be found again with the conversation's keys.
+- *The model can call the relay's tool itself* and so make the window ask a question it wrote, in the form of a real
+  one. Left as it is, on purpose: the answer goes back to the model and to nothing else, so it allows nothing; Claude
+  Code asks the user before the model may call that tool at all; and the relay cannot tell one caller from another.
+- *Claude's own questions carry no word that an AI asks.* Left as it is: a question in a conversation with Claude is
+  Claude's by its place, with the screen and with the stream alike, and answering it runs nothing. The caution is
+  for what an answer lets happen (root rule 11), and a tool call's question has it every time.
 
 **Measured with Claude Code 2.1.330 itself, the same day** (`tests/scripts/axClaude/48-stream-live.txt`, the first
 script that runs the stream with Claude Code and not the stand-in). Claude Code works unchanged inside the job: it

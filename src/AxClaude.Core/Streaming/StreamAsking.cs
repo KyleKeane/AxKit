@@ -178,6 +178,16 @@ public sealed class StreamAsking
     }
 
     /// <summary>
+    /// The line that stays in the conversation when the user chose the answer that stops the asking for a tool
+    /// (<see cref="AlwaysKey"/>), or null for every other answer: from then on Claude uses the whole tool unasked, and
+    /// until 2026-11-21 nothing in the window said afterwards that such a word had been given (the audit of that day).
+    /// </summary>
+    public string? StandingWords(string given) =>
+        !_ask.IsQuestion && given.Trim() == AlwaysKey
+            ? $"You allowed {Who} to use {Shown(_ask.Tool)} without asking for the rest of this session. A new start of Claude Code asks again."
+            : null;
+
+    /// <summary>
     /// Escape. While the user's own words are awaited, back to the question's list, and null. Else no to the whole:
     /// the answer that refuses, also for Claude's own questions (SM-7.5).
     /// </summary>
