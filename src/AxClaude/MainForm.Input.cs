@@ -90,6 +90,16 @@ internal sealed partial class MainForm
             return;
         }
 
+        if (Streams && text.Length > 0 && _model.PromptPending && _wait is not { Shown: true })
+        {
+            // Over the stream an answer is axKit's own to hold back until the question has been shown and heard
+            // (stream-mode.md SM-7.4; the 2026-11-21 audit): a "2" typed for something Claude wrote, in the moment
+            // before a tool call's question settles into the area, would allow that call with nothing of it heard.
+            // The text stays in the field.
+            Announce("Not sent: Claude asks something, and its question opens in a moment", true);
+            return;
+        }
+
         _keptMessage = null;
         Input.Clear();
         if (text.Length == 0)

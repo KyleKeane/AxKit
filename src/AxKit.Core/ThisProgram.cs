@@ -1,18 +1,31 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace AxKit.Forms;
+namespace AxKit.Core;
 
 /// <summary>
 /// Whether another process runs this very program file (security audit S-13): asked of Windows by the process's image
 /// path, which a look-alike program cannot copy the way it can copy a window title or a pipe name. From
-/// <see cref="AppMessage"/> on its second use, the MCP pipes (docs/axKit/mcp.md MC-6.3), 2026-10-24.
+/// AppMessage on its second use, the MCP pipes (docs/axKit/mcp.md MC-6.3), 2026-10-24; in AxKit.Core since 2026-11-21,
+/// when the relay of Claude Code's questions, which loads nothing of the windows, came to ask it too.
 /// </summary>
 public static class ThisProgram
 {
     /// <summary>Whether the process runs the same AxKit.exe as this one.</summary>
     public static bool Runs(uint processId) =>
         ImageOf(processId) is { } path && string.Equals(path, Environment.ProcessPath, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Whether the pipe this process connected to is served by a process of this same program file: asked before a
+    /// secret is written to a pipe known by its name alone, since another program of the same account can make a pipe
+    /// of any name that is free (the questions' relay, docs/axClaude/stream-mode.md SM-7.3; the 2026-11-21 audit).
+    /// False when Windows cannot say.
+    /// </summary>
+    public static bool Serves(System.IO.Pipes.NamedPipeClientStream pipe) =>
+        GetNamedPipeServerProcessId(pipe.SafePipeHandle.DangerousGetHandle(), out var server) && Runs(server);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool GetNamedPipeServerProcessId(nint pipe, out uint processId);
 
     /// <summary>The program file a process runs, or null when it is gone or may not be asked.</summary>
     public static string? ImageOf(uint processId)

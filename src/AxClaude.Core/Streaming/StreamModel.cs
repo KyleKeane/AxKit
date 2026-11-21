@@ -656,10 +656,30 @@ public sealed class StreamModel : ClaudeModel
         return $" ({shown})";
     }
 
+    /// <summary>The text without its control characters, a tab kept; the same text object when it holds none.</summary>
+    internal static string Printable(string text)
+    {
+        var clean = true;
+        foreach (var c in text)
+        {
+            if (char.IsControl(c) && c != '\t')
+            {
+                clean = false;
+                break;
+            }
+        }
+
+        return clean ? text : string.Concat(text.Where(c => !char.IsControl(c) || c == '\t'));
+    }
+
     /// <summary>A line that is final as it is added: no row of a screen will rewrite it.</summary>
     private Line Final(LineKind kind, string text)
     {
-        var line = NewLine(kind, text);
+        // What the screen's parser never let through, the stream brings as it is: a control character in a reply, a
+        // tool's subject or a failed result's first line. A text box ends its text at a character of code 0, and the
+        // view would then put its whole text in again at every update; they are dropped here, the one place a line
+        // of the stream is made (the 2026-11-21 audit). A tab stays.
+        var line = NewLine(kind, Printable(text));
         line.Committed = true;
         return line;
     }

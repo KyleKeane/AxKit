@@ -152,7 +152,7 @@ internal sealed partial class MainForm
         // SM-7.3: the pipe on which the relay passes Claude Code's questions to this window, new for each start; its
         // name and secret reach the relay through Claude Code's environment and are written nowhere. Without it
         // nothing could be asked, and nothing runs without the user's word (SM-7.2): no start.
-        if (AskChannel.Start(this, StreamAsked) is not { } questions)
+        if (AskChannel.Start(this, StreamAsked, StreamQuestionsLost) is not { } questions)
         {
             StreamNotStarted("Claude Code was not started over its stream: the pipe for its questions could not be opened.");
             return;
@@ -540,6 +540,27 @@ internal sealed partial class MainForm
         }
     }
 
+    /// <summary>
+    /// The questions' pipe gave up (SM-7.3; the 2026-11-21 audit found it silent): from then on the relay would answer
+    /// every question no and the user would hear nothing of it, and the pipe's name would be free. Claude Code is
+    /// stopped, at once, and the window says why and offers the way back.
+    /// </summary>
+    private void StreamQuestionsLost(AskChannel channel)
+    {
+        if (!ReferenceEquals(channel, _askChannel))
+        {
+            // The pipe of a Claude Code that was stopped already.
+            return;
+        }
+
+        const string message = "The pipe on which Claude Code asks you its questions broke and could not be opened again, so Claude Code was stopped: nothing runs without your answer.";
+        StopProcess();
+        Log.Error("Stream: Claude Code stopped, since the questions' pipe was lost");
+        _model.AddSystemLine(message);
+        UpdateStatus();
+        OfferScreen("Claude Code was stopped", message);
+    }
+
     /// <summary>The stream was not started: the reason in the log and as a line of the conversation, and the notice that offers the way back (SM-9.3).</summary>
     private void StreamNotStarted(string message)
     {
@@ -645,14 +666,16 @@ internal sealed class AskChannel
 
     private readonly Control _owner;
     private readonly Action<AskRequest> _asked;
+    private readonly Action<AskChannel> _lost;
     private readonly string _name;
     private readonly string _secret;
     private readonly CancellationTokenSource _cancel = new();
 
-    private AskChannel(Control owner, Action<AskRequest> asked, string name, string secret)
+    private AskChannel(Control owner, Action<AskRequest> asked, Action<AskChannel> lost, string name, string secret)
     {
         _owner = owner;
         _asked = asked;
+        _lost = lost;
         _name = name;
         _secret = secret;
         VariableValue = AskRelay.VariableValue(name, secret);
@@ -664,13 +687,14 @@ internal sealed class AskChannel
     /// <summary>
     /// Opens a new pipe with a new name and a new secret and serves it on a thread of its own. The pipe exists when
     /// this returns, so that the first question finds it. Null, with one line in the log, when it could not be
-    /// opened. <paramref name="asked"/> gets each question on the thread of <paramref name="owner"/>.
+    /// opened. <paramref name="asked"/> gets each question on the thread of <paramref name="owner"/>, and
+    /// <paramref name="lost"/> is called there once when the pipe gives up for good.
     /// </summary>
-    public static AskChannel? Start(Control owner, Action<AskRequest> asked)
+    public static AskChannel? Start(Control owner, Action<AskRequest> asked, Action<AskChannel> lost)
     {
         try
         {
-            var channel = new AskChannel(owner, asked, AskRelay.NewPipeName(UserPipe.User().Value), HookFrame.NewSecret());
+            var channel = new AskChannel(owner, asked, lost, AskRelay.NewPipeName(UserPipe.User().Value), HookFrame.NewSecret());
             var pipe = channel.Open();
             new Thread(() => channel.Serve(pipe)) { IsBackground = true, Name = "AxKit questions" }.Start();
             return channel;
@@ -728,6 +752,7 @@ internal sealed class AskChannel
                     if (++failures > MostFailures)
                     {
                         Log.Error($"Stream: the questions' pipe gave up after {failures} failures in a row ({ex.GetType().Name})");
+                        TellLost();
                         return;
                     }
 
@@ -739,6 +764,7 @@ internal sealed class AskChannel
         {
             // The type and the place, never the message: it could quote what a question carried.
             Log.Error($"Stream: the questions' pipe ended on {ex.GetType().Name}\n{ex.StackTrace}");
+            TellLost();
         }
         finally
         {
@@ -772,6 +798,24 @@ internal sealed class AskChannel
         var answer = request.Wait(_cancel.Token);
         HookFrame.Write(pipe, _secret, answer);
         pipe.WaitForPipeDrain();
+    }
+
+    /// <summary>The window is told, on its thread, that this pipe serves no more; nothing when the window is gone or the pipe was stopped.</summary>
+    private void TellLost()
+    {
+        if (_cancel.IsCancellationRequested || _owner.IsDisposed || !_owner.IsHandleCreated)
+        {
+            return;
+        }
+
+        try
+        {
+            _owner.BeginInvoke(() => _lost(this));
+        }
+        catch (InvalidOperationException)
+        {
+            // The window is closing.
+        }
     }
 
     private bool Post(AskRequest request)

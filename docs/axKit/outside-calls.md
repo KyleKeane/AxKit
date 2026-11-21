@@ -260,7 +260,7 @@ Calls (3):
 - **axClaude**, `src/AxClaude.Core/Hooks/HookRelay.cs`, in `HookRelay.Run`, by `Console.OpenStandardInput`: the standard input of "AxKit.exe hook", on which Claude Code writes the event it started the hook for.
   Code: `using var input = Console.OpenStandardInput();`
 - **axClaude**, `src/AxClaude.Core/Hooks/HookRelay.cs`, in `HookRelay.Connect`, by `new NamedPipeClientStream`: connects to the pipe of the axClaude window that started this Claude Code, named in the environment it gave, and writes the event; on this computer, never over the network.
-  Code: `var pipe = new NamedPipeClientStream(".", name, PipeDirection.Out);`
+  Code: `var pipe = new NamedPipeClientStream(".", name, PipeDirection.Out, PipeOptions.None, System.Security.Principal.TokenImpersonationLevel.Identification); // the server may learn who connected, and may not act as them`
 - **axClaude**, `src/AxClaude/MainForm.Hooks.cs`, in `HookChannel.Open`, by `NamedPipeServerStreamAcl.Create`: the window's own named pipe, which only this Windows account may open, where "AxKit.exe hook", started by Claude Code for an event of the session, says that the event happened; each connection must send the window's secret.
   Code: `return NamedPipeServerStreamAcl.Create(_name, PipeDirection.In, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous, InBufferBytes, 0, UserPipe.Security());`
 
@@ -277,7 +277,7 @@ Calls (3):
 - **axClaude**, `src/AxClaude.Core/Streaming/AskRelay.cs`, in `AskRelay.Run`, by `Console.OpenStandardInput`: the standard input of "AxKit.exe ask", on which the Claude Code that started it as its permission tool writes each question (MCP's JSON-RPC); the answers go to its standard output.
   Code: `using var input = new StreamReader(Console.OpenStandardInput(), new UTF8Encoding(false));`
 - **axClaude**, `src/AxClaude.Core/Streaming/AskRelay.cs`, in `AskRelay.Connect`, by `new NamedPipeClientStream`: connects to the pipe of the axClaude window that started this Claude Code, named in the environment it gave, writes the question and reads the user's answer; on this computer, never over the network.
-  Code: `var pipe = new NamedPipeClientStream(".", name, PipeDirection.InOut);`
+  Code: `var pipe = new NamedPipeClientStream(".", name, PipeDirection.InOut, PipeOptions.None, System.Security.Principal.TokenImpersonationLevel.Identification); // the server may learn who connected, and may not act as them`
 - **axClaude**, `src/AxClaude/MainForm.Stream.cs`, in `AskChannel.Open`, by `NamedPipeServerStreamAcl.Create`: the window's own named pipe, which only this Windows account may open, where "AxKit.exe ask", started by Claude Code as its permission tool, writes a question and reads the user's answer; each connection must send the window's secret.
   Code: `return NamedPipeServerStreamAcl.Create(_name, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous, BufferBytes, BufferBytes, UserPipe.Security());`
 

@@ -88,10 +88,17 @@ public static class HookRelay
     {
         // Outside call, pipe, Claude Code events: connects to the pipe of the axClaude window that started this Claude
         // Code, named in the environment it gave, and writes the event; on this computer, never over the network.
-        var pipe = new NamedPipeClientStream(".", name, PipeDirection.Out);
+        var pipe = new NamedPipeClientStream(".", name, PipeDirection.Out, PipeOptions.None, System.Security.Principal.TokenImpersonationLevel.Identification); // the server may learn who connected, and may not act as them
         try
         {
             pipe.Connect(timeoutMs);
+            // As the questions' relay: the secret is written only to a pipe this same program file serves (2026-11-21).
+            if (!AxKit.Core.ThisProgram.Serves(pipe))
+            {
+                pipe.Dispose();
+                return null;
+            }
+
             return pipe;
         }
         catch (Exception)

@@ -138,10 +138,17 @@ public sealed record StreamAsk(string Tool, string Call, string About, JsonEleme
 
     /// <summary>
     /// <see cref="About"/> is not the whole of what the call is about: only the first line of a command of several,
-    /// or the first 200 characters of a long one. A window that asks about the call says so, since allowing it runs
-    /// all of it.
+    /// or the first 200 characters of a long one, or the call's input holds more than the member it names (a file's
+    /// new content beside its path). A window that asks about the call says so, since allowing it runs all of it.
     /// </summary>
     public bool AboutCut { get; init; }
+
+    /// <summary>
+    /// <see cref="About"/> is Claude's own description of the call (the input's <c>description</c> or <c>title</c>),
+    /// since the input names nothing this place knows as the thing acted on (a tool of a server of the user's): a
+    /// window says it as Claude's words, never as the action itself (root rule 11; the 2026-11-21 audit).
+    /// </summary>
+    public bool AboutDescribes { get; init; }
 }
 
 /// <summary>
@@ -348,9 +355,11 @@ public static class ClaudeCodeStream
 
             var input = root.TryGetProperty("input", out var given) && given.ValueKind == JsonValueKind.Object ? given.Clone() : NoInput;
             var about = Subject(input);
+            var (key, whole) = SubjectMember(input);
             return new StreamAsk(tool, Text(root, "tool_use_id"), about, input, tool == QuestionTool ? Questions(input) : [])
             {
-                AboutCut = SubjectWhole(input).Trim() != about,
+                AboutCut = whole.Trim() != about || HoldsMore(tool, input, key),
+                AboutDescribes = key is "description" or "title",
             };
         }
         catch (Exception ex) when (ex is JsonException or InvalidOperationException)
@@ -622,22 +631,57 @@ public static class ClaudeCodeStream
     /// <summary>What a tool call is about: the first of <see cref="SubjectKeys"/> its input holds, its first line, 200 characters at most.</summary>
     private static string Subject(JsonElement input)
     {
-        var first = FirstLine(SubjectWhole(input));
+        // The first line that holds something: a command that begins with a line break is still named by its start
+        // (before 2026-11-21 its title named nothing, and said nothing of more).
+        var first = FirstLine(SubjectMember(input).Whole.TrimStart());
         return first.Length > 200 ? first[..200] : first;
     }
 
-    /// <summary>The whole text of the member <see cref="Subject"/> is taken from, all its lines; empty when the input holds none.</summary>
-    private static string SubjectWhole(JsonElement input)
+    /// <summary>The member <see cref="Subject"/> is taken from, by its name, and its whole text, all its lines; both empty when the input holds none.</summary>
+    private static (string Key, string Whole) SubjectMember(JsonElement input)
     {
         foreach (var key in SubjectKeys)
         {
-            if (Text(input, key) is { Length: > 0 } value)
+            if (Text(input, key) is { Length: > 0 } value && value.Trim().Length > 0)
             {
-                return value;
+                return (key, value);
             }
         }
 
-        return string.Empty;
+        return (string.Empty, string.Empty);
+    }
+
+    /// <summary>
+    /// Whether a call's input holds more to read than the member its title names: another member with a text, a list
+    /// or an object in it (a file's content, an edit's old and new text, a query for a server's tool). Claude's own
+    /// description of a call is no part of what runs and does not count; numbers and switches do not either. One of
+    /// Claude Code's own tools that is named by its file (Write, Edit, Read) says by its name what happens to the
+    /// file, and the words of more are kept for where they tell something: said at every write, they would no
+    /// longer be heard at the command that was cut.
+    /// </summary>
+    private static bool HoldsMore(string tool, JsonElement input, string subjectKey)
+    {
+        if (input.ValueKind != JsonValueKind.Object
+            || (subjectKey is "file_path" or "notebook_path" && !tool.StartsWith("mcp__", StringComparison.Ordinal)))
+        {
+            return false;
+        }
+
+        foreach (var member in input.EnumerateObject())
+        {
+            if (member.Name == subjectKey || member.Name == "description")
+            {
+                continue;
+            }
+
+            if (member.Value.ValueKind is JsonValueKind.Array or JsonValueKind.Object
+                || (member.Value.ValueKind == JsonValueKind.String && member.Value.GetString() is { Length: > 0 }))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>A tool's result: whose call it answers, whether it failed, and when it did, the first line of what it gave back.</summary>

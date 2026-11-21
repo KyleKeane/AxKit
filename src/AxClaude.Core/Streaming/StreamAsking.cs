@@ -78,7 +78,7 @@ public sealed class StreamAsking
     {
         get
         {
-            var lines = new List<string> { AiCaution.ToolCall(Who), string.Empty, "Tool: " + _ask.Tool };
+            var lines = new List<string> { AiCaution.ToolCall(Who), string.Empty, "Tool: " + Shown(_ask.Tool) };
             if (_ask.Input.ValueKind == JsonValueKind.Object)
             {
                 foreach (var member in _ask.Input.EnumerateObject())
@@ -87,12 +87,12 @@ public sealed class StreamAsking
                     var parts = value.Replace("\r\n", "\n").Split('\n');
                     if (parts.Length == 1)
                     {
-                        lines.Add($"{member.Name}: {parts[0]}");
+                        lines.Add($"{Shown(member.Name)}: {Shown(parts[0])}");
                     }
                     else
                     {
-                        lines.Add(member.Name + ":");
-                        lines.AddRange(parts);
+                        lines.Add(Shown(member.Name) + ":");
+                        lines.AddRange(parts.Select(Shown));
                     }
                 }
             }
@@ -100,6 +100,15 @@ public sealed class StreamAsking
             return string.Join("\n", lines);
         }
     }
+
+    /// <summary>
+    /// One line of what Claude asks, as it is put into a control: every character that is not seen or heard itself
+    /// (a control character, a zero-width or direction character) written out as its code, a tab kept. A text box
+    /// ends its text at a character of code 0, so that without this the explanation could stop before the part that
+    /// matters, while a yes ran all of it (the 2026-11-21 audit).
+    /// </summary>
+    private static string Shown(string line) =>
+        line.Contains('\t', StringComparison.Ordinal) ? string.Join('\t', line.Split('\t').Select(DisplayText.Visible)) : DisplayText.Visible(line);
 
     /// <summary>
     /// Takes what the user chose: the key of an answer ("2"), several keys where several may be chosen ("1,3"), or,
@@ -208,8 +217,15 @@ public sealed class StreamAsking
         // A command of several lines, or a long one, is named by its start alone: the title says that more follows,
         // since a yes runs all of it.
         var more = _ask.AboutCut ? MoreWords : string.Empty;
+        // What the title names is shown with its hidden characters written out (a direction mark, a control
+        // character), and Claude's own description of a call is said as Claude's, never as the action (rule 11).
+        about = Shown(about);
+        var tool = Shown(_ask.Tool);
+        var named = about.Length == 0 ? $"{Who} asks to use {tool}"
+            : _ask.AboutDescribes ? $"{Who} asks to use {tool}, and describes it as: {about}"
+            : $"{Who} asks to use {tool}: {about}";
         return new Question(
-            about.Length > 0 ? $"{Who} asks to use {_ask.Tool}: {about}{more}" : $"{Who} asks to use {_ask.Tool}",
+            named + more,
             [AiCaution.Asked(Who)],
             [
                 new QuestionOption(RefuseKey, "No"),
@@ -228,11 +244,11 @@ public sealed class StreamAsking
         {
             var choice = asked.Choices[i];
             var says = choice.Description.Length > 0 && !string.Equals(choice.Description, choice.Label, StringComparison.OrdinalIgnoreCase);
-            options.Add(new QuestionOption(Key(i + 1), says ? choice.Label + ClaudeCodeTexts.AnswerDash + choice.Description : choice.Label));
+            options.Add(new QuestionOption(Key(i + 1), Shown(says ? choice.Label + ClaudeCodeTexts.AnswerDash + choice.Description : choice.Label)));
         }
 
         options.Add(new QuestionOption(Key(asked.Choices.Count + 1), ClaudeCodeTexts.OtherAnswer));
-        return new Question(asked.Text, [], options)
+        return new Question(Shown(asked.Text), [], options)
         {
             AllowsSeveral = asked.Several,
             Step = _ask.Questions.Count > 1 ? (index + 1, _ask.Questions.Count) : null,

@@ -502,3 +502,41 @@ by a second reader each. Nothing was found that changes a window the screen feed
   are caught: the wait that would end it later dies with the window's process.
 - Record raw stream is not available in a window the stream feeds, and `--record` says so: it said "Recording
   started" and wrote nothing (SM-6.5 is still to build).
+
+**The audit of 2026-11-21.** A second reader went through the stream source as released in 5.10.0, for what the
+first review had missed. Repaired the same day, each with its test:
+
+- *The relay trusted a pipe by its name.* `AxKit.exe ask` connected to the name in its environment and wrote the
+  secret to whoever served it; and the window, after twenty failures of its pipe in a row, gave it up with one line
+  in the log, the name free from then on. A program of the same account could have taken the name, been handed the
+  secret, and answered yes to every question, unheard. The relay now asks Windows which program serves the pipe and
+  takes only this same program file (`AxKit.Core/ThisProgram.Serves`; the hooks' relay does the same), connects so
+  that the server cannot act as it, and a window that loses its pipe stops Claude Code at once, says why, and offers
+  the way back (`StreamQuestionsLost`).
+- *A title that named nothing.* A command that began with a line break was asked about with no command in the
+  title and no word of more. The title names the first line that holds something. A tool whose input names nothing
+  known as the thing acted on (a server's tool with `sql`) was titled with Claude's own description as if it were
+  the action: it is now said as Claude's ("and describes it as"), with the words of more; and the words of more are
+  also said when the input holds another member to read. Claude Code's own file tools are named by their file and
+  their name, and say nothing of more, so that those words keep their weight.
+- *Control characters.* The stream brings what the screen's parser never let through. A character of code 0 ends a
+  text box's text: the explanation of a call stopped there, while a yes ran all of it, and a failed command that
+  printed binary output cut the conversation's view. In what Claude asks, every hidden character is written out as
+  its code (`DisplayText.Visible`, a tab kept); in the conversation's lines they are dropped where a line is made.
+- *A digit typed too early.* A "2" sent from the message field in the moment before a tool call's question had
+  settled into its list allowed the call with nothing of it heard. Over the stream, text from the message field
+  answers nothing until the question is shown; it stays in the field and the window says so.
+- *The program outlived its window.* Nothing tied Claude Code to the window's life: when axKit crashed or was
+  ended, calls already allowed went on with no window; commands left running in the background were never ended;
+  and one that held the output's pipe kept the end from being reported at all. Claude Code now runs in a Windows
+  job (`AxKit.Core/ChildJob`) that ends with this process, `Kill` ends the job, and what is left two seconds after
+  Claude Code itself has ended is ended with it, as a console's programs end with their console.
+- *A request with no answer.* A call nested deeper than 64 levels was not read by the relay and got no answer; it
+  reads to 1,024 now. A call over 1 MB is refused in words that say so.
+
+Open, on the item "axClaude: the stream source's repairs from the audit of 2026-11-21": that "Yes, and do not ask
+again" covers the whole tool for the session and nothing shows afterwards that such a rule is in force; that the
+model may call the relay's tool itself and make the window ask a question it wrote (it grants nothing); that
+Claude's own questions carry no word that an AI asks; and, to be measured with a live Claude Code, whether a server
+named `axask` in a folder's own `.mcp.json` can take the relay's place, and that Claude Code works unchanged inside
+the job.

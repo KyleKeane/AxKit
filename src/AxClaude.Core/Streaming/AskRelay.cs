@@ -42,6 +42,9 @@ public static class AskRelay
     /// <summary>What Claude is told when the window could not be asked: no call runs for want of an answer.</summary>
     public const string NoWindowWords = "The window that asks the user could not be reached, so this was not allowed.";
 
+    /// <summary>What Claude is told when a call is larger than the window is ever asked about: it is not allowed, and Claude can make it smaller.</summary>
+    public const string TooLargeWords = "This call is too large to be shown to the user whole, so it was not allowed. Do it in smaller parts.";
+
     /// <summary>The verb's whole run: Claude Code's requests on standard input, the answers on standard output, until the input ends.</summary>
     public static void Run()
     {
@@ -79,7 +82,9 @@ public static class AskRelay
             JsonDocument document;
             try
             {
-                document = JsonDocument.Parse(line);
+                // Deeper than the parser's own 64 levels: a call's input may nest further, and a request that is not
+                // read gets no answer at all, on which Claude Code would wait (the 2026-11-21 audit).
+                document = JsonDocument.Parse(line, new JsonDocumentOptions { MaxDepth = 1024 });
             }
             catch (JsonException)
             {
@@ -132,10 +137,17 @@ public static class AskRelay
             return ClaudeCodeStream.DenyAnswer(NoWindowWords);
         }
 
+        var question = Encoding.UTF8.GetBytes(arguments.GetRawText());
+        if (question.Length > HookFrame.MaxBody)
+        {
+            // Said as what it is: the window was there, the call was too large to be put to the user whole.
+            return ClaudeCodeStream.DenyAnswer(TooLargeWords);
+        }
+
         byte[]? answered;
         try
         {
-            answered = ask(Encoding.UTF8.GetBytes(arguments.GetRawText()));
+            answered = ask(question);
         }
         catch (Exception)
         {
@@ -204,10 +216,19 @@ public static class AskRelay
         // Outside call, pipe, Claude Code questions: connects to the pipe of the axClaude window that started this
         // Claude Code, named in the environment it gave, writes the question and reads the user's answer; on this
         // computer, never over the network.
-        var pipe = new NamedPipeClientStream(".", name, PipeDirection.InOut);
+        var pipe = new NamedPipeClientStream(".", name, PipeDirection.InOut, PipeOptions.None, System.Security.Principal.TokenImpersonationLevel.Identification); // the server may learn who connected, and may not act as them
         try
         {
             pipe.Connect(timeoutMs);
+            // The name alone proves nothing: another program of this account could have made a pipe of this name while
+            // the window's was closed for a moment, to be handed the secret and to answer yes. Only a pipe that this
+            // same program file serves is the window's; any other is no window, and the answer is no (SM-7.3).
+            if (!AxKit.Core.ThisProgram.Serves(pipe))
+            {
+                pipe.Dispose();
+                return null;
+            }
+
             return pipe;
         }
         catch (Exception)

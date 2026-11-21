@@ -9,7 +9,7 @@ The notes of each piece are in `src/AxKit.Core/notes`, one file per kind (split 
 
 - `notes/bundle.md`, the bundle: Dispatch, PackageIdentity, the Store, AppPaths, Ai, AiCaution, Consent, Theme, the settings files, Log, Updates, Events (the kinds of event and the table that gives each its sound), Audio, BundleAbout, BundleHelp, RecentActions.
 - `notes/paths-windows-lists.md`, paths, windows and lists: LocalPaths, FileSize, PathName, RecentPaths, RecentlyClosed, AxKitWindows, MenuText, Palette, TextMatch, TypeAhead, NaturalOrder, Accents, KeyChord, CommandListing.
-- `notes/safety.md`, safety: SystemPrograms, ProgramInstall, AutomationEnvironment, ProcessRun, DisplayText, Signatures, Redaction, SettingsSeal.
+- `notes/safety.md`, safety: SystemPrograms, ProgramInstall, AutomationEnvironment, ProcessRun, DisplayText, Signatures, Redaction, SettingsSeal, ThisProgram, ChildJob.
 - `notes/ai-tools.md`, the AI tools: McpAccess, McpPipeName, McpProtocol, ClaudeCodeProgram, McpClaudeCode, McpTools, McpOffer, CommandNames, CommandGate, McpRun.
 - `notes/background-apps.md`, background apps: SignInStart, Hotkey.
 - `notes/text-and-editors.md`, text and the editors: TypedLineBreak, Paragraphs, TextLines, MarkdownOutline, TextDocument, EditorSettings, EditHistory, the item format, FieldStep, ItemFiles, Reports, AxKitHttp, MediaFiles.

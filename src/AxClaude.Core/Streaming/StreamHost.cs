@@ -42,9 +42,20 @@ public sealed class StreamHost : IDisposable
     private int _exitedOnce;
     private int _disposed;
 
-    private StreamHost(Process process, Action<string> lineReceived, Action<int> exited)
+    /// <summary>
+    /// The job the program and everything it starts is in (the 2026-11-21 audit): ended with them when this process
+    /// ends, however it ends, and by <see cref="Kill"/> also once the program itself is gone, which the walk of its
+    /// process tree could no longer do. Null where Windows gave none.
+    /// </summary>
+    private readonly AxKit.Core.ChildJob? _job;
+
+    /// <summary>How long what the program left running may keep its output open once the program itself has ended.</summary>
+    private const int LeftoverMs = 2000;
+
+    private StreamHost(Process process, AxKit.Core.ChildJob? job, Action<string> lineReceived, Action<int> exited)
     {
         _process = process;
+        _job = job;
         _lineReceived = lineReceived;
         _exited = exited;
     }
@@ -103,7 +114,11 @@ public sealed class StreamHost : IDisposable
         // non-interactive stream); Claude Code talks to Anthropic under the user's account. Only a window made for
         // the stream starts it (the setting claudeSource, which is the screen at first).
         var process = Process.Start(start) ?? throw new InvalidOperationException("The program was not started.");
-        var host = new StreamHost(process, lineReceived, exited) { ProcessId = process.Id };
+        // Into the job at once: what the program starts from here on is in it too. (A child it started in its first
+        // moments, before this line, would not be: Claude Code starts none that early.)
+        var job = AxKit.Core.ChildJob.TryCreate();
+        job?.Add(process);
+        var host = new StreamHost(process, job, lineReceived, exited) { ProcessId = process.Id };
         host.Run();
         return host;
     }
@@ -148,6 +163,10 @@ public sealed class StreamHost : IDisposable
             // by this account (the tree's failures come as one AggregateException): the end is reported by the
             // reader. Never thrown on: End calls this on a thread of the pool, where an exception ends the program.
         }
+
+        // What the program started and left running, also when the program itself has already ended and the tree can
+        // no longer be walked from it.
+        _job?.Terminate();
     }
 
     /// <summary>Ends the program if it still runs and lets its threads end.</summary>
@@ -185,6 +204,31 @@ public sealed class StreamHost : IDisposable
         _errors.Start();
         new Thread(ReadOutput) { IsBackground = true, Name = "axClaude stream output" }.Start();
         new Thread(WriteInput) { IsBackground = true, Name = "axClaude stream input" }.Start();
+        if (_job is not null)
+        {
+            new Thread(WatchEnd) { IsBackground = true, Name = "axClaude stream end" }.Start();
+        }
+    }
+
+    /// <summary>
+    /// When the program itself has ended, what it started ends with it, as a console's programs end with their
+    /// console: a command left running in the background holds the output's pipe open, and the reader would wait on
+    /// it for ever, the window saying that Claude runs while messages go nowhere. The reader gets a moment to take
+    /// the last lines first.
+    /// </summary>
+    private void WatchEnd()
+    {
+        try
+        {
+            _process.WaitForExit();
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or System.ComponentModel.Win32Exception or ObjectDisposedException)
+        {
+            // The process is gone, or was let go of: the job is closed below all the same.
+        }
+
+        _gone.Wait(LeftoverMs);
+        _job?.Dispose();
     }
 
     /// <summary>Every line of the output, in order, until the output ends; then the program's end, once.</summary>
