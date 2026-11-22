@@ -6,6 +6,22 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-22: axCalc as a conversation window, and the conversation window in two classes; by the assistant with NVDA listening (`main` 3c652252)
+
+`.\nvda-pass.ps1 -Only` every script of axCalc and axTerminal, behind the spoken countdown, the maintainer away at
+his word ("i am stepping away so you can run ncda pass and get everythig completed with axcalc"), NVDA 2025.3.3 with
+the OneCore voice, Windows 11 Pro 10.0.26200, the build 5.10.0 of commit 3c652252, the tree clean: 17 scripts, 110
+goals and checks, none failed and none run twice.
+
+| What | Scripts | Result |
+|---|---|---|
+| axCalc on `ConversationForm` (framework step 9): the answer, the field cleared, the history as a text read line by line, Enter on a line taking its expression into the field, Ctrl+I on the line you are on, a and l in the history, find, Clear history, the history kept between runs | 4 | Passed |
+| axTerminal, the console window over the split conversation window: every script | 13 | Passed |
+
+Not run with NVDA: axClaude, whose stand-in scripts (24) passed on the hidden desktop at the split's commit; its
+live scripts start the real Claude Code and are run only when meant. Not heard by a person, and lines of the item
+of step 9 for the maintainer's ear: how the history reads as a text, and whether the field should be one line.
+
 ## 2026-11-22: the selection in axPass, axMCP and axAutomate; by the assistant with NVDA listening (`main` cfe68be7)
 
 `.\nvda-pass.ps1 -Only` every script of axAutomate, axMCP and axPass, behind the spoken countdown, the maintainer
