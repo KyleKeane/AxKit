@@ -150,7 +150,7 @@ public sealed partial class MediaForm : ItemForm
     // ---- what the navigator asks for (the item window, docs/axKit/framework.md FW-4.9) ----
 
     /// <summary>The queue is the one level and its files are all there is to a row: no second pane.</summary>
-    protected override bool HasDetailPane => false;
+    protected override SecondPane Pane => SecondPane.None;
 
     /// <summary>Space selects a file (AM-3.5), and Delete then takes the selected files out.</summary>
     protected override bool HasSelection => true;

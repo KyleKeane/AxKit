@@ -375,7 +375,7 @@ public abstract partial class ItemForm : AxKitForm
 
     protected override void ShowAfterNotice() => _split.Visible = true;
 
-    protected override Control FocusTarget => DetailPane.Focused ? DetailPane : Navigator;
+    protected override Control FocusTarget => DetailPane.Focused ? DetailPane : TextPane.Focused ? TextPane : Navigator;
 
     /// <summary>
     /// What an AI tool's act command would act on (docs/axKit/mcp.md MC-7.3): the navigator's selected row by its name,
@@ -407,6 +407,7 @@ public abstract partial class ItemForm : AxKitForm
     {
         Navigator.Font = font;
         DetailPane.Font = font;
+        TextPane.Font = font;
     }
 
     /// <summary>Ctrl+S: every change is written at once.</summary>
@@ -414,14 +415,19 @@ public abstract partial class ItemForm : AxKitForm
 
     protected override void OnShown(EventArgs e)
     {
-        if (HasDetailPane)
+        switch (Pane)
         {
-            _split.SplitterDistance = Math.Max(_split.Panel1MinSize, _split.Width * 45 / 100);
-        }
-        else
-        {
-            // The navigator alone (framework step 4): the second panel is not there to see or to tab to.
-            _split.Panel2Collapsed = true;
+            case SecondPane.Fields:
+                _split.SplitterDistance = Math.Max(_split.Panel1MinSize, _split.Width * 45 / 100);
+                break;
+            case SecondPane.Text:
+                // The text under the navigator, which has two fifths of the height (axGIT's layout, AG-2.1).
+                _split.SplitterDistance = Math.Max(_split.Panel1MinSize, _split.Height * 2 / 5);
+                break;
+            default:
+                // The navigator alone (framework step 4): the second panel is not there to see or to tab to.
+                _split.Panel2Collapsed = true;
+                break;
         }
 
         if (!NoticeOpen)
@@ -447,6 +453,14 @@ public abstract partial class ItemForm : AxKitForm
     protected void PlaceWith(MenuStrip menu, params Control[] between)
     {
         menu.MenuActivate += (_, _) => UpdateMenus();
+        if (Pane == SecondPane.Text)
+        {
+            // The second pane as a text, under the navigator: a diff's lines are long, and a list of files is not.
+            _split.Panel2.Controls.Clear();
+            _split.Panel2.Controls.Add(TextPane);
+            _split.Orientation = Orientation.Horizontal;
+        }
+
         PlaceControls(menu, [_split, .. between, _status]);
         AddSharedKeys();
     }
@@ -480,6 +494,15 @@ public abstract partial class ItemForm : AxKitForm
             }
         }
 
+        // Find acts where the focus is (axGIT's AG-2.4): in the text pane's text while it has the focus, in the
+        // navigator's rows otherwise. The text's three come first, so that they take the keys there.
+        if (Pane == SecondPane.Text)
+        {
+            Shared(new Command("Find in the text", BundleKeys.Find, () => ShowFind(TextPane)) { When = InText, Mark = CommandMark.Read });
+            Shared(new Command("Find next in the text", BundleKeys.FindNext, () => FindNext(TextPane, 1)) { When = InText, Mark = CommandMark.Read });
+            Shared(new Command("Find previous in the text", BundleKeys.FindPrevious, () => FindNext(TextPane, -1)) { When = InText, Mark = CommandMark.Read });
+        }
+
         Shared(new Command("Find in the list", BundleKeys.Find, () => ShowFindInList(Navigator, NavigatorLabels)) { When = NotRenaming, Mark = CommandMark.Read });
         Shared(new Command("Find next", BundleKeys.FindNext, () => FindInList(Navigator, NavigatorLabels, 1)) { When = NotRenaming, Mark = CommandMark.Read });
         Shared(new Command("Find previous", BundleKeys.FindPrevious, () => FindInList(Navigator, NavigatorLabels, -1)) { When = NotRenaming, Mark = CommandMark.Read });
@@ -498,9 +521,12 @@ public abstract partial class ItemForm : AxKitForm
         // control, as in axMedia's window before it was a navigator.
         foreach (var key in new[] { BundleKeys.NextControl, BundleKeys.PreviousControl, BundleKeys.NextControlAlso })
         {
-            Shared(HasDetailPane
-                ? new Command("Switch between the navigator and the detail pane", key, () => (Navigator.Focused ? (Control)DetailPane : Navigator).Select()) { When = NotRenaming, Mark = CommandMark.Open }
-                : new Command("Back to the list", key, () => Navigator.Select()) { When = NotRenaming, Mark = CommandMark.Open });
+            Shared(Pane switch
+            {
+                SecondPane.Fields => new Command("Switch between the navigator and the detail pane", key, () => (Navigator.Focused ? (Control)DetailPane : Navigator).Select()) { When = NotRenaming, Mark = CommandMark.Open },
+                SecondPane.Text => new Command("Switch between the list and the text", key, () => (Navigator.Focused ? (Control)TextPane : Navigator).Select()) { When = NotRenaming, Mark = CommandMark.Open },
+                _ => new Command("Back to the list", key, () => Navigator.Select()) { When = NotRenaming, Mark = CommandMark.Open },
+            });
         }
 
         // The navigator's keys.
@@ -514,6 +540,15 @@ public abstract partial class ItemForm : AxKitForm
         {
             Shared(new Command("To the detail pane", ItemKeys.OtherPane, () => DetailPane.Select()) { When = InNavigator, Mark = CommandMark.Open });
             Shared(new Command("To the detail pane", ItemKeys.OtherPaneBack, () => DetailPane.Select()) { When = InNavigator, Mark = CommandMark.Open });
+        }
+        else if (Pane == SecondPane.Text)
+        {
+            // The text pane's keys: Tab and Shift+Tab go to it and back, and Escape comes back from it.
+            Shared(new Command("To the text", ItemKeys.OtherPane, () => TextPane.Select()) { When = InNavigator, Mark = CommandMark.Open });
+            Shared(new Command("To the text", ItemKeys.OtherPaneBack, () => TextPane.Select()) { When = InNavigator, Mark = CommandMark.Open });
+            Shared(new Command("To the list", ItemKeys.OtherPane, () => Navigator.Select()) { When = InText, Mark = CommandMark.Open });
+            Shared(new Command("To the list", ItemKeys.OtherPaneBack, () => Navigator.Select()) { When = InText, Mark = CommandMark.Open });
+            Shared(new Command("To the list", ItemKeys.Back, () => Navigator.Select()) { When = InText, Mark = CommandMark.Open });
         }
 
         // AX-8.16: Space selects, in an app whose navigator has a selection; the edge sound in one that has none.
@@ -575,12 +610,68 @@ public abstract partial class ItemForm : AxKitForm
 
     // ---- what a navigator may do without (framework step 4, FW-4.7; 2026-11-22) ----
 
+    /// <summary>The kinds of second pane a navigator has (docs/axKit/framework.md FW-4.7, point 2); a log of lines, axFile's, is the one still to come.</summary>
+    protected enum SecondPane
+    {
+        /// <summary>The fields of the row you are on, a list (<see cref="DetailPane"/>): the item apps.</summary>
+        Fields,
+
+        /// <summary>A text to read, shown on the app's word (<see cref="TextPane"/>, <see cref="ShowText"/>): axGIT's diff and commit.</summary>
+        Text,
+
+        /// <summary>None: the navigator fills the window (axMedia's queue, axProcess).</summary>
+        None,
+    }
+
     /// <summary>
-    /// Whether the window has the second pane. Yes by default, the detail of the row you are on. An app whose rows
-    /// have no more to show than their line says no (axMedia's queue): the navigator fills the window, the pane
-    /// keys and the detail pane's commands are not made, and the detail is never filled.
+    /// What the window's second pane is. The fields of the row you are on by default. With a text, the pane is a
+    /// read-only text under the navigator that the app fills (<see cref="ShowText"/>): the pane keys go to it and
+    /// back, Escape comes back from it, and find acts on it while it has the focus. With none, the navigator fills
+    /// the window, and neither the pane keys nor the detail pane's commands are made.
     /// </summary>
-    protected virtual bool HasDetailPane => true;
+    protected virtual SecondPane Pane => SecondPane.Fields;
+
+    /// <summary>Whether the second pane is the fields of the row you are on.</summary>
+    private bool HasDetailPane => Pane == SecondPane.Fields;
+
+    /// <summary>The second pane as a text (<see cref="SecondPane.Text"/>): the bundle's read-only text, placed by <see cref="PlaceWith"/> in such a window alone.</summary>
+    protected AxKitTextBox TextPane { get; } = new()
+    {
+        Multiline = true,
+        ReadOnly = true,
+        WordWrap = true,
+        ScrollBars = ScrollBars.Vertical,
+        HideSelection = false,
+        MaxLength = 0,
+        Dock = DockStyle.Fill,
+        TabIndex = 1,
+        AccessibleName = "Details",
+    };
+
+    /// <summary>Where a text pane's keys act.</summary>
+    protected bool InText() => TextPane.Focused;
+
+    /// <summary>
+    /// A text into the text pane, named for what it is (from axGIT's details, AG-D5, on its move onto the type):
+    /// the line ends made the control's, the caret on the first line. With <paramref name="focus"/> the focus goes
+    /// there and the name and length are said after NVDA's own reading of the control, not interrupting it;
+    /// without, they are said at once.
+    /// </summary>
+    protected void ShowText(string name, string text, bool focus)
+    {
+        var normalized = text.Replace("\r\n", "\n").TrimEnd('\n').Replace("\n", "\r\n");
+        var lines = normalized.Length == 0 ? 0 : normalized.Split("\r\n").Length;
+        TextPane.AccessibleName = name;
+        TextPane.Text = normalized;
+        TextPane.Select(0, 0);
+        TextPane.ScrollToCaret();
+        if (focus)
+        {
+            TextPane.Focus();
+        }
+
+        Announce($"{name}, {lines} {(lines == 1 ? "line" : "lines")}", !focus);
+    }
 
     /// <summary>
     /// The navigator's keys the app has no use for, which are then no commands of its window: a key that could

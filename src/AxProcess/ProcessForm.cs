@@ -165,7 +165,7 @@ public sealed class ProcessForm : ItemForm
     // ---- what the navigator asks for (the item window, docs/axKit/framework.md FW-4.6) ----
 
     /// <summary>A row has no more to show than its line; its details are a notice, on Enter.</summary>
-    protected override bool HasDetailPane => false;
+    protected override SecondPane Pane => SecondPane.None;
 
     /// <summary>Space selects processes and startup programs (AX-8.16): Delete then ends or removes all the selected.</summary>
     protected override bool HasSelection => true;
