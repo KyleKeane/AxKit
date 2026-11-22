@@ -159,6 +159,10 @@ per command, `-q` on every command that opens the database:
   attributes. `show -a Password` prints the password itself without `-s`: the attribute's value, one line.
 - **`edit -t <title> -u <name>`** renames and changes the user name; `mv <entry> <group>` says "Successfully moved
   entry … to group …" on standard output.
+- **`edit` with an empty value** (asked of the tool again on 2026-11-21, 2.8.0): `edit --url ""` alone answers "Not
+  changing any field for entry …" and ends with code 1; `edit --url "" -u bob` changes the user name, ends with
+  code 0 and leaves the URL as it was, without a word. The tool has no way to empty a field of an entry, so axPass
+  refuses such a change itself (SPEC PW-6.1).
 - **`rm`** moves an entry to the group `Recycle Bin` (made by the first `rm`; `db-info` says "Recycle bin is
   enabled."); `rm` on an entry in it deletes it for good, without a question. **`rmdir`** moves a group, with its
   entries, into the Recycle Bin the same way.

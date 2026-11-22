@@ -8,10 +8,9 @@
 # here by KeePassXC's own tool, the master password and every value a test value. The copies (Ctrl+B, Ctrl+C) stay
 # with the NVDA pass, since they would change the clipboard of whoever runs this, and Ctrl+U on a web address is not
 # pressed: it would start the browser.
-# Not here: a field emptied (Enter on it, its text deleted, Enter), and Ctrl+Z after notes were written into an empty
-# Notes field. Both end today in the words of KeePassXC's tool, "Not changing any field for entry ...", and the field
-# keeps its text; that is the report's to name, not a step to write as passing. So the notes are written first here,
-# and the change Ctrl+Z takes back is the URL's, from one address to another.
+# A field emptied (Enter on it, its text deleted, Enter) and Ctrl+Z after notes were written into an empty Notes
+# field are here since 2026-11-21: KeePassXC's tool cannot empty a field, and axPass says so in its own words
+# in both places. The change Ctrl+Z takes back is the URL's, from one address to another.
 # The idle lock off: it counts real input only, which the runner's keys are not.
 file home\AxKit\axPass.json {"checkForUpdates": false, "lockMinutes": 0}
 file home\AxKit\axFile.json {"checkForUpdates": false}
@@ -97,6 +96,17 @@ keys enter
 expect said ! URL: https://example.org/login
 expect focus URL, text, https://example.org/login
 
+# Check: A field cannot be emptied, and axPass says so in its own words
+# KeePassXC's tool takes an empty value as no change (asked of the tool, 2.8.0): axPass does not start it, says why
+# and where the field can be emptied, and the field keeps its text.
+keys enter
+expect state "notice":"Change URL"
+keys ctrl+a
+keys delete
+keys enter
+expect said ! URL cannot be emptied here: KeePassXC's tool takes an empty value as no change. Empty it in KeePassXC's own window
+expect focus URL, text, https://example.org/login
+
 # Check: Right and Left change nothing in the fields and play the edge sound
 keys right
 expect said ♪ Edge
@@ -124,6 +134,14 @@ keys ctrl+z
 expect said ! Undone: URL: https://example.org/login
 keys down
 expect focus URL, text, https://mail.example.com
+
+# Check: Ctrl+Z says when a change cannot be taken back
+# The change before the URL's wrote the notes into an empty field: the tool cannot empty it again, so Ctrl+Z says
+# so, once, and passes over it.
+keys ctrl+z
+expect said ! Not undone: Notes: First line of the notes, and 1 more line. Notes cannot be emptied here: KeePassXC's tool takes an empty value as no change. Empty it in KeePassXC's own window
+keys ctrl+z
+expect said ! Nothing to undo
 
 # Goal: Change an entry's title in its fields
 # Enter on Title: the notice "Change Title" with the title in its field; the new one renames the entry.

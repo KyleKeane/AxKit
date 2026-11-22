@@ -58,6 +58,33 @@ public class PassTests
         Assert.Equal(["-t", "Gmail personal"], EntryFields.EditOptions(before, before.WithTitle("Gmail personal")));
     }
 
+    /// <summary>
+    /// PW-6.1: KeePassXC's tool takes an option with an empty value as not given (asked of the tool, 2.8.0,
+    /// 2026-11-21: alone it answers "Not changing any field", beside another change it drops it without a word), so a
+    /// field that would lose its value is named before the tool is started, in axPass's own words.
+    /// </summary>
+    [Fact]
+    public void AFieldThatWouldBeEmptiedIsNamedBeforeTheToolIsAsked()
+    {
+        var before = EntryFields.Parse(Show);
+        var urlGone = before.WithValue(3, JsonValue.Create(string.Empty));
+        Assert.Equal([EntryFields.Url], EntryFields.Emptied(before, urlGone));
+        Assert.Equal("URL cannot be emptied here: KeePassXC's tool takes an empty value as no change. Empty it in KeePassXC's own window",
+            EntryFields.CannotEmpty(EntryFields.Emptied(before, urlGone)));
+
+        // Beside another change the emptied field is still named: the tool would drop it without a word.
+        var both = urlGone.WithValue(1, JsonValue.Create(string.Empty));
+        Assert.Equal([EntryFields.UserName, EntryFields.Url], EntryFields.Emptied(before, both));
+        Assert.StartsWith("UserName and URL cannot be emptied here", EntryFields.CannotEmpty(EntryFields.Emptied(before, both)));
+        Assert.EndsWith("Empty them in KeePassXC's own window", EntryFields.CannotEmpty(EntryFields.Emptied(before, both)));
+
+        // A value changed, or written into an empty field, is no emptying; the way back from the second is.
+        Assert.Empty(EntryFields.Emptied(before, before.WithValue(3, JsonValue.Create("https://example.org"))));
+        Assert.Empty(EntryFields.Emptied(urlGone, before));
+        Assert.Equal([EntryFields.Url], EntryFields.Emptied(before, urlGone));
+        Assert.Empty(EntryFields.Emptied(before, before));
+    }
+
     [Theory]
     [InlineData("Gmail", null)]
     [InlineData("a/b", "A name cannot hold a slash: KeePassXC's tool reads it as a group")]

@@ -14,8 +14,12 @@ public sealed partial class PassForm
     /// <summary>One run of the tool: the command, its options, the paths after the database.</summary>
     private sealed record Call(string Command, string[] Options, string[] Rest);
 
-    /// <summary>A change Ctrl+Z can take back: its words, the runs that undo it, and the row to select after.</summary>
-    private sealed record Step(string Said, IReadOnlyList<Call> Undo, string? Select);
+    /// <summary>
+    /// A change Ctrl+Z can take back: its words, the runs that undo it, and the row to select after; or, with
+    /// <paramref name="CannotUndo"/>, a change the tool cannot take back (a value written into an empty field), which
+    /// Ctrl+Z says and passes over.
+    /// </summary>
+    private sealed record Step(string Said, IReadOnlyList<Call> Undo, string? Select, string? CannotUndo = null);
 
     private const int MaxUndo = 20;
 
@@ -36,6 +40,13 @@ public sealed partial class PassForm
             return;
         }
 
+        // The tool cannot empty a field (EntryFields.Emptied): said in axPass's words, and the tool is not started.
+        if (EntryFields.Emptied(before, changed) is { Count: > 0 } emptied)
+        {
+            Announce(EntryFields.CannotEmpty(emptied), true);
+            return;
+        }
+
         Do(async () =>
         {
             if (await Cli(KeePassCliTexts.Edit, options, [path]) is null)
@@ -44,7 +55,11 @@ public sealed partial class PassForm
             }
 
             _entries[path] = changed;
-            Remember(new Step(said, [new Call(KeePassCliTexts.Edit, [.. EntryFields.EditOptions(changed, before)], [path])], path));
+            // A field that was empty cannot be emptied again by the tool: the step says so when Ctrl+Z comes to it.
+            var back = EntryFields.Emptied(changed, before);
+            Remember(back.Count > 0
+                ? new Step(said, [], path, EntryFields.CannotEmpty(back))
+                : new Step(said, [new Call(KeePassCliTexts.Edit, [.. EntryFields.EditOptions(changed, before)], [path])], path));
             Fill(path);
             SelectField(selectField);
             Announce(said, true);
@@ -256,6 +271,14 @@ public sealed partial class PassForm
         // tool refused at once ("Still working on the last command") lost the step, and the change could no longer be
         // undone. Once a run has gone through, the step is used up, whatever the later runs do.
         var step = _undo[^1];
+        if (step.CannotUndo is { } why)
+        {
+            // Said once and passed over, so that the next Ctrl+Z reaches the change before it.
+            _undo.Remove(step);
+            Announce($"Not undone: {step.Said}. {why}", true);
+            return;
+        }
+
         Do(async () =>
         {
             var begun = false;

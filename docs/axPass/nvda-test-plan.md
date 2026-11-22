@@ -33,7 +33,7 @@ should read; a step that reads differently is a defect. The specifications are `
 ## 4. Changing (IA-5, PW-6)
 
 1. In the fields, Right and Left on UserName, on Password and on Title: the edge sound, nothing said, nothing changed, the focus still in the pane (IA-5.6). Enter on UserName, type `sam2`, Enter: "UserName: sam2". Ctrl+Z: "Undone: UserName: sam2"; it reads
-   sam again.
+   sam again. Enter on URL, Ctrl+A, Delete, Enter: "URL cannot be emptied here: KeePassXC's tool takes an empty value as no change. Empty it in KeePassXC's own window", and the URL reads as before. Write notes into an empty Notes, then Ctrl+Z: "Not undone: Notes: …. Notes cannot be emptied here: …"; Ctrl+Z again takes back the change before it, or says "Nothing to undo".
 2. Enter on Password: the notice "New password for Gmail", its field protected. Alt+G: "Generated a password of 20
    characters; Enter sets it"; Enter: "Password set for Gmail".
 3. Enter on Password, type `one`, Enter, type `two`, Enter: "The two passwords differ: nothing changed".

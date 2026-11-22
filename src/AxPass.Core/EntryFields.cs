@@ -115,6 +115,20 @@ public static class EntryFields
         return options;
     }
 
+    /// <summary>
+    /// The fields of KeePass's own that have a value in <paramref name="before"/> and none in
+    /// <paramref name="after"/>. The tool's <c>edit</c> cannot make that change: it takes an option with an empty
+    /// value as not given, says "Not changing any field for entry …" when nothing else changed, and drops it without
+    /// a word beside another change (KeePassXC 2.8.0, asked of the tool itself on 2026-11-21). So such a change is
+    /// refused here, in axPass's own words, before the tool is started (SPEC.md PW-6.1).
+    /// </summary>
+    public static IReadOnlyList<string> Emptied(ItemDocument before, ItemDocument after) =>
+        new[] { Title, UserName, Url, Notes }.Where(title => ValueOf(before, title).Length > 0 && ValueOf(after, title).Length == 0).ToList();
+
+    /// <summary>"URL cannot be emptied here: …", for the fields <see cref="Emptied"/> names.</summary>
+    public static string CannotEmpty(IReadOnlyList<string> titles) =>
+        $"{string.Join(" and ", titles)} cannot be emptied here: KeePassXC's tool takes an empty value as no change. Empty {(titles.Count == 1 ? "it" : "them")} in KeePassXC's own window";
+
     /// <summary>A field's text; empty when the entry has no such field.</summary>
     public static string ValueOf(ItemDocument document, string title) =>
         document.IndexOf(title) is var i && i >= 0 ? FieldTypes.TextOf(document.Fields[i].Value) : string.Empty;

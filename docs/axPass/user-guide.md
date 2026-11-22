@@ -54,7 +54,10 @@ in a password field rather than in the notes.
 ## Changing entries
 
 - Enter on a field changes it: Title, UserName, URL and Notes in a notice; Notes is a field of several lines, where
-  Enter makes a new line and Tab then Enter on Save keeps it.
+  Enter makes a new line and Tab then Enter on Save keeps it. A field cannot be emptied here: KeePassXC's tool
+  takes an empty value as no change, so axPass says "URL cannot be emptied here" and the field keeps its text; empty
+  it in KeePassXC's own window. For the same reason Ctrl+Z cannot take back what you wrote into an empty field: it
+  says so once, and the next Ctrl+Z takes back the change before it.
 - Enter on Password: type a new one, then type it again; or press Generate (Alt+G) for one of 20 letters, digits and
   signs, then Enter. Ctrl+Z does not bring an old password back.
 - Every change is written to the database at once, by KeePassXC's tool; there is nothing to save.

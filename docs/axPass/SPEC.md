@@ -83,7 +83,14 @@ forgets the master password and shows only the notice that asks for it.
 
 - **PW-6.1 The fields** are KeePass's standard ones in this order: Title (`text`), UserName (`username`), Password
   (`password`), URL (`text`), Notes (`longtext`); then the entry's custom attributes, read only (Enter: "Change it in
-  KeePassXC"). New field (Ctrl+N in the detail pane) says the same.
+  KeePassXC"). New field (Ctrl+N in the detail pane) says the same. **A field cannot be emptied here** (2026-11-21):
+  the tool's `edit` takes an option with an empty value as not given (`kdbx-notes.md` section 8), so axPass does not
+  start it for such a change and says "URL cannot be emptied here: KeePassXC's tool takes an empty value as no
+  change. Empty it in KeePassXC's own window"; the field keeps its value. For the same reason a value written into
+  an empty field cannot be taken back: Ctrl+Z says "Not undone: Notes: …. Notes cannot be emptied here: …" once
+  and passes over that change, so that the next Ctrl+Z reaches the one before it (`EntryFields.Emptied`,
+  `CannotEmpty`; until then the user heard the tool's own "Not changing any field for entry …", or nothing, and the
+  field stayed). A need the tool cannot meet is said, not worked around (PW-D1).
 - **PW-6.2 The two extra types.** `username` reads and changes as `text`. `password` reads "hidden"; Ctrl+Q on it
   reads it as hidden too; Enter changes it in a hidden field, with Generate (Alt+G) filling it from `generate` (20
   characters, upper and lower case, digits, signs), and asks a typed one twice. Ctrl+Z does not bring an old password

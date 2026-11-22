@@ -30,7 +30,9 @@ section 8. The window is `src/AxPass`, with its own `CLAUDE.md`. The item format
   `DatabaseName`.
 - `EntryFields` (PW-6): `show` read into an `ItemDocument` of KeePass's fields (the password's value never read, its
   type `password`), other attributes after them; `EditOptions` (the `edit` options that make one document into
-  another); `IsStandard`, `ValueOf`.
+  another); `Emptied` and `CannotEmpty` (the fields a change would empty, which the tool's `edit` cannot do: it takes
+  an empty value as not given, so the window refuses the change, and an undo that would need it, in its own words,
+  PW-6.1); `IsStandard`, `ValueOf`.
 - `Backups` (PW-4.5): `FolderFor` ("mine backups" beside the database), `Make` (the file copied, named with the time, the newest `Keep` kept), `List` (newest first, by name), `Changes` (the tool's commands that change the database).
 - `PassSettings`: the database open last, the tool's path when set, the minutes before the lock.
 
