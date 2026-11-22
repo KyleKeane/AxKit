@@ -6,6 +6,27 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-21: axTask, the item's form; by the assistant with NVDA listening (`main` bbf77601)
+
+`.\nvda-pass.ps1 axTask`, the user away at his word of the same day, NVDA 2025.3.3 with the OneCore voice, Windows 11
+Pro 10.0.26200, the build 5.10.0 of commit bbf77601: axTask's 18 scripts, 110 goals and checks, all passed with every
+announcement also spoken by NVDA. The first hearing of step 2 of `docs/axTask/forms-framework.md` (f10eeb0f): Enter
+on an item opens its form.
+
+| What | Scripts | Result |
+|---|---|---|
+| `18-item-form.txt`, new | 1 | Passed |
+| The seventeen others, `01` and `13` following the form | 17 | Passed |
+
+What was heard: the form opening as every form of the bundle does, NVDA reading its title and explanation ("Fields
+of Fix the tap … The fields of Fix the tap, in the order of its list. …") and then the focus in the title's box;
+each control by its name, an instruction; "Saved Fix the tap. Done: done. Due: 2 November 2099, Monday. Priority:
+Normal. …" once; the refusal of a date with the focus in its box; "Nothing changed"; the form opened on a field
+from the detail pane, and the focus back on that field after it.
+
+Owed to his own ear: how the form feels with a list of many fields (the priorities list has ten), and whether the
+controls' names, which are instructions with what a date takes, are the right length to hear at every Tab.
+
 ## 2026-11-21: axTask, the lists' new files; by the assistant with NVDA listening (`main` c7f61977)
 
 `.\nvda-pass.ps1 axTask`, the user still away at his word of the same day, NVDA 2025.3.3 with the OneCore voice,
