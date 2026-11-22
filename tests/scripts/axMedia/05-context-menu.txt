@@ -1,6 +1,6 @@
 # Workflow: Use axMedia's Context menu
 # axMedia, plan step 1.9 (docs/axMedia/nvda-test-plan.md; SPEC.md AM-5.1, bundle AX-9.11): Context holds what acts on
-# the file selected in the queue, Play, Remove and Information, and one item, "Nothing in the queue", while the queue
+# the file selected in the queue, Play, Remove and Information, and one item, "Queue is empty", while the queue
 # is empty. The commands are run by name through the command list and found in the command palette, since Shift+F10
 # and Alt+C open the menu in menu mode, which only the foreground window enters.
 # Every sound is the runner's silence; nothing reaches the speakers.
@@ -12,10 +12,10 @@ file home\AxKit\axMedia.json {"checkForUpdates":false}
 # An empty queue: Context's one item says that there is nothing to act on, and says it again when chosen.
 start media
 expect focus Queue is empty
-expect commands "Nothing in the queue, Context"
+expect commands "Queue is empty, Context"
 refuse commands "Play, Context
-menu Nothing in the queue, Context
-expect said ! Nothing in the queue
+menu Queue is empty, Context
+expect said ! Queue is empty
 close
 wait 1500
 
@@ -28,7 +28,7 @@ start media {temp}\ch
 expect said ! Playing alpha.wav
 expect focus Queue, 2 items
 expect commands "Play, Context, Enter","Remove, Context, Delete","Information, Context, Ctrl+I"
-refuse commands "Nothing in the queue, Context"
+refuse commands "Queue is empty, Context"
 
 # Goal: Hear a file's information from the Context menu
 # Information on the playing file, with its position; on the other, its place only.
@@ -65,4 +65,4 @@ expect list "items":["alpha.wav"]
 menu Remove, Context
 expect said ! Removed alpha.wav
 expect list ["Queue is empty"]
-expect commands "Nothing in the queue, Context"
+expect commands "Queue is empty, Context"

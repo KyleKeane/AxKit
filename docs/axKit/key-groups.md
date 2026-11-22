@@ -66,9 +66,9 @@ Ctrl and a punctuation key stays inside the window you are in, where the same ke
 
 The keys:
 
-- Ctrl+Period, axFile, axGIT, axMedia and axProcess: Context menu.
-- Ctrl+Period, axAutomate, axMCP, axPass and axTask: The Context menu.
+- Ctrl+Period, axAutomate, axMCP, axMedia, axPass and axTask: The Context menu.
 - Ctrl+Period, axAutomate, axMCP, axPass and axTask: The field's menu.
+- Ctrl+Period, axFile, axGIT and axProcess: Context menu.
 - Ctrl+Slash, every app: Ask about this window.
 
 ### Space and Ctrl+Space: select, or toggle
@@ -77,8 +77,8 @@ Space selects the thing you are on in a list of things you can act on several of
 
 The keys:
 
+- Space, axAutomate, axMCP, axMedia, axPass and axTask: Select or deselect.
 - Space, axAutomate, axMCP, axPass and axTask: Check the field.
-- Space, axAutomate, axMCP, axPass and axTask: Select or deselect.
 - Space, axFile: Select or deselect this entry.
 - Space, axGIT: Stage or unstage.
 
@@ -122,12 +122,12 @@ The keys:
 
 Windows' own keys, as in every program:
 
-- Applications key, axFile, axGIT, axMedia and axProcess: Context menu.
-- Applications key, axAutomate, axMCP, axPass and axTask: The Context menu.
+- Applications key, axAutomate, axMCP, axMedia, axPass and axTask: The Context menu.
 - Applications key, axAutomate, axMCP, axPass and axTask: The field's menu.
-- Shift+F10, axFile, axGIT, axMedia and axProcess: Context menu.
-- Shift+F10, axAutomate, axMCP, axPass and axTask: The Context menu.
+- Applications key, axFile, axGIT and axProcess: Context menu.
+- Shift+F10, axAutomate, axMCP, axMedia, axPass and axTask: The Context menu.
 - Shift+F10, axAutomate, axMCP, axPass and axTask: The field's menu.
+- Shift+F10, axFile, axGIT and axProcess: Context menu.
 
 ### Enter: open or confirm
 
@@ -135,7 +135,7 @@ Enter opens what you are on or says yes to a question.
 
 The keys:
 
-- Enter, axAutomate, axFile, axMCP, axPass and axTask: Open.
+- Enter, axAutomate, axFile, axMCP, axMedia, axPass and axTask: Open.
 - Enter, axAutomate, axMCP, axPass and axTask: Change the field.
 - Enter, axCalc: Answer.
 - Enter, axTask: Change the item in its form.
@@ -181,7 +181,7 @@ Delete removes what you are on, and what can be lost asks first or can be undone
 
 The keys:
 
-- Delete, axAutomate, axFile, axMCP, axPass and axTask: Delete.
+- Delete, axAutomate, axFile, axMCP, axMedia, axPass and axTask: Delete.
 - Delete, axAutomate, axMCP, axPass and axTask: Remove the field.
 - Delete, axTask: Archive.
 - Delete, axGIT: Discard changes.
@@ -218,15 +218,15 @@ The arrows and Page Up and Page Down move through a list or a text, as in every 
 
 Windows' own keys, as in every program:
 
-- Backspace, axAutomate, axMCP, axPass and axTask: Up a level.
+- Backspace, axAutomate, axMCP, axMedia, axPass and axTask: Up a level.
 - Backspace, axFile: Up one level.
 - Down arrow, axClip and axStart: Next match.
+- Left arrow, axAutomate, axMCP, axMedia, axPass and axTask: Up a level.
 - Left arrow, axAutomate, axMCP, axPass and axTask: The previous value of the field.
-- Left arrow, axAutomate, axMCP, axPass and axTask: Up a level.
 - Left arrow, axFile: Up one level.
 - Page Down, axClip and axStart: Page down.
 - Page Up, axClip and axStart: Page up.
-- Right arrow, axAutomate, axMCP, axPass and axTask: Into the list.
+- Right arrow, axAutomate, axMCP, axMedia, axPass and axTask: Into the list.
 - Right arrow, axAutomate, axMCP, axPass and axTask: The next value of the field.
 - Right arrow, axFile: Into the folder.
 - Right arrow, axTask: Open it where it lives.
@@ -248,7 +248,7 @@ Shift with an arrow, Home or End selects as it moves, as in every Windows list a
 
 The keys:
 
-- Shift+Space, axFile and axTask: Select to here.
+- Shift+Space, axFile, axMedia and axTask: Select to here.
 
 Windows' own keys, as in every program:
 
@@ -316,11 +316,10 @@ Windows' own keys, as in every program:
 - Ctrl+C, axFile: Copy.
 - Ctrl+C, axProcess: Copy line.
 - Ctrl+C, axPreview: Copy the detail's value.
+- Ctrl+F, axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Find in the list.
 - Ctrl+F, axClaude, axDown, axFile, axJSON, axPreview and axTerminal: Find.
-- Ctrl+F, axAutomate, axGIT, axMCP, axPass, axProcess and axTask: Find in the list.
 - Ctrl+F, axGIT: Find in the details.
 - Ctrl+F, axCalc: Find in the history.
-- Ctrl+F, axMedia: Find in the queue.
 - Ctrl+N, axAutomate, axMCP, axPass and axTask: New field.
 - Ctrl+N, axAutomate, axMCP, axPass and axTask: New item.
 - Ctrl+N, axFile, axMedia and axPreview: New window.

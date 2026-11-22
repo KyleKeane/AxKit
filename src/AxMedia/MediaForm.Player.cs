@@ -236,31 +236,45 @@ public sealed partial class MediaForm
     }
 
     /// <summary>The title (AM-2.3): "<name> - axMedia" while a file plays or is paused, "axMedia" otherwise; the Window menu names the window by it.</summary>
-    private void UpdateTitle() => SetTitle(PlayerActive && _queue.PlayingName is { } name ? name : null);
+    private void UpdateTitle()
+    {
+        // From the first file on, the title is the file playing, no longer the start's.
+        _startTitle = null;
+        SetTitle(TitleNow());
+    }
+
+    /// <summary>The title's first part now: the file playing or paused, the start's file before anything has played, nothing otherwise.</summary>
+    private string? TitleNow() => PlayerActive && _queue.PlayingName is { } name ? name : _startTitle;
 
     /// <summary>The status bar (AM-2.2): the state, the file and the time on the left while something plays; the place and the speed on the right.</summary>
     private void UpdateStatusBar()
     {
-        var state = _player?.State;
-        if (_player is null || state is not (PlayerState.Playing or PlayerState.Paused or PlayerState.Opening))
+        SetPlace(PlaceNow());
+        ShowStatus();
+    }
+
+    /// <summary>The status bar's first part, in place of the level's name (the item window's StatusState): "Playing 03.mp3 0:12 / 3:40" while something plays, nothing otherwise; ", 3 selected" follows it.</summary>
+    protected override string? StatusState
+    {
+        get
         {
-            _stateLabel.Text = string.Empty;
-            _placeLabel.Text = string.Empty;
-        }
-        else
-        {
-            var word = state switch
+            if (!PlayerActive || _player is not { } player)
+            {
+                return string.Empty;
+            }
+
+            var word = player.State switch
             {
                 PlayerState.Playing => "Playing",
                 PlayerState.Paused => "Paused",
                 _ => "Opening",
             };
-            _stateLabel.Text = $"{word} {_queue.PlayingName} {MediaFiles.FormatTime(_player.Position)} / {MediaFiles.FormatTime(_player.Duration)}";
-            _placeLabel.Text = _queue.PlaceText(Speed);
+            return $"{word} {_queue.PlayingName} {MediaFiles.FormatTime(player.Position)} / {MediaFiles.FormatTime(player.Duration)}";
         }
-
-        StatusLayout.Fit(_status, _stateLabel, _placeLabel);
     }
+
+    /// <summary>The status bar's second part: "3 of 12, speed 1.25" while something plays, nothing otherwise.</summary>
+    private string PlaceNow() => PlayerActive ? _queue.PlaceText(Speed) : string.Empty;
 
     /// <summary>The video area (AM-2.4): two fifths of the window while a video plays or is paused, hidden otherwise.</summary>
     private void FitVideo()

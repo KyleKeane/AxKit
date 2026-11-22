@@ -33,14 +33,14 @@ command's in this version of axKit.
 
 ### Find a file by part of its name
 
-1. Press Ctrl+F (Find in the queue).
+1. Press Ctrl+F (Find in the list).
 2. Type: elt
 3. Press Enter.
-4. Press Ctrl+F (Find in the queue).
+4. Press Ctrl+F (Find in the list).
 5. Type: ta.w
 6. Press Enter.
 7. Press F3 2 times (Find next).
-8. Press Ctrl+F (Find in the queue).
+8. Press Ctrl+F (Find in the list).
 9. Type: a.wav
 10. Press Enter.
 11. Press Shift+F3 2 times (Find previous).

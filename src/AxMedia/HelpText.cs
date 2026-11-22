@@ -13,7 +13,8 @@ public static class HelpText
             "Ctrl+F: find a file whose name contains the text. F3 and Shift+F3: the next or the previous match",
         ]) + """
         ## The queue
-          Arrow keys, Home, End, Page Up, Page Down: move through the files; type the start of a name to jump to it, Shift with a letter backwards. The one playing reads "(playing)" after its name
+          Up, Down, Home, End, Page Up, Page Down: move through the files; type the start of a name to jump to it, Shift with a letter backwards. The one playing reads "(playing)" after its name
+          Right, Left, Backspace: the edge sound; a queue has no list to go into and no level above
           Enter: play this file; the rest of the queue follows in order
           Delete: take this file out of the queue; the one playing goes on to the next. With files selected, all of them: "Removed 3 files"
           Space: select the file you are on, or deselect it again; a selected file reads ", selected". Shift+Down, Shift+Up, Shift+Home, Shift+End: select as you move. Shift+Space: select from the nearest selected file to this one. Ctrl+A: select every file. Ctrl+Shift+A, or Escape: deselect all

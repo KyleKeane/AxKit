@@ -6,28 +6,26 @@ namespace AxMedia;
 
 /// <summary>
 /// axMedia's window (SPEC.md AM-2): a menu bar, the video area shown only while a video plays, one list with the
-/// queue, and a status bar with what plays and where. Enter plays the file under the selection and the rest follow;
-/// the transport keys work from anywhere in the window. The engine is <see cref="MediaPlayer"/>, its events posted
+/// queue, and a status bar with what plays and where. Enter plays the file you are on and the rest follow; the
+/// transport keys work from anywhere in the window. The engine is <see cref="MediaPlayer"/>, its events posted
 /// back to this thread; the queue is <see cref="PlayQueue"/>. A start with paths while this window is open arrives as
-/// a hand-over message (AM-1.2, <see cref="AppMessage"/>) in <see cref="WndProc"/>. The notices, the fonts, the
-/// window's place, the update flow, find and the announcements are the bundle's window base (<see cref="AxKitForm"/>).
-/// Grown from axFile's player and queue pane (the split's inventory of 2026-10-22, in the git history).
+/// a hand-over message (AM-1.2, <see cref="AppMessage"/>) in <see cref="WndProc"/>.
+/// The window is a navigator (docs/axKit/framework.md FW-4.9, step 6, 2026-11-22; a window of its own until then,
+/// grown from axFile's player and queue pane on 2026-10-22): the bundle's item window (<see cref="ItemForm"/>) with
+/// one level, the queue, whose rows are the files, and no second pane. The list, its selection, find, the Context
+/// menu and the keys of a navigator are the item window's; this class holds the queue's commands and the player.
 /// </summary>
-public sealed partial class MediaForm : AxKitForm
+public sealed partial class MediaForm : ItemForm
 {
     private readonly MediaSettings _settings;
     private readonly HandOver? _start;
     private readonly MenuStrip _menu = new();
-
-    /// <summary>The bar's Context menu (AX-9.11): the selected file's commands.</summary>
-    private readonly ContextBarMenu _context;
     private readonly ToolStripMenuItem _recentItem = new("Open &recent");
-    private readonly AxKitList _list = new();
     private readonly Panel _video = new();
-    private readonly StatusStrip _status = new();
-    private readonly ToolStripStatusLabel _stateLabel;
-    private readonly ToolStripStatusLabel _placeLabel;
     private readonly System.Windows.Forms.Timer _clock = new() { Interval = 1000 };
+
+    /// <summary>The title of a start on one file, until the first file plays (AM-2.3).</summary>
+    private string? _startTitle;
     private readonly PlayQueue _queue = new();
     private MediaPlayer? _player;
 
@@ -46,12 +44,14 @@ public sealed partial class MediaForm : AxKitForm
         _settings = settings;
         _start = start;
         // A start on one file is named after it from the first moment, so that NVDA reads the file's window as it opens (AM-2.3).
-        SetTitle(start is { Verb: AppMessage.Play, Paths: [var only] } && File.Exists(only) ? Path.GetFileName(only) : null);
+        _startTitle = start is { Verb: AppMessage.Play, Paths: [var only] } && File.Exists(only) ? Path.GetFileName(only) : null;
+        SetTitle(_startTitle);
 
         // ---- menus and keys (AM-5.1, AM-5.2): one command list (docs/axKit/app-kit.md AK-2), each key from the tables ----
         // Queue is the thing worked on, in the standard order of a first menu (bundle AX-6): New and Open with the
-        // recent list, the items on the file, Show current file in, Exit. Enter, Delete and Space act in the list
-        // only (AM-5.2); in a notice's field they are the field's own, and in the list returning true keeps it from dinging.
+        // recent list, the items on the file, Show current file in, Exit. The keys of a navigator (Enter, Delete,
+        // the selection keys, find, the Context menu's) are the item window's commands, registered after these by
+        // PlaceWith; the menu items for them here only show the keys.
         var queue = new ToolStripMenuItem("&Session");
         Add(queue, new Command("&New window", AxMediaKeys.NewWindow, NewWindow) { Mark = CommandMark.Open });
         Add(queue, new Command("&Open files...", AxMediaKeys.OpenFiles, OpenFiles) { Mark = CommandMark.Open });
@@ -84,8 +84,8 @@ public sealed partial class MediaForm : AxKitForm
         Add(play, new Command("&What is playing", AxMediaKeys.WhatIsPlaying, SayWhatIsPlaying) { Mark = CommandMark.Read });
         play.DropDownItems.Add(new ToolStripSeparator());
         // The bundle's selection (AX-8.16, AM-3.5): every file of the queue, or none; the row's own two are in Context.
-        Add(play, new Command("S&elect all", SelectionKeys.SelectAll, SelectAllFiles) { When = () => _list.Focused, Mark = CommandMark.Change });
-        Add(play, new Command("&Deselect all", SelectionKeys.SelectNone, () => Selection.None()) { When = () => _list.Focused, Mark = CommandMark.Change });
+        play.DropDownItems.Add(Item("S&elect all", SelectAllRows, SelectionKeys.SelectAll, CommandMark.Change));
+        play.DropDownItems.Add(Item("&Deselect all", SelectNoRows, SelectionKeys.SelectNone, CommandMark.Change));
 
         // Navigation (AX-9.1): along the queue and in the file.
         var navigation = new ToolStripMenuItem();
@@ -93,33 +93,16 @@ public sealed partial class MediaForm : AxKitForm
         Add(navigation, new Command("Pre&vious file", AxMediaKeys.PreviousFile, () => MoveInQueue(-1)) { Mark = CommandMark.Open });
         Add(navigation, new Command("&Go to time...", AxMediaKeys.GoToTime, GoToTime) { Mark = CommandMark.Open });
 
-        // Context (AX-9.11): what acts on the file you are on in the queue; Enter, Delete and Space act in the list only
-        // (AM-5.2): in a notice's field they are the field's own, and in the list returning true keeps it from dinging.
-        // Remove takes the selected files out when there are any (AM-3.5).
+        // Context (AX-9.11): what acts on the file you are on in the queue. Enter, Delete and the selection keys are
+        // the navigator's (the item window's commands, which act in the list only); Remove takes the selected files
+        // out when there are any (AM-3.5). Without a file, Context has the one item "Queue is empty".
         var file = new ToolStripMenuItem("&File");
-        Add(file, new Command("&Play", AxMediaKeys.Play, PlaySelected) { When = () => _list.Focused, Mark = CommandMark.Open });
-        Add(file, new Command("R&emove", AxMediaKeys.Remove, RemoveSelected) { When = () => _list.Focused, Mark = CommandMark.Change });
+        file.DropDownItems.Add(Item("&Play", PlaySelected, ItemKeys.Open, CommandMark.Open));
+        file.DropDownItems.Add(Item("R&emove", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Change));
         Add(file, new Command("&Information", AxMediaKeys.Information, SayInformation) { Mark = CommandMark.Read });
         file.DropDownItems.Add(new ToolStripSeparator());
-        Add(file, new Command("&Select or deselect", SelectionKeys.Select, SelectFile) { When = () => _list.Focused, Mark = CommandMark.Change });
-        Add(file, new Command("Select to &here", SelectionKeys.SelectTo, SelectToHere) { When = () => _list.Focused, Mark = CommandMark.Change });
-        // The keys that select as they move, and Escape, which gives a selection up; no menu items.
-        foreach (var move in Selection.MoveCommands("file", () => _list.Focused, () => Announce(PlayQueue.EmptyText, true)))
-        {
-            AddKey(move);
-        }
-
-        AddKey(new Command("Deselect all", SelectionKeys.Clear, () => Selection.None()) { When = () => _list.Focused && Selection.Count > 0, Mark = CommandMark.Change });
-        _context = new ContextBarMenu(() => _queue.Count == 0 ? null : file, () => "Nothing in the queue", said => Announce(said, true), file);
-        AddKey(new Command("Context menu", AxMediaKeys.ContextMenu, OpenContext) { When = () => _list.Focused, Mark = CommandMark.Open });
-        AddKey(new Command("Context menu", AxMediaKeys.ContextMenuAlso, OpenContext) { When = () => _list.Focused, Mark = CommandMark.Open });
-        // The keys without a menu item: Tab and its kin back to the list (the one control), and find in the queue.
-        foreach (var key in new[] { BundleKeys.NextControl, BundleKeys.PreviousControl, BundleKeys.NextControlAlso })
-        {
-            AddKey(new Command("Back to the list", key, () => _list.Focus()) { Mark = CommandMark.Open });
-        }
-
-        AddFindInListKeys("queue", _list, Names);
+        file.DropDownItems.Add(Item("&Select or deselect", SelectRow, SelectionKeys.Select, CommandMark.Change));
+        file.DropDownItems.Add(Item("Select to &here", SelectToHere, SelectionKeys.SelectTo, CommandMark.Change));
 
         // Options, the app's own first (AX-9.1): Say each file as it starts, the play menu's until 2026-11-11.
         var options = new ToolStripMenuItem();
@@ -135,20 +118,10 @@ public sealed partial class MediaForm : AxKitForm
         ]);
 
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
-        PlaceMenuBar(_menu, queue, play, navigation, _context.Menu, options, help);
-        _menu.MenuActivate += (_, _) => _context.Fill();
+        PlaceMenuBar(_menu, queue, play, navigation, CreateContextMenu(file), options, help);
 
-        // ---- the list (AM-2.1): the one control; its own keys stay native ----
-        _list.IntegralHeight = false;
-        _list.Dock = DockStyle.Fill;
-        _list.TabIndex = 0;
-        _list.AccessibleName = _queue.ListName;
-        _list.Items.Add(PlayQueue.EmptyText);
-        _list.SelectedIndex = 0;
-        _list.DoubleClick += (_, _) => PlaySelected();
-        _list.OpenMenuOnRightClick(OpenContext);
-        // The bundle's list (AX-8.6): the empty queue's one line is no item to type to; the files by their names.
-        _list.Names = () => _markRows.Select(row => row.Name).ToList();
+        // ---- the list (AM-2.1): the navigator, the one control; its own keys stay native ----
+        Navigator.DoubleClick += (_, _) => PlaySelected();
 
         // ---- the video area (AM-2.4): a plain surface at the top, shown while a video plays, never focused ----
         _video.Dock = DockStyle.Top;
@@ -164,16 +137,92 @@ public sealed partial class MediaForm : AxKitForm
         _video.Resize += (_, _) => _player?.UpdateVideo();
         _video.Paint += (_, _) => _player?.UpdateVideo();
 
-        // ---- the status bar (AM-2.2): the bundle's pair, no AccessibleName, no Spring ----
-        (_stateLabel, _placeLabel) = StatusLayout.Pair(_status);
+        // ---- the status bar (AM-2.2): the item window's pair; the first part is what plays (StatusState) ----
         _clock.Tick += (_, _) => UpdateStatusBar();
         SizeChanged += (_, _) => FitVideo();
 
         // Docked from the last control to the first: the menu takes the top, the status bar the bottom, the video
         // area the strip under the menu while it shows, and the list (or the notice over it) what is left.
-        PlaceControls(_menu, _list, _video, _status);
-        UpdateStatusBar();
+        PlaceWith(_menu, _video);
+        Fill(select: null);
     }
+
+    // ---- what the navigator asks for (the item window, docs/axKit/framework.md FW-4.9) ----
+
+    /// <summary>The queue is the one level and its files are all there is to a row: no second pane.</summary>
+    protected override bool HasDetailPane => false;
+
+    /// <summary>Space selects a file (AM-3.5), and Delete then takes the selected files out.</summary>
+    protected override bool HasSelection => true;
+
+    protected override string RowNoun => "file";
+
+    /// <summary>The empty queue's one line, which is no file.</summary>
+    protected override string? EmptyLine => PlayQueue.EmptyText;
+
+    /// <summary>One level for ever: the selection is kept while the queue is, and given up by a play that replaces it.</summary>
+    protected override string LevelIdentity() => "queue";
+
+    /// <summary>The selection keys on the empty queue's line: that line.</summary>
+    protected override void NothingToSelect(ItemRow? row) => Announce(PlayQueue.EmptyText, true);
+
+    /// <summary>
+    /// The queue as the navigator's level (AM-2.1): a row for each file, by its name, the one playing marked; the
+    /// list named with its count; the title and the status bar's second part as <see cref="UpdateTitle"/> and
+    /// <see cref="UpdateStatusBar"/> have them.
+    /// </summary>
+    protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel() =>
+        (QueueRows(), _queue.ListName, TitleNow() ?? string.Empty, PlaceNow());
+
+    /// <summary>
+    /// The queue's files as rows. A file queued twice is two rows, so each has a key of its own, its path and which
+    /// of its occurrences it is; the files still there keep their marks (AM-3.5).
+    /// </summary>
+    private List<ItemRow> QueueRows()
+    {
+        var rows = new List<ItemRow>(_queue.Count);
+        if (_queue.Count == 0)
+        {
+            return rows;
+        }
+
+        var lines = _queue.Lines(PlayerActive);
+        var seen = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        for (var i = 0; i < _queue.Count; i++)
+        {
+            var path = _queue.Paths[i];
+            seen.TryGetValue(path, out var before);
+            seen[path] = before + 1;
+            rows.Add(new ItemRow(IsList: false, $"{path}\n{before}", Path.GetFileName(path), lines[i]));
+        }
+
+        return rows;
+    }
+
+    /// <summary>Enter in the queue, the navigator's Open: the file plays.</summary>
+    protected override void OpenItem(ItemRow row) => PlaySelected();
+
+    /// <summary>Delete in the queue, the navigator's Delete: the file, or the selected files, taken out.</summary>
+    protected override void DeleteRow(ItemRow row) => RemoveSelected();
+
+    /// <summary>
+    /// A queue has nothing to rename, to undo or to read again, and a window has the one queue: F2, Ctrl+Z, F5 and
+    /// Ctrl+Shift+N are no commands here. The four methods below are what the item window asks every app for;
+    /// none of them is reached through a key.
+    /// </summary>
+    protected override IReadOnlyCollection<Keys> KeysWithoutUse => [ItemKeys.Rename, ItemKeys.Undo, ItemKeys.Refresh, ItemKeys.NewList];
+
+    protected override string? RenameRefused(ItemRow row) => "A file is renamed in axFile, not in the queue";
+
+    /// <summary>Ctrl+N is New window here, the app's own command; the navigator's New item is never registered.</summary>
+    protected override void NewItem() => NewWindow();
+
+    protected override void NewList() => Announce("One queue to a window: Ctrl+N opens another window", true);
+
+    protected override void Undo() => Announce("Nothing to undo in the queue", true);
+
+    /// <summary>Ctrl+S, as before the window was a navigator.</summary>
+    protected override void SaveCommand() => Announce("Nothing to save here", true);
 
     // ---- what the window base asks for ----
 
@@ -184,20 +233,15 @@ public sealed partial class MediaForm : AxKitForm
 
     protected override void HideForNotice()
     {
-        _list.Visible = false;
+        base.HideForNotice();
         _video.Visible = false;
     }
 
     protected override void ShowAfterNotice()
     {
-        _list.Visible = true;
+        base.ShowAfterNotice();
         FitVideo();
     }
-
-    protected override Control FocusTarget => _list;
-
-    protected override void ApplyFont(Font font) => _list.Font = font;
-
 
     protected override string UpdateRestartText => $"closes {AxMediaApp.Name}, installs it and starts it again on the file playing";
 
@@ -209,11 +253,6 @@ public sealed partial class MediaForm : AxKitForm
 
     protected override void OnShown(EventArgs e)
     {
-        if (!NoticeOpen)
-        {
-            _list.Select();
-        }
-
         base.OnShown(e);
         if (_start is { } start)
         {
@@ -267,9 +306,6 @@ public sealed partial class MediaForm : AxKitForm
 
     // ---- the queue (AM-3) ----
 
-    /// <summary>The queued files' names, one per list item, for the bundle's find; the empty line has none.</summary>
-    private IReadOnlyList<string> Names() => _queue.Paths.Select(Path.GetFileName).Select(name => name ?? string.Empty).ToList();
-
     /// <summary>
     /// What a start or a hand-over asks (AM-1.1, AM-3.2): a play replaces the queue (one file with its folder's media
     /// files around it, a folder's files, several paths expanded), plays, and brings the window to the front, the
@@ -298,8 +334,7 @@ public sealed partial class MediaForm : AxKitForm
         _queue.Set(queue, start);
         // Another queue: nothing selected (AM-3.5), as another folder in axFile.
         Selection.Clear();
-        FillList();
-        _list.SelectedIndex = start;
+        FillList(select: start);
         PlayCurrent(prompted: true);
         WindowMenu.Activate(Handle);
         RememberPath(message.Paths);
@@ -318,76 +353,22 @@ public sealed partial class MediaForm : AxKitForm
     private static string Describe(IReadOnlyList<string> paths) => paths.Count == 1 ? PathName.Of(paths[0]) : $"{paths.Count} paths";
 
     /// <summary>
-    /// The list's lines made again from the queue (AM-2.1): each line changed in place while the count is the same,
-    /// so that the selection stays where it is and nothing but the changed line moves under NVDA; the whole list
-    /// otherwise, the selection kept by index. The list is named with its count.
+    /// The list's lines made again from the queue (AM-2.1): each line changed in place while the same files are
+    /// there, so that the row you are on stays and nothing but the changed line moves under NVDA (the item window's
+    /// Refill); the whole list otherwise, on the row of the same place, or on <paramref name="select"/> (a play
+    /// that replaces the queue). The list is named with its count.
     /// </summary>
-    private void FillList()
+    private void FillList(int? select = null)
     {
-        // The queue's files as the selection sees them (AM-3.5): a file queued twice is two rows, so each has a key
-        // of its own, its path and which of its occurrences it is. The files still there keep their marks.
-        var seen = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-        _markRows = [.. _queue.Paths.Select(path =>
+        var rows = QueueRows();
+        if (select is null && rows.Select(row => row.Key).SequenceEqual(Rows.Select(row => row.Key), StringComparer.OrdinalIgnoreCase))
         {
-            seen.TryGetValue(path, out var before);
-            seen[path] = before + 1;
-            return new MarkRow($"{path}\n{before}", Path.GetFileName(path));
-        })];
-        Selection.Keep();
-        var lines = _queue.Lines(PlayerActive).Select((line, row) => LineOf(row, line)).ToList();
-        _list.AccessibleName = _queue.ListName;
-        var index = _list.SelectedIndex;
-        if (_list.SetLines(lines))
-        {
+            Refill();
             return;
         }
 
-        _list.SelectedIndex = Math.Clamp(index, 0, _list.Items.Count - 1);
-        UpdateStatusBar();
-    }
-
-    // ---- the selection (bundle AX-8.16; SPEC.md AM-3.5, 2026-11-22) ----
-
-    /// <summary>The queue's files as the marks see them, made by <see cref="FillList"/>; empty for an empty queue, whose one line is no file.</summary>
-    private IReadOnlyList<MarkRow> _markRows = [];
-
-    private ListSelection? _selectionMade;
-
-    /// <summary>The queue's selection, the bundle's: Space selects the file you are on, and Delete then takes the selected files out.</summary>
-    private ListSelection Selection => _selectionMade ??= new ListSelection(_list, () => _markRows,
-        row => LineOf(row, _queue.Lines(PlayerActive)[row]), said => Announce(said, true));
-
-    /// <summary>A row's line as its item shows it: the queue's line, with ", selected" while the file is.</summary>
-    private string LineOf(int row, string line) => row < _markRows.Count ? Selection.Label(_markRows[row].Key, line) : line;
-
-    /// <summary>Space in the list: the file selected, or deselected again; on the empty queue's line, that line.</summary>
-    private void SelectFile()
-    {
-        if (!Selection.Toggle())
-        {
-            Announce(PlayQueue.EmptyText, true);
-        }
-    }
-
-    /// <summary>Shift+Space: every file from the nearest selected one to this one.</summary>
-    private void SelectToHere()
-    {
-        if (!Selection.ToHere())
-        {
-            Announce(PlayQueue.EmptyText, true);
-        }
-    }
-
-    /// <summary>Ctrl+A: every file of the queue, "n selected".</summary>
-    private void SelectAllFiles()
-    {
-        if (_markRows.Count == 0)
-        {
-            Announce(PlayQueue.EmptyText, true);
-            return;
-        }
-
-        Selection.All();
+        var at = Math.Clamp(select ?? Navigator.SelectedIndex, 0, Math.Max(rows.Count - 1, 0));
+        Fill(rows.Count == 0 ? null : rows[at].Key);
     }
 
     private bool PlayerActive => _player is { State: PlayerState.Playing or PlayerState.Paused or PlayerState.Opening };
@@ -463,7 +444,7 @@ public sealed partial class MediaForm : AxKitForm
     /// <summary>The file in hand (AM-1.4): the one playing or paused, else the one under the selection; null with an empty queue.</summary>
     private string? FileInHand =>
         PlayerActive && _queue.PlayingPath is { } playing ? playing
-        : _queue.IsFile(_list.SelectedIndex) ? _queue.Paths[_list.SelectedIndex]
+        : _queue.IsFile(Navigator.SelectedIndex) ? _queue.Paths[Navigator.SelectedIndex]
         : null;
 
     /// <summary>The file in hand for a command; null, and said, when the queue is empty.</summary>
@@ -490,7 +471,7 @@ public sealed partial class MediaForm : AxKitForm
     /// <summary>Enter in the list, Queue → Play: the file under the selection plays, "Playing <name>"; the empty line is read again.</summary>
     private void PlaySelected()
     {
-        if (!_queue.Select(_list.SelectedIndex))
+        if (!_queue.Select(Navigator.SelectedIndex))
         {
             Announce(PlayQueue.EmptyText, true);
             return;
@@ -507,7 +488,7 @@ public sealed partial class MediaForm : AxKitForm
             // AM-3.5: with files selected, Delete takes them all out, whatever row you are on: "Removed 3 files".
             // From the last to the first, so that each index still names its file; the one playing goes on to the
             // next file left, or stops at the end.
-            var rows = Enumerable.Range(0, _markRows.Count).Where(row => Selection.Contains(_markRows[row].Key)).OrderByDescending(row => row).ToList();
+            var rows = Enumerable.Range(0, Rows.Count).Where(row => Selection.Contains(Rows[row].Key)).OrderByDescending(row => row).ToList();
             var playingGoes = PlayerActive && rows.Contains(_queue.Playing);
             foreach (var row in rows)
             {
@@ -532,7 +513,7 @@ public sealed partial class MediaForm : AxKitForm
             return;
         }
 
-        var index = _list.SelectedIndex;
+        var index = Navigator.SelectedIndex;
         var wasPlaying = _queue.IsFile(index) && index == _queue.Playing && PlayerActive;
         if (_queue.Remove(index) is not { } removed)
         {
@@ -568,7 +549,7 @@ public sealed partial class MediaForm : AxKitForm
     /// <summary>Ctrl+I, Queue → Information: the file's name and place, "03 Chapter 3.mp3, 3 of 12", with the position while it is the one playing; the empty line is read again.</summary>
     private void SayInformation()
     {
-        var index = _list.SelectedIndex;
+        var index = Navigator.SelectedIndex;
         if (!_queue.IsFile(index))
         {
             Announce(PlayQueue.EmptyText, true);
@@ -587,12 +568,5 @@ public sealed partial class MediaForm : AxKitForm
         }
 
         Announce(text, true);
-    }
-
-    /// <summary>Shift+F10, the Applications key and a right click in the queue (AX-9.11): the bar's Context menu.</summary>
-    private void OpenContext()
-    {
-        _context.Fill();
-        OpenBarMenu(ContextBarMenu.Letter);
     }
 }

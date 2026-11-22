@@ -100,29 +100,35 @@ public abstract partial class ItemForm : AxKitForm
     /// <summary>The level shown: its rows, the navigator's name with its count ("Home, 4 items"), the window title's first part, and the status bar's second label (the folder or the database).</summary>
     protected abstract (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel();
 
-    /// <summary>The app's state set to the list's level, for Right and Enter on a list.</summary>
-    protected abstract void EnterList(ItemRow row);
+    /// <summary>The app's state set to the list's level, for Right and Enter on a list; nothing in an app whose rows are never lists (axMedia's queue).</summary>
+    protected virtual void EnterList(ItemRow row)
+    {
+    }
 
     /// <summary>Why Right and Enter do not go into this list, said in place of the move; null (every list of most apps) when they do.</summary>
     protected virtual string? EntryRefused(ItemRow row) => null;
 
-    /// <summary>The app's state set to the level above, and the key of the row to select there; null at the top, where nothing changes.</summary>
-    protected abstract string? LeaveList();
+    /// <summary>The app's state set to the level above, and the key of the row to select there; null at the top, where nothing changes, which a navigator of one level always is.</summary>
+    protected virtual string? LeaveList() => null;
 
-    /// <summary>What the detail pane shows for a row, or for nothing selected.</summary>
-    protected abstract ItemDetail DetailOf(ItemRow? row);
+    /// <summary>What the detail pane shows for a row, or for nothing selected; never asked in a window without the pane (<see cref="HasDetailPane"/>).</summary>
+    protected virtual ItemDetail DetailOf(ItemRow? row) => new("Details", null, null, []);
 
     /// <summary>A change to the detail pane's document, saved; the app fills the panes again and calls <see cref="SelectField"/> with <paramref name="selectField"/> when it is done, and says <paramref name="said"/>.</summary>
-    protected abstract void SaveFields(ItemDetail detail, ItemDocument changed, string said, int selectField);
+    protected virtual void SaveFields(ItemDetail detail, ItemDocument changed, string said, int selectField)
+    {
+    }
 
     /// <summary>An item's Title changed, from the detail pane's Title field: the app renames it as F2 does.</summary>
-    protected abstract void RenameItem(ItemRow row, string title);
+    protected virtual void RenameItem(ItemRow row, string title)
+    {
+    }
 
     /// <summary>F2 in the navigator (AX-8.7): why this row cannot be renamed, said instead of the box; null when it can.</summary>
     protected abstract string? RenameRefused(ItemRow row);
 
     /// <summary>Why a typed name is refused for the row, said with the box kept open; null when it is fine.</summary>
-    protected abstract string? RefusedName(ItemRow row, string name);
+    protected virtual string? RefusedName(ItemRow row, string name) => null;
 
     /// <summary>The row renamed to a name <see cref="RefusedName"/> took, once the box has closed; an item's rename by default, as its Title field's (axTask renames a list its own way).</summary>
     protected virtual void RenameTo(ItemRow row, string name) => RenameItem(row, name);
@@ -164,6 +170,14 @@ public abstract partial class ItemForm : AxKitForm
         return _context.Menu;
     }
 
+    /// <summary>The bar's Context menu in a navigator whose rows are all of one kind, without lists and without the second pane (axMedia's queue): the one menu of what acts on the row.</summary>
+    protected ToolStripMenuItem CreateContextMenu(ToolStripMenuItem item)
+    {
+        _rowMenu = item;
+        _context = new ContextBarMenu(ContextNow, NothingToActOn, said => Announce(said, true), item);
+        return _context.Menu;
+    }
+
     /// <summary>Whether the selection's commands act at all: axPass's only while the database is unlocked.</summary>
     protected virtual bool SelectionMenusAvailable => true;
 
@@ -195,6 +209,7 @@ public abstract partial class ItemForm : AxKitForm
     private string NothingToActOn() =>
         !SelectionMenusAvailable ? NothingWhileUnavailable
         : SelectedRow() is { IsSection: true } ? "A heading: nothing to act on"
+        : _rows.Count == 0 && EmptyLine is { } empty ? empty
         : "Nothing selected";
 
     /// <summary>Context filled for where the focus is and what is selected now.</summary>
@@ -230,6 +245,9 @@ public abstract partial class ItemForm : AxKitForm
 
     /// <summary>Space on a row that cannot be selected, and the keys that select all in a level with nothing to select: the app's words for why; the edge sound alone by default.</summary>
     protected virtual void NothingToSelect(ItemRow? row) => EventDoor.Raise(EventKind.NoCommand, EventSound.Edge);
+
+    /// <summary>The app's word for a row, in the names of the commands that select as they move ("Select to the next item"); axMedia: file.</summary>
+    protected virtual string RowNoun => "item";
 
     /// <summary>The navigator's rows as the marks see them, made with <see cref="_rows"/>.</summary>
     private IReadOnlyList<MarkRow> _markRows = [];
@@ -444,9 +462,10 @@ public abstract partial class ItemForm : AxKitForm
     {
         // A shared key the app gave to a command of its own that acts anywhere is the app's: the shared command
         // would never run, and is not listed (framework step 4; the F5 case of axAutomate, made general).
+        // A key the app has no use for (KeysWithoutUse) is no command of the window either.
         void Shared(Command command)
         {
-            if (!KeyTakenAnywhere(command.Key))
+            if (!KeyTakenAnywhere(command.Key) && !KeysWithoutUse.Contains(command.Key))
             {
                 AddKey(command);
             }
@@ -466,10 +485,13 @@ public abstract partial class ItemForm : AxKitForm
 
         // The bundle's focus keys switch the panes from either one, as in every other window (AX-8.2; 2026-11-09, the
         // item windows had Tab and Shift+Tab alone, which stay each pane's own below).
-        // Not in a navigator without a second pane (HasDetailPane, framework step 4): Tab has nowhere to go there.
-        foreach (var key in HasDetailPane ? new[] { BundleKeys.NextControl, BundleKeys.PreviousControl, BundleKeys.NextControlAlso } : [])
+        // In a navigator without a second pane (HasDetailPane, framework step 4) they come back to the list, the one
+        // control, as in axMedia's window before it was a navigator.
+        foreach (var key in new[] { BundleKeys.NextControl, BundleKeys.PreviousControl, BundleKeys.NextControlAlso })
         {
-            Shared(new Command("Switch between the navigator and the detail pane", key, () => (Navigator.Focused ? (Control)DetailPane : Navigator).Select()) { When = NotRenaming, Mark = CommandMark.Open });
+            Shared(HasDetailPane
+                ? new Command("Switch between the navigator and the detail pane", key, () => (Navigator.Focused ? (Control)DetailPane : Navigator).Select()) { When = NotRenaming, Mark = CommandMark.Open }
+                : new Command("Back to the list", key, () => Navigator.Select()) { When = NotRenaming, Mark = CommandMark.Open });
         }
 
         // The navigator's keys.
@@ -490,7 +512,7 @@ public abstract partial class ItemForm : AxKitForm
         if (HasSelection)
         {
             Shared(new Command("Select to here", SelectionKeys.SelectTo, SelectToHere) { When = InNavigator, Mark = CommandMark.Change });
-            foreach (var move in Selection.MoveCommands("item", InNavigator))
+            foreach (var move in Selection.MoveCommands(RowNoun, InNavigator, () => NothingToSelect(null)))
             {
                 Shared(move);
             }
@@ -550,6 +572,13 @@ public abstract partial class ItemForm : AxKitForm
     /// keys and the detail pane's commands are not made, and the detail is never filled.
     /// </summary>
     protected virtual bool HasDetailPane => true;
+
+    /// <summary>
+    /// The navigator's keys the app has no use for, which are then no commands of its window: a key that could
+    /// only say "not here" is left to do nothing (axMedia's queue has nothing to rename, to undo or to refresh,
+    /// and no second list). None by default.
+    /// </summary>
+    protected virtual IReadOnlyCollection<Keys> KeysWithoutUse => [];
 
     /// <summary>
     /// The one line a level without rows shows, which is no row: nothing is selected on it, and the commands that
@@ -637,21 +666,29 @@ public abstract partial class ItemForm : AxKitForm
             case { IsSection: true }:
                 OnSectionHeader();
                 return;
-            case { IsList: false }:
-                if (HasDetailPane)
-                {
-                    DetailPane.Select();
-                }
-                else
-                {
-                    // No second pane to go to: an app without one gives Enter on a row its own command.
-                    EventDoor.Raise(EventKind.Edge);
-                }
-
+            case { IsList: false } item:
+                OpenItem(item);
                 return;
             case var row:
                 OpenList(row);
                 return;
+        }
+    }
+
+    /// <summary>
+    /// Enter on an item, the one key the apps of the type differ in (docs/axKit/framework.md, section 9): its
+    /// fields take the focus by default; an app without the second pane says what it does (axMedia plays the
+    /// file), the edge sound otherwise.
+    /// </summary>
+    protected virtual void OpenItem(ItemRow row)
+    {
+        if (HasDetailPane)
+        {
+            DetailPane.Select();
+        }
+        else
+        {
+            EventDoor.Raise(EventKind.Edge);
         }
     }
 
@@ -748,10 +785,13 @@ public abstract partial class ItemForm : AxKitForm
         // A level without rows shows the app's one line for it, when it has one (EmptyLine): no row, nothing selected.
         IEnumerable<string> lines = _rows.Count == 0 && EmptyLine is { } empty ? [empty] : _rows.Select(RowText);
         Navigator.Fill(lines, name, select is null ? 0 : _rows.FindIndex(row => string.Equals(row.Key, select, StringComparison.OrdinalIgnoreCase)));
-        SetTitle(title);
+        SetLevelTitle(title);
         ShowName();
         FillDetail();
     }
+
+    /// <summary>The window's title for the level; an empty one is the app's name alone (axMedia while nothing plays).</summary>
+    private void SetLevelTitle(string title) => SetTitle(title.Length == 0 ? null : title);
 
     /// <summary>
     /// The status bar's second part alone, for a state that changes while the level stays (axTask's "Running" and
@@ -800,7 +840,7 @@ public abstract partial class ItemForm : AxKitForm
             Navigator.AccessibleName = name;
         }
 
-        SetTitle(title);
+        SetLevelTitle(title);
         ShowName();
         // The detail pane is made again only for a selected row whose words changed, and never under the user's focus
         // in it: a refill of other rows leaves the field the user is on alone.

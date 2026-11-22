@@ -581,7 +581,7 @@ every window" or under a heading that names the windows without it; under an app
 - Select all. Menu: Actions. Key: Ctrl+A. Mark: change.
 - Slower. Menu: Actions. Key: Ctrl+Down. Mark: change.
 - What is playing. Menu: Actions. Key: Ctrl+Q. Mark: read.
-- Nothing in the queue. Menu: Context. Key: none. Mark: read.
+- Queue is empty. Menu: Context. Key: none. Mark: read.
 - Formats Windows plays, at Microsoft. Menu: Help, Media resources. Key: none. Mark: act.
 - Free codecs in the Microsoft Store. Menu: Help, Media resources. Key: none. Mark: act.
 - Go to time. Menu: Navigation. Key: Ctrl+T. Mark: open.
@@ -598,14 +598,20 @@ every window" or under a heading that names the windows without it; under an app
 - axTerminal, access layer for your shell. Menu: Session, Show current file in. Key: none. Mark: act.
 - File Explorer. Menu: Session, Show current file in. Key: Ctrl+W. Mark: open.
 - Back to the list. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
-- Context menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
-- Find in the queue. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
+- Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
+- Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
 - Find previous. Menu: none, a key alone. Key: Shift+F3. Mark: read. Never run by AI tools.
+- Into the list. Menu: none, a key alone. Key: Right. Mark: open. Never run by AI tools.
+- Open. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
+- Select or deselect. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
+- Select to here. Menu: none, a key alone. Key: Shift+Space. Mark: change. Never run by AI tools.
 - Select to the first file. Menu: none, a key alone. Key: Shift+Home. Mark: change. Never run by AI tools.
 - Select to the last file. Menu: none, a key alone. Key: Shift+End. Mark: change. Never run by AI tools.
 - Select to the next file. Menu: none, a key alone. Key: Shift+Down. Mark: change. Never run by AI tools.
 - Select to the previous file. Menu: none, a key alone. Key: Shift+Up. Mark: change. Never run by AI tools.
+- The Context menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
+- Up a level. Menu: none, a key alone. Key: Left. Also: Backspace. Mark: open. Never run by AI tools.
 
 ## axPass
 

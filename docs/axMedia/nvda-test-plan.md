@@ -14,7 +14,7 @@ Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video an
 6. Ctrl+I on the playing file: "<name>, 2 of 15, playing, 0:12 of 45:30"; on another: "<name>, 3 of 15".
 7. Delete on another file: "Removed <name>", the list one shorter, the mark still on the playing file. Delete on the playing file: "Removed <name>" and the next plays ("Playing <next>" is heard only when Say each file is on). Session, Clear queue: "Queue cleared", the sound stops, the list reads "Queue is empty"; NVDA+T: "axMedia".
 8. Ctrl+N: a second axMedia window, empty; Alt+W, O, 1 goes back; Alt+F4 closes the second.
-9. The menus (bundle AX-9.1, AX-9.11): Alt, then Right along the bar: Session, Actions, Navigation, Context, Options, Window, axKit, Help. On a file of the queue, Shift+F10: Context opens on "Play Enter" and NVDA reads it; Escape. With the queue empty, Alt+C: one item, "Nothing in the queue".
+9. The menus (bundle AX-9.1, AX-9.11): Alt, then Right along the bar: Session, Actions, Navigation, Context, Options, Window, axKit, Help. On a file of the queue, Shift+F10: Context opens on "Play Enter" and NVDA reads it; Escape. With the queue empty, Alt+C: one item, "Queue is empty". In the queue, Right, Left and Backspace: the edge sound, the row you are on unchanged; F2, Ctrl+Z and F5: nothing.
 
 ## 2. The hand-over (AM-1.2, AM-1.3)
 

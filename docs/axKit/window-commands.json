@@ -1043,7 +1043,7 @@
         {"label": "Edit theme file", "menu": "axKit, Theme", "key": "", "also": [], "keyText": "", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Reload theme", "menu": "axKit, Theme", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Theme on", "menu": "axKit, Theme", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},
-        {"label": "Nothing in the queue", "menu": "Context", "key": "", "also": [], "keyText": "", "mark": "read", "keyOnly": false, "ai": true},
+        {"label": "Queue is empty", "menu": "Context", "key": "", "also": [], "keyText": "", "mark": "read", "keyOnly": false, "ai": true},
         {"label": "Command palette", "menu": "Help", "key": "ctrl+shift+p", "also": [], "keyText": "Ctrl+Shift+P", "mark": "read", "keyOnly": false, "ai": true},
         {"label": "Keyboard shortcuts", "menu": "Help", "key": "f1", "also": [], "keyText": "F1", "mark": "read", "keyOnly": false, "ai": true},
         {"label": "Send a report", "menu": "Help", "key": "f4", "also": [], "keyText": "F4", "mark": "open", "keyOnly": false, "ai": true},
@@ -1103,14 +1103,20 @@
         {"label": "axTask", "menu": "Window, New window", "key": "", "also": [], "keyText": "", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "axTerminal, access layer for your shell", "menu": "Window, New window", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "Back to the list", "menu": "", "key": "ctrl+tab", "also": ["ctrl+shift+tab", "f6"], "keyText": "Ctrl+Tab", "mark": "open", "keyOnly": true, "ai": false},
-        {"label": "Context menu", "menu": "", "key": "shift+f10", "also": ["ctrl+period", "apps"], "keyText": "Shift+F10", "mark": "open", "keyOnly": true, "ai": false},
-        {"label": "Find in the queue", "menu": "", "key": "ctrl+f", "also": [], "keyText": "Ctrl+F", "mark": "read", "keyOnly": true, "ai": false},
+        {"label": "Delete", "menu": "", "key": "delete", "also": [], "keyText": "Delete", "mark": "act", "keyOnly": true, "ai": false},
+        {"label": "Find in the list", "menu": "", "key": "ctrl+f", "also": [], "keyText": "Ctrl+F", "mark": "read", "keyOnly": true, "ai": false},
         {"label": "Find next", "menu": "", "key": "f3", "also": [], "keyText": "F3", "mark": "read", "keyOnly": true, "ai": false},
         {"label": "Find previous", "menu": "", "key": "shift+f3", "also": [], "keyText": "Shift+F3", "mark": "read", "keyOnly": true, "ai": false},
+        {"label": "Into the list", "menu": "", "key": "right", "also": [], "keyText": "Right", "mark": "open", "keyOnly": true, "ai": false},
+        {"label": "Open", "menu": "", "key": "enter", "also": [], "keyText": "Enter", "mark": "open", "keyOnly": true, "ai": false},
+        {"label": "Select or deselect", "menu": "", "key": "space", "also": [], "keyText": "Space", "mark": "change", "keyOnly": true, "ai": false},
+        {"label": "Select to here", "menu": "", "key": "shift+space", "also": [], "keyText": "Shift+Space", "mark": "change", "keyOnly": true, "ai": false},
         {"label": "Select to the first file", "menu": "", "key": "shift+home", "also": [], "keyText": "Shift+Home", "mark": "change", "keyOnly": true, "ai": false},
         {"label": "Select to the last file", "menu": "", "key": "shift+end", "also": [], "keyText": "Shift+End", "mark": "change", "keyOnly": true, "ai": false},
         {"label": "Select to the next file", "menu": "", "key": "shift+down", "also": [], "keyText": "Shift+Down", "mark": "change", "keyOnly": true, "ai": false},
-        {"label": "Select to the previous file", "menu": "", "key": "shift+up", "also": [], "keyText": "Shift+Up", "mark": "change", "keyOnly": true, "ai": false}
+        {"label": "Select to the previous file", "menu": "", "key": "shift+up", "also": [], "keyText": "Shift+Up", "mark": "change", "keyOnly": true, "ai": false},
+        {"label": "The Context menu", "menu": "", "key": "shift+f10", "also": ["ctrl+period", "apps"], "keyText": "Shift+F10", "mark": "open", "keyOnly": true, "ai": false},
+        {"label": "Up a level", "menu": "", "key": "left", "also": ["backspace"], "keyText": "Left", "mark": "open", "keyOnly": true, "ai": false}
       ]
     },
     {

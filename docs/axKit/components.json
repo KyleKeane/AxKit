@@ -118,7 +118,7 @@
     { "app": "axDown", "window": "", "type": "editor", "to be": "editor", "note": "" },
     { "app": "axJSON", "window": "", "type": "editor", "to be": "editor", "note": "" },
     { "app": "axPreview", "window": "", "type": "editor", "to be": "editor", "note": "Read-only, with the list of details." },
-    { "app": "axMedia", "window": "MediaForm", "type": "", "to be": "navigator", "note": "A window of its own today. To be a queue and its controls." },
+    { "app": "axMedia", "window": "MediaForm", "type": "navigator", "to be": "navigator", "note": "One level, the queue, and no second pane; the video area and the player are its own." },
     { "app": "axTask", "window": "TaskForm", "type": "navigator", "to be": "navigator", "note": "" },
     { "app": "axStart", "window": "StartForm", "type": "hotkey", "to be": "hotkey", "note": "" },
     { "app": "axClip", "window": "ClipForm", "type": "hotkey", "to be": "hotkey", "note": "" },

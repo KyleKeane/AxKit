@@ -79,8 +79,8 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 - What: For things in levels: a list of rows you go into and out of, and beside it more of the row you are on.
 - Made of: the list; the list.
 - Moving: Right goes into a row that holds a level; Left and Backspace go up. Enter opens the row. Tab and the other pane keys switch to the second pane; Escape comes back.
-- Apps on it: axTask, axAutomate, axPass, axMCP.
-- To move onto it: axFile, axMedia, axProcess, axGIT.
+- Apps on it: axMedia, axTask, axAutomate, axPass, axMCP.
+- To move onto it: axFile, axProcess, axGIT.
 - The code: `ItemForm`, `src/AxKit.Forms/ItemForm.cs`.
 
 ### The hotkey window
@@ -93,7 +93,7 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 
 ## The apps
 
-17 apps: 12 on a type, 5 with a window of their own still to move.
+17 apps: 13 on a type, 4 with a window of their own still to move.
 
 | App | Type today | To be | Note |
 |---|---|---|---|
@@ -101,7 +101,7 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 | axDown | editor | editor |  |
 | axJSON | editor | editor |  |
 | axPreview | editor | editor | Read-only, with the list of details. |
-| axMedia | a window of its own | navigator | A window of its own today. To be a queue and its controls. |
+| axMedia | navigator | navigator | One level, the queue, and no second pane; the video area and the player are its own. |
 | axTask | navigator | navigator |  |
 | axStart | hotkey | hotkey |  |
 | axClip | hotkey | hotkey |  |

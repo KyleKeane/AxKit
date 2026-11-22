@@ -33,6 +33,17 @@ keys shift+down
 expect focus delta.wav, selected
 keys ctrl+i
 expect said 2 selected
+expect state , 2 selected","
+
+# Check: The queue is a navigator of one level: Right, Left and Backspace play the edge sound and move nothing
+# docs/axKit/framework.md FW-4.9: no list to go into and no level above; the row you are on and the selection stay.
+keys right
+expect said ♪ Edge
+keys left
+expect said ♪ Edge
+keys backspace
+expect said ♪ Edge
+expect focus delta.wav, selected
 
 # Goal: Take the selected files out of the queue
 # Delete removes both, whatever row you are on; the file playing goes on undisturbed.

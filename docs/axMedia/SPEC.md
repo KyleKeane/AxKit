@@ -91,11 +91,17 @@ top of the window. It works entirely offline (bundle G6).
 
 - AM-2.1 One list, "Queue", named with its count ("Queue, 12 items"; "Queue is empty" as its one item when empty,
   AX-9.5): the files in order as "03 Chapter 3.mp3", the one playing or paused marked "03 Chapter 3.mp3 (playing)".
-  The arrow keys, Home, End, Page Up and Page Down and a typed letter are the list's own; nothing is spoken on them
-  (AX-7.3).
+  The Up and Down arrow keys, Home, End, Page Up and Page Down and a typed letter are the list's own; nothing is
+  spoken on them (AX-7.3). The window is a navigator, the bundle's item window (`docs/axKit/framework.md` FW-4.9,
+  2026-11-22; a window of its own until then): the queue is its one level, the files its rows, and it has no
+  second pane. So the list, its selection (AM-3.5), find, the Context menu and the keys of a navigator are the
+  shared ones: Right, Left and Backspace, which go into a list and up a level in other navigators, play the edge
+  sound here, where there is neither; F2, Ctrl+Z, F5 and Ctrl+Shift+N, a navigator's rename, undo, refresh and new
+  list, are no keys of this window, since a queue has no use for them.
 - AM-2.2 The status bar: on the left the state, the file and the time while something plays, "Playing 03 Chapter
   3.mp3 12:40 / 45:30", moving every second; on the right the place and the speed, "3 of 12, speed 1.25"; both empty
-  otherwise. The labels have no accessible name and no spring (AX-6.2).
+  otherwise. While files are selected the left part ends in how many, ", 3 selected" (AX-8.16; "3 selected" alone
+  while nothing plays). The labels have no accessible name and no spring (AX-6.2).
 - AM-2.3 The title: "<name> - axMedia" while a file plays or is paused, "axMedia" otherwise; the Window menu names the
   window by it (AX-9).
 - AM-2.4 A video's picture is drawn in an area at the top of the window (not focusable; never a window of its own,
@@ -172,14 +178,16 @@ top of the window. It works entirely offline (bundle G6).
   seconds Ctrl+Right | Back 15 seconds Ctrl+Left | ─ | Faster Ctrl+Up | Slower Ctrl+Down | Normal
   speed | ─ | What is playing Ctrl+Q. **Navigation (N):** Next file Ctrl+Shift+Right | Previous file Ctrl+Shift+Left |
   Go to time… Ctrl+T. **Context (C)**, the file selected (AX-9.11; Shift+F10, the Applications key and a right click in
-  the queue): Play Enter | Remove Delete | Information Ctrl+I; "Nothing in the queue" while it is empty. **Options
+  the queue): Play Enter | Remove Delete | Information Ctrl+I | ─ | Select or deselect Space | Select to here Shift+Space; one
+  item, "Queue is empty", the empty line's words, while it is empty ("Nothing in the queue" until 2026-11-22). **Options
   (O):** Say each file as it starts ✓ | Text ▸ | General ▸ (Check for updates at start ✓) | Developer ▸ (Open settings
   file). **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Media resources ▸ (Formats Windows plays, Microsoft's
   page on Media Foundation; Free codecs in the Microsoft Store, a Store search for media extensions; each in the
   browser). Every item has a mnemonic (AX-7.4).
 - AM-5.2 Keys (AX-8). Bundle-wide: F1, the control keys (one control, so they stay in the list), Ctrl+F, F3, Shift+F3,
-  Ctrl+S ("Nothing to save here"), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxMediaKeys`): Enter, Delete and
-  Space and the other selection keys in the list (AM-3.5); Ctrl+Enter, Ctrl+I, Ctrl+O, Ctrl+Shift+O, Ctrl+N (New window, AX-9), Ctrl+W, Ctrl+Right, Ctrl+Left,
+  Ctrl+S ("Nothing to save here"), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxMediaKeys`): Enter, Delete,
+  Space and the other selection keys, and Shift+F10 in the list (AM-3.5), which are the navigator's keys
+  (`ItemKeys`, `SelectionKeys`), named in the table by what they do in a queue; Ctrl+Enter, Ctrl+I, Ctrl+O, Ctrl+Shift+O, Ctrl+N (New window, AX-9), Ctrl+W, Ctrl+Right, Ctrl+Left,
   Ctrl+Shift+Right, Ctrl+Shift+Left, Ctrl+T, Ctrl+Up, Ctrl+Down, Ctrl+Q from anywhere in the window
   (in a notice's field they are the field's own, AX-7.2; Ctrl+Up and Ctrl+Down, faster and slower, are the bundle's
   paragraph keys there, AM-D8). The collision test covers the table.
@@ -224,8 +232,8 @@ src/AxMedia.Core/   class library (net10.0): MediaPlayer (MFPlay through P/Invok
                     AxFile.Core unchanged), PlayQueue (the paths, the index playing, Set, Add, Remove, MoveOn, the
                     lines; moved from AxFile.Core without the status lines, which stay axFile's), MediaFolder (a
                     folder's media files in name order, hidden ones left out), MediaSettings; references AxKit.Core
-src/AxMedia/        class library (net10.0-windows): AxMediaApp (Run, Usage), MediaForm (the window, on AxKitForm:
-                    the queue list, the video area, the status bar and its clock, the menus, the keys, the player's
+src/AxMedia/        class library (net10.0-windows): AxMediaApp (Run, Usage), MediaForm (the window, on ItemForm, the
+                    bundle's navigator, since 2026-11-22: the queue as its one level, the video area, the status bar and its clock, the menus, the keys, the player's
                     events, the hand-over received through AppMessage; grown from axFile's FileForm.Player.cs and the
                     queue part of FileForm.Pane.cs), AxMediaKeys, HelpText; references AxMedia.Core, AxKit.Core,
                     AxKit.Forms
