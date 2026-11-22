@@ -44,7 +44,9 @@ if ($Only -ne '') {
 # The hooks are installed (root CLAUDE.md rules 7 and 9): the commit-msg hook marks each commit's item in the priorities
 # list and the pre-push hook syncs the repositories beside this one, and both do nothing in a clone where the setting
 # was never made. Only on a computer that has the lists (..\axkit-management): a contributor's clone and CI have no
-# lists to keep. The setting may hold tools/hooks or the folder's full path, as release.ps1's check allows.
+# lists to keep. The setting may hold tools/hooks or the folder's full path, as release.ps1's check allows. In a
+# worktree beside the checkout (a branch's own folder) the setting is the checkout's, with the full path of its
+# hooks, and those are the hooks that run there: that passes too.
 if (Test-Path -LiteralPath (Join-Path $root '..\axkit-management')) {
     $hooks = "$(git -C $root config --get core.hooksPath)".Trim()
     $hooksFolder = ''
@@ -52,7 +54,12 @@ if (Test-Path -LiteralPath (Join-Path $root '..\axkit-management')) {
         $hooksFolder = if ([IO.Path]::IsPathRooted($hooks)) { $hooks } else { Join-Path $root $hooks }
         $hooksFolder = [IO.Path]::GetFullPath($hooksFolder).TrimEnd('\')
     }
-    if ($hooksFolder -ine [IO.Path]::GetFullPath((Join-Path $root 'tools\hooks')).TrimEnd('\')) {
+    $installed = @([IO.Path]::GetFullPath((Join-Path $root 'tools\hooks')).TrimEnd('\'))
+    $common = "$(git -C $root rev-parse --path-format=absolute --git-common-dir)".Trim()
+    if ($common) {
+        $installed += [IO.Path]::GetFullPath((Join-Path (Split-Path -Parent $common) 'tools\hooks')).TrimEnd('\')
+    }
+    if ($installed -inotcontains $hooksFolder) {
         Write-Host 'The git hooks are not installed in this clone, so no commit marks its item and no push syncs the lists. Run once: git config core.hooksPath tools/hooks'
         exit 1
     }
