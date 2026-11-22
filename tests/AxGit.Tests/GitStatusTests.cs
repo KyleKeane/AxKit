@@ -50,15 +50,10 @@ public sealed class GitStatusTests
     }
 
     [Fact]
-    public void Space_stages_what_is_unstaged_and_unstages_the_rest()
+    public void A_conflict_is_not_staged_from_the_list()
     {
         var files = GitStatus.Parse(Sample).Files.ToDictionary(file => file.Path);
-        Assert.Equal(["add", "--", "src/Foo.cs"], files["src/Foo.cs"].StageArguments);
-        Assert.Equal("Staged src/Foo.cs", files["src/Foo.cs"].StageAnnouncement);
-        Assert.Equal(["restore", "--staged", "--", "docs/plan.md"], files["docs/plan.md"].StageArguments);
-        Assert.Equal("Unstaged docs/plan.md", files["docs/plan.md"].StageAnnouncement);
-        Assert.Equal(["add", "--", "CHANGELOG.md"], files["CHANGELOG.md"].StageArguments);
-        Assert.Equal(["add", "--", "notes.txt"], files["notes.txt"].StageArguments);
+        Assert.True(files["src/Foo.cs"].CanStage);
         Assert.False(files["src/Conflict.cs"].CanStage);
     }
 

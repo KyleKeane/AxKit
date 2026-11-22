@@ -55,13 +55,6 @@ public sealed record ChangedFile(string Path, ChangeKind Kind, bool Staged, bool
     /// <summary>A conflict is not staged from the list (AG-3.2).</summary>
     public bool CanStage => Kind != ChangeKind.Conflict;
 
-    /// <summary>Space: the whole file into the index when any of it is unstaged, otherwise out of it (AG-3.2).</summary>
-    public IReadOnlyList<string> StageArguments =>
-        Unstaged ? ["add", "--", Path] : ["restore", "--staged", "--", Path];
-
-    /// <summary>What Space will say.</summary>
-    public string StageAnnouncement => Unstaged ? $"Staged {Path}" : $"Unstaged {Path}";
-
     /// <summary>Enter: the diff of what changed (AG-3.3); empty for an untracked file, whose own text is shown instead.</summary>
     public IReadOnlyList<string> DiffArguments => Kind switch
     {
