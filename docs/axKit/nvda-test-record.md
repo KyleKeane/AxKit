@@ -27,6 +27,13 @@ Right goes into this one"; "Done: 2 tasks. 1 was done already.", "Not done: 3 ta
 "Later: 3 items moved to Later", "Archived 2 items", and each "Undone: …". With nothing selected Ctrl+Enter says
 "Done: Fix the tap" as Space did before.
 
+The same sitting at 14262c85 (Ctrl+M, Move to a list): `axTask\20-selection.txt` again, 13 goals and checks, all
+passed and spoken. Heard: "Choose the list list, Later", then the form's explanation once; "2 items moved to
+Later"; in the name's field "Type the new list's name, when you chose A new list, edit, blank", then "Buy paint
+moved to Someday"; each "Undone: …". One thing for his ear: in a form's list NVDA sometimes adds its own "not
+selected" to a line ("Later not selected"), which is the list box's state and has nothing to do with the items
+selected with Space; it is so in every form's list, Move to section too.
+
 Not heard here, his by ear: how Space as select and Ctrl+Enter as Done feel under the fingers in his own lists.
 Not run yet at this commit: the window checks of the other apps, which the shared window code changed under; they
 are recorded before the next release.
