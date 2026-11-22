@@ -52,6 +52,9 @@ public sealed class ControlArea : Panel
         list.IntegralHeight = false;
         list.AccessibleName = name;
         list.Dock = DockStyle.Fill;
+        // AX-7.11, framework FW-3.8: the focus arrived in the answers: a list entered. Its field is the text box,
+        // which says so itself. A question a program asks has its own sound first, and this one then stays silent.
+        list.Enter += (_, _) => (FindForm() as AxKitForm)?.SoundOnEntry(list, AxKit.Core.Events.EventKind.ListEntered);
         list.Items.AddRange([.. items]);
         if (list is CheckedListBox boxes)
         {

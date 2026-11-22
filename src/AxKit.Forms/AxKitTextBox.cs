@@ -28,6 +28,24 @@ public class AxKitTextBox : TextBox
         MaxLength = 0;
     }
 
+    /// <summary>
+    /// The focus arrived in the text from outside it (AX-7.11, framework FW-3.8): it says so itself, through the
+    /// window it is in: a text to read when it is read-only (a conversation, a notice's text, a file shown), a
+    /// field to type in otherwise. Every text box of every window is this class.
+    /// </summary>
+    protected override void OnEnter(EventArgs e)
+    {
+        base.OnEnter(e);
+        if (ReadOnly)
+        {
+            (FindForm() as AxKitForm)?.SoundOnEntry(this, AxKit.Core.Events.EventKind.TextEntered);
+        }
+        else
+        {
+            (FindForm() as AxKitForm)?.SoundOnEntry(this, AxKit.Core.Events.EventKind.FieldEntered);
+        }
+    }
+
     // ---- edit mode and navigation mode (AX-8.13, 2026-11-15) ----
 
     /// <summary>

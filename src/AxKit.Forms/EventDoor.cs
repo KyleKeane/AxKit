@@ -76,8 +76,54 @@ public static class EventDoor
     }
 
     /// <summary>The sound by its name: each goes to the method of <see cref="Sounds"/> of the same name.</summary>
+    // ---- turns (AX-7.11): which sounds came of one and the same key press or arrival ----
+
+    /// <summary>The turn of the window's thread now: one for each message it takes off its queue (a key, a timer's tick, a posted call).</summary>
+    private static long _turn;
+
+    /// <summary>The turn in which a sound of a moment last played; the ticks of arriving lines and the entry sounds themselves do not count.</summary>
+    private static long _momentTurn = -1;
+
+    private static bool _counting;
+
+    private sealed class TurnCounter : IMessageFilter
+    {
+        public bool PreFilterMessage(ref Message m)
+        {
+            _turn++;
+            return false;
+        }
+    }
+
+    /// <summary>Starts counting the turns of this thread, once; every window calls it as it is made.</summary>
+    public static void CountTurns()
+    {
+        if (!_counting)
+        {
+            _counting = true;
+            Application.AddMessageFilter(new TurnCounter());
+        }
+    }
+
+    /// <summary>The turn now, for a caller that asks <see cref="SoundedIn"/> about it later.</summary>
+    public static long Turn => _turn;
+
+    /// <summary>
+    /// Whether a sound of something that happened played in that turn: an entry sound asked for in the same turn
+    /// then stays silent (<see cref="AxKitForm.SoundOnEntry"/>, AX-7.11), so that a refusal, a notice that opened by
+    /// itself or a program's question is heard alone, and never cut off by the sound of the focus arriving where
+    /// that same key or arrival sent it. Exact, and no matter of time: two keys pressed one right after the other
+    /// are two turns (a rule of "within 150 ms" was tried first and silenced the second key's entry).
+    /// </summary>
+    public static bool SoundedIn(long turn) => _momentTurn == turn;
+
     private static void Play(EventSound sound)
     {
+        if (sound is not (EventSound.Click or EventSound.Tool or EventSound.FormOpen or EventSound.ListOpen or EventSound.FieldOpen or EventSound.TextOpen))
+        {
+            _momentTurn = _turn;
+        }
+
         switch (sound)
         {
             case EventSound.Click: Sounds.Click(); break;

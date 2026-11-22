@@ -75,7 +75,7 @@ public sealed class ThemeTests
         Directory.Delete(Path.GetDirectoryName(path)!, recursive: true);
     }
 
-    /// <summary>TH-6.7, AX-7.11 (2026-11-22): Sounds when something opens, on without a file or a key, written beside the other display settings.</summary>
+    /// <summary>TH-6.7, AX-7.11 (2026-11-22): Entry sounds, on without a file or a key, written beside the other display settings.</summary>
     [Fact]
     public void Sounds_when_something_opens_are_on_by_default_and_written_beside_what_is_there()
     {

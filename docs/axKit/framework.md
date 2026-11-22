@@ -65,8 +65,8 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
   so it is not another coding paradigm that might be forgotten"; "Every focus entry, automatic"). When the focus
   arrives in a component from outside it (something opened, Tab between panes, back from a notice), the component
   raises its kind and the kind's sound plays (the family Openings, AX-7.11). Moving inside it is silent. No window
-  raises these. A new component cannot exist without declaring its entry event. This moves the raising from the
-  notice (as built on 2026-11-22) into the components.
+  raises these. A new component cannot exist without declaring its entry event. Built on 2026-11-22 (step 2 of
+  section 8; SPEC AX-7.11): the raising moved from the notice, where it was first built that day, into the components.
 
 | Component | Class | Entry event | Its sound |
 |---|---|---|---|
@@ -258,15 +258,17 @@ Each removes something that exists today. Each can be turned back while its piec
 5. **axGIT is made simple**: staging acts on the selected files, where Space staged one file until now.
 6. **Tab switches panes in every window**; where there is one pane it does nothing.
 
-### Still his to say
+### Decided by him on 2026-11-22 ("Yes, take all four as proposed"; axCalc: "should just be using the same as axclaude and axterminal")
 
-7. **No selection of several in the hotkey windows**, since Space types into their field. I propose to state it
-   as the one exception to "Space selects".
+7. **No selection of several in the hotkey windows**, since Space types into their field: the one exception to
+   "Space selects".
 8. **axHelp** stays a hotkey window, since being called from anywhere is its point, with the conversation
-   window's text and field inside it. The other choice is a conversation window that a hotkey brings up.
+   window's text and field inside it.
 9. **The second pane of the navigator** in three kinds (fields, text, log), no more.
 10. **Enter on a row** keeps the app's own opening (a form in axTask, the file in axFile, the text in axGIT, the
     details in axProcess, play in axMedia): the one key in which apps of the type differ.
+
+No point is open.
 
 ## 10. As read from the sources on 2026-11-22
 

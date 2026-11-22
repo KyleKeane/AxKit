@@ -870,7 +870,7 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Hear that a text to read opened
     - Hear that a field to type in opened
     - Hear that a form opened, and its explanation only on demand
-    - Turn the sounds of what opens off and on
+    - Turn the entry sounds off and on
 
 ## axTerminal
 

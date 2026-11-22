@@ -219,11 +219,11 @@
           "sounds": [],
           "words": "NVDA reads what opened. 'Started Notepad', 'Opening x' for an outside program.",
           "apps": "Every window.",
-          "note": "What opens inside the window as a notice has a kind of its own since 2026-11-22, by the way of working that starts: form-opened, list-opened, field-opened, text-opened. This kind is what is left: the palette's own moves, another window, an outside program."
+          "note": "The focus arriving in a list, a text, a field or a form has a kind of its own since 2026-11-22, raised by the component itself: form-entered, list-entered, field-entered, text-entered. This kind is what is left: another window, an outside program."
         },
         {
-          "id": "form-opened",
-          "when": "A form opened in the window at your command: several things asked for one action, Tab between them (SPEC AX-7.11).",
+          "id": "form-entered",
+          "when": "The focus entered a form from outside it: several things asked for one action, Tab between them (SPEC AX-7.11). Once for the form; moving between its controls is silent.",
           "starts": ["key", "menu", "palette", "ai-tool", "script"],
           "sounds": ["FormOpen"],
           "words": "After NVDA has read the first control: the title and the one word, 'Move 2 items, form'. The explanation is not said: Ctrl+Q reads it. Two forms say their text after the word, since it is what will happen and not how a form is used: the report, and an action of an axTask list.",
@@ -231,32 +231,32 @@
           "where": ["src/AxKit.Forms/AxKitForm.Theme.cs"]
         },
         {
-          "id": "list-opened",
-          "when": "A list to choose one of opened in the window at your command: Up and Down, Enter chooses (SPEC AX-7.11).",
+          "id": "list-entered",
+          "when": "The focus entered a list from outside it: one opened, Tab or F6 came to it, a notice closed over it, the window started on it (SPEC AX-7.11). Moving inside it is silent.",
           "starts": ["key", "menu", "palette", "ai-tool", "script"],
           "sounds": ["ListOpen"],
           "words": "NVDA reads the list and its line.",
-          "apps": "The item windows' choices of a field.",
+          "apps": "Every list of every window, and the answers in the field's place.",
           "where": ["src/AxKit.Forms/AxKitForm.Theme.cs"]
         },
         {
-          "id": "field-opened",
-          "when": "One field to type in opened at your command: a name asked for, Find, the command palette, a rename in place (SPEC AX-7.11).",
+          "id": "field-entered",
+          "when": "The focus entered a field to type in from outside it: a message field, a document, a name asked for, Find, the command palette, a rename in place (SPEC AX-7.11).",
           "starts": ["key", "menu", "palette", "ai-tool", "script"],
           "sounds": ["FieldOpen"],
           "words": "NVDA reads the field.",
-          "apps": "Every window: Find, the command palette, the one-field questions, F2 in a list.",
+          "apps": "Every field of every window.",
           "where": ["src/AxKit.Forms/AxKitForm.Theme.cs"]
         },
         {
-          "id": "text-opened",
-          "when": "A text to read opened in the window at your command: a help text, a question's words with its buttons, an answer (SPEC AX-7.11).",
+          "id": "text-entered",
+          "when": "The focus entered a text to read from outside it: a conversation, a help text, a question's words with its buttons, an answer, a file shown read-only (SPEC AX-7.11).",
           "starts": ["key", "menu", "palette", "ai-tool", "script"],
           "sounds": ["TextOpen"],
           "words": "NVDA reads the text.",
-          "apps": "Every window: F1, the guides, About, a question such as Delete, AI help's answer.",
+          "apps": "Every read-only text of every window.",
           "where": ["src/AxKit.Forms/AxKitForm.Theme.cs"],
-          "note": "Not a notice that opens by itself, which has the notice sound, and not one that only waits on work."
+          "note": "When the same command just played another sound (a notice that opened by itself, a refusal, a program's question), that sound stands alone and the entry is silent. So for all four kinds."
         },
         {
           "id": "busy",
@@ -656,10 +656,10 @@
       "title": "Openings: a way of working starts",
       "learn": "Bell pings, a voice used for nothing else. Every one begins with the same mark, three quick beeps running up, which says the way you work has changed; then it goes down as its kind. An extended tone is text, discrete beeps are items, and a form has both.",
       "members": [
-        { "id": "FormOpen", "heard": "The mark, then beep, beep, tone, and the same lower: D6 twice and a held D5, A5 twice and a held A4. 0.7 s, the most complex, as a form is.", "chosen": "By ear, 2026-11-22: 'Mark 4 with the descending kinds' and 'Form B', after three sets and a second round in one voice.", "switch": "Options, Text, Sounds when something opens, in every window." },
-        { "id": "ListOpen", "heard": "The mark, then four quick beeps in a line going down by steps: A5, F sharp 5, E5, D5. 0.4 s.", "chosen": "By ear, 2026-11-22, with the others of its family.", "switch": "Options, Text, Sounds when something opens, in every window." },
-        { "id": "FieldOpen", "heard": "The mark, then one extended tone, A4: the simplest. 0.44 s.", "chosen": "By ear, 2026-11-22, with the others of its family.", "switch": "Options, Text, Sounds when something opens, in every window." },
-        { "id": "TextOpen", "heard": "The mark, then one extended tone an octave lower, A3, a little softer. 0.44 s.", "chosen": "By ear, 2026-11-22, with the others of its family.", "switch": "Options, Text, Sounds when something opens, in every window." }
+        { "id": "FormOpen", "heard": "The mark, then beep, beep, tone, and the same lower: D6 twice and a held D5, A5 twice and a held A4. 0.7 s, the most complex, as a form is.", "chosen": "By ear, 2026-11-22: 'Mark 4 with the descending kinds' and 'Form B', after three sets and a second round in one voice.", "switch": "Options, Text, Entry sounds, in every window." },
+        { "id": "ListOpen", "heard": "The mark, then four quick beeps in a line going down by steps: A5, F sharp 5, E5, D5. 0.4 s.", "chosen": "By ear, 2026-11-22, with the others of its family.", "switch": "Options, Text, Entry sounds, in every window." },
+        { "id": "FieldOpen", "heard": "The mark, then one extended tone, A4: the simplest. 0.44 s.", "chosen": "By ear, 2026-11-22, with the others of its family.", "switch": "Options, Text, Entry sounds, in every window." },
+        { "id": "TextOpen", "heard": "The mark, then one extended tone an octave lower, A3, a little softer. 0.44 s.", "chosen": "By ear, 2026-11-22, with the others of its family.", "switch": "Options, Text, Entry sounds, in every window." }
       ]
     },
     {

@@ -57,11 +57,6 @@ public abstract partial class AxKitForm
                     break;
             }
         }
-        else if (!notice.Unprompted && !notice.Silent)
-        {
-            // AX-7.11: what the user's own command opened plays the sound of its kind, before NVDA reads it.
-            SoundOnOpening(OpeningOf(notice));
-        }
 
         if (!NoticeOpen && !_chaining)
         {

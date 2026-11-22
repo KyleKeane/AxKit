@@ -110,6 +110,31 @@ public sealed class ComponentsTests
         Assert.All(Apps(document), app => Assert.True(app.ToBe.Length > 0, $"{app.App} does not say which type it is to be."));
     }
 
+    /// <summary>
+    /// FW-7.4, AX-7.11: an entry is raised by the component the focus entered, never by a window. So the four kinds
+    /// are named only where they are defined, in the components, and in the one place of the window base that
+    /// plays them. An app's file that names one fails here: the app gets the sound by using the component.
+    /// </summary>
+    [Fact]
+    public void Only_the_components_raise_an_entry()
+    {
+        string[] allowed =
+        [
+            "AxKit.Core/Events/EventKind.cs", "AxKit.Core/Events/EventPresenter.cs",
+            "AxKit.Forms/AxKitList.cs", "AxKit.Forms/AxKitTextBox.cs", "AxKit.Forms/FormControls.cs", "AxKit.Forms/ControlArea.cs",
+            "AxKit.Forms/AxKitForm.Theme.cs",
+        ];
+        var source = Path.Combine(LayoutTests.RepositoryRoot(), "src");
+        var elsewhere = Directory.GetFiles(source, "*.cs", SearchOption.AllDirectories)
+            .Where(file => !file.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar, StringComparison.Ordinal)
+                && !file.Contains(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar, StringComparison.Ordinal))
+            .Where(file => Regex.IsMatch(System.IO.File.ReadAllText(file), @"EventKind\.(Form|List|Field|Text)Entered\b"))
+            .Select(file => Path.GetRelativePath(source, file).Replace('\\', '/'))
+            .Where(file => !allowed.Contains(file))
+            .ToList();
+        Assert.True(elsewhere.Count == 0, "An entry event is named outside the components: " + string.Join(", ", elsewhere));
+    }
+
     [Fact]
     public void What_the_file_names_exists()
     {

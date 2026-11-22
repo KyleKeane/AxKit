@@ -62,10 +62,10 @@ public static class EventPresenter
         EventKind.Refused => [EventSound.Edge],
         EventKind.Sent => [EventSound.Sent],
         EventKind.Recalled => [EventSound.Recall],
-        EventKind.FormOpened => [EventSound.FormOpen],
-        EventKind.ListOpened => [EventSound.ListOpen],
-        EventKind.FieldOpened => [EventSound.FieldOpen],
-        EventKind.TextOpened => [EventSound.TextOpen],
+        EventKind.FormEntered => [EventSound.FormOpen],
+        EventKind.ListEntered => [EventSound.ListOpen],
+        EventKind.FieldEntered => [EventSound.FieldOpen],
+        EventKind.TextEntered => [EventSound.TextOpen],
         EventKind.Failed => [EventSound.Notice],
 
         // Something arrived.

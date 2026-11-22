@@ -148,6 +148,17 @@ public class AxKitList : ListBox
     }
 
     /// <summary>Any move of the selection but the search's own (an arrow, a command, the list filled anew) starts a new search, as in File Explorer: a letter typed just after it never continues the letters before (found by axAutomate, 2026-10-24: "s", then keys, then "b" within the second searched "sb").</summary>
+    /// <summary>
+    /// The focus arrived in the list from outside it (AX-7.11, framework FW-3.8): the list says so itself, through
+    /// the window it is in, which holds the user's switch and plays the sound once. Every list of every window is
+    /// this class, so no window has to remember it.
+    /// </summary>
+    protected override void OnEnter(EventArgs e)
+    {
+        base.OnEnter(e);
+        (FindForm() as AxKitForm)?.SoundOnEntry(this, EventKind.ListEntered);
+    }
+
     protected override void OnSelectedIndexChanged(EventArgs e)
     {
         if (!_jumping)
@@ -285,8 +296,7 @@ public class AxKitList : ListBox
             Controls.Add(_renameBox);
         }
 
-        // AX-7.11: a field to type in opened, in place: its sound through the window, which knows the user's switch.
-        (FindForm() as AxKitForm)?.SoundOnOpening(EventKind.FieldOpened);
+        // AX-7.11: the rename box is a field, and says so itself as the focus enters it (AxKitTextBox.OnEnter).
         _renameCommit = commit;
         _renameEnded = ended;
         _renameBox.Bounds = GetItemRectangle(SelectedIndex);

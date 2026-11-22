@@ -2,7 +2,7 @@
 # The bundle's AX-7.11 (the maintainer's wish of 2026-11-22), heard in axTask: whatever the user's own command opens
 # in the window plays the sound of its kind first: a text to read, a field to type in, a list to choose from, a form.
 # A form says its title and the word "form" and not its explanation, which Ctrl+Q reads, as it reads any notice's
-# text again. Options, Text, Sounds when something opens turns the sounds off for every window.
+# text again. Options, Text, Entry sounds turns the sounds off for every window.
 file home\AxKit\axTask.json {"checkForUpdates": false}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
 file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false}
@@ -46,16 +46,16 @@ expect said ! Now in Home. Up and Down choose the list
 keys escape
 expect state "notice":null
 
-# Goal: Turn the sounds of what opens off and on
-# Options, Text, Sounds when something opens: off, and F1 opens without the sound; on again.
-menu Sounds when something opens
-expect said ! Sounds when something opens off
+# Goal: Turn the entry sounds off and on
+# Options, Text, Entry sounds: off, and F1 opens without the sound; on again.
+menu Entry sounds
+expect said ! Entry sounds off
 keys f1
 expect state "notice":"Keyboard shortcuts"
 refuse said ♪ TextOpen
 keys escape
-menu Sounds when something opens
-expect said ! Sounds when something opens on
+menu Entry sounds
+expect said ! Entry sounds on
 keys f1
 expect said ♪ TextOpen
 keys escape

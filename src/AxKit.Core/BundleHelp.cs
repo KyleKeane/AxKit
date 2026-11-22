@@ -27,8 +27,8 @@ public static class BundleHelp
     /// <summary>The key test's line, the same in every F1 text (AX-8.12, 2026-11-15).</summary>
     public const string KeyTestLine = "  A key that seems to do nothing: Help, Diagnostics, Test a key says each key you press and what it does here, and carries none of them out; Escape ends it. A key that is not said never reached axKit";
 
-    /// <summary>What opens, its sound and its words, the same in every F1 text (AX-7.11, 2026-11-22).</summary>
-    public const string NoticeLine = "  What opens in the window plays a sound of its kind first, bell notes that run up and then go down: one long tone for a field to type in, a lower one for a text to read, four quick beeps for a list to choose from, beeps and tones for a form. A form says its title and the word form; Ctrl+Q reads its explanation, as it reads the text of any question or notice again. Options, Text, Sounds when something opens turns the sounds off for every window";
+    /// <summary>The entry sounds and a form's words, the same in every F1 text (AX-7.11, 2026-11-22).</summary>
+    public const string NoticeLine = "  Whenever the focus enters a list, a text, a field or a form, a sound of its kind plays first, bell notes that run up and then go down: one long tone for a field to type in, a lower one for a text to read, four quick beeps for a list, beeps and tones for a form. Moving inside it is silent. A form says its title and the word form; Ctrl+Q reads its explanation, as it reads the text of any question or notice again. Options, Text, Entry sounds turns the sounds off for every window";
 
     /// <summary>F8's line, the same in every F1 text (AX-7.10, 2026-11-15).</summary>
     public const string StatusLine = "  F8: say the status, what the status bar at the bottom of the window holds, said by axKit itself; in a notice too";

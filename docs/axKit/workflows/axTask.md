@@ -946,14 +946,14 @@ Starts with: Open axTask with the folder tasks.
     You hear: Now in Home. Up and Down choose the list.
 3. Press Escape.
 
-### Turn the sounds of what opens off and on
+### Turn the entry sounds off and on
 
-1. Choose Sounds when something opens in the Options menu, Text.
-    You hear: Sounds when something opens off.
+1. Choose Entry sounds in the Options menu, Text.
+    You hear: Entry sounds off.
 2. Press F1 (Keyboard shortcuts; Help menu).
 3. Press Escape.
-4. Choose Sounds when something opens in the Options menu, Text.
-    You hear: Sounds when something opens on.
+4. Choose Entry sounds in the Options menu, Text.
+    You hear: Entry sounds on.
 5. Press F1 (Keyboard shortcuts; Help menu).
     You hear the sound TextOpen.
 6. Press Escape.

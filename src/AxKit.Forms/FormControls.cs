@@ -24,6 +24,16 @@ public sealed class FormControls : FlowLayoutPanel
         SizeChanged += (_, _) => LayoutRows();
     }
 
+    /// <summary>
+    /// The focus arrived in the form from outside it (AX-7.11, framework FW-3.8): the form says so itself, once for
+    /// all its controls, which stay silent as the focus moves between them (<see cref="AxKitForm.SoundOnEntry"/>).
+    /// </summary>
+    protected override void OnEnter(EventArgs e)
+    {
+        base.OnEnter(e);
+        (FindForm() as AxKitForm)?.SoundOnEntry(this, AxKit.Core.Events.EventKind.FormEntered);
+    }
+
     /// <summary>Whether a text box here takes Enter as a new line: the form's text then says its keys itself (<see cref="Notice.KeyLine"/>).</summary>
     public bool EnterMakesNewLine { get; private set; }
 

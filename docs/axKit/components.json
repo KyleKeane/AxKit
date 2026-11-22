@@ -10,7 +10,7 @@
       "what": "Rows you move through with the arrow keys. Every list of every window is this one.",
       "built in": "Type the start of a name to jump to it; the edge sound at the first and the last row; rename in place with F2 where rows have names.",
       "selection": "With src/AxKit.Forms/ListSelection.cs: Space selects the row you are on, Shift with an arrow selects as it moves, Ctrl+A all, Escape none (SPEC AX-8.16). On in axFile's folder list and axTask's navigator so far.",
-      "entry event": "list-opened",
+      "entry event": "list-entered",
       "says": "NVDA reads the row; a selected row ends in ', selected'.",
       "keys": ["moves", "letter", "space", "shift-select", "enter", "delete", "escape"]
     },
@@ -22,7 +22,7 @@
       "what": "Text you read and do not change: a conversation, a notice's text, a file shown read-only. The conversation's text is this class; a notice's text and a read-only file are the text box below, set read-only.",
       "built in": "The caret moves only on your own key. Letters jump by heading and the like; Ctrl+F finds.",
       "selection": "",
-      "entry event": "text-opened",
+      "entry event": "text-entered",
       "says": "NVDA reads from the caret.",
       "keys": ["moves", "letter", "ctrl-arrows"]
     },
@@ -34,7 +34,7 @@
       "what": "Text you type, on one line or several: a message, a command, a document, a name.",
       "built in": "Ctrl+Space switches between editing and navigating; a line break typed is said, 'new line'.",
       "selection": "",
-      "entry event": "field-opened",
+      "entry event": "field-entered",
       "says": "NVDA reads the field's name and what it holds.",
       "keys": ["moves", "space", "ctrl-arrows", "enter"]
     },
@@ -46,7 +46,7 @@
       "what": "What a window waits on, shown where its field is: a list of answers, or a small field. Never a second window.",
       "built in": "The number keys choose an answer; Enter and Escape answer.",
       "selection": "",
-      "entry event": "list-opened",
+      "entry event": "list-entered",
       "says": "The question, then NVDA reads the answer you are on.",
       "keys": ["moves", "enter", "escape"]
     },
@@ -58,7 +58,7 @@
       "what": "Several standard controls for one action, in Tab order, each named with an instruction.",
       "built in": "Tab between the controls; Ctrl+Enter or Enter does it; Escape leaves and nothing is changed. Ctrl+Q reads its explanation.",
       "selection": "",
-      "entry event": "form-opened",
+      "entry event": "form-entered",
       "says": "After NVDA has read the first control: the title and the word 'form'.",
       "keys": ["ctrl-tab", "enter", "enter-forms", "escape"]
     },
@@ -70,7 +70,7 @@
       "what": "A text with its buttons over the window: a help text, a question, an error. It holds one of the pieces above when it asks for more.",
       "built in": "Enter and Escape press its buttons from anywhere in it; Ctrl+Q reads its text again.",
       "selection": "",
-      "entry event": "text-opened",
+      "entry event": "text-entered",
       "says": "NVDA reads the text.",
       "keys": ["enter", "escape", "letter"]
     }

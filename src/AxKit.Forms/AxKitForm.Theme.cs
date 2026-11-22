@@ -89,12 +89,12 @@ public abstract partial class AxKitForm
     }
 
     /// <summary>
-    /// Options, Text, Sounds when something opens (AX-7.11, TH-6.7, 2026-11-22): the same kind of item as Sound on
-    /// headings, the theme file's <c>display.openingSounds</c>.
+    /// Options, Text, Entry sounds (AX-7.11, TH-6.7, 2026-11-22): the same kind of item as Sound on headings, the
+    /// theme file's <c>display.openingSounds</c>.
     /// </summary>
     private ToolStripMenuItem CreateOpeningSoundsItem(ToolStripMenuItem textMenu)
     {
-        var item = CommandPalette.Marked(new ToolStripMenuItem("Sounds when something &opens", null, (_, _) => ToggleOpeningSounds()) { Checked = _theme?.OpeningSounds ?? true }, CommandMark.Change);
+        var item = CommandPalette.Marked(new ToolStripMenuItem("&Entry sounds", null, (_, _) => ToggleOpeningSounds()) { Checked = _theme?.OpeningSounds ?? true }, CommandMark.Change);
         CommandPalette.RefreshedOnOpening(textMenu, () => item.Checked = _theme?.OpeningSounds ?? true);
         return item;
     }
@@ -109,31 +109,60 @@ public abstract partial class AxKitForm
         }
 
         LoadTheme();
-        Announce(on ? "Sounds when something opens on" : "Sounds when something opens off", true);
+        Announce(on ? "Entry sounds on" : "Entry sounds off", true);
     }
 
-    /// <summary>
-    /// The kind a notice opens as (AX-7.11), by what it holds: a form (several controls of the window's own), a list
-    /// to choose from, a field to type in (the notice's own, or a text box of the window's), otherwise a text to
-    /// read. None for a notice that only waits on work (its progress bar).
-    /// </summary>
-    private static EventKind? OpeningOf(Notice notice) =>
-        notice.Progress ? null
-        : notice.Custom is FormControls ? EventKind.FormOpened
-        : notice.Custom is AxKitList ? EventKind.ListOpened
-        : notice.Input is not null || notice.Custom is TextBoxBase ? EventKind.FieldOpened
-        : notice.Custom is not null ? EventKind.FormOpened
-        : EventKind.TextOpened;
+    /// <summary>The entry a component asked for in this turn of the window's thread, played once the turn is over; the last asked wins.</summary>
+    private EventKind? _entryPending;
 
     /// <summary>
-    /// Something opened in the window at the user's own command (AX-7.11): the sound of its kind, unless Sounds when
-    /// something opens is off. Called as it opens, so that the sound starts before NVDA reads what opened. A list's
-    /// rename box in place calls it too (<see cref="AxKitList.BeginRename"/>). As the file was read at the window's
-    /// last activation, like Sound on headings.
+    /// The focus arrived in a component from outside it (AX-7.11, framework FW-3.8; the maintainer, 2026-11-22:
+    /// "as automatic as possible so it is not another coding paradigm that might be forgotten"). The components
+    /// call this themselves, from their own focus entry (<see cref="AxKitList"/>, <see cref="AxKitTextBox"/>,
+    /// <see cref="FormControls"/>, <see cref="ControlArea"/>'s list); no window does. The sound of the kind plays
+    /// once the window's thread has finished what it is doing, so that:
+    /// a focus that passes through one component on its way to another sounds only where it ends;
+    /// a control inside a form is silent, the form having sounded once for all of them;
+    /// and when the same command played another sound just before (a refusal, nothing found, a notice that opened
+    /// by itself, a question a program asks), that sound stands alone and the entry is silent.
+    /// Not while Entry sounds is off, as the file was read at the window's last activation.
     /// </summary>
-    protected internal void SoundOnOpening(EventKind? kind)
+    protected internal void SoundOnEntry(Control component, EventKind kind)
     {
-        if (kind is null || !(_theme?.OpeningSounds ?? true))
+        if (component is not FormControls)
+        {
+            for (var parent = component.Parent; parent is not null; parent = parent.Parent)
+            {
+                if (parent is FormControls)
+                {
+                    return;
+                }
+            }
+        }
+
+        if (!IsHandleCreated || IsDisposed)
+        {
+            return;
+        }
+
+        var first = _entryPending is null;
+        _entryPending = kind;
+        if (first)
+        {
+            EventDoor.CountTurns();
+            _entryTurn = EventDoor.Turn;
+            BeginInvoke(PlayEntry);
+        }
+    }
+
+    /// <summary>The turn of the window's thread in which the pending entry was asked for.</summary>
+    private long _entryTurn;
+
+    private void PlayEntry()
+    {
+        var kind = _entryPending;
+        _entryPending = null;
+        if (kind is null || IsDisposed || !(_theme?.OpeningSounds ?? true) || EventDoor.SoundedIn(_entryTurn))
         {
             return;
         }
@@ -141,17 +170,17 @@ public abstract partial class AxKitForm
         // Each raised by its name, so that the door and its test know which it was.
         switch (kind)
         {
-            case EventKind.FormOpened:
-                EventDoor.Raise(EventKind.FormOpened);
+            case EventKind.FormEntered:
+                EventDoor.Raise(EventKind.FormEntered);
                 break;
-            case EventKind.ListOpened:
-                EventDoor.Raise(EventKind.ListOpened);
+            case EventKind.ListEntered:
+                EventDoor.Raise(EventKind.ListEntered);
                 break;
-            case EventKind.FieldOpened:
-                EventDoor.Raise(EventKind.FieldOpened);
+            case EventKind.FieldEntered:
+                EventDoor.Raise(EventKind.FieldEntered);
                 break;
-            case EventKind.TextOpened:
-                EventDoor.Raise(EventKind.TextOpened);
+            case EventKind.TextEntered:
+                EventDoor.Raise(EventKind.TextEntered);
                 break;
         }
     }

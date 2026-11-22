@@ -1622,24 +1622,39 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   keys, the bundle keys that work in a notice, where F1, F4, the palette and Shift+F1, which each open a notice, wait
   (AX-7.2). An open menu keeps the key. A window put away says nothing (axClaude FR-9.6). In every F1 text
   (`BundleHelp.StatusLine`), the command palette and the menu, marked read for the AI tools.
-- AX-7.11 **What opens says its kind: a sound, one word for a form, and the explanation on demand** (2026-11-22,
-  the maintainer: "are we able to announce the type of interface a user is in? so that when they are in a form it
-  announces so they can know to switch keyboard interaction styles ... i would like to minimize those messages so
-  that it is just the essential info when the cursor moves"; "make a form opening earcon so that there is a cue
-  that the mode has switched"; "an earcon for the other interaction modes starting ... indicative of an
-  interaction change and have some character about the type of interaction").
+- AX-7.11 **What the focus enters says its kind: a sound, one word for a form, and the explanation on demand**
+  (2026-11-22, the maintainer: "are we able to announce the type of interface a user is in? so that when they are
+  in a form it announces so they can know to switch keyboard interaction styles ... i would like to minimize those
+  messages so that it is just the essential info when the cursor moves"; "make a form opening earcon so that there
+  is a cue that the mode has switched"; "an earcon for the other interaction modes starting ... indicative of an
+  interaction change and have some character about the type of interaction"; and on how it is raised, "we want
+  that process to be as automatic as possible so it is not another coding paradigm that might be forgotten":
+  "Every focus entry, automatic").
   - **What NVDA says by itself and what axKit adds.** NVDA names the kind of each control as the focus lands on
     it: "list", "edit", "check box", "button". That is NVDA's and stays. A form of axKit is a part of the window
     and no dialog (AX-7.2), so NVDA never says that a form opened; that is axKit's to say.
-  - **Four kinds of what opens in the window at the user's command**, by the way of working that starts, each a
-    kind of event of its own (`EventKind`, `docs/axKit/families.json`): a **form** (several things asked for one
-    action, Tab between them; a notice with controls of the window's own), a **list** to choose one of (a notice
-    whose control is a list), a **field** to type in (a notice with its own field, the command palette among them,
-    a text box of the window's in a notice, and the rename box in place of a list, AX-8.7), and a **text** to read
-    (everything else: a help text, a question's words with its buttons, an answer). The window base decides the
-    kind in one place (`AxKitForm.OpeningOf`). A notice that opens by itself keeps the notice sound (class Asks),
-    a request of an AI keeps its own, and a notice that only waits on work has none.
-  - **The sound** plays as it opens, before NVDA reads what opened (`AxKitForm.SoundOnOpening`, through the door,
+  - **Four kinds of entry**, by the way of working that starts, each a kind of event of its own (`EventKind`,
+    `docs/axKit/families.json`): the focus entered a **form** (several things asked for one action, Tab between
+    them), a **list**, a **field** to type in, or a **text** to read.
+  - **Raised by the component itself, at every entry of the focus from outside it** (framework FW-3.8, built
+    2026-11-22; the same day's first form raised it in the window base when a notice opened): the list
+    (`AxKitList.OnEnter`), the text box (`AxKitTextBox.OnEnter`: a text to read when it is read-only, the
+    conversation's text among them, a field otherwise), the form (`FormControls.OnEnter`, once for all its
+    controls, which are silent as the focus moves between them) and the answers in the field's place
+    (`ControlArea`'s list). So it sounds when something opens, when Tab or F6 moves to another pane, when the
+    focus comes back from a notice, and when a window starts; moving inside a component is silent. No window
+    raises an entry, and a component cannot be used without it. The rename box in a list is a field and sounds as
+    one.
+  - **One sound for one command** (`AxKitForm.SoundOnEntry`): the entry is played once the window's thread has
+    finished what it was doing. A focus that passes through one component on its way to another sounds only
+    where it ends. When the same key press or the same arrival already played another sound (a refusal, nothing
+    found, a notice that opened by itself with its notice sound, a question a program asks, an AI's request),
+    that sound stands alone and the entry is silent. "The same" is exact and no matter of time: the door counts
+    the turns of the window's thread, one for each key, tick or posted call it takes up, and an entry is silent
+    only when a sound of a moment played in the very turn that asked for it (`EventDoor.Turn`, `SoundedIn`; the
+    ticks of arriving lines do not count). A first form of this, "another sound within 150 ms", silenced the
+    entry of a second key pressed right after a first, and was replaced the same day.
+  - **The sound** plays before NVDA reads where the focus arrived (through the door,
     rule 13). The four are one family, **Openings**, in one voice used for nothing else, small bell pings
     (`AxKit.Core/Audio/OpeningSounds`, `WaveTone.Pings`): every one begins with the same mark, three quick beeps
     running up a chord, which says that the way of working changed; then it goes down as its kind. An extended
@@ -1650,9 +1665,8 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
     class 4 was one of them and was not taken for this). The form's sound is 0.7 s, the one sound of a moment
     beside the call from another window that is longer than half a second, as he chose it; the others are under
     half a second.
-  - **The switch**: Options, Text, **Sounds when something opens**, on at first, the same in every window
-    (`display.openingSounds` of the theme file, `docs/axKit/theme.md` TH-6.7); "Sounds when something opens on"
-    or "off".
+  - **The switch**: Options, Text, **Entry sounds**, on at first, the same in every window
+    (`display.openingSounds` of the theme file, `docs/axKit/theme.md` TH-6.7); "Entry sounds on" or "off".
   - **The words of a form.** The focus starts in the form's first control and never on its text. After NVDA has
     read that control, the window says the title and the one word: "Move 2 items, form". The explanation is not
     said at opening (until 2026-11-22 it was, whole, and partly a second time as the focus passed over the
@@ -1666,11 +1680,11 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
     (`OverlayPanel.ReadText`, taken by the window base while a notice shows, before the window's commands): the
     same key that reads what you are on in the windows that have such a key. In every F1 text
     (`BundleHelp.NoticeLine`).
-  - **Not done, by decision of the day, open to his word**: no sound when the focus moves between the panes of a
-    window with Tab, which would sound at every Tab; and no sound for leaving.
+  - **Not done, open to his word**: no sound for leaving.
   - Tested: `OpeningSoundsTests` (the sounds), `ThemeTests` (the switch), `EventKindTests` and `EventDoorTests`
-    (the kinds, the table and the door); `tests/scripts/axTask/18-item-form.txt` and `20-selection.txt` hear the
-    form's sound, its words and Ctrl+Q.
+    (the kinds, the table and the door), `ComponentsTests` (only the components name the four kinds);
+    `tests/scripts/axTask/21-what-opens.txt` hears each of the four and the switch, `18-item-form.txt` and
+    `20-selection.txt` the form's sound, its words and Ctrl+Q.
 
 ## 5. Architecture
 

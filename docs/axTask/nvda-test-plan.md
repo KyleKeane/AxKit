@@ -295,7 +295,7 @@ up, then the kind going down.
    its line; then "Move Fix the tap, form" and nothing more. Ctrl+Q: the explanation. Escape.
 5. Listen across the four that they are told apart at once, that each is over before the words matter, and that none
    is mistaken for the heading sound, the edge, a question's sound or the sound of background work starting.
-6. Options, Text, Sounds when something opens: "Sounds when something opens off"; F1, Ctrl+F and Ctrl+M open in
+6. Options, Text, Entry sounds: "Entry sounds off"; F1, Ctrl+F, Ctrl+M and Tab between the panes are in
    silence, the form still saying its title and "form". Again: "on".
 7. A notice that opens by itself (an update offer, an error at start) still plays the notice sound and not one of
    these.

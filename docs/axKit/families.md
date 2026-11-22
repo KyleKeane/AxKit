@@ -181,28 +181,28 @@ You pressed a key, typed, or chose a command, and this is how it ended. Every co
   - Heard: no sound.
   - Said: NVDA reads what opened. 'Started Notepad', 'Opening x' for an outside program.
   - In: Every window.
-  - Note: What opens inside the window as a notice has a kind of its own since 2026-11-22, by the way of working that starts: form-opened, list-opened, field-opened, text-opened. This kind is what is left: the palette's own moves, another window, an outside program.
-- `form-opened`: A form opened in the window at your command: several things asked for one action, Tab between them (SPEC AX-7.11).
+  - Note: The focus arriving in a list, a text, a field or a form has a kind of its own since 2026-11-22, raised by the component itself: form-entered, list-entered, field-entered, text-entered. This kind is what is left: another window, an outside program.
+- `form-entered`: The focus entered a form from outside it: several things asked for one action, Tab between them (SPEC AX-7.11). Once for the form; moving between its controls is silent.
   - Started by: `key`, `menu`, `palette`, `ai-tool`, `script`.
   - Heard: sound `FormOpen`.
   - Said: After NVDA has read the first control: the title and the one word, 'Move 2 items, form'. The explanation is not said: Ctrl+Q reads it. Two forms say their text after the word, since it is what will happen and not how a form is used: the report, and an action of an axTask list.
   - In: Every window with a form: the report (F4), axTask's item form, Move to section, Move to a list and an action's form, axMCP's Add server, axTerminal's Add a shell, the item windows' New field, axClaude's New session.
-- `list-opened`: A list to choose one of opened in the window at your command: Up and Down, Enter chooses (SPEC AX-7.11).
+- `list-entered`: The focus entered a list from outside it: one opened, Tab or F6 came to it, a notice closed over it, the window started on it (SPEC AX-7.11). Moving inside it is silent.
   - Started by: `key`, `menu`, `palette`, `ai-tool`, `script`.
   - Heard: sound `ListOpen`.
   - Said: NVDA reads the list and its line.
-  - In: The item windows' choices of a field.
-- `field-opened`: One field to type in opened at your command: a name asked for, Find, the command palette, a rename in place (SPEC AX-7.11).
+  - In: Every list of every window, and the answers in the field's place.
+- `field-entered`: The focus entered a field to type in from outside it: a message field, a document, a name asked for, Find, the command palette, a rename in place (SPEC AX-7.11).
   - Started by: `key`, `menu`, `palette`, `ai-tool`, `script`.
   - Heard: sound `FieldOpen`.
   - Said: NVDA reads the field.
-  - In: Every window: Find, the command palette, the one-field questions, F2 in a list.
-- `text-opened`: A text to read opened in the window at your command: a help text, a question's words with its buttons, an answer (SPEC AX-7.11).
+  - In: Every field of every window.
+- `text-entered`: The focus entered a text to read from outside it: a conversation, a help text, a question's words with its buttons, an answer, a file shown read-only (SPEC AX-7.11).
   - Started by: `key`, `menu`, `palette`, `ai-tool`, `script`.
   - Heard: sound `TextOpen`.
   - Said: NVDA reads the text.
-  - In: Every window: F1, the guides, About, a question such as Delete, AI help's answer.
-  - Note: Not a notice that opens by itself, which has the notice sound, and not one that only waits on work.
+  - In: Every read-only text of every window.
+  - Note: When the same command just played another sound (a notice that opened by itself, a refusal, a program's question), that sound stands alone and the entry is silent. So for all four kinds.
 - `busy`: The command started work that takes time.
   - Started by: `key`, `menu`, `palette`, `script`.
   - Heard: no sound.
@@ -488,23 +488,23 @@ Bell pings, a voice used for nothing else. Every one begins with the same mark, 
 
 - `FormOpen`: The mark, then beep, beep, tone, and the same lower: D6 twice and a held D5, A5 twice and a held A4. 0.7 s, the most complex, as a form is.
   - Chosen: By ear, 2026-11-22: 'Mark 4 with the descending kinds' and 'Form B', after three sets and a second round in one voice.
-  - Switch: Options, Text, Sounds when something opens, in every window.
-  - The sound of: `form-opened`.
+  - Switch: Options, Text, Entry sounds, in every window.
+  - The sound of: `form-entered`.
   - Played from 1 file: AxKit.Forms/AxKitForm.Theme.cs.
 - `ListOpen`: The mark, then four quick beeps in a line going down by steps: A5, F sharp 5, E5, D5. 0.4 s.
   - Chosen: By ear, 2026-11-22, with the others of its family.
-  - Switch: Options, Text, Sounds when something opens, in every window.
-  - The sound of: `list-opened`.
+  - Switch: Options, Text, Entry sounds, in every window.
+  - The sound of: `list-entered`.
   - Played from 1 file: AxKit.Forms/AxKitForm.Theme.cs.
 - `FieldOpen`: The mark, then one extended tone, A4: the simplest. 0.44 s.
   - Chosen: By ear, 2026-11-22, with the others of its family.
-  - Switch: Options, Text, Sounds when something opens, in every window.
-  - The sound of: `field-opened`.
+  - Switch: Options, Text, Entry sounds, in every window.
+  - The sound of: `field-entered`.
   - Played from 1 file: AxKit.Forms/AxKitForm.Theme.cs.
 - `TextOpen`: The mark, then one extended tone an octave lower, A3, a little softer. 0.44 s.
   - Chosen: By ear, 2026-11-22, with the others of its family.
-  - Switch: Options, Text, Sounds when something opens, in every window.
-  - The sound of: `text-opened`.
+  - Switch: Options, Text, Entry sounds, in every window.
+  - The sound of: `text-entered`.
   - Played from 1 file: AxKit.Forms/AxKitForm.Theme.cs.
 
 ### Turns: where the conversation stands

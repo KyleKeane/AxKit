@@ -58,16 +58,16 @@ public enum EventKind
     Opened,
 
     /// <summary>A form opened in the window at your command: several things asked for one action (AX-7.11).</summary>
-    FormOpened,
+    FormEntered,
 
     /// <summary>A list to choose one of opened in the window at your command (AX-7.11).</summary>
-    ListOpened,
+    ListEntered,
 
     /// <summary>One field to type in opened at your command: a name, a search, a rename in place (AX-7.11).</summary>
-    FieldOpened,
+    FieldEntered,
 
     /// <summary>A text to read opened in the window at your command: a help text, a question's words, an error (AX-7.11).</summary>
-    TextOpened,
+    TextEntered,
 
     /// <summary>The command started work that takes time.</summary>
     Busy,

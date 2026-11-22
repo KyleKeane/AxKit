@@ -62,10 +62,10 @@ if ($problems.Count -gt 0) {
 }
 
 $soundOf = @{
-    'list-opened'  = 'three quick beeps up, then four quick beeps going down'
-    'text-opened'  = 'three quick beeps up, then one low long tone'
-    'field-opened' = 'three quick beeps up, then one long tone'
-    'form-opened'  = 'three quick beeps up, then beeps and tones together'
+    'list-entered'  = 'three quick beeps up, then four quick beeps going down'
+    'text-entered'  = 'three quick beeps up, then one low long tone'
+    'field-entered' = 'three quick beeps up, then one long tone'
+    'form-entered'  = 'three quick beeps up, then beeps and tones together'
 }
 
 $lines = New-Object System.Collections.Generic.List[string]
@@ -83,7 +83,7 @@ foreach ($component in $data.components) {
     $lines.Add("- What: $($component.what)")
     $lines.Add("- Built into it: $($component.'built in')")
     if ($component.selection) { $lines.Add("- Selecting: $($component.selection)") }
-    $lines.Add("- Its sound: $($soundOf[$component.'entry event']) (the kind of event ``$($component.'entry event')``, SPEC AX-7.11). It plays when your own command opens it; at every entry of the focus once that is built (framework step 2). Then: $($component.says)")
+    $lines.Add("- Its sound: $($soundOf[$component.'entry event']) (the kind of event ``$($component.'entry event')``, SPEC AX-7.11). It plays whenever the focus enters it from outside; moving inside it is silent. Then: $($component.says)")
     $lines.Add("- Its keys, by family (``docs/axKit/key-groups.md``): $($component.keys -join ', ').")
     $lines.Add("- The code: ``$($component.class)``, ``$($component.file)``.")
 }
