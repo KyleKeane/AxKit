@@ -894,6 +894,14 @@ public abstract partial class AxKitForm : Form
     protected bool KeyTaken(Keys key) => _commands.Any(command => command.Key == key);
 
     /// <summary>
+    /// Whether a command added so far has the key and acts anywhere in the window (no <see cref="Command.When"/>):
+    /// a later command on the same key would never run. A shared piece that adds its keys after the app's own
+    /// leaves such a key to the app (the item window's Ctrl+N and Ctrl+Q under axMedia's New window and What is
+    /// playing, framework step 4), so that the window lists no command that cannot run.
+    /// </summary>
+    protected bool KeyTakenAnywhere(Keys key) => _commands.Any(command => command.Key == key && command.When is null);
+
+    /// <summary>
     /// What is wrong with the window's command list (app-kit AK-2.4), for the automated checks' <c>check commands</c>:
     /// a key of the window's own with a modifier, or a function key, that the F1 text does not name, and a command that never runs because
     /// an earlier one has its key everywhere (no <see cref="Command.When"/>). Empty when all is well.

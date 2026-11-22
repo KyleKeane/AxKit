@@ -264,11 +264,12 @@ public abstract partial class ItemForm : AxKitForm
         }
     }
 
-    /// <summary>The status bar's first part: the level's name with its count, and ", 3 selected" while rows are.</summary>
+    /// <summary>The status bar's first part: the level's name with its count (or the app's <see cref="StatusState"/>), and ", 3 selected" while rows are.</summary>
     private void ShowName()
     {
-        var name = Navigator.AccessibleName ?? string.Empty;
-        _nameLabel.Text = Selection.Count > 0 ? $"{name}, {Selection.Count} selected" : name;
+        var name = StatusState ?? Navigator.AccessibleName ?? string.Empty;
+        var text = Selection.Count > 0 ? (name.Length > 0 ? $"{name}, {Selection.Count} selected" : $"{Selection.Count} selected") : name;
+        _nameLabel.Text = text;
         StatusLayout.Fit(_status, _nameLabel, _placeLabel);
     }
 
@@ -386,7 +387,16 @@ public abstract partial class ItemForm : AxKitForm
 
     protected override void OnShown(EventArgs e)
     {
-        _split.SplitterDistance = Math.Max(_split.Panel1MinSize, _split.Width * 45 / 100);
+        if (HasDetailPane)
+        {
+            _split.SplitterDistance = Math.Max(_split.Panel1MinSize, _split.Width * 45 / 100);
+        }
+        else
+        {
+            // The navigator alone (framework step 4): the second panel is not there to see or to tab to.
+            _split.Panel2Collapsed = true;
+        }
+
         if (!NoticeOpen)
         {
             Navigator.Select();
@@ -400,10 +410,17 @@ public abstract partial class ItemForm : AxKitForm
     /// the end of the app's constructor, after its menus and its own commands are made, so that the app's keys come
     /// first (axPass's Enter unlocking a locked window before Enter opening).
     /// </summary>
-    protected void PlaceControls(MenuStrip menu)
+    protected void PlaceControls(MenuStrip menu) => PlaceWith(menu);
+
+    /// <summary>
+    /// As <see cref="PlaceControls(MenuStrip)"/>, with further controls of the app's own docked between the panes
+    /// and the status bar in the order given (axMedia's video area, at the top; framework step 4). The app hides
+    /// and shows them itself around a notice (<see cref="HideForNotice"/>, <see cref="ShowAfterNotice"/>).
+    /// </summary>
+    protected void PlaceWith(MenuStrip menu, params Control[] between)
     {
         menu.MenuActivate += (_, _) => UpdateMenus();
-        PlaceControls(menu, _split, _status);
+        PlaceControls(menu, [_split, .. between, _status]);
         AddSharedKeys();
     }
 
@@ -425,75 +442,94 @@ public abstract partial class ItemForm : AxKitForm
     /// <summary>The keys of <see cref="ItemKeys"/>; the apps' menu items for them only show them. In a pane, taking a key keeps the list box from its own move and its ding.</summary>
     private void AddSharedKeys()
     {
-        AddKey(new Command("Find in the list", BundleKeys.Find, () => ShowFindInList(Navigator, NavigatorLabels)) { When = NotRenaming, Mark = CommandMark.Read });
-        AddKey(new Command("Find next", BundleKeys.FindNext, () => FindInList(Navigator, NavigatorLabels, 1)) { When = NotRenaming, Mark = CommandMark.Read });
-        AddKey(new Command("Find previous", BundleKeys.FindPrevious, () => FindInList(Navigator, NavigatorLabels, -1)) { When = NotRenaming, Mark = CommandMark.Read });
-        AddKey(new Command("Undo", ItemKeys.Undo, Undo) { When = NotRenaming, Mark = CommandMark.Change });
+        // A shared key the app gave to a command of its own that acts anywhere is the app's: the shared command
+        // would never run, and is not listed (framework step 4; the F5 case of axAutomate, made general).
+        void Shared(Command command)
+        {
+            if (!KeyTakenAnywhere(command.Key))
+            {
+                AddKey(command);
+            }
+        }
+
+        Shared(new Command("Find in the list", BundleKeys.Find, () => ShowFindInList(Navigator, NavigatorLabels)) { When = NotRenaming, Mark = CommandMark.Read });
+        Shared(new Command("Find next", BundleKeys.FindNext, () => FindInList(Navigator, NavigatorLabels, 1)) { When = NotRenaming, Mark = CommandMark.Read });
+        Shared(new Command("Find previous", BundleKeys.FindPrevious, () => FindInList(Navigator, NavigatorLabels, -1)) { When = NotRenaming, Mark = CommandMark.Read });
+        Shared(new Command("Undo", ItemKeys.Undo, Undo) { When = NotRenaming, Mark = CommandMark.Change });
         // Not where the app gave F5 to a command of its own (axAutomate runs with it, AU-D8): its menu's Refresh is the command there.
         if (!KeyTaken(ItemKeys.Refresh))
         {
-            AddKey(new Command("Refresh", ItemKeys.Refresh, () => Refresh(announce: true)) { When = NotRenaming, Mark = CommandMark.Read });
+            Shared(new Command("Refresh", ItemKeys.Refresh, () => Refresh(announce: true)) { When = NotRenaming, Mark = CommandMark.Read });
         }
-        AddKey(new Command("New list", ItemKeys.NewList, NewList) { When = NotRenaming, Mark = CommandMark.Change });
-        AddKey(new Command("Read in full", ItemKeys.ReadAll, ReadAll) { When = NotRenaming, Mark = CommandMark.Read });
+        Shared(new Command("New list", ItemKeys.NewList, NewList) { When = NotRenaming, Mark = CommandMark.Change });
+        Shared(new Command("Read in full", ItemKeys.ReadAll, ReadAll) { When = NotRenaming, Mark = CommandMark.Read });
 
         // The bundle's focus keys switch the panes from either one, as in every other window (AX-8.2; 2026-11-09, the
         // item windows had Tab and Shift+Tab alone, which stay each pane's own below).
-        foreach (var key in new[] { BundleKeys.NextControl, BundleKeys.PreviousControl, BundleKeys.NextControlAlso })
+        // Not in a navigator without a second pane (HasDetailPane, framework step 4): Tab has nowhere to go there.
+        foreach (var key in HasDetailPane ? new[] { BundleKeys.NextControl, BundleKeys.PreviousControl, BundleKeys.NextControlAlso } : [])
         {
-            AddKey(new Command("Switch between the navigator and the detail pane", key, () => (Navigator.Focused ? (Control)DetailPane : Navigator).Select()) { When = NotRenaming, Mark = CommandMark.Open });
+            Shared(new Command("Switch between the navigator and the detail pane", key, () => (Navigator.Focused ? (Control)DetailPane : Navigator).Select()) { When = NotRenaming, Mark = CommandMark.Open });
         }
 
         // The navigator's keys.
-        AddKey(new Command("Into the list", ItemKeys.Into, Into) { When = InNavigator, Mark = CommandMark.Open });
-        AddKey(new Command("Up a level", ItemKeys.Up, UpLevel) { When = InNavigator, Mark = CommandMark.Open });
-        AddKey(new Command("Up a level", ItemKeys.UpAlso, UpLevel) { When = InNavigator, Mark = CommandMark.Open });
-        AddKey(new Command("Previous section", ItemKeys.PreviousSection, () => JumpSection(-1)) { When = InNavigator, Mark = CommandMark.Open });
-        AddKey(new Command("Next section", ItemKeys.NextSection, () => JumpSection(1)) { When = InNavigator, Mark = CommandMark.Open });
-        AddKey(new Command("Open", ItemKeys.Open, OpenSelected) { When = InNavigator, Mark = CommandMark.Open });
-        AddKey(new Command("To the detail pane", ItemKeys.OtherPane, () => DetailPane.Select()) { When = InNavigator, Mark = CommandMark.Open });
-        AddKey(new Command("To the detail pane", ItemKeys.OtherPaneBack, () => DetailPane.Select()) { When = InNavigator, Mark = CommandMark.Open });
-        // AX-8.16: Space selects, in an app whose navigator has a selection; the edge sound in one that has none.
-        AddKey(new Command("Select or deselect", SelectionKeys.Select, SelectRow) { When = InNavigator, Mark = CommandMark.Change });
-        if (HasSelection)
+        Shared(new Command("Into the list", ItemKeys.Into, Into) { When = InNavigator, Mark = CommandMark.Open });
+        Shared(new Command("Up a level", ItemKeys.Up, UpLevel) { When = InNavigator, Mark = CommandMark.Open });
+        Shared(new Command("Up a level", ItemKeys.UpAlso, UpLevel) { When = InNavigator, Mark = CommandMark.Open });
+        Shared(new Command("Previous section", ItemKeys.PreviousSection, () => JumpSection(-1)) { When = InNavigator, Mark = CommandMark.Open });
+        Shared(new Command("Next section", ItemKeys.NextSection, () => JumpSection(1)) { When = InNavigator, Mark = CommandMark.Open });
+        Shared(new Command("Open", ItemKeys.Open, OpenSelected) { When = InNavigator, Mark = CommandMark.Open });
+        if (HasDetailPane)
         {
-            AddKey(new Command("Select to here", SelectionKeys.SelectTo, SelectToHere) { When = InNavigator, Mark = CommandMark.Change });
-            foreach (var move in Selection.MoveCommands("item", InNavigator))
-            {
-                AddKey(move);
-            }
-
-            AddKey(new Command("Select all", SelectionKeys.SelectAll, SelectAllRows) { When = InNavigator, Mark = CommandMark.Change });
-            AddKey(new Command("Deselect all", SelectionKeys.SelectNone, SelectNoRows) { When = InNavigator, Mark = CommandMark.Change });
-            // Escape gives up a selection before anything else in the navigator; with none, the key is left alone.
-            AddKey(new Command("Deselect all", SelectionKeys.Clear, SelectNoRows) { When = () => InNavigator() && Selection.Count > 0, Mark = CommandMark.Change });
+            Shared(new Command("To the detail pane", ItemKeys.OtherPane, () => DetailPane.Select()) { When = InNavigator, Mark = CommandMark.Open });
+            Shared(new Command("To the detail pane", ItemKeys.OtherPaneBack, () => DetailPane.Select()) { When = InNavigator, Mark = CommandMark.Open });
         }
 
-        AddKey(new Command("New item", ItemKeys.New, NewItem) { When = InNavigator, Mark = CommandMark.Change });
-        AddKey(new Command("Rename", ItemKeys.Rename, RenameSelected) { When = InNavigator, Mark = CommandMark.Change });
-        AddKey(new Command("Delete", ItemKeys.Delete, () => WithRow(DeleteRow)) { When = InNavigator, Mark = CommandMark.Act });
-        AddKey(new Command("The Context menu", ItemKeys.ItemMenu, OpenPaneMenu) { When = InNavigator, Mark = CommandMark.Open });
-        AddKey(new Command("The Context menu", ItemKeys.ItemMenuAlso, OpenPaneMenu) { When = InNavigator, Mark = CommandMark.Open });
+        // AX-8.16: Space selects, in an app whose navigator has a selection; the edge sound in one that has none.
+        Shared(new Command("Select or deselect", SelectionKeys.Select, SelectRow) { When = InNavigator, Mark = CommandMark.Change });
+        if (HasSelection)
+        {
+            Shared(new Command("Select to here", SelectionKeys.SelectTo, SelectToHere) { When = InNavigator, Mark = CommandMark.Change });
+            foreach (var move in Selection.MoveCommands("item", InNavigator))
+            {
+                Shared(move);
+            }
+
+            Shared(new Command("Select all", SelectionKeys.SelectAll, SelectAllRows) { When = InNavigator, Mark = CommandMark.Change });
+            Shared(new Command("Deselect all", SelectionKeys.SelectNone, SelectNoRows) { When = InNavigator, Mark = CommandMark.Change });
+            // Escape gives up a selection before anything else in the navigator; with none, the key is left alone.
+            Shared(new Command("Deselect all", SelectionKeys.Clear, SelectNoRows) { When = () => InNavigator() && Selection.Count > 0, Mark = CommandMark.Change });
+        }
+
+        Shared(new Command("New item", ItemKeys.New, NewItem) { When = InNavigator, Mark = CommandMark.Change });
+        Shared(new Command("Rename", ItemKeys.Rename, RenameSelected) { When = InNavigator, Mark = CommandMark.Change });
+        Shared(new Command("Delete", ItemKeys.Delete, () => WithRow(DeleteRow)) { When = InNavigator, Mark = CommandMark.Act });
+        Shared(new Command("The Context menu", ItemKeys.ItemMenu, OpenPaneMenu) { When = InNavigator, Mark = CommandMark.Open });
+        Shared(new Command("The Context menu", ItemKeys.ItemMenuAlso, OpenPaneMenu) { When = InNavigator, Mark = CommandMark.Open });
+        if (!HasDetailPane)
+        {
+            return;
+        }
 
         // The detail pane's keys.
-        AddKey(new Command("Change the field", ItemKeys.Open, ChangeField) { When = InDetail, Mark = CommandMark.Change });
-        AddKey(new Command("To the navigator", ItemKeys.OtherPane, () => Navigator.Select()) { When = InDetail, Mark = CommandMark.Open });
-        AddKey(new Command("To the navigator", ItemKeys.OtherPaneBack, () => Navigator.Select()) { When = InDetail, Mark = CommandMark.Open });
-        AddKey(new Command("To the navigator", ItemKeys.Back, () => Navigator.Select()) { When = InDetail, Mark = CommandMark.Open });
-        AddKey(new Command("Check the field", ItemKeys.Check, CheckField) { When = InDetail, Mark = CommandMark.Change });
-        AddKey(new Command("New field", ItemKeys.New, NewField) { When = InDetail, Mark = CommandMark.Change });
-        AddKey(new Command("Rename the field", ItemKeys.Rename, RenameField) { When = InDetail, Mark = CommandMark.Change });
-        AddKey(new Command("Remove the field", ItemKeys.Delete, RemoveField) { When = InDetail, Mark = CommandMark.Change });
+        Shared(new Command("Change the field", ItemKeys.Open, ChangeField) { When = InDetail, Mark = CommandMark.Change });
+        Shared(new Command("To the navigator", ItemKeys.OtherPane, () => Navigator.Select()) { When = InDetail, Mark = CommandMark.Open });
+        Shared(new Command("To the navigator", ItemKeys.OtherPaneBack, () => Navigator.Select()) { When = InDetail, Mark = CommandMark.Open });
+        Shared(new Command("To the navigator", ItemKeys.Back, () => Navigator.Select()) { When = InDetail, Mark = CommandMark.Open });
+        Shared(new Command("Check the field", ItemKeys.Check, CheckField) { When = InDetail, Mark = CommandMark.Change });
+        Shared(new Command("New field", ItemKeys.New, NewField) { When = InDetail, Mark = CommandMark.Change });
+        Shared(new Command("Rename the field", ItemKeys.Rename, RenameField) { When = InDetail, Mark = CommandMark.Change });
+        Shared(new Command("Remove the field", ItemKeys.Delete, RemoveField) { When = InDetail, Mark = CommandMark.Change });
 
         // Right and Left change the field in focus (IA-5.6, AX-8.10 rule 4): a choice's next and previous value, a
         // check checked and unchecked; the edge sound on every other field, never the list box's own move.
-        AddKey(new Command("The next value of the field", ItemKeys.Into, () => StepField(1)) { When = InDetail, Mark = CommandMark.Change });
-        AddKey(new Command("The previous value of the field", ItemKeys.Up, () => StepField(-1)) { When = InDetail, Mark = CommandMark.Change });
-        AddKey(new Command("The field's menu", ItemKeys.ItemMenu, OpenPaneMenu) { When = InDetail, Mark = CommandMark.Open });
-        AddKey(new Command("The field's menu", ItemKeys.ItemMenuAlso, OpenPaneMenu) { When = InDetail, Mark = CommandMark.Open });
+        Shared(new Command("The next value of the field", ItemKeys.Into, () => StepField(1)) { When = InDetail, Mark = CommandMark.Change });
+        Shared(new Command("The previous value of the field", ItemKeys.Up, () => StepField(-1)) { When = InDetail, Mark = CommandMark.Change });
+        Shared(new Command("The field's menu", ItemKeys.ItemMenu, OpenPaneMenu) { When = InDetail, Mark = CommandMark.Open });
+        Shared(new Command("The field's menu", ItemKeys.ItemMenuAlso, OpenPaneMenu) { When = InDetail, Mark = CommandMark.Open });
     }
 
-    /// <summary>A navigator command on the selected row; "Nothing selected" without one.</summary>
+    /// <summary>A navigator command on the selected row; "Nothing selected" without one, or the one line of an empty level (<see cref="EmptyLine"/>).</summary>
     protected void WithRow(Action<ItemRow> command)
     {
         if (SelectedRow() is { } row)
@@ -502,9 +538,34 @@ public abstract partial class ItemForm : AxKitForm
         }
         else
         {
-            Announce("Nothing selected", true);
+            Announce(_rows.Count == 0 && EmptyLine is { } empty ? empty : "Nothing selected", true);
         }
     }
+
+    // ---- what a navigator may do without (framework step 4, FW-4.7; 2026-11-22) ----
+
+    /// <summary>
+    /// Whether the window has the second pane. Yes by default, the detail of the row you are on. An app whose rows
+    /// have no more to show than their line says no (axMedia's queue): the navigator fills the window, the pane
+    /// keys and the detail pane's commands are not made, and the detail is never filled.
+    /// </summary>
+    protected virtual bool HasDetailPane => true;
+
+    /// <summary>
+    /// The one line a level without rows shows, which is no row: nothing is selected on it, and the commands that
+    /// need a row say it ("Queue is empty"). Null, the default, for an empty list, as the item apps have it.
+    /// </summary>
+    protected virtual string? EmptyLine => null;
+
+    /// <summary>
+    /// What the status bar's first part says in place of the level's name, when the app has something of the
+    /// moment to say there (axMedia: what plays and where); null, the default, for the level's name with its
+    /// count. ", 3 selected" follows either. <see cref="ShowStatus"/> shows it again when it changed.
+    /// </summary>
+    protected virtual string? StatusState => null;
+
+    /// <summary>The status bar's first part shown again, for an app whose <see cref="StatusState"/> changed (a clock's tick).</summary>
+    protected void ShowStatus() => ShowName();
 
     /// <summary>
     /// F2 in the navigator (AX-8.7): the bundle's rename box over the row with its name selected; Enter takes a name
@@ -571,13 +632,22 @@ public abstract partial class ItemForm : AxKitForm
         switch (SelectedRow())
         {
             case null:
-                Announce(_rows.Count == 0 ? "Nothing here: Ctrl+N adds an item" : "Nothing selected", true);
+                Announce(_rows.Count == 0 ? EmptyLine ?? "Nothing here: Ctrl+N adds an item" : "Nothing selected", true);
                 return;
             case { IsSection: true }:
                 OnSectionHeader();
                 return;
             case { IsList: false }:
-                DetailPane.Select();
+                if (HasDetailPane)
+                {
+                    DetailPane.Select();
+                }
+                else
+                {
+                    // No second pane to go to: an app without one gives Enter on a row its own command.
+                    EventDoor.Raise(EventKind.Edge);
+                }
+
                 return;
             case var row:
                 OpenList(row);
@@ -675,7 +745,9 @@ public abstract partial class ItemForm : AxKitForm
         _placeLabel.Text = place;
         KeepSelection();
         // S-42: titles from a shared folder or database with their hidden characters made visible, by Fill.
-        Navigator.Fill(_rows.Select(RowText), name, select is null ? 0 : _rows.FindIndex(row => string.Equals(row.Key, select, StringComparison.OrdinalIgnoreCase)));
+        // A level without rows shows the app's one line for it, when it has one (EmptyLine): no row, nothing selected.
+        IEnumerable<string> lines = _rows.Count == 0 && EmptyLine is { } empty ? [empty] : _rows.Select(RowText);
+        Navigator.Fill(lines, name, select is null ? 0 : _rows.FindIndex(row => string.Equals(row.Key, select, StringComparison.OrdinalIgnoreCase)));
         SetTitle(title);
         ShowName();
         FillDetail();
@@ -707,6 +779,13 @@ public abstract partial class ItemForm : AxKitForm
 
         if (rows.SequenceEqual(_rows) && name == Navigator.AccessibleName)
         {
+            return;
+        }
+
+        if (rows.Count == 0 && EmptyLine is not null)
+        {
+            // Still without rows, under another name: the one line of the empty level stays (Fill makes it).
+            Fill(select: null);
             return;
         }
 
@@ -761,6 +840,11 @@ public abstract partial class ItemForm : AxKitForm
     /// <summary>The detail pane filled for the navigator's selection, silently; the field selected before kept when the same thing shows.</summary>
     protected void FillDetail()
     {
+        if (!HasDetailPane)
+        {
+            return;
+        }
+
         _detailStale = false;
         var keep = DetailPane.SelectedIndex;
         var detail = DetailOf(SelectedRow());

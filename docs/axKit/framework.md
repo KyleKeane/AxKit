@@ -124,6 +124,12 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
   4. The selection always available, rows saying whether they can be selected (built for axTask and axFile).
   5. The line of an empty level and the line that says what is not shown (axFile).
   6. The rows offered in the command palette (axFile).
+  7. An area of the app's own beside the panes (axMedia's video), and the status bar's first part free for what
+     the app has to say of the moment (what plays).
+  Built on 2026-11-22, with nothing changed for the four item apps (`ItemForm`: `HasDetailPane`, `PlaceWith`,
+  `StatusState`, `EmptyLine`): the pane as none (of point 2), the line of an empty level (of point 5), and point
+  7; and a shared key the app gave to a command of its own that acts anywhere is left to the app. Still to
+  build: points 1, 3 and 6, the text and log kinds of the pane, and the line of what is not shown.
 - FW-4.8 After this, axTask and axFile are the same window: one shows folders of items with a pane of fields, the
   other folders of files with a pane of the operations made. Their difference is their data and their commands.
 - FW-4.9 **axMedia is a queue and its controls**, a navigator of one level whose rows are what will play (the
