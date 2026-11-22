@@ -24,9 +24,10 @@ public static class HelpText
           Tab, Ctrl+Tab or F6: to the detail pane
           Ctrl+Enter: done or not done, on a task
           Space: select the item you are on, or deselect it again; a selected item reads ", selected". Shift+Down, Shift+Up, Shift+Home, Shift+End: select as you move. Shift+Space: select from the nearest selected item to this one. Ctrl+A: select every item shown. Ctrl+Shift+A, or Escape: deselect all. Items are selected, not lists; another list starts with none
-          With items selected, Ctrl+Enter, Delete and the list's actions that set fields or move act on all of them, as one step for Ctrl+Z: "Done: 3 tasks", "Archived 3 items". Ctrl+Enter marks them all done while any is not, and all not done when every one is. Enter, F2 and the ways to open stay on the item you are on
+          With items selected, Ctrl+Enter, Delete, Ctrl+M and the list's actions that set fields or move act on all of them, as one step for Ctrl+Z: "Done: 3 tasks", "Archived 3 items". Ctrl+Enter marks them all done while any is not, and all not done when every one is. Enter, F2 and the ways to open stay on the item you are on
           Ctrl+N: a new item in this list. Ctrl+Shift+N: a new list, in the section of the line you are on
           Ctrl+M on a list: move it to a section, or to a new one; its Section field in the detail pane does the same
+          Ctrl+M on an item, or with items selected: move it, or all of them, to a list you choose in a form, or to a new list you name there, as one step for Ctrl+Z: "3 items moved to Later"
           F2: rename in place: a box over the line, Enter keeps the new name, Escape the old. Delete: move to the Archive; Ctrl+Z brings it back
           Ctrl+Q: read every field of the item
           Ctrl+0: All tasks, every task not done

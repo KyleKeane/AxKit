@@ -864,6 +864,8 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Set a field of every selected item with an action of the list
     - Move every selected item to another list with an action of the list
     - Archive several items at once
+    - Move the selected items to a list chosen in a form
+    - Move an item to a new list
 
 ## axTerminal
 

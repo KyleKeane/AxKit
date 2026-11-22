@@ -80,7 +80,7 @@ public sealed partial class TaskForm : ItemForm
         _listMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open, CommandMark.Open));
         _listMenu.DropDownItems.Add(Item("&Rename", RenameSelected, ItemKeys.Rename, CommandMark.Change));
         _listMenu.DropDownItems.Add(Item("Ar&chive", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act));
-        Add(_listMenu, new Command("Move to s&ection...", AxTaskKeys.MoveToSection, MoveToSection) { When = InNavigator, Mark = CommandMark.Change });
+        Add(_listMenu, new Command("Move to s&ection...", AxTaskKeys.MoveToSection, MoveToSection) { When = OnListToMove, Mark = CommandMark.Change });
         _listMenu.DropDownItems.Add(new ToolStripSeparator());
         // AF-11.1: on a list, Ctrl+J is its configuration, the one file a list is configured in; on anything else it
         // opens the selection's file (the Item menu's "Open in axJSON" shows the same key).
@@ -95,6 +95,9 @@ public sealed partial class TaskForm : ItemForm
         _itemMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
         _itemMenu.DropDownItems.Add(Item("Rena&me", RenameSelected, ItemKeys.Rename, CommandMark.Change));
         _itemMenu.DropDownItems.Add(Item("Ar&chive", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act));
+        // TK-4.7: Ctrl+M, the move key, on an item or with items selected: to a list chosen in a form, or a new one.
+        // On a list with nothing selected the key is the List menu's Move to section (OnListToMove).
+        Add(_itemMenu, new Command("Mo&ve to a list...", AxTaskKeys.MoveToSection, MoveToList) { When = OnItemsToMove, Mark = CommandMark.Change });
         _itemMenu.DropDownItems.Add(new ToolStripSeparator());
         // The selection (AX-8.16, TK-4.7): the keys are the item window's commands; these items show them. Done,
         // Archive and the list's actions that set or move act on the selected items when there are any.

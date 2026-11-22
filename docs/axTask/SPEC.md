@@ -178,6 +178,18 @@ selected ones (TK-4.4, TK-4.7).
       written, "Priority high: 3 items"; all of them moved, "Later: 3 items moved to Later". An action's form is
       asked once, and a move's first press says what it does once (TK-7a.3). One item that refuses (a value its
       field does not hold) stops the action before anything is written.
+    - **Ctrl+M, Move to a list** (Context; the move key, which on a list with nothing selected is Move to
+      section, TK-3a.3): one form (bundle AX-8.10) named "Move 3 items" or "Move Fix the tap", with the folder's
+      lists as a list (the Archive and the items' own list left out, a list of the earlier format too) and "A new
+      list" last, then a field for the new list's name, refused as a new list's name is (TK-D4). Enter or
+      Ctrl+Enter moves them, the links following: "3 items moved to Later", "Fix the tap moved to Someday". A
+      new list is made beside the others with the fields and the section of the list the first item is in, and
+      is part of the same step: Ctrl+Z brings the items back and takes the list away again. An item that is in
+      the chosen list already stays ("Already in Later" when all are). Not from what a search found ("Open an
+      item where it lives first: Enter. The search moves nothing"), and not for a project's item gathered into
+      the user's smart lists ("An item of a project is moved inside its project: Right on the project first").
+      This is also how what a smart list or a tag's list shows becomes a list of its own: Ctrl+A, Ctrl+M, A new
+      list.
     Each is one step for Ctrl+Z ("Undone: Archived 3 items"), and each checks every item against its file as it
     was shown before anything is written (IA-5.5). Several moves are made one after the other, each from the disk
     as the one before left it, so that an item linking to two of the moved items is written right; a failure
@@ -190,8 +202,9 @@ selected ones (TK-4.4, TK-4.7).
     the run refuses the run, as a change of the item does.
   - The rules of Done on several and the words are pure code, `AxTask.Core/ManyItems`, tested; the window's part
     is `TaskForm.Targets`. Checked by `tests/scripts/axTask/20-selection.txt`.
-  - Not built yet, each with its item in the priorities list: Move to a list chosen from all lists, Set fields of
-    the selected items in one form, and selecting lists at the top level.
+  - Not built yet, each with its item in the priorities list: Set fields of the selected items in one form (a
+    list's set action, with or without a form of its own, does it meanwhile), and selecting lists at the top
+    level.
 
 ## 5. All tasks and the smart lists
 
@@ -281,6 +294,7 @@ On top of IA-3:
 | Ctrl+Shift+1, Ctrl+Shift+2, Ctrl+Shift+3 | navigator, at a top level | the heading of level 1, 2 or 3 before (TK-3a.2) |
 | Ctrl+Up, Ctrl+Down | navigator | the heading before or after, of either level (TK-3a.2) |
 | Ctrl+M | navigator, on a list | move the list to a section (TK-3a.3) |
+| Ctrl+M | navigator, on an item or with items selected | move it, or the selected items, to a list chosen in a form, or to a new one (TK-4.7) |
 | Ctrl+Shift+F | anywhere | find words in every list, the user's own and every project's (TK-7b.4) |
 | Right, Enter, Escape | navigator, in the found level | open the item where it lives; back where the search started (TK-7b.4) |
 

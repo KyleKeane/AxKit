@@ -271,3 +271,9 @@ The runner's script is `tests/scripts/axTask/20-selection.txt`.
 7. Select two, Delete: "Archived 2 items", the focus on the next item. Ctrl+Z: "Undone: Archived 2 items".
 8. Select one, Left, Right: nothing is selected; Ctrl+Enter: "Done: <the item>".
 9. With two selected, Enter: the form of the item you are on, not of the selected ones.
+10. Select two, Ctrl+M: "Move 2 items", the focus in the list "Choose the list" on the first other list, then the
+    form's explanation. Enter: "2 items moved to Later". Ctrl+Z: "Undone: 2 items moved to Later".
+11. On one item with nothing selected, Ctrl+M, End: "A new list". Enter without a name: the edge sound, "Type the
+    list's name", the focus in the name's field. Type a name, Enter: "<item> moved to <name>"; the new list is among
+    the lists with the same fields. Ctrl+Z: the item is back and the list is gone.
+12. On a list at the top level, Ctrl+M: "Move <list>", the sections, as before.

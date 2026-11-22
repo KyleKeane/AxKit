@@ -84,6 +84,12 @@ With items selected, these act on all of them, each as one step that Ctrl+Z take
 - **Delete**: all of them to the Archive, "Archived 3 items".
 - **An action of the list that sets fields or moves the item** (Ctrl+1 to Ctrl+9, see Actions): "Priority high: 3
   items", "Later: 3 items moved to Later".
+- **Ctrl+M**, Move to a list: a form with your lists; Up and Down choose one, Enter moves the items there, "3 items
+  moved to Later". The last line, A new list, makes one: Tab to the name's field and type it. The new list gets the
+  same fields as the one the items came from. With nothing selected, Ctrl+M moves the item you are on. (On a list,
+  Ctrl+M moves the list to a section, as before.)
+
+To make a list out of what a smart list or a tag shows: go into it, Ctrl+A, Ctrl+M, A new list.
 
 Everything else stays on the one item you are on, whatever is selected: Enter and its form, F2, Ctrl+Q, Ctrl+J,
 Ctrl+E, the detail pane, and an action that opens something or runs a program.

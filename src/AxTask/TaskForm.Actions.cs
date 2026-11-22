@@ -368,20 +368,45 @@ public sealed partial class TaskForm
             return;
         }
 
-        if (!items.All(item => CheckFresh(item.Path, item.Text)))
+        MoveItemsTo(items, target, name + ": ", made: null);
+    }
+
+    /// <summary>
+    /// Items moved into the list at <paramref name="target"/>, the links following (IA-D3), as one step
+    /// (<see cref="CommitMoves"/>): "Later: 3 items moved to Later" for an action, "Fix the tap moved to Later" for
+    /// Move to a list. <paramref name="made"/> is the part that makes the list first, for a new one; its undo takes
+    /// the list away again once the items are back. An item that is in that list already stays.
+    /// </summary>
+    private void MoveItemsTo(IReadOnlyList<ItemFile> items, string target, string saidStart, FileChange? made)
+    {
+        var moving = items.Where(item => !Path.GetDirectoryName(item.Path)!.Equals(target, StringComparison.OrdinalIgnoreCase)).ToList();
+        if (moving.Count == 0)
+        {
+            Announce($"Already in {Path.GetFileName(target)}", true);
+            return;
+        }
+
+        if (!moving.All(item => CheckFresh(item.Path, item.Text)))
         {
             return;
         }
 
-        var what = items.Count == 1 ? ItemFolder.NameOf(items[0]) : ManyItems.Items(items.Count);
-        var select = KeyAfter([.. items.Select(item => item.Path)]);
-        CommitMoves([.. items.Select(item => (Func<List<FileChange>>)(() =>
+        var what = moving.Count == 1 ? ItemFolder.NameOf(moving[0]) : ManyItems.Items(moving.Count);
+        var select = KeyAfter([.. moving.Select(item => item.Path)]);
+        var moves = new List<Func<List<FileChange>>>();
+        if (made is not null)
+        {
+            moves.Add(() => [made]);
+        }
+
+        moves.AddRange(moving.Select(item => (Func<List<FileChange>>)(() =>
         {
             var to = ItemFiles.FreePath(target, Path.GetFileNameWithoutExtension(item.Path), ".json");
             var parts = new List<FileChange> { FileChange.Move(item.Path, to) };
             parts.AddRange(Links.AfterMove(ItemFolder.AllItems(TopFolder), item.Path, to));
             return parts;
-        }))], $"{name}: {what} moved to {Path.GetFileName(target)}", select);
+        })));
+        CommitMoves(moves, $"{saidStart}{what} moved to {Path.GetFileName(target)}", select);
     }
 
     /// <summary>An open action (RP-8.1): an app on the item's file, or a field's web address in the browser.</summary>

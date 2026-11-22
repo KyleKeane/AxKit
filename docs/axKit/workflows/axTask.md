@@ -63,9 +63,9 @@ Starts with: Open axTask with the folder tasks.
 
 ### Mark a task done or not done
 
-1. Press Ctrl+Enter.
+1. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Done: Fix the tap.
-2. Press Ctrl+Enter.
+2. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Not done: Fix the tap.
 
 ### Set a due date by typing a weekday
@@ -341,7 +341,7 @@ Starts with: Open axTask with the folder tasks.
 2. Press Right.
     You hear: All tasks, 2 items, Buy a tap, in Home.
 3. Press Down.
-4. Press Ctrl+Enter.
+4. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Done: Fix the tap.
 5. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Done: Fix the tap.
@@ -363,7 +363,7 @@ Starts with: Open axTask with the folder tasks.
 5. Press Down.
 6. Press Right.
     You hear: Home, 1 item, Fix the tap.
-7. Press Ctrl+Enter.
+7. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Done: Fix the tap.
 8. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Done: Fix the tap.
@@ -611,7 +611,7 @@ Starts with: Open axTask with the folder lists.
 
 ### A wrong passphrase approves nothing
 
-1. Choose the menu item Approve this report.
+1. Choose Approve this report in the Context menu.
 2. Press Tab.
 3. Type: not the passphrase at all
 4. Press Enter.
@@ -620,7 +620,7 @@ Starts with: Open axTask with the folder lists.
 
 ### Approve an entry with the passphrase
 
-1. Choose the menu item Approve this report.
+1. Choose Approve this report in the Context menu.
 2. Press Tab.
 3. Type: a long test passphrase
 4. Press Enter.
@@ -670,7 +670,7 @@ Starts with: Open axTask with the folder tasks.
 7. Press Tab.
 8. Press Down 3 times.
 9. Press Shift+Tab.
-10. Press Ctrl+Enter.
+10. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Done: Idea.
 
 ### Add an item to a list that has no configuration yet
@@ -718,7 +718,7 @@ Starts with: Open axTask with the folder tasks.
 15. Type: Second line
 16. Press Tab.
 17. Type: Washer
-18. Press Ctrl+Enter.
+18. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Saved Fix the tap. Done: done. Due: 2 November 2099, Monday. Priority: Normal. Room: Hall. Notes: First line, and 1 more line. Waits on: Washer.
 19. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Saved Fix the tap.
@@ -728,7 +728,7 @@ Starts with: Open axTask with the folder tasks.
 1. Press Enter.
 2. Press Tab 6 times.
 3. Type: Washer
-4. Press Ctrl+Enter.
+4. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Saved Fix the tap. Waits on: Washer.
 5. Press Down.
 6. Press Enter.
@@ -851,9 +851,9 @@ Starts with: Open axTask with the folder tasks.
 5. Press End.
 6. Press Space.
     You hear: Selected, 3 selected.
-7. Press Ctrl+Enter.
+7. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Done: 2 tasks. 1 was done already.
-8. Press Ctrl+Enter.
+8. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Not done: 3 tasks.
 9. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Not done: 3 tasks.
@@ -873,8 +873,7 @@ Starts with: Open axTask with the folder tasks.
     You hear: Ctrl+2 in this list now moves to ../Later. Press it again to do it.
 2. Press Ctrl+2 (Action key 2).
     You hear: Later: 3 items moved to Later.
-3. Press Ctrl+Enter.
-    You hear words such as: Done.
+3. Press Ctrl+Enter (Done or not done; Context menu).
 4. Press Ctrl+Z 2 times (Undo; Actions menu).
     You hear: Undone: Later: 3 items moved to Later.
 
@@ -889,3 +888,27 @@ Starts with: Open axTask with the folder tasks.
     You hear: Archived 2 items.
 6. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Archived 2 items.
+
+### Move the selected items to a list chosen in a form
+
+1. Press Space.
+2. Press Down.
+3. Press Space.
+    You hear: Selected, 2 selected.
+4. Press Ctrl+M.
+5. Press Enter.
+    You hear: 2 items moved to Later.
+6. Press Ctrl+Z (Undo; Actions menu).
+    You hear: Undone: 2 items moved to Later.
+
+### Move an item to a new list
+
+1. Press Ctrl+M.
+2. Press End.
+3. Press Enter.
+    You hear: Type the list's name.
+4. Type: Someday
+5. Press Enter.
+    You hear: Buy paint moved to Someday.
+6. Press Ctrl+Z (Undo; Actions menu).
+    You hear: Undone: Buy paint moved to Someday.

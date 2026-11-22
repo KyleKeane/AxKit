@@ -20,7 +20,7 @@ public static class AxTaskKeys
     /// <summary>Words found in every list, the user's own and every project's (TK-7b.4).</summary>
     public const Keys FindEverywhere = Keys.Control | Keys.Shift | Keys.F;
 
-    /// <summary>On a list among the sections: its section chosen (TK-3a.3).</summary>
+    /// <summary>The move key. On a list among the sections: its section chosen (TK-3a.3). On an item, or with items selected: the list they move to (TK-4.7).</summary>
     public const Keys MoveToSection = Keys.Control | Keys.M;
 
     /// <summary>
@@ -60,7 +60,7 @@ public static class AxTaskKeys
         ("Show in axFile", ShowInAxFile),
         ("Hide or show done tasks", HideDone),
         ("All tasks", AllTasks),
-        ("Move the list to a section", MoveToSection),
+        ("Move: a list to a section, an item or the selected items to a list", MoveToSection),
         ("Find in every list", FindEverywhere),
         // Ctrl+1 to Ctrl+3 are one entry each: the next heading at a top level, the action key in a list (TK-D14, TK-D20).
         ("Action key 1 in a list, the next heading of level 1 at a top level", NextHeading1),

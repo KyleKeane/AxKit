@@ -497,6 +497,79 @@ public sealed partial class TaskForm
         }))], $"Archived {ManyItems.Items(items.Count)}", select);
     }
 
+    /// <summary>Where Ctrl+M moves an item, or the selected items, to a list (TK-4.7); on a list with nothing selected it is Move to section.</summary>
+    private bool OnItemsToMove() => InNavigator() && (Selection.Count > 0 || ItemOf(SelectedRow()) is not null);
+
+    /// <summary>Where Ctrl+M moves a list to a section (TK-3a.3).</summary>
+    private bool OnListToMove() => InNavigator() && !OnItemsToMove();
+
+    /// <summary>
+    /// Ctrl+M on an item, Context, Move to a list (TK-4.7): the selected items, or the item you are on, into a list
+    /// of the folder chosen in one form, or into a new list named there, which gets the fields and the section of the
+    /// list the first item is in. One step for Ctrl+Z, the links following: "3 items moved to Later". Not from what
+    /// a search found, and not for a project's item gathered into the user's smart lists, which is moved in its
+    /// project.
+    /// </summary>
+    private void MoveToList()
+    {
+        if (Gathered)
+        {
+            Announce("Open an item where it lives first: Enter. The search moves nothing", true);
+            return;
+        }
+
+        var items = Targets();
+        if (items.Count == 0)
+        {
+            Refuse("Move to an item first");
+            return;
+        }
+
+        var top = TopFolder;
+        if (items.Any(item => !TopOf(item.Path).Equals(top, StringComparison.OrdinalIgnoreCase)))
+        {
+            Announce("An item of a project is moved inside its project: Right on the project first", true);
+            return;
+        }
+
+        if (!items.All(Changeable))
+        {
+            return;
+        }
+
+        var from = items.Select(item => Path.GetDirectoryName(item.Path)!).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        var lists = ItemFolder.ReadTop(top).Lists
+            .Where(list => !ItemFolder.IsEarlier(list) && !(from.Count == 1 && list.Equals(from[0], StringComparison.OrdinalIgnoreCase))).ToList();
+        var what = items.Count == 1 ? ItemFolder.NameOf(items[0]) : ManyItems.Items(items.Count);
+        List<string> choices = [.. lists.Select(list => ItemFolder.ListName(top, list)), "A new list"];
+        // One form (bundle AX-8.10), as Move to section: the lists as a list and, for a new one, its name.
+        var form = new FormControls();
+        var chosen = form.AddList("Choose the list", choices, 0);
+        var name = form.AddText("Type the new list's name, when you chose A new list");
+        bool IsNew() => chosen.SelectedIndex == choices.Count - 1;
+        string? NameRefused() => ItemFolder.RefusedListName(top, name.Text)
+            ?? (name.Text.Trim().Equals(ItemFolder.ArchiveName, StringComparison.OrdinalIgnoreCase) ? "Archive is the archive's own name" : null);
+        ShowForm("Move " + what,
+            $"Now in {string.Join(", ", from.Select(folder => ItemFolder.ListName(top, folder)))}. Up and Down choose the list; Enter or Ctrl+Enter moves {(items.Count == 1 ? "the item" : "the " + what)} there, as one step that Ctrl+Z takes back. For a list that does not exist yet, choose A new list, the last one, then Tab and type its name: it gets the same fields. Escape leaves, and nothing is moved.",
+            form, "&Move",
+            () =>
+            {
+                if (!IsNew())
+                {
+                    MoveItemsTo(items, lists[chosen.SelectedIndex], string.Empty, made: null);
+                    return;
+                }
+
+                // A new list beside the first item's own: its fields for the items, its section among the details (TK-3a.3).
+                var trimmed = name.Text.Trim();
+                var template = TaskRules.TemplateOf(ItemFolder.ReadList(from[0]));
+                var section = ItemFolder.IsArchive(top, from[0]) ? string.Empty : ItemFolder.SectionOf(from[0]);
+                var details = ListConfig.New(template).WithDetail(ItemFolder.SectionField, JsonValue.Create(section));
+                MoveItemsTo(items, Path.Combine(top, trimmed), string.Empty, FileChange.WriteInNewFolder(Path.Combine(top, trimmed, ItemDocument.ListFile), details.ToText()));
+            },
+            () => IsNew() && NameRefused() is { } refused ? (name, refused) : null);
+    }
+
     /// <summary>
     /// TK-4.2: the list in hand made a checklist or a plain list. The change is the configuration's alone (AF-13.3):
     /// a Done field first among the fields of its items, or none. No item's file is touched: as a checklist every

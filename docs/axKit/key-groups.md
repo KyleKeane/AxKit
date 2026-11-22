@@ -143,6 +143,7 @@ The keys:
 - Enter, axProcess: Details.
 - Enter, axFile: Go to the action's place.
 - Enter, axTask: Open it where it lives.
+- Enter, axTask: Open its form.
 - Enter, axHelp: Open the conversation.
 - Enter, axPreview: Open the detail.
 - Enter, axTask: Open the file in axJSON.
@@ -183,6 +184,7 @@ The keys:
 
 - Delete, axAutomate, axFile, axMCP, axPass and axTask: Delete.
 - Delete, axAutomate, axMCP, axPass and axTask: Remove the field.
+- Delete, axTask: Archive.
 - Delete, axGIT: Discard changes.
 - Delete, axProcess: End process.
 - Delete, axClip: Remove.
@@ -293,11 +295,14 @@ The keys:
 - Ctrl+E, axPreview: Edit in axDown.
 - Ctrl+E, axFile: Editor.
 - Ctrl+E, axGIT: Open file in editor.
+- Ctrl+E, axTask: Show in axFile.
 - Ctrl+E, axProcess: Show program in axFile.
 - Ctrl+J, axTask: Edit the list's configuration.
+- Ctrl+J, axTask: Open in axJSON.
 - Ctrl+J, axAutomate: The workflow's file as text.
 - Ctrl+L, axTerminal: Clear transcript.
 - Ctrl+L, axPass: Lock.
+- Ctrl+M, axTask: Move to a list.
 - Ctrl+M, axTask: Move to section.
 - Ctrl+W, axClaude, axDown, axFile, axGIT, axJSON, axMedia, axPreview and axTerminal: File Explorer.
 - Ctrl+W, axFile: Show the folder in File Explorer.
@@ -521,6 +526,7 @@ Enter with a modifier is another way of opening or saying yes. Ctrl+Enter does t
 The keys:
 
 - Ctrl+Enter, axGIT: Commit.
+- Ctrl+Enter, axTask: Done or not done.
 - Ctrl+Enter, axFile: Play folder in axMedia.
 - Ctrl+Enter, axTerminal: Send the command.
 - Ctrl+Enter, axClaude: Send the message.

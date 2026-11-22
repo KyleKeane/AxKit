@@ -24,6 +24,14 @@ expect said ! Items are selected, not lists: Right goes into this one
 keys right
 expect focus Buy paint
 
+# Check: The commands of an item are in the window's command list
+# On an item Context holds the item's commands: Done or not done on Ctrl+Enter, Move to a list on Ctrl+M, the
+# selection's two. Every key of the window's own is in the F1 text and none is shadowed (app-kit AK-2.4).
+check commands
+expect commands Done or not done, Context
+expect commands Move to a list, Context
+expect commands Select or deselect, Context
+
 # Goal: Select items one by one with Space
 # Space selects the item, whose line then ends in ", selected"; again deselects it. The count is said from the
 # second one on, and the status bar holds it.
@@ -143,3 +151,51 @@ keys right
 expect focus Buy paint
 keys ctrl+enter
 expect said ! Done: Buy paint
+
+# Goal: Move the selected items to a list chosen in a form
+# Ctrl+M on an item, or with items selected (TK-4.7): one form with the folder's other lists, then A new list. Two
+# items go to Later as one step.
+keys space
+keys down
+keys space
+expect said ! Selected, 2 selected
+keys ctrl+m
+expect state "notice":"Move 2 items"
+expect focus "name":"Choose the list"
+expect focus Later
+keys enter
+expect said ! 2 items moved to Later
+run cmd /c if exist "tasks\Later\Call the plumber.json" (exit 0) else (exit 1)
+expect state Home, 3 items
+do Undo
+expect said ! Undone: 2 items moved to Later
+run cmd /c if exist "tasks\Home\Call the plumber.json" (exit 0) else (exit 1)
+
+# Goal: Move an item to a new list
+# With nothing selected the item you are on moves. A new list needs its name, and gets the fields of the item's own
+# list; Ctrl+Z brings the item back and takes the list away again.
+expect focus Buy paint
+keys ctrl+m
+expect state "notice":"Move Buy paint"
+keys end
+expect focus A new list
+keys enter
+expect said ! Type the list's name
+expect focus "name":"Type the new list's name, when you chose A new list"
+type Someday
+keys enter
+expect said ! Buy paint moved to Someday
+run cmd /c if exist "tasks\Someday\Buy paint.json" (exit 0) else (exit 1)
+run findstr /l /c:"Priority" tasks\Someday\list.json
+do Undo
+expect said ! Undone: Buy paint moved to Someday
+run cmd /c if exist tasks\Someday (exit 1) else (exit 0)
+
+# Check: On a list, Ctrl+M is still Move to section
+keys left
+expect focus Home, list, 5 items
+keys ctrl+m
+expect state "notice":"Move Home"
+expect focus "name":"Choose the section"
+keys escape
+expect state "notice":null
