@@ -123,17 +123,15 @@ expect said Speak replies: all lines
 keys alt+1
 type Markdown only: ## Alpha, a five-word sentence, ## Beta, three one-word bullets.
 keys enter
-expect said claude: Alpha
-expect said Done
+expect said Done. claude: Alpha
 # First lines: only the first line of each of Claude's messages.
 menu Speak replies: first lines
 expect said Speak replies: first lines
 type Reply with two lines: the word first, then on the next line the word second.
 keys enter
-# The reply's first line, not the message typed above, which holds both words.
-expect said claude: first
+# The reply's first line, not the message typed above, which holds both words; "Done" stands before it (FR-7.2a).
+expect said Done. claude: first
 refuse said second
-expect said Done
 # Check: A restart speaks nothing of the conversation again
 # Ctrl+Shift+R: nothing of the conversation is spoken again, "Ready", and the next reply is spoken.
 keys ctrl+shift+r
@@ -145,8 +143,7 @@ refuse said Alpha
 wait 2000
 type Reply with the single word after.
 keys enter
-expect said claude:
-expect said Done
+expect said Done. claude:
 # An error from Claude spoken in both modes needs Claude started with a bad API key in its environment, which the
 # runner cannot set for one window: left manual.
 # Goal: Hear each tool call as it starts

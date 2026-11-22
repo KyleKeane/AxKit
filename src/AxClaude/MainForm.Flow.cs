@@ -328,19 +328,18 @@ internal sealed partial class MainForm
             return;
         }
 
-        // Reply speech is still the window's own (WP-A18), behind a hold of its own that knows nothing of this
-        // moment: with a record the core's Done comes some 40 ms after the reply's frame, the hold runs for 250, and
-        // the reply would be heard after its Done. Lines the core releases with a Done are spoken before it
-        // (EG-5.6), so what the window still holds goes first; a question that waits has emptied the hold already
-        // (OnTranscriptChanged). The shadow is told in the order heard: the lines, then Done.
-        SpeakHeld();
+        // "Done" is heard first, then the reply's last lines (SPEC.md FR-7.2a, the maintainer's choice of 2026-11-22;
+        // until then the lines went first, EG-5.6, and Done was heard only when NVDA had read the whole reply, long
+        // after the music stopped). Reply speech is still the window's own (WP-A18), behind a hold of its own, which
+        // waits for this moment once the bell has rung (DoneAwaited); what it still holds goes right after the word.
+        // A question that waits has emptied the hold already (OnTranscriptChanged). The shadow is told in the order
+        // heard: Done, then the lines; it counts both, in whichever order.
+        // The word and the lines are one notification (SpeakHeld): NVDA does not speak both of two raised back to back.
+        // With the word switched off (Options, When Claude is done, Announce "Done") the lines go alone.
+        _doneAwaitedSince = 0;
         _shadow.Core(done, _flowNow);
         _shadow.Window(ShadowFact.SaidDone, _flowNow);
-        if (_settings.AnnounceBell)
-        {
-            Announce("Done", false);
-        }
-
+        SpeakHeld(_settings.AnnounceBell ? "Done" : null);
         Signal(question: false);
     }
 

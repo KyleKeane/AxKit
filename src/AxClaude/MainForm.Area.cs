@@ -22,6 +22,13 @@ internal sealed partial class MainForm
     /// <summary>How long reply speech waits for Claude's prompt row, which comes after a question's rows (D33).</summary>
     private const int SpeechHoldMs = 250;
 
+    /// <summary>
+    /// How long after the bell reply lines still held wait for "Done" (FR-7.2a): Done is said first, then the lines.
+    /// Longer than the core's own cap for Done (600 ms after the bell) and the settle's 400; when no Done comes in
+    /// that time (the bell was a question's, the turn was cut), the lines go as they would have.
+    /// </summary>
+    private const int DoneFirstMs = 800;
+
     /// <summary>D33: the interrupting speech of a question waits this long after the focus moved, so that NVDA's reading of the new control does not cut it off.</summary>
     private const int FocusSettleMs = 300;
 

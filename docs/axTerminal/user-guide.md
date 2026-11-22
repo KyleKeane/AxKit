@@ -34,7 +34,7 @@ From the top: the menu bar (Alt), the terminal (the text of everything so far), 
 
 ## Run a command
 
-Type the command in the field and press Enter. You hear "Sent" with a low note. The terminal gets a `# Input 1` heading, `## Folder` with the folder the command runs in under it, `## Command` with your command under it, then `# Output 1`, and what the shell prints follows, with a short tick for each new line. When the prompt comes back you hear "Done" with the falling chime, or "Failed, exit code 1" when the command failed (PowerShell says "Failed" for an error of its own; Command Prompt gives no code). Alt+3 then takes you to the start of the output; read down with the arrow keys.
+Type the command in the field and press Enter. You hear "Sent" with a low note. The terminal gets a `# Input 1` heading, `## Folder` with the folder the command runs in under it, `## Command` with your command under it, then `# Output 1`, and what the shell prints follows, with a short tick for each new line. When the prompt comes back you hear the falling chime and "Done", or "Failed, exit code 1" when the command failed (PowerShell says "Failed" for an error of its own; Command Prompt gives no code). With Speak output on, the word comes before the output: "Done. hello" for a quick command, and for one that takes longer, whose output you have been hearing as it came, "Done" and then what was left. Options, When a command is done, Announce "Done" turns the word off: a command that ends well then says its output alone, with the chime; a failure is always said. Alt+3 then takes you to the start of the output; read down with the arrow keys.
 
 - Shift+Enter starts a new line in the field. A command of several lines goes to the shell line by line; for PowerShell one more Enter follows, which its console host wants to end a block.
 - An empty field sends a plain Enter.
@@ -65,7 +65,7 @@ The terminal is an ordinary read-only text: arrows, Home and End, Page Up and Pa
 - Ctrl+F finds text; F3 and Shift+F3 the next and previous match.
 - Escape clears a selection, or goes to the field.
 
-Options, Speech, Speak output: all lines, the default, reads each line as it arrives, joined into one utterance per burst. Speak output: none leaves only the ticks, and you read the output when you want.
+Options, Speech, Speak output: all lines, the default, reads the lines as they arrive, joined into one utterance for each third of a second. Speak output: none leaves only the ticks, and you read the output when you want.
 
 ## The shell
 

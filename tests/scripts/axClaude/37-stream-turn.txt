@@ -23,8 +23,7 @@ expect state Claude: ready | manual mode on
 type Say ok
 keys enter
 expect said Sent
-expect said claude: ok
-expect said Done
+expect said Done. claude: ok
 expect state Claude: ready | manual mode on
 # The conversation holds the exchange as it does with the screen: the markers, the message, the reply.
 do Conversation

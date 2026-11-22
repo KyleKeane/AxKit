@@ -26,7 +26,7 @@ Manual checks with NVDA running, before a release that changes axTerminal (`docs
   and no question chime at once; NVDA+End: "Running: …" and the folder still `start-here`; "Done" only after the five
   seconds.
 - `Start-Sleep 30`, Enter; NVDA+End: "Running: Start-Sleep 30"; Ctrl+Q: "Running: Start-Sleep 30, n seconds, …"; Ctrl+Shift+C: "Interrupt sent", then "Done" or "Failed". Shift+Escape: "Escape sent".
-- Options, Speech, Speak output: all lines; `Get-ChildItem`, Enter: the lines spoken as one utterance, then "Done". Back to none.
+- Options, Speech, Speak output: all lines; `Write-Output hello`, Enter: "Done. hello" as one utterance, with the chime; `Get-ChildItem`, Enter: "Done", then the whole listing, none of its rows before the word. Options, When a command is done, Announce "Done": "Announce Done, not checked"; `Write-Output again`, Enter: the chime and "again", no "Done"; `cmd /c exit 3`: "Failed, exit code 3" all the same. The switch on again: "Done. …". Speak output back to none. The runner's script is `02b-speak-output.txt`.
 - Options, Sounds, Background music while a command runs on; `Start-Sleep 5`: the music plays until "Done". Ctrl+M: "Background music off" (Ctrl+Space until 2026-11-15).
 - The mode key (bundle AX-8.13): type `echo one`, then Ctrl+Space: "Navigation mode", and F8 ends in "field in navigation mode". A letter that is no jump: a wooden bonk, nothing typed; Enter: the edge sound, nothing sent; h with no heading in the field: a low buzz, then "No next heading"; Ctrl+Up: the caret to the start of the field, no command from the history. Alt+2, Ctrl+Space: "Read only: there is no edit mode here". Alt+1, Ctrl+Space: "Edit mode"; typing types again.
 

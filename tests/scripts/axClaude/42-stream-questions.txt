@@ -50,8 +50,7 @@ keys down
 keys space
 keys enter
 expect said Sent: 1, Apple, 3, Cherry
-expect said claude: thanks
-expect said Done
+expect said Done. claude: thanks
 # Claude Code got the answers as one: the stand-in's log holds that the window allowed the call.
 run findstr /c:"the window's answer was allow" st\stream-standin.log
 do Conversation

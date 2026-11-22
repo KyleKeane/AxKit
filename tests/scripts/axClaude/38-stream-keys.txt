@@ -27,8 +27,7 @@ expect state Claude: ready | accept edits on
 type Write the file
 keys enter
 expect said Sent
-expect said claude: written
-expect said Done
+expect said Done. claude: written
 do Conversation
 expect text tool: Write (C:\work\probe-mode.txt)
 expect text claude: written

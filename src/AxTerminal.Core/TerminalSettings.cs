@@ -41,6 +41,13 @@ public sealed class TerminalSettings : ConsoleSettings
     /// <summary>"Asks: …" when a running program seems to wait on a question (AT-5.4).</summary>
     public bool AnnounceQuestions { get; set; } = true;
 
+    /// <summary>
+    /// The word "Done" when a command ends well (AT-5.1; the maintainer's decision of 2026-11-22: said before the
+    /// result or not at all, a setting of each app's own, with no threshold of time). Off, a command that ends well
+    /// says its output alone; its chime and "Failed" with the exit code are not this setting's.
+    /// </summary>
+    public bool AnnounceDone { get; set; } = true;
+
     public static string DefaultPath => AppPaths.SettingsFile("axTerminal");
 
     /// <summary>The seal over the fields that decide what is run (bundle AX-5.6, AT-8.1a): written at every save, checked at every load.</summary>

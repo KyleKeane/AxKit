@@ -120,25 +120,40 @@ internal sealed partial class MainForm
         WatchBackground();
     }
 
-    /// <summary>The held reply lines go out as one notification (D32), and the hold ends.</summary>
-    private void SpeakHeld()
+    /// <summary>
+    /// The held reply lines go out as one notification (D32), and the hold ends. With <paramref name="first"/>, the
+    /// word of a turn's end ("Done", FR-7.2a), that word stands before them in the same notification, and is said
+    /// alone when nothing is held: two notifications raised back to back are not both spoken by NVDA (the gotcha
+    /// of the per-line burst in this folder's notes), so the word and the lines are never two.
+    /// </summary>
+    private void SpeakHeld(string? first = null)
     {
         _speechHold.Stop();
+        var text = new StringBuilder();
         if (_heldLines.Count > 0)
         {
             // For the shadow's count (MainForm.Flow.cs): the lines this code speaks, before the user's silent words.
             FlowSpoke(_heldLines);
-            var text = new StringBuilder();
             // FR-7.4a: a line holding one of the user's silent words stays in the conversation, unspoken, whole: its
             // row and the rows its wrapping joined to it.
             foreach (var line in SpeechFilter.Spoken(_heldLines, _settings.SilentWords))
             {
                 Utterance.Append(text, Arrivals.SpokenText(line), line.JoinedToPrevious);
             }
+        }
 
-            if (text.Length > 0)
+        var lines = text.Length > 0;
+        if (first is not null)
+        {
+            // The word, a full stop for NVDA's pause, then the lines.
+            text.Insert(0, lines ? first + ". " : first);
+        }
+
+        if (text.Length > 0)
+        {
+            Announce(text.ToString(), false);
+            if (lines)
             {
-                Announce(text.ToString(), false);
                 // Until about when NVDA reads it: a question that opens meanwhile cuts it off (FR-7.4b, ShowInArea).
                 _replySpeechEnds = LeftoverSpeech.EndsAt(Environment.TickCount64, _replySpeechEnds, text.Length);
             }
@@ -234,11 +249,10 @@ internal sealed partial class MainForm
     /// <summary>The settle's own Done: the word by its switch, the chime and the taskbar signal; the bell and a Done that was owed are used up.</summary>
     private void SayDoneBySettle()
     {
-        if (_settings.AnnounceBell)
-        {
-            Announce("Done", false);
-        }
-
+        // FR-7.2a: the word first, and the reply lines that waited for it right after, as one notification; with
+        // the word switched off the lines go alone.
+        _doneAwaitedSince = 0;
+        SpeakHeld(_settings.AnnounceBell ? "Done" : null);
         Signal(question: false);
         if (!_doneOwed)
         {

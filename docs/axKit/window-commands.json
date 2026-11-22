@@ -1669,6 +1669,7 @@
         {"label": "Sound on headings", "menu": "Options, Text", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Time stamps on Input and Output lines", "menu": "Options, Text", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Windows text size", "menu": "Options, Text", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},
+        {"label": "Announce \"Done\"", "menu": "Options, When a command is done", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Flash the taskbar button", "menu": "Options, When a command is done", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Louder alert when the window is in the background", "menu": "Options, When a command is done", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Add a shell", "menu": "Session", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},

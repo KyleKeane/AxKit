@@ -76,9 +76,9 @@ type Reply with exactly two lines and nothing else: first line the words pelican
 expect focus second line the words green apples
 said
 keys enter
-expect said green apples
+# "Done" first, then the line that is spoken (FR-7.2a).
+expect said Done. green apples
 refuse said feathers
-expect said Done
 keys alt+2 ctrl+end
 expect text pelican feathers
 # Goal: Have every reply line spoken again
@@ -91,8 +91,7 @@ expect said Every reply line is spoken
 keys alt+1
 type Reply with exactly one line: the words pelican again.
 keys enter
-expect said pelican again
-expect said Done
+expect said Done. claude: pelican again
 
 # Check: The two feedback items switch like the others
 # The two feedback items under Options, Questions are switches like the others, saved as they are toggled.

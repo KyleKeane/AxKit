@@ -54,8 +54,7 @@ keys up
 expect focus 2. Yes, once
 keys enter
 expect said Sent: 2, Yes, once
-expect said claude: pinged
-expect said Done
+expect said Done. claude: pinged
 expect state Claude: ready
 # Claude Code was told yes: the stand-in's log holds what the window answered, no word of the question.
 run findstr /c:"the window's answer was allow" st\stream-standin.log

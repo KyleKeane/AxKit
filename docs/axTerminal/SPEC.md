@@ -321,12 +321,12 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   gives a `D` without a code and no command was sent. "Sent" has the sent note; the chimes are axClaude's
   (`soundOnBell`, axClaude FR-7.3), the ready ping with "Ready" when the first prompt appears after a start. The word
   waits for the frame that ends the command, or the banner, and is said with that frame's speech as one notification
-  ("hello. Done"; "… All rights reserved.. Ready"), since NVDA drops the second of two raised back to back; alone after
-  half a second when no frame comes (the NVDA pass of 2026-11-01 heard "Done" and Command Prompt's "Ready" go unspoken).
+  ("Done. hello"; "… All rights reserved.. Ready"), since NVDA drops the second of two raised back to back; alone after
+  half a second when no frame comes (the NVDA pass of 2026-11-01 heard "Done" and Command Prompt's "Ready" go unspoken). **The word of a command's end stands before its output** (the maintainer's decision of 2026-11-22, for axClaude, its FR-7.2a, and here alike: "a setting that speaks done before the result or does not speak done at all", with no threshold of time, which would leave the user guessing why the window behaves differently from one command to the next). Until then the last line stood first ("hello. Done"), and after a long output the word was heard only when NVDA had read all of it. So that the word stands before the whole result of a quick command, and not in the middle of it, the output's speech is held for 300 ms from its first line (AT-5.3): a command that ends within that time says "Done" and then everything it printed; one that runs on says its output in pieces a third of a second apart, and at its end "Done" with what is left. "Ready" stays after the banner it ends. **The word has a switch of its own** (`announceDone`, default on; Options → When a command is done → Announce "Done"; axClaude has its own, `announceBell`): off, a command that ends well says its output alone. The chime and the attention signals are not the word's and stay; "Failed" with its code is always said, before the output.
 - AT-5.2 **Tick** (`clickOnNewLine`, axClaude FR-7.8): one tick for a frame that adds a visible line; no tool tick,
   since nothing here is a tool call.
 - AT-5.3 **Speak output** (`outputSpeech`: `none` or `all` (default); Options → Speech → Speak output: none | all
-  lines, checked like a radio group): the lines that became final in a frame, as one notification (axClaude FR-7.4,
+  lines, checked like a radio group): the lines that became final, held for 300 ms from the first and then one notification (AT-5.1 says why; axClaude FR-7.4,
   D32), the markers and the hidden rows left out. All lines by default since 2026-10-23, decided at the NVDA pass: "axTerminal
   should speak the output of any command" (axClaude's default stays none, D10, since Claude's replies have Speak replies).
 - AT-5.4 **A program asks** (`announceQuestions`, default on; Options → Speech → Say when a program asks): while a
@@ -395,7 +395,7 @@ file). The speech of output (AT-5.3) and the texts of the notices are the rest.
   `commandLine` each, trimmed, a blank one dropped and a repeated name kept once, AT-1.6a), `userShellName` (the one
   in use, with `shell` `custom`; dropped when no shell of that name is listed), `lastFolder`, `recentFolders` (ten), `ptyColumns` 240, `ptyRows` 50,
   `soundOnBell` on, `clickOnNewLine` on, `workingMusic` off, `backgroundAlert` off, `flashTaskbar` on, `outputSpeech`
-  `none`, `announceQuestions` on, `markerTimeStamps` off, `showMarkers` on, `joinWrappedLines` on, `maxTranscriptLines` 20000, and the
+  `none`, `announceQuestions` on, `announceDone` on, `markerTimeStamps` off, `showMarkers` on, `joinWrappedLines` on, `maxTranscriptLines` 20000, and the
   window base's font, update check and window fields. Unknown or out-of-range values fall back to the defaults.
 - AT-8.1a **The shells are sealed** (bundle AX-5.6, 2026-11-16, `repairs.md` R-53): `shell`, `customShell` and
   `userShells` are under the file's `seal`, written at every save. A file whose seal does not check starts the

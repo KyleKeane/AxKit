@@ -33,8 +33,7 @@ file by\go1 x
 expect state Claude: working
 refuse said Claude goes on by itself
 file by\go2 x
-expect said claude: ok
-expect said Done
+expect said Done. claude: ok
 refuse said Claude goes on by itself
 expect state Claude: ready
 wait 2000
@@ -53,8 +52,7 @@ refuse said ! Claude goes on by itself
 expect said Claude goes on by itself
 refuse said Claude goes on by itself
 file by\go4 x
-expect said claude: The first shell has ended
-expect said Done
+expect said Done. claude: The first shell has ended
 refuse said Claude goes on by itself
 expect state Claude: ready
 
@@ -71,8 +69,7 @@ file by\go5 x
 expect state Claude: working
 refuse said Claude goes on by itself
 file by\go6 x
-expect said claude: The second shell has ended
-expect said Done
+expect said Done. claude: The second shell has ended
 refuse said Claude goes on by itself
 expect state Claude: ready
 menu Say the event sources

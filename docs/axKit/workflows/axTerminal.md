@@ -164,15 +164,26 @@ Starts with: Open axTerminal with the folder myproject.
 
 Starts with: Open axTerminal with the folder myproject.
 
-You hear the sound Ready.
+### Hear Done before a command's output
+
 1. Choose Speak output: all lines in the Options menu, Speech.
     You hear: Speak output: all lines.
-2. Type: Get-ChildItem
+2. Type: Write-Output hello
 3. Press Enter.
-    You hear: listed.txt. Done.
+    You hear: Done. hello.
     You hear the sound Done.
-4. Choose Speak output: none in the Options menu, Speech.
-    You hear: Speak output: none.
+
+### Turn the word Done off
+
+1. Choose Announce "Done" in the Options menu, When a command is done.
+    You hear: Announce "Done", not checked.
+2. Type: Write-Output again
+3. Press Enter.
+    You hear the sound Done.
+    You hear: again.
+4. Type: cmd /c exit 3
+5. Press Enter.
+    You hear: Failed, exit code 3.
 
 ## Switch shells and folders
 

@@ -28,8 +28,7 @@ expect state Claude: working
 # says Done once the turn has ended and its last reply is in the conversation, and what is still held of the reply
 # is spoken first (docs/axClaude/events-and-grounding.md EG-5.6, since 2026-11-17; before, the window's own timers
 # decided the order, and under load Done came first, seen 2026-11-15).
-expect said claude: ok
-expect said Done
+expect said Done. claude: ok
 do Conversation
 expect text claude: ok
 # The session file under the run's own folder holds the turn's end.

@@ -1,7 +1,8 @@
 # Workflow: Hear a command's output as it arrives
-# axTerminal, section 2 of docs/axTerminal/nvda-test-plan.md, step 9: Speak output (AT-5.3), in a script of its own
-# because it fails at present (seen 2026-10-23: the listing's last line comes after "Done", in an utterance of its own),
-# so that 02-commands.txt checks the rest of the section.
+# axTerminal, section 2 of docs/axTerminal/nvda-test-plan.md, step 9: Speak output (AT-5.3) and the word of a
+# command's end (AT-5.1): "Done" stands before the output's last lines, in one announcement with them (the
+# maintainer's decision of 2026-11-22; until then the last line stood first, "listed.txt. Done"), and Options, When a
+# command is done, Announce "Done" turns the word off: the output is then said alone, and the chime still plays.
 mkdir myproject
 file home\AxKit\axTerminal.json {"checkForUpdates": false}
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
@@ -9,13 +10,42 @@ file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code",
 file myproject\listed.txt x
 start terminal {temp}\myproject
 expect said ♪ Ready
-# Options, Speech, Speak output: all lines; Get-ChildItem: the lines as one utterance, then "Done"; back to none.
+
+# Goal: Hear Done before a command's output
+# Options, Speech, Speak output: all lines; Write-Output: "Done" and then the output, one announcement, then the chime.
 menu Speak output: all lines
 expect said Speak output: all lines
+type Write-Output hello
+keys enter
+expect said Done. hello
+expect said ♪ Done
+# Check: A listing is said after Done, down to its last line
 type Get-ChildItem
 keys enter
-# The listing's last line and "Done" as one announcement (AT-5.1, since 2026-11-01), then the chime.
-expect said listed.txt. Done
+expect said Done.
+expect said listed.txt
+# The whole listing follows the word: none of its rows stands before it (its rule of hyphens did, for a while that day).
+refuse said ----. Done
 expect said ♪ Done
+
+# Goal: Turn the word Done off
+# Options, When a command is done, Announce "Done": off, a command that ends well says its output alone; the chime
+# is not the word's and still plays. A command that fails still says so, with its exit code, before its output.
+menu Announce "Done"
+expect said ! Announce "Done", not checked
+type Write-Output again
+keys enter
+expect said ♪ Done
+expect said again
+refuse said Done. again
+type cmd /c exit 3
+keys enter
+expect said Failed, exit code 3
+# Check: The word comes back with its switch
+menu Announce "Done"
+expect said ! Announce "Done", checked
+type Write-Output 'once more'
+keys enter
+expect said Done. once more
 menu Speak output: none
 expect said Speak output: none

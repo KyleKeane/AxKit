@@ -19,34 +19,99 @@ internal sealed partial class TerminalForm
             EventDoor.Raise(EventKind.Line);
         }
 
-        SayWithFinished(arrival.Speech);
+        HoldOutput(arrival.Speech);
+        if (_finished is not null)
+        {
+            // The frame after a command's end, or after the first prompt: the word, with everything still held.
+            SayWithFinished();
+        }
     }
 
-    /// <summary>"Ready", "Done" or "Failed", waiting for the frame that ends it to be spoken first; then said with that frame's speech as one announcement.</summary>
+    private const string ReadyWord = "Ready";
+    private const string DoneWord = "Done";
+
+    /// <summary>"Ready", "Done" or "Failed", waiting for the frame that ends it; then said with what is held as one announcement.</summary>
     private string? _finished;
 
-    /// <summary>Half a second at most for that frame; then the word goes alone.</summary>
+    /// <summary>Half a second at most for that frame; then the word goes without it.</summary>
     private readonly System.Windows.Forms.Timer _finishedLate = new() { Interval = 500 };
 
     /// <summary>
-    /// The frame's speech and the word that waits, as one announcement: NVDA drops the second of two notifications
-    /// raised back to back (src/AxClaude/CLAUDE.md), so "Done" after a command's last line, and "Ready" after a shell's
-    /// banner, were never spoken while each was its own (heard by the NVDA pass, 2026-11-01). Done and Failed bring the
-    /// chime and the attention signals; Ready has its ping from <see cref="OnReady"/>.
+    /// The output's speech not yet handed to NVDA (AT-5.3), held for <see cref="OutputHoldMs"/> from its first line:
+    /// a command that ends within that time says "Done" and then its whole result, and one that runs on says its
+    /// output in pieces a third of a second apart and at its end "Done" with what is left.
     /// </summary>
-    private void SayWithFinished(string? speech)
+    private readonly System.Text.StringBuilder _heldOutput = new();
+
+    private const int OutputHoldMs = 300;
+
+    private readonly System.Windows.Forms.Timer _outputHold = new() { Interval = OutputHoldMs };
+
+    /// <summary>A frame's speech joins what is held, one full stop between them (a shell's line may end with its own), and the hold starts with the first.</summary>
+    private void HoldOutput(string? speech)
+    {
+        if (speech is null)
+        {
+            return;
+        }
+
+        if (_heldOutput.Length > 0)
+        {
+            var kept = _heldOutput.ToString().TrimEnd('.', ' ');
+            _heldOutput.Clear().Append(kept).Append(". ");
+        }
+
+        _heldOutput.Append(speech);
+        if (!_outputHold.Enabled)
+        {
+            _outputHold.Tick -= OnOutputHold;
+            _outputHold.Tick += OnOutputHold;
+            _outputHold.Start();
+        }
+    }
+
+    /// <summary>The hold is over: what is held goes, unless a word of an end waits, which takes it along.</summary>
+    private void OnOutputHold(object? sender, EventArgs e)
+    {
+        _outputHold.Stop();
+        if (_finished is null && _heldOutput.Length > 0)
+        {
+            Announce(_heldOutput.ToString(), false);
+            _heldOutput.Clear();
+        }
+    }
+
+    /// <summary>
+    /// The word that waits and the output still held, as one announcement: NVDA drops the second of two
+    /// notifications raised back to back (src/AxClaude/CLAUDE.md), so "Done" and a command's last line, and "Ready"
+    /// after a shell's banner, were never both spoken while each was its own (heard by the NVDA pass, 2026-11-01).
+    /// The word of a command's end stands first, "Done. hello" (the maintainer's decision of 2026-11-22, for axClaude
+    /// and here alike: Done is said before the result, or not at all, with no threshold of time; until then "hello.
+    /// Done", so that after a long output the word was heard only when all of it had been read, and for a short
+    /// while that day in the middle of a listing, whose first lines had gone before the command ended: hence the
+    /// hold). "Ready" stays after the banner it ends. With <see cref="TerminalSettings.AnnounceDone"/> off "Done" is
+    /// not said and the output goes alone; "Failed" with its code is always said. Done and Failed bring the chime
+    /// and the attention signals whatever is said; Ready has its ping from <see cref="OnReady"/>.
+    /// </summary>
+    private void SayWithFinished()
     {
         _finishedLate.Stop();
+        _outputHold.Stop();
         var word = _finished;
         _finished = null;
-        if (speech is not null || word is not null)
+        var speech = _heldOutput.Length > 0 ? _heldOutput.ToString() : null;
+        _heldOutput.Clear();
+        var said = word == DoneWord && !_settings.AnnounceDone ? null : word;
+        if (speech is not null || said is not null)
         {
-            // One full stop between them: a shell's line may end with its own.
-            Announce(speech is null ? word! : word is null ? speech : $"{speech.TrimEnd('.', ' ')}. {word}", false);
+            Announce(speech is null ? said!
+                : said is null ? speech
+                : said == ReadyWord ? $"{speech.TrimEnd('.', ' ')}. {said}"
+                : $"{said}. {speech}", false);
         }
 
         // The sound at once; the text may wait a moment to be joined to another (AX-7.3), so the ping can come first.
-        if (word == "Ready")
+        if (word == ReadyWord)
         {
             if (_settings.SoundOnBell)
             {
@@ -62,7 +127,7 @@ internal sealed partial class TerminalForm
     /// <summary>The first prompt of a run (AT-5.1): "Ready" with its ping, after the banner's last line.</summary>
     private void OnReady()
     {
-        _finished = "Ready";
+        _finished = ReadyWord;
         StartFinishedLate();
         UpdateStatus();
     }
@@ -72,9 +137,9 @@ internal sealed partial class TerminalForm
     {
         _askedRow = null;
         // The end of a command is reported while its output is still being read, before the frame that makes its last
-        // line final: the word waits for that frame's speech (OnTranscriptChanged), so that Speak output: all lines
-        // says the last line before "Done", not after it (found by tools/AxAutomate, 2026-10-23).
-        _finished = code is null or 0 ? "Done" : code == ShellTexts.ErrorWithoutCode ? "Failed" : $"Failed, exit code {code}";
+        // line final: the word waits for that frame's speech (OnTranscriptChanged), half a second at most, and is
+        // said with it as one announcement, the word first (SayWithFinished).
+        _finished = code is null or 0 ? DoneWord : code == ShellTexts.ErrorWithoutCode ? "Failed" : $"Failed, exit code {code}";
         StartFinishedLate();
     }
 
@@ -88,7 +153,7 @@ internal sealed partial class TerminalForm
         }
     }
 
-    private void OnFinishedLate(object? sender, EventArgs e) => SayWithFinished(null);
+    private void OnFinishedLate(object? sender, EventArgs e) => SayWithFinished();
 
     /// <summary>
     /// AT-5.4: while a command runs and output has stopped for two seconds, a cursor row that ends like a question

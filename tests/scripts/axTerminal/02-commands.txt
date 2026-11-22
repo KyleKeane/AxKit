@@ -217,7 +217,7 @@ expect said Escape sent
 # Goal: Play music while a command runs
 # Step 10: the background music while a command runs, until "Done"; Ctrl+M turns it off (Ctrl+Space until 2026-11-15). The menu command
 # itself says nothing here: the palette's spoken new state is the palette notice's, which "menu" skips.
-# Step 9, Speak output, is in 02b-speak-output.txt, since it fails at present too.
+# Step 9, Speak output, and the word Done before the output are in 02b-speak-output.txt.
 menu Background music while a command runs
 type Start-Sleep 3
 keys enter
@@ -238,7 +238,6 @@ type $n = 'abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abc
 keys enter
 expect said Sent
 refuse said tailmark
-expect said finished
-expect said Done
+expect said Done. finished
 do Latest output
 expect text "# Output 1","","finished"

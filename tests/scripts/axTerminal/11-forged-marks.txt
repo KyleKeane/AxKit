@@ -32,9 +32,8 @@ refuse state server
 refuse said Asks
 
 # Check: Done comes once, when the command ends, in the same folder
-# "Done" once, when the six seconds are over, with the file's line; the window is idle in the same folder.
-expect said A file that pretends the command is done.
-expect said Done
+# "Done" once, when the six seconds are over, and the file's line after it; the window is idle in the same folder.
+expect said Done. A file that pretends the command is done.
 expect said ♪ Done
 expect state "status":["Idle"
 expect state \\myproject\u003E"]

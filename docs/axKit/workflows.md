@@ -245,8 +245,8 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
 34. **Know that Claude works, and send a message while a reply arrives**
     - Know that Claude works while the screen shows no sign of it
     - Send a message while a reply's rows are still arriving
-35. **Hear Done after the reply, and not after an interrupt**
-    - Hear Done after the reply's words
+35. **Hear Done before the reply, and not after an interrupt**
+    - Hear Done, then the reply's words
 36. **Hear that Claude goes on by itself after background work**
     - Stop hearing that Claude goes on by itself
 37. **Follow a turn of Claude Code's stream**
@@ -875,6 +875,8 @@ Steps and keys: `docs/axKit/workflows/axTerminal.md` (in Claude's working folder
     - Interrupt a long command
     - Play music while a command runs
 3. **Hear a command's output as it arrives**
+    - Hear Done before a command's output
+    - Turn the word Done off
 4. **Switch shells and folders**
     - Start a new session in another shell
     - Switch to another shell

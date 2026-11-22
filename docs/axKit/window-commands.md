@@ -901,6 +901,7 @@ every window" or under a heading that names the windows without it; under an app
 - Speak output: none. Menu: Options, Speech. Key: none. Mark: change.
 - Markers in the text. Menu: Options, Text. Key: none. Mark: change.
 - Time stamps on Input and Output lines. Menu: Options, Text. Key: none. Mark: change.
+- Announce "Done". Menu: Options, When a command is done. Key: none. Mark: change.
 - Flash the taskbar button. Menu: Options, When a command is done. Key: none. Mark: change.
 - Louder alert when the window is in the background. Menu: Options, When a command is done. Key: none. Mark: change.
 - Add a shell. Menu: Session. Key: none. Mark: act.

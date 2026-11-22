@@ -36,8 +36,7 @@ do Message field
 type Still there?
 keys enter
 expect said Sent
-expect said claude: still here
-expect said Done
+expect said Done. claude: still here
 do Conversation
 expect text System: Interrupted
 expect text # Input 2

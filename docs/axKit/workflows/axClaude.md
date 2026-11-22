@@ -734,14 +734,12 @@ Starts with: Open axClaude with the folder opts.
 2. Press Alt+1 (Message field; Navigation menu).
 3. Type: Markdown only: ## Alpha, a five-word sentence, ## Beta, three one-word bullets.
 4. Press Enter.
-    You hear: claude: Alpha.
-    You hear: Done.
+    You hear: Done. claude: Alpha.
 5. Choose Speak replies: first lines in the Options menu, Speech.
     You hear: Speak replies: first lines.
 6. Type: Reply with two lines: the word first, then on the next line the word second.
 7. Press Enter.
-    You hear: claude: first.
-    You hear: Done.
+    You hear: Done. claude: first.
 
 ### Hear each tool call as it starts
 
@@ -1198,8 +1196,7 @@ Starts with: Open axClaude with the folder spoken.
     You hear: 2 words keep a line silent.
 5. Type: Reply with exactly two lines and nothing else: first line the words pelican feathers, second line the words green apples.
 6. Press Enter.
-    You hear: green apples.
-    You hear: Done.
+    You hear: Done. green apples.
 7. Press Alt+2, Ctrl+End.
 
 ### Have every reply line spoken again
@@ -1210,8 +1207,7 @@ Starts with: Open axClaude with the folder spoken.
 3. Press Alt+1 (Message field; Navigation menu).
 4. Type: Reply with exactly one line: the words pelican again.
 5. Press Enter.
-    You hear: pelican again.
-    You hear: Done.
+    You hear: Done. claude: pelican again.
 
 ## Run a command Claude offers you
 
@@ -1503,8 +1499,7 @@ You hear: Ready.
 1. Type: Say ok
 2. Press Enter.
     You hear: Sent.
-    You hear: claude: ok.
-    You hear: Done.
+    You hear: Done. claude: ok.
 3. Press Alt+2 (Conversation; Navigation menu).
 
 ## See Claude Code's events arrive, without Claude Code
@@ -1593,17 +1588,16 @@ Starts with: Open axClaude with the folder sw.
 2. Press Enter.
     You hear: Queued.
 
-## Hear Done after the reply, and not after an interrupt
+## Hear Done before the reply, and not after an interrupt
 
 Starts with: Open axClaude with the folder dn.
 
-### Hear Done after the reply's words
+### Hear Done, then the reply's words
 
 1. Type: Say ok
 2. Press Enter.
     You hear: Sent.
-    You hear: claude: ok.
-    You hear: Done.
+    You hear: Done. claude: ok.
     You hear the sound Done.
 
 ## Hear that Claude goes on by itself after background work
@@ -1625,8 +1619,7 @@ You hear: Ready.
 1. Type: Say ok
 2. Press Enter.
     You hear: Sent.
-    You hear: claude: ok.
-    You hear: Done.
+    You hear: Done. claude: ok.
 3. Press Alt+2 (Conversation; Navigation menu).
 
 ## Change Claude Code's mode and use the window's commands over the stream
@@ -1644,8 +1637,7 @@ You hear: Ready.
 1. Type: Write the file
 2. Press Enter.
     You hear: Sent.
-    You hear: claude: written.
-    You hear: Done.
+    You hear: Done. claude: written.
 3. Press Alt+2 (Conversation; Navigation menu).
 
 ### Restart Claude Code
@@ -1698,8 +1690,7 @@ You hear: Start Claude Code in this folder?
 1. Press Up 2 times.
 2. Press Enter.
     You hear: Sent: 2, Yes, once.
-    You hear: claude: pinged.
-    You hear: Done.
+    You hear: Done. claude: pinged.
 3. Press Alt+2 (Conversation; Navigation menu).
 
 ## Say no to Claude Code in a folder, and to what Claude asks to do
@@ -1721,8 +1712,7 @@ Starts with: Open axClaude with the folder st --source stream.
     You hear: Claude asks to use Write: C:\work\probe-denied.txt. Asked by Claude, an AI: read the explanation before you allow it. 1. No.
 2. Press Enter.
     You hear: Sent: 1, No.
-    You hear: claude: No, it was not created.
-    You hear: Done.
+    You hear: Done. claude: No, it was not created.
 3. Press Alt+2 (Conversation; Navigation menu).
 
 ## Answer Claude's own questions over Claude Code's stream
@@ -1756,8 +1746,7 @@ You hear: Question 2 of 2: Which fruits do you like?
 3. Press Space.
 4. Press Enter.
     You hear: Sent: 1, Apple, 3, Cherry.
-    You hear: claude: thanks.
-    You hear: Done.
+    You hear: Done. claude: thanks.
 5. Press Alt+2 (Conversation; Navigation menu).
 
 ## Interrupt Claude over Claude Code's stream
@@ -1784,8 +1773,7 @@ Starts with: Open axClaude with the folder st --source stream.
 2. Type: Still there?
 3. Press Enter.
     You hear: Sent.
-    You hear: claude: still here.
-    You hear: Done.
+    You hear: Done. claude: still here.
 4. Press Alt+2 (Conversation; Navigation menu).
 
 ## Be asked again when Claude asks the same thing twice, over Claude Code's stream
@@ -1807,8 +1795,7 @@ Starts with: Open axClaude with the folder st --source stream.
 You hear: Claude asks to use Edit: notes.txt. Asked by Claude, an AI: read the explanation before you allow it. 1. No.
 1. Press Enter.
     You hear: Sent: 1, No.
-    You hear: claude: one of two.
-    You hear: Done.
+    You hear: Done. claude: one of two.
 
 ## Hear a reply spoken in a new install
 
@@ -1818,8 +1805,7 @@ You hear: Ready.
 1. Type: Say ok
 2. Press Enter.
     You hear: Sent.
-    You hear: claude: ok.
-    You hear: Done.
+    You hear: Done. claude: ok.
 3. Press Alt+2 (Conversation; Navigation menu).
 
 ## Let Claude run a command over its stream, with Claude Code itself

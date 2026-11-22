@@ -125,6 +125,8 @@ internal sealed partial class TerminalForm
         options.DropDownItems.Add(speech);
 
         var done = new ToolStripMenuItem("When a command is &done");
+        // AT-5.1: the word, as axClaude's Options, When Claude is done, Announce "Done"; each app has its own.
+        done.DropDownItems.Add(Toggle("&Announce \"Done\"", _settings.AnnounceDone, v => _settings.AnnounceDone = v));
         done.DropDownItems.Add(Toggle("&Flash the taskbar button", _settings.FlashTaskbar, v => _settings.FlashTaskbar = v));
         done.DropDownItems.Add(Toggle("&Louder alert when the window is in the background", _settings.BackgroundAlert, v => _settings.BackgroundAlert = v));
         options.DropDownItems.Add(done);

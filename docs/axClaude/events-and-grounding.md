@@ -302,7 +302,7 @@ Constants are named here once and used by name afterwards. All times are millise
   1. no proposed line is pending in the gate;
   2. the end is confirmed: the turn's Stop event has come, or the record has shown its TurnEnd, or `DoneNoRecordMs` have passed since the bell;
   3. a frame has ended after the bell that added a visible line to the conversation (the last reply's rows, or the turn summary row).
-  Lines released in the same step are spoken before Done. After Done the turn's window is closed (EG-5.2). While the window is put away, Done is kept for the bringing up as today, one for several turns.
+  Lines released in the same step are spoken before Done: that is the core's own order, by which it counts. What is heard since 2026-11-22 is the other way round, by the maintainer's choice: the window, whose reply speech it still is, says Done first and the lines it held right after (axClaude's SPEC FR-7.2a). When the core's speech takes the window's place, it takes that order with it. After Done the turn's window is closed (EG-5.2). While the window is put away, Done is kept for the bringing up as today, one for several turns.
 - EG-5.7 **What is dropped and what never.** When the generation rises, every pending line is dropped, unspoken and counted. Done is never dropped by a generation. Questions and what the window says of them are the window's and are never dropped by the core.
 - EG-5.8 Before Claude is ready after a start nothing is proposed (the replay is for reading), as today. "Responding", "Ready", the ticks and the tool sound stay where they are.
 - EG-5.9 Every number of the gate is in the diagnostics: released, dropped outside a turn, dropped unconfirmed, dropped as stale, pending now.

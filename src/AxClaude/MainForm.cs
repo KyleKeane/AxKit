@@ -71,6 +71,17 @@ internal sealed partial class MainForm : ConsoleForm
     /// <summary>The bell rang (FR-7.2): "Done" or "Claude asks" once the screen has settled. While the core decides Done, only a bell the core found to be no turn's end (<see cref="FlowBell"/>).</summary>
     private bool _bellPending;
 
+    /// <summary>
+    /// When the bell last rang, in the system's milliseconds, while the Done it may bring has not been said; 0
+    /// otherwise. FR-7.2a (the maintainer's choice of 2026-11-22: "Done" is heard first, then the reply): the bell
+    /// comes just before the turn's last frame, which brings the last reply's rows, and those rows went to NVDA a
+    /// quarter of a second later, before Done was decided, so that Done was heard only after the whole reply.
+    /// </summary>
+    private long _doneAwaitedSince;
+
+    /// <summary>Whether reply lines still held wait for a Done (FR-7.2a): the bell rang less than <see cref="DoneFirstMs"/> ago and its Done has not been said.</summary>
+    private bool DoneAwaited => _doneAwaitedSince != 0 && Environment.TickCount64 - _doneAwaitedSince < DoneFirstMs;
+
     /// <summary>The bell that is pending came in a run that has shown no mark (EG-6.5): the bell and the settle are all there is of a turn's end, and the settle says Done as before the core (<see cref="DoneBySettle"/>).</summary>
     private bool _bellNoMarks;
 
@@ -150,6 +161,8 @@ internal sealed partial class MainForm : ConsoleForm
         };
         _model.Bell += () =>
         {
+            // FR-7.2a: a Done may follow this bell, and the reply lines not yet spoken wait for it (DoneAwaited).
+            _doneAwaitedSince = Environment.TickCount64;
             if (!FlowDecides(FlowCharge.Done))
             {
                 // The old rule (the setting eventCore set to shadow, a core that failed): every bell starts the
@@ -177,7 +190,15 @@ internal sealed partial class MainForm : ConsoleForm
 
             OnFrameSettled();
         };
-        _speechHold.Tick += (_, _) => SpeakHeld();
+        _speechHold.Tick += (_, _) =>
+        {
+            // FR-7.2a: while a Done is awaited the held lines stay held, and the timer asks again on its next tick;
+            // Done speaks them right after itself (FlowDone, SayDoneBySettle).
+            if (!DoneAwaited)
+            {
+                SpeakHeld();
+            }
+        };
         WireBackground();
         // The source's own code, of which one part wires itself and the other does nothing (SM-3.6, SM-9.2): the
         // machinery beside the screen, or the stream source.

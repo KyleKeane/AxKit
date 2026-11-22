@@ -18,6 +18,8 @@ public sealed class TerminalSettingsTests
         Assert.True(settings.ClickOnNewLine);
         Assert.False(settings.WorkingMusic);
         Assert.True(settings.AnnounceQuestions);
+        // AT-5.1: the word "Done" is said until its switch is turned off.
+        Assert.True(settings.AnnounceDone);
         Assert.Equal(OutputSpeechMode.All, settings.OutputSpeech);
         Assert.Equal(20000, settings.MaxTranscriptLines);
         Assert.True(settings.CheckForUpdates);

@@ -1,11 +1,11 @@
-# Workflow: Hear Done after the reply, and not after an interrupt
+# Workflow: Hear Done before the reply, and not after an interrupt
 # Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
 # axClaude, docs/axClaude/nvda-test-plan.md section 25 step 5 (docs/axClaude/events-and-grounding.md EG-5.6, EG-6.5 and
 # section 4.2; 2026-11-17): "Done" is the core's. It is said when a turn has ended with its end marks and its bell and
-# the last reply is in the conversation, after that reply's words, and no longer 400 ms after any bell. The stand-in
+# the last reply is in the conversation, and no longer 400 ms after any bell; since 2026-11-22 the word is heard first and that reply's words after it, in one utterance (SPEC.md FR-7.2a, the maintainer's choice). The stand-in
 # (tools/AxAutomate/StandIn.cs) plays four ends as Claude Code 2.1.325 writes them, each step at a file the script
 # makes, and writes the session file under the run's own folder as it goes. A turn whose reply's frame comes 80 ms
-# after the bell: the reply's words, then "Done" with its chime. An interrupt, the end marks without a bell and the
+# after the bell: "Done" with its chime, then the reply's words. An interrupt, the end marks without a bell and the
 # cut reply with its Interrupted row: no "Done". A bell alone, with a question's rows on the screen: the question,
 # and no "Done" until the answer has ended the turn. A start mark and the end marks at once with no bell, the note
 # Claude Code writes when it hands the prompt back: nothing at all. Speak replies is all lines, so that the reply's
@@ -27,17 +27,16 @@ file scenario.json {"version":"2.1.325 (stand-in)","session":"11111111-2222-4333
 
 start claude {temp}\dn --claude {temp}\claude.cmd -- --model haiku
 expect said Ready
-# Goal: Hear Done after the reply's words
+# Goal: Hear Done, then the reply's words
 # Claude takes the message up: the start mark and a working frame. Then the end marks and the bell, and the reply's
-# frame 80 ms later: the reply is said, then "Done", and the Done chime plays.
+# frame 80 ms later: "Done" is said with the reply after it, and the Done chime plays.
 type Say ok
 keys enter
 expect said Sent
 file dn\go1 x
 expect state Claude: working
 file dn\go2 x
-expect said claude: ok
-expect said Done
+expect said Done. claude: ok
 expect said ♪ Done
 expect state Claude: ready
 
@@ -72,8 +71,7 @@ refuse said ♪ Done
 keys 1 enter
 expect said Sent: 1, Yes
 file dn\go6 x
-expect said claude: asked
-expect said Done
+expect said Done. claude: asked
 expect said ♪ Done
 expect state Claude: ready
 
