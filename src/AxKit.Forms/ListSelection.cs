@@ -38,8 +38,8 @@ public sealed class ListSelection
     /// <summary>What a selected row's item ends in.</summary>
     public const string Suffix = ", selected";
 
-    /// <summary>What a window does with a change besides showing and saying it (axFile's line in its Actions list); called before the words are said.</summary>
-    public Action<MarkChange>? Recorded { get; set; }
+    /// <summary>What a window does after a change of the marks besides showing and saying it (the count in its status bar); called before the words are said.</summary>
+    public Action? Changed { get; set; }
 
     public int Count => _marks.Count;
 
@@ -47,9 +47,6 @@ public sealed class ListSelection
 
     /// <summary>The selected keys, a copy, in no order: a window acts on its rows that <see cref="Contains"/> holds, in the list's order.</summary>
     public IReadOnlyList<string> Keys => _marks.Keys;
-
-    /// <summary>Whether a Shift range is being made.</summary>
-    public bool RangeOn => _marks.RangeOn;
 
     /// <summary>A row's words as its item shows them: with ", selected" while it is.</summary>
     public string Label(string key, string label) => _marks.Contains(key) ? label + Suffix : label;
@@ -87,10 +84,10 @@ public sealed class ListSelection
     }
 
     /// <summary>Ctrl+A: every row shown that can be selected, "n selected".</summary>
-    public void All() => Apply(_marks.All(_rows(), _list.SelectedIndex));
+    public void All() => Apply(_marks.All(_rows()));
 
     /// <summary>Ctrl+Shift+A, Escape: no row selected, "None selected".</summary>
-    public void None() => Apply(_marks.None(_rows(), _list.SelectedIndex));
+    public void None() => Apply(_marks.None(_rows()));
 
     /// <summary>
     /// Shift with Up, Down, Home or End: the current row moves to <paramref name="target"/> (the first or the last
@@ -129,9 +126,6 @@ public sealed class ListSelection
     /// <summary>Another level shown: no marks.</summary>
     public void Clear() => _marks.Clear();
 
-    /// <summary>The marks as they were before a recorded change (a window's undo of a selection line).</summary>
-    public void Restore(IReadOnlyList<string> marks) => Apply(_marks.Restore(marks, _rows()));
-
     /// <summary>
     /// The four keys that select as they move, as commands for the window's command list: "Select to the next
     /// entry" on Shift+Down and the like, with the window's word for a row and where the keys act.
@@ -158,7 +152,7 @@ public sealed class ListSelection
         ];
     }
 
-    /// <summary>One change of the marks applied: the items whose mark flipped rewritten, the window's record of it, and what the key says said.</summary>
+    /// <summary>One change of the marks applied: the items whose mark flipped rewritten, the window told, and what the key says said.</summary>
     private void Apply(MarkChange change)
     {
         if (change.Changed.Count > 1)
@@ -176,7 +170,7 @@ public sealed class ListSelection
             _list.EndUpdate();
         }
 
-        Recorded?.Invoke(change);
+        Changed?.Invoke();
         if (change.Said.Length > 0)
         {
             _say(change.Said);

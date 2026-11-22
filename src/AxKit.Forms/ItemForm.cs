@@ -275,7 +275,7 @@ public abstract partial class ItemForm : AxKitForm
     /// The navigator's selection (AX-8.16), the bundle's <see cref="ListSelection"/>: the marks on the rows of the
     /// level shown, kept while the same level shows. Empty for ever in an app without a selection.
     /// </summary>
-    protected ListSelection Selection => _selectionMade ??= new ListSelection(Navigator, () => _markRows, row => DisplayText.Visible(RowText(_rows[row])), said => Announce(said, true)) { Recorded = _ => ShowName() };
+    protected ListSelection Selection => _selectionMade ??= new ListSelection(Navigator, () => _markRows, row => DisplayText.Visible(RowText(_rows[row])), said => Announce(said, true)) { Changed = ShowName };
 
     /// <summary>A row's words as its item shows them: with ", selected" while it is.</summary>
     private string RowText(ItemRow row) => Selection.Label(row.Key, row.Label);
