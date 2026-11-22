@@ -6,6 +6,27 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-22: axGIT as a navigator, and the navigator's text pane; by the assistant with NVDA listening (`main` 0e040525)
+
+`.\nvda-pass.ps1 -Only` every script of axGIT, axTask, axPass, axMCP, axAutomate, axMedia and axProcess, the seven
+apps on the navigator, behind the spoken countdown, the maintainer away at his word (NVDA passes "Yes, for this
+whole absence"), NVDA 2025.3.3 with the OneCore voice, Windows 11 Pro 10.0.26200, the build 5.10.0 of commit
+0e040525, the tree clean: 54 scripts, 409 goals and checks, none failed and none run twice.
+
+| What | Scripts | Result |
+|---|---|---|
+| axGIT on `ItemForm` with the text pane (framework step 8): the start, up to the repository and into another list, the diff and the commit in the details with Tab, Shift+Tab and Escape back, Stage and Unstage on the file you are on and on two selected files, the commit, Discard on one file and on the selected, the consents, a repository's own programs | 7 | Passed |
+| axTask, axPass, axMCP, axAutomate: every script, after the text pane came into the item window | 33 | Passed |
+| axMedia, axProcess: every script | 14 | Passed |
+
+The run ended with the error code for a stale command inventory, and nothing else: axGIT's inventory had been
+written while the repository was still being read, when Context holds "Nothing selected" in place of a file's
+commands. The script `01-start.txt` asks for the command list after the list has its files now, and the inventory
+was written again; a fault of the script's timing, not of the window.
+
+Not heard by a person, and lines of the item of step 8 for the maintainer's word: the staging keys Ctrl+Shift+S
+and Ctrl+Shift+U, and whether Delete on one file should have Cancel as its default as it has for several.
+
 ## 2026-11-22: axProcess as a navigator, its three views three lists; by the assistant with NVDA listening (`main` 6524dfc8)
 
 `.\nvda-pass.ps1 -Only` every script of axProcess and axMedia, behind the spoken countdown, the maintainer away at
