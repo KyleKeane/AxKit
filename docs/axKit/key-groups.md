@@ -476,6 +476,7 @@ The keys:
 - Ctrl+Shift+K, axJSON: Key.
 - Ctrl+Shift+L, axDown and axPreview: List.
 - Ctrl+Shift+L, axJSON: Array.
+- Ctrl+Shift+M, axJSON: Add a member.
 - Ctrl+Shift+N, axAutomate, axMCP, axPass and axTask: New list.
 - Ctrl+Shift+N, axDown and axJSON: New window.
 - Ctrl+Shift+N, axPass: New group.
@@ -554,6 +555,7 @@ Alt+Up and Alt+Down move what you are on: a field of an item goes one place up o
 The keys:
 
 - Alt+Down arrow, axAutomate, axMCP, axPass and axTask: Move the field down.
+- Alt+Down arrow, axJSON: Choose a value.
 - Alt+Up arrow, axAutomate, axMCP, axPass and axTask: Move the field up.
 
 Exceptions today, which do another kind of thing:

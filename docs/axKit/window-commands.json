@@ -823,6 +823,8 @@
     {
       "app": "axJSON",
       "commands": [
+        {"label": "Add a member", "menu": "Actions", "key": "ctrl+shift+m", "also": [], "keyText": "Ctrl+Shift+M", "mark": "change", "keyOnly": false, "ai": true},
+        {"label": "Choose a value", "menu": "Actions", "key": "alt+down", "also": [], "keyText": "Alt+Down", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Format", "menu": "Actions", "key": "ctrl+shift+f", "also": [], "keyText": "Ctrl+Shift+F", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Redo", "menu": "Actions", "key": "ctrl+y", "also": ["ctrl+shift+z"], "keyText": "Ctrl+Y", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Undo", "menu": "Actions", "key": "ctrl+z", "also": [], "keyText": "Ctrl+Z", "mark": "change", "keyOnly": false, "ai": true},

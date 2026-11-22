@@ -489,6 +489,8 @@ every window" or under a heading that names the windows without it; under an app
 
 ## axJSON
 
+- Add a member. Menu: Actions. Key: Ctrl+Shift+M. Mark: change.
+- Choose a value. Menu: Actions. Key: Alt+Down. Mark: change.
 - Format. Menu: Actions. Key: Ctrl+Shift+F. Mark: change.
 - Redo. Menu: Actions. Key: Ctrl+Y. Also: Ctrl+Shift+Z. Mark: change.
 - Undo. Menu: Actions. Key: Ctrl+Z. Mark: change.

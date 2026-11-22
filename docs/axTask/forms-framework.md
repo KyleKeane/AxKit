@@ -272,7 +272,9 @@ usable by itself:
    AF-7.2; the run off the UI thread with its words, its output and its stop; the hand-over to axTerminal.
 5. `SPEC.md` rewritten for all of it, the user guide, the NVDA plan, the outside-calls page, `PRIVACY.md` and
    `SECURITY.md`; window scripts; an NVDA pass. **From here a list's actions can be configured and worked with.**
-6. axJSON learns the options (section 12): the table of the configuration's members and their values, and
+6. *(Built on 2026-11-21: the table is `AxKit.Core/ListOptions`, the file `docs/axKit/axkit-list 2.options.json`,
+   axJSON's two commands Choose a value (Alt+Down) and Add a member (Ctrl+Shift+M), its SPEC AJ-5; what changed
+   while building is said in section 12 in italics.)* axJSON learns the options (section 12): the table of the configuration's members and their values, and
    axJSON's two commands that offer them. With axJSON's own maturing, which the maintainer expects to follow.
 7. The first uses, in the management lists: Answer the report on GitHub in the outside reports list (after an entry
    is Done), and what the maintainer asks for next.
@@ -362,6 +364,16 @@ There is no form of axTask's own for making an action: the configuration is the 
   view of the whole file in place of the text, one command to go there and back: the same form axTask opens on
   Enter (AF-14.1), built from the same linked file by the same shared code, so that it is written once. The text
   stays the truth, and the form is another way to change it.
+- **AF-12.6 As built on 2026-11-21** (axJSON's SPEC AJ-5 says it in full). *The table is `AxKit.Core/ListOptions`,
+  not a class of axTask: axJSON reads it, and an app never references another; axTask's test holds the actions'
+  side of it to the actions' reader, and the readers themselves were left as they are. The file is
+  `docs/axKit/axkit-list 2.options.json`, named for the format as it is now, written from the table and held by a
+  test; it is in the repository for other programs, and axJSON uses the table in code. A configuration is known by
+  its `"format"`, and names no options file itself: a file shipped with axKit has no place a `list.json` could link
+  to. An item is known by its `"schema"` link, which axJSON follows to the configuration beside it, on this
+  computer only. Of AF-12.5's ways, the list is built (Alt+Down on a value; Ctrl+Shift+M for an object's missing
+  members); stepping through the values with a key, a date's `today` and `+3`, and the form view are not, and stay
+  the maintainer's to settle with the two keys.*
 
 
 ## 13. An item is its values, read through its list's configuration

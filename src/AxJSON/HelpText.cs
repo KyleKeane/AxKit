@@ -27,6 +27,8 @@ public static class HelpText
           Ctrl+I and Ctrl+Shift+I: next and previous item of an array, "Item 2 of 5, Read"
           Ctrl+E and Ctrl+Shift+E: the place where the file stops being JSON, with the line and what was expected there; "No next error" means the file is valid
           Ctrl+Shift+F: format: two spaces per level, one key per line; a trailing comma, a missing comma, single quotes, an unquoted key and a comment are repaired on the way and named
+          Alt+Down: choose a value: for a list's configuration of axTask (list.json) and for an item of a list, the values the member at the caret can take, as a list; Enter writes the one chosen, Escape leaves. "type", "does", "key", a choice's options, true or false
+          Ctrl+Shift+M: add a member: the members the object at the caret can have and does not have yet, each with what it is; Enter adds the one chosen with a first value and puts the caret on it
           Ctrl+Shift+W: word wrap on or off
 
         ## The text

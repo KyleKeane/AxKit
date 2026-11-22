@@ -16,6 +16,7 @@ namespace AxKit.Forms;
 /// <param name="ResourcesLabel">The Help submenu of pages about the file format, "Markdown &amp;resources".</param>
 /// <param name="Resources">Its items: a label with a mnemonic and the page it opens in the browser.</param>
 /// <param name="Commands">The app's own commands on the whole text, at the end of the Edit menu: axJSON's Format.</param>
+/// <param name="Offers">The app's commands that offer a list at the caret, after the commands in the Edit menu: axJSON's values and members (AJ-5); null for none.</param>
 /// <param name="ReadOnly">A viewer (axPreview, docs/axPreview/SPEC.md AP-D4): the text is read-only, there is no Edit menu, no Save and no history; the File menu has Reload and Edit in the editor instead; the window keeps one instance and takes a file handed over by a start (<see cref="AppMessage"/>).</param>
 /// <param name="Refuse">For a viewer: the notice for a file that is not opened (a text too large), or null when it opens; the window then keeps what it had (AP-2.2).</param>
 /// <param name="Render">For a viewer: what a file shows, from the renderer that takes it (AP-7); null reads every file as text.</param>
@@ -35,7 +36,8 @@ public sealed record EditorApp(
     bool ReadOnly = false,
     Func<string, Notice?>? Refuse = null,
     Func<string, ViewerPage>? Render = null,
-    Func<string, IReadOnlyList<string>, IReadOnlyList<string>>? Details = null);
+    Func<string, IReadOnlyList<string>, IReadOnlyList<string>>? Details = null,
+    IReadOnlyList<EditorOffer>? Offers = null);
 
 /// <summary>Where the viewer's Ctrl+E goes (docs/axPreview/SPEC.md AP-7.3): the file's editor, axMedia, or the program Windows has for it.</summary>
 public enum ViewerWayOut
@@ -63,3 +65,17 @@ public sealed record EditorCommand(string Label, Keys Key, Func<string, Rewrite>
 
 /// <summary>What a command made of the text, and the one announcement for it ("Formatted", "Not valid JSON: line 12, expected a comma"); the text unchanged when nothing could be done.</summary>
 public sealed record Rewrite(string Text, string Message);
+
+/// <summary>
+/// A command of an editor app that offers a list at the caret (docs/axJSON/SPEC.md AJ-5): its menu label with a
+/// mnemonic, its key from the app's table, and the function that gives the offer for the text, the caret and the
+/// file's path (null for a document not saved yet). The shell shows the list in place of the Go to line field,
+/// writes the chosen line's change as one undo step and says its sentence.
+/// </summary>
+public sealed record EditorOffer(string Label, Keys Key, Func<string, int, string?, Offered> At);
+
+/// <summary>What an <see cref="EditorOffer"/> gives: a list (its name, its lines, the line it starts on, the change each line makes), or with no lines the one sentence that says why there is none.</summary>
+public sealed record Offered(string? Said, string Name = "", IReadOnlyList<string>? Lines = null, int Selected = 0, Func<int, TextEdit>? Choose = null);
+
+/// <summary>One change to the text of an editor: what replaces which characters, where the caret stands after, and what is said. A change of no characters by no text only says its sentence.</summary>
+public sealed record TextEdit(int Start, int Length, string Text, int Caret, string Said);

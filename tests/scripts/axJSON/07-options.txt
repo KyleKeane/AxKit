@@ -1,0 +1,106 @@
+# Workflow: Write a list's configuration by choosing
+# axJSON, SPEC.md AJ-5 (docs/axTask/forms-framework.md section 12): for a list's configuration of axTask and for an
+# item of a list, a value that is one of a few is chosen from a list, and an object's missing members are added from
+# a list that says what each is. Any other file has no options, and says so. Nothing is validated or refused.
+file home\AxKit\axJSON.json {"checkForUpdates": false}
+file lists\Home\list.json {\n  "format": "axkit-list 2",\n  "details": { "Notes": "" },\n  "item fields": [\n    { "title": "Done", "type": "check", "value": false },\n    { "title": "Priority", "type": "choice", "value": "Normal", "options": ["High", "Normal", "Low"] }\n  ],\n  "actions": [\n    {\n      "name": "Later",\n      "does": "move",\n      "to": "../Later"\n    }\n  ]\n}\n
+file lists\Home\tap.json {\n  "schema": "list.json",\n  "Title": "Fix the tap",\n  "Done": false,\n  "Priority": "Normal"\n}\n
+file other.json {\n  "model": "opus"\n}\n
+
+start json {temp}\lists\Home\list.json
+expect focus list.json
+check commands
+
+# Goal: Choose a value from the values a member can take
+# On the first field's type (the sixth key of the file): Choose a value lists the field types, starting on the one
+# that stands there; Enter writes the one chosen in its place, as one step, and says it.
+keys ctrl+home ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k
+expect said ! type: check
+do Choose a value
+expect focus {"name":"type: What the field holds","role":"List","value":"check"}
+keys down
+expect focus {"name":"type: What the field holds","role":"List","value":"choice"}
+keys enter
+expect said ! type: choice
+expect focus list.json
+expect text "type": "choice", "value": false }
+# Check: Escape leaves the list and changes nothing
+keys alt+down
+expect focus {"name":"type: What the field holds","role":"List","value":"choice"}
+keys escape
+expect focus list.json
+expect text "type": "choice", "value": false }
+
+# Goal: Add a member an object can have
+# In the same field: Add a member lists what a field can have and does not have yet, each with what it is; Enter
+# adds it as the object's last member with a first value, and the caret is on that value.
+do Add a member
+expect focus {"name":"Add a member to a field of the list's items","role":"List","value":"options: The values to choose from, for the type choice"}
+keys enter
+expect said ! Added options: The values to choose from, for the type choice
+expect focus list.json
+expect text "value": false, "options": [] }
+# Check: Each choice is one step to undo
+keys ctrl+z
+expect text "type": "choice", "value": false }
+keys ctrl+z
+expect text "type": "check", "value": false }
+
+# Goal: Add a key to an action and choose it
+# In the action (the key "name" is the thirteenth): Add a member, the first line is key; added with Ctrl+1, the
+# caret on it, so that Choose a value lists the eighteen keys at once.
+keys ctrl+home ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k
+expect said ! name: Later
+keys ctrl+shift+m
+expect focus {"name":"Add a member to an action of the list","role":"List","value":"key: The key that runs it; without one it runs from the menu"}
+keys enter
+expect said ! Added key: The key that runs it; without one it runs from the menu
+do Choose a value
+expect focus {"name":"key: The key that runs it; without one it runs from the menu","role":"List","value":"Ctrl+1"}
+keys end
+expect focus {"name":"key: The key that runs it; without one it runs from the menu","role":"List","value":"Ctrl+Shift+9"}
+keys enter
+expect said ! key: Ctrl+Shift+9
+expect text "key": "Ctrl+Shift+9"
+# Check: A member that takes any value says what it is
+keys ctrl+home ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k
+expect said ! title: Done
+do Choose a value
+expect said ! title takes any value. The field's name, as it is shown and said
+
+# Goal: Choose an item's value through its link to the list's configuration
+# An item names its list's configuration ("schema": "list.json"): axJSON reads the file beside it and offers the
+# choice's options the list gives.
+start json {temp}\lists\Home\tap.json
+expect focus tap.json
+keys ctrl+home ctrl+k ctrl+k ctrl+k ctrl+k
+expect said ! Priority: Normal
+keys alt+down
+expect focus {"name":"Priority: A choice of the list's options","role":"List","value":"Normal"}
+keys up
+keys enter
+expect said ! Priority: High
+expect text "Priority": "High"
+# Check: A check is true or false
+# The caret stands on the value just written, so the first Ctrl+Shift+K is that member's own key.
+keys ctrl+shift+k
+expect said ! Priority: High
+keys ctrl+shift+k
+expect said ! Done: false
+do Choose a value
+expect focus {"name":"Done: A check: true or false","role":"List","value":"false"}
+keys up
+keys enter
+expect said ! Done: true
+# Check: An item that has every field of its list has nothing to add
+do Add a member
+expect said ! An item of a list has every member it can have
+
+# Check: A file axJSON has no options for says so
+start json {temp}\other.json
+expect focus other.json
+keys ctrl+home ctrl+k
+do Choose a value
+expect said ! axJSON has no options for this file: it has them for a list's configuration and for an item of a list
+do Add a member
+expect said ! axJSON has no options for this file: it has them for a list's configuration and for an item of a list

@@ -29,6 +29,15 @@ public static class AxJSONKeys
     /// <summary>Edit → Format (AJ-2.3).</summary>
     public const Keys Format = Keys.Control | Keys.Shift | Keys.F;
 
+    /// <summary>
+    /// Edit, Choose a value (AJ-5): the values the member at the caret can take, as a list. Alt+Down, the key that
+    /// opens a list of choices in Windows; it means nothing to an edit control or to NVDA.
+    /// </summary>
+    public const Keys ChooseValue = Keys.Alt | Keys.Down;
+
+    /// <summary>Edit, Add a member (AJ-5): the members the object at the caret can have and does not have yet.</summary>
+    public const Keys AddMember = Keys.Control | Keys.Shift | Keys.M;
+
     /// <summary>Every key of the window with its name, the editor shell's first, for the collision test and the F1 text.</summary>
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
     [
@@ -44,6 +53,8 @@ public static class AxJSONKeys
         ("Next error", NextError),
         ("Previous error", PreviousError),
         ("Format", Format),
+        ("Choose a value", ChooseValue),
+        ("Add a member", AddMember),
     ];
 
     /// <summary>The keys of AJ-2.2 as pairs, one per kind, with the outline's functions: the editor and every notice text take this list (bundle AX-7.2).</summary>

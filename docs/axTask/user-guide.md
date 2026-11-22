@@ -110,6 +110,10 @@ A list that has no such file yet gets one written first, with the fields its ite
 to edit. When you come back to axTask, one line says what the configuration holds now, "The list's configuration
 changed: 5 fields, 2 actions".
 
+In axJSON you can choose instead of typing: Alt+Down on a value that is one of a few, such as a field's `type` or
+an action's `does`, lists the values; Ctrl+Shift+M in a field or an action lists the members it can have and does
+not have yet, each with what it is, and adds the one you choose (axJSON's guide, "Choose instead of typing").
+
 ```json
 {
   "format": "axkit-list 2",

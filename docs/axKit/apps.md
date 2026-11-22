@@ -35,7 +35,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxJSON` (the window), `src/AxJSON.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxJSON.Tests`.
 - Documents: `docs/axJSON/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axJSON/`, 6 scripts (their workflows are in `docs/axKit/workflows/axJSON.md`).
+- Automated checks: `tests/scripts/axJSON/`, 7 scripts (their workflows are in `docs/axKit/workflows/axJSON.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axJSON.ps1`, or `run.ps1 -App json`.
 
 ### axPreview

@@ -83,6 +83,41 @@ public sealed class ListActionsTests
         Assert.Empty(ListActions.Read(ListConfig.New([])));
     }
 
+    /// <summary>
+    /// AF-12.1: the options table axJSON offers a configuration from (<c>AxKit.Core/ListOptions</c>) names what this
+    /// reader takes: the kinds, the keys, a form's field types, and members that read as an action when each holds
+    /// its first value.
+    /// </summary>
+    [Fact]
+    public void The_options_table_names_what_the_reader_takes()
+    {
+        Assert.Equal([ListActions.SetKind, ListActions.MoveKind, ListActions.OpenKind, ListActions.RunKind, ListActions.TerminalKind], ListOptions.ActionKinds);
+        Assert.Equal(Enumerable.Range(1, ListActions.KeyCount).Select(ListActions.KeyText), ListOptions.ActionKeys);
+        Assert.All(ListOptions.ActionKeys, key => Assert.NotNull(ListActions.ParseKey(key)));
+        Assert.Equal(ListActions.FieldTypesOfAForm, ListOptions.FormFieldTypes);
+        Assert.Equal([ListActions.ListFolder], ListOptions.Table.Kind("action")!.Member("folder")!.Values);
+        Assert.Equal(ListActions.DefaultSeconds.ToString(System.Globalization.CultureInfo.InvariantCulture), ListOptions.Table.Kind("action")!.Member("seconds")!.First);
+
+        // Each kind of action, written with the table's members alone, is understood.
+        var members = ListOptions.Table.Kind("action")!.Members.Select(member => member.Name).ToHashSet();
+        foreach (var action in new[]
+        {
+            """{ "name": "A", "key": "Ctrl+1", "does": "set", "set": { "Done": true } }""",
+            """{ "name": "B", "does": "move", "to": "../Later" }""",
+            """{ "name": "C", "does": "open", "open": "Address" }""",
+            """{ "name": "D", "does": "run", "program": "gh", "arguments": ["x"], "input": "{form:Say}", "folder": "list", "seconds": 60, "then": { "set": { "Done": true } }, "fields": [ { "title": "Say", "type": "text", "value": "", "options": [], "required": true, "hidden": false } ] }""",
+            """{ "name": "E", "does": "terminal", "command": ["gh", "x"], "folder": "list" }""",
+        })
+        {
+            var read = Assert.Single(Read($"[ {action} ]"));
+            Assert.Null(read.NotUnderstood);
+            Assert.All(((System.Text.Json.Nodes.JsonObject)System.Text.Json.Nodes.JsonNode.Parse(action)!).Select(pair => pair.Key), name => Assert.Contains(name, members));
+        }
+
+        Assert.Equal(["title", "type", "value", "options", "required", "hidden"], ListOptions.Table.Kind("form field")!.Members.Select(member => member.Name));
+        Assert.Equal(["set"], ListOptions.Table.Kind("then")!.Members.Select(member => member.Name));
+    }
+
     /// <summary>TK-7a.3 (bundle repairs R-72): a list's file may come from elsewhere, so what leaves the list is said before it is done.</summary>
     [Fact]
     public void An_action_that_moves_or_opens_asks_first_and_one_that_sets_fields_does_not()

@@ -28,6 +28,9 @@ public sealed class JsonNode
     /// <summary>The characters a string scalar stands for; the text for the other scalars.</summary>
     public string Value { get; set; } = string.Empty;
 
+    /// <summary>Where the value ends in the text, just after its last character: the closing brace or bracket of a container that is closed, the scalar's last character; the start for a container the text never closes.</summary>
+    public int End { get; set; }
+
     public List<JsonNode> Children { get; } = [];
 
     public bool IsContainer => Kind is TokenKind.OpenObject or TokenKind.OpenArray;
@@ -128,13 +131,13 @@ public static class JsonParser
                         repairs.Add(RepairKind.SingleQuotedString);
                     }
 
-                    return new JsonNode(TokenKind.String, token.Start, key) { Text = token.Text, Value = JsonScanner.Unquote(token) };
+                    return new JsonNode(TokenKind.String, token.Start, key) { End = token.End, Text = token.Text, Value = JsonScanner.Unquote(token) };
                 case TokenKind.Number:
                     Advance();
-                    return new JsonNode(TokenKind.Number, token.Start, key) { Text = token.Text, Value = token.Text };
+                    return new JsonNode(TokenKind.Number, token.Start, key) { End = token.End, Text = token.Text, Value = token.Text };
                 case TokenKind.Word when token.Text is "true" or "false" or "null":
                     Advance();
-                    return new JsonNode(TokenKind.Word, token.Start, key) { Text = token.Text, Value = token.Text };
+                    return new JsonNode(TokenKind.Word, token.Start, key) { End = token.End, Text = token.Text, Value = token.Text };
                 case TokenKind.End:
                     Fail("the document ends where a value was expected");
                     return null;
@@ -146,12 +149,13 @@ public static class JsonParser
 
         private JsonNode Object(string? key)
         {
-            var node = new JsonNode(TokenKind.OpenObject, Current.Start, key);
+            var node = new JsonNode(TokenKind.OpenObject, Current.Start, key) { End = Current.Start };
             Advance();
             while (Problem is null)
             {
                 if (Current.Kind == TokenKind.CloseObject)
                 {
+                    node.End = Current.End;
                     Advance();
                     return node;
                 }
@@ -206,12 +210,13 @@ public static class JsonParser
 
         private JsonNode Array(string? key)
         {
-            var node = new JsonNode(TokenKind.OpenArray, Current.Start, key);
+            var node = new JsonNode(TokenKind.OpenArray, Current.Start, key) { End = Current.Start };
             Advance();
             while (Problem is null)
             {
                 if (Current.Kind == TokenKind.CloseArray)
                 {
+                    node.End = Current.End;
                     Advance();
                     return node;
                 }

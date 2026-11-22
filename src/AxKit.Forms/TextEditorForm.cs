@@ -130,6 +130,16 @@ public sealed partial class TextEditorForm : AxKitForm
                     Add(edit, new Command(command.Label, command.Key, () => RunCommand(command)) { Mark = CommandMark.Change });
                 }
             }
+
+            if (_app.Offers is { Count: > 0 } offers)
+            {
+                // The app's lists at the caret (AJ-5), after its commands on the whole text.
+                edit.DropDownItems.Add(new ToolStripSeparator());
+                foreach (var offer in offers)
+                {
+                    Add(edit, new Command(offer.Label, offer.Key, () => RunOffer(offer)) { Mark = CommandMark.Change });
+                }
+            }
         }
 
         var navigate = new ToolStripMenuItem();
@@ -509,6 +519,66 @@ public sealed partial class TextEditorForm : AxKitForm
         }
 
         Announce(result.Message, true);
+    }
+
+    /// <summary>
+    /// An app's list at the caret (AJ-5): the offer is asked for the text, the caret and the file; with no list its
+    /// sentence is said and nothing else happens. The list takes the place of the Go to line field and the focus;
+    /// Enter writes the chosen line's change, Escape leaves, and either way the focus is back in the text. The
+    /// caret moves only by the user's own choice (AX-7).
+    /// </summary>
+    private void RunOffer(EditorOffer offer)
+    {
+        if (RefusedInNavigation(_editor))
+        {
+            return;
+        }
+
+        var offered = offer.At(_editor.Text, _editor.SelectionStart, _path);
+        if (offered.Lines is not { Count: > 0 } lines || offered.Choose is not { } choose)
+        {
+            Announce(offered.Said ?? "Nothing to choose here", true);
+            return;
+        }
+
+        // The text the offer was made for: a change made meanwhile (nothing can, the list has the focus) would refuse the edit.
+        var offeredFor = _editor.Text;
+        _area.ShowList(offered.Name, lines, offered.Selected, ticked: null, focus: true, hold: false,
+            choose: (chosen, _) =>
+            {
+                _area.Clear();
+                _editor.Select();
+                if (_editor.Text == offeredFor)
+                {
+                    ApplyEdit(choose(chosen));
+                }
+            },
+            escape: () =>
+            {
+                _area.Clear();
+                _editor.Select();
+            });
+    }
+
+    /// <summary>One change to the text as one undo step (as <see cref="RunCommand"/> records its own), the caret where the edit puts it, and its sentence said.</summary>
+    private void ApplyEdit(TextEdit edit)
+    {
+        if (edit.Length > 0 || edit.Text.Length > 0)
+        {
+            var before = _editor.Text;
+            _replaying = true;
+            _editor.Select(edit.Start, edit.Length);
+            _editor.SelectedText = edit.Text;
+            _replaying = false;
+            _history.Record(before, _editor.Text, _editor.SelectionStart, -1);
+            _text = _editor.Text;
+            _editor.ClearUndo();
+            _editor.Select(Math.Clamp(edit.Caret, 0, _editor.TextLength), 0);
+            _editor.ScrollToCaret();
+            UpdateStatus();
+        }
+
+        Announce(edit.Said, true);
     }
 
     // ---- find and go to line (AD-6.3, AD-6.4) ----

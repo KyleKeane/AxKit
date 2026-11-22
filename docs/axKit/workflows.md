@@ -556,6 +556,11 @@ Steps and keys: `docs/axKit/workflows/axJSON.md` (in Claude's working folder: `w
     - Turn word wrap off and on in axJSON
     - Save a change to a JSON file
     - Close axJSON when the file has changes
+7. **Write a list's configuration by choosing**
+    - Choose a value from the values a member can take
+    - Add a member an object can have
+    - Add a key to an action and choose it
+    - Choose an item's value through its link to the list's configuration
 
 ## axMCP
 

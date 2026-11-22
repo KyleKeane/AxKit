@@ -230,3 +230,44 @@ Starts with: Open axJSON with the file settings.json.
 5. Close the window.
 6. Press Tab 2 times.
 7. Press Enter.
+
+## Write a list's configuration by choosing
+
+Starts with: Open axJSON with the file lists\Home\list.json.
+
+### Choose a value from the values a member can take
+
+1. Press Ctrl+Home, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K.
+    You hear: type: check.
+2. Press Alt+Down (Choose a value; Actions menu).
+3. Press Down.
+4. Press Enter.
+    You hear: type: choice.
+
+### Add a member an object can have
+
+1. Press Ctrl+Shift+M (Add a member; Actions menu).
+2. Press Enter.
+    You hear: Added options: The values to choose from, for the type choice.
+
+### Add a key to an action and choose it
+
+1. Press Ctrl+Home, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K.
+    You hear: name: Later.
+2. Press Ctrl+Shift+M (Add a member; Actions menu).
+3. Press Enter.
+    You hear: Added key: The key that runs it; without one it runs from the menu.
+4. Press Alt+Down (Choose a value; Actions menu).
+5. Press End.
+6. Press Enter.
+    You hear: key: Ctrl+Shift+9.
+
+### Choose an item's value through its link to the list's configuration
+
+1. Open axJSON with the file lists\Home\tap.json.
+2. Press Ctrl+Home, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K.
+    You hear: Priority: Normal.
+3. Press Alt+Down (Choose a value; Actions menu).
+4. Press Up.
+5. Press Enter.
+    You hear: Priority: High.

@@ -33,6 +33,15 @@
   values read through its list's configuration. `FieldTypes.OfKind` (a value's type by JSON's own kind), `Holds`
   (whether a type holds a value; one it does not is read "..., kept as text: the field is now a date", AF-11.6) and
   `PlainText`.
+- `ListOptions` with `OptionsTable`, `OptionKind` and `OptionMember` (docs/axTask/forms-framework.md section 12,
+  docs/axJSON/SPEC.md AJ-5; 2026-11-21): the options of a list's configuration as one table: every kind of object
+  it holds, each member with what it is, its first value and, where the value is one of a few, its values
+  (`Table`; `ActionKeys`, `ActionKinds`, `FormFieldTypes`); `ForItem` makes an item's table from its list's
+  configuration; `KindAt` finds the kind of an object by the way to it; `ToJson` writes the file
+  `docs/axKit/axkit-list 2.options.json`, which a test holds current (run it once with `AXKIT_UPDATE_OPTIONS=1`
+  after a change of the table). It is here, and not in axTask as first specified, because axJSON reads it and an
+  app never references another; axTask's `ListActionsTests` holds the actions' side to its reader. A new member of
+  the configuration or of an action joins the table in the same commit. `ListOptionsTests`.
 - The lists' files (docs/axTask/forms-framework.md sections 11 and 13; 2026-11-21): `ListConfig`, a list's
   `list.json` as `axkit-list 2` (`details`, `item fields`, `actions`; `Parse` with an `InvalidDataException` that
   names the line, `Problems` for a member passed over, `FormatOf`, `New`, `WithDetail`, `WithItemFields`, which

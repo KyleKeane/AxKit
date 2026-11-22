@@ -43,7 +43,47 @@ public static class AxJSONApp
                 var (formatted, message) = JsonFormat.Apply(text);
                 return new Rewrite(formatted, message);
             }),
+        ],
+        Offers:
+        [
+            new EditorOffer("&Choose a value...", AxJSONKeys.ChooseValue, (text, caret, path) => Shown(JsonOffers.Values(text, caret, name => ReadLinked(path, name)))),
+            new EditorOffer("Add a &member...", AxJSONKeys.AddMember, (text, caret, path) => Shown(JsonOffers.Members(text, caret, name => ReadLinked(path, name)))),
         ]);
 
     public static void Run(string[] args) => EditorHost.Run(App, Usage, args);
+
+    /// <summary>The longest file a link is followed to (AJ-5.4): a list's configuration is a few thousand characters.</summary>
+    private const long MaxLinkedFile = 1024 * 1024;
+
+    /// <summary>A pure offer as the editor shell shows it.</summary>
+    private static Offered Shown((JsonOffer? Offer, string? Said) result) => result.Offer is { } offer
+        ? new Offered(null, offer.Name, offer.Lines, offer.Selected, chosen =>
+        {
+            var edit = offer.Choose(chosen);
+            return new TextEdit(edit.Start, edit.Length, edit.Text, edit.Caret, edit.Said);
+        })
+        : new Offered(result.Said);
+
+    /// <summary>
+    /// The text of the file a document links to (AJ-5.4): a file of that name beside the document, read only on a
+    /// drive of this computer (so that the window never waits on a network), only when it is small, and never
+    /// anywhere else: the name is a plain file name by the time it comes here. Null when there is no such file.
+    /// </summary>
+    private static string? ReadLinked(string? path, string name)
+    {
+        if (path is null || System.IO.Path.GetDirectoryName(path) is not { Length: > 0 } folder || !LocalPaths.IsLocal(folder))
+        {
+            return null;
+        }
+
+        try
+        {
+            var linked = new FileInfo(System.IO.Path.Combine(folder, name));
+            return linked.Exists && linked.Length <= MaxLinkedFile ? File.ReadAllText(linked.FullName) : null;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Security.SecurityException or NotSupportedException)
+        {
+            return null;
+        }
+    }
 }

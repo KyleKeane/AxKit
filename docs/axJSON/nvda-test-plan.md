@@ -55,6 +55,18 @@ and `broken.json`, the same with the comma after `"opus"` removed and a comma ad
    text is unchanged. Actions, Format does the same as the key.
 4. Ctrl+Shift+F on an already formatted file: "Already formatted", nothing changes, and the title shows no star.
 
+## 3a. Options: choosing in place of typing (AJ-5)
+
+The runner's script is `tests/scripts/axJSON/07-options.txt`. By hand: in axTask, Ctrl+J on a list opens its `list.json` here.
+
+1. Ctrl+K to the `type` of a field ("type: check"), Alt+Down: NVDA reads the list, "type: What the field holds, list, check, 6 of 8". Down: "choice". Enter: "type: choice", the focus is back in the text and the line reads with `"type": "choice"`. Ctrl+Z: the old value is back.
+2. Alt+Down, then Escape: the focus is back in the text and nothing changed.
+3. With the caret in an action, Ctrl+Shift+M: "Add a member to an action of the list, list, key: The key that runs it; without one it runs from the menu, 1 of" the number it lacks. Enter: "Added key: The key that runs it; without one it runs from the menu"; the caret is on `"Ctrl+1"`. Alt+Down, End, Enter: "key: Ctrl+Shift+9".
+4. On a field's `title`, Alt+Down: "title takes any value. The field's name, as it is shown and said", and no list.
+5. Open an item of the list (Ctrl+J on an item in axTask). On a choice field, Alt+Down: the list's options; on a check, "true" and "false".
+6. In any other JSON file, Alt+Down and Ctrl+Shift+M: "axJSON has no options for this file: it has them for a list's configuration and for an item of a list".
+7. In navigation mode (Ctrl+Space), Alt+Down: the refusal of navigation mode, no list.
+
 ## 4. The Window menu and About
 
 1. Alt+W, N: New window lists every app of the bundle; Alt+W, N, J starts a new axJSON window.

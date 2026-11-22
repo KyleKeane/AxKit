@@ -1,0 +1,254 @@
+{
+  "format": "axkit-options 1",
+  "for": "axkit-list 2",
+  "root": "list",
+  "kinds": {
+    "list": {
+      "what": "The configuration of a list",
+      "members": [
+        {
+          "name": "format",
+          "what": "Says that this file is a list's configuration, and of which version",
+          "first": "axkit-list 2",
+          "values": [
+            "axkit-list 2"
+          ]
+        },
+        {
+          "name": "details",
+          "what": "The list's own values: its notes and its section",
+          "first": {},
+          "kind": "details"
+        },
+        {
+          "name": "item fields",
+          "what": "The fields every item of the list has, in the order they are shown",
+          "first": [],
+          "each": "field"
+        },
+        {
+          "name": "actions",
+          "what": "What can be done with an item of the list, by a key or from the menu",
+          "first": [],
+          "each": "action"
+        }
+      ]
+    },
+    "details": {
+      "what": "The list's own values",
+      "members": [
+        {
+          "name": "Notes",
+          "what": "Notes about the list",
+          "first": ""
+        },
+        {
+          "name": "Section",
+          "what": "The section of the top level the list stands in",
+          "first": ""
+        }
+      ]
+    },
+    "field": {
+      "what": "A field of the list's items",
+      "members": [
+        {
+          "name": "title",
+          "what": "The field's name, as it is shown and said",
+          "first": ""
+        },
+        {
+          "name": "type",
+          "what": "What the field holds",
+          "first": "text",
+          "values": [
+            "text",
+            "longtext",
+            "number",
+            "date",
+            "datetime",
+            "check",
+            "choice",
+            "link"
+          ]
+        },
+        {
+          "name": "value",
+          "what": "The value a new item starts with",
+          "first": ""
+        },
+        {
+          "name": "options",
+          "what": "The values to choose from, for the type choice",
+          "first": []
+        }
+      ]
+    },
+    "action": {
+      "what": "An action of the list",
+      "members": [
+        {
+          "name": "name",
+          "what": "The action's name, as the menu shows it",
+          "first": ""
+        },
+        {
+          "name": "key",
+          "what": "The key that runs it; without one it runs from the menu",
+          "first": "Ctrl+1",
+          "values": [
+            "Ctrl+1",
+            "Ctrl+2",
+            "Ctrl+3",
+            "Ctrl+4",
+            "Ctrl+5",
+            "Ctrl+6",
+            "Ctrl+7",
+            "Ctrl+8",
+            "Ctrl+9",
+            "Ctrl+Shift+1",
+            "Ctrl+Shift+2",
+            "Ctrl+Shift+3",
+            "Ctrl+Shift+4",
+            "Ctrl+Shift+5",
+            "Ctrl+Shift+6",
+            "Ctrl+Shift+7",
+            "Ctrl+Shift+8",
+            "Ctrl+Shift+9"
+          ]
+        },
+        {
+          "name": "does",
+          "what": "What the action does",
+          "first": "set",
+          "values": [
+            "set",
+            "move",
+            "open",
+            "run",
+            "terminal"
+          ]
+        },
+        {
+          "name": "fields",
+          "what": "A form that asks for values before the action runs",
+          "first": [],
+          "each": "form field"
+        },
+        {
+          "name": "set",
+          "what": "For does set: the fields it writes, each with its value",
+          "first": {}
+        },
+        {
+          "name": "to",
+          "what": "For does move: the list the item moves to, as a path from this list",
+          "first": "../Later"
+        },
+        {
+          "name": "open",
+          "what": "For does open: a field that holds a web address, or an app such as json",
+          "first": ""
+        },
+        {
+          "name": "program",
+          "what": "For does run: the program, by its name or its full path",
+          "first": ""
+        },
+        {
+          "name": "arguments",
+          "what": "For does run: the program's arguments, each one text",
+          "first": []
+        },
+        {
+          "name": "input",
+          "what": "For does run: a text the program reads as its input",
+          "first": ""
+        },
+        {
+          "name": "command",
+          "what": "For does terminal: the command for axTerminal's field, the program first, each part one text",
+          "first": []
+        },
+        {
+          "name": "folder",
+          "what": "For does run and terminal: where it runs: list, the list's folder, or a path",
+          "first": "list",
+          "values": [
+            "list"
+          ]
+        },
+        {
+          "name": "seconds",
+          "what": "For does run: how long the program may take, 1 to 600",
+          "first": 60
+        },
+        {
+          "name": "then",
+          "what": "For does run: what happens when the program ends without an error",
+          "first": {},
+          "kind": "then"
+        }
+      ]
+    },
+    "form field": {
+      "what": "A field of an action's form",
+      "members": [
+        {
+          "name": "title",
+          "what": "The field's name, written as an instruction: it is what is read as the box's name",
+          "first": ""
+        },
+        {
+          "name": "type",
+          "what": "The kind of box",
+          "first": "text",
+          "values": [
+            "text",
+            "longtext",
+            "choice",
+            "date"
+          ]
+        },
+        {
+          "name": "value",
+          "what": "What the box starts with",
+          "first": ""
+        },
+        {
+          "name": "options",
+          "what": "The values to choose from, for the type choice",
+          "first": []
+        },
+        {
+          "name": "required",
+          "what": "Whether the action waits until the field holds something",
+          "first": true,
+          "values": [
+            true,
+            false
+          ]
+        },
+        {
+          "name": "hidden",
+          "what": "Whether the field is typed unseen; such a field may fill the input alone",
+          "first": false,
+          "values": [
+            true,
+            false
+          ]
+        }
+      ]
+    },
+    "then": {
+      "what": "What follows a program that ended without an error",
+      "members": [
+        {
+          "name": "set",
+          "what": "The fields it writes, each with its value",
+          "first": {}
+        }
+      ]
+    }
+  }
+}

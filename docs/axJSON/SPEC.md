@@ -112,20 +112,68 @@ otherwise. Native fields mean NVDA reads them by itself, and the caret cannot le
 ### AJ-4 Menus, keys, texts
 
 - AJ-4.1 The menus are the shell's (AD-4) with axJSON's additions: Edit → Format (Ctrl+Shift+F) after the control's
-  own items; Navigate → Next and Previous with the kinds of AJ-2.2; Help → JSON resources ▸ (JSON syntax,
+  own items, then Choose a value… and Add a member… (AJ-5); Navigate → Next and Previous with the kinds of AJ-2.2; Help → JSON resources ▸ (JSON syntax,
   `https://www.json.org/json-en.html`; Claude Code settings, `https://code.claude.com/docs/en/settings`), as axDown's
   Help has Markdown resources.
 - AJ-4.2 Keys (AX-8): the shell's (`EditorKeys`, included in `AxJSONKeys.All`), then Ctrl+K, Ctrl+J, Ctrl+L, Ctrl+I,
-  Ctrl+E with Ctrl+Shift for the previous one, and Ctrl+Shift+F; the collision test covers them. Ctrl+J, a line feed
+  Ctrl+E with Ctrl+Shift for the previous one, Ctrl+Shift+F, and AJ-5's Alt+Down and Ctrl+Shift+M; the collision test covers them. Ctrl+J, a line feed
   in an EDIT control, is kept from the control as axDown keeps Ctrl+H and Ctrl+I (AD-5.1).
 - AJ-4.3 The F1 text (`HelpText.Shortcuts`) names the shell's keys and AJ-2.2's; the user guide `docs/axJSON/user-guide.md`
   is embedded (Help → User guide); About is the bundle's (AX-9.9).
+
+### AJ-5 Options: choosing in place of typing (2026-11-21)
+
+For a file axJSON has an options table for, a value that is one of a few is chosen from a list, and an object's
+missing members are added from a list that says what each is (docs/axTask/forms-framework.md section 12, the
+maintainer's wish of that day: "a linked json that has allowed options", "a very simple options schema"). A table is
+names and choices and nothing that validates: no file is refused, nothing is marked wrong, and a place the table does
+not know has nothing to offer. JSON Schema stays a non-goal (G3).
+
+- AJ-5.1 **The tables.** One table in code, `AxKit.Core/ListOptions`: every kind of object a list's configuration
+  holds (the configuration, its details, a field of the items, an action, a field of an action's form, an action's
+  `then`), each with its members in order, and each member with one line that says what it is, the value a new
+  member starts with and, where the value is one of a few, the values (a field's `type`, an action's `does`, its
+  `key`, `required` and `hidden`). axJSON has the table for a document whose root's `"format"` is `axkit-list 2`.
+  The table is written out as `docs/axKit/axkit-list 2.options.json` (the format `axkit-options 1`) for a program
+  that is not axKit; a test holds the file to the table, and tests hold the table to what the readers take
+  (`ListOptionsTests`, axTask's `ListActionsTests`).
+- AJ-5.2 **Choose a value**, Edit → Choose a value… (Alt+Down, the key that opens a list of choices in Windows).
+  With the caret on a member, on its key, in its value or just after it: a list in place of the Go to line field,
+  named with the member and what it is ("type: What the field holds"), its lines the values, starting on the one
+  that stands there. Enter writes the chosen value in place of the old one, quoted as the value needs, as one undo
+  step, puts the caret on it and says it ("type: date"); Escape leaves, and nothing changed. Where there is no
+  list, one sentence and nothing else: "title takes any value. The field's name, as it is shown and said", "No list
+  of values here: put the caret on a member that has one, such as type or does", "axJSON has no options for this
+  file: it has them for a list's configuration and for an item of a list", or "Not valid JSON: line 12, …".
+- AJ-5.3 **Add a member**, Edit → Add a member… (Ctrl+Shift+M). With the caret in an object: a list of the members
+  that kind of object can have and does not have yet, each line the name and what it is ("key: The key that runs
+  it; without one it runs from the menu"), the list named for the object ("Add a member to an action of the list").
+  Enter adds the member as the object's last, with its first value: on a line of its own, indented as the member
+  before it; in an object written on one line, on that line; an empty object opens over three lines. A trailing
+  comma in the text is not doubled; where a comment stands before the closing brace, nothing is written and it
+  says so. One undo step; the caret is on the new value, so that Choose a value can follow at once; it says "Added
+  key: …". An object that has everything: "An action of the list has every member it can have".
+- AJ-5.4 **An item's options come through its link.** A document whose root has `"schema"` with a plain file name
+  (an item of a list, `"schema": "list.json"`) gets its table from the file of that name beside it, when that is a
+  list's configuration: the Title, and each field the list names with its type said; a choice offers the list's
+  options, a check true and false. It is the link axTask reads the item through (AF-12.4). The link is followed
+  only as a file name in the document's own folder, only on a drive of this computer (the window never waits on a
+  network), only for a file of at most 1 MB, and only to read it; a name with a path in it is not followed. A value
+  the list does not name (kept, AF-11.3) has no options.
+- AJ-5.5 **Where it is.** `AxJSON.Core/JsonOffers` (pure: `TableOf`, `At`, `Values`, `Members`, each giving a list
+  and the one edit a line makes), over the tree's nodes, which know their end (`JsonNode.End`); the shell shows it
+  (`EditorOffer`, `Offered` and `TextEdit` of `AxKit.Forms/EditorApp`, `TextEditorForm.RunOffer` and `ApplyEdit`),
+  and axJSON gives the two as data, with `ReadLinked` for AJ-5.4. Not in navigation mode, as every change. Tested
+  in `JsonOffersTests`; the window in `tests/scripts/axJSON/07-options.txt`.
+- AJ-5.6 **Left open** (AF-12.5, the maintainer's to settle): stepping to the next and previous value with a key in
+  the text, a date's `today` and `+3`, and a form view of the whole file (AJ-3) built from the same table.
 
 ## 5. Architecture
 
 ```
 src/AxJSON.Core/   class library (net10.0): JsonScanner (tokens, forgiving), JsonParser and JsonTree (the tree, the
-                   repairs, the first problem), JsonOutline (the elements for the keys, AxKit.Core.Element), JsonFormat
+                   repairs, the first problem), JsonOutline (the elements for the keys, AxKit.Core.Element), JsonFormat,
+                   JsonOffers (AJ-5: the lists of values and of members, from AxKit.Core's ListOptions)
 src/AxJSON/        class library (net10.0-windows): AxJSONApp (Run, and axJSON's EditorApp record), AxJSONKeys,
                    HelpText (F1 text, the embedded user guide); references AxJSON.Core, AxKit.Core, AxKit.Forms
 src/AxKit.Forms/    TextEditorForm, EditorApp, EditorKeys, EditorHost: the text editor shell, shared with axDown
@@ -177,3 +225,7 @@ edit control holds it, every input is accepted without an exception, and the rep
   as steps of it (AJ-3.5); AJ-2.5 built the same day with axDown's (Ctrl+Z, Ctrl+Y, Edit → Undo and Redo; the NVDA pass,
   test plan 3.1, is still to run), AJ-3.5 comes with the structured mode.
 - 2026-10-22: released in 3.3.1 (3.3.0 tagged, not published). The whole NVDA test plan marked passed at the user's word, no step reported failing; the record by step is `docs/axKit/nvda-test-record.md`.
+- 2026-11-21: the options built (AJ-5): Choose a value (Alt+Down) and Add a member (Ctrl+Shift+M) for a list's
+  configuration of axTask and for an item of a list, from the bundle's table `AxKit.Core/ListOptions`; the window
+  script `07-options.txt`; its NVDA pass, test plan 3a, is still to run. The two keys and what AJ-5.6 leaves open
+  are the maintainer's to settle.
