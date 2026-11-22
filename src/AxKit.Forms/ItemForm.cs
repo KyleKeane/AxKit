@@ -200,6 +200,12 @@ public abstract partial class ItemForm : AxKitForm
             return null;
         }
 
+        if (_detailLast && Pane == SecondPane.Log)
+        {
+            // The log pane was the last of the two to have the focus: the menu of its line, which the app gives.
+            return LogLineMenu;
+        }
+
         if (_detailLast && _shown.Document is not null)
         {
             return _fieldMenu;
@@ -218,8 +224,7 @@ public abstract partial class ItemForm : AxKitForm
     private string NothingToActOn() =>
         !SelectionMenusAvailable ? NothingWhileUnavailable
         : SelectedRow() is { IsSection: true } ? "A heading: nothing to act on"
-        : _rows.Count == 0 && EmptyLine is { } empty ? empty
-        : "Nothing selected";
+        : NoRowSaid();
 
     /// <summary>Context filled for where the focus is and what is selected now.</summary>
     private void UpdateMenus() => _context?.Fill();
@@ -424,6 +429,10 @@ public abstract partial class ItemForm : AxKitForm
                 // The text under the navigator, which has two fifths of the height (axGIT's layout, AG-2.1).
                 _split.SplitterDistance = Math.Max(_split.Panel1MinSize, _split.Height * 2 / 5);
                 break;
+            case SecondPane.Log:
+                // The log under the navigator, which has two thirds of the height (axFile's Actions list, AF-9.1).
+                _split.SplitterDistance = Math.Max(_split.Panel1MinSize, _split.Height * 2 / 3);
+                break;
             default:
                 // The navigator alone (framework step 4): the second panel is not there to see or to tab to.
                 _split.Panel2Collapsed = true;
@@ -460,6 +469,13 @@ public abstract partial class ItemForm : AxKitForm
             _split.Panel2.Controls.Add(TextPane);
             _split.Orientation = Orientation.Horizontal;
         }
+        else if (Pane == SecondPane.Log)
+        {
+            // The second pane as a log, the detail pane's list filled by the app, under the navigator. Its
+            // type-ahead goes over its own lines, there being no fields.
+            _split.Orientation = Orientation.Horizontal;
+            DetailPane.Names = null;
+        }
 
         PlaceControls(menu, [_split, .. between, _status]);
         AddSharedKeys();
@@ -485,10 +501,12 @@ public abstract partial class ItemForm : AxKitForm
     {
         // A shared key the app gave to a command of its own that acts anywhere is the app's: the shared command
         // would never run, and is not listed (framework step 4; the F5 case of axAutomate, made general).
-        // A key the app has no use for (KeysWithoutUse) is no command of the window either.
+        // A key the app has no use for (KeysWithoutUse) is no command of the window either. And a key the app gave
+        // to a command of its own in the very place the shared command acts (the same condition: axFile's own
+        // Enter, Delete and F2 with InNavigator) is the app's too (KeyTakenWhere).
         void Shared(Command command)
         {
-            if (!KeyTakenAnywhere(command.Key) && !KeysWithoutUse.Contains(command.Key))
+            if (!KeyTakenWhere(command.Key, command.When) && !KeysWithoutUse.Contains(command.Key))
             {
                 AddKey(command);
             }
@@ -525,6 +543,7 @@ public abstract partial class ItemForm : AxKitForm
             {
                 SecondPane.Fields => new Command("Switch between the navigator and the detail pane", key, () => (Navigator.Focused ? (Control)DetailPane : Navigator).Select()) { When = NotRenaming, Mark = CommandMark.Open },
                 SecondPane.Text => new Command("Switch between the list and the text", key, () => (Navigator.Focused ? (Control)TextPane : Navigator).Select()) { When = NotRenaming, Mark = CommandMark.Open },
+                SecondPane.Log => new Command($"Switch between the list and the {LogName}", key, () => (Navigator.Focused ? (Control)DetailPane : Navigator).Select()) { When = NotRenaming, Mark = CommandMark.Open },
                 _ => new Command("Back to the list", key, () => Navigator.Select()) { When = NotRenaming, Mark = CommandMark.Open },
             });
         }
@@ -549,6 +568,18 @@ public abstract partial class ItemForm : AxKitForm
             Shared(new Command("To the list", ItemKeys.OtherPane, () => Navigator.Select()) { When = InText, Mark = CommandMark.Open });
             Shared(new Command("To the list", ItemKeys.OtherPaneBack, () => Navigator.Select()) { When = InText, Mark = CommandMark.Open });
             Shared(new Command("To the list", ItemKeys.Back, () => Navigator.Select()) { When = InText, Mark = CommandMark.Open });
+        }
+        else if (Pane == SecondPane.Log)
+        {
+            // The log pane's keys: Tab and Shift+Tab go to it and back, and Escape comes back from it. What Enter and
+            // the other keys do on a line of the log is the app's, registered before these with InDetail.
+            Shared(new Command("To the " + LogName, ItemKeys.OtherPane, () => DetailPane.Select()) { When = InNavigator, Mark = CommandMark.Open });
+            Shared(new Command("To the " + LogName, ItemKeys.OtherPaneBack, () => DetailPane.Select()) { When = InNavigator, Mark = CommandMark.Open });
+            Shared(new Command("To the list", ItemKeys.OtherPane, () => Navigator.Select()) { When = InDetail, Mark = CommandMark.Open });
+            Shared(new Command("To the list", ItemKeys.OtherPaneBack, () => Navigator.Select()) { When = InDetail, Mark = CommandMark.Open });
+            Shared(new Command("To the list", ItemKeys.Back, () => Navigator.Select()) { When = InDetail, Mark = CommandMark.Open });
+            Shared(new Command("The line's menu", ItemKeys.ItemMenu, OpenPaneMenu) { When = InDetail, Mark = CommandMark.Open });
+            Shared(new Command("The line's menu", ItemKeys.ItemMenuAlso, OpenPaneMenu) { When = InDetail, Mark = CommandMark.Open });
         }
 
         // AX-8.16: Space selects, in an app whose navigator has a selection; the edge sound in one that has none.
@@ -604,13 +635,24 @@ public abstract partial class ItemForm : AxKitForm
         }
         else
         {
-            Announce(_rows.Count == 0 && EmptyLine is { } empty ? empty : "Nothing selected", true);
+            Announce(NoRowSaid(), true);
         }
+    }
+
+    /// <summary>
+    /// What a command that needs a row says without one: the line you are on when it is no row (the one line of an
+    /// empty level, <see cref="EmptyLine"/>; the line after the rows, <see cref="AfterRowsLine"/>), "Nothing
+    /// selected" otherwise.
+    /// </summary>
+    protected string NoRowSaid()
+    {
+        var index = Navigator.SelectedIndex;
+        return index >= _rows.Count && index < Navigator.Items.Count && Navigator.Items[index]?.ToString() is { Length: > 0 } line ? line : "Nothing selected";
     }
 
     // ---- what a navigator may do without (framework step 4, FW-4.7; 2026-11-22) ----
 
-    /// <summary>The kinds of second pane a navigator has (docs/axKit/framework.md FW-4.7, point 2); a log of lines, axFile's, is the one still to come.</summary>
+    /// <summary>The kinds of second pane a navigator has (docs/axKit/framework.md FW-4.7, point 2).</summary>
     protected enum SecondPane
     {
         /// <summary>The fields of the row you are on, a list (<see cref="DetailPane"/>): the item apps.</summary>
@@ -618,6 +660,15 @@ public abstract partial class ItemForm : AxKitForm
 
         /// <summary>A text to read, shown on the app's word (<see cref="TextPane"/>, <see cref="ShowText"/>): axGIT's diff and commit.</summary>
         Text,
+
+        /// <summary>
+        /// A log of lines the app keeps, under the navigator (axFile's Actions list): the pane is
+        /// <see cref="DetailPane"/>, a list the app fills itself and names; the pane keys go to it and back and
+        /// Escape comes back; what a key does on a line is the app's command, registered with
+        /// <see cref="InDetail"/> before the shared keys; Context holds <see cref="LogLineMenu"/> while the log was
+        /// the last of the two to have the focus. No command of the fields is made.
+        /// </summary>
+        Log,
 
         /// <summary>None: the navigator fills the window (axMedia's queue, axProcess).</summary>
         None,
@@ -685,6 +736,19 @@ public abstract partial class ItemForm : AxKitForm
     /// need a row say it ("Queue is empty"). Null, the default, for an empty list, as the item apps have it.
     /// </summary>
     protected virtual string? EmptyLine => null;
+
+    /// <summary>
+    /// A line after the level's rows that is no row (axFile's "Not shown: 3 hidden", what a read left out): the
+    /// arrows reach it, nothing is selected on it, and the commands that need a row say it. Null, the default, for
+    /// none. It comes after the <see cref="EmptyLine"/> too.
+    /// </summary>
+    protected virtual string? AfterRowsLine => null;
+
+    /// <summary>The menu of the log pane's line (<see cref="SecondPane.Log"/>), which Context holds while the log was the last of the two panes to have the focus; null for none.</summary>
+    protected virtual ToolStripMenuItem? LogLineMenu => null;
+
+    /// <summary>The app's words for its log pane (<see cref="SecondPane.Log"/>), in the names of the commands that go to it ("To the Actions list"): "log" by default.</summary>
+    protected virtual string LogName => "log";
 
     /// <summary>
     /// What the status bar's first part says in place of the level's name, when the app has something of the
@@ -839,8 +903,11 @@ public abstract partial class ItemForm : AxKitForm
         AnnounceLevel();
     }
 
-    /// <summary>Left, Backspace: up a level, the list left selected; at the top, the edge sound.</summary>
-    protected void UpLevel()
+    /// <summary>
+    /// Left, Backspace: up a level, the list left selected; at the top, the edge sound. An app whose level above
+    /// is read off the UI thread makes it its own (axFile: the parent folder, read on a task).
+    /// </summary>
+    protected virtual void UpLevel()
     {
         if (LeaveList() is not { } select)
         {
@@ -883,11 +950,23 @@ public abstract partial class ItemForm : AxKitForm
         KeepSelection();
         // S-42: titles from a shared folder or database with their hidden characters made visible, by Fill.
         // A level without rows shows the app's one line for it, when it has one (EmptyLine): no row, nothing selected.
-        IEnumerable<string> lines = _rows.Count == 0 && EmptyLine is { } empty ? [empty] : _rows.Select(RowText);
-        Navigator.Fill(lines, name, select is null ? 0 : _rows.FindIndex(row => string.Equals(row.Key, select, StringComparison.OrdinalIgnoreCase)));
+        // After them, the app's line of what the rows leave out, when it has one (AfterRowsLine): no row either.
+        Navigator.Fill(LevelLines(), name, select is null ? 0 : _rows.FindIndex(row => string.Equals(row.Key, select, StringComparison.OrdinalIgnoreCase)));
         SetLevelTitle(title);
         ShowName();
         FillDetail();
+    }
+
+    /// <summary>The navigator's lines for the level: its rows (or the one line of an empty level), then the line after the rows, each as its item shows it.</summary>
+    private List<string> LevelLines()
+    {
+        List<string> lines = _rows.Count == 0 && EmptyLine is { } empty ? [empty] : [.. _rows.Select(RowText)];
+        if (AfterRowsLine is { } after)
+        {
+            lines.Add(after);
+        }
+
+        return lines;
     }
 
     /// <summary>The window's title for the level; an empty one is the app's name alone (axMedia while nothing plays).</summary>
@@ -934,7 +1013,7 @@ public abstract partial class ItemForm : AxKitForm
         _placeLabel.Text = place;
         // The same rows by key, so the same marks; a row that can no longer be selected loses its.
         KeepSelection();
-        Navigator.SetLines(_rows.Select(row => DisplayText.Visible(RowText(row))).ToList());
+        Navigator.SetLines(LevelLines().Select(DisplayText.Visible).ToList());
         if (Navigator.AccessibleName != name)
         {
             Navigator.AccessibleName = name;

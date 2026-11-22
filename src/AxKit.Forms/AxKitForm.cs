@@ -902,6 +902,16 @@ public abstract partial class AxKitForm : Form
     protected bool KeyTakenAnywhere(Keys key) => _commands.Any(command => command.Key == key && command.When is null);
 
     /// <summary>
+    /// Whether a command added so far would take the key from a later one that acts where <paramref name="when"/>
+    /// says: it has the key and acts anywhere, or acts in that very place (the same condition). The later command
+    /// would never run, which is what <see cref="CommandProblems"/> names. A shared piece that adds its keys after
+    /// the app's own leaves such a key to the app (axFile's own Enter, Delete and F2 in its folder list, on the
+    /// item window's condition, framework step 13).
+    /// </summary>
+    protected bool KeyTakenWhere(Keys key, Func<bool>? when) =>
+        _commands.Any(command => command.Key == key && (command.When is null || command.When == when));
+
+    /// <summary>
     /// What is wrong with the window's command list (app-kit AK-2.4), for the automated checks' <c>check commands</c>:
     /// a key of the window's own with a modifier, or a function key, that the F1 text does not name, and a command that never runs because
     /// an earlier one has its key everywhere (no <see cref="Command.When"/>). Empty when all is well.
