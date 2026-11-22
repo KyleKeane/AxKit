@@ -6,6 +6,29 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-22: the eight navigator apps, after axFile's selection left its Actions list; by the assistant with NVDA listening (branch `axfile-navigator` 51d76e58)
+
+`.\nvda-pass.ps1 -Only` every script of the eight apps on the navigator, from the branch's own folder beside the
+checkout, behind the spoken countdown, the maintainer away at his word (NVDA passes "Yes, for this whole absence"),
+NVDA 2025.3.3 with the OneCore voice, Windows 11 Pro 10.0.26200, the build 5.10.0 of commit 51d76e58, the tree
+clean: 67 scripts, 529 goals and checks, none failed and none run twice.
+
+| What | Scripts | Result |
+|---|---|---|
+| axFile (framework step 14): a selection writes no line into the Actions list, the status bar counts the selected, Ctrl+Z in the folder list undoes an operation and never the selection; every other script | 13 | Passed |
+| axTask: every script | 21 | Passed |
+| axPass: every script | 4 | Passed |
+| axMCP: every script | 3 | Passed |
+| axAutomate: every script | 5 | Passed |
+| axMedia: every script | 8 | Passed |
+| axProcess: every script | 6 | Passed |
+| axGIT: every script | 7 | Passed |
+
+This pass also hears, for the seven apps beside axFile, the navigator's groundwork of step 13 (commit 231c4a3b)
+and the shared selection without its recorded line (commit 51d76e58), which the pass before it left to the hidden
+desktop. Not heard by a person, and a line of the item of step 14 for the maintainer's word: that the undo of a
+selection is gone with its lines.
+
 ## 2026-11-22: axFile as a navigator; by the assistant with NVDA listening (branch `axfile-navigator` c1cc505c)
 
 `.\nvda-pass.ps1 -Only` every script of axFile, from the branch's own folder beside the checkout, behind the spoken
