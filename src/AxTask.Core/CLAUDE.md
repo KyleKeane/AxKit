@@ -46,6 +46,18 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
   gives its field a value, taken as `FieldTypes.Parse` takes it, a link's title through the caller; the first value
   refused, with its control), `Said` ("Saved Fix the tap. Due: …. Priority: High", or "Nothing changed"). Tested in
   `ItemFormRulesTests`.
+- The actions of a list, pure (docs/axTask/forms-framework.md sections 3 to 7; 2026-11-21, used by no window yet):
+  `ListActions` with `ConfiguredAction` and `ActionField`: `Read` gives the entries of a configuration's `"actions"`
+  in the file's order, each with its kind (`set`, `move`, `open`, `run`, `terminal`), its key of the eighteen
+  (`ParseKey`, `KeyText`; a second action of a key gets `KeyProblem` and still runs from the menu), its form's fields,
+  and `NotUnderstood`, why it is never run (a kind not known, a member of the wrong type, a program or a folder with
+  a placeholder, a hidden field named outside the input); `Described` is the one sentence of what it does, `Label`
+  the menu's words, `MarkText` what an acceptance is sealed over (the list's folder and the whole action as the file
+  holds it). `ActionValues` with `ActionContext`, `FilledRun` and `FilledTerminal`: the names in braces (`Names`,
+  `IsFixed`), `Fill`, and `Run`, `Terminal` and `Set`, which fill an action for an item. A value fills the one text it
+  stands in and that text stays one argument; nothing here joins or splits a command line; a line break in an
+  argument refuses the action. The terminal's command line is quoted by `AxKit.Core/ShellQuote`. Tested in
+  `ListActionsTests`.
 - `TaskRules` (TK-4): Done, Start and Due, `DefaultTemplate`, `TemplateOf` (the fields of a list's configuration),
   `IsTask`, `IsDone`, `Due`, `Summary`, `TemplateWithDone` (a checklist or a plain list is the configuration's
   alone, AF-13.3: no item's file is touched), `DoneIndex`.

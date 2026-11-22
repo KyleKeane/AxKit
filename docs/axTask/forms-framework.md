@@ -125,7 +125,7 @@ so that a person and the assistant can both write an action by hand and know wha
 - **AF-4.1 Placeholders.** A text of an action may hold names in braces, filled in when the action runs: `{Title}`
   and `{<a field's title>}`, the selected item's field as its text; `{form:<a form field's title>}`, what was typed
   in the form; `{file}`, the item's file with its full path; `{name}`, the file's name without `.json`; `{folder}`,
-  the list's folder; `{today}`, the date as 2026-11-21. `{{` and `}}` are braces themselves. A name the item or the
+  the list's folder; `{today}`, the date as 2026-11-21. `{{` and `}}` are braces themselves. These four names are written in lower case; `{field:<title>}` says an item's field whatever its title, for a field titled like one of them. A field of the list that the item's file does not hold yet is empty, not missing. A name the item or the
   form does not have refuses the action before anything happens: "Answer the report on GitHub names {Number}, which
   this item does not have".
 - **AF-4.2 A value is one argument, never a piece of a command.** In `run`, each element of `arguments` is one
@@ -167,14 +167,14 @@ so that a person and the assistant can both write an action by hand and know wha
 - **AF-6.2 Every action is in the menu.** Context, Actions of this list, lists each action by its name with its key,
   so that the command palette and F1 hold them; an action without a key is run from there.
 - **AF-6.3 The user gives the key** in the list's configuration (section 11), as one of eighteen options. Where two
-  actions name one key, the first in the file has it, and the second is shown as "<name>, not understood: Ctrl+1 is
+  actions name one key, the first in the file has it, and the second (as an action whose key is none of the eighteen) is shown as "<name>, not understood: Ctrl+1 is
   <the first's name>'s" and still runs from the menu.
 
 ## 7. What is said, asked and trusted
 
 - **AF-7.1 One sentence says what an action does**, made from the file alone (`ListAction.Described`): "runs gh with
   7 arguments: issue, comment, {Number}, --repo, KyleKeane/AxKit-reports, --body-file, -; gives it {form:Answer} as
-  input; then sets Answered to {today}". The form's line, the menu's detail and the question of AF-7.2 all use it.
+  input; then sets Answered: {today}" (the words a set has in the action keys, "Field: value"). The form's line, the menu's detail and the question of AF-7.2 all use it.
 - **AF-7.2 An action that starts a program is asked about before its first run.** A `set` is one undo step and is
   never asked about. `move` and `open` are asked about as today (TK-7a.3: said at the first press, done at the
   second). `run` and `terminal` open a notice before the first run on this computer, and again whenever anything of
@@ -266,7 +266,7 @@ usable by itself:
    fields.** *Built on 2026-11-21 (the branch `flat-items`); what the building changed in sections 11 and 13 is said
    there in italics or as "changed while building". An NVDA pass of axTask's window is owed for it.*
 2. The item's form on Enter (section 14). *Built on 2026-11-21: `AxTask.Core/ItemFormRules`, `TaskForm.ItemForm.cs`, the window script `18-item-form.txt`; axTask's SPEC TK-4.0a says it as built.*
-3. `AxTask.Core`: `ListActions`, `ActionValues` (the placeholders and their refusals), the acceptance over a whole
+3. *(Built on 2026-11-21 as pure code with its tests, used by no window yet.)* `AxTask.Core`: `ListActions`, `ActionValues` (the placeholders and their refusals), the acceptance over a whole
    action; `AxKit.Core/ShellQuote`. All pure, each with its tests.
 4. The window: Context, Actions of this list; the eighteen keys; the form of an action's fields; the question of
    AF-7.2; the run off the UI thread with its words, its output and its stop; the hand-over to axTerminal.
