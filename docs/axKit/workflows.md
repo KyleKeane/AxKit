@@ -838,6 +838,11 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
 17. **Give a list its configuration**
     - Give a list its configuration
     - Add an item to a list that has no configuration yet
+18. **Change an item in its form**
+    - Open an item's form and move through its fields
+    - Change several fields of an item and save them as one step
+    - Rename an item in its form
+    - Open the form on a field from the detail pane
 
 ## axTerminal
 

@@ -82,6 +82,19 @@ public sealed class FormControls : FlowLayoutPanel
     /// <summary>The focus in the first control, where a form starts (AX-8.10 rule 1).</summary>
     public void FocusFirst() => _first?.Select();
 
+    /// <summary>
+    /// The control the form starts in, when it is not the first: a form opened on one of its fields (axTask's item
+    /// form from a field of the detail pane, docs/axTask/forms-framework.md AF-14.2). A control that is not of this
+    /// form changes nothing.
+    /// </summary>
+    public void StartIn(Control control)
+    {
+        if (Controls.Contains(control))
+        {
+            _first = control;
+        }
+    }
+
     private void Add(Control control, string caption)
     {
         Controls.Add(new Label { Text = caption, AutoSize = true, Margin = new Padding(0, 6, 0, 2) });

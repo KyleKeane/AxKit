@@ -13,18 +13,19 @@ keys right
 expect focus Fix the tap
 
 # Goal: Give a task a date and time in words
-# Tab to the fields, Down to Due, Enter: the notice says what the field takes. "tomorrow 14:00" is kept as tomorrow's
-# date with the time, said once; the day itself changes with the calendar, so only the time is asked for here.
+# Tab to the fields, Down to Due, Enter: the item's form with the focus in Due's box, whose name says what the field
+# takes. "tomorrow 14:00" is kept as tomorrow's date with the time, said once; the day itself changes with the
+# calendar, so only the time is asked for here.
 keys tab
 expect focus Title, text, Fix the tap
 keys down down
 expect focus Due, date and time, empty
 keys enter
-expect state "notice":"Change Due"
-expect state A date, a space and a time: tomorrow 14:00. Empty for none.
+expect state "notice":"Fields of Fix the tap"
+expect focus "name":"Type Due: a date, a space and a time, such as tomorrow 14:00; empty for none"
 type tomorrow 14:00
 keys enter
-expect said ! Due:
+expect said Due:
 expect state "notice":null
 expect focus Due, date and time
 expect focus 14:00

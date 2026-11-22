@@ -92,6 +92,25 @@ marks a task done.
   read: its row says "earlier format: Enter converts it", the gathering lists leave it out and say so in their name,
   and Right or Enter asks once, with Convert, Convert all such lists and Cancel; the copy goes among the Archived
   lists as "<name>, before conversion", and the conversion is one step for Ctrl+Z (AF-13.6).
+- **TK-4.0a The item's form** (since 2026-11-21; AF-14.1, AF-14.2, the maintainer's message 8). Enter on an item in
+  the navigator opens "Fields of <item>", a form of the bundle's (AX-8.10): one standard control for each field of
+  the item as its list's configuration gives it, the Title first, the focus in the title's box, its explanation said
+  once with the line of the fields the item keeps. A text and a number are a box of one line, a long text a box of
+  several lines, a check a check box named by the field, a date and a date and time a box whose name says what it
+  takes ("Type Due: a date such as 2026-11-30, today, tomorrow, +3 or a weekday; empty for none"), a choice a list of
+  its options ("Choose Priority"; with "Not chosen" first while the field holds none of them), a link a box for the
+  other item's title. Ctrl+Enter or Save, and Enter from a box of one line, a list or a check box, saves every field
+  that was changed as one undo step, said once: "Saved Fix the tap. Due: 2 November 2026, Monday. Priority: High";
+  nothing changed says "Nothing changed". A changed Title renames the item's file, the links following, as F2 does.
+  A value a field does not take is said with its field's name and the focus in its box, and the form stays. A
+  control left as it was changes nothing of its field, so a value the form cannot show as it is (a link whose item
+  is gone, a value of the type the field had before, shown as text) is never rewritten. Escape leaves and nothing is
+  changed. Enter on a field of an item in the detail pane opens the same form with the focus in that field, and the
+  focus comes back to that field after it; the detail pane keeps its one-key changes (Space, Right and Left), and
+  Enter on a list's own details still changes the one detail in a notice. Not in the search's level, where Enter
+  opens the found item where it lives (TK-7b.4), and not on an item whose configuration is not there, which Enter
+  shows in its fields as before. The rules are `AxTask.Core/ItemFormRules`; the window's side is
+  `TaskForm.ItemForm.cs`.
 - **TK-4.1 The default fields.** A list made in axTask (Ctrl+Shift+N) gets the fields of the list selected or shown,
   or Done (`check`), Start (`date`) and Due (`date`), empty. A folder with no `list.json` and no item gets these same
   fields, its configuration written in the same step as its first item.

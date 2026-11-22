@@ -325,16 +325,7 @@ public sealed partial class TaskForm
             return;
         }
 
-        var renamed = item.Document.WithTitle(title);
-        var folder = Path.GetDirectoryName(item.Path)!;
-        var to = ItemFiles.FreePath(folder, ItemFiles.FileStem(title), ".json", own: item.Path);
-        var parts = new List<FileChange> { FileChange.Write(item.Path, item.Text, item.TextWith(renamed)) };
-        if (!to.Equals(item.Path, StringComparison.Ordinal))
-        {
-            parts.Add(FileChange.Move(item.Path, to));
-            parts.AddRange(Links.AfterMove(ItemFolder.AllItems(TopOf(item.Path)), item.Path, to, skip: item.Path));
-        }
-
+        var (parts, to) = ItemChangeParts(item, item.Document.WithTitle(title));
         if (CheckFresh(item.Path, item.Text))
         {
             Commit(new Step(parts, "Renamed " + title), to);

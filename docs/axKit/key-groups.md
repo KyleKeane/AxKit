@@ -139,12 +139,14 @@ The keys:
 - Enter, axAutomate, axFile, axMCP, axPass and axTask: Open.
 - Enter, axAutomate, axMCP, axPass and axTask: Change the field.
 - Enter, axCalc: Answer.
+- Enter, axTask: Change the item in its form.
 - Enter, axProcess: Details.
 - Enter, axFile: Go to the action's place.
 - Enter, axTask: Open it where it lives.
 - Enter, axHelp: Open the conversation.
 - Enter, axPreview: Open the detail.
 - Enter, axTask: Open the file in axJSON.
+- Enter, axTask: Open the item's form.
 - Enter, axClip: Paste.
 - Enter, axMCP: Read the resource.
 - Enter, axCalc: Recall the entry.

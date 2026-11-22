@@ -41,7 +41,7 @@ Window-specific keys, in one table per app (AX-8); the ones here are the same in
 | Right | on a list: open it. On an item: nothing, the edge earcon (axFile's Right on a file) | on a choice the next value, on a check checked (IA-5.6); the edge earcon on any other field |
 | Left | up a level | on a choice the previous value, on a check unchecked (IA-5.6); the edge earcon on any other field |
 | Backspace | up a level | nothing |
-| Enter | open: a list opens its items; an item moves to its fields, as Tab (IA-D2) | change the field (section 5) |
+| Enter | open: a list opens its items; an item moves to its fields, as Tab (IA-D2); in axTask an item opens its form (docs/axTask/SPEC.md TK-4.0a) | change the field (section 5); in axTask, on a field of an item, the item's form with the focus in that field |
 | Tab, Shift+Tab | to the detail pane | back to the navigator |
 | Ctrl+Tab, Ctrl+Shift+Tab, F6 | to the detail pane (the bundle's pane keys, AX-8.2, since 2026-11-09) | back to the navigator |
 | Escape | — | back to the navigator |

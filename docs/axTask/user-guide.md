@@ -37,7 +37,8 @@ Two panes side by side, and a status bar.
 - Right goes into a list. Left or Backspace goes back to the sections, with the list you came from selected. A list
   holds items, not other lists: your own sections group the lists instead.
 - Right on an item does nothing; you hear the edge sound, as in axFile on a file.
-- Enter opens: on a list it shows the list's items; on an item it moves you to the item's fields, as Tab does.
+- Enter opens: on a list it shows the list's items; on an item it opens the item's form ("The item's form", below).
+  Tab moves you to the item's fields to read them.
 - Tab, Ctrl+Tab or F6 go to the detail pane. Escape, Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6 come back to the navigator.
 - Ctrl+0 goes to All tasks from anywhere.
 - At either end of a pane, Up or Down plays the edge sound.
@@ -72,14 +73,28 @@ In the navigator:
   under its line "Archived items". Ctrl+Z brings it back.
   To delete something for good, show it in axFile with Ctrl+E and delete it there.
 
-In the detail pane:
+The item's form:
 
-- Enter changes the field. A notice opens with the value:
-  - a date takes 2026-10-30, 30 October 2026, today, tomorrow, +3 for three days on, or a weekday such as friday;
-  - a date and time takes a date, a space and a time: tomorrow 14:00;
-  - a choice shows a list of its options; Up and Down move, Enter chooses;
-  - a long text is a field of several lines: Enter makes a new line, Ctrl+Enter keeps it, and so does Tab and then Enter on Save;
-  - a link takes the title of the item it points to, in any list.
+- Enter on an item opens its form: one control for each of the item's fields, in the order of its list, the focus in
+  the title's box. Tab and Shift+Tab move between them, and NVDA reads each as what it is:
+  - a text is a box of one line; a long text a box of several lines, where Enter makes a new line;
+  - a check is a check box, which Space checks and unchecks;
+  - a date is a box that takes 2026-10-30, 30 October 2026, today, tomorrow, +3 for three days on, or a weekday such
+    as friday; a date and time takes a date, a space and a time: tomorrow 14:00;
+  - a choice is a list of its options: Up and Down move, and nothing is chosen until you leave the list. While the
+    field holds none of them the list starts on "Not chosen";
+  - a link is a box that takes the title of the item it points to, in any list.
+- Ctrl+Enter, or the Save button, saves everything you changed as one step, and says it once: "Saved Fix the tap.
+  Due: 2 November 2026, Monday. Priority: High". Ctrl+Z takes the whole step back. Enter saves too, from a box of one
+  line, a list or a check box. A title you changed renames the item and its file, and the links to it follow.
+- Escape leaves the form and nothing is changed. A value a field does not take ("30 Febuary") is said with the focus
+  in its box, and the form stays open.
+- What the item keeps that its list does not name is said with the form's explanation.
+
+In the detail pane, which stays for reading:
+
+- Enter on a field of an item opens the same form with the focus in that field. On a list's own details, Enter
+  changes the one detail in a notice.
 - Right and Left change the field you are on without opening anything. On a choice, Right is the next option and Left the previous; at the first and the last you hear the edge sound, and it never goes round. On a check, Right checks and Left unchecks; when it is so already, the edge sound. You hear the field and its new value once, "Priority: Low", and Ctrl+Z takes it back. On any other field the two keys do nothing but the edge sound. They never leave the detail pane: Escape or Shift+Tab goes back to the navigator.
 - Which fields an item has is not changed here: the fields are its list's, the same for every item of the list. Ctrl+N,
   F2, Delete, Alt+Up and Alt+Down in the fields say so, and where it is done: Ctrl+J on the list.

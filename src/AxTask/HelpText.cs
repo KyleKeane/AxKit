@@ -20,7 +20,7 @@ public static class HelpText
           Ctrl+1, Ctrl+2, Ctrl+3: the next heading of level 1, 2 or 3, at a top level. Ctrl+Shift+1, Ctrl+Shift+2, Ctrl+Shift+3: the one before. In a list these are action keys
           Right: into a list or a smart list. On an item or a section's header, nothing: the edge sound
           Left or Backspace: back to the sections
-          Enter: open: a list shows its items, an item moves to its fields
+          Enter: open: a list shows its items; an item opens its form, one control for each of its fields: Tab moves between them, Ctrl+Enter saves them all as one step, Escape leaves and nothing is changed
           Tab, Ctrl+Tab or F6: to the detail pane
           Space: done or not done, on a task
           Ctrl+N: a new item in this list. Ctrl+Shift+N: a new list, in the section of the line selected
@@ -38,7 +38,7 @@ public static class HelpText
         ## The detail pane, on the right
           It shows the fields of the item selected in the navigator, or the details of the list
           Up, Down: move through the fields
-          Enter: change the field. Space: done or not done, on a check
+          Enter: on a field of an item, the item's form with the focus in that field; on a list's detail, change it. Space: done or not done, on a check
           Right and Left: on a choice, the next and the previous value; on a check, Right checks and Left unchecks. Said once, one step for Ctrl+Z; the edge sound at an end and on any other field
           Which fields a list's items have is written once, in the list's configuration: Ctrl+J on the list opens it in axJSON, where a field is added, renamed, taken out or moved for every item at once. A field taken out is hidden and its values are kept; put back, they show again. Ctrl+N, F2, Delete, Alt+Up and Alt+Down in the fields say where this is done
           A last line such as "2 more fields kept: Sprint, Old priority" names what an item holds that its list does not name: Enter reads those values

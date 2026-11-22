@@ -265,7 +265,7 @@ usable by itself:
    exists, and it is what makes a list safe to configure by hand: **from here the maintainer can configure a list's
    fields.** *Built on 2026-11-21 (the branch `flat-items`); what the building changed in sections 11 and 13 is said
    there in italics or as "changed while building". An NVDA pass of axTask's window is owed for it.*
-2. The item's form on Enter (section 14).
+2. The item's form on Enter (section 14). *Built on 2026-11-21: `AxTask.Core/ItemFormRules`, `TaskForm.ItemForm.cs`, the window script `18-item-form.txt`; axTask's SPEC TK-4.0a says it as built.*
 3. `AxTask.Core`: `ListActions`, `ActionValues` (the placeholders and their refusals), the acceptance over a whole
    action; `AxKit.Core/ShellQuote`. All pure, each with its tests.
 4. The window: Context, Actions of this list; the eighteen keys; the form of an action's fields; the question of

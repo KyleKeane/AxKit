@@ -3,7 +3,7 @@
 Written by `tools/key-map.ps1` from `docs/axKit/window-commands.json`, `src/AxKit.Forms/BundleKeys.cs` and
 `docs/axKit/key-families.json`; never edit it by hand. Every key of every window and what it does in each app.
 
-The inventory holds 577 commands with a key in 17 apps, on 119 different keys, counting the
+The inventory holds 579 commands with a key in 17 apps, on 119 different keys, counting the
 second keys some commands answer. 50 keys have one meaning wherever they are; 69 have several.
 21 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
 are window keys, each in its window's own table.
@@ -72,17 +72,19 @@ The most spread first: the number of meanings, then the number of apps.
 
 ### Enter
 
-Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axHelp, axMCP, axPass, axPreview, axProcess, axStart and axTask. 16 meanings.
+Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axHelp, axMCP, axPass, axPreview, axProcess, axStart and axTask. 18 meanings.
 
 - axAutomate, axFile, axMCP, axPass and axTask: Open.
 - axAutomate, axMCP, axPass and axTask: Change the field.
 - axCalc: Answer.
+- axTask: Change the item in its form.
 - axProcess: Details.
 - axFile: Go to the action's place.
 - axTask: Open it where it lives.
 - axHelp: Open the conversation.
 - axPreview: Open the detail.
 - axTask: Open the file in axJSON.
+- axTask: Open the item's form.
 - axClip: Paste.
 - axMCP: Read the resource.
 - axCalc: Recall the entry.

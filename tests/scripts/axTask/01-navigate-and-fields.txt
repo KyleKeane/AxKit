@@ -82,10 +82,15 @@ keys left
 expect said ♪ Edge
 
 # Goal: Open an item's fields
-# 1.4 Enter opens Home; Enter on an item moves to its fields.
+# 1.4 Enter opens Home. Enter on an item opens its form (forms-framework.md AF-14.1; its own script is
+# 18-item-form.txt), and Escape leaves it; Tab goes to the item's fields, which stay for reading.
 keys enter
 expect said ! Home, 2 items
 keys enter
+expect state "notice":"Fields of Fix the tap"
+keys escape
+expect state "notice":null
+keys tab
 expect focus Title, text, Fix the tap
 keys down
 expect focus Done, check, not done
@@ -120,20 +125,26 @@ keys space
 expect said ! Not done: Fix the tap
 
 # Goal: Set a due date by typing a weekday
-# 2.2 A date typed as a weekday (the next Friday from the day of the run); a date refused keeps the notice.
+# 2.2 Enter on Due in the fields opens the item's form with the focus in Due's box (AF-14.2). A date typed as a
+# weekday (the next Friday from the day of the run); a date refused keeps the form, the focus in its box.
 keys tab
 keys enter
-expect focus Due
+expect state "notice":"Fields of Fix the tap"
+expect focus "name":"Type Due
+keys ctrl+a
 type friday
 keys enter
 expect said , Friday
+expect state "notice":null
 # Check: A date that does not exist is refused
 keys enter
+keys ctrl+a
 type 30 Febuary
 keys enter
-expect said ! Not a date: 30 Febuary
+expect said Due: Not a date: 30 Febuary
+expect state "notice":"Fields of Fix the tap"
 keys escape
-expect focus Due, date, 
+expect focus Due, date,
 expect focus , Friday
 
 # Check: The fields of an item are its list's, and the field keys say where they are changed
@@ -151,14 +162,18 @@ expect said ! The fields are the list's configuration's
 expect focus Due, date,
 # Goal: Give a field its first value
 # 2.3a Priority is a field of the list that this item's file does not hold yet: shown empty, and written into the
-# file with its first value (AF-11.3), a choice from the list of its options.
+# file with its first value (AF-11.3), a choice from the list of its options in the item's form, which starts on
+# "Not chosen" while the field holds none.
 keys down
 expect focus Priority, choice, empty
 keys enter
-expect focus High
+expect focus "name":"Choose Priority","role":"List","value":"Not chosen"
+keys down
+expect focus "value":"High"
 keys down
 keys enter
-expect said ! Priority: Low
+expect said Priority: Low
+expect focus Priority, choice, Low
 run findstr /l /c:"\"Priority\": \"Low\"" "tasks\Home\Fix the tap.json"
 
 # Goal: Change a choice to its previous or next value

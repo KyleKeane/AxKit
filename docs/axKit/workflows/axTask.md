@@ -47,7 +47,9 @@ Starts with: Open axTask with the folder tasks.
 1. Press Enter.
     You hear: Home, 2 items.
 2. Press Enter.
-3. Press Down 3 times.
+3. Press Escape.
+4. Press Tab.
+5. Press Down 3 times.
 
 ### Move between the list and the fields
 
@@ -70,15 +72,16 @@ Starts with: Open axTask with the folder tasks.
 
 1. Press Tab.
 2. Press Enter.
-3. Type: friday
-4. Press Enter.
+3. Press Ctrl+A.
+4. Type: friday
+5. Press Enter.
     You hear words such as: Friday.
 
 ### Give a field its first value
 
 1. Press Down.
 2. Press Enter.
-3. Press Down.
+3. Press Down 2 times.
 4. Press Enter.
     You hear: Priority: Low.
 
@@ -696,3 +699,67 @@ Starts with: Open axTask with the folder tasks.
 9. Press Shift+Tab.
 10. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Added First thing.
+
+## Change an item in its form
+
+Starts with: Open axTask with the folder tasks.
+
+### Open an item's form and move through its fields
+
+1. Press Enter.
+    You hear: The fields of Fix the tap, in the order of its list.
+    You hear: 1 more field kept: Sprint.
+2. Press Tab 8 times.
+
+### Change several fields of an item and save them as one step
+
+1. Press Enter.
+2. Press Tab.
+3. Press Space.
+4. Press Tab.
+5. Press Ctrl+A.
+6. Type: 2099-11-02
+7. Press Tab.
+8. Press Down 2 times.
+9. Press Tab.
+10. Press Ctrl+A.
+11. Type: Hall
+12. Press Tab.
+13. Type: First line
+14. Press Enter.
+15. Type: Second line
+16. Press Tab.
+17. Type: Washer
+18. Press Ctrl+Enter.
+    You hear: Saved Fix the tap. Done: done. Due: 2 November 2099, Monday. Priority: Normal. Room: Hall. Notes: First line, and 1 more line. Waits on: Washer.
+19. Press Ctrl+Z (Undo; Actions menu).
+    You hear: Undone: Saved Fix the tap.
+
+### Rename an item in its form
+
+1. Press Enter.
+2. Press Tab 6 times.
+3. Type: Washer
+4. Press Ctrl+Enter.
+    You hear: Saved Fix the tap. Waits on: Washer.
+5. Press Down.
+6. Press Enter.
+7. Press Ctrl+A.
+8. Type: Washer 15 mm
+9. Press Enter.
+    You hear: Saved Washer 15 mm. Title: Washer 15 mm.
+
+### Open the form on a field from the detail pane
+
+1. Press Up.
+2. Press Tab.
+3. Press Down 4 times.
+4. Press Enter.
+5. Press Ctrl+A.
+6. Type: Bathroom
+7. Press Enter.
+    You hear: Saved Fix the tap. Room: Bathroom.
+8. Press Home.
+9. Press Down.
+10. Press Space.
+    You hear: Done: done.

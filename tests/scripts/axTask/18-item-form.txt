@@ -1,0 +1,159 @@
+# Workflow: Change an item in its form
+# axTask, docs/axTask/forms-framework.md AF-14.1, AF-14.2: Enter on an item opens its form, one standard control for
+# each field of its list's configuration, in its order. Tab moves between the controls, Ctrl+Enter saves them all as
+# one step for Ctrl+Z, Escape leaves and nothing is changed. Enter on a field in the detail pane opens the same form
+# with the focus in that field. The detail pane stays for reading, with its one-key changes.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Due","type":"date","value":""},{"title":"Priority","type":"choice","value":"","options":["High","Normal","Low"]},{"title":"Room","type":"text","value":""},{"title":"Notes","type":"longtext","value":""},{"title":"Waits on","type":"link","value":""}],"actions":[]}
+file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false,"Due":"2099-10-30","Room":"Kitchen","Sprint":"October"}
+file tasks\Home\Washer.json {"schema":"list.json","Title":"Washer","Done":false}
+start task {temp}\tasks
+expect focus Your lists, heading level 1
+keys down
+keys right
+expect focus Fix the tap, due 30 October 2099
+
+# Goal: Open an item's form and move through its fields
+# Enter on the item: the form, the focus in the title's box, ready to type; its explanation is said once, with the
+# values the item keeps that its list does not name. Tab goes through one control for each field, by its kind.
+keys enter
+expect state "notice":"Fields of Fix the tap"
+expect focus "name":"Type the title","role":"Text","value":"Fix the tap"
+expect said The fields of Fix the tap, in the order of its list
+expect said 1 more field kept: Sprint
+keys tab
+expect focus "name":"Done"
+expect focus CheckButton
+keys tab
+expect focus "name":"Type Due: a date such as 2026-11-30, today, tomorrow, +3 or a weekday; empty for none"
+expect focus "value":"2099-10-30"
+keys tab
+expect focus "name":"Choose Priority","role":"List","value":"Not chosen"
+keys tab
+expect focus "name":"Type Room","role":"Text","value":"Kitchen"
+keys tab
+expect focus "name":"Type Notes; Enter makes a new line"
+keys tab
+expect focus "name":"Type the title of the item Waits on links to; empty for none"
+keys tab
+expect focus Save"
+keys tab
+expect focus Cancel"
+
+# Check: Escape leaves the form and nothing is changed
+keys shift+tab shift+tab shift+tab shift+tab
+expect focus "name":"Type Room"
+type  and more
+keys escape
+expect state "notice":null
+expect focus Fix the tap, due 30 October 2099
+run findstr /l /c:"\"Room\":\"Kitchen\"" "tasks\Home\Fix the tap.json"
+
+# Goal: Change several fields of an item and save them as one step
+# The check checked, a date in words, a choice from its list, a text, two lines of notes, a link by the other item's
+# title: Ctrl+Enter saves them together and says each once; Ctrl+Z takes all of it back in one step.
+keys enter
+expect focus "name":"Type the title"
+keys tab
+keys space
+keys tab
+keys ctrl+a
+type 2099-11-02
+keys tab
+keys down down
+expect focus "value":"Normal"
+keys tab
+keys ctrl+a
+type Hall
+keys tab
+type First line
+keys enter
+type Second line
+keys tab
+type Washer
+keys ctrl+enter
+expect said ! Saved Fix the tap. Done: done. Due: 2 November 2099, Monday. Priority: Normal. Room: Hall. Notes: First line, and 1 more line. Waits on: Washer
+expect state "notice":null
+expect focus Fix the tap, done, due 2 November 2099
+run findstr /l /c:"\"Priority\": \"Normal\"" "tasks\Home\Fix the tap.json"
+run findstr /l /c:"First line\nSecond line" "tasks\Home\Fix the tap.json"
+run findstr /l /c:"\"Waits on\": \"Washer.json\"" "tasks\Home\Fix the tap.json"
+run findstr /l /c:"\"Sprint\": \"October\"" "tasks\Home\Fix the tap.json"
+do Undo
+expect said ! Undone: Saved Fix the tap
+expect focus Fix the tap, due 30 October 2099
+run findstr /l /c:"\"Room\":\"Kitchen\"" "tasks\Home\Fix the tap.json"
+
+# Check: A value a field does not take is said, with the focus in its box, and the form stays
+keys enter
+keys tab
+keys tab
+keys ctrl+a
+type 30 Febuary
+keys ctrl+enter
+expect said ! Due: Not a date: 30 Febuary
+expect state "notice":"Fields of Fix the tap"
+expect focus "name":"Type Due
+keys ctrl+a
+type today
+keys tab tab tab tab
+type Nothing like it
+keys enter
+expect said ! Waits on: No item is called Nothing like it
+expect focus "name":"Type the title of the item Waits on links to
+keys escape
+
+# Check: A form saved with nothing changed says so
+keys enter
+keys ctrl+enter
+expect said ! Nothing changed
+expect state "notice":null
+
+# Goal: Rename an item in its form
+# The title changed in the form renames the item and its file, as F2 does; the link to it from another item follows.
+keys enter
+keys tab tab tab tab tab tab
+type Washer
+keys ctrl+enter
+expect said ! Saved Fix the tap. Waits on: Washer
+keys down
+expect focus Washer
+keys enter
+expect focus "name":"Type the title","role":"Text","value":"Washer"
+keys ctrl+a
+type Washer 15 mm
+keys enter
+expect said ! Saved Washer 15 mm. Title: Washer 15 mm
+expect focus Washer 15 mm
+run cmd /c if exist "tasks\Home\Washer 15 mm.json" (exit 0) else (exit 1)
+run findstr /l /c:"\"Waits on\": \"Washer 15 mm.json\"" "tasks\Home\Fix the tap.json"
+
+# Goal: Open the form on a field from the detail pane
+# Tab to the fields, which stay for reading; Enter on Room opens the item's form with the focus in Room's box. The
+# one-key changes of the detail pane stay: Space on Done there changes it at once.
+keys up
+expect focus Fix the tap
+keys tab
+expect focus Title, text, Fix the tap
+keys down down down down
+expect focus Room, text, Kitchen
+keys enter
+expect state "notice":"Fields of Fix the tap"
+expect focus "name":"Type Room","role":"Text","value":"Kitchen"
+keys ctrl+a
+type Bathroom
+keys enter
+expect said ! Saved Fix the tap. Room: Bathroom
+# The focus is back where the form was opened from, on the field, with its new value.
+expect focus Room, text, Bathroom
+keys home
+keys down
+expect focus Done, check, not done
+keys space
+expect said ! Done: done
+# Check: Enter on the line of the kept fields reads them, and opens no form
+keys end
+expect focus 1 more field kept: Sprint
+keys enter
+expect state "notice":"Fields kept"
+keys escape

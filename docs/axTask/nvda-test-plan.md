@@ -17,7 +17,7 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
 2. Right: "Home, 2 items, Fix the tap, due 30 October". Down: "Water plants, done".
 3. Right on an item: the edge sound, nothing else. Left: "Lists, 6 lists, Home, list, 2 items". Left again: the edge
    sound.
-4. Enter on Home: the same as Right. Enter on Fix the tap: the focus moves to "Fields of Fix the tap", "Title, text,
+4. Enter on Home: the same as Right. Enter on Fix the tap: the item's form (section 10); Escape. Tab on Fix the tap: the focus moves to "Fields of Fix the tap", "Title, text,
    Fix the tap". Down: "Done, check, not done", "Start, date, empty", "Due, date, 30 October 2026, Friday".
 5. Escape: back to "Fix the tap, due 30 October". Tab: the fields again; Shift+Tab back. Ctrl+Tab: the fields; F6: back (the bundle's pane keys, as in every other window).
 6. Up in the navigator on the first row: the edge sound. Type `w`: Water plants; Shift+W: back.
@@ -41,12 +41,12 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
 ## 2. Changing (IA-5, TK-4)
 
 1. On Fix the tap, Space: "Done: Fix the tap"; Space: "Not done: Fix the tap". Ctrl+J: axJSON shows the item as its values, `"Done": false` among them, and `"schema": "list.json"` first.
-2. In its fields, Enter on Due, type `+3`, Enter: "Due: …, " three days from today. Type `30 Febuary`: "Not a date: …"
-   and the notice stays; Escape.
+2. In its fields, Enter on Due: the item's form with the focus in Due's box; type `+3`, Enter: "Saved Fix the tap. Due: …, " three days from today, and the focus is back on Due in the fields. Enter again, type `30 Febuary`, Enter: "Due: Not a date: …"
+   and the form stays, the focus in Due's box; Escape.
 3. Ctrl+N in the fields: "The fields are the list's configuration's: Ctrl+J on the list opens it in axJSON", and no
    notice opens; F2 on Due, Delete and Alt+Up say the same and change nothing (the fields of an item are its list's,
    `forms-framework.md` AF-13.3). Down to "Priority, choice, empty", a field of the list that this item's file does not
-   hold yet. Enter on it: the list "Priority" on High; Down, Enter: "Priority:
+   hold yet. Enter on it: the item's form with the focus in the list "Choose Priority" on "Not chosen"; Down twice, Enter: "Saved Fix the tap. Priority:
    Low", written into the file with this first value. Left on it: "Priority: High", once; Left again: the edge sound, nothing said; Right: "Priority: Low"; Right
    again: the edge sound, it does not go round; Ctrl+Z: "Undone: Priority: Low", one step. On Done: Right: "Done:
    done"; Right again: the edge sound; Left: "Done: not done"; Left again: the edge sound. On Title or Due: Right and
@@ -213,3 +213,26 @@ The runner's scripts are `tests/scripts/axTask/16-convert-earlier-format.txt` an
 6. Left, Ctrl+J on No configuration: "Written the configuration of No configuration", and axJSON opens the new
    `list.json` with "item fields" Done and Notes and an empty list of actions. Back in axTask, Idea's fields read
    "Done, check, not done" and "Notes, text, One line", and Space marks it done.
+
+## 10. The item's form (TK-4.0a, forms-framework.md AF-14.1, AF-14.2)
+
+The runner's script is `tests/scripts/axTask/18-item-form.txt`.
+
+1. Enter on Fix the tap: "Fields of Fix the tap", the focus in an edit box named "Type the title" holding the title,
+   then the form's explanation once: the fields in the order of the list, Tab, Ctrl+Enter, Escape. Listen that NVDA
+   reads the box first and the explanation after it, not over it.
+2. Tab through: "Done, check box, not checked"; "Type Start: a date such as …", an edit box; "Type Due: …"; "Choose
+   Priority, list" on its option or on "Not chosen"; then Save and Cancel. Each is read by NVDA as the control it is.
+   Shift+Tab goes back the same way.
+3. In the list of Priority, Up and Down move and NVDA reads each option; nothing is saved by moving.
+4. Change the title's box and press Escape: the form closes, the row reads as before.
+5. Enter again; Space on Done, a new date in Due, Down in Priority; Ctrl+Enter: "Saved Fix the tap. Done: done. Due:
+   …. Priority: …", once, and the row reads the new state. Ctrl+Z: "Undone: Saved Fix the tap…", all three back.
+6. Enter, type `30 Febuary` into Due, Ctrl+Enter: the refusal sound, "Due: Not a date: 30 Febuary. …", the focus in
+   Due's box, the form still open. Escape.
+7. Enter, Ctrl+Enter with nothing changed: "Nothing changed".
+8. Enter, change the title, Enter: "Saved <new title>. Title: <new title>"; Ctrl+E shows the file renamed.
+9. Tab to the fields, Down to Due, Enter: the same form, the focus in Due's box at once. Save: the focus is back on
+   Due in the fields, with its new value.
+10. On Water plants, Enter: the explanation ends with "1 more field kept: Sprint: they are in the item's file and no
+    field of its list".

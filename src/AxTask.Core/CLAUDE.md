@@ -39,6 +39,13 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
   as the step left it), `Undo` (last part first; a new list's folder goes with its `list.json`), `ReadOrNull`.
 - `Links` (IA-D3): `AfterMove` (the writes that keep every link pointing where it did when a file or a folder moves,
   both the links to it and the links it holds), `Spoken` ("missing: name"), `Remap`.
+- `ItemFormRules` with `FormControl` and `FormValue` (AF-14.1, TK-4.0a, 2026-11-21): the item's form, pure:
+  `Controls` (one control per field of the item's document: its kind, text, check, lines or list, its name as an
+  instruction, what it starts with; a choice that holds none of its options starts on `NotChosen`; a value its type
+  does not hold is a text box), `Apply` (what the controls' values make of the item: only a control that was changed
+  gives its field a value, taken as `FieldTypes.Parse` takes it, a link's title through the caller; the first value
+  refused, with its control), `Said` ("Saved Fix the tap. Due: …. Priority: High", or "Nothing changed"). Tested in
+  `ItemFormRulesTests`.
 - `TaskRules` (TK-4): Done, Start and Due, `DefaultTemplate`, `TemplateOf` (the fields of a list's configuration),
   `IsTask`, `IsDone`, `Due`, `Summary`, `TemplateWithDone` (a checklist or a plain list is the configuration's
   alone, AF-13.3: no item's file is touched), `DoneIndex`.
