@@ -11,18 +11,22 @@ public static class HelpText
         "axCalc",
         [
             "Tab, Shift+Tab, Ctrl+Tab or F6: switch between the history and the expression field",
-            "Ctrl+F: find an entry in the history. F3 and Shift+F3: next or previous match",
+            "Ctrl+F: find text in the history. F3 and Shift+F3: next or previous match",
             "Ctrl+S: save the history as a text file",
         ]) + """
         ## axCalc
           In the expression field
             Enter: the answer, spoken; the line joins the history and the field empties
             Escape: clear the field
-          In the history
-            Enter: the entry's expression back in the field, to change it
-            Delete: remove the entry
+          In the history, a text with one line for each answer, the newest last, read as the conversation in axClaude and the terminal in axTerminal
+            Up, Down: one line at a time. a, Shift+A: the next or the previous answer. s, Shift+S: the next or the previous line of axCalc's own. l: the line number
+            Enter: the line's expression back in the field, to change it
             Escape: back to the field
-          Ctrl+Shift+C: copy the answer (the last one, or the entry's in the history)
+            m: bookmark this line, or take its bookmark away; Ctrl+Shift+K does it from the field too. k, Shift+K: the next or the previous bookmark. Backspace: back to the line before a jump
+            Ctrl+Alt with a, s or k, from anywhere: every line of that kind from the line you are on to the end
+            Shift with the arrows selects; Ctrl+C copies the selection
+            Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on the line you are on
+          Ctrl+Shift+C: copy the answer (the last one, or the line's in the history)
           Ctrl+I: the answer in hexadecimal, binary and octal
           Ctrl+Q: say the last answer again
           Ctrl+Shift+Delete: clear the history, after a question

@@ -8,7 +8,7 @@ axCalc is part of axKit. Installing axKit (see the axKit guide: Help, About, axK
 
 ## Start
 
-The window is called "Calculator - axCalc", and the focus starts in the field named Expression. Above it is the history, a list; Tab, Shift+Tab, Ctrl+Tab or F6 move between the two.
+The window is called "Calculator - axCalc", and the focus starts in the field named Expression. Above it is the history, a text you read line by line, as the conversation in axClaude and the terminal in axTerminal; Tab, Shift+Tab, Ctrl+Tab or F6 move between the two.
 
 ## Answers
 
@@ -39,8 +39,11 @@ The newest line is at the bottom, so Up from the end reads back from the latest.
 - **Enter** puts the line's expression back in the field, to change it and press Enter again.
 - **Ctrl+Shift+C** copies the line's answer. In the field, it copies the last answer.
 - **Ctrl+I** says the line's answer in other bases.
-- **Delete** removes the line; **Escape** goes back to the field.
-- **Ctrl+F** finds a line by its text, F3 the next one.
+- **Escape** goes back to the field.
+- **Ctrl+F** finds text in the history from the line you are on, F3 the next match and Shift+F3 the one before.
+- The letters are the ones of axClaude's conversation: **a** goes to the next answer and Shift+A to the one before; **l** says the line's number; **m** drops a bookmark on the line, and **k** and Shift+K go from bookmark to bookmark; Backspace goes back to the line you were on before a jump.
+- Shift with the arrows selects text, and Ctrl+C copies the selection.
+- One line cannot be removed alone any more: the history is a text. Clear history empties it.
 
 **Ctrl+S** saves the whole history as a text file, one line per answer. Session, Clear history (Ctrl+Shift+Delete) empties it after a question. The history and your variables are kept until next time, unless you turn off Options, Keep history between runs.
 
@@ -48,6 +51,8 @@ The newest line is at the bottom, so Up from the end reads back from the latest.
 
 - **Session**: Save history (Ctrl+S), Exit.
 - **Actions**: Answer (Enter), Copy answer (Ctrl+Shift+C), Copy answer in, Answer in other bases (Ctrl+I), Say the last answer (Ctrl+Q), Variables, Clear variables, Clear history (Ctrl+Shift+Delete).
+- **Navigation**: Find (Ctrl+F), Find next (F3), Find previous (Shift+F3), Next bookmark, Previous bookmark.
+- **Context**: what acts on the history's line: Take this line's expression into the field (Enter in the history), Bookmark this line (Ctrl+Shift+K), Copy the selection. Shift+F10 opens it.
 - **Options**: Angles (Degrees, Radians), Keep history between runs, Text (font and size), General (the update check), Developer (the settings file, diagnostics).
 - **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.
 

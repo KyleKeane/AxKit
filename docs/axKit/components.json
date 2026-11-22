@@ -123,7 +123,7 @@
     { "app": "axTask", "window": "TaskForm", "type": "navigator", "to be": "navigator", "note": "" },
     { "app": "axStart", "window": "StartForm", "type": "hotkey", "to be": "hotkey", "note": "" },
     { "app": "axClip", "window": "ClipForm", "type": "hotkey", "to be": "hotkey", "note": "" },
-    { "app": "axCalc", "window": "CalcForm", "type": "", "to be": "conversation", "note": "A window of its own today." },
+    { "app": "axCalc", "window": "CalcForm", "type": "conversation", "to be": "conversation", "note": "The shape without a program behind it: its text is the answers given." },
     { "app": "axProcess", "window": "ProcessForm", "type": "navigator", "to be": "navigator", "note": "Three lists of This computer, read off the UI thread, and no second pane; it starts inside Processes." },
     { "app": "axAutomate", "window": "AutomateForm", "type": "navigator", "to be": "navigator", "note": "" },
     { "app": "axTerminal", "window": "TerminalForm", "type": "conversation", "to be": "conversation", "note": "" },

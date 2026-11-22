@@ -43,13 +43,14 @@ Starts with: Open axCalc.
 1. Press Tab.
 2. Press Enter.
 
-### Remove an entry from the history
+### Go back from the history to the field
 
 1. Press Tab.
 2. Press Escape.
 3. Press Tab.
 4. Press Delete.
-    You hear: Removed.
+5. Press Escape 2 times.
+    You hear: Cleared.
 
 ### Read the keyboard shortcuts
 
@@ -107,7 +108,7 @@ Starts with: Open axCalc.
 
 ### Find an entry in the history
 
-1. Press Ctrl+F (Find in the history).
+1. Press Ctrl+F (Find; Navigation menu).
 2. Type: rate
 3. Press Enter.
 
@@ -138,7 +139,7 @@ Starts with: Open axCalc.
 6. Open axCalc.
 7. Press Shift+Tab.
 
-## Move through axCalc's history, find in it and remove an entry
+## Move through axCalc's history and find in it
 
 Starts with: Open axCalc.
 
@@ -155,7 +156,7 @@ Starts with: Open axCalc.
 7. Press Enter.
     You hear: 30.
 
-### Move through the history one entry at a time
+### Move through the history one line at a time
 
 1. Press Shift+Tab.
 2. Press Up 3 times.
@@ -168,25 +169,20 @@ Starts with: Open axCalc.
 3. Press Ctrl+I (Answer in other bases; Actions menu).
     You hear: 11, hex B, binary 1011, octal 13.
 
+### Move from answer to answer with a letter
+
+1. Press A.
+2. Press Shift+A.
+3. Press L.
+    You hear: Line 2 of 4.
+
 ### Find the next and the previous match in the history
 
-1. Press Ctrl+F (Find in the history).
+1. Press Ctrl+F (Find; Navigation menu).
 2. Type: 10
 3. Press Enter.
-4. Press F3 2 times (Find next).
-5. Press Shift+F3 (Find previous).
-
-### Remove entries from the history
-
-1. Press Delete.
-    You hear: Removed.
-2. Press End.
-3. Press Delete.
-    You hear: Removed.
-
-### Find an entry by typing its first characters
-
-1. Type: 255
+4. Press F3 2 times (Find next; Navigation menu).
+5. Press Shift+F3 (Find previous; Navigation menu).
 
 ### Go back to the field from the history
 

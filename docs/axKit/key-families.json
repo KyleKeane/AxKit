@@ -181,10 +181,9 @@
         { "chord": "f5", "apps": ["axAutomate"], "does": "Run", "kind": "act on what is selected" },
         { "chord": "f6", "apps": ["axAutomate", "axMCP", "axPass", "axTask"], "does": "Switch between the navigator and the detail pane", "kind": "move between panes; a bundle key" },
         { "chord": "f6", "apps": ["axDown", "axJSON", "axPreview"], "does": "Between the text and the details", "kind": "move between panes" },
-        { "chord": "f6", "apps": ["axClaude", "axTerminal"], "does": "Switch between the view and the field", "kind": "move between panes" },
+        { "chord": "f6", "apps": ["axCalc", "axClaude", "axTerminal"], "does": "Switch between the view and the field", "kind": "move between panes" },
         { "chord": "f6", "apps": ["axGIT"], "does": "Switch between the list and the text", "kind": "move between panes" },
         { "chord": "f6", "apps": ["axMedia"], "does": "Back to the list", "kind": "move between panes" },
-        { "chord": "f6", "apps": ["axCalc"], "does": "Switch between the history and the field", "kind": "move between panes" },
         { "chord": "f6", "apps": ["axFile"], "does": "Switch between the folder list and the Actions list", "kind": "move between panes" }
       ]
     },

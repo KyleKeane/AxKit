@@ -10,7 +10,7 @@ expect focus Expression
 # Check: The empty history is named as empty
 # 1.2 The history's name when it is empty.
 keys shift+tab
-expect focus History, empty
+expect focus "name":"History","role":"Text","value":""
 keys tab
 expect focus Expression
 
@@ -149,7 +149,7 @@ keys enter
 expect said History cleared
 # Check: After the clearing the focus stays in the empty history
 # The focus is still in the history, now empty.
-expect focus History, empty
+expect focus "name":"History","role":"Text","value":""
 
 # Goal: Stop keeping the history between runs
 # 5.2 Keep history between runs off: the next start has none.
@@ -162,4 +162,4 @@ close
 wait 1500
 start calc
 keys shift+tab
-expect focus History, empty
+expect focus "name":"History","role":"Text","value":""

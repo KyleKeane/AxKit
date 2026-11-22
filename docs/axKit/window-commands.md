@@ -128,21 +128,21 @@ every window" or under a heading that names the windows without it; under an app
 - Binary. Menu: Actions, Copy answer in. Key: none. Mark: act.
 - Hexadecimal. Menu: Actions, Copy answer in. Key: none. Mark: act.
 - Octal. Menu: Actions, Copy answer in. Key: none. Mark: act.
-- Nothing for the focus here yet. Menu: Context. Key: none. Mark: read.
+- Bookmark this line. Menu: Context. Key: Ctrl+Shift+K, or M in the history. Mark: change.
+- Copy the selection. Menu: Context. Key: Ctrl+C in the history. Mark: act.
+- Take this line's expression into the field. Menu: Context. Key: Enter in the history. Mark: change.
 - Floating point explained. Menu: Help, Calculator resources. Key: none. Mark: act.
-- Nothing to move to here yet. Menu: Navigation. Key: none. Mark: read.
+- Find. Menu: Navigation. Key: Ctrl+F. Mark: read.
+- Find next. Menu: Navigation. Key: F3. Mark: read.
+- Find previous. Menu: Navigation. Key: Shift+F3. Mark: read.
+- Next bookmark. Menu: Navigation. Key: K in the history. Mark: open.
+- Previous bookmark. Menu: Navigation. Key: Shift+K in the history. Mark: open.
 - Keep history between runs. Menu: Options. Key: none. Mark: change.
 - Degrees. Menu: Options, Angles. Key: none. Mark: change.
 - Radians. Menu: Options, Angles. Key: none. Mark: change.
 - Save history. Menu: Session. Key: Ctrl+S. Mark: change.
-- Back to the field. Menu: none, a key alone. Key: Escape. Mark: open. Never run by AI tools.
 - Clear the field. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
-- Find in the history. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
-- Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
-- Find previous. Menu: none, a key alone. Key: Shift+F3. Mark: read. Never run by AI tools.
-- Recall the entry. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
-- Remove the entry. Menu: none, a key alone. Key: Delete. Mark: change. Never run by AI tools.
-- Switch between the history and the field. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
+- Switch between the view and the field. Menu: none, a key alone. Key: Tab. Also: Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
 
 ## axClaude
 

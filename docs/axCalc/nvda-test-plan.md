@@ -5,7 +5,7 @@ Run with NVDA before a release, after `scripts to run-individual-apps\run-axCalc
 ## 1. Start (AC-1, AC-2)
 
 1. Start axCalc: NVDA reads "Calculator - axCalc window", then "Expression, edit". Nothing else is spoken.
-2. Shift+Tab: "History, empty list" (or "History, N entries" and the last line). Tab: the field again. F6 and Ctrl+Tab: the same two.
+2. Shift+Tab: the history, a text since 2026-11-22: NVDA says "History" and that it is a read-only text, blank when empty, else the last line. Tab: the field again. F6 and Ctrl+Tab: the same two.
 3. NVDA+End: the status bar: "No answer yet" (or "Answer …") and "Degrees, no variables".
 4. Alt+F4 closes the window without a question.
 
@@ -31,10 +31,11 @@ Run with NVDA before a release, after `scripts to run-individual-apps\run-axCalc
 1. Shift+Tab to the history; Up and Down: each line read alone, nothing else.
 2. On `1920*1080*4 = 8294400`, Ctrl+Shift+C: "Copied 8294400". Ctrl+I: that line's bases.
 3. Enter: the focus in the field, which holds `1920*1080*4` with the caret at its end (NVDA reads the field and its text). Change it, Enter: the new answer.
-4. In the history, Delete: "Removed"; the line is gone and the next one is selected. Escape: back to the field.
-5. Ctrl+F in the window: the Find notice; type `rate`, Enter: the line `rate = 1.25` selected and read; F3: the next match or the same again.
+4. In the history, Delete: nothing is removed and the line is as it was. Escape: back to the field.
+4a. The history's letters (AC-5.7): a: the next answer, read; Shift+A: the one before; l: "Line N of M"; m: "Bookmark 1 added", and Up reads the bookmark's line; k: to the bookmark; m on it: "Bookmark 1 removed"; Backspace: "Back to" and the line before the jump.
+5. Ctrl+F in the window: the Find notice; type `rate`, Enter: the caret on the line `rate = 1.25`, read; F3: the next match or the same again.
 6. Ctrl+S: the Windows save dialog; save as `calc-test.txt`: "Saved calc-test.txt". Open the file in axDown: one line per entry.
-7. Ctrl+Shift+Delete: the notice "Clear the history?" with "The N entries cannot be brought back."; Escape: nothing changes. Ctrl+Shift+Delete, Enter: "History cleared"; Shift+Tab: "History, empty".
+7. Ctrl+Shift+Delete: the notice "Clear the history?" with "The N entries cannot be brought back."; Escape: nothing changes. Ctrl+Shift+Delete, Enter: "History cleared"; Shift+Tab: the history, blank.
 8. Session, Variables: the notice lists `rate = 1.25`. Session, Clear variables, Enter: "Variables cleared".
 
 ## 5. Kept between runs (AC-9)

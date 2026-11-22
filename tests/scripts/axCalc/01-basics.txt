@@ -39,21 +39,26 @@ keys ctrl+i
 expect said hex
 
 # Goal: Put an earlier expression back in the field
-# Tab to the history: the newest entry; Enter puts its expression back in the field (AC-5.2).
+# Tab to the history, a text since 2026-11-22 (docs/axKit/framework.md step 9): the caret on the newest answer's
+# line; Enter puts that line's expression back in the field (AC-5.2).
 keys tab
-expect focus History
+expect focus "name":"History","role":"Text","value":"/2 = 4147200"
 keys enter
-expect focus "name":"Expression"
+expect focus "name":"Expression","role":"Text","value":"/2"
 
-# Goal: Remove an entry from the history
-# In the history Escape goes back to the field, Delete removes the entry.
+# Goal: Go back from the history to the field
+# In the history Escape goes back to the field, which still holds what it held. Delete removes nothing: the history
+# is a text, and Clear history empties it (AC-5.6).
 keys tab
-expect focus History
+expect focus "name":"History"
 keys escape
-expect focus "name":"Expression"
+expect focus "name":"Expression","role":"Text","value":"/2"
 keys tab
 keys delete
-expect said ! Removed
+expect focus "name":"History","role":"Text","value":"/2 = 4147200"
+keys escape
+keys escape
+expect said ! Cleared
 
 # Check: Find in the history opens and closes
 # Ctrl+F finds in the history; Escape closes the find.

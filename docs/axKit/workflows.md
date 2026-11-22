@@ -48,7 +48,7 @@ Steps and keys: `docs/axKit/workflows/axCalc.md` (in Claude's working folder: `w
     - Go on from the last answer
     - Hear the last answer in other bases
     - Put an earlier expression back in the field
-    - Remove an entry from the history
+    - Go back from the history to the field
     - Read the keyboard shortcuts
 2. **Use variables, earlier answers and the history in axCalc**
     - Go on from the last answer and use ans
@@ -59,13 +59,12 @@ Steps and keys: `docs/axKit/workflows/axCalc.md` (in Claude's working folder: `w
     - See the variables and clear them
     - Clear the history
     - Stop keeping the history between runs
-3. **Move through axCalc's history, find in it and remove an entry**
+3. **Move through axCalc's history and find in it**
     - Hear the last answer in other bases
-    - Move through the history one entry at a time
+    - Move through the history one line at a time
     - Hear the answer of an entry in other bases
+    - Move from answer to answer with a letter
     - Find the next and the previous match in the history
-    - Remove entries from the history
-    - Find an entry by typing its first characters
     - Go back to the field from the history
     - Change the text size
     - Hear the bases from the command palette

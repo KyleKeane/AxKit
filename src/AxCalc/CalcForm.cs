@@ -5,28 +5,32 @@ using AxKit.Forms;
 namespace AxCalc;
 
 /// <summary>
-/// axCalc's window (SPEC.md AC-2): a menu bar, the history as a list, the expression field under it, and a status bar
-/// with the last answer. Enter in the field answers in one announcement; the history keeps every answer to read back,
-/// copy and recall. The evaluator is <see cref="Calculator"/> in the Core; the notices, the fonts, the window's place,
-/// find and the update flow are the bundle's window base (<see cref="AxKitForm"/>).
+/// axCalc's window (SPEC.md AC-2): the bundle's conversation window (<see cref="ConversationForm"/>;
+/// docs/axKit/framework.md step 9, 2026-11-22; a window of its own with the history as a list until then): the
+/// history as the text, one line an answer, the expression field under it, and a status bar with the last answer.
+/// Enter in the field answers in one announcement; the history keeps every answer to read back, copy and take
+/// into the field again. The text, the field, the keys between them, find, the bookmarks and the Context menu on a
+/// line are the conversation window's; this class holds the calculator's commands. The evaluator is
+/// <see cref="Calculator"/> and the history's lines are <see cref="CalcTranscript"/>, both in the Core.
 /// </summary>
-public sealed class CalcForm : AxKitForm
+public sealed class CalcForm : ConversationForm
 {
     private readonly CalcSettings _settings;
     private readonly Calculator _calculator = new();
     private readonly List<CalcEntry> _entries = [];
-    private readonly MenuStrip _menu = new();
-    private readonly AxKitList _history = new();
-    private readonly AxKitTextBox _field = new();
-    private readonly StatusStrip _status = new();
-    private readonly ToolStripStatusLabel _answerLabel;
-    private readonly ToolStripStatusLabel _unitLabel;
+    private readonly CalcTranscript _lines;
     private readonly ChoiceItems<bool> _angles;
 
     public CalcForm(CalcSettings settings, string? settingsError)
-        : base(AxCalcApp.Name, settings, CalcSettings.DefaultPath, settingsError)
+        : this(settings, settingsError, new CalcTranscript())
+    {
+    }
+
+    private CalcForm(CalcSettings settings, string? settingsError, CalcTranscript lines)
+        : base(AxCalcApp.Name, settings, CalcSettings.DefaultPath, settingsError, lines, AxCalcKeys.Transcript, "History", "Expression", showMarkers: false)
     {
         _settings = settings;
+        _lines = lines;
         SetTitle("Calculator");
         _calculator.Degrees = settings.Degrees;
         foreach (var (name, value) in settings.Variables)
@@ -38,13 +42,14 @@ public sealed class CalcForm : AxKitForm
         _calculator.Answer = _entries.Count > 0 ? _entries[^1].Value : null;
 
         // ---- menus and keys (AC-7.1, AC-7.2): one command list (docs/axKit/app-kit.md AK-2), each key from the tables ----
-        // The bundle's eight (AX-9.1): Session the history's file and Exit; Actions the calculator's commands.
+        // The bundle's eight (AX-9.1): Session the history's file and Exit; Actions the calculator's commands;
+        // Navigation find and the bookmarks; Context what acts on the history's line.
         var calculator = new ToolStripMenuItem();
         calculator.DropDownItems.Add(Item("&Save history...", SaveHistory, BundleKeys.Save, CommandMark.Change));
         calculator.DropDownItems.Add(new ToolStripSeparator());
         calculator.DropDownItems.Add(CreateExitItem());
         var actions = new ToolStripMenuItem();
-        Add(actions, new Command("&Answer", AxCalcKeys.Act, Evaluate) { When = () => _field.Focused, Mark = CommandMark.Read });
+        Add(actions, new Command("&Answer", AxCalcKeys.Act, Evaluate) { When = () => Input.Focused, Mark = CommandMark.Read });
         Add(actions, new Command("&Copy answer", AxCalcKeys.CopyAnswer, CopyAnswer) { Mark = CommandMark.Act });
         var copyIn = new ToolStripMenuItem("Copy answer &in");
         copyIn.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Hexadecimal", null, (_, _) => CopyCode(16)), CommandMark.Act));
@@ -57,6 +62,11 @@ public sealed class CalcForm : AxKitForm
         actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Variables", null, (_, _) => ShowVariables()), CommandMark.Open));
         actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Clear va&riables...", null, (_, _) => ClearVariables()), CommandMark.Change));
         Add(actions, new Command("Clear &history...", AxCalcKeys.ClearHistory, ClearHistory) { Mark = CommandMark.Act });
+
+        var navigation = new ToolStripMenuItem();
+        AddFindItems(navigation);
+        navigation.DropDownItems.Add(new ToolStripSeparator());
+        AddBookmarkItems(navigation);
 
         // Options, as the other windows' (AX-6): the window's own submenus and items first, then Text, General, Developer.
         var options = new ToolStripMenuItem();
@@ -77,88 +87,47 @@ public sealed class CalcForm : AxKitForm
             [("&Floating point explained", "https://floating-point-gui.de")]);
 
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
-        PlaceMenuBar(_menu, calculator, actions, new ToolStripMenuItem(), new ToolStripMenuItem(), options, help);
+        PlaceMenuBar(MenuBar, calculator, actions, navigation, CreateTranscriptContext("Take this line's e&xpression into the field"), options, help);
 
-        // The keys without a menu item: between the history and the field, find in the history, and the keys that
-        // act on what has the focus (AC-5.2; in the list they also keep it from dinging).
-        foreach (var key in new[] { BundleKeys.NextControl, BundleKeys.PreviousControl, BundleKeys.NextControlAlso })
-        {
-            AddKey(new Command("Switch between the history and the field", key, () => (_history.Focused ? (Control)_field : _history).Focus()) { Mark = CommandMark.Open });
-        }
+        // Escape in the field clears it (AC-6.3); in the history Escape goes back to the field and Enter takes the
+        // line's expression there, both the conversation window's own (AC-5.2).
+        AddKey(new Command("Clear the field", AxCalcKeys.Back, ClearField) { When = () => Input.Focused, Mark = CommandMark.Change });
+        Transcript.LineChosen += (_, _, text) => Recall(text);
 
-        AddFindInListKeys("history", _history, Labels);
-        AddKey(new Command("Clear the field", AxCalcKeys.Back, ClearField) { When = () => _field.Focused, Mark = CommandMark.Change });
-        AddKey(new Command("Recall the entry", AxCalcKeys.Act, Recall) { When = () => _history.Focused, Mark = CommandMark.Open });
-        AddKey(new Command("Back to the field", AxCalcKeys.Back, () => _field.Focus()) { When = () => _history.Focused, Mark = CommandMark.Open });
-        AddKey(new Command("Remove the entry", AxCalcKeys.Remove, RemoveEntry) { When = () => _history.Focused, Mark = CommandMark.Change });
+        // ---- the history (AC-2.1): the answers kept from the last run, as lines ----
+        _lines.Load(_entries.Select(entry => entry.Label));
 
-        // ---- the history and the field (AC-2.1) ----
-        _history.IntegralHeight = false;
-        _history.Dock = DockStyle.Fill;
-        _history.TabIndex = 0;
-        _history.Items.AddRange(_entries.Select(entry => (object)entry.Label).ToArray());
-        if (_history.Items.Count > 0)
-        {
-            // AC-2.4: on the last line, so that the first Shift+Tab reads the latest answer.
-            _history.SelectedIndex = _history.Items.Count - 1;
-        }
-
-        _field.Dock = DockStyle.Bottom;
-        _field.TabIndex = 1;
-        _field.AccessibleName = "Expression";
-
-        (_answerLabel, _unitLabel) = StatusLayout.Pair(_status);
-
-        // Docked from the last control to the first: the menu takes the top, the status bar the bottom, the field the
-        // line above it, and the history (or the notice over both) what is left.
-        PlaceControls(_menu, _history, _field, _status);
         UpdateAngles();
-        AfterChange();
+        UpdateStatus();
+        ApplyTextFont();
+        RestoreWindow();
+    }
+
+    // ---- what the conversation window asks for ----
+
+    /// <summary>Nothing of its own follows a new line: the answer is said by the command that gave it.</summary>
+    protected override void OnTranscriptChanged()
+    {
+    }
+
+    /// <summary>The status bar (AC-2.3): the last answer on the left; the angle unit and the variables on the right.</summary>
+    protected override void UpdateStatus()
+    {
+        var variables = _calculator.Variables.Count;
+        SetStatus(
+            _calculator.Answer is { } answer ? "Answer " + NumberText.Format(answer) : "No answer yet",
+            $"{(_calculator.Degrees ? "Degrees" : "Radians")}, {(variables == 0 ? "no variables" : variables == 1 ? "1 variable" : $"{variables} variables")}");
     }
 
     // ---- what the window base asks for ----
 
     protected override string Shortcuts => HelpText.Shortcuts;
 
-    protected override void HideForNotice()
-    {
-        _history.Visible = false;
-        _field.Visible = false;
-    }
-
-    protected override void ShowAfterNotice()
-    {
-        _history.Visible = true;
-        _field.Visible = true;
-    }
-
-    protected override Control FocusTarget => _field;
-
-    /// <summary>The announcements on the control with the focus, so that NVDA speaks them where the user is.</summary>
-    protected override Control AnnounceSource => _history.Focused ? _history : _field;
-
-    protected override void ApplyFont(Font font)
-    {
-        _history.Font = font;
-        _field.Font = font;
-    }
-
-
     protected override IEnumerable<string> DiagnosticsLines =>
         [$"History: {_entries.Count} entries, {_calculator.Variables.Count} variables, {(_calculator.Degrees ? "degrees" : "radians")}"];
 
     /// <summary>Ctrl+S, the bundle's save key: the history as a text file (AC-5.5).</summary>
     protected override void SaveCommand() => SaveHistory();
-
-    protected override void OnShown(EventArgs e)
-    {
-        if (!NoticeOpen)
-        {
-            _field.Select();
-        }
-
-        base.OnShown(e);
-    }
 
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
@@ -172,7 +141,7 @@ public sealed class CalcForm : AxKitForm
     /// <summary>Enter in the field: the answer said and added to the history, the field emptied; an error said and the field kept to mend.</summary>
     private void Evaluate()
     {
-        var text = _field.Text;
+        var text = Input.Text;
         if (text.Trim().Length == 0)
         {
             Announce("Type an expression", true);
@@ -187,37 +156,36 @@ public sealed class CalcForm : AxKitForm
         }
 
         _entries.Add(CalcEntry.From(text, answer));
-        _history.Items.Add(_entries[^1].Label);
+        _lines.AddAnswer(_entries[^1].Label);
         while (_entries.Count > CalcSettings.MaxHistory)
         {
             _entries.RemoveAt(0);
-            _history.Items.RemoveAt(0);
+            _lines.RemoveOldestAnswer();
         }
 
-        _history.SelectedIndex = _history.Items.Count - 1;
-        _field.Clear();
-        AfterChange();
+        Input.Clear();
+        UpdateStatus();
         Announce(answer.Spoken, true);
     }
 
     private void ClearField()
     {
-        if (_field.TextLength == 0)
+        if (Input.TextLength == 0)
         {
             Announce("Empty", true);
             return;
         }
 
-        _field.Clear();
+        Input.Clear();
         Announce("Cleared", true);
     }
 
-    /// <summary>The value a command acts on: the selected entry's while the history has the focus, the last answer otherwise.</summary>
-    private double? CurrentValue() =>
-        _history.Focused && SelectedEntry() is { } entry ? entry.Value : _calculator.Answer;
+    /// <summary>The entry a line of the history is, by its words; the newest of several that read the same, which hold the same expression and answer.</summary>
+    private CalcEntry? EntryOf(string? line) => line is null ? null : _entries.LastOrDefault(entry => entry.Label == line);
 
-    private CalcEntry? SelectedEntry() =>
-        _history.SelectedIndex is var i && i >= 0 && i < _entries.Count ? _entries[i] : null;
+    /// <summary>The value a command acts on: the answer of the line you are on while the history has the focus, the last answer otherwise.</summary>
+    private double? CurrentValue() =>
+        Transcript.Focused && EntryOf(Transcript.CaretLineText()) is { } entry ? entry.Value : _calculator.Answer;
 
     private void SayLastAnswer() =>
         Announce(_calculator.Answer is { } answer ? "Answer " + NumberText.Format(answer) : "No answer yet", true);
@@ -270,41 +238,21 @@ public sealed class CalcForm : AxKitForm
 
     private IReadOnlyList<string> Labels() => _entries.Select(entry => entry.Label).ToList();
 
-    /// <summary>What a history command says without an entry to act on.</summary>
-    private string NothingSelected => _entries.Count == 0 ? "History, empty" : "No entry selected";
-
-    /// <summary>Enter in the history: the entry's expression in the field, the caret at its end, the focus there.</summary>
-    private void Recall()
+    /// <summary>
+    /// Enter on a line of the history, and the Context menu's item for it: the line's expression in the field, the
+    /// caret at its end, the focus there. A line that is no answer (a line of the app's own, a bookmark) says so.
+    /// </summary>
+    private void Recall(string line)
     {
-        if (SelectedEntry() is not { } entry)
+        if (EntryOf(line) is not { } entry)
         {
-            Announce(NothingSelected, true);
+            Announce(_entries.Count == 0 ? "History, empty" : "No answer on this line", true);
             return;
         }
 
-        _field.Text = entry.Expression;
-        _field.Focus();
-        _field.SelectionStart = _field.TextLength;
-    }
-
-    private void RemoveEntry()
-    {
-        var index = _history.SelectedIndex;
-        if (index < 0 || index >= _entries.Count)
-        {
-            Announce(NothingSelected, true);
-            return;
-        }
-
-        _entries.RemoveAt(index);
-        _history.Items.RemoveAt(index);
-        if (_history.Items.Count > 0)
-        {
-            _history.SelectedIndex = Math.Min(index, _history.Items.Count - 1);
-        }
-
-        AfterChange();
-        Announce("Removed", true);
+        Input.Text = entry.Expression;
+        Input.Focus();
+        Input.SelectionStart = Input.TextLength;
     }
 
     private void ClearHistory()
@@ -319,8 +267,8 @@ public sealed class CalcForm : AxKitForm
         ShowNotice(Notice.Ask("Clear the history?", count == 1 ? "The entry cannot be brought back." : $"The {count} entries cannot be brought back.", "C&lear", () =>
         {
             _entries.Clear();
-            _history.Items.Clear();
-            AfterChange();
+            _lines.ClearAnswers();
+            UpdateStatus();
             SaveState();
             Announce("History cleared", true);
         }));
@@ -388,20 +336,20 @@ public sealed class CalcForm : AxKitForm
         ShowNotice(Notice.Ask("Clear the variables?", count == 1 ? "The variable cannot be brought back." : $"The {count} variables cannot be brought back.", "C&lear", () =>
         {
             _calculator.ClearVariables();
-            AfterChange();
+            UpdateStatus();
             SaveState();
             Announce("Variables cleared", true);
         }));
     }
 
-    // ---- settings and the status bar (AC-2.3, AC-9) ----
+    // ---- settings (AC-9) ----
 
     private void SetDegrees(bool degrees)
     {
         _calculator.Degrees = degrees;
         _settings.Degrees = degrees;
         UpdateAngles();
-        AfterChange();
+        UpdateStatus();
         SaveSettings();
         Announce(degrees ? "Degrees" : "Radians", true);
     }
@@ -413,16 +361,5 @@ public sealed class CalcForm : AxKitForm
     {
         _settings.Keep(_entries, _calculator.Variables);
         SaveSettings();
-    }
-
-    /// <summary>The list's name and the status bar after the history, the variables or the unit changed.</summary>
-    private void AfterChange()
-    {
-        var count = _entries.Count;
-        _history.AccessibleName = count == 0 ? "History, empty" : $"History, {count} {(count == 1 ? "entry" : "entries")}";
-        _answerLabel.Text = _calculator.Answer is { } answer ? "Answer " + NumberText.Format(answer) : "No answer yet";
-        var variables = _calculator.Variables.Count;
-        _unitLabel.Text = $"{(_calculator.Degrees ? "Degrees" : "Radians")}, {(variables == 0 ? "no variables" : variables == 1 ? "1 variable" : $"{variables} variables")}";
-        StatusLayout.Fit(_status, _answerLabel, _unitLabel);
     }
 }

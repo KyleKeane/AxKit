@@ -62,8 +62,7 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 - What: For something you talk to in turns: what was said above, and under it the field, or the choice that stands in its place. Over a program in a console (axClaude, axTerminal) the window is the console window, which adds the program to this shape.
 - Made of: the text to read; the field; the choice in the field's place.
 - Moving: Tab and the other pane keys switch between the text and the field. Escape in the text goes to the field. Enter on a line of the text takes it into the field.
-- Apps on it: axTerminal, axClaude.
-- To move onto it: axCalc.
+- Apps on it: axCalc, axTerminal, axClaude.
 - The code: `ConversationForm`, `src/AxKit.Forms/ConversationForm.cs`.
 - Over a program in a console: `ConsoleForm`, which derives from it.
 
@@ -94,7 +93,7 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 
 ## The apps
 
-17 apps: 15 on a type, 2 with a window of their own still to move.
+17 apps: 16 on a type, 1 with a window of their own still to move.
 
 | App | Type today | To be | Note |
 |---|---|---|---|
@@ -106,7 +105,7 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 | axTask | navigator | navigator |  |
 | axStart | hotkey | hotkey |  |
 | axClip | hotkey | hotkey |  |
-| axCalc | a window of its own | conversation | A window of its own today. |
+| axCalc | conversation | conversation | The shape without a program behind it: its text is the answers given. |
 | axProcess | navigator | navigator | Three lists of This computer, read off the UI thread, and no second pane; it starts inside Processes. |
 | axAutomate | navigator | navigator |  |
 | axTerminal | conversation | conversation |  |

@@ -11,14 +11,16 @@ documents, "SPEC.md" means this file.
 
 Windows' Calculator is a grid of buttons with a display that a screen reader reads one way and a keyboard user drives
 another. A developer wants something simpler: type `1920*1080*4`, press Enter, hear the answer, and keep a history to
-read back and copy from. axCalc is one window with an expression field at the bottom and the history above it, a list
-of the lines `1920*1080*4 = 8294400`. Enter answers; the answer is spoken once; nothing else is.
+read back and copy from. axCalc is one window with an expression field at the bottom and the history above it, a text
+of the lines `1920*1080*4 = 8294400`, read as the conversation in axClaude and the terminal in axTerminal are
+(AC-2.1; a list until 2026-11-22). Enter answers; the answer is spoken once; nothing else is.
 
 ## 2. Goals and non-goals
 
 - **G1 Type, Enter, hear.** The expression field takes the usual notation (`+ - * / % ^`, parentheses, functions,
   constants, variables) and answers on Enter in one announcement (AX-7.3).
-- **G2 A history to read.** Every answer is a line of a list (AX-7.1: a list box, which NVDA reads best); arrows
+- **G2 A history to read.** Every answer is a line of the history's text (the bundle's read-only text of a
+  conversation window since 2026-11-22; a list box until then); arrows
   explore it, Enter puts a line's expression back in the field, a key copies a line's answer.
 - **G3 For development.** Hexadecimal, binary and octal literals (`0xFF`, `0b1010`, `0o17`), the answer in those bases
   on a key, integer results without a trailing `.0`, variables for a value used twice.
@@ -51,16 +53,22 @@ of the lines `1920*1080*4 = 8294400`. Enter answers; the answer is spoken once; 
 
 ### AC-2 The window
 
-- AC-2.1 From the top: the menu bar; the history, a list named "History, N entries" ("History, empty" with none);
-  the expression field, a single-line edit named "Expression"; the status bar. Tab and Shift+Tab move between the
-  history and the field, and so do Ctrl+Tab, Ctrl+Shift+Tab and F6 (AX-8.2). A notice takes the place of both while it
-  shows (AX-6.4). The focus starts in the field.
+- AC-2.1 The window is the bundle's conversation window (`ConversationForm`, `docs/axKit/framework.md` section 4.1,
+  step 9; since 2026-11-22, the maintainer: "axcalc i think should just be using the same as axclaude and
+  axterminal"; a window of its own with the history as a list until then). From the top: the menu bar; the history, a
+  read-only text named "History", one line an answer; the expression field, named "Expression", with its name in a
+  band over it for the eyes; the status bar. Tab and Shift+Tab move between the history and the field, and so do
+  Ctrl+Tab, Ctrl+Shift+Tab and F6 (AX-8.2). A notice takes the place of both while it shows (AX-6.4). The focus
+  starts in the field. What a conversation window has is here too: find in the text, bookmarks, the Context menu on
+  a line, a selection copied with Ctrl+C, and a line of the app's own ("System: …") for what the window must say
+  about itself (a settings file that could not be read). The history's name no longer counts its entries; the
+  question before Clear history does (AC-5.3).
 - AC-2.2 The title is "Calculator - axCalc" (the ending the Window menu reads, AX-9), with the window's role (AX-7.1):
   NVDA says "Calculator - axCalc window".
 - AC-2.3 The status bar's left label is the last answer ("Answer 8294400", "No answer yet"); the right one the angle
   unit and the number of variables ("Degrees, 1 variable"). No AccessibleName, no Spring (`StatusLayout`).
-- AC-2.4 The history lists the newest entry last, as a paper roll does, and the list is kept on its last line after an
-  answer, so that Up from the end reads back. At most 500 entries; the oldest go first.
+- AC-2.4 The history has the newest entry last, as a paper roll does, and its caret is on the last line when the
+  focus comes to it, so that Up from the end reads back. At most 500 entries; the oldest go first.
 
 ### AC-3 Expressions
 
@@ -106,20 +114,26 @@ of the lines `1920*1080*4 = 8294400`. Enter answers; the answer is spoken once; 
 - AC-5.1 Each answer adds the entry "<expression> = <answer>", the expression as typed without the spaces around it
   (`1920*1080*4 = 8294400`); an assignment's entry is "<name> = <value>" (`rate = 1.25`), and its whole expression is
   what Enter puts back (AC-5.2).
-- AC-5.2 In the history: Enter puts the entry's expression into the field, the caret at its end, and moves the focus
-  there; Ctrl+Shift+C copies the entry's answer ("Copied 8294400"); Delete removes the entry ("Removed"); Escape goes
-  back to the field.
+- AC-5.2 In the history: Enter on a line puts its expression into the field, the caret at its end, and moves the
+  focus there (the Context menu's "Take this line's expression into the field"); on a line that is no answer (a line
+  of the app's own, a bookmark) it says "No answer on this line". Ctrl+Shift+C copies the answer of the line you are
+  on ("Copied 8294400"), and Ctrl+I says it in other bases; Escape goes back to the field. Delete no longer removes
+  one entry (2026-11-22, the framework's decision 2): the history is a text, and Clear history empties it.
 - AC-5.3 Session, Clear history (Ctrl+Shift+Delete) asks "Clear the history? The N entries cannot be brought back."
-  with Clear and Cancel; Clear empties the list and says "History cleared". The variables stay; Session, Clear
+  with Clear and Cancel; Clear empties the history, its bookmarks with it, and says "History cleared". The variables stay; Session, Clear
   variables removes them after the same kind of question.
 - AC-5.4 Session, Variables shows a notice listing each variable as "name = value", one per line, or "No
   variables. Set one with name = value".
 - AC-5.5 Ctrl+S saves the history as a text file, one entry per line, through the Windows save dialog (AX-7.2), and
   says "Saved <file name>".
-- AC-5.6 Ctrl+F finds an entry in the history by its text (the bundle's find in a list), F3 and Shift+F3 the next and
-  the previous, wrapping once.
-- AC-5.7 The history is the bundle's list (AX-8.6): letters typed in it find an entry by its first characters, Shift
-  with a letter backwards, and Up on the first entry or Down on the last plays the edge sound.
+- AC-5.6 Ctrl+F finds text in the history from the line you are on (the conversation window's find), F3 and Shift+F3
+  the next and the previous, round the ends; "Not found" otherwise.
+- AC-5.7 The history's keys are a conversation window's, the same letters as in axClaude's conversation and
+  axTerminal's terminal (`AxCalcKeys.Transcript`): **a** and Shift+A the next and the previous answer, **s** and
+  Shift+S a line of the app's own, **m** a bookmark on the line and **k** and Shift+K from bookmark to bookmark
+  (Ctrl+Shift+K bookmarks from the field too), **l** the line's number ("Line 2 of 4"), Backspace back to the line
+  before a jump, and Ctrl+Alt with a, s or k every line of that kind from the line you are on to the end. Until
+  2026-11-22 the history was the bundle's list, where a typed character found an entry by its start.
 
 ### AC-6 The field
 
@@ -135,14 +149,18 @@ of the lines `1920*1080*4 = 8294400`. Enter answers; the answer is spoken once; 
 - AC-7.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** Save history… Ctrl+S | ─ | Exit Alt+F4.
   **Actions (A):** Answer Enter | Copy answer Ctrl+Shift+C | Copy answer in ▸ (Hexadecimal | Binary | Octal) | Answer in
   other bases Ctrl+I | Say the last answer Ctrl+Q | ─ | Variables | Clear variables… | Clear history… Ctrl+Shift+Delete.
-  **Navigation (N)** and **Context (C)**: one item each saying there is nothing yet. **Options (O):** Angles ▸ (Degrees ✓ |
+  **Navigation (N):** Find… Ctrl+F | Find next F3 | Find previous Shift+F3 | ─ | Next bookmark k in the history |
+  Previous bookmark Shift+K in the history. **Context (C)**, what acts on the history's line: Take this line's
+  expression into the field Enter in the history | Bookmark this line Ctrl+Shift+K | Copy the selection Ctrl+C in the
+  history. **Options (O):** Angles ▸ (Degrees ✓ |
   Radians) | Keep history between runs ✓ | Text ▸ | General ▸ | Developer ▸. **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):**
   Keyboard shortcuts F1 | User guide | ─ | Calculator resources ▸ (Floating point explained). Every item has a
   mnemonic (AX-7.4).
 - AC-7.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, the control keys, Ctrl+F, F3, Shift+F3, Ctrl+S (the history as a
-  text file), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxCalcKeys`): Enter (answer in the field, recall in the
-  history), Escape (clear the field, back to the field from the history), Ctrl+Shift+C, Ctrl+I, Ctrl+Q, Delete (in the
-  history), Ctrl+Shift+Delete. The collision test covers the table.
+  text file), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxCalcKeys`): Enter (answer in the field, the line's
+  expression into the field in the history), Escape (clear the field, back to the field from the history),
+  Ctrl+Shift+C, Ctrl+I, Ctrl+Q, Ctrl+Shift+Delete, and the history's keys of AC-5.7 with Ctrl+C for a selection.
+  The collision test covers the table.
 - AC-7.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axCalc/user-guide.md` is embedded (Help, User
   guide); About is the bundle's (AX-9.9).
 
@@ -184,6 +202,10 @@ fonts, the window's place, find and the update flow.
 
 - **AC-D1 A field and a list, no buttons.** The keyboard is the calculator; a grid of buttons would be a second way to
   type the same thing and a long Tab order. The list box is the control NVDA reads best (axGIT AG-D3).
+  **Changed on 2026-11-22**: a field and a text. The bundle is consolidated onto a few window types
+  (`docs/axKit/framework.md`), and a field with what was answered above it is the conversation window, the one
+  axClaude and axTerminal have, so that one set of habits serves all three. What it costs: an entry is no longer
+  removed alone, a typed character no longer finds an entry (Ctrl+F does), and the history's name no longer counts.
 - **AC-D2 The answer once, the history newest last.** Enter speaks the answer and nothing else; the history grows at
   the bottom, like a terminal's transcript, so that Up from the end reads the latest first.
 - **AC-D3 Small first.** Units, bit operators and a programmer mode are what a developer might ask for next; they are

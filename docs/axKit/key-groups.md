@@ -104,10 +104,9 @@ Exceptions today, which do another kind of thing:
 - F5, axAutomate: Run.
 - F6, axAutomate, axMCP, axPass and axTask: Switch between the navigator and the detail pane.
 - F6, axDown, axJSON and axPreview: Between the text and the details.
+- F6, axCalc, axClaude and axTerminal: Switch between the view and the field.
 - F6, axMedia: Back to the list.
-- F6, axClaude and axTerminal: Switch between the view and the field.
 - F6, axFile: Switch between the folder list and the Actions list.
-- F6, axCalc: Switch between the history and the field.
 - F6, axGIT: Switch between the list and the text.
 
 ### Shift+F-key, and the Applications key: the reverse or the other form of the same F-key
@@ -149,7 +148,6 @@ The keys:
 - Enter, axTask: Open the item's form.
 - Enter, axClip: Paste.
 - Enter, axMCP: Read the resource.
-- Enter, axCalc: Recall the entry.
 - Enter, axGIT: Show diff.
 - Enter, axStart: Start.
 - Enter, axPass: Unlock.
@@ -164,7 +162,6 @@ The keys:
 - Escape, axAutomate, axMCP, axPass and axTask: To the navigator.
 - Escape, axClip, axHelp and axStart: Hide.
 - Escape, axTask: Back from the search.
-- Escape, axCalc: Back to the field.
 - Escape, axFile: Back to the folder list.
 - Escape, axGIT: To the list.
 - Shift+Escape, axClaude: Interrupt.
@@ -187,7 +184,6 @@ The keys:
 - Delete, axGIT: Discard changes.
 - Delete, axProcess: End process.
 - Delete, axClip: Remove.
-- Delete, axCalc: Remove the entry.
 - Delete, axPass: To the Recycle Bin.
 - Ctrl+Shift+Delete, axCalc and axClip: Clear history.
 
@@ -199,17 +195,15 @@ The keys:
 
 - Ctrl+Tab, axAutomate, axMCP, axPass and axTask: Switch between the navigator and the detail pane.
 - Ctrl+Tab, axDown, axJSON and axPreview: Between the text and the details.
+- Ctrl+Tab, axCalc, axClaude and axTerminal: Switch between the view and the field.
 - Ctrl+Tab, axMedia and axProcess: Back to the list.
-- Ctrl+Tab, axClaude and axTerminal: Switch between the view and the field.
 - Ctrl+Tab, axFile: Switch between the folder list and the Actions list.
-- Ctrl+Tab, axCalc: Switch between the history and the field.
 - Ctrl+Tab, axGIT: Switch between the list and the text.
 - Ctrl+Shift+Tab, axAutomate, axMCP, axPass and axTask: Switch between the navigator and the detail pane.
 - Ctrl+Shift+Tab, axDown, axJSON and axPreview: Between the text and the details.
+- Ctrl+Shift+Tab, axCalc, axClaude and axTerminal: Switch between the view and the field.
 - Ctrl+Shift+Tab, axMedia and axProcess: Back to the list.
-- Ctrl+Shift+Tab, axClaude and axTerminal: Switch between the view and the field.
 - Ctrl+Shift+Tab, axFile: Switch between the folder list and the Actions list.
-- Ctrl+Shift+Tab, axCalc: Switch between the history and the field.
 - Ctrl+Shift+Tab, axGIT: Switch between the list and the text.
 
 ### The arrows, Page Up, Page Down, Tab, Shift+Tab and Backspace: move through what you are on
@@ -234,14 +228,14 @@ Windows' own keys, as in every program:
 - Right arrow, axTask: Open it where it lives.
 - Tab, axAutomate, axMCP, axPass and axTask: To the detail pane.
 - Tab, axAutomate, axMCP, axPass and axTask: To the navigator.
-- Tab, axClaude and axTerminal: Switch between the view and the field.
+- Tab, axCalc, axClaude and axTerminal: Switch between the view and the field.
 - Tab, axFile: Switch between the folder list and the Actions list.
 - Tab, axGIT: To the list.
 - Tab, axGIT: To the text.
 - Up arrow, axClip and axStart: Previous match.
 - Shift+Tab, axAutomate, axMCP, axPass and axTask: To the detail pane.
 - Shift+Tab, axAutomate, axMCP, axPass and axTask: To the navigator.
-- Shift+Tab, axClaude and axTerminal: Switch between the view and the field.
+- Shift+Tab, axCalc, axClaude and axTerminal: Switch between the view and the field.
 - Shift+Tab, axFile: Switch between the folder list and the Actions list.
 - Shift+Tab, axGIT: To the list.
 - Shift+Tab, axGIT: To the text.
@@ -331,9 +325,8 @@ Windows' own keys, as in every program:
 - Ctrl+C, axFile: Copy.
 - Ctrl+C, axProcess: Copy line.
 - Ctrl+C, axPreview: Copy the detail's value.
+- Ctrl+F, axCalc, axClaude, axDown, axFile, axJSON, axPreview and axTerminal: Find.
 - Ctrl+F, axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Find in the list.
-- Ctrl+F, axClaude, axDown, axFile, axJSON, axPreview and axTerminal: Find.
-- Ctrl+F, axCalc: Find in the history.
 - Ctrl+F, axGIT: Find in the text.
 - Ctrl+N, axAutomate, axMCP, axPass and axTask: New field.
 - Ctrl+N, axAutomate, axMCP, axPass and axTask: New item.
@@ -497,6 +490,7 @@ The keys:
 - Ctrl+Shift+I, axDown and axPreview: List item.
 - Ctrl+Shift+I, axJSON: Item.
 - Ctrl+Shift+J, axJSON: Object.
+- Ctrl+Shift+K, axCalc: Bookmark this line.
 - Ctrl+Shift+K, axDown and axPreview: Link.
 - Ctrl+Shift+K, axJSON: Key.
 - Ctrl+Shift+L, axDown and axPreview: List.

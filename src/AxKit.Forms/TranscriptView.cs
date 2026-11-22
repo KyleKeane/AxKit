@@ -600,6 +600,12 @@ public sealed class TranscriptView : AxKitTextBox
     }
 
     /// <summary>
+    /// The caret's line as the reader sees it (joined rows as one), or null in an empty view: for a window whose
+    /// command acts on the line you are on without taking it anywhere (axCalc's answer of that line in other bases).
+    /// </summary>
+    public string? CaretLineText() => _mirror.LineCount == 0 ? null : _mirror.DisplayTextAt(_mirror.LineIndexAt(SelectionStart));
+
+    /// <summary>
     /// Backspace: the caret goes back to the line it left at the last jump, one jump per press (FR-3.12). A line that
     /// is no longer shown is skipped.
     /// </summary>
