@@ -64,6 +64,16 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
   a change to `Text` is a change to that script too, and `ApprovalScriptTests` fails when the two part. Tested in
   `ApprovalsTests` and `ApprovalScriptTests`.
 
+- The format the lists move to (docs/axTask/forms-framework.md sections 11 and 13; 2026-11-21, pure code that no
+  window uses yet): `ListConfig`, a list's `list.json` as `axkit-list 2` (`details`, `item fields`, `actions`; `Parse`
+  with an `InvalidDataException` that names the line, `Problems` for a member passed over, `FormatOf`, `New`,
+  `WithDetail`, `WithItemFields`, `WithExtra`, `IndexOf`); `FlatItem`, an item as its names and values with its link
+  `"schema"` (`Parse`, `New`, `With` placing a first value in the configuration's order, `Has`, `Text`); `ItemView` with
+  `ShownItem` and `KeptValue`: an item read through a configuration (hide, keep, restore; `KeptLine`), or `Plain` when
+  its configuration is not there. `Conversion/EarlierFormat` (a namespace apart) turns a list of the shape the window
+  still reads into these: the only place that will know the earlier shape once the window has moved. Tested in
+  `ListConfigTests` and `EarlierFormatTests`.
+
 ## Gotchas
 
 - `TextDocument.Read` gives CRLF text whatever the file holds, and `ToText` writes CRLF, so the text kept for the

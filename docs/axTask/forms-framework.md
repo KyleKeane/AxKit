@@ -323,7 +323,7 @@ There is no form of axTask's own for making an action: the configuration is the 
 - **AF-12.1 A small table, written once.** Every member of the configuration and the values it can take are one
   table in code (`AxTask.Core/ListConfigOptions`), from which axTask reads a configuration and by which a test
   holds this document's lists. Where a value is one of a few, the table names them: a field's `type` (`text`,
-  `longtext`, `date`, `datetime`, `check`, `choice`, `link`), an action's `does` (`set`, `move`, `open`, `run`,
+  `longtext`, `number`, `date`, `datetime`, `check`, `choice`, `link`: the item format's own, `FieldTypes.All`), an action's `does` (`set`, `move`, `open`, `run`,
   `terminal`), its `key` (the eighteen), `folder` (`list`, or a path), `required` and `hidden` (`true`, `false`).
 - **AF-12.2 As a file axJSON loads.** The table is written out as one small JSON file of axKit's own shape,
   `axkit-list 1.options.json`, shipped with axKit: for each kind of object (the configuration, a field, an action,
@@ -393,9 +393,13 @@ task to keep right, and it is: the same fact written in a thousand files cannot 
   the fields of `"new item"` and of the items themselves become `"item fields"` (the configuration's own first; a
   field only some items hold is added after them, so that nothing is hidden by the conversion), every item becomes
   its values, the list's `"fields"` become `"details"`, and `"keys"` become actions. A list not converted is not
-  opened. The converter is a module of its own (`AxTask.Convert`, a folder and a namespace apart, with its own
-  tests and the earlier shape's reader inside it): the app's core calls it at this one place and knows nothing of
-  the earlier shape. A later change of format gets a converter of its own beside it, and the app still reads one.
+  opened. The converter is a module of its own (`AxTask.Core/Conversion/EarlierFormat`, a folder and a namespace
+  apart, with its own tests and the earlier shape's reader inside it): the app's core calls it at this one place and
+  knows nothing of the earlier shape. A later change of format gets a converter of its own beside it, and the app
+  still reads one. Nothing is dropped by it: a name that cannot stay (a field called `schema`, a second field of a
+  title, a field without one) is kept under another name, which is a field of the list too, and said; a file that is
+  not of the earlier shape is left as it is, and said. *Built on 2026-11-21 as pure code with its tests
+  (`ListConfig`, `FlatItem`, `ItemView`, `EarlierFormat`), used by no window yet.*
 - **AF-13.7 What moves with it**, in the same step: the scripts of `tools` that read and write the lists
   (`items.ps1`, `item.ps1`, `approvals.ps1`, `outside-report.ps1`, `reports-check.ps1`), the AI tools of axTask
   (`TaskTools`), the smart lists' conditions, the links between items, and the maintainer's own lists, converted
