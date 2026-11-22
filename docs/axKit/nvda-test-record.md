@@ -6,6 +6,39 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-21: axTask's actions, axTerminal's handed command, axJSON's options; by the assistant with NVDA listening (`main` 31fe68c1)
+
+`.\nvda-pass.ps1 axJSON`, then `axTerminal` and `axTask`, the user away at his word of the same day, NVDA 2025.3.3
+with the OneCore voice, Windows 11 Pro 10.0.26200, the build 5.10.0 of commit 31fe68c1, the tree clean: 39 scripts,
+231 goals and checks, all passed with every announcement also spoken by NVDA. The first hearing of steps 4 and 6
+of `docs/axTask/forms-framework.md` (3be92544, afbcb2dd, 2fbec3e1).
+
+| What | Scripts | Goals | Result |
+|---|---|---|---|
+| axTask, with `19-list-actions.txt` new and `04-action-keys.txt` rewritten | 19 | 120 | Passed |
+| axTerminal, with `13-handed-command.txt` new | 13 | 66 | Passed |
+| axJSON, with `07-options.txt` new | 7 | 45 | Passed |
+
+What was heard. axTask: an action by its key and from Context, Actions of this list ("Mark it a bug: Kind: Bug");
+an action that is not understood, by its reason; the question "Run Find the kind?" read as a notice, its focus on
+Cancel's side of Enter; "Running Find the kind", "Find the kind: done", "Miss failed, exit code 1" with the notice
+sound and its output opened; the form of an action; "Wait stopped"; "Put Look in the terminal into axTerminal?" and
+"Look in the terminal is in axTerminal's command field". axTerminal: the command field read with the handed line in
+it, and "A command is in the command field, not sent. Another program put it there, and axKit checked nothing of
+it: read it, and press Enter only if you want to run it"; "No output yet" before Enter, "Sent" and "Done" after.
+axJSON: the list of a member's values by its name ("type: What the field holds"), the value chosen ("type:
+choice"), the list of an object's missing members, "Added key: …", an item's choices through its link, and the
+sentence of a file without options.
+
+An earlier pass of axTask the same day, at 029af1bb, passed the same 120 goals; it was recorded over files of the
+next step that were being written, so its record was set aside and the pass run again here on a clean tree.
+
+Owed to his own ear: whether the question before a program's first run is the right length to listen to, and reads
+well from the top with the arguments one on a line; whether "Running" and "done" are enough for a program that
+takes a while, or a sound should mark the end; whether Alt+Down and Ctrl+Shift+M are the keys he wants in axJSON,
+and whether the lists' names ("type: What the field holds") are right to hear on every opening; and how the handed
+command's sentence sits with NVDA's own reading of the window as it opens.
+
 ## 2026-11-21: axTask, the item's form; by the assistant with NVDA listening (`main` bbf77601)
 
 `.\nvda-pass.ps1 axTask`, the user away at his word of the same day, NVDA 2025.3.3 with the OneCore voice, Windows 11

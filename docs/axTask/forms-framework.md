@@ -270,14 +270,23 @@ usable by itself:
    action; `AxKit.Core/ShellQuote`. All pure, each with its tests.
 4. *(Built on 2026-11-21: `TaskForm.Actions.cs`, the window script `19-list-actions.txt`; axTask's SPEC TK-7a.1a says it as built. The hand-over of a `terminal` action is axTerminal's `--command` option, its SPEC AT-1.5a: axTask passes the command's parts as arguments and axTerminal, which knows its shell, makes and quotes the line, so that axTask never joins one.)* The window: Context, Actions of this list; the eighteen keys; the form of an action's fields; the question of
    AF-7.2; the run off the UI thread with its words, its output and its stop; the hand-over to axTerminal.
-5. `SPEC.md` rewritten for all of it, the user guide, the NVDA plan, the outside-calls page, `PRIVACY.md` and
+5. *(Done on 2026-11-21 with steps 4 and 6, each in its own commit; the NVDA pass of axTask, axTerminal and axJSON
+   at 31fe68c1 is in `docs/axKit/nvda-test-record.md`, with what is owed to the maintainer's own ear.)* `SPEC.md` rewritten for all of it, the user guide, the NVDA plan, the outside-calls page, `PRIVACY.md` and
    `SECURITY.md`; window scripts; an NVDA pass. **From here a list's actions can be configured and worked with.**
 6. *(Built on 2026-11-21: the table is `AxKit.Core/ListOptions`, the file `docs/axKit/axkit-list 2.options.json`,
    axJSON's two commands Choose a value (Alt+Down) and Add a member (Ctrl+Shift+M), its SPEC AJ-5; what changed
    while building is said in section 12 in italics.)* axJSON learns the options (section 12): the table of the configuration's members and their values, and
    axJSON's two commands that offer them. With axJSON's own maturing, which the maintainer expects to follow.
 7. The first uses, in the management lists: Answer the report on GitHub in the outside reports list (after an entry
-   is Done), and what the maintainer asks for next.
+   is Done), and what the maintainer asks for next. *(2026-11-21: a first use is in the maintainer's own priorities
+   list, four actions without a key, so that no key of his changed: Start today, Priority high, Priority normal and
+   Priority low, in Context, Actions of this list; a key is one member more, `"key": "Ctrl+1"`, added in axJSON with
+   Ctrl+Shift+M. Answer the report on GitHub is not put in: it posts to GitHub, and the outside reports list is the
+   one his signature governs, so it waits for his word. As proposed: the entry gets a number field `Issue`, written
+   by `tools/outside-report.ps1` with the entry, and the list the action
+   `{ "name": "Answer the report on GitHub", "does": "run", "fields": [ { "title": "Type your answer", "type": "longtext" } ], "program": "gh", "arguments": ["issue", "comment", "{Issue}", "--repo", "KyleKeane/AxKit-reports", "--body-file", "-"], "input": "{form:Type your answer}", "then": { "set": { "Answered": "{today}" } } }`:
+   nothing of the report's own words is an argument, the answer is what he types, and the first run asks him with
+   every argument written out.)*
 
 There is no form of axTask's own for making an action: the configuration is the file, edited in axJSON (his message
 7). Action keys' form of today (Actions, Action keys) goes with the action keys, which the conversion makes actions.
