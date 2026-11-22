@@ -6,6 +6,23 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-22: axFile as a navigator; by the assistant with NVDA listening (branch `axfile-navigator` c1cc505c)
+
+`.\nvda-pass.ps1 -Only` every script of axFile, from the branch's own folder beside the checkout, behind the spoken
+countdown, the maintainer away at his word ("i will revuild while you migrate axfile"; NVDA passes "Yes, for this
+whole absence"), NVDA 2025.3.3 with the OneCore voice, Windows 11 Pro 10.0.26200, the build 5.10.0 of commit
+c1cc505c, the tree clean: 13 scripts, 116 goals and checks, none failed and none run twice.
+
+| What | Scripts | Result |
+|---|---|---|
+| axFile on `ItemForm` (framework step 13, first part): browsing, the lines that are no entry, the filter and the orders, the operations and their undo, the selection and its lines in the Actions list, the Actions list as the second pane (Tab and the pane keys, Escape back, Enter on a line), the notices, the palette, the hand-overs, the rename box | 13 | Passed |
+
+Not run with NVDA: the seven other navigator apps, for the navigator's groundwork (commit 231c4a3b); their 54
+window scripts passed on the hidden desktop with the command inventory checked, and nothing in the inventory
+changed for them. Not heard by a person, and lines of the item of step 13 for the maintainer's word: the status
+bar's count of the selected, Context on a line that is no entry, Shift+F10 in the Actions list, and Tab from an
+open rename box.
+
 ## 2026-11-22: axCalc as a conversation window, and the conversation window in two classes; by the assistant with NVDA listening (`main` 3c652252)
 
 `.\nvda-pass.ps1 -Only` every script of axCalc and axTerminal, behind the spoken countdown, the maintainer away at

@@ -61,11 +61,11 @@ No longer owed: the script each names passed with NVDA listening (`docs/axKit/wo
 - R-53: axTerminal's refusal of shells in a settings file whose seal does not check. Heard: `tests/scripts/axTerminal/08-user-shells.txt` passed with NVDA at 3c652252.
 - R-53: axGIT's refusal of trusted repositories in a settings file whose seal does not check. Heard: `tests/scripts/axGIT/07-own-programs.txt` passed with NVDA at 0e040525.
 - R-53: axMCP's refusal of servers in a settings file whose seal does not check. Heard: `tests/scripts/axMCP/02-your-servers-errors-prompts.txt` passed with NVDA at cfe68be7.
-- R-53: axFile's refusal of programs of Open with in a settings file whose seal does not check. Heard: `tests/scripts/axFile/10-settings-changed-outside.txt` passed with NVDA at 4f0f309b.
+- R-53: axFile's refusal of programs of Open with in a settings file whose seal does not check. Heard: `tests/scripts/axFile/10-settings-changed-outside.txt` passed with NVDA at c1cc505c.
 - R-53: axClaude's refusal of claudePath in a settings file whose seal does not check. Heard: `tests/scripts/axClaude/33-settings-changed-outside.txt` passed with NVDA at 7a683b1b+.
 - R-63: the notice of an item window when the settings cannot be saved. Heard: `tests/scripts/axTask/11-settings-not-saved.txt` passed with NVDA at 0e040525.
 - R-63: the system line of a console window when the settings cannot be saved. Heard: `tests/scripts/axTerminal/12-settings-not-saved.txt` passed with NVDA at 3c652252.
-- R-64: the sentence that a remembered path is on the network and was not opened. Heard: `tests/scripts/axFile/10-settings-changed-outside.txt` passed with NVDA at 4f0f309b.
+- R-64: the sentence that a remembered path is on the network and was not opened. Heard: `tests/scripts/axFile/10-settings-changed-outside.txt` passed with NVDA at c1cc505c.
 - R-66: a damaged item named in its list in axTask. Heard: `tests/scripts/axTask/10-damaged-item.txt` passed with NVDA at 0e040525.
 - R-69: the sentence of axClip at its first showing when the kept history could not be read. Heard: `tests/scripts/axClip/03-history-not-read.txt` passed with NVDA at 7a683b1b+.
 - R-72: the first press of an action key of a list that moves or opens, in axTask. Heard: `tests/scripts/axTask/04-action-keys.txt` passed with NVDA at 0e040525.
