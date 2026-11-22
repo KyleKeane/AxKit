@@ -6,6 +6,25 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-21: axAutomate's Refresh and axPass's field that cannot be emptied; by the assistant with NVDA listening (`main` fb38565f)
+
+`.\nvda-pass.ps1 axAutomate`, then `axPass`, the user away at his word of the same day, NVDA 2025.3.3 with the
+OneCore voice, Windows 11 Pro 10.0.26200, KeePassXC 2.8.0, the build 5.10.0 of commit fb38565f, the tree clean: 9
+scripts, 76 goals and checks, all passed with every announcement also spoken by NVDA.
+
+| What | Scripts | Goals | Result |
+|---|---|---|---|
+| axAutomate, `04` choosing Session, Refresh by its name again (ceca8f15) | 5 | 30 | Passed |
+| axPass, `04` with a field emptied and an undo into an empty field (fb38565f) | 4 | 46 | Passed |
+
+What was heard: in axAutomate "Refreshed: flows, 3 workflows, 0 folders" from the menu's Refresh, and no run
+started; in axPass "URL cannot be emptied here: KeePassXC's tool takes an empty value as no change. Empty it in
+KeePassXC's own window" with the URL read as before, and "Not undone: Notes: First line of the notes, and 1 more
+line. Notes cannot be emptied here: …", then "Nothing to undo".
+
+Owed to his own ear: whether the sentence of the field that cannot be emptied is the right length, and whether it
+should carry the refusal's sound, which it does not, as axPass's other sentences of this kind do not.
+
 ## 2026-11-21: axTask's actions, axTerminal's handed command, axJSON's options; by the assistant with NVDA listening (`main` 31fe68c1)
 
 `.\nvda-pass.ps1 axJSON`, then `axTerminal` and `axTask`, the user away at his word of the same day, NVDA 2025.3.3
