@@ -6,6 +6,35 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-21: every app, after the audit's repairs; by the assistant with NVDA listening (`main` 7a683b1b)
+
+`.\nvda-pass.ps1`, the user away at his own word ("i am going away for a long time so please just move forward
+autonomously"), NVDA 2025.3.3 with the OneCore voice, Windows 11 Pro 10.0.26200, the build 5.10.0 of commit 7a683b1b
+(the record says `7a683b1b+`: the working folder held new pure code of axTask's lists that no window uses yet): the
+170 scripts of `tests/scripts` and the five of `tests/nvda-scripts`, 175 in all. 174 passed with every announcement
+also spoken by NVDA; 1115 goals and checks passed, 1 failed and 24 were not run after it. Then
+`.\nvda-pass.ps1 -NoBuild -Only 'axClaude\04-headings.txt'`, the one script again on the same build: 25 goals, all
+passed. Every goal and check of the record, 1140, has a pass with NVDA as its last result. It is the first pass with
+NVDA of what the audit of 2026-11-21 changed: the approval notices of axTask (the confirmation that names itself, the
+focus in the entry's text), the stream source's repairs, the new settings of a first start of axClaude, the sound of
+sending played once, and the count of commands left running.
+
+| What | Scripts | Result |
+|---|---|---|
+| Every script but one | 174 | Passed in the whole pass |
+| `axClaude/04-headings.txt` | 1 | One step failed in the whole pass, by the live model's words; passed when run again |
+
+What it found:
+
+- The headings script asks Haiku for a reply with the headings Alpha and Beta and then moves through them with `h`.
+  In the whole pass `h` went from "claude: Alpha heading level 2" straight to "Input 2 heading level 1": the reply
+  held no second heading that time. The script's own header says a step that waits for Claude's words can fail when
+  the model words it differently; no code lies between the two runs, and the second reply held both headings. Nothing
+  to repair in axClaude.
+- This run was started without the question tool, on his word that he was away for a long time and wanted no
+  questions; the pass's own guard (20 seconds without a key or the mouse) held both times. The rule of 2026-11-18
+  stands for every run while he is at the computer.
+
 ## 2026-11-18: every app, before 5.10.0; by the assistant with NVDA listening (`main` 4830f1f0, then e10f28cf for ten scripts)
 
 `.\nvda-pass.ps1` of 2026-11-17 to 18, the user away at his own word ("do the nvda pass"), NVDA
