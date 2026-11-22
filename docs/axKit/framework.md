@@ -80,11 +80,17 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
 
 ## 4. The window types
 
-### 4.1 The conversation window (`ConsoleForm`)
+### 4.1 The conversation window (`ConversationForm`; over a program, `ConsoleForm`)
 
 - FW-4.1 Two panes: the text of what was said, above, and under it the field, or the choice that stands in its
   place. Every pane key switches between them; Escape in the text goes to the field. A line of the text can be
   taken into the field with Enter. For a program one talks to in turns.
+  The type is two classes since 2026-11-22 (step 9, first part): `ConversationForm` is the shape alone (the text,
+  the field, the choice, the pane keys, find, the bookmarks, the Context menu on a line, the status bar) and knows
+  no program; `ConsoleForm` derives from it and adds a program in a pseudo console (the process, the writes, the
+  recording, the signals and the music, the folders, the question before closing). The split moved code without
+  changing it: axClaude's and axTerminal's windows, their scripts and their command lists are as they were. A
+  window without a console program derives from `ConversationForm` (axCalc, the second part of the step).
 - Apps today: axClaude, axTerminal. Their difference is the program, its keys and how messages pass.
 - FW-4.2 **To lift into the type**, since both apps do it in their own files in the same way today (section 10.5):
   Enter sends and Escape only announces in the field; Ctrl+Enter sends; a line taken into the field; the three

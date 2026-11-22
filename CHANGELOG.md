@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- For developers: the conversation window is two classes. `ConversationForm` is the shape alone (the text, the field or the choice in its place, the pane keys, find, the bookmarks, the status bar); `ConsoleForm` derives from it and adds the program in a pseudo console. Code moved and did not change: axClaude and axTerminal behave as before. And the test driver, `tools/AxAutomate`, no longer starts the real Claude Code by itself: a run of a folder leaves the live scripts out and says how many, unless `--live` is given; a script named by its own file still runs.
 - axPass: Space selects entries, and Delete then moves all the selected entries to the Recycle Bin: "Moved 3 entries to the Recycle Bin; Ctrl+Z brings them back". One Ctrl+Z brings them all back. Groups, and what is already in the Recycle Bin, are not selected: those still go one at a time, each after its question. The selection is given up when the window locks.
 - axMCP: Space selects servers of your own, and Delete then removes all the selected after one question that names them. One Ctrl+Z puts them all back.
 - axAutomate: Space selects workflows of a folder, and F5 then runs only the selected ones: "Running 2 selected workflows". With none selected F5 runs every workflow of the folder, as before.

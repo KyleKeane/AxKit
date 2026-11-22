@@ -7,24 +7,9 @@ namespace AxKit.Forms;
 
 public abstract partial class ConsoleForm
 {
-    // ---- find, export, recording (axClaude FR-3.7, FR-3.8, FR-13.3; axTerminal AT-4.5, AT-4.7, AT-8.2) ----
+    // ---- export, recording (axClaude FR-3.8, FR-13.3; axTerminal AT-4.7, AT-8.2); find is the conversation window's (ConversationForm) ----
 
     private StreamRecorder? _recorder;
-
-    /// <summary>Ctrl+F: the bundle's Find notice over the view's search. Find next closes it and searches from the caret; an empty field keeps it open.</summary>
-    protected void FindDialog() => ShowFind(text => Transcript.Find(text, backward: false));
-
-    /// <summary>F3 and Shift+F3: the last text again from the caret; the Find notice when there is none yet.</summary>
-    protected void FindNext(bool backward)
-    {
-        if (FindText.Length == 0)
-        {
-            FindDialog();
-            return;
-        }
-
-        Transcript.Find(FindText, backward);
-    }
 
     /// <summary>
     /// The transcript as the reader sees it (hidden rows left out, the reading break the view adds left out) to a

@@ -79,9 +79,10 @@
     {
       "id": "conversation",
       "title": "The conversation window",
-      "class": "ConsoleForm",
-      "file": "src/AxKit.Forms/ConsoleForm.cs",
-      "what": "For a program you talk to in turns: what was said above, and under it the field, or the choice that stands in its place.",
+      "class": "ConversationForm",
+      "file": "src/AxKit.Forms/ConversationForm.cs",
+      "with a program": "ConsoleForm",
+      "what": "For something you talk to in turns: what was said above, and under it the field, or the choice that stands in its place. Over a program in a console (axClaude, axTerminal) the window is the console window, which adds the program to this shape.",
       "panes": ["text", "field", "choice"],
       "moving": "Tab and the other pane keys switch between the text and the field. Escape in the text goes to the field. Enter on a line of the text takes it into the field."
     },

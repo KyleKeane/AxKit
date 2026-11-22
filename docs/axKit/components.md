@@ -59,12 +59,13 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 
 ### The conversation window
 
-- What: For a program you talk to in turns: what was said above, and under it the field, or the choice that stands in its place.
+- What: For something you talk to in turns: what was said above, and under it the field, or the choice that stands in its place. Over a program in a console (axClaude, axTerminal) the window is the console window, which adds the program to this shape.
 - Made of: the text to read; the field; the choice in the field's place.
 - Moving: Tab and the other pane keys switch between the text and the field. Escape in the text goes to the field. Enter on a line of the text takes it into the field.
 - Apps on it: axTerminal, axClaude.
 - To move onto it: axCalc.
-- The code: `ConsoleForm`, `src/AxKit.Forms/ConsoleForm.cs`.
+- The code: `ConversationForm`, `src/AxKit.Forms/ConversationForm.cs`.
+- Over a program in a console: `ConsoleForm`, which derives from it.
 
 ### The editor
 

@@ -103,6 +103,9 @@ foreach ($type in $data.'window types') {
     $lines.Add('- Apps on it: ' + $(if ($here.Count -gt 0) { ($here -join ', ') + '.' } else { 'none yet.' }))
     if ($coming.Count -gt 0) { $lines.Add("- To move onto it: $($coming -join ', ').") }
     $lines.Add("- The code: ``$($type.class)``, ``$($type.file)``.")
+    # A type whose window stands over a program has a second class, which adds the program to the first.
+    $programClass = $type.'with a program'
+    if ($programClass) { $lines.Add("- Over a program in a console: ``$programClass``, which derives from it.") }
 }
 
 $owed = @($data.apps | Where-Object { -not $_.type })

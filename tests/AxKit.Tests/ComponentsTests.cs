@@ -23,9 +23,16 @@ public sealed class ComponentsTests
             app.GetProperty("app").GetString()!, app.GetProperty("window").GetString()!,
             app.GetProperty("type").GetString()!, app.GetProperty("to be").GetString()!))];
 
-    private static Dictionary<string, string> TypeClasses(JsonDocument document) =>
+    /// <summary>
+    /// The classes an app's window of a type may derive from: the type's class, and for a type whose window can stand
+    /// over a program in a console the class that adds the program to it ("with a program": the conversation window's
+    /// <c>ConsoleForm</c> over <c>ConversationForm</c>, framework step 9).
+    /// </summary>
+    private static Dictionary<string, string[]> TypeClasses(JsonDocument document) =>
         document.RootElement.GetProperty("window types").EnumerateArray()
-            .ToDictionary(type => type.GetProperty("id").GetString()!, type => type.GetProperty("class").GetString()!);
+            .ToDictionary(type => type.GetProperty("id").GetString()!, type => type.TryGetProperty("with a program", out var program)
+                ? new[] { type.GetProperty("class").GetString()!, program.GetString()! }
+                : [type.GetProperty("class").GetString()!]);
 
     /// <summary>Every "class X : Base" of an app's project, by class name; the shared projects (AxKit, AxKit.Core, AxKit.Forms) are not apps.</summary>
     private static Dictionary<string, string> WindowClassesOf(string project)
@@ -36,7 +43,7 @@ public sealed class ComponentsTests
             .Where(file => !file.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar, StringComparison.Ordinal)
                 && !file.Contains(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar, StringComparison.Ordinal)))
         {
-            foreach (Match match in Regex.Matches(System.IO.File.ReadAllText(file), @"class (\w+) : (AxKitForm|ConsoleForm|TextEditorForm|ItemForm|HotkeyForm|Form)\b"))
+            foreach (Match match in Regex.Matches(System.IO.File.ReadAllText(file), @"class (\w+) : (AxKitForm|ConversationForm|ConsoleForm|TextEditorForm|ItemForm|HotkeyForm|Form)\b"))
             {
                 found[match.Groups[1].Value] = match.Groups[2].Value;
             }
@@ -81,10 +88,10 @@ public sealed class ComponentsTests
                 continue;
             }
 
-            var wanted = row.Type.Length == 0 ? "AxKitForm" : types[row.Type];
-            if (derivesFrom != wanted)
+            string[] wanted = row.Type.Length == 0 ? ["AxKitForm"] : types[row.Type];
+            if (!wanted.Contains(derivesFrom))
             {
-                problems.Add($"{row.App}: {row.Window} derives from {derivesFrom}; the file says {(row.Type.Length == 0 ? "a window of its own, on AxKitForm" : $"the type {row.Type}, {wanted}")}.");
+                problems.Add($"{row.App}: {row.Window} derives from {derivesFrom}; the file says {(row.Type.Length == 0 ? "a window of its own, on AxKitForm" : $"the type {row.Type}, {string.Join(" or ", wanted)}")}.");
             }
 
             foreach (var other in windows.Where(window => window.Key != row.Window))
