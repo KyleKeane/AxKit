@@ -481,16 +481,19 @@ Steps and keys: `docs/axKit/workflows/axGIT.md` (in Claude's working folder: `wo
 1. **Open a repository in axGIT**
     - Open a repository
     - Move between the list and the details
-    - Switch between the views
+    - Go up to the repository and into another list
+    - Switch between the lists by their keys
     - Close the window
 2. **Open axGIT from another app**
 3. **Review and commit changes**
     - Stage and unstage a file
+    - Select files with Space and stage them together
     - Read the diff of a changed file
     - Read an untracked file
     - Stage all and unstage all
     - Commit the staged changes
     - Discard the changes to a file
+    - Discard the changes to the selected files
 4. **Read the history and switch branches**
     - Read a commit of the log
     - Switch branches

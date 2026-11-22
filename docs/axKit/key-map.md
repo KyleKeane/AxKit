@@ -3,7 +3,7 @@
 Written by `tools/key-map.ps1` from `docs/axKit/window-commands.json`, `src/AxKit.Forms/BundleKeys.cs` and
 `docs/axKit/key-families.json`; never edit it by hand. Every key of every window and what it does in each app.
 
-The inventory holds 626 commands with a key in 17 apps, on 124 different keys, counting the
+The inventory holds 639 commands with a key in 17 apps, on 124 different keys, counting the
 second keys some commands answer. 48 keys have one meaning wherever they are; 76 have several.
 21 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
 are window keys, each in its window's own table.
@@ -28,7 +28,6 @@ In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 - Ctrl+7. Window key, in axTask alone: Action key 7.
 - Ctrl+8. Window key, in axTask alone: Action key 8.
 - Ctrl+9. Window key, in axTask alone: Action key 9.
-- Ctrl+A. Window key, in axFile, axMedia, axProcess and axTask: Select all.
 - Ctrl+B. Window key, in axClaude alone: What runs in the background.
 - Ctrl+H. Window key, in axDown and axPreview: Heading.
 - Ctrl+V. Window key, in axFile alone: Paste.
@@ -44,13 +43,14 @@ In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 - Ctrl+Shift+7. Window key, in axTask alone: Action key Shift+7.
 - Ctrl+Shift+8. Window key, in axTask alone: Action key Shift+8.
 - Ctrl+Shift+9. Window key, in axTask alone: Action key Shift+9.
+- Ctrl+Shift+A. Window key, in axFile, axGIT, axMedia, axProcess and axTask: Deselect all.
 - Ctrl+Shift+D. Window key, in axTask alone: Hide done tasks.
 - Ctrl+Shift+E. Window key, in axJSON alone: Error.
 - Ctrl+Shift+J. Window key, in axJSON alone: Object.
 - Ctrl+Shift+M. Window key, in axClaude alone: Next permission mode.
 - Ctrl+Shift+O. Window key, in axMedia alone: Open folder.
 - Ctrl+Shift+P. Bundle key, in every app: Command palette.
-- Ctrl+Shift+U. Window key, in axGIT alone: Unstage all.
+- Ctrl+Shift+U. Window key, in axGIT alone: Unstage.
 - Ctrl+Shift+V. Window key, in axPreview alone: Read the clipboard's picture.
 - Ctrl+Shift+Z. Window key, in axDown and axJSON: Redo.
 - Ctrl+Shift+Delete. Window key, in axCalc and axClip: Clear history.
@@ -62,7 +62,7 @@ In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 - Alt+Enter. Window key, in axFile alone: Properties.
 - Alt+Left arrow. Window key, in axJSON alone: Add a member.
 - Alt+Right arrow. Window key, in axJSON alone: Choose a value.
-- Shift+Space. Window key, in axFile, axMedia, axProcess and axTask: Select to here.
+- Shift+Space. Window key, in axFile, axGIT, axMedia, axProcess and axTask: Select to here.
 
 ## Keys whose meaning differs
 
@@ -70,9 +70,9 @@ The most spread first: the number of meanings, then the number of apps.
 
 ### Enter
 
-Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axHelp, axMCP, axMedia, axPass, axPreview, axProcess, axStart and axTask. 19 meanings.
+Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axHelp, axMCP, axMedia, axPass, axPreview, axProcess, axStart and axTask. 17 meanings.
 
-- axAutomate, axFile, axMCP, axMedia, axPass, axProcess and axTask: Open.
+- axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Open.
 - axAutomate, axMCP, axPass and axTask: Change the field.
 - axCalc: Answer.
 - axTask: Change the item in its form.
@@ -87,10 +87,22 @@ Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axHelp, axMCP, axMedia
 - axClip: Paste.
 - axMCP: Read the resource.
 - axCalc: Recall the entry.
-- axGIT: Show diff.
-- axGIT: Show the commit.
 - axStart: Start.
 - axPass: Unlock.
+
+### Escape
+
+Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axHelp, axMCP, axMedia, axPass, axProcess, axStart and axTask. 9 meanings.
+
+- axGIT, axMedia, axProcess and axTask: Deselect all.
+- axAutomate, axMCP, axPass and axTask: To the navigator.
+- axClip, axHelp and axStart: Hide.
+- axTask: Back from the search.
+- axCalc: Back to the field.
+- axFile: Back to the folder list.
+- axCalc: Clear the field.
+- axFile: Clear the selection or the filter.
+- axGIT: To the list.
 
 ### Ctrl+N
 
@@ -104,32 +116,6 @@ Window key, in axAutomate, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMed
 - axMCP: Add server.
 - axGIT: New branch.
 - axPass: New entry.
-
-### Escape
-
-Window key, in axAutomate, axCalc, axClip, axFile, axHelp, axMCP, axMedia, axPass, axProcess, axStart and axTask. 8 meanings.
-
-- axAutomate, axMCP, axPass and axTask: To the navigator.
-- axMedia, axProcess and axTask: Deselect all.
-- axClip, axHelp and axStart: Hide.
-- axTask: Back from the search.
-- axCalc: Back to the field.
-- axFile: Back to the folder list.
-- axCalc: Clear the field.
-- axFile: Clear the selection or the filter.
-
-### Delete
-
-Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 8 meanings.
-
-- axAutomate, axFile, axMCP, axMedia, axPass, axProcess and axTask: Delete.
-- axAutomate, axMCP, axPass and axTask: Remove the field.
-- axTask: Archive.
-- axGIT: Discard changes.
-- axProcess: End process.
-- axClip: Remove.
-- axCalc: Remove the entry.
-- axPass: To the Recycle Bin.
 
 ### Ctrl+O
 
@@ -154,7 +140,7 @@ Bundle key, in axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMC
 - axClaude and axTerminal: Switch between the view and the field.
 - axFile: Switch between the folder list and the Actions list.
 - axCalc: Switch between the history and the field.
-- axGIT: Switch between the list and the details.
+- axGIT: Switch between the list and the text.
 
 ### Ctrl+Tab
 
@@ -166,7 +152,7 @@ Bundle key, in axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMC
 - axClaude and axTerminal: Switch between the view and the field.
 - axFile: Switch between the folder list and the Actions list.
 - axCalc: Switch between the history and the field.
-- axGIT: Switch between the list and the details.
+- axGIT: Switch between the list and the text.
 
 ### Ctrl+Shift+Tab
 
@@ -178,7 +164,7 @@ Bundle key, in axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMC
 - axClaude and axTerminal: Switch between the view and the field.
 - axFile: Switch between the folder list and the Actions list.
 - axCalc: Switch between the history and the field.
-- axGIT: Switch between the list and the details.
+- axGIT: Switch between the list and the text.
 
 ### Ctrl+Q
 
@@ -191,6 +177,18 @@ Window key, in axAutomate, axCalc, axClaude, axClip, axDown, axMCP, axMedia, axP
 - axProcess: Summary.
 - axMedia: What is playing.
 - axTerminal: What is running.
+
+### Delete
+
+Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 7 meanings.
+
+- axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Delete.
+- axAutomate, axMCP, axPass and axTask: Remove the field.
+- axTask: Archive.
+- axProcess: End process.
+- axClip: Remove.
+- axCalc: Remove the entry.
+- axPass: To the Recycle Bin.
 
 ### Ctrl+1
 
@@ -240,16 +238,27 @@ Window key, in axAutomate, axDown, axFile, axJSON, axMCP, axPass and axTask. 7 m
 - axFile: Undo rename.
 - axFile: Undo the action.
 
-### Ctrl+E
+### Tab
 
-Window key, in axFile, axGIT, axJSON, axPreview, axProcess and axTask. 6 meanings.
+Window key, in axAutomate, axClaude, axFile, axGIT, axMCP, axPass, axTask and axTerminal. 6 meanings.
 
-- axPreview: Edit in axDown.
-- axFile: Editor.
-- axJSON: Error.
-- axGIT: Open file in editor.
-- axTask: Show in axFile.
-- axProcess: Show program in axFile.
+- axAutomate, axMCP, axPass and axTask: To the detail pane.
+- axAutomate, axMCP, axPass and axTask: To the navigator.
+- axClaude and axTerminal: Switch between the view and the field.
+- axFile: Switch between the folder list and the Actions list.
+- axGIT: To the list.
+- axGIT: To the text.
+
+### Shift+Tab
+
+Window key, in axAutomate, axClaude, axFile, axGIT, axMCP, axPass, axTask and axTerminal. 6 meanings.
+
+- axAutomate, axMCP, axPass and axTask: To the detail pane.
+- axAutomate, axMCP, axPass and axTask: To the navigator.
+- axClaude and axTerminal: Switch between the view and the field.
+- axFile: Switch between the folder list and the Actions list.
+- axGIT: To the list.
+- axGIT: To the text.
 
 ### Ctrl+Enter
 
@@ -262,6 +271,16 @@ Bundle key, in axClaude, axFile, axGIT, axMedia, axTask and axTerminal. 6 meanin
 - axTerminal: Send the command.
 - axClaude: Send the message.
 
+### Left arrow
+
+Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 5 meanings.
+
+- axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Up a level.
+- axAutomate, axMCP, axPass and axTask: The previous value of the field.
+- axFile: Up one level.
+- axProcess: Up to This computer.
+- axGIT: Up to the repository.
+
 ### Ctrl+I
 
 Window key, in axCalc, axDown, axFile, axJSON, axPreview and axStart. 5 meanings.
@@ -271,6 +290,16 @@ Window key, in axCalc, axDown, axFile, axJSON, axPreview and axStart. 5 meanings
 - axCalc: Answer in other bases.
 - axJSON: Item.
 - axFile: The action's number and time.
+
+### Ctrl+E
+
+Window key, in axFile, axJSON, axPreview, axProcess and axTask. 5 meanings.
+
+- axPreview: Edit in axDown.
+- axFile: Editor.
+- axJSON: Error.
+- axTask: Show in axFile.
+- axProcess: Show program in axFile.
 
 ### Ctrl+Shift+C
 
@@ -288,8 +317,8 @@ Bundle key, in axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMC
 
 - axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Find in the list.
 - axClaude, axDown, axFile, axJSON, axPreview and axTerminal: Find.
-- axGIT: Find in the details.
 - axCalc: Find in the history.
+- axGIT: Find in the text.
 
 ### F5
 
@@ -300,41 +329,14 @@ Window key, in axAutomate, axFile, axGIT, axMCP, axPass, axPreview, axProcess, a
 - axPreview: Reload.
 - axAutomate: Run.
 
-### Space
+### Right arrow
 
 Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 4 meanings.
 
-- axAutomate, axMCP, axMedia, axPass, axProcess and axTask: Select or deselect.
-- axAutomate, axMCP, axPass and axTask: Check the field.
-- axFile: Select or deselect this entry.
-- axGIT: Stage or unstage.
-
-### Left arrow
-
-Window key, in axAutomate, axFile, axMCP, axMedia, axPass, axProcess and axTask. 4 meanings.
-
-- axAutomate, axMCP, axMedia, axPass, axProcess and axTask: Up a level.
-- axAutomate, axMCP, axPass and axTask: The previous value of the field.
-- axFile: Up one level.
-- axProcess: Up to This computer.
-
-### Right arrow
-
-Window key, in axAutomate, axFile, axMCP, axMedia, axPass, axProcess and axTask. 4 meanings.
-
-- axAutomate, axMCP, axMedia, axPass, axProcess and axTask: Into the list.
+- axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Into the list.
 - axAutomate, axMCP, axPass and axTask: The next value of the field.
 - axFile: Into the folder.
 - axTask: Open it where it lives.
-
-### Tab
-
-Window key, in axAutomate, axClaude, axFile, axMCP, axPass, axTask and axTerminal. 4 meanings.
-
-- axAutomate, axMCP, axPass and axTask: To the detail pane.
-- axAutomate, axMCP, axPass and axTask: To the navigator.
-- axClaude and axTerminal: Switch between the view and the field.
-- axFile: Switch between the folder list and the Actions list.
 
 ### Ctrl+Shift+N
 
@@ -344,15 +346,6 @@ Window key, in axAutomate, axDown, axFile, axJSON, axMCP, axPass and axTask. 4 m
 - axDown and axJSON: New window.
 - axFile: New folder.
 - axPass: New group.
-
-### Shift+Tab
-
-Window key, in axAutomate, axClaude, axFile, axMCP, axPass, axTask and axTerminal. 4 meanings.
-
-- axAutomate, axMCP, axPass and axTask: To the detail pane.
-- axAutomate, axMCP, axPass and axTask: To the navigator.
-- axClaude and axTerminal: Switch between the view and the field.
-- axFile: Switch between the folder list and the Actions list.
 
 ### Ctrl+L
 
@@ -412,25 +405,33 @@ Window key, in axAutomate, axJSON and axTask. 4 meanings.
 
 Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 3 meanings.
 
-- axAutomate, axMCP, axMedia, axPass, axProcess and axTask: The Context menu.
+- axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: The Context menu.
 - axAutomate, axMCP, axPass and axTask: The field's menu.
-- axFile and axGIT: Context menu.
+- axFile: Context menu.
+
+### Space
+
+Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 3 meanings.
+
+- axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Select or deselect.
+- axAutomate, axMCP, axPass and axTask: Check the field.
+- axFile: Select or deselect this entry.
 
 ### Shift+F10
 
 Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 3 meanings.
 
-- axAutomate, axMCP, axMedia, axPass, axProcess and axTask: The Context menu.
+- axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: The Context menu.
 - axAutomate, axMCP, axPass and axTask: The field's menu.
-- axFile and axGIT: Context menu.
+- axFile: Context menu.
 
 ### Ctrl+Period
 
 Bundle key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 3 meanings.
 
-- axAutomate, axMCP, axMedia, axPass, axProcess and axTask: The Context menu.
+- axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: The Context menu.
 - axAutomate, axMCP, axPass and axTask: The field's menu.
-- axFile and axGIT: Context menu.
+- axFile: Context menu.
 
 ### Ctrl+Shift+K
 
@@ -440,6 +441,38 @@ Window key, in axClaude, axDown, axJSON, axPreview and axTerminal. 3 meanings.
 - axDown and axPreview: Link.
 - axJSON: Key.
 
+### Shift+Down arrow
+
+Window key, in axFile, axGIT, axMedia, axProcess and axTask. 3 meanings.
+
+- axGIT and axMedia: Select to the next file.
+- axProcess and axTask: Select to the next item.
+- axFile: Select to the next entry.
+
+### Shift+End
+
+Window key, in axFile, axGIT, axMedia, axProcess and axTask. 3 meanings.
+
+- axGIT and axMedia: Select to the last file.
+- axProcess and axTask: Select to the last item.
+- axFile: Select to the last entry.
+
+### Shift+Home
+
+Window key, in axFile, axGIT, axMedia, axProcess and axTask. 3 meanings.
+
+- axGIT and axMedia: Select to the first file.
+- axProcess and axTask: Select to the first item.
+- axFile: Select to the first entry.
+
+### Shift+Up arrow
+
+Window key, in axFile, axGIT, axMedia, axProcess and axTask. 3 meanings.
+
+- axGIT and axMedia: Select to the previous file.
+- axProcess and axTask: Select to the previous item.
+- axFile: Select to the previous entry.
+
 ### Ctrl+Shift+L
 
 Window key, in axDown, axGIT, axJSON and axPreview. 3 meanings.
@@ -448,37 +481,13 @@ Window key, in axDown, axGIT, axJSON and axPreview. 3 meanings.
 - axJSON: Array.
 - axGIT: Pull.
 
-### Shift+Down arrow
+### Ctrl+Shift+S
 
-Window key, in axFile, axMedia, axProcess and axTask. 3 meanings.
+Window key, in axClaude, axDown, axGIT and axJSON. 3 meanings.
 
-- axProcess and axTask: Select to the next item.
-- axFile: Select to the next entry.
-- axMedia: Select to the next file.
-
-### Shift+End
-
-Window key, in axFile, axMedia, axProcess and axTask. 3 meanings.
-
-- axProcess and axTask: Select to the last item.
-- axFile: Select to the last entry.
-- axMedia: Select to the last file.
-
-### Shift+Home
-
-Window key, in axFile, axMedia, axProcess and axTask. 3 meanings.
-
-- axProcess and axTask: Select to the first item.
-- axFile: Select to the first entry.
-- axMedia: Select to the first file.
-
-### Shift+Up arrow
-
-Window key, in axFile, axMedia, axProcess and axTask. 3 meanings.
-
-- axProcess and axTask: Select to the previous item.
-- axFile: Select to the previous entry.
-- axMedia: Select to the previous file.
+- axDown and axJSON: Save as.
+- axClaude: Send queued messages now.
+- axGIT: Stage.
 
 ### Ctrl+C
 
@@ -533,14 +542,21 @@ Window key, in axFile and axHelp. 3 meanings.
 Bundle key, in axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask and axTerminal. 2 meanings.
 
 - axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask and axTerminal: Find next.
-- axGIT: Find next in the list.
+- axGIT: Find next in the text.
 
 ### Shift+F3
 
 Bundle key, in axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask and axTerminal. 2 meanings.
 
 - axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask and axTerminal: Find previous.
-- axGIT: Find previous in the list.
+- axGIT: Find previous in the text.
+
+### Backspace
+
+Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 2 meanings.
+
+- axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Up a level.
+- axFile: Up one level.
 
 ### Ctrl+W
 
@@ -549,25 +565,18 @@ Window key, in axClaude, axDown, axFile, axGIT, axJSON, axMedia, axPreview and a
 - axClaude, axDown, axFile, axGIT, axJSON, axMedia, axPreview and axTerminal: File Explorer.
 - axFile: Show the folder in File Explorer.
 
-### Backspace
-
-Window key, in axAutomate, axFile, axMCP, axMedia, axPass, axProcess and axTask. 2 meanings.
-
-- axAutomate, axMCP, axMedia, axPass, axProcess and axTask: Up a level.
-- axFile: Up one level.
-
 ### Ctrl+Down arrow
 
-Bundle key, in axAutomate, axMCP, axMedia, axPass, axProcess and axTask. 2 meanings.
+Bundle key, in axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 2 meanings.
 
-- axAutomate, axMCP, axPass, axProcess and axTask: Next section.
+- axAutomate, axGIT, axMCP, axPass, axProcess and axTask: Next section.
 - axMedia: Slower.
 
 ### Ctrl+Up arrow
 
-Bundle key, in axAutomate, axMCP, axMedia, axPass, axProcess and axTask. 2 meanings.
+Bundle key, in axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 2 meanings.
 
-- axAutomate, axMCP, axPass, axProcess and axTask: Previous section.
+- axAutomate, axGIT, axMCP, axPass, axProcess and axTask: Previous section.
 - axMedia: Faster.
 
 ### F2
@@ -577,12 +586,12 @@ Window key, in axAutomate, axFile, axMCP, axPass and axTask. 2 meanings.
 - axAutomate, axFile, axMCP, axPass and axTask: Rename.
 - axAutomate, axMCP, axPass and axTask: Rename the field.
 
-### Ctrl+Shift+A
+### Ctrl+A
 
 Window key, in axFile, axGIT, axMedia, axProcess and axTask. 2 meanings.
 
-- axFile, axMedia, axProcess and axTask: Deselect all.
-- axGIT: Stage all.
+- axFile, axGIT, axMedia, axProcess and axTask: Select all.
+- axGIT: Select all files.
 
 ### Ctrl+G
 
@@ -681,13 +690,6 @@ Window key, in axDown, axFile and axPreview. 2 meanings.
 
 - axDown and axPreview: Block quote.
 - axFile: Add to axMedia's queue.
-
-### Ctrl+Shift+S
-
-Window key, in axClaude, axDown and axJSON. 2 meanings.
-
-- axDown and axJSON: Save as.
-- axClaude: Send queued messages now.
 
 ### Ctrl+Shift+T
 
@@ -865,7 +867,7 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 - F2, axAutomate, axFile, axMCP, axPass and axTask: Rename. Its kind: act on what is selected; Windows' own key for it.
 - F2, axAutomate, axMCP, axPass and axTask: Rename the field. Its kind: act on what is selected.
 - F3, axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask and axTerminal: Find next. Its kind: go to a place; a bundle key.
-- F3, axGIT: Find next in the list. Its kind: go to a place.
+- F3, axGIT: Find next in the text. Its kind: go to a place.
 - F4, every app: Send a report. Its kind: open or confirm; a bundle key.
 - F5, axFile, axGIT, axMCP, axPass, axProcess and axTask: Refresh. Its kind: reads again; Windows' own key for it.
 - F5, axStart: Refresh programs. Its kind: reads again.
@@ -874,7 +876,7 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 - F6, axAutomate, axMCP, axPass and axTask: Switch between the navigator and the detail pane. Its kind: move between panes; a bundle key.
 - F6, axDown, axJSON and axPreview: Between the text and the details. Its kind: move between panes.
 - F6, axClaude and axTerminal: Switch between the view and the field. Its kind: move between panes.
-- F6, axGIT: Switch between the list and the details. Its kind: move between panes.
+- F6, axGIT: Switch between the list and the text. Its kind: move between panes.
 - F6, axMedia: Back to the list. Its kind: move between panes.
 - F6, axCalc: Switch between the history and the field. Its kind: move between panes.
 - F6, axFile: Switch between the folder list and the Actions list. Its kind: move between panes.

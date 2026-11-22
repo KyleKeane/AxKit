@@ -126,7 +126,7 @@
     { "app": "axProcess", "window": "ProcessForm", "type": "navigator", "to be": "navigator", "note": "Three lists of This computer, read off the UI thread, and no second pane; it starts inside Processes." },
     { "app": "axAutomate", "window": "AutomateForm", "type": "navigator", "to be": "navigator", "note": "" },
     { "app": "axTerminal", "window": "TerminalForm", "type": "conversation", "to be": "conversation", "note": "" },
-    { "app": "axGIT", "window": "GitForm", "type": "", "to be": "navigator", "note": "A window of its own today. Its three views to be three levels." },
+    { "app": "axGIT", "window": "GitForm", "type": "navigator", "to be": "navigator", "note": "Three lists of the repository, read through git off the UI thread, with a text as second pane; it starts inside Changes." },
     { "app": "axPass", "window": "PassForm", "type": "navigator", "to be": "navigator", "note": "" },
     { "app": "axClaude", "window": "MainForm", "type": "conversation", "to be": "conversation", "note": "" },
     { "app": "axMCP", "window": "MCPForm", "type": "navigator", "to be": "navigator", "note": "" },

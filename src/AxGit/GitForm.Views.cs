@@ -3,14 +3,15 @@ using AxKit.Forms;
 
 namespace AxGit;
 
-/// <summary>axGIT's window, the views (AG-2.2): three records over one list, and the details and the status bar (AG-2.1, AG-2.3, AG-2.4).</summary>
+/// <summary>axGIT's window, the three lists of a repository and their reads (AG-2.2), and the status bar (AG-2.3).</summary>
 public sealed partial class GitForm
 {
-    // ---- the views (AG-2.2): three records, one list ----
+    // ---- the lists (AG-2.2): three levels under the repository, each read through git off the UI thread ----
 
-    private ListViewState Current => _views[(int)_view];
-
-    /// <summary>F5, and every command's end: the status read again, the view shown read again with it, the list refilled on the item it had.</summary>
+    /// <summary>
+    /// F5, and every command's end: the status read again, and the list shown with it; at the repository's level
+    /// all three, so that each row has its count. The list is filled on the row you are on.
+    /// </summary>
     private async Task RefreshAsync(bool announce)
     {
         if (_root is null)
@@ -19,28 +20,28 @@ public sealed partial class GitForm
             return;
         }
 
-        RememberSelection();
+        // The status first: the status bar and the commit need it whatever the list shown.
         if (!await LoadAsync(View.Changes))
         {
             return;
         }
 
-        if (_view != View.Changes)
+        foreach (var view in _level switch { null => new[] { View.Log, View.Branches }, View.Changes => [], var one => [one.Value] })
         {
-            await LoadAsync(_view);
+            await LoadAsync(view);
         }
 
-        FillList();
+        Fill(SelectedKey());
         UpdateStatusBar();
         if (announce)
         {
-            Announce("Refreshed: " + _list.AccessibleName, true);
+            Announce("Refreshed: " + Navigator.AccessibleName, true);
         }
     }
 
     /// <summary>
-    /// Reads one view from git into its record: the status for Changes (<see cref="_repo"/>, which the status bar and
-    /// the commit need too), the log, the branches. False when git did not run or failed, which is said.
+    /// Reads one list from git into its records: the status for Changes (<see cref="_repo"/>, which the status bar
+    /// and the commit need too), the log, the branches. False when git did not run or failed, which is said.
     /// </summary>
     private async Task<bool> LoadAsync(View view)
     {
@@ -62,37 +63,38 @@ public sealed partial class GitForm
             return false;
         }
 
-        var state = _views[(int)view];
         switch (view)
         {
             case View.Changes:
                 _repo = GitStatus.Parse(result.Output);
-                state.Set(_repo.ListName, _repo.Files.Select(file => file.Label), _repo.Files.Select(file => file.Path));
                 break;
             case View.Log:
                 _commits = GitLog.Parse(result.Output);
-                state.Set(GitLog.ListName(_commits.Count), _commits.Select(commit => commit.Label), _commits.Select(commit => commit.Hash));
                 break;
             default:
                 _branches = GitBranches.Parse(result.Output);
-                state.Set(GitBranches.ListName(_branches.Count), _branches.Select(branch => branch.Label), _branches.Select(branch => branch.Name));
                 break;
         }
 
+        _loaded[(int)view] = true;
         return true;
     }
 
-    /// <summary>The views to read again before they show next: a commit, a switch, a fetch changed what they list.</summary>
+    /// <summary>The lists to read again before they show next: a commit, a switch, a fetch changed what they hold.</summary>
     private void Stale(params View[] views)
     {
         foreach (var view in views)
         {
-            _views[(int)view].Loaded = false;
+            _loaded[(int)view] = false;
         }
     }
 
-    /// <summary>View → Changes, Log, Branches (Alt+1, 2, 3): the list refilled, read on the first visit or when stale, and its name said with the item the focus is on (axClaude D26).</summary>
-    private async Task ShowViewAsync(View view)
+    /// <summary>
+    /// Into a list: Right or Enter on its row at the repository's level, or Alt+1, 2 and 3 from anywhere. Read on
+    /// the first visit or when stale, then shown on the row it was left on, and its name said with that row
+    /// (axClaude D26). The level changes only once the read is in, so that the rows shown are always the level's.
+    /// </summary>
+    private async Task ShowListAsync(View view)
     {
         if (_root is null)
         {
@@ -102,86 +104,64 @@ public sealed partial class GitForm
 
         if (_busy is not null)
         {
-            // The view's first load would be refused and the list shown empty under the new name.
+            // The list's first read would be refused.
             Announce("Working…", true);
             return;
         }
 
-        RememberSelection();
-        _view = view;
-        if (!Current.Loaded)
+        if (!_loaded[(int)view] && !await LoadAsync(view))
         {
-            await LoadAsync(view);
+            return;
         }
 
-        FillList();
-        var name = _list.AccessibleName ?? string.Empty;
-        Announce(_list.SelectedItem is string item ? $"{name}. {item}" : name, true);
+        if (_level is { } from)
+        {
+            _kept[(int)from] = SelectedKey();
+        }
+
+        _level = view;
+        Fill(_kept[(int)view]);
+        var name = Navigator.AccessibleName ?? string.Empty;
+        Announce(Navigator.SelectedItem is string item ? $"{name}. {item}" : name, true);
     }
 
-    /// <summary>The list's items for the view shown, named with the view and the count, the selection on the view's key when it is still listed, else the first item.</summary>
-    private void FillList() => Current.FillInto(_list);
+    private ChangedFile? CurrentFile() => SelectedRow()?.Tag as ChangedFile;
 
-    /// <summary>The key of the item selected in the view shown, kept in its record before the list changes under it (a refresh, a view switch).</summary>
-    private void RememberSelection() => Current.Remember(_list);
+    private Commit? CurrentCommit() => SelectedRow()?.Tag as Commit;
 
-    private ChangedFile? CurrentFile() =>
-        _view == View.Changes && _list.SelectedIndex is var i && i >= 0 && i < _repo.Files.Count ? _repo.Files[i] : null;
-
-    private Commit? CurrentCommit() =>
-        _view == View.Log && _list.SelectedIndex is var i && i >= 0 && i < _commits.Count ? _commits[i] : null;
-
-    private Branch? CurrentBranch() =>
-        _view == View.Branches && _list.SelectedIndex is var i && i >= 0 && i < _branches.Count ? _branches[i] : null;
+    private Branch? CurrentBranch() => SelectedRow()?.Tag as Branch;
 
     /// <summary>
-    /// Whether the list shows the view a command belongs to; otherwise which view first is said, "Changes view
-    /// first: Alt+1" (AG-6.2), the key from the table. One rule for every command of a view since 2026-10-23: Space, Enter and the menu's
-    /// Show diff switched the view silently, Delete said this, and Switch to branch switched too.
+    /// The files a command of Changes acts on (AG-3.2, bundle AX-8.16): the selected files, or the file you are on
+    /// when none is selected. Null, and said, when the list shown is not Changes or holds no file.
     /// </summary>
-    private bool InView(View view)
+    private IReadOnlyList<ChangedFile>? FilesInHand()
     {
-        if (_view == view)
+        if (_level != View.Changes)
         {
-            return true;
+            Announce("For the files of Changes: " + BundleKeys.Text(AxGitKeys.ViewChanges).TrimEnd('.'), true);
+            return null;
         }
 
-        Announce(view switch
+        IReadOnlyList<ChangedFile> files = SelectedRows() is { Count: > 0 } rows
+            ? [.. rows.Select(row => row.Tag).OfType<ChangedFile>()]
+            : CurrentFile() is { } file ? [file] : [];
+        if (files.Count == 0)
         {
-            View.Changes => "Changes view first: " + BundleKeys.Text(AxGitKeys.ViewChanges).TrimEnd('.'),
-            View.Log => "Log view first: " + BundleKeys.Text(AxGitKeys.ViewLog).TrimEnd('.'),
-            _ => "Branches view first: " + BundleKeys.Text(AxGitKeys.ViewBranches).TrimEnd('.'),
-        }, true);
-        return false;
-    }
-
-    // ---- the details and the status bar (AG-2.1, AG-2.3, AG-2.4) ----
-
-    /// <summary>Text into the details, named for what it is; with <paramref name="focus"/> the focus goes to its first line and the name and length are said after it (AG-D5).</summary>
-    private void ShowDetails(string name, string text, bool focus)
-    {
-        var normalized = text.Replace("\r\n", "\n").TrimEnd('\n').Replace("\n", "\r\n");
-        var lines = normalized.Length == 0 ? 0 : normalized.Split("\r\n").Length;
-        _details.AccessibleName = name;
-        _details.Text = normalized;
-        _details.Select(0, 0);
-        _details.ScrollToCaret();
-        if (focus)
-        {
-            _details.Focus();
+            Announce("No file selected", true);
+            return null;
         }
 
-        Announce($"{name}, {lines} {(lines == 1 ? "line" : "lines")}", !focus);
+        return files;
     }
 
+    // ---- the status bar (AG-2.3) ----
+
+    /// <summary>The status bar shown again: what runs or the branch and the counts on the left (<see cref="StatusState"/>), the repository's path on the right.</summary>
     private void UpdateStatusBar()
     {
-        _stateLabel.Text = _busy is not null ? $"Working: {_busy}…"
-            : _gitMissing ? "git was not found"
-            : _root is null ? "No repository"
-            : _repo.StatusText;
-        _pathLabel.Text = _root ?? string.Empty;
-        StatusLayout.Fit(_status, _stateLabel, _pathLabel);
+        SetPlace(_root ?? string.Empty);
+        ShowStatus();
     }
 
     /// <summary>An item that runs git: disabled while a command runs and when git is missing.</summary>

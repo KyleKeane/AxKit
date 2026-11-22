@@ -19,24 +19,25 @@ The window is named after the repository's folder: "myproject - axGIT".
 
 A repository can name programs of its own that git runs, hooks for example. When the one you open does, axGIT says so in a notice, "This repository runs programs of its own", with their names, and runs git without them. Choose Trust this repository only for a repository you know, your own for example; from then on git runs them as it would in a console. Your trust is for the programs the repository named when you gave it: if it later names another, a new hook for example, axGIT sets them aside again and asks again, saying that what the repository would run has changed.
 
-## The list and its views
+## The three lists
 
-The list at the top has three views, each named with what it holds:
+A repository has three lists here, and the list at the top of the window shows one of them at a time. The window starts inside Changes. Left, or Backspace, goes up to the repository, where the three lists are three rows, each with its count; Right, or Enter, on one goes into it. Alt+1, Alt+2 and Alt+3 go straight into a list from anywhere. It works like the lists of axTask.
 
 - **Changes** (Alt+1): one item per changed file, "Modified src/Foo.cs, unstaged". The last words say whether the file is staged for the next commit, unstaged, or both; a new file not yet in git reads "Untracked", a file in conflict after a merge reads "Conflict".
 - **Log** (Alt+2): the last 200 commits, "3a1f2c0 2026-10-18 Kyle: Release 2.11.0".
 - **Branches** (Alt+3): your branches, "main, current, origin/main, 1 ahead".
 
-Arrow keys move through the items and nothing happens until you press a key. Type the start of an item to jump to it; the same letter again goes to the next one, and Shift with a letter goes backwards. Pressing a view's key while the view already shows says its name again, so you always know where you are. F5 refreshes the view after you changed something outside axGIT.
+Up and Down move through the rows and nothing happens until you press a key. Type the start of a row to jump to it; the same letter again goes to the next one, and Shift with a letter goes backwards. Pressing a list's key while that list already shows says its name again, so you always know where you are. F5 reads the list again after you changed something outside axGIT.
 
 Under the list is the details text, which Tab, Ctrl+Tab or F6 reach. It holds the last thing you asked to see: a diff, a commit, or what git answered. Arrow keys read it line by line; Ctrl+F finds text in it; Page Up and Page Down move a screen; Ctrl+Up and Ctrl+Down move by paragraph. In the list, Ctrl+F finds a line of the list instead, and F3 and Shift+F3 go to the next and previous one.
 
 ## Changes
 
-- **Space** stages the file you are on, or unstages it when it is staged; axGIT says "Staged src/Foo.cs". Stage all (Ctrl+Shift+A) and Unstage all (Ctrl+Shift+U) do it for every file.
+- **Ctrl+Shift+S** stages the file you are on, and **Ctrl+Shift+U** unstages it; axGIT says "Staged src/Foo.cs". (Until now Space did both. Space selects now, as in axFile and axTask.)
+- **Space** selects the file you are on, and deselects it again; a selected file reads ", selected", and the status bar counts them. Shift+Down and Shift+Up select as you move, Shift+Space selects from the nearest selected file to this one, Ctrl+A selects every file, Ctrl+Shift+A or Escape deselects all. With files selected, Ctrl+Shift+S and Ctrl+Shift+U act on all of them, "Staged 3 files", and the selection stays, so Ctrl+Enter can commit them next. Actions, Stage all and Unstage all do every file without selecting.
 - **Enter** shows the file's diff in the details and puts you on its first line, so Down Arrow reads it. Lines starting with a plus were added, with a minus removed. Ctrl+Tab goes back to the list. For a new file, the details show the file itself.
 - **Ctrl+E** opens the file in axDown, or axJSON for a `.json` file.
-- **Delete** discards the changes to a file after a question; they cannot be brought back. A new, untracked file is not deleted from axGIT.
+- **Delete** discards the changes to a file after a question; they cannot be brought back. A new, untracked file is not deleted from axGIT. With files selected, Delete asks once for all of them and names each; there Cancel is the default, so Enter keeps everything and Alt+D discards.
 - **Ctrl+Enter** commits what is staged: a notice asks for the message, Enter commits, and axGIT says "Committed" with the commit's short hash. With nothing staged it says so instead.
 
 ## Log
@@ -54,9 +55,9 @@ axGIT does not merge, rebase or resolve conflicts. For those, use the terminal o
 The menu bar is the same eight menus in every axKit window.
 
 - **Session**: Open repository (Ctrl+O), Open recent repository, Refresh (F5), Show current repository in (File Explorer Ctrl+W, axClaude, axTerminal, axFile), Exit.
-- **Actions**: Stage all, Unstage all, Commit (Ctrl+Enter), New branch (Ctrl+N), Fetch, Pull, Push.
-- **Navigation**: Changes (Alt+1), Log (Alt+2), Branches (Alt+3). Ctrl+1, Ctrl+2 and Ctrl+3, the keys for these until now, still work.
-- **Context**: what acts on the line you are on, by the view: in Changes, Stage or unstage (Space), Show diff (Enter), Open file in editor (Ctrl+E), Discard changes (Delete); in Log, Show the commit (Enter); in Branches, Switch to branch (Enter). Shift+F10 opens it.
+- **Actions**: Stage (Ctrl+Shift+S), Unstage (Ctrl+Shift+U), Stage all, Unstage all, Commit (Ctrl+Enter), New branch (Ctrl+N), Fetch, Pull, Push, Select all files (Ctrl+A), Deselect all (Ctrl+Shift+A).
+- **Navigation**: Changes (Alt+1), Log (Alt+2), Branches (Alt+3), Up to the repository (Left). Ctrl+1, Ctrl+2 and Ctrl+3, the keys for the three lists until now, still work.
+- **Context**: what acts on the row you are on, by what it is. A file: Show diff (Enter), Stage, Unstage, Open file in editor (Ctrl+E), Discard changes (Delete), Select or deselect (Space), Select to here (Shift+Space). A commit: Show the commit (Enter). A branch: Switch to branch (Enter). One of the three lists at the repository: Open (Enter). Shift+F10 opens it.
 - **Options**: Text (font and size), General (the update check), Developer (the settings file, diagnostics).
 - **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.
 

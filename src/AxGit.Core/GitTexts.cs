@@ -25,6 +25,20 @@ public static partial class GitTexts
     /// <summary>Unstage all: the index back to HEAD, the working tree untouched.</summary>
     public static readonly IReadOnlyList<string> UnstageAllArguments = ["restore", "--staged", "."];
 
+    // ---- Commands on several files at once (SPEC.md AG-3.2a, AG-3.4a; the selection, bundle AX-8.16, 2026-11-22) ----
+
+    /// <summary>How many paths one git call takes: several calls for more, so that a command line never grows past what Windows allows.</summary>
+    public const int PathsPerCall = 50;
+
+    /// <summary>Stage the files given, each whole: new and deleted files too. The paths come after "--", so that none is read as an option.</summary>
+    public static IReadOnlyList<string> StageArguments(IEnumerable<string> paths) => ["add", "--", .. paths];
+
+    /// <summary>Unstage the files given: the index back to HEAD for them, the working tree untouched.</summary>
+    public static IReadOnlyList<string> UnstageArguments(IEnumerable<string> paths) => ["restore", "--staged", "--", .. paths];
+
+    /// <summary>Discard the changes to the files given: index and working tree back to HEAD. Never asked for an untracked file, which git would not know.</summary>
+    public static IReadOnlyList<string> DiscardArguments(IEnumerable<string> paths) => ["restore", "--staged", "--worktree", "--", .. paths];
+
     /// <summary>Commit what is staged with the message given, which is one argument, never a file or an editor.</summary>
     public static IReadOnlyList<string> CommitArguments(string message) => ["commit", "-m", message];
 

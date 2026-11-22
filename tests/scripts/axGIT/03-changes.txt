@@ -20,19 +20,48 @@ expect focus Changes, 2 files
 expect focus Modified a.txt, unstaged
 
 # Goal: Stage and unstage a file
-# 3.1 Space stages and unstages in place; the status bar's staged count follows.
-keys space
+# 3.1 Ctrl+Shift+S stages the file you are on and Ctrl+Shift+U unstages it, in place; the status bar's staged count
+# follows (AG-3.2; Space did both until 2026-11-22 and selects now). Each says why when there is nothing to do.
+keys ctrl+shift+s
 expect said ! Staged a.txt
 expect focus Modified a.txt, staged
 expect state 1 staged
+keys ctrl+shift+s
+expect said ! a.txt is already staged
 keys down
 expect said · Untracked new.txt
 keys up
 expect said · Modified a.txt, staged
-keys space
+keys ctrl+shift+u
 expect said ! Unstaged a.txt
 expect focus Modified a.txt, unstaged
 expect state 0 staged
+keys ctrl+shift+u
+expect said ! a.txt is not staged
+
+# Goal: Select files with Space and stage them together
+# 3.1a Space selects the file you are on, Shift+Down takes the next; Stage then stages both with one sentence, and
+# the selection stays, so that Unstage acts on the same two. Escape gives the selection up.
+keys space
+expect said ! Selected
+expect focus Modified a.txt, unstaged, selected
+keys shift+down
+expect focus Untracked new.txt, selected
+expect state 2 selected
+keys ctrl+shift+s
+expect said ! Staged 2 files
+expect list "Modified a.txt, staged, selected","Added new.txt, staged, selected"
+expect state 2 staged
+keys ctrl+shift+s
+expect said ! Nothing to stage among the 2 selected files
+keys ctrl+shift+u
+expect said ! Unstaged 2 files
+expect list "Modified a.txt, unstaged, selected","Untracked new.txt, selected"
+keys escape
+expect said ! None selected
+expect list "Modified a.txt, unstaged","Untracked new.txt"
+keys home
+expect focus Modified a.txt, unstaged
 
 # Goal: Read the diff of a changed file
 # 3.2 Enter on a changed file: the diff in the details, the focus on its first line, then the name and length said.
@@ -68,23 +97,23 @@ keys ctrl+tab
 expect said → Changes, 2 files (List): Untracked new.txt
 
 # Goal: Stage all and unstage all
-# 3.4 Stage all and unstage all.
-keys ctrl+shift+a
+# 3.4 Stage all and unstage all, the Actions menu's two without a key: every file, whatever is selected.
+menu Stage all
 expect said ! Staged all
 expect list "Modified a.txt, staged","Added new.txt, staged"
-keys ctrl+shift+u
+menu Unstage all
 expect said ! Unstaged all
 expect list "Modified a.txt, unstaged","Untracked new.txt"
 
 # Check: A commit with nothing staged is refused
 # 3.5 Commit: refused with nothing staged; the notice with its Message field; refused empty; then the commit.
 keys ctrl+enter
-expect said ! Nothing staged. Space stages a file
+expect said ! Nothing staged. Ctrl+Shift+S stages the selected files
 expect state "notice":null
 # Goal: Commit the staged changes
 keys up
 expect said · Modified a.txt, unstaged
-keys space
+keys ctrl+shift+s
 expect said ! Staged a.txt
 # "Staged" is said before the refresh after it ends; Ctrl+Enter pressed at once read the old count and said
 # "Nothing staged" (reported). The script waits for the status bar's count.
@@ -136,20 +165,45 @@ keys delete
 expect said ! Untracked file: delete it in File Explorer
 expect state "notice":null
 
+# Goal: Discard the changes to the selected files
+# 3.6a With files selected, Delete asks once for all of them and names them; Cancel is the default, so Enter keeps
+# everything; an untracked file among them is named as left alone. Discard (Alt+D) then discards, one sentence, and
+# the selection is given up.
+file repo\a.txt hello\nthird time
+keys f5
+expect said ! Refreshed: Changes, 2 files
+keys ctrl+a
+expect said ! 2 selected
+keys delete
+expect state "notice":"Discard the changes to 1 file?"
+expect state They cannot be brought back.
+expect state Left alone: 1 untracked file, which File Explorer deletes.
+wait 1200
+keys enter
+expect state "notice":null
+expect list "Modified a.txt, unstaged, selected","Untracked new.txt, selected"
+keys delete
+expect state "notice":"Discard the changes to 1 file?"
+wait 1200
+keys alt+d
+expect said ! Discarded a.txt
+expect focus Changes, 1 file
+expect list "Untracked new.txt"
+
 # Check: Save has nothing to save here
 # 3.7 Ctrl+S has nothing to save.
 keys ctrl+s
-expect said ! Nothing to save here. Space stages, Ctrl+Enter commits
+expect said ! Nothing to save here. Ctrl+Shift+S stages, Ctrl+Enter commits
 
 # Check: A commit asked while a stage runs does not say nothing is staged
-# AG-5.4, AG-7: a command asked for while one runs says "Working…". Space and Ctrl+Enter pressed together: the commit
-# is asked while the stage (or the refresh after it) still runs. Fails today (reported): Ctrl+Enter does not check
-# for a running command, reads the staged count from before the stage and says "Nothing staged. Space stages a file".
+# AG-5.4, AG-7: a command asked for while one runs says "Working…". The stage key and Ctrl+Enter pressed together:
+# the commit is asked while the stage (or the refresh after it) still runs. It once read the staged count from
+# before the stage and said "Nothing staged" (found 2026-10-23, fixed since).
 # Kept last, so that the steps above run whatever it says.
 file repo\a.txt hello\nonce more
 keys f5
 expect said ! Refreshed: Changes, 2 files
 keys home
 expect focus Modified a.txt, unstaged
-keys space ctrl+enter
+keys ctrl+shift+s ctrl+enter
 refuse said Nothing staged

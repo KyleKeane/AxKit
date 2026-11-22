@@ -1,6 +1,6 @@
 # axGIT, the window
 
-The WinForms side of axGIT: one list with three views, one read-only details text, a status bar, the bundle's notices. The pure code (git as a process, the parsers, the settings) is `src/AxGit.Core`, with its own `CLAUDE.md`. The spec is `docs/axGIT/SPEC.md` ("SPEC.md" below); the guide `docs/axGIT/user-guide.md` is embedded by `AxGit.csproj` for Help → User guide; the manual test plan is `docs/axGIT/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`.
+The WinForms side of axGIT: one list, one read-only details text, a status bar, the bundle's notices. Since 2026-11-22 the window is a navigator, the bundle's item window (`AxKit.Forms/ItemForm`, `src/AxKit.Forms/notes/item.md`; `docs/axKit/framework.md` FW-4.10): the repository's level holds three lists (Changes, Log, Branches), the window starts inside Changes, and the second pane is a text, the details. Space selects files, and Stage, Unstage and Discard act on the selected files. Until then it was a window of its own with three views of one list, and Space staged one file. The pure code (git as a process, the parsers, the settings) is `src/AxGit.Core`, with its own `CLAUDE.md`. The spec is `docs/axGIT/SPEC.md` ("SPEC.md" below); the guide `docs/axGIT/user-guide.md` is embedded by `AxGit.csproj` for Help → User guide; the manual test plan is `docs/axGIT/nvda-test-plan.md`. The bundle rules are in the root `CLAUDE.md`.
 
 ## Commands
 
@@ -15,40 +15,40 @@ dotnet test tests/AxGit.Tests/AxGit.Tests.csproj
 
 - `AxGitApp`: the entry point `Run` that axKit's `Program` calls (bundle AX-1.7), one call into `AxKit.Forms/AppHost.Run` with the one folder or file of the command line, the settings and the window; the log (`axGIT.log`), the crash handling, `--help` and `--version` are the host's.
 - `GitForm`: the window (SPEC.md AG-2), in five partial files since 2026-10-29:
-  - `GitForm.cs` (the controls, the menus, the hooks, the keys, the repository; `CheckTrustAsync` asks `GitSettings.Trusts(root, risks)`, so a trusted repository that would run something else is asked about again, AG-1.6);
+  - `GitForm.cs` (the menus, what the navigator asks for, the repository; `CheckTrustAsync` asks `GitSettings.Trusts(root, risks)`, so a trusted repository that would run something else is asked about again, AG-1.6);
   - `GitForm.Run.cs` (running git);
-  - `GitForm.Views.cs` (the views, the details, the status bar);
+  - `GitForm.Views.cs` (the three lists and their reads, the files in hand, the status bar);
   - `GitForm.Commands.cs` (changes, history, branches);
   - `GitForm.Consent.cs` (bundle AX-11.5, AX-11.6: `ToServerAsync`, the consent before the first fetch, pull or push that reaches a server, by the remote's host through `GitRemote`, and the sign-in line the first time a window reaches each server; the consent before the first repository is in `StartAsync`, both through the base's `HasConsent`).
   - The menus and keys (AG-6.1, AG-6.2) as one command list (`docs/axKit/app-kit.md` AK-2) from `BundleKeys` and `AxGitKeys`:
-    - each menu item and its key one `Add(menu, new Command(...))` (wrapped in `Git` when it runs git);
-    - the keys with no item (Tab between the list and the details, find, Enter on a commit, and File Explorer, whose item the base's Show in submenu is made around) `AddKey`;
+    - axGIT's own keys each one `Add(menu, new Command(...))` (wrapped in `Git` when it runs git: the item is disabled while a command runs and when git is missing); File Explorer's item is the one the base's Show in submenu is made around;
+    - Enter, Delete, Right, Left, Tab, the selection keys, find and Shift+F10 are the item window's commands, registered by `PlaceControls` after axGIT's own; the menu items for them (`Item`, placed with `Placed`) only show the keys and state how far they reach (Switch to branch and Discard changes act, pinned in `CommandMarkTests`);
     - no `ProcessWindowKey` of its own.
-    - the bar is the bundle's eight (`PlaceMenuBar`, AX-9.1, 2026-11-11): Actions with the staging, Commit, New branch, Fetch, Pull and Push; Navigation with the three views; Context (`_context`, a `ContextBarMenu`, AX-9.11) over three menus off the bar, the Changes view's line, the Log's commit and the Branches view's branch, opened by Shift+F10, the Applications key and a right click in the list (`OpenContext`).
-  - The views, one `AxKit.Forms/ListViewState` each (the list's name, the items, their keys, whether read since last made stale, the selected key):
-    - `LoadAsync` reads one from git, `ShowViewAsync` and `FillList` show it;
-    - `RememberSelection` keeps the key before the list changes, `Stale` marks views to read again;
-    - `InView` says "Changes view first: Ctrl+1" for a command of another view.
-  - The commands, each one `RunGitAsync` call with the argument list the Core's records or `GitTexts` give, and git's output read by the Core alone (root `CLAUDE.md` rule 12: no option and no text of git's is written in the window, `GitTextsTests` fails on one) (`StageToggleAsync`, `ShowDiffAsync`, `Discard`, `Commit`, `ShowCommitAsync`, `SwitchBranchAsync`, `NewBranch`, `FetchAsync`, `PullAsync`, `PushAsync`); `ShowDetails`.
-  - The notice flow, the fonts, the window placement, find and the update flow are the window base's (`AxKit.Forms/AxKitForm`, bundle AX-6.5), which `GitForm` fills in with its hooks:
-    - the list and the details hidden for a notice;
-    - the list as the focus target (the details keep the focus across a notice by the base's rule);
-    - the font on both;
+    - the bar is the bundle's eight (`PlaceMenuBar`, AX-9.1, 2026-11-11): Actions with Stage, Unstage, Stage all, Unstage all, Commit, New branch, Fetch, Pull, Push and the selection's two; Navigation with the three lists and the way up; Context (the item window's `CreateContextMenu` with `MenuOf`, AX-9.11) over four menus off the bar, a file's, a commit's, a branch's and a list's, by the row you are on.
+  - What the navigator asks for (`GitForm.cs`): `Pane` text; `ReadLevel` from what was read last (`LevelRows`: a row's key is the file's path, the commit's hash, the branch's name, its `Tag` the `ChangedFile`, `Commit` or `Branch`, which every command reads its kind from; `TopRow` for a list at the repository's level, with its count once read; no rows and "No repository" without one); `HasSelection` with `CanSelectRow` (a changed file); `LevelIdentity` (the repository and the list); `EntryRefused` (going into a list is the app's own, off the UI thread: an empty reason, and `ShowListAsync`); `LeaveList`; `OpenItem` (Enter by the kind of row: the diff, the commit, the switch); `DeleteRow` (Delete: Discard on a file, words on a commit, a branch and a list); `StatusState` (what runs, or the branch and the counts); `KeysWithoutUse`.
+  - The lists (`GitForm.Views.cs`): `_level` (one of the three, or null at the repository's level), `_loaded` (read since last made stale) and `_kept` (the row each was left on);
+    - `LoadAsync` reads one from git; `ShowListAsync` reads when needed, sets the level only once the read is in, fills on the kept row and says the name with the row; `RefreshAsync` reads the status and the list shown, all three at the repository's level, and fills on the row you are on;
+    - `Stale` marks lists to read again;
+    - `FilesInHand`: the selected files, or the file you are on; "For the files of Changes: Alt+1" in another list.
+  - The commands, each `RunGitAsync` calls with the argument list the Core's records or `GitTexts` give, and git's output read by the Core alone (root `CLAUDE.md` rule 12: no option and no text of git's is written in the window, `GitTextsTests` fails on one) (`StageFilesAsync` for Stage and Unstage on the files in hand, up to `GitTexts.PathsPerCall` paths a call; `StageAllAsync`; `ShowDiffAsync`; `Discard` and `DiscardSeveral`, the second with Cancel the default; `Commit`; `ShowCommitAsync`; `SwitchBranchAsync`; `NewBranch`; `FetchAsync`, `PullAsync`, `PushAsync`). The details are the item window's `TextPane`, filled with its `ShowText`.
+  - The notice flow, the fonts, the window placement, find and the update flow are the window base's and the item window's, which `GitForm` fills in with its hooks:
     - `git` plus the repository as the restart arguments;
-    - Ctrl+S's "Nothing to save here. Space stages, Ctrl+Enter commits" (`SaveCommand`).
+    - Ctrl+S's "Nothing to save here. Ctrl+Shift+S stages, Ctrl+Enter commits" (`SaveCommand`).
 - `AxGitKeys`: the window's keys (SPEC.md AG-6.2; bundle AX-8), the one place a key is changed; `All` feeds the collision test and the F1 text names the same keys.
 - `HelpText`: the F1 text and the embedded guide; About is the bundle's.
 
 ## Rules
 
-1. Every control gets an `AccessibleName`; the list is named with its view and count; nothing speaks on a plain arrow key; a command's result is one announcement (AG-7), on the list, or on the notice while one shows.
+1. Every control gets an `AccessibleName`; the list is named with what it shows and its count; nothing speaks on a plain arrow key; a command's result is one announcement (AG-7), on the list, or on the notice while one shows.
 2. git never runs on the UI thread: `RunGitAsync` awaits the Core's process on a task, one command at a time (`_busy`), the status bar saying what runs and the git menu items disabled meanwhile.
 3. No second window (bundle AX-7.2): questions and errors are notices; the folder picker and File Explorer are the system's own windows.
 4. Run the `accessibility-review` skill on a change here before committing, and check it with NVDA following the test plan.
 
 ## Gotchas already learned
 
-- Enter in a `ListBox` reaches `ProcessCmdKey` as `Keys.Return`; its commands (Show diff, the commit, Switch to branch, one per view) carry `When = () => _list.Focused && _view == ...`, so that Enter in the details stays the control's own, and a command run keeps the list from dinging.
+- Enter in a `ListBox` reaches `ProcessCmdKey` as `Keys.Return`; it is the item window's Open, which acts while the navigator has the focus, so that Enter in the details stays the control's own, and a command run keeps the list from dinging. `OpenItem` chooses by the row's `Tag`; a new kind of row needs its case there, in `DeleteRow`, in `MenuOf` and in `CanSelectRow`.
+- `Commit` is a method of the window and a record of the Core: a pattern on the record names it in full (`AxGit.Core.Commit`).
+- The level changes only after a list's read is in (`ShowListAsync`): the rows shown are always the level's.
 - The base's `Do(Func<Task>)` wraps every command: an exception out of an awaited task would otherwise be unobserved; there it becomes an error notice.
-- Changing the list's `AccessibleName` while it has the focus is silent for NVDA; a view switch therefore announces the name and the focused item itself (AG-2.2).
+- Changing the list's `AccessibleName` while it has the focus is silent for NVDA; going into a list therefore announces the name and the row you are on itself (AG-2.2).
 - The focus moves to the details after Enter on a file or a commit (AG-D5); the announcement is raised after the focus change and without interrupting, so that NVDA's reading of the control is not cut off.

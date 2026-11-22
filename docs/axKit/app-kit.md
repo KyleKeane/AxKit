@@ -112,7 +112,7 @@ After the kit:
 ## 3. Archetypes
 
 - AK-3.1 The windows keep their archetype bases and gain one: **`ListWindow`** (shapes of axGIT, axProcess, axMedia,
-  axCalc and most of axFile): one list with views (`ListViewState` and the refresh, show, stale and cycle flow, once),
+  axCalc and most of axFile): one list with views (the record of a view and the refresh, show, stale and cycle flow, once; overtaken on 2026-11-22 by `docs/axKit/framework.md`, where views are levels of the navigator),
   an optional details pane, an optional field, Tab between them, find in the list or the details, the default
   bodies of the base's hooks (hide for a notice, the font, the focus).
 - AK-3.2 The others stay: `TextEditorForm` with `EditorApp` (axDown is 112 lines; the model of the kit), `ConsoleForm`,

@@ -441,36 +441,52 @@ every window" or under a heading that names the windows without it; under an app
 ## axGIT
 
 - Commit. Menu: Actions. Key: Ctrl+Enter. Mark: act.
+- Deselect all. Menu: Actions. Key: Ctrl+Shift+A. Also: Escape. Mark: change.
 - Fetch. Menu: Actions. Key: Ctrl+Shift+F. Mark: act.
 - New branch. Menu: Actions. Key: Ctrl+N. Mark: act.
 - Pull. Menu: Actions. Key: Ctrl+Shift+L. Mark: act.
 - Push. Menu: Actions. Key: Ctrl+Shift+H. Mark: act.
-- Stage all. Menu: Actions. Key: Ctrl+Shift+A. Mark: act.
-- Unstage all. Menu: Actions. Key: Ctrl+Shift+U. Mark: act.
-- Discard changes. Menu: Context. Key: Delete. Mark: act.
-- Open file in editor. Menu: Context. Key: Ctrl+E. Mark: open.
-- Show diff. Menu: Context. Key: Enter. Mark: read.
-- Stage or unstage. Menu: Context. Key: Space. Mark: act.
+- Select all files. Menu: Actions. Key: Ctrl+A. Mark: change.
+- Stage. Menu: Actions. Key: Ctrl+Shift+S. Mark: act.
+- Stage all. Menu: Actions. Key: none. Mark: act.
+- Unstage. Menu: Actions. Key: Ctrl+Shift+U. Mark: act.
+- Unstage all. Menu: Actions. Key: none. Mark: act.
+- Nothing selected. Menu: Context. Key: none. Mark: read.
 - git-scm.com. Menu: Help, Git resources. Key: none. Mark: act.
 - Pro Git, the book. Menu: Help, Git resources. Key: none. Mark: act.
 - Branches. Menu: Navigation. Key: Alt+3. Also: Ctrl+3. Mark: open.
 - Changes. Menu: Navigation. Key: Alt+1. Also: Ctrl+1. Mark: open.
 - Log. Menu: Navigation. Key: Alt+2. Also: Ctrl+2. Mark: open.
+- Up to the repository. Menu: Navigation. Key: Left. Mark: open.
 - Open repository. Menu: Session. Key: Ctrl+O. Mark: open.
 - Refresh. Menu: Session. Key: F5. Mark: read.
 - axClaude, access layer for Claude Code. Menu: Session, Show current repository in. Key: none. Mark: act.
 - axFile. Menu: Session, Show current repository in. Key: none. Mark: open.
 - axTerminal, access layer for your shell. Menu: Session, Show current repository in. Key: none. Mark: act.
 - File Explorer. Menu: Session, Show current repository in. Key: Ctrl+W. Mark: open.
-- Context menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
-- Find in the details. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
+- Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
+- Find in the text. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
-- Find next in the list. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
+- Find next in the text. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
 - Find previous. Menu: none, a key alone. Key: Shift+F3. Mark: read. Never run by AI tools.
-- Find previous in the list. Menu: none, a key alone. Key: Shift+F3. Mark: read. Never run by AI tools.
-- Show the commit. Menu: none, a key alone. Key: Enter. Mark: read. Never run by AI tools.
-- Switch between the list and the details. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
+- Find previous in the text. Menu: none, a key alone. Key: Shift+F3. Mark: read. Never run by AI tools.
+- Into the list. Menu: none, a key alone. Key: Right. Mark: open. Never run by AI tools.
+- Next section. Menu: none, a key alone. Key: Ctrl+Down. Mark: open. Never run by AI tools.
+- Open. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
+- Previous section. Menu: none, a key alone. Key: Ctrl+Up. Mark: open. Never run by AI tools.
+- Select all. Menu: none, a key alone. Key: Ctrl+A. Mark: change. Never run by AI tools.
+- Select or deselect. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
+- Select to here. Menu: none, a key alone. Key: Shift+Space. Mark: change. Never run by AI tools.
+- Select to the first file. Menu: none, a key alone. Key: Shift+Home. Mark: change. Never run by AI tools.
+- Select to the last file. Menu: none, a key alone. Key: Shift+End. Mark: change. Never run by AI tools.
+- Select to the next file. Menu: none, a key alone. Key: Shift+Down. Mark: change. Never run by AI tools.
+- Select to the previous file. Menu: none, a key alone. Key: Shift+Up. Mark: change. Never run by AI tools.
+- Switch between the list and the text. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
+- The Context menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
+- To the list. Menu: none, a key alone. Key: Tab. Also: Shift+Tab, Escape. Mark: open. Never run by AI tools.
+- To the text. Menu: none, a key alone. Key: Tab. Also: Shift+Tab. Mark: open. Never run by AI tools.
+- Up a level. Menu: none, a key alone. Key: Left. Also: Backspace. Mark: open. Never run by AI tools.
 
 ## axHelp
 

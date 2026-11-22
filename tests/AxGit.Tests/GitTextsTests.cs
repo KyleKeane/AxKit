@@ -89,6 +89,21 @@ public sealed partial class GitTextsTests
         Assert.Equal(["pull", "--ff-only"], GitTexts.PullArguments);
     }
 
+    /// <summary>
+    /// The commands on several files (AG-3.2a, AG-3.4a): every path after "--", so that a file named like an option
+    /// is a file; nothing but the paths given; the discard of the index and the working tree together.
+    /// </summary>
+    [Fact]
+    public void The_commands_on_several_files_put_every_path_after_the_two_dashes()
+    {
+        string[] paths = ["src/a.cs", "--force", "notes with spaces.txt"];
+        Assert.Equal(["add", "--", "src/a.cs", "--force", "notes with spaces.txt"], GitTexts.StageArguments(paths));
+        Assert.Equal(["restore", "--staged", "--", "src/a.cs", "--force", "notes with spaces.txt"], GitTexts.UnstageArguments(paths));
+        Assert.Equal(["restore", "--staged", "--worktree", "--", "src/a.cs", "--force", "notes with spaces.txt"], GitTexts.DiscardArguments(paths));
+        // Fifty paths a call: far under what one Windows command line holds, whatever the paths' lengths.
+        Assert.Equal(50, GitTexts.PathsPerCall);
+    }
+
     [Fact]
     public void A_push_ties_a_branch_without_an_upstream_to_origin()
     {

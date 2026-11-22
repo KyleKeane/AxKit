@@ -19,9 +19,11 @@ public sealed partial class CommandMarkTests
         (Path.Combine("src", "AxHelp", "HelpForm.cs"), "&Open the conversation", "starts Claude Code in an axClaude window (MC-6.5's NeverOpened)"),
         (Path.Combine("src", "AxHelp", "HelpForm.cs"), "Put a picture &file into the conversation...", "starts Claude Code in an axClaude window"),
         (Path.Combine("src", "AxKit.Forms", "TextEditorForm.Viewer.cs"), "Read the clipboard's &picture", "brings in the clipboard, which the AI tools could not read (MC-7.6)"),
-        (Path.Combine("src", "AxGit", "GitForm.cs"), "&Stage or unstage", "changes the repository"),
+        (Path.Combine("src", "AxGit", "GitForm.cs"), "&Stage", "changes the repository"),
+        (Path.Combine("src", "AxGit", "GitForm.cs"), "&Unstage", "changes the repository"),
         (Path.Combine("src", "AxGit", "GitForm.cs"), "Stage &all", "changes the repository"),
-        (Path.Combine("src", "AxGit", "GitForm.cs"), "&Unstage all", "changes the repository"),
+        (Path.Combine("src", "AxGit", "GitForm.cs"), "U&nstage all", "changes the repository"),
+        (Path.Combine("src", "AxGit", "GitForm.cs"), "&Commit...", "makes a commit"),
         (Path.Combine("src", "AxStart", "StartForm.cs"), "&Start", "starts a program"),
         (Path.Combine("src", "AxStart", "StartForm.cs"), "Start as &administrator", "starts a program"),
         (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "&New session...", "starts Claude Code"),
@@ -85,6 +87,10 @@ public sealed partial class CommandMarkTests
         // axProcess as a navigator (2026-11-22): Delete is the item window's command, itself marked act (the next
         // line), and the two menu items that show the key state act as well.
         (Path.Combine("src", "AxKit.Forms", "ItemForm.cs"), "Shared(new Command(\"Delete\", ItemKeys.Delete, () => WithRow(DeleteRow)) { When = InNavigator, Mark = CommandMark.Act });", "a navigator's Delete archives, removes, ends a process or deletes a startup entry"),
+        // axGIT as a navigator (2026-11-22): Enter on a branch switches to it and Delete discards changes, each the
+        // item window's key; the menu items that show the keys state act.
+        (Path.Combine("src", "AxGit", "GitForm.cs"), "Item(\"&Switch to branch\", OpenSelected, ItemKeys.Open, CommandMark.Act)", "switches the repository to another branch"),
+        (Path.Combine("src", "AxGit", "GitForm.cs"), "Item(\"Disca&rd changes...\", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act)", "discards changes for good"),
         (Path.Combine("src", "AxProcess", "ProcessForm.cs"), "Item(\"&End process...\", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act)", "ends a process"),
         (Path.Combine("src", "AxProcess", "ProcessForm.cs"), "Item(\"&Remove...\", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act)", "deletes an entry of what starts with Windows"),
         (Path.Combine("src", "AxKit.Forms", "ConsoleForm.cs"), "CommandMark.Act, SwitchFolder", "a console's recent folder starts Claude Code or a shell again"),

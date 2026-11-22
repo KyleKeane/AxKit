@@ -79,8 +79,8 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 - What: For things in levels: a list of rows you go into and out of, and beside it more of the row you are on.
 - Made of: the list; the list.
 - Moving: Right goes into a row that holds a level; Left and Backspace go up. Enter opens the row. Tab and the other pane keys switch to the second pane; Escape comes back.
-- Apps on it: axMedia, axTask, axProcess, axAutomate, axPass, axMCP.
-- To move onto it: axFile, axGIT.
+- Apps on it: axMedia, axTask, axProcess, axAutomate, axGIT, axPass, axMCP.
+- To move onto it: axFile.
 - The code: `ItemForm`, `src/AxKit.Forms/ItemForm.cs`.
 
 ### The hotkey window
@@ -93,7 +93,7 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 
 ## The apps
 
-17 apps: 14 on a type, 3 with a window of their own still to move.
+17 apps: 15 on a type, 2 with a window of their own still to move.
 
 | App | Type today | To be | Note |
 |---|---|---|---|
@@ -109,7 +109,7 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 | axProcess | navigator | navigator | Three lists of This computer, read off the UI thread, and no second pane; it starts inside Processes. |
 | axAutomate | navigator | navigator |  |
 | axTerminal | conversation | conversation |  |
-| axGIT | a window of its own | navigator | A window of its own today. Its three views to be three levels. |
+| axGIT | navigator | navigator | Three lists of the repository, read through git off the UI thread, with a text as second pane; it starts inside Changes. |
 | axPass | navigator | navigator |  |
 | axClaude | conversation | conversation |  |
 | axMCP | navigator | navigator |  |

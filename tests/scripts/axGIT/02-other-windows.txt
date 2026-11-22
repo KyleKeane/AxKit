@@ -30,10 +30,12 @@ expect commands "axClaude, access layer for Claude Code, Session, Show current r
 expect commands "axTerminal, access layer for your shell, Session, Show current repository in"
 expect commands "axFile, Session, Show current repository in"
 # Check: Open file in editor with no file selected says so
-# 2.5 Ctrl+E with no file in the list says so and starts nothing.
+# 2.5 Ctrl+E with no file in the list says so and starts nothing; Context, the menu of the row you are on, has no
+# row to act on and does not offer the command (docs/axKit/framework.md FW-4.10).
 keys ctrl+e
 expect said ! No file selected
-expect commands "Open file in editor, Context, Ctrl
+refuse commands "Open file in editor, Context, Ctrl
+expect commands "Nothing selected, Context"
 
 # Check: axDown's Show current file in lists axGIT
 # 2.3 axDown on a file of the repository: File, Show current file in, axGIT.

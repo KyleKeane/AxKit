@@ -21,12 +21,27 @@ command's in this version of axKit.
     The focus moves to Details (Text).
 3. Press Shift+Tab.
     The focus moves to Changes, 2 files (List): Untracked new.txt.
-4. Press F6 (Switch between the list and the details).
+4. Press F6 (Switch between the list and the text).
     The focus moves to Details (Text).
-5. Press Ctrl+Tab (Switch between the list and the details).
+5. Press Ctrl+Tab (Switch between the list and the text).
     The focus moves to Changes, 2 files (List): Untracked new.txt.
 
-### Switch between the views
+### Go up to the repository and into another list
+
+1. Press Left.
+    You hear: repo, 3 lists, Changes, 2 files.
+2. Press Left.
+    You hear the sound Edge.
+3. Press Down.
+4. Press Right.
+    You hear: Log, 2 commits.
+5. Press Backspace.
+    You hear: repo, 3 lists, Log, 2 commits.
+6. Press Up.
+7. Press Enter.
+    You hear: Changes, 2 files. Untracked new.txt.
+
+### Switch between the lists by their keys
 
 1. Press Alt+1 (Changes; Navigation menu).
     You hear: Changes, 2 files. Untracked new.txt.
@@ -50,14 +65,33 @@ Starts with: Open axGIT with the folder repo.
 
 ### Stage and unstage a file
 
-1. Press Space.
+1. Press Ctrl+Shift+S (Stage; Actions menu).
     You hear: Staged a.txt.
-2. Press Down.
+2. Press Ctrl+Shift+S (Stage; Actions menu).
+    You hear: a.txt is already staged.
+3. Press Down.
     It reads Untracked new.txt.
-3. Press Up.
+4. Press Up.
     It reads Modified a.txt, staged.
-4. Press Space.
+5. Press Ctrl+Shift+U (Unstage; Actions menu).
     You hear: Unstaged a.txt.
+6. Press Ctrl+Shift+U (Unstage; Actions menu).
+    You hear: a.txt is not staged.
+
+### Select files with Space and stage them together
+
+1. Press Space.
+    You hear: Selected.
+2. Press Shift+Down.
+3. Press Ctrl+Shift+S (Stage; Actions menu).
+    You hear: Staged 2 files.
+4. Press Ctrl+Shift+S (Stage; Actions menu).
+    You hear: Nothing to stage among the 2 selected files.
+5. Press Ctrl+Shift+U (Unstage; Actions menu).
+    You hear: Unstaged 2 files.
+6. Press Escape.
+    You hear: None selected.
+7. Press Home.
 
 ### Read the diff of a changed file
 
@@ -73,7 +107,7 @@ Starts with: Open axGIT with the folder repo.
     It reads  No newline at end of file.
 6. Press Down.
     It reads +changed world.
-7. Press Ctrl+Tab (Switch between the list and the details).
+7. Press Ctrl+Tab (Switch between the list and the text).
     The focus moves to Changes, 2 files (List): Modified a.txt, unstaged.
 
 ### Read an untracked file
@@ -84,21 +118,21 @@ Starts with: Open axGIT with the folder repo.
     You hear: Diff of new.txt, 4 lines.
 3. Press Down.
     It reads one.
-4. Press Ctrl+Tab (Switch between the list and the details).
+4. Press Ctrl+Tab (Switch between the list and the text).
     The focus moves to Changes, 2 files (List): Untracked new.txt.
 
 ### Stage all and unstage all
 
-1. Press Ctrl+Shift+A (Stage all; Actions menu).
+1. Choose Stage all in the Actions menu.
     You hear: Staged all.
-2. Press Ctrl+Shift+U (Unstage all; Actions menu).
+2. Choose Unstage all in the Actions menu.
     You hear: Unstaged all.
 
 ### Commit the staged changes
 
 1. Press Up.
     It reads Modified a.txt, unstaged.
-2. Press Space.
+2. Press Ctrl+Shift+S (Stage; Actions menu).
     You hear: Staged a.txt.
 3. Press Ctrl+Enter (Commit; Actions menu).
 4. Press Enter.
@@ -122,6 +156,18 @@ Starts with: Open axGIT with the folder repo.
 6. Press Enter.
     You hear: Discarded a.txt.
 
+### Discard the changes to the selected files
+
+1. Press F5 (Refresh; Session menu).
+    You hear: Refreshed: Changes, 2 files.
+2. Press Ctrl+A.
+    You hear: 2 selected.
+3. Press Delete.
+4. Press Enter.
+5. Press Delete.
+6. Press Alt+D.
+    You hear: Discarded a.txt.
+
 ## Read the history and switch branches
 
 Starts with: Open axGIT with the folder repo.
@@ -140,7 +186,7 @@ Starts with: Open axGIT with the folder repo.
     You hear: second commit.
 6. Press Down 2 times.
     You hear: a.txt.
-7. Press Ctrl+Tab (Switch between the list and the details).
+7. Press Ctrl+Tab (Switch between the list and the text).
     The focus moves to Log, 2 commits (List).
 
 ### Switch branches
@@ -215,16 +261,16 @@ The focus moves to Diff of a.txt (Text): +first paragraph marker.
 
 ### Move by paragraph in a commit's details
 
-1. Press Ctrl+Tab (Switch between the list and the details).
+1. Press Ctrl+Tab (Switch between the list and the text).
 2. Press Alt+2 (Log; Navigation menu).
     You hear: Log, 1 commit.
 3. Press Enter.
     You hear: lines.
-4. Press Ctrl+Down.
+4. Press Ctrl+Down (Next section).
     It reads first.
-5. Press Ctrl+Down.
+5. Press Ctrl+Down (Next section).
     It reads a.txt.
-6. Press Ctrl+Tab (Switch between the list and the details).
+6. Press Ctrl+Tab (Switch between the list and the text).
 7. Press Alt+1 (Changes; Navigation menu).
     You hear: Changes, 1 file.
 

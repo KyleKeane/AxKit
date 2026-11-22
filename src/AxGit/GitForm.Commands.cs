@@ -8,39 +8,61 @@ public sealed partial class GitForm
 {
     // ---- changes (AG-3) ----
 
-    private async Task StageToggleAsync()
+    /// <summary>
+    /// Actions → Stage, Unstage (AG-3.2; Space staged or unstaged the one file until 2026-11-22): the selected
+    /// files, or the file you are on when none is selected. Stage takes the files with anything unstaged, Unstage
+    /// the files with anything staged; a conflict is never staged from here. One sentence: "Staged src/Foo.cs",
+    /// "Staged 3 files", or why nothing was done. The selection stays, so that Commit can follow.
+    /// </summary>
+    private async Task StageFilesAsync(bool stage)
     {
-        if (!InView(View.Changes))
+        if (FilesInHand() is not { } files)
         {
             return;
         }
 
-        if (CurrentFile() is not { } file)
+        var able = files.Where(file => stage ? file.Unstaged && file.CanStage : file.Staged).ToList();
+        if (able.Count == 0)
         {
-            Announce("No file selected", true);
+            Announce(NothingToStage(files, stage), true);
             return;
         }
 
-        if (!file.CanStage)
+        var paths = able.Select(file => file.Path).ToList();
+        for (var at = 0; at < paths.Count; at += GitTexts.PathsPerCall)
         {
-            Announce("A conflict: resolve it in the editor or the terminal first", true);
-            return;
+            var some = paths.Skip(at).Take(GitTexts.PathsPerCall);
+            var result = await RunGitAsync(stage ? GitTexts.StageArguments(some) : GitTexts.UnstageArguments(some), GitRunner.Short, stage ? "stage" : "unstage");
+            if (result is null)
+            {
+                return;
+            }
+
+            if (!result.Ok)
+            {
+                Failed(stage ? "Stage failed" : "Unstage failed", result);
+                await RefreshAsync(announce: false);
+                return;
+            }
         }
 
-        var result = await RunGitAsync(file.StageArguments, GitRunner.Short, file.Unstaged ? "stage" : "unstage");
-        if (result is null)
-        {
-            return;
-        }
-
-        if (!result.Ok)
-        {
-            Failed(file.Unstaged ? "Stage failed" : "Unstage failed", result);
-            return;
-        }
-
-        Announce(file.StageAnnouncement, true);
+        var verb = stage ? "Staged" : "Unstaged";
+        Announce(able.Count == 1 ? $"{verb} {able[0].Path}" : $"{verb} {able.Count} files", true);
         await RefreshAsync(announce: false);
+    }
+
+    /// <summary>Why Stage or Unstage did nothing: a conflict, a file already staged or not staged, or none among the selected.</summary>
+    private static string NothingToStage(IReadOnlyList<ChangedFile> files, bool stage)
+    {
+        if (files.Count > 1)
+        {
+            return stage ? $"Nothing to stage among the {files.Count} selected files" : $"Nothing staged among the {files.Count} selected files";
+        }
+
+        var file = files[0];
+        return stage && !file.CanStage ? "A conflict: resolve it in the editor or the terminal first"
+            : stage ? $"{file.Path} is already staged"
+            : $"{file.Path} is not staged";
     }
 
     private async Task StageAllAsync(bool stage)
@@ -64,11 +86,6 @@ public sealed partial class GitForm
     /// <summary>Enter on a file (AG-3.3): its diff in the details, with the focus on the first line; an untracked file shows itself.</summary>
     private async Task ShowDiffAsync()
     {
-        if (!InView(View.Changes))
-        {
-            return;
-        }
-
         if (_root is null || CurrentFile() is not { } file)
         {
             Announce(_root is null ? "No repository" : "No file selected", true);
@@ -95,7 +112,7 @@ public sealed partial class GitForm
             }
 
             var lines = text.Length == 0 ? 0 : text.Split('\n').Length;
-            ShowDetails($"Diff of {file.Path}", $"Untracked file, {lines} lines\n{text}", focus: true);
+            ShowText($"Diff of {file.Path}", $"Untracked file, {lines} lines\n{text}", focus: true);
             return;
         }
 
@@ -117,23 +134,27 @@ public sealed partial class GitForm
             return;
         }
 
-        ShowDetails($"Diff of {file.Path}", result.Output, focus: true);
+        ShowText($"Diff of {file.Path}", result.Output, focus: true);
     }
 
-    /// <summary>Changes → Discard changes… (Delete, AG-3.4): a question first; an untracked file is not deleted from here.</summary>
+    /// <summary>
+    /// Context → Discard changes… (Delete, AG-3.4): a question first; an untracked file is not deleted from here.
+    /// With files selected, the changes to all of them after one question (<see cref="DiscardSeveral"/>).
+    /// </summary>
     private void Discard()
     {
-        if (!InView(View.Changes))
+        if (FilesInHand() is not { } files)
         {
             return;
         }
 
-        if (CurrentFile() is not { } file)
+        if (files.Count > 1)
         {
-            Announce("No file selected", true);
+            DiscardSeveral(files);
             return;
         }
 
+        var file = files[0];
         if (file.Kind == ChangeKind.Untracked)
         {
             Announce("Untracked file: delete it in File Explorer", true);
@@ -159,6 +180,53 @@ public sealed partial class GitForm
         })));
     }
 
+    /// <summary>
+    /// Delete with several files selected (AG-3.4a, bundle AX-8.16): one question that names them, Cancel the
+    /// default, since what is discarded cannot be brought back; the untracked files among them are named as left
+    /// alone, and with only such files selected nothing is asked. One sentence, "Discarded 3 files"; the selection
+    /// given up and the list read again.
+    /// </summary>
+    private void DiscardSeveral(IReadOnlyList<ChangedFile> files)
+    {
+        var tracked = files.Where(file => file.Kind != ChangeKind.Untracked).ToList();
+        var untracked = files.Count - tracked.Count;
+        if (tracked.Count == 0)
+        {
+            Announce("Untracked files: delete them in File Explorer", true);
+            return;
+        }
+
+        var text = "They cannot be brought back.\n" + string.Join("\n", tracked.Select(file => file.Path));
+        if (untracked > 0)
+        {
+            text += $"\nLeft alone: {untracked} untracked {(untracked == 1 ? "file" : "files")}, which File Explorer deletes.";
+        }
+
+        ShowNotice(Notice.Ask($"Discard the changes to {tracked.Count} {(tracked.Count == 1 ? "file" : "files")}?", text, "&Discard", () => Do(async () =>
+        {
+            var paths = tracked.Select(file => file.Path).ToList();
+            for (var at = 0; at < paths.Count; at += GitTexts.PathsPerCall)
+            {
+                var result = await RunGitAsync(GitTexts.DiscardArguments(paths.Skip(at).Take(GitTexts.PathsPerCall)), GitRunner.Short, "discard");
+                if (result is null)
+                {
+                    return;
+                }
+
+                if (!result.Ok)
+                {
+                    Failed("Discard failed", result);
+                    await RefreshAsync(announce: false);
+                    return;
+                }
+            }
+
+            Announce(tracked.Count == 1 ? $"Discarded {tracked[0].Path}" : $"Discarded {tracked.Count} files", true);
+            Selection.Clear();
+            await RefreshAsync(announce: false);
+        }), cancelIsDefault: true));
+    }
+
     /// <summary>Changes → Commit… (Ctrl+Enter, AG-3.5): the message in a notice, then git commit.</summary>
     private void Commit()
     {
@@ -171,7 +239,7 @@ public sealed partial class GitForm
         if (_busy is not null)
         {
             // A stage or its refresh still runs: the count below is the one before it (found by tools/AxAutomate,
-            // 2026-10-23: Space then Ctrl+Enter said "Nothing staged").
+            // 2026-10-23: the stage key then Ctrl+Enter said "Nothing staged").
             Announce("Working…", true);
             return;
         }
@@ -179,7 +247,7 @@ public sealed partial class GitForm
         var staged = _repo.StagedCount;
         if (staged == 0)
         {
-            Announce("Nothing staged. Space stages a file", true);
+            Announce($"Nothing staged. {BundleKeys.Text(AxGitKeys.Stage).TrimEnd('.')} stages the selected files", true);
             return;
         }
 
@@ -229,18 +297,13 @@ public sealed partial class GitForm
             return;
         }
 
-        ShowDetails($"Commit {commit.Hash}", result.Output, focus: true);
+        ShowText($"Commit {commit.Hash}", result.Output, focus: true);
     }
 
     // ---- branches (AG-5) ----
 
     private async Task SwitchBranchAsync()
     {
-        if (!InView(View.Branches))
-        {
-            return;
-        }
-
         if (CurrentBranch() is not { } branch)
         {
             Announce("No branch selected", true);

@@ -10,7 +10,7 @@ The notes of each piece are in `src/AxKit.Forms/notes`, one file per kind of win
 - `notes/controls.md`, the shared controls, keys and sounds: `EventDoor` (the one place that plays a sound: raise the kind of event), `Sounds`, `EditKeys.Page`, `EditKeys.Paragraph`, `EditKeys`, `AxKitTextBox`, `WindowsOpenWith`, `User32`, `Announcer`, `ListSelection` with `SelectionKeys` (selecting several rows of a list, the same in every window), `AxKitList`, `AxKitCheckBox`, `ChoiceItems<T>`, `PrivateClipboard`, `WindowAccessibleObject`, `StatusLayout`, `BundleKeys`.
 - `notes/console.md`, the console window (axClaude, axTerminal): `ConsoleForm`, `TranscriptView` with `TranscriptKeys` and `QuickKey`, `ControlArea` with `ListKeys`.
 - `notes/editor.md`, the text editor shell (axDown, axJSON, axPreview): `MarkdownKeys`, `TextJump`, `TextEditorForm`, `EditorApp`, `EditorKeys`, `EditorHost`.
-- `notes/item.md`, the item window (axTask, axPass, axMCP, axAutomate) and the list views: `ContextBarMenu`, `ListViewState`, `ItemForm`, `ItemKeys`, `ItemRow`, `ItemDetail`, `ItemDetailLine`.
+- `notes/item.md`, the item window, the bundle's navigator (axTask, axPass, axMCP, axAutomate, axMedia, axProcess, axGIT): `ContextBarMenu`, `ItemForm`, `ItemKeys`, `ItemRow`, `ItemDetail`, `ItemDetailLine`.
 - `notes/hotkey.md`, the hotkey window (axStart, axClip, axHelp): `HotkeyForm`.
 - `notes/ai-and-automation.md`, AI help, the AI tools and the automation channel: `AutomationChannel`, AI help (`AxKitForm.Ai.cs`, `AiHelpFlow`), the AI tools (`McpChannel`, `McpBroker`, `AxKitForm.Mcp.cs`, `AiToolsSetup`), `UserPipe`, `WindowReading`.
 

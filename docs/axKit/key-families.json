@@ -173,7 +173,7 @@
         { "chord": "f2", "apps": ["axAutomate", "axFile", "axMCP", "axPass", "axTask"], "does": "Rename", "kind": "act on what is selected; Windows' own key for it" },
         { "chord": "f2", "apps": ["axAutomate", "axMCP", "axPass", "axTask"], "does": "Rename the field", "kind": "act on what is selected" },
         { "chord": "f3", "apps": ["axAutomate", "axCalc", "axClaude", "axDown", "axFile", "axGIT", "axJSON", "axMCP", "axMedia", "axPass", "axPreview", "axProcess", "axTask", "axTerminal"], "does": "Find next", "kind": "go to a place; a bundle key" },
-        { "chord": "f3", "apps": ["axGIT"], "does": "Find next in the list", "kind": "go to a place" },
+        { "chord": "f3", "apps": ["axGIT"], "does": "Find next in the text", "kind": "go to a place" },
         { "chord": "f4", "apps": "all", "does": "Send a report", "kind": "open or confirm; a bundle key" },
         { "chord": "f5", "apps": ["axFile", "axGIT", "axMCP", "axPass", "axProcess", "axTask"], "does": "Refresh", "kind": "reads again; Windows' own key for it" },
         { "chord": "f5", "apps": ["axStart"], "does": "Refresh programs", "kind": "reads again" },
@@ -182,7 +182,7 @@
         { "chord": "f6", "apps": ["axAutomate", "axMCP", "axPass", "axTask"], "does": "Switch between the navigator and the detail pane", "kind": "move between panes; a bundle key" },
         { "chord": "f6", "apps": ["axDown", "axJSON", "axPreview"], "does": "Between the text and the details", "kind": "move between panes" },
         { "chord": "f6", "apps": ["axClaude", "axTerminal"], "does": "Switch between the view and the field", "kind": "move between panes" },
-        { "chord": "f6", "apps": ["axGIT"], "does": "Switch between the list and the details", "kind": "move between panes" },
+        { "chord": "f6", "apps": ["axGIT"], "does": "Switch between the list and the text", "kind": "move between panes" },
         { "chord": "f6", "apps": ["axMedia"], "does": "Back to the list", "kind": "move between panes" },
         { "chord": "f6", "apps": ["axCalc"], "does": "Switch between the history and the field", "kind": "move between panes" },
         { "chord": "f6", "apps": ["axFile"], "does": "Switch between the folder list and the Actions list", "kind": "move between panes" }

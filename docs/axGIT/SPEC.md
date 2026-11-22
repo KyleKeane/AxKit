@@ -14,8 +14,10 @@ An **access layer** for Git (bundle AX-11, 2026-10-29): titled "axGIT, access la
 A developer who works in axClaude and axDown wants to know the state of the repository under them and to act on it
 without a terminal: which files changed, what changed in one of them, stage some, commit with a message, look at the
 log, switch a branch, pull and push. axGIT opens one repository in one window, named after it. The window is one list
-with three views (Changes, Log, Branches), one read-only text for details (a diff, a commit, a command's output), a
-status bar with the branch, and the bundle's notices for the commit message and every question. Everything is the
+that shows one of the repository's three lists (Changes, Log, Branches), one read-only text for details (a diff, a
+commit), a status bar with the branch, and the bundle's notices for the commit message and every question. It is
+a navigator, as axTask's and axProcess's (AG-2.2): the three lists are rows of the repository's level, the window
+starts inside Changes, Space selects files, and staging, unstaging and discarding act on the selected files. Everything is the
 `git` program the user already has: axGIT runs it and reads its output, and reimplements nothing (AG-D2).
 
 The window is reached from the other windows: axClaude's Session → Show current folder in ▸ axGIT and the editors'
@@ -43,7 +45,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
 ## 3. Scenarios
 
 1. In axClaude on a project, Alt+S, I, G: axGIT opens on the repository, the Changes list focused: "Changes, 3 files.
-   Modified src/Foo.cs, unstaged, 1 of 3". Space: "Staged src/Foo.cs". Ctrl+Enter, type the message, Enter:
+   Modified src/Foo.cs, unstaged, 1 of 3". Ctrl+Shift+S: "Staged src/Foo.cs". Ctrl+Enter, type the message, Enter:
    "Committed 3a1f2c0". Alt+W, O, 1 back to axClaude.
 2. Enter on a changed file: the diff in the details text, the focus on its first line; Down Arrow reads it line by
    line; Ctrl+Tab back to the list.
@@ -108,18 +110,26 @@ opens in the editor for its type (AG-1.4, AG-D1).
 
 ### AG-2 The window
 
-- AG-2.1 From the top: the menu bar; the list, named with its view and count ("Changes, 3 files", "Log, 200 commits",
-  "Branches, 2"); the details text under it, read-only, named "Details" and, after a diff, "Diff of <file>"; the
+- AG-2.1 From the top: the menu bar; the list, named with what it shows and its count ("Changes, 3 files", "Log, 200
+  commits", "Branches, 2"; "<repository>, 3 lists" at the repository's level); the details text under it, read-only, named "Details" and, after a diff, "Diff of <file>"; the
   status bar. Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6 move between the list and the details (AX-8.2); a
   notice takes the place of both while it shows (AX-6.4).
-- AG-2.2 Views: Alt+1 Changes, Alt+2 Log, Alt+3 Branches (Navigation). Ctrl+1, Ctrl+2 and Ctrl+3, the keys until 2026-11-16, stay as further keys of the same commands for now, shown in no menu, with nothing extra said (bundle AX-8.14). The key says the list's name and the item
-  the selection is on, also when the list already shows the view (axClaude D26); while a command runs it says
-  "Working…" and the view stays (2026-10-23: the switch went through with an empty list under the new name). Each
-  view keeps its selection while the window is open, by the item's key (the file's path, the commit's hash, the
-  branch's name), taken before the lists change (2026-10-23: taken after, two views with the same count swapped
-  selections); F5 refreshes the view and the status bar the same way and says "Refreshed: <the list's name>". Each view is one
-  record in the window (`AxKit.Forms/ListViewState`, shared with axProcess: the list's name, the items, their keys, whether it has been read since it was
-  last made stale, the selected key); the three records are the whole state of the list (2026-10-23).
+- AG-2.2 **Levels** (a navigator, the bundle's item window, `docs/axKit/framework.md` FW-4.10; since 2026-11-22, three
+  views of one list until then, AG-D3). The repository's level, "<repository>, 3 lists", has three rows, Changes,
+  Log and Branches, each with its count once it has been read ("Changes, 3 files"). Right or Enter on one goes into
+  it; Left or Backspace in a list goes up, onto the list left; Left at the repository's level and Right on a row of
+  a list play the edge sound. The window starts inside Changes. Alt+1 Changes, Alt+2 Log and Alt+3 Branches go
+  straight into a list from anywhere (Navigation; Ctrl+1, Ctrl+2 and Ctrl+3, the keys until 2026-11-16, stay as
+  further keys of the same commands for now, shown in no menu, with nothing extra said, bundle AX-8.14). The key
+  says the list's name and the row you are on, also when that list already shows (axClaude D26); while a command
+  runs it says "Working…" and the list stays (2026-10-23: the switch went through with an empty list under the new
+  name; since 2026-11-22 the level changes only once the list's read is in). Each list keeps the row it was left on
+  while the window is open, by its key (the file's path, the commit's hash, the branch's name); F5 reads the status
+  and the list shown again, at the repository's level all three, and says "Refreshed: <the list's name>". A list
+  is read on its first visit and again after a commit, a switch or a fetch made it stale.
+  Space selects files in Changes (bundle AX-8.16; AG-3.2, AG-3.4a): a selected file reads ", selected", the status
+  bar counts them, Shift with an arrow selects as it moves, Shift+Space to here, Ctrl+A all, Ctrl+Shift+A and
+  Escape none. A commit and a branch are not selected, since nothing acts on several of them: the edge sound.
 - AG-2.3 The title is `<repository folder name> - axGIT`, "No repository - axGIT" without one. The status bar's left
   label: the branch, then the upstream state when there is an upstream ("main · 2 ahead" / "main · 1 behind" / "main
   · up to date" / "main · no upstream"), then the counts ("3 changed, 1 staged"); "Working: pull…" while a command
@@ -137,10 +147,18 @@ opens in the editor for its type (AG-1.4, AG-D1).
   Conflict; states "staged", "unstaged", "staged and unstaged"; an untracked file and a conflict have no state. Order:
   conflicts, then the rest as git lists them. The list's name is "Changes, N files" ("Changes, no changes" when the
   tree is clean).
-- AG-3.2 Space on an item stages the whole file (`git add -- <path>`, also an untracked one) when any of it is
-  unstaged, otherwise unstages it (`git restore --staged -- <path>`); the item's text changes in place and the
-  announcement is "Staged <path>" or "Unstaged <path>". Changes → Stage all (Ctrl+Shift+A, `git add -A`) and Unstage
-  all (Ctrl+Shift+U, `git restore --staged .`) say "Staged all" and "Unstaged all". A conflict is not staged from here.
+- AG-3.2 **Stage** (Actions and Context, Ctrl+Shift+S) and **Unstage** (Ctrl+Shift+U) act on the selected files, or
+  on the file you are on when none is selected (2026-11-22; until then Space staged the file you were on or
+  unstaged it, and Space selects now). Stage takes each whole file with anything unstaged (`git add -- <paths>`,
+  an untracked one too), Unstage each with anything staged (`git restore --staged -- <paths>`), one git call for up
+  to fifty paths, every path after `--`. The rows change in place, the selection stays so that Commit can follow,
+  and one sentence is said: "Staged <path>" or "Staged 3 files", "Unstaged <path>" or "Unstaged 3 files". With
+  nothing to do: "<path> is already staged", "<path> is not staged", "Nothing to stage among the 3 selected files",
+  "Nothing staged among the 3 selected files". A conflict is not staged from here ("A conflict: resolve it in the
+  editor or the terminal first"). In another list than Changes both say "For the files of Changes: Alt+1".
+  Actions → Stage all (`git add -A`) and Unstage all (`git restore --staged .`) say "Staged all" and "Unstaged
+  all", whatever is selected; they have no key since 2026-11-22 (Ctrl+Shift+A, Stage all's, is the bundle's
+  Deselect all, and Ctrl+Shift+U is Unstage): Ctrl+A, then Ctrl+Shift+S, does the same with keys.
 - AG-3.3 Enter on an item shows its diff in the details ("Diff of <path>"): `git diff --cached` for a staged file,
   `git diff` for an unstaged one, `git diff HEAD` for one that is both, the file's own text for an untracked one
   (first 200 KB, "Untracked file, N lines" as the first line), `git diff` for a conflict. The focus goes to the first
@@ -148,7 +166,14 @@ opens in the editor for its type (AG-1.4, AG-D1).
 - AG-3.4 Changes → Discard changes… (Delete) on a tracked file asks "Discard the changes to <path>? They cannot be
   brought back." with Discard and Cancel; Discard runs `git restore --staged --worktree -- <path>` and says
   "Discarded <path>". An untracked file is not deleted from here ("Untracked file: delete it in File Explorer").
-- AG-3.5 Changes → Commit… (Ctrl+Enter): with nothing staged, "Nothing staged. Space stages a file" and no notice;
+  Delete on a commit says "A commit is not removed here", on a branch "A branch is not deleted here", on a list of
+  the repository's level "A list: Right goes into it".
+- AG-3.4a **Several files** (2026-11-22, AX-8.16). With two or more files selected, Delete asks once, "Discard the
+  changes to 3 files?", with "They cannot be brought back." and each path; the untracked files among them are
+  counted in a line of their own as left alone, and with only untracked files selected nothing is asked ("Untracked
+  files: delete them in File Explorer"). Discard (Alt+D) and Cancel, **Cancel the default**, since several files
+  go at once. One sentence, "Discarded 3 files"; the selection is given up and the list read again.
+- AG-3.5 Changes → Commit… (Ctrl+Enter): with nothing staged, "Nothing staged. Ctrl+Shift+S stages the selected files" and no notice;
   otherwise the notice "Commit N staged files" with a text field "Message" (required; the first line is the subject)
   and the buttons Commit and Cancel. Commit runs `git commit -m <message>` and says "Committed <short hash>"; the
   Changes view refreshes. A failure (a hook, an identity not set) is the notice **Commit failed** with git's output.
@@ -184,38 +209,45 @@ opens in the editor for its type (AG-1.4, AG-D1).
 
 - AG-6.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** Open repository… Ctrl+O | Open recent
   repository ▸ (ten, "1. name (path)", AX-9.5; "No recent repositories" when none) | ─ | Refresh F5 | ─ | Show current
-  repository in ▸ (File Explorer Ctrl+W | axClaude | axTerminal | axFile) | ─ | Exit Alt+F4. **Actions (A):** Stage all
-  Ctrl+Shift+A | Unstage all Ctrl+Shift+U | Commit… Ctrl+Enter | ─ | New branch… Ctrl+N | Fetch Ctrl+Shift+F | Pull
-  Ctrl+Shift+L | Push Ctrl+Shift+H. **Navigation (N):** Changes Alt+1 | Log Alt+2 | Branches Alt+3 (the View menu's
-  until 2026-11-11). **Context (C)**, what acts on the line selected by the view shown (AX-9.11; Shift+F10, the
-  Applications key and a right click in the list): in Changes, Stage or unstage Space | Show diff Enter | Open file in
-  editor Ctrl+E | Discard changes… Delete; in Log, Show the commit Enter; in Branches, Switch to branch Enter; "Nothing
-  selected" on an empty list. **Options (O):** Text ▸ (Font… | Larger text Ctrl+Plus | Smaller text Ctrl+Minus |
+  repository in ▸ (File Explorer Ctrl+W | axClaude | axTerminal | axFile) | ─ | Exit Alt+F4. **Actions (A):** Stage
+  Ctrl+Shift+S | Unstage Ctrl+Shift+U | Stage all | Unstage all | Commit… Ctrl+Enter | ─ | New branch… Ctrl+N |
+  Fetch Ctrl+Shift+F | Pull Ctrl+Shift+L | Push Ctrl+Shift+H | ─ | Select all files Ctrl+A | Deselect all
+  Ctrl+Shift+A. **Navigation (N):** Changes Alt+1 | Log Alt+2 | Branches Alt+3 | ─ | Up to the repository Left (the
+  View menu's until 2026-11-11). **Context (C)**, what acts on the row you are on, by its kind (AX-9.11; Shift+F10,
+  the Applications key and a right click in the list): on a file, Show diff Enter | Stage Ctrl+Shift+S | Unstage
+  Ctrl+Shift+U | Open file in editor Ctrl+E | Discard changes… Delete | ─ | Select or deselect Space | Select to
+  here Shift+Space; on a commit, Show the commit Enter; on a branch, Switch to branch Enter; on a list of the
+  repository's level, Open Enter; "Nothing selected" on an empty list. **Options (O):** Text ▸ (Font… | Larger text Ctrl+Plus | Smaller text Ctrl+Minus |
   Windows text size) | General ▸ (Check for updates at start ✓) | Developer ▸ (Open settings file).
   **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User
   guide | ─ | Git resources ▸ (git-scm.com | Pro Git book). Every item has a mnemonic (AX-7.4).
 - AG-6.2 Keys (AX-8). Bundle-wide: F1, the control keys, Ctrl+F, F3, Shift+F3, Ctrl+S (axGIT holds nothing to save:
-  "Nothing to save here. Space stages, Ctrl+Enter commits"), Ctrl+Enter (the bundle's main action, AX-8.10: here Commit, AG-3.5, a command on `BundleKeys.MainAction`), Ctrl+Plus, Ctrl+Minus, the edit keys of the details,
-  Alt+F4. Window-specific (`AxGitKeys`): Ctrl+O, F5, Ctrl+W, Alt+1, Alt+2, Alt+3 (with Ctrl+1, Ctrl+2, Ctrl+3 as their further keys, AX-8.14), Shift+F10 and the Applications key, Space and Enter and Delete in the
-  list, Ctrl+Shift+A, Ctrl+Shift+U, Ctrl+E, Ctrl+N, Ctrl+Shift+F, Ctrl+Shift+L, Ctrl+Shift+H. Space,
-  Enter and Delete act only while the list has the focus; in the details they are the control's own. The collision
-  test covers the table. A command of one view asked for in another says which view first: "Changes view first:
-  Alt+1" for Space, Delete, Stage or unstage, Show diff and Discard changes, "Branches view first: Alt+3" for
-  Switch to branch (one rule since 2026-10-23: Space, Enter and Show diff switched the view silently, Delete said this).
+  "Nothing to save here. Ctrl+Shift+S stages, Ctrl+Enter commits"), Ctrl+Enter (the bundle's main action, AX-8.10: here Commit, AG-3.5, a command on `BundleKeys.MainAction`), Ctrl+Plus, Ctrl+Minus, the edit keys of the details,
+  Alt+F4. Window-specific (`AxGitKeys`): Ctrl+O, F5, Ctrl+W, Alt+1, Alt+2, Alt+3 (with Ctrl+1, Ctrl+2, Ctrl+3 as their further keys, AX-8.14), Ctrl+Shift+S, Ctrl+Shift+U, Ctrl+E, Ctrl+N, Ctrl+Shift+F, Ctrl+Shift+L, Ctrl+Shift+H, and the navigator's keys
+  (`ItemKeys`, `SelectionKeys`), named in the table by what they do here: Right, Left, Backspace, Enter, Delete,
+  Tab and Shift+Tab, Space and the other selection keys, Shift+F10 and the Applications key. The navigator's keys
+  act only while the list has the focus; in the details they are the control's own, but for Tab, Shift+Tab and
+  Escape, which come back to the list. F2, Ctrl+Z, Ctrl+Shift+N and Ctrl+Q, a navigator's rename, undo, new list and
+  read in full, are no keys of this window, which has no use for them. The collision test covers the table. Enter
+  and Delete act by the kind of row (AG-3.3, AG-3.4, AG-4.2, AG-5.2), so the rule of 2026-10-23, that a command of
+  one view asked for in another said which view first ("Changes view first: Alt+1"), is gone with the views; what
+  is left of it is Stage and Unstage outside Changes (AG-3.2).
 - AG-6.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axGIT/user-guide.md` is embedded (Help → User guide);
   About is the bundle's (AX-9.9).
 
 ### AG-7 Announcements
 
 One UI Automation notification each, on the list, or on the notice while one shows (AX-7.3): "Staged <path>",
-"Unstaged <path>", "Staged all", "Unstaged all", "Nothing staged. Space stages a file", "Committed <hash>", "Discarded
-<path>", "Untracked file: delete it in File Explorer", "No changes", "Diff of <path>, N lines", "Commit <hash>, N
+"Unstaged <path>", "Staged 3 files", "Unstaged 3 files" and the four sentences of AG-3.2 for nothing to do, "Staged
+all", "Unstaged all", "Nothing staged. Ctrl+Shift+S stages the selected files", "Committed <hash>", "Discarded
+<path>", "Discarded 3 files", the selection's words (AX-8.16), "Untracked file: delete it in File Explorer", "No changes", "Diff of <path>, N lines", "Commit <hash>, N
 lines", "Switched to <name>", "Already on <name>", "Fetched", "Pulled", "Already up to date", "Pushed", "Refreshed:
-<list name>", "Changes, N files" and the other view names when the view's key is pressed on the view already shown,
-"Working…" when a command is asked for while one runs, "Nothing to save here. Space stages, Ctrl+Enter commits",
+<list name>", "Changes, N files" and the other lists' names when a list's key is pressed in the list already shown,
+"<repository>, 3 lists, <the list left>" on the way up,
+"Working…" when a command is asked for while one runs, "Nothing to save here. Ctrl+Shift+S stages, Ctrl+Enter commits",
 "Not found" (find), "Text size n", "Windows text size", "Copied diagnostics", "No repository" (a command without
-one), "No file selected", "No commit selected", "No branch selected", "Changes view first: Alt+1", "Branches view first:
-Alt+3" (a command of one view asked for in another, AG-6.2), "A conflict: resolve it in the editor or the terminal first" (a pull or a switch that git refuses for
+one), "No file selected", "No commit selected", "No branch selected", "For the files of Changes: Alt+1" (Stage or Unstage
+in another list, AG-3.2), "A commit is not removed here", "A branch is not deleted here", "A conflict: resolve it in the editor or the terminal first" (a pull or a switch that git refuses for
 one). A failure that git explains in one line is announced as "Failed: <line>"; more than one line is a notice.
 
 ### AG-8 Settings, status
@@ -268,6 +300,10 @@ have been the third copy of them.
 - **AG-D3 One list with views, the state in the words.** NVDA reads a list box best. The staged state is part of the
   item's text ("…, staged") rather than a check box, so that arrows explore without touching anything and Space is
   the one key that acts; the same list shows the log and the branches with Enter acting on the view's item.
+  **Changed on 2026-11-22** (`docs/axKit/framework.md` FW-4.10; the maintainer had not used axGIT and kept nothing
+  of its design: "we can potentially simplify it into one of the interface templates"): the three views are three
+  lists one goes into (AG-2.2), and Space selects, as everywhere in axKit (bundle AX-8.16), so that staging is a
+  command on the selected files (AG-3.2). The staged state stays in the row's words.
 - **AG-D4 Streamlined scope.** The daily set only; everything else is a non-goal until it is asked for, since the
   whole of git is endless and a file-manager-sized menu is what the user said to avoid.
 - **AG-D5 Announce on demand, focus to the details on Enter.** Nothing speaks on arrows. Enter on a file or a commit

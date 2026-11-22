@@ -11,7 +11,7 @@ public static class HelpText
         "axGIT",
         [
             "Tab, Shift+Tab, Ctrl+Tab or F6: switch between the list and the details",
-            "Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on the line selected in the view shown",
+            "Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on the row you are on",
             "Ctrl+F: find in the list while the list has the focus, in the details otherwise. F3 and Shift+F3: next or previous match",
         ]) + """
         ## axGIT
@@ -19,12 +19,15 @@ public static class HelpText
           Ctrl+O: open a repository (the Windows folder picker; any folder inside it will do)
           F5: refresh the list and the status bar
           Ctrl+W: show the repository's folder in File Explorer
-          Alt+1, Alt+2, Alt+3: the Changes, Log and Branches view of the list; pressed on the view already shown, the key says its name. Ctrl+1, Ctrl+2 and Ctrl+3, their keys until now, still work
-          In the list
-            Space: stage the file, or unstage it when it is staged; axGIT says which
+          The window starts in Changes, one of three lists of the repository: Changes, Log and Branches
+          Left or Backspace: up to the repository, where the three lists are rows. Right or Enter on one: into it
+          Alt+1, Alt+2, Alt+3: straight to Changes, Log or Branches from anywhere; pressed in the list already shown, the key says its name. Ctrl+1, Ctrl+2 and Ctrl+3, their keys until now, still work
+          In a list
             Enter: in Changes, the file's diff in the details; in Log, the commit's details; in Branches, switch to the branch
-            Delete: discard the changes to the file, after a question
-          Ctrl+Shift+A, Ctrl+Shift+U: stage all, unstage all
+            Space: select the file you are on in Changes, or deselect it again; a selected file reads ", selected". Shift+Down, Shift+Up, Shift+Home, Shift+End: select as you move. Shift+Space: select from the nearest selected file to this one. Ctrl+A: select every file. Ctrl+Shift+A, or Escape: deselect all
+            Delete: discard the changes to the file, after a question; with files selected, to all of them after one question whose default is Cancel
+            Right on a row that is no list, Left at the repository: the edge sound
+          Ctrl+Shift+S: stage the selected files, or the file you are on. Ctrl+Shift+U: unstage them. Actions, Stage all and Unstage all do every file
           Ctrl+E: open the file in axDown, or axJSON for a .json file
           Ctrl+Enter: commit what is staged; a notice asks for the message
           Ctrl+N: a new branch, after its name; axGIT switches to it

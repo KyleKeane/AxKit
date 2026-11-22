@@ -52,8 +52,25 @@ expect state no upstream
 expect state 2 changed, 0 staged
 expect state \\repo"]
 
-# Goal: Switch between the views
-# 1.4 The views by Alt+1, 2, 3, each said with the item it is on; Alt+1 back on the item it had.
+# Goal: Go up to the repository and into another list
+# 1.4b The three lists are rows of the repository (docs/axKit/framework.md FW-4.10): Left goes up, onto the list
+# left, and at the top plays the edge sound; Right, or Enter, goes into the list you are on, read through git.
+keys left
+expect said ! repo, 3 lists, Changes, 2 files
+keys left
+expect said ♪ Edge
+keys down
+expect focus "value":"Log"
+keys right
+expect said ! Log, 2 commits.
+keys backspace
+expect said ! repo, 3 lists, Log, 2 commits
+keys up
+keys enter
+expect said ! Changes, 2 files. Untracked new.txt
+
+# Goal: Switch between the lists by their keys
+# 1.4 The lists by Alt+1, 2, 3, each said with the row it is on; Alt+1 back on the row it had.
 keys alt+1
 expect said ! Changes, 2 files. Untracked new.txt
 keys alt+2
@@ -66,20 +83,26 @@ keys alt+1
 expect said ! Changes, 2 files. Untracked new.txt
 expect focus Untracked new.txt
 
-# Check: A command of another view says which view first
-# 1.4a A command of another view says which view first, and the view stays.
+# Check: The commands on files say so on a commit, and the list stays
+# 1.4a On a commit Space selects nothing (the edge sound: only files are selected), Delete says a commit is not
+# removed, and Stage names the list its files are in.
 keys alt+2
 expect said ! Log, 2 commits.
 keys space
-expect said ! Changes view first: Alt+1
+expect said ♪ Edge
 keys delete
-expect said ! Changes view first: Alt+1
-# Context holds the view's own commands only (bundle AX-9.11), so Show diff is not offered in the Log.
+expect said ! A commit is not removed here
+keys ctrl+shift+s
+expect said ! For the files of Changes: Alt+1
+# Context holds the commands of the row you are on only (bundle AX-9.11), so Show diff is not offered on a commit.
 expect commands Show the commit, Context
+refuse commands Show diff, Context
 expect focus Log, 2 commits
 keys alt+1
 expect said ! Changes, 2 files.
-expect commands Stage or unstage, Context
+expect commands Show diff, Context
+expect commands "Stage, Context, Ctrl+Shift+S"
+expect commands "Discard changes, Context, Delete"
 expect focus Changes, 2 files
 
 # Check: The older keys of the views still work

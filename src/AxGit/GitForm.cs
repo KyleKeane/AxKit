@@ -5,14 +5,19 @@ using AxKit.Forms;
 namespace AxGit;
 
 /// <summary>
-/// axGIT's window (SPEC.md AG-2): a menu bar, one list with three views (Changes, Log, Branches), one read-only text
-/// for the details (a diff, a commit, what git answered), and a status bar with the branch. Every action is one git
-/// command run on a background task (AG-D6); the result is one announcement, or a notice with git's whole answer.
-/// The notices, the fonts, the window's place, the update flow and find are the bundle's window base
-/// (<see cref="AxKitForm"/>).
+/// axGIT's window (SPEC.md AG-2): a menu bar, one list, one read-only text for the details (a diff, a commit), and a
+/// status bar with the branch. The window is a navigator, the bundle's item window (<see cref="ItemForm"/>;
+/// docs/axKit/framework.md FW-4.10, step 8, 2026-11-22; a window of its own with three views of one list until
+/// then): the top level, the repository, holds three lists, Changes, Log and Branches, and the window starts
+/// inside Changes; its second pane is a text. Space selects files, and staging, unstaging and discarding act on
+/// the selected files. Every action is one git command run on a background task (AG-D6); the result is one
+/// announcement, or a notice with git's whole answer. The list, its selection, the text pane with its keys, find,
+/// the Context menu and a navigator's keys are the item window's; this class holds the repository, its trust, the
+/// reads and the commands.
 /// </summary>
-public sealed partial class GitForm : AxKitForm
+public sealed partial class GitForm : ItemForm
 {
+    /// <summary>The three lists of the repository (AG-2.2); their names are the rows' keys at the top level.</summary>
     private enum View
     {
         Changes,
@@ -28,25 +33,26 @@ public sealed partial class GitForm : AxKitForm
     private readonly GitSettings _settings;
     private readonly string? _startPath;
     private readonly MenuStrip _menu = new();
-
-    /// <summary>The bar's Context menu (AX-9.11): the line's commands by the view shown.</summary>
-    private readonly ContextBarMenu _context;
     private readonly ToolStripMenuItem _recentItem = new("Open &recent repository");
-    private readonly AxKitList _list = new();
-    private readonly AxKitTextBox _details = new();
-    private readonly StatusStrip _status = new();
-    private readonly ToolStripStatusLabel _stateLabel;
-    private readonly ToolStripStatusLabel _pathLabel;
+    private readonly ToolStripMenuItem _listMenu = new("&List");
+    private readonly ToolStripMenuItem _changeMenu = new("&Change");
+    private readonly ToolStripMenuItem _commitMenu = new("C&ommit");
+    private readonly ToolStripMenuItem _branchMenu = new("&Branch");
 
     /// <summary>The menu items that run git, disabled while a command runs and when git is missing (AG-5.4).</summary>
     private readonly List<ToolStripMenuItem> _gitItems = [];
 
-    /// <summary>The three views, indexed by <see cref="View"/>; <see cref="Current"/> is the one the list shows.</summary>
-    /// <summary>The three views of the list (AG-2.2), the whole state of the list: keys the file's path, the commit's hash, the branch's name; made stale by a commit, a switch, a fetch.</summary>
-    private readonly ListViewState[] _views = [new(), new(), new()];
-
     private string? _root;
-    private View _view = View.Changes;
+
+    /// <summary>The level shown: one of the three lists, or null at the top, the repository.</summary>
+    private View? _level = View.Changes;
+
+    /// <summary>Which of the three lists has been read since it was last made stale by a commit, a switch or a fetch.</summary>
+    private readonly bool[] _loaded = new bool[3];
+
+    /// <summary>The row each list was left on, by its key (the file's path, the commit's hash, the branch's name), to come back to.</summary>
+    private readonly string?[] _kept = new string?[3];
+
     private RepositoryStatus _repo = RepositoryStatus.Empty;
     private IReadOnlyList<Commit> _commits = [];
     private IReadOnlyList<Branch> _branches = [];
@@ -82,42 +88,55 @@ public sealed partial class GitForm : AxKitForm
         repository.DropDownItems.Add(new ToolStripSeparator());
         repository.DropDownItems.Add(CreateExitItem());
 
-        // Actions (AX-9.1): what axGIT does to the repository, the same wherever the focus is.
+        // Actions (AX-9.1): what axGIT does to the repository, the same wherever the focus is. Stage and Unstage act
+        // on the selected files of Changes, or on the file you are on when none is selected (AG-3.2, 2026-11-22;
+        // Space staged one file until then, and selects now, bundle AX-8.16). Stage all and Unstage all have no
+        // key any more: Ctrl+Shift+A, Stage all's, is the bundle's Deselect all, and Ctrl+A then Stage does it.
         var actions = new ToolStripMenuItem();
-        Git(Add(actions, new Command("Stage &all", AxGitKeys.StageAll, () => Do(() => StageAllAsync(stage: true))) { Mark = CommandMark.Act }));
-        Git(Add(actions, new Command("&Unstage all", AxGitKeys.UnstageAll, () => Do(() => StageAllAsync(stage: false))) { Mark = CommandMark.Act }));
+        var stage = new Command("&Stage", AxGitKeys.Stage, () => Do(() => StageFilesAsync(stage: true))) { Mark = CommandMark.Act };
+        var unstage = new Command("&Unstage", AxGitKeys.Unstage, () => Do(() => StageFilesAsync(stage: false))) { Mark = CommandMark.Act };
+        Git(Add(actions, stage));
+        Git(Add(actions, unstage));
+        Git(Add(actions, new Command("Stage &all", Keys.None, () => Do(() => StageAllAsync(stage: true))) { Mark = CommandMark.Act }));
+        Git(Add(actions, new Command("U&nstage all", Keys.None, () => Do(() => StageAllAsync(stage: false))) { Mark = CommandMark.Act }));
         Git(Add(actions, new Command("&Commit...", BundleKeys.MainAction, Commit) { Mark = CommandMark.Act }));
         actions.DropDownItems.Add(new ToolStripSeparator());
-        Git(Add(actions, new Command("&New branch...", AxGitKeys.NewBranch, NewBranch) { Mark = CommandMark.Act }));
+        Git(Add(actions, new Command("New &branch...", AxGitKeys.NewBranch, NewBranch) { Mark = CommandMark.Act }));
         Git(Add(actions, new Command("&Fetch", AxGitKeys.Fetch, () => Do(() => ToServerAsync(FetchAsync))) { Mark = CommandMark.Act }));
         Git(Add(actions, new Command("&Pull", AxGitKeys.Pull, () => Do(() => ToServerAsync(PullAsync))) { Mark = CommandMark.Act }));
-        Git(Add(actions, new Command("Pu&sh", AxGitKeys.Push, () => Do(() => ToServerAsync(PushAsync))) { Mark = CommandMark.Act }));
+        Git(Add(actions, new Command("Pus&h", AxGitKeys.Push, () => Do(() => ToServerAsync(PushAsync))) { Mark = CommandMark.Act }));
+        actions.DropDownItems.Add(new ToolStripSeparator());
+        actions.DropDownItems.Add(Item("Select all &files", SelectAllRows, SelectionKeys.SelectAll, CommandMark.Change));
+        actions.DropDownItems.Add(Item("&Deselect all", SelectNoRows, SelectionKeys.SelectNone, CommandMark.Change));
 
-        // Navigation (AX-9.1): the three views (the View menu's until 2026-11-11).
+        // Navigation (AX-9.1): the three lists, each a jump from anywhere, and the way up to the repository.
         var navigation = new ToolStripMenuItem();
         // On Alt+1, 2 and 3, each with its older Ctrl key as a further key of the same command (bundle AX-8.14).
-        Place(new Command("&Changes", AxGitKeys.ViewChanges, () => Do(() => ShowViewAsync(View.Changes))) { Mark = CommandMark.Open }, AxGitKeys.ViewChangesAlso);
-        Place(new Command("&Log", AxGitKeys.ViewLog, () => Do(() => ShowViewAsync(View.Log))) { Mark = CommandMark.Open }, AxGitKeys.ViewLogAlso);
-        Place(new Command("&Branches", AxGitKeys.ViewBranches, () => Do(() => ShowViewAsync(View.Branches))) { Mark = CommandMark.Open }, AxGitKeys.ViewBranchesAlso);
+        Place(new Command("&Changes", AxGitKeys.ViewChanges, () => Do(() => ShowListAsync(View.Changes))) { Mark = CommandMark.Open }, AxGitKeys.ViewChangesAlso);
+        Place(new Command("&Log", AxGitKeys.ViewLog, () => Do(() => ShowListAsync(View.Log))) { Mark = CommandMark.Open }, AxGitKeys.ViewLogAlso);
+        Place(new Command("&Branches", AxGitKeys.ViewBranches, () => Do(() => ShowListAsync(View.Branches))) { Mark = CommandMark.Open }, AxGitKeys.ViewBranchesAlso);
+        navigation.DropDownItems.Add(new ToolStripSeparator());
+        navigation.DropDownItems.Add(Item("&Up to the repository", UpLevel, ItemKeys.Up, CommandMark.Open));
         void Place(Command command, Keys also)
         {
             Add(navigation, command);
             AddKey(command with { Key = also });
         }
 
-        // Context (AX-9.11): what acts on the line selected, by the view shown. Space, Enter and Delete act in the list
-        // only; in the details they are the control's own (AG-6.2). Enter acts on the item of the view shown: Show
-        // diff, the commit, Switch to branch.
-        var changes = new ToolStripMenuItem("&Change");
-        Git(Add(changes, new Command("&Stage or unstage", AxGitKeys.StageToggle, () => Do(StageToggleAsync)) { When = () => _list.Focused, Mark = CommandMark.Act }));
-        Git(Add(changes, new Command("Show &diff", AxGitKeys.Act, () => Do(ShowDiffAsync)) { When = () => _list.Focused && _view == View.Changes, Mark = CommandMark.Read }));
-        Add(changes, new Command("&Open file in editor", AxGitKeys.OpenInEditor, OpenInEditor) { Mark = CommandMark.Open });
-        Git(Add(changes, new Command("Disca&rd changes...", AxGitKeys.Discard, Discard) { When = () => _list.Focused, Mark = CommandMark.Act }));
-        var commit = new ToolStripMenuItem("C&ommit");
-        commit.DropDownItems.Add(Item("&Show the commit", () => Do(ShowCommitAsync), AxGitKeys.Act, CommandMark.Open));
-        var branch = new ToolStripMenuItem("&Branch");
-        Git(Add(branch, new Command("&Switch to branch", AxGitKeys.Act, () => Do(SwitchBranchAsync)) { When = () => _list.Focused && _view == View.Branches, Mark = CommandMark.Act }));
-        _context = new ContextBarMenu(() => _view switch { View.Log => commit, View.Branches => branch, _ => changes }, () => "Nothing selected", said => Announce(said, true), changes, commit, branch);
+        // Context (AX-9.11): what acts on the row you are on, by its kind. Enter, Delete and the selection keys are
+        // the navigator's (the item window's commands, registered after these by PlaceControls); the menu items
+        // for them here only show the keys, and state how far they reach: Switch to branch and Discard act.
+        Git(Placed(_changeMenu, Item("Show &diff", OpenSelected, ItemKeys.Open, CommandMark.Read)));
+        Git(Add(_changeMenu, stage));
+        Git(Add(_changeMenu, unstage));
+        Add(_changeMenu, new Command("&Open file in editor", AxGitKeys.OpenInEditor, OpenInEditor) { Mark = CommandMark.Open });
+        Git(Placed(_changeMenu, Item("Disca&rd changes...", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act)));
+        _changeMenu.DropDownItems.Add(new ToolStripSeparator());
+        _changeMenu.DropDownItems.Add(Item("Se&lect or deselect", SelectRow, SelectionKeys.Select, CommandMark.Change));
+        _changeMenu.DropDownItems.Add(Item("Select to &here", SelectToHere, SelectionKeys.SelectTo, CommandMark.Change));
+        Git(Placed(_commitMenu, Item("&Show the commit", OpenSelected, ItemKeys.Open, CommandMark.Open)));
+        Git(Placed(_branchMenu, Item("&Switch to branch", OpenSelected, ItemKeys.Open, CommandMark.Act)));
+        _listMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open, CommandMark.Open));
 
         // Options, as the other windows' (AX-6): every setting in the submenu for what it is about.
         var options = new ToolStripMenuItem();
@@ -128,93 +147,197 @@ public sealed partial class GitForm : AxKitForm
         var help = CreateHelpMenu(HelpText.UserGuide, "Git &resources",
             [("&git-scm.com", "https://git-scm.com"), ("&Pro Git, the book", "https://git-scm.com/book/en/v2")]);
 
-        PlaceMenuBar(_menu, repository, actions, navigation, _context.Menu, options, help);
-        _menu.MenuActivate += (_, _) => _context.Fill();
-        // The keys without a menu item: between the list and the details, find in the details, Enter on a commit.
-        foreach (var key in new[] { BundleKeys.NextControl, BundleKeys.PreviousControl, BundleKeys.NextControlAlso })
+        // The list and the details (AG-2.1) are the item window's navigator and its text pane, with their keys:
+        // the pane keys, find where the focus is (AG-2.4), the Context menu's keys.
+        PlaceMenuBar(_menu, repository, actions, navigation, CreateContextMenu(MenuOf, _listMenu, _changeMenu, _commitMenu, _branchMenu), options, help);
+        PlaceControls(_menu);
+        Fill(select: null);
+    }
+
+    /// <summary>A menu item placed in its menu and given back, for <see cref="Git"/>.</summary>
+    private static ToolStripMenuItem Placed(ToolStripMenuItem menu, ToolStripMenuItem item)
+    {
+        menu.DropDownItems.Add(item);
+        return item;
+    }
+
+    // ---- what the navigator asks for (the item window, docs/axKit/framework.md FW-4.10) ----
+
+    /// <summary>The second pane is a text: a file's diff, a commit.</summary>
+    protected override SecondPane Pane => SecondPane.Text;
+
+    /// <summary>Space selects files in Changes (AX-8.16): Stage, Unstage and Discard act on all the selected.</summary>
+    protected override bool HasSelection => true;
+
+    /// <summary>A changed file can be selected. A commit, a branch and a list cannot: nothing here acts on several of them.</summary>
+    protected override bool CanSelectRow(ItemRow row) => row.Tag is ChangedFile;
+
+    protected override string RowNoun => "file";
+
+    /// <summary>The level by the repository and the list, not by the status bar's second part.</summary>
+    protected override string LevelIdentity() => $"{_root}\n{_level}";
+
+    /// <summary>
+    /// A navigator's keys with no use here: nothing is renamed or undone, there is no second kind of new thing,
+    /// and a row has nothing to read in full beyond its line. F2, Ctrl+Z, Ctrl+Shift+N and Ctrl+Q are no commands of
+    /// the window. Ctrl+N is New branch, axGIT's own.
+    /// </summary>
+    protected override IReadOnlyCollection<Keys> KeysWithoutUse => [ItemKeys.Rename, ItemKeys.Undo, ItemKeys.NewList, ItemKeys.ReadAll];
+
+    protected override string? RenameRefused(ItemRow row) => "Nothing is renamed here";
+
+    protected override void NewItem() => NewBranch();
+
+    protected override void NewList() => Announce("Nothing is made here", true);
+
+    protected override void Undo() => Announce("Nothing to undo here", true);
+
+    /// <summary>
+    /// The level shown: at the top the three lists, each with its count once it has been read; in a list its rows
+    /// as last read from git. Without a repository there are no rows, and the list and the title say so. The
+    /// title is the repository's folder; the status bar's second part is its path.
+    /// </summary>
+    protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel() =>
+        _root is null
+            ? ([], "No repository", "No repository", string.Empty)
+            : (LevelRows(), LevelName(_root), PathName.Of(_root), _root);
+
+    private IReadOnlyList<ItemRow> LevelRows() => _level switch
+    {
+        View.Changes => [.. _repo.Files.Select(file => new ItemRow(IsList: false, file.Path, file.Path, file.Label, file))],
+        View.Log => [.. _commits.Select(commit => new ItemRow(IsList: false, commit.Hash, commit.Subject, commit.Label, commit))],
+        View.Branches => [.. _branches.Select(branch => new ItemRow(IsList: false, branch.Name, branch.Name, branch.Label, branch))],
+        _ => [TopRow(View.Changes), TopRow(View.Log), TopRow(View.Branches)],
+    };
+
+    /// <summary>A list as a row of the top level: "Changes, 3 files" once read, "Changes" before or when stale.</summary>
+    private ItemRow TopRow(View view) => new(IsList: true, view.ToString(), view.ToString(), _loaded[(int)view] ? ListName(view) : view.ToString());
+
+    private string LevelName(string root) =>
+        _level is not { } view ? $"{PathName.Of(root)}, 3 lists"
+        : _loaded[(int)view] ? ListName(view)
+        : $"{view}, reading";
+
+    private string ListName(View view) => view switch
+    {
+        View.Changes => _repo.ListName,
+        View.Log => GitLog.ListName(_commits.Count),
+        _ => GitBranches.ListName(_branches.Count),
+    };
+
+    /// <summary>
+    /// Right and Enter on a list of the top level: the list is read through git off the UI thread, then shown and
+    /// said once (<see cref="ShowListAsync"/>). The item window's own way in fills at once, so it is turned down
+    /// with an empty reason, which says nothing: the app does the going in itself.
+    /// </summary>
+    protected override string? EntryRefused(ItemRow row)
+    {
+        if (Enum.TryParse<View>(row.Key, out var view))
         {
-            AddKey(new Command("Switch between the list and the details", key, () => (_list.Focused ? (Control)_details : _list).Focus()) { Mark = CommandMark.Open });
+            Do(() => ShowListAsync(view));
         }
 
-        // AG-2.4 (2026-10-25, the user's choice, inventory item 10): find where the focus is, as every list window
-        // does: in the list by its lines while the list has the focus, in the details text otherwise.
-        AddKey(new Command("Find in the list", BundleKeys.Find, () => ShowFindInList(_list, ListLines)) { When = () => _list.Focused, Mark = CommandMark.Read });
-        AddKey(new Command("Find next in the list", BundleKeys.FindNext, () => FindInList(_list, ListLines, 1)) { When = () => _list.Focused, Mark = CommandMark.Read });
-        AddKey(new Command("Find previous in the list", BundleKeys.FindPrevious, () => FindInList(_list, ListLines, -1)) { When = () => _list.Focused, Mark = CommandMark.Read });
-        IReadOnlyList<string> ListLines() => _list.Items.Cast<object>().Select(item => item.ToString() ?? string.Empty).ToList();
-        AddKey(new Command("Find in the details", BundleKeys.Find, () => ShowFind(_details)) { Mark = CommandMark.Read });
-        AddKey(new Command("Find next", BundleKeys.FindNext, () => FindNext(_details, 1)) { Mark = CommandMark.Read });
-        AddKey(new Command("Find previous", BundleKeys.FindPrevious, () => FindNext(_details, -1)) { Mark = CommandMark.Read });
-        AddKey(new Command("Context menu", AxGitKeys.ContextMenu, OpenContext) { When = () => _list.Focused, Mark = CommandMark.Open });
-        AddKey(new Command("Context menu", AxGitKeys.ContextMenuAlso, OpenContext) { When = () => _list.Focused, Mark = CommandMark.Open });
-        AddKey(new Command("Show the commit", AxGitKeys.Act, () => Do(ShowCommitAsync)) { When = () => _list.Focused && _view == View.Log, Mark = CommandMark.Read });
-
-        // ---- the list and the details (AG-2.1) ----
-        _list.IntegralHeight = false;
-        _list.Dock = DockStyle.Top;
-        _list.Height = 200;
-        _list.TabIndex = 0;
-        _list.AccessibleName = "No repository";
-        _list.OpenMenuOnRightClick(OpenContext);
-
-        _details.Multiline = true;
-        _details.ReadOnly = true;
-        _details.WordWrap = true;
-        _details.ScrollBars = ScrollBars.Vertical;
-        _details.HideSelection = false;
-        _details.MaxLength = 0;
-        _details.Dock = DockStyle.Fill;
-        _details.TabIndex = 1;
-        _details.AccessibleName = "Details";
-
-        // ---- the status bar (AG-2.3): the bundle's pair, no AccessibleName, no Spring ----
-        (_stateLabel, _pathLabel) = StatusLayout.Pair(_status);
-
-        SizeChanged += (_, _) => _list.Height = Math.Max(80, ClientSize.Height * 2 / 5);
-
-        // Docked from the last control to the first: the menu takes the top, the status bar the bottom, the list the
-        // strip under the menu, and the details (or the notice over both) what is left.
-        PlaceControls(_menu, _details, _list, _status);
-        UpdateStatusBar();
+        return string.Empty;
     }
+
+    /// <summary>Left and Backspace in a list: up to the repository, on the list left; at the top, and without a repository, nothing, the edge sound.</summary>
+    protected override string? LeaveList()
+    {
+        if (_root is null || _level is not { } view)
+        {
+            return null;
+        }
+
+        _kept[(int)view] = SelectedKey();
+        _level = null;
+        return view.ToString();
+    }
+
+    /// <summary>
+    /// Enter on a row of a list, the navigator's Open, by its kind (AG-3.3, AG-4.2, AG-5.2): a file's diff or a
+    /// commit in the text pane, with the focus moved there; a branch switched to.
+    /// </summary>
+    protected override void OpenItem(ItemRow row)
+    {
+        switch (row.Tag)
+        {
+            case ChangedFile:
+                Do(ShowDiffAsync);
+                break;
+            case AxGit.Core.Commit:
+                Do(ShowCommitAsync);
+                break;
+            default:
+                Do(SwitchBranchAsync);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Delete, the navigator's key, by the kind of row (AG-3.4): the changes to a file are discarded after a
+    /// question, and with files selected those of all of them after one question; a commit and a branch are not
+    /// removed here, and a list of the top level is no thing to discard.
+    /// </summary>
+    protected override void DeleteRow(ItemRow row)
+    {
+        switch (row.Tag)
+        {
+            case ChangedFile:
+                Discard();
+                return;
+            case AxGit.Core.Commit:
+                Announce("A commit is not removed here", true);
+                return;
+            case Branch:
+                Announce("A branch is not deleted here", true);
+                return;
+            default:
+                Announce("A list: Right goes into it", true);
+                return;
+        }
+    }
+
+    /// <summary>The menu of the row you are on, whose items Context holds (AG-6.1, AX-9.11).</summary>
+    private ToolStripMenuItem? MenuOf(ItemRow row) => row.Tag switch
+    {
+        ChangedFile => _changeMenu,
+        AxGit.Core.Commit => _commitMenu,
+        Branch => _branchMenu,
+        _ => _listMenu,
+    };
+
+    /// <summary>The status bar's first part (AG-2.3): the command running, that git is missing, that no repository is open, or the branch and the counts.</summary>
+    protected override string? StatusState =>
+        _busy is not null ? $"Working: {_busy}…"
+        : _gitMissing ? "git was not found"
+        : _root is null ? "No repository"
+        : _repo.StatusText;
 
     // ---- what the window base asks for ----
 
     protected override string Shortcuts => HelpText.Shortcuts;
 
-    protected override void HideForNotice()
-    {
-        _list.Visible = false;
-        _details.Visible = false;
-    }
-
-    protected override void ShowAfterNotice()
-    {
-        _list.Visible = true;
-        _details.Visible = true;
-    }
-
-    protected override Control FocusTarget => _list;
-
     /// <summary>
-    /// What an AI tool's act command would act on (docs/axKit/mcp.md MC-7.3): the selected file, commit or branch; with
-    /// none in hand (an empty view, the details focused) the window base's, the focused control.
+    /// What an AI tool's act command would act on (docs/axKit/mcp.md MC-7.3): the file, commit or branch you are
+    /// on, and the selected files with it while there are any, so that the target changes when the selection does;
+    /// with none in hand (an empty list, the top level) the item window's.
     /// </summary>
-    protected override AxKit.Core.Mcp.RunTarget McpTarget() =>
-        CurrentFile() is { } file ? AxKit.Core.Mcp.RunTarget.Of(file.Path)
-        : CurrentCommit() is { } commit ? AxKit.Core.Mcp.RunTarget.Of($"the commit {commit.Subject}, {commit.Hash}")
-        : CurrentBranch() is { } branch ? AxKit.Core.Mcp.RunTarget.Of($"the branch {branch.Name}")
-        : base.McpTarget();
+    protected override AxKit.Core.Mcp.RunTarget McpTarget()
+    {
+        var text = SelectedRow()?.Tag switch
+        {
+            ChangedFile file => file.Path,
+            AxGit.Core.Commit commit => $"the commit {commit.Subject}, {commit.Hash}",
+            Branch branch => $"the branch {branch.Name}",
+            _ => string.Empty,
+        };
+        return text.Length == 0 ? base.McpTarget()
+            : Selection.Count == 0 ? AxKit.Core.Mcp.RunTarget.Of(text)
+            : new AxKit.Core.Mcp.RunTarget($"{text}, and {Selection.Count} selected", text + "\n" + string.Join("\n", Selection.Keys.Order(StringComparer.OrdinalIgnoreCase)));
+    }
 
     /// <summary>Ctrl+S, the bundle's save key: nothing to save in a git window, and the keys that do something said (AG-6.2).</summary>
-    protected override void SaveCommand() => Announce("Nothing to save here. Space stages, Ctrl+Enter commits", true);
-
-    protected override void ApplyFont(Font font)
-    {
-        _list.Font = font;
-        _details.Font = font;
-    }
-
+    protected override void SaveCommand() => Announce($"Nothing to save here. {BundleKeys.Text(AxGitKeys.Stage).TrimEnd('.')} stages, Ctrl+Enter commits", true);
 
     protected override string UpdateRestartText => $"closes {AxGitApp.Name}, installs it and starts it again on the same repository";
 
@@ -222,11 +345,6 @@ public sealed partial class GitForm : AxKitForm
 
     protected override void OnShown(EventArgs e)
     {
-        if (!NoticeOpen)
-        {
-            _list.Select();
-        }
-
         base.OnShown(e);
         Do(() => StartAsync(_startPath));
     }
@@ -310,14 +428,16 @@ public sealed partial class GitForm : AxKitForm
     private async Task OpenRepositoryAsync(string root)
     {
         _root = root;
-        for (var i = 0; i < _views.Length; i++)
-        {
-            _views[i] = new ListViewState();
-        }
-
+        Array.Clear(_loaded);
+        Array.Clear(_kept);
+        _level = View.Changes;
         _repo = RepositoryStatus.Empty;
         _commits = [];
         _branches = [];
+        // Another repository: nothing selected, and the text of the one before gone.
+        Selection.Clear();
+        TextPane.Clear();
+        TextPane.AccessibleName = "Details";
         SetTitle(PathName.Of(root));
         _settings.RememberRepository(root);
         SaveSettings();
@@ -385,11 +505,9 @@ public sealed partial class GitForm : AxKitForm
     {
         _root = null;
         _repo = RepositoryStatus.Empty;
-        SetTitle("No repository");
-        _list.Items.Clear();
-        _list.AccessibleName = "No repository";
-        _list.OpenMenuOnRightClick(OpenContext);
-        UpdateStatusBar();
+        _level = View.Changes;
+        Array.Clear(_loaded);
+        Fill(select: null);
     }
 
     /// <summary>Repository → Open repository… (Ctrl+O): the bundle's folder picker, one of the system's own windows; any folder inside a repository will do.</summary>
@@ -446,12 +564,5 @@ public sealed partial class GitForm : AxKitForm
 
         var path = Path.Combine(_root, file.Path.Replace('/', Path.DirectorySeparatorChar));
         WindowMenu.Start(Dispatch.EditorOf(path), path);
-    }
-
-    /// <summary>Shift+F10, the Applications key and a right click in the list (AX-9.11): the bar's Context menu with the line's commands.</summary>
-    private void OpenContext()
-    {
-        _context.Fill();
-        OpenBarMenu(ContextBarMenu.Letter);
     }
 }
