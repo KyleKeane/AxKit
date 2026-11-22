@@ -64,6 +64,16 @@
   item.
 - `NaturalOrder`: `StrCmpLogicalW` of shlwapi as an `IComparer<string>`, File Explorer's order of names (2 before 10);
   from AxFile.Core, axMedia (2026-10-22).
+- `Marks`, with `MarkChange` and `MarkRow` (docs/axKit/SPEC.md AX-8.16; from AxFile.Core, the item windows,
+  2026-11-22): the selection of a list as a set of marks on the rows it shows, and the Shift range being made. One
+  method per key of `AxKit.Forms/SelectionKeys` (`Toggle`, `All`, `None`, `ToHere`, `Extend`; `Keep` for a list made
+  again, `Restore` for a window's undo of a selection line, `Clear` for another level), each over the shown rows (a
+  `MarkRow`: the key its mark is kept by, its name, and whether it can be selected at all, a heading cannot and is
+  passed over by the keys that select many) and returning a `MarkChange`: the rows whose mark flipped, the marks
+  before, the line a recording window keeps (axFile's Actions list; null when nothing is recorded), whether a range
+  began, the row the line leads to, and the words said. The words of a selection ("Selected, 3 selected", "None
+  selected") are made here and nowhere else. `Items` is "1 item", "3 items". The window's side is
+  `AxKit.Forms/ListSelection`.
 - `Accents` (2026-10-23): the accented letters of Latin-1 and Latin Extended-A taken apart (`Split`), put together
   (`Compose`) and stripped (`Strip`) from tables of their own, because the executable runs with invariant
   globalization, where `string.Normalize` returns its input; `TextMatch.Fold` and axFile's lookalike names use it. The

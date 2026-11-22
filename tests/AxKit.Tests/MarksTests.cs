@@ -1,14 +1,14 @@
-using AxFile.Core;
+using AxKit.Core;
 
-namespace AxFile.Tests;
+namespace AxKit.Tests;
 
-/// <summary>The marks on a folder's entries (docs/axFile/SPEC.md AF-3.7, AF-9.2): each key's change, its line and its words.</summary>
+/// <summary>The marks on a list's rows (docs/axKit/SPEC.md AX-8.16; axFile's AF-3.7, AF-9.2): each key's change, its line and its words.</summary>
 public sealed class MarksTests
 {
-    private static readonly IReadOnlyList<Entry> Shown = Entries("a.txt", "b.txt", "c.txt", "d.txt", "e.txt");
+    private static readonly IReadOnlyList<MarkRow> Shown = Entries("a.txt", "b.txt", "c.txt", "d.txt", "e.txt");
 
-    private static IReadOnlyList<Entry> Entries(params string[] names) =>
-        names.Select(name => new Entry(name, "C:\\x\\" + name, false, 0, DateTime.Now)).ToList();
+    private static IReadOnlyList<MarkRow> Entries(params string[] names) =>
+        names.Select(name => new MarkRow("C:\\x\\" + name, name)).ToList();
 
     [Fact]
     public void Space_marks_and_unmarks_the_entry_with_the_count_when_more_are_marked()
@@ -151,5 +151,40 @@ public sealed class MarksTests
         // An entry gone since is skipped.
         Assert.Equal("Undone: 1 selected", marks.Restore(["C:\\x\\zz.txt", "C:\\x\\e.txt"], Shown).Said);
         Assert.True(marks.Contains("C:\\x\\e.txt"));
+    }
+
+    [Fact]
+    public void A_row_that_cannot_be_marked_is_passed_over_by_the_keys_that_select_many()
+    {
+        // A heading between the items, as in an item window's navigator.
+        IReadOnlyList<MarkRow> rows = [new("a", "A"), new("h", "Heading", CanMark: false), new("b", "B"), new("c", "C")];
+        var marks = new Marks();
+        var all = marks.All(rows, 0);
+        Assert.Equal([0, 2, 3], all.Changed);
+        Assert.Equal("Selected all, 3 items", all.Line);
+        Assert.Equal("3 selected", all.Said);
+        Assert.False(marks.Contains("h"));
+
+        marks.Clear();
+        var range = marks.Extend(rows, 0, 2);
+        Assert.Equal([0, 2], range.Changed);
+        Assert.Equal("Selected 2 items", range.Line);
+        Assert.False(marks.Contains("h"));
+
+        // Onto the heading itself: the current row moves there, and nothing more is marked.
+        marks.Clear();
+        Assert.Equal([0], marks.Extend(rows, 0, 1).Changed);
+
+        marks.Clear();
+        marks.Toggle(rows, 0);
+        var toHere = marks.ToHere(rows, 3);
+        Assert.Equal([2, 3], toHere.Changed);
+        Assert.Equal("Selected 3 items", toHere.Line);
+        Assert.Equal("Selected, 3 selected", toHere.Said);
+
+        // A row that could be marked before and cannot now loses its mark with the next fill.
+        marks.Keep([new("a", "A", CanMark: false), new("b", "B")]);
+        Assert.Equal(1, marks.Count);
+        Assert.True(marks.Contains("b"));
     }
 }

@@ -45,9 +45,9 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
     - `FillFavorites` and `ToggleFavorite` (AF-3.9);
     - the Drives submenu of Folder (AF-3.11; a menu of its own until 2026-10-22);
     - the selection (AF-3.7, AF-D9):
-      - `_marks`, the `AxFile.Core.Marks` of the shown entries, which each key asks for its change;
-      - `ToggleSelection`, `SelectAll`, `SelectNone`, `ExtendSelection`, `SelectToHere`, `UndoMarks` (Ctrl+Z on a selection line), and `ApplyMarks` applies: the items whose mark flipped rewritten (`ItemText`), the line of the Actions list recorded, or rewritten while a Shift range goes on (`RangeLine`), the words said;
-      - `Rearrange` keeps only the marks on the entries still shown (`Marks.Keep`);
+      - `Selection`, the bundle's `AxKit.Forms/ListSelection` over `AxKit.Core/Marks` (bundle AX-8.16, shared since 2026-11-22; the keys are `AxKit.Forms/SelectionKeys`), on `_markRows`, the shown entries by path and name; it rewrites the items whose mark flipped (`ItemText`, made with its `Label`) and says the words;
+      - `ToggleSelection`, `SelectAll`, `SelectNone`, `SelectToHere` and `UndoMarks` (Ctrl+Z on a selection line) call it behind axFile's own guards; the four Shift keys are its `MoveCommands`; `RecordMarks` (its `Recorded`) is what is axFile's own: the line of the Actions list recorded, or rewritten while a Shift range goes on (`RangeLine`);
+      - `Rearrange` keeps only the marks on the entries still shown (`Selection.Keep`);
       - `DropSelectionLines` (another folder), `OnMarks` (the Selection submenu's operations, on the marks alone);
       - `SelectedEntries` and `Targets`, what an operation acts on;
     - `PaletteEntries` (AF-3.12: the shown entries in the bundle's command palette, Enter selecting the entry and calling `OpenSelected`);

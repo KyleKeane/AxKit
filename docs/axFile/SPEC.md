@@ -198,9 +198,11 @@ folder of the file or project in hand, and sends back. It works entirely offline
   folder: showing another folder drops them, a refresh of the same folder keeps those still there, and a renamed or
   deleted entry loses its mark. The marks are on the entries the list shows: a filter, a new order or a read drops
   the marks on the entries it leaves out, with no line, so that the count said and the entries acted on are one set
-  (until 2026-10-23 a mark hidden by the filter was counted and not acted on). The marks are one pure piece, `Marks`
-  in AxFile.Core (each key one method over the shown entries, returning the rows whose mark flipped, the line and
-  the words; tested), which the window applies to its items and the Actions list (`FileForm.ApplyMarks`). A mouse click chooses the current entry as before and marks nothing. The marks are
+  (until 2026-10-23 a mark hidden by the filter was counted and not acted on). The marks, their keys and
+  their words are the bundle's since 2026-11-22 (bundle AX-8.16, on their second use, the item windows): `Marks` in
+  AxKit.Core (each key one method over the shown rows, returning the rows whose mark flipped, the line and the
+  words; tested), the keys in `AxKit.Forms/SelectionKeys`, and `AxKit.Forms/ListSelection`, which rewrites the
+  items and says the words; what is axFile's own is the line of the Actions list (`FileForm.RecordMarks`). A mouse click chooses the current entry as before and marks nothing. The marks are
   text in the items rather than the list box's own multiple selection (AF-D9).
 - AF-3.8 **Sort and filter** (asked 2026-10-21). **Options → Sort by ▸** Name, Date, Size, one checked: folders first
   in every order, then by name (the natural order), by date newest first, or by size largest first, ties by name
@@ -573,8 +575,8 @@ src/AxFile.Core/    class library (net10.0): FolderListing (a folder's entries a
                     check, new folder, rename, delete to the Recycle Bin, copy and move into a folder, the last three
                     through SHFileOperationW, the undo checks and inverses, the messages), Operation and
                     OperationKind (one operation with what its undo needs and where it left things), ActionLog and
-                    ActionEntry (the Actions list's lines and states, the limits), Marks and MarkChange (the marks on the
-                    shown entries and the Shift range, each key one change; AF-3.7), RecycleBin (the $I records),
+                    ActionEntry (the Actions list's lines and states, the limits), RecycleBin (the $I records; the
+                    marks on the shown entries are AxKit.Core's Marks since 2026-11-22, AX-8.16),
                     UserPrograms and UserProgram (the user's own programs; AF-4.11), Archives (a zip from entries, a
                     zip into a new folder, free names; AF-4.12), FileSettings; references AxKit.Core (MediaFiles for
                     the hand-over counts, NaturalOrder, Dispatch for the editor's verb)
@@ -583,7 +585,7 @@ src/AxFile/         class library (net10.0-windows): AxFileApp (Run, Usage), Fil
                     HelpText (F1 text, the embedded guide), Shell (Windows' own ways with an entry: the
                     Open with dialog, the Properties sheet, the shell's context menu through IShellFolder and
                     IContextMenu, Eject, the Recycle Bin's Restore; AF-4.7); references AxFile.Core, AxKit.Core, AxKit.Forms
-tests/AxFile.Tests/ FolderListingTests, MarksTests, FileOperationsTests, UndoTests, ArchivesTests, PathCompletionTests, ActionLogTests,
+tests/AxFile.Tests/ FolderListingTests, FileOperationsTests, UndoTests, ArchivesTests, PathCompletionTests, ActionLogTests,
                     UserProgramsTests and FileSettingsTests over temporary folders (the
                     Recycle Bin is not exercised), ActionLogTests, UserProgramsTests, FileSettingsTests
 docs/axFile/        this spec, user-guide.md (embedded), nvda-test-plan.md

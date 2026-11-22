@@ -105,20 +105,22 @@ public sealed partial class FileForm : AxKitForm
         // Selection (AF-3.7, AF-D10, 2026-10-22): the marks, Select all and Deselect all in Actions, the rest a submenu
         // of the entry's Context: this entry's mark, then the operations on the marks alone, which say "None selected"
         // rather than fall back to the current entry.
-        Add(actions, new Command("Select &all", AxFileKeys.SelectAll, SelectAll) { When = InList, Mark = CommandMark.Change });
-        Add(actions, new Command("D&eselect all", AxFileKeys.SelectNone, SelectNone) { When = InList, Mark = CommandMark.Change });
+        Add(actions, new Command("Select &all", SelectionKeys.SelectAll, SelectAll) { When = InList, Mark = CommandMark.Change });
+        Add(actions, new Command("D&eselect all", SelectionKeys.SelectNone, SelectNone) { When = InList, Mark = CommandMark.Change });
         var select = new ToolStripMenuItem("Selectio&n");
         item.DropDownItems.Add(new ToolStripSeparator());
         item.DropDownItems.Add(select);
-        Add(select, new Command("Select or deselect this &entry", AxFileKeys.Select, ToggleSelection) { When = InList, Mark = CommandMark.Change });
-        Add(select, new Command("Select to &here", AxFileKeys.SelectTo, SelectToHere) { When = InList, Mark = CommandMark.Change });
-        // The Shift ranges (AF-3.7), keys of the list with no menu item.
-        AddKey(new Command("Select to the next entry", AxFileKeys.SelectDown, () => ExtendSelection(_list.SelectedIndex + 1)) { When = InList, Mark = CommandMark.Change });
-        AddKey(new Command("Select to the previous entry", AxFileKeys.SelectUp, () => ExtendSelection(_list.SelectedIndex - 1)) { When = InList, Mark = CommandMark.Change });
-        AddKey(new Command("Select to the first entry", AxFileKeys.SelectToStart, () => ExtendSelection(0)) { When = InList, Mark = CommandMark.Change });
-        AddKey(new Command("Select to the last entry", AxFileKeys.SelectToEnd, () => ExtendSelection(int.MaxValue)) { When = InList, Mark = CommandMark.Change });
+        Add(select, new Command("Select or deselect this &entry", SelectionKeys.Select, ToggleSelection) { When = InList, Mark = CommandMark.Change });
+        Add(select, new Command("Select to &here", SelectionKeys.SelectTo, SelectToHere) { When = InList, Mark = CommandMark.Change });
+        // The Shift ranges (AF-3.7), keys of the list with no menu item: the shared selection's four commands,
+        // "Select to the next entry" and the like; on a line after the entries they say that line.
+        foreach (var move in Selection.MoveCommands("entry", InList, SayNoEntry))
+        {
+            AddKey(move);
+        }
+
         // Escape: the marks cleared, else the filter (AF-3.7, AF-3.8); with neither, the key is left alone.
-        AddKey(new Command("Clear the selection or the filter", AxFileKeys.Clear, () => ClearSelectionOrFilter()) { When = () => InList() && (_marks.Count > 0 || _filter.Length > 0), Mark = CommandMark.Change });
+        AddKey(new Command("Clear the selection or the filter", AxFileKeys.Clear, () => ClearSelectionOrFilter()) { When = () => InList() && (Selection.Count > 0 || _filter.Length > 0), Mark = CommandMark.Change });
         select.DropDownItems.Add(new ToolStripSeparator());
         // The operations on the marks alone (AF-D10): their keys are the entry's commands, on the targets, which
         // are the marks while there are any; these items only show them.

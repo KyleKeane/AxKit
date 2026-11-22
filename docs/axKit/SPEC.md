@@ -924,6 +924,40 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     reserved.
   - Neither is in a window's table or is a system-wide key (`KeyTests`); both are in every F1 text, in the key test
     (AX-8.12) and in the window's list of its commands as further keys of the commands they run.
+- AX-8.16 **Selecting things in a list: Space, and one piece of code for every window** (the maintainer's decision
+  of 2026-11-22: "we should use space to mean select an item everywhere in axkit", "that way we can use the
+  standard item selection mechanics everywhere so that shift and space extends selection and other standard list
+  operations are managed in a unified way", "share code across apps to make the list elements and selection
+  mechanics and selection actions all work the same and be easy to adjust across the suite"; axFile's selection of
+  2026-10-21, AF-3.7, is the model and moved here on its second use).
+  - **What a selection is.** A list stays a single-selection list box, where the arrow keys choose the current
+    row and NVDA reads it; the selection the commands act on is a set of marks on top of it. A selected row's item
+    reads "<its words>, selected", so that an arrow key onto it says so and nothing is said on the others.
+  - **The keys**, the same in every window that has a selection, defined once in `AxKit.Forms/SelectionKeys`:
+    **Space** selects the current row, or deselects it again, "Selected" or "Deselected", with ", n selected" when
+    more than that one is ("Selected, 3 selected"). **Shift+Down**, **Shift+Up**, **Shift+Home** and **Shift+End**
+    move the current row and select every row from where the range began to there, as in every Windows list;
+    moving back with Shift shrinks the range, the rows selected before it stay, and nothing more is said than each
+    row reached, which reads ", selected" by itself. **Shift+Space** selects every row from the nearest selected
+    one to the current one, "Selected, n selected"; with no other row selected it is Space. **Ctrl+A** selects
+    every row the list shows, "n selected"; **Ctrl+Shift+A** deselects them all, "None selected", and so does
+    **Escape** in the list while any row is selected, before Escape does anything else there. A row that cannot be
+    selected (a heading) is passed over by the keys that select many, and Space on it says why in the window's
+    words.
+  - **What the commands act on.** A command that can act on several things acts on the selected rows when there
+    are any, and on the current row alone otherwise; a command that is about one thing (Enter, F2, the ways to
+    open) stays on the current row. Each window's specification names which of its commands are which.
+  - **How long it lasts.** The selection lives in one level (a folder, a list): showing another drops it; the same
+    level read again keeps the rows still there. The marks are on rows the list shows, so that the count said and
+    the rows acted on are one set.
+  - **The code.** `AxKit.Core/Marks` is the marks and the words (each key one method over the shown rows, each a
+    `MarkRow` of a key, a name and whether it can be selected; pure, tested in `MarksTests`).
+    `AxKit.Forms/ListSelection` is one list's selection in a window: it rewrites the items whose mark flipped in
+    place, so that the list is not made again under NVDA, says what the key says, and makes the four commands
+    that select as they move. A window gives it its rows and its words for an item, makes its commands on
+    `SelectionKeys`, and asks it what is selected. No window keeps marks, their keys or their words of its own.
+  - **The windows on it**: axFile's folder list (AF-3.7), which also records each change as a line of its Actions
+    list. Every other list with a use for a selection follows, one app at a time (the priorities list).
 
 ### AX-9 The bundle's menus: Options, Window, axKit, Help
 

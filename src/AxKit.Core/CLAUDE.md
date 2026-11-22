@@ -8,7 +8,7 @@ another project on its second use, the bullet says so.
 The notes of each piece are in `src/AxKit.Core/notes`, one file per kind (split on 2026-11-15, when this file outgrew NotesTests' limit), so that a change to one kind is made with that file alone in hand. Read the file of the piece you change before changing it, and keep its bullet current in the same commit.
 
 - `notes/bundle.md`, the bundle: Dispatch, PackageIdentity, the Store, AppPaths, Ai, AiCaution, Consent, Theme, the settings files, Log, Updates, Events (the kinds of event and the table that gives each its sound), Audio, BundleAbout, BundleHelp, RecentActions.
-- `notes/paths-windows-lists.md`, paths, windows and lists: LocalPaths, FileSize, PathName, RecentPaths, RecentlyClosed, AxKitWindows, MenuText, Palette, TextMatch, TypeAhead, NaturalOrder, Accents, KeyChord, CommandListing.
+- `notes/paths-windows-lists.md`, paths, windows and lists: LocalPaths, FileSize, PathName, RecentPaths, RecentlyClosed, AxKitWindows, MenuText, Palette, TextMatch, TypeAhead, NaturalOrder, Marks, Accents, KeyChord, CommandListing.
 - `notes/safety.md`, safety: SystemPrograms, ProgramInstall, AutomationEnvironment, ProcessRun, DisplayText, Signatures, Redaction, SettingsSeal, ThisProgram, ChildJob.
 - `notes/ai-tools.md`, the AI tools: McpAccess, McpPipeName, McpProtocol, ClaudeCodeProgram, McpClaudeCode, McpTools, McpOffer, CommandNames, CommandGate, McpRun.
 - `notes/background-apps.md`, background apps: SignInStart, Hotkey.

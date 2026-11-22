@@ -1,3 +1,5 @@
+using AxKit.Forms;
+
 namespace AxFile;
 
 /// <summary>
@@ -33,7 +35,7 @@ public static class AxFileKeys
     public const Keys Filter = Keys.Control | Keys.Shift | Keys.F;
 
     /// <summary>In the folder list: the selection cleared while entries are selected, otherwise the filter; nothing while there is neither. In the Actions list: back to the folder list.</summary>
-    public const Keys Clear = Keys.Escape;
+    public const Keys Clear = SelectionKeys.Clear;
     public const Keys OpenFolder = Keys.Control | Keys.O;
     public const Keys GoToFolder = Keys.Control | Keys.G;
 
@@ -67,24 +69,9 @@ public static class AxFileKeys
     /// <summary>In the list: the clipboard's files copied or moved into the folder shown.</summary>
     public const Keys Paste = Keys.Control | Keys.V;
 
-    /// <summary>In the list: the entry selected, or deselected again (AF-3.7); the operations act on the selected entries.</summary>
-    public const Keys Select = Keys.Space;
-
-    /// <summary>In the list: every entry selected.</summary>
-    public const Keys SelectAll = Keys.Control | Keys.A;
-
-    /// <summary>In the list: no entry selected.</summary>
-    public const Keys SelectNone = Keys.Control | Keys.Shift | Keys.A;
-
-    /// <summary>In the list: every entry from the nearest selected one to the current one selected (AF-3.7), one line in the Actions list.</summary>
-    public const Keys SelectTo = Keys.Shift | Keys.Space;
-
-    /// <summary>In the list: the range from where it began to the next entry selected, as File Explorer's Shift+Down (AF-3.7).</summary>
-    public const Keys SelectDown = Keys.Shift | Keys.Down;
-
-    public const Keys SelectUp = Keys.Shift | Keys.Up;
-    public const Keys SelectToStart = Keys.Shift | Keys.Home;
-    public const Keys SelectToEnd = Keys.Shift | Keys.End;
+    // The keys that select entries (AF-3.7: Space, Shift+Space, Shift with Up, Down, Home and End, Ctrl+A,
+    // Ctrl+Shift+A) are the bundle's, AxKit.Forms/SelectionKeys (AX-8.16), the same in every window with a selection;
+    // the table below includes them.
 
     /// <summary>In the list: the bar's Context menu on the entry, opened as Alt and C open it (AF-4.6, AF-D13, AX-9.11).</summary>
     public const Keys ContextMenu = Keys.Shift | Keys.F10;
@@ -153,14 +140,8 @@ public static class AxFileKeys
         ("Cut (in the folder list)", Cut),
         ("Copy (in the folder list)", Copy),
         ("Paste (in the folder list)", Paste),
-        ("Select or deselect (in the folder list)", Select),
-        ("Select all (in the folder list)", SelectAll),
-        ("Deselect all (in the folder list)", SelectNone),
-        ("Select to here, from the nearest selected entry (in the folder list)", SelectTo),
-        ("Select to the next entry (in the folder list)", SelectDown),
-        ("Select to the previous entry (in the folder list)", SelectUp),
-        ("Select to the first entry (in the folder list)", SelectToStart),
-        ("Select to the last entry (in the folder list)", SelectToEnd),
+        // The bundle's selection keys (AX-8.16), in the folder list; Escape is the entry above, with its second meaning here.
+        .. SelectionKeys.All.Where(key => key.Key != SelectionKeys.Clear),
         ("Context menu (in the folder list)", ContextMenu),
         ("Context menu (in the folder list)", ContextMenuAlso),
         ("Properties", Properties),

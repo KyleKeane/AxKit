@@ -24,8 +24,17 @@ public sealed partial class FileForm
     private int _hidden;
     private int _dot;
 
-    /// <summary>The marks on the shown entries (AF-3.7), which the operations act on, and the Shift range being made; a marked item reads ", selected". Kept while the same folder shows.</summary>
-    private readonly Marks _marks = new();
+    /// <summary>The shown entries as the marks see them, each by its path and name, made with <see cref="_shown"/>.</summary>
+    private IReadOnlyList<MarkRow> _markRows = [];
+
+    private ListSelection? _selectionMade;
+
+    /// <summary>
+    /// The marks on the shown entries (AF-3.7), which the operations act on, and the Shift range being made; a marked
+    /// item reads ", selected". Kept while the same folder shows. The bundle's selection of a list (AX-8.16,
+    /// <see cref="ListSelection"/>), whose every change is also a line of the Actions list here (<see cref="RecordMarks"/>).
+    /// </summary>
+    private ListSelection Selection => _selectionMade ??= new ListSelection(_list, () => _markRows, row => ItemText(_shown[row]), said => Announce(said, true)) { Recorded = RecordMarks };
 
     /// <summary>The folder's last write time at the last read, so that coming back to the window knows whether to read again (AF-3.4).</summary>
     private DateTime _folderStamp;
@@ -166,7 +175,7 @@ public sealed partial class FileForm
         // keeps the filter, and the marks on the entries still shown (Rearrange).
         if (changed)
         {
-            _marks.Clear();
+            Selection.Clear();
             DropSelectionLines();
             _filter = string.Empty;
         }
@@ -254,7 +263,8 @@ public sealed partial class FileForm
         // The drives of This PC stay in letter order (AF-3.10).
         _shown = FolderListing.IsThisPC(_folder) ? FolderListing.Filter(_entries, _filter) : FolderListing.Arrange(_entries, _settings.SortBy, _filter);
         // A Shift range is rows of the shown entries: a new order or filter, or a read, ends it; the items are made anew below.
-        _marks.Keep(_shown);
+        _markRows = [.. _shown.Select(entry => new MarkRow(entry.Path, entry.Name))];
+        Selection.Keep();
         FillList(select);
     }
 
@@ -324,7 +334,7 @@ public sealed partial class FileForm
     /// <summary>Escape in the list: the selection cleared, as Ctrl+Shift+A, while entries are selected (AF-3.7); otherwise the filter cleared; false, the key left alone, when there is neither.</summary>
     private bool ClearSelectionOrFilter()
     {
-        if (_marks.Count > 0)
+        if (Selection.Count > 0)
         {
             SelectNone();
             return true;
@@ -341,65 +351,48 @@ public sealed partial class FileForm
 
     /// <summary>The list item of an entry (AF-2.2): its label, with ", selected" while it is (AF-3.7).</summary>
     // S-42: a name's hidden direction marks and control characters made visible.
-    private string ItemText(Entry entry) => DisplayText.Visible(_marks.Contains(entry.Path) ? entry.Label + ", selected" : entry.Label);
+    private string ItemText(Entry entry) => DisplayText.Visible(Selection.Label(entry.Path, entry.Label));
 
-    // ---- the selection (AF-3.7): the marks, one pure piece (Marks), applied here to the items and the Actions list ----
-    // Every change of the marks is a line of the Actions list's Selection section (AF-9.2), which Ctrl+Z on the line
-    // takes back (AF-9.3); a Shift range is one line, rewritten while the range goes on.
+    // ---- the selection (AF-3.7): the bundle's selection of a list (AX-8.16, ListSelection over Marks), recorded here in the Actions list ----
+    // The shared piece rewrites the items whose mark flipped and says what the key says. Here every change of the
+    // marks is also a line of the Actions list's Selection section (AF-9.2), which Ctrl+Z on the line takes back
+    // (AF-9.3); a Shift range is one line, rewritten while the range goes on.
 
     /// <summary>The line made last for a change of the marks, which is the Shift range's while one is being made (<see cref="RangeLine"/>).</summary>
     private ActionEntry? _rangeLine;
 
     /// <summary>The line of the Shift range being made, rewritten as it goes on; null once the range has ended (AF-9.2).</summary>
-    private ActionEntry? RangeLine => _marks.RangeOn ? _rangeLine : null;
+    private ActionEntry? RangeLine => Selection.RangeOn ? _rangeLine : null;
 
     /// <summary>
-    /// One change of the marks applied (AF-3.7): the items whose mark flipped rewritten, so that the list is not made
-    /// again under NVDA; its line recorded in the Actions list, a Shift range's rewritten while the range goes on; and
-    /// what the key says said.
+    /// One change of the marks recorded (AF-9.2), after its items were rewritten and before its words are said
+    /// (<see cref="ListSelection.Recorded"/>): its line in the Actions list, a Shift range's rewritten while the
+    /// range goes on.
     /// </summary>
-    private void ApplyMarks(MarkChange change)
+    private void RecordMarks(MarkChange change)
     {
-        if (change.Changed.Count > 1)
+        if (change.Line is not { } text)
         {
-            _list.BeginUpdate();
+            return;
         }
 
-        foreach (var row in change.Changed)
+        if (!change.RangeBegins && RangeLine is { } line)
         {
-            _list.Items[row] = ItemText(_shown[row]);
+            _actions.Rewrite(line, text);
+            line.Select = change.Select;
+        }
+        else
+        {
+            _rangeLine = _actions.Mark(text, _folder ?? string.Empty, change.Select, change.Before);
         }
 
-        if (change.Changed.Count > 1)
-        {
-            _list.EndUpdate();
-        }
-
-        if (change.Line is { } text)
-        {
-            if (!change.RangeBegins && RangeLine is { } line)
-            {
-                _actions.Rewrite(line, text);
-                line.Select = change.Select;
-            }
-            else
-            {
-                _rangeLine = _actions.Mark(text, _folder ?? string.Empty, change.Select, change.Before);
-            }
-
-            FillPane();
-        }
-
-        if (change.Said.Length > 0)
-        {
-            Announce(change.Said, true);
-        }
+        FillPane();
     }
 
     /// <summary>A Selection menu operation (AF-3.7): on the marked entries alone, "None selected" when there are none, never the current entry.</summary>
     private void OnMarks(Action operation)
     {
-        if (_marks.Count == 0)
+        if (Selection.Count == 0)
         {
             Announce("None selected", true);
             return;
@@ -420,18 +413,16 @@ public sealed partial class FileForm
     {
         _actions.Undone(entry);
         FillPane();
-        ApplyMarks(_marks.Restore(entry.Before ?? [], _shown));
+        Selection.Restore(entry.Before ?? []);
     }
 
     /// <summary>Space in the list: the entry selected, or deselected again, its item reading ", selected" while it is; "Selected" or "Deselected", with the count when more are.</summary>
     private void ToggleSelection()
     {
-        if (!TryEntry(out _))
+        if (TryEntry(out _))
         {
-            return;
+            Selection.Toggle();
         }
-
-        ApplyMarks(_marks.Toggle(_shown, _list.SelectedIndex));
     }
 
     /// <summary>Ctrl+A in the list, Selection → Select all: every entry shown, "n selected".</summary>
@@ -443,44 +434,29 @@ public sealed partial class FileForm
             return;
         }
 
-        ApplyMarks(_marks.All(_shown, _list.SelectedIndex));
+        Selection.All();
     }
 
     /// <summary>Ctrl+Shift+A in the list, Selection → Deselect all: the marks cleared, "None selected".</summary>
-    private void SelectNone() => ApplyMarks(_marks.None(_shown, _list.SelectedIndex));
+    private void SelectNone() => Selection.None();
 
     /// <summary>Shift+Space in the list (AF-3.7): every entry from the nearest marked entry to the current one marked, "Selected, n selected"; with no other entry marked, Space.</summary>
     private void SelectToHere()
     {
-        if (!TryEntry(out _))
+        if (TryEntry(out _))
         {
-            return;
+            Selection.ToHere();
         }
-
-        ApplyMarks(_marks.ToHere(_shown, _list.SelectedIndex));
     }
 
-    /// <summary>
-    /// Shift with Up, Down, Home or End in the list (AF-3.7): the current entry moves to <paramref name="target"/>
-    /// and every entry between where the range began and there is marked, as in File Explorer (<see cref="Marks.Extend"/>).
-    /// Each entry passed reads ", selected" on its own; nothing else is said. On a line after the entries (an empty
-    /// folder's, the not-shown line) the keys say that line.
-    /// </summary>
-    private void ExtendSelection(int target)
-    {
-        if (!TryEntry(out _))
-        {
-            return;
-        }
-
-        target = Math.Clamp(target, 0, _shown.Count - 1);
-        // The items first, the move after: the entry reached is read once, with its mark.
-        ApplyMarks(_marks.Extend(_shown, _list.SelectedIndex, target));
-        _list.SelectedIndex = target;
-    }
+    // Shift with Up, Down, Home or End in the list (AF-3.7) are the shared piece's four commands
+    // (ListSelection.MoveCommands, registered in FileForm.cs): the current entry moves and every entry between where
+    // the range began and there is marked, as in File Explorer. Each entry passed reads ", selected" on its own;
+    // nothing else is said. On a line after the entries (an empty folder's, the not-shown line) the keys say that
+    // line (SayNoEntry).
 
     /// <summary>The selected entries among those shown, in the list's order; none when nothing is selected.</summary>
-    private List<Entry> SelectedEntries() => _shown.Where(entry => _marks.Contains(entry.Path)).ToList();
+    private List<Entry> SelectedEntries() => _shown.Where(entry => Selection.Contains(entry.Path)).ToList();
 
     /// <summary>What an operation acts on (AF-3.7): the selected entries, or the current entry alone when none is selected; empty, and said, when there is no entry.</summary>
     private List<Entry> Targets()
@@ -773,7 +749,7 @@ public sealed partial class FileForm
             return;
         }
 
-        var count = _marks.Count;
+        var count = Selection.Count;
         Announce(FolderListing.Information(entry) + (count > 0 ? $", {count} selected" : string.Empty), true);
     }
 }
