@@ -6,6 +6,34 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-22: what opens says its kind, and a form says its title and "form"; by the assistant with NVDA listening (`main` 598ab96b)
+
+`.\nvda-pass.ps1 -Only` every script of axTask and of axMCP, axTerminal's `08-user-shells` and axFile's
+`03-operations`, behind the spoken countdown, the maintainer away at his word ("i am away so you can run nvda pass
+when you are ready"), NVDA 2025.3.3 with the OneCore voice, Windows 11 Pro 10.0.26200, the build 5.10.0 of commit
+598ab96b, the tree clean: 26 scripts, 219 goals and checks, all passed with every announcement also spoken by NVDA.
+
+| What | Scripts | Result |
+|---|---|---|
+| axTask: every script, the new `21-what-opens.txt` and the forms of `18-item-form` and `20-selection` | 21 | Passed |
+| axMCP: Add server's form, a choice's list | 3 | Passed |
+| axTerminal: Add a shell's form | 1 | Passed |
+| axFile: the operations, with the rename box in place | 1 | Passed |
+
+What was heard when a form opens: the first control as NVDA reads it, then the one short line, and nothing of the
+explanation: "Choose the list, list. Later. Move 2 items, form"; "Type the title, edit, selected, Fix the tap.
+Fields of Fix the tap, form"; "Type the name of the server, edit, blank. Add server, form"; "Add a shell, form".
+Ctrl+Q then reads the explanation whole, "The fields of Fix the tap, in the order of its list. Tab moves from one
+to the next. …". A text still reads as NVDA reads it, "Keyboard shortcuts, edit, read only, multi line, In this
+text: …", and a field "Name contains, edit". The four sounds were raised where expected (the runner hears that a
+sound was played, by its name; it does not hear the sound itself), and none with the switch off.
+
+His by ear, not heard here: the four sounds in real use (whether each is told from the others and from the
+heading, edge, question and background sounds at speed, and whether the form's, at 0.7 s, sits well under NVDA's
+reading of the first control); and whether the title and "form" coming after the first control, not before it,
+is the order he wants. It comes after because a line said before the focus moves is cut off by NVDA's reading of
+the control.
+
 ## 2026-11-22: Space selects, Ctrl+Enter is Done in axTask, on the shared selection; by the assistant with NVDA listening (`main` 7543da40)
 
 `.\nvda-pass.ps1 -Only` every script of axTask and the four of axFile that select (`01-browse`, `03-operations`,
