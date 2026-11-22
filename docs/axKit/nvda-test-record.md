@@ -6,6 +6,22 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-22: axMedia as a navigator on the item window, and the item window's hooks for it; by the assistant with NVDA listening (`main` 89362d2c)
+
+`.\nvda-pass.ps1 -Only` every script of axMedia, axTask, axPass, axMCP and axAutomate, behind the spoken countdown,
+the maintainer away at his word (NVDA passes "Yes, for this whole absence"), NVDA 2025.3.3 with the OneCore voice,
+Windows 11 Pro 10.0.26200, the build 5.10.0 of commit 89362d2c, the tree clean: 41 scripts, 313 goals and checks,
+none failed and none run twice.
+
+| What | Scripts | Result |
+|---|---|---|
+| axMedia on `ItemForm` (framework step 6): the queue, playing, the Context menu with "Queue is empty", the selection with its count in the status bar, Right, Left and Backspace as the edge sound | 8 | Passed |
+| axTask: every script | 21 | Passed |
+| axPass, axMCP, axAutomate: every script | 12 | Passed |
+
+Not heard by a person: whether the edge sound on Right and Left in the queue is what the maintainer wants there
+(they moved the row before); it is a line of the item of step 6 for his ear.
+
 ## 2026-11-22: the entry sounds raised by the components, and axMedia's selection; by the assistant with NVDA listening (`main` 4f0f309b)
 
 `.\nvda-pass.ps1 -Only` every script of axMedia, axTask, axFile, axMCP, axCalc and axProcess, and axTerminal's
