@@ -6,6 +6,20 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-22: axFile's rename on the navigator's rename box; by the assistant with NVDA listening (branch `axfile-navigator` b80893ce)
+
+`.\nvda-pass.ps1 -Only` every script of axFile, from the branch's own folder, behind the spoken countdown, the
+maintainer away at his word, NVDA 2025.3.3 with the OneCore voice, Windows 11 Pro 10.0.26200, the build 5.10.0 of
+commit b80893ce, the tree clean: 13 scripts, 116 goals and checks, none failed and none run twice.
+
+| What | Scripts | Result |
+|---|---|---|
+| axFile: the rename in place through the item window's `RenameSelected` (F2, the name before the extension selected, a refused name with the box kept open, an unchanged name, a new text file's whole name, a file in use); every other script | 13 | Passed |
+
+On the hidden desktop before the pass, one run of `11-two-windows-save.txt` failed once and passed in the four runs
+after it: two windows closed 52 ms apart and one setting change was lost. It has an item of its own in the
+priorities list; nothing of the rename touches it.
+
 ## 2026-11-22: the eight navigator apps, after axFile's selection left its Actions list; by the assistant with NVDA listening (branch `axfile-navigator` 51d76e58)
 
 `.\nvda-pass.ps1 -Only` every script of the eight apps on the navigator, from the branch's own folder beside the
