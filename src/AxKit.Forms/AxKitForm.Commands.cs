@@ -110,6 +110,13 @@ public abstract partial class AxKitForm
         CommandPalette.Commands(MainMenuStrip, text => SayFor(origin, text), (item, name) => ClickFor(origin, item, name));
 
     /// <summary>
+    /// Whether the command that runs now was clicked for an AI tool (MC-7.5): true only while its click runs. For a
+    /// command that then asks the user more than it would ask him for his own press (axTask's actions that start a
+    /// program, docs/axTask/forms-framework.md AF-7.5); a command that goes on later takes the answer with it.
+    /// </summary>
+    protected bool ClickedForAiTool { get; private set; }
+
+    /// <summary>
     /// The one place where axKit itself clicks a menu item (CL-4.7): for the command palette's line, for the
     /// automation channel's <c>choose</c> and <c>menu</c>, and for an AI tool's run. Each caller has made its own
     /// checks before (<see cref="CommandGate"/> says which belong to which origin); here are the click and what goes
@@ -129,7 +136,16 @@ public abstract partial class AxKitForm
             ChimeForMcp();
         }
 
-        item.PerformClick();
+        ClickedForAiTool = origin == CommandOrigin.AiTool;
+        try
+        {
+            item.PerformClick();
+        }
+        finally
+        {
+            ClickedForAiTool = false;
+        }
+
         if (origin != CommandOrigin.AiTool && item.CheckOnClick)
         {
             SayFor(origin, MenuText.CheckSaid(name, item.Checked));

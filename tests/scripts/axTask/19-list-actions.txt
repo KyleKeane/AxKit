@@ -1,0 +1,117 @@
+# Workflow: Run the actions of a list
+# axTask, docs/axTask/forms-framework.md sections 2 to 7: a list's configuration declares actions, run on the item
+# selected: by name from Context, Actions of this list, and by one of eighteen keys. A set writes fields; a run
+# starts a program with its arguments as a list, asked about before its first run with everything that would run
+# written out, then heard as it starts and as it ends; its output is read on demand, and a failure opens it. The
+# programs here are Windows' own findstr and ping, which reach nothing.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Kind","type":"text","value":""},{"title":"Checked","type":"date","value":""}],"actions":[{"name":"Mark it a bug","key":"Ctrl+1","does":"set","set":{"Kind":"Bug"}},{"name":"Find the kind","key":"Ctrl+Shift+4","does":"run","program":"findstr","arguments":["/c:{Kind}"],"input":"{Kind} of {Title}","then":{"set":{"Checked":"{today}"}}},{"name":"Miss","does":"run","program":"findstr","arguments":["/c:no such words"],"input":"{Title}"},{"name":"Find what I type","does":"run","program":"findstr","arguments":["/c:{form:Type the word to look for}"],"input":"{Title}","fields":[{"title":"Type the word to look for","type":"text"}]},{"name":"Wait","does":"run","program":"ping","arguments":["-n","30","127.0.0.1"]},{"name":"Broken","key":"Ctrl+1","does":"fly"},{"name":"No such program","does":"run","program":"no-such-program-of-axkit"},{"name":"Look in the terminal","does":"terminal","command":["findstr","/c:x","{file}"]}]}
+file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false}
+start task {temp}\tasks
+expect focus Your lists, heading level 1
+keys down
+keys right
+expect focus Fix the tap
+
+# Goal: Set fields with an action's key
+# Ctrl+1 is the list's first action: it sets Kind, as one step for Ctrl+Z. A key without an action says so.
+do Action key 1
+expect said ! Mark it a bug: Kind: Bug
+run findstr /l /c:"\"Kind\": \"Bug\"" "tasks\Home\Fix the tap.json"
+do Action key 9
+expect said ! No action on Ctrl+9 in this list
+# Check: An action that is not understood says why and does nothing
+menu Broken, not understood: it does fly, which this version does not know
+expect said ! Broken, not understood: it does fly, which this version does not know
+menu No such program
+expect said ! No such program names the program no-such-program-of-axkit, which is not there
+menu Look in the terminal
+expect said ! Look in the terminal: handing a command line to axTerminal comes with the next step
+
+# Goal: Read what a program would do before its first run, and cancel it
+# The action's other key, Ctrl+Shift+4: before its first run the question, with where the action is written, what it
+# does, the program by its full path, each argument as it is for this item, its input, and what is set after. Enter
+# is on Cancel: nothing runs.
+do Action key Shift+4
+expect state "notice":"Run Find the kind?"
+expect state This action is in the list's configuration file
+expect state Find the kind runs findstr with 1 argument: /c:{Kind}; gives it {Kind} of {Title} as input; then sets Checked: {today}
+expect state findstr.exe
+expect state /c:Bug
+expect state Bug of Fix the tap
+expect state axKit does not know what this program does or reaches
+keys enter
+expect state "notice":null
+refuse said Running Find the kind
+
+# Goal: Run a program on an item, and hear how it ends
+# Asked again; Run it, and do not ask again for this action: "Running Find the kind", then "Find the kind: done"
+# with what it set, written into the item as one step. The next run is not asked about.
+do Action key Shift+4
+expect state "notice":"Run Find the kind?"
+keys tab
+expect focus Cancel"
+keys tab
+expect focus Run it &once"
+keys tab
+expect focus do not &ask again for this action"
+keys enter
+expect said ! Running Find the kind
+expect said ! Find the kind: done. Checked:
+run findstr /l /c:"\"Checked\": \"20" "tasks\Home\Fix the tap.json"
+said
+do Action key Shift+4
+expect said ! Find the kind: done. Checked:
+expect state "notice":null
+# Check: The last output is read on demand
+menu Read the last output
+expect state "notice":"Output of Find the kind"
+expect state Bug of Fix the tap
+keys escape
+
+# Check: A program that fails says so with its exit code and opens its output
+menu Miss
+expect state "notice":"Run Miss?"
+keys tab tab
+expect focus Run it &once"
+keys enter
+expect said ! Running Miss
+expect said ! Miss failed, exit code 1
+expect state "notice":"Output of Miss"
+expect state It wrote nothing.
+keys escape
+
+# Goal: Fill in an action's form
+# An action with fields opens its form first: the field named by its title, an instruction; an empty needed field
+# keeps the form open; filled, the action goes on to its question and runs with what was typed as one argument.
+menu Find what I type
+expect state "notice":"Find what I type"
+expect focus "name":"Type the word to look for"
+keys enter
+expect said Type the word to look for: this is needed
+expect state "notice":"Find what I type"
+type the tap
+keys enter
+expect state "notice":"Run Find what I type?"
+expect state /c:the tap
+keys tab tab
+keys enter
+expect said ! Find what I type: done
+menu Read the last output
+expect state Fix the tap
+keys escape
+
+# Goal: Stop a running action
+# A program that takes long: "Running Wait"; a second action meanwhile is refused; Actions, Stop the running action
+# ends it with what it started.
+menu Wait
+expect state "notice":"Run Wait?"
+keys tab tab
+keys enter
+expect said ! Running Wait
+menu Miss
+expect said ! Wait is still running
+do Stop the running action
+expect said ! Wait stopped
+do Stop the running action
+expect said ! No action is running

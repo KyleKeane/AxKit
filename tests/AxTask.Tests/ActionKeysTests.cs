@@ -4,120 +4,26 @@ using AxTask.Core;
 
 namespace AxTask.Tests;
 
-/// <summary>The Ctrl+number action keys of a list (docs/axKit/reports.md RP-8).</summary>
+/// <summary>
+/// What the actions of a list share with the action keys they grew from (docs/axKit/reports.md RP-8, SPEC.md
+/// TK-7a): a set applied and said, the open rule, the acceptance under the seal, and the program an action names.
+/// The actions themselves are <see cref="ListActionsTests"/>'.
+/// </summary>
 public sealed class ActionKeysTests
 {
-    /// <summary>
-    /// A list's configuration with its actions (docs/axTask/forms-framework.md section 3). The action keys are the
-    /// entries on Ctrl+1 to Ctrl+9 that set, move or open; the rest are not theirs: one without a name, one on
-    /// another key, one of another kind, a second entry on a key, one without what its kind needs.
-    /// </summary>
-    private const string ListText = """
-        {
-          "format": "axkit-list 2",
-          "details": { "Notes": "" },
-          "item fields": [ { "title": "Done", "type": "check", "value": false } ],
-          "actions": [
-            { "name": "Make it a bug", "key": "Ctrl+1", "does": "set", "set": { "Kind": "Bug" } },
-            { "name": "Done", "key": "Ctrl+4", "does": "set", "set": { "Done": true } },
-            { "name": "Move to Later", "key": "ctrl+7", "does": "move", "to": "../Later" },
-            { "name": "Open on GitHub", "key": "Ctrl+8", "does": "open", "open": "Issue" },
-            { "name": "", "key": "Ctrl+9", "does": "open", "open": "Issue" },
-            { "name": "Not a digit", "key": "Ctrl+0", "does": "open", "open": "Issue" },
-            { "name": "Runs a program", "key": "Ctrl+2", "does": "run", "program": "git" },
-            { "name": "On Shift", "key": "Ctrl+Shift+3", "does": "set", "set": { "Kind": "Idea" } },
-            { "name": "A second on a key", "key": "Ctrl+1", "does": "open", "open": "Issue" },
-            { "name": "Nothing to set", "key": "Ctrl+5", "does": "set" }
-          ]
-        }
-        """;
-
-    [Fact]
-    public void The_keys_are_read_by_digit_and_a_nameless_one_is_not_one()
-    {
-        var keys = ActionKeys.Read(ListConfig.Parse(ListText));
-        Assert.Equal([1, 4, 7, 8], keys.Keys.Order());
-        Assert.Equal("set", keys[1].Kind);
-        Assert.Equal("sets Kind: Bug", keys[1].Described);
-        Assert.Equal("sets Done: done", keys[4].Described);
-        Assert.Equal("moves to ../Later", keys[7].Described);
-        Assert.Equal("opens Issue", keys[8].Described);
-        Assert.Equal("Ctrl+1. Make it a bug", ActionKeys.Spoken(1, keys[1]));
-        Assert.Equal("Ctrl+3. not set", ActionKeys.Spoken(3, null));
-        Assert.Empty(ActionKeys.Read(null));
-        Assert.Empty(ActionKeys.Read(ListConfig.New([])));
-    }
-
-    [Fact]
-    public void A_key_is_set_and_removed_among_the_actions_and_the_others_stay_as_they_are()
-    {
-        var list = ListConfig.New([]);
-        list = ActionKeys.With(list, 2, new ListAction("Make it feedback", Set: new Dictionary<string, JsonNode?> { ["Kind"] = JsonValue.Create("Feedback") }));
-        Assert.Contains("\"key\": \"Ctrl+2\"", list.ToText());
-        Assert.Contains("\"does\": \"set\"", list.ToText());
-        var back = ActionKeys.Read(ListConfig.Parse(list.ToText()));
-        Assert.Equal("Make it feedback", back[2].Name);
-        Assert.Equal("Feedback", back[2].Set!["kind"]!.GetValue<string>());
-
-        list = ActionKeys.With(list, 2, null);
-        Assert.Empty(list.Actions!);
-
-        // In a list with other actions: a key set again keeps its place, a new one goes last, and what is no action
-        // key (another kind, another key) is written back as it was.
-        var full = ListConfig.Parse(ListText);
-        var changed = ActionKeys.With(ActionKeys.With(full, 4, new ListAction("Park", Move: "../Later")), 6, new ListAction("Web", Open: "Issue"));
-        var names = changed.Actions!.Select(action => FieldTypes.TextOf(action!["name"])).ToList();
-        Assert.Equal("Park", names[1]);
-        Assert.Equal("Web", names[^1]);
-        Assert.Equal(full.Actions!.Count + 1, names.Count);
-        Assert.Contains("Runs a program", names);
-        Assert.Equal("../Later", FieldTypes.TextOf(changed.Actions![1]!["to"]));
-        Assert.Equal(full.Actions!.Count - 1, ActionKeys.With(full, 8, null).Actions!.Count);
-    }
-
-    /// <summary>
-    /// The action keys of the earlier format come through the conversion as they were: the same keys, the same
-    /// actions, and so the same acceptances (TK-7a.3: <see cref="ActionKeys.MarkText"/> is over the action, not over
-    /// the file's shape). A list made as a GitHub list before 2026-11-14 (TK-7a.2) keeps its <c>github</c> member,
-    /// which means nothing.
-    /// </summary>
-    [Fact]
-    public void The_keys_of_a_list_of_the_earlier_format_are_the_same_keys_after_its_conversion()
-    {
-        const string text = """
-            {
-              "format": "axkit-list 1",
-              "fields": [ { "title": "Notes", "type": "longtext", "value": "" } ],
-              "new item": [ { "title": "Kind", "type": "choice", "value": "unlabelled", "options": ["Bug", "unlabelled"] } ],
-              "github": { "repository": "owner/repo", "state": "open" },
-              "keys": { "1": { "name": "Make it a bug", "set": { "Kind": "Bug" } }, "5": { "name": "Open on GitHub", "open": "Issue" }, "7": { "name": "Later", "move": "../Later" } }
-            }
-            """;
-        var list = ListConfig.Parse(AxKit.Core.Conversion.EarlierFormat.Convert(text, []).Config);
-        var keys = ActionKeys.Read(list);
-        Assert.Equal([1, 5, 7], keys.Keys.Order());
-        Assert.Equal("Kind", Assert.Single(TaskRules.TemplateOf(list)).Title);
-        // The action as an acceptance seals it is what the earlier file held, to the letter.
-        Assert.Equal("{\"name\":\"Later\",\"move\":\"../Later\"}", keys[7].ToJson().ToJsonString());
-        Assert.Equal("{\"name\":\"Open on GitHub\",\"open\":\"Issue\"}", keys[5].ToJson().ToJsonString());
-        var changed = ActionKeys.With(list, 5, null);
-        Assert.Contains("\"github\"", changed.ToText());
-        Assert.Contains("owner/repo", changed.ToText());
-    }
-
     [Fact]
     public void Applying_a_set_changes_the_fields_and_adds_a_missing_one()
     {
         var item = ItemDocument.NewItem("Fix the tap", [new ItemField("Done", FieldTypes.Check, JsonValue.Create(false), [])]);
-        var set = ActionKeys.ParseSetLines("Done: done\r\nKind: Bug\r\nno colon here\r\nSize: 3");
-        Assert.NotNull(set);
+        var set = new Dictionary<string, JsonNode?> { ["Done"] = JsonValue.Create(true), ["Kind"] = JsonValue.Create("Bug"), ["Size"] = JsonValue.Create(3) };
+
         var changed = ActionKeys.ApplySet(item, set);
+
         Assert.True(FieldTypes.IsTrue(changed.Fields[changed.IndexOf("Done")].Value));
         Assert.Equal("Bug", FieldTypes.TextOf(changed.Fields[changed.IndexOf("Kind")].Value));
         Assert.Equal(FieldTypes.Text, changed.Fields[changed.IndexOf("Kind")].Type);
         Assert.Equal(FieldTypes.Number, changed.Fields[changed.IndexOf("Size")].Type);
         Assert.Equal("Done: done, Kind: Bug, Size: 3", ActionKeys.SpokenSet(set));
-        Assert.Null(ActionKeys.ParseSetLines("nothing"));
     }
 
     [Fact]
@@ -131,18 +37,41 @@ public sealed class ActionKeysTests
         Assert.Null(ActionKeys.OpenRefusal(Dispatch.AxClaude, Path.Combine(Path.GetTempPath(), "code")));
     }
 
-    // ---- a key that moves or opens is asked about first (TK-7a.3; bundle repairs.md R-72) ----
-
+    /// <summary>
+    /// The action keys of the earlier format come through the conversion as the same keys and the same actions, and
+    /// so with the acceptances given then (TK-7a.3): the mark the window makes of a converted action on Ctrl+digit is
+    /// the mark that was sealed before. A list made as a GitHub list before 2026-11-14 (TK-7a.2) keeps its
+    /// <c>github</c> member, which means nothing.
+    /// </summary>
     [Fact]
-    public void A_key_that_moves_or_opens_asks_first_and_one_that_sets_fields_does_not()
+    public void An_acceptance_of_a_key_of_the_earlier_format_stands_after_the_conversion()
     {
-        var keys = ActionKeys.Read(ListConfig.Parse(ListText));
-        Assert.False(ActionKeys.AsksFirst(keys[1]));
-        Assert.True(ActionKeys.AsksFirst(keys[7]));
-        Assert.True(ActionKeys.AsksFirst(keys[8]));
-        Assert.Equal("Ctrl+7 in this list now moves to ../Later. Press it again to do it.", ActionKeys.AskText(7, keys[7]));
-        Assert.Equal("Ctrl+8 in this list now opens Issue. Press it again to do it.", ActionKeys.AskText(8, keys[8]));
+        const string text = """
+            {
+              "format": "axkit-list 1",
+              "fields": [ { "title": "Notes", "type": "longtext", "value": "" } ],
+              "new item": [ { "title": "Kind", "type": "choice", "value": "unlabelled", "options": ["Bug", "unlabelled"] } ],
+              "github": { "repository": "owner/repo", "state": "open" },
+              "keys": { "1": { "name": "Make it a bug", "set": { "Kind": "Bug" } }, "5": { "name": "Open on GitHub", "open": "Issue" }, "7": { "name": "Later", "move": "../Later" } }
+            }
+            """;
+        var converted = AxKit.Core.Conversion.EarlierFormat.Convert(text, []).Config;
+        var list = ListConfig.Parse(converted);
+        var actions = ListActions.Read(list);
+
+        Assert.Equal([1, 5, 7], actions.Select(action => action.Key));
+        Assert.All(actions, action => Assert.Null(action.NotUnderstood));
+        Assert.Equal("Kind", Assert.Single(TaskRules.TemplateOf(list)).Title);
+        Assert.Contains("owner/repo", converted, StringComparison.Ordinal);
+
+        // What the window seals over for a move and an open on Ctrl+digit is what the earlier file held, to the letter.
+        var later = actions[2];
+        var open = actions[1];
+        Assert.Equal("{\"name\":\"Later\",\"move\":\"../Later\"}", new ListAction(later.Name, Move: later.To).ToJson().ToJsonString());
+        Assert.Equal("{\"name\":\"Open on GitHub\",\"open\":\"Issue\"}", new ListAction(open.Name, Open: open.Open).ToJson().ToJsonString());
     }
+
+    // ---- an acceptance is kept under the seal (TK-7a.3, AF-7.2; bundle repairs.md R-72) ----
 
     [Fact]
     public void An_acceptance_is_for_one_list_one_key_and_one_action_and_is_kept_under_the_seal()
@@ -182,6 +111,33 @@ public sealed class ActionKeysTests
     }
 
     [Fact]
+    public void An_action_that_runs_a_program_is_accepted_whole_and_any_change_to_it_is_not()
+    {
+        using var temp = new TempFolder("axtask-keys");
+        var path = Path.Combine(temp.Path, "axTask.json");
+        var home = Path.Combine(temp.Path, "tasks", "Home");
+        static ConfiguredAction Action(string arguments) => ListActions.Read(ListConfig.Parse(
+            $$"""{ "format": "axkit-list 2", "actions": [ { "name": "Answer", "does": "run", "program": "gh", "arguments": {{arguments}} } ] }"""))[0];
+        var action = Action("""["issue", "view", "{Number}"]""");
+        var settings = TaskSettings.Load(path, out _);
+        Assert.False(settings.AcceptsAction(path, ListActions.MarkText(home, action)));
+
+        Assert.True(settings.AcceptAction(path, ListActions.MarkText(home, action)));
+        Assert.False(settings.AcceptAction(path, ListActions.MarkText(home, action)));
+        settings.Save(path);
+        var back = TaskSettings.Load(path, out _);
+        Assert.True(back.AcceptsAction(path, ListActions.MarkText(home, Action("""["issue", "view", "{Number}"]"""))));
+        // An argument changed in the file asks again; so does the same action in another list.
+        Assert.False(back.AcceptsAction(path, ListActions.MarkText(home, Action("""["issue", "close", "{Number}"]"""))));
+        Assert.False(back.AcceptsAction(path, ListActions.MarkText(Path.Combine(temp.Path, "tasks", "Work"), action)));
+        // Nothing of the action is readable in the settings, and its mark written in by hand accepts nothing.
+        Assert.DoesNotContain("issue", File.ReadAllText(path), StringComparison.Ordinal);
+        var fresh = TaskSettings.Load(Path.Combine(temp.Path, "other.json"), out _);
+        fresh.AcceptedActionKeys.Add(ListActions.MarkText(home, action));
+        Assert.False(fresh.AcceptsAction(Path.Combine(temp.Path, "other.json"), ListActions.MarkText(home, action)));
+    }
+
+    [Fact]
     public void The_acceptances_are_kept_to_a_limit_the_oldest_going_first()
     {
         using var temp = new TempFolder("axtask-keys");
@@ -197,70 +153,33 @@ public sealed class ActionKeysTests
         Assert.True(settings.AcceptsActionKey(path, temp.Path, 2, first));
     }
 
-    // ---- the form of one key (RP-8.2, bundle AX-8.10) ----
-
-    private static bool Later(string list) => list == "Later";
+    // ---- the program a run action names (forms-framework.md AF-3.2, AF-4.3) ----
 
     [Fact]
-    public void The_form_shows_a_keys_action_by_its_kind_and_its_value()
+    public void A_program_is_found_on_the_search_path_or_by_a_full_path_and_never_in_the_lists_folder()
     {
-        var keys = ActionKeys.Read(ListConfig.Parse(ListText));
-        Assert.Equal(3, ActionKeys.KindNames.Count);
-        Assert.Equal((0, "Kind: Bug"), (ActionKeys.KindIndex(keys[1]), ActionKeys.ValueText(keys[1])));
-        // A check is written as it is typed, done or not done.
-        Assert.Equal((0, "Done: done"), (ActionKeys.KindIndex(keys[4]), ActionKeys.ValueText(keys[4])));
-        Assert.Equal((1, "Later"), (ActionKeys.KindIndex(keys[7]), ActionKeys.ValueText(keys[7])));
-        Assert.Equal((2, "Issue"), (ActionKeys.KindIndex(keys[8]), ActionKeys.ValueText(keys[8])));
-        // A key not set: the first kind, nothing typed.
-        Assert.Equal((0, string.Empty), (ActionKeys.KindIndex(null), ActionKeys.ValueText(null)));
-    }
+        using var temp = new TempFolder("axtask-program");
+        var tools = Directory.CreateDirectory(Path.Combine(temp.Path, "tools")).FullName;
+        var list = Directory.CreateDirectory(Path.Combine(temp.Path, "lists", "Home")).FullName;
+        File.WriteAllText(Path.Combine(tools, "gh.exe"), string.Empty);
+        File.WriteAllText(Path.Combine(tools, "build.cmd"), string.Empty);
+        File.WriteAllText(Path.Combine(tools, "notes.txt"), string.Empty);
+        File.WriteAllText(Path.Combine(list, "evil.exe"), string.Empty);
+        // The list's own folder is on the search path here, and still nothing is taken from it.
+        var path = $"{list};relative\\folder;{tools}";
+        static bool Local(string found) => true;
 
-    [Fact]
-    public void The_forms_fields_make_the_action_of_the_kind_chosen()
-    {
-        var set = ActionKeys.FromForm(" Finish ", 0, "Done: done\r\nKind: Bug", Later);
-        Assert.Null(set.Refused);
-        Assert.Equal("Finish", set.Action!.Name);
-        Assert.Equal("sets Done: done, Kind: Bug", set.Action.Described);
+        Assert.Equal(Path.Combine(tools, "gh.exe"), ActionProgram.Find("gh", list, path, Local).Path);
+        Assert.Equal(Path.Combine(tools, "gh.exe"), ActionProgram.Find(" gh.exe ", list, path, Local).Path);
+        Assert.Equal(Path.Combine(tools, "build.cmd"), ActionProgram.Find("build", list, path, Local).Path);
+        Assert.Equal(Path.Combine(tools, "gh.exe"), ActionProgram.Find(Path.Combine(tools, "gh.exe"), list, path, Local).Path);
 
-        var move = ActionKeys.FromForm("Park", 1, " Later ", Later);
-        Assert.Equal("../Later", move.Action!.Move);
-
-        var open = ActionKeys.FromForm("Web", 2, "Issue", Later);
-        Assert.Equal("Issue", open.Action!.Open);
-    }
-
-    [Fact]
-    public void What_a_key_shows_comes_back_as_the_same_action()
-    {
-        var keys = ActionKeys.Read(ListConfig.Parse(ListText));
-        foreach (var action in keys.Values)
-        {
-            var again = ActionKeys.FromForm(action.Name, ActionKeys.KindIndex(action), ActionKeys.ValueText(action), Later);
-            Assert.Null(again.Refused);
-            Assert.Equal(action.ToJson().ToJsonString(), again.Action!.ToJson().ToJsonString());
-        }
-    }
-
-    [Fact]
-    public void An_empty_name_removes_the_key_whatever_else_is_typed()
-    {
-        Assert.Equal((null, null, false), ActionKeys.FromForm("  ", 1, "Nowhere", Later));
-    }
-
-    [Theory]
-    [InlineData(0, "no colon here", "Type at least one line as Field: value")]
-    [InlineData(0, "", "Type at least one line as Field: value")]
-    [InlineData(1, "", "Type the name of a list in the top folder")]
-    [InlineData(1, "Nowhere", "No list called Nowhere in the top folder")]
-    [InlineData(1, "Later\nSooner", "No list called Later Sooner in the top folder")]
-    [InlineData(2, " ", "Type one field's title or one app")]
-    [InlineData(2, "Issue\njson", "Type one field's title or one app")]
-    public void A_value_the_kind_cannot_take_is_refused_in_the_values_field(int kind, string value, string refused)
-    {
-        var typed = ActionKeys.FromForm("Name", kind, value, Later);
-        Assert.Null(typed.Action);
-        Assert.Equal(refused, typed.Refused);
-        Assert.True(typed.InValue);
+        Assert.Contains("which is not there", ActionProgram.Find("no-such-tool", list, path, Local).Refused, StringComparison.Ordinal);
+        Assert.Contains("inside the list's own folder", ActionProgram.Find("evil", list, path, Local).Refused, StringComparison.Ordinal);
+        Assert.Contains("inside the list's own folder", ActionProgram.Find(Path.Combine(list, "evil.exe"), list, path, Local).Refused, StringComparison.Ordinal);
+        Assert.Contains("a path that is not a full one", ActionProgram.Find(@"tools\gh.exe", list, path, Local).Refused, StringComparison.Ordinal);
+        Assert.Contains("a path that is not a full one", ActionProgram.Find(@"..\tools\gh.exe", list, path, Local).Refused, StringComparison.Ordinal);
+        Assert.Contains("is no program file", ActionProgram.Find(Path.Combine(tools, "notes.txt"), list, path, Local).Refused, StringComparison.Ordinal);
+        Assert.Contains("not on a drive of this computer", ActionProgram.Find("gh", list, path, _ => false).Refused, StringComparison.Ordinal);
     }
 }

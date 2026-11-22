@@ -247,32 +247,60 @@ The design is `docs/axKit/reports.md` section 8 (RP-8); the rules axTask keeps:
   (a value the item lacked is written; one the list's configuration does not name is kept, AF-11.3), `move` moves the item to a list by a path relative to this one, the links
   following (IA-D3), `open` opens a field's web address in the browser (the user's own act; axTask itself asks the network nothing) or
   an app by its verb on the item's file
-  (`json`, `file`; `claude` and `terminal` only in a folder on a drive of this computer, RP-8.1). A digit without an action: the edge earcon and "No action
-  on Ctrl+3 in this list; Actions, Action keys sets one"; outside a list, "Action keys act in a list: open one
-  first". Actions → Action keys… opens one form (bundle AX-8.10) with four controls in Tab order: the list "Choose
-  the key" with the nine keys ("Ctrl+1. Done", "Ctrl+3. not set"); "Type the action's name, or leave it empty to remove
-  the key"; the list "Choose what the key does" (set, move, open); and a box of several lines for the value, its
-  fields as Field: value lines, the list it moves to, or the field or app it opens; then Keep and Cancel. Moving
-  through the keys fills the other three with that key's action. Ctrl+Enter or Keep writes `list.json` as one undo
-  step; a value the kind cannot take is said with the focus in the value's box and the form stays (`ActionKeys.FromForm`;
-  a list and up to three notices, one after the other, until 2026-11-14)
-  (RP-8.2). Context's Action keys submenu on an item shows the nine with the names the list gives them, so the palette and
-  F1 list them (RP-8.3). All tasks moved to Ctrl+0 for them (RP-8.4).
+  (`json`, `file`; `claude` and `terminal` only in a folder on a drive of this computer, RP-8.1). A key without an action: the edge earcon and "No action
+  on Ctrl+3 in this list; its actions are written in its configuration, Ctrl+J on the list"; outside a list, "Action
+  keys act in a list: open one first". All tasks moved to Ctrl+0 for them (RP-8.4).
+- **TK-7a.1a The actions of a list** (since 2026-11-21; `forms-framework.md` sections 2 to 7 are the specification,
+  AF-n.m, and this is what is built of it). A list's actions are the entries of its configuration's `"actions"`, and
+  nothing else: the form Actions, Action keys went, and an action is written in the file, in axJSON (Ctrl+J on the
+  list). Five kinds (`does`): `set`, `move`, `open` as above; `run`, a program with its arguments as a list; and
+  `terminal`, a command line handed to axTerminal, which is not built yet and says so. Eighteen keys and no other:
+  Ctrl+1 to Ctrl+9 and Ctrl+Shift+1 to Ctrl+Shift+9 (at a top level the first three of each are the heading keys);
+  the first action of a key in the file has it. Context, Actions of this list, lists every action by its name with
+  its key, made as the menu opens, then Read the last output; Actions has Stop the running action. An action that
+  is not understood (a kind not known, a member of the wrong type, a second action of a name, a program or a folder
+  with a placeholder, a hidden field named outside the input) is listed as "<name>, not understood: <why>", says so
+  when chosen and is never run (AF-3.4). An action's texts may hold names in braces (AF-4.1): `{Title}` and any
+  field's title, `{form:<a form field's title>}`, `{file}`, `{name}`, `{folder}`, `{today}`; a name the item or the
+  form does not have refuses the action before anything happens. An action with `fields` opens its form first
+  (AF-5): a control for each field, named by the field's title, the form's text saying what the action does;
+  an empty needed field keeps the form open. A `run` action (AF-3.2, AF-4, AF-7): the program is fixed in the file,
+  found on the search path or by its full path, never in the list's own folder and never off this computer
+  (`ActionProgram`); each argument is one text after its names are filled, never joined into a command line, and a
+  value with a line break is refused as an argument (`input` takes any text); before its first run on this
+  computer, and after any change of the action in the file, the notice "Run <name>?" names where the action is
+  written, what it does, the program by its full path, the folder, each argument as it is for the item on a line of
+  its own with hidden characters written out, its input (not shown when it holds what was typed unseen) and what is
+  set after; "axKit does not know what this program does or reaches. Running it is your own choice."; the answers
+  Cancel, where Enter is, Run it once, and Run it, and do not ask again for this action, whose acceptance is the
+  seal of TK-7a.3 over the list's folder and the whole action (`ListActions.MarkText`). A run asked for by an AI
+  tool is asked about whatever was accepted, and an action with a field typed unseen is never offered to the AI
+  tools (AF-7.5). The run is off the window's thread, one at a time, in a job that ends with the window: "Running
+  <name>", then "<name>: done" with what its `then` set, written as one undo step, or "<name> failed, exit code 1"
+  with the failure sound and its output opened; "<name> was stopped after 60 seconds, its time limit"; Stop the
+  running action: "<name> stopped". The output, both streams, its last 64 KB, is kept in memory for Read the last
+  output and never logged. Not built yet of the specification: the `terminal` kind's hand-over (AF-7.4) and the
+  status bar's "Running <name>" (AF-7.6). The rules are `AxTask.Core` (`ListActions`, `ActionValues`,
+  `ActionProgram`), the window `TaskForm.Actions.cs`; tested in `ListActionsTests`, `ActionKeysTests` and
+  `tests/scripts/axTask/19-list-actions.txt`.
 - **TK-7a.3 A key that moves or opens is said first when the list's file was not this install's** (2026-11-16,
   bundle `repairs.md` R-72). A `list.json` can come from elsewhere (a shared folder, a sync, another program
   rewriting it), and its `keys` decide what Ctrl+1 to Ctrl+9 do. So an action that moves the item or opens something
-  (`ActionKeys.AsksFirst`; a `set` is one undo step in the list and is never asked about) runs at the first press
-  only when this install wrote it in Actions, Action keys or the user accepted it before. Otherwise the first press
+  (a `set` is one undo step in the list and is never asked about) runs at the first press
+  only when the user accepted it before (until 2026-11-21 also when this install had written it in the form Actions,
+  Action keys, which went). Otherwise the first press
   does nothing and says what the key now does: "Ctrl+2 in this list now moves to ../Later. Press it again to do
-  it." (`ActionKeys.AskText`, with the words of the form's line, `ListAction.Described`); the same key pressed
-  again, the action still the same, does it and accepts it, so that it is not asked about again. Another key, or
+  it." (for an action chosen in the menu, its name and "Choose it again"; the words are `ConfiguredAction.Described`); the same action run
+  again, still the same in the file, does it and accepts it, so that it is not asked about again. Another key, or
   the same key after the file changed, starts over. The acceptances are kept in axTask's settings as
   `acceptedActionKeys`, the newest 500: each is the bundle's seal (AX-5.6, `SettingsSeal.Of`) over the list's
-  folder, the digit and the action as the file holds it, name included (`ActionKeys.MarkText`), so that a line
+  folder and the whole action as the file holds it (`ListActions.MarkText`; for a Ctrl+digit key accepted before
+  2026-11-21 the list's folder, the digit and the action as the earlier file held it, `ActionKeys.MarkText`, which
+  still counts, so that the conversion of a list asks about nothing again), so that a line
   written into the settings file accepts nothing, the file says nothing of a list, and another computer's
   acceptances do not count on this one. Where the seal has no key, the second press still acts and nothing is
-  kept. A list made before this version is asked about once for each such key. The item of Context's Action keys
-  submenu does the same as the key. Tested in `ActionKeysTests`; the window in `tests/scripts/axTask/04-action-keys`.
+  kept. A list made before this version is asked about once for each such key. The item of Context, Actions of
+  this list, does the same as the key. Tested in `ActionKeysTests`; the window in `tests/scripts/axTask/04-action-keys`.
 - **TK-7a.2 axTask is local only; the GitHub lists are gone** (the user's decision, 2026-11-14; RP-7, RP-D10).
   axTask makes no network request and keeps no token. From 2026-11-07 to 2026-11-14 a list whose `list.json` had
   `"github": {"repository": "owner/name"}` filled itself from that repository's issues, and its items could change an

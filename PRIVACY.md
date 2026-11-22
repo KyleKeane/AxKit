@@ -65,7 +65,12 @@ when you send a report:
   where this copy cannot send at all, the notice offers to copy the report, not encrypted, to your own
   clipboard. GitHub's privacy statement applies to what is posted: <https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement>.
 
-axTask is local only and makes no network request. Versions 5.1.0 to 5.8.0 had GitHub lists in axTask, which read a
+axTask is local only and makes no network request. A list's own actions can start a program: an action written in
+the list's configuration file (`list.json`) may name a program on your computer, which axTask runs when you choose
+the action, with what the selected item holds as its arguments. axTask asks you before such an action's first run and
+after every change to it, shows the program and every argument, and does not know what the program does or reaches:
+a program that contacts a server does so by itself, as it would from a terminal (`docs/axTask/forms-framework.md`
+section 7). Versions 5.1.0 to 5.8.0 had GitHub lists in axTask, which read a
 repository's issues and could change one with a token of your own GitHub account; they were removed
 (`docs/axKit/reports.md` RP-7). A token such a version kept is no longer read or sent; its file,
 `%LOCALAPPDATA%\AxKit\github.token`, protected for your Windows account, is yours to delete, and so is the token
@@ -215,7 +220,8 @@ turning the access off ends access at the next call and turns Let AI tools run c
 
 axKit starts only Windows' own programs by their full paths (PowerShell for the installer, File Explorer, cmd for
 batch files), the programs you installed and chose (Claude Code, git, your shells, KeePassXC's tool, the MCP servers you start in
-axMCP, the programs of Open with and of axStart, and the installers of Install it now), and itself. It never runs anything with administrator rights; an installer you choose in Install it now
+axMCP, the programs of Open with and of axStart, the programs that the actions of your axTask lists name, each asked
+about before its first run, and the installers of Install it now), and itself. It never runs anything with administrator rights; an installer you choose in Install it now
 may ask Windows for them, and Windows asks you.
 
 One start of axKit is made by Claude Code, at axClaude's request: for an event of an axClaude session, Claude Code

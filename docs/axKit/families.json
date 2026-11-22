@@ -147,7 +147,7 @@
           "sounds": ["Unassigned", "Edge"],
           "words": "None, or the reason: 'No action on Ctrl+4 in this list'.",
           "apps": "Navigation mode of a text; the item windows; every window for Ctrl+Enter.",
-          "where": ["src/AxKit.Forms/AxKitForm.Modes.cs", "src/AxKit.Forms/AxKitForm.cs", "src/AxKit.Forms/OverlayPanel.cs", "src/AxKit.Forms/ItemForm.cs", "src/AxTask/TaskForm.Commands.cs", "src/AxTask/TaskForm.ActionKeys.cs"],
+          "where": ["src/AxKit.Forms/AxKitForm.Modes.cs", "src/AxKit.Forms/AxKitForm.cs", "src/AxKit.Forms/OverlayPanel.cs", "src/AxKit.Forms/ItemForm.cs", "src/AxTask/TaskForm.Commands.cs", "src/AxTask/TaskForm.Actions.cs"],
           "note": "Unassigned (the wooden bonk) only for a plain key that would type in navigation mode. Edge for Ctrl+Enter where the window has no main action, for Ctrl+Space where there is no text with modes, for Space on a row that cannot be checked, and for an action key with no action. A key no window knows gets nothing from axKit."
         },
         {
@@ -157,7 +157,7 @@
           "sounds": ["Edge"],
           "words": "None for a key in navigation mode. From a menu, the palette or an AI tool the reason: 'Navigation mode: press Ctrl+Space to edit'. 'Not a task', 'Select an item first', 'Type the field's title'.",
           "apps": "Every window.",
-          "where": ["src/AxKit.Forms/AxKitForm.Modes.cs", "src/AxKit.Forms/AxKitTextBox.cs", "src/AxKit.Forms/AxKitForm.Notices.cs", "src/AxKit.Forms/ItemForm.Fields.cs", "src/AxTask/TaskForm.Commands.cs", "src/AxTask/TaskForm.ActionKeys.cs", "src/AxTask/TaskForm.Approvals.cs"],
+          "where": ["src/AxKit.Forms/AxKitForm.Modes.cs", "src/AxKit.Forms/AxKitTextBox.cs", "src/AxKit.Forms/AxKitForm.Notices.cs", "src/AxKit.Forms/ItemForm.Fields.cs", "src/AxTask/TaskForm.Commands.cs", "src/AxTask/TaskForm.Actions.cs", "src/AxTask/TaskForm.Approvals.cs"],
           "note": "Some refusals have words and no sound: 'Read only: there is no edit mode here', axPass's 'Locked: Enter unlocks', axAutomate's 'This version views and runs the workflows'."
         },
         {
@@ -236,8 +236,8 @@
           "sounds": ["Notice"],
           "words": "One line is spoken with no sound: 'Failed: the reason'. Several lines, or an error with a title, open a notice, and that notice plays the notice sound.",
           "apps": "Every window.",
-          "where": ["src/AxKit.Forms/AxKitForm.Notices.cs"],
-          "note": "The error notice chimes even though your own command caused it, because every error notice is marked as coming by itself."
+          "where": ["src/AxKit.Forms/AxKitForm.Notices.cs", "src/AxTask/TaskForm.Actions.cs"],
+          "note": "The error notice chimes even though your own command caused it, because every error notice is marked as coming by itself. A program that an action of an axTask list ran and that failed, or could not be started, plays the same sound with its one line, 'Miss failed, exit code 1', since it ends some time after the key; its output then opens as a plain notice."
         },
         {
           "id": "cancelled",

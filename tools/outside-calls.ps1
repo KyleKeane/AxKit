@@ -92,6 +92,12 @@ $targets = @(
         @('What it reaches', 'whatever the program does, with the user''s rights.'),
         @('Documentation', 'docs/axFile/SPEC.md (Open with); docs/axStart/SPEC.md.'),
         @('Apps', 'axFile; axStart.')) }
+    @{ Key = 'List actions'; Kind = 'program'; Lines = @(
+        @('What', 'a program that an action of an axTask list names: the action is written in the list''s configuration, `list.json`, by the user, by another program or by an AI, and axKit checks nothing of it.'),
+        @('How', 'without a window, run to its end under a time limit, in a job that ends with the axTask window. The program is fixed in the file and found on the search path or by its full path, never in the list''s own folder and never off this computer; what the selected item holds reaches it only as single arguments or as its input, never as a command line. Asked about before its first run on this computer and after every change of the action, with the program and every argument written out; Cancel is the default answer.'),
+        @('What it reaches', 'whatever the program does, with the user''s rights; axKit does not know it, and the question says so. axTask''s own code makes no network request.'),
+        @('Documentation', 'docs/axTask/forms-framework.md sections 3, 4 and 7; docs/axTask/SPEC.md TK-7a.'),
+        @('Apps', 'axTask.')) }
     @{ Key = 'axKit'; Kind = 'program'; Lines = @(
         @('What', 'axKit itself, this very program file: a new window of an app, the restart under its own name when started through an Open with hard link, the restart after an update, a window the AI tool asked for, the windows and the AI tools'' server of a workflow''s run (axAutomate, on the run''s own desktop).'),
         @('How', 'a new process of this program file (or the installed `AxKit.exe` after an update) with the app''s verb and path; a test run''s variables go only to a window of the run (S-11).'),

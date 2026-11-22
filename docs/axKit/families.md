@@ -57,7 +57,7 @@ Only in a test run, on a desktop of its own, never in your windows.
 
 ## 2. The functions
 
-A function is a command of a window (`docs/axKit/command-language.md`): 1617 in the inventory, of which 201 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
+A function is a command of a window (`docs/axKit/command-language.md`): 1626 in the inventory, of which 210 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
 
 ### The marks, and the events a command of each mark ends in
 
@@ -89,7 +89,7 @@ A function is a command of a window (`docs/axKit/command-language.md`): 1617 in 
 - `help`, the Help menu: The keys (F1), the user guide, the command palette, sending a report (F4), about, diagnostics and the key test.
   - 269 commands in 17 apps: read 153, open 17, act 99.
 - `keys-alone`: Commands that are a key with no menu item, because their meaning depends on where the focus is: Tab between panes, Enter on a row, Right into a list, F3 for find next. An AI tool never runs these.
-  - 201 rows of the inventory.
+  - 210 rows of the inventory.
 - `control-keys`: Not commands at all: the keys a control handles itself, the arrows in a list or a text and typing in a field. The inventory does not hold them; the families of keys do.
 
 ## 3. The events
@@ -192,7 +192,7 @@ You pressed a key, typed, or chose a command, and this is how it ended. Every co
   - Heard: sound `Notice`.
   - Said: One line is spoken with no sound: 'Failed: the reason'. Several lines, or an error with a title, open a notice, and that notice plays the notice sound.
   - In: Every window.
-  - Note: The error notice chimes even though your own command caused it, because every error notice is marked as coming by itself.
+  - Note: The error notice chimes even though your own command caused it, because every error notice is marked as coming by itself. A program that an action of an axTask list ran and that failed, or could not be started, plays the same sound with its one line, 'Miss failed, exit code 1', since it ends some time after the key; its output then opens as a plain notice.
 - `cancelled`: You said no, pressed Escape, or the thing was called off.
   - Started by: `key`, `menu`.
   - Heard: no sound.
@@ -433,7 +433,7 @@ Very short, right after your key and over before NVDA speaks. Each says how the 
   - Chosen: Asked 2026-10-22; made louder and given its upper note on 2026-10-23 after it was lost under speech. Not chosen from candidates.
   - Switch: None: it always plays.
   - The sound of: `nothing-found`, `edge`, `no-command`, `refused`.
-  - Played from 18 files: AxFile/FileForm.Browse.cs, AxFile/FileForm.Completion.cs, AxKit.Forms/AxKitForm.cs, AxKit.Forms/AxKitForm.Modes.cs, AxKit.Forms/AxKitForm.Notices.cs, AxKit.Forms/AxKitForm.Palette.cs, AxKit.Forms/AxKitList.cs, AxKit.Forms/AxKitTextBox.cs, AxKit.Forms/HotkeyForm.cs, AxKit.Forms/ItemForm.cs, AxKit.Forms/ItemForm.Fields.cs, AxKit.Forms/OverlayPanel.cs, AxTask/TaskForm.ActionKeys.cs, AxTask/TaskForm.Approvals.cs, AxTask/TaskForm.Commands.cs, AxTask/TaskForm.cs, AxTask/TaskForm.Projects.cs, AxTerminal/TerminalForm.Input.cs.
+  - Played from 18 files: AxFile/FileForm.Browse.cs, AxFile/FileForm.Completion.cs, AxKit.Forms/AxKitForm.cs, AxKit.Forms/AxKitForm.Modes.cs, AxKit.Forms/AxKitForm.Notices.cs, AxKit.Forms/AxKitForm.Palette.cs, AxKit.Forms/AxKitList.cs, AxKit.Forms/AxKitTextBox.cs, AxKit.Forms/HotkeyForm.cs, AxKit.Forms/ItemForm.cs, AxKit.Forms/ItemForm.Fields.cs, AxKit.Forms/OverlayPanel.cs, AxTask/TaskForm.Actions.cs, AxTask/TaskForm.Approvals.cs, AxTask/TaskForm.Commands.cs, AxTask/TaskForm.cs, AxTask/TaskForm.Projects.cs, AxTerminal/TerminalForm.Input.cs.
 - `Heading`: G4 leaping an octave to G5, 85 ms.
   - Chosen: Asked 2026-11-11. Not chosen from candidates.
   - Switch: Options, Text, Sound on headings, in every window.
@@ -498,7 +498,7 @@ Short figures on one or two notes. docs/axKit/earcons.md proposes to make these 
   - Chosen: Not chosen from candidates. The earcons proposal retires it for the knocks.
   - Switch: Options, Sounds, Chimes, in axClaude and axTerminal. No switch in the other windows.
   - The sound of: `failed`, `program-asks`, `program-screen`, `pairing`, `notice-by-itself`, `ai-ran`.
-  - Played from 3 files: AxClaude/MainForm.Area.cs, AxKit.Forms/AxKitForm.Mcp.cs, AxKit.Forms/AxKitForm.Notices.cs.
+  - Played from 4 files: AxClaude/MainForm.Area.cs, AxKit.Forms/AxKitForm.Mcp.cs, AxKit.Forms/AxKitForm.Notices.cs, AxTask/TaskForm.Actions.cs.
 
 ### Code: something asks to run or to act beyond the window
 

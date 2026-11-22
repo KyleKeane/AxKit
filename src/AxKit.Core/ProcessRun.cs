@@ -20,7 +20,12 @@ public sealed record ProcessResult(int ExitCode, string Output, string Error, bo
 /// </summary>
 public static class ProcessRun
 {
-    public static async Task<ProcessResult> RunAsync(ProcessStartInfo start, IReadOnlyList<string> input, TimeSpan timeout, CancellationToken cancellation = default)
+    /// <summary>
+    /// <paramref name="started"/> is handed the process right after it started, before anything is written to it:
+    /// for a caller that puts it into a job of its own (<see cref="ChildJob"/>), so that it ends with the caller
+    /// however the caller ends (axTask's actions).
+    /// </summary>
+    public static async Task<ProcessResult> RunAsync(ProcessStartInfo start, IReadOnlyList<string> input, TimeSpan timeout, CancellationToken cancellation = default, Action<Process>? started = null)
     {
         start.UseShellExecute = false;
         start.CreateNoWindow = true;
@@ -32,6 +37,7 @@ public static class ProcessRun
         // RunAsync, in its own comment.
         using var process = new Process { StartInfo = start };
         process.Start();
+        started?.Invoke(process);
 
         using var limit = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
         limit.CancelAfter(timeout);

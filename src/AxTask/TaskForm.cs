@@ -69,8 +69,9 @@ public sealed partial class TaskForm : ItemForm
         actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Add &Done to every item", null, (_, _) => SwitchList(done: true)), CommandMark.Act));
         actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Remove Do&ne from every item", null, (_, _) => SwitchList(done: false)), CommandMark.Act));
         actions.DropDownItems.Add(new ToolStripSeparator());
-        // The action keys (docs/axKit/reports.md RP-8.2; TaskForm.ActionKeys.cs).
-        actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Action &keys...", null, (_, _) => EditActionKeys()), CommandMark.Act));
+        // The program an action of the list runs (forms-framework.md AF-7.6; TaskForm.Actions.cs). The actions
+        // themselves are written in the list's configuration, Ctrl+J on the list, and listed in Context.
+        actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Sto&p the running action", null, (_, _) => StopAction()), CommandMark.Act));
 
         _listMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open, CommandMark.Open));
         _listMenu.DropDownItems.Add(Item("&Rename", RenameSelected, ItemKeys.Rename, CommandMark.Change));
@@ -100,9 +101,10 @@ public sealed partial class TaskForm : ItemForm
         AddKey(new Command("Previous heading level 2", AxTaskKeys.PreviousHeading2, () => JumpHeading(2, -1)) { When = AtHeadings, Mark = CommandMark.Read });
         AddKey(new Command("Next heading level 3", AxTaskKeys.NextHeading3, () => JumpHeading(3, 1)) { When = AtHeadings, Mark = CommandMark.Read });
         AddKey(new Command("Previous heading level 3", AxTaskKeys.PreviousHeading3, () => JumpHeading(3, -1)) { When = AtHeadings, Mark = CommandMark.Read });
-        // Ctrl+1 to Ctrl+9, the list's own actions (RP-8; TaskForm.ActionKeys.cs).
-        PlaceActionKeyMenu();
-        _itemMenu.DropDownItems.Add(_actionKeysMenu);
+        // The list's own actions, on Ctrl+1 to Ctrl+9 and with Shift, and by name in this submenu (forms-framework.md
+        // AF-6; TaskForm.Actions.cs).
+        PlaceActionMenu();
+        _itemMenu.DropDownItems.Add(_actionsMenu);
         _itemMenu.DropDownItems.Add(new ToolStripSeparator());
         _itemMenu.DropDownItems.Add(Item("Open in ax&JSON", OpenInAxJson, AxTaskKeys.OpenInAxJson, CommandMark.Open));
         _itemMenu.DropDownItems.Add(Item("Show in ax&File", ShowInAxFile, AxTaskKeys.ShowInAxFile, CommandMark.Open));

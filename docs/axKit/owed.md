@@ -8,8 +8,8 @@ dated pass; then the script writes this page again.
 
 ## Where it stands
 
-- 28 owed in all.
-- Owed a hearing with NVDA: 12.
+- 29 owed in all.
+- Owed a hearing with NVDA: 13.
 - Owed a live check with a real outside program or situation: 7.
 - Owed a window check on the hidden desktop: 8.
 - Owed a test in code: 1.
@@ -28,6 +28,7 @@ dated pass; then the script writes this page again.
 - R-56: the sentence of the AI tools submenu when the setting was changed outside axKit or its key is gone.
 - R-57: the end of the sentence after a report is sent, which says how many waiting reports were not sent.
 - R-61: axMCP's notice that reads a server's whole command line before it is agreed to.
+- R-72: the first press of an action key of a list that moves or opens, in axTask (leaves when `tests/scripts/axTask/04-action-keys.txt` has passed with NVDA).
 
 ## Owed a live check with a real outside program or situation
 
@@ -68,5 +69,4 @@ No longer owed: the script each names passed with NVDA listening (`docs/axKit/wo
 - R-64: the sentence that a remembered path is on the network and was not opened. Heard: `tests/scripts/axFile/10-settings-changed-outside.txt` passed with NVDA at 7a683b1b+.
 - R-66: a damaged item named in its list in axTask. Heard: `tests/scripts/axTask/10-damaged-item.txt` passed with NVDA at bbf77601.
 - R-69: the sentence of axClip at its first showing when the kept history could not be read. Heard: `tests/scripts/axClip/03-history-not-read.txt` passed with NVDA at 7a683b1b+.
-- R-72: the first press of an action key of a list that moves or opens, in axTask. Heard: `tests/scripts/axTask/04-action-keys.txt` passed with NVDA at bbf77601.
 - R-74: the details of a started server in axMCP with their error lines. Heard: `tests/scripts/axMCP/01-start.txt` passed with NVDA at 7a683b1b+.

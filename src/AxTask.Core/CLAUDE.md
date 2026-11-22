@@ -46,7 +46,9 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
   gives its field a value, taken as `FieldTypes.Parse` takes it, a link's title through the caller; the first value
   refused, with its control), `Said` ("Saved Fix the tap. Due: …. Priority: High", or "Nothing changed"). Tested in
   `ItemFormRulesTests`.
-- The actions of a list, pure (docs/axTask/forms-framework.md sections 3 to 7; 2026-11-21, used by no window yet):
+- The actions of a list, pure (docs/axTask/forms-framework.md sections 3 to 7; 2026-11-21; the window's side is
+  `TaskForm.Actions.cs`). `ActionProgram.Find`: the program a `run` action names, found on the search path or by a
+  full path, never in the list's own folder, never off this computer, a program file only.
   `ListActions` with `ConfiguredAction` and `ActionField`: `Read` gives the entries of a configuration's `"actions"`
   in the file's order, each with its kind (`set`, `move`, `open`, `run`, `terminal`), its key of the eighteen
   (`ParseKey`, `KeyText`; a second action of a key gets `KeyProblem` and still runs from the menu), its form's fields,
@@ -74,18 +76,17 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
 - `TaskSettings`: the top folder, the list open last, whether done tasks are hidden, the project folders (`ProjectFolders`, `RefusedProjectFolder`, `AddProjectFolder`; full paths once, TK-7b.1), and the action keys this install wrote or the user accepted (`AcceptedActionKeys`, TK-7a.3, bundle repairs R-72: each a seal of `ActionKeys.MarkText` under the key of the bundle's `SettingsSeal`, so a line written into the file accepts nothing; `ActionKeyMark`, `AcceptsActionKey`, `AcceptActionKey`, `MaxAcceptedActionKeys`).
 - `Projects` with `TaskProject` (its `Root`, the project folder it was found under, TK-7b.3), `GatheredItem` (an item with its top and its place's name; `Where`, "Home" or "alpha / Home", TK-5.6) and `SearchHit` (TK-7b, 2026-11-11): `Find` (the folders of lists under the project folders, four folders down, hidden folders and `.git`, `node_modules`, `bin`, `obj` skipped, the top folder left out, names told apart by the folder above), `Gather` (every item of each place, the Archive left out), `GatherOne` (one file read again as a project's item, or null), `Inside`, `Words`, `Matches` (every word in the Title or a text field, case not minded) and `Search` (over places, or over items already gathered). Read-only; the window calls them off the UI thread. Tested in `ProjectsTests`.
 - `TaskTools` with `ReachableList` (TK-8, docs/axKit/mcp.md MC-8, 2026-11-11): the AI tools' pure half: `Lists` (the top folder's lists by name, then each project's as "project / list"), `Find` (a list by its name, its own name when unique, or its full path when reached; a path elsewhere refused), `ItemOf` (an item as JSON: the fields its list's configuration names, a password or user name field "protected"), `NewItem` (`ItemDocument.NewItem` with the list's fields, then each typed value through `FieldTypes.Parse`; a field the list does not have is refused with the fields it has, since its value would be kept and shown to no one, AF-11.3; link, password, user name refused). Tested in `TaskToolsTests`.
-- `ActionKeys` and `ListAction` (docs/axKit/reports.md RP-8, TK-7a.1; 2026-11-07): a list's Ctrl+number actions, the
-  entries of its configuration's `"actions"` on Ctrl+1 to Ctrl+9 that set, move or open (`ListAction.FromAction`,
-  `ToAction`; `"keys"` in the earlier format, which the conversion turns into these; the kinds that run a program
-  and the keys with Shift come with the actions' own code, forms-framework.md section 3): `Read`, `With`, `Spoken` ("Ctrl+1. Done"), `ApplySet`
-  (fields set, a missing one added with the value's type), `SpokenSet`, `ParseSetLines` ("Field: value" lines), and the form of one key, `KindNames`, `KindIndex`, `ValueText` and `FromForm` (what its fields make, or why they are refused); an
-  action is `set`, `move` or `open`, with `Described`; `OpenRefusal` keeps an `open` of axClaude or axTerminal off a
-  folder that is not on a drive of this computer (S-5's rule, 2026-11-09); `AsksFirst` (a move or an open), `AskText`
-  ("Ctrl+2 in this list now moves to Later. Press it again to do it.") and `MarkText` (the list's folder, the digit and
-  the action in the shape `ListAction.ToJson` gives, whatever the file's shape, so that an acceptance survives the
-  conversion; what an acceptance is for) are TK-7a.3's. Tested in `ActionKeysTests`. The GitHub
-  lists that came with them (RP-7) were removed on 2026-11-14, when axTask became local only: a `"github"` member in a
-  `list.json` is kept as any member axTask does not know and means nothing (TK-7a.2).
+- `ActionKeys` and `ListAction` (docs/axKit/reports.md RP-8, TK-7a; 2026-11-07, cut down on 2026-11-21 when a list's
+  actions became `ListActions`): what the actions share with the action keys they grew from: `ApplySet` (fields set,
+  a missing one added with the value's type) and `SpokenSet` ("Kind: Bug, Done: done"); `OpenRefusal`, which keeps an
+  `open` of axClaude or axTerminal off a folder that is not on a drive of this computer (S-5's rule, 2026-11-09); and
+  `MarkText` over a `ListAction`, the mark of an acceptance of a Ctrl+digit key as it was sealed before 2026-11-21
+  (the list's folder, the digit and the action as the earlier file held it, `ListAction.ToJson`), which the window
+  still honours, so that a key accepted before a list was converted is not asked about again. `TaskSettings` keeps
+  the acceptances of both kinds in `AcceptedActionKeys` (`AcceptsAction`, `AcceptAction` for a whole action,
+  AF-7.2). Tested in `ActionKeysTests`. The GitHub lists that came with the action keys (RP-7) were removed on
+  2026-11-14, when axTask became local only: a `"github"` member in a `list.json` is kept as any member axTask does
+  not know and means nothing (TK-7a.2).
 
 - `Approvals` with `ApprovalEntry`, `ApprovalPublicKey` and `ApprovalException`, and `OutsideReports`
   (docs/axKit/outside-reports.md sections 5 and 6, 2026-11-21): the maintainer's signed approval of an outside report.

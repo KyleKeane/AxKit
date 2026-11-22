@@ -6,7 +6,7 @@ Everything axKit reaches outside its own process: the network requests its own c
 
 The three kinds: **network**, a request over the network from axKit's own code; **program**, another program started on this computer, Windows' own, one the user installed, or axKit itself; **pipe**, a channel on this computer that another process connects to or that axKit connects to. The access layers (axClaude, axGIT, axTerminal, axPass) meet the network only through the programs listed here, which use it as they would without axKit (bundle SPEC AX-11.11). `PRIVACY.md` says the same for the user in plain words; `SECURITY.md` says what matters for security. The set of apps grows as the author finds another thing worth doing by ear, and every new call enters this page the same way.
 
-Today: 6 network requests, 35 program starts and 11 pipes, in 38 files, under the 15 headings below.
+Today: 6 network requests, 36 program starts and 11 pipes, in 39 files, under the 16 headings below.
 
 ## What axKit reaches
 
@@ -189,6 +189,19 @@ Calls (2):
   Code: `Process.Start(UserPrograms.StartInfo(program, paths))?.Dispose();`
 - **axStart**, `src/AxStart/AppsFolder.cs`, in `AppsFolder.Start`, by `Process.Start`: starts the program the user picked in axStart, by its name in the shell's Applications folder as the Start menu does, or its target file as administrator when asked.
   Code: `Process.Start(info)?.Dispose();`
+
+#### List actions
+
+- **What**: a program that an action of an axTask list names: the action is written in the list's configuration, `list.json`, by the user, by another program or by an AI, and axKit checks nothing of it.
+- **How**: without a window, run to its end under a time limit, in a job that ends with the axTask window. The program is fixed in the file and found on the search path or by its full path, never in the list's own folder and never off this computer; what the selected item holds reaches it only as single arguments or as its input, never as a command line. Asked about before its first run on this computer and after every change of the action, with the program and every argument written out; Cancel is the default answer.
+- **What it reaches**: whatever the program does, with the user's rights; axKit does not know it, and the question says so. axTask's own code makes no network request.
+- **Documentation**: docs/axTask/forms-framework.md sections 3, 4 and 7; docs/axTask/SPEC.md TK-7a.
+- **Apps**: axTask.
+
+Calls (1):
+
+- **axTask**, `src/AxTask/TaskForm.Actions.cs`, in `TaskForm.RunNow`, by `ProcessRun.RunAsync`: the program an action of the list's configuration names, found on the search path or by its full path and never in the list's folder, with its arguments as a list; asked about before its first run and after every change of the action (forms-framework.md AF-7.2).
+  Code: `result = await Task.Run(() => ProcessRun.RunAsync(start, input, TimeSpan.FromSeconds(run.Seconds), stop.Token, process => job?.Add(process)));`
 
 #### axKit
 
@@ -380,14 +393,15 @@ Used in 1 place:
 
 ### ProcessRun.RunAsync, program
 
-Defined in this repository, `src/AxKit.Core/ProcessRun.cs` (`public static async Task<ProcessResult> RunAsync(ProcessStartInfo start, IReadOnlyList<string> input, TimeSpan timeout, CancellationToken cancellation = default)`).
+Defined in this repository, `src/AxKit.Core/ProcessRun.cs` (`public static async Task<ProcessResult> RunAsync(ProcessStartInfo start, IReadOnlyList<string> input, TimeSpan timeout, CancellationToken cancellation = default, Action<Process>? started = null)`).
 
-Used in 4 places:
+Used in 5 places:
 
 - `src/AxClaude.Core/Pty/ClaudeLauncher.cs`, in `ClaudeLauncher.VersionAsync`, for Claude Code.
 - `src/AxGit.Core/GitRunner.cs`, in `GitRunner.RunAsync`, for Git.
 - `src/AxKit.Core/Ai/AiRequest.cs`, in `AiRequest.AskAsync`, for Claude Code.
 - `src/AxPreview.Core/PictureText.cs`, in `PictureText.RecognizeAsync`, for Windows.
+- `src/AxTask/TaskForm.Actions.cs`, in `TaskForm.RunNow`, for List actions.
 
 ### PtyHost.Start, program
 

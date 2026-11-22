@@ -67,7 +67,7 @@ public sealed class TaskSettings : WindowSettings
     public const int MaxAcceptedActionKeys = 500;
 
     /// <summary>
-    /// The action keys of the kinds that move or open (<see cref="ActionKeys.AsksFirst"/>) that this install wrote in
+    /// The action keys of the kinds that move or open (<see cref="ConfiguredAction.AsksFirst"/>) that this install wrote in
     /// Actions, Action keys or the user accepted by a second press (SPEC.md TK-7a.3; bundle repairs.md R-72), the
     /// newest last: each the seal of <see cref="ActionKeys.MarkText"/> under the key of the bundle's settings seal
     /// (<see cref="SettingsSeal.Of"/>, bundle AX-5.6), so that a line written into this file by hand or by another
@@ -84,9 +84,22 @@ public sealed class TaskSettings : WindowSettings
         ActionKeyMark(settingsPath, listFolder, digit, action) is { Length: > 0 } mark && AcceptedActionKeys.Contains(mark);
 
     /// <summary>The key's action in that list is accepted from now on; false when nothing changed (it was already, or there is no seal).</summary>
-    public bool AcceptActionKey(string settingsPath, string listFolder, int digit, ListAction action)
+    public bool AcceptActionKey(string settingsPath, string listFolder, int digit, ListAction action) =>
+        Accept(ActionKeyMark(settingsPath, listFolder, digit, action));
+
+    /// <summary>
+    /// Whether an action of a list was accepted (docs/axTask/forms-framework.md AF-7.2): <paramref name="markText"/>
+    /// is <see cref="ListActions.MarkText"/>, the list's folder and the whole action as the file holds it, so that any
+    /// change to the action is not accepted. Kept as its seal, with the action keys' acceptances.
+    /// </summary>
+    public bool AcceptsAction(string settingsPath, string markText) =>
+        SettingsSeal.Of(settingsPath, markText) is { Length: > 0 } mark && AcceptedActionKeys.Contains(mark);
+
+    /// <summary>The action is accepted from now on; false when nothing changed (it was already, or there is no seal).</summary>
+    public bool AcceptAction(string settingsPath, string markText) => Accept(SettingsSeal.Of(settingsPath, markText));
+
+    private bool Accept(string mark)
     {
-        var mark = ActionKeyMark(settingsPath, listFolder, digit, action);
         if (mark.Length == 0 || AcceptedActionKeys.Contains(mark))
         {
             return false;

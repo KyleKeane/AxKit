@@ -418,14 +418,23 @@ Adding Shift to Ctrl and a number goes backwards: the previous heading of that l
 The keys:
 
 - Ctrl+Shift+1, axDown and axPreview: Heading level 1.
+- Ctrl+Shift+1, axTask: Action key Shift+1.
 - Ctrl+Shift+1, axTask: Previous heading level 1.
 - Ctrl+Shift+2, axDown and axPreview: Heading level 2.
+- Ctrl+Shift+2, axTask: Action key Shift+2.
 - Ctrl+Shift+2, axTask: Previous heading level 2.
 - Ctrl+Shift+3, axDown and axPreview: Heading level 3.
+- Ctrl+Shift+3, axTask: Action key Shift+3.
 - Ctrl+Shift+3, axTask: Previous heading level 3.
 - Ctrl+Shift+4, axDown and axPreview: Heading level 4.
+- Ctrl+Shift+4, axTask: Action key Shift+4.
 - Ctrl+Shift+5, axDown and axPreview: Heading level 5.
+- Ctrl+Shift+5, axTask: Action key Shift+5.
 - Ctrl+Shift+6, axDown and axPreview: Heading level 6.
+- Ctrl+Shift+6, axTask: Action key Shift+6.
+- Ctrl+Shift+7, axTask: Action key Shift+7.
+- Ctrl+Shift+8, axTask: Action key Shift+8.
+- Ctrl+Shift+9, axTask: Action key Shift+9.
 
 ### Alt+digit: go to a place or view of the window
 

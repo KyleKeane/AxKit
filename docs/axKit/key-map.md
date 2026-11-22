@@ -3,8 +3,8 @@
 Written by `tools/key-map.ps1` from `docs/axKit/window-commands.json`, `src/AxKit.Forms/BundleKeys.cs` and
 `docs/axKit/key-families.json`; never edit it by hand. Every key of every window and what it does in each app.
 
-The inventory holds 579 commands with a key in 17 apps, on 119 different keys, counting the
-second keys some commands answer. 50 keys have one meaning wherever they are; 69 have several.
+The inventory holds 588 commands with a key in 17 apps, on 122 different keys, counting the
+second keys some commands answer. 50 keys have one meaning wherever they are; 72 have several.
 21 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
 are window keys, each in its window's own table.
 
@@ -41,9 +41,9 @@ In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 - Ctrl+Plus. Bundle key, in every app: Larger text.
 - Ctrl+Right arrow. Window key, in axMedia alone: Forward 15 seconds.
 - Ctrl+Slash. Bundle key, in every app: Ask about this window.
-- Ctrl+Shift+4. Window key, in axDown and axPreview: Heading level 4.
-- Ctrl+Shift+5. Window key, in axDown and axPreview: Heading level 5.
-- Ctrl+Shift+6. Window key, in axDown and axPreview: Heading level 6.
+- Ctrl+Shift+7. Window key, in axTask alone: Action key Shift+7.
+- Ctrl+Shift+8. Window key, in axTask alone: Action key Shift+8.
+- Ctrl+Shift+9. Window key, in axTask alone: Action key Shift+9.
 - Ctrl+Shift+D. Window key, in axTask alone: Hide done tasks.
 - Ctrl+Shift+E. Window key, in axJSON alone: Error.
 - Ctrl+Shift+J. Window key, in axJSON alone: Object.
@@ -462,6 +462,30 @@ Window key, in axClip, axMedia and axTerminal. 3 meanings.
 - axClip: Pause recording.
 - axTerminal: Say current folder.
 
+### Ctrl+Shift+1
+
+Window key, in axDown, axPreview and axTask. 3 meanings.
+
+- axDown and axPreview: Heading level 1.
+- axTask: Action key Shift+1.
+- axTask: Previous heading level 1.
+
+### Ctrl+Shift+2
+
+Window key, in axDown, axPreview and axTask. 3 meanings.
+
+- axDown and axPreview: Heading level 2.
+- axTask: Action key Shift+2.
+- axTask: Previous heading level 2.
+
+### Ctrl+Shift+3
+
+Window key, in axDown, axPreview and axTask. 3 meanings.
+
+- axDown and axPreview: Heading level 3.
+- axTask: Action key Shift+3.
+- axTask: Previous heading level 3.
+
 ### Ctrl+D
 
 Window key, in axFile and axHelp. 3 meanings.
@@ -589,26 +613,26 @@ Window key, in axDown, axMedia and axPreview. 2 meanings.
 - axDown and axPreview: Table.
 - axMedia: Go to time.
 
-### Ctrl+Shift+1
+### Ctrl+Shift+4
 
 Window key, in axDown, axPreview and axTask. 2 meanings.
 
-- axDown and axPreview: Heading level 1.
-- axTask: Previous heading level 1.
+- axDown and axPreview: Heading level 4.
+- axTask: Action key Shift+4.
 
-### Ctrl+Shift+2
-
-Window key, in axDown, axPreview and axTask. 2 meanings.
-
-- axDown and axPreview: Heading level 2.
-- axTask: Previous heading level 2.
-
-### Ctrl+Shift+3
+### Ctrl+Shift+5
 
 Window key, in axDown, axPreview and axTask. 2 meanings.
 
-- axDown and axPreview: Heading level 3.
-- axTask: Previous heading level 3.
+- axDown and axPreview: Heading level 5.
+- axTask: Action key Shift+5.
+
+### Ctrl+Shift+6
+
+Window key, in axDown, axPreview and axTask. 2 meanings.
+
+- axDown and axPreview: Heading level 6.
+- axTask: Action key Shift+6.
 
 ### Ctrl+Shift+H
 
@@ -772,7 +796,7 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 
 ### Ctrl+Shift+digit: go to the previous heading of that level
 
-6 keys of the inventory. No misfits.
+9 keys of the inventory. No misfits.
 
 ### Alt+digit: go to a place or view of the window
 

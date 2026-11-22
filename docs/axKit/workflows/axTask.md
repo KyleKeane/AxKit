@@ -299,7 +299,7 @@ Starts with: Open axTask with the folder tasks.
 4. Press Right.
 5. Press Ctrl+3 (Action key 3).
     You hear the sound Edge.
-    You hear: No action on Ctrl+3 in this list; Actions, Action keys sets one.
+    You hear: No action on Ctrl+3 in this list; its actions are written in its configuration, Ctrl+J on the list.
 6. Press Ctrl+1 (Action key 1).
     You hear: Done: Done: done.
 7. Press Ctrl+Z (Undo; Actions menu).
@@ -314,24 +314,12 @@ Starts with: Open axTask with the folder tasks.
 3. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Later: Fix the tap moved to Later.
 
-### Set up an action key
+### Give a list another action
 
-1. Choose Action keys in the Actions menu.
-2. Press Tab.
-3. Press Shift+Tab.
-4. Press Down 3 times.
-5. Press Tab.
-6. Type: Finish
-7. Press Tab.
-8. Press Ctrl+Enter.
-    You hear the sound Edge.
-    You hear: Type at least one line as Field: value.
-9. Type: Done: done
-10. Press Ctrl+Enter.
-    You hear: Ctrl+4: Finish, sets Done: done.
-11. Press Ctrl+4 (Action key 4).
+1. Press F5 (Refresh; Session menu).
+2. Press Ctrl+4 (Action key 4).
     You hear: Finish: Done: done.
-12. Press Ctrl+Z (Undo; Actions menu).
+3. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Finish: Done: done.
 
 ## Add project folders and search every list
@@ -763,3 +751,55 @@ Starts with: Open axTask with the folder tasks.
 9. Press Down.
 10. Press Space.
     You hear: Done: done.
+
+## Run the actions of a list
+
+Starts with: Open axTask with the folder tasks.
+
+### Set fields with an action's key
+
+1. Press Ctrl+1 (Action key 1).
+    You hear: Mark it a bug: Kind: Bug.
+2. Press Ctrl+9 (Action key 9).
+    You hear: No action on Ctrl+9 in this list.
+
+### Read what a program would do before its first run, and cancel it
+
+1. Press Ctrl+Shift+4 (Action key Shift+4).
+2. Press Enter.
+
+### Run a program on an item, and hear how it ends
+
+1. Press Ctrl+Shift+4 (Action key Shift+4).
+2. Press Tab 3 times.
+3. Press Enter.
+    You hear: Running Find the kind.
+    You hear words such as: Find the kind: done. Checked.
+4. Press Ctrl+Shift+4 (Action key Shift+4).
+    You hear words such as: Find the kind: done. Checked.
+
+### Fill in an action's form
+
+1. Choose the menu item Find what I type.
+2. Press Enter.
+    You hear: Type the word to look for: this is needed.
+3. Type: the tap
+4. Press Enter.
+5. Press Tab 2 times.
+6. Press Enter.
+    You hear: Find what I type: done.
+7. Choose the menu item Read the last output.
+8. Press Escape.
+
+### Stop a running action
+
+1. Choose the menu item Wait.
+2. Press Tab 2 times.
+3. Press Enter.
+    You hear: Running Wait.
+4. Choose the menu item Miss.
+    You hear: Wait is still running.
+5. Choose Stop the running action in the Actions menu.
+    You hear: Wait stopped.
+6. Choose Stop the running action in the Actions menu.
+    You hear: No action is running.

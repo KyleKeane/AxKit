@@ -23,8 +23,14 @@ public static class AxTaskKeys
     /// <summary>On a list among the sections: its section chosen (TK-3a.3).</summary>
     public const Keys MoveToSection = Keys.Control | Keys.M;
 
-    /// <summary>Ctrl+1 to Ctrl+9: the action the list's <c>list.json</c> assigns to the digit (RP-8.1).</summary>
-    public static Keys ActionKey(int digit) => Keys.Control | (Keys)((int)Keys.D0 + digit);
+    /// <summary>
+    /// The eighteen keys an action of a list may have, and no other (docs/axTask/forms-framework.md AF-6.1): 1 to 9
+    /// are Ctrl+1 to Ctrl+9, 10 to 18 Ctrl+Shift+1 to Ctrl+Shift+9. No action can take a key of the window or the
+    /// bundle, by construction.
+    /// </summary>
+    public static Keys ActionKey(int key) => key <= 9
+        ? Keys.Control | (Keys)((int)Keys.D0 + key)
+        : Keys.Control | Keys.Shift | (Keys)((int)Keys.D0 + key - 9);
 
     /// <summary>
     /// At a top level, the next heading of level 1 or 2 (TK-3a.2, TK-D14): the same keys as action keys 1 and 2, which
@@ -59,8 +65,10 @@ public static class AxTaskKeys
         ("Action key 2 in a list, the next heading of level 2 at a top level", NextHeading2),
         ("Action key 3 in a list, the next heading of level 3 at a top level", NextHeading3),
         .. Enumerable.Range(4, 6).Select(digit => ($"Action key {digit}", ActionKey(digit))),
-        ("Previous heading level 1", PreviousHeading1),
-        ("Previous heading level 2", PreviousHeading2),
-        ("Previous heading level 3", PreviousHeading3),
+        // Ctrl+Shift+1 to Ctrl+Shift+3 likewise: the heading before at a top level, the action key in a list.
+        ("Action key Shift+1 in a list, the previous heading of level 1 at a top level", PreviousHeading1),
+        ("Action key Shift+2 in a list, the previous heading of level 2 at a top level", PreviousHeading2),
+        ("Action key Shift+3 in a list, the previous heading of level 3 at a top level", PreviousHeading3),
+        .. Enumerable.Range(4, 6).Select(digit => ($"Action key Shift+{digit}", ActionKey(digit + 9))),
     ];
 }

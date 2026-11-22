@@ -390,7 +390,7 @@ every proof and every sentence named here to the code (`docs/axKit/SPEC.md` AX-5
 
 - Does: An action key of a list that moves or opens, and that this install neither wrote nor accepted, says what it now does at the first press and acts at the second; a key that sets fields acts at once.
 - Says: Ctrl+<digit> in this list now <what it does>. Press it again to do it.
-- Proved by: `AxTask.Tests/ActionKeysTests.A_key_that_moves_or_opens_asks_first_and_one_that_sets_fields_does_not`.
+- Proved by: `AxTask.Tests/ListActionsTests.An_action_that_moves_or_opens_asks_first_and_one_that_sets_fields_does_not`.
 - From: R-72.
 
 ### A data folder or file: gone while the window is open

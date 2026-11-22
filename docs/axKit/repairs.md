@@ -575,10 +575,10 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ### R-72, low, apps: A list's action keys in list.json are not checked
 
-- Where: src/AxTask/TaskForm.ActionKeys.cs
+- Where: src/AxTask/TaskForm.Actions.cs
 - Principle: P1
 - Fix: An action key that opens or moves says what it now does and waits for a second press when the list's keys differ from the ones this install wrote or accepted.
-- Checked by: tests/AxTask.Tests/ActionKeysTests (A_key_that_moves_or_opens_asks_first_and_one_that_sets_fields_does_not, An_acceptance_is_for_one_list_one_key_and_one_action_and_is_kept_under_the_seal, The_acceptances_are_kept_to_a_limit_the_oldest_going_first); tests/scripts/axTask/04-action-keys for the window (the first press says, the second does, the third acts at once); heard with NVDA in the pass of 2026-11-16 (f93f1e64)
+- Checked by: tests/AxTask.Tests/ListActionsTests (An_action_that_moves_or_opens_asks_first_and_one_that_sets_fields_does_not) and ActionKeysTests (An_acceptance_is_for_one_list_one_key_and_one_action_and_is_kept_under_the_seal, The_acceptances_are_kept_to_a_limit_the_oldest_going_first); tests/scripts/axTask/04-action-keys for the window (the first press says, the second does, the third acts at once); heard with NVDA in the pass of 2026-11-16 (f93f1e64)
 - Note: Found on 2026-11-16 by the second reading: a shared or rewritten list. The words: "Ctrl+2 in this list now moves to ../Later. Press it again to do it." The seal is per list and key, not per list: an acceptance is the bundle's seal (SettingsSeal.Of) over the list's folder, the digit and the action, kept in axTask's settings as acceptedActionKeys, so that accepting one key says nothing of the eight others the user has not heard (docs/axTask/SPEC.md TK-7a.3). A key written in Actions, Action keys is accepted as it is written. Left open: every move or open key of a list made before this version asks once; a key set in the form and then taken back by Ctrl+Z stays accepted.
 
 ### R-74, low, apps: An MCP server's error lines go into axMCP's log

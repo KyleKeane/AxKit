@@ -797,12 +797,12 @@ every window" or under a heading that names the windows without it; under an app
 
 ## axTask
 
-- Action keys. Menu: Actions. Key: none. Mark: act.
 - Add Done to every item. Menu: Actions. Key: none. Mark: act.
 - New item. Menu: Actions. Key: Ctrl+N. Mark: change.
 - New list. Menu: Actions. Key: Ctrl+Shift+N. Mark: change.
 - New smart list. Menu: Actions. Key: none. Mark: change.
 - Remove Done from every item. Menu: Actions. Key: none. Mark: act.
+- Stop the running action. Menu: Actions. Key: none. Mark: act.
 - Undo. Menu: Actions. Key: Ctrl+Z. Mark: change.
 - A heading: nothing to act on. Menu: Context. Key: none. Mark: read.
 - Edit the list's configuration. Menu: Context. Key: Ctrl+J. Mark: open.
@@ -828,6 +828,15 @@ every window" or under a heading that names the windows without it; under an app
 - Action key 7. Menu: none, a key alone. Key: Ctrl+7. Mark: act. Never run by AI tools.
 - Action key 8. Menu: none, a key alone. Key: Ctrl+8. Mark: act. Never run by AI tools.
 - Action key 9. Menu: none, a key alone. Key: Ctrl+9. Mark: act. Never run by AI tools.
+- Action key Shift+1. Menu: none, a key alone. Key: Ctrl+Shift+1. Mark: act. Never run by AI tools.
+- Action key Shift+2. Menu: none, a key alone. Key: Ctrl+Shift+2. Mark: act. Never run by AI tools.
+- Action key Shift+3. Menu: none, a key alone. Key: Ctrl+Shift+3. Mark: act. Never run by AI tools.
+- Action key Shift+4. Menu: none, a key alone. Key: Ctrl+Shift+4. Mark: act. Never run by AI tools.
+- Action key Shift+5. Menu: none, a key alone. Key: Ctrl+Shift+5. Mark: act. Never run by AI tools.
+- Action key Shift+6. Menu: none, a key alone. Key: Ctrl+Shift+6. Mark: act. Never run by AI tools.
+- Action key Shift+7. Menu: none, a key alone. Key: Ctrl+Shift+7. Mark: act. Never run by AI tools.
+- Action key Shift+8. Menu: none, a key alone. Key: Ctrl+Shift+8. Mark: act. Never run by AI tools.
+- Action key Shift+9. Menu: none, a key alone. Key: Ctrl+Shift+9. Mark: act. Never run by AI tools.
 - Back from the search. Menu: none, a key alone. Key: Escape. Mark: open. Never run by AI tools.
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
 - Change the item in its form. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.

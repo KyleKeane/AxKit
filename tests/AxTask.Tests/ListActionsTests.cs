@@ -83,6 +83,25 @@ public sealed class ListActionsTests
         Assert.Empty(ListActions.Read(ListConfig.New([])));
     }
 
+    /// <summary>TK-7a.3 (bundle repairs R-72): a list's file may come from elsewhere, so what leaves the list is said before it is done.</summary>
+    [Fact]
+    public void An_action_that_moves_or_opens_asks_first_and_one_that_sets_fields_does_not()
+    {
+        var actions = Read("""
+            [ { "name": "Done", "key": "Ctrl+1", "does": "set", "set": { "Done": true } },
+              { "name": "Later", "key": "Ctrl+2", "does": "move", "to": "../Later" },
+              { "name": "Web", "does": "open", "open": "Issue" },
+              { "name": "Answer", "does": "run", "program": "gh", "arguments": ["issue", "view"] } ]
+            """);
+
+        Assert.False(actions[0].AsksFirst);
+        Assert.True(actions[1].AsksFirst);
+        Assert.True(actions[2].AsksFirst);
+        // A program has its own question, with everything that would run (AF-7.2).
+        Assert.False(actions[3].AsksFirst);
+        Assert.True(actions[3].StartsProgram);
+    }
+
     [Theory]
     [InlineData("Ctrl+1", 1)]
     [InlineData("ctrl+9", 9)]

@@ -31,17 +31,17 @@ keys right
 expect focus Fix the tap
 do Action key 3
 expect said ♪ Edge
-expect said No action on Ctrl+3 in this list; Actions, Action keys sets one
+expect said No action on Ctrl+3 in this list; its actions are written in its configuration, Ctrl+J on the list
 do Action key 1
 expect said Done: Done: done
 expect focus Fix the tap, done
 do Undo
 expect said Undone: Done: Done: done
 expect focus Fix the tap
-# Check: The Context menu names the list's action keys
-# Context's Action keys submenu on an item names the list's actions (RP-8.3).
-expect commands Done, Context, Action keys
-expect commands Later, Context, Action keys
+# Check: The Context menu names the list's actions
+# Context, Actions of this list, on an item names the list's actions (forms-framework.md AF-6.2).
+expect commands Done, Context, Actions of this list
+expect commands Later, Context, Actions of this list
 # Goal: Move an item to another list with an action key
 # Step 4: Ctrl+2 moves the item to Later, the links following; Ctrl+Z brings it back. The list's file was not written
 # by this install, so the first press of a key that moves says what it does and waits (TK-7a.3); the second moves.
@@ -60,39 +60,19 @@ expect said Later: Fix the tap moved to Later
 do Undo
 expect said Undone: Later: Fix the tap moved to Later
 expect focus Fix the tap
-# Goal: Set up an action key
-# Step 2: List, Action keys: one form (bundle AX-8.10): the nine keys read by digit, then the name, what the key
-# does and its value; moving through the keys fills the fields. Ctrl+4 made "Finish", a set of Done: done, as one
-# undo step; a name without a value is refused with the focus in the value's box.
-menu Action keys
-expect state "notice":"Action keys"
-expect focus "name":"Choose the key"
-expect focus Ctrl+1. Done
-keys tab
-expect focus "name":"Type the action's name, or leave it empty to remove the key","role":"Text","value":"Done"
-keys shift+tab
-keys down down down
-expect focus Ctrl+4. not set
-keys tab
-expect focus "name":"Type the action's name, or leave it empty to remove the key","role":"Text","value":""
-type Finish
-keys tab
-expect focus "name":"Choose what the key does"
-expect focus Set fields to values
-keys ctrl+enter
-expect said ♪ Edge
-expect said Type at least one line as Field: value
-expect state "notice":"Action keys"
-expect focus "name":"Type what it sets
-type Done: done
-keys ctrl+enter
-expect said Ctrl+4: Finish, sets Done: done
-expect state "notice":null
+# Goal: Give a list another action
+# Step 2: a list's actions are written in its configuration, the one file a list is configured in (forms-framework.md
+# AF-3; the form Actions, Action keys went on 2026-11-21). "Finish" added there on Ctrl+4, a set of Done, the file
+# written as axJSON would save it: after Refresh the key acts, and Context names the action.
+file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[{"name":"Done","key":"Ctrl+1","does":"set","set":{"Done":true}},{"name":"Later","key":"Ctrl+2","does":"move","to":"../Later"},{"name":"Finish","key":"Ctrl+4","does":"set","set":{"Done":true}}]}
+do Refresh
 do Action key 4
 expect said Finish: Done: done
 expect focus Fix the tap, done
 do Undo
 expect said Undone: Finish: Done: done
+expect commands Finish, Context, Actions of this list
+refuse commands Action keys
 # Check: No command of the GitHub lists is left
 # Step 6: axTask is local only (TK-7a.2, 2026-11-14): no command of the GitHub lists is left.
 refuse commands New GitHub list

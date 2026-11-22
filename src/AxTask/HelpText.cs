@@ -31,7 +31,8 @@ public static class HelpText
           Tags: a smart list for each word your tasks not done start with a symbol, @kyle for the person a task is assigned to, #ui, !urgent, $budget or %done, in their titles and text fields
           Date lists: Overdue, Due today, Due in the next 7 days, No due date
           Ctrl+Shift+F: find words in every list, your own and every project's. "Searching every list" is said, then what was found; another notice opened meanwhile drops the result. In what was found, Right or Enter opens the item where it lives, Left or Escape goes back
-          Ctrl+1, Ctrl+2, Ctrl+3, Ctrl+4, Ctrl+5, Ctrl+6, Ctrl+7, Ctrl+8, Ctrl+9: the list's own action keys on the item selected, set in Actions, Action keys: fields set, the item moved to a list, or something opened; Context's Action keys submenu on an item names them
+          Ctrl+1, Ctrl+2, Ctrl+3, Ctrl+4, Ctrl+5, Ctrl+6, Ctrl+7, Ctrl+8, Ctrl+9, and Ctrl+Shift+1, Ctrl+Shift+2, Ctrl+Shift+3, Ctrl+Shift+4, Ctrl+Shift+5, Ctrl+Shift+6, Ctrl+Shift+7, Ctrl+Shift+8, Ctrl+Shift+9: the list's own actions on the item selected. An action sets fields, moves the item to a list, opens something, or runs a program with what the item holds as its arguments. They are written in the list's configuration, Ctrl+J on the list; Context, Actions of this list, names them all, with or without a key
+          An action that runs a program is asked about before its first run, with the program and every argument written out; Enter there is Cancel. "Running" and its name is said as it starts, "done" or "failed" with its exit code as it ends; Context, Actions of this list, Read the last output shows what it wrote. Actions, Stop the running action ends it
           Ctrl+Shift+D: hide or show the done tasks of a list
           Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on the selection
 

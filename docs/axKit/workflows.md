@@ -795,7 +795,7 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
 4. **Act on items with action keys**
     - Run an action key on an item
     - Move an item to another list with an action key
-    - Set up an action key
+    - Give a list another action
 5. **Add project folders and search every list**
     - Find the project folders by their headings
     - Mark a project's task done from All tasks
@@ -843,6 +843,12 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Change several fields of an item and save them as one step
     - Rename an item in its form
     - Open the form on a field from the detail pane
+19. **Run the actions of a list**
+    - Set fields with an action's key
+    - Read what a program would do before its first run, and cancel it
+    - Run a program on an item, and hear how it ends
+    - Fill in an action's form
+    - Stop a running action
 
 ## axTerminal
 

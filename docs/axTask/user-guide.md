@@ -217,29 +217,61 @@ opens a list's configuration, an item's file or a smart list in axJSON; Ctrl+E s
 does not know in a file is kept as it is. An item in a folder that has no `list.json`, made by hand or by a script,
 is shown with every value as plain text and is not changed until Ctrl+J on the list has written the configuration.
 
-## Action keys: Ctrl+1 to Ctrl+9
+## Actions: Ctrl+1 to Ctrl+9, and with Shift
 
-Every list can give the number keys actions of its own. Actions, Action keys opens one form. It starts on the list of
-the nine keys; Up and Down choose one, and the fields after it show what that key does. Tab goes on to the action's
-name (empty removes the key), to a list of what the key does, and to a box for its value, where Enter makes a new
-line; Ctrl+Enter or the Keep button keeps it. The three things a key can do: set fields to values ("Kind: Bug", "Done: done"), move the item to another
-list, or open something (a field holding a web address, or an app such as axJSON for the item's file). From then on
-Ctrl+1 to Ctrl+9 do that to the item selected, and Context's Action keys submenu on an item names them. Ctrl+Z takes a set
-or a move back. All tasks is Ctrl+0.
+Every list can have actions of its own, which act on the item selected. They are written in the list's
+configuration, under `actions`: Ctrl+J on the list opens it in axJSON. Each action has a name, may have a key, and
+does one thing:
 
-The keys are written among the `actions` of the list's configuration, each with its name, its key and what it does:
-`{ "name": "Later", "key": "Ctrl+2", "does": "move", "to": "../Later" }`.
+```json
+"actions": [
+  { "name": "Done", "key": "Ctrl+1", "does": "set", "set": { "Done": true, "Closed": "{today}" } },
+  { "name": "Later", "key": "Ctrl+2", "does": "move", "to": "../Later" },
+  { "name": "Web", "does": "open", "open": "Address" },
+  { "name": "Answer the report", "key": "Ctrl+Shift+1", "does": "run",
+    "fields": [ { "title": "Type your answer", "type": "longtext" } ],
+    "program": "gh",
+    "arguments": ["issue", "comment", "{Number}", "--repo", "owner/name", "--body-file", "-"],
+    "input": "{form:Type your answer}",
+    "then": { "set": { "Answered": "{today}" } } }
+]
+```
 
-A key that moves an item or opens something acts at once when you set it in this form on this computer. When the
-list's keys came another way (a list someone shared, a folder that syncs, a `list.json` edited outside axTask), the
-first press does nothing and says what the key now does: "Ctrl+2 in this list now moves to ../Later. Press it again to
-do it." Press it again and it does it; from then on it acts at the first press, until the key's action changes. A key
-that only sets fields is never asked about: Ctrl+Z takes it back.
+- `set` writes fields; `move` moves the item to another list; `open` opens a field that holds a web address, or an
+  app such as axJSON on the item's file; `run` starts a program.
+- A key is one of eighteen: Ctrl+1 to Ctrl+9 and Ctrl+Shift+1 to Ctrl+Shift+9. An action without a key is run from
+  the menu. Context, Actions of this list, names every action of the list with its key. All tasks is Ctrl+0.
+- A text of an action may hold names in braces, filled in from the item when the action runs: `{Title}` or any
+  field's title, `{file}` for the item's file, `{name}` for its name, `{folder}` for the list's folder, `{today}` for
+  the date, and `{form:...}` for what you typed in the action's form.
+- An action with `fields` opens a small form first, with a box for each field; the field's title is what NVDA reads
+  as the box's name, so write it as an instruction ("Type your answer").
+- An action axTask does not understand is in the menu as "Name, not understood:" and why, and never runs.
+
+A program an action runs:
+
+- gets each argument as one piece, whatever it holds. A title with quotes or a semicolon in it is that title, and can
+  never become a second command. A text of several lines goes to the program as its `input`, not as an argument.
+- is asked about before its first run: "Run Answer the report?" names where the action is written, what it does, the
+  program by its full path and every argument as it is for the item you are on. Enter there is Cancel; Tab goes to
+  Run it once, and to Run it, and do not ask again for this action. Change anything of the action in the file and
+  you are asked again.
+- is heard: "Running Answer the report" as it starts; "Answer the report: done" with what it set, or "Answer the
+  report failed, exit code 1", and then its output opens to read. Context, Actions of this list, Read the last output
+  shows what the last program wrote. Actions, Stop the running action ends it.
+- is never taken from the list's own folder, and runs only on this computer. axTask does not know what a program
+  does or reaches: that is the program's doing, and your choice to run it.
+
+A key that moves an item or opens something says first what it does, the first time: "Ctrl+2 in this list now moves
+to ../Later. Press it again to do it." Press it again and it does it; from then on it acts at the first press, until
+the action changes. A key that only sets fields is never asked about: Ctrl+Z takes it back.
 
 ## Local only
 
-axTask works on the files of your computer and asks the network nothing. An action key that opens a field's web
-address hands the address to your browser, which is your own step.
+axTask works on the files of your computer and asks the network nothing. An action that opens a field's web
+address hands the address to your browser, which is your own step. An action that runs a program starts a program
+of your choosing, which you were asked about; what that program reaches, a server among it, is its own doing, as
+if you had run it in a terminal.
 
 Until version 5.8.0 axTask had GitHub lists, which read a repository's issues. They were removed: a complex thing
 such as GitHub will get an app of its own. A list you made as a GitHub list stays, as an ordinary list with its
