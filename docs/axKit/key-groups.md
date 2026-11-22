@@ -150,6 +150,7 @@ The keys:
 - Enter, axClip: Paste.
 - Enter, axMCP: Read the resource.
 - Enter, axCalc: Recall the entry.
+- Enter, axGIT: Show diff.
 - Enter, axStart: Start.
 - Enter, axPass: Unlock.
 
@@ -183,6 +184,7 @@ The keys:
 - Delete, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Delete.
 - Delete, axAutomate, axMCP, axPass and axTask: Remove the field.
 - Delete, axTask: Archive.
+- Delete, axGIT: Discard changes.
 - Delete, axProcess: End process.
 - Delete, axClip: Remove.
 - Delete, axCalc: Remove the entry.
@@ -299,6 +301,7 @@ The keys:
 - Ctrl+D, axHelp: Put a picture file into the conversation.
 - Ctrl+E, axPreview: Edit in axDown.
 - Ctrl+E, axFile: Editor.
+- Ctrl+E, axGIT: Open file in editor.
 - Ctrl+E, axTask: Show in axFile.
 - Ctrl+E, axProcess: Show program in axFile.
 - Ctrl+J, axTask: Edit the list's configuration.

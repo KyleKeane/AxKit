@@ -21,12 +21,14 @@ mkdir plain
 # Goal: Open a repository
 # 1.1 The window is named after the repository, the Changes list focused on its first item; nothing announced.
 start git {temp}\repo
-# Check: The window's command list holds every key of its own
-# The window's command list: every key of its own in the F1 text, none shadowed (docs/axKit/app-kit.md AK-2.4).
-check commands
 expect state repo - axGIT
 expect focus Changes, 2 files
 expect focus Modified a.txt, unstaged
+# Check: The window's command list holds every key of its own
+# The window's command list: every key of its own in the F1 text, none shadowed (docs/axKit/app-kit.md AK-2.4).
+# Asked once the list has its files: Context holds the commands of the row you are on, so before the repository
+# is read it holds "Nothing selected", and the list of commands would be another (found 2026-11-22).
+check commands
 expect quiet 1500
 
 # Goal: Move between the list and the details

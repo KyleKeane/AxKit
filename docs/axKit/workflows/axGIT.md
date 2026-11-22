@@ -65,17 +65,17 @@ Starts with: Open axGIT with the folder repo.
 
 ### Stage and unstage a file
 
-1. Press Ctrl+Shift+S (Stage; Actions menu).
+1. Press Ctrl+Shift+S.
     You hear: Staged a.txt.
-2. Press Ctrl+Shift+S (Stage; Actions menu).
+2. Press Ctrl+Shift+S.
     You hear: a.txt is already staged.
 3. Press Down.
     It reads Untracked new.txt.
 4. Press Up.
     It reads Modified a.txt, staged.
-5. Press Ctrl+Shift+U (Unstage; Actions menu).
+5. Press Ctrl+Shift+U.
     You hear: Unstaged a.txt.
-6. Press Ctrl+Shift+U (Unstage; Actions menu).
+6. Press Ctrl+Shift+U.
     You hear: a.txt is not staged.
 
 ### Select files with Space and stage them together
@@ -83,11 +83,11 @@ Starts with: Open axGIT with the folder repo.
 1. Press Space.
     You hear: Selected.
 2. Press Shift+Down.
-3. Press Ctrl+Shift+S (Stage; Actions menu).
+3. Press Ctrl+Shift+S.
     You hear: Staged 2 files.
-4. Press Ctrl+Shift+S (Stage; Actions menu).
+4. Press Ctrl+Shift+S.
     You hear: Nothing to stage among the 2 selected files.
-5. Press Ctrl+Shift+U (Unstage; Actions menu).
+5. Press Ctrl+Shift+U.
     You hear: Unstaged 2 files.
 6. Press Escape.
     You hear: None selected.
@@ -132,7 +132,7 @@ Starts with: Open axGIT with the folder repo.
 
 1. Press Up.
     It reads Modified a.txt, unstaged.
-2. Press Ctrl+Shift+S (Stage; Actions menu).
+2. Press Ctrl+Shift+S.
     You hear: Staged a.txt.
 3. Press Ctrl+Enter (Commit; Actions menu).
 4. Press Enter.

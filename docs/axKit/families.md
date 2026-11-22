@@ -57,7 +57,7 @@ Only in a test run, on a desktop of its own, never in your windows.
 
 ## 2. The functions
 
-A function is a command of a window (`docs/axKit/command-language.md`): 1703 in the inventory, of which 241 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
+A function is a command of a window (`docs/axKit/command-language.md`): 1707 in the inventory, of which 239 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
 
 ### The marks, and the events a command of each mark ends in
 
@@ -79,7 +79,7 @@ A function is a command of a window (`docs/axKit/command-language.md`): 1703 in 
 - `actions`, the Actions menu: Do something with the whole of what the window holds: undo and redo, run, push and pull, a new item, interrupt.
   - 100 commands in 17 apps: read 10, open 7, change 33, act 50.
 - `context`, the Context menu: Do something with the one thing the focus is on: copy, cut, paste, rename, delete, open, information. Shift+F10 and Ctrl+Period open it.
-  - 98 commands in 17 apps: read 14, open 27, change 15, act 42.
+  - 104 commands in 17 apps: read 14, open 28, change 17, act 45.
 - `options`, the Options menu: Settings, each said with its new state: text, speech, sounds, announcements, what happens when something is done.
   - 251 commands in 17 apps: read 1, open 20, change 192, act 38.
 - `window`, the Window menu: The other windows of axKit: a new window of any app, close all windows, say the status.
@@ -89,7 +89,7 @@ A function is a command of a window (`docs/axKit/command-language.md`): 1703 in 
 - `help`, the Help menu: The keys (F1), the user guide, the command palette, sending a report (F4), about, diagnostics and the key test.
   - 269 commands in 17 apps: read 153, open 17, act 99.
 - `keys-alone`: Commands that are a key with no menu item, because their meaning depends on where the focus is: Tab between panes, Enter on a row, Right into a list, F3 for find next. An AI tool never runs these.
-  - 241 rows of the inventory.
+  - 239 rows of the inventory.
 - `control-keys`: Not commands at all: the keys a control handles itself, the arrows in a list or a text and typing in a field. The inventory does not hold them; the families of keys do.
 
 ## 3. The events

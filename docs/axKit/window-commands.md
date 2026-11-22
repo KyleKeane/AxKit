@@ -451,7 +451,13 @@ every window" or under a heading that names the windows without it; under an app
 - Stage all. Menu: Actions. Key: none. Mark: act.
 - Unstage. Menu: Actions. Key: Ctrl+Shift+U. Mark: act.
 - Unstage all. Menu: Actions. Key: none. Mark: act.
-- Nothing selected. Menu: Context. Key: none. Mark: read.
+- Discard changes. Menu: Context. Key: Delete. Mark: act.
+- Open file in editor. Menu: Context. Key: Ctrl+E. Mark: open.
+- Select or deselect. Menu: Context. Key: Space. Mark: change.
+- Select to here. Menu: Context. Key: Shift+Space. Mark: change.
+- Show diff. Menu: Context. Key: Enter. Mark: read.
+- Stage. Menu: Context. Key: Ctrl+Shift+S. Mark: act.
+- Unstage. Menu: Context. Key: Ctrl+Shift+U. Mark: act.
 - git-scm.com. Menu: Help, Git resources. Key: none. Mark: act.
 - Pro Git, the book. Menu: Help, Git resources. Key: none. Mark: act.
 - Branches. Menu: Navigation. Key: Alt+3. Also: Ctrl+3. Mark: open.
@@ -476,8 +482,6 @@ every window" or under a heading that names the windows without it; under an app
 - Open. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
 - Previous section. Menu: none, a key alone. Key: Ctrl+Up. Mark: open. Never run by AI tools.
 - Select all. Menu: none, a key alone. Key: Ctrl+A. Mark: change. Never run by AI tools.
-- Select or deselect. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
-- Select to here. Menu: none, a key alone. Key: Shift+Space. Mark: change. Never run by AI tools.
 - Select to the first file. Menu: none, a key alone. Key: Shift+Home. Mark: change. Never run by AI tools.
 - Select to the last file. Menu: none, a key alone. Key: Shift+End. Mark: change. Never run by AI tools.
 - Select to the next file. Menu: none, a key alone. Key: Shift+Down. Mark: change. Never run by AI tools.
