@@ -107,10 +107,10 @@ public sealed class ReportSenderTests : IDisposable
         // The item on the computer stays as the user wrote it, plain.
         Assert.Contains("first marmalade", File.ReadAllText(older));
 
-        var olderItem = ItemDocument.Parse(File.ReadAllText(older));
+        var olderItem = FlatItem.Parse(File.ReadAllText(older));
         Assert.Equal(ReportStatus.Sent, ReportFiles.Status(olderItem));
         Assert.Contains("issues/12", olderItem.ToText());
-        Assert.Equal(ReportStatus.Sent, ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(newer))));
+        Assert.Equal(ReportStatus.Sent, ReportFiles.Status(FlatItem.Parse(File.ReadAllText(newer))));
         Assert.Empty(ReportFiles.Unsent(_folder));
 
         // The blocklist is kept a day: the next run reads it from the settings, and the gap rule holds for half a minute.
@@ -136,7 +136,7 @@ public sealed class ReportSenderTests : IDisposable
         Assert.Equal(ReportSender.NoTokenReason, outcome.Reason);
         Assert.Equal(1, outcome.Left);
         Assert.Empty(fake.Requests);
-        Assert.Equal("Not sent yet: this build cannot send reports", ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(path))));
+        Assert.Equal("Not sent yet: this build cannot send reports", ReportFiles.Status(FlatItem.Parse(File.ReadAllText(path))));
     }
 
     [Fact]
@@ -150,7 +150,7 @@ public sealed class ReportSenderTests : IDisposable
         Assert.Equal(ReportSender.SealReason, outcome.Reason);
         // The blocklist was asked for, and no issue: nothing of the report went anywhere.
         Assert.Equal(GitHubIssues.BlocklistUrl, Assert.Single(fake.Requests).Url);
-        Assert.Equal("Not sent yet: the report could not be encrypted", ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(path))));
+        Assert.Equal("Not sent yet: the report could not be encrypted", ReportFiles.Status(FlatItem.Parse(File.ReadAllText(path))));
     }
 
     [Fact]
@@ -168,8 +168,8 @@ public sealed class ReportSenderTests : IDisposable
         var read = Assert.Single(fake.Requests);
         Assert.Equal(HttpMethod.Get, read.Method);
         Assert.Equal("https://raw.githubusercontent.com/KyleKeane/AxKit-blocklist/main/blocklist.json", read.Url);
-        Assert.Equal("Not sent yet: reports from this install are not being accepted", ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(older))));
-        Assert.Equal("Not sent yet: reports from this install are not being accepted", ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(newer))));
+        Assert.Equal("Not sent yet: reports from this install are not being accepted", ReportFiles.Status(FlatItem.Parse(File.ReadAllText(older))));
+        Assert.Equal("Not sent yet: reports from this install are not being accepted", ReportFiles.Status(FlatItem.Parse(File.ReadAllText(newer))));
 
         // Within the day the copy answers: still blocked, and no request at all.
         _now = _now.AddHours(23);
@@ -235,8 +235,8 @@ public sealed class ReportSenderTests : IDisposable
         Assert.Equal(0, outcome.Sent);
         Assert.Equal(2, outcome.Left);
         Assert.Equal("this version can no longer send reports, update axKit", outcome.Reason);
-        Assert.Equal("Not sent yet: this version can no longer send reports, update axKit", ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(first))));
-        Assert.Equal("Not sent yet", ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(second))));
+        Assert.Equal("Not sent yet: this version can no longer send reports, update axKit", ReportFiles.Status(FlatItem.Parse(File.ReadAllText(first))));
+        Assert.Equal("Not sent yet", ReportFiles.Status(FlatItem.Parse(File.ReadAllText(second))));
         Assert.Equal(2, fake.Requests.Count);
     }
 
@@ -246,7 +246,7 @@ public sealed class ReportSenderTests : IDisposable
         var path = Save("Offline", "words");
         var outcome = await ReportSender.SendUnsentAsync(_folder, _settings, _written, "5.1.0", "tok", ReportSealTests.Keys.Public, new HttpClient(new Throwing()), () => _now, CancellationToken.None);
         Assert.Equal("no network", outcome.Reason);
-        Assert.Equal("Not sent yet: no network", ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(path))));
+        Assert.Equal("Not sent yet: no network", ReportFiles.Status(FlatItem.Parse(File.ReadAllText(path))));
         Assert.Single(ReportFiles.Unsent(_folder));
     }
 
@@ -281,7 +281,7 @@ public sealed class ReportSenderTests : IDisposable
         Assert.Equal(1, outcome.NotOfTheForm);
         // One issue, the form's; the planted file is as it was, not sent and not marked.
         Assert.Equal(2, fake.Requests.Count);
-        Assert.Equal(ReportStatus.Sent, ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(own))));
+        Assert.Equal(ReportStatus.Sent, ReportFiles.Status(FlatItem.Parse(File.ReadAllText(own))));
         Assert.Equal(before, File.ReadAllText(planted));
         Assert.Equal("1 file in the reports folder was not written by axKit's report form and was not sent.", ReportWritten.NotSentSentence(outcome.NotOfTheForm));
         Assert.Equal("3 files in the reports folder were not written by axKit's report form and were not sent.", ReportWritten.NotSentSentence(3));
@@ -316,7 +316,7 @@ public sealed class ReportSenderTests : IDisposable
         var waiting = Plant("Waiting since the version before.json", "older words", minutesAgo: 50);
         var own = Save("Mine", "my words");
         // The earlier version's report by its name alone; the form's own by its name and by the id in its file.
-        var ownId = ReportFiles.IdOf(ItemDocument.Parse(File.ReadAllText(own)))!;
+        var ownId = ReportFiles.IdOf(FlatItem.Parse(File.ReadAllText(own)))!;
         Assert.Equal(["waiting since the version before.json", "mine.json", ReportWritten.IdMark + ownId], ReportWritten.Names(_written));
         var late = Plant("Came later.json", "planted", minutesAgo: 1);
 
@@ -324,17 +324,17 @@ public sealed class ReportSenderTests : IDisposable
         var outcome = await Send(fake);
         Assert.Equal(2, outcome.Sent);
         Assert.Equal(1, outcome.NotOfTheForm);
-        Assert.Equal(ReportStatus.Sent, ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(waiting))));
-        Assert.Equal(ReportStatus.Sent, ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(own))));
-        Assert.True(ReportStatus.AwaitsSending(ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(late)))));
+        Assert.Equal(ReportStatus.Sent, ReportFiles.Status(FlatItem.Parse(File.ReadAllText(waiting))));
+        Assert.Equal(ReportStatus.Sent, ReportFiles.Status(FlatItem.Parse(File.ReadAllText(own))));
+        Assert.True(ReportStatus.AwaitsSending(ReportFiles.Status(FlatItem.Parse(File.ReadAllText(late)))));
     }
 
     [Fact]
     public async Task A_report_changed_in_axTask_is_still_sent_since_the_list_is_by_name()
     {
         var own = Save("Mine", "my words");
-        var item = ItemDocument.Parse(File.ReadAllText(own));
-        ReportFiles.Write(own, item.WithValue(item.IndexOf(ReportFiles.ReportField), System.Text.Json.Nodes.JsonValue.Create("my words, with more")));
+        var item = FlatItem.Parse(File.ReadAllText(own));
+        ReportFiles.Write(own, item.With(ReportFiles.ReportField, System.Text.Json.Nodes.JsonValue.Create("my words, with more")));
         var fake = new Fake().Answer(HttpStatusCode.NotFound, "no blocklist").Answer(HttpStatusCode.Created, Issue(51));
         var outcome = await Send(fake);
         Assert.Equal(1, outcome.Sent);
@@ -347,21 +347,21 @@ public sealed class ReportSenderTests : IDisposable
         // The leftover of R-57: axTask renames an item's file when its title changes (IA-4.5), which took an unsent
         // report off a list kept by name. The id the form wrote into the file goes with it.
         var own = Save("Mine", "my words");
-        var item = ItemDocument.Parse(File.ReadAllText(own));
+        var item = FlatItem.Parse(File.ReadAllText(own));
         var renamed = Path.Combine(_folder, "A better title.json");
-        File.WriteAllText(renamed, item.WithValue(item.IndexOf(ItemDocument.TitleField), System.Text.Json.Nodes.JsonValue.Create("A better title")).ToText());
+        File.WriteAllText(renamed, item.With(ItemDocument.TitleField, System.Text.Json.Nodes.JsonValue.Create("A better title")).ToText());
         File.Delete(own);
         // A planted file under a name of its own with an id nobody wrote on the list, and one without an id.
         var planted = Plant("Planted.json", "planted");
-        var plantedItem = ItemDocument.Parse(File.ReadAllText(planted));
-        File.WriteAllText(Path.Combine(_folder, "Planted with an id.json"), plantedItem.WithExtra(ReportFiles.IdKey, System.Text.Json.Nodes.JsonValue.Create("0123456789abcdef0123456789abcdef")).ToText());
+        var plantedItem = FlatItem.Parse(File.ReadAllText(planted));
+        File.WriteAllText(Path.Combine(_folder, "Planted with an id.json"), plantedItem.With(ReportFiles.IdKey, System.Text.Json.Nodes.JsonValue.Create("0123456789abcdef0123456789abcdef")).ToText());
 
         var fake = new Fake().Answer(HttpStatusCode.NotFound, "no blocklist").Answer(HttpStatusCode.Created, Issue(61));
         var outcome = await Send(fake);
         Assert.Equal(1, outcome.Sent);
         Assert.Equal(2, outcome.NotOfTheForm);
         Assert.Contains("my words", ReportSeal.Open(Posted(fake.Requests[1].Body).Body, ReportSealTests.Keys.Private));
-        Assert.Equal(ReportStatus.Sent, ReportFiles.Status(ItemDocument.Parse(File.ReadAllText(renamed))));
+        Assert.Equal(ReportStatus.Sent, ReportFiles.Status(FlatItem.Parse(File.ReadAllText(renamed))));
         // The id never leaves the computer: it is no part of what is sent.
         Assert.DoesNotContain(ReportFiles.IdOf(item)!, ReportSeal.Open(Posted(fake.Requests[1].Body).Body, ReportSealTests.Keys.Private));
     }

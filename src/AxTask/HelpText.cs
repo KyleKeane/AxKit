@@ -40,7 +40,8 @@ public static class HelpText
           Up, Down: move through the fields
           Enter: change the field. Space: done or not done, on a check
           Right and Left: on a choice, the next and the previous value; on a check, Right checks and Left unchecks. Said once, one step for Ctrl+Z; the edge sound at an end and on any other field
-          Ctrl+N: a new field. F2: rename the field in place. Delete: remove it. Alt+Up, Alt+Down: move it
+          Which fields a list's items have is written once, in the list's configuration: Ctrl+J on the list opens it in axJSON, where a field is added, renamed, taken out or moved for every item at once. A field taken out is hidden and its values are kept; put back, they show again. Ctrl+N, F2, Delete, Alt+Up and Alt+Down in the fields say where this is done
+          A last line such as "2 more fields kept: Sprint, Old priority" names what an item holds that its list does not name: Enter reads those values
           Ctrl+Q: read the field's whole value
           Escape, Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6: back to the navigator
 
@@ -55,7 +56,8 @@ public static class HelpText
         ## Everywhere in axTask
           Ctrl+Z: undo the last change
           F5: read the folder again
-          Ctrl+J: open the item, the list's details or the smart list in axJSON
+          Ctrl+J: on a list, edit its configuration in axJSON (its details, the fields of its items, its actions; written first when the list has none); on an item or a smart list, open its file there. Back in axTask, one line says what the configuration holds now, or that it does not read and at which line
+          A list written by an earlier version of axTask says "earlier format" and is not opened: Enter on it asks to convert it, and a copy is kept among the Archived lists
           Ctrl+E: show it in axFile
           Ctrl+S: nothing to save here; every change is written at once
         """ + BundleHelp.NoticesSection("axTask", "the panes");

@@ -96,11 +96,13 @@ public static class TaskTools
     }
 
     /// <summary>
-    /// TK-8.3: a new item as the window's New item makes it (<see cref="ItemDocument.NewItem"/> with the list's template),
-    /// then each value typed into its field as the field's own change would take it (<see cref="FieldTypes.Parse"/>: a
-    /// date as 2026-11-18, today, +7 or a weekday; a choice as one of its options), a check as true or false. A field the
-    /// template lacks is added at the end (MC-D13): long text for Notes or a value of several lines, text otherwise. A
-    /// link, a password and a user name are refused, as is the Title among the fields. The first refusal is the answer.
+    /// TK-8.3: a new item as the window's New item makes it (<see cref="ItemDocument.NewItem"/> with the fields of the
+    /// list's configuration), then each value typed into its field as the field's own change would take it
+    /// (<see cref="FieldTypes.Parse"/>: a date as 2026-11-18, today, +7 or a weekday; a choice as one of its options), a
+    /// check as true or false. A field the list does not have is refused with the fields it has (MC-D13 as changed on
+    /// 2026-11-21: added at the end until then, which would now write a value no one is shown). A link, a password
+    /// and a user name are refused, as is the Title among the fields. The first refusal is the answer. The file is
+    /// <see cref="ItemFolder.NewItemFile"/>'s.
     /// </summary>
     public static (ItemDocument? Item, string? Refused) NewItem(string? title, IReadOnlyList<ItemField> template, IReadOnlyList<KeyValuePair<string, string>> values, DateOnly today)
     {
@@ -149,9 +151,12 @@ public static class TaskTools
             var index = item.IndexOf(field);
             if (index < 0)
             {
-                var type = field.Equals(NotesField, StringComparison.OrdinalIgnoreCase) || text.Contains('\n') ? FieldTypes.LongText : FieldTypes.Text;
-                item = item.WithField(-1, field, type, []);
-                index = item.Fields.Count - 1;
+                // A value the list's configuration does not name would be kept in the file and never shown
+                // (AF-11.3): the user would not find what the tool said it added. So it is refused, with the fields
+                // there are.
+                return (null, template.Count == 0
+                    ? $"{field} is not a field of this list: its items have only a title."
+                    : $"{field} is not a field of this list. Its fields: {string.Join(", ", template.Select(known => known.Title))}.");
             }
 
             var shown = item.Fields[index];
@@ -170,8 +175,6 @@ public static class TaskTools
     /// <summary>The longest title a tool may give (TK-8.3): the window says it whole, in "Claude added ..." and in the undo.</summary>
     public const int MaxTitle = 200;
 
-    /// <summary>The field a new item's notes go in when its list's template has none.</summary>
-    public const string NotesField = "Notes";
 
     private static (JsonNode? Value, string? Refused) ValueOf(ItemField field, string text, DateOnly today)
     {

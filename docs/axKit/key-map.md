@@ -3,7 +3,7 @@
 Written by `tools/key-map.ps1` from `docs/axKit/window-commands.json`, `src/AxKit.Forms/BundleKeys.cs` and
 `docs/axKit/key-families.json`; never edit it by hand. Every key of every window and what it does in each app.
 
-The inventory holds 576 commands with a key in 17 apps, on 119 different keys, counting the
+The inventory holds 577 commands with a key in 17 apps, on 119 different keys, counting the
 second keys some commands answer. 50 keys have one meaning wherever they are; 69 have several.
 21 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
 are window keys, each in its window's own table.
@@ -444,6 +444,14 @@ Window key, in axFile, axPreview and axProcess. 3 meanings.
 - axProcess: Copy line.
 - axPreview: Copy the detail's value.
 
+### Ctrl+J
+
+Window key, in axAutomate, axJSON and axTask. 3 meanings.
+
+- axTask: Edit the list's configuration.
+- axJSON: Object.
+- axAutomate: The workflow's file as text.
+
 ### Ctrl+P
 
 Window key, in axClip, axMedia and axTerminal. 3 meanings.
@@ -634,13 +642,6 @@ Window key, in axDown, axFile and axPreview. 2 meanings.
 
 - axDown and axPreview: Table.
 - axFile: New text file.
-
-### Ctrl+J
-
-Window key, in axAutomate and axJSON. 2 meanings.
-
-- axJSON: Object.
-- axAutomate: The workflow's file as text.
 
 ### Ctrl+R
 

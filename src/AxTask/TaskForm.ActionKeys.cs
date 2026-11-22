@@ -18,7 +18,7 @@ public sealed partial class TaskForm
 
     // ---- the list in hand ----
 
-    private ItemDocument? CurrentListDetails => _smart is null && !AtTop && Directory.Exists(_folder) ? ItemFolder.ReadList(_folder) : null;
+    private ListConfig? CurrentListDetails =>_smart is null && !AtTop && Directory.Exists(_folder) ? ItemFolder.ReadList(_folder) : null;
 
     /// <summary>The menu of this file, placed by the constructor: the action keys in Context on an item.</summary>
     private void PlaceActionKeyMenu()
@@ -131,8 +131,13 @@ public sealed partial class TaskForm
             return;
         }
 
+        if (!Changeable(item))
+        {
+            return;
+        }
+
         var changed = ActionKeys.ApplySet(item.Document, set);
-        Commit(new Step([FileChange.Write(item.Path, item.Text, changed.ToText())], $"{name}: {ActionKeys.SpokenSet(set)}"), item.Path);
+        Commit(new Step([FileChange.Write(item.Path, item.Text, item.TextWith(changed))], $"{name}: {ActionKeys.SpokenSet(set)}"), item.Path);
     }
 
     /// <summary>A Move action (RP-8.1): to the list at the relative path, the links following (IA-D3).</summary>
@@ -235,9 +240,13 @@ public sealed partial class TaskForm
     private void WriteActionKey(string folder, int digit, ListAction? action)
     {
         var listFile = Path.Combine(folder, ItemDocument.ListFile);
-        var before = Changes.ReadOrNull(listFile);
-        var details = ItemFolder.ReadList(folder) ?? ItemDocument.NewList(TaskRules.TemplateOf(null));
-        var changed = ActionKeys.With(details, digit, action);
+        if (ConfigurationForChange(folder) is not { } list)
+        {
+            return;
+        }
+
+        var before = list.Text;
+        var changed = ActionKeys.With(list.Config, digit, action);
         // TK-7a.3: an action written here is this install's own and is not asked about.
         if (action is not null && ActionKeys.AsksFirst(action) && _settings.AcceptActionKey(SettingsPath, folder, digit, action))
         {

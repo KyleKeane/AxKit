@@ -18,18 +18,21 @@ public sealed class FolderTests : IDisposable
         Directory.CreateDirectory(Path.Combine(_top.Path, "Archive", "Old list"));
         Directory.CreateDirectory(Path.Combine(_top.Path, "Archive"));
         Directory.CreateDirectory(Path.Combine(_top.Path, ".hidden"));
+        TestLists.List(Path.Combine(_top.Path, "Course plan"), section: " Work ");
+        // A plain list: its items have a title and nothing else.
+        TestLists.List(Path.Combine(_top.Path, "Plain"), fields: []);
         Item("Home", "Fix the tap", done: false, due: "2026-10-30");
         Item("Home", "Water plants", done: true, due: "2026-10-20");
         Item("Work", "Report", done: false, due: "2026-10-22");
         Item("Course plan", "Week one", done: false, due: null);
         Item(Path.Combine("Work", "Nested"), "Never shown", done: false, due: null);
         Item(Path.Combine("Archive", "Old list"), "Old task", done: false, due: null);
-        File.WriteAllText(Path.Combine(_top.Path, "Loose.json"), ItemDocument.NewItem("Loose", []).ToText());
-        File.WriteAllText(Path.Combine(_top.Path, "Course plan", ItemDocument.ListFile), ItemDocument.NewList([]).WithField(-1, ItemFolder.SectionField, FieldTypes.Text, []).WithValue(1, System.Text.Json.Nodes.JsonValue.Create(" Work ")).ToText());
-        Item("Archive", "Old thing", done: false, due: null);
+        File.WriteAllText(Path.Combine(_top.Path, "Loose.json"), """{ "schema": "list.json", "Title": "Loose" }""");
+        // An item the Archive holds of its own: the Archive has no configuration, and the item is read all the same.
+        File.WriteAllText(Path.Combine(_top.Path, "Archive", "Old thing.json"), """{ "schema": "list.json", "Title": "Old thing", "Done": false }""");
         File.WriteAllText(Path.Combine(_top.Path, "Home", "notes.txt"), "not an item");
         File.WriteAllText(Path.Combine(_top.Path, "Home", "broken.json"), "{ nope");
-        File.WriteAllText(Path.Combine(_top.Path, "Home", "Milk.json"), ItemDocument.NewItem("Milk", []).ToText());
+        TestLists.Item(Path.Combine(_top.Path, "Plain"), "Milk");
     }
 
     public void Dispose() => _top.Dispose();
@@ -38,12 +41,19 @@ public sealed class FolderTests : IDisposable
     public void ReadsALevel()
     {
         var top = ItemFolder.ReadTop(_top.Path);
-        Assert.Equal(["Course plan", "Home", "Work"], top.Lists.Select(Path.GetFileName));
+        Assert.Equal(["Course plan", "Home", "Plain", "Work"], top.Lists.Select(Path.GetFileName));
         Assert.Equal(["Old list"], top.ArchivedLists.Select(Path.GetFileName));
         Assert.Equal(1, top.ArchivedItems);
         Assert.Equal(1, top.NotShown);
         var home = ItemFolder.Read(Path.Combine(_top.Path, "Home"));
-        Assert.Equal(["Fix the tap", "Milk", "Water plants"], home.Items.Select(ItemFolder.NameOf));
+        Assert.Equal(["Fix the tap", "Water plants"], home.Items.Select(ItemFolder.NameOf));
+        Assert.False(home.Earlier);
+        Assert.Null(home.ConfigProblem);
+        // An item is read through its list's configuration: its Title, then the list's fields in the list's order.
+        Assert.Equal(["Title", "Done", "Start", "Due"], home.Items[0].Document.Fields.Select(field => field.Title));
+        Assert.Equal(FieldTypes.Date, home.Items[0].Document.Fields[3].Type);
+        Assert.Null(home.Items[0].ConfigProblem);
+        Assert.Empty(home.Items[0].Kept);
         // notes.txt is no item and is counted; broken.json is a damaged item and is named (TK-4.6).
         Assert.Equal(1, home.NotShown);
         Assert.Equal(["broken.json"], home.Unreadable.Select(Path.GetFileName));
@@ -115,8 +125,11 @@ public sealed class FolderTests : IDisposable
     {
         var home = ItemFolder.Read(Path.Combine(_top.Path, "Home")).Items;
         Assert.Equal(", due 30 October", TaskRules.Summary(home[0].Document, Today));
-        Assert.Equal(string.Empty, TaskRules.Summary(home[1].Document, Today));
-        Assert.Equal(", done, due 20 October", TaskRules.Summary(home[2].Document, Today));
+        Assert.Equal(", done, due 20 October", TaskRules.Summary(home[1].Document, Today));
+        // An item of a plain list is no task and has no summary.
+        var milk = ItemFolder.Read(Path.Combine(_top.Path, "Plain")).Items[0];
+        Assert.False(TaskRules.IsTask(milk.Document));
+        Assert.Equal(string.Empty, TaskRules.Summary(milk.Document, Today));
         var report = ItemFolder.Read(Path.Combine(_top.Path, "Work")).Items[0];
         Assert.Equal(", overdue since 22 October", TaskRules.Summary(report.Document, Today));
     }
@@ -158,7 +171,7 @@ public sealed class FolderTests : IDisposable
     {
         var path = Path.Combine(_top.Path, "Home", "Fix the tap.json");
         var before = File.ReadAllText(path).ReplaceLineEndings("\r\n");
-        var after = ItemDocument.Parse(before).WithTitle("Fix the sink").ToText();
+        var after = TestLists.TextOf(path, document => document.WithTitle("Fix the sink"));
         var moved = Path.Combine(_top.Path, "Home", "Fix the sink.json");
         var step = new Step([FileChange.Write(path, before, after), FileChange.Move(path, moved)], "Renamed");
         Changes.Apply(step.Parts);
@@ -170,7 +183,7 @@ public sealed class FolderTests : IDisposable
         Assert.Equal("Fix the tap", ItemFolder.ReadItem(path)!.Document.Title);
 
         Changes.Apply(step.Parts);
-        File.WriteAllText(moved, ItemDocument.NewItem("Changed elsewhere", []).ToText());
+        File.WriteAllText(moved, """{ "schema": "list.json", "Title": "Changed elsewhere" }""");
         Assert.Equal("Fix the sink changed on disk", Changes.CheckUndo(step));
     }
 
@@ -178,7 +191,7 @@ public sealed class FolderTests : IDisposable
     public void AMadeFileIsRemovedByUndo()
     {
         var path = Path.Combine(_top.Path, "Garden", "Dig.json");
-        var step = new Step([FileChange.Write(path, null, ItemDocument.NewItem("Dig", []).ToText())], "Added Dig");
+        var step = new Step([FileChange.Write(path, null, FlatItem.New("Dig", ListConfig.New([])).ToText())], "Added Dig");
         Changes.Apply(step.Parts);
         Assert.True(File.Exists(path));
         Assert.Null(Changes.CheckUndo(step));
@@ -211,14 +224,12 @@ public sealed class FolderTests : IDisposable
     [Fact]
     public void AChoiceSortsByItsOptionsUnlessTheOrderSaysByText()
     {
-        Directory.CreateDirectory(Path.Combine(_top.Path, "Ranked"));
+        // The options and their order are the list's configuration's; an item holds the option's text alone.
+        var ranked = Path.Combine(_top.Path, "Ranked");
+        TestLists.List(ranked, [new ItemField("Priority", FieldTypes.Choice, System.Text.Json.Nodes.JsonValue.Create(string.Empty), ["High", "Normal", "Low"])]);
         foreach (var (title, priority) in new[] { ("A", "Low"), ("B", "High"), ("C", ""), ("D", "Normal") })
         {
-            File.WriteAllText(Path.Combine(_top.Path, "Ranked", title + ".json"), $$"""
-                { "format": "axkit-item 1", "fields": [
-                  { "title": "Title", "type": "text", "value": "{{title}}" },
-                  { "title": "Priority", "type": "choice", "value": "{{priority}}", "options": [ "High", "Normal", "Low" ] } ] }
-                """);
+            TestLists.Item(ranked, title, ("Priority", System.Text.Json.Nodes.JsonValue.Create(priority)));
         }
 
         string[] Sorted(string order)
@@ -237,15 +248,100 @@ public sealed class FolderTests : IDisposable
         Assert.NotNull(SmartList.Read(Path.Combine(_top.Path, "Odd.filter.json")).NotUnderstood);
     }
 
+    [Fact]
+    public void An_item_is_read_through_the_configuration_its_link_names()
+    {
+        var home = Path.Combine(_top.Path, "Home");
+        var tap = Path.Combine(home, "Fix the tap.json");
+
+        // A value the list's configuration does not name is kept, and named in one line (AF-11.3, AF-11.4).
+        File.WriteAllText(tap, """{ "schema": "list.json", "Title": "Fix the tap", "Done": false, "Sprint": "November" }""");
+        var item = ItemFolder.ReadItem(tap)!;
+        Assert.Equal(["Title", "Done", "Start", "Due"], item.Document.Fields.Select(field => field.Title));
+        Assert.Equal("1 more field kept: Sprint", item.KeptLine);
+
+        // A change writes what changed and leaves what is kept alone.
+        var changed = FlatItem.Parse(item.TextWith(item.Document.WithValue(1, System.Text.Json.Nodes.JsonValue.Create(true))));
+        Assert.True(FieldTypes.IsTrue(changed.Value("Done")));
+        Assert.Equal("November", changed.Text("Sprint"));
+        Assert.False(changed.Has("Due"));
+
+        // The configuration gone: every value as plain text, and why (AF-13.4).
+        File.Delete(Path.Combine(home, "list.json"));
+        var plain = ItemFolder.ReadItem(tap)!;
+        Assert.Equal("Its configuration, list.json, is not there", plain.ConfigProblem);
+        Assert.Equal(["Title", "Done", "Sprint"], plain.Document.Fields.Select(field => field.Title));
+        Assert.All(plain.Document.Fields, field => Assert.Equal(FieldTypes.Text, field.Type));
+
+        // One that does not read: the same, with the line (AF-11.7); the list says it too.
+        File.WriteAllText(Path.Combine(home, "list.json"), "{\n  \"format\": \"axkit-list 2\",\n  \"item fields\": [ }\n}");
+        Assert.Equal("Its configuration, list.json, does not read: it is not JSON at line 3", ItemFolder.ReadItem(tap)!.ConfigProblem);
+        var level = ItemFolder.Read(home);
+        Assert.Equal("The list's configuration does not read: it is not JSON at line 3", level.ConfigProblem);
+        Assert.Equal(2, level.Items.Count);
+        Assert.Null(ItemFolder.ReadList(home));
+
+        // A link that leads out of the item's reach is followed nowhere.
+        File.WriteAllText(tap, """{ "schema": "C:\\elsewhere\\list.json", "Title": "Fix the tap" }""");
+        Assert.Equal("Its configuration, C:\\elsewhere\\list.json, is not a file beside it", ItemFolder.ReadItem(tap)!.ConfigProblem);
+    }
+
+    [Fact]
+    public void A_list_of_the_earlier_format_is_not_read_and_is_named()
+    {
+        var old = Path.Combine(_top.Path, "Old");
+        Directory.CreateDirectory(old);
+        File.WriteAllText(Path.Combine(old, "list.json"), """{ "format": "axkit-list 1", "fields": [], "new item": [] }""");
+        File.WriteAllText(Path.Combine(old, "Thing.json"), """{ "format": "axkit-item 1", "fields": [ { "title": "Title", "type": "text", "value": "Thing" }, { "title": "Done", "type": "check", "value": false } ] }""");
+
+        var level = ItemFolder.Read(old);
+        Assert.True(level.Earlier);
+        Assert.Empty(level.Items);
+        Assert.Empty(level.Unreadable);
+        Assert.True(ItemFolder.IsEarlier(old));
+        Assert.Equal([old], ItemFolder.EarlierLists(_top.Path));
+        Assert.Equal("1 list in the earlier format is not read: Old. Open one to convert it", ItemFolder.EarlierSummary([old]));
+        Assert.StartsWith("2 lists in the earlier format are not read: Old, Home.", ItemFolder.EarlierSummary([old, Path.Combine(_top.Path, "Home")]));
+        Assert.Equal(string.Empty, ItemFolder.EarlierSummary([]));
+        // Nothing of it is gathered: no task of it, and no word of a file not readable.
+        Assert.DoesNotContain(ItemFolder.ReadAll(_top.Path).Items, item => ItemFolder.NameOf(item) == "Thing");
+        Assert.DoesNotContain(ItemFolder.ReadAll(_top.Path).Unreadable, path => path.StartsWith(old, StringComparison.OrdinalIgnoreCase));
+
+        // A converted list an earlier version of axKit wrote one item into is of the earlier format again, for that item.
+        var home = Path.Combine(_top.Path, "Home");
+        File.Copy(Path.Combine(old, "Thing.json"), Path.Combine(home, "Thing.json"));
+        Assert.True(ItemFolder.Read(home).Earlier);
+    }
+
+    [Fact]
+    public void A_list_without_a_configuration_gets_one_from_what_its_items_hold()
+    {
+        var folder = Path.Combine(_top.Path, "Made elsewhere");
+        Directory.CreateDirectory(folder);
+        // No items yet: the fields of a new list.
+        Assert.Equal(["Done", "Start", "Due"], ItemFolder.StarterConfig(folder).ItemFields.Select(field => field.Title));
+
+        File.WriteAllText(Path.Combine(folder, "A.json"), """{ "schema": "list.json", "Title": "A", "Done": true, "Size": 3 }""");
+        File.WriteAllText(Path.Combine(folder, "B.json"), """{ "schema": "list.json", "Title": "B", "Notes": "one\ntwo", "done": false }""");
+        File.WriteAllText(Path.Combine(folder, "not an item.json"), "[1]");
+        var starter = ItemFolder.StarterConfig(folder);
+        Assert.Equal(["Done", "Size", "Notes"], starter.ItemFields.Select(field => field.Title));
+        Assert.Equal([FieldTypes.Check, FieldTypes.Number, FieldTypes.LongText], starter.ItemFields.Select(field => field.Type));
+        // A new item starts empty, whatever the items held.
+        Assert.False(FieldTypes.IsTrue(starter.ItemFields[0].Value));
+        Assert.Empty(starter.Actions!);
+    }
+
     private void Item(string list, string title, bool done, string? due)
     {
-        var item = ItemDocument.NewItem(title, TaskRules.DefaultTemplate);
-        var document = item.WithValue(item.IndexOf("Done"), System.Text.Json.Nodes.JsonValue.Create(done));
-        if (due is not null)
+        var folder = Path.Combine(_top.Path, list);
+        if (due is null)
         {
-            document = document.WithValue(document.IndexOf("Due"), System.Text.Json.Nodes.JsonValue.Create(due));
+            TestLists.Item(folder, title, ("Done", System.Text.Json.Nodes.JsonValue.Create(done)));
         }
-
-        File.WriteAllText(Path.Combine(_top.Path, list, title + ".json"), document.ToText());
+        else
+        {
+            TestLists.Item(folder, title, ("Done", System.Text.Json.Nodes.JsonValue.Create(done)), ("Due", System.Text.Json.Nodes.JsonValue.Create(due)));
+        }
     }
 }

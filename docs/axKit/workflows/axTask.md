@@ -74,21 +74,12 @@ Starts with: Open axTask with the folder tasks.
 4. Press Enter.
     You hear words such as: Friday.
 
-### Add a field with a choice of values
+### Give a field its first value
 
-1. Press Ctrl+N.
-2. Type: Priority
-3. Press Tab.
-4. Type: cc
-5. Press Enter.
-    You hear the sound Edge.
-    You hear: Type at least one option.
-6. Type: High, Low
-7. Press Enter.
-    You hear: Added Priority, choice of 2.
-8. Press Enter.
-9. Press Down.
-10. Press Enter.
+1. Press Down.
+2. Press Enter.
+3. Press Down.
+4. Press Enter.
     You hear: Priority: Low.
 
 ### Change a choice to its previous or next value
@@ -105,14 +96,7 @@ Starts with: Open axTask with the folder tasks.
     You hear: Undone: Priority: Low.
 6. Press Right.
     You hear: Priority: Low.
-
-### Move a field up
-
-1. Press Alt+Up (Move the field up).
-    You hear: Moved up: Priority.
-2. Press Home.
-3. Press Alt+Up (Move the field up).
-    You hear: Top of the fields.
+7. Press Home.
 
 ### Set a check field on or off
 
@@ -206,11 +190,17 @@ Starts with: Open axTask with the folder tasks.
 
 1. Press Left.
 2. Choose Remove Done from every item in the Actions menu.
-    You hear: Shopping is a plain list: Done removed from 0 items.
+    You hear: Shopping is a plain list: Done is hidden, and kept in the items that have it.
 3. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Shopping is a plain list.
-4. Choose Add Done to every item in the Actions menu.
-    You hear: Shopping is a checklist: Done added to 1 item.
+4. Choose Remove Done from every item in the Actions menu.
+    You hear: Shopping is a plain list.
+5. Choose Remove Done from every item in the Actions menu.
+    You hear: Shopping is a plain list already.
+6. Choose Add Done to every item in the Actions menu.
+    You hear: Shopping is a checklist: every item has Done.
+7. Choose Add Done to every item in the Actions menu.
+    You hear: Shopping is a checklist already.
 
 ### Make a new list
 
@@ -551,7 +541,7 @@ Starts with: Open axTask with the folder tasks.
 
 Starts with: Open axTask with the folder tasks.
 
-## Rename a list, and rename and remove a field
+## Rename a list, and change the fields of its items
 
 Starts with: Open axTask with the folder tasks.
 
@@ -563,25 +553,33 @@ Starts with: Open axTask with the folder tasks.
 4. Press Enter.
     You hear: Renamed Home to House.
 
-### Rename a field of an item
+### Read which fields a list's items have
 
-1. Press Right.
-2. Press Tab.
-3. Press Down.
-4. Press F2.
-5. Press Ctrl+A.
-6. Type: Place
-7. Press Enter.
-    You hear: Renamed Room to Place.
+1. Press Tab.
+2. Press End.
+3. Press Enter.
+4. Press Escape.
+5. Press Shift+Tab.
 
-### Remove a field of an item and undo it
+### Take a field out of a list and keep its values
 
-1. Press Delete.
-    You hear: Removed Place.
-2. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: Removed Place.
+1. Press F5 (Refresh; Session menu).
+2. Press Right.
+3. Press Tab.
+4. Press Down 2 times.
+5. Press Enter.
+6. Press Escape.
 
-## Set a date in words, and give new items a task's fields
+### Put a field back and find its values again
+
+1. Press Escape.
+2. Press F5 (Refresh; Session menu).
+3. Press Tab.
+4. Press Home.
+5. Press Down 2 times.
+6. Press End.
+
+## Set a date in words, and add an item with its list's fields
 
 Starts with: Open axTask with the folder tasks.
 
@@ -594,15 +592,13 @@ Starts with: Open axTask with the folder tasks.
 5. Press Enter.
     You hear words such as: Due.
 
-### Give a list's new items the fields of a task
+### Add an item with its list's fields
 
-1. Choose Use these fields for new items in the Context menu.
-    You hear: New items in Home get: Done, Due, Room.
-2. Press Ctrl+N.
-3. Type: Paint the door
-4. Press Enter.
-5. Press Tab.
-6. Press Down 3 times.
+1. Press Ctrl+N.
+2. Type: Paint the door
+3. Press Enter.
+4. Press Tab.
+5. Press Down 3 times.
 
 ## Make a smart list of your own
 
@@ -638,3 +634,65 @@ Starts with: Open axTask with the folder lists.
 3. Type: a long test passphrase
 4. Press Enter.
     You hear: Approved: axStart: said nothing on its first launch.
+
+## Convert a list written in axTask's earlier format
+
+Starts with: Open axTask with the folder tasks.
+
+### Convert a list of the earlier format
+
+1. Type: ho
+2. Press Right.
+3. Press Escape.
+4. Press Enter 2 times.
+    You hear: Converted Home: 2 items. A copy is among the Archived lists.
+
+### Take a conversion back
+
+1. Press Ctrl+Z (Undo; Actions menu).
+    You hear: Undone: Converted Home: 2 items.
+
+### Convert every list of the earlier format at once
+
+1. Press Enter.
+2. Press Tab 2 times.
+3. Press Enter.
+    You hear: Converted 2 lists: 3 items. A copy is among the Archived lists.
+4. Press Down.
+5. Press Ctrl+0 (All tasks; Navigation menu).
+    You hear: All tasks, 3 items.
+
+## Give a list its configuration
+
+Starts with: Open axTask with the folder tasks.
+
+### Give a list its configuration
+
+1. Press Left.
+2. Press Tab.
+3. Press End.
+4. Press Shift+Tab.
+5. Press Ctrl+J (Edit the list's configuration; Context menu).
+    You hear: Written the configuration of Notes.
+6. Press Right.
+    You hear: Notes, 1 item, Idea.
+7. Press Tab.
+8. Press Down 3 times.
+9. Press Shift+Tab.
+10. Press Space.
+    You hear: Done: Idea.
+
+### Add an item to a list that has no configuration yet
+
+1. Press Left.
+2. Type: em
+3. Press Right.
+4. Press Ctrl+N (New item; Actions menu).
+5. Type: First thing
+6. Press Enter.
+    You hear: Added First thing.
+7. Press Tab.
+8. Press End.
+9. Press Shift+Tab.
+10. Press Ctrl+Z (Undo; Actions menu).
+    You hear: Undone: Added First thing.

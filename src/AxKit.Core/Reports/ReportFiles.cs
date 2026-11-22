@@ -1,12 +1,15 @@
 using System.Text;
 using System.Text.Json.Nodes;
+using AxKit.Core.Conversion;
 
 namespace AxKit.Core.Reports;
 
 /// <summary>
 /// The user's reports as an axTask list (docs/axKit/reports.md RP-5): the folder, its <c>list.json</c> with the
-/// template and the action keys, and each report as one item file, written before anything is sent and read again
-/// for the unsent ones.
+/// fields of a report and the actions for its kinds, and each report as one item file, written before anything is
+/// sent and read again for the unsent ones. The files are of the lists' one shape (<see cref="ListConfig"/>,
+/// <see cref="FlatItem"/>; docs/axTask/forms-framework.md section 13); a list an earlier version of axKit made is
+/// converted when it is met (<see cref="EnsureList"/>), so that a report that waits in it is still sent.
 /// </summary>
 public static class ReportFiles
 {
@@ -21,16 +24,19 @@ public static class ReportFiles
     public const string IssueField = "Issue";
     public const string NumberField = "Number";
 
-    /// <summary>The key of an item's root that holds the report's id (RP-6.9): random, written when the report form saves the report, kept by axTask through every change and rename.</summary>
+    /// <summary>
+    /// The name of the value that holds the report's id (RP-6.9): random, written when the report form saves the
+    /// report, kept by axTask through every change and rename. No field of the list: it is kept in the file and not
+    /// shown among the fields (AF-11.3).
+    /// </summary>
     public const string IdKey = "reportId";
 
     /// <summary>The id an item carries, or null: a report an earlier version saved, or a file that is not the form's.</summary>
-    public static string? IdOf(ItemDocument item) =>
-        item.Extra(IdKey) is JsonValue value && value.TryGetValue<string>(out var id) && id.Length > 0 ? id : null;
+    public static string? IdOf(FlatItem item) => item.Text(IdKey) is { Length: > 0 } id ? id : null;
 
     private static readonly UTF8Encoding Utf8 = new(false);
 
-    /// <summary>The template of a report item (RP-5.2), in the order the detail pane shows the fields.</summary>
+    /// <summary>The fields of a report item (RP-5.2), in the order the detail pane shows them, each with the value a new one starts with.</summary>
     public static IReadOnlyList<ItemField> Template { get; } =
     [
         new(KindField, FieldTypes.Choice, JsonValue.Create(ReportKinds.Name(ReportKind.Feedback)), ReportKinds.Names),
@@ -53,67 +59,60 @@ public static class ReportFiles
     public const string ListNotesBefore =
         "Your reports to axKit's maintainer, from F4 in any window: each one is saved here first, then sent to GitHub as a public issue; Status says whether it went, and Issue is its address once it has. Delete removes a report from this list only.";
 
-    /// <summary>
-    /// The list's <c>list.json</c> (RP-5.1, RP-8.5): what the list is, the template with its values (Feedback, Draft),
-    /// and the action keys for the kinds; a list as <see cref="ItemDocument.NewList"/> writes one (until 2026-11-09
-    /// written by hand here, because the written template emptied its values). Until 2026-11-14 a fourth key opened
-    /// the report's issue on GitHub, which is in a private repository now and opens for the maintainer alone.
-    /// </summary>
-    public static string ListText()
-    {
-        var list = ItemDocument.NewList(Template);
-        list = list.WithValue(list.IndexOf("Notes"), JsonValue.Create(ListNotes));
-        return list.WithExtra("keys", new JsonObject
-        {
-            ["1"] = Key("Make it a bug", KindField, ReportKinds.Name(ReportKind.Bug)),
-            ["2"] = Key("Make it a feature request", KindField, ReportKinds.Name(ReportKind.Feature)),
-            ["3"] = Key("Make it feedback", KindField, ReportKinds.Name(ReportKind.Feedback)),
-        }).ToText();
+    /// <summary>The list's configuration (RP-5.1, RP-8.5): what the list is, the fields of a report with their first values (Feedback, Draft), and the three actions that set the kind.</summary>
+    public static ListConfig ListConfiguration() =>
+        ListConfig.New(Template)
+            .WithDetail("Notes", JsonValue.Create(ListNotes))
+            .WithExtra(ListConfig.ActionsKey, new JsonArray(
+                Action("Make it a bug", 1, ReportKinds.Name(ReportKind.Bug)),
+                Action("Make it a feature request", 2, ReportKinds.Name(ReportKind.Feature)),
+                Action("Make it feedback", 3, ReportKinds.Name(ReportKind.Feedback))));
 
-        static JsonObject Key(string name, string field, string value) =>
-            new() { ["name"] = name, ["set"] = new JsonObject { [field] = value } };
-    }
+    /// <summary>The text of the list's <c>list.json</c> as it is first written.</summary>
+    public static string ListText() => ListConfiguration().ToText();
 
-    /// <summary>A report as an item (IA-4), with its status.</summary>
-    public static ItemDocument ToItem(Report report, string status)
-    {
-        var item = ItemDocument.NewItem(report.Title, Template);
-        item = Set(item, KindField, ReportKinds.Name(report.Kind));
-        item = Set(item, ReportField, report.Words);
-        item = Set(item, AppField, report.App);
-        item = Set(item, WhereField, report.Where);
-        item = Set(item, ActionsField, string.Join("\r\n", report.Actions));
-        item = Set(item, LogField, string.Join("\r\n", report.Log));
-        item = Set(item, CreatedField, FieldTypes.DateTimeText(report.Created));
-        return Set(item, StatusField, status);
-    }
+    private static JsonObject Action(string name, int digit, string kind) =>
+        new() { ["name"] = name, ["key"] = $"Ctrl+{digit}", ["does"] = "set", ["set"] = new JsonObject { [KindField] = kind } };
 
-    /// <summary>The report an item holds, as the sender reads an unsent one; null when the item is not a report (no Report field).</summary>
-    public static Report? FromItem(ItemDocument item)
+    /// <summary>A report as an item of the list, with its status.</summary>
+    public static FlatItem ToItem(Report report, string status) =>
+        FlatItem.New(report.Title, ListConfiguration())
+            .With(KindField, JsonValue.Create(ReportKinds.Name(report.Kind)))
+            .With(ReportField, JsonValue.Create(report.Words))
+            .With(AppField, JsonValue.Create(report.App))
+            .With(WhereField, JsonValue.Create(report.Where))
+            .With(ActionsField, JsonValue.Create(string.Join("\r\n", report.Actions)))
+            .With(LogField, JsonValue.Create(string.Join("\r\n", report.Log)))
+            .With(CreatedField, JsonValue.Create(FieldTypes.DateTimeText(report.Created)))
+            .With(StatusField, JsonValue.Create(status));
+
+    /// <summary>The report an item holds, as the sender reads an unsent one; null when the item is not a report (no Report value).</summary>
+    public static Report? FromItem(FlatItem item)
     {
-        if (item.IndexOf(ReportField) < 0)
+        if (!item.Has(ReportField))
         {
             return null;
         }
 
-        var created = FieldTypes.ReadDateTime(Value(item, CreatedField)) ?? DateTime.UtcNow;
+        var created = FieldTypes.ReadDateTime(item.Value(CreatedField)) ?? DateTime.UtcNow;
         return new Report(
             item.Title.Trim().Length > 0 ? item.Title.Trim() : "Report",
-            ReportKinds.Parse(Text(item, KindField)) ?? ReportKind.Feedback,
-            Text(item, ReportField),
-            Text(item, AppField),
-            Text(item, WhereField),
-            Lines(Text(item, ActionsField)),
-            Lines(Text(item, LogField)),
+            ReportKinds.Parse(item.Text(KindField)) ?? ReportKind.Feedback,
+            item.Text(ReportField),
+            item.Text(AppField),
+            item.Text(WhereField),
+            Lines(item.Text(ActionsField)),
+            Lines(item.Text(LogField)),
             created);
     }
 
-    public static string Status(ItemDocument item) => Text(item, StatusField);
+    public static string Status(FlatItem item) => item.Text(StatusField);
 
-    public static ItemDocument WithStatus(ItemDocument item, string status) => Set(item, StatusField, status);
+    /// <summary>The item with its status set; an item that holds no Status is left as it is.</summary>
+    public static FlatItem WithStatus(FlatItem item, string status) => Set(item, StatusField, status);
 
     /// <summary>The item once its issue exists (RP-6.1): Sent, with the issue's number and address.</summary>
-    public static ItemDocument WithSent(ItemDocument item, int number, string url)
+    public static FlatItem WithSent(FlatItem item, int number, string url)
     {
         item = Set(item, StatusField, ReportStatus.Sent);
         item = Set(item, IssueField, url);
@@ -122,13 +121,30 @@ public static class ReportFiles
 
     /// <summary>
     /// The folder and its <c>list.json</c>, made when missing (RP-5.1): before a report is written, and before axTask
-    /// opens the list. A list an earlier version made keeps everything the user set in it; only its Notes, when they
-    /// are still that version's own words, which said "public issue", become <see cref="ListNotes"/>.
+    /// opens the list. A list an earlier version made keeps everything the user set in it: one of the earlier shape
+    /// is converted first, a copy of it kept beside the folder (AF-13.6), so that the reports that wait in it are
+    /// read and sent; and its Notes, when they are still the words of the versions that said "public issue", become
+    /// <see cref="ListNotes"/>. A list that cannot be converted or read is left as it is, and the reason logged.
     /// </summary>
     public static void EnsureList(string folder)
     {
         Directory.CreateDirectory(folder);
-        var list = Path.Combine(folder, ItemDocument.ListFile);
+        var list = Path.Combine(folder, ListConfig.FileName);
+        try
+        {
+            if (ListConversion.IsEarlier(folder))
+            {
+                var plan = ListConversion.Plan(folder);
+                ListConversion.KeepCopy(folder, Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(folder)) ?? folder);
+                ListConversion.Apply(plan);
+                Log.Info($"The reports list was converted from axKit's earlier format: {plan.Files.Count} files written, a copy kept beside it");
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException or InvalidDataException)
+        {
+            Log.Error("The reports list is in axKit's earlier format and could not be converted", ex);
+        }
+
         if (!File.Exists(list))
         {
             File.WriteAllText(list, ListText(), Utf8);
@@ -137,11 +153,10 @@ public static class ReportFiles
 
         try
         {
-            var document = ItemDocument.Parse(File.ReadAllText(list));
-            var notes = document.IndexOf("Notes");
-            if (notes >= 0 && FieldTypes.TextOf(document.Fields[notes].Value) == ListNotesBefore)
+            var config = ListConfig.Parse(File.ReadAllText(list));
+            if (config.Detail("Notes") == ListNotesBefore)
             {
-                SafeFile.WriteAllText(list, document.WithValue(notes, JsonValue.Create(ListNotes)).ToText(), Utf8);
+                SafeFile.WriteAllText(list, config.WithDetail("Notes", JsonValue.Create(ListNotes)).ToText(), Utf8);
             }
         }
         catch (InvalidDataException)
@@ -173,7 +188,7 @@ public static class ReportFiles
             Log.Error("The list of the reports axKit's report form wrote could not be written, so this report waits unsent: " + ex.Message);
         }
 
-        SafeFile.WriteAllText(path, ToItem(report, status).WithExtra(IdKey, JsonValue.Create(id)).ToText(), Utf8);
+        SafeFile.WriteAllText(path, ToItem(report, status).With(IdKey, JsonValue.Create(id)).ToText(), Utf8);
         return path;
     }
 
@@ -181,7 +196,7 @@ public static class ReportFiles
     /// The waiting items the report form wrote (RP-6.9), oldest first, and how many other waiting items the folder
     /// holds, which are never sent or changed. While the list is not kept yet, every waiting item is the form's.
     /// </summary>
-    public static (IReadOnlyList<(string Path, ItemDocument Item)> Ours, int Others) UnsentOfTheForm(string folder, string writtenFile)
+    public static (IReadOnlyList<(string Path, FlatItem Item)> Ours, int Others) UnsentOfTheForm(string folder, string writtenFile)
     {
         var unsent = Unsent(folder);
         if (unsent.Count == 0)
@@ -195,53 +210,46 @@ public static class ReportFiles
     }
 
     /// <summary>Writes an item back to its file (the status changed, the issue known).</summary>
-    public static void Write(string path, ItemDocument item) => SafeFile.WriteAllText(path, item.ToText(), Utf8);
+    public static void Write(string path, FlatItem item) => SafeFile.WriteAllText(path, item.ToText(), Utf8);
 
-    /// <summary>The items of the folder that wait to be sent (RP-6.7), oldest first by their Created field, each with its path; none when the folder is missing.</summary>
-    public static IReadOnlyList<(string Path, ItemDocument Item)> Unsent(string folder)
+    /// <summary>The items of the folder that wait to be sent (RP-6.7), oldest first by their Created value, each with its path; none when the folder is missing.</summary>
+    public static IReadOnlyList<(string Path, FlatItem Item)> Unsent(string folder)
     {
         if (!Directory.Exists(folder))
         {
             return [];
         }
 
-        var unsent = new List<(string Path, ItemDocument Item, DateTime Created)>();
+        var unsent = new List<(string Path, FlatItem Item, DateTime Created)>();
         foreach (var path in Directory.EnumerateFiles(folder, "*.json"))
         {
-            if (Path.GetFileName(path).Equals(ItemDocument.ListFile, StringComparison.OrdinalIgnoreCase))
+            if (Path.GetFileName(path).Equals(ListConfig.FileName, StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
 
-            ItemDocument item;
+            FlatItem item;
             try
             {
-                item = ItemDocument.Parse(File.ReadAllText(path));
+                item = FlatItem.Parse(File.ReadAllText(path));
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
             {
                 continue;
             }
 
-            if (item.IndexOf(ReportField) >= 0 && ReportStatus.AwaitsSending(Status(item)))
+            if (item.Has(ReportField) && ReportStatus.AwaitsSending(Status(item)))
             {
-                unsent.Add((path, item, FieldTypes.ReadDateTime(Value(item, CreatedField)) ?? File.GetCreationTimeUtc(path)));
+                unsent.Add((path, item, FieldTypes.ReadDateTime(item.Value(CreatedField)) ?? File.GetCreationTimeUtc(path)));
             }
         }
 
         return unsent.OrderBy(entry => entry.Created).Select(entry => (entry.Path, entry.Item)).ToList();
     }
 
-    private static ItemDocument Set(ItemDocument item, string field, string value)
-    {
-        var index = item.IndexOf(field);
-        return index < 0 ? item : item.WithValue(index, JsonValue.Create(value));
-    }
-
-    private static JsonNode? Value(ItemDocument item, string field) =>
-        item.IndexOf(field) is var index && index >= 0 ? item.Fields[index].Value : null;
-
-    private static string Text(ItemDocument item, string field) => FieldTypes.TextOf(Value(item, field));
+    /// <summary>A value set where the item holds one of that name: an item that lacks the field is not given it.</summary>
+    private static FlatItem Set(FlatItem item, string field, string value) =>
+        item.Has(field) ? item.With(field, JsonValue.Create(value)) : item;
 
     private static IReadOnlyList<string> Lines(string text) =>
         text.ReplaceLineEndings("\n").Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);

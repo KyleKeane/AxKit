@@ -55,10 +55,12 @@ $pointing = @{}
 foreach ($file in Get-ChildItem $Lists -Filter *.json) {
     if ($file.Name -eq 'list.json') { continue }
     try { $item = [IO.File]::ReadAllText($file.FullName) | ConvertFrom-Json } catch { continue }
-    if (-not $item.fields) { continue }
-    $where = [string]($item.fields | Where-Object { $_.title -eq 'Where it is written' } | Select-Object -First 1).value
-    $title = [string]($item.fields | Where-Object { $_.title -eq 'Title' } | Select-Object -First 1).value
-    $done = [bool]($item.fields | Where-Object { $_.title -eq 'Done' } | Select-Object -First 1).value
+    # An item is its names and values with its link (docs/axTask/forms-framework.md section 13); a file without the
+    # link is no item.
+    if ($null -eq $item -or -not "$($item.schema)".Trim()) { continue }
+    $where = [string]$item.'Where it is written'
+    $title = [string]$item.Title
+    $done = [bool]$item.Done
     foreach ($match in [regex]::Matches($where, 'AxKit-reports issues? ([^;]*)', 'IgnoreCase')) {
         foreach ($number in [regex]::Matches($match.Groups[1].Value, '\d+')) {
             $key = [int]$number.Value

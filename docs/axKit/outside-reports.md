@@ -101,7 +101,13 @@ allowed where the review needs them ("it asks to 'turn off the seal'").
   `date: <Approved on>`. Proposed and Harm review are taken with their line ends made LF and their ends trimmed. In a
   line's value a backslash is doubled and a line end is written as backslash-n, so that two different values never
   make the same line. So the signature covers the review he read and exactly the scope he approved: an entry changed
-  after its approval no longer verifies, and counts as not approved.
+  after its approval no longer verifies, and counts as not approved. The values are the ones the entry's own file
+  holds, by name, whatever fields the list's configuration names (since 2026-11-21 an item is its values read through
+  its list's `list.json`, docs/axTask/forms-framework.md section 13, and a value the configuration does not name is
+  kept and not shown): the notice, the signing and the scripts read the file itself, so a change of the configuration
+  can hide nothing from what is signed. A text is itself and anything else is empty, in axTask (`FieldTypes.TextOf`)
+  and in `tools/approvals.ps1` alike. The text is over the values and not over the file's shape, so an approval given
+  before a list was converted to this format stands after it.
 - **OR-5.4 Never through the AI tools.** Both commands are marked so that `axkit_window_run` refuses them (`ai: false`,
   mark act), and the field is a password field, which the AI tools read as protected (`mcp.md`). The automation channel
   of window scripts can press the command, but no script and no one but the maintainer knows the passphrase.

@@ -1,15 +1,14 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using AxKit.Core;
-
-namespace AxTask.Core;
+namespace AxKit.Core;
 
 /// <summary>
 /// An item as its file holds it (docs/axTask/forms-framework.md section 13): one JSON object of names and values,
 /// and <c>"schema"</c>, the path, relative to the file, of the configuration it is read through. Nothing of a field
 /// but its value is here; its type, its options and its place are the configuration's (<see cref="ListConfig"/>).
 ///
-/// The object is kept whole and in its order; every change returns a new item. Not used by a window yet.
+/// The object is kept whole and in its order; every change returns a new item. axTask's lists
+/// and the reports list (<c>Reports/ReportFiles</c>) are written in it.
 /// </summary>
 public sealed class FlatItem
 {
@@ -113,7 +112,12 @@ public sealed class FlatItem
         }
 
         var at = root.Count;
-        if (config is not null && config.IndexOf(name) is var index and >= 0)
+        if (name.Equals(ItemDocument.TitleField, StringComparison.OrdinalIgnoreCase))
+        {
+            // The Title an item lacked goes where a Title is: first, after the link.
+            at = root.Select(pair => pair.Key).ToList().IndexOf(SchemaKey) + 1;
+        }
+        else if (config is not null && config.IndexOf(name) is var index and >= 0)
         {
             // After the last member that is the link, the Title, or a field the configuration has before this one.
             at = 0;
@@ -178,8 +182,8 @@ public static class ItemView
             fields.Add(field with { Value = item.Has(field.Title) ? item.Value(field.Title)?.DeepClone() : FieldTypes.Empty(field.Type) });
         }
 
-        var kept = item.Values
-            .Where(pair => !pair.Key.Equals(ItemDocument.TitleField, StringComparison.OrdinalIgnoreCase) && config.IndexOf(pair.Key) < 0)
+        var kept = Others(item)
+            .Where(pair => config.IndexOf(pair.Key) < 0)
             .Select(pair => new KeptValue(pair.Key, pair.Value?.DeepClone()))
             .ToList();
         return new ShownItem(item.Title, fields, kept);
@@ -187,12 +191,42 @@ public static class ItemView
 
     /// <summary>
     /// The item with every name and value as a field of plain text, in the file's order: how it is shown, read-only,
-    /// when the configuration it names is not there or does not read (AF-13.4, AF-11.5). Nothing is guessed from a
-    /// value.
+    /// when the configuration it names is not there or does not read (AF-13.4). Nothing is guessed from a value: a
+    /// check reads "true" or "false", a number as it is written.
     /// </summary>
     public static ShownItem Plain(FlatItem item) =>
         new(item.Title,
-            [.. item.Values.Where(pair => !pair.Key.Equals(ItemDocument.TitleField, StringComparison.OrdinalIgnoreCase))
-                .Select(pair => new ItemField(pair.Key, FieldTypes.Text, pair.Value?.DeepClone(), []))],
+            [.. Others(item).Select(pair => new ItemField(pair.Key, FieldTypes.Text, JsonValue.Create(FieldTypes.PlainText(pair.Value)), []))],
             []);
+
+    /// <summary>The document the item window shows for an item: its Title first, then the fields shown.</summary>
+    public static ItemDocument Document(ShownItem shown) =>
+        ItemDocument.Of([new ItemField(ItemDocument.TitleField, FieldTypes.Text, JsonValue.Create(shown.Title), []), .. shown.Fields]);
+
+    /// <summary>
+    /// The item's file after a change made in the window (AF-11.3): <paramref name="shown"/> is the document the item
+    /// was shown as, <paramref name="changed"/> the one the change made. Only a value that changed is written, so a
+    /// field shown empty because the file does not hold it stays out of the file until it is first given a value, and
+    /// a value the configuration does not name is never touched. A field the change added is written too.
+    /// </summary>
+    public static FlatItem Changed(FlatItem item, ItemDocument shown, ItemDocument changed, ListConfig? config)
+    {
+        var result = item;
+        foreach (var field in changed.Fields)
+        {
+            var before = shown.IndexOf(field.Title);
+            if (before >= 0 && JsonNode.DeepEquals(shown.Fields[before].Value, field.Value))
+            {
+                continue;
+            }
+
+            result = result.With(field.Title, field.Value, config);
+        }
+
+        return result;
+    }
+
+    /// <summary>Every value of the item but its Title, in the file's order.</summary>
+    private static IEnumerable<KeyValuePair<string, JsonNode?>> Others(FlatItem item) =>
+        item.Values.Where(pair => !pair.Key.Equals(ItemDocument.TitleField, StringComparison.OrdinalIgnoreCase));
 }

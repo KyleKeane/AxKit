@@ -31,17 +31,20 @@ public static class OutsideReports
     /// <summary>The key file of a list's folder: in the folder above it.</summary>
     public static string KeyFileOf(string listFolder) => Path.Combine(Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(listFolder)) ?? listFolder, KeyFileName);
 
-    /// <summary>A field's text by its title; empty when the entry has none.</summary>
-    public static string Field(ItemDocument entry, string title) =>
-        entry.IndexOf(title) is var i && i >= 0 && entry.Fields[i].Value is JsonValue value && value.TryGetValue<string>(out var text) ? text : string.Empty;
+    /// <summary>
+    /// A value's text by its name; empty when the entry has none. Read from the entry's file itself, never from the
+    /// item as the list's configuration shows it: what an approval signs must not depend on which fields a
+    /// configuration names (docs/axTask/forms-framework.md AF-11.3, where a value not named is kept and not shown).
+    /// </summary>
+    public static string Field(FlatItem entry, string title) => entry.Text(title);
 
     /// <summary>The entry as an approval of the decision on the date signs it (OR-5.3).</summary>
-    public static ApprovalEntry EntryOf(ItemDocument entry, string decision, string date) => new(
+    public static ApprovalEntry EntryOf(FlatItem entry, string decision, string date) => new(
         decision, Field(entry, "Report"), entry.Title, Field(entry, "Category"), Field(entry, "Item"),
         Field(entry, "Proposed priority"), Field(entry, "Proposed"), Field(entry, "Harm review"), date);
 
     /// <summary>Why the entry cannot be decided now, or null: only an entry awaiting approval is approved or declined, and it holds its report.</summary>
-    public static string? Refusal(ItemDocument entry)
+    public static string? Refusal(FlatItem entry)
     {
         var state = Field(entry, "State");
         if (state != AwaitingApproval)
@@ -61,7 +64,7 @@ public static class OutsideReports
     /// character, a separator or a character of private use), or null. Such a character could hide words from the
     /// maintainer's ear inside the scope he signs.
     /// </summary>
-    public static string? Unheard(ItemDocument entry)
+    public static string? Unheard(FlatItem entry)
     {
         foreach (var title in SignedFields)
         {
@@ -91,7 +94,7 @@ public static class OutsideReports
     }
 
     /// <summary>The notice's text: everything the approval covers, the review whole, in the order the maintainer reads it.</summary>
-    public static string NoticeText(ItemDocument entry, bool approve) =>
+    public static string NoticeText(FlatItem entry, bool approve) =>
         string.Join("\r\n",
             $"Report: {Field(entry, "Report")}",
             $"Category: {Field(entry, "Category")}",
@@ -108,24 +111,12 @@ public static class OutsideReports
                 ? "Your passphrase signs exactly this. If any of it changes afterwards, the approval no longer counts."
                 : "Your passphrase signs the decline: nothing of this report is worked on, and it is answered and closed.");
 
-    /// <summary>The entry signed: its State, its Approval and its date, written; every other field as it was.</summary>
-    public static ItemDocument Signed(ItemDocument entry, bool approve, string signature, string date)
-    {
-        var signed = With(entry, "State", approve ? ApprovedState : DeclinedState);
-        signed = With(signed, "Approved on", date);
-        return With(signed, "Approval", signature);
-    }
-
-    private static ItemDocument With(ItemDocument entry, string title, string value)
-    {
-        var i = entry.IndexOf(title);
-        if (i < 0)
-        {
-            var type = title == "Approved on" ? FieldTypes.Date : FieldTypes.Text;
-            entry = entry.WithField(entry.Fields.Count - 1, title, type, []);
-            i = entry.IndexOf(title);
-        }
-
-        return entry.WithValue(i, JsonValue.Create(value));
-    }
+    /// <summary>
+    /// The entry signed: its State, its Approval and its date, written; every other value as it was. A value the
+    /// entry lacked is put where the list's configuration has its field.
+    /// </summary>
+    public static FlatItem Signed(FlatItem entry, ListConfig? config, bool approve, string signature, string date) =>
+        entry.With("State", JsonValue.Create(approve ? ApprovedState : DeclinedState), config)
+            .With("Approved on", JsonValue.Create(date), config)
+            .With("Approval", JsonValue.Create(signature), config);
 }

@@ -21,7 +21,9 @@ public sealed class SmartListTests : IDisposable
         Item("Home", "Read #Garden notes with @sam", done: false, due: null);
         Item("Home", "Write to #done-tag", done: true, due: "2026-11-01");
         Item(Path.Combine("Archive", "Old"), "Old #archived", done: false, due: null);
-        File.WriteAllText(Path.Combine(_top.Path, "Home", "Plain.json"), ItemDocument.NewItem("Plain #plain", []).ToText());
+        // An item of a plain list, which is no task: its list's configuration names no Done.
+        TestLists.List(Path.Combine(_top.Path, "Jottings"), fields: []);
+        File.WriteAllText(Path.Combine(_top.Path, "Jottings", "Plain.json"), FlatItem.New("Plain #plain", ListConfig.New([])).ToText());
     }
 
     public void Dispose() => _top.Dispose();
@@ -120,6 +122,6 @@ public sealed class SmartListTests : IDisposable
             document = document.WithValue(document.IndexOf(TaskRules.DueField), System.Text.Json.Nodes.JsonValue.Create(due));
         }
 
-        File.WriteAllText(Path.Combine(_top.Path, list, title + ".json"), document.ToText());
+        TestLists.Write(Path.Combine(_top.Path, list, title + ".json"), document);
     }
 }

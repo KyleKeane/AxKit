@@ -1,0 +1,107 @@
+# Workflow: Convert a list written in axTask's earlier format
+# axTask, docs/axTask/forms-framework.md AF-13.6: a list of the earlier format (list.json "axkit-list 1", items with
+# title, type and value objects) is not opened. Its row says so, Right or Enter asks once, and Convert keeps a copy
+# among the Archived lists and writes the list's configuration and every item anew, as one step for Ctrl+Z. The
+# gathering lists leave such a list out and say so. Two lists here, so that one answer can take both.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file tasks\Home\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": "Things at home."}], "new item": [{"title": "Done", "type": "check", "value": false}, {"title": "Due", "type": "date", "value": ""}], "keys": {"1": {"name": "Finish", "set": {"Done": true}}}}
+file "tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}, {"title": "Due", "type": "date", "value": "2099-10-30"}, {"title": "Room", "type": "text", "value": "Kitchen"}]}
+file "tasks\Home\Water plants.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Water plants"}, {"title": "Done", "type": "check", "value": true}]}
+file tasks\Work\Report.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Report"}, {"title": "Done", "type": "check", "value": false}]}
+file tasks\Garden\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
+file tasks\Garden\Dig.json {"schema":"list.json","Title":"Dig","Done":false}
+start task {temp}\tasks
+expect state Lists - axTask
+expect focus Your lists, heading level 1, 3 lists
+
+# Check: A list of the earlier format says so in its row and in its details, and is left out of All tasks
+keys down
+expect focus Garden, list, 1 item
+keys down
+expect focus Home, list, earlier format: Enter converts it
+keys tab
+expect focus Home, list, earlier format: Enter converts it
+keys down
+expect focus This list is written in axTask's earlier format
+keys shift+tab
+do All tasks
+expect said ! All tasks, 1 item, 2 lists in the earlier format are not read: Home, Work. Open one to convert it
+keys left
+expect focus All tasks, 1 not done
+
+# Goal: Convert a list of the earlier format
+# Right on the list asks; Escape leaves everything as it was, the level too. Asked again, Convert: the copy is among
+# the Archived lists, the items hold their values, and the list opens.
+type ho
+expect focus Home, list, earlier format: Enter converts it
+keys right
+expect state "notice":"Convert Home?"
+expect state A copy is kept among the Archived lists
+expect state A copy of axKit older than this one does not read a converted list
+keys escape
+expect state "notice":null
+expect focus Home, list, earlier format: Enter converts it
+run findstr /l /c:"axkit-item 1" "tasks\Home\Fix the tap.json"
+keys enter
+expect state "notice":"Convert Home?"
+keys enter
+expect said ! Converted Home: 2 items. A copy is among the Archived lists
+expect state "notice":null
+expect focus Home, list, 2 items
+run findstr /l /c:"\"schema\": \"list.json\"" "tasks\Home\Fix the tap.json"
+run findstr /l /c:"\"Room\": \"Kitchen\"" "tasks\Home\Fix the tap.json"
+run findstr /l /c:"axkit-list 2" tasks\Home\list.json
+run findstr /l /c:"axkit-item 1" "tasks\Archive\Home, before conversion\Fix the tap.json"
+run findstr /l /c:"axkit-list 1" "tasks\Archive\Home, before conversion\list.json"
+# Check: The converted list shows what it showed, and its action key is the same key
+# The fields of the list's own first, then the field only an item held, so that nothing is hidden; the list's Notes
+# are its details; Ctrl+1 is the action it was.
+keys right
+expect said ! Home, 2 items, Fix the tap, due 30 October 2099
+keys tab
+expect focus Title, text, Fix the tap
+keys down
+expect focus Done, check, not done
+keys down
+expect focus Due, date, 30 October 2099, Friday
+keys down
+expect focus Room, text, Kitchen
+keys end
+expect focus Room, text, Kitchen
+keys shift+tab
+do Action key 1
+expect said ! Finish: Done: done
+do Undo
+expect said ! Undone: Finish: Done: done
+keys left
+keys tab
+keys down
+expect focus Notes, long text, Things at home.
+keys shift+tab
+
+# Goal: Take a conversion back
+# Ctrl+Z takes the whole conversion back: the files are as they were, and the list is of the earlier format again.
+do Undo
+expect said ! Undone: Converted Home: 2 items
+expect focus Home, list, earlier format: Enter converts it
+run findstr /l /c:"axkit-item 1" "tasks\Home\Fix the tap.json"
+
+# Goal: Convert every list of the earlier format at once
+# With more than one such list the question offers them all: Home and Work together, each with its copy. Work had no
+# file of its own: it gets its configuration from what its item holds.
+keys enter
+expect state "notice":"Convert Home?"
+keys tab
+keys tab
+expect focus all 2 lists"
+keys enter
+expect said ! Converted 2 lists: 3 items. A copy is among the Archived lists
+keys down
+expect focus Work, list, 1 item
+run findstr /l /c:"axkit-list 2" tasks\Work\list.json
+run findstr /l /c:"\"schema\": \"list.json\"" tasks\Work\Report.json
+run cmd /c if exist "tasks\Archive\Work, before conversion\Report.json" (exit 0) else (exit 1)
+run cmd /c if exist "tasks\Archive\Home, before conversion 2\list.json" (exit 0) else (exit 1)
+do All tasks
+expect said ! All tasks, 3 items
+refuse said earlier format

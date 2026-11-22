@@ -25,6 +25,19 @@ public sealed class ApprovalScriptTests
         {
             Management = Directory.CreateDirectory(Path.Combine(_temp.Path, "axkit-management")).FullName;
             Priorities = Directory.CreateDirectory(Path.Combine(Management, "priorities")).FullName;
+            // The priorities list's configuration: the scripts take the fields of an item from it.
+            static System.Text.Json.Nodes.JsonNode Empty() => System.Text.Json.Nodes.JsonValue.Create(string.Empty);
+            TestLists.List(Priorities,
+            [
+                new("Done", FieldTypes.Check, System.Text.Json.Nodes.JsonValue.Create(false), []),
+                new("Started", FieldTypes.Date, Empty(), []),
+                new("Priority", FieldTypes.Choice, Empty(), ["High", "Normal", "Low"]),
+                new("App", FieldTypes.Text, Empty(), []),
+                new("Tags", FieldTypes.Text, Empty(), []),
+                new("Due", FieldTypes.Date, Empty(), []),
+                new("Where it is written", FieldTypes.Text, Empty(), []),
+                new("Notes", FieldTypes.LongText, Empty(), []),
+            ]);
             Outside = Directory.CreateDirectory(Path.Combine(Management, OutsideReports.FolderName)).FullName;
             Repository = Directory.CreateDirectory(Path.Combine(_temp.Path, "repository")).FullName;
             Directory.CreateDirectory(Path.Combine(Repository, "docs", "axKit"));
@@ -58,32 +71,33 @@ public sealed class ApprovalScriptTests
         /// <summary>The entry awaiting approval, then signed with the test's key as axTask signs it.</summary>
         public void WriteApprovedEntry(string proposed = "Reproduce a fresh start;\r\nmake the first showing take the foreground.")
         {
-            var entry = ItemDocument.Parse($$"""
-                {"format":"axkit-item 1","fields":[
-                  {"title":"Title","type":"text","value":"axStart: said nothing on its first launch"},
-                  {"title":"Report","type":"text","value":"{{Report}}"},
-                  {"title":"Received","type":"date","value":"2026-11-21"},
-                  {"title":"State","type":"choice","value":"Awaiting approval","options":["To review","Awaiting approval","Approved","Declined","Done"]},
-                  {"title":"Harm review","type":"longtext","value":"Nothing found."},
-                  {"title":"Category","type":"choice","value":"New item","options":[]},
-                  {"title":"Item","type":"text","value":"{{ItemTitle}}"},
-                  {"title":"Proposed","type":"longtext","value":{{System.Text.Json.JsonSerializer.Serialize(proposed)}}},
-                  {"title":"Proposed priority","type":"choice","value":"High","options":["High","Normal","Low"]},
-                  {"title":"Approval","type":"text","value":""},
-                  {"title":"Approved on","type":"date","value":""}
-                ]}
+            var entry = FlatItem.Parse($$"""
+                {
+                  "schema": "list.json",
+                  "Title": "axStart: said nothing on its first launch",
+                  "Report": "{{Report}}",
+                  "Received": "2026-11-21",
+                  "State": "Awaiting approval",
+                  "Harm review": "Nothing found.",
+                  "Category": "New item",
+                  "Item": "{{ItemTitle}}",
+                  "Proposed": {{System.Text.Json.JsonSerializer.Serialize(proposed)}},
+                  "Proposed priority": "High",
+                  "Approval": "",
+                  "Approved on": ""
+                }
                 """);
             Assert.Null(OutsideReports.Refusal(entry));
             var text = Approvals.Text(OutsideReports.EntryOf(entry, Approvals.Approved, "2026-11-21"));
-            var signed = OutsideReports.Signed(entry, approve: true, Approvals.Sign(text, KeyFile, Passphrase), "2026-11-21");
+            var signed = OutsideReports.Signed(entry, null, approve: true, Approvals.Sign(text, KeyFile, Passphrase), "2026-11-21");
             File.WriteAllText(EntryPath, signed.ToText());
         }
 
         /// <summary>The entry's State written as the scripts or a hand would, the signature left as it is.</summary>
         public void SetState(string state)
         {
-            var entry = ItemDocument.Parse(File.ReadAllText(EntryPath));
-            File.WriteAllText(EntryPath, entry.WithValue(entry.IndexOf("State"), System.Text.Json.Nodes.JsonValue.Create(state)).ToText());
+            var entry = FlatItem.Parse(File.ReadAllText(EntryPath));
+            File.WriteAllText(EntryPath, entry.With("State", System.Text.Json.Nodes.JsonValue.Create(state)).ToText());
         }
 
         /// <summary>A key as axTask writes it beside the lists: the key file, its public half, and for a change the line the old key signed.</summary>
@@ -180,7 +194,8 @@ public sealed class ApprovalScriptTests
 
         Assert.Equal(1, other.ExitCode);
         Assert.Contains("report 15 is outside work", other.Output, StringComparison.Ordinal);
-        Assert.Empty(Directory.GetFiles(setup.Priorities));
+        // Nothing but the list's own file: no item was written.
+        Assert.Equal(["list.json"], Directory.GetFiles(setup.Priorities).Select(Path.GetFileName));
     }
 
     [Fact]
@@ -261,8 +276,8 @@ public sealed class ApprovalScriptTests
         setup.SetState("Approved");
         var reopened = Script("outside-report.ps1", "reopen", "-Name", "said nothing", "-Management", setup.Management, "-Repository", setup.Repository);
         Assert.True(reopened.ExitCode == 0, reopened.Output);
-        Assert.Equal(OutsideReports.AwaitingApproval, OutsideReports.Field(ItemDocument.Parse(File.ReadAllText(setup.EntryPath)), "State"));
-        Assert.Equal(string.Empty, OutsideReports.Field(ItemDocument.Parse(File.ReadAllText(setup.EntryPath)), "Approval"));
+        Assert.Equal(OutsideReports.AwaitingApproval, OutsideReports.Field(FlatItem.Parse(File.ReadAllText(setup.EntryPath)), "State"));
+        Assert.Equal(string.Empty, OutsideReports.Field(FlatItem.Parse(File.ReadAllText(setup.EntryPath)), "Approval"));
         Assert.Equal(0, Check(setup).ExitCode);
     }
 
@@ -351,10 +366,10 @@ public sealed class ApprovalScriptTests
         var (ownKey, ownPublic) = Approvals.MakeKey("someone else's passphrase", 1000);
         File.WriteAllText(Path.Combine(setup.Management, OutsideReports.KeyFileName), ownKey);
         setup.WriteApprovedEntry();
-        var entry = ItemDocument.Parse(File.ReadAllText(setup.EntryPath));
+        var entry = FlatItem.Parse(File.ReadAllText(setup.EntryPath));
         var text = Approvals.Text(OutsideReports.EntryOf(entry, Approvals.Approved, "2026-11-21"));
-        File.WriteAllText(setup.EntryPath, OutsideReports.Signed(entry, approve: true, Approvals.Sign(text, ownKey, "someone else's passphrase"), "2026-11-21").ToText());
-        Assert.True(Approvals.Verify(text, OutsideReports.Field(ItemDocument.Parse(File.ReadAllText(setup.EntryPath)), "Approval"), ownPublic));
+        File.WriteAllText(setup.EntryPath, OutsideReports.Signed(entry, null, approve: true, Approvals.Sign(text, ownKey, "someone else's passphrase"), "2026-11-21").ToText());
+        Assert.True(Approvals.Verify(text, OutsideReports.Field(FlatItem.Parse(File.ReadAllText(setup.EntryPath)), "Approval"), ownPublic));
 
         var refused = NewItem(setup, ItemTitle);
 

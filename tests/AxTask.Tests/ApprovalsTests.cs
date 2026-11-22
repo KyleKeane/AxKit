@@ -64,7 +64,7 @@ public sealed class ApprovalsTests
     {
         // Put into the document as a value: neither an attribute's text nor written JSON can hold half a pair.
         var entry = EntryWith("Proposed", "x");
-        entry = entry.WithValue(entry.IndexOf("Proposed"), System.Text.Json.Nodes.JsonValue.Create("Half a pair " + (char)0xD83D + " here"));
+        entry = entry.With("Proposed", System.Text.Json.Nodes.JsonValue.Create("Half a pair " + (char)0xD83D + " here"));
         var refused = OutsideReports.Refusal(entry);
 
         Assert.Contains("(U+D83D, character 13)", refused, StringComparison.Ordinal);
@@ -76,7 +76,43 @@ public sealed class ApprovalsTests
         Assert.Null(OutsideReports.Refusal(EntryWith("Proposed", "First line.\r\n\tSecond: caf\u00E9, \u65E5\u672C\u8A9E, \U0001F600.")));
     }
 
-    private static AxKit.Core.ItemDocument EntryWith(string field, string value)
+    [Fact]
+    public void What_is_signed_is_the_entrys_own_values_whatever_the_lists_configuration_names()
+    {
+        // docs/axTask/forms-framework.md AF-11.3: a value the configuration does not name is kept and not shown. An
+        // approval reads the file itself, so a configuration that names no field hides nothing from what is signed.
+        var entry = EntryWith("Proposed", "Make the list speak.");
+        var shown = AxKit.Core.ItemView.Document(AxKit.Core.ItemView.Of(entry, AxKit.Core.ListConfig.New([])));
+        Assert.Equal(["Title"], shown.Fields.Select(field => field.Title));
+
+        var signed = OutsideReports.EntryOf(entry, Approvals.Approved, "2026-11-21");
+        Assert.Equal("Make the list speak.", signed.Proposed);
+        Assert.Equal("Nothing found.", signed.Review);
+        Assert.Equal("axStart: said nothing", signed.Title);
+        Assert.Contains("Make the list speak.", OutsideReports.NoticeText(entry, approve: true), StringComparison.Ordinal);
+
+        // Signed, the three values are written where the list has their fields, and nothing else changes.
+        var config = AxKit.Core.ListConfig.New(
+        [
+            new("State", AxKit.Core.FieldTypes.Text, null, []),
+            new("Approved on", AxKit.Core.FieldTypes.Date, null, []),
+            new("Report", AxKit.Core.FieldTypes.Text, null, []),
+            new("Approval", AxKit.Core.FieldTypes.Text, null, []),
+        ]);
+        var after = OutsideReports.Signed(entry, config, approve: true, "signature", "2026-11-21");
+        Assert.Equal(OutsideReports.ApprovedState, after.Text("State"));
+        Assert.Equal("2026-11-21", after.Text("Approved on"));
+        Assert.Equal("signature", after.Text("Approval"));
+        Assert.Equal("Make the list speak.", after.Text("Proposed"));
+        // Approved on, which the entry lacked, goes right after State, the field the configuration has before it;
+        // Approval, the configuration's last, after every field of it the entry holds.
+        var names = after.Values.Select(pair => pair.Key).ToList();
+        Assert.Equal(names.IndexOf("State") + 1, names.IndexOf("Approved on"));
+        Assert.True(names.IndexOf("Approval") > names.IndexOf("Approved on"));
+        Assert.Equal(OutsideReports.DeclinedState, OutsideReports.Signed(entry, config, approve: false, "s", "2026-11-21").Text("State"));
+    }
+
+    private static AxKit.Core.FlatItem EntryWith(string field, string value)
     {
         var fields = new Dictionary<string, string>
         {
@@ -89,14 +125,13 @@ public sealed class ApprovalsTests
             ["Proposed priority"] = "High",
         };
         fields[field] = value;
-        var json = new System.Text.Json.Nodes.JsonObject
+        var json = new System.Text.Json.Nodes.JsonObject { ["schema"] = "list.json", ["Title"] = "axStart: said nothing" };
+        foreach (var (name, text) in fields)
         {
-            ["format"] = "axkit-item 1",
-            ["fields"] = new System.Text.Json.Nodes.JsonArray(
-                [new System.Text.Json.Nodes.JsonObject { ["title"] = "Title", ["type"] = "text", ["value"] = "axStart: said nothing" },
-                    .. fields.Select(pair => new System.Text.Json.Nodes.JsonObject { ["title"] = pair.Key, ["type"] = "text", ["value"] = pair.Value })]),
-        };
-        return AxKit.Core.ItemDocument.Parse(json.ToJsonString());
+            json[name] = text;
+        }
+
+        return AxKit.Core.FlatItem.Parse(json.ToJsonString());
     }
 
     [Fact]

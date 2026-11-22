@@ -389,7 +389,8 @@ lists without driving the window. axTask's own side is `docs/axTask/SPEC.md` sec
   items by the list's name, each with its title, whether it is done and its fields (title, type, value); done items
   only with `done` true. `axkit_task_add` (change): a new item in a named list, with `title` and an optional `fields`
   object of field titles and typed texts (`{"Due": "2026-11-18", "Priority": "High", "Notes": "..."}`), made from the
-  list's template as New item makes it (TK-8.3).
+  fields of the list's configuration as New item makes it (TK-8.3); a field the list does not have is refused with
+  the fields it has (MC-D13).
 - MC-8.3 **Allowed.** The reads need only the access and the pairing. An add needs Let AI tools run commands as well
   (MC-7.2, the same switch: it is a change), read again by the window from the sealed file off its thread (MC-7.6); off,
   it answers as `axkit_window_run` does. It is refused while the window shows a notice or a Windows dialog, in the
@@ -425,9 +426,13 @@ to reverse:
   the top folder itself, `axkit_open` starts axTask only with no path, on the user's own top folder (a start on a
   folder makes it the top and saves it): "axTask opens through the AI tools only on your own lists" (found at review,
   2026-11-11).
-- MC-D13 **A field the template lacks is added**, after the others: long text for Notes or a value of several lines,
-  text otherwise, so that "Notes" works in a list whose template has none (the default template has Done, Start and
-  Due). A link, a password and a user name are never written by a tool.
+- MC-D13 **A field the list does not have is refused**, with the fields it has ("Notes is not a field of this list.
+  Its fields: Done, Start, Due."), since 2026-11-21. Until then such a field was added after the others, so that
+  "Notes" worked in a list without it. Since an item is its values read through its list's configuration
+  (docs/axTask/forms-framework.md AF-11.3), a value the configuration does not name is kept in the file and shown
+  among no fields: the tool would say it added notes that the user then does not find. The refusal names the fields,
+  so the tool can put its words where the list has a place for them, or tell the user the list has none. A link, a
+  password and a user name are never written by a tool.
 - MC-D14 **List names**: a top folder's list by its own name, a project's as "project / list", the list's own name
   alone when only one list has it; the item's file name from its Title as New item gives it.
 - MC-D15 **The selection moves only within the list shown**: the new item is selected when its list is the one the

@@ -1,9 +1,12 @@
-# Workflow: Rename a list, and rename and remove a field
-# axTask, docs/axTask/user-guide.md "Changing things": F2 on a list renames it and its folder; in the detail pane, F2
-# renames the field in focus and Delete removes it (the item window's shared field commands, docs/axKit/item-apps.md
-# IA-3); every change is one step for Ctrl+Z.
+# Workflow: Rename a list, and change the fields of its items
+# axTask, docs/axTask/user-guide.md "Changing things": F2 on a list renames it and its folder. The fields of a list's
+# items are written once, in the list's configuration (docs/axTask/forms-framework.md AF-11.3, AF-11.4, AF-11.7,
+# AF-13.4): a field the configuration no longer names is hidden and its value kept; named again, it shows with the
+# value it had; a configuration that does not read is said, and nothing of the list is changed until it reads again.
+# The configuration is changed here as axJSON would save it: the file written, then Refresh.
 file home\AxKit\axTask.json {"checkForUpdates": false}
-file "tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Room", "type": "text", "value": "Kitchen"}]}
+file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Room","type":"text","value":""}],"actions":[]}
+file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Room":"Kitchen"}
 start task {temp}\tasks
 expect focus Your lists, heading level 1
 keys down
@@ -19,32 +22,85 @@ expect said ! Renamed Home to House
 run cmd /c if exist "tasks\House\Fix the tap.json" (exit 0) else (exit 1)
 expect focus House, list, 1 item
 
-# Goal: Rename a field of an item
-# In the detail pane, F2 on a field: its title in place; Enter renames it in the item's file.
+# Goal: Read which fields a list's items have
+# The list's details end with the fields of its items; Enter on the line says how they are changed.
+keys tab
+keys end
+expect focus Fields of its items: Room
+keys enter
+expect state "notice":"Fields of its items"
+expect state Ctrl+J on the list opens it in axJSON
+keys escape
+expect state "notice":null
+keys shift+tab
+expect focus House, list, 1 item
+
+# Goal: Take a field out of a list and keep its values
+# The configuration names Place where it named Room: the item shows Place, empty, and says that Room is kept; Enter
+# on that line reads the kept value. Nothing of the item's file changed.
+file tasks\House\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Place","type":"text","value":""}],"actions":[]}
+do Refresh
 keys right
 expect focus Fix the tap
 keys tab
 expect focus Title, text, Fix the tap
 keys down
-expect focus Room, text, Kitchen
-keys f2
-keys ctrl+a
-type Place
+expect focus Place, text, empty
+keys down
+expect focus 1 more field kept: Room
 keys enter
-expect said ! Renamed Room to Place
-run findstr /l /c:"\"Place\"" "tasks\House\Fix the tap.json"
+expect state "notice":"Fields kept"
+expect state Room: Kitchen
+keys escape
+expect state "notice":null
+run findstr /l /c:"\"Room\":\"Kitchen\"" "tasks\House\Fix the tap.json"
+# Check: A change to an item leaves a kept value as it is
+# Place given its first value: written into the file; Room, which the list does not name, stays as it was.
+keys up
+expect focus Place, text, empty
+keys enter
+type Hall
+keys enter
+expect said ! Place: Hall
+run findstr /l /c:"\"Room\": \"Kitchen\"" "tasks\House\Fix the tap.json"
+run findstr /l /c:"\"Place\": \"Hall\"" "tasks\House\Fix the tap.json"
 
-# Goal: Remove a field of an item and undo it
-# Delete on a field removes it; Ctrl+Z brings it back. The Title stays.
-expect focus Place, text, Kitchen
-keys delete
-expect said ! Removed Place
-run powershell -NoProfile -Command "if ((Get-Content -Raw 'tasks\House\Fix the tap.json').Contains('Kitchen')) { exit 1 } else { exit 0 }"
-do Undo
-expect said ! Undone: Removed Place
-run findstr /l /c:"Kitchen" "tasks\House\Fix the tap.json"
-# Check: The Title field cannot be removed
+# Goal: Put a field back and find its values again
+# The configuration names Room again, before Place: the item shows both, Room with the value it had, and keeps
+# nothing more.
+file tasks\House\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Room","type":"text","value":""},{"title":"Place","type":"text","value":""}],"actions":[]}
+keys escape
+do Refresh
+keys tab
 keys home
-expect focus Title, text, Fix the tap
-keys delete
-expect said ! The Title field stays
+keys down
+expect focus Room, text, Kitchen
+keys down
+expect focus Place, text, Hall
+keys end
+expect focus Place, text, Hall
+
+# Check: A configuration that does not read is said, and nothing is changed until it reads
+# A comma too many after an edit: the level says so with the line, the list's row says so, the item shows every value
+# as text with the reason, and a change is refused. Mended, everything is as before.
+file tasks\House\list.json {"format":"axkit-list 2","item fields":[}
+keys escape
+do Refresh
+expect said The list's configuration does not read: it is not JSON at line 1. Ctrl+J opens it
+keys tab
+keys end
+expect focus Its configuration, list.json, does not read: it is not JSON at line 1: every value is shown as text
+keys home
+keys down
+expect focus Place, text, Hall
+keys enter
+expect said ! Its configuration, list.json, does not read
+expect state "notice":null
+keys escape
+keys left
+expect focus House, list, 1 item, its configuration does not read
+file tasks\House\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Room","type":"text","value":""},{"title":"Place","type":"text","value":""}],"actions":[]}
+do Refresh
+expect said Refreshed: Lists, 1 list
+expect focus House, list, 1 item
+refuse said does not read

@@ -29,7 +29,7 @@ Two panes side by side, and a status bar.
 - **The detail pane**, on the right. It shows what the navigator's selection holds, without saying anything until
   you go there with Tab:
   - on an item, its fields: "Due, date, 30 October 2026, Friday";
-  - on a list, the list's own details, and a line naming the fields a new item gets;
+  - on a list, the list's own details, and a line naming the fields of its items;
   - on a smart list, what it shows.
 
 ## Moving around
@@ -51,9 +51,11 @@ Two panes side by side, and a status bar.
 
 ## Tasks and plain lists
 
-- A task is an item with a **Done** check. Space marks it done or not done, in the navigator or on the Done field.
+- A task is an item of a list whose fields have a **Done** check. Space marks it done or not done, in the navigator or
+  on the Done field. An item that was never marked is not done.
 - A list without Done is a plain list, for things that are not tasks. Actions, Add Done to every item makes a plain list
-  a checklist; Actions, Remove Done from every item makes it plain again.
+  a checklist; Actions, Remove Done from every item makes it plain again. Neither touches an item's file: a task marked
+  done stays marked while the list is plain, and shows so again when the list is a checklist again.
 - A row reads its title and, for a task, "done", "due 30 October" or "overdue since 22 October".
 - Ctrl+Shift+D hides the done tasks of a list, and shows them again.
 
@@ -61,8 +63,8 @@ Two panes side by side, and a status bar.
 
 In the navigator:
 
-- Ctrl+N adds an item to the list shown. It gets the fields the list gives new items: Done, Start and Due unless
-  you choose others.
+- Ctrl+N adds an item to the list shown. It gets the fields of its list: Done, Start and Due in a list made by
+  axTask, or the ones you wrote into the list's configuration ("The fields of a list", below).
 - Ctrl+Shift+N makes a new list.
 - F2 renames the item or the list in place: a box over the line holds the name; type the new one and press Enter,
   or Escape to keep the old. Links to it from other items are kept.
@@ -79,12 +81,67 @@ In the detail pane:
   - a long text is a field of several lines: Enter makes a new line, Ctrl+Enter keeps it, and so does Tab and then Enter on Save;
   - a link takes the title of the item it points to, in any list.
 - Right and Left change the field you are on without opening anything. On a choice, Right is the next option and Left the previous; at the first and the last you hear the edge sound, and it never goes round. On a check, Right checks and Left unchecks; when it is so already, the edge sound. You hear the field and its new value once, "Priority: Low", and Ctrl+Z takes it back. On any other field the two keys do nothing but the edge sound. They never leave the detail pane: Escape or Shift+Tab goes back to the navigator.
-- Ctrl+N adds a field after the selected one, in one form: type its title, Tab to the list of types and choose one, and for a choice Tab once more and type its options with a comma between them; Enter or Ctrl+Enter adds the field. What is missing is said, with the focus in its field.
-- F2 renames the field in place, Delete removes it, Alt+Up and Alt+Down move it. The Title field stays.
-- Context, Use these fields for new items gives the list's new items the fields of the item selected, emptied.
+- Which fields an item has is not changed here: the fields are its list's, the same for every item of the list. Ctrl+N,
+  F2, Delete, Alt+Up and Alt+Down in the fields say so, and where it is done: Ctrl+J on the list.
 
 Every change is written to the file at once, and Ctrl+Z takes back the last ones, one at a time. If another program
 changed the file since axTask showed it, axTask reads it again and says so instead of writing over it.
+
+## The fields of a list
+
+A list says once which fields its items have, in which order and of which type. That is the list's configuration,
+the file `list.json` in its folder. Ctrl+J on a list, or Context, Edit the list's configuration, opens it in axJSON.
+A list that has no such file yet gets one written first, with the fields its items hold, so that there is something
+to edit. When you come back to axTask, one line says what the configuration holds now, "The list's configuration
+changed: 5 fields, 2 actions".
+
+```json
+{
+  "format": "axkit-list 2",
+  "details": { "Section": "Home", "Notes": "Things to do at home." },
+  "item fields": [
+    { "title": "Done", "type": "check", "value": false },
+    { "title": "Due", "type": "date", "value": "" },
+    { "title": "Priority", "type": "choice", "value": "Normal", "options": ["High", "Normal", "Low"] },
+    { "title": "Notes", "type": "longtext", "value": "" }
+  ],
+  "actions": []
+}
+```
+
+- `details` are the list's own values, shown in the detail pane when the list is selected: its Section, its Notes.
+- `item fields` are the fields of its items, in the order they are shown after the Title. Each has a `title`, a
+  `type` (`text`, `longtext`, `number`, `date`, `datetime`, `check`, `choice` or `link`), the `value` a new item
+  starts with, and for a choice its `options`.
+- `actions` are the list's action keys, further down.
+
+What happens when you change the fields:
+
+- A field you add shows in every item at once, empty. Nothing is written into an item's file until you give the
+  field a value there.
+- A field you take out is hidden, and its values stay in the items' files. An item that holds such a value says so
+  in the last line of its fields, "2 more fields kept: Sprint, Old priority"; Enter on that line reads them. Put the
+  field back under the same name and every item shows the value it had.
+- A field you rename is a new field: the old name's values are kept as above, and the new one starts empty.
+- A field whose type you change keeps its values: one that the new type cannot hold is read as text with what the
+  field is now, "next week, kept as text: the field is now a date", until you give the field a new value.
+- Actions, Add Done to every item makes the list a checklist, and Remove Done from every item a plain list, whose
+  items are no tasks. Both change the configuration only.
+
+If the file does not read after an edit (a comma too many), nothing is lost and nothing is changed: the list's line
+says "its configuration does not read", the list says where, "The list's configuration does not read: it is not JSON
+at line 12. Ctrl+J opens it", its items are shown with every value as plain text, and axTask writes nothing in that
+list until the file reads again.
+
+## A list from an earlier version
+
+Before this version an item's file held the title, the type and the value of every field. axTask now reads one
+shape only, the one above. A list written the earlier way says "earlier format: Enter converts it" in its line and is
+not opened, and All tasks and the other gathering lists leave it out and say so. Enter or Right on it asks once:
+Convert, Convert all such lists, or Cancel. Convert keeps a copy first, among the Archived lists, named after the
+list with ", before conversion", then writes the configuration and every item anew. Nothing an item holds is dropped;
+the list's fields are the ones its items had, so every item shows what it showed; the action keys stay on their keys.
+Ctrl+Z takes the conversion back. A copy of axKit older than this version does not read a converted list.
 
 ## Smart lists
 
@@ -128,21 +185,22 @@ folder of lists. A change made outside axTask to a project's file shows after F5
 
 ## The files
 
-Each item is a JSON file named after its title, a list of fields each with a title, a type and a value:
+Each item is a JSON file named after its title: its names and values, and `schema`, the link to the list's
+configuration it is read through.
 
 ```json
 {
-  "format": "axkit-item 1",
-  "fields": [
-    { "title": "Title", "type": "text", "value": "Fix the tap" },
-    { "title": "Done", "type": "check", "value": false },
-    { "title": "Due", "type": "date", "value": "2026-10-30" }
-  ]
+  "schema": "list.json",
+  "Title": "Fix the tap",
+  "Done": false,
+  "Due": "2026-10-30"
 }
 ```
 
-A list is a folder in the top folder; its details are `list.json` in it, its section among them. Ctrl+J opens the item, the list's details or a smart list in
-axJSON; Ctrl+E shows it in axFile. Anything axTask does not know in a file is kept as it is.
+A list is a folder in the top folder; its configuration is `list.json` in it ("The fields of a list", above). Ctrl+J
+opens a list's configuration, an item's file or a smart list in axJSON; Ctrl+E shows it in axFile. Anything axTask
+does not know in a file is kept as it is. An item in a folder that has no `list.json`, made by hand or by a script,
+is shown with every value as plain text and is not changed until Ctrl+J on the list has written the configuration.
 
 ## Action keys: Ctrl+1 to Ctrl+9
 
@@ -153,6 +211,9 @@ line; Ctrl+Enter or the Keep button keeps it. The three things a key can do: set
 list, or open something (a field holding a web address, or an app such as axJSON for the item's file). From then on
 Ctrl+1 to Ctrl+9 do that to the item selected, and Context's Action keys submenu on an item names them. Ctrl+Z takes a set
 or a move back. All tasks is Ctrl+0.
+
+The keys are written among the `actions` of the list's configuration, each with its name, its key and what it does:
+`{ "name": "Later", "key": "Ctrl+2", "does": "move", "to": "../Later" }`.
 
 A key that moves an item or opens something acts at once when you set it in this form on this computer. When the
 list's keys came another way (a list someone shared, a folder that syncs, a `list.json` edited outside axTask), the
@@ -200,7 +261,7 @@ moving them.
   where you are: press Ctrl+Shift+F again, your words are kept. Each line says where the item lives:
   "Fix the tap, in tasks in alpha / Home". Right or Enter opens the item in its own list; Left or Escape goes back to
   where you searched from. Tab shows the found item's fields, and Space marks a task done, there and then; to rename,
-  archive or link it, or to use its fields for new items, open it where it lives first.
+  archive or link it, open it where it lives first.
 
 ## AI tools and your lists
 
@@ -211,7 +272,8 @@ window is open, once you have turned the AI tools on and allowed it (axKit menu,
   one list's items with their fields. Nothing is said while it reads.
 - Adding: only while axKit menu, AI tools, Let AI tools run commands is on. Ask it, for instance, "remind me next week
   to call the dentist": it adds the item to the list it names, made from that list's fields as Ctrl+N makes one, with
-  a Due date, a Priority from the list's choices or Notes if it gives them. The window says "Claude added Call the
+  a Due date, a Priority from the list's choices or Notes if it gives them and the list has those fields; a field the
+  list does not have is refused, and the tool is told which fields there are. The window says "Claude added Call the
   dentist to Personal"; if that list is the one shown, the new item is selected, otherwise you stay where you are.
   Ctrl+Z takes it back as any change. In a window behind you hear a chime and the window flashes on the taskbar.
 - It never changes or deletes an item, never reaches a folder of lists that is not your top folder or one of your

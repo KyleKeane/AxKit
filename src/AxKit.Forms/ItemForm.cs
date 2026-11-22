@@ -471,7 +471,13 @@ public abstract partial class ItemForm : AxKitForm
         if (EntryRefused(row) is { } why)
         {
             // A list that cannot be gone into (axMCP's remote server, MP-1.4): the reason said, the level as it was.
-            Announce(why, true);
+            // An empty reason: the app has said or asked something itself (axTask's question before a list of the
+            // earlier format is converted).
+            if (why.Length > 0)
+            {
+                Announce(why, true);
+            }
+
             return;
         }
 

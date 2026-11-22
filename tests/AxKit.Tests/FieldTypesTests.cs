@@ -81,4 +81,44 @@ public class FieldTypesTests
     [Fact]
     public void ATextFieldHoldsOneLine() =>
         Assert.NotNull(FieldTypes.Parse(FieldTypes.Text, "one\ntwo", [], Today).Refused);
+
+    [Fact]
+    public void AValueHasATypeByItsOwnKind()
+    {
+        Assert.Equal(FieldTypes.Check, FieldTypes.OfKind(JsonValue.Create(false)));
+        Assert.Equal(FieldTypes.Number, FieldTypes.OfKind(JsonValue.Create(3)));
+        Assert.Equal(FieldTypes.Text, FieldTypes.OfKind(JsonValue.Create("one line")));
+        Assert.Equal(FieldTypes.LongText, FieldTypes.OfKind(JsonValue.Create("two\nlines")));
+        Assert.Equal(FieldTypes.Text, FieldTypes.OfKind(null));
+        Assert.Equal(FieldTypes.Text, FieldTypes.OfKind(new JsonArray()));
+    }
+
+    [Fact]
+    public void AValueOfTheTypeAFieldHadIsReadAsTextWithWhatTheFieldIsNow()
+    {
+        // docs/axTask/forms-framework.md AF-11.6: the field's type changed in its list's configuration.
+        Assert.Equal("next week, kept as text: the field is now a date", FieldTypes.Spoken(new ItemField("Due", FieldTypes.Date, JsonValue.Create("next week"), [])));
+        Assert.Equal("yes, kept as text: the field is now a check", FieldTypes.Spoken(new ItemField("Done", FieldTypes.Check, JsonValue.Create("yes"), [])));
+        Assert.Equal("true, kept as text: the field is now a text", FieldTypes.Spoken(new ItemField("Kind", FieldTypes.Text, JsonValue.Create(true), [])));
+        Assert.Equal("many, kept as text: the field is now a number", FieldTypes.Spoken(new ItemField("Size", FieldTypes.Number, JsonValue.Create("many"), [])));
+        Assert.Equal("soon, kept as text: the field is now a date and time", FieldTypes.Spoken(new ItemField("At", FieldTypes.DateTime, JsonValue.Create("soon"), [])));
+
+        // What the type holds is read as ever: nothing, a number in a text, a number written as text.
+        Assert.Equal("empty", FieldTypes.Spoken(new ItemField("Due", FieldTypes.Date, JsonValue.Create(string.Empty), [])));
+        Assert.Equal("empty", FieldTypes.Spoken(new ItemField("Due", FieldTypes.Date, null, [])));
+        Assert.Equal("3", FieldTypes.Spoken(new ItemField("Kind", FieldTypes.Text, JsonValue.Create(3), [])));
+        Assert.Equal("12", FieldTypes.Spoken(new ItemField("Number", FieldTypes.Number, JsonValue.Create("12"), [])));
+        Assert.True(FieldTypes.Holds(FieldTypes.Choice, JsonValue.Create("not an option")));
+        Assert.False(FieldTypes.Holds(FieldTypes.Text, new JsonObject()));
+    }
+
+    [Fact]
+    public void AnyValueHasAPlainText()
+    {
+        Assert.Equal("words", FieldTypes.PlainText(JsonValue.Create("words")));
+        Assert.Equal("true", FieldTypes.PlainText(JsonValue.Create(true)));
+        Assert.Equal("3.5", FieldTypes.PlainText(JsonValue.Create(3.5)));
+        Assert.Equal(string.Empty, FieldTypes.PlainText(null));
+        Assert.Equal("[1,2]", FieldTypes.PlainText(new JsonArray(1, 2)));
+    }
 }

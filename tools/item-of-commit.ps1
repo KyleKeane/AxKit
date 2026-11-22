@@ -15,7 +15,8 @@
   such lines may stand in one message. What the script then writes into the item's file, in the list
   <parent>\axkit-management\priorities beside this repository:
 
-    Item:       the field Started gets today's date, when it is empty (made after Done when the item has none);
+    Item:       Started gets today's date, when it is empty (written where the list's configuration has the field,
+                when the item's file does not hold it yet);
     Item done:  Started as above, and Done is checked.
 
   A commit without such a line, a line that names no item or more than one, and "none" without a reason are refused,
@@ -84,7 +85,11 @@ if ($named.Count -eq 0) {
 
 # The items, and how words name one: tools\items.ps1, which tools\item.ps1 reads the same way.
 . (Join-Path $PSScriptRoot 'items.ps1')
+if (Test-EarlierList $Lists) {
+    Refuse 'the priorities list is written in axTask''s earlier format, which the scripts no longer read. Open the list in axTask and convert it (Enter on the list), then commit again.'
+}
 $items = @(Get-ListItems $Lists)
+$listConfig = Get-ListConfig $Lists
 
 # Outside reports (docs/axKit/outside-reports.md OR-7.3, OR-6.3): a commit on an item whose Where it is written names a
 # report needs the maintainer's approval of an entry of that report naming the item, verified with the key pinned in
@@ -133,7 +138,7 @@ foreach ($one in $named) {
     }
 
     $item = $found[0]
-    $where = [string]($item.Document.fields | Where-Object { $_.title -eq 'Where it is written' } | Select-Object -First 1).value
+    $where = [string](Get-ItemValue $item.Document 'Where it is written')
     foreach ($report in @(Get-ReportNumbers $where)) {
         if (-not (Test-ApprovedForItem $outsideEntries $report $item.Title)) {
             Write-Host ''
@@ -141,22 +146,18 @@ foreach ($one in $named) {
             exit 1
         }
     }
-    $fields = [System.Collections.ArrayList]@($item.Document.fields)
-    $started = $fields | Where-Object { $_.title -eq 'Started' } | Select-Object -First 1
-    $done = $fields | Where-Object { $_.title -eq 'Done' } | Select-Object -First 1
+    # The item is its values (docs/axTask/forms-framework.md section 13): Started is written where the list's
+    # configuration has the field, when the file does not hold it yet; Done is checked for an item that holds it or
+    # whose list names it (an item shows a field of its list as not done until it is given a value).
+    $document = $item.Document
     $changed = $false
-    if (-not $started) {
-        $started = [pscustomobject]@{ title = 'Started'; type = 'date'; value = '' }
-        $at = if ($done) { $fields.IndexOf($done) + 1 } else { [Math]::Min(1, $fields.Count) }
-        $fields.Insert($at, $started)
+    if (-not "$(Get-ItemValue $document 'Started')") {
+        $document = Set-ItemValue $document 'Started' $today $listConfig
         $changed = $true
     }
-    if (-not "$($started.value)") {
-        $started.value = $today
-        $changed = $true
-    }
-    if ($one.Done -and $done -and -not $done.value) {
-        $done.value = $true
+    $hasDone = (Test-ItemValue $document 'Done') -or (@(Get-ItemFieldTitles $listConfig) -contains 'Done')
+    if ($one.Done -and $hasDone -and -not (Get-ItemValue $document 'Done')) {
+        $document = Set-ItemValue $document 'Done' $true $listConfig
         $changed = $true
     }
 
@@ -166,8 +167,7 @@ foreach ($one in $named) {
         continue
     }
     if ($changed) {
-        $item.Document.fields = $fields.ToArray()
-        Save-ListItem $item.File $item.Document
+        Save-ListItem $item.File $document
         Write-Host "Priorities list, marked ${what}: $($item.Title)"
     }
 }

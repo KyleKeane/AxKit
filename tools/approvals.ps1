@@ -225,17 +225,23 @@ function Get-UnapprovedOutsideItems([string]$priorities, $entries) {
     return $found
 }
 
-# The fields of an item file by their titles, or $null for a file that is no item.
+# The values of an item file by their names, each as text, or $null for a file that is no item (it names no "schema",
+# docs/axTask/forms-framework.md section 13). The file's own values, whatever the list's configuration names: what an
+# approval signs must not depend on which fields are shown. A text is itself, a check True or False, anything else
+# empty, as AxTask.Core OutsideReports.Field reads it (FieldTypes.TextOf), so that the two never sign different texts.
 function Read-ApprovalItemFields([string]$path) {
     try {
         $json = [IO.File]::ReadAllText($path) | ConvertFrom-Json
     } catch {
         return $null
     }
-    if ($null -eq $json -or $null -eq $json.fields) { return $null }
+    if ($null -eq $json -or $json -isnot [System.Management.Automation.PSCustomObject]) { return $null }
+    $link = $json.PSObject.Properties['schema']
+    if ($null -eq $link -or -not "$($link.Value)".Trim()) { return $null }
     $fields = @{}
-    foreach ($field in @($json.fields)) {
-        if ($null -ne $field.title) { $fields[[string]$field.title] = if ($null -eq $field.value) { '' } else { [string]$field.value } }
+    foreach ($member in $json.PSObject.Properties) {
+        if ($member.Name -ceq 'schema') { continue }
+        $fields[[string]$member.Name] = if ($member.Value -is [string]) { $member.Value } elseif ($member.Value -is [bool]) { [string]$member.Value } else { '' }
     }
     return $fields
 }

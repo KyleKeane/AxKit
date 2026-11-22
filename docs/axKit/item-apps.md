@@ -45,11 +45,11 @@ Window-specific keys, in one table per app (AX-8); the ones here are the same in
 | Tab, Shift+Tab | to the detail pane | back to the navigator |
 | Ctrl+Tab, Ctrl+Shift+Tab, F6 | to the detail pane (the bundle's pane keys, AX-8.2, since 2026-11-09) | back to the navigator |
 | Escape | — | back to the navigator |
-| Ctrl+N | new item in this list | new field |
+| Ctrl+N | new item in this list | said: where the fields are changed (IA-5.3) |
 | Ctrl+Shift+N | new list here | — |
-| F2 | rename in place (the Title field; bundle AX-8.7) | rename the field in place |
-| Delete | delete the item or list (IA-D4) | remove the field (never Title) |
-| Alt+Up, Alt+Down | — | move the field |
+| F2 | rename in place (the Title field; bundle AX-8.7) | said: where the fields are changed (IA-5.3) |
+| Delete | delete the item or list (IA-D4) | said: where the fields are changed (IA-5.3) |
+| Alt+Up, Alt+Down | — | said: where the fields are changed (IA-5.3) |
 | Ctrl+Z | undo the last change | the same |
 | Ctrl+Q | read the selection in full: every field, one after another | read the field in full |
 | F5 | read the folder again | — |
@@ -63,32 +63,42 @@ Window-specific keys, in one table per app (AX-8); the ones here are the same in
 
 - **IA-3.1** Entering the detail pane reads its name and the field: "Fields of Fix the tap, Due, date, 30 October
   2026". Leaving it says the navigator's selection.
-- **IA-3.2** A level shows its sub-lists first, then its items, each by name in natural order, as axFile shows folders and files (the Archive last at the top, IA-D4). An item's fields are in the order the user gave them (Alt+Up and Alt+Down move one); nothing else sorts behind the user's back.
+- **IA-3.2** A level shows its sub-lists first, then its items, each by name in natural order, as axFile shows folders and files (the Archive last at the top, IA-D4). An item's fields are in the order its list's configuration gives them (IA-4.3), the Title first; nothing else sorts behind the user's back.
 
 ## 4. The format
 
+The files are axTask's (the reports list of `reports.md` is one of its lists); axPass makes the same fields in
+memory from a KeePass entry and has no file of this shape. Since 2026-11-21 the format is the one of
+`docs/axTask/forms-framework.md` sections 11 and 13 (AF-n.m), which this section sums up: an item holds values, and
+its list's configuration says once what the fields are. The shape before it (`axkit-item 1`, `axkit-list 1`: an item
+as a list of objects with a title, a type and a value each) is read by the converter alone
+(`AxKit.Core/Conversion`, AF-13.6), never beside this one.
+
 ### 4.1 An item
 
-A JSON file holding a list of fields. The first field is the Title.
+A JSON file of names and values, with `"schema"`, the link to the configuration it is read through. The Title is
+first.
 
 ```json
 {
-  "format": "axkit-item 1",
-  "fields": [
-    { "title": "Title", "type": "text", "value": "Fix the tap" },
-    { "title": "Done", "type": "check", "value": false },
-    { "title": "Start", "type": "date", "value": "2026-10-24" },
-    { "title": "Due", "type": "date", "value": "2026-10-30" },
-    { "title": "Priority", "type": "choice", "value": "High", "options": ["High", "Normal", "Low"] },
-    { "title": "Notes", "type": "longtext", "value": "Washer under the sink." },
-    { "title": "Waits on", "type": "link", "value": "../Shopping/Washer.json" }
-  ]
+  "schema": "list.json",
+  "Title": "Fix the tap",
+  "Done": false,
+  "Start": "2026-10-24",
+  "Due": "2026-10-30",
+  "Priority": "High",
+  "Notes": "Washer under the sink.",
+  "Waits on": "../Shopping/Washer.json"
 }
 ```
 
-- **IA-4.1** Keys the app does not know, in the file or in a field, are kept as they are when the file is written
-  again. A field of a type the app does not know reads as text and is changed only in axJSON.
-- **IA-4.2** An empty value is `""` (or `false` for a check); a field is never left out to mean empty.
+- **IA-4.1** A value whose name the list's configuration does not have is kept as it is when the file is written
+  again, not shown among the fields, and named in the item's last line ("1 more field kept: Sprint"; AF-11.3,
+  AF-11.4). A field of a type the app does not know reads as text. In the window the item is an `ItemDocument`, its
+  Title and the configuration's fields with the item's values (`AxKit.Core/ItemView`).
+- **IA-4.2** A field the file does not hold is shown empty (`""`, or not done for a check) and is written with its
+  first value; a new item is written with every field of its list, each with the value the configuration starts it
+  with.
 
 ### 4.2 The types
 
@@ -103,31 +113,38 @@ A JSON file holding a list of fields. The first field is the Title.
 | `choice` | one of `options` | the option | a list of the options, the current one selected; Right and Left step through them without the list |
 | `link` | a path to another item, relative to this file | the other item's title, or "missing: name" | the other item's title, typed |
 
-axPass adds `username` and `password` (section 6).
+axPass adds `username` and `password` (section 6). A value its field's type does not hold (the type was changed in
+the list's configuration) is read as its text with what the field is now, "next week, kept as text: the field is now
+a date", and stays as it is until the field is given a new value (AF-11.6; `FieldTypes.Holds`).
 
 ### 4.3 A list
 
-A folder. Its details are `list.json` in it, the same shape as an item, never shown in the navigator:
+A folder. Its configuration is `list.json` in it, never shown in the navigator:
 
 ```json
 {
-  "format": "axkit-list 1",
-  "fields": [
-    { "title": "Notes", "type": "longtext", "value": "" }
-  ],
-  "new item": [
+  "format": "axkit-list 2",
+  "details": { "Notes": "" },
+  "item fields": [
     { "title": "Done", "type": "check", "value": false },
-    { "title": "Due", "type": "date", "value": "" }
-  ]
+    { "title": "Due", "type": "date", "value": "" },
+    { "title": "Priority", "type": "choice", "value": "Normal", "options": ["High", "Normal", "Low"] }
+  ],
+  "actions": []
 }
 ```
 
-- **IA-4.3** `new item` is the list's template: a new item gets a Title and these fields, with the values they carry
-  (a check's `false`, a choice's starting value; since 2026-11-09, before which the template the app wrote emptied
-  every value). The detail pane on a list shows the list's fields, then one line "Fields of a new item: Done, Due" that
-  Enter opens to change the template; Use these fields for new items takes an item's fields with their values emptied.
-- **IA-4.4** A folder without `list.json` is a list with no details and an empty template (axTask fills its own
-  default, its spec). The file is written the first time the user changes a detail.
+- **IA-4.3** `item fields` are the fields of the list's items, in the order they are shown after the Title, each
+  with its `title`, its `type`, the `value` a new item starts with and a choice's `options`; `details` are the list's
+  own values by name; `actions` are its actions (axTask's action keys, its spec). The detail pane on a list shows
+  the details as fields, then one line "Fields of its items: Done, Due, Priority", on which Enter says how they are
+  changed: in this file, opened in axJSON from the list (Ctrl+J in axTask). A change there holds for every item at
+  once and touches no item's file: a field added shows empty, a field taken out is hidden and its values kept, and
+  it shows them again when it is named again (hide, keep, restore; AF-11.3). Anything else in the file is kept.
+- **IA-4.4** A folder without `list.json` shows its details as they would be written; the file is written the first
+  time the user changes a detail, adds an item or asks to edit the configuration, with the fields the folder's items
+  hold (AF-11.1). Until then an item of the folder, whose link names a file that is not there, is shown with every
+  value as text and is not changed (AF-13.4), as is an item whose configuration does not read (AF-11.7).
 
 ### 4.4 File names
 
@@ -148,11 +165,12 @@ A folder. Its details are `list.json` in it, the same shape as an item, never sh
   field and selected (a date as 2026-10-30, a link as the other item's title). Enter keeps it, Escape leaves it as it
   was. A value the type refuses ("30 Febuary") says why and the notice stays.
 - **IA-5.2** A check changes with Space or Enter, at once: "Done: done".
-- **IA-5.3** New field (Ctrl+N in the pane): one form (bundle AX-8.10, since 2026-11-14; up to three notices, one after
-  the other, before): "Type the field's title", the list "Choose what the field holds" with the types, and "Type the
-  options of a choice, with a comma between them; leave it empty for any other type", then Add and Cancel. The field
-  is added after the selected one. A missing or taken title, or a choice without options, is said with the focus in
-  its field, and the form stays.
+- **IA-5.3** Which fields an item has is not changed in the detail pane (since 2026-11-21): they are the list's
+  configuration's in axTask (IA-4.3), KeePass's in axPass, the server's schema in axMCP. Ctrl+N, F2, Delete, Alt+Up
+  and Alt+Down in the fields say where it is done, in the app's own words ("The fields are the list's
+  configuration's: Ctrl+J on the list opens it in axJSON"), and change nothing. Until then axTask added, renamed,
+  removed and moved a field in one item's file; the shared window still holds that code behind `FieldsFixed`, which
+  every app now gives, and it is to be removed (the priorities list).
 - **IA-5.4** Every change is one announcement ("Due: 30 October 2026, Friday") and one step for Ctrl+Z.
 - **IA-5.5** Before every write the file is read again; if it changed since it was shown (axJSON, a script, a sync),
   the change is refused with "The item changed on disk; it has been read again" (axList's LI-D5).
@@ -172,7 +190,7 @@ A folder. Its details are `list.json` in it, the same shape as an item, never sh
 | | axTask | axPass |
 | --- | --- | --- |
 | Where the items are | a folder of JSON files; a list is a folder (IA-4) | one encrypted KeePass file (`.kdbx`), through KeePassXC's command-line tool; a list is a KeePass group |
-| The JSON shape | the file on disk | the same shape, in memory only; never written to disk |
+| The fields | read from the item's file through its list's configuration (IA-4) | made in memory from the entry; never written to disk |
 | Open in axJSON | yes, Ctrl+J on an item or a list | no: a password in a plain file defeats the encryption |
 | Extra field types | none | `username`, `password` (read as "password, hidden"; Ctrl+Q never reads it) |
 | Extra navigator entries | All tasks, the smart lists (saved filters) | none; search by title (Ctrl+F) |
@@ -180,8 +198,8 @@ A folder. Its details are `list.json` in it, the same shape as an item, never sh
 | Space in the navigator | marks the item done or not done | nothing |
 | Its own keys | (its spec) | copy user name, copy password with the clipboard cleared after 30 seconds, generate a password, lock |
 | Opens with | a folder | a `.kdbx` file and the master password, asked in a notice whose field hides what is typed |
-| New field | any type (IA-5.3) | not in the first version: KeePass's standard fields, custom attributes read only (PW-D3) |
-| Templates | `list.json`'s `new item` | KeePass's standard fields (Title, UserName, Password, URL, Notes) plus the user's own |
+| Which fields an item has | the list's configuration, `list.json`'s `item fields`, edited in axJSON (IA-4.3) | KeePass's standard fields, custom attributes read only (PW-D3) |
+| A new item's fields | the configuration's, each with the value it starts with | KeePass's standard fields (Title, UserName, Password, URL, Notes) plus the user's own |
 | Delete | to the top folder's Archive list; Ctrl+Z brings it back | to KeePass's own Recycle Bin group |
 
 Everything not in this table is the same in both apps, and a change to one of those things changes this document and

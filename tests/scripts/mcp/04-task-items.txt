@@ -4,16 +4,16 @@
 # back with Ctrl+Z; an add into another list and into a project's list, the selection left where it was; a list
 # elsewhere refused; the add refused while Let AI tools run commands is off. The runner is the MCP client.
 # A list made as a GitHub list (TK-7a.2): the "github" member of its list.json means nothing now; it is an ordinary list.
-file tasks\Issues\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}], "github": {"repository": "owner/repo"}}
-file tasks\Errands\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}]}
-file projects\alpha\Home\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}]}
-file "projects\alpha\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}]}
+file tasks\Issues\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[],"actions":[],"github":{"repository":"owner/repo"}}
+file tasks\Errands\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[],"actions":[]}
+file projects\alpha\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
+file "projects\alpha\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false}
 file home\AxKit\axTask.json {"checkForUpdates": false}
 # The settings file names the project folder by its full path, which only the run knows.
 run powershell -NoProfile -Command "[IO.File]::WriteAllText('home\AxKit\axTask.json', (ConvertTo-Json -InputObject @{checkForUpdates=$false; projectFolders=@((Resolve-Path 'projects').Path)}))"
-file tasks\Personal\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}], "new item": [{"title": "Done", "type": "check", "value": false}, {"title": "Due", "type": "date", "value": ""}, {"title": "Priority", "type": "choice", "value": "Normal", "options": ["High", "Normal", "Low"]}]}
-file "tasks\Personal\Buy milk.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Buy milk"}, {"title": "Done", "type": "check", "value": false}, {"title": "Due", "type": "date", "value": ""}]}
-file "tasks\Personal\Old chore.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Old chore"}, {"title": "Done", "type": "check", "value": true}]}
+file tasks\Personal\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Due","type":"date","value":""},{"title":"Priority","type":"choice","value":"Normal","options":["High","Normal","Low"]}],"actions":[]}
+file "tasks\Personal\Buy milk.json" {"schema":"list.json","Title":"Buy milk","Done":false,"Due":""}
+file "tasks\Personal\Old chore.json" {"schema":"list.json","Title":"Old chore","Done":true}
 start task {temp}\tasks
 expect state Lists - axTask
 type pe

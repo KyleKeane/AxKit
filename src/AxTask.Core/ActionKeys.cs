@@ -47,7 +47,54 @@ public sealed record ListAction(string Name, IReadOnlyDictionary<string, JsonNod
         return node;
     }
 
-    /// <summary>The action a key's JSON names; null for one that is not an object with a name.</summary>
+    /// <summary>
+    /// The action as a list's configuration holds it (docs/axTask/forms-framework.md section 3): its name, its key,
+    /// what it does, and what it sets, where it moves to or what it opens.
+    /// </summary>
+    public JsonObject ToAction(int digit)
+    {
+        var node = new JsonObject { ["name"] = Name, ["key"] = $"Ctrl+{digit}", ["does"] = Kind };
+        if (Set is not null)
+        {
+            node[SetKind] = ToJson()[SetKind]!.DeepClone();
+        }
+        else if (Move is not null)
+        {
+            node["to"] = Move;
+        }
+        else if (Open is not null)
+        {
+            node[OpenKind] = Open;
+        }
+
+        return node;
+    }
+
+    /// <summary>
+    /// The action of a Ctrl+number key that an entry of a configuration's <c>"actions"</c> names, with its digit;
+    /// null for an entry that is not one: another key, another kind (the kinds that run a program come with the
+    /// actions' own code), or a kind without what it needs.
+    /// </summary>
+    public static (int Digit, ListAction Action)? FromAction(JsonNode? node)
+    {
+        if (node is not JsonObject obj || FieldTypes.TextOf(obj["name"]).Trim() is not { Length: > 0 } name
+            || FieldTypes.TextOf(obj["key"]).Trim() is not { Length: 6 } key || !key.StartsWith("Ctrl+", StringComparison.OrdinalIgnoreCase)
+            || key[5] is < '1' or > '9')
+        {
+            return null;
+        }
+
+        var digit = key[5] - '0';
+        return FieldTypes.TextOf(obj["does"]).Trim().ToLowerInvariant() switch
+        {
+            SetKind when obj[SetKind] is JsonObject => (digit, Parse(new JsonObject { ["name"] = name, [SetKind] = obj[SetKind]!.DeepClone() })!),
+            MoveKind when FieldTypes.TextOf(obj["to"]).Trim() is { Length: > 0 } to => (digit, new ListAction(name, Move: to)),
+            OpenKind when FieldTypes.TextOf(obj[OpenKind]).Trim() is { Length: > 0 } open => (digit, new ListAction(name, Open: open)),
+            _ => null,
+        };
+    }
+
+    /// <summary>The action in the shape an acceptance is sealed over (<see cref="ActionKeys.MarkText"/>), the action keys' own until 2026-11-21; null for one that is not an object with a name.</summary>
     public static ListAction? Parse(JsonNode? node)
     {
         if (node is not JsonObject obj || obj["name"] is not JsonValue nameValue || !nameValue.TryGetValue<string>(out var name) || name.Trim().Length == 0)
@@ -80,45 +127,62 @@ public sealed record ListAction(string Name, IReadOnlyDictionary<string, JsonNod
     }
 }
 
-/// <summary>The action keys of a list, under <c>"keys"</c> in its <c>list.json</c>, one entry per digit 1 to 9 (RP-8).</summary>
+/// <summary>
+/// The action keys of a list (RP-8): the entries of its configuration's <c>"actions"</c> that are on Ctrl+1 to
+/// Ctrl+9 and set fields, move the item or open something (docs/axTask/forms-framework.md section 3; under
+/// <c>"keys"</c> in the earlier format, which the conversion turns into these). The other kinds of action and the
+/// keys with Shift come with the actions' own code.
+/// </summary>
 public static class ActionKeys
 {
-    public const string RootKey = "keys";
     public const int First = 1;
     public const int Last = 9;
 
-    /// <summary>The digits that have an action, with it; a list without <c>list.json</c> has none.</summary>
-    public static IReadOnlyDictionary<int, ListAction> Read(ItemDocument? list)
+    /// <summary>The digits that have an action, with it, the first entry of a key counting; a list without a configuration has none.</summary>
+    public static IReadOnlyDictionary<int, ListAction> Read(ListConfig? list)
     {
         var keys = new Dictionary<int, ListAction>();
-        if (list?.Extra(RootKey) is JsonObject root)
+        foreach (var entry in list?.Actions ?? [])
         {
-            for (var digit = First; digit <= Last; digit++)
+            if (ListAction.FromAction(entry) is { } read)
             {
-                if (ListAction.Parse(root[digit.ToString()]) is { } action)
-                {
-                    keys[digit] = action;
-                }
+                keys.TryAdd(read.Digit, read.Action);
             }
         }
 
         return keys;
     }
 
-    /// <summary>The list's details with the digit's action set, or removed with null (the whole key gone when none is left).</summary>
-    public static ItemDocument With(ItemDocument list, int digit, ListAction? action)
+    /// <summary>
+    /// The configuration with the digit's action set, or removed with null: in the place of the entry the key had,
+    /// at the end for a key that had none. Every other entry of <c>"actions"</c> stays as it is.
+    /// </summary>
+    public static ListConfig With(ListConfig list, int digit, ListAction? action)
     {
-        var root = list.Extra(RootKey) is JsonObject existing ? (JsonObject)existing.DeepClone() : new JsonObject();
-        if (action is null)
+        var actions = new JsonArray();
+        var placed = false;
+        foreach (var entry in list.Actions ?? [])
         {
-            root.Remove(digit.ToString());
-        }
-        else
-        {
-            root[digit.ToString()] = action.ToJson();
+            if (ListAction.FromAction(entry) is { } read && read.Digit == digit)
+            {
+                if (action is not null && !placed)
+                {
+                    actions.Add(action.ToAction(digit));
+                    placed = true;
+                }
+
+                continue;
+            }
+
+            actions.Add(entry?.DeepClone());
         }
 
-        return list.WithExtra(RootKey, root.Count == 0 ? null : root);
+        if (action is not null && !placed)
+        {
+            actions.Add(action.ToAction(digit));
+        }
+
+        return list.WithExtra(ListConfig.ActionsKey, actions);
     }
 
     /// <summary>

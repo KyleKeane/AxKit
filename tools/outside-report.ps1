@@ -95,19 +95,27 @@ if (-not (Test-Path -LiteralPath $outside)) {
 }
 $listFile = Join-Path $outside 'list.json'
 if (-not (Test-Path -LiteralPath $listFile)) {
-    $list = [pscustomobject]@{
-        format = 'axkit-list 1'
-        fields = @(
-            [pscustomobject]@{ title = 'Section'; type = 'text'; value = 'Lists' },
-            [pscustomobject]@{ title = 'Notes'; type = 'longtext'; value = 'Outside reports: one entry for each report of KyleKeane/AxKit-reports, with the assistant''s harm review and the scope it proposes. Nothing of a report is worked on until you approve its entry with your passphrase (Approve this report, in the Context menu). docs/axKit/outside-reports.md.' }
-        )
-        'new item' = @(Get-ListTemplate)
+    # The list's configuration (docs/axTask/forms-framework.md section 11): its details, the fields of its entries.
+    $list = [ordered]@{
+        format = 'axkit-list 2'
+        details = [ordered]@{
+            Section = 'Lists'
+            Notes = 'Outside reports: one entry for each report of KyleKeane/AxKit-reports, with the assistant''s harm review and the scope it proposes. Nothing of a report is worked on until you approve its entry with your passphrase (Approve this report, in the Context menu). docs/axKit/outside-reports.md.'
+        }
+        'item fields' = @(Get-ListTemplate)
+        actions = @()
     }
-    Save-ListItem $listFile $list
+    Save-ListItem $listFile ([pscustomobject]$list)
 }
+if (Test-EarlierList $outside) {
+    Refuse 'the outside reports list is written in axTask''s earlier format, which the scripts no longer read. Open the list in axTask and convert it (Enter on the list) first.'
+}
+$listConfig = Get-ListConfig $outside
+if ($null -eq $listConfig) { Refuse 'the outside reports list has no configuration that reads (list.json, format axkit-list 2).' }
 
+# A value of an entry as text, by its name; empty when the entry holds none.
 function Get-Field($document, [string]$named) {
-    return ($document.fields | Where-Object { $_.title -eq $named } | Select-Object -First 1)
+    return [string](Get-ItemValue $document $named)
 }
 
 function Get-FileStem([string]$of) {
@@ -127,15 +135,14 @@ if ($Form -eq 'new') {
     $numbers = @(Get-ReportNumbers $Report)
     if ($numbers.Count -eq 0) { Refuse "-Report must be written 'KyleKeane/AxKit-reports issue <n>' (or 'issues <n> and <m>')." }
     foreach ($entry in $entries) {
-        $theirs = @(Get-ReportNumbers ([string](Get-Field $entry.Document 'Report').value))
+        $theirs = @(Get-ReportNumbers (Get-Field $entry.Document 'Report'))
         foreach ($number in $numbers) {
             if ($theirs -contains $number) { Refuse "report $number already has its entry: $($entry.Title)." }
         }
     }
-    $fields = @([pscustomobject]@{ title = 'Title'; type = 'text'; value = $Title.Trim() }) + @(Get-ListTemplate)
-    $document = [pscustomobject]@{ format = 'axkit-item 1'; fields = $fields }
-    (Get-Field $document 'Report').value = $Report.Trim()
-    (Get-Field $document 'Received').value = (Get-Date).ToString('yyyy-MM-dd')
+    $document = New-ListItem $Title.Trim() $listConfig
+    $document = Set-ItemValue $document 'Report' $Report.Trim() $listConfig
+    $document = Set-ItemValue $document 'Received' (Get-Date).ToString('yyyy-MM-dd') $listConfig
     $file = Join-Path $outside ((Get-FileStem $Title) + '.json')
     if (Test-Path -LiteralPath $file) { Refuse "an entry of that name exists: $([IO.Path]::GetFileName($file))." }
     Save-ListItem $file $document
@@ -148,7 +155,16 @@ $found = @(Find-ListItems $entries $Name)
 if ($found.Count -eq 0) { Refuse "no entry's title holds '$Name'." }
 if ($found.Count -gt 1) { Refuse "'$Name' names $($found.Count) entries; use more of the title." }
 $entry = $found[0]
-$state = [string](Get-Field $entry.Document 'State').value
+$state = Get-Field $entry.Document 'State'
+
+# The entry written with these values set, each where the list's configuration has its field when the file lacked it.
+function Save-Entry([System.Collections.IDictionary]$changes) {
+    $changed = $entry.Document
+    foreach ($field in $changes.Keys) {
+        $changed = Set-ItemValue $changed $field $changes[$field] $listConfig
+    }
+    Save-ListItem $entry.File $changed
+}
 
 if ($Form -eq 'done') {
     $key = Get-PinnedApprovalKey $Repository
@@ -156,8 +172,7 @@ if ($Form -eq 'done') {
     if ($state -ne 'Approved' -or $checked.Count -ne 1 -or -not $checked[0].Valid) {
         Refuse "only an entry the maintainer approved, with an approval that verifies, is done; this one is '$state'."
     }
-    (Get-Field $entry.Document 'State').value = 'Done'
-    Save-ListItem $entry.File $entry.Document
+    Save-Entry ([ordered]@{ 'State' = 'Done' })
     Write-Host "Outside reports, done: $($entry.Title)"
     exit 0
 }
@@ -169,10 +184,7 @@ if ($Form -eq 'reopen') {
     $checked = @(Get-OutsideEntries $outside $key | Where-Object { $_.Path -eq $entry.File })
     if ($state -ne 'Approved' -or $checked.Count -ne 1) { Refuse "only an Approved entry is offered again; this one is '$state'." }
     if ($checked[0].Valid) { Refuse 'its approval verifies with the pinned key: it stands, and nothing is taken back.' }
-    (Get-Field $entry.Document 'State').value = 'Awaiting approval'
-    (Get-Field $entry.Document 'Approval').value = ''
-    (Get-Field $entry.Document 'Approved on').value = ''
-    Save-ListItem $entry.File $entry.Document
+    Save-Entry ([ordered]@{ 'State' = 'Awaiting approval'; 'Approval' = ''; 'Approved on' = '' })
     Write-Host "Outside reports, awaiting the maintainer's approval again: $($entry.Title)"
     exit 0
 }
@@ -186,30 +198,31 @@ if ($Form -eq 'review') {
     if ($Priority -and @('High', 'Normal', 'Low') -notcontains $Priority) { Refuse 'the priority must be High, Normal or Low.' }
     $values = [ordered]@{ 'Harm review' = $Review; 'Category' = $Category; 'Item' = $Item; 'Proposed' = $Proposed; 'Proposed priority' = $Priority }
     $written = @()
+    $reviewed = [ordered]@{}
     foreach ($field in $values.Keys) {
         if ($PSBoundParameters.ContainsKey(@{ 'Harm review' = 'Review'; 'Category' = 'Category'; 'Item' = 'Item'; 'Proposed' = 'Proposed'; 'Proposed priority' = 'Priority' }[$field])) {
-            (Get-Field $entry.Document $field).value = "$($values[$field])".Trim()
+            $reviewed[$field] = "$($values[$field])".Trim()
             $written += $field
         }
     }
     if ($written.Count -eq 0) { Refuse 'give at least one of -Review, -Category, -Item, -Proposed, -Priority.' }
-    (Get-Field $entry.Document 'State').value = 'To review'
-    Save-ListItem $entry.File $entry.Document
+    $reviewed['State'] = 'To review'
+    Save-Entry $reviewed
     Write-Host "Outside reports, written ($($written -join ', ')): $($entry.Title)"
     exit 0
 }
 
 # ready
-$harm = [string](Get-Field $entry.Document 'Harm review').value
-$chosen = [string](Get-Field $entry.Document 'Category').value
-$itemTitle = [string](Get-Field $entry.Document 'Item').value
-$scope = [string](Get-Field $entry.Document 'Proposed').value
-$proposedPriority = [string](Get-Field $entry.Document 'Proposed priority').value
+$harm = Get-Field $entry.Document 'Harm review'
+$chosen = Get-Field $entry.Document 'Category'
+$itemTitle = Get-Field $entry.Document 'Item'
+$scope = Get-Field $entry.Document 'Proposed'
+$proposedPriority = Get-Field $entry.Document 'Proposed priority'
 if (-not $harm.Trim()) { Refuse 'the Harm review is empty; "Nothing found." is a finding and is written.' }
 # What he signs is what he hears (OR-5.6): axTask refuses to sign an entry with a character that is not spoken, so it
 # is named here already.
 foreach ($signedField in @('Title', 'Report', 'Category', 'Item', 'Proposed priority', 'Proposed', 'Harm review')) {
-    $unheard = Get-UnheardCharacter ([string](Get-Field $entry.Document $signedField).value)
+    $unheard = Get-UnheardCharacter (Get-Field $entry.Document $signedField)
     if ($unheard) { Refuse "the field $signedField holds a character that is not spoken ($unheard): write it again without it." }
 }
 if ($categories -notcontains $chosen) { Refuse 'the entry has no category.' }
@@ -224,7 +237,6 @@ if ($acting -contains $chosen) {
         Refuse "no priorities item has the exact title '$itemTitle'."
     }
 }
-(Get-Field $entry.Document 'State').value = 'Awaiting approval'
-Save-ListItem $entry.File $entry.Document
+Save-Entry ([ordered]@{ 'State' = 'Awaiting approval' })
 Write-Host "Outside reports, awaiting the maintainer's approval: $($entry.Title)"
 exit 0

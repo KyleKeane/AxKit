@@ -79,6 +79,7 @@ public sealed class TaskToolsTests : IDisposable
             new(TaskRules.DueField, FieldTypes.Date, JsonValue.Create(string.Empty), []),
             new("Priority", FieldTypes.Choice, JsonValue.Create("Normal"), ["High", "Normal", "Low"]),
         ];
+        template.Add(new("Notes", FieldTypes.LongText, JsonValue.Create(string.Empty), []));
         var (item, refused) = TaskTools.NewItem(" Call the dentist ", template, [new("due", "+7"), new("Priority", "high"), new("Notes", "Ask about Tuesday")], Today);
         Assert.Null(refused);
         Assert.Equal("Call the dentist", item!.Title);
@@ -88,13 +89,30 @@ public sealed class TaskToolsTests : IDisposable
         Assert.Equal(FieldTypes.LongText, item.Fields[4].Type);
         Assert.Equal("Ask about Tuesday", FieldTypes.TextOf(item.Fields[4].Value));
         Assert.False(FieldTypes.IsTrue(item.Fields[1].Value));
+
+        // Its file: the link, the Title and the list's fields in the list's order, one member a line.
+        Assert.Equal(
+            "{\r\n  \"schema\": \"list.json\",\r\n  \"Title\": \"Call the dentist\",\r\n  \"Done\": false,\r\n  \"Due\": \"2026-11-18\",\r\n  \"Priority\": \"High\",\r\n  \"Notes\": \"Ask about Tuesday\"\r\n}\r\n",
+            ItemFolder.NewItemFile(item, ListConfig.New(template)).ToText());
+    }
+
+    [Fact]
+    public void A_field_the_list_does_not_have_is_refused_with_the_fields_it_has()
+    {
+        // A value the list's configuration does not name would be kept in the file and shown to no one (AF-11.3).
+        var (item, refused) = TaskTools.NewItem("Call the dentist", TaskRules.DefaultTemplate, [new("Notes", "Ask about Tuesday")], Today);
+        Assert.Null(item);
+        Assert.Equal("Notes is not a field of this list. Its fields: Done, Start, Due.", refused);
+        Assert.Equal("Notes is not a field of this list: its items have only a title.", TaskTools.NewItem("Milk", [], [new("Notes", "x")], Today).Refused);
+        Assert.StartsWith("schema is not a field of this list", TaskTools.NewItem("Milk", [], [new("schema", "other.json")], Today).Refused);
     }
 
     [Fact]
     public void The_same_item_as_New_item_makes_when_no_value_is_given()
     {
         var (item, _) = TaskTools.NewItem("Milk", TaskRules.DefaultTemplate, [], Today);
-        Assert.Equal(ItemDocument.NewItem("Milk", TaskRules.DefaultTemplate).ToText(), item!.ToText());
+        var config = ListConfig.New(TaskRules.DefaultTemplate);
+        Assert.Equal(FlatItem.New("Milk", config).ToText(), ItemFolder.NewItemFile(item!, config).ToText());
     }
 
     [Fact]
@@ -134,19 +152,20 @@ public sealed class TaskToolsTests : IDisposable
     [Fact]
     public void An_item_is_given_with_its_title_whether_it_is_done_and_its_fields_a_password_never()
     {
-        var document = ItemDocument.NewItem("Fix the tap", TaskRules.DefaultTemplate).WithField(-1, "Secret", FieldTypes.Password, []).WithValue(4, JsonValue.Create("hunter2"));
-        var item = TaskTools.ItemOf(new ItemFile(@"D:\Tasks\Home\Fix the tap.json", document, document.ToText()));
+        // A password field (a type of axPass's, should a list's configuration name one) is never given.
+        var config = ListConfig.New([.. TaskRules.DefaultTemplate, new("Secret", FieldTypes.Password, JsonValue.Create(string.Empty), [])]);
+        var flat = FlatItem.New("Fix the tap", config).With("Secret", JsonValue.Create("hunter2")).With("Sprint", JsonValue.Create("November"));
+        var item = TaskTools.ItemOf(new ItemFile(@"D:\Tasks\Home\Fix the tap.json", flat, config, flat.ToText()));
         Assert.Equal("Fix the tap", item["title"]!.GetValue<string>());
         Assert.False(item["done"]!.GetValue<bool>());
         Assert.Equal("protected", item["fields"]![4]!["value"]!.GetValue<string>());
         Assert.DoesNotContain("hunter2", item.ToJsonString(), StringComparison.Ordinal);
-        var plain = ItemDocument.NewItem("Milk", []);
-        Assert.Null(TaskTools.ItemOf(new ItemFile(@"D:\Tasks\Shopping\Milk.json", plain, plain.ToText()))["done"]);
+        // A value the list does not name is kept in the file and is no field given.
+        Assert.DoesNotContain("Sprint", item.ToJsonString(), StringComparison.Ordinal);
+        var plain = ListConfig.New([]);
+        var milk = FlatItem.New("Milk", plain);
+        Assert.Null(TaskTools.ItemOf(new ItemFile(@"D:\Tasks\Shopping\Milk.json", milk, plain, milk.ToText()))["done"]);
     }
 
-    private static void List(string folder)
-    {
-        Directory.CreateDirectory(folder);
-        File.WriteAllText(Path.Combine(folder, ItemDocument.ListFile), ItemDocument.NewList([]).ToText());
-    }
+    private static void List(string folder) => TestLists.List(folder, fields: []);
 }

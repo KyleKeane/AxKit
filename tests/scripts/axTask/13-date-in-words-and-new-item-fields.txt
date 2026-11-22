@@ -1,9 +1,10 @@
-# Workflow: Set a date in words, and give new items a task's fields
+# Workflow: Set a date in words, and add an item with its list's fields
 # axTask, docs/axTask/user-guide.md "Changing things", in the detail pane: Enter on a date and time field takes a date
-# in words, a space and a time ("tomorrow 14:00"); Context, Use these fields for new items gives the list's new items
-# the fields of the item selected, emptied (docs/axTask/SPEC.md, the list's "new item" fields in list.json).
+# in words, a space and a time ("tomorrow 14:00"); a new item gets the fields of its list's configuration, each with
+# the value a new item starts with (docs/axTask/forms-framework.md AF-13.1, the "item fields" of list.json).
 file home\AxKit\axTask.json {"checkForUpdates": false}
-file "tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}, {"title": "Due", "type": "datetime", "value": ""}, {"title": "Room", "type": "text", "value": "Kitchen"}]}
+file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Due","type":"datetime","value":""},{"title":"Room","type":"text","value":""}],"actions":[]}
+file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false,"Due":"","Room":"Kitchen"}
 start task {temp}\tasks
 expect focus Your lists, heading level 1
 keys down
@@ -32,12 +33,9 @@ run findstr /l /c:"14:00" "tasks\Home\Fix the tap.json"
 keys shift+tab
 expect focus Fix the tap, due
 
-# Goal: Give a list's new items the fields of a task
-# Context, Use these fields for new items: the fields of the item selected, without the Title, are the list's own
-# from now on, and a new item starts with them, emptied.
-do Use these fields for new items
-expect said ! New items in Home get: Done, Due, Room
-run findstr /l /c:"\"new item\"" "tasks\Home\list.json"
+# Goal: Add an item with its list's fields
+# Ctrl+N in the list: the new item has the list's fields, in the list's order, each empty as the configuration
+# starts it; the first item keeps its own values.
 keys ctrl+n
 expect state "notice":"New item"
 type Paint the door

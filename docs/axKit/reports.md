@@ -166,9 +166,15 @@ part sent leaves the box unchecked, or cancels.
 
 ## 5. Saving: the Reports list
 
-- **RP-5.1 The folder.** `%APPDATA%\AxKit\reports` is an axTask list (docs/axKit/item-apps.md section 4): `list.json`
-  with the template below, written when the folder is first made, and one JSON file per report, named after its Title
-  (IA-4.5). axTask opens it as any folder; the Help menu's "Your reports" opens it (RP-2.2). axJSON opens any item.
+- **RP-5.1 The folder.** `%APPDATA%\AxKit\reports` is an axTask list (docs/axKit/item-apps.md section 4): `list.json`,
+  the list's configuration with the fields below as its `item fields`, written when the folder is first made, and one
+  JSON file per report, its values with the link to that configuration, named after its Title (IA-4.5). axTask opens
+  it as any folder; the Help menu's "Your reports" opens it (RP-2.2). axJSON opens any item. A list an earlier
+  version of axKit made, in the format before 2026-11-21, is converted the first time the report form or the sender
+  meets it (`ReportFiles.EnsureList`; docs/axTask/forms-framework.md AF-13.6), a copy of the folder kept beside it as
+  `reports, before conversion`, without a question: the list is the form's own, and a report that waits in it would
+  otherwise never be read and sent. The report's id (RP-6.9) is a value of the file that is no field of the list: it
+  is kept, and axTask names it in the item's last line ("1 more field kept: reportId").
 - **RP-5.2 The fields** (the template's order): Title; Kind (choice: Feedback, the template's value, Bug or Feature
   request); Report (text, the user's words); App (text, as RP-3 item 3); Where (text); Actions (text, one action per
   line); Log (text); Created (date and time); Status (text, Draft as the template's value: Draft, Not sent yet, or Sent, with the reason after a colon when not sent: "Not sent
@@ -392,15 +398,17 @@ What happens to a report once it is in, its harm review and the maintainer's sig
 
 - **RP-8.1 The keys.** Ctrl+1 to Ctrl+9 in axTask, anywhere in the window, run the action the current list assigns to
   that number, on the item selected in the navigator (or the item whose fields the pane shows). The list's `list.json`
-  holds them under `"keys"`, one entry per digit:
+  holds them among its `"actions"`, each with its name, its key and what it does (since 2026-11-21,
+  docs/axTask/forms-framework.md section 3; under `"keys"` by digit before, `"1": { "name": "Done", "set": { "Done":
+  true } }`, which the conversion of a list turns into these, the same keys and the same actions):
 
   ```json
-  "keys": {
-    "1": { "name": "Done", "set": { "Done": true } },
-    "2": { "name": "Make it a bug", "set": { "Kind": "Bug" } },
-    "3": { "name": "Move to Later", "move": "../Later" },
-    "4": { "name": "Open on GitHub", "open": "Issue" }
-  }
+  "actions": [
+    { "name": "Done", "key": "Ctrl+1", "does": "set", "set": { "Done": true } },
+    { "name": "Make it a bug", "key": "Ctrl+2", "does": "set", "set": { "Kind": "Bug" } },
+    { "name": "Move to Later", "key": "Ctrl+3", "does": "move", "to": "../Later" },
+    { "name": "Open on GitHub", "key": "Ctrl+4", "does": "open", "open": "Issue" }
+  ]
   ```
 
   One kind of action per key: `set` (fields to values, one undo step, IA-5.4), `move` (to a list by a path relative to

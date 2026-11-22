@@ -113,9 +113,21 @@ public sealed partial class TaskForm
             return new { error = "fields is an object of field titles and texts, such as {\"Due\": \"2026-11-18\"}." };
         }
 
-        var details = ItemFolder.ReadList(list.Folder);
-        var template = TaskRules.TemplateOf(details);
-        var (item, wrong) = TaskTools.NewItem(McpProtocol.Text(arguments["title"]), template, values, DateOnly.FromDateTime(DateTime.Now));
+        // The list's configuration gives the item its fields. A list of the earlier format, and one whose
+        // configuration does not read, take nothing until the user has converted or mended them (AF-13.6, AF-11.7).
+        if (ItemFolder.IsEarlier(list.Folder))
+        {
+            return new { error = $"{list.Name} is written in axTask's earlier format: the user converts it in the axTask window first (Enter on the list)." };
+        }
+
+        var read = ItemFolder.ReadConfig(list.Folder);
+        if (read is { Config: null, Text: not null })
+        {
+            return new { error = $"The configuration of {list.Name} does not read, so nothing is added to the list: the user mends it first (Ctrl+J on the list)." };
+        }
+
+        var config = read.Config ?? ItemFolder.StarterConfig(list.Folder);
+        var (item, wrong) = TaskTools.NewItem(McpProtocol.Text(arguments["title"]), config.ItemFields, values, DateOnly.FromDateTime(DateTime.Now));
         if (item is null)
         {
             return new { error = wrong };
@@ -125,12 +137,13 @@ public sealed partial class TaskForm
         var path = ItemFiles.FreePath(list.Folder, ItemFiles.FileStem(title), ".json");
         var said = $"{McpRun.Speaker(client)} added {title} to {list.Name}";
         var shownHere = _smart is null && !Gathered && _folder.Equals(list.Folder, StringComparison.OrdinalIgnoreCase);
-        if (!Commit(new Step([FileChange.Write(path, null, item.ToText())], said), shownHere ? path : SelectedKey()))
+        var file = ItemFolder.NewItemFile(item, config);
+        if (!Commit(new Step(NewItemParts(list.Folder, (config, read.Text), path, file), said), shownHere ? path : SelectedKey()))
         {
             return new { error = $"{title} could not be written; the window shows why." };
         }
 
         ChimeForMcp();
-        return new { added = title, list = list.Name, said, item = TaskTools.ItemOf(new ItemFile(path, item, item.ToText())) };
+        return new { added = title, list = list.Name, said, item = TaskTools.ItemOf(new ItemFile(path, file, config, file.ToText())) };
     }
 }

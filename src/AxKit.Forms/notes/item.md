@@ -16,7 +16,7 @@ Part of the notes of `src/AxKit.Forms` (the index is `src/AxKit.Forms/CLAUDE.md`
     - `StepField` (IA-5.6, AX-8.10 rule 4, 2026-11-14): Right and Left in the detail pane, a choice's next and previous value and a check checked and unchecked through `AxKit.Core/FieldStep`, saved and said as every change (`SetValue`), the edge sound on anything else; until then both keys played the edge sound alone;
     - and `ChooseFromList`, the list notice both apps use, with `ChangeLongText`, a long text's box, where Enter is a new line and Ctrl+Enter keeps the text (IA-5.7; `AskText`, the one-field notice, is the base's since 2026-11-09, `AxKitForm.Notices.cs`).
   - The app fills in:
-    - the levels (`ReadLevel`, `EnterList`, `LeaveList`; `EntryRefused` for a list Right and Enter do not go into, its reason said, axMCP's remote server);
+    - the levels (`ReadLevel`, `EnterList`, `LeaveList`; `EntryRefused` for a list Right and Enter do not go into, its reason said, axMCP's remote server; an empty reason says nothing, the app having asked something itself, axTask's question before a list of the earlier format is converted);
     - the detail (`DetailOf`, `SpokenValue`);
     - the saving;
     - the navigator's commands (`NewItem`, `NewList`, `RenameItem`, `RenameTo` (an item's rename by default), `RenameRefused`, `DeleteRow`, `Undo`, `CheckInNavigator`);

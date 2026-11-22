@@ -209,7 +209,7 @@ public static class ReportSender
     private static bool Failed(Exception ex, CancellationToken cancellation) =>
         !cancellation.IsCancellationRequested && ex is GitHubException or HttpRequestException or OperationCanceledException or IOException;
 
-    private static void Mark(IReadOnlyList<(string Path, ItemDocument Item)> items, string reason)
+    private static void Mark(IReadOnlyList<(string Path, FlatItem Item)> items, string reason)
     {
         foreach (var (path, item) in items)
         {

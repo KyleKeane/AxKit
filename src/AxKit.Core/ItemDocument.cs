@@ -1,104 +1,49 @@
-using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace AxKit.Core;
 
-/// <summary>One field as the window shows it (docs/axKit/item-apps.md IA-4.1): its title, its type, its value as in the file, and a choice's options.</summary>
+/// <summary>One field as the window shows it (docs/axKit/item-apps.md IA-4.1): its title, its type, its value, and a choice's options.</summary>
 public sealed record ItemField(string Title, string Type, JsonNode? Value, IReadOnlyList<string> Options);
 
 /// <summary>
-/// An item file or a list's <c>list.json</c> (IA-4.1, IA-4.3): a JSON object with a <c>format</c> and a list of
-/// <c>fields</c>, each a title, a type and a value, and for a list a <c>new item</c> template. The object is kept
-/// whole, so that keys the app does not know are written back as they were read (IA-4.1). Every change returns a new
-/// document; the one read stays as it was, for the check against the file on disk and for undo.
+/// What the item window shows and changes (IA-4.1): a list of fields in their order, each a title, a type and a
+/// value. It lives in memory only and has no file shape of its own since 2026-11-21: an app makes it from what it
+/// holds (axTask from an item's values read through its list's configuration, <see cref="ItemView"/>; axPass from a
+/// KeePassXC entry; axMCP from a tool's arguments) and writes a change back in its own way. The files of the lists
+/// are <see cref="FlatItem"/> and <see cref="ListConfig"/>. Every change returns a new document; the one made stays
+/// as it was, for the check against the file on disk and for undo.
 /// </summary>
 public sealed class ItemDocument
 {
-    public const string ItemFormat = "axkit-item 1";
-    public const string ListFormat = "axkit-list 1";
-    public const string ListFile = "list.json";
+    public const string ListFile = ListConfig.FileName;
     public const string TitleField = "Title";
 
-    private const string FieldsKey = "fields";
-    private const string TemplateKey = "new item";
+    private readonly IReadOnlyList<ItemField> _fields;
 
-    private static readonly JsonSerializerOptions Indented = new() { WriteIndented = true, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
-
-    private readonly JsonObject _root;
-
-    private ItemDocument(JsonObject root)
+    private ItemDocument(IReadOnlyList<ItemField> fields)
     {
-        _root = root;
+        _fields = fields;
     }
 
-    /// <summary>The fields in the file's order.</summary>
-    public IReadOnlyList<ItemField> Fields => Read(_root[FieldsKey] as JsonArray);
-
-    /// <summary>A list's template (IA-4.3): the fields a new item gets after its Title; empty for an item.</summary>
-    public IReadOnlyList<ItemField> Template => Read(_root[TemplateKey] as JsonArray);
-
-    /// <summary>Whether the list's file names a template at all, so that the app's default applies when it does not (TK-4.1).</summary>
-    public bool HasTemplate => _root[TemplateKey] is JsonArray;
+    /// <summary>The fields in their order.</summary>
+    public IReadOnlyList<ItemField> Fields => _fields;
 
     /// <summary>The Title field's text; empty when there is none.</summary>
-    public string Title => IndexOf(TitleField) is var i && i >= 0 && Fields[i].Value is JsonValue value && value.TryGetValue<string>(out var text) ? text : string.Empty;
+    public string Title => IndexOf(TitleField) is var i && i >= 0 && _fields[i].Value is JsonValue value && value.TryGetValue<string>(out var text) ? text : string.Empty;
 
-    /// <summary>The document in a file's text; an <see cref="InvalidDataException"/> when it is not JSON or not an object with a list of fields.</summary>
-    public static ItemDocument Parse(string text)
-    {
-        JsonNode? node;
-        try
-        {
-            node = JsonNode.Parse(text, documentOptions: new JsonDocumentOptions { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip });
-        }
-        catch (JsonException ex)
-        {
-            throw new InvalidDataException("Not JSON: " + ex.Message, ex);
-        }
-
-        if (node is not JsonObject root)
-        {
-            throw new InvalidDataException("Not an item: the file is not a JSON object");
-        }
-
-        if (root[FieldsKey] is not JsonArray fields || fields.Any(field => field is not JsonObject))
-        {
-            throw new InvalidDataException("Not an item: no list of fields");
-        }
-
-        return new ItemDocument(root);
-    }
+    /// <summary>The document of these fields, in this order.</summary>
+    public static ItemDocument Of(IEnumerable<ItemField> fields) => new([.. fields.Select(Own)]);
 
     /// <summary>A new item (IA-4.3): its Title, then the template's fields with their values.</summary>
-    public static ItemDocument NewItem(string title, IReadOnlyList<ItemField> template)
-    {
-        var fields = new JsonArray { FieldObject(TitleField, FieldTypes.Text, JsonValue.Create(title), []) };
-        foreach (var field in template.Where(field => !field.Title.Equals(TitleField, StringComparison.OrdinalIgnoreCase)))
-        {
-            fields.Add(FieldObject(field.Title, field.Type, field.Value?.DeepClone(), field.Options));
-        }
-
-        return new ItemDocument(new JsonObject { ["format"] = ItemFormat, [FieldsKey] = fields });
-    }
-
-    /// <summary>A list's details with no fields of its own and the template given (IA-4.4: written the first time a detail changes).</summary>
-    public static ItemDocument NewList(IReadOnlyList<ItemField> template)
-    {
-        var root = new JsonObject { ["format"] = ListFormat, [FieldsKey] = new JsonArray { FieldObject("Notes", FieldTypes.LongText, JsonValue.Create(string.Empty), []) } };
-        root[TemplateKey] = TemplateArray(template);
-        return new ItemDocument(root);
-    }
-
-    /// <summary>The text written to the file: indented JSON with Windows line ends.</summary>
-    public string ToText() => _root.ToJsonString(Indented).ReplaceLineEndings("\r\n") + "\r\n";
+    public static ItemDocument NewItem(string title, IReadOnlyList<ItemField> template) =>
+        Of([new ItemField(TitleField, FieldTypes.Text, JsonValue.Create(title), []), .. template.Where(field => !field.Title.Equals(TitleField, StringComparison.OrdinalIgnoreCase))]);
 
     /// <summary>The index of the first field with this title (case ignored), -1 for none.</summary>
     public int IndexOf(string title)
     {
-        var fields = Fields;
-        for (var i = 0; i < fields.Count; i++)
+        for (var i = 0; i < _fields.Count; i++)
         {
-            if (fields[i].Title.Equals(title, StringComparison.OrdinalIgnoreCase))
+            if (_fields[i].Title.Equals(title, StringComparison.OrdinalIgnoreCase))
             {
                 return i;
             }
@@ -109,45 +54,23 @@ public sealed class ItemDocument
 
     /// <summary>Whether field <paramref name="index"/> is still the one shown, by title and type (IA-5.5).</summary>
     public bool Holds(int index, ItemField shown) =>
-        index >= 0 && index < Fields.Count && Fields[index].Title == shown.Title && Fields[index].Type == shown.Type;
+        index >= 0 && index < _fields.Count && _fields[index].Title == shown.Title && _fields[index].Type == shown.Type;
 
-    public ItemDocument WithValue(int index, JsonNode? value) => Change(fields => ((JsonObject)fields[index]!)["value"] = value?.DeepClone());
-
-    /// <summary>
-    /// A key of the file's root beyond the format, the fields and the template, kept as the file has it (IA-4.1): a
-    /// list's action keys (docs/axKit/reports.md RP-8.1). Null for none.
-    /// </summary>
-    public JsonNode? Extra(string key) => _root[key];
-
-    /// <summary>The root key set, or removed with null; the fields as they were.</summary>
-    public ItemDocument WithExtra(string key, JsonNode? value)
-    {
-        var root = (JsonObject)_root.DeepClone();
-        if (value is null)
-        {
-            root.Remove(key);
-        }
-        else
-        {
-            root[key] = value.DeepClone();
-        }
-
-        return new ItemDocument(root);
-    }
+    public ItemDocument WithValue(int index, JsonNode? value) => Change(fields => fields[index] = fields[index] with { Value = value?.DeepClone() });
 
     public ItemDocument WithTitle(string title)
     {
         var index = IndexOf(TitleField);
         return index >= 0
             ? WithValue(index, JsonValue.Create(title))
-            : Change(fields => fields.Insert(0, FieldObject(TitleField, FieldTypes.Text, JsonValue.Create(title), [])));
+            : Change(fields => fields.Insert(0, new ItemField(TitleField, FieldTypes.Text, JsonValue.Create(title), [])));
     }
 
     /// <summary>A new field after <paramref name="after"/> (-1 for the end), empty (IA-4.2).</summary>
     public ItemDocument WithField(int after, string title, string type, IReadOnlyList<string> options) =>
         Change(fields =>
         {
-            var field = FieldObject(title, type, FieldTypes.Empty(type), options);
+            var field = new ItemField(title, type, FieldTypes.Empty(type), type == FieldTypes.Choice ? [.. options] : []);
             if (after < 0 || after >= fields.Count - 1)
             {
                 fields.Add(field);
@@ -160,13 +83,13 @@ public sealed class ItemDocument
 
     public ItemDocument WithoutField(int index) => Change(fields => fields.RemoveAt(index));
 
-    public ItemDocument WithFieldTitle(int index, string title) => Change(fields => ((JsonObject)fields[index]!)["title"] = title);
+    public ItemDocument WithFieldTitle(int index, string title) => Change(fields => fields[index] = fields[index] with { Title = title });
 
     /// <summary>The field moved one place up or down; null at the end it would leave.</summary>
     public ItemDocument? WithFieldMoved(int index, int direction)
     {
         var to = index + direction;
-        if (to < 0 || to >= Fields.Count)
+        if (to < 0 || to >= _fields.Count)
         {
             return null;
         }
@@ -179,70 +102,13 @@ public sealed class ItemDocument
         });
     }
 
-    /// <summary>A list's template replaced (IA-4.3).</summary>
-    public ItemDocument WithTemplate(IReadOnlyList<ItemField> template)
+    private ItemDocument Change(Action<List<ItemField>> change)
     {
-        var root = (JsonObject)_root.DeepClone();
-        root[TemplateKey] = TemplateArray(template);
-        return new ItemDocument(root);
+        var fields = _fields.ToList();
+        change(fields);
+        return new ItemDocument(fields);
     }
 
-    private ItemDocument Change(Action<JsonArray> change)
-    {
-        var root = (JsonObject)_root.DeepClone();
-        change((JsonArray)root[FieldsKey]!);
-        return new ItemDocument(root);
-    }
-
-    /// <summary>
-    /// The template as <c>list.json</c> carries it, every field with the value given, which a new item then starts with
-    /// (IA-4.3; a GitHub list's "unlabelled" and "open", the Reports list's Feedback and Draft). Until 2026-11-09 every
-    /// value was emptied here, so a list written by the app gave new items empty fields; axTask's Use these fields for
-    /// new items empties the values itself, since an item's own values are not a template's.
-    /// </summary>
-    private static JsonArray TemplateArray(IReadOnlyList<ItemField> template)
-    {
-        var array = new JsonArray();
-        foreach (var field in template.Where(field => !field.Title.Equals(TitleField, StringComparison.OrdinalIgnoreCase)))
-        {
-            array.Add(FieldObject(field.Title, field.Type, field.Value?.DeepClone(), field.Options));
-        }
-
-        return array;
-    }
-
-    private static JsonObject FieldObject(string title, string type, JsonNode? value, IReadOnlyList<string> options)
-    {
-        var field = new JsonObject { ["title"] = title, ["type"] = type, ["value"] = value };
-        if (type == FieldTypes.Choice)
-        {
-            field["options"] = new JsonArray([.. options.Select(option => (JsonNode?)JsonValue.Create(option))]);
-        }
-
-        return field;
-    }
-
-    private static IReadOnlyList<ItemField> Read(JsonArray? fields)
-    {
-        if (fields is null)
-        {
-            return [];
-        }
-
-        var read = new List<ItemField>();
-        foreach (var node in fields)
-        {
-            if (node is not JsonObject field)
-            {
-                continue;
-            }
-
-            var options = field["options"] is JsonArray array
-                ? array.Select(option => option is JsonValue value && value.TryGetValue<string>(out var text) ? text : null).OfType<string>().ToList()
-                : [];
-            read.Add(new ItemField(FieldTypes.TextOf(field["title"]), FieldTypes.TextOf(field["type"]), field["value"], options));
-        }
-
-        return read;
-    }
+    /// <summary>A field with a value of its own: a value handed in may belong to a JSON document that changes later.</summary>
+    private static ItemField Own(ItemField field) => field with { Value = field.Value?.DeepClone(), Options = [.. field.Options] };
 }

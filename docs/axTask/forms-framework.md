@@ -263,7 +263,8 @@ usable by itself:
    converter as a module of its own, and the maintainer's lists and every script of `tools` moved with it.
    `AxTask.Core`, the item window's detail pane, their tests and window scripts. This is useful before any action
    exists, and it is what makes a list safe to configure by hand: **from here the maintainer can configure a list's
-   fields.**
+   fields.** *Built on 2026-11-21 (the branch `flat-items`); what the building changed in sections 11 and 13 is said
+   there in italics or as "changed while building". An NVDA pass of axTask's window is owed for it.*
 2. The item's form on Enter (section 14).
 3. `AxTask.Core`: `ListActions`, `ActionValues` (the placeholders and their refusals), the acceptance over a whole
    action; `AxKit.Core/ShellQuote`. All pure, each with its tests.
@@ -285,9 +286,13 @@ There is no form of axTask's own for making an action: the configuration is the 
   nothing of a list is configured anywhere else. Context, on a list: **Edit the list's configuration** (Ctrl+J, the
   item "Open in axJSON" of today, named for what it is on a list) opens it in axJSON. A list that has no file yet
   gets one written first, with its fields as they are and an empty list of actions, so that there is something to
-  edit and its members are there to be filled in. axTask reads the file again when its window comes to the front,
-  as it reads every file, and says what changed in one line ("The list's configuration changed: 2 actions, 5
-  fields").
+  edit and its members are there to be filled in. When axTask's window comes back to the front, it looks at the
+  configuration it opened this way; when the file changed, it reads the panes again and says what the file holds
+  now in one line ("The list's configuration changed: 5 fields, 2 actions", with what its reader passed over; or
+  that it does not read, AF-11.7). *As built on 2026-11-21: "its fields as they are" are the fields the list's items
+  hold, each once, typed by JSON's own kind of the first value (true or false a check, a number a number, a text of
+  several lines a long text), or Done, Start and Due for a folder without an item; the same file is written, in the
+  same step, by the first item added to such a folder (`ItemFolder.StarterConfig`).*
 - **AF-11.2 The members**, all there are:
   - `"format"`: `axkit-list 2` (section 13: the shape before it is converted, never read beside this one).
   - `"details"`: the list's own values, by name: `"Notes"`, `"Section"`.
@@ -305,16 +310,24 @@ There is no form of axTask's own for making an action: the configuration is the 
   Old priority"; Enter on it reads them with their values, read-only. So a hidden value is never a surprise, and a
   field renamed in the configuration (a new name is a new field) is seen at once: the old name stands among the
   kept ones.
-- **AF-11.5 A list without named fields shows every field**, as all lists did until now: a folder with no
-  `list.json`, or one whose `"new item"` is empty. So do the gathering lists (All tasks, the date lists, a search),
-  item by item, each by its own list's configuration.
+- **AF-11.5 One rule for every list** (changed while building, 2026-11-21; the draft had "a list without named
+  fields shows every field"). A list whose configuration names no field shows its items' Titles alone, and what an
+  item holds besides is kept and named in its last line, as in any list. The exception of the draft would have made
+  the last field one takes out of a list the one that brings every hidden value back into view (take Done out of a
+  list that has only Done, and Done shows again, as a field of no list); one rule is simpler to hold in the head.
+  A folder with no `list.json` at all is AF-13.4's case: every value as text, nothing changed, until the
+  configuration is written (AF-11.1). The gathering lists (All tasks, the date lists, a search) read each item
+  through its own list's configuration.
 - **AF-11.6 A type that changed.** A value the field's new type cannot hold is shown as its text with "kept as
   text: the field is now a date", is not changed, and is replaced only when the user gives the field a new value.
 - **AF-11.7 A configuration that does not read** (a comma too many after an edit) changes nothing in the folder:
-  the list is shown as one without a configuration (every field, no actions), its row and its detail pane say "The
-  list's configuration does not read: <what>, line 12. Ctrl+J opens it", and axTask writes nothing into that file
-  until it reads again. A member of the wrong kind (actions that are no list) is passed over in the same way, with
-  its own sentence, and the rest of the file counts.
+  the list is shown as one without a configuration (every value of an item as text, no actions; AF-13.4), its row
+  says "its configuration does not read", the level and the detail pane say "The list's configuration does not
+  read: it is not JSON at line 12. Ctrl+J opens it", and axTask writes nothing in that list until the file reads
+  again: no item changed, none added, no detail set. A member of the wrong kind (actions that are no list, an item
+  field without a title, two fields of one title, a field named Title or schema, a type this version does not know,
+  which is read as text) is passed over with its own sentence in the list's details and in the line said on coming
+  back from axJSON, and the rest of the file counts.
 - **AF-11.8 axPass is left as it is**: its entries are KeePassXC's and have no list configuration. The item
   window's shared code learns a list's field order from the app (`ItemForm`), and only axTask gives one.
 
@@ -387,19 +400,31 @@ task to keep right, and it is: the same fact written in a thousand files cannot 
 - **AF-13.5 One format in the app.** axTask reads and writes this shape and no other. There is no second reader
   kept beside it.
 - **AF-13.6 The conversion.** A list in the earlier shape (`"format": "axkit-list 1"`, items with `title`, `type`
-  and `value` objects, `"new item"`, `"keys"`) is recognised when it is met: its row says "earlier format", and
-  opening it asks once, "This list is written in axTask's earlier format. Convert it? A copy is kept beside it."
-  Convert copies the folder to `<name>, before conversion`, then writes the configuration and every item anew:
+  and `value` objects, `"new item"`, `"keys"`) is recognised when it is met: its row says "earlier format: Enter
+  converts it", and opening it asks once, "This list is written in axTask's earlier format, and is not opened until
+  it is converted. Convert it? A copy is kept among the Archived lists", with what changes, that Ctrl+Z takes it
+  back, and that a copy of axKit older than this one does not read a converted list. With more than one such list in
+  the folder of lists, the question has a third answer, "Convert all N lists" (added while building: ten lists should
+  not be ten questions). Convert copies the folder's files into the Archive as `<name>, before conversion` (the
+  Archive and not beside the list, where the copy would itself be a list of the earlier format among the user's
+  own), then writes the configuration and every item anew, as one step that Ctrl+Z takes back:
   the fields of `"new item"` and of the items themselves become `"item fields"` (the configuration's own first; a
   field only some items hold is added after them, so that nothing is hidden by the conversion), every item becomes
   its values, the list's `"fields"` become `"details"`, and `"keys"` become actions. A list not converted is not
-  opened. The converter is a module of its own (`AxTask.Core/Conversion/EarlierFormat`, a folder and a namespace
-  apart, with its own tests and the earlier shape's reader inside it): the app's core calls it at this one place and
-  knows nothing of the earlier shape. A later change of format gets a converter of its own beside it, and the app
-  still reads one. Nothing is dropped by it: a name that cannot stay (a field called `schema`, a second field of a
-  title, a field without one) is kept under another name, which is a field of the list too, and said; a file that is
-  not of the earlier shape is left as it is, and said. *Built on 2026-11-21 as pure code with its tests
-  (`ListConfig`, `FlatItem`, `ItemView`, `EarlierFormat`), used by no window yet.*
+  opened, and the gathering lists leave it out and say so in their name ("All tasks, 3 items, 1 list in the earlier
+  format is not read: Old. Open one to convert it"). The converter is a module of its own (`AxKit.Core/Conversion`,
+  a folder and a namespace apart, with its own tests and the earlier shape's reader inside it: `EarlierFormat`,
+  texts in and texts out, and `ListConversion`, the folder's side): the apps' code calls it where a list is met and
+  knows nothing of the earlier shape. It sits in the shared code, beside the item format, because two things meet
+  earlier lists: axTask, and the report form's own list (`reports.md` RP-5.1), which is converted without a question
+  the first time the form or the sender meets it, a copy kept beside it, since a report that waits there must still
+  be sent. A later change of format gets a converter of its own beside it, and the app still reads one. Nothing is
+  dropped by it: a name that cannot stay (a field called `schema`, a second field of a title, a field without one)
+  is kept under another name, which is a field of the list too, and said; a file that is neither of the earlier
+  shape nor an item of the shape now is left as it is, and said; an item already of the shape now is left without a
+  word, and a list half converted (one an earlier version of axKit wrote an item into) is finished the same way.
+  *Built on 2026-11-21, with the window: `ListConfig`, `FlatItem`, `ItemView`, `Conversion`, and in axTask
+  `ItemFolder`, `TaskForm.Conversion.cs`; window scripts 12, 16 and 17 of `tests/scripts/axTask`.*
 - **AF-13.7 What moves with it**, in the same step: the scripts of `tools` that read and write the lists
   (`items.ps1`, `item.ps1`, `approvals.ps1`, `outside-report.ps1`, `reports-check.ps1`), the AI tools of axTask
   (`TaskTools`), the smart lists' conditions, the links between items, and the maintainer's own lists, converted

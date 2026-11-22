@@ -14,8 +14,13 @@ namespace AxTask;
 /// </summary>
 public sealed partial class TaskForm : ItemForm
 {
-    /// <summary>What the detail pane's document is saved to: a file and the text it was read from (null when it does not exist yet, a list's first <c>list.json</c>).</summary>
-    private sealed record FileSource(string Path, string? Text);
+    /// <summary>
+    /// What the detail pane's document is saved to: a file and the text it was read from (null when it does not exist
+    /// yet, a list's first <c>list.json</c>), and what the document was made from: an item as read, or a list's
+    /// configuration, whose details the document shows. <see cref="Locked"/>: why nothing of it can be changed
+    /// (an item whose configuration is not there, AF-13.4; a configuration that does not read, AF-11.7), or null.
+    /// </summary>
+    private sealed record FileSource(string Path, string? Text, ItemFile? Item = null, ListConfig? List = null, string? Locked = null);
 
     private readonly TaskSettings _settings;
     private readonly MenuStrip _menu = new();
@@ -72,7 +77,9 @@ public sealed partial class TaskForm : ItemForm
         _listMenu.DropDownItems.Add(Item("Ar&chive", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act));
         Add(_listMenu, new Command("Move to s&ection...", AxTaskKeys.MoveToSection, MoveToSection) { When = InNavigator, Mark = CommandMark.Change });
         _listMenu.DropDownItems.Add(new ToolStripSeparator());
-        Add(_listMenu, new Command("Open in ax&JSON", AxTaskKeys.OpenInAxJson, OpenInAxJson) { When = NotRenaming, Mark = CommandMark.Open });
+        // AF-11.1: on a list, Ctrl+J is its configuration, the one file a list is configured in; on anything else it
+        // opens the selection's file (the Item menu's "Open in axJSON" shows the same key).
+        Add(_listMenu, new Command("Edit the list's confi&guration", AxTaskKeys.OpenInAxJson, OpenInAxJson) { When = NotRenaming, Mark = CommandMark.Open });
         Add(_listMenu, new Command("Show in ax&File", AxTaskKeys.ShowInAxFile, ShowInAxFile) { When = NotRenaming, Mark = CommandMark.Open });
 
         _itemMenu.DropDownItems.Add(Item("&Open its fields", OpenSelected, ItemKeys.Open, CommandMark.Open));
@@ -80,7 +87,6 @@ public sealed partial class TaskForm : ItemForm
         _itemMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
         _itemMenu.DropDownItems.Add(Item("Rena&me", RenameSelected, ItemKeys.Rename, CommandMark.Change));
         _itemMenu.DropDownItems.Add(Item("Ar&chive", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act));
-        _itemMenu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Use these fields for &new items", null, (_, _) => UseAsTemplate()), CommandMark.Change));
         _itemMenu.DropDownItems.Add(new ToolStripSeparator());
         // The maintainer's approval of an outside report (docs/axKit/outside-reports.md OR-5; TaskForm.Approvals.cs).
         _itemMenu.DropDownItems.AddRange(CreateApprovalItems());
@@ -103,11 +109,10 @@ public sealed partial class TaskForm : ItemForm
         _fieldMenu.DropDownItems.Add(Item("&Change...", ChangeField, ItemKeys.Open, CommandMark.Change));
         _fieldMenu.DropDownItems.Add(Item("&Done or not done", CheckField, ItemKeys.Check, CommandMark.Change));
         _fieldMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
-        _fieldMenu.DropDownItems.Add(Item("&New field...", NewField, ItemKeys.New, CommandMark.Change));
-        _fieldMenu.DropDownItems.Add(Item("Ren&ame field", RenameField, ItemKeys.Rename, CommandMark.Change));
-        _fieldMenu.DropDownItems.Add(Item("Re&move field", RemoveField, ItemKeys.Delete, CommandMark.Change));
-        _fieldMenu.DropDownItems.Add(Item("Move &up", () => MoveField(-1), ItemKeys.MoveFieldUp, CommandMark.Change));
-        _fieldMenu.DropDownItems.Add(Item("Move do&wn", () => MoveField(1), ItemKeys.MoveFieldDown, CommandMark.Change));
+        // AF-13.3: which fields a list's items have, their names and their order are the list's configuration's, so
+        // the field commands that changed them in one item are not offered here; their keys say where it is done
+        // (FieldsFixed).
+        _fieldMenu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Edit the list's confi&guration", null, (_, _) => EditConfigurationOfShown()), CommandMark.Open));
 
         // Options: the app's own settings first (AX-9.1; Hide done tasks was the View menu's until 2026-11-11).
         var options = new ToolStripMenuItem();
@@ -150,6 +155,9 @@ public sealed partial class TaskForm : ItemForm
     /// <summary>A link reads the item it points to, or "missing: name" (IA-D3).</summary>
     protected override string SpokenValue(ItemRow? row, ItemField field) =>
         FieldTypes.Spoken(field, link => ShownDetail.Source is FileSource source ? Links.Spoken(source.Path, link) : link);
+
+    /// <summary>AF-13.3: a field is added, renamed, removed and moved in the list's configuration, for every item at once; said at the keys that did it in one item.</summary>
+    protected override string? FieldsFixed => "The fields are the list's configuration's: Ctrl+J on the list opens it in axJSON";
 
     protected override void BeforeRefresh()
     {
@@ -346,15 +354,17 @@ public sealed partial class TaskForm : ItemForm
                 rows.Add(new ItemRow(false, UnreadableKey, notRead, notRead, new UnreadableTag(null)));
                 name += $", {_unreadable.Count} not readable";
             }
+
+            // AF-13.6: the lists of the earlier format are not gathered until they are converted, and the level's
+            // name says so; their own rows among the sections say it too, and Enter there converts.
+            if (ItemFolder.EarlierSummary(ItemFolder.EarlierLists(TopFolder)) is { Length: > 0 } earlier)
+            {
+                name += ", " + earlier;
+            }
         }
-        else if (AtTop)
-        {
-            name = ReadSections(rows, today);
-        }
-        else
+        else if (!AtTop && ItemFolder.Read(_folder) is { Earlier: false } level)
         {
             // A list's level: its items only (TK-D4).
-            var level = ItemFolder.Read(_folder);
             var hidden = 0;
             foreach (var item in level.Items)
             {
@@ -389,6 +399,19 @@ public sealed partial class TaskForm : ItemForm
             {
                 name += $", {Count(level.NotShown, "file")} not shown";
             }
+
+            // AF-11.7: a configuration that does not read is said with the level, and where it is mended.
+            if (level.ConfigProblem is { } problem)
+            {
+                name += $". {problem}. Ctrl+J opens it";
+            }
+        }
+        else
+        {
+            // The top; or a list of the earlier format, which is not opened (AF-13.6; the list of the last run, at
+            // the start): the sections, where its row says so and Enter asks to convert it.
+            _folder = TopFolder;
+            name = ReadSections(rows, today);
         }
 
         var title = _search is not null ? "Found" : _smart?.Name ?? (AtTop ? _projectName ?? "Lists" : ListTitle());
@@ -549,12 +572,21 @@ public sealed partial class TaskForm : ItemForm
         _ => 0,
     };
 
-    /// <summary>"Home, list, 2 items".</summary>
+    /// <summary>"Home, list, 2 items"; "Home, list, earlier format: Enter converts it" (AF-13.6); "Home, list, 2 items, its configuration does not read" (AF-11.7).</summary>
     private static ItemRow ListRow(string list)
     {
         var listName = Path.GetFileName(list);
-        return new ItemRow(true, list, listName, $"{listName}, list, {Count(ItemFolder.Read(list).Items.Count, "item")}");
+        var level = ItemFolder.Read(list);
+        var state = level.Earlier ? "earlier format: Enter converts it"
+            : Count(level.Items.Count, "item") + (level.ConfigProblem is null ? string.Empty : ", its configuration does not read");
+        return new ItemRow(true, list, listName, $"{listName}, list, {state}");
     }
+
+    /// <summary>"The list's configuration does not read: it is not JSON at line 12. Ctrl+J opens it" (AF-11.7); null for a list whose configuration reads or that has none.</summary>
+    private static string? ConfigurationProblem(string folder) =>
+        ItemFolder.ReadConfig(folder) is { Config: null, Text: not null, Problem: { } problem }
+            ? $"The list's configuration {problem}. Ctrl+J opens it"
+            : null;
 
     private static ItemRow SmartRow(SmartList smart, IReadOnlyList<GatheredItem> all, DateOnly today)
     {
@@ -599,10 +631,9 @@ public sealed partial class TaskForm : ItemForm
                 return new ItemDetail("Details, nothing selected", null, null,
                     [new ItemDetailLine(Rows.Count == 0 ? "Nothing in this list: Ctrl+N in the navigator adds an item" : "Nothing selected")]);
             case { Tag: ItemFile item }:
-                return new ItemDetail("Fields of " + row.Name, item.Path, item.Document, [], new FileSource(item.Path, item.Text));
+                return DetailOfItem(row.Name, item, []);
             case { Tag: FoundItem found }:
-                return new ItemDetail("Fields of " + row.Name, found.Item.Path, found.Item.Document,
-                    [new ItemDetailLine($"In {found.Hit.Place} / {found.Hit.List}; Enter in the navigator opens it there")], new FileSource(found.Item.Path, found.Item.Text));
+                return DetailOfItem(row.Name, found.Item, [new ItemDetailLine($"In {found.Hit.Place} / {found.Hit.List}; Enter in the navigator opens it there")]);
             case { Tag: UnreadableTag { Path: { } unreadable } }:
                 return new ItemDetail("Details of " + row.Name, null, null,
                     [new ItemDetailLine(row.Label), new ItemDetailLine("The file is JSON that is not an item, or not JSON: Enter in the navigator or Ctrl+J opens it in axJSON to mend; Ctrl+E shows it in axFile"), new ItemDetailLine(unreadable)]);
@@ -642,34 +673,94 @@ public sealed partial class TaskForm : ItemForm
                 lines.Add(new ItemDetailLine(smart.BuiltIn ? "Built in; a smart list of your own is List, New smart list" : $"Its file: {Path.GetFileName(smart.Path)}; Ctrl+J changes it in axJSON"));
                 return new ItemDetail("Details of " + smart.Name, null, null, lines);
             default:
-                var listFile = Path.Combine(row.Key, ItemDocument.ListFile);
-                var read = ItemFolder.ReadItem(listFile);
-                var template = TaskRules.TemplateOf(read?.Document);
-                var templateLine = new ItemDetailLine(template.Count == 0
-                    ? "Fields of a new item: only its title, a plain list"
-                    : "Fields of a new item: " + string.Join(", ", template.Select(field => field.Title)), ExplainTemplate);
-                return new ItemDetail("Details of " + row.Name, listFile, WithSectionField(read?.Document ?? ItemDocument.NewList(TaskRules.DefaultTemplate)), [templateLine], new FileSource(listFile, read?.Text));
+                return DetailOfList(row);
         }
     }
 
-    /// <summary>TK-3a.3: a list's details with the Section field first, made empty when the file has none.</summary>
-    private static ItemDocument WithSectionField(ItemDocument details)
+    /// <summary>
+    /// An item's detail: its fields as its list's configuration gives them, then what the caller says of it, why it
+    /// cannot be changed when its configuration is not there (AF-13.4), and the line of the values it keeps that the
+    /// configuration does not name (AF-11.4), on which Enter reads them.
+    /// </summary>
+    private ItemDetail DetailOfItem(string name, ItemFile item, IReadOnlyList<ItemDetailLine> first)
     {
-        if (details.IndexOf(ItemFolder.SectionField) >= 0)
+        var lines = new List<ItemDetailLine>(first);
+        if (item.ConfigProblem is { } problem)
         {
-            return details;
+            lines.Add(new ItemDetailLine(problem + ": every value is shown as text, and nothing of the item is changed here"));
         }
 
-        var withField = details.WithField(-1, ItemFolder.SectionField, FieldTypes.Text, []);
-        for (var i = withField.Fields.Count - 1; i > 0; i--)
+        if (item.KeptLine is { } kept)
         {
-            withField = withField.WithFieldMoved(i, -1)!;
+            lines.Add(new ItemDetailLine(kept, () => ReadKept(item)));
         }
 
-        return withField;
+        return new ItemDetail("Fields of " + name, item.Path, item.Document, lines, new FileSource(item.Path, item.Text, Item: item, Locked: item.ConfigProblem));
     }
 
-    /// <summary>Enter on a list's "Fields of a new item" line: how they change.</summary>
-    private void ExplainTemplate() =>
-        ShowNotice(Notice.Plain("Fields of a new item", (ShownDetail.Lines.FirstOrDefault()?.Label ?? string.Empty) + ".\r\n\r\nTo change them: select an item with the fields new items should get, then Item, Use these fields for new items. List, Add Done to every item or Remove Done from every item makes the list a checklist or a plain list. Ctrl+J opens the list's details in axJSON."));
+    /// <summary>Enter on "2 more fields kept: ...": the kept values, read-only (AF-11.4).</summary>
+    private void ReadKept(ItemFile item) =>
+        ShowNotice(Notice.Plain("Fields kept",
+            string.Join("\r\n", item.Kept.Select(kept => $"{kept.Name}: {FieldTypes.PlainText(kept.Value)}"))
+            + "\r\n\r\nThese values are in the item's file, and no field of the list's configuration has their names, so they are kept and not shown among the fields. A field of that name in the configuration shows its value again. Ctrl+J on the list opens the configuration in axJSON."));
+
+    /// <summary>
+    /// A list's detail: its details as fields (Section first, TK-3a.3), then the fields of its items, on which Enter
+    /// says how they change, and what the configuration's reader passed over (AF-11.7). A list of the earlier format
+    /// and one whose configuration does not read show why and nothing to change.
+    /// </summary>
+    private ItemDetail DetailOfList(ItemRow row)
+    {
+        var listFile = Path.Combine(row.Key, ItemDocument.ListFile);
+        if (ItemFolder.IsEarlier(row.Key))
+        {
+            return new ItemDetail("Details of " + row.Name, listFile, null,
+                [new ItemDetailLine(row.Label), new ItemDetailLine("This list is written in axTask's earlier format. Enter in the navigator asks to convert it; a copy is kept among the Archived lists")]);
+        }
+
+        var read = ItemFolder.ReadConfig(row.Key);
+        if (read is { Config: null, Text: not null })
+        {
+            return new ItemDetail("Details of " + row.Name, listFile, null,
+            [
+                new ItemDetailLine(row.Label),
+                new ItemDetailLine(ConfigurationProblem(row.Key) ?? string.Empty),
+                new ItemDetailLine("Until it reads again, the list's items are shown with every value as text, and axTask writes nothing into that file"),
+            ]);
+        }
+
+        // A list without a file of its own shows what the file would say; it is written with the first change.
+        var config = read.Config ?? ItemFolder.StarterConfig(row.Key);
+        var lines = new List<ItemDetailLine>
+        {
+            new(config.ItemFields.Count == 0
+                ? "Fields of its items: only a title, a plain list"
+                : "Fields of its items: " + string.Join(", ", config.ItemFields.Select(field => field.Title)), ExplainFields),
+        };
+        lines.AddRange(config.Problems.Select(problem => new ItemDetailLine("In the list's configuration, " + problem)));
+        return new ItemDetail("Details of " + row.Name, listFile, DetailsDocument(config), lines, new FileSource(listFile, read.Text, List: config));
+    }
+
+    /// <summary>
+    /// A list's details as the detail pane's fields: Section first, empty when the list has none (TK-3a.3), then the
+    /// others in the file's order; Notes a text of several lines, the rest by JSON's own kind (AF-11.2: a detail is a
+    /// name and a value).
+    /// </summary>
+    private static ItemDocument DetailsDocument(ListConfig config)
+    {
+        var fields = new List<ItemField> { new(ItemFolder.SectionField, FieldTypes.Text, System.Text.Json.Nodes.JsonValue.Create(config.Detail(ItemFolder.SectionField)), []) };
+        foreach (var (name, value) in config.Details)
+        {
+            if (!name.Equals(ItemFolder.SectionField, StringComparison.OrdinalIgnoreCase))
+            {
+                fields.Add(new ItemField(name, name.Equals(ItemFolder.NotesField, StringComparison.OrdinalIgnoreCase) ? FieldTypes.LongText : FieldTypes.OfKind(value), value, []));
+            }
+        }
+
+        return ItemDocument.Of(fields);
+    }
+
+    /// <summary>Enter on a list's "Fields of its items" line: how they change.</summary>
+    private void ExplainFields() =>
+        ShowNotice(Notice.Plain("Fields of its items", (ShownDetail.Lines.FirstOrDefault()?.Label ?? string.Empty) + ".\r\n\r\nThe fields of a list's items are written once, in the list's configuration: Ctrl+J on the list opens it in axJSON, where \"item fields\" names each field with its title, its type and the value a new item starts with. A field added there shows in every item, empty until it is given a value. A field taken out is hidden and its values are kept in the items: put it back and they show again. Actions, Add Done to every item or Remove Done from every item makes the list a checklist or a plain list."));
 }

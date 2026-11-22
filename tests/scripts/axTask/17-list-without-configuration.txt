@@ -1,0 +1,81 @@
+# Workflow: Give a list its configuration
+# axTask, docs/axTask/forms-framework.md AF-11.1, AF-13.4: a folder of items that has no list.json (made by hand or by
+# a script) shows each item with every value as text, and says why; nothing of such an item is changed. Edit the
+# list's configuration (Ctrl+J on the list) writes the file first, with the fields the items hold, and from then on
+# the items are read through it. Opening axJSON itself is not checked here: the hand-over is the bundle's.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file tasks\Notes\Idea.json {"schema":"list.json","Title":"Idea","Done":false,"Size":3,"Notes":"One line"}
+file tasks\Empty\keep.txt a folder with no item yet
+start task {temp}\tasks
+expect state Lists - axTask
+expect focus Your lists, heading level 1, 2 lists
+
+# Check: An item whose list has no configuration is shown as text, and is not changed
+type no
+expect focus Notes, list, 1 item
+keys right
+expect said ! Notes, 1 item, Idea
+keys tab
+expect focus Title, text, Idea
+keys down
+expect focus Done, text, false
+keys down
+expect focus Size, text, 3
+keys end
+expect focus Its configuration, list.json, is not there: every value is shown as text
+keys shift+tab
+keys space
+expect said ! Not a task
+do Rename
+type Thought
+keys enter
+expect said ! Its configuration, list.json, is not there: nothing of the item is changed
+run cmd /c if exist tasks\Notes\Idea.json (exit 0) else (exit 1)
+
+# Goal: Give a list its configuration
+# Ctrl+J on the list: the configuration is written with the fields its items hold, each of the kind of its first
+# value, and an empty list of actions; the item is then read through it and can be changed.
+keys left
+expect focus Notes, list, 1 item
+keys tab
+keys end
+expect focus Fields of its items: Done, Size, Notes
+keys shift+tab
+do Edit the list's configuration
+expect said ! Written the configuration of Notes
+run findstr /l /c:"axkit-list 2" tasks\Notes\list.json
+run findstr /l /c:"\"actions\": []" tasks\Notes\list.json
+keys right
+expect said ! Notes, 1 item, Idea
+keys tab
+keys down
+expect focus Done, check, not done
+keys down
+expect focus Size, number, 3
+keys down
+expect focus Notes, text, One line
+keys shift+tab
+keys space
+expect said ! Done: Idea
+run findstr /l /c:"\"Done\": true" tasks\Notes\Idea.json
+
+# Goal: Add an item to a list that has no configuration yet
+# Ctrl+N in a folder with no list.json and no item: the list's configuration is written with a new list's fields in
+# the same step as the item, and Ctrl+Z takes both back.
+keys left
+type em
+expect focus Empty, list, 0 items
+keys right
+do New item
+type First thing
+keys enter
+expect said ! Added First thing
+run findstr /l /c:"\"title\": \"Due\"" tasks\Empty\list.json
+run findstr /l /c:"\"schema\": \"list.json\"" "tasks\Empty\First thing.json"
+keys tab
+keys end
+expect focus Due, date, empty
+keys shift+tab
+do Undo
+expect said ! Undone: Added First thing
+run cmd /c if not exist tasks\Empty\list.json (exit 0) else (exit 1)

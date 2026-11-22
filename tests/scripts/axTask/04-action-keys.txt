@@ -2,12 +2,12 @@
 # axTask: the action keys (docs/axTask/nvda-test-plan.md section 5; docs/axTask/SPEC.md TK-7a;
 # docs/axKit/reports.md RP-8). A scratch folder with three lists; Home's list.json assigns Ctrl+1 and Ctrl+2; Issues
 # was made as a GitHub list, with the "github" member and the keys such a list had, and is an ordinary list now.
-file tasks\Issues\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}], "new item": [{"title": "Kind", "type": "choice", "value": "unlabelled", "options": ["Feedback", "Bug", "Feature request", "unlabelled"]}], "github": {"repository": "owner/repo", "state": "open"}, "keys": {"1": {"name": "Make it a bug", "set": {"Kind": "Bug"}}, "5": {"name": "Open on GitHub", "open": "Issue"}, "6": {"name": "Open in axClaude", "open": "axClaude"}}}
-file "tasks\Issues\12 The list loses my place.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "The list loses my place"}, {"title": "Number", "type": "number", "value": 12}, {"title": "Kind", "type": "choice", "value": "unlabelled", "options": ["Feedback", "Bug", "Feature request", "unlabelled"]}, {"title": "Issue", "type": "link", "value": ""}, {"title": "Notes", "type": "longtext", "value": ""}]}
+file tasks\Issues\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Kind","type":"choice","value":"unlabelled","options":["Feedback","Bug","Feature request","unlabelled"]},{"title":"Number","type":"number","value":""},{"title":"Issue","type":"link","value":""},{"title":"Notes","type":"longtext","value":""}],"actions":[{"name":"Make it a bug","key":"Ctrl+1","does":"set","set":{"Kind":"Bug"}},{"name":"Open on GitHub","key":"Ctrl+5","does":"open","open":"Issue"},{"name":"Open in axClaude","key":"Ctrl+6","does":"open","open":"axClaude"}],"github":{"repository":"owner/repo","state":"open"}}
+file "tasks\Issues\12 The list loses my place.json" {"schema":"list.json","Title":"The list loses my place","Kind":"unlabelled","Number":12,"Issue":"","Notes":""}
 file home\AxKit\axTask.json {"checkForUpdates": false}
-file "tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}]}
-file tasks\Home\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}], "new item": [{"title": "Done", "type": "check", "value": false}], "keys": {"1": {"name": "Done", "set": {"Done": true}}, "2": {"name": "Later", "move": "../Later"}}}
-file tasks\Later\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}], "new item": [{"title": "Done", "type": "check", "value": false}]}
+file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false}
+file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[{"name":"Done","key":"Ctrl+1","does":"set","set":{"Done":true}},{"name":"Later","key":"Ctrl+2","does":"move","to":"../Later"}]}
+file tasks\Later\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
 start task {temp}\tasks
 check commands
 expect state Lists - axTask
@@ -118,7 +118,7 @@ do Action key 1
 expect said Make it a bug: Kind: Bug
 keys tab
 keys home
-keys down down
+keys down
 expect focus Kind, choice, Bug
 keys escape
 do Undo

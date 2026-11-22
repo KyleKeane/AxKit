@@ -3,9 +3,11 @@
 # 4.4); a smart list or the top level open at the close leaves the next start at the top; a start that names the
 # folder opens its top level whatever was open last.
 file home\AxKit\axTask.json {"checkForUpdates": false}
-file "tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}]}
-file tasks\Shopping\Milk.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Milk"}]}
-file tasks\Shopping\Washer.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Washer"}, {"title": "Done", "type": "check", "value": false}]}
+file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
+file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false}
+file tasks\Shopping\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
+file tasks\Shopping\Milk.json {"schema":"list.json","Title":"Milk"}
+file tasks\Shopping\Washer.json {"schema":"list.json","Title":"Washer","Done":false}
 
 # The first start names the folder, which becomes the top folder of the next starts; Shopping opened, Washer selected.
 start task {temp}\tasks
@@ -35,7 +37,7 @@ expect focus Your lists, heading level 1, 2 lists
 # Check: A smart list open at the close leaves the next start at the top
 # A smart list open at the close is not a list of the folder: the next start is at the top level too.
 do All tasks
-expect said ! All tasks, 2 items
+expect said ! All tasks, 3 items
 close
 start task
 expect state Lists - axTask

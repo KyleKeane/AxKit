@@ -1,8 +1,7 @@
 using AxKit.Core;
-using AxTask.Core;
-using AxTask.Core.Conversion;
+using AxKit.Core.Conversion;
 
-namespace AxTask.Tests;
+namespace AxKit.Tests;
 
 /// <summary>
 /// The conversion of a list from the earlier shape (docs/axTask/forms-framework.md AF-13.6): nothing is lost, nothing
@@ -138,14 +137,81 @@ public sealed class EarlierFormatTests
             ("Later.filter.json", """{ "where": [] }"""),
         ]);
 
+        // An item of the shape now is left without a word: there is nothing to know about it.
         Assert.Single(converted.Items);
         Assert.Equal(
             [
                 "broken.json is not an item of the earlier format and is left as it is.",
-                "already.json is not an item of the earlier format and is left as it is.",
                 "Later.filter.json is not an item of the earlier format and is left as it is.",
             ],
             converted.Notes);
+    }
+
+    [Fact]
+    public void A_list_of_the_shape_now_keeps_its_file_and_gains_only_what_an_earlier_item_brings()
+    {
+        // A converted list an earlier version of axKit wrote an item into: the item is converted, the list's file
+        // kept to the letter when the item brings no new field.
+        const string now = "{\r\n  // mine\r\n  \"format\": \"axkit-list 2\",\r\n  \"item fields\": [ { \"title\": \"Done\", \"type\": \"check\", \"value\": false, \"note\": \"kept\" } ],\r\n  \"actions\": []\r\n}\r\n";
+
+        var same = EarlierFormat.Convert(now, [("Buy milk.json", Milk)]);
+        Assert.Equal(now, same.Config);
+        Assert.Equal("{\r\n  \"schema\": \"list.json\",\r\n  \"Title\": \"Buy milk\",\r\n  \"Done\": false\r\n}\r\n", same.Items.Single().Text);
+
+        // An item that brings fields: they are added after the list's own, whose objects stay as the file wrote them.
+        var more = EarlierFormat.Convert(now, [("Fix the tap.json", Tap)]);
+        var config = ListConfig.Parse(more.Config);
+        Assert.Equal(["Done", "Due", "Priority", "Notes"], config.ItemFields.Select(field => field.Title));
+        Assert.Contains("\"note\": \"kept\"", more.Config, StringComparison.Ordinal);
+        Assert.Empty(more.Notes);
+    }
+
+    [Fact]
+    public void A_folder_is_recognised_planned_copied_and_written()
+    {
+        var above = Path.Combine(Path.GetTempPath(), "axkit-tests", "conversion-" + Guid.NewGuid().ToString("N"));
+        var folder = Path.Combine(above, "Home");
+        Directory.CreateDirectory(folder);
+        try
+        {
+            File.WriteAllText(Path.Combine(folder, "list.json"), List);
+            File.WriteAllText(Path.Combine(folder, "Fix the tap.json"), Tap);
+            File.WriteAllText(Path.Combine(folder, "Buy milk.json"), Milk);
+            File.WriteAllText(Path.Combine(folder, "notes.md"), "not a list's file");
+            File.WriteAllText(Path.Combine(folder, "Later.filter.json"), """{ "where": [] }""");
+            Assert.True(ListConversion.IsEarlier(folder));
+            Assert.False(ListConversion.IsEarlier(Path.Combine(above, "missing")));
+
+            var plan = ListConversion.Plan(folder);
+            // The list's file first, then the items by name; a smart list's filter and other files are no part of it.
+            Assert.Equal(["list.json", "Buy milk.json", "Fix the tap.json"], plan.Files.Select(file => Path.GetFileName(file.Path)));
+            Assert.All(plan.Files, file => Assert.NotNull(file.Before));
+            Assert.Empty(plan.Notes);
+            // Nothing is written by the plan.
+            Assert.Contains("axkit-list 1", File.ReadAllText(Path.Combine(folder, "list.json")));
+
+            var copy = ListConversion.KeepCopy(folder, above);
+            Assert.Equal(Path.Combine(above, "Home, before conversion"), copy);
+            Assert.Equal(5, Directory.GetFiles(copy).Length);
+            Assert.Equal(Path.Combine(above, "Home, before conversion 2"), ListConversion.KeepCopy(folder, above));
+
+            ListConversion.Apply(plan);
+            Assert.False(ListConversion.IsEarlier(folder));
+            Assert.Equal("Fix the tap", FlatItem.Parse(File.ReadAllText(Path.Combine(folder, "Fix the tap.json"))).Title);
+            Assert.Empty(ListConfig.Parse(File.ReadAllText(Path.Combine(folder, "list.json"))).Problems);
+            // Converted, there is nothing left to plan.
+            Assert.Empty(ListConversion.Plan(folder).Files);
+
+            // A list without a file of its own is one of the earlier format when an item of it is.
+            File.Delete(Path.Combine(folder, "list.json"));
+            Assert.False(ListConversion.IsEarlier(folder));
+            File.WriteAllText(Path.Combine(folder, "Old.json"), Milk);
+            Assert.True(ListConversion.IsEarlier(folder));
+        }
+        finally
+        {
+            Directory.Delete(above, recursive: true);
+        }
     }
 
     [Fact]

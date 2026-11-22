@@ -27,19 +27,36 @@
   `Undo` and `Redo` hand the step back for the window to apply through the selection; four million characters of
   deltas at most, the oldest dropped.
 - `ItemDocument`, `ItemField`, `FieldTypes` and `Parsed` (docs/axKit/item-apps.md IA-4; from AxTask.Core, axPass,
-  2026-10-24): the item apps' format, an item as a list of fields of a title, a type and a value kept whole as JSON,
-  the types read out and typed (dates as tomorrow or +3); a list's template (`NewList`, `WithTemplate`) is written
-  with its values, which a new item starts with (IA-4.3; emptied until 2026-11-09, so `ReportFiles.ListText` wrote
-  its own and a GitHub list's new items had no kind or state).
+  2026-10-24): what the item window shows and changes, an item as a list of fields of a title, a type and a value,
+  the types read out and typed (dates as tomorrow or +3). In memory only since 2026-11-21 (`Of`, `NewItem`; no
+  file shape of its own): axPass makes it from an entry, axMCP from a tool's arguments, axTask from an item's
+  values read through its list's configuration. `FieldTypes.OfKind` (a value's type by JSON's own kind), `Holds`
+  (whether a type holds a value; one it does not is read "..., kept as text: the field is now a date", AF-11.6) and
+  `PlainText`.
+- The lists' files (docs/axTask/forms-framework.md sections 11 and 13; 2026-11-21): `ListConfig`, a list's
+  `list.json` as `axkit-list 2` (`details`, `item fields`, `actions`; `Parse` with an `InvalidDataException` that
+  names the line, `Problems` for a member passed over, `FormatOf`, `New`, `WithDetail`, `WithItemFields`, which
+  keeps the object of a field that stays, `WithExtra`, `IndexOf`); `FlatItem`, an item as its names and values with
+  its link `"schema"` (`Parse`, `New`, `With`, placing a first value in the configuration's order, `Has`, `Text`);
+  `ItemView` with `ShownItem` and `KeptValue`: an item read through a configuration (`Of`: hide, keep, restore, with
+  `KeptLine`), as plain text when its configuration is not there (`Plain`), as the window's `Document`, and
+  `Changed`, the file after a change in the window, which writes only what changed. Used by axTask and by the
+  reports list.
+- `Conversion/` (AF-13.6, a namespace apart): `EarlierFormat`, the only place that reads the shape before
+  (`axkit-list 1`, `axkit-item 1`: `IsEarlierList`, `IsEarlierItem`, `Convert`, texts in and texts out, nothing
+  dropped, what it has to say in `Notes`), and `ListConversion`, the folder's side (`IsEarlier`, `Plan`, `KeepCopy`,
+  `Apply`). axTask asks before it converts; the report form's own list is converted when it is met.
 - `FieldStep` (AX-8.10 rule 4, IA-5.6): Right and Left on a field: a choice's next or previous value, a check
   checked or unchecked, null (the edge sound) otherwise, never a `Protected` type.
 - `ItemFiles` (IA-4.5; from AxTask.Core's `ItemFolder` on its second use, the reports list, 2026-11-07): `FileStem`,
   the file name a Title gives, and `FreePath`, a free name beside the taken ones ("name - 2.json").
 - `Reports/` (docs/axKit/reports.md, 2026-11-07): `Report` with `ReportKind`, `ReportKinds` (the names, the GitHub
   labels, `Parse`) and `ReportStatus` (Draft, Not sent yet with its reason, Sent, `AwaitsSending`); `ReportFiles`, the
-  Reports list as an axTask folder (the template, `ListText` with the action keys, `ToItem`, `FromItem`, `Save`,
-  `Write`, `WithStatus`, `WithSent`, `Unsent`; `EnsureList` also replaces the Notes of a list made when reports
-  were public, `ListNotesBefore`, by `ListNotes`); `ReportBody`: `Markdown`, the plain report with the reporter line
+  Reports list as an axTask folder in the lists' one shape (`ListConfiguration` and `ListText` with the fields of a
+  report and the three actions of its kinds, `ToItem`, `FromItem`, `Save`, `Write`, `WithStatus`, `WithSent`,
+  `Unsent`; `EnsureList` converts a list an earlier version made, a copy kept beside it, so that a report waiting
+  in it is still sent, and replaces the Notes of a list made when reports were public, `ListNotesBefore`, by
+  `ListNotes`); `ReportBody`: `Markdown`, the plain report with the reporter line
   last, and `ParseReporterLine`; `Plain` (the title and the kind, then `Markdown`), which is what is sealed;
   `IssueTitle` (the kind and the version, never the user's words) and `Sealed`, the issue's body, the envelope alone
   in a `json` code fence. Tested in `ReportsTests`. `ReportSeal` with `ReportEnvelope` and `ReportSealException`

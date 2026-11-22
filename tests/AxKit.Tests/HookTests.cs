@@ -37,7 +37,7 @@ public sealed class HookTests
         // The three forms of the line, the two marks, and the pass for a clone without the lists.
         Assert.Contains("Item( done)?:", script, StringComparison.Ordinal);
         Assert.Contains("'Started'", script, StringComparison.Ordinal);
-        Assert.Contains("$done.value = $true", script, StringComparison.Ordinal);
+        Assert.Contains("Set-ItemValue $document 'Done' $true", script, StringComparison.Ordinal);
         Assert.Contains("needs its reason", script, StringComparison.Ordinal);
         Assert.Contains("if (-not (Test-Path -LiteralPath $Lists))", script, StringComparison.Ordinal);
         // Windows PowerShell 5.1 reads a script without a byte order mark as ANSI: the script stays ASCII.

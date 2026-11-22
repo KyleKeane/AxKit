@@ -1,8 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using AxKit.Core;
-
-namespace AxTask.Core;
+namespace AxKit.Core;
 
 /// <summary>
 /// A list's configuration, its <c>list.json</c> in the shape of docs/axTask/forms-framework.md section 11
@@ -12,8 +10,8 @@ namespace AxTask.Core;
 ///
 /// The object is kept whole, so that what this version does not know is written back as it was read (IA-4). Every
 /// change returns a new configuration. A member of the wrong kind is passed over and named in <see cref="Problems"/>;
-/// the rest of the file counts (AF-11.7). Not used by a window yet: the item window still reads the earlier shape,
-/// which <c>Conversion/EarlierFormat</c> turns into this one.
+/// the rest of the file counts (AF-11.7). The shape before it (<c>axkit-list 1</c>) is read by axTask's converter
+/// alone (<c>AxTask.Core/Conversion/EarlierFormat</c>), which turns it into this one.
 /// </summary>
 public sealed class ListConfig
 {
@@ -145,7 +143,25 @@ public sealed class ListConfig
     public ListConfig WithItemFields(IReadOnlyList<ItemField> itemFields)
     {
         var root = (JsonObject)_root.DeepClone();
-        root[ItemFieldsKey] = FieldsArray(itemFields);
+        var array = FieldsArray(itemFields);
+        // A field that stays as it was keeps its own object, with whatever else the file wrote in it (IA-4).
+        if (_root[ItemFieldsKey] is JsonArray written)
+        {
+            for (var i = 0; i < itemFields.Count; i++)
+            {
+                var same = written.OfType<JsonObject>().FirstOrDefault(entry =>
+                    FieldTypes.TextOf(entry["title"]).Trim() == itemFields[i].Title
+                    && FieldTypes.TextOf(entry["type"]).Trim() == itemFields[i].Type
+                    && JsonNode.DeepEquals(entry["value"], array[i]!["value"])
+                    && JsonNode.DeepEquals(entry["options"], array[i]!["options"]));
+                if (same is not null)
+                {
+                    array[i] = same.DeepClone();
+                }
+            }
+        }
+
+        root[ItemFieldsKey] = array;
         return new ListConfig(root, [.. itemFields], Problems);
     }
 

@@ -287,6 +287,7 @@ The keys:
 - Ctrl+E, axFile: Editor.
 - Ctrl+E, axGIT: Open file in editor.
 - Ctrl+E, axProcess: Show program in axFile.
+- Ctrl+J, axTask: Edit the list's configuration.
 - Ctrl+J, axAutomate: The workflow's file as text.
 - Ctrl+L, axTerminal: Clear transcript.
 - Ctrl+L, axPass: Lock.

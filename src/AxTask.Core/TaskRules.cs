@@ -21,8 +21,8 @@ public static class TaskRules
         new(DueField, FieldTypes.Date, JsonValue.Create(string.Empty), []),
     ];
 
-    /// <summary>The template a list gives: its own when its <c>list.json</c> names one, the default otherwise.</summary>
-    public static IReadOnlyList<ItemField> TemplateOf(ItemDocument? list) => list is { HasTemplate: true } ? list.Template : DefaultTemplate;
+    /// <summary>The fields a list gives its items: its configuration's, or the default for a list that has no configuration yet.</summary>
+    public static IReadOnlyList<ItemField> TemplateOf(ListConfig? list) => list?.ItemFields ?? DefaultTemplate;
 
     /// <summary>The index of the Done check; -1 for a plain item (TK-4.2).</summary>
     public static int DoneIndex(ItemDocument item)
@@ -43,15 +43,11 @@ public static class TaskRules
 
     public static bool IsDone(ItemDocument item) => DoneIndex(item) is var i && i >= 0 && FieldTypes.IsTrue(item.Fields[i].Value);
 
-    /// <summary>TK-4.2: a plain item made a task, a Done check after its Title; the item itself when it is one already.</summary>
-    public static ItemDocument WithDone(ItemDocument item) =>
-        IsTask(item) ? item : item.WithField(Math.Max(0, item.IndexOf(ItemDocument.TitleField)), DoneField, FieldTypes.Check, []);
-
-    /// <summary>TK-4.2: a task made a plain item, its Done check gone; the item itself when it has none.</summary>
-    public static ItemDocument WithoutDone(ItemDocument item) =>
-        DoneIndex(item) is var i && i >= 0 ? item.WithoutField(i) : item;
-
-    /// <summary>A template with a Done check first, or without one (TK-4.2's switch of a whole list).</summary>
+    /// <summary>
+    /// The fields of a list's items with a Done check first, or without one (TK-4.2's switch of a whole list). The
+    /// switch is made in the list's configuration alone (AF-13.3): no item's file is touched, a Done an item holds is
+    /// kept while the list is plain and shown again when it is a checklist again.
+    /// </summary>
     public static IReadOnlyList<ItemField> TemplateWithDone(IReadOnlyList<ItemField> template, bool done)
     {
         var without = template.Where(field => !(field.Type == FieldTypes.Check && field.Title.Equals(DoneField, StringComparison.OrdinalIgnoreCase))).ToList();

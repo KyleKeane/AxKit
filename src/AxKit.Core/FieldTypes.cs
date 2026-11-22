@@ -46,9 +46,67 @@ public static class FieldTypes
     /// <summary>The empty value of a type (IA-4.2): false for a check, an empty string otherwise.</summary>
     public static JsonNode? Empty(string type) => type == Check ? JsonValue.Create(false) : JsonValue.Create(string.Empty);
 
-    /// <summary>The value read out (IA-4.2): "30 October 2026, Friday", "done", the first line of a long text; "empty" for nothing.</summary>
+    /// <summary>
+    /// The type a value has by JSON's own kind, for a value no configuration gives a type (docs/axTask/forms-framework.md
+    /// AF-11.5): true and false are a check, a number a number, a text of several lines a long text, anything else text.
+    /// </summary>
+    public static string OfKind(JsonNode? value) => value is not JsonValue known ? Text : known.GetValueKind() switch
+    {
+        System.Text.Json.JsonValueKind.True or System.Text.Json.JsonValueKind.False => Check,
+        System.Text.Json.JsonValueKind.Number => Number,
+        _ => TextOf(value).Contains('\n') ? LongText : Text,
+    };
+
+    /// <summary>
+    /// Whether a value is one the type holds (AF-11.6): true or false for a check, a number or nothing for a number, a
+    /// date or nothing for a date, a text for the rest. A field whose type changed in its list's configuration may hold
+    /// a value of the type it had.
+    /// </summary>
+    public static bool Holds(string type, JsonNode? value)
+    {
+        if (value is null)
+        {
+            return true;
+        }
+
+        if (value is not JsonValue known)
+        {
+            return false;
+        }
+
+        var kind = known.GetValueKind();
+        var text = TextOf(value);
+        return type switch
+        {
+            Check => kind is System.Text.Json.JsonValueKind.True or System.Text.Json.JsonValueKind.False,
+            Number => kind == System.Text.Json.JsonValueKind.Number || (kind == System.Text.Json.JsonValueKind.String && (text.Length == 0 || double.TryParse(text, NumberStyles.Float, English, out _))),
+            Date => kind == System.Text.Json.JsonValueKind.String && (text.Length == 0 || ReadDate(value) is not null),
+            DateTime => kind == System.Text.Json.JsonValueKind.String && (text.Length == 0 || ReadDateTime(value) is not null),
+            // A text says a number as it is written, as it always did.
+            _ => kind is System.Text.Json.JsonValueKind.String or System.Text.Json.JsonValueKind.Number,
+        };
+    }
+
+    /// <summary>Any value as a text: a text itself, "true" and "false", a number as written, nothing as empty, a list or an object as its JSON.</summary>
+    public static string PlainText(JsonNode? value) => value switch
+    {
+        null => string.Empty,
+        JsonValue known when known.TryGetValue<string>(out var text) => text,
+        _ => value.ToJsonString(),
+    };
+
+    /// <summary>
+    /// The value read out (IA-4.2): "30 October 2026, Friday", "done", the first line of a long text; "empty" for
+    /// nothing. A value the type does not hold is read as its text, with what the field is now (AF-11.6): "next week,
+    /// kept as text: the field is now a date".
+    /// </summary>
     public static string Spoken(ItemField field, Func<string, string>? link = null)
     {
+        if (field.Type != Password && !Holds(field.Type, field.Value))
+        {
+            return $"{PlainText(field.Value)}, kept as text: the field is now a {Spoken(field.Type)}";
+        }
+
         var text = TextOf(field.Value);
         switch (field.Type)
         {

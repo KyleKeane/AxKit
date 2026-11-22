@@ -392,34 +392,59 @@ function Build-AxPreview([string]$d) {
     try { for ($i = 0; $i -lt 100; $i++) { $stream.Write($chunk, 0, $chunk.Length) } } finally { $stream.Dispose() }
 }
 
-function Write-Item([string]$path, [string]$title, [string]$done, [string]$due, [string]$extra = '') {
-    $fields = @("    { ""title"": ""Title"", ""type"": ""text"", ""value"": ""$title"" }")
-    if ($done -ne '') { $fields += "    { ""title"": ""Done"", ""type"": ""check"", ""value"": $done }" }
-    if ($due -ne '-') { $fields += "    { ""title"": ""Start"", ""type"": ""date"", ""value"": """" }"; $fields += "    { ""title"": ""Due"", ""type"": ""date"", ""value"": ""$due"" }" }
-    if ($extra -ne '') { $fields += $extra }
-    Write-Text $path ("{`r`n  ""format"": ""axkit-item 1"",`r`n  ""fields"": [`r`n" + ($fields -join ",`r`n") + "`r`n  ]`r`n}`r`n")
+# axTask's files are of the lists' one shape (docs/axTask/forms-framework.md section 13): a list's list.json names
+# the fields of its items, and an item is its values with "schema", the link to that file.
+function Write-List([string]$folder, [string[]]$fields, [string]$details = '"Notes": ""') {
+    Write-Text (Join-Path $folder 'list.json') ("{`r`n  ""format"": ""axkit-list 2"",`r`n  ""details"": { $details },`r`n  ""item fields"": [`r`n" + (($fields | ForEach-Object { '    ' + $_ }) -join ",`r`n") + "`r`n  ],`r`n  ""actions"": []`r`n}`r`n")
+}
+
+function Write-Item([string]$path, [string]$title, [string[]]$values = @()) {
+    $members = @('"schema": "list.json"', """Title"": ""$title""") + $values
+    Write-Text $path ("{`r`n" + (($members | ForEach-Object { '  ' + $_ }) -join ",`r`n") + "`r`n}`r`n")
 }
 
 function Build-AxTask([string]$d) {
+    $done = '{ "title": "Done", "type": "check", "value": false }'
+    $start = '{ "title": "Start", "type": "date", "value": "" }'
+    $due = '{ "title": "Due", "type": "date", "value": "" }'
+    $notes = '{ "title": "Notes", "type": "longtext", "value": "" }'
     $t = New-Folder (Join-Path $d 'tasks')
+    # Home and Shopping are checklists, Home with a choice; Jottings is a plain list, whose items are no tasks;
+    # Course plan is in the section Work.
     $house = New-Folder (Join-Path $t 'Home')
+    Write-List $house @($done, $start, $due, '{ "title": "Priority", "type": "choice", "value": "", "options": ["High", "Low"] }')
     $shop = New-Folder (Join-Path $t 'Shopping')
+    Write-List $shop @($done, $start, $due)
+    $jottings = New-Folder (Join-Path $t 'Jottings')
+    Write-List $jottings @($notes)
     $plan = New-Folder (Join-Path $t 'Course plan')
-    Write-Text (Join-Path $plan 'list.json') "{`r`n  ""format"": ""axkit-list 1"",`r`n  ""fields"": [`r`n    { ""title"": ""Section"", ""type"": ""text"", ""value"": ""Work"" },`r`n    { ""title"": ""Notes"", ""type"": ""longtext"", ""value"": """" }`r`n  ]`r`n}`r`n"
-    Write-Item (Join-Path $house 'Fix the tap.json') 'Fix the tap' 'false' '2026-10-30'
-    Write-Item (Join-Path $house 'Water plants.json') 'Water plants' 'true' '2026-10-20'
-    Write-Item (Join-Path $shop 'Milk.json') 'Milk' '' '-'
-    Write-Item (Join-Path $shop 'Washer.json') 'Washer' 'false' ''
-    Write-Item (Join-Path $plan 'Week one.json') 'Week one' 'false' '' '    { "title": "Notes", "type": "longtext", "value": "Read chapter one.\nWrite the summary." }'
+    Write-List $plan @($done, $notes) '"Section": "Work", "Notes": ""'
+    Write-Item (Join-Path $house 'Fix the tap.json') 'Fix the tap' @('"Done": false', '"Start": ""', '"Due": "2026-10-30"')
+    # Water plants holds a value the list's configuration does not name: kept, and said in the item's last line.
+    Write-Item (Join-Path $house 'Water plants.json') 'Water plants' @('"Done": true', '"Due": "2026-10-20"', '"Sprint": "October"')
+    Write-Item (Join-Path $jottings 'Milk.json') 'Milk' @('"Notes": ""')
+    Write-Item (Join-Path $shop 'Washer.json') 'Washer' @('"Done": false')
+    Write-Item (Join-Path $plan 'Week one.json') 'Week one' @('"Done": false', '"Notes": "Read chapter one.\nWrite the summary."')
     Write-Text (Join-Path $house 'notes.txt') 'Not an item: the list counts it as a file not shown.'
+
+    # A list written in axTask's earlier format (forms-framework.md AF-13.6): its row says so, and Enter asks to
+    # convert it, a copy kept among the Archived lists.
+    $old = New-Folder (Join-Path $t 'Old format')
+    Write-Text (Join-Path $old 'list.json') "{`r`n  ""format"": ""axkit-list 1"",`r`n  ""fields"": [`r`n    { ""title"": ""Notes"", ""type"": ""longtext"", ""value"": ""A list from an earlier version."" }`r`n  ],`r`n  ""new item"": [`r`n    { ""title"": ""Done"", ""type"": ""check"", ""value"": false }`r`n  ],`r`n  ""keys"": { ""1"": { ""name"": ""Finish"", ""set"": { ""Done"": true } } }`r`n}`r`n"
+    Write-Text (Join-Path $old 'Paint the fence.json') "{`r`n  ""format"": ""axkit-item 1"",`r`n  ""fields"": [`r`n    { ""title"": ""Title"", ""type"": ""text"", ""value"": ""Paint the fence"" },`r`n    { ""title"": ""Done"", ""type"": ""check"", ""value"": false },`r`n    { ""title"": ""Colour"", ""type"": ""text"", ""value"": ""Green"" }`r`n  ]`r`n}`r`n"
+
+    # A folder of items with no list.json (AF-11.1, AF-13.4): its item is shown as text until Ctrl+J on the list
+    # writes the configuration.
+    $bare = New-Folder (Join-Path $t 'No configuration')
+    Write-Item (Join-Path $bare 'Idea.json') 'Idea' @('"Done": false', '"Notes": "One line"')
+
     # The project folder of docs/axTask/nvda-test-plan.md section 6 (TK-7b): two code projects, each with a tasks folder.
-    $list = "{`r`n  ""format"": ""axkit-list 1"",`r`n  ""fields"": [`r`n    { ""title"": ""Notes"", ""type"": ""longtext"", ""value"": """" }`r`n  ]`r`n}`r`n"
     $alpha = New-Folder (Join-Path $d 'projects\alpha\tasks\Home')
-    Write-Text (Join-Path $alpha 'list.json') $list
-    Write-Item (Join-Path $alpha 'Fix the leak.json') 'Fix the leak' 'false' '' '    { "title": "Notes", "type": "longtext", "value": "A washer of 15 mm" }'
+    Write-List $alpha @($done, $notes)
+    Write-Item (Join-Path $alpha 'Fix the leak.json') 'Fix the leak' @('"Done": false', '"Notes": "A washer of 15 mm"')
     $beta = New-Folder (Join-Path $d 'projects\beta\tasks\Bugs')
-    Write-Text (Join-Path $beta 'list.json') $list
-    Write-Item (Join-Path $beta 'Tap drips.json') 'Tap drips' 'false' ''
+    Write-List $beta @($done)
+    Write-Item (Join-Path $beta 'Tap drips.json') 'Tap drips' @('"Done": false')
 }
 
 function Build-AxPass([string]$d) {

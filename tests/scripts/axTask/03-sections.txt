@@ -3,10 +3,14 @@
 # own with Ctrl+M, a new section, the Section field, a new list joining the selected section, the Archived lists
 # section, Ctrl+Up and Ctrl+Down across them, a folder inside a list not shown.
 file home\AxKit\axTask.json {"checkForUpdates": false}
-file tasks\Home\Tap.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Tap"}, {"title": "Done", "type": "check", "value": false}]}
-file tasks\Shopping\Milk.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Milk"}]}
-file tasks\Work\Report.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Report"}, {"title": "Done", "type": "check", "value": false}]}
-file tasks\Work\Nested\Hidden.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Hidden"}]}
+file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
+file tasks\Home\Tap.json {"schema":"list.json","Title":"Tap","Done":false}
+file tasks\Shopping\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[],"actions":[]}
+file tasks\Shopping\Milk.json {"schema":"list.json","Title":"Milk"}
+file tasks\Work\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
+file tasks\Work\Report.json {"schema":"list.json","Title":"Report","Done":false}
+file tasks\Work\Nested\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[],"actions":[]}
+file tasks\Work\Nested\Hidden.json {"schema":"list.json","Title":"Hidden"}
 
 start task {temp}\tasks
 expect focus Your lists, heading level 1, 3 lists

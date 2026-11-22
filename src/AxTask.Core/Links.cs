@@ -50,7 +50,7 @@ public static class Links
 
             if (!ReferenceEquals(document, item.Document))
             {
-                writes.Add(FileChange.Write(newPath, item.Text, document.ToText()));
+                writes.Add(FileChange.Write(newPath, item.Text, item.TextWith(document)));
             }
         }
 

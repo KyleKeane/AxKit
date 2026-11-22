@@ -67,11 +67,13 @@ public sealed class ReportsTests
     {
         var item = ReportFiles.ToItem(Sample(), ReportStatus.NotSent("no network"));
         Assert.Equal("The list loses my place", item.Title);
-        Assert.Equal(ReportFiles.Template.Count + 1, item.Fields.Count);
+        // The link first, then the Title and every field of a report, in the list's order.
+        Assert.Equal(ListConfig.FileName, item.Schema);
+        Assert.Equal(["Title", .. ReportFiles.Template.Select(field => field.Title)], item.Values.Select(pair => pair.Key));
         Assert.Equal("Not sent yet: no network", ReportFiles.Status(item));
 
         // A record with lists compares them by reference, so field by field.
-        var back = ReportFiles.FromItem(ItemDocument.Parse(item.ToText()));
+        var back = ReportFiles.FromItem(FlatItem.Parse(item.ToText()));
         Assert.NotNull(back);
         var sample = Sample();
         Assert.Equal(sample.Title, back.Title);
@@ -87,7 +89,7 @@ public sealed class ReportsTests
     [Fact]
     public void An_item_that_is_not_a_report_reads_as_none()
     {
-        var task = ItemDocument.NewItem("Fix the tap", [new ItemField("Done", FieldTypes.Check, System.Text.Json.Nodes.JsonValue.Create(false), [])]);
+        var task = FlatItem.Parse("""{ "schema": "list.json", "Title": "Fix the tap", "Done": false }""");
         Assert.Null(ReportFiles.FromItem(task));
     }
 
@@ -98,8 +100,7 @@ public sealed class ReportsTests
         Assert.Equal(ReportStatus.Sent, ReportFiles.Status(item));
         var text = item.ToText();
         Assert.Contains("\"https://github.com/KyleKeane/AxKit-reports/issues/12\"", text);
-        Assert.Contains("\"title\": \"Number\"", text);
-        Assert.Contains("\"12\"", text);
+        Assert.Contains("\"Number\": \"12\"", text);
     }
 
     [Fact]
@@ -113,12 +114,19 @@ public sealed class ReportsTests
             Assert.Equal("The list loses my place.json", Path.GetFileName(first));
             Assert.Equal("The list loses my place - 2.json", Path.GetFileName(second));
 
-            var list = ItemDocument.Parse(File.ReadAllText(Path.Combine(folder, ItemDocument.ListFile)));
-            Assert.True(list.HasTemplate);
-            Assert.Equal(ReportFiles.Template.Select(f => f.Title), list.Template.Select(f => f.Title));
-            Assert.Equal(ReportKinds.Name(ReportKind.Feedback), FieldTypes.TextOf(list.Template.First(f => f.Title == ReportFiles.KindField).Value));
-            Assert.Equal(ReportStatus.Draft, FieldTypes.TextOf(list.Template.First(f => f.Title == ReportFiles.StatusField).Value));
-            Assert.Contains("\"keys\"", File.ReadAllText(Path.Combine(folder, ItemDocument.ListFile)));
+            var list = ListConfig.Parse(File.ReadAllText(Path.Combine(folder, ItemDocument.ListFile)));
+            Assert.Empty(list.Problems);
+            Assert.Equal(ReportFiles.Template.Select(f => f.Title), list.ItemFields.Select(f => f.Title));
+            Assert.Equal(ReportKinds.Name(ReportKind.Feedback), FieldTypes.TextOf(list.ItemFields.First(f => f.Title == ReportFiles.KindField).Value));
+            Assert.Equal(ReportStatus.Draft, FieldTypes.TextOf(list.ItemFields.First(f => f.Title == ReportFiles.StatusField).Value));
+            // The three actions that set the kind, on Ctrl+1 to Ctrl+3.
+            Assert.Equal(["Ctrl+1", "Ctrl+2", "Ctrl+3"], list.Actions!.Select(action => FieldTypes.TextOf(action!["key"])));
+            Assert.All(list.Actions!, action => Assert.Equal("set", FieldTypes.TextOf(action!["does"])));
+
+            // The item holds the link, its values, and the report's id last, which is no field of the list.
+            var saved = FlatItem.Parse(File.ReadAllText(first));
+            Assert.Equal(ReportFiles.IdKey, saved.Values[^1].Key);
+            Assert.Equal(["reportId"], ItemView.Of(saved, list).Kept.Select(kept => kept.Name));
 
             // The unsent ones, and only those, oldest first.
             var unsent = ReportFiles.Unsent(folder);
@@ -244,25 +252,97 @@ public sealed class ReportsTests
             Assert.DoesNotContain("public", made);
             Assert.DoesNotContain("Open on GitHub", made);
 
-            // An earlier version's list: its own Notes, and a key the user added.
-            var list = ItemDocument.Parse(made);
-            var old = list.WithValue(list.IndexOf("Notes"), System.Text.Json.Nodes.JsonValue.Create(ReportFiles.ListNotesBefore))
-                .WithExtra("keys", new System.Text.Json.Nodes.JsonObject { ["7"] = new System.Text.Json.Nodes.JsonObject { ["name"] = "Mine", ["open"] = "Issue" } });
+            // A list whose Notes are still the words of the versions that said "public issue", with an action the user added.
+            var list = ListConfig.Parse(made);
+            var mine = new System.Text.Json.Nodes.JsonObject { ["name"] = "Mine", ["key"] = "Ctrl+7", ["does"] = "open", ["open"] = "Issue" };
+            var old = list.WithDetail("Notes", System.Text.Json.Nodes.JsonValue.Create(ReportFiles.ListNotesBefore))
+                .WithExtra(ListConfig.ActionsKey, new System.Text.Json.Nodes.JsonArray([.. list.Actions!.Select(action => action!.DeepClone()), mine]));
             File.WriteAllText(file, old.ToText());
             ReportFiles.EnsureList(folder);
             var after = File.ReadAllText(file);
             Assert.DoesNotContain("public issue", after);
             Assert.Contains("\"Mine\"", after);
-            Assert.Equal(ReportFiles.ListNotes, FieldTypes.TextOf(ItemDocument.Parse(after).Fields[list.IndexOf("Notes")].Value));
+            Assert.Equal(ReportFiles.ListNotes, ListConfig.Parse(after).Detail("Notes"));
 
             // Notes the user wrote themselves stay.
-            File.WriteAllText(file, list.WithValue(list.IndexOf("Notes"), System.Text.Json.Nodes.JsonValue.Create("My own words")).ToText());
+            File.WriteAllText(file, list.WithDetail("Notes", System.Text.Json.Nodes.JsonValue.Create("My own words")).ToText());
             ReportFiles.EnsureList(folder);
             Assert.Contains("My own words", File.ReadAllText(file));
+
+            // A list.json changed into something that is no list is the user's: left as it is.
+            File.WriteAllText(file, "{ \"mine\": true }");
+            ReportFiles.EnsureList(folder);
+            Assert.Equal("{ \"mine\": true }", File.ReadAllText(file));
         }
         finally
         {
             Directory.Delete(folder, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void A_list_of_the_earlier_format_is_converted_so_that_its_waiting_reports_are_still_sent()
+    {
+        // The reports list an earlier version of axKit made, with a report that waits and its id beside its fields.
+        var above = Path.Combine(Path.GetTempPath(), "axkit-tests", "reports-" + Guid.NewGuid().ToString("N"));
+        var folder = Path.Combine(above, "reports");
+        Directory.CreateDirectory(folder);
+        try
+        {
+            File.WriteAllText(Path.Combine(folder, "list.json"), """
+                {
+                  "format": "axkit-list 1",
+                  "fields": [ { "title": "Notes", "type": "longtext", "value": "My reports." } ],
+                  "new item": [
+                    { "title": "Kind", "type": "choice", "value": "Feedback", "options": ["Bug", "Feature request", "Feedback"] },
+                    { "title": "Report", "type": "longtext", "value": "" },
+                    { "title": "Created", "type": "datetime", "value": "" },
+                    { "title": "Status", "type": "text", "value": "Draft" }
+                  ],
+                  "keys": { "1": { "name": "Make it a bug", "set": { "Kind": "Bug" } } }
+                }
+                """);
+            var waiting = Path.Combine(folder, "It froze.json");
+            File.WriteAllText(waiting, """
+                {
+                  "format": "axkit-item 1",
+                  "fields": [
+                    { "title": "Title", "type": "text", "value": "It froze" },
+                    { "title": "Kind", "type": "choice", "value": "Bug", "options": ["Bug", "Feature request", "Feedback"] },
+                    { "title": "Report", "type": "longtext", "value": "The window froze." },
+                    { "title": "Created", "type": "datetime", "value": "2026-11-01T10:00" },
+                    { "title": "Status", "type": "text", "value": "Not sent yet: no network" }
+                  ],
+                  "reportId": "0123456789abcdef0123456789abcdef"
+                }
+                """);
+            // Nothing of the shape now reads it before the conversion.
+            Assert.Empty(ReportFiles.Unsent(folder));
+
+            ReportFiles.EnsureList(folder);
+
+            var unsent = ReportFiles.Unsent(folder);
+            Assert.Equal([waiting], unsent.Select(entry => entry.Path));
+            Assert.Equal("The window froze.", ReportFiles.FromItem(unsent[0].Item)!.Words);
+            Assert.Equal(ReportKind.Bug, ReportFiles.FromItem(unsent[0].Item)!.Kind);
+            Assert.Equal("0123456789abcdef0123456789abcdef", ReportFiles.IdOf(unsent[0].Item));
+            var list = ListConfig.Parse(File.ReadAllText(Path.Combine(folder, "list.json")));
+            Assert.Equal("My reports.", list.Detail("Notes"));
+            Assert.Equal(["Kind", "Report", "Created", "Status"], list.ItemFields.Select(field => field.Title));
+            Assert.Single(list.Actions!);
+
+            // The copy kept beside the folder holds the files as they were.
+            var copy = Path.Combine(above, "reports, before conversion");
+            Assert.Contains("axkit-item 1", File.ReadAllText(Path.Combine(copy, "It froze.json")));
+            Assert.Contains("axkit-list 1", File.ReadAllText(Path.Combine(copy, "list.json")));
+
+            // Asked again, nothing is converted or copied a second time.
+            ReportFiles.EnsureList(folder);
+            Assert.False(Directory.Exists(Path.Combine(above, "reports, before conversion 2")));
+        }
+        finally
+        {
+            Directory.Delete(above, recursive: true);
         }
     }
 

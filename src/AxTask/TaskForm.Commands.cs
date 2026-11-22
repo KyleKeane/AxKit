@@ -47,10 +47,50 @@ public sealed partial class TaskForm
         var now = !TaskRules.IsDone(item.Document);
         var leaves = now && (_smart is not null || (_settings.HideDone && _search is null));
         var select = leaves ? NeighbourKey() : item.Path;
-        if (CheckFresh(item.Path, item.Text))
+        if (Changeable(item) && CheckFresh(item.Path, item.Text))
         {
-            Commit(new Step([FileChange.Write(item.Path, item.Text, item.Document.WithValue(done, JsonValue.Create(now)).ToText())], (now ? "Done: " : "Not done: ") + ItemFolder.NameOf(item)), select);
+            Commit(new Step([FileChange.Write(item.Path, item.Text, item.TextWith(item.Document.WithValue(done, JsonValue.Create(now))))], (now ? "Done: " : "Not done: ") + ItemFolder.NameOf(item)), select);
         }
+    }
+
+    /// <summary>
+    /// Whether an item can be changed: not one whose configuration is not there or does not read, which is shown as
+    /// plain text (AF-13.4); the reason is said then.
+    /// </summary>
+    private bool Changeable(ItemFile item)
+    {
+        if (item.ConfigProblem is not { } problem)
+        {
+            return true;
+        }
+
+        EventDoor.Raise(EventKind.Refused);
+        Announce(problem + ": nothing of the item is changed until it is there and reads. Ctrl+J on the list opens it", true);
+        return false;
+    }
+
+    /// <summary>
+    /// The configuration a change in a list goes by, with its file as it is on disk: the list's own, or, for a list
+    /// that has no file yet, the one it gets (AF-11.1), which the caller writes in the same step. Null, with the
+    /// reason said, for a configuration that does not read: axTask writes nothing into that file and adds nothing
+    /// beside it until it reads again (AF-11.7).
+    /// </summary>
+    private (ListConfig Config, string? Text)? ConfigurationForChange(string folder)
+    {
+        var read = ItemFolder.ReadConfig(folder);
+        if (read.Config is { } config)
+        {
+            return (config, read.Text);
+        }
+
+        if (read.Text is null)
+        {
+            return (ItemFolder.StarterConfig(folder), null);
+        }
+
+        EventDoor.Raise(EventKind.Refused);
+        Announce(ConfigurationProblem(folder) ?? "The list's configuration does not read", true);
+        return null;
     }
 
     /// <summary>Ctrl+N in the navigator: a new item in the list shown (IA-4.3), its fields from the list's template.</summary>
@@ -77,12 +117,34 @@ public sealed partial class TaskForm
         }
 
         var folder = _folder;
+        if (ConfigurationForChange(folder) is null)
+        {
+            return;
+        }
+
         AskText("New item", $"In {(AtTop ? "the top folder" : Path.GetFileName(folder))}.", "Title:", "Title", string.Empty, "&Add", title =>
         {
-            var template = TaskRules.TemplateOf(ItemFolder.ReadList(folder));
+            if (ConfigurationForChange(folder) is not { } list)
+            {
+                return;
+            }
+
             var path = ItemFiles.FreePath(folder, ItemFiles.FileStem(title), ".json");
-            Commit(new Step([FileChange.Write(path, null, ItemDocument.NewItem(title, template).ToText())], "Added " + title), path);
+            Commit(new Step(NewItemParts(folder, list, path, FlatItem.New(title, list.Config)), "Added " + title), path);
         }, typed => typed.Trim().Length == 0 ? "Type the item's title" : null);
+    }
+
+    /// <summary>The writes of a new item: its file, and before it the list's configuration when the list has none on disk yet (AF-11.1), so that the item is read through a file that is there.</summary>
+    private static List<FileChange> NewItemParts(string folder, (ListConfig Config, string? Text) list, string path, FlatItem item)
+    {
+        var parts = new List<FileChange>();
+        if (list.Text is null)
+        {
+            parts.Add(FileChange.Write(Path.Combine(folder, ItemDocument.ListFile), null, list.Config.ToText()));
+        }
+
+        parts.Add(FileChange.Write(path, null, item.ToText()));
+        return parts;
     }
 
     /// <summary>
@@ -109,9 +171,9 @@ public sealed partial class TaskForm
         {
             var trimmed = name.Trim();
             var listFile = Path.Combine(folder, trimmed, ItemDocument.ListFile);
+            // The fields of the list selected or shown, for its items; the section first among its details (TK-3a.3).
             var template = TaskRules.TemplateOf(templateFrom is null ? null : ItemFolder.ReadList(templateFrom));
-            var details = WithSectionField(ItemDocument.NewList(template));
-            details = details.WithValue(details.IndexOf(ItemFolder.SectionField), JsonValue.Create(section));
+            var details = ListConfig.New(template).WithDetail(ItemFolder.SectionField, JsonValue.Create(section));
             _smart = null;
             _folder = TopFolder;
             Commit(new Step([FileChange.WriteInNewFolder(listFile, details.ToText())], "Made " + trimmed), Path.Combine(folder, trimmed));
@@ -160,13 +222,12 @@ public sealed partial class TaskForm
     private void SetSection(ItemRow row, string section)
     {
         var listFile = Path.Combine(row.Key, ItemDocument.ListFile);
-        var read = ItemFolder.ReadItem(listFile);
-        var details = WithSectionField(read?.Document ?? ItemDocument.NewList(TaskRules.DefaultTemplate));
-        details = details.WithValue(details.IndexOf(ItemFolder.SectionField), JsonValue.Create(section));
-        if (CheckFresh(listFile, read?.Text))
+        if (ConfigurationForChange(row.Key) is not { } list)
         {
-            Commit(new Step([FileChange.Write(listFile, read?.Text, details.ToText())], $"Moved {row.Name} to {(section.Length == 0 ? YourLists : section)}"), row.Key);
+            return;
         }
+
+        Commit(new Step([FileChange.Write(listFile, list.Text, list.Config.WithDetail(ItemFolder.SectionField, JsonValue.Create(section)).ToText())], $"Moved {row.Name} to {(section.Length == 0 ? YourLists : section)}"), row.Key);
     }
 
     /// <summary>List, New smart list (TK-5.3): a filter file with All tasks' conditions, opened in axJSON.</summary>
@@ -259,10 +320,15 @@ public sealed partial class TaskForm
             return;
         }
 
+        if (!Changeable(item))
+        {
+            return;
+        }
+
         var renamed = item.Document.WithTitle(title);
         var folder = Path.GetDirectoryName(item.Path)!;
         var to = ItemFiles.FreePath(folder, ItemFiles.FileStem(title), ".json", own: item.Path);
-        var parts = new List<FileChange> { FileChange.Write(item.Path, item.Text, renamed.ToText()) };
+        var parts = new List<FileChange> { FileChange.Write(item.Path, item.Text, item.TextWith(renamed)) };
         if (!to.Equals(item.Path, StringComparison.Ordinal))
         {
             parts.Add(FileChange.Move(item.Path, to));
@@ -328,7 +394,12 @@ public sealed partial class TaskForm
         }
     }
 
-    /// <summary>TK-4.2: the list in hand made a checklist (Done on every item and in its template) or a plain list.</summary>
+    /// <summary>
+    /// TK-4.2: the list in hand made a checklist or a plain list. The change is the configuration's alone (AF-13.3):
+    /// a Done field first among the fields of its items, or none. No item's file is touched: as a checklist every
+    /// item shows Done, not done until it is checked; as a plain list a Done an item holds is kept in its file, and
+    /// shows again when the list is a checklist again.
+    /// </summary>
     private void SwitchList(bool done)
     {
         var folder = SelectedRow() is { IsList: true, Tag: null } row && !DetailPane.Focused ? row.Key : _smart is null && !AtTop ? _folder : null;
@@ -338,54 +409,29 @@ public sealed partial class TaskForm
             return;
         }
 
-        var parts = new List<FileChange>();
-        var changed = 0;
-        foreach (var item in ItemFolder.Read(folder).Items)
+        if (ItemFolder.IsEarlier(folder))
         {
-            var switched = done ? TaskRules.WithDone(item.Document) : TaskRules.WithoutDone(item.Document);
-            if (!ReferenceEquals(switched, item.Document))
-            {
-                parts.Add(FileChange.Write(item.Path, item.Text, switched.ToText()));
-                changed++;
-            }
+            Announce("This list is written in axTask's earlier format: Enter on it converts it first", true);
+            return;
         }
 
-        var listFile = Path.Combine(folder, ItemDocument.ListFile);
-        var list = ItemFolder.ReadItem(listFile);
-        var details = list?.Document ?? ItemDocument.NewList(TaskRules.DefaultTemplate);
-        parts.Add(FileChange.Write(listFile, list?.Text, details.WithTemplate(TaskRules.TemplateWithDone(TaskRules.TemplateOf(list?.Document), done)).ToText()));
+        if (ConfigurationForChange(folder) is not { } list)
+        {
+            return;
+        }
+
         var name = folder.Equals(TopFolder, StringComparison.OrdinalIgnoreCase) ? "The top folder" : Path.GetFileName(folder);
-        Commit(new Step(parts, done ? $"{name} is a checklist: Done added to {Count(changed, "item")}" : $"{name} is a plain list: Done removed from {Count(changed, "item")}"), SelectedKey());
-    }
-
-    /// <summary>Item, Use these fields for new items (IA-4.3): the item's fields, emptied, as its list's template.</summary>
-    private void UseAsTemplate()
-    {
-        if (SelectedRow() is { Tag: FoundItem })
+        var has = list.Config.ItemFields.Any(field => field.Type == FieldTypes.Check && field.Title.Equals(TaskRules.DoneField, StringComparison.OrdinalIgnoreCase));
+        if (has == done && list.Text is not null)
         {
-            // A list's template is changed where the list lives, as F2 and Delete change an item there (TK-7b.4).
-            Announce("Open it where it lives first: Enter", true);
+            Announce(done ? $"{name} is a checklist already" : $"{name} is a plain list already", true);
             return;
         }
 
-        if (SelectedRow() is not { Tag: ItemFile item })
-        {
-            Announce("Select an item whose fields new items should get", true);
-            return;
-        }
-
-        var folder = Path.GetDirectoryName(item.Path)!;
         var listFile = Path.Combine(folder, ItemDocument.ListFile);
-        var list = ItemFolder.ReadItem(listFile);
-        var details = list?.Document ?? ItemDocument.NewList(TaskRules.DefaultTemplate);
-        // The item's values are its own, not the template's: emptied here (the written template keeps its values since 2026-11-09).
-        var template = item.Document.Fields
-            .Where(field => !field.Title.Equals(ItemDocument.TitleField, StringComparison.OrdinalIgnoreCase))
-            .Select(field => new ItemField(field.Title, field.Type, FieldTypes.Empty(field.Type), field.Options))
-            .ToList();
-        var name = folder.Equals(TopFolder, StringComparison.OrdinalIgnoreCase) ? "the top folder" : Path.GetFileName(folder);
-        Commit(new Step([FileChange.Write(listFile, list?.Text, details.WithTemplate(template).ToText())],
-            template.Count == 0 ? $"New items in {name} get only a title" : $"New items in {name} get: {string.Join(", ", template.Select(field => field.Title))}"), SelectedKey());
+        var changed = list.Config.WithItemFields(TaskRules.TemplateWithDone(list.Config.ItemFields, done));
+        Commit(new Step([FileChange.Write(listFile, list.Text, changed.ToText())],
+            done ? $"{name} is a checklist: every item has Done" : $"{name} is a plain list: Done is hidden, and kept in the items that have it"), SelectedKey());
     }
 
     // ---- the detail pane's link (IA-D3) ----
@@ -393,6 +439,13 @@ public sealed partial class TaskForm
     /// <summary>A link: the other item's title typed, found among every item under the top folder.</summary>
     protected override bool ChangeSpecial(ItemRow row, int index, ItemField field)
     {
+        // An item whose configuration is not there or does not read is not changed (AF-13.4): said before any
+        // notice asks for a value that could not be kept.
+        if (ShownDetail.Source is FileSource { Item: { } shown } && !Changeable(shown))
+        {
+            return true;
+        }
+
         if (field.Type != FieldTypes.Link || ShownDetail.Source is not FileSource source)
         {
             return false;
@@ -512,21 +565,116 @@ public sealed partial class TaskForm
                 Announce(smart.Name + " is built in: List, New smart list makes one to change", true);
                 return;
             case { } row:
-                var listFile = Path.Combine(row.Key, ItemDocument.ListFile);
-                if (File.Exists(listFile))
-                {
-                    WindowMenu.Start(Dispatch.AxJSON, listFile);
-                }
-                else
-                {
-                    Announce($"{row.Name} has no details file yet: change one of its details first", true);
-                }
-
+                EditConfiguration(row.Key, row.Name);
                 return;
             default:
                 Announce("Nothing selected", true);
                 return;
         }
+    }
+
+    /// <summary>
+    /// Edit the list's configuration (AF-11.1): its <c>list.json</c> in axJSON. A list that has no file yet gets one
+    /// written first, with the fields its items hold and an empty list of actions, so that there is something to
+    /// edit and its members are there to be filled in. A configuration that does not read is opened as it is, to be
+    /// mended; a list of the earlier format is converted first.
+    /// </summary>
+    private void EditConfiguration(string folder, string name)
+    {
+        if (ItemFolder.IsEarlier(folder))
+        {
+            Announce($"{name} is written in axTask's earlier format: Enter on it converts it first", true);
+            return;
+        }
+
+        var listFile = Path.Combine(folder, ItemDocument.ListFile);
+        if (!File.Exists(listFile)
+            && !Commit(new Step([FileChange.Write(listFile, null, ItemFolder.StarterConfig(folder).ToText())], $"Written the configuration of {name}"), SelectedKey()))
+        {
+            return;
+        }
+
+        try
+        {
+            _configEdited = (listFile, Changes.ReadOrNull(listFile));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            _configEdited = null;
+        }
+
+        WindowMenu.Start(Dispatch.AxJSON, listFile);
+    }
+
+    /// <summary>The configuration that Edit the list's configuration opened last, with its text then (AF-11.1): looked at again when this window comes back to the front.</summary>
+    private (string Path, string? Text)? _configEdited;
+
+    /// <summary>
+    /// Back from axJSON (AF-11.1): when the configuration opened from here has changed, the panes are read again and
+    /// one line says what it holds now, or that it does not read and where ("The list's configuration changed: 5
+    /// fields, 2 actions"). Said after the window's own words on coming to the front; left for the next time while
+    /// a notice or a rename is open.
+    /// </summary>
+    protected override void OnActivated(EventArgs e)
+    {
+        base.OnActivated(e);
+        if (_configEdited is not { } edited || Busy)
+        {
+            return;
+        }
+
+        string? now;
+        try
+        {
+            now = Changes.ReadOrNull(edited.Path);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            return;
+        }
+
+        if (now == edited.Text)
+        {
+            return;
+        }
+
+        _configEdited = (edited.Path, now);
+        var folder = Path.GetDirectoryName(edited.Path)!;
+        After(500, () =>
+        {
+            if (Busy)
+            {
+                return;
+            }
+
+            Fill(SelectedKey());
+            Announce(ConfigurationChanged(folder), true);
+        });
+    }
+
+    /// <summary>"The list's configuration changed: 5 fields, 2 actions", with what its reader passed over; or that it does not read, and where it is mended.</summary>
+    private static string ConfigurationChanged(string folder)
+    {
+        var read = ItemFolder.ReadConfig(folder);
+        if (read.Config is not { } config)
+        {
+            return read.Text is null ? "The list's configuration is gone" : ConfigurationProblem(folder) ?? "The list's configuration does not read";
+        }
+
+        var said = $"The list's configuration changed: {Count(config.ItemFields.Count, "field")}, {Count(config.Actions?.Count ?? 0, "action")}";
+        return config.Problems.Count == 0 ? said : $"{said}. {string.Join(". ", config.Problems.Select(problem => char.ToUpperInvariant(problem[0]) + problem[1..]))}";
+    }
+
+    /// <summary>The Field menu's Edit the list's configuration: of the list whose details, or whose item, the detail pane shows.</summary>
+    private void EditConfigurationOfShown()
+    {
+        if (ShownDetail.Source is not FileSource source || Path.GetDirectoryName(source.Path) is not { } folder)
+        {
+            Announce("Select a list or an item first", true);
+            return;
+        }
+
+        EditConfiguration(folder, Path.GetFileName(folder));
     }
 
     /// <summary>Ctrl+E: the selection's file or folder in axFile; the folder shown when nothing is selected.</summary>
@@ -564,12 +712,47 @@ public sealed partial class TaskForm
     /// <summary>A change to the detail pane's document (an item or a list's details), written to its file.</summary>
     protected override void SaveFields(ItemDetail detail, ItemDocument changed, string said, int selectField)
     {
-        if (detail.Source is not FileSource source || !CheckFresh(source.Path, source.Text))
+        if (detail.Source is not FileSource source || detail.Document is not { } shown)
         {
             return;
         }
 
-        if (Commit(new Step([FileChange.Write(source.Path, source.Text, changed.ToText())], said), SelectedKey()))
+        if (source.Item is { } item && !Changeable(item))
+        {
+            return;
+        }
+
+        if (!CheckFresh(source.Path, source.Text))
+        {
+            return;
+        }
+
+        string text;
+        if (source.Item is { } changedItem)
+        {
+            // An item: only the values that changed are written into its file (AF-11.3).
+            text = changedItem.TextWith(changed);
+        }
+        else if (source.List is { } list)
+        {
+            // A list's details: each one that changed, into its configuration; the rest of the file as it was.
+            foreach (var field in changed.Fields)
+            {
+                var before = shown.IndexOf(field.Title);
+                if (before < 0 || !JsonNode.DeepEquals(shown.Fields[before].Value, field.Value))
+                {
+                    list = list.WithDetail(field.Title, field.Value);
+                }
+            }
+
+            text = list.ToText();
+        }
+        else
+        {
+            return;
+        }
+
+        if (Commit(new Step([FileChange.Write(source.Path, source.Text, text)], said), SelectedKey()))
         {
             SelectField(selectField);
         }

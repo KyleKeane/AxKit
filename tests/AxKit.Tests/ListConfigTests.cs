@@ -1,8 +1,7 @@
 using System.Text.Json.Nodes;
 using AxKit.Core;
-using AxTask.Core;
 
-namespace AxTask.Tests;
+namespace AxKit.Tests;
 
 /// <summary>
 /// A list's configuration and an item read through it (docs/axTask/forms-framework.md sections 11 and 13): the file
@@ -227,6 +226,78 @@ public sealed class ListConfigTests
         Assert.Equal("Fix the tap", plain.Title);
         Assert.Equal(["Done", "Priority", "Sprint", "Old priority"], plain.Fields.Select(field => field.Title));
         Assert.All(plain.Fields, field => Assert.Equal(FieldTypes.Text, field.Type));
+        // Nothing is guessed: a check reads false, a number as it is written.
+        Assert.Equal(["false", "High", "November", "3"], plain.Fields.Select(field => FieldTypes.TextOf(field.Value)));
         Assert.Empty(plain.Kept);
+    }
+
+    [Fact]
+    public void A_list_that_names_no_fields_shows_the_title_alone_and_keeps_the_rest()
+    {
+        var shown = ItemView.Of(FlatItem.Parse(Item), ListConfig.New([]));
+
+        Assert.Empty(shown.Fields);
+        Assert.Equal("4 more fields kept: Done, Priority, Sprint, Old priority", shown.KeptLine);
+        Assert.Equal(["Title"], ItemView.Document(shown).Fields.Select(field => field.Title));
+    }
+
+    [Fact]
+    public void A_change_in_the_window_writes_only_what_changed()
+    {
+        var config = ListConfig.Parse(Config);
+        var item = FlatItem.Parse(Item);
+        var shown = ItemView.Document(ItemView.Of(item, config));
+        Assert.Equal(["Title", "Done", "Priority", "Due"], shown.Fields.Select(field => field.Title));
+
+        // Nothing changed: the file as it was, and Due, shown empty, still not in it.
+        Assert.Equal(item.ToText(), ItemView.Changed(item, shown, shown, config).ToText());
+
+        // Done checked: that value alone; what is kept is untouched, Due still not written.
+        var done = ItemView.Changed(item, shown, shown.WithValue(1, JsonValue.Create(true)), config);
+        Assert.True(FieldTypes.IsTrue(done.Value("Done")));
+        Assert.False(done.Has("Due"));
+        Assert.Equal("November", done.Text("Sprint"));
+        Assert.Equal(item.Values.Select(pair => pair.Key), done.Values.Select(pair => pair.Key));
+
+        // Due given a value for the first time: written where the configuration has it.
+        var due = ItemView.Changed(item, shown, shown.WithValue(3, JsonValue.Create("2026-12-01")), config);
+        Assert.Equal(["Title", "Done", "Priority", "Due", "Sprint", "Old priority"], due.Values.Select(pair => pair.Key));
+
+        // The Title changed, and a field the change added (an action that sets one the list does not name).
+        var changed = ItemView.Changed(item, shown, shown.WithTitle("Mend the tap").WithField(-1, "Kind", FieldTypes.Text, []).WithValue(4, JsonValue.Create("Bug")), config);
+        Assert.Equal("Mend the tap", changed.Title);
+        Assert.Equal("Bug", changed.Text("Kind"));
+        Assert.Equal("Kind", changed.Values[^1].Key);
+    }
+
+    [Fact]
+    public void A_title_an_item_lacked_is_put_first_after_the_link()
+    {
+        var item = FlatItem.Parse("""{ "schema": "list.json", "Done": true }""").With("title", JsonValue.Create("Named"));
+
+        Assert.Equal(["title", "Done"], item.Values.Select(pair => pair.Key));
+        Assert.Equal("Named", item.Title);
+    }
+
+    [Fact]
+    public void Item_fields_set_again_keep_the_objects_of_the_fields_that_stay()
+    {
+        var config = ListConfig.Parse("""
+            {
+              "format": "axkit-list 2",
+              "item fields": [
+                { "title": "Done", "type": "check", "value": false, "note": "kept" },
+                { "title": "Due", "type": "date", "value": "" }
+              ]
+            }
+            """);
+
+        var with = config.WithItemFields([.. config.ItemFields, new ItemField("Kind", FieldTypes.Text, JsonValue.Create(string.Empty), [])]);
+
+        Assert.Contains("\"note\": \"kept\"", with.ToText(), StringComparison.Ordinal);
+        Assert.Equal(["Done", "Due", "Kind"], ListConfig.Parse(with.ToText()).ItemFields.Select(field => field.Title));
+        // A field whose type changed is written anew.
+        var changed = config.WithItemFields([config.ItemFields[0] with { Type = FieldTypes.Text, Value = JsonValue.Create(string.Empty) }]);
+        Assert.DoesNotContain("\"note\"", changed.ToText(), StringComparison.Ordinal);
     }
 }

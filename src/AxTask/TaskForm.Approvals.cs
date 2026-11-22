@@ -34,7 +34,12 @@ public sealed partial class TaskForm
             return;
         }
 
-        if (OutsideReports.Refusal(entry.Document) is { } refused)
+        if (!Changeable(entry))
+        {
+            return;
+        }
+
+        if (OutsideReports.Refusal(entry.Flat) is { } refused)
         {
             EventDoor.Raise(EventKind.Refused);
             Announce(refused, true);
@@ -50,7 +55,7 @@ public sealed partial class TaskForm
         }
 
         var verb = approve ? "approve" : "decline";
-        ShowNotice(new Notice((approve ? "Approve: " : "Decline: ") + entry.Document.Title, OutsideReports.NoticeText(entry.Document, approve),
+        ShowNotice(new Notice((approve ? "Approve: " : "Decline: ") + entry.Flat.Title, OutsideReports.NoticeText(entry.Flat, approve),
         [
             new OverlayChoice(approve ? "&Approve" : "&Decline", () =>
             {
@@ -71,7 +76,7 @@ public sealed partial class TaskForm
     private async void SignEntry(ItemFile entry, string keyFile, string passphrase, bool approve)
     {
         var date = DateTime.Now.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-        var text = Approvals.Text(OutsideReports.EntryOf(entry.Document, approve ? Approvals.Approved : Approvals.Declined, date));
+        var text = Approvals.Text(OutsideReports.EntryOf(entry.Flat, approve ? Approvals.Approved : Approvals.Declined, date));
         string? signature = null;
         string? failed = null;
         try
@@ -100,8 +105,8 @@ public sealed partial class TaskForm
             return;
         }
 
-        var signed = OutsideReports.Signed(entry.Document, approve, signature, date);
-        Commit(new Step([FileChange.Write(entry.Path, entry.Text, signed.ToText())], (approve ? "Approved: " : "Declined: ") + entry.Document.Title), entry.Path);
+        var signed = OutsideReports.Signed(entry.Flat, entry.Config, approve, signature, date);
+        Commit(new Step([FileChange.Write(entry.Path, entry.Text, signed.ToText())], (approve ? "Approved: " : "Declined: ") + entry.Flat.Title), entry.Path);
     }
 
     /// <summary>

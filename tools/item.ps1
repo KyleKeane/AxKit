@@ -8,8 +8,9 @@
   The list is <parent>\axkit-management\priorities beside this repository, one JSON file per item. Three forms:
 
     new -Title <title> -App <app> -Priority <priority> -Where <where it is written> -Notes <notes>
-        writes a new item in the shape the list gives its new items (the "new item" fields of the list's list.json,
-        the Title in front): Done not checked, Started, Tags and Due empty. The file is named from the title as axTask
+        writes a new item as the list's items are (docs/axTask/forms-framework.md section 13): the link to the
+        list's list.json, the Title, and each of the list's "item fields" with the value a new item starts with:
+        Done not checked, Started, Tags and Due empty. The file is named from the title as axTask
         names it (AxKit.Core ItemFiles.FileStem: a character Windows forbids becomes a space, no full stop at the
         end, 120 characters at most). Refused when a file of that name exists, and when the priority is not one of
         the list's (High, Normal, Low).
@@ -88,9 +89,12 @@ function Get-NamedItem([string]$words) {
     return $found[0]
 }
 
-function Get-Field($document, [string]$named) {
-    return ($document.fields | Where-Object { $_.title -eq $named } | Select-Object -First 1)
+if (Test-EarlierList $Lists) {
+    Refuse 'the priorities list is written in axTask''s earlier format, which the scripts no longer read. Open the list in axTask and convert it (Enter on the list) first.'
 }
+
+# The list's configuration: the fields of its items, in their order (list.json, "item fields").
+$listConfig = Get-ListConfig $Lists
 
 $today = (Get-Date).ToString('yyyy-MM-dd')
 
@@ -117,39 +121,23 @@ if ($Form -eq 'new') {
         if (-not "$($needed[1])".Trim()) { Refuse "a new item needs -$($needed[0])." }
     }
 
-    # The fields of a new item are the list's own, from its list.json; a list without them gets the fields the
-    # priorities list has had since 2026-11-10.
-    $template = $null
-    $listFile = Join-Path $Lists 'list.json'
-    if (Test-Path -LiteralPath $listFile) {
-        $template = (Get-Content -LiteralPath $listFile -Raw | ConvertFrom-Json).'new item'
-    }
-    if (-not $template) {
-        $template = @(
-            [pscustomobject]@{ title = 'Done'; type = 'check'; value = $false },
-            [pscustomobject]@{ title = 'Started'; type = 'date'; value = '' },
-            [pscustomobject]@{ title = 'Priority'; type = 'choice'; value = ''; options = @('High', 'Normal', 'Low') },
-            [pscustomobject]@{ title = 'App'; type = 'text'; value = '' },
-            [pscustomobject]@{ title = 'Tags'; type = 'text'; value = '' },
-            [pscustomobject]@{ title = 'Due'; type = 'date'; value = '' },
-            [pscustomobject]@{ title = 'Where it is written'; type = 'text'; value = '' },
-            [pscustomobject]@{ title = 'Notes'; type = 'longtext'; value = '' }
-        )
-    }
+    # The fields of a new item are the list's own, from its configuration (list.json, "item fields"): the item is
+    # the link to that file, its Title, and each field with the value a new item starts with.
+    if ($null -eq $listConfig) { Refuse 'the list has no configuration that reads (list.json, format axkit-list 2), so the fields of a new item are not known.' }
+    $titles = @(Get-ItemFieldTitles $listConfig)
 
     Assert-ApprovedFromOutside $Title.Trim() @($Title, $Where, $Notes)
-    $fields = @([pscustomobject]@{ title = 'Title'; type = 'text'; value = $Title.Trim() }) + @($template | Where-Object { $_.title -ne 'Title' })
-    $document = [pscustomobject]@{ format = 'axkit-item 1'; fields = $fields }
+    $document = New-ListItem $Title.Trim() $listConfig
 
-    $priorities = @((Get-Field $document 'Priority').options)
+    $priorityField = @($listConfig.'item fields') | Where-Object { "$($_.title)" -ieq 'Priority' } | Select-Object -First 1
+    $priorities = @($priorityField.options)
     $chosen = @($priorities | Where-Object { $_ -ieq $Priority })
     if ($chosen.Count -ne 1) { Refuse "the priority '$Priority' is not one of the list's: $($priorities -join ', ')." }
 
-    $values = @{ 'Priority' = $chosen[0]; 'App' = $App.Trim(); 'Where it is written' = $Where.Trim(); 'Notes' = $Notes.Trim() }
+    $values = [ordered]@{ 'Priority' = $chosen[0]; 'App' = $App.Trim(); 'Where it is written' = $Where.Trim(); 'Notes' = $Notes.Trim() }
     foreach ($key in $values.Keys) {
-        $field = Get-Field $document $key
-        if (-not $field) { Refuse "the list's new items have no field '$key' (list.json, ""new item"")." }
-        $field.value = $values[$key]
+        if ($titles -notcontains $key) { Refuse "the list's items have no field '$key' (list.json, ""item fields"")." }
+        $document = Set-ItemValue $document $key $values[$key] $listConfig
     }
 
     $file = Join-Path $Lists ((Get-FileStem $Title) + '.json')
@@ -161,27 +149,32 @@ if ($Form -eq 'new') {
 
 $item = Get-NamedItem $Name
 
+# A field the item's file does not hold yet is one of the item's all the same when the list's configuration names it
+# (it is shown empty until it is given a value); a name neither has is refused.
+function Assert-ItemField([string]$named) {
+    if (-not (Test-ItemValue $item.Document $named) -and (@(Get-ItemFieldTitles $listConfig) -notcontains $named)) {
+        Refuse "the item has no $named field: $($item.Title)"
+    }
+}
+
 if ($Form -eq 'note') {
     if (-not "$Text".Trim()) { Refuse 'a note needs -Text.' }
     Assert-ApprovedFromOutside $item.Title @($Text)
-    $field = Get-Field $item.Document 'Notes'
-    if (-not $field) { Refuse "the item has no Notes field: $($item.Title)" }
+    Assert-ItemField 'Notes'
     $sentence = $Text.Trim()
     if ($sentence -notmatch '[.?!)"]$') { $sentence += '.' }
-    $field.value = ("${today}: $sentence " + "$($field.value)").TrimEnd()
-    Save-ListItem $item.File $item.Document
+    $noted = ("${today}: $sentence " + "$(Get-ItemValue $item.Document 'Notes')").TrimEnd()
+    Save-ListItem $item.File (Set-ItemValue $item.Document 'Notes' $noted $listConfig)
     Write-Host "Priorities list, note of $today in front of the Notes: $($item.Title)"
     exit 0
 }
 
 # done
-$field = Get-Field $item.Document 'Done'
-if (-not $field) { Refuse "the item has no Done field: $($item.Title)" }
-if ($field.value) {
+Assert-ItemField 'Done'
+if (Get-ItemValue $item.Document 'Done') {
     Write-Host "Priorities list, already done: $($item.Title)"
     exit 0
 }
-$field.value = $true
-Save-ListItem $item.File $item.Document
+Save-ListItem $item.File (Set-ItemValue $item.Document 'Done' $true $listConfig)
 Write-Host "Priorities list, marked done: $($item.Title)"
 exit 0

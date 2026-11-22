@@ -148,11 +148,7 @@ public sealed class ProjectsTests : IDisposable
         Assert.Contains(found, project => project.Name == "tasks in beta");
     }
 
-    private static void List(string folder)
-    {
-        Directory.CreateDirectory(folder);
-        File.WriteAllText(Path.Combine(folder, ItemDocument.ListFile), ItemDocument.NewList([]).ToText());
-    }
+    private static void List(string folder) => TestLists.List(folder, fields: []);
 
     private static void Item(string folder, string title, string? notes)
     {
@@ -163,6 +159,7 @@ public sealed class ProjectsTests : IDisposable
             item = item.WithField(-1, "Notes", FieldTypes.LongText, []).WithValue(1, JsonValue.Create(notes));
         }
 
-        File.WriteAllText(Path.Combine(folder, title + ".json"), item.ToText());
+        // The list's configuration comes to name Notes with the first item that has them.
+        TestLists.Write(Path.Combine(folder, title + ".json"), item);
     }
 }

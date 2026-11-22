@@ -7,26 +7,35 @@ namespace AxTask.Tests;
 /// <summary>The Ctrl+number action keys of a list (docs/axKit/reports.md RP-8).</summary>
 public sealed class ActionKeysTests
 {
+    /// <summary>
+    /// A list's configuration with its actions (docs/axTask/forms-framework.md section 3). The action keys are the
+    /// entries on Ctrl+1 to Ctrl+9 that set, move or open; the rest are not theirs: one without a name, one on
+    /// another key, one of another kind, a second entry on a key, one without what its kind needs.
+    /// </summary>
     private const string ListText = """
         {
-          "format": "axkit-list 1",
-          "fields": [ { "title": "Notes", "type": "longtext", "value": "" } ],
-          "new item": [ { "title": "Done", "type": "check", "value": false } ],
-          "keys": {
-            "1": { "name": "Make it a bug", "set": { "Kind": "Bug" } },
-            "4": { "name": "Done", "set": { "Done": true } },
-            "7": { "name": "Move to Later", "move": "../Later" },
-            "8": { "name": "Open on GitHub", "open": "Issue" },
-            "9": { "name": "", "open": "Issue" },
-            "0": { "name": "Not a digit", "open": "Issue" }
-          }
+          "format": "axkit-list 2",
+          "details": { "Notes": "" },
+          "item fields": [ { "title": "Done", "type": "check", "value": false } ],
+          "actions": [
+            { "name": "Make it a bug", "key": "Ctrl+1", "does": "set", "set": { "Kind": "Bug" } },
+            { "name": "Done", "key": "Ctrl+4", "does": "set", "set": { "Done": true } },
+            { "name": "Move to Later", "key": "ctrl+7", "does": "move", "to": "../Later" },
+            { "name": "Open on GitHub", "key": "Ctrl+8", "does": "open", "open": "Issue" },
+            { "name": "", "key": "Ctrl+9", "does": "open", "open": "Issue" },
+            { "name": "Not a digit", "key": "Ctrl+0", "does": "open", "open": "Issue" },
+            { "name": "Runs a program", "key": "Ctrl+2", "does": "run", "program": "git" },
+            { "name": "On Shift", "key": "Ctrl+Shift+3", "does": "set", "set": { "Kind": "Idea" } },
+            { "name": "A second on a key", "key": "Ctrl+1", "does": "open", "open": "Issue" },
+            { "name": "Nothing to set", "key": "Ctrl+5", "does": "set" }
+          ]
         }
         """;
 
     [Fact]
     public void The_keys_are_read_by_digit_and_a_nameless_one_is_not_one()
     {
-        var keys = ActionKeys.Read(ItemDocument.Parse(ListText));
+        var keys = ActionKeys.Read(ListConfig.Parse(ListText));
         Assert.Equal([1, 4, 7, 8], keys.Keys.Order());
         Assert.Equal("set", keys[1].Kind);
         Assert.Equal("sets Kind: Bug", keys[1].Described);
@@ -36,30 +45,44 @@ public sealed class ActionKeysTests
         Assert.Equal("Ctrl+1. Make it a bug", ActionKeys.Spoken(1, keys[1]));
         Assert.Equal("Ctrl+3. not set", ActionKeys.Spoken(3, null));
         Assert.Empty(ActionKeys.Read(null));
-        Assert.Empty(ActionKeys.Read(ItemDocument.NewList([])));
+        Assert.Empty(ActionKeys.Read(ListConfig.New([])));
     }
 
     [Fact]
-    public void A_key_is_set_and_removed_in_the_list_and_the_whole_key_goes_with_the_last()
+    public void A_key_is_set_and_removed_among_the_actions_and_the_others_stay_as_they_are()
     {
-        var list = ItemDocument.NewList([]);
+        var list = ListConfig.New([]);
         list = ActionKeys.With(list, 2, new ListAction("Make it feedback", Set: new Dictionary<string, JsonNode?> { ["Kind"] = JsonValue.Create("Feedback") }));
-        Assert.Contains("\"keys\"", list.ToText());
-        var back = ActionKeys.Read(ItemDocument.Parse(list.ToText()));
+        Assert.Contains("\"key\": \"Ctrl+2\"", list.ToText());
+        Assert.Contains("\"does\": \"set\"", list.ToText());
+        var back = ActionKeys.Read(ListConfig.Parse(list.ToText()));
         Assert.Equal("Make it feedback", back[2].Name);
         Assert.Equal("Feedback", back[2].Set!["kind"]!.GetValue<string>());
 
         list = ActionKeys.With(list, 2, null);
-        Assert.DoesNotContain("\"keys\"", list.ToText());
-        Assert.Single(list.Fields);
+        Assert.Empty(list.Actions!);
+
+        // In a list with other actions: a key set again keeps its place, a new one goes last, and what is no action
+        // key (another kind, another key) is written back as it was.
+        var full = ListConfig.Parse(ListText);
+        var changed = ActionKeys.With(ActionKeys.With(full, 4, new ListAction("Park", Move: "../Later")), 6, new ListAction("Web", Open: "Issue"));
+        var names = changed.Actions!.Select(action => FieldTypes.TextOf(action!["name"])).ToList();
+        Assert.Equal("Park", names[1]);
+        Assert.Equal("Web", names[^1]);
+        Assert.Equal(full.Actions!.Count + 1, names.Count);
+        Assert.Contains("Runs a program", names);
+        Assert.Equal("../Later", FieldTypes.TextOf(changed.Actions![1]!["to"]));
+        Assert.Equal(full.Actions!.Count - 1, ActionKeys.With(full, 8, null).Actions!.Count);
     }
 
     /// <summary>
-    /// A list made as a GitHub list before 2026-11-14 (TK-7a.2): its <c>github</c> member means nothing now and is kept
-    /// as any member axTask does not know; its keys are read and its template is the list's, as in every list.
+    /// The action keys of the earlier format come through the conversion as they were: the same keys, the same
+    /// actions, and so the same acceptances (TK-7a.3: <see cref="ActionKeys.MarkText"/> is over the action, not over
+    /// the file's shape). A list made as a GitHub list before 2026-11-14 (TK-7a.2) keeps its <c>github</c> member,
+    /// which means nothing.
     /// </summary>
     [Fact]
-    public void A_list_that_was_a_GitHub_list_is_an_ordinary_list_and_keeps_its_member()
+    public void The_keys_of_a_list_of_the_earlier_format_are_the_same_keys_after_its_conversion()
     {
         const string text = """
             {
@@ -67,12 +90,16 @@ public sealed class ActionKeysTests
               "fields": [ { "title": "Notes", "type": "longtext", "value": "" } ],
               "new item": [ { "title": "Kind", "type": "choice", "value": "unlabelled", "options": ["Bug", "unlabelled"] } ],
               "github": { "repository": "owner/repo", "state": "open" },
-              "keys": { "1": { "name": "Make it a bug", "set": { "Kind": "Bug" } }, "5": { "name": "Open on GitHub", "open": "Issue" } }
+              "keys": { "1": { "name": "Make it a bug", "set": { "Kind": "Bug" } }, "5": { "name": "Open on GitHub", "open": "Issue" }, "7": { "name": "Later", "move": "../Later" } }
             }
             """;
-        var list = ItemDocument.Parse(text);
-        Assert.Equal([1, 5], ActionKeys.Read(list).Keys.Order());
+        var list = ListConfig.Parse(AxKit.Core.Conversion.EarlierFormat.Convert(text, []).Config);
+        var keys = ActionKeys.Read(list);
+        Assert.Equal([1, 5, 7], keys.Keys.Order());
         Assert.Equal("Kind", Assert.Single(TaskRules.TemplateOf(list)).Title);
+        // The action as an acceptance seals it is what the earlier file held, to the letter.
+        Assert.Equal("{\"name\":\"Later\",\"move\":\"../Later\"}", keys[7].ToJson().ToJsonString());
+        Assert.Equal("{\"name\":\"Open on GitHub\",\"open\":\"Issue\"}", keys[5].ToJson().ToJsonString());
         var changed = ActionKeys.With(list, 5, null);
         Assert.Contains("\"github\"", changed.ToText());
         Assert.Contains("owner/repo", changed.ToText());
@@ -109,7 +136,7 @@ public sealed class ActionKeysTests
     [Fact]
     public void A_key_that_moves_or_opens_asks_first_and_one_that_sets_fields_does_not()
     {
-        var keys = ActionKeys.Read(ItemDocument.Parse(ListText));
+        var keys = ActionKeys.Read(ListConfig.Parse(ListText));
         Assert.False(ActionKeys.AsksFirst(keys[1]));
         Assert.True(ActionKeys.AsksFirst(keys[7]));
         Assert.True(ActionKeys.AsksFirst(keys[8]));
@@ -177,7 +204,7 @@ public sealed class ActionKeysTests
     [Fact]
     public void The_form_shows_a_keys_action_by_its_kind_and_its_value()
     {
-        var keys = ActionKeys.Read(ItemDocument.Parse(ListText));
+        var keys = ActionKeys.Read(ListConfig.Parse(ListText));
         Assert.Equal(3, ActionKeys.KindNames.Count);
         Assert.Equal((0, "Kind: Bug"), (ActionKeys.KindIndex(keys[1]), ActionKeys.ValueText(keys[1])));
         // A check is written as it is typed, done or not done.
@@ -206,7 +233,7 @@ public sealed class ActionKeysTests
     [Fact]
     public void What_a_key_shows_comes_back_as_the_same_action()
     {
-        var keys = ActionKeys.Read(ItemDocument.Parse(ListText));
+        var keys = ActionKeys.Read(ListConfig.Parse(ListText));
         foreach (var action in keys.Values)
         {
             var again = ActionKeys.FromForm(action.Name, ActionKeys.KindIndex(action), ActionKeys.ValueText(action), Later);

@@ -2,16 +2,18 @@
 # axTask: a list's details, plain lists and checklists, links, smart lists, a change on disk (docs/axTask/nvda-test-plan.md
 # sections 1.8, 2.4, 2.8 to 2.10, 3 and 4; docs/axKit/item-apps.md IA-4.3, IA-5.5, IA-D3; SPEC TK-4, TK-5).
 file home\AxKit\axTask.json {"checkForUpdates": false}
-file "tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}, {"title": "Due", "type": "date", "value": "2099-10-30"}, {"title": "Waits on", "type": "link", "value": ""}]}
-file "tasks\Home\Water plants.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Water plants"}, {"title": "Done", "type": "check", "value": true}]}
-file tasks\Shopping\Milk.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Milk"}]}
-file tasks\Shopping\Washer.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Washer"}, {"title": "Done", "type": "check", "value": false}]}
+file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Due","type":"date","value":""},{"title":"Waits on","type":"link","value":""}],"actions":[]}
+file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false,"Due":"2099-10-30","Waits on":""}
+file "tasks\Home\Water plants.json" {"schema":"list.json","Title":"Water plants","Done":true}
+file tasks\Shopping\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
+file tasks\Shopping\Milk.json {"schema":"list.json","Title":"Milk"}
+file tasks\Shopping\Washer.json {"schema":"list.json","Title":"Washer","Done":false}
 
 start task {temp}\tasks
 expect focus Your lists, heading level 1, 2 lists
 
 # Goal: Read a list's details
-# 1.8 A list's details: its fields, then the fields its new items get.
+# 1.8 A list's details: its own, then the fields of its items, as its configuration names them.
 keys down
 expect focus Home, list, 2 items
 keys tab
@@ -19,7 +21,7 @@ expect focus Section, text, empty
 keys down
 expect focus Notes, long text, empty
 keys down
-expect focus Fields of a new item: Done, Start, Due
+expect focus Fields of its items: Done, Due, Waits on
 
 # Goal: Write notes of several lines
 # 2.4 A long text of two lines: the field takes Enter as a new line; Save keeps it; Ctrl+Q reads both lines.
@@ -73,16 +75,23 @@ expect said ! Archived Washer 15 mm
 run findstr /l /c:"../Archive/Washer 15 mm.json" "tasks\Home\Fix the tap.json"
 
 # Goal: Make a checklist a plain list and back
-# 2.8 Shopping made a plain list and back.
+# 2.8 Shopping made a plain list and back. The switch is the list's configuration's alone (forms-framework.md
+# AF-13.3): no item's file is touched; a Done an item holds is kept while the list is plain.
 keys left
 expect focus Shopping, list
 menu Remove Done from every item
-expect said ! Shopping is a plain list: Done removed from 0 items
+expect said ! Shopping is a plain list: Done is hidden, and kept in the items that have it
 do Undo
 expect said ! Undone: Shopping is a plain list
+menu Remove Done from every item
+expect said ! Shopping is a plain list
+menu Remove Done from every item
+expect said ! Shopping is a plain list already
 menu Add Done to every item
-expect said ! Shopping is a checklist: Done added to 1 item
-run findstr /l /c:"\"Done\"" tasks\Shopping\Milk.json
+expect said ! Shopping is a checklist: every item has Done
+run findstr /l /c:"\"title\": \"Done\"" tasks\Shopping\list.json
+menu Add Done to every item
+expect said ! Shopping is a checklist already
 
 # Goal: Make a new list
 # 2.10 A new list, and its undo.

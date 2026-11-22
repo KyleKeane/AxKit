@@ -3,6 +3,10 @@ using AxKit.Core;
 
 namespace AxKit.Tests;
 
+/// <summary>
+/// The item window's document: fields in memory, every change a new document. It has no file shape of its own since
+/// 2026-11-21; the files are <c>FlatItem</c>'s and <c>ListConfig</c>'s (<c>FlatItemTests</c>, <c>ListConfigTests</c>).
+/// </summary>
 public class ItemDocumentTests
 {
     private static readonly IReadOnlyList<ItemField> Template =
@@ -12,60 +16,46 @@ public class ItemDocumentTests
         new("Due", FieldTypes.Date, JsonValue.Create(string.Empty), []),
     ];
 
-    private const string Sample = """
-        {
-          "format": "axkit-item 1",
-          "colour": "blue",
-          "fields": [
-            { "title": "Title", "type": "text", "value": "Fix the tap" },
-            { "title": "Done", "type": "check", "value": false, "note": "kept" },
-            { "title": "Due", "type": "date", "value": "2026-10-30" },
-            { "title": "Priority", "type": "choice", "value": "High", "options": ["High", "Normal", "Low"] }
-          ]
-        }
-        """;
+    private static ItemDocument Sample() => ItemDocument.Of(
+    [
+        new("Title", FieldTypes.Text, JsonValue.Create("Fix the tap"), []),
+        new("Done", FieldTypes.Check, JsonValue.Create(false), []),
+        new("Due", FieldTypes.Date, JsonValue.Create("2026-10-30"), []),
+        new("Priority", FieldTypes.Choice, JsonValue.Create("High"), ["High", "Normal", "Low"]),
+    ]);
 
     [Fact]
-    public void ReadsTheFieldsInOrder()
+    public void HoldsTheFieldsInOrder()
     {
-        var document = ItemDocument.Parse(Sample);
+        var document = Sample();
         Assert.Equal(["Title", "Done", "Due", "Priority"], document.Fields.Select(field => field.Title));
         Assert.Equal("Fix the tap", document.Title);
         Assert.Equal(["High", "Normal", "Low"], document.Fields[3].Options);
+        Assert.Equal(2, document.IndexOf("due"));
+        Assert.Equal(-1, document.IndexOf("Notes"));
     }
 
     [Fact]
-    public void KeepsKeysItDoesNotKnow()
+    public void AChangeLeavesTheDocumentAsItWas()
     {
-        var changed = ItemDocument.Parse(Sample).WithValue(1, JsonValue.Create(true));
-        var text = changed.ToText();
-        Assert.Contains("\"colour\": \"blue\"", text);
-        Assert.Contains("\"note\": \"kept\"", text);
-        Assert.Contains("\"value\": true", text);
-    }
-
-    [Fact]
-    public void AChangeLeavesTheDocumentReadAsItWas()
-    {
-        var document = ItemDocument.Parse(Sample);
-        _ = document.WithValue(1, JsonValue.Create(true));
+        var document = Sample();
+        var changed = document.WithValue(1, JsonValue.Create(true));
+        Assert.True(FieldTypes.IsTrue(changed.Fields[1].Value));
         Assert.False(FieldTypes.IsTrue(document.Fields[1].Value));
     }
 
     [Fact]
-    public void WritesWindowsLineEndsAndReadsItsOwnText()
+    public void AValueHandedInIsTheDocumentsOwn()
     {
-        var text = ItemDocument.Parse(Sample).ToText();
-        Assert.DoesNotContain("\n", text.Replace("\r\n", string.Empty));
-        Assert.Equal(text, ItemDocument.Parse(text).ToText());
+        // A value may belong to a JSON document that changes later, or be handed to another one: the document keeps
+        // a copy of its own.
+        var value = JsonValue.Create("first");
+        var holder = new JsonObject { ["value"] = value };
+        var document = ItemDocument.Of([new ItemField("Title", FieldTypes.Text, holder["value"], [])]);
+        holder["value"] = "second";
+        Assert.Equal("first", document.Title);
+        Assert.Null(document.Fields[0].Value!.Parent);
     }
-
-    [Theory]
-    [InlineData("not json")]
-    [InlineData("[1, 2]")]
-    [InlineData("{ \"format\": \"axkit-item 1\" }")]
-    [InlineData("{ \"fields\": [1] }")]
-    public void RefusesWhatIsNotAnItem(string text) => Assert.Throws<InvalidDataException>(() => ItemDocument.Parse(text));
 
     [Fact]
     public void ANewItemHasItsTitleThenTheTemplate()
@@ -73,13 +63,22 @@ public class ItemDocumentTests
         var item = ItemDocument.NewItem("Call the plumber", Template);
         Assert.Equal(["Title", "Done", "Start", "Due"], item.Fields.Select(field => field.Title));
         Assert.Equal("Call the plumber", item.Title);
-        Assert.Contains("\"format\": \"axkit-item 1\"", item.ToText());
+        // A template that names the Title does not give a second one.
+        Assert.Equal(["Title", "Done"], ItemDocument.NewItem("x", [new("title", FieldTypes.Text, null, []), Template[0]]).Fields.Select(field => field.Title));
+    }
+
+    [Fact]
+    public void ANewItemStartsWithTheTemplatesValues()
+    {
+        var item = ItemDocument.NewItem("Issue 7", [new("Kind", FieldTypes.Choice, JsonValue.Create("unlabelled"), ["Bug", "unlabelled"])]);
+        Assert.Equal("unlabelled", FieldTypes.TextOf(item.Fields[item.IndexOf("Kind")].Value));
+        Assert.Equal(["Bug", "unlabelled"], item.Fields[1].Options);
     }
 
     [Fact]
     public void FieldsAreAddedRemovedRenamedAndMoved()
     {
-        var document = ItemDocument.Parse(Sample);
+        var document = Sample();
         var added = document.WithField(0, "Notes", FieldTypes.LongText, []);
         Assert.Equal("Notes", added.Fields[1].Title);
         Assert.Equal(string.Empty, FieldTypes.TextOf(added.Fields[1].Value));
@@ -93,49 +92,20 @@ public class ItemDocumentTests
     }
 
     [Fact]
+    public void ATitleIsSetOrPutFirst()
+    {
+        Assert.Equal("Mend the tap", Sample().WithTitle("Mend the tap").Title);
+        var untitled = ItemDocument.Of([Template[0]]).WithTitle("New");
+        Assert.Equal(["Title", "Done"], untitled.Fields.Select(field => field.Title));
+    }
+
+    [Fact]
     public void HoldsTellsAFieldThatMoved()
     {
-        var document = ItemDocument.Parse(Sample);
+        var document = Sample();
         var shown = document.Fields[2];
         Assert.True(document.Holds(2, shown));
         Assert.False(document.WithFieldMoved(2, -1)!.Holds(2, shown));
         Assert.False(document.Holds(9, shown));
-    }
-
-    [Fact]
-    public void AListKeepsItsTemplate()
-    {
-        var list = ItemDocument.NewList(Template);
-        Assert.True(list.HasTemplate);
-        Assert.Equal(["Done", "Start", "Due"], list.Template.Select(field => field.Title));
-        var plain = list.WithTemplate([]);
-        Assert.True(plain.HasTemplate);
-        Assert.Empty(plain.Template);
-        Assert.Contains("\"new item\": []", plain.ToText());
-    }
-
-    [Fact]
-    public void AWrittenTemplateKeepsItsValuesAndANewItemStartsWithThem()
-    {
-        // Until 2026-11-09 the written template emptied every value, so a GitHub list's new items had no kind or state.
-        var written = ItemDocument.Parse(ItemDocument.NewList(
-        [
-            new("Kind", FieldTypes.Choice, JsonValue.Create("unlabelled"), ["Bug", "unlabelled"]),
-            new("Done", FieldTypes.Check, JsonValue.Create(false), []),
-        ]).ToText());
-        Assert.Equal("unlabelled", FieldTypes.TextOf(written.Template[0].Value));
-        Assert.Equal(["Bug", "unlabelled"], written.Template[0].Options);
-        Assert.False(FieldTypes.IsTrue(written.Template[1].Value));
-        var item = ItemDocument.NewItem("Issue 7", written.Template);
-        Assert.Equal("unlabelled", FieldTypes.TextOf(item.Fields[item.IndexOf("Kind")].Value));
-        Assert.Equal("Bug", FieldTypes.TextOf(ItemDocument.Parse(written.WithTemplate([new("Kind", FieldTypes.Choice, JsonValue.Create("Bug"), ["Bug"])]).ToText()).Template[0].Value));
-    }
-
-    [Fact]
-    public void KeepsTextAsWritten()
-    {
-        var item = ItemDocument.NewItem("Café & \"quotes\" <tag>", []);
-        Assert.Contains("Café & \\\"quotes\\\" <tag>", item.ToText());
-        Assert.Equal("Café & \"quotes\" <tag>", ItemDocument.Parse(item.ToText()).Title);
     }
 }

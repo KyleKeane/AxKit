@@ -1,8 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using AxKit.Core;
-
-namespace AxTask.Core.Conversion;
+namespace AxKit.Core.Conversion;
 
 /// <summary>One item's file as the conversion writes it: its name in the list's folder and its new text.</summary>
 public sealed record ConvertedItem(string FileName, string Text);
@@ -25,10 +23,11 @@ public sealed record ConvertedList(string Config, IReadOnlyList<ConvertedItem> I
 /// with a link to the list's file (<see cref="FlatItem"/>), and the list's file is the schema
 /// (<see cref="ListConfig"/>).
 ///
-/// This file reads the earlier shape itself and is the only place that knows it: the app's own code calls
-/// <see cref="Convert"/> where it meets such a list and nowhere reads the earlier shape. Pure: texts in, texts out;
-/// the caller copies the folder first and writes the files. Nothing is ever dropped: a value that has no place of
-/// its own is kept under a name the notes give.
+/// This file reads the earlier shape itself and is the only place that knows it: the apps' own code calls it where
+/// it meets such a list (through <see cref="ListConversion"/>, the folder's side) and nowhere reads the earlier
+/// shape. Pure: texts in, texts out. Nothing is ever dropped: a value that has no place of its own is kept under a
+/// name the notes give. It sits beside the item format in <c>AxKit.Core</c> because two things meet earlier lists:
+/// axTask, and the report form's own list (<c>Reports/ReportFiles</c>), whose waiting reports must still be sent.
 /// </summary>
 public static class EarlierFormat
 {
@@ -48,20 +47,23 @@ public static class EarlierFormat
     /// none; <paramref name="items"/> are the folder's item files by name. The configuration's item fields are the
     /// template's, in its order, and after them every field that only some items hold, so that nothing an item shows
     /// today is hidden by the conversion (AF-13.6). An item that is not of the earlier shape is left out of the
-    /// result, with a note, and its file stays as it is.
+    /// result and its file stays as it is: without a word when it is an item of the shape now (a list half
+    /// converted, or one an earlier version of axKit wrote a file into), with a note otherwise. A list's file that
+    /// is of the shape now already is kept, and only gains the fields the earlier items bring.
     /// </summary>
     public static ConvertedList Convert(string? listText, IReadOnlyList<(string FileName, string Text)> items)
     {
         var notes = new List<string>();
-        var list = listText is null ? null : ReadObject(listText);
-        if (listText is not null && list is null)
+        var existing = listText is not null && ListConfig.FormatOf(listText) == ListConfig.Format ? ListConfig.Parse(listText) : null;
+        var list = listText is null || existing is not null ? null : ReadObject(listText);
+        if (listText is not null && existing is null && list is null)
         {
             notes.Add("The list's own file did not read as JSON; the new one is made from the items alone.");
         }
 
         // The fields of the list's items: the template first, then what the items themselves hold.
         var fields = new List<ItemField>();
-        foreach (var field in Fields(list?["new item"]))
+        foreach (var field in existing?.ItemFields ?? Fields(list?["new item"]))
         {
             AddField(fields, field, startValue: field.Value);
         }
@@ -70,6 +72,11 @@ public static class EarlierFormat
         foreach (var (name, text) in items)
         {
             var root = ReadObject(text);
+            if (FlatItem.IsItem(root))
+            {
+                continue;
+            }
+
             if (root is null || FormatOf(root) != ItemFormat || root["fields"] is not JsonArray)
             {
                 notes.Add($"{name} is not an item of the earlier format and is left as it is.");
@@ -87,7 +94,10 @@ public static class EarlierFormat
             }
         }
 
-        var config = ListConfig.New(fields);
+        // A configuration of the shape now is rewritten only where the earlier items bring a field it lacks.
+        var config = existing is null ? ListConfig.New(fields)
+            : fields.Count == existing.ItemFields.Count ? existing
+            : existing.WithItemFields(fields);
         foreach (var detail in Fields(list?["fields"]))
         {
             config = config.WithDetail(detail.Title, detail.Value);
@@ -116,7 +126,8 @@ public static class EarlierFormat
             converted.Add(new ConvertedItem(name, Item(name, root, named, config, notes).ToText()));
         }
 
-        return new ConvertedList(config.ToText(), converted, notes);
+        // A configuration that gained nothing keeps its text to the letter, so that its file is not written at all.
+        return new ConvertedList(ReferenceEquals(config, existing) ? listText! : config.ToText(), converted, notes);
     }
 
     /// <summary>

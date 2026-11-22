@@ -770,9 +770,8 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Move between the list and the fields
     - Mark a task done or not done
     - Set a due date by typing a weekday
-    - Add a field with a choice of values
+    - Give a field its first value
     - Change a choice to its previous or next value
-    - Move a field up
     - Set a check field on or off
     - Rename an item
     - Add an item
@@ -819,18 +818,26 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Open a damaged item's file in axJSON
     - Hear how many items a gathering list could not read
 11. **Change a setting of axTask when its settings file cannot be written**
-12. **Rename a list, and rename and remove a field**
+12. **Rename a list, and change the fields of its items**
     - Rename a list
-    - Rename a field of an item
-    - Remove a field of an item and undo it
-13. **Set a date in words, and give new items a task's fields**
+    - Read which fields a list's items have
+    - Take a field out of a list and keep its values
+    - Put a field back and find its values again
+13. **Set a date in words, and add an item with its list's fields**
     - Give a task a date and time in words
-    - Give a list's new items the fields of a task
+    - Add an item with its list's fields
 14. **Make a smart list of your own**
     - Make a smart list and see its file open in axJSON
 15. **Approve or decline a report from outside with the approval passphrase**
     - A wrong passphrase approves nothing
     - Approve an entry with the passphrase
+16. **Convert a list written in axTask's earlier format**
+    - Convert a list of the earlier format
+    - Take a conversion back
+    - Convert every list of the earlier format at once
+17. **Give a list its configuration**
+    - Give a list its configuration
+    - Add an item to a list that has no configuration yet
 
 ## axTerminal
 

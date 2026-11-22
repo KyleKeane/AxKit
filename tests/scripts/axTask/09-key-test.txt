@@ -3,8 +3,9 @@
 # focus is, the navigator here, and none is carried out; Escape ends it. Ctrl+Up and Ctrl+Down are the item
 # windows' section keys in the navigator, in the bundle's paragraph keys' place (docs/axKit/item-apps.md IA-2.3a).
 file home\AxKit\axTask.json {"checkForUpdates": false}
-file tasks\Shopping\Milk.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Milk"}]}
-file tasks\Shopping\Washer.json {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Washer"}, {"title": "Done", "type": "check", "value": false}]}
+file tasks\Shopping\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
+file tasks\Shopping\Milk.json {"schema":"list.json","Title":"Milk"}
+file tasks\Shopping\Washer.json {"schema":"list.json","Title":"Washer","Done":false}
 
 start task {temp}\tasks
 expect state Lists - axTask

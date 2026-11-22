@@ -54,21 +54,26 @@ public sealed class LinksTests : IDisposable
     [Fact]
     public void ACheckComesAndGoes()
     {
-        Assert.Empty(TaskRules.TemplateOf(ItemDocument.NewList([]).WithTemplate([])));
+        Assert.Empty(TaskRules.TemplateOf(ListConfig.New([])));
         Assert.Equal(3, TaskRules.TemplateOf(null).Count);
-        var plain = ItemDocument.NewItem("Butter", []);
-        var task = TaskRules.WithDone(plain);
-        Assert.Equal(["Title", "Done"], task.Fields.Select(field => field.Title));
-        Assert.Same(task, TaskRules.WithDone(task));
-        Assert.Equal(["Title"], TaskRules.WithoutDone(task).Fields.Select(field => field.Title));
         Assert.Equal(["Done", "Due"], TaskRules.TemplateWithDone(TaskRules.TemplateWithDone(TaskRules.DefaultTemplate, false).Where(f => f.Title != "Start").ToList(), true).Select(f => f.Title));
+
+        // The switch is the configuration's alone (AF-13.3): the item's file is the same before and after, its Done
+        // kept while the list is plain and shown again when the list is a checklist again.
+        var butter = FlatItem.Parse("""{ "schema": "list.json", "Title": "Butter", "Done": true }""");
+        var checklist = ListConfig.New(TaskRules.TemplateWithDone([], true));
+        var plain = checklist.WithItemFields(TaskRules.TemplateWithDone(checklist.ItemFields, false));
+        Assert.True(TaskRules.IsDone(ItemView.Document(ItemView.Of(butter, checklist))));
+        Assert.False(TaskRules.IsTask(ItemView.Document(ItemView.Of(butter, plain))));
+        Assert.Equal("1 more field kept: Done", ItemView.Of(butter, plain).KeptLine);
+        Assert.True(TaskRules.IsDone(ItemView.Document(ItemView.Of(butter, plain.WithItemFields(TaskRules.TemplateWithDone(plain.ItemFields, true))))));
     }
 
     [Fact]
     public void ANewListsFolderGoesWithItsUndo()
     {
         var path = Path.Combine(_top.Path, "Garden", ItemDocument.ListFile);
-        var step = new Step([FileChange.WriteInNewFolder(path, ItemDocument.NewList(TaskRules.DefaultTemplate).ToText())], "Made Garden");
+        var step = new Step([FileChange.WriteInNewFolder(path, ListConfig.New(TaskRules.DefaultTemplate).ToText())], "Made Garden");
         Changes.Apply(step.Parts);
         Assert.True(Directory.Exists(Path.Combine(_top.Path, "Garden")));
         Changes.Undo(step);
@@ -81,7 +86,7 @@ public sealed class LinksTests : IDisposable
     private static void Write(string path, ItemDocument document)
     {
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-        File.WriteAllText(path, document.ToText());
+        TestLists.Write(path, document);
     }
 
     /// <summary>S-5: a link that is not relative, or leads off this computer, is never opened; it reads as missing.</summary>

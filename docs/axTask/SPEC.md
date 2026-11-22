@@ -74,15 +74,36 @@ marks a task done.
 
 ## 4. axTask's part of the shared shape
 
-- **TK-4.1 The default template.** A list with no `list.json` gives a new item the fields Done (`check`), Start
-  (`date`) and Due (`date`), empty.
-- **TK-4.2 A task** is an item with a `check` field titled Done. An item without one is a plain item: a list of
-  things that are not tasks is a list whose template has no Done (the user's ask: plain lists and checklists, and an
-  easy way between them). Changing a list's template does not change its items; "Add Done to every item" and "Remove
-  Done from every item" in Actions switch a whole list between the two.
+- **TK-4.0 The files** (since 2026-11-21; `forms-framework.md` sections 11 and 13 are the specification, AF-n.m, and
+  this section is axTask's part of it). A list's `list.json` is its configuration (`axkit-list 2`): its details, the
+  fields of its items in their order, its actions. An item's file is its names and values with `"schema"`, the link to
+  that configuration; everything of a field but its value is the configuration's. An item shows its Title and then
+  the configuration's fields: a field its file does not hold is shown empty and written with its first value; a value
+  the configuration does not name is kept, not shown among the fields, and named in the item's last line ("2 more
+  fields kept: Sprint, Old priority", Enter reads them; AF-11.3, AF-11.4). The field commands that changed one item's
+  fields (new, rename, remove, move) are not in axTask's Field menu, and their keys say "The fields are the list's
+  configuration's: Ctrl+J on the list opens it in axJSON". Ctrl+J on a list is **Edit the list's configuration**: the
+  file in axJSON, written first with the fields its items hold when the list has none (AF-11.1); back in the window,
+  one line says what it holds now ("The list's configuration changed: 5 fields, 2 actions") or that it does not read.
+  A configuration that does not read (AF-11.7) is said in the list's row ("its configuration does not read"), with the
+  level ("The list's configuration does not read: it is not JSON at line 12. Ctrl+J opens it") and in the details;
+  the list's items are then shown with every value as text and nothing in the list is changed, as for an item whose
+  configuration is not there (AF-13.4). A list of the earlier format (`axkit-list 1`, items of `axkit-item 1`) is not
+  read: its row says "earlier format: Enter converts it", the gathering lists leave it out and say so in their name,
+  and Right or Enter asks once, with Convert, Convert all such lists and Cancel; the copy goes among the Archived
+  lists as "<name>, before conversion", and the conversion is one step for Ctrl+Z (AF-13.6).
+- **TK-4.1 The default fields.** A list made in axTask (Ctrl+Shift+N) gets the fields of the list selected or shown,
+  or Done (`check`), Start (`date`) and Due (`date`), empty. A folder with no `list.json` and no item gets these same
+  fields, its configuration written in the same step as its first item.
+- **TK-4.2 A task** is an item of a list whose configuration names a `check` field titled Done: a list of things that
+  are not tasks is a list without it (the user's ask: plain lists and checklists, and an easy way between them). "Add
+  Done to every item" and "Remove Done from every item" in Actions switch a whole list between the two, in its
+  configuration alone (AF-13.3): no item's file is touched, a Done an item holds is kept while the list is plain and
+  shows again when it is a checklist again ("Home is a plain list: Done is hidden, and kept in the items that have
+  it"; "Home is a checklist already" when there is nothing to switch).
 - **TK-4.3 The row summary** (IA-6): the Title, then "done" when Done is true, then "due" and the Due date when there is
   one: "Fix the tap, done, due 30 October". Overdue reads "overdue since 30 October".
-- **TK-4.4 Space in the navigator** toggles Done on a task; on a plain item, the edge earcon and "Not a task".
+- **TK-4.4 Space in the navigator** toggles Done on a task; on an item of a plain list, the edge earcon and "Not a task".
 - **TK-4.5 The start.** Without a path the window opens the list of the last run. That list is looked at during the
   start only on a drive of this computer (bundle AX-9.5a, 2026-11-16): elsewhere the top level shows and the window
   says "<path> is on the network and was not opened at start; Right on its list opens it." The top folder itself is
@@ -200,9 +221,11 @@ On top of IA-3:
 
 The design is `docs/axKit/reports.md` section 8 (RP-8); the rules axTask keeps:
 
-- **TK-7a.1 Action keys.** Ctrl+1 to Ctrl+9 run the action the list's `list.json` assigns to the digit under `"keys"`
-  (RP-8.1), on the item selected in the navigator: `set` writes fields to values as one undo step (a field the item
-  lacks is added, with the value's type), `move` moves the item to a list by a path relative to this one, the links
+- **TK-7a.1 Action keys.** Ctrl+1 to Ctrl+9 run the action the list's configuration gives the key among its
+  `"actions"` (`{ "name": "Later", "key": "Ctrl+2", "does": "move", "to": "../Later" }`; under `"keys"` by digit in the
+  earlier format, which the conversion turns into these, the same keys and the same actions, so that an acceptance
+  of TK-7a.3 stands; RP-8.1), on the item selected in the navigator: `set` writes fields to values as one undo step
+  (a value the item lacked is written; one the list's configuration does not name is kept, AF-11.3), `move` moves the item to a list by a path relative to this one, the links
   following (IA-D3), `open` opens a field's web address in the browser (the user's own act; axTask itself asks the network nothing) or
   an app by its verb on the item's file
   (`json`, `file`; `claude` and `terminal` only in a folder on a drive of this computer, RP-8.1). A digit without an action: the edge earcon and "No action
@@ -308,8 +331,8 @@ are later (the priorities item of the request); the AI tools over the lists are 
   lives (in its project, when it is in one) with the item selected: "Home, 1 item, Fix the tap"; Left, Backspace or
   Escape goes back where the search was started, the row selected then selected again. In the found level Tab shows
   the item's fields, which change as anywhere, and Space marks a task done in its own file, the selection staying on
-  it (done tasks stay in the found level, Hide done or not); F2, Delete, a link's change and Item → Use these fields
-  for new items say "Open it where it lives first", Ctrl+N "Items are made in a list: open the item where it lives first, Enter", the action keys "Action keys act in a list: open one first" (TK-D9).
+  it (done tasks stay in the found level, Hide done or not); F2, Delete and a link's change say "Open it where it
+  lives first", Ctrl+N "Items are made in a list: open the item where it lives first, Enter", the action keys "Action keys act in a list: open one first" (TK-D9).
 - **TK-7b.5 The top folder** is never moved or changed by any of this: a project is shown, entered and changed where
   it is, and the user's top folder stays the one in the settings.
 
@@ -333,13 +356,16 @@ MC-8); this section is what the axTask window does with them. Code: `TaskForm.Mc
   exactly one list reached has it ("Home"); or its full path when that is one of the lists reached. A path anywhere
   else is refused: "… is not one of the axTask window's lists: AI tools reach only the lists of its top folder and of
   its project folders" (MC-D12). A name that names none or several says so with the names to choose from.
-- **TK-8.3 An item added.** `axkit_task_add` makes the item as Ctrl+N does: the list's template (TK-4.1, the default
-  Done, Start and Due without one), the Title given (one line of at most 200 characters, since the window says it
+- **TK-8.3 An item added.** `axkit_task_add` makes the item as Ctrl+N does: the fields of the list's configuration
+  (TK-4.0; the default Done, Start and Due for a folder that has none yet; nothing is added to a list of the earlier
+  format or to one whose configuration does not read, and the answer says what the user does first), the Title given (one line of at most 200 characters, since the window says it
   whole: "A title is at most 200 characters: put the rest in Notes."; no control character, a tab or an escape, in the
   title or a field's name, since 2026-11-12: "A title holds no control characters."), into the list named (from 2026-11-12 to 2026-11-14 a GitHub list was refused; there is none now, TK-7a.2), at a free file name (`ItemFiles.FreePath`, so nothing is ever
   overwritten), then each value given typed into its field as the field's own change takes it: a date as 2026-11-18,
-  today, tomorrow, +7 or a weekday; a choice as one of its options; a check as true or false. A field the template
-  lacks is added after the others, long text for Notes or a value of several lines, text otherwise (MC-D13). A link,
+  today, tomorrow, +7 or a weekday; a choice as one of its options; a check as true or false. A field the list does
+  not have is refused with the fields it has ("Notes is not a field of this list. Its fields: Done, Start, Due."),
+  since its value would be kept in the file and shown to no one (MC-D13 as changed on 2026-11-21; added after the
+  others until then). A link,
   a password or a user name, the Title among the fields and a value a field does not take are refused with the
   field's own reason ("Priority: Not one of the options: High, Normal, Low"), and nothing is written. It is one step of
   the window's undo, so Ctrl+Z takes it back ("Undone: Claude added Call the dentist to Personal").
@@ -373,8 +399,9 @@ The process is `docs/axKit/outside-reports.md` (OR-n.m); axTask's part of it:
 - **TK-D1 The All tasks entry is not a file.** It is the one smart list nobody can delete or break; every other one is
   a file the user owns.
 - **TK-D2 Done is a field by its title**, "Done", not a special key in the format: the format stays the shared one, and
-  a script sets it as any other field. The cost: a user who renames Done turns tasks into plain items; the Fields
-  of a new item line says so when the template has no Done.
+  a script sets it as any other field. The cost: a user who renames Done in a list's configuration turns its tasks
+  into plain items (the values of the old name are kept, AF-11.3); the list's line "Fields of its items" names the
+  fields there are.
 - **TK-D3 No index or cache.** All tasks and the smart lists read every file under the folder each time they open. A
   few thousand small files read in well under a second; an index waits until a real folder shows the need, and then
   it is a plain file too.
@@ -404,8 +431,9 @@ The process is `docs/axKit/outside-reports.md` (OR-n.m); axTask's part of it:
   item's own folder of lists (its Archive, the links to it), so they say to open it where it lives first. All the
   words must be in the item, as a search box usually means.
 - **TK-D10 Leftovers of the project folders' review** (taken by the assistant on 2026-11-11, the user away, for the
-  user to confirm): Use these fields for new items on a found item refuses as F2 and Delete do, since it changes the
-  item's list, a thing of where the item lives, not of the item; New GitHub list refuses where New list does; the
+  user to confirm): Use these fields for new items on a found item refused as F2 and Delete do, since it changed the
+  item's list, a thing of where the item lives, not of the item (the command went on 2026-11-21, when the fields of a
+  list's items became its configuration's, TK-4.0); New GitHub list refuses where New list does; the
   last project folder removed leaves a project shown for the user's own top level, since nothing would lead back to
   it; opening a list in a project or a found item leaves the list open last alone, as the task
   asked, a found item in the user's own folder included (the user's own place is the list open before the search);

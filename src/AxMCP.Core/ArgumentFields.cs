@@ -25,7 +25,7 @@ public static class ArgumentFields
     /// <summary>The fields for a tool: Description, then its arguments, each from its schema property.</summary>
     public static ItemDocument ForTool(ServerTool tool)
     {
-        var fields = new JsonArray { Field(DescriptionField, FieldTypes.LongText, tool.Description) };
+        var fields = new List<ItemField> { Field(DescriptionField, FieldTypes.LongText, tool.Description) };
         var properties = tool.InputSchema["properties"] as JsonObject;
         var required = RequiredNames(tool.InputSchema);
         if (properties is null || properties.Count == 0)
@@ -46,19 +46,19 @@ public static class ArgumentFields
             }
         }
 
-        return ItemDocument.Parse(new JsonObject { ["format"] = ItemDocument.ItemFormat, ["fields"] = fields }.ToJsonString());
+        return ItemDocument.Of(fields);
     }
 
     /// <summary>The fields for a prompt: Description, then one text per argument.</summary>
     public static ItemDocument ForPrompt(ServerPrompt prompt)
     {
-        var fields = new JsonArray { Field(DescriptionField, FieldTypes.LongText, prompt.Description) };
+        var fields = new List<ItemField> { Field(DescriptionField, FieldTypes.LongText, prompt.Description) };
         foreach (var argument in prompt.Arguments)
         {
             fields.Add(Field(argument.Name + (argument.Required ? RequiredMark : string.Empty), FieldTypes.Text, string.Empty));
         }
 
-        return ItemDocument.Parse(new JsonObject { ["format"] = ItemDocument.ItemFormat, ["fields"] = fields }.ToJsonString());
+        return ItemDocument.Of(fields);
     }
 
     /// <summary>The argument an argument field stands for: its title without the required mark.</summary>
@@ -215,20 +215,11 @@ public static class ArgumentFields
     private static bool IsEmptyText(ItemField field) =>
         field.Value is not JsonValue value || value.GetValueKind() == JsonValueKind.String && value.GetValue<string>().Trim().Length == 0;
 
-    private static JsonObject Field(string title, string type, string value) => Field(title, type, JsonValue.Create(value), []);
+    private static ItemField Field(string title, string type, string value) => Field(title, type, JsonValue.Create(value), []);
 
-    private static JsonObject Field(string title, string type, JsonNode? value, IReadOnlyList<string> options)
-    {
-        var field = new JsonObject { ["title"] = title, ["type"] = type, ["value"] = value };
-        if (options.Count > 0)
-        {
-            field["options"] = new JsonArray([.. options.Select(option => JsonValue.Create(option))]);
-            if (value is JsonValue v && v.TryGetValue<string>(out var chosen) && chosen.Length == 0)
-            {
-                field["value"] = options[0];
-            }
-        }
-
-        return field;
-    }
+    /// <summary>One field of the document; a choice left empty starts on its first option.</summary>
+    private static ItemField Field(string title, string type, JsonNode? value, IReadOnlyList<string> options) =>
+        options.Count > 0 && value is JsonValue v && v.TryGetValue<string>(out var chosen) && chosen.Length == 0
+            ? new ItemField(title, type, JsonValue.Create(options[0]), options)
+            : new ItemField(title, type, value, options);
 }

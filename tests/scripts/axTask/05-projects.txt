@@ -2,13 +2,14 @@
 # axTask: the project folders (docs/axTask/SPEC.md TK-7b, TK-D6 to TK-D9; docs/axTask/nvda-test-plan.md section 6): the
 # folders of lists found under them in a section for each project folder, a project entered and changed in place, a
 # project folder added by its typed path, and the search across every list.
-file "tasks\Home\Buy a tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Buy a tap"}, {"title": "Done", "type": "check", "value": false}]}
-file projects\alpha\tasks\Home\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}]}
-file "projects\alpha\tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}, {"title": "Notes", "type": "longtext", "value": "A washer of 15 mm"}]}
-file projects\beta\tasks\Bugs\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": ""}]}
-file "projects\beta\tasks\Bugs\Tap drips.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Tap drips"}]}
-file projects\code\node_modules\pkg\Lists\list.json {"format": "axkit-list 1", "fields": []}
-file more\gamma\Lists\list.json {"format": "axkit-list 1", "fields": []}
+file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
+file "tasks\Home\Buy a tap.json" {"schema":"list.json","Title":"Buy a tap","Done":false}
+file projects\alpha\tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Notes","type":"longtext","value":""}],"actions":[]}
+file "projects\alpha\tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false,"Notes":"A washer of 15 mm"}
+file projects\beta\tasks\Bugs\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[],"actions":[]}
+file "projects\beta\tasks\Bugs\Tap drips.json" {"schema":"list.json","Title":"Tap drips"}
+file projects\code\node_modules\pkg\Lists\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[],"actions":[]}
+file more\gamma\Lists\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[],"actions":[]}
 file home\AxKit\axTask.json {"checkForUpdates": false}
 # The settings file names the first project folder by its full path, which only the run knows.
 run powershell -NoProfile -Command "[IO.File]::WriteAllText('home\AxKit\axTask.json', (ConvertTo-Json -InputObject @{checkForUpdates=$false; projectFolders=@((Resolve-Path 'projects').Path)}))"
@@ -153,8 +154,6 @@ do Rename
 expect said ! Open it where it lives first: Enter
 do New item
 expect said ! Items are made in a list: open the item where it lives first, Enter
-menu Use these fields for new items
-expect said ! Open it where it lives first: Enter
 keys enter
 expect said ! Home, 1 item, Fix the tap
 # Check: A project's list opened from the search is not remembered as open last
