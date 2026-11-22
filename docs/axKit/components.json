@@ -1,0 +1,135 @@
+{
+  "format": "axkit-components 1",
+  "about": "The canonical pieces every axKit window is made of, the few types of window, and which app is which (docs/axKit/framework.md). The page docs/axKit/components.md is written from this file by tools/components.ps1; tests/AxKit.Tests/ComponentsTests.cs holds the sources to it.",
+  "components": [
+    {
+      "id": "list",
+      "title": "The list",
+      "class": "AxKitList",
+      "file": "src/AxKit.Forms/AxKitList.cs",
+      "what": "Rows you move through with the arrow keys. Every list of every window is this one.",
+      "built in": "Type the start of a name to jump to it; the edge sound at the first and the last row; rename in place with F2 where rows have names.",
+      "selection": "With src/AxKit.Forms/ListSelection.cs: Space selects the row you are on, Shift with an arrow selects as it moves, Ctrl+A all, Escape none (SPEC AX-8.16). On in axFile's folder list and axTask's navigator so far.",
+      "entry event": "list-opened",
+      "says": "NVDA reads the row; a selected row ends in ', selected'.",
+      "keys": ["moves", "letter", "space", "shift-select", "enter", "delete", "escape"]
+    },
+    {
+      "id": "text",
+      "title": "The text to read",
+      "class": "TranscriptView",
+      "file": "src/AxKit.Forms/TranscriptView.cs",
+      "what": "Text you read and do not change: a conversation, a notice's text, a file shown read-only. The conversation's text is this class; a notice's text and a read-only file are the text box below, set read-only.",
+      "built in": "The caret moves only on your own key. Letters jump by heading and the like; Ctrl+F finds.",
+      "selection": "",
+      "entry event": "text-opened",
+      "says": "NVDA reads from the caret.",
+      "keys": ["moves", "letter", "ctrl-arrows"]
+    },
+    {
+      "id": "field",
+      "title": "The field",
+      "class": "AxKitTextBox",
+      "file": "src/AxKit.Forms/AxKitTextBox.cs",
+      "what": "Text you type, on one line or several: a message, a command, a document, a name.",
+      "built in": "Ctrl+Space switches between editing and navigating; a line break typed is said, 'new line'.",
+      "selection": "",
+      "entry event": "field-opened",
+      "says": "NVDA reads the field's name and what it holds.",
+      "keys": ["moves", "space", "ctrl-arrows", "enter"]
+    },
+    {
+      "id": "choice",
+      "title": "The choice in the field's place",
+      "class": "ControlArea",
+      "file": "src/AxKit.Forms/ControlArea.cs",
+      "what": "What a window waits on, shown where its field is: a list of answers, or a small field. Never a second window.",
+      "built in": "The number keys choose an answer; Enter and Escape answer.",
+      "selection": "",
+      "entry event": "list-opened",
+      "says": "The question, then NVDA reads the answer you are on.",
+      "keys": ["moves", "enter", "escape"]
+    },
+    {
+      "id": "form",
+      "title": "The form",
+      "class": "FormControls",
+      "file": "src/AxKit.Forms/FormControls.cs",
+      "what": "Several standard controls for one action, in Tab order, each named with an instruction.",
+      "built in": "Tab between the controls; Ctrl+Enter or Enter does it; Escape leaves and nothing is changed. Ctrl+Q reads its explanation.",
+      "selection": "",
+      "entry event": "form-opened",
+      "says": "After NVDA has read the first control: the title and the word 'form'.",
+      "keys": ["ctrl-tab", "enter", "enter-forms", "escape"]
+    },
+    {
+      "id": "notice",
+      "title": "The notice",
+      "class": "OverlayPanel",
+      "file": "src/AxKit.Forms/OverlayPanel.cs",
+      "what": "A text with its buttons over the window: a help text, a question, an error. It holds one of the pieces above when it asks for more.",
+      "built in": "Enter and Escape press its buttons from anywhere in it; Ctrl+Q reads its text again.",
+      "selection": "",
+      "entry event": "text-opened",
+      "says": "NVDA reads the text.",
+      "keys": ["enter", "escape", "letter"]
+    }
+  ],
+  "window types": [
+    {
+      "id": "conversation",
+      "title": "The conversation window",
+      "class": "ConsoleForm",
+      "file": "src/AxKit.Forms/ConsoleForm.cs",
+      "what": "For a program you talk to in turns: what was said above, and under it the field, or the choice that stands in its place.",
+      "panes": ["text", "field", "choice"],
+      "moving": "Tab and the other pane keys switch between the text and the field. Escape in the text goes to the field. Enter on a line of the text takes it into the field."
+    },
+    {
+      "id": "editor",
+      "title": "The editor",
+      "class": "TextEditorForm",
+      "file": "src/AxKit.Forms/TextEditorForm.cs",
+      "what": "For one text you write or read: the text, with a choice under it for Go to line and for the options of a place; read-only, a list of details under it.",
+      "panes": ["field", "choice", "list"],
+      "moving": "Ctrl+Tab and F6 switch panes; Tab types a tab while editing."
+    },
+    {
+      "id": "navigator",
+      "title": "The navigator",
+      "class": "ItemForm",
+      "file": "src/AxKit.Forms/ItemForm.cs",
+      "what": "For things in levels: a list of rows you go into and out of, and beside it more of the row you are on.",
+      "panes": ["list", "list"],
+      "moving": "Right goes into a row that holds a level; Left and Backspace go up. Enter opens the row. Tab and the other pane keys switch to the second pane; Escape comes back."
+    },
+    {
+      "id": "hotkey",
+      "title": "The hotkey window",
+      "class": "HotkeyForm",
+      "file": "src/AxKit.Forms/HotkeyForm.cs",
+      "what": "For something called from anywhere in Windows with a key: a field that always holds the caret, and under it a list the arrow keys move through from the field.",
+      "panes": ["field", "list"],
+      "moving": "Down and Up move through the list while you type. Enter does the app's thing with the row. Escape hides the window."
+    }
+  ],
+  "apps": [
+    { "app": "axFile", "window": "FileForm", "type": "", "to be": "navigator", "note": "A window of its own today. The largest move, and the last." },
+    { "app": "axDown", "window": "", "type": "editor", "to be": "editor", "note": "" },
+    { "app": "axJSON", "window": "", "type": "editor", "to be": "editor", "note": "" },
+    { "app": "axPreview", "window": "", "type": "editor", "to be": "editor", "note": "Read-only, with the list of details." },
+    { "app": "axMedia", "window": "MediaForm", "type": "", "to be": "navigator", "note": "A window of its own today. To be a queue and its controls." },
+    { "app": "axTask", "window": "TaskForm", "type": "navigator", "to be": "navigator", "note": "" },
+    { "app": "axStart", "window": "StartForm", "type": "hotkey", "to be": "hotkey", "note": "" },
+    { "app": "axClip", "window": "ClipForm", "type": "hotkey", "to be": "hotkey", "note": "" },
+    { "app": "axCalc", "window": "CalcForm", "type": "", "to be": "conversation", "note": "A window of its own today." },
+    { "app": "axProcess", "window": "ProcessForm", "type": "", "to be": "navigator", "note": "A window of its own today. Its three views to be three levels." },
+    { "app": "axAutomate", "window": "AutomateForm", "type": "navigator", "to be": "navigator", "note": "" },
+    { "app": "axTerminal", "window": "TerminalForm", "type": "conversation", "to be": "conversation", "note": "" },
+    { "app": "axGIT", "window": "GitForm", "type": "", "to be": "navigator", "note": "A window of its own today. Its three views to be three levels." },
+    { "app": "axPass", "window": "PassForm", "type": "navigator", "to be": "navigator", "note": "" },
+    { "app": "axClaude", "window": "MainForm", "type": "conversation", "to be": "conversation", "note": "" },
+    { "app": "axMCP", "window": "MCPForm", "type": "navigator", "to be": "navigator", "note": "" },
+    { "app": "axHelp", "window": "HelpForm", "type": "hotkey", "to be": "hotkey", "note": "A text and no list." }
+  ]
+}

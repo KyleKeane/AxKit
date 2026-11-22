@@ -162,6 +162,7 @@ public sealed class AiDocumentationTests
             // docs/axKit: records, audits and reviews.
             ["docs/axKit/nvda-test-record.md"] = "the record of the NVDA passes",
             ["docs/axKit/owed.md"] = "what is still owed a hearing",
+            ["docs/axKit/components.md"] = "the pieces and types of window while the framework is being built; to be carried for AI help once the apps have moved (framework.md section 8)",
             ["docs/axKit/repairs.md"] = "what the audits found and what became of it",
             // The repository's top.
             ["README.md"] = "the repository's front page; the bundle's guide says the same for a user",
