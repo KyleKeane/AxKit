@@ -6,6 +6,31 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-22: Space selects, Ctrl+Enter is Done in axTask, on the shared selection; by the assistant with NVDA listening (`main` 7543da40)
+
+`.\nvda-pass.ps1 -Only` every script of axTask and the four of axFile that select (`01-browse`, `03-operations`,
+`06-actions-list`, `07-move-to-folder`), behind the spoken countdown, the maintainer away at his word ("i am
+stepping away for awhile so you can work autonomously and run everything you need"), NVDA 2025.3.3 with the OneCore
+voice, Windows 11 Pro 10.0.26200, the build 5.10.0 of commit 7543da40, the tree clean: 24 scripts, 218 goals and
+checks, all passed with every announcement also spoken by NVDA.
+
+| What | Scripts | Goals | Result |
+|---|---|---|---|
+| axFile: the selection on the shared code (`ListSelection` over `Marks`), unchanged for the ear | 4 | 88 | Passed |
+| axTask: every script, Done on Ctrl+Enter, and the new `20-selection.txt` | 20 | 130 | Passed |
+
+What was heard in axTask: Space on an item says "Selected" and NVDA does not read the row a second time after it;
+an arrow onto a selected row reads "Buy paint, selected"; Shift+Down says nothing but the row reached, "Oil the
+hinge, selected"; "Selected, 2 selected", "Deselected, 1 selected", "Selected, 4 selected" after Shift+Space, "None
+selected", "5 selected"; on a heading "A heading: nothing to select", on a list "Items are selected, not lists:
+Right goes into this one"; "Done: 2 tasks. 1 was done already.", "Not done: 3 tasks", "Priority high: 3 items",
+"Later: 3 items moved to Later", "Archived 2 items", and each "Undone: …". With nothing selected Ctrl+Enter says
+"Done: Fix the tap" as Space did before.
+
+Not heard here, his by ear: how Space as select and Ctrl+Enter as Done feel under the fingers in his own lists.
+Not run yet at this commit: the window checks of the other apps, which the shared window code changed under; they
+are recorded before the next release.
+
 ## 2026-11-22: Done before the result, in axClaude and axTerminal; by the assistant with NVDA listening (`main` 37472e06)
 
 `.\nvda-pass.ps1 axTerminal`, then `-Only` six scripts of axClaude that hear the end of a turn (`29`, `35`, `36`
