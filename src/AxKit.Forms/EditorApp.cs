@@ -74,8 +74,13 @@ public sealed record Rewrite(string Text, string Message);
 /// </summary>
 public sealed record EditorOffer(string Label, Keys Key, Func<string, int, string?, Offered> At);
 
-/// <summary>What an <see cref="EditorOffer"/> gives: a list (its name, its lines, the line it starts on, the change each line makes), or with no lines the one sentence that says why there is none.</summary>
-public sealed record Offered(string? Said, string Name = "", IReadOnlyList<string>? Lines = null, int Selected = 0, Func<int, TextEdit>? Choose = null);
+/// <summary>
+/// What an <see cref="EditorOffer"/> gives: a list (its name, its lines, the line it starts on, the change each line
+/// makes); or one change made at once, with no list (<paramref name="Edit"/>: a value stepped in line); or, with
+/// neither, the one sentence that says why nothing is offered, with the edge sound when <paramref name="Edge"/>
+/// (the last of the values).
+/// </summary>
+public sealed record Offered(string? Said, string Name = "", IReadOnlyList<string>? Lines = null, int Selected = 0, Func<int, TextEdit>? Choose = null, TextEdit? Edit = null, bool Edge = false);
 
 /// <summary>One change to the text of an editor: what replaces which characters, where the caret stands after, and what is said. A change of no characters by no text only says its sentence.</summary>
 public sealed record TextEdit(int Start, int Length, string Text, int Caret, string Said);

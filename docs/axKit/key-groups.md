@@ -37,7 +37,7 @@ Inside one app's window:
 - Ctrl+Shift+letter: the reverse or the wider form of the same letter with Ctrl.
 - Enter with Ctrl, Shift or Alt: another form of open or confirm.
 - Ctrl with an arrow, Home or End, and Ctrl+Shift with Left or Right arrow: a bigger step.
-- Alt+Up arrow and Alt+Down arrow: move what you are on up or down.
+- Alt with an arrow: the choices of what you are on.
 - A letter alone: in a view you read, a quick command: go to the next thing of a kind, or say something.
 
 ## From anywhere in Windows
@@ -476,7 +476,6 @@ The keys:
 - Ctrl+Shift+K, axJSON: Key.
 - Ctrl+Shift+L, axDown and axPreview: List.
 - Ctrl+Shift+L, axJSON: Array.
-- Ctrl+Shift+M, axJSON: Add a member.
 - Ctrl+Shift+N, axAutomate, axMCP, axPass and axTask: New list.
 - Ctrl+Shift+N, axDown and axJSON: New window.
 - Ctrl+Shift+N, axPass: New group.
@@ -548,15 +547,16 @@ Exceptions today, which do another kind of thing:
 - Ctrl+Down arrow, axMedia: Slower.
 - Ctrl+Up arrow, axMedia: Faster.
 
-### Alt+Up arrow and Alt+Down arrow: move what you are on up or down
+### Alt with an arrow: the choices of what you are on
 
-Alt+Up and Alt+Down move what you are on: a field of an item goes one place up or down in its list.
+Alt with an arrow is for the choices of what you are on, in the arrows' own directions (the maintainer's rule of 2026-11-21): Alt+Right goes into the list of them, where the arrows move and Enter chooses; Alt+Down and Alt+Up change to the next and the previous one in place; Alt+Left steps out to what is around it and offers what can be added there. Ctrl with an arrow moves the cursor a bigger step, and moving an item of a list up or down is Ctrl+Shift+Up and Ctrl+Shift+Down, wherever a list has it.
 
 The keys:
 
-- Alt+Down arrow, axAutomate, axMCP, axPass and axTask: Move the field down.
-- Alt+Down arrow, axJSON: Choose a value.
-- Alt+Up arrow, axAutomate, axMCP, axPass and axTask: Move the field up.
+- Alt+Down arrow, axJSON: Next value.
+- Alt+Left arrow, axJSON: Add a member.
+- Alt+Right arrow, axJSON: Choose a value.
+- Alt+Up arrow, axJSON: Previous value.
 
 Exceptions today, which do another kind of thing:
 

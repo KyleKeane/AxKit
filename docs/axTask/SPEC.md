@@ -268,15 +268,21 @@ The design is `docs/axKit/reports.md` section 8 (RP-8); the rules axTask keeps:
   found on the search path or by its full path, never in the list's own folder and never off this computer
   (`ActionProgram`); each argument is one text after its names are filled, never joined into a command line, and a
   value with a line break is refused as an argument (`input` takes any text); before its first run on this
-  computer, and after any change of the action in the file, the notice "Run <name>?" names where the action is
-  written, what it does, the program by its full path, the folder, each argument as it is for the item on a line of
+  computer, and after any change of the action in the file, a notice carries the bundle's AI caution (AX-11.12; the
+  maintainer's decision of 2026-11-21, since an action may be an AI's): its name is "Run <name>? An AI may have
+  written it: read the explanation before you run it", heard every time, and its text begins with "Read this
+  first" and `AiCaution.Action` (who wrote the action is not known; it can be wrong; axKit checked none of it; an
+  AI may have put it there because its own checks refused the command; running it is the user's own act). Under
+  "The action" it then names the file the action is written in, what it does, the program by its full path, the
+  folder, each argument as it is for the item on a line of
   its own with hidden characters written out, its input (not shown when it holds what was typed unseen) and what is
   set after; "axKit does not know what this program does or reaches. Running it is your own choice."; the answers
   Cancel, where Enter is, Run it once, and Run it, and do not ask again for this action, whose acceptance is the
   seal of TK-7a.3 over the list's folder and the whole action (`ListActions.MarkText`). A run asked for by an AI
   tool is asked about whatever was accepted, and an action with a field typed unseen is never offered to the AI
   tools (AF-7.5). The run is off the window's thread, one at a time, in a job that ends with the window: "Running
-  <name>", then "<name>: done" with what its `then` set, written as one undo step, or "<name> failed, exit code 1"
+  <name>", then the done chime (`EventKind.TurnDone`, the sound of a finished command everywhere; the maintainer's
+  choice of 2026-11-21) and "<name>: done" with what its `then` set, written as one undo step, or "<name> failed, exit code 1"
   with the failure sound and its output opened; "<name> was stopped after 60 seconds, its time limit"; Stop the
   running action: "<name> stopped". The output, both streams, its last 64 KB, is kept in memory for Read the last
   output and never logged; while a program runs the status bar's second part starts with "Running <name>."
@@ -284,7 +290,8 @@ The design is `docs/axKit/reports.md` section 8 (RP-8); the rules axTask keeps:
   for the item and handed to a new axTerminal window in the action's folder, each part as an argument of that
   process; axTerminal makes the one line for its shell, each part quoted by the shell's rule, puts it into its
   command field and sends nothing (axTerminal's SPEC AT-1.5a). Asked about as a program is, before the first time
-  and after any change of the action, and every time for an AI tool: "Put <name> into axTerminal?", with the folder
+  and after any change of the action, and every time for an AI tool: "Put <name> into axTerminal?" with the same caution in its name and at the
+  start of its text, then the folder
   and each part as it is for the item on a line of its own, "axTerminal puts the command into its command field and
   does not send it: you read it there and press Enter yourself. axKit does not know what the command does or
   reaches. Sending it is your own choice."; the answers Cancel, where Enter is, Put it there once, and Put it there,

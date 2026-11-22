@@ -97,7 +97,7 @@ In the detail pane, which stays for reading:
   changes the one detail in a notice.
 - Right and Left change the field you are on without opening anything. On a choice, Right is the next option and Left the previous; at the first and the last you hear the edge sound, and it never goes round. On a check, Right checks and Left unchecks; when it is so already, the edge sound. You hear the field and its new value once, "Priority: Low", and Ctrl+Z takes it back. On any other field the two keys do nothing but the edge sound. They never leave the detail pane: Escape or Shift+Tab goes back to the navigator.
 - Which fields an item has is not changed here: the fields are its list's, the same for every item of the list. Ctrl+N,
-  F2, Delete, Alt+Up and Alt+Down in the fields say so, and where it is done: Ctrl+J on the list.
+  F2 and Delete in the fields say so, and where it is done: Ctrl+J on the list.
 
 Every change is written to the file at once, and Ctrl+Z takes back the last ones, one at a time. If another program
 changed the file since axTask showed it, axTask reads it again and says so instead of writing over it.
@@ -110,9 +110,10 @@ A list that has no such file yet gets one written first, with the fields its ite
 to edit. When you come back to axTask, one line says what the configuration holds now, "The list's configuration
 changed: 5 fields, 2 actions".
 
-In axJSON you can choose instead of typing: Alt+Down on a value that is one of a few, such as a field's `type` or
-an action's `does`, lists the values; Ctrl+Shift+M in a field or an action lists the members it can have and does
-not have yet, each with what it is, and adds the one you choose (axJSON's guide, "Choose instead of typing").
+In axJSON you can choose instead of typing, with Alt and an arrow. Alt+Right on a value that is one of a few, such
+as a field's `type` or an action's `does`, lists the values; Alt+Down and Alt+Up change it in line to the next and
+the previous one; Alt+Left in a field or an action lists the members it can have and does not have yet, each with
+what it is, and adds the one you choose (axJSON's guide, "Choose instead of typing").
 
 ```json
 {
@@ -257,11 +258,14 @@ A program an action runs:
 
 - gets each argument as one piece, whatever it holds. A title with quotes or a semicolon in it is that title, and can
   never become a second command. A text of several lines goes to the program as its `input`, not as an argument.
-- is asked about before its first run: "Run Answer the report?" names where the action is written, what it does, the
+- is asked about before its first run: "Run Answer the report? An AI may have written it: read the explanation
+  before you run it". The text starts with "Read this first": axKit does not know who wrote the action, you, another
+  program or an AI; it can be wrong, nothing of it is checked, and running it is your own act. Then, under "The
+  action", where it is written, what it does, the
   program by its full path and every argument as it is for the item you are on. Enter there is Cancel; Tab goes to
   Run it once, and to Run it, and do not ask again for this action. Change anything of the action in the file and
   you are asked again.
-- is heard: "Running Answer the report" as it starts; "Answer the report: done" with what it set, or "Answer the
+- is heard: "Running Answer the report" as it starts; the falling chime of a finished command and "Answer the report: done" with what it set, or "Answer the
   report failed, exit code 1", and then its output opens to read. Context, Actions of this list, Read the last output
   shows what the last program wrote. Actions, Stop the running action ends it.
 - shows in the status bar while it runs: "Running Answer the report" stands before the folder (NVDA+End).

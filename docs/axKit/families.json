@@ -137,7 +137,7 @@
           "sounds": ["Edge"],
           "words": "None in a plain list. In the palette, the hotkey windows and axFile's folder field, the entry you are on is said again. 'Top of the fields', 'A section: Down goes into it'.",
           "apps": "Every list of every window.",
-          "where": ["src/AxKit.Forms/AxKitList.cs", "src/AxKit.Forms/AxKitForm.Palette.cs", "src/AxKit.Forms/HotkeyForm.cs", "src/AxKit.Forms/ItemForm.cs", "src/AxKit.Forms/ItemForm.Fields.cs", "src/AxFile/FileForm.Browse.cs", "src/AxFile/FileForm.Completion.cs", "src/AxTask/TaskForm.Projects.cs", "src/AxTerminal/TerminalForm.Input.cs"],
+          "where": ["src/AxKit.Forms/AxKitList.cs", "src/AxKit.Forms/AxKitForm.Palette.cs", "src/AxKit.Forms/HotkeyForm.cs", "src/AxKit.Forms/ItemForm.cs", "src/AxKit.Forms/ItemForm.Fields.cs", "src/AxKit.Forms/TextEditorForm.cs", "src/AxFile/FileForm.Browse.cs", "src/AxFile/FileForm.Completion.cs", "src/AxTask/TaskForm.Projects.cs", "src/AxTerminal/TerminalForm.Input.cs"],
           "note": "Two places give words and no sound for the same thing: axMedia's 'First file' and 'End of queue' on Ctrl+Shift+Left and Right, and axFile's 'Top' on Backspace at This PC, where Left at the same place plays the edge."
         },
         {
@@ -367,12 +367,12 @@
         },
         {
           "id": "turn-done",
-          "when": "The turn is over: Claude finished, a shell command finished, the last file of axMedia's queue ended.",
+          "when": "The turn is over: Claude finished, a shell command finished, a program that an action of an axTask list ran ended without an error, the last file of axMedia's queue ended.",
           "starts": ["program"],
           "sounds": ["Done"],
-          "words": "'Done'; in axTerminal also 'Failed' or 'Failed, exit code 2'; in axMedia 'End of queue'.",
-          "apps": "axClaude, axTerminal, axMedia.",
-          "where": ["src/AxKit.Forms/ConsoleForm.Signals.cs", "src/AxMedia/MediaForm.Player.cs", "src/AxClaude/MainForm.PutAway.cs"],
+          "words": "'Done'; in axTerminal also 'Failed' or 'Failed, exit code 2'; in axMedia 'End of queue'; in axTask the action's name and 'done'.",
+          "apps": "axClaude, axTerminal, axMedia, axTask.",
+          "where": ["src/AxKit.Forms/ConsoleForm.Signals.cs", "src/AxMedia/MediaForm.Player.cs", "src/AxClaude/MainForm.PutAway.cs", "src/AxTask/TaskForm.Actions.cs"],
           "note": "A shell command that failed plays the same sound as one that worked. axMedia's sound has no switch. The call in MainForm.PutAway.cs, for a turn ending while axClaude is put away, is switched off in code."
         },
         {

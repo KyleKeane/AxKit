@@ -85,7 +85,29 @@ function Get-ListTemplate {
         [pscustomobject]@{ title = 'Proposed'; type = 'longtext'; value = '' },
         [pscustomobject]@{ title = 'Proposed priority'; type = 'choice'; value = ''; options = @('High', 'Normal', 'Low') },
         [pscustomobject]@{ title = 'Approval'; type = 'text'; value = '' },
-        [pscustomobject]@{ title = 'Approved on'; type = 'date'; value = '' }
+        [pscustomobject]@{ title = 'Approved on'; type = 'date'; value = '' },
+        # For the list's action that answers the report (docs/axTask/forms-framework.md section 10, step 7): the
+        # number of the report's issue, the first when the entry names several, and the day it was answered.
+        # Neither is a field an approval signs (OR-5.3).
+        [pscustomobject]@{ title = 'Issue'; type = 'text'; value = '' },
+        [pscustomobject]@{ title = 'Answered'; type = 'date'; value = '' }
+    )
+}
+
+# The list's one action (the maintainer's yes of 2026-11-21): Answer the report on GitHub. Its form asks for the
+# answer, which goes to gh as its input; the only value of the entry among the arguments is the issue's number.
+# Nothing of a report's own words is an argument, and axTask asks before the first run with every argument shown.
+function Get-ListActions {
+    return @(
+        [ordered]@{
+            name = 'Answer the report on GitHub'
+            does = 'run'
+            fields = @([ordered]@{ title = 'Type your answer'; type = 'longtext' })
+            program = 'gh'
+            arguments = @('issue', 'comment', '{Issue}', '--repo', 'KyleKeane/AxKit-reports', '--body-file', '-')
+            input = '{form:Type your answer}'
+            then = [ordered]@{ set = [ordered]@{ Answered = '{today}' } }
+        }
     )
 }
 
@@ -103,7 +125,7 @@ if (-not (Test-Path -LiteralPath $listFile)) {
             Notes = 'Outside reports: one entry for each report of KyleKeane/AxKit-reports, with the assistant''s harm review and the scope it proposes. Nothing of a report is worked on until you approve its entry with your passphrase (Approve this report, in the Context menu). docs/axKit/outside-reports.md.'
         }
         'item fields' = @(Get-ListTemplate)
-        actions = @()
+        actions = @(Get-ListActions)
     }
     Save-ListItem $listFile ([pscustomobject]$list)
 }
@@ -143,6 +165,8 @@ if ($Form -eq 'new') {
     $document = New-ListItem $Title.Trim() $listConfig
     $document = Set-ItemValue $document 'Report' $Report.Trim() $listConfig
     $document = Set-ItemValue $document 'Received' (Get-Date).ToString('yyyy-MM-dd') $listConfig
+    # The issue's number alone, for the list's action that answers the report: the first when the entry names several.
+    $document = Set-ItemValue $document 'Issue' "$($numbers[0])" $listConfig
     $file = Join-Path $outside ((Get-FileStem $Title) + '.json')
     if (Test-Path -LiteralPath $file) { Refuse "an entry of that name exists: $([IO.Path]::GetFileName($file))." }
     Save-ListItem $file $document

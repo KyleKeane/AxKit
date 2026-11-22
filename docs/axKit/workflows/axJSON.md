@@ -239,14 +239,24 @@ Starts with: Open axJSON with the file lists\Home\list.json.
 
 1. Press Ctrl+Home, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K.
     You hear: type: check.
-2. Press Alt+Down (Choose a value; Actions menu).
+2. Press Alt+Right (Choose a value; Actions menu).
 3. Press Down.
 4. Press Enter.
     You hear: type: choice.
 
+### Change a value in line to the next and the previous
+
+1. Press Alt+Down (Next value; Actions menu).
+    You hear: type: link, 8 of 8.
+2. Press Alt+Down (Next value; Actions menu).
+    You hear the sound Edge.
+    You hear: type: link, the last of 8.
+3. Press Alt+Up (Previous value; Actions menu).
+    You hear: type: choice, 7 of 8.
+
 ### Add a member an object can have
 
-1. Press Ctrl+Shift+M (Add a member; Actions menu).
+1. Press Alt+Left (Add a member; Actions menu).
 2. Press Enter.
     You hear: Added options: The values to choose from, for the type choice.
 
@@ -254,10 +264,10 @@ Starts with: Open axJSON with the file lists\Home\list.json.
 
 1. Press Ctrl+Home, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K.
     You hear: name: Later.
-2. Press Ctrl+Shift+M (Add a member; Actions menu).
+2. Press Alt+Left (Add a member; Actions menu).
 3. Press Enter.
     You hear: Added key: The key that runs it; without one it runs from the menu.
-4. Press Alt+Down (Choose a value; Actions menu).
+4. Press Alt+Right (Choose a value; Actions menu).
 5. Press End.
 6. Press Enter.
     You hear: key: Ctrl+Shift+9.
@@ -267,7 +277,7 @@ Starts with: Open axJSON with the file lists\Home\list.json.
 1. Open axJSON with the file lists\Home\tap.json.
 2. Press Ctrl+Home, Ctrl+K, Ctrl+K, Ctrl+K, Ctrl+K.
     You hear: Priority: Normal.
-3. Press Alt+Down (Choose a value; Actions menu).
+3. Press Alt+Right (Choose a value; Actions menu).
 4. Press Up.
 5. Press Enter.
     You hear: Priority: High.

@@ -340,8 +340,6 @@ public abstract partial class ItemForm : AxKitForm
         AddKey(new Command("New field", ItemKeys.New, NewField) { When = InDetail, Mark = CommandMark.Change });
         AddKey(new Command("Rename the field", ItemKeys.Rename, RenameField) { When = InDetail, Mark = CommandMark.Change });
         AddKey(new Command("Remove the field", ItemKeys.Delete, RemoveField) { When = InDetail, Mark = CommandMark.Change });
-        AddKey(new Command("Move the field up", ItemKeys.MoveFieldUp, () => MoveField(-1)) { When = InDetail, Mark = CommandMark.Change });
-        AddKey(new Command("Move the field down", ItemKeys.MoveFieldDown, () => MoveField(1)) { When = InDetail, Mark = CommandMark.Change });
 
         // Right and Left change the field in focus (IA-5.6, AX-8.10 rule 4): a choice's next and previous value, a
         // check checked and unchecked; the edge sound on every other field, never the list box's own move.

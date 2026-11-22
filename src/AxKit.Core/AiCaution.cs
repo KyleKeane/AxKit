@@ -37,6 +37,25 @@ public static class AiCaution
         + "Read all of it, and the conversation that led to it, before you allow it. If you do not understand what it does, do not allow it. "
         + "Allowing it is your own act, as if you had done it yourself: what it does to your files, your accounts and your computer is yours to answer for, not axKit's and not its maker's.";
 
+    /// <summary>
+    /// In the name of the question about an action of a list that runs a program or hands a command to a shell's
+    /// window (axTask, docs/axTask/forms-framework.md AF-7.2), heard every time the question is read. Who wrote the
+    /// action is not known: the user, another program or an AI.
+    /// </summary>
+    public const string ActionShort = "An AI may have written it: read the explanation before you run it";
+
+    /// <summary>
+    /// The first section of that question's explanation, in <see cref="Command"/>'s terms (the maintainer's decision
+    /// of 2026-11-21: the run question uses the AI caution's words): the action may be an AI's, it can be wrong,
+    /// nothing of it is checked, an AI may have put it there because its own checks refused the command, and
+    /// running it is the user's own act.
+    /// </summary>
+    public const string Action =
+        "This action is written in the list's configuration file. axKit does not know who wrote it: you, another program, or an AI model. It can be wrong, and axKit has checked none of it. "
+        + "An AI can write an action into a list when it could not or should not run a command itself. That can be because its own permission or safety checks refused it, so run it with care. "
+        + "Read all the details here before you run anything. If you do not understand what it does, do not run it. "
+        + "Running it is your own act, as if you had typed it: what it does to your files, your accounts and your computer is yours to answer for, not axKit's and not its maker's.";
+
     /// <summary>In the question an AI tool's run of a window command asks.</summary>
     public const string Request = "The request comes from an AI tool, which can be wrong: allow it only if you know what the command will do here.";
 }

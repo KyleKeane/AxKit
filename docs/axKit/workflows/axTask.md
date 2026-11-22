@@ -788,8 +788,6 @@ Starts with: Open axTask with the folder tasks.
 5. Press Tab 2 times.
 6. Press Enter.
     You hear: Find what I type: done.
-7. Choose the menu item Read the last output.
-8. Press Escape.
 
 ### Stop a running action
 

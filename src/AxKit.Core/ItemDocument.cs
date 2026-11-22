@@ -85,23 +85,6 @@ public sealed class ItemDocument
 
     public ItemDocument WithFieldTitle(int index, string title) => Change(fields => fields[index] = fields[index] with { Title = title });
 
-    /// <summary>The field moved one place up or down; null at the end it would leave.</summary>
-    public ItemDocument? WithFieldMoved(int index, int direction)
-    {
-        var to = index + direction;
-        if (to < 0 || to >= _fields.Count)
-        {
-            return null;
-        }
-
-        return Change(fields =>
-        {
-            var field = fields[index];
-            fields.RemoveAt(index);
-            fields.Insert(to, field);
-        });
-    }
-
     private ItemDocument Change(Action<List<ItemField>> change)
     {
         var fields = _fields.ToList();

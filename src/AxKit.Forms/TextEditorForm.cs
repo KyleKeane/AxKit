@@ -1,4 +1,5 @@
 using AxKit.Core;
+using AxKit.Core.Events;
 
 namespace AxKit.Forms;
 
@@ -535,8 +536,20 @@ public sealed partial class TextEditorForm : AxKitForm
         }
 
         var offered = offer.At(_editor.Text, _editor.SelectionStart, _path);
+        if (offered.Edit is { } atOnce)
+        {
+            // A change with no list: a value stepped in line (AJ-5.2).
+            ApplyEdit(atOnce);
+            return;
+        }
+
         if (offered.Lines is not { Count: > 0 } lines || offered.Choose is not { } choose)
         {
+            if (offered.Edge)
+            {
+                EventDoor.Raise(EventKind.Edge);
+            }
+
             Announce(offered.Said ?? "Nothing to choose here", true);
             return;
         }

@@ -3,8 +3,8 @@
 Written by `tools/key-map.ps1` from `docs/axKit/window-commands.json`, `src/AxKit.Forms/BundleKeys.cs` and
 `docs/axKit/key-families.json`; never edit it by hand. Every key of every window and what it does in each app.
 
-The inventory holds 590 commands with a key in 17 apps, on 122 different keys, counting the
-second keys some commands answer. 48 keys have one meaning wherever they are; 74 have several.
+The inventory holds 583 commands with a key in 17 apps, on 124 different keys, counting the
+second keys some commands answer. 52 keys have one meaning wherever they are; 72 have several.
 21 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
 are window keys, each in its window's own table.
 
@@ -47,6 +47,7 @@ In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 - Ctrl+Shift+D. Window key, in axTask alone: Hide done tasks.
 - Ctrl+Shift+E. Window key, in axJSON alone: Error.
 - Ctrl+Shift+J. Window key, in axJSON alone: Object.
+- Ctrl+Shift+M. Window key, in axClaude alone: Next permission mode.
 - Ctrl+Shift+O. Window key, in axMedia alone: Open folder.
 - Ctrl+Shift+P. Bundle key, in every app: Command palette.
 - Ctrl+Shift+U. Window key, in axGIT alone: Unstage all.
@@ -57,7 +58,10 @@ In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 - Ctrl+Shift+Left arrow. Window key, in axMedia alone: Previous file.
 - Ctrl+Shift+Right arrow. Window key, in axMedia alone: Next file.
 - Alt+D. Window key, in axFile alone: Go to folder.
+- Alt+Down arrow. Window key, in axJSON alone: Next value.
 - Alt+Enter. Window key, in axFile alone: Properties.
+- Alt+Left arrow. Window key, in axJSON alone: Add a member.
+- Alt+Right arrow. Window key, in axJSON alone: Choose a value.
 - Shift+Down arrow. Window key, in axFile alone: Select to the next entry.
 - Shift+End. Window key, in axFile alone: Select to the last entry.
 - Shift+Home. Window key, in axFile alone: Select to the first entry.
@@ -541,20 +545,6 @@ Bundle key, in axAutomate, axMCP, axMedia, axPass and axTask. 2 meanings.
 - axAutomate, axMCP, axPass and axTask: Previous section.
 - axMedia: Faster.
 
-### Alt+Down arrow
-
-Window key, in axAutomate, axJSON, axMCP, axPass and axTask. 2 meanings.
-
-- axAutomate, axMCP, axPass and axTask: Move the field down.
-- axJSON: Choose a value.
-
-### Alt+Up arrow
-
-Window key, in axAutomate, axFile, axMCP, axPass and axTask. 2 meanings.
-
-- axAutomate, axMCP, axPass and axTask: Move the field up.
-- axFile: Up one level.
-
 ### Ctrl+G
 
 Window key, in axDown, axFile, axJSON and axPreview. 2 meanings.
@@ -688,19 +678,19 @@ Window key, in axFile and axGIT. 2 meanings.
 - axFile: Deselect all.
 - axGIT: Stage all.
 
-### Ctrl+Shift+M
-
-Window key, in axClaude and axJSON. 2 meanings.
-
-- axJSON: Add a member.
-- axClaude: Next permission mode.
-
 ### Ctrl+Shift+R
 
 Window key, in axClaude and axTerminal. 2 meanings.
 
 - axClaude: Force Claude to restart.
 - axTerminal: Restart shell.
+
+### Alt+Up arrow
+
+Window key, in axFile and axJSON. 2 meanings.
+
+- axJSON: Previous value.
+- axFile: Up one level.
 
 ### Shift+Enter
 
@@ -908,9 +898,9 @@ Windows' own keys, not counted: Shift+Up arrow, Shift+Down arrow, Shift+Home and
 - Ctrl+Up arrow, axMedia: Faster. Its kind: change a value: the speed of playing.
 - Ctrl+Down arrow, axMedia: Slower. Its kind: change a value: the speed of playing.
 
-### Alt+Up arrow and Alt+Down arrow: move what you are on up or down
+### Alt with an arrow: the choices of what you are on
 
-2 keys of the inventory. 1 misfit.
+4 keys of the inventory. 1 misfit.
 
 - Alt+Up arrow, axFile: Up one level. Its kind: go to a place; File Explorer's own key for it.
 

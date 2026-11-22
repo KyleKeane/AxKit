@@ -428,8 +428,12 @@ public sealed partial class TaskForm
             return;
         }
 
+        // The AI caution first, and in the question's name, heard every time (bundle rule 11, AX-11.12).
         var text = new StringBuilder()
-            .AppendLine($"This action is in the list's configuration file, {Path.Combine(folder, ItemDocument.ListFile)}. axKit did not write it and checked nothing of it; you, another program or an AI may have written it.")
+            .AppendLine("# Read this first").AppendLine()
+            .AppendLine(AiCaution.Action).AppendLine()
+            .AppendLine("# The action").AppendLine()
+            .AppendLine($"It is in the file {Path.Combine(folder, ItemDocument.ListFile)}.")
             .AppendLine()
             .AppendLine($"{action.Name} {action.Described}.")
             .AppendLine()
@@ -441,7 +445,7 @@ public sealed partial class TaskForm
         }
 
         text.AppendLine().Append("axTerminal puts the command into its command field and does not send it: you read it there and press Enter yourself. axKit does not know what the command does or reaches. Sending it is your own choice.");
-        ShowNotice(new Notice($"Put {action.Name} into axTerminal?", text.ToString(),
+        ShowNotice(new Notice($"Put {action.Name} into axTerminal? {AiCaution.ActionShort}", text.ToString(),
         [
             new OverlayChoice("&Cancel", IsDefault: true, IsCancel: true),
             new OverlayChoice("Put it there &once", HandOver),
@@ -511,8 +515,12 @@ public sealed partial class TaskForm
         // AF-7.2: asked before the first run on this computer, and again after any change to the action. Cancel is
         // where Enter is; running is never the default answer (bundle rule 11).
         var typedUnseen = action.Input is { } input && action.Fields.Any(field => field.Hidden && (ActionValues.Names(input) ?? []).Any(name => field.Title.Equals(ActionValues.FormFieldOf(name), StringComparison.OrdinalIgnoreCase)));
+        // The AI caution first, and in the question's name, heard every time (bundle rule 11, AX-11.12).
         var text = new StringBuilder()
-            .AppendLine($"This action is in the list's configuration file, {Path.Combine(folder, ItemDocument.ListFile)}. axKit did not write it and checked nothing of it; you, another program or an AI may have written it.")
+            .AppendLine("# Read this first").AppendLine()
+            .AppendLine(AiCaution.Action).AppendLine()
+            .AppendLine("# The action").AppendLine()
+            .AppendLine($"It is in the file {Path.Combine(folder, ItemDocument.ListFile)}.")
             .AppendLine()
             .AppendLine($"{action.Name} {action.Described}.")
             .AppendLine()
@@ -539,7 +547,7 @@ public sealed partial class TaskForm
         }
 
         text.AppendLine().Append("axKit does not know what this program does or reaches. Running it is your own choice.");
-        ShowNotice(new Notice($"Run {action.Name}?", text.ToString(),
+        ShowNotice(new Notice($"Run {action.Name}? {AiCaution.ActionShort}", text.ToString(),
         [
             new OverlayChoice("&Cancel", IsDefault: true, IsCancel: true),
             new OverlayChoice("Run it &once", () => RunNow(action, item, program, line, run)),
@@ -636,6 +644,10 @@ public sealed partial class TaskForm
             ReadLastOutput();
             return;
         }
+
+        // A program that ended well sounds as a finished command does everywhere, the done chime (the maintainer's
+        // choice of 2026-11-21): it may have taken a while, and the user may be elsewhere in the window by then.
+        EventDoor.Raise(EventKind.TurnDone);
 
         // AF-3.2: what the action sets once its program ended well, as one undo step, on the item as it is now.
         if (run.Then.Count > 0)

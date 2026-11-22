@@ -149,15 +149,13 @@ expect focus , Friday
 
 # Check: The fields of an item are its list's, and the field keys say where they are changed
 # 2.3 Which fields an item has is written once, in its list's configuration (forms-framework.md AF-13.3): Ctrl+N,
-# F2 on a field that is not the Title, Delete and Alt+Up in the fields say so, and nothing is asked or changed.
+# F2 on a field that is not the Title and Delete in the fields say so, and nothing is asked or changed.
 keys ctrl+n
 expect said ! The fields are the list's configuration's: Ctrl+J on the list opens it in axJSON
 expect state "notice":null
 keys f2
 expect said ! The fields are the list's configuration's
 keys delete
-expect said ! The fields are the list's configuration's
-keys alt+up
 expect said ! The fields are the list's configuration's
 expect focus Due, date,
 # Goal: Give a field its first value

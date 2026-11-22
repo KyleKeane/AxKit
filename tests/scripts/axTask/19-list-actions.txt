@@ -33,8 +33,8 @@ expect said ! No such program names the program no-such-program-of-axkit, which 
 # does, the program by its full path, each argument as it is for this item, its input, and what is set after. Enter
 # is on Cancel: nothing runs.
 do Action key Shift+4
-expect state "notice":"Run Find the kind?"
-expect state This action is in the list's configuration file
+expect state "notice":"Run Find the kind? An AI may have written it: read the explanation before you run it"
+expect state This action is written in the list's configuration file. axKit does not know who wrote it: you, another program, or an AI model.
 expect state Find the kind runs findstr with 1 argument: /c:{Kind}; gives it {Kind} of {Title} as input; then sets Checked: {today}
 expect state findstr.exe
 expect state /c:Bug
@@ -48,7 +48,7 @@ refuse said Running Find the kind
 # Asked again; Run it, and do not ask again for this action: "Running Find the kind", then "Find the kind: done"
 # with what it set, written into the item as one step. The next run is not asked about.
 do Action key Shift+4
-expect state "notice":"Run Find the kind?"
+expect state "notice":"Run Find the kind? An AI may have written it: read the explanation before you run it"
 keys tab
 expect focus Cancel"
 keys tab
@@ -71,7 +71,7 @@ keys escape
 
 # Check: A program that fails says so with its exit code and opens its output
 menu Miss
-expect state "notice":"Run Miss?"
+expect state "notice":"Run Miss? An AI may have written it: read the explanation before you run it"
 keys tab tab
 expect focus Run it &once"
 keys enter
@@ -92,11 +92,13 @@ expect said Type the word to look for: this is needed
 expect state "notice":"Find what I type"
 type the tap
 keys enter
-expect state "notice":"Run Find what I type?"
+expect state "notice":"Run Find what I type? An AI may have written it: read the explanation before you run it"
 expect state /c:the tap
 keys tab tab
 keys enter
 expect said ! Find what I type: done
+# Check: A program that ended well plays the done chime
+expect said ♪ Done
 menu Read the last output
 expect state Fix the tap
 keys escape
@@ -105,7 +107,7 @@ keys escape
 # A program that takes long: "Running Wait"; a second action meanwhile is refused; Actions, Stop the running action
 # ends it with what it started.
 menu Wait
-expect state "notice":"Run Wait?"
+expect state "notice":"Run Wait? An AI may have written it: read the explanation before you run it"
 keys tab tab
 keys enter
 expect said ! Running Wait
@@ -123,14 +125,14 @@ expect said ! No action is running
 # on a line; then a new axTerminal window in the list's folder holds the command as one line for its shell in its
 # command field, the item's file, whose name has spaces, in quotes as one part. Nothing ran: the user sends it.
 menu Look in the terminal
-expect state "notice":"Put Look in the terminal into axTerminal?"
+expect state "notice":"Put Look in the terminal into axTerminal? An AI may have written it: read the explanation before you run it"
 expect state Look in the terminal puts a command of 3 parts into axTerminal's command field, for you to send: findstr, /c:x, {file}
 expect state Fix the tap.json
 expect state axTerminal puts the command into its command field and does not send it
 keys enter
 expect state "notice":null
 menu Look in the terminal
-expect state "notice":"Put Look in the terminal into axTerminal?"
+expect state "notice":"Put Look in the terminal into axTerminal? An AI may have written it: read the explanation before you run it"
 keys tab tab
 expect focus Put it there &once
 keys enter

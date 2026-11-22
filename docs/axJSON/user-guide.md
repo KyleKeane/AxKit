@@ -46,16 +46,19 @@ Past the last one of a kind you hear "No next key" and the caret stays. The same
 
 ## Choose instead of typing
 
-For two kinds of file axJSON knows what can be written, and lets you choose it from a list: the configuration of an axTask list (`list.json`, which axTask opens here with Ctrl+J on a list) and an item of such a list.
+For two kinds of file axJSON knows what can be written, and lets you choose it: the configuration of an axTask list (`list.json`, which axTask opens here with Ctrl+J on a list) and an item of such a list. The keys are Alt with an arrow, and they follow the arrows as you know them from the lists of axKit: Right goes in, Up and Down change, Left steps out.
 
-- **Alt+Down, choose a value** (Actions, Choose a value). Put the caret on a member whose value is one of a few, such as `"type"` of a field or `"does"` of an action; the caret may be on the key, in the value or just after it. A list opens under the text, named with the member and what it is, "type: What the field holds", and starts on the value that stands there. Up and Down move through the values; Enter writes the one you are on in place of the old value and says it, "type: date"; Escape leaves and nothing changed. On a member that takes any value you hear what it is, "title takes any value. The field's name, as it is shown and said".
-- **Ctrl+Shift+M, add a member** (Actions, Add a member). Put the caret anywhere in an object. The list holds what that object can have and does not have yet, each line the name and what it is, "key: The key that runs it; without one it runs from the menu". Enter adds the member at the end of the object with a first value and puts the caret on that value, so that Alt+Down can follow at once.
+- **Alt+Right, the list of values** (Actions, Choose a value). Put the caret on a member whose value is one of a few, such as `"type"` of a field or `"does"` of an action; the caret may be on the key, in the value or just after it. A list opens under the text, named with the member and what it is, "type: What the field holds", and starts on the value that stands there. Up and Down move through the values; Enter writes the one you are on in place of the old value and says it, "type: date"; Escape leaves and nothing changed.
+- **Alt+Down and Alt+Up, the next and the previous value** (Actions, Next value and Previous value). The value changes in line, without a list, and you hear it with its place: "type: date, 4 of 8". At the last or the first value nothing changes; you hear the edge sound and "type: link, the last of 8".
+- **Alt+Left, add a member** (Actions, Add a member). Put the caret anywhere in an object. The list holds what that object can have and does not have yet, each line the name and what it is, "key: The key that runs it; without one it runs from the menu". Enter adds the member at the end of the object with a first value and puts the caret on that value, so that Alt+Down or Alt+Right can follow at once.
 
-So an action is written by choosing: Ctrl+Shift+M in the action, Enter on "key", Alt+Down, and pick the key from the eighteen.
+On a member that takes any value you hear what it is, "title takes any value. The field's name, as it is shown and said".
+
+So an action is written by choosing: Alt+Left in the action, Enter on "key", then Alt+Down until you hear the key you want, or Alt+Right to pick it from the eighteen.
 
 In an item's file the choices come from the item's list: axJSON follows the item's `"schema": "list.json"` to the configuration beside it, and offers a choice field's options and true or false for a check.
 
-Each choice is one step for Ctrl+Z. Nothing is checked or refused: you can still type anything, and for any other file you hear "axJSON has no options for this file".
+Each change is one step for Ctrl+Z. Nothing is checked or refused: you can still type anything, and for any other file you hear "axJSON has no options for this file".
 
 ## Format
 

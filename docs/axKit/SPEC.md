@@ -1317,7 +1317,11 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   names who asks and for what, "Asked by Claude, an AI: read the explanation before you allow it" is its text, heard
   every time; the list starts on No; and its explanation, everything Claude asks to do, begins with
   `AiCaution.ToolCall`: who asks, that it can be wrong, that axKit checked none of it, to read all of it and not to
-  allow what is not understood, and that allowing it is the user's own act). With the screen, Claude Code draws
+  allow what is not understood, and that allowing it is the user's own act); an action of an axTask list that runs a
+  program or puts a command into axTerminal (`docs/axTask/SPEC.md` TK-7a.1a, the maintainer's decision of 2026-11-21:
+  who wrote an action in a list's file is not known, and it may be an AI, so the question's name ends "An AI may have
+  written it: read the explanation before you run it" and its text begins with `AiCaution.Action`; Cancel is where
+  Enter is). With the screen, Claude Code draws
   that question itself, and the window shows it as Claude Code wrote it. axClaude's conversation itself is Claude
   Code's own output, shown as it comes, under the access layer's consent (AX-11.4). These are reminders in plain
   words, as the consent notices are (AX-11.10), not legal advice. A new feature of this kind brings its caution in

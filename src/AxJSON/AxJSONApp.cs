@@ -47,6 +47,8 @@ public static class AxJSONApp
         Offers:
         [
             new EditorOffer("&Choose a value...", AxJSONKeys.ChooseValue, (text, caret, path) => Shown(JsonOffers.Values(text, caret, name => ReadLinked(path, name)))),
+            new EditorOffer("Ne&xt value", AxJSONKeys.NextValue, (text, caret, path) => Stepped(JsonOffers.Step(text, caret, 1, name => ReadLinked(path, name)))),
+            new EditorOffer("Pre&vious value", AxJSONKeys.PreviousValue, (text, caret, path) => Stepped(JsonOffers.Step(text, caret, -1, name => ReadLinked(path, name)))),
             new EditorOffer("Add a &member...", AxJSONKeys.AddMember, (text, caret, path) => Shown(JsonOffers.Members(text, caret, name => ReadLinked(path, name)))),
         ]);
 
@@ -63,6 +65,11 @@ public static class AxJSONApp
             return new TextEdit(edit.Start, edit.Length, edit.Text, edit.Caret, edit.Said);
         })
         : new Offered(result.Said);
+
+    /// <summary>A value stepped in line as the shell takes it: the one change made at once, or the sentence, with the edge sound at the last or the first value.</summary>
+    private static Offered Stepped((JsonEdit? Edit, string Said, bool Edge) result) => result.Edit is { } edit
+        ? new Offered(null, Edit: new TextEdit(edit.Start, edit.Length, edit.Text, edit.Caret, edit.Said))
+        : new Offered(result.Said, Edge: result.Edge);
 
     /// <summary>
     /// The text of the file a document links to (AJ-5.4): a file of that name beside the document, read only on a

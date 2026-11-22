@@ -45,8 +45,6 @@ public static class ItemKeys
     /// <summary>Archive the item or list (IA-D4); in the detail pane, remove the field.</summary>
     public const Keys Delete = Keys.Delete;
 
-    public const Keys MoveFieldUp = Keys.Alt | Keys.Up;
-    public const Keys MoveFieldDown = Keys.Alt | Keys.Down;
     public const Keys Undo = Keys.Control | Keys.Z;
 
     /// <summary>Read in full: every field of the item, or the field's whole value.</summary>
@@ -76,8 +74,6 @@ public static class ItemKeys
         ("New list", NewList),
         ("Rename", Rename),
         ("Archive, or remove the field", Delete),
-        ("Move the field up", MoveFieldUp),
-        ("Move the field down", MoveFieldDown),
         ("Undo", Undo),
         ("Read in full", ReadAll),
         ("Refresh", Refresh),

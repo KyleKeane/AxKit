@@ -25,10 +25,24 @@ expect said ! type: choice
 expect focus list.json
 expect text "type": "choice", "value": false }
 # Check: Escape leaves the list and changes nothing
-keys alt+down
+# Alt+Right is the key of Choose a value: Right goes into the value's list, as it goes into a list in axTask.
+keys alt+right
 expect focus {"name":"type: What the field holds","role":"List","value":"choice"}
 keys escape
 expect focus list.json
+expect text "type": "choice", "value": false }
+
+# Goal: Change a value in line to the next and the previous
+# Alt+Down and Alt+Up write the next and the previous of the member's values in place, said with its place among
+# them; at the last value nothing changes, the edge sounds and it says so. Each press is one step for Ctrl+Z.
+keys alt+down
+expect said ! type: link, 8 of 8
+expect text "type": "link", "value": false }
+keys alt+down
+expect said ♪ Edge
+expect said ! type: link, the last of 8
+keys alt+up
+expect said ! type: choice, 7 of 8
 expect text "type": "choice", "value": false }
 
 # Goal: Add a member an object can have
@@ -41,9 +55,12 @@ expect said ! Added options: The values to choose from, for the type choice
 expect focus list.json
 expect text "value": false, "options": [] }
 # Check: Each choice is one step to undo
+# The member added, then the two steps in line, then the value chosen from the list.
 keys ctrl+z
 expect text "type": "choice", "value": false }
 keys ctrl+z
+expect text "type": "link", "value": false }
+keys ctrl+z ctrl+z
 expect text "type": "check", "value": false }
 
 # Goal: Add a key to an action and choose it
@@ -51,7 +68,7 @@ expect text "type": "check", "value": false }
 # caret on it, so that Choose a value lists the eighteen keys at once.
 keys ctrl+home ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k
 expect said ! name: Later
-keys ctrl+shift+m
+keys alt+left
 expect focus {"name":"Add a member to an action of the list","role":"List","value":"key: The key that runs it; without one it runs from the menu"}
 keys enter
 expect said ! Added key: The key that runs it; without one it runs from the menu
@@ -75,7 +92,7 @@ start json {temp}\lists\Home\tap.json
 expect focus tap.json
 keys ctrl+home ctrl+k ctrl+k ctrl+k ctrl+k
 expect said ! Priority: Normal
-keys alt+down
+keys alt+right
 expect focus {"name":"Priority: A choice of the list's options","role":"List","value":"Normal"}
 keys up
 keys enter

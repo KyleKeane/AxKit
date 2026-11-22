@@ -116,7 +116,7 @@ otherwise. Native fields mean NVDA reads them by itself, and the caret cannot le
   `https://www.json.org/json-en.html`; Claude Code settings, `https://code.claude.com/docs/en/settings`), as axDown's
   Help has Markdown resources.
 - AJ-4.2 Keys (AX-8): the shell's (`EditorKeys`, included in `AxJSONKeys.All`), then Ctrl+K, Ctrl+J, Ctrl+L, Ctrl+I,
-  Ctrl+E with Ctrl+Shift for the previous one, Ctrl+Shift+F, and AJ-5's Alt+Down and Ctrl+Shift+M; the collision test covers them. Ctrl+J, a line feed
+  Ctrl+E with Ctrl+Shift for the previous one, Ctrl+Shift+F, and AJ-5's four, Alt with an arrow; the collision test covers them. Ctrl+J, a line feed
   in an EDIT control, is kept from the control as axDown keeps Ctrl+H and Ctrl+I (AD-5.1).
 - AJ-4.3 The F1 text (`HelpText.Shortcuts`) names the shell's keys and AJ-2.2's; the user guide `docs/axJSON/user-guide.md`
   is embedded (Help → User guide); About is the bundle's (AX-9.9).
@@ -137,7 +137,16 @@ not know has nothing to offer. JSON Schema stays a non-goal (G3).
   The table is written out as `docs/axKit/axkit-list 2.options.json` (the format `axkit-options 1`) for a program
   that is not axKit; a test holds the file to the table, and tests hold the table to what the readers take
   (`ListOptionsTests`, axTask's `ListActionsTests`).
-- AJ-5.2 **Choose a value**, Edit → Choose a value… (Alt+Down, the key that opens a list of choices in Windows).
+- AJ-5.1a **The keys are Alt with an arrow** (the maintainer's decision of 2026-11-21, on hearing the first keys,
+  Alt+Down for the list and Ctrl+Shift+M for a member; his words: "alt+right would open the list that arrows would
+  work inside of. and alt+up/down would change the value in-line since that is more like the up and down to select
+  an item"). They follow axKit's arrows: Right goes into the value's list, Up and Down change the value as they
+  select in a list, Left steps out to the object around it. It is one rule for every window, written into the key
+  families (`docs/axKit/key-families.json`, "Alt with an arrow"): Alt with an arrow is for the choices of what you
+  are on; Ctrl with an arrow moves the cursor; moving an item of a list is Ctrl+Shift+Up and Ctrl+Shift+Down,
+  wherever a list has it. The item windows' move of a field, which had Alt+Up and Alt+Down and did nothing any
+  more, went with it.
+- AJ-5.2 **Choose a value**, Edit → Choose a value… (Alt+Right).
   With the caret on a member, on its key, in its value or just after it: a list in place of the Go to line field,
   named with the member and what it is ("type: What the field holds"), its lines the values, starting on the one
   that stands there. Enter writes the chosen value in place of the old one, quoted as the value needs, as one undo
@@ -145,7 +154,12 @@ not know has nothing to offer. JSON Schema stays a non-goal (G3).
   list, one sentence and nothing else: "title takes any value. The field's name, as it is shown and said", "No list
   of values here: put the caret on a member that has one, such as type or does", "axJSON has no options for this
   file: it has them for a list's configuration and for an item of a list", or "Not valid JSON: line 12, …".
-- AJ-5.3 **Add a member**, Edit → Add a member… (Ctrl+Shift+M). With the caret in an object: a list of the members
+- AJ-5.2a **Next value and Previous value**, Edit → Next value (Alt+Down) and Previous value (Alt+Up). The value of
+  the member at the caret is written in line as the next or the previous of its values, as one undo step, the
+  caret staying on it, and said with its place: "type: date, 4 of 8". At the last or the first value nothing
+  changes: the edge sound and "type: link, the last of 8". A value that is none of the member's goes to the first,
+  or from the other side to the last. Where there are no values, the sentences of AJ-5.2 and no sound.
+- AJ-5.3 **Add a member**, Edit → Add a member… (Alt+Left). With the caret in an object: a list of the members
   that kind of object can have and does not have yet, each line the name and what it is ("key: The key that runs
   it; without one it runs from the menu"), the list named for the object ("Add a member to an action of the list").
   Enter adds the member as the object's last, with its first value: on a line of its own, indented as the member
@@ -160,13 +174,14 @@ not know has nothing to offer. JSON Schema stays a non-goal (G3).
   only as a file name in the document's own folder, only on a drive of this computer (the window never waits on a
   network), only for a file of at most 1 MB, and only to read it; a name with a path in it is not followed. A value
   the list does not name (kept, AF-11.3) has no options.
-- AJ-5.5 **Where it is.** `AxJSON.Core/JsonOffers` (pure: `TableOf`, `At`, `Values`, `Members`, each giving a list
-  and the one edit a line makes), over the tree's nodes, which know their end (`JsonNode.End`); the shell shows it
-  (`EditorOffer`, `Offered` and `TextEdit` of `AxKit.Forms/EditorApp`, `TextEditorForm.RunOffer` and `ApplyEdit`),
-  and axJSON gives the two as data, with `ReadLinked` for AJ-5.4. Not in navigation mode, as every change. Tested
+- AJ-5.5 **Where it is.** `AxJSON.Core/JsonOffers` (pure: `TableOf`, `At`, `Values` and `Members`, each giving a list
+  and the one edit a line makes, and `Step`, the one edit of a value in line), over the tree's nodes, which know
+  their end (`JsonNode.End`); the shell shows it (`EditorOffer`, `Offered` and `TextEdit` of
+  `AxKit.Forms/EditorApp`, `TextEditorForm.RunOffer` and `ApplyEdit`: a list, or one change made at once, or a
+  sentence with the edge sound), and axJSON gives the four as data, with `ReadLinked` for AJ-5.4. Not in navigation mode, as every change. Tested
   in `JsonOffersTests`; the window in `tests/scripts/axJSON/07-options.txt`.
-- AJ-5.6 **Left open** (AF-12.5, the maintainer's to settle): stepping to the next and previous value with a key in
-  the text, a date's `today` and `+3`, and a form view of the whole file (AJ-3) built from the same table.
+- AJ-5.6 **Left open** (AF-12.5, the maintainer's to settle): a date's `today` and `+3`, and a form view of the
+  whole file (AJ-3) built from the same table.
 
 ## 5. Architecture
 
@@ -225,7 +240,7 @@ edit control holds it, every input is accepted without an exception, and the rep
   as steps of it (AJ-3.5); AJ-2.5 built the same day with axDown's (Ctrl+Z, Ctrl+Y, Edit → Undo and Redo; the NVDA pass,
   test plan 3.1, is still to run), AJ-3.5 comes with the structured mode.
 - 2026-10-22: released in 3.3.1 (3.3.0 tagged, not published). The whole NVDA test plan marked passed at the user's word, no step reported failing; the record by step is `docs/axKit/nvda-test-record.md`.
-- 2026-11-21: the options built (AJ-5): Choose a value (Alt+Down) and Add a member (Ctrl+Shift+M) for a list's
+- 2026-11-21: the options built (AJ-5): Choose a value, Next and Previous value and Add a member, on Alt with an arrow since the maintainer heard the first keys the same day (AJ-5.1a), for a list's
   configuration of axTask and for an item of a list, from the bundle's table `AxKit.Core/ListOptions`; the window
-  script `07-options.txt`; its NVDA pass, test plan 3a, is still to run. The two keys and what AJ-5.6 leaves open
-  are the maintainer's to settle.
+  script `07-options.txt`; what AJ-5.6 leaves open
+  is the maintainer's to settle.

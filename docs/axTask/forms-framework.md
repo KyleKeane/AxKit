@@ -274,16 +274,18 @@ usable by itself:
    at 31fe68c1 is in `docs/axKit/nvda-test-record.md`, with what is owed to the maintainer's own ear.)* `SPEC.md` rewritten for all of it, the user guide, the NVDA plan, the outside-calls page, `PRIVACY.md` and
    `SECURITY.md`; window scripts; an NVDA pass. **From here a list's actions can be configured and worked with.**
 6. *(Built on 2026-11-21: the table is `AxKit.Core/ListOptions`, the file `docs/axKit/axkit-list 2.options.json`,
-   axJSON's two commands Choose a value (Alt+Down) and Add a member (Ctrl+Shift+M), its SPEC AJ-5; what changed
+   axJSON's commands on Alt with an arrow (Alt+Right the list of values, Alt+Down and Alt+Up the next and the previous value in line, Alt+Left add a member; his keys, on hearing the first ones), its SPEC AJ-5; what changed
    while building is said in section 12 in italics.)* axJSON learns the options (section 12): the table of the configuration's members and their values, and
    axJSON's two commands that offer them. With axJSON's own maturing, which the maintainer expects to follow.
 7. The first uses, in the management lists: Answer the report on GitHub in the outside reports list (after an entry
    is Done), and what the maintainer asks for next. *(2026-11-21: a first use is in the maintainer's own priorities
    list, four actions without a key, so that no key of his changed: Start today, Priority high, Priority normal and
    Priority low, in Context, Actions of this list; a key is one member more, `"key": "Ctrl+1"`, added in axJSON with
-   Ctrl+Shift+M. Answer the report on GitHub is not put in: it posts to GitHub, and the outside reports list is the
-   one his signature governs, so it waits for his word. As proposed: the entry gets a number field `Issue`, written
-   by `tools/outside-report.ps1` with the entry, and the list the action
+   Alt+Left; asked the same day, he keeps them without keys for now. Answer the report on GitHub was first only
+   proposed, since it posts to GitHub and the outside reports list is the one his signature governs; he said yes
+   the same day, and it is in: an entry has the field `Issue`, the number of its report's issue (the first when it
+   names several; a field no approval signs), written by `tools/outside-report.ps1` with the entry and given to
+   the four entries there were, a date field `Answered`, and the list the action
    `{ "name": "Answer the report on GitHub", "does": "run", "fields": [ { "title": "Type your answer", "type": "longtext" } ], "program": "gh", "arguments": ["issue", "comment", "{Issue}", "--repo", "KyleKeane/AxKit-reports", "--body-file", "-"], "input": "{form:Type your answer}", "then": { "set": { "Answered": "{today}" } } }`:
    nothing of the report's own words is an argument, the answer is what he types, and the first run asks him with
    every argument written out.)*
@@ -380,9 +382,9 @@ There is no form of axTask's own for making an action: the configuration is the 
   test; it is in the repository for other programs, and axJSON uses the table in code. A configuration is known by
   its `"format"`, and names no options file itself: a file shipped with axKit has no place a `list.json` could link
   to. An item is known by its `"schema"` link, which axJSON follows to the configuration beside it, on this
-  computer only. Of AF-12.5's ways, the list is built (Alt+Down on a value; Ctrl+Shift+M for an object's missing
-  members); stepping through the values with a key, a date's `today` and `+3`, and the form view are not, and stay
-  the maintainer's to settle with the two keys.*
+  computer only. Of AF-12.5's ways, the list and the step in line are built (Alt+Right and Alt+Down, Alt+Up on a value; Alt+Left for an object's missing
+  members: his keys, chosen on hearing the first ones); a date's `today` and `+3` and the form view are not, and
+  stay his to settle.*
 
 
 ## 13. An item is its values, read through its list's configuration

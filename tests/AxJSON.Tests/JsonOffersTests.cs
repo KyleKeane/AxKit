@@ -65,6 +65,49 @@ public sealed class JsonOffersTests
         Assert.Equal(Config.Length - 1, changed.Length);
     }
 
+    /// <summary>
+    /// AJ-5.2: Alt+Down and Alt+Up change the value in line to the next and the previous of its values, said with
+    /// its place; at the last or the first nothing changes and the window sounds the edge.
+    /// </summary>
+    [Fact]
+    public void A_value_steps_in_line_to_the_next_and_the_previous_and_stops_at_the_ends()
+    {
+        var onDoes = On(Config, "\"move\"");
+        var (edit, said, edge) = JsonOffers.Step(Config, onDoes, 1, NoFile);
+        Assert.False(edge);
+        Assert.Equal(string.Empty, said);
+        Assert.Equal("does: open, 3 of 5", edit!.Said);
+        var opened = Apply(Config, edit);
+        Assert.Contains("\"does\": \"open\",", opened, StringComparison.Ordinal);
+        // The caret stays on the value, so the next press goes on from there.
+        Assert.Equal("does: run, 4 of 5", JsonOffers.Step(opened, edit.Caret, 1, NoFile).Edit!.Said);
+        Assert.Equal("does: move, 2 of 5", JsonOffers.Step(opened, edit.Caret, -1, NoFile).Edit!.Said);
+
+        // At the ends: no change, the value with where it stands, and the edge.
+        var first = Apply(Config, JsonOffers.Step(Config, onDoes, -1, NoFile).Edit!);
+        Assert.Contains("\"does\": \"set\",", first, StringComparison.Ordinal);
+        var atFirst = JsonOffers.Step(first, onDoes, -1, NoFile);
+        Assert.Null(atFirst.Edit);
+        Assert.True(atFirst.Edge);
+        Assert.Equal("does: set, the first of 5", atFirst.Said);
+        var terminal = first.Replace("\"does\": \"set\"", "\"does\": \"terminal\"", StringComparison.Ordinal);
+        Assert.Equal(("does: terminal, the last of 5", true), (JsonOffers.Step(terminal, onDoes, 1, NoFile).Said, JsonOffers.Step(terminal, onDoes, 1, NoFile).Edge));
+
+        // A value that is none of the member's goes to the first, or from the other side to the last.
+        var other = Config.Replace("\"does\": \"move\"", "\"does\": \"fly\"", StringComparison.Ordinal);
+        Assert.Equal("does: set, 1 of 5", JsonOffers.Step(other, onDoes, 1, NoFile).Edit!.Said);
+        Assert.Equal("does: terminal, 5 of 5", JsonOffers.Step(other, onDoes, -1, NoFile).Edit!.Said);
+
+        // A check steps between the words, and a member without values says what it is, with no edge.
+        var done = JsonOffers.Step(Item, On(Item, "false"), -1, Beside).Edit!;
+        Assert.Contains("\"Done\": true,", Apply(Item, done), StringComparison.Ordinal);
+        Assert.Equal("Done: true, 1 of 2", done.Said);
+        var name = JsonOffers.Step(Config, On(Config, "\"Later\""), 1, NoFile);
+        Assert.Null(name.Edit);
+        Assert.False(name.Edge);
+        Assert.Equal("name takes any value. The action's name, as the menu shows it", name.Said);
+    }
+
     [Fact]
     public void The_caret_on_the_members_key_or_just_after_its_value_is_on_the_member()
     {

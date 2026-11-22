@@ -288,10 +288,10 @@
     {
       "id": "alt-arrows",
       "scope": "window",
-      "pattern": "Alt+Up arrow and Alt+Down arrow",
-      "match": "^alt\\+(up|down)$",
-      "does": "move what you are on up or down",
-      "learn": "Alt+Up and Alt+Down move what you are on: a field of an item goes one place up or down in its list.",
+      "pattern": "Alt with an arrow",
+      "match": "^alt\\+(up|down|left|right)$",
+      "does": "the choices of what you are on",
+      "learn": "Alt with an arrow is for the choices of what you are on, in the arrows' own directions (the maintainer's rule of 2026-11-21): Alt+Right goes into the list of them, where the arrows move and Enter chooses; Alt+Down and Alt+Up change to the next and the previous one in place; Alt+Left steps out to what is around it and offers what can be added there. Ctrl with an arrow moves the cursor a bigger step, and moving an item of a list up or down is Ctrl+Shift+Up and Ctrl+Shift+Down, wherever a list has it.",
       "windows": [],
       "misfits": [
         { "chord": "alt+up", "apps": ["axFile"], "does": "Up one level", "kind": "go to a place; File Explorer's own key for it" }

@@ -558,6 +558,7 @@ Steps and keys: `docs/axKit/workflows/axJSON.md` (in Claude's working folder: `w
     - Close axJSON when the file has changes
 7. **Write a list's configuration by choosing**
     - Choose a value from the values a member can take
+    - Change a value in line to the next and the previous
     - Add a member an object can have
     - Add a key to an action and choose it
     - Choose an item's value through its link to the list's configuration

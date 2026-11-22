@@ -29,14 +29,22 @@ public static class AxJSONKeys
     /// <summary>Edit → Format (AJ-2.3).</summary>
     public const Keys Format = Keys.Control | Keys.Shift | Keys.F;
 
-    /// <summary>
-    /// Edit, Choose a value (AJ-5): the values the member at the caret can take, as a list. Alt+Down, the key that
-    /// opens a list of choices in Windows; it means nothing to an edit control or to NVDA.
-    /// </summary>
-    public const Keys ChooseValue = Keys.Alt | Keys.Down;
+    // The options (AJ-5) are Alt with an arrow, the maintainer's rule of 2026-11-21 for the choices of what the caret
+    // is on, in axKit's own arrows: Right goes into the value's list, Up and Down change the value in line as they
+    // select in a list, Left steps out to the object around it. Ctrl with an arrow moves the cursor, and Ctrl+Shift
+    // with Up or Down is kept for moving an item of a list. None of the four means anything to an edit control or NVDA.
 
-    /// <summary>Edit, Add a member (AJ-5): the members the object at the caret can have and does not have yet.</summary>
-    public const Keys AddMember = Keys.Control | Keys.Shift | Keys.M;
+    /// <summary>Edit, Choose a value: the values the member at the caret can take, as a list the arrows move in.</summary>
+    public const Keys ChooseValue = Keys.Alt | Keys.Right;
+
+    /// <summary>Edit, Next value: the member's value changed in line to the next of its values.</summary>
+    public const Keys NextValue = Keys.Alt | Keys.Down;
+
+    /// <summary>Edit, Previous value: the same, to the one before.</summary>
+    public const Keys PreviousValue = Keys.Alt | Keys.Up;
+
+    /// <summary>Edit, Add a member: the members the object at the caret can have and does not have yet.</summary>
+    public const Keys AddMember = Keys.Alt | Keys.Left;
 
     /// <summary>Every key of the window with its name, the editor shell's first, for the collision test and the F1 text.</summary>
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
@@ -54,6 +62,8 @@ public static class AxJSONKeys
         ("Previous error", PreviousError),
         ("Format", Format),
         ("Choose a value", ChooseValue),
+        ("Next value", NextValue),
+        ("Previous value", PreviousValue),
         ("Add a member", AddMember),
     ];
 

@@ -55,9 +55,20 @@ in the assistant's own words. Its fields:
 | State | choice | `To review` (written, review not done), `Awaiting approval`, `Approved`, `Declined`, `Done`. |
 | Approval | text | Written by axTask alone: the signature of OR-5. Empty until approved. |
 | Approved on | date | Written by axTask with the signature. |
+| Issue | text | The number of the report's issue alone, the first when the entry names several: what the list's action gives to gh. Written with the entry; no approval signs it. |
+| Answered | date | The day the report was answered from the list, written by the action. |
 
 The report's own text is never copied into the entry. A few words quoted inside the Harm review, marked as quoted, are
 allowed where the review needs them ("it asks to 'turn off the seal'").
+
+**The list's one action, Answer the report on GitHub** (the maintainer's yes of 2026-11-21; docs/axTask/forms-framework.md
+section 10, step 7). Context, Actions of this list, on an entry: a small form asks for the answer; axTask then runs
+`gh issue comment <Issue> --repo KyleKeane/AxKit-reports --body-file -` with the answer as gh's input, and sets
+Answered to the day. The only value of the entry among the arguments is the issue's number; nothing of a report's
+words reaches a command line, and the answer is what the maintainer types. axTask asks before the first run on a
+computer, with the AI caution and every argument written out, and Cancel is where Enter is (axTask's SPEC TK-7a.1a).
+It answers; it does not approve, close or change a state: those stay as OR-5 and OR-7 have them. The action is in
+the list's `list.json`, written for a new list by `tools\outside-report.ps1`.
 
 ## 4. What the assistant does with a report (the harm review)
 

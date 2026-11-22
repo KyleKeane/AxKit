@@ -138,7 +138,7 @@ keys in place of its words on a line:
   keeps the keys the new operation shares and drops the others, with Ctrl+Z to bring them back (IA-5.4).
 - AU-4.4 Keys of the window: F5 runs the workflow in hand (in the navigator's top level: every workflow of the
   folder, one after another); Escape during a run stops it after the current step; Ctrl+N a new step after the one
-  selected (a new workflow at the top level); Delete removes a step, Ctrl+Z brings it back; Alt+Up and Alt+Down move a
+  selected (a new workflow at the top level); Delete removes a step, Ctrl+Z brings it back; Ctrl+Shift+Up and Ctrl+Shift+Down move a
   step; Ctrl+J the file in axJSON. The rest are the item apps' (IA-3).
 - AU-4.5 During a run, each step's row is said as it ends only when it fails ("Step 7 failed: expected said Command
   palette"), and once at the end: "axDown: the command palette passed, 42 steps" or "failed at step 7". The report,

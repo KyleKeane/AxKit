@@ -35,7 +35,6 @@ public static class HelpText
           Up, Down: move through the fields
           Enter: change the field; on the description, read it whole. Space: a check on or off
           Right and Left: on a choice, the next and the previous value; on a check, Right checks and Left unchecks; the edge sound at an end and on any other field
-          Alt+Up, Alt+Down: nothing here; the arguments keep the server's order
           Ctrl+Q: read the field's whole value
           Escape, Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6: back to the navigator
 

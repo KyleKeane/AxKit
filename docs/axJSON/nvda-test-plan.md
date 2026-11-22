@@ -57,15 +57,16 @@ and `broken.json`, the same with the comma after `"opus"` removed and a comma ad
 
 ## 3a. Options: choosing in place of typing (AJ-5)
 
-The runner's script is `tests/scripts/axJSON/07-options.txt`. By hand: in axTask, Ctrl+J on a list opens its `list.json` here.
+The runner's script is `tests/scripts/axJSON/07-options.txt`. By hand: in axTask, Ctrl+J on a list opens its `list.json` here. The keys are Alt with an arrow (AJ-5.1a).
 
-1. Ctrl+K to the `type` of a field ("type: check"), Alt+Down: NVDA reads the list, "type: What the field holds, list, check, 6 of 8". Down: "choice". Enter: "type: choice", the focus is back in the text and the line reads with `"type": "choice"`. Ctrl+Z: the old value is back.
-2. Alt+Down, then Escape: the focus is back in the text and nothing changed.
-3. With the caret in an action, Ctrl+Shift+M: "Add a member to an action of the list, list, key: The key that runs it; without one it runs from the menu, 1 of" the number it lacks. Enter: "Added key: The key that runs it; without one it runs from the menu"; the caret is on `"Ctrl+1"`. Alt+Down, End, Enter: "key: Ctrl+Shift+9".
-4. On a field's `title`, Alt+Down: "title takes any value. The field's name, as it is shown and said", and no list.
-5. Open an item of the list (Ctrl+J on an item in axTask). On a choice field, Alt+Down: the list's options; on a check, "true" and "false".
-6. In any other JSON file, Alt+Down and Ctrl+Shift+M: "axJSON has no options for this file: it has them for a list's configuration and for an item of a list".
-7. In navigation mode (Ctrl+Space), Alt+Down: the refusal of navigation mode, no list.
+1. Ctrl+K to the `type` of a field ("type: check"), Alt+Right: NVDA reads the list, "type: What the field holds, list, check, 6 of 8". Down: "choice". Enter: "type: choice", the focus is back in the text and the line reads with `"type": "choice"`. Ctrl+Z: the old value is back.
+2. Alt+Right, then Escape: the focus is back in the text and nothing changed.
+3. On the same member, Alt+Down: "type: choice, 7 of 8" and the line reads with the new value; Alt+Down again: "type: link, 8 of 8"; once more: the edge sound and "type: link, the last of 8", nothing changed. Alt+Up: "type: choice, 7 of 8". Each press is one Ctrl+Z.
+4. With the caret in an action, Alt+Left: "Add a member to an action of the list, list, key: The key that runs it; without one it runs from the menu, 1 of" the number it lacks. Enter: "Added key: The key that runs it; without one it runs from the menu"; the caret is on `"Ctrl+1"`. Alt+Right, End, Enter: "key: Ctrl+Shift+9".
+5. On a field's `title`, Alt+Right and Alt+Down: "title takes any value. The field's name, as it is shown and said", no list and no sound.
+6. Open an item of the list (Ctrl+J on an item in axTask). On a choice field, Alt+Right: the list's options; on a check, "true" and "false".
+7. In any other JSON file, each of the four keys: "axJSON has no options for this file: it has them for a list's configuration and for an item of a list".
+8. In navigation mode (Ctrl+Space), each of the four keys: the refusal of navigation mode, no list and no change.
 
 ## 4. The Window menu and About
 

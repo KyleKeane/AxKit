@@ -266,10 +266,6 @@ public sealed class KeyTests
             "Apps", "Backspace", "Ctrl+1", "Ctrl+B", "Ctrl+2", "Ctrl+3", "Ctrl+4", "Ctrl+5", "Ctrl+6", "Ctrl+C", "Ctrl+D", "Ctrl+E", "Ctrl+G", "Ctrl+I", "Ctrl+K", "Ctrl+L",
             // Ctrl+Shift+1 to 6: the previous heading of a level in the editors, an action of the list in axTask (forms-framework.md AF-6.1).
             "Ctrl+Shift+1", "Ctrl+Shift+2", "Ctrl+Shift+3", "Ctrl+Shift+4", "Ctrl+Shift+5", "Ctrl+Shift+6",
-            // axJSON's options (its SPEC AJ-5, 2026-11-21): Alt+Down opens the list of a member's values, the key that opens
-            // a list of choices in Windows (the item windows move a field down with it); Ctrl+Shift+M adds a member (axClaude's
-            // next permission mode). Both open a list that Escape leaves, and are the maintainer's to change.
-            "Alt+Down", "Ctrl+Shift+M",
             "Ctrl+N", "Ctrl+O", "Ctrl+P", "Ctrl+Q", "Ctrl+R", "Ctrl+Shift+A", "Ctrl+Shift+C", "Ctrl+Shift+F", "Ctrl+Shift+H", "Ctrl+Shift+I",
             "Ctrl+Shift+K", "Ctrl+Shift+L", "Ctrl+Shift+Q", "Ctrl+Shift+R", "Ctrl+Shift+S", "Ctrl+Shift+T", "Ctrl+Shift+W", "Ctrl+T",
             "Ctrl+W", "Ctrl+Z", "Delete", "Down", "Enter", "Escape", "F5", "O", "Shift+Enter", "Shift+Escape", "Shift+F10", "Space", "Up",

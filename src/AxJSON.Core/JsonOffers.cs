@@ -95,36 +95,76 @@ public static class JsonOffers
     /// </summary>
     public static (JsonOffer? Offer, string? Said) Values(string text, int caret, Func<string, string?> readLinked)
     {
+        var (node, member, said) = MemberWithValues(text, caret, readLinked);
+        if (node is null || member is null)
+        {
+            return (null, said);
+        }
+
+        var now = member.Values.ToList().FindIndex(value => value == node.Value);
+        return (new JsonOffer($"{node.Key}: {member.What}", member.Values, Math.Max(0, now), chosen => Written(node, member, chosen, $"{node.Key}: {member.Values[chosen]}")), null);
+    }
+
+    /// <summary>
+    /// The value of the member at the caret changed in line to the next of its values (<paramref name="direction"/>
+    /// 1) or the one before (-1), said with its place among them ("type: date, 4 of 8"); a value that is none of
+    /// them goes to the first, or from the other side to the last. At an end nothing changes: no edit, the value
+    /// and that it is the last or the first, and <c>Edge</c> for the window's sound. Where there are no values, the
+    /// sentence of <see cref="Values"/> and no edge.
+    /// </summary>
+    public static (JsonEdit? Edit, string Said, bool Edge) Step(string text, int caret, int direction, Func<string, string?> readLinked)
+    {
+        var (node, member, said) = MemberWithValues(text, caret, readLinked);
+        if (node is null || member is null)
+        {
+            return (null, said ?? string.Empty, false);
+        }
+
+        var values = member.Values;
+        var now = values.ToList().FindIndex(value => value == node.Value);
+        var next = now < 0 ? (direction > 0 ? 0 : values.Count - 1) : now + direction;
+        if (next < 0 || next >= values.Count)
+        {
+            return (null, $"{node.Key}: {values[now]}, the {(direction > 0 ? "last" : "first")} of {values.Count}", true);
+        }
+
+        return (Written(node, member, next, $"{node.Key}: {values[next]}, {next + 1} of {values.Count}"), string.Empty, false);
+    }
+
+    /// <summary>One of a member's values written in place of the value that stands there, quoted as it needs, the caret on it.</summary>
+    private static JsonEdit Written(JsonNode node, OptionMember member, int chosen, string said)
+    {
+        var value = member.Values[chosen];
+        return new JsonEdit(node.Start, node.End - node.Start, member.Quoted ? JsonScanner.Quote(value) : value, node.Start, said);
+    }
+
+    /// <summary>The member at the caret and its values, or the one sentence that says why there are none here.</summary>
+    private static (JsonNode? Node, OptionMember? Member, string? Said) MemberWithValues(string text, int caret, Func<string, string?> readLinked)
+    {
         var (tree, table, said) = Read(text, readLinked);
         if (table is null || tree.Root is null)
         {
-            return (null, said);
+            return (null, null, said);
         }
 
         var place = At(tree.Root, caret)!;
         var node = place.Node;
         if (node.IsContainer || node.Key is null || place.Parent is not { Kind: TokenKind.OpenObject })
         {
-            return (null, "No list of values here: put the caret on a member that has one, such as type or does");
+            return (null, null, "No list of values here: put the caret on a member that has one, such as type or does");
         }
 
         if (table.KindAt(place.Path.Take(place.Path.Count - 1).ToList())?.Member(node.Key) is not { } member)
         {
-            return (null, $"{node.Key} is not a member axJSON has options for");
+            return (null, null, $"{node.Key} is not a member axJSON has options for");
         }
 
         if (member.Values.Count == 0)
         {
-            return (null, $"{node.Key} takes any value. {member.What}");
+            return (null, null, $"{node.Key} takes any value. {member.What}");
         }
 
-        var now = member.Values.ToList().FindIndex(value => value == node.Value);
-        return (new JsonOffer($"{node.Key}: {member.What}", member.Values, Math.Max(0, now), chosen =>
-        {
-            var value = member.Values[chosen];
-            var written = member.Quoted ? JsonScanner.Quote(value) : value;
-            return new JsonEdit(node.Start, node.End - node.Start, written, node.Start, $"{node.Key}: {value}");
-        }), null);
+        return (node, member, null);
     }
 
     /// <summary>

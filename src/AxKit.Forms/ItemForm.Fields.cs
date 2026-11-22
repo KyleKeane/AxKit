@@ -307,32 +307,6 @@ public abstract partial class ItemForm
         ChangeShown(document => (document.WithoutField(index), "Removed " + field.Title), Math.Min(index, _shown.Document.Fields.Count - 2));
     }
 
-    /// <summary>Alt+Up, Alt+Down in the detail pane: the field moved; the edge sound at an end.</summary>
-    protected void MoveField(int direction)
-    {
-        if (SelectedField() is not { } index)
-        {
-            Announce("Select a field first", true);
-            return;
-        }
-
-        if (FieldsFixed is { } why)
-        {
-            Announce(why, true);
-            return;
-        }
-
-        if (_shown.Document!.WithFieldMoved(index, direction) is null)
-        {
-            EventDoor.Raise(EventKind.Edge);
-            Announce(direction < 0 ? "Top of the fields" : "Bottom of the fields", true);
-            return;
-        }
-
-        var field = _shown.Document.Fields[index];
-        ChangeShown(document => document.WithFieldMoved(index, direction) is { } moved ? (moved, (direction < 0 ? "Moved up: " : "Moved down: ") + field.Title) : null, index + direction);
-    }
-
     /// <summary>Ctrl+Q: every field of the item in the navigator, or the whole value of the field in the detail pane.</summary>
     protected void ReadAll()
     {

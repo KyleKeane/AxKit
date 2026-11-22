@@ -87,8 +87,6 @@ every window" or under a heading that names the windows without it; under an app
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
 - Find previous. Menu: none, a key alone. Key: Shift+F3. Mark: read. Never run by AI tools.
 - Into the list. Menu: none, a key alone. Key: Right. Mark: open. Never run by AI tools.
-- Move the field down. Menu: none, a key alone. Key: Alt+Down. Mark: change. Never run by AI tools.
-- Move the field up. Menu: none, a key alone. Key: Alt+Up. Mark: change. Never run by AI tools.
 - New field. Menu: none, a key alone. Key: Ctrl+N. Mark: change. Never run by AI tools.
 - New item. Menu: none, a key alone. Key: Ctrl+N. Mark: change. Never run by AI tools.
 - New list. Menu: none, a key alone. Key: Ctrl+Shift+N. Mark: change. Never run by AI tools.
@@ -489,9 +487,11 @@ every window" or under a heading that names the windows without it; under an app
 
 ## axJSON
 
-- Add a member. Menu: Actions. Key: Ctrl+Shift+M. Mark: change.
-- Choose a value. Menu: Actions. Key: Alt+Down. Mark: change.
+- Add a member. Menu: Actions. Key: Alt+Left. Mark: change.
+- Choose a value. Menu: Actions. Key: Alt+Right. Mark: change.
 - Format. Menu: Actions. Key: Ctrl+Shift+F. Mark: change.
+- Next value. Menu: Actions. Key: Alt+Down. Mark: change.
+- Previous value. Menu: Actions. Key: Alt+Up. Mark: change.
 - Redo. Menu: Actions. Key: Ctrl+Y. Also: Ctrl+Shift+Z. Mark: change.
 - Undo. Menu: Actions. Key: Ctrl+Z. Mark: change.
 - Copy. Menu: Context. Key: Ctrl+C. Mark: act.
@@ -544,8 +544,6 @@ every window" or under a heading that names the windows without it; under an app
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
 - Find previous. Menu: none, a key alone. Key: Shift+F3. Mark: read. Never run by AI tools.
 - Into the list. Menu: none, a key alone. Key: Right. Mark: open. Never run by AI tools.
-- Move the field down. Menu: none, a key alone. Key: Alt+Down. Mark: change. Never run by AI tools.
-- Move the field up. Menu: none, a key alone. Key: Alt+Up. Mark: change. Never run by AI tools.
 - New field. Menu: none, a key alone. Key: Ctrl+N. Mark: change. Never run by AI tools.
 - New item. Menu: none, a key alone. Key: Ctrl+N. Mark: change. Never run by AI tools.
 - New list. Menu: none, a key alone. Key: Ctrl+Shift+N. Mark: change. Never run by AI tools.
@@ -675,8 +673,6 @@ every window" or under a heading that names the windows without it; under an app
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
 - Find previous. Menu: none, a key alone. Key: Shift+F3. Mark: read. Never run by AI tools.
 - Into the list. Menu: none, a key alone. Key: Right. Mark: open. Never run by AI tools.
-- Move the field down. Menu: none, a key alone. Key: Alt+Down. Mark: change. Never run by AI tools.
-- Move the field up. Menu: none, a key alone. Key: Alt+Up. Mark: change. Never run by AI tools.
 - New field. Menu: none, a key alone. Key: Ctrl+N. Mark: change. Never run by AI tools.
 - New item. Menu: none, a key alone. Key: Ctrl+N. Mark: change. Never run by AI tools.
 - New list. Menu: none, a key alone. Key: Ctrl+Shift+N. Mark: change. Never run by AI tools.
@@ -684,7 +680,6 @@ every window" or under a heading that names the windows without it; under an app
 - Open. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
 - Previous section. Menu: none, a key alone. Key: Ctrl+Up. Mark: open. Never run by AI tools.
 - Read in full. Menu: none, a key alone. Key: Ctrl+Q. Mark: read. Never run by AI tools.
-- Refresh. Menu: none, a key alone. Key: F5. Mark: read. Never run by AI tools.
 - Remove the field. Menu: none, a key alone. Key: Delete. Mark: change. Never run by AI tools.
 - Rename. Menu: none, a key alone. Key: F2. Mark: change. Never run by AI tools.
 - Rename the field. Menu: none, a key alone. Key: F2. Mark: change. Never run by AI tools.
@@ -849,8 +844,6 @@ every window" or under a heading that names the windows without it; under an app
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
 - Find previous. Menu: none, a key alone. Key: Shift+F3. Mark: read. Never run by AI tools.
 - Into the list. Menu: none, a key alone. Key: Right. Mark: open. Never run by AI tools.
-- Move the field down. Menu: none, a key alone. Key: Alt+Down. Mark: change. Never run by AI tools.
-- Move the field up. Menu: none, a key alone. Key: Alt+Up. Mark: change. Never run by AI tools.
 - New field. Menu: none, a key alone. Key: Ctrl+N. Mark: change. Never run by AI tools.
 - Next heading level 1. Menu: none, a key alone. Key: Ctrl+1. Mark: read. Never run by AI tools.
 - Next heading level 2. Menu: none, a key alone. Key: Ctrl+2. Mark: read. Never run by AI tools.
