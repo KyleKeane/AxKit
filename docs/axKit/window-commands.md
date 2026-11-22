@@ -78,7 +78,7 @@ every window" or under a heading that names the windows without it; under an app
 - The automated checks of axKit. Menu: Help, axAutomate resources. Key: none. Mark: act.
 - Nothing to move to here yet. Menu: Navigation. Key: none. Mark: read.
 - Open a folder of workflows. Menu: Session. Key: Ctrl+O. Mark: open.
-- Refresh. Menu: Session. Key: none. Also: F5. Mark: read.
+- Refresh. Menu: Session. Key: none. Mark: read.
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
 - Check. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
 - Check the field. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.

@@ -55,7 +55,10 @@ After the kit:
   (`tests/AxKit.Tests/CommandMarkTests`, `mcp.md` MC-D7); no menu item with a click is made without a mark (the same
   tests, read off the sources, and the compiler for `Item`). And from the built window: `check commands`, which every
   app's first script asks (`AxKitForm.CommandProblems`), fails on a key the F1 text does not name, on a command that
-  never runs, and on any entry of the menus as they stand that states no mark, however it was made.
+  never runs (an earlier command has its key everywhere, or under the very condition it has itself: its row would
+  name a key that does the other command, as axAutomate's Refresh stood on F5, which runs there, until 2026-11-21),
+  and on any entry of the menus as they stand that states no mark, however it was made. A shared piece that adds
+  its keys after the app's own leaves out a key the app has given to a command (`KeyTaken`).
 - AK-2.5 **One source, every reader the same** (the user's rule of 2026-11-13: parity between the menus, the settings,
   the command palette and the AI tools, with as few exceptions as possible, each one deliberate and for security).
   The menu bar is the one source of what a window can do: every command, every setting (a check item or a choice),

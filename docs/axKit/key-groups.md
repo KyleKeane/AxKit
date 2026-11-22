@@ -99,7 +99,7 @@ Exceptions today, which do another kind of thing:
 - F3, axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask and axTerminal: Find next.
 - F3, axGIT: Find next in the list.
 - F4, every app: Send a report.
-- F5, axAutomate, axFile, axGIT, axMCP, axPass, axProcess and axTask: Refresh.
+- F5, axFile, axGIT, axMCP, axPass, axProcess and axTask: Refresh.
 - F5, axStart: Refresh programs.
 - F5, axPreview: Reload.
 - F5, axAutomate: Run.

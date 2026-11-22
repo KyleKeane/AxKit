@@ -33,7 +33,7 @@ command's in this version of axKit.
 ### Run every workflow of a folder
 
 1. Open axAutomate with the folder flows.
-2. Press F5.
+2. Press F5 (Run; Actions menu).
     You hear: Running 6 workflows.
     You hear: 01-passes passed, 4 steps.
     You hear: Step 2 failed: Expect the focus: Nothing like this. Not within 10 s.
@@ -71,7 +71,7 @@ command's in this version of axKit.
 
 ### Run a workflow that runs commands
 
-1. Press F5.
+1. Press F5 (Run; Actions menu).
 2. Press Tab.
 3. Press Space.
     You hear: Running 07-commands; Escape stops it.
@@ -114,7 +114,7 @@ Starts with: Open axAutomate with the folder flows.
 
 ### Read the folder again after a workflow was added
 
-1. Choose Refresh in the Session menu (key: F5).
+1. Choose Refresh in the Session menu.
     You hear: Refreshed: flows, 3 workflows, 0 folders.
 
 ### Read every key of the window
@@ -142,7 +142,7 @@ Starts with: Open axAutomate with the folder flows.
 ### Stop the run of a folder partway
 
 1. Open axAutomate with the folder flows.
-2. Press F5.
+2. Press F5 (Run; Actions menu).
     You hear: Running 3 workflows.
     You hear: 01-quick passed, 2 steps.
 3. Press Escape.

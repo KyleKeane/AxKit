@@ -311,7 +311,7 @@ Window key, in axCalc, axClaude, axFile and axTerminal. 5 meanings.
 
 Window key, in axAutomate, axFile, axGIT, axMCP, axPass, axPreview, axProcess, axStart and axTask. 4 meanings.
 
-- axAutomate, axFile, axGIT, axMCP, axPass, axProcess and axTask: Refresh.
+- axFile, axGIT, axMCP, axPass, axProcess and axTask: Refresh.
 - axStart: Refresh programs.
 - axPreview: Reload.
 - axAutomate: Run.
@@ -846,7 +846,7 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 - F3, axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask and axTerminal: Find next. Its kind: go to a place; a bundle key.
 - F3, axGIT: Find next in the list. Its kind: go to a place.
 - F4, every app: Send a report. Its kind: open or confirm; a bundle key.
-- F5, axAutomate, axFile, axGIT, axMCP, axPass, axProcess and axTask: Refresh. Its kind: reads again; Windows' own key for it.
+- F5, axFile, axGIT, axMCP, axPass, axProcess and axTask: Refresh. Its kind: reads again; Windows' own key for it.
 - F5, axStart: Refresh programs. Its kind: reads again.
 - F5, axPreview: Reload. Its kind: reads again.
 - F5, axAutomate: Run. Its kind: act on what is selected.

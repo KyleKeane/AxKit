@@ -47,7 +47,7 @@
         {"label": "Windows text size", "menu": "Options, Text", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Exit", "menu": "Session", "key": "", "also": [], "keyText": "Alt+F4", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "Open a folder of workflows", "menu": "Session", "key": "ctrl+o", "also": [], "keyText": "Ctrl+O", "mark": "open", "keyOnly": false, "ai": true},
-        {"label": "Refresh", "menu": "Session", "key": "", "also": ["f5"], "keyText": "", "mark": "read", "keyOnly": false, "ai": true},
+        {"label": "Refresh", "menu": "Session", "key": "", "also": [], "keyText": "", "mark": "read", "keyOnly": false, "ai": true},
         {"label": "Close all windows", "menu": "Window", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "Say the status", "menu": "Window", "key": "f8", "also": [], "keyText": "F8", "mark": "read", "keyOnly": false, "ai": true},
         {"label": "axAutomate", "menu": "Window, New window", "key": "", "also": [], "keyText": "", "mark": "open", "keyOnly": false, "ai": true},

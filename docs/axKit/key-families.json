@@ -176,7 +176,7 @@
         { "chord": "f3", "apps": ["axAutomate", "axCalc", "axClaude", "axDown", "axFile", "axGIT", "axJSON", "axMCP", "axMedia", "axPass", "axPreview", "axProcess", "axTask", "axTerminal"], "does": "Find next", "kind": "go to a place; a bundle key" },
         { "chord": "f3", "apps": ["axGIT"], "does": "Find next in the list", "kind": "go to a place" },
         { "chord": "f4", "apps": "all", "does": "Send a report", "kind": "open or confirm; a bundle key" },
-        { "chord": "f5", "apps": ["axAutomate", "axFile", "axGIT", "axMCP", "axPass", "axProcess", "axTask"], "does": "Refresh", "kind": "reads again; Windows' own key for it" },
+        { "chord": "f5", "apps": ["axFile", "axGIT", "axMCP", "axPass", "axProcess", "axTask"], "does": "Refresh", "kind": "reads again; Windows' own key for it" },
         { "chord": "f5", "apps": ["axStart"], "does": "Refresh programs", "kind": "reads again" },
         { "chord": "f5", "apps": ["axPreview"], "does": "Reload", "kind": "reads again" },
         { "chord": "f5", "apps": ["axAutomate"], "does": "Run", "kind": "act on what is selected" },

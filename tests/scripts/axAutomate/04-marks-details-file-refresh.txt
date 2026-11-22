@@ -6,8 +6,8 @@
 # (docs/axAutomate/nvda-test-plan.md; SPEC.md AU-4), run by tools/AxAutomate on a desktop of its own.
 # Not here: Ctrl+Q in a step's details, which the guide says reads every line at once (plan step 3.2); it says the
 # selected line alone today, which is the report's to name and not a step to write as passing.
-# Session, Refresh is run by its menu item (menu), not by do: asked for its commands, the window answers that F5
-# would run Refresh, and F5 runs the folder's workflows here (AU-D8), so do Refresh starts a run.
+# Session, Refresh has no key here: F5 runs (AU-D8). The window lists Refresh without a key, so do Refresh chooses
+# the menu item; until 2026-11-21 the listing named Refresh on F5 and do Refresh started a run of every workflow.
 file home\AxKit\axAutomate.json {"checkForUpdates": false}
 file home\AxKit\axDown.json {"checkForUpdates": false}
 file home\AxKit\axJSON.json {"checkForUpdates": false}
@@ -82,7 +82,7 @@ expect focus Marks, workflow, 5 steps
 # Goal: Read the folder again after a workflow was added
 # A script written into the folder while the window is open; Session, Refresh lists it, the selection kept.
 file flows\03-new.txt # A script added while the window is open.\n\nstart down\nclose
-menu Refresh
+do Refresh
 expect said ! Refreshed: flows, 3 workflows, 0 folders
 expect list "03-new, workflow, 2 steps"
 expect focus Marks, workflow, 5 steps

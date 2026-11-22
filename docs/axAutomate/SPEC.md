@@ -290,6 +290,10 @@ keys in place of its words on a line:
 - AU-D8 F5 runs (AU-4.4), so it is not the item apps' Refresh here: Refresh stays in the Session menu without a key,
   and a run reads its workflow's file again by itself (the assistant, 2026-11-11). Escape also stops a run, before its
   detail pane meaning, only while one goes on. To reverse: a key of its own for Refresh in `AxAutomateKeys`.
+  Until 2026-11-21 the item window still added its own Refresh on F5 behind Run, where it never ran but stood in the
+  window's list of commands: a script's `do Refresh`, or an AI tool asking for Refresh, pressed F5 and started a run
+  of every workflow. The item window now leaves the key out where the app has given it to a command, the window's
+  list names Refresh without a key, and `check commands` fails on any such row (bundle `app-kit.md` AK-2.4).
 - AU-D9 F5 at a folder's level runs that folder's own workflows, not those of the folders inside it (the assistant,
   2026-11-11): at `tests\scripts`, whose workflows are all in folders, a stray F5 would otherwise start an hour of
   checks. The command line keeps running a folder whole. To reverse: `WorkflowFolder` read recursively in

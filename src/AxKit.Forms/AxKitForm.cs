@@ -878,6 +878,14 @@ public abstract partial class AxKitForm : Form
     }
 
     /// <summary>
+    /// Whether a command added so far has the key: a shared piece that adds its keys after the app's own asks, so
+    /// that it does not list a command on a key the app gave to another (axAutomate's F5 runs, and the item
+    /// window's Refresh stood on it in the listing, where a script's or an AI tool's "Refresh" then started a run;
+    /// found 2026-11-17).
+    /// </summary>
+    protected bool KeyTaken(Keys key) => _commands.Any(command => command.Key == key);
+
+    /// <summary>
     /// What is wrong with the window's command list (app-kit AK-2.4), for the automated checks' <c>check commands</c>:
     /// a key of the window's own with a modifier, or a function key, that the F1 text does not name, and a command that never runs because
     /// an earlier one has its key everywhere (no <see cref="Command.When"/>). Empty when all is well.
@@ -903,9 +911,11 @@ public abstract partial class AxKitForm : Form
                 problems.Add($"{Plain(command.Label)} ({text}) is not in the F1 text");
             }
 
-            if (_commands.Take(i).FirstOrDefault(earlier => earlier.Key == key && earlier.When is null) is { } shadow)
+            // An earlier command takes the key everywhere, or wherever this one would act (the same condition): the
+            // listing would name this command on a key that does the other (axAutomate's Refresh on F5, 2026-11-17).
+            if (_commands.Take(i).FirstOrDefault(earlier => earlier.Key == key && (earlier.When is null || earlier.When == command.When)) is { } shadow)
             {
-                problems.Add($"{Plain(command.Label)} ({text}) never runs: {Plain(shadow.Label)} takes the key everywhere");
+                problems.Add($"{Plain(command.Label)} ({text}) never runs: {Plain(shadow.Label)} takes the key {(shadow.When is null ? "everywhere" : "wherever it would act")}");
             }
         }
 

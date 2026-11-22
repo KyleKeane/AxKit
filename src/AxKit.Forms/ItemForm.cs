@@ -300,7 +300,11 @@ public abstract partial class ItemForm : AxKitForm
         AddKey(new Command("Find next", BundleKeys.FindNext, () => FindInList(Navigator, NavigatorLabels, 1)) { When = NotRenaming, Mark = CommandMark.Read });
         AddKey(new Command("Find previous", BundleKeys.FindPrevious, () => FindInList(Navigator, NavigatorLabels, -1)) { When = NotRenaming, Mark = CommandMark.Read });
         AddKey(new Command("Undo", ItemKeys.Undo, Undo) { When = NotRenaming, Mark = CommandMark.Change });
-        AddKey(new Command("Refresh", ItemKeys.Refresh, () => Refresh(announce: true)) { When = NotRenaming, Mark = CommandMark.Read });
+        // Not where the app gave F5 to a command of its own (axAutomate runs with it, AU-D8): its menu's Refresh is the command there.
+        if (!KeyTaken(ItemKeys.Refresh))
+        {
+            AddKey(new Command("Refresh", ItemKeys.Refresh, () => Refresh(announce: true)) { When = NotRenaming, Mark = CommandMark.Read });
+        }
         AddKey(new Command("New list", ItemKeys.NewList, NewList) { When = NotRenaming, Mark = CommandMark.Change });
         AddKey(new Command("Read in full", ItemKeys.ReadAll, ReadAll) { When = NotRenaming, Mark = CommandMark.Read });
 
