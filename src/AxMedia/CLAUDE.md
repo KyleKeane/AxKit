@@ -18,13 +18,14 @@ dotnet test tests/AxMedia.Tests/AxMedia.Tests.csproj
 - `MediaForm`, in two partial files since 2026-10-24 (`MediaForm.Player.cs` is playing, AM-4: the engine, the transport, the position, the engine's events):
   - the controls (the list, the video area, the status bar), the menus (AM-5.1; the bundle's eight through `PlaceMenuBar`, AX-9.1, 2026-11-11: Actions the player, Navigation the queue's moves and Go to time, Context (`_context`, a `ContextBarMenu`, AX-9.11) the selected file's Play, Remove and Information, opened by Shift+F10, the Applications key and a right click, `OpenContext`; Options with Say each file as it starts first);
   - the hooks the window base asks for (`TakeHandOver`: a hand-over message, answered by the base and queued through `Apply`, the queue drained in order by `DrainAsync`);
-  - the menus and the keys as one command list (`Add` and `AddKey` of the window base, docs/axKit/app-kit.md AK-2; each key from `BundleKeys` and `AxMediaKeys`; Enter, Delete and Space with `When = _list.Focused`; no `ProcessWindowKey` of its own);
+  - the menus and the keys as one command list (`Add` and `AddKey` of the window base, docs/axKit/app-kit.md AK-2; each key from `BundleKeys` and `AxMediaKeys`; Enter, Delete and the selection keys with `When = _list.Focused`; pause and resume on `BundleKeys.MainAction`, Ctrl+Enter, with no `When`, AM-D7 as of 2026-11-22; no `ProcessWindowKey` of its own);
   - the base's `Do` runs every task (an escaped exception becomes a notice);
   - the queue:
     - `ApplyAsync` (a play replaces the queue through `MediaFolder.Queue` and plays with the playing file selected, an add appends through `MediaFolder.Expand` and says nothing, since axFile says it, AM-D3);
     - `FillList` (the lines changed in place while the count is the same, so that the selection stays and only the changed line moves under NVDA; the list named with its count);
     - `AddPaths` (Open files, Open folder, a recent item: "Added n"), `FillRecent`;
     - `PlaySelected`, `RemoveSelected`, `ClearQueue`, `SayInformation`;
+    - the selection of several files (AM-3.5, bundle AX-8.16, 2026-11-22): `Selection`, the bundle's `ListSelection`, over `_markRows`, which `FillList` makes from the queue (a file queued twice is two rows: the key is the path and which occurrence it is) before it keeps the marks and writes each line through `LineOf` (", selected" while it is); `SelectFile`, `SelectToHere`, `SelectAllFiles`, the four move commands and Escape; `RemoveSelected` takes the selected files out, from the last to the first, when there are any; a play that replaces the queue clears the marks. In the notes "the file selected" of older lines means the file you are on;
     - `CurrentFile` (the playing file, or the selected one) for `ShowInExplorer` and the base's Show current file in submenu;
   - the player:
     - the engine made on first use with the video area's handle, `PlayCurrent`;

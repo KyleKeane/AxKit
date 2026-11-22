@@ -10,35 +10,36 @@ silence p\second.wav 60000
 silence p\third.wav 60000
 
 # Goal: Play, pause and resume
-# Step 1: play, pause and resume with Space and Ctrl+P; Ctrl+P in Go to time's field is the field's own.
+# Step 1: play, pause and resume with Ctrl+Enter, the main action key (AM-D7 as of 2026-11-22; Space and Ctrl+P until then).
 # The waits between the presses are a user's pace: the engine changes its state a moment after a call, and a press
 # within that moment reads the old state (see the report).
 start media {temp}\p
 expect said ! Playing first.wav
-keys space
+keys ctrl+enter
 expect said ! Paused at 0:0
 wait 300
-keys space
+keys ctrl+enter
 expect said ! Playing
 wait 300
-keys ctrl+p
+keys ctrl+enter
 expect said ! Paused at 0:0
 wait 300
-keys ctrl+p
+keys ctrl+enter
 expect said ! Playing
 wait 300
-# Check: In the Go to time field the pause key is the field's own
+# Check: In the Go to time field Space is a character and pauses nothing
+# Space selects in the queue and types in a field; neither pauses. Escape leaves the field as it found things.
 keys ctrl+t
 expect state "notice":"Go to time"
 expect focus Time
-keys ctrl+p
+keys space
 expect quiet 500
 keys escape
 expect focus first.wav (playing)
 
 # Goal: Move forward, back and to a time
 # Step 2: 15 seconds forward and back, the position reached said; Go to time.
-keys space
+keys ctrl+enter
 expect said ! Paused at 0:0
 keys ctrl+right
 expect said ! 0:1
@@ -49,7 +50,7 @@ type 0:30
 keys enter
 expect said ! 0:30
 expect focus first.wav (playing)
-keys space
+keys ctrl+enter
 expect said ! Playing
 
 # Goal: Change the playing speed

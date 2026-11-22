@@ -632,6 +632,11 @@ Steps and keys: `docs/axKit/workflows/axMedia.md` (in Claude's working folder: `
     - Remove a file found in the command palette
 7. **Add a recent folder to the queue from the command palette**
     - Add a recent folder to the queue from the palette
+8. **Select files in the queue and take several out**
+    - Pause and resume with Ctrl+Enter
+    - Select files with Space and with Shift and an arrow
+    - Take the selected files out of the queue
+    - Select every file, and give the selection up
 
 ## axPass
 

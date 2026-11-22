@@ -15,8 +15,9 @@ public static class HelpText
         ## The queue
           Arrow keys, Home, End, Page Up, Page Down: move through the files; type the start of a name to jump to it, Shift with a letter backwards. The one playing reads "(playing)" after its name
           Enter: play this file; the rest of the queue follows in order
-          Delete: take this file out of the queue; the one playing goes on to the next
-          Ctrl+I: the file's place, "3 of 12", and its position while it plays
+          Delete: take this file out of the queue; the one playing goes on to the next. With files selected, all of them: "Removed 3 files"
+          Space: select the file you are on, or deselect it again; a selected file reads ", selected". Shift+Down, Shift+Up, Shift+Home, Shift+End: select as you move. Shift+Space: select from the nearest selected file to this one. Ctrl+A: select every file. Ctrl+Shift+A, or Escape: deselect all
+          Ctrl+I: the file's place, "3 of 12", its position while it plays, and how many are selected
           Ctrl+O: add files with the Windows file picker, several at once. Ctrl+Shift+O: add a folder's sound and video files. Session, Open recent lists the files and folders added lately by number
           Session, Clear queue: the queue emptied and the sound stopped
           Ctrl+N: a new axMedia window
@@ -24,12 +25,12 @@ public static class HelpText
           Ctrl+S: nothing to save here; axMedia says so
 
         ## Playing
-          Space, or Ctrl+P from anywhere in the window: pause, or resume
+          Ctrl+Enter, from anywhere in the window: pause, or resume
           Ctrl+Right, Ctrl+Left: 15 seconds forward or back. Ctrl+T: go to a time, 12:40 or 1:02:10 or seconds
           Ctrl+Shift+Right, Ctrl+Shift+Left: the next or the previous file of the queue
           Ctrl+Up, Ctrl+Down: faster or slower by a quarter, the voice's pitch kept; Actions, Normal speed goes back to 1
           Ctrl+Q: what is playing, where it is, and the speed
-          Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on the file selected in the queue
+          Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on the file you are on in the queue
           Options, Say each file as it starts: the next file's name said when the queue moves on, the one thing axMedia says on its own
           The volume is Windows' own: your keyboard's volume keys
         """ + BundleHelp.NoticesSection("axMedia", "the list");

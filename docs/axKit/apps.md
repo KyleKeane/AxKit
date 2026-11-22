@@ -55,7 +55,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxMedia` (the window), `src/AxMedia.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxMedia.Tests`.
 - Documents: `docs/axMedia/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axMedia/`, 7 scripts (their workflows are in `docs/axKit/workflows/axMedia.md`).
+- Automated checks: `tests/scripts/axMedia/`, 8 scripts (their workflows are in `docs/axKit/workflows/axMedia.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axMedia.ps1`, or `run.ps1 -App media`.
 
 ## Organise

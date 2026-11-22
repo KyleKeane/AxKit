@@ -24,7 +24,7 @@ keys ctrl+i
 expect said ! Queue is empty
 keys ctrl+q
 expect said ! Nothing playing
-keys space
+keys ctrl+enter
 expect said ! Nothing playing
 expect quiet 500
 close
@@ -58,7 +58,7 @@ start media {temp}\ch
 expect said ! Playing alpha.wav
 expect focus Queue, 4 items
 expect list alpha.wav (playing)","beta.wav","delta.wav","gamma.wav"]
-keys space
+keys ctrl+enter
 expect said ! Paused at
 expect quiet 300
 

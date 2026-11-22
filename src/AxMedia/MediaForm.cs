@@ -69,11 +69,11 @@ public sealed partial class MediaForm : AxKitForm
         queue.DropDownItems.Add(new ToolStripSeparator());
         queue.DropDownItems.Add(CreateExitItem());
 
-        // Actions (AX-9.1): the player, the same wherever the focus is. The menu item shows Space, the list's key;
-        // Ctrl+P pauses and resumes from anywhere in the window.
+        // Actions (AX-9.1): the player, the same wherever the focus is. Ctrl+Enter, the bundle's main action key,
+        // pauses and resumes from anywhere in the window (AM-D7 as of 2026-11-22, the maintainer: "space in axmedia
+        // should select and ctrl+enter should become play/pause"; Space and Ctrl+P until then).
         var play = new ToolStripMenuItem();
-        Add(play, new Command("P&ause or resume", AxMediaKeys.PauseResume, PauseResume) { When = () => _list.Focused, Mark = CommandMark.Open });
-        AddKey(new Command("Pause or resume", AxMediaKeys.PauseResumeAlso, PauseResume) { Mark = CommandMark.Open });
+        Add(play, new Command("P&ause or resume", BundleKeys.MainAction, PauseResume) { Mark = CommandMark.Open });
         Add(play, new Command($"&Forward {_settings.SeekSeconds} seconds", AxMediaKeys.Forward, () => Seek(_settings.SeekSeconds)) { Mark = CommandMark.Open });
         Add(play, new Command($"&Back {_settings.SeekSeconds} seconds", AxMediaKeys.Back, () => Seek(-_settings.SeekSeconds)) { Mark = CommandMark.Open });
         play.DropDownItems.Add(new ToolStripSeparator());
@@ -82,6 +82,10 @@ public sealed partial class MediaForm : AxKitForm
         play.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("N&ormal speed", null, (_, _) => ChangeSpeed(1)), CommandMark.Change));
         play.DropDownItems.Add(new ToolStripSeparator());
         Add(play, new Command("&What is playing", AxMediaKeys.WhatIsPlaying, SayWhatIsPlaying) { Mark = CommandMark.Read });
+        play.DropDownItems.Add(new ToolStripSeparator());
+        // The bundle's selection (AX-8.16, AM-3.5): every file of the queue, or none; the row's own two are in Context.
+        Add(play, new Command("S&elect all", SelectionKeys.SelectAll, SelectAllFiles) { When = () => _list.Focused, Mark = CommandMark.Change });
+        Add(play, new Command("&Deselect all", SelectionKeys.SelectNone, () => Selection.None()) { When = () => _list.Focused, Mark = CommandMark.Change });
 
         // Navigation (AX-9.1): along the queue and in the file.
         var navigation = new ToolStripMenuItem();
@@ -89,12 +93,23 @@ public sealed partial class MediaForm : AxKitForm
         Add(navigation, new Command("Pre&vious file", AxMediaKeys.PreviousFile, () => MoveInQueue(-1)) { Mark = CommandMark.Open });
         Add(navigation, new Command("&Go to time...", AxMediaKeys.GoToTime, GoToTime) { Mark = CommandMark.Open });
 
-        // Context (AX-9.11): what acts on the file selected in the queue; Enter, Delete and Space act in the list only
+        // Context (AX-9.11): what acts on the file you are on in the queue; Enter, Delete and Space act in the list only
         // (AM-5.2): in a notice's field they are the field's own, and in the list returning true keeps it from dinging.
+        // Remove takes the selected files out when there are any (AM-3.5).
         var file = new ToolStripMenuItem("&File");
         Add(file, new Command("&Play", AxMediaKeys.Play, PlaySelected) { When = () => _list.Focused, Mark = CommandMark.Open });
         Add(file, new Command("R&emove", AxMediaKeys.Remove, RemoveSelected) { When = () => _list.Focused, Mark = CommandMark.Change });
         Add(file, new Command("&Information", AxMediaKeys.Information, SayInformation) { Mark = CommandMark.Read });
+        file.DropDownItems.Add(new ToolStripSeparator());
+        Add(file, new Command("&Select or deselect", SelectionKeys.Select, SelectFile) { When = () => _list.Focused, Mark = CommandMark.Change });
+        Add(file, new Command("Select to &here", SelectionKeys.SelectTo, SelectToHere) { When = () => _list.Focused, Mark = CommandMark.Change });
+        // The keys that select as they move, and Escape, which gives a selection up; no menu items.
+        foreach (var move in Selection.MoveCommands("file", () => _list.Focused, () => Announce(PlayQueue.EmptyText, true)))
+        {
+            AddKey(move);
+        }
+
+        AddKey(new Command("Deselect all", SelectionKeys.Clear, () => Selection.None()) { When = () => _list.Focused && Selection.Count > 0, Mark = CommandMark.Change });
         _context = new ContextBarMenu(() => _queue.Count == 0 ? null : file, () => "Nothing in the queue", said => Announce(said, true), file);
         AddKey(new Command("Context menu", AxMediaKeys.ContextMenu, OpenContext) { When = () => _list.Focused, Mark = CommandMark.Open });
         AddKey(new Command("Context menu", AxMediaKeys.ContextMenuAlso, OpenContext) { When = () => _list.Focused, Mark = CommandMark.Open });
@@ -132,8 +147,8 @@ public sealed partial class MediaForm : AxKitForm
         _list.SelectedIndex = 0;
         _list.DoubleClick += (_, _) => PlaySelected();
         _list.OpenMenuOnRightClick(OpenContext);
-        // The bundle's list (AX-8.6): the empty queue's one line is no item to type to.
-        _list.Names = () => _queue.Count == 0 ? [] : _list.Items.Cast<object>().Take(_queue.Count).Select(item => item.ToString() ?? string.Empty).ToList();
+        // The bundle's list (AX-8.6): the empty queue's one line is no item to type to; the files by their names.
+        _list.Names = () => _markRows.Select(row => row.Name).ToList();
 
         // ---- the video area (AM-2.4): a plain surface at the top, shown while a video plays, never focused ----
         _video.Dock = DockStyle.Top;
@@ -281,6 +296,8 @@ public sealed partial class MediaForm : AxKitForm
         }
 
         _queue.Set(queue, start);
+        // Another queue: nothing selected (AM-3.5), as another folder in axFile.
+        Selection.Clear();
         FillList();
         _list.SelectedIndex = start;
         PlayCurrent(prompted: true);
@@ -307,7 +324,17 @@ public sealed partial class MediaForm : AxKitForm
     /// </summary>
     private void FillList()
     {
-        var lines = _queue.Lines(PlayerActive);
+        // The queue's files as the selection sees them (AM-3.5): a file queued twice is two rows, so each has a key
+        // of its own, its path and which of its occurrences it is. The files still there keep their marks.
+        var seen = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        _markRows = [.. _queue.Paths.Select(path =>
+        {
+            seen.TryGetValue(path, out var before);
+            seen[path] = before + 1;
+            return new MarkRow($"{path}\n{before}", Path.GetFileName(path));
+        })];
+        Selection.Keep();
+        var lines = _queue.Lines(PlayerActive).Select((line, row) => LineOf(row, line)).ToList();
         _list.AccessibleName = _queue.ListName;
         var index = _list.SelectedIndex;
         if (_list.SetLines(lines))
@@ -317,6 +344,50 @@ public sealed partial class MediaForm : AxKitForm
 
         _list.SelectedIndex = Math.Clamp(index, 0, _list.Items.Count - 1);
         UpdateStatusBar();
+    }
+
+    // ---- the selection (bundle AX-8.16; SPEC.md AM-3.5, 2026-11-22) ----
+
+    /// <summary>The queue's files as the marks see them, made by <see cref="FillList"/>; empty for an empty queue, whose one line is no file.</summary>
+    private IReadOnlyList<MarkRow> _markRows = [];
+
+    private ListSelection? _selectionMade;
+
+    /// <summary>The queue's selection, the bundle's: Space selects the file you are on, and Delete then takes the selected files out.</summary>
+    private ListSelection Selection => _selectionMade ??= new ListSelection(_list, () => _markRows,
+        row => LineOf(row, _queue.Lines(PlayerActive)[row]), said => Announce(said, true));
+
+    /// <summary>A row's line as its item shows it: the queue's line, with ", selected" while the file is.</summary>
+    private string LineOf(int row, string line) => row < _markRows.Count ? Selection.Label(_markRows[row].Key, line) : line;
+
+    /// <summary>Space in the list: the file selected, or deselected again; on the empty queue's line, that line.</summary>
+    private void SelectFile()
+    {
+        if (!Selection.Toggle())
+        {
+            Announce(PlayQueue.EmptyText, true);
+        }
+    }
+
+    /// <summary>Shift+Space: every file from the nearest selected one to this one.</summary>
+    private void SelectToHere()
+    {
+        if (!Selection.ToHere())
+        {
+            Announce(PlayQueue.EmptyText, true);
+        }
+    }
+
+    /// <summary>Ctrl+A: every file of the queue, "n selected".</summary>
+    private void SelectAllFiles()
+    {
+        if (_markRows.Count == 0)
+        {
+            Announce(PlayQueue.EmptyText, true);
+            return;
+        }
+
+        Selection.All();
     }
 
     private bool PlayerActive => _player is { State: PlayerState.Playing or PlayerState.Paused or PlayerState.Opening };
@@ -431,6 +502,36 @@ public sealed partial class MediaForm : AxKitForm
     /// <summary>Delete in the list, Queue → Remove: the file taken out, "Removed <name>"; the one playing goes on to the next, or stops at the end.</summary>
     private void RemoveSelected()
     {
+        if (Selection.Count > 0)
+        {
+            // AM-3.5: with files selected, Delete takes them all out, whatever row you are on: "Removed 3 files".
+            // From the last to the first, so that each index still names its file; the one playing goes on to the
+            // next file left, or stops at the end.
+            var rows = Enumerable.Range(0, _markRows.Count).Where(row => Selection.Contains(_markRows[row].Key)).OrderByDescending(row => row).ToList();
+            var playingGoes = PlayerActive && rows.Contains(_queue.Playing);
+            foreach (var row in rows)
+            {
+                _queue.Remove(row);
+            }
+
+            Selection.Clear();
+            if (playingGoes)
+            {
+                if (_queue.PlayingPath is not null)
+                {
+                    PlayCurrent(prompted: false);
+                }
+                else
+                {
+                    StopPlayback();
+                }
+            }
+
+            FillList();
+            Announce(rows.Count == 1 ? "Removed 1 file" : $"Removed {rows.Count} files", true);
+            return;
+        }
+
         var index = _list.SelectedIndex;
         var wasPlaying = _queue.IsFile(index) && index == _queue.Playing && PlayerActive;
         if (_queue.Remove(index) is not { } removed)
@@ -478,6 +579,11 @@ public sealed partial class MediaForm : AxKitForm
         if (index == _queue.Playing && _player is { State: PlayerState.Playing or PlayerState.Paused } player)
         {
             text += $", {(player.State == PlayerState.Playing ? "playing" : "paused")}, {MediaFiles.FormatTime(player.Position)} of {MediaFiles.FormatTime(player.Duration)}";
+        }
+
+        if (Selection.Count > 0)
+        {
+            text += $", {Selection.Count} selected";
         }
 
         Announce(text, true);

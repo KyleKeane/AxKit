@@ -14,10 +14,9 @@ public static class AxMediaKeys
     /// <summary>In the list: the file taken out of the queue.</summary>
     public const Keys Remove = Keys.Delete;
 
-    /// <summary>In the list: pause, or resume (AM-D7); Ctrl+P the same from anywhere in the window.</summary>
-    public const Keys PauseResume = Keys.Space;
-
-    public const Keys PauseResumeAlso = Keys.Control | Keys.P;
+    // Pause and resume is Ctrl+Enter, the bundle's main action key (BundleKeys.MainAction), from anywhere in the
+    // window (AM-D7 as of 2026-11-22; Space in the list and Ctrl+P until then). Space and its kin select files:
+    // the bundle's selection keys (AxKit.Forms/SelectionKeys, AX-8.16), which the table below includes.
 
     /// <summary>The file's place in the queue, and its position while it plays.</summary>
     public const Keys Information = Keys.Control | Keys.I;
@@ -59,8 +58,8 @@ public static class AxMediaKeys
     [
         ("Play (in the list)", Play),
         ("Remove (in the list)", Remove),
-        ("Pause or resume (in the list)", PauseResume),
-        ("Pause or resume", PauseResumeAlso),
+        // The bundle's selection keys (AX-8.16), in the queue.
+        .. AxKit.Forms.SelectionKeys.All,
         ("Information about the file", Information),
         ("Open files", OpenFiles),
         ("Open folder", OpenFolder),

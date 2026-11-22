@@ -1023,10 +1023,12 @@
       "app": "axMedia",
       "commands": [
         {"label": "Back 15 seconds", "menu": "Actions", "key": "ctrl+left", "also": [], "keyText": "Ctrl+Left", "mark": "open", "keyOnly": false, "ai": true},
+        {"label": "Deselect all", "menu": "Actions", "key": "ctrl+shift+a", "also": ["escape"], "keyText": "Ctrl+Shift+A", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Faster", "menu": "Actions", "key": "ctrl+up", "also": [], "keyText": "Ctrl+Up", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Forward 15 seconds", "menu": "Actions", "key": "ctrl+right", "also": [], "keyText": "Ctrl+Right", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Normal speed", "menu": "Actions", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},
-        {"label": "Pause or resume", "menu": "Actions", "key": "space", "also": ["ctrl+p"], "keyText": "Space", "mark": "open", "keyOnly": false, "ai": true},
+        {"label": "Pause or resume", "menu": "Actions", "key": "ctrl+enter", "also": [], "keyText": "Ctrl+Enter", "mark": "open", "keyOnly": false, "ai": true},
+        {"label": "Select all", "menu": "Actions", "key": "ctrl+a", "also": [], "keyText": "Ctrl+A", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Slower", "menu": "Actions", "key": "ctrl+down", "also": [], "keyText": "Ctrl+Down", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "What is playing", "menu": "Actions", "key": "ctrl+q", "also": [], "keyText": "Ctrl+Q", "mark": "read", "keyOnly": false, "ai": true},
         {"label": "Add axKit to Claude Code", "menu": "axKit, AI tools", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": false},
@@ -1104,7 +1106,11 @@
         {"label": "Context menu", "menu": "", "key": "shift+f10", "also": ["ctrl+period", "apps"], "keyText": "Shift+F10", "mark": "open", "keyOnly": true, "ai": false},
         {"label": "Find in the queue", "menu": "", "key": "ctrl+f", "also": [], "keyText": "Ctrl+F", "mark": "read", "keyOnly": true, "ai": false},
         {"label": "Find next", "menu": "", "key": "f3", "also": [], "keyText": "F3", "mark": "read", "keyOnly": true, "ai": false},
-        {"label": "Find previous", "menu": "", "key": "shift+f3", "also": [], "keyText": "Shift+F3", "mark": "read", "keyOnly": true, "ai": false}
+        {"label": "Find previous", "menu": "", "key": "shift+f3", "also": [], "keyText": "Shift+F3", "mark": "read", "keyOnly": true, "ai": false},
+        {"label": "Select to the first file", "menu": "", "key": "shift+home", "also": [], "keyText": "Shift+Home", "mark": "change", "keyOnly": true, "ai": false},
+        {"label": "Select to the last file", "menu": "", "key": "shift+end", "also": [], "keyText": "Shift+End", "mark": "change", "keyOnly": true, "ai": false},
+        {"label": "Select to the next file", "menu": "", "key": "shift+down", "also": [], "keyText": "Shift+Down", "mark": "change", "keyOnly": true, "ai": false},
+        {"label": "Select to the previous file", "menu": "", "key": "shift+up", "also": [], "keyText": "Shift+Up", "mark": "change", "keyOnly": true, "ai": false}
       ]
     },
     {

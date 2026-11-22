@@ -16,7 +16,7 @@ From anywhere in Windows:
 The same in every axKit window:
 
 - Ctrl+punctuation: the in-window partner of the same key with Ctrl+Shift.
-- Space and Ctrl+Space: select, toggle or play.
+- Space and Ctrl+Space: select, or toggle.
 - F-keys (F1 to F12 alone): say or show.
 - Shift+F-key, and the Applications key: the reverse or the other form of the same F-key.
 - Enter: open or confirm.
@@ -71,15 +71,14 @@ The keys:
 - Ctrl+Period, axAutomate, axMCP, axPass and axTask: The field's menu.
 - Ctrl+Slash, every app: Ask about this window.
 
-### Space and Ctrl+Space: select, toggle or play
+### Space and Ctrl+Space: select, or toggle
 
-Space selects the thing you are on in a list of things you can act on several of at once, and deselects it again (the maintainer's rule of 2026-11-22, SPEC AX-8.16: axFile and axTask so far). On a check box it checks and unchecks; in a player it plays and pauses. Ctrl+Space switches between navigating and editing.
+Space selects the thing you are on in a list of things you can act on several of at once, and deselects it again (the maintainer's rule of 2026-11-22, SPEC AX-8.16: axFile, axTask and axMedia so far). On a check box it checks and unchecks. Ctrl+Space switches between navigating and editing.
 
 The keys:
 
 - Space, axAutomate, axMCP, axPass and axTask: Check the field.
 - Space, axAutomate, axMCP, axPass and axTask: Select or deselect.
-- Space, axMedia: Pause or resume.
 - Space, axFile: Select or deselect this entry.
 - Space, axGIT: Stage or unstage.
 
@@ -164,10 +163,10 @@ The keys:
 
 - Escape, axAutomate, axMCP, axPass and axTask: To the navigator.
 - Escape, axClip, axHelp and axStart: Hide.
+- Escape, axMedia and axTask: Deselect all.
 - Escape, axTask: Back from the search.
 - Escape, axCalc: Back to the field.
 - Escape, axFile: Back to the folder list.
-- Escape, axTask: Deselect all.
 - Shift+Escape, axClaude: Interrupt.
 - Shift+Escape, axTerminal: Send Escape.
 
@@ -254,12 +253,16 @@ The keys:
 Windows' own keys, as in every program:
 
 - Shift+Down arrow, axFile: Select to the next entry.
+- Shift+Down arrow, axMedia: Select to the next file.
 - Shift+Down arrow, axTask: Select to the next item.
 - Shift+End, axFile: Select to the last entry.
+- Shift+End, axMedia: Select to the last file.
 - Shift+End, axTask: Select to the last item.
 - Shift+Home, axFile: Select to the first entry.
+- Shift+Home, axMedia: Select to the first file.
 - Shift+Home, axTask: Select to the first item.
 - Shift+Up arrow, axFile: Select to the previous entry.
+- Shift+Up arrow, axMedia: Select to the previous file.
 - Shift+Up arrow, axTask: Select to the previous item.
 
 ### Ctrl+Plus and Ctrl+Minus: make the text larger or smaller
@@ -309,7 +312,7 @@ The keys:
 
 Windows' own keys, as in every program:
 
-- Ctrl+A, axFile and axTask: Select all.
+- Ctrl+A, axFile, axMedia and axTask: Select all.
 - Ctrl+C, axFile: Copy.
 - Ctrl+C, axProcess: Copy line.
 - Ctrl+C, axPreview: Copy the detail's value.
@@ -365,7 +368,6 @@ Exceptions today, which do another kind of thing:
 - Ctrl+L, axDown and axPreview: List.
 - Ctrl+L, axJSON: Array.
 - Ctrl+M, axClaude and axTerminal: Background music on or off.
-- Ctrl+P, axMedia: Pause or resume.
 - Ctrl+P, axClip: Pause recording.
 - Ctrl+P, axTerminal: Say current folder.
 - Ctrl+Q, axAutomate, axClip, axMCP, axPass and axTask: Read in full.
@@ -471,7 +473,7 @@ Adding Shift to Ctrl and a letter gives the reverse or the bigger form of that c
 
 The keys:
 
-- Ctrl+Shift+A, axFile and axTask: Deselect all.
+- Ctrl+Shift+A, axFile, axMedia and axTask: Deselect all.
 - Ctrl+Shift+A, axGIT: Stage all.
 - Ctrl+Shift+C, axCalc: Copy answer.
 - Ctrl+Shift+C, axFile: Copy path.
@@ -521,12 +523,13 @@ Exceptions today, which do another kind of thing:
 
 ### Enter with Ctrl, Shift or Alt: another form of open or confirm
 
-Enter with a modifier is another way of opening or saying yes. Ctrl+Enter does the window's main thing: it sends the message or the command, commits, saves a form, or in axTask marks a task done. Shift+Enter opens what you are on another way, such as a preview. Alt+Enter shows its properties and Ctrl+Shift+Enter starts a program as administrator, as everywhere in Windows.
+Enter with a modifier is another way of opening or saying yes. Ctrl+Enter does the window's main thing: it sends the message or the command, commits, saves a form, marks a task done in axTask, or pauses and resumes in axMedia. Shift+Enter opens what you are on another way, such as a preview. Alt+Enter shows its properties and Ctrl+Shift+Enter starts a program as administrator, as everywhere in Windows.
 
 The keys:
 
 - Ctrl+Enter, axGIT: Commit.
 - Ctrl+Enter, axTask: Done or not done.
+- Ctrl+Enter, axMedia: Pause or resume.
 - Ctrl+Enter, axFile: Play folder in axMedia.
 - Ctrl+Enter, axTerminal: Send the command.
 - Ctrl+Enter, axClaude: Send the message.

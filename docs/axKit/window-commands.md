@@ -573,10 +573,12 @@ every window" or under a heading that names the windows without it; under an app
 ## axMedia
 
 - Back 15 seconds. Menu: Actions. Key: Ctrl+Left. Mark: open.
+- Deselect all. Menu: Actions. Key: Ctrl+Shift+A. Also: Escape. Mark: change.
 - Faster. Menu: Actions. Key: Ctrl+Up. Mark: change.
 - Forward 15 seconds. Menu: Actions. Key: Ctrl+Right. Mark: open.
 - Normal speed. Menu: Actions. Key: none. Mark: change.
-- Pause or resume. Menu: Actions. Key: Space. Also: Ctrl+P. Mark: open.
+- Pause or resume. Menu: Actions. Key: Ctrl+Enter. Mark: open.
+- Select all. Menu: Actions. Key: Ctrl+A. Mark: change.
 - Slower. Menu: Actions. Key: Ctrl+Down. Mark: change.
 - What is playing. Menu: Actions. Key: Ctrl+Q. Mark: read.
 - Nothing in the queue. Menu: Context. Key: none. Mark: read.
@@ -600,6 +602,10 @@ every window" or under a heading that names the windows without it; under an app
 - Find in the queue. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
 - Find previous. Menu: none, a key alone. Key: Shift+F3. Mark: read. Never run by AI tools.
+- Select to the first file. Menu: none, a key alone. Key: Shift+Home. Mark: change. Never run by AI tools.
+- Select to the last file. Menu: none, a key alone. Key: Shift+End. Mark: change. Never run by AI tools.
+- Select to the next file. Menu: none, a key alone. Key: Shift+Down. Mark: change. Never run by AI tools.
+- Select to the previous file. Menu: none, a key alone. Key: Shift+Up. Mark: change. Never run by AI tools.
 
 ## axPass
 

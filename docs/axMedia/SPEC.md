@@ -41,7 +41,7 @@ top of the window. It works entirely offline (bundle G6).
 1. In axFile on a folder of chapters, with axMedia the default program for `.mp3` in Windows' settings, Enter on
    `03 Chapter 3.mp3`: axMedia opens with the folder's media files as the queue, the third playing, the window in
    front: NVDA reads "03 Chapter 3.mp3 - axMedia window", then "Queue, 12 items, 03 Chapter 3.mp3 (playing), 3 of
-   12". Space: "Paused at 12:40". Space: "Playing". Ctrl+Left: "12:25". Ctrl+Up: "Speed 1.25". Ctrl+Q:
+   12". Ctrl+Enter: "Paused at 12:40". Ctrl+Enter: "Playing". Ctrl+Left: "12:25". Ctrl+Up: "Speed 1.25". Ctrl+Q:
    "Playing 03 Chapter 3.mp3, 12:52 of 45:30, speed 1.25". Without that default, Enter opens the file in whatever
    plays it on the machine, and Item → Open in axKit → axMedia does the same as above.
 2. The chapter ends: "Playing 04 Chapter 4.mp3" and the next plays; the window can be left in the background, Alt+Tab
@@ -52,7 +52,7 @@ top of the window. It works entirely offline (bundle G6).
    selected; Enter: "Playing <name>". Ctrl+Shift+O on a folder: its media files are appended.
 5. In File Explorer, right-click an `.mp3`, Open with axKit, axMedia: the file plays with its folder's media files
    after it.
-6. Enter on a video file: "Playing <name>", the picture appears at the top of the window; Space pauses it.
+6. Enter on a video file: "Playing <name>", the picture appears at the top of the window; Ctrl+Enter pauses it.
 7. A file Windows cannot decode: "Cannot play clip.ogg: this kind of file is not supported" and the next plays.
 
 ## 4. Functional requirements
@@ -120,6 +120,18 @@ top of the window. It works entirely offline (bundle G6).
 - AM-3.3 When a file ends the next plays, to the end of the queue: "End of queue" with the done chime (the shared
   `Sounds`). Files already played stay in the queue until it is cleared or they are removed.
 - AM-3.4 The queue is the window's: closing the window drops it (§9 for keeping it).
+- AM-3.5 **Selecting files** (2026-11-22; the bundle's selection, AX-8.16, which states the keys and the words:
+  the maintainer, "space in axmedia should select"; framework step 6). **Space** selects the file you are on, or
+  deselects it again, its line then ending in ", selected" ("beta.wav, selected"; the one playing, "alpha.wav
+  (playing), selected"); **Shift+Down, Shift+Up, Shift+Home, Shift+End** select as they move; **Shift+Space** from
+  the nearest selected file to here; **Ctrl+A** every file (Actions, Select all); **Ctrl+Shift+A**, and **Escape**
+  while any is selected, none. With files selected, **Delete** takes them all out of the queue, whatever file
+  you are on, "Removed 3 files"; when the file playing is among them the next file left plays, or the sound stops
+  at the end. With nothing selected Delete takes out the file you are on, as before. Enter, Ctrl+I and the ways
+  out stay on the file you are on; Ctrl+I adds ", n selected" while any are. A new queue (a play that replaces
+  it, Clear queue) starts with none selected; files added keep what was selected. A file queued twice is two
+  rows, each selected by itself. On the empty queue's line the keys say that line. The window's part is
+  `MediaForm`'s `Selection`, the bundle's `ListSelection`; the script is `tests/scripts/axMedia/07-selection.txt`.
 
 ### AM-4 Playing
 
@@ -138,7 +150,7 @@ top of the window. It works entirely offline (bundle G6).
   it names, and left alone (2026-10-23; the old file's failure skipped the new one). A Windows without the media components (an N edition without the Media Feature Pack has no `mfplay.dll`)
   gives "Cannot play <name>: the media player could not be created: Windows' media components are missing…", not a
   crash (2026-10-23).
-- AM-4.3 **Keys**, from anywhere in the window: **Space** in the list and **Ctrl+P** anywhere pause or resume
+- AM-4.3 **Keys**, from anywhere in the window: **Ctrl+Enter**, the bundle's main action key, pauses or resumes (AM-D7)
   ("Paused at 12:40" / "Playing"); **Ctrl+Right** and **Ctrl+Left** move 15 seconds forward or back (`seekSeconds`),
   saying the position reached, "12:25", the file's end at most (until 2026-10-23 the position asked for, past the
   end included); **Ctrl+Shift+Right** and **Ctrl+Shift+Left** the next and the previous file ("Playing <name>"; "First
@@ -147,7 +159,7 @@ top of the window. It works entirely offline (bundle G6).
   and the next window; **Ctrl+T** Go to time…, the notice with the field "Time" (`12:40`, `1:02:10`, or `750` for
   seconds), the position reached, "12:40", when done; **Ctrl+Q** What is playing: "Playing <name>, 12:52 of 45:30, speed 1.25", "Paused …"
   or "Nothing playing". "Say each file as it starts" (`sayEachFile`, default on; Options) is the one
-  unprompted announcement (G5). The volume is Windows' own (AM-D6). Stop as a command is not offered: Space pauses,
+  unprompted announcement (G5). The volume is Windows' own (AM-D6). Stop as a command is not offered: Ctrl+Enter pauses,
   Clear queue stops.
 - AM-4.4 Closing the window stops the player.
 - AM-4.5 The time format is `m:ss` under an hour and `h:mm:ss` over (`MediaFiles.FormatTime`, tested).
@@ -156,7 +168,7 @@ top of the window. It works entirely offline (bundle G6).
 
 - AM-5.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** New window Ctrl+N | Open files… Ctrl+O |
   Open folder… Ctrl+Shift+O | Open recent ▸ | ─ | Clear queue | ─ | Show current file in ▸ (File Explorer Ctrl+W |
-  axClaude | axTerminal | axGIT | axFile) | ─ | Exit Alt+F4. **Actions (A):** Pause or resume Space | Forward 15
+  axClaude | axTerminal | axGIT | axFile) | ─ | Exit Alt+F4. **Actions (A):** Pause or resume Ctrl+Enter | Forward 15
   seconds Ctrl+Right | Back 15 seconds Ctrl+Left | ─ | Faster Ctrl+Up | Slower Ctrl+Down | Normal
   speed | ─ | What is playing Ctrl+Q. **Navigation (N):** Next file Ctrl+Shift+Right | Previous file Ctrl+Shift+Left |
   Go to time… Ctrl+T. **Context (C)**, the file selected (AX-9.11; Shift+F10, the Applications key and a right click in
@@ -167,7 +179,7 @@ top of the window. It works entirely offline (bundle G6).
   browser). Every item has a mnemonic (AX-7.4).
 - AM-5.2 Keys (AX-8). Bundle-wide: F1, the control keys (one control, so they stay in the list), Ctrl+F, F3, Shift+F3,
   Ctrl+S ("Nothing to save here"), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxMediaKeys`): Enter, Delete and
-  Space in the list; Ctrl+P, Ctrl+I, Ctrl+O, Ctrl+Shift+O, Ctrl+N (New window, AX-9), Ctrl+W, Ctrl+Right, Ctrl+Left,
+  Space and the other selection keys in the list (AM-3.5); Ctrl+Enter, Ctrl+I, Ctrl+O, Ctrl+Shift+O, Ctrl+N (New window, AX-9), Ctrl+W, Ctrl+Right, Ctrl+Left,
   Ctrl+Shift+Right, Ctrl+Shift+Left, Ctrl+T, Ctrl+Up, Ctrl+Down, Ctrl+Q from anywhere in the window
   (in a notice's field they are the field's own, AX-7.2; Ctrl+Up and Ctrl+Down, faster and slower, are the bundle's
   paragraph keys there, AM-D8). The collision test covers the table.
@@ -256,9 +268,12 @@ events are posted back to it (AX-7.5).
   it. The user's NVDA pass of 2026-10-21 played MP3 chapters and an MP4 video through this engine with the pitch kept.
 - **AM-D6 Volume is Windows'.** The keyboard's volume keys change the system volume from any window and are read by
   NVDA (from AF-D4).
-- **AM-D7 Space pauses.** In axFile Space marks entries, so pause had moved to Ctrl+P; in axMedia the list is the
-  queue and Space is what every player's pause is. Ctrl+P stays as the key from anywhere in the window; while a
-  notice shows, the keys are the notice's, as in every window (AX-6.5).
+- **AM-D7 Ctrl+Enter pauses; Space selects** (the maintainer's decision of 2026-11-22: "space in axmedia should
+  select and ctrl+enter should become play/pause"). Space selects in every list of axKit (bundle AX-8.16), so a
+  user never has to remember which lists mark and which play; Ctrl+Enter is the bundle's main action key, and
+  the main action of a player is pause and resume, from anywhere in the window. One key for it: Ctrl+P, the
+  second key until then, goes. Until 2026-11-22 Space paused in the list, "what every player's pause is", and
+  Ctrl+P from anywhere. While a notice shows, the keys are the notice's, as in every window (AX-6.5).
 - **AM-D8 Ctrl+Up is faster, Ctrl+Down slower** (the user's choice of 2026-11-14). Until then the speed was on
   Ctrl+Shift+Period and Ctrl+Shift+Comma; those became the bundle's system-wide keys, axHelp's screenshot and the
   one kept for a later help launcher (bundle AX-8.11), which never reach a window. The four arrows with Ctrl are now

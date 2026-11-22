@@ -28,14 +28,14 @@ Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video an
 
 ## 3. Playing (AM-4)
 
-1. Enter on the first chapter: "Playing <name>". Space: "Paused at 0:05", the sound stops. Space: "Playing". Ctrl+P: "Paused at …"; Ctrl+P: "Playing". Ctrl+T, then Ctrl+P in the notice's field: nothing happens (the notice holds the keys); Escape.
+1. Enter on the first chapter: "Playing <name>". Ctrl+Enter: "Paused at 0:05", the sound stops. Ctrl+Enter: "Playing". Ctrl+T, then Space in the notice's field: a space is typed and nothing pauses; Escape.
 2a. Ctrl+Right again and again until the file is nearly over, then once more: the time said is the file's length, not a time past it; Go to time with a time past the end: the same.
 2. Ctrl+Right: "0:20" and the sound jumps. Ctrl+Left: "0:05". Ctrl+T, type `1:00`, Enter: "1:00". Ctrl+T, type `abc`, Enter: "Not a time", the notice stays; Escape.
 3. Ctrl+Up: "Speed 1.25"; the voice is faster at the same pitch. Twice more: "Speed 1.75". Ctrl+Down: "Speed 1.5". Actions, Normal speed: "Speed 1". Set 1.5, Alt+F4, start again and play: Ctrl+Q ends in "speed 1.5".
 4. Ctrl+Q: "Playing <name>, 1:12 of 45:30, speed 1.5". Ctrl+Shift+Right: "Playing <next>". Ctrl+Shift+Left: "Playing <first>". Again: "First file".
 5. Ctrl+T near the end, Enter; wait: "Playing <next>" spoken on its own, the next file plays, the selection stays where it was and the mark moves. Options, Say each file as it starts, off; the same again: nothing is spoken.
 6. On the last file, Ctrl+T near its end; wait: "End of queue" with the done chime; NVDA+End: both labels empty; NVDA+T: "axMedia". Ctrl+Q: "Nothing playing".
-7. Enter on the video: "Playing <name>", the picture appears at the top of the window, the focus stays in the list; Space pauses; Ctrl+Shift+Right or the end hides the picture.
+7. Enter on the video: "Playing <name>", the picture appears at the top of the window, the focus stays in the list; Ctrl+Enter pauses; Ctrl+Shift+Right or the end hides the picture.
 8. Enter on a file Windows cannot decode (an `.opus` without the Store codec): "Cannot play <name>: …" and the next plays. Ctrl+O and pick the `.txt` (All files): "Added 1"; Enter on it: "Cannot play <name>: …", the next plays.
 9. Alt+Tab to another program while a file plays, let it end: "Playing <next>" from the background, or silence with the setting off; the sound carries on. Ctrl+W: File Explorer with the playing file selected. Session, Show current file in, axFile: axFile on the folder with the file selected. Alt+F4 on axMedia: the sound stops.
 
@@ -45,3 +45,17 @@ Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video an
 2. F1: the Keyboard shortcuts notice; Escape. Help, User guide: this guide; Escape. Ctrl+S: "Nothing to save here".
 3. Alt+W: the Window menu with New window (axMedia among the apps), Recently closed (the file an axMedia window was playing when it closed; chosen, it plays with its folder), Open windows, Close all windows, Say the status (F8: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+A: the axKit menu with Claude, AI tools and Theme.
 4. Help, Diagnostics, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the queue, the player's state and the log's end.
+
+## 5. Selecting files in the queue (AM-3.5, bundle AX-8.16)
+
+The runner's script is `tests/scripts/axMedia/07-selection.txt`.
+
+1. With a queue of four playing, Space on the second file: "Selected"; Up and Down again onto it: "<name>,
+   selected". Listen that NVDA does not read the line a second time after the word, and that the sound goes on:
+   Space does not pause.
+2. Shift+Down: the next line with ", selected" and nothing else said. Ctrl+I: "<name>, 3 of 4, 2 selected".
+3. Delete: "Removed 2 files"; the queue reads "Queue, 2 items", and the file playing still plays.
+4. Select the file playing and one more, Delete: "Removed 2 files", then the next file left plays, or "End of
+   queue" when none is left.
+5. Ctrl+A: "n selected". Escape: "None selected". On the empty queue, Space: "Queue is empty".
+6. Ctrl+Enter: "Paused at …"; Ctrl+Enter: "Playing"; from the list and with the Go to time notice closed.

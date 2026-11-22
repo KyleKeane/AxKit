@@ -17,7 +17,7 @@ command's in this version of axKit.
 
 1. Open axMedia with the folder ch.
     You hear: Playing alpha.wav.
-2. Press Space.
+2. Press Ctrl+Enter (Pause or resume; Actions menu).
     You hear words such as: Paused at.
 
 ### Move through the queue
@@ -113,18 +113,18 @@ command's in this version of axKit.
 
 1. Open axMedia with the folder p.
     You hear: Playing first.wav.
-2. Press Space.
+2. Press Ctrl+Enter (Pause or resume; Actions menu).
     You hear: Paused at 0:0.
-3. Press Space.
+3. Press Ctrl+Enter (Pause or resume; Actions menu).
     You hear: Playing.
-4. Press Ctrl+P (Pause or resume; Actions menu).
+4. Press Ctrl+Enter (Pause or resume; Actions menu).
     You hear: Paused at 0:0.
-5. Press Ctrl+P (Pause or resume; Actions menu).
+5. Press Ctrl+Enter (Pause or resume; Actions menu).
     You hear: Playing.
 
 ### Move forward, back and to a time
 
-1. Press Space.
+1. Press Ctrl+Enter (Pause or resume; Actions menu).
     You hear: Paused at 0:0.
 2. Press Ctrl+Right (Forward 15 seconds; Actions menu).
     You hear: 0:1.
@@ -134,7 +134,7 @@ command's in this version of axKit.
 5. Type: 0:30
 6. Press Enter.
     You hear: 0:30.
-7. Press Space.
+7. Press Ctrl+Enter (Pause or resume; Actions menu).
     You hear: Playing.
 
 ### Change the playing speed
@@ -236,3 +236,39 @@ Starts with: Open axMedia with the folder chapters.
     You hear: Session, Open recent.
 3. Press Enter.
     You hear: Added 2.
+
+## Select files in the queue and take several out
+
+Starts with: Open axMedia with the folder ch.
+
+### Pause and resume with Ctrl+Enter
+
+1. Press Ctrl+Enter (Pause or resume; Actions menu).
+    You hear words such as: Paused at.
+2. Press Ctrl+Enter (Pause or resume; Actions menu).
+    You hear: Playing.
+
+### Select files with Space and with Shift and an arrow
+
+1. Press Down.
+2. Press Space.
+    You hear: Selected.
+3. Press Shift+Down.
+4. Press Ctrl+I.
+    You hear: 2 selected.
+
+### Take the selected files out of the queue
+
+1. Press Delete.
+    You hear: Removed 2 files.
+
+### Select every file, and give the selection up
+
+1. Press Ctrl+A (Select all; Actions menu).
+    You hear: 2 selected.
+2. Press Escape.
+    You hear: None selected.
+3. Press Shift+Space.
+    You hear: Selected.
+4. Press Ctrl+Shift+A (Deselect all; Actions menu).
+    You hear: None selected.

@@ -10,7 +10,7 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 
 - What: Rows you move through with the arrow keys. Every list of every window is this one.
 - Built into it: Type the start of a name to jump to it; the edge sound at the first and the last row; rename in place with F2 where rows have names.
-- Selecting: With src/AxKit.Forms/ListSelection.cs: Space selects the row you are on, Shift with an arrow selects as it moves, Ctrl+A all, Escape none (SPEC AX-8.16). On in axFile's folder list and axTask's navigator so far.
+- Selecting: With src/AxKit.Forms/ListSelection.cs: Space selects the row you are on, Shift with an arrow selects as it moves, Ctrl+A all, Escape none (SPEC AX-8.16). On in axFile's folder list, axTask's navigator and axMedia's queue so far.
 - Its sound: three quick beeps up, then four quick beeps going down (the kind of event `list-entered`, SPEC AX-7.11). It plays whenever the focus enters it from outside; moving inside it is silent. Then: NVDA reads the row; a selected row ends in ', selected'.
 - Its keys, by family (`docs/axKit/key-groups.md`): moves, letter, space, shift-select, enter, delete, escape.
 - The code: `AxKitList`, `src/AxKit.Forms/AxKitList.cs`.

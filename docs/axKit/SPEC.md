@@ -965,7 +965,9 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     how many are selected, and the target an AI tool's command is asked about names the selection too). An item
     app says it has a selection only once its commands act on one, so that nothing is ever selected that a
     command then passes by: in axPass, axMCP and axAutomate Space in the navigator stays the edge sound. Every
-    other list with a use for a selection follows, one app at a time (the priorities list).
+    other list with a use for a selection follows, one app at a time (the priorities list). axMedia's queue is
+    on it since the same day (docs/axMedia/SPEC.md AM-3.5): Space selects files, Delete takes the selected ones
+    out, and pause moved from Space to Ctrl+Enter there (AM-D7).
   - **Space no longer marks a task done** in axTask: that is Ctrl+Enter, the bundle's main action key, there
     (TK-4.4).
 

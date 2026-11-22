@@ -6,7 +6,7 @@ mkdir ch
 silence ch\alpha.wav 30000
 start media {temp}\ch
 expect said ! Playing alpha.wav
-keys space
+keys ctrl+enter
 expect said ! Paused at
 
 # Goal: Change the text size

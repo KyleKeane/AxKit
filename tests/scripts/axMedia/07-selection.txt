@@ -1,0 +1,59 @@
+# Workflow: Select files in the queue and take several out
+# axMedia, docs/axMedia/SPEC.md AM-3.5 and AM-D7, bundle AX-8.16 (the maintainer's decision of 2026-11-22: "space in
+# axmedia should select and ctrl+enter should become play/pause"): Space selects the file you are on, Shift with an
+# arrow selects as it moves, Ctrl+A every file, Escape gives the selection up; Delete then takes the selected files
+# out of the queue. Ctrl+Enter pauses and resumes. Every sound is the runner's silence.
+file home\AxKit\axMedia.json {"checkForUpdates":false}
+mkdir ch
+silence ch\alpha.wav 30000
+silence ch\beta.wav 30000
+silence ch\delta.wav 30000
+silence ch\gamma.wav 30000
+start media {temp}\ch
+expect said ! Playing alpha.wav
+expect focus Queue, 4 items
+
+# Goal: Pause and resume with Ctrl+Enter
+# The main action key, from anywhere in the window. The waits are a user's pace, as in 03-playing.
+keys ctrl+enter
+expect said ! Paused at
+wait 300
+keys ctrl+enter
+expect said ! Playing
+wait 300
+
+# Goal: Select files with Space and with Shift and an arrow
+# Space on beta selects it; Shift+Down takes delta too and says nothing but the line reached. Ctrl+I counts them.
+keys down
+expect focus beta.wav
+keys space
+expect said ! Selected
+expect focus beta.wav, selected
+keys shift+down
+expect focus delta.wav, selected
+keys ctrl+i
+expect said 2 selected
+
+# Goal: Take the selected files out of the queue
+# Delete removes both, whatever row you are on; the file playing goes on undisturbed.
+keys delete
+expect said ! Removed 2 files
+expect list "name":"Queue, 2 items"
+expect list alpha.wav (playing)
+
+# Goal: Select every file, and give the selection up
+keys ctrl+a
+expect said ! 2 selected
+keys escape
+expect said ! None selected
+keys shift+space
+expect said ! Selected
+keys ctrl+shift+a
+expect said ! None selected
+
+# Check: With nothing selected, Delete takes out the file you are on, as before
+keys end
+expect focus gamma.wav
+keys delete
+expect said ! Removed gamma.wav
+expect list "name":"Queue, 1 item"
