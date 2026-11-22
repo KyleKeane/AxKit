@@ -6,6 +6,35 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-22: Done before the result, in axClaude and axTerminal; by the assistant with NVDA listening (`main` 37472e06)
+
+`.\nvda-pass.ps1 axTerminal`, then `-Only` six scripts of axClaude that hear the end of a turn (`29`, `35`, `36`
+and `37` with the stand-in, `09-options` and `17-what-is-spoken` with the real Claude Code, Haiku), each behind the
+spoken countdown, the maintainer away from the VM's keyboard at his word ("Start now"), NVDA 2025.3.3 with the
+OneCore voice, Windows 11 Pro 10.0.26200, the build 5.10.0 of commit 37472e06, the tree clean: 19 scripts, 109
+goals and checks, all passed with every announcement also spoken by NVDA.
+
+| What | Scripts | Goals | Result |
+|---|---|---|---|
+| axTerminal: "Done" before the output, the switch Announce "Done", a failure said all the same | 13 | 69 | Passed |
+| axClaude: "Done" and then the reply as one utterance, with the stand-in and with the real Claude Code | 6 | 40 | Passed |
+
+What was heard: in axTerminal "Done. hello", "Done" and then a whole listing with none of its rows before the word,
+with the switch off the chime and "again" alone, "Failed, exit code 3"; in axClaude the done chime and, a third of
+a second later, "Done. claude: Alpha. The quick brown fox jumps. Beta. …" as one utterance, "Done. claude: first",
+"Done. green apples" with the silent line left out. Before the change the log of the maintainer's own window showed
+Done decided 0.2 to 0.3 seconds after the work ended and heard only after NVDA had read the whole reply.
+
+The same sitting, without NVDA: axClaude's sixteen stand-in scripts and three live ones (`09`, `17`, `27`) on the
+hidden desktop, all passed; every app's window checks are recorded at the same commit.
+
+The countdown stopped the first start of this pass too, when input reached the VM during its sentence: on the host
+the mouse pointer over the VM's window is input to the VM.
+
+Not heard with NVDA here: axClaude's other live scripts, which have no reply speech and expect "Done" alone as
+before. Owed to his own ear: whether "Done" and the reply in one breath reads well after a long turn, and whether a
+third of a second of hold is felt in axTerminal's output.
+
 ## 2026-11-22: the maintainer's decisions on the keys, the caution and the chime; by the assistant with NVDA listening (`main` cb898468)
 
 `.\nvda-pass.ps1 axTask`, then `-Only` axJSON, axPass, axMCP and axAutomate, each behind the pass's new spoken
