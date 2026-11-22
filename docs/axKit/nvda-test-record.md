@@ -6,6 +6,30 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-21: axTask, the lists' new files; by the assistant with NVDA listening (`main` c7f61977)
+
+`.\nvda-pass.ps1 axTask`, the user still away at his word of the same day, NVDA 2025.3.3 with the OneCore voice,
+Windows 11 Pro 10.0.26200, the build 5.10.0 of commit c7f61977: axTask's 17 scripts, 102 goals and checks, all
+passed with every announcement also spoken by NVDA. It is the first hearing of step 1 of
+`docs/axTask/forms-framework.md` (b89207a6): an item as its values read through its list's configuration.
+
+| What | Scripts | Result |
+|---|---|---|
+| The fifteen scripts there were, their lists and items in the new shape | 15 | Passed |
+| `16-convert-earlier-format.txt` and `17-list-without-configuration.txt`, new | 2 | Passed |
+
+What was heard for the first time: the field keys' sentence ("The fields are the list's configuration's: Ctrl+J on
+the list opens it in axJSON"); a field shown empty and given its first value; "1 more field kept: Room" and the
+notice "Fields kept"; a configuration that does not read, in the level's name, the row and the item's last line, and
+the refusal of a change; the row "earlier format: Enter converts it", the question "Convert Home?" with its three
+answers, "Converted Home: 2 items. A copy is among the Archived lists" and its undo; an item of a folder without a
+`list.json` shown as text, and "Written the configuration of Notes".
+
+Not heard by this pass and owed to his own use: the line said on coming back from axJSON ("The list's configuration
+changed: 5 fields, 2 actions"), which needs the two windows on the real desktop (test plan 2.5), and the pass of
+section 9 of the plan by hand on `manual_tests/axTask`. The other item apps (axPass, axMCP, axAutomate) passed their
+window checks on the hidden desktop at b89207a6; the shared window changed by one line for them.
+
 ## 2026-11-21: every app, after the audit's repairs; by the assistant with NVDA listening (`main` 7a683b1b)
 
 `.\nvda-pass.ps1`, the user away at his own word ("i am going away for a long time so please just move forward
