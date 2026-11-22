@@ -7,13 +7,18 @@ using AxProcess.Core;
 namespace AxProcess;
 
 /// <summary>
-/// axProcess's window (SPEC.md PR-2): a menu bar, one list with three views (Processes, Services, Startup) and a status
-/// bar. Every read runs on a background task (AX-7.5) and nothing refreshes by itself (PR-D2); Enter shows an item's
-/// details as a notice with what can be done to it. The notices, the fonts, the window's place, find and the update
-/// flow are the bundle's window base (<see cref="AxKitForm"/>).
+/// axProcess's window (SPEC.md PR-2): a menu bar, one list and a status bar. The window is a navigator, the bundle's
+/// item window (<see cref="ItemForm"/>; docs/axKit/framework.md FW-4.6, step 7, 2026-11-22; a window of its own with
+/// three views of one list until then): the top level, "This computer", holds three lists, Processes, Services and
+/// Startup, and Right or Enter goes into one, Left or Backspace back. The window starts inside Processes. It has no
+/// second pane: Enter on a row shows its details as a notice with what can be done to it. Every read runs on a
+/// background task (AX-7.5) and nothing refreshes by itself (PR-D2). The list, its selection, find, the Context
+/// menu and a navigator's keys are the item window's; this class holds the three reads and the commands on their
+/// rows.
 /// </summary>
-public sealed class ProcessForm : AxKitForm
+public sealed class ProcessForm : ItemForm
 {
+    /// <summary>The three lists of the top level (PR-2.2); their names are the rows' keys there.</summary>
     private enum View
     {
         Processes,
@@ -21,24 +26,25 @@ public sealed class ProcessForm : AxKitForm
         Startup,
     }
 
-
     private static readonly TimeSpan SampleInterval = TimeSpan.FromSeconds(1);
 
     private readonly ProcessSettings _settings;
     private readonly MenuStrip _menu = new();
-    private readonly AxKitList _list = new();
-    private readonly StatusStrip _status = new();
-    private readonly ToolStripStatusLabel _nameLabel;
-    private readonly ToolStripStatusLabel _memoryLabel;
-    /// <summary>The three views of the list (PR-2.2), as axGIT's.</summary>
-    private readonly ListViewState[] _views = [new(), new(), new()];
     private readonly ChoiceItems<ProcessSort> _sortItems;
+    private readonly ToolStripMenuItem _listMenu = new("&List");
     private readonly ToolStripMenuItem _processMenu = new("&Process");
     private readonly ToolStripMenuItem _serviceMenu = new("S&ervice");
     private readonly ToolStripMenuItem _startupMenu = new("S&tartup");
-    private readonly ContextBarMenu _context;
 
-    private View _view = View.Processes;
+    /// <summary>The level shown: one of the three lists, or null at the top, "This computer".</summary>
+    private View? _level = View.Processes;
+
+    /// <summary>Which of the three lists has been read.</summary>
+    private readonly bool[] _loaded = new bool[3];
+
+    /// <summary>The row each list was left on, by its key, to come back to (PR-2.2).</summary>
+    private readonly string?[] _kept = new string?[3];
+
     private IReadOnlyList<ProcessRow> _processes = [];
     private IReadOnlyList<ServiceRow> _services = [];
     private IReadOnlyList<StartupEntry> _startup = [];
@@ -56,57 +62,67 @@ public sealed class ProcessForm : AxKitForm
         SetTitle("This computer");
 
         // ---- menus and keys (PR-6.1, PR-6.2): one command list (docs/axKit/app-kit.md AK-2), each key from the tables ----
-        // The first menu holds what every view has (AX-6: the thing worked on, then Exit); each view has a menu of its
-        // own, off the bar, and Context holds the one of the view shown, so that a process command is never at hand
-        // among the services (the user's ask, 2026-10-24; AX-9.11, 2026-11-11). The keys act in every view, as before:
-        // Enter and Ctrl+E are the first menu's command with the key, and each command finds the view shown.
+        // The first menu holds what every level has (AX-6: the thing worked on, then Exit); each kind of row has a
+        // menu of its own, off the bar, and Context holds the one of the row you are on, so that a process command
+        // is never at hand among the services (the user's ask, 2026-10-24; AX-9.11, 2026-11-11). Enter, Delete, the
+        // selection keys, find and the Context menu's keys are the navigator's (the item window's commands,
+        // registered after these by PlaceControls); the menu items for them here only show the keys.
         var computer = new ToolStripMenuItem("&Session");
         Add(computer, new Command("&Refresh", AxProcessKeys.Refresh, () => Do(() => RefreshAsync(announce: true))) { Mark = CommandMark.Read });
         computer.DropDownItems.Add(new ToolStripSeparator());
         computer.DropDownItems.Add(CreateExitItem());
 
-        // Actions: what is about the computer as a whole (AX-9.1); Context: what acts on the line the list is on, from
-        // the menu of the view shown (AX-9.11, B-19).
+        // Actions: what is about the computer as a whole (AX-9.1), and the selection's two that act on every row.
         var actions = new ToolStripMenuItem();
         Add(actions, new Command("&Summary", AxProcessKeys.Summary, SaySummary) { Mark = CommandMark.Read });
+        actions.DropDownItems.Add(new ToolStripSeparator());
+        actions.DropDownItems.Add(Item("Select &all", SelectAllRows, SelectionKeys.SelectAll, CommandMark.Change));
+        actions.DropDownItems.Add(Item("D&eselect all", SelectNoRows, SelectionKeys.SelectNone, CommandMark.Change));
 
-        // Details, Copy line and Show program are in more than one view's menu: one command each, placed in every menu that has it.
-        var details = new Command("&Details", AxProcessKeys.Act, () => Do(ActAsync)) { When = () => _list.Focused, Mark = CommandMark.Read };
+        // Copy line and Show program are in more than one menu: one command each, placed in every menu that has it.
         var copyLine = new Command("&Copy line", AxProcessKeys.CopyLine, CopyLine) { Mark = CommandMark.Act };
         var showProgram = new Command("Show program in ax&File", AxProcessKeys.ShowProgram, ShowProgram) { Mark = CommandMark.Open };
-        Add(_processMenu, details);
-        // Delete is two commands, by the view shown (PR-6.2): Remove in Startup, End process in the other two.
-        Add(_processMenu, new Command("&End process...", AxProcessKeys.End, () => EndProcess(tree: false)) { When = () => _list.Focused && _view != View.Startup, Mark = CommandMark.Act });
+
+        _listMenu.DropDownItems.Add(Item("&Open", OpenSelected, ItemKeys.Open, CommandMark.Open));
+        Add(_listMenu, copyLine);
+
+        // Delete is the navigator's key and, by the kind of row, two things (PR-6.2): End process on a process,
+        // Remove on a startup program; with rows selected, all of them, after one question (PR-3.3a, PR-5.6a).
+        _processMenu.DropDownItems.Add(Item("&Details", OpenSelected, ItemKeys.Open, CommandMark.Read));
+        _processMenu.DropDownItems.Add(Item("&End process...", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act));
         Add(_processMenu, new Command("End process &tree...", Keys.None, () => EndProcess(tree: true)) { Mark = CommandMark.Act });
         Add(_processMenu, showProgram);
         Add(_processMenu, copyLine);
+        AddSelectionItems(_processMenu);
 
-        Add(_serviceMenu, details);
+        _serviceMenu.DropDownItems.Add(Item("&Details", OpenSelected, ItemKeys.Open, CommandMark.Read));
         Add(_serviceMenu, new Command("&Start", Keys.None, () => ControlSelectedService(ServiceAction.Start)) { Mark = CommandMark.Act });
         Add(_serviceMenu, new Command("S&top", Keys.None, () => ControlSelectedService(ServiceAction.Stop)) { Mark = CommandMark.Act });
         Add(_serviceMenu, new Command("&Restart", Keys.None, () => ControlSelectedService(ServiceAction.Restart)) { Mark = CommandMark.Act });
         Add(_serviceMenu, copyLine);
 
         // Turn off, Turn on and Remove change what starts with Windows (PR-5.4 to PR-5.6): act, so an AI tool asks first.
-        Add(_startupMenu, details);
+        _startupMenu.DropDownItems.Add(Item("&Details", OpenSelected, ItemKeys.Open, CommandMark.Read));
         Add(_startupMenu, new Command("Turn &off", Keys.None, () => ChangeSelectedStartup(StartupAction.TurnOff)) { Mark = CommandMark.Act });
         Add(_startupMenu, new Command("Turn o&n", Keys.None, () => ChangeSelectedStartup(StartupAction.TurnOn)) { Mark = CommandMark.Act });
-        Add(_startupMenu, new Command("&Remove...", AxProcessKeys.End, () => ChangeSelectedStartup(StartupAction.Remove)) { When = () => _list.Focused && _view == View.Startup, Mark = CommandMark.Act });
+        _startupMenu.DropDownItems.Add(Item("&Remove...", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act));
         Add(_startupMenu, showProgram);
         Add(_startupMenu, copyLine);
+        AddSelectionItems(_startupMenu);
 
-        // Navigation: the three views (the View menu's until 2026-11-11, AX-9.1).
+        // Navigation: the three lists, each a jump from anywhere, and the way up (AX-9.1).
         var view = new ToolStripMenuItem();
         // On Alt+1, 2 and 3, each with its older Ctrl key as a further key of the same command (bundle AX-8.14).
-        Place(new Command("&Processes", AxProcessKeys.ViewProcesses, () => Do(() => ShowViewAsync(View.Processes))) { Mark = CommandMark.Open }, AxProcessKeys.ViewProcessesAlso);
-        Place(new Command("&Services", AxProcessKeys.ViewServices, () => Do(() => ShowViewAsync(View.Services))) { Mark = CommandMark.Open }, AxProcessKeys.ViewServicesAlso);
-        Place(new Command("Start&up", AxProcessKeys.ViewStartup, () => Do(() => ShowViewAsync(View.Startup))) { Mark = CommandMark.Open }, AxProcessKeys.ViewStartupAlso);
+        Place(new Command("&Processes", AxProcessKeys.ViewProcesses, () => Do(() => ShowListAsync(View.Processes))) { Mark = CommandMark.Open }, AxProcessKeys.ViewProcessesAlso);
+        Place(new Command("&Services", AxProcessKeys.ViewServices, () => Do(() => ShowListAsync(View.Services))) { Mark = CommandMark.Open }, AxProcessKeys.ViewServicesAlso);
+        Place(new Command("Start&up", AxProcessKeys.ViewStartup, () => Do(() => ShowListAsync(View.Startup))) { Mark = CommandMark.Open }, AxProcessKeys.ViewStartupAlso);
+        view.DropDownItems.Add(new ToolStripSeparator());
+        view.DropDownItems.Add(Item("Up to This &computer", UpLevel, ItemKeys.Up, CommandMark.Open));
         void Place(Command command, Keys also)
         {
             Add(view, command);
             AddKey(command with { Key = also });
         }
-
 
         var sort = new ToolStripMenuItem("Sort processes &by");
         _sortItems = new ChoiceItems<ProcessSort>(sort, [(ProcessSort.Memory, "&Memory"), (ProcessSort.Processor, "&Processor"), (ProcessSort.Name, "&Name")], settings.SortBy, SetSort);
@@ -125,29 +141,10 @@ public sealed class ProcessForm : AxKitForm
         ]);
 
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
-        _context = new ContextBarMenu(ContextNow, () => "Nothing selected", said => Announce(said, true), _processMenu, _serviceMenu, _startupMenu);
-        PlaceMenuBar(_menu, computer, actions, view, _context.Menu, options, help);
-        _menu.MenuActivate += (_, _) => _context.Fill();
+        PlaceMenuBar(_menu, computer, actions, view, CreateContextMenu(MenuOf, _listMenu, _processMenu, _serviceMenu, _startupMenu), options, help);
 
-        // The keys without a menu item: find in the list, and Tab, Shift+Tab and the menu keys in the list (returning
-        // true there keeps it from dinging).
-        AddFindInListKeys("list", _list, () => Current.Labels);
-        AddKey(new Command("Next view", AxProcessKeys.NextView, () => Do(() => ShowViewAsync(Cycled(1)))) { When = () => _list.Focused, Mark = CommandMark.Open });
-        AddKey(new Command("Previous view", AxProcessKeys.PreviousView, () => Do(() => ShowViewAsync(Cycled(-1)))) { When = () => _list.Focused, Mark = CommandMark.Open });
-        AddKey(new Command("Context menu", AxProcessKeys.ItemMenu, OpenViewMenu) { When = () => _list.Focused, Mark = CommandMark.Open });
-        AddKey(new Command("Context menu", AxProcessKeys.ItemMenuAlso, OpenViewMenu) { When = () => _list.Focused, Mark = CommandMark.Open });
-
-        // ---- the list (PR-2.1) ----
-        _list.IntegralHeight = false;
-        _list.Dock = DockStyle.Fill;
-        _list.TabIndex = 0;
-        _list.AccessibleName = "Processes, reading";
-        _list.OpenMenuOnRightClick(OpenViewMenu);
-
-        (_nameLabel, _memoryLabel) = StatusLayout.Pair(_status);
-
-        PlaceControls(_menu, _list, _status);
-        UpdateStatusBar();
+        PlaceControls(_menu);
+        Fill(select: null);
     }
 
     private enum ServiceAction
@@ -157,69 +154,202 @@ public sealed class ProcessForm : AxKitForm
         Restart,
     }
 
+    /// <summary>The selection's two items of a row's menu; the keys are the item window's commands.</summary>
+    private void AddSelectionItems(ToolStripMenuItem menu)
+    {
+        menu.DropDownItems.Add(new ToolStripSeparator());
+        menu.DropDownItems.Add(Item("Se&lect or deselect", SelectRow, SelectionKeys.Select, CommandMark.Change));
+        menu.DropDownItems.Add(Item("Select to &here", SelectToHere, SelectionKeys.SelectTo, CommandMark.Change));
+    }
+
+    // ---- what the navigator asks for (the item window, docs/axKit/framework.md FW-4.6) ----
+
+    /// <summary>A row has no more to show than its line; its details are a notice, on Enter.</summary>
+    protected override bool HasDetailPane => false;
+
+    /// <summary>Space selects processes and startup programs (AX-8.16): Delete then ends or removes all the selected.</summary>
+    protected override bool HasSelection => true;
+
+    /// <summary>What Delete acts on can be selected: a process, a startup program. A list and a service cannot, since nothing here acts on several of them.</summary>
+    protected override bool CanSelectRow(ItemRow row) => row.Tag is ProcessRow or StartupEntry;
+
+    protected override void NothingToSelect(ItemRow? row)
+    {
+        if (row?.Tag is ServiceRow)
+        {
+            Announce("Services are not selected: nothing here acts on several of them", true);
+        }
+        else
+        {
+            base.NothingToSelect(row);
+        }
+    }
+
+    /// <summary>The level by its own name, not by the status bar's second part, which is the memory in use and changes.</summary>
+    protected override string LevelIdentity() => _level?.ToString() ?? "This computer";
+
+    /// <summary>
+    /// A navigator's keys with no use here: nothing is renamed, undone or made new. F2, Ctrl+Z, Ctrl+N and
+    /// Ctrl+Shift+N are no commands of the window; the four methods below are what the item window asks every app
+    /// for, and none is reached through a key.
+    /// </summary>
+    protected override IReadOnlyCollection<Keys> KeysWithoutUse => [ItemKeys.Rename, ItemKeys.Undo, ItemKeys.New, ItemKeys.NewList];
+
+    protected override string? RenameRefused(ItemRow row) => "Nothing is renamed here";
+
+    protected override void NewItem() => Announce("Nothing is made here", true);
+
+    protected override void NewList() => Announce("Nothing is made here", true);
+
+    protected override void Undo() => Announce("Nothing to undo here", true);
+
+    /// <summary>
+    /// The level shown: at the top the three lists, each with its count once it has been read; in a list its rows
+    /// as last read. The list is named with its count, "Processes, 214", or "Processes, reading" before its first
+    /// read; the title is the computer; the status bar's second part is the memory in use.
+    /// </summary>
+    protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel() =>
+        (LevelRows(), LevelName(), "This computer", MemoryText());
+
+    private IReadOnlyList<ItemRow> LevelRows() => _level switch
+    {
+        View.Processes => [.. _processes.Select(row => new ItemRow(IsList: false, row.Id.ToString(), row.Name, row.Label, row))],
+        View.Services => [.. _services.Select(row => new ItemRow(IsList: false, row.Name, row.DisplayName, row.Label, row))],
+        View.Startup => [.. _startup.Select(entry => new ItemRow(IsList: false, entry.Key, entry.Name, entry.Label, entry))],
+        _ => [TopRow(View.Processes), TopRow(View.Services), TopRow(View.Startup)],
+    };
+
+    /// <summary>A list as a row of the top level: "Processes, 214" once read, "Processes" before.</summary>
+    private ItemRow TopRow(View view) => new(IsList: true, view.ToString(), view.ToString(), _loaded[(int)view] ? ListName(view) : view.ToString());
+
+    private string LevelName() =>
+        _level is not { } view ? "This computer, 3 lists"
+        : _loaded[(int)view] ? ListName(view)
+        : $"{view}, reading";
+
+    private string ListName(View view) => view switch
+    {
+        View.Processes => ProcessTable.ListName(_processes.Count),
+        View.Services => ServiceRow.ListName(_services.Count),
+        _ => StartupEntry.ListName(_startup.Count),
+    };
+
+    /// <summary>
+    /// Right and Enter on a list of the top level: the list is read off the UI thread on its first visit, then
+    /// shown and said once (<see cref="ShowListAsync"/>). The item window's own way in fills at once, so it is
+    /// turned down with an empty reason, which says nothing: the app does the going in itself.
+    /// </summary>
+    protected override string? EntryRefused(ItemRow row)
+    {
+        if (Enum.TryParse<View>(row.Key, out var view))
+        {
+            Do(() => ShowListAsync(view));
+        }
+
+        return string.Empty;
+    }
+
+    /// <summary>Left and Backspace in a list: up to This computer, on the list left; at the top nothing, the edge sound.</summary>
+    protected override string? LeaveList()
+    {
+        if (_level is not { } view)
+        {
+            return null;
+        }
+
+        _kept[(int)view] = SelectedKey();
+        _level = null;
+        return view.ToString();
+    }
+
+    /// <summary>Enter on a row of a list, the navigator's Open: its details, with what can be done to it.</summary>
+    protected override void OpenItem(ItemRow row) => Do(ActAsync);
+
+    /// <summary>
+    /// Delete, the navigator's key, by the kind of row (PR-6.2): a process is ended, a startup program removed,
+    /// each after a question, and with rows selected all of them after one question; a service is not ended, and
+    /// a list of the top level is no thing to end.
+    /// </summary>
+    protected override void DeleteRow(ItemRow row)
+    {
+        var selected = SelectedRows();
+        switch (row.Tag)
+        {
+            case ProcessRow when selected.Count > 1:
+                EndProcesses([.. selected.Select(one => one.Tag).OfType<ProcessRow>()]);
+                return;
+            case ProcessRow:
+                EndProcess(tree: false);
+                return;
+            case StartupEntry when selected.Count > 1:
+                RemoveStartups([.. selected.Select(one => one.Tag).OfType<StartupEntry>()]);
+                return;
+            case StartupEntry:
+                ChangeSelectedStartup(StartupAction.Remove);
+                return;
+            case ServiceRow:
+                Announce("A service is not ended: Enter shows it, with Stop where it can be stopped", true);
+                return;
+            default:
+                Announce("A list: Right goes into it", true);
+                return;
+        }
+    }
+
+    /// <summary>The menu of the row you are on, whose items Context holds (PR-6.1, AX-9.11).</summary>
+    private ToolStripMenuItem? MenuOf(ItemRow row) => row.Tag switch
+    {
+        ProcessRow => _processMenu,
+        ServiceRow => _serviceMenu,
+        StartupEntry => _startupMenu,
+        _ => _listMenu,
+    };
+
+    /// <summary>The status bar's first part while something is read or done: "Reading…", "Stopping Print Spooler…"; the level's name otherwise.</summary>
+    protected override string? StatusState => _busy;
+
     // ---- what the window base asks for ----
 
     protected override string Shortcuts => HelpText.Shortcuts;
 
-    protected override void HideForNotice() => _list.Visible = false;
-
-    protected override void ShowAfterNotice() => _list.Visible = true;
-
-    protected override Control FocusTarget => _list;
-
-    /// <summary>What an AI tool's act command would act on (docs/axKit/mcp.md MC-7.3): the selected process with its ID, service or startup entry.</summary>
-    protected override AxKit.Core.Mcp.RunTarget McpTarget() => AxKit.Core.Mcp.RunTarget.Of(
-        CurrentProcess() is { } process ? $"the process {process.Name}, ID {process.Id}"
-        : CurrentService() is { } service ? $"the service {service.DisplayName}"
-        : CurrentStartup() is { } startup ? $"the startup program {startup.Name}"
-        : string.Empty);
-
-    protected override void ApplyFont(Font font) => _list.Font = font;
-
+    /// <summary>
+    /// What an AI tool's act command would act on (docs/axKit/mcp.md MC-7.3): the process with its ID, the service or
+    /// the startup program you are on, and the selection with it while there is one, so that the target changes when
+    /// the selection does.
+    /// </summary>
+    protected override AxKit.Core.Mcp.RunTarget McpTarget()
+    {
+        var text = SelectedRow()?.Tag switch
+        {
+            ProcessRow process => $"the process {process.Name}, ID {process.Id}",
+            ServiceRow service => $"the service {service.DisplayName}",
+            StartupEntry startup => $"the startup program {startup.Name}",
+            _ => string.Empty,
+        };
+        return text.Length == 0 ? AxKit.Core.Mcp.RunTarget.None
+            : Selection.Count == 0 ? AxKit.Core.Mcp.RunTarget.Of(text)
+            : new AxKit.Core.Mcp.RunTarget($"{text}, and {Selection.Count} selected", text + "\n" + string.Join("\n", Selection.Keys.Order(StringComparer.OrdinalIgnoreCase)));
+    }
 
     protected override IEnumerable<string> DiagnosticsLines =>
-        [$"View: {_view}, {Current.Labels.Count} items, sorted by {ProcessTable.SortName(_settings.SortBy)}"];
+        [$"Level: {LevelIdentity()}, {Rows.Count} rows, processes sorted by {ProcessTable.SortName(_settings.SortBy)}"];
 
     /// <summary>Ctrl+S, the bundle's save key: nothing to save, and the keys that act said (PR-6.2).</summary>
     protected override void SaveCommand() => Announce("Nothing to save here. F5 refreshes, Delete ends a process", true);
 
     protected override void OnShown(EventArgs e)
     {
-        if (!NoticeOpen)
-        {
-            _list.Select();
-        }
-
         base.OnShown(e);
         Do(() => RefreshAsync(announce: false));
     }
 
+    // ---- the levels and their reads (PR-2.2, PR-2.3) ----
 
-    // ---- keys (PR-6.2): every key comes from BundleKeys or AxProcessKeys, and is a command of the list made above ----
-
-    /// <summary>The view after or before the one shown, round from Startup to Processes (Tab, Shift+Tab; PR-2.2).</summary>
-    private View Cycled(int step) => (View)(((int)_view + step + 3) % 3);
-
-    /// <summary>Shift+F10, the Applications key, a right click (PR-6.1): the bar's Context menu, holding the view's items.</summary>
-    private void OpenViewMenu()
-    {
-        _context.Fill();
-        OpenBarMenu(ContextBarMenu.Letter);
-    }
-
-    /// <summary>The menu of the view shown, whose items Context holds (PR-6.1, AX-9.11); null with nothing selected.</summary>
-    private ToolStripMenuItem? ContextNow() =>
-        _list.SelectedIndex < 0 ? null : _view switch { View.Services => _serviceMenu, View.Startup => _startupMenu, _ => _processMenu };
-
-    /// <summary>Context made again for the view shown.</summary>
-    private void UpdateViewMenus() => _context.Fill();
-
-    // ---- the views (PR-2.2, PR-2.3) ----
-
-    private ListViewState Current => _views[(int)_view];
-
-    /// <summary>F5, the first showing and every command's end: the view shown read again on a background task, the list refilled on the item it had.</summary>
-    private async Task RefreshAsync(bool announce)
+    /// <summary>
+    /// F5, the first showing and every command's end: the list shown read again on a background task and filled
+    /// on the row it was on; at the top, all three lists, so that each row has its count.
+    /// </summary>
+    private async Task RefreshAsync(bool announce, string? select = null)
     {
         if (_busy is not null)
         {
@@ -227,26 +357,37 @@ public sealed class ProcessForm : AxKitForm
             return;
         }
 
-        RememberSelection();
-        if (!await LoadAsync(_view))
+        var level = _level;
+        foreach (var view in level is { } one ? new[] { one } : [View.Processes, View.Services, View.Startup])
         {
-            return;
+            if (!await LoadAsync(view))
+            {
+                return;
+            }
         }
 
-        FillList();
+        // The row you are on now, which may have moved during the read; the one asked for when the level is still the same.
+        Fill(_level == level && select is not null ? select : SelectedKey());
         if (announce)
         {
-            Announce("Refreshed: " + _list.AccessibleName, true);
+            Announce("Refreshed: " + Navigator.AccessibleName, true);
         }
         else if (!_announcedFirstRead)
         {
-            // The list was empty when the window took the focus; its name and first item are said once, not interrupting.
+            // The list was empty when the window took the focus; its name and first row are said once, not interrupting.
             _announcedFirstRead = true;
-            Announce(_list.SelectedItem is string item ? $"{_list.AccessibleName}. {item}" : _list.AccessibleName ?? string.Empty, false);
+            Announce(NameAndRow(), false);
         }
     }
 
-    /// <summary>Reads one view into its record; false when another read runs.</summary>
+    /// <summary>"Processes, 214. chrome, 350 MB, process 1234": the list's name, a full stop, the row you are on.</summary>
+    private string NameAndRow()
+    {
+        var name = Navigator.AccessibleName ?? string.Empty;
+        return Navigator.SelectedItem is string item ? $"{name}. {item}" : name;
+    }
+
+    /// <summary>Reads one list into its rows; false when another read runs.</summary>
     private async Task<bool> LoadAsync(View view)
     {
         if (_busy is not null)
@@ -259,25 +400,22 @@ public sealed class ProcessForm : AxKitForm
         UpdateStatusBar();
         try
         {
-            var state = _views[(int)view];
             switch (view)
             {
                 case View.Processes:
                     var (rows, processor) = await Task.Run(ReadProcesses);
                     _processor = processor;
                     _processes = ProcessTable.Sorted(rows, _settings.SortBy);
-                    state.Set(ProcessTable.ListName(_processes.Count), _processes.Select(row => row.Label), _processes.Select(row => row.Id.ToString()));
                     break;
                 case View.Services:
                     _services = await Task.Run(ServiceManager.List);
-                    state.Set(ServiceRow.ListName(_services.Count), _services.Select(row => row.Label), _services.Select(row => row.Name));
                     break;
                 default:
                     _startup = await Task.Run(StartupList.Read);
-                    state.Set(StartupEntry.ListName(_startup.Count), _startup.Select(entry => entry.Label), _startup.Select(entry => entry.Key));
                     break;
             }
 
+            _loaded[(int)view] = true;
             return true;
         }
         finally
@@ -302,8 +440,12 @@ public sealed class ProcessForm : AxKitForm
         return (ProcessTable.Rows(first, second, watch.Elapsed, Environment.ProcessorCount), SystemTimes.Busy(timesBefore, timesAfter));
     }
 
-    /// <summary>View → Processes, Services, Startup (Alt+1, 2, 3): the list refilled, read on the first visit, and its name said with the item the selection is on.</summary>
-    private async Task ShowViewAsync(View view)
+    /// <summary>
+    /// Into a list: Right or Enter on its row at the top, or Alt+1, 2 and 3 from anywhere. Read on the first
+    /// visit, then shown on the row it was left on, and its name said with that row. The level changes only once
+    /// the read is in, so that the rows shown are always the level's.
+    /// </summary>
+    private async Task ShowListAsync(View view)
     {
         if (_busy is not null)
         {
@@ -311,115 +453,65 @@ public sealed class ProcessForm : AxKitForm
             return;
         }
 
-        RememberSelection();
-        _view = view;
-        if (!Current.Loaded)
+        if (!_loaded[(int)view] && !await LoadAsync(view))
         {
-            if (!await LoadAsync(view))
-            {
-                return;
-            }
+            return;
         }
 
-        FillList();
-        var name = _list.AccessibleName ?? string.Empty;
-        Announce(_list.SelectedItem is string item ? $"{name}. {item}" : name, true);
-    }
-
-    private void FillList()
-    {
-        UpdateViewMenus();
-        Current.FillInto(_list);
-        UpdateStatusBar();
-    }
-
-    private void RememberSelection() => Current.Remember(_list);
-
-    private ProcessRow? CurrentProcess() =>
-        _view == View.Processes && _list.SelectedIndex is var i && i >= 0 && i < _processes.Count ? _processes[i] : null;
-
-    private ServiceRow? CurrentService() =>
-        _view == View.Services && _list.SelectedIndex is var i && i >= 0 && i < _services.Count ? _services[i] : null;
-
-    private StartupEntry? CurrentStartup() =>
-        _view == View.Startup && _list.SelectedIndex is var i && i >= 0 && i < _startup.Count ? _startup[i] : null;
-
-    /// <summary>Whether the list shows the view a command belongs to; otherwise which view first is said (PR-6.2).</summary>
-    private bool InView(View view)
-    {
-        if (_view == view)
+        if (_level is { } from)
         {
-            return true;
+            _kept[(int)from] = SelectedKey();
         }
 
-        Announce(ViewFirst(view), true);
-        return false;
+        _level = view;
+        Fill(_kept[(int)view]);
+        Announce(NameAndRow(), true);
     }
 
-    /// <summary>"Processes view first: Alt+1": the view a command belongs to and its key, from the table.</summary>
-    private static string ViewFirst(View view) => view switch
-    {
-        View.Processes => "Processes view first: " + BundleKeys.Text(AxProcessKeys.ViewProcesses).TrimEnd('.'),
-        View.Services => "Services view first: " + BundleKeys.Text(AxProcessKeys.ViewServices).TrimEnd('.'),
-        _ => "Startup view first: " + BundleKeys.Text(AxProcessKeys.ViewStartup).TrimEnd('.'),
-    };
+    private ProcessRow? CurrentProcess() => SelectedRow()?.Tag as ProcessRow;
 
-    /// <summary>View → Sort processes by (PR-3.2): the rows put in the new order without a new read.</summary>
+    private ServiceRow? CurrentService() => SelectedRow()?.Tag as ServiceRow;
+
+    private StartupEntry? CurrentStartup() => SelectedRow()?.Tag as StartupEntry;
+
+    /// <summary>Options → Sort processes by (PR-3.2): the rows put in the new order without a new read.</summary>
     private void SetSort(ProcessSort sort)
     {
         _settings.SortBy = sort;
         _sortItems.Check(sort);
         SaveSettings();
-        if (_views[(int)View.Processes].Loaded)
+        if (_loaded[(int)View.Processes])
         {
-            if (_view == View.Processes)
-            {
-                RememberSelection();
-            }
-
             _processes = ProcessTable.Sorted(_processes, sort);
-            _views[(int)View.Processes].Set(ProcessTable.ListName(_processes.Count), _processes.Select(row => row.Label), _processes.Select(row => row.Id.ToString()));
-            if (_view == View.Processes)
+            if (_level == View.Processes)
             {
-                FillList();
+                Fill(SelectedKey());
             }
         }
 
         Announce("Sorted by " + ProcessTable.SortName(sort), true);
     }
 
-    // ---- the items (PR-3, PR-4, PR-5) ----
+    // ---- the rows (PR-3, PR-4, PR-5) ----
 
-    /// <summary>Enter, or the Details items: the selected item's notice for the view shown.</summary>
+    /// <summary>Enter, or the Details items: the notice of the row you are on, by its kind.</summary>
     private async Task ActAsync()
     {
-        switch (_view)
+        switch (SelectedRow()?.Tag)
         {
-            case View.Processes:
-                if (CurrentProcess() is not { } row)
-                {
-                    Announce("Nothing selected", true);
-                    return;
-                }
-
+            case ProcessRow row:
                 var lines = await Task.Run(() => SystemInfo.Details(row));
                 ShowNotice(new Notice(row.Name, string.Join("\n", lines),
                 [
-                    new OverlayChoice("&End process...", () => EndProcess(tree: false)),
+                    new OverlayChoice("&End process...", () => EndProcess(row, tree: false)),
                     new OverlayChoice("Show program in ax&File", ShowProgram),
                     new OverlayChoice("&Close", IsDefault: true, IsCancel: true),
                 ]));
                 return;
-            case View.Services:
-                ShowServiceDetails();
+            case ServiceRow service:
+                ShowServiceDetails(service);
                 return;
-            default:
-                if (CurrentStartup() is not { } entry)
-                {
-                    Announce("Nothing selected", true);
-                    return;
-                }
-
+            case StartupEntry entry:
                 ShowNotice(new Notice(entry.Name, string.Join("\n", entry.Details),
                 [
                     entry.Enabled
@@ -430,23 +522,27 @@ public sealed class ProcessForm : AxKitForm
                     new OverlayChoice("&Close", IsDefault: true, IsCancel: true),
                 ]));
                 return;
+            default:
+                Announce("Nothing selected", true);
+                return;
         }
     }
 
-    /// <summary>Delete, Process → End process, End process tree (PR-3.3): a question, then the end on a background task and a new read.</summary>
+    /// <summary>Delete on a process, Context → End process tree (PR-3.3): the process you are on.</summary>
     private void EndProcess(bool tree)
     {
-        if (!InView(View.Processes))
-        {
-            return;
-        }
-
         if (CurrentProcess() is not { } row)
         {
             Announce("Nothing selected", true);
             return;
         }
 
+        EndProcess(row, tree);
+    }
+
+    /// <summary>A question, then the end on a background task and a new read (PR-3.3).</summary>
+    private void EndProcess(ProcessRow row, bool tree)
+    {
         if (row.Id == Environment.ProcessId)
         {
             Announce("That is this window: close it with Alt+F4", true);
@@ -456,43 +552,68 @@ public sealed class ProcessForm : AxKitForm
         var title = tree ? $"End {row.Name} and the processes it started?" : $"End {row.Name} (process {row.Id})?";
         ShowNotice(Notice.Ask(title, "Anything unsaved in it is lost.", tree ? "End process &tree" : "&End process", () => Do(async () =>
         {
-            var said = await Task.Run(() => Kill(row, tree));
+            var (_, said) = await Task.Run(() => Kill(row, tree));
             Announce(said, true);
             await RefreshAsync(announce: false);
         })));
     }
 
-    /// <summary>The end itself, off the UI thread: what to say about it. The ID must still be the same program's, since Windows reuses IDs.</summary>
-    private static string Kill(ProcessRow row, bool tree)
+    /// <summary>
+    /// Delete with several processes selected (PR-3.3a, AX-8.16): one question that names them, then each ended
+    /// on a background task, one sentence for all, "Ended 3 processes", with what could not be ended after it;
+    /// the selection given up and the list read again. This window is never among them.
+    /// </summary>
+    private void EndProcesses(IReadOnlyList<ProcessRow> rows)
+    {
+        if (rows.Any(row => row.Id == Environment.ProcessId))
+        {
+            Announce("This window is among the selected: deselect it first, or close it with Alt+F4", true);
+            return;
+        }
+
+        var names = string.Join(", ", rows.Select(row => $"{row.Name} (process {row.Id})"));
+        ShowNotice(Notice.Ask($"End {rows.Count} processes?", $"Anything unsaved in them is lost.\n{names}", "&End processes", () => Do(async () =>
+        {
+            var results = await Task.Run(() => rows.Select(row => Kill(row, tree: false)).ToList());
+            var ended = results.Count(result => result.Ended);
+            var failed = results.Where(result => !result.Ended).Select(result => result.Said).ToList();
+            Announce(failed.Count == 0 ? $"Ended {ended} processes" : $"Ended {ended} of {rows.Count} processes. {string.Join(". ", failed)}", true);
+            Selection.Clear();
+            await RefreshAsync(announce: false);
+        })));
+    }
+
+    /// <summary>The end itself, off the UI thread: whether it ended, and what to say about it. The ID must still be the same program's, since Windows reuses IDs.</summary>
+    private static (bool Ended, string Said) Kill(ProcessRow row, bool tree)
     {
         try
         {
             using var process = Process.GetProcessById(row.Id);
             if (!process.ProcessName.Equals(row.Name, StringComparison.OrdinalIgnoreCase))
             {
-                return $"{row.Name} has already ended";
+                return (false, $"{row.Name} has already ended");
             }
 
             process.Kill(entireProcessTree: tree);
             process.WaitForExit(5000);
             Log.Info($"Ended {row.Name} ({row.Id}){(tree ? " with its tree" : string.Empty)}");
-            return $"Ended {row.Name}";
+            return (true, $"Ended {row.Name}");
         }
         catch (ArgumentException)
         {
-            return $"{row.Name} has already ended";
+            return (false, $"{row.Name} has already ended");
         }
         catch (InvalidOperationException)
         {
-            return $"{row.Name} has already ended";
+            return (false, $"{row.Name} has already ended");
         }
         catch (Win32Exception ex) when (ex.NativeErrorCode == 5)
         {
-            return $"Could not end {row.Name}: access is denied. It may need administrator rights";
+            return (false, $"Could not end {row.Name}: access is denied. It may need administrator rights");
         }
         catch (Win32Exception ex)
         {
-            return $"Could not end {row.Name}: {ex.Message}";
+            return (false, $"Could not end {row.Name}: {ex.Message}");
         }
     }
 
@@ -501,18 +622,18 @@ public sealed class ProcessForm : AxKitForm
     {
         string? path;
         string name;
-        switch (_view)
+        switch (SelectedRow()?.Tag)
         {
-            case View.Processes when CurrentProcess() is { } row:
+            case ProcessRow row:
                 path = SystemInfo.ProgramPath(row.Id);
                 name = row.Name;
                 break;
-            case View.Startup when CurrentStartup() is { } entry:
+            case StartupEntry entry:
                 path = CommandLine.ProgramOf(entry.Command);
                 name = entry.Name;
                 break;
-            case View.Services:
-                Announce(ViewFirst(View.Processes), true);
+            case ServiceRow:
+                Announce("Show program is for a process or a startup program", true);
                 return;
             default:
                 Announce("Nothing selected", true);
@@ -528,35 +649,30 @@ public sealed class ProcessForm : AxKitForm
         WindowMenu.Start(Dispatch.AxFile, path);
     }
 
+    /// <summary>Ctrl+C: the row's line, without the ", selected" its item may end in.</summary>
     private void CopyLine()
     {
-        if (_list.SelectedItem is not string line)
+        if (SelectedRow() is not { } row)
         {
             Announce("Nothing selected", true);
             return;
         }
 
-        CopyText(line, "Copied");
+        CopyText(row.Label, "Copied");
     }
 
     /// <summary>Ctrl+Q (PR-2.5): the processes of the last read, or counted now, the memory now, the processor of the last read.</summary>
     private void SaySummary()
     {
-        var count = _views[(int)View.Processes].Loaded ? _processes.Count : Process.GetProcesses().Length;
+        var count = _loaded[(int)View.Processes] ? _processes.Count : Process.GetProcesses().Length;
         var (total, available) = SystemInfo.Memory();
         Announce(ProcessTable.Summary(count, total, available, _processor), true);
     }
 
     // ---- services (PR-4) ----
 
-    private void ShowServiceDetails()
+    private void ShowServiceDetails(ServiceRow row)
     {
-        if (CurrentService() is not { } row)
-        {
-            Announce("Nothing selected", true);
-            return;
-        }
-
         var choices = new List<OverlayChoice>();
         if (row.State == ServiceState.Stopped)
         {
@@ -575,11 +691,6 @@ public sealed class ProcessForm : AxKitForm
 
     private void ControlSelectedService(ServiceAction action)
     {
-        if (!InView(View.Services))
-        {
-            return;
-        }
-
         if (CurrentService() is not { } row)
         {
             Announce("Nothing selected", true);
@@ -639,11 +750,6 @@ public sealed class ProcessForm : AxKitForm
 
     private void ChangeSelectedStartup(StartupAction action)
     {
-        if (!InView(View.Startup))
-        {
-            return;
-        }
-
         if (CurrentStartup() is not { } entry)
         {
             Announce("Nothing selected", true);
@@ -708,31 +814,90 @@ public sealed class ProcessForm : AxKitForm
             return;
         }
 
-        // The list read again, in place: the selection stays on the entry, or goes to its neighbour when it is gone.
-        var startup = _views[(int)View.Startup];
-        if (_view == View.Startup)
+        // The list read again, in place: the row stays on the entry, or goes to its neighbour when it is gone.
+        var gone = action == StartupAction.Remove || result.Outcome == StartupOutcome.Gone;
+        var select = _level == View.Startup && gone && SelectedKey() == entry.Key ? neighbour : null;
+        if (await LoadAsync(View.Startup))
         {
-            RememberSelection();
-        }
-
-        if (startup.SelectedKey == entry.Key && (action == StartupAction.Remove || result.Outcome == StartupOutcome.Gone))
-        {
-            startup.SelectedKey = neighbour;
-        }
-
-        if (await LoadAsync(View.Startup) && _view == View.Startup)
-        {
-            FillList();
+            Fill(_level == View.Startup && select is not null ? select : SelectedKey());
         }
     });
 
+    /// <summary>
+    /// Delete with several startup programs selected (PR-5.6a, AX-8.16): what cannot be removed here (an entry of
+    /// the whole computer without administrator rights) is said and stays; one question names the others, Cancel
+    /// the default; each is removed on a background task; one sentence for all, "Removed 3 startup programs", with
+    /// what could not be removed after it; the selection given up and the list read again.
+    /// </summary>
+    private void RemoveStartups(IReadOnlyList<StartupEntry> entries)
+    {
+        var administrator = StartupPlaces.Current.Administrator;
+        var allowed = entries.Where(entry => StartupChange.Refusal(StartupAction.Remove, entry, administrator) is null).ToList();
+        var refused = entries.Except(allowed).ToList();
+        if (allowed.Count == 0)
+        {
+            var first = refused[0];
+            Announce(StartupChange.Said(StartupAction.Remove, first, new StartupResult(StartupChange.Refusal(StartupAction.Remove, first, administrator)!.Value)), true);
+            return;
+        }
+
+        var text = "Each entry is deleted for good from its Run key or its Startup folder, not sent to the Recycle Bin. The programs themselves stay on the computer.\n"
+            + string.Join(", ", allowed.Select(entry => entry.Name));
+        if (refused.Count > 0)
+        {
+            text += $"\nNot removed, since they are the whole computer's and need administrator rights: {string.Join(", ", refused.Select(entry => entry.Name))}";
+        }
+
+        ShowNotice(Notice.Ask($"Remove {Count(allowed.Count, "startup program")} from the programs that start with Windows?", text, "&Remove", () => Do(async () =>
+        {
+            if (_busy is not null)
+            {
+                Announce("Working…", true);
+                return;
+            }
+
+            _busy = $"Removing {Count(allowed.Count, "startup program")}…";
+            UpdateStatusBar();
+            List<(StartupEntry Entry, StartupResult Result)> results;
+            try
+            {
+                results = await Task.Run(() => allowed.Select(entry => (entry, StartupList.Apply(StartupPlaces.Current, entry, StartupAction.Remove))).ToList());
+            }
+            finally
+            {
+                _busy = null;
+                UpdateStatusBar();
+            }
+
+            foreach (var (entry, result) in results)
+            {
+                Log.Info($"Startup entry {entry.Name} ({StartupEntry.PlaceText(entry.Place)}) Remove: {result.Outcome}{(result.Error is { } error ? ", " + error : string.Empty)}");
+            }
+
+            var done = results.Count(one => one.Result.Outcome is StartupOutcome.Done or StartupOutcome.Gone);
+            var failed = results.Where(one => one.Result.Outcome is not (StartupOutcome.Done or StartupOutcome.Gone))
+                .Select(one => StartupChange.Said(StartupAction.Remove, one.Entry, one.Result).TrimEnd('.')).ToList();
+            Announce(failed.Count == 0 ? $"Removed {Count(done, "startup program")}" : $"Removed {done} of {Count(allowed.Count, "startup program")}. {string.Join(". ", failed)}", true);
+            Selection.Clear();
+            if (await LoadAsync(View.Startup))
+            {
+                Fill(SelectedKey());
+            }
+        }), cancelIsDefault: true));
+    }
+
     // ---- the status bar (PR-2.4) ----
 
+    /// <summary>The status bar shown again: what is being done or the level's name on the left, the memory in use on the right.</summary>
     private void UpdateStatusBar()
     {
-        _nameLabel.Text = _busy ?? _list.AccessibleName ?? string.Empty;
+        SetPlace(MemoryText());
+        ShowStatus();
+    }
+
+    private static string MemoryText()
+    {
         var (total, available) = SystemInfo.Memory();
-        _memoryLabel.Text = total > 0 ? $"Memory {Math.Round((total - available) * 100d / total):0}% in use" : string.Empty;
-        StatusLayout.Fit(_status, _nameLabel, _memoryLabel);
+        return total > 0 ? $"Memory {Math.Round((total - available) * 100d / total):0}% in use" : string.Empty;
     }
 }

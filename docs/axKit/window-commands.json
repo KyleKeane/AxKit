@@ -1339,6 +1339,8 @@
     {
       "app": "axProcess",
       "commands": [
+        {"label": "Deselect all", "menu": "Actions", "key": "ctrl+shift+a", "also": ["escape"], "keyText": "Ctrl+Shift+A", "mark": "change", "keyOnly": false, "ai": true},
+        {"label": "Select all", "menu": "Actions", "key": "ctrl+a", "also": [], "keyText": "Ctrl+A", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Summary", "menu": "Actions", "key": "ctrl+q", "also": [], "keyText": "Ctrl+Q", "mark": "read", "keyOnly": false, "ai": true},
         {"label": "Add axKit to Claude Code", "menu": "axKit, AI tools", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": false},
         {"label": "Forget AI tools", "menu": "axKit, AI tools", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": false},
@@ -1357,6 +1359,8 @@
         {"label": "End process", "menu": "Context", "key": "delete", "also": [], "keyText": "Delete", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "End process tree", "menu": "Context", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "Nothing selected", "menu": "Context", "key": "", "also": [], "keyText": "", "mark": "read", "keyOnly": false, "ai": true},
+        {"label": "Select or deselect", "menu": "Context", "key": "space", "also": [], "keyText": "Space", "mark": "change", "keyOnly": false, "ai": true},
+        {"label": "Select to here", "menu": "Context", "key": "shift+space", "also": [], "keyText": "Shift+Space", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Show program in axFile", "menu": "Context", "key": "ctrl+e", "also": [], "keyText": "Ctrl+E", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Command palette", "menu": "Help", "key": "ctrl+shift+p", "also": [], "keyText": "Ctrl+Shift+P", "mark": "read", "keyOnly": false, "ai": true},
         {"label": "Keyboard shortcuts", "menu": "Help", "key": "f1", "also": [], "keyText": "F1", "mark": "read", "keyOnly": false, "ai": true},
@@ -1377,6 +1381,7 @@
         {"label": "Processes", "menu": "Navigation", "key": "alt+1", "also": ["ctrl+1"], "keyText": "Alt+1", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Services", "menu": "Navigation", "key": "alt+2", "also": ["ctrl+2"], "keyText": "Alt+2", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Startup", "menu": "Navigation", "key": "alt+3", "also": ["ctrl+3"], "keyText": "Alt+3", "mark": "open", "keyOnly": false, "ai": true},
+        {"label": "Up to This computer", "menu": "Navigation", "key": "left", "also": [], "keyText": "Left", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Open settings file", "menu": "Options, Developer", "key": "", "also": [], "keyText": "", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Check for updates at start", "menu": "Options, General", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "Memory", "menu": "Options, Sort processes by", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},
@@ -1410,12 +1415,23 @@
         {"label": "axStart", "menu": "Window, New window", "key": "", "also": [], "keyText": "", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "axTask", "menu": "Window, New window", "key": "", "also": [], "keyText": "", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "axTerminal, access layer for your shell", "menu": "Window, New window", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},
-        {"label": "Context menu", "menu": "", "key": "shift+f10", "also": ["ctrl+period", "apps"], "keyText": "Shift+F10", "mark": "open", "keyOnly": true, "ai": false},
+        {"label": "Back to the list", "menu": "", "key": "ctrl+tab", "also": ["ctrl+shift+tab", "f6"], "keyText": "Ctrl+Tab", "mark": "open", "keyOnly": true, "ai": false},
+        {"label": "Delete", "menu": "", "key": "delete", "also": [], "keyText": "Delete", "mark": "act", "keyOnly": true, "ai": false},
         {"label": "Find in the list", "menu": "", "key": "ctrl+f", "also": [], "keyText": "Ctrl+F", "mark": "read", "keyOnly": true, "ai": false},
         {"label": "Find next", "menu": "", "key": "f3", "also": [], "keyText": "F3", "mark": "read", "keyOnly": true, "ai": false},
         {"label": "Find previous", "menu": "", "key": "shift+f3", "also": [], "keyText": "Shift+F3", "mark": "read", "keyOnly": true, "ai": false},
-        {"label": "Next view", "menu": "", "key": "tab", "also": [], "keyText": "Tab", "mark": "open", "keyOnly": true, "ai": false},
-        {"label": "Previous view", "menu": "", "key": "shift+tab", "also": [], "keyText": "Shift+Tab", "mark": "open", "keyOnly": true, "ai": false}
+        {"label": "Into the list", "menu": "", "key": "right", "also": [], "keyText": "Right", "mark": "open", "keyOnly": true, "ai": false},
+        {"label": "Next section", "menu": "", "key": "ctrl+down", "also": [], "keyText": "Ctrl+Down", "mark": "open", "keyOnly": true, "ai": false},
+        {"label": "Open", "menu": "", "key": "enter", "also": [], "keyText": "Enter", "mark": "open", "keyOnly": true, "ai": false},
+        {"label": "Previous section", "menu": "", "key": "ctrl+up", "also": [], "keyText": "Ctrl+Up", "mark": "open", "keyOnly": true, "ai": false},
+        {"label": "Select or deselect", "menu": "", "key": "space", "also": [], "keyText": "Space", "mark": "change", "keyOnly": true, "ai": false},
+        {"label": "Select to here", "menu": "", "key": "shift+space", "also": [], "keyText": "Shift+Space", "mark": "change", "keyOnly": true, "ai": false},
+        {"label": "Select to the first item", "menu": "", "key": "shift+home", "also": [], "keyText": "Shift+Home", "mark": "change", "keyOnly": true, "ai": false},
+        {"label": "Select to the last item", "menu": "", "key": "shift+end", "also": [], "keyText": "Shift+End", "mark": "change", "keyOnly": true, "ai": false},
+        {"label": "Select to the next item", "menu": "", "key": "shift+down", "also": [], "keyText": "Shift+Down", "mark": "change", "keyOnly": true, "ai": false},
+        {"label": "Select to the previous item", "menu": "", "key": "shift+up", "also": [], "keyText": "Shift+Up", "mark": "change", "keyOnly": true, "ai": false},
+        {"label": "The Context menu", "menu": "", "key": "shift+f10", "also": ["ctrl+period", "apps"], "keyText": "Shift+F10", "mark": "open", "keyOnly": true, "ai": false},
+        {"label": "Up a level", "menu": "", "key": "left", "also": ["backspace"], "keyText": "Left", "mark": "open", "keyOnly": true, "ai": false}
       ]
     },
     {

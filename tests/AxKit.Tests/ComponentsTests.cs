@@ -106,7 +106,7 @@ public sealed class ComponentsTests
     {
         using var document = File();
         var owed = Apps(document).Where(app => app.Type.Length == 0).Select(app => app.App).Order(StringComparer.Ordinal).ToList();
-        Assert.Equal(["axCalc", "axFile", "axGIT", "axProcess"], owed);
+        Assert.Equal(["axCalc", "axFile", "axGIT"], owed);
         Assert.All(Apps(document), app => Assert.True(app.ToBe.Length > 0, $"{app.App} does not say which type it is to be."));
     }
 

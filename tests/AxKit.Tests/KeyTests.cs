@@ -262,7 +262,8 @@ public sealed class KeyTests
     {
         string[] known =
         [
-            "Alt+1", "Alt+2", "Alt+3", "Alt+Up", "Ctrl+Down", "Ctrl+J", "Ctrl+M", "Ctrl+Shift+N", "Ctrl+Up", "F2", "Left", "Right", "Shift+Tab", "Tab",
+            "Alt+1", "Alt+2", "Alt+3", "Alt+Up", "Ctrl+Down", "Ctrl+J", "Ctrl+M", "Ctrl+Shift+N", "Ctrl+Up", "F2", "Left", "Right",
+            // Tab and Shift+Tab left this list on 2026-11-22: they went round axProcess's three views until it became a navigator.
             "Apps", "Backspace", "Ctrl+1", "Ctrl+B", "Ctrl+2", "Ctrl+3", "Ctrl+4", "Ctrl+5", "Ctrl+6", "Ctrl+C", "Ctrl+D", "Ctrl+E", "Ctrl+G", "Ctrl+I", "Ctrl+K", "Ctrl+L",
             // Ctrl+Shift+1 to 6: the previous heading of a level in the editors, an action of the list in axTask (forms-framework.md AF-6.1).
             "Ctrl+Shift+1", "Ctrl+Shift+2", "Ctrl+Shift+3", "Ctrl+Shift+4", "Ctrl+Shift+5", "Ctrl+Shift+6",

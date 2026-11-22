@@ -766,28 +766,44 @@ every window" or under a heading that names the windows without it; under an app
 
 ## axProcess
 
+- Deselect all. Menu: Actions. Key: Ctrl+Shift+A. Also: Escape. Mark: change.
+- Select all. Menu: Actions. Key: Ctrl+A. Mark: change.
 - Summary. Menu: Actions. Key: Ctrl+Q. Mark: read.
 - Copy line. Menu: Context. Key: Ctrl+C. Mark: act.
 - Details. Menu: Context. Key: Enter. Mark: read.
 - End process. Menu: Context. Key: Delete. Mark: act.
 - End process tree. Menu: Context. Key: none. Mark: act.
 - Nothing selected. Menu: Context. Key: none. Mark: read.
+- Select or deselect. Menu: Context. Key: Space. Mark: change.
+- Select to here. Menu: Context. Key: Shift+Space. Mark: change.
 - Show program in axFile. Menu: Context. Key: Ctrl+E. Mark: open.
 - Services. Menu: Help, Windows resources. Key: none. Mark: act.
 - Task Manager. Menu: Help, Windows resources. Key: none. Mark: act.
 - Processes. Menu: Navigation. Key: Alt+1. Also: Ctrl+1. Mark: open.
 - Services. Menu: Navigation. Key: Alt+2. Also: Ctrl+2. Mark: open.
 - Startup. Menu: Navigation. Key: Alt+3. Also: Ctrl+3. Mark: open.
+- Up to This computer. Menu: Navigation. Key: Left. Mark: open.
 - Memory. Menu: Options, Sort processes by. Key: none. Mark: change.
 - Name. Menu: Options, Sort processes by. Key: none. Mark: change.
 - Processor. Menu: Options, Sort processes by. Key: none. Mark: change.
 - Refresh. Menu: Session. Key: F5. Mark: read.
-- Context menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
+- Back to the list. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
+- Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
 - Find previous. Menu: none, a key alone. Key: Shift+F3. Mark: read. Never run by AI tools.
-- Next view. Menu: none, a key alone. Key: Tab. Mark: open. Never run by AI tools.
-- Previous view. Menu: none, a key alone. Key: Shift+Tab. Mark: open. Never run by AI tools.
+- Into the list. Menu: none, a key alone. Key: Right. Mark: open. Never run by AI tools.
+- Next section. Menu: none, a key alone. Key: Ctrl+Down. Mark: open. Never run by AI tools.
+- Open. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
+- Previous section. Menu: none, a key alone. Key: Ctrl+Up. Mark: open. Never run by AI tools.
+- Select or deselect. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
+- Select to here. Menu: none, a key alone. Key: Shift+Space. Mark: change. Never run by AI tools.
+- Select to the first item. Menu: none, a key alone. Key: Shift+Home. Mark: change. Never run by AI tools.
+- Select to the last item. Menu: none, a key alone. Key: Shift+End. Mark: change. Never run by AI tools.
+- Select to the next item. Menu: none, a key alone. Key: Shift+Down. Mark: change. Never run by AI tools.
+- Select to the previous item. Menu: none, a key alone. Key: Shift+Up. Mark: change. Never run by AI tools.
+- The Context menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
+- Up a level. Menu: none, a key alone. Key: Left. Also: Backspace. Mark: open. Never run by AI tools.
 
 ## axStart
 

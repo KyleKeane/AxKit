@@ -170,11 +170,19 @@ public abstract partial class ItemForm : AxKitForm
         return _context.Menu;
     }
 
-    /// <summary>The bar's Context menu in a navigator whose rows are all of one kind, without lists and without the second pane (axMedia's queue): the one menu of what acts on the row.</summary>
-    protected ToolStripMenuItem CreateContextMenu(ToolStripMenuItem item)
+    /// <summary>The menu of a row by its kind, in a window made with <see cref="CreateContextMenu(Func{ItemRow, ToolStripMenuItem}, ToolStripMenuItem[])"/>.</summary>
+    private Func<ItemRow, ToolStripMenuItem?>? _menuOf;
+
+    /// <summary>
+    /// The bar's Context menu in a navigator without the second pane, whose rows are of the app's own kinds
+    /// (axMedia's files, one menu; axProcess's lists, processes, services and startup programs, four): Context
+    /// holds the menu <paramref name="menuOf"/> gives for the row you are on. <paramref name="menus"/> are all of
+    /// them, kept off the bar.
+    /// </summary>
+    protected ToolStripMenuItem CreateContextMenu(Func<ItemRow, ToolStripMenuItem?> menuOf, params ToolStripMenuItem[] menus)
     {
-        _rowMenu = item;
-        _context = new ContextBarMenu(ContextNow, NothingToActOn, said => Announce(said, true), item);
+        _menuOf = menuOf;
+        _context = new ContextBarMenu(ContextNow, NothingToActOn, said => Announce(said, true), menus);
         return _context.Menu;
     }
 
@@ -200,6 +208,7 @@ public abstract partial class ItemForm : AxKitForm
         return SelectedRow() switch
         {
             null or { IsSection: true } => null,
+            var row when _menuOf is not null => _menuOf(row),
             { IsList: true } => _listMenu,
             _ => _rowMenu,
         };

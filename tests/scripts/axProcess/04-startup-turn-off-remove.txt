@@ -128,12 +128,12 @@ expect focus Startup, 2
 expect focus Check Everyone, enabled, computer's Run key
 run if exist "home\AxKit\startup\yours\Check Morning.lnk" (exit 1) else (exit 0)
 
-# Check: Ending a process from the Services view says which view first
-# PR-6.2 Delete in the Services view is still the Processes view's command, and says which view first.
+# Check: Delete on a service says that a service is not ended
+# PR-6.2 Delete acts by the kind of row: a process is ended, a startup program removed, a service neither.
 keys alt+2
 expect said ! Services,
 keys delete
-expect said ! Processes view first: Alt+1
+expect said ! A service is not ended: Enter shows it, with Stop where it can be stopped
 
 # Check: The stand-in's registry key is deleted at the end
 # The stand-in's key deleted: nothing of the run is left in the registry.

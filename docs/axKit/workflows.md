@@ -730,7 +730,7 @@ Steps and keys: `docs/axKit/workflows/axProcess.md` (in Claude's working folder:
     - Go back from the services to the processes
     - Show the startup programs
     - Read the keyboard shortcuts
-    - Move through the views one after another
+    - Go up to This computer and into another list
     - Find a service by typing its name
 3. **Find a process by typing its name and read a startup program's details**
     - Find a process by typing its name
@@ -745,6 +745,10 @@ Steps and keys: `docs/axKit/workflows/axProcess.md` (in Claude's working folder:
 5. **End a process with the processes it started**
     - Find a process and go to the next and the previous match
     - End a process with the processes it started
+6. **Select several processes or startup programs and end or remove them together**
+    - Select two processes with Space and Shift+Down
+    - End the selected processes together
+    - Select two startup programs and remove them together
 
 ## axStart
 

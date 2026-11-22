@@ -34,7 +34,6 @@ public sealed partial class CommandMarkTests
         (Path.Combine("src", "AxProcess", "ProcessForm.cs"), "&Copy line", "writes the user's clipboard"),
         (Path.Combine("src", "AxProcess", "ProcessForm.cs"), "Turn &off", "changes what starts with Windows"),
         (Path.Combine("src", "AxProcess", "ProcessForm.cs"), "Turn o&n", "changes what starts with Windows"),
-        (Path.Combine("src", "AxProcess", "ProcessForm.cs"), "&Remove...", "deletes an entry of what starts with Windows"),
     ];
 
     [Fact]
@@ -83,6 +82,11 @@ public sealed partial class CommandMarkTests
     /// </summary>
     private static readonly (string File, string Text, string Why)[] PinnedActItems =
     [
+        // axProcess as a navigator (2026-11-22): Delete is the item window's command, itself marked act (the next
+        // line), and the two menu items that show the key state act as well.
+        (Path.Combine("src", "AxKit.Forms", "ItemForm.cs"), "Shared(new Command(\"Delete\", ItemKeys.Delete, () => WithRow(DeleteRow)) { When = InNavigator, Mark = CommandMark.Act });", "a navigator's Delete archives, removes, ends a process or deletes a startup entry"),
+        (Path.Combine("src", "AxProcess", "ProcessForm.cs"), "Item(\"&End process...\", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act)", "ends a process"),
+        (Path.Combine("src", "AxProcess", "ProcessForm.cs"), "Item(\"&Remove...\", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act)", "deletes an entry of what starts with Windows"),
         (Path.Combine("src", "AxKit.Forms", "ConsoleForm.cs"), "CommandMark.Act, SwitchFolder", "a console's recent folder starts Claude Code or a shell again"),
         (Path.Combine("src", "AxKit.Forms", "ConsoleForm.cs"), "CommandMark.Act, OpenInNewWindow", "starts Claude Code or a shell in a new window"),
         (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "v => Settings.CheckForUpdates = v, CommandMark.Act", "turns a network contact on"),

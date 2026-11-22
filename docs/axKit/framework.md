@@ -29,8 +29,8 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
   window, the editor, the navigator, the hotkey window. A fifth, the graph, comes much later and is not started.
 - **An app adds only** its data (what the rows or the text are, how they are read and written), its commands on
   them, its keys, and its message passing with the program under it.
-- **Today** thirteen apps are on a type and four have windows of their own (axFile, axGIT, axProcess, axCalc);
-  axMedia, the fifth when this was written, is a navigator since 2026-11-22. The work is to move those four, to
+- **Today** fourteen apps are on a type and three have windows of their own (axFile, axGIT, axCalc); axMedia and
+  axProcess, the other two when this was written, are navigators since 2026-11-22. The work is to move those three, to
   make every list of items the one selectable list, and to lift what two apps of one type still do each in their
   own code into the type.
 - **Held by tests**, not by memory: which classes a window may derive from, which controls it may hold, and that
@@ -111,12 +111,20 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
   opens the row (goes in, or does the row's own opening), Space selects, Ctrl+Enter is the app's main action,
   Delete removes, F2 renames where rows have names, Escape gives up a selection, then a filter, then goes back
   from the second pane. Every pane key switches panes.
-- Apps today: axTask, axPass, axMCP, axAutomate, axMedia. **To move onto it**: axFile, axGIT, axProcess.
+- Apps today: axTask, axPass, axMCP, axAutomate, axMedia, axProcess. **To move onto it**: axFile, axGIT.
 - FW-4.6 **No views.** axGIT and axProcess each show three contents in one list today, changed with Alt+1 to
   Alt+3 (and Tab in axProcess). In the navigator those are three rows of the top level that one goes into with
   Right: in axGIT Changes, History and Branches; in axProcess Processes, Services and Startup. The count of each
   is in its row, as a list's count is in axTask. So a second way of changing what a list shows goes, and with it
   its keys. Each level keeps the row one was on, as levels do.
+  **Built for axProcess on 2026-11-22** (step 7): `ProcessForm` derives from `ItemForm`. The window starts inside
+  Processes, so that the common use costs no key; Left goes up to "This computer, 3 lists". Tab no longer goes
+  round the three. Alt+1, 2 and 3 are kept, as jumps straight into a list from anywhere, like axTask's keys to a
+  list (my reading of the decision below: what goes is the second way of changing what the list shows, and a jump
+  to a level is not one; they are a line of the step's item for the maintainer's word, and of the key map's
+  audit, step 16). Reading off the UI thread needed nothing new in the type: the app turns the type's own way
+  into a list down with an empty reason (`EntryRefused`), reads, and only then sets the level and fills. Space
+  selects processes and startup programs, and Delete acts on all the selected after one question.
 - FW-4.7 **What the type must gain to take them**, each from the app that has it today:
   1. Reading a level off the UI thread, a late answer dropped, "reading" as a state (axFile, axGIT, axProcess).
   2. The second pane as one of three kinds, or none: the fields of the row (today's detail pane), a text to read
@@ -182,7 +190,7 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
 | axAutomate | navigator | navigator | the workflows, running them |
 | axFile | its own window | navigator, a log as second pane | file operations and their undo, the shell, the clipboard, zip, favourites, drives |
 | axGIT | its own window | navigator, three levels, a text as second pane | running git, the repository's trust, its commands |
-| axProcess | its own window | navigator, three levels, no second pane | reading processes, services and startup; ending and changing them |
+| axProcess | navigator | navigator, three levels, no second pane | reading processes, services and startup; ending and changing them |
 | axMedia | navigator | navigator, one level, no second pane: a queue and its controls | the player, the hand-over of files, the video |
 | axCalc | its own window | conversation | the evaluator, variables, bases |
 | axStart | hotkey | hotkey | finding programs, starting them |
@@ -234,6 +242,7 @@ NVDA pass recorded. A piece that changes what a user does updates the app's spec
 6. axMedia: the queue as a navigator of one level; Space selects, Ctrl+Enter plays and pauses, Delete takes the
    selected rows out (FW-4.9). Built, 2026-11-22.
 7. axProcess: three levels, Processes, Services, Startup; Space selects, Delete ends or removes the selected.
+   Built, 2026-11-22.
 8. axGIT, made simple: three levels and a text pane; Space selects files, staging on the selected, Ctrl+Enter
    commits (FW-4.10).
 9. axCalc onto the conversation window: the field and the results above it.

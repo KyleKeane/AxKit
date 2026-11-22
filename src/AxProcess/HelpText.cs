@@ -13,17 +13,19 @@ public static class HelpText
             "Ctrl+F: find an item in the list. F3 and Shift+F3: next or previous match",
         ]) + """
         ## axProcess
-          Alt+1, Alt+2, Alt+3: the Processes, Services and Startup view of the list; pressed on the view already shown, the key says its name. Ctrl+1, Ctrl+2 and Ctrl+3, their keys until now, still work
-          Tab, Shift+Tab: the next or the previous view, round from Startup to Processes
-          F5: read the view again; nothing changes by itself
+          The window starts in Processes, one of three lists of This computer: Processes, Services and Startup
+          Left or Backspace: up to This computer, where the three lists are rows. Right or Enter on one: into it
+          Alt+1, Alt+2, Alt+3: straight to Processes, Services or Startup from anywhere; pressed in the list already shown, the key says its name. Ctrl+1, Ctrl+2 and Ctrl+3, their keys until now, still work
+          F5: read the list again; nothing changes by itself. At This computer, all three
           Ctrl+Q: the summary: the processes, the memory in use, the processor
-          Type the start of an item to jump to it, the same letter again to the next; Shift with a letter backwards
-          In the list
-            Enter: the item's details, with what can be done to it: end a process, start or stop a service, turn a startup program off or on, remove it
-            Delete: end the process, after a question; in the Startup view, remove the startup program, after a question whose default is Cancel
-            Context, Turn off and Turn on, in the Startup view: the startup program no longer starts with Windows, or starts again; nothing is deleted
-            Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on the line selected in the view shown
-            Up or Home on the first item, Down or End on the last: the edge sound, since nothing moves
+          Type the start of a row to jump to it, the same letter again to the next; Shift with a letter backwards
+          In a list
+            Enter: the row's details, with what can be done to it: end a process, start or stop a service, turn a startup program off or on, remove it
+            Delete: end the process, after a question; in Startup, remove the startup program, after a question whose default is Cancel. With rows selected, all of them after one question: "Ended 3 processes"
+            Space: select the process or startup program you are on, or deselect it again; a selected row reads ", selected". Shift+Down, Shift+Up, Shift+Home, Shift+End: select as you move. Shift+Space: select from the nearest selected row to this one. Ctrl+A: select every row. Ctrl+Shift+A, or Escape: deselect all. Services are not selected
+            Context, Turn off and Turn on, in Startup: the startup program no longer starts with Windows, or starts again; nothing is deleted
+            Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on the row you are on
+            Up or Home on the first row, Down or End on the last, Right on a row that is no list, Left at This computer: the edge sound, since nothing moves
           Ctrl+E: show the program file in axFile
           Ctrl+C: copy the line
           Ctrl+S: nothing to save here; axProcess says so

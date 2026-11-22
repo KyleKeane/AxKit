@@ -10,10 +10,12 @@ documents, "SPEC.md" means this file.
 ## 1. Summary
 
 Task Manager answers "what is using the memory", "what hangs", "what starts with Windows", but its lists are grids
-that NVDA reads in part, and its columns move. axProcess is one window with one list and three views: the running
-**processes** with their memory and processor use, the **services** with their state, and the programs that
-**start** at sign-in. Arrows explore; Enter shows an item's details with what can be done to it; Delete ends a
-process after a question, and in the Startup view removes a startup program after one; a startup program is turned
+that NVDA reads in part, and its columns move. axProcess is one window with one list that shows one of three lists of this
+computer: the running **processes** with their memory and processor use, the **services** with their state, and
+the programs that **start** at sign-in. The window is a navigator, as axTask's and axMedia's (PR-2.2): the three are
+rows of the top level, "This computer", and it starts inside Processes. Arrows explore; Enter shows a row's details
+with what can be done to it; Space selects processes and startup programs; Delete ends a process after a question,
+and in Startup removes a startup program after one, with rows selected all of them; a startup program is turned
 off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by itself: F5 reads the computer again
 (PR-D2).
 
@@ -62,14 +64,24 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
 
 ### PR-2 The window
 
-- PR-2.1 From the top: the menu bar; the list, named with its view and count ("Processes, 214", "Services, 280",
-  "Startup, 9"); the status bar. A notice takes the list's place while it shows (AX-6.4). The focus starts in the list.
-- PR-2.2 Views: Alt+1 Processes, Alt+2 Services, Alt+3 Startup (Navigation; Ctrl+1, Ctrl+2 and Ctrl+3, the keys until 2026-11-16, stay as further keys of the same commands for now, shown in no menu, with nothing extra said (bundle AX-8.14).), and Tab and Shift+Tab to the next and the
-  previous view, round from Startup to Processes (the window has one control; the user's ask, 2026-10-24). The key says the list's name and the
-  item the selection is on, also when the list already shows the view (axClaude D26). A view is read the first time it
-  shows and on F5; each keeps its selection by the item's key (the process ID, the service's name, the startup entry's
-  name and place) across a refresh, as axGIT's views do (AG-2.2).
-- PR-2.3 F5 reads the view shown again, on a background task (AX-7.5), and says "Refreshed: <the list's name>".
+- PR-2.1 From the top: the menu bar; the list, named with what it shows and its count ("Processes, 214", "Services,
+  280", "Startup, 9"; "This computer, 3 lists" at the top); the status bar. A notice takes the list's place while it shows (AX-6.4). The focus starts in the list.
+- PR-2.2 **Levels** (a navigator, the bundle's item window, `docs/axKit/framework.md` FW-4.6; since 2026-11-22, three
+  views of one list until then, PR-D1). The top level, "This computer, 3 lists", has three rows, Processes, Services
+  and Startup, each with its count once it has been read ("Processes, 214"). Right or Enter on one goes into it; Left
+  or Backspace in a list goes up, onto the list left ("This computer, 3 lists, Processes, 214"); Left at the top and
+  Right on a row of a list play the edge sound. The window starts inside Processes, so that the common use costs no
+  key. Alt+1 Processes, Alt+2 Services and Alt+3 Startup go straight into a list from anywhere (Navigation; Ctrl+1,
+  Ctrl+2 and Ctrl+3, the keys until 2026-11-16, stay as further keys of the same commands for now, shown in no menu,
+  with nothing extra said, bundle AX-8.14); the key says the list's name and the row you are on, "Startup, 9.
+  OneDrive, enabled, …", also when that list already shows (axClaude D26). Tab and Shift+Tab, which went round the
+  three views until 2026-11-22 (the user's ask of 2026-10-24), are the bundle's focus keys and come back to the
+  list, as in every navigator without a second pane. A list is read the first time it is gone into and on F5; each
+  keeps the row it was left on by its key (the process ID, the service's name, the startup entry's name and place),
+  across a refresh and across a visit to another list. Space selects processes and startup programs (bundle
+  AX-8.16; PR-3.3a, PR-5.6a); a service is not selected, since nothing here acts on several services, and says so.
+- PR-2.3 F5 reads the list shown again, on a background task (AX-7.5), and says "Refreshed: <the list's name>"; at
+  This computer it reads all three, so that each row has its count.
   While a read runs the status bar says "Reading…" and a second F5 says "Working…".
 - PR-2.4 The title is "This computer - axProcess". The status bar's left label is the list's name, the right one the
   memory in use ("Memory 57% in use"). No AccessibleName, no Spring (`StatusLayout`).
@@ -92,6 +104,12 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
   processes it started?". A process that is already gone says "<name> has already ended"; one Windows refuses says
   "Could not end <name>: access is denied. It may need administrator rights". axProcess's own process is refused:
   "That is this window: close it with Alt+F4".
+- PR-3.3a **Several processes** (2026-11-22, AX-8.16). With two or more processes selected, Delete asks once, "End 3
+  processes?", with "Anything unsaved in them is lost." and each by its name and process ID; End processes ends each
+  on a background task and says one sentence, "Ended 3 processes", or "Ended 2 of 3 processes." with the sentence of
+  each that could not be ended; the selection is given up and the list read again. With this window among the
+  selected nothing is asked: "This window is among the selected: deselect it first, or close it with Alt+F4". End
+  process tree acts on the row you are on alone.
 - PR-3.4 Enter, or Context → Details, shows a notice titled with the process's name: the process ID, the memory, the
   processor use, the program file, the start time and the number of threads, each on its own line, those Windows lets
   the user read; with the buttons End process, Show program in axFile and Close (the default and the cancel button).
@@ -139,7 +157,7 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
   Manager's Startup apps tab, or Settings, Apps, Startup" ("turning it on" for Turn on; for Remove, "removing it
   needs administrator rights. Task Manager's Startup apps tab, or Settings, Apps, Startup, turns it off"), with no
   question before it. An axProcess that was started as an administrator acts on them as on the user's own.
-- PR-5.6 **Remove** (Delete in the Startup view, Context, the details' button) takes the entry out for good, after a
+- PR-5.6 **Remove** (Delete in Startup, Context, the details' button) takes the entry out for good, after a
   question: the notice "Remove <name> from the programs that start with Windows?" with the lines "Command <command>",
   "Set in <place>", what is deleted ("The entry is deleted from the Run key for good. The program itself stays on
   the computer.", or for a Startup folder "The file in the Startup folder is deleted for good, not sent to the
@@ -150,6 +168,15 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
   of the same name made later is not off from its first day. The file is deleted, not sent to the Recycle Bin: the
   bundle's one Recycle Bin operation is axFile's own (`AxFile.Core`), which another app may not reference (bundle
   5.3); when it moves to the shared code, Remove uses it and the question's line changes.
+- PR-5.6a **Several startup programs** (2026-11-22, AX-8.16). With two or more selected, Delete asks once, "Remove 3
+  startup programs from the programs that start with Windows?", with what is deleted ("Each entry is deleted for
+  good from its Run key or its Startup folder, not sent to the Recycle Bin. The programs themselves stay on the
+  computer.") and their names; an entry that cannot be removed here (the whole computer's, without administrator
+  rights, PR-5.5) is named in a line of its own, "Not removed, since …", and stays; with only such entries selected
+  nothing is asked and PR-5.5's sentence is said. Remove (Alt+R) and Cancel, Cancel the default. Each is removed on a
+  background task; one sentence, "Removed 3 startup programs", or "Removed 2 of 3 startup programs." with the
+  sentence of each that was not; the selection is given up and the list read again. Turn off and Turn on act on the
+  row you are on alone.
 - PR-5.7 **One sentence per command, the list in place.** The change runs on a background task (the status bar says
   "Turning off <name>…" meanwhile, a second command "Working…"); then one announcement: "<name> turned off: it no
   longer starts with Windows", "<name> turned on: it starts with Windows again", "<name> removed from the programs
@@ -179,11 +206,14 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
 ### PR-6 Menus, keys, texts
 
 - PR-6.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** Refresh F5 | ─ | Exit Alt+F4.
-  **Actions (A):** Summary Ctrl+Q. **Navigation (N):** Processes Alt+1 | Services Alt+2 | Startup Alt+3.
-  **Context (C)**, what acts on the line selected, by the view shown (AX-9.11): in Processes, Details Enter | End
-  process… Delete | End process tree… | Show program in axFile Ctrl+E | Copy line Ctrl+C; in Services, Details Enter |
-  Start | Stop | Restart | Copy line Ctrl+C; in Startup, Details Enter | Turn off | Turn on | Remove… Delete | Show
-  program in axFile Ctrl+E | Copy line Ctrl+C; "Nothing selected" on an empty list. So a process command is never at hand among the services and the
+  **Actions (A):** Summary Ctrl+Q | ─ | Select all Ctrl+A | Deselect all Ctrl+Shift+A. **Navigation (N):** Processes
+  Alt+1 | Services Alt+2 | Startup Alt+3 | ─ | Up to This computer Left.
+  **Context (C)**, what acts on the row you are on, by its kind (AX-9.11): on a process, Details Enter | End
+  process… Delete | End process tree… | Show program in axFile Ctrl+E | Copy line Ctrl+C | ─ | Select or deselect
+  Space | Select to here Shift+Space; on a service, Details Enter | Start | Stop | Restart | Copy line Ctrl+C; on a
+  startup program, Details Enter | Turn off | Turn on | Remove… Delete | Show program in axFile Ctrl+E | Copy line
+  Ctrl+C | ─ | Select or deselect Space | Select to here Shift+Space; on a list of This computer, Open Enter | Copy
+  line Ctrl+C; "Nothing selected" on an empty list. So a process command is never at hand among the services and the
   reverse (the user's ask, 2026-10-24; until 2026-11-11 three menus of which only the view's was enabled).
   **Options (O):** Sort processes by ▸ (Memory ✓ | Processor | Name) | Text ▸ | General ▸ | Developer ▸. **Window (W)**,
   **axKit (K)** (AX-9.1). **Help (H):** Keyboard shortcuts F1 | User guide | ─ | Windows resources ▸ (Task Manager |
@@ -191,13 +221,16 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
   Context, as Alt and C open it, so that NVDA reads its first item (the window base's `OpenBarMenu`, axFile's AF-D13;
   2026-10-24).
 - PR-6.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, Ctrl+F, F3, Shift+F3, Ctrl+S ("Nothing to save here. F5
-  refreshes, Delete ends a process"), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxProcessKeys`): Alt+1 (with Ctrl+1, Ctrl+2, Ctrl+3 as further keys of the three views, AX-8.14),
-  Alt+2, Alt+3, Tab, Shift+Tab, F5, Enter, Delete, Ctrl+E, Ctrl+C, Ctrl+Q, Shift+F10 and the Applications key, and Up,
-  Down, Home and End at the ends of the list. Enter and Delete act while the list has the focus. Delete
-  is one key and two commands, by the view shown: Remove in the Startup view (PR-5.6), End process in the other two
-  (which in the Services view says "Processes view first: Alt+1", as before). A
-  command of one view asked for in another says which view first: "Processes view first: Alt+1", "Services view first:
-  Alt+2", "Startup view first: Alt+3". End process, End process tree, Start, Stop, Restart, Turn off, Turn on, Remove
+  refreshes, Delete ends a process"), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxProcessKeys`): Alt+1 (with Ctrl+1, Ctrl+2, Ctrl+3 as further keys of the three lists, AX-8.14),
+  Alt+2, Alt+3, F5, Ctrl+E, Ctrl+C, Ctrl+Q, and the navigator's keys (`ItemKeys`, `SelectionKeys`), named in the
+  table by what they do here: Right, Left, Backspace, Enter, Delete, Space and the other selection keys, Shift+F10
+  and the Applications key, with Up, Down, Home and End at the ends of the list. They act while the list has the
+  focus. F2, Ctrl+Z, Ctrl+N and Ctrl+Shift+N, a navigator's rename, undo and new, are no keys of this window, which
+  has no use for them. Delete acts by the kind of row: End process on a process (PR-3.3), Remove on a startup
+  program (PR-5.6), each on all the selected rows when there are several; on a service "A service is not ended:
+  Enter shows it, with Stop where it can be stopped"; on a list of This computer "A list: Right goes into it".
+  Ctrl+E on a service says "Show program is for a process or a startup program". (Until 2026-11-22 a command of one
+  view asked for in another said which view first, "Processes view first: Alt+1".) End process, End process tree, Start, Stop, Restart, Turn off, Turn on, Remove
   and Copy line are marked act (`CommandMark.Act`): an AI tool asks the user before it runs one (`docs/axKit/mcp.md`
   MC-7.3).
 - PR-6.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axProcess/user-guide.md` is embedded (Help, User
@@ -207,12 +240,14 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
 
 - PR-7.1 `%APPDATA%\AxKit\axProcess.json` (AX-5.3; `ProcessSettings`): `fontFamily`, `fontSize`, `fontBold`,
   `checkForUpdates`, `window`, `sortBy` (`memory`, `processor` or `name`).
-- PR-7.2 Announcements, one UI Automation notification each (AX-7.3): the view's name with the selected item;
+- PR-7.2 Announcements, one UI Automation notification each (AX-7.3): the list's name with the row you are on; the
+  level's name with the list left, on the way up; the selection's words (AX-8.16) and the sentences of PR-3.3a and
+  PR-5.6a;
   "Refreshed: <name>"; "Working…"; the summary; "Ended <name>", "<name> has already ended", the refusals of PR-3.3;
   "Started", "Stopped", "Restarted <display name>", "<display name> is still starting" and the refusals of PR-4.3;
   the sentences of PR-5.7 for a startup program turned off, turned on or removed and of PR-5.5 for one of the whole
-  computer; "Sorted by memory", "Sorted by processor", "Sorted by name"; "Copied"; "Nothing selected"; "Processes view
-  first: Alt+1", "Services view first: Alt+2", "Startup view first: Alt+3"; "Not found" (find); the bundle's text size and diagnostics announcements.
+  computer; "Sorted by memory", "Sorted by processor", "Sorted by name"; "Copied"; "Nothing selected"; the three
+  refusals of PR-6.2; "Not found" (find); the bundle's text size and diagnostics announcements.
   Nothing is spoken on an arrow key.
 - PR-7.3 The log is `%LOCALAPPDATA%\AxKit\logs\axProcess.log`: the start, the exit, every process ended, every
   service started or stopped and every startup program turned off, turned on or removed, by its name with what it
@@ -241,6 +276,11 @@ docs/axProcess/        this spec, user-guide.md (embedded), nvda-test-plan.md
 ## 6. Design decisions
 
 - **PR-D1 One list with views**, as axGIT (AG-D3): one control to learn, the view's name said on its key.
+  **Replaced on 2026-11-22 by levels** (PR-2.2): the bundle is consolidated onto a few window types
+  (`docs/axKit/framework.md`), and in the navigator a second content of the list is a level one goes into, not a
+  view one switches to (FW-4.6, the maintainer's word on the framework's decisions the same day). Still one
+  control; the list's name is still said on Alt+1, 2 and 3, which stay. What it costs: Tab no longer goes round the
+  three, which is written into the step's item for the maintainer's word.
 - **PR-D2 No refresh on a timer.** Task Manager's lists change every second, which moves what a screen reader is
   reading; F5 reads again on the user's word, and every command that changes something reads again after it.
 - **PR-D3 The processor use over one second.** One reading of a process's processor time says nothing; two, a
@@ -274,3 +314,6 @@ docs/axProcess/        this spec, user-guide.md (embedded), nvda-test-plan.md
 - 2026-11-14: Turn off, Turn on and Remove in the Startup view (PR-5.4 to PR-5.8), with unit tests and the check
   script `tests/scripts/axProcess/04-startup-turn-off-remove.txt`, run on the test desktop; not yet heard under NVDA
   (test plan section 4, steps 4 to 9).
+- 2026-11-22: the window is a navigator (PR-2.2, framework step 7): the three views are three lists of This
+  computer, Space selects processes and startup programs, Delete acts on all the selected (PR-3.3a, PR-5.6a). The
+  check scripts hold it, `06-select-several.txt` the selection.

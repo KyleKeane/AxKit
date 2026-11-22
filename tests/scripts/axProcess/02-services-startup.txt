@@ -29,12 +29,14 @@ expect state State running
 keys escape
 expect state "notice":null
 
-# Check: A command of the Processes view in the Services view says which view first
-# 3.3 A command of the Processes view in the Services view says which view first.
+# Check: Delete, Show program and Space on a service say why they do not act
+# 3.3 A service is not ended, has no program to show here and is not selected; each key says so.
 keys delete
-expect said ! Processes view first: Alt+1
+expect said ! A service is not ended: Enter shows it, with Stop where it can be stopped
 keys ctrl+e
-expect said ! Processes view first: Alt+1
+expect said ! Show program is for a process or a startup program
+keys space
+expect said ! Services are not selected: nothing here acts on several of them
 
 # Goal: Go back from the services to the processes
 # 3.4 Alt+2 again names the view; Alt+1 back to the processes.
@@ -67,17 +69,24 @@ expect state Alt+1, Alt+2, Alt+3
 keys escape
 expect state "notice":null
 
-# Goal: Move through the views one after another
-# 2.2 Tab and Shift+Tab go round the views, said as their keys say them.
+# Goal: Go up to This computer and into another list
+# 2.2 The three lists are rows of This computer (docs/axKit/framework.md FW-4.6): Left goes up, onto the list left,
+# and at the top plays the edge sound; Right, or Enter, goes into the list you are on; Backspace is Left.
 keys alt+1
 expect said ! Processes,
-keys tab
+keys left
+expect said ! This computer, 3 lists, Processes,
+keys left
+expect said ♪ Edge
+keys down
+expect focus Services,
+keys right
 expect said ! Services,
-keys tab
-expect said ! Startup,
-keys tab
-expect said ! Processes,
-keys shift+tab
+keys backspace
+expect said ! This computer, 3 lists, Services,
+keys end
+expect focus Startup,
+keys enter
 expect said ! Startup,
 
 # Check: Only the menu of the view shown is enabled

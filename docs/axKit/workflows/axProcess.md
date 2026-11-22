@@ -71,16 +71,20 @@ Starts with: Open axProcess.
 1. Press F1 (Keyboard shortcuts; Help menu).
 2. Press Escape.
 
-### Move through the views one after another
+### Go up to This computer and into another list
 
 1. Press Alt+1 (Processes; Navigation menu).
-2. Press Tab.
+2. Press Left.
+    You hear words such as: This computer, 3 lists, Processes.
+3. Press Left.
+    You hear the sound Edge.
+4. Press Down.
+5. Press Right.
     You hear words such as: Services.
-3. Press Tab.
-    You hear words such as: Startup.
-4. Press Tab.
-    You hear words such as: Processes.
-5. Press Shift+Tab.
+6. Press Backspace.
+    You hear words such as: This computer, 3 lists, Services.
+7. Press End.
+8. Press Enter.
     You hear words such as: Startup.
 
 ### Find a service by typing its name
@@ -164,3 +168,31 @@ Starts with: Open axProcess.
 1. Choose End process tree in the Context menu.
 2. Press Enter.
     You hear: Ended axkitscript05a.
+
+## Select several processes or startup programs and end or remove them together
+
+Starts with: Open axProcess.
+
+### Select two processes with Space and Shift+Down
+
+1. Press Ctrl+F (Find in the list).
+2. Type: axkitscript06
+3. Press Enter.
+4. Press Space.
+    You hear: Selected.
+5. Press Shift+Down.
+
+### End the selected processes together
+
+1. Press Delete.
+2. Press Enter.
+    You hear: Ended 2 processes.
+
+### Select two startup programs and remove them together
+
+1. Press Alt+3 (Startup; Navigation menu).
+    You hear: Startup, 4. Check Alpha, enabled, current user's Run key.
+2. Press Space.
+    You hear: Selected.
+3. Press Shift+Down.
+4. Press Delete.

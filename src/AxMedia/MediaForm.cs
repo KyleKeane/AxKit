@@ -118,7 +118,7 @@ public sealed partial class MediaForm : ItemForm
         ]);
 
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
-        PlaceMenuBar(_menu, queue, play, navigation, CreateContextMenu(file), options, help);
+        PlaceMenuBar(_menu, queue, play, navigation, CreateContextMenu(_ => file, file), options, help);
 
         // ---- the list (AM-2.1): the navigator, the one control; its own keys stay native ----
         Navigator.DoubleClick += (_, _) => PlaySelected();
