@@ -190,6 +190,12 @@ whatever `enabled` says and under high contrast too, since none of it is a colou
   Options, Text, Sound on headings in any window writes it as TH-6.5 does (`Theme.SetHeadingSound`), says "Sound on
   headings on" or "Sound on headings off", and every other window takes it when next activated (TH-3.2). The template
   carries it beside `sayNewLine`; a value that is not `true` or `false` is on and counted (TH-6.3).
+- TH-6.7 `display.openingSounds` (true by default; 2026-11-22, bundle AX-7.11): whether a form, a list to choose
+  from, a field to type in or a text to read that opens in a window at the user's command plays the sound of its
+  kind first, in every window. Options, Text, Sounds when something opens in any window writes it as TH-6.5 does
+  (`Theme.SetOpeningSounds`), says "Sounds when something opens on" or "off", and every other window takes it when
+  next activated (TH-3.2). The template carries it beside `headingSound`; a value that is not `true` or `false` is
+  on and counted (TH-6.3).
 
 ## 5. Architecture
 

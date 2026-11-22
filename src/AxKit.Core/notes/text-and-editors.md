@@ -3,7 +3,7 @@
 - `TypedLineBreak` (AX-7.8, 2026-11-11): whether a key put a line break into a field, from the text and selection as
   the key went down and the text and caret after it (the selection replaced by a line break, an indent after it
   allowed, the caret after that), and `Said`, "new line"; `AxKit.Forms/AxKitTextBox` asks it. The setting is the theme
-  file's `display.sayNewLine` (`Theme.SayNewLine`, `SetSayNewLine`, TH-6.5); the heading sound's switch beside it is `display.headingSound` (`Theme.HeadingSound`, `SetHeadingSound`, TH-6.6). Tested in `TypedLineBreakTests`.
+  file's `display.sayNewLine` (`Theme.SayNewLine`, `SetSayNewLine`, TH-6.5); the heading sound's switch beside it is `display.headingSound` (`Theme.HeadingSound`, `SetHeadingSound`, TH-6.6), and the switch of the sounds of what opens `display.openingSounds` (`Theme.OpeningSounds`, `SetOpeningSounds`, TH-6.7, bundle AX-7.11). Tested in `TypedLineBreakTests`.
 - `TextModes` (AX-8.13, 2026-11-15): the words of the mode key ("Edit mode", "Navigation mode", "Read only: there is no edit mode here", the menu refusal "Navigation mode: press Ctrl+Space to edit", the status part and the key test's words) and the rule of navigation mode by virtual key code and modifiers (`InNavigation`: `Refused` for what types or deletes, pastes, cuts, undoes or sends; `Passes` for moves, copy and every other command), with `CharacterAllowed` for the control's own guard. `AxKit.Forms/AxKitTextBox` and the window base apply it. Tested in `TextModesTests`.
 - `Paragraphs`: where Ctrl+Up and Ctrl+Down go in a text with `\r\n` line ends: the starts of its paragraphs, the
   first line or a line with text after a blank line, for `AxKit.Forms.EditKeys.Paragraph`.

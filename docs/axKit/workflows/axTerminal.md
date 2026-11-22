@@ -384,21 +384,24 @@ Starts with: Open axTerminal with the folder work\myproject.
 ### Add a shell of your own
 
 1. Choose Add a shell in the Session menu.
+    You hear the sound FormOpen.
+    You hear: Add a shell, form.
+2. Press Ctrl+Q (What is running; Actions menu).
     You hear: A shell of your own: the name Switch shell and the New session notice show for it.
-2. Press Enter.
+3. Press Enter.
     You hear the sound Edge.
     You hear: Type a name.
-3. Type: Command Prompt
-4. Press Enter.
+4. Type: Command Prompt
+5. Press Enter.
     You hear: A shell named Command Prompt is already there.
-5. Press Ctrl+A.
-6. Type: Test cmd
-7. Press Enter.
+6. Press Ctrl+A.
+7. Type: Test cmd
+8. Press Enter.
     You hear: Type the command line.
-8. Type: cmd.exe /k
-9. Press Tab 2 times.
-10. Press Shift+Tab 2 times.
-11. Press Ctrl+Enter (Send the command).
+9. Type: cmd.exe /k
+10. Press Tab 2 times.
+11. Press Shift+Tab 2 times.
+12. Press Ctrl+Enter (Send the command).
     You hear: Added Test cmd.
 
 ### Switch to a shell of your own

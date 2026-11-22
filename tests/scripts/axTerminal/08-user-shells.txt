@@ -20,7 +20,12 @@ refuse commands No shells of your own yet
 menu Add a shell
 expect state "notice":"Add a shell"
 expect focus "name":"Type the shell's name"
-expect said A shell of your own: the name Switch shell and the New session notice show for it
+# The form's sound, its title and the one word (bundle AX-7.11); its explanation is read on Ctrl+Q, not at opening.
+expect said ♪ FormOpen
+expect said Add a shell, form
+refuse said A shell of your own: the name Switch shell and the New session notice show for it
+keys ctrl+q
+expect said ! A shell of your own: the name Switch shell and the New session notice show for it
 keys enter
 expect said ♪ Edge
 expect said Type a name

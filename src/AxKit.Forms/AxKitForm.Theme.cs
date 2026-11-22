@@ -89,6 +89,74 @@ public abstract partial class AxKitForm
     }
 
     /// <summary>
+    /// Options, Text, Sounds when something opens (AX-7.11, TH-6.7, 2026-11-22): the same kind of item as Sound on
+    /// headings, the theme file's <c>display.openingSounds</c>.
+    /// </summary>
+    private ToolStripMenuItem CreateOpeningSoundsItem(ToolStripMenuItem textMenu)
+    {
+        var item = CommandPalette.Marked(new ToolStripMenuItem("Sounds when something &opens", null, (_, _) => ToggleOpeningSounds()) { Checked = _theme?.OpeningSounds ?? true }, CommandMark.Change);
+        CommandPalette.RefreshedOnOpening(textMenu, () => item.Checked = _theme?.OpeningSounds ?? true);
+        return item;
+    }
+
+    private void ToggleOpeningSounds()
+    {
+        var on = !(_theme?.OpeningSounds ?? true);
+        if (Theme.SetOpeningSounds(AppPaths.ThemeFile, on) is { } problem)
+        {
+            Failed("Theme file", "The theme file could not be changed: " + problem);
+            return;
+        }
+
+        LoadTheme();
+        Announce(on ? "Sounds when something opens on" : "Sounds when something opens off", true);
+    }
+
+    /// <summary>
+    /// The kind a notice opens as (AX-7.11), by what it holds: a form (several controls of the window's own), a list
+    /// to choose from, a field to type in (the notice's own, or a text box of the window's), otherwise a text to
+    /// read. None for a notice that only waits on work (its progress bar).
+    /// </summary>
+    private static EventKind? OpeningOf(Notice notice) =>
+        notice.Progress ? null
+        : notice.Custom is FormControls ? EventKind.FormOpened
+        : notice.Custom is AxKitList ? EventKind.ListOpened
+        : notice.Input is not null || notice.Custom is TextBoxBase ? EventKind.FieldOpened
+        : notice.Custom is not null ? EventKind.FormOpened
+        : EventKind.TextOpened;
+
+    /// <summary>
+    /// Something opened in the window at the user's own command (AX-7.11): the sound of its kind, unless Sounds when
+    /// something opens is off. Called as it opens, so that the sound starts before NVDA reads what opened. A list's
+    /// rename box in place calls it too (<see cref="AxKitList.BeginRename"/>). As the file was read at the window's
+    /// last activation, like Sound on headings.
+    /// </summary>
+    protected internal void SoundOnOpening(EventKind? kind)
+    {
+        if (kind is null || !(_theme?.OpeningSounds ?? true))
+        {
+            return;
+        }
+
+        // Each raised by its name, so that the door and its test know which it was.
+        switch (kind)
+        {
+            case EventKind.FormOpened:
+                EventDoor.Raise(EventKind.FormOpened);
+                break;
+            case EventKind.ListOpened:
+                EventDoor.Raise(EventKind.ListOpened);
+                break;
+            case EventKind.FieldOpened:
+                EventDoor.Raise(EventKind.FieldOpened);
+                break;
+            case EventKind.TextOpened:
+                EventDoor.Raise(EventKind.TextOpened);
+                break;
+        }
+    }
+
+    /// <summary>
     /// The user's own key moved onto a heading (AX-7.9): the heading sound, unless Sound on headings is off. Called
     /// on the key, before the control's own move, so that the sound starts before NVDA reads the heading. As the file
     /// was read at the window's last activation, like Say new line.

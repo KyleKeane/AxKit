@@ -63,6 +63,30 @@ is the variant.
 | A plain key in navigation mode with no command | a wooden bonk, 70 ms, falling from 420 towards 260 Hz with a wood block's overtone | exists (`Sounds.Unassigned`), chosen by ear 2026-11-16 |
 | A value changed by Right or Left in a list of fields | proposed: a rise of one step for the next value, a fall of one step for the previous | proposed, with the forms paradigm |
 
+### 2a. Openings: a way of working starts (built 2026-11-22)
+
+What opens in the window at the user's own command says its kind with a sound, before NVDA reads it (SPEC
+AX-7.11). Chosen by the maintainer's ear from sets played to him: the knock scale of class 4 below, a character
+for each kind, and the same after a shared mark; then a second round in one voice. His words: "the interaction
+mode change should be a quickly rising set of beeps and then the type of interaction could be a descending
+earcon"; "a field that can take text has more of an extended tone and items should be discrete beeps, and the
+form that mixes both should have both"; "a set of distinctive tones and beeps that are only for this type of
+information".
+
+Pattern: small bell pings, a voice no other class uses. Every sound begins with the same mark, three quick beeps
+running up a chord; then its kind, going down.
+
+| What opened | Sound | State |
+|---|---|---|
+| A field to type in (a name asked for, Find, the palette, a rename in place) | the mark, then one extended tone, A4 | exists (`Sounds.FieldOpen`) |
+| A text to read (a help text, a question's words, an answer) | the mark, then one extended tone an octave lower, A3 | exists (`Sounds.TextOpen`) |
+| A list to choose from | the mark, then four quick beeps going down by steps | exists (`Sounds.ListOpen`) |
+| A form | the mark, then beep, beep, tone, and the same lower; 0.7 s | exists (`Sounds.FormOpen`) |
+
+Not chosen and kept: three other marks (a struck fifth, D5 and A5 at once; a flip, E6 then A5; a small gong, a
+low D4 with a bright tap), a list of four beeps on one pitch, and a form of a tone, three beeps over it and a
+lower tone. The knock scale stays a proposal for class 4, what asks by itself.
+
 ### 3. Turns: where the conversation stands
 
 Pattern: one to three smooth notes at an even, unhurried pace (about ninety milliseconds a note), the last one held
@@ -145,6 +169,7 @@ Pattern: soft sustained chords in a slow loop while Claude works (plucked notes 
 |---|---|---|
 | 1. Tick | struck noise, one or two | nothing |
 | 2. Move | two notes run together, very short | carry on |
+| 2a. Opening | bell beeps running up, then the kind going down | work the way that kind works: type, read, choose, or Tab through a form |
 | 3. Turn | one to three even notes, last one held | wait, or type |
 | 4. Ask | knocks on one note; the count is how much is asked | one: read; two: pick; three: type; more: a form |
 | 5. Code | five gliding swoops | decide with care |

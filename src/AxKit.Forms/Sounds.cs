@@ -244,6 +244,13 @@ internal static class Sounds
     // An octave where the recall rises a fourth and the edge falls, and over before NVDA starts speaking.
     private static readonly Sound HeadingTick = new(WaveTone.Notes(0.45, (392, 30), (783.99, 55)));
 
+    // The four sounds of a way of working starting (AX-7.11, chosen by ear 2026-11-22): bell pings, three beeps up and
+    // then the kind going down. The samples are AxKit.Core's, Audio/OpeningSounds.
+    private static readonly Sound FormOpenTone = new(OpeningSounds.Form());
+    private static readonly Sound ListOpenTone = new(OpeningSounds.List());
+    private static readonly Sound FieldOpenTone = new(OpeningSounds.Field());
+    private static readonly Sound TextOpenTone = new(OpeningSounds.Text());
+
     // G5, C6 up to a held E6, and once more: longer and louder than the chimes, so that Claude finishing or asking is
     // heard from another window, where the done chime was missed (axClaude FR-7.3).
     private static readonly Sound AlertChime = new(WaveTone.Notes(0.6, (783.99, 100), (1046.5, 100), (1318.5, 300), (0, 200), (783.99, 100), (1046.5, 100), (1318.5, 500)));
@@ -268,7 +275,7 @@ internal static class Sounds
     private static readonly Sound?[,] BackgroundChords = new Sound?[AmbientSounds.ChordNames.Count, AmbientSounds.MostThings];
     private static readonly bool[,] BackgroundChordsBeingMade = new bool[AmbientSounds.ChordNames.Count, AmbientSounds.MostThings];
 
-    private static readonly Device Chimes = new("sounds", [LineTick, ToolPop, ReadyChime, SentChime, RespondingChime, DoneChime, QuestionChime, NoticeChime, OfferChime, EdgeTick, RecallTick, HeadingTick, AlertChime, BackgroundStartTone, BackgroundFinishTone, NavKeyClick, NothingTone, UnassignedKnock]);
+    private static readonly Device Chimes = new("sounds", [LineTick, ToolPop, ReadyChime, SentChime, RespondingChime, DoneChime, QuestionChime, NoticeChime, OfferChime, EdgeTick, RecallTick, HeadingTick, AlertChime, BackgroundStartTone, BackgroundFinishTone, NavKeyClick, NothingTone, UnassignedKnock, FormOpenTone, ListOpenTone, FieldOpenTone, TextOpenTone]);
     private static readonly Device Music = new("working music", WorkingMusic);
 
     // The recurring chords of background work, 4.6 s each, on a third device of their own: on the chimes' device
@@ -389,6 +396,18 @@ internal static class Sounds
 
     /// <summary>A low note leaping an octave: the user's key moved onto a heading (AX-7.9), played before NVDA reads it.</summary>
     public static void Heading() => Play("Heading", () => Chimes.Play(HeadingTick, replace: true));
+
+    /// <summary>A form opened (AX-7.11): the mark, then beeps and tones going down, the most complex of the four.</summary>
+    public static void FormOpen() => Play("FormOpen", () => Chimes.Play(FormOpenTone, replace: true));
+
+    /// <summary>A list to choose from opened (AX-7.11): the mark, then four quick beeps going down.</summary>
+    public static void ListOpen() => Play("ListOpen", () => Chimes.Play(ListOpenTone, replace: true));
+
+    /// <summary>A field to type in opened (AX-7.11): the mark, then one extended tone.</summary>
+    public static void FieldOpen() => Play("FieldOpen", () => Chimes.Play(FieldOpenTone, replace: true));
+
+    /// <summary>A text to read opened (AX-7.11): the mark, then one low extended tone.</summary>
+    public static void TextOpen() => Play("TextOpen", () => Chimes.Play(TextOpenTone, replace: true));
 
     /// <summary>A longer, louder call, three rising notes to a held one and again: Claude is done or asks while the window is in the background.</summary>
     public static void Alert() => Play("Alert", () => Chimes.Play(AlertChime, replace: true));

@@ -57,6 +57,11 @@ public abstract partial class AxKitForm
                     break;
             }
         }
+        else if (!notice.Unprompted && !notice.Silent)
+        {
+            // AX-7.11: what the user's own command opened plays the sound of its kind, before NVDA reads it.
+            SoundOnOpening(OpeningOf(notice));
+        }
 
         if (!NoticeOpen && !_chaining)
         {
@@ -243,14 +248,19 @@ public abstract partial class AxKitForm
     /// A form (AX-8.10): a notice whose text is the form's explanation, with the window's <paramref name="controls"/>
     /// under it in Tab order, then <paramref name="button"/>, the default button, and Cancel. Whatever asks more than
     /// one thing for one action is asked this way, once, never as one question after another. The focus starts in
-    /// the first control, ready to type, and the explanation is said once, after NVDA has read that control. Enter
+    /// the first control, ready to type, with the form's sound (AX-7.11), and after NVDA has read that control the
+    /// window says the title and the one word "form": "Move 2 items, form". The explanation is not said at opening
+    /// (the maintainer's wish of 2026-11-22, "just the essential info when the cursor moves"): Ctrl+Q reads it, and
+    /// Shift+Tab from the first control goes to it. <paramref name="sayText"/> is for the two forms whose text is
+    /// not how a form is used but what will happen, which must be heard: what a report sends and to whom, and what
+    /// an action written in a file will do (bundle rule 11); there the text is said after the word. Enter
     /// presses the default button from a one-line box, a list or a check box, and makes a new line in a box of several
     /// lines (the text then says the keys itself, and no line made from the buttons follows it); Ctrl+Enter presses
     /// the default button from any control (<see cref="BundleKeys.MainAction"/>); Escape cancels and nothing is kept.
     /// <paramref name="missing"/>, asked before the button acts, names the control that still needs something and
     /// what to say: the focus goes there with the edge sound, and the form stays open.
     /// </summary>
-    protected internal void ShowForm(string title, string text, FormControls controls, string button, Action act, Func<(Control Field, string Said)?>? missing = null, Action? cancelled = null)
+    protected internal void ShowForm(string title, string text, FormControls controls, string button, Action act, Func<(Control Field, string Said)?>? missing = null, Action? cancelled = null, bool sayText = false)
     {
         ShowNotice(new Notice(title, text,
         [
@@ -273,13 +283,18 @@ public abstract partial class AxKitForm
                 return false;
             },
         });
-        // After the notice's own FocusStart, which lands on the notice's text, never on a control of the window's own.
+        // The notice's own FocusStart put the focus in the form's first control; here, once that has happened and
+        // NVDA reads the control, the title and the word, queued after it and never over it.
         BeginInvoke(() =>
         {
             if (NoticeOpen && ReferenceEquals(Overlay.Shown?.Custom, controls))
             {
-                controls.FocusFirst();
-                Announce(text, false);
+                if (!controls.ContainsFocus)
+                {
+                    controls.FocusFirst();
+                }
+
+                Announce(sayText ? $"{title}, form. {text}" : $"{title}, form", false);
             }
         });
     }

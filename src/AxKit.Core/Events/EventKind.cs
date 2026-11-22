@@ -57,6 +57,18 @@ public enum EventKind
     /// <summary>Something opened at your command.</summary>
     Opened,
 
+    /// <summary>A form opened in the window at your command: several things asked for one action (AX-7.11).</summary>
+    FormOpened,
+
+    /// <summary>A list to choose one of opened in the window at your command (AX-7.11).</summary>
+    ListOpened,
+
+    /// <summary>One field to type in opened at your command: a name, a search, a rename in place (AX-7.11).</summary>
+    FieldOpened,
+
+    /// <summary>A text to read opened in the window at your command: a help text, a question's words, an error (AX-7.11).</summary>
+    TextOpened,
+
     /// <summary>The command started work that takes time.</summary>
     Busy,
 
@@ -194,6 +206,12 @@ public enum EventSound
     Nothing,
     Unassigned,
     Recall,
+
+    /// <summary>The four sounds of a way of working starting (AX-7.11): bell pings, a run of beeps up and then the kind going down.</summary>
+    FormOpen,
+    ListOpen,
+    FieldOpen,
+    TextOpen,
     Ready,
     Sent,
     Responding,

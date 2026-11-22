@@ -163,6 +163,9 @@ keys ctrl+m
 expect state "notice":"Move 2 items"
 expect focus "name":"Choose the list"
 expect focus Later
+# The form's sound, then its title and the one word; no explanation at opening (bundle AX-7.11).
+expect said ♪ FormOpen
+expect said Move 2 items, form
 keys enter
 expect said ! 2 items moved to Later
 run cmd /c if exist "tasks\Later\Call the plumber.json" (exit 0) else (exit 1)

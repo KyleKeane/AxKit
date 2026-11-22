@@ -43,6 +43,7 @@ every window" or under a heading that names the windows without it; under an app
 - Say new line. Menu: Options, Text. Key: none. Mark: change.
 - Smaller text. Menu: Options, Text. Key: Ctrl+Minus. Mark: change.
 - Sound on headings. Menu: Options, Text. Key: none. Mark: change.
+- Sounds when something opens. Menu: Options, Text. Key: none. Mark: change.
 - Windows text size. Menu: Options, Text. Key: none. Mark: change.
 - Close all windows. Menu: Window. Key: none. Mark: act.
 - Say the status. Menu: Window. Key: F8. Mark: read.
@@ -265,6 +266,7 @@ every window" or under a heading that names the windows without it; under an app
 - Say new line. Menu: Options, Text. Key: none. Mark: change. Never run by AI tools.
 - Smaller text. Menu: Options, Text. Key: Ctrl+Minus. Mark: change. Never run by AI tools.
 - Sound on headings. Menu: Options, Text. Key: none. Mark: change. Never run by AI tools.
+- Sounds when something opens. Menu: Options, Text. Key: none. Mark: change. Never run by AI tools.
 - Windows text size. Menu: Options, Text. Key: none. Mark: change. Never run by AI tools.
 - Hide. Menu: Session. Key: Escape. Mark: change. Never run by AI tools.
 - Quit axClip. Menu: Session. Key: none. Mark: act. Never run by AI tools.
@@ -638,6 +640,7 @@ every window" or under a heading that names the windows without it; under an app
 - Say new line. Menu: Options, Text. Key: none. Mark: change. Never run by AI tools.
 - Smaller text. Menu: Options, Text. Key: Ctrl+Minus. Mark: change. Never run by AI tools.
 - Sound on headings. Menu: Options, Text. Key: none. Mark: change. Never run by AI tools.
+- Sounds when something opens. Menu: Options, Text. Key: none. Mark: change. Never run by AI tools.
 - Windows text size. Menu: Options, Text. Key: none. Mark: change. Never run by AI tools.
 - Back up now. Menu: Session. Key: none. Mark: act. Never run by AI tools.
 - Exit. Menu: Session. Key: Alt+F4. Mark: act. Never run by AI tools.

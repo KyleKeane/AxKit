@@ -75,6 +75,28 @@ public sealed class ThemeTests
         Directory.Delete(Path.GetDirectoryName(path)!, recursive: true);
     }
 
+    /// <summary>TH-6.7, AX-7.11 (2026-11-22): Sounds when something opens, on without a file or a key, written beside the other display settings.</summary>
+    [Fact]
+    public void Sounds_when_something_opens_are_on_by_default_and_written_beside_what_is_there()
+    {
+        Assert.True(Theme.Read("""{ "format": "axkit-theme 1" }""", out _)!.OpeningSounds);
+        Assert.Contains("\"openingSounds\": true", Theme.Template());
+        var odd = Theme.Read("""{ "format": "axkit-theme 1", "display": { "openingSounds": 1 } }""", out _);
+        Assert.True(odd!.OpeningSounds);
+        Assert.Equal(["display.openingSounds"], odd.NotUnderstood);
+
+        var path = Path.Combine(Path.GetTempPath(), "axkit-tests", Guid.NewGuid().ToString("N"), "theme.json");
+        Assert.Null(Theme.SetHeadingSound(path, false));
+        Assert.Null(Theme.SetOpeningSounds(path, false));
+        var both = Theme.Load(path, out _)!;
+        Assert.False(both.OpeningSounds);
+        Assert.False(both.HeadingSound);
+        Assert.Null(Theme.SetOpeningSounds(path, true));
+        Assert.True(Theme.Load(path, out _)!.OpeningSounds);
+        Assert.False(Theme.Load(path, out _)!.HeadingSound);
+        Directory.Delete(Path.GetDirectoryName(path)!, recursive: true);
+    }
+
     /// <summary>TH-6.6, AX-7.9 (2026-11-11): Sound on headings, on without a file or a key, written beside the other display settings.</summary>
     [Fact]
     public void Sound_on_headings_is_on_by_default_and_written_beside_what_is_there()

@@ -106,6 +106,8 @@ expect focus size, choice, medium
 # Enter on the choice: its values as a list, the one it has selected; Down and Enter choose another.
 keys enter
 expect state "notice":"Change size"
+# A list to choose from opened: its sound, before NVDA reads it (bundle AX-7.11).
+expect said ♪ ListOpen
 expect state Now medium. Up and Down move through the list, Enter chooses.
 expect list "items":["small","medium","large"],"selected":1
 keys down

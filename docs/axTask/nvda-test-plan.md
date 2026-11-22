@@ -25,7 +25,7 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
 8. Tab on a list: "Details of Home", "Section, text, empty", "Notes, long text, empty", then "Fields of its items:
    Done, Start, Due, Priority". Enter on that line: the notice "Fields of its items", which says that Ctrl+J on the list
    opens its configuration in axJSON; Escape.
-9. On Shopping, Ctrl+M: the form "Move Shopping", the focus in the list "Choose the section" on Your lists, then its explanation said once; End, "A new section", Enter: the edge sound, "Type the section's name", the focus in the field "Type the new section's name, when you chose A new section", the form still open; type `Errands`, Enter: "Moved
+9. On Shopping, Ctrl+M: the form "Move Shopping", the focus in the list "Choose the section" on Your lists, then the form's sound and "Move Shopping, form" (its explanation on Ctrl+Q, bundle AX-7.11); End, "A new section", Enter: the edge sound, "Type the section's name", the focus in the field "Type the new section's name, when you chose A new section", the form still open; type `Errands`, Enter: "Moved
    Shopping to Errands"; it is under the heading "Errands, heading level 2, 1 list". Ctrl+Shift+N there, type `Garden`: "Made
    Garden", in Errands too. Tab on Garden, Enter on Section, delete the text, Enter: back in Your lists.
 10. Make a task in Home titled `Call @Sam about #garden !urgent`, Left: under Smart lists, "Tags, heading level 2, 3
@@ -230,9 +230,10 @@ The runner's scripts are `tests/scripts/axTask/16-convert-earlier-format.txt` an
 
 The runner's script is `tests/scripts/axTask/18-item-form.txt`.
 
-1. Enter on Fix the tap: "Fields of Fix the tap", the focus in an edit box named "Type the title" holding the title,
-   then the form's explanation once: the fields in the order of the list, Tab, Ctrl+Enter, Escape. Listen that NVDA
-   reads the box first and the explanation after it, not over it.
+1. Enter on Fix the tap: the form's sound, the focus in an edit box named "Type the title" holding the title, then
+   "Fields of Fix the tap, form". Listen that NVDA reads the box first and the words after it, not over it, and
+   that the explanation is not read. Ctrl+Q: the explanation, the fields in the order of the list, Tab, Ctrl+Enter,
+   Escape.
 2. Tab through: "Done, check box, not checked"; "Type Start: a date such as …", an edit box; "Type Due: …"; "Choose
    Priority, list" on its option or on "Not chosen"; then Save and Cancel. Each is read by NVDA as the control it is.
    Shift+Tab goes back the same way.
@@ -272,8 +273,29 @@ The runner's script is `tests/scripts/axTask/20-selection.txt`.
 8. Select one, Left, Right: nothing is selected; Ctrl+Enter: "Done: <the item>".
 9. With two selected, Enter: the form of the item you are on, not of the selected ones.
 10. Select two, Ctrl+M: "Move 2 items", the focus in the list "Choose the list" on the first other list, then the
-    form's explanation. Enter: "2 items moved to Later". Ctrl+Z: "Undone: 2 items moved to Later".
+    form's sound and "Move 2 items, form"; Ctrl+Q reads the explanation. Enter: "2 items moved to Later". Ctrl+Z: "Undone: 2 items moved to Later".
 11. On one item with nothing selected, Ctrl+M, End: "A new list". Enter without a name: the edge sound, "Type the
     list's name", the focus in the name's field. Type a name, Enter: "<item> moved to <name>"; the new list is among
     the lists with the same fields. Ctrl+Z: the item is back and the list is gone.
 12. On a list at the top level, Ctrl+M: "Move <list>", the sections, as before.
+
+## 12. What opens says its kind (bundle AX-7.11)
+
+The runner's script is `tests/scripts/axTask/21-what-opens.txt`. The sounds are bell notes: three quick beeps running
+up, then the kind going down.
+
+1. F1: the mark and one low long tone, then NVDA reads the text. Ctrl+Q: the text is read again from its start.
+   Escape.
+2. Ctrl+F: the mark and one long tone, higher than the text's, then NVDA reads the field. Escape. F2 on an item: the
+   same sound, then "New name, edit". Escape.
+3. A list to choose from, which axTask opens rarely since an item's choices are in its form: in axMCP, Enter on a
+   tool's argument that is a choice ("Change size"): the mark and four quick beeps going down, then NVDA reads the
+   list. Escape. Its script is `tests/scripts/axMCP/03-numbers-choices-restart-agreement.txt`.
+4. Ctrl+M on an item: the mark, then beeps and tones, the longest of the four; NVDA reads "Choose the list, list" and
+   its line; then "Move Fix the tap, form" and nothing more. Ctrl+Q: the explanation. Escape.
+5. Listen across the four that they are told apart at once, that each is over before the words matter, and that none
+   is mistaken for the heading sound, the edge, a question's sound or the sound of background work starting.
+6. Options, Text, Sounds when something opens: "Sounds when something opens off"; F1, Ctrl+F and Ctrl+M open in
+   silence, the form still saying its title and "form". Again: "on".
+7. A notice that opens by itself (an update offer, an error at start) still plays the notice sound and not one of
+   these.

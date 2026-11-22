@@ -123,7 +123,7 @@ The item's form:
   line, a list or a check box. A title you changed renames the item and its file, and the links to it follow.
 - Escape leaves the form and nothing is changed. A value a field does not take ("30 Febuary") is said with the focus
   in its box, and the form stays open.
-- What the item keeps that its list does not name is said with the form's explanation.
+- What the item keeps that its list does not name is in the form's explanation, which Ctrl+Q reads.
 
 In the detail pane, which stays for reading:
 

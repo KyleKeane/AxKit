@@ -695,9 +695,12 @@ Starts with: Open axTask with the folder tasks.
 ### Open an item's form and move through its fields
 
 1. Press Enter.
+    You hear the sound FormOpen.
+    You hear: Fields of Fix the tap, form.
+2. Press Ctrl+Q (Read in full; Context menu).
     You hear: The fields of Fix the tap, in the order of its list.
     You hear: 1 more field kept: Sprint.
-2. Press Tab 8 times.
+3. Press Tab 8 times.
 
 ### Change several fields of an item and save them as one step
 
@@ -896,6 +899,8 @@ Starts with: Open axTask with the folder tasks.
 3. Press Space.
     You hear: Selected, 2 selected.
 4. Press Ctrl+M.
+    You hear the sound FormOpen.
+    You hear: Move 2 items, form.
 5. Press Enter.
     You hear: 2 items moved to Later.
 6. Press Ctrl+Z (Undo; Actions menu).
@@ -912,3 +917,43 @@ Starts with: Open axTask with the folder tasks.
     You hear: Buy paint moved to Someday.
 6. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Buy paint moved to Someday.
+
+## Hear what kind of thing opened
+
+Starts with: Open axTask with the folder tasks.
+
+### Hear that a text to read opened
+
+1. Press F1 (Keyboard shortcuts; Help menu).
+    You hear the sound TextOpen.
+2. Press Escape.
+
+### Hear that a field to type in opened
+
+1. Press Ctrl+F (Find in the list).
+    You hear the sound FieldOpen.
+2. Press Escape.
+3. Press F2.
+    You hear the sound FieldOpen.
+4. Press Escape.
+
+### Hear that a form opened, and its explanation only on demand
+
+1. Press Ctrl+M.
+    You hear the sound FormOpen.
+    You hear: Move Fix the tap, form.
+2. Press Ctrl+Q (Read in full; Context menu).
+    You hear: Now in Home. Up and Down choose the list.
+3. Press Escape.
+
+### Turn the sounds of what opens off and on
+
+1. Choose Sounds when something opens in the Options menu, Text.
+    You hear: Sounds when something opens off.
+2. Press F1 (Keyboard shortcuts; Help menu).
+3. Press Escape.
+4. Choose Sounds when something opens in the Options menu, Text.
+    You hear: Sounds when something opens on.
+5. Press F1 (Keyboard shortcuts; Help menu).
+    You hear the sound TextOpen.
+6. Press Escape.

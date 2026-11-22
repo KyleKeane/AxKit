@@ -285,6 +285,8 @@ public class AxKitList : ListBox
             Controls.Add(_renameBox);
         }
 
+        // AX-7.11: a field to type in opened, in place: its sound through the window, which knows the user's switch.
+        (FindForm() as AxKitForm)?.SoundOnOpening(EventKind.FieldOpened);
         _renameCommit = commit;
         _renameEnded = ended;
         _renameBox.Bounds = GetItemRectangle(SelectedIndex);

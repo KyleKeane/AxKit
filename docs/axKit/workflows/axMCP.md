@@ -79,19 +79,22 @@ Starts with: Open axMCP with the test folder.
 ### Add a server of your own
 
 1. Press Ctrl+N.
+    You hear the sound FormOpen.
+    You hear: Add server, form.
+2. Press Ctrl+Q (Read in full).
     You hear: A server of your own: a name for the list.
-2. Type: probe
-3. Press Enter.
+3. Type: probe
+4. Press Enter.
     You hear the sound Edge.
     You hear: Type the program and its arguments.
-4. Type: cmd /c echo
-5. Press Tab 2 times.
-6. Press Shift+Tab.
-7. Press Ctrl+Enter.
+5. Type: cmd /c echo
+6. Press Tab 2 times.
+7. Press Shift+Tab.
+8. Press Ctrl+Enter.
     You hear: Added probe.
-8. Press Tab.
-9. Press Down.
-10. Press Escape.
+9. Press Tab.
+10. Press Down.
+11. Press Escape.
 
 ### Rename a server and undo the rename
 
@@ -221,6 +224,7 @@ Starts with: Open axMCP with the test folder.
 ### Choose from a choice's list
 
 1. Press Enter.
+    You hear the sound ListOpen.
 2. Press Down.
 3. Press Enter.
     You hear: size: large.

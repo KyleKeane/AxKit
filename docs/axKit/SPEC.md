@@ -678,7 +678,9 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   10. **A form's explanation and disclaimer are the notice's own text at the top**, never a row or a field of their
      own and never shortened away. The text names the form's keys itself (`Notice.KeyLine` false: the line made
      from the buttons, "Enter: Send", would be untrue where Enter is a new line). Since the focus starts in the
-     first field, the window says the text once as the form opens, after NVDA has read the field.
+     first field, the window says the title and the word "form" as the form opens, after NVDA has read the field,
+     and the text on demand, Ctrl+Q (AX-7.11, 2026-11-22; the whole text at opening until then); the report's
+     form and an action's form of an axTask list still say their text at opening, which is what will happen.
   11. **A required field left empty**: Send and Ctrl+Enter move the focus to that field, play the edge sound and
      say what is missing ("Type a few words first").
   12. **The value steps of rule 4 have no sound of their own**: the edge sound at the ends, speech for the change.
@@ -1620,6 +1622,55 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   keys, the bundle keys that work in a notice, where F1, F4, the palette and Shift+F1, which each open a notice, wait
   (AX-7.2). An open menu keeps the key. A window put away says nothing (axClaude FR-9.6). In every F1 text
   (`BundleHelp.StatusLine`), the command palette and the menu, marked read for the AI tools.
+- AX-7.11 **What opens says its kind: a sound, one word for a form, and the explanation on demand** (2026-11-22,
+  the maintainer: "are we able to announce the type of interface a user is in? so that when they are in a form it
+  announces so they can know to switch keyboard interaction styles ... i would like to minimize those messages so
+  that it is just the essential info when the cursor moves"; "make a form opening earcon so that there is a cue
+  that the mode has switched"; "an earcon for the other interaction modes starting ... indicative of an
+  interaction change and have some character about the type of interaction").
+  - **What NVDA says by itself and what axKit adds.** NVDA names the kind of each control as the focus lands on
+    it: "list", "edit", "check box", "button". That is NVDA's and stays. A form of axKit is a part of the window
+    and no dialog (AX-7.2), so NVDA never says that a form opened; that is axKit's to say.
+  - **Four kinds of what opens in the window at the user's command**, by the way of working that starts, each a
+    kind of event of its own (`EventKind`, `docs/axKit/families.json`): a **form** (several things asked for one
+    action, Tab between them; a notice with controls of the window's own), a **list** to choose one of (a notice
+    whose control is a list), a **field** to type in (a notice with its own field, the command palette among them,
+    a text box of the window's in a notice, and the rename box in place of a list, AX-8.7), and a **text** to read
+    (everything else: a help text, a question's words with its buttons, an answer). The window base decides the
+    kind in one place (`AxKitForm.OpeningOf`). A notice that opens by itself keeps the notice sound (class Asks),
+    a request of an AI keeps its own, and a notice that only waits on work has none.
+  - **The sound** plays as it opens, before NVDA reads what opened (`AxKitForm.SoundOnOpening`, through the door,
+    rule 13). The four are one family, **Openings**, in one voice used for nothing else, small bell pings
+    (`AxKit.Core/Audio/OpeningSounds`, `WaveTone.Pings`): every one begins with the same mark, three quick beeps
+    running up a chord, which says that the way of working changed; then it goes down as its kind. An extended
+    tone stands for text, discrete beeps stand for items, and a form has both: a field is the mark and one
+    extended tone, the simplest; a text the same an octave lower; a list the mark and four quick beeps going down
+    by steps; a form the mark, then beep, beep, tone, and the same lower, the most complex, as a form is. Chosen
+    by the maintainer's ear on 2026-11-22 from sets played to him (the knock scale of `docs/axKit/earcons.md`
+    class 4 was one of them and was not taken for this). The form's sound is 0.7 s, the one sound of a moment
+    beside the call from another window that is longer than half a second, as he chose it; the others are under
+    half a second.
+  - **The switch**: Options, Text, **Sounds when something opens**, on at first, the same in every window
+    (`display.openingSounds` of the theme file, `docs/axKit/theme.md` TH-6.7); "Sounds when something opens on"
+    or "off".
+  - **The words of a form.** The focus starts in the form's first control and never on its text. After NVDA has
+    read that control, the window says the title and the one word: "Move 2 items, form". The explanation is not
+    said at opening (until 2026-11-22 it was, whole, and partly a second time as the focus passed over the
+    text). It stays the notice's text at the top (AX-8.10 rule 10): **Ctrl+Q** reads it, and Shift+Tab from the
+    first control goes to it. Two forms say their text after the word, because it is what will happen and not
+    how a form is used (`ShowForm`'s `sayText`): the report, which says what is sent and to whom
+    (`docs/axKit/reports.md`), and the form of an action of an axTask list, which says what the action written
+    in the list's file will do (rule 11, AX-11.12). A list, a field and a text get no word from axKit: NVDA's
+    own "list" and "edit" say it, and the sound came first.
+  - **Ctrl+Q in a notice** reads the notice's whole text again, any notice's, from any of its controls
+    (`OverlayPanel.ReadText`, taken by the window base while a notice shows, before the window's commands): the
+    same key that reads what you are on in the windows that have such a key. In every F1 text
+    (`BundleHelp.NoticeLine`).
+  - **Not done, by decision of the day, open to his word**: no sound when the focus moves between the panes of a
+    window with Tab, which would sound at every Tab; and no sound for leaving.
+  - Tested: `OpeningSoundsTests` (the sounds), `ThemeTests` (the switch), `EventKindTests` and `EventDoorTests`
+    (the kinds, the table and the door); `tests/scripts/axTask/18-item-form.txt` and `20-selection.txt` hear the
+    form's sound, its words and Ctrl+Q.
 
 ## 5. Architecture
 

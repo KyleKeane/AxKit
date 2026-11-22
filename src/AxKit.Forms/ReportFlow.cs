@@ -65,7 +65,7 @@ internal sealed class ReportFlow
         // The bundle's form (AX-8.10): the focus in the words, ready to type, the text, the explanation and
         // disclaimer, said once as it opens (rule 10), Send the default button, Ctrl+Enter from any control.
         var controls = new ReportControls(plain, full);
-        _form.ShowForm(ReportTitle, ReportText, controls.Panel, "&Send", () => SaveReport(controls), controls.Missing, Cancelled);
+        _form.ShowForm(ReportTitle, ReportText, controls.Panel, "&Send", () => SaveReport(controls), controls.Missing, Cancelled, sayText: true);
     }
 
     /// <summary>

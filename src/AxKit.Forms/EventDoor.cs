@@ -88,6 +88,10 @@ public static class EventDoor
             case EventSound.Nothing: Sounds.Nothing(); break;
             case EventSound.Unassigned: Sounds.Unassigned(); break;
             case EventSound.Recall: Sounds.Recall(); break;
+            case EventSound.FormOpen: Sounds.FormOpen(); break;
+            case EventSound.ListOpen: Sounds.ListOpen(); break;
+            case EventSound.FieldOpen: Sounds.FieldOpen(); break;
+            case EventSound.TextOpen: Sounds.TextOpen(); break;
             case EventSound.Ready: Sounds.Ready(); break;
             case EventSound.Sent: Sounds.Sent(); break;
             case EventSound.Responding: Sounds.Responding(); break;

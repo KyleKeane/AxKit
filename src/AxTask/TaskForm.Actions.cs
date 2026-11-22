@@ -162,7 +162,8 @@ public sealed partial class TaskForm
             return;
         }
 
-        AskActionForm(action, items[0], folder, values => PerformAction(action, items, folder, values, how, pressed, forAiTool));
+        var on = items.Count == 1 ? ItemFolder.NameOf(items[0]) : $"the {ManyItems.Items(items.Count)} selected; the form shows what the first, {ItemFolder.NameOf(items[0])}, would fill in";
+        AskActionForm(action, items[0], on, folder, values => PerformAction(action, items, folder, values, how, pressed, forAiTool));
     }
 
     /// <summary>
@@ -170,7 +171,7 @@ public sealed partial class TaskForm
     /// file writes as an instruction; the form's text says what the action will do; Ctrl+Enter or the button runs
     /// it, Escape leaves and nothing happened. A hidden field is typed unseen and its box emptied as it is read.
     /// </summary>
-    private void AskActionForm(ConfiguredAction action, ItemFile item, string folder, Action<IReadOnlyDictionary<string, string>> then)
+    private void AskActionForm(ConfiguredAction action, ItemFile item, string on, string folder, Action<IReadOnlyDictionary<string, string>> then)
     {
         var context = new ActionContext(item.Flat, item.Config, item.Path, folder, new Dictionary<string, string>(), Today);
         var form = new FormControls();
@@ -230,7 +231,7 @@ public sealed partial class TaskForm
         }
 
         ShowForm(action.Name,
-            $"{action.Name} {action.Described}. It acts on {ItemFolder.NameOf(item)}. Ctrl+Enter or the button runs it; Escape leaves, and nothing happened."
+            $"{action.Name} {action.Described}. It acts on {on}. Ctrl+Enter or the button runs it; Escape leaves, and nothing happened."
                 + (form.EnterMakesNewLine ? " In a box of several lines Enter makes a new line." : string.Empty),
             form, action.Name.Replace("&", "&&", StringComparison.Ordinal),
             () =>
@@ -250,7 +251,10 @@ public sealed partial class TaskForm
                     then(values);
                 }
             },
-            () => Typed() is { Lacking: { } lacking, Said: { } said } ? (lacking, said) : null);
+            () => Typed() is { Lacking: { } lacking, Said: { } said } ? (lacking, said) : null,
+            // What the action will do is said at opening, after the word "form": it is written in a file, and
+            // is not an explanation of how a form is used (bundle rule 11, AX-7.11).
+            sayText: true);
     }
 
     /// <summary>The action done: on every one of <paramref name="items"/> when it sets fields or moves (the selected items, or the current one alone, TK-4.7), on the first, the current item, otherwise.</summary>

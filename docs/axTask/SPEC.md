@@ -95,8 +95,8 @@ selected ones (TK-4.4, TK-4.7).
   lists as "<name>, before conversion", and the conversion is one step for Ctrl+Z (AF-13.6).
 - **TK-4.0a The item's form** (since 2026-11-21; AF-14.1, AF-14.2, the maintainer's message 8). Enter on an item in
   the navigator opens "Fields of <item>", a form of the bundle's (AX-8.10): one standard control for each field of
-  the item as its list's configuration gives it, the Title first, the focus in the title's box, its explanation said
-  once with the line of the fields the item keeps. A text and a number are a box of one line, a long text a box of
+  the item as its list's configuration gives it, the Title first, the focus in the title's box, with the form's sound and "Fields of <item>, form" (bundle AX-7.11); its explanation, read on Ctrl+Q, ends
+  with the line of the fields the item keeps. A text and a number are a box of one line, a long text a box of
   several lines, a check a check box named by the field, a date and a date and time a box whose name says what it
   takes ("Type Due: a date such as 2026-11-30, today, tomorrow, +3 or a weekday; empty for none"), a choice a list of
   its options ("Choose Priority"; with "Not chosen" first while the field holds none of them), a link a box for the

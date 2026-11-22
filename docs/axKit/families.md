@@ -2,7 +2,7 @@
 
 Written by `tools/families.ps1` from `docs/axKit/families.json`; never by hand. One data structure for the four families of axKit and the links between them, asked by the maintainer on 2026-11-16 so that he and the assistant name the same things by the same short names. It describes what the code does today, read from the code that day; it changes no behaviour. Since 2026-11-17 the kinds of event and the sounds are in code too (AxKit.Core/Events: EventKind, EventSound and the table EventPresenter), held to this file both ways by EventKindTests, and every sound is played by raising its kind at the door (AxKit.Forms/EventDoor; docs/axKit/events.md, section 10). Each of the four lists has the same shape, a family with its members. The keys stay in docs/axKit/key-families.json and the commands in docs/axKit/window-commands.json; this file names them and does not copy them. Where the same kind of event sounds one way in one place and another way elsewhere, the event's note says so: those are the open choices, and a sound is added or changed only when the maintainer has chosen it by ear (docs/axKit/earcons.md).
 
-Status: proposed. In numbers: 52 kinds of event, 27 with a sound, 25 without; 20 sounds; 10 families of functions; 13 kinds of start.
+Status: proposed. In numbers: 56 kinds of event, 31 with a sound, 25 without; 24 sounds; 10 families of functions; 13 kinds of start.
 
 ## How to read it
 
@@ -57,7 +57,7 @@ Only in a test run, on a desktop of its own, never in your windows.
 
 ## 2. The functions
 
-A function is a command of a window (`docs/axKit/command-language.md`): 1642 in the inventory, of which 206 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
+A function is a command of a window (`docs/axKit/command-language.md`): 1659 in the inventory, of which 206 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
 
 ### The marks, and the events a command of each mark ends in
 
@@ -81,7 +81,7 @@ A function is a command of a window (`docs/axKit/command-language.md`): 1642 in 
 - `context`, the Context menu: Do something with the one thing the focus is on: copy, cut, paste, rename, delete, open, information. Shift+F10 and Ctrl+Period open it.
   - 99 commands in 17 apps: read 14, open 28, change 13, act 44.
 - `options`, the Options menu: Settings, each said with its new state: text, speech, sounds, announcements, what happens when something is done.
-  - 234 commands in 17 apps: read 1, open 20, change 175, act 38.
+  - 251 commands in 17 apps: read 1, open 20, change 192, act 38.
 - `window`, the Window menu: The other windows of axKit: a new window of any app, close all windows, say the status.
   - 323 commands in 17 apps: read 17, open 255, act 51.
 - `axkit`, the axKit menu: The services of the whole bundle: the AI tools and what they may do, Claude for AI help, the theme.
@@ -181,6 +181,28 @@ You pressed a key, typed, or chose a command, and this is how it ended. Every co
   - Heard: no sound.
   - Said: NVDA reads what opened. 'Started Notepad', 'Opening x' for an outside program.
   - In: Every window.
+  - Note: What opens inside the window as a notice has a kind of its own since 2026-11-22, by the way of working that starts: form-opened, list-opened, field-opened, text-opened. This kind is what is left: the palette's own moves, another window, an outside program.
+- `form-opened`: A form opened in the window at your command: several things asked for one action, Tab between them (SPEC AX-7.11).
+  - Started by: `key`, `menu`, `palette`, `ai-tool`, `script`.
+  - Heard: sound `FormOpen`.
+  - Said: After NVDA has read the first control: the title and the one word, 'Move 2 items, form'. The explanation is not said: Ctrl+Q reads it. Two forms say their text after the word, since it is what will happen and not how a form is used: the report, and an action of an axTask list.
+  - In: Every window with a form: the report (F4), axTask's item form, Move to section, Move to a list and an action's form, axMCP's Add server, axTerminal's Add a shell, the item windows' New field, axClaude's New session.
+- `list-opened`: A list to choose one of opened in the window at your command: Up and Down, Enter chooses (SPEC AX-7.11).
+  - Started by: `key`, `menu`, `palette`, `ai-tool`, `script`.
+  - Heard: sound `ListOpen`.
+  - Said: NVDA reads the list and its line.
+  - In: The item windows' choices of a field.
+- `field-opened`: One field to type in opened at your command: a name asked for, Find, the command palette, a rename in place (SPEC AX-7.11).
+  - Started by: `key`, `menu`, `palette`, `ai-tool`, `script`.
+  - Heard: sound `FieldOpen`.
+  - Said: NVDA reads the field.
+  - In: Every window: Find, the command palette, the one-field questions, F2 in a list.
+- `text-opened`: A text to read opened in the window at your command: a help text, a question's words with its buttons, an answer (SPEC AX-7.11).
+  - Started by: `key`, `menu`, `palette`, `ai-tool`, `script`.
+  - Heard: sound `TextOpen`.
+  - Said: NVDA reads the text.
+  - In: Every window: F1, the guides, About, a question such as Delete, AI help's answer.
+  - Note: Not a notice that opens by itself, which has the notice sound, and not one that only waits on work.
 - `busy`: The command started work that takes time.
   - Started by: `key`, `menu`, `palette`, `script`.
   - Heard: no sound.
@@ -459,6 +481,31 @@ Very short, right after your key and over before NVDA speaks. Each says how the 
   - Switch: None: it always plays.
   - The sound of: `recalled`, `brought-up`.
   - Played from 2 files: AxClaude/MainForm.PutAway.cs, AxTerminal/TerminalForm.Input.cs.
+
+### Openings: a way of working starts
+
+Bell pings, a voice used for nothing else. Every one begins with the same mark, three quick beeps running up, which says the way you work has changed; then it goes down as its kind. An extended tone is text, discrete beeps are items, and a form has both.
+
+- `FormOpen`: The mark, then beep, beep, tone, and the same lower: D6 twice and a held D5, A5 twice and a held A4. 0.7 s, the most complex, as a form is.
+  - Chosen: By ear, 2026-11-22: 'Mark 4 with the descending kinds' and 'Form B', after three sets and a second round in one voice.
+  - Switch: Options, Text, Sounds when something opens, in every window.
+  - The sound of: `form-opened`.
+  - Played from 1 file: AxKit.Forms/AxKitForm.Theme.cs.
+- `ListOpen`: The mark, then four quick beeps in a line going down by steps: A5, F sharp 5, E5, D5. 0.4 s.
+  - Chosen: By ear, 2026-11-22, with the others of its family.
+  - Switch: Options, Text, Sounds when something opens, in every window.
+  - The sound of: `list-opened`.
+  - Played from 1 file: AxKit.Forms/AxKitForm.Theme.cs.
+- `FieldOpen`: The mark, then one extended tone, A4: the simplest. 0.44 s.
+  - Chosen: By ear, 2026-11-22, with the others of its family.
+  - Switch: Options, Text, Sounds when something opens, in every window.
+  - The sound of: `field-opened`.
+  - Played from 1 file: AxKit.Forms/AxKitForm.Theme.cs.
+- `TextOpen`: The mark, then one extended tone an octave lower, A3, a little softer. 0.44 s.
+  - Chosen: By ear, 2026-11-22, with the others of its family.
+  - Switch: Options, Text, Sounds when something opens, in every window.
+  - The sound of: `text-opened`.
+  - Played from 1 file: AxKit.Forms/AxKitForm.Theme.cs.
 
 ### Turns: where the conversation stands
 

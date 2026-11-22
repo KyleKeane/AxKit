@@ -14,12 +14,17 @@ keys right
 expect focus Fix the tap, due 30 October 2099
 
 # Goal: Open an item's form and move through its fields
-# Enter on the item: the form, the focus in the title's box, ready to type; its explanation is said once, with the
-# values the item keeps that its list does not name. Tab goes through one control for each field, by its kind.
+# Enter on the item: the form's sound, the focus in the title's box, ready to type, and the title with the one word
+# "form" (bundle AX-7.11). The explanation is not said at opening: Ctrl+Q reads it, with the values the item keeps
+# that its list does not name. Tab goes through one control for each field, by its kind.
 keys enter
 expect state "notice":"Fields of Fix the tap"
 expect focus "name":"Type the title","role":"Text","value":"Fix the tap"
-expect said The fields of Fix the tap, in the order of its list
+expect said ♪ FormOpen
+expect said Fields of Fix the tap, form
+refuse said The fields of Fix the tap, in the order of its list
+keys ctrl+q
+expect said ! The fields of Fix the tap, in the order of its list
 expect said 1 more field kept: Sprint
 keys tab
 expect focus "name":"Done"

@@ -866,6 +866,11 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Archive several items at once
     - Move the selected items to a list chosen in a form
     - Move an item to a new list
+21. **Hear what kind of thing opened**
+    - Hear that a text to read opened
+    - Hear that a field to type in opened
+    - Hear that a form opened, and its explanation only on demand
+    - Turn the sounds of what opens off and on
 
 ## axTerminal
 

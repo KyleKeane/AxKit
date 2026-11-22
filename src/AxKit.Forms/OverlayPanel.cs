@@ -527,6 +527,14 @@ public sealed class OverlayPanel : Panel
     /// </summary>
     public void FocusStart()
     {
+        if (Shown?.Custom is FormControls form)
+        {
+            // A form (AX-8.10, AX-7.11): the focus starts in its first control and never on its text, so that the
+            // explanation is not read at opening; the window says the title and "form", and Ctrl+Q reads the text.
+            form.FocusFirst();
+            return;
+        }
+
         if (_inputSpec is not null && !(Shown is { FocusText: true } && _text.Visible))
         {
             var stays = _input.Focused;
@@ -542,6 +550,16 @@ public sealed class OverlayPanel : Panel
         _text.Select(0, 0);
         _text.Select();
     }
+
+    /// <summary>
+    /// The key that reads the notice's text on demand (AX-7.11): Ctrl+Q, which reads what you are on in the windows
+    /// that have such a key (an item in full, a question again, what is playing). The window base takes it while a
+    /// notice shows, before any command of the window.
+    /// </summary>
+    public const Keys ReadText = Keys.Control | Keys.Q;
+
+    /// <summary>The notice's text said again, whole: its explanation, and the line of its keys when it has one.</summary>
+    public void SayText() => Announce(_text.Visible ? _text.Text : _title.Text, true);
 
     /// <summary>Speaks through a UI Automation notification raised on the notice, which holds the focus while it shows.</summary>
     public bool Announce(string text, bool interrupt)

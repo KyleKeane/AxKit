@@ -369,6 +369,7 @@ public abstract partial class AxKitForm : Form
 
         menu.DropDownItems.Add(CreateSayNewLineItem(menu));
         menu.DropDownItems.Add(CreateHeadingSoundItem(menu));
+        menu.DropDownItems.Add(CreateOpeningSoundsItem(menu));
         menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Font...", null, (_, _) => ChooseFont()), CommandMark.Change));
         menu.DropDownItems.Add(Item("&Larger text", () => ChangeTextSize(1), BundleKeys.LargerText, CommandMark.Change));
         menu.DropDownItems.Add(Item("S&maller text", () => ChangeTextSize(-1), BundleKeys.SmallerText, CommandMark.Change));
@@ -755,6 +756,13 @@ public abstract partial class AxKitForm : Form
             {
                 // AX-8.10 rule 3: the notice's main action, a form's Send or the main button, as Enter presses it.
                 Overlay.PressMain();
+                return true;
+            }
+
+            if (keyData == OverlayPanel.ReadText)
+            {
+                // AX-7.11: the notice's text on demand, a form's explanation among them, which is not said at opening.
+                Overlay.SayText();
                 return true;
             }
 
