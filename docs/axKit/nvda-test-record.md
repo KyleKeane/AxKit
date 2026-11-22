@@ -6,6 +6,30 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-22: the maintainer's decisions on the keys, the caution and the chime; by the assistant with NVDA listening (`main` cb898468)
+
+`.\nvda-pass.ps1 axTask`, then `-Only` axJSON, axPass, axMCP and axAutomate, each behind the pass's new spoken
+countdown, the maintainer at the computer and keeping his hands off at his word ("Start it now"), NVDA 2025.3.3 with
+the OneCore voice, Windows 11 Pro 10.0.26200, KeePassXC 2.8.0, the build 5.10.0 of commit cb898468, the tree clean:
+38 scripts, 291 goals and checks, all passed with every announcement also spoken by NVDA.
+
+| What | Scripts | Goals | Result |
+|---|---|---|---|
+| axTask: the AI caution in the question before a run and a hand-over, the done chime, the field move gone | 19 | 121 | Passed |
+| axJSON: Alt+Right the list, Alt+Down and Alt+Up the value in line, Alt+Left a member | 7 | 170 together | Passed |
+| axPass, axMCP, axAutomate: the field move gone from the item window | 12 | with axJSON's | Passed |
+
+What was heard: "Run Find the kind? An AI may have written it: read the explanation before you run it"; the done
+chime before "Find what I type: done"; in axJSON "type: link, 8 of 8", the edge sound with "type: link, the last
+of 8", "type: choice, 7 of 8", and the list of values on Alt+Right and of members on Alt+Left.
+
+The pass's own warning, new that day (101307d8): the first start was stopped by a key or the mouse during the
+spoken sentence, said as "Stopped. No test pass", and nothing was taken; asked again, the maintainer chose to start
+it, and both parts ran after the count from ten.
+
+Owed to his own ear: the four Alt keys in use on his own lists; whether stepping in line should say less than the
+member's name and the place each time; whether the question's longer name is right to hear on every opening.
+
 ## 2026-11-21: axAutomate's Refresh and axPass's field that cannot be emptied; by the assistant with NVDA listening (`main` fb38565f)
 
 `.\nvda-pass.ps1 axAutomate`, then `axPass`, the user away at his word of the same day, NVDA 2025.3.3 with the
