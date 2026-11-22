@@ -75,6 +75,12 @@ with Enter; a prompt is filled and fetched like a tool.
   after the bundle's yes-or-cancel question; F2 renames; Ctrl+Z takes the last of these back. Kept in `axMCP.json`
   (MP-8). A name already in the list is refused with the notice kept open. On any other level Ctrl+N says "Servers
   are added at the top level"; Ctrl+Shift+N says that Ctrl+N adds one.
+- MP-1.5a **Several of Your servers** (2026-11-22; bundle AX-8.16). Space selects one of Your servers, with the
+  bundle's other selection keys; a server of Claude Code's, a heading and what a server offers are not selected
+  (the edge sound), since Delete removes Your servers alone. With two or more selected, Delete asks once, "Remove 3
+  servers?", with "The servers leave axMCP's list; nothing is uninstalled." and their names; Remove stops each
+  that runs and takes it off the list: "Removed 3 servers". One Ctrl+Z puts all of them back where they stood
+  ("Undone: removed 3 servers"). Start, Stop and Rename stay on the server you are on.
 - MP-1.4 A server whose kind is not `stdio` is listed and never started in this version; Right or Enter says "http
   servers need a network connection of axKit's own, which this version does not make" (MP-D2).
 

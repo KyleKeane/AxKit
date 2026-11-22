@@ -140,6 +140,12 @@ keys in place of its words on a line:
   folder, one after another); Escape during a run stops it after the current step; Ctrl+N a new step after the one
   selected (a new workflow at the top level); Delete removes a step, Ctrl+Z brings it back; Ctrl+Shift+Up and Ctrl+Shift+Down move a
   step; Ctrl+J the file in axJSON. The rest are the item apps' (IA-3).
+- AU-4.4a **Running the selected workflows** (2026-11-22; bundle AX-8.16). Space selects a workflow of a folder's
+  level, with the bundle's other selection keys; a folder and a step are not selected (the edge sound). With
+  workflows selected, F5 in that folder runs the selected ones and no other, in the list's order: "Running 2
+  selected workflows; Escape stops the run". With none selected F5 runs every workflow of the folder, as before.
+  The selection stays after the run, so that F5 runs the same ones again; Escape gives it up once no run is going
+  on (during a run Escape stops the run). Inside a workflow F5 runs that workflow, whatever is selected outside.
 - AU-4.5 During a run, each step's row is said as it ends only when it fails ("Step 7 failed: expected said Command
   palette"), and once at the end: "axDown: the command palette passed, 42 steps" or "failed at step 7". The report,
   every step with what was said and focused, opens with Ctrl+R as a notice text with the bundle's reading keys.

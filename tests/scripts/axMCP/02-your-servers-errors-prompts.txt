@@ -132,6 +132,27 @@ expect focus probe, stdio, stopped
 keys ctrl+z
 expect said ! Nothing to undo
 
+# Goal: Remove several of your servers at once and bring them back
+# MP-1.5a, bundle AX-8.16: Space selects one of Your servers, and a server of Claude Code's is not selected, so
+# Ctrl+A selects the two of your own, fake and probe. Delete asks once for both; Enter removes them, one sentence;
+# one Ctrl+Z puts both back.
+keys ctrl+a
+expect said ! 2 selected
+expect focus probe, stdio, stopped, selected
+keys delete
+expect state "notice":"Remove 2 servers?"
+# A notice holds its answering keys for a moment after it appears (KeyHold).
+wait 1200
+keys enter
+expect said ! Removed 2 servers
+refuse list probe, stdio
+refuse list fake, stdio
+keys ctrl+z
+expect said ! Undone: removed 2 servers
+expect list fake, stdio, stopped
+expect list probe, stdio, stopped
+refuse list , selected
+
 # Goal: Start a server
 # The fake started (01-start, 2.2), with its four tools, the resource and its template, and the prompt.
 wait 1100

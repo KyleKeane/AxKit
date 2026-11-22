@@ -129,6 +129,24 @@ keys ctrl+z
 expect said ! Undone: Moved Bank to the Recycle Bin
 expect focus Bank
 
+# Goal: Move several entries to the Recycle Bin at once and undo it
+# PW-6.4a, bundle AX-8.16: Space selects an entry; Ctrl+A here selects the two of the group. Delete moves both to
+# the Recycle Bin with one sentence, and one Ctrl+Z brings both back; nothing stays selected.
+keys ctrl+a
+expect said ! 2 selected
+expect focus Bank, selected
+keys delete
+expect said ! Moved 2 entries to the Recycle Bin; Ctrl+Z brings them back
+refuse list Bank
+refuse list Gmail personal
+keys ctrl+z
+expect said ! Undone: Moved 2 entries to the Recycle Bin
+expect list Gmail personal
+expect list Bank
+refuse list , selected
+keys end
+expect focus Bank
+
 # Goal: Set a generated password
 # 4.2 A generated password set; 4.3 two typed ones that differ change nothing.
 keys up

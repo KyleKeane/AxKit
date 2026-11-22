@@ -49,6 +49,9 @@ desktop; the window's run starts a further desktop of its own there, which works
 4. Inside a workflow, F5: "Running 03-waits; Escape stops it"; Escape at once: "Stopping after the current step",
    then "03-waits stopped". On a workflow that cannot run, F5: "This workflow cannot run: ...". The Actions menu:
    Run unavailable on it; Stop the run unavailable when nothing runs.
+4a. The selected workflows (AU-4.4a): in a folder, Space on a workflow: "Selected", the row reads ", selected"; End,
+   Space on another: "Selected, 2 selected". F5: "Running 2 selected workflows; Escape stops the run", and only those
+   two run. Escape after the run: "None selected". Space on a folder or on a step: the edge sound.
 5. By ear (the script cannot): during a folder run of `tests\scripts\axDown`, work in another program: no axKit
    window of the run appears, takes the focus or plays a sound (a workflow's `run` step is a command on your own
    desktop, step 6); Alt+F4 on axAutomate during a run closes the window, and Task

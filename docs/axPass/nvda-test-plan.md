@@ -42,6 +42,9 @@ should read; a step that reads differently is a defect. The specifications are `
    hold a slash …".
 6. Ctrl+N in Email, type `Bank`: "Added Bank; Tab, then Enter on Password sets its password". Delete on Bank: "Moved
    Bank to the Recycle Bin; Ctrl+Z brings it back". Ctrl+Z: Bank is back.
+6a. Several at once (PW-6.4a): in Email, Space on an entry: "Selected", the row reads ", selected"; Ctrl+A: "2
+   selected". Delete: "Moved 2 entries to the Recycle Bin; Ctrl+Z brings them back", the group empty. Ctrl+Z:
+   "Undone: Moved 2 entries to the Recycle Bin", both back, none selected. Space on a group: the edge sound.
 7. Delete on the group Work: the question "Move the group"; Cancel is the default.
 8. Ctrl+M on Gmail personal: the list "Group" on "The top of the database"; Down to Work, Enter: "Moved Gmail personal
    to Work". Ctrl+Z: "Undone: Moved Gmail personal to Work", back in Email.

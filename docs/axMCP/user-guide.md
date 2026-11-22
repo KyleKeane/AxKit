@@ -56,7 +56,8 @@ filled like a tool and fetched with Ctrl+Enter; its messages open as a text, eac
 At the top level, Ctrl+N adds a server in one form: type its name, Tab, type the command line that starts it as a
 terminal would, Tab, and a folder to start it in (empty for the folder axMCP was started on, or your profile folder);
 Enter or Ctrl+Enter adds it. What is missing is said, with the focus in its field. F2 renames one of yours, Delete removes
-one after a question, Ctrl+Z takes the last of these back. Claude Code's own servers are changed in Claude Code, with
+one after a question, Ctrl+Z takes the last of these back. Space selects one of your servers (Ctrl+A all of yours,
+Escape none); Delete then removes all the selected after one question, and one Ctrl+Z brings them all back. Claude Code's own servers are changed in Claude Code, with
 `claude mcp add` and `claude mcp remove`; axMCP only reads its files.
 
 ## Settings

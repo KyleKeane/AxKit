@@ -105,14 +105,89 @@ public sealed partial class PassForm
 
     protected override string? RefusedName(ItemRow row, string name) => PassTree.RefusedName(name);
 
+    // ---- the selection (bundle AX-8.16; SPEC.md PW-6.4a, framework step 10, 2026-11-22) ----
+
+    /// <summary>Space selects entries: Delete then moves all the selected to the Recycle Bin, and one Ctrl+Z brings them back.</summary>
+    protected override bool HasSelection => true;
+
+    /// <summary>
+    /// An entry outside the Recycle Bin can be selected, since that is what Delete moves there and Ctrl+Z brings
+    /// back. A group cannot (only KeePassXC brings a group back, so it goes one at a time, after its question), and
+    /// nothing in the Recycle Bin can (there Delete is for good, one at a time, after its question).
+    /// </summary>
+    protected override bool CanSelectRow(ItemRow row) => row.Tag is PassNode { IsGroup: false } node && !PassTree.InRecycleBin(node.Path);
+
+    protected override string RowNoun => "entry";
+
+    /// <summary>
+    /// The level by the database, the group and whether it is locked: the status bar's second part is the database
+    /// at every level. So the selection is given up when the group changes and when the window locks.
+    /// </summary>
+    protected override string LevelIdentity() => $"{_database}\n{_group}\n{(_password is null ? "locked" : "unlocked")}";
+
+    /// <summary>
+    /// Delete with several entries selected (PW-6.4a): each moved to the Recycle Bin by the tool, one run an entry,
+    /// in the list's order; one sentence, "Moved 3 entries to the Recycle Bin; Ctrl+Z brings them back", and one
+    /// step for Ctrl+Z with the way back of each. Two selected entries of one name are refused before anything is
+    /// moved, since in the Recycle Bin their names are all the way back has to tell them apart. A run the tool
+    /// refuses stops the rest, and what was moved until then is said and can be undone.
+    /// </summary>
+    private void RecycleEntries(IReadOnlyList<PassNode> entries)
+    {
+        if (entries.GroupBy(entry => entry.Name, StringComparer.OrdinalIgnoreCase).FirstOrDefault(same => same.Count() > 1) is { } twice)
+        {
+            Announce($"Two of the selected entries are called {twice.Key}: move those to the Recycle Bin one at a time, so that Ctrl+Z can tell them apart", true);
+            return;
+        }
+
+        Do(async () =>
+        {
+            var select = KeyAfter([.. entries.Select(entry => entry.Path)]);
+            var moved = new List<PassNode>();
+            foreach (var entry in entries)
+            {
+                if (await Cli(KeePassCliTexts.Remove, null, [entry.Path]) is null)
+                {
+                    break;
+                }
+
+                _entries.Remove(entry.Path);
+                moved.Add(entry);
+            }
+
+            if (moved.Count == 0)
+            {
+                return;
+            }
+
+            var count = moved.Count == 1 ? "1 entry" : $"{moved.Count} entries";
+            Remember(new Step($"Moved {count} to the Recycle Bin",
+                [.. moved.Select(entry => new Call(KeePassCliTexts.Move, [], [PassTree.Join(PassTree.RecycleBin, entry.Name), entry.Group.Length == 0 ? KeePassCliTexts.Root : entry.Group]))],
+                moved[0].Path));
+            Selection.Clear();
+            await ReloadAsync(select);
+            Announce(moved.Count == entries.Count
+                ? $"Moved {count} to the Recycle Bin; Ctrl+Z brings them back"
+                : $"Moved {moved.Count} of {entries.Count} entries to the Recycle Bin; Ctrl+Z brings them back", true);
+        });
+    }
+
     /// <summary>
     /// Delete (PW-6.4): an entry to the Recycle Bin, back with Ctrl+Z; a group after a question, since only KeePassXC
-    /// brings a group back; in the Recycle Bin, for good after a question.
+    /// brings a group back; in the Recycle Bin, for good after a question. With several entries selected, all of
+    /// them (<see cref="RecycleEntries"/>).
     /// </summary>
     protected override void DeleteRow(ItemRow row)
     {
         if (row.Tag is not PassNode node || _tree is null)
         {
+            return;
+        }
+
+        var selected = SelectedRows().Select(one => one.Tag).OfType<PassNode>().ToList();
+        if (selected.Count > 1)
+        {
+            RecycleEntries(selected);
             return;
         }
 

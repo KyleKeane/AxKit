@@ -22,6 +22,7 @@ public static class HelpText
           Tab, Ctrl+Tab or F6: to the detail pane
           Ctrl+N: a new entry here. Ctrl+Shift+N: a new group here
           F2: rename the entry in place: a box over the line, Enter keeps the new title, Escape the old. Delete: move it to the Recycle Bin; Ctrl+Z brings it back
+          Space: select the entry you are on, or deselect it again; a selected entry reads ", selected". Shift+Down, Shift+Up, Shift+Home, Shift+End: select as you move. Shift+Space: select from the nearest selected entry to this one. Ctrl+A: select every entry of the group. Ctrl+Shift+A, or Escape: deselect all. Delete then moves all the selected entries to the Recycle Bin, and one Ctrl+Z brings them all back. Groups, and what is in the Recycle Bin, are not selected
           Ctrl+M: move the entry to another group, chosen from a list
           Ctrl+Q: read every field of the entry; the password is never read
           Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on the selection

@@ -75,6 +75,9 @@ public sealed partial class PassForm : ItemForm
         actions.DropDownItems.Add(Item("New &group...", NewList, ItemKeys.NewList, CommandMark.Change));
         actions.DropDownItems.Add(new ToolStripSeparator());
         actions.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo, CommandMark.Change));
+        // The bundle's selection (AX-8.16, PW-6.4a): Space selects an entry, and Delete then moves the selected to the Recycle Bin.
+        actions.DropDownItems.Add(Item("Select &all entries", SelectAllRows, SelectionKeys.SelectAll, CommandMark.Change));
+        actions.DropDownItems.Add(Item("&Deselect all", SelectNoRows, SelectionKeys.SelectNone, CommandMark.Change));
         actions.DropDownItems.Add(new ToolStripSeparator());
         Add(actions, new Command("&Lock", AxPassKeys.Lock, Lock) { When = NotRenaming, Mark = CommandMark.Change });
 
@@ -89,6 +92,9 @@ public sealed partial class PassForm : ItemForm
         _entryMenu.DropDownItems.Add(Item("Rena&me", RenameSelected, ItemKeys.Rename, CommandMark.Change));
         Add(_entryMenu, new Command("Move to a gr&oup...", AxPassKeys.MoveEntry, MoveEntry) { When = InNavigator, Mark = CommandMark.Change });
         _entryMenu.DropDownItems.Add(Item("To the Recycle &Bin", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act));
+        _entryMenu.DropDownItems.Add(new ToolStripSeparator());
+        _entryMenu.DropDownItems.Add(Item("&Select or deselect", SelectRow, SelectionKeys.Select, CommandMark.Change));
+        _entryMenu.DropDownItems.Add(Item("Select to &here", SelectToHere, SelectionKeys.SelectTo, CommandMark.Change));
 
         _fieldMenu.DropDownItems.Add(Item("&Change...", ChangeField, ItemKeys.Open, CommandMark.Change));
         _fieldMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));

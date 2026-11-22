@@ -60,6 +60,7 @@ script `tests/scripts/axMCP/01-start.txt` runs sections 1 to 4 and 6 against a f
    Tab: Add; Tab: Cancel; Shift+Tab twice, Ctrl+Enter: "Added name", the row selected under "Your servers".
 2. F2 on it: the rename box; a new name, Enter: "Renamed to …". Ctrl+Z: "Undone: renamed …".
 3. Delete on it: "Remove name?", Enter: "Removed name". Ctrl+Z: "Undone: removed name", the row back.
+3a. Several at once (MP-1.5a): with two servers of your own, Ctrl+A: "2 selected" (a server of Claude Code's is not among them). Delete: "Remove 2 servers?" with their names; Enter: "Removed 2 servers". Ctrl+Z: "Undone: removed 2 servers", both back, none selected. Space on a server of Claude Code's: the edge sound.
 4. F2 or Delete on a server of Claude Code's: the sentence naming `claude mcp`.
 
 ## 6. Stopping and closing (MP-2.3)

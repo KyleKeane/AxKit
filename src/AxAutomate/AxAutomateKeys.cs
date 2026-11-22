@@ -30,6 +30,9 @@ public static class AxAutomateKeys
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
     [
         .. ItemKeys.All.Where(shared => shared.Key is not (Run or StopRun)),
+        // The bundle's selection keys (AX-8.16, AU-4.4a), on the workflows of a folder; Space is in ItemKeys.All, and
+        // Escape, which also gives a selection up, is Stop the run's below.
+        .. SelectionKeys.WithoutSpaceAndEscape,
         ("Open a folder of workflows", OpenFolder),
         ("The workflow's file as text", OpenFile),
         ("Run the workflow, or every workflow of the folder", Run),

@@ -75,6 +75,13 @@ public sealed partial class AutomateForm : ItemForm
         _runItem = Add(_actionsMenu, new Command("R&un", AxAutomateKeys.Run, RunCommand) { When = NotRenaming, Mark = CommandMark.Act });
         _stopItem = Add(_actionsMenu, new Command("&Stop the run", AxAutomateKeys.StopRun, StopRun) { When = () => Running, Mark = CommandMark.Act });
         Add(_actionsMenu, new Command("The last run's &report", AxAutomateKeys.Report, ShowRunReport) { When = NotRenaming, Mark = CommandMark.Read });
+        // The bundle's selection (AX-8.16, AU-4.4a): Space selects a workflow of a folder, and F5 then runs the selected ones.
+        _actionsMenu.DropDownItems.Add(new ToolStripSeparator());
+        _actionsMenu.DropDownItems.Add(Item("Select &all", SelectAllRows, SelectionKeys.SelectAll, CommandMark.Change));
+        _actionsMenu.DropDownItems.Add(Item("&Deselect all", SelectNoRows, SelectionKeys.SelectNone, CommandMark.Change));
+        listMenu.DropDownItems.Add(new ToolStripSeparator());
+        listMenu.DropDownItems.Add(Item("&Select or deselect", SelectRow, SelectionKeys.Select, CommandMark.Change));
+        listMenu.DropDownItems.Add(Item("Select to &here", SelectToHere, SelectionKeys.SelectTo, CommandMark.Change));
         // Running keys only on what can run (AU-3.3.2): the items say so as the menu opens, and the command palette
         // reads them after the same refresh.
         CommandPalette.RefreshedOnOpening(_actionsMenu, UpdateRunItems);
@@ -153,6 +160,19 @@ public sealed partial class AutomateForm : ItemForm
         var problem = workflow.Problem is null ? string.Empty : ", not all understood";
         return new ItemRow(true, entry.Path, workflow.Title, $"{workflow.Title}, workflow, {StepText.Count(workflow.StepCount, "step")}{problem}{OutcomeMark(workflow.Path)}", entry);
     }
+
+    // ---- the selection (bundle AX-8.16; SPEC.md AU-4.4a, framework step 10, 2026-11-22) ----
+
+    /// <summary>Space selects workflows of a folder: F5 then runs the selected ones, where it runs every workflow of the folder with none selected.</summary>
+    protected override bool HasSelection => true;
+
+    /// <summary>A workflow of a folder's level can be selected; a folder, a step and the lines that stand for nothing cannot.</summary>
+    protected override bool CanSelectRow(ItemRow row) => _workflow is null && row.Tag is FolderEntry { IsFolder: false };
+
+    protected override string RowNoun => "workflow";
+
+    /// <summary>The level by its folder and the workflow gone into, so that the selection of a folder is not carried among a workflow's steps, which show under the same folder in the status bar.</summary>
+    protected override string LevelIdentity() => $"{(_folders.Count == 0 ? string.Empty : _folders[^1])}\n{_workflow?.Path}";
 
     protected override void EnterList(ItemRow row)
     {

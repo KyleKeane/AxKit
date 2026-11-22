@@ -22,6 +22,8 @@ public static class AxPassKeys
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
     [
         .. ItemKeys.All,
+        // The bundle's selection keys (AX-8.16, PW-6.4a), on entries; Space and Escape are in ItemKeys.All.
+        .. SelectionKeys.WithoutSpaceAndEscape,
         ("Copy the user name", CopyUserName),
         ("Copy the password", CopyPassword),
         ("Open the URL", OpenUrl),

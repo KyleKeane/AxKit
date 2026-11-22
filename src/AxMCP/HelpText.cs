@@ -24,6 +24,7 @@ public static class HelpText
           Ctrl+J: the last result, whole, as JSON in axJSON
           Ctrl+Shift+S: stop the server
           Ctrl+N at the top level: add a server of your own, in one form: a name, its command line, a folder, Tab between them, Enter or Ctrl+Enter adds it. F2: rename one of yours. Delete: remove one of yours, after a question
+          Space: select one of your servers, or deselect it again; a selected server reads ", selected". Shift+Down, Shift+Up, Shift+Home, Shift+End: select as you move. Shift+Space: select from the nearest selected server to this one. Ctrl+A: select every server of yours. Ctrl+Shift+A, or Escape: deselect all. Delete then removes all the selected after one question, and one Ctrl+Z brings them all back
           Ctrl+Shift+N: nothing here; servers are added with Ctrl+N
           Ctrl+Q: read every field of the selection
           Shift+F10, the Applications key or Ctrl+Period: the menu of the selection

@@ -93,11 +93,18 @@ public sealed class MCPForm : ItemForm
         var actions = new ToolStripMenuItem("");
         actions.DropDownItems.Add(Item("&Add server...", NewItem, ItemKeys.New, CommandMark.Change));
         actions.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo, CommandMark.Change));
+        // The bundle's selection (AX-8.16, MP-1.5a): Space selects one of Your servers, and Delete then removes the selected.
+        actions.DropDownItems.Add(new ToolStripSeparator());
+        actions.DropDownItems.Add(Item("Select &all of your servers", SelectAllRows, SelectionKeys.SelectAll, CommandMark.Change));
+        actions.DropDownItems.Add(Item("&Deselect all", SelectNoRows, SelectionKeys.SelectNone, CommandMark.Change));
 
         _serverMenu.DropDownItems.Add(Item("&Start, or open", OpenSelected, ItemKeys.Open, CommandMark.Act));
         Add(_serverMenu, new Command("S&top", AxMCPKeys.StopServer, StopSelected) { When = NotRenaming, Mark = CommandMark.Act });
         _serverMenu.DropDownItems.Add(Item("&Rename", RenameSelected, ItemKeys.Rename, CommandMark.Change));
         _serverMenu.DropDownItems.Add(Item("Re&move", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act));
+        _serverMenu.DropDownItems.Add(new ToolStripSeparator());
+        _serverMenu.DropDownItems.Add(Item("Se&lect or deselect", SelectRow, SelectionKeys.Select, CommandMark.Change));
+        _serverMenu.DropDownItems.Add(Item("Select to &here", SelectToHere, SelectionKeys.SelectTo, CommandMark.Change));
 
         Add(_itemMenu, new Command("&Call, or fetch the prompt", BundleKeys.MainAction, CallSelected) { When = NotRenaming, Mark = CommandMark.Act });
         _itemMenu.DropDownItems.Add(Item("&Open its arguments", OpenSelected, ItemKeys.Open, CommandMark.Open));
@@ -397,8 +404,64 @@ public sealed class MCPForm : ItemForm
         }, $"renamed {before} to {name.Trim()}");
     }
 
+    // ---- the selection (bundle AX-8.16; SPEC.md MP-1.5a, framework step 10, 2026-11-22) ----
+
+    /// <summary>Space selects servers of your own at the top level: Delete then removes all the selected after one question.</summary>
+    protected override bool HasSelection => true;
+
+    /// <summary>One of Your servers can be selected, since those are what Delete removes; a server of Claude Code's, a heading and what a server offers cannot.</summary>
+    protected override bool CanSelectRow(ItemRow row) => row.Tag is McpServer { Own: true };
+
+    protected override string RowNoun => "server";
+
+    /// <summary>The level by the server gone into and its section: the status bar's second part is the project's folder at every level.</summary>
+    protected override string LevelIdentity() => $"{_server?.Key}\n{_section}";
+
+    /// <summary>
+    /// Delete with several of Your servers selected (MP-1.5a): one question that names them, then each stopped when
+    /// it runs and taken off the list; one sentence, "Removed 3 servers", and one Ctrl+Z puts all of them back
+    /// where they stood. Nothing is uninstalled.
+    /// </summary>
+    private void RemoveServers(IReadOnlyList<McpServer> servers)
+    {
+        var names = string.Join(", ", servers.Select(server => server.Name));
+        ShowNotice(Notice.Ask($"Remove {servers.Count} servers?", $"The servers leave axMCP's list; nothing is uninstalled.\n{names}", "&Remove", () =>
+        {
+            // Each with the place it stood at, the first of the list first, so that the way back restores the order.
+            var removed = servers.Select(server => (Server: server, Own: OwnOf(server))).Where(pair => pair.Own is not null)
+                .Select(pair => (pair.Server, Own: pair.Own!, At: _settings.Servers.IndexOf(pair.Own!))).OrderBy(pair => pair.At).ToList();
+            foreach (var (server, own, _) in removed)
+            {
+                StopIfRunning(server);
+                _settings.Servers.Remove(own);
+            }
+
+            SaveSettings();
+            Selection.Clear();
+            ReadAndFill(null);
+            Announce($"Removed {Count(removed.Count, "server")}", true);
+            _undo = (() =>
+            {
+                foreach (var (_, own, at) in removed)
+                {
+                    _settings.Servers.Insert(Math.Clamp(at, 0, _settings.Servers.Count), own);
+                }
+
+                SaveSettings();
+                ReadAndFill(removed.Count > 0 ? removed[0].Server.Key : null);
+            }, $"removed {Count(removed.Count, "server")}");
+        }));
+    }
+
     protected override void DeleteRow(ItemRow row)
     {
+        var selected = SelectedRows().Select(one => one.Tag).OfType<McpServer>().Where(server => server.Own).ToList();
+        if (selected.Count > 1)
+        {
+            RemoveServers(selected);
+            return;
+        }
+
         switch (row.Tag)
         {
             case McpServer { Own: true } server when OwnOf(server) is { } own:

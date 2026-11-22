@@ -59,6 +59,8 @@ public sealed partial class AutomateForm
 
         string? workflowPath = null;
         string? folder = null;
+        // AU-4.4a: the workflows selected in the folder, by their files; none selected runs every workflow of it.
+        IReadOnlyList<string> only = [];
         string said;
         if (_workflow is { } open)
         {
@@ -80,7 +82,10 @@ public sealed partial class AutomateForm
             }
 
             folder = _folders[^1];
-            said = $"Running {StepText.Count(_levelWorkflows, "workflow")}; Escape stops the run";
+            only = [.. SelectedRows().Select(row => row.Key)];
+            said = only.Count > 0
+                ? $"Running {StepText.Count(only.Count, "selected workflow")}; Escape stops the run"
+                : $"Running {StepText.Count(_levelWorkflows, "workflow")}; Escape stops the run";
         }
 
         _stopAsked = false;
@@ -89,7 +94,7 @@ public sealed partial class AutomateForm
         // never longer than that wait.
         // "Running ..." is said by the run's thread once the run starts: after the commands notice is answered with Run
         // (AU-D11), never before it, so that a Cancel says only "Not run".
-        _run = new Thread(() => RunJobs(workflowPath, folder, exe, said)) { IsBackground = true, Name = "axAutomate run" };
+        _run = new Thread(() => RunJobs(workflowPath, folder, only, exe, said)) { IsBackground = true, Name = "axAutomate run" };
         _run.Start();
     }
 
@@ -162,7 +167,7 @@ public sealed partial class AutomateForm
     /// on its own desktop with its own folder, the outcomes posted to the window as each ends. Any exception ends the
     /// workflow it came from as failed and never the process (the user's window).
     /// </summary>
-    private void RunJobs(string? workflowPath, string? folder, string exe, string starting)
+    private void RunJobs(string? workflowPath, string? folder, IReadOnlyList<string> only, string exe, string starting)
     {
         var (passed, failed, cannotRun) = (0, 0, 0);
         var count = 0;
@@ -184,7 +189,7 @@ public sealed partial class AutomateForm
                 }
                 else if (folder is not null)
                 {
-                    jobs.AddRange(WorkflowFolder.Read(folder).Where(entry => !entry.IsFolder).Select(entry => Job(WorkflowFolder.ReadWorkflow(entry.Path))));
+                    jobs.AddRange(WorkflowFolder.Read(folder).Where(entry => !entry.IsFolder && (only.Count == 0 || only.Contains(entry.Path, StringComparer.OrdinalIgnoreCase))).Select(entry => Job(WorkflowFolder.ReadWorkflow(entry.Path))));
                 }
             }
             catch (Exception ex)

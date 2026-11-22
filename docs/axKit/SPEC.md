@@ -964,7 +964,12 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     `SelectedRows`), switched on by axTask, whose items it selects (docs/axTask/SPEC.md TK-4.7; its status bar says
     how many are selected, and the target an AI tool's command is asked about names the selection too). An item
     app says it has a selection only once its commands act on one, so that nothing is ever selected that a
-    command then passes by: in axPass, axMCP and axAutomate Space in the navigator stays the edge sound. Every
+    command then passes by, and it says which rows: since 2026-11-22 (framework step 10) axPass selects entries
+    outside the Recycle Bin, which Delete moves there with one undo (docs/axPass/SPEC.md PW-6.4a), axMCP selects
+    Your servers, which Delete removes with one undo (docs/axMCP/SPEC.md MP-1.5a), and axAutomate selects the
+    workflows of a folder, which F5 runs (docs/axAutomate/SPEC.md AU-4.4a); on any other row Space is the edge
+    sound. The navigators that came onto the type the same day select the same way: axMedia's files, axProcess's
+    processes and startup programs, axGIT's changed files. Every
     other list with a use for a selection follows, one app at a time (the priorities list). axMedia's queue is
     on it since the same day (docs/axMedia/SPEC.md AM-3.5): Space selects files, Delete takes the selected ones
     out, and pause moved from Space to Ctrl+Enter there (AM-D7).

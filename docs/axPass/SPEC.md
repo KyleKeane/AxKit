@@ -101,6 +101,18 @@ forgets the master password and shows only the notice that asks for it.
   on first use); Ctrl+Z moves an entry back with `mv`; a group cannot come back that way (the tool moves entries only), so
   Delete on a group asks first and says that KeePassXC's own window brings it back. In the Recycle Bin, Delete removes
   for good after a question, since the tool asks none. A title cannot hold a slash (the tool's paths have no escape).
+- **PW-6.4a Several entries** (2026-11-22; bundle AX-8.16). Space selects an entry outside the Recycle Bin, with
+  the bundle's other selection keys; the status bar counts them. A group is not selected (only KeePassXC brings a
+  group back, so a group goes one at a time, after its question), nor is anything in the Recycle Bin (there Delete
+  is for good, one at a time, after its question): on those Space is the edge sound. With two or more entries
+  selected, Delete moves each to the Recycle Bin, one run of the tool an entry, in the list's order, with no
+  question, as for one entry, since Ctrl+Z brings them back: "Moved 3 entries to the Recycle Bin; Ctrl+Z brings
+  them back". One Ctrl+Z moves all of them back ("Undone: Moved 3 entries to the Recycle Bin"). Two selected
+  entries of one name are refused before anything is moved ("Two of the selected entries are called <name>: move
+  those to the Recycle Bin one at a time, so that Ctrl+Z can tell them apart"), since in the Recycle Bin the name
+  is all the way back has. A run the tool refuses stops the rest; what was moved until then is said ("Moved 2 of
+  3 entries …") and can be undone. The selection is given up when the group changes and when the window locks.
+  Copy, Open URL, Rename and Move to a group stay on the entry you are on.
 
 - **PW-6.5 Moving an entry** (Ctrl+M, Context, Move to a group; asked 2026-10-24): a list of the groups, the top of
   the database first and the Recycle Bin left out; `mv` to it (`/` for the top), and Ctrl+Z moves it back.

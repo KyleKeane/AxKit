@@ -78,6 +78,16 @@ command's in this version of axKit.
 2. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Moved Bank to the Recycle Bin.
 
+### Move several entries to the Recycle Bin at once and undo it
+
+1. Press Ctrl+A.
+    You hear: 2 selected.
+2. Press Delete.
+    You hear: Moved 2 entries to the Recycle Bin; Ctrl+Z brings them back.
+3. Press Ctrl+Z (Undo; Actions menu).
+    You hear: Undone: Moved 2 entries to the Recycle Bin.
+4. Press End.
+
 ### Set a generated password
 
 1. Press Up.

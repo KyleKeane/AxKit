@@ -22,6 +22,8 @@ public static class AxMCPKeys
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
     [
         .. ItemKeys.All,
+        // The bundle's selection keys (AX-8.16, MP-1.5a), on Your servers; Space and Escape are in ItemKeys.All.
+        .. SelectionKeys.WithoutSpaceAndEscape,
         ("The last result as JSON in axJSON", LastResult),
         ("Stop the server", StopServer),
     ];

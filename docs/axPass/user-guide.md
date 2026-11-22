@@ -71,6 +71,10 @@ in a password field rather than in the notes.
 - Ctrl+N makes a new entry here, Ctrl+Shift+N a new group. F2 renames an entry in place: type the new title over the old and press Enter, or Escape. A title cannot hold a slash.
 - Delete moves an entry to the Recycle Bin group; Ctrl+Z brings it back. A group moves there after a question, and
   only KeePassXC's own window brings a group back. In the Recycle Bin, Delete removes for good after a question.
+- Space selects the entry you are on, and deselects it again; a selected entry reads ", selected", and the status bar
+  counts them. Shift+Down and Shift+Up select as you move, Ctrl+A selects every entry of the group, Ctrl+Shift+A or
+  Escape deselects all. Delete then moves all the selected entries to the Recycle Bin, "Moved 3 entries to the
+  Recycle Bin", and one Ctrl+Z brings them all back. Groups, and what is in the Recycle Bin, are not selected.
 - Fields other than KeePass's own ones are shown and are changed in KeePassXC's own window. A group is renamed there
   too.
 

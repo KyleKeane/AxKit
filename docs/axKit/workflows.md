@@ -36,6 +36,7 @@ Steps and keys: `docs/axKit/workflows/axAutomate.md` (in Claude's working folder
 5. **Stop the run of a folder and see which checks need NVDA**
     - Stop the run of a folder partway
     - Read on the rows how far a stopped run came
+    - Run only the workflows you selected
 
 ## axCalc
 
@@ -584,6 +585,7 @@ Steps and keys: `docs/axKit/workflows/axMCP.md` (in Claude's working folder: `wo
     - Rename a server and undo the rename
     - Remove a server
     - Undo the removal of a server
+    - Remove several of your servers at once and bring them back
     - Start a server
     - Tick a yes-or-no argument and call the tool
     - Read a resource from a template
@@ -656,6 +658,7 @@ Steps and keys: `docs/axKit/workflows/axPass.md` (in Claude's working folder: `w
     - Rename an entry
     - Add an entry
     - Move an entry to the Recycle Bin and undo it
+    - Move several entries to the Recycle Bin at once and undo it
     - Set a generated password
     - Move an entry to another group
     - Lock the database

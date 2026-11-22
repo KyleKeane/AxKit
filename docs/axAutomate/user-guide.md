@@ -49,7 +49,9 @@ goes back. Ctrl+Q reads every line at once.
 ## Running workflows
 
 F5 inside a workflow runs it; F5 in a folder runs every workflow of that folder, one after another (not the folders
-inside it). The axKit windows of a run open on a desktop of their own: they never come to the front, never take your
+inside it). To run only some of them, select them first: Space selects the workflow you are on, Shift+Down and
+Shift+Up select as you move, Ctrl+A selects all, and F5 then runs the selected ones, "Running 2 selected workflows".
+The selection stays after the run; Escape gives it up. The axKit windows of a run open on a desktop of their own: they never come to the front, never take your
 keyboard and play no sound, so you can go on working, in axAutomate or anywhere else. Each workflow gets fresh
 windows with settings of their own, never yours, and its steps that make files and folders make them in a folder of
 the run's own: a workflow with such a step that writes anywhere else cannot run from the window.
@@ -87,7 +89,8 @@ say "Cannot run". So does one with a step whose number is not one, such as "wait
 
 - Ctrl+O: open a folder of workflows.
 - Ctrl+J: the workflow's file as text, a script in axDown, a workflow file in axJSON.
-- F5: run the workflow, or every workflow of the folder. Escape during a run: stop it.
+- F5: run the workflow, or every workflow of the folder, or the selected ones. Escape during a run: stop it.
+- Space: select a workflow of a folder, or deselect it. Ctrl+A: select all. Ctrl+Shift+A, or Escape while nothing runs: deselect all.
 - Ctrl+R: the report of the last run.
 - Session, Refresh: read the folder or the workflow again, after the file changed.
 - F1: every key of the window.

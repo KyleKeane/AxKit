@@ -254,7 +254,10 @@ NVDA pass recorded. A piece that changes what a user does updates the app's spec
 8. axGIT, made simple: three levels and a text pane; Space selects files, staging on the selected, Ctrl+Enter
    commits (FW-4.10). Built, 2026-11-22.
 9. axCalc onto the conversation window: the field and the results above it.
-10. The selection in axPass, axMCP and axAutomate, where a command acts on several rows.
+10. The selection in axPass, axMCP and axAutomate, where a command acts on several rows. Built, 2026-11-22: in
+    axPass Delete moves the selected entries to the Recycle Bin with one undo; in axMCP Delete removes the selected
+    servers of your own with one undo; in axAutomate F5 runs the selected workflows. Each app says which rows can
+    be selected, and they are the ones its command acts on.
 
 **D. The conversation window**
 

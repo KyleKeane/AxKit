@@ -12,9 +12,9 @@ The WinForms side of axAutomate: the item apps' window (`AxKit.Forms/ItemForm`) 
 ## Where things are
 
 - `AxAutomateApp`: the entry point `Run` that axKit's `Program` calls (bundle AX-1.7), one call into `AxKit.Forms/AppHost.Run`.
-- `AutomateForm`: the window on `ItemForm`: the levels (a stack of folders, then one workflow), the rows from `StepText.Rows`, the details from `StepText.Details`; every change refused with `ViewOnly`; Ctrl+O and Ctrl+J its own.
+- `AutomateForm`: the window on `ItemForm`: the levels (a stack of folders, then one workflow), the rows from `StepText.Rows`, the details from `StepText.Details`; every change refused with `ViewOnly`; Ctrl+O and Ctrl+J its own. The selection (SPEC.md AU-4.4a, bundle AX-8.16, 2026-11-22): `HasSelection`, `CanSelectRow` (a workflow of a folder's level), `LevelIdentity` (the folder and the workflow gone into); `RunCommand` hands the selected workflows' files to the run, which runs those and no other.
 - `AutomateForm.Run.cs` (SPEC.md AU-6b): F5 and Escape; the run on a background thread of its own (the files read there) through `ScriptRunner.Play(..., hosted: true)` with this program file as the run's exe; failing steps and each end posted to the window (`Post`) and said without interrupting (`RunSentences`); the outcomes by path, which the rows and the details read.
-- `AxAutomateKeys`: the window's keys (bundle AX-8), `ItemKeys.All` without F5 and Escape, which are Run and Stop the run here, and its own; `All` feeds the collision test and the F1 text names the same keys.
+- `AxAutomateKeys`: the window's keys (bundle AX-8), `ItemKeys.All` without F5 and Escape, which are Run and Stop the run here (Escape stops a run before it gives a selection up), the bundle's selection keys, and its own; `All` feeds the collision test and the F1 text names the same keys.
 - `HelpText`: the F1 text and the embedded guide; About is the bundle's.
 
 ## Rules

@@ -160,7 +160,7 @@ Escape goes back one step or closes what is open. It never loses work without as
 
 The keys:
 
-- Escape, axGIT, axMedia, axProcess and axTask: Deselect all.
+- Escape, axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Deselect all.
 - Escape, axAutomate, axMCP, axPass and axTask: To the navigator.
 - Escape, axClip, axHelp and axStart: Hide.
 - Escape, axTask: Back from the search.
@@ -252,22 +252,30 @@ Shift with an arrow, Home or End selects as it moves, as in every Windows list a
 
 The keys:
 
-- Shift+Space, axFile, axGIT, axMedia, axProcess and axTask: Select to here.
+- Shift+Space, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Select to here.
 
 Windows' own keys, as in every program:
 
+- Shift+Down arrow, axFile and axPass: Select to the next entry.
 - Shift+Down arrow, axGIT and axMedia: Select to the next file.
 - Shift+Down arrow, axProcess and axTask: Select to the next item.
-- Shift+Down arrow, axFile: Select to the next entry.
+- Shift+Down arrow, axMCP: Select to the next server.
+- Shift+Down arrow, axAutomate: Select to the next workflow.
+- Shift+End, axFile and axPass: Select to the last entry.
 - Shift+End, axGIT and axMedia: Select to the last file.
 - Shift+End, axProcess and axTask: Select to the last item.
-- Shift+End, axFile: Select to the last entry.
+- Shift+End, axMCP: Select to the last server.
+- Shift+End, axAutomate: Select to the last workflow.
+- Shift+Home, axFile and axPass: Select to the first entry.
 - Shift+Home, axGIT and axMedia: Select to the first file.
 - Shift+Home, axProcess and axTask: Select to the first item.
-- Shift+Home, axFile: Select to the first entry.
+- Shift+Home, axMCP: Select to the first server.
+- Shift+Home, axAutomate: Select to the first workflow.
+- Shift+Up arrow, axFile and axPass: Select to the previous entry.
 - Shift+Up arrow, axGIT and axMedia: Select to the previous file.
 - Shift+Up arrow, axProcess and axTask: Select to the previous item.
-- Shift+Up arrow, axFile: Select to the previous entry.
+- Shift+Up arrow, axMCP: Select to the previous server.
+- Shift+Up arrow, axAutomate: Select to the previous workflow.
 
 ### Ctrl+Plus and Ctrl+Minus: make the text larger or smaller
 
@@ -316,8 +324,10 @@ The keys:
 
 Windows' own keys, as in every program:
 
-- Ctrl+A, axFile, axGIT, axMedia, axProcess and axTask: Select all.
+- Ctrl+A, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Select all.
+- Ctrl+A, axPass: Select all entries.
 - Ctrl+A, axGIT: Select all files.
+- Ctrl+A, axMCP: Select all of your servers.
 - Ctrl+C, axFile: Copy.
 - Ctrl+C, axProcess: Copy line.
 - Ctrl+C, axPreview: Copy the detail's value.
@@ -477,7 +487,7 @@ Adding Shift to Ctrl and a letter gives the reverse or the bigger form of that c
 
 The keys:
 
-- Ctrl+Shift+A, axFile, axGIT, axMedia, axProcess and axTask: Deselect all.
+- Ctrl+Shift+A, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Deselect all.
 - Ctrl+Shift+C, axCalc: Copy answer.
 - Ctrl+Shift+C, axFile: Copy path.
 - Ctrl+Shift+C, axFile: Copy paths.

@@ -117,6 +117,16 @@ Starts with: Open axMCP with the test folder.
 1. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: removed probe.
 
+### Remove several of your servers at once and bring them back
+
+1. Press Ctrl+A.
+    You hear: 2 selected.
+2. Press Delete.
+3. Press Enter.
+    You hear: Removed 2 servers.
+4. Press Ctrl+Z (Undo; Actions menu).
+    You hear: Undone: removed 2 servers.
+
 ### Start a server
 
 1. Type: fake

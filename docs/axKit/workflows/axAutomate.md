@@ -153,3 +153,16 @@ Starts with: Open axAutomate with the folder flows.
 ### Read on the rows how far a stopped run came
 
 1. Close the window.
+
+### Run only the workflows you selected
+
+1. Open axAutomate with the folder flows.
+2. Press Space.
+    You hear: Selected.
+3. Press End.
+4. Press Space.
+    You hear: Selected.
+5. Press F5 (Run; Actions menu).
+    You hear: Running 2 selected workflows.
+    You hear: 01-quick passed, 2 steps.
+    You hear: 03-later passed, 2 steps.

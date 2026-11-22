@@ -16,6 +16,7 @@ public static class HelpText
           Up, Down, Home, End: move; the edge sound at an end. Type the start of a name to jump to it, Shift with a letter backwards
           A folder of workflows lists its folders, then its workflows, each with how many steps it has and, after a run, "passed", "failed at step 3" or "cannot run"
           Right or Enter on a folder or a workflow: go into it. Left or Backspace: up a level
+          Space: select the workflow you are on in a folder, or deselect it again; a selected workflow reads ", selected". Shift+Down, Shift+Up, Shift+Home, Shift+End: select as you move. Shift+Space: select from the nearest selected workflow to this one. Ctrl+A: select every workflow. Ctrl+Shift+A, or Escape while no run is going on: deselect all. F5 then runs the selected workflows
           Ctrl+Up, Ctrl+Down: the section before or after, where a level has sections; the edge sound otherwise
           In a workflow, one row per step in the order they run: "4. Expect said: Command palette"
           A step's marks after its sentence: "may not come" or "goes on if it fails" when a failure does not stop the workflow, "reports" when it has its own failure message, "then 2 steps" when steps run only after it passed, "otherwise 1 step" when steps run only after it failed

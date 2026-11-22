@@ -31,6 +31,29 @@ expect said Run stopped at 02-waits: 1 passed, 1 not run
 expect list "items":["01-quick, workflow, 2 steps, passed","02-waits, workflow, 4 steps, stopped","03-later, workflow, 2 steps"]
 close
 
+# Goal: Run only the workflows you selected
+# AU-4.4a, bundle AX-8.16: Space selects the workflow you are on; F5 then runs the selected ones and no other. Here
+# the first and the third, in a window of their own: Space on 01-quick, End, Space on 03-later. The second is never
+# started, so its row has no outcome.
+start automate {temp}\flows
+expect focus 01-quick, workflow, 2 steps
+keys space
+expect said ! Selected
+keys end
+keys space
+expect said ! Selected
+expect state , 2 selected","
+keys f5
+expect said Running 2 selected workflows
+expect said 01-quick passed, 2 steps
+expect said 03-later passed, 2 steps
+expect list "items":["01-quick, workflow, 2 steps, passed, selected","02-waits, workflow, 4 steps","03-later, workflow, 2 steps, passed, selected"]
+# Check: Escape gives the selection up once no run is going on
+keys escape
+expect said ! None selected
+expect list "items":["01-quick, workflow, 2 steps, passed","02-waits, workflow, 4 steps","03-later, workflow, 2 steps, passed"]
+close
+
 # Check: A check that needs NVDA listening cannot run from the window
 # A script with a step for NVDA's speech: its details say why it cannot run, F5 in its folder and F5 inside it say
 # the same, and its step reads "Expect NVDA to say".

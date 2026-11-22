@@ -29,12 +29,13 @@ guide `docs/axPass/user-guide.md` is embedded by `AxPass.csproj`; the manual tes
   at a time (`_busy`), its failure said, and before the first change after unlocking a backup (`_backedUp`,
   `Backups.Make`; no change without it; a command and an option are named by `KeePassCliTexts`' constants, never
   written as a string here, root `CLAUDE.md` rule 12, and `KeePassCliTextsTests` fails on one); `BackUpNowAsync` and `ShowBackups` for the Session menu.
+- The selection (SPEC.md PW-6.4a, bundle AX-8.16, 2026-11-22; in `PassForm.Commands.cs`): `HasSelection`, `CanSelectRow` (an entry outside the Recycle Bin; never a group, never what is in the Recycle Bin), `LevelIdentity` (the database, the group and whether it is locked, so that the selection is given up when the group changes and when the window locks), `RecycleEntries` (Delete with several selected: one `rm` an entry through `Cli`, one `Step` with the `mv` back of each, two of one name refused first).
 - `PassForm.Commands.cs`: `SaveFields` (`edit` with `EntryFields.EditOptions`; a change that would empty a field is refused first, and a value written into an empty field is kept as a `Step` that Ctrl+Z says it cannot take back, PW-6.1), `RenameItem`, `RenameTo`, `DeleteRow`
   (`rm` with its `mv` back; a group or the Recycle Bin's entries after a question), `NewItem`, `NewList`, `Undo` (the
   runs a `Step` keeps), the password's notices (`ChangeSpecial`, Generate, typed twice, `edit -p`), the copies (the
   user name by axPass, the password read with `show -s -a Password` and put on the clipboard marked private by `AxKit.Forms/PrivateClipboard`, cleared after 30 seconds, PW-5.4), the URL,
   the database's picker and `db-create`, the tool's place.
-- `AxPassKeys`: the window's keys, `AxKit.Forms/ItemKeys.All` and its own; `All` feeds the collision test.
+- `AxPassKeys`: the window's keys, `AxKit.Forms/ItemKeys.All`, the bundle's selection keys and its own; `All` feeds the collision test.
 - `HelpText`: the F1 text and the embedded guide; About is the bundle's.
 
 ## Rules

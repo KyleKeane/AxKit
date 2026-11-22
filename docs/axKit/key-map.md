@@ -3,7 +3,7 @@
 Written by `tools/key-map.ps1` from `docs/axKit/window-commands.json`, `src/AxKit.Forms/BundleKeys.cs` and
 `docs/axKit/key-families.json`; never edit it by hand. Every key of every window and what it does in each app.
 
-The inventory holds 644 commands with a key in 17 apps, on 124 different keys, counting the
+The inventory holds 668 commands with a key in 17 apps, on 124 different keys, counting the
 second keys some commands answer. 48 keys have one meaning wherever they are; 76 have several.
 21 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
 are window keys, each in its window's own table.
@@ -43,7 +43,7 @@ In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 - Ctrl+Shift+7. Window key, in axTask alone: Action key Shift+7.
 - Ctrl+Shift+8. Window key, in axTask alone: Action key Shift+8.
 - Ctrl+Shift+9. Window key, in axTask alone: Action key Shift+9.
-- Ctrl+Shift+A. Window key, in axFile, axGIT, axMedia, axProcess and axTask: Deselect all.
+- Ctrl+Shift+A. Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Deselect all.
 - Ctrl+Shift+D. Window key, in axTask alone: Hide done tasks.
 - Ctrl+Shift+E. Window key, in axJSON alone: Error.
 - Ctrl+Shift+J. Window key, in axJSON alone: Object.
@@ -62,7 +62,7 @@ In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 - Alt+Enter. Window key, in axFile alone: Properties.
 - Alt+Left arrow. Window key, in axJSON alone: Add a member.
 - Alt+Right arrow. Window key, in axJSON alone: Choose a value.
-- Shift+Space. Window key, in axFile, axGIT, axMedia, axProcess and axTask: Select to here.
+- Shift+Space. Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Select to here.
 
 ## Keys whose meaning differs
 
@@ -95,7 +95,7 @@ Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axHelp, axMCP, axMedia
 
 Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axHelp, axMCP, axMedia, axPass, axProcess, axStart and axTask. 9 meanings.
 
-- axGIT, axMedia, axProcess and axTask: Deselect all.
+- axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Deselect all.
 - axAutomate, axMCP, axPass and axTask: To the navigator.
 - axClip, axHelp and axStart: Hide.
 - axTask: Back from the search.
@@ -294,6 +294,46 @@ Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and 
 - axProcess: Up to This computer.
 - axGIT: Up to the repository.
 
+### Shift+Down arrow
+
+Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 5 meanings.
+
+- axFile and axPass: Select to the next entry.
+- axGIT and axMedia: Select to the next file.
+- axProcess and axTask: Select to the next item.
+- axMCP: Select to the next server.
+- axAutomate: Select to the next workflow.
+
+### Shift+End
+
+Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 5 meanings.
+
+- axFile and axPass: Select to the last entry.
+- axGIT and axMedia: Select to the last file.
+- axProcess and axTask: Select to the last item.
+- axMCP: Select to the last server.
+- axAutomate: Select to the last workflow.
+
+### Shift+Home
+
+Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 5 meanings.
+
+- axFile and axPass: Select to the first entry.
+- axGIT and axMedia: Select to the first file.
+- axProcess and axTask: Select to the first item.
+- axMCP: Select to the first server.
+- axAutomate: Select to the first workflow.
+
+### Shift+Up arrow
+
+Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 5 meanings.
+
+- axFile and axPass: Select to the previous entry.
+- axGIT and axMedia: Select to the previous file.
+- axProcess and axTask: Select to the previous item.
+- axMCP: Select to the previous server.
+- axAutomate: Select to the previous workflow.
+
 ### Ctrl+I
 
 Window key, in axCalc, axDown, axFile, axJSON, axPreview and axStart. 5 meanings.
@@ -340,6 +380,15 @@ Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and 
 - axAutomate, axMCP, axPass and axTask: The next value of the field.
 - axFile: Into the folder.
 - axTask: Open it where it lives.
+
+### Ctrl+A
+
+Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask. 4 meanings.
+
+- axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Select all.
+- axPass: Select all entries.
+- axGIT: Select all files.
+- axMCP: Select all of your servers.
 
 ### Ctrl+Shift+N
 
@@ -443,38 +492,6 @@ Window key, in axClaude, axDown, axJSON, axPreview and axTerminal. 3 meanings.
 - axClaude and axTerminal: Bookmark this line.
 - axDown and axPreview: Link.
 - axJSON: Key.
-
-### Shift+Down arrow
-
-Window key, in axFile, axGIT, axMedia, axProcess and axTask. 3 meanings.
-
-- axGIT and axMedia: Select to the next file.
-- axProcess and axTask: Select to the next item.
-- axFile: Select to the next entry.
-
-### Shift+End
-
-Window key, in axFile, axGIT, axMedia, axProcess and axTask. 3 meanings.
-
-- axGIT and axMedia: Select to the last file.
-- axProcess and axTask: Select to the last item.
-- axFile: Select to the last entry.
-
-### Shift+Home
-
-Window key, in axFile, axGIT, axMedia, axProcess and axTask. 3 meanings.
-
-- axGIT and axMedia: Select to the first file.
-- axProcess and axTask: Select to the first item.
-- axFile: Select to the first entry.
-
-### Shift+Up arrow
-
-Window key, in axFile, axGIT, axMedia, axProcess and axTask. 3 meanings.
-
-- axGIT and axMedia: Select to the previous file.
-- axProcess and axTask: Select to the previous item.
-- axFile: Select to the previous entry.
 
 ### Ctrl+Shift+L
 
@@ -588,13 +605,6 @@ Window key, in axAutomate, axFile, axMCP, axPass and axTask. 2 meanings.
 
 - axAutomate, axFile, axMCP, axPass and axTask: Rename.
 - axAutomate, axMCP, axPass and axTask: Rename the field.
-
-### Ctrl+A
-
-Window key, in axFile, axGIT, axMedia, axProcess and axTask. 2 meanings.
-
-- axFile, axGIT, axMedia, axProcess and axTask: Select all.
-- axGIT: Select all files.
 
 ### Ctrl+G
 
