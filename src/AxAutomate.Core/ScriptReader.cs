@@ -182,6 +182,36 @@ public static class ScriptReader
     /// <summary>What a needs line says, or null when the comment is no needs line.</summary>
     public static string? NeedsOf(string comment) => After(comment, NeedsPrefix);
 
+    /// <summary>
+    /// What a needs line says of a live script (docs/axKit/automation.md): one that would start the real Claude
+    /// Code on the user's account, or ask a server. The same three as <c>tools/window-run.ps1</c> holds, which
+    /// <c>GoalTests</c> checks; a line that says "no Claude Code, no network" names none of them.
+    /// </summary>
+    public static readonly IReadOnlyList<string> LiveNeeds = ["Claude Code signed in", "the network", "GitHub"];
+
+    /// <summary>Whether what a needs line says makes its script a live one, never run by a folder's run unless it is meant.</summary>
+    public static bool IsLive(string needs) => LiveNeeds.Any(need => needs.Contains(need, StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>What the needs line of a script's file says, read from the comment lines at its head alone; empty without one.</summary>
+    public static string NeedsOfFile(string path)
+    {
+        foreach (var line in File.ReadLines(path))
+        {
+            if (!line.StartsWith('#'))
+            {
+                // The head of a script is its comment lines; the first step ends it.
+                break;
+            }
+
+            if (NeedsOf(CommentText(line)) is { } needs)
+            {
+                return needs;
+            }
+        }
+
+        return string.Empty;
+    }
+
     private static bool IsStable(string comment) => string.Equals(comment, StableWord, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>The text after the prefix (any case), trimmed, or null when the comment does not start with it or holds nothing after it.</summary>

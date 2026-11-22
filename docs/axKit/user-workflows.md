@@ -1427,9 +1427,15 @@ line of the preamble for the script's when the script's line starts with it.
 ```
 AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda]
            [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off]
-           [--record] [--convert] [--ai-tools]
+           [--record] [--convert] [--ai-tools] [--live]
 AxAutomate --reference [--check] [--repository <folder>]
 ```
+
+`--live` (2026-11-22): a run of a folder leaves out its live scripts, the ones whose `# Needs:` line names Claude
+Code signed in, the network or GitHub (`ScriptReader.IsLive`), and says how many, since they start the real Claude
+Code on the user's account or ask a server; `--live` plays them too. A script named by its own file runs whatever
+it needs. `nvda-pass.ps1` and `tools/upstream.ps1 -Verify` pass it, since they mean every script they gather;
+`tools/window-passes.ps1` and `tools/nightly.ps1` never run a live script.
 
 The repository is `--repository`, or the folder above the program that holds `AxKit.sln`. `FindRepository` returns
 null when no folder above the program holds it. Today it falls back to the current directory; that must go, since a

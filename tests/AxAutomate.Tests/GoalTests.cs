@@ -467,6 +467,53 @@ public sealed class GoalTests
             goals.Select(goal => lines.Skip(goal.FirstLine - 1).Take(goal.LastLine - goal.FirstLine + 1).Any(ScriptReader.IsInput)));
     }
 
+    /// <summary>
+    /// A live script (docs/axKit/automation.md): its needs line names Claude Code signed in, the network or GitHub.
+    /// A run of a folder leaves such a script out unless --live says it is meant (2026-11-22: a folder's run, meant
+    /// as a check of the windows, started the real Claude Code for every live script of axClaude).
+    /// </summary>
+    [Theory]
+    [InlineData("Claude Code signed in, and the network.", true)]
+    [InlineData("Claude Code signed in and a live model.", true)]
+    [InlineData("The network: GitHub's API.", true)]
+    [InlineData("GitHub.", true)]
+    [InlineData("no Claude Code, no network: the stand-in plays the turn.", false)]
+    [InlineData("Git installed.", false)]
+    [InlineData("KeePassXC installed in C:\\Program Files\\KeePassXC.", false)]
+    [InlineData("", false)]
+    public void A_needs_line_says_whether_its_script_is_live(string needs, bool live) =>
+        Assert.Equal(live, ScriptReader.IsLive(needs));
+
+    /// <summary>The runner and the PowerShell helper that leaves live scripts out of the recorded passes hold the same three needs.</summary>
+    [Fact]
+    public void The_runner_and_the_window_passes_agree_on_what_is_live()
+    {
+        var helper = File.ReadAllText(Path.Combine(RepositoryRoot(), "tools", "window-run.ps1"));
+        Assert.Contains("$script:LiveNeed = '" + string.Join("|", ScriptReader.LiveNeeds) + "'", helper);
+    }
+
+    /// <summary>The needs line is read from the comment lines at a script's head alone, and the repository has live scripts for the guard to hold back.</summary>
+    [Fact]
+    public void The_live_scripts_of_the_repository_are_found_by_their_needs_line()
+    {
+        var live = RepositoryScripts().Where(path => ScriptReader.IsLive(ScriptReader.NeedsOfFile(path))).Select(Path.GetFileName).ToList();
+        Assert.Contains("31-hooks-live.txt", live);
+        Assert.Contains("48-stream-live.txt", live);
+        Assert.DoesNotContain("29-stand-in-turn.txt", live);
+        Assert.DoesNotContain("01-queue.txt", live);
+    }
+
+    private static string RepositoryRoot()
+    {
+        var root = AppContext.BaseDirectory;
+        while (!File.Exists(Path.Combine(root, "AxKit.sln")))
+        {
+            root = Path.GetDirectoryName(root) ?? throw new InvalidOperationException("No repository above the tests.");
+        }
+
+        return root;
+    }
+
     /// <summary>Every script of tests/scripts and tests/nvda-scripts.</summary>
     private static List<string> RepositoryScripts()
     {

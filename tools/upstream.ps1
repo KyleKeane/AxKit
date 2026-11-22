@@ -241,7 +241,7 @@ function Invoke-Check([string]$kind, [string]$target) {
         $current = ''
         $steps = New-Object System.Collections.Generic.List[string]
         try {
-            & dotnet run --project (Join-Path $root 'tools\AxAutomate') -c Release -- (Join-Path $root (Join-Path 'tests\scripts' $target)) --build --inventory off --traces off | ForEach-Object {
+            & dotnet run --project (Join-Path $root 'tools\AxAutomate') -c Release -- (Join-Path $root (Join-Path 'tests\scripts' $target)) --build --inventory off --traces off --live | ForEach-Object {
                 Write-Host $_
                 if ($_ -match '^== (.+)$') { $current = $Matches[1] }
                 elseif ($_ -match '^FAIL') { $steps.Add("$(if ($current) { $current } else { $target }): $_") }

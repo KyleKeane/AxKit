@@ -6,7 +6,7 @@
 // Usage:
 //   AxAutomate <script or folder of scripts> [--exe <AxKit.exe> | --build] [--report <file.md>] [--keep] [--nvda]
 //              [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record]
-//              [--convert] [--ai-tools]
+//              [--convert] [--ai-tools] [--live]
 //   AxAutomate --reference [--check] [--repository <folder>]
 //   --build      builds src\AxKit in Release into the run's own folder first (the running app's bin is never touched)
 //   --exe        the AxKit.exe to drive; there is no default: a run names its program or builds it
@@ -272,6 +272,18 @@ internal static class Program
                 .OrderBy(path => path, StringComparer.OrdinalIgnoreCase).ToList()
             : [target];
 
+        // A folder's run never starts the real Claude Code or asks a server by itself: its live scripts are left out
+        // unless --live says they are meant (RunOptions.LiveOption). A script named by its own file is meant.
+        if (Directory.Exists(target) && !options.Live)
+        {
+            var live = scripts.Where(script => script.EndsWith(".txt", StringComparison.OrdinalIgnoreCase) && ScriptReader.IsLive(ScriptReader.NeedsOfFile(script))).ToList();
+            if (live.Count > 0)
+            {
+                scripts = scripts.Except(live).ToList();
+                Console.WriteLine($"{live.Count} live script(s) left out: they start the real Claude Code or reach a server. Name one by its file, or add {RunOptions.LiveOption}, to run them.");
+            }
+        }
+
         // The command inventory (InventoryRun, WF-2.7 to WF-2.10): read now; under write or rewrite only the scripts
         // that list a window's commands play.
         if (InventoryRun.Start(options.Inventory, options.Repository, root) is { } unreadable)
@@ -522,7 +534,7 @@ internal static class Program
         return Run.Stopped is not null ? CannotStart : failed.Count > 0 ? ScriptsFailed : inventory.Stale ? InventoryStale : 0;
     }
 
-    private const string Usage = "Usage: AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda] [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record] [--convert] [--ai-tools], or AxAutomate --reference [--check] [--repository <folder>]. See docs/axKit/automation.md.";
+    private const string Usage = "Usage: AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda] [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record] [--convert] [--ai-tools] [--live], or AxAutomate --reference [--check] [--repository <folder>]. See docs/axKit/automation.md.";
 
     /// <summary>
     /// The exit codes (docs/axKit/user-workflows.md WF-11.5): 0 every script passed and nothing is stale, 1 a script

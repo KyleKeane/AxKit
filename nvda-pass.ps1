@@ -207,7 +207,9 @@ if ($Inventory -ne '') { $more = @('--inventory', $Inventory) }
 Stop-WhenSomeoneIsThere
 # The runner's error output is not redirected: under $ErrorActionPreference = 'Stop', Windows PowerShell 5.1 would turn
 # its first line into a terminating error and end this script before the summary (the root CLAUDE.md's 2>&1 gotcha).
-& $runner $scripts --exe $exe --nvda --record --repository $root --report $report @more |
+# --live: the pass means every script it gathered, the live ones among them (a run of a folder leaves those out by
+# itself since 2026-11-22, tools\AxAutomate\Options.cs); -Only is how a pass is kept to some.
+& $runner $scripts --exe $exe --nvda --record --repository $root --report $report --live @more |
     ForEach-Object { "$_" } |
     # What the run says of the command inventory is shown whole, the rows it names among it ("  axHelp: ... has also
     # ctrl+slash; the inventory has none"): until 2026-11-18 only its first line was, and the row had to be looked for

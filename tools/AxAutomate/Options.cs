@@ -3,7 +3,7 @@ namespace AxAutomate;
 /// <summary>
 /// The command line of a run, read once (docs/axKit/user-workflows.md section 6.4):
 /// <c>AxAutomate &lt;script or folder&gt; (--exe &lt;AxKit.exe&gt; | --build) [--report &lt;file.md&gt;] [--keep]
-/// [--nvda] [--repository &lt;folder&gt;] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record] [--convert] [--ai-tools]</c>.
+/// [--nvda] [--repository &lt;folder&gt;] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record] [--convert] [--ai-tools] [--live]</c>.
 /// <paramref name="Repository"/> is the folder named by <c>--repository</c>, else the one above the program that holds
 /// <c>AxKit.sln</c> (<see cref="FindRepository"/>), else null: without one the command inventory and the traces are
 /// off. <paramref name="Inventory"/> is one of <see cref="Check"/> (the default), <see cref="Write"/>,
@@ -21,6 +21,19 @@ namespace AxAutomate;
 /// </summary>
 internal sealed record RunOptions(string Target, string? Exe, bool Build, string? Report, bool Keep, bool Nvda, string? Repository, string Inventory, string Traces, bool TraceReport, bool Record, bool Convert, bool AiTools)
 {
+    /// <summary>
+    /// The option that lets a folder's run play its live scripts too (docs/axKit/automation.md): the ones whose
+    /// <c># Needs:</c> line names Claude Code signed in, the network or GitHub (<c>ScriptReader.IsLive</c>), which
+    /// start the real Claude Code on the user's account or ask a server. Without it a folder's run leaves them out
+    /// and says how many (2026-11-22: a run of a whole folder, meant as a check of the windows, started Claude Code
+    /// for every live script of axClaude). A script named by its own file runs whatever it needs: naming it is
+    /// meaning it.
+    /// </summary>
+    public const string LiveOption = "--live";
+
+    /// <summary>Whether <see cref="LiveOption"/> was given.</summary>
+    public bool Live { get; init; }
+
     public const string Check = "check";
     public const string Write = "write";
     public const string Rewrite = "rewrite";
@@ -53,6 +66,7 @@ internal sealed record RunOptions(string Target, string? Exe, bool Build, string
         var record = false;
         var convert = false;
         var aiTools = false;
+        var live = false;
         var inventory = Check;
         string? traces = null;
         for (var i = 1; i < args.Count; i++)
@@ -73,6 +87,7 @@ internal sealed record RunOptions(string Target, string? Exe, bool Build, string
                 case "--record": record = true; break;
                 case "--convert": convert = true; break;
                 case "--ai-tools": aiTools = true; break;
+                case LiveOption: live = true; break;
                 case "--repository": repository = args[++i]; break;
                 case "--inventory":
                     inventory = args[++i];
@@ -173,7 +188,7 @@ internal sealed record RunOptions(string Target, string? Exe, bool Build, string
         }
 
         traces = nvda || convert || aiTools || repository is null ? Off : traces ?? Check;
-        return (new RunOptions(args[0], exe, build, report, keep, nvda, repository, inventory, traces, report is not null && asked && traces != Off, record, convert, aiTools), string.Empty);
+        return (new RunOptions(args[0], exe, build, report, keep, nvda, repository, inventory, traces, report is not null && asked && traces != Off, record, convert, aiTools) { Live = live }, string.Empty);
     }
 
     /// <summary>
