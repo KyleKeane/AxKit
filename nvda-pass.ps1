@@ -10,10 +10,13 @@
   move a script expects must also be spoken by NVDA, read from the axkitCapture add-on (tools\nvda-capture).
 
   It takes the keyboard and the mouse. Run it only at the user's word, after asking them to step away: it refuses to
-  start (exit code 2) when NVDA is not running, when the installed capture add-on is not the repository's, and,
-  right before the runner takes the keyboard, while the last key or mouse input is under 20 seconds old (it waits a
-  minute for that quiet first). Windows' voice repeats the warning through the run, with the number of the test that
-  runs, how many remain and about how long they take, and says
+  start (exit code 2) when NVDA is not running and when the installed capture add-on is not the repository's. It
+  speaks before it takes anything (the user's ask of 2026-11-21, after he touched the keyboard not knowing a pass
+  was about to start): Windows' voice says at the script's start that a pass is being prepared, and right before
+  the runner takes the keyboard it says one short sentence and counts from ten to one aloud; a key or a mouse move after the countdown's
+  sentence began stops the pass for good (exit code 2), said in the same voice. -WarningOnly plays the warning and
+  the countdown alone, and starts nothing. Windows' voice then repeats the warning through the run, with the number
+  of the test that runs, how many remain and about how long they take, and says
   when it is over. The report is %TEMP%\axkit-nvda\report.md; the result
   lines are printed without the account's paths. Exit code 0 when every script passed.
 
@@ -42,7 +45,9 @@ param(
     # command inventory gets the rows of an app whose scripts are all live (axHelp), which no run on the hidden
     # desktop lists: only the scripts with a "check commands" or "do" step play then (2026-11-18).
     [ValidateSet('', 'check', 'write', 'rewrite', 'off')]
-    [string]$Inventory = ''
+    [string]$Inventory = '',
+    # The spoken warning and the countdown alone, for hearing them: nothing is built and no pass starts.
+    [switch]$WarningOnly
 )
 
 $ErrorActionPreference = 'Stop'
@@ -51,39 +56,76 @@ $work = Join-Path $env:TEMP 'axkit-nvda'
 $exe = Join-Path $work 'axkit\AxKit.exe'
 $runner = Join-Path $work 'runner\AxAutomate.exe'
 
-# The run takes the keyboard and the mouse, so the user must have stepped away (docs/axKit/automation.md section 3):
-# a key or a mouse move in the last 20 seconds means someone is at the computer, and the run does not start. Windows
-# keeps the time of the last input of the session (GetLastInputInfo); the runner's own keys come later and are not
-# asked about. Asked once, right before the runner takes the keyboard: the build before it is usually longer than
-# the 20 seconds after the user's answer to "step away". When the input is newer, the script waits for the quiet, a
-# minute at most, and then refuses.
+# The run takes the keyboard and the mouse, so the user must have stepped away (docs/axKit/automation.md section 3),
+# and must hear that it is coming before it takes anything (the user's ask, 2026-11-21: he touched the keyboard not
+# knowing a pass was about to start; until then the script waited in silence for 20 seconds without input, and the
+# first spoken word came from the runner, with the keyboard already taken). So Windows' own voice speaks from the
+# script's start, and right before the runner takes the keyboard it counts from ten to one aloud. A key or a mouse
+# move after the countdown's sentence began means someone is at the computer: the pass stops for good and says so.
+# Windows keeps the time of the last input of the session (GetLastInputInfo); the runner's own keys come later and
+# are not asked about. The voice is SAPI's, as the runner's is: NVDA never speaks it, and no window takes the focus.
 Add-Type -Namespace AxKitNvdaPass -Name LastInput -MemberDefinition @'
 [StructLayout(LayoutKind.Sequential)]
 public struct LASTINPUTINFO { public uint cbSize; public uint dwTime; }
 [DllImport("user32.dll")]
 public static extern bool GetLastInputInfo(ref LASTINPUTINFO info);
-public static int SecondsAgo() {
+public static long MillisecondsAgo() {
     LASTINPUTINFO info = new LASTINPUTINFO();
     info.cbSize = (uint)Marshal.SizeOf(typeof(LASTINPUTINFO));
     if (!GetLastInputInfo(ref info)) { return -1; }
-    return (int)(unchecked((uint)Environment.TickCount - info.dwTime) / 1000);
+    return (long)unchecked((uint)Environment.TickCount - info.dwTime);
 }
 '@
-function Stop-WhenSomeoneIsThere {
-    $seconds = [AxKitNvdaPass.LastInput]::SecondsAgo()
-    for ($waited = 0; $seconds -ge 0 -and $seconds -lt 20 -and $waited -lt 60; $waited++) {
-        if ($waited -eq 0) { Write-Host "The last key or mouse input was $seconds seconds ago: waiting for 20 seconds without input..." }
-        Start-Sleep -Seconds 1
-        $seconds = [AxKitNvdaPass.LastInput]::SecondsAgo()
+$spoken = $null
+try { $spoken = New-Object -ComObject SAPI.SpVoice } catch { $spoken = $null }
+
+# One sentence in Windows' voice, also written as a line. -Whole waits until it has been spoken to its end; without
+# it the script goes on while the voice speaks. A new sentence takes the place of one still being spoken. A computer
+# without the voice gets a tone, so that something is heard.
+function Write-Spoken([string]$Sentence, [switch]$Whole) {
+    Write-Host "(Windows' voice: $Sentence)"
+    if ($null -eq $spoken) {
+        [Console]::Beep(880, 400)
+        return
     }
-    if ($seconds -lt 0) {
+    # SAPI's flags: 1 speaks without waiting, 2 ends what is still being spoken.
+    $flags = 3
+    if ($Whole) { $flags = 2 }
+    try { [void]$spoken.Speak($Sentence, $flags) } catch { [Console]::Beep(880, 400) }
+}
+
+# The spoken countdown right before the runner takes the keyboard: one sentence, then ten seconds counted aloud;
+# any key or mouse input since the sentence began stops the pass for good.
+function Stop-WhenSomeoneIsThere {
+    if ([AxKitNvdaPass.LastInput]::MillisecondsAgo() -lt 0) {
+        Write-Spoken 'No test pass.' -Whole
         Write-Host 'Not started: Windows did not say when the last key or mouse input was, so nobody is known to have stepped away.'
         exit 2
     }
-    if ($seconds -lt 20) {
-        Write-Host "Not started: the last key or mouse input was $seconds seconds ago, so someone is at the computer. The run takes the keyboard: ask the user to step away, then start it again (-NoBuild runs the build that is there)."
-        exit 2
+    # One short sentence, then every second from ten to one (the user's words on hearing the first form, 2026-11-21:
+    # "shorter sentence and just count down from ten").
+    $began = [Diagnostics.Stopwatch]::StartNew()
+    Write-Spoken 'NVDA test pass. Press any key to stop it.' -Whole
+    for ($left = 10; $left -ge 0; $left--) {
+        $ago = [AxKitNvdaPass.LastInput]::MillisecondsAgo()
+        if ($ago -ge 0 -and $ago -lt $began.ElapsedMilliseconds) {
+            Write-Spoken 'Stopped. No test pass.' -Whole
+            Write-Host 'Not started: a key or the mouse was used during the spoken countdown, so someone is at the computer. The run takes the keyboard: ask the user to step away, then start it again (-NoBuild runs the build that is there).'
+            exit 2
+        }
+        if ($left -gt 0) {
+            Write-Spoken "$left"
+            Start-Sleep -Seconds 1
+        }
     }
+}
+
+if ($WarningOnly) {
+    Write-Spoken 'Only the warning: nothing starts.' -Whole
+    Write-Spoken 'NVDA test pass being prepared.' -Whole
+    Stop-WhenSomeoneIsThere
+    Write-Spoken 'Here the pass would start.' -Whole
+    exit 0
 }
 
 $capture = Join-Path $env:APPDATA 'nvda\addons\axkitCapture\globalPlugins\axkitCapture.py'
@@ -103,12 +145,15 @@ if (Compare-Object @(Get-Content $capture) @(Get-Content (Join-Path $root 'tools
     exit 2
 }
 
+# Said before anything is built, so that whoever is at the computer knows from the first moment what is coming.
+Write-Spoken 'NVDA test pass being prepared.'
+
 if (-not $NoBuild) {
     Write-Host 'Building axKit and the runner into the scratch folder...'
     dotnet build (Join-Path $root 'src\AxKit\AxKit.csproj') -c Release -o (Join-Path $work 'axkit') --nologo -v q | Out-Null
-    if ($LASTEXITCODE -ne 0) { Write-Host 'axKit did not build.'; exit $LASTEXITCODE }
+    if ($LASTEXITCODE -ne 0) { Write-Spoken 'No test pass.' -Whole; Write-Host 'axKit did not build.'; exit $LASTEXITCODE }
     dotnet build (Join-Path $root 'tools\AxAutomate\AxAutomate.Runner.csproj') -c Release -o (Join-Path $work 'runner') --nologo -v q | Out-Null
-    if ($LASTEXITCODE -ne 0) { Write-Host 'The runner did not build.'; exit $LASTEXITCODE }
+    if ($LASTEXITCODE -ne 0) { Write-Spoken 'No test pass.' -Whole; Write-Host 'The runner did not build.'; exit $LASTEXITCODE }
 }
 
 # The scripts of the pass in one folder, each app's in its own subfolder, in the runner's order.
@@ -119,6 +164,7 @@ New-Item -ItemType Directory -Force $scripts | Out-Null
 $apps = @(Get-ChildItem (Join-Path $root 'tests\scripts') -Directory |
     Where-Object { ($App -eq '' -or $_.Name -eq $App) -and $_.Name -notin $Skip })
 if ($App -ne '' -and $apps.Count -eq 0) {
+    Write-Spoken 'No test pass.' -Whole
     Write-Host "No scripts in tests\scripts\$App."
     exit 1
 }
@@ -148,6 +194,7 @@ if ($Only.Count -gt 0) {
         if ($wanted) { $kept++ } else { Remove-Item -LiteralPath $file.FullName -Force }
     }
     if ($kept -eq 0) {
+        Write-Spoken 'No test pass.' -Whole
         Write-Host "No script matches -Only $($Only -join ', ')."
         exit 1
     }

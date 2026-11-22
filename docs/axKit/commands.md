@@ -69,8 +69,9 @@ points here. Each app's own commands are in its `CLAUDE.md`.
   otherwise it puts that one file back as it was, so a working session never finds changes it did not make. It never
   commits or pushes.
 - `nvda-pass.ps1 [<app>]` runs the same scripts with NVDA listening, plus `tests/nvda-scripts`: the NVDA test plans as
-  the assistant runs them. It takes the keyboard, so only after the user has stepped away: it does not start while
-  the last key or mouse input is under 20 seconds old (it waits a minute for that), when NVDA is not running, or
+  the assistant runs them. It takes the keyboard, so only after the user has stepped away: it says so in Windows' voice from its
+  start, counts from ten to one aloud before it takes the keyboard, and does not start when a key or the mouse is
+  used during that countdown (`-WarningOnly` plays the warning alone), when NVDA is not running, or
   when the installed capture add-on differs from `tools/nvda-capture`. `-Skip <app>, ...` leaves apps out and
   `-NoBuild` runs the last build again. `-Only <pattern>, ...` plays only the scripts whose name, or folder and
   name, match (`-Only '*-stream-*', 'axMedia\03-playing.txt'`): what a pass failed is heard again after its repair

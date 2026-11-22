@@ -489,8 +489,14 @@ The assistant runs this tier itself to hear a change as NVDA speaks it, in the s
    what only NVDA shows; a first run without `--nvda` on the test desktop finds the focus order and the texts without
    taking the machine.
 3. Ask the user through the question tool to step away, saying how long. The answer is the go: the run is started at
-   once. `nvda-pass.ps1` itself holds the rule: right before the runner takes the keyboard it asks Windows when the
-   last key or mouse input was, waits up to a minute for 20 seconds without any, and refuses to start otherwise.
+   once. `nvda-pass.ps1` itself holds the rule, and speaks before it takes anything (the user's ask of 2026-11-21,
+   after he touched the keyboard not knowing a pass was about to start): Windows' voice says at the script's start
+   "NVDA test pass being prepared", and right before the runner takes the keyboard "NVDA test pass. Press any key
+   to stop it", then counts from ten to one, a number a second (his words on hearing a longer form: "shorter
+   sentence and just count down from ten"). A key or a mouse move after that sentence began stops the pass for
+   good: "Stopped. No test pass." Until then the script waited in silence for 20 seconds without input, up to a
+   minute. `.\nvda-pass.ps1 -WarningOnly` plays
+   the warning and the countdown alone, for hearing them, and starts nothing.
 4. The run records "Running NVDA tests. Please do not touch the keyboard or mouse." in Windows' own voice (SAPI, not
    NVDA, so the capture holds only what the windows made NVDA say, and no window takes the focus) into a wave file and
    plays it in a loop (the user's ask), then takes the foreground and the keys. From the first script on the warning
@@ -661,5 +667,5 @@ about once a month; their check is axTerminal's, run once for all the shells.
   a commit newer than the app's last recorded pass on the desktop tier or with NVDA listening, and name the apps
   (`tools/window-passes.ps1 -Check`, whose header says how it decides; run it without `-Check` at any time to see
   what a release would say). `test.ps1` does not run it: during ordinary work the windows are ahead of their record.
-- `nvda-pass.ps1` does not start while the last key or mouse input is under 20 seconds old, nor with a capture add-on
-  that differs from `tools/nvda-capture`.
+- `nvda-pass.ps1` does not start when a key or the mouse is used during its spoken countdown from ten, nor with
+  a capture add-on that differs from `tools/nvda-capture`.
