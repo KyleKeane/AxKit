@@ -127,7 +127,7 @@ public sealed partial class FileForm
     // ---- undo (AF-4.14) ----
 
     /// <summary>Folder → Undo <operation> (Ctrl+Z, AF-4.14): the newest line of the Actions list that can be taken back; "Nothing to undo" when none can.</summary>
-    private void Undo()
+    protected override void Undo()
     {
         if (_actions.Newest() is not { } entry)
         {

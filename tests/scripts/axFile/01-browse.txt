@@ -141,9 +141,9 @@ keys enter
 expect said ! empty-folder-no-items, No items in this folder
 keys enter
 expect said ! No items in this folder
-do Information
+keys ctrl+i
 expect said ! No items in this folder
-do Rename
+keys f2
 expect said ! No items in this folder
 keys backspace
 expect said nav, 13 items, empty-folder-no-items, folder

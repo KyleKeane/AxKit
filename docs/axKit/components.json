@@ -115,7 +115,7 @@
     }
   ],
   "apps": [
-    { "app": "axFile", "window": "FileForm", "type": "", "to be": "navigator", "note": "A window of its own today. The largest move, and the last." },
+    { "app": "axFile", "window": "FileForm", "type": "navigator", "to be": "navigator", "note": "A folder is a level and its entries the rows, read off the UI thread, with the Actions list, a log, as second pane. The last to move; some of its commands are still its own." },
     { "app": "axDown", "window": "", "type": "editor", "to be": "editor", "note": "" },
     { "app": "axJSON", "window": "", "type": "editor", "to be": "editor", "note": "" },
     { "app": "axPreview", "window": "", "type": "editor", "to be": "editor", "note": "Read-only, with the list of details." },

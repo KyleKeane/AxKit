@@ -14,46 +14,47 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
 ## Where things are
 
 - `AxFileApp`: the entry point `Run` that axKit's `Program` calls (bundle AX-1.7), one call into `AxKit.Forms/AppHost.Run` with the one folder or file of the command line, the settings and the window; the log (`axFile.log`), the crash handling, `--help` and `--version` are the host's. It moves the process's working directory to the program's folder (AF-1.2): a folder that is a process's current directory cannot be renamed or moved (Windows' "being used by another process"), and the apps started from here inherit the working directory.
-- `FileForm`, in six partial files (`FileForm.Completion.cs`, the Go to folder field's completion, out of Browse, and `FileForm.Programs.cs`, the user's own programs and Windows' own ways, out of Operations, since 2026-10-24).
+- `FileForm`, in six partial files (`FileForm.Completion.cs`, the Go to folder field's completion, out of Browse, and `FileForm.Programs.cs`, the user's own programs and Windows' own ways, out of Operations, since 2026-10-24). It is a navigator, the bundle's item window (`AxKit.Forms/ItemForm`, its notes in `src/AxKit.Forms/notes/item.md`; SPEC.md AF-D14, docs/axKit/framework.md step 13, 2026-11-22; a window of its own on the window base until then): a folder is a level, each shown entry a row (a folder a list, a file an item, the row's key the entry's path, its `Tag` the entry), and the Actions list the second pane as a log.
   - `FileForm.cs`:
-    - the controls (the folder list, the rename box as a child of the list, AF-4.2, the status bar);
+    - the controls are the item window's: `_list` is its `Navigator` (the folder list, the rename box a child of it, AF-4.2) and `_pane` its `DetailPane` (the Actions list); the split between them and the status bar are its own;
+    - what the navigator asks for: `Pane` (a log), `LogLineMenu` and `LogName`, `HasSelection`, `RowNoun`, `EmptyLine` (the empty folder's line or the filter's), `AfterRowsLine` (the not-shown line), `StatusState` (the newest operation's line), `ReadLevel` (the rows from the shown entries, the list's name with the count, the title, the path), `LevelIdentity` (the folder, so that another folder starts without marks), `KeysWithoutUse`, `NothingToSelect`, and in Browse `EntryRefused` (Right on a folder: the read started, the level staying until it is in), `OpenItem` and `UpLevel` (Left);
     - the menus (AF-6.1):
-      - the bundle's eight (`PlaceMenuBar`, AX-9.1, 2026-11-11): Session, Actions (Undo, New folder, New text file, Paste, Select all, Deselect all), Navigation (Favorites, Drives, Go to folder, Up one level, The Actions list), Context (`_context`, a `ContextBarMenu` over the entry's menu and the Actions list's line's, by the list that last had the focus, `_paneLast`; AX-9.11), Options (Sort by and Filter first);
+      - the bundle's eight (`PlaceMenuBar`, AX-9.1, 2026-11-11): Session, Actions (Undo, New folder, New text file, Paste, Select all, Deselect all), Navigation (Favorites, Drives, Go to folder, Up one level, The Actions list), Context (the item window's `CreateContextMenu` over the entry's menu and the Actions list's line's, `_lineMenu`, by the list that last had the focus; on a line that is no entry it holds that line's words; AX-9.11), Options (Sort by and Filter first);
       - `FillItemMenu` fills the entry's menu, never on the bar, with one flat list in File Explorer's order, AF-4.6, and its Selection submenu;
       - the Selection submenu holds the Space toggle, Select to here and the operations on the marks, AF-3.7;
       - `FillOpenWith` in Programs fills Open with ▸ on each opening;
     - the hooks the window base asks for;
     - `WndProc` (the shell menu's messages forwarded to `Shell`);
     - the command list (docs/axKit/app-kit.md AK-2):
-      - each menu item with a key is `Add(menu, new Command(...))`, a key with no item `AddKey`, its `When` where it acts, `InList` or `InPane`, its `Mark` for MCP;
+      - each menu item with a key is `Add(menu, new Command(...))`, a key with no item `AddKey`, its `When` where it acts, the item window's `InNavigator` or `InDetail`, its `Mark` for MCP; the item window adds its own keys after these (`PlaceControls`) and leaves a key to axFile where axFile has a command for it in the same place (`KeyTakenWhere`): Enter, Backspace, F2, Delete, find, F5, Ctrl+N and Ctrl+Shift+N are axFile's own, and the pane keys (Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab, F6), Right and Left, the selection's keys, Shift+F10 and the Applications key in either list, and Escape (deselect all in the folder list, back from the Actions list) are the item window's;
       - no `ProcessWindowKey` since 2026-10-24, the base running the list;
       - the Selection submenu's operations on the marks only show the entry's keys, the File Explorer item of Show current folder in only shows Ctrl+W, and Ctrl+D is a key of its own beside the Favorites submenu, refilled as it opens;
       - Enter, Shift+Enter, Backspace, Space, F2, Delete, Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A, Ctrl+Shift+A, Ctrl+Enter and Ctrl+Shift+Q only while the folder list has the focus;
       - in the Actions list Enter, Escape, Ctrl+Z and Ctrl+I act on its line;
-      - Shift+F10, the Applications key and a right click open the bar's Context menu through `ShowItemMenu`, AF-D13, AX-9.11;
+      - Shift+F10, the Applications key and a right click open the bar's Context menu through the item window's `OpenPaneMenu`, AF-D13, AX-9.11;
     - `Failed` (one line as an announcement, more as a notice; the base's `Do` runs every task and turns an escaped exception into a notice);
     - `UpdateStatusBar` (the newest action's line and the folder's path, AF-2.3).
   - `FileForm.Browse.cs`:
     - `StartAsync`;
     - `ShowFolderAsync` (the read on a task, the list refilled with the selection by name, the title, the recent list; a folder gone gives the notice and the nearest parent that exists);
-    - `Rearrange` and `FillList`:
-      - `_entries` is the folder as read, `_shown` what the list holds after the filter and the sort order, AF-3.8; every index into the list is into `_shown`;
-      - an empty folder, or a filter nothing passes, gets one item, and a read that left hidden or period-named entries out adds the last line "Not shown: …";
+    - `Rearrange`, which makes the shown entries and has the item window fill the list (`Fill`, which asks `ReadLevel`):
+      - `_entries` is the folder as read, `_shown` what the list holds after the filter and the sort order, AF-3.8; every index into the list is into `_shown`, and the item window's rows are made from it, one for one;
+      - an empty folder, or a filter nothing passes, gets one item (`EmptyLine`), and a read that left hidden or period-named entries out adds the last line "Not shown: …" (`AfterRowsLine`);
       - `CurrentEntry` counts neither as an entry, and `SayNoEntry` reads the line the selection is on;
-    - `SetSort`, `ShowFilterNotice`, `ApplyFilter`, `ClearSelectionOrFilter` (Escape: the marks first, then the filter);
+    - `SetSort`, `ShowFilterNotice`, `ApplyFilter` (Escape: the marks first, the item window's Deselect all, then the filter, the command "Clear the filter");
     - `TryFolder`, `NoFolderHere` and `TryEntry` (the guards: the folder a command needs, or "No folder" and "Choose a drive first" at This PC said, AF-3.10; the entry under the selection, or the line it is on said; `RealFolder`, the folder shown when it is one on disk, which Ctrl+N and the restart pass on);
     - `FillFavorites` and `ToggleFavorite` (AF-3.9);
     - the Drives submenu of Folder (AF-3.11; a menu of its own until 2026-10-22);
     - the selection (AF-3.7, AF-D9):
-      - `Selection`, the bundle's `AxKit.Forms/ListSelection` over `AxKit.Core/Marks` (bundle AX-8.16, shared since 2026-11-22; the keys are `AxKit.Forms/SelectionKeys`), on `_markRows`, the shown entries by path and name; it rewrites the items whose mark flipped (`ItemText`, made with its `Label`) and says the words;
-      - `ToggleSelection`, `SelectAll`, `SelectNone`, `SelectToHere` and `UndoMarks` (Ctrl+Z on a selection line) call it behind axFile's own guards; the four Shift keys are its `MoveCommands`; `RecordMarks` (its `Recorded`) is what is axFile's own: the line of the Actions list recorded, or rewritten while a Shift range goes on (`RangeLine`);
-      - `Rearrange` keeps only the marks on the entries still shown (`Selection.Keep`);
+      - `Selection` is the item window's, the bundle's `AxKit.Forms/ListSelection` over `AxKit.Core/Marks` (bundle AX-8.16, shared since 2026-11-22; the keys are `AxKit.Forms/SelectionKeys`), on its rows, the shown entries by path and name; it makes each item, rewrites the items whose mark flipped and says the words;
+      - the keys (Space, Shift+Space, Ctrl+A, Ctrl+Shift+A, Escape, the four Shift keys of its `MoveCommands`) are the item window's commands, which say the line on a line that is no entry (`NothingToSelect`); the menu items only show them; `UndoMarks` (Ctrl+Z on a selection line) restores the marks; `RecordMarks` (set as its `Recorded` in the constructor) is what is axFile's own: the line of the Actions list recorded, or rewritten while a Shift range goes on (`RangeLine`);
+      - the item window keeps only the marks on the entries still shown as the list is filled, and drops them all for another folder (`LevelIdentity`);
       - `DropSelectionLines` (another folder), `OnMarks` (the Selection submenu's operations, on the marks alone);
       - `SelectedEntries` and `Targets`, what an operation acts on;
-    - `PaletteEntries` (AF-3.12: the shown entries in the bundle's command palette, Enter selecting the entry and calling `OpenSelected`);
-    - `OpenSelected` (Enter: a folder here, a file through `OpenWithWindows`, AF-3.2);
+    - `PaletteEntries` (AF-3.12: the shown entries in the bundle's command palette, Enter selecting the entry and calling `OpenEntry`);
+    - `OpenEntry` (Enter: a folder here, a file through `OpenWithWindows`, AF-3.2);
     - `OpenInPreview` (Shift+Enter: axPreview on a file, a new axFile window on a folder);
-    - `GoUp`, `IntoFolder` and `OutOfFolder` (Right and Left, AF-D12: a folder or drive opened, up one level, the edge earcon on a file or at This PC);
+    - `GoUp`, `EntryRefused` and `UpLevel` (Backspace; Right and Left, the item window's Into and Up a level, AF-D12: a folder or drive opened, up one level, the edge earcon on a file or at This PC);
     - the folder picker, the recent submenu;
     - Go to folder: its field's `KeyHook` is `OnPathKey`:
       - Down and Up run `CompleteAsync`, the folder read on a task through `AxFile.Core.PathCompletion`;
@@ -81,13 +82,13 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
       - `_inFlight` holds the paths the running pastes and moves are writing or moving away, so that `Paste` chooses its names around them (`FileOperations.Destinations` with the reserved paths) and a cut still on its way says "Already pasting", or pastes the files that are not and counts the ones that are;
       - the set is read on the UI thread, snapshotted for the task, and cleared in the runner's `finally`.
   - `FileForm.Actions.cs` (AF-9, 2026-10-22):
-    - the Actions list, an `AxKitList` named "Actions" docked under the folder list from the start, "No actions yet" as its one line until the first operation (hidden only while a notice shows; the base's focus rule gives a notice's focus back to it), a third of the window (`FitPane`);
+    - the Actions list, the item window's second pane as a log (`_pane`, its `DetailPane`), an `AxKitList` named "Actions" under the folder list from the start, "No actions yet" as its one line until the first operation (hidden only while a notice shows; the item window gives a notice's focus back to it), a third of the window (the item window's split);
     - `_actions`, the `AxFile.Core.ActionLog`;
     - `FillPane`:
       - the rows from `ActionLog.Rows`, each line changed in place while the count is the same, so that the selection stays and only the changed line moves under NVDA, the running line the user is on left alone while it is the same entry on the same row, `_paneRows`;
       - otherwise the whole list with the newest line selected while the focus is in the folder list, so that Tab lands on it;
       - the line the user is on is found in `_paneRows`, so the callers pass nothing;
-    - `SwitchPane` (Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab, F6 between the two lists);
+    - Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6 between the two lists are the item window's pane keys, named with `LogName`;
     - `ShowActions` (Navigation → The Actions list);
     - the line methods above (`Begin`, `Progress`, `End`, `FailAction`, `Record`);
     - the Actions list's sections and header lines come from `ActionLog.Lines`, and a line of the list is mapped to its entry with `EntryAt`/`IndexOf`, so that `FillPane` keeps the user's line by entry;
@@ -102,7 +103,7 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
   - `FileForm.Programs.cs`: the user's own programs and Windows' own ways, out of Operations (since 2026-10-24).
 - `AxFileKeys`: the window's keys (SPEC.md AF-6.2; bundle AX-8), the one place a key is changed; `All` feeds the collision test and the F1 text names the same keys.
 - `HelpText`: the F1 text and the embedded guide; About is the bundle's.
-- The entry's menu has no context-menu copy (AF-D13, 2026-10-23): `ShowItemMenu` (Programs) fills Context and is the window base's `OpenBarMenu` with C since 2026-11-11 (I until then), which waits until Shift, F10 and the Applications key are up, then posts `SC_KEYMENU` and the letter, as Alt and C typed, so that WinForms opens the bar's Context drop-down from the keyboard and NVDA reads its first item. The list's own `ContextMenuStrip` (the former `ItemMenu`) was silent the first time it opened however it was shown; a mnemonic inside the `SC_KEYMENU` message opened Folder; with the keys still down F10 closed the menu and the letter was Shift+I.
+- The entry's menu has no context-menu copy (AF-D13, 2026-10-23): the item window's `OpenPaneMenu` (axFile's own opener in Programs until 2026-11-22) fills Context and is the window base's `OpenBarMenu` with C since 2026-11-11 (I until then), which waits until Shift, F10 and the Applications key are up, then posts `SC_KEYMENU` and the letter, as Alt and C typed, so that WinForms opens the bar's Context drop-down from the keyboard and NVDA reads its first item. The list's own `ContextMenuStrip` (the former `ItemMenu`) was silent the first time it opened however it was shown; a mnemonic inside the `SC_KEYMENU` message opened Folder; with the keys still down F10 closed the menu and the letter was Shift+I.
 - `Shell` (SPEC.md AF-4.7, AF-D8): the things Windows does with an entry (its Open with dialog is `AxKit.Forms/WindowsOpenWith` since 2026-10-24, axPreview using it too), on the UI thread apart from `Undelete`, which the window runs through `FileOperations.OnShellThreadAsync`: `Properties` (`ShellExecuteExW` with the verb `properties`), `ShowMenu` (the shell's context menu: `SHParseDisplayName`, `SHBindToParent`, `IShellFolder.GetUIObjectOf`, `IContextMenu.QueryContextMenu` into a popup of `CreatePopupMenu`, `TrackPopupMenuEx` with the command returned, `InvokeCommand`), `Eject` (the same menu built for a drive, the item whose `GetCommandString` verb is `eject` invoked through `FindVerb` and `Invoke`, AF-3.11), `Undelete` (AF-4.14: the Recycle Bin bound as a shell folder from `SHGetKnownFolderIDList`, its items enumerated with `IEnumIDList`, each one's `$R` parsing name read through `GetDisplayNameOf` and `StrRetToBufW` and its record through `AxFile.Core.RecycleBin`, the items whose original path is wanted, the latest deletion of each, given to `GetUIObjectOf` together and the verb `undelete` invoked once), and `ForwardMenuMessage`, which the window's `WndProc` calls so that the shell fills its submenus (`IContextMenu2`/`3.HandleMenuMsg`). The interfaces are declared in vtable order with `PreserveSig`.
 
 ## Rules

@@ -50,14 +50,14 @@ public static class HelpText
         ## Information
           Ctrl+I: the entry's size and date; for a drive, the free space
           Ctrl+Shift+W: show the entry in File Explorer. Ctrl+W: show the folder in File Explorer. Session, Show current folder in: axClaude, axTerminal, axGIT
-          NVDA+End: the status bar: the newest operation on the left, the folder's full path on the right
+          NVDA+End: the status bar: the newest operation and how many entries are selected on the left, the folder's full path on the right
           Ctrl+S: nothing to save here; axFile says so
 
         ## The Actions list
           Under the folder list, always; "No actions yet" until the first operation. Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6 moves between the two lists, Escape goes back to the folder list, Session, Actions goes there
           Three sections, each under a header line: Running, the operations under way; Operations, the ones done; Selection, the changes of the selection in this folder. Newest last in each
           One line per operation: "Renamed notes.md to todo.md", "Copied 3 items", "Compressing, 40 of 120 files" while it runs, "Failed: …", "…, undone" once taken back. One per change of the selection: "Selected notes.md", "Selected 5 items", "Deselected all, 3 items"
-          Enter: go to where it happened, the folder list on the entry it made, moved or selected. Ctrl+Z: undo this line, whatever its place; Ctrl+Z in the folder list undoes operations only. Ctrl+I: its section, number and time, "Operations, 3 of 12, 21:04"
+          Enter: go to where it happened, the folder list on the entry it made, moved or selected. Ctrl+Z: undo this line, whatever its place; Ctrl+Z in the folder list undoes operations only. Ctrl+I: its section, number and time, "Operations, 3 of 12, 21:04". Shift+F10 or the Applications key: the Context menu with these for the line
         """ + BundleHelp.NoticesSection("axFile", "the lists");
 
     /// <summary>docs/axFile/user-guide.md, embedded by AxFile.csproj.</summary>

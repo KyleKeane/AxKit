@@ -286,8 +286,8 @@ expect list "items":["quiet, folder, selected","subfolder-for-inner, folder, sel
 do Undo new folder
 expect said ! Undone: quiet removed
 expect list "subfolder-for-inner, folder, selected","temp, folder, selected"
-# The status bar never reads a selection line.
-expect state "status":["Created quiet, undone",
+# The status bar never reads a selection line; it ends with how many are selected, as in every navigator.
+expect state "status":["Created quiet, undone, 2 selected",
 # Enter on a folder: the Selection section is gone.
 keys home
 keys enter

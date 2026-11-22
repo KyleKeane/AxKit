@@ -79,8 +79,7 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 - What: For things in levels: a list of rows you go into and out of, and beside it more of the row you are on.
 - Made of: the list; the list.
 - Moving: Right goes into a row that holds a level; Left and Backspace go up. Enter opens the row. Tab and the other pane keys switch to the second pane; Escape comes back.
-- Apps on it: axMedia, axTask, axProcess, axAutomate, axGIT, axPass, axMCP.
-- To move onto it: axFile.
+- Apps on it: axFile, axMedia, axTask, axProcess, axAutomate, axGIT, axPass, axMCP.
 - The code: `ItemForm`, `src/AxKit.Forms/ItemForm.cs`.
 
 ### The hotkey window
@@ -93,11 +92,11 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 
 ## The apps
 
-17 apps: 16 on a type, 1 with a window of their own still to move.
+17 apps: 17 on a type, 0 with a window of their own still to move.
 
 | App | Type today | To be | Note |
 |---|---|---|---|
-| axFile | a window of its own | navigator | A window of its own today. The largest move, and the last. |
+| axFile | navigator | navigator | A folder is a level and its entries the rows, read off the UI thread, with the Actions list, a log, as second pane. The last to move; some of its commands are still its own. |
 | axDown | editor | editor |  |
 | axJSON | editor | editor |  |
 | axPreview | editor | editor | Read-only, with the list of details. |

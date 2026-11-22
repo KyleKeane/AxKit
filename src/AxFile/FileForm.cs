@@ -8,12 +8,17 @@ namespace AxFile;
 /// axFile's window (SPEC.md AF-2): a menu bar, one list with a folder's entries, the Actions list always under it ("No
 /// actions yet" until the first operation), and a status bar with the newest action and the folder's path. Enter is the verb (G2): a
 /// folder opens in the list, a file in the program Windows has for it; Shift+Enter reads a file in axPreview. The
-/// folder reads and the operations run on background tasks. The notices, the fonts, the window's place, the update
-/// flow and the announcements are the bundle's window base (<see cref="AxKitForm"/>). The window is in four files:
-/// this one (the controls, the menus, the hooks, the keys), Browse (the folder, the list and the selection),
-/// Operations (the operations and the ways out) and Actions (the Actions list and the hand-overs to axMedia).
+/// folder reads and the operations run on background tasks. The window is a navigator, the bundle's item window
+/// (<see cref="ItemForm"/>; docs/axKit/framework.md FW-4.8, step 13, 2026-11-22; a window of its own until then): a
+/// folder is a level and its entries the rows, and the Actions list is the second pane, a log. The two lists, the
+/// split between them, the status bar, the selection's marks, the notices, the fonts and the window's place are
+/// the item window's. In this first step the commands stay axFile's own, each on the item window's condition for
+/// its place, so that the keys, the words and the order are what they were; they move onto the type's hooks one
+/// by one after it. The window is in four files: this one (the menus, the hooks, the keys), Browse (the folder,
+/// the list and the selection), Operations (the operations and the ways out) and Actions (the Actions list and
+/// the hand-overs to axMedia).
 /// </summary>
-public sealed partial class FileForm : AxKitForm
+public sealed partial class FileForm : ItemForm
 {
     private readonly FileSettings _settings;
     private readonly string? _startPath;
@@ -22,17 +27,13 @@ public sealed partial class FileForm : AxKitForm
     private readonly ToolStripMenuItem _favoritesItem = new("Fa&vorites");
     private readonly ToolStripMenuItem _drivesMenu = new("Driv&es");
     private readonly ChoiceItems<SortBy> _sortItems;
-    private readonly AxKitList _list = new();
-    private readonly StatusStrip _status = new();
-    private readonly ToolStripStatusLabel _stateLabel;
-    private readonly ToolStripStatusLabel _pathLabel;
     private readonly ToolStripMenuItem _undoItem;
 
-    /// <summary>The bar's Context menu (AX-9.11): the entry's commands, or the Actions list's line's.</summary>
-    private readonly ContextBarMenu _context;
+    /// <summary>The folder list: the item window's navigator.</summary>
+    private AxKitList _list => Navigator;
 
-    /// <summary>Whether the Actions list was the last of the two lists to have the focus, which Context follows.</summary>
-    private bool _paneLast;
+    /// <summary>The menu of the Actions list's line, which Context holds while that list was the last of the two to have the focus (AX-9.11).</summary>
+    private readonly ToolStripMenuItem _lineMenu = new("&Line");
 
     /// <param name="settingsPath">Where the settings are saved; the app's own file unless a probe says otherwise, so that a probe never writes the user's.</param>
     public FileForm(string? path, FileSettings settings, string? settingsError, string? settingsPath = null)
@@ -43,7 +44,7 @@ public sealed partial class FileForm : AxKitForm
         SetTitle(null);
 
         // ---- menus and keys (AF-6.1, AF-6.2): one command list (docs/axKit/app-kit.md AK-2), each key from the tables;
-        // a key's When is where it acts: the folder list (InList), the Actions list (InPane) or anywhere ----
+        // a key's When is where it acts: the folder list (InNavigator), the Actions list (InDetail) or anywhere ----
         // Folder is the thing worked on, in the standard order of a first menu (bundle AX-6): Open and the recent
         // folders, the ways around, Show current folder in, Exit.
         var folder = new ToolStripMenuItem("&Session");
@@ -69,7 +70,7 @@ public sealed partial class FileForm : AxKitForm
         navigation.DropDownItems.Add(_drivesMenu);
         Add(navigation, new Command("&Go to folder...", AxFileKeys.GoToFolder, GoToFolder) { Mark = CommandMark.Open });
         AddKey(new Command("Go to folder", AxFileKeys.GoToFolderAlso, GoToFolder) { Mark = CommandMark.Open });
-        Add(navigation, new Command("&Up one level", AxFileKeys.Up, GoUp) { When = InList, Mark = CommandMark.Open });
+        Add(navigation, new Command("&Up one level", AxFileKeys.Up, GoUp) { When = InNavigator, Mark = CommandMark.Open });
         AddKey(new Command("Up one level", AxFileKeys.UpAlso, GoUp) { Mark = CommandMark.Open });
         navigation.DropDownItems.Add(new ToolStripSeparator());
         Add(navigation, new Command("The &Actions list", Keys.None, ShowActions) { Mark = CommandMark.Open });
@@ -86,7 +87,7 @@ public sealed partial class FileForm : AxKitForm
         actions.DropDownItems.Add(new ToolStripSeparator());
         Add(actions, new Command("&New folder...", AxFileKeys.NewFolder, NewFolder) { Mark = CommandMark.Act });
         Add(actions, new Command("New text &file", AxFileKeys.NewFile, NewFile) { Mark = CommandMark.Act });
-        Add(actions, new Command("&Paste", AxFileKeys.Paste, Paste) { When = InList, Mark = CommandMark.Act });
+        Add(actions, new Command("&Paste", AxFileKeys.Paste, Paste) { When = InNavigator, Mark = CommandMark.Act });
         actions.DropDownItems.Add(new ToolStripSeparator());
         // AF-1.3: the way to the other windows, on the folder shown. The base makes the submenu around its File
         // Explorer item, so the item only shows the key and the key is a command of its own.
@@ -105,22 +106,19 @@ public sealed partial class FileForm : AxKitForm
         // Selection (AF-3.7, AF-D10, 2026-10-22): the marks, Select all and Deselect all in Actions, the rest a submenu
         // of the entry's Context: this entry's mark, then the operations on the marks alone, which say "None selected"
         // rather than fall back to the current entry.
-        Add(actions, new Command("Select &all", SelectionKeys.SelectAll, SelectAll) { When = InList, Mark = CommandMark.Change });
-        Add(actions, new Command("D&eselect all", SelectionKeys.SelectNone, SelectNone) { When = InList, Mark = CommandMark.Change });
+        // The keys of the selection are the item window's commands (AX-8.16), the Shift ranges among them; these
+        // items only show them.
+        actions.DropDownItems.Add(Item("Select &all", SelectAllRows, SelectionKeys.SelectAll, CommandMark.Change));
+        actions.DropDownItems.Add(Item("D&eselect all", SelectNoRows, SelectionKeys.SelectNone, CommandMark.Change));
         var select = new ToolStripMenuItem("Selectio&n");
         item.DropDownItems.Add(new ToolStripSeparator());
         item.DropDownItems.Add(select);
-        Add(select, new Command("Select or deselect this &entry", SelectionKeys.Select, ToggleSelection) { When = InList, Mark = CommandMark.Change });
-        Add(select, new Command("Select to &here", SelectionKeys.SelectTo, SelectToHere) { When = InList, Mark = CommandMark.Change });
-        // The Shift ranges (AF-3.7), keys of the list with no menu item: the shared selection's four commands,
-        // "Select to the next entry" and the like; on a line after the entries they say that line.
-        foreach (var move in Selection.MoveCommands("entry", InList, SayNoEntry))
-        {
-            AddKey(move);
-        }
+        select.DropDownItems.Add(Item("Select or deselect this &entry", SelectRow, SelectionKeys.Select, CommandMark.Change));
+        select.DropDownItems.Add(Item("Select to &here", SelectToHere, SelectionKeys.SelectTo, CommandMark.Change));
 
-        // Escape: the marks cleared, else the filter (AF-3.7, AF-3.8); with neither, the key is left alone.
-        AddKey(new Command("Clear the selection or the filter", AxFileKeys.Clear, () => ClearSelectionOrFilter()) { When = () => InList() && (Selection.Count > 0 || _filter.Length > 0), Mark = CommandMark.Change });
+        // Escape: the marks cleared, else the filter (AF-3.7, AF-3.8); with neither, the key is left alone. The
+        // marks are the item window's Deselect all on the key; the filter, with no entry selected, is this command.
+        AddKey(new Command("Clear the filter", AxFileKeys.Clear, () => ApplyFilter(string.Empty)) { When = () => InNavigator() && Selection.Count == 0 && _filter.Length > 0, Mark = CommandMark.Change });
         select.DropDownItems.Add(new ToolStripSeparator());
         // The operations on the marks alone (AF-D10): their keys are the entry's commands, on the targets, which
         // are the marks while there are any; these items only show them.
@@ -133,33 +131,21 @@ public sealed partial class FileForm : AxKitForm
         select.DropDownItems.Add(Item("Add to axMedia's &queue", () => OnMarks(AddToQueue), AxFileKeys.AddToQueue, CommandMark.Act));
         select.DropDownItems.Add(Item("Copy &paths", () => OnMarks(CopyPath), AxFileKeys.CopyPath, CommandMark.Act));
 
-        // The keys without a menu item. Two places at most, the folder list and the Actions list (AF-9.1): every one
-        // of the control keys moves between them.
-        foreach (var key in new[] { Keys.Tab, Keys.Shift | Keys.Tab, BundleKeys.NextControl, BundleKeys.PreviousControl, BundleKeys.NextControlAlso })
-        {
-            AddKey(new Command("Switch between the folder list and the Actions list", key, SwitchPane) { Mark = CommandMark.Open });
-        }
-
+        // The keys without a menu item. Between the two places, the folder list and the Actions list (AF-9.1), go
+        // the item window's pane keys; Right and Left (AF-D12) are its Into and Up a level (EntryRefused, UpLevel),
+        // and Context from the keyboard (AF-4.6, AF-D13, AX-9.11) its Context keys, in either list.
         AddKey(new Command("Find", BundleKeys.Find, ShowFindNotice) { Mark = CommandMark.Read });
         AddKey(new Command("Find next", BundleKeys.FindNext, () => FindInList(1)) { Mark = CommandMark.Read });
         AddKey(new Command("Find previous", BundleKeys.FindPrevious, () => FindInList(-1)) { Mark = CommandMark.Read });
-        // In the folder list: Right and Left (AF-D12), and Context from the keyboard (AF-4.6, AF-D13, AX-9.11).
-        AddKey(new Command("Into the folder", AxFileKeys.IntoFolder, IntoFolder) { When = InList, Mark = CommandMark.Open });
-        AddKey(new Command("Up one level", AxFileKeys.OutOfFolder, OutOfFolder) { When = InList, Mark = CommandMark.Open });
-        AddKey(new Command("Context menu", AxFileKeys.ContextMenu, ShowItemMenu) { When = InList, Mark = CommandMark.Open });
-        AddKey(new Command("Context menu", AxFileKeys.ContextMenuAlso, ShowItemMenu) { When = InList, Mark = CommandMark.Open });
-        // In the Actions list (AF-9.3): Enter goes where the action left things, Escape goes back to the folder list.
-        AddKey(new Command("Go to the action's place", AxFileKeys.Open, GoToAction) { When = InPane, Mark = CommandMark.Open });
-        AddKey(new Command("Back to the folder list", AxFileKeys.Clear, () => _list.Focus()) { When = InPane, Mark = CommandMark.Open });
+        // In the Actions list (AF-9.3): Enter goes where the action left things; Escape goes back to the folder
+        // list, the item window's key.
+        AddKey(new Command("Go to the action's place", AxFileKeys.Open, GoToAction) { When = InDetail, Mark = CommandMark.Open });
 
-        // The Actions list's line (AF-9.3): its keys, shown in Context while the Actions list has the focus.
-        var line = new ToolStripMenuItem("&Line");
-        line.DropDownItems.Add(Item("&Go to where it happened", GoToAction, AxFileKeys.Open, CommandMark.Open));
-        line.DropDownItems.Add(Item("&Undo this action", UndoSelectedAction, AxFileKeys.Undo, CommandMark.Act));
-        line.DropDownItems.Add(Item("Its number and &time", SayActionInformation, AxFileKeys.Information, CommandMark.Read));
-        _list.Enter += (_, _) => _paneLast = false;
-        _pane.Enter += (_, _) => _paneLast = true;
-        _context = new ContextBarMenu(() => _paneLast ? line : item, () => "Nothing selected", said => Announce(said, true), item, line);
+        // The Actions list's line (AF-9.3): its keys, shown in Context while the Actions list was the last of the two
+        // lists to have the focus (the item window's LogLineMenu).
+        _lineMenu.DropDownItems.Add(Item("&Go to where it happened", GoToAction, AxFileKeys.Open, CommandMark.Open));
+        _lineMenu.DropDownItems.Add(Item("&Undo this action", UndoSelectedAction, AxFileKeys.Undo, CommandMark.Act));
+        _lineMenu.DropDownItems.Add(Item("Its number and &time", SayActionInformation, AxFileKeys.Information, CommandMark.Read));
 
         // Options, as the other windows' (AX-6): the order and the filter (AF-3.8) first, then every setting in the
         // submenu for what it is about.
@@ -190,29 +176,24 @@ public sealed partial class FileForm : AxKitForm
             [("&Keyboard shortcuts in Windows", "https://support.microsoft.com/windows/keyboard-shortcuts-in-windows-dcc61a57-8ff0-cffe-9796-cb9706c75eec")]);
 
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
-        PlaceMenuBar(_menu, folder, actions, navigation, _context.Menu, options, help);
-        _menu.MenuActivate += (_, _) => _context.Fill();
+        // Context holds the entry's menu on an entry, the line's menu while the Actions list was the last to have the focus.
+        PlaceMenuBar(_menu, folder, actions, navigation, CreateContextMenu(_ => item, item, _lineMenu), options, help);
 
-        // ---- the list (AF-2.1, AF-2.2): the main control; its own keys stay native (AF-3.6) ----
-        _list.IntegralHeight = false;
-        _list.Dock = DockStyle.Fill;
-        _list.TabIndex = 0;
-        _list.AccessibleName = "No folder";
-        _list.DoubleClick += (_, _) => OpenSelected();
-        // AF-3.6: File Explorer's type-ahead, several letters into one prefix, in place of the list's one-letter jump.
-        // The bundle's list (AX-8.6) types over the shown entries' names, not the empty folder's or the Not shown line.
-        _list.Names = () => _shown.Select(entry => entry.Name).ToList();
-        // AF-4.6, AF-D13: a right click opens the bar's Context menu on the entry under it, selected first as File
-        // Explorer does; Shift+F10 and the Applications key open the same menu from their commands.
-        _list.OpenMenuOnRightClick(ShowItemMenu);
+        // ---- the list (AF-2.1, AF-2.2): the item window's navigator; its own keys stay native (AF-3.6) ----
+        // Its type-ahead (AF-3.6) goes over the rows' names, which are the shown entries' (the item window's), and a
+        // right click opens Context on the entry under it (AF-4.6, AF-D13; the item window's too).
+        _list.DoubleClick += (_, _) => OpenEntry();
 
-        // ---- the Actions list (AF-9): always under the folder list, "No actions yet" until the first operation ----
+        // ---- the Actions list (AF-9): the item window's second pane as a log, under the folder list ----
         SetUpActions();
 
-        // ---- the status bar (AF-2.3): the bundle's pair, no AccessibleName, no Spring ----
-        (_stateLabel, _pathLabel) = StatusLayout.Pair(_status);
+        // AF-9.2: every change of the marks is also a line of the Actions list, beside the count in the status bar.
+        Selection.Recorded = change =>
+        {
+            RecordMarks(change);
+            ShowStatus();
+        };
 
-        SizeChanged += (_, _) => FitPane();
         // AF-3.4: coming back to the window reads the folder again when another program changed it; not when one of
         // the Windows dialogs closes, which activates the window too (the base's DialogShowing).
         Activated += (_, _) =>
@@ -223,12 +204,69 @@ public sealed partial class FileForm : AxKitForm
             }
         };
 
-        // Docked from the last control to the first: the menu takes the top, the status bar the bottom, the Actions
-        // list the strip above the status bar, and the folder list (or the notice over both) what is left.
-        PlaceControls(_menu, _list, _pane, _status);
-        FitPane();
+        // The item window places the two lists, the split between them and the status bar, and adds its own keys
+        // after axFile's: a key axFile has a command for in the same place stays axFile's.
+        PlaceControls(_menu);
+        Fill(select: null);
         FillPane();
     }
+
+    // ---- what the navigator asks for (the item window, docs/axKit/framework.md FW-4.8) ----
+
+    /// <summary>The second pane is the Actions list, a log of lines axFile keeps.</summary>
+    protected override SecondPane Pane => SecondPane.Log;
+
+    protected override ToolStripMenuItem? LogLineMenu => _lineMenu;
+
+    protected override string LogName => "Actions list";
+
+    /// <summary>Space selects entries (AF-3.7): the operations act on the selected ones.</summary>
+    protected override bool HasSelection => true;
+
+    protected override string RowNoun => "entry";
+
+    /// <summary>The one line of a folder without entries to show (AF-2.2, AF-3.8): an empty folder's, or the filter's; none before a folder is shown.</summary>
+    protected override string? EmptyLine => _folder is null ? null : _filter.Length > 0 ? NoMatchText : EmptyFolderText;
+
+    /// <summary>What the read left out (AF-2.2), as the last line, so that the count is there when wanted.</summary>
+    protected override string? AfterRowsLine => _hidden > 0 || _dot > 0 ? FolderListing.NotShownText(_hidden, _dot) : null;
+
+    /// <summary>The status bar's first part (AF-2.3): the newest file operation's line, never a selection line.</summary>
+    protected override string? StatusState => _actions.LatestOperation?.Line ?? string.Empty;
+
+    /// <summary>
+    /// The folder shown as the navigator's level (AF-2.1, AF-2.2): a row for each shown entry (a folder a list, a
+    /// file an item, its key its path), the list named with its count, the title the folder's name, the status
+    /// bar's second part its path. Before a folder is shown there are no rows and the list is "No folder".
+    /// </summary>
+    protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel() =>
+        _folder is null
+            ? ([], "No folder", string.Empty, string.Empty)
+            : ([.. _shown.Select(entry => new ItemRow(entry.IsFolder, entry.Path, entry.Name, entry.Label, entry))],
+                FolderListing.ListName(_shown.Count, _entries.Count, _filter), PathName.Of(_folder), _folder);
+
+    /// <summary>
+    /// The navigator's keys axFile has a command of its own for under another condition, or no use for: Ctrl+Z
+    /// (Undo here and in the Actions list), Ctrl+Q (nothing to read in full), and the section keys, a folder
+    /// having no sections. Of the rest, some are axFile's own commands in the same place, which the item window
+    /// leaves to it (Enter, F2, Delete, Backspace), and the others are the item window's (the pane keys, Right
+    /// and Left, the selection's, Context's, Escape).
+    /// </summary>
+    protected override IReadOnlyCollection<Keys> KeysWithoutUse =>
+        [ItemKeys.Undo, ItemKeys.ReadAll, ItemKeys.PreviousSection, ItemKeys.NextSection];
+
+    /// <summary>The selection keys on a line that is no entry say that line (AF-7).</summary>
+    protected override void NothingToSelect(ItemRow? row) => SayNoEntry();
+
+    // What the item window asks every app for and axFile reaches through its own commands in this step: F2 is
+    // Rename, Delete is Delete, Ctrl+N is New window and Ctrl+Shift+N New folder.
+    protected override string? RenameRefused(ItemRow row) => null;
+
+    protected override void DeleteRow(ItemRow row) => Delete();
+
+    protected override void NewItem() => NewFile();
+
+    protected override void NewList() => NewFolder();
 
     /// <summary>
     /// The entry's menu (AF-4.6, AF-6.1), filled for the menu bar and again for the list's context menu: one flat
@@ -238,7 +276,7 @@ public sealed partial class FileForm : AxKitForm
     /// </summary>
     private void FillItemMenu(ToolStripMenuItem menu)
     {
-        Add(menu, new Command("&Open", AxFileKeys.Open, OpenSelected) { When = InList, Mark = CommandMark.Act });
+        Add(menu, new Command("&Open", AxFileKeys.Open, OpenEntry) { When = InNavigator, Mark = CommandMark.Act });
         var openWith = new ToolStripMenuItem("Open &with");
         CommandPalette.NoEntry(openWith).DropDownOpening += (_, _) => FillOpenWith(openWith);
         FillOpenWith(openWith);
@@ -250,16 +288,16 @@ public sealed partial class FileForm : AxKitForm
         WindowMenu.AddApps(axkit.DropDownItems, Dispatch.Apps.Where(app => app.Opens != Opens.Nothing), app => CommandPalette.Marked(new ToolStripMenuItem(AxKitWindows.AppLabel(app), null, (_, _) => OpenInAxKit(app)), WindowMenu.OpenMark(app.Verb)));
 
         menu.DropDownItems.Add(axkit);
-        Add(menu, new Command("Pr&eview", AxFileKeys.Preview, OpenInPreview) { When = InList, Mark = CommandMark.Open });
-        Add(menu, new Command("Play folder in axMe&dia", BundleKeys.MainAction, PlayFolder) { When = InList, Mark = CommandMark.Open });
-        Add(menu, new Command("Add to axMedia's &queue", AxFileKeys.AddToQueue, AddToQueue) { When = InList, Mark = CommandMark.Open });
+        Add(menu, new Command("Pr&eview", AxFileKeys.Preview, OpenInPreview) { When = InNavigator, Mark = CommandMark.Open });
+        Add(menu, new Command("Play folder in axMe&dia", BundleKeys.MainAction, PlayFolder) { When = InNavigator, Mark = CommandMark.Open });
+        Add(menu, new Command("Add to axMedia's &queue", AxFileKeys.AddToQueue, AddToQueue) { When = InNavigator, Mark = CommandMark.Open });
         menu.DropDownItems.Add(new ToolStripSeparator());
-        Add(menu, new Command("Cu&t", AxFileKeys.Cut, () => CopyOrCut(cut: true)) { When = InList, Mark = CommandMark.Act });
-        Add(menu, new Command("&Copy", AxFileKeys.Copy, () => CopyOrCut(cut: false)) { When = InList, Mark = CommandMark.Act });
+        Add(menu, new Command("Cu&t", AxFileKeys.Cut, () => CopyOrCut(cut: true)) { When = InNavigator, Mark = CommandMark.Act });
+        Add(menu, new Command("&Copy", AxFileKeys.Copy, () => CopyOrCut(cut: false)) { When = InNavigator, Mark = CommandMark.Act });
         menu.DropDownItems.Add(new ToolStripSeparator());
         // Posted, so that a menu has closed and the list has the focus back before the box takes it; F2 is posted the same way.
-        Add(menu, new Command("Rena&me", AxFileKeys.Rename, () => BeginInvoke(() => Rename())) { When = InList, Mark = CommandMark.Act });
-        Add(menu, new Command("&Delete", AxFileKeys.Delete, Delete) { When = InList, Mark = CommandMark.Act });
+        Add(menu, new Command("Rena&me", AxFileKeys.Rename, () => BeginInvoke(() => Rename())) { When = InNavigator, Mark = CommandMark.Act });
+        Add(menu, new Command("&Delete", AxFileKeys.Delete, Delete) { When = InNavigator, Mark = CommandMark.Act });
         menu.DropDownItems.Add(new ToolStripSeparator());
         Add(menu, new Command("Mo&ve to folder...", Keys.None, MoveIntoNewFolder) { Mark = CommandMark.Act });
         Add(menu, new Command("Compress to &zip", Keys.None, Compress) { Mark = CommandMark.Act });
@@ -269,49 +307,29 @@ public sealed partial class FileForm : AxKitForm
         Add(menu, new Command("Show in File Exp&lorer", AxFileKeys.ShowItemInExplorer, ShowItemInExplorer) { Mark = CommandMark.Open });
         // Ctrl+I in the Actions list is the line's number and time (AF-9.3).
         Add(menu, new Command("&Information", AxFileKeys.Information, SayInformation) { When = () => !_pane.Focused, Mark = CommandMark.Read });
-        AddKey(new Command("The action's number and time", AxFileKeys.Information, SayActionInformation) { When = InPane, Mark = CommandMark.Read });
+        AddKey(new Command("The action's number and time", AxFileKeys.Information, SayActionInformation) { When = InDetail, Mark = CommandMark.Read });
         Add(menu, new Command("Prope&rties", AxFileKeys.Properties, ShowProperties) { Mark = CommandMark.Act });
         menu.DropDownItems.Add(new ToolStripSeparator());
         // AF-4.7: the shell's own menu, behind one item of ours (AF-D8).
         Add(menu, new Command("Windows men&u...", Keys.None, ShowWindowsMenu) { Mark = CommandMark.Act });
     }
 
-    /// <summary>Where a key of the folder list acts: the list itself has the focus, not the rename box over it or the Actions list (AF-6.2).</summary>
-    private bool InList() => _list.Focused;
-
-    /// <summary>Where a key of the Actions list acts (AF-9.3).</summary>
-    private bool InPane() => _pane.Focused;
+    // Where a key acts (AF-6.2, AF-9.3) is the item window's condition for its place: InNavigator, the folder list
+    // itself having the focus, not the rename box over it or the Actions list; InDetail, the Actions list.
 
     // ---- what the window base asks for ----
 
     protected override string Shortcuts => HelpText.Shortcuts;
 
+    /// <summary>A rename box left open is closed first; the two lists are hidden by the item window.</summary>
     protected override void HideForNotice()
     {
         EndRename();
-        _list.Visible = false;
-        _pane.Visible = false;
+        base.HideForNotice();
     }
-
-    protected override void ShowAfterNotice()
-    {
-        _list.Visible = true;
-        FitPane();
-        _pane.Visible = true;
-    }
-
-    /// <summary>The folder list, when the control a notice opened from is gone (the rename box); the Actions list keeps the focus across a notice by the base's rule (AF-9.1).</summary>
-    protected override Control FocusTarget => _list;
 
     /// <summary>An announcement is raised on the list that has the focus (AF-7): the Actions list while it does, the folder list otherwise.</summary>
     protected override Control AnnounceSource => _pane.Focused ? _pane : _list;
-
-    protected override void ApplyFont(Font font)
-    {
-        _list.Font = font;
-        _pane.Font = font;
-        FitPane();
-    }
 
     protected override string UpdateRestartText => $"closes {AxFileApp.Name}, installs it and starts it again on the same folder";
 
@@ -323,11 +341,6 @@ public sealed partial class FileForm : AxKitForm
 
     protected override void OnShown(EventArgs e)
     {
-        if (!NoticeOpen)
-        {
-            _list.Select();
-        }
-
         base.OnShown(e);
         Do(() => StartAsync(_startPath));
     }
@@ -384,11 +397,10 @@ public sealed partial class FileForm : AxKitForm
 
 
 
-    /// <summary>The status bar (AF-2.3): the newest file operation's line on the left (never a selection line), the folder's full path on the right.</summary>
+    /// <summary>The status bar (AF-2.3) shown again: the newest file operation's line on the left (<see cref="StatusState"/>; never a selection line), the folder's full path on the right.</summary>
     private void UpdateStatusBar()
     {
-        _stateLabel.Text = _actions.LatestOperation?.Line ?? string.Empty;
-        _pathLabel.Text = _folder ?? string.Empty;
-        StatusLayout.Fit(_status, _stateLabel, _pathLabel);
+        SetPlace(_folder ?? string.Empty);
+        ShowStatus();
     }
 }

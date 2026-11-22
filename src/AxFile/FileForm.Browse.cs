@@ -24,17 +24,12 @@ public sealed partial class FileForm
     private int _hidden;
     private int _dot;
 
-    /// <summary>The shown entries as the marks see them, each by its path and name, made with <see cref="_shown"/>.</summary>
-    private IReadOnlyList<MarkRow> _markRows = [];
+    // The marks on the shown entries (AF-3.7), which the operations act on, are the item window's selection
+    // (AX-8.16, its Selection): each entry by its path, kept while the same folder shows, a marked item reading
+    // ", selected". Every change of them is also a line of the Actions list here (RecordMarks).
 
-    private ListSelection? _selectionMade;
-
-    /// <summary>
-    /// The marks on the shown entries (AF-3.7), which the operations act on, and the Shift range being made; a marked
-    /// item reads ", selected". Kept while the same folder shows. The bundle's selection of a list (AX-8.16,
-    /// <see cref="ListSelection"/>), whose every change is also a line of the Actions list here (<see cref="RecordMarks"/>).
-    /// </summary>
-    private ListSelection Selection => _selectionMade ??= new ListSelection(_list, () => _markRows, row => ItemText(_shown[row]), said => Announce(said, true)) { Recorded = RecordMarks };
+    /// <summary>The folder as the level the marks belong to: the same folder under another spelling keeps them.</summary>
+    protected override string LevelIdentity() => _folder?.ToUpperInvariant() ?? string.Empty;
 
     /// <summary>The folder's last write time at the last read, so that coming back to the window knows whether to read again (AF-3.4).</summary>
     private DateTime _folderStamp;
@@ -171,11 +166,11 @@ public sealed partial class FileForm
             return false;
         }
 
-        // AF-3.7, AF-3.8: the marks and the filter live in one folder: another folder starts with none; the same one
-        // keeps the filter, and the marks on the entries still shown (Rearrange).
+        // AF-3.7, AF-3.8: the marks and the filter live in one folder: another folder starts with none (the item
+        // window drops the marks as the level changes, and their lines go here); the same one keeps the filter, and
+        // the marks on the entries still shown (Rearrange).
         if (changed)
         {
-            Selection.Clear();
             DropSelectionLines();
             _filter = string.Empty;
         }
@@ -185,7 +180,6 @@ public sealed partial class FileForm
         _hidden = listing.Hidden;
         _dot = listing.Dot;
         _folderStamp = Stamp(folder);
-        SetTitle(PathName.Of(folder));
         Rearrange(select);
         if (FolderListing.IsThisPC(folder))
         {
@@ -257,34 +251,19 @@ public sealed partial class FileForm
     /// <summary>The one item of a folder whose entries all fail the filter (AF-3.8).</summary>
     private string NoMatchText => "No names contain " + _filter;
 
-    /// <summary>The shown entries made again from the folder's entries, the order and the filter (AF-3.8), and the list refilled; the marks on entries no longer shown go with them (AF-3.7).</summary>
+    /// <summary>
+    /// The shown entries made again from the folder's entries, the order and the filter (AF-3.8), and the list
+    /// filled again by the item window (<see cref="ReadLevel"/>: the rows, the list's name with the count, the
+    /// title, the lines after the entries), <paramref name="select"/> selected by name or path, or the first
+    /// entry; the marks on entries no longer shown go with them (AF-3.7), and a Shift range ends. A new list starts
+    /// the type-ahead afresh (AF-3.6).
+    /// </summary>
     private void Rearrange(string? select)
     {
         // The drives of This PC stay in letter order (AF-3.10).
         _shown = FolderListing.IsThisPC(_folder) ? FolderListing.Filter(_entries, _filter) : FolderListing.Arrange(_entries, _settings.SortBy, _filter);
-        // A Shift range is rows of the shown entries: a new order or filter, or a read, ends it; the items are made anew below.
-        _markRows = [.. _shown.Select(entry => new MarkRow(entry.Path, entry.Name))];
-        Selection.Keep();
-        FillList(select);
-    }
-
-    /// <summary>The list's items for the shown entries, named with the folder and the count; the selection by name, or the first entry.</summary>
-    private void FillList(string? select)
-    {
-        var lines = _shown.Select(ItemText).ToList();
-        if (_shown.Count == 0)
-        {
-            lines.Add(_filter.Length > 0 ? NoMatchText : EmptyFolderText);
-        }
-
-        if (_hidden > 0 || _dot > 0)
-        {
-            // AF-2.2: what the read left out, as the last line, so that the count is there when wanted.
-            lines.Add(FolderListing.NotShownText(_hidden, _dot));
-        }
-
-        // A new list starts the type-ahead afresh (AF-3.6).
-        _list.Fill(lines, FolderListing.ListName(_shown.Count, _entries.Count, _filter), select is null ? 0 : IndexOfName(select));
+        // A row's key is its entry's path; a name that is not here selects nothing, as before.
+        Fill(select is null ? null : IndexOfName(select) is var index && index >= 0 ? _shown[index].Path : select);
     }
 
     // ---- the order and the filter (AF-3.8) ----
@@ -331,32 +310,17 @@ public sealed partial class FileForm
         Announce($"{_list.AccessibleName}, {_list.SelectedItem}", true);
     }
 
-    /// <summary>Escape in the list: the selection cleared, as Ctrl+Shift+A, while entries are selected (AF-3.7); otherwise the filter cleared; false, the key left alone, when there is neither.</summary>
-    private bool ClearSelectionOrFilter()
-    {
-        if (Selection.Count > 0)
-        {
-            SelectNone();
-            return true;
-        }
+    // Escape in the list: the selection cleared, as Ctrl+Shift+A, while entries are selected (AF-3.7; the item
+    // window's command); otherwise the filter cleared (the command "Clear the filter"); the key left alone when
+    // there is neither.
 
-        if (_filter.Length == 0)
-        {
-            return false;
-        }
-
-        ApplyFilter(string.Empty);
-        return true;
-    }
-
-    /// <summary>The list item of an entry (AF-2.2): its label, with ", selected" while it is (AF-3.7).</summary>
-    // S-42: a name's hidden direction marks and control characters made visible.
-    private string ItemText(Entry entry) => DisplayText.Visible(Selection.Label(entry.Path, entry.Label));
-
-    // ---- the selection (AF-3.7): the bundle's selection of a list (AX-8.16, ListSelection over Marks), recorded here in the Actions list ----
-    // The shared piece rewrites the items whose mark flipped and says what the key says. Here every change of the
-    // marks is also a line of the Actions list's Selection section (AF-9.2), which Ctrl+Z on the line takes back
-    // (AF-9.3); a Shift range is one line, rewritten while the range goes on.
+    // ---- the selection (AF-3.7): the item window's (AX-8.16, ListSelection over Marks), recorded here in the Actions list ----
+    // The shared piece makes each item (an entry's label, with ", selected" while it is, S-42's hidden characters
+    // made visible), rewrites the items whose mark flipped and says what the key says; its keys are the item
+    // window's commands (Space, Shift+Space, Ctrl+A, Ctrl+Shift+A, Shift with the arrows, Home and End), which on
+    // a line that is no entry say that line (NothingToSelect). Here every change of the marks is also a line of
+    // the Actions list's Selection section (AF-9.2), which Ctrl+Z on the line takes back (AF-9.3); a Shift range
+    // is one line, rewritten while the range goes on.
 
     /// <summary>The line made last for a change of the marks, which is the Shift range's while one is being made (<see cref="RangeLine"/>).</summary>
     private ActionEntry? _rangeLine;
@@ -416,44 +380,11 @@ public sealed partial class FileForm
         Selection.Restore(entry.Before ?? []);
     }
 
-    /// <summary>Space in the list: the entry selected, or deselected again, its item reading ", selected" while it is; "Selected" or "Deselected", with the count when more are.</summary>
-    private void ToggleSelection()
-    {
-        if (TryEntry(out _))
-        {
-            Selection.Toggle();
-        }
-    }
-
-    /// <summary>Ctrl+A in the list, Selection → Select all: every entry shown, "n selected".</summary>
-    private void SelectAll()
-    {
-        if (_shown.Count == 0)
-        {
-            SayNoEntry();
-            return;
-        }
-
-        Selection.All();
-    }
-
-    /// <summary>Ctrl+Shift+A in the list, Selection → Deselect all: the marks cleared, "None selected".</summary>
-    private void SelectNone() => Selection.None();
-
-    /// <summary>Shift+Space in the list (AF-3.7): every entry from the nearest marked entry to the current one marked, "Selected, n selected"; with no other entry marked, Space.</summary>
-    private void SelectToHere()
-    {
-        if (TryEntry(out _))
-        {
-            Selection.ToHere();
-        }
-    }
-
     // Shift with Up, Down, Home or End in the list (AF-3.7) are the shared piece's four commands
-    // (ListSelection.MoveCommands, registered in FileForm.cs): the current entry moves and every entry between where
-    // the range began and there is marked, as in File Explorer. Each entry passed reads ", selected" on its own;
-    // nothing else is said. On a line after the entries (an empty folder's, the not-shown line) the keys say that
-    // line (SayNoEntry).
+    // (ListSelection.MoveCommands, registered by the item window): the current entry moves and every entry between
+    // where the range began and there is marked, as in File Explorer. Each entry passed reads ", selected" on its
+    // own; nothing else is said. On a line after the entries (an empty folder's, the not-shown line) the keys say
+    // that line (SayNoEntry).
 
     /// <summary>The selected entries among those shown, in the list's order; none when nothing is selected.</summary>
     private List<Entry> SelectedEntries() => _shown.Where(entry => Selection.Contains(entry.Path)).ToList();
@@ -632,14 +563,14 @@ public sealed partial class FileForm
 
             _list.Select();
             _list.SelectedIndex = index;
-            OpenSelected();
+            OpenEntry();
         }));
     }
 
     // ---- browsing (AF-3.1) ----
 
     /// <summary>Enter in the list (G2): a folder opens here, a file in the program the user has made its default in Windows, as in File Explorer (AF-3.2, AF-D2).</summary>
-    private void OpenSelected()
+    private void OpenEntry()
     {
         if (!TryEntry(out var entry))
         {
@@ -693,20 +624,23 @@ public sealed partial class FileForm
         Do(() => ShowFolderAsync(parent, left, remember: false));
     }
 
-    /// <summary>Right Arrow in the list (AF-3.1, AF-D12): a folder or a drive opened, as Enter; the edge earcon on a file or a line that is not an entry, so that an arrow key never starts a program.</summary>
-    private void IntoFolder()
+    /// <summary>
+    /// Right Arrow in the list (AF-3.1, AF-D12), the item window's Into: a folder or a drive opened, as Enter; the
+    /// edge earcon on a file or a line that is not an entry (the item window's), so that an arrow key never starts
+    /// a program. The folder is read on a background task and shown when the read is in, so the item window is told
+    /// that the level stays for now, with nothing to say.
+    /// </summary>
+    protected override string? EntryRefused(ItemRow row)
     {
-        if (CurrentEntry() is { IsFolder: true } entry)
-        {
-            Do(() => ShowFolderAsync(entry.Path, null, remember: false));
-            return;
-        }
-
-        EventDoor.Raise(EventKind.Edge);
+        Do(() => ShowFolderAsync(row.Key, null, remember: false));
+        return string.Empty;
     }
 
-    /// <summary>Left Arrow in the list (AF-3.1, AF-D12): up one level, as Backspace; the edge earcon at This PC.</summary>
-    private void OutOfFolder()
+    /// <summary>The item window's Enter on an item, should anything of it open one: as Enter here (AF-3.2).</summary>
+    protected override void OpenItem(ItemRow row) => OpenEntry();
+
+    /// <summary>Left Arrow in the list (AF-3.1, AF-D12), the item window's Up a level: up one level, as Backspace; the edge earcon at This PC.</summary>
+    protected override void UpLevel()
     {
         if (FolderListing.IsThisPC(_folder))
         {

@@ -66,9 +66,9 @@ Ctrl and a punctuation key stays inside the window you are in, where the same ke
 
 The keys:
 
-- Ctrl+Period, axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: The Context menu.
+- Ctrl+Period, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: The Context menu.
 - Ctrl+Period, axAutomate, axMCP, axPass and axTask: The field's menu.
-- Ctrl+Period, axFile: Context menu.
+- Ctrl+Period, axFile: The line's menu.
 - Ctrl+Slash, every app: Ask about this window.
 
 ### Space and Ctrl+Space: select, or toggle
@@ -77,7 +77,7 @@ Space selects the thing you are on in a list of things you can act on several of
 
 The keys:
 
-- Space, axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Select or deselect.
+- Space, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Select or deselect.
 - Space, axAutomate, axMCP, axPass and axTask: Check the field.
 - Space, axFile: Select or deselect this entry.
 
@@ -106,7 +106,7 @@ Exceptions today, which do another kind of thing:
 - F6, axDown, axJSON and axPreview: Between the text and the details.
 - F6, axCalc, axClaude and axTerminal: Switch between the view and the field.
 - F6, axMedia: Back to the list.
-- F6, axFile: Switch between the folder list and the Actions list.
+- F6, axFile: Switch between the list and the Actions list.
 - F6, axGIT: Switch between the list and the text.
 
 ### Shift+F-key, and the Applications key: the reverse or the other form of the same F-key
@@ -121,12 +121,12 @@ The keys:
 
 Windows' own keys, as in every program:
 
-- Applications key, axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: The Context menu.
+- Applications key, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: The Context menu.
 - Applications key, axAutomate, axMCP, axPass and axTask: The field's menu.
-- Applications key, axFile: Context menu.
-- Shift+F10, axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: The Context menu.
+- Applications key, axFile: The line's menu.
+- Shift+F10, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: The Context menu.
 - Shift+F10, axAutomate, axMCP, axPass and axTask: The field's menu.
-- Shift+F10, axFile: Context menu.
+- Shift+F10, axFile: The line's menu.
 
 ### Enter: open or confirm
 
@@ -158,19 +158,18 @@ Escape goes back one step or closes what is open. It never loses work without as
 
 The keys:
 
-- Escape, axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Deselect all.
+- Escape, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Deselect all.
 - Escape, axAutomate, axMCP, axPass and axTask: To the navigator.
 - Escape, axClip, axHelp and axStart: Hide.
+- Escape, axFile and axGIT: To the list.
 - Escape, axTask: Back from the search.
-- Escape, axFile: Back to the folder list.
-- Escape, axGIT: To the list.
 - Shift+Escape, axClaude: Interrupt.
 - Shift+Escape, axTerminal: Send Escape.
 
 Exceptions today, which do another kind of thing:
 
 - Escape, axCalc: Clear the field.
-- Escape, axFile: Clear the selection or the filter.
+- Escape, axFile: Clear the filter.
 
 ### Delete and Ctrl+Shift+Delete: remove
 
@@ -197,13 +196,13 @@ The keys:
 - Ctrl+Tab, axDown, axJSON and axPreview: Between the text and the details.
 - Ctrl+Tab, axCalc, axClaude and axTerminal: Switch between the view and the field.
 - Ctrl+Tab, axMedia and axProcess: Back to the list.
-- Ctrl+Tab, axFile: Switch between the folder list and the Actions list.
+- Ctrl+Tab, axFile: Switch between the list and the Actions list.
 - Ctrl+Tab, axGIT: Switch between the list and the text.
 - Ctrl+Shift+Tab, axAutomate, axMCP, axPass and axTask: Switch between the navigator and the detail pane.
 - Ctrl+Shift+Tab, axDown, axJSON and axPreview: Between the text and the details.
 - Ctrl+Shift+Tab, axCalc, axClaude and axTerminal: Switch between the view and the field.
 - Ctrl+Shift+Tab, axMedia and axProcess: Back to the list.
-- Ctrl+Shift+Tab, axFile: Switch between the folder list and the Actions list.
+- Ctrl+Shift+Tab, axFile: Switch between the list and the Actions list.
 - Ctrl+Shift+Tab, axGIT: Switch between the list and the text.
 
 ### The arrows, Page Up, Page Down, Tab, Shift+Tab and Backspace: move through what you are on
@@ -215,29 +214,27 @@ Windows' own keys, as in every program:
 - Backspace, axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Up a level.
 - Backspace, axFile: Up one level.
 - Down arrow, axClip and axStart: Next match.
-- Left arrow, axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Up a level.
+- Left arrow, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Up a level.
 - Left arrow, axAutomate, axMCP, axPass and axTask: The previous value of the field.
-- Left arrow, axFile: Up one level.
 - Left arrow, axProcess: Up to This computer.
 - Left arrow, axGIT: Up to the repository.
 - Page Down, axClip and axStart: Page down.
 - Page Up, axClip and axStart: Page up.
-- Right arrow, axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Into the list.
+- Right arrow, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Into the list.
 - Right arrow, axAutomate, axMCP, axPass and axTask: The next value of the field.
-- Right arrow, axFile: Into the folder.
 - Right arrow, axTask: Open it where it lives.
 - Tab, axAutomate, axMCP, axPass and axTask: To the detail pane.
 - Tab, axAutomate, axMCP, axPass and axTask: To the navigator.
 - Tab, axCalc, axClaude and axTerminal: Switch between the view and the field.
-- Tab, axFile: Switch between the folder list and the Actions list.
-- Tab, axGIT: To the list.
+- Tab, axFile and axGIT: To the list.
+- Tab, axFile: To the Actions list.
 - Tab, axGIT: To the text.
 - Up arrow, axClip and axStart: Previous match.
 - Shift+Tab, axAutomate, axMCP, axPass and axTask: To the detail pane.
 - Shift+Tab, axAutomate, axMCP, axPass and axTask: To the navigator.
 - Shift+Tab, axCalc, axClaude and axTerminal: Switch between the view and the field.
-- Shift+Tab, axFile: Switch between the folder list and the Actions list.
-- Shift+Tab, axGIT: To the list.
+- Shift+Tab, axFile and axGIT: To the list.
+- Shift+Tab, axFile: To the Actions list.
 - Shift+Tab, axGIT: To the text.
 
 ### Shift with an arrow, Home, End or Space: select

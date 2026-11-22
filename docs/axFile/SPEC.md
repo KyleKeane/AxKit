@@ -94,7 +94,8 @@ folder of the file or project in hand, and sends back. It works entirely offline
 - AF-2.1 From the top: the menu bar; the folder list, named with its count alone, "N items" ("24 items"; "1 item";
   "Empty" for none; "3 of 24 items, filter chap" under a filter, AF-3.8); the Actions list under it, always (AF-9);
   the status bar. A notice takes the place of both lists while it shows (AX-6.4). Tab, Shift+Tab, Ctrl+Tab,
-  Ctrl+Shift+Tab and F6 move between the two lists (AX-8.2), the window's two controls.
+  Ctrl+Shift+Tab and F6 move between the two lists (AX-8.2), the window's two controls. The window is the
+  bundle's navigator (AF-D14): a folder is a level, its entries the rows, and the Actions list the second pane.
 - AF-2.2 Items: a file by its name as it is; a folder as "<name>, folder"; a drive of This PC as "<label> (C:), drive"
   (AF-3.10). Folders first, then files, each group in
   Windows' natural order (`StrCmpLogicalW`, so that `2` comes before `10`). Hidden and system entries are left out,
@@ -108,7 +109,9 @@ folder of the file or project in hand, and sends back. It works entirely offline
   reason is read (the bundle's rule for empty lists, AX-9.5). Neither that item nor the not-shown line is an entry: a
   command on either says the line itself (AF-7).
 - AF-2.3 The title is `<folder name> - axFile`. The status bar's left label: the newest file operation's line in the Actions list
-  ("Copied 3 items", "Compressing, 40 of 120 files"; never a selection line, AF-9.2), empty before the first operation; the right label: the folder's
+  ("Copied 3 items", "Compressing, 40 of 120 files"; never a selection line, AF-9.2), empty before the first operation,
+  and after it, while entries are selected, how many, as in every navigator ("Copied 3 items, 2 selected"; "2 selected"
+  alone before the first operation; AX-8.16, since 2026-11-22); the right label: the folder's
   full path. No AccessibleName, no Spring (axClaude §6.2).
 - AF-2.4 **Information** (Ctrl+I; Context → Information): the selected entry on demand, "report.pdf, 1.2 MB, modified
   2026-10-18 14:02" or "docs, folder, modified 2026-10-18 14:02"; the items themselves stay names (AF-D7).
@@ -316,7 +319,9 @@ Every operation here is one line of the Actions list (AF-9) as well as its annou
   Open with ▸, Open in axKit ▸, Preview, Play folder in axMedia, Add to axMedia's queue | Cut, Copy | Rename,
   Delete | Move to folder…, Compress to zip, Extract here | Copy path, Show in File
   Explorer, Information, Properties | Windows menu… | Selection ▸; Paste, New folder and New text file act on the folder and are in Actions (2026-11-11). There is one menu, the bar's Context menu, the standard drop-down
-  (AX-6.6); the list has no context menu of its own (AF-D13).
+  (AX-6.6); the list has no context menu of its own (AF-D13). On a line that is no entry (an empty folder's, the
+  not-shown line) Context holds one item, that line's words, in place of commands that could only say them (the
+  navigator's rule, since 2026-11-22; the entry's keys still say the line there, AF-7).
 - AF-4.7 **Windows' own ways**, items of the entry's menu, each one of the system's own windows like the folder picker
   (AX-7.2): Open with ▸ **Windows default** opens the entry with the program Windows has for it (a folder in File Explorer),
   or, when Windows has none, the Windows dialog that picks a program and runs it, as File Explorer does on Enter;
@@ -461,10 +466,13 @@ and the started process finds its open window and hands the paths over with the 
   Ctrl+I, Ctrl+Shift+N, Ctrl+Shift+T, Ctrl+Shift+C, Ctrl+Shift+F, Escape, Shift+Up, Shift+Down, Shift+Home,
   Shift+End, Space, Shift+Space, Ctrl+A, Ctrl+Shift+A, Ctrl+Shift+Q (AF-5), Shift+F10, the Applications key,
   Alt+Enter, Ctrl+Z (AF-4.14), Ctrl+X, Ctrl+C, Ctrl+V. Enter, Shift+Enter, Backspace, Left, Right, Space, Escape, F2, Delete,
-  Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A, Ctrl+Shift+A, Shift+Space, Ctrl+Enter, Ctrl+Shift+Q, the Shift arrows, Shift+F10 and the
-  Applications key act only while the folder list has the focus (in the Actions list, Enter, Escape, Ctrl+Z and Ctrl+I
-  act on its line, AF-9.3; in a notice's field or the rename box they are the field's; the two menu keys open the
-  bar's Context menu once they are up, AF-D13, AX-9.11). The collision test covers the table and lists the keys other windows use
+  Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A, Ctrl+Shift+A, Shift+Space, Ctrl+Enter, Ctrl+Shift+Q and the Shift arrows
+  act only while the folder list has the focus (in the Actions list, Enter, Escape, Ctrl+Z and Ctrl+I
+  act on its line, AF-9.3; in a notice's field or the rename box they are the field's); Shift+F10 and the
+  Applications key open the bar's Context menu from either list, on the entry or on the Actions list's line
+  (AF-D13, AX-9.11; in the Actions list since 2026-11-22). The keys between the two lists, Right and Left, the
+  selection's keys, the two menu keys and Escape are the navigator's own commands (`ItemKeys`, `SelectionKeys`; AF-D14);
+  `AxFileKeys` names them for this window. The collision test covers the table and lists the keys other windows use
   otherwise (Ctrl+N, Ctrl+G, Ctrl+E, Ctrl+C, Ctrl+Shift+C, Ctrl+Shift+F). Ctrl+Enter is the bundle's main action
   (AX-8.10, `BundleKeys.MainAction`), here Play folder in axMedia (AF-5.1) while the folder list has the focus, the edge
   sound elsewhere.
@@ -547,7 +555,8 @@ and a typed name no entry starts with (AF-3.6).
   rewritten, a running line under the focus being left until it ends, so that a zip's count is not reselected under
   NVDA four times a second. Nothing is spoken for a line (the operation's own
   announcement, AF-7, is what is heard). Cut, Copy, Copy path, Open, the hand-overs and Favorites change nothing on
-  disk and have no line. The status bar shows the newest operation's line, never a selection's (AF-2.3).
+  disk and have no line. The status bar shows the newest operation's line, never a selection's, and after it how
+  many entries are selected (AF-2.3).
 - AF-9.3 **On a line.** **Enter** goes where the action left things: the folder list shows the folder and selects the
   entry the action made, renamed or moved (the new folder for a move into one, the first entry for a paste; the folder
   alone for a delete), and takes the focus, before the folder is said (AF-3.1), so that NVDA's reading of the list
@@ -660,6 +669,19 @@ and AxPreview.Core since the split; `MediaFiles` and `NaturalOrder` moved to `Ax
   an editor wants a quick-open, the completion moves to the shared pieces on its second use.
 
 - **AF-D13 One Item menu, opened by every way.** 2026-10-23: the list's own context menu (Shift+F10, the Applications key, a right click) never read its first item the first time it opened, whether shown from code, with its first item selected, with a Down posted into it, or through the list's own WM_CONTEXTMENU (which leaves nothing selected), while Alt+I read the bar's Item menu every time. At the user's word the three ways open the bar's Item menu (the bar's Context menu, Alt+C, since 2026-11-11, AX-9.11): the window posts SC_KEYMENU and then the letter I, as Alt and I typed, once Shift, F10 and the Applications key are up (with them down F10 closed the menu and the letter was Shift+I, a beep). Ctrl+I inside the menu (AF-4.10) went with the context menu.
+
+- **AF-D14 The window is the bundle's navigator.** 2026-11-22 (docs/axKit/framework.md FW-4.8, step 13; the
+  maintainer: every app on one of a few window types, axFile unified with the item navigator). axFile had a window
+  of its own, the last app that did. Since then `FileForm` derives from `ItemForm`: a folder is a level and each
+  shown entry a row (a folder a list, a file an item, the row's key its path); the folder list is the navigator,
+  the Actions list its second pane as a log; the two lists, the split between them, the status bar, the marks of
+  the selection (AX-8.16), the pane keys, Right and Left, the Context keys and Escape are the navigator's. What
+  changed for the user is small and named where it applies: the status bar ends with how many entries are selected
+  (AF-2.3), Context on a line that is no entry holds that line's words (AF-4.6), and Shift+F10 and the Applications
+  key open the line's menu in the Actions list (AF-6.2). The first step leaves Enter, Backspace, F2, Delete, find,
+  refresh and undo as axFile's own commands, each on the navigator's condition for its place, so that the words and
+  the order are as they were; the folder is still read on a background task and shown when the read is in
+  (`EntryRefused` starts the read and the level stays until then).
 
 AF-D4 (the volume) and AF-D6 (the queue fixed at Enter) went to axMedia with the player (AM-D6, AM-D2).
 

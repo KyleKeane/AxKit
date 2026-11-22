@@ -184,7 +184,7 @@
         { "chord": "f6", "apps": ["axCalc", "axClaude", "axTerminal"], "does": "Switch between the view and the field", "kind": "move between panes" },
         { "chord": "f6", "apps": ["axGIT"], "does": "Switch between the list and the text", "kind": "move between panes" },
         { "chord": "f6", "apps": ["axMedia"], "does": "Back to the list", "kind": "move between panes" },
-        { "chord": "f6", "apps": ["axFile"], "does": "Switch between the folder list and the Actions list", "kind": "move between panes" }
+        { "chord": "f6", "apps": ["axFile"], "does": "Switch between the list and the Actions list", "kind": "move between panes" }
       ]
     },
     {
@@ -226,7 +226,7 @@
       "learn": "Escape goes back one step or closes what is open. It never loses work without asking. Shift+Escape is for the program under an access layer: it interrupts Claude, or sends Escape to the terminal's program.",
       "windows": [],
       "misfits": [
-        { "chord": "escape", "apps": ["axFile"], "does": "Clear the selection or the filter", "kind": "remove: it clears and stays where it is" },
+        { "chord": "escape", "apps": ["axFile"], "does": "Clear the filter", "kind": "remove: it clears and stays where it is" },
         { "chord": "escape", "apps": ["axCalc"], "does": "Clear the field", "kind": "remove: it clears and stays where it is" }
       ]
     },

@@ -1,4 +1,4 @@
-# AxKit.Forms: the item window, the bundle's navigator (axTask, axPass, axMCP, axAutomate, axMedia, axProcess, axGIT)
+# AxKit.Forms: the item window, the bundle's navigator (axTask, axPass, axMCP, axAutomate, axMedia, axProcess, axGIT, axFile)
 
 Part of the notes of `src/AxKit.Forms` (the index is `src/AxKit.Forms/CLAUDE.md`). One bullet per piece.
 

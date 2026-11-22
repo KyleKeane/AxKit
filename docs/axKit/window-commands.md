@@ -359,7 +359,7 @@ every window" or under a heading that names the windows without it; under an app
 
 ## axFile
 
-- Deselect all. Menu: Actions. Key: Ctrl+Shift+A. Mark: change.
+- Deselect all. Menu: Actions. Key: Ctrl+Shift+A. Also: Escape. Mark: change.
 - New folder. Menu: Actions. Key: Ctrl+Shift+N. Mark: act.
 - New text file. Menu: Actions. Key: Ctrl+Shift+T. Mark: act.
 - Paste. Menu: Actions. Key: Ctrl+V. Mark: act.
@@ -411,7 +411,7 @@ every window" or under a heading that names the windows without it; under an app
 - Keyboard shortcuts in Windows. Menu: Help, File resources. Key: none. Mark: act.
 - Go to folder. Menu: Navigation. Key: Ctrl+G. Also: Alt+D. Mark: open.
 - The Actions list. Menu: Navigation. Key: none. Mark: open.
-- Up one level. Menu: Navigation. Key: Backspace. Also: Alt+Up, Left. Mark: open.
+- Up one level. Menu: Navigation. Key: Backspace. Also: Alt+Up. Mark: open.
 - Add or remove this folder. Menu: Navigation, Favorites. Key: Ctrl+D. Mark: change.
 - Add a program to Open with. Menu: Options. Key: none. Mark: change.
 - Filter. Menu: Options. Key: Ctrl+Shift+F. Mark: change.
@@ -428,22 +428,26 @@ every window" or under a heading that names the windows without it; under an app
 - axTerminal, access layer for your shell. Menu: Session, Show current folder in. Key: none. Mark: act.
 - File Explorer. Menu: Session, Show current folder in. Key: Ctrl+W. Mark: act.
 - Add to or remove from Favorites. Menu: none, a key alone. Key: Ctrl+D. Mark: change. Never run by AI tools.
-- Back to the folder list. Menu: none, a key alone. Key: Escape. Mark: open. Never run by AI tools.
-- Clear the selection or the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
-- Context menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
+- Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
 - Find. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
 - Find previous. Menu: none, a key alone. Key: Shift+F3. Mark: read. Never run by AI tools.
 - Go to the action's place. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
-- Into the folder. Menu: none, a key alone. Key: Right. Mark: open. Never run by AI tools.
+- Into the list. Menu: none, a key alone. Key: Right. Mark: open. Never run by AI tools.
+- Select or deselect. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
 - Select to the first entry. Menu: none, a key alone. Key: Shift+Home. Mark: change. Never run by AI tools.
 - Select to the last entry. Menu: none, a key alone. Key: Shift+End. Mark: change. Never run by AI tools.
 - Select to the next entry. Menu: none, a key alone. Key: Shift+Down. Mark: change. Never run by AI tools.
 - Select to the previous entry. Menu: none, a key alone. Key: Shift+Up. Mark: change. Never run by AI tools.
 - Show the folder in File Explorer. Menu: none, a key alone. Key: Ctrl+W. Mark: open. Never run by AI tools.
-- Switch between the folder list and the Actions list. Menu: none, a key alone. Key: Tab. Also: Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
+- Switch between the list and the Actions list. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
 - The action's number and time. Menu: none, a key alone. Key: Ctrl+I. Mark: read. Never run by AI tools.
+- The Context menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
+- The line's menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
+- To the Actions list. Menu: none, a key alone. Key: Tab. Also: Shift+Tab. Mark: open. Never run by AI tools.
+- To the list. Menu: none, a key alone. Key: Tab. Also: Shift+Tab, Escape. Mark: open. Never run by AI tools.
 - Undo the action. Menu: none, a key alone. Key: Ctrl+Z. Mark: act. Never run by AI tools.
+- Up a level. Menu: none, a key alone. Key: Left. Mark: open. Never run by AI tools.
 
 ## axGIT
 

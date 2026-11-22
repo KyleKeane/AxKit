@@ -29,9 +29,10 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
   window, the editor, the navigator, the hotkey window. A fifth, the graph, comes much later and is not started.
 - **An app adds only** its data (what the rows or the text are, how they are read and written), its commands on
   them, its keys, and its message passing with the program under it.
-- **Today** sixteen apps are on a type and one has a window of its own, axFile; of the other four when this was
-  written, axMedia, axProcess and axGIT are navigators and axCalc is a conversation window since 2026-11-22. The
-  work is to move axFile, to make every list of items the one selectable list, and to lift what two apps of one type still do each in their
+- **Today** all seventeen apps are on a type; of the five that had a window of their own when this was
+  written, axMedia, axProcess, axGIT and axFile are navigators and axCalc is a conversation window since
+  2026-11-22. The work left is to move the rest of axFile's commands onto the navigator's own (steps 13 to 15), to
+  make every list of items the one selectable list, and to lift what two apps of one type still do each in their
   own code into the type.
 - **Held by tests**, not by memory: which classes a window may derive from, which controls it may hold, and that
   every component raises its entry event.
@@ -119,7 +120,7 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
   opens the row (goes in, or does the row's own opening), Space selects, Ctrl+Enter is the app's main action,
   Delete removes, F2 renames where rows have names, Escape gives up a selection, then a filter, then goes back
   from the second pane. Every pane key switches panes.
-- Apps today: axTask, axPass, axMCP, axAutomate, axMedia, axProcess, axGIT. **To move onto it**: axFile.
+- Apps today: axTask, axPass, axMCP, axAutomate, axMedia, axProcess, axGIT, axFile.
 - FW-4.6 **No views.** axGIT and axProcess each show three contents in one list today, changed with Alt+1 to
   Alt+3 (and Tab in axProcess). In the navigator those are three rows of the top level that one goes into with
   Right: in axGIT Changes, History and Branches; in axProcess Processes, Services and Startup. The count of each
@@ -147,7 +148,14 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
   `StatusState`, `EmptyLine`): the pane as none and as a text (of point 2: `SecondPane`, `TextPane`,
   `ShowText`), the line of an empty level (of point 5), and point 7; and a shared key the app gave to a command
   of its own that acts anywhere is left to the app. Point 1 needed nothing in the type for axProcess (FW-4.6).
-  Still to build: points 3 and 6, the log kind of the pane, and the line of what is not shown.
+  Built with axFile's move (step 13, 2026-11-22): the log kind of the pane (`SecondPane.Log`: the pane's list is
+  the app's to fill, `LogLineMenu` is what Context holds on its line, `LogName` names it in the pane keys'
+  commands), the line of what is not shown (`AfterRowsLine`; a command on a line that is no row says that line,
+  `NoRowSaid`), and a shared key the app gave to a command of its own in the very place the shared one acts is
+  left to the app (`KeyTakenWhere`), which is what lets a window move onto the type with its own commands first
+  and give them up one by one. Point 1 needed nothing in the type for axFile either (`EntryRefused` starts the
+  read; `UpLevel` is the app's where the level above is read too). Still to build: points 3 and 6, which axFile
+  does in its own code.
 - FW-4.8 After this, axTask and axFile are the same window: one shows folders of items with a pane of fields, the
   other folders of files with a pane of the operations made. Their difference is their data and their commands.
 - FW-4.9 **axMedia is a queue and its controls**, a navigator of one level whose rows are what will play (the
@@ -204,7 +212,7 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
 | axPass | navigator | navigator | KeePassXC's tool, the lock, the clipboard's clearing |
 | axMCP | navigator | navigator | the servers, calling a tool |
 | axAutomate | navigator | navigator | the workflows, running them |
-| axFile | its own window | navigator, a log as second pane | file operations and their undo, the shell, the clipboard, zip, favourites, drives |
+| axFile | navigator | navigator, a log as second pane | file operations and their undo, the shell, the clipboard, zip, favourites, drives |
 | axGIT | navigator | navigator, three levels, a text as second pane | running git, the repository's trust, its commands |
 | axProcess | navigator | navigator, three levels, no second pane | reading processes, services and startup; ending and changing them |
 | axMedia | navigator | navigator, one level, no second pane: a queue and its controls | the player, the hand-over of files, the video |
@@ -277,8 +285,13 @@ NVDA pass recorded. A piece that changes what a user does updates the app's spec
 
 **E. axFile, last and with the most care**
 
-13. axFile's folder list on the navigator: levels, reading, the row you are on, rename, delete, find.
-14. Its Actions log as the navigator's second pane of the log kind; its selection no longer written there.
+13. axFile's folder list on the navigator: levels, reading, the row you are on, rename, delete, find. Built in its
+    first part, 2026-11-22: `FileForm` derives from `ItemForm`; a folder is a level and its entries the rows; the
+    two lists, the split, the status bar, the selection, the pane keys, Right and Left, the Context keys and
+    Escape are the navigator's. Enter, Backspace, rename, delete, find, refresh and undo are still axFile's own
+    commands on the navigator's conditions, to move onto its hooks one by one (docs/axFile/SPEC.md AF-D14).
+14. Its Actions log as the navigator's second pane of the log kind; its selection no longer written there. The
+    pane is built with step 13; the selection is still written there.
 15. Its own parts placed on the type: filter and sort from the type; favourites, drives, Go to folder, the
     clipboard, zip and the shell as its commands. The old window's code goes.
 

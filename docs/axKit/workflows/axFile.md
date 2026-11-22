@@ -30,9 +30,9 @@ command's in this version of axKit.
 
 1. Press Tab.
 2. Press Shift+Tab.
-3. Press F6 (Switch between the folder list and the Actions list).
+3. Press F6 (Switch between the list and the Actions list).
 4. Press Escape.
-5. Press Ctrl+Tab (Switch between the folder list and the Actions list).
+5. Press Ctrl+Tab (Switch between the list and the Actions list).
 6. Press Escape.
 
 ### Hear the status bar
@@ -561,9 +561,9 @@ Starts with: Open axFile with the folder act.
 4. Press Tab.
 5. Press Up.
 6. Press Escape.
-7. Press F6 (Switch between the folder list and the Actions list).
+7. Press F6 (Switch between the list and the Actions list).
 8. Press Shift+Tab.
-9. Press Ctrl+Tab (Switch between the folder list and the Actions list).
+9. Press Ctrl+Tab (Switch between the list and the Actions list).
 10. Press Shift+Tab.
 
 ### Go to the folder of an operation from its line

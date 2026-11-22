@@ -18,7 +18,9 @@ public sealed partial class FileForm
     /// <summary>The one line of the Actions list before the first operation (AF-9.1), so that the list is never empty (AX-9.5).</summary>
     private const string NoActionsText = "No actions yet";
 
-    private readonly AxKitList _pane = new();
+    /// <summary>The Actions list: the item window's second pane, a log (<see cref="ItemForm.SecondPane.Log"/>), under the folder list with a third of the window (AF-9.1).</summary>
+    private AxKitList _pane => DetailPane;
+
     private readonly ActionLog _actions = new();
 
     /// <summary>The entry on each row of the list as last filled (null on a header line), so that a line moved to another row is told from one changed in place, and the line the user is on is known once the log has changed.</summary>
@@ -26,15 +28,9 @@ public sealed partial class FileForm
 
     private void SetUpActions()
     {
-        _pane.IntegralHeight = false;
-        _pane.Dock = DockStyle.Bottom;
-        _pane.TabIndex = 1;
         _pane.AccessibleName = "Actions";
         _pane.DoubleClick += (_, _) => GoToAction();
     }
-
-    /// <summary>The Actions list takes a third of the window at most (AF-9.1), and three lines at least.</summary>
-    private void FitPane() => _pane.Height = Math.Max(_pane.ItemHeight * 3 + 4, ClientSize.Height / 3);
 
     /// <summary>
     /// The list's lines made again from the log (AF-9.2), after the log changed: the sections under their headers,
@@ -78,18 +74,8 @@ public sealed partial class FileForm
         UpdateStatusBar();
     }
 
-    /// <summary>Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6 (AX-8.2): between the folder list and the Actions list, the two controls of the window.</summary>
-    private void SwitchPane()
-    {
-        if (_list.Focused)
-        {
-            _pane.Focus();
-        }
-        else
-        {
-            _list.Focus();
-        }
-    }
+    // Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6 (AX-8.2) go between the folder list and the Actions list, the
+    // two controls of the window: the item window's pane keys.
 
     /// <summary>Folder → Actions: the focus in the Actions list (AF-9.1).</summary>
     private void ShowActions() => _pane.Focus();

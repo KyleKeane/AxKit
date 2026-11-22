@@ -73,11 +73,11 @@ public static class AxFileKeys
     // Ctrl+Shift+A) are the bundle's, AxKit.Forms/SelectionKeys (AX-8.16), the same in every window with a selection;
     // the table below includes them.
 
-    /// <summary>In the list: the bar's Context menu on the entry, opened as Alt and C open it (AF-4.6, AF-D13, AX-9.11).</summary>
-    public const Keys ContextMenu = Keys.Shift | Keys.F10;
+    /// <summary>In either list: the bar's Context menu on the entry, or on the Actions list's line, opened as Alt and C open it (AF-4.6, AF-D13, AX-9.11). The navigator's key (<see cref="ItemKeys"/>).</summary>
+    public const Keys ContextMenu = ItemKeys.ItemMenu;
 
-    /// <summary>In the list: the same, from the Applications key.</summary>
-    public const Keys ContextMenuAlso = Keys.Apps;
+    /// <summary>In either list: the same, from the Applications key.</summary>
+    public const Keys ContextMenuAlso = ItemKeys.ItemMenuAlso;
 
     /// <summary>The Windows Properties sheet of the entry, File Explorer's key for it (AF-4.7).</summary>
     public const Keys Properties = Keys.Alt | Keys.Return;
@@ -100,10 +100,10 @@ public static class AxFileKeys
     public const Keys CompleteNext = LastItem;
 
     /// <summary>In the folder list: into the folder or drive, as Enter, the edge earcon on a file (AF-3.1, AF-D12). In the Go to folder field, at the end of a completed folder: its first entry.</summary>
-    public const Keys IntoFolder = Keys.Right;
+    public const Keys IntoFolder = ItemKeys.Into;
 
-    /// <summary>In the folder list: up one level, as Backspace, the edge earcon at This PC (AF-3.1, AF-D12).</summary>
-    public const Keys OutOfFolder = Keys.Left;
+    /// <summary>In the folder list: up one level, as Backspace, the edge earcon at This PC (AF-3.1, AF-D12). The navigator's key, as <see cref="IntoFolder"/> is.</summary>
+    public const Keys OutOfFolder = ItemKeys.Up;
 
     public const Keys LastItemAlso = Keys.End;
 
@@ -142,8 +142,8 @@ public static class AxFileKeys
         ("Paste (in the folder list)", Paste),
         // The bundle's selection keys (AX-8.16), in the folder list; Escape is the entry above, with its second meaning here.
         .. SelectionKeys.All.Where(key => key.Key != SelectionKeys.Clear),
-        ("Context menu (in the folder list)", ContextMenu),
-        ("Context menu (in the folder list)", ContextMenuAlso),
+        ("Context menu: the entry's, or the line's in the Actions list", ContextMenu),
+        ("Context menu, from the Applications key", ContextMenuAlso),
         ("Properties", Properties),
         ("Undo the newest operation, or the action under the selection (in the Actions list)", Undo),
         ("The edge earcon at the first entry (in a list); the previous completion (in the Go to folder field)", FirstItem),

@@ -104,16 +104,16 @@ public sealed class ComponentsTests
     }
 
     /// <summary>
-    /// FW-7.1: the windows of an app's own, on the bare window base, are the ones the framework still has to move,
-    /// and the list only shrinks. A new app's window derives from a type; a new name here is a decision to take
-    /// with the maintainer, not a line to add.
+    /// FW-7.1: no app has a window of its own, on the bare window base; the last, axFile, moved onto the navigator
+    /// on 2026-11-22. A new app's window derives from a type; a name here is a decision to take with the
+    /// maintainer, not a line to add.
     /// </summary>
     [Fact]
-    public void Only_the_apps_still_to_move_have_a_window_of_their_own()
+    public void No_app_has_a_window_of_its_own()
     {
         using var document = File();
         var owed = Apps(document).Where(app => app.Type.Length == 0).Select(app => app.App).Order(StringComparer.Ordinal).ToList();
-        Assert.Equal(["axFile"], owed);
+        Assert.Empty(owed);
         Assert.All(Apps(document), app => Assert.True(app.ToBe.Length > 0, $"{app.App} does not say which type it is to be."));
     }
 

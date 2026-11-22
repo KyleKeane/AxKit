@@ -169,12 +169,8 @@ public sealed partial class FileForm
         }
     }
 
-    /// <summary>Shift+F10, the Applications key and a right click in the folder list (AF-4.6, AF-D13): the bar's Context menu with the entry's commands, opened as Alt and C open it (AX-9.11; the window base's <c>OpenBarMenu</c>).</summary>
-    private void ShowItemMenu()
-    {
-        _context.Fill();
-        OpenBarMenu(ContextBarMenu.Letter);
-    }
+    // Shift+F10, the Applications key and a right click in either list (AF-4.6, AF-D13) open the bar's Context menu,
+    // as Alt and C open it (AX-9.11): the item window's keys.
 
     /// <summary>Context → Windows menu…: the shell's own menu for the entry, under it in the list, once Context has closed.</summary>
     private void ShowWindowsMenu()
