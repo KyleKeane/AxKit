@@ -6,6 +6,22 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-22: axProcess as a navigator, its three views three lists; by the assistant with NVDA listening (`main` 6524dfc8)
+
+`.\nvda-pass.ps1 -Only` every script of axProcess and axMedia, behind the spoken countdown, the maintainer away at
+his word (NVDA passes "Yes, for this whole absence"), NVDA 2025.3.3 with the OneCore voice, Windows 11 Pro
+10.0.26200, the build 5.10.0 of commit 6524dfc8, the tree clean: 14 scripts, 99 goals and checks, none failed and
+none run twice.
+
+| What | Scripts | Result |
+|---|---|---|
+| axProcess on `ItemForm` (framework step 7): the start inside Processes, up to This computer and into another list, the details, the words on a service, Turn off, Turn on and Remove on the stand-in's startup entries | 5 | Passed |
+| axProcess: Space selects two processes the script started and two of the stand-in's startup entries; Delete ends or removes them after one question (`06-select-several.txt`, new) | 1 | Passed |
+| axMedia, again after the Context menu's change in the item window | 8 | Passed |
+
+Not heard by a person, and lines of the item of step 7 for the maintainer's word: that Tab no longer goes round the
+three lists, that Alt+1, 2 and 3 stay as jumps, and the words on Delete on a service.
+
 ## 2026-11-22: axMedia as a navigator on the item window, and the item window's hooks for it; by the assistant with NVDA listening (`main` 89362d2c)
 
 `.\nvda-pass.ps1 -Only` every script of axMedia, axTask, axPass, axMCP and axAutomate, behind the spoken countdown,
