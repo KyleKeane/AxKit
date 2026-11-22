@@ -44,7 +44,9 @@ Window-specific keys, in one table per app (AX-8); the ones here are the same in
 | Enter | open: a list opens its items; an item moves to its fields, as Tab (IA-D2); in axTask an item opens its form (docs/axTask/SPEC.md TK-4.0a) | change the field (section 5); in axTask, on a field of an item, the item's form with the focus in that field |
 | Tab, Shift+Tab | to the detail pane | back to the navigator |
 | Ctrl+Tab, Ctrl+Shift+Tab, F6 | to the detail pane (the bundle's pane keys, AX-8.2, since 2026-11-09) | back to the navigator |
-| Escape | — | back to the navigator |
+| Escape | where the app has a selection: deselect all, while any is selected (bundle AX-8.16) | back to the navigator |
+| Space | the bundle's key that selects the row, where the app's navigator has a selection (AX-8.16, 2026-11-22: axTask, whose items it selects, docs/axTask/SPEC.md TK-4.7); the edge sound where it has none | on a check: checked or not (IA-5.2) |
+| Shift+Space, Shift+Down, Shift+Up, Shift+Home, Shift+End, Ctrl+A, Ctrl+Shift+A | the rest of the bundle's selection keys, where the app has a selection (`ItemForm.HasSelection`); the list's own keys elsewhere | — |
 | Ctrl+N | new item in this list | said: where the fields are changed (IA-5.3) |
 | Ctrl+Shift+N | new list here | — |
 | F2 | rename in place (the Title field; bundle AX-8.7) | said: where the fields are changed (IA-5.3) |
@@ -195,7 +197,7 @@ A folder. Its configuration is `list.json` in it, never shown in the navigator:
 | Extra field types | none | `username`, `password` (read as "password, hidden"; Ctrl+Q never reads it) |
 | Extra navigator entries | All tasks, the smart lists (saved filters) | none; search by title (Ctrl+F) |
 | Row summary | the Title, "done" and the Due date | the Title and the user name |
-| Space in the navigator | marks the item done or not done | nothing |
+| Space in the navigator | selects the item, the bundle's selection (AX-8.16; Ctrl+Enter marks a task done; until 2026-11-22 Space did) | the edge sound: no selection yet |
 | Its own keys | (its spec) | copy user name, copy password with the clipboard cleared after 30 seconds, generate a password, lock |
 | Opens with | a folder | a `.kdbx` file and the master password, asked in a notice whose field hides what is typed |
 | Which fields an item has | the list's configuration, `list.json`'s `item fields`, edited in axJSON (IA-4.3) | KeePass's standard fields, custom attributes read only (PW-D3) |

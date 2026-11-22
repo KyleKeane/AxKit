@@ -34,8 +34,8 @@
       "scope": "every-window",
       "pattern": "Space and Ctrl+Space",
       "match": "^(ctrl\\+)?space$",
-      "does": "toggle or play",
-      "learn": "Space switches something on and off or plays it. Ctrl+Space switches between navigating and editing.",
+      "does": "select, toggle or play",
+      "learn": "Space selects the thing you are on in a list of things you can act on several of at once, and deselects it again (the maintainer's rule of 2026-11-22, SPEC AX-8.16: axFile and axTask so far). On a check box it checks and unchecks; in a player it plays and pauses. Ctrl+Space switches between navigating and editing.",
       "windows": [],
       "misfits": []
     },
@@ -215,7 +215,7 @@
       "pattern": "Enter with Ctrl, Shift or Alt",
       "match": "^(ctrl\\+|shift\\+|alt\\+|ctrl\\+shift\\+)enter$",
       "does": "another form of open or confirm",
-      "learn": "Enter with a modifier is another way of opening or saying yes. Ctrl+Enter does the window's main thing: it sends the message or the command, or commits. Shift+Enter opens what you are on another way, such as a preview. Alt+Enter shows its properties and Ctrl+Shift+Enter starts a program as administrator, as everywhere in Windows.",
+      "learn": "Enter with a modifier is another way of opening or saying yes. Ctrl+Enter does the window's main thing: it sends the message or the command, commits, saves a form, or in axTask marks a task done. Shift+Enter opens what you are on another way, such as a preview. Alt+Enter shows its properties and Ctrl+Shift+Enter starts a program as administrator, as everywhere in Windows.",
       "windows": ["alt+enter", "ctrl+shift+enter"],
       "misfits": []
     },
@@ -268,7 +268,7 @@
       "pattern": "Shift with an arrow, Home, End or Space",
       "match": "^shift\\+(up|down|left|right|home|end|space)$",
       "does": "select",
-      "learn": "Shift with an arrow, Home or End selects as it moves, as in every Windows list and text. Shift+Space selects from where the selection started to here.",
+      "learn": "Shift with an arrow, Home or End selects as it moves, as in every Windows list and text. Shift+Space selects from the nearest selected thing to here. The keys, their words and their code are one shared piece (SPEC AX-8.16).",
       "windows": ["shift+up", "shift+down", "shift+home", "shift+end"],
       "misfits": []
     },

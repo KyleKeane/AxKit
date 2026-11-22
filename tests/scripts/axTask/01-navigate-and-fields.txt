@@ -117,11 +117,11 @@ keys escape
 expect focus Fix the tap, due 30 October 2099
 
 # Goal: Mark a task done or not done
-# 2.1 Space marks it done and not done, in the file too.
-keys space
+# 2.1 Ctrl+Enter marks it done and not done, in the file too (TK-4.4; Space until 2026-11-22, which selects now).
+keys ctrl+enter
 expect said ! Done: Fix the tap
 run findstr /l /c:"\"Done\": true" "tasks\Home\Fix the tap.json"
-keys space
+keys ctrl+enter
 expect said ! Not done: Fix the tap
 
 # Goal: Set a due date by typing a weekday
@@ -245,13 +245,13 @@ expect said ! Undone: Archived Bread
 run cmd /c if exist "tasks\Shopping\Bread.json" (exit 0) else (exit 1)
 
 # Check: An item of a plain list cannot be marked done
-# 2.8 Space on an item of a list whose configuration names no Done: the edge sound and "Not a task".
+# 2.8 Ctrl+Enter on an item of a list whose configuration names no Done: the edge sound and "Not a task".
 keys left
 type j
 expect focus Jottings, list, 1 item
 keys right
 expect focus Milk
-keys space
+keys ctrl+enter
 expect said ! Not a task
 # Goal: Hear every field of an item
 # IA-3 Ctrl+Q reads every field of the selection; an empty long text reads "empty" as every empty field does ("Notes: "

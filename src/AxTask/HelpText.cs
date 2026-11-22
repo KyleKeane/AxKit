@@ -22,8 +22,10 @@ public static class HelpText
           Left or Backspace: back to the sections
           Enter: open: a list shows its items; an item opens its form, one control for each of its fields: Tab moves between them, Ctrl+Enter saves them all as one step, Escape leaves and nothing is changed
           Tab, Ctrl+Tab or F6: to the detail pane
-          Space: done or not done, on a task
-          Ctrl+N: a new item in this list. Ctrl+Shift+N: a new list, in the section of the line selected
+          Ctrl+Enter: done or not done, on a task
+          Space: select the item you are on, or deselect it again; a selected item reads ", selected". Shift+Down, Shift+Up, Shift+Home, Shift+End: select as you move. Shift+Space: select from the nearest selected item to this one. Ctrl+A: select every item shown. Ctrl+Shift+A, or Escape: deselect all. Items are selected, not lists; another list starts with none
+          With items selected, Ctrl+Enter, Delete and the list's actions that set fields or move act on all of them, as one step for Ctrl+Z: "Done: 3 tasks", "Archived 3 items". Ctrl+Enter marks them all done while any is not, and all not done when every one is. Enter, F2 and the ways to open stay on the item you are on
+          Ctrl+N: a new item in this list. Ctrl+Shift+N: a new list, in the section of the line you are on
           Ctrl+M on a list: move it to a section, or to a new one; its Section field in the detail pane does the same
           F2: rename in place: a box over the line, Enter keeps the new name, Escape the old. Delete: move to the Archive; Ctrl+Z brings it back
           Ctrl+Q: read every field of the item
@@ -31,13 +33,13 @@ public static class HelpText
           Tags: a smart list for each word your tasks not done start with a symbol, @kyle for the person a task is assigned to, #ui, !urgent, $budget or %done, in their titles and text fields
           Date lists: Overdue, Due today, Due in the next 7 days, No due date
           Ctrl+Shift+F: find words in every list, your own and every project's. "Searching every list" is said, then what was found; another notice opened meanwhile drops the result. In what was found, Right or Enter opens the item where it lives, Left or Escape goes back
-          Ctrl+1, Ctrl+2, Ctrl+3, Ctrl+4, Ctrl+5, Ctrl+6, Ctrl+7, Ctrl+8, Ctrl+9, and Ctrl+Shift+1, Ctrl+Shift+2, Ctrl+Shift+3, Ctrl+Shift+4, Ctrl+Shift+5, Ctrl+Shift+6, Ctrl+Shift+7, Ctrl+Shift+8, Ctrl+Shift+9: the list's own actions on the item selected. An action sets fields, moves the item to a list, opens something, runs a program with what the item holds as its arguments, or puts a command into axTerminal's command field for you to read and send. They are written in the list's configuration, Ctrl+J on the list; Context, Actions of this list, names them all, with or without a key
+          Ctrl+1, Ctrl+2, Ctrl+3, Ctrl+4, Ctrl+5, Ctrl+6, Ctrl+7, Ctrl+8, Ctrl+9, and Ctrl+Shift+1, Ctrl+Shift+2, Ctrl+Shift+3, Ctrl+Shift+4, Ctrl+Shift+5, Ctrl+Shift+6, Ctrl+Shift+7, Ctrl+Shift+8, Ctrl+Shift+9: the list's own actions on the item you are on. An action sets fields, moves the item to a list, opens something, runs a program with what the item holds as its arguments, or puts a command into axTerminal's command field for you to read and send. They are written in the list's configuration, Ctrl+J on the list; Context, Actions of this list, names them all, with or without a key
           An action that runs a program is asked about before its first run, with the program and every argument written out; Enter there is Cancel. "Running" and its name is said as it starts, "done" or "failed" with its exit code as it ends; Context, Actions of this list, Read the last output shows what it wrote. Actions, Stop the running action ends it
           Ctrl+Shift+D: hide or show the done tasks of a list
-          Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on the selection
+          Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on the item or the list you are on
 
         ## The detail pane, on the right
-          It shows the fields of the item selected in the navigator, or the details of the list
+          It shows the fields of the item you are on in the navigator, or the details of the list
           Up, Down: move through the fields
           Enter: on a field of an item, the item's form with the focus in that field; on a list's detail, change it. Space: done or not done, on a check
           Right and Left: on a choice, the next and the previous value; on a check, Right checks and Left unchecks. Said once, one step for Ctrl+Z; the edge sound at an end and on any other field

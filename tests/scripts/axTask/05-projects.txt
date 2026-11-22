@@ -42,7 +42,7 @@ keys right
 expect said ! All tasks, 2 items, Buy a tap, in Home
 keys down
 expect focus Fix the tap, in tasks in alpha / Home
-keys space
+keys ctrl+enter
 expect said ! Done: Fix the tap
 run findstr /l /c:"true" "projects\alpha\tasks\Home\Fix the tap.json"
 expect focus Buy a tap, in Home
@@ -83,7 +83,7 @@ keys down
 expect focus Home, list, 1 item
 keys right
 expect said ! Home, 1 item, Fix the tap
-keys space
+keys ctrl+enter
 expect said ! Done: Fix the tap
 run findstr /l /c:"true" "projects\alpha\tasks\Home\Fix the tap.json"
 do Undo

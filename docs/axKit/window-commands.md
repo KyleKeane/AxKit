@@ -80,7 +80,6 @@ every window" or under a heading that names the windows without it; under an app
 - Open a folder of workflows. Menu: Session. Key: Ctrl+O. Mark: open.
 - Refresh. Menu: Session. Key: none. Mark: read.
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
-- Check. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
 - Check the field. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
@@ -95,6 +94,7 @@ every window" or under a heading that names the windows without it; under an app
 - Remove the field. Menu: none, a key alone. Key: Delete. Mark: change. Never run by AI tools.
 - Rename. Menu: none, a key alone. Key: F2. Mark: change. Never run by AI tools.
 - Rename the field. Menu: none, a key alone. Key: F2. Mark: change. Never run by AI tools.
+- Select or deselect. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
 - Switch between the navigator and the detail pane. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
 - The Context menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
 - The field's menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
@@ -537,7 +537,6 @@ every window" or under a heading that names the windows without it; under an app
 - Nothing to move to here yet. Menu: Navigation. Key: none. Mark: read.
 - Refresh. Menu: Session. Key: F5. Mark: read.
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
-- Check. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
 - Check the field. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
@@ -555,6 +554,7 @@ every window" or under a heading that names the windows without it; under an app
 - Remove the field. Menu: none, a key alone. Key: Delete. Mark: change. Never run by AI tools.
 - Rename. Menu: none, a key alone. Key: F2. Mark: change. Never run by AI tools.
 - Rename the field. Menu: none, a key alone. Key: F2. Mark: change. Never run by AI tools.
+- Select or deselect. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
 - Switch between the navigator and the detail pane. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
 - The Context menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
 - The field's menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
@@ -666,7 +666,6 @@ every window" or under a heading that names the windows without it; under an app
 - axTerminal, access layer for your shell. Menu: Window, New window. Key: none. Mark: act. Never run by AI tools.
 - Ask about this window. Menu: none, a key alone. Key: Ctrl+Slash. Mark: act. Never run by AI tools.
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
-- Check. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
 - Check the field. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
@@ -683,6 +682,7 @@ every window" or under a heading that names the windows without it; under an app
 - Remove the field. Menu: none, a key alone. Key: Delete. Mark: change. Never run by AI tools.
 - Rename. Menu: none, a key alone. Key: F2. Mark: change. Never run by AI tools.
 - Rename the field. Menu: none, a key alone. Key: F2. Mark: change. Never run by AI tools.
+- Select or deselect. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
 - Switch between the navigator and the detail pane. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
 - The Context menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
 - The field's menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
@@ -795,10 +795,12 @@ every window" or under a heading that names the windows without it; under an app
 ## axTask
 
 - Add Done to every item. Menu: Actions. Key: none. Mark: act.
+- Deselect all. Menu: Actions. Key: Ctrl+Shift+A. Also: Escape. Mark: change.
 - New item. Menu: Actions. Key: Ctrl+N. Mark: change.
 - New list. Menu: Actions. Key: Ctrl+Shift+N. Mark: change.
 - New smart list. Menu: Actions. Key: none. Mark: change.
 - Remove Done from every item. Menu: Actions. Key: none. Mark: act.
+- Select all. Menu: Actions. Key: Ctrl+A. Mark: change.
 - Stop the running action. Menu: Actions. Key: none. Mark: act.
 - Undo. Menu: Actions. Key: Ctrl+Z. Mark: change.
 - A heading: nothing to act on. Menu: Context. Key: none. Mark: read.
@@ -837,7 +839,6 @@ every window" or under a heading that names the windows without it; under an app
 - Back from the search. Menu: none, a key alone. Key: Escape. Mark: open. Never run by AI tools.
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
 - Change the item in its form. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
-- Check. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
 - Check the field. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
@@ -859,6 +860,12 @@ every window" or under a heading that names the windows without it; under an app
 - Remove the field. Menu: none, a key alone. Key: Delete. Mark: change. Never run by AI tools.
 - Rename. Menu: none, a key alone. Key: F2. Mark: change. Never run by AI tools.
 - Rename the field. Menu: none, a key alone. Key: F2. Mark: change. Never run by AI tools.
+- Select or deselect. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
+- Select to here. Menu: none, a key alone. Key: Shift+Space. Mark: change. Never run by AI tools.
+- Select to the first item. Menu: none, a key alone. Key: Shift+Home. Mark: change. Never run by AI tools.
+- Select to the last item. Menu: none, a key alone. Key: Shift+End. Mark: change. Never run by AI tools.
+- Select to the next item. Menu: none, a key alone. Key: Shift+Down. Mark: change. Never run by AI tools.
+- Select to the previous item. Menu: none, a key alone. Key: Shift+Up. Mark: change. Never run by AI tools.
 - Switch between the navigator and the detail pane. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
 - The Context menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
 - The field's menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.

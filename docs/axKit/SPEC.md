@@ -938,7 +938,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     more than that one is ("Selected, 3 selected"). **Shift+Down**, **Shift+Up**, **Shift+Home** and **Shift+End**
     move the current row and select every row from where the range began to there, as in every Windows list;
     moving back with Shift shrinks the range, the rows selected before it stay, and nothing more is said than each
-    row reached, which reads ", selected" by itself. **Shift+Space** selects every row from the nearest selected
+    row reached, which reads ", selected" by itself; at an end of the list, where the key cannot move, the edge
+    sound, as for the arrow alone (AX-8.6). **Shift+Space** selects every row from the nearest selected
     one to the current one, "Selected, n selected"; with no other row selected it is Space. **Ctrl+A** selects
     every row the list shows, "n selected"; **Ctrl+Shift+A** deselects them all, "None selected", and so does
     **Escape** in the list while any row is selected, before Escape does anything else there. A row that cannot be
@@ -957,7 +958,14 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     that select as they move. A window gives it its rows and its words for an item, makes its commands on
     `SelectionKeys`, and asks it what is selected. No window keeps marks, their keys or their words of its own.
   - **The windows on it**: axFile's folder list (AF-3.7), which also records each change as a line of its Actions
-    list. Every other list with a use for a selection follows, one app at a time (the priorities list).
+    list; and the item window's navigator (`ItemForm`: `HasSelection`, `CanSelectRow`, `NothingToSelect`,
+    `SelectedRows`), switched on by axTask, whose items it selects (docs/axTask/SPEC.md TK-4.7; its status bar says
+    how many are selected, and the target an AI tool's command is asked about names the selection too). An item
+    app says it has a selection only once its commands act on one, so that nothing is ever selected that a
+    command then passes by: in axPass, axMCP and axAutomate Space in the navigator stays the edge sound. Every
+    other list with a use for a selection follows, one app at a time (the priorities list).
+  - **Space no longer marks a task done** in axTask: that is Ctrl+Enter, the bundle's main action key, there
+    (TK-4.4).
 
 ### AX-9 The bundle's menus: Options, Window, axKit, Help
 

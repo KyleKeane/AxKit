@@ -66,6 +66,10 @@ public sealed partial class TaskForm : ItemForm
         actions.DropDownItems.Add(new ToolStripSeparator());
         actions.DropDownItems.Add(Item("&Undo", Undo, ItemKeys.Undo, CommandMark.Change));
         actions.DropDownItems.Add(new ToolStripSeparator());
+        // AX-8.16: the items of the level shown, selected or not; the keys are the item window's.
+        actions.DropDownItems.Add(Item("Select &all", SelectAllRows, SelectionKeys.SelectAll, CommandMark.Change));
+        actions.DropDownItems.Add(Item("D&eselect all", SelectNoRows, SelectionKeys.SelectNone, CommandMark.Change));
+        actions.DropDownItems.Add(new ToolStripSeparator());
         actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Add &Done to every item", null, (_, _) => SwitchList(done: true)), CommandMark.Act));
         actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Remove Do&ne from every item", null, (_, _) => SwitchList(done: false)), CommandMark.Act));
         actions.DropDownItems.Add(new ToolStripSeparator());
@@ -85,10 +89,17 @@ public sealed partial class TaskForm : ItemForm
 
         // AF-14.1: Enter on an item opens its form, one control for each field of its list.
         _itemMenu.DropDownItems.Add(Item("&Open its form", OpenFormOfSelected, ItemKeys.Open, CommandMark.Open));
-        _itemMenu.DropDownItems.Add(Item("&Done or not done", () => CheckInNavigator(SelectedRow()), ItemKeys.Check, CommandMark.Change));
+        // TK-4.4 (2026-11-22): Ctrl+Enter, the bundle's main action, marks a task done or not done, the selected
+        // tasks when items are selected; Space, which did until then, selects (bundle AX-8.16).
+        Add(_itemMenu, new Command("&Done or not done", BundleKeys.MainAction, ToggleDone) { When = NotRenaming, Mark = CommandMark.Change });
         _itemMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
         _itemMenu.DropDownItems.Add(Item("Rena&me", RenameSelected, ItemKeys.Rename, CommandMark.Change));
         _itemMenu.DropDownItems.Add(Item("Ar&chive", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act));
+        _itemMenu.DropDownItems.Add(new ToolStripSeparator());
+        // The selection (AX-8.16, TK-4.7): the keys are the item window's commands; these items show them. Done,
+        // Archive and the list's actions that set or move act on the selected items when there are any.
+        _itemMenu.DropDownItems.Add(Item("&Select or deselect", SelectRow, SelectionKeys.Select, CommandMark.Change));
+        _itemMenu.DropDownItems.Add(Item("Select to &here", SelectToHere, SelectionKeys.SelectTo, CommandMark.Change));
         _itemMenu.DropDownItems.Add(new ToolStripSeparator());
         // The maintainer's approval of an outside report (docs/axKit/outside-reports.md OR-5; TaskForm.Approvals.cs).
         _itemMenu.DropDownItems.AddRange(CreateApprovalItems());
@@ -137,7 +148,8 @@ public sealed partial class TaskForm : ItemForm
         // the shared keys, which PlaceControls registers after these.
         AddKey(new Command("Open it where it lives", ItemKeys.Into, OpenFound) { When = InSearch, Mark = CommandMark.Open });
         AddKey(new Command("Open it where it lives", ItemKeys.Open, OpenFound) { When = InSearch, Mark = CommandMark.Open });
-        AddKey(new Command("Back from the search", ItemKeys.Back, UpLevel) { When = InSearch, Mark = CommandMark.Open });
+        // Escape gives up a selection first (AX-8.16), the item window's command; with none it leaves the search.
+        AddKey(new Command("Back from the search", ItemKeys.Back, UpLevel) { When = () => InSearch() && Selection.Count == 0, Mark = CommandMark.Open });
         // TK-4.6: Enter on a file that does not read as an item opens it in axJSON; on the gathering lists' row of them it reads the row.
         AddKey(new Command("Open the file in axJSON", ItemKeys.Open, OpenUnreadable) { When = OnUnreadable, Mark = CommandMark.Open });
         // AF-14.1, AF-14.2: Enter on an item, and on a field of one in the detail pane, opens the item's form

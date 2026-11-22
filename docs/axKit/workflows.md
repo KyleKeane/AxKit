@@ -856,6 +856,14 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Fill in an action's form
     - Stop a running action
     - Put a command into axTerminal's command field
+20. **Select several items and act on all of them**
+    - Select items one by one with Space
+    - Select a range as you move, with Shift and an arrow
+    - Give the selection up with Escape, and select every item with Ctrl+A
+    - Mark several tasks done at once
+    - Set a field of every selected item with an action of the list
+    - Move every selected item to another list with an action of the list
+    - Archive several items at once
 
 ## axTerminal
 

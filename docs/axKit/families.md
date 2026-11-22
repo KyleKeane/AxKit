@@ -57,7 +57,7 @@ Only in a test run, on a desktop of its own, never in your windows.
 
 ## 2. The functions
 
-A function is a command of a window (`docs/axKit/command-language.md`): 1622 in the inventory, of which 201 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
+A function is a command of a window (`docs/axKit/command-language.md`): 1629 in the inventory, of which 206 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
 
 ### The marks, and the events a command of each mark ends in
 
@@ -77,7 +77,7 @@ A function is a command of a window (`docs/axKit/command-language.md`): 1622 in 
 - `navigation`, the Navigation menu: Go somewhere in what the window holds: find, the next heading, link or list, go to a line, a bookmark, the next file.
   - 111 commands in 17 apps: read 85, open 25, change 1.
 - `actions`, the Actions menu: Do something with the whole of what the window holds: undo and redo, run, push and pull, a new item, interrupt.
-  - 90 commands in 17 apps: read 10, open 7, change 25, act 48.
+  - 92 commands in 17 apps: read 10, open 7, change 27, act 48.
 - `context`, the Context menu: Do something with the one thing the focus is on: copy, cut, paste, rename, delete, open, information. Shift+F10 and Ctrl+Period open it.
   - 86 commands in 17 apps: read 13, open 25, change 9, act 39.
 - `options`, the Options menu: Settings, each said with its new state: text, speech, sounds, announcements, what happens when something is done.
@@ -89,7 +89,7 @@ A function is a command of a window (`docs/axKit/command-language.md`): 1622 in 
 - `help`, the Help menu: The keys (F1), the user guide, the command palette, sending a report (F4), about, diagnostics and the key test.
   - 269 commands in 17 apps: read 153, open 17, act 99.
 - `keys-alone`: Commands that are a key with no menu item, because their meaning depends on where the focus is: Tab between panes, Enter on a row, Right into a list, F3 for find next. An AI tool never runs these.
-  - 201 rows of the inventory.
+  - 206 rows of the inventory.
 - `control-keys`: Not commands at all: the keys a control handles itself, the arrows in a list or a text and typing in a field. The inventory does not hold them; the families of keys do.
 
 ## 3. The events
@@ -126,7 +126,7 @@ You pressed a key, typed, or chose a command, and this is how it ended. Every co
   - Said: Often the reason: 'No next heading', 'No commands match x', 'Nothing found for x', 'Not found'. Sometimes none.
   - In: Every window.
   - Note: Not one sound today. Nothing (the low buzz) only for a letter in navigation mode. Edge for a typed name that no entry starts with, for the palette and the hotkey windows with no match, for a section or heading jump in the item windows, and for axTask's search of every list. No sound at all, only words, for a Ctrl jump in an editor, for Find ('Not found') and for axFile's filter.
-- `edge`: Nothing further that way: the first or last entry of a list, the top level, a row that cannot be gone into, the end of the history.
+- `edge`: Nothing further that way: the first or last entry of a list, the top level, a row that cannot be gone into, the end of the history, a key that selects as it moves at an end of the list.
   - Started by: `key`, `menu`, `palette`, `ai-tool`, `script`.
   - Heard: sound `Edge`.
   - Said: None in a plain list. In the palette, the hotkey windows and axFile's folder field, the entry you are on is said again. 'Top of the fields', 'A section: Down goes into it'.
@@ -433,7 +433,7 @@ Very short, right after your key and over before NVDA speaks. Each says how the 
   - Chosen: Asked 2026-10-22; made louder and given its upper note on 2026-10-23 after it was lost under speech. Not chosen from candidates.
   - Switch: None: it always plays.
   - The sound of: `nothing-found`, `edge`, `no-command`, `refused`.
-  - Played from 19 files: AxFile/FileForm.Browse.cs, AxFile/FileForm.Completion.cs, AxKit.Forms/AxKitForm.cs, AxKit.Forms/AxKitForm.Modes.cs, AxKit.Forms/AxKitForm.Notices.cs, AxKit.Forms/AxKitForm.Palette.cs, AxKit.Forms/AxKitList.cs, AxKit.Forms/AxKitTextBox.cs, AxKit.Forms/HotkeyForm.cs, AxKit.Forms/ItemForm.cs, AxKit.Forms/ItemForm.Fields.cs, AxKit.Forms/OverlayPanel.cs, AxKit.Forms/TextEditorForm.cs, AxTask/TaskForm.Actions.cs, AxTask/TaskForm.Approvals.cs, AxTask/TaskForm.Commands.cs, AxTask/TaskForm.cs, AxTask/TaskForm.Projects.cs, AxTerminal/TerminalForm.Input.cs.
+  - Played from 20 files: AxFile/FileForm.Browse.cs, AxFile/FileForm.Completion.cs, AxKit.Forms/AxKitForm.cs, AxKit.Forms/AxKitForm.Modes.cs, AxKit.Forms/AxKitForm.Notices.cs, AxKit.Forms/AxKitForm.Palette.cs, AxKit.Forms/AxKitList.cs, AxKit.Forms/AxKitTextBox.cs, AxKit.Forms/HotkeyForm.cs, AxKit.Forms/ItemForm.cs, AxKit.Forms/ItemForm.Fields.cs, AxKit.Forms/ListSelection.cs, AxKit.Forms/OverlayPanel.cs, AxKit.Forms/TextEditorForm.cs, AxTask/TaskForm.Actions.cs, AxTask/TaskForm.Approvals.cs, AxTask/TaskForm.Commands.cs, AxTask/TaskForm.cs, AxTask/TaskForm.Projects.cs, AxTerminal/TerminalForm.Input.cs.
 - `Heading`: G4 leaping an octave to G5, 85 ms.
   - Chosen: Asked 2026-11-11. Not chosen from candidates.
   - Switch: Options, Text, Sound on headings, in every window.
@@ -557,7 +557,7 @@ Each family of keys (`docs/axKit/key-groups.md`) with the kinds of event its key
   - `busy`: no sound.
   - `late-notice`: no sound.
   - Note: Ctrl+Period opens the Context menu. Ctrl+Slash asks Claude about the window: the answer is a late notice.
-- `space`, Space and Ctrl+Space: toggle or play.
+- `space`, Space and Ctrl+Space: select, toggle or play.
   - `changed`: no sound.
   - `no-command`: sound `Unassigned` or `Edge`.
   - Note: Ctrl+Space says the new mode. Space on a row that cannot be checked plays the edge.

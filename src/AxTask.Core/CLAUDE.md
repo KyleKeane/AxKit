@@ -60,6 +60,10 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
   stands in and that text stays one argument; nothing here joins or splits a command line; a line break in an
   argument refuses the action. The terminal's command line is quoted by `AxKit.Core/ShellQuote`. Tested in
   `ListActionsTests`.
+- `ManyItems` (TK-4.7, bundle AX-8.16, 2026-11-22): a command on several selected items, pure: `DoneNow` (Ctrl+Enter
+  on several tasks marks them done while any is not, not done only when every one is), `DoneSaid` ("Done: 2 tasks. 1
+  was done already. 1 selected item is not a task."), `Items` ("3 items"). The marks themselves and their words are
+  the bundle's, `AxKit.Core/Marks`. Tested in `ManyItemsTests`.
 - `TaskRules` (TK-4): Done, Start and Due, `DefaultTemplate`, `TemplateOf` (the fields of a list's configuration),
   `IsTask`, `IsDone`, `Due`, `Summary`, `TemplateWithDone` (a checklist or a plain list is the configuration's
   alone, AF-13.3: no item's file is touched), `DoneIndex`.

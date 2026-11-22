@@ -63,16 +63,16 @@ Starts with: Open axTask with the folder tasks.
 
 ### Mark a task done or not done
 
-1. Press Space.
+1. Press Ctrl+Enter.
     You hear: Done: Fix the tap.
-2. Press Space.
+2. Press Ctrl+Enter.
     You hear: Not done: Fix the tap.
 
 ### Set a due date by typing a weekday
 
 1. Press Tab.
 2. Press Enter.
-3. Press Ctrl+A.
+3. Press Ctrl+A (Select all; Actions menu).
 4. Type: friday
 5. Press Enter.
     You hear words such as: Friday.
@@ -341,7 +341,7 @@ Starts with: Open axTask with the folder tasks.
 2. Press Right.
     You hear: All tasks, 2 items, Buy a tap, in Home.
 3. Press Down.
-4. Press Space.
+4. Press Ctrl+Enter.
     You hear: Done: Fix the tap.
 5. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Done: Fix the tap.
@@ -363,7 +363,7 @@ Starts with: Open axTask with the folder tasks.
 5. Press Down.
 6. Press Right.
     You hear: Home, 1 item, Fix the tap.
-7. Press Space.
+7. Press Ctrl+Enter.
     You hear: Done: Fix the tap.
 8. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Done: Fix the tap.
@@ -380,11 +380,11 @@ Starts with: Open axTask with the folder tasks.
 2. Type: nowhere
 3. Press Enter.
     You hear: No folder is there.
-4. Press Ctrl+A.
+4. Press Ctrl+A (Select all; Actions menu).
 5. Type: tasks
 6. Press Enter.
     You hear: That is your own top folder: its lists show at the top already.
-7. Press Ctrl+A.
+7. Press Ctrl+A (Select all; Actions menu).
 8. Type: more
 9. Press Enter.
     You hear: Added Projects in more, looking for lists.
@@ -399,7 +399,7 @@ Starts with: Open axTask with the folder tasks.
     You hear: Searching every list.
     You hear: Nothing found for zebra.
 4. Press Ctrl+Shift+F (Find in every list; Navigation menu).
-5. Press Ctrl+A.
+5. Press Ctrl+A (Select all; Actions menu).
 6. Type: TAP
 7. Press Enter.
     You hear: Found TAP, 3 items, Buy a tap, in tasks / Home.
@@ -539,7 +539,7 @@ Starts with: Open axTask with the folder tasks.
 ### Rename a list
 
 1. Press F2.
-2. Press Ctrl+A.
+2. Press Ctrl+A (Select all; Actions menu).
 3. Type: House
 4. Press Enter.
     You hear: Renamed Home to House.
@@ -670,7 +670,7 @@ Starts with: Open axTask with the folder tasks.
 7. Press Tab.
 8. Press Down 3 times.
 9. Press Shift+Tab.
-10. Press Space.
+10. Press Ctrl+Enter.
     You hear: Done: Idea.
 
 ### Add an item to a list that has no configuration yet
@@ -705,12 +705,12 @@ Starts with: Open axTask with the folder tasks.
 2. Press Tab.
 3. Press Space.
 4. Press Tab.
-5. Press Ctrl+A.
+5. Press Ctrl+A (Select all; Actions menu).
 6. Type: 2099-11-02
 7. Press Tab.
 8. Press Down 2 times.
 9. Press Tab.
-10. Press Ctrl+A.
+10. Press Ctrl+A (Select all; Actions menu).
 11. Type: Hall
 12. Press Tab.
 13. Type: First line
@@ -732,7 +732,7 @@ Starts with: Open axTask with the folder tasks.
     You hear: Saved Fix the tap. Waits on: Washer.
 5. Press Down.
 6. Press Enter.
-7. Press Ctrl+A.
+7. Press Ctrl+A (Select all; Actions menu).
 8. Type: Washer 15 mm
 9. Press Enter.
     You hear: Saved Washer 15 mm. Title: Washer 15 mm.
@@ -743,7 +743,7 @@ Starts with: Open axTask with the folder tasks.
 2. Press Tab.
 3. Press Down 4 times.
 4. Press Enter.
-5. Press Ctrl+A.
+5. Press Ctrl+A (Select all; Actions menu).
 6. Type: Bathroom
 7. Press Enter.
     You hear: Saved Fix the tap. Room: Bathroom.
@@ -808,3 +808,84 @@ Starts with: Open axTask with the folder tasks.
     You hear: A command is in the command field, not sent. Another program put it there, and axKit checked nothing of it: read it, and press Enter only if you want to run it.
 7. Close the window.
 8. Go to the axTask window.
+
+## Select several items and act on all of them
+
+Starts with: Open axTask with the folder tasks.
+
+### Select items one by one with Space
+
+1. Press Space.
+    You hear: Selected.
+2. Press Down 2 times.
+3. Press Space.
+    You hear: Selected, 2 selected.
+4. Press Space.
+    You hear: Deselected, 1 selected.
+5. Press Space.
+    You hear: Selected, 2 selected.
+
+### Select a range as you move, with Shift and an arrow
+
+1. Press Shift+Down.
+2. Press Shift+Up.
+3. Press End.
+4. Press Shift+Space.
+    You hear: Selected, 4 selected.
+
+### Give the selection up with Escape, and select every item with Ctrl+A
+
+1. Press Escape.
+    You hear: None selected.
+2. Press Ctrl+A (Select all; Actions menu).
+    You hear: 5 selected.
+3. Press Ctrl+Shift+A (Deselect all; Actions menu).
+    You hear: None selected.
+
+### Mark several tasks done at once
+
+1. Press Home.
+2. Press Space.
+3. Press Down.
+4. Press Space.
+5. Press End.
+6. Press Space.
+    You hear: Selected, 3 selected.
+7. Press Ctrl+Enter.
+    You hear: Done: 2 tasks. 1 was done already.
+8. Press Ctrl+Enter.
+    You hear: Not done: 3 tasks.
+9. Press Ctrl+Z (Undo; Actions menu).
+    You hear: Undone: Not done: 3 tasks.
+10. Press Ctrl+Z (Undo; Actions menu).
+    You hear: Undone: Done: 2 tasks. 1 was done already.
+
+### Set a field of every selected item with an action of the list
+
+1. Press Ctrl+1 (Action key 1).
+    You hear: Priority high: 3 items.
+2. Press Ctrl+Z (Undo; Actions menu).
+    You hear: Undone: Priority high: 3 items.
+
+### Move every selected item to another list with an action of the list
+
+1. Press Ctrl+2 (Action key 2).
+    You hear: Ctrl+2 in this list now moves to ../Later. Press it again to do it.
+2. Press Ctrl+2 (Action key 2).
+    You hear: Later: 3 items moved to Later.
+3. Press Ctrl+Enter.
+    You hear words such as: Done.
+4. Press Ctrl+Z 2 times (Undo; Actions menu).
+    You hear: Undone: Later: 3 items moved to Later.
+
+### Archive several items at once
+
+1. Press Home.
+2. Press Space.
+3. Press Down.
+4. Press Space.
+    You hear: Selected, 2 selected.
+5. Press Delete.
+    You hear: Archived 2 items.
+6. Press Ctrl+Z (Undo; Actions menu).
+    You hear: Undone: Archived 2 items.

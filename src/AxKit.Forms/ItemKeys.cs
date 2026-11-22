@@ -30,11 +30,15 @@ public static class ItemKeys
 
     public const Keys OtherPaneBack = Keys.Shift | Keys.Tab;
 
-    /// <summary>In the detail pane: back to the navigator.</summary>
-    public const Keys Back = Keys.Escape;
+    /// <summary>In the detail pane: back to the navigator. In the navigator of an app with a selection, the bundle's key that deselects all while rows are selected (<see cref="SelectionKeys.Clear"/>, AX-8.16).</summary>
+    public const Keys Back = SelectionKeys.Clear;
 
-    /// <summary>In the detail pane on a check: checked or not; in axTask's navigator, a task done or not.</summary>
-    public const Keys Check = Keys.Space;
+    /// <summary>
+    /// In the detail pane on a check: checked or not. In the navigator it is the bundle's key that selects the row
+    /// (<see cref="SelectionKeys.Select"/>, AX-8.16; until 2026-11-22 a task done or not in axTask, which is
+    /// Ctrl+Enter now): the edge sound in an app whose navigator has no selection.
+    /// </summary>
+    public const Keys Check = SelectionKeys.Select;
 
     /// <summary>A new item in the navigator, a new field in the detail pane.</summary>
     public const Keys New = Keys.Control | Keys.N;
@@ -68,8 +72,8 @@ public static class ItemKeys
         ("Open, or change the field", Open),
         ("To the other pane", OtherPane),
         ("To the other pane, back", OtherPaneBack),
-        ("Back to the navigator (in the detail pane)", Back),
-        ("Done or not done", Check),
+        ("Back to the navigator (in the detail pane); deselect all while any is selected (in the navigator)", Back),
+        ("Check or uncheck the field (in the detail pane); select or deselect (in the navigator)", Check),
         ("New item, or new field", New),
         ("New list", NewList),
         ("Rename", Rename),

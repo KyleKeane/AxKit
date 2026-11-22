@@ -24,7 +24,7 @@ expect focus Size, text, 3
 keys end
 expect focus Its configuration, list.json, is not there: every value is shown as text
 keys shift+tab
-keys space
+keys ctrl+enter
 expect said ! Not a task
 do Rename
 type Thought
@@ -55,7 +55,7 @@ expect focus Size, number, 3
 keys down
 expect focus Notes, text, One line
 keys shift+tab
-keys space
+keys ctrl+enter
 expect said ! Done: Idea
 run findstr /l /c:"\"Done\": true" tasks\Notes\Idea.json
 

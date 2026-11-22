@@ -139,25 +139,30 @@ public sealed partial class TaskForm
             return;
         }
 
-        if (SelectedRow() is not { Tag: ItemFile item })
+        // TK-4.7: an action that sets fields or moves the item acts on the selected items when there are any; one
+        // that opens something, runs a program or fills axTerminal's field is about one item, the current one.
+        var onSelected = Selection.Count > 0 && action.Does is ListActions.SetKind or ListActions.MoveKind;
+        List<ItemFile> items = onSelected ? Targets() : SelectedRow() is { Tag: ItemFile one } ? [one] : [];
+        if (items.Count == 0)
         {
-            Refuse("Select an item first");
+            Refuse("Move to an item first");
             return;
         }
 
-        if (!Changeable(item))
+        if (!items.All(Changeable))
         {
             return;
         }
 
-        var folder = Path.GetDirectoryName(item.Path)!;
+        // The form, when the action has one, is asked once and shows what the first of the items would fill in.
+        var folder = Path.GetDirectoryName(items[0].Path)!;
         if (action.Fields.Count == 0)
         {
-            PerformAction(action, item, folder, new Dictionary<string, string>(), how, pressed, forAiTool);
+            PerformAction(action, items, folder, new Dictionary<string, string>(), how, pressed, forAiTool);
             return;
         }
 
-        AskActionForm(action, item, folder, values => PerformAction(action, item, folder, values, how, pressed, forAiTool));
+        AskActionForm(action, items[0], folder, values => PerformAction(action, items, folder, values, how, pressed, forAiTool));
     }
 
     /// <summary>
@@ -248,25 +253,35 @@ public sealed partial class TaskForm
             () => Typed() is { Lacking: { } lacking, Said: { } said } ? (lacking, said) : null);
     }
 
-    private void PerformAction(ConfiguredAction action, ItemFile item, string folder, IReadOnlyDictionary<string, string> form, string how, bool pressed, bool forAiTool)
+    /// <summary>The action done: on every one of <paramref name="items"/> when it sets fields or moves (the selected items, or the current one alone, TK-4.7), on the first, the current item, otherwise.</summary>
+    private void PerformAction(ConfiguredAction action, IReadOnlyList<ItemFile> items, string folder, IReadOnlyDictionary<string, string> form, string how, bool pressed, bool forAiTool)
     {
-        var context = new ActionContext(item.Flat, item.Config, item.Path, folder, form, Today);
+        ActionContext ContextOf(ItemFile of) => new(of.Flat, of.Config, of.Path, folder, form, Today);
+        var item = items[0];
+        var context = ContextOf(item);
         switch (action.Does)
         {
             case ListActions.SetKind:
-                var (set, refused) = ActionValues.Set(action.Set, context, action.Name);
-                if (refused is not null)
+                // Each item is filled from its own values; one that refuses stops the action before anything is written.
+                var sets = new List<(ItemFile Item, IReadOnlyDictionary<string, JsonNode?> Set)>();
+                foreach (var each in items)
                 {
-                    Refuse(refused);
-                    return;
+                    var (set, refused) = ActionValues.Set(action.Set, ContextOf(each), action.Name);
+                    if (refused is not null)
+                    {
+                        Refuse(refused);
+                        return;
+                    }
+
+                    sets.Add((each, set!));
                 }
 
-                SetFields(item, set!, action.Name);
+                SetFields(sets, action.Name);
                 return;
             case ListActions.MoveKind:
                 if (!action.AsksFirst || AcceptedOrAsked(action, folder, how, pressed))
                 {
-                    MoveItem(item, folder, action.To, action.Name);
+                    MoveItems(items, folder, action.To, action.Name);
                 }
 
                 return;
@@ -326,20 +341,24 @@ public sealed partial class TaskForm
         return false;
     }
 
-    /// <summary>A set action (RP-8.1): the fields written as one step.</summary>
-    private void SetFields(ItemFile item, IReadOnlyDictionary<string, JsonNode?> set, string name)
+    /// <summary>A set action (RP-8.1): the fields written as one step, of one item ("Priority high: Priority: High") or of every selected one ("Priority high: 3 items", TK-4.7).</summary>
+    private void SetFields(IReadOnlyList<(ItemFile Item, IReadOnlyDictionary<string, JsonNode?> Set)> sets, string name)
     {
-        if (!CheckFresh(item.Path, item.Text))
+        if (!sets.All(one => CheckFresh(one.Item.Path, one.Item.Text)))
         {
             return;
         }
 
-        var changed = ActionKeys.ApplySet(item.Document, set);
-        Commit(new Step([FileChange.Write(item.Path, item.Text, item.TextWith(changed))], $"{name}: {ActionKeys.SpokenSet(set)}"), item.Path);
+        var parts = sets.Select(one => FileChange.Write(one.Item.Path, one.Item.Text, one.Item.TextWith(ActionKeys.ApplySet(one.Item.Document, one.Set)))).ToList();
+        var said = sets.Count == 1 ? $"{name}: {ActionKeys.SpokenSet(sets[0].Set)}" : $"{name}: {ManyItems.Items(sets.Count)}";
+        Commit(new Step(parts, said), SelectedKey());
     }
 
-    /// <summary>A move action (RP-8.1): to the list at the path from the item's own list, the links following (IA-D3).</summary>
-    private void MoveItem(ItemFile item, string folder, string move, string name)
+    /// <summary>
+    /// A move action (RP-8.1): to the list at the path from the items' own list, the links following (IA-D3); one
+    /// item, or every selected one as one step (TK-4.7, <see cref="CommitMoves"/>).
+    /// </summary>
+    private void MoveItems(IReadOnlyList<ItemFile> items, string folder, string move, string name)
     {
         var target = Path.GetFullPath(Path.Combine(folder, move));
         var top = TopFolder.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
@@ -349,15 +368,20 @@ public sealed partial class TaskForm
             return;
         }
 
-        if (!CheckFresh(item.Path, item.Text))
+        if (!items.All(item => CheckFresh(item.Path, item.Text)))
         {
             return;
         }
 
-        var to = ItemFiles.FreePath(target, Path.GetFileNameWithoutExtension(item.Path), ".json");
-        var parts = new List<FileChange> { FileChange.Move(item.Path, to) };
-        parts.AddRange(Links.AfterMove(ItemFolder.AllItems(TopFolder), item.Path, to));
-        Commit(new Step(parts, $"{name}: {ItemFolder.NameOf(item)} moved to {Path.GetFileName(target)}"), NeighbourKey());
+        var what = items.Count == 1 ? ItemFolder.NameOf(items[0]) : ManyItems.Items(items.Count);
+        var select = KeyAfter([.. items.Select(item => item.Path)]);
+        CommitMoves([.. items.Select(item => (Func<List<FileChange>>)(() =>
+        {
+            var to = ItemFiles.FreePath(target, Path.GetFileNameWithoutExtension(item.Path), ".json");
+            var parts = new List<FileChange> { FileChange.Move(item.Path, to) };
+            parts.AddRange(Links.AfterMove(ItemFolder.AllItems(TopFolder), item.Path, to));
+            return parts;
+        }))], $"{name}: {what} moved to {Path.GetFileName(target)}", select);
     }
 
     /// <summary>An open action (RP-8.1): an app on the item's file, or a field's web address in the browser.</summary>

@@ -1,0 +1,145 @@
+# Workflow: Select several items and act on all of them
+# axTask, docs/axTask/SPEC.md TK-4.7, bundle AX-8.16 (the maintainer's decision of 2026-11-22): Space selects the item
+# you are on, Shift with an arrow selects as it moves, Ctrl+A every item shown, Escape gives the selection up. Ctrl+Enter
+# (done or not done), Delete (archive) and the list's actions that set fields or move then act on all the selected
+# items as one step, which Ctrl+Z takes back. The keys, the words and the marks are the bundle's shared selection.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Priority","type":"text","value":""}],"actions":[{"name":"Priority high","key":"Ctrl+1","does":"set","set":{"Priority":"High"}},{"name":"Later","key":"Ctrl+2","does":"move","to":"../Later"}]}
+file "tasks\Home\Buy paint.json" {"schema":"list.json","Title":"Buy paint","Done":false}
+file "tasks\Home\Call the plumber.json" {"schema":"list.json","Title":"Call the plumber","Done":false}
+file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false}
+file "tasks\Home\Oil the hinge.json" {"schema":"list.json","Title":"Oil the hinge","Done":false}
+file "tasks\Home\Water plants.json" {"schema":"list.json","Title":"Water plants","Done":true}
+file tasks\Later\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Priority","type":"text","value":""}],"actions":[]}
+start task {temp}\tasks
+expect focus Your lists, heading level 1
+
+# Check: A heading and a list are not selected, and Space says why
+keys space
+expect said ! A heading: nothing to select
+keys down
+expect focus Home, list, 5 items
+keys space
+expect said ! Items are selected, not lists: Right goes into this one
+keys right
+expect focus Buy paint
+
+# Goal: Select items one by one with Space
+# Space selects the item, whose line then ends in ", selected"; again deselects it. The count is said from the
+# second one on, and the status bar holds it.
+keys space
+expect said ! Selected
+expect focus Buy paint, selected
+keys down
+keys down
+expect focus Fix the tap
+keys space
+expect said ! Selected, 2 selected
+expect state Home, 5 items, 2 selected
+keys space
+expect said ! Deselected, 1 selected
+keys space
+expect said ! Selected, 2 selected
+
+# Goal: Select a range as you move, with Shift and an arrow
+# Shift+Down from Fix the tap selects Oil the hinge too, and says nothing but the line reached; Shift+Up takes it back.
+keys shift+down
+expect focus Oil the hinge, selected
+expect state 3 selected
+keys shift+up
+expect focus Fix the tap, selected
+expect state 2 selected
+# Shift+Space on the last item: from the nearest selected one, Fix the tap, to here.
+keys end
+expect focus Water plants, done
+keys shift+space
+expect said ! Selected, 4 selected
+expect focus Water plants, done, selected
+
+# Goal: Give the selection up with Escape, and select every item with Ctrl+A
+keys escape
+expect said ! None selected
+expect focus Water plants, done
+keys ctrl+a
+expect said ! 5 selected
+keys ctrl+shift+a
+expect said ! None selected
+
+# Goal: Mark several tasks done at once
+# Two tasks not done and one done are selected: Ctrl+Enter marks the two done and counts the third. Again, with
+# all three done, it marks them not done. Each is one step for Ctrl+Z.
+keys home
+keys space
+keys down
+keys space
+keys end
+keys space
+expect said ! Selected, 3 selected
+keys ctrl+enter
+expect said ! Done: 2 tasks. 1 was done already.
+run findstr /l /c:"\"Done\": true" "tasks\Home\Buy paint.json"
+run findstr /l /c:"\"Done\": true" "tasks\Home\Call the plumber.json"
+expect focus Water plants, done, selected
+keys ctrl+enter
+expect said ! Not done: 3 tasks
+run findstr /l /c:"\"Done\": false" "tasks\Home\Water plants.json"
+do Undo
+expect said ! Undone: Not done: 3 tasks
+do Undo
+expect said ! Undone: Done: 2 tasks. 1 was done already.
+run findstr /l /c:"\"Done\":false" "tasks\Home\Buy paint.json"
+
+# Goal: Set a field of every selected item with an action of the list
+# The three stay selected through the changes. The list's set action writes each of them, as one step.
+expect state 3 selected
+do Action key 1
+expect said ! Priority high: 3 items
+run findstr /l /c:"\"Priority\": \"High\"" "tasks\Home\Buy paint.json"
+run findstr /l /c:"\"Priority\": \"High\"" "tasks\Home\Water plants.json"
+do Undo
+expect said ! Undone: Priority high: 3 items
+
+# Goal: Move every selected item to another list with an action of the list
+# A move is said at its first press and done at the second (TK-7a.3), once for all of them; they leave the list and
+# the selection with them.
+do Action key 2
+expect said Ctrl+2 in this list now moves to ../Later. Press it again to do it.
+do Action key 2
+expect said ! Later: 3 items moved to Later
+run cmd /c if exist "tasks\Later\Buy paint.json" (exit 0) else (exit 1)
+run cmd /c if exist "tasks\Later\Water plants.json" (exit 0) else (exit 1)
+expect state Home, 2 items
+# Nothing is selected now: Ctrl+Enter is the one task's again.
+keys ctrl+enter
+expect said ! Done:
+do Undo
+do Undo
+expect said ! Undone: Later: 3 items moved to Later
+run cmd /c if exist "tasks\Home\Water plants.json" (exit 0) else (exit 1)
+expect state Home, 5 items
+
+# Goal: Archive several items at once
+keys home
+expect focus Buy paint
+keys space
+keys down
+keys space
+expect said ! Selected, 2 selected
+keys delete
+expect said ! Archived 2 items
+expect focus Fix the tap
+run cmd /c if exist "tasks\Archive\Buy paint.json" (exit 0) else (exit 1)
+do Undo
+expect said ! Undone: Archived 2 items
+run cmd /c if exist "tasks\Home\Call the plumber.json" (exit 0) else (exit 1)
+
+# Check: Another list starts with nothing selected
+keys home
+keys space
+expect said ! Selected
+keys left
+expect focus Home, list, 5 items
+keys right
+expect focus Buy paint
+keys ctrl+enter
+expect said ! Done: Buy paint

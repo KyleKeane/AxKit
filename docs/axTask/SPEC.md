@@ -14,8 +14,9 @@ A folder of lists: `Home\`, `Shopping\`, `Course plan\`, each item a file such a
 deep (TK-D4). The top level is in sections (TK-3a): **Smart lists** (All tasks, every task not done from every list
 by due date, and the saved filters), **User lists**, the user's own sections, and **Archived lists**; Ctrl+Up and
 Ctrl+Down move between them. Right or Enter goes into a list, Left back to the sections, Tab or Enter on an item to
-its fields in the detail pane (Ctrl+Tab, Ctrl+Shift+Tab and F6 switch the panes too, the bundle's keys, AX-8.2). Space
-marks a task done.
+its fields in the detail pane (Ctrl+Tab, Ctrl+Shift+Tab and F6 switch the panes too, the bundle's keys, AX-8.2).
+Ctrl+Enter marks a task done; Space selects an item, and Ctrl+Enter, Delete and a list's actions then act on all the
+selected ones (TK-4.4, TK-4.7).
 
 ## 2. Goals and non-goals
 
@@ -35,7 +36,7 @@ marks a task done.
 2. Right: "Home, 2 items, Fix the tap, due 30 October". Tab: "Fields of Fix the tap, Title, text, Fix the tap". Down:
    "Done, check, not done", then "Due, date, 30 October 2026, Friday".
 3. Enter on Due, type `+3`, Enter: "Due: 2 November 2026, Monday". Shift+Tab: "Fix the tap, due 2 November".
-4. Space: "Done: Fix the tap". Ctrl+Z: "Undone: Done: Fix the tap".
+4. Ctrl+Enter: "Done: Fix the tap". Ctrl+Z: "Undone: Done: Fix the tap".
 5. Ctrl+N, type `Call the plumber`, Enter: "Added Call the plumber", with the list's new-item fields (Done, Due).
 6. Left: "Lists, Home". Up: "All tasks, 5 not done". Right: the tasks of every list, the soonest due first, each read
    "Call the plumber, in Home".
@@ -122,7 +123,11 @@ marks a task done.
   it"; "Home is a checklist already" when there is nothing to switch).
 - **TK-4.3 The row summary** (IA-6): the Title, then "done" when Done is true, then "due" and the Due date when there is
   one: "Fix the tap, done, due 30 October". Overdue reads "overdue since 30 October".
-- **TK-4.4 Space in the navigator** toggles Done on a task; on an item of a plain list, the edge earcon and "Not a task".
+- **TK-4.4 Ctrl+Enter marks a task done** (the maintainer's decision of 2026-11-22: "we should use space to mean
+  select an item everywhere in axkit, so we can use ctrl+enter to mean mark as done in axtask"; Space did this
+  until then). Ctrl+Enter, the bundle's main action key, toggles Done on a task, in the navigator and from the
+  detail pane alike: "Done: Fix the tap", "Not done: Fix the tap"; on an item of a plain list, the edge earcon and
+  "Not a task". Context, Done or not done, shows the key. With items selected it acts on them (TK-4.7).
 - **TK-4.5 The start.** Without a path the window opens the list of the last run. That list is looked at during the
   start only on a drive of this computer (bundle AX-9.5a, 2026-11-16): elsewhere the top level shows and the window
   says "<path> is on the network and was not opened at start; Right on its list opens it." The top folder itself is
@@ -134,7 +139,8 @@ marks a task done.
   - In its list it is a row after the items: "<file name>, not readable as an item, Enter opens it in axJSON"
     (`ItemFolder.UnreadableRow`), and the list's name says how many: "Home, 3 items, 1 not readable". Enter or Ctrl+J
     opens the file in axJSON, Ctrl+E shows it in axFile. F2 and Delete say "Not readable as an item: Enter opens it
-    in axJSON, Ctrl+E shows it in axFile" and change nothing; Space sounds the edge. The detail pane holds the row's
+    in axJSON, Ctrl+E shows it in axFile" and change nothing; Ctrl+Enter sounds the edge, and Space, which selects
+    items, says the same sentence. The detail pane holds the row's
     words, what to do, and the file's path. A file that is not `.json` is still only counted (IA-4.6).
   - A list that gathers items (All tasks, a date list, a tag's list, a smart list of the user's) says in its name how
     many files it could not read, "Due today, 2 items, 1 not readable", and ends with one row that says where:
@@ -145,6 +151,47 @@ marks a task done.
     looked at; and the projects' items, read off the window's thread by the look for projects (TK-5.6), are
     gathered without their damaged files, which show in the project's own lists once it is entered.
   - Checked by `tests/scripts/axTask/10-damaged-item.txt` and `FolderTests`.
+- **TK-4.7 Selecting several items, and what acts on them** (2026-11-22; the bundle's selection, AX-8.16, which
+  states the keys and the words: this window keeps none of its own). Two words are kept apart from here on: the
+  item **you are on**, which the arrow keys choose and NVDA reads, and the **selected** items, which Space marks.
+  - **What is selected.** Items, in a list, in a smart list and in what a search found: **Space** selects the
+    item you are on, or deselects it again; **Shift+Down, Shift+Up, Shift+Home, Shift+End** select as they move;
+    **Shift+Space** selects from the nearest selected item to here; **Ctrl+A** selects every item shown, and
+    Actions, Select all does; **Ctrl+Shift+A**, and **Escape** while any is selected, deselect all. A selected
+    item's line ends in ", selected", and the status bar's first part says how many are: "Home, 5 items, 2
+    selected". A list, a project, a heading and a file that does not read as an item are not selected: Space
+    there plays the edge sound and says why ("Items are selected, not lists: Right goes into this one", "A
+    heading: nothing to select"), and Ctrl+A at a top level says "No items here to select: go into a list,
+    Right". The keys that select many pass over such rows.
+  - **How long it lasts.** The selection is one level's: going into a list, back out, to a smart list or to a
+    search starts with none. The same level filled again (a change written, F5, done tasks hidden) keeps the
+    selected items that are still shown. Nothing of it is written anywhere, and it is not a step for Ctrl+Z.
+  - **What acts on the selected items** when there are any, and on the item you are on alone otherwise:
+    - **Ctrl+Enter**: the tasks among them done while any of those is not, and not done when every one is, so that
+      one press never leaves them mixed and a second takes the first back. "Done: 2 tasks. 1 was done already."
+      "Not done: 3 tasks". A selected item that is no task is passed over and counted: "1 selected item is not
+      a task"; with no task among them, "None of the selected items is a task" and nothing changes.
+    - **Delete**: each into its own folder of lists' Archive, the links to them kept: "Archived 3 items". Not
+      from what a search found ("Open an item where it lives first: Enter. The search archives nothing") and not
+      for items in the Archive already.
+    - **An action of the list that sets fields or moves** (TK-7a.1a): each item filled from its own values and
+      written, "Priority high: 3 items"; all of them moved, "Later: 3 items moved to Later". An action's form is
+      asked once, and a move's first press says what it does once (TK-7a.3). One item that refuses (a value its
+      field does not hold) stops the action before anything is written.
+    Each is one step for Ctrl+Z ("Undone: Archived 3 items"), and each checks every item against its file as it
+    was shown before anything is written (IA-5.5). Several moves are made one after the other, each from the disk
+    as the one before left it, so that an item linking to two of the moved items is written right; a failure
+    takes back what was done before it and says so (`TaskForm.CommitMoves`).
+  - **What stays on the item you are on**, whatever is selected: Enter (its form), F2, Ctrl+Q, Ctrl+J, Ctrl+E,
+    the detail pane and its changes, and an action of the list that opens something, runs a program or fills
+    axTerminal's field: those are about one thing.
+  - **For an AI tool** (bundle `mcp.md` MC-7.3): while items are selected, the target of a command it asks to run
+    is named with both, "Fix the tap, and 3 selected", and a change of the selection between the question and
+    the run refuses the run, as a change of the item does.
+  - The rules of Done on several and the words are pure code, `AxTask.Core/ManyItems`, tested; the window's part
+    is `TaskForm.Targets`. Checked by `tests/scripts/axTask/20-selection.txt`.
+  - Not built yet, each with its item in the priorities list: Move to a list chosen from all lists, Set fields of
+    the selected items in one form, and selecting lists at the top level.
 
 ## 5. All tasks and the smart lists
 
@@ -223,7 +270,8 @@ On top of IA-3:
 
 | Key | Where | What |
 | --- | --- | --- |
-| Space | navigator | done or not done (TK-4.4) |
+| Ctrl+Enter | navigator and detail pane | done or not done, the selected tasks when items are selected (TK-4.4, TK-4.7; Space until 2026-11-22) |
+| Space, Shift+Space, Shift+Down, Shift+Up, Shift+Home, Shift+End, Ctrl+A, Ctrl+Shift+A, Escape | navigator | the bundle's selection keys (AX-8.16, TK-4.7) |
 | Ctrl+J | anywhere | open the item, the list's `list.json` or the smart list in axJSON |
 | Ctrl+E | anywhere | show the file or folder in axFile |
 | Ctrl+Shift+D | navigator | hide or show done tasks in this list |
@@ -393,8 +441,9 @@ are later (the priorities item of the request); the AI tools over the lists are 
   Home", the user's own lists first, named by the top folder's name. Right or Enter opens the item's list where it
   lives (in its project, when it is in one) with the item selected: "Home, 1 item, Fix the tap"; Left, Backspace or
   Escape goes back where the search was started, the row selected then selected again. In the found level Tab shows
-  the item's fields, which change as anywhere, and Space marks a task done in its own file, the selection staying on
-  it (done tasks stay in the found level, Hide done or not); F2, Delete and a link's change say "Open it where it
+  the item's fields, which change as anywhere, and Ctrl+Enter marks a task done in its own file, the selection staying on
+  it (done tasks stay in the found level, Hide done or not); Space selects what was found, for Ctrl+Enter on several, and
+  Escape gives a selection up before it leaves the search (TK-4.7); F2, Delete and a link's change say "Open it where it
   lives first", Ctrl+N "Items are made in a list: open the item where it lives first, Enter", the action keys "Action keys act in a list: open one first" (TK-D9).
 - **TK-7b.5 The top folder** is never moved or changed by any of this: a project is shown, entered and changed where
   it is, and the user's top folder stays the one in the settings.

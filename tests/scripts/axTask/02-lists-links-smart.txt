@@ -110,7 +110,7 @@ type h
 keys right
 expect focus Fix the tap
 run cmd /c powershell -NoProfile -Command "(Get-Content -Raw 'tasks\Home\Fix the tap.json').Replace('2099-10-30','2099-11-02') | Set-Content -NoNewline 'tasks\Home\Fix the tap.json'"
-keys space
+keys ctrl+enter
 expect said ! The item changed on disk; it has been read again
 expect focus Fix the tap, due 2 November 2099
 

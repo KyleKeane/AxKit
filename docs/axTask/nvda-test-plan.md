@@ -32,7 +32,7 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
    symbols"; Ctrl+3: "@ at sign, heading level 3, 1 smart list", Down: "@Sam, 1"; Ctrl+3: "# number sign, heading
    level 3, 1 smart list"; Ctrl+3: "! exclamation mark, heading level 3, 1 smart list"; Ctrl+3: the edge sound;
    Ctrl+Shift+3: back on "! exclamation mark" (TK-5.5, TK-D20). Listen that each symbol's name is said in full. Right
-   on @Sam: "@Sam, 1 item, Call @Sam about #garden !urgent, in Home". Space: "Done: …", and the row leaves the list.
+   on @Sam: "@Sam, 1 item, Call @Sam about #garden !urgent, in Home". Ctrl+Enter: "Done: …", and the row leaves the list.
    Ctrl+Z; then archive the task with Delete: Left, the heading Tags is gone.
 11. Make two smart lists, Actions, New smart list, `App one` and `App two` (close axJSON each time), and a third, `Soon`:
    under Smart lists, after All tasks, "Soon, smart list, …", then "App, heading level 2, 2 smart lists" holding "App
@@ -40,7 +40,7 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
 
 ## 2. Changing (IA-5, TK-4)
 
-1. On Fix the tap, Space: "Done: Fix the tap"; Space: "Not done: Fix the tap". Ctrl+J: axJSON shows the item as its values, `"Done": false` among them, and `"schema": "list.json"` first.
+1. On Fix the tap, Ctrl+Enter: "Done: Fix the tap"; Ctrl+Enter: "Not done: Fix the tap". Ctrl+J: axJSON shows the item as its values, `"Done": false` among them, and `"schema": "list.json"` first.
 2. In its fields, Enter on Due: the item's form with the focus in Due's box; type `+3`, Enter: "Saved Fix the tap. Due: …, " three days from today, and the focus is back on Due in the fields. Enter again, type `30 Febuary`, Enter: "Due: Not a date: …"
    and the form stays, the focus in Due's box; Escape.
 3. Ctrl+N in the fields: "The fields are the list's configuration's: Ctrl+J on the list opens it in axJSON", and no
@@ -71,7 +71,7 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
 7. Ctrl+N in Shopping, type `Bread`: "Added Bread", with the list's fields, Done, Start, Due. Delete on Bread: "Archived Bread"; Ctrl+Z:
    "Undone: Archived Bread".
 8. Actions, Remove Done from every item in Shopping: "Shopping is a plain list: Done is hidden, and kept in the items that have it"; Washer reads without "done" or a Done field, and its last line is "1 more field kept: Done". Ctrl+Z: "Undone: Shopping is a plain list", and Done shows again as it was.
-9. Change Fix the sink in axJSON and save; in axTask, Space on it: "The item changed on disk; it has been read again".
+9. Change Fix the sink in axJSON and save; in axTask, Ctrl+Enter on it: "The item changed on disk; it has been read again".
 10. Ctrl+Shift+N at the top, type `Garden`: "Made Garden". Ctrl+Z: Garden is gone.
 
 ## 3. Links and smart lists (IA-D3, TK-5)
@@ -139,11 +139,11 @@ mm") and `beta\tasks\Bugs` (`Tap drips`). The runner's script is `tests/scripts/
    "A project's lists are made inside it: Right on a project first". Delete: "A project stays: Options, Remove
    a project folder removes the folder it was found in". F2: "A project's folder is renamed in axFile: Ctrl+E".
 5. Up, Right on tasks in alpha: "tasks in alpha, 1 list, Your lists, heading level 1, 1 list". Down: "Home, list, 1
-   item". Right: "Home, 1 item, Fix the leak". Space: "Done: Fix the leak"; Ctrl+Z: "Undone: Done: Fix the leak".
+   item". Right: "Home, 1 item, Fix the leak". Ctrl+Enter: "Done: Fix the leak"; Ctrl+Z: "Undone: Done: Fix the leak".
 6. Left: "tasks in alpha, 1 list, Home, list, 1 item". Left: "Lists, 6 lists, tasks in alpha, project, 1 list". Left:
    the edge sound.
 6a. Ctrl+1 to Smart lists, Down: "All tasks, 5 not done", your own three tasks and the projects' two together (TK-5.6). Right:
-   each row ends with where it lives; "Fix the leak, in tasks in alpha / Home". Space on it: "Done: Fix the leak",
+   each row ends with where it lives; "Fix the leak, in tasks in alpha / Home". Ctrl+Enter on it: "Done: Fix the leak",
    and it leaves All tasks at once; the file in `projects\alpha\tasks\Home` holds the change. Ctrl+Z: back. Left,
    Ctrl+1 to Date lists: No due date counts the project's tasks too.
 7. Ctrl+Shift+F: the notice "Find in every list", the field "Type the words to find in every list". Type `zebra`,
@@ -220,11 +220,11 @@ The runner's scripts are `tests/scripts/axTask/16-convert-earlier-format.txt` an
    format" again.
 5. Right on No configuration: "No configuration, 1 item, Idea". Tab: "Title, text, Idea", "Done, text, false", "Notes,
    text, One line", then "Its configuration, list.json, is not there: every value is shown as text, and nothing of
-   the item is changed here". Space in the navigator: "Not a task". F2, type a name, Enter: "Its configuration,
+   the item is changed here". Ctrl+Enter in the navigator: "Not a task". F2, type a name, Enter: "Its configuration,
    list.json, is not there: nothing of the item is changed until it is there and reads. Ctrl+J on the list opens it".
 6. Left, Ctrl+J on No configuration: "Written the configuration of No configuration", and axJSON opens the new
    `list.json` with "item fields" Done and Notes and an empty list of actions. Back in axTask, Idea's fields read
-   "Done, check, not done" and "Notes, text, One line", and Space marks it done.
+   "Done, check, not done" and "Notes, text, One line", and Ctrl+Enter marks it done.
 
 ## 10. The item's form (TK-4.0a, forms-framework.md AF-14.1, AF-14.2)
 
@@ -248,3 +248,26 @@ The runner's script is `tests/scripts/axTask/18-item-form.txt`.
    Due in the fields, with its new value.
 10. On Water plants, Enter: the explanation ends with "1 more field kept: Sprint: they are in the item's file and no
     field of its list".
+
+## 11. Selecting several items (TK-4.7, bundle AX-8.16)
+
+The runner's script is `tests/scripts/axTask/20-selection.txt`.
+
+1. On the heading Your lists, Space: the edge sound, "A heading: nothing to select". On the list Home, Space: "Items
+   are selected, not lists: Right goes into this one".
+2. In Home, Space on Buy paint: "Selected"; Up and Down again onto it: NVDA reads "Buy paint, selected". Down twice,
+   Space: "Selected, 2 selected". Space again: "Deselected, 1 selected". Listen that NVDA does not read the line a
+   second time after the word.
+3. Shift+Down: NVDA reads the next line with ", selected" and nothing else is said. Shift+Up: the line before,
+   still selected, and the one left is not selected any more. Shift+Down on the last item: the edge sound.
+4. End, Shift+Space: "Selected, n selected". Escape: "None selected", and the line reads without ", selected".
+   Ctrl+A: "5 selected". Ctrl+Shift+A: "None selected". Say the status while two are selected: "Home, 5 items, 2
+   selected".
+5. Select two tasks not done and one done; Ctrl+Enter: "Done: 2 tasks. 1 was done already." Ctrl+Enter again: "Not
+   done: 3 tasks". Ctrl+Z twice: each "Undone: …", and the three are still selected.
+6. With the three selected, the list's set action (Ctrl+1): "Priority high: 3 items". Its move action (Ctrl+2),
+   twice the first time: "Later: 3 items moved to Later"; the list shows the two left and nothing is selected.
+   Ctrl+Z: all three back.
+7. Select two, Delete: "Archived 2 items", the focus on the next item. Ctrl+Z: "Undone: Archived 2 items".
+8. Select one, Left, Right: nothing is selected; Ctrl+Enter: "Done: <the item>".
+9. With two selected, Enter: the form of the item you are on, not of the selected ones.

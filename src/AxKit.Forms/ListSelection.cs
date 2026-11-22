@@ -1,4 +1,5 @@
 using AxKit.Core;
+using AxKit.Core.Events;
 
 namespace AxKit.Forms;
 
@@ -95,7 +96,8 @@ public sealed class ListSelection
     /// Shift with Up, Down, Home or End: the current row moves to <paramref name="target"/> (the first or the last
     /// row past either end) and every row from where the range began to there is selected. The items first, the
     /// move after, so that the row reached is read once, with its mark; the move is the user's own
-    /// (<see cref="AxKitList.SelectForCommand"/>). False, and nothing done, when the list has no row.
+    /// (<see cref="AxKitList.SelectForCommand"/>). At an end, where the key cannot move, the edge sound. False,
+    /// and nothing done, when the list has no row.
     /// </summary>
     public bool Extend(int target)
     {
@@ -111,6 +113,11 @@ public sealed class ListSelection
         if (target != current)
         {
             _list.SelectForCommand(target);
+        }
+        else
+        {
+            // At an end of the list the key cannot move: the edge sound, as for the arrow alone (AX-8.6).
+            EventDoor.Raise(EventKind.Edge);
         }
 
         return true;

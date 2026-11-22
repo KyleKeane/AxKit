@@ -54,6 +54,8 @@ public static class AxTaskKeys
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
     [
         .. ItemKeys.All,
+        // The bundle's selection keys (AX-8.16, TK-4.7), in the navigator; Space and Escape are in ItemKeys.All, each with its second meaning in the detail pane.
+        .. SelectionKeys.WithoutSpaceAndEscape,
         ("Open in axJSON", OpenInAxJson),
         ("Show in axFile", ShowInAxFile),
         ("Hide or show done tasks", HideDone),

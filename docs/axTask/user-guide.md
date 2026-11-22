@@ -52,13 +52,41 @@ Two panes side by side, and a status bar.
 
 ## Tasks and plain lists
 
-- A task is an item of a list whose fields have a **Done** check. Space marks it done or not done, in the navigator or
-  on the Done field. An item that was never marked is not done.
+- A task is an item of a list whose fields have a **Done** check. **Ctrl+Enter** marks it done or not done, from the
+  navigator or the detail pane; on the Done field itself, Space checks and unchecks it. An item that was never marked
+  is not done. (Until 5.10.0 Space marked a task done in the navigator; Space selects now, as below.)
 - A list without Done is a plain list, for things that are not tasks. Actions, Add Done to every item makes a plain list
   a checklist; Actions, Remove Done from every item makes it plain again. Neither touches an item's file: a task marked
   done stays marked while the list is plain, and shows so again when the list is a checklist again.
 - A row reads its title and, for a task, "done", "due 30 October" or "overdue since 22 October".
 - Ctrl+Shift+D hides the done tasks of a list, and shows them again.
+
+## Selecting several items
+
+The arrow keys choose the item you are on, as always. To act on several items at once, select them first. The keys
+are the same in every axKit window that has a selection, axFile among them.
+
+- **Space** selects the item you are on, or deselects it again: "Selected", "Deselected", with the count when more
+  than one is selected, "Selected, 3 selected". A selected item's line ends in ", selected", so you hear it as you
+  arrow over it.
+- **Shift+Down** and **Shift+Up** select as you move; **Shift+Home** and **Shift+End** select to the first and the
+  last item. Moving back with Shift takes items out of the range again.
+- **Shift+Space** selects every item from the nearest selected one to the item you are on.
+- **Ctrl+A** selects every item shown. **Ctrl+Shift+A** deselects all, and so does **Escape**: "None selected".
+- The status bar says how many are selected, "Home, 5 items, 2 selected"; Say the status reads it.
+- Items are selected, not lists or headings: Space on one of those says so. Going into another list, or back out,
+  starts with nothing selected.
+
+With items selected, these act on all of them, each as one step that Ctrl+Z takes back:
+
+- **Ctrl+Enter**: done or not done. All the selected tasks are marked done while any of them is not; when every one
+  is done, all are marked not done. "Done: 2 tasks. 1 was done already."
+- **Delete**: all of them to the Archive, "Archived 3 items".
+- **An action of the list that sets fields or moves the item** (Ctrl+1 to Ctrl+9, see Actions): "Priority high: 3
+  items", "Later: 3 items moved to Later".
+
+Everything else stays on the one item you are on, whatever is selected: Enter and its form, F2, Ctrl+Q, Ctrl+J,
+Ctrl+E, the detail pane, and an action that opens something or runs a program.
 
 ## Changing things
 
@@ -322,7 +350,7 @@ moving them.
   then what it found; if you open another notice before the search ends, its result is dropped and the focus stays
   where you are: press Ctrl+Shift+F again, your words are kept. Each line says where the item lives:
   "Fix the tap, in tasks in alpha / Home". Right or Enter opens the item in its own list; Left or Escape goes back to
-  where you searched from. Tab shows the found item's fields, and Space marks a task done, there and then; to rename,
+  where you searched from. Tab shows the found item's fields, and Ctrl+Enter marks a task done, there and then; to rename,
   archive or link it, open it where it lives first.
 
 ## AI tools and your lists

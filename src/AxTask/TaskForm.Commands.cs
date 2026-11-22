@@ -20,17 +20,62 @@ public sealed partial class TaskForm
 
     // ---- the navigator's commands ----
 
-    /// <summary>Space in the navigator (TK-4.4): a task done or not done; the edge sound on a list or a plain item.</summary>
-    protected override void CheckInNavigator(ItemRow? row)
+    // ---- the selection (bundle AX-8.16; SPEC.md TK-4.7, 2026-11-22) ----
+
+    /// <summary>The navigator has a selection: Space selects, and the commands below that can act on several items act on the selected ones.</summary>
+    protected override bool HasSelection => true;
+
+    /// <summary>Items are selected, in a list, a smart list and the search alike; a list, a project and a file that does not read as an item are not.</summary>
+    protected override bool CanSelectRow(ItemRow row) => ItemOf(row) is not null;
+
+    /// <summary>Space on what cannot be selected: why, in a few words.</summary>
+    protected override void NothingToSelect(ItemRow? row)
     {
-        // A task the search found is marked where it lives, its file written (TK-7b.4).
-        var item = row switch
+        EventDoor.Raise(EventKind.NoCommand, EventSound.Edge);
+        Announce(row switch
         {
-            { Tag: ItemFile file } => file,
-            { Tag: FoundItem found } => found.Item,
-            _ => null,
-        };
-        if (item is null)
+            null => Rows.Count == 0 ? "Nothing here to select" : "No items here to select: go into a list, Right",
+            { IsSection: true } => "A heading: nothing to select",
+            { Tag: UnreadableTag } => NotAnItem,
+            _ => "Items are selected, not lists: Right goes into this one",
+        }, true);
+    }
+
+    /// <summary>The item of a row: a list's, or the one the search found, which is changed where it lives (TK-7b.4); null on anything else.</summary>
+    private static ItemFile? ItemOf(ItemRow? row) => row switch
+    {
+        { Tag: ItemFile file } => file,
+        { Tag: FoundItem found } => found.Item,
+        _ => null,
+    };
+
+    /// <summary>
+    /// What a command that can act on several items acts on (AX-8.16, TK-4.7): the selected items, in the list's
+    /// order, or the current item alone when none is selected; empty when there is neither.
+    /// </summary>
+    private List<ItemFile> Targets()
+    {
+        var selected = SelectedRows().Select(ItemOf).OfType<ItemFile>().ToList();
+        return selected.Count > 0 ? selected : ItemOf(SelectedRow()) is { } item ? [item] : [];
+    }
+
+    // ---- the navigator's commands ----
+
+    /// <summary>
+    /// Ctrl+Enter (TK-4.4; Space until 2026-11-22, which selects now): a task done or not done; the edge sound on a
+    /// list or a plain item. With items selected (TK-4.7): all of their tasks done while any is not, not done when
+    /// every one is, one step for Ctrl+Z, and what was passed over counted in the words.
+    /// </summary>
+    private void ToggleDone()
+    {
+        if (Selection.Count > 0)
+        {
+            DoneForSelected();
+            return;
+        }
+
+        // A task the search found is marked where it lives, its file written (TK-7b.4).
+        if (ItemOf(SelectedRow()) is not { } item)
         {
             EventDoor.Raise(EventKind.NoCommand, EventSound.Edge);
             return;
@@ -45,12 +90,36 @@ public sealed partial class TaskForm
         }
 
         var now = !TaskRules.IsDone(item.Document);
-        var leaves = now && (_smart is not null || (_settings.HideDone && _search is null));
-        var select = leaves ? NeighbourKey() : item.Path;
+        var select = LeavesWhenDone(now) ? NeighbourKey() : item.Path;
         if (Changeable(item) && CheckFresh(item.Path, item.Text))
         {
             Commit(new Step([FileChange.Write(item.Path, item.Text, item.TextWith(item.Document.WithValue(done, JsonValue.Create(now))))], (now ? "Done: " : "Not done: ") + ItemFolder.NameOf(item)), select);
         }
+    }
+
+    /// <summary>Whether a task marked done leaves the level shown: a smart list shows the tasks not done, and a list with Hide done tasks on does.</summary>
+    private bool LeavesWhenDone(bool now) => now && (_smart is not null || (_settings.HideDone && _search is null));
+
+    private void DoneForSelected()
+    {
+        var items = Targets();
+        var tasks = items.Where(item => TaskRules.IsTask(item.Document)).ToList();
+        if (tasks.Count == 0)
+        {
+            Refuse(items.Count == 1 ? "The selected item is not a task" : "None of the selected items is a task");
+            return;
+        }
+
+        var now = ManyItems.DoneNow(tasks.Select(task => task.Document));
+        var change = tasks.Where(task => TaskRules.IsDone(task.Document) != now).ToList();
+        if (!change.All(Changeable) || !change.All(task => CheckFresh(task.Path, task.Text)))
+        {
+            return;
+        }
+
+        var parts = change.Select(task => FileChange.Write(task.Path, task.Text, task.TextWith(task.Document.WithValue(TaskRules.DoneIndex(task.Document), JsonValue.Create(now))))).ToList();
+        var select = LeavesWhenDone(now) ? KeyAfter([.. change.Select(task => task.Path)]) : SelectedKey();
+        Commit(new Step(parts, ManyItems.DoneSaid(now, change.Count, tasks.Count - change.Count, items.Count - tasks.Count)), select);
     }
 
     /// <summary>
@@ -335,6 +404,13 @@ public sealed partial class TaskForm
     /// <summary>Delete in the navigator (IA-D4): the item or list into the Archive list, the links to it kept; Ctrl+Z brings it back.</summary>
     protected override void DeleteRow(ItemRow row)
     {
+        if (Selection.Count > 0)
+        {
+            // TK-4.7: with items selected, Delete archives them, whatever row is current.
+            ArchiveSelected();
+            return;
+        }
+
         if (row.Tag is UnreadableTag)
         {
             Announce(NotAnItem, true);
@@ -383,6 +459,42 @@ public sealed partial class TaskForm
         {
             Commit(new Step(parts, $"Archived {row.Name}"), NeighbourKey());
         }
+    }
+
+    /// <summary>
+    /// Delete with items selected (TK-4.7): every one of them into its own folder of lists' Archive, the links to
+    /// them kept, one step for Ctrl+Z, "Archived 3 items". Not from the search, where an item is opened where it
+    /// lives first, and not for items that are in the Archive already.
+    /// </summary>
+    private void ArchiveSelected()
+    {
+        var items = Targets();
+        if (SelectedRows().Any(row => row.Tag is FoundItem))
+        {
+            Announce("Open an item where it lives first: Enter. The search archives nothing", true);
+            return;
+        }
+
+        if (items.Any(item => ItemFolder.IsArchive(TopOf(item.Path), Path.GetDirectoryName(item.Path)!)))
+        {
+            Announce("Already in the Archive: Ctrl+E shows an item in axFile, which deletes it for good", true);
+            return;
+        }
+
+        if (!items.All(item => CheckFresh(item.Path, item.Text)))
+        {
+            return;
+        }
+
+        var select = KeyAfter([.. items.Select(item => item.Path)]);
+        CommitMoves([.. items.Select(item => (Func<List<FileChange>>)(() =>
+        {
+            var top = TopOf(item.Path);
+            var to = ItemFiles.FreePath(ItemFolder.ArchiveFolder(top), Path.GetFileNameWithoutExtension(item.Path), ".json");
+            var parts = new List<FileChange> { FileChange.Move(item.Path, to) };
+            parts.AddRange(Links.AfterMove(ItemFolder.AllItems(top), item.Path, to));
+            return parts;
+        }))], $"Archived {ManyItems.Items(items.Count)}", select);
     }
 
     /// <summary>
@@ -789,6 +901,12 @@ public sealed partial class TaskForm
             return false;
         }
 
+        return Committed(step, select);
+    }
+
+    /// <summary>A step that is on disk: kept for Ctrl+Z, the panes filled on <paramref name="select"/>, its words said.</summary>
+    private bool Committed(Step step, string? select)
+    {
         Log.Info("A change written");
         PatchProjectItems(step.Parts);
         _undo.Add(step);
@@ -800,6 +918,46 @@ public sealed partial class TaskForm
         Fill(select);
         Announce(step.Said, true);
         return true;
+    }
+
+    /// <summary>
+    /// Several moves as one step (TK-4.7): each move's parts are made from the disk as the moves before it left it
+    /// and applied at once, so that an item that links to two of the moved items is written right; all the parts
+    /// are one step for Ctrl+Z. A failure takes back what was applied, then says so. False after the error notice.
+    /// </summary>
+    private bool CommitMoves(IReadOnlyList<Func<List<FileChange>>> moves, string said, string? select)
+    {
+        var applied = new List<FileChange>();
+        try
+        {
+            foreach (var move in moves)
+            {
+                foreach (var part in move())
+                {
+                    Changes.Apply([part]);
+                    applied.Add(part);
+                }
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            var back = string.Empty;
+            try
+            {
+                Changes.Undo(new Step(applied, said));
+            }
+            catch (Exception undo) when (undo is IOException or UnauthorizedAccessException or InvalidOperationException)
+            {
+                back = $" What was done before it could not all be taken back: {undo.Message}";
+            }
+
+            PatchProjectItems(applied);
+            Fail($"{said} could not be done: {ex.Message}{back}");
+            Refresh(announce: false);
+            return false;
+        }
+
+        return Committed(new Step(applied, said), select);
     }
 
     private bool IsArchiveFolder(string path) => path.Equals(ItemFolder.ArchiveFolder(TopFolder), StringComparison.OrdinalIgnoreCase);

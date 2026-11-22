@@ -215,8 +215,126 @@ public abstract partial class ItemForm : AxKitForm
     /// <summary>The types New field offers.</summary>
     private static IReadOnlyList<string> NewFieldTypes => FieldTypes.All;
 
-    /// <summary>Space in the navigator (axTask: a task done); the edge sound otherwise.</summary>
-    protected virtual void CheckInNavigator(ItemRow? row) => EventDoor.Raise(EventKind.NoCommand, EventSound.Edge);
+    // ---- the selection (docs/axKit/SPEC.md AX-8.16; 2026-11-22) ----
+
+    /// <summary>
+    /// Whether the app's navigator has a selection of several rows (AX-8.16): the keys of
+    /// <see cref="SelectionKeys"/> are the window's commands then, and the app's commands that can act on several
+    /// things ask <see cref="Selection"/> for what is selected. No by default: an app says yes once its commands
+    /// act on a selection, so that nothing is ever selected that a command then passes by. axTask does.
+    /// </summary>
+    protected virtual bool HasSelection => false;
+
+    /// <summary>Whether a row can be selected, in an app that <see cref="HasSelection"/>: a heading never can; the app says which of the others (axTask: an item, not a list).</summary>
+    protected virtual bool CanSelectRow(ItemRow row) => true;
+
+    /// <summary>Space on a row that cannot be selected, and the keys that select all in a level with nothing to select: the app's words for why; the edge sound alone by default.</summary>
+    protected virtual void NothingToSelect(ItemRow? row) => EventDoor.Raise(EventKind.NoCommand, EventSound.Edge);
+
+    /// <summary>The navigator's rows as the marks see them, made with <see cref="_rows"/>.</summary>
+    private IReadOnlyList<MarkRow> _markRows = [];
+
+    /// <summary>The level the marks were made in (<see cref="LevelIdentity"/>): another level starts with none.</summary>
+    private string? _selectionLevel;
+
+    private ListSelection? _selectionMade;
+
+    /// <summary>
+    /// The navigator's selection (AX-8.16), the bundle's <see cref="ListSelection"/>: the marks on the rows of the
+    /// level shown, kept while the same level shows. Empty for ever in an app without a selection.
+    /// </summary>
+    protected ListSelection Selection => _selectionMade ??= new ListSelection(Navigator, () => _markRows, row => DisplayText.Visible(RowText(_rows[row])), said => Announce(said, true)) { Recorded = _ => ShowName() };
+
+    /// <summary>A row's words as its item shows them: with ", selected" while it is.</summary>
+    private string RowText(ItemRow row) => Selection.Label(row.Key, row.Label);
+
+    /// <summary>The rows for the marks, and the marks kept for the same level or dropped for another; called as the navigator is filled, before its items are made.</summary>
+    private void KeepSelection()
+    {
+        _markRows = [.. _rows.Select(row => new MarkRow(row.Key, row.Name, HasSelection && !row.IsSection && CanSelectRow(row)))];
+        var level = LevelIdentity();
+        if (level == _selectionLevel)
+        {
+            Selection.Keep();
+        }
+        else
+        {
+            Selection.Clear();
+            _selectionLevel = level;
+        }
+    }
+
+    /// <summary>The status bar's first part: the level's name with its count, and ", 3 selected" while rows are.</summary>
+    private void ShowName()
+    {
+        var name = Navigator.AccessibleName ?? string.Empty;
+        _nameLabel.Text = Selection.Count > 0 ? $"{name}, {Selection.Count} selected" : name;
+        StatusLayout.Fit(_status, _nameLabel, _placeLabel);
+    }
+
+    /// <summary>Space in the navigator (AX-8.16): the row selected, or deselected again; on a row that cannot be selected, and in an app without a selection, the app's words or the edge sound.</summary>
+    protected void SelectRow()
+    {
+        if (!Selection.Toggle())
+        {
+            NothingToSelect(SelectedRow());
+        }
+    }
+
+    /// <summary>Shift+Space: every row from the nearest selected one to this one.</summary>
+    protected void SelectToHere()
+    {
+        if (!Selection.ToHere())
+        {
+            NothingToSelect(SelectedRow());
+        }
+    }
+
+    /// <summary>Ctrl+A: every row of the level that can be selected, "n selected".</summary>
+    protected void SelectAllRows()
+    {
+        if (_markRows.Any(row => row.CanMark))
+        {
+            Selection.All();
+        }
+        else
+        {
+            NothingToSelect(null);
+        }
+    }
+
+    /// <summary>Ctrl+Shift+A, and Escape while rows are selected: "None selected".</summary>
+    protected void SelectNoRows() => Selection.None();
+
+    /// <summary>The rows selected, in the navigator's order; none when nothing is selected.</summary>
+    protected IReadOnlyList<ItemRow> SelectedRows() => Selection.Count == 0 ? [] : [.. _rows.Where(row => Selection.Contains(row.Key))];
+
+    /// <summary>
+    /// The row to select when rows leave the level (the selected ones archived, moved or hidden as done): the
+    /// current row when it stays, otherwise the first after it that stays, otherwise the nearest before it.
+    /// </summary>
+    protected string? KeyAfter(IReadOnlyCollection<string> leaving)
+    {
+        bool Stays(ItemRow row) => !leaving.Contains(row.Key, StringComparer.OrdinalIgnoreCase);
+        var at = Math.Max(Navigator.SelectedIndex, 0);
+        for (var i = at; i < _rows.Count; i++)
+        {
+            if (Stays(_rows[i]))
+            {
+                return _rows[i].Key;
+            }
+        }
+
+        for (var i = Math.Min(at, _rows.Count) - 1; i >= 0; i--)
+        {
+            if (Stays(_rows[i]))
+            {
+                return _rows[i].Key;
+            }
+        }
+
+        return null;
+    }
 
     /// <summary>F5, before the level is read again.</summary>
     protected virtual void BeforeRefresh()
@@ -234,10 +352,21 @@ public abstract partial class ItemForm : AxKitForm
     /// <summary>
     /// What an AI tool's act command would act on (docs/axKit/mcp.md MC-7.3): the navigator's selected row by its name,
     /// told apart by the level it is in (<see cref="LevelIdentity"/>) and its key (an item's file), so that two items of
-    /// one title in two lists are never one target.
+    /// one title in two lists are never one target. While rows are selected (AX-8.16) a command may act on them
+    /// instead, so the target names both, "Fix the tap, and 3 selected", and changes when the selection does.
     /// </summary>
-    protected override AxKit.Core.Mcp.RunTarget McpTarget() =>
-        SelectedRow() is { } row ? new AxKit.Core.Mcp.RunTarget(row.Name, $"{LevelIdentity()}\n{row.Key}") : AxKit.Core.Mcp.RunTarget.None;
+    protected override AxKit.Core.Mcp.RunTarget McpTarget()
+    {
+        if (SelectedRow() is not { } row)
+        {
+            return AxKit.Core.Mcp.RunTarget.None;
+        }
+
+        var identity = $"{LevelIdentity()}\n{row.Key}";
+        return Selection.Count == 0
+            ? new AxKit.Core.Mcp.RunTarget(row.Name, identity)
+            : new AxKit.Core.Mcp.RunTarget($"{row.Name}, and {Selection.Count} selected", identity + "\n" + string.Join("\n", Selection.Keys.Order(StringComparer.OrdinalIgnoreCase)));
+    }
 
     /// <summary>
     /// The level shown, for <see cref="McpTarget"/>: the status bar's place by default; an app whose place can change
@@ -324,7 +453,22 @@ public abstract partial class ItemForm : AxKitForm
         AddKey(new Command("Open", ItemKeys.Open, OpenSelected) { When = InNavigator, Mark = CommandMark.Open });
         AddKey(new Command("To the detail pane", ItemKeys.OtherPane, () => DetailPane.Select()) { When = InNavigator, Mark = CommandMark.Open });
         AddKey(new Command("To the detail pane", ItemKeys.OtherPaneBack, () => DetailPane.Select()) { When = InNavigator, Mark = CommandMark.Open });
-        AddKey(new Command("Check", ItemKeys.Check, () => CheckInNavigator(SelectedRow())) { When = InNavigator, Mark = CommandMark.Change });
+        // AX-8.16: Space selects, in an app whose navigator has a selection; the edge sound in one that has none.
+        AddKey(new Command("Select or deselect", SelectionKeys.Select, SelectRow) { When = InNavigator, Mark = CommandMark.Change });
+        if (HasSelection)
+        {
+            AddKey(new Command("Select to here", SelectionKeys.SelectTo, SelectToHere) { When = InNavigator, Mark = CommandMark.Change });
+            foreach (var move in Selection.MoveCommands("item", InNavigator))
+            {
+                AddKey(move);
+            }
+
+            AddKey(new Command("Select all", SelectionKeys.SelectAll, SelectAllRows) { When = InNavigator, Mark = CommandMark.Change });
+            AddKey(new Command("Deselect all", SelectionKeys.SelectNone, SelectNoRows) { When = InNavigator, Mark = CommandMark.Change });
+            // Escape gives up a selection before anything else in the navigator; with none, the key is left alone.
+            AddKey(new Command("Deselect all", SelectionKeys.Clear, SelectNoRows) { When = () => InNavigator() && Selection.Count > 0, Mark = CommandMark.Change });
+        }
+
         AddKey(new Command("New item", ItemKeys.New, NewItem) { When = InNavigator, Mark = CommandMark.Change });
         AddKey(new Command("Rename", ItemKeys.Rename, RenameSelected) { When = InNavigator, Mark = CommandMark.Change });
         AddKey(new Command("Delete", ItemKeys.Delete, () => WithRow(DeleteRow)) { When = InNavigator, Mark = CommandMark.Act });
@@ -527,12 +671,13 @@ public abstract partial class ItemForm : AxKitForm
     {
         var (rows, name, title, place) = ReadLevel();
         _rows = [.. rows];
-        // S-42: titles from a shared folder or database with their hidden characters made visible, by Fill.
-        Navigator.Fill(_rows.Select(row => row.Label), name, select is null ? 0 : _rows.FindIndex(row => string.Equals(row.Key, select, StringComparison.OrdinalIgnoreCase)));
-        SetTitle(title);
-        _nameLabel.Text = name;
+        // The place first: it names the level for the marks where the app has no name of its own for it.
         _placeLabel.Text = place;
-        StatusLayout.Fit(_status, _nameLabel, _placeLabel);
+        KeepSelection();
+        // S-42: titles from a shared folder or database with their hidden characters made visible, by Fill.
+        Navigator.Fill(_rows.Select(RowText), name, select is null ? 0 : _rows.FindIndex(row => string.Equals(row.Key, select, StringComparison.OrdinalIgnoreCase)));
+        SetTitle(title);
+        ShowName();
         FillDetail();
     }
 
@@ -567,16 +712,17 @@ public abstract partial class ItemForm : AxKitForm
 
         var selectedBefore = SelectedRow();
         _rows = [.. rows];
-        Navigator.SetLines(_rows.Select(row => DisplayText.Visible(row.Label)).ToList());
+        _placeLabel.Text = place;
+        // The same rows by key, so the same marks; a row that can no longer be selected loses its.
+        KeepSelection();
+        Navigator.SetLines(_rows.Select(row => DisplayText.Visible(RowText(row))).ToList());
         if (Navigator.AccessibleName != name)
         {
             Navigator.AccessibleName = name;
         }
 
         SetTitle(title);
-        _nameLabel.Text = name;
-        _placeLabel.Text = place;
-        StatusLayout.Fit(_status, _nameLabel, _placeLabel);
+        ShowName();
         // The detail pane is made again only for a selected row whose words changed, and never under the user's focus
         // in it: a refill of other rows leaves the field the user is on alone.
         if (SelectedRow() != selectedBefore)
