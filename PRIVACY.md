@@ -70,7 +70,8 @@ the list's configuration file (`list.json`) may name a program on your computer,
 the action, with what the selected item holds as its arguments. axTask asks you before such an action's first run and
 after every change to it, shows the program and every argument, and does not know what the program does or reaches:
 a program that contacts a server does so by itself, as it would from a terminal (`docs/axTask/forms-framework.md`
-section 7). Versions 5.1.0 to 5.8.0 had GitHub lists in axTask, which read a
+section 7). An action can also put a command into axTerminal's command field: axTerminal opens with it there and
+never sends it; you read it and press Enter yourself, and what the command then reaches is its own doing. Versions 5.1.0 to 5.8.0 had GitHub lists in axTask, which read a
 repository's issues and could change one with a token of your own GitHub account; they were removed
 (`docs/axKit/reports.md` RP-7). A token such a version kept is no longer read or sent; its file,
 `%LOCALAPPDATA%\AxKit\github.token`, protected for your Windows account, is yours to delete, and so is the token

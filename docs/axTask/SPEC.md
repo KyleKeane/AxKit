@@ -254,7 +254,7 @@ The design is `docs/axKit/reports.md` section 8 (RP-8); the rules axTask keeps:
   AF-n.m, and this is what is built of it). A list's actions are the entries of its configuration's `"actions"`, and
   nothing else: the form Actions, Action keys went, and an action is written in the file, in axJSON (Ctrl+J on the
   list). Five kinds (`does`): `set`, `move`, `open` as above; `run`, a program with its arguments as a list; and
-  `terminal`, a command line handed to axTerminal, which is not built yet and says so. Eighteen keys and no other:
+  `terminal`, a command handed to axTerminal's command field, never sent (below). Eighteen keys and no other:
   Ctrl+1 to Ctrl+9 and Ctrl+Shift+1 to Ctrl+Shift+9 (at a top level the first three of each are the heading keys);
   the first action of a key in the file has it. Context, Actions of this list, lists every action by its name with
   its key, made as the menu opens, then Read the last output; Actions has Stop the running action. An action that
@@ -279,8 +279,17 @@ The design is `docs/axKit/reports.md` section 8 (RP-8); the rules axTask keeps:
   <name>", then "<name>: done" with what its `then` set, written as one undo step, or "<name> failed, exit code 1"
   with the failure sound and its output opened; "<name> was stopped after 60 seconds, its time limit"; Stop the
   running action: "<name> stopped". The output, both streams, its last 64 KB, is kept in memory for Read the last
-  output and never logged. Not built yet of the specification: the `terminal` kind's hand-over (AF-7.4) and the
-  status bar's "Running <name>" (AF-7.6). The rules are `AxTask.Core` (`ListActions`, `ActionValues`,
+  output and never logged; while a program runs the status bar's second part starts with "Running <name>."
+  (AF-7.6). A `terminal` action (AF-4.5, AF-7.4): its `command`, a list of texts with the program first, is filled
+  for the item and handed to a new axTerminal window in the action's folder, each part as an argument of that
+  process; axTerminal makes the one line for its shell, each part quoted by the shell's rule, puts it into its
+  command field and sends nothing (axTerminal's SPEC AT-1.5a). Asked about as a program is, before the first time
+  and after any change of the action, and every time for an AI tool: "Put <name> into axTerminal?", with the folder
+  and each part as it is for the item on a line of its own, "axTerminal puts the command into its command field and
+  does not send it: you read it there and press Enter yourself. axKit does not know what the command does or
+  reaches. Sending it is your own choice."; the answers Cancel, where Enter is, Put it there once, and Put it there,
+  and do not ask again for this action. Then "<name> is in axTerminal's command field". Only in a folder on a drive
+  of this computer. The rules are `AxTask.Core` (`ListActions`, `ActionValues`,
   `ActionProgram`), the window `TaskForm.Actions.cs`; tested in `ListActionsTests`, `ActionKeysTests` and
   `tests/scripts/axTask/19-list-actions.txt`.
 - **TK-7a.3 A key that moves or opens is said first when the list's file was not this install's** (2026-11-16,

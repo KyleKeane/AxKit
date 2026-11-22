@@ -5,6 +5,8 @@
 # written out, then heard as it starts and as it ends; its output is read on demand, and a failure opens it. The
 # programs here are Windows' own findstr and ping, which reach nothing.
 file home\AxKit\axTask.json {"checkForUpdates": false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+file home\AxKit\axTerminal.json {"checkForUpdates": false}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Kind","type":"text","value":""},{"title":"Checked","type":"date","value":""}],"actions":[{"name":"Mark it a bug","key":"Ctrl+1","does":"set","set":{"Kind":"Bug"}},{"name":"Find the kind","key":"Ctrl+Shift+4","does":"run","program":"findstr","arguments":["/c:{Kind}"],"input":"{Kind} of {Title}","then":{"set":{"Checked":"{today}"}}},{"name":"Miss","does":"run","program":"findstr","arguments":["/c:no such words"],"input":"{Title}"},{"name":"Find what I type","does":"run","program":"findstr","arguments":["/c:{form:Type the word to look for}"],"input":"{Title}","fields":[{"title":"Type the word to look for","type":"text"}]},{"name":"Wait","does":"run","program":"ping","arguments":["-n","30","127.0.0.1"]},{"name":"Broken","key":"Ctrl+1","does":"fly"},{"name":"No such program","does":"run","program":"no-such-program-of-axkit"},{"name":"Look in the terminal","does":"terminal","command":["findstr","/c:x","{file}"]}]}
 file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false}
 start task {temp}\tasks
@@ -25,8 +27,6 @@ menu Broken, not understood: it does fly, which this version does not know
 expect said ! Broken, not understood: it does fly, which this version does not know
 menu No such program
 expect said ! No such program names the program no-such-program-of-axkit, which is not there
-menu Look in the terminal
-expect said ! Look in the terminal: handing a command line to axTerminal comes with the next step
 
 # Goal: Read what a program would do before its first run, and cancel it
 # The action's other key, Ctrl+Shift+4: before its first run the question, with where the action is written, what it
@@ -109,9 +109,37 @@ expect state "notice":"Run Wait?"
 keys tab tab
 keys enter
 expect said ! Running Wait
+# Check: The status bar says what runs
+expect state "Home, 1 item","Running Wait. 
 menu Miss
 expect said ! Wait is still running
 do Stop the running action
 expect said ! Wait stopped
 do Stop the running action
 expect said ! No action is running
+
+# Goal: Put a command into axTerminal's command field
+# A terminal action never sends (AF-7.4): asked about first, with the command's parts as they are for the item, one
+# on a line; then a new axTerminal window in the list's folder holds the command as one line for its shell in its
+# command field, the item's file, whose name has spaces, in quotes as one part. Nothing ran: the user sends it.
+menu Look in the terminal
+expect state "notice":"Put Look in the terminal into axTerminal?"
+expect state Look in the terminal puts a command of 3 parts into axTerminal's command field, for you to send: findstr, /c:x, {file}
+expect state Fix the tap.json
+expect state axTerminal puts the command into its command field and does not send it
+keys enter
+expect state "notice":null
+menu Look in the terminal
+expect state "notice":"Put Look in the terminal into axTerminal?"
+keys tab tab
+expect focus Put it there &once
+keys enter
+expect said ! Look in the terminal is in axTerminal's command field
+adopt
+expect state - axTerminal, access layer for your shell"
+expect focus "name":"Command","role":"Text","value":"findstr /c:x '
+expect focus Fix the tap.json'"
+expect said A command is in the command field, not sent. Another program put it there, and axKit checked nothing of it: read it, and press Enter only if you want to run it
+close
+use 1
+expect focus Fix the tap

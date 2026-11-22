@@ -535,6 +535,16 @@ public abstract partial class ItemForm : AxKitForm
     }
 
     /// <summary>
+    /// The status bar's second part alone, for a state that changes while the level stays (axTask's "Running" and
+    /// an action's name, forms-framework.md AF-7.6): nothing read again, nothing said.
+    /// </summary>
+    protected void SetPlace(string place)
+    {
+        _placeLabel.Text = place;
+        StatusLayout.Fit(_status, _nameLabel, _placeLabel);
+    }
+
+    /// <summary>
     /// The level read again for something that changed off the user's command (axTask's projects found, TK-7b.2): when
     /// the same rows are there by key, only the words of the rows that changed are rewritten in place and the selection
     /// stays, so that NVDA has nothing to read again; otherwise filled again on the row selected. Nothing said.

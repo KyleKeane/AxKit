@@ -238,7 +238,8 @@ does one thing:
 ```
 
 - `set` writes fields; `move` moves the item to another list; `open` opens a field that holds a web address, or an
-  app such as axJSON on the item's file; `run` starts a program.
+  app such as axJSON on the item's file; `run` starts a program; `terminal` puts a command into axTerminal's command
+  field for you to read and send (`"does": "terminal", "command": ["gh", "issue", "view", "{Number}"]`).
 - A key is one of eighteen: Ctrl+1 to Ctrl+9 and Ctrl+Shift+1 to Ctrl+Shift+9. An action without a key is run from
   the menu. Context, Actions of this list, names every action of the list with its key. All tasks is Ctrl+0.
 - A text of an action may hold names in braces, filled in from the item when the action runs: `{Title}` or any
@@ -259,8 +260,14 @@ A program an action runs:
 - is heard: "Running Answer the report" as it starts; "Answer the report: done" with what it set, or "Answer the
   report failed, exit code 1", and then its output opens to read. Context, Actions of this list, Read the last output
   shows what the last program wrote. Actions, Stop the running action ends it.
+- shows in the status bar while it runs: "Running Answer the report" stands before the folder (NVDA+End).
 - is never taken from the list's own folder, and runs only on this computer. axTask does not know what a program
   does or reaches: that is the program's doing, and your choice to run it.
+
+A command an action puts into axTerminal is never sent for you. You are asked first, "Put Look at the report into
+axTerminal?", with each part of the command as it is for the item; then a new axTerminal window opens in the list's
+folder with the command in its field, and says that it is there and not sent. You read it, change it if you like,
+and press Enter yourself. Each part is quoted for the shell of that window, so a value from the item stays one text.
 
 A key that moves an item or opens something says first what it does, the first time: "Ctrl+2 in this list now moves
 to ../Later. Press it again to do it." Press it again and it does it; from then on it acts at the first press, until

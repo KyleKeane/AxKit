@@ -48,6 +48,10 @@ Type the command in the field and press Enter. You hear "Sent" with a low note. 
 
 A program that asks a question (y/n, a passphrase) prints it as a line; when the output has been quiet for a couple of seconds and the last line ends like a question, you hear "Asks:" and the line, with the question chime. Type the answer in the field and press Enter. Ctrl+Q says what is running, for how long, and the prompt, at any time. "Asks:" is always the program's own line, never axTerminal asking: a program, or a file you print, can word a line to look like any question, a password prompt included, so answer only what you know the program you ran asks.
 
+### A command another window put into the field
+
+An action of an axTask list can hand a command to axTerminal. A new axTerminal window opens in the action's folder with the command in the field, and you hear: "A command is in the command field, not sent. Another program put it there, and axKit checked nothing of it: read it, and press Enter only if you want to run it". Read the field (it has the focus), change the line if you like, and press Enter to run it, or close the window and nothing has happened. axTerminal never sends such a line by itself. Each part of the command is quoted for your shell, so a title with a quote or a semicolon in it stays one text. Where your shell is Git Bash or a shell of your own, for which axKit has no quoting rule, the field stays empty and you are told why.
+
 ## Read the terminal
 
 The terminal is an ordinary read-only text: arrows, Home and End, Page Up and Page Down, Shift with them to select, Ctrl+C to copy ("Copied"). Nothing moves your caret while you read, and nothing is spoken on an arrow key. Single letters jump, Shift with the letter jumps back:

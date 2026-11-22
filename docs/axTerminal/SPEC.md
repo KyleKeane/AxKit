@@ -121,6 +121,20 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   still Ready and not Done.
 - AT-1.5 `AxTerminalApp.Run(args)` is the entry point (AX-1.7), one call into `AppHost.Run` with the log name
   `axTerminal`, the usage text, the settings (`axTerminal.json`) and the window.
+- AT-1.5a **A command handed over** (2026-11-21; docs/axTask/forms-framework.md AF-4.5, AF-7.4).
+  `terminal [<folder>] --command <program> [<argument> ...]`: everything after `--command` is one command, its
+  parts as the process's own arguments, one each, whatever they look like; the one folder stands before the option
+  (`HandedCommand.Parse`). The window makes one line of them for the shell it starts, each part quoted by that
+  shell's rule so that it stays one part (`HandedCommand.Line` over the bundle's `ShellQuote`: PowerShell, single
+  quotes with a single quote doubled; Command Prompt, a part with a character cmd.exe acts on refused; Git Bash, a
+  custom shell and a shell of the user's own have no rule; a line break in a part refused for every shell), puts
+  the line into the command field with the caret after it, and sends nothing: Enter is the user's. Once the window
+  shows it says, and the transcript holds as a system line, "A command is in the command field, not sent. Another
+  program put it there, and axKit checked nothing of it: read it, and press Enter only if you want to run it"; where
+  no line could be made, "A command was handed to this window and is not in the command field:" and why, and the
+  field is empty. The start line of the log holds the number of parts, never the parts (`CommandLineText.ForLog`),
+  since they may hold an item's values. axTask's `terminal` actions are what hands a command over. Tested in
+  `HandedCommandTests`, `CommandLineTextTests` and `tests/scripts/axTerminal/13-handed-command.txt`.
 - AT-1.6 Session → **New session…** (Ctrl+N), the shape and the name of axClaude's New session (axClaude FR-8.6,
   D30): the notice "New session" with `Folder: C:\path` as its first line, "Choose the shell and the folder. Starting
   ends the current shell and starts a new session in the folder." and the key line, preceded by "<the command> is

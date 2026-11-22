@@ -461,3 +461,22 @@ Starts with: Open axTerminal with the folder myproject.
 ## Change a setting of axTerminal when its settings file cannot be written
 
 Starts with: Open axTerminal with the folder myproject.
+
+## Take a command another window hands over
+
+Starts with: Open axTerminal with the folder myproject --command Write-Output "It's two words; Write-Output more".
+
+### Read a handed command in the field before sending it
+
+You hear: A command is in the command field, not sent. Another program put it there, and axKit checked nothing of it: read it, and press Enter only if you want to run it.
+You hear the sound Ready.
+1. Press Alt+2 (Terminal; Navigation menu).
+
+### Send the handed command yourself
+
+1. Press Enter.
+    You hear: Sent.
+    You hear: Done.
+2. Press Alt+3 (Latest output; Navigation menu).
+    You hear: Output 1 heading level 1.
+3. Press Down 2 times.

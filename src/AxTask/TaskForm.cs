@@ -423,7 +423,7 @@ public sealed partial class TaskForm : ItemForm
         }
 
         var title = _search is not null ? "Found" : _smart?.Name ?? (AtTop ? _projectName ?? "Lists" : ListTitle());
-        return (rows, name, title, TopFolder);
+        return (rows, name, title, PlaceText);
     }
 
     /// <summary>"Home"; the Archive's own items are "Archived items".</summary>

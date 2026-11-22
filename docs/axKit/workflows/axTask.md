@@ -797,9 +797,16 @@ Starts with: Open axTask with the folder tasks.
 2. Press Tab 2 times.
 3. Press Enter.
     You hear: Running Wait.
-4. Choose the menu item Miss.
-    You hear: Wait is still running.
-5. Choose Stop the running action in the Actions menu.
-    You hear: Wait stopped.
-6. Choose Stop the running action in the Actions menu.
-    You hear: No action is running.
+
+### Put a command into axTerminal's command field
+
+1. Choose the menu item Look in the terminal.
+2. Press Enter.
+3. Choose the menu item Look in the terminal.
+4. Press Tab 2 times.
+5. Press Enter.
+    You hear: Look in the terminal is in axTerminal's command field.
+6. A new window opens: go to it.
+    You hear: A command is in the command field, not sent. Another program put it there, and axKit checked nothing of it: read it, and press Enter only if you want to run it.
+7. Close the window.
+8. Go to the axTask window.

@@ -268,7 +268,7 @@ usable by itself:
 2. The item's form on Enter (section 14). *Built on 2026-11-21: `AxTask.Core/ItemFormRules`, `TaskForm.ItemForm.cs`, the window script `18-item-form.txt`; axTask's SPEC TK-4.0a says it as built.*
 3. *(Built on 2026-11-21 as pure code with its tests, used by no window yet.)* `AxTask.Core`: `ListActions`, `ActionValues` (the placeholders and their refusals), the acceptance over a whole
    action; `AxKit.Core/ShellQuote`. All pure, each with its tests.
-4. *(Built on 2026-11-21 but for two things, the hand-over to axTerminal and the status bar's line: `TaskForm.Actions.cs`, the window script `19-list-actions.txt`; axTask's SPEC TK-7a.1a says it as built.)* The window: Context, Actions of this list; the eighteen keys; the form of an action's fields; the question of
+4. *(Built on 2026-11-21: `TaskForm.Actions.cs`, the window script `19-list-actions.txt`; axTask's SPEC TK-7a.1a says it as built. The hand-over of a `terminal` action is axTerminal's `--command` option, its SPEC AT-1.5a: axTask passes the command's parts as arguments and axTerminal, which knows its shell, makes and quotes the line, so that axTask never joins one.)* The window: Context, Actions of this list; the eighteen keys; the form of an action's fields; the question of
    AF-7.2; the run off the UI thread with its words, its output and its stop; the hand-over to axTerminal.
 5. `SPEC.md` rewritten for all of it, the user guide, the NVDA plan, the outside-calls page, `PRIVACY.md` and
    `SECURITY.md`; window scripts; an NVDA pass. **From here a list's actions can be configured and worked with.**

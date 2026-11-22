@@ -69,10 +69,41 @@ internal sealed partial class TerminalForm : ConsoleForm
     /// <summary>The cursor row announced as a question, not announced again while it stays.</summary>
     private string? _askedRow;
 
-    public TerminalForm(string? folder, TerminalSettings settings, string? settingsError)
+    /// <summary>
+    /// <paramref name="handed"/> is a command another window handed over (AT-1.5a), its program and arguments one
+    /// each: it is put into the command field as one line for this window's shell, and never sent.
+    /// </summary>
+    public TerminalForm(string? folder, TerminalSettings settings, string? settingsError, IReadOnlyList<string>? handed = null)
         : this(folder, settings, settingsError, new TerminalModel(settings.PtyColumns, settings.PtyRows))
     {
+        if (handed is { Count: > 0 })
+        {
+            TakeHandedCommand(handed);
+        }
     }
+
+    /// <summary>
+    /// AT-1.5a: the handed command as one line in the field, the caret after it, quoted for the shell this window
+    /// starts (a shell of the user's own and a custom shell have no rule, and get nothing); what happened is said
+    /// once the window shows. Nothing here sends: Enter is the user's.
+    /// </summary>
+    private void TakeHandedCommand(IReadOnlyList<string> handed)
+    {
+        var (line, refused) = HandedCommand.Line(_shell, handed);
+        if (line is not null)
+        {
+            Input.Text = line;
+            Input.Select(Input.TextLength, 0);
+        }
+
+        // A system line of the transcript, to read again, and spoken once the window shows (OnShown): a system line alone is not spoken.
+        _handedSaid = HandedCommand.Said(refused);
+        SayAtStart(_handedSaid);
+        Log.Info(line is null ? "A handed command was not put into the field" : "A handed command was put into the field");
+    }
+
+    /// <summary>What to say of a handed command once the window shows (AT-1.5a); null when none was handed, and once said.</summary>
+    private string? _handedSaid;
 
     /// <summary>The model is made first so that the base and this class both hold it: the base as a LineStore, this class as the shell's.</summary>
     private TerminalForm(string? folder, TerminalSettings settings, string? settingsError, TerminalModel model)
@@ -104,6 +135,12 @@ internal sealed partial class TerminalForm : ConsoleForm
     {
         // The base puts the focus in the field first: a notice shown by what follows (the shell not found) takes it from there and gives it back.
         base.OnShown(e);
+        if (_handedSaid is { } said)
+        {
+            _handedSaid = null;
+            Announce(said, false);
+        }
+
         StartShell();
     }
 

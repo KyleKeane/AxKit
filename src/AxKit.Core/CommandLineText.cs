@@ -17,6 +17,12 @@ public static class CommandLineText
             {
                 parts.Add($"<message, {args[++i].Length} characters>");
             }
+            else if (args[i] == "--command")
+            {
+                // A command handed to axTerminal (AT-1.5a) holds an item's values: everything after the option is it.
+                parts.Add($"<command, {args.Count - i - 1} parts>");
+                break;
+            }
         }
 
         return string.Join(" ", parts);

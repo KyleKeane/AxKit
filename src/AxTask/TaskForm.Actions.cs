@@ -43,6 +43,9 @@ public sealed partial class TaskForm
     /// <summary>The action the window last asked about by saying what it does (a move or an open, TK-7a.3), as its mark; null when none waits for its second press.</summary>
     private string? _askedAction;
 
+    /// <summary>The status bar's second part (AF-7.6): the top folder, with "Running" and the action's name before it while a program of an action runs.</summary>
+    private string PlaceText => _running is { } running ? $"Running {running}. {TopFolder}" : TopFolder;
+
     // ---- the list in hand ----
 
     private ListConfig? CurrentListDetails => _smart is null && !AtTop && Directory.Exists(_folder) ? ItemFolder.ReadList(_folder) : null;
@@ -278,7 +281,7 @@ public sealed partial class TaskForm
                 StartRun(action, item, folder, context, forAiTool);
                 return;
             default:
-                Refuse($"{action.Name}: handing a command line to axTerminal comes with the next step of the actions; a run action starts a program now");
+                StartTerminal(action, item, folder, context, forAiTool);
                 return;
         }
     }
@@ -384,6 +387,78 @@ public sealed partial class TaskForm
 
         Announce(!held && item.Document.IndexOf(open) < 0 ? $"No field called {open}, and no app called that" : value.Length == 0 ? $"{open} is empty" : $"{open} holds no web address", true);
     }
+
+    // ---- a command for axTerminal ----
+
+    /// <summary>
+    /// A terminal action (AF-4.5, AF-7.4): its command filled for the item and handed to a new axTerminal window in
+    /// the action's folder, each part as an argument of its own; axTerminal makes the line for its shell and puts it
+    /// into its command field. Nothing is sent: the user reads it there and presses Enter himself. Asked about
+    /// before the first time and after any change of the action, as a program is (AF-7.2), and every time for an AI
+    /// tool; only in a folder on a drive of this computer (S-5).
+    /// </summary>
+    private void StartTerminal(ConfiguredAction action, ItemFile item, string folder, ActionContext context, bool forAiTool)
+    {
+        var (terminal, refused) = ActionValues.Terminal(action, context);
+        if (terminal is null)
+        {
+            Refuse(refused ?? $"{action.Name} cannot be filled for this item");
+            return;
+        }
+
+        if (!Directory.Exists(terminal.Folder) || !LocalPaths.IsLocal(terminal.Folder))
+        {
+            Refuse($"{action.Name} would open axTerminal in {terminal.Folder}, which is not a folder on a drive of this computer");
+            return;
+        }
+
+        void HandOver()
+        {
+            // A new axTerminal window with the command's parts as its arguments, which puts them into its command
+            // field as one line for its shell and sends nothing (axTerminal's SPEC AT-1.5a). The start itself, of
+            // axKit's own program file, is WindowMenu's, where its outside-call comment is (AF-7.7).
+            WindowMenu.StartWith(Dispatch.AxTerminal, [terminal.Folder, TerminalCommandOption, .. terminal.Command]);
+            Announce($"{action.Name} is in axTerminal's command field", true);
+        }
+
+        var mark = ListActions.MarkText(folder, action);
+        if (!forAiTool && _settings.AcceptsAction(SettingsPath, mark))
+        {
+            HandOver();
+            return;
+        }
+
+        var text = new StringBuilder()
+            .AppendLine($"This action is in the list's configuration file, {Path.Combine(folder, ItemDocument.ListFile)}. axKit did not write it and checked nothing of it; you, another program or an AI may have written it.")
+            .AppendLine()
+            .AppendLine($"{action.Name} {action.Described}.")
+            .AppendLine()
+            .AppendLine($"The folder axTerminal opens in: {terminal.Folder}")
+            .AppendLine($"The command as it is for {ItemFolder.NameOf(item)}, one part on a line:");
+        foreach (var part in terminal.Command)
+        {
+            text.AppendLine(DisplayText.Visible(part));
+        }
+
+        text.AppendLine().Append("axTerminal puts the command into its command field and does not send it: you read it there and press Enter yourself. axKit does not know what the command does or reaches. Sending it is your own choice.");
+        ShowNotice(new Notice($"Put {action.Name} into axTerminal?", text.ToString(),
+        [
+            new OverlayChoice("&Cancel", IsDefault: true, IsCancel: true),
+            new OverlayChoice("Put it there &once", HandOver),
+            new OverlayChoice("Put it there, and do not &ask again for this action", () =>
+            {
+                if (_settings.AcceptAction(SettingsPath, mark))
+                {
+                    SaveSettings();
+                }
+
+                HandOver();
+            }),
+        ]));
+    }
+
+    /// <summary>The option of axTerminal's command line after which every argument is a part of the command (axTerminal's SPEC AT-1.5a).</summary>
+    private const string TerminalCommandOption = "--command";
 
     // ---- a program ----
 
@@ -495,6 +570,7 @@ public sealed partial class TaskForm
 
         var name = action.Name;
         _running = name;
+        SetPlace(PlaceText);
         var stop = _runStop = new CancellationTokenSource();
         var job = _actionJob ??= ChildJob.TryCreate();
         Announce($"Running {name}", true);
@@ -535,6 +611,8 @@ public sealed partial class TaskForm
         {
             return;
         }
+
+        SetPlace(PlaceText);
 
         if (stopped)
         {

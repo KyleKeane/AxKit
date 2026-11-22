@@ -132,7 +132,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxTerminal` (the window), `src/AxTerminal.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxTerminal.Tests`.
 - Documents: `docs/axTerminal/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axTerminal/`, 12 scripts (their workflows are in `docs/axKit/workflows/axTerminal.md`).
+- Automated checks: `tests/scripts/axTerminal/`, 13 scripts (their workflows are in `docs/axKit/workflows/axTerminal.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axTerminal.ps1`, or `run.ps1 -App terminal`.
 
 ### axGIT

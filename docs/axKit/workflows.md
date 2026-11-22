@@ -849,6 +849,7 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Run a program on an item, and hear how it ends
     - Fill in an action's form
     - Stop a running action
+    - Put a command into axTerminal's command field
 
 ## axTerminal
 
@@ -899,6 +900,9 @@ Steps and keys: `docs/axKit/workflows/axTerminal.md` (in Claude's working folder
 10. **Start a shell in a recent folder from the command palette**
 11. **Read a file that imitates the shell's marks**
 12. **Change a setting of axTerminal when its settings file cannot be written**
+13. **Take a command another window hands over**
+    - Read a handed command in the field before sending it
+    - Send the handed command yourself
 
 ## AI tools
 
