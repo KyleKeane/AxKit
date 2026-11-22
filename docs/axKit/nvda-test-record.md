@@ -25,6 +25,11 @@ line. Notes cannot be emptied here: …", then "Nothing to undo".
 Owed to his own ear: whether the sentence of the field that cannot be emptied is the right length, and whether it
 should carry the refusal's sound, which it does not, as axPass's other sentences of this kind do not.
 
+The same evening, at 69c52c86: `.\nvda-pass.ps1 axProcess`, 5 scripts, 42 goals and checks, all passed, after
+`01-start.txt` was changed to end only a copy of ping under a name of its own (axkitscript01); no such process was
+left after the run. Before it took the keyboard the pass found key or mouse input of that moment and waited for its
+20 seconds without input, as built; whose input it was is not known, and no further pass was run that sitting.
+
 ## 2026-11-21: axTask's actions, axTerminal's handed command, axJSON's options; by the assistant with NVDA listening (`main` 31fe68c1)
 
 `.\nvda-pass.ps1 axJSON`, then `axTerminal` and `axTask`, the user away at his word of the same day, NVDA 2025.3.3
