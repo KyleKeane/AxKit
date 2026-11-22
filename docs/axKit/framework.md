@@ -154,8 +154,13 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
   `NoRowSaid`), and a shared key the app gave to a command of its own in the very place the shared one acts is
   left to the app (`KeyTakenWhere`), which is what lets a window move onto the type with its own commands first
   and give them up one by one. Point 1 needed nothing in the type for axFile either (`EntryRefused` starts the
-  read; `UpLevel` is the app's where the level above is read too). Still to build: points 3 and 6, which axFile
-  does in its own code.
+  read; `UpLevel` is the app's where the level above is read too). Points 3 and 6 are not lifted, and the
+  reason is the rule that shared code moves on its second use (root `CLAUDE.md`, rule 4), looked at again on
+  2026-11-22 once axFile stood on the type: a filter of the rows exists in axFile alone (axProcess has none); the
+  rows in the command palette are axFile's alone, through a hook the window base already has
+  (`AxKitForm.PaletteEntries`); and the orders of a sort are each app's own (axFile's name, date, size and type,
+  axProcess's memory, processor and name) over a piece that is shared already, the menu of one choice
+  (`ChoiceItems`). They move into the type when a second navigator filters or offers its rows.
 - FW-4.8 After this, axTask and axFile are the same window: one shows folders of items with a pane of fields, the
   other folders of files with a pane of the operations made. Their difference is their data and their commands.
 - FW-4.9 **axMedia is a queue and its controls**, a navigator of one level whose rows are what will play (the
@@ -296,7 +301,11 @@ NVDA pass recorded. A piece that changes what a user does updates the app's spec
 14. Its Actions log as the navigator's second pane of the log kind; its selection no longer written there. Built,
     2026-11-22: the pane with step 13; the selection's lines, their section and their undo are gone from the log.
 15. Its own parts placed on the type: filter and sort from the type; favourites, drives, Go to folder, the
-    clipboard, zip and the shell as its commands. The old window's code goes.
+    clipboard, zip and the shell as its commands. The old window's code goes. Closed, 2026-11-22: the old
+    window's code went with step 13 (the two lists, their layout, the status bar, the Context menu's holder, the
+    pane and selection keys, the selection's record and the rename's steps are the type's), and favourites,
+    drives, Go to folder, the clipboard, zip and the shell are axFile's commands on the type. The filter and
+    the sort stay axFile's own, with the reason in FW-4.7: neither has a second user to share with yet.
 
 **F. What it was for**
 
