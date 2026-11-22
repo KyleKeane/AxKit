@@ -614,7 +614,7 @@ Starts with: Open axFile with the folder act.
 1. Press Ctrl+Z (Undo delete; Actions menu).
     You hear: Undone: 2 items restored.
 
-### See what was selected in the Actions list
+### Select entries without a line in the Actions list
 
 1. Press Ctrl+F (Find).
 2. Type: start-here
@@ -623,9 +623,8 @@ Starts with: Open axFile with the folder act.
     You hear: Selected.
 5. Press Tab.
 6. Press End.
-7. Press Up.
-8. Press Escape.
-9. Press Space.
+7. Press Escape.
+8. Press Space.
     You hear: Deselected.
 
 ### Select every entry from the marked one to here

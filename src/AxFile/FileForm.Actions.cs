@@ -6,8 +6,8 @@ namespace AxFile;
 
 /// <summary>
 /// The Actions list (SPEC.md AF-9): a second list under the folder list, always there, with every file operation of
-/// this window and every change of its marks as one line, in three sections under header lines, the running
-/// operations first, then the operations, then the selection; "No actions yet" until the first. Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6 move
+/// this window as one line, in two sections under header lines, the running operations first, then the
+/// operations; "No actions yet" until the first. Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6 move
 /// between the folder list and it, Escape in it goes back; Enter on a line goes where the action left things, Ctrl+Z
 /// on a line takes that one back, Ctrl+I says its number and time. The lines are <see cref="ActionLog"/>; the
 /// operations themselves (Operations) begin and end them. Also here: the hand-overs to axMedia, Play folder and Add

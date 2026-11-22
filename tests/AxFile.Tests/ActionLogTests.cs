@@ -42,7 +42,6 @@ public sealed class ActionLogTests
         Assert.Equal("Un&do rename", log.MenuText);
         Assert.Equal(2, log.IndexOf(rename));
         Assert.Same(rename, log.Latest);
-        Assert.Same(rename, log.LatestOperation);
     }
 
     [Fact]
@@ -135,52 +134,6 @@ public sealed class ActionLogTests
         Assert.Equal((Folder, "36"), log.Entries[^20].Location);
         Assert.Equal((Folder, "35"), log.Entries[^21].Location);
         Assert.Null(log.Entries[^21].Operation);
-    }
-
-    [Fact]
-    public void Selection_lines_sit_last_are_undone_on_their_line_and_go_with_the_folder()
-    {
-        var log = Log(new DateTime(2026, 10, 22, 21, 4, 0));
-        var rename = log.Add("Renamed notes.md to todo.md", new Operation(OperationKind.Rename, [In("notes.md")], [In("todo.md")]));
-        var mark = log.Mark("Selected a.txt", Folder, "a.txt", []);
-        var range = log.Mark("Selected 2 items", Folder, "c.txt", [In("a.txt")]);
-        Assert.Equal(["Operations", "Renamed notes.md to todo.md", "Selection", "Selected a.txt", "Selected 2 items"], log.Lines());
-        Assert.Equal(ActionSection.Selection, mark.Section);
-        Assert.Equal((Folder, "a.txt"), mark.Location);
-        Assert.Same(range, log.Latest);
-        Assert.Same(rename, log.LatestOperation);
-        // Ctrl+Z in the folder list never takes a selection line.
-        Assert.Same(rename, log.Newest());
-        Assert.Equal("Selection, 2 of 2, 21:04", log.Information(4));
-        Assert.Equal("Selection", log.Information(2));
-        Assert.Null(log.EntryAt(2));
-
-        // The range grows: its line is rewritten in place.
-        log.Rewrite(range, "Selected 3 items");
-        Assert.Equal("Selected 3 items", range.Line);
-        Assert.True(range.CanUndo);
-        Assert.Equal([In("a.txt")], range.Before);
-
-        log.Undone(range);
-        Assert.Equal("Selected 3 items, undone", range.Line);
-        Assert.False(range.CanUndo);
-        log.Rewrite(range, "Selected 4 items");
-        Assert.Equal("Selected 3 items, undone", range.Line);
-
-        // Twenty selection lines stay, the operations untouched.
-        for (var i = 1; i <= 25; i++)
-        {
-            log.Mark($"Selected {i}.txt", Folder, $"{i}.txt", []);
-        }
-
-        Assert.Equal(ActionLog.SelectionLimit, log.Entries.Count(entry => entry.Kind == ActionKind.Selection));
-        Assert.Equal("Selected 6.txt", log.Lines()[3]);
-        Assert.Equal(-1, log.IndexOf(mark));
-        Assert.Equal(1, log.IndexOf(rename));
-
-        log.DropSelection();
-        Assert.Equal(["Operations", "Renamed notes.md to todo.md"], log.Lines());
-        Assert.Same(rename, log.Latest);
     }
 
     [Fact]

@@ -109,7 +109,7 @@ folder of the file or project in hand, and sends back. It works entirely offline
   reason is read (the bundle's rule for empty lists, AX-9.5). Neither that item nor the not-shown line is an entry: a
   command on either says the line itself (AF-7).
 - AF-2.3 The title is `<folder name> - axFile`. The status bar's left label: the newest file operation's line in the Actions list
-  ("Copied 3 items", "Compressing, 40 of 120 files"; never a selection line, AF-9.2), empty before the first operation,
+  ("Copied 3 items", "Compressing, 40 of 120 files"), empty before the first operation,
   and after it, while entries are selected, how many, as in every navigator ("Copied 3 items, 2 selected"; "2 selected"
   alone before the first operation; AX-8.16, since 2026-11-22); the right label: the folder's
   full path. No AccessibleName, no Spring (axClaude §6.2).
@@ -196,16 +196,17 @@ folder of the file or project in hand, and sends back. It works entirely offline
   operations that take the marked entries, Cut, Copy, Delete, Move to folder…, Compress to zip, Add to axMedia's
   queue, Copy path; its operations never fall back to the current entry: "None selected" when nothing is marked (asked
   2026-10-22: one menu for the entry, Item, one for the marks, Selection, one for the folder, Folder, so that the
-  target is the menu's name and no mode is needed). Every change of the marks is a line of the Actions list's
-  Selection section, which Ctrl+Z on the line takes back (AF-9.2, AF-9.3). The marks live in one
+  target is the menu's name and no mode is needed). A change of the marks is no line of the Actions list
+  (it was one, taken back with Ctrl+Z on the line, from 2026-10-22 to 2026-11-22; AF-9.2): Space on an entry and
+  Escape take a selection back, and the status bar says how many are selected (AF-2.3). The marks live in one
   folder: showing another folder drops them, a refresh of the same folder keeps those still there, and a renamed or
   deleted entry loses its mark. The marks are on the entries the list shows: a filter, a new order or a read drops
   the marks on the entries it leaves out, with no line, so that the count said and the entries acted on are one set
   (until 2026-10-23 a mark hidden by the filter was counted and not acted on). The marks, their keys and
   their words are the bundle's since 2026-11-22 (bundle AX-8.16, on their second use, the item windows): `Marks` in
-  AxKit.Core (each key one method over the shown rows, returning the rows whose mark flipped, the line and the
+  AxKit.Core (each key one method over the shown rows, returning the rows whose mark flipped and the
   words; tested), the keys in `AxKit.Forms/SelectionKeys`, and `AxKit.Forms/ListSelection`, which rewrites the
-  items and says the words; what is axFile's own is the line of the Actions list (`FileForm.RecordMarks`). A mouse click chooses the current entry as before and marks nothing. The marks are
+  items and says the words; nothing of them is axFile's own since the window is a navigator (AF-D14). A mouse click chooses the current entry as before and marks nothing. The marks are
   text in the items rather than the list box's own multiple selection (AF-D9).
 - AF-3.8 **Sort and filter** (asked 2026-10-21). **Options → Sort by ▸** Name, Date, Size, one checked: folders first
   in every order, then by name (the natural order), by date newest first, or by size largest first, ties by name
@@ -491,8 +492,8 @@ AF-3.10), "Ejecting <name>" (AF-3.11), "Added <name>", "Removed <name>", "Starte
 <name>", "Extracted to <name>", "Compressing, please wait", "Extracting, please wait" (AF-4.12), "Pasted <name>",
 "Pasted n items", "Pasted n items, m already pasting" (AF-4.5), "Pasting, please wait" (a paste longer than a second), "Deleting, please wait", "Moving, please wait" (the same, AF-4.5), "Added n to axMedia's queue", "No sound or
 video files here", "No sound or video files to add" (AF-5), "Undone: …", "Not undone: …", "Nothing to undo", "Undo is
-still running" (AF-4.14), "Undone: n selected", "Undone: none selected" (a selection line, AF-9.3), "No actions yet",
-"Still running", "Already undone", "Nothing to undo here", "<section>, n of m, hh:mm", "Running", "Operations", "Selection" (a header line),
+still running" (AF-4.14), "No actions yet",
+"Still running", "Already undone", "Nothing to undo here", "<section>, n of m, hh:mm", "Running", "Operations" (a header line),
 "Folder not found" (the Actions list, AF-9.3), "Refreshed", "Not found: <path>", "Failed: <message>", "<name>, <size>,
 modified <date>" (Ctrl+I), "Not found" (find), "Nothing to save here", "Text size n", "Windows text size", "Copied
 diagnostics", "<name>, <size>, modified <date>, n selected" (Ctrl+I with marks), "Failed: In use by another program: a
@@ -525,24 +526,21 @@ and a typed name no entry starts with (AF-3.6).
 
 ### AF-9 The Actions list
 
-- AF-9.1 **What it is.** A second list under the folder list, "Actions", with every file operation of this window and
-  every change of its marks (AF-3.7) as one line, in three sections (AF-9.2), so that what was done can be read again,
-  taken back and walked back to. It is there from the first
+- AF-9.1 **What it is.** A second list under the folder list, "Actions", with every file operation of this window
+  as one line, in two sections (AF-9.2), so that what was done can be read again,
+  taken back and walked back to. It holds only what changed files (the maintainer's direction of 2026-11-22,
+  docs/axKit/framework.md section 9; the changes of the selection were lines of a third section until then). It is there from the first
   moment, with the one line "No actions yet" until the first operation (AX-9.5; asked 2026-10-22: a pane that appears
   later leaves Tab and Shift+Tab with nowhere to go), hidden only while a notice shows; a third of the window at
   most; **Tab**, **Shift+Tab**, **Ctrl+Tab**, **Ctrl+Shift+Tab** and **F6** move between the folder list and it
   (AX-8.2), **Escape** in it goes back to the folder list, Navigation → **The Actions list** puts the focus in it. One list, not tabs: NVDA reads a list and its place in it, and the two lists are reached with the
   keys every axKit window uses for its controls (AF-D1). Each command's result is one announcement on the list that has
   the focus (AF-7); nothing is spoken on an arrow key (AF-D7). The newest line is the status bar's left text (AF-2.3).
-- AF-9.2 **The lines.** Three sections, each a header line ("Running", "Operations", "Selection") over its lines, a
+- AF-9.2 **The lines.** Two sections, each a header line ("Running", "Operations") over its lines, a
   section present only while it has lines (asked 2026-10-22; AF-D11): **Running**, the operations under way, pinned at
-  the top so that what is going on is one Tab and Home away; **Operations**, the file operations done, failed or undone;
-  **Selection**, the changes of the marks: "Selected notes.md", "Deselected notes.md", "Selected 5 items" (a Shift range
-  or Shift+Space, one line for the whole range, rewritten as it grows or shrinks, counting the entries from its start
-  to its end), "Selected all, 24 items", "Deselected all, 3 items" (the count unmarked; no line when nothing changed),
-  each taking back the marks as they were before it (AF-9.3); the marks live in one folder (AF-3.7), so the section
-  empties with a change of folder, and keeps its last twenty lines. Within a section the lines are in time order,
-  newest last; "No actions yet" is the one line while all three are empty. The operations' lines, the last fifty kept,
+  the top so that what is going on is one Tab and Home away; **Operations**, the file operations done, failed or undone.
+  A change of the selection has no line (AF-3.7). Within a section the lines are in time order,
+  newest last; "No actions yet" is the one line while both are empty. The operations' lines, the last fifty kept,
   gone with the window: "Renamed notes.md to
   todo.md", "Created temp", "Created New file.txt", "Moved 3 items into bundle", "Copied 3 items", "Moved 2 items",
   "Compressed to docs.zip", "Extracted to docs - 2", "Deleted notes.md", "Deleted 2 items". A running operation reads
@@ -555,8 +553,7 @@ and a typed name no entry starts with (AF-3.6).
   rewritten, a running line under the focus being left until it ends, so that a zip's count is not reselected under
   NVDA four times a second. Nothing is spoken for a line (the operation's own
   announcement, AF-7, is what is heard). Cut, Copy, Copy path, Open, the hand-overs and Favorites change nothing on
-  disk and have no line. The status bar shows the newest operation's line, never a selection's, and after it how
-  many entries are selected (AF-2.3).
+  disk and have no line. The status bar shows the newest line, and after it how many entries are selected (AF-2.3).
 - AF-9.3 **On a line.** **Enter** goes where the action left things: the folder list shows the folder and selects the
   entry the action made, renamed or moved (the new folder for a move into one, the first entry for a paste; the folder
   alone for a delete), and takes the focus, before the folder is said (AF-3.1), so that NVDA's reading of the list
@@ -564,10 +561,7 @@ and a typed name no entry starts with (AF-3.6).
   on a running line, "Folder not found" when the place is gone. **Ctrl+Z** takes that line back, whatever its place,
   with AF-4.14's checks and texts; a line that cannot be says why: "Still running", "Already undone", "Not undone:
   <reason>" again, or "Nothing to undo here" (a failed line, or one older than the twenty undoable). Ctrl+Z in the
-  folder list takes the newest undoable operation (AF-4.14), never a selection line. On a selection line, Ctrl+Z puts
-  the marks back as they were before it, in the folder shown (the section empties with another folder, so the line is
-  always of this one; entries gone since are skipped), "Undone: 3 selected" or "Undone: none selected", the line reading
-  ", undone"; Enter on it is the folder list on the entry it marked, or where the user was. **Ctrl+I** says the line's
+  folder list takes the newest undoable operation (AF-4.14). **Ctrl+I** says the line's
   section, number in it and time, "Operations, 3 of 12, 21:04". On a header line and on "No actions yet", Enter, Ctrl+Z
   and Ctrl+I say the line. Delete does nothing (an action is a record, not an
   entry). There is no redo.
@@ -658,8 +652,11 @@ and AxPreview.Core since the split; `MediaFiles` and `NaturalOrder` moved to `Ax
 - **AF-D11 Sections as header lines in one list.** Asked 2026-10-22: the running operations pinned at the top, the
   operations next, the changes of the marks last. Three list boxes would be three Tab stops and a plain list cannot
   mark a group; so one list with a header line over each section that has lines, a header being an item NVDA reads
-  like any other and Enter, Ctrl+Z and Ctrl+I answer with its name. The marks' changes are in the list, at the user's
+  like any other and Enter, Ctrl+Z and Ctrl+I answer with its name. The marks' changes were in the list, at the user's
   ask, but outside Ctrl+Z in the folder list (AF-4.14): a selection undone by the key meant for a paste would surprise.
+  On 2026-11-22 they left the list (docs/axKit/framework.md section 9, taken under the maintainer's word not to hold
+  on to the current design): the selection is the navigator's, the same in every app, and a log of what changed
+  files is one thing where a log of files and marks was two. Two sections remain.
 
 - **AF-D12 No tree; the tree's keys on the list, and completion in Go to folder.** Asked 2026-10-22: a tree to drive
   through folders and drives, or an AxOpen app with a tree and typing. A tree (always, or as a pane beside the list as

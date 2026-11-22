@@ -290,8 +290,8 @@ NVDA pass recorded. A piece that changes what a user does updates the app's spec
     two lists, the split, the status bar, the selection, the pane keys, Right and Left, the Context keys and
     Escape are the navigator's. Enter, Backspace, rename, delete, find, refresh and undo are still axFile's own
     commands on the navigator's conditions, to move onto its hooks one by one (docs/axFile/SPEC.md AF-D14).
-14. Its Actions log as the navigator's second pane of the log kind; its selection no longer written there. The
-    pane is built with step 13; the selection is still written there.
+14. Its Actions log as the navigator's second pane of the log kind; its selection no longer written there. Built,
+    2026-11-22: the pane with step 13; the selection's lines, their section and their undo are gone from the log.
 15. Its own parts placed on the type: filter and sort from the type; favourites, drives, Go to folder, the
     clipboard, zip and the shell as its commands. The old window's code goes.
 
@@ -314,7 +314,7 @@ Each removes something that exists today. Each can be turned back while its piec
 2. **axCalc becomes a conversation window.** A field with its results above it, a result taken back into the
    field with Enter on its line. What goes: removing one history line with Delete; Clear history stays.
 3. **axFile's selection is no longer written into its Actions list.** Space and Escape undo a selection; the log
-   holds only what changed files.
+   holds only what changed files. Built, 2026-11-22 (step 14).
 4. **axMedia is a queue and its controls.** It keeps no browsing of its own; axFile chooses and hands over.
 5. **axGIT is made simple**: staging acts on the selected files, where Space staged one file until now.
 6. **Tab switches panes in every window**; where there is one pane it does nothing.

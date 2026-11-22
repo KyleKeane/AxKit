@@ -456,7 +456,7 @@ Steps and keys: `docs/axKit/workflows/axFile.md` (in Claude's working folder: `w
     - Undo an operation from the Actions list
     - Go to an operation done in another folder
     - Undo the newest operation from the folder list
-    - See what was selected in the Actions list
+    - Select entries without a line in the Actions list
     - Select every entry from the marked one to here
 7. **Move files to a folder you type**
     - Move a file into a folder by typing its name

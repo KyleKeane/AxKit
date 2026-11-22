@@ -187,13 +187,6 @@ public sealed partial class FileForm : ItemForm
         // ---- the Actions list (AF-9): the item window's second pane as a log, under the folder list ----
         SetUpActions();
 
-        // AF-9.2: every change of the marks is also a line of the Actions list, beside the count in the status bar.
-        Selection.Recorded = change =>
-        {
-            RecordMarks(change);
-            ShowStatus();
-        };
-
         // AF-3.4: coming back to the window reads the folder again when another program changed it; not when one of
         // the Windows dialogs closes, which activates the window too (the base's DialogShowing).
         Activated += (_, _) =>
@@ -231,8 +224,8 @@ public sealed partial class FileForm : ItemForm
     /// <summary>What the read left out (AF-2.2), as the last line, so that the count is there when wanted.</summary>
     protected override string? AfterRowsLine => _hidden > 0 || _dot > 0 ? FolderListing.NotShownText(_hidden, _dot) : null;
 
-    /// <summary>The status bar's first part (AF-2.3): the newest file operation's line, never a selection line.</summary>
-    protected override string? StatusState => _actions.LatestOperation?.Line ?? string.Empty;
+    /// <summary>The status bar's first part (AF-2.3): the newest file operation's line; how many are selected follows it, the item window's.</summary>
+    protected override string? StatusState => _actions.Latest?.Line ?? string.Empty;
 
     /// <summary>
     /// The folder shown as the navigator's level (AF-2.1, AF-2.2): a row for each shown entry (a folder a list, a

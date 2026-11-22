@@ -243,8 +243,8 @@ keys enter
 expect said ! Created quiet
 expect quiet 1000
 
-# Goal: See what was selected in the Actions list
-# 6.8 Selection lines: Space on a file, Tab, End: "Selected <name>" under the header "Selection".
+# Goal: Select entries without a line in the Actions list
+# 6.8 A selection is no line of the Actions list: Space on a file, Tab, End: still the newest operation.
 do Find
 expect focus "name":"Name contains"
 type start-here
@@ -254,47 +254,33 @@ keys space
 expect said ! Selected
 keys tab
 keys end
-expect focus "value":"Selected start-here.txt"
-keys up
-expect focus "value":"Selection"
+expect focus "value":"Created quiet"
 keys escape
 keys space
 expect said ! Deselected
-# Check: A run of selections is one line
-# Shift+Down twice: one line "Selected 3 items", not three.
+# Check: A run of selections writes no line, and the status bar counts the selected
+# Shift+Down twice: three selected, said by the status bar after the newest operation; no line for them.
 keys home
 keys shift+down shift+down
 expect focus "value":"temp, folder, selected"
+expect state "status":["Created quiet, 3 selected",
 keys tab
 keys end
-expect focus "value":"Selected 3 items"
-keys up
-expect focus "value":"Deselected start-here.txt"
-keys escape
-do Deselect all
-expect said ! None selected
-keys tab
-keys end
-expect focus "value":"Deselected all, 3 items"
-keys ctrl+z
-expect said ! Undone: 3 selected
+expect focus "value":"Created quiet"
 keys escape
 expect focus "name":"9 items"
 expect list "items":["quiet, folder, selected","subfolder-for-inner, folder, selected","temp, folder, selected"
 # Check: Undo in the folder list never undoes the selection
-# Ctrl+Z in the folder list undoes an operation, never the selection.
+# Ctrl+Z in the folder list undoes an operation; the entries that stay are still selected.
 do Undo new folder
 expect said ! Undone: quiet removed
 expect list "subfolder-for-inner, folder, selected","temp, folder, selected"
-# The status bar never reads a selection line; it ends with how many are selected, as in every navigator.
 expect state "status":["Created quiet, undone, 2 selected",
-# Enter on a folder: the Selection section is gone.
+# Enter on a folder: another folder starts with nothing selected.
 keys home
 keys enter
 expect said ! subfolder-for-inner, 2 items
-keys tab
-expect list "Created quiet, undone"],"selected"
-keys escape
+expect state "status":["Created quiet, undone",
 keys backspace
 expect said ! act,
 

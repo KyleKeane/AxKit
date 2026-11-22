@@ -47,9 +47,9 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
     - the Drives submenu of Folder (AF-3.11; a menu of its own until 2026-10-22);
     - the selection (AF-3.7, AF-D9):
       - `Selection` is the item window's, the bundle's `AxKit.Forms/ListSelection` over `AxKit.Core/Marks` (bundle AX-8.16, shared since 2026-11-22; the keys are `AxKit.Forms/SelectionKeys`), on its rows, the shown entries by path and name; it makes each item, rewrites the items whose mark flipped and says the words;
-      - the keys (Space, Shift+Space, Ctrl+A, Ctrl+Shift+A, Escape, the four Shift keys of its `MoveCommands`) are the item window's commands, which say the line on a line that is no entry (`NothingToSelect`); the menu items only show them; `UndoMarks` (Ctrl+Z on a selection line) restores the marks; `RecordMarks` (set as its `Recorded` in the constructor) is what is axFile's own: the line of the Actions list recorded, or rewritten while a Shift range goes on (`RangeLine`);
+      - the keys (Space, Shift+Space, Ctrl+A, Ctrl+Shift+A, Escape, the four Shift keys of its `MoveCommands`) are the item window's commands, which say the line on a line that is no entry (`NothingToSelect`); the menu items only show them; a change of the marks is no line of the Actions list (it was one from 2026-10-22 to 2026-11-22, with its own undo; SPEC.md AF-D11), so nothing of the selection is axFile's own;
       - the item window keeps only the marks on the entries still shown as the list is filled, and drops them all for another folder (`LevelIdentity`);
-      - `DropSelectionLines` (another folder), `OnMarks` (the Selection submenu's operations, on the marks alone);
+      - `OnMarks` (the Selection submenu's operations, on the marks alone);
       - `SelectedEntries` and `Targets`, what an operation acts on;
     - `PaletteEntries` (AF-3.12: the shown entries in the bundle's command palette, Enter selecting the entry and calling `OpenEntry`);
     - `OpenEntry` (Enter: a folder here, a file through `OpenWithWindows`, AF-3.2);

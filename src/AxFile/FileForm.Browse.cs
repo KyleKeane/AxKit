@@ -26,7 +26,7 @@ public sealed partial class FileForm
 
     // The marks on the shown entries (AF-3.7), which the operations act on, are the item window's selection
     // (AX-8.16, its Selection): each entry by its path, kept while the same folder shows, a marked item reading
-    // ", selected". Every change of them is also a line of the Actions list here (RecordMarks).
+    // ", selected".
 
     /// <summary>The folder as the level the marks belong to: the same folder under another spelling keeps them.</summary>
     protected override string LevelIdentity() => _folder?.ToUpperInvariant() ?? string.Empty;
@@ -167,11 +167,10 @@ public sealed partial class FileForm
         }
 
         // AF-3.7, AF-3.8: the marks and the filter live in one folder: another folder starts with none (the item
-        // window drops the marks as the level changes, and their lines go here); the same one keeps the filter, and
-        // the marks on the entries still shown (Rearrange).
+        // window drops the marks as the level changes); the same one keeps the filter, and the marks on the entries
+        // still shown (Rearrange).
         if (changed)
         {
-            DropSelectionLines();
             _filter = string.Empty;
         }
 
@@ -314,44 +313,13 @@ public sealed partial class FileForm
     // window's command); otherwise the filter cleared (the command "Clear the filter"); the key left alone when
     // there is neither.
 
-    // ---- the selection (AF-3.7): the item window's (AX-8.16, ListSelection over Marks), recorded here in the Actions list ----
+    // ---- the selection (AF-3.7): the item window's (AX-8.16, ListSelection over Marks) ----
     // The shared piece makes each item (an entry's label, with ", selected" while it is, S-42's hidden characters
     // made visible), rewrites the items whose mark flipped and says what the key says; its keys are the item
     // window's commands (Space, Shift+Space, Ctrl+A, Ctrl+Shift+A, Shift with the arrows, Home and End), which on
-    // a line that is no entry say that line (NothingToSelect). Here every change of the marks is also a line of
-    // the Actions list's Selection section (AF-9.2), which Ctrl+Z on the line takes back (AF-9.3); a Shift range
-    // is one line, rewritten while the range goes on.
-
-    /// <summary>The line made last for a change of the marks, which is the Shift range's while one is being made (<see cref="RangeLine"/>).</summary>
-    private ActionEntry? _rangeLine;
-
-    /// <summary>The line of the Shift range being made, rewritten as it goes on; null once the range has ended (AF-9.2).</summary>
-    private ActionEntry? RangeLine => Selection.RangeOn ? _rangeLine : null;
-
-    /// <summary>
-    /// One change of the marks recorded (AF-9.2), after its items were rewritten and before its words are said
-    /// (<see cref="ListSelection.Recorded"/>): its line in the Actions list, a Shift range's rewritten while the
-    /// range goes on.
-    /// </summary>
-    private void RecordMarks(MarkChange change)
-    {
-        if (change.Line is not { } text)
-        {
-            return;
-        }
-
-        if (!change.RangeBegins && RangeLine is { } line)
-        {
-            _actions.Rewrite(line, text);
-            line.Select = change.Select;
-        }
-        else
-        {
-            _rangeLine = _actions.Mark(text, _folder ?? string.Empty, change.Select, change.Before);
-        }
-
-        FillPane();
-    }
+    // a line that is no entry say that line (NothingToSelect). A change of the marks is no line of the Actions
+    // list (it was one until 2026-11-22, AF-9.2): Space and Escape take a selection back, and the status bar says
+    // how many are selected.
 
     /// <summary>A Selection menu operation (AF-3.7): on the marked entries alone, "None selected" when there are none, never the current entry.</summary>
     private void OnMarks(Action operation)
@@ -363,21 +331,6 @@ public sealed partial class FileForm
         }
 
         operation();
-    }
-
-    /// <summary>Another folder shown: the marks are gone (<see cref="Marks.Clear"/>), and their lines with them (AF-9.2).</summary>
-    private void DropSelectionLines()
-    {
-        _actions.DropSelection();
-        FillPane();
-    }
-
-    /// <summary>Ctrl+Z on a selection line (AF-9.3): the marks as they were before it, entries gone since skipped; "Undone: 3 selected".</summary>
-    private void UndoMarks(ActionEntry entry)
-    {
-        _actions.Undone(entry);
-        FillPane();
-        Selection.Restore(entry.Before ?? []);
     }
 
     // Shift with Up, Down, Home or End in the list (AF-3.7) are the shared piece's four commands
