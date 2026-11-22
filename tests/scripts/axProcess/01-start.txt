@@ -1,10 +1,16 @@
 # Workflow: Find and end a process
 # axProcess: start, the Processes view, ending a process (docs/axProcess/nvda-test-plan.md sections 1 and 2; SPEC PR-2, PR-3).
-# The lists are this computer's, so the steps match the fixed words, never a count. Something safe to end: a hidden
-# ping that runs for two minutes with its window hidden, started apart from the runner's command (run's own children
-# end with the command, since it reads their output).
+# The lists are this computer's, so the steps match the fixed words, never a count. The script ends something in the
+# list, so it ends only what it started itself, under a name no other program has: a copy of Windows' own ping, made
+# in the run's folder as axkitscript01.exe, which asks this computer itself for 120 echoes (two minutes, nothing
+# leaves the computer) with its window hidden. Nothing else is ever selected for an end: the text typed into Find is
+# the copy's own name, the row must be it before Delete, the question must name it, and a script stops at its first
+# failing step (until 2026-11-21 the script found "PING", which another ping on the computer would have answered
+# to). It is started apart from the runner's command (run's own children end with the command, since it reads
+# their output), and named with its folder (.\), since a command prompt may be set not to look in the folder it is in.
 file home\AxKit\axProcess.json {"checkForUpdates": false}
-run powershell -NoProfile -Command "Start-Process ping -ArgumentList '-n','120','127.0.0.1' -WindowStyle Hidden"
+run copy /y %SystemRoot%\System32\PING.EXE axkitscript01.exe
+run powershell -NoProfile -Command "Start-Process '.\axkitscript01.exe' -ArgumentList '-n','120','127.0.0.1' -WindowStyle Hidden"
 
 # Check: The window opens with the processes' list named and said
 # 1.1 The window, and after the first read (one second of sampling) the list's name and first item, not interrupting.
@@ -49,37 +55,37 @@ menu Memory
 expect said ! Sorted by memory
 
 # Goal: Find a process and read its details
-# 2.2 Ctrl+F finds the ping; Enter shows its details with the buttons; Escape closes them.
+# 2.2 Ctrl+F finds the script's own copy of ping by its name; Enter shows its details with the buttons; Escape closes them.
 keys ctrl+f
 expect state Find
-type PING
+type axkitscript01
 keys enter
-expect focus PING,
+expect focus "value":"axkitscript01,
 keys enter
-expect state "notice":"PING"
+expect state "notice":"axkitscript01"
 expect state Process ID
 expect state Memory
 keys escape
 expect state "notice":null
-expect focus PING,
+expect focus "value":"axkitscript01,
 
 # Check: Closing the question keeps the process running
 # 2.5 Delete asks, Escape keeps it; Delete and Enter end it, and the list is read again without it.
 keys delete
-expect state End PING (process
+expect state End axkitscript01 (process
 expect state Anything unsaved in it is lost.
 # A notice holds its answering keys for a moment after it appears (KeyHold).
 wait 1200
 keys escape
 expect state "notice":null
-expect focus PING,
+expect focus "value":"axkitscript01,
 # Goal: End a process
 keys delete
-expect state End PING (process
+expect state End axkitscript01 (process
 wait 1200
 keys enter
-expect said ! Ended PING
-refuse list PING,
+expect said ! Ended axkitscript01
+refuse list axkitscript01,
 
 # Check: Saving says there is nothing to save
 # 2.8 Ctrl+C copies the line: the clipboard is shared with the user's session, so the step is not run (automation.md).

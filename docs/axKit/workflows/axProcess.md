@@ -31,7 +31,7 @@ command's in this version of axKit.
 ### Find a process and read its details
 
 1. Press Ctrl+F (Find in the list).
-2. Type: PING
+2. Type: axkitscript01
 3. Press Enter 2 times.
 4. Press Escape.
 
@@ -39,7 +39,7 @@ command's in this version of axKit.
 
 1. Press Delete.
 2. Press Enter.
-    You hear: Ended PING.
+    You hear: Ended axkitscript01.
 
 ## Manage services and startup programs
 
