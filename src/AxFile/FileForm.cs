@@ -251,8 +251,11 @@ public sealed partial class FileForm : ItemForm
     /// <summary>The selection keys on a line that is no entry say that line (AF-7).</summary>
     protected override void NothingToSelect(ItemRow? row) => SayNoEntry();
 
-    // What the item window asks every app for and axFile reaches through its own commands in this step: F2 is
-    // Rename, Delete is Delete, Ctrl+N is New window and Ctrl+Shift+N New folder.
+    // What the item window asks every app for and axFile reaches through its own commands, which carry axFile's
+    // marks (a rename or a delete of a file is an act, AK-2.5): F2 is Rename, whose box and steps are the item
+    // window's (Operations), Delete is Delete, Ctrl+N is New window and Ctrl+Shift+N New folder.
+
+    /// <summary>Nothing refuses a rename here: axFile's Rename has said "No folder" or "Choose a drive first" before the box (AF-3.10).</summary>
     protected override string? RenameRefused(ItemRow row) => null;
 
     protected override void DeleteRow(ItemRow row) => Delete();

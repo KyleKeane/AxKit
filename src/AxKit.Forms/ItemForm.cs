@@ -127,6 +127,9 @@ public abstract partial class ItemForm : AxKitForm
     /// <summary>F2 in the navigator (AX-8.7): why this row cannot be renamed, said instead of the box; null when it can.</summary>
     protected abstract string? RenameRefused(ItemRow row);
 
+    /// <summary>How much of the row's name the rename box selects as it opens, from its start: all of it by default; axFile, a file's name before its extension.</summary>
+    protected virtual int RenameSelectionLength(ItemRow row) => row.Name.Length;
+
     /// <summary>Why a typed name is refused for the row, said with the box kept open; null when it is fine.</summary>
     protected virtual string? RefusedName(ItemRow row, string name) => null;
 
@@ -772,7 +775,7 @@ public abstract partial class ItemForm : AxKitForm
             return;
         }
 
-        Navigator.BeginRename(row.Name, row.Name.Length, name =>
+        Navigator.BeginRename(row.Name, RenameSelectionLength(row), name =>
         {
             if (name == row.Name)
             {

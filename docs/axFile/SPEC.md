@@ -675,10 +675,13 @@ and AxPreview.Core since the split; `MediaFiles` and `NaturalOrder` moved to `Ax
   the selection (AX-8.16), the pane keys, Right and Left, the Context keys and Escape are the navigator's. What
   changed for the user is small and named where it applies: the status bar ends with how many entries are selected
   (AF-2.3), Context on a line that is no entry holds that line's words (AF-4.6), and Shift+F10 and the Applications
-  key open the line's menu in the Actions list (AF-6.2). The first step leaves Enter, Backspace, F2, Delete, find,
-  refresh and undo as axFile's own commands, each on the navigator's condition for its place, so that the words and
-  the order are as they were; the folder is still read on a background task and shown when the read is in
-  (`EntryRefused` starts the read and the level stays until then).
+  key open the line's menu in the Actions list (AF-6.2). Enter, Backspace, F2, Delete, find,
+  refresh and undo stay axFile's own commands, each on the navigator's condition for its place, with the words,
+  the order and the marks they had (opening a file, a rename and a delete are acts an AI tool asks about first,
+  where the navigator's own Open and Rename are not); the rename box and its steps are the navigator's, axFile
+  saying how much of the name is selected, which names it refuses, and renaming (AF-4.2). The folder is still read
+  on a background task and shown when the read is in (`EntryRefused` starts the read and the level stays until
+  then).
 
 AF-D4 (the volume) and AF-D6 (the queue fixed at Enter) went to axMedia with the player (AM-D6, AM-D2).
 

@@ -30,8 +30,8 @@ public sealed partial class FileForm
     /// <summary>How often at most a zip's count is written into its line (AF-9.2).</summary>
     private const int ProgressMs = 250;
 
-    /// <summary>The entry being renamed in place (AF-4.2) while the box over it shows; null otherwise.</summary>
-    private Entry? _renaming;
+    /// <summary>Whether the rename box about to open selects the whole name, extension included: for a new file (AF-4.1).</summary>
+    private bool _renameWholeName;
 
     /// <summary>Whether an undo is on its way: a second Ctrl+Z says so rather than racing it.</summary>
     private bool _undoing;
@@ -357,38 +357,37 @@ public sealed partial class FileForm
 
     // ---- the rename in place (AF-4.2): a box over the entry, Enter renames, Escape or leaving the box keeps the name ----
 
-    /// <summary>Item → Rename (F2): the box over the entry with its name, the part before the extension selected; the whole name for a folder, or when asked (a new file, AF-4.1).</summary>
+    /// <summary>
+    /// Item → Rename (F2): the box over the entry with its name, the part before the extension selected; the whole
+    /// name for a folder, or when asked (a new file, AF-4.1). The box and its steps are the item window's
+    /// (<see cref="ItemForm.RenameSelected"/>, AX-8.7: Enter takes a name that is not refused, an unchanged one
+    /// says "Name unchanged", Escape or leaving the box keeps the name); axFile says how much of the name is
+    /// selected, which names it refuses, and renames.
+    /// </summary>
     private void Rename(bool wholeName = false)
     {
-        if (_renaming is not null || NoFolderHere() || !TryEntry(out var entry))
+        if (NoFolderHere() || !TryEntry(out _))
         {
             return;
         }
 
-        _renaming = entry;
-        // The bundle's rename box over the entry (AX-8.7): Enter commits, Escape or leaving it keeps the name.
-        _list.BeginRename(entry.Name, wholeName || entry.IsFolder ? entry.Name.Length : Path.GetFileNameWithoutExtension(entry.Name).Length,
-            CommitRename, () => _renaming = null);
+        _renameWholeName = wholeName;
+        RenameSelected();
+        _renameWholeName = false;
     }
 
-    /// <summary>The typed name checked and applied: "Renamed to <name>", the entry selected under its new name.</summary>
-    private void CommitRename(string name)
+    /// <summary>A file's name before its extension is selected in the rename box; a folder's whole name, and a new file's (AF-4.1).</summary>
+    protected override int RenameSelectionLength(ItemRow row) =>
+        _renameWholeName || row.IsList ? row.Name.Length : Path.GetFileNameWithoutExtension(row.Name).Length;
+
+    /// <summary>The name check, or an entry here that reads the same (AF-4.2); said with the box kept open.</summary>
+    protected override string? RefusedName(ItemRow row, string name) => CheckNewName(name, row.Tag as Entry);
+
+    /// <summary>The typed name applied: "Renamed to <name>", the entry selected under its new name.</summary>
+    protected override void RenameTo(ItemRow row, string name)
     {
-        if (_renaming is not { } entry || _folder is not { } folder)
+        if (row.Tag is not Entry entry || _folder is not { } folder)
         {
-            return;
-        }
-
-        if (CheckNewName(name, entry) is { } problem)
-        {
-            Announce(problem, true);
-            return;
-        }
-
-        EndRename();
-        if (string.Equals(name, entry.Name, StringComparison.Ordinal))
-        {
-            Announce("Name unchanged", true);
             return;
         }
 

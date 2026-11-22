@@ -285,11 +285,14 @@ NVDA pass recorded. A piece that changes what a user does updates the app's spec
 
 **E. axFile, last and with the most care**
 
-13. axFile's folder list on the navigator: levels, reading, the row you are on, rename, delete, find. Built in its
-    first part, 2026-11-22: `FileForm` derives from `ItemForm`; a folder is a level and its entries the rows; the
-    two lists, the split, the status bar, the selection, the pane keys, Right and Left, the Context keys and
-    Escape are the navigator's. Enter, Backspace, rename, delete, find, refresh and undo are still axFile's own
-    commands on the navigator's conditions, to move onto its hooks one by one (docs/axFile/SPEC.md AF-D14).
+13. axFile's folder list on the navigator: levels, reading, the row you are on, rename, delete, find. Built,
+    2026-11-22: `FileForm` derives from `ItemForm`; a folder is a level and its entries the rows; the
+    two lists, the split, the status bar, the selection, the pane keys, Right and Left, the Context keys,
+    Escape and the rename box with its steps are the navigator's. Enter, Backspace, Delete, find, refresh and
+    undo stay axFile's own commands on the navigator's conditions, and that is where they belong: each is the
+    app's part of a navigator, its commands on its rows, with the app's own mark (opening a file starts a
+    program, a rename and a delete act on the disk, so an AI tool asks first) and its own words
+    (docs/axFile/SPEC.md AF-D14).
 14. Its Actions log as the navigator's second pane of the log kind; its selection no longer written there. Built,
     2026-11-22: the pane with step 13; the selection's lines, their section and their undo are gone from the log.
 15. Its own parts placed on the type: filter and sort from the type; favourites, drives, Go to folder, the
