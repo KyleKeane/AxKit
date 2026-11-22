@@ -6,6 +6,32 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-22: the entry sounds raised by the components, and axMedia's selection; by the assistant with NVDA listening (`main` 4f0f309b)
+
+`.\nvda-pass.ps1 -Only` every script of axMedia, axTask, axFile, axMCP, axCalc and axProcess, and axTerminal's
+`08-user-shells`, behind the spoken countdown, the maintainer away at his word (NVDA passes "Yes, for this whole
+absence"), NVDA 2025.3.3 with the OneCore voice, Windows 11 Pro 10.0.26200, the build 5.10.0 of commit 4f0f309b,
+the tree clean: 55 scripts, 442 goals and checks.
+
+| What | Scripts | Result |
+|---|---|---|
+| axMedia: Space selects, Ctrl+Enter pauses, Delete takes the selected files out; the new `07-selection.txt` | 8 | Passed |
+| axTask: every script | 21 | Passed |
+| axFile: every script | 13 | Passed, `03-operations` at its second run |
+| axMCP, axCalc, axProcess: every script | 12 | Passed |
+| axTerminal: Add a shell's form | 1 | Passed |
+
+One step failed in the first run and passed in a second run of its script alone, straight after: in axFile's
+`03-operations`, the window announced "None selected" after Deselect all, and NVDA did not speak it; it had spoken
+the "Selected" of the step before late, after that step had ended, and the next announcement was lost with it.
+The script runs two menu commands one right after the other there, faster than a person does. Taken as NVDA
+speaking late once: the window's own announcement was right both times, and the same step passed with NVDA in two
+earlier passes of the day. If it is seen again it gets an item.
+
+The speech was as before for every app: the entry sounds are sounds, and NVDA's words did not change with them.
+His by ear, as written under the pass of 598ab96b: the four sounds in real use, now also at every Tab between
+panes and at a window's start.
+
 ## 2026-11-22: what opens says its kind, and a form says its title and "form"; by the assistant with NVDA listening (`main` 598ab96b)
 
 `.\nvda-pass.ps1 -Only` every script of axTask and of axMCP, axTerminal's `08-user-shells` and axFile's
