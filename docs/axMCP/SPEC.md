@@ -129,8 +129,8 @@ with Enter; a prompt is filled and fetched like a tool.
 - MP-3.2 The detail pane on a tool, named "Arguments of axkit_windows": Description first (a long text, fixed: Enter
   on it reads it whole), then one field per property of the input schema's object, in the schema's order, the type
   from the schema (MP-3.3), the title followed by " (required)" for a required argument, the default value filled in,
-  else empty. A tool with no arguments has the one Description field. The fields are the server's: New field, Rename,
-  Remove and Move say so (`FieldsFixed`).
+  else empty. A tool with no arguments has the one Description field. The fields are the server's: Ctrl+N, F2 and Delete
+  have no command in the fields (the knock; item-apps.md IA-5.3).
 - MP-3.3 **Schema to field** (`ArgumentFields`): `string` → `text`; `string` with `enum` → `choice`, the first option
   chosen when there is no default; `string` with `format` `date` → `date`, `date-time` → `datetime`; `integer` or
   `number` → `number`; `boolean` → `check`; `array`, `object` and anything else → `longtext` holding JSON, read back as

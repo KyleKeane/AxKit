@@ -114,8 +114,6 @@ public sealed partial class AutomateForm : ItemForm
 
     protected override IReadOnlyList<string> RestartArguments() => _folders.Count == 0 ? [Dispatch.AxAutomate] : [Dispatch.AxAutomate, _folders[0]];
 
-    protected override string? FieldsFixed => ViewOnly;
-
     // ---- the levels (AU-4.2) ----
 
     protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel()

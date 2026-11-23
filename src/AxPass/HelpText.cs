@@ -33,7 +33,6 @@ public static class HelpText
           Enter: change the field. On Password: type a new one twice, or Generate (Alt+G) makes one
           Right and Left change nothing here and play the edge sound: an entry has no choice and no check, and the user name and the password never change on an arrow
           Ctrl+Q: read the field's whole value
-          Ctrl+N, F2, Delete: the other item apps' field commands; here they say that an entry keeps KeePass's own fields
           Escape, Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6: back to the navigator
 
         ## Everywhere in axPass

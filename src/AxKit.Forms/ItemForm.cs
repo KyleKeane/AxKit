@@ -241,11 +241,30 @@ public abstract partial class ItemForm : AxKitForm
     /// <summary>Enter on a field of the app's own type (a link, a password); true when the app took it.</summary>
     protected virtual bool ChangeSpecial(ItemRow row, int index, ItemField field) => false;
 
-    /// <summary>Why the set of fields cannot change (axPass: KeePass's own fields only); null when New, Rename, Remove and Move field work.</summary>
-    protected virtual string? FieldsFixed => null;
+    /// <summary>
+    /// Ctrl+N, F2 and Delete in the detail pane of fields: keys with no command there, which play the sound of
+    /// one (the maintainer's decision of 2026-11-23, "Remove the keys there"). Until 2026-11-21 they added,
+    /// renamed and removed a field of the item; then every app refused with a sentence of its own, since which
+    /// fields an item has is its list's configuration in axTask and the program's own in axPass, axMCP and
+    /// axAutomate; the commands and the code behind them are gone. A key the app gave a command of its own there
+    /// never reaches this: the commands run first.
+    /// </summary>
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+        if (base.ProcessCmdKey(ref msg, keyData))
+        {
+            return true;
+        }
 
-    /// <summary>The types New field offers.</summary>
-    private static IReadOnlyList<string> NewFieldTypes => FieldTypes.All;
+        if (HasDetailPane && Pane == SecondPane.Fields && DetailPane.Focused && !DetailPane.Renaming
+            && keyData is ItemKeys.New or ItemKeys.Rename or ItemKeys.Delete)
+        {
+            EventDoor.Raise(EventKind.NoCommand, EventSound.Unassigned);
+            return true;
+        }
+
+        return false;
+    }
 
     // ---- the selection (docs/axKit/SPEC.md AX-8.16; 2026-11-22) ----
 
@@ -622,9 +641,8 @@ public abstract partial class ItemForm : AxKitForm
         Shared(new Command("To the navigator", ItemKeys.OtherPaneBack, () => Navigator.Select()) { When = InDetail, Mark = CommandMark.Open });
         Shared(new Command("To the navigator", ItemKeys.Back, () => Navigator.Select()) { When = InDetail, Mark = CommandMark.Open });
         Shared(new Command("Check the field", ItemKeys.Check, CheckField) { When = InDetail, Mark = CommandMark.Change });
-        Shared(new Command("New field", ItemKeys.New, NewField) { When = InDetail, Mark = CommandMark.Change });
-        Shared(new Command("Rename the field", ItemKeys.Rename, RenameField) { When = InDetail, Mark = CommandMark.Change });
-        Shared(new Command("Remove the field", ItemKeys.Delete, RemoveField) { When = InDetail, Mark = CommandMark.Change });
+        // Ctrl+N, F2 and Delete have no command in the detail pane since 2026-11-23 (NoFieldCommand): which fields an
+        // item has is nowhere changed there any more.
 
         // Right and Left change the field in focus (IA-5.6, AX-8.10 rule 4): a choice's next and previous value, a
         // check checked and unchecked; the edge sound on every other field, never the list box's own move.

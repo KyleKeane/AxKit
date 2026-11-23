@@ -128,8 +128,8 @@ public sealed partial class TaskForm : ItemForm
         _fieldMenu.DropDownItems.Add(Item("&Done or not done", CheckField, ItemKeys.Check, CommandMark.Change));
         _fieldMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
         // AF-13.3: which fields a list's items have, their names and their order are the list's configuration's, so
-        // the field commands that changed them in one item are not offered here; their keys say where it is done
-        // (FieldsFixed).
+        // the field commands that changed them in one item are gone (2026-11-23), and Context has the way to the
+        // configuration.
         _fieldMenu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Edit the list's confi&guration", null, (_, _) => EditConfigurationOfShown()), CommandMark.Open));
 
         // Options: the app's own settings first (AX-9.1; Hide done tasks was the View menu's until 2026-11-11).
@@ -178,9 +178,6 @@ public sealed partial class TaskForm : ItemForm
     /// <summary>A link reads the item it points to, or "missing: name" (IA-D3).</summary>
     protected override string SpokenValue(ItemRow? row, ItemField field) =>
         FieldTypes.Spoken(field, link => ShownDetail.Source is FileSource source ? Links.Spoken(source.Path, link) : link);
-
-    /// <summary>AF-13.3: a field is added, renamed, removed and moved in the list's configuration, for every item at once; said at the keys that did it in one item.</summary>
-    protected override string? FieldsFixed => "The fields are the list's configuration's: Ctrl+J on the list opens it in axJSON";
 
     protected override void BeforeRefresh()
     {

@@ -40,13 +40,13 @@ public static class ItemKeys
     /// </summary>
     public const Keys Check = SelectionKeys.Select;
 
-    /// <summary>A new item in the navigator, a new field in the detail pane.</summary>
+    /// <summary>A new item in the navigator; no command in the detail pane (the knock of a key without one, 2026-11-23).</summary>
     public const Keys New = Keys.Control | Keys.N;
 
     public const Keys NewList = Keys.Control | Keys.Shift | Keys.N;
     public const Keys Rename = Keys.F2;
 
-    /// <summary>Archive the item or list (IA-D4); in the detail pane, remove the field.</summary>
+    /// <summary>Archive the item or list (IA-D4); no command in the detail pane.</summary>
     public const Keys Delete = Keys.Delete;
 
     public const Keys Undo = Keys.Control | Keys.Z;
@@ -74,10 +74,10 @@ public static class ItemKeys
         ("To the other pane, back", OtherPaneBack),
         ("Back to the navigator (in the detail pane); deselect all while any is selected (in the navigator)", Back),
         ("Check or uncheck the field (in the detail pane); select or deselect (in the navigator)", Check),
-        ("New item, or new field", New),
+        ("New item", New),
         ("New list", NewList),
         ("Rename", Rename),
-        ("Archive, or remove the field", Delete),
+        ("Archive", Delete),
         ("Undo", Undo),
         ("Read in full", ReadAll),
         ("Refresh", Refresh),

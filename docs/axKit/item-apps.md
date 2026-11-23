@@ -47,10 +47,10 @@ Window-specific keys, in one table per app (AX-8); the ones here are the same in
 | Escape | where the app has a selection: deselect all, while any is selected (bundle AX-8.16) | back to the navigator |
 | Space | the bundle's key that selects the row, where the app's navigator has a selection (AX-8.16, 2026-11-22: axTask, whose items it selects, docs/axTask/SPEC.md TK-4.7); the edge sound where it has none | on a check: checked or not (IA-5.2) |
 | Shift+Space, Shift+Down, Shift+Up, Shift+Home, Shift+End, Ctrl+A, Ctrl+Shift+A | the rest of the bundle's selection keys, where the app has a selection (`ItemForm.HasSelection`); the list's own keys elsewhere | — |
-| Ctrl+N | new item in this list | said: where the fields are changed (IA-5.3) |
+| Ctrl+N | new item in this list | no command: the knock of a key without one (IA-5.3) |
 | Ctrl+Shift+N | new list here | — |
-| F2 | rename in place (the Title field; bundle AX-8.7) | said: where the fields are changed (IA-5.3) |
-| Delete | delete the item or list (IA-D4) | said: where the fields are changed (IA-5.3) |
+| F2 | rename in place (the Title field; bundle AX-8.7) | no command: the knock (IA-5.3) |
+| Delete | delete the item or list (IA-D4) | no command: the knock (IA-5.3) |
 | Alt+Up, Alt+Down | — | — (the move of a field went on 2026-11-21; Alt with an arrow is for the choices of what you are on, and a move of an item of a list is Ctrl+Shift+Up and Down, wherever one is built: the maintainer's rule of that day) |
 | Ctrl+Z | undo the last change | the same |
 | Ctrl+Q | read the selection in full: every field, one after another; for a row whose details are lines and no fields, the row and every line (2026-11-22) | read the field or the line in full |
@@ -169,10 +169,11 @@ A folder. Its configuration is `list.json` in it, never shown in the navigator:
 - **IA-5.2** A check changes with Space or Enter, at once: "Done: done".
 - **IA-5.3** Which fields an item has is not changed in the detail pane (since 2026-11-21): they are the list's
   configuration's in axTask (IA-4.3), KeePass's in axPass, the server's schema in axMCP. Ctrl+N, F2 and Delete
-  in the fields say where it is done, in the app's own words ("The fields are the list's
-  configuration's: Ctrl+J on the list opens it in axJSON"), and change nothing. Until then axTask added, renamed,
-  removed and moved a field in one item's file; the shared window still holds that code behind `FieldsFixed`, which
-  every app now gives, and it is to be removed (the priorities list).
+  have no command in the fields since 2026-11-23 and play the knock of a key without one (the maintainer's
+  decision, "Remove the keys there"; from 2026-11-21 until then each said where the fields are changed, in the
+  app's own words). The commands New field, Rename the field and Remove the field are gone from the item window
+  with the code behind them; in axTask the way to the fields is Context, Edit the list's configuration, and Ctrl+J
+  on the list. Until 2026-11-21 axTask added, renamed, removed and moved a field in one item's file.
 - **IA-5.4** Every change is one announcement ("Due: 30 October 2026, Friday") and one step for Ctrl+Z.
 - **IA-5.5** Before every write the file is read again; if it changed since it was shown (axJSON, a script, a sync),
   the change is refused with "The item changed on disk; it has been read again" (axList's LI-D5).

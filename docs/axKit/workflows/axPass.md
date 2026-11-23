@@ -59,7 +59,7 @@ command's in this version of axKit.
 ### Rename an entry
 
 1. Press Escape.
-2. Press F2.
+2. Press F2 (Rename).
 3. Type: Gmail personal
 4. Press Enter.
     You hear: Renamed Gmail personal.

@@ -153,9 +153,6 @@ public sealed class MCPForm : ItemForm
         base.OnFormClosing(e);
     }
 
-    /// <summary>MP-3.2: a tool's arguments are the server's.</summary>
-    protected override string? FieldsFixed => "A tool's arguments are the server's: its schema says which";
-
     /// <summary>Enter on the Description reads it whole; it is never changed.</summary>
     protected override bool ChangeSpecial(ItemRow row, int index, ItemField field)
     {

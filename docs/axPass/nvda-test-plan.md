@@ -37,7 +37,7 @@ should read; a step that reads differently is a defect. The specifications are `
 2. Enter on Password: the notice "New password for Gmail", its field protected. Alt+G: "Generated a password of 20
    characters; Enter sets it"; Enter: "Password set for Gmail".
 3. Enter on Password, type `one`, Enter, type `two`, Enter: "The two passwords differ: nothing changed".
-4. Ctrl+N on Gmail's field list: "An entry has KeePass's own fields here …".
+4. Ctrl+N on Gmail's field list: the knock of a key with no command, and nothing opens.
 5. F2 in the navigator on Gmail, type `Gmail personal`: "Renamed Gmail personal". Type `a/b` instead: "A name cannot
    hold a slash …".
 6. Ctrl+N in Email, type `Bank`: "Added Bank; Tab, then Enter on Password sets its password". Delete on Bank: "Moved

@@ -484,7 +484,7 @@ Starts with: Open axTask with the folder tasks.
     You hear: Ctrl+Period: The Context menu, as Shift+F10.
 5. Press Ctrl+Slash (Ask about this window; axKit menu, Claude).
     You hear: Ctrl+Slash: Ask Claude about this window, as Shift+F1.
-6. Press Ctrl+N.
+6. Press Ctrl+N (New item; Actions menu).
     You hear: Ctrl+N: New item.
 7. Press Ctrl+Up (Previous section; Navigation menu).
     You hear: Ctrl+Up: Previous section.
@@ -538,7 +538,7 @@ Starts with: Open axTask with the folder tasks.
 
 ### Rename a list
 
-1. Press F2.
+1. Press F2 (Rename; Context menu).
 2. Press Ctrl+A (Select all; Actions menu).
 3. Type: House
 4. Press Enter.
@@ -585,7 +585,7 @@ Starts with: Open axTask with the folder tasks.
 
 ### Add an item with its list's fields
 
-1. Press Ctrl+N.
+1. Press Ctrl+N (New item; Actions menu).
 2. Type: Paint the door
 3. Press Enter.
 4. Press Tab.
@@ -932,7 +932,7 @@ Starts with: Open axTask with the folder tasks.
 1. Press Ctrl+F (Find in the list).
     You hear the sound FieldOpen.
 2. Press Escape.
-3. Press F2.
+3. Press F2 (Rename; Context menu).
     You hear the sound FieldOpen.
 4. Press Escape.
 

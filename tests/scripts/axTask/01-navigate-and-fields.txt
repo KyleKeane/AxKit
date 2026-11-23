@@ -147,16 +147,19 @@ keys escape
 expect focus Due, date,
 expect focus , Friday
 
-# Check: The fields of an item are its list's, and the field keys say where they are changed
-# 2.3 Which fields an item has is written once, in its list's configuration (forms-framework.md AF-13.3): Ctrl+N,
-# F2 on a field that is not the Title and Delete in the fields say so, and nothing is asked or changed.
+# Check: The fields of an item are its list's, and the keys that once changed them have no command in the fields
+# 2.3 Which fields an item has is written once, in its list's configuration (forms-framework.md AF-13.3): Ctrl+N, F2
+# and Delete in the fields are keys with no command there since 2026-11-23: the knock, and nothing asked or changed.
+said
 keys ctrl+n
-expect said ! The fields are the list's configuration's: Ctrl+J on the list opens it in axJSON
+expect said ♪ Unassigned
 expect state "notice":null
+said
 keys f2
-expect said ! The fields are the list's configuration's
+expect said ♪ Unassigned
+said
 keys delete
-expect said ! The fields are the list's configuration's
+expect said ♪ Unassigned
 expect focus Due, date,
 # Goal: Give a field its first value
 # 2.3a Priority is a field of the list that this item's file does not hold yet: shown empty, and written into the
@@ -213,10 +216,11 @@ keys left
 expect said ! Done: not done
 keys home
 
-# Check: The Title field keeps its name
-# 2.6 The Title keeps its name; F2 in the navigator renames the item and its file.
+# Check: F2 on the Title in the fields has no command either
+# 2.6 F2 in the navigator renames the item and its file; in the fields it is a key with no command, on the Title too.
+said
 keys f2
-expect said ! The Title field keeps its name
+expect said ♪ Unassigned
 # Goal: Rename an item
 keys escape
 do Rename

@@ -43,8 +43,8 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
 1. On Fix the tap, Ctrl+Enter: "Done: Fix the tap"; Ctrl+Enter: "Not done: Fix the tap". Ctrl+J: axJSON shows the item as its values, `"Done": false` among them, and `"schema": "list.json"` first.
 2. In its fields, Enter on Due: the item's form with the focus in Due's box; type `+3`, Enter: "Saved Fix the tap. Due: …, " three days from today, and the focus is back on Due in the fields. Enter again, type `30 Febuary`, Enter: "Due: Not a date: …"
    and the form stays, the focus in Due's box; Escape.
-3. Ctrl+N in the fields: "The fields are the list's configuration's: Ctrl+J on the list opens it in axJSON", and no
-   notice opens; F2 on Due and Delete say the same and change nothing (the fields of an item are its list's,
+3. Ctrl+N in the fields: the knock of a key with no command, and no
+   notice opens; F2 on Due and Delete knock the same way and change nothing (the fields of an item are its list's,
    `forms-framework.md` AF-13.3). Down to "Priority, choice, empty", a field of the list that this item's file does not
    hold yet. Enter on it: the item's form with the focus in the list "Choose Priority" on "Not chosen"; Down twice, Enter: "Saved Fix the tap. Priority:
    Low", written into the file with this first value. Left on it: "Priority: High", once; Left again: the edge sound, nothing said; Right: "Priority: Low"; Right
@@ -66,7 +66,7 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
    configuration, list.json, does not read: …: every value is shown as text, and nothing of the item is changed
    here"; Enter on a field says the reason and opens nothing. Mend the file in axJSON, back: "The list's configuration
    changed: …", and everything is as before.
-6. F2 on Title: "The Title field keeps its name …". F2 in the navigator on Fix the tap, type `Fix the sink`: "Renamed
+6. F2 on Title in the fields: the knock, as on every field. F2 in the navigator on Fix the tap, type `Fix the sink`: "Renamed
    Fix the sink"; Ctrl+E shows `Fix the sink.json` in axFile.
 7. Ctrl+N in Shopping, type `Bread`: "Added Bread", with the list's fields, Done, Start, Due. Delete on Bread: "Archived Bread"; Ctrl+Z:
    "Undone: Archived Bread".

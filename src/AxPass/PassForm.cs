@@ -241,9 +241,6 @@ public sealed partial class PassForm : ItemForm
 
     protected override string NothingWhileUnavailable => "Locked: Enter unlocks the database";
 
-    /// <summary>PW-6.1: KeePass's own fields only.</summary>
-    protected override string? FieldsFixed => "An entry has KeePass's own fields here; other fields are added in KeePassXC's own window";
-
     // ---- the levels ----
 
     protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel()

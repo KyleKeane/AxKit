@@ -76,14 +76,12 @@ public class ItemDocumentTests
     }
 
     [Fact]
-    public void FieldsAreAddedRemovedAndRenamed()
+    public void AFieldIsAdded()
     {
         var document = Sample();
         var added = document.WithField(0, "Notes", FieldTypes.LongText, []);
         Assert.Equal("Notes", added.Fields[1].Title);
         Assert.Equal(string.Empty, FieldTypes.TextOf(added.Fields[1].Value));
-        Assert.Equal("Status", added.WithFieldTitle(1, "Status").Fields[1].Title);
-        Assert.Equal(["Title", "Done", "Due", "Priority"], added.WithoutField(1).Fields.Select(field => field.Title));
         var choice = document.WithField(-1, "Size", FieldTypes.Choice, ["S", "M"]);
         Assert.Equal(["S", "M"], choice.Fields[^1].Options);
     }
@@ -102,7 +100,7 @@ public class ItemDocumentTests
         var document = Sample();
         var shown = document.Fields[2];
         Assert.True(document.Holds(2, shown));
-        Assert.False(document.WithoutField(1).Holds(2, shown));
+        Assert.False(ItemDocument.Of([.. document.Fields.Where((_, index) => index != 1)]).Holds(2, shown));
         Assert.False(document.Holds(9, shown));
     }
 }

@@ -98,7 +98,7 @@ Starts with: Open axMCP with the test folder.
 
 ### Rename a server and undo the rename
 
-1. Press F2.
+1. Press F2 (Rename).
 2. Press Ctrl+A.
 3. Type: probe two
 4. Press Enter.

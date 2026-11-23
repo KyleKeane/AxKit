@@ -700,7 +700,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
      instruction ("Type the name of the server"), shown by `AxKitForm.ShowForm` with the form's explanation, its
      default button and Cancel. The window's check runs before the button acts: what is missing or refused is said
      with the edge sound and the focus in that control, and the form stays open. The forms: the report (F4); axTerminal,
-     Add a shell (AT-1.6a); axMCP, Add server (MP-1.3); the item window, New field (item-apps IA-5.3); axTask, Action
+     Add a shell (AT-1.6a); axMCP, Add server (MP-1.3); axTask, Action
      keys (TK-7a.1) and Move to section (TK-3a.3). Left as they are: a question with one field (rule 6); a list to
      choose one thing from, which is one question; and a password asked twice, axPass's master password for a new
      database and an entry's new password, each in the notice's own hidden field, which is emptied as the notice

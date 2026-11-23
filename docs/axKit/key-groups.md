@@ -94,7 +94,6 @@ The keys:
 Exceptions today, which do another kind of thing:
 
 - F2, axAutomate, axFile, axMCP, axPass and axTask: Rename.
-- F2, axAutomate, axMCP, axPass and axTask: Rename the field.
 - F3, axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask and axTerminal: Find next.
 - F3, axGIT: Find next in the text.
 - F4, every app: Send a report.
@@ -179,7 +178,6 @@ Delete removes what you are on, and what can be lost asks first or can be undone
 The keys:
 
 - Delete, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Delete.
-- Delete, axAutomate, axMCP, axPass and axTask: Remove the field.
 - Delete, axTask: Archive.
 - Delete, axGIT: Discard changes.
 - Delete, axProcess: End process.
@@ -327,7 +325,6 @@ Windows' own keys, as in every program:
 - Ctrl+F, axCalc, axClaude, axDown, axFile, axJSON, axPreview and axTerminal: Find.
 - Ctrl+F, axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Find in the list.
 - Ctrl+F, axGIT: Find in the text.
-- Ctrl+N, axAutomate, axMCP, axPass and axTask: New field.
 - Ctrl+N, axAutomate, axMCP, axPass and axTask: New item.
 - Ctrl+N, axFile, axMedia and axPreview: New window.
 - Ctrl+N, axDown and axJSON: New.

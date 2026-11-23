@@ -81,10 +81,6 @@ public sealed class ItemDocument
             }
         });
 
-    public ItemDocument WithoutField(int index) => Change(fields => fields.RemoveAt(index));
-
-    public ItemDocument WithFieldTitle(int index, string title) => Change(fields => fields[index] = fields[index] with { Title = title });
-
     private ItemDocument Change(Action<List<ItemField>> change)
     {
         var fields = _fields.ToList();

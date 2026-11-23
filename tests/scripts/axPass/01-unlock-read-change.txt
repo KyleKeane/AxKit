@@ -96,9 +96,11 @@ keys ctrl+z
 expect said ! Undone: UserName: sam2
 
 # Check: An entry keeps KeePass's own set of fields
-# 4.4 The set of fields stays KeePass's.
+# 4.4 The set of fields stays KeePass's: Ctrl+N in the fields is a key with no command there, the knock.
+said
 keys ctrl+n
-expect said ! An entry has KeePass's own fields here
+expect said ♪ Unassigned
+expect state "notice":null
 
 # Check: A slash in a title is refused
 # 4.5 A slash in a title is refused; a rename.

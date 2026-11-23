@@ -83,7 +83,7 @@ forgets the master password and shows only the notice that asks for it.
 
 - **PW-6.1 The fields** are KeePass's standard ones in this order: Title (`text`), UserName (`username`), Password
   (`password`), URL (`text`), Notes (`longtext`); then the entry's custom attributes, read only (Enter: "Change it in
-  KeePassXC"). New field (Ctrl+N in the detail pane) says the same. **A field cannot be emptied here** (2026-11-21):
+  KeePassXC"). Ctrl+N, F2 and Delete have no command in the fields (the knock; item-apps.md IA-5.3). **A field cannot be emptied here** (2026-11-21):
   the tool's `edit` takes an option with an empty value as not given (`kdbx-notes.md` section 8), so axPass does not
   start it for such a change and says "URL cannot be emptied here: KeePassXC's tool takes an empty value as no
   change. Empty it in KeePassXC's own window"; the field keeps its value. For the same reason a value written into
