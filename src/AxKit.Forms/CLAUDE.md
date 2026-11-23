@@ -13,7 +13,7 @@ The notes of each piece are in `src/AxKit.Forms/notes`, one file per kind of win
 - `notes/console.md`, the conversation window and the console window over it (axClaude, axTerminal): `ConversationForm`, `ConsoleForm` with `ConsoleKeys` and `ConsoleQuestion`, `TranscriptView` with `TranscriptKeys` and `QuickKey`, `ControlArea` with `ListKeys`.
 - `notes/editor.md`, the text editor shell (axDown, axJSON, axPreview): `MarkdownKeys`, `TextJump`, `TextEditorForm`, `EditorApp`, `EditorKeys`, `EditorHost`.
 - `notes/item.md`, the item window, the bundle's navigator (axTask, axPass, axMCP, axAutomate, axMedia, axProcess, axGIT, axFile): `ContextBarMenu`, `ItemForm`, `ItemKeys`, `ItemRow`, `ItemDetail`, `ItemDetailLine`.
-- `notes/hotkey.md`, the hotkey window (axStart, axClip, axHelp): `HotkeyForm`.
+- `notes/hotkey.md`, the hotkey window (axStart, axClip, axHelp): `HotkeyForm`, `KeySender`.
 - `notes/ai-and-automation.md`, AI help, the AI tools and the automation channel: `AutomationChannel`, AI help (`AxKitForm.Ai.cs`, `AiHelpFlow`), the AI tools (`McpChannel`, `McpBroker`, `AxKitForm.Mcp.cs`, `AiToolsSetup`), `UserPipe`, `WindowReading`.
 
 ## Rules

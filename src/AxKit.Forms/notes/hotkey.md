@@ -21,3 +21,4 @@ Part of the notes of `src/AxKit.Forms` (the index is `src/AxKit.Forms/CLAUDE.md`
     - `AddMatchKeys` (six commands with the app's keys: Down, Up, Page Down, Page Up, first, last) and `SelectMatch`, which moves through the list's `MoveFromField` (the edge earcon at an end, the sound of nothing found) and says the match.
   - The app fills in `PrepareShowing`, `AfterShowing`, `OnHiding`, and for the matches `MatchCount`, `SpokenMatch`, `NothingSaid` and `Refill`.
   - The gotchas of the foreground are in `src/AxStart/CLAUDE.md`.
+- `KeySender` (docs/axClip/SPEC.md CP-D3; from axClip's `ClipForm` on its second use, axTemplate's launcher, 2026-11-23, moved unchanged): `SendCtrlV`, the paste key to the program in front through `SendInput`, for a hotkey window that has hidden and given the front back. The caller checks first that the window it means is in front. Windows refuses such keys into a program running as administrator, without an error.
