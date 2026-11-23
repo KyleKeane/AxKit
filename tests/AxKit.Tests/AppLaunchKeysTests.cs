@@ -67,6 +67,44 @@ public sealed class AppLaunchKeysTests
         }
     }
 
+    /// <summary>
+    /// The command inventory (docs/axKit/window-commands.json, written by the window runs, which the key map is
+    /// written from) holds the app keys as the code gives them and no submenu of the Window menu the code no longer
+    /// has: a run with --inventory write never removes a row, and the New window rows with the keys of the first
+    /// assignment stayed in it unseen on 2026-11-23 (the cure is a run with --inventory rewrite).
+    /// </summary>
+    [Fact]
+    public void The_command_inventory_holds_the_app_keys_as_the_code_gives_them()
+    {
+        using var document = System.Text.Json.JsonDocument.Parse(File.ReadAllText(Path.Combine(LayoutTests.RepositoryRoot(), "docs", "axKit", "window-commands.json")));
+        string[] windowSubmenus = ["Window, Apps", "Window, Access layers", "Window, Open windows", "Window, Recently closed"];
+        var wrong = new List<string>();
+        foreach (var app in document.RootElement.GetProperty("apps").EnumerateArray())
+        {
+            foreach (var row in app.GetProperty("commands").EnumerateArray())
+            {
+                var menu = row.GetProperty("menu").GetString()!;
+                var label = row.GetProperty("label").GetString()!;
+                if (menu.StartsWith("Window, ", StringComparison.Ordinal) && !windowSubmenus.Contains(menu))
+                {
+                    wrong.Add($"{app.GetProperty("app").GetString()}: {label} under {menu}, a submenu the Window menu no longer has");
+                }
+
+                if (menu is "Window, Apps" or "Window, Access layers")
+                {
+                    var key = AppLaunchKeys.Default.FirstOrDefault(k => k.App.Title == label);
+                    var expected = key?.Text ?? string.Empty;
+                    if (row.GetProperty("keyText").GetString() != expected)
+                    {
+                        wrong.Add($"{app.GetProperty("app").GetString()}: {label} with {row.GetProperty("keyText").GetString()}, the code gives {expected}");
+                    }
+                }
+            }
+        }
+
+        Assert.True(wrong.Count == 0, "The command inventory is stale; run the window scripts with --inventory rewrite:\n" + string.Join("\n", wrong.Take(10)));
+    }
+
     [Fact]
     public void The_bundle_keys_hold_every_app_key_and_each_finds_its_app()
     {

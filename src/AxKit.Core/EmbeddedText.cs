@@ -17,6 +17,18 @@ public static class EmbeddedText
         }
 
         using var reader = new StreamReader(stream);
-        return reader.ReadToEnd();
+        return Shown(reader.ReadToEnd());
+    }
+
+    /// <summary>
+    /// The text as a window shows it: without the lines that are an HTML comment and nothing else, the markers a
+    /// script writes between (a guide's Menus section, tools/guide-menus.ps1), which are for the scripts and would
+    /// otherwise be read aloud.
+    /// </summary>
+    public static string Shown(string text)
+    {
+        var lines = text.Split('\n');
+        var kept = lines.Where(line => !(line.TrimStart().StartsWith("<!--", StringComparison.Ordinal) && line.TrimEnd().EndsWith("-->", StringComparison.Ordinal)));
+        return string.Join('\n', kept);
     }
 }

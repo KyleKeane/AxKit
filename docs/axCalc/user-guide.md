@@ -49,12 +49,17 @@ The newest line is at the bottom, so Up from the end reads back from the latest.
 
 ## Menus
 
-- **Session**: Save history (Ctrl+S), Exit.
-- **Actions**: Answer (Enter), Copy answer (Ctrl+Shift+C), Copy answer in, Answer in other bases (Ctrl+I), Say the last answer (Ctrl+Q), Variables, Clear variables, Clear history (Ctrl+Shift+Delete).
-- **Navigation**: Find (Ctrl+F), Find next (F3), Find previous (Shift+F3), Next bookmark, Previous bookmark.
-- **Context**: what acts on the history's line: Take this line's expression into the field (Enter in the history), Bookmark this line (Ctrl+Shift+K), Copy the selection. Shift+F10 opens it.
-- **Options**: Angles (Degrees, Radians), Keep history between runs, Text (font and size), General (the update check), Developer (the settings file, diagnostics).
-- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.
+Each menu with its commands and their keys, as the window lists them:
+
+<!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
+- **Session**: Exit (Alt+F4); Save history (Ctrl+S).
+- **Actions**: Answer (Enter); Answer in other bases (Ctrl+I); Clear history (Ctrl+Shift+Delete); Clear variables; Copy answer (Ctrl+Shift+C); Say the last answer (Ctrl+Q); Variables; Copy answer in (Binary, Hexadecimal, Octal).
+- **Navigation**: Find (Ctrl+F); Find next (F3); Find previous (Shift+F3); Next bookmark (K in the history); Previous bookmark (Shift+K in the history).
+- **Context**: Bookmark this line (Ctrl+Shift+K, or M in the history); Copy the selection (Ctrl+C in the history); Take this line's expression into the field (Enter in the history).
+- **Options**: Keep history between runs; Angles (Degrees, Radians); Developer (Open settings file); General (Check for updates at start); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
+- Keys without a menu item: Escape (Clear the field); Tab (Switch between the view and the field).
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+<!-- end of the menus -->
 
 ## Settings
 

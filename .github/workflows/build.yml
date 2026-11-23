@@ -34,6 +34,9 @@ jobs:
       - name: Apps are listed
         # docs/axKit/apps.md is what Dispatch.Apps and the folders give: the one list of the apps (repairs R-44).
         run: ./tools/apps-page.ps1 -Check
+      - name: The guides' menus are written
+        # Each guide's Menus section is what the command inventory gives (tools/guide-menus.ps1; the maintainer, 2026-11-23).
+        run: ./tools/guide-menus.ps1 -Check
       - name: Cases are listed
         # docs/axKit/cases.md is what docs/axKit/cases.json gives: how each unexpected situation is handled (AX-5.10).
         run: ./tools/cases.ps1 -Check

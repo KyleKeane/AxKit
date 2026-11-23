@@ -90,30 +90,18 @@ Ctrl with a function key opens a standalone axKit app from any axKit window, in 
 
 The keys:
 
-- Ctrl+F1, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axFile.
-- Ctrl+F1, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axStart.
-- Ctrl+F2, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axDown.
-- Ctrl+F2, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axFile.
-- Ctrl+F3, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axClip.
-- Ctrl+F3, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axJSON.
-- Ctrl+F4, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axPreview.
-- Ctrl+F4, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axTemplate.
-- Ctrl+F5, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axDown.
-- Ctrl+F5, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axMedia.
-- Ctrl+F6, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axJSON.
-- Ctrl+F6, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axTask.
-- Ctrl+F7, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axPreview.
-- Ctrl+F7, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axStart.
-- Ctrl+F8, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axClip.
-- Ctrl+F8, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axMedia.
-- Ctrl+F9, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axCalc.
-- Ctrl+F9, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axTask.
-- Ctrl+F10, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axCalc.
-- Ctrl+F10, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axProcess.
-- Ctrl+F11, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axAutomate.
-- Ctrl+F11, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axProcess.
-- Ctrl+F12, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axAutomate.
-- Ctrl+F12, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axTemplate.
+- Ctrl+F1, every app: axStart.
+- Ctrl+F2, every app: axFile.
+- Ctrl+F3, every app: axClip.
+- Ctrl+F4, every app: axTemplate.
+- Ctrl+F5, every app: axDown.
+- Ctrl+F6, every app: axJSON.
+- Ctrl+F7, every app: axPreview.
+- Ctrl+F8, every app: axMedia.
+- Ctrl+F9, every app: axTask.
+- Ctrl+F10, every app: axCalc.
+- Ctrl+F11, every app: axProcess.
+- Ctrl+F12, every app: axAutomate.
 
 ### Ctrl+Shift+F-key: open an access layer
 
@@ -121,15 +109,12 @@ Ctrl+Shift with a function key opens an access layer, an app over a program you 
 
 The keys:
 
-- Ctrl+Shift+F1, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axTerminal, access layer for your shell.
-- Ctrl+Shift+F2, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axGIT, access layer for Git.
-- Ctrl+Shift+F3, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axPass, access layer for KeePassXC.
-- Ctrl+Shift+F4, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axClaude, access layer for Claude Code.
-- Ctrl+Shift+F5, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axClaude, access layer for Claude Code.
-- Ctrl+Shift+F5, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axMCP, access layer for MCP servers.
-- Ctrl+Shift+F6, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axHelp, access layer for Claude Code.
-- Ctrl+Shift+F9, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axHelp, access layer for Claude Code.
-- Ctrl+Shift+F10, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axMCP, access layer for MCP servers.
+- Ctrl+Shift+F1, every app: axTerminal, access layer for your shell.
+- Ctrl+Shift+F2, every app: axGIT, access layer for Git.
+- Ctrl+Shift+F3, every app: axPass, access layer for KeePassXC.
+- Ctrl+Shift+F5, every app: axClaude, access layer for Claude Code.
+- Ctrl+Shift+F9, every app: axHelp, access layer for Claude Code.
+- Ctrl+Shift+F10, every app: axMCP, access layer for MCP servers.
 
 ### F-keys (F1 to F12 alone): say or show
 
@@ -359,7 +344,6 @@ The keys:
 - Ctrl+D, axFile: Add to or remove from Favorites.
 - Ctrl+D, axHelp: Put a picture file into the conversation.
 - Ctrl+E, axPreview: Edit in axDown.
-- Ctrl+E, axFile: Editor.
 - Ctrl+E, axGIT: Open file in editor.
 - Ctrl+E, axTask: Show in axFile.
 - Ctrl+E, axProcess: Show program in axFile.

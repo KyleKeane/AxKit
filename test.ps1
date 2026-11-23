@@ -90,7 +90,7 @@ if ($Only -eq '') {
     # The pages a script writes from the sources (docs/axKit/repairs.json R-30): build.yml checks them, and until
     # 2026-11-13 this script did not, so a stale page was found only by CI, six times in three days. Each check says
     # which script writes its page again.
-    foreach ($page in 'outside-calls', 'workflows', 'repairs', 'apps-page', 'cases', 'key-map', 'families', 'owed', 'components') {
+    foreach ($page in 'outside-calls', 'workflows', 'repairs', 'apps-page', 'cases', 'key-map', 'families', 'owed', 'components', 'guide-menus') {
         & (Join-Path $root "tools\$page.ps1") -Check
         if ($LASTEXITCODE -ne 0) {
             Write-Host "The page check tools\$page.ps1 -Check failed: run tools\$page.ps1 (without -Check) and commit the page it writes."
