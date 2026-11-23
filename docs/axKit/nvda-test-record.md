@@ -6,6 +6,21 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-23: axTemplate's browser; by the assistant with NVDA listening (branch `axfile-navigator` e8120737)
+
+`.\nvda-pass.ps1 axTemplate`, from the branch's own folder, behind the spoken countdown, the maintainer away at his
+word, the same NVDA, voice and Windows as the pass below, the build 5.10.0 of commit e8120737, the tree clean: 2
+scripts, 13 goals and checks, all passed at the first run.
+
+| Plan section (`docs/axTemplate/nvda-test-plan.md`) | Scripts | Result |
+|---|---|---|
+| 1 Start, 2 A new template, 3 The fields, 4 Rename, delete, undo: the empty list's line, F1, Ctrl+N with the name asked and a taken name refused, Text written in the field of several lines, a check set, Ctrl+Enter "Copied", F2 and the Title field "Renamed", Delete after its question, Ctrl+Z for the deletion and for the rename | `01-start.txt` | Passed |
+| 5 Several at once, and reading again; 6 A file that is no template: "broken, not a template" and its refusals, a kept value's line, two selected and deleted with one Ctrl+Z, F5 | `02-several-and-not-a-template.txt` | Passed |
+
+Not run, since no script reaches it: 5.3, a change made in axJSON shown on coming back to the window; 1.3, Alt+F4.
+By ear, and the maintainer's: how the pane of eleven fields reads (Title, Text, nine checks), and the words of the
+delete question.
+
 ## 2026-11-23: templates in the editors; by the assistant with NVDA listening (branch `axfile-navigator` 07b23771)
 
 `.\nvda-pass.ps1 -Only` every script of axDown, axJSON and axPreview, from the branch's own folder, behind the spoken
