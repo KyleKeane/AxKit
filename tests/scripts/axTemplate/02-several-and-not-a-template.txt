@@ -3,10 +3,10 @@
 # folder that holds templates already, without a list.json, and one file that is not an item. Run by tools/AxAutomate
 # on a desktop of its own (docs/axKit/automation.md). The launcher the browser starts gets a hotkey nobody uses.
 file home\AxKit\axTemplate.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F7", "sayFirstMatch": false}
-file home\AxKit\templates\Alpha.json {"schema": "list.json", "Title": "Alpha", "Text": "First {caret}"}
-file home\AxKit\templates\Beta.json {"schema": "list.json", "Title": "Beta", "Text": "Second", "axDown": true, "Sprint": "kept"}
-file home\AxKit\templates\Gamma.json {"schema": "list.json", "Title": "Gamma", "Text": "Third"}
-file home\AxKit\templates\broken.json [1, 2]
+file home\Documents\axKit\Templates\Alpha.json {"schema": "list.json", "Title": "Alpha", "Text": "First {caret}"}
+file home\Documents\axKit\Templates\Beta.json {"schema": "list.json", "Title": "Beta", "Text": "Second", "axDown": true, "Sprint": "kept"}
+file home\Documents\axKit\Templates\Gamma.json {"schema": "list.json", "Title": "Gamma", "Text": "Third"}
+file home\Documents\axKit\Templates\broken.json [1, 2]
 
 start template
 expect state Templates, 3 templates

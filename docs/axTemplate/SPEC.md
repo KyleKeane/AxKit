@@ -86,7 +86,9 @@ answer to a key.
 
 ### TP-2 The templates
 
-- TP-2.1 **One folder**, `%APPDATA%\AxKit\templates`, a list in the item format: its `list.json` (`axkit-list 2`)
+- TP-2.1 **One folder**, `Documents\axKit\Templates` (the user's Documents; bundle AX-5.11, the maintainer's
+  decision of 2026-11-23: what the user writes is where the user finds it, and where an uninstall of the Store's
+  copy does not take it; first built under AppData, never released there), a list in the item format: its `list.json` (`axkit-list 2`)
   names the fields, and every other `.json` file in it is one template, an item that names `list.json` as its
   configuration. axTemplate writes `list.json` when it is not there and adds a field to it that a newer version
   brings; it never takes one away.
@@ -240,7 +242,13 @@ answer to a key.
   program puts in what was pasted and nothing more; a program that indents or closes brackets by itself can land
   the caret a little off, and the guide says so. A template without `{caret}` sends no Left key.
 - **TP-D6 The clipboard is given back.** A template put in should not cost the user what they had copied, and
-  should not fill a clipboard history with templates.
+  should not fill a clipboard history with templates. What is given back is the text the clipboard held when the
+  launcher came up, so the copy that Ctrl+Enter makes in the other program is undone with it; a clipboard that
+  held a picture or files then is not given back (the launcher takes only its text). The other program is asked
+  to paste and cannot say when it has, so the text goes back after a fixed wait, about half a second after the
+  paste key: a program slower than that pastes the old text, and the guide names Shift+Enter for such a one. The
+  wait is the same every time, not a guess at the program (the maintainer's rule of no hidden thresholds is
+  about behaviour the user sees differing by a measure; this is one fixed step). Open to his ear and his use.
 - **TP-D7 A template is the user's own text.** axTemplate reads no template from outside its folder, takes none
   from an AI tool, and runs nothing: it pastes. A template of several lines pasted into a shell runs them, as any
   paste of several lines does; Ctrl+Q reads a template before it is used.
@@ -287,9 +295,13 @@ Asked one at a time through the question tool, after he had the first specificat
 Steps 1 and 2 are built (2026-11-23). Step 1: the store, the finding and the settings in `AxTemplate.Core` with
 their tests, and the browser, `BrowserForm`, which a plain start shows. Step 2: the launcher, `LauncherForm`,
 behind Ctrl+Shift+Apostrophe: the finding, Enter with the paste, Shift+Enter, Ctrl+Q, Ctrl+B, and the plain start
-that starts it hidden. The window checks of both are `tests/scripts/axTemplate`. Not yet, step 3: Ctrl+Enter with
-the other program's selection (`{selection}` is empty from the launcher until then), the clipboard given back
-and marked against histories (a template put in stays on the clipboard, and axClip keeps it), and the caret
-moved back to `{caret}` (it stays at the end of what was pasted). Also there from 2026-11-23: the marks and
+that starts it hidden, with the hotkey on for everyone after an installation and an update (TP-1.4). Step 3:
+Ctrl+Enter with the other program's selection, the template on the clipboard marked against histories
+(`AxKit.Forms/PrivateClipboard`) and the clipboard's text of before given back 550 ms after the paste key, when
+nothing else was copied since, and the caret moved back to `{caret}` by Left keys 150 ms after the paste key
+(`AxKit.Forms/KeySender`). The window checks are `tests/scripts/axTemplate`; what only a real front window shows
+(the paste, the caret, the clipboard, the selection) is `tests/nvda-scripts/axTemplate-put-in.txt`. Steps 4 to 6
+are not built: the editors read the items, the templates in every axKit window, axAutomate's step. Also there
+from 2026-11-23: the marks and
 their code (`AxKit.Core/TextTemplate`), and the editors' Insert template menu, which reads plain files of
 `templates\<app>` until step 4.

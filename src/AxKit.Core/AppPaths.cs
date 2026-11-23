@@ -17,8 +17,35 @@ public static class AppPaths
     /// <summary>The folder of an editor's templates of the user's own (docs/axDown/SPEC.md AD-13.4): each file there is one template of that app.</summary>
     public static string TemplatesFolder(string app) => Path.Combine(SettingsFolder, "templates", app);
 
-    /// <summary>The folder of the bundle's templates (docs/axTemplate/SPEC.md TP-2.1): a list of the item format, every item one template.</summary>
-    public static string TemplatesRoot => Path.Combine(SettingsFolder, "templates");
+    /// <summary>
+    /// The folder of what the user writes with axKit and would want to keep, find, back up or sync: <c>axKit</c> in
+    /// the user's Documents (docs/axKit/SPEC.md AX-5.11; the maintainer's decision of 2026-11-23). Settings, logs and
+    /// what axKit keeps for itself stay under AppData; nothing here is needed for axKit to run, so deleting any of
+    /// it breaks nothing. And AppData is the package's private folder in the Store's copy, which Windows removes
+    /// with an uninstall: Documents is not. In a test run it is a Documents folder of the run's own home.
+    /// </summary>
+    public static string UserFolder { get; } =
+        AutomationEnvironment.Home is { } home
+            ? Path.Combine(home, "Documents", "axKit")
+            : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "axKit");
+
+    /// <summary>The folder of the bundle's templates (docs/axTemplate/SPEC.md TP-2.1): a list of the item format, every item one template; <c>Templates</c> in <see cref="UserFolder"/>.</summary>
+    public static string TemplatesRoot => Path.Combine(UserFolder, "Templates");
+
+    /// <summary>
+    /// axTask's top folder of lists when the user set none (docs/axKit/SPEC.md AX-5.11): <c>Tasks</c> in
+    /// <see cref="UserFolder"/>; for someone whose lists are in <c>Documents\Tasks</c> already, the default until
+    /// 2026-11-23, and who has none in the new place, that folder still. Asked of the disk once, as the process starts.
+    /// </summary>
+    public static string TasksFolder { get; } =
+        TasksFolderFor(UserFolder, Path.Combine(Path.GetDirectoryName(UserFolder)!, "Tasks"), Directory.Exists);
+
+    /// <summary>The rule of <see cref="TasksFolder"/>, pure: the new place, unless only the earlier one is there.</summary>
+    public static string TasksFolderFor(string userFolder, string earlier, Func<string, bool> exists)
+    {
+        var now = Path.Combine(userFolder, "Tasks");
+        return !exists(now) && exists(earlier) ? earlier : now;
+    }
 
     /// <summary>The key of the settings' seal and the names of the sealed files (AX-5.6), kept with DPAPI; beside the AI tools' key, never roamed.</summary>
     public static string SettingsSealFile { get; } =

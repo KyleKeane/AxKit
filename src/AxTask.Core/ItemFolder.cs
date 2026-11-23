@@ -88,7 +88,12 @@ public static class ItemFolder
     public const string ArchiveName = "Archive";
     public const string FilterExtension = ".filter.json";
 
-    public static string DefaultFolder => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tasks");
+    /// <summary>
+    /// The top folder of lists when the user set none: <c>Tasks</c> in axKit's folder in Documents (bundle AX-5.11,
+    /// the maintainer's decision of 2026-11-23), or the <c>Documents\Tasks</c> of before for someone whose lists
+    /// are there (<see cref="AppPaths.TasksFolder"/>).
+    /// </summary>
+    public static string DefaultFolder => AppPaths.TasksFolder;
 
     /// <summary>A list's items by title (TK-D4: a folder inside it is not shown, and counted), hidden and dot entries left out.</summary>
     public static FolderLevel Read(string folder)

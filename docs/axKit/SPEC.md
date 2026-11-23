@@ -510,6 +510,22 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   fails when the constant's text changes, a row without a proof must say what is owed, and every settings file of
   `AppPaths` and every settings class has a row. What it cannot hold is that a change of behaviour whose test and
   words stay the same reaches its row: that is the commit's to do.
+- AX-5.11 **What the user writes is in Documents, in a folder `axKit`** (the maintainer's decision of 2026-11-23:
+  "appdata if a user is not meant to interact with it and … axKit documents folder if it is a user facing set of
+  content that they will not break by deleting things"; `AppPaths.UserFolder`). Two kinds of file, two places:
+  - Under AppData, as AX-5.1 has it: settings, logs, downloaded updates, and whatever axKit keeps for itself. The
+    user is not meant to open them.
+  - Under `Documents\axKit`: what the user makes with an app and would want to keep, find in File Explorer or
+    axFile, back up or sync. Today axTemplate's templates, `Documents\axKit\Templates` (TP-2.1), and axTask's
+    lists for someone who set no top folder, `Documents\axKit\Tasks` (an earlier `Documents\Tasks` stays in use
+    while it is there and the new folder is not; a folder the user set stays). A later app with content of the
+    user's own puts it in a folder of its own beside them.
+  - The test of which place: nothing under `Documents\axKit` is needed for axKit to run, and deleting any of it
+    breaks nothing (a list's `list.json` is written again); and the content is the user's, not axKit's.
+  - Why it matters most in the Store's copy: AppData is the package's private folder there (AX-5.5, AX-13.5),
+    which Windows removes with an uninstall; Documents is never redirected and never removed. Where the user's
+    Documents is synced by OneDrive, this folder is synced with it, by the user's own setup; axKit itself makes
+    no network request for it (rule 8).
 
 ### AX-6 Shared pieces
 
@@ -718,7 +734,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   | axGIT | commit what is staged (AG-3.5) | the same |
   | axMCP | call the tool or fetch the prompt selected (MP-3.4) | the same |
   | axFile | in the folder list, play the folder in axMedia (AF-5.1) | the same; outside the folder list the edge sound |
-  | axTemplate | not there (begun 2026-11-23) | in the browser, copies the template's text, its marks filled with nothing (TP-8.4); in the launcher the edge sound, until it takes the other program's selection first (TP-4.2, not built yet) |
+  | axTemplate | not there (begun 2026-11-23) | in the browser, copies the template's text, its marks filled with nothing (TP-8.4); in the launcher, puts the template in around what is selected in the program in front, which is sent the copy key first (TP-4.2) |
   | axDown, axJSON | a line break in the text (the edit control's own) | the edge sound; Enter makes the line break |
   | axPreview, axMedia, axProcess, axCalc, axTask, axPass, axAutomate, axStart, axClip, axHelp | nothing of axKit's (the focused control's own, if any) | the edge sound |
 - AX-8.11 **The system-wide keys are on Ctrl+Shift** (the user's decision of 2026-11-14). A system-wide key is a

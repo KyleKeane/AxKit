@@ -19,13 +19,15 @@ The launcher needs no start of yours. It runs in the background from the moment 
 - Ctrl+Shift+Apostrophe shows the launcher: one field, "Search templates", with your templates listed under it. The key again, or Escape, hides it, and you are back where you were.
 - Type words of a template's name or of its text. Only the templates that hold every word stay in the list; those that hold them in their name come first. With nothing typed, the templates you used last come first.
 - Down and Up move through the list and say each template with its place, "Thanks, 1 of 3". The caret stays in the field. Ctrl+Home and Ctrl+End go to the first and the last, Page Down and Page Up by a screen.
-- Enter puts the template into the program you came from: the launcher hides, and the text is pasted where your caret was, with that program's own paste, Ctrl+V.
+- Enter puts the template into the program you came from: the launcher hides, and the text is pasted where your caret was, with that program's own paste, Ctrl+V. When the template has a `{caret}` mark, the caret is then moved back to it, so you can type on at once.
+- Ctrl+Enter does the same around what you had selected in that program: the selection is copied there first (the launcher presses Ctrl+C for you), stands where the template says `{selection}`, and the template takes its place. Do not use it in a terminal, where Ctrl+C ends the running command; and an editor that copies the whole line when nothing is selected gives that line.
+- Afterwards the clipboard holds what it held before, when that was text: a template does not cost you what you had copied. The template itself is kept out of clipboard histories, axClip's and Windows' own.
 - Shift+Enter only puts the text on the clipboard, "Copied". Use it where pasting is another key, and in a program that runs as administrator, where Windows lets no other program press keys.
 - Ctrl+Q reads the template's text before you use it. In a terminal, a template of several lines runs each line as it is pasted, as any paste of several lines does.
 - Ctrl+B opens the browser.
 - Options, Hotkey changes the key. Session, Quit axTemplate ends the launcher; closing its window only hides it.
 
-Not built yet, and coming next: the caret is left at the end of what was pasted, not yet at `{caret}`; `{selection}` is empty from the launcher; and the template stays on the clipboard afterwards, where a clipboard history such as axClip's keeps it.
+The caret is moved with Left keys, one for each character after the mark. That is exact in a plain field. A program that changes what is pasted, by indenting it or closing a bracket by itself, can leave the caret a little off. A program that takes long to paste may get the old clipboard text; if that happens to you in some program, use Shift+Enter there and paste yourself.
 
 ### The templates, on the left
 
@@ -50,14 +52,14 @@ Not built yet, and coming next: the caret is left at the end of what was pasted,
 Three marks can stand in a template's text. Each is written with its curly brackets.
 
 - `{caret}` is where the caret is left after the template is put in.
-- `{selection}` is replaced by the text that was selected when the template was put in.
+- `{selection}` is replaced by the text that was selected when the template was put in: from the launcher with Ctrl+Enter, and empty with Enter.
 - `{clipboard}` is replaced by the clipboard's text, as it was when the launcher came up.
 
 A link's template, for example, is `[{selection}]({caret})`: the selected words become the link's text, and the caret waits where the address goes.
 
 ### Where the templates are
 
-Each template is one small JSON file in the folder `templates` of axKit's settings folder. Session, Show the templates' folder in, opens it in File Explorer or axFile. A file there that is not a template is listed with "not a template" after its name; Ctrl+J opens it in axJSON to mend.
+Each template is one small JSON file in the folder `axKit\Templates` of your Documents. The files are yours: copy them to another computer, back them up, or delete them; axKit needs none of them to run, and writes the folder's `list.json` again when it is missing. Session, Show the templates' folder in, opens it in File Explorer or axFile. A file there that is not a template is listed with "not a template" after its name; Ctrl+J opens it in axJSON to mend.
 
 ## Settings
 

@@ -16,6 +16,29 @@ public sealed class AppPathsTests
         Assert.Equal(@"Local\AxKit.AxHelp", AppPaths.OneAtATime("AxHelp"));
     }
 
+    /// <summary>AX-5.11: what the user writes is in axKit's folder in Documents, never under AppData, which the Store's copy loses with an uninstall.</summary>
+    [Fact]
+    public void What_the_user_writes_is_in_the_axKit_folder_of_Documents()
+    {
+        var documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        Assert.Equal(Path.Combine(documents, "axKit"), AppPaths.UserFolder);
+        Assert.Equal(Path.Combine(documents, "axKit", "Templates"), AppPaths.TemplatesRoot);
+        Assert.DoesNotContain("AppData", AppPaths.UserFolder, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>AX-5.11: axTask's lists are in the new place, but for someone whose lists are in Documents\Tasks and nowhere else.</summary>
+    [Fact]
+    public void The_tasks_folder_is_the_new_one_unless_only_the_earlier_one_is_there()
+    {
+        const string user = @"D:\Docs\axKit";
+        const string earlier = @"D:\Docs\Tasks";
+        const string now = @"D:\Docs\axKit\Tasks";
+        Assert.Equal(now, AppPaths.TasksFolderFor(user, earlier, _ => false));
+        Assert.Equal(earlier, AppPaths.TasksFolderFor(user, earlier, path => path == earlier));
+        Assert.Equal(now, AppPaths.TasksFolderFor(user, earlier, _ => true));
+        Assert.Equal(now, AppPaths.TasksFolderFor(user, earlier, path => path == now));
+    }
+
     [Fact]
     public void A_whole_folder_moves_when_the_new_one_is_missing_and_nothing_happens_without_an_old_one()
     {

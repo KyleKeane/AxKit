@@ -5,10 +5,10 @@
 #
 # Enter, which pastes into the program in front, acts outside the window: not run here, it stays for the NVDA plan.
 file home\AxKit\axTemplate.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F7", "sayFirstMatch": false}
-file home\AxKit\templates\Greeting.json {"schema": "list.json", "Title": "Greeting", "Text": "Dear {clipboard}, the sprint starts {caret}"}
-file "home\AxKit\templates\Sprint notes.json" {"schema": "list.json", "Title": "Sprint notes", "Text": ""}
-file home\AxKit\templates\Thanks.json {"schema": "list.json", "Title": "Thanks", "Text": "Thank you very much"}
-file home\AxKit\templates\broken.json [1, 2]
+file home\Documents\axKit\Templates\Greeting.json {"schema": "list.json", "Title": "Greeting", "Text": "Dear {clipboard}, the sprint starts {caret}"}
+file "home\Documents\axKit\Templates\Sprint notes.json" {"schema": "list.json", "Title": "Sprint notes", "Text": ""}
+file home\Documents\axKit\Templates\Thanks.json {"schema": "list.json", "Title": "Thanks", "Text": "Thank you very much"}
+file home\Documents\axKit\Templates\broken.json [1, 2]
 
 start template --launcher
 # Check: The launcher's command list holds every key of its own
