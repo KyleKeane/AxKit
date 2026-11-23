@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- For developers: the navigator's work off the UI thread is one piece (`ItemForm.Work.cs`, framework step 3): one piece of work at a time with "Working…" for a second command (axGIT, axProcess), and a read whose late answer is dropped (axFile), each shown as the status bar's state. For the user one thing changes: axFile's status bar says "Reading…" while a folder is read.
 - axTask, axPass, axMCP, axAutomate: **Ctrl+N, F2 and Delete have no command in the details pane.** They once added, renamed and removed a field, and lately only said where fields are changed. They now play the knock of a key without a command there. In the list on the left they do what they did: a new item, rename, archive or delete.
 - axFile: **the command palette holds commands only.** It no longer lists the files and folders of the folder you are in; that was axFile's alone, and the palette is now the same in every app: the list of what the window can do. To find an entry, use Options, Filter, or type its first letters in the list.
 - axKit: **Up and Down in an empty list play the edge sound.** A list with nothing in it, such as an axTask list without items, was silent on the arrow keys, Home and End; it now plays the sound of a list's end, as a list of one item already did. In every list of every app.

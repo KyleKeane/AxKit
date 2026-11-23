@@ -49,9 +49,6 @@ public sealed class ProcessForm : ItemForm
     private IReadOnlyList<StartupEntry> _startup = [];
     private double? _processor;
 
-    /// <summary>What is being read or done now, for the status bar; null when nothing runs (PR-2.3).</summary>
-    private string? _busy;
-
     private bool _announcedFirstRead;
 
     public ProcessForm(ProcessSettings settings, string? settingsError)
@@ -301,9 +298,6 @@ public sealed class ProcessForm : ItemForm
         _ => _listMenu,
     };
 
-    /// <summary>The status bar's first part while something is read or done: "Reading…", "Stopping Print Spooler…"; the level's name otherwise.</summary>
-    protected override string? StatusState => _busy;
-
     // ---- what the window base asks for ----
 
     protected override string Shortcuts => HelpText.Shortcuts;
@@ -347,9 +341,8 @@ public sealed class ProcessForm : ItemForm
     /// </summary>
     private async Task RefreshAsync(bool announce, string? select = null)
     {
-        if (_busy is not null)
+        if (RefusedWhileWorking())
         {
-            Announce("Working…", true);
             return;
         }
 
@@ -386,13 +379,12 @@ public sealed class ProcessForm : ItemForm
     /// <summary>Reads one list into its rows; false when another read runs.</summary>
     private async Task<bool> LoadAsync(View view)
     {
-        if (_busy is not null)
+        if (RefusedWhileWorking())
         {
-            Announce("Working…", true);
             return false;
         }
 
-        _busy = "Reading…";
+        BeginWork(ReadingState);
         UpdateStatusBar();
         try
         {
@@ -416,7 +408,7 @@ public sealed class ProcessForm : ItemForm
         }
         finally
         {
-            _busy = null;
+            EndWork();
             if (!IsDisposed)
             {
                 UpdateStatusBar();
@@ -443,9 +435,8 @@ public sealed class ProcessForm : ItemForm
     /// </summary>
     private async Task ShowListAsync(View view)
     {
-        if (_busy is not null)
+        if (RefusedWhileWorking())
         {
-            Announce("Working…", true);
             return;
         }
 
@@ -710,14 +701,13 @@ public sealed class ProcessForm : ItemForm
     /// <summary>Start, Stop, Restart (PR-4.3) on a background task, with the wait for the new state, then a new read.</summary>
     private void ControlService(ServiceRow row, ServiceAction action) => Do(async () =>
     {
-        if (_busy is not null)
+        if (RefusedWhileWorking())
         {
-            Announce("Working…", true);
             return;
         }
 
         var verb = action switch { ServiceAction.Start => "start", ServiceAction.Stop => "stop", _ => "restart" };
-        _busy = action switch { ServiceAction.Start => "Starting ", ServiceAction.Stop => "Stopping ", _ => "Restarting " } + row.DisplayName + "…";
+        BeginWork(action switch { ServiceAction.Start => "Starting ", ServiceAction.Stop => "Stopping ", _ => "Restarting " } + row.DisplayName + "…");
         UpdateStatusBar();
         ServiceResult result;
         try
@@ -731,7 +721,7 @@ public sealed class ProcessForm : ItemForm
         }
         finally
         {
-            _busy = null;
+            EndWork();
             UpdateStatusBar();
         }
 
@@ -793,15 +783,14 @@ public sealed class ProcessForm : ItemForm
     /// </summary>
     private void ApplyStartup(StartupEntry entry, StartupAction action) => Do(async () =>
     {
-        if (_busy is not null)
+        if (RefusedWhileWorking())
         {
-            Announce("Working…", true);
             return;
         }
 
         var at = _startup.ToList().IndexOf(entry);
         var neighbour = at < 0 ? null : at + 1 < _startup.Count ? _startup[at + 1].Key : at > 0 ? _startup[at - 1].Key : null;
-        _busy = (action switch { StartupAction.TurnOff => "Turning off ", StartupAction.TurnOn => "Turning on ", _ => "Removing " }) + entry.Name + "…";
+        BeginWork((action switch { StartupAction.TurnOff => "Turning off ", StartupAction.TurnOn => "Turning on ", _ => "Removing " }) + entry.Name + "…");
         UpdateStatusBar();
         StartupResult result;
         try
@@ -810,7 +799,7 @@ public sealed class ProcessForm : ItemForm
         }
         finally
         {
-            _busy = null;
+            EndWork();
             UpdateStatusBar();
         }
 
@@ -857,13 +846,12 @@ public sealed class ProcessForm : ItemForm
 
         ShowNotice(Notice.Ask($"Remove {Count(allowed.Count, "startup program")} from the programs that start with Windows?", text, "&Remove", () => Do(async () =>
         {
-            if (_busy is not null)
+            if (RefusedWhileWorking())
             {
-                Announce("Working…", true);
                 return;
             }
 
-            _busy = $"Removing {Count(allowed.Count, "startup program")}…";
+            BeginWork($"Removing {Count(allowed.Count, "startup program")}…");
             UpdateStatusBar();
             List<(StartupEntry Entry, StartupResult Result)> results;
             try
@@ -872,7 +860,7 @@ public sealed class ProcessForm : ItemForm
             }
             finally
             {
-                _busy = null;
+                EndWork();
                 UpdateStatusBar();
             }
 

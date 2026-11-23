@@ -40,7 +40,7 @@ dotnet test tests/AxGit.Tests/AxGit.Tests.csproj
 ## Rules
 
 1. Every control gets an `AccessibleName`; the list is named with what it shows and its count; nothing speaks on a plain arrow key; a command's result is one announcement (AG-7), on the list, or on the notice while one shows.
-2. git never runs on the UI thread: `RunGitAsync` awaits the Core's process on a task, one command at a time (`_busy`), the status bar saying what runs and the git menu items disabled meanwhile.
+2. git never runs on the UI thread: `RunGitAsync` awaits the Core's process on a task, one command at a time (the item window's `BeginWork` and `EndWork`, 2026-11-23; `_busy` here until then), the status bar saying what runs and the git menu items disabled meanwhile.
 3. No second window (bundle AX-7.2): questions and errors are notices; the folder picker and File Explorer are the system's own windows.
 4. Run the `accessibility-review` skill on a change here before committing, and check it with NVDA following the test plan.
 

@@ -115,7 +115,7 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
 ## Gotchas already learned
 
 - Enter in a list (`AxKitList`, a `ListBox`) reaches `ProcessCmdKey` as `Keys.Return`; handled there with a `_list.Focused` check, and returning true keeps the list from dinging. Backspace, Space, F2 and Delete are the same; Shift+Enter arrives as `Keys.Shift | Keys.Return`.
-- A read that comes back after the user has moved on is dropped (`_reads`): a slow folder would otherwise overwrite a faster one chosen later.
+- A read that comes back after the user has moved on is dropped (the item window's `BeginRead` and `EndRead`, 2026-11-23; a counter here until then; the status bar says "Reading…" meanwhile): a slow folder would otherwise overwrite a faster one chosen later.
 - "The process cannot access the file because it is being used by another process" on renaming a folder is a process whose current directory the folder is (a terminal or an app started in it; probed 2026-10-22), not an open handle: an open enumeration of the folder's contents does not block a rename on Windows 11, and an open file inside gives "Access to the path is denied" instead. axFile holds nothing (every enumeration is a `foreach`, the shell objects are released at once, the file operation has no owner window); `FileOperations.Message` says what the two codes mean.
 - The Actions list is a bottom-docked list, always visible (it was hidden until the first operation, which left Tab with nowhere to go); the docking order in `Controls.AddRange` puts it between the folder list and the status bar.
 - The Actions list keeps the `ActionEntry` objects the operations were given back, so a running line is updated by object, not by index: lines may fall off the front of the list meanwhile.

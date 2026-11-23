@@ -38,9 +38,6 @@ public sealed partial class FileForm
     /// <summary>The folder's last write time at the last read, so that coming back to the window knows whether to read again (AF-3.4).</summary>
     private DateTime _folderStamp;
 
-    /// <summary>The number of the latest read: a slow read of a folder left behind is dropped when it arrives.</summary>
-    private int _reads;
-
     /// <summary>The folder shown when it is one on disk; null before one is shown and at This PC, which is no path a window can start on (AF-3.10).</summary>
     private string? RealFolder => _folder is { } folder && !FolderListing.IsThisPC(folder) ? folder : null;
 
@@ -134,7 +131,7 @@ public sealed partial class FileForm
     {
         // A rename box left open over the list that is about to change renames the wrong entry (AF-4.2).
         EndRename();
-        var read = ++_reads;
+        var read = BeginRead();
         var changed = !string.Equals(folder, _folder, StringComparison.OrdinalIgnoreCase);
         Listing listing;
         try
@@ -144,7 +141,7 @@ public sealed partial class FileForm
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
         {
-            if (read != _reads || IsDisposed)
+            if (!EndRead(read))
             {
                 return false;
             }
@@ -164,7 +161,7 @@ public sealed partial class FileForm
             return false;
         }
 
-        if (read != _reads || IsDisposed)
+        if (!EndRead(read))
         {
             return false;
         }

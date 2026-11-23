@@ -236,11 +236,10 @@ public sealed partial class GitForm
             return;
         }
 
-        if (_busy is not null)
+        if (RefusedWhileWorking())
         {
             // A stage or its refresh still runs: the count below is the one before it (found by tools/AxAutomate,
-            // 2026-10-23: the stage key then Ctrl+Enter said "Nothing staged").
-            Announce("Working…", true);
+            // 2026-10-23: the stage key then Ctrl+Enter said "Nothing staged").
             return;
         }
 

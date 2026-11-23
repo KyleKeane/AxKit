@@ -218,7 +218,7 @@ public sealed partial class FileForm : ItemForm
     protected override string? AfterRowsLine => _hidden > 0 || _dot > 0 ? FolderListing.NotShownText(_hidden, _dot) : null;
 
     /// <summary>The status bar's first part (AF-2.3): the newest file operation's line; how many are selected follows it, the item window's.</summary>
-    protected override string? StatusState => _actions.Latest?.Line ?? string.Empty;
+    protected override string? StatusState => Working ?? _actions.Latest?.Line ?? string.Empty;
 
     /// <summary>
     /// The folder shown as the navigator's level (AF-2.1, AF-2.2): a row for each entry, in the chosen order (a

@@ -102,10 +102,9 @@ public sealed partial class GitForm
             return;
         }
 
-        if (_busy is not null)
+        if (RefusedWhileWorking())
         {
-            // The list's first read would be refused.
-            Announce("Working…", true);
+            // The list's first read would be refused.
             return;
         }
 

@@ -777,11 +777,12 @@ public abstract partial class ItemForm : AxKitForm
     protected virtual string LogName => "log";
 
     /// <summary>
-    /// What the status bar's first part says in place of the level's name, when the app has something of the
-    /// moment to say there (axMedia: what plays and where); null, the default, for the level's name with its
-    /// count. ", 3 selected" follows either. <see cref="ShowStatus"/> shows it again when it changed.
+    /// What the status bar's first part says in place of the level's name, when there is something of the moment
+    /// to say there: by default the work that runs off the UI thread (<see cref="Working"/>: "Reading…"), and an app
+    /// says more in its place (axMedia: what plays and where). Null for the level's name with its count.
+    /// ", 3 selected" follows either. <see cref="ShowStatus"/> shows it again when it changed.
     /// </summary>
-    protected virtual string? StatusState => null;
+    protected virtual string? StatusState => Working;
 
     /// <summary>The status bar's first part shown again, for an app whose <see cref="StatusState"/> changed (a clock's tick).</summary>
     protected void ShowStatus() => ShowName();

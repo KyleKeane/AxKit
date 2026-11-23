@@ -109,7 +109,8 @@ folder of the file or project in hand, and sends back. It works entirely offline
   reason is read (the bundle's rule for empty lists, AX-9.5). Neither that item nor the not-shown line is an entry: a
   command on either says the line itself (AF-7).
 - AF-2.3 The title is `<folder name> - axFile`. The status bar's left label: the newest file operation's line in the Actions list
-  ("Copied 3 items", "Compressing, 40 of 120 files"), empty before the first operation,
+  ("Copied 3 items", "Compressing, 40 of 120 files"), empty before the first operation; while a folder is being read,
+  "Reading…" in its place (the navigator's state for work off the UI thread, framework FW-4.7 point 1, 2026-11-23),
   and after it, while entries are selected, how many, as in every navigator ("Copied 3 items, 2 selected"; "2 selected"
   alone before the first operation; AX-8.16, since 2026-11-22); the right label: the folder's
   full path. No AccessibleName, no Spring (axClaude §6.2).

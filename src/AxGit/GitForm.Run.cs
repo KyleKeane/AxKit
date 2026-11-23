@@ -29,13 +29,12 @@ public sealed partial class GitForm
             return null;
         }
 
-        if (_busy is not null)
+        if (RefusedWhileWorking())
         {
-            Announce("Working…", true);
             return null;
         }
 
-        _busy = verb;
+        BeginWork($"Working: {verb}…");
         SetGitItems(false);
         UpdateStatusBar();
         var watch = Stopwatch.StartNew();
@@ -53,7 +52,7 @@ public sealed partial class GitForm
         }
         finally
         {
-            _busy = null;
+            EndWork();
             if (!IsDisposed)
             {
                 SetGitItems(true);

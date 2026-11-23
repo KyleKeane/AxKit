@@ -57,9 +57,6 @@ public sealed partial class GitForm : ItemForm
     private IReadOnlyList<Commit> _commits = [];
     private IReadOnlyList<Branch> _branches = [];
 
-    /// <summary>The verb of the git command running now, for the status bar; null between commands.</summary>
-    private string? _busy;
-
     private bool _gitMissing;
 
     public GitForm(string? path, GitSettings settings, string? settingsError)
@@ -308,7 +305,7 @@ public sealed partial class GitForm : ItemForm
 
     /// <summary>The status bar's first part (AG-2.3): the command running, that git is missing, that no repository is open, or the branch and the counts.</summary>
     protected override string? StatusState =>
-        _busy is not null ? $"Working: {_busy}…"
+        Working is { } work ? work
         : _gitMissing ? "git was not found"
         : _root is null ? "No repository"
         : _repo.StatusText;

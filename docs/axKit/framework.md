@@ -159,6 +159,8 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
   maintainer put it back the same day: "i want any list to be able to be filtered or sorted". Point 6, the rows in
   the command palette, is not built and is gone from axFile too: asked on 2026-11-23 whether every navigator should
   offer its rows there, he answered "Remove it from axFile too". The palette holds commands only (bundle AX-10.5).
+  Point 1 is in the type since 2026-11-23 (step 3, `ItemForm.Work.cs`): the busy state and the read ticket
+  the three apps each kept.
 - FW-4.8 After this, axTask and axFile are the same window: one shows folders of items with a pane of fields, the
   other folders of files with a pane of the operations made. Their difference is their data and their commands.
 - FW-4.9 **axMedia is a queue and its controls**, a navigator of one level whose rows are what will play (the
@@ -279,10 +281,14 @@ NVDA pass recorded. A piece that changes what a user does updates the app's spec
 
 **B. The navigator made general, with nothing changing for axTask, axPass, axMCP and axAutomate**
 
-3. A level read off the UI thread, with a late answer dropped and "reading" said (FW-4.7, point 1). Not built
-   in the type, and open: axProcess, axGIT and axFile moved onto the navigator with their own reads, each
-   started through the type's hooks, so nothing forced a shared one. Asked on 2026-11-23, the maintainer wants
-   the shared one built ("Yes, build the common one"): the step is open, and next.
+3. A level read off the UI thread, with a late answer dropped and "reading" said (FW-4.7, point 1). Built,
+   2026-11-23, at the maintainer's word ("Yes, build the common one"; the three apps had first moved onto the
+   navigator with their own reads, and I had left it there): `ItemForm.Work.cs` holds the two rules the three
+   had between them. One piece of work at a time, a second command refused with "Working…": axGIT's git
+   commands, which is its own rule, and axProcess's reads and changes. A read whose late answer is dropped:
+   axFile's folder. Either shows as the status bar's state, "Reading…" or the app's words, read on demand and
+   never said by itself. axFile's status bar now says "Reading…" while a folder is read; nothing else changes
+   for the user.
 4. The second pane as fields, a text, a log, or none (point 2). Built, 2026-11-22 (FW-4.7).
 5. Filter and sort, the line of an empty level, the rows in the palette (points 3, 5, 6). Built, 2026-11-22:
    filter and sort in every navigator (FW-4.10a), the line of an empty level and the line of what is not shown
