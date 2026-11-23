@@ -998,3 +998,5 @@ Steps and keys: `docs/axKit/workflows/nvda-only.md` (in Claude's working folder:
 4. **Hear axDown's notices and palette with NVDA**
 5. **Find a name backwards with Shift and a letter**
     - Go back to the name before with Shift and its letter
+6. **Hear the caution of a command another program put into the command field**
+    - Hear that another program put the command there, before the command, and again on coming back to the field

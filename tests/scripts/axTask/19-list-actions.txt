@@ -139,9 +139,8 @@ keys enter
 expect said ! Look in the terminal is in axTerminal's command field
 adopt
 expect state - axTerminal, access layer for your shell"
-expect focus "name":"Command","role":"Text","value":"findstr /c:x '
+expect focus "name":"Command, put here by another program and not sent. axKit checked nothing of it: read it, and press Enter only if you want to run it","role":"Text","value":"findstr /c:x '
 expect focus Fix the tap.json'"
-expect said A command is in the command field, not sent. Another program put it there, and axKit checked nothing of it: read it, and press Enter only if you want to run it
 close
 use 1
 expect focus Fix the tap

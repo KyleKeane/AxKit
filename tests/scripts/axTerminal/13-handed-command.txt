@@ -1,8 +1,10 @@
 # Workflow: Take a command another window hands over
 # axTerminal, SPEC.md AT-1.5a (docs/axTask/forms-framework.md AF-7.4): started with --command and the command's
-# parts, the window puts them into its command field as one line for its shell, each part still one part, says so
-# once, and sends nothing: the user reads the line and presses Enter himself. The shell is the default one of a
-# fresh settings file, Windows PowerShell or PowerShell 7, whose quoting rule is the same.
+# parts, the window puts them into its command field as one line for its shell, each part still one part, and sends
+# nothing: the user reads the line and presses Enter himself. While the line stands there as it came, the field's
+# own name is the caution, so that NVDA reads it before the command whenever the focus arrives; changed, sent or
+# deleted, the field is "Command" again. The shell is the default one of a fresh settings file, Windows PowerShell
+# or PowerShell 7, whose quoting rule is the same.
 mkdir myproject
 file home\AxKit\axTerminal.json {"checkForUpdates": false, "fontSize": 6, "window": {"x": 0, "y": 0, "width": 1600, "height": 900, "maximized": true}}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
@@ -10,18 +12,25 @@ start terminal {temp}\myproject --command Write-Output "It's two words; Write-Ou
 
 # Goal: Read a handed command in the field before sending it
 # The line is in the field, the part with spaces, a quote and a semicolon in single quotes with its quote doubled,
-# so that it is one text and no second command. It is said once and stands in the transcript as a system line.
-expect focus {"name":"Command","role":"Text","value":"Write-Output 'It''s two words; Write-Output more'"}
-expect said A command is in the command field, not sent. Another program put it there, and axKit checked nothing of it: read it, and press Enter only if you want to run it
+# so that it is one text and no second command. The field's name is the caution, and the transcript holds it as a
+# system line; it is no announcement, which NVDA's reading of the opening window could cut off.
+expect focus {"name":"Command, put here by another program and not sent. axKit checked nothing of it: read it, and press Enter only if you want to run it","role":"Text","value":"Write-Output 'It''s two words; Write-Output more'"}
 expect said ♪ Ready
+refuse said A command is in the command field
 do Terminal
 expect text System: A command is in the command field, not sent.
 # Check: A handed command is not sent by itself
-# Nothing was sent: the transcript holds no input block, and the line is still in the field.
+# Nothing was sent: the transcript holds no input block, and the line is still in the field under its caution.
 do Latest output
 expect said No output yet
 do Command field
-expect focus {"name":"Command","role":"Text","value":"Write-Output 'It''s two words; Write-Output more'"}
+expect focus {"name":"Command, put here by another program and not sent. axKit checked nothing of it: read it, and press Enter only if you want to run it","role":"Text","value":"Write-Output 'It''s two words; Write-Output more'"}
+# Check: A handed command the user changed is the user's own
+# One character typed: the field is "Command" again; taken back, the line is as it came and has its caution again.
+type x
+expect focus {"name":"Command","role":"Text","value":"Write-Output 'It''s two words; Write-Output more'x"}
+keys backspace
+expect focus {"name":"Command, put here by another program and not sent. axKit checked nothing of it: read it, and press Enter only if you want to run it","role":"Text","value":"Write-Output 'It''s two words; Write-Output more'"}
 
 # Goal: Send the handed command yourself
 # Enter sends it, as any line of the field: one output line, the text as one text.
@@ -33,3 +42,6 @@ expect said Output 1 heading level 1
 keys down
 keys down
 expect focus "value":"It's two words; Write-Output more"}
+# Check: Once sent, the field is the plain command field again
+do Command field
+expect focus {"name":"Command","role":"Text","value":""}

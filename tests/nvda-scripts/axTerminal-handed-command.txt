@@ -1,0 +1,20 @@
+# Workflow: Hear the caution of a command another program put into the command field
+# NVDA tier (docs/axKit/automation.md, tier 3): axTerminal started with --command (docs/axTerminal/SPEC.md AT-1.5a).
+# The caution is the command field's own name while the line stands in it as it came, so NVDA speaks it as it reads
+# the field the focus lands in, before the command, and nothing can cut it off; as an announcement it was once lost
+# behind NVDA's reading of the opening window (the pass of 2026-11-22). Run only with --nvda, with the user away.
+mkdir myproject
+file home\AxKit\axTerminal.json {"checkForUpdates": false, "fontSize": 6, "window": {"x": 0, "y": 0, "width": 1600, "height": 900, "maximized": true}}
+file home\AxKit\consent.json {"items":[{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"}]}
+start terminal {temp}\myproject --command Write-Output "two words"
+
+# Goal: Hear that another program put the command there, before the command, and again on coming back to the field
+# As the window opens NVDA reads the field under its caution, then the command. The focus then leaves for the
+# terminal's text and comes back: the field is read under its caution again.
+expect spoken Command, put here by another program and not sent. axKit checked nothing of it: read it, and press Enter only if you want to run it
+expect spoken Write-Output 'two words'
+expect said ♪ Ready
+spoken
+do Terminal
+do Command field
+expect spoken Command, put here by another program and not sent

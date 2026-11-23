@@ -482,7 +482,6 @@ Starts with: Open axTerminal with the folder myproject --command Write-Output "I
 
 ### Read a handed command in the field before sending it
 
-You hear: A command is in the command field, not sent. Another program put it there, and axKit checked nothing of it: read it, and press Enter only if you want to run it.
 You hear the sound Ready.
 1. Press Alt+2 (Terminal; Navigation menu).
 

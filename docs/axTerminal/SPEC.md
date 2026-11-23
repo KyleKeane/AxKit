@@ -128,13 +128,23 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   shell's rule so that it stays one part (`HandedCommand.Line` over the bundle's `ShellQuote`: PowerShell, single
   quotes with a single quote doubled; Command Prompt, a part with a character cmd.exe acts on refused; Git Bash, a
   custom shell and a shell of the user's own have no rule; a line break in a part refused for every shell), puts
-  the line into the command field with the caret after it, and sends nothing: Enter is the user's. Once the window
-  shows it says, and the transcript holds as a system line, "A command is in the command field, not sent. Another
-  program put it there, and axKit checked nothing of it: read it, and press Enter only if you want to run it"; where
-  no line could be made, "A command was handed to this window and is not in the command field:" and why, and the
-  field is empty. The start line of the log holds the number of parts, never the parts (`CommandLineText.ForLog`),
-  since they may hold an item's values. axTask's `terminal` actions are what hands a command over. Tested in
-  `HandedCommandTests`, `CommandLineTextTests` and `tests/scripts/axTerminal/13-handed-command.txt`.
+  the line into the command field with the caret after it, and sends nothing: Enter is the user's. **The caution
+  is the field's own name** while the line stands in it as it came (2026-11-22, `HandedCommand.FieldName`):
+  "Command, put here by another program and not sent. axKit checked nothing of it: read it, and press Enter only
+  if you want to run it", in the place of "Command". NVDA reads a field's name before its text whenever the focus
+  arrives there, so the warning is heard before the command, at the start and on every return to the field, and
+  cannot be lost. Until that day the words were an announcement as the window showed, and NVDA's own reading of
+  the opening window could cut it off: heard once in four runs by the NVDA pass of 2026-11-22, where the command
+  was then read with no warning (root rule 11: such a caution is heard every time). Changed by the user, replaced
+  by a recalled command, sent or deleted, the text is the user's own and the field is "Command" again; undone
+  back to the line as it came, it has its caution again. The transcript holds, as a system line to read again, "A
+  command is in the command field, not sent. Another program put it there, and axKit checked nothing of it: read
+  it, and press Enter only if you want to run it"; where no line could be made, "A command was handed to this
+  window and is not in the command field:" and why, said once the window shows, and the field is empty. The
+  start line of the log holds the number of parts, never the parts (`CommandLineText.ForLog`), since they may hold
+  an item's values. axTask's `terminal` actions are what hands a command over. Tested in `HandedCommandTests`,
+  `CommandLineTextTests`, `tests/scripts/axTerminal/13-handed-command.txt` and, for what NVDA speaks,
+  `tests/nvda-scripts/axTerminal-handed-command.txt`.
 - AT-1.6 Session → **New session…** (Ctrl+N), the shape and the name of axClaude's New session (axClaude FR-8.6,
   D30): the notice "New session" with `Folder: C:\path` as its first line, "Choose the shell and the folder. Starting
   ends the current shell and starts a new session in the folder." and the key line, preceded by "<the command> is

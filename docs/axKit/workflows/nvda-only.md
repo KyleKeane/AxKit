@@ -109,3 +109,16 @@ Starts with: Open axFile with the folder f.
 
 1. Press End.
 2. Press Shift+C 2 times.
+
+## Hear the caution of a command another program put into the command field
+
+Starts with: Open axTerminal with the folder myproject --command Write-Output "two words".
+
+### Hear that another program put the command there, before the command, and again on coming back to the field
+
+NVDA says: Command, put here by another program and not sent. axKit checked nothing of it: read it, and press Enter only if you want to run it.
+NVDA says: Write-Output 'two words'.
+You hear the sound Ready.
+1. Press Alt+2 (Terminal; Navigation menu).
+2. Press Alt+1 (Command field; Navigation menu).
+    NVDA says: Command, put here by another program and not sent.

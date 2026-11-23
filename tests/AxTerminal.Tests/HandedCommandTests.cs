@@ -84,4 +84,19 @@ public sealed class HandedCommandTests
         Assert.Equal("A command was handed to this window and is not in the command field: axKit has no quoting rule for Git Bash",
             HandedCommand.Said(HandedCommand.Line(ShellKind.GitBash, ["dir"]).Refused));
     }
+
+    /// <summary>
+    /// AT-1.5a, root rule 11: the field's name while the handed line stands in it says all the caution says, and
+    /// begins with the field's own word, so that it is still the command field to the ear.
+    /// </summary>
+    [Fact]
+    public void The_fields_name_carries_the_whole_caution()
+    {
+        Assert.StartsWith("Command, ", HandedCommand.FieldName, StringComparison.Ordinal);
+        foreach (var part in new[] { "another program", "not sent", "axKit checked nothing of it", "read it", "press Enter only if you want to run it" })
+        {
+            Assert.Contains(part, HandedCommand.FieldName, StringComparison.Ordinal);
+            Assert.Contains(part, HandedCommand.Said(null), StringComparison.OrdinalIgnoreCase);
+        }
+    }
 }

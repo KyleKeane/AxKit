@@ -84,8 +84,12 @@ internal sealed partial class TerminalForm : ConsoleForm
 
     /// <summary>
     /// AT-1.5a: the handed command as one line in the field, the caret after it, quoted for the shell this window
-    /// starts (a shell of the user's own and a custom shell have no rule, and get nothing); what happened is said
-    /// once the window shows. Nothing here sends: Enter is the user's.
+    /// starts (a shell of the user's own and a custom shell have no rule, and get nothing). Nothing here sends: Enter
+    /// is the user's. The caution is the field's own name while the line stands in it as it came
+    /// (<see cref="HandedCommand.FieldName"/>): NVDA reads a field's name before its text whenever the focus
+    /// arrives there, so the caution is heard first and every time. Until 2026-11-22 it was an announcement as the
+    /// window showed, which NVDA's own reading of the opening window could cut off (heard once by the NVDA pass of
+    /// that day): a command another program put there was then read without its warning.
     /// </summary>
     private void TakeHandedCommand(IReadOnlyList<string> handed)
     {
@@ -94,20 +98,45 @@ internal sealed partial class TerminalForm : ConsoleForm
         {
             Input.Text = line;
             Input.Select(Input.TextLength, 0);
+            _handedLine = line;
+            Input.AccessibleName = HandedCommand.FieldName;
+            // Changed by the user, replaced by a recalled command, sent or deleted, the text is the user's own and
+            // the field is the plain command field again; undone back to the line as it came, it has its caution again.
+            Input.TextChanged += (_, _) =>
+            {
+                if (Input.TextLength == 0)
+                {
+                    _handedLine = null;
+                }
+
+                var name = _handedLine is not null && Input.Text == _handedLine ? HandedCommand.FieldName : CommandFieldName;
+                if (Input.AccessibleName != name)
+                {
+                    Input.AccessibleName = name;
+                }
+            };
         }
 
-        // A system line of the transcript, to read again, and spoken once the window shows (OnShown): a system line alone is not spoken.
-        _handedSaid = HandedCommand.Said(refused);
-        SayAtStart(_handedSaid);
+        // A system line of the transcript, to read again. Where no line could be made there is no field text to
+        // carry the words, so they are also spoken once the window shows (OnShown): a system line alone is not spoken.
+        var said = HandedCommand.Said(refused);
+        SayAtStart(said);
+        _handedSaid = line is null ? said : null;
         Log.Info(line is null ? "A handed command was not put into the field" : "A handed command was put into the field");
     }
 
-    /// <summary>What to say of a handed command once the window shows (AT-1.5a); null when none was handed, and once said.</summary>
+    /// <summary>What NVDA calls the command field.</summary>
+    private const string CommandFieldName = "Command";
+
+    /// <summary>The handed line while it stands in the field as it came (AT-1.5a); null when none was handed, and once the field was emptied.</summary>
+    private string? _handedLine;
+
+    /// <summary>What to say once the window shows of a handed command that could not be put into the field (AT-1.5a); null otherwise, and once said.</summary>
     private string? _handedSaid;
 
     /// <summary>The model is made first so that the base and this class both hold it: the base as a LineStore, this class as the shell's.</summary>
     private TerminalForm(string? folder, TerminalSettings settings, string? settingsError, TerminalModel model)
-        : base(AxTerminalApp.Name, settings, TerminalSettings.DefaultPath, settingsError, model, AxTerminalKeys.Transcript, "Terminal", "Command")
+        : base(AxTerminalApp.Name, settings, TerminalSettings.DefaultPath, settingsError, model, AxTerminalKeys.Transcript, "Terminal", CommandFieldName)
     {
         _settings = settings;
         _model = model;

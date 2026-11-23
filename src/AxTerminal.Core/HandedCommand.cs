@@ -66,8 +66,18 @@ public static class HandedCommand
     };
 
     /// <summary>
-    /// What is said once the window shows: that a line is in the field, not sent, and who put it there; or why
-    /// nothing is. The line itself is not said here: NVDA reads the field, where the focus is.
+    /// The command field's name while the handed line stands in it as it came (AT-1.5a, 2026-11-22): the caution
+    /// as the field's own name, in the place of "Command". NVDA reads a field's name before its text whenever
+    /// the focus arrives in it, so the warning comes before the command, every time, and no reading of the opening
+    /// window can cut it off, as it once cut the announcement these words were until then. It says the same as
+    /// <see cref="Said"/>: put there by another program, not sent, nothing checked, Enter is the user's choice.
+    /// </summary>
+    public const string FieldName = "Command, put here by another program and not sent. axKit checked nothing of it: read it, and press Enter only if you want to run it";
+
+    /// <summary>
+    /// The system line of the transcript: that a line is in the field, not sent, and who put it there; or why
+    /// nothing is, which is also spoken once the window shows, since no field text carries it. The line itself is
+    /// not said here: NVDA reads the field, where the focus is, under its name of the moment (<see cref="FieldName"/>).
     /// </summary>
     public static string Said(string? refused) => refused is null
         ? "A command is in the command field, not sent. Another program put it there, and axKit checked nothing of it: read it, and press Enter only if you want to run it"

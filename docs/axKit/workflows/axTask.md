@@ -808,7 +808,6 @@ Starts with: Open axTask with the folder tasks.
 5. Press Enter.
     You hear: Look in the terminal is in axTerminal's command field.
 6. A new window opens: go to it.
-    You hear: A command is in the command field, not sent. Another program put it there, and axKit checked nothing of it: read it, and press Enter only if you want to run it.
 7. Close the window.
 8. Go to the axTask window.
 
