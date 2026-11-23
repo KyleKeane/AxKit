@@ -6,6 +6,22 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-23: the navigators after four changes from the maintainer's answers; by the assistant with NVDA listening (branch `axfile-navigator` a99a6c08)
+
+`.\nvda-pass.ps1 -Only` every script of the eight navigators (axFile, axGIT, axProcess, axTask, axPass, axMCP,
+axAutomate, axMedia), from the branch's own folder, behind the spoken countdown, the maintainer away at his word
+("i am away for awhile so please work autonomously"), NVDA 2025.3.3 with the OneCore voice, Windows 11 Pro
+10.0.26200, the build 5.10.0 of commit a99a6c08, the tree clean: 70 scripts, 539 goals and checks, all passed at
+the first run.
+
+| What | Scripts | Result |
+|---|---|---|
+| The edge sound in a list that holds nothing, and in a list of one item (axTask, `23-edge-in-small-lists.txt`): Up, Down, Home and End | 1 | Passed |
+| The command palette with commands only: in axFile the start of a folder's name says "No commands match …", a command's name runs it (`05-text-notices-axkit-menu.txt`) | 1 | Passed |
+| Ctrl+N, F2 and Delete in the details pane of axTask and axPass: the knock of a key with no command, nothing opened or changed | 2 | Passed |
+| axFile, axGIT and axProcess on the navigator's shared work state (one piece of work at a time, a read whose late answer is dropped): every script | 26 | Passed |
+| The other scripts of the eight navigators | 40 | Passed |
+
 ## 2026-11-22: the caution of a handed command as axTerminal's field name; by the assistant with NVDA listening (branch `axfile-navigator` 656663e1)
 
 `.\nvda-pass.ps1 -Only` every script of axTerminal, axTask's `19-list-actions.txt` and the new NVDA script
