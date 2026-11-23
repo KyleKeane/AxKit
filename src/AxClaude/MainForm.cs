@@ -279,7 +279,6 @@ internal sealed partial class MainForm : ConsoleForm
         }
     }
 
-    /// <summary>FR-1.7: closing now would cut Claude off in the middle of a turn, or stop the work it runs in the background after the turn: the question first, inside the window (D23).</summary>
     /// <summary>
     /// A start's "message" (FR-9.2; axHelp's screenshot into its conversation, docs/axHelp/SPEC.md HE-3): the text
     /// added to the message field on a line of its own, not sent, the caret at its end and the window in front, so
@@ -313,9 +312,10 @@ internal sealed partial class MainForm : ConsoleForm
     };
 
     /// <summary>
-    /// The Close axClaude? notice (FR-1.7): what Claude is doing, what closing does to it; none while Claude neither
-    /// works nor has work in the background. Enter closes, Escape keeps the window: the buttons are the console
-    /// window's (Close anyway, Keep working).
+    /// The Close axClaude? notice (FR-1.7): closing now would cut Claude off in the middle of a turn, or stop the work it
+    /// runs in the background after the turn, so the question comes first, inside the window (D23). It says what Claude
+    /// is doing and what closing does to it; none while Claude neither works nor has work in the background. Enter
+    /// closes, Escape keeps the window: the buttons are the console window's (Close anyway, Keep working).
     /// </summary>
     protected override ConsoleQuestion? ClosingQuestion()
     {
