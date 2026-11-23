@@ -65,6 +65,10 @@ every window" or under a heading that names the windows without it; under an app
 - axTask. Menu: Window, New window. Key: none. Mark: open.
 - axTerminal, access layer for your shell. Menu: Window, New window. Key: none. Mark: act.
 
+## In every window but axClip, axHelp and axPass
+
+- axTemplate. Menu: Window, New window. Key: none. Mark: open.
+
 ## In every window but axClip, axHelp, axPass and axStart
 
 - Exit. Menu: Session. Key: Alt+F4. Mark: act.
@@ -296,6 +300,7 @@ every window" or under a heading that names the windows without it; under an app
 - axProcess. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
 - axStart. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
 - axTask. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
+- axTemplate. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
 - axTerminal, access layer for your shell. Menu: Window, New window. Key: none. Mark: act. Never run by AI tools.
 - First match. Menu: none, a key alone. Key: Ctrl+Home. Mark: read. Never run by AI tools.
 - Last match. Menu: none, a key alone. Key: Ctrl+End. Mark: read. Never run by AI tools.
@@ -751,6 +756,7 @@ every window" or under a heading that names the windows without it; under an app
 - axProcess. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
 - axStart. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
 - axTask. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
+- axTemplate. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
 - axTerminal, access layer for your shell. Menu: Window, New window. Key: none. Mark: act. Never run by AI tools.
 - Ask about this window. Menu: none, a key alone. Key: Ctrl+Slash. Mark: act. Never run by AI tools.
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
@@ -1010,6 +1016,7 @@ every window" or under a heading that names the windows without it; under an app
 - Copy without putting in. Menu: Context. Key: Shift+Enter. Mark: act.
 - No templates yet: Ctrl+N makes one. Menu: Context. Key: none. Mark: read.
 - Put in. Menu: Context. Key: Enter. Mark: act.
+- Put in, with that program's selection. Menu: Context. Key: Ctrl+Enter. Mark: act.
 - Read in full. Menu: Context. Key: Ctrl+Q. Mark: read.
 - The marks of a template. Menu: Help, axTemplate resources. Key: none. Mark: act.
 - Nothing to move to here yet. Menu: Navigation. Key: none. Mark: read.
@@ -1028,7 +1035,6 @@ every window" or under a heading that names the windows without it; under an app
 - axGIT, access layer for Git. Menu: Session, Show the templates' folder in. Key: none. Mark: open.
 - axTerminal, access layer for your shell. Menu: Session, Show the templates' folder in. Key: none. Mark: act.
 - File Explorer. Menu: Session, Show the templates' folder in. Key: none. Mark: open.
-- axTemplate. Menu: Window, New window. Key: none. Mark: open.
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
 - Check the field. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
 - Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.

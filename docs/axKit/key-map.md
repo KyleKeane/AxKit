@@ -3,7 +3,7 @@
 Written by `tools/key-map.ps1` from `docs/axKit/window-commands.json`, `src/AxKit.Forms/BundleKeys.cs` and
 `docs/axKit/key-families.json`; never edit it by hand. Every key of every window and what it does in each app.
 
-The inventory holds 716 commands with a key in 18 apps, on 126 different keys, counting the
+The inventory holds 717 commands with a key in 18 apps, on 126 different keys, counting the
 second keys some commands answer. 50 keys have one meaning wherever they are; 76 have several.
 21 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
 are window keys, each in its window's own table.
@@ -191,6 +191,18 @@ Window key, in axClaude, axDown, axGIT, axPreview, axProcess, axTask and axTermi
 - axTask: Next heading level 3.
 - axProcess: Startup.
 
+### Ctrl+Enter
+
+Bundle key, in axClaude, axFile, axGIT, axMedia, axTask, axTemplate and axTerminal. 7 meanings.
+
+- axGIT: Commit.
+- axTask: Done or not done.
+- axFile: Play folder in axMedia.
+- axMedia: Play, pause or resume.
+- axTemplate: Put in, with that program's selection.
+- axTerminal: Send the command.
+- axClaude: Send the message.
+
 ### F6
 
 Bundle key, in axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask, axTemplate and axTerminal. 6 meanings.
@@ -311,17 +323,6 @@ Window key, in axFile, axGIT, axJSON, axPreview, axProcess and axTask. 6 meaning
 - axGIT: Open file in editor.
 - axTask: Show in axFile.
 - axProcess: Show program in axFile.
-
-### Ctrl+Enter
-
-Bundle key, in axClaude, axFile, axGIT, axMedia, axTask and axTerminal. 6 meanings.
-
-- axGIT: Commit.
-- axTask: Done or not done.
-- axFile: Play folder in axMedia.
-- axMedia: Play, pause or resume.
-- axTerminal: Send the command.
-- axClaude: Send the message.
 
 ### Ctrl+I
 

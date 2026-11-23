@@ -21,10 +21,11 @@ expect commands "axStart, Window, New window"
 # does not reach.
 # 4.2 manual: Open windows by type is a submenu filled as it opens, which the palette leaves out.
 # Goal: Hear the version of axKit
-# 4.2: axKit, About, Version names the apps in their two kinds.
+# 4.2: axKit, About, Version names the apps in their two kinds; the standalone apps by how their list begins, since
+# a new app joins its end.
 menu Version
 expect state "notice":"axKit
-expect state Windows: axFile, axDown, axJSON, axPreview, axMedia, axTask, axStart, axClip, axCalc, axProcess, axAutomate.
+expect state Standalone apps, which need only Windows: axFile, axDown, axJSON, axPreview, axMedia, axTask, axStart, axClip, axCalc, axProcess, axAutomate
 expect state axTerminal for your shell, axGIT for Git, axPass for KeePassXC, axClaude for Claude Code, axMCP for MCP servers, axHelp for Claude Code.
 keys escape
 expect state "notice":null

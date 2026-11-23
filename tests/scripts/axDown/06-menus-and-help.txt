@@ -69,10 +69,12 @@ expect said ! No next table
 keys escape
 expect focus a.md
 # Goal: Hear the version of axKit
-# axKit, About, Version names the version of axKit, the apps in their two kinds and the folders.
+# axKit, About, Version names the version of axKit, the apps in their two kinds and the folders. The standalone apps
+# are checked by how their list begins: a new app joins its end (axTemplate did on 2026-11-23, and the whole list
+# written here failed); the whole sentence is BundleAbout's, tested there.
 menu Version
 expect state "notice":"axKit
-expect state Windows: axFile, axDown, axJSON, axPreview, axMedia, axTask, axStart, axClip, axCalc, axProcess, axAutomate.
+expect state Standalone apps, which need only Windows: axFile, axDown, axJSON, axPreview, axMedia, axTask, axStart, axClip, axCalc, axProcess, axAutomate
 expect state axTerminal for your shell, axGIT for Git, axPass for KeePassXC, axClaude for Claude Code, axMCP for MCP servers, axHelp for Claude Code.
 expect state Settings: 
 expect state Logs: 

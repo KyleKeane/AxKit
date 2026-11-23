@@ -547,6 +547,7 @@ The keys:
 - Ctrl+Enter, axTask: Done or not done.
 - Ctrl+Enter, axFile: Play folder in axMedia.
 - Ctrl+Enter, axMedia: Play, pause or resume.
+- Ctrl+Enter, axTemplate: Put in, with that program's selection.
 - Ctrl+Enter, axTerminal: Send the command.
 - Ctrl+Enter, axClaude: Send the message.
 - Shift+Enter, axClip: Copy without pasting.

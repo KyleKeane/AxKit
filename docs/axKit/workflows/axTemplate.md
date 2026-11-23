@@ -24,7 +24,7 @@ Starts with: Open axTemplate.
 2. Press Down.
 3. Press Enter.
 4. Type: Thank you, {clipboard}.{caret}
-5. Press Ctrl+Enter.
+5. Press Ctrl+Enter (Put in, with that program's selection; Context menu).
 6. Press Down.
 7. Press Space.
 8. Press Down.
