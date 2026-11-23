@@ -29,8 +29,8 @@ public sealed class TemplateTests : IDisposable
         var text = TemplateStore.ConfigurationToWrite(null, ["axDown", "axJSON"]);
         Assert.NotNull(text);
         var config = ListConfig.Parse(text);
-        Assert.Equal(["Text", "Every axKit app", "axDown", "axJSON"], config.ItemFields.Select(field => field.Title));
-        Assert.Equal([FieldTypes.LongText, FieldTypes.Check, FieldTypes.Check, FieldTypes.Check], config.ItemFields.Select(field => field.Type));
+        Assert.Equal(["Text", "axDown", "axJSON"], config.ItemFields.Select(field => field.Title));
+        Assert.Equal([FieldTypes.LongText, FieldTypes.Check, FieldTypes.Check], config.ItemFields.Select(field => field.Type));
     }
 
     [Fact]
@@ -44,14 +44,19 @@ public sealed class TemplateTests : IDisposable
         var withOwn = own.WithItemFields([.. own.ItemFields, new ItemField("Notes", FieldTypes.Text, FieldTypes.Empty(FieldTypes.Text), [])]).ToText();
         var grown = TemplateStore.ConfigurationToWrite(withOwn, ["axDown", "axClaude"]);
         Assert.NotNull(grown);
-        Assert.Equal(["Text", "Every axKit app", "axDown", "Notes", "axClaude"], ListConfig.Parse(grown).ItemFields.Select(field => field.Title));
+        Assert.Equal(["Text", "axDown", "Notes", "axClaude"], ListConfig.Parse(grown).ItemFields.Select(field => field.Title));
+
+
+        // The retired check for every app (2026-11-23, Check all in the form) is taken out of a configuration that has it.
+        var old = own.WithItemFields([own.ItemFields[0], new ItemField(TemplateStore.EveryAppField, FieldTypes.Check, FieldTypes.Empty(FieldTypes.Check), []), .. own.ItemFields.Skip(1)]).ToText();
+        Assert.Equal(["Text", "axDown"], ListConfig.Parse(TemplateStore.ConfigurationToWrite(old, ["axDown"])!).ItemFields.Select(field => field.Title));
     }
 
     [Fact]
     public void A_configuration_that_does_not_read_is_left_alone()
     {
         Assert.Null(TemplateStore.ConfigurationToWrite("{ not json", ["axDown"]));
-        Assert.Equal(["Text", "Every axKit app"], TemplateStore.Configuration("{ not json").ItemFields.Select(field => field.Title));
+        Assert.Equal(["Text"], TemplateStore.Configuration("{ not json").ItemFields.Select(field => field.Title));
     }
 
     [Fact]
@@ -115,7 +120,7 @@ public sealed class TemplateTests : IDisposable
         var folder = Path.Combine(_folder, "templates");
         var first = TemplateStore.Open(folder);
         Assert.Empty(first.Files);
-        Assert.Equal(["Text", "Every axKit app", .. TemplateStore.AppsWithField], first.Config.ItemFields.Select(field => field.Title));
+        Assert.Equal(["Text", .. TemplateStore.AppsWithField], first.Config.ItemFields.Select(field => field.Title));
 
         var written = File.GetLastWriteTimeUtc(TemplateStore.ConfigurationPath(folder));
         File.WriteAllText(Path.Combine(folder, "Thanks.json"), TemplateStore.NewItemText("Thanks", first.Config));

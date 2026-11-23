@@ -42,25 +42,29 @@ public static class TemplateStore
     /// <summary>The field that holds what is put in.</summary>
     public const string TextField = "Text";
 
-    /// <summary>The check that shows a template in every axKit app's command palette.</summary>
+    /// <summary>
+    /// The check that showed a template in every axKit app's command palette, retired on 2026-11-23 (the maintainer:
+    /// "every axkit app should be a button that checks all items in the list of checkboxes"): the form's Check all does
+    /// it. A template whose file still has it checked shows in every app; the folder's configuration loses it.
+    /// </summary>
     public const string EveryAppField = "Every axKit app";
 
     /// <summary>The path of the folder's configuration.</summary>
     public static string ConfigurationPath(string folder) => Path.Combine(folder, ListConfig.FileName);
 
-    /// <summary>The fields a template has, in the form's order: the text, the check for every app, then one check for each app named.</summary>
+    /// <summary>The fields a template has, in the form's order: the text, then one check for each app named.</summary>
     public static IReadOnlyList<ItemField> Fields(IEnumerable<string> apps) =>
     [
         new ItemField(TextField, FieldTypes.LongText, FieldTypes.Empty(FieldTypes.LongText), []),
-        new ItemField(EveryAppField, FieldTypes.Check, FieldTypes.Empty(FieldTypes.Check), []),
         .. apps.Select(app => new ItemField(app, FieldTypes.Check, FieldTypes.Empty(FieldTypes.Check), [])),
     ];
 
     /// <summary>
     /// The folder's configuration as it should be written, or null when the one there has every field already
     /// (TP-2.1): made new when there is none; a field a newer version brings (a new app's check) added after the
-    /// ones there; no field ever taken away, so that what the user added in axJSON stays. A configuration that does
-    /// not read is left alone: null, and the templates are read as plain items until the user mends it.
+    /// ones there; no field taken away but the retired <see cref="EveryAppField"/>, so that what the user added in
+    /// axJSON stays. A configuration that does not read is left alone: null, and the templates are read as plain
+    /// items until the user mends it.
     /// </summary>
     public static string? ConfigurationToWrite(string? existing, IEnumerable<string> apps)
     {
@@ -81,7 +85,10 @@ public static class TemplateStore
         }
 
         var missing = wanted.Where(field => config.IndexOf(field.Title) < 0).ToList();
-        return missing.Count == 0 ? null : config.WithItemFields([.. config.ItemFields, .. missing]).ToText();
+        var retired = config.IndexOf(EveryAppField) >= 0;
+        return missing.Count == 0 && !retired
+            ? null
+            : config.WithItemFields([.. config.ItemFields.Where(field => field.Title != EveryAppField), .. missing]).ToText();
     }
 
     /// <summary>The configuration in a text, or the one a folder without a readable file gets: the fields for no app.</summary>

@@ -45,7 +45,7 @@ How the caret gets to its place: where the program shows its text to screen read
 
 - Title is the template's name.
 - Text is what is put in. In the form it is a box of several lines: there Enter is a new line.
-- Then come checks, one for each place inside axKit where the template also shows: Every axKit app first, then one for each app. Space checks or unchecks one right here. Enter on any field opens the form with the focus in that field. These are for a step that is built later, the templates in the command palette of the axKit apps; today they are only kept. The launcher lists every template whatever its checks.
+- Then come checks, one for each axKit app where the template also shows. Space checks or unchecks one right here. In the form they are one list: Down and Up move through the apps, Space checks or unchecks one, Ctrl+A checks them all, and the Check all button just before the list does the same. Enter on any field opens the form with the focus in that field. These are for a step that is built later, the templates in the command palette of the axKit apps; today they are only kept. The launcher lists every template whatever its checks.
 
 ### The marks in a text
 

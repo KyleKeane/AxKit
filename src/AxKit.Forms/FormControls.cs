@@ -111,7 +111,7 @@ public sealed class FormControls : FlowLayoutPanel
             case Keys.Return:
                 ToggleNavigation();
                 return true;
-            case Keys.Space when Fields().FirstOrDefault(control => control.ContainsFocus) is AxKitCheckBox:
+            case Keys.Space when Fields().FirstOrDefault(control => control.ContainsFocus) is AxKitCheckBox or FormCheckList:
                 return false;
             case >= Keys.A and <= Keys.Z or >= Keys.D0 and <= Keys.D9:
                 FindField(code is >= Keys.A and <= Keys.Z ? (char)('a' + (code - Keys.A)) : (char)('0' + (code - Keys.D0)));
@@ -159,12 +159,19 @@ public sealed class FormControls : FlowLayoutPanel
             return;
         }
 
-        var fields = Fields();
-        var names = fields.Select(NameOf).ToList();
-        var at = TypeAhead.Find(names, _typed, Math.Max(0, fields.FindIndex(control => control.ContainsFocus)));
+        // A check list's lines are searched as fields of their own, so that a name typed lands on its line.
+        var stops = Fields().SelectMany(control => control is FormCheckList checks
+            ? checks.ItemNames.Select((name, line) => (Control: control, Name: name, Line: line))
+            : [(Control: control, Name: NameOf(control), Line: -1)]).ToList();
+        var here = stops.FindIndex(stop => stop.Control.ContainsFocus && (stop.Line < 0 || ((FormCheckList)stop.Control).SelectedIndex == stop.Line));
+        var at = TypeAhead.Find([.. stops.Select(stop => stop.Name)], _typed, Math.Max(0, here));
         if (at >= 0)
         {
-            fields[at].Select();
+            stops[at].Control.Select();
+            if (stops[at].Control is FormCheckList list)
+            {
+                list.SelectedIndex = stops[at].Line;
+            }
         }
         else
         {
@@ -219,6 +226,25 @@ public sealed class FormControls : FlowLayoutPanel
         list.Height = list.ItemHeight * Math.Clamp(items.Count, 1, 8) + 6;
         Add(list, name);
         return list;
+    }
+
+    /// <summary>A group of checks of one kind as one list (rule 19): one Tab stop, Space checks a line, Ctrl+A all.</summary>
+    public FormCheckList AddCheckList(string name, IReadOnlyList<(string Name, bool Checked)> items)
+    {
+        var list = new FormCheckList(items) { AccessibleName = name, Margin = new Padding(0) };
+        list.Height = list.ItemHeight * Math.Clamp(items.Count, 1, 8) + 6;
+        Add(list, name);
+        return list;
+    }
+
+    /// <summary>A button inside the form (Check all before a check list): Enter or Space presses it, as any button.</summary>
+    public Button AddButton(string text, Action pressed)
+    {
+        var button = new Button { Text = text, AccessibleName = text.Replace("&", string.Empty), AutoSize = true, Margin = new Padding(0, 8, 0, 0) };
+        button.Click += (_, _) => pressed();
+        Controls.Add(button);
+        _first ??= button;
+        return button;
     }
 
     /// <summary>A check box, the bundle's, not checked; its text is its name.</summary>

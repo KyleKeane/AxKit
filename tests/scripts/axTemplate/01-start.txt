@@ -74,13 +74,16 @@ expect focus Type the title
 keys ctrl+down
 expect focus Type Text; Enter makes a new line
 keys ctrl+down
-expect focus Every axKit app
+expect focus Check the ones that apply
 # Ctrl+Space in a form: navigation mode, where the start of a field's name or its number goes to it, and Enter goes
 # back to typing (AX-8.10 rule 18, the maintainer's ask of 2026-11-23).
 keys ctrl+space
 expect said Navigation mode
-keys a x
-expect focus axDown
+# One letter cycles from the line you are on, as in every list: from axDown to axJSON.
+keys a
+expect focus axJSON, not checked
+keys space
+expect said checked
 keys 1
 expect focus Type the title
 keys down
@@ -92,11 +95,11 @@ keys escape
 expect state "notice":null
 expect focus Text
 keys down
-expect focus Every axKit app
-keys space
-expect focus Every axKit app
+expect focus axDown, check, not done
 keys down
-expect focus axDown
+expect focus axJSON, check, not done
+keys space
+expect focus axJSON, check, done
 keys escape
 expect focus Thanks
 

@@ -35,8 +35,6 @@ keys tab
 expect focus Title, text, Beta
 keys down
 keys down
-expect focus Every axKit app, check, not done
-keys down
 expect focus axDown, check, done
 keys end
 expect focus 1 more field kept: Sprint

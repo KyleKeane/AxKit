@@ -19,7 +19,7 @@ The steps change your own templates' folder: use a template made for the test, a
 
 1. Enter on Thanks: "Fields of Thanks, list", "Title, text, Thanks". Down: "Text, long text, empty".
 2. Enter on Text: a field of several lines. Type `Thank you, {clipboard}.{caret}`, Ctrl+Enter: the pane again, "Text, long text, Thank you, {clipboard}.{caret}".
-3. Down: "Every axKit app, check, not done". Space: "done". Down: "axDown, check, not done", then the other apps' checks.
+3. Down: "axDown, check, not done", then the other apps' checks; Space: "done". Enter on one: the form, the focus in the list of apps on that app, "axDown, not checked"; Space: "checked"; Shift+Tab: "Check all, button"; Space: "All 5 checked"; Escape.
 4. Escape: the list, on Thanks. Ctrl+Enter: "Copied"; pasting in axDown gives `Thank you, .`
 
 ## 4. Rename, delete, undo (TP-8.4)

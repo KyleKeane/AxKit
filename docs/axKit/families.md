@@ -475,7 +475,7 @@ Very short, right after your key and over before NVDA speaks. Each says how the 
   - Chosen: By ear, 2026-11-16, from four bonks, after four kinds of blip were turned down.
   - Switch: None: it always plays.
   - The sound of: `no-command`.
-  - Played from 2 files: AxKit.Forms/AxKitForm.Modes.cs, AxKit.Forms/ItemForm.cs.
+  - Played from 3 files: AxKit.Forms/AxKitForm.Modes.cs, AxKit.Forms/FormControls.cs, AxKit.Forms/ItemForm.cs.
 - `Recall`: E5 rising a fourth to A5, 85 ms.
   - Chosen: Asked 2026-10-23. Not chosen from candidates.
   - Switch: None: it always plays.

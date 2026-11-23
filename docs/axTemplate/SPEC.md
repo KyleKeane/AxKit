@@ -93,12 +93,16 @@ answer to a key.
   configuration. axTemplate writes `list.json` when it is not there and adds a field to it that a newer version
   brings; it never takes one away.
 - TP-2.2 **A template's fields**: `Title`, its name and its file's name; `Text` (a long text), what is put in;
-  then one check for each place it also shows inside axKit (TP-5): `Every axKit app` first, then one for each app
+  then one check for each place it also shows inside axKit (TP-5), one for each app
   whose window has a field or a text that Insert template puts a template into (TP-5.2), by the app's name (his
   answers: "A check per app", "Every app with a field"): axDown, axJSON, axCalc, axTerminal and axClaude, in the
   bundle's order (`TemplateStore.AppsWithField`). Built first with axTask, axPass and axMCP too; their fields are
   the fields of notices, which the palette does not reach, so their checks would have shown a template nowhere. The launcher lists every template whatever its checks. A value in a template's file that no field
   names is kept as it is, and the pane says so in a line after the fields.
+  The check for every axKit app that came first until 2026-11-23 is retired (the maintainer: "every axkit app should be
+  a button that checks all items in the list of checkboxes"): in the form the checks are one list with Check all
+  before it (bundle AX-8.10 rule 19); a template whose file still has it checked shows in every app, and the
+  folder's configuration drops the field (`TemplateStore.ConfigurationToWrite`).
 - TP-2.3 **The marks** in a template's text are `docs/axDown/SPEC.md` AD-13.2's, filled by the same code
   (`AxKit.Core/TextTemplate`): `{caret}`, `{selection}`, `{clipboard}` (his answer: "Yes, keep all three"). In an
   axKit window all three mean what they mean in an editor. From the launcher, in another program:

@@ -147,7 +147,7 @@
           "sounds": ["Unassigned", "Edge"],
           "words": "None, or the reason: 'No action on Ctrl+4 in this list'.",
           "apps": "Navigation mode of a text; the item windows; every window for Ctrl+Enter.",
-          "where": ["src/AxKit.Forms/AxKitForm.Modes.cs", "src/AxKit.Forms/AxKitForm.cs", "src/AxKit.Forms/OverlayPanel.cs", "src/AxKit.Forms/ItemForm.cs", "src/AxTask/TaskForm.Commands.cs", "src/AxTask/TaskForm.Actions.cs"],
+          "where": ["src/AxKit.Forms/AxKitForm.Modes.cs", "src/AxKit.Forms/FormControls.cs", "src/AxKit.Forms/AxKitForm.cs", "src/AxKit.Forms/OverlayPanel.cs", "src/AxKit.Forms/ItemForm.cs", "src/AxTask/TaskForm.Commands.cs", "src/AxTask/TaskForm.Actions.cs"],
           "note": "Unassigned (the wooden bonk) only for a plain key that would type in navigation mode. Edge for Ctrl+Enter where the window has no main action, for Ctrl+Space where there is no text with modes, for Space on a row that cannot be checked, and for an action key with no action. A key no window knows gets nothing from axKit."
         },
         {

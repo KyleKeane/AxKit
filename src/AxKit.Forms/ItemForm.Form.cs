@@ -22,6 +22,9 @@ public sealed record ItemFormSource(string Name, ItemDocument Document, Action<I
     /// <summary>The form's title: "Fields of" and the name for an item there is; a new item's form names itself ("New template").</summary>
     public string? Title { get; init; }
 
+    /// <summary>The name of a group of checks shown as one list (rule 19), an instruction.</summary>
+    public string ChecksName { get; init; } = "Check the ones that apply: Space checks or unchecks";
+
     /// <summary>The default button: Save, or Add for a new item's form.</summary>
     public string Button { get; init; } = "&Save";
 }
@@ -77,9 +80,45 @@ public abstract partial class ItemForm
         var document = source.Document;
         var controls = ItemFormRules.Controls(document, source.LinkTitle);
         var form = new FormControls();
+        // For each of the rules' controls, the control it is shown in and how its value is read back: a check of a
+        // group (rule 19) is a line of the group's list.
         var made = new List<Control>();
-        foreach (var control in controls)
+        var values = new List<Func<FormValue>>();
+        for (var i = 0; i < controls.Count; i++)
         {
+            var control = controls[i];
+            var run = 0;
+            while (i + run < controls.Count && controls[i + run].Kind == ItemFormRules.CheckKind)
+            {
+                run++;
+            }
+
+            if (run >= 2)
+            {
+                // Two or more checks in a row: one list, Space checks a line, with Check all before it (the
+                // maintainer's choice of 2026-11-23, "One list, Space checks").
+                var group = controls.Skip(i).Take(run).ToList();
+                FormCheckList? list = null;
+                form.AddButton("Check &all", () => list?.SetAll(true));
+                list = form.AddCheckList(source.ChecksName, [.. group.Select(check => (check.Name, check.Checked))]);
+                for (var line = 0; line < group.Count; line++)
+                {
+                    var at = line;
+                    made.Add(list);
+                    values.Add(() => new FormValue(string.Empty, list.IsChecked(at), 0));
+                    form.Key(document.Fields[group[at].Field].Title, list);
+                    form.Key(made.Count.ToString(System.Globalization.CultureInfo.InvariantCulture), list);
+                }
+
+                if (startField is not null && group.Any(check => document.Fields[check.Field].Title == startField))
+                {
+                    list.SelectName(group.First(check => document.Fields[check.Field].Title == startField).Name);
+                }
+
+                i += run - 1;
+                continue;
+            }
+
             Control added = control.Kind switch
             {
                 ItemFormRules.CheckKind => form.AddCheck(control.Name),
@@ -93,8 +132,14 @@ public abstract partial class ItemForm
             }
 
             made.Add(added);
+            values.Add(added switch
+            {
+                AxKitCheckBox check => () => new FormValue(string.Empty, check.Checked, 0),
+                AxKitList choice => () => new FormValue(string.Empty, false, choice.SelectedIndex),
+                _ => () => new FormValue(added.Text, false, 0),
+            });
             form.Key(document.Fields[control.Field].Title, added);
-            form.Key((made.Count).ToString(System.Globalization.CultureInfo.InvariantCulture), added);
+            form.Key(made.Count.ToString(System.Globalization.CultureInfo.InvariantCulture), added);
         }
 
         if (startField is not null)
@@ -103,12 +148,7 @@ public abstract partial class ItemForm
         }
 
         // What the controls hold now, as the rules take them.
-        List<FormValue> Values() => [.. made.Select(control => control switch
-        {
-            AxKitCheckBox check => new FormValue(string.Empty, check.Checked, 0),
-            AxKitList list => new FormValue(string.Empty, false, list.SelectedIndex),
-            _ => new FormValue(control.Text, false, 0),
-        })];
+        List<FormValue> Values() => [.. values.Select(value => value())];
 
         (ItemDocument? Changed, int Control, string? Refused) Typed() => ItemFormRules.Apply(document, controls, Values(), FormToday, source.Link);
 

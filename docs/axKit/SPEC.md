@@ -758,7 +758,13 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
      again, goes back to typing in that field, "Edit mode" said; leaving the form ends it. In a form the mode key is the
      form's, so a box of several lines there has no navigation mode of its own. Every form's explanation (Ctrl+Q) ends
      with these keys, written from the key table (`FormControls.KeysLine`).
-  What Ctrl+Enter does, per app. A window gives the key its main action as a command on `BundleKeys.MainAction`;
+  19. **A group of checks of one kind is one list** (the maintainer's choice of 2026-11-23, "One list, Space checks", over
+     a check box each, after his question whether checks take a Tab each or the arrows; both are Windows' own, a check
+     box each for a few unlike options, one list for many of a kind): one Tab stop, Down and Up through the lines, Space
+     checks or unchecks the line, Ctrl+A checks every line and Ctrl+Shift+A none, each line saying "checked" or "not
+     checked"; a Check all button just before it (`AxKit.Forms/FormCheckList`, `FormControls.AddCheckList`,
+     `AddButton`). The item form makes one of two or more checks in a row (`ItemForm.Form.cs`), named by the
+     source's `ChecksName`; in navigation mode a typed name lands on its line.  What Ctrl+Enter does, per app. A window gives the key its main action as a command on `BundleKeys.MainAction`;
   no window's key table holds Ctrl+Enter, and `KeyTests` fails on one that does.
 
   | App | Until 2026-11-14 | Now |
