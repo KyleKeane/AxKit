@@ -289,7 +289,7 @@ public static class ScriptReader
         goals.FirstOrDefault(goal => goal.FirstLine <= line && line <= goal.LastLine);
 
     /// <summary>The step words of an input step (section 3 of docs/axKit/user-workflows.md): what the user would do at the keyboard, and the steps that open, choose and close windows.</summary>
-    private static readonly HashSet<string> InputWords = new(StringComparer.Ordinal) { "do", "keys", "type", "menu", "start", "launch", "adopt", "use", "close" };
+    private static readonly HashSet<string> InputWords = new(StringComparer.Ordinal) { "do", "keys", "type", "template", "menu", "start", "launch", "adopt", "use", "close" };
 
     /// <summary>
     /// Whether a script's line is an input step: its step word, after any <c>iffound</c>, is one of

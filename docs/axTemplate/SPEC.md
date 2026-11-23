@@ -94,10 +94,10 @@ answer to a key.
   brings; it never takes one away.
 - TP-2.2 **A template's fields**: `Title`, its name and its file's name; `Text` (a long text), what is put in;
   then one check for each place it also shows inside axKit (TP-5): `Every axKit app` first, then one for each app
-  that has a field to write in, by the app's name (his answers: "A check per app", "Every app with a field"):
-  axDown, axJSON, axTask, axCalc, axTerminal, axPass, axClaude and axMCP, in the bundle's order
-  (`TemplateStore.AppsWithField`; a window of any other app has its notices' fields, which `Every axKit app`
-  reaches). The launcher lists every template whatever its checks. A value in a template's file that no field
+  whose window has a field or a text that Insert template puts a template into (TP-5.2), by the app's name (his
+  answers: "A check per app", "Every app with a field"): axDown, axJSON, axCalc, axTerminal and axClaude, in the
+  bundle's order (`TemplateStore.AppsWithField`). Built first with axTask, axPass and axMCP too; their fields are
+  the fields of notices, which the palette does not reach, so their checks would have shown a template nowhere. The launcher lists every template whatever its checks. A value in a template's file that no field
   names is kept as it is, and the pane says so in a line after the fields.
 - TP-2.3 **The marks** in a template's text are `docs/axDown/SPEC.md` AD-13.2's, filled by the same code
   (`AxKit.Core/TextTemplate`): `{caret}`, `{selection}`, `{clipboard}` (his answer: "Yes, keep all three"). In an
@@ -153,21 +153,31 @@ answer to a key.
 - TP-5.1 **The command palette.** In a window of an axKit app that has a field to write in, the palette lists the
   templates checked for that app or for every axKit app, each as a command "Insert template" with its name, in a
   menu (Actions, Insert template), since the palette holds commands only (bundle AX-10.5). Enter puts the template
-  in at the caret of the field that had the focus, in the place of its selection, with all three marks, as an
-  editor does (AD-13.2), and says "<name> inserted".
+  in at the caret of the window's field, in the place of its selection, with all three marks, as an editor does
+  (AD-13.2), the focus in the field, and says "<name> inserted". The templates are read off the UI thread as the
+  window comes up and each time it is active again; a template's file is read again when it is chosen. A field that
+  is not there at that moment (a question of the program stands in its place) says "No field to put a template
+  into now" (`AxKitForm.Templates.cs`, `TemplateField`).
 - TP-5.2 **Which apps** (his answer: "Every app with a field"): the editors, axDown and axJSON, in their text;
-  axClaude in its message field and axTerminal in its command field; axCalc in its expression field; and the
-  fields of forms and notices in every window (an item's form in axTask, axPass and axMCP among them).
+  axClaude in its message field and axTerminal in its command field; axCalc in its expression field (the
+  conversation windows' field at the bottom). The fields of forms and notices in every window, an item's form in
+  axTask, axPass and axMCP among them, are reached by the launcher, Ctrl+Shift+Apostrophe, which puts a template
+  into whatever field had the focus, axKit's own too: the palette does not open over a notice (bundle AX-10.1), so
+  it cannot offer them (the assistant's finding while building, 2026-11-23; open to the maintainer's word).
 - TP-5.3 The editors keep their own templates (AD-13.3: axDown's Link, Table and Code block) before the user's.
 - TP-5.4 A template is put into a field and never sent: in axTerminal's command field and axClaude's message
   field the user reads it and presses Enter, as for any text put there.
 
 ### TP-6 axAutomate
 
-- TP-6.1 A step of a workflow, `template`: the template's name, and optionally the text for `{selection}` and for
-  `{clipboard}`. The step fills the marks and types the text into the window the workflow drives, where its focus
-  is, as a `type` step does with a text of its own. So a workflow can put a template in and fill what it carries.
-- TP-6.2 A template named in a workflow and not found fails the step with its name, as a missing file does.
+- TP-6.1 A step of a workflow, `template <name> [| <selection> [| <clipboard>]]`: the template's name, and
+  optionally the text for `{selection}` and for `{clipboard}`. The step fills the marks and types the text into the
+  window the workflow drives, where its focus is, as `type` steps do with a text of their own, its lines with Enter
+  between them, then the Left keys that put the caret at `{caret}`. So a workflow can put a template in and fill
+  what it carries (`AxAutomate.Core/TemplateStep`, docs/axKit/automation.md). The templates are those of the run's
+  home, `home\Documents\axKit\Templates`, which a script's `file` steps write, as every file a run uses is its own.
+- TP-6.2 A template named in a workflow and not found fails the step with its name ("No template is called
+  Thanks"), as a missing file does, and nothing is typed.
 
 ### TP-7 Menus, keys, texts, settings, log
 
@@ -211,7 +221,7 @@ answer to a key.
 
 ## 5. Architecture
 
-- `src/AxTemplate.Core`: the store (`TemplateStore`: the folder as a list of the item format, its `list.json` with
+- `src/AxTemplate.Core` and `src/AxKit.Core`: the store (`AxKit.Core/TemplateStore`, shared since step 4: the folder as a list of the item format, its `list.json` with
   the fields of TP-2.2, a template read from and written to its item through `AxKit.Core`'s `ListConfig`,
   `FlatItem` and `ItemView`), the finding (`TemplateMatch`: words against name and text, the order), the count of
   Left keys after a paste, and the settings; all pure and unit tested. The marks stay `AxKit.Core/TextTemplate`.
@@ -219,8 +229,8 @@ answer to a key.
   the field, the list, Enter and the paste (`ForegroundBefore`, keys through `SendInput`), the notices. The browser
   on `ItemForm`, as the item apps': `ReadLevel` gives the templates, `DetailOf` an item's document, `SaveFields`
   writes it.
-- The window base gains the templates of TP-5.1 for every window with a field; the editor shell's
-  `TextEditorForm.Templates.cs` is where that code is today, and it moves to the base on this second use (rule 4).
+- The window base holds the templates of TP-5.1 (`AxKitForm.Templates.cs`, moved from the editor shell on its
+  second use, rule 4): a window names its field (`TemplateField`), the editor shell puts a template into its text.
 - axAutomate's step is one more line of its step table.
 
 ## 6. Design decisions
@@ -294,7 +304,7 @@ Asked one at a time through the question tool, after he had the first specificat
 
 ## 9. Status
 
-Steps 1 to 4 are built (2026-11-23). Step 1: the store, the finding and the settings, with their tests (the store
+All six steps are built (2026-11-23). Step 1: the store, the finding and the settings, with their tests (the store
 is `AxKit.Core/TemplateStore` since step 4), and the browser, `BrowserForm`, which a plain start shows. Step 2: the launcher, `LauncherForm`,
 behind Ctrl+Shift+Apostrophe: the finding, Enter with the paste, Shift+Enter, Ctrl+Q, Ctrl+B, and the plain start
 that starts it hidden, with the hotkey on for everyone after an installation and an update (TP-1.4). Step 3:
@@ -305,5 +315,7 @@ nothing else was copied since, and the caret moved back to `{caret}` by Left key
 (the paste, the caret, the clipboard, the selection) is `tests/nvda-scripts/axTemplate-put-in.txt`. Step 4: the
 editors' Insert template (axDown, axJSON; docs/axDown/SPEC.md AD-13.4) lists the templates checked for the app or
 for every axKit app, in place of the plain files they read before, and Options, General, Templates in axTemplate
-opens the browser. Steps 5 and 6 are not built: the templates in every other axKit window with a field, and
-axAutomate's step. The marks and their code are `AxKit.Core/TextTemplate`, shared with the editors.
+opens the browser. Step 5: the conversation windows (axClaude, axTerminal, axCalc) have Actions, Insert template
+for their field, the code moved from the editor shell to the window base (`AxKitForm.Templates.cs`); axCalc's
+script `05-templates.txt` checks it. Step 6: axAutomate's step `template <name> [| <selection> [| <clipboard>]]`
+(`AxAutomate.Core/TemplateStep`), which the same script uses. The marks and their code are `AxKit.Core/TextTemplate`, shared with the editors.

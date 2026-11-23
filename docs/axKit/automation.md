@@ -183,6 +183,10 @@ including while the user works, because nothing takes the foreground.
     `pagedown`, `plus`, `minus`, `period`, `comma`, `apps`, `f1` to `f12`, `slash`, `semicolon`, and `add` and
     `subtract` for the numeric keypad's plus and minus; any other name is an error of the step.
   - `type <text>`: characters into the focused control, as typed.
+  - `template <name> [| <selection> [| <clipboard>]]`: an axTemplate template of the run's home
+    (`home\Documents\axKit\Templates`, written by `file` steps) found by its name, its marks filled with the
+    texts given, typed into the focused control as `type` steps with Enter between its lines, then the Left keys
+    that put the caret at `{caret}` (docs/axTemplate/SPEC.md TP-6). A name no template has fails the step.
   - `focus`: the focused control's accessible name and role, its text or the selected item, the caret's line.
   - `said`: what the window announced since the last `said`, each notification with its kind (interrupting or not),
     in order; the announcements are recorded where they are raised (`AxKitForm.Announce`).

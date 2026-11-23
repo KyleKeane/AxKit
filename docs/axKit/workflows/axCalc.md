@@ -243,3 +243,39 @@ Starts with: Open axCalc.
 3. Type: 0xFF+0b1010
 4. Press Enter.
     You hear: 265.
+
+## Put a template into axCalc's field from the command palette
+
+Starts with: Open axCalc.
+
+### Put a template into the field and type at its caret
+
+1. Press Ctrl+Shift+P (Command palette; Help menu).
+2. Type: circle
+    You hear: Circle area.
+    You hear: Actions, Insert template.
+3. Press Enter.
+    You hear: Circle area inserted.
+4. Type: 3
+5. Press Escape.
+    You hear: Cleared.
+
+### Put a template in around the selected text
+
+1. Type: 21
+2. Press Shift+Home.
+3. Press Ctrl+Shift+P (Command palette; Help menu).
+4. Type: answer twice
+5. Press Enter.
+    You hear: Answer twice inserted.
+6. Press Enter.
+    You hear: 42.
+
+### Type a template into the field with a workflow step
+
+1. Put in the template circle area.
+2. Type: 4
+3. Press Escape.
+4. Put in the template Answer twice.
+5. Press Enter.
+    You hear: 10.

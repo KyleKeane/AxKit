@@ -165,6 +165,8 @@ public sealed class Run(string exe, string temp, bool hosted = false)
                 return (problems.Contains("\"problems\":[]", StringComparison.Ordinal), problems);
             case "do":
                 return Do(rest.Trim());
+            case "template":
+                return Template(rest);
             case "spoken":
                 return (true, string.Join(" | ", _speech.TakeAll()));
             case "keys" when Nvda:
@@ -407,6 +409,36 @@ public sealed class Run(string exe, string temp, bool hosted = false)
     /// "menu item". Everything else fails the step with nothing pressed: no listing, a notice, a name that finds no
     /// one command, and a key that does not act where the focus is, with the focused control named.
     /// </summary>
+    /// <summary>
+    /// The step <c>template</c> (docs/axTemplate/SPEC.md TP-6): the template of the run's home found by its name
+    /// (<see cref="TemplateStep"/>), its lines typed where the window's focus is as <c>type</c> steps with Enter
+    /// between them, then the Left keys that put the caret back at its mark. A name no template has fails the step
+    /// with the name, and nothing is typed.
+    /// </summary>
+    private (bool, string?) Template(string rest)
+    {
+        var (typing, error) = TemplateStep.Of(rest, TemplateStep.Read(_home));
+        if (typing is null)
+        {
+            return (false, error);
+        }
+
+        for (var i = 0; i < typing.Lines.Count; i++)
+        {
+            if (i > 0 && Step("keys enter") is (false, var enterFailed))
+            {
+                return (false, enterFailed);
+            }
+
+            if (typing.Lines[i].Length > 0 && Step("type " + typing.Lines[i]) is (false, var typeFailed))
+            {
+                return (false, typeFailed);
+            }
+        }
+
+        return typing.LeftKeys > 0 ? Step("keys " + string.Join(" ", Enumerable.Repeat("left", typing.LeftKeys))) : (true, null);
+    }
+
     private (bool, string?) Do(string name)
     {
         var window = Current;

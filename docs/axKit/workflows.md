@@ -74,6 +74,10 @@ Steps and keys: `docs/axKit/workflows/axCalc.md` (in Claude's working folder: `w
     - Take a remainder
     - Round to a number of places
     - Type numbers with separators, in hexadecimal and in binary
+5. **Put a template into axCalc's field from the command palette**
+    - Put a template into the field and type at its caret
+    - Put a template in around the selected text
+    - Type a template into the field with a workflow step
 
 ## axClaude
 

@@ -117,6 +117,9 @@ public abstract class ConversationForm : AxKitForm
     /// <summary>The multi-line field at the bottom: the message to Claude, the command to the shell, the expression.</summary>
     protected AxKitTextBox Input { get; } = new();
 
+    /// <summary>Actions, Insert template puts a template into the field at the bottom, never sent (docs/axTemplate/SPEC.md TP-5.2, TP-5.4).</summary>
+    protected override AxKitTextBox? TemplateField => Input;
+
     /// <summary>What takes the field's place: Claude's question, the recent commands.</summary>
     protected ControlArea Area { get; } = new();
 

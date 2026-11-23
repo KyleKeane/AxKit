@@ -51,7 +51,7 @@ public sealed class TraceTests
 
         // The input steps of 5.4, no more and no fewer: a new one gets its line here and its place in 5.4.
         var inputs = words.Where(word => Traces.InputLine(word + " x", null) is not null).Order(StringComparer.Ordinal);
-        Assert.Equal(["adopt", "close", "do", "keys", "launch", "mcp call", "menu", "start", "type", "use"], inputs);
+        Assert.Equal(["adopt", "close", "do", "keys", "launch", "mcp call", "menu", "start", "template", "type", "use"], inputs);
     }
 
     [Fact]

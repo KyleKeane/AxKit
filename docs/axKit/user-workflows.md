@@ -901,6 +901,7 @@ an input step, by its step word:
   do       do <name> = <chord>          or   do <name> = menu item
   keys     the script's line            keys ctrl+f
   type     the script's line            type apple
+  template the script's line            template Thanks | | the report   (docs/axTemplate/SPEC.md TP-6)
   menu     the script's line            menu Larger text
   start, launch, adopt, use, close, mcp call        the script's line ("mcp call <tool>" without its arguments)
   iffound <step>                        the inner step's line, only when it ran

@@ -14,7 +14,7 @@ public static class ScriptLines
     /// <summary>The operations the engine knows (the header of <c>tools/AxAutomate/Program.cs</c>), as <see cref="ScriptReader"/> names them.</summary>
     public static readonly IReadOnlySet<string> Known = new HashSet<string>(StringComparer.Ordinal)
     {
-        "mkdir", "file", "silence", "run", "start", "launch", "adopt", "use", "keys", "type", "menu", "do", "close", "wait",
+        "mkdir", "file", "silence", "run", "start", "launch", "adopt", "use", "keys", "type", "template", "menu", "do", "close", "wait",
         "said", "text", "list", "commands", "state", "focus", "check commands", "allow error", "mcp start", "mcp call",
         "expect said", "expect focus", "expect state", "expect list", "expect text", "expect commands", "expect closed",
         "expect quiet", "expect mcp", "refuse said", "refuse focus", "refuse state", "refuse list", "refuse text",

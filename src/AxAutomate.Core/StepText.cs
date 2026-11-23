@@ -26,6 +26,7 @@ public static class StepText
         {
             "keys" => "Press " + Keys(step.Value("keys")),
             "type" => "Type " + text,
+            "template" => "Put in the template " + TemplateStep.Parts(text).Name,
             "menu" => "Choose the menu item " + step.Value("name"),
             "do" => "Do the command " + step.Value("command"),
             "start" => "Start " + step.Value("arguments"),

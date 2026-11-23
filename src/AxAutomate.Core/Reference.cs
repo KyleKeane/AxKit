@@ -448,6 +448,7 @@ public static class Reference
             "adopt" => "A new window opens: go to it",
             "use" => UseSentence(app, AppAt(apps, step.Line - 1)),
             "type" => "Type: " + step.Value("text"),
+            "template" => "Put in the template " + TemplateStep.Parts(step.Value("text")).Name,
             _ => StepText.Sentence(step),
         });
     }

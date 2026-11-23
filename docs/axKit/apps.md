@@ -99,7 +99,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxCalc` (the window), `src/AxCalc.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxCalc.Tests`.
 - Documents: `docs/axCalc/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axCalc/`, 4 scripts (their workflows are in `docs/axKit/workflows/axCalc.md`).
+- Automated checks: `tests/scripts/axCalc/`, 5 scripts (their workflows are in `docs/axKit/workflows/axCalc.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axCalc.ps1`, or `run.ps1 -App calc`.
 
 ### axProcess

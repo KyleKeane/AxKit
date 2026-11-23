@@ -1,0 +1,59 @@
+# Workflow: Put a template into axCalc's field from the command palette
+# axCalc: Actions, Insert template (docs/axTemplate/SPEC.md TP-5; the conversation windows' field, step 5). A template
+# of axTemplate checked for axCalc, or for every axKit app, is a command of the window, so the palette finds it by
+# its name; it is put into the field at the caret with the caret where the template says, and it is never sent. One
+# checked for axDown alone is not listed.
+file home\AxKit\axCalc.json {"checkForUpdates": false, "keepHistory": false}
+file home\Documents\axKit\Templates\Circle.json {"schema": "list.json", "Title": "Circle area", "Text": "pi*{caret}^2", "axCalc": true}
+file home\Documents\axKit\Templates\Everywhere.json {"schema": "list.json", "Title": "Answer twice", "Text": "{selection}*2", "Every axKit app": true}
+file home\Documents\axKit\Templates\Down.json {"schema": "list.json", "Title": "Meeting notes", "Text": "# Meeting", "axDown": true}
+
+start calc
+check commands
+expect focus Expression
+
+# Goal: Put a template into the field and type at its caret
+# The palette finds the template by its name; the caret waits at its mark, and nothing is calculated until Enter.
+do Command palette
+type circle
+expect said Circle area
+expect said Actions, Insert template
+keys enter
+expect said ! Circle area inserted
+expect focus "name":"Expression","role":"Text","value":"pi*^2"
+type 3
+expect focus "name":"Expression","role":"Text","value":"pi*3^2"
+keys escape
+expect said ! Cleared
+
+# Goal: Put a template in around the selected text
+# A template checked for every axKit app is here too; what was selected in the field stands where it says.
+type 21
+keys shift+home
+do Command palette
+type answer twice
+keys enter
+expect said ! Answer twice inserted
+expect focus "name":"Expression","role":"Text","value":"21*2"
+keys enter
+expect said ! 42
+
+# Check: The palette lists only the templates for this app
+# The menu's name finds the two for axCalc and for every app, not the one for axDown.
+do Command palette
+type insert template
+expect said , 1 of 2
+refuse said Meeting notes
+keys escape
+
+# Goal: Type a template into the field with a workflow step
+# axAutomate's step template (docs/axTemplate/SPEC.md TP-6): the template found by its name, its marks filled with the
+# texts the step gives, typed where the focus is, and the caret put back at its mark.
+template circle area
+type 4
+expect focus "name":"Expression","role":"Text","value":"pi*4^2"
+keys escape
+template Answer twice | 5
+expect focus "name":"Expression","role":"Text","value":"5*2"
+keys enter
+expect said ! 10

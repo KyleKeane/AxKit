@@ -215,6 +215,17 @@ public abstract partial class AxKitForm : Form
             own[i].Text = BarMenus[i];
         }
 
+        // TP-5: a window with a field to write in gets the templates for it at the end of its Actions.
+        if (TemplateField is not null)
+        {
+            if (actions.DropDownItems.Count > 0)
+            {
+                actions.DropDownItems.Add(new ToolStripSeparator());
+            }
+
+            actions.DropDownItems.Add(CreateInsertTemplateMenu([], InsertIntoTemplateField));
+        }
+
         SayWhenEmpty(actions, "No actions here yet");
         SayWhenEmpty(navigation, "Nothing to move to here yet");
         SayWhenEmpty(context, "Nothing for the focus here yet");
