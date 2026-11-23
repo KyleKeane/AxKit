@@ -6,6 +6,19 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-22: Ctrl+Q on a row with detail lines, and axClaude's keys while Claude is stopped; by the assistant with NVDA listening (branch `axfile-navigator` 60954e9f)
+
+`.\nvda-pass.ps1 -Only` every script of axAutomate, axTask, axPass and axMCP and axClaude's `08-lifecycle.txt`, from
+the branch's own folder, behind the spoken countdown, the maintainer away at his word, NVDA 2025.3.3 with the OneCore
+voice, Windows 11 Pro 10.0.26200, the build 5.10.0 of commit 60954e9f, the tree clean: 35 scripts, 279 goals and
+checks, all passed at the first run.
+
+| What | Scripts | Result |
+|---|---|---|
+| axAutomate: every script; in `02-run.txt` the new check, Read in full on a step says the step and every line of its details ("2. Expect the focus: Nothing like this, failed" and "Last run: failed. Not within 10 s" in one announcement, spoken) | 5 | Passed |
+| axTask, axPass and axMCP on the item window whose Ctrl+Q reads a row with its detail lines | 29 | Passed |
+| axClaude, `08-lifecycle.txt`, live with the real Claude Code: with Claude stopped, the interrupt says "Claude stopped. Ctrl+Shift+R starts it", spoken, as a message sent then does | 1 | Passed |
+
 ## 2026-11-22: the list under a field in the hotkey windows and the palette, and axDown's format commands; by the assistant with NVDA listening (branch `axfile-navigator` ef8f3671)
 
 `.\nvda-pass.ps1 -Only` every script of axStart, axClip, axHelp, axDown, axJSON and axPreview, from the branch's
