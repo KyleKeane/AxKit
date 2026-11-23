@@ -1,7 +1,6 @@
 using System.Text.Json.Nodes;
-using AxKit.Core;
 
-namespace AxTask.Core;
+namespace AxKit.Core;
 
 /// <summary>
 /// One control of an item's form (docs/axTask/forms-framework.md AF-14.1): which field it is for, its kind, its name

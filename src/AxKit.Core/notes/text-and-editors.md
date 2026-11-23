@@ -66,6 +66,13 @@
 - `FieldStep` (AX-8.10 rule 4, IA-5.6): Right and Left on a field: a choice's next or previous value, a check
   checked or unchecked, null (the edge sound) otherwise, never a `Protected` type.
 - `Changes`, `Step` and `FileChange` (IA-5.4; from AxTask.Core on their second use, axTemplate's browser, 2026-11-23, moved unchanged): a change on disk as parts, writes and moves, `Apply`, `CheckUndo` (every path as the step left it, so that an edit made since is never lost), `Undo` (last part first; a new list's folder goes with its `list.json`), `ReadOrNull`. Tested where they came from, `tests/AxTask.Tests` (`FolderTests`, `LinksTests`).
+- `ItemFormRules` with `FormControl` and `FormValue` (docs/axTask/forms-framework.md AF-14.1, axTask's TK-4.0a, 2026-11-21; from AxTask.Core on its second use, axTemplate's form, 2026-11-23): an item's form, pure:
+  `Controls` (one control per field of the item's document: its kind, text, check, lines or list, its name as an
+  instruction, what it starts with; a choice that holds none of its options starts on `NotChosen`; a value its type
+  does not hold is a text box), `Apply` (what the controls' values make of the item: only a control that was changed
+  gives its field a value, taken as `FieldTypes.Parse` takes it, a link's title through the caller; the first value
+  refused, with its control), `Said` ("Saved Fix the tap. Due: …. Priority: High", or "Nothing changed"). Tested in
+  `ItemFormRulesTests`.
 - `TemplateStore` (docs/axTemplate/SPEC.md TP-2; from AxTemplate.Core on its second use, the editors' Insert template, 2026-11-23, moved unchanged): the templates' folder, `AppPaths.TemplatesRoot`, as a list of the item format. `Fields` and `AppsWithField` are a template's fields (its Text, then a check for every axKit app and one per app with a field); `ConfigurationToWrite` makes the folder's `list.json` or adds the fields a newer version brings, never taking one away; `Open` makes the folder ready and reads it; `Files` gives every item file for axTemplate's browser, `Read` the templates for its launcher and the editors; `Parse` one file; `After` the files after a change of the browser's own or its undo, without the disk; `NameRefused`, `NoTextYet`, `LeftKeys`. `Template.ShowsInApp` says whether a template shows in an app's palette. Disk reads: call them off the UI thread. Tested in `tests/AxTemplate.Tests`.
 - `ItemFiles` (IA-4.5; from AxTask.Core's `ItemFolder` on its second use, the reports list, 2026-11-07): `FileStem`,
   the file name a Title gives, and `FreePath`, a free name beside the taken ones ("name - 2.json").

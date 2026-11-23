@@ -1,8 +1,7 @@
 using System.Text.Json.Nodes;
 using AxKit.Core;
-using AxTask.Core;
 
-namespace AxTask.Tests;
+namespace AxKit.Tests;
 
 /// <summary>
 /// The item's form (docs/axTask/forms-framework.md AF-14.1): one standard control per field, and what the controls'

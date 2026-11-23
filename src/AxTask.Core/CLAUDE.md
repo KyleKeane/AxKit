@@ -38,13 +38,7 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
 - The changes on disk and their undo (`Changes`, `Step`, `FileChange`, IA-5.4) are `AxKit.Core`'s since 2026-11-23, on their second use, axTemplate's browser; this project and the window use them from there.
 - `Links` (IA-D3): `AfterMove` (the writes that keep every link pointing where it did when a file or a folder moves,
   both the links to it and the links it holds), `Spoken` ("missing: name"), `Remap`.
-- `ItemFormRules` with `FormControl` and `FormValue` (AF-14.1, TK-4.0a, 2026-11-21): the item's form, pure:
-  `Controls` (one control per field of the item's document: its kind, text, check, lines or list, its name as an
-  instruction, what it starts with; a choice that holds none of its options starts on `NotChosen`; a value its type
-  does not hold is a text box), `Apply` (what the controls' values make of the item: only a control that was changed
-  gives its field a value, taken as `FieldTypes.Parse` takes it, a link's title through the caller; the first value
-  refused, with its control), `Said` ("Saved Fix the tap. Due: …. Priority: High", or "Nothing changed"). Tested in
-  `ItemFormRulesTests`.
+- The item's form rules, `ItemFormRules`, moved to `AxKit.Core` on 2026-11-23 (its second use, axTemplate's form; `src/AxKit.Core/notes/text-and-editors.md`).
 - The actions of a list, pure (docs/axTask/forms-framework.md sections 3 to 7; 2026-11-21; the window's side is
   `TaskForm.Actions.cs`). `ActionProgram.Find`: the program a `run` action names, found on the search path or by a
   full path, never in the list's own folder, never off this computer, a program file only.
