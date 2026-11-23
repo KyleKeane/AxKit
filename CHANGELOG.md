@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axAutomate: **Ctrl+Q on a step or a workflow reads it and every line of its details**, as the guide said it would; until now it read the row alone. The same holds in the other item windows for a row whose details are lines and not fields, such as a list in axTask.
 - axClaude: **a key for Claude is no longer silent while Claude is stopped.** Shift+Escape (the interrupt), Claude, Send key and Claude, Next permission mode say "Claude stopped. Ctrl+Shift+R starts it", as a message sent then always did.
 - axHelp: **after Update and restart, Claude in axHelp's conversation keeps axKit's AI tools.** The window came back without them until axHelp started the conversation anew.
 - For developers: the scripts that write the generated pages sort by the characters' own order (`Sort-Ordinal`, `tools/ordinal.ps1`), and the script lint refuses `Sort-Object` in them, since Windows PowerShell and PowerShell 7 order a hyphen and a full stop differently and a page written on one was stale under the other.

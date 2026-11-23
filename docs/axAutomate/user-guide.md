@@ -44,7 +44,8 @@ After the sentence come small marks:
 
 Tab or Enter on a step goes to its details: its number, what it does, each of its values (the keys, the text), what
 happens when it fails, what it reports, its blocks, its note, and the line of the file it comes from. Escape or Tab
-goes back. Ctrl+Q reads every line at once.
+goes back. Ctrl+Q on a step or a workflow, in the list, reads it and every line of its details at once; in the
+details it reads the line you are on.
 
 ## Running workflows
 

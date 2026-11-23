@@ -49,6 +49,12 @@ expect focus 2. Expect the focus: Nothing like this, failed
 keys tab down
 expect focus Last run: failed. Not within 10 s
 keys escape
+# Check: Read in full on a step says the step and every line of its details
+# Ctrl+Q in the navigator says the row and what the detail pane holds of it, as it reads every field of an item.
+said
+do Read in full
+expect said 2. Expect the focus: Nothing like this, failed
+expect said Last run: failed. Not within 10 s
 
 # Goal: Read the report of a workflow's last run
 # 5.2a Ctrl+R: the report of the workflow's last run, its end then the lines played, as a notice (AU-4.5, AU-6b.6).

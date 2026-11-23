@@ -23,7 +23,7 @@ a small folder of its own.
 ## 3. A step's details and the refusals (AU-4.3, AU-6a.2)
 
 1. On a step, Tab: "Step N" and its lines: Does, its values, On failure, Report, the line of the file. Right and Left on a line: the edge sound, the focus still in the pane.
-2. Ctrl+Q reads every line. Escape: back to the navigator, the step selected.
+2. Ctrl+Q there reads the line you are on. Escape: back to the navigator, the step selected; Ctrl+Q there reads the step and every line of its details, one after another.
 3. Delete, Ctrl+N, F2: "This version views and runs the workflows; changing them comes later".
 4. Ctrl+J on a workflow: axDown opens the script.
 

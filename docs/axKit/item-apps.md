@@ -53,7 +53,7 @@ Window-specific keys, in one table per app (AX-8); the ones here are the same in
 | Delete | delete the item or list (IA-D4) | said: where the fields are changed (IA-5.3) |
 | Alt+Up, Alt+Down | — | — (the move of a field went on 2026-11-21; Alt with an arrow is for the choices of what you are on, and a move of an item of a list is Ctrl+Shift+Up and Down, wherever one is built: the maintainer's rule of that day) |
 | Ctrl+Z | undo the last change | the same |
-| Ctrl+Q | read the selection in full: every field, one after another | read the field in full |
+| Ctrl+Q | read the selection in full: every field, one after another; for a row whose details are lines and no fields, the row and every line (2026-11-22) | read the field or the line in full |
 | F5 | read the folder again | — |
 | Shift+F10, the Applications key | the bar's Context menu: the list's or the item's commands (bundle AX-9.11) | Context: the field's commands |
 

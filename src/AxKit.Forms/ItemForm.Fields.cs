@@ -307,7 +307,12 @@ public abstract partial class ItemForm
         ChangeShown(document => (document.WithoutField(index), "Removed " + field.Title), Math.Min(index, _shown.Document.Fields.Count - 2));
     }
 
-    /// <summary>Ctrl+Q: every field of the item in the navigator, or the whole value of the field in the detail pane.</summary>
+    /// <summary>
+    /// Ctrl+Q: in the navigator, the row and everything the detail pane shows of it, one after another: every field
+    /// of an item, or, for a row whose details are lines and no fields (axAutomate's workflows and steps, a list in
+    /// axTask), every line (since 2026-11-22; until then such a row was read alone, where axAutomate's guide and
+    /// F1 text said every line). In the detail pane, the whole value of the field or the line you are on.
+    /// </summary>
     protected void ReadAll()
     {
         if (DetailPane.Focused)
@@ -333,6 +338,9 @@ public abstract partial class ItemForm
                 Announce(row.Name + ". " + string.Join(". ", document.Fields.Where(field => !field.Title.Equals(ItemDocument.TitleField, StringComparison.OrdinalIgnoreCase))
                     // A long text is read whole here; an empty one reads "empty" as every other empty field does ("Notes: " and nothing until 2026-11-14).
                     .Select(field => $"{field.Title}: {(field.Type == FieldTypes.LongText && FieldTypes.TextOf(field.Value) is { Length: > 0 } text ? text.ReplaceLineEndings(". ") : SpokenValue(row, field))}")), true);
+                return;
+            case { } other when Pane == SecondPane.Fields && HasDetailPane && _shown.Lines.Count > 0:
+                Announce(other.Label + ". " + string.Join(". ", _shown.Lines.Select(line => line.Label.TrimEnd('.'))), true);
                 return;
             case { } other:
                 Announce(other.Label, true);
