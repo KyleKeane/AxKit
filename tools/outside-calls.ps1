@@ -31,6 +31,7 @@ param([switch]$Check)
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
+. (Join-Path $root 'tools\ordinal.ps1')
 $sourceRoot = Join-Path $root 'src'
 $documentPath = Join-Path $root 'docs\axKit\outside-calls.md'
 
@@ -194,9 +195,8 @@ $declaration = [regex]'^\s*(?:(?:public|private|protected|internal|static|async|
 $typeDeclaration = [regex]'^\s*(?:\w+\s+)*(?:class|record|struct|interface)\s+(\w+)'
 $import = [regex]'(?:DllImport|LibraryImport)\("([^"]+)"'
 
-$files = @(Get-ChildItem -Path $sourceRoot -Recurse -Filter *.cs -File |
-    Where-Object { $_.FullName -notmatch '\\(bin|obj)\\' } |
-    Sort-Object FullName)
+$files = @(Sort-Ordinal @(Get-ChildItem -Path $sourceRoot -Recurse -Filter *.cs -File |
+    Where-Object { $_.FullName -notmatch '\\(bin|obj)\\' }) { $_.FullName })
 
 function Relative([string]$path) {
     return $path.Substring($root.Length + 1).Replace('\', '/')
@@ -346,7 +346,7 @@ $out.Add('The three kinds: **network**, a request over the network from axKit''s
 $out.Add('')
 $counts = @{}
 foreach ($kind in $kindNames.Keys) { $counts[$kind] = @($hits | Where-Object { $_.Function.Kind -eq $kind }).Count }
-$fileCount = @($hits | ForEach-Object { $_.File } | Sort-Object -Unique).Count
+$fileCount = @($hits | ForEach-Object { $_.File } | Select-Object -Unique).Count
 $reached = @($targets | Where-Object { $key = $_.Key; @($hits | Where-Object { $_.Targets -ccontains $key }).Count -gt 0 }).Count
 $out.Add("Today: $($counts['network']) network requests, $($counts['program']) program starts and $($counts['pipe']) pipes, in $fileCount files, under the $reached headings below.")
 $out.Add('')
@@ -357,7 +357,7 @@ foreach ($kind in $kindNames.Keys) {
     $out.Add('')
     foreach ($target in @($targets | Where-Object { $_.Kind -eq $kind })) {
         $key = $target.Key
-        $calls = @($hits | Where-Object { $_.Targets -ccontains $key } | Sort-Object { $_.File }, { $_.Line })
+        $calls = @(Sort-Ordinal @($hits | Where-Object { $_.Targets -ccontains $key }) { "{0}`t{1:D6}" -f $_.File, [int]$_.Line })
         if ($calls.Count -eq 0) { continue }
         $out.Add("#### $key")
         $out.Add('')

@@ -24,7 +24,9 @@ points here. Each app's own commands are in its `CLAUDE.md`.
   repository, it first refuses a clone whose hooks are not installed and names the command
   (`git config core.hooksPath tools/hooks`).
 - `tools/script-lint.ps1 -Check`, run by `test.ps1` and `build.yml`: every `.ps1` is ASCII, parses, and assigns no
-  local variable named like one of its parameters; its header says what each rule cost.
+  local variable named like one of its parameters, and a script that takes `-Check` (the page scripts) sorts with
+  `Sort-Ordinal` of `tools/ordinal.ps1`, never with `Sort-Object`, whose order differs between Windows PowerShell and
+  PowerShell 7; its header says what each rule cost.
 - The rules of the bundle that the tests hold, read off the sources in `tests/AxKit.Tests`: `LayoutTests` (references
   point one way), `ListTests` (every list is `AxKitList`), `SecondWindowTests` (no message box, dialog or bare form
   outside its list of files), `StackTests` (no package, WPF or web view outside the tests), `KeyTests` (no key

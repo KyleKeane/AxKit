@@ -37,6 +37,7 @@ param([switch]$Check)
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path | Split-Path -Parent
+. (Join-Path $root 'tools\ordinal.ps1')
 $filePath = Join-Path $root 'docs\axKit\families.json'
 $keyFamiliesPath = Join-Path $root 'docs\axKit\key-families.json'
 $inventoryPath = Join-Path $root 'docs\axKit\window-commands.json'
@@ -325,7 +326,7 @@ foreach ($family in $file.sounds) {
         $p.Add("  - Switch: $($member.switch)")
         $p.Add("  - The sound of: $(Get-Named $eventsOfSound[$member.id]).")
         if ($callers.ContainsKey($member.id)) {
-            $p.Add("  - Played from $(Get-Count $callers[$member.id].Count 'file' 'files'): $((@($callers[$member.id]) | Sort-Object | ForEach-Object { $_ -replace '^src/', '' }) -join ', ').")
+            $p.Add("  - Played from $(Get-Count $callers[$member.id].Count 'file' 'files'): $((@(Sort-Ordinal $callers[$member.id]) | ForEach-Object { $_ -replace '^src/', '' }) -join ', ').")
         }
     }
 }

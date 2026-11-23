@@ -15,7 +15,7 @@ axKit is built for people who use a screen reader, and every change is judged by
 - **Accessibility first** (AX-7): every control has an accessible name, everything works without a mouse, the caret moves only on the user's own command, and the result of a command is one announcement. Questions and errors are notices inside the window, never a second window (`SecondWindowTests`).
 - **Keys** live in one table per window, or in `BundleKeys` when they mean the same everywhere; a test fails on a collision, and another on a key the F1 text does not name.
 - **No personal data and no secrets**: no e-mail address, no path with an account name in it, no token and no private key, anywhere in the repository (`PrivacyTests`).
-- **Scripts** are ASCII and name no local variable like one of their parameters (`tools/script-lint.ps1`, which `test.ps1` runs, says why).
+- **Scripts** are ASCII, name no local variable like one of their parameters, and sort a page with `Sort-Ordinal` (`tools/ordinal.ps1`), never `Sort-Object` (`tools/script-lint.ps1`, which `test.ps1` runs, says why).
 
 ## Before you open a pull request
 

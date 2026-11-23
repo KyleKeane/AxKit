@@ -40,6 +40,7 @@ param([switch]$Check, [switch]$Open)
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path | Split-Path -Parent
+. (Join-Path $root 'tools\ordinal.ps1')
 $dataPath = Join-Path $root 'docs\axKit\repairs.json'
 $documentPath = Join-Path $root 'docs\axKit\repairs.md'
 $data = [IO.File]::ReadAllText($dataPath) | ConvertFrom-Json
@@ -83,8 +84,11 @@ if ($problems.Count -gt 0) {
 
 function Rank($item) { [array]::IndexOf($severities, $item.severity) }
 
+# The items of a list in the page's order: by severity, then by id, as text (tools\ordinal.ps1).
+function InOrder($items) { Sort-Ordinal @($items) { "{0:D3}`t{1}" -f [int](Rank $_), $_.id } }
+
 if ($Open) {
-    $data.items | Where-Object { $_.status -eq 'open' } | Sort-Object { Rank $_ }, id | ForEach-Object { "{0} {1,-8} {2,-9} {3}" -f $_.id, $_.severity, $_.area, $_.title }
+    InOrder ($data.items | Where-Object { $_.status -eq 'open' }) | ForEach-Object { "{0} {1,-8} {2,-9} {3}" -f $_.id, $_.severity, $_.area, $_.title }
     exit 0
 }
 
@@ -114,7 +118,7 @@ foreach ($principle in $data.principles) {
 }
 
 foreach ($status in $statuses) {
-    $of = @($data.items | Where-Object { $_.status -eq $status } | Sort-Object { Rank $_ }, id)
+    $of = @(InOrder ($data.items | Where-Object { $_.status -eq $status }))
     if ($of.Count -eq 0) { continue }
     $lines.Add('')
     $lines.Add('## ' + $status.Substring(0, 1).ToUpperInvariant() + $status.Substring(1))
