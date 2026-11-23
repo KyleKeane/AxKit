@@ -185,7 +185,12 @@ Features of the apps that exist:
   keys. Asked again on 2026-11-22 and back in the priorities list: its entry under "Still to come" says how.
 - **A gutter for the transcript views** and **custom keys to scripts**: described above in this section.
 
-New apps: **axList** (lists to remember as Markdown files; a draft is on the tag `archive/axlist-draft`), **axSQL** (a
+New apps: **axTemplate** (the maintainer's idea of 2026-11-23: his templates behind a system-wide hotkey, found by
+name or by their text in a launcher like axClip's and put in wherever the caret was, in any program; a browser
+like axTask's to keep them in order; the same templates in the axKit apps' command palettes; a step of axAutomate
+that puts one in. Specified for his reading, `docs/axTemplate/SPEC.md`, with seven open questions; not built. The
+editors' Insert template menu of the same day, `docs/axDown/SPEC.md` AD-13, is its scaffolding),
+**axList** (lists to remember as Markdown files; a draft is on the tag `archive/axlist-draft`), **axSQL** (a
 SQLite browser), **axHTTP** (a REST client), **axMail** (mail over IMAP and SMTP, the largest build), **AxVault**
 (Cryptomator vaults; AxCryptomator below), and, on record only, **AxWeb**, **AxCalendar** and **AxSettings**. Each is
 described under "Later apps".
