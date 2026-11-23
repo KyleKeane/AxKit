@@ -96,6 +96,14 @@ public sealed partial class FileForm
             return;
         }
 
+        // What the operation made may be gone since (renamed, undone): in the folder shown, the entry the user is on
+        // stays selected rather than the list jumping to its first entry.
+        if (select is not null && string.Equals(folder, _folder, StringComparison.OrdinalIgnoreCase)
+            && !ShownEntries().Any(shown => string.Equals(shown.Name, select, StringComparison.OrdinalIgnoreCase)))
+        {
+            select = CurrentEntry()?.Name;
+        }
+
         ShowInList(folder, select, remember: false);
     }
 
