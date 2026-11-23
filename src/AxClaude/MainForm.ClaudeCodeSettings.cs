@@ -177,7 +177,7 @@ internal sealed partial class MainForm
     {
         if (!ProcessRunning)
         {
-            Announce("Claude stopped. Ctrl+Shift+R starts it", true);
+            Announce(ClaudeStopped, true);
             return;
         }
 

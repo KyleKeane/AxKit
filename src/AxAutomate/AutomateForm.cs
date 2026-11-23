@@ -116,11 +116,14 @@ public sealed partial class AutomateForm : ItemForm
 
     // ---- the levels (AU-4.2) ----
 
+    /// <summary>What the window says and shows with no folder open, its key from the table.</summary>
+    private static string NoFolderOpen => $"No folder open: {BundleKeys.Text(AxAutomateKeys.OpenFolder)} opens a folder of workflows";
+
     protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel()
     {
         if (_folders.Count == 0)
         {
-            const string none = "No folder open: Ctrl+O opens a folder of workflows";
+            var none = NoFolderOpen;
             return ([new ItemRow(false, "none", none, none)], "Workflows, no folder open", "Workflows", "No folder");
         }
 

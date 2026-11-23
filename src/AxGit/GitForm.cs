@@ -334,7 +334,7 @@ public sealed partial class GitForm : ItemForm
     }
 
     /// <summary>Ctrl+S, the bundle's save key: nothing to save in a git window, and the keys that do something said (AG-6.2).</summary>
-    protected override void SaveCommand() => Announce($"Nothing to save here. {BundleKeys.Text(AxGitKeys.Stage).TrimEnd('.')} stages, Ctrl+Enter commits", true);
+    protected override void SaveCommand() => Announce($"Nothing to save here. {BundleKeys.Text(AxGitKeys.Stage).TrimEnd('.')} stages, {BundleKeys.Text(BundleKeys.MainAction)} commits", true);
 
     protected override string UpdateRestartText => $"closes {AxGitApp.Name}, installs it and starts it again on the same repository";
 
@@ -361,7 +361,7 @@ public sealed partial class GitForm : ItemForm
                     SetNoRepository();
                 }
 
-                Announce("Not connected to Git. Ctrl+O opens a repository", true);
+                Announce($"Not connected to Git. {BundleKeys.Text(AxGitKeys.OpenRepository)} opens a repository", true);
             }))
         {
             return;
@@ -415,7 +415,7 @@ public sealed partial class GitForm : ItemForm
                 SetNoRepository();
             }
 
-            ShowNotice(Notice.Plain("Not a git repository", $"{target} is not inside a git repository. Session, Open repository (Ctrl+O) takes another folder.") with { Unprompted = true });
+            ShowNotice(Notice.Plain("Not a git repository", $"{target} is not inside a git repository. Session, Open repository ({BundleKeys.Text(AxGitKeys.OpenRepository)}) takes another folder.") with { Unprompted = true });
             return;
         }
 

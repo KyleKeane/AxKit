@@ -1,5 +1,6 @@
 using System.Reflection;
 using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxAutomate;
 
@@ -10,39 +11,39 @@ public static class HelpText
     public static readonly string Shortcuts = BundleHelp.Section(
         "axAutomate",
         [
-            "Ctrl+F: find a row in the navigator. F3 and Shift+F3: next or previous match",
-        ]) + """
+            $"{BundleKeys.Text(BundleKeys.Find)}: find a row in the navigator. {BundleKeys.Text(BundleKeys.FindNext)} and {BundleKeys.Text(BundleKeys.FindPrevious)}: next or previous match",
+        ]) + $"""
         ## The navigator, on the left
           Up, Down, Home, End: move; the edge sound at an end. Type the start of a name to jump to it, Shift with a letter backwards
           A folder of workflows lists its folders, then its workflows, each with how many steps it has and, after a run, "passed", "failed at step 3" or "cannot run"
           Right or Enter on a folder or a workflow: go into it. Left or Backspace: up a level
-          Space: select the workflow you are on in a folder, or deselect it again; a selected workflow reads ", selected". Shift+Down, Shift+Up, Shift+Home, Shift+End: select as you move. Shift+Space: select from the nearest selected workflow to this one. Ctrl+A: select every workflow. Ctrl+Shift+A, or Escape while no run is going on: deselect all. F5 then runs the selected workflows
-          Ctrl+Up, Ctrl+Down: the section before or after, where a level has sections; the edge sound otherwise
+          Space: select the workflow you are on in a folder, or deselect it again; a selected workflow reads ", selected". {BundleKeys.Text(SelectionKeys.SelectDown)}, {BundleKeys.Text(SelectionKeys.SelectUp)}, {BundleKeys.Text(SelectionKeys.SelectToStart)}, {BundleKeys.Text(SelectionKeys.SelectToEnd)}: select as you move. {BundleKeys.Text(SelectionKeys.SelectTo)}: select from the nearest selected workflow to this one. {BundleKeys.Text(SelectionKeys.SelectAll)}: select every workflow. {BundleKeys.Text(SelectionKeys.SelectNone)}, or Escape while no run is going on: deselect all. F5 then runs the selected workflows
+          {BundleKeys.Text(ItemKeys.PreviousSection)}, {BundleKeys.Text(ItemKeys.NextSection)}: the section before or after, where a level has sections; the edge sound otherwise
           In a workflow, one row per step in the order they run: "4. Expect said: Command palette"
           A step's marks after its sentence: "may not come" or "goes on if it fails" when a failure does not stop the workflow, "reports" when it has its own failure message, "then 2 steps" when steps run only after it passed, "otherwise 1 step" when steps run only after it failed
           The steps of a then or otherwise block come right after their step, numbered under it: "5.1 then: Wait 1.5 seconds"
           A row that starts with "Note:" is a sentence for the reader, never run
-          Enter, Tab, Ctrl+Tab or F6: to the step's details
-          Ctrl+J: the workflow's file as text, a script in axDown, a workflow file in axJSON
-          Ctrl+Q: read every line of the selection's details
-          Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on the selection
+          Enter, Tab, {BundleKeys.Text(BundleKeys.NextControl)} or F6: to the step's details
+          {BundleKeys.Text(AxAutomateKeys.OpenFile)}: the workflow's file as text, a script in axDown, a workflow file in axJSON
+          {BundleKeys.Text(ItemKeys.ReadAll)}: read every line of the selection's details
+          {BundleKeys.Text(ItemKeys.ItemMenu)}, the Applications key or {BundleKeys.Text(BundleKeys.ContextMenu)}: the Context menu, what acts on the selection
 
         ## The detail pane, on the right
           On a step: its number, what it does, each of its values, what happens when it fails, what it reports, its blocks, its note, and the line of the file it comes from
           On a workflow: its title, what it covers, how many steps, its file and its format
-          Up, Down: move through the lines. Ctrl+Q: read the line whole. Right and Left change nothing in this version: the edge sound
-          Escape, Tab, Shift+Tab, Ctrl+Tab or F6: back to the navigator; during a run Escape stops the run instead
+          Up, Down: move through the lines. {BundleKeys.Text(ItemKeys.ReadAll)}: read the line whole. Right and Left change nothing in this version: the edge sound
+          Escape, Tab, {BundleKeys.Text(ItemKeys.OtherPaneBack)}, {BundleKeys.Text(BundleKeys.NextControl)} or F6: back to the navigator; during a run Escape stops the run instead
           After a run: "Last run:" with the outcome and what the runner saw, on the workflow and on the step that failed
 
         ## Everywhere in axAutomate
-          Ctrl+O: open a folder of workflows; axAutomate opens it again at the next start
+          {BundleKeys.Text(AxAutomateKeys.OpenFolder)}: open a folder of workflows; axAutomate opens it again at the next start
           F5: run the workflow you are in, on a desktop of its own, never with your keyboard; in a folder, every workflow of that folder, one after another. A failing step is said as it ends ("Step 3 failed: ..."), and one line when each workflow ends ("02-palette passed, 6 steps" or "02-palette failed at step 3"); the rows then carry the outcome, and the details what the runner saw
           A workflow with a run step asks first, naming its command lines: they run on your own desktop and files. Cancel is the default; Alt+R runs it
           A step that makes a file or a folder outside the run's own folder cannot run from here. These guard against slips only: a workflow drives axKit's windows, which reach your files, so run only workflows you wrote or trust
           Escape during a run: stop it after the step going on
-          Ctrl+R: the report of the last run of the workflow you are in or on: how it ended, every step played with what the runner saw, and the timeline of what was said and focused, as a text with the reading keys and Ctrl+F. Kept until the window closes
+          {BundleKeys.Text(AxAutomateKeys.Report)}: the report of the last run of the workflow you are in or on: how it ended, every step played with what the runner saw, and the timeline of what was said and focused, as a text with the reading keys and {BundleKeys.Text(BundleKeys.Find)}. Kept until the window closes
           Session, Refresh: read the folder or the workflow again; a run reads its file again by itself
-          This version views and runs the workflows: changing them comes later. Ctrl+N, Ctrl+Shift+N, F2, Delete and Ctrl+Z say so
+          This version views and runs the workflows: changing them comes later. {BundleKeys.Text(ItemKeys.New)}, {BundleKeys.Text(ItemKeys.NewList)}, F2, Delete and {BundleKeys.Text(ItemKeys.Undo)} say so
         """ + BundleHelp.FilterAndSortSection() + BundleHelp.NoticesSection("axAutomate", "the panes");
 
     /// <summary>docs/axAutomate/user-guide.md, embedded by AxAutomate.csproj.</summary>

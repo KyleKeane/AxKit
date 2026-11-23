@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- For developers: most keys a window names in its words are now made from the key tables (`BundleKeys.Text` of the table's constant) instead of typed: every app's F1 text but axFile's, the windows' own sentences ("Ctrl+N adds an item", "Claude stopped. Ctrl+Shift+R starts it") and the forms' "Ctrl+Enter". Nothing heard changes: each F1 text was compared before and after, character for character. `HandKeyTests.StillByHand` went from 69 files to 43; what stays typed is the text field's own keys, the hotkeys a user chooses, another program's keys and the shared texts of `AxKit.Core`.
 - axTask: **Session, Recent top folders.** The folders of lists you used before, the newest first, each with its path, as every recent list of axKit; choose one to open it, as Top folder does. A folder joins the list when you leave it for another and when you open it, from the menu or the command line.
 - axTask: **Ctrl+N on a list among your lists adds the item to that list** without going into it: type the title and press Enter, and axTask says "Added" with the title and the list; you stay on the list, and Ctrl+Z takes it back. On a heading or a smart list Ctrl+N still says where items go.
 - For developers: the unit tests write their log lines into a folder of their own under the temporary path (`tests/Shared/TestLog.cs`, `Log.UseFolder`), no longer into the user's `%LOCALAPPDATA%\AxKit\logs`, where a test's error about a changed settings file read as if the user's own had been tampered with.

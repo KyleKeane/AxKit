@@ -136,7 +136,7 @@ public sealed partial class PassForm
     {
         if (entries.GroupBy(entry => entry.Name, StringComparer.OrdinalIgnoreCase).FirstOrDefault(same => same.Count() > 1) is { } twice)
         {
-            Announce($"Two of the selected entries are called {twice.Key}: move those to the Recycle Bin one at a time, so that Ctrl+Z can tell them apart", true);
+            Announce($"Two of the selected entries are called {twice.Key}: move those to the Recycle Bin one at a time, so that {BundleKeys.Text(ItemKeys.Undo)} can tell them apart", true);
             return;
         }
 
@@ -167,8 +167,8 @@ public sealed partial class PassForm
             Selection.Clear();
             await ReloadAsync(select);
             Announce(moved.Count == entries.Count
-                ? $"Moved {count} to the Recycle Bin; Ctrl+Z brings them back"
-                : $"Moved {moved.Count} of {entries.Count} entries to the Recycle Bin; Ctrl+Z brings them back", true);
+                ? $"Moved {count} to the Recycle Bin; {BundleKeys.Text(ItemKeys.Undo)} brings them back"
+                : $"Moved {moved.Count} of {entries.Count} entries to the Recycle Bin; {BundleKeys.Text(ItemKeys.Undo)} brings them back", true);
         });
     }
 
@@ -212,14 +212,14 @@ public sealed partial class PassForm
                 _entries.Remove(node.Path);
                 Remember(new Step($"Moved {node.Name} to the Recycle Bin", [new Call(KeePassCliTexts.Move, [], [PassTree.Join(PassTree.RecycleBin, node.Name), node.Group.Length == 0 ? KeePassCliTexts.Root : node.Group])], node.Path));
                 await ReloadAsync(select);
-                Announce($"Moved {node.Name} to the Recycle Bin; Ctrl+Z brings it back", true);
+                Announce($"Moved {node.Name} to the Recycle Bin; {BundleKeys.Text(ItemKeys.Undo)} brings it back", true);
             });
             return;
         }
 
         var question = forGood
             ? $"Delete {node.Name} for good? It is in the Recycle Bin, and nothing brings it back."
-            : $"Move the group {node.Name} and its {Count(_tree.CountIn(node.Path), "item")} to the Recycle Bin? Ctrl+Z cannot bring a group back: KeePassXC's own window can.";
+            : $"Move the group {node.Name} and its {Count(_tree.CountIn(node.Path), "item")} to the Recycle Bin? {BundleKeys.Text(ItemKeys.Undo)} cannot bring a group back: KeePassXC's own window can.";
         ShowNotice(Notice.Ask(forGood ? "Delete for good" : "Move the group", question, forGood ? "&Delete" : "&Move", () => Do(async () =>
         {
             var select = NeighbourKey();
@@ -250,7 +250,7 @@ public sealed partial class PassForm
         List<string> choices = entry.Group.Length == 0 ? groups : [TopName, .. groups];
         if (choices.Count == 0)
         {
-            Announce("There is no other group: Ctrl+Shift+N makes one", true);
+            Announce($"There is no other group: {BundleKeys.Text(ItemKeys.NewList)} makes one", true);
             return;
         }
 
@@ -417,7 +417,7 @@ public sealed partial class PassForm
         }
 
         var generated = false;
-        ShowNotice(new Notice("New password for " + entry.Name, "Type it, or Generate makes one of 20 characters. Ctrl+Z does not bring the old one back.",
+        ShowNotice(new Notice("New password for " + entry.Name, $"Type it, or Generate makes one of 20 characters. {BundleKeys.Text(ItemKeys.Undo)} does not bring the old one back.",
         [
             new OverlayChoice("&Set", () =>
             {

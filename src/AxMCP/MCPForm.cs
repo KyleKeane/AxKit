@@ -244,7 +244,7 @@ public sealed class MCPForm : ItemForm
         Section(ServerSources.Own, _servers.Where(server => server.Own));
         if (rows.Count == 0)
         {
-            rows.Add(new ItemRow(false, "none", "No servers", "No servers: Ctrl+N adds one of your own; claude mcp add in a terminal adds one to Claude Code"));
+            rows.Add(new ItemRow(false, "none", "No servers", $"No servers: {BundleKeys.Text(ItemKeys.New)} adds one of your own; claude mcp add in a terminal adds one to Claude Code"));
         }
 
         return (rows, $"Servers, {Count(_servers.Count, "server")}", "Servers", _folder ?? string.Empty);
@@ -299,7 +299,7 @@ public sealed class MCPForm : ItemForm
         switch (row?.Tag)
         {
             case null when row is null:
-                return new ItemDetail("Details, nothing selected", null, null, [new ItemDetailLine(Rows.Count == 0 ? "No servers: Ctrl+N adds one" : "Nothing selected")]);
+                return new ItemDetail("Details, nothing selected", null, null, [new ItemDetailLine(Rows.Count == 0 ? $"No servers: {BundleKeys.Text(ItemKeys.New)} adds one" : "Nothing selected")]);
             case McpServer server:
                 var lines = new List<ItemDetailLine>
                 {
@@ -327,9 +327,9 @@ public sealed class MCPForm : ItemForm
             case SectionTag section:
                 return new ItemDetail("Details of " + section.Name, row.Key, null, [new ItemDetailLine(row.Label), new ItemDetailLine(section.Key switch
                 {
-                    "tools" => "What the server can do: Tab on a tool for its arguments, Ctrl+Enter calls it",
+                    "tools" => $"What the server can do: Tab on a tool for its arguments, {BundleKeys.Text(BundleKeys.MainAction)} calls it",
                     "resources" => "What the server can show: Enter on a resource reads it",
-                    _ => "Texts the server composes: Tab on a prompt for its arguments, Ctrl+Enter fetches it",
+                    _ => $"Texts the server composes: Tab on a prompt for its arguments, {BundleKeys.Text(BundleKeys.MainAction)} fetches it",
                 })]);
             case ServerTool tool:
                 return new ItemDetail("Arguments of " + tool.Title, row.Key, ArgumentsFor(row.Key, () => ArgumentFields.ForTool(tool)), [], tool);
@@ -505,7 +505,7 @@ public sealed class MCPForm : ItemForm
         var command = form.AddText("Type the command line that starts it");
         var folder = form.AddText("Type the folder to start it in, or leave it empty", _folder ?? string.Empty);
         ShowForm("Add server",
-            "A server of your own: a name for the list, the command line that starts it, as a terminal would run it, and the folder to start it in; an empty folder means the folder axMCP was started on, or your profile folder. Tab moves between the fields; Enter or Ctrl+Enter adds the server.",
+            $"A server of your own: a name for the list, the command line that starts it, as a terminal would run it, and the folder to start it in; an empty folder means the folder axMCP was started on, or your profile folder. Tab moves between the fields; Enter or {BundleKeys.Text(BundleKeys.MainAction)} adds the server.",
             form, "&Add",
             () =>
             {
@@ -527,7 +527,7 @@ public sealed class MCPForm : ItemForm
                 : null);
     }
 
-    protected override void NewList() => Announce("Servers are added with Ctrl+N at the top level", true);
+    protected override void NewList() => Announce($"Servers are added with {BundleKeys.Text(ItemKeys.New)} at the top level", true);
 
     protected override void Undo()
     {

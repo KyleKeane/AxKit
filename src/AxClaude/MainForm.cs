@@ -20,7 +20,10 @@ namespace AxClaude;
 internal sealed partial class MainForm : ConsoleForm
 {
     /// <summary>Spoken for Ctrl+O, which the app does not pass on (D14).</summary>
-    private const string CtrlOGuardText = "Ctrl+O is off. For tool output, start with --verbose";
+    private static string CtrlOGuardText => $"{BundleKeys.Text(AxClaudeKeys.CtrlOGuard)} is off. For tool output, start with --verbose";
+
+    /// <summary>Said when a key for Claude meets a Claude Code that is not running, with the key that starts it.</summary>
+    private static string ClaudeStopped => $"Claude stopped. {BundleKeys.Text(AxClaudeKeys.RestartClaude)} starts it";
 
     /// <summary>The command line's options; its Claude path is cleared when it no longer exists and an install put Claude in its own place.</summary>
     private StartupOptions _options;
@@ -271,7 +274,7 @@ internal sealed partial class MainForm : ConsoleForm
 
         if (_folder is null)
         {
-            _model.AddSystemLine("No project folder. Press Ctrl+N to choose one.");
+            _model.AddSystemLine($"No project folder. Press {BundleKeys.Text(AxClaudeKeys.NewSession)} to choose one.");
         }
         else
         {

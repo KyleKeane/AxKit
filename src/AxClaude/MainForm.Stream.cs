@@ -284,7 +284,7 @@ internal sealed partial class MainForm
     {
         if (_stream is not { } host)
         {
-            Announce("Claude stopped. Ctrl+Shift+R starts it", true);
+            Announce(ClaudeStopped, true);
             return;
         }
 
@@ -316,7 +316,7 @@ internal sealed partial class MainForm
     {
         if (_stream is not { } host || _streamModel is not { } model)
         {
-            Announce("Claude stopped. Ctrl+Shift+R starts it", true);
+            Announce(ClaudeStopped, true);
             return;
         }
 
@@ -397,7 +397,7 @@ internal sealed partial class MainForm
             },
             "&Do not start", () =>
             {
-                _model.AddSystemLine("Claude Code was not started in this folder. Press Ctrl+Shift+R to be asked again.");
+                _model.AddSystemLine($"Claude Code was not started in this folder. Press {BundleKeys.Text(AxClaudeKeys.RestartClaude)} to be asked again.");
                 UpdateStatus();
             },
             cancelIsDefault: true) with { Unprompted = true });

@@ -403,7 +403,7 @@ public sealed partial class TaskForm : ItemForm
                 rows.Add(new ItemRow(false, item.Path, itemName, itemName + TaskRules.Summary(item.Document, today), item));
             }
 
-            name = ListTitle() + ", " + (rows.Count == 0 && hidden == 0 ? "empty: Ctrl+N adds an item" : Count(rows.Count, "item"));
+            name = ListTitle() + ", " + (rows.Count == 0 && hidden == 0 ? $"empty: {BundleKeys.Text(ItemKeys.New)} adds an item" : Count(rows.Count, "item"));
             if (hidden > 0)
             {
                 name += $", {hidden} done hidden";
@@ -428,7 +428,7 @@ public sealed partial class TaskForm : ItemForm
             // AF-11.7: a configuration that does not read is said with the level, and where it is mended.
             if (level.ConfigProblem is { } problem)
             {
-                name += $". {problem}. Ctrl+J opens it";
+                name += $". {problem}. {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} opens it";
             }
         }
         else
@@ -527,7 +527,7 @@ public sealed partial class TaskForm : ItemForm
         foreach (var (word, lists) in groups)
         {
             rows.Add(Heading("filters:" + word, word, 2, Count(lists.Count, "smart list"),
-                new SectionTag(word, false, 2, $"Your smart lists whose names start with {word}; each is a file of its own, Ctrl+J changes it in axJSON")));
+                new SectionTag(word, false, 2, $"Your smart lists whose names start with {word}; each is a file of its own, {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} changes it in axJSON")));
             rows.AddRange(lists.Select(list => SmartRow(list, all, today)));
         }
 
@@ -572,7 +572,7 @@ public sealed partial class TaskForm : ItemForm
     {
         var bySection = top.Lists.GroupBy(ItemFolder.SectionOf, StringComparer.OrdinalIgnoreCase).ToDictionary(group => group.Key, group => group.ToList(), StringComparer.OrdinalIgnoreCase);
         var plain = bySection.GetValueOrDefault(string.Empty) ?? [];
-        AddHeading(rows, YourLists, 1, top.Lists.Count == 0 ? "none: Ctrl+Shift+N makes one" : Count(plain.Count, "list"));
+        AddHeading(rows, YourLists, 1, top.Lists.Count == 0 ? $"none: {BundleKeys.Text(ItemKeys.NewList)} makes one" : Count(plain.Count, "list"));
         rows.AddRange(plain.Select(ListRow));
         foreach (var section in bySection.Keys.Where(key => key.Length > 0).OrderBy(key => key, AxKit.Core.NaturalOrder.Instance))
         {
@@ -610,7 +610,7 @@ public sealed partial class TaskForm : ItemForm
     /// <summary>"The list's configuration does not read: it is not JSON at line 12. Ctrl+J opens it" (AF-11.7); null for a list whose configuration reads or that has none.</summary>
     private static string? ConfigurationProblem(string folder) =>
         ItemFolder.ReadConfig(folder) is { Config: null, Text: not null, Problem: { } problem }
-            ? $"The list's configuration {problem}. Ctrl+J opens it"
+            ? $"The list's configuration {problem}. {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} opens it"
             : null;
 
     private static ItemRow SmartRow(SmartList smart, IReadOnlyList<GatheredItem> all, DateOnly today)
@@ -654,14 +654,14 @@ public sealed partial class TaskForm : ItemForm
         {
             case null:
                 return new ItemDetail("Details, nothing selected", null, null,
-                    [new ItemDetailLine(Rows.Count == 0 ? "Nothing in this list: Ctrl+N in the navigator adds an item" : "Nothing selected")]);
+                    [new ItemDetailLine(Rows.Count == 0 ? $"Nothing in this list: {BundleKeys.Text(ItemKeys.New)} in the navigator adds an item" : "Nothing selected")]);
             case { Tag: ItemFile item }:
                 return DetailOfItem(row.Name, item, []);
             case { Tag: FoundItem found }:
                 return DetailOfItem(row.Name, found.Item, [new ItemDetailLine($"In {found.Hit.Place} / {found.Hit.List}; Enter in the navigator opens it there")]);
             case { Tag: UnreadableTag { Path: { } unreadable } }:
                 return new ItemDetail("Details of " + row.Name, null, null,
-                    [new ItemDetailLine(row.Label), new ItemDetailLine("The file is JSON that is not an item, or not JSON: Enter in the navigator or Ctrl+J opens it in axJSON to mend; Ctrl+E shows it in axFile"), new ItemDetailLine(unreadable)]);
+                    [new ItemDetailLine(row.Label), new ItemDetailLine($"The file is JSON that is not an item, or not JSON: Enter in the navigator or {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} opens it in axJSON to mend; {BundleKeys.Text(AxTaskKeys.ShowInAxFile)} shows it in axFile"), new ItemDetailLine(unreadable)]);
             case { Tag: UnreadableTag }:
                 return new ItemDetail("Details of files not readable", null, null,
                     [new ItemDetailLine(row.Label), .. _unreadable.Select(path => new ItemDetailLine(path)), new ItemDetailLine("Each is a row of its own list, where Enter opens it in axJSON")]);
@@ -677,9 +677,9 @@ public sealed partial class TaskForm : ItemForm
                         SmartTags => "A heading for each symbol that starts a word in your tasks not done, @ for the people they are assigned to, # and the rest for tags, with a smart list for each, over your lists and every project's",
                         "Date lists" => "The tasks not done by their Due date, in your lists and every project's",
                         "Projects" => "A heading for each project folder, with the folders of lists found under it; Options, Add a project folder adds and removes them",
-                        "Archived lists" => "What Delete moved away; Ctrl+Z brings back the last, axFile deletes for good",
-                        YourLists => "Lists in no section of your own, then your sections; Ctrl+M on a list moves it to a section",
-                        _ => "A section of your own: a list joins it by its Section field, or Ctrl+M",
+                        "Archived lists" => $"What Delete moved away; {BundleKeys.Text(ItemKeys.Undo)} brings back the last, axFile deletes for good",
+                        YourLists => $"Lists in no section of your own, then your sections; {BundleKeys.Text(AxTaskKeys.MoveToSection)} on a list moves it to a section",
+                        _ => $"A section of your own: a list joins it by its Section field, or {BundleKeys.Text(AxTaskKeys.MoveToSection)}",
                     }),
                 ]);
             case { Tag: var tag } when ReferenceEquals(tag, ArchivedItemsTag):
@@ -695,7 +695,7 @@ public sealed partial class TaskForm : ItemForm
                     lines.Add(new ItemDetailLine("A condition not understood: " + why));
                 }
 
-                lines.Add(new ItemDetailLine(smart.BuiltIn ? "Built in; a smart list of your own is List, New smart list" : $"Its file: {Path.GetFileName(smart.Path)}; Ctrl+J changes it in axJSON"));
+                lines.Add(new ItemDetailLine(smart.BuiltIn ? "Built in; a smart list of your own is List, New smart list" : $"Its file: {Path.GetFileName(smart.Path)}; {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} changes it in axJSON"));
                 return new ItemDetail("Details of " + smart.Name, null, null, lines);
             default:
                 return DetailOfList(row);
@@ -727,7 +727,7 @@ public sealed partial class TaskForm : ItemForm
     private void ReadKept(ItemFile item) =>
         ShowNotice(Notice.Plain("Fields kept",
             string.Join("\r\n", item.Kept.Select(kept => $"{kept.Name}: {FieldTypes.PlainText(kept.Value)}"))
-            + "\r\n\r\nThese values are in the item's file, and no field of the list's configuration has their names, so they are kept and not shown among the fields. A field of that name in the configuration shows its value again. Ctrl+J on the list opens the configuration in axJSON."));
+            + $"\r\n\r\nThese values are in the item's file, and no field of the list's configuration has their names, so they are kept and not shown among the fields. A field of that name in the configuration shows its value again. {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} on the list opens the configuration in axJSON."));
 
     /// <summary>
     /// A list's detail: its details as fields (Section first, TK-3a.3), then the fields of its items, on which Enter
@@ -787,5 +787,5 @@ public sealed partial class TaskForm : ItemForm
 
     /// <summary>Enter on a list's "Fields of its items" line: how they change.</summary>
     private void ExplainFields() =>
-        ShowNotice(Notice.Plain("Fields of its items", (ShownDetail.Lines.FirstOrDefault()?.Label ?? string.Empty) + ".\r\n\r\nThe fields of a list's items are written once, in the list's configuration: Ctrl+J on the list opens it in axJSON, where \"item fields\" names each field with its title, its type and the value a new item starts with. A field added there shows in every item, empty until it is given a value. A field taken out is hidden and its values are kept in the items: put it back and they show again. Actions, Add Done to every item or Remove Done from every item makes the list a checklist or a plain list."));
+        ShowNotice(Notice.Plain("Fields of its items", (ShownDetail.Lines.FirstOrDefault()?.Label ?? string.Empty) + $".\r\n\r\nThe fields of a list's items are written once, in the list's configuration: {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} on the list opens it in axJSON, where \"item fields\" names each field with its title, its type and the value a new item starts with. A field added there shows in every item, empty until it is given a value. A field taken out is hidden and its values are kept in the items: put it back and they show again. Actions, Add Done to every item or Remove Done from every item makes the list a checklist or a plain list."));
 }

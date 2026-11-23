@@ -1,5 +1,6 @@
 using System.Reflection;
 using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxCalc;
 
@@ -10,10 +11,10 @@ public static class HelpText
     public static readonly string Shortcuts = BundleHelp.Section(
         "axCalc",
         [
-            "Tab, Shift+Tab, Ctrl+Tab or F6: switch between the history and the expression field",
-            "Ctrl+F: find text in the history. F3 and Shift+F3: next or previous match",
-            "Ctrl+S: save the history as a text file",
-        ]) + """
+            $"Tab, Shift+Tab, {BundleKeys.Text(BundleKeys.NextControl)} or {BundleKeys.Text(BundleKeys.NextControlAlso)}: switch between the history and the expression field",
+            $"{BundleKeys.Text(BundleKeys.Find)}: find text in the history. {BundleKeys.Text(BundleKeys.FindNext)} and {BundleKeys.Text(BundleKeys.FindPrevious)}: next or previous match",
+            $"{BundleKeys.Text(BundleKeys.Save)}: save the history as a text file",
+        ]) + $"""
         ## axCalc
           In the expression field
             Enter: the answer, spoken; the line joins the history and the field empties
@@ -22,14 +23,14 @@ public static class HelpText
             Up, Down: one line at a time. a, Shift+A: the next or the previous answer. s, Shift+S: the next or the previous line of axCalc's own. l: the line number
             Enter: the line's expression back in the field, to change it
             Escape: back to the field
-            m: bookmark this line, or take its bookmark away; Ctrl+Shift+K does it from the field too. k, Shift+K: the next or the previous bookmark. Backspace: back to the line before a jump
+            m: bookmark this line, or take its bookmark away; {BundleKeys.Text(AxCalcKeys.BookmarkLine)} does it from the field too. k, Shift+K: the next or the previous bookmark. Backspace: back to the line before a jump
             Ctrl+Alt with a, s or k, from anywhere: every line of that kind from the line you are on to the end
-            Shift with the arrows selects; Ctrl+C copies the selection
-            Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on the line you are on
-          Ctrl+Shift+C: copy the answer (the last one, or the line's in the history)
-          Ctrl+I: the answer in hexadecimal, binary and octal
-          Ctrl+Q: say the last answer again
-          Ctrl+Shift+Delete: clear the history, after a question
+            Shift with the arrows selects; {BundleKeys.Text(AxCalcKeys.CopySelection)} copies the selection
+            Shift+F10, the Applications key or {BundleKeys.Text(BundleKeys.ContextMenu)}: the Context menu, what acts on the line you are on
+          {BundleKeys.Text(AxCalcKeys.CopyAnswer)}: copy the answer (the last one, or the line's in the history)
+          {BundleKeys.Text(AxCalcKeys.OtherBases)}: the answer in hexadecimal, binary and octal
+          {BundleKeys.Text(AxCalcKeys.LastAnswer)}: say the last answer again
+          {BundleKeys.Text(AxCalcKeys.ClearHistory)}: clear the history, after a question
 
         ## Expressions
           + - * / as usual, % or mod for the remainder, ^ or ** for a power, ! for a factorial, parentheses to group

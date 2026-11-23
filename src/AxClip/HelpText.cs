@@ -1,5 +1,6 @@
 using System.Reflection;
 using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxClip;
 
@@ -10,18 +11,18 @@ public static class HelpText
     public static readonly string Shortcuts = BundleHelp.Section(
         "axClip",
         [
-            "Ctrl+F, F3 and Shift+F3: find in a notice's text",
+            $"{BundleKeys.Text(BundleKeys.Find)}, {BundleKeys.Text(BundleKeys.FindNext)} and {BundleKeys.Text(BundleKeys.FindPrevious)}: find in a notice's text",
         ],
-        altF4: "hide axClip (Quit axClip, in its first menu, ends it)") + """
+        altF4: "hide axClip (Quit axClip, in its first menu, ends it)") + $"""
         ## axClip
           Ctrl+Shift+Apostrophe, or the hotkey you chose: show axClip from anywhere; again: hide it
           Type: only the items that hold every word typed
-          Down, Up: the next or the previous item. Ctrl+Home, Ctrl+End: the first or the last. Page Down, Page Up: a screen
+          Down, Up: the next or the previous item. {BundleKeys.Text(AxClipKeys.FirstMatch)}, {BundleKeys.Text(AxClipKeys.LastMatch)}: the first or the last. Page Down, Page Up: a screen
           Enter: paste the item into the program you were in
-          Shift+Enter: put the item on the clipboard without pasting
-          Ctrl+Q: read the item in full
-          Delete: remove the item. Ctrl+Shift+Delete: clear the history, after a question
-          Ctrl+P: pause recording, or record again
+          {BundleKeys.Text(AxClipKeys.CopyOnly)}: put the item on the clipboard without pasting
+          {BundleKeys.Text(AxClipKeys.ReadInFull)}: read the item in full
+          Delete: remove the item. {BundleKeys.Text(AxClipKeys.ClearHistory)}: clear the history, after a question
+          {BundleKeys.Text(AxClipKeys.PauseRecording)}: pause recording, or record again
           Escape: hide axClip
         """ + BundleHelp.NoticesSection("axClip", "the list");
 

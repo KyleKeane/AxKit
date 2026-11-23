@@ -204,7 +204,7 @@ internal sealed partial class MainForm
                 _stoppedWhilePutAway = false;
                 if (!ProcessRunning)
                 {
-                    Announce(StoppedText + ". Ctrl+Shift+R starts it again", false);
+                    Announce(StoppedText + $". {BundleKeys.Text(AxClaudeKeys.RestartClaude)} starts it again", false);
                 }
             }
 

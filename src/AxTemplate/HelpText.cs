@@ -1,5 +1,6 @@
 using System.Reflection;
 using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxTemplate;
 
@@ -10,33 +11,33 @@ public static class HelpText
     public static readonly string Shortcuts = BundleHelp.Section(
         "axTemplate",
         [
-            "Ctrl+F: find a template in the navigator. F3 and Shift+F3: next or previous match",
-        ]) + """
+            $"{BundleKeys.Text(BundleKeys.Find)}: find a template in the navigator. {BundleKeys.Text(BundleKeys.FindNext)} and {BundleKeys.Text(BundleKeys.FindPrevious)}: next or previous match",
+        ]) + $$"""
         ## The navigator, on the left
           Up, Down, Home, End: move through the templates; the edge sound at an end. Type the start of a name to jump to it, Shift with a letter backwards
-          Enter, Tab, Ctrl+Tab or F6: to the template's fields
-          Ctrl+N: a new template; a notice asks its name, and it is made with an empty text
+          Enter, Tab, {{BundleKeys.Text(BundleKeys.NextControl)}} or F6: to the template's fields
+          {{BundleKeys.Text(ItemKeys.New)}}: a new template; a notice asks its name, and it is made with an empty text
           F2: rename the template; its file is renamed with it
           Delete: delete the template, or the selected ones, after a question
-          Ctrl+Enter: copy the template's text, its marks filled with nothing, to see what it makes
-          Ctrl+J: the template's file in axJSON
-          Space: select the template, or deselect it again; a selected template reads ", selected". Shift+Down, Shift+Up, Shift+Home, Shift+End: select as you move. Shift+Space: select from the nearest selected template to here. Ctrl+A: all. Ctrl+Shift+A or Escape: none
-          Ctrl+Q: read every field of the template
-          Shift+F10, the Applications key or Ctrl+Period: the menu of the template
+          {{BundleKeys.Text(BundleKeys.MainAction)}}: copy the template's text, its marks filled with nothing, to see what it makes
+          {{BundleKeys.Text(AxTemplateKeys.OpenInJson)}}: the template's file in axJSON
+          Space: select the template, or deselect it again; a selected template reads ", selected". {{BundleKeys.Text(SelectionKeys.SelectDown)}}, {{BundleKeys.Text(SelectionKeys.SelectUp)}}, {{BundleKeys.Text(SelectionKeys.SelectToStart)}}, {{BundleKeys.Text(SelectionKeys.SelectToEnd)}}: select as you move. {{BundleKeys.Text(SelectionKeys.SelectTo)}}: select from the nearest selected template to here. {{BundleKeys.Text(SelectionKeys.SelectAll)}}: all. {{BundleKeys.Text(SelectionKeys.SelectNone)}} or Escape: none
+          {{BundleKeys.Text(ItemKeys.ReadAll)}}: read every field of the template
+          {{BundleKeys.Text(ItemKeys.ItemMenu)}}, the Applications key or {{BundleKeys.Text(BundleKeys.ContextMenu)}}: the menu of the template
 
         ## The fields, on the right
           Title: the template's name. Text: what is put in. Then a check for each place inside axKit the template also shows in: Every axKit app, then one for each app
           In the text, {caret} is where the caret is left, {selection} is the text that was selected, and {clipboard} is the clipboard's text
           Up, Down: move through the fields
-          Enter: change the field; the Text opens as a field of several lines, where Enter is a new line and Ctrl+Enter keeps the text. Space: a check on or off
+          Enter: change the field; the Text opens as a field of several lines, where Enter is a new line and {{BundleKeys.Text(BundleKeys.MainAction)}} keeps the text. Space: a check on or off
           Right and Left: on a check, Right checks and Left unchecks; the edge sound on any other field
-          Ctrl+Q: read the field's whole value
-          Escape, Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6: back to the navigator
+          {{BundleKeys.Text(ItemKeys.ReadAll)}}: read the field's whole value
+          Escape, Tab, {{BundleKeys.Text(ItemKeys.OtherPaneBack)}}, {{BundleKeys.Text(BundleKeys.NextControl)}}, {{BundleKeys.Text(BundleKeys.PreviousControl)}} or F6: back to the navigator
 
         ## Everywhere in axTemplate
-          Ctrl+Z: undo the last change: a field, a rename, a new template, a deletion
+          {{BundleKeys.Text(ItemKeys.Undo)}}: undo the last change: a field, a rename, a new template, a deletion
           F5: read the templates again
-          Ctrl+S: nothing to save here; a template is kept as you change it
+          {{BundleKeys.Text(BundleKeys.Save)}}: nothing to save here; a template is kept as you change it
         """ + BundleHelp.FilterAndSortSection() + BundleHelp.NoticesSection("axTemplate", "the panes");
 
     /// <summary>The launcher's F1 text (SPEC.md TP-7.1), as axClip's: the bundle's section with what Alt+F4 does here, then the launcher's own keys.</summary>

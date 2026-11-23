@@ -14,7 +14,7 @@ namespace AxTerminal;
 internal sealed partial class TerminalForm : ConsoleForm
 {
     /// <summary>Spoken for plain Escape in the command field (AT-3.5; axClaude D20).</summary>
-    protected override string EscapeGuardText => "Shift+Escape sends Escape, Ctrl+Shift+C interrupts";
+    protected override string EscapeGuardText => $"{BundleKeys.Text(AxTerminalKeys.SendEscape)} sends Escape, {BundleKeys.Text(AxTerminalKeys.Interrupt)} interrupts";
 
     /// <summary>How long output must have stopped before a cursor row that ends like a question is announced (AT-5.4).</summary>
     private const int AsksQuietMs = 2000;

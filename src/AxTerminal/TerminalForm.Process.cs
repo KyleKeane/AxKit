@@ -12,7 +12,7 @@ internal sealed partial class TerminalForm
     {
         if (!Directory.Exists(_folder))
         {
-            Fail($"The folder no longer exists: {_folder}. Press Ctrl+N to choose another.");
+            Fail($"The folder no longer exists: {_folder}. Press {BundleKeys.Text(AxTerminalKeys.NewSession)} to choose another.");
             return;
         }
 
@@ -24,8 +24,8 @@ internal sealed partial class TerminalForm
         if (commandLine is null)
         {
             Fail(_shell == ShellKind.Custom
-                ? "No custom command line is set. Press Ctrl+N and choose a shell."
-                : $"{ShellLauncher.Describe(_shell)} was not found on this computer. Press Ctrl+N and choose another shell.");
+                ? $"No custom command line is set. Press {BundleKeys.Text(AxTerminalKeys.NewSession)} and choose a shell."
+                : $"{ShellLauncher.Describe(_shell)} was not found on this computer. Press {BundleKeys.Text(AxTerminalKeys.NewSession)} and choose another shell.");
             return;
         }
 
@@ -35,7 +35,7 @@ internal sealed partial class TerminalForm
         var target = _shell == ShellKind.Custom
             ? AxKit.Core.ConsentTarget.CommandLineShell(ShellName, commandLine)
             : AxKit.Core.ConsentTarget.Shell(ShellLauncher.Describe(_shell));
-        if (!HasConsent(target, StartShell, () => _model.AddSystemLine($"Not connected to {target.Program}. Press Ctrl+N to start a shell.")))
+        if (!HasConsent(target, StartShell, () => _model.AddSystemLine($"Not connected to {target.Program}. Press {BundleKeys.Text(AxTerminalKeys.NewSession)} to start a shell.")))
         {
             return;
         }

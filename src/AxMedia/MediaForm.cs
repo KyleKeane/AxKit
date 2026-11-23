@@ -234,7 +234,7 @@ public sealed partial class MediaForm : ItemForm
     /// <summary>Ctrl+N is New window here, the app's own command; the navigator's New item is never registered.</summary>
     protected override void NewItem() => NewWindow();
 
-    protected override void NewList() => Announce("One queue to a window: Ctrl+N opens another window", true);
+    protected override void NewList() => Announce($"One queue to a window: {BundleKeys.Text(AxMediaKeys.NewWindow)} opens another window", true);
 
     protected override void Undo() => Announce("Nothing to undo in the queue", true);
 

@@ -134,7 +134,7 @@ public sealed partial class TaskForm
         }
 
         EventDoor.Raise(EventKind.Refused);
-        Announce(problem + ": nothing of the item is changed until it is there and reads. Ctrl+J on the list opens it", true);
+        Announce(problem + $": nothing of the item is changed until it is there and reads. {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} on the list opens it", true);
         return false;
     }
 
@@ -198,7 +198,7 @@ public sealed partial class TaskForm
         {
             // TK-D4: items live in lists; the Archive keeps what was moved there. At the top, a heading, a smart list,
             // a project or the Archive is selected: a list there takes the item (above).
-            Announce(AtTop ? "Items go in a list: Right on a list, then Ctrl+N" :"The Archive keeps what was archived: open a list to add an item", true);
+            Announce(AtTop ? $"Items go in a list: Right on a list, then {BundleKeys.Text(ItemKeys.New)}" :"The Archive keeps what was archived: open a list to add an item", true);
             return;
         }
 
@@ -305,7 +305,7 @@ public sealed partial class TaskForm
         var name = form.AddText("Type the new section's name, when you chose A new section");
         bool IsNew() => section.SelectedIndex == choices.Count - 1;
         ShowForm("Move " + row.Name,
-            $"Now in {(current.Length == 0 ? YourLists : current)}. Up and Down choose the section; Enter or Ctrl+Enter moves the list there. For a section that does not exist yet, choose A new section, the last one, then Tab and type its name.",
+            $"Now in {(current.Length == 0 ? YourLists : current)}. Up and Down choose the section; Enter or {BundleKeys.Text(BundleKeys.MainAction)} moves the list there. For a section that does not exist yet, choose A new section, the last one, then Tab and type its name.",
             form, "&Move",
             () => SetSection(row, IsNew() ? name.Text.Trim() : section.SelectedIndex <= 0 ? string.Empty : choices[section.SelectedIndex]),
             () => !IsNew() ? null
@@ -359,13 +359,13 @@ public sealed partial class TaskForm
     /// <summary>F2 in the navigator (AX-8.7): an item's Title (its file renamed with it, IA-4.5) or a list's name, in place; the links to them kept (IA-D3).</summary>
     protected override string? RenameRefused(ItemRow row) => row switch
     {
-        { Tag: SectionTag { Custom: true } } => "A section is renamed by moving its lists: Ctrl+M on each",
+        { Tag: SectionTag { Custom: true } } => $"A section is renamed by moving its lists: {BundleKeys.Text(AxTaskKeys.MoveToSection)} on each",
         { Tag: SectionTag } => "This section keeps its name",
         { Tag: SmartList { BuiltIn: true } smart } => smart.Name + " is built in and keeps its name",
-        { Tag: SmartList } => "Rename a smart list's file in axFile: Ctrl+E",
+        { Tag: SmartList } => $"Rename a smart list's file in axFile: {BundleKeys.Text(AxTaskKeys.ShowInAxFile)}",
         { Tag: ItemFile } => null,
         { Tag: FoundItem } => "Open it where it lives first: Enter",
-        { Tag: ProjectTag } => "A project's folder is renamed in axFile: Ctrl+E",
+        { Tag: ProjectTag } => $"A project's folder is renamed in axFile: {BundleKeys.Text(AxTaskKeys.ShowInAxFile)}",
         { Tag: ProjectSectionTag } => "A project folder's section keeps its folder's name",
         { Tag: UnreadableTag } => NotAnItem,
         _ when ReferenceEquals(row.Tag, ArchivedItemsTag) || IsArchiveFolder(row.Key) => "The Archive keeps its name",
@@ -446,13 +446,13 @@ public sealed partial class TaskForm
 
         if (row.Tag is SmartList)
         {
-            Announce("A smart list's file is deleted in axFile: Ctrl+E", true);
+            Announce($"A smart list's file is deleted in axFile: {BundleKeys.Text(AxTaskKeys.ShowInAxFile)}", true);
             return;
         }
 
         if (row.Tag is SectionTag)
         {
-            Announce("A section goes when its lists leave it: Ctrl+M on each", true);
+            Announce($"A section goes when its lists leave it: {BundleKeys.Text(AxTaskKeys.MoveToSection)} on each", true);
             return;
         }
 
@@ -472,7 +472,7 @@ public sealed partial class TaskForm
         var top = TopOf(row.Key);
         if (IsArchiveFolder(row.Key) || ItemFolder.IsArchive(top, Path.GetDirectoryName(row.Key)!))
         {
-            Announce(IsArchiveFolder(row.Key) ? "The Archive stays" : "Already in the Archive: Ctrl+E shows it in axFile, which deletes it for good", true);
+            Announce(IsArchiveFolder(row.Key) ? "The Archive stays" : $"Already in the Archive: {BundleKeys.Text(AxTaskKeys.ShowInAxFile)} shows it in axFile, which deletes it for good", true);
             return;
         }
 
@@ -504,7 +504,7 @@ public sealed partial class TaskForm
 
         if (items.Any(item => ItemFolder.IsArchive(TopOf(item.Path), Path.GetDirectoryName(item.Path)!)))
         {
-            Announce("Already in the Archive: Ctrl+E shows an item in axFile, which deletes it for good", true);
+            Announce($"Already in the Archive: {BundleKeys.Text(AxTaskKeys.ShowInAxFile)} shows an item in axFile, which deletes it for good", true);
             return;
         }
 
@@ -577,7 +577,7 @@ public sealed partial class TaskForm
         string? NameRefused() => ItemFolder.RefusedListName(top, name.Text)
             ?? (name.Text.Trim().Equals(ItemFolder.ArchiveName, StringComparison.OrdinalIgnoreCase) ? "Archive is the archive's own name" : null);
         ShowForm("Move " + what,
-            $"Now in {string.Join(", ", from.Select(folder => ItemFolder.ListName(top, folder)))}. Up and Down choose the list; Enter or Ctrl+Enter moves {(items.Count == 1 ? "the item" : "the " + what)} there, as one step that Ctrl+Z takes back. For a list that does not exist yet, choose A new list, the last one, then Tab and type its name: it gets the same fields. Escape leaves, and nothing is moved.",
+            $"Now in {string.Join(", ", from.Select(folder => ItemFolder.ListName(top, folder)))}. Up and Down choose the list; Enter or {BundleKeys.Text(BundleKeys.MainAction)} moves {(items.Count == 1 ? "the item" : "the " + what)} there, as one step that {BundleKeys.Text(ItemKeys.Undo)} takes back. For a list that does not exist yet, choose A new list, the last one, then Tab and type its name: it gets the same fields. Escape leaves, and nothing is moved.",
             form, "&Move",
             () =>
             {
@@ -736,7 +736,7 @@ public sealed partial class TaskForm
     }
 
     /// <summary>What F2 and Delete say on a file that does not read as an item (TK-4.6): nothing of axTask's changes it.</summary>
-    private const string NotAnItem = "Not readable as an item: Enter opens it in axJSON, Ctrl+E shows it in axFile";
+    private static string NotAnItem => $"Not readable as an item: Enter opens it in axJSON, {BundleKeys.Text(AxTaskKeys.ShowInAxFile)} shows it in axFile";
 
     /// <summary>Ctrl+J: the item, the list's details or the smart list in axJSON (G3).</summary>
     private void OpenInAxJson()
@@ -753,13 +753,13 @@ public sealed partial class TaskForm
                 OpenUnreadable();
                 return;
             case { Tag: ProjectTag }:
-                Announce("A project is a folder: Ctrl+E shows it in axFile", true);
+                Announce($"A project is a folder: {BundleKeys.Text(AxTaskKeys.ShowInAxFile)} shows it in axFile", true);
                 return;
             case { Tag: ProjectSectionTag }:
                 Announce("A project folder gathers folders: Options, Add a project folder adds one", true);
                 return;
             case { Tag: SectionTag }:
-                Announce("A section is its lists' Section field: Ctrl+J on a list", true);
+                Announce($"A section is its lists' Section field: {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} on a list", true);
                 return;
             case { Tag: SmartList { Path: { } filter } }:
                 WindowMenu.Start(Dispatch.AxJSON, filter);

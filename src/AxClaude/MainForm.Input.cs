@@ -20,7 +20,7 @@ internal sealed partial class MainForm
 
     protected override string SendFieldName => "Send the message";
 
-    protected override string EscapeGuardText => "Shift+Escape interrupts";
+    protected override string EscapeGuardText => $"{BundleKeys.Text(AxClaudeKeys.Interrupt)} interrupts";
 
     /// <summary>The literal lines around a quoted conversation line in the message, so Claude can tell it from the user's words (FR-2.9).</summary>
     private const string QuoteMarker = "_ start of copied line from conversation history _";
@@ -66,7 +66,7 @@ internal sealed partial class MainForm
             return false;
         }
 
-        Announce(_hookVersionWait ? "Claude is starting" : "Claude stopped. Ctrl+Shift+R starts it", true);
+        Announce(_hookVersionWait ? "Claude is starting" : ClaudeStopped, true);
         return true;
     }
 

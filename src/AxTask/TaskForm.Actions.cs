@@ -89,7 +89,7 @@ public sealed partial class TaskForm
         if (actions.Count == 0)
         {
             _actionsMenu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("No actions in this list", null,
-                (_, _) => Announce("This list has no actions. They are written in the list's configuration: Ctrl+J on the list opens it in axJSON", true)), CommandMark.Read));
+                (_, _) => Announce($"This list has no actions. They are written in the list's configuration: {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} on the list opens it in axJSON", true)), CommandMark.Read));
         }
 
         _actionsMenu.DropDownItems.Add(new ToolStripSeparator());
@@ -110,7 +110,7 @@ public sealed partial class TaskForm
         if (ListActions.Read(CurrentListDetails).FirstOrDefault(known => known.Key == key) is not { } action)
         {
             EventDoor.Raise(EventKind.NoCommand, EventSound.Edge);
-            Announce($"No action on {ListActions.KeyText(key)} in this list; its actions are written in its configuration, Ctrl+J on the list", true);
+            Announce($"No action on {ListActions.KeyText(key)} in this list; its actions are written in its configuration, {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} on the list", true);
             return;
         }
 
@@ -231,7 +231,7 @@ public sealed partial class TaskForm
         }
 
         ShowForm(action.Name,
-            $"{action.Name} {action.Described}. It acts on {on}. Ctrl+Enter or the button runs it; Escape leaves, and nothing happened."
+            $"{action.Name} {action.Described}. It acts on {on}. {BundleKeys.Text(BundleKeys.MainAction)} or the button runs it; Escape leaves, and nothing happened."
                 + (form.EnterMakesNewLine ? " In a box of several lines Enter makes a new line." : string.Empty),
             form, action.Name.Replace("&", "&&", StringComparison.Ordinal),
             () =>

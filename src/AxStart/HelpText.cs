@@ -1,5 +1,6 @@
 using System.Reflection;
 using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxStart;
 
@@ -10,9 +11,9 @@ public static class HelpText
     public static readonly string Shortcuts = BundleHelp.Section(
         "axStart",
         [
-            "Ctrl+S: nothing to save here; axStart says so",
+            $"{BundleKeys.Text(BundleKeys.Save)}: nothing to save here; axStart says so",
         ],
-        altF4: "hide axStart (Session, Quit axStart ends it)") + """
+        altF4: "hide axStart (Session, Quit axStart ends it)") + $"""
         ## Bringing axStart up
           The hotkey, Ctrl+Shift+Space unless you chose another in Options, Hotkey: from any program, the search field
           The same hotkey while axStart shows hides it again
@@ -21,10 +22,10 @@ public static class HelpText
           The caret stays here: type and delete at any time
           Type part of a program's name; after a short pause the first match is said, "Calculator, 1 of 2"
           Down, Up: the next or the previous match, said with its place. Page Down, Page Up: a page of matches
-          Ctrl+Home, Ctrl+End: the first or the last match. At the first or the last match, a key that cannot move plays one short low note and says the match again
-          Enter: start the match. Ctrl+Shift+Enter: start it as administrator (Windows asks first)
-          Ctrl+I: the match, its kind and where its program file is
-          Ctrl+O: the program file's folder in axFile, the file selected
+          {BundleKeys.Text(AxStartKeys.FirstMatch)}, {BundleKeys.Text(AxStartKeys.LastMatch)}: the first or the last match. At the first or the last match, a key that cannot move plays one short low note and says the match again
+          Enter: start the match. {BundleKeys.Text(AxStartKeys.StartAsAdministrator)}: start it as administrator (Windows asks first)
+          {BundleKeys.Text(AxStartKeys.Information)}: the match, its kind and where its program file is
+          {BundleKeys.Text(AxStartKeys.OpenFileLocation)}: the program file's folder in axFile, the file selected
           F5: read the list of programs again
           Escape: hide axStart at once and return where you were; the field is empty the next time
         """ + BundleHelp.NoticesSection("axStart", "the field");

@@ -1,6 +1,7 @@
 using System.Text.Json.Nodes;
 using AxKit.Core;
 using AxKit.Core.Mcp;
+using AxKit.Forms;
 using AxTask.Core;
 
 namespace AxTask;
@@ -123,7 +124,7 @@ public sealed partial class TaskForm
         var read = ItemFolder.ReadConfig(list.Folder);
         if (read is { Config: null, Text: not null })
         {
-            return new { error = $"The configuration of {list.Name} does not read, so nothing is added to the list: the user mends it first (Ctrl+J on the list)." };
+            return new { error = $"The configuration of {list.Name} does not read, so nothing is added to the list: the user mends it first ({BundleKeys.Text(AxTaskKeys.OpenInAxJson)} on the list)." };
         }
 
         var config = read.Config ?? ItemFolder.StarterConfig(list.Folder);

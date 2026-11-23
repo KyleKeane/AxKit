@@ -175,7 +175,7 @@ public abstract partial class ItemForm
             Text = FieldTypes.TextOf(field.Value).ReplaceLineEndings("\r\n"),
             Font = Navigator.Font,
         };
-        ShowNotice(new Notice("Change " + field.Title, "Enter makes a new line. Ctrl+Enter keeps the text; so does Tab, then Enter on Save. Escape leaves it as it was.",
+        ShowNotice(new Notice("Change " + field.Title, $"Enter makes a new line. {BundleKeys.Text(BundleKeys.MainAction)} keeps the text; so does Tab, then Enter on Save. Escape leaves it as it was.",
         [
             new OverlayChoice("&Save", () => SetValue(index, field, FieldTypes.Parse(FieldTypes.LongText, box.Text, [], DateOnly.FromDateTime(DateTime.Now)).Value), IsDefault: true),
             new OverlayChoice("&Cancel", IsCancel: true),

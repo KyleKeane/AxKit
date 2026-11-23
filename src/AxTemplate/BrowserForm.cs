@@ -158,7 +158,10 @@ public sealed class BrowserForm : ItemForm
         return (rows, $"Templates, {count} {(count == 1 ? "template" : "templates")}", "Templates", _folder);
     }
 
-    protected override string? EmptyLine => _read ? "No templates yet: Ctrl+N makes one" : "Reading the templates";
+    protected override string? EmptyLine => _read ? $"No templates yet: {BundleKeys.Text(ItemKeys.New)} makes one" : "Reading the templates";
+
+    /// <summary>What a file that is no template is said to be, its key from the table.</summary>
+    private static string NotATemplate => $"Not a template: {BundleKeys.Text(AxTemplateKeys.OpenInJson)} opens the file in axJSON to mend";
 
     /// <summary>One level without sections: Ctrl+Shift+N, Ctrl+Up and Ctrl+Down have nothing to do here, and are no commands of this window.</summary>
     protected override IReadOnlyCollection<Keys> KeysWithoutUse => AxTemplateKeys.WithoutUse;
@@ -187,11 +190,11 @@ public sealed class BrowserForm : ItemForm
                     new ItemDetailLine(row.Label),
                     new ItemDetailLine(file.Text is null
                         ? "The file could not be read: F5 reads the folder again"
-                        : "The file is JSON that is not an item, or not JSON: Ctrl+J in the navigator opens it in axJSON to mend"),
+                        : $"The file is JSON that is not an item, or not JSON: {BundleKeys.Text(AxTemplateKeys.OpenInJson)} in the navigator opens it in axJSON to mend"),
                 ]);
             default:
                 return new ItemDetail("Details, nothing selected", null, null,
-                    [new ItemDetailLine(_read ? (_files.Count == 0 ? "No templates yet: Ctrl+N in the navigator makes one" : "Nothing selected") : "Reading the templates")]);
+                    [new ItemDetailLine(_read ? (_files.Count == 0 ? $"No templates yet: {BundleKeys.Text(ItemKeys.New)} in the navigator makes one" :"Nothing selected") : "Reading the templates")]);
         }
     }
 
@@ -238,7 +241,7 @@ public sealed class BrowserForm : ItemForm
     }
 
     protected override string? RenameRefused(ItemRow row) =>
-        row.Tag is TemplateFile { Item: not null } ? null : "Not a template: Ctrl+J opens the file in axJSON to mend";
+        row.Tag is TemplateFile { Item: not null } ? null : NotATemplate;
 
     protected override string? RefusedName(ItemRow row, string name) => TemplateStore.NameRefused(name, Names(), own: row.Name);
 
@@ -284,12 +287,12 @@ public sealed class BrowserForm : ItemForm
         var files = rows.Select(one => one.Tag).OfType<TemplateFile>().ToList();
         if (files.FirstOrDefault(file => file.Text is null) is { } unread)
         {
-            Announce($"{unread.Title} could not be read, so Ctrl+Z could not bring it back: delete its file in axFile", true);
+            Announce($"{unread.Title} could not be read, so {BundleKeys.Text(ItemKeys.Undo)} could not bring it back: delete its file in axFile", true);
             return;
         }
 
         var what = files.Count == 1 ? files[0].Title : $"{files.Count} templates";
-        ShowNotice(Notice.Ask($"Delete {what}?", "Ctrl+Z brings back what was deleted, for as long as this window is open.", "&Delete", () =>
+        ShowNotice(Notice.Ask($"Delete {what}?", $"{BundleKeys.Text(ItemKeys.Undo)} brings back what was deleted, for as long as this window is open.", "&Delete", () =>
         {
             if (!files.All(Fresh))
             {
@@ -372,7 +375,7 @@ public sealed class BrowserForm : ItemForm
         }
         else
         {
-            Announce("Not a template: Ctrl+J opens the file in axJSON to mend", true);
+            Announce(NotATemplate, true);
         }
     });
 

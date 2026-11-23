@@ -190,7 +190,7 @@ internal sealed partial class TerminalForm
         var name = form.AddText("Type the shell's name");
         var line = form.AddText("Type the command line that starts it");
         ShowForm("Add a shell",
-            "A shell of your own: the name Switch shell and the New session notice show for it, and the command line that starts it, as typed at a prompt, for example cmd.exe /k or pwsh -NoProfile. It starts as a custom shell does, without the integration marks unless its prompt prints them. Tab moves between the fields; Enter or Ctrl+Enter adds the shell.",
+            $"A shell of your own: the name Switch shell and the New session notice show for it, and the command line that starts it, as typed at a prompt, for example cmd.exe /k or pwsh -NoProfile. It starts as a custom shell does, without the integration marks unless its prompt prints them. Tab moves between the fields; Enter or {BundleKeys.Text(BundleKeys.MainAction)} adds the shell.",
             form, "&Add",
             () =>
             {

@@ -1,5 +1,6 @@
 using System.Reflection;
 using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxPass;
 
@@ -10,39 +11,39 @@ public static class HelpText
     public static readonly string Shortcuts = BundleHelp.Section(
         "axPass",
         [
-            "Ctrl+F: find an entry in the navigator. F3 and Shift+F3: next or previous match",
+            $"{BundleKeys.Text(BundleKeys.Find)}: find an entry in the navigator. {BundleKeys.Text(BundleKeys.FindNext)} and {BundleKeys.Text(BundleKeys.FindPrevious)}: next or previous match",
         ],
-        altF4: "close axPass, which locks it") + """
+        altF4: "close axPass, which locks it") + $"""
         ## The navigator, on the left
           Up, Down, Home, End: move; the edge sound at an end. Type the start of a name to jump to it, Shift with a letter backwards
           Right: into a group. On an entry, nothing: the edge sound
           Left or Backspace: up a level
-          Ctrl+Up, Ctrl+Down: the section before or after, on a level in sections (the other item apps'); here the edge sound
+          {BundleKeys.Text(ItemKeys.PreviousSection)}, {BundleKeys.Text(ItemKeys.NextSection)}: the section before or after, on a level in sections (the other item apps'); here the edge sound
           Enter: open: a group shows what is in it, an entry moves to its fields. On a locked window, Enter unlocks
-          Tab, Ctrl+Tab or F6: to the detail pane
-          Ctrl+N: a new entry here. Ctrl+Shift+N: a new group here
-          F2: rename the entry in place: a box over the line, Enter keeps the new title, Escape the old. Delete: move it to the Recycle Bin; Ctrl+Z brings it back
-          Space: select the entry you are on, or deselect it again; a selected entry reads ", selected". Shift+Down, Shift+Up, Shift+Home, Shift+End: select as you move. Shift+Space: select from the nearest selected entry to this one. Ctrl+A: select every entry of the group. Ctrl+Shift+A, or Escape: deselect all. Delete then moves all the selected entries to the Recycle Bin, and one Ctrl+Z brings them all back. Groups, and what is in the Recycle Bin, are not selected
-          Ctrl+M: move the entry to another group, chosen from a list
-          Ctrl+Q: read every field of the entry; the password is never read
-          Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on the selection
+          Tab, {BundleKeys.Text(BundleKeys.NextControl)} or F6: to the detail pane
+          {BundleKeys.Text(ItemKeys.New)}: a new entry here. {BundleKeys.Text(ItemKeys.NewList)}: a new group here
+          F2: rename the entry in place: a box over the line, Enter keeps the new title, Escape the old. Delete: move it to the Recycle Bin; {BundleKeys.Text(ItemKeys.Undo)} brings it back
+          Space: select the entry you are on, or deselect it again; a selected entry reads ", selected". {BundleKeys.Text(SelectionKeys.SelectDown)}, {BundleKeys.Text(SelectionKeys.SelectUp)}, {BundleKeys.Text(SelectionKeys.SelectToStart)}, {BundleKeys.Text(SelectionKeys.SelectToEnd)}: select as you move. {BundleKeys.Text(SelectionKeys.SelectTo)}: select from the nearest selected entry to this one. {BundleKeys.Text(SelectionKeys.SelectAll)}: select every entry of the group. {BundleKeys.Text(SelectionKeys.SelectNone)}, or Escape: deselect all. Delete then moves all the selected entries to the Recycle Bin, and one {BundleKeys.Text(ItemKeys.Undo)} brings them all back. Groups, and what is in the Recycle Bin, are not selected
+          {BundleKeys.Text(AxPassKeys.MoveEntry)}: move the entry to another group, chosen from a list
+          {BundleKeys.Text(ItemKeys.ReadAll)}: read every field of the entry; the password is never read
+          {BundleKeys.Text(ItemKeys.ItemMenu)}, the Applications key or {BundleKeys.Text(BundleKeys.ContextMenu)}: the Context menu, what acts on the selection
 
         ## The detail pane, on the right
           It shows the fields of the entry selected in the navigator: Title, UserName, Password (read as hidden), URL, Notes
           Up, Down: move through the fields
           Enter: change the field. On Password: type a new one twice, or Generate (Alt+G) makes one
           Right and Left change nothing here and play the edge sound: an entry has no choice and no check, and the user name and the password never change on an arrow
-          Ctrl+Q: read the field's whole value
-          Escape, Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6: back to the navigator
+          {BundleKeys.Text(ItemKeys.ReadAll)}: read the field's whole value
+          Escape, Tab, {BundleKeys.Text(ItemKeys.OtherPaneBack)}, {BundleKeys.Text(BundleKeys.NextControl)}, {BundleKeys.Text(BundleKeys.PreviousControl)} or F6: back to the navigator
 
         ## Everywhere in axPass
-          Ctrl+B: copy the user name
-          Ctrl+C: copy the password; the clipboard clears after 30 seconds
-          Ctrl+U: open the URL in the browser
-          Ctrl+L: lock: the master password is forgotten until you type it again
-          Ctrl+O: open another database
-          Ctrl+Z: undo the last change. F5: read the database again
-          Ctrl+S: nothing to save here; every change is written to the database at once, by KeePassXC's tool
+          {BundleKeys.Text(AxPassKeys.CopyUserName)}: copy the user name
+          {BundleKeys.Text(AxPassKeys.CopyPassword)}: copy the password; the clipboard clears after 30 seconds
+          {BundleKeys.Text(AxPassKeys.OpenUrl)}: open the URL in the browser
+          {BundleKeys.Text(AxPassKeys.Lock)}: lock: the master password is forgotten until you type it again
+          {BundleKeys.Text(AxPassKeys.OpenDatabase)}: open another database
+          {BundleKeys.Text(ItemKeys.Undo)}: undo the last change. F5: read the database again
+          {BundleKeys.Text(BundleKeys.Save)}: nothing to save here; every change is written to the database at once, by KeePassXC's tool
         """ + BundleHelp.FilterAndSortSection() + BundleHelp.NoticesSection("axPass", "the panes");
 
     /// <summary>docs/axPass/user-guide.md, embedded by AxPass.csproj.</summary>

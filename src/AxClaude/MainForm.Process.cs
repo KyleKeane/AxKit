@@ -75,7 +75,7 @@ internal sealed partial class MainForm
         HookCancelStart();
         if (!Directory.Exists(_folder))
         {
-            Fail($"The project folder no longer exists: {_folder}. Press Ctrl+N to choose another.");
+            Fail($"The project folder no longer exists: {_folder}. Press {BundleKeys.Text(AxClaudeKeys.NewSession)} to choose another.");
             return;
         }
 
@@ -85,7 +85,7 @@ internal sealed partial class MainForm
         {
             // FR-1.9: say where the app looked, offer the install command, or let the user point at claude.exe.
             Log.Error("Claude Code was not found");
-            _model.AddSystemLine("Claude Code was not found. Install it, then press Ctrl+Shift+R.");
+            _model.AddSystemLine($"Claude Code was not found. Install it, then press {BundleKeys.Text(AxClaudeKeys.RestartClaude)}.");
             UpdateStatus();
             ShowClaudeNotFound(ClaudeCodeProgram.Candidates(configured));
             return;
@@ -94,7 +94,7 @@ internal sealed partial class MainForm
         // Bundle AX-11.4: the first connection to Claude Code waits for the user's consent; Connect starts it.
         if (!HasConsent(ConsentTarget.ClaudeCode, StartClaude, () =>
             {
-                _model.AddSystemLine("Not connected to Claude Code. Press Ctrl+Shift+R to connect.");
+                _model.AddSystemLine($"Not connected to Claude Code. Press {BundleKeys.Text(AxClaudeKeys.RestartClaude)} to connect.");
                 UpdateStatus();
             }))
         {
@@ -342,7 +342,7 @@ internal sealed partial class MainForm
             return;
         }
 
-        _model.AddSystemLine($"Claude stopped (exit code {code}). Press Ctrl+Shift+R to start it again.");
+        _model.AddSystemLine($"Claude stopped (exit code {code}). Press {BundleKeys.Text(AxClaudeKeys.RestartClaude)} to start it again.");
         Announce(StoppedText, false);
     }
 

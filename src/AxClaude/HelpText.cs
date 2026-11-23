@@ -1,6 +1,7 @@
 using System.Reflection;
 using AxClaude.Core.Pty;
 using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxClaude;
 
@@ -14,37 +15,37 @@ public static class HelpText
             "Alt+1: go to the message field. Alt+2: go to the conversation. Both say where you are, also when you are there already",
             "Alt+3: go to the latest reply, in the conversation",
             "Ctrl+1, Ctrl+2 and Ctrl+3, the keys of these three places until now, still work",
-            "Tab, Shift+Tab, Ctrl+Tab or F6: switch between the message field (or Claude's question in its place) and the conversation",
-            "Shift+Escape: interrupt Claude, or close one of Claude's dialogs",
-            "Ctrl+Shift+S: make Claude take up the waiting message now instead of after its current step",
-            "Ctrl+F: find text in the conversation. F3 and Shift+F3: next or previous match",
-            "Ctrl+S: export the conversation as a text file",
-            "Ctrl+W: show the current folder in File Explorer",
-            "Ctrl+N: new session: choose the folder and how Claude starts (continue, resume, plan mode, custom arguments)",
-            "Ctrl+Shift+R: force Claude to restart in the same folder with the same arguments, after a confirmation",
-            "Ctrl+O: switched off, a reminder says why (Claude's detailed view redraws the conversation in screen reader mode)",
-            "Ctrl+Shift+C: send Ctrl+C to Claude",
-            "Ctrl+Shift+M: next permission mode",
+            $"Tab, Shift+Tab, {BundleKeys.Text(BundleKeys.NextControl)} or F6: switch between the message field (or Claude's question in its place) and the conversation",
+            $"{BundleKeys.Text(AxClaudeKeys.Interrupt)}: interrupt Claude, or close one of Claude's dialogs",
+            $"{BundleKeys.Text(AxClaudeKeys.SendNow)}: make Claude take up the waiting message now instead of after its current step",
+            $"{BundleKeys.Text(BundleKeys.Find)}: find text in the conversation. {BundleKeys.Text(BundleKeys.FindNext)} and {BundleKeys.Text(BundleKeys.FindPrevious)}: next or previous match",
+            $"{BundleKeys.Text(BundleKeys.Save)}: export the conversation as a text file",
+            $"{BundleKeys.Text(AxClaudeKeys.ShowInExplorer)}: show the current folder in File Explorer",
+            $"{BundleKeys.Text(AxClaudeKeys.NewSession)}: new session: choose the folder and how Claude starts (continue, resume, plan mode, custom arguments)",
+            $"{BundleKeys.Text(AxClaudeKeys.RestartClaude)}: force Claude to restart in the same folder with the same arguments, after a confirmation",
+            $"{BundleKeys.Text(AxClaudeKeys.CtrlOGuard)}: switched off, a reminder says why (Claude's detailed view redraws the conversation in screen reader mode)",
+            $"{BundleKeys.Text(AxClaudeKeys.SendCtrlC)}: send Ctrl+C to Claude",
+            $"{BundleKeys.Text(AxClaudeKeys.NextPermissionMode)}: next permission mode",
             "Ctrl+Alt and a letter from the Conversation list below: read every line of that kind from the caret to the end of the conversation in one go, without moving; Ctrl+Alt+P reads the paragraphs whole. Control stops NVDA",
-            "Ctrl+Shift+K: bookmark the conversation line the caret is on, or take the bookmark away",
-            "Ctrl+M: background music on or off, and says which",
-            "Ctrl+B: say what runs in the background: how many things, each agent's type and what it does, each workflow with how far it is, and the shells. Claude Code's rows about it are never spoken, and stay out of the conversation unless you show them (Options, Background work). The status bar (F8) says the number; three quick notes going up say that background work started, the same three going down that it ended, and while it runs a slow soft chord with a long fading tail comes again and again with a short pause between, a different chord each time, fuller with each thing running (Options, Background work)",
-            "Ctrl+Q: read Claude's question or screen again while it waits at the bottom, all its lines and the answer the focus is on, without moving",
+            $"{BundleKeys.Text(AxClaudeKeys.BookmarkLine)}: bookmark the conversation line the caret is on, or take the bookmark away",
+            $"{BundleKeys.Text(AxClaudeKeys.ToggleMusic)}: background music on or off, and says which",
+            $"{BundleKeys.Text(AxClaudeKeys.BackgroundWork)}: say what runs in the background: how many things, each agent's type and what it does, each workflow with how far it is, and the shells. Claude Code's rows about it are never spoken, and stay out of the conversation unless you show them (Options, Background work). The status bar (F8) says the number; three quick notes going up say that background work started, the same three going down that it ended, and while it runs a slow soft chord with a long fading tail comes again and again with a short pause between, a different chord each time, fuller with each thing running (Options, Background work)",
+            $"{BundleKeys.Text(AxClaudeKeys.ReadQuestion)}: read Claude's question or screen again while it waits at the bottom, all its lines and the answer the focus is on, without moving",
         ],
         altF4: "close axClaude (asks first while Claude is working); in axHelp's conversation it hides the window and Claude runs on, and Session, End Claude and close this window ends it",
-        heading: "Anywhere") + """
+        heading: "Anywhere") + $"""
         ## Message field
-          Enter: send (an empty field sends a plain Enter to Claude). Ctrl+Enter sends too
+          Enter: send (an empty field sends a plain Enter to Claude). {BundleKeys.Text(BundleKeys.MainAction)} sends too
           Shift+Enter: new line
           Page Up, Page Down: one screen of the field up or down, or the first or last line of the message
-          Escape: does nothing; a reminder says that Shift+Escape interrupts Claude
-          Ctrl+Up, Ctrl+Down: the previous or next paragraph of the message; with Shift, select to there
-          Ctrl+Space: navigation mode, to move through a long message by its headings, links and lists with single letters without changing it; Enter and every key that would type play the edge sound. Ctrl+Space again: edit mode
+          Escape: does nothing; a reminder says that {BundleKeys.Text(AxClaudeKeys.Interrupt)} interrupts Claude
+          {BundleKeys.Text(BundleKeys.ParagraphUp)}, {BundleKeys.Text(BundleKeys.ParagraphDown)}: the previous or next paragraph of the message; with Shift, select to there
+          {BundleKeys.Text(BundleKeys.ToggleMode)}: navigation mode, to move through a long message by its headings, links and lists with single letters without changing it; Enter and every key that would type play the edge sound. {BundleKeys.Text(BundleKeys.ToggleMode)} again: edit mode
 
         ## Conversation
           Arrow keys, Home, End, Ctrl+Home, Ctrl+End: move as in any text
           Page Up, Page Down: one screen up or down
-          Ctrl+Up, Ctrl+Down: the previous or next paragraph (the first line after a blank line); with Shift, select to there
+          {BundleKeys.Text(BundleKeys.ParagraphUp)}, {BundleKeys.Text(BundleKeys.ParagraphDown)}: the previous or next paragraph (the first line after a blank line); with Shift, select to there
           l: say the line number, like "Line 12 of 340"
           i and Shift+I: next and previous "# Input" line (a message you sent)
           o and Shift+O, or r and Shift+R: next and previous "# Output" line (a reply from Claude)
@@ -69,7 +70,7 @@ public static class HelpText
 
         ## When Claude asks something
           A list of the answers takes the message field's place; the question is read each time you arrive there
-          Tab, Shift+Tab, Ctrl+Tab or F6: between the conversation and the answers
+          Tab, Shift+Tab, {BundleKeys.Text(BundleKeys.NextControl)} or F6: between the conversation and the answers
           Up, Down, or an answer's number: choose (the number again: the next answer starting with it; Shift and the number: back; 0: answers 1 to 9)
           Page Up, Page Down: ten answers. Home, End: the first or last. Space: tick, when several answers are allowed
           Enter: answer. Escape: cancel the question, or go back a step

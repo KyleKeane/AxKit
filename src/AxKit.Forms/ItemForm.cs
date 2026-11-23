@@ -853,7 +853,7 @@ public abstract partial class ItemForm : AxKitForm
         switch (SelectedRow())
         {
             case null:
-                Announce(_rows.Count == 0 ? EmptyLineNow ?? "Nothing here: Ctrl+N adds an item" : "Nothing selected", true);
+                Announce(_rows.Count == 0 ? EmptyLineNow ?? $"Nothing here: {BundleKeys.Text(ItemKeys.New)} adds an item" : "Nothing selected", true);
                 return;
             case { IsSection: true }:
                 OnSectionHeader();

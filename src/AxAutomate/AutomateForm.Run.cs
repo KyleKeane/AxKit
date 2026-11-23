@@ -53,7 +53,7 @@ public sealed partial class AutomateForm
 
         if (_folders.Count == 0)
         {
-            Announce("No folder open: Ctrl+O opens a folder of workflows", true);
+            Announce(NoFolderOpen, true);
             return;
         }
 

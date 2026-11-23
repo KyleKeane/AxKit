@@ -108,7 +108,7 @@ public sealed partial class PassForm : ItemForm
             _settings.LockMinutes = minutes;
             SaveSettings();
             lockChoices.Check(minutes);
-            Announce(minutes == 0 ? "axPass locks only on Ctrl+L" : $"axPass locks after {minutes} minutes without a key", true);
+            Announce(minutes == 0 ? $"axPass locks only on {BundleKeys.Text(AxPassKeys.Lock)}" : $"axPass locks after {minutes} minutes without a key", true);
         });
 
         var options = new ToolStripMenuItem("&Options");
@@ -247,7 +247,7 @@ public sealed partial class PassForm : ItemForm
     {
         if (_database is null)
         {
-            return ([], "No database open: Ctrl+O opens one, Session, New database makes one", "No database", string.Empty);
+            return ([], $"No database open: {BundleKeys.Text(AxPassKeys.OpenDatabase)} opens one, Session, New database makes one", "No database", string.Empty);
         }
 
         var name = PassTree.DatabaseName(_database);
@@ -276,7 +276,7 @@ public sealed partial class PassForm : ItemForm
         }
 
         var level = _group.Length == 0 ? name : _group[(_group.LastIndexOf('/') + 1)..];
-        var count = rows.Count == 0 ? "empty: Ctrl+N adds an entry" : Count(rows.Count, "item");
+        var count = rows.Count == 0 ? $"empty: {BundleKeys.Text(ItemKeys.New)} adds an entry" : Count(rows.Count, "item");
         return (rows, $"{level}, {count}", _group.Length == 0 ? name : $"{_group.Replace("/", ", ")}, {name}", _database);
     }
 

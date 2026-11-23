@@ -1,5 +1,6 @@
 using System.Reflection;
 using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxHelp;
 
@@ -14,16 +15,16 @@ public static class HelpText
 
         {screenshotKey}: a screenshot of the window in front, put into the conversation's message field with its path, which is on the clipboard too; type your question after it and press Enter.{(screenshotRegistered ? string.Empty : $" {screenshotKey} is taken by another program now: change screenshotHotkey in axHelp.json (Options, Developer, Open settings file) and start axHelp again.")}
 
-        Here: Enter opens the conversation, Ctrl+D puts a picture file of yours into it, Ctrl+O opens the last screenshot in axPreview, Escape hides this window. Options, Hotkey changes {conversationKey}.
+        Here: Enter opens the conversation, {BundleKeys.Text(AxHelpKeys.PictureFile)} puts a picture file of yours into it, {BundleKeys.Text(AxHelpKeys.OpenScreenshot)} opens the last screenshot in axPreview, Escape hides this window. Options, Hotkey changes {conversationKey}.
         """;
 
     /// <summary>The F1 text (SPEC.md HE-6): the bundle-wide keys, then axHelp's own, then the bundle's Notices section.</summary>
     public static readonly string Shortcuts = BundleHelp.Section(
         "axHelp",
         [
-            "Ctrl+S: nothing to save here; axHelp says so",
+            $"{BundleKeys.Text(BundleKeys.Save)}: nothing to save here; axHelp says so",
         ],
-        altF4: "hide axHelp (Session, Quit axHelp ends it)") + """
+        altF4: "hide axHelp (Session, Quit axHelp ends it)") + $"""
         ## From any program
           The conversation's hotkey, Ctrl+Shift+Slash (the question mark's key) unless you chose another in Options, Hotkey: the conversation with Claude, an axClaude window titled axHelp, the focus in its message field
           The screenshot's hotkey, Ctrl+Shift+Comma (the less-than sign's key) unless axHelp.json names another: a picture of the window in front, its path put into the conversation's message field and on the clipboard; type your question after it and press Enter
@@ -35,8 +36,8 @@ public static class HelpText
 
         ## In this window
           Enter: the conversation
-          Ctrl+D: a picture file of yours put into the conversation (a .png, .jpg, .jpeg, .gif or .webp file), as the screenshot is
-          Ctrl+O: the last screenshot in axPreview, which reads the text in it with Windows' own reader
+          {BundleKeys.Text(AxHelpKeys.PictureFile)}: a picture file of yours put into the conversation (a .png, .jpg, .jpeg, .gif or .webp file), as the screenshot is
+          {BundleKeys.Text(AxHelpKeys.OpenScreenshot)}: the last screenshot in axPreview, which reads the text in it with Windows' own reader
           Escape: hide axHelp at once
         """ + BundleHelp.NoticesSection("axHelp", "the text");
 

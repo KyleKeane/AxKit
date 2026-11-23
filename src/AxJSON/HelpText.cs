@@ -1,5 +1,6 @@
 using System.Reflection;
 using AxKit.Core;
+using AxKit.Forms;
 
 namespace AxJSON;
 
@@ -10,36 +11,36 @@ public static class HelpText
     public static readonly string Shortcuts = BundleHelp.Section(
         "axJSON",
         [
-            "Ctrl+F: find text. F3 and Shift+F3: next or previous match",
-            "Ctrl+S: save the file",
+            $"{BundleKeys.Text(BundleKeys.Find)}: find text. {BundleKeys.Text(BundleKeys.FindNext)} and {BundleKeys.Text(BundleKeys.FindPrevious)}: next or previous match",
+            $"{BundleKeys.Text(BundleKeys.Save)}: save the file",
         ],
-        altF4: "close axJSON (asks first when there are unsaved changes)") + """
+        altF4: "close axJSON (asks first when there are unsaved changes)") + $$"""
         ## axJSON
-          Ctrl+N: new, empty document
-          Ctrl+Shift+N: a new, empty document in a new axJSON window; this one stays as it is
-          Ctrl+O: open a file
-          Ctrl+Shift+S: save under a new name
-          Ctrl+W: show the current file in File Explorer
-          Ctrl+G: go to a line; the field also says where you are, like "Go to line (now line 12, column 4)"
-          Ctrl+K and Ctrl+Shift+K: next and previous key, spoken with its value ("model: opus") or its size ("permissions, object with 2 keys")
-          Ctrl+J and Ctrl+Shift+J: next and previous object, spoken with its key and its number of keys
-          Ctrl+L and Ctrl+Shift+L: next and previous array, spoken with its key and its number of items
-          Ctrl+I and Ctrl+Shift+I: next and previous item of an array, "Item 2 of 5, Read"
-          Ctrl+E and Ctrl+Shift+E: the place where the file stops being JSON, with the line and what was expected there; "No next error" means the file is valid
-          Ctrl+Shift+F: format: two spaces per level, one key per line; a trailing comma, a missing comma, single quotes, an unquoted key and a comment are repaired on the way and named
+          {{BundleKeys.Text(EditorKeys.NewDocument)}}: new, empty document
+          {{BundleKeys.Text(EditorKeys.NewWindow)}}: a new, empty document in a new axJSON window; this one stays as it is
+          {{BundleKeys.Text(EditorKeys.Open)}}: open a file
+          {{BundleKeys.Text(EditorKeys.SaveAs)}}: save under a new name
+          {{BundleKeys.Text(EditorKeys.ShowInExplorer)}}: show the current file in File Explorer
+          {{BundleKeys.Text(EditorKeys.GoToLine)}}: go to a line; the field also says where you are, like "Go to line (now line 12, column 4)"
+          {{BundleKeys.Text(AxJSONKeys.NextKey)}} and {{BundleKeys.Text(AxJSONKeys.PreviousKey)}}: next and previous key, spoken with its value ("model: opus") or its size ("permissions, object with 2 keys")
+          {{BundleKeys.Text(AxJSONKeys.NextObject)}} and {{BundleKeys.Text(AxJSONKeys.PreviousObject)}}: next and previous object, spoken with its key and its number of keys
+          {{BundleKeys.Text(AxJSONKeys.NextArray)}} and {{BundleKeys.Text(AxJSONKeys.PreviousArray)}}: next and previous array, spoken with its key and its number of items
+          {{BundleKeys.Text(AxJSONKeys.NextItem)}} and {{BundleKeys.Text(AxJSONKeys.PreviousItem)}}: next and previous item of an array, "Item 2 of 5, Read"
+          {{BundleKeys.Text(AxJSONKeys.NextError)}} and {{BundleKeys.Text(AxJSONKeys.PreviousError)}}: the place where the file stops being JSON, with the line and what was expected there; "No next error" means the file is valid
+          {{BundleKeys.Text(AxJSONKeys.Format)}}: format: two spaces per level, one key per line; a trailing comma, a missing comma, single quotes, an unquoted key and a comment are repaired on the way and named
           Alt with an arrow: choosing instead of typing, in a list's configuration of axTask (list.json) and in an item of a list
-          Alt+Right: the values the member at the caret can take, as a list; Up and Down move in it, Enter writes the one chosen, Escape leaves. "type", "does", "key", a choice's options, true or false
-          Alt+Down and Alt+Up: the next and the previous value, written in line and said with its place, "type: date, 4 of 8"
-          Alt+Left: add a member: the members the object at the caret can have and does not have yet, each with what it is; Enter adds the one chosen with a first value and puts the caret on it
+          {{BundleKeys.Text(AxJSONKeys.ChooseValue)}}: the values the member at the caret can take, as a list; Up and Down move in it, Enter writes the one chosen, Escape leaves. "type", "does", "key", a choice's options, true or false
+          {{BundleKeys.Text(AxJSONKeys.NextValue)}} and {{BundleKeys.Text(AxJSONKeys.PreviousValue)}}: the next and the previous value, written in line and said with its place, "type: date, 4 of 8"
+          {{BundleKeys.Text(AxJSONKeys.AddMember)}}: add a member: the members the object at the caret can have and does not have yet, each with what it is; Enter adds the one chosen with a first value and puts the caret on it
           Actions, Insert template: every template of axTemplate checked for axJSON or for every axKit app, put in at the caret; Options, General, Templates in axTemplate opens axTemplate, where you write them. In a template {caret} is where the caret lands, {selection} the text you had selected, {clipboard} the clipboard's text
-          Ctrl+Shift+W: word wrap on or off
+          {{BundleKeys.Text(EditorKeys.WordWrap)}}: word wrap on or off
 
         ## The text
           Arrow keys, Home, End, Ctrl+Home, Ctrl+End, Ctrl+Left, Ctrl+Right: move as in any text
           Page Up, Page Down: one screen up or down, or the first or last line
-          Ctrl+Up, Ctrl+Down: the previous or next paragraph (the first line after a blank line)
+          {{BundleKeys.Text(BundleKeys.ParagraphUp)}}, {{BundleKeys.Text(BundleKeys.ParagraphDown)}}: the previous or next paragraph (the first line after a blank line)
           Shift with any of them, or Ctrl+A: select. Ctrl+C, Ctrl+X, Ctrl+V: copy, cut, paste
-          Ctrl+Z: undo the last change, as far back as the file was opened here. Ctrl+Y or Ctrl+Shift+Z: redo
+          {{BundleKeys.Text(EditorKeys.Undo)}}: undo the last change, as far back as the file was opened here. {{BundleKeys.Text(EditorKeys.Redo)}} or {{BundleKeys.Text(EditorKeys.RedoAlso)}}: redo
           Enter: a new line. Tab: a tab character
         """ + BundleHelp.NoticesSection("axJSON", "the text");
 

@@ -232,7 +232,7 @@ public sealed class LauncherForm : HotkeyForm
 
         if (text.Length == 0)
         {
-            Announce(TemplateStore.NoTextYet(template.Title) + ": Ctrl+B opens the browser, where it is written", true);
+            Announce(TemplateStore.NoTextYet(template.Title) + $": {BundleKeys.Text(AxTemplateKeys.OpenBrowser)} opens the browser, where it is written", true);
             return null;
         }
 

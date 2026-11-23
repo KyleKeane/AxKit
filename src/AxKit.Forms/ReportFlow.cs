@@ -14,9 +14,9 @@ internal sealed class ReportFlow
 {
     private const string ReportTitle = "Report to axKit";
 
-    private const string ReportText =
+    private static string ReportText =>
         "A report goes to axKit's maintainer. It is encrypted on your computer and stored in a private repository on GitHub; only the maintainer can read it. Nothing in it names you unless you write it. "
-        + "Type your words; Enter makes a new line. Tab goes on to the kind, the box for more detail and what is sent with your report. Ctrl+Enter or the Send button sends. Escape cancels.";
+        + $"Type your words; Enter makes a new line. Tab goes on to the kind, the box for more detail and what is sent with your report. {BundleKeys.Text(BundleKeys.MainAction)} or the Send button sends. Escape cancels.";
 
     /// <summary>The agreement to the reports is recorded under this name, not the app's: every window sends the same way (RP-6.6).</summary>
     private const string ReportsConsentApp = "axKit";

@@ -68,7 +68,7 @@ internal sealed partial class TerminalForm
     {
         if (!ProcessRunning)
         {
-            Announce("The shell ended. Ctrl+Shift+R starts it again", true);
+            Announce($"The shell ended. {BundleKeys.Text(AxTerminalKeys.RestartShell)} starts it again", true);
             return;
         }
 
