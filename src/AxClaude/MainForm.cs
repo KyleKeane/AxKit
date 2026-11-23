@@ -404,46 +404,7 @@ internal sealed partial class MainForm : ConsoleForm
     protected override void SaveCommand() => ExportConversation();
 
     /// <summary>How the new version starts after Update and restart: on this folder, and on the conversation when a message was sent (FR-9.1).</summary>
-    protected override IReadOnlyList<string> RestartArguments()
-    {
-        var arguments = new List<string> { "claude" };
-        if (_folder is not null)
-        {
-            arguments.Add(_folder);
-            // A window another program keeps (axHelp's conversation, FR-9.2, FR-9.6) comes back as that window.
-            if (_options.Title is { Length: > 0 } title)
-            {
-                arguments.Add("--title");
-                arguments.Add(title);
-            }
-
-            if (_options.Model is { Length: > 0 } model)
-            {
-                arguments.Add("--model");
-                arguments.Add(model);
-            }
-
-            if (_options.HideOnClose)
-            {
-                arguments.Add("--hide-on-close");
-            }
-
-            // A source the command line named (SM-9.1) is this window's, whatever the setting says by then.
-            if (_options.Source is { } source)
-            {
-                arguments.Add("--source");
-                arguments.Add(source);
-            }
-
-            if (_messageSent)
-            {
-                arguments.Add("--");
-                arguments.Add("--continue");
-            }
-        }
-
-        return arguments;
-    }
+    protected override IReadOnlyList<string> RestartArguments() => _options.RestartArguments(_folder, _messageSent);
 
     protected override string UpdateRestartText =>
         "closes axClaude, installs it and starts it again on the same folder; the conversation is picked up again if one is open";

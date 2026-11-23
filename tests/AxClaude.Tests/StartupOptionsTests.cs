@@ -121,4 +121,31 @@ public class StartupOptionsTests
         Assert.True(Path.IsPathRooted(options.RecordPath));
         Assert.EndsWith("session.vt", options.RecordPath);
     }
+
+    /// <summary>
+    /// FR-9.1, FR-9.6: after Update and restart the window comes back as the window it was. axHelp's conversation
+    /// came back without <c>--ai-tools</c> until 2026-11-22, so Claude there had lost axKit's AI tools.
+    /// </summary>
+    [Fact]
+    public void A_restart_starts_the_window_another_program_keeps_as_that_window()
+    {
+        var kept = StartupOptions.Parse([Folder, "--title", "axHelp", "--model", "haiku", "--hide-on-close", "--hidden", "--ai-tools", "--source", "screen", "--message", "a picture"]);
+        var restart = kept.RestartArguments(kept.Folder, messageSent: true);
+        Assert.Equal(["claude", kept.Folder!, "--title", "axHelp", "--model", "haiku", "--hide-on-close", "--ai-tools", "--source", "screen", "--", "--continue"], restart);
+
+        // Read again as a command line, it is the same window, on view and with an empty field.
+        var again = StartupOptions.Parse([.. restart.Skip(1)]);
+        Assert.Equal((kept.Folder, "axHelp", "haiku", true, true, "screen"), (again.Folder, again.Title, again.Model, again.HideOnClose, again.AiTools, again.Source));
+        Assert.False(again.Hidden);
+        Assert.Null(again.Message);
+        Assert.Equal(["--continue"], again.ClaudeArgs!);
+    }
+
+    [Fact]
+    public void A_restart_of_a_plain_window_names_its_folder_and_nothing_else()
+    {
+        var plain = StartupOptions.Parse([Folder]);
+        Assert.Equal(["claude", plain.Folder!], plain.RestartArguments(plain.Folder, messageSent: false));
+        Assert.Equal(["claude"], plain.RestartArguments(null, messageSent: true));
+    }
 }

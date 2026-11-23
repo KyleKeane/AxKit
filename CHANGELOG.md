@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axHelp: **after Update and restart, Claude in axHelp's conversation keeps axKit's AI tools.** The window came back without them until axHelp started the conversation anew.
 - For developers: the scripts that write the generated pages sort by the characters' own order (`Sort-Ordinal`, `tools/ordinal.ps1`), and the script lint refuses `Sort-Object` in them, since Windows PowerShell and PowerShell 7 order a hyphen and a full stop differently and a page written on one was stale under the other.
 - axDown: **format commands: headings, bold, italic, code, list items and block quotes.** Actions, Format (Alt+A, F) writes Markdown's marks where you are, on the line or on the selection, and each command is a toggle: chosen again, it takes the format away. Three have a key: Ctrl+B for bold, Shift+Alt+Right for a heading one level deeper (a plain line becomes a heading of level 1) and Shift+Alt+Left for one level shallower. axDown says what it did, "Heading 2", "No heading", "Bold on", "List item on, 3 lines"; each change is one step for Ctrl+Z; in navigation mode nothing changes.
 - For developers: the list under a field that keeps the caret (axStart's programs, axClip's clipboard items, the command palette's commands) is the bundle's list, `AxKitList`, in a mode of its own (`Field`, `MoveFromField`; framework step 12), where it was a plain list box moved by two copies of the same code. For the user nothing changes but one thing: a clipboard text or a name with hidden characters in it now shows them, as every other list does.

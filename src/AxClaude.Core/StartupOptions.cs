@@ -32,6 +32,61 @@ public sealed record StartupOptions(
     /// <summary>The window starts hidden (FR-9.6): only together with <see cref="HideOnClose"/> and a folder, since a hidden window that asks for a folder, or that nothing can bring back, serves nobody.</summary>
     public bool StartsHidden => Hidden && HideOnClose && Folder is not null;
 
+    /// <summary>
+    /// The command line that starts this window again after Update and restart (FR-9.1): the verb alone without a
+    /// folder; on <paramref name="folder"/> otherwise, with everything of this start that makes the window what
+    /// it is, so that a window another program keeps (axHelp's conversation, FR-9.2, FR-9.6) comes back as that
+    /// window: its title, its model, hiding on close, the AI tools for Claude (<c>--ai-tools</c>, left out until
+    /// 2026-11-22, so that axHelp's conversation came back without them) and a source the command line named
+    /// (SM-9.1); and on the folder's conversation when a message was sent in this window. Never
+    /// <c>--hidden</c> or <c>--message</c>: the window comes back on view, with nothing put into its field.
+    /// </summary>
+    public IReadOnlyList<string> RestartArguments(string? folder, bool messageSent)
+    {
+        var arguments = new List<string> { "claude" };
+        if (folder is null)
+        {
+            return arguments;
+        }
+
+        arguments.Add(folder);
+        if (Title is { Length: > 0 })
+        {
+            arguments.Add("--title");
+            arguments.Add(Title);
+        }
+
+        if (Model is { Length: > 0 })
+        {
+            arguments.Add("--model");
+            arguments.Add(Model);
+        }
+
+        if (HideOnClose)
+        {
+            arguments.Add("--hide-on-close");
+        }
+
+        if (AiTools)
+        {
+            arguments.Add("--ai-tools");
+        }
+
+        if (Source is not null)
+        {
+            arguments.Add("--source");
+            arguments.Add(Source);
+        }
+
+        if (messageSent)
+        {
+            arguments.Add("--");
+            arguments.Add("--continue");
+        }
+
+        return arguments;
+    }
+
     public const string Usage = """
         Usage: axKit claude [<folder>] [--project <folder>] [--claude <path>] [--cols N] [--rows N] [--no-ax] [--record <file.vt>] [--message <text>] [--title <text>] [--model <name>] [--hide-on-close [--hidden]] [--ai-tools] [--source screen|stream] [-- claude arguments]
                axclaude ...  the same, as the installed console command
