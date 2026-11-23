@@ -721,6 +721,8 @@
     { "family": "ctrl-shift-letter", "events": ["done", "changed", "opened", "asked", "busy", "failed"] },
     { "family": "f-keys", "events": ["said", "opened", "landed", "nothing-found", "done"], "note": "F1 and F4 open, F3 lands or says Not found, F5 refreshes, F6 lands in the other pane, F8 says the status." },
     { "family": "shift-f-keys", "events": ["opened", "landed", "nothing-found", "busy", "late-notice"] },
+    { "family": "ctrl-f-keys", "events": ["opened"], "note": "The app's new window opens with its own sound; the window the key was pressed in says nothing." },
+    { "family": "ctrl-shift-f-keys", "events": ["opened"], "note": "As Ctrl with a function key, for an access layer." },
     { "family": "enter", "events": ["opened", "landed", "sent", "asked", "edge", "refused"] },
     { "family": "enter-forms", "events": ["sent", "done", "opened", "no-command", "refused"], "note": "Ctrl+Enter where the window has no main action plays the edge." },
     { "family": "escape", "events": ["cancelled", "landed", "said", "done"], "note": "Escape in axClaude's message field only speaks; Shift+Escape interrupts the program." },

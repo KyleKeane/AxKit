@@ -1,3 +1,5 @@
+using AxKit.Core;
+
 namespace AxKit.Forms;
 
 /// <summary>
@@ -108,7 +110,17 @@ public static class BundleKeys
         ("Larger text (numpad)", LargerTextNumpad),
         ("Smaller text", SmallerText),
         ("Smaller text (numpad)", SmallerTextNumpad),
+        // AX-8.18 rule 6: Ctrl with a function key opens a standalone app, Ctrl+Shift with one an access layer.
+        .. AppLaunchKeys.Default.Select(key => ($"Open {key.App.Name}", LaunchKey(key))),
     ];
+
+    /// <summary>An app's key (AX-8.18 rule 6) as a key of WinForms: Ctrl, Shift for an access layer, and its function key.</summary>
+    public static Keys LaunchKey(AppLaunchKey key) =>
+        Keys.Control | (key.Shift ? Keys.Shift : Keys.None) | (Keys)((int)Keys.F1 + key.Number - 1);
+
+    /// <summary>The app a key opens (AX-8.18 rule 6); null for a key that opens none.</summary>
+    public static App? AppOfLaunchKey(Keys keyData) =>
+        AppLaunchKeys.Default.FirstOrDefault(key => LaunchKey(key) == keyData)?.App;
 
     /// <summary>
     /// The system-wide keys (AX-8.11): the background apps' hotkeys as they are at first, which Windows takes from

@@ -167,4 +167,4 @@ expect quiet 1000
 # 6.6 manual: save as, Enter opens the Windows Save as picker; Alt+H, P needs the menu bar's menu mode.
 # Check: The command for a new axDown window is in the palette
 # Alt+W, New window, axDown is in the palette; the recent lists are too, played in 14-recent-from-the-palette.
-expect commands "axDown, Window, New window"
+expect commands "axDown, Window, New window, Ctrl+F2"

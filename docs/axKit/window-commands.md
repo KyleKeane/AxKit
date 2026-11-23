@@ -47,27 +47,27 @@ every window" or under a heading that names the windows without it; under an app
 - Windows text size. Menu: Options, Text. Key: none. Mark: change.
 - Close all windows. Menu: Window. Key: none. Mark: act.
 - Say the status. Menu: Window. Key: F8. Mark: read.
-- axAutomate. Menu: Window, New window. Key: none. Mark: open.
-- axCalc. Menu: Window, New window. Key: none. Mark: open.
-- axClaude, access layer for Claude Code. Menu: Window, New window. Key: none. Mark: act.
-- axClip. Menu: Window, New window. Key: none. Mark: open.
-- axDown. Menu: Window, New window. Key: none. Mark: open.
-- axFile. Menu: Window, New window. Key: none. Mark: open.
-- axGIT, access layer for Git. Menu: Window, New window. Key: none. Mark: open.
-- axHelp, access layer for Claude Code. Menu: Window, New window. Key: none. Mark: open.
-- axJSON. Menu: Window, New window. Key: none. Mark: open.
-- axMCP, access layer for MCP servers. Menu: Window, New window. Key: none. Mark: open.
-- axMedia. Menu: Window, New window. Key: none. Mark: open.
-- axPass, access layer for KeePassXC. Menu: Window, New window. Key: none. Mark: open.
-- axPreview. Menu: Window, New window. Key: none. Mark: open.
-- axProcess. Menu: Window, New window. Key: none. Mark: open.
-- axStart. Menu: Window, New window. Key: none. Mark: open.
-- axTask. Menu: Window, New window. Key: none. Mark: open.
-- axTerminal, access layer for your shell. Menu: Window, New window. Key: none. Mark: act.
 
 ## In every window but axClip, axHelp and axPass
 
-- axTemplate. Menu: Window, New window. Key: none. Mark: open.
+- axAutomate. Menu: Window, New window. Key: Ctrl+F11. Mark: open.
+- axCalc. Menu: Window, New window. Key: Ctrl+F9. Mark: open.
+- axClaude, access layer for Claude Code. Menu: Window, New window. Key: Ctrl+Shift+F4. Mark: act.
+- axClip. Menu: Window, New window. Key: Ctrl+F8. Mark: open.
+- axDown. Menu: Window, New window. Key: Ctrl+F2. Mark: open.
+- axFile. Menu: Window, New window. Key: Ctrl+F1. Mark: open.
+- axGIT, access layer for Git. Menu: Window, New window. Key: Ctrl+Shift+F2. Mark: open.
+- axHelp, access layer for Claude Code. Menu: Window, New window. Key: Ctrl+Shift+F6. Mark: open.
+- axJSON. Menu: Window, New window. Key: Ctrl+F3. Mark: open.
+- axMCP, access layer for MCP servers. Menu: Window, New window. Key: Ctrl+Shift+F5. Mark: open.
+- axMedia. Menu: Window, New window. Key: Ctrl+F5. Mark: open.
+- axPass, access layer for KeePassXC. Menu: Window, New window. Key: Ctrl+Shift+F3. Mark: open.
+- axPreview. Menu: Window, New window. Key: Ctrl+F4. Mark: open.
+- axProcess. Menu: Window, New window. Key: Ctrl+F10. Mark: open.
+- axStart. Menu: Window, New window. Key: Ctrl+F7. Mark: open.
+- axTask. Menu: Window, New window. Key: Ctrl+F6. Mark: open.
+- axTemplate. Menu: Window, New window. Key: Ctrl+F12. Mark: open.
+- axTerminal, access layer for your shell. Menu: Window, New window. Key: Ctrl+Shift+F1. Mark: act.
 
 ## In every window but axClip, axHelp, axPass and axStart
 
@@ -284,24 +284,24 @@ every window" or under a heading that names the windows without it; under an app
 - Quit axClip. Menu: Session. Key: none. Mark: act. Never run by AI tools.
 - Close all windows. Menu: Window. Key: none. Mark: act. Never run by AI tools.
 - Say the status. Menu: Window. Key: F8. Mark: read. Never run by AI tools.
-- axAutomate. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axCalc. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axClaude, access layer for Claude Code. Menu: Window, New window. Key: none. Mark: act. Never run by AI tools.
-- axClip. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axDown. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axFile. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axGIT, access layer for Git. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axHelp, access layer for Claude Code. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axJSON. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axMCP, access layer for MCP servers. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axMedia. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axPass, access layer for KeePassXC. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axPreview. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axProcess. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axStart. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axTask. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axTemplate. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axTerminal, access layer for your shell. Menu: Window, New window. Key: none. Mark: act. Never run by AI tools.
+- axAutomate. Menu: Window, New window. Key: Ctrl+F11. Mark: open. Never run by AI tools.
+- axCalc. Menu: Window, New window. Key: Ctrl+F9. Mark: open. Never run by AI tools.
+- axClaude, access layer for Claude Code. Menu: Window, New window. Key: Ctrl+Shift+F4. Mark: act. Never run by AI tools.
+- axClip. Menu: Window, New window. Key: Ctrl+F8. Mark: open. Never run by AI tools.
+- axDown. Menu: Window, New window. Key: Ctrl+F2. Mark: open. Never run by AI tools.
+- axFile. Menu: Window, New window. Key: Ctrl+F1. Mark: open. Never run by AI tools.
+- axGIT, access layer for Git. Menu: Window, New window. Key: Ctrl+Shift+F2. Mark: open. Never run by AI tools.
+- axHelp, access layer for Claude Code. Menu: Window, New window. Key: Ctrl+Shift+F6. Mark: open. Never run by AI tools.
+- axJSON. Menu: Window, New window. Key: Ctrl+F3. Mark: open. Never run by AI tools.
+- axMCP, access layer for MCP servers. Menu: Window, New window. Key: Ctrl+Shift+F5. Mark: open. Never run by AI tools.
+- axMedia. Menu: Window, New window. Key: Ctrl+F5. Mark: open. Never run by AI tools.
+- axPass, access layer for KeePassXC. Menu: Window, New window. Key: Ctrl+Shift+F3. Mark: open. Never run by AI tools.
+- axPreview. Menu: Window, New window. Key: Ctrl+F4. Mark: open. Never run by AI tools.
+- axProcess. Menu: Window, New window. Key: Ctrl+F10. Mark: open. Never run by AI tools.
+- axStart. Menu: Window, New window. Key: Ctrl+F7. Mark: open. Never run by AI tools.
+- axTask. Menu: Window, New window. Key: Ctrl+F6. Mark: open. Never run by AI tools.
+- axTemplate. Menu: Window, New window. Key: Ctrl+F12. Mark: open. Never run by AI tools.
+- axTerminal, access layer for your shell. Menu: Window, New window. Key: Ctrl+Shift+F1. Mark: act. Never run by AI tools.
 - First match. Menu: none, a key alone. Key: Ctrl+Home. Mark: read. Never run by AI tools.
 - Last match. Menu: none, a key alone. Key: Ctrl+End. Mark: read. Never run by AI tools.
 - Next match. Menu: none, a key alone. Key: Down. Mark: read. Never run by AI tools.
@@ -545,6 +545,23 @@ every window" or under a heading that names the windows without it; under an app
 - Sounds when something opens. Menu: Options, Text. Key: none. Mark: change.
 - Hide. Menu: Session. Key: Escape. Mark: change.
 - Quit axHelp. Menu: Session. Key: none. Mark: act.
+- axAutomate. Menu: Window, New window. Key: none. Mark: open.
+- axCalc. Menu: Window, New window. Key: none. Mark: open.
+- axClaude, access layer for Claude Code. Menu: Window, New window. Key: none. Mark: act.
+- axClip. Menu: Window, New window. Key: none. Mark: open.
+- axDown. Menu: Window, New window. Key: none. Mark: open.
+- axFile. Menu: Window, New window. Key: none. Mark: open.
+- axGIT, access layer for Git. Menu: Window, New window. Key: none. Mark: open.
+- axHelp, access layer for Claude Code. Menu: Window, New window. Key: none. Mark: open.
+- axJSON. Menu: Window, New window. Key: none. Mark: open.
+- axMCP, access layer for MCP servers. Menu: Window, New window. Key: none. Mark: open.
+- axMedia. Menu: Window, New window. Key: none. Mark: open.
+- axPass, access layer for KeePassXC. Menu: Window, New window. Key: none. Mark: open.
+- axPreview. Menu: Window, New window. Key: none. Mark: open.
+- axProcess. Menu: Window, New window. Key: none. Mark: open.
+- axStart. Menu: Window, New window. Key: none. Mark: open.
+- axTask. Menu: Window, New window. Key: none. Mark: open.
+- axTerminal, access layer for your shell. Menu: Window, New window. Key: none. Mark: act.
 
 ## axJSON
 
@@ -740,24 +757,24 @@ every window" or under a heading that names the windows without it; under an app
 - Show backups in axFile. Menu: Session. Key: none. Mark: open. Never run by AI tools.
 - Close all windows. Menu: Window. Key: none. Mark: act. Never run by AI tools.
 - Say the status. Menu: Window. Key: F8. Mark: read. Never run by AI tools.
-- axAutomate. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axCalc. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axClaude, access layer for Claude Code. Menu: Window, New window. Key: none. Mark: act. Never run by AI tools.
-- axClip. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axDown. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axFile. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axGIT, access layer for Git. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axHelp, access layer for Claude Code. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axJSON. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axMCP, access layer for MCP servers. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axMedia. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axPass, access layer for KeePassXC. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axPreview. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axProcess. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axStart. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axTask. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axTemplate. Menu: Window, New window. Key: none. Mark: open. Never run by AI tools.
-- axTerminal, access layer for your shell. Menu: Window, New window. Key: none. Mark: act. Never run by AI tools.
+- axAutomate. Menu: Window, New window. Key: Ctrl+F11. Mark: open. Never run by AI tools.
+- axCalc. Menu: Window, New window. Key: Ctrl+F9. Mark: open. Never run by AI tools.
+- axClaude, access layer for Claude Code. Menu: Window, New window. Key: Ctrl+Shift+F4. Mark: act. Never run by AI tools.
+- axClip. Menu: Window, New window. Key: Ctrl+F8. Mark: open. Never run by AI tools.
+- axDown. Menu: Window, New window. Key: Ctrl+F2. Mark: open. Never run by AI tools.
+- axFile. Menu: Window, New window. Key: Ctrl+F1. Mark: open. Never run by AI tools.
+- axGIT, access layer for Git. Menu: Window, New window. Key: Ctrl+Shift+F2. Mark: open. Never run by AI tools.
+- axHelp, access layer for Claude Code. Menu: Window, New window. Key: Ctrl+Shift+F6. Mark: open. Never run by AI tools.
+- axJSON. Menu: Window, New window. Key: Ctrl+F3. Mark: open. Never run by AI tools.
+- axMCP, access layer for MCP servers. Menu: Window, New window. Key: Ctrl+Shift+F5. Mark: open. Never run by AI tools.
+- axMedia. Menu: Window, New window. Key: Ctrl+F5. Mark: open. Never run by AI tools.
+- axPass, access layer for KeePassXC. Menu: Window, New window. Key: Ctrl+Shift+F3. Mark: open. Never run by AI tools.
+- axPreview. Menu: Window, New window. Key: Ctrl+F4. Mark: open. Never run by AI tools.
+- axProcess. Menu: Window, New window. Key: Ctrl+F10. Mark: open. Never run by AI tools.
+- axStart. Menu: Window, New window. Key: Ctrl+F7. Mark: open. Never run by AI tools.
+- axTask. Menu: Window, New window. Key: Ctrl+F6. Mark: open. Never run by AI tools.
+- axTemplate. Menu: Window, New window. Key: Ctrl+F12. Mark: open. Never run by AI tools.
+- axTerminal, access layer for your shell. Menu: Window, New window. Key: Ctrl+Shift+F1. Mark: act. Never run by AI tools.
 - Ask about this window. Menu: none, a key alone. Key: Ctrl+Slash. Mark: act. Never run by AI tools.
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
 - Check the field. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.

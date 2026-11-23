@@ -28,7 +28,7 @@ public sealed class WindowMenu : ToolStripMenuItem
     {
         _owner = owner;
         var newWindow = new ToolStripMenuItem("&New window");
-        AddApps(newWindow.DropDownItems, Dispatch.Apps, app => CommandPalette.Marked(new ToolStripMenuItem(AxKitWindows.AppLabel(app), null, (_, _) => Start(app.Verb, null)), OpenMark(app.Verb)));
+        AddApps(newWindow.DropDownItems, Dispatch.Apps, NewWindowItem);
         DropDownItems.Add(newWindow);
         // The lists made as the menu opens, and again before the command palette reads it, so that an open window or a
         // recently closed file is one search away (AX-10.2, 2026-11-13; the palette left them out before).
@@ -44,6 +44,19 @@ public sealed class WindowMenu : ToolStripMenuItem
         }, CommandMark.Read), BundleKeys.SayStatus));
         CommandPalette.RefreshedOnOpening(this, Fill);
         Fill();
+    }
+
+    /// <summary>New window's item of an app, with the app's key shown (AX-8.18 rule 6), which the base handles in every window.</summary>
+    private static ToolStripMenuItem NewWindowItem(App app)
+    {
+        var item = CommandPalette.Marked(new ToolStripMenuItem(AxKitWindows.AppLabel(app), null, (_, _) => Start(app.Verb, null)), OpenMark(app.Verb));
+        if (AppLaunchKeys.Of(app.Name) is { } key)
+        {
+            item.ShortcutKeyDisplayString = key.Text;
+            CommandPalette.Keyed(item, BundleKeys.LaunchKey(key));
+        }
+
+        return item;
     }
 
     private void Fill()

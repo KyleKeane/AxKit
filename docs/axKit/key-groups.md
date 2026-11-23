@@ -17,6 +17,8 @@ The same in every axKit window:
 
 - Ctrl+punctuation: the in-window partner of the same key with Ctrl+Shift.
 - Space and Ctrl+Space: select, or toggle.
+- Ctrl+F-key: open a standalone app.
+- Ctrl+Shift+F-key: open an access layer.
 - F-keys (F1 to F12 alone): say or show.
 - Shift+F-key, and the Applications key: the reverse or the other form of the same F-key.
 - Enter: open or confirm.
@@ -81,6 +83,38 @@ The keys:
 - Space, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Select or deselect.
 - Space, axAutomate, axMCP, axPass, axTask and axTemplate: Check the field.
 - Space, axFile: Select or deselect this entry.
+
+### Ctrl+F-key: open a standalone app
+
+Ctrl with a function key opens a standalone axKit app from any axKit window, in the order of the Window menu: Ctrl+F1 axFile, Ctrl+F2 axDown, and on (SPEC AX-8.18 rule 6).
+
+The keys:
+
+- Ctrl+F1, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axFile.
+- Ctrl+F2, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axDown.
+- Ctrl+F3, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axJSON.
+- Ctrl+F4, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axPreview.
+- Ctrl+F5, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axMedia.
+- Ctrl+F6, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axTask.
+- Ctrl+F7, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axStart.
+- Ctrl+F8, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axClip.
+- Ctrl+F9, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axCalc.
+- Ctrl+F10, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axProcess.
+- Ctrl+F11, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axAutomate.
+- Ctrl+F12, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axTemplate.
+
+### Ctrl+Shift+F-key: open an access layer
+
+Ctrl+Shift with a function key opens an access layer, an app over a program you install, from any axKit window, in the order of the Window menu (SPEC AX-8.18 rule 6).
+
+The keys:
+
+- Ctrl+Shift+F1, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axTerminal, access layer for your shell.
+- Ctrl+Shift+F2, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axGIT, access layer for Git.
+- Ctrl+Shift+F3, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axPass, access layer for KeePassXC.
+- Ctrl+Shift+F4, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axClaude, access layer for Claude Code.
+- Ctrl+Shift+F5, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axMCP, access layer for MCP servers.
+- Ctrl+Shift+F6, axAutomate, axCalc, axClaude, axClip, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask, axTemplate and axTerminal: axHelp, access layer for Claude Code.
 
 ### F-keys (F1 to F12 alone): say or show
 

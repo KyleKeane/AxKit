@@ -279,7 +279,8 @@ the selection, the conversation windows' shared parts, and the hotkey window's l
 were planned and built is in the git history (commit 3f4a9925 and before). Left:
 
 16. The workflows that result, as one inventory; then the key map; then the function keys and Ctrl with a number
-    as classes of interaction (their items in the priorities list).
+    as classes of interaction. Done 2026-11-23: the rules of the keys settled with the maintainer (bundle SPEC
+    AX-8.18), the app keys built; the misfits of each key family are the key audit's item.
 
 ## 9. Decisions
 

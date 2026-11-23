@@ -51,6 +51,7 @@ Steps and keys: `docs/axKit/workflows/axCalc.md` (in Claude's working folder: `w
     - Go back from the history to the field
     - Read the keyboard shortcuts
     - Get to the end and the start of the field with the page keys
+    - Open another app with its key
 2. **Use variables, earlier answers and the history in axCalc**
     - Go on from the last answer and use ans
     - Set a variable and use it

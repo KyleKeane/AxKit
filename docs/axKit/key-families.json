@@ -161,6 +161,26 @@
       ]
     },
     {
+      "id": "ctrl-f-keys",
+      "scope": "every-window",
+      "pattern": "Ctrl+F-key",
+      "match": "^ctrl\\+f[0-9]+$",
+      "does": "open a standalone app",
+      "learn": "Ctrl with a function key opens a standalone axKit app from any axKit window, in the order of the Window menu: Ctrl+F1 axFile, Ctrl+F2 axDown, and on (SPEC AX-8.18 rule 6).",
+      "windows": [],
+      "misfits": []
+    },
+    {
+      "id": "ctrl-shift-f-keys",
+      "scope": "every-window",
+      "pattern": "Ctrl+Shift+F-key",
+      "match": "^ctrl\\+shift\\+f[0-9]+$",
+      "does": "open an access layer",
+      "learn": "Ctrl+Shift with a function key opens an access layer, an app over a program you install, from any axKit window, in the order of the Window menu (SPEC AX-8.18 rule 6).",
+      "windows": [],
+      "misfits": []
+    },
+    {
       "id": "f-keys",
       "scope": "every-window",
       "pattern": "F-keys (F1 to F12 alone)",

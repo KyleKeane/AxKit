@@ -92,3 +92,13 @@ keys pageup pageup
 expect said ♪ Edge
 keys escape
 expect said ! Cleared
+
+# Goal: Open another app with its key
+# Bundle AX-8.18 rule 6 (2026-11-23): Ctrl with a function key opens a standalone app from any window, in the
+# Window menu's order; Ctrl+F2 is axDown.
+keys ctrl+f2
+adopt
+expect state "title":"Untitled - axDown"
+close
+use 1
+expect focus Expression

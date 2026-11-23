@@ -1036,6 +1036,26 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   - In code: the rules are `AxKit.Core/ListArrange` (tested), the window's side
     `AxKit.Forms/ItemForm.Arrange.cs`; an app gives its level's rows (`ReadLevel`) and the item window decides
     which are shown and in which order, so a row's place in the list is never its place in the app's own data.
+- AX-8.18 **The rules of the keys, on one page** (the maintainer, 2026-11-23: "it is too much for my working memory
+  to process all those which is why i need us to settle on simple heuristics"; settled through the question tool
+  the same day). What a combination means comes from its modifier, whatever the key, so that a key never learnt
+  can be guessed. Every key of a table falls under one rule; the key map (`key-map.md`, `key-families.json`) is
+  the same rules by family, and a key that fits none is a fault of the table.
+  1. No modifier: move and read where you are. Shift with the same key: the other direction, or select as you move.
+  2. Ctrl with a letter: act on what you are on. Ctrl+Shift with the same letter: its reverse or wider form.
+  3. Ctrl with a number: the window's own numbered action (a heading level in the editors, an action key in
+     axTask). Ctrl+Shift with the same number: its reverse. Nothing on numbers works outside the window.
+  4. Alt with a letter: a menu. Alt with a number: a place of the window (AX-8.14). Alt with an arrow: the choices of
+     what you are on.
+  5. A function key alone: say or show. Shift with it: the reverse or another form.
+  6. Ctrl with a function key: open a standalone app; Ctrl+Shift with a function key: open an access layer, so that
+     the key says which kind of app it opens. Each in the bundle's order, the Window menu's, F1 first (axFile on
+     Ctrl+F1, the first access layer on Ctrl+Shift+F1); the same in every axKit window, shown in New window, handled
+     by the base before the window's own keys (`AxKit.Core/AppLaunchKeys`, `BundleKeys.LaunchKey`). Only axKit's
+     windows take them, nothing for all of Windows. The table is in code for now; a table of the user's own is a
+     later step ("changeable later").
+  7. Ctrl+Shift with Space or a punctuation key: the few keys that work anywhere in Windows, one per background app
+     (AX-8.11). Not Ctrl+Alt, which NVDA's table keys, Windows Magnifier and the AltGr letters of many keyboards take.
 
 ### AX-9 The bundle's menus: Options, Window, axKit, Help
 

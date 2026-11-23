@@ -806,6 +806,14 @@ public abstract partial class AxKitForm : Form
                 return true;
         }
 
+        // AX-8.18 rule 6: Ctrl with a function key opens a standalone app, Ctrl+Shift with one an access layer, from
+        // every window, as the Window menu's New window does.
+        if (BundleKeys.AppOfLaunchKey(keyData) is { } launched)
+        {
+            WindowMenu.Start(launched.Verb, null);
+            return true;
+        }
+
         // The window's own keys first (a rename box's, a state's), then the keys of its command list (app-kit AK-2.3).
         if (ProcessWindowKey(keyData) || RunCommandKey(keyData))
         {

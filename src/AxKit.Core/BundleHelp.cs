@@ -33,6 +33,9 @@ public static class BundleHelp
     /// <summary>F8's line, the same in every F1 text (AX-7.10, 2026-11-15).</summary>
     public const string StatusLine = "  F8: say the status, what the status bar at the bottom of the window holds, said by axKit itself; in a notice too";
 
+    /// <summary>The app keys (AX-8.18 rule 6), in every window's F1 text; the Window menu's New window shows each app's own.</summary>
+    public const string AppKeysLine = "  Ctrl with a function key: open a standalone axKit app, Ctrl+F1 axFile, Ctrl+F2 axDown, and on in the order of the Window menu; Ctrl+Shift with a function key: an access layer, Ctrl+Shift+F1 axTerminal and on. Window, New window shows each app's key";
+
     /// <summary>
     /// The first line and the bundle's section, ending in a blank line so that the app's own sections follow. In the
     /// section: F1, the command palette, the app's own <paramref name="lines"/> in their order (what Tab moves between,
@@ -69,6 +72,7 @@ public static class BundleHelp
         text.Append(ModeLine).Append("\r\n");
         text.Append("  Shift+F1 or Ctrl+Slash: ask Claude about this window: type your question and press Enter; the first time, a reminder asks you to turn Claude on; the answer is a notice, with a field under it to ask more\r\n");
         text.Append(StatusLine).Append("\r\n");
+        text.Append(AppKeysLine).Append("\r\n");
         foreach (var line in lines)
         {
             text.Append("  ").Append(line).Append("\r\n");

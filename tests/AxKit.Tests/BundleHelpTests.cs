@@ -23,6 +23,7 @@ public sealed class BundleHelpTests
                 BundleHelp.ModeLine,
                 "  Shift+F1 or Ctrl+Slash: ask Claude about this window: type your question and press Enter; the first time, a reminder asks you to turn Claude on; the answer is a notice, with a field under it to ask more",
                 "  F8: say the status, what the status bar at the bottom of the window holds, said by axKit itself; in a notice too",
+                BundleHelp.AppKeysLine,
                 "  Tab: between the list and the field",
                 "  Ctrl+S: save the thing",
                 "  Ctrl+Plus, Ctrl+Minus: bigger or smaller text",

@@ -650,6 +650,12 @@ Each family of keys (`docs/axKit/key-groups.md`) with the kinds of event its key
   - `nothing-found`: sound `Nothing` or `Edge`.
   - `busy`: no sound.
   - `late-notice`: no sound.
+- `ctrl-f-keys`, Ctrl+F-key: open a standalone app.
+  - `opened`: no sound.
+  - Note: The app's new window opens with its own sound; the window the key was pressed in says nothing.
+- `ctrl-shift-f-keys`, Ctrl+Shift+F-key: open an access layer.
+  - `opened`: no sound.
+  - Note: As Ctrl with a function key, for an access layer.
 - `enter`, Enter: open or confirm.
   - `opened`: no sound.
   - `landed`: no sound.
