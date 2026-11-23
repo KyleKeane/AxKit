@@ -20,6 +20,7 @@ public static class KeySender
     private const ushort VkC = 0x43;
     private const ushort VkV = 0x56;
     private const ushort VkLeft = 0x25;
+    private const ushort VkDelete = 0x2E;
 
     /// <summary>Ctrl+V to the program in front: Ctrl down, V down, V up, Ctrl up, in one <c>SendInput</c>.</summary>
     public static void SendCtrlV() => Send("The paste's keys",
@@ -57,6 +58,37 @@ public static class KeySender
 
         Send("The caret's keys", inputs);
     }
+
+    /// <summary>The Delete key to the program in front: what is selected there goes (TP-2.3, the caret's mark).</summary>
+    public static void SendDelete() => Send("The delete key", [Key(VkDelete, KeyEventExtended), Key(VkDelete, KeyEventExtended | KeyEventUp)]);
+
+    /// <summary>
+    /// Waits until Ctrl, Shift, Alt and the Windows keys are all up, <paramref name="maxMs"/> at most: a key the user
+    /// still holds from the hotkey or from Ctrl+Enter joins every key sent, a Left becoming Ctrl+Left, a word, or
+    /// Shift+Left, a selection (the maintainer, 2026-11-23: the caret "unreliable"). False when one was still down.
+    /// </summary>
+    public static async Task<bool> WaitForModifiersUpAsync(int maxMs)
+    {
+        for (var waited = 0; waited <= maxMs; waited += 25)
+        {
+            if (!ModifierDown())
+            {
+                return true;
+            }
+
+            await Task.Delay(25);
+        }
+
+        return false;
+    }
+
+    private static bool ModifierDown() =>
+        ModifierKeys.Any(key => (GetAsyncKeyState(key) & 0x8000) != 0);
+
+    private static readonly int[] ModifierKeys = [0x10, 0x11, 0x12, 0x5B, 0x5C];
+
+    [DllImport("user32.dll")]
+    private static extern short GetAsyncKeyState(int key);
 
     private static void Send(string what, Input[] inputs)
     {

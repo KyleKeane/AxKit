@@ -223,4 +223,16 @@ public sealed class TemplateTests : IDisposable
         File.WriteAllText(path, """{ "hotkey": "Ctrl+Alt+Shift+T" }""");
         Assert.Equal("Ctrl+Alt+Shift+T", TemplateSettings.Load(path, out _).HotkeyText);
     }
+
+    /// <summary>TP-2.3, TP-D10: the text pasted with the caret's mark in its place, found and deleted after the paste.</summary>
+    [Fact]
+    public void The_caret_mark_stays_in_the_pasted_text_where_the_caret_goes()
+    {
+        Assert.Equal("Dear {caret}, thank you", TemplateStore.WithCaretMark(TextTemplate.Expand("Dear {caret}, thank you", "", "")));
+        // The caret at the end: nothing to place.
+        Assert.Null(TemplateStore.WithCaretMark(TextTemplate.Expand("Dear Ann", "", "")));
+        // A mark in the clipboard's text after the caret would be found first: the Left keys then.
+        Assert.Null(TemplateStore.WithCaretMark(TextTemplate.Expand("{caret} and {clipboard}", "", "a {caret} b")));
+        Assert.Equal("{caret}x", TemplateStore.WithCaretMark(TextTemplate.Expand("{caret}x", "", "")));
+    }
 }

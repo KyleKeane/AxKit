@@ -27,7 +27,7 @@ The launcher needs no start of yours. It runs in the background from the moment 
 - Ctrl+B opens the browser.
 - Options, Hotkey changes the key. Session, Quit axTemplate ends the launcher; closing its window only hides it.
 
-The caret is moved with Left keys, one for each character after the mark. That is exact in a plain field. A program that changes what is pasted, by indenting it or closing a bracket by itself, can leave the caret a little off. A program that takes long to paste may get the old clipboard text; if that happens to you in some program, use Shift+Enter there and paste yourself.
+How the caret gets to its place: where the program shows its text to screen readers (Word, Notepad, a field in a browser), the template is pasted with the mark `{caret}` still in it, and the launcher finds that mark back from the caret, selects it and deletes it, so the caret is exactly there, however slowly the program pastes. Where it does not (a terminal, some older programs), the caret is moved back with Left keys, one for each character after the mark; a program that changes what is pasted, by indenting it or closing a bracket by itself, can leave it a little off there. If you ever find `{caret}` left in your text, the program did not let the launcher find it in time: delete it yourself, and tell the maintainer with F4. The launcher waits until you have let go of Ctrl and Shift before it sends anything.
 
 ### The templates, on the left
 

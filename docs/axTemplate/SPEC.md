@@ -104,8 +104,13 @@ answer to a key.
   axKit window all three mean what they mean in an editor. From the launcher, in another program:
   - `{clipboard}` is the clipboard's text at the moment the launcher came up.
   - `{selection}` is empty with Enter, and with Ctrl+Enter the text selected in that program (TP-4.2).
-  - `{caret}`: after the paste the caret is moved back to its place, by one Left key for every character that
-    follows the mark, a line ending counting as one (TP-D5).
+  - `{caret}`: the caret is put in its place after the paste (TP-D10). Where the field gives its text to UI
+    Automation, the channel a screen reader reads by (Word, Notepad, a browser's field), the text is pasted with
+    the mark `{caret}` left in, the mark nearest before the caret is searched for until the paste has put it
+    there, selected, and deleted with the Delete key, which leaves the caret where it was. Elsewhere (a terminal,
+    a program that gives no text), the caret is moved back by one Left key for every character that follows the
+    mark, a line ending counting as one (TP-D5). Before any key is sent, the launcher waits until Ctrl, Shift, Alt
+    and the Windows keys are up, 1.5 seconds at most.
 - TP-2.4 A file that is not an item, or cannot be read, is no template: the browser lists it with "not a
   template" after its name and the launcher leaves it out.
 - TP-2.5 The folder is read off the UI thread, as each window comes up and on F5; the launcher reads a template's
@@ -255,6 +260,17 @@ answer to a key.
 - **TP-D5 The caret by Left keys.** The one way that works in a plain field of any program. It is exact where the
   program puts in what was pasted and nothing more; a program that indents or closes brackets by itself can land
   the caret a little off, and the guide says so. A template without `{caret}` sends no Left key.
+- **TP-D10 The caret found by its mark** (the maintainer, 2026-11-23: the caret was "unreliable", then "can you
+  instead insert the full template and then search for each pattern to select it and replace it with the
+  clipboard or place the caret there by deleting the content that is there?"). The Left keys of TP-D5 went wrong
+  two ways: a key the user still held (Ctrl from the hotkey or from Ctrl+Enter) made every Left a Ctrl+Left, a
+  word, and a program that pastes slowly took the Left keys before the paste. A program's own Find cannot be driven
+  reliably, each has its own; UI Automation's text of the focused field can be searched in every program that
+  gives it, which is the one NVDA reads, so the mark is found there (`AxTemplate/FocusedText`, the client's
+  interfaces declared in code, no package). The mark's arrival also tells that the paste is in, so the clipboard
+  goes back then. `{clipboard}` and `{selection}` are filled before the paste, as they were; a mark in the text
+  after the caret (from the clipboard) sends the Left keys instead, and a mark not found within three seconds stays
+  in the text, where the user finds it, and is logged.
 - **TP-D6 The clipboard is given back.** A template put in should not cost the user what they had copied, and
   should not fill a clipboard history with templates. What is given back is the text the clipboard held when the
   launcher came up, so the copy that Ctrl+Enter makes in the other program is undone with it; a clipboard that

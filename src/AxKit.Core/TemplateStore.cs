@@ -276,6 +276,23 @@ public static class TemplateStore
         return tail.ReplaceLineEndings("\n").Length;
     }
 
+    /// <summary>
+    /// The text to paste with the caret's mark left in its place (TP-2.3, TP-D10): it is found after the paste,
+    /// searched back from the caret, and deleted, which leaves the caret there. Null when the caret ends the text
+    /// (nothing to place) or when the text after it holds the mark itself (from the clipboard or the selection),
+    /// which the search back would find first: then the Left keys place it.
+    /// </summary>
+    public static string? WithCaretMark(TemplateText made)
+    {
+        if (made.Caret >= made.Text.Length)
+        {
+            return null;
+        }
+
+        var caret = Math.Max(made.Caret, 0);
+        return made.Text[caret..].Contains(TextTemplate.CaretMark, StringComparison.Ordinal) ? null : made.Text.Insert(caret, TextTemplate.CaretMark);
+    }
+
     /// <summary>What is said of a template whose text makes nothing to copy or put in: the clipboard takes no empty text (TP-4.7, TP-8.4).</summary>
     public static string NoTextYet(string title) => $"{title} has no text yet";
 

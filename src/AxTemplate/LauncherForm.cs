@@ -19,11 +19,17 @@ public sealed class LauncherForm : HotkeyForm
     /// <summary>How long after the window hid a paste waits for the program to be in front again (TP-4.1, axClip's CP-4.1).</summary>
     private const int PasteDelayMs = 150;
 
-    /// <summary>How long after the paste key the Left keys wait, so that the program has taken the paste before its caret is moved (TP-2.3).</summary>
-    private const int SettleMs = 150;
+    /// <summary>How long after the paste key the Left keys wait, so that the program has taken the paste before its caret is moved (TP-2.3); 150 ms until 2026-11-23, too short for a slow program.</summary>
+    private const int SettleMs = 300;
 
     /// <summary>How long after that the clipboard's text of before is given back (TP-4.3): a program that pastes late would paste the old text.</summary>
-    private const int GiveBackMs = 400;
+    private const int GiveBackMs = 600;
+
+    /// <summary>How long the keys of the user's hand may stay down before the sequence goes on anyway (TP-D10).</summary>
+    private const int ModifiersMs = 1500;
+
+    /// <summary>How long the pasted caret mark is searched for, a slow program's paste included (TP-D10).</summary>
+    private const int MarkMs = 3000;
 
     private readonly TemplateSettings _settings;
     private readonly string _folder = AppPaths.TemplatesRoot;
@@ -273,6 +279,12 @@ public sealed class LauncherForm : HotkeyForm
             return;
         }
 
+        // A key the user still holds (Ctrl of the hotkey or of Ctrl+Enter) would join every key sent from here.
+        if (!await KeySender.WaitForModifiersUpAsync(ModifiersMs))
+        {
+            Log.Info("A modifier key was still down when the keys were sent");
+        }
+
         var selection = takeSelection ? await TakeSelectionAsync() : string.Empty;
         var made = TextTemplate.Expand(text, selection, before);
         if (made.Text.Length == 0)
@@ -281,10 +293,13 @@ public sealed class LauncherForm : HotkeyForm
             return;
         }
 
+        // TP-D10: where the field gives its text, the mark is pasted and found; elsewhere the Left keys place the caret.
+        var marked = TemplateStore.WithCaretMark(made);
+        var findMark = marked is not null && await Task.Run(FocusedText.Readable);
         uint sequence;
         try
         {
-            sequence = PrivateClipboard.Copy(made.Text);
+            sequence = PrivateClipboard.Copy(findMark ? marked! : made.Text);
         }
         catch (Exception ex) when (ex is ExternalException or InvalidOperationException)
         {
@@ -294,14 +309,35 @@ public sealed class LauncherForm : HotkeyForm
 
         KeySender.SendCtrlV();
         Log.Info("Pasted");
-        // The program takes the paste before the caret moves and before the clipboard changes back.
-        await Task.Delay(SettleMs);
-        if (GetForegroundWindow() == target)
+        if (findMark)
         {
-            KeySender.SendLeft(TemplateStore.LeftKeys(made));
+            // The mark's coming tells that the paste is in, however slow the program: then it is selected and
+            // deleted, and the clipboard can go back at once.
+            var found = await Task.Run(() => FocusedText.SelectMarkBeforeCaret(TextTemplate.CaretMark, MarkMs));
+            if (found && GetForegroundWindow() == target)
+            {
+                KeySender.SendDelete();
+                Log.Info("The caret placed at its mark");
+            }
+            else
+            {
+                Log.Info("The caret's mark was not found after the paste; it stays in the text");
+            }
+
+            await Task.Delay(SettleMs);
+        }
+        else
+        {
+            // The program takes the paste before the caret moves and before the clipboard changes back.
+            await Task.Delay(SettleMs);
+            if (GetForegroundWindow() == target)
+            {
+                KeySender.SendLeft(TemplateStore.LeftKeys(made));
+            }
+
+            await Task.Delay(GiveBackMs);
         }
 
-        await Task.Delay(GiveBackMs);
         GiveBack(before, sequence);
     });
 
