@@ -96,7 +96,7 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 
 | App | Type today | To be | Note |
 |---|---|---|---|
-| axFile | navigator | navigator | A folder is a level and its entries the rows, read off the UI thread, with the Actions list, a log, as second pane. The last to move; some of its commands are still its own. |
+| axFile | navigator | navigator | A folder is a level and its entries the rows, read off the UI thread, with the Favorites list, a list it fills itself, as second pane. The last to move; some of its commands are still its own. |
 | axDown | editor | editor |  |
 | axJSON | editor | editor |  |
 | axPreview | editor | editor | Read-only, with the list of details. |

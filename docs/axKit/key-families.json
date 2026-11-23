@@ -56,7 +56,7 @@
         { "chord": "ctrl+i", "apps": ["axDown", "axPreview"], "does": "List item", "kind": "go to a place" },
         { "chord": "ctrl+i", "apps": ["axJSON"], "does": "Item", "kind": "go to a place" },
         { "chord": "ctrl+i", "apps": ["axFile", "axStart"], "does": "Information", "kind": "say or show" },
-        { "chord": "ctrl+i", "apps": ["axFile"], "does": "The action's number and time", "kind": "say or show" },
+        { "chord": "ctrl+i", "apps": ["axFile"], "does": "The favorite's folder", "kind": "say or show" },
         { "chord": "ctrl+i", "apps": ["axCalc"], "does": "Answer in other bases", "kind": "say or show" },
         { "chord": "ctrl+j", "apps": ["axJSON"], "does": "Object", "kind": "go to a place" },
         { "chord": "ctrl+k", "apps": ["axDown", "axPreview"], "does": "Link", "kind": "go to a place" },

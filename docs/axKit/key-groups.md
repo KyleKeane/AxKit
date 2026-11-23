@@ -144,7 +144,7 @@ Exceptions today, which do another kind of thing:
 - F6, axDown, axJSON and axPreview: Between the text and the details.
 - F6, axCalc, axClaude and axTerminal: Switch between the view and the field.
 - F6, axMedia: Back to the list.
-- F6, axFile: Switch between the list and the Actions list.
+- F6, axFile: Switch between the list and the Favorites list.
 - F6, axGIT: Switch between the list and the text.
 
 ### Shift+F-key, and the Applications key: the reverse or the other form of the same F-key
@@ -176,11 +176,11 @@ The keys:
 - Enter, axAutomate, axMCP, axPass, axTask and axTemplate: Change the field.
 - Enter, axCalc: Answer.
 - Enter, axProcess: Details.
-- Enter, axFile: Go to the action's place.
 - Enter, axTask: Open it where it lives.
 - Enter, axTask: Open its form.
 - Enter, axHelp: Open the conversation.
 - Enter, axPreview: Open the detail.
+- Enter, axFile: Open the favorite.
 - Enter, axTask: Open the file in axJSON.
 - Enter, axClip: Paste.
 - Enter, axTemplate: Put in.
@@ -220,6 +220,7 @@ The keys:
 - Delete, axGIT: Discard changes.
 - Delete, axProcess: End process.
 - Delete, axClip: Remove.
+- Delete, axFile: Remove from Favorites.
 - Delete, axPass: To the Recycle Bin.
 - Ctrl+Shift+Delete, axCalc and axClip: Clear history.
 
@@ -233,13 +234,13 @@ The keys:
 - Ctrl+Tab, axDown, axJSON and axPreview: Between the text and the details.
 - Ctrl+Tab, axCalc, axClaude and axTerminal: Switch between the view and the field.
 - Ctrl+Tab, axMedia and axProcess: Back to the list.
-- Ctrl+Tab, axFile: Switch between the list and the Actions list.
+- Ctrl+Tab, axFile: Switch between the list and the Favorites list.
 - Ctrl+Tab, axGIT: Switch between the list and the text.
 - Ctrl+Shift+Tab, axAutomate, axMCP, axPass, axTask and axTemplate: Switch between the navigator and the detail pane.
 - Ctrl+Shift+Tab, axDown, axJSON and axPreview: Between the text and the details.
 - Ctrl+Shift+Tab, axCalc, axClaude and axTerminal: Switch between the view and the field.
 - Ctrl+Shift+Tab, axMedia and axProcess: Back to the list.
-- Ctrl+Shift+Tab, axFile: Switch between the list and the Actions list.
+- Ctrl+Shift+Tab, axFile: Switch between the list and the Favorites list.
 - Ctrl+Shift+Tab, axGIT: Switch between the list and the text.
 
 ### The arrows, Page Up, Page Down, Tab, Shift+Tab and Backspace: move through what you are on
@@ -264,14 +265,14 @@ Windows' own keys, as in every program:
 - Tab, axAutomate, axMCP, axPass, axTask and axTemplate: To the navigator.
 - Tab, axCalc, axClaude and axTerminal: Switch between the view and the field.
 - Tab, axFile and axGIT: To the list.
-- Tab, axFile: To the Actions list.
+- Tab, axFile: To the Favorites list.
 - Tab, axGIT: To the text.
 - Up arrow, axClip, axStart and axTemplate: Previous match.
 - Shift+Tab, axAutomate, axMCP, axPass, axTask and axTemplate: To the detail pane.
 - Shift+Tab, axAutomate, axMCP, axPass, axTask and axTemplate: To the navigator.
 - Shift+Tab, axCalc, axClaude and axTerminal: Switch between the view and the field.
 - Shift+Tab, axFile and axGIT: To the list.
-- Shift+Tab, axFile: To the Actions list.
+- Shift+Tab, axFile: To the Favorites list.
 - Shift+Tab, axGIT: To the text.
 
 ### Shift with an arrow, Home, End or Space: select
@@ -395,7 +396,6 @@ Windows' own keys, as in every program:
 - Ctrl+Z, axFile: Undo move.
 - Ctrl+Z, axFile: Undo new folder.
 - Ctrl+Z, axFile: Undo rename.
-- Ctrl+Z, axFile: Undo the action.
 
 Exceptions today, which do another kind of thing:
 
@@ -408,7 +408,7 @@ Exceptions today, which do another kind of thing:
 - Ctrl+I, axDown and axPreview: List item.
 - Ctrl+I, axCalc: Answer in other bases.
 - Ctrl+I, axJSON: Item.
-- Ctrl+I, axFile: The action's number and time.
+- Ctrl+I, axFile: The favorite's folder.
 - Ctrl+J, axJSON: Object.
 - Ctrl+K, axDown and axPreview: Link.
 - Ctrl+K, axJSON: Key.
