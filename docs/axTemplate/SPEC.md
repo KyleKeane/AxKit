@@ -216,9 +216,9 @@ answer to a key.
   axTask's (bundle AX-8.10 rule 17): the name, the Text in a box of several lines, a check box for each place.
   Ctrl+Enter or Save writes every change as one step, which Ctrl+Z takes back; a new name renames the file, and a
   name another template has is refused in the form, the focus in the name. Escape leaves, nothing changed.
-- TP-8.4 **On a template**: Enter opens its form (TP-8.3a). Ctrl+N makes a new one: a notice asks its name, the item is
-  made with an empty text and no check, and it is selected; a name another template has, whatever its capitals,
-  is refused with the notice kept. F2 renames it in place (bundle AX-8.7), and so does its form's name; its file
+- TP-8.4 **On a template**: Enter opens its form (TP-8.3a). Ctrl+N opens the same form, empty (the maintainer, 2026-11-23: "adding a new template should open the full form
+  rather than the smaller naming dialog"): Add makes the template with everything typed in it and selects it; a
+  name another template has, whatever its capitals, is refused in the form, the focus in the name. F2 renames it in place (bundle AX-8.7), and so does its form's name; its file
   is renamed with it. Delete deletes the template, or the selected ones, after a question that names it or their
   count (TP-D9). Ctrl+Z takes back the last change, whichever it was: a field, a rename, a new template, a
   deletion; up to fifty, for as long as the window is open, and never over a file that changed on disk since

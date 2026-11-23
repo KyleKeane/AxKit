@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- axKit: **Ctrl+Space in any form: navigation mode.** Nothing is typed; typing the start of a field's name, or its number, goes to that field; Down and Up move between the fields; Enter goes back to typing there. Ctrl+Q in a form reads these keys with its explanation.
+- axTemplate: **Ctrl+N opens the whole form of the new template**, empty, in place of the question for its name: type the name, the text and the checks, and Ctrl+Enter adds it.
 - axTemplate: **Enter opens the template's form**, every field in one place, as in axTask: the name, the Text, the checks; Ctrl+Enter saves them all as one change. Enter on a field in the pane on the right opens the same form in that field; the pane is for reading.
 - axKit: **one form for every list window.** axTask's and axTemplate's forms are now the same piece of the shared window, so they behave the same and change together. In every form of axKit, Ctrl+Down and Ctrl+Up move to the next and the previous field.
 - axTemplate: **the caret lands where `{caret}` is, reliably.** Where the program shows its text to screen readers (Word, Notepad, a browser's field), the template is pasted with the mark still in, and the launcher finds the mark, selects it and deletes it, however slowly the program pastes. Elsewhere the Left keys place it, as before, after a longer wait. In both cases the launcher waits until you have let go of Ctrl and Shift, which had turned the Left keys into word jumps.

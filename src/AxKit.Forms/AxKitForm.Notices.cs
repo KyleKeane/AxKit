@@ -257,7 +257,8 @@ public abstract partial class AxKitForm
     /// </summary>
     protected internal void ShowForm(string title, string text, FormControls controls, string button, Action act, Func<(Control Field, string Said)?>? missing = null, Action? cancelled = null, bool sayText = false)
     {
-        ShowNotice(new Notice(title, text,
+        // AX-8.10 rules 15 and 18: the keys every form has, at the end of its explanation, from the key table.
+        ShowNotice(new Notice(title, text + " " + FormControls.KeysLine,
         [
             new OverlayChoice(button, act, IsDefault: true),
             new OverlayChoice("&Cancel", cancelled, IsCancel: true),

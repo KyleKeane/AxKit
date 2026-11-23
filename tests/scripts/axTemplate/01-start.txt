@@ -17,10 +17,10 @@ keys escape
 expect focus No templates yet: Ctrl+N makes one
 
 # Goal: Make a template
-# 2.1 Ctrl+N: a notice asks the name; the template is made with an empty text and selected (TP-8.4).
+# 2.1 Ctrl+N: the template's form, empty, the focus in its name; Add makes it and selects it (TP-8.4).
 keys ctrl+n
 expect state "notice":"New template"
-expect focus "name":"Type the name of the new template","role":"Text","value":""
+expect focus "name":"Type the title","role":"Text","value":""
 type Thanks
 keys enter
 expect said Added Thanks
@@ -30,10 +30,10 @@ expect state Templates, 1 template
 # Check: A template without a text has nothing to copy
 # 2.1a Ctrl+Enter on the new template says so; nothing is put on the clipboard.
 keys ctrl+enter
-expect said Thanks has no text yet: Enter goes to its fields
+expect said Thanks has no text yet: Enter opens its form
 
 # Check: A name that is taken is refused
-# 2.2 The same name again, whatever its capitals: said, and the notice kept.
+# 2.2 The same name again, whatever its capitals: said, and the form kept.
 keys ctrl+n
 type thanks
 keys enter
@@ -75,6 +75,19 @@ keys ctrl+down
 expect focus Type Text; Enter makes a new line
 keys ctrl+down
 expect focus Every axKit app
+# Ctrl+Space in a form: navigation mode, where the start of a field's name or its number goes to it, and Enter goes
+# back to typing (AX-8.10 rule 18, the maintainer's ask of 2026-11-23).
+keys ctrl+space
+expect said Navigation mode
+keys a x
+expect focus axDown
+keys 1
+expect focus Type the title
+keys down
+expect focus Type Text; Enter makes a new line
+keys enter
+expect said Edit mode
+expect focus Type Text; Enter makes a new line
 keys escape
 expect state "notice":null
 expect focus Text

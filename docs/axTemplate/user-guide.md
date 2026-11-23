@@ -32,7 +32,7 @@ How the caret gets to its place: where the program shows its text to screen read
 ### The templates, on the left
 
 - Up, Down, Home and End move through the templates. Typing the start of a name jumps to it.
-- Ctrl+N makes a new template: a notice asks its name. Enter adds it, with an empty text.
+- Ctrl+N makes a new template: its form opens, empty. Type the name, Tab to the Text and write it, check where it shows, then Ctrl+Enter, or Enter from the name, adds it.
 - Enter opens the template's form: every field in one place, the name first, then the Text, then the checks. Tab or Ctrl+Down goes to the next field, Shift+Tab or Ctrl+Up to the one before. Ctrl+Enter saves everything as one change, which Ctrl+Z takes back; Escape leaves and changes nothing. A new name renames the file too.
 - F2 renames the template. Its file is renamed with it.
 - Delete deletes the template after a question. With several selected (Space selects), it deletes those, and the question says how many.

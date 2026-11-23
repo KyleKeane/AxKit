@@ -12,7 +12,7 @@ The steps change your own templates' folder: use a template made for the test, a
 
 ## 2. A new template (TP-8.4)
 
-1. Ctrl+N: the form's sound, "New template, form", then "Type the name of the new template, edit". Type `Thanks`, Enter: "Added Thanks", and the list is on Thanks.
+1. Ctrl+N: the form's sound, "New template, form", then "Type the title, edit": the template's whole form, empty. Type `Thanks`, Enter: "Added Thanks", and the list is on Thanks. Again Ctrl+N: Tab to the Text, type a line, Ctrl+Space: "Navigation mode"; T: the focus on the title; 2: on the Text; Enter: "Edit mode"; Escape leaves, nothing added.
 2. Ctrl+N, type `thanks`, Enter: "There is a template called thanks already", the notice still open. Escape: the list, on Thanks.
 
 ## 3. The fields (TP-8.3, TP-2.2, TP-2.3)

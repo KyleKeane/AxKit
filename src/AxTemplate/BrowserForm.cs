@@ -212,14 +212,30 @@ public sealed class BrowserForm : ItemForm
 
     // ---- new, rename, delete, undo (TP-8.4) ----
 
-    protected override void NewItem() =>
-        AskText("New template", "It is made with an empty text and shows in the launcher. Enter on it goes to its fields, where its text is written.",
-            "Name:", "Type the name of the new template", string.Empty, "&Add", name =>
-            {
-                var title = name.Trim();
-                var path = ItemFiles.FreePath(_folder, ItemFiles.FileStem(title), ".json");
-                Commit(new Step([FileChange.Write(path, null, TemplateStore.NewItemText(title, _config))], "Added " + title), path);
-            }, refused: name => TemplateStore.NameRefused(name, Names()));
+    /// <summary>
+    /// Ctrl+N (TP-8.4; the maintainer, 2026-11-23: "adding a new template should open the full form rather than the
+    /// smaller naming dialog"): the template's form, empty, the item window's own; Add makes the template with
+    /// everything typed in it, a name another template has refused in the form.
+    /// </summary>
+    protected override void NewItem()
+    {
+        var fresh = FlatItem.New(string.Empty, _config);
+        var shown = ItemView.Document(ItemView.Of(fresh, _config));
+        OpenItemForm(new ItemFormSource("the new template", shown, (changed, _) => AddTemplate(fresh, shown, changed))
+        {
+            Title = "New template",
+            Button = "&Add",
+            Refuse = changed => TemplateStore.NameRefused(changed.Title, Names()) is { } why ? (ItemDocument.TitleField, why) : null,
+            Note = "The template shows in the launcher once it is added. The marks {caret}, {selection} and {clipboard} in the Text work as the guide says.",
+        }, null);
+    }
+
+    private void AddTemplate(FlatItem fresh, ItemDocument shown, ItemDocument changed)
+    {
+        var title = changed.Title.Trim();
+        var path = ItemFiles.FreePath(_folder, ItemFiles.FileStem(title), ".json");
+        Commit(new Step([FileChange.Write(path, null, ItemView.Changed(fresh, shown, changed, _config).ToText())], "Added " + title), path);
+    }
 
     protected override string? RenameRefused(ItemRow row) =>
         row.Tag is TemplateFile { Item: not null } ? null : "Not a template: Ctrl+J opens the file in axJSON to mend";
@@ -331,7 +347,7 @@ public sealed class BrowserForm : ItemForm
         if (made.Length == 0)
         {
             // The clipboard takes no empty text; a new template has none yet.
-            Announce(TemplateStore.NoTextYet(file.Title) + ": Enter goes to its fields", true);
+            Announce(TemplateStore.NoTextYet(file.Title) + ": Enter opens its form", true);
             return;
         }
 

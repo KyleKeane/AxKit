@@ -748,7 +748,16 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
      of the detail pane opens the same form in that field (`AxKit.Forms/ItemForm.Form.cs`, the rules
      `AxKit.Core/ItemFormRules`). An app says only which rows have a form, with the item's document and what a save
      writes (`FormOf`, an `ItemFormSource`); axTask and axTemplate do (TK-4.0a, TP-8.3a). The detail pane stays for
-     reading, with its one-key changes (rule 4).
+     reading, with its one-key changes (rule 4). A new item's form is the same form, empty (`OpenItemForm` with a
+     fresh document, its own title and Add; axTemplate's Ctrl+N, TP-8.4).
+  18. **Ctrl+Space in a form is the form's navigation mode** (the maintainer, 2026-11-23: "having user search in a form
+     for field names would be useful. can we use ctrl+space to toggle nav mode in a form in the same way we have it in
+     axdown"): from any field, nothing is typed; Down and Up move between the fields; the start of a field's name goes
+     to it, as type-ahead in a list (`AxKit.Core/TypeAhead`, AX-8.6, over each field's first key or its caption), and
+     its number goes to it where the form numbers its fields; Space still checks a check box; Enter, or Ctrl+Space
+     again, goes back to typing in that field, "Edit mode" said; leaving the form ends it. In a form the mode key is the
+     form's, so a box of several lines there has no navigation mode of its own. Every form's explanation (Ctrl+Q) ends
+     with these keys, written from the key table (`FormControls.KeysLine`).
   What Ctrl+Enter does, per app. A window gives the key its main action as a command on `BundleKeys.MainAction`;
   no window's key table holds Ctrl+Enter, and `KeyTests` fails on one that does.
 

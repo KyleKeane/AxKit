@@ -18,6 +18,12 @@ public sealed record ItemFormSource(string Name, ItemDocument Document, Action<I
     public Func<ItemDocument, (string Field, string Said)?> Refuse { get; init; } = _ => null;
 
     public string? Note { get; init; }
+
+    /// <summary>The form's title: "Fields of" and the name for an item there is; a new item's form names itself ("New template").</summary>
+    public string? Title { get; init; }
+
+    /// <summary>The default button: Save, or Add for a new item's form.</summary>
+    public string Button { get; init; } = "&Save";
 }
 
 /// <summary>
@@ -126,7 +132,7 @@ public abstract partial class ItemForm
         var text = $"The fields of {source.Name}. Tab moves from one to the next. {save} or the Save button saves them all as one step, which {BundleKeys.Text(ItemKeys.Undo)} takes back. Escape leaves, and nothing is changed."
             + (form.EnterMakesNewLine ? " In a box of several lines Enter makes a new line." : string.Empty)
             + (source.Note is { } note ? " " + note : string.Empty);
-        ShowForm("Fields of " + source.Name, text, form, "&Save", () => SaveItemForm(source, Typed().Changed), Refused);
+        ShowForm(source.Title ?? "Fields of " + source.Name, text, form, source.Button, () => SaveItemForm(source, Typed().Changed), Refused);
     }
 
     /// <summary>The form saved: nothing when nothing changed, said; otherwise the app's save with the words of what changed.</summary>

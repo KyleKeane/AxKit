@@ -1,3 +1,4 @@
+using AxKit.Core;
 using AxKit.Core.Events;
 
 namespace AxKit.Forms;
@@ -14,6 +15,7 @@ public sealed class FormControls : FlowLayoutPanel
 {
     private readonly List<Control> _wide = [];
     private readonly Dictionary<string, Control> _keys = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<Control, string> _captions = [];
     private Control? _first;
     private bool _selectFirst;
 
@@ -48,23 +50,130 @@ public sealed class FormControls : FlowLayoutPanel
     {
         if (keyData is BundleKeys.ParagraphDown or BundleKeys.ParagraphUp)
         {
-            var fields = _wide.Concat(Controls.OfType<AxKitCheckBox>()).OrderBy(Controls.GetChildIndex).ToList();
-            var at = fields.FindIndex(control => control.ContainsFocus);
-            var next = at + (keyData == BundleKeys.ParagraphDown ? 1 : -1);
-            if (at >= 0 && next >= 0 && next < fields.Count)
-            {
-                fields[next].Select();
-            }
-            else
-            {
-                EventDoor.Raise(EventKind.Edge);
-            }
-
+            MoveField(keyData == BundleKeys.ParagraphDown ? 1 : -1);
             return true;
         }
 
-        return base.ProcessCmdKey(ref msg, keyData);
+        // AX-8.10 rule 18: in a form the mode key is the form's, from any of its fields.
+        if (keyData == BundleKeys.ToggleMode)
+        {
+            ToggleNavigation();
+            return true;
+        }
+
+        return (Navigation && NavigationKey(keyData)) || base.ProcessCmdKey(ref msg, keyData);
     }
+
+    /// <summary>
+    /// The form's navigation mode (AX-8.10 rule 18; the maintainer, 2026-11-23: "having user search in a form for
+    /// field names would be useful. can we use ctrl+space to toggle nav mode in a form in the same way we have it in
+    /// axdown"): nothing is typed; Down and Up go to the next and the previous field; a letter or a digit goes to the
+    /// next field whose name starts with what was typed, as type-ahead does in a list (<see cref="TypeAhead"/>); Space
+    /// still checks a check box; Enter goes back to editing in the field. Off as the focus leaves the form.
+    /// </summary>
+    public bool Navigation { get; private set; }
+
+    /// <summary>The keys every form has (rules 15 and 18), in its explanation, named from the key table.</summary>
+    public static string KeysLine =>
+        $"{BundleKeys.Text(BundleKeys.ParagraphDown)} and {BundleKeys.Text(BundleKeys.ParagraphUp)} move to the next and the previous field. "
+        + $"{BundleKeys.Text(BundleKeys.ToggleMode)} turns navigation mode on, where nothing is typed: the start of a field's name, or its number, goes to it, Down and Up move between the fields, and Enter goes back to typing.";
+
+    private string _typed = string.Empty;
+    private DateTime _typedAt;
+
+    private void ToggleNavigation()
+    {
+        Navigation = !Navigation;
+        _typed = string.Empty;
+        (FindForm() as AxKitForm)?.Announce(TextModes.Toggled(Navigation), true);
+    }
+
+    protected override void OnLeave(EventArgs e)
+    {
+        base.OnLeave(e);
+        Navigation = false;
+    }
+
+    /// <summary>A key down in navigation mode: true when the form took it, false for a key that keeps its work (Tab, Escape, the arrows across, a key with Ctrl or Alt).</summary>
+    private bool NavigationKey(Keys keyData)
+    {
+        if ((keyData & (Keys.Control | Keys.Alt)) != 0)
+        {
+            return false;
+        }
+
+        var code = keyData & Keys.KeyCode;
+        switch (code)
+        {
+            case Keys.Down or Keys.Up when (keyData & Keys.Shift) == 0:
+                MoveField(code == Keys.Down ? 1 : -1);
+                return true;
+            case Keys.Return:
+                ToggleNavigation();
+                return true;
+            case Keys.Space when Fields().FirstOrDefault(control => control.ContainsFocus) is AxKitCheckBox:
+                return false;
+            case >= Keys.A and <= Keys.Z or >= Keys.D0 and <= Keys.D9:
+                FindField(code is >= Keys.A and <= Keys.Z ? (char)('a' + (code - Keys.A)) : (char)('0' + (code - Keys.D0)));
+                return true;
+            case Keys.Tab or Keys.Escape or Keys.Left or Keys.Right or Keys.Home or Keys.End or Keys.PageUp or Keys.PageDown or >= Keys.F1 and <= Keys.F24:
+                return false;
+            default:
+                // A key that would type or edit: nothing here, as in an editor's navigation mode.
+                EventDoor.Raise(EventKind.NoCommand, EventSound.Unassigned);
+                return true;
+        }
+    }
+
+    /// <summary>The fields in the form's order: the controls a value is typed or chosen in.</summary>
+    private List<Control> Fields() => [.. _wide.Concat(Controls.OfType<AxKitCheckBox>()).OrderBy(Controls.GetChildIndex)];
+
+    /// <summary>The field <paramref name="by"/> places on; the edge sound past the first or the last, the focus staying.</summary>
+    private void MoveField(int by)
+    {
+        var fields = Fields();
+        var at = fields.FindIndex(control => control.ContainsFocus);
+        var next = at + by;
+        if (at >= 0 && next >= 0 && next < fields.Count)
+        {
+            fields[next].Select();
+        }
+        else
+        {
+            EventDoor.Raise(EventKind.Edge);
+        }
+    }
+
+    /// <summary>The next field whose name starts with what was typed in the last second, the lists' type-ahead over the fields' names (their first key, or their caption).</summary>
+    private void FindField(char letter)
+    {
+        var now = DateTime.UtcNow;
+        // Within a second the letters join, as in a list; a digit after letters, or a letter after digits, starts anew.
+        var joins = (now - _typedAt).TotalMilliseconds < 1000 && _typed.Length > 0 && char.IsAsciiDigit(_typed[^1]) == char.IsAsciiDigit(letter);
+        _typed = joins ? _typed + letter : letter.ToString();
+        _typedAt = now;
+        // Digits name a field by its number, where the form keys its fields so (the item form).
+        if (_typed.All(char.IsAsciiDigit) && Field(_typed) is { } numbered)
+        {
+            numbered.Select();
+            return;
+        }
+
+        var fields = Fields();
+        var names = fields.Select(NameOf).ToList();
+        var at = TypeAhead.Find(names, _typed, Math.Max(0, fields.FindIndex(control => control.ContainsFocus)));
+        if (at >= 0)
+        {
+            fields[at].Select();
+        }
+        else
+        {
+            EventDoor.Raise(EventKind.Edge);
+        }
+    }
+
+    private string NameOf(Control control) =>
+        _keys.FirstOrDefault(pair => pair.Value == control).Key ?? (_captions.TryGetValue(control, out var caption) ? caption : control.AccessibleName ?? string.Empty);
 
     /// <summary>Whether a text box here takes Enter as a new line: the form's text then says its keys itself (<see cref="Notice.KeyLine"/>).</summary>
     public bool EnterMakesNewLine { get; private set; }
@@ -194,6 +303,7 @@ public sealed class FormControls : FlowLayoutPanel
     private void Add(Control control, string caption)
     {
         Controls.Add(new Label { Text = caption, AutoSize = true, Margin = new Padding(0, 6, 0, 2) });
+        _captions[control] = caption;
         Controls.Add(control);
         _wide.Add(control);
         _first ??= control;
