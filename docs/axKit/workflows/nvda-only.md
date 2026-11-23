@@ -112,15 +112,38 @@ Starts with: Open axFile with the folder f.
 
 ## Put a template into another window from axTemplate's launcher, with NVDA
 
-Starts with: Open axDown with the file notes.md. Start axTemplate again with --launcher. A new window opens: go to it.
+Starts with: Open axDown with the file notes.md.
 
-NVDA says: notes.md.
-NVDA says: Search templates.
-1. Type: thanks
-2. Press Down.
+### Put a template in where the caret was
+
+1. Press Shift+End.
+2. Press Ctrl+C.
+3. Press End.
+4. Press Enter.
+5. Start axTemplate again with --launcher.
+6. A new window opens: go to it.
+    NVDA says: Search templates.
+7. Type: thanks
+8. Press Down.
     NVDA says: Thanks, 1 of 1.
-3. Press Enter.
-4. Go to the axDown window.
+9. Press Enter.
+10. Go to the axDown window.
+11. Type: friend
+
+### Put a template in around what is selected
+
+1. Press Enter.
+2. Type: word
+3. Press Shift+Home.
+4. Start axTemplate again with --launcher.
+5. Go to the other window.
+    NVDA says: Search templates.
+6. Type: link
+7. Press Down.
+    NVDA says: Link, 1 of 1.
+8. Press Ctrl+Enter.
+9. Go to the axDown window.
+10. Type: address
 
 ## Hear the caution of a command another program put into the command field
 

@@ -51,7 +51,11 @@ The steps change your own templates' folder: use a template made for the test, a
 ## 8. Using a template (TP-4)
 
 1. In axDown, put the caret on an empty line. Ctrl+Shift+Apostrophe, type the start of a template's name, Enter: the launcher hides, NVDA reads axDown, and the template's text is pasted at the caret.
-2. Copy a word in axDown, then use a template whose text holds `{clipboard}`: the word stands in its place.
+2. Copy a word in axDown, then use a template whose text holds `{clipboard}`: the word stands in its place. Ctrl+V afterwards pastes the word again: the clipboard was given back.
+2a. Use a template whose text holds `{caret}` in its middle, then type a letter: it lands where the mark was.
+2b. Select a word in axDown, Ctrl+Shift+Apostrophe, a template whose text is `[{selection}]({caret})`, Ctrl+Enter: the word is now in square brackets, and what you type goes between the round ones.
+2c. With axClip running: after any of these, Ctrl+Shift+Semicolon: the template's text is not among axClip's items.
+2d. A new template, with no text yet: Enter says "… has no text yet: Ctrl+B opens the browser, where it is written", and the launcher stays.
 3. Ctrl+Shift+Apostrophe, a template, Shift+Enter: "Copied", the launcher hides; nothing is pasted; Ctrl+V in axDown pastes it.
 4. Ctrl+Q on a template: the notice titled with its name and "1 line" or its count, the text with its marks; Escape.
 5. Ctrl+Shift+Apostrophe with nothing typed: the template used last is first.

@@ -12,6 +12,9 @@ namespace AxKit.Forms;
 /// </summary>
 public static class PrivateClipboard
 {
+    /// <summary>The clipboard's sequence number now: it changes with every change of the clipboard, so two readings tell whether anything was copied between them without reading what (axTemplate's launcher waits on it for the other program's copy, and gives the clipboard back only while it is unchanged).</summary>
+    public static uint Sequence => GetClipboardSequenceNumber();
+
     /// <summary>Puts <paramref name="text"/> on the clipboard marked private; the clipboard's sequence number after it, for <see cref="ClearIfUnchanged"/>. Throws <see cref="ExternalException"/> when another program holds the clipboard.</summary>
     public static uint Copy(string text)
     {

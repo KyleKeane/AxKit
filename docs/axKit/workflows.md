@@ -1025,5 +1025,7 @@ Steps and keys: `docs/axKit/workflows/nvda-only.md` (in Claude's working folder:
 5. **Find a name backwards with Shift and a letter**
     - Go back to the name before with Shift and its letter
 6. **Put a template into another window from axTemplate's launcher, with NVDA**
+    - Put a template in where the caret was
+    - Put a template in around what is selected
 7. **Hear the caution of a command another program put into the command field**
     - Hear that another program put the command there, before the command, and again on coming back to the field

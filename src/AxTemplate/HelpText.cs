@@ -50,7 +50,8 @@ public static class HelpText
           Ctrl+Shift+Apostrophe, or the hotkey you chose: show the launcher from anywhere; again: hide it
           Type: only the templates that hold every word typed, in their name or in their text; names first
           Down, Up: the next or the previous template. Ctrl+Home, Ctrl+End: the first or the last. Page Down, Page Up: a screen
-          Enter: put the template into the program you were in
+          Enter: put the template into the program you were in; the caret is left at {caret}, and what you had copied is on the clipboard again afterwards
+          Ctrl+Enter: the same, around what is selected in that program, which is copied there first; not in a terminal, where Ctrl+C ends the running command
           Shift+Enter: put the template's text on the clipboard without putting it in
           Ctrl+Q: read the template's text
           Ctrl+B: open the browser, where templates are made and changed
