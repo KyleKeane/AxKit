@@ -321,7 +321,8 @@ public sealed class AiDocumentationTests
         Assert.Contains(SettingsFile.NotUnderstood, guide, StringComparison.Ordinal);
         Assert.Contains(SettingsSeal.CopyKept, guide, StringComparison.Ordinal);
         Assert.Contains(SettingsSeal.ChangedOutside, guide, StringComparison.Ordinal);
-        Assert.Contains(Path.GetFileName(AiSettings.DefaultWorkingFolder), guide, StringComparison.Ordinal);
+        // The folder by the guide's words for it (AX-5.11): the default itself depends on which folder this computer has.
+        Assert.Contains("Documents, axKit, Claude", guide, StringComparison.Ordinal);
         Assert.Contains("If Claude's working folder is deleted", guide, StringComparison.Ordinal);
         Assert.Contains("\"always allow\"", guide, StringComparison.Ordinal);
     }

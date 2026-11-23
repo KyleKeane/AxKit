@@ -1268,7 +1268,7 @@ Starts with: Open axClaude with the folder waits.
 
 ## A conversation window that starts hidden and hides on closing
 
-Starts with: Open axClaude with the folder home\axKit Claude --title axHelp --hide-on-close --hidden.
+Starts with: Open axClaude with the folder home\Documents\axKit\Claude --title axHelp --hide-on-close --hidden.
 
 ### Bring up the hidden conversation
 

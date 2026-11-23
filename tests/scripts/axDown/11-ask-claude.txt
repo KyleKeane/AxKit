@@ -87,7 +87,7 @@ expect focus notes.md
 # AH-2.3: the folders notice, none yet, naming Claude's working folder.
 menu Folders Claude may read
 expect state No folders yet
-expect state axKit Claude
+expect state axKit\Claude
 keys escape
 expect focus notes.md
 

@@ -114,7 +114,7 @@ agreement (AX-11.4) asked the first time.
   length and not the value, and nothing said. The name goes onto Claude Code's command line, where a value that
   starts with a hyphen would be read as an option (bundle `repairs.md` R-71, 2026-11-16);
   `HelpSettings.ConversationArguments` checks it once more.
-- HE-2.4 **The working folder** is AI help's (`ai-help.md` AH-2.1, AH-D6): `Documents\axKit Claude` unless
+- HE-2.4 **The working folder** is AI help's (`ai-help.md` AH-2.1, AH-D6): `Documents\axKit\Claude` unless
   `ai-help.json` names another. Claude Code keeps per folder the conversations, the "always allow" answers and the
   CLAUDE.md, so nothing of axHelp reaches the user's projects. Before the conversation's start axHelp writes, each only
   when missing (`WorkingFolderFiles`): `CLAUDE.md` (short spoken replies; a message starting "Screenshot of" or

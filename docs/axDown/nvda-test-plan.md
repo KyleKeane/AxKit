@@ -197,7 +197,7 @@ Claude Code installed and logged in, and are the user's by ear.
 5. Shift+F1, then Escape: nothing asked, the editor has the focus. Ctrl+Slash: the same notice as Shift+F1 opens, and no character is typed into the text (bundle AX-8.15); Escape.
 6. Alt+A, C, F: "Folders Claude may read", "No folders yet…", the text naming Claude's working folder; Tab to Add a
    folder, Enter: the folder picker; Escape it: the notice comes back; Escape closes it. Alt+A, C, W: axFile opens on
-   `Documents\axKit Claude`; Alt+F4.
+   `Documents\axKit\Claude`; Alt+F4.
 7. Alt+A, C, U: "Claude off"; Alt+A, C, U: "Claude on" (the agreement is remembered); Alt+A, C, U: "Claude off".
 
 ## 10. Format (SPEC.md AD-12, 2026-11-22)

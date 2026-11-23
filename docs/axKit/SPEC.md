@@ -518,7 +518,9 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   - Under `Documents\axKit`: what the user makes with an app and would want to keep, find in File Explorer or
     axFile, back up or sync. Today axTemplate's templates, `Documents\axKit\Templates` (TP-2.1), and axTask's
     lists for someone who set no top folder, `Documents\axKit\Tasks` (an earlier `Documents\Tasks` stays in use
-    while it is there and the new folder is not; a folder the user set stays). A later app with content of the
+    while it is there and the new folder is not; a folder the user set stays), and AI help's working folder,
+    `Documents\axKit\Claude`, where Claude Code keeps its notes for the user (ai-help.md AH-D6; `Documents\axKit
+    Claude` until 2026-11-23, which stays in use on the same rule). A later app with content of the
     user's own puts it in a folder of its own beside them.
   - The test of which place: nothing under `Documents\axKit` is needed for axKit to run, and deleting any of it
     breaks nothing (a list's `list.json` is written again); and the content is the user's, not axKit's.

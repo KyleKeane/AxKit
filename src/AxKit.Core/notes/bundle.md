@@ -27,7 +27,7 @@
   run so that the run's app and the user's own never count as one.
 - `Ai` (docs/axKit/ai-help.md, 2026-11-09): `AiSettings` (AH-1.1: `ai-help.json`, the switch, the folders Claude
   may read, the model, `claudePath`, and `WorkingFolder` (the switch, the folders, `claudePath` and the working
-  folder under the bundle's seal, AH-1.1a, `notes/safety.md`; a refused file gives Claude off and no folders) with `DefaultWorkingFolder`, `Documents\axKit Claude` or the
+  folder under the bundle's seal, AH-1.1a, `notes/safety.md`; a refused file gives Claude off and no folders) with `DefaultWorkingFolder`, `Documents\axKit\Claude` or the
   test run's home, `EnsureWorkingFolder`, AH-2.1, AH-D6, 5.6.0), `AiRequest` (the command line of `claude -p`, the
   process started in the working folder with every allowed folder as `--add-dir`, the run with the prompt on standard
   input; `Line` is `ClaudeCodeProgram.LineFor` over `Arguments`, and a refused line, a `claude.cmd` with a folder

@@ -58,7 +58,7 @@ axPreview, which reads the text in it without Claude.
 
 ## axHelp's folder and model
 
-Claude works in its own folder, Documents, axKit Claude (Actions, Claude's working folder opens it in axFile). Its
+Claude works in its own folder, Documents, axKit, Claude (Actions, Claude's working folder opens it in axFile). Its
 conversations, the permissions you give with "always" and its instructions stay there, apart from your projects. The
 file CLAUDE.md there holds Claude's standing instructions for axHelp, short spoken replies among them; change it as you
 like. The folder `.claude\agents` holds the agent.
@@ -123,7 +123,7 @@ If the hotkeys do nothing, start axHelp again from the Start menu. When the runn
 new start asks "axHelp is running but does not answer. End it and start again?". No is the default and changes
 nothing; Yes ends that axHelp alone and starts it again; the conversation's window is not ended.
 
-If Claude's working folder is deleted (Documents, axKit Claude), nothing breaks. axHelp makes the folder again the
+If Claude's working folder is deleted (Documents, axKit, Claude), nothing breaks. axHelp makes the folder again the
 next time you use it, and axKit's own files in it, the guides and the two rule files, are written back; CLAUDE.md and
 the agent come back as axHelp first wrote them. What is lost is what was not axKit's: the answers you gave Claude
 Code with "always allow", so it asks again, and every file of your own there, your changes to CLAUDE.md and the

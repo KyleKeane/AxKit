@@ -116,10 +116,13 @@ public sealed class AiTests
         Assert.Empty(missing.Folders);
         Assert.Null(missing.Model);
         Assert.Null(missing.ResolvedClaudePath());
-        // The working folder (AH-2.1, AH-D6): Documents\axKit Claude unless the file names one.
+        // The working folder (AH-2.1, AH-D6): Documents\axKit\Claude unless the file names one (AX-5.11, 2026-11-23);
+        // an earlier Documents\axKit Claude while it is the only one there.
         Assert.Null(missing.WorkingFolder);
         Assert.Equal(AiSettings.DefaultWorkingFolder, missing.ResolvedWorkingFolder());
-        Assert.Equal("axKit Claude", Path.GetFileName(AiSettings.DefaultWorkingFolder));
+        Assert.Equal(@"D:\Docs\axKit\Claude", AiSettings.WorkingFolderFor(@"D:\Docs\axKit", @"D:\Docs\axKit Claude", _ => false));
+        Assert.Equal(@"D:\Docs\axKit Claude", AiSettings.WorkingFolderFor(@"D:\Docs\axKit", @"D:\Docs\axKit Claude", path => path == @"D:\Docs\axKit Claude"));
+        Assert.Equal(@"D:\Docs\axKit\Claude", AiSettings.WorkingFolderFor(@"D:\Docs\axKit", @"D:\Docs\axKit Claude", _ => true));
 
         missing.Enabled = true;
         missing.Folders = [@"C:\notes", @" C:\notes ", string.Empty, @"C:\work"];

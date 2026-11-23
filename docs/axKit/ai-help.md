@@ -56,7 +56,7 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
 - AH-1.1 One setting for the bundle, in `%APPDATA%\AxKit\ai-help.json`: `enabled` (false by default), `folders` (the
   folders Claude may read, AH-2.3), `model` (empty for Claude Code's default), `claudePath` (Claude Code's program
   when it is not where axKit looks; a relative path is taken from the settings folder, which is how the automation's
-  fake stands in), `workingFolder` (Claude Code's working folder, AH-2.1; empty for `Documents\axKit Claude`). axKit
+  fake stands in), `workingFolder` (Claude Code's working folder, AH-2.1; empty for `Documents\axKit\Claude`). axKit
   menu → Claude ▸ → Use Claude in axKit (a checked item, the switch), Ask about this window… (Shift+F1, AH-6), Folders
   Claude may read…, Claude's working folder (AH-2.1, opened in axFile), a separator, AI tools ▸ (`mcp.md` MC-6.1):
   everything of Claude in one submenu, the same in every window (the Window menu's shape, AX-9.1; until 5.6.0 an AI
@@ -92,7 +92,7 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
 - AH-2.1 Claude Code in print mode, one process per question (`ClaudeCodeProgram` finds it as axClaude does, after
   the file's `claudePath`): `claude -p --output-format json --allowedTools Read,Glob,Grep --strict-mcp-config --settings <file> [--add-dir <folder>]…
   [--model <model>] [--resume <session>]`, started without a window in **Claude's working folder** (AH-D6, 5.6.0:
-  `Documents\axKit Claude` unless the file's `workingFolder` names another, made when first needed,
+  `Documents\axKit\Claude` unless the file's `workingFolder` names another, made when first needed,
   `AiSettings.EnsureWorkingFolder`; axKit menu, Claude, Claude's working folder, and axHelp's first menu, open it in
   axFile; a CLAUDE.md the user writes there is Claude's standing instructions, and Claude Code's own memory, settings
   and sessions for the service live there; until 5.6.0 Claude Code started in the first allowed folder, or the user's
@@ -422,9 +422,13 @@ file of the working folder.
   with its own default location for working directory to use all the claude code benefits"). Claude Code keeps what
   it learns per working folder: a CLAUDE.md there is read into every question, its memory, its project settings and
   its sessions live under that folder's name, and `--resume` finds a session from the folder it was made in. Starting
-  in the first allowed folder, or the user's profile, scattered that; one folder, `Documents\axKit Claude`, made when
+  in the first allowed folder, or the user's profile, scattered that; one folder, `Documents\axKit\Claude`, made when
   first needed and opened from the menu, gathers it and gives the user one place to write Claude standing
-  instructions. The allowed folders stay what they were, `--add-dir` each.
+  instructions. The allowed folders stay what they were, `--add-dir` each. It was `Documents\axKit Claude` until
+  2026-11-23, when the maintainer chose to move it into axKit's folder of what the user keeps (bundle AX-5.11); an
+  existing `Documents\axKit Claude` stays in use while the new folder is not there (`AiSettings.WorkingFolderFor`).
+  Claude Code finds its sessions by the folder's name, so a conversation of the old folder is taken up only there:
+  the user moves the folder's contents himself when he wants them in the new place.
 - **AH-D7 The guides as files, the instruction as a rule file** (2026-11-15, AH-7). Three ways to tell Claude about
   the guides were weighed. A line in the working folder's CLAUDE.md reaches only new folders: the file is the user's
   and is written once. Claude Code's `--append-system-prompt` works in print mode and in a conversation, but Claude

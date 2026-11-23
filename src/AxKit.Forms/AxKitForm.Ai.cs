@@ -42,7 +42,7 @@ public abstract partial class AxKitForm
     }
 
     /// <summary>
-    /// Claude Code's working folder (AH-2.1, AH-D6), made when it is missing: Documents\axKit Claude unless the settings
+    /// Claude Code's working folder (AH-2.1, AH-D6), made when it is missing: Documents\axKit\Claude unless the settings
     /// file names another; false, said, when it cannot be made.
     /// </summary>
     protected bool AiWorkingFolder(out string folder) => _ai.AiWorkingFolder(out folder);

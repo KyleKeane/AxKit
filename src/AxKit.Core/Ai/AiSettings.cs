@@ -23,9 +23,20 @@ public sealed class AiSettings
     /// <summary>The folder Claude Code starts in (AH-2.1), where its CLAUDE.md, its settings and its memory live; null for the default.</summary>
     public string? WorkingFolder { get; set; }
 
-    /// <summary>Documents\axKit Claude, a folder of Claude's own, made when first needed (AH-D6); under a test run's own home.</summary>
+    /// <summary>
+    /// Documents\axKit\Claude, a folder of Claude's own in axKit's folder of what the user keeps (AH-D6; bundle AX-5.11,
+    /// the maintainer's choice of 2026-11-23), made when first needed; for someone whose Documents\axKit Claude, the
+    /// default until then, is there and the new folder is not, that folder still. Under a test run's own home.
+    /// </summary>
     public static string DefaultWorkingFolder =>
-        Path.Combine(AutomationEnvironment.Home ?? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "axKit Claude");
+        WorkingFolderFor(AppPaths.UserFolder, Path.Combine(Path.GetDirectoryName(AppPaths.UserFolder)!, "axKit Claude"), Directory.Exists);
+
+    /// <summary>The rule of <see cref="DefaultWorkingFolder"/>, pure: <c>Claude</c> in the user's axKit folder, unless only the earlier folder is there.</summary>
+    public static string WorkingFolderFor(string userFolder, string earlier, Func<string, bool> exists)
+    {
+        var now = Path.Combine(userFolder, "Claude");
+        return !exists(now) && exists(earlier) ? earlier : now;
+    }
 
     /// <summary>The working folder as a full path: the file's, or the default.</summary>
     public string ResolvedWorkingFolder() => WorkingFolder is null ? DefaultWorkingFolder : Path.GetFullPath(WorkingFolder);

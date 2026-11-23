@@ -15,7 +15,7 @@ need a real reply and a real screen and are the user's by ear.
 ## 2. The conversation (HE-2.1, HE-2.3, HE-2.4)
 
 1. In Notepad, press Ctrl+Shift+Slash: "axHelp window", then "Message to Claude, edit". The first time, axClaude's reminder
-   and Claude Code's trust question come first; answer them. `Documents\axKit Claude` now has CLAUDE.md and
+   and Claude Code's trust question come first; answer them. `Documents\axKit\Claude` now has CLAUDE.md and
    `.claude\agents\agent.md`.
 2. Type "what is the capital of France", Enter: the reply, spoken by axClaude's Speak replies setting (real). Alt+3:
    the reply. The status bar names the folder.

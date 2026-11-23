@@ -133,7 +133,7 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
 - **AI help** (`docs/axKit/ai-help.md`; off until your first question, when a reminder asks you to turn it on; the
   switch is the axKit menu, Claude, Use Claude in axKit) runs `claude -p`,
   Claude Code in its print mode, as a child process with read-only tools, once per question, in a working folder of its
-  own (`Documents\axKit Claude` unless `ai-help.json` names another; Claude Code keeps its own notes and sessions for
+  own (`Documents\axKit\Claude` unless `ai-help.json` names another; Claude Code keeps its own notes and sessions for
   the service there and reads a `CLAUDE.md` you write there), and reads its answer from its standard output. What goes
   to Claude Code and, through it, to Anthropic under your account and Anthropic's terms:
   your question; for Shift+F1 in an axKit window, that window's name and title, the name and place of the control you
@@ -144,7 +144,7 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   `--settings` on axKit's file `%LOCALAPPDATA%\AxKit\claude-no-hooks.json`, which holds that one switch and nothing of
   yours), so that no file in the working folder starts a program or reaches a server when you ask.
 - **axHelp, access layer for Claude Code** is a conversation in axClaude (above) on Claude's working folder,
-  `Documents\axKit Claude`, started with a model of axHelp's own; what goes to Anthropic is what axClaude sends.
+  `Documents\axKit\Claude`, started with a model of axHelp's own; what goes to Anthropic is what axClaude sends.
   Closing that conversation hides it, and Claude Code keeps running until you end it there (Session, End Claude and
   close this window) or quit axHelp. Claude Code starts for it at your first press of the key, never before you act, unless
   you turn on Options, Keep the conversation ready in the background, in axHelp's window, which is off at first. With
