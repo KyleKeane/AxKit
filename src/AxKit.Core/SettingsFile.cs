@@ -363,21 +363,53 @@ public static class SettingsFile
         }
 
         var mine = JsonSerializer.Serialize(settings, JsonOptions);
-        var written = WithWhatTheFileGained(path, settings, mine, fileChecks);
-        if (ReferenceEquals(written, settings))
+        // R-62, the second part (2026-11-22): the read of what the file gained, the merge and the write happen
+        // under a mutex named after the file. Without it two windows closed in the same instant both read, and the
+        // second could find the file being put in place by the first, give up the merge and write its own settings
+        // alone (seen twice in a day in the two-windows check). A window that does not get the mutex in time, or
+        // cannot make it, saves as before: a save is never lost for the window itself, and it never hangs.
+        Mutex? mutex = null;
+        var held = false;
+        try
         {
-            SafeFile.WriteAllText(path, mine);
+            mutex = new Mutex(false, FileMutex.Name("AxKit.Settings.", path));
+            held = FileMutex.Held(mutex, MutexWaitMilliseconds);
         }
-        else
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or WaitHandleCannotBeOpenedException)
         {
-            seal?.Invoke(written);
-            SafeFile.WriteAllText(path, JsonSerializer.Serialize(written, JsonOptions));
+            Log.Info("A settings file is saved without its mutex: " + ex.Message);
+        }
+
+        try
+        {
+            var written = WithWhatTheFileGained(path, settings, mine, fileChecks);
+            if (ReferenceEquals(written, settings))
+            {
+                SafeFile.WriteAllText(path, mine);
+            }
+            else
+            {
+                seal?.Invoke(written);
+                SafeFile.WriteAllText(path, JsonSerializer.Serialize(written, JsonOptions));
+            }
+        }
+        finally
+        {
+            if (held)
+            {
+                mutex!.ReleaseMutex();
+            }
+
+            mutex?.Dispose();
         }
 
         // This window's own settings, not what was written: a member another window changed stays one this window did not.
         View(path, mine);
         return true;
     }
+
+    /// <summary>How long a save waits for another window's save of the same file to end, before it saves anyway.</summary>
+    public const int MutexWaitMilliseconds = 2000;
 
     /// <summary>
     /// The first start under a new file name takes over the file of an earlier version (AX-5.2): copied, not moved,

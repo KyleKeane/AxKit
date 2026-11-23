@@ -54,7 +54,7 @@ public static class RecentlyClosed
         try
         {
             using var mutex = new Mutex(false, MutexName(file));
-            if (!Held(mutex, waitMilliseconds))
+            if (!FileMutex.Held(mutex, waitMilliseconds))
             {
                 Log.Info("The recently closed list was not written: another window was writing it");
                 return false;
@@ -78,24 +78,7 @@ public static class RecentlyClosed
     }
 
     /// <summary>The name of the mutex of a list's file: the same for every process that writes that file, whatever the case of its path.</summary>
-    public static string MutexName(string file)
-    {
-        var hash = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(Path.GetFullPath(file).ToLowerInvariant()));
-        return "AxKit.RecentlyClosed." + Convert.ToHexString(hash, 0, 16);
-    }
-
-    /// <summary>Whether this thread now holds the mutex; one a process ended while holding is held too.</summary>
-    private static bool Held(Mutex mutex, int waitMilliseconds)
-    {
-        try
-        {
-            return mutex.WaitOne(waitMilliseconds);
-        }
-        catch (AbandonedMutexException)
-        {
-            return true;
-        }
-    }
+    public static string MutexName(string file) => FileMutex.Name("AxKit.RecentlyClosed.", file);
 
     /// <summary>
     /// Whether an entry is one the list keeps (repairs.md R-68): an app's name, and a path that is whole

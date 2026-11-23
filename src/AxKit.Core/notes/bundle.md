@@ -73,6 +73,7 @@
   and by each `Save`), `Merged` takes the file's value of every top-level member this window did not change, whole
   (no list merging); a sealed class hands `Save` its seal check for the file and its sealing for what is written.
   `NotWritten` and `NotWrittenOnce` are the sentence of a file that could not be written (AX-5.9, R-63).
+- `FileMutex` (AX-5.7; repairs.md R-62; from `RecentlyClosed` on its second use, the settings files, 2026-11-22): the mutex of a file several windows read, change and write. `Name(kind, file)` is the same for every process that writes the file, whatever the case of its path; `Held(mutex, wait)` waits and counts a mutex left by an ended process as held. `SettingsFile.Save` does its read of what the file gained, its merge and its write under it (`MutexWaitMilliseconds`; a window that does not get it in time saves as before, so a save is never lost for the window itself and never hangs): two windows closed in the same instant each read the file, and the second could find it being put in place, give up the merge and write its own settings alone. The check is `tests/scripts/axFile/11-two-windows-save.txt`, which failed twice in a day before and passed 25 times in a row after.
 - `FileCase` (AX-5.1, 2026-11-10): `Match(path)` renames a file that exists under another case to the path's own
   spelling, so that a settings or log file an earlier version left as `axdown.json` becomes `axDown.json`, the name
   NVDA says as the app is said; `SettingsFile.Load` and `Log.UseApp` call it first. Tested in `FileCaseTests`.
