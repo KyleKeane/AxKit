@@ -37,6 +37,9 @@ jobs:
       - name: The guides' menus are written
         # Each guide's Menus section is what the command inventory gives (tools/guide-menus.ps1; the maintainer, 2026-11-23).
         run: ./tools/guide-menus.ps1 -Check
+      - name: The documents name real menus
+        # Every menu path a document names is one the windows have (tools/doc-menus.ps1; the maintainer, 2026-11-23).
+        run: ./tools/doc-menus.ps1 -Check
       - name: Cases are listed
         # docs/axKit/cases.md is what docs/axKit/cases.json gives: how each unexpected situation is handled (AX-5.10).
         run: ./tools/cases.ps1 -Check

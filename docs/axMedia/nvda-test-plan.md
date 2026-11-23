@@ -43,7 +43,7 @@ Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video an
 
 1. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back. Options, Text, Windows text size: "Windows text size".
 2. F1: the Keyboard shortcuts notice; Escape. Help, User guide: this guide; Escape. Ctrl+S: "Nothing to save here".
-3. Alt+W: the Window menu with Apps (axMedia among them) and Access layers, Recently closed (the file an axMedia window was playing when it closed; chosen, it plays with its folder), Open windows, Close all windows, Say the status (F8: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+A: the axKit menu with Claude, AI tools and Theme.
+3. Alt+W: the Window menu with Recently closed (the file an axMedia window was playing when it closed; chosen, it plays with its folder), Open windows, Close all windows, Say the status (F8: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+A: the axKit menu with Claude, AI tools and Theme.
 4. Help, Diagnostics, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the queue, the player's state and the log's end.
 
 ## 5. Selecting files in the queue (AM-3.5, bundle AX-8.16)

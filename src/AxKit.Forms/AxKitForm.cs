@@ -269,7 +269,7 @@ public abstract partial class AxKitForm : Form
         }
     }
 
-    /// <summary>The Window menu (AX-9.1): Apps, Access layers, Open windows, Recently closed, Close all windows; the window puts it after Options, which follows its own menus (Navigate last of them).</summary>
+    /// <summary>The Window menu (AX-9.1): Open windows, Recently closed, Close all windows; the window puts it after Options, which follows its own menus (Navigate last of them).</summary>
     private WindowMenu CreateWindowMenu() => new(this);
 
     /// <summary>
@@ -281,6 +281,11 @@ public abstract partial class AxKitForm : Form
     private ToolStripMenuItem CreateAxKitMenu()
     {
         var menu = new ToolStripMenuItem(BarMenus[6]);
+        // AX-9.2: the bundle's apps first, the access layers after them (moved from the Window menu, 2026-11-23).
+        var (apps, layers) = WindowMenu.CreateAppMenus();
+        menu.DropDownItems.Add(apps);
+        menu.DropDownItems.Add(layers);
+        menu.DropDownItems.Add(new ToolStripSeparator());
         menu.DropDownItems.Add(CreateClaudeMenu());
         menu.DropDownItems.Add(CreateMcpMenu());
         menu.DropDownItems.Add(CreateThemeMenu());
@@ -807,7 +812,7 @@ public abstract partial class AxKitForm : Form
         }
 
         // AX-8.18 rule 6: Ctrl with a function key opens a standalone app, Ctrl+Shift with one an access layer, from
-        // every window, as the Window menu's Apps and Access layers do.
+        // every window, as the axKit menu's Apps and Access layers do.
         if (BundleKeys.AppOfLaunchKey(keyData) is { } launched)
         {
             WindowMenu.Start(launched.Verb, null);

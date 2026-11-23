@@ -39,7 +39,7 @@ expect focus {"name":"README.md","role":"Text","value":"## Install"}
 # updates, About.
 # 3.3 manual: Alt+W needs the menu bar's menu mode; Recently closed, Open windows and Open windows by type are
 # submenus filled as they open, which the palette leaves out.
-expect commands "axPreview, Window, Apps, Ctrl+F7"
+expect commands "axPreview, axKit, Apps, Ctrl+F7"
 expect commands "Close all windows, Window"
 expect commands "Check for updates (axKit
 expect commands "Version, Help, About"

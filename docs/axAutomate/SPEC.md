@@ -192,7 +192,7 @@ keys in place of its words on a line:
   own windows, with the run's secret. The window starts the runs; it never opens the channel of the user's own
   windows. As built (2026-11-11): the run's windows are this very program file (`Environment.ProcessPath`), started
   on a desktop of the run's own with the run's secret and folder in their own environment block, never set on the
-  window's process, so that the window's other children (Ctrl+J's axDown, Window, Apps) never get them; the
+  window's process, so that the window's other children (Ctrl+J's axDown, axKit, Apps) never get them; the
   run's end ends only the processes the run started and their descendants (`Run`, `hosted`).
 
 ## 6b. Running from the window (2026-11-11)

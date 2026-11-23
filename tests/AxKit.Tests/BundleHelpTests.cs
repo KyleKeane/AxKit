@@ -41,11 +41,16 @@ public sealed class BundleHelpTests
     }
 
     [Fact]
-    public void The_AxKit_menu_line_is_the_bundles_words()
+    public void The_menus_line_names_each_bundle_menu_by_its_own_letter()
     {
-        Assert.Contains(
-            "  Alt+W: the Window menu: a new window of any app, the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows, Say the status. Alt+A: the axKit menu: Claude (Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder), the AI tools and the theme. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Diagnostics (Test a key, Copy diagnostics), Check for updates, and About\r\n",
-            BundleHelp.Section("axThing", []));
+        // The letters come from the menu bar's own names (AxKitForm.BarMenus), so that a menu given another letter
+        // fails here: the line said Alt+A for the axKit menu from 2026-11-11, when its letter became K, to 2026-11-23.
+        static string Alt(string menu) => "Alt+" + char.ToUpperInvariant(menu[menu.IndexOf('&') + 1]);
+        var bar = AxKit.Forms.AxKitForm.BarMenus;
+        Assert.Contains($"{Alt(bar[5])}: the Window menu", BundleHelp.BundleMenusLine);
+        Assert.Contains($"{Alt(bar[6])}: the axKit menu: Apps and Access layers", BundleHelp.BundleMenusLine);
+        Assert.Contains($"{Alt(bar[7])}: Help", BundleHelp.BundleMenusLine);
+        Assert.Contains($"{Alt(bar[6])}, A lists the apps", BundleHelp.AppKeysLine);
     }
 
     [Fact]

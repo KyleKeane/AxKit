@@ -103,7 +103,7 @@ letter), and a `long.md` with headings and lines longer than the window.
 3. Help, User guide shows this app's guide, and Ctrl+H, Ctrl+K, Ctrl+L and the other navigation keys move through it, spoken
    as in the editor, "No next table" when there is none; Help, About, Version names the version of axKit, the apps
    and the folders; About, Licence, Attribution and axKit guide open their notices, Escape closes each.
-4. Alt+W: the Window menu with Apps, Access layers, Open windows, Recently closed, Close all windows, Say the status (F8: the status bar is said); Alt+K: the axKit menu with Claude, AI tools and Theme;
+4. Alt+W: the Window menu with Open windows, Recently closed, Close all windows, Say the status (F8: the status bar is said); Alt+K: the axKit menu with Claude, AI tools and Theme;
    Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key, Copy diagnostics), Check
    for updates and About (bundle AX-9.1); Help, About, axKit on GitHub: the browser opens the repository page. With a second
    axDown open, Open windows reads "1. <name> - axDown, 1 of 1" and Enter brings that window to the front; Alt+W, N, D starts a new Untitled window. Alone, Open windows holds
@@ -120,7 +120,7 @@ letter), and a `long.md` with headings and lines longer than the window.
    "Word wrap, checked" (or "not checked") is said; Options shows the item changed. Ctrl+Shift+P, type `xyz`:
    "No commands match xyz"; Enter says it again and the palette stays; Escape: back in the editor, nothing run.
    Ctrl+Shift+P, `save as`, Enter: the Save as picker opens. Alt+H, P (Help, Command palette, the menu's first item) opens it too. Recent files and the
-   Window menu's lists are not in it; Alt+W, Apps, axDown is ("axDown, Window, Apps").
+   Window menu's lists are not in it; Alt+K, Apps, axDown is ("axDown, axKit, Apps").
 7. The key test (bundle AX-8.12; script `15-key-test`), with the caret in the middle of a line. Alt+H, D, T (Help,
    Diagnostics, Test a key): "Key test. Press any key to hear its name and what it does here. Press Escape to end."
    F8: "F8: Say the status" and no status; F4: "F4: Send a report" and no form; Ctrl+G: "Ctrl+G: Go to line";

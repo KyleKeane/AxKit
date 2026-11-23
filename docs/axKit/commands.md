@@ -124,6 +124,7 @@ page by hand; run its script and commit the page.
   checked, a deferred or declined one why, and a commit that is named exists in the repository; a done finding that
   is still owed a hearing or a live check says so in `owed`, each entry with its kind in front, for `tools/owed.ps1`.
 - `tools/apps-page.ps1` writes `apps.md`: the apps from `Dispatch.Apps`, each with its command and its folders.
+- `tools/doc-menus.ps1 -Check` reads every menu path the documents name ("Alt+K, Apps", "the Window menu's Open windows") and fails on one the windows do not have, the names from the command inventory and the window base's code.
 - `tools/guide-menus.ps1` writes the Menus section of each app's user guide, between its two marker lines, from `window-commands.json`: every menu with its commands and keys, so that no guide lists them by hand.
   `tools/apps.ps1` is the reader the other scripts share.
 - `tools/cases.ps1` writes `cases.md` from `cases.json`, the table of how each unexpected situation is handled (SPEC

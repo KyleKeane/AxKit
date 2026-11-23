@@ -1,3 +1,4 @@
+using AxKit.Core;
 using AxKit.Forms;
 
 namespace AxKit.Tests;
@@ -237,7 +238,8 @@ public sealed class KeyTests
     [Fact]
     public void Every_F1_text_names_the_AxKit_menu_and_its_first_items()
     {
-        const string line = "Alt+W: the Window menu: a new window of any app, the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows, Say the status. Alt+A: the axKit menu: Claude (Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder), the AI tools and the theme. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Diagnostics (Test a key, Copy diagnostics), Check for updates, and About";
+        // The line itself, never a copy of its words: the copy here kept the wrong Alt+A from 2026-11-11 to 2026-11-23.
+        var line = BundleHelp.BundleMenusLine;
         var missing = F1Texts.Where(pair => !pair.Value.Contains(line, StringComparison.Ordinal)).Select(pair => pair.Key).ToList();
         Assert.True(missing.Count == 0, "Without the axKit menu line: " + string.Join(", ", missing));
     }

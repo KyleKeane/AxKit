@@ -13,7 +13,7 @@ public static class BundleHelp
     public const string InEveryWindow = "In every window of axKit";
 
     /// <summary>The bundle's menus in one line, the same in every F1 text (AX-9.1: Window, axKit, Help; <c>KeyTests</c> checks it whole).</summary>
-    public const string BundleMenusLine = "Alt+W: the Window menu: a new window of any app, the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows, Say the status. Alt+A: the axKit menu: Claude (Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder), the AI tools and the theme. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Diagnostics (Test a key, Copy diagnostics), Check for updates, and About";
+    public const string BundleMenusLine = "Alt+W: the Window menu: the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows, Say the status. Alt+K: the axKit menu: Apps and Access layers, a new window of any app with its key; Claude (Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder), the AI tools and the theme. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Diagnostics (Test a key, Copy diagnostics), Check for updates, and About";
 
     /// <summary>F4's line, the same in every F1 text: the report is a form of standard controls (AX-8.10, reports.md RP-3).</summary>
     public const string ReportLine = "  F4: report a bug, an idea or feedback to axKit's maintainer: type your words, Enter makes a new line; Tab goes on to the kind, a box for more detail and what is sent with your report; Ctrl+Enter or the Send button sends; Escape cancels and keeps nothing. The report is encrypted on your computer, and only the maintainer can read it";
@@ -33,11 +33,11 @@ public static class BundleHelp
     /// <summary>F8's line, the same in every F1 text (AX-7.10, 2026-11-15).</summary>
     public const string StatusLine = "  F8: say the status, what the status bar at the bottom of the window holds, said by axKit itself; in a notice too";
 
-    /// <summary>The app keys (AX-8.18 rule 6), in every window's F1 text; the Window menu's Apps and Access layers show each app's own.</summary>
+    /// <summary>The app keys (AX-8.18 rule 6), in every window's F1 text; the axKit menu's Apps and Access layers show each app's own.</summary>
     public static string AppKeysLine { get; } =
         "  Ctrl with a function key: open an axKit app, each group on its block of four keys: " + Blocks(shift: false)
         + ". Ctrl+Shift with a function key: open an access layer: " + Blocks(shift: true)
-        + ". Alt+W, A lists the apps and Alt+W, L the access layers, each with its key";
+        + ". Alt+K, A lists the apps and Alt+K, L the access layers, each with its key";
 
     /// <summary>"F1 to F4 getting around, axStart, axFile, ...; F5 to F8 ...": the blocks of one kind, from <see cref="AppLaunchKeys"/>.</summary>
     private static string Blocks(bool shift) => string.Join("; ", AppLaunchKeys.Default.Where(key => key.Shift == shift).GroupBy(key => key.App.Group).Select(group =>

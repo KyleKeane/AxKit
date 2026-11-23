@@ -8,7 +8,7 @@ to for you.
 ## Install
 
 axMCP is part of axKit. Installing axKit (see the axKit guide: Help, About, axKit guide) gives you a Start menu entry
-`axKit axMCP` and a console command `axMCP`. Any axKit window starts one too: Alt+W, Access layers, axMCP.
+`axKit axMCP` and a console command `axMCP`. Any axKit window starts one too: Alt+K, Access layers, axMCP.
 
 ## Start
 

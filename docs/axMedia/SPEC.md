@@ -27,7 +27,7 @@ top of the window. It works entirely offline (bundle G6).
 - **G2 The queue is the thing.** A folder of files in order is a playlist; so is what was added from anywhere. The
   queue is fixed when play starts and the user is free to roam elsewhere (AM-D2).
 - **G3 One player.** axFile and the others hand files to the axMedia window that is open; a second window is a
-  deliberate act (the Window menu's Apps, or its key).
+  deliberate act (the axKit menu's Apps, or its key).
 - **G4 Streamlined.** What axFile's player had and no more (AF-5): the transport, the speed, the position; the rest
   waits (§9).
 - **G5 Nothing spoken unprompted** (AX-7.3) but two things the user asked for by playing the queue: the name of the
@@ -65,12 +65,12 @@ top of the window. It works entirely offline (bundle G6).
   with an empty queue (§9 for the last queue). Start menu entry `axKit axMedia`, console command `axMedia`, File
   Explorer's Open with axKit ▸ axMedia on files of the media kinds (AM-4.1) and axMedia under Windows' own Open with for
   them (type name "Media file (axMedia)"), so that the user can make it the default program for a kind in Windows'
-  settings (the installer cannot; the guide says how), the Window menu's Apps (AX-9). A media file alone on the
+  settings (the installer cannot; the guide says how), the axKit menu's Apps (AX-9). A media file alone on the
   command line (`AxKit song.mp3`) starts axMedia (AX-1.2).
 - AM-1.2 **One player.** A start with paths, from axFile, from File Explorer (a double click once axMedia is the
   default, or Open with axKit) or from the command line, hands them to the axMedia window that is open, the most
   recent by Z order when there are several, and ends; it opens a window of its own only when there is none, or with
-  `--new` (the Window menu's Apps passes it). A play brings the window to the front, since the user chose to
+  `--new` (the axKit menu's Apps passes it). A play brings the window to the front, since the user chose to
   open the file in its app; an add leaves the focus where it is, and axFile says "Added 24 to axMedia's queue"
   (AM-D3). axFile does nothing special: it starts the app on the paths, with `--add` for Add to queue; Enter on a
   media file is Windows' default program, axMedia when the user has chosen it (`docs/axFile/SPEC.md` section 9).

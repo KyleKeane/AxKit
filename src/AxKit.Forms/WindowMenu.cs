@@ -7,7 +7,7 @@ namespace AxKit.Forms;
 
 /// <summary>
 /// The Window menu every window has (docs/axKit/SPEC.md AX-9; the axKit menu until 5.7.0, when the user asked for
-/// the bundle's menus by intent, Window, axKit and Help, 2026-11-10): Apps and Access layers (a new window of each app, apart since 2026-11-23), Open windows
+/// the bundle's menus by intent, Window, axKit and Help, 2026-11-10): Open windows
 /// (the other windows of the bundle's apps, most recently used first), Recently closed (the bundle's list, AX-9.4)
 /// and Close all windows. The lists are filled each time the menu opens, the windows from what the system lists in Z
 /// order, which is Alt+Tab's order, so nothing about windows is stored. The lists and labels are
@@ -27,15 +27,6 @@ public sealed class WindowMenu : ToolStripMenuItem
         : base("&Window")
     {
         _owner = owner;
-        // AX-9.2 (the maintainer, 2026-11-23: "we should split axKit Apps and axKit Access Layers in the menus ... these
-        // are very importantly different things"): a new window of a standalone app under Apps, of an access layer
-        // under Access layers, each by group in the order of its function keys (AX-8.18 rule 6).
-        var apps = new ToolStripMenuItem("&Apps");
-        AddApps(apps.DropDownItems, Dispatch.Apps.Where(app => !app.IsAccessLayer), NewWindowItem);
-        DropDownItems.Add(apps);
-        var layers = new ToolStripMenuItem("Access &layers");
-        AddApps(layers.DropDownItems, Dispatch.Apps.Where(app => app.IsAccessLayer), NewWindowItem);
-        DropDownItems.Add(layers);
         // The lists made as the menu opens, and again before the command palette reads it, so that an open window or a
         // recently closed file is one search away (AX-10.2, 2026-11-13; the palette left them out before).
         DropDownItems.Add(_openWindows);
@@ -50,6 +41,22 @@ public sealed class WindowMenu : ToolStripMenuItem
         }, CommandMark.Read), BundleKeys.SayStatus));
         CommandPalette.RefreshedOnOpening(this, Fill);
         Fill();
+    }
+
+    /// <summary>
+    /// The axKit menu's Apps and Access layers (AX-9.2; the maintainer, 2026-11-23: "we should split axKit Apps and
+    /// axKit Access Layers in the menus ... these are very importantly different things", then "you should move the
+    /// apps and access layets into the axkit menu rather than the window menu"): a new window of a standalone app
+    /// under Apps, of an access layer under Access layers, each by group in the order of its function keys
+    /// (AX-8.18 rule 6).
+    /// </summary>
+    public static (ToolStripMenuItem Apps, ToolStripMenuItem Layers) CreateAppMenus()
+    {
+        var apps = new ToolStripMenuItem("&Apps");
+        AddApps(apps.DropDownItems, Dispatch.Apps.Where(app => !app.IsAccessLayer), NewWindowItem);
+        var layers = new ToolStripMenuItem("Access &layers");
+        AddApps(layers.DropDownItems, Dispatch.Apps.Where(app => app.IsAccessLayer), NewWindowItem);
+        return (apps, layers);
     }
 
     /// <summary>An app's item under Apps or Access layers, a new window of it, with the app's key shown (AX-8.18 rule 6), which the base handles in every window.</summary>
@@ -187,7 +194,7 @@ public sealed class WindowMenu : ToolStripMenuItem
 
         try
         {
-            // Outside call, program, axKit: starts another window of axKit from the Window menu (Apps, Access layers, Show
+            // Outside call, program, axKit: starts another window of axKit from the axKit menu (Apps, Access layers), the Window menu (Show
             // current folder in, axFile's Open with axKit apps and access layers): this very program file with the app's verb and path; axHelp starts its conversation, an axClaude window, the same way, hidden as axHelp itself starts in the background only when the user turned on its setting Keep the conversation ready in the background, off at first (docs/axHelp/SPEC.md HE-2.7).
             return Process.Start(info);
         }

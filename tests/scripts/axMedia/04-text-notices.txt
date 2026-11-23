@@ -42,7 +42,7 @@ expect said ! Nothing to save here
 # command palette's list, and menu mode needs the foreground): New window with axMedia among the apps, Close all
 # windows, About. Recently closed, Open windows and Open windows by type, and choosing a recently closed file, are
 # left to the NVDA pass; New window would start a window the runner cannot reach or close.
-expect commands axMedia, Window, Apps
+expect commands axMedia, axKit, Apps
 expect commands Close all windows, Window
 expect commands Version, Help, About
 expect commands Check for updates at start, Options, General

@@ -63,7 +63,7 @@ answer to a key.
 
 ### TP-1 Launch, the background, the hotkey
 
-- TP-1.1 **A plain start** (`axKit template`, Window, Apps, axTemplate, or its key) shows the browser (TP-8), and
+- TP-1.1 **A plain start** (`axKit template`, axKit, Apps, axTemplate, or its key) shows the browser (TP-8), and
   starts the launcher in the background when it does not run yet, so that the hotkey works from then on (his
   answer: "The browser").
 - TP-1.2 **The launcher** is as axClip (CP-1): a background process with one hidden window, one copy at a time,

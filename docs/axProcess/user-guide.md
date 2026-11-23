@@ -4,7 +4,7 @@ axProcess shows what runs on your computer, made for screen reader users: the ru
 
 ## Install
 
-axProcess is part of axKit. Installing axKit (see the axKit guide: Help, About, axKit guide) gives you a Start menu entry `axKit axProcess` and a console command `axProcess`. Any axKit window starts one too: Alt+W, Apps, axProcess.
+axProcess is part of axKit. Installing axKit (see the axKit guide: Help, About, axKit guide) gives you a Start menu entry `axKit axProcess` and a console command `axProcess`. Any axKit window starts one too: Alt+K, Apps, axProcess.
 
 ## Start
 

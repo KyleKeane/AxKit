@@ -4,7 +4,7 @@ axTemplate keeps your templates: pieces of text you write once and put in again 
 
 ## Install
 
-axTemplate is part of axKit. Installing axKit (see the axKit guide in the Help, About) gives you a Start menu entry `axKit axTemplate` and a console command `axTemplate`. Any axKit window starts one too: Alt+W, Apps, axTemplate.
+axTemplate is part of axKit. Installing axKit (see the axKit guide in the Help, About) gives you a Start menu entry `axKit axTemplate` and a console command `axTemplate`. Any axKit window starts one too: Alt+K, Apps, axTemplate.
 
 ## Start
 

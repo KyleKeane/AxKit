@@ -77,7 +77,7 @@ public sealed class AppLaunchKeysTests
     public void The_command_inventory_holds_the_app_keys_as_the_code_gives_them()
     {
         using var document = System.Text.Json.JsonDocument.Parse(File.ReadAllText(Path.Combine(LayoutTests.RepositoryRoot(), "docs", "axKit", "window-commands.json")));
-        string[] windowSubmenus = ["Window, Apps", "Window, Access layers", "Window, Open windows", "Window, Recently closed"];
+        string[] windowSubmenus = ["Window, Open windows", "Window, Recently closed"];
         var wrong = new List<string>();
         foreach (var app in document.RootElement.GetProperty("apps").EnumerateArray())
         {
@@ -90,7 +90,7 @@ public sealed class AppLaunchKeysTests
                     wrong.Add($"{app.GetProperty("app").GetString()}: {label} under {menu}, a submenu the Window menu no longer has");
                 }
 
-                if (menu is "Window, Apps" or "Window, Access layers")
+                if (menu is "axKit, Apps" or "axKit, Access layers")
                 {
                     var key = AppLaunchKeys.Default.FirstOrDefault(k => k.App.Title == label);
                     var expected = key?.Text ?? string.Empty;

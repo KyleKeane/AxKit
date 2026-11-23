@@ -104,7 +104,7 @@ expect focus "name":"Terminal"
 # Check: The Window menu lists axTerminal under New window
 # Step 6: the Window menu's New window lists axTerminal (Alt+W itself needs menu mode; the palette's list is the same
 # menu). Open windows by type stays manual: it is filled as it opens, so the palette does not list it.
-expect commands axTerminal, access layer for your shell, Window, Access layers
+expect commands axTerminal, access layer for your shell, axKit, Access layers
 
 # Goal: Close the window while a command runs
 # Step 5 (last, since it closes the window): Alt+F4 while a command runs asks first; Escape keeps it; Alt+F4 again

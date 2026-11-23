@@ -83,9 +83,9 @@ A function is a command of a window (`docs/axKit/command-language.md`): 1896 in 
 - `options`, the Options menu: Settings, each said with its new state: text, speech, sounds, announcements, what happens when something is done.
   - 287 commands in 18 apps: read 1, open 24, change 222, act 40.
 - `window`, the Window menu: The other windows of axKit: a new window of any app, close all windows, say the status.
-  - 360 commands in 18 apps: read 18, open 288, act 54.
+  - 36 commands in 18 apps: read 18, act 18.
 - `axkit`, the axKit menu: The services of the whole bundle: the AI tools and what they may do, Claude for AI help, the theme.
-  - 216 commands in 18 apps: open 36, change 36, act 144.
+  - 540 commands in 18 apps: open 324, change 36, act 180.
 - `help`, the Help menu: The keys (F1), the user guide, the command palette, sending a report (F4), about, diagnostics and the key test.
   - 284 commands in 18 apps: read 162, open 18, act 104.
 - `keys-alone`: Commands that are a key with no menu item, because their meaning depends on where the focus is: Tab between panes, Enter on a row, Right into a list, F3 for find next. An AI tool never runs these.

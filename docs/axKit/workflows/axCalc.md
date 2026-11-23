@@ -74,7 +74,7 @@ Starts with: Open axCalc.
 
 ### Open another app with its key
 
-1. Press Ctrl+F5 (axDown; Window menu, Apps).
+1. Press Ctrl+F5 (axDown; axKit menu, Apps).
 2. A new window opens: go to it.
 3. Close the window.
 4. Go to the axCalc window.

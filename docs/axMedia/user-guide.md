@@ -13,7 +13,7 @@ axMedia is part of axKit. Installing axKit (see the axKit guide: Help, About, ax
 - Start menu: `axKit axMedia`. Press the Windows key and type `axm`. The window opens with an empty queue; Ctrl+O adds files.
 - Console: `axmedia C:\Music\Dune\03.mp3` (the file with the folder's others after it), `axmedia C:\Music\Dune` (the folder from the first file), `axmedia a.mp3 b.mp3` (those, in order), `axmedia --add C:\Music\More` (added to the end of the queue, nothing starts).
 
-axMedia keeps one window: a file opened from axFile, File Explorer or the console while an axMedia window is open goes into that window, replacing its queue (or added to it, for an add), rather than opening another. A second window is the Window menu's New window, or Ctrl+N, or `--new` on the console.
+axMedia keeps one window: a file opened from axFile, File Explorer or the console while an axMedia window is open goes into that window, replacing its queue (or added to it, for an add), rather than opening another. A second window is the axKit menu's Apps, axMedia, or Ctrl+N, or `--new` on the console.
 
 The window is named after the file playing: "03 Chapter 3.mp3 - axMedia", or "axMedia" while nothing plays. The status bar (NVDA+End) has what is playing and the time on the left, "Playing 03 Chapter 3.mp3 12:40 / 45:30", and the place and the speed on the right, "3 of 12, speed 1.25".
 

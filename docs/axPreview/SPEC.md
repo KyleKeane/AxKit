@@ -35,7 +35,7 @@ it, so that every file shows something and the details say what it is.
 - **G2 Reading first.** Every key is a reading key; the editors' Ctrl letters work the same, so that a file read in
   axPreview and edited in axDown is the same text under the same keys.
 - **G3 One viewer.** axFile hands files to the axPreview window that is open; a second window is a deliberate act (the
-  Window menu's Apps).
+  axKit menu's Apps).
 - **G4 Every file, as text.** Text files in version one (3.3.1); since 2026-10-24 every kind, each through its
   renderer into the same read-only text (AP-D6), with the details pane beside it in the reading order (AP-6).
 - **G5 Nothing spoken unprompted** (AX-7.3).
@@ -72,11 +72,11 @@ it, so that every file shows something and the details say what it is.
   every file, axPreview under Windows' own Open with for every file type (since 3.7.2, the general viewer, AP-6 and
   AP-7; the text kinds `.txt`, `.md`, `.markdown`, `.log`, `.json` before it; type name
   "File (axPreview)"), so that the user can make it the default program for a kind in Windows'
-  settings (AP-D2), the Window menu's Apps (AX-9). A file alone on the command line keeps going to its editor
+  settings (AP-D2), the axKit menu's Apps (AX-9). A file alone on the command line keeps going to its editor
   (AX-1.2); the viewer is chosen by name or by Windows' association.
 - AP-1.2 **One viewer.** A start with a file, from axFile, from File Explorer or from the command line, hands the
   file to the axPreview window that is open, the most recent by Z order when there are several, brings it to the
-  front and ends; it opens a window of its own only when there is none, or with `--new` (the Window menu's Apps
+  front and ends; it opens a window of its own only when there is none, or with `--new` (the axKit menu's Apps
   passes it). axFile does nothing special: it starts the app on the file.
 - AP-1.3 **The hand-over** between the starting process and the open window is the bundle's `WM_COPYDATA` message
   (`AxKit.Forms/AppMessage`, `docs/axMedia/SPEC.md` AM-1.3) with the verb `open` and one path; the window answers
