@@ -620,7 +620,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   with a letter searches the same way backwards (the user's ask; the case of the letters never matters, so a capital
   only says the direction); the edge earcon when no item starts with it; nothing is said but what NVDA reads of the
   selection. Up or Home on the first item and Down or End on the last play the edge earcon too, since the key moves
-  nothing. Both are built into one control, `AxKit.Forms/AxKitList`, the list of every app (`AxKit.Core/TypeAhead` the
+  nothing; in a list that holds nothing, each of the four plays it (2026-11-23: an empty list of axTask was silent
+  on Up and Down, the maintainer's report). Both are built into one control, `AxKit.Forms/AxKitList`, the list of every app (`AxKit.Core/TypeAhead` the
   search, tested): a window makes an `AxKitList` and has them, and gives it the names to search only when its items
   are not all names (`Names`). `ListTests` fails on a plain `ListBox` in an app; its one named exception is a
   question's answers, whose letters are the screen's keys (axClaude D33). The lists under a field that keeps the

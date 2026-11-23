@@ -898,6 +898,9 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
 22. **Filter and sort a list of axTask**
     - Narrow the lists to those whose name contains a text
     - Put a list's items in the order of their names
+23. **Hear the end of a list that holds one item or none**
+    - Hear both ends of a list of one item
+    - Hear that a list with no item has nowhere to go
 
 ## axTerminal
 

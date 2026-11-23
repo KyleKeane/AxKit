@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axKit: **Up and Down in an empty list play the edge sound.** A list with nothing in it, such as an axTask list without items, was silent on the arrow keys, Home and End; it now plays the sound of a list's end, as a list of one item already did. In every list of every app.
 - axTerminal: **the warning for a command another program put into the field can no longer be missed.** When an action of an axTask list hands a command to axTerminal, the warning is now the field's own name: NVDA says "Command, put here by another program and not sent. axKit checked nothing of it: read it, and press Enter only if you want to run it", then reads the command, at the start and every time you come back to the field while the line stands there as it came. Until now the warning was an announcement as the window opened, and NVDA's own reading of the new window could cut it off, so that the command was heard without it. Changed, sent or deleted, the field is "Command" again.
 - axAutomate: **Ctrl+Q on a step or a workflow reads it and every line of its details**, as the guide said it would; until now it read the row alone. The same holds in the other item windows for a row whose details are lines and not fields, such as a list in axTask.
 - axClaude: **a key for Claude is no longer silent while Claude is stopped.** Shift+Escape (the interrupt), Claude, Send key and Claude, Next permission mode say "Claude stopped. Ctrl+Shift+R starts it", as a message sent then always did.

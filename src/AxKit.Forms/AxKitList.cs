@@ -324,7 +324,24 @@ public class AxKitList : ListBox
     protected override void OnKeyDown(KeyEventArgs e)
     {
         base.OnKeyDown(e);
-        if (e.Handled || e.Modifiers != Keys.None || Items.Count == 0 || SelectedIndex < 0)
+        if (e.Handled || e.Modifiers != Keys.None)
+        {
+            return;
+        }
+
+        if (Items.Count == 0)
+        {
+            // A list that holds nothing is at both its ends: the same earcon, never silence (the maintainer's
+            // report of 2026-11-22: Up and Down in an empty list of axTask made no sound, and NVDA has nothing to read).
+            if (e.KeyCode is Keys.Up or Keys.Down or Keys.Home or Keys.End)
+            {
+                EventDoor.Raise(EventKind.Edge);
+            }
+
+            return;
+        }
+
+        if (SelectedIndex < 0)
         {
             return;
         }

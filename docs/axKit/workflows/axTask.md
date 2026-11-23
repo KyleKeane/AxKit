@@ -977,3 +977,29 @@ Starts with: Open axTask with the folder tasks.
 4. Choose The list's own order in the Options menu, Sort by.
     You hear: Sorted by the list's own order.
 5. Close the window.
+
+## Hear the end of a list that holds one item or none
+
+Starts with: Open axTask with the folder tasks.
+
+### Hear both ends of a list of one item
+
+1. Press Down 2 times.
+2. Press Right.
+3. Press Up.
+    You hear the sound Edge.
+4. Press Down.
+    You hear the sound Edge.
+
+### Hear that a list with no item has nowhere to go
+
+1. Press Left, Up.
+2. Press Right.
+3. Press Up.
+    You hear the sound Edge.
+4. Press Down.
+    You hear the sound Edge.
+5. Press Home.
+    You hear the sound Edge.
+6. Press End.
+    You hear the sound Edge.

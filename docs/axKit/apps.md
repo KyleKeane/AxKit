@@ -67,7 +67,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxTask` (the window), `src/AxTask.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxTask.Tests`.
 - Documents: `docs/axTask/` (`forms-framework.md`, `nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axTask/`, 22 scripts (their workflows are in `docs/axKit/workflows/axTask.md`).
+- Automated checks: `tests/scripts/axTask/`, 23 scripts (their workflows are in `docs/axKit/workflows/axTask.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axTask.ps1`, or `run.ps1 -App task`.
 
 ## Utilities

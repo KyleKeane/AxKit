@@ -1,0 +1,41 @@
+# Workflow: Hear the end of a list that holds one item or none
+# axTask (bundle SPEC AX-8.6; docs/axKit/framework.md FW-3.1): Up on the first row and Down on the last play the edge
+# sound in every list. A list of one item is at both ends at once, and a list with no item too: the maintainer's
+# report of 2026-11-22, where an empty list was silent on Up and Down.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file tasks\One\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[],"actions":[]}
+file tasks\One\Milk.json {"schema":"list.json","Title":"Milk"}
+file tasks\None\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[],"actions":[]}
+
+start task {temp}\tasks
+expect focus Your lists, heading level 1, 2 lists
+
+# Goal: Hear both ends of a list of one item
+# Up and Down on the one item: the edge sound each time, and the item stays.
+keys down down
+expect focus One, list, 1 item
+keys right
+said
+keys up
+expect said ♪ Edge
+said
+keys down
+expect said ♪ Edge
+
+# Goal: Hear that a list with no item has nowhere to go
+# Up, Down, Home and End in the empty list: the edge sound, never silence.
+keys left up
+expect focus None, list
+keys right
+said
+keys up
+expect said ♪ Edge
+said
+keys down
+expect said ♪ Edge
+said
+keys home
+expect said ♪ Edge
+said
+keys end
+expect said ♪ Edge
