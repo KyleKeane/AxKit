@@ -6,6 +6,27 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-22: the caution of a handed command as axTerminal's field name; by the assistant with NVDA listening (branch `axfile-navigator` 656663e1)
+
+`.\nvda-pass.ps1 -Only` every script of axTerminal, axTask's `19-list-actions.txt` and the new NVDA script
+`tests/nvda-scripts/axTerminal-handed-command.txt`, from the branch's own folder, behind the spoken countdown, the
+maintainer away at his word, NVDA 2025.3.3 with the OneCore voice, Windows 11 Pro 10.0.26200, the build 5.10.0 of
+commit 656663e1: 15 scripts, 83 goals and checks.
+
+| What | Scripts | Result |
+|---|---|---|
+| axTerminal, every script; in `13-handed-command.txt` the field's name is the caution while the line stands there as it came, "Command" once a letter is typed, the caution again when the letter is taken back, "Command" after the line was sent | 13 | Passed |
+| axTask, `19-list-actions.txt`: the action that hands a command to axTerminal; the new window's field under its caution | 1 | Passed |
+| The NVDA script: what NVDA itself speaks as the window opens | 1 | Failed at the first run on an expectation of the script's own, corrected, then passed |
+
+What NVDA said as the window opened, from the report: the window's title, then "Command, put here by another program
+and not sent. axKit checked nothing of it: read it, and press Enter only if you want to run it edit multi line" and
+the command, in one piece of speech: the caution before the command, with nothing that could come between or cut
+it off. The script had asked for the command's text as a second piece and found it already spoken with the first;
+it asks for the name alone now. With a letter typed and taken back NVDA said the letter twice and no word about
+the field's name changing; after Enter, "Sent" and "Done" and no more. The caution is spoken once, not a second
+time as an announcement. This closes the failure of the pass at f8f3c2e6 below.
+
 ## 2026-11-22: Ctrl+Q on a row with detail lines, and axClaude's keys while Claude is stopped; by the assistant with NVDA listening (branch `axfile-navigator` 60954e9f)
 
 `.\nvda-pass.ps1 -Only` every script of axAutomate, axTask, axPass and axMCP and axClaude's `08-lifecycle.txt`, from

@@ -9,10 +9,11 @@ file home\AxKit\consent.json {"items":[{"app":"axTerminal","target":"Windows Pow
 start terminal {temp}\myproject --command Write-Output "two words"
 
 # Goal: Hear that another program put the command there, before the command, and again on coming back to the field
-# As the window opens NVDA reads the field under its caution, then the command. The focus then leaves for the
-# terminal's text and comes back: the field is read under its caution again.
+# As the window opens NVDA reads the field under its caution and then the command, in one piece of speech (heard
+# 2026-11-22: "Command, put here by another program ... run it edit multi line Write-Output 'two words'"), so the
+# one expectation of the name holds the order too. The focus then leaves for the terminal's text and comes back:
+# the field is read under its caution again.
 expect spoken Command, put here by another program and not sent. axKit checked nothing of it: read it, and press Enter only if you want to run it
-expect spoken Write-Output 'two words'
 expect said ♪ Ready
 spoken
 do Terminal
