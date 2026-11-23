@@ -188,7 +188,8 @@ Features of the apps that exist:
 New apps: **axTemplate** (the maintainer's idea of 2026-11-23: his templates behind a system-wide hotkey, found by
 name or by their text in a launcher like axClip's and put in wherever the caret was, in any program; a browser
 like axTask's to keep them in order; the same templates in the axKit apps' command palettes; a step of axAutomate
-that puts one in. Specified for his reading, `docs/axTemplate/SPEC.md`, with seven open questions; not built. The
+that puts one in. Specified, `docs/axTemplate/SPEC.md`, and rewritten on his answers the same day: a template is a JSON item of
+the item format, with a check for each axKit app it shows in; the build is under way, section 8 there. The
 editors' Insert template menu of the same day, `docs/axDown/SPEC.md` AD-13, is its scaffolding),
 **axList** (lists to remember as Markdown files; a draft is on the tag `archive/axlist-draft`), **axSQL** (a
 SQLite browser), **axHTTP** (a REST client), **axMail** (mail over IMAP and SMTP, the largest build), **AxVault**
