@@ -225,7 +225,8 @@ page by hand; run its script and commit the page.
   occasion. `new -Title -App -Priority -Where -Notes` writes a new item with the list's own fields, its file named
   from the title as axTask names it, and refuses a name that exists and a priority the list does not have; `note
   -Name <words of the title> -Text` puts the text, dated today, in front of the item's Notes; `done -Name <words>`
-  checks its Done. The words must name exactly one item, as a commit message's (`tools/items.ps1` is the matching
+  checks its Done; `archive` moves every done item into the top folder's `Archive\priorities`, out of the list,
+  which the sync of every push does by itself (the maintainer's ask of 2026-11-23). The words must name exactly one item, as a commit message's (`tools/items.ps1` is the matching
   both scripts use). One line says what was written, with the title and nothing else of the item. It never commits
   or pushes; without the lists beside the repository it says so, exit code 1. `-Lists <folder>` names another list.
 - `tools/reports-check.ps1`: the reports on GitHub (the issues of `KyleKeane/AxKit-reports`) against the items of the

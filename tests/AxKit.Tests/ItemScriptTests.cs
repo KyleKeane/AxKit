@@ -185,6 +185,34 @@ public sealed class ItemScriptTests
         Assert.Equal(otherBefore, File.ReadAllBytes(other));
     }
 
+    /// <summary>The maintainer's ask of 2026-11-23: done items move into the top folder's Archive, in a list of the same name that still reads, and leave the list.</summary>
+    [Fact]
+    public void Archive_moves_the_done_items_into_the_archive_with_the_lists_configuration()
+    {
+        using var temp = new TempFolder("axkit-item-script");
+        var lists = Path.Combine(temp.Path, "priorities");
+        Assert.Equal(0, NewItem(lists, Title).ExitCode);
+        Assert.Equal(0, NewItem(lists, "axCalc: the history is kept").ExitCode);
+        Assert.Contains("no item is done", Script("item.ps1", lists, "archive").Output, StringComparison.Ordinal);
+
+        Assert.Equal(0, Script("item.ps1", lists, "done", "-Name", "says its length").ExitCode);
+        var archived = Script("item.ps1", lists, "archive");
+        Assert.Equal(0, archived.ExitCode);
+        Assert.Contains("archived: 1 done item(s)", archived.Output, StringComparison.Ordinal);
+
+        var archive = Path.Combine(temp.Path, "Archive", "priorities");
+        Assert.Equal([ItemFiles.FileStem("axCalc: the history is kept") + ".json"], Items(lists).Select(Path.GetFileName));
+        Assert.Equal([ItemFiles.FileStem(Title) + ".json"], Items(archive).Select(Path.GetFileName));
+        Assert.True(File.Exists(Path.Combine(archive, ListConfig.FileName)));
+        Assert.True(Field(Items(archive)[0], "Done").GetBoolean());
+
+        // A second done item of the same name gets axTask's next free name.
+        Assert.Equal(0, NewItem(lists, Title).ExitCode);
+        Assert.Equal(0, Script("item.ps1", lists, "done", "-Name", "says its length").ExitCode);
+        Assert.Equal(0, Script("item.ps1", lists, "archive").ExitCode);
+        Assert.Contains(ItemFiles.FileStem(Title) + " - 2.json", Items(archive).Select(Path.GetFileName));
+    }
+
     [Fact]
     public void Without_the_list_the_item_script_says_so_and_ends_with_1()
     {

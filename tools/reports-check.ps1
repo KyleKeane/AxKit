@@ -50,9 +50,13 @@ if ($IssuesFile) {
 # Windows PowerShell 5.1 hands a JSON array on as one object: unrolled here, so that Count is the reports' number.
 $issues = @(($issuesText | ConvertFrom-Json) | ForEach-Object { $_ })
 
-# Each report's items: number -> the list of (title, done).
+# Each report's items: number -> the list of (title, done). The done items moved into the top folder's Archive
+# (tools\item.ps1 archive, run with every push) count too, so that a closed report still finds its item there.
 $pointing = @{}
-foreach ($file in Get-ChildItem $Lists -Filter *.json) {
+$archived = Join-Path (Join-Path (Split-Path -Parent $Lists) 'Archive') (Split-Path -Leaf $Lists)
+$itemFiles = @(Get-ChildItem $Lists -Filter *.json)
+if (Test-Path -LiteralPath $archived) { $itemFiles += @(Get-ChildItem -LiteralPath $archived -Filter *.json) }
+foreach ($file in $itemFiles) {
     if ($file.Name -eq 'list.json') { continue }
     try { $item = [IO.File]::ReadAllText($file.FullName) | ConvertFrom-Json } catch { continue }
     # An item is its names and values with its link (docs/axTask/forms-framework.md section 13); a file without the

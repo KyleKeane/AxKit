@@ -5,7 +5,7 @@
   pre-push hook, tools\sync-repos.ps1).
 
 .DESCRIPTION
-  The list is <parent>\axkit-management\priorities beside this repository, one JSON file per item. Three forms:
+  The list is <parent>\axkit-management\priorities beside this repository, one JSON file per item. Four forms:
 
     new -Title <title> -App <app> -Priority <priority> -Where <where it is written> -Notes <notes>
         writes a new item as the list's items are (docs/axTask/forms-framework.md section 13): the link to the
@@ -21,6 +21,11 @@
     done -Name <words of the title>
         checks the item's Done. (A commit whose message says "Item done: <words>" does the same by itself.)
 
+    archive
+        moves every done item into the top folder's Archive, in a list of the same name (Archive\priorities, with a
+        copy of list.json), where axTask shows it among the archived and no list or smart list shows it; the sync of
+        every push (tools\sync-repos.ps1) runs it before the lists are committed (the maintainer's ask of 2026-11-23).
+
   The words name an item as a commit message's do (tools\items.ps1, which tools\item-of-commit.ps1 reads too): the
   items whose title holds them, without regard to case; they must name exactly one. Each form prints one line with
   the item's title and prints nothing else of the item. Where the lists are not beside the repository the script
@@ -33,7 +38,7 @@
 #>
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory = $true, Position = 0)][ValidateSet('new', 'note', 'done')][string]$Form,
+    [Parameter(Mandatory = $true, Position = 0)][ValidateSet('new', 'note', 'done', 'archive')][string]$Form,
     [string]$Title,
     [string]$App,
     [string]$Priority,
@@ -144,6 +149,36 @@ if ($Form -eq 'new') {
     if (Test-Path -LiteralPath $file) { Refuse "an item of that name exists: $([IO.Path]::GetFileName($file))." }
     Save-ListItem $file $document
     Write-Host "Priorities list, new item: $($Title.Trim())"
+    exit 0
+}
+
+if ($Form -eq 'archive') {
+    # The top folder's Archive (axTask's, docs/axKit/item-apps.md IA-D4), which axTask leaves out of every list and
+    # smart list, with a list of the same name as this one: the done items move there, with a copy of this list's
+    # list.json, so that they still read as items, in axTask's Archive and for tools\reports-check.ps1.
+    $archive = Join-Path (Join-Path (Split-Path $Lists -Parent) 'Archive') (Split-Path $Lists -Leaf)
+    $finished = @(Get-ListItems $Lists | Where-Object { Get-ItemValue $_.Document 'Done' })
+    if ($finished.Count -eq 0) {
+        Write-Host 'Priorities list, archived: no item is done'
+        exit 0
+    }
+
+    New-Item -ItemType Directory -Force -Path $archive | Out-Null
+    Copy-Item -LiteralPath (Join-Path $Lists 'list.json') -Destination (Join-Path $archive 'list.json') -Force
+    foreach ($one in $finished) {
+        # A name the Archive holds already gets " - 2", as axTask names a file (AxKit.Core ItemFiles.FreePath).
+        $stem = [IO.Path]::GetFileNameWithoutExtension($one.File)
+        $to = Join-Path $archive "$stem.json"
+        $count = 2
+        while (Test-Path -LiteralPath $to) {
+            $to = Join-Path $archive "$stem - $count.json"
+            $count++
+        }
+
+        Move-Item -LiteralPath $one.File -Destination $to
+    }
+
+    Write-Host "Priorities list, archived: $($finished.Count) done item(s), into Archive\$(Split-Path $Lists -Leaf)"
     exit 0
 }
 
