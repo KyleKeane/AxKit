@@ -123,6 +123,12 @@ selected ones (TK-4.4, TK-4.7).
   it"; "Home is a checklist already" when there is nothing to switch).
 - **TK-4.3 The row summary** (IA-6): the Title, then "done" when Done is true, then "due" and the Due date when there is
   one: "Fix the tap, done, due 30 October". Overdue reads "overdue since 30 October".
+- **TK-4.3a Ctrl+N on a list at the top level** (the maintainer's wish of the old feature list, item 30: "ctrl+n in
+  axtask when focused on a list should insert the task into the list that is in focus"; built 2026-11-23). With a
+  list selected among the sections, Ctrl+N asks for the title "In <the list>." and adds the item to that list, made
+  as in the list itself; the focus stays on the list, and the window says "Added <title> to <the list>". Ctrl+Z takes
+  it back. A list of the earlier format asks to be converted first, as Right does (AF-13.6). On a heading, a smart
+  list, a project or the Archive, Ctrl+N still says "Items go in a list: Right on a list, then Ctrl+N".
 - **TK-4.4 Ctrl+Enter marks a task done** (the maintainer's decision of 2026-11-22: "we should use space to mean
   select an item everywhere in axkit, so we can use ctrl+enter to mean mark as done in axtask"; Space did this
   until then). Ctrl+Enter, the bundle's main action key, toggles Done on a task, in the navigator and from the

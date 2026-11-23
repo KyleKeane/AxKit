@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axTask: **Ctrl+N on a list among your lists adds the item to that list** without going into it: type the title and press Enter, and axTask says "Added" with the title and the list; you stay on the list, and Ctrl+Z takes it back. On a heading or a smart list Ctrl+N still says where items go.
 - For developers: the unit tests write their log lines into a folder of their own under the temporary path (`tests/Shared/TestLog.cs`, `Log.UseFolder`), no longer into the user's `%LOCALAPPDATA%\AxKit\logs`, where a test's error about a changed settings file read as if the user's own had been tampered with.
 - axKit: **every app's guide lists its menus as the window has them.** The Menus section of each user guide (axFile's to follow) is written from the commands the windows list, each menu with its commands and their keys, and the keys that have no menu item; a guide that lists them by hand can no longer fall behind the window. axAutomate, axHelp, axMCP, axPass, axTask and axTemplate have such a section for the first time.
 - axKit: **a group of checks in a form is one list.** Down and Up move through it, Space checks or unchecks a line, Ctrl+A checks them all, and a Check all button stands just before it. axTemplate's apps are such a list; its Every axKit app check is gone, Check all does it.

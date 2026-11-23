@@ -162,9 +162,25 @@ public sealed partial class TaskForm
         return null;
     }
 
-    /// <summary>Ctrl+N in the navigator: a new item in the list shown (IA-4.3), its fields from the list's template.</summary>
+    /// <summary>
+    /// Ctrl+N in the navigator: a new item in the list shown (IA-4.3), its fields from the list's template; at the top
+    /// level, in the list selected (TK-4.3a), the focus staying on that list.
+    /// </summary>
     protected override void NewItem()
     {
+        if (AtTop && SelectedRow() is { IsList: true, Tag: null } selected && !ItemFolder.IsArchive(TopFolder, selected.Key))
+        {
+            if (ItemFolder.IsEarlier(selected.Key))
+            {
+                // A list of the earlier format takes no item until it is converted: the question Right asks.
+                AskConversion(selected);
+                return;
+            }
+
+            AskNewItem(selected.Key, selected.Name, inList: false);
+            return;
+        }
+
         if (_smart is not null)
         {
             Announce("A smart list gathers items from the lists: open a list to add one", true);
@@ -180,18 +196,28 @@ public sealed partial class TaskForm
 
         if (AtTop || IsArchiveFolder(_folder))
         {
-            // TK-D4: items live in lists; the Archive keeps what was moved there.
-            Announce(AtTop ? "Items go in a list: Right on a list, then Ctrl+N" : "The Archive keeps what was archived: open a list to add an item", true);
+            // TK-D4: items live in lists; the Archive keeps what was moved there. At the top, a heading, a smart list,
+            // a project or the Archive is selected: a list there takes the item (above).
+            Announce(AtTop ? "Items go in a list: Right on a list, then Ctrl+N" :"The Archive keeps what was archived: open a list to add an item", true);
             return;
         }
 
-        var folder = _folder;
+        AskNewItem(_folder, Path.GetFileName(_folder), inList: true);
+    }
+
+    /// <summary>
+    /// The question for a new item's title and the item made in <paramref name="folder"/>: in the list shown
+    /// (<paramref name="inList"/>), the new item selected and "Added &lt;title&gt;" said; from the top level, the list
+    /// stays selected and "Added &lt;title&gt; to &lt;list&gt;" is said (TK-4.3a).
+    /// </summary>
+    private void AskNewItem(string folder, string listName, bool inList)
+    {
         if (ConfigurationForChange(folder) is null)
         {
             return;
         }
 
-        AskText("New item", $"In {(AtTop ? "the top folder" : Path.GetFileName(folder))}.", "Title:", "Title", string.Empty, "&Add", title =>
+        AskText("New item", $"In {listName}.", "Title:", "Title", string.Empty, "&Add", title =>
         {
             if (ConfigurationForChange(folder) is not { } list)
             {
@@ -199,7 +225,8 @@ public sealed partial class TaskForm
             }
 
             var path = ItemFiles.FreePath(folder, ItemFiles.FileStem(title), ".json");
-            Commit(new Step(NewItemParts(folder, list, path, FlatItem.New(title, list.Config)), "Added " + title), path);
+            var said = inList ? "Added " + title : $"Added {title} to {listName}";
+            Commit(new Step(NewItemParts(folder, list, path, FlatItem.New(title, list.Config)), said), inList ? path : folder);
         }, typed => typed.Trim().Length == 0 ? "Type the item's title" : null);
     }
 

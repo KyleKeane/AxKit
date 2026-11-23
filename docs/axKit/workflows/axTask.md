@@ -1003,3 +1003,14 @@ Starts with: Open axTask with the folder tasks.
     You hear the sound Edge.
 6. Press End.
     You hear the sound Edge.
+
+## Add an item to a list without going into it
+
+Starts with: Open axTask with the folder tasks.
+
+### Add an item to a list from the top level
+
+1. Press Ctrl+N (New item; Actions menu).
+2. Type: Paint the door
+3. Press Enter.
+    You hear: Added Paint the door to Home.

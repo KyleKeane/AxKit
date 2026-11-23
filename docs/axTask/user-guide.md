@@ -100,6 +100,8 @@ In the navigator:
 
 - Ctrl+N adds an item to the list shown. It gets the fields of its list: Done, Start and Due in a list made by
   axTask, or the ones you wrote into the list's configuration ("The fields of a list", below).
+- On a list among your lists, Ctrl+N adds the item to that list without going into it: type the title and press
+  Enter; axTask says "Added" and the title "to" the list, and you stay on the list.
 - Ctrl+Shift+N makes a new list.
 - F2 renames the item or the list in place: a box over the line holds the name; type the new one and press Enter,
   or Escape to keep the old. Links to it from other items are kept.

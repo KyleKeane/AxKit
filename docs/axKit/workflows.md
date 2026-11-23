@@ -910,6 +910,8 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
 23. **Hear the end of a list that holds one item or none**
     - Hear both ends of a list of one item
     - Hear that a list with no item has nowhere to go
+24. **Add an item to a list without going into it**
+    - Add an item to a list from the top level
 
 ## axTemplate
 

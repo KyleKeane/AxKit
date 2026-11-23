@@ -1,0 +1,31 @@
+# Workflow: Add an item to a list without going into it
+# axTask, docs/axTask/user-guide.md "Changing things" and SPEC.md TK-4.3a: Ctrl+N on a list among the sections asks for
+# the title and adds the item to that list, made from the list's fields; the focus stays on the list. On a heading it
+# says where items go, as before.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Room","type":"text","value":""}],"actions":[]}
+file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false,"Room":"Kitchen"}
+start task {temp}\tasks
+expect focus Your lists, heading level 1
+
+# Check: On a heading, Ctrl+N says where items go
+keys ctrl+n
+expect said Items go in a list: Right on a list, then Ctrl+N
+keys down
+expect focus Home, list, 1 item
+
+# Goal: Add an item to a list from the top level
+# Ctrl+N on the list: the question names the list; Enter adds the item there and the focus stays on the list.
+keys ctrl+n
+expect state "notice":"New item","noticeText":"In Home."
+type Paint the door
+keys enter
+expect said Added Paint the door to Home
+expect state "notice":null
+expect focus Home, list, 2 items
+run findstr /l /c:"Room" "tasks\Home\Paint the door.json"
+
+# Check: Ctrl+Z takes the new item back
+keys ctrl+z
+expect focus Home, list, 1 item
+run powershell -NoProfile -Command "if (Test-Path 'tasks\Home\Paint the door.json') { exit 1 } else { exit 0 }"
