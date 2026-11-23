@@ -156,9 +156,9 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
   and give them up one by one. Point 1 needed nothing in the type for axFile either (`EntryRefused` starts the
   read; `UpLevel` is the app's where the level above is read too). Point 3, filter and sort, is built in the
   type for every navigator (FW-4.10a). I had first closed it as not to be lifted, a filter having one user; the
-  maintainer put it back the same day: "i want any list to be able to be filtered or sorted". Point 6 stays
-  axFile's: the rows in the command palette go through a hook the window base already has
-  (`AxKitForm.PaletteEntries`), and no second navigator offers its rows yet.
+  maintainer put it back the same day: "i want any list to be able to be filtered or sorted". Point 6, the rows in
+  the command palette, is not built and is gone from axFile too: asked on 2026-11-23 whether every navigator should
+  offer its rows there, he answered "Remove it from axFile too". The palette holds commands only (bundle AX-10.5).
 - FW-4.8 After this, axTask and axFile are the same window: one shows folders of items with a pane of fields, the
   other folders of files with a pane of the operations made. Their difference is their data and their commands.
 - FW-4.9 **axMedia is a queue and its controls**, a navigator of one level whose rows are what will play (the
@@ -281,14 +281,13 @@ NVDA pass recorded. A piece that changes what a user does updates the app's spec
 
 3. A level read off the UI thread, with a late answer dropped and "reading" said (FW-4.7, point 1). Not built
    in the type, and open: axProcess, axGIT and axFile moved onto the navigator with their own reads, each
-   started through the type's hooks, so nothing forced a shared one. The assistant's reading, 2026-11-22, not
-   the maintainer's decision: his word is asked, since this is a step of the plan he cleared.
+   started through the type's hooks, so nothing forced a shared one. Asked on 2026-11-23, the maintainer wants
+   the shared one built ("Yes, build the common one"): the step is open, and next.
 4. The second pane as fields, a text, a log, or none (point 2). Built, 2026-11-22 (FW-4.7).
 5. Filter and sort, the line of an empty level, the rows in the palette (points 3, 5, 6). Built, 2026-11-22:
    filter and sort in every navigator (FW-4.10a), the line of an empty level and the line of what is not shown
-   (FW-4.7). Not built, and open for the same reason as step 3: the rows in the command palette, which axFile
-   alone offers, through the window base's hook; whether every navigator should offer its rows there, now that
-   every one has a filter, is asked of the maintainer.
+   (FW-4.7). The rows in the command palette, which axFile alone offered: asked of the maintainer on 2026-11-23,
+   who took them out of axFile too, so the palette holds commands only (bundle AX-10.5). The step is done.
 
 **C. The apps moved, smallest first**
 

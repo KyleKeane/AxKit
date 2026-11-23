@@ -24,4 +24,4 @@ Part of the notes of `src/AxKit.Forms` (the index is `src/AxKit.Forms/CLAUDE.md`
     - the field's `KeyHook` moves through the matches;
     - the 300 ms `_paletteSpeak` timer says the first match;
     - Run is a `StaysOpen` choice that closes the notice itself and posts the entry's action, so that the focus is back where it was (the notice rule) before the command runs.
-  - A window adds entries of its own through `PaletteEntries` (axFile's folder entries).
+  - No window adds entries of its own since 2026-11-23 (the maintainer's word: commands only; axFile's folder entries and the hook for them went).

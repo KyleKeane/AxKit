@@ -451,7 +451,6 @@ Steps and keys: `docs/axKit/workflows/axFile.md` (in Claude's working folder: `w
     - Change the text size
     - Read the user guide
     - Hear the version of axKit
-    - Open a folder from the command palette
     - Run a command from the command palette
     - Open axFile on the last folder
 6. **Undo a file operation from the Actions list**

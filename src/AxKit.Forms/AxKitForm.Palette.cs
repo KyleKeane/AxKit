@@ -25,7 +25,8 @@ public abstract partial class AxKitForm
             return;
         }
 
-        _paletteAll = [.. MenuLines(CommandOrigin.Palette), .. PaletteEntries()];
+        // Commands only (AX-10.5, the maintainer's decision of 2026-11-23): no window adds entries of its own.
+        _paletteAll = [.. MenuLines(CommandOrigin.Palette)];
         _paletteShown = _paletteAll;
         ShowNotice(new Notice("Command palette", string.Empty,
         [

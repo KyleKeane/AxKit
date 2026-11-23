@@ -520,22 +520,16 @@ Starts with: Open axFile with the folder pal.
 1. Choose Version in the Help menu, About.
 2. Press Escape.
 
-### Open a folder from the command palette
-
-1. Press Ctrl+Shift+P (Command palette; Help menu).
-2. Type: oth
-    You hear words such as: other, folder, 1.
-3. Press Enter.
-    You hear: other, No items in this folder.
-4. Press Backspace.
-    You hear: pal, 3 items, other, folder.
-
 ### Run a command from the command palette
 
 1. Press Ctrl+Shift+P (Command palette; Help menu).
-2. Type: refresh
+2. Type: oth
+    You hear: No commands match oth.
+3. Press Escape.
+4. Press Ctrl+Shift+P (Command palette; Help menu).
+5. Type: refresh
     You hear: Refresh, Session, F5, 1 of 1.
-3. Press Enter.
+6. Press Enter.
     You hear: Refreshed.
 
 ### Open axFile on the last folder

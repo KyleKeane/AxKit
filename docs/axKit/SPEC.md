@@ -560,7 +560,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   what to show after, the control the focus falls back to after one (`FocusTarget`), whether the chime follows a
   setting, what gets the font, how the new version starts it again (`RestartArguments`, by default the app's verb and `PathInHand`; `UpdateRestartText`), what
   to note of an update (`UpdateNoted`), its diagnostics lines, the control its announcements are raised on
-  (`AnnounceSource`), its own palette entries (`PaletteEntries`, AX-10.5), what Ctrl+S does (`SaveCommand`;
+  (`AnnounceSource`), what Ctrl+S does (`SaveCommand`;
   "Nothing to save here" by default), what it does with a hand-over (`TakeHandOver`), how it reports a settings file
   it could not read (`SettingsNotRead`; a notice by default, a system line in the console windows), and its own
   keys, as commands (docs/axKit/app-kit.md AK-2; `ProcessWindowKey` for what must come before them). **The focus across a notice is one rule, the base's** (2026-10-23): when the first
@@ -1226,11 +1226,14 @@ name, so that a command is reached without knowing its menu or its key, and its 
   the command acts where the user was; a checked setting run this way says its new state, "Word wrap, not checked",
   since no menu shows it. Enter with nothing matching says "No commands match …" and the palette stays. **Escape**
   closes the palette with the focus back and nothing run.
-- AX-10.5 **A window's own entries.** A window may add entries after the commands through one hook of the window base,
-  each a name and an action. axFile adds the folder's entries, "notes.md, file", "docs, folder", and Enter on one acts
-  as Enter on it in the folder list (docs/axFile/SPEC.md). Other windows add none.
+- AX-10.5 **Commands only.** The palette holds the window's commands and nothing else, in every app (the maintainer's
+  decision of 2026-11-23). Until then a window could add entries of its own after the commands, and axFile added the
+  folder's entries, "notes.md, file", "docs, folder". Asked whether every navigator should offer its rows there, he
+  answered "Remove it from axFile too": a row is found with the navigator's filter (AX-8.17) or by typing its first
+  letters (AX-8.6), and the palette stays the one list of what a window can do. What a window offers by name
+  through the palette it offers as a command, in a menu: the templates of an editor are such commands.
 - AX-10.6 The palette is the window base's (`AxKitForm`, AX-6.5) with the matching in `AxKit.Core` (unit tested); no app
-  writes code for it beyond AX-10.5. Every window's F1 text names Ctrl+Shift+P. axGIT's Push, which held
+  writes code for it. Every window's F1 text names Ctrl+Shift+P. axGIT's Push, which held
   Ctrl+Shift+P, moved to Ctrl+Shift+H (docs/axGIT/SPEC.md AG-5.4).
 
 ### AX-11 Access layers and consent

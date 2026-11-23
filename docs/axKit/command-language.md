@@ -141,8 +141,8 @@ The conditions:
    the window's order whose `When` holds runs; when none does, the key is the focused control's. The menu item always
    runs. Built: `AxKitForm.RunCommandKey`.
 4. **The palette offers what the menus offer at that moment**: every enabled item, the recent lists filled; not the
-   lists that are slow to fill (axFile's Drives, Open with). axFile adds the folder's entries to its palette, which
-   are no commands (`SPEC.md` AX-10.5).
+   lists that are slow to fill (axFile's Drives, Open with). No window adds entries of its own: axFile's folder
+   entries left the palette on 2026-11-23 (`SPEC.md` AX-10.5).
 5. **Only in a test run.** The automation channel answers only a runner that started the window with its secret, on
    its own desktop.
 6. **In the AI tools mode** (`--ai-tools`, `user-workflows.md` WF-9) a `do` step whose command the tools may run
@@ -212,7 +212,7 @@ Each origin, by function and file, down to the code that runs the command.
   `Run(Command)`, then `Command.Run`. For an item made where its menu is filled (`Item`, `Toggle`, `ChoiceItems`,
   `CommandPalette.Marked`): the item's own action, directly.
 - CL-4.3 **The palette.** `AxKitForm.ShowCommandPalette` (`AxKitForm.Palette.cs`) reads `CommandPalette.Commands`
-  (`CommandPalette.cs`; the lines of `CommandPalette.Entries`) and the window's own `PaletteEntries`; `Palette.Find`
+  (`CommandPalette.cs`; the lines of `CommandPalette.Entries`), and nothing else since 2026-11-23; `Palette.Find`
   (`src/AxKit.Core/Palette.cs`) gives the matches; Enter is `RunPaletteEntry`, which closes the notice and posts the
   line's action: the menu item found again if it was made anew, then `PerformClick`. From there, CL-4.2.
 - CL-4.4 **A script's `do`.** `Run.Do` (`src/AxAutomate.Core/Run.cs`) asks the window `commands data`
@@ -439,9 +439,9 @@ correcting the documents to the code, which decided; each line says where. Nothi
    Claude may read (`AxKitForm.CreateMcpMenu`, `AxKitForm.Ai.cs`). Settled 2026-11-16: exception 3 names the submenu
    with its five items and AI help's two.
 3. **`app-kit.md` AK-2.5 said "nothing is added to one reader alone".** The palette holds axFile's folder entries,
-   which no menu, no AI tool and no listing has (`FileForm.PaletteEntries`), as `SPEC.md` AX-10.5 specifies. Settled
+   which no menu, no AI tool and no listing has (a hook of the window base, "palette entries"), as `SPEC.md` AX-10.5 specifies. Settled
    2026-11-16: AK-2.6 lists the palette's own entries among the exceptions that are not for security, and AK-2.5
-   points there.
+   points there. Gone since 2026-11-23: the maintainer took the folder entries out of the palette, and the hook with them.
 4. **`app-kit.md` AK-2.5 named `CommandPalette.Commands` as the one function every reader goes through.** In code it
    is `CommandPalette.Entries`; `Commands` is the palette's lines made from it, which the channel's `menu` and
    `commands` also read. Settled 2026-11-16: AK-2.5 names `Entries` and says what `Commands` is.

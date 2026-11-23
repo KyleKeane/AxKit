@@ -74,7 +74,7 @@ the base's. The rest of this section is for a window of a new kind.
   base; add `Overlay` to the controls first; fill in the hooks (`Shortcuts`, `HideForNotice`, `ShowAfterNotice`,
   `FocusTarget`, `ApplyFont`, `ProcessWindowKey`, and the optional ones `RestartArguments` (the app's verb and `PathInHand` by default), `UpdateRestartText`,
   `NoticeChime`, `OnNoticeOpened`, `OnNoticeClosed`, `UpdateNoted`, `DiagnosticsLines`, `AnnounceSource`,
-  `PaletteEntries`, `SaveCommand`, `TakeHandOver`, `SettingsNotRead`, `Fail`, `CopyDiagnostics`). Use the other
+  `SaveCommand`, `TakeHandOver`, `SettingsNotRead`, `Fail`, `CopyDiagnostics`). Use the other
   shared pieces, never a copy: `ControlArea` for a field or a list in the input's place, `EditKeys` for an edit
   control's page and paragraph keys, `StatusLayout` for two status labels, `Notice` records for every question and
   text of the window's own, `CreateExitItem` for the end of the first menu, `ChooseFolder` for the folder picker.

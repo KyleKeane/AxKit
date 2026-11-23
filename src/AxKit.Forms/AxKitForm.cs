@@ -145,9 +145,6 @@ public abstract partial class AxKitForm : Form
     /// <summary>The window's own lines of Copy diagnostics, after the version line.</summary>
     protected virtual IEnumerable<string> DiagnosticsLines => [];
 
-    /// <summary>The window's own entries of the command palette, after the menus' commands (AX-10.5): axFile's folder entries; none by default.</summary>
-    protected virtual IEnumerable<PaletteEntry> PaletteEntries() => [];
-
     /// <summary>The window's own keys, from its table; true when the key was handled. Called when no notice shows and after the common keys.</summary>
     protected virtual bool ProcessWindowKey(Keys keyData) => false;
 

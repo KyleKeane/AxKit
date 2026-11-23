@@ -51,7 +51,6 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
       - the item window keeps only the marks on the entries still shown as the list is filled, and drops them all for another folder (`LevelIdentity`);
       - `OnMarks` (the Selection submenu's operations, on the marks alone);
       - `SelectedEntries` and `Targets`, what an operation acts on;
-    - `PaletteEntries` (AF-3.12: the shown entries in the bundle's command palette, Enter selecting the entry and calling `OpenEntry`);
     - `OpenEntry` (Enter: a folder here, a file through `OpenWithWindows`, AF-3.2);
     - `OpenInPreview` (Shift+Enter: axPreview on a file, a new axFile window on a folder);
     - `GoUp`, `EntryRefused` and `UpLevel` (Backspace; Right and Left, the item window's Into and Up a level, AF-D12: a folder or drive opened, up one level, the edge earcon on a file or at This PC);

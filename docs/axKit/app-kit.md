@@ -70,8 +70,8 @@ After the kit:
   `AxKitForm.ClickFor`).
   A command of the list keeps its own mark (AK-2.1); an item that is not one takes its kind's: a setting is change, a
   recent file or window is open, Recently closed is open. Nothing is added to one reader alone: a new action is a menu
-  item, and it is in all of them at once. The one thing a single reader has is listed in AK-2.6: the palette's own
-  entries of a window (axFile's folder entries, `SPEC.md` AX-10.5).
+  item, and it is in all of them at once. No reader has entries of its own: the palette held axFile's folder entries
+  until 2026-11-23, when the maintainer took them out ("Remove it from axFile too"; `SPEC.md` AX-10.5).
   One more reader since 2026-11-15 (`user-workflows.md` WF-2.3 to WF-2.5): the automation channel's `commands data`,
   the window's commands as data (`AxKitForm.CommandRows`, `AxKit.Core/CommandListing`). It reads the same entries,
   each with its key as a value in the words a script presses (`BundleKeys.Chord`, `AxKit.Core/KeyChord`), adds the
@@ -97,10 +97,10 @@ After the kit:
      access settings of AX-11 are under exception 3.
   Not security, and kept as few as possible: axFile's Drives and the Open with submenus are filled only when opened,
   since reading them can stall on a network drive or the shell's handlers; the menus themselves and their keys work.
-  And one reader has entries the others have not: the command palette holds a window's own entries after the
-  commands (`AxKitForm.PaletteEntries`, `SPEC.md` AX-10.5), which today are axFile's, the shown folder's files and
-  folders (`FileForm.PaletteEntries`). They are no commands: no menu, no AI tool and no listing has them, and Enter
-  on one does what Enter on it in the folder list does.
+  No reader has entries the others have not: until 2026-11-23 the command palette held a window's own entries after
+  the commands, which were axFile's, the shown folder's files and folders. They were no commands (no menu, no AI
+  tool and no listing had them), and the maintainer took them out: the palette holds commands only, in every app
+  (`SPEC.md` AX-10.5); a row is found with the navigator's filter or by typing its first letters.
   Built 2026-11-13: the palette reads every menu, the recent lists included; `axkit_window_commands` and
   `axkit_window_run` read the same entries (`AxKitForm.ToolEntries`); exception 3 is `CommandPalette.NeverForAiTools`
   on the menus it covers; marks are given where items are made (`CommandPalette.Marked`: a command's through `Add`,
