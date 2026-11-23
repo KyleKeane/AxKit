@@ -44,7 +44,7 @@ public static class HelpText
           Ctrl+O: open another database
           Ctrl+Z: undo the last change. F5: read the database again
           Ctrl+S: nothing to save here; every change is written to the database at once, by KeePassXC's tool
-        """ + BundleHelp.NoticesSection("axPass", "the panes");
+        """ + BundleHelp.FilterAndSortSection() + BundleHelp.NoticesSection("axPass", "the panes");
 
     /// <summary>docs/axPass/user-guide.md, embedded by AxPass.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axPass/user-guide.md");

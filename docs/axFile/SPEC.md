@@ -92,7 +92,7 @@ folder of the file or project in hand, and sends back. It works entirely offline
 ### AF-2 The window
 
 - AF-2.1 From the top: the menu bar; the folder list, named with its count alone, "N items" ("24 items"; "1 item";
-  "Empty" for none; "3 of 24 items, filter chap" under a filter, AF-3.8); the Actions list under it, always (AF-9);
+  "Empty" for none; "24 items, filter chap, 3 shown" under a filter, AF-3.8); the Actions list under it, always (AF-9);
   the status bar. A notice takes the place of both lists while it shows (AX-6.4). Tab, Shift+Tab, Ctrl+Tab,
   Ctrl+Shift+Tab and F6 move between the two lists (AX-8.2), the window's two controls. The window is the
   bundle's navigator (AF-D14): a folder is a level, its entries the rows, and the Actions list the second pane.
@@ -211,10 +211,13 @@ folder of the file or project in hand, and sends back. It works entirely offline
 - AF-3.8 **Sort and filter** (asked 2026-10-21). **Options → Sort by ▸** Name, Date, Size, one checked: folders first
   in every order, then by name (the natural order), by date newest first, or by size largest first, ties by name
   (`FolderListing.Sort`, tested); the entry in hand stays selected; "Sorted by date"; the order is a setting
-  (`sortBy`) and holds for every folder and the next window. **Filter…** (Ctrl+Shift+F; Options → Filter…): the notice
+  (`sortBy`) and holds for every folder and the next window. **Filter…** (Options → Filter…; Ctrl+Shift+F until
+  2026-11-22, when the filter became the navigator's, the same in every app, and by the maintainer's choice
+  without a key: bundle AX-8.17, which is where both are specified now, axFile giving its three orders): the notice
   "Filter" with the field "Name contains" holding the filter in force; Filter lists only the entries whose name
-  contains the text, any case, names the list "3 of 24 items, filter chap" so that the count is read with the list,
-  and says the name and the entry at once, "3 of 24 items, filter chap, Chapter 1.mp3"; an empty field clears it,
+  contains the text, any case, names the list "24 items, filter chap, 3 shown" so that the count is read with the
+  list ("3 of 24 items, filter chap" until then),
+  and says the name and the entry at once, "24 items, filter chap, 3 shown, Chapter 1.mp3"; an empty field clears it,
   "Filter cleared", as does **Escape** in the list while a filter is on and no entry is marked (Escape clears the marks first, AF-3.7, and does nothing when there is neither). A filter that nothing passes shows the one item "No names contain <text>", and a command on
   it says the same. The filter lives in the folder: another folder drops it, a refresh keeps it. What the list shows
   is what the commands see: Select all marks the shown entries, find moves among the shown entries, and a mark on an entry the filter hides is gone (AF-3.7). Find (AF-3.6)
@@ -454,7 +457,7 @@ and the started process finds its open window and hands the paths over with the 
   (Select or deselect this entry Space | Select to here Shift+Space | ─ | Cut Ctrl+X | Copy Ctrl+C | Delete Delete | ─ |
   Move to folder… | Compress to zip | Add to axMedia's queue Ctrl+Shift+Q | Copy paths Ctrl+Shift+C; AF-3.7, the
   operations on the marks alone); in the Actions list, its line (AF-9.3): Go to where it happened Enter | Undo this
-  action Ctrl+Z | Its number and time Ctrl+I. **Options (O):** Sort by ▸ (Name ✓ | Date | Size) | Filter… Ctrl+Shift+F | ─ | Add a program to Open with… | Remove a program from Open with ▸ | ─
+  action Ctrl+Z | Its number and time Ctrl+I. **Options (O):** Filter… | Sort by ▸ (Name ✓ | Date | Size) | ─ | Add a program to Open with… | Remove a program from Open with ▸ | ─
   | Text ▸ (Font… | Larger text Ctrl+Plus | Smaller text Ctrl+Minus | Windows text size) | General ▸ (Check for updates
   at start ✓ | Show hidden files and folders | Show files and folders starting with a period) | Developer ▸ (Open
   settings file). **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Keyboard shortcuts F1 | User
@@ -464,7 +467,7 @@ and the started process finds its open window and hands the paths over with the 
   the folder list and the Actions list, AF-9.1), Ctrl+F, F3, Shift+F3, Ctrl+S ("Nothing to save here"), Ctrl+Plus,
   Ctrl+Minus, Page Up and Page Down (the list's own here), Alt+F4. Window-specific (`AxFileKeys`): Enter,
   Shift+Enter, Backspace, Alt+Up, Left, Right, F5, F2, Delete, Ctrl+N, Ctrl+O, Ctrl+G, Alt+D, Ctrl+D, Ctrl+W, Ctrl+Shift+W, Ctrl+E,
-  Ctrl+I, Ctrl+Shift+N, Ctrl+Shift+T, Ctrl+Shift+C, Ctrl+Shift+F, Escape, Shift+Up, Shift+Down, Shift+Home,
+  Ctrl+I, Ctrl+Shift+N, Ctrl+Shift+T, Ctrl+Shift+C, Escape, Shift+Up, Shift+Down, Shift+Home,
   Shift+End, Space, Shift+Space, Ctrl+A, Ctrl+Shift+A, Ctrl+Shift+Q (AF-5), Shift+F10, the Applications key,
   Alt+Enter, Ctrl+Z (AF-4.14), Ctrl+X, Ctrl+C, Ctrl+V. Enter, Shift+Enter, Backspace, Left, Right, Space, Escape, F2, Delete,
   Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A, Ctrl+Shift+A, Shift+Space, Ctrl+Enter, Ctrl+Shift+Q and the Shift arrows
@@ -474,7 +477,7 @@ and the started process finds its open window and hands the paths over with the 
   (AF-D13, AX-9.11; in the Actions list since 2026-11-22). The keys between the two lists, Right and Left, the
   selection's keys, the two menu keys and Escape are the navigator's own commands (`ItemKeys`, `SelectionKeys`; AF-D14);
   `AxFileKeys` names them for this window. The collision test covers the table and lists the keys other windows use
-  otherwise (Ctrl+N, Ctrl+G, Ctrl+E, Ctrl+C, Ctrl+Shift+C, Ctrl+Shift+F). Ctrl+Enter is the bundle's main action
+  otherwise (Ctrl+N, Ctrl+G, Ctrl+E, Ctrl+C, Ctrl+Shift+C). Ctrl+Enter is the bundle's main action
   (AX-8.10, `BundleKeys.MainAction`), here Play folder in axMedia (AF-5.1) while the folder list has the focus, the edge
   sound elsewhere.
 - AF-6.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axFile/user-guide.md` is embedded (Help → User

@@ -641,6 +641,10 @@ Steps and keys: `docs/axKit/workflows/axMedia.md` (in Claude's working folder: `
     - Select files with Space and with Shift and an arrow
     - Take the selected files out of the queue
     - Select every file, and give the selection up
+9. **Filter and sort axMedia's queue**
+    - Narrow the queue to the files whose name contains a text
+    - Clear the filter
+    - Put the queue in the order of the files' names
 
 ## axPass
 
@@ -885,6 +889,9 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Hear that a field to type in opened
     - Hear that a form opened, and its explanation only on demand
     - Turn the entry sounds off and on
+22. **Filter and sort a list of axTask**
+    - Narrow the lists to those whose name contains a text
+    - Put a list's items in the order of their names
 
 ## axTerminal
 

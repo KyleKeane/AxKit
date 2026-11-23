@@ -3,7 +3,7 @@
 Written by `tools/key-map.ps1` from `docs/axKit/window-commands.json`, `src/AxKit.Forms/BundleKeys.cs` and
 `docs/axKit/key-families.json`; never edit it by hand. Every key of every window and what it does in each app.
 
-The inventory holds 670 commands with a key in 17 apps, on 124 different keys, counting the
+The inventory holds 676 commands with a key in 17 apps, on 124 different keys, counting the
 second keys some commands answer. 48 keys have one meaning wherever they are; 76 have several.
 21 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
 are window keys, each in its window's own table.
@@ -120,13 +120,13 @@ Window key, in axAutomate, axDown, axFile, axGIT, axHelp, axJSON, axMedia, axPas
 
 Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axHelp, axMCP, axMedia, axPass, axProcess, axStart and axTask. 7 meanings.
 
+- axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Clear the filter.
 - axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Deselect all.
 - axAutomate, axMCP, axPass and axTask: To the navigator.
 - axClip, axHelp and axStart: Hide.
 - axFile and axGIT: To the list.
 - axTask: Back from the search.
 - axCalc: Clear the field.
-- axFile: Clear the filter.
 
 ### Ctrl+Q
 
@@ -382,15 +382,6 @@ Window key, in axDown, axJSON, axPass, axPreview and axTerminal. 4 meanings.
 - axTerminal: Clear transcript.
 - axPass: Lock.
 
-### Ctrl+Shift+F
-
-Window key, in axFile, axGIT, axJSON and axTask. 4 meanings.
-
-- axGIT: Fetch.
-- axFile: Filter.
-- axTask: Find in every list.
-- axJSON: Format.
-
 ### Alt+1
 
 Window key, in axClaude, axGIT, axProcess and axTerminal. 4 meanings.
@@ -538,6 +529,14 @@ Window key, in axDown, axPreview and axTask. 3 meanings.
 - axDown and axPreview: Heading level 3.
 - axTask: Action key Shift+3.
 - axTask: Previous heading level 3.
+
+### Ctrl+Shift+F
+
+Window key, in axGIT, axJSON and axTask. 3 meanings.
+
+- axGIT: Fetch.
+- axTask: Find in every list.
+- axJSON: Format.
 
 ### Ctrl+D
 
@@ -842,13 +841,12 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 
 ### Ctrl+Shift+letter: the reverse or the wider form of the same letter with Ctrl
 
-22 keys of the inventory. 18 misfits.
+22 keys of the inventory. 17 misfits.
 
 - Ctrl+Shift+C, axTerminal: Interrupt. Its kind: sends Ctrl+C to the program.
 - Ctrl+Shift+C, axClaude: Ctrl+C. Its kind: sends Ctrl+C to the program.
 - Ctrl+Shift+D, axTask: Hide done tasks. Its kind: toggle or play.
 - Ctrl+Shift+F, axJSON: Format. Its kind: act on what is selected.
-- Ctrl+Shift+F, axFile: Filter. Its kind: narrows the list, where Ctrl+F finds in it.
 - Ctrl+Shift+F, axGIT: Fetch. Its kind: acts on the repository.
 - Ctrl+Shift+H, axGIT: Push. Its kind: acts on the repository.
 - Ctrl+Shift+K, axClaude and axTerminal: Bookmark this line. Its kind: act on what is selected.

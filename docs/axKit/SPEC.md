@@ -975,6 +975,31 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     out, and pause moved from Space to Ctrl+Enter there (AM-D7).
   - **Space no longer marks a task done** in axTask: that is Ctrl+Enter, the bundle's main action key, there
     (TK-4.4).
+- AX-8.17 **Filter and sort in every navigator's list** (the maintainer, 2026-11-22: "i want any list to be able
+  to be filtered or sorted"; from axFile, AF-3.8, where both were until then; docs/axKit/framework.md FW-4.10a).
+  In every window on the navigator (axTask, axPass, axMCP, axAutomate, axMedia, axProcess, axGIT, axFile) the
+  Options menu begins with **Filter…** and **Sort by ▸**. The item window puts them there itself, so that no
+  app adds them and none can be without them. Neither has a key (his choice of the same day, when the one key
+  axFile had, Ctrl+Shift+F, was Find everywhere in axTask and Fetch in axGIT); both are in the command palette.
+  - **Filter…** opens the notice "Filter" with the field "Name contains". The level then shows only the rows
+    whose name contains the text, in any case, and the list's name says so after the level's own: "Home, 4
+    items, filter tap, 1 shown" ("3 of 24 items, filter chap" in axFile until then). What is said is the
+    list's new name and the row landed on. A heading stays while a row under it, up to the next heading,
+    passes; a heading's own name is not looked at. A level whose rows all fail the filter shows the one line
+    "No names contain <text>". An empty text clears the filter, "Filter cleared", and so does **Escape** in
+    the list once nothing is selected (Escape gives up a selection first, AX-8.16). The filter lives in one
+    level: going into a list, up a level or to another folder drops it; the same level read again keeps it.
+    The selection is on shown rows only, so a row the filter hides loses its mark.
+  - **Sort by ▸** holds the orders of the list, one checked; choosing one says "Sorted by <order>" and keeps
+    the row you are on. By default they are **The list's own order**, as the app gives its rows, and **Name**:
+    Windows' natural order (2 before 10), lists before the other rows as folders come before files, a heading
+    left in its place and the rows under it ordered among themselves. An app with orders of its own names them
+    and keeps the chosen one in its settings: axFile Name, Date and Size (AF-3.8), axProcess Memory, Processor
+    and Name, the order of its processes (PR-3.2). The default choice is kept for the window, not saved. A list
+    whose order is what it does keeps the sort true to it: in axMedia Name reorders the queue itself, so that the files play in the order shown, and The order added puts it back (AM-3.6). One order alone would leave Sort by out.
+  - In code: the rules are `AxKit.Core/ListArrange` (tested), the window's side
+    `AxKit.Forms/ItemForm.Arrange.cs`; an app gives its level's rows (`ReadLevel`) and the item window decides
+    which are shown and in which order, so a row's place in the list is never its place in the app's own data.
 
 ### AX-9 The bundle's menus: Options, Window, axKit, Help
 

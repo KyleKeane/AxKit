@@ -205,6 +205,7 @@ selected ones (TK-4.4, TK-4.7).
   - Not built yet, each with its item in the priorities list: Set fields of the selected items in one form (a
     list's set action, with or without a form of its own, does it meanwhile), and selecting lists at the top
     level.
+- **TK-4.8 Filter and sort** (2026-11-22; the navigator's, bundle AX-8.17). Options → Filter… shows only the rows of the level whose name contains a text (lists at the top level, items in a list), a heading staying while a row under it passes; Options → Sort by ▸ Name puts the rows in the order of their names, under each heading among themselves, and The list's own order puts them back. Neither changes a file: the order of a list on disk and its smart lists are untouched.
 
 ## 5. All tasks and the smart lists
 

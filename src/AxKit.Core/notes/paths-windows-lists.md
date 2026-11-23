@@ -74,6 +74,7 @@
   list holds only what changed files since). The words of a selection ("Selected, 3 selected", "None
   selected") are made here and nowhere else. `Items` is "1 item", "3 items". The window's side is
   `AxKit.Forms/ListSelection`.
+- `ListArrange`, with `ArrangeRow` (docs/axKit/framework.md FW-4.10a, 2026-11-22; the filter from AxFile.Core's `FolderListing`, for every navigator): the filter and the sort of a navigator's list, as positions in the rows given (an `ArrangeRow`: its name, whether it is a list one goes into, whether it is a heading). `ByName` (Windows' natural order, lists first, a heading left in its place and the rows under it ordered among themselves), `Filter` (the names that contain a text in any case; a heading stays while a row under it passes, its own name not looked at), `Name` (the list's name under a filter, "Home, 4 items, filter tap, 1 shown") and `NoMatch` ("No names contain chap"). The window's side is `AxKit.Forms/ItemForm.Arrange.cs`.
 - `Accents` (2026-10-23): the accented letters of Latin-1 and Latin Extended-A taken apart (`Split`), put together
   (`Compose`) and stripped (`Strip`) from tables of their own, because the executable runs with invariant
   globalization, where `string.Normalize` returns its input; `TextMatch.Fold` and axFile's lookalike names use it. The

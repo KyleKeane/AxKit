@@ -96,7 +96,7 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
 - PR-3.1 Each process is "<name>, <memory>, <n>% CPU, process <id>": the name without `.exe`, the working set
   ("350 MB", "350.4 MB", "1.2 GB", "900 KB": the bundle's `AxKit.Core/FileSize`, one decimal from megabytes up, since 2026-10-25, the format every app says sizes in; whole megabytes before), the processor use over one second, rounded to a whole percent of the whole computer
   ("0% CPU" for an idle one; left out for a process Windows does not let the user measure), and the process ID.
-- PR-3.2 Sort by ▸ Memory (the default), Processor, Name (Options; the choice is kept, PR-7.1). Memory and processor
+- PR-3.2 Sort by ▸ Memory (the default), Processor, Name (Options; the choice is kept, PR-7.1; the navigator's Sort by since 2026-11-22, bundle AX-8.17, with these three orders, which are of the processes: services and startup programs stay by name whatever is chosen; Options → Filter… is the navigator's too, in all three lists). Memory and processor
   sort the largest first; ties go by name.
 - PR-3.3 Delete, or Context → End process, asks "End <name> (process <id>)? Anything unsaved in it is lost." with End
   process and Cancel; End runs `Process.Kill` on a background task, says "Ended <name>" and reads the list again. End
@@ -215,7 +215,7 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
   Ctrl+C | ─ | Select or deselect Space | Select to here Shift+Space; on a list of This computer, Open Enter | Copy
   line Ctrl+C; "Nothing selected" on an empty list. So a process command is never at hand among the services and the
   reverse (the user's ask, 2026-10-24; until 2026-11-11 three menus of which only the view's was enabled).
-  **Options (O):** Sort processes by ▸ (Memory ✓ | Processor | Name) | Text ▸ | General ▸ | Developer ▸. **Window (W)**,
+  **Options (O):** Filter… | Sort by ▸ (Memory ✓ | Processor | Name; the navigator's menu, bundle AX-8.17, with the orders of the processes; "Sort processes by" until 2026-11-22) | Text ▸ | General ▸ | Developer ▸. **Window (W)**,
   **axKit (K)** (AX-9.1). **Help (H):** Keyboard shortcuts F1 | User guide | ─ | Windows resources ▸ (Task Manager |
   Services). Every item has a mnemonic (AX-7.4). Shift+F10, the Applications key and a right click in the list open
   Context, as Alt and C open it, so that NVDA reads its first item (the window base's `OpenBarMenu`, axFile's AF-D13;

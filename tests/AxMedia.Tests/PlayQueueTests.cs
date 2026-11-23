@@ -89,4 +89,33 @@ public class PlayQueueTests
         Assert.Equal(-1, queue.Playing);
         Assert.Equal([PlayQueue.EmptyText], queue.Lines(active: true));
     }
+
+    [Fact]
+    public void Sort_by_name_reorders_the_queue_itself_and_the_order_added_puts_it_back()
+    {
+        // AM-3.6: the files then play in the order shown; the one playing stays the one playing.
+        var queue = new PlayQueue();
+        queue.Set([@"C:\m\b 10.mp3", @"C:\m\b 2.mp3", @"C:\m\a.mp3"], 0);
+        queue.OrderBy(name: true);
+        Assert.True(queue.ByName);
+        Assert.Equal([@"C:\m\a.mp3", @"C:\m\b 2.mp3", @"C:\m\b 10.mp3"], queue.Paths);
+        Assert.Equal(@"C:\m\b 10.mp3", queue.PlayingPath);
+        Assert.Equal(2, queue.Playing);
+        Assert.False(queue.MoveOn());
+
+        // A file added while the queue is kept by name takes its place by name.
+        Assert.Equal(1, queue.Add([@"C:\m\b 5.mp3"]));
+        Assert.Equal([@"C:\m\a.mp3", @"C:\m\b 2.mp3", @"C:\m\b 5.mp3", @"C:\m\b 10.mp3"], queue.Paths);
+        Assert.Equal(@"C:\m\b 10.mp3", queue.PlayingPath);
+
+        // A removed file takes its number with it.
+        Assert.Equal("b 2.mp3", queue.Remove(1));
+
+        queue.OrderBy(name: false);
+        Assert.False(queue.ByName);
+        Assert.Equal([@"C:\m\b 10.mp3", @"C:\m\a.mp3", @"C:\m\b 5.mp3"], queue.Paths);
+        Assert.Equal(@"C:\m\b 10.mp3", queue.PlayingPath);
+        Assert.True(queue.MoveOn());
+        Assert.Equal(@"C:\m\a.mp3", queue.PlayingPath);
+    }
 }

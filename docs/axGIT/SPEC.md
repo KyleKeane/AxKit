@@ -139,6 +139,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
   list, Ctrl+F, F3 and Shift+F3 find in the list's lines instead ("Name contains", the bundle's list find, as every list
   window; since 2026-10-25, the user's choice; they always searched the details before). Nothing moves the
   caret but the user, except that Enter on a file or a commit puts the focus on the first line of what it loaded.
+- AG-2.5 **Filter and sort** (2026-11-22; the navigator's, bundle AX-8.17): Options → Filter… shows only the rows of the level whose name contains a text (a changed file's path, a commit's subject, a branch's name); Options → Sort by ▸ puts them by name or back in git's own order. Both act on what the list shows; no git command is run for them.
 
 ### AG-3 Changes
 

@@ -158,6 +158,7 @@ Escape goes back one step or closes what is open. It never loses work without as
 
 The keys:
 
+- Escape, axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Clear the filter.
 - Escape, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Deselect all.
 - Escape, axAutomate, axMCP, axPass and axTask: To the navigator.
 - Escape, axClip, axHelp and axStart: Hide.
@@ -168,8 +169,8 @@ The keys:
 
 Exceptions today, which do another kind of thing:
 
-- Escape, axCalc: Clear the field.
 - Escape, axFile: Clear the filter.
+- Escape, axCalc: Clear the field.
 
 ### Delete and Ctrl+Shift+Delete: remove
 
@@ -511,7 +512,6 @@ Exceptions today, which do another kind of thing:
 - Ctrl+Shift+C, axTerminal: Interrupt.
 - Ctrl+Shift+D, axTask: Hide done tasks.
 - Ctrl+Shift+F, axGIT: Fetch.
-- Ctrl+Shift+F, axFile: Filter.
 - Ctrl+Shift+F, axJSON: Format.
 - Ctrl+Shift+H, axGIT: Push.
 - Ctrl+Shift+K, axClaude and axTerminal: Bookmark this line.

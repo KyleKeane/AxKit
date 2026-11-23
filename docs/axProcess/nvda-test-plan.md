@@ -20,7 +20,7 @@ Run with NVDA before a release, after `scripts to run-individual-apps\run-axProc
 
 ## 2. Processes (PR-3)
 
-1. Options, Sort processes by, Name: "Sorted by name"; the list is in the alphabet's order on the item it had. Sort by Processor: "Sorted by processor". Back to Memory.
+1. Options, Sort by, Name: "Sorted by name"; the list is in the alphabet's order on the item it had. Sort by Processor: "Sorted by processor". Back to Memory.
 2. Ctrl+F, type `notepad`, Enter: the Notepad item selected and read.
 3. Enter: a notice titled "Notepad" with "Process ID …", "Memory …", "Program C:\Windows\…\notepad.exe", "Started …", "Threads …"; the buttons End process, Show program in axFile, Close; Escape closes it.
 4. Ctrl+E on Notepad: axFile opens on its folder with notepad.exe selected.

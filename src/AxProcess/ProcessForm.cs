@@ -30,7 +30,6 @@ public sealed class ProcessForm : ItemForm
 
     private readonly ProcessSettings _settings;
     private readonly MenuStrip _menu = new();
-    private readonly ChoiceItems<ProcessSort> _sortItems;
     private readonly ToolStripMenuItem _listMenu = new("&List");
     private readonly ToolStripMenuItem _processMenu = new("&Process");
     private readonly ToolStripMenuItem _serviceMenu = new("S&ervice");
@@ -124,12 +123,9 @@ public sealed class ProcessForm : ItemForm
             AddKey(command with { Key = also });
         }
 
-        var sort = new ToolStripMenuItem("Sort processes &by");
-        _sortItems = new ChoiceItems<ProcessSort>(sort, [(ProcessSort.Memory, "&Memory"), (ProcessSort.Processor, "&Processor"), (ProcessSort.Name, "&Name")], settings.SortBy, SetSort);
-
-        // Options, the app's own first (AX-9.1): Sort processes by, the View menu's until 2026-11-11.
+        // Options begins with Filter and Sort by, the item window's as in every navigator (PR-3.2: the orders of the
+        // processes are this app's; "Sort processes by" was a menu item of its own until 2026-11-22).
         var options = new ToolStripMenuItem();
-        options.DropDownItems.Add(sort);
         options.DropDownItems.Add(CreateTextMenu());
         options.DropDownItems.Add(CreateGeneralMenu());
         options.DropDownItems.Add(CreateDeveloperMenu());
@@ -474,22 +470,33 @@ public sealed class ProcessForm : ItemForm
 
     private StartupEntry? CurrentStartup() => SelectedRow()?.Tag as StartupEntry;
 
-    /// <summary>Options → Sort processes by (PR-3.2): the rows put in the new order without a new read.</summary>
-    private void SetSort(ProcessSort sort)
+    // ---- Options → Sort by (PR-3.2): the item window's menu and words, the processes' three orders ----
+    // The orders are of the processes: by memory, by processor time, by name. Services and startup programs are
+    // listed by name whatever is chosen. The choice is kept in the settings, and the rows are put in the new
+    // order without a new read.
+
+    private static readonly ProcessSort[] Orders = [ProcessSort.Memory, ProcessSort.Processor, ProcessSort.Name];
+
+    protected override IReadOnlyList<string> SortNames => [.. Orders.Select(ProcessTable.SortName)];
+
+    protected override int SortChoice
     {
-        _settings.SortBy = sort;
-        _sortItems.Check(sort);
-        SaveSettings();
+        get => Array.IndexOf(Orders, _settings.SortBy);
+        set
+        {
+            _settings.SortBy = Orders[value];
+            SaveSettings();
+        }
+    }
+
+    protected override bool OrdersRowsItself => true;
+
+    protected override void SortChanged()
+    {
         if (_loaded[(int)View.Processes])
         {
-            _processes = ProcessTable.Sorted(_processes, sort);
-            if (_level == View.Processes)
-            {
-                Fill(SelectedKey());
-            }
+            _processes = ProcessTable.Sorted(_processes, _settings.SortBy);
         }
-
-        Announce("Sorted by " + ProcessTable.SortName(sort), true);
     }
 
     // ---- the rows (PR-3, PR-4, PR-5) ----

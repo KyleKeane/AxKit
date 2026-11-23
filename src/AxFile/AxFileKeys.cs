@@ -31,9 +31,6 @@ public static class AxFileKeys
     /// <summary>The folder shown added to Favorites, or removed from them (AF-3.9); the browsers' bookmark key.</summary>
     public const Keys Favorite = Keys.Control | Keys.D;
 
-    /// <summary>The Filter notice: the list narrowed to the names that contain a text (AF-3.8).</summary>
-    public const Keys Filter = Keys.Control | Keys.Shift | Keys.F;
-
     /// <summary>In the folder list: the selection cleared while entries are selected, otherwise the filter; nothing while there is neither. In the Actions list: back to the folder list.</summary>
     public const Keys Clear = SelectionKeys.Clear;
     public const Keys OpenFolder = Keys.Control | Keys.O;
@@ -123,7 +120,6 @@ public static class AxFileKeys
         ("New window", NewWindow),
         ("Refresh", Refresh),
         ("Add to or remove from Favorites", Favorite),
-        ("Filter", Filter),
         ("Clear the selection, or else the filter (in the folder list); back to the folder list (in the Actions list)", Clear),
         ("Open folder", OpenFolder),
         ("Go to folder", GoToFolder),

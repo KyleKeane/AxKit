@@ -87,6 +87,10 @@ with their number, then the newest ten. They stay in the window and are gone whe
 report can carry, holds only how long each line was, since a server may write a path or a token there. A server that stops by itself is announced with its exit code; Enter on its level starts it
 again. A call that gets no answer in 60 seconds is given up and said.
 
+## Filter and sort
+
+Options, Filter (Alt+O, then F) shows only what has a text in its name: type part of a name, Enter, and the list holds only those rows and says so in its name, "Home, 4 items, filter tap, 1 shown". An empty text clears the filter, and so does Escape in the list once nothing is selected; going into another list drops it. Options, Sort by puts the list in the order of its names, or back in its own order. Both are the same in every list of axKit's navigators, and neither changes anything that is stored.
+
 ## About
 
 axMCP is part of axKit by Dr. Kyle Keane, www.kylekeane.com. Help, About has the licence and the version.

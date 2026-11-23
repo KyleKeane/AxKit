@@ -465,6 +465,8 @@ public abstract partial class ItemForm : AxKitForm
     protected void PlaceWith(MenuStrip menu, params Control[] between)
     {
         menu.MenuActivate += (_, _) => UpdateMenus();
+        // Filter and Sort by begin the Options menu of every navigator (ItemForm.Arrange.cs).
+        AddArrangeItems(menu);
         if (Pane == SecondPane.Text)
         {
             // The second pane as a text, under the navigator: a diff's lines are long, and a list of files is not.
@@ -600,6 +602,9 @@ public abstract partial class ItemForm : AxKitForm
             // Escape gives up a selection before anything else in the navigator; with none, the key is left alone.
             Shared(new Command("Deselect all", SelectionKeys.Clear, SelectNoRows) { When = () => InNavigator() && Selection.Count > 0, Mark = CommandMark.Change });
         }
+
+        // Escape then gives up a filter (ItemForm.Arrange.cs).
+        AddArrangeKeys(Shared);
 
         Shared(new Command("New item", ItemKeys.New, NewItem) { When = InNavigator, Mark = CommandMark.Change });
         Shared(new Command("Rename", ItemKeys.Rename, RenameSelected) { When = InNavigator, Mark = CommandMark.Change });
@@ -828,7 +833,7 @@ public abstract partial class ItemForm : AxKitForm
         switch (SelectedRow())
         {
             case null:
-                Announce(_rows.Count == 0 ? EmptyLine ?? "Nothing here: Ctrl+N adds an item" : "Nothing selected", true);
+                Announce(_rows.Count == 0 ? EmptyLineNow ?? "Nothing here: Ctrl+N adds an item" : "Nothing selected", true);
                 return;
             case { IsSection: true }:
                 OnSectionHeader();
@@ -946,10 +951,12 @@ public abstract partial class ItemForm : AxKitForm
     /// </summary>
     protected void Fill(string? select)
     {
-        var (rows, name, title, place) = ReadLevel();
-        _rows = [.. rows];
-        // The place first: it names the level for the marks where the app has no name of its own for it.
+        var (read, levelName, title, place) = ReadLevel();
+        // The place first: it names the level for the marks and the filter where the app has no name of its own for it.
         _placeLabel.Text = place;
+        // What of the level is shown, and in which order (ItemForm.Arrange.cs): the chosen order, then the filter.
+        _rows = Arranged(read);
+        var name = ArrangedName(levelName, _rows);
         KeepSelection();
         // S-42: titles from a shared folder or database with their hidden characters made visible, by Fill.
         // A level without rows shows the app's one line for it, when it has one (EmptyLine): no row, nothing selected.
@@ -963,7 +970,7 @@ public abstract partial class ItemForm : AxKitForm
     /// <summary>The navigator's lines for the level: its rows (or the one line of an empty level), then the line after the rows, each as its item shows it.</summary>
     private List<string> LevelLines()
     {
-        List<string> lines = _rows.Count == 0 && EmptyLine is { } empty ? [empty] : [.. _rows.Select(RowText)];
+        List<string> lines = _rows.Count == 0 && EmptyLineNow is { } empty ? [empty] : [.. _rows.Select(RowText)];
         if (AfterRowsLine is { } after)
         {
             lines.Add(after);
@@ -992,7 +999,10 @@ public abstract partial class ItemForm : AxKitForm
     /// </summary>
     protected void Refill()
     {
-        var (rows, name, title, place) = ReadLevel();
+        var (read, levelName, title, place) = ReadLevel();
+        // The rows as the list shows them, in the order and under the filter there are (ItemForm.Arrange.cs).
+        var rows = Arranged(read);
+        var name = ArrangedName(levelName, rows);
         if (!rows.Select(row => row.Key).SequenceEqual(_rows.Select(row => row.Key), StringComparer.OrdinalIgnoreCase))
         {
             Fill(SelectedKey());
@@ -1004,7 +1014,7 @@ public abstract partial class ItemForm : AxKitForm
             return;
         }
 
-        if (rows.Count == 0 && EmptyLine is not null)
+        if (rows.Count == 0 && EmptyLineNow is not null)
         {
             // Still without rows, under another name: the one line of the empty level stays (Fill makes it).
             Fill(select: null);

@@ -150,6 +150,7 @@ keys in place of its words on a line:
   palette"), and once at the end: "axDown: the command palette passed, 42 steps" or "failed at step 7". The report,
   every step with what was said and focused, opens with Ctrl+R as a notice text with the bundle's reading keys.
 - AU-4.6 The window's menus follow AX-9.1 (Session, Actions, Navigation, Context, Options, Window, axKit, Help; 2026-11-11): Actions holds Run and Stop the run, Context Open, Read in full and the workflow's file as text for what the focus is on.
+- AU-4.7 **Filter and sort** (2026-11-22; the navigator's, bundle AX-8.17): Options → Filter… shows only the folders, workflows or steps of the level whose name contains a text; Options → Sort by ▸ puts them by name or back in their own order. F5 runs the selected workflows, or with none selected every workflow of the folder, filter or not (AU-4.4a).
 
 ## 5. The engine and the move of the tests
 

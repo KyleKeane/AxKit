@@ -212,7 +212,7 @@ public sealed partial class FileForm
             return;
         }
 
-        if (!_shown.Any(entry => !entry.IsFolder && MediaFiles.IsMedia(entry.Path)))
+        if (!ShownEntries().Any(entry => !entry.IsFolder && MediaFiles.IsMedia(entry.Path)))
         {
             Announce("No sound or video files here", true);
             return;

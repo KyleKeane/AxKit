@@ -55,7 +55,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxMedia` (the window), `src/AxMedia.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxMedia.Tests`.
 - Documents: `docs/axMedia/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axMedia/`, 8 scripts (their workflows are in `docs/axKit/workflows/axMedia.md`).
+- Automated checks: `tests/scripts/axMedia/`, 9 scripts (their workflows are in `docs/axKit/workflows/axMedia.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axMedia.ps1`, or `run.ps1 -App media`.
 
 ## Organise
@@ -67,7 +67,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxTask` (the window), `src/AxTask.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxTask.Tests`.
 - Documents: `docs/axTask/` (`forms-framework.md`, `nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axTask/`, 21 scripts (their workflows are in `docs/axKit/workflows/axTask.md`).
+- Automated checks: `tests/scripts/axTask/`, 22 scripts (their workflows are in `docs/axKit/workflows/axTask.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axTask.ps1`, or `run.ps1 -App task`.
 
 ## Utilities

@@ -145,7 +145,6 @@
         { "chord": "ctrl+shift+c", "apps": ["axClaude"], "does": "Ctrl+C", "kind": "sends Ctrl+C to the program" },
         { "chord": "ctrl+shift+d", "apps": ["axTask"], "does": "Hide done tasks", "kind": "toggle or play" },
         { "chord": "ctrl+shift+f", "apps": ["axJSON"], "does": "Format", "kind": "act on what is selected" },
-        { "chord": "ctrl+shift+f", "apps": ["axFile"], "does": "Filter", "kind": "narrows the list, where Ctrl+F finds in it" },
         { "chord": "ctrl+shift+f", "apps": ["axGIT"], "does": "Fetch", "kind": "acts on the repository" },
         { "chord": "ctrl+shift+h", "apps": ["axGIT"], "does": "Push", "kind": "acts on the repository" },
         { "chord": "ctrl+shift+k", "apps": ["axClaude", "axTerminal"], "does": "Bookmark this line", "kind": "act on what is selected" },

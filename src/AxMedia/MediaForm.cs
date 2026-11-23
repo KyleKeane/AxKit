@@ -176,7 +176,9 @@ public sealed partial class MediaForm : ItemForm
 
     /// <summary>
     /// The queue's files as rows. A file queued twice is two rows, so each has a key of its own, its path and which
-    /// of its occurrences it is; the files still there keep their marks (AM-3.5).
+    /// of its occurrences it is; the files still there keep their marks (AM-3.5). A row carries its file's place
+    /// in the queue (<see cref="QueueIndex"/>): under the item window's filter the list shows fewer rows than the
+    /// queue has, and a row's place in the list is not its file's place in the queue.
     /// </summary>
     private List<ItemRow> QueueRows()
     {
@@ -193,11 +195,26 @@ public sealed partial class MediaForm : ItemForm
             var path = _queue.Paths[i];
             seen.TryGetValue(path, out var before);
             seen[path] = before + 1;
-            rows.Add(new ItemRow(IsList: false, $"{path}\n{before}", Path.GetFileName(path), lines[i]));
+            rows.Add(new ItemRow(IsList: false, $"{path}\n{before}", Path.GetFileName(path), lines[i], Tag: i));
         }
 
         return rows;
     }
+
+    /// <summary>The place in the queue of the file whose row you are on; -1 on the line of an empty queue or of a filter nothing passes.</summary>
+    private int QueueIndex() => SelectedRow()?.Tag is int index ? index : -1;
+
+    // ---- Options → Sort by (AM-3.6): the item window's menu and words, and a sort that reorders the queue ----
+    // The queue is the order the files play in, so a list shown in another order than it plays in would mislead
+    // (the maintainer's choice, 2026-11-22: "Sort that reorders the queue"). Name puts the queue itself in the
+    // order of the names, and the files then play in that order; The order added puts it back. The queue does the
+    // ordering (PlayQueue.OrderBy), so the rows come in the chosen order. Kept for the window, not saved.
+
+    protected override IReadOnlyList<string> SortNames => ["the order added", "name"];
+
+    protected override bool OrdersRowsItself => true;
+
+    protected override void SortChanged() => _queue.OrderBy(SortChoice == 1);
 
     /// <summary>Enter in the queue, the navigator's Open: the file plays.</summary>
     protected override void OpenItem(ItemRow row) => PlaySelected();
@@ -361,15 +378,22 @@ public sealed partial class MediaForm : ItemForm
     private void FillList(int? select = null)
     {
         var rows = QueueRows();
-        if (select is null && rows.Select(row => row.Key).SequenceEqual(Rows.Select(row => row.Key), StringComparer.OrdinalIgnoreCase))
+        var keys = rows.Select(row => row.Key).ToList();
+        var same = keys.SequenceEqual(_filledKeys, StringComparer.OrdinalIgnoreCase);
+        // The place in the queue of the row you are on, read before the rows are made again.
+        var at = Math.Clamp(select ?? QueueIndex(), 0, Math.Max(rows.Count - 1, 0));
+        _filledKeys = keys;
+        if (select is null && same)
         {
             Refill();
             return;
         }
 
-        var at = Math.Clamp(select ?? Navigator.SelectedIndex, 0, Math.Max(rows.Count - 1, 0));
         Fill(rows.Count == 0 ? null : rows[at].Key);
     }
+
+    /// <summary>The queue's files, by their rows' keys, as the list was last made from them: the same files again change their lines in place.</summary>
+    private List<string> _filledKeys = [];
 
     private bool PlayerActive => _player is { State: PlayerState.Playing or PlayerState.Paused or PlayerState.Opening };
 
@@ -444,7 +468,7 @@ public sealed partial class MediaForm : ItemForm
     /// <summary>The file in hand (AM-1.4): the one playing or paused, else the one under the selection; null with an empty queue.</summary>
     private string? FileInHand =>
         PlayerActive && _queue.PlayingPath is { } playing ? playing
-        : _queue.IsFile(Navigator.SelectedIndex) ? _queue.Paths[Navigator.SelectedIndex]
+        : _queue.IsFile(QueueIndex()) ? _queue.Paths[QueueIndex()]
         : null;
 
     /// <summary>The file in hand for a command; null, and said, when the queue is empty.</summary>
@@ -471,7 +495,7 @@ public sealed partial class MediaForm : ItemForm
     /// <summary>Enter in the list, Queue → Play: the file under the selection plays, "Playing <name>"; the empty line is read again.</summary>
     private void PlaySelected()
     {
-        if (!_queue.Select(Navigator.SelectedIndex))
+        if (!_queue.Select(QueueIndex()))
         {
             Announce(PlayQueue.EmptyText, true);
             return;
@@ -488,7 +512,7 @@ public sealed partial class MediaForm : ItemForm
             // AM-3.5: with files selected, Delete takes them all out, whatever row you are on: "Removed 3 files".
             // From the last to the first, so that each index still names its file; the one playing goes on to the
             // next file left, or stops at the end.
-            var rows = Enumerable.Range(0, Rows.Count).Where(row => Selection.Contains(Rows[row].Key)).OrderByDescending(row => row).ToList();
+            var rows = SelectedRows().Select(row => (int)row.Tag!).OrderByDescending(row => row).ToList();
             var playingGoes = PlayerActive && rows.Contains(_queue.Playing);
             foreach (var row in rows)
             {
@@ -513,7 +537,7 @@ public sealed partial class MediaForm : ItemForm
             return;
         }
 
-        var index = Navigator.SelectedIndex;
+        var index = QueueIndex();
         var wasPlaying = _queue.IsFile(index) && index == _queue.Playing && PlayerActive;
         if (_queue.Remove(index) is not { } removed)
         {
@@ -549,7 +573,7 @@ public sealed partial class MediaForm : ItemForm
     /// <summary>Ctrl+I, Queue → Information: the file's name and place, "03 Chapter 3.mp3, 3 of 12", with the position while it is the one playing; the empty line is read again.</summary>
     private void SayInformation()
     {
-        var index = Navigator.SelectedIndex;
+        var index = QueueIndex();
         if (!_queue.IsFile(index))
         {
             Announce(PlayQueue.EmptyText, true);

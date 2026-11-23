@@ -29,8 +29,7 @@ public static class HelpText
           Ctrl+E: show the program file in axFile
           Ctrl+C: copy the line
           Ctrl+S: nothing to save here; axProcess says so
-          Options, Sort processes by: memory, processor or name
-        """ + BundleHelp.NoticesSection("axProcess", "the list");
+        """ + BundleHelp.FilterAndSortSection("Memory, Processor or Name, the order of the processes") + BundleHelp.NoticesSection("axProcess", "the list");
 
     /// <summary>docs/axProcess/user-guide.md, embedded by AxProcess.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axProcess/user-guide.md");

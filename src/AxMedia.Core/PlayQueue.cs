@@ -13,6 +13,18 @@ public sealed class PlayQueue
 
     private readonly List<string> _paths = [];
 
+    /// <summary>Each file's number in the order of adding, beside <see cref="_paths"/>: what "the order added" puts the queue back in (AM-3.6).</summary>
+    private readonly List<int> _added = [];
+
+    private int _nextAdded;
+
+    /// <summary>
+    /// Whether the queue is kept in the order of the files' names rather than in the order they were added
+    /// (AM-3.6; the maintainer, 2026-11-22: a sort "that reorders the queue", so that the files play in the order
+    /// shown). While it is, files added later take their place by name.
+    /// </summary>
+    public bool ByName { get; private set; }
+
     public IReadOnlyList<string> Paths => _paths;
 
     public int Count => _paths.Count;
@@ -28,15 +40,18 @@ public sealed class PlayQueue
     public void Set(IReadOnlyList<string> paths, int start)
     {
         _paths.Clear();
-        _paths.AddRange(paths);
+        _added.Clear();
+        Append(paths);
         Playing = start >= 0 && start < _paths.Count ? start : -1;
+        Order();
     }
 
-    /// <summary>Add: the paths appended; how many were.</summary>
+    /// <summary>Add: the paths appended, or put in their places by name while the queue is kept by name; how many were.</summary>
     public int Add(IEnumerable<string> paths)
     {
         var before = _paths.Count;
-        _paths.AddRange(paths);
+        Append(paths);
+        Order();
         return _paths.Count - before;
     }
 
@@ -44,7 +59,45 @@ public sealed class PlayQueue
     public void Clear()
     {
         _paths.Clear();
+        _added.Clear();
         Playing = -1;
+    }
+
+    /// <summary>
+    /// Options → Sort by (AM-3.6): the queue itself put in the order of the files' names (Windows' natural order,
+    /// 2 before 10), or back in the order the files were added. The file playing stays the one playing, at its
+    /// new place, and what plays after it is what follows it in the new order.
+    /// </summary>
+    public void OrderBy(bool name)
+    {
+        ByName = name;
+        Order();
+    }
+
+    private void Append(IEnumerable<string> paths)
+    {
+        foreach (var path in paths)
+        {
+            _paths.Add(path);
+            _added.Add(_nextAdded++);
+        }
+    }
+
+    /// <summary>The files put in the order the queue is kept in, the playing index following its file.</summary>
+    private void Order()
+    {
+        var positions = Enumerable.Range(0, _paths.Count);
+        var order = ByName
+            ? positions.OrderBy(i => Path.GetFileName(_paths[i]), AxKit.Core.NaturalOrder.Instance).ThenBy(i => _added[i]).ToList()
+            : positions.OrderBy(i => _added[i]).ToList();
+        var paths = order.Select(i => _paths[i]).ToList();
+        var added = order.Select(i => _added[i]).ToList();
+        var playing = Playing >= 0 ? order.IndexOf(Playing) : -1;
+        _paths.Clear();
+        _paths.AddRange(paths);
+        _added.Clear();
+        _added.AddRange(added);
+        Playing = playing;
     }
 
     /// <summary>Whether <paramref name="index"/> names a queued file rather than the empty text.</summary>
@@ -88,6 +141,7 @@ public sealed class PlayQueue
 
         var name = Path.GetFileName(_paths[index]);
         _paths.RemoveAt(index);
+        _added.RemoveAt(index);
         if (index < Playing || Playing >= _paths.Count)
         {
             Playing = index < Playing ? Playing - 1 : -1;

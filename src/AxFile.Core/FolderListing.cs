@@ -136,32 +136,19 @@ public static class FolderListing
         return ordered.ThenBy(entry => entry.Name, NaturalOrder.Instance).ToList();
     }
 
-    /// <summary>The entries whose name contains <paramref name="text"/>, any case; all of them for an empty text (AF-3.8).</summary>
-    public static IReadOnlyList<Entry> Filter(IEnumerable<Entry> entries, string text) =>
-        text.Length == 0 ? entries.ToList() : entries.Where(entry => entry.Name.Contains(text, StringComparison.OrdinalIgnoreCase)).ToList();
-
-    /// <summary>The list as shown: the entries that pass the filter, in the chosen order.</summary>
-    public static IReadOnlyList<Entry> Arrange(IEnumerable<Entry> entries, SortBy by, string filter) => Sort(Filter(entries, filter), by);
+    // The filter of the list (AF-3.8) is the item window's since 2026-11-22, the same in every navigator
+    // (docs/axKit/framework.md FW-4.10a): the names that contain a text, in any case. The orders stay here.
 
     /// <summary>"name", "date", "size": the order's word for the announcement and the menu.</summary>
     public static string SortName(SortBy by) => by.ToString().ToLowerInvariant();
 
-
-    /// <summary>"24 items", "1 item", "Empty": the list's accessible name (AF-2.1), the folder's name being the window's; with a filter on, "3 of 24 items, filter chap" (AF-3.8).</summary>
-    public static string ListName(int count, int total = -1, string filter = "")
+    /// <summary>"24 items", "1 item", "Empty": the list's accessible name (AF-2.1), the folder's name being the window's. Under a filter the item window adds the text and how many are shown (AF-3.8).</summary>
+    public static string ListName(int count) => count switch
     {
-        if (filter.Length > 0)
-        {
-            return $"{count} of {total} items, filter {filter}";
-        }
-
-        return count switch
-        {
-            0 => "Empty",
-            1 => "1 item",
-            _ => $"{count} items",
-        };
-    }
+        0 => "Empty",
+        1 => "1 item",
+        _ => $"{count} items",
+    };
 
     /// <summary>"report.pdf, 1.2 MB, modified 2026-10-18 14:02" or "docs, folder, modified 2026-10-18 14:02" (AF-2.4); a drive: "Local Disk (C:), 120 GB free of 476 GB".</summary>
     public static string Information(Entry entry)

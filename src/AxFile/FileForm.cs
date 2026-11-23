@@ -26,7 +26,6 @@ public sealed partial class FileForm : ItemForm
     private readonly ToolStripMenuItem _recentItem = new("Open &recent folder");
     private readonly ToolStripMenuItem _favoritesItem = new("Fa&vorites");
     private readonly ToolStripMenuItem _drivesMenu = new("Driv&es");
-    private readonly ChoiceItems<SortBy> _sortItems;
     private readonly ToolStripMenuItem _undoItem;
 
     /// <summary>The folder list: the item window's navigator.</summary>
@@ -116,9 +115,8 @@ public sealed partial class FileForm : ItemForm
         select.DropDownItems.Add(Item("Select or deselect this &entry", SelectRow, SelectionKeys.Select, CommandMark.Change));
         select.DropDownItems.Add(Item("Select to &here", SelectToHere, SelectionKeys.SelectTo, CommandMark.Change));
 
-        // Escape: the marks cleared, else the filter (AF-3.7, AF-3.8); with neither, the key is left alone. The
-        // marks are the item window's Deselect all on the key; the filter, with no entry selected, is this command.
-        AddKey(new Command("Clear the filter", AxFileKeys.Clear, () => ApplyFilter(string.Empty)) { When = () => InNavigator() && Selection.Count == 0 && _filter.Length > 0, Mark = CommandMark.Change });
+        // Escape: the marks cleared, else the filter (AF-3.7, AF-3.8); with neither, the key is left alone. Both
+        // are the item window's commands on the key.
         select.DropDownItems.Add(new ToolStripSeparator());
         // The operations on the marks alone (AF-D10): their keys are the entry's commands, on the targets, which
         // are the marks while there are any; these items only show them.
@@ -147,14 +145,9 @@ public sealed partial class FileForm : ItemForm
         _lineMenu.DropDownItems.Add(Item("&Undo this action", UndoSelectedAction, AxFileKeys.Undo, CommandMark.Act));
         _lineMenu.DropDownItems.Add(Item("Its number and &time", SayActionInformation, AxFileKeys.Information, CommandMark.Read));
 
-        // Options, as the other windows' (AX-6): the order and the filter (AF-3.8) first, then every setting in the
-        // submenu for what it is about.
+        // Options, as the other windows' (AX-6): the filter and the order (AF-3.8) first, which the item window puts
+        // there as in every navigator, then every setting in the submenu for what it is about.
         var options = new ToolStripMenuItem();
-        var sort = new ToolStripMenuItem("&Sort by");
-        _sortItems = new ChoiceItems<SortBy>(sort, Enum.GetValues<SortBy>().Select(by => (by, "&" + char.ToUpperInvariant(by.ToString()[0]) + by.ToString()[1..])), _settings.SortBy, SetSort);
-        options.DropDownItems.Add(sort);
-        Add(options, new Command("&Filter...", AxFileKeys.Filter, ShowFilterNotice) { Mark = CommandMark.Change });
-        options.DropDownItems.Add(new ToolStripSeparator());
         options.DropDownItems.AddRange(CreateProgramItems());
         options.DropDownItems.Add(new ToolStripSeparator());
         options.DropDownItems.Add(CreateTextMenu());
@@ -218,8 +211,8 @@ public sealed partial class FileForm : ItemForm
 
     protected override string RowNoun => "entry";
 
-    /// <summary>The one line of a folder without entries to show (AF-2.2, AF-3.8): an empty folder's, or the filter's; none before a folder is shown.</summary>
-    protected override string? EmptyLine => _folder is null ? null : _filter.Length > 0 ? NoMatchText : EmptyFolderText;
+    /// <summary>The one line of an empty folder (AF-2.2); none before a folder is shown. The line of a folder whose entries all fail the filter is the item window's (AF-3.8).</summary>
+    protected override string? EmptyLine => _folder is null ? null : EmptyFolderText;
 
     /// <summary>What the read left out (AF-2.2), as the last line, so that the count is there when wanted.</summary>
     protected override string? AfterRowsLine => _hidden > 0 || _dot > 0 ? FolderListing.NotShownText(_hidden, _dot) : null;
@@ -228,15 +221,16 @@ public sealed partial class FileForm : ItemForm
     protected override string? StatusState => _actions.Latest?.Line ?? string.Empty;
 
     /// <summary>
-    /// The folder shown as the navigator's level (AF-2.1, AF-2.2): a row for each shown entry (a folder a list, a
-    /// file an item, its key its path), the list named with its count, the title the folder's name, the status
-    /// bar's second part its path. Before a folder is shown there are no rows and the list is "No folder".
+    /// The folder shown as the navigator's level (AF-2.1, AF-2.2): a row for each entry, in the chosen order (a
+    /// folder a list, a file an item, its key its path), the list named with its count, the title the folder's
+    /// name, the status bar's second part its path. The item window then shows the rows that pass its filter
+    /// and says so in the list's name. Before a folder is shown there are no rows and the list is "No folder".
     /// </summary>
     protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel() =>
         _folder is null
             ? ([], "No folder", string.Empty, string.Empty)
-            : ([.. _shown.Select(entry => new ItemRow(entry.IsFolder, entry.Path, entry.Name, entry.Label, entry))],
-                FolderListing.ListName(_shown.Count, _entries.Count, _filter), PathName.Of(_folder), _folder);
+            : ([.. _sorted.Select(entry => new ItemRow(entry.IsFolder, entry.Path, entry.Name, entry.Label, entry))],
+                FolderListing.ListName(_entries.Count), PathName.Of(_folder), _folder);
 
     /// <summary>
     /// The navigator's keys axFile has a command of its own for under another condition, or no use for: Ctrl+Z

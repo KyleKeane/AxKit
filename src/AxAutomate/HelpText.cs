@@ -43,7 +43,7 @@ public static class HelpText
           Ctrl+R: the report of the last run of the workflow you are in or on: how it ended, every step played with what the runner saw, and the timeline of what was said and focused, as a text with the reading keys and Ctrl+F. Kept until the window closes
           Session, Refresh: read the folder or the workflow again; a run reads its file again by itself
           This version views and runs the workflows: changing them comes later. Ctrl+N, Ctrl+Shift+N, F2, Delete and Ctrl+Z say so
-        """ + BundleHelp.NoticesSection("axAutomate", "the panes");
+        """ + BundleHelp.FilterAndSortSection() + BundleHelp.NoticesSection("axAutomate", "the panes");
 
     /// <summary>docs/axAutomate/user-guide.md, embedded by AxAutomate.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axAutomate/user-guide.md");

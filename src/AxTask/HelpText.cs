@@ -64,7 +64,7 @@ public static class HelpText
           A list written by an earlier version of axTask says "earlier format" and is not opened: Enter on it asks to convert it, and a copy is kept among the Archived lists
           Ctrl+E: show it in axFile
           Ctrl+S: nothing to save here; every change is written at once
-        """ + BundleHelp.NoticesSection("axTask", "the panes");
+        """ + BundleHelp.FilterAndSortSection() + BundleHelp.NoticesSection("axTask", "the panes");
 
     /// <summary>docs/axTask/user-guide.md, embedded by AxTask.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axTask/user-guide.md");

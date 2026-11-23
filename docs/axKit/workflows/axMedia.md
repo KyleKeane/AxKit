@@ -272,3 +272,33 @@ Starts with: Open axMedia with the folder ch.
     You hear: Selected.
 4. Press Ctrl+Shift+A (Deselect all; Actions menu).
     You hear: None selected.
+
+## Filter and sort axMedia's queue
+
+Starts with: Open axMedia with the folder ch.
+
+### Narrow the queue to the files whose name contains a text
+
+1. Choose Filter in the Options menu.
+2. Type: amm
+3. Press Enter.
+    You hear: Queue, 3 items, filter amm, 1 shown, gamma.wav.
+
+### Clear the filter
+
+1. Press Escape.
+    You hear: Filter cleared.
+2. Close the window.
+
+### Put the queue in the order of the files' names
+
+1. Open axMedia with --add the file one\zulu.wav.
+2. Start axMedia again with --add the file two\alpha.wav.
+3. Choose Name in the Options menu, Sort by.
+    You hear: Sorted by name.
+4. Press Home.
+5. Press Enter.
+    You hear: Playing alpha.wav.
+6. Choose The order added in the Options menu, Sort by.
+    You hear: Sorted by the order added.
+7. Close the window.

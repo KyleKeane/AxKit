@@ -11,14 +11,18 @@ public sealed partial class FileForm
 {
     private string? _folder;
 
-    /// <summary>Every entry of the folder as read; <see cref="_shown"/> is what the list holds (AF-3.8).</summary>
+    /// <summary>Every entry of the folder as read (AF-3.8).</summary>
     private IReadOnlyList<Entry> _entries = [];
 
-    /// <summary>The entries the list shows, in its order: those that pass the filter, sorted as the setting says; the list's indices are into this.</summary>
-    private IReadOnlyList<Entry> _shown = [];
+    /// <summary>
+    /// The folder's entries in the chosen order (AF-3.8), which the level's rows are made from. The item window
+    /// then shows those that pass its filter: what the list holds is its rows (<see cref="ShownEntries"/>), and
+    /// an index into the list is an index into them.
+    /// </summary>
+    private IReadOnlyList<Entry> _sorted = [];
 
-    /// <summary>The filter text (AF-3.8), empty for none; dropped with the folder.</summary>
-    private string _filter = string.Empty;
+    /// <summary>The entries the list shows, in its order: the item window's rows, each row's entry.</summary>
+    private List<Entry> ShownEntries() => [.. Rows.Select(row => (Entry)row.Tag!)];
 
     /// <summary>How many entries the read left out (AF-2.2): hidden ones, and ones starting with a period; the list's last line says so.</summary>
     private int _hidden;
@@ -73,13 +77,12 @@ public sealed partial class FileForm
     private void SayNoEntry()
     {
         var index = _list.SelectedIndex;
-        var line = index >= _shown.Count && index < _list.Items.Count ? _list.Items[index].ToString() : null;
+        var line = index >= Rows.Count && index < _list.Items.Count ? _list.Items[index].ToString() : null;
         Announce(_folder is null ? "No folder" : line ?? "Nothing selected", true);
     }
 
     /// <summary>The entry under the selection; null on the lines after the entries (an empty list's, the not-shown line), which are not entries.</summary>
-    private Entry? CurrentEntry() =>
-        _list.SelectedIndex is var i && i >= 0 && i < _shown.Count ? _shown[i] : null;
+    private Entry? CurrentEntry() => SelectedRow()?.Tag as Entry;
 
     // ---- the folder (AF-2.2, AF-3.1) ----
 
@@ -166,14 +169,9 @@ public sealed partial class FileForm
             return false;
         }
 
-        // AF-3.7, AF-3.8: the marks and the filter live in one folder: another folder starts with none (the item
-        // window drops the marks as the level changes); the same one keeps the filter, and the marks on the entries
-        // still shown (Rearrange).
-        if (changed)
-        {
-            _filter = string.Empty;
-        }
-
+        // AF-3.7, AF-3.8: the marks and the filter live in one folder: another folder starts with none, and the
+        // same one keeps the filter and the marks on the entries still shown. Both are the item window's, which
+        // drops them as the level changes (LevelIdentity).
         _folder = folder;
         _entries = listing.Entries;
         _hidden = listing.Hidden;
@@ -212,7 +210,7 @@ public sealed partial class FileForm
     {
         var name = FolderListing.IsThisPC(_folder) ? FolderListing.ThisPC : PathName.Of(_folder ?? string.Empty);
         var item = _list.SelectedItem?.ToString() ?? string.Empty;
-        return _shown.Count == 0 ? $"{name}, {item}" : $"{name}, {_list.AccessibleName}, {item}";
+        return Rows.Count == 0 ? $"{name}, {item}" : $"{name}, {_list.AccessibleName}, {item}";
     }
 
     /// <summary>
@@ -247,71 +245,51 @@ public sealed partial class FileForm
     /// <summary>The one item of an empty folder (AF-2.2), so that the list is never empty and the reason is read (AX-9.5).</summary>
     private const string EmptyFolderText = "No items in this folder";
 
-    /// <summary>The one item of a folder whose entries all fail the filter (AF-3.8).</summary>
-    private string NoMatchText => "No names contain " + _filter;
-
     /// <summary>
-    /// The shown entries made again from the folder's entries, the order and the filter (AF-3.8), and the list
-    /// filled again by the item window (<see cref="ReadLevel"/>: the rows, the list's name with the count, the
-    /// title, the lines after the entries), <paramref name="select"/> selected by name or path, or the first
-    /// entry; the marks on entries no longer shown go with them (AF-3.7), and a Shift range ends. A new list starts
-    /// the type-ahead afresh (AF-3.6).
+    /// The list made again from the folder's entries (AF-3.8): the entries put in the chosen order, and the list
+    /// filled by the item window (<see cref="ReadLevel"/>: the rows, the list's name with the count, the title,
+    /// the lines after the entries; then its filter), <paramref name="select"/> selected by name or path, or the
+    /// first entry; the marks on entries no longer shown go with them (AF-3.7), and a Shift range ends. A new
+    /// list starts the type-ahead afresh (AF-3.6).
     /// </summary>
     private void Rearrange(string? select)
     {
-        // The drives of This PC stay in letter order (AF-3.10).
-        _shown = FolderListing.IsThisPC(_folder) ? FolderListing.Filter(_entries, _filter) : FolderListing.Arrange(_entries, _settings.SortBy, _filter);
-        // A row's key is its entry's path; a name that is not here selects nothing, as before.
-        Fill(select is null ? null : IndexOfName(select) is var index && index >= 0 ? _shown[index].Path : select);
+        PutInOrder();
+        // A row's key is its entry's path; a name that is not here, or that the filter hides, selects nothing.
+        var selected = select is null ? null : _sorted.FirstOrDefault(entry => Named(entry, select));
+        Fill(select is null ? null : selected?.Path ?? select);
     }
 
-    // ---- the order and the filter (AF-3.8) ----
+    /// <summary>The folder's entries in the chosen order; the drives of This PC stay in letter order (AF-3.10).</summary>
+    private void PutInOrder() =>
+        _sorted = FolderListing.IsThisPC(_folder) ? _entries : FolderListing.Sort(_entries, _settings.SortBy);
 
-    /// <summary>Folder → Sort by → one order: the setting, the checked item, the list made again with the entry kept; "Sorted by date".</summary>
-    private void SetSort(SortBy by)
-    {
-        _settings.SortBy = by;
-        SaveSettings();
-        _sortItems.Check(by);
-        Rearrange(CurrentEntry()?.Name);
-        Announce("Sorted by " + FolderListing.SortName(by), true);
-    }
+    /// <summary>Whether the entry has that name, or that path (a drive of This PC is selected by its root).</summary>
+    private static bool Named(Entry entry, string name) =>
+        string.Equals(entry.Name, name, StringComparison.OrdinalIgnoreCase) || string.Equals(entry.Path, name, StringComparison.OrdinalIgnoreCase);
 
-    /// <summary>Folder → Filter… (Ctrl+Shift+F): the notice "Filter" with the field "Name contains"; an empty field clears the filter.</summary>
-    private void ShowFilterNotice()
+    // ---- the order and the filter (AF-3.8): the item window's Sort by and Filter (docs/axKit/framework.md FW-4.10a) ----
+    // Options → Filter… and Sort by are the item window's, the same in every navigator. axFile names its orders
+    // (name, date, size), keeps the chosen one in its settings, and gives its rows in that order.
+
+    protected override IReadOnlyList<string> SortNames => [.. Enum.GetValues<SortBy>().Select(FolderListing.SortName)];
+
+    protected override int SortChoice
     {
-        if (_folder is null)
+        get => (int)_settings.SortBy;
+        set
         {
-            Announce("No folder", true);
-            return;
+            _settings.SortBy = (SortBy)value;
+            SaveSettings();
         }
-
-        AskText("Filter", "Only the entries whose name contains the text are listed; empty clears the filter.", "Name contains:", "Name contains", _filter, "&Filter",
-            typed => ApplyFilter(typed.Trim()), required: false, emptyMessage: string.Empty);
     }
 
-    /// <summary>The filter set and the list made again, the entry kept when it still shows; the list's new name and the entry are said, "3 of 24 items, filter chap, Chapter 1.mp3", or "Filter cleared" when it is emptied.</summary>
-    private void ApplyFilter(string text)
-    {
-        var had = _filter.Length > 0;
-        _filter = text;
-        Rearrange(CurrentEntry()?.Name);
-        if (text.Length == 0)
-        {
-            if (had)
-            {
-                Announce("Filter cleared", true);
-            }
+    protected override bool OrdersRowsItself => true;
 
-            return;
-        }
+    protected override void SortChanged() => PutInOrder();
 
-        Announce($"{_list.AccessibleName}, {_list.SelectedItem}", true);
-    }
-
-    // Escape in the list: the selection cleared, as Ctrl+Shift+A, while entries are selected (AF-3.7; the item
-    // window's command); otherwise the filter cleared (the command "Clear the filter"); the key left alone when
-    // there is neither.
+    // Escape in the list: the selection cleared, as Ctrl+Shift+A, while entries are selected (AF-3.7); otherwise
+    // the filter cleared; the key left alone when there is neither. Both are the item window's commands.
 
     // ---- the selection (AF-3.7): the item window's (AX-8.16, ListSelection over Marks) ----
     // The shared piece makes each item (an entry's label, with ", selected" while it is, S-42's hidden characters
@@ -340,7 +318,7 @@ public sealed partial class FileForm
     // that line (SayNoEntry).
 
     /// <summary>The selected entries among those shown, in the list's order; none when nothing is selected.</summary>
-    private List<Entry> SelectedEntries() => _shown.Where(entry => Selection.Contains(entry.Path)).ToList();
+    private List<Entry> SelectedEntries() => [.. SelectedRows().Select(row => (Entry)row.Tag!)];
 
     /// <summary>What an operation acts on (AF-3.7): the selected entries, or the current entry alone when none is selected; empty, and said, when there is no entry.</summary>
     private List<Entry> Targets()
@@ -362,9 +340,9 @@ public sealed partial class FileForm
     /// <summary>The shown entry with that name, or that path (a drive of This PC is selected by its root); -1 when none.</summary>
     private int IndexOfName(string name)
     {
-        for (var i = 0; i < _shown.Count; i++)
+        for (var i = 0; i < Rows.Count; i++)
         {
-            if (string.Equals(_shown[i].Name, name, StringComparison.OrdinalIgnoreCase) || string.Equals(_shown[i].Path, name, StringComparison.OrdinalIgnoreCase))
+            if (Named((Entry)Rows[i].Tag!, name))
             {
                 return i;
             }
@@ -504,7 +482,7 @@ public sealed partial class FileForm
     protected override IEnumerable<PaletteEntry> PaletteEntries()
     {
         var kind = FolderListing.IsThisPC(_folder) ? "drive" : null;
-        return _shown.Select(entry => new PaletteEntry($"{entry.Name}, {kind ?? (entry.IsFolder ? "folder" : "file")}", () =>
+        return ShownEntries().Select(entry => new PaletteEntry($"{entry.Name}, {kind ?? (entry.IsFolder ? "folder" : "file")}", () =>
         {
             var index = IndexOfName(entry.Path);
             if (index < 0)
@@ -626,7 +604,7 @@ public sealed partial class FileForm
     /// <summary>F3 and Shift+F3: the next (or previous) entry whose name contains the text, wrapping once; "Not found" otherwise.</summary>
     private void FindInList(int direction) => FindInList(_list, EntryNames, direction);
 
-    private IReadOnlyList<string> EntryNames() => _shown.Select(entry => entry.Name).ToList();
+    private IReadOnlyList<string> EntryNames() => Rows.Select(row => row.Name).ToList();
 
     /// <summary>Item → Information (Ctrl+I): the entry's size, or that it is a folder, and its date, on demand (AF-D7); and how many entries are selected, when any are (AF-3.7).</summary>
     private void SayInformation()

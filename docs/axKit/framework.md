@@ -154,13 +154,11 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
   `NoRowSaid`), and a shared key the app gave to a command of its own in the very place the shared one acts is
   left to the app (`KeyTakenWhere`), which is what lets a window move onto the type with its own commands first
   and give them up one by one. Point 1 needed nothing in the type for axFile either (`EntryRefused` starts the
-  read; `UpLevel` is the app's where the level above is read too). Points 3 and 6 are not lifted, and the
-  reason is the rule that shared code moves on its second use (root `CLAUDE.md`, rule 4), looked at again on
-  2026-11-22 once axFile stood on the type: a filter of the rows exists in axFile alone (axProcess has none); the
-  rows in the command palette are axFile's alone, through a hook the window base already has
-  (`AxKitForm.PaletteEntries`); and the orders of a sort are each app's own (axFile's name, date, size and type,
-  axProcess's memory, processor and name) over a piece that is shared already, the menu of one choice
-  (`ChoiceItems`). They move into the type when a second navigator filters or offers its rows.
+  read; `UpLevel` is the app's where the level above is read too). Point 3, filter and sort, is built in the
+  type for every navigator (FW-4.10a). I had first closed it as not to be lifted, a filter having one user; the
+  maintainer put it back the same day: "i want any list to be able to be filtered or sorted". Point 6 stays
+  axFile's: the rows in the command palette go through a hook the window base already has
+  (`AxKitForm.PaletteEntries`), and no second navigator offers its rows yet.
 - FW-4.8 After this, axTask and axFile are the same window: one shows folders of items with a pane of fields, the
   other folders of files with a pane of the operations made. Their difference is their data and their commands.
 - FW-4.9 **axMedia is a queue and its controls**, a navigator of one level whose rows are what will play (the
@@ -189,6 +187,21 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
   lost their keys, since Ctrl+Shift+A is the bundle's Deselect all. Delete discards the selected files after one
   question, Cancel the default. The trust of a repository, the consents and the one-command-at-a-time rule are
   untouched, and every option of git's is still written in the core alone.
+- FW-4.10a **Filter and sort are the navigator's, in every app on it** (the maintainer, 2026-11-22: "i want any
+  list to be able to be filtered or sorted"; what the user gets is bundle SPEC AX-8.17). The app gives its
+  level's rows; the type decides which of them are shown and in which order, between the read and the list
+  (`ItemForm.Arrange.cs`, the rules in `AxKit.Core/ListArrange`). Options begins with Filter… and Sort by in
+  every navigator, put there by the type, without keys (his choice). What it asks of an app:
+  - nothing, for the filter and for the two default orders (the list's own, and by name);
+  - its orders by name and the chosen one, when it has orders of its own (axFile, axProcess), the app then
+    giving its rows in that order;
+  - a sort that is true to what the list does, where the order is the content: axMedia's queue is the order the files play in, so Name reorders the queue itself and The order added puts it back (one order alone would leave Sort by out);
+  - that a row's place in the list is never taken for its place in the app's own data: the row carries what the
+    app needs in its `Tag` (axMedia's place in the queue, axFile's entry).
+  For the maintainer's word, as built: the filter looks at a row's name, not at everything its line says;
+  headings keep their own counts under a filter (axTask's "Your lists, heading level 1, 3 lists" while one of
+  the three is shown); axProcess's three orders are of its processes, and its services and startup programs
+  stay by name whatever is chosen; a thing made while a filter hides it is made and said, and not shown.
 
 ### 4.4 The hotkey window (`HotkeyForm`)
 
@@ -305,7 +318,8 @@ NVDA pass recorded. A piece that changes what a user does updates the app's spec
     window's code went with step 13 (the two lists, their layout, the status bar, the Context menu's holder, the
     pane and selection keys, the selection's record and the rename's steps are the type's), and favourites,
     drives, Go to folder, the clipboard, zip and the shell are axFile's commands on the type. The filter and
-    the sort stay axFile's own, with the reason in FW-4.7: neither has a second user to share with yet.
+    the sort I had left as axFile's own; the maintainer put them back the same day, and they are the type's
+    for every navigator since (FW-4.10a).
 
 **F. What it was for**
 

@@ -85,10 +85,14 @@ every window" or under a heading that names the windows without it; under an app
 - The workflow's file as text. Menu: Context. Key: Ctrl+J. Mark: open.
 - The automated checks of axKit. Menu: Help, axAutomate resources. Key: none. Mark: act.
 - Nothing to move to here yet. Menu: Navigation. Key: none. Mark: read.
+- Filter. Menu: Options. Key: none. Mark: change.
+- Name. Menu: Options, Sort by. Key: none. Mark: change.
+- The list's own order. Menu: Options, Sort by. Key: none. Mark: change.
 - Open a folder of workflows. Menu: Session. Key: Ctrl+O. Mark: open.
 - Refresh. Menu: Session. Key: none. Mark: read.
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
 - Check the field. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
+- Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
@@ -414,7 +418,7 @@ every window" or under a heading that names the windows without it; under an app
 - Up one level. Menu: Navigation. Key: Backspace. Also: Alt+Up. Mark: open.
 - Add or remove this folder. Menu: Navigation, Favorites. Key: Ctrl+D. Mark: change.
 - Add a program to Open with. Menu: Options. Key: none. Mark: change.
-- Filter. Menu: Options. Key: Ctrl+Shift+F. Mark: change.
+- Filter. Menu: Options. Key: none. Mark: change.
 - Show files and folders starting with a period. Menu: Options, General. Key: none. Mark: change.
 - Show hidden files and folders. Menu: Options, General. Key: none. Mark: change.
 - Date. Menu: Options, Sort by. Key: none. Mark: change.
@@ -475,12 +479,16 @@ every window" or under a heading that names the windows without it; under an app
 - Changes. Menu: Navigation. Key: Alt+1. Also: Ctrl+1. Mark: open.
 - Log. Menu: Navigation. Key: Alt+2. Also: Ctrl+2. Mark: open.
 - Up to the repository. Menu: Navigation. Key: Left. Mark: open.
+- Filter. Menu: Options. Key: none. Mark: change.
+- Name. Menu: Options, Sort by. Key: none. Mark: change.
+- The list's own order. Menu: Options, Sort by. Key: none. Mark: change.
 - Open repository. Menu: Session. Key: Ctrl+O. Mark: open.
 - Refresh. Menu: Session. Key: F5. Mark: read.
 - axClaude, access layer for Claude Code. Menu: Session, Show current repository in. Key: none. Mark: act.
 - axFile. Menu: Session, Show current repository in. Key: none. Mark: open.
 - axTerminal, access layer for your shell. Menu: Session, Show current repository in. Key: none. Mark: act.
 - File Explorer. Menu: Session, Show current repository in. Key: Ctrl+W. Mark: open.
+- Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find in the text. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
@@ -574,9 +582,13 @@ every window" or under a heading that names the windows without it; under an app
 - MCP servers in Claude Code. Menu: Help, MCP resources. Key: none. Mark: act.
 - The Model Context Protocol. Menu: Help, MCP resources. Key: none. Mark: act.
 - Nothing to move to here yet. Menu: Navigation. Key: none. Mark: read.
+- Filter. Menu: Options. Key: none. Mark: change.
+- Name. Menu: Options, Sort by. Key: none. Mark: change.
+- The list's own order. Menu: Options, Sort by. Key: none. Mark: change.
 - Refresh. Menu: Session. Key: F5. Mark: read.
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
 - Check the field. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
+- Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
@@ -626,7 +638,10 @@ every window" or under a heading that names the windows without it; under an app
 - Go to time. Menu: Navigation. Key: Ctrl+T. Mark: open.
 - Next file. Menu: Navigation. Key: Ctrl+Shift+Right. Mark: open.
 - Previous file. Menu: Navigation. Key: Ctrl+Shift+Left. Mark: open.
+- Filter. Menu: Options. Key: none. Mark: change.
 - Say each file as it starts. Menu: Options. Key: none. Mark: change.
+- Name. Menu: Options, Sort by. Key: none. Mark: change.
+- The order added. Menu: Options, Sort by. Key: none. Mark: change.
 - Clear queue. Menu: Session. Key: none. Mark: change.
 - New window. Menu: Session. Key: Ctrl+N. Mark: open.
 - Open files. Menu: Session. Key: Ctrl+O. Mark: open.
@@ -637,6 +652,7 @@ every window" or under a heading that names the windows without it; under an app
 - axTerminal, access layer for your shell. Menu: Session, Show current file in. Key: none. Mark: act.
 - File Explorer. Menu: Session, Show current file in. Key: Ctrl+W. Mark: open.
 - Back to the list. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
+- Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
@@ -684,6 +700,7 @@ every window" or under a heading that names the windows without it; under an app
 - KeePassXC. Menu: Help, KeePass resources. Key: none. Mark: act. Never run by AI tools.
 - The KDBX format. Menu: Help, KeePass resources. Key: none. Mark: act. Never run by AI tools.
 - Nothing to move to here yet. Menu: Navigation. Key: none. Mark: read. Never run by AI tools.
+- Filter. Menu: Options. Key: none. Mark: change. Never run by AI tools.
 - KeePassXC's tool. Menu: Options. Key: none. Mark: act. Never run by AI tools.
 - Open settings file. Menu: Options, Developer. Key: none. Mark: open. Never run by AI tools.
 - Check for updates at start. Menu: Options, General. Key: none. Mark: act. Never run by AI tools.
@@ -692,6 +709,8 @@ every window" or under a heading that names the windows without it; under an app
 - 5 minutes. Menu: Options, Lock after. Key: none. Mark: change. Never run by AI tools.
 - 60 minutes. Menu: Options, Lock after. Key: none. Mark: change. Never run by AI tools.
 - Never. Menu: Options, Lock after. Key: none. Mark: change. Never run by AI tools.
+- Name. Menu: Options, Sort by. Key: none. Mark: change. Never run by AI tools.
+- The list's own order. Menu: Options, Sort by. Key: none. Mark: change. Never run by AI tools.
 - Entry sounds. Menu: Options, Text. Key: none. Mark: change. Never run by AI tools.
 - Font. Menu: Options, Text. Key: none. Mark: change. Never run by AI tools.
 - Larger text. Menu: Options, Text. Key: Ctrl+Plus. Mark: change. Never run by AI tools.
@@ -727,6 +746,7 @@ every window" or under a heading that names the windows without it; under an app
 - Ask about this window. Menu: none, a key alone. Key: Ctrl+Slash. Mark: act. Never run by AI tools.
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
 - Check the field. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
+- Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Deselect all. Menu: none, a key alone. Key: Ctrl+Shift+A. Also: Escape. Mark: change. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
@@ -831,11 +851,13 @@ every window" or under a heading that names the windows without it; under an app
 - Services. Menu: Navigation. Key: Alt+2. Also: Ctrl+2. Mark: open.
 - Startup. Menu: Navigation. Key: Alt+3. Also: Ctrl+3. Mark: open.
 - Up to This computer. Menu: Navigation. Key: Left. Mark: open.
-- Memory. Menu: Options, Sort processes by. Key: none. Mark: change.
-- Name. Menu: Options, Sort processes by. Key: none. Mark: change.
-- Processor. Menu: Options, Sort processes by. Key: none. Mark: change.
+- Filter. Menu: Options. Key: none. Mark: change.
+- Memory. Menu: Options, Sort by. Key: none. Mark: change.
+- Name. Menu: Options, Sort by. Key: none. Mark: change.
+- Processor. Menu: Options, Sort by. Key: none. Mark: change.
 - Refresh. Menu: Session. Key: F5. Mark: read.
 - Back to the list. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
+- Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
@@ -911,7 +933,10 @@ every window" or under a heading that names the windows without it; under an app
 - Previous section. Menu: Navigation. Key: Ctrl+Up. Mark: open.
 - Add a project folder. Menu: Options. Key: none. Mark: change.
 - Approval passphrase. Menu: Options. Key: none. Mark: act. Never run by AI tools.
+- Filter. Menu: Options. Key: none. Mark: change.
 - Hide done tasks. Menu: Options. Key: Ctrl+Shift+D. Mark: change.
+- Name. Menu: Options, Sort by. Key: none. Mark: change.
+- The list's own order. Menu: Options, Sort by. Key: none. Mark: change.
 - Refresh. Menu: Session. Key: F5. Mark: read.
 - Top folder. Menu: Session. Key: none. Mark: act.
 - Action key 1. Menu: none, a key alone. Key: Ctrl+1. Mark: act. Never run by AI tools.
@@ -936,6 +961,7 @@ every window" or under a heading that names the windows without it; under an app
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
 - Change the item in its form. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
 - Check the field. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
+- Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.

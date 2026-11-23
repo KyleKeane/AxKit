@@ -37,11 +37,11 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
   - `FileForm.Browse.cs`:
     - `StartAsync`;
     - `ShowFolderAsync` (the read on a task, the list refilled with the selection by name, the title, the recent list; a folder gone gives the notice and the nearest parent that exists);
-    - `Rearrange`, which makes the shown entries and has the item window fill the list (`Fill`, which asks `ReadLevel`):
-      - `_entries` is the folder as read, `_shown` what the list holds after the filter and the sort order, AF-3.8; every index into the list is into `_shown`, and the item window's rows are made from it, one for one;
-      - an empty folder, or a filter nothing passes, gets one item (`EmptyLine`), and a read that left hidden or period-named entries out adds the last line "Not shown: …" (`AfterRowsLine`);
-      - `CurrentEntry` counts neither as an entry, and `SayNoEntry` reads the line the selection is on;
-    - `SetSort`, `ShowFilterNotice`, `ApplyFilter` (Escape: the marks first, the item window's Deselect all, then the filter, the command "Clear the filter");
+    - `Rearrange`, which puts the entries in order (`PutInOrder`) and has the item window fill the list (`Fill`, which asks `ReadLevel`):
+      - `_entries` is the folder as read and `_sorted` the same entries in the chosen order, AF-3.8, which the level's rows are made from, one for one; the item window then shows the rows that pass its filter, so what the list holds is its `Rows`, each row's `Tag` its entry (`ShownEntries`), and an index into the list is an index into them, never into `_sorted`;
+      - an empty folder gets one item (`EmptyLine`), a filter nothing passes the item window's line, and a read that left hidden or period-named entries out adds the last line "Not shown: …" (`AfterRowsLine`);
+      - `CurrentEntry` (the selected row's entry) counts neither as an entry, and `SayNoEntry` reads the line the selection is on;
+    - the filter and the sort (AF-3.8) are the item window's since 2026-11-22 (`AxKit.Forms/ItemForm.Arrange.cs`, docs/axKit/framework.md FW-4.10a): Options → Filter… and Sort by, Escape for the filter after the selection, the words. axFile names its orders (`SortNames`), keeps the chosen one in its settings (`SortChoice`), gives its rows in that order (`OrdersRowsItself`) and puts them in a new one when asked (`SortChanged`); the filter has no key (Ctrl+Shift+F until then);
     - `TryFolder`, `NoFolderHere` and `TryEntry` (the guards: the folder a command needs, or "No folder" and "Choose a drive first" at This PC said, AF-3.10; the entry under the selection, or the line it is on said; `RealFolder`, the folder shown when it is one on disk, which Ctrl+N and the restart pass on);
     - `FillFavorites` and `ToggleFavorite` (AF-3.9);
     - the Drives submenu of Folder (AF-3.11; a menu of its own until 2026-10-22);

@@ -217,19 +217,19 @@ command's in this version of axKit.
 ### Show only the entries whose names contain a word
 
 1. Press Home.
-2. Press Ctrl+Shift+F (Filter; Options menu).
+2. Choose Filter in the Options menu.
 3. Type: chap
 4. Press Enter.
-    You hear: 5 of 9 items, filter chap, chapter-01-notes.txt.
+    You hear: 9 items, filter chap, 5 shown, chapter-01-notes.txt.
 5. Press Down.
 6. Press Ctrl+I (Information; Context menu).
     You hear words such as: chapter-02-notes.txt.
 7. Press Escape.
     You hear: Filter cleared.
-8. Press Ctrl+Shift+F (Filter; Options menu).
+8. Choose Filter in the Options menu.
 9. Type: zzz
 10. Press Enter.
-    You hear: 0 of 9 items, filter zzz, No names contain zzz.
+    You hear: 9 items, filter zzz, 0 shown, No names contain zzz.
 11. Press Enter.
     You hear: No names contain zzz.
 12. Press Escape.

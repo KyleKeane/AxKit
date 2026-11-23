@@ -83,6 +83,7 @@ with Enter; a prompt is filled and fetched like a tool.
   ("Undone: removed 3 servers"). Start, Stop and Rename stay on the server you are on.
 - MP-1.4 A server whose kind is not `stdio` is listed and never started in this version; Right or Enter says "http
   servers need a network connection of axKit's own, which this version does not make" (MP-D2).
+- MP-1.6 **Filter and sort** (2026-11-22; the navigator's, bundle AX-8.17): Options → Filter… shows only the servers, tools, prompts or resources of the level whose name contains a text, a section staying while a row under it passes; Options → Sort by ▸ puts them by name or back in their own order.
 
 ### MP-2 Starting and stopping
 

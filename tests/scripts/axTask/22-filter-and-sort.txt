@@ -1,0 +1,40 @@
+# Workflow: Filter and sort a list of axTask
+# axTask (docs/axTask/SPEC.md TK-4.8; docs/axKit/framework.md FW-4.10a): Options, Filter narrows a level to the rows
+# whose name contains a text, and Options, Sort by puts them in the order of their names or back in the list's own.
+# Both are the navigator's, the same in every app. A heading stays while a row under it passes the filter.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
+file tasks\Home\Tap.json {"schema":"list.json","Title":"Tap","Done":false}
+file tasks\Home\Apples.json {"schema":"list.json","Title":"Apples","Done":false}
+file tasks\Home\Taxes.json {"schema":"list.json","Title":"Taxes","Done":false}
+file tasks\Shopping\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[],"actions":[]}
+file tasks\Shopping\Milk.json {"schema":"list.json","Title":"Milk"}
+
+start task {temp}\tasks
+expect focus Your lists, heading level 1, 2 lists
+
+# Goal: Narrow the lists to those whose name contains a text
+# Options, Filter, "shop": the one list that passes, under its heading; the headings with nothing under them go.
+do Filter
+expect focus "name":"Name contains"
+type shop
+keys enter
+expect said ! filter shop, 1 shown
+expect list "items":["Your lists, heading level 1, 2 lists","Shopping, list, 1 item"]
+
+# Check: Escape clears the filter
+keys escape
+expect said ! Filter cleared
+expect list "Home, list, 3 items","Shopping, list, 1 item"
+
+# Goal: Put a list's items in the order of their names
+# In Home: Options, Sort by, Name; then the list's own order again.
+type h
+expect focus Home, list, 3 items
+keys right
+menu Name, Options, Sort by
+expect said ! Sorted by name
+expect list "items":["Apples
+menu The list's own order, Options, Sort by
+expect said ! Sorted by the list's own order
+close

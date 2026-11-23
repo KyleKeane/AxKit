@@ -21,11 +21,11 @@ command's in this version of axKit.
 
 ### Sort the processes by name, processor or memory
 
-1. Choose Name in the Options menu, Sort processes by.
+1. Choose Name in the Options menu, Sort by.
     You hear: Sorted by name.
-2. Choose Processor in the Options menu, Sort processes by.
+2. Choose Processor in the Options menu, Sort by.
     You hear: Sorted by processor.
-3. Choose Memory in the Options menu, Sort processes by.
+3. Choose Memory in the Options menu, Sort by.
     You hear: Sorted by memory.
 
 ### Find a process and read its details
@@ -98,7 +98,7 @@ Starts with: Open axProcess.
 
 ### Find a process by typing its name
 
-1. Choose Name in the Options menu, Sort processes by.
+1. Choose Name in the Options menu, Sort by.
     You hear: Sorted by name.
 2. Press Home.
 3. Type: svc

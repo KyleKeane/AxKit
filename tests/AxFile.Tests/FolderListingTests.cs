@@ -91,21 +91,7 @@ public sealed class FolderListingTests : IDisposable
         ];
         Assert.Equal(["docs", "new.txt", "same.txt", "big.txt", "old.txt"], FolderListing.Sort(entries, SortBy.Date).Select(e => e.Name));
         Assert.Equal(["docs", "big.txt", "old.txt", "new.txt", "same.txt"], FolderListing.Sort(entries, SortBy.Size).Select(e => e.Name));
-        Assert.Equal(["docs", "big.txt", "new.txt", "old.txt", "same.txt"], FolderListing.Arrange(entries, SortBy.Name, string.Empty).Select(e => e.Name));
-    }
-
-    [Fact]
-    public void The_filter_keeps_the_names_that_contain_the_text_in_any_case()
-    {
-        Entry[] entries =
-        [
-            new("Chapter 1.mp3", "x", false, 0, DateTime.Now),
-            new("notes.md", "x", false, 0, DateTime.Now),
-            new("chap", "x", true, 0, DateTime.Now),
-        ];
-        Assert.Equal(["chap", "Chapter 1.mp3"], FolderListing.Arrange(entries, SortBy.Name, "CHAP").Select(e => e.Name));
-        Assert.Equal(3, FolderListing.Filter(entries, string.Empty).Count);
-        Assert.Empty(FolderListing.Filter(entries, "zzz"));
+        Assert.Equal(["docs", "big.txt", "new.txt", "old.txt", "same.txt"], FolderListing.Sort(entries, SortBy.Name).Select(e => e.Name));
         Assert.Equal("date", FolderListing.SortName(SortBy.Date));
     }
 
@@ -116,14 +102,6 @@ public sealed class FolderListingTests : IDisposable
     public void The_list_is_named_with_the_count_alone(int count, string expected)
     {
         Assert.Equal(expected, FolderListing.ListName(count));
-    }
-
-    [Fact]
-    public void With_a_filter_the_list_is_named_with_the_match_count_and_the_text()
-    {
-        Assert.Equal("3 of 24 items, filter chap", FolderListing.ListName(3, 24, "chap"));
-        Assert.Equal("0 of 24 items, filter zzz", FolderListing.ListName(0, 24, "zzz"));
-        Assert.Equal("24 items", FolderListing.ListName(24, 24, string.Empty));
     }
 
     [Fact]

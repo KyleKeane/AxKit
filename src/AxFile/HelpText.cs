@@ -19,7 +19,6 @@ public static class HelpText
           Enter or Right Arrow on a folder: into it; Right on a file plays the low note and never opens it. Backspace, Left Arrow or Alt+Up: the folder above, the one you left selected; from a drive's top, This PC with the drives. Each says the folder, its count and the entry you land on: "docs, 5 items, plan.md"
           Ctrl+G or Alt+D: go to a typed path, %USERPROFILE%\Downloads for instance; in its field, Down and Up complete the path from what you typed, "Documents, folder, 2 of 5", and Right at the end of a completed folder goes into it. Ctrl+O: the Windows folder picker. Session, Open recent folder and Session, Favorites: by number. Ctrl+D: add this folder to Favorites, or remove it
           Ctrl+N: a new axFile window on this folder. F5: read the folder again
-          Ctrl+Shift+F: filter the list to the names containing a text, "3 of 24 items, filter chap"; Escape in the list clears it once nothing is selected. Session, Sort by: name, date or size
           Session, Drives: the drives by number, This PC, Eject this drive, Drive properties
 
         ## Opening
@@ -58,7 +57,7 @@ public static class HelpText
           Two sections, each under a header line: Running, the operations under way; Operations, the ones done. Newest last in each
           One line per operation: "Renamed notes.md to todo.md", "Copied 3 items", "Compressing, 40 of 120 files" while it runs, "Failed: …", "…, undone" once taken back. Selecting writes no line
           Enter: go to where it happened, the folder list on the entry it made or moved. Ctrl+Z: undo this line, whatever its place. Ctrl+I: its section, number and time, "Operations, 3 of 12, 21:04". Shift+F10 or the Applications key: the Context menu with these for the line
-        """ + BundleHelp.NoticesSection("axFile", "the lists");
+        """ + BundleHelp.FilterAndSortSection("Name, Date or Size, folders first") + BundleHelp.NoticesSection("axFile", "the lists");
 
     /// <summary>docs/axFile/user-guide.md, embedded by AxFile.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axFile/user-guide.md");

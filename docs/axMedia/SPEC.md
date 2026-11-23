@@ -138,6 +138,7 @@ top of the window. It works entirely offline (bundle G6).
   it, Clear queue) starts with none selected; files added keep what was selected. A file queued twice is two
   rows, each selected by itself. On the empty queue's line the keys say that line. The window's part is
   `MediaForm`'s `Selection`, the bundle's `ListSelection`; the script is `tests/scripts/axMedia/07-selection.txt`.
+- AM-3.6 **Filter and sort** (2026-11-22; the navigator's, bundle AX-8.17). Options → **Filter…** shows only the files whose name contains a text; a row under the filter is still its own file of the queue, so Enter plays that file and Ctrl+I says its place in the whole queue, and Escape in the queue clears the filter once nothing is selected. Options → **Sort by ▸ Name** reorders the queue itself (the maintainer's choice of that day, "Sort that reorders the queue": a list shown in another order than it plays in would mislead), in Windows' natural order; the file playing stays the one playing, at its new place, and what plays next is what follows it there; files added later take their place by name. **The order added** puts the queue back in the order the files came. The choice is kept for the window, not saved (`PlayQueue.OrderBy`, tested).
 
 ### AM-4 Playing
 

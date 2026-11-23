@@ -66,7 +66,7 @@ The menu bar is the same eight menus in every axKit window.
 - **Actions**: Pause or resume (Ctrl+Enter), Forward 15 seconds, Back 15 seconds, Faster, Slower, Normal speed, What is playing (Ctrl+Q).
 - **Navigation**: Next file, Previous file, Go to time (Ctrl+T).
 - **Context**: what acts on the file you are on in the queue: Play (Enter), Remove (Delete), Information (Ctrl+I). Shift+F10 opens it.
-- **Options**: Say each file as it starts, Text (font and size), General (the update check), Developer (the settings file, diagnostics).
+- **Options**: Filter (only the files whose name contains a text; Escape in the queue clears it), Sort by (Name puts the queue itself in the order of the names, so that the files play in that order; The order added puts it back), Say each file as it starts, Text (font and size), General (the update check), Developer (the settings file, diagnostics).
 - **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.
 
 ## Settings

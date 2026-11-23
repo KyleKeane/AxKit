@@ -423,7 +423,7 @@ expect state "notice":"Filter"
 expect focus "name":"Name contains"
 type chap
 keys enter
-expect said ! 5 of 9 items, filter chap, chapter-01-notes.txt
+expect said ! 9 items, filter chap, 5 shown, chapter-01-notes.txt
 expect list "count":5
 keys down
 expect focus chapter-02-notes.txt
@@ -437,7 +437,7 @@ do Filter
 expect focus "name":"Name contains"
 type zzz
 keys enter
-expect said ! 0 of 9 items, filter zzz, No names contain zzz
+expect said ! 9 items, filter zzz, 0 shown, No names contain zzz
 keys enter
 expect said ! No names contain zzz
 keys escape
@@ -556,12 +556,12 @@ do Filter
 expect focus "name":"Name contains"
 type select-0
 keys enter
-expect said ! 9 of 14 items, filter select-0
+expect said ! 14 items, filter select-0, 9 shown
 keys space
 expect said ! Selected
 keys escape
 expect said ! None selected
-expect focus "name":"9 of 14 items, filter select-0"
+expect focus "name":"14 items, filter select-0, 9 shown"
 keys escape
 expect said ! Filter cleared
 # Check: A selection is dropped when another folder is shown
@@ -614,7 +614,7 @@ do Filter
 expect focus "name":"Name contains"
 type select-01
 keys enter
-expect said ! 1 of 14 items, filter select-01, select-01.txt
+expect said ! 14 items, filter select-01, 1 shown, select-01.txt
 do Information
 expect said , 1 selected
 # Manual (1.13a): Ctrl+X "Cut <name>" writes to the system clipboard, which the test desktop shares with the user.

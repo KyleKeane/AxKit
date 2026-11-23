@@ -957,3 +957,24 @@ Starts with: Open axTask with the folder tasks.
 5. Press F1 (Keyboard shortcuts; Help menu).
     You hear the sound TextOpen.
 6. Press Escape.
+
+## Filter and sort a list of axTask
+
+Starts with: Open axTask with the folder tasks.
+
+### Narrow the lists to those whose name contains a text
+
+1. Choose Filter in the Options menu.
+2. Type: shop
+3. Press Enter.
+    You hear: filter shop, 1 shown.
+
+### Put a list's items in the order of their names
+
+1. Type: h
+2. Press Right.
+3. Choose Name in the Options menu, Sort by.
+    You hear: Sorted by name.
+4. Choose The list's own order in the Options menu, Sort by.
+    You hear: Sorted by the list's own order.
+5. Close the window.

@@ -1,0 +1,62 @@
+# Workflow: Filter and sort axMedia's queue
+# axMedia (docs/axMedia/SPEC.md AM-3.6; docs/axKit/framework.md FW-4.10a): Options, Filter narrows the queue to the files
+# whose name contains a text, as in every navigator. A row under the filter is still its own file of the queue:
+# Enter plays that file, and Information says its place in the whole queue. Options, Sort by, Name reorders the
+# queue itself, so that the files play in the order shown; The order added puts it back.
+# Every sound is the runner's silence; nothing reaches the speakers.
+
+# The run's own settings (AXKIT_HOME): no update check at start, which goes to the network.
+file home\AxKit\axMedia.json {"checkForUpdates":false}
+mkdir ch
+silence ch\alpha.wav 30000
+silence ch\beta.wav 30000
+silence ch\gamma.wav 30000
+start media {temp}\ch
+expect said ! Playing alpha.wav
+expect focus Queue, 3 items
+
+# Goal: Narrow the queue to the files whose name contains a text
+# Options, Filter, "amm": one file is shown, and the list's name says the filter and how many it shows.
+do Filter
+expect focus "name":"Name contains"
+type amm
+keys enter
+expect said ! Queue, 3 items, filter amm, 1 shown, gamma.wav
+expect focus "name":"Queue, 3 items, filter amm, 1 shown"
+
+# Check: A row under the filter is its own file of the queue
+# Enter plays the file shown, not the first of the queue; Information says its place among all three.
+keys enter
+expect said ! Playing gamma.wav
+menu Information, Context
+expect said ! gamma.wav, 3 of 3
+
+# Goal: Clear the filter
+# Escape in the queue clears it, and all three files are listed again.
+keys escape
+expect said ! Filter cleared
+expect focus "name":"Queue, 3 items"
+close
+wait 1500
+
+# Goal: Put the queue in the order of the files' names
+# Two files added out of the order of their names: Sort by, Name reorders the queue itself, and Enter on the first
+# row plays the file that is first now. The order added puts the queue back, the file playing still the one playing.
+mkdir one
+mkdir two
+silence one\zulu.wav 30000
+silence two\alpha.wav 30000
+start media --add {temp}\one\zulu.wav
+expect state "title":"axMedia"
+launch media --add {temp}\two\alpha.wav
+expect list ["zulu.wav","alpha.wav"]
+menu Name, Options, Sort by
+expect said ! Sorted by name
+expect list ["alpha.wav","zulu.wav"]
+keys home
+keys enter
+expect said ! Playing alpha.wav
+menu The order added, Options, Sort by
+expect said ! Sorted by the order added
+expect list ["zulu.wav","alpha.wav (playing)"]
+close

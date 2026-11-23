@@ -34,7 +34,7 @@ public static class HelpText
           Shift+F10, the Applications key or Ctrl+Period: the Context menu, what acts on the file you are on in the queue
           Options, Say each file as it starts: the next file's name said when the queue moves on, the one thing axMedia says on its own
           The volume is Windows' own: your keyboard's volume keys
-        """ + BundleHelp.NoticesSection("axMedia", "the list");
+        """ + BundleHelp.FilterAndSortSection("Name puts the queue itself in the order of the names, so that the files play in that order; The order added puts it back") + BundleHelp.NoticesSection("axMedia", "the list");
 
     /// <summary>docs/axMedia/user-guide.md, embedded by AxMedia.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axMedia/user-guide.md");

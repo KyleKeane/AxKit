@@ -88,6 +88,10 @@ in a password field rather than in the notes.
 - Help, Diagnostics, Copy diagnostics puts what is needed for a bug report on the clipboard. It never holds a
   password or anything from the database.
 
+## Filter and sort
+
+Options, Filter (Alt+O, then F) shows only what has a text in its name: type part of a name, Enter, and the list holds only those rows and says so in its name, "Home, 4 items, filter tap, 1 shown". An empty text clears the filter, and so does Escape in the list once nothing is selected; going into another list drops it. Options, Sort by puts the list in the order of its names, or back in its own order. Both are the same in every list of axKit's navigators, and neither changes anything that is stored.
+
 ## About
 
 axPass is part of axKit by Dr. Kyle Keane, www.kylekeane.com. KeePassXC is a separate project; axPass only runs its

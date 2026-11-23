@@ -43,7 +43,7 @@ public static class HelpText
           Ctrl+Z: undo the last change to Your servers
           F5: read the servers again, and a running server's lists again
           Ctrl+S: nothing to save here; a server of yours is kept as you add it
-        """ + BundleHelp.NoticesSection("axMCP", "the panes");
+        """ + BundleHelp.FilterAndSortSection() + BundleHelp.NoticesSection("axMCP", "the panes");
 
     /// <summary>docs/axMCP/user-guide.md, embedded by AxMCP.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axMCP/user-guide.md");
