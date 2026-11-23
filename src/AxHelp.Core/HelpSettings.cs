@@ -20,7 +20,7 @@ public sealed class HelpSettings : HotkeySettings
     protected override Hotkey DefaultHotkey => new(Hotkey.Control | Hotkey.Shift, 0xBF);
 
     /// <summary>Windows+Alt+H, the conversation's default until 2026-11-14 (HE-D5): a file that holds it is taken over to the new one.</summary>
-    protected override Hotkey? RetiredDefault => new(Hotkey.Windows | Hotkey.Alt, 'H');
+    protected override IReadOnlyList<Hotkey> RetiredDefaults => [new(Hotkey.Windows | Hotkey.Alt, 'H')];
 
     /// <summary>Ctrl+Shift+Comma, the less-than sign's key (HE-4.1, bundle AX-8.11): the screenshot into the conversation.</summary>
     public static Hotkey DefaultScreenshotHotkey => new(Hotkey.Control | Hotkey.Shift, 0xBC);

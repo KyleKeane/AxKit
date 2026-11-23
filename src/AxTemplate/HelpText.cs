@@ -47,7 +47,7 @@ public static class HelpText
         ],
         altF4: "hide the launcher (Quit axTemplate, in its first menu, ends it)") + """
         ## The launcher
-          Ctrl+Shift+Apostrophe, or the hotkey you chose: show the launcher from anywhere; again: hide it
+          Ctrl+Shift+Semicolon, or the hotkey you chose: show the launcher from anywhere; again: hide it
           Type: only the templates that hold every word typed, in their name or in their text; names first
           Down, Up: the next or the previous template. Ctrl+Home, Ctrl+End: the first or the last. Page Down, Page Up: a screen
           Enter: put the template into the program you were in; the caret is left at {caret}, and what you had copied is on the clipboard again afterwards

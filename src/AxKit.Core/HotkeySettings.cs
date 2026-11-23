@@ -31,10 +31,12 @@ public abstract class HotkeySettings : WindowSettings
     protected abstract Hotkey DefaultHotkey { get; }
 
     /// <summary>
-    /// A default of an earlier version that no longer is one (axHelp's Windows+Alt+H, retired 2026-11-14, bundle
-    /// AX-8.11), null for none: a file that still holds it is taken over to <see cref="DefaultHotkey"/> on loading.
+    /// The defaults of earlier versions that no longer are (axHelp's Windows+Alt+H, retired 2026-11-14, bundle
+    /// AX-8.11; axClip's Ctrl+Shift+Semicolon and axTemplate's Ctrl+Shift+Apostrophe, swapped 2026-11-23), none by
+    /// default: a file that still holds one is taken over to <see cref="DefaultHotkey"/> on loading. So a retired
+    /// default is never a key of the user's choice for that app: each is another app's default now, or retired.
     /// </summary>
-    protected virtual Hotkey? RetiredDefault => null;
+    protected virtual IReadOnlyList<Hotkey> RetiredDefaults => [];
 
     /// <summary>
     /// A hotkey's text taken over from a retired default (AX-8.11): the text of <paramref name="now"/> when
@@ -51,7 +53,11 @@ public abstract class HotkeySettings : WindowSettings
     protected void SanitizeHotkey()
     {
         SanitizeWindow();
-        HotkeyText = TakenOver(HotkeyText, RetiredDefault, DefaultHotkey) ?? string.Empty;
+        foreach (var retired in RetiredDefaults)
+        {
+            HotkeyText = TakenOver(HotkeyText, retired, DefaultHotkey) ?? string.Empty;
+        }
+
         HotkeyText = Key.ToString();
     }
 }

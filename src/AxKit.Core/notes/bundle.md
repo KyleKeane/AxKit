@@ -86,7 +86,7 @@
 - `HotkeySettings` (2026-11-09): on `WindowSettings`, the base of axStart's and axClip's classes: the hotkey as text
   (`HotkeyText`, read as `Key`, the app's `DefaultHotkey` when the text is not a usable one), Start with Windows and
   Say the first match while typing, with `SanitizeHotkey`; the JSON names are the ones the two files had.
-  `RetiredDefault` with `TakenOver` (AX-8.11): a file's retired default becomes the new one on loading.
+  `RetiredDefaults` with `TakenOver` (AX-8.11): a file's retired default becomes the new one on loading (axClip and axTemplate swapped theirs on 2026-11-23).
   `AxKit.Forms/HotkeyForm` reads it without knowing the app.
 - `Log`: one file per app; each app calls `Log.UseApp` first thing in its `Run`.
 - `Updates/UpdateCheck` (the latest GitHub release: JSON parsing, version comparison; the repository name lives here)

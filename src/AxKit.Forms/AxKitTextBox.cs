@@ -106,7 +106,8 @@ public class AxKitTextBox : TextBox
             SayIfLineBreakTyped();
         }
 
-        if (!e.Handled && Multiline)
+        // The page keys in every field, the paragraph keys in one of several lines (EditKeys), after the window's own.
+        if (!e.Handled)
         {
             EditKeys.Handle(this, e);
         }

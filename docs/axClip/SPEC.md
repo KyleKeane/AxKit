@@ -11,7 +11,7 @@ In axClip's code and documents, "SPEC.md" means this file.
 ## 1. Summary
 
 Windows' own clipboard history (Windows+V) is a panel that NVDA reads poorly. axClip keeps the text of every copy
-while it runs; its hotkey, Ctrl+Shift+Semicolon unless the user chose another, brings up one search field over that history,
+while it runs; its hotkey, Ctrl+Shift+Apostrophe unless the user chose another, brings up one search field over that history,
 the newest first. Typing narrows it, Down and Up move through it with the caret kept in the field, as in axStart, and
 Enter pastes the item into the program that was in front. Nothing is spoken but the answer to a key.
 
@@ -28,9 +28,9 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
 
 ## 3. Scenarios
 
-1. In an editor, Ctrl+C on a line; later Ctrl+Shift+Semicolon: "axClip window, Search the clipboard, edit"; Down: "git status
+1. In an editor, Ctrl+C on a line; later Ctrl+Shift+Apostrophe: "axClip window, Search the clipboard, edit"; Down: "git status
    --porcelain, 1 of 12". Enter: axClip hides, the editor is in front again, and the line is pasted.
-2. Ctrl+Shift+Semicolon, type `token`: after the pause, "export TOKEN=…, 1 of 2". Ctrl+Q: the whole text in a notice, to read
+2. Ctrl+Shift+Apostrophe, type `token`: after the pause, "export TOKEN=…, 1 of 2". Ctrl+Q: the whole text in a notice, to read
    with the arrows.
 3. Before copying a password by hand: axClip's Options, Pause recording; the copies after it are not kept until it is
    turned on again.
@@ -47,7 +47,7 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
 - CP-1.2 Start with Windows (a setting, on at first): the value "axKit axClip" under the user's Run key,
   `"…\AxKit.exe" clip --hidden`, written only by the installed program (`SignInStart`, AS-1.3). The installer stops
   axClip before it changes anything and starts it again, hidden, after an install when the setting is on (AS-1.5).
-- CP-1.3 The hotkey is Ctrl+Shift+Semicolon at first (CP-D1; Windows+Alt+V until 2026-11-14, a file that still holds
+- CP-1.3 The hotkey is Ctrl+Shift+Apostrophe at first (CP-D1; Windows+Alt+V until 2026-11-14, a file that still holds
   it taken over as it is read); Options, Hotkey… chooses another the way axStart's does (AS-4.2),
   and a hotkey another program holds is said in a notice with the window shown (AS-4.3).
 - CP-1.4 The window hides on Enter, Shift+Enter, Escape, Alt+F4 and another program coming to the front, and gives the
@@ -131,7 +131,7 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
 ### CP-6 Settings, announcements, log
 
 - CP-6.1 `%APPDATA%\AxKit\axClip.json` (AX-5.3; `ClipSettings`): `fontFamily`, `fontSize`, `fontBold`,
-  `checkForUpdates`, `hotkey` (`Ctrl+Shift+Semicolon`), `startWithWindows` (true), `sayFirstMatch` (true), `keepHistory`
+  `checkForUpdates`, `hotkey` (`Ctrl+Shift+Apostrophe`), `startWithWindows` (true), `sayFirstMatch` (true), `keepHistory`
   (false), `protectedHistory` (the items, newest first, only while Keep history is on, as JSON of `text` and `copied`, the time, encrypted for the Windows account with DPAPI, `AxKit.Core/UserSecret`, so that the file elsewhere shows nothing; security audit S-21; Clear history also removes a `.bad` copy of the file).
 - CP-6.2 Announcements (AX-7.3): the matches as in CP-2.3 and CP-2.4; "Removed"; "Clipboard history
   cleared"; "Recording paused"; "Recording"; "The clipboard history is empty"; "The kept clipboard history could not be read
@@ -155,12 +155,15 @@ docs/axClip/        this spec, user-guide.md (embedded), nvda-test-plan.md
 
 ## 6. Design decisions
 
-- **CP-D1 Ctrl+Shift+Semicolon** (the user's decision of 2026-11-14). Every system-wide key of axKit is on Ctrl+Shift
-  (bundle AX-8.11): axStart's Space, axHelp's Slash and Comma, and axClip's Semicolon, a key under the right hand
-  that no axKit window uses and few programs do. Not Ctrl+Shift+V, which pastes plain text in many programs, and not
+- **CP-D1 Ctrl+Shift+Apostrophe** (the user's decision of 2026-11-14, and his swap of 2026-11-23). Every system-wide
+  key of axKit is on Ctrl+Shift (bundle AX-8.11): axStart's Space, axHelp's Slash and Comma, axTemplate's
+  Semicolon and axClip's Apostrophe, keys under the right hand that no axKit window uses and few programs do.
+  axClip had Semicolon from 2026-11-14; on 2026-11-23 the user gave it to axTemplate, whose templates he expects to
+  use more ("i think templates should be ctrl+shift+; since it will be used more"), and axClip took Apostrophe, the
+  key beside it. Not Ctrl+Shift+V, which pastes plain text in many programs, and not
   Windows+V, Windows' own history. Until then the key was Windows+Alt+V, chosen on 2026-10-23 as free in Windows and
   in NVDA; it is retired with axHelp's Windows+Alt keys, which the user expected other programs to take or to act
-  on. A settings file that still holds it is taken over to the new key as it is read (`ClipSettings.RetiredDefault`,
+  on. A settings file that still holds it is taken over to the new key as it is read, and so is Ctrl+Shift+Semicolon (`ClipSettings.RetiredDefaults`,
   `HotkeySettings.TakenOver`, tested) and written with the next save; a key the user chose is kept, and one who had
   chosen Windows+Alt+V themselves cannot be told from one who never chose: they get the new key and choose again
   (CP-1.3).

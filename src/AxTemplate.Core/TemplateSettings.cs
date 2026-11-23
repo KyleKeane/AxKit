@@ -10,8 +10,11 @@ namespace AxTemplate.Core;
 /// </summary>
 public sealed class TemplateSettings : HotkeySettings
 {
-    /// <summary>Ctrl+Shift+Apostrophe (TP-D1, bundle AX-8.11; the maintainer's choice of 2026-11-23): the key to the right of axClip's Semicolon.</summary>
-    protected override Hotkey DefaultHotkey => new(Hotkey.Control | Hotkey.Shift, 0xDE);
+    /// <summary>Ctrl+Shift+Semicolon (TP-D1, bundle AX-8.11; the maintainer's swap with axClip of 2026-11-23: templates are used more, so they have the key under the little finger).</summary>
+    protected override Hotkey DefaultHotkey => new(Hotkey.Control | Hotkey.Shift, 0xBA);
+
+    /// <summary>Ctrl+Shift+Apostrophe, the default for a few hours of 2026-11-23 and axClip's now: a file that holds it is taken over.</summary>
+    protected override IReadOnlyList<Hotkey> RetiredDefaults => [new(Hotkey.Control | Hotkey.Shift, 0xDE)];
 
     /// <summary>The names of the templates used last from the launcher, newest first (TP-3.2): they lead the list of an empty field.</summary>
     public List<string> RecentTemplates { get; set; } = [];

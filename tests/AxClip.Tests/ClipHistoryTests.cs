@@ -93,7 +93,7 @@ public sealed class ClipHistoryTests
         var path = Path.Combine(folder, "axClip.json");
         var settings = ClipSettings.Load(path, out var error);
         Assert.Null(error);
-        Assert.Equal("Ctrl+Shift+Semicolon", settings.HotkeyText);
+        Assert.Equal("Ctrl+Shift+Apostrophe", settings.HotkeyText);
         Assert.False(settings.KeepHistory);
         settings.Keep([new ClipEntry("secret", Now)]);
         Assert.Empty(settings.History);
@@ -108,30 +108,32 @@ public sealed class ClipHistoryTests
 
         File.WriteAllText(path, """{ "hotkey": "Shift+V", "keepHistory": false, "history": [ { "text": "left over", "copied": "2026-10-23T14:00:00" } ] }""");
         var mended = ClipSettings.Load(path, out _);
-        Assert.Equal("Ctrl+Shift+Semicolon", mended.HotkeyText);
+        Assert.Equal("Ctrl+Shift+Apostrophe", mended.HotkeyText);
         Assert.Empty(mended.History);
     }
 
-    /// <summary>CP-D1: Windows+Alt+V, the key until 2026-11-14, is taken over to the new one and saved so; a key the user chose is kept.</summary>
+    /// <summary>CP-D1: Windows+Alt+V, the key until 2026-11-14, and Ctrl+Shift+Semicolon, until 2026-11-23 (axTemplate's now), are taken over to the new one and saved so; a key the user chose is kept.</summary>
     [Fact]
     public void A_file_with_the_retired_hotkey_is_taken_over_and_a_chosen_key_is_kept()
     {
         using var temp = new TempFolder("axclip-tests");
         var path = Path.Combine(temp.Path, "axClip.json");
+        File.WriteAllText(path, """{ "hotkey": "Ctrl+Shift+Semicolon" }""");
+        Assert.Equal("Ctrl+Shift+Apostrophe", ClipSettings.Load(path, out _).HotkeyText);
         File.WriteAllText(path, """{ "hotkey": "Windows+Alt+V", "sayFirstMatch": false }""");
         var settings = ClipSettings.Load(path, out var error);
         Assert.Null(error);
-        Assert.Equal("Ctrl+Shift+Semicolon", settings.HotkeyText);
-        Assert.Equal(new AxKit.Core.Hotkey(AxKit.Core.Hotkey.Control | AxKit.Core.Hotkey.Shift, 0xBA), settings.Key);
+        Assert.Equal("Ctrl+Shift+Apostrophe", settings.HotkeyText);
+        Assert.Equal(new AxKit.Core.Hotkey(AxKit.Core.Hotkey.Control | AxKit.Core.Hotkey.Shift, 0xDE), settings.Key);
         // Nothing else of the file changes.
         Assert.False(settings.SayFirstMatch);
 
         settings.Save(path);
         // A plus sign may be written escaped, so only the key's name is looked for.
         var text = File.ReadAllText(path);
-        Assert.Contains("Semicolon", text, StringComparison.Ordinal);
+        Assert.Contains("Apostrophe", text, StringComparison.Ordinal);
         Assert.DoesNotContain("Alt", text, StringComparison.Ordinal);
-        Assert.Equal("Ctrl+Shift+Semicolon", ClipSettings.Load(path, out _).HotkeyText);
+        Assert.Equal("Ctrl+Shift+Apostrophe", ClipSettings.Load(path, out _).HotkeyText);
 
         File.WriteAllText(path, """{ "hotkey": "Ctrl+Alt+Shift+V" }""");
         Assert.Equal("Ctrl+Alt+Shift+V", ClipSettings.Load(path, out _).HotkeyText);

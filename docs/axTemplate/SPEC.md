@@ -47,7 +47,7 @@ answer to a key.
 
 ## 3. Scenarios
 
-1. In a browser's comment field, Ctrl+Shift+Apostrophe: "axTemplate window, Search templates, edit". Type
+1. In a browser's comment field, Ctrl+Shift+Semicolon: "axTemplate window, Search templates, edit". Type
    `thanks`: after the pause, "Thanks for the report, 1 of 2". Enter: axTemplate hides, the browser is in front
    again, and the text stands in the field.
 2. In a mail, select a name, then the hotkey, `intro`, Ctrl+Enter: axTemplate copies the selected name from the
@@ -70,7 +70,7 @@ answer to a key.
   brought up by its hotkey, hidden by Escape, Alt+F4 and the focus going to another program; only Quit ends it.
   `axKit template --launcher` shows its field (a second start hands "show" to the running one);
   `axKit template --hidden` runs it hidden, which is what a sign-in start and the browser's start of it are.
-- TP-1.3 The hotkey is the user's to change (Options, Hotkey). At first **Ctrl+Shift+Apostrophe** (TP-D1).
+- TP-1.3 The hotkey is the user's to change (Options, Hotkey). At first **Ctrl+Shift+Semicolon** (TP-D1).
 - TP-1.4 **The hotkey is on for everyone after an installation and after an update** (the maintainer's word of
   2026-11-23: "you should automentically enable the axtemplate global hotkey for all users on installation and
   update"), with nothing for the user to start first. Options, General, Start with Windows, in the launcher's
@@ -161,7 +161,7 @@ answer to a key.
 - TP-5.2 **Which apps** (his answer: "Every app with a field"): the editors, axDown and axJSON, in their text;
   axClaude in its message field and axTerminal in its command field; axCalc in its expression field (the
   conversation windows' field at the bottom). The fields of forms and notices in every window, an item's form in
-  axTask, axPass and axMCP among them, are reached by the launcher, Ctrl+Shift+Apostrophe, which puts a template
+  axTask, axPass and axMCP among them, are reached by the launcher, Ctrl+Shift+Semicolon, which puts a template
   into whatever field had the focus, axKit's own too: the palette does not open over a notice (bundle AX-10.1), so
   it cannot offer them (the assistant's finding while building, 2026-11-23; open to the maintainer's word).
 - TP-5.3 The editors keep their own templates (AD-13.3: axDown's Link, Table and Code block) before the user's.
@@ -235,10 +235,12 @@ answer to a key.
 
 ## 6. Design decisions
 
-- **TP-D1 Ctrl+Shift+Apostrophe** (the maintainer's choice, 2026-11-23). Every system-wide key of axKit is on
-  Ctrl+Shift with a punctuation key or Space (bundle AX-8.11): Space is axStart's, Slash and Comma axHelp's,
-  Semicolon axClip's, and Apostrophe, the key to the right of Semicolon, is axTemplate's. Ctrl+Shift+Period stays
-  kept and unused.
+- **TP-D1 Ctrl+Shift+Semicolon** (the maintainer's choice and swap, 2026-11-23). Every system-wide key of axKit is
+  on Ctrl+Shift with a punctuation key or Space (bundle AX-8.11): Space is axStart's, Slash and Comma axHelp's.
+  He first chose Apostrophe, the key to the right of axClip's Semicolon; the same day, after using it, he swapped
+  the two: "i think templates should be ctrl+shift+; since it will be used more". axTemplate has Semicolon, axClip
+  Apostrophe; a settings file of either that holds its old default is taken over to the new one as it is read.
+  Ctrl+Shift+Period stays kept and unused.
 - **TP-D2 A template is an item; where it shows is its checks.** First specified as plain files, with the folder a
   file lies in saying where it shows. The maintainer wanted JSON, as axTask, and the most reuse: an item brings
   the browser's fields, forms, undo and file handling with it, and a check per app says where it shows, in the
@@ -284,7 +286,7 @@ Asked one at a time through the question tool, after he had the first specificat
    on how far the reuse goes for the browser: "Own window, same format".
 2. How the field for where it shows works: "A check per app".
 3. Which apps have a check: "Every app with a field".
-4. The hotkey: "Ctrl+Shift+Apostrophe".
+4. The hotkey: "Ctrl+Shift+Apostrophe"; swapped with axClip's Semicolon the same day, at his word (TP-D1).
 5. The selection of another program: "A second key for it".
 6. The Store's copy: "No entry of its own".
 7. Which window a plain start shows: "The browser".
@@ -306,7 +308,7 @@ Asked one at a time through the question tool, after he had the first specificat
 
 All six steps are built (2026-11-23). Step 1: the store, the finding and the settings, with their tests (the store
 is `AxKit.Core/TemplateStore` since step 4), and the browser, `BrowserForm`, which a plain start shows. Step 2: the launcher, `LauncherForm`,
-behind Ctrl+Shift+Apostrophe: the finding, Enter with the paste, Shift+Enter, Ctrl+Q, Ctrl+B, and the plain start
+behind Ctrl+Shift+Semicolon: the finding, Enter with the paste, Shift+Enter, Ctrl+Q, Ctrl+B, and the plain start
 that starts it hidden, with the hotkey on for everyone after an installation and an update (TP-1.4). Step 3:
 Ctrl+Enter with the other program's selection, the template on the clipboard marked against histories
 (`AxKit.Forms/PrivateClipboard`) and the clipboard's text of before given back 550 ms after the paste key, when

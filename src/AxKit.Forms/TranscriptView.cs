@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Core.Transcript;
 using static AxKit.Forms.User32;
 
@@ -560,14 +561,19 @@ public sealed class TranscriptView : AxKitTextBox
     }
 
     /// <summary>
-    /// Page Up and Page Down move the caret by one screen of wrapped rows and reach the first and last row
+    /// Page Up and Page Down move the caret by one screen of wrapped rows, then to the very start or end, the edge sound there
     /// (<see cref="EditKeys.Page"/>, shared with the message field). The line left is remembered for Backspace (FR-3.12)
     /// when the caret moved. The screen reader reads the new row itself, so nothing is announced here.
     /// </summary>
     private void Page(int direction)
     {
         var from = _mirror.LineCount == 0 ? null : _mirror.LineAt(_mirror.LineIndexAt(SelectionStart));
-        if (EditKeys.Page(this, direction) && from is not null)
+        if (!EditKeys.Page(this, direction))
+        {
+            // At the start or the end of the conversation already (2026-11-23: the last press goes to the very end).
+            EventDoor.Raise(EventKind.Edge);
+        }
+        else if (from is not null)
         {
             RememberJump(from);
         }

@@ -43,28 +43,28 @@ The steps change your own templates' folder: use a template made for the test, a
 
 ## 7. The launcher and its hotkey (TP-1, TP-3)
 
-1. With axTemplate's browser started once, and closed again: in axDown, Ctrl+Shift+Apostrophe: "axTemplate window, Search templates, edit". Escape: the launcher hides and NVDA reads axDown; typing goes there.
-2. Ctrl+Shift+Apostrophe, Down: the second template, "…, 2 of N". At the last one, Down plays the low edge sound and reads it again. Ctrl+Home, Ctrl+End: the first and the last.
+1. With axTemplate's browser started once, and closed again: in axDown, Ctrl+Shift+Semicolon: "axTemplate window, Search templates, edit". Escape: the launcher hides and NVDA reads axDown; typing goes there.
+2. Ctrl+Shift+Semicolon, Down: the second template, "…, 2 of N". At the last one, Down plays the low edge sound and reads it again. Ctrl+Home, Ctrl+End: the first and the last.
 3. Type a word that only one template's text holds: after a moment that template, "…, 1 of 1". Type a word nothing holds, Down: "No template matches …".
-4. Ctrl+Shift+Apostrophe while the launcher shows: it hides. Alt+F4 in the launcher: it hides, it does not end; the hotkey brings it back.
+4. Ctrl+Shift+Semicolon while the launcher shows: it hides. Alt+F4 in the launcher: it hides, it does not end; the hotkey brings it back.
 
 ## 8. Using a template (TP-4)
 
-1. In axDown, put the caret on an empty line. Ctrl+Shift+Apostrophe, type the start of a template's name, Enter: the launcher hides, NVDA reads axDown, and the template's text is pasted at the caret.
+1. In axDown, put the caret on an empty line. Ctrl+Shift+Semicolon, type the start of a template's name, Enter: the launcher hides, NVDA reads axDown, and the template's text is pasted at the caret.
 2. Copy a word in axDown, then use a template whose text holds `{clipboard}`: the word stands in its place. Ctrl+V afterwards pastes the word again: the clipboard was given back.
 2a. Use a template whose text holds `{caret}` in its middle, then type a letter: it lands where the mark was.
-2b. Select a word in axDown, Ctrl+Shift+Apostrophe, a template whose text is `[{selection}]({caret})`, Ctrl+Enter: the word is now in square brackets, and what you type goes between the round ones.
-2c. With axClip running: after any of these, Ctrl+Shift+Semicolon: the template's text is not among axClip's items.
+2b. Select a word in axDown, Ctrl+Shift+Semicolon, a template whose text is `[{selection}]({caret})`, Ctrl+Enter: the word is now in square brackets, and what you type goes between the round ones.
+2c. With axClip running: after any of these, Ctrl+Shift+Apostrophe: the template's text is not among axClip's items.
 2d. A new template, with no text yet: Enter says "… has no text yet: Ctrl+B opens the browser, where it is written", and the launcher stays.
-3. Ctrl+Shift+Apostrophe, a template, Shift+Enter: the launcher hides and NVDA reads the window you were in; nothing is said by the launcher and nothing is pasted; Ctrl+V in axDown pastes it.
+3. Ctrl+Shift+Semicolon, a template, Shift+Enter: the launcher hides and NVDA reads the window you were in; nothing is said by the launcher and nothing is pasted; Ctrl+V in axDown pastes it.
 4. Ctrl+Q on a template: the notice titled with its name and "1 line" or its count, the text with its marks; Escape.
-5. Ctrl+Shift+Apostrophe with nothing typed: the template used last is first.
+5. Ctrl+Shift+Semicolon with nothing typed: the template used last is first.
 
 ## 9. The browser, settings and the rest (TP-4.6, TP-7)
 
 1. Ctrl+B in the launcher: it hides and the browser opens, "Templates - axTemplate window".
-2. Options, Hotkey in the launcher: the notice that takes the next key; press Ctrl+Alt+Shift+T, Enter: "Hotkey Ctrl+Alt+Shift+T", and the new key shows the launcher. Set it back to Ctrl+Shift+Apostrophe.
+2. Options, Hotkey in the launcher: the notice that takes the next key; press Ctrl+Alt+Shift+T, Enter: "Hotkey Ctrl+Alt+Shift+T", and the new key shows the launcher. Set it back to Ctrl+Shift+Semicolon.
 3. F1 in the launcher: its own keys, Ctrl+B among them; Escape.
 4. Session, Quit axTemplate: the launcher ends, and the hotkey does nothing until axTemplate is started again.
 
-By ear, and the maintainer's: how the launcher comes up over other programs, whether the paste lands every time, and the key Ctrl+Shift+Apostrophe under the fingers.
+By ear, and the maintainer's: how the launcher comes up over other programs, whether the paste lands every time, and the key Ctrl+Shift+Semicolon under the fingers.

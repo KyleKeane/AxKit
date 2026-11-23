@@ -19,8 +19,8 @@ public sealed class HotkeyTests
     [InlineData("Alt+A")]
     [InlineData("Ctrl+Shift+Slash")]
     [InlineData("Ctrl+Shift+Comma")]
-    [InlineData("Ctrl+Shift+Semicolon")]
     [InlineData("Ctrl+Shift+Apostrophe")]
+    [InlineData("Ctrl+Shift+Semicolon")]
     public void The_text_comes_back_the_same(string text)
     {
         Assert.Equal(text, Hotkey.Parse(text)!.ToString());

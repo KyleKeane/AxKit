@@ -10,7 +10,7 @@ namespace AxKit.Forms;
 /// listed from what that read gave; a template's file is read again when it is chosen. Where it is put in is the
 /// window's: the editor shell puts it into its text as one undo step, a window with a field to write in names the
 /// field (<see cref="TemplateField"/>) and the base puts it in there. The fields of notices are reached by axTemplate's
-/// launcher instead (Ctrl+Shift+Apostrophe), since the palette never opens over a notice.
+/// launcher instead (Ctrl+Shift+Semicolon), since the palette never opens over a notice.
 /// </summary>
 public abstract partial class AxKitForm
 {

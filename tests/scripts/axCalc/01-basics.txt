@@ -74,3 +74,21 @@ expect state "notice":"Keyboard shortcuts"
 expect text Notices
 keys escape
 expect state "notice":null
+
+# Goal: Get to the end and the start of the field with the page keys
+# Bundle AX-8.2 (2026-11-23): Page Down goes a screen and then to the very end of the text, Page Up to its start;
+# pressed there again, the edge sound. The field is one row here, so one press gets there.
+type 12+34
+keys home
+keys pagedown
+type 0
+expect focus "name":"Expression","role":"Text","value":"12+340"
+keys pagedown
+expect said ♪ Edge
+keys pageup
+type 9
+expect focus "name":"Expression","role":"Text","value":"912+340"
+keys pageup pageup
+expect said ♪ Edge
+keys escape
+expect said ! Cleared

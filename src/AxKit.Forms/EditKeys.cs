@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using AxKit.Core;
+using AxKit.Core.Events;
 using static AxKit.Forms.User32;
 
 namespace AxKit.Forms;
@@ -21,7 +22,16 @@ public static class EditKeys
 
         if (e.KeyData is BundleKeys.PageUp or BundleKeys.PageDown)
         {
-            Page(box, e.KeyCode == Keys.PageDown ? 1 : -1);
+            if (!Page(box, e.KeyCode == Keys.PageDown ? 1 : -1))
+            {
+                // At the start or the end already: nothing further that way (AX-8.6's edge sound, as in a list).
+                EventDoor.Raise(EventKind.Edge);
+            }
+        }
+        else if (!box.Multiline)
+        {
+            // A field of one line has no paragraphs: its other keys are the control's.
+            return;
         }
         else if (e.KeyData is BundleKeys.ParagraphUp or BundleKeys.ParagraphDown or BundleKeys.SelectParagraphUp or BundleKeys.SelectParagraphDown)
         {
@@ -48,9 +58,18 @@ public static class EditKeys
     private const int EM_GETFIRSTVISIBLELINE = 0x00CE;
     private const int EM_CHARFROMPOS = 0x00D7;
 
-    /// <summary>Moves the caret one screen of rows down (<paramref name="direction"/> 1) or up (-1). False when it was on the last (first) row already and stays.</summary>
+    /// <summary>
+    /// Moves the caret one screen of rows down (<paramref name="direction"/> 1) or up (-1); on the last (first) row,
+    /// to the end (start) of the text, so that repeated presses always get there; in a field of one line, there at
+    /// once (the maintainer's ask of 2026-11-23). False when it was at the end (start) already and stays.
+    /// </summary>
     public static bool Page(TextBoxBase box, int direction)
     {
+        if (!box.Multiline)
+        {
+            return ToEnd(box, direction);
+        }
+
         var handle = box.Handle;
         var lineCount = (int)SendMessage(handle, EM_GETLINECOUNT, IntPtr.Zero, IntPtr.Zero);
         var first = (int)SendMessage(handle, EM_GETFIRSTVISIBLELINE, IntPtr.Zero, IntPtr.Zero);
@@ -67,7 +86,8 @@ public static class EditKeys
         var target = Math.Clamp(caretRow + direction * page, 0, Math.Max(0, lineCount - 1));
         if (target == caretRow)
         {
-            return false;
+            // On the first or last row already: the start or the end of the text, once more.
+            return ToEnd(box, direction);
         }
 
         box.Select(box.GetFirstCharIndexFromLine(target), 0);
@@ -77,6 +97,24 @@ public static class EditKeys
         var now = (int)SendMessage(handle, EM_GETFIRSTVISIBLELINE, IntPtr.Zero, IntPtr.Zero);
         SendMessage(handle, EM_LINESCROLL, IntPtr.Zero, (IntPtr)(Math.Max(0, target - offset) - now));
         SendMessage(handle, EM_SCROLLCARET, IntPtr.Zero, IntPtr.Zero);
+        return true;
+    }
+
+    /// <summary>The caret to the end (<paramref name="direction"/> 1) or the start (-1) of the text; false when it is there already, nothing selected.</summary>
+    private static bool ToEnd(TextBoxBase box, int direction)
+    {
+        var target = direction > 0 ? box.TextLength : 0;
+        if (box.SelectionStart == target && box.SelectionLength == 0)
+        {
+            return false;
+        }
+
+        box.Select(target, 0);
+        if (box.IsHandleCreated)
+        {
+            SendMessage(box.Handle, EM_SCROLLCARET, IntPtr.Zero, IntPtr.Zero);
+        }
+
         return true;
     }
 

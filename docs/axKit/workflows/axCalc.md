@@ -57,6 +57,21 @@ Starts with: Open axCalc.
 1. Press F1 (Keyboard shortcuts; Help menu).
 2. Press Escape.
 
+### Get to the end and the start of the field with the page keys
+
+1. Type: 12+34
+2. Press Home.
+3. Press Page Down.
+4. Type: 0
+5. Press Page Down.
+    You hear the sound Edge.
+6. Press Page Up.
+7. Type: 9
+8. Press Page Up 2 times.
+    You hear the sound Edge.
+9. Press Escape.
+    You hear: Cleared.
+
 ## Use variables, earlier answers and the history in axCalc
 
 Starts with: Open axCalc.

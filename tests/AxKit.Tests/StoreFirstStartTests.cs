@@ -78,7 +78,7 @@ public class StoreFirstStartTests
     [Fact]
     public void The_setting_is_off_only_when_the_file_says_so()
     {
-        Assert.True(SignInStart.TurnedOff("{ \"hotkey\": \"Ctrl+Shift+Apostrophe\", \"startWithWindows\": false }"));
+        Assert.True(SignInStart.TurnedOff("{ \"hotkey\": \"Ctrl+Shift+Semicolon\", \"startWithWindows\": false }"));
         Assert.True(SignInStart.TurnedOff("{ \"StartWithWindows\": false }"));
         Assert.False(SignInStart.TurnedOff("{ \"startWithWindows\": true }"));
         Assert.False(SignInStart.TurnedOff("{ \"checkForUpdates\": false }"));

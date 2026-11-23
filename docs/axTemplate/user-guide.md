@@ -1,6 +1,6 @@
 # axTemplate user guide
 
-axTemplate keeps your templates: pieces of text you write once and put in again and again, made for screen reader users. It has two windows. The browser is where templates are made and changed. The launcher comes up over any program when you press Ctrl+Shift+Apostrophe: you type a few letters, press Enter, and the template is put in where your caret was.
+axTemplate keeps your templates: pieces of text you write once and put in again and again, made for screen reader users. It has two windows. The browser is where templates are made and changed. The launcher comes up over any program when you press Ctrl+Shift+Semicolon: you type a few letters, press Enter, and the template is put in where your caret was.
 
 ## Install
 
@@ -10,13 +10,13 @@ axTemplate is part of axKit. Installing axKit (see the axKit guide in the Help, 
 
 Starting axTemplate shows the browser. Its window ends its title in "- axTemplate", and the focus starts in the list of your templates, on the left. With no template yet, the list has one line: "No templates yet: Ctrl+N makes one".
 
-The launcher needs no start of yours. It runs in the background from the moment axKit is installed or updated, and again each time you sign in to Windows, so Ctrl+Shift+Apostrophe (the key to the right of Semicolon) brings it up from any program. To have it not start by itself, turn off Options, General, Start with Windows in the launcher's window. Starting axTemplate also starts the launcher when it is not running.
+The launcher needs no start of yours. It runs in the background from the moment axKit is installed or updated, and again each time you sign in to Windows, so Ctrl+Shift+Semicolon (the semicolon key, beside L) brings it up from any program. To have it not start by itself, turn off Options, General, Start with Windows in the launcher's window. Starting axTemplate also starts the launcher when it is not running.
 
 ## Use
 
 ### The launcher, from any program
 
-- Ctrl+Shift+Apostrophe shows the launcher: one field, "Search templates", with your templates listed under it. The key again, or Escape, hides it, and you are back where you were.
+- Ctrl+Shift+Semicolon shows the launcher: one field, "Search templates", with your templates listed under it. The key again, or Escape, hides it, and you are back where you were.
 - Type words of a template's name or of its text. Only the templates that hold every word stay in the list; those that hold them in their name come first. With nothing typed, the templates you used last come first.
 - Down and Up move through the list and say each template with its place, "Thanks, 1 of 3". The caret stays in the field. Ctrl+Home and Ctrl+End go to the first and the last, Page Down and Page Up by a screen.
 - Enter puts the template into the program you came from: the launcher hides, and the text is pasted where your caret was, with that program's own paste, Ctrl+V. When the template has a `{caret}` mark, the caret is then moved back to it, so you can type on at once.

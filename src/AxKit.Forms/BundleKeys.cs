@@ -121,8 +121,8 @@ public static class BundleKeys
         ("axStart's search field", Keys.Control | Keys.Shift | Keys.Space),
         ("axHelp's conversation", Keys.Control | Keys.Shift | Keys.OemQuestion),
         ("axHelp's screenshot", Keys.Control | Keys.Shift | Keys.Oemcomma),
-        ("axClip's search field", Keys.Control | Keys.Shift | Keys.OemSemicolon),
-        ("axTemplate's search field", Keys.Control | Keys.Shift | Keys.OemQuotes),
+        ("axClip's search field", Keys.Control | Keys.Shift | Keys.OemQuotes),
+        ("axTemplate's search field", Keys.Control | Keys.Shift | Keys.OemSemicolon),
         ("Kept for a later help launcher", Keys.Control | Keys.Shift | Keys.OemPeriod),
     ];
 

@@ -50,6 +50,7 @@ Steps and keys: `docs/axKit/workflows/axCalc.md` (in Claude's working folder: `w
     - Put an earlier expression back in the field
     - Go back from the history to the field
     - Read the keyboard shortcuts
+    - Get to the end and the start of the field with the page keys
 2. **Use variables, earlier answers and the history in axCalc**
     - Go on from the last answer and use ans
     - Set a variable and use it

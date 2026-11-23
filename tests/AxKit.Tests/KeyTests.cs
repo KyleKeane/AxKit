@@ -173,7 +173,7 @@ public sealed class KeyTests
             Keys.Control | Keys.Shift | Keys.OemPeriod,
         ];
         Assert.Equal(expected, BundleKeys.SystemWide.Select(k => k.Key));
-        Assert.Equal(["Ctrl+Shift+Space", "Ctrl+Shift+Slash", "Ctrl+Shift+Comma", "Ctrl+Shift+Semicolon", "Ctrl+Shift+Apostrophe"], new[] { start, help.Key, help.ScreenshotKey, clip, template }.Select(key => key.ToString()));
+        Assert.Equal(["Ctrl+Shift+Space", "Ctrl+Shift+Slash", "Ctrl+Shift+Comma", "Ctrl+Shift+Apostrophe", "Ctrl+Shift+Semicolon"], new[] { start, help.Key, help.ScreenshotKey, clip, template }.Select(key => key.ToString()));
 
         static Keys AsKeys(AxKit.Core.Hotkey hotkey) =>
             (Keys)hotkey.Key

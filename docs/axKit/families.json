@@ -137,7 +137,7 @@
           "sounds": ["Edge"],
           "words": "None in a plain list. In the palette, the hotkey windows and axFile's folder field, the entry you are on is said again. 'Top of the fields', 'A section: Down goes into it'.",
           "apps": "Every list of every window.",
-          "where": ["src/AxKit.Forms/AxKitList.cs", "src/AxKit.Forms/AxKitForm.Palette.cs", "src/AxKit.Forms/HotkeyForm.cs", "src/AxKit.Forms/ItemForm.cs", "src/AxKit.Forms/ItemForm.Fields.cs", "src/AxKit.Forms/ListSelection.cs", "src/AxKit.Forms/TextEditorForm.cs", "src/AxFile/FileForm.Browse.cs", "src/AxFile/FileForm.Completion.cs", "src/AxTask/TaskForm.Projects.cs", "src/AxTerminal/TerminalForm.Input.cs"],
+          "where": ["src/AxKit.Forms/AxKitList.cs", "src/AxKit.Forms/AxKitForm.Palette.cs", "src/AxKit.Forms/EditKeys.cs", "src/AxKit.Forms/TranscriptView.cs", "src/AxKit.Forms/HotkeyForm.cs", "src/AxKit.Forms/ItemForm.cs", "src/AxKit.Forms/ItemForm.Fields.cs", "src/AxKit.Forms/ListSelection.cs", "src/AxKit.Forms/TextEditorForm.cs", "src/AxFile/FileForm.Browse.cs", "src/AxFile/FileForm.Completion.cs", "src/AxTask/TaskForm.Projects.cs", "src/AxTerminal/TerminalForm.Input.cs"],
           "note": "Two places give words and no sound for the same thing: axMedia's 'First file' and 'End of queue' on Ctrl+Shift+Left and Right, and axFile's 'Top' on Backspace at This PC, where Left at the same place plays the edge."
         },
         {

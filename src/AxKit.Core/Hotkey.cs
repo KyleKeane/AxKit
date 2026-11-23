@@ -110,13 +110,14 @@ public sealed record Hotkey(int Modifiers, int Key)
             [0x27] = "Right",
             [0x28] = "Down",
             // The punctuation keys of the bundle's own system-wide keys (docs/axKit/SPEC.md AX-8.11): axHelp's
-            // Ctrl+Shift+Slash, the question mark's key, and Ctrl+Shift+Comma, the less-than sign's, and axClip's
+            // Ctrl+Shift+Slash, the question mark's key, and Ctrl+Shift+Comma, the less-than sign's, and axTemplate's
             // Ctrl+Shift+Semicolon. The period, the greater-than sign's key, is kept for a later help launcher and so
             // is no hotkey's key.
             [0xBF] = "Slash",
             [0xBC] = "Comma",
             [0xBA] = "Semicolon",
-            // axTemplate's Ctrl+Shift+Apostrophe (docs/axTemplate/SPEC.md TP-D1, 2026-11-23), the key to the right of Semicolon.
+            // The key to the right of Semicolon (2026-11-23): axClip's Ctrl+Shift+Apostrophe since the swap that gave
+            // axTemplate Semicolon (docs/axTemplate/SPEC.md TP-D1).
             [0xDE] = "Apostrophe",
         };
         for (var c = 'A'; c <= 'Z'; c++)

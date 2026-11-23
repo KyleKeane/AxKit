@@ -209,7 +209,18 @@ public sealed class TemplateTests : IDisposable
     {
         var settings = TemplateSettings.Load(Path.Combine(_folder, "axTemplate.json"), out var error);
         Assert.Null(error);
-        Assert.Equal("Ctrl+Shift+Apostrophe", settings.HotkeyText);
+        Assert.Equal("Ctrl+Shift+Semicolon", settings.HotkeyText);
         Assert.Empty(settings.RecentTemplates);
+    }
+
+    [Fact]
+    public void The_first_default_now_axClips_is_taken_over_and_a_chosen_key_is_kept()
+    {
+        Directory.CreateDirectory(_folder);
+        var path = Path.Combine(_folder, "axTemplate.json");
+        File.WriteAllText(path, """{ "hotkey": "Ctrl+Shift+Apostrophe" }""");
+        Assert.Equal("Ctrl+Shift+Semicolon", TemplateSettings.Load(path, out _).HotkeyText);
+        File.WriteAllText(path, """{ "hotkey": "Ctrl+Alt+Shift+T" }""");
+        Assert.Equal("Ctrl+Alt+Shift+T", TemplateSettings.Load(path, out _).HotkeyText);
     }
 }

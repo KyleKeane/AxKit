@@ -103,7 +103,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   every answer to read back, copy and recall, and Ctrl+I says an answer in hexadecimal, binary and octal.
   Specification `docs/axCalc/SPEC.md`, guide `docs/axCalc/user-guide.md`, test plan `docs/axCalc/nvda-test-plan.md`.
 - **axClip** (2026-10-23, branch `axClip`): `AxKit.exe clip [--hidden]`, Start entry `axKit axClip`, command `axClip`, no File
-  Explorer entry. A clipboard history behind a hotkey (Ctrl+Shift+Semicolon unless the user chose another): a background
+  Explorer entry. A clipboard history behind a hotkey (Ctrl+Shift+Apostrophe unless the user chose another): a background
   process from sign-in, as axStart, on the bundle's `HotkeyForm`, with one search field over the text of every copy;
   Enter pastes into the program that was in front. Specification `docs/axClip/SPEC.md`, guide
   `docs/axClip/user-guide.md`, test plan `docs/axClip/nvda-test-plan.md`.
@@ -111,7 +111,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
 - **axHelp** (asked 2026-10-23 as AxAsk, built 2026-11-09; rebuilt in 5.7.0 as two hotkeys into one conversation in axClaude, with axDescribe, asked as AxSee, merged in; an access layer, AX-11, for Claude Code): `AxKit.exe help [--hidden | <picture>]` (`describe`, the former verb, the same), Start entry `axKit axHelp`, command `axHelp`: a background process whose hotkey, Ctrl+Shift+Slash (the question mark's key, AX-8.11), brings up the conversation, an axClaude window on Claude's working folder titled axHelp, on a model of axHelp's own, and whose second hotkey, Ctrl+Shift+Comma, puts a picture of the window in front into it (`docs/axHelp/SPEC.md`).
 
 - **axAutomate** (asked 2026-11-10, built 2026-11-11 as a viewer first): `AxKit.exe automate [<folder>]`, Start entry `axKit axAutomate`, command `axAutomate`: the workflows that drive axKit's windows, the automated checks of every app first, read step by step in the item apps' window (`docs/axAutomate/SPEC.md`).
-- **axTemplate** (asked 2026-11-23, its browser and its launcher built the same day): `AxKit.exe template [--launcher | --hidden]`, Start entry `axKit axTemplate`, command `axTemplate`: the user's templates, each an item of the item format in one folder, with a browser on the item apps' window and a launcher behind a hotkey (Ctrl+Shift+Apostrophe unless the user chose another), a background process as axClip's, that puts a template into the program in front (`docs/axTemplate/SPEC.md`). The one app with two windows, each of a bundle type (TP-D8).
+- **axTemplate** (asked 2026-11-23, its browser and its launcher built the same day): `AxKit.exe template [--launcher | --hidden]`, Start entry `axKit axTemplate`, command `axTemplate`: the user's templates, each an item of the item format in one folder, with a browser on the item apps' window and a launcher behind a hotkey (Ctrl+Shift+Semicolon unless the user chose another), a background process as axClip's, that puts a template into the program in front (`docs/axTemplate/SPEC.md`). The one app with two windows, each of a bundle type (TP-D8).
 ## 4. Functional requirements
 
 ### AX-1 Launch and dispatch
@@ -606,7 +606,10 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   document of their own, export their transcript to a text file with it, from the bottom of their first menu, so that
   Save and Save as keep their place in the editors' and the first menus share one order; a window with nothing to
   save says "Nothing to save here", axGIT adding the keys that do something, through the base's `SaveCommand`); Ctrl+Plus and Ctrl+Minus text size; Enter and Escape on a notice; Page Up and Page Down one screen in an
-  edit control; Ctrl+Up and Ctrl+Down the start of the previous and next paragraph in an edit control, a paragraph
+  edit control, then the very start or end of its text, so that repeated presses always get there, and in a field
+  of one line its start or end at once, the edge sound when already there (the maintainer's ask of 2026-11-23;
+  `EditKeys.Page`; a window that gives these keys to a list under its field, the palette and the hotkey windows,
+  keeps them); Ctrl+Up and Ctrl+Down the start of the previous and next paragraph in an edit control, a paragraph
   starting at the first line or at a line with text directly after a blank line, and Ctrl+Shift+Up and
   Ctrl+Shift+Down the selection grown to there, as in Word (`EditKeys.Paragraph`; the EDIT control's own keys scroll a
   row and leave the caret where it is, as Notepad's do, which a screen reader, reading at the caret after the key,
@@ -746,21 +749,23 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   | Ctrl+Shift+Space | axStart's search field (AS-4.1) | `AxKit.Core/Hotkey.Default`; Options, Hotkey in axStart |
   | Ctrl+Shift+Slash, the question mark's key | axHelp's conversation with Claude (HE-4.1) | `AxHelp.Core/HelpSettings.DefaultHotkey`; Options, Hotkey in axHelp |
   | Ctrl+Shift+Comma, the less-than sign's key | a screenshot of the window in front into axHelp's conversation (HE-4.1) | `HelpSettings.DefaultScreenshotHotkey`; `screenshotHotkey` in `axHelp.json` |
-  | Ctrl+Shift+Semicolon | axClip's search field over the clipboard history (CP-1.3) | `AxClip.Core/ClipSettings.DefaultHotkey`; Options, Hotkey in axClip |
-  | Ctrl+Shift+Apostrophe | axTemplate's search field over the templates (TP-1.3) | `AxTemplate.Core/TemplateSettings.DefaultHotkey`; Options, Hotkey in axTemplate's launcher |
+  | Ctrl+Shift+Apostrophe | axClip's search field over the clipboard history (CP-1.3) | `AxClip.Core/ClipSettings.DefaultHotkey`; Options, Hotkey in axClip |
+  | Ctrl+Shift+Semicolon | axTemplate's search field over the templates (TP-1.3) | `AxTemplate.Core/TemplateSettings.DefaultHotkey`; Options, Hotkey in axTemplate's launcher |
   | Ctrl+Shift+Period, the greater-than sign's key | reserved for a later help launcher; nothing registers it | written here alone |
 
   The Windows+Alt keys, axHelp's Windows+Alt+H and Windows+Alt+S and axClip's Windows+Alt+V, are retired: the user
   expected other programs to take them or to act on them. A settings file that still holds one of them is taken over to the new key as it is
-  read (`AxKit.Core/HotkeySettings.TakenOver`, tested; an app names its `RetiredDefault`), and a key the user chose
+  read (`AxKit.Core/HotkeySettings.TakenOver`, tested; an app names its `RetiredDefaults`), and a key the user chose
   stays. No table, the bundle's or a window's, holds one of the six keys, the reserved one included: the key would
   never reach the window. `BundleKeys.SystemWide` lists them, and `KeyTests` fails on a table that holds one and on
   a default that left the list. axMedia's Faster and Slower, on Ctrl+Shift+Period and Ctrl+Shift+Comma until then,
   are Ctrl+Up and Ctrl+Down (AM-D8). Outside axKit, Word and Outlook lose their larger and smaller font on the comma
   and period keys while axHelp runs; the user was told. A hotkey's key is one of `Hotkey.Names`: a letter, a digit,
   a function key, a navigation key, Slash, Comma, Semicolon or Apostrophe, never Period. axClip's key joined the
-  same day by a second decision of the user's (CP-D1); no window used Ctrl+Shift+Semicolon. axTemplate's key, the
-  one to the right of Semicolon, is the user's choice of 2026-11-23 (TP-D1); no window used Ctrl+Shift+Apostrophe.
+  same day by a second decision of the user's (CP-D1), on Semicolon. axTemplate's came on 2026-11-23 on Apostrophe,
+  the key to the right, and the same day the user swapped them: templates are used more, so axTemplate has
+  Ctrl+Shift+Semicolon and axClip Ctrl+Shift+Apostrophe (CP-D1, TP-D1). No window uses either. A settings file that
+  holds an app's old default is taken over to the new one as it is read (`HotkeySettings.RetiredDefaults`).
 - AX-8.12 **The key test: whether a key reaches the window, and what it does there** (2026-11-15, the user's
   decision, after a function key that never reached axClaude: the keyboard had made it another key). Every window
   has **Help, Diagnostics, Test a key**, in the menu and the command palette, with no key of its own; it is not
