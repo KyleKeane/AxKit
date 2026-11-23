@@ -35,8 +35,7 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
   A `.json` file that does not read as an item is in `FolderLevel.Unreadable` (TK-4.6, R-66), not in the count of
   files not shown; `ReadAll` gives a top folder's items and those files in one reading, `UnreadableRow` and
   `UnreadableSummary` are the two sentences.
-- `Changes`, `Step` and `FileChange` (IA-5.4): a change as parts, writes and moves, `Apply`, `CheckUndo` (every path
-  as the step left it), `Undo` (last part first; a new list's folder goes with its `list.json`), `ReadOrNull`.
+- The changes on disk and their undo (`Changes`, `Step`, `FileChange`, IA-5.4) are `AxKit.Core`'s since 2026-11-23, on their second use, axTemplate's browser; this project and the window use them from there.
 - `Links` (IA-D3): `AfterMove` (the writes that keep every link pointing where it did when a file or a folder moves,
   both the links to it and the links it holds), `Spoken` ("missing: name"), `Remap`.
 - `ItemFormRules` with `FormControl` and `FormValue` (AF-14.1, TK-4.0a, 2026-11-21): the item's form, pure:

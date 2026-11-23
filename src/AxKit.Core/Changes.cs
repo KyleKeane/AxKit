@@ -1,6 +1,4 @@
-using AxKit.Core;
-
-namespace AxTask.Core;
+namespace AxKit.Core;
 
 /// <summary>
 /// One part of a change on disk: a file written (<see cref="Before"/> null when it was made, <see cref="After"/> null

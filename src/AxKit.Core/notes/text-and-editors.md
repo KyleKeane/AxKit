@@ -65,6 +65,7 @@
   `Apply`). axTask asks before it converts; the report form's own list is converted when it is met.
 - `FieldStep` (AX-8.10 rule 4, IA-5.6): Right and Left on a field: a choice's next or previous value, a check
   checked or unchecked, null (the edge sound) otherwise, never a `Protected` type.
+- `Changes`, `Step` and `FileChange` (IA-5.4; from AxTask.Core on their second use, axTemplate's browser, 2026-11-23, moved unchanged): a change on disk as parts, writes and moves, `Apply`, `CheckUndo` (every path as the step left it, so that an edit made since is never lost), `Undo` (last part first; a new list's folder goes with its `list.json`), `ReadOrNull`. Tested where they came from, `tests/AxTask.Tests` (`FolderTests`, `LinksTests`).
 - `ItemFiles` (IA-4.5; from AxTask.Core's `ItemFolder` on its second use, the reports list, 2026-11-07): `FileStem`,
   the file name a Title gives, and `FreePath`, a free name beside the taken ones ("name - 2.json").
 - `Reports/` (docs/axKit/reports.md, 2026-11-07): `Report` with `ReportKind`, `ReportKinds` (the names, the GitHub
