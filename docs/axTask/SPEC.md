@@ -138,6 +138,15 @@ selected ones (TK-4.4, TK-4.7).
   start only on a drive of this computer (bundle AX-9.5a, 2026-11-16): elsewhere the top level shows and the window
   says "<path> is on the network and was not opened at start; Right on its list opens it." The top folder itself is
   read on the window's thread wherever it is (TK-D3).
+- **TK-4.5a Another top folder, and the ones used lately** (the maintainer's wish of the old feature list, item 24:
+  "we should add the open database and recent databases"; built 2026-11-23). Session → Top folder… chooses another
+  folder of lists with Windows' folder picker; Session → Recent top folders ▸ lists the top folders used before, the
+  newest first, "1. Tasks (D:\Lists\Tasks)" as every recent list of the bundle (AX-9.5), without the one in use
+  and without one that is gone; "No recent top folders" when there is none. Choosing one opens it as Top folder…
+  does: the top level, its undo emptied, "Folder <name>. <the list>". The list is kept in the settings file
+  (`recentFolders`, at most ten, `RecentPaths`); a folder joins it when axTask leaves it for another and when it
+  is opened, by either command or from the command line. Both commands are marked act for the AI tools, since they
+  change the folder axTask works in (MC-D12).
 - **TK-4.6 A damaged item is a row** (2026-11-16, `repairs.md` R-66). A `.json` file in a list that does not read as
   an item (not JSON, not an object, no list of fields, or a file that cannot be opened) was only counted with the
   files not shown, and the lists that gather items said nothing at all, so a due task whose file broke vanished from

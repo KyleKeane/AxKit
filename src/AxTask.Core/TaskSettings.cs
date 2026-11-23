@@ -24,6 +24,12 @@ public sealed class TaskSettings : WindowSettings
     /// </summary>
     public List<string> ProjectFolders { get; set; } = [];
 
+    /// <summary>The top folders used lately, the newest first, each a full path, at most <see cref="RecentPaths.Max"/> (SPEC.md TK-4.5a): Session, Recent top folders.</summary>
+    public List<string> RecentFolders { get; set; } = [];
+
+    /// <summary>Puts the folder at the front of <see cref="RecentFolders"/>, once.</summary>
+    public void RememberFolder(string folder) => RecentPaths.Remember(RecentFolders, Path.TrimEndingDirectorySeparator(folder));
+
     /// <summary>Why a typed path cannot be a new project folder (TK-7b.1): blank, not a full path, not there, the top folder or inside it, or there already; null when it can.</summary>
     public string? RefusedProjectFolder(string typed)
     {
@@ -148,6 +154,7 @@ public sealed class TaskSettings : WindowSettings
         }
 
         ProjectFolders = folders;
+        RecentFolders = RecentPaths.Sanitize(RecentFolders);
 
         if (string.IsNullOrWhiteSpace(LastList) || LastList.Contains("..", StringComparison.Ordinal) || Path.IsPathRooted(LastList))
         {

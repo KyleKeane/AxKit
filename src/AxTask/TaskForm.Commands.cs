@@ -897,6 +897,29 @@ public sealed partial class TaskForm
             return;
         }
 
+        OpenTopFolder(folder);
+    }
+
+    /// <summary>Session, Recent top folders (TK-4.5a): the folders used lately but the one in use, as "1. Tasks (path)".</summary>
+    private void FillRecentFolders() =>
+        RecentMenu.FillFolders(_recentFoldersItem,
+            _settings.RecentFolders.Where(folder => !folder.Equals(Path.TrimEndingDirectorySeparator(_settings.TopFolder), StringComparison.OrdinalIgnoreCase)),
+            "&No recent top folders", CommandMark.Act, OpenTopFolder);
+
+    /// <summary>
+    /// Another top folder, chosen in the picker or among the recent ones (TK-4.5a): the one left and the one opened go to
+    /// the front of the recent list, then the top level of the new one is shown with its undo emptied.
+    /// </summary>
+    private void OpenTopFolder(string folder)
+    {
+        if (!Directory.Exists(folder))
+        {
+            Announce("No folder is there any more: " + folder, true);
+            return;
+        }
+
+        _settings.RememberFolder(_settings.TopFolder);
+        _settings.RememberFolder(folder);
         _settings.Folder = folder;
         _settings.LastList = null;
         SaveSettings();

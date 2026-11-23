@@ -912,6 +912,8 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Hear that a list with no item has nowhere to go
 24. **Add an item to a list without going into it**
     - Add an item to a list from the top level
+25. **Open a folder of lists used lately**
+    - Open a folder of lists used lately
 
 ## axTemplate
 

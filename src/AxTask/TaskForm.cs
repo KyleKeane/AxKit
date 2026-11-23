@@ -29,6 +29,9 @@ public sealed partial class TaskForm : ItemForm
     private readonly ToolStripMenuItem _fieldMenu = new("Fiel&d");
     private readonly ToolStripMenuItem _hideDoneItem;
 
+    /// <summary>Session, Recent top folders (TK-4.5a), filled as it opens.</summary>
+    private readonly ToolStripMenuItem _recentFoldersItem = new("Recent &top folders");
+
     /// <summary>The level shown: a folder (the top or a list), or a smart list's items.</summary>
     private string _folder = string.Empty;
 
@@ -46,6 +49,10 @@ public sealed partial class TaskForm : ItemForm
         // detail pane's: Context holds the one for where the focus is and what is selected (AX-9.11, B-19).
         var file = new ToolStripMenuItem("&Session");
         file.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Top &folder...", null, (_, _) => ChooseTopFolder()), CommandMark.Act));
+        // TK-4.5a: act, as Top folder is, since either changes the folder axTask works in (MC-D12).
+        CommandPalette.RefreshedOnOpening(_recentFoldersItem, FillRecentFolders);
+        FillRecentFolders();
+        file.DropDownItems.Add(_recentFoldersItem);
         file.DropDownItems.Add(Item("&Refresh", () => Refresh(announce: true), ItemKeys.Refresh, CommandMark.Read));
         file.DropDownItems.Add(new ToolStripSeparator());
         file.DropDownItems.Add(CreateExitItem());
@@ -205,6 +212,8 @@ public sealed partial class TaskForm : ItemForm
         if (path is not null && Directory.Exists(path))
         {
             _settings.Folder = Path.GetFullPath(path);
+            // TK-4.5a: a top folder opened from the command line is one used lately too.
+            _settings.RememberFolder(_settings.Folder);
             _folder = TopFolder;
         }
         else if (path is not null && File.Exists(path))

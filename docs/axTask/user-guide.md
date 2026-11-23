@@ -7,6 +7,7 @@ folder. It is part of axKit, a bundle of apps for people who use a screen reader
 
 - Start menu: `axKit axTask`. Console: `axTask`, or `axtask C:\my\tasks` for a folder of your own.
 - The first time, axTask uses the folder `axKit\Tasks` in your Documents folder, beside what the other axKit apps keep for you there. If your lists were in `Tasks` in your Documents, from a version before this, the update moves them into `axKit\Tasks` the first time any axKit app starts; a folder you chose yourself is never moved. Session, Top folder chooses another.
+- Session, Recent top folders lists the folders of lists you used before, the newest first; choose one to open it. The command palette finds them too: Ctrl+Shift+P and part of the folder's name.
 - axTask opens on the list you had open last.
 
 ## The window

@@ -1014,3 +1014,17 @@ Starts with: Open axTask with the folder tasks.
 2. Type: Paint the door
 3. Press Enter.
     You hear: Added Paint the door to Home.
+
+## Open a folder of lists used lately
+
+Starts with: Open axTask with the folder work. Close the window. Open axTask with the folder tasks.
+
+### Open a folder of lists used lately
+
+1. Press Ctrl+Shift+P (Command palette; Help menu).
+2. Type: work
+    You hear words such as: 1. work.
+    You hear: Session, Recent top folders.
+3. Press Enter.
+    You hear: Folder work.
+4. Press Down.

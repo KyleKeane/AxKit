@@ -32,4 +32,27 @@ public sealed class TaskSettingsTests
             Assert.Null(mended.Folder);
         }
     }
+
+    /// <summary>TK-4.5a: the top folders used lately, the newest first, each once whatever its case, kept between runs; an entry that is no whole path is dropped as the file is read.</summary>
+    [Fact]
+    public void The_top_folders_used_lately_are_kept_newest_first_and_once()
+    {
+        using var temp = new TempFolder("axtask-settings");
+        var path = Path.Combine(temp.Path, "axTask.json");
+        var settings = TaskSettings.Load(path, out _);
+        Assert.Empty(settings.RecentFolders);
+
+        var work = Path.Combine(temp.Path, "Work");
+        var home = Path.Combine(temp.Path, "Home");
+        settings.RememberFolder(work);
+        settings.RememberFolder(home + "\\");
+        settings.RememberFolder(work.ToUpperInvariant());
+        Assert.Equal([work.ToUpperInvariant(), home], settings.RecentFolders);
+
+        settings.Save(path);
+        Assert.Equal([work.ToUpperInvariant(), home], TaskSettings.Load(path, out _).RecentFolders);
+
+        File.WriteAllText(path, "{ \"recentFolders\": [\"" + home.Replace("\\", "\\\\") + "\", \"relative\", \"--help\", \" \"] }");
+        Assert.Equal([home], TaskSettings.Load(path, out _).RecentFolders);
+    }
 }
