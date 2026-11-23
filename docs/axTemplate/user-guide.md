@@ -52,7 +52,7 @@ How the caret gets to its place: where the program shows its text to screen read
 Three marks can stand in a template's text. Each is written with its curly brackets.
 
 - `{caret}` is where the caret is left after the template is put in.
-- `{selection}` is replaced by the text that was selected when the template was put in: from the launcher with Ctrl+Enter, and empty with Enter.
+- `{selection}` is replaced by the text that was selected when the template was put in. With Enter the launcher reads it without pressing any key, in programs that show their text to screen readers (Word, Notepad, a browser's field); in another program it is empty with Enter, and Ctrl+Enter takes it by pressing Ctrl+C there first.
 - `{clipboard}` is replaced by the clipboard's text, as it was when the launcher came up.
 
 A link's template, for example, is `[{selection}]({caret})`: the selected words become the link's text, and the caret waits where the address goes.

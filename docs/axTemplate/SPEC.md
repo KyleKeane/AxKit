@@ -103,7 +103,7 @@ answer to a key.
   (`AxKit.Core/TextTemplate`): `{caret}`, `{selection}`, `{clipboard}` (his answer: "Yes, keep all three"). In an
   axKit window all three mean what they mean in an editor. From the launcher, in another program:
   - `{clipboard}` is the clipboard's text at the moment the launcher came up.
-  - `{selection}` is empty with Enter, and with Ctrl+Enter the text selected in that program (TP-4.2).
+  - `{selection}` is the text selected in that program. With Enter it is read through UI Automation, with no key sent, where the field gives its text (the maintainer, 2026-11-23: "{selection} is not working as expected"), and is empty elsewhere; with Ctrl+Enter it is copied with the copy key first (TP-4.2), for a program that gives no text that way. Either way the paste then stands in the selection's place.
   - `{caret}`: the caret is put in its place after the paste (TP-D10). Where the field gives its text to UI
     Automation, the channel a screen reader reads by (Word, Notepad, a browser's field), the text is pasted with
     the mark `{caret}` left in, the mark nearest before the caret is searched for until the paste has put it

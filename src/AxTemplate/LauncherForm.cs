@@ -285,7 +285,11 @@ public sealed class LauncherForm : HotkeyForm
             Log.Info("A modifier key was still down when the keys were sent");
         }
 
-        var selection = takeSelection ? await TakeSelectionAsync() : string.Empty;
+        // TP-4.2: Ctrl+Enter sends the copy key; Enter reads the selection through UI Automation where the field gives
+        // its text, for a template that has {selection}, with no key sent.
+        var selection = takeSelection ? await TakeSelectionAsync()
+            : text.Contains(TextTemplate.SelectionMark, StringComparison.Ordinal) ? await Task.Run(FocusedText.SelectedText) ?? string.Empty
+            : string.Empty;
         var made = TextTemplate.Expand(text, selection, before);
         if (made.Text.Length == 0)
         {

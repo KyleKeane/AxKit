@@ -35,6 +35,24 @@ public static class FocusedText
     }
 
     /// <summary>
+    /// The text selected in the focused field, read without a key (TP-4.2; the maintainer, 2026-11-23: "{selection}
+    /// is not working as expected"): empty when nothing is selected, null when the field gives no text. No copy key
+    /// is sent, so a terminal's running command is never stopped by it.
+    /// </summary>
+    public static string? SelectedText()
+    {
+        try
+        {
+            return Pattern()?.GetSelection() is { Length: > 0 } selection ? selection.GetElement(0).GetText(-1) ?? string.Empty : null;
+        }
+        catch (COMException ex)
+        {
+            Log.Info("The focused field's selection could not be read: " + ex.GetType().Name);
+            return null;
+        }
+    }
+
+    /// <summary>
     /// The mark nearest before the caret selected, once the paste has put it there: tried every 50 ms for
     /// <paramref name="maxMs"/>, so that a program that pastes slowly is waited for. False when it never came.
     /// </summary>
@@ -185,7 +203,8 @@ public static class FocusedText
 
         void GetEnclosingElement();
 
-        void GetText();
+        [return: MarshalAs(UnmanagedType.BStr)]
+        string? GetText(int maxLength);
 
         void Move();
 
