@@ -22,7 +22,7 @@ The launcher needs no start of yours. It runs in the background from the moment 
 - Enter puts the template into the program you came from: the launcher hides, and the text is pasted where your caret was, with that program's own paste, Ctrl+V. When the template has a `{caret}` mark, the caret is then moved back to it, so you can type on at once.
 - Ctrl+Enter does the same around what you had selected in that program: the selection is copied there first (the launcher presses Ctrl+C for you), stands where the template says `{selection}`, and the template takes its place. Do not use it in a terminal, where Ctrl+C ends the running command; and an editor that copies the whole line when nothing is selected gives that line.
 - Afterwards the clipboard holds what it held before, when that was text: a template does not cost you what you had copied. The template itself is kept out of clipboard histories, axClip's and Windows' own.
-- Shift+Enter only puts the text on the clipboard, "Copied". Use it where pasting is another key, and in a program that runs as administrator, where Windows lets no other program press keys.
+- Shift+Enter only puts the text on the clipboard: the launcher hides and you are back in your program, which is the sign that it worked. Use it where pasting is another key, and in a program that runs as administrator, where Windows lets no other program press keys.
 - Ctrl+Q reads the template's text before you use it. In a terminal, a template of several lines runs each line as it is pasted, as any paste of several lines does.
 - Ctrl+B opens the browser.
 - Options, Hotkey changes the key. Session, Quit axTemplate ends the launcher; closing its window only hides it.

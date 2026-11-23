@@ -370,7 +370,9 @@ public sealed class ClipForm : HotkeyForm
             return;
         }
 
-        if (CopyText(entry.Text, "Copied"))
+        // No word of it (the maintainer's choice of 2026-11-23): NVDA speaks the window the hide gives the front back
+        // to, and never heard a "Copied" said as the window hid. Coming back is the sign; a copy that failed stays and says why.
+        if (CopyText(entry.Text, null))
         {
             HideWindow();
         }

@@ -18,8 +18,8 @@ keys shift+end
 keys ctrl+c
 keys end
 keys enter
-launch template --launcher
-adopt
+# The launcher is the run's second window; it remembers axDown as the window it came up over.
+start template --launcher
 expect spoken Search templates
 type thanks
 keys down

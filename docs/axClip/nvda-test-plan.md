@@ -22,7 +22,7 @@ Run with NVDA before a release, after `scripts to run-individual-apps\run-axClip
 ## 3. Pasting (CP-4)
 
 1. In axDown, put the caret on an empty line. Ctrl+Shift+Semicolon, Down to an item, Enter: axClip hides, NVDA reads axDown, and the item is pasted at the caret.
-2. Ctrl+Shift+Semicolon, an item, Shift+Enter: "Copied", axClip hides; nothing is pasted; Ctrl+V in axDown pastes it.
+2. Ctrl+Shift+Semicolon, an item, Shift+Enter: axClip hides and NVDA reads the window you were in; nothing is said by axClip and nothing is pasted; Ctrl+V in axDown pastes it.
 3. Delete on an item: "Removed". Ctrl+Shift+Delete: the notice "Clear the clipboard history?"; Escape: nothing changes; again and Enter: "Clipboard history cleared"; Down: the low sound and "The clipboard history is empty".
 
 ## 4. Settings and the rest (CP-5, CP-6)

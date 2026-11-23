@@ -137,7 +137,9 @@ answer to a key.
 - TP-4.3 **The clipboard afterwards.** The template's text is put on the clipboard marked as not for a clipboard
   history, the mark password managers use, so that axClip and Windows' own history do not keep it. When the
   clipboard held plain text before, that text is put back once the paste is done (TP-D6).
-- TP-4.4 Shift+Enter puts the filled text on the clipboard without pasting: "Copied", and the window hides. For a
+- TP-4.4 Shift+Enter puts the filled text on the clipboard without pasting, and the window hides; nothing is
+  said, as in axClip (CP-4.2, the maintainer's choice of 2026-11-23: a word said as the window hides is never
+  heard, and coming back is the sign). For a
   program whose paste is another key.
 - TP-4.5 Ctrl+Q shows the template's own text, marks and all, in a notice titled with its name and its lines, read
   with the arrows; Escape closes it.

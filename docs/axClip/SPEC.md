@@ -101,7 +101,10 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
 - CP-4.1 Enter pastes the selected item: it is put on the clipboard, the window hides and gives the front back, and
   after 150 ms, when that program's window is in front again, Ctrl+V is sent to it (`SendInput`). When another window
   is in front by then, nothing is pasted and the text stays on the clipboard. The item becomes the newest.
-- CP-4.2 Shift+Enter puts the item on the clipboard without pasting: "Copied", and the window hides.
+- CP-4.2 Shift+Enter puts the item on the clipboard without pasting, and the window hides. Nothing is said (the
+  maintainer's choice of 2026-11-23): NVDA speaks the window the front goes back to, and the "Copied" said until
+  then as the window hid was never heard (the NVDA pass of that day). Coming back is the sign that it worked; a
+  copy that failed keeps the window and says why.
 - CP-4.3 Ctrl+Q shows the item's whole text in a notice titled "Clipboard text, <n> lines", read with the arrows;
   Escape closes it.
 - CP-4.4 Delete removes the selected item: "Removed". Ctrl+Shift+Delete asks "Clear the clipboard history? Its N items
@@ -130,7 +133,7 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
 - CP-6.1 `%APPDATA%\AxKit\axClip.json` (AX-5.3; `ClipSettings`): `fontFamily`, `fontSize`, `fontBold`,
   `checkForUpdates`, `hotkey` (`Ctrl+Shift+Semicolon`), `startWithWindows` (true), `sayFirstMatch` (true), `keepHistory`
   (false), `protectedHistory` (the items, newest first, only while Keep history is on, as JSON of `text` and `copied`, the time, encrypted for the Windows account with DPAPI, `AxKit.Core/UserSecret`, so that the file elsewhere shows nothing; security audit S-21; Clear history also removes a `.bad` copy of the file).
-- CP-6.2 Announcements (AX-7.3): the matches as in CP-2.3 and CP-2.4; "Copied"; "Removed"; "Clipboard history
+- CP-6.2 Announcements (AX-7.3): the matches as in CP-2.3 and CP-2.4; "Removed"; "Clipboard history
   cleared"; "Recording paused"; "Recording"; "The clipboard history is empty"; "The kept clipboard history could not be read
   on this computer and starts empty." (CP-3.6); the Hotkey notice's words (AS-4.2);
   the bundle's. Nothing is said when the window hides, and nothing when a copy is kept.

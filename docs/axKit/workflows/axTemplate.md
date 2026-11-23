@@ -109,7 +109,6 @@ Starts with: Open axTemplate with --launcher.
 1. Press Ctrl+A (Select all; Actions menu).
 2. Type: thanks
 3. Press Shift+Enter (Copy without putting in; Context menu).
-    You hear: Copied.
 4. Start axTemplate again with --launcher.
 5. Press Down.
     You hear: Greeting, 2 of 3.

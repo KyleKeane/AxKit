@@ -364,7 +364,9 @@ public sealed class LauncherForm : HotkeyForm
         {
             Announce(MakesNothing, true);
         }
-        else if (CopyText(made.Text, "Copied"))
+        // No word of it (the maintainer's choice of 2026-11-23, with axClip's): NVDA speaks the window the hide gives the
+        // front back to, and never heard a "Copied" said as the window hid. Coming back is the sign.
+        else if (CopyText(made.Text, null))
         {
             HideWindow();
         }

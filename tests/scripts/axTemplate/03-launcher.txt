@@ -60,12 +60,12 @@ expect state "notice":null
 expect focus Search templates
 
 # Goal: Copy a template without putting it in
-# TP-4.4: Shift+Enter puts the text on the clipboard and hides the launcher. A second start shows it again with
-# the field empty, and the template used last is first (TP-3.2).
+# TP-4.4: Shift+Enter puts the text on the clipboard and hides the launcher, without a word. A second start shows it
+# again with the field empty, and the template used last is first (TP-3.2).
 keys ctrl+a
 type thanks
 do Copy without putting in
-expect said Copied
+# Nothing is said: the window hides, and a second start finds it hidden, so that it shows again with the field empty.
 launch template --launcher
 expect focus "name":"Search templates","role":"Text","value":""
 keys down

@@ -120,15 +120,14 @@ Starts with: Open axDown with the file notes.md.
 2. Press Ctrl+C.
 3. Press End.
 4. Press Enter.
-5. Start axTemplate again with --launcher.
-6. A new window opens: go to it.
+5. Open axTemplate with --launcher.
     NVDA says: Search templates.
-7. Type: thanks
-8. Press Down.
+6. Type: thanks
+7. Press Down.
     NVDA says: Thanks, 1 of 1.
-9. Press Enter.
-10. Go to the axDown window.
-11. Type: friend
+8. Press Enter.
+9. Go to the axDown window.
+10. Type: friend
 
 ### Put a template in around what is selected
 
@@ -136,12 +135,12 @@ Starts with: Open axDown with the file notes.md.
 2. Type: word
 3. Press Shift+Home.
 4. Start axTemplate again with --launcher.
-5. Go to the other window.
+5. Go to the axTemplate window.
     NVDA says: Search templates.
 6. Type: link
 7. Press Down.
     NVDA says: Link, 1 of 1.
-8. Press Ctrl+Enter.
+8. Press Ctrl+Enter (Put in, with that program's selection; Context menu).
 9. Go to the axDown window.
 10. Type: address
 
