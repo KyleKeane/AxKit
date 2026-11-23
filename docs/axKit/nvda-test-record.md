@@ -6,6 +6,26 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-22: the console window's shared field, menus and session steps; by the assistant with NVDA listening (branch `axfile-navigator` f8f3c2e6)
+
+`.\nvda-pass.ps1 -Only` every script of axClaude, axTerminal and axCalc, from the branch's own folder, behind the
+spoken countdown, the maintainer away at his word (NVDA passes without his approval; the real Claude Code for this
+step, with the small model), NVDA 2025.3.3 with the OneCore voice, Windows 11 Pro 10.0.26200, the build 5.10.0 of
+commit f8f3c2e6, the tree clean: 65 scripts, 377 goals and checks; 64 scripts passed at the first run.
+
+| What | Scripts | Result |
+|---|---|---|
+| axClaude on the console window's shared field keys, places, Sounds and done menus, closing question, restart and folder switch (framework step 11): the stand-in scripts and the live ones with the real Claude Code | 48 | Passed |
+| axTerminal on the same: every script but one | 12 | Passed |
+| axTerminal, `13-handed-command.txt`, step 15: the window said the caution of a handed command ("A command is in the command field, not sent. Another program put it there, and axKit checked nothing of it...") and NVDA did not speak it: it read the window's title, the field with the command, the shell's first lines and "Ready" | 1 | Failed once; passed three times in a row when run alone right after |
+| axCalc: every script | 4 | Passed |
+
+The failure is a race that is older than this step: what a window says before it is active is raised half a second
+after its first activation, and NVDA's own reading of the window can come after that and cut it. It has its own
+item in the priorities list, High, with two ways to make that caution certain. Before the pass, six live scripts of
+axClaude (start, a message and its reply, reading, the folder, the lifecycle, the options) passed on the hidden
+desktop with the real Claude Code, three after the first part of the step and three after the last.
+
 ## 2026-11-22: Filter and Sort by in every navigator, and axMedia's Ctrl+Enter and add; by the assistant with NVDA listening (branch `axfile-navigator` c22a5fd4)
 
 `.\nvda-pass.ps1 -Only` every script of the eight apps on the navigator, from the branch's own folder, behind the
