@@ -124,6 +124,7 @@ public static class Dispatch
     public const string AxMCP = "mcpclient";
     public const string AxHelp = "help";
     public const string AxAutomate = "automate";
+    public const string AxTemplate = "template";
     /// <summary>axDescribe's verb until it merged into axHelp (5.7.0): still starts axHelp, so that a sign-in start or a script written for it works.</summary>
     public const string FormerDescribe = "describe";
 
@@ -197,6 +198,10 @@ public static class Dispatch
         new("axAutomate", AxAutomate, "AxAutomate", AppGroup.Utilities, Opens.Folders)
         {
             Description = "axAutomate, workflows that drive the windows of axKit", Icon = new("Aa", 80, 80, 120),
+        },
+        new("axTemplate", AxTemplate, "AxTemplate", AppGroup.Utilities, Opens.Nothing)
+        {
+            Description = "axTemplate, your templates, put in anywhere", Icon = new("Ae", 80, 80, 120),
         },
         new("axTerminal", AxTerminal, "AxTerminal", AppGroup.AccessLayers, Opens.Folders, ShowIn: true)
         {
@@ -273,7 +278,7 @@ public static class Dispatch
     };
 
     public const string Usage = """
-        Usage: AxKit [claude|down|json|git|terminal|file|media|preview|start|process|task|pass|calc|clip|mcpclient|help|automate] [arguments]
+        Usage: AxKit [claude|down|json|git|terminal|file|media|preview|start|process|task|pass|calc|clip|mcpclient|help|automate|template] [arguments]
 
           AxKit claude [<folder>] ...  axClaude, the front end for Claude Code (AxKit claude --help lists its options)
           AxKit down [<file>]          axDown, the text editor
@@ -292,6 +297,7 @@ public static class Dispatch
           AxKit mcpclient [<folder>]   axMCP, the MCP servers Claude Code knows and your own: their tools, resources and prompts, run by hand
           AxKit help [--hidden | <picture>]  axHelp, your conversation with Claude from anywhere: its hotkeys; a picture file put into the conversation (AxKit describe is the same)
           axKit automate [<folder>]   axAutomate, workflows that drive the windows of axKit
+          axKit template              axTemplate, your templates, put in anywhere
           AxKit <folder>               the same as AxKit claude <folder>
           AxKit <file>                 the same as AxKit down <file>, AxKit json <file> for a .json file, AxKit pass <file> for a .kdbx file, or AxKit media <file> for a sound or video file
           AxKit                        axClaude on the current folder
@@ -299,7 +305,7 @@ public static class Dispatch
           AxKit apps                   the apps as JSON on standard output, for the installer and other scripts
           --help, --version           this text, or the version
 
-        The installed console commands axkit, axclaude, axdown, axjson, axgit, axterminal, axfile, axmedia, axpreview, axstart, axprocess, axtask, axpass, axcalc, axclip, axmcp, axhelp and axAutomate stand for AxKit, AxKit claude, AxKit down, AxKit json, AxKit git, AxKit terminal, AxKit file, AxKit media, AxKit preview, AxKit start, AxKit process, AxKit task, AxKit pass, AxKit calc, AxKit clip, AxKit mcpclient, AxKit help and AxKit automate.
+        The installed console commands axkit, axclaude, axdown, axjson, axgit, axterminal, axfile, axmedia, axpreview, axstart, axprocess, axtask, axpass, axcalc, axclip, axmcp, axhelp, axAutomate and axTemplate stand for AxKit, AxKit claude, AxKit down, AxKit json, AxKit git, AxKit terminal, AxKit file, AxKit media, AxKit preview, AxKit start, AxKit process, AxKit task, AxKit pass, AxKit calc, AxKit clip, AxKit mcpclient, AxKit help, AxKit automate and AxKit template.
         """;
 
     /// <summary>Whether an argument asks for the usage text: the forms Windows and Unix programs take (the apps' hosts read it too).</summary>

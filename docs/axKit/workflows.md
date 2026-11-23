@@ -905,6 +905,19 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Hear both ends of a list of one item
     - Hear that a list with no item has nowhere to go
 
+## axTemplate
+
+Steps and keys: `docs/axKit/workflows/axTemplate.md` (in Claude's working folder: `workflows-axTemplate.md`).
+
+1. **Make, write, rename and delete a template in axTemplate's browser**
+    - Make a template
+    - Write the text of a template
+    - Rename a template
+    - Delete a template and bring it back
+    - Rename a template from its Title field
+2. **Delete several templates, and meet a file that is no template, in axTemplate's browser**
+    - Delete several templates at once
+
 ## axTerminal
 
 Steps and keys: `docs/axKit/workflows/axTerminal.md` (in Claude's working folder: `workflows-axTerminal.md`).

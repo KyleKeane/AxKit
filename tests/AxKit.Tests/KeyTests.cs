@@ -30,6 +30,7 @@ public sealed class KeyTests
             ["axMCP"] = AxMCP.AxMCPKeys.All,
             ["axHelp"] = AxHelp.AxHelpKeys.All,
             ["axAutomate"] = AxAutomate.AxAutomateKeys.All,
+            ["axTemplate"] = AxTemplate.AxTemplateKeys.All,
         };
 
     /// <summary>
@@ -155,16 +156,18 @@ public sealed class KeyTests
         var start = new AxStart.Core.StartSettings().Key;
         var help = new AxHelp.Core.HelpSettings();
         var clip = new AxClip.Core.ClipSettings().Key;
+        var template = new AxTemplate.Core.TemplateSettings().Key;
         Keys[] expected =
         [
             AsKeys(start),
             AsKeys(help.Key),
             AsKeys(help.ScreenshotKey),
             AsKeys(clip),
+            AsKeys(template),
             Keys.Control | Keys.Shift | Keys.OemPeriod,
         ];
         Assert.Equal(expected, BundleKeys.SystemWide.Select(k => k.Key));
-        Assert.Equal(["Ctrl+Shift+Space", "Ctrl+Shift+Slash", "Ctrl+Shift+Comma", "Ctrl+Shift+Semicolon"], new[] { start, help.Key, help.ScreenshotKey, clip }.Select(key => key.ToString()));
+        Assert.Equal(["Ctrl+Shift+Space", "Ctrl+Shift+Slash", "Ctrl+Shift+Comma", "Ctrl+Shift+Semicolon", "Ctrl+Shift+Apostrophe"], new[] { start, help.Key, help.ScreenshotKey, clip, template }.Select(key => key.ToString()));
 
         static Keys AsKeys(AxKit.Core.Hotkey hotkey) =>
             (Keys)hotkey.Key
@@ -192,6 +195,7 @@ public sealed class KeyTests
         ["axMCP"] = AxMCP.HelpText.Shortcuts,
         ["axHelp"] = AxHelp.HelpText.Shortcuts,
         ["axAutomate"] = AxAutomate.HelpText.Shortcuts,
+        ["axTemplate"] = AxTemplate.HelpText.Shortcuts,
     };
 
     /// <summary>

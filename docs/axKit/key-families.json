@@ -12,7 +12,7 @@
       "id": "system-wide",
       "scope": "anywhere",
       "pattern": "Ctrl+Shift+Space and Ctrl+Shift+punctuation",
-      "match": "^ctrl\\+shift\\+(space|slash|comma|semicolon|period)$",
+      "match": "^ctrl\\+shift\\+(space|slash|comma|semicolon|apostrophe|period)$",
       "does": "bring up axKit from anywhere in Windows",
       "learn": "Hold Ctrl and Shift and press Space or a punctuation key, in any program: an axKit app comes up. These are the only keys of axKit that work outside its windows (SPEC AX-8.11).",
       "source": "system-wide",

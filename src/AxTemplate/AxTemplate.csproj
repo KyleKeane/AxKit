@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- axTemplate's window side, as a class library inside AxKit.exe (docs/axKit/SPEC.md AX-1.7): the window, its key table
+       and its texts; the pure code is AxTemplate.Core. -->
+  <PropertyGroup>
+    <TargetFramework>$(AxKitDotNet)-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>AxTemplate</RootNamespace>
+    <AssemblyName>axTemplate</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AxTemplate.Core\AxTemplate.Core.csproj" />
+    <ProjectReference Include="..\AxKit.Core\AxKit.Core.csproj" />
+    <ProjectReference Include="..\AxKit.Forms\AxKit.Forms.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Help, User guide shows this file. -->
+    <EmbeddedResource Include="..\..\docs\axTemplate\user-guide.md" LogicalName="UserGuide.md" />
+  </ItemGroup>
+
+</Project>

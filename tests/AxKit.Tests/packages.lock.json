@@ -313,6 +313,20 @@
           "AxKit.Core": "[1.0.0, )"
         }
       },
+      "axtemplate": {
+        "type": "Project",
+        "dependencies": {
+          "AxKit.Core": "[1.0.0, )",
+          "AxKit.Forms": "[1.0.0, )",
+          "AxTemplate.Core": "[1.0.0, )"
+        }
+      },
+      "axtemplate.core": {
+        "type": "Project",
+        "dependencies": {
+          "AxKit.Core": "[1.0.0, )"
+        }
+      },
       "axterminal": {
         "type": "Project",
         "dependencies": {

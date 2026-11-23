@@ -116,6 +116,8 @@ public sealed record Hotkey(int Modifiers, int Key)
             [0xBF] = "Slash",
             [0xBC] = "Comma",
             [0xBA] = "Semicolon",
+            // axTemplate's Ctrl+Shift+Apostrophe (docs/axTemplate/SPEC.md TP-D1, 2026-11-23), the key to the right of Semicolon.
+            [0xDE] = "Apostrophe",
         };
         for (var c = 'A'; c <= 'Z'; c++)
         {

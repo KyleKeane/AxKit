@@ -19,6 +19,7 @@ using AxTerminal;
 using AxMCP;
 using AxHelp;
 using AxAutomate;
+using AxTemplate;
 
 namespace axKit;
 
@@ -141,6 +142,7 @@ internal static class Program
         [Dispatch.AxMCP] = AxMCPApp.Run,
         [Dispatch.AxHelp] = AxHelpApp.Run,
         [Dispatch.AxAutomate] = AxAutomateApp.Run,
+        [Dispatch.AxTemplate] = AxTemplateApp.Run,
     };
 
     /// <summary>

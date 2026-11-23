@@ -111,11 +111,12 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
 - **axHelp** (asked 2026-10-23 as AxAsk, built 2026-11-09; rebuilt in 5.7.0 as two hotkeys into one conversation in axClaude, with axDescribe, asked as AxSee, merged in; an access layer, AX-11, for Claude Code): `AxKit.exe help [--hidden | <picture>]` (`describe`, the former verb, the same), Start entry `axKit axHelp`, command `axHelp`: a background process whose hotkey, Ctrl+Shift+Slash (the question mark's key, AX-8.11), brings up the conversation, an axClaude window on Claude's working folder titled axHelp, on a model of axHelp's own, and whose second hotkey, Ctrl+Shift+Comma, puts a picture of the window in front into it (`docs/axHelp/SPEC.md`).
 
 - **axAutomate** (asked 2026-11-10, built 2026-11-11 as a viewer first): `AxKit.exe automate [<folder>]`, Start entry `axKit axAutomate`, command `axAutomate`: the workflows that drive axKit's windows, the automated checks of every app first, read step by step in the item apps' window (`docs/axAutomate/SPEC.md`).
+- **axTemplate** (asked 2026-11-23, its browser built the same day): `AxKit.exe template`, Start entry `axKit axTemplate`, command `axTemplate`: the user's templates, each an item of the item format in one folder, with a browser on the item apps' window and, as its next step, a launcher behind a hotkey (Ctrl+Shift+Apostrophe unless the user chose another) that puts a template into the program in front (`docs/axTemplate/SPEC.md`).
 ## 4. Functional requirements
 
 ### AX-1 Launch and dispatch
 
-- AX-1.1 The first argument may be a verb naming an app: `claude`, `down`, `json`, `git`, `terminal`, `file`, `media`, `preview`, `start`, `process`, `task`, `pass`, `calc`, `clip`, `mcpclient`, `help`, `automate` (`describe` starts axHelp since 5.7.0; the one list is `Dispatch.Apps`). The rest of the arguments go to that app
+- AX-1.1 The first argument may be a verb naming an app: `claude`, `down`, `json`, `git`, `terminal`, `file`, `media`, `preview`, `start`, `process`, `task`, `pass`, `calc`, `clip`, `mcpclient`, `help`, `automate`, `template` (`describe` starts axHelp since 5.7.0; the one list is `Dispatch.Apps`). The rest of the arguments go to that app
   unchanged, so `AxKit.exe claude C:\src --record x.vt` is what `AxClaude.exe C:\src --record x.vt` was.
 - AX-1.2 Without a verb, a first argument that is an existing folder goes to axClaude and an existing file to axDown,
   or to axJSON when its extension is `.json`, to axPass when it is `.kdbx`, or to axMedia when it is a sound or video
@@ -132,7 +133,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   installation keeps that listing as `apps.json`, which an uninstall reads when the program cannot be run.
 - AX-1.5 The dispatch is pure code in `AxKit.Core` (`Dispatch`): arguments in, app name and arguments out. It is unit
   tested and has no knowledge of the apps beyond their names.
-- AX-1.6 Each process sets a Windows application id before its window opens (`AxKit.AxClaude`, `AxKit.AxDown`, `AxKit.AxJSON`, `AxKit.AxGit`, `AxKit.AxTerminal`, `AxKit.AxFile`, `AxKit.AxMedia`, `AxKit.AxPreview`, `AxKit.AxStart`, `AxKit.AxProcess`, `AxKit.AxTask`, `AxKit.AxPass`, `AxKit.AxCalc`, `AxKit.AxClip`, `AxKit.AxMCP`, `AxKit.AxHelp`, `AxKit.AxAutomate`), so the
+- AX-1.6 Each process sets a Windows application id before its window opens (`AxKit.AxClaude`, `AxKit.AxDown`, `AxKit.AxJSON`, `AxKit.AxGit`, `AxKit.AxTerminal`, `AxKit.AxFile`, `AxKit.AxMedia`, `AxKit.AxPreview`, `AxKit.AxStart`, `AxKit.AxProcess`, `AxKit.AxTask`, `AxKit.AxPass`, `AxKit.AxCalc`, `AxKit.AxClip`, `AxKit.AxMCP`, `AxKit.AxHelp`, `AxKit.AxAutomate`, `AxKit.AxTemplate`), so the
   taskbar shows the apps apart and Win+number keys reach the right one.
 - AX-1.7 An app is a class library with one entry point, `static void Run(string[] args)` on a class named
   `<App>App`, plus a `Usage` text. `AxKit`'s `Program` only dispatches; the entry point is one call into
@@ -729,18 +730,20 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   | Ctrl+Shift+Slash, the question mark's key | axHelp's conversation with Claude (HE-4.1) | `AxHelp.Core/HelpSettings.DefaultHotkey`; Options, Hotkey in axHelp |
   | Ctrl+Shift+Comma, the less-than sign's key | a screenshot of the window in front into axHelp's conversation (HE-4.1) | `HelpSettings.DefaultScreenshotHotkey`; `screenshotHotkey` in `axHelp.json` |
   | Ctrl+Shift+Semicolon | axClip's search field over the clipboard history (CP-1.3) | `AxClip.Core/ClipSettings.DefaultHotkey`; Options, Hotkey in axClip |
+  | Ctrl+Shift+Apostrophe | axTemplate's search field over the templates (TP-1.3; the launcher is being built, and until then nothing registers the key) | `AxTemplate.Core/TemplateSettings.DefaultHotkey` |
   | Ctrl+Shift+Period, the greater-than sign's key | reserved for a later help launcher; nothing registers it | written here alone |
 
   The Windows+Alt keys, axHelp's Windows+Alt+H and Windows+Alt+S and axClip's Windows+Alt+V, are retired: the user
   expected other programs to take them or to act on them. A settings file that still holds one of them is taken over to the new key as it is
   read (`AxKit.Core/HotkeySettings.TakenOver`, tested; an app names its `RetiredDefault`), and a key the user chose
-  stays. No table, the bundle's or a window's, holds one of the five keys, the reserved one included: the key would
+  stays. No table, the bundle's or a window's, holds one of the six keys, the reserved one included: the key would
   never reach the window. `BundleKeys.SystemWide` lists them, and `KeyTests` fails on a table that holds one and on
   a default that left the list. axMedia's Faster and Slower, on Ctrl+Shift+Period and Ctrl+Shift+Comma until then,
   are Ctrl+Up and Ctrl+Down (AM-D8). Outside axKit, Word and Outlook lose their larger and smaller font on the comma
   and period keys while axHelp runs; the user was told. A hotkey's key is one of `Hotkey.Names`: a letter, a digit,
-  a function key, a navigation key, Slash, Comma or Semicolon, never Period. axClip's key joined the same day by a
-  second decision of the user's (CP-D1); no window used Ctrl+Shift+Semicolon.
+  a function key, a navigation key, Slash, Comma, Semicolon or Apostrophe, never Period. axClip's key joined the
+  same day by a second decision of the user's (CP-D1); no window used Ctrl+Shift+Semicolon. axTemplate's key, the
+  one to the right of Semicolon, is the user's choice of 2026-11-23 (TP-D1); no window used Ctrl+Shift+Apostrophe.
 - AX-8.12 **The key test: whether a key reaches the window, and what it does there** (2026-11-15, the user's
   decision, after a function key that never reached axClaude: the keyboard had made it another key). Every window
   has **Help, Diagnostics, Test a key**, in the menu and the command palette, with no key of its own; it is not

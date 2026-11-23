@@ -1000,6 +1000,52 @@ every window" or under a heading that names the windows without it; under an app
 - To the navigator. Menu: none, a key alone. Key: Tab. Also: Shift+Tab, Escape. Mark: open. Never run by AI tools.
 - Up a level. Menu: none, a key alone. Key: Left. Also: Backspace. Mark: open. Never run by AI tools.
 
+## axTemplate
+
+- Deselect all. Menu: Actions. Key: Ctrl+Shift+A. Also: Escape. Mark: change.
+- New template. Menu: Actions. Key: Ctrl+N. Mark: change. Never run by AI tools.
+- Select all. Menu: Actions. Key: Ctrl+A. Mark: change.
+- Undo. Menu: Actions. Key: Ctrl+Z. Mark: change. Never run by AI tools.
+- No templates yet: Ctrl+N makes one. Menu: Context. Key: none. Mark: read.
+- The marks of a template. Menu: Help, axTemplate resources. Key: none. Mark: act.
+- Nothing to move to here yet. Menu: Navigation. Key: none. Mark: read.
+- Filter. Menu: Options. Key: none. Mark: change.
+- Name. Menu: Options, Sort by. Key: none. Mark: change.
+- The list's own order. Menu: Options, Sort by. Key: none. Mark: change.
+- Refresh. Menu: Session. Key: F5. Mark: read.
+- axClaude, access layer for Claude Code. Menu: Session, Show the templates' folder in. Key: none. Mark: act.
+- axFile. Menu: Session, Show the templates' folder in. Key: none. Mark: open.
+- axGIT, access layer for Git. Menu: Session, Show the templates' folder in. Key: none. Mark: open.
+- axTerminal, access layer for your shell. Menu: Session, Show the templates' folder in. Key: none. Mark: act.
+- File Explorer. Menu: Session, Show the templates' folder in. Key: none. Mark: open.
+- axTemplate. Menu: Window, New window. Key: none. Mark: open.
+- Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
+- Check the field. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
+- Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
+- Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
+- Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
+- Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
+- Find previous. Menu: none, a key alone. Key: Shift+F3. Mark: read. Never run by AI tools.
+- Into the list. Menu: none, a key alone. Key: Right. Mark: open. Never run by AI tools.
+- New item. Menu: none, a key alone. Key: Ctrl+N. Mark: change. Never run by AI tools.
+- Open. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
+- Read in full. Menu: none, a key alone. Key: Ctrl+Q. Mark: read. Never run by AI tools.
+- Rename. Menu: none, a key alone. Key: F2. Mark: change. Never run by AI tools.
+- Select or deselect. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
+- Select to here. Menu: none, a key alone. Key: Shift+Space. Mark: change. Never run by AI tools.
+- Select to the first template. Menu: none, a key alone. Key: Shift+Home. Mark: change. Never run by AI tools.
+- Select to the last template. Menu: none, a key alone. Key: Shift+End. Mark: change. Never run by AI tools.
+- Select to the next template. Menu: none, a key alone. Key: Shift+Down. Mark: change. Never run by AI tools.
+- Select to the previous template. Menu: none, a key alone. Key: Shift+Up. Mark: change. Never run by AI tools.
+- Switch between the navigator and the detail pane. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
+- The Context menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
+- The field's menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
+- The next value of the field. Menu: none, a key alone. Key: Right. Mark: change. Never run by AI tools.
+- The previous value of the field. Menu: none, a key alone. Key: Left. Mark: change. Never run by AI tools.
+- To the detail pane. Menu: none, a key alone. Key: Tab. Also: Shift+Tab. Mark: open. Never run by AI tools.
+- To the navigator. Menu: none, a key alone. Key: Tab. Also: Shift+Tab, Escape. Mark: open. Never run by AI tools.
+- Up a level. Menu: none, a key alone. Key: Left. Also: Backspace. Mark: open. Never run by AI tools.
+
 ## axTerminal
 
 - Interrupt. Menu: Actions. Key: Ctrl+Shift+C. Mark: act.

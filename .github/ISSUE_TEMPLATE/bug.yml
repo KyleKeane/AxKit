@@ -28,6 +28,7 @@ body:
         - axMCP
         - axHelp
         - axAutomate
+        - axTemplate
         - The bundle (install, update, the axKit menu)
     validations:
       required: true

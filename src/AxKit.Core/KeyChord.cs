@@ -43,6 +43,7 @@ public static class KeyChord
         ("apps", 0x5D),
         ("slash", 0xBF),
         ("semicolon", 0xBA),
+        ("apostrophe", 0xDE),
         ("add", 0x6B),
         ("subtract", 0x6D),
     ];

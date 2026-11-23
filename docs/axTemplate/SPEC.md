@@ -83,8 +83,11 @@ answer to a key.
   brings; it never takes one away.
 - TP-2.2 **A template's fields**: `Title`, its name and its file's name; `Text` (a long text), what is put in;
   then one check for each place it also shows inside axKit (TP-5): `Every axKit app` first, then one for each app
-  that has a field to write in, by the app's name (his answers: "A check per app", "Every app with a field"). The
-  launcher lists every template whatever its checks.
+  that has a field to write in, by the app's name (his answers: "A check per app", "Every app with a field"):
+  axDown, axJSON, axTask, axCalc, axTerminal, axPass, axClaude and axMCP, in the bundle's order
+  (`TemplateStore.AppsWithField`; a window of any other app has its notices' fields, which `Every axKit app`
+  reaches). The launcher lists every template whatever its checks. A value in a template's file that no field
+  names is kept as it is, and the pane says so in a line after the fields.
 - TP-2.3 **The marks** in a template's text are `docs/axDown/SPEC.md` AD-13.2's, filled by the same code
   (`AxKit.Core/TextTemplate`): `{caret}`, `{selection}`, `{clipboard}` (his answer: "Yes, keep all three"). In an
   axKit window all three mean what they mean in an editor. From the launcher, in another program:
@@ -169,20 +172,27 @@ answer to a key.
 
 - TP-8.1 **A window of the navigator type** (`ItemForm`; framework FW-4.6 to FW-4.10a; his answer: "Own window,
   same format"), a window like any other: it shows in the taskbar and the Window menu, and Alt+F4 closes it.
-- TP-8.2 **One level**: the templates, "Templates, 12", each row a template's name. Filter and Sort by are the
-  navigator's (bundle AX-8.17); Space selects (AX-8.16); type-to-find and the edge sound are the list's.
+- TP-8.2 **One level**: the templates, "Templates, 12 templates", each row a template's name, in the order of the
+  names; a file that is no template (TP-2.4) is among them by its file's name. An empty folder shows the one line
+  "No templates yet: Ctrl+N makes one". Filter and Sort by are the navigator's (bundle AX-8.17); Space selects
+  (AX-8.16); type-to-find and the edge sound are the list's.
 - TP-8.3 **The second pane is the template's fields** (the navigator's pane of fields, IA-2.3): Title, Text, and
   the checks of TP-2.2. Tab goes to it and back. Enter on a field changes it as in every item window (IA-5): Text
   in a field of several lines, a check with Space or Enter, Right and Left.
 - TP-8.4 **On a template**: Enter goes to its fields. Ctrl+N makes a new one: a notice asks its name, the item is
-  made with an empty text and no check, and it is selected. F2 renames it in place (bundle AX-8.7); its file is
-  renamed with it. Delete moves the selected templates to the Recycle Bin after a question that names them or
-  their count; Ctrl+Z undoes the last change of a field. Ctrl+Enter puts the template's text on the clipboard,
-  marks filled with nothing, "Copied", for a look at what it makes. Ctrl+J opens the template's file in axJSON,
-  and Session, Show in opens the folder in axFile.
+  made with an empty text and no check, and it is selected; a name another template has, whatever its capitals,
+  is refused with the notice kept. F2 renames it in place (bundle AX-8.7), and so does its Title field; its file
+  is renamed with it. Delete deletes the template, or the selected ones, after a question that names it or their
+  count (TP-D9). Ctrl+Z takes back the last change, whichever it was: a field, a rename, a new template, a
+  deletion; up to fifty, for as long as the window is open, and never over a file that changed on disk since
+  (item-apps IA-5.4). Ctrl+Enter puts the template's text on the clipboard, marks filled with nothing, "Copied",
+  for a look at what it makes. Ctrl+J opens the template's file in axJSON, and Session, Show the templates'
+  folder in, opens the folder in File Explorer or axFile.
 - TP-8.5 The browser reads the folder off the UI thread (the navigator's read, framework FW-4.7 point 1), again on
-  F5 and when the window is active again after the folder changed. For the AI tools, reading is free; making,
-  renaming, changing and deleting a template are never run for an AI tool (TP-D7).
+  F5 and when the window is active again, where the list is shown again only when the folder changed. A change
+  is made only to a file that is still as it was read: otherwise "The template changed on disk; it is read
+  again", and nothing is changed (IA-5.5). For the AI tools, reading is free; making, renaming, changing and
+  deleting a template are never run for an AI tool (TP-D7): their menu items are withheld from the AI tools.
 
 ## 5. Architecture
 
@@ -228,6 +238,12 @@ answer to a key.
   each is new: until now every app is one window type (framework section 5). They are no second window in the
   sense of bundle AX-7.2, which rules out dialogs of an app's own: each is a whole window of a bundle type, as
   axHelp's small window and its conversation are.
+- **TP-D9 Delete deletes, and Ctrl+Z brings back** (the assistant's choice while building, 2026-11-23, open to the
+  maintainer's word). The specification first said the Recycle Bin. The item apps' changes with their undo
+  (`AxKit.Core/Changes`, moved from axTask on this second use) give one Ctrl+Z for every change, a deletion
+  among them, with the check that nothing changed on disk since; the Recycle Bin's code is axFile's own and would
+  be a second way to take a deletion back. The price: once the window is closed, a deleted template is gone. The
+  question before a deletion says so.
 
 ## 7. The maintainer's answers, 2026-11-23
 
@@ -257,6 +273,8 @@ Asked one at a time through the question tool, after he had the first specificat
 
 ## 9. Status
 
-Specified; the build begins with step 1. What exists from 2026-11-23: the marks and their code
-(`AxKit.Core/TextTemplate`), the templates folder's path (`AppPaths.TemplatesFolder`), and the editors' Insert
-template menu, which reads plain files of `templates\<app>` until step 4.
+Step 1 is built (2026-11-23): the store, the finding and the settings in `AxTemplate.Core` with their tests, and
+the browser, `BrowserForm`, which a plain start shows; its window checks are `tests/scripts/axTemplate`. The
+launcher is step 2: until it is built the hotkey does nothing, and a template is used by copying it from the
+browser (Ctrl+Enter). Also there from 2026-11-23: the marks and their code (`AxKit.Core/TextTemplate`), and the
+editors' Insert template menu, which reads plain files of `templates\<app>` until step 4.

@@ -79,7 +79,7 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 - What: For things in levels: a list of rows you go into and out of, and beside it more of the row you are on.
 - Made of: the list; the list.
 - Moving: Right goes into a row that holds a level; Left and Backspace go up. Enter opens the row. Tab and the other pane keys switch to the second pane; Escape comes back.
-- Apps on it: axFile, axMedia, axTask, axProcess, axAutomate, axGIT, axPass, axMCP.
+- Apps on it: axFile, axMedia, axTask, axProcess, axAutomate, axTemplate, axGIT, axPass, axMCP.
 - The code: `ItemForm`, `src/AxKit.Forms/ItemForm.cs`.
 
 ### The hotkey window
@@ -92,7 +92,7 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 
 ## The apps
 
-17 apps: 17 on a type, 0 with a window of their own still to move.
+18 apps: 18 on a type, 0 with a window of their own still to move.
 
 | App | Type today | To be | Note |
 |---|---|---|---|
@@ -107,6 +107,7 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 | axCalc | conversation | conversation | The shape without a program behind it: its text is the answers given. |
 | axProcess | navigator | navigator | Three lists of This computer, read off the UI thread, and no second pane; it starts inside Processes. |
 | axAutomate | navigator | navigator |  |
+| axTemplate | navigator | navigator | The browser of the templates; the launcher behind the hotkey, on the hotkey window, is its next step (docs/axTemplate/SPEC.md TP-D8). |
 | axTerminal | conversation | conversation |  |
 | axGIT | navigator | navigator | Three lists of the repository, read through git off the UI thread, with a text as second pane; it starts inside Changes. |
 | axPass | navigator | navigator |  |

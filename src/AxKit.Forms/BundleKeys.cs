@@ -122,6 +122,7 @@ public static class BundleKeys
         ("axHelp's conversation", Keys.Control | Keys.Shift | Keys.OemQuestion),
         ("axHelp's screenshot", Keys.Control | Keys.Shift | Keys.Oemcomma),
         ("axClip's search field", Keys.Control | Keys.Shift | Keys.OemSemicolon),
+        ("axTemplate's search field", Keys.Control | Keys.Shift | Keys.OemQuotes),
         ("Kept for a later help launcher", Keys.Control | Keys.Shift | Keys.OemPeriod),
     ];
 
@@ -158,6 +159,7 @@ public static class BundleKeys
             Keys.Oemcomma => "Comma",
             Keys.OemQuestion => "Slash",
             Keys.OemSemicolon => "Semicolon",
+            Keys.OemQuotes => "Apostrophe",
             Keys.Back => "Backspace",
             // The enumeration gives Page Down its other name, Next, and Page Up as one word (found 2026-11-15 in the
             // command inventory, where axStart's and axClip's Page down read "Next").

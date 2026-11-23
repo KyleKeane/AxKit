@@ -24,6 +24,7 @@ body:
         - axMCP
         - axHelp
         - axAutomate
+        - axTemplate
         - The bundle, or a new app
     validations:
       required: true

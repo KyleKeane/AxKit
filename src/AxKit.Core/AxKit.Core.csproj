@@ -39,6 +39,7 @@
     <EmbeddedResource Include="../../docs/axClaude/user-guide.md" LogicalName="Guide.axClaude.md" />
     <EmbeddedResource Include="../../docs/axMCP/user-guide.md" LogicalName="Guide.axMCP.md" />
     <EmbeddedResource Include="../../docs/axHelp/user-guide.md" LogicalName="Guide.axHelp.md" />
+    <EmbeddedResource Include="../../docs/axTemplate/user-guide.md" LogicalName="Guide.axTemplate.md" />
   </ItemGroup>
 
   <ItemGroup>

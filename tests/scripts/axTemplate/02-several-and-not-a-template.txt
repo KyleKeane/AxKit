@@ -1,0 +1,68 @@
+# Workflow: Delete several templates, and meet a file that is no template, in axTemplate's browser
+# axTemplate's browser (docs/axTemplate/nvda-test-plan.md sections 5 and 6; SPEC TP-2.1, TP-2.4, TP-8.2, TP-8.4): a
+# folder that holds templates already, without a list.json, and one file that is not an item. Run by tools/AxAutomate
+# on a desktop of its own (docs/axKit/automation.md).
+file home\AxKit\axTemplate.json {"checkForUpdates": false}
+file home\AxKit\templates\Alpha.json {"schema": "list.json", "Title": "Alpha", "Text": "First {caret}"}
+file home\AxKit\templates\Beta.json {"schema": "list.json", "Title": "Beta", "Text": "Second", "axDown": true, "Sprint": "kept"}
+file home\AxKit\templates\Gamma.json {"schema": "list.json", "Title": "Gamma", "Text": "Third"}
+file home\AxKit\templates\broken.json [1, 2]
+
+start template
+expect state Templates, 3 templates
+expect focus Alpha
+
+# Check: A file that is no item is listed as no template
+# 6.1 Among the names in their order; its details say what to do (TP-2.4).
+type broken
+expect focus broken, not a template
+keys f2
+expect said ! Not a template: Ctrl+J opens the file in axJSON to mend
+keys ctrl+enter
+expect said Not a template: Ctrl+J opens the file in axJSON to mend
+keys tab
+expect focus broken, not a template
+keys down
+expect focus The file is JSON that is not an item, or not JSON
+keys escape
+
+# Check: A template's checks and a value the fields do not name
+# 6.2 The folder had no list.json: the browser wrote it, so the checks are fields; a value of no field is kept.
+keys home
+keys down
+expect focus Beta
+keys tab
+expect focus Title, text, Beta
+keys down
+keys down
+expect focus Every axKit app, check, not done
+keys down
+expect focus axDown, check, done
+keys end
+expect focus 1 more field kept: Sprint
+keys escape
+expect focus Beta
+
+# Goal: Delete several templates at once
+# 5.1 Space selects; Delete then asks with their count, and one Ctrl+Z brings them all back (TP-8.2, TP-8.4).
+keys home
+keys space
+expect focus Alpha, selected
+keys down
+keys space
+expect focus Beta, selected
+keys delete
+expect state "notice":"Delete 2 templates?"
+keys enter
+expect said Deleted 2 templates
+expect state Templates, 1 template
+expect focus broken, not a template
+keys ctrl+z
+expect said Undone: Deleted 2 templates
+expect state Templates, 3 templates
+expect focus Alpha
+
+# Check: F5 reads the folder again
+# 5.2 Said with the list's name and count (TP-8.5).
+keys f5
+expect said Refreshed: Templates, 3 templates

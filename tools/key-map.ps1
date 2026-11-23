@@ -43,7 +43,7 @@ $problems = New-Object System.Collections.Generic.List[string]
 # A key of the Keys enumeration as the chord vocabulary names it (AxKit.Core/KeyChord): the names that differ.
 $keyNames = @{
     'return' = 'enter'; 'oemplus' = 'plus'; 'add' = 'plus'; 'oemminus' = 'minus'; 'subtract' = 'minus'
-    'oemperiod' = 'period'; 'oemcomma' = 'comma'; 'oemquestion' = 'slash'; 'oemsemicolon' = 'semicolon'; 'back' = 'backspace'
+    'oemperiod' = 'period'; 'oemcomma' = 'comma'; 'oemquestion' = 'slash'; 'oemsemicolon' = 'semicolon'; 'oemquotes' = 'apostrophe'; 'back' = 'backspace'
 }
 
 # "Keys.Control | Keys.Shift | Keys.P" as "ctrl+shift+p".
