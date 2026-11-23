@@ -2027,56 +2027,6 @@ dialogs) is .NET's, shipped inside the executable, and every project is marked a
 
 ## 7. Status
 
-- 2.0.0 (2026-10-02): the bundle, called Axit until 5.0.0 (B-16; the names below are today's). `AxKit.exe` with
-  axClaude unchanged inside it and axDown new; `AxKit.Core` and `AxKit.Forms`; the installer, publish and release
-  scripts for the bundle; the repository renamed `KyleKeane/Axit`. Preceded by axClaude 1.7.0, the bridge (B-6). Both
-  apps checked with NVDA by the user before the release.
-- 2.1.0: the key tables (`AxClaudeKeys`, `AxDownKeys`, `BundleKeys`) with the collision test (AX-8); heading
-  navigation in axDown. 2.1.1: axDown's window spoken on opening (`AccessibleRole.Window`).
-- 2.2.0: the update notice with I accept all terms, install and restart, I accept all terms, install and close, and a progress bar for the download.
-- 2.3.0: the in-place install with one bar for download and install and the restart by the app itself (AX-2.8,
-  AX-3.2); the user ran the full path from an older build with NVDA. 2.3.1: the documents pruned after the transition.
-- 2.9.0 (2026-10-18), developed on the branch `axkit` and checked with NVDA by the user: `MarkdownOutline` and
-  `TextJump` shared for axDown's letters and every notice text (AX-7.2); the bundle's menus in every window (AX-9, B-14)
-  with About in sections and the embedded axKit guide; axClaude's Session menu and axDown's menus in the same shape;
-  an enabled item in every empty list (AX-9.5).
-- 2.9.1 (2026-10-18): axJSON, raw mode (`docs/axJSON/SPEC.md`), on the text editor shell shared with axDown the same
-  day (`TextEditorForm`, `EditorApp`, `EditorKeys`, `EditorHost`; AX-1, AX-2, AX-6.2, AX-8.3); released at the user's
-  ask before its NVDA pass.
-- 2.10.0 (2026-10-18): every numbered list item reads "N. name (path)" (AX-9.5, FR-8.5, AD-4.1); axJSON marked beta
-  until its NVDA pass.
-- 2.11.0 (2026-10-18), developed on `axkit`: axClaude's handling of the feedback drafts Claude Code queues by itself
-  (the review comes up like a question, `/feedback` lists the drafts, a screen's keys from anywhere in its list, the
-  edit field, Ctrl+Q to read a question or screen again; axClaude D33), the first menu of every window in the standard
-  order of a File menu with axClaude's Save conversation as renamed Export conversation (AX-8.2, AD-4.1); the draft
-  flow and Ctrl+Q heard under NVDA by the user, the rest covered by recordings and tests.
-- 2.12.0 (2026-10-18), developed on `axkit`: axGIT, the fourth app, as a first draft (`docs/axGIT/SPEC.md`; section
-  3), reached from the other windows' "Show current … in ▸" submenus; the window base `AxKitForm` (AX-6.5) with the
-  editor shell, axGIT and axClaude's `MainForm` on it. Heard under NVDA by the user: the notices in axClaude and
-  axDown on the base, axGIT's start, views, diff, staging and notices, and the way to and from it; axGIT's commit,
-  discard, switch and remote commands await their pass.
-- 3.0.0 to 3.2.2 (2026-10-19 to 2026-10-21): axTerminal with the console pieces shared (AX-6.1), the in-place update
-  clearing old remnants (AX-2.8), one Open with axKit submenu (AX-2.3); axFile (3.1.0) with its operations, Undo and
-  pane; the delayed question focus in axClaude (3.2.1); the editors' undo and redo (3.2.2). `CHANGELOG.md` has each.
-- 3.3.1 (2026-10-22), developed on `split`: the split of axFile (the split's inventory of 2026-10-22, in the git history): axMedia, the player
-  with one queue, and axPreview, the viewer as the editor shell's read-only mode, as apps of their own with a
-  hand-over from a starting process to the open window (`AxKit.Forms/AppMessage`, AX-6.2); axFile lean, Enter the
-  user's default program, the pane its Actions list; `MediaFiles`, `NaturalOrder` and the find in a list shared
-  (AX-6.3); the dispatcher's media rule (AX-1.2) and the installer's Open with registrations for both apps (AX-2.3).
-  Every plan passed under NVDA by the user the same day (`docs/axKit/nvda-test-record.md`); 3.3.0 was tagged from the
-  same work and never published (a test the Release build refused).
-- 3.4.0 (2026-10-22): axStart, the program launcher (section 3, `docs/axStart/SPEC.md`), its NVDA pass still owed;
-  `test.ps1` running the tests as CI does (AX-4.4); the repository's pages (AX-4.5).
-- Unreleased (2026-10-23), developed on `palette`: the command palette in every window (AX-10); the heading letters
-  and Ctrl+F in every notice's text (AX-7.2); the review of the code and documents of 2026-10-18 to 2026-10-22
-  (in the git history) with its fixes, the tests run without the globalization data as the program
-  runs (AX-6.1, `Accents`), and the practices for the years ahead (`docs/axKit/longevity.md`). The same day, the
-  rewrites the review asked for (one console window for axClaude and axTerminal with one settings class, AX-6.1;
-  the notice and focus core of the window base as one rule, AX-6.5; axClaude's wait as one record; axFile's
-  operation runner and marks; axTerminal's prompt rows by identity; the smaller ones), the duplication moved into
-  the shared projects, the tests asked for, and the longevity items that needed no account (the Windows APIs
-  listed in 5.4, the actions pinned, the installer off the GitHub API and putting the commands on the PATH, Claude
-  Code's version logged, the release rules, the lock files). Not yet checked with NVDA (the review's section 9).
-- 5.0.0 (2026-11-05): the bundle renamed axKit (B-16): every name, file, path and document in one pass, the
-  installer's removal of an Axit installation (AX-2.6), the folders taken over on the first start (AX-5.4), the
-  repository `KyleKeane/AxKit`.
+What each release brought is `CHANGELOG.md`, one section per version, and the release notes on GitHub. This section
+listed the releases from 2.0.0 to 5.0.0 a second time until 2026-11-23 (the maintainer's cleanup); the git history
+keeps that list.

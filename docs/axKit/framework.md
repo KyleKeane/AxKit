@@ -95,7 +95,7 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
 - Apps today: axClaude and axTerminal, whose difference is the program, its keys and how messages pass; and axCalc
   (step 9, 2026-11-22), which has no program: its text is the answers given, one line an answer, in a line store of
   its own, and Enter on a line takes the line's expression into the field.
-- FW-4.2 **To lift into the type**, since both apps do it in their own files in the same way today (section 10.5):
+- FW-4.2 **To lift into the type**, since both apps do it in their own files in the same way (built, step 11; the inventory of section 10.5 is in the git history):
   Enter sends and Escape only announces in the field; Ctrl+Enter sends; a line taken into the field; the three
   places on Alt+1, Alt+2, Alt+3; the Session menu; the Options of sounds, speech and "when it is done"; the
   folder's handling; the restart; the question before closing; the consent before the first start.
@@ -273,100 +273,13 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
 
 ## 8. The path, each step leaving every app working
 
-The work in small pieces, in order. Each is one item of the priorities list, named "Framework step" with its
-number, small enough for one sitting or two, and ends with every app working, its window scripts passed and an
-NVDA pass recorded. A piece that changes what a user does updates the app's specification and guide in its commit.
-
-**A. The ground**
-
-1. The components file, its page and its tests (FW-7.3), and the rule that a window derives from a type class,
-   with the five windows of their own on the list still owed (FW-7.1). No behaviour changes.
-2. The entry events raised by the components themselves (FW-3.8): the list, the text, the field, the form.
-   The sounds of what opens then come from the components, at every focus entry.
-
-**B. The navigator made general, with nothing changing for axTask, axPass, axMCP and axAutomate**
-
-3. A level read off the UI thread, with a late answer dropped and "reading" said (FW-4.7, point 1). Built,
-   2026-11-23, at the maintainer's word ("Yes, build the common one"; the three apps had first moved onto the
-   navigator with their own reads, and I had left it there): `ItemForm.Work.cs` holds the two rules the three
-   had between them. One piece of work at a time, a second command refused with "Working…": axGIT's git
-   commands, which is its own rule, and axProcess's reads and changes. A read whose late answer is dropped:
-   axFile's folder. Either shows as the status bar's state, "Reading…" or the app's words, read on demand and
-   never said by itself. axFile's status bar now says "Reading…" while a folder is read; nothing else changes
-   for the user.
-4. The second pane as fields, a text, a log, or none (point 2). Built, 2026-11-22 (FW-4.7).
-5. Filter and sort, the line of an empty level, the rows in the palette (points 3, 5, 6). Built, 2026-11-22:
-   filter and sort in every navigator (FW-4.10a), the line of an empty level and the line of what is not shown
-   (FW-4.7). The rows in the command palette, which axFile alone offered: asked of the maintainer on 2026-11-23,
-   who took them out of axFile too, so the palette holds commands only (bundle AX-10.5). The step is done.
-
-**C. The apps moved, smallest first**
-
-6. axMedia: the queue as a navigator of one level; Space selects, Ctrl+Enter plays and pauses, Delete takes the
-   selected rows out (FW-4.9). Built, 2026-11-22.
-7. axProcess: three levels, Processes, Services, Startup; Space selects, Delete ends or removes the selected.
-   Built, 2026-11-22.
-8. axGIT, made simple: three levels and a text pane; Space selects files, staging on the selected, Ctrl+Enter
-   commits (FW-4.10). Built, 2026-11-22.
-9. axCalc onto the conversation window: the field and the results above it. Built, 2026-11-22, in two parts: the
-   conversation window split into its shape (`ConversationForm`) and the console window over it (`ConsoleForm`),
-   then `CalcForm` on the shape.
-10. The selection in axPass, axMCP and axAutomate, where a command acts on several rows. Built, 2026-11-22: in
-    axPass Delete moves the selected entries to the Recycle Bin with one undo; in axMCP Delete removes the selected
-    servers of your own with one undo; in axAutomate F5 runs the selected workflows. Each app says which rows can
-    be selected, and they are the ones its command acts on.
-
-**D. The conversation window**
-
-11. What axClaude and axTerminal each do the same way, lifted into the type, in two or three commits: the field's
-    keys and a line taken into it; the menus and options; the folder, the restart and the closing question.
-    The first part is built, 2026-11-22 (`ConsoleForm.Field.cs`, `ConsoleKeys`): Enter and the Escape guard in
-    the field, Ctrl+Enter as a command, a line taken into the field, and the places on Alt+1 to Alt+3. Nothing
-    changed for the user in either app; what is sent, the guard's words and the shape of a taken line stay each
-    app's. The second and third parts are built the same day: Options, Sounds and "When … is done"
-    (`ConsoleForm.Options.cs`), and the question before closing, the restart with its question and the switch to
-    another folder (`ConsoleForm.Session.cs`), each as the console window's steps over the app's own words and
-    conditions. Left where they are, each for a reason, and open to the maintainer's word: the Session menu (the
-    two share an order and four items, and each has its own block in the middle, so a builder would be slots
-    around almost nothing); the speech choice (two enumerations of the two apps' own); stopping the program and
-    its end (all but one line is each app's own); the consent before the first start (the shared piece is the
-    window base's `HasConsent` already); and the guards of a key sent while nothing runs, where the two differ in
-    behaviour: axTerminal says "The shell ended" on every such key, axClaude said "Claude stopped" for a message
-    and nothing for Interrupt, Send key and Next permission mode. axClaude says it for those too since the same
-    night (the rule of 2026-10-22, never silence; the words are each app's own, so the guards stay each app's).
-12. The hotkey window's list as the canonical list, and axHelp's text and field as the conversation's components.
-    Built, 2026-11-22: the list under the field is `AxKitList` in its mode for that (FW-4.12), in axStart, axClip
-    and, on its second use, under the command palette's field; one move from the field with its sounds in place
-    of two copies. Nothing changes for the user, but that a clipboard text or a program's name with hidden
-    characters shows them, as every list does. axHelp had nothing to move (section 9, decision 8).
-
-**E. axFile, last and with the most care**
-
-13. axFile's folder list on the navigator: levels, reading, the row you are on, rename, delete, find. Built,
-    2026-11-22: `FileForm` derives from `ItemForm`; a folder is a level and its entries the rows; the
-    two lists, the split, the status bar, the selection, the pane keys, Right and Left, the Context keys,
-    Escape and the rename box with its steps are the navigator's. Enter, Backspace, Delete, find, refresh and
-    undo stay axFile's own commands on the navigator's conditions, and that is where they belong: each is the
-    app's part of a navigator, its commands on its rows, with the app's own mark (opening a file starts a
-    program, a rename and a delete act on the disk, so an AI tool asks first) and its own words
-    (docs/axFile/SPEC.md AF-D14).
-14. Its Actions log as the navigator's second pane of the log kind; its selection no longer written there. Built,
-    2026-11-22: the pane with step 13; the selection's lines, their section and their undo are gone from the log.
-15. Its own parts placed on the type: filter and sort from the type; favourites, drives, Go to folder, the
-    clipboard, zip and the shell as its commands. The old window's code goes. Closed, 2026-11-22: the old
-    window's code went with step 13 (the two lists, their layout, the status bar, the Context menu's holder, the
-    pane and selection keys, the selection's record and the rename's steps are the type's), and favourites,
-    drives, Go to folder, the clipboard, zip and the shell are axFile's commands on the type. The filter and
-    the sort I had left as axFile's own; the maintainer put them back the same day, and they are the type's
-    for every navigator since (FW-4.10a).
-
-**F. What it was for**
+Steps 1 to 15 are built (2026-11-22 and 2026-11-23): the components file and its tests, the entry events, the
+navigator's reading, second panes, filter and sort, axMedia, axProcess, axGIT, axCalc and axFile on their types,
+the selection, the conversation windows' shared parts, and the hotkey window's list. The list of the steps as they
+were planned and built is in the git history (commit 3f4a9925 and before). Left:
 
 16. The workflows that result, as one inventory; then the key map; then the function keys and Ctrl with a number
     as classes of interaction (their items in the priorities list).
-
-Pieces 1 and 2 are days. B is the foundation and has no visible change. C and D are a sitting or two each. E is
-the long part.
 
 ## 9. Decisions
 
@@ -402,56 +315,6 @@ No point is open.
 
 ## 10. As read from the sources on 2026-11-22
 
-Compact; the windows' own notes hold the detail.
-
-### 10.1 What every window has from the base
-
-The menu bar in one order; a command list (`Add`, `AddKey`, each command with where its key acts); F1, F4, F8, the
-palette, Ctrl+S and the text size handled once; notices that replace the main controls; a status bar of two parts.
-
-### 10.2 The four types today
-
-| Type | Panes | Pane keys | List keys of note | Reading |
-|---|---|---|---|---|
-| Conversation | text; field or choice | Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab, F6 | the choice's own | off the UI thread |
-| Editor | text; choice; details list when read-only | Ctrl+Tab, Ctrl+Shift+Tab, F6; Tab types in the editor | Enter and Ctrl+C in details | details off the UI thread |
-| Navigator | list; detail list | all five; Escape back from the detail | Enter, Right, Left, Backspace, Space, Delete, F2, Ctrl+N | on the UI thread; apps add their own |
-| Hotkey | field; list that never has the focus | none | Down, Up, Page keys from the field; Enter the app's | the app's |
-
-### 10.3 The five windows of their own
-
-| App | Panes | Pane keys | Space | Enter | Ctrl+Enter | Levels or views | Reading | Its own part, lines |
-|---|---|---|---|---|---|---|---|---|
-| axFile | folder list; Actions list | all five; Escape back | selects | opens | plays the folder in axMedia | levels | off the UI thread | about 2,000 of 2,600 |
-| axGIT | list; details text | Ctrl+Tab, F6; Tab native | stages | by view: diff, commit, switch | commit | three views | off the UI thread | about 750 of 1,170 |
-| axProcess | list | none; Tab cycles views | nothing | details | nothing | three views | off the UI thread | about 400 of 740 |
-| axMedia | list | all lead back to the list | pauses | plays | nothing | one level | hand-overs off the UI thread | about 550 of 775 |
-| axCalc | history list; field | Ctrl+Tab, F6; Escape back | nothing | recalls; evaluates in the field | nothing | none | on the UI thread | about 230 of 430 |
-
-### 10.4 The navigator and axFile side by side
-
-Both have, under different names and code: going into a level and up; what a level change says; the row you are
-on and its guards; filling and refresh; the selection (both on the shared piece since 2026-11-22); type-to-find;
-rename in place; delete; new; undo; the Context menu; find in the list; a second pane; pane switching; the status
-bar; the target an AI tool's command is asked about.
-
-Only the navigator has: the pane of fields with its field commands; sections and headings; a level that refuses
-entry; a refill off the user's command; a place that changes alone in the status bar.
-
-Only axFile has: filter; sort; favourites; drives and This PC; Go to folder with completion; recent folders; the
-Actions log; the clipboard; reads and operations off the UI thread; zip; the Windows shell; the hand-overs to
-other apps; its rows in the palette; the lines for an empty folder and for what is not shown.
-
-### 10.5 What axClaude and axTerminal each do in their own code, the same way
-
-Enter sends and Escape guards in the field; Ctrl+Enter sends; a line taken into the field; the places on Alt+1 to
-Alt+3 with find and bookmarks; the Session menu in one order; Options of sounds, speech and "when it is done";
-choosing, setting and switching the folder; the restart with its question; the question before closing; stopping
-the program; the consent before the first start; the guards of a key sent while nothing runs.
-
-### 10.6 axGIT and axProcess
-
-(As found on 2026-11-22, before their moves; both are navigators now and the shared record of a view is deleted.)
-Both kept three views in the same way (a shared record: a name, labels and keys per view, the row kept per view),
-with the same method to change view, the same per-view Context menu and the same refresh. They differ in the
-second pane, in what Tab does, and in what a refresh reads.
+The window classes as they stood before the moves of section 8, with what each held of its own: taken out on
+2026-11-23, since every app is on a type now (`components.md`). The git history keeps it (commit 3f4a9925 and
+before).

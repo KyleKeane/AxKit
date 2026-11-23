@@ -706,21 +706,8 @@ The sounds and the update check are the bundle's and are tested in `tests/AxKit.
 
 ## 12. Status
 
-axKit 2.9.0 (2026-10-18): the Session menu (FR-8, FR-10), the Claude menu with the restart first, Claude Code resources in Help, the title with the folder's path (FR-8.4), the heading keys in every notice text (FR-5), and the bundle's axKit menu (bundle AX-9); checked with NVDA by the user (test plan sections 1, 7, 9, 11 and 13).
-
-axKit 2.0.0 (2026-10-02): axClaude became one app of the axKit bundle. The window moved into a class library called by `AxKit.exe claude`, the shared pieces (notices, the control area, the sounds, paging, the status layout, the log, the updater, the settings file handling) moved to `AxKit.Core` and `AxKit.Forms` unchanged, the settings file became `%APPDATA%\AxKit\axClaude.json` (copied from the 1.x file), and the installer became the bundle's; no behaviour of this specification changed. Checked with NVDA on the notice, control area, paging and sound sections of the test plan before the release.
-
-Built 2026-09-18 to 2026-09-19: everything in §5, checked with NVDA (test plan sections 1 to 10) on the development build. The 2026-09-19 consolidation pass simplified every announcement, menu label and document, removed unused code (OSC 133, bracketed paste, soft-wrap and cursor-column tracking, unused view members) and fixed the per-frame wastes (D24).
-
-Released 1.0.0 on 2026-09-19 through the release workflow (§9), with the MIT licence, the update check (FR-1.10) and the bookmarks. 1.0.1 (the version items in Help, the update notice at startup) and 1.0.2 (Ctrl+1 / Ctrl+2, the disclaimer, the reading breaks, the selection) followed the same day; CHANGELOG.md has the details.
-
-1.1.0 (New session, the sounds, the `--continue` default with the replay blocks, the paragraph key, the jump history, the comment marker), 1.2.0 (New session clears the conversation, the three speech modes and the spoken tool calls, the tool tick, the field's page keys, Open current folder) and 1.2.1 (the Ctrl+O guard) followed on the same day. 1.3.0 (2026-09-20): the sounds play through one open wave-out device (D31), the tick option names both ticks, a folder change clears the conversation (FR-8.3), Restart is announced, `run.ps1 -New`, and PtyCapture records through `PtyHost`.
-
-1.4.0 (2026-09-24, from the branch `answer-notice`), checked with NVDA by the user: Claude's real questions (`/model`), the guard, the screen notice (`/tasks`, `/status`), the answer notice through the trial menu Help → Try the answer notice, since removed (the chime, "Claude asks:", the focus on the current answer, answer keys, Enter, Escape, Alt+M), the Force Claude to restart? notice, the Close axClaude? notice with background work, and the key line at the end of the notices (D23, D33, FR-1.7, FR-1.8). The repaint handling (§4.4 item 20) waits for a long session to show that no old content is read out.
-
-1.5.0 and 1.5.1 (2026-09-25): the own-answer field, check boxes, the `Question:` record, install.cmd, the control area in the message field's place. 1.6.0 (2026-09-25): wrapped answers, the review submitted for the user, Enter closing a screen, the list keys, Tab and Shift+Tab as focus keys with Ctrl+Shift+M for the mode (D35), the mode line kept out of spoken replies, and personal data kept out of recordings and repositories (D34). Test plan section 12 was checked with NVDA by the user on 1.6.0, and the earlier sections of the test plan were confirmed the same day.
-
-To do:
+What each release of axClaude brought is `CHANGELOG.md` (the lines that start with axClaude), and before axKit 2.0.0
+its own history; the release paragraphs that stood here until 2026-11-23 are in the git history. What is open:
 
 - [ ] Background work (FR-7.10, built 2026-11-15): the three sounds were chosen by the user by ear the same day, from scripts, and the working music is settled; what is left is hearing them in the app with real background work (`docs/axClaude/nvda-test-plan.md` section 22), the recurring chords (which replaced the breath the same day, the breath rejected once heard in the app) and the tool pop heard in the app, whether a pause of 2 seconds is right, and their place in the lists of `docs/axKit/earcons.md`. A recorded fixture with background agents is still owed (`claude-screens.md`), and with it whether the mode line ever counts agents itself. A dynamic workflow's live row and its waiting row (§4.4 item 24, built the same day from the rows the user's window held, `tests/scripts/axClaude/27-workflow-progress.txt` with a stand-in) are not recorded either: owed are a fixture of a workflow from start to end (the row at 0 percent, a finished or failed workflow, two at once, the row without the warning, whether the mode line counts workflows) and an NVDA pass of section 22 steps 10 and 11, with the option on and off.
 - [ ] A pass with a second user for impressions before the app is called complete.
@@ -733,8 +720,6 @@ To do:
   silence), and whether a question list or a notice had just been shown or disposed. Possible mitigation if it
   recurs: an Options choice to speak announcements through the selection fallback (FR-7.6) instead of notifications,
   since the app cannot tell that a notification went unspoken (the call succeeds either way).
-- [x] **Bug (2026-10-02, queued with the one above):** an own-words answer (the Other field) of about a hundred characters arrived at Claude with most characters dropped ("PLSE E DAU NA ML C KS…"). The answer goes one keystroke per character with Enter at the end (FR-2 notes); the keystrokes have been paced since (60 ms apart, `TypeAnswer`). Checked 2026-11-09 with Claude Code 2.1.321: a hundred-character answer in `tests/scripts/axClaude/12-questions.txt` step 9 arrived whole, Claude's record and its reply repeating every word; the step stays in the script as the guard.
-- 2026-10-22: released in 3.3.1 (3.3.0 tagged, not published). The whole NVDA test plan marked passed at the user's word, no step reported failing; the record by step is `docs/axKit/nvda-test-record.md`.
 
 ## Appendix A — Control sequences the screen model handles
 
