@@ -60,14 +60,17 @@ The volume is Windows' own: your keyboard's volume keys work from anywhere. A vi
 
 ## Menus
 
-The menu bar is the same eight menus in every axKit window.
+Each menu with its commands and their keys, as the window lists them:
 
-- **Session**: New window (Ctrl+N), Open files (Ctrl+O), Open folder (Ctrl+Shift+O), Open recent, Clear queue, Show current file in (File Explorer Ctrl+W, axClaude, axTerminal, axGIT, axFile), Exit.
-- **Actions**: Play, pause or resume (Ctrl+Enter), Forward 15 seconds, Back 15 seconds, Faster, Slower, Normal speed, What is playing (Ctrl+Q).
-- **Navigation**: Next file, Previous file, Go to time (Ctrl+T).
-- **Context**: what acts on the file you are on in the queue: Play (Enter), Remove (Delete), Information (Ctrl+I). Shift+F10 opens it.
-- **Options**: Filter (only the files whose name contains a text; Escape in the queue clears it), Sort by (Name puts the queue itself in the order of the names, so that the files play in that order; The order added puts it back), Say each file as it starts, Text (font and size), General (the update check), Developer (the settings file, diagnostics).
-- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.
+<!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
+- **Session**: Clear queue; Exit (Alt+F4); New window (Ctrl+N); Open files (Ctrl+O); Open folder (Ctrl+Shift+O); Show current file in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, axTerminal, access layer for your shell, File Explorer (Ctrl+W)).
+- **Actions**: Back 15 seconds (Ctrl+Left); Deselect all (Ctrl+Shift+A); Faster (Ctrl+Up); Forward 15 seconds (Ctrl+Right); Normal speed; Play, pause or resume (Ctrl+Enter); Select all (Ctrl+A); Slower (Ctrl+Down); What is playing (Ctrl+Q).
+- **Navigation**: Go to time (Ctrl+T); Next file (Ctrl+Shift+Right); Previous file (Ctrl+Shift+Left).
+- **Context**: Queue is empty.
+- **Options**: Filter; Say each file as it starts; Developer (Open settings file); General (Check for updates at start); Sort by (Name, The order added); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
+- Keys without a menu item: Ctrl+Tab (Back to the list); Escape (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); F3 (Find next); Shift+F3 (Find previous); Right (Into the list); Enter (Open); Space (Select or deselect); Shift+Space (Select to here); Shift+Home (Select to the first file); Shift+End (Select to the last file); Shift+Down (Select to the next file); Shift+Up (Select to the previous file); Shift+F10 (The Context menu); Left (Up a level).
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+<!-- end of the menus -->
 
 ## Settings
 

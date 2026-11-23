@@ -71,12 +71,17 @@ Ctrl+Plus and Ctrl+Minus make the text larger and smaller, and axDown says the n
 
 ## Menus
 
-- **Session**: New, Open, Open recent file (each as a number, the file's name and its full path), Save, Save as, Show current file in (File Explorer, Ctrl+W; axClaude, Claude in the file's folder; axTerminal, a shell in the file's folder; axGIT, a git manager on the repository that holds the file; axFile, the file's folder with the file selected), Exit.
-- **Actions**: Undo, Redo, Format (Heading 1 to Heading 6, Heading deeper with Shift+Alt+Right, Heading shallower with Shift+Alt+Left, Bold with Ctrl+B, Italic, Code, List item, Block quote) and Insert template (Link, Table, Code block, then your own).
-- **Context**: Cut, Copy, Paste, Select all, on the selection. Shift+F10, the Applications key or a right click in the text opens it.
-- **Navigation**: Find, Find next, Find previous, Go to line, and the submenus Next and Previous, each with Heading, Heading level 1 to 6, Link, List, List item, Block quote and Table.
-- **Options**: Text (Word wrap, Say new line, Sound on headings, Font, Larger text, Smaller text, Windows text size), General (Check for updates at start, Templates folder) and Developer (Open settings file, which opens axDown.json in a new axJSON window).
-- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.
+Each menu with its commands and their keys, as the window lists them:
+
+<!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
+- **Session**: Exit (Alt+F4); New (Ctrl+N); New window (Ctrl+Shift+N); Open (Ctrl+O); Save (Ctrl+S); Save as (Ctrl+Shift+S); Show current file in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, axTerminal, access layer for your shell, File Explorer (Ctrl+W)).
+- **Actions**: Redo (Ctrl+Y); Undo (Ctrl+Z); Format (Block quote, Bold (Ctrl+B), Code, Heading 1, Heading 2, Heading 3, Heading 4, Heading 5, Heading 6, Heading deeper (Shift+Alt+Right), Heading shallower (Shift+Alt+Left), Italic, List item); Insert template (Code block, Link, Table).
+- **Navigation**: Find (Ctrl+F); Find next (F3); Find previous (Shift+F3); Go to line (Ctrl+G); Next (Block quote (Ctrl+Q), Heading (Ctrl+H), Heading level 1 (Ctrl+1), Heading level 2 (Ctrl+2), Heading level 3 (Ctrl+3), Heading level 4 (Ctrl+4), Heading level 5 (Ctrl+5), Heading level 6 (Ctrl+6), Link (Ctrl+K), List (Ctrl+L), List item (Ctrl+I), Table (Ctrl+T)); Previous (Block quote (Ctrl+Shift+Q), Heading (Ctrl+Shift+H), Heading level 1 (Ctrl+Shift+1), Heading level 2 (Ctrl+Shift+2), Heading level 3 (Ctrl+Shift+3), Heading level 4 (Ctrl+Shift+4), Heading level 5 (Ctrl+Shift+5), Heading level 6 (Ctrl+Shift+6), Link (Ctrl+Shift+K), List (Ctrl+Shift+L), List item (Ctrl+Shift+I), Table (Ctrl+Shift+T)).
+- **Context**: Copy (Ctrl+C); Cut (Ctrl+X); Paste (Ctrl+V); Select all (Ctrl+A).
+- **Options**: Developer (Open settings file); General (Check for updates at start, Templates in axTemplate); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size, Word wrap (Ctrl+Shift+W)).
+- Keys without a menu item: Ctrl+Tab (Between the text and the details).
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+<!-- end of the menus -->
 
 ## Settings
 

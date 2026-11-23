@@ -70,12 +70,17 @@ Ctrl+Plus and Ctrl+Minus make the text larger and smaller, and axJSON says the n
 
 ## Menus
 
-- **Session**: New, Open, Open recent file, Save, Save as, Show current file in (File Explorer, Ctrl+W; axClaude, Claude in the file's folder; axTerminal, a shell in the file's folder; axGIT, a git manager on the repository that holds the file; axFile, the file's folder with the file selected), Exit.
-- **Actions**: Undo, Redo, Format (Ctrl+Shift+F), the choices of a place (Alt with an arrow), and Insert template: every template of axTemplate checked for axJSON or for every axKit app, put in at the caret, with `{caret}` for where the caret lands, `{selection}` for the text you had selected and `{clipboard}` for the clipboard's text. Options, General, Templates in axTemplate opens axTemplate, where templates are written. The command palette finds a template by its name, or all of them under "insert template".
-- **Context**: Cut, Copy, Paste, Select all, on the selection; Shift+F10 opens it.
-- **Navigation**: Find, Find next, Find previous, Go to line, and the submenus Next and Previous, each with Key, Object, Array, Item and Error.
-- **Options**: Text (Word wrap, Font, Larger text, Smaller text, Windows text size), General (Check for updates at start) and Developer (Open settings file, which opens axJSON.json in a new axJSON window).
-- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.
+Each menu with its commands and their keys, as the window lists them:
+
+<!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
+- **Session**: Exit (Alt+F4); New (Ctrl+N); New window (Ctrl+Shift+N); Open (Ctrl+O); Save (Ctrl+S); Save as (Ctrl+Shift+S); Show current file in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, axTerminal, access layer for your shell, File Explorer (Ctrl+W)).
+- **Actions**: Add a member (Alt+Left); Choose a value (Alt+Right); Format (Ctrl+Shift+F); Next value (Alt+Down); Previous value (Alt+Up); Redo (Ctrl+Y); Undo (Ctrl+Z).
+- **Navigation**: Find (Ctrl+F); Find next (F3); Find previous (Shift+F3); Go to line (Ctrl+G); Next (Array (Ctrl+L), Error (Ctrl+E), Item (Ctrl+I), Key (Ctrl+K), Object (Ctrl+J)); Previous (Array (Ctrl+Shift+L), Error (Ctrl+Shift+E), Item (Ctrl+Shift+I), Key (Ctrl+Shift+K), Object (Ctrl+Shift+J)).
+- **Context**: Copy (Ctrl+C); Cut (Ctrl+X); Paste (Ctrl+V); Select all (Ctrl+A).
+- **Options**: Developer (Open settings file); General (Check for updates at start, Templates in axTemplate); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size, Word wrap (Ctrl+Shift+W)).
+- Keys without a menu item: Ctrl+Tab (Between the text and the details).
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+<!-- end of the menus -->
 
 ## Settings
 

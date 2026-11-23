@@ -61,6 +61,20 @@ A link's template, for example, is `[{selection}]({caret})`: the selected words 
 
 Each template is one small JSON file in the folder `axKit\Templates` of your Documents. The files are yours: copy them to another computer, back them up, or delete them; axKit needs none of them to run, and writes the folder's `list.json` again when it is missing. Session, Show the templates' folder in, opens it in File Explorer or axFile. A file there that is not a template is listed with "not a template" after its name; Ctrl+J opens it in axJSON to mend.
 
+## Menus
+
+Each menu with its commands and their keys, as the window lists them:
+
+<!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
+- **Session**: Exit (Alt+F4); Hide (Escape); Open the browser (Ctrl+B); Quit axTemplate; Refresh (F5); Show the templates' folder in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, axTerminal, access layer for your shell, File Explorer).
+- **Actions**: Deselect all (Ctrl+Shift+A); New template (Ctrl+N); No actions here yet; Select all (Ctrl+A); Undo (Ctrl+Z).
+- **Navigation**: Nothing to move to here yet.
+- **Context**: Copy without putting in (Shift+Enter); No templates yet: Ctrl+N makes one; Put in (Enter); Put in, with that program's selection (Ctrl+Enter); Read in full (Ctrl+Q).
+- **Options**: Filter; Hotkey; Developer (Open settings file); General (Check for updates at start, Say the first match while typing, Start with Windows); Sort by (Name, The list's own order); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
+- Keys without a menu item: Enter (Change the field); Space (Check the field); Escape (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); F3 (Find next); Shift+F3 (Find previous); Ctrl+Home (First match); Right (Into the list); Ctrl+End (Last match); Ctrl+N (New item); Down (Next match); Enter (Open); Page Down (Page down); Page Up (Page up); Up (Previous match); Ctrl+Q (Read in full); F2 (Rename); Space (Select or deselect); Shift+Space (Select to here); Shift+Home (Select to the first template); Shift+End (Select to the last template); Shift+Down (Select to the next template); Shift+Up (Select to the previous template); Ctrl+Tab (Switch between the navigator and the detail pane); Shift+F10 (The Context menu); Shift+F10 (The field's menu); Right (The next value of the field); Left (The previous value of the field); Tab (To the detail pane); Tab (To the navigator); Left (Up a level).
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+<!-- end of the menus -->
+
 ## Settings
 
 In the browser, Options, Filter and Sort by arrange the list. In the launcher, Options, Hotkey sets the key that brings it up, and Options, General has Start with Windows and Say the first match while typing. In both, Options, Text sets the font and its size, and Options, General the update check.

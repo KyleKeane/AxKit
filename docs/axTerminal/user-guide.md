@@ -81,7 +81,17 @@ Clear transcript (Ctrl+L) empties the window; the shell's own `cls` clears only 
 
 ## Menus
 
-Alt opens the menu bar, the same eight menus in every axKit window. Session: new session, the recent folders, the recent folders in a new window (this one stays as it is), switch shell, restart, clear, say current folder (Ctrl+P), Show current folder in (File Explorer, axClaude, axGIT, axFile), export the transcript as a Markdown file (Ctrl+S), exit. Actions: interrupt, Escape, the keys, the recent commands, send without recording, what is running. Navigation: the field, the terminal, the latest output, find, the bookmarks. Context: copy the terminal's line into the command field, bookmark it, copy the selection; Shift+F10 opens it. Options: Sounds (the chimes, the ticks, background music while a command runs, Ctrl+M), Speech (speak output, say when a program asks), When a command is done (the taskbar flash, the louder alert for the background), Text (time stamps, markers in the text, the font and size), General, Developer. Window and axKit: the bundle's menus. Help: the shortcuts (F1), this guide, shell resources.
+Each menu with its commands and their keys, as the window lists them:
+
+<!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
+- **Session**: Add a shell; Clear transcript (Ctrl+L); Custom shell; Exit (Alt+F4); Export transcript (Ctrl+S); New session (Ctrl+N); Restart shell (Ctrl+Shift+R); Say current folder (Ctrl+P); Show current folder in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, File Explorer (Ctrl+W)).
+- **Actions**: Interrupt (Ctrl+Shift+C); Recent commands (Ctrl+R); Send Escape (Shift+Escape); Send without recording; What is running (Ctrl+Q); Send key (Ctrl+D (end of input), Down, Up).
+- **Navigation**: Command field (Alt+1); Find (Ctrl+F); Find next (F3); Find previous (Shift+F3); Latest output (Alt+3); Next bookmark (K in the terminal); Previous bookmark (Shift+K in the terminal); Terminal (Alt+2).
+- **Context**: Bookmark this line (Ctrl+Shift+K, or M in the terminal); Copy the selection (Ctrl+C in the terminal); Copy this line into the command field (Enter in the terminal).
+- **Options**: Developer (Open settings file, Record raw stream for a bug report); General (Check for updates at start); Sounds (Background music while a command runs (Ctrl+M), Chimes: ready, sent, done, question, Ticks for new lines); Speech (Say when a program asks, Speak output: all lines, Speak output: none); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Markers in the text, Say new line, Smaller text (Ctrl+Minus), Sound on headings, Time stamps on Input and Output lines, Windows text size); When a command is done (Announce "Done", Flash the taskbar button, Louder alert when the window is in the background).
+- Keys without a menu item: Ctrl+M (Background music on or off); Ctrl+Enter (Send the command); Tab (Switch between the view and the field).
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+<!-- end of the menus -->
 
 ## Settings
 

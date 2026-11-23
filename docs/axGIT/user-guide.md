@@ -52,14 +52,17 @@ axGIT does not merge, rebase or resolve conflicts. For those, use the terminal o
 
 ## Menus
 
-The menu bar is the same eight menus in every axKit window.
+Each menu with its commands and their keys, as the window lists them:
 
-- **Session**: Open repository (Ctrl+O), Open recent repository, Refresh (F5), Show current repository in (File Explorer Ctrl+W, axClaude, axTerminal, axFile), Exit.
-- **Actions**: Stage (Ctrl+Shift+S), Unstage (Ctrl+Shift+U), Stage all, Unstage all, Commit (Ctrl+Enter), New branch (Ctrl+N), Fetch, Pull, Push, Select all files (Ctrl+A), Deselect all (Ctrl+Shift+A).
-- **Navigation**: Changes (Alt+1), Log (Alt+2), Branches (Alt+3), Up to the repository (Left). Ctrl+1, Ctrl+2 and Ctrl+3, the keys for the three lists until now, still work.
-- **Context**: what acts on the row you are on, by what it is. A file: Show diff (Enter), Stage, Unstage, Open file in editor (Ctrl+E), Discard changes (Delete), Select or deselect (Space), Select to here (Shift+Space). A commit: Show the commit (Enter). A branch: Switch to branch (Enter). One of the three lists at the repository: Open (Enter). Shift+F10 opens it.
-- **Options**: Filter (only the rows whose name contains a text), Sort by (the list's own order, or Name), Text (font and size), General (the update check), Developer (the settings file, diagnostics).
-- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.
+<!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
+- **Session**: Exit (Alt+F4); Open repository (Ctrl+O); Refresh (F5); Show current repository in (axClaude, access layer for Claude Code, axFile, axTerminal, access layer for your shell, File Explorer (Ctrl+W)).
+- **Actions**: Commit (Ctrl+Enter); Deselect all (Ctrl+Shift+A); Fetch (Ctrl+Shift+F); New branch (Ctrl+N); Pull (Ctrl+Shift+L); Push (Ctrl+Shift+H); Select all files (Ctrl+A); Stage (Ctrl+Shift+S); Stage all; Unstage (Ctrl+Shift+U); Unstage all.
+- **Navigation**: Branches (Alt+3); Changes (Alt+1); Log (Alt+2); Up to the repository (Left).
+- **Context**: Discard changes (Delete); Open file in editor (Ctrl+E); Select or deselect (Space); Select to here (Shift+Space); Show diff (Enter); Stage (Ctrl+Shift+S); Unstage (Ctrl+Shift+U).
+- **Options**: Filter; Developer (Open settings file); General (Check for updates at start); Sort by (Name, The list's own order); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
+- Keys without a menu item: Escape (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); Ctrl+F (Find in the text); F3 (Find next); F3 (Find next in the text); Shift+F3 (Find previous); Shift+F3 (Find previous in the text); Right (Into the list); Ctrl+Down (Next section); Enter (Open); Ctrl+Up (Previous section); Ctrl+A (Select all); Shift+Home (Select to the first file); Shift+End (Select to the last file); Shift+Down (Select to the next file); Shift+Up (Select to the previous file); Ctrl+Tab (Switch between the list and the text); Shift+F10 (The Context menu); Tab (To the list); Tab (To the text); Left (Up a level).
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+<!-- end of the menus -->
 
 ## Settings
 

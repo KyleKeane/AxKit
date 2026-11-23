@@ -112,7 +112,18 @@ Up to version 5.8.0 the two keys were Windows+Alt+H and Windows+Alt+S. If you ne
 keys by itself; a key you chose stays yours. While axHelp runs, its two keys are taken from every program: Word and
 Outlook use them for a smaller and a larger font. Choose other keys if you need those.
 
-- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.
+## Menus
+
+Each menu with its commands and their keys, as the window lists them:
+
+<!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
+- **Session**: Hide (Escape); Quit axHelp.
+- **Actions**: Claude's working folder; Open the conversation (Enter); Open the last screenshot in axPreview (Ctrl+O); Put a picture file into the conversation (Ctrl+D).
+- **Navigation**: Nothing to move to here yet.
+- **Context**: Nothing for the focus here yet.
+- **Options**: Hotkey; Keep the conversation ready in the background; Conversation model (Balanced (Sonnet), Fast (Haiku), Strongest (Opus)); Developer (Open settings file); General (Check for updates at start, Start with Windows); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+<!-- end of the menus -->
 
 ## If something goes wrong
 

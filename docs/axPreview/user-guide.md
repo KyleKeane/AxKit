@@ -40,10 +40,17 @@ Under the text is the Details list: Tab or F6 moves there and back. It has every
 
 ## Menus
 
-- **Session**: New window (Ctrl+N), Open (Ctrl+O), Open recent, Reload (F5), the way on (Ctrl+E: Edit in axDown or axJSON for a text, Play in axMedia for a sound or video, Open in Windows' program for anything else), Open with (the axKit apps for the file, Windows' program, or Choose another program…, Windows' own list, whose Always makes one the default), Show current file in (File Explorer Ctrl+W, axClaude, axTerminal, axGIT, axFile), Exit.
-- **Navigation**: Find (Ctrl+F), Find next (F3), Find previous (Shift+F3), Go to line (Ctrl+G), Next and Previous (heading, heading level 1 to 6, link, list, list item, block quote, table).
-- **Options**: Text (word wrap, font and size), General (the update check), Developer (the settings file, diagnostics).
-- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.
+Each menu with its commands and their keys, as the window lists them:
+
+<!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
+- **Session**: Edit in axDown (Ctrl+E); Exit (Alt+F4); New window (Ctrl+N); Open (Ctrl+O); Read the clipboard's picture (Ctrl+Shift+V); Reload (F5); Show current file in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, axTerminal, access layer for your shell, File Explorer (Ctrl+W)).
+- **Actions**: No actions here yet.
+- **Navigation**: Find (Ctrl+F); Find next (F3); Find previous (Shift+F3); Go to line (Ctrl+G); Next (Block quote (Ctrl+Q), Heading (Ctrl+H), Heading level 1 (Ctrl+1), Heading level 2 (Ctrl+2), Heading level 3 (Ctrl+3), Heading level 4 (Ctrl+4), Heading level 5 (Ctrl+5), Heading level 6 (Ctrl+6), Link (Ctrl+K), List (Ctrl+L), List item (Ctrl+I), Table (Ctrl+T)); Previous (Block quote (Ctrl+Shift+Q), Heading (Ctrl+Shift+H), Heading level 1 (Ctrl+Shift+1), Heading level 2 (Ctrl+Shift+2), Heading level 3 (Ctrl+Shift+3), Heading level 4 (Ctrl+Shift+4), Heading level 5 (Ctrl+Shift+5), Heading level 6 (Ctrl+Shift+6), Link (Ctrl+Shift+K), List (Ctrl+Shift+L), List item (Ctrl+Shift+I), Table (Ctrl+Shift+T)).
+- **Context**: Copy (Ctrl+C); Select all (Ctrl+A).
+- **Options**: Developer (Open settings file); General (Check for updates at start); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size, Word wrap (Ctrl+Shift+W)).
+- Keys without a menu item: Ctrl+Tab (Between the text and the details); Ctrl+C (Copy the detail's value); Enter (Open the detail); L (Say the line).
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+<!-- end of the menus -->
 
 ## Settings
 

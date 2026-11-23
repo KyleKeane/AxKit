@@ -41,11 +41,17 @@ axStart, **Quit axStart** ends it until the next sign-in or the next time you st
 
 ## Menus
 
-- **Session**: Refresh programs (F5), Hide (Escape), Quit axStart.
-- **Context**, the program you are on: Start (Enter), Start as administrator (Ctrl+Shift+Enter), Open file location (Ctrl+O), Information (Ctrl+I).
-- **Actions** and **Navigation** say they have nothing yet.
-- **Options**: Hotkey, Text, General (Start with Windows, Say the first match while typing, Check for updates at start), Developer.
-- **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.
+Each menu with its commands and their keys, as the window lists them:
+
+<!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
+- **Session**: Hide (Escape); Quit axStart; Refresh programs (F5).
+- **Actions**: No actions here yet.
+- **Navigation**: Nothing to move to here yet.
+- **Context**: Information (Ctrl+I); Open file location (Ctrl+O); Start (Enter); Start as administrator (Ctrl+Shift+Enter).
+- **Options**: Hotkey; Developer (Open settings file); General (Check for updates at start, Say the first match while typing, Start with Windows); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
+- Keys without a menu item: Ctrl+Home (First match); Ctrl+End (Last match); Down (Next match); Page Down (Page down); Page Up (Page up); Up (Previous match).
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+<!-- end of the menus -->
 
 ## Updates
 
