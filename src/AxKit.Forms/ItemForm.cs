@@ -452,7 +452,7 @@ public abstract partial class ItemForm : AxKitForm
                 _split.SplitterDistance = Math.Max(_split.Panel1MinSize, _split.Height * 2 / 5);
                 break;
             case SecondPane.Log:
-                // The log under the navigator, which has two thirds of the height (axFile's Actions list, AF-9.1).
+                // The app's list under the navigator, which has two thirds of the height (axFile's Favorites list, AF-9.1).
                 _split.SplitterDistance = Math.Max(_split.Panel1MinSize, _split.Height * 2 / 3);
                 break;
             default:
@@ -689,7 +689,7 @@ public abstract partial class ItemForm : AxKitForm
         Text,
 
         /// <summary>
-        /// A log of lines the app keeps, under the navigator (axFile's Actions list): the pane is
+        /// A list of lines the app keeps, under the navigator (axFile's Favorites list): the pane is
         /// <see cref="DetailPane"/>, a list the app fills itself and names; the pane keys go to it and back and
         /// Escape comes back; what a key does on a line is the app's command, registered with
         /// <see cref="InDetail"/> before the shared keys; Context holds <see cref="LogLineMenu"/> while the log was
@@ -774,7 +774,7 @@ public abstract partial class ItemForm : AxKitForm
     /// <summary>The menu of the log pane's line (<see cref="SecondPane.Log"/>), which Context holds while the log was the last of the two panes to have the focus; null for none.</summary>
     protected virtual ToolStripMenuItem? LogLineMenu => null;
 
-    /// <summary>The app's words for its log pane (<see cref="SecondPane.Log"/>), in the names of the commands that go to it ("To the Actions list"): "log" by default.</summary>
+    /// <summary>The app's words for its log pane (<see cref="SecondPane.Log"/>), in the names of the commands that go to it ("To the Favorites list"): "log" by default.</summary>
     protected virtual string LogName => "log";
 
     /// <summary>

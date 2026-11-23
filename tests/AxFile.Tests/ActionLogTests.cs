@@ -2,7 +2,7 @@ using AxFile.Core;
 
 namespace AxFile.Tests;
 
-/// <summary>The Actions list (docs/axFile/SPEC.md AF-9.2, AF-9.3): the lines in their sections, their states, where Enter goes, and the limits.</summary>
+/// <summary>The window's history of file operations (docs/axFile/SPEC.md AF-9.2, AF-9.3, AF-4.14): the entries, their states, what Ctrl+Z takes back and in what order, where Recent operations goes, and the limits.</summary>
 public sealed class ActionLogTests
 {
     private static readonly string Folder = @"C:\work";
@@ -11,64 +11,61 @@ public sealed class ActionLogTests
 
     private static ActionLog Log(DateTime at) => new(() => at);
 
+    private static Operation Rename(string from, string to) => new(OperationKind.Rename, [In(from)], [In(to)]);
+
     [Fact]
-    public void A_running_line_is_replaced_when_it_ends_and_an_instant_one_is_done_at_once()
+    public void A_running_entry_is_replaced_when_it_ends_and_an_instant_one_is_done_at_once()
     {
         var log = Log(new DateTime(2026, 10, 22, 21, 4, 0));
         var copy = log.Begin("Copying 3 items", Folder);
-        Assert.Equal(["Running", "Copying 3 items"], log.Lines());
+        Assert.Equal("Copying 3 items, running", copy.HistoryLine);
         Assert.False(copy.CanUndo);
         Assert.Equal((Folder, (string?)null), copy.Location);
-        Assert.Null(log.EntryAt(0));
-        Assert.Same(copy, log.EntryAt(1));
-        Assert.Equal("Running", log.Information(0));
+        Assert.Same(copy, log.Latest);
 
         log.Progress(copy, "Copying 3 items, please wait");
         Assert.Equal("Copying 3 items, please wait", copy.Line);
 
         var operation = new Operation(OperationKind.Copy, [@"C:\elsewhere\a.txt", @"C:\elsewhere\b.txt", @"C:\elsewhere\c.txt"], [In("a.txt"), In("b.txt"), In("c.txt")]);
         log.End(copy, "Copied 3 items", operation);
-        Assert.Equal(["Operations", "Copied 3 items"], log.Lines());
+        Assert.Equal("Copied 3 items, 21:04", copy.HistoryLine);
         Assert.True(copy.CanUndo);
         Assert.Equal((Folder, "a.txt"), copy.Location);
         Assert.Same(copy, log.Newest());
         Assert.Equal("Un&do paste", log.MenuText);
-        Assert.Equal("Operations, 1 of 1, 21:04", log.Information(1));
 
-        var rename = log.Add("Renamed notes.md to todo.md", new Operation(OperationKind.Rename, [In("notes.md")], [In("todo.md")]));
-        Assert.Equal(["Operations", "Copied 3 items", "Renamed notes.md to todo.md"], log.Lines());
+        var rename = log.Add("Renamed notes.md to todo.md", Rename("notes.md", "todo.md"));
         Assert.Equal((Folder, "todo.md"), rename.Location);
         Assert.Same(rename, log.Newest());
         Assert.Equal("Un&do rename", log.MenuText);
-        Assert.Equal(2, log.IndexOf(rename));
         Assert.Same(rename, log.Latest);
     }
 
     [Fact]
-    public void Running_lines_come_first_whatever_their_time()
+    public void Recent_operations_are_listed_newest_first_whatever_their_state()
     {
-        var log = Log(DateTime.Now);
-        var rename = log.Add("Renamed notes.md to todo.md", new Operation(OperationKind.Rename, [In("notes.md")], [In("todo.md")]));
+        var log = Log(new DateTime(2026, 11, 23, 9, 30, 0));
+        Assert.Empty(log.Recent());
+        var rename = log.Add("Renamed notes.md to todo.md", Rename("notes.md", "todo.md"));
         var copy = log.Begin("Copying 3 items", Folder);
-        Assert.Equal(["Running", "Copying 3 items", "Operations", "Renamed notes.md to todo.md"], log.Lines());
-        Assert.Equal(1, log.IndexOf(copy));
-        Assert.Equal(3, log.IndexOf(rename));
-        Assert.Same(copy, log.Latest);
-
-        log.End(copy, "Copied 3 items", null);
-        Assert.Equal(["Operations", "Renamed notes.md to todo.md", "Copied 3 items"], log.Lines());
-        Assert.Equal(2, log.IndexOf(copy));
-        Assert.False(copy.CanUndo);
+        var zip = log.Begin("Compressing", Folder);
+        log.Fail(zip, "The file is in use");
+        Assert.Equal([zip, copy, rename], log.Recent());
+        Assert.Equal(
+            ["Failed: The file is in use, 09:30", "Copying 3 items, running", "Renamed notes.md to todo.md, 09:30"],
+            log.Recent().Select(entry => entry.HistoryLine));
+        // The status bar's line is the newest entry's, whatever its state.
+        Assert.Same(zip, log.Latest);
     }
 
     [Fact]
-    public void A_failed_line_says_so_and_cannot_be_undone()
+    public void A_failed_entry_says_so_and_cannot_be_undone()
     {
         var log = Log(DateTime.Now);
         var zip = log.Begin("Compressing", Folder);
         log.Progress(zip, "Compressing, 40 of 120 files");
         log.Fail(zip, "The file is in use");
-        Assert.Equal(["Operations", "Failed: The file is in use"], log.Lines());
+        Assert.Equal("Failed: The file is in use", zip.Line);
         Assert.Equal(ActionState.Failed, zip.State);
         Assert.False(zip.CanUndo);
         Assert.Null(log.Newest());
@@ -79,15 +76,46 @@ public sealed class ActionLogTests
     }
 
     [Fact]
-    public void An_undone_line_reads_so_and_enter_goes_where_the_undo_put_things_back()
+    public void Undo_takes_the_operations_back_newest_first_one_per_press()
+    {
+        // Ctrl+Z (AF-4.14): each press takes the newest operation that can still be taken back; a failed one, a running
+        // one and one already undone are passed over, and the menu item is named after the next.
+        var log = Log(DateTime.Now);
+        var made = log.Add("Created temp", new Operation(OperationKind.NewFolder, [], [In("temp")]));
+        var rename = log.Add("Renamed temp to notes", Rename("temp", "notes"));
+        var failed = log.Begin("Copying 2 items", Folder);
+        log.Fail(failed, "The disk is full");
+        var running = log.Begin("Deleting 4 items", Folder);
+
+        Assert.Same(rename, log.Newest());
+        Assert.Equal("Un&do rename", log.MenuText);
+        log.Undone(rename);
+        Assert.Equal("Renamed temp to notes, undone", rename.Line);
+        Assert.False(rename.CanUndo);
+
+        Assert.Same(made, log.Newest());
+        Assert.Equal("Un&do new folder", log.MenuText);
+        log.Undone(made);
+
+        Assert.Null(log.Newest());
+        Assert.Equal("Un&do", log.MenuText);
+
+        // The running delete ends: it is the next to take back.
+        log.End(running, "Deleted 4 items", new Operation(OperationKind.Delete, [In("a"), In("b"), In("c"), In("d")], []));
+        Assert.Same(running, log.Newest());
+        Assert.Equal("Un&do delete", log.MenuText);
+    }
+
+    [Fact]
+    public void An_undone_entry_reads_so_and_leads_where_the_undo_put_things_back()
     {
         var log = Log(DateTime.Now);
-        var rename = log.Add("Renamed notes.md to todo.md", new Operation(OperationKind.Rename, [In("notes.md")], [In("todo.md")]));
+        var rename = log.Add("Renamed notes.md to todo.md", Rename("notes.md", "todo.md"));
         var made = log.Add("Created temp", new Operation(OperationKind.NewFolder, [], [In("temp")]));
         log.Undone(made);
         Assert.Equal("Created temp, undone", made.Line);
         Assert.False(made.CanUndo);
-        // What was made is gone: Enter goes to the folder it was in.
+        // What was made is gone: Recent operations goes to the folder it was in.
         Assert.Equal((Folder, (string?)null), made.Location);
         Assert.Same(rename, log.Newest());
 
@@ -115,7 +143,7 @@ public sealed class ActionLogTests
     }
 
     [Fact]
-    public void Fifty_lines_stay_and_twenty_can_be_undone()
+    public void Fifty_entries_stay_and_twenty_can_be_undone()
     {
         var log = Log(DateTime.Now);
         for (var i = 1; i <= 55; i++)
@@ -124,9 +152,9 @@ public sealed class ActionLogTests
         }
 
         Assert.Equal(ActionLog.Limit, log.Count);
-        Assert.Equal("Operations", log.Lines()[0]);
-        Assert.Equal("Created 6", log.Lines()[1]);
-        Assert.Equal("Created 55", log.Lines()[^1]);
+        Assert.Equal("Created 6", log.Entries[0].Line);
+        Assert.Equal("Created 55", log.Recent()[0].Line);
+        Assert.Equal("Created 6", log.Recent()[^1].Line);
         Assert.Equal(ActionLog.UndoLimit, log.Entries.Count(entry => entry.CanUndo));
         Assert.False(log.Entries[0].CanUndo);
         Assert.True(log.Entries[^1].CanUndo);
@@ -137,10 +165,27 @@ public sealed class ActionLogTests
     }
 
     [Fact]
+    public void A_running_entry_that_fell_off_the_log_still_ends()
+    {
+        // The window holds the entry of a slow operation while fifty quick ones push it off the log.
+        var log = Log(DateTime.Now);
+        var slow = log.Begin("Copying 1 item", Folder);
+        for (var i = 1; i <= ActionLog.Limit; i++)
+        {
+            log.Add($"Created {i}", new Operation(OperationKind.NewFolder, [], [In(i.ToString())]));
+        }
+
+        Assert.DoesNotContain(slow, log.Entries);
+        log.End(slow, "Copied 1 item", new Operation(OperationKind.Copy, [@"C:\elsewhere\a.txt"], [In("a.txt")]));
+        Assert.Equal("Copied 1 item", slow.Line);
+        Assert.DoesNotContain(slow, log.Entries);
+    }
+
+    [Fact]
     public void An_operation_knows_where_it_left_things()
     {
-        Assert.Equal(Folder, new Operation(OperationKind.Rename, [In("a")], [In("b")]).ResultFolder);
-        Assert.Equal("b", new Operation(OperationKind.Rename, [In("a")], [In("b")]).Result);
+        Assert.Equal(Folder, Rename("a", "b").ResultFolder);
+        Assert.Equal("b", Rename("a", "b").Result);
         var move = new Operation(OperationKind.Move, [In("a")], [Path.Combine(Folder, "bundle", "a")], In("bundle"));
         Assert.Equal(Folder, move.ResultFolder);
         Assert.Equal("bundle", move.Result);

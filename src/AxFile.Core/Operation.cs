@@ -17,7 +17,7 @@ public enum OperationKind
 /// One operation the window made, with what its undo needs (SPEC.md AF-4.14): the paths before it and after it. A
 /// rename has the old path and the new; a new folder, a new file, a compress and an extract only what they made; a
 /// move and a copy the sources and where each landed (a move into a new folder names it, to remove when it is empty
-/// again); a delete the paths that went to the Recycle Bin. The Actions list (<see cref="ActionLog"/>) holds the
+/// again); a delete the paths that went to the Recycle Bin. The window's history (<see cref="ActionLog"/>) holds the
 /// operations the window can still take back.
 /// </summary>
 public sealed record Operation(OperationKind Kind, IReadOnlyList<string> Before, IReadOnlyList<string> After, string? MadeFolder = null)
@@ -47,7 +47,7 @@ public sealed record Operation(OperationKind Kind, IReadOnlyList<string> Before,
     /// <summary>The entry to select afterwards: the one put back; null when the undo removed what it made.</summary>
     public string? Select => PutsBack ? Path.GetFileName(Before[0]) : null;
 
-    /// <summary>Where the operation left things (the Actions list's Enter, AF-9.3): the folder of what it made or moved into, or of what it deleted.</summary>
+    /// <summary>Where the operation left things (Recent operations, AF-9.3): the folder of what it made or moved into, or of what it deleted.</summary>
     public string ResultFolder => Kind == OperationKind.Delete
         ? Path.GetDirectoryName(Before[0]) ?? Before[0]
         : Path.GetDirectoryName(MadeFolder ?? After[0]) ?? After[0];

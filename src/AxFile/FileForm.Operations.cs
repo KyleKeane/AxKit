@@ -12,7 +12,7 @@ namespace AxFile;
 /// The operations (SPEC.md AF-4), each one announcement or one notice: the folder, the rename in place, the delete,
 /// the path, the clipboard, the last three on the selected entries when there are any (AF-3.7); and the ways out of
 /// the window (AF-1.3, AF-3.2, AF-4.7, AF-4.9). Every operation that changes the disk runs through one of two
-/// runners: <see cref="RunOperation"/> for one on a task with a running line in the Actions list, <see cref="RunAtOnceAsync"/>
+/// runners: <see cref="RunOperation"/> for one on a task with a running entry in the window's history, <see cref="RunAtOnceAsync"/>
 /// for one that ends at once.
 /// </summary>
 public sealed partial class FileForm
@@ -46,8 +46,8 @@ public sealed partial class FileForm
     // ---- the runners (AF-4.5): what every operation shares ----
 
     /// <summary>
-    /// What an operation ended with: its line in the Actions list ("Moved 3 items"), the operation for its undo and
-    /// for Enter on the line, the entry to select in the folder it ran in, and what is said when that differs from the
+    /// What an operation ended with: its line in the window's history ("Moved 3 items"), the operation for its undo and
+    /// for Recent operations, the entry to select in the folder it ran in, and what is said when that differs from the
     /// line ("Pasted 3 items"); or why it failed, when the shell refused it (<see cref="Failure"/>).
     /// </summary>
     private sealed record Outcome(string Line, Operation? Operation, string? Select, string? Said = null, string? Failed = null)
@@ -56,7 +56,7 @@ public sealed partial class FileForm
     }
 
     /// <summary>
-    /// Runs one operation on a task (AF-4.5): its line in the Actions list from <paramref name="doing"/> until it ends
+    /// Runs one operation on a task (AF-4.5): its line in the window's history and the status bar from <paramref name="doing"/> until it ends
     /// (AF-9.2), <paramref name="busy"/>, the paths it writes or moves away, held in <see cref="_inFlight"/> meanwhile,
     /// "<waiting>, please wait" when it passes a second, its failure on the line and said (<see cref="FailAction"/>),
     /// and its result: the line done, then the folder it ran in read again with the result selected and the outcome
@@ -126,7 +126,7 @@ public sealed partial class FileForm
 
     // ---- undo (AF-4.14) ----
 
-    /// <summary>Folder → Undo <operation> (Ctrl+Z, AF-4.14): the newest line of the Actions list that can be taken back; "Nothing to undo" when none can.</summary>
+    /// <summary>Actions → Undo <operation> (Ctrl+Z, AF-4.14), wherever the focus is but in the rename box: the newest operation of the window's history that can be taken back, one per press; "Nothing to undo" when none can.</summary>
     protected override void Undo()
     {
         if (_actions.Newest() is not { } entry)
@@ -139,7 +139,7 @@ public sealed partial class FileForm
     }
 
     /// <summary>
-    /// One line of the Actions list taken back (AF-4.14, AF-9.3) and the entry it touched selected in its folder:
+    /// One operation of the window's history taken back (AF-4.14, AF-9.2) and the entry it touched selected in its folder:
     /// "Undone: …", the line reading ", undone" afterwards; "Not undone: <name> has changed" when something else moved
     /// the entry since, the line saying so and its operation dropped. A delete comes back through the shell's own
     /// Restore on the Recycle Bin's item; the other kinds are the file operations' inverses. An undo that fails (a zip
@@ -168,7 +168,7 @@ public sealed partial class FileForm
                 {
                     // "Not undone: …": the line keeps the reason without the prefix.
                     _actions.NotUndone(entry, problem.StartsWith("Not undone: ", StringComparison.Ordinal) ? problem["Not undone: ".Length..] : problem);
-                    FillPane();
+                    UpdateStatusBar();
                     Announce(problem, true);
                     return;
                 }
@@ -182,7 +182,7 @@ public sealed partial class FileForm
                 {
                     // Emptied meanwhile: a retry can never succeed, so the line says so and Ctrl+Z moves on (AF-4.14).
                     _actions.NotUndone(entry, reason);
-                    FillPane();
+                    UpdateStatusBar();
                     Announce("Not undone: " + reason, true);
                     return;
                 }
@@ -194,7 +194,7 @@ public sealed partial class FileForm
                 }
 
                 _actions.Undone(entry);
-                FillPane();
+                UpdateStatusBar();
                 // The undo's own words are what is heard, the folder's name among them when it is another (AF-4.14).
                 if (await ShowFolderAsync(operation.Folder, operation.Select ?? CurrentEntry()?.Name, remember: false, announce: false))
                 {
@@ -647,7 +647,7 @@ public sealed partial class FileForm
     }
 
     /// <summary>
-    /// Runs a zip operation (<see cref="RunOperation"/>) with its count in the Actions list's line, "Compressing, 40
+    /// Runs a zip operation (<see cref="RunOperation"/>) with its count in its line in the status bar, "Compressing, 40
     /// of 120 files" (AF-9.2, at most a few times a second), then shows the folder with the result selected and says
     /// "<done> <name>", the line saying the same.
     /// </summary>

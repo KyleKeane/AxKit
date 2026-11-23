@@ -10,8 +10,8 @@ public sealed record MarkRow(string Key, string Name, bool CanMark = true);
 /// <summary>
 /// What one change of the marks did (AX-8.16), for the window to apply: the rows of the list whose mark flipped, so
 /// that those items alone are rewritten, and what the key says, empty when it says nothing. Until 2026-11-22 it
-/// also carried the line axFile wrote into its Actions list for the change and the marks before it for that line's
-/// undo; the log holds only what changed files since (docs/axKit/framework.md, section 9).
+/// also carried the line axFile wrote into its history of operations for the change and the marks before it for
+/// that line's undo; the history holds only what changed files since (docs/axKit/framework.md, section 9).
 /// </summary>
 public sealed record MarkChange(IReadOnlyList<int> Changed, string Said);
 

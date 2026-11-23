@@ -30,6 +30,51 @@ public sealed class FileSettingsTests
     }
 
     [Fact]
+    public void A_favorite_is_removed_from_the_list_whatever_its_case_and_once()
+    {
+        // Delete in the Favorites list (AF-9.1).
+        var settings = new FileSettings();
+        settings.ToggleFavorite("C:\\Music");
+        settings.ToggleFavorite("C:\\Docs");
+        settings.ToggleFavorite("D:\\");
+        Assert.True(settings.RemoveFavorite("c:\\docs"));
+        Assert.Equal(["C:\\Music", "D:\\"], settings.Favorites);
+        Assert.False(settings.RemoveFavorite("C:\\Docs"));
+        Assert.False(settings.IsFavorite("C:\\Docs"));
+    }
+
+    [Fact]
+    public void A_favorite_reads_as_its_name_then_its_path()
+    {
+        // The Favorites list's lines (AF-9.1): the name first for type-ahead, the path to tell two of a name apart.
+        Assert.Equal("Music (C:\\Media\\Music)", FileSettings.FavoriteLine("C:\\Media\\Music"));
+        Assert.Equal("Music (D:\\Music\\)", FileSettings.FavoriteLine("D:\\Music\\"));
+        Assert.Equal("D:\\", FileSettings.FavoriteLine("D:\\"));
+        // A share's root is a root, as a drive's is: its path alone.
+        Assert.Equal("\\\\server\\share", FileSettings.FavoriteLine("\\\\server\\share"));
+        Assert.Equal("docs (\\\\server\\share\\docs)", FileSettings.FavoriteLine("\\\\server\\share\\docs"));
+    }
+
+    [Fact]
+    public void The_favorites_are_kept_in_their_order_through_a_save()
+    {
+        // A folder of its own: the seal's key file is made beside a settings file outside axKit's folder (AX-5.6).
+        using var temp = new TempFolder("axfile-settings");
+        var path = Path.Combine(temp.Path, "axFile.json");
+        var settings = new FileSettings();
+        settings.ToggleFavorite("C:\\b");
+        settings.ToggleFavorite("C:\\a");
+        settings.ToggleFavorite("C:\\c");
+        settings.RemoveFavorite("C:\\a");
+        settings.Save(path);
+        // The favorites are no sealed field: the file keeps them in plain words beside the seal.
+        Assert.Contains("\"favorites\"", File.ReadAllText(path));
+        var loaded = FileSettings.Load(path, out var error);
+        Assert.Null(error);
+        Assert.Equal(["C:\\b", "C:\\c"], loaded.Favorites);
+    }
+
+    [Fact]
     public void Remembered_folders_go_first_once_and_stay_ten()
     {
         var settings = new FileSettings();

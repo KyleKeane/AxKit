@@ -42,11 +42,10 @@ public class AxKitList : ListBox
     public Func<IReadOnlyList<string>>? Names { get; set; }
 
     /// <summary>
-    /// The list's lines made again (from axMedia's queue and axFile's Actions list, inventory item 7, 2026-10-25): while
-    /// the count is the same each changed line is rewritten in place, so that the selection stays and nothing but the
-    /// changed line moves under NVDA, a line <paramref name="leave"/> names being left as it is (axFile's running line
-    /// the user is on); otherwise the whole list is filled again, and the caller puts the selection back. True when the
-    /// lines were changed in place.
+    /// The list's lines made again (from axMedia's queue and axFile's lists, inventory item 7, 2026-10-25): while the
+    /// count is the same each changed line is rewritten in place, so that the selection stays and nothing but the
+    /// changed line moves under NVDA, a line <paramref name="leave"/> names being left as it is; otherwise the whole
+    /// list is filled again, and the caller puts the selection back. True when the lines were changed in place.
     /// </summary>
     public bool SetLines(IReadOnlyList<string> lines, Func<int, bool>? leave = null)
     {
