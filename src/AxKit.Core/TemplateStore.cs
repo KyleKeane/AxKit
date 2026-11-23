@@ -1,7 +1,6 @@
 using System.Text.Json.Nodes;
-using AxKit.Core;
 
-namespace AxTemplate.Core;
+namespace AxKit.Core;
 
 /// <summary>
 /// A template as the windows use it (SPEC.md TP-2.2): its name, the text that is put in, the places inside axKit it

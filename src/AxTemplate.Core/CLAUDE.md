@@ -10,8 +10,7 @@ Everything of axTemplate that needs no window. Unit tested in `tests/AxTemplate.
 
 ## Where things are
 
-- `TemplateStore` (TP-2): the templates' folder as a list of the bundle's item format (`AxKit.Core`'s `ListConfig`, `FlatItem`, `ItemView`). `Fields` and `AppsWithField` are a template's fields; `ConfigurationToWrite` makes the folder's `list.json` or adds the fields a newer version brings, never taking one away; `Open` makes the folder ready and reads it (disk, off the UI thread); `Files` gives every item file for the browser, `Read` the templates for the launcher; `After` is the files after a change of the browser's own, or its undo, without the disk; `NameRefused`; `LeftKeys`, the Left keys that set the caret after a paste (TP-2.3).
-- `Template`, `TemplateFile`, `TemplateList`, `TemplateFolder`: a template as it is used (name, text, where it shows), a file as the browser holds it (its text and its item, or none), and the two shapes a read gives.
+- The store of templates is `AxKit.Core`'s since 2026-11-23, on its second use, the editors' Insert template (TP-5, step 4): `TemplateStore` with `Template`, `TemplateFile`, `TemplateList`, `TemplateFolder`, described in `src/AxKit.Core/notes/text-and-editors.md`. Its tests stay here, in `tests/AxTemplate.Tests`.
 - `TemplateMatch` (TP-3.2, TP-3.3): the finding by words in the name or the text, names first; the order of an empty field, the ones used last first; what is said of a match and of none.
 - `TemplateSettings` (TP-7.2): one settings file for both windows, on `AxKit.Core/HotkeySettings`: the hotkey (Ctrl+Shift+Apostrophe at first), the hotkey windows' settings, the names used last, the browser's place.
 - The marks of a template's text are not here: `AxKit.Core/TextTemplate`, which the editors use too.

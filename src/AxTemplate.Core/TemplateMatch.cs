@@ -1,3 +1,5 @@
+using AxKit.Core;
+
 namespace AxTemplate.Core;
 
 /// <summary>
