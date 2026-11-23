@@ -107,7 +107,6 @@
           "sounds": ["Heading"],
           "words": "The heading itself, read after the sound.",
           "apps": "Texts with Markdown headings (axDown, axPreview), the text of every notice, and the section rows of the item windows (axTask, axPass, axMCP, axAutomate).",
-          "where": ["src/AxKit.Forms/AxKitForm.Theme.cs"],
           "note": "Not in the conversations of axClaude and axTerminal, and not in axJSON."
         },
         {
@@ -117,7 +116,6 @@
           "sounds": ["NavKey"],
           "words": "What the jump lands on, after the sound.",
           "apps": "Every text of several lines that you can type in, while it is in navigation mode.",
-          "where": ["src/AxKit.Forms/AxKitForm.Modes.cs"],
           "note": "Only for a letter alone. The same jump with Ctrl, from the menu or from the palette has no sound before it."
         },
         {
@@ -127,7 +125,6 @@
           "sounds": ["Nothing", "Edge"],
           "words": "Often the reason: 'No next heading', 'No commands match x', 'Nothing found for x', 'Not found'. Sometimes none.",
           "apps": "Every window.",
-          "where": ["src/AxKit.Forms/AxKitForm.Modes.cs", "src/AxKit.Forms/AxKitList.cs", "src/AxKit.Forms/AxKitForm.Palette.cs", "src/AxKit.Forms/HotkeyForm.cs", "src/AxKit.Forms/ItemForm.cs", "src/AxTask/TaskForm.cs", "src/AxTask/TaskForm.Projects.cs"],
           "note": "Not one sound today. Nothing (the low buzz) only for a letter in navigation mode. Edge for a typed name that no entry starts with, for the palette and the hotkey windows with no match, for a section or heading jump in the item windows, and for axTask's search of every list. No sound at all, only words, for a Ctrl jump in an editor, for Find ('Not found') and for axFile's filter."
         },
         {
@@ -137,7 +134,6 @@
           "sounds": ["Edge"],
           "words": "None in a plain list. In the palette, the hotkey windows and axFile's folder field, the entry you are on is said again. 'Top of the fields', 'A section: Down goes into it'.",
           "apps": "Every list of every window.",
-          "where": ["src/AxKit.Forms/AxKitList.cs", "src/AxKit.Forms/FormControls.cs", "src/AxKit.Forms/AxKitForm.Palette.cs", "src/AxKit.Forms/EditKeys.cs", "src/AxKit.Forms/TranscriptView.cs", "src/AxKit.Forms/HotkeyForm.cs", "src/AxKit.Forms/ItemForm.cs", "src/AxKit.Forms/ItemForm.Fields.cs", "src/AxKit.Forms/ListSelection.cs", "src/AxKit.Forms/TextEditorForm.cs", "src/AxFile/FileForm.Browse.cs", "src/AxFile/FileForm.Completion.cs", "src/AxTask/TaskForm.Projects.cs", "src/AxTerminal/TerminalForm.Input.cs"],
           "note": "Two places give words and no sound for the same thing: axMedia's 'First file' and 'End of queue' on Ctrl+Shift+Left and Right, and axFile's 'Top' on Backspace at This PC, where Left at the same place plays the edge."
         },
         {
@@ -147,7 +143,6 @@
           "sounds": ["Unassigned", "Edge"],
           "words": "None, or the reason: 'No action on Ctrl+4 in this list'.",
           "apps": "Navigation mode of a text; the item windows; every window for Ctrl+Enter.",
-          "where": ["src/AxKit.Forms/AxKitForm.Modes.cs", "src/AxKit.Forms/FormControls.cs", "src/AxKit.Forms/AxKitForm.cs", "src/AxKit.Forms/OverlayPanel.cs", "src/AxKit.Forms/ItemForm.cs", "src/AxTask/TaskForm.Commands.cs", "src/AxTask/TaskForm.Actions.cs"],
           "note": "Unassigned (the wooden bonk) only for a plain key that would type in navigation mode. Edge for Ctrl+Enter where the window has no main action, for Ctrl+Space where there is no text with modes, for Space on a row that cannot be checked, and for an action key with no action. A key no window knows gets nothing from axKit."
         },
         {
@@ -157,7 +152,6 @@
           "sounds": ["Edge"],
           "words": "None for a key in navigation mode. From a menu, the palette or an AI tool the reason: 'Navigation mode: press Ctrl+Space to edit'. 'Not a task', 'Select an item first', 'Type the field's title'.",
           "apps": "Every window.",
-          "where": ["src/AxKit.Forms/AxKitForm.Modes.cs", "src/AxKit.Forms/AxKitTextBox.cs", "src/AxKit.Forms/AxKitForm.Notices.cs", "src/AxKit.Forms/ItemForm.Fields.cs", "src/AxTask/TaskForm.Commands.cs", "src/AxTask/TaskForm.Actions.cs", "src/AxTask/TaskForm.Approvals.cs"],
           "note": "Some refusals have words and no sound: 'Read only: there is no edit mode here', axPass's 'Locked: Enter unlocks', axAutomate's 'This version views and runs the workflows'."
         },
         {
@@ -192,7 +186,6 @@
           "sounds": ["Sent"],
           "words": "'Sent', 'Queued', 'Sent, not recorded', 'Sent: 1, Green'. In axClaude the word is a setting; in axTerminal it is always said.",
           "apps": "axClaude and axTerminal.",
-          "where": ["src/AxClaude/MainForm.Input.cs", "src/AxClaude/MainForm.Area.cs", "src/AxClaude/MainForm.Mcp.cs", "src/AxTerminal/TerminalForm.Input.cs"],
           "note": "In axClaude the sound plays a second time, with no words, when axClaude itself confirms the review after your last answer."
         },
         {
@@ -201,8 +194,7 @@
           "starts": ["key"],
           "sounds": ["Recall"],
           "words": "The command, or 'blank'.",
-          "apps": "axTerminal.",
-          "where": ["src/AxTerminal/TerminalForm.Input.cs"]
+          "apps": "axTerminal."
         },
         {
           "id": "asked",
@@ -227,8 +219,7 @@
           "starts": ["key", "menu", "palette", "ai-tool", "script"],
           "sounds": ["FormOpen"],
           "words": "After NVDA has read the first control: the title and the one word, 'Move 2 items, form'. The explanation is not said: Ctrl+Q reads it. Two forms say their text after the word, since it is what will happen and not how a form is used: the report, and an action of an axTask list.",
-          "apps": "Every window with a form: the report (F4), axTask's item form, Move to section, Move to a list and an action's form, axMCP's Add server, axTerminal's Add a shell, the item windows' New field, axClaude's New session.",
-          "where": ["src/AxKit.Forms/AxKitForm.Theme.cs"]
+          "apps": "Every window with a form: the report (F4), axTask's item form, Move to section, Move to a list and an action's form, axMCP's Add server, axTerminal's Add a shell, the item windows' New field, axClaude's New session."
         },
         {
           "id": "list-entered",
@@ -236,8 +227,7 @@
           "starts": ["key", "menu", "palette", "ai-tool", "script"],
           "sounds": ["ListOpen"],
           "words": "NVDA reads the list and its line.",
-          "apps": "Every list of every window, and the answers in the field's place.",
-          "where": ["src/AxKit.Forms/AxKitForm.Theme.cs"]
+          "apps": "Every list of every window, and the answers in the field's place."
         },
         {
           "id": "field-entered",
@@ -245,8 +235,7 @@
           "starts": ["key", "menu", "palette", "ai-tool", "script"],
           "sounds": ["FieldOpen"],
           "words": "NVDA reads the field.",
-          "apps": "Every field of every window.",
-          "where": ["src/AxKit.Forms/AxKitForm.Theme.cs"]
+          "apps": "Every field of every window."
         },
         {
           "id": "text-entered",
@@ -255,7 +244,6 @@
           "sounds": ["TextOpen"],
           "words": "NVDA reads the text.",
           "apps": "Every read-only text of every window.",
-          "where": ["src/AxKit.Forms/AxKitForm.Theme.cs"],
           "note": "When the same command just played another sound (a notice that opened by itself, a refusal, a program's question), that sound stands alone and the entry is silent. So for all four kinds."
         },
         {
@@ -274,7 +262,6 @@
           "sounds": ["Notice"],
           "words": "One line is spoken with no sound: 'Failed: the reason'. Several lines, or an error with a title, open a notice, and that notice plays the notice sound.",
           "apps": "Every window.",
-          "where": ["src/AxKit.Forms/AxKitForm.Notices.cs", "src/AxTask/TaskForm.Actions.cs"],
           "note": "The error notice chimes even though your own command caused it, because every error notice is marked as coming by itself. A program that an action of an axTask list ran and that failed, or could not be started, plays the same sound with its one line, 'Miss failed, exit code 1', since it ends some time after the key; its output then opens as a plain notice."
         },
         {
@@ -298,8 +285,7 @@
           "starts": ["program"],
           "sounds": ["Click"],
           "words": "None with the sound; the line may be spoken after it (reply-spoken).",
-          "apps": "axClaude and axTerminal.",
-          "where": ["src/AxClaude/MainForm.Model.cs", "src/AxTerminal/TerminalForm.Model.cs"]
+          "apps": "axClaude and axTerminal."
         },
         {
           "id": "tool-call",
@@ -307,8 +293,7 @@
           "starts": ["program"],
           "sounds": ["Tool"],
           "words": "The tool call's row, when Speak tool calls is on.",
-          "apps": "axClaude.",
-          "where": ["src/AxClaude/MainForm.Model.cs"]
+          "apps": "axClaude."
         },
         {
           "id": "reply-spoken",
@@ -371,8 +356,7 @@
           "starts": ["program"],
           "sounds": ["Ready"],
           "words": "'Ready'.",
-          "apps": "axClaude and axTerminal.",
-          "where": ["src/AxClaude/MainForm.Model.cs", "src/AxTerminal/TerminalForm.Model.cs"]
+          "apps": "axClaude and axTerminal."
         },
         {
           "id": "responding",
@@ -381,7 +365,6 @@
           "sounds": ["Responding"],
           "words": "'Responding'.",
           "apps": "axClaude.",
-          "where": ["src/AxClaude/MainForm.cs"],
           "note": "axTerminal has no such moment."
         },
         {
@@ -390,8 +373,7 @@
           "starts": ["program"],
           "sounds": ["Music"],
           "words": "None; the status bar says working.",
-          "apps": "axClaude and axTerminal.",
-          "where": ["src/AxKit.Forms/ConsoleForm.Signals.cs"]
+          "apps": "axClaude and axTerminal."
         },
         {
           "id": "turn-self-started",
@@ -400,7 +382,6 @@
           "sounds": [],
           "words": "'Claude goes on by itself'.",
           "apps": "axClaude.",
-          "where": ["src/AxClaude/MainForm.Flow.cs"],
           "note": "Words only, by a switch of Options, Announcements; the working music has started just before them."
         },
         {
@@ -410,7 +391,6 @@
           "sounds": ["Done"],
           "words": "'Done'; in axTerminal also 'Failed' or 'Failed, exit code 2'; in axMedia 'End of queue'; in axTask the action's name and 'done'.",
           "apps": "axClaude, axTerminal, axMedia, axTask.",
-          "where": ["src/AxKit.Forms/ConsoleForm.Signals.cs", "src/AxMedia/MediaForm.Player.cs", "src/AxClaude/MainForm.PutAway.cs", "src/AxTask/TaskForm.Actions.cs"],
           "note": "A shell command that failed plays the same sound as one that worked. axMedia's sound has no switch. The call in MainForm.PutAway.cs, for a turn ending while axClaude is put away, is switched off in code."
         },
         {
@@ -444,7 +424,6 @@
           "sounds": ["Notice", "Question"],
           "words": "The question and the answer you are on, or 'Claude asks', or in axTerminal 'Asks: the row'.",
           "apps": "axClaude and axTerminal.",
-          "where": ["src/AxClaude/MainForm.Area.cs", "src/AxKit.Forms/ConsoleForm.Signals.cs"],
           "note": "Two sounds for one thing. Notice (the trill) when axClaude shows the question as a list in the window. Question (two notes) when it cannot be shown as a list, and for axTerminal's guess that a program asks."
         },
         {
@@ -453,8 +432,7 @@
           "starts": ["program"],
           "sounds": ["Notice"],
           "words": "The title and the first line.",
-          "apps": "axClaude.",
-          "where": ["src/AxClaude/MainForm.Area.cs"]
+          "apps": "axClaude."
         },
         {
           "id": "question-closed",
@@ -471,7 +449,6 @@
           "sounds": ["Offer"],
           "words": "'Claude offers a command for you to run', the command, and the caution. Running is never where the list starts.",
           "apps": "axClaude.",
-          "where": ["src/AxClaude/MainForm.Mcp.cs"],
           "note": "Its sound plays wherever the window is, and the taskbar button flashes when the window is behind; the louder background alert never takes its place."
         },
         {
@@ -481,7 +458,6 @@
           "sounds": ["Offer"],
           "words": "'Command offer. Claude asks to run this window's command Delete on a.txt', with the caution; No is the default.",
           "apps": "Every window but axPass and axClip.",
-          "where": ["src/AxKit.Forms/AxKitForm.Mcp.cs", "src/AxClaude/MainForm.Mcp.cs"],
           "note": "The same sound as command-offer; docs/axKit/earcons.md proposes a variant of its own."
         },
         {
@@ -490,8 +466,7 @@
           "starts": ["ai-tool"],
           "sounds": ["Notice"],
           "words": "'Claude asks to use axKit', with a consent box; Deny is the default.",
-          "apps": "Every window.",
-          "where": ["src/AxKit.Forms/AxKitForm.Notices.cs"]
+          "apps": "Every window."
         },
         {
           "id": "notice-by-itself",
@@ -500,7 +475,6 @@
           "sounds": ["Notice"],
           "words": "The notice's own text, and Enter is held for a second so that a key already on its way answers nothing.",
           "apps": "Every window.",
-          "where": ["src/AxKit.Forms/AxKitForm.Notices.cs"],
           "note": "The sound can be switched off only in axClaude and axTerminal (with their chimes). In those two windows the settings notes are a line of the conversation and make no sound."
         },
         {
@@ -519,7 +493,6 @@
           "sounds": ["Alert"],
           "words": "Those of the event behind it; the taskbar button flashes.",
           "apps": "axClaude and axTerminal.",
-          "where": ["src/AxKit.Forms/ConsoleForm.Signals.cs"],
           "note": "Off at first. When on, it takes the place of the done and question sounds, and plays even with the chimes off."
         }
       ]
@@ -535,8 +508,7 @@
           "starts": ["program"],
           "sounds": ["BackgroundStart"],
           "words": "'Agent started: the description', when Say background work is on.",
-          "apps": "axClaude.",
-          "where": ["src/AxClaude/MainForm.Background.cs"]
+          "apps": "axClaude."
         },
         {
           "id": "background-running",
@@ -544,8 +516,7 @@
           "starts": ["timer"],
           "sounds": ["BackgroundChord"],
           "words": "None; the status bar counts what runs.",
-          "apps": "axClaude.",
-          "where": ["src/AxClaude/MainForm.Background.cs"]
+          "apps": "axClaude."
         },
         {
           "id": "background-finished",
@@ -553,8 +524,7 @@
           "starts": ["program"],
           "sounds": ["BackgroundFinish"],
           "words": "'The description finished', when Say background work is on.",
-          "apps": "axClaude.",
-          "where": ["src/AxClaude/MainForm.Background.cs"]
+          "apps": "axClaude."
         },
         {
           "id": "job-finished",
@@ -572,7 +542,6 @@
           "sounds": ["Notice"],
           "words": "'Claude ran Word wrap', joined to what the command itself says; 'Claude added Buy milk to Home'.",
           "apps": "Every window but axPass and axClip.",
-          "where": ["src/AxKit.Forms/AxKitForm.Mcp.cs"],
           "note": "The sound and a flash of the taskbar only when the window is not in front, once for a burst, since NVDA does not speak for a window behind. This is the one use of the notice sound that no switch turns off."
         },
         {
@@ -614,7 +583,6 @@
           "sounds": ["Recall"],
           "words": "'Unsent message in the field'.",
           "apps": "axClaude.",
-          "where": ["src/AxClaude/MainForm.PutAway.cs"],
           "note": "The recall sound has a second meaning here; its first is a command come back from the history."
         },
         {

@@ -184,8 +184,9 @@ switch. What changed is that no place plays a sound any more; it names what happ
   channel alone listens to what was played); every raise is written whole on one line and names its kind in so many
   words, never a variable, so that each can be found and checked; a sound is named at a raise only for the three
   kinds; the door sends each sound to the method of its own name.
-- **Held to the inventory** (EV-6.4): `tools/families.ps1` fails when a file raises a kind whose "where" in
-  `families.json` does not name the file. Run after the move, it found nothing: every choice of a kind agrees with
+- **Held to the inventory** (EV-6.4): `tools/families.ps1` fails when a file raises a kind that `families.json`
+  does not have; which files raise each kind it reads from the code itself (a "where" list per kind was kept by
+  hand in the file until 2026-11-23, when a file it did not name broke two builds). Run after the move, it found nothing: every choice of a kind agrees with
   the inventory of 2026-11-16, made by reading the same places a day earlier. And the page it writes came out
   unchanged, which shows that every sound is played from the same files as before.
 

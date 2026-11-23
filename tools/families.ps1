@@ -21,8 +21,10 @@ from, a new menu or a new family of keys shows as a line to correct and not as a
   - every id is used once; every action, event and sound named by another entry exists;
   - every public method of Sounds is a sound here (its "methods", or its id), and every sound here is a method;
   - every sound is the sound of at least one kind of event;
-  - every file under src that raises a kind of event through the door (EventDoor.Raise(EventKind.X), and the door's
-    calls for the sounds that last) is named in that kind's "where", and every file named in "where" exists;
+  - every kind of event a file under src raises through the door (EventDoor.Raise(EventKind.X), and the door's calls
+    for the sounds that last) is a kind of the file. Which files raise a kind is read from the code itself and never
+    written in the file (its "where" lists, kept by hand until 2026-11-23, broke two builds that day when a new file
+    was not named; the maintainer: "building systems that stop hand maintanence");
   - every top menu of docs\axKit\window-commands.json is a family of functions and the other way round;
   - every family of docs\axKit\key-families.json is in "keys" and the other way round.
 
@@ -142,10 +144,6 @@ foreach ($family in $file.events) {
             if (-not $eventsOfSound.ContainsKey($sound)) { $eventsOfSound[$sound] = New-Object System.Collections.Generic.List[string] }
             $eventsOfSound[$sound].Add($member.id)
         }
-        foreach ($place in @($member.where | Where-Object { $_ })) {
-            $whereOfEvent[$member.id][$place] = $true
-            if (-not (Test-Path (Join-Path $root $place.Replace('/', '\')))) { $problems.Add("events: '$($member.id)' names $place, which does not exist.") }
-        }
     }
 }
 foreach ($sound in $soundIds.Keys) {
@@ -156,10 +154,7 @@ foreach ($sound in $soundIds.Keys) {
 $callers = @{}
 foreach ($raise in $raises) {
     if (-not $whereOfEvent.ContainsKey($raise.Kind)) { $problems.Add("events: $($raise.File) raises '$($raise.Kind)', which is no kind of event of the file."); continue }
-    if (-not $whereOfEvent[$raise.Kind].ContainsKey($raise.File)) {
-        $line = "events: $($raise.File) raises '$($raise.Kind)' and the kind does not name the file in its 'where'."
-        if (-not $problems.Contains($line)) { $problems.Add($line) }
-    }
+    $whereOfEvent[$raise.Kind][$raise.File] = $true
     $played = $raise.Sound
     if (-not $played -and $soundsOfEvent[$raise.Kind].Count -gt 0) { $played = $soundsOfEvent[$raise.Kind][0] }
     if (-not $played) { continue }
