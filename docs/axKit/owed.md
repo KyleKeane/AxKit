@@ -67,6 +67,6 @@ No longer owed: the script each names passed with NVDA listening (`docs/axKit/wo
 - R-63: the system line of a console window when the settings cannot be saved. Heard: `tests/scripts/axTerminal/12-settings-not-saved.txt` passed with NVDA at 656663e1.
 - R-64: the sentence that a remembered path is on the network and was not opened. Heard: `tests/scripts/axFile/10-settings-changed-outside.txt` passed with NVDA at a99a6c08.
 - R-66: a damaged item named in its list in axTask. Heard: `tests/scripts/axTask/10-damaged-item.txt` passed with NVDA at a99a6c08.
-- R-69: the sentence of axClip at its first showing when the kept history could not be read. Heard: `tests/scripts/axClip/03-history-not-read.txt` passed with NVDA at 89d4ac77.
+- R-69: the sentence of axClip at its first showing when the kept history could not be read. Heard: `tests/scripts/axClip/03-history-not-read.txt` passed with NVDA at 941301c4.
 - R-72: the first press of an action key of a list that moves or opens, in axTask. Heard: `tests/scripts/axTask/04-action-keys.txt` passed with NVDA at a99a6c08.
 - R-74: the details of a started server in axMCP with their error lines. Heard: `tests/scripts/axMCP/01-start.txt` passed with NVDA at a99a6c08.

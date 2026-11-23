@@ -25,8 +25,11 @@ type thanks
 keys down
 expect spoken Thanks, 1 of 1
 keys enter
-use 1
+# The paste, the Left keys and the clipboard given back are over in under a second. The runner's use takes the
+# front with an Alt key held for 50 ms, so it waits until they are done: Left keys that met that Alt were taken as
+# Alt+Left, and the caret landed short (the NVDA pass of 2026-11-23).
 wait 1500
+use 1
 # The caret waits at its mark: what is typed now lands there.
 type friend
 expect text Dear friend, thank you for A line.
@@ -48,7 +51,8 @@ type link
 keys down
 expect spoken Link, 1 of 1
 keys ctrl+enter
+# The copy in axDown, the paste, the caret and the clipboard, all before the runner's Alt of use.
+wait 2000
 use 1
-wait 1800
 type address
 expect text [word](address)

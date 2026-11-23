@@ -6,6 +6,32 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-23: axTemplate's launcher, axClip, axStart; by the assistant with NVDA listening (branch `axfile-navigator` 89d4ac77 to 941301c4)
+
+`.\nvda-pass.ps1 -Only` axTemplate's, axClip's and axStart's scripts and `zz-nvda\axTemplate-put-in.txt`, from the
+branch's own folder, behind the spoken countdown, each pass after the maintainer's yes through the question tool,
+the same NVDA, voice and Windows as the passes below. Three passes, the third of the paste script alone.
+
+| What | Scripts | Result |
+|---|---|---|
+| axStart, all four scripts | 4 | Passed (89d4ac77) |
+| axClip, all four scripts | 4 | Passed (941301c4) |
+| axTemplate's browser and launcher, `01-start` to `03-launcher` | 3 | Passed (941301c4) |
+| axTemplate's paste into axDown, `axTemplate-put-in.txt`: Enter puts the template in, the caret at `{caret}`, the clipboard's text of before given back, Ctrl+Enter around a selection | 1 | Passed (941301c4 with the script's waits) |
+
+Found and mended on the way:
+- 89d4ac77, `03-launcher.txt` step 68: Shift+Enter said "Copied" as the window hid, and NVDA never spoke it, since
+  it reads the window the front goes back to. The maintainer chose "Hide, say nothing" for axTemplate and axClip
+  (941301c4; axClip CP-4.2, axTemplate TP-4.4).
+- 89d4ac77, `axTemplate-put-in.txt` step 21: the launcher was started with `launch`, which waits for a start that
+  hands over and ends; it is the run's second window, so `start`.
+- 941301c4, the same script, step 32: the caret landed three characters short. The runner's `use` takes the front
+  with Alt held for 50 ms, and it ran while the launcher sent its Left keys, which became Alt+Left. The script waits
+  for the paste to end before `use`; the launcher is unchanged.
+
+By ear, and the maintainer's: the paste, the caret and the clipboard in his own programs (Word, a browser, a
+terminal), where a program that indents or pastes late can differ (TP-D5, TP-D6).
+
 ## 2026-11-23: axTemplate's browser; by the assistant with NVDA listening (branch `axfile-navigator` e8120737)
 
 `.\nvda-pass.ps1 axTemplate`, from the branch's own folder, behind the spoken countdown, the maintainer away at his
