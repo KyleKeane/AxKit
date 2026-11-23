@@ -387,7 +387,12 @@ Steps and keys: `docs/axKit/workflows/axDown.md` (in Claude's working folder: `w
     - Turn on navigation mode
     - Move by single letters
     - Go back to edit mode and type
-18. **Answer a notice and use the command palette**
+18. **Give a line, a word and several lines their Markdown format, and take it away again**
+    - Make a line a heading and change its level
+    - Make the word at the caret bold and take it off again
+    - Make the selected words italic
+    - Make several lines list items and undo it in one step
+19. **Answer a notice and use the command palette**
     - Read the keyboard shortcuts
     - Find a command in the command palette
 

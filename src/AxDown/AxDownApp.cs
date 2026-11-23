@@ -34,7 +34,33 @@ public static class AxDownApp
             ("Markdown &basics", "https://commonmark.org/help/"),
             ("&GitHub Flavored Markdown", "https://github.github.com/gfm/"),
         ],
-        Commands: []);
+        Commands: [],
+        Format: FormatCommands());
+
+    /// <summary>
+    /// Actions, Format (SPEC.md AD-12): each item one function of <see cref="MarkdownEdit"/> on the caret's line
+    /// or the selection, a toggle; three have a key (<see cref="AxDownKeys"/>).
+    /// </summary>
+    private static IReadOnlyList<EditorChange> FormatCommands()
+    {
+        var items = new List<EditorChange>();
+        for (var level = 1; level <= MarkdownEdit.DeepestHeading; level++)
+        {
+            var heading = level;
+            items.Add(new EditorChange($"Heading &{level}", Keys.None, (text, start, _) => Edit(MarkdownEdit.Heading(text, start, heading))));
+        }
+
+        items.Add(new EditorChange("Heading &deeper", AxDownKeys.HeadingDeeper, (text, start, _) => Edit(MarkdownEdit.HeadingDeeper(text, start))));
+        items.Add(new EditorChange("Heading &shallower", AxDownKeys.HeadingShallower, (text, start, _) => Edit(MarkdownEdit.HeadingShallower(text, start))));
+        items.Add(new EditorChange("&Bold", AxDownKeys.Bold, (text, start, length) => Edit(MarkdownEdit.Bold(text, start, length))));
+        items.Add(new EditorChange("&Italic", Keys.None, (text, start, length) => Edit(MarkdownEdit.Italic(text, start, length))));
+        items.Add(new EditorChange("&Code", Keys.None, (text, start, length) => Edit(MarkdownEdit.Code(text, start, length))));
+        items.Add(new EditorChange("&List item", Keys.None, (text, start, length) => Edit(MarkdownEdit.ListItem(text, start, length))));
+        items.Add(new EditorChange("Block &quote", Keys.None, (text, start, length) => Edit(MarkdownEdit.BlockQuote(text, start, length))));
+        return items;
+    }
+
+    private static TextEdit Edit(MarkdownChange change) => new(change.Start, change.Length, change.Text, change.Caret, change.Said, change.Edge);
 
     public static void Run(string[] args) => EditorHost.Run(App, Usage, args);
 }

@@ -13,6 +13,13 @@
   outside fenced code blocks: headings with a level filter, links, list items and lists, block quotes and tables,
   each with `Next…` and `Previous…` from a caret position returning an `Element` with `Start` and `Spoken`; block
   kinds by line, links by position; `HeadingLineAt`, the caret's line when it is a heading, for the heading sound (AX-7.9).
+- `MarkdownEdit` with `MarkdownChange` (docs/axDown/SPEC.md AD-12, 2026-11-22): the format commands of a Markdown
+  text, each a pure function from the text and the caret or the selection to one change (what replaces which
+  characters, the caret after, the sentence, and whether nothing could change, for the edge sound), and each a
+  toggle: `Heading` (a level set, changed, or taken away), `HeadingDeeper` and `HeadingShallower` (a number sign
+  more or fewer), `Bold`, `Italic` and `Code` (around the selection, or the caret's word, or empty marks to type
+  into; two or three asterisks are bold, one or three italic), `ListItem` and `BlockQuote` (on every line the
+  selection touches; empty lines carried along and not counted). A line's ending is never touched.
 - `TextDocument` (docs/axDown/SPEC.md AD-3; from AxDown.Core, axJSON): a text file as an editor window holds it, with
   the encoding, the byte order mark and the line ending it came with, so that `ToBytes` writes it back as it was,
   every line ending of the text the file's (a lone LF pasted from a Unix clipboard included); `FromBytes` and

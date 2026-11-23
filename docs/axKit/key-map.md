@@ -3,8 +3,8 @@
 Written by `tools/key-map.ps1` from `docs/axKit/window-commands.json`, `src/AxKit.Forms/BundleKeys.cs` and
 `docs/axKit/key-families.json`; never edit it by hand. Every key of every window and what it does in each app.
 
-The inventory holds 676 commands with a key in 17 apps, on 124 different keys, counting the
-second keys some commands answer. 48 keys have one meaning wherever they are; 76 have several.
+The inventory holds 679 commands with a key in 17 apps, on 126 different keys, counting the
+second keys some commands answer. 49 keys have one meaning wherever they are; 77 have several.
 21 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
 are window keys, each in its window's own table.
 
@@ -28,7 +28,6 @@ In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 - Ctrl+7. Window key, in axTask alone: Action key 7.
 - Ctrl+8. Window key, in axTask alone: Action key 8.
 - Ctrl+9. Window key, in axTask alone: Action key 9.
-- Ctrl+B. Window key, in axClaude alone: What runs in the background.
 - Ctrl+H. Window key, in axDown and axPreview: Heading.
 - Ctrl+V. Window key, in axFile alone: Paste.
 - Ctrl+X. Window key, in axFile alone: Cut.
@@ -61,7 +60,9 @@ In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 - Alt+Down arrow. Window key, in axJSON alone: Next value.
 - Alt+Enter. Window key, in axFile alone: Properties.
 - Alt+Left arrow. Window key, in axJSON alone: Add a member.
+- Shift+Alt+Left arrow. Window key, in axDown alone: Heading shallower.
 - Alt+Right arrow. Window key, in axJSON alone: Choose a value.
+- Shift+Alt+Right arrow. Window key, in axDown alone: Heading deeper.
 - Shift+Space. Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Select to here.
 
 ## Keys whose meaning differs
@@ -699,6 +700,13 @@ Window key, in axDown, axFile and axPreview. 2 meanings.
 
 - axDown and axPreview: Table.
 - axFile: New text file.
+
+### Ctrl+B
+
+Window key, in axClaude and axDown. 2 meanings.
+
+- axDown: Bold.
+- axClaude: What runs in the background.
 
 ### Ctrl+P
 

@@ -200,6 +200,26 @@ Claude Code installed and logged in, and are the user's by ear.
    `Documents\axKit Claude`; Alt+F4.
 7. Alt+A, C, U: "Claude off"; Alt+A, C, U: "Claude on" (the agreement is remembered); Alt+A, C, U: "Claude off".
 
+## 10. Format (SPEC.md AD-12, 2026-11-22)
+
+On a copy of `manual_tests/axDown/_main.md`, or any Markdown file.
+
+1. On a plain line, Shift+Alt+Right: "Heading 1", and the line starts with a number sign and a space; again:
+   "Heading 2". Shift+Alt+Left twice: "Heading 1", then "No heading" and the line is plain again; once more: the
+   edge sound and "No heading".
+2. Alt+A, F: the Format menu reads Heading 1 to Heading 6, Heading deeper, Heading shallower, Bold, Italic, Code,
+   List item, Block quote. Heading 3: "Heading 3"; the same again: "No heading".
+3. With the caret in a word, Ctrl+B: "Bold on", two asterisks on each side of the word, the caret still in the
+   word; Ctrl+B: "Bold off". Select three words, Ctrl+B: "Bold on", around all three. In an empty place, Ctrl+B,
+   type a word: it stands between the asterisks.
+4. Alt+A, F, I on a bold word: "Italic on", three asterisks; Ctrl+B there: "Bold off", one asterisk stays.
+   Alt+A, F, C on a word: "Code on", a backtick on each side.
+5. Select three lines, Alt+A, F, L: "List item on, 3 lines", each starts with a dash; again: "List item off, 3
+   lines". Alt+A, F, Q on one line: "Block quote on"; again: "Block quote off".
+6. Ctrl+Z after any of them: "Undone", the whole change back in one step.
+7. Ctrl+Space, then Ctrl+B: the edge sound and "Navigation mode: press Ctrl+Space to edit"; nothing changed.
+8. By ear, the maintainer's: whether "on" and "off" are the right words, and whether the three keys sit well.
+
 ## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)
 
 1. In the text with a word selected, Shift+F10: Context opens on "Cut Ctrl+X" and NVDA reads it, not the edit control's own menu; the Applications key and a right click the same; Escape: back in the text, the caret and the selection where they were. Alt, then Right along the bar: Session, Actions, Navigation, Context, Options, Window, axKit, Help.

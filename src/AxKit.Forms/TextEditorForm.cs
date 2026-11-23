@@ -141,6 +141,19 @@ public sealed partial class TextEditorForm : AxKitForm
                     Add(edit, new Command(offer.Label, offer.Key, () => RunOffer(offer)) { Mark = CommandMark.Change });
                 }
             }
+
+            if (_app.Format is { Count: > 0 } changes)
+            {
+                // The app's changes of the format where the user is (AD-12), in a submenu of their own.
+                edit.DropDownItems.Add(new ToolStripSeparator());
+                var format = new ToolStripMenuItem("&Format");
+                foreach (var change in changes)
+                {
+                    Add(format, new Command(change.Label, change.Key, () => RunChange(change)) { Mark = CommandMark.Change });
+                }
+
+                edit.DropDownItems.Add(format);
+            }
         }
 
         var navigate = new ToolStripMenuItem();
@@ -573,9 +586,25 @@ public sealed partial class TextEditorForm : AxKitForm
             });
     }
 
+    /// <summary>An app's change of the format where the user is (AD-12): asked for the text and the selection, written as one undo step and said; nothing in navigation mode.</summary>
+    private void RunChange(EditorChange change)
+    {
+        if (RefusedInNavigation(_editor))
+        {
+            return;
+        }
+
+        ApplyEdit(change.At(_editor.Text, _editor.SelectionStart, _editor.SelectionLength));
+    }
+
     /// <summary>One change to the text as one undo step (as <see cref="RunCommand"/> records its own), the caret where the edit puts it, and its sentence said.</summary>
     private void ApplyEdit(TextEdit edit)
     {
+        if (edit.Edge)
+        {
+            EventDoor.Raise(EventKind.Edge);
+        }
+
         if (edit.Length > 0 || edit.Text.Length > 0)
         {
             var before = _editor.Text;

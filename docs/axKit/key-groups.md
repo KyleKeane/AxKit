@@ -296,6 +296,7 @@ Ctrl and a letter does something to what you are on, and the letter is the first
 
 The keys:
 
+- Ctrl+B, axDown: Bold.
 - Ctrl+D, axFile: Add or remove this folder.
 - Ctrl+D, axFile: Add to or remove from Favorites.
 - Ctrl+D, axHelp: Put a picture file into the conversation.
@@ -591,4 +592,7 @@ The keys:
 
 ## Keys in no group yet
 
-None: every key of the inventory is in a group.
+These keys of the inventory match no group's pattern. Most are the arrows and the keys of a list or a text.
+
+- Shift+Alt+Left arrow: Heading shallower.
+- Shift+Alt+Right arrow: Heading deeper.

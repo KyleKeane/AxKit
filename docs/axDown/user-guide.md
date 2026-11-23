@@ -42,6 +42,16 @@ In a Markdown file, the keys NVDA uses on a web page work with Ctrl: Ctrl+H move
 
 To move by structure without holding Ctrl, press Ctrl+Space: axDown says "Navigation mode", and the status bar adds "navigation mode" after the file's name. Now the same letters work alone, as in NVDA's browse mode and in axClaude's conversation: h and Shift+H for headings, 1 to 6 for a level, k for links, l for lists, i for list items, q for block quotes, t for tables. The arrows, Page Up, Page Down and the paragraph keys still move, and with Shift select; Ctrl+C copies and the Ctrl keys still jump. Each letter has its sound, heard before anything is read: a small click when it moves you, one flat low tone when there is nothing of that kind to go to, and a wooden bonk for a letter, a digit or a sign that has no command. Nothing can change the file in this mode: Enter, Backspace, Delete and a paste play the low edge sound, and Undo, Cut and Paste from the menus play the same sound and say "Navigation mode: press Ctrl+Space to edit". Press Ctrl+Space again to hear "Edit mode" and type as before. Every window starts in edit mode. axJSON works the same way with its own letters (k a key, j an object, l an array, i an item, e an error).
 
+## Format
+
+Actions, Format (Alt+A, F) writes Markdown's marks for you. Every command there acts where you are, and every one is a toggle: chosen again on the same text, it takes the format away. Each change is one step for Ctrl+Z, and axDown says in a word or two what it did.
+
+- **Headings.** Shift+Alt+Right makes the line you are on a heading, or a heading one level deeper: it adds a number sign, and axDown says "Heading 1", "Heading 2". Shift+Alt+Left takes one away, down to a plain line, "No heading". The menu's Heading 1 to Heading 6 set a level at once; on a heading of that very level they take the number signs away.
+- **Bold, Italic, Code.** Ctrl+B puts two asterisks on each side of the selection, or, with nothing selected, of the word the caret is in: "Bold on". Again: "Bold off". With the caret in no word it writes the empty marks with the caret between them, to type into. Italic (one asterisk) and Code (a backtick) work the same way, from the menu.
+- **List item, Block quote.** On the line you are on, or on every line of a selection: a dash and a space, or a greater-than sign and a space, before each line; again takes them away. For several lines axDown says how many, "List item on, 3 lines".
+
+In navigation mode nothing changes the text, these commands included.
+
 ## Text size and fonts
 
 Ctrl+Plus and Ctrl+Minus make the text larger and smaller, and axDown says the new size. Options, Text, Font opens the Windows font dialog. Both are remembered.
@@ -49,7 +59,7 @@ Ctrl+Plus and Ctrl+Minus make the text larger and smaller, and axDown says the n
 ## Menus
 
 - **Session**: New, Open, Open recent file (each as a number, the file's name and its full path), Save, Save as, Show current file in (File Explorer, Ctrl+W; axClaude, Claude in the file's folder; axTerminal, a shell in the file's folder; axGIT, a git manager on the repository that holds the file; axFile, the file's folder with the file selected), Exit.
-- **Actions**: Undo, Redo.
+- **Actions**: Undo, Redo, and Format: Heading 1 to Heading 6, Heading deeper (Shift+Alt+Right), Heading shallower (Shift+Alt+Left), Bold (Ctrl+B), Italic, Code, List item, Block quote.
 - **Context**: Cut, Copy, Paste, Select all, on the selection. Shift+F10, the Applications key or a right click in the text opens it.
 - **Navigation**: Find, Find next, Find previous, Go to line, and the submenus Next and Previous, each with Heading, Heading level 1 to 6, Link, List, List item, Block quote and Table.
 - **Options**: Text (Word wrap, Say new line, Sound on headings, Font, Larger text, Smaller text, Windows text size), General (Check for updates at start) and Developer (Open settings file, which opens axDown.json in a new axJSON window).

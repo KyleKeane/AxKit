@@ -1,0 +1,73 @@
+# Workflow: Give a line, a word and several lines their Markdown format, and take it away again
+# axDown: Actions, Format (docs/axDown/SPEC.md AD-12; docs/axDown/nvda-test-plan.md, section 10). Each command is a
+# toggle on the caret's line or the selection, one undo step, one sentence; three have a key: Ctrl+B bold,
+# Shift+Alt+Right and Shift+Alt+Left a heading one level deeper and shallower.
+file home\AxKit\axDown.json {"checkForUpdates": false}
+file format.md Title\n\nmilk and eggs\n\ntea\ncoffee\n
+
+start down {temp}\format.md
+expect focus format.md
+
+# Goal: Make a line a heading and change its level
+# Shift+Alt+Right adds a number sign, Shift+Alt+Left takes one; Heading 4 from the menu sets the level, and chosen
+# again on a heading of level 4 takes the number signs away.
+keys alt+shift+right
+expect said ! Heading 1
+expect focus {"name":"format.md","role":"Text","value":"# Title"}
+keys alt+shift+right
+expect said ! Heading 2
+expect focus {"name":"format.md","role":"Text","value":"## Title"}
+keys alt+shift+left
+expect said ! Heading 1
+do Heading 4, Actions, Format
+expect said ! Heading 4
+expect focus {"name":"format.md","role":"Text","value":"#### Title"}
+do Heading 4, Actions, Format
+expect said ! No heading
+expect focus {"name":"format.md","role":"Text","value":"Title"}
+# Check: A plain line made shallower stays as it is
+# Nothing to take away: the edge sound, and the words all the same.
+said
+keys alt+shift+left
+expect said ♪ Edge
+expect said ! No heading
+expect focus {"name":"format.md","role":"Text","value":"Title"}
+
+# Goal: Make the word at the caret bold and take it off again
+# Without a selection the command takes the word the caret is in or at an end of.
+keys ctrl+down
+keys ctrl+b
+expect said ! Bold on
+expect focus {"name":"format.md","role":"Text","value":"**milk** and eggs"}
+keys ctrl+b
+expect said ! Bold off
+expect focus {"name":"format.md","role":"Text","value":"milk and eggs"}
+
+# Goal: Make the selected words italic
+# With a selection the marks go around it.
+keys home shift+end
+do Italic, Actions, Format
+expect said ! Italic on
+expect focus {"name":"format.md","role":"Text","value":"*milk and eggs*"}
+
+# Goal: Make several lines list items and undo it in one step
+# Every line the selection touches gets its dash; the count is said; one Ctrl+Z takes all of it back.
+keys ctrl+down
+keys shift+down shift+end
+do List item, Actions, Format
+expect said ! List item on, 2 lines
+expect text - tea
+expect text - coffee
+keys ctrl+z
+expect said ! Undone
+expect focus {"name":"format.md","role":"Text","value":"coffee"}
+
+# Check: In navigation mode a format command changes nothing
+# The edge sound and the sentence that says how to edit, as for every command that would change the text.
+keys ctrl+space
+expect said ! Navigation mode
+said
+keys ctrl+b
+expect said ♪ Edge
+expect said ! Navigation mode: press Ctrl+Space to edit
+expect focus {"name":"format.md","role":"Text","value":"coffee"}

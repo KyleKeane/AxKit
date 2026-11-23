@@ -25,7 +25,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxDown` (the window; its pure code is in `src/AxKit.Core`); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxKit.Tests`.
 - Documents: `docs/axDown/` (`nvda-test-plan.md`, `SPEC.md`, `tutorial.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axDown/`, 18 scripts (their workflows are in `docs/axKit/workflows/axDown.md`).
+- Automated checks: `tests/scripts/axDown/`, 19 scripts (their workflows are in `docs/axKit/workflows/axDown.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axDown.ps1`, or `run.ps1 -App down`.
 
 ### axJSON

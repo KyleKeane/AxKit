@@ -21,6 +21,7 @@ namespace AxKit.Forms;
 /// <param name="Refuse">For a viewer: the notice for a file that is not opened (a text too large), or null when it opens; the window then keeps what it had (AP-2.2).</param>
 /// <param name="Render">For a viewer: what a file shows, from the renderer that takes it (AP-7); null reads every file as text.</param>
 /// <param name="Details">For a viewer: the Details list's lines of a file, given its page's Contents lines (AP-6), run off the UI thread; null for a window without the list.</param>
+/// <param name="Format">The app's commands that change the format of the caret's line or of the selection, in a Format submenu of Actions: axDown's headings, bold, italic, code, list item and block quote (docs/axDown/SPEC.md AD-12); null for none.</param>
 public sealed record EditorApp(
     string Name,
     string Verb,
@@ -37,7 +38,8 @@ public sealed record EditorApp(
     Func<string, Notice?>? Refuse = null,
     Func<string, ViewerPage>? Render = null,
     Func<string, IReadOnlyList<string>, IReadOnlyList<string>>? Details = null,
-    IReadOnlyList<EditorOffer>? Offers = null);
+    IReadOnlyList<EditorOffer>? Offers = null,
+    IReadOnlyList<EditorChange>? Format = null);
 
 /// <summary>Where the viewer's Ctrl+E goes (docs/axPreview/SPEC.md AP-7.3): the file's editor, axMedia, or the program Windows has for it.</summary>
 public enum ViewerWayOut
@@ -82,5 +84,13 @@ public sealed record EditorOffer(string Label, Keys Key, Func<string, int, strin
 /// </summary>
 public sealed record Offered(string? Said, string Name = "", IReadOnlyList<string>? Lines = null, int Selected = 0, Func<int, TextEdit>? Choose = null, TextEdit? Edit = null, bool Edge = false);
 
-/// <summary>One change to the text of an editor: what replaces which characters, where the caret stands after, and what is said. A change of no characters by no text only says its sentence.</summary>
-public sealed record TextEdit(int Start, int Length, string Text, int Caret, string Said);
+/// <summary>
+/// A command of an editor app that changes the format where the user is (docs/axDown/SPEC.md AD-12): its menu
+/// label with a mnemonic, its key from the app's table or none, and the function that gives the change for the
+/// text and the selection (its start and its length, 0 for a caret alone). The shell writes the change as one undo
+/// step and says its sentence; in navigation mode it changes nothing, as every command that edits.
+/// </summary>
+public sealed record EditorChange(string Label, Keys Key, Func<string, int, int, TextEdit> At);
+
+/// <summary>One change to the text of an editor: what replaces which characters, where the caret stands after, and what is said. A change of no characters by no text only says its sentence, with the edge sound first when <paramref name="Edge"/> (nothing more to change that way).</summary>
+public sealed record TextEdit(int Start, int Length, string Text, int Caret, string Said, bool Edge = false);

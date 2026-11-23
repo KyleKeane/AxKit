@@ -314,6 +314,19 @@ every window" or under a heading that names the windows without it; under an app
 
 - Redo. Menu: Actions. Key: Ctrl+Y. Also: Ctrl+Shift+Z. Mark: change.
 - Undo. Menu: Actions. Key: Ctrl+Z. Mark: change.
+- Block quote. Menu: Actions, Format. Key: none. Mark: change.
+- Bold. Menu: Actions, Format. Key: Ctrl+B. Mark: change.
+- Code. Menu: Actions, Format. Key: none. Mark: change.
+- Heading 1. Menu: Actions, Format. Key: none. Mark: change.
+- Heading 2. Menu: Actions, Format. Key: none. Mark: change.
+- Heading 3. Menu: Actions, Format. Key: none. Mark: change.
+- Heading 4. Menu: Actions, Format. Key: none. Mark: change.
+- Heading 5. Menu: Actions, Format. Key: none. Mark: change.
+- Heading 6. Menu: Actions, Format. Key: none. Mark: change.
+- Heading deeper. Menu: Actions, Format. Key: Shift+Alt+Right. Mark: change.
+- Heading shallower. Menu: Actions, Format. Key: Shift+Alt+Left. Mark: change.
+- Italic. Menu: Actions, Format. Key: none. Mark: change.
+- List item. Menu: Actions, Format. Key: none. Mark: change.
 - Copy. Menu: Context. Key: Ctrl+C. Mark: act.
 - Cut. Menu: Context. Key: Ctrl+X. Mark: act.
 - Paste. Menu: Context. Key: Ctrl+V. Mark: act.

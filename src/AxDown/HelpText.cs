@@ -40,6 +40,13 @@ public static class HelpText
           Ctrl+Z: undo the last change, as far back as the file was opened here. Ctrl+Y or Ctrl+Shift+Z: redo
           Enter: a new line. Tab: a tab character
 
+        ## Format (Actions, Format)
+          Ctrl+B: bold on the selection, or on the word the caret is in; again takes it off. Said "Bold on", "Bold off"
+          Shift+Alt+Right: heading deeper, one number sign more: a plain line becomes a heading of level 1. Said "Heading 2"
+          Shift+Alt+Left: heading shallower, one number sign fewer: a heading of level 1 becomes a plain line, said "No heading"
+          In the menu, without a key: Heading 1 to Heading 6, Italic, Code, List item, Block quote. Each is a toggle: chosen again on the same text, it takes the format away
+          List item and Block quote act on every line of a selection
+
         ## Navigation mode
           Ctrl+Space: navigation mode, said "Navigation mode"; again: edit mode, said "Edit mode". The status bar shows "navigation mode" after the file's name. Every window starts in edit mode
           The letters of the Ctrl keys above, without Ctrl: h and Shift+H heading, 1 to 6 and Shift with them a heading of that level, k link, l list, i list item, q block quote, t table, each the next one and with Shift the previous one

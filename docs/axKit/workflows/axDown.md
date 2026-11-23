@@ -635,6 +635,46 @@ Starts with: Open axDown with the file modes.md.
 4. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone.
 
+## Give a line, a word and several lines their Markdown format, and take it away again
+
+Starts with: Open axDown with the file format.md.
+
+### Make a line a heading and change its level
+
+1. Press Shift+Alt+Right (Heading deeper; Actions menu, Format).
+    You hear: Heading 1.
+2. Press Shift+Alt+Right (Heading deeper; Actions menu, Format).
+    You hear: Heading 2.
+3. Press Shift+Alt+Left (Heading shallower; Actions menu, Format).
+    You hear: Heading 1.
+4. Choose Heading 4 in the Actions menu, Format.
+    You hear: Heading 4.
+5. Choose Heading 4 in the Actions menu, Format.
+    You hear: No heading.
+
+### Make the word at the caret bold and take it off again
+
+1. Press Ctrl+Down.
+2. Press Ctrl+B (Bold; Actions menu, Format).
+    You hear: Bold on.
+3. Press Ctrl+B (Bold; Actions menu, Format).
+    You hear: Bold off.
+
+### Make the selected words italic
+
+1. Press Home, Shift+End.
+2. Choose Italic in the Actions menu, Format.
+    You hear: Italic on.
+
+### Make several lines list items and undo it in one step
+
+1. Press Ctrl+Down.
+2. Press Shift+Down, Shift+End.
+3. Choose List item in the Actions menu, Format.
+    You hear: List item on, 2 lines.
+4. Press Ctrl+Z (Undo; Actions menu).
+    You hear: Undone.
+
 ## Answer a notice and use the command palette
 
 Starts with: Open axDown with the file notes.md.

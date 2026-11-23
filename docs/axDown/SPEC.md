@@ -172,7 +172,7 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
   AG-1.4) and axFile (the file's folder listed with the file selected, docs/axFile/SPEC.md AF-1.3), the bundle's one
   submenu (AX-9.10); then Exit (Alt+F4).
 - AD-4.2 Edit: Undo (Ctrl+Z) and Redo (Ctrl+Y) over the window's own history (AD-2.5), then Cut, Copy, Paste,
-  Select all (the control's own, listed for discoverability).
+  Select all (the control's own, listed for discoverability), and Format ▸, the format commands of AD-12.
   Navigate (as axClaude's): Find… (Ctrl+F), Find next (F3), Find previous (Shift+F3), Go to line… (Ctrl+G), then the
   submenus Next and Previous with one item per kind of section 9, made from the key pairs of the table: the kind's
   name with NVDA's letter as the mnemonic ("Heading", "Heading level 1" to "6", "Link", "List", "List item", "Block
@@ -210,7 +210,8 @@ next paragraph, with Shift selecting to there (AD-2.3); Ctrl+Space edit mode or 
 
 Window-specific: Ctrl+N new document; Ctrl+O open; Ctrl+Shift+S save as; Ctrl+W show the file in File Explorer (axClaude's key for its folder); Ctrl+Z undo, Ctrl+Y or Ctrl+Shift+Z redo (AD-2.5); Ctrl+G go to line; Ctrl+Shift+W word wrap;
 Ctrl+H heading, Ctrl+1 to Ctrl+6 a heading of that level, Ctrl+K link, Ctrl+L list, Ctrl+I list item, Ctrl+Q block
-quote, Ctrl+T table, each the next one, and with Shift the previous one (section 9).
+quote, Ctrl+T table, each the next one, and with Shift the previous one (section 9); Ctrl+B bold, Shift+Alt+Right
+heading deeper and Shift+Alt+Left heading shallower (AD-12).
 Everything else in the editor is the control's own: arrows, Home, End, Ctrl+Home, Ctrl+End, Ctrl+Left and
 Ctrl+Right by word, Shift with any of them to select, Ctrl+A, Ctrl+C, Ctrl+X, Ctrl+V, Delete, Backspace,
 Ctrl+Backspace, Tab (types a tab), Enter (a new line).
@@ -265,6 +266,7 @@ window has the accessible role Window, as axClaude's has, so that NVDA names it;
 then. Afterwards, spoken through one UI Automation notification on the editor (AX-7.3), and only these: "Saved" (after a save and
 after Save as); "Reloaded, <name> changed on disk" and "<name> changed on disk; Save will ask" on coming back to the window, "Reloaded" after Reload and lose mine (AD-3.6); "Not found" (find); "Line n of m" after Go to line, or "Not a line number"; "Word wrap on" / "Word wrap off"; "Undone", "Redone", "Nothing to undo", "Nothing to redo" (AD-2.5); "Text size n"; "No file yet" (Show current file in on Untitled);
 "Install, heading level 2" after a heading jump, "No next heading" / "No previous heading" when there is none;
+the format commands' sentences, "Heading 2", "No heading", "Bold on", "Bold off", "List item on, 3 lines" and their like (AD-12);
 "Navigation mode" / "Edit mode" on Ctrl+Space, and "Navigation mode: press Ctrl+Space to edit", after the edge sound, for a menu command that would change the text in navigation mode (AD-5.3);
 "Copied" is NVDA's own. Opening a file speaks nothing of its own: the focus arrives in the editor and NVDA reads
 its name (the file's) and the first line.
@@ -291,6 +293,48 @@ reads it with NVDA+End; nothing is spoken automatically.
 
 As axClaude's FR-13: an exception in a handler is logged to `%LOCALAPPDATA%\AxKit\logs\axDown.log` and shown as a
 notice; Help, Diagnostics, Copy diagnostics puts the version, the paths and the log's tail on the clipboard.
+
+### AD-12 Format
+
+The maintainer's ask of 2026-11-22: "axdown could benefit from some heading toggles and other markdown editing
+quick keys that would be of great utility". Built the same day, in his absence and on his word to take the
+assistant's recommendations; which commands, which keys and what is said are open to his word and his ear
+(AD-12.6).
+
+- AD-12.1 **Where.** Actions, Format: a submenu, after Undo and Redo. Every item is in the command palette. Each
+  acts where the user is, on the caret's line or on the selection, and each is a **toggle**: chosen again on the
+  same text, it takes the format away. A change is one undo step (AD-2.5), and one sentence is said. In navigation
+  mode nothing changes: the edge sound and "Navigation mode: press Ctrl+Space to edit" (AD-5.3).
+- AD-12.2 **Headings**, on the caret's line. Heading 1 to Heading 6 make the line a heading of that level or change
+  its level, said "Heading 2"; on a heading of that very level the number signs go, said "No heading". Heading
+  deeper (Shift+Alt+Right) adds a number sign: a plain line becomes a heading of level 1, a heading goes one
+  level deeper; at level 6 nothing changes, the edge sound and "Heading 6". Heading shallower (Shift+Alt+Left)
+  takes one: a heading of level 1 becomes a plain line, "No heading"; on a plain line the edge sound and "No
+  heading". The caret keeps its place in the line's words.
+- AD-12.3 **Bold** (Ctrl+B), **Italic** and **Code**: two asterisks, one asterisk, or a backtick on both sides of
+  the selection (without the blanks at its ends); with no selection, of the word the caret is in or at an end
+  of; in no word, the empty marks with the caret between them, to type into. Said "Bold on", "Bold off", and the
+  same for Italic and Code. Bold and italic together are three asterisks, and each comes off alone. A selection
+  that takes the marks in and one that leaves them out are the same thing. Code around text that holds a
+  backtick is two backticks. After the change the caret is where it was in the words, or after the selection's
+  text; nothing stays selected.
+- AD-12.4 **List item** and **Block quote**, on the caret's line or on every line the selection touches (a
+  selection that ends at the start of a line does not touch that line). List item puts "- " before each line's
+  words, after its indentation, and takes "- ", "* " or "+ " away when every such line is an item already. Block
+  quote puts "> " at each line's start and takes it away when every line is quoted. Empty lines are not counted:
+  a list leaves them empty, a quote gives them its sign alone so that it stays one quote. Said "List item on",
+  "Block quote off", and for several lines the count after it, "List item on, 3 lines".
+- AD-12.5 **Keys** (`AxDownKeys`): Ctrl+B bold, as in every editor; Shift+Alt+Right and Shift+Alt+Left heading
+  deeper and shallower, the keys Word has for a heading's level. The letters of the kinds are the jumps of
+  section 9 (Ctrl+H, Ctrl+I, Ctrl+K, Ctrl+L, Ctrl+Q, Ctrl+T, Ctrl+1 to Ctrl+6, and Shift with them), so the other
+  commands have no key and are reached by Alt+A, F and the item's letter, or by the palette.
+- AD-12.6 **In code.** Each command is a pure function of `AxKit.Core/MarkdownEdit` from the text and the caret or
+  the selection to one change (`MarkdownEditTests`); `AxDownApp` gives them to the editor shell as its
+  `EditorApp.Format` (`EditorChange`), and the shell holds the submenu, the undo step, the refusal in navigation
+  mode and the saying, for every editor that names format commands. **Open, for the maintainer:** the three keys;
+  whether Italic, Code, List item and Block quote should have keys at the cost of others; the words "on" and
+  "off"; and the next step he asked for with this one, templates put in at the caret (a table, a code block, a
+  link, his own files) and axJSON's own format commands (the priorities list's item on templates in the editors).
 
 ## 5. User interface
 
