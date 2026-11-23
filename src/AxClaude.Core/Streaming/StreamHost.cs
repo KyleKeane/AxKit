@@ -222,12 +222,23 @@ public sealed class StreamHost : IDisposable
         {
             _process.WaitForExit();
         }
-        catch (Exception ex) when (ex is InvalidOperationException or System.ComponentModel.Win32Exception or ObjectDisposedException)
+        catch (Exception ex) when (ex is InvalidOperationException or System.Runtime.InteropServices.ExternalException or ObjectDisposedException)
         {
-            // The process is gone, or was let go of: the job is closed below all the same.
+            // The process is gone, or was let go of: the job is closed below all the same. ExternalException
+            // holds both of Windows' own: a Win32Exception, and the COMException "The handle is invalid" that
+            // the wait throws when the process object is let go of just as this thread starts (seen in a test
+            // run on 2026-11-22, where it ended the whole process: an exception no one takes on a thread does).
         }
 
-        _gone.Wait(LeftoverMs);
+        try
+        {
+            _gone.Wait(LeftoverMs);
+        }
+        catch (ObjectDisposedException)
+        {
+            // The host was let go of meanwhile.
+        }
+
         _job?.Dispose();
     }
 
