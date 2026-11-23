@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axFile: **two panes, the folder and your favorites.** Under the folder list, where the list of operations was, is the Favorites list: the folders you pinned with Ctrl+D, one line each with its path. Tab goes there, Enter shows the folder, Delete takes it out of the favorites, Ctrl+I says its path; Navigation, The Favorites list goes there too. The operations are kept as before: Ctrl+Z takes back the newest, now from either list, the status bar shows the newest, and Actions, Recent operations (Alt+A, O) lists them newest first, Enter going to where the chosen one left things. Undoing one operation out of order, from its own line, is gone: Ctrl+Z goes newest first.
 - axKit: **a group of checks in a form is one list.** Down and Up move through it, Space checks or unchecks a line, Ctrl+A checks them all, and a Check all button stands just before it. axTemplate's apps are such a list; its Every axKit app check is gone, Check all does it.
 - axKit: **Ctrl+Space in any form: navigation mode.** Nothing is typed; typing the start of a field's name, or its number, goes to that field; Down and Up move between the fields; Enter goes back to typing there. Ctrl+Q in a form reads these keys with its explanation.
 - axTemplate: **Ctrl+N opens the whole form of the new template**, empty, in place of the question for its name: type the name, the text and the checks, and Ctrl+Enter adds it.

@@ -159,7 +159,7 @@ do Refresh
 expect said ! Refreshed
 expect focus "value":"a.txt"
 expect list "a.txt"
-# Manual (3.6, 3.6a): cut, copy and paste, the two pastes at once and the Actions list during them: the clipboard.
+# Manual (3.6, 3.6a): cut, copy and paste, the two pastes at once and Recent operations during them: the clipboard.
 
 # Goal: Delete a folder to the Recycle Bin
 # 3.3 Delete on Notes (an empty folder this script made): the question, Escape does nothing; Delete, Enter: "Deleted Notes".

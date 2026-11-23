@@ -202,7 +202,7 @@
         { "chord": "f6", "apps": ["axCalc", "axClaude", "axTerminal"], "does": "Switch between the view and the field", "kind": "move between panes" },
         { "chord": "f6", "apps": ["axGIT"], "does": "Switch between the list and the text", "kind": "move between panes" },
         { "chord": "f6", "apps": ["axMedia"], "does": "Back to the list", "kind": "move between panes" },
-        { "chord": "f6", "apps": ["axFile"], "does": "Switch between the list and the Actions list", "kind": "move between panes" }
+        { "chord": "f6", "apps": ["axFile"], "does": "Switch between the list and the Favorites list", "kind": "move between panes" }
       ]
     },
     {

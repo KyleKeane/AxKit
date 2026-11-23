@@ -292,7 +292,7 @@ Each removes something that exists today. Each can be turned back while its piec
    Alt+3 no longer change views there, and Tab in axProcess no longer cycles them.
 2. **axCalc becomes a conversation window.** A field with its results above it, a result taken back into the
    field with Enter on its line. What goes: removing one history line with Delete; Clear history stays.
-3. **axFile's selection is no longer written into its Actions list.** Space and Escape undo a selection; the log
+3. **axFile's selection is no longer written into its history of operations** (a list pane then, the Favorites list's place since 2026-11-23). Space and Escape undo a selection; the log
    holds only what changed files. Built, 2026-11-22 (step 14).
 4. **axMedia is a queue and its controls.** It keeps no browsing of its own; axFile chooses and hands over.
 5. **axGIT is made simple**: staging acts on the selected files, where Space staged one file until now.
