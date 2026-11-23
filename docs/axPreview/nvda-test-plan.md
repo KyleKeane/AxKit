@@ -33,7 +33,7 @@ Run with NVDA before a release, on a folder with `README.md` (headings, links, a
 
 1. Ctrl+Plus: "Text size 13" (or the next size), the caret where it was; Ctrl+Minus back. Options, Text, Font: the font picker; Escape.
 2. Help, User guide: this guide; Ctrl+H moves through its headings; Escape.
-3. Alt+W: the Window menu with New window (axPreview among the apps), Recently closed (the file an axPreview window had when it closed), Open windows, Close all windows, Say the status (F8: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+K: the axKit menu with Claude, AI tools and Theme.
+3. Alt+W: the Window menu with Apps (axPreview among them) and Access layers, Recently closed (the file an axPreview window had when it closed), Open windows, Close all windows, Say the status (F8: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+K: the axKit menu with Claude, AI tools and Theme.
 4. Help, Diagnostics, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the file with its encoding and the log's end. Alt+F4 closes without a question.
 
 ## 5. The Details list and the kinds of file (AP-6, AP-7)

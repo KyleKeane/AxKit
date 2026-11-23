@@ -8,15 +8,15 @@ start json {temp}\settings.json
 expect focus settings.json
 # Check: New window lists every app of the bundle
 # 4.1: axKit, New window lists every app of the bundle, as the palette reads the menu.
-expect commands "axClaude, access layer for Claude Code, Window, New window, Ctrl+Shift+F4"
-expect commands "axDown, Window, New window, Ctrl+F2"
-expect commands "axJSON, Window, New window, Ctrl+F3"
-expect commands "axGIT, access layer for Git, Window, New window, Ctrl+Shift+F2"
-expect commands "axTerminal, access layer for your shell, Window, New window, Ctrl+Shift+F1"
-expect commands "axFile, Window, New window, Ctrl+F1"
-expect commands "axMedia, Window, New window, Ctrl+F5"
-expect commands "axPreview, Window, New window, Ctrl+F4"
-expect commands "axStart, Window, New window, Ctrl+F7"
+expect commands "axClaude, access layer for Claude Code, Window, Access layers, Ctrl+Shift+F5"
+expect commands "axDown, Window, Apps, Ctrl+F5"
+expect commands "axJSON, Window, Apps, Ctrl+F6"
+expect commands "axGIT, access layer for Git, Window, Access layers, Ctrl+Shift+F2"
+expect commands "axTerminal, access layer for your shell, Window, Access layers, Ctrl+Shift+F1"
+expect commands "axFile, Window, Apps, Ctrl+F2"
+expect commands "axMedia, Window, Apps, Ctrl+F8"
+expect commands "axPreview, Window, Apps, Ctrl+F7"
+expect commands "axStart, Window, Apps, Ctrl+F1"
 # 4.1 manual: Alt+W, N, J needs the menu bar's menu mode; the new axJSON window it starts is a process the runner
 # does not reach.
 # 4.2 manual: Open windows by type is a submenu filled as it opens, which the palette leaves out.

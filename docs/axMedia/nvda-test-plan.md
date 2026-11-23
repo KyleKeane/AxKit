@@ -18,7 +18,7 @@ Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video an
 
 ## 2. The hand-over (AM-1.2, AM-1.3)
 
-1. With an axMedia window open, in axFile on the chapters folder, Shift+F10, A, M (Open in axKit, axMedia) on the third chapter: the axMedia window comes to the front, NVDA reads its title and "Queue, 12 items list, <third> (playing), 3 of 12", "Playing <third>", the sound starts; the queue is the folder's files, the third playing. No second window opened (Alt+W, O lists one axMedia).
+1. With an axMedia window open, in axFile on the chapters folder, Shift+F10, A, M (Open with axKit apps, axMedia) on the third chapter: the axMedia window comes to the front, NVDA reads its title and "Queue, 12 items list, <third> (playing), 3 of 12", "Playing <third>", the sound starts; the queue is the folder's files, the third playing. No second window opened (Alt+W, O lists one axMedia).
 1a. In axFile, Shift+F10, A, M on a chapter and at once the same on another: "Playing <the second>", the second plays, and nothing says the first could not be played.
 2. Back in axFile (Alt+W, O, 1), Ctrl+Enter: "Playing <first>" in axMedia, in front again, the queue the whole folder from the first.
 3. In axFile, Space on two folders with media, Ctrl+Shift+Q: "Added 24 to axMedia's queue", the focus stays in axFile, the sound goes on; Alt+Tab to axMedia: the queue holds the folder's files, then the 24; Ctrl+Shift+Q on a text file in axFile: "No sound or video files to add".
@@ -43,7 +43,7 @@ Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video an
 
 1. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back. Options, Text, Windows text size: "Windows text size".
 2. F1: the Keyboard shortcuts notice; Escape. Help, User guide: this guide; Escape. Ctrl+S: "Nothing to save here".
-3. Alt+W: the Window menu with New window (axMedia among the apps), Recently closed (the file an axMedia window was playing when it closed; chosen, it plays with its folder), Open windows, Close all windows, Say the status (F8: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+A: the axKit menu with Claude, AI tools and Theme.
+3. Alt+W: the Window menu with Apps (axMedia among them) and Access layers, Recently closed (the file an axMedia window was playing when it closed; chosen, it plays with its folder), Open windows, Close all windows, Say the status (F8: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+A: the axKit menu with Claude, AI tools and Theme.
 4. Help, Diagnostics, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the queue, the player's state and the log's end.
 
 ## 5. Selecting files in the queue (AM-3.5, bundle AX-8.16)

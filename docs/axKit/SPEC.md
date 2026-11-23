@@ -1049,8 +1049,11 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
      what you are on.
   5. A function key alone: say or show. Shift with it: the reverse or another form.
   6. Ctrl with a function key: open a standalone app; Ctrl+Shift with a function key: open an access layer, so that
-     the key says which kind of app it opens. Each in the bundle's order, the Window menu's, F1 first (axFile on
-     Ctrl+F1, the first access layer on Ctrl+Shift+F1); the same in every axKit window, shown in New window, handled
+     the key says which kind of app it opens. Each group of apps (AX-9.2) takes one block of four function keys, as
+     the keyboard groups them, F1 to F4, F5 to F8, F9 to F12, the groups in the bundle's order and the apps within a
+     group too (the maintainer, 2026-11-23: "they should be grouped into similar apps on the function keys so that i
+     can have a heuristic on that also"); which app has which key is written only on the generated `apps.md` and in
+     the F1 texts, both made from the code. The same in every axKit window, shown in Apps and Access layers, handled
      by the base before the window's own keys (`AxKit.Core/AppLaunchKeys`, `BundleKeys.LaunchKey`). Only axKit's
      windows take them, nothing for all of Windows. The table is in code for now; a table of the user's own is a
      later step ("changeable later").
@@ -1065,7 +1068,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   apps", then "navigate then windows then options then axkit then help", and the same evening Options before Window: "the options are more about the app itself and the window starts to bridge into the axkit stuff"):
   - **Options** (O), the app's own settings (AX-6.4), right after the app's own menus (Navigate the last of them where
     the app has one): its own submenus, then Text, General and Developer.
-  - **Window** (W; `AxKit.Forms/WindowMenu`, `CreateWindowMenu`), after Options: New window ▸ (N), Open windows ▸ (O),
+  - **Window** (W; `AxKit.Forms/WindowMenu`, `CreateWindowMenu`), after Options: Apps ▸ (A), Access layers ▸ (L), Open windows ▸ (O),
     Recently closed ▸ (R) and Close all windows (C); then, after a separator, Say the status (S, F8, AX-7.10), the
     one item about this window alone.
   - **axKit** (K since 2026-11-11, A before; `AxKitForm.CreateAxKitMenu`): what is the bundle's rather than the app's, each a submenu: Claude ▸ (C;
@@ -1103,7 +1106,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   - **Options**: what changes how things are shown or behave, a setting: the app's own items or submenus first, then
     Text, General and Developer (what View menus held until 2026-11-11 came here or to Navigation).
   Within a menu, items stand in groups parted by separators. No item is deeper than the bar's menu, a submenu and
-  an item (Window, New window, axClaude is the deepest; `AxKit.Forms/MenuShape`, a deeper one logged as an error as
+  an item (Window, Access layers, axClaude is the deepest; `AxKit.Forms/MenuShape`, a deeper one logged as an error as
   the bar is placed, `MenuTests`; 2026-11-11, when axTask's Remove a project folder, axFile's Remove a program and
   axTerminal's Remove a shell came up a level). A submenu holds one kind where it can, commands or check items
   (toggles and choices); the mixes kept are Options' Text (the app's display toggles beside the text size), axKit's
@@ -1115,17 +1118,22 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   named for what they act on (List, Item, Field; Process, Service, Startup), only the one of the focus enabled; 5.6.0
   had one axKit menu (A) holding the window lists, a Claude submenu, the palette, the reports, the updates and About;
   until 5.6.0 Open windows by type ▸ (one submenu per app) stood after Open windows.
-- AX-9.2 **New window ▸** (N): one item per app of the bundle (`Dispatch.Apps`), "axClaude", "axDown", with the letter
-  after ax as the mnemonic. It starts `AxKit.exe <verb>` with no arguments: a new process and a new window (B-2), the
-  app starting as it does from its Start menu entry. The apps stand in five groups, a separator between them
-  (2026-10-24, the user's choice of a flat list over a submenu per group; since 2026-10-29 the access layers last,
-  AX-11.3; since 5.6.0 the Claude apps as a group of their own, last of all, the user's ask of 2026-11-09 to "group
-  the claude related apps"): files (axFile, axDown, axJSON, axPreview, axMedia), one's own lists (axTask), utilities
-  (axStart, axClip, axCalc, axProcess), the other access layers, each by its title (axTerminal, axGIT, axPass), then
-  the Claude apps (axClaude, axMCP, axHelp). Every list of apps in the windows has this order and these
-  separators: New window, axFile's Open in axKit (`WindowMenu.AddApps`). A new app is one line in `Dispatch.Apps`,
-  with its group, what it opens and whether Show in offers it; every list, Show in (AX-9.10) and Recently closed
-  (AX-9.4) follow from that line.
+- AX-9.2 **Apps ▸** (A) **and Access layers ▸** (L): one item per app of the bundle (`Dispatch.Apps`), the standalone
+  apps under Apps and the access layers under Access layers (the maintainer, 2026-11-23: "we should split axKit Apps
+  and axKit Access Layers in the menus and everywhere in the menus and documenntation. these are very importantly
+  different things"; one New window ▸ held both until then), each item with the letter after ax as the mnemonic and
+  its key (AX-8.18 rule 6). It starts `AxKit.exe <verb>` with no arguments: a new process and a new window (B-2), the
+  app starting as it does from its Start menu entry. The apps stand in groups, a separator between them, each group
+  on its block of four function keys (`AppGroup`; the groups of 2026-11-23, by what the apps are for): the apps
+  getting around, documents and media, and tools; the access layers programs, AI, and utilities (the maintainer,
+  2026-11-23: "make the ai function keys be there own group ... we want complete separation of standalone apps from
+  access layers ... axhelp and axMCP are probably more in the utilities and ... c+s+f5-8 can be saved for other ai
+  access layers that will come later"; the Claude apps were one group, last, from the ask of 2026-11-09). Which app is in which group is written only on the
+  generated `apps.md`. Every list of apps in the windows has this order and these separators (`WindowMenu.AddApps`);
+  axFile has the same split as two entries of its Context menu, Open with axKit apps and Open with axKit access
+  layers (AF-4.9). A new app is one line in `Dispatch.Apps`,
+  with its group, what it opens and whether Show in offers it; every list, its key, Show in (AX-9.10) and Recently
+  closed (AX-9.4) follow from that line.
 - AX-9.3 **Open windows ▸** (O): every open window of the bundle's apps except this one, the most recently used first.
   The order is the one Windows keeps its top-level windows in, which is Alt+Tab's, so nothing is stored and Alt+W, O,
   1 is always the window the user was in before this one. (Open windows by type ▸, one submenu per app with that
@@ -1309,14 +1317,15 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   "<name>, access layer for <program>" ("axClaude, access layer for Claude Code"), from one place,
   `App.Title` (the name alone for a standalone app; the phrase "access layer" is one constant). That is: the window
   title (wherever the app's name stands in it today), the Window menu's New
-  window, Open windows, Show current folder in and Recently closed lists, axFile's Open in axKit, the command palette,
+  window, Open windows, Show current folder in and Recently closed lists, axFile's Open with axKit apps and access layers, the command palette,
   About, Version, the Start menu entry's name and description, File Explorer's Open with axKit submenu, Windows' Open
   with list, the installer's lines, the first line of each access layer's user guide and F1 text, both READMEs and
   `NOTICE.md`. The console commands (`axClaude`) and the verbs stay single words.
 - AX-11.3 **Grouped apart.** Every list of apps shows the standalone apps first, in their groups (AX-9.2), then the
   access layers, with a separator before them (in File Explorer's submenu, the separator flag of its entry), the
-  Claude apps as the last group of all (`AppGroup.Claude`: axClaude, axMCP, axHelp; 5.6.0; axDescribe until 5.7.0); the docs
-  list them the same way under "Standalone apps" and "Access layers". `Dispatch.Apps` is in that order, and a test
+  AI access layers and the utilities among them last (`AppGroup.Ai`, `AppGroup.Utilities`; one Claude group from 5.6.0 to 2026-11-23); the Window menu has them
+  as two submenus, Apps and Access layers (AX-9.2), and the docs list them the same way under "Apps" and "Access
+  layers" (`apps.md`, written from the code). `Dispatch.Apps` is in that order, and a test
   fails when an access layer stands before a standalone app.
 - AX-11.4 **The consent notice.** Before an access layer connects to a program or service for the first time, it shows
   a notice in its own window (AX-7.2; the window's input waits behind it), titled "Before <app> connects to
@@ -1545,7 +1554,7 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   `HotkeyForm`), the GitHub install from the Run key as before, and `DispatchTests` fails on one, so that such an app
   is added on purpose. The apps without an entry (axJSON, axGIT, axMedia, axPreview, axProcess, axPass, axCalc, axMCP,
   axAutomate) are reached by their command, by a file of their
-  kind, by the Window menu's New window in any window and from axFile; axStart lists the Start menu's programs and so
+  kind, by the Window menu's Apps and Access layers in any window, by their keys, and from axFile; axStart lists the Start menu's programs and so
   knows the eight.
   `AxKit.Core/PackageIdentity` tells whether the process runs from the package (`GetCurrentPackageFullName`) and which
   entry started it (`GetCurrentApplicationUserModelId`); `Dispatch.WithApplicationVerb` puts the verb first when the
@@ -1593,7 +1602,7 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   Windows reports no package for a child started by `CreateProcess`, by .NET's `Process.Start` or through the shell, and
   their AppData writes land in the user's folders): Claude Code and the shells in the pseudo console, git, KeePassXC's
   tool, winget and the installers, the programs the user starts from axStart and axFile, and the browser all behave as
-  they do without axKit. A child that runs a program file of the package keeps the identity (New window, the AI tools'
+  they do without axKit. A child that runs a program file of the package keeps the identity (Apps and Access layers, the AI tools'
   window). `PackageIdentity.ProgramPath` is the path recorded for later use in the Store's copy, the alias
   `%LOCALAPPDATA%\Microsoft\WindowsApps\axKit.exe`, since the package folder changes with every update (the AI tools'
   `claude mcp add` command line, AiToolsSetup.cs). The capability that turns virtualization off,

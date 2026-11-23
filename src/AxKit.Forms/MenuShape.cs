@@ -4,7 +4,7 @@ namespace AxKit.Forms;
 
 /// <summary>
 /// The shape rules of a window's bar (docs/axKit/SPEC.md AX-9.1, 2026-11-11): never deeper than bar menu, submenu,
-/// item, as Window, New window, axClaude is. <see cref="AxKitForm.PlaceMenuBar"/> logs every item past that depth;
+/// item, as Window, Access layers, axClaude is. <see cref="AxKitForm.PlaceMenuBar"/> logs every item past that depth;
 /// <c>MenuTests</c> holds the rule.
 /// </summary>
 public static class MenuShape

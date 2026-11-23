@@ -258,7 +258,7 @@ public sealed class DispatchTests
         Assert.Equal(Dispatch.AxJSON, Dispatch.Decide(["json", "x.json"]).App);
         Assert.Equal(["x.json"], Dispatch.Decide(["JSON", "x.json"]).Arguments);
         Assert.Contains("AxKit json", Dispatch.Usage);
-        Assert.Equal(["axFile", "axDown", "axJSON", "axPreview", "axMedia", "axTask", "axStart", "axClip", "axCalc", "axProcess", "axAutomate", "axTemplate", "axTerminal", "axGIT", "axPass", "axClaude", "axMCP", "axHelp"], Dispatch.Apps.Select(a => a.Name));
+        Assert.Equal(["axStart", "axFile", "axClip", "axTemplate", "axDown", "axJSON", "axPreview", "axMedia", "axTask", "axCalc", "axProcess", "axAutomate", "axTerminal", "axGIT", "axPass", "axClaude", "axHelp", "axMCP"], Dispatch.Apps.Select(a => a.Name));
     }
 
     [Fact]
@@ -344,7 +344,7 @@ public sealed class DispatchTests
     {
         foreach (var app in Dispatch.Apps)
         {
-            Assert.Equal(app.Group is AppGroup.AccessLayers or AppGroup.Claude, app.IsAccessLayer);
+            Assert.Equal(app.Group >= AppGroup.Programs, app.IsAccessLayer);
             if (app.IsAccessLayer)
             {
                 Assert.Equal($"{app.Name}, access layer for {app.AccessLayerFor}", app.Title);
@@ -357,10 +357,10 @@ public sealed class DispatchTests
         }
 
         Assert.Equal(
-            ["axTerminal", "axGIT", "axPass", "axClaude", "axMCP", "axHelp"],
+            ["axTerminal", "axGIT", "axPass", "axClaude", "axHelp", "axMCP"],
             Dispatch.Apps.Where(app => app.IsAccessLayer).Select(app => app.Name));
-        Assert.Equal(["axClaude", "axMCP", "axHelp"], Dispatch.Apps.Where(app => app.Group == AppGroup.Claude).Select(app => app.Name));
-        Assert.Equal(AppGroup.Claude, Enum.GetValues<AppGroup>().Max());
+        Assert.Equal(["axClaude"], Dispatch.Apps.Where(app => app.Group == AppGroup.Ai).Select(app => app.Name));
+        Assert.Equal(AppGroup.Utilities, Enum.GetValues<AppGroup>().Max());
     }
 
     /// <summary>AX-9.10, AF-4.9: what an app is started on from a file or a folder in hand.</summary>

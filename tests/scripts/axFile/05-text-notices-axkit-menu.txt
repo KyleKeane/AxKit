@@ -31,7 +31,7 @@ expect focus "value":"docs, folder"
 
 # Goal: Hear the version of axKit
 # 5.3 The axKit menu: New window with axFile among the apps, Close all windows, About's Version "axKit <version>".
-expect commands "axFile, Window, New window, Ctrl+F1"
+expect commands "axFile, Window, Apps, Ctrl+F2"
 expect commands "Close all windows, Window"
 menu Version, Help, About
 expect state axKit

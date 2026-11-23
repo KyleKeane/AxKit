@@ -31,7 +31,7 @@ of the lines `1920*1080*4 = 8294400`, read as the conversation in axClaude and t
 
 ## 3. Scenarios
 
-1. Start axCalc (Start menu, `axCalc`, or the Window menu's New window): NVDA reads "Calculator - axCalc window",
+1. Start axCalc (Start menu, `axCalc`, or the Window menu's Apps): NVDA reads "Calculator - axCalc window",
    then "Expression, edit". Type `1920*1080*4`, Enter: "8294400". The history's first line is `1920*1080*4 = 8294400`.
 2. Type `*2`, Enter: "16588800": an expression that starts with an operator continues from the last answer.
 3. Ctrl+I: "16588800, hex FD 2000, binary 1111 1101 0010 0000 0000 0000, octal 77220000".

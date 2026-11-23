@@ -45,7 +45,7 @@ agreement (AX-11.4) asked the first time.
 - HE-1.1 `AxKit.exe help` shows axHelp's window and keeps running; `--hidden` runs it hidden until a hotkey, as at
   sign-in (`HotkeyForm`, axStart AS-1.1, AS-1.3); `AxKit.exe help <picture>` puts the picture into the conversation
   (HE-3.3) without showing the window. Start with Windows (Options, General) writes the Run key. In the Store's copy
-  axHelp has no startup task (bundle AX-13.2) and is started from any window's Window menu, New window.
+  axHelp has no startup task (bundle AX-13.2) and is started from any window's Window menu, Access layers, or by its key.
 - HE-1.2 One axHelp at a time (a named mutex, `AppPaths.OneAtATime`): a second start hands "show", or "open" with its
   picture, to the running one's window (`AppMessage`), found by its title "axHelp hotkeys" (never "axHelp", which is the
   conversation's), and ends; with `--hidden` it just ends. A running axHelp that does not answer is asked about:

@@ -49,7 +49,7 @@ taskbar. It works entirely offline (bundle G6).
 ### AS-1 Launch, the background process, the hand-over
 
 - AS-1.1 `AxKit.exe start [--hidden]`: the background process, the window shown at once unless `--hidden` (the
-  sign-in start). Start menu entry `axKit axStart`, console command `axStart`, the Window menu's New window ▸ axStart
+  sign-in start). Start menu entry `axKit axStart`, console command `axStart`, the Window menu's Apps ▸ axStart
   (AX-9). No path is taken; axStart is not in File Explorer's Open with axKit submenu.
 - AS-1.2 **One axStart.** A start while axStart runs hands over to the running one, which shows its window, and ends
   (the bundle's `AppMessage`, `docs/axMedia/SPEC.md` AM-1.3, with a new verb `show`); with `--hidden` it ends without

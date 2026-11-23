@@ -8,7 +8,7 @@ built for and with NVDA. This version views the workflows and runs them; changin
 ## Install
 
 axAutomate is part of axKit. Installing axKit (see the axKit guide: Help, About, axKit guide) gives you a Start menu entry
-`axKit axAutomate` and a console command `axAutomate`. Any axKit window starts one too: Alt+W, New window,
+`axKit axAutomate` and a console command `axAutomate`. Any axKit window starts one too: Alt+W, Apps,
 axAutomate.
 
 ## Start

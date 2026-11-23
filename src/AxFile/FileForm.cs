@@ -261,7 +261,7 @@ public sealed partial class FileForm : ItemForm
     /// <summary>
     /// The entry's menu (AF-4.6, AF-6.1), filled for the menu bar and again for the list's context menu: one flat
     /// list in File Explorer's order and words, with two submenus for the ways to open (Open with: Windows and the
-    /// user's programs, AF-4.7, AF-4.11; Open in axKit: the bundle's apps, AF-4.9), and the hand-overs to axPreview
+    /// user's programs, AF-4.7, AF-4.11; Open with axKit apps and Open with axKit access layers, AF-4.9), and the hand-overs to axPreview
     /// and axMedia (AF-3.2, AF-5). Filled once, so that each command is registered once; only Open with is refilled as it opens.
     /// </summary>
     private void FillItemMenu(ToolStripMenuItem menu)
@@ -271,13 +271,16 @@ public sealed partial class FileForm : ItemForm
         CommandPalette.NoEntry(openWith).DropDownOpening += (_, _) => FillOpenWith(openWith);
         FillOpenWith(openWith);
         menu.DropDownItems.Add(openWith);
-        var axkit = new ToolStripMenuItem("Open in &axKit");
-        Add(axkit, new Command("&Editor", AxFileKeys.OpenInEditor, OpenInEditor) { Mark = CommandMark.Open });
-        axkit.DropDownItems.Add(new ToolStripSeparator());
-        // Every app that opens a path (AF-4.9), by group as in the Window menu.
-        WindowMenu.AddApps(axkit.DropDownItems, Dispatch.Apps.Where(app => app.Opens != Opens.Nothing), app => CommandPalette.Marked(new ToolStripMenuItem(AxKitWindows.AppLabel(app), null, (_, _) => OpenInAxKit(app)), WindowMenu.OpenMark(app.Verb)));
-
-        menu.DropDownItems.Add(axkit);
+        // Every app that opens a path (AF-4.9), by group as in the Window menu, the standalone apps and the access layers
+        // as two entries (the maintainer, 2026-11-23: "you can call open with axKit Apps and open with axKit Access
+        // Layers as separate things").
+        ToolStripMenuItem OpenItem(App app) => CommandPalette.Marked(new ToolStripMenuItem(AxKitWindows.AppLabel(app), null, (_, _) => OpenInAxKit(app)), WindowMenu.OpenMark(app.Verb));
+        var apps = new ToolStripMenuItem("Open with axKit &apps");
+        WindowMenu.AddApps(apps.DropDownItems, Dispatch.Apps.Where(app => app.Opens != Opens.Nothing && !app.IsAccessLayer), OpenItem);
+        menu.DropDownItems.Add(apps);
+        var layers = new ToolStripMenuItem("Open with axKit access layer&s");
+        WindowMenu.AddApps(layers.DropDownItems, Dispatch.Apps.Where(app => app.Opens != Opens.Nothing && app.IsAccessLayer), OpenItem);
+        menu.DropDownItems.Add(layers);
         Add(menu, new Command("Pr&eview", AxFileKeys.Preview, OpenInPreview) { When = InNavigator, Mark = CommandMark.Open });
         Add(menu, new Command("Play folder in axMe&dia", BundleKeys.MainAction, PlayFolder) { When = InNavigator, Mark = CommandMark.Open });
         Add(menu, new Command("Add to axMedia's &queue", AxFileKeys.AddToQueue, AddToQueue) { When = InNavigator, Mark = CommandMark.Open });

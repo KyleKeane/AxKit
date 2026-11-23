@@ -45,7 +45,7 @@ folder of the file or project in hand, and sends back. It works entirely offline
    for `.mp3`, axMedia when the user has made it so, with the folder's other chapters after it. Backspace: "Music, 8
    items, Dune, folder".
 2. In axClaude on a project, Alt+S, I, F: axFile opens on the project folder. Down to `docs`, Enter: "docs, 5 items,
-   plan.md"; Shift+Enter on `plan.md`: axPreview shows it to read; Ctrl+E on it: axDown opens it to edit. Backspace:
+   plan.md"; Shift+Enter on `plan.md`: axPreview shows it to read. Backspace:
    "myproject, 12 items, docs, folder".
 3. Ctrl+Shift+N, type `notes`, Enter: "Created notes", the folder selected. F2 on it, type `Notes`, Enter: "Renamed to
    Notes". Delete: "Delete Notes? It goes to the Recycle Bin with everything in it.", Enter: "Deleted Notes". Tab:
@@ -84,9 +84,7 @@ folder of the file or project in hand, and sends back. It works entirely offline
   From axFile, Session → Show current folder in ▸ **File Explorer** (Ctrl+W), **axClaude**, **axTerminal**, **axGIT** (bundle AX-9.10;
   "Folder missing" when the folder shown is gone);
   Context → **Show in File Explorer** (Ctrl+Shift+W) opens File Explorer with the selected entry selected ("Folder
-  missing" or "File missing" when the entry is gone); Context → Open in
-  axKit ▸ **Editor** (Ctrl+E) opens the selected file in axJSON for `.json` and axDown for anything else
-  (`Dispatch.EditorOf`, the bundle's one rule), whatever Enter would do with it; Context → **Preview** (Shift+Enter) and the axMedia items
+  missing" or "File missing" when the entry is gone); Context → **Preview** (Shift+Enter) and the axMedia items
   are AF-5.
 
 ### AF-2 The window
@@ -134,7 +132,7 @@ folder of the file or project in hand, and sends back. It works entirely offline
   shows it (AF-4.7). The axKit apps register as programs for their kinds when axKit is installed (AX-2.3), so that
   axDown, axJSON, axMedia or axPreview can be chosen there (the guide says how; an installer cannot set a default).
   **Shift+Enter** on a file opens it in axPreview to read (Context → Preview; AF-5.3); on a folder it is File
-  Explorer's Shift+Enter, the folder in a new axFile window. **Ctrl+E** opens a file in its editor (AF-1.3).
+  Explorer's Shift+Enter, the folder in a new axFile window. Editor and its key Ctrl+E were removed on 2026-11-23 at the maintainer's word ("you can remove editor because i do not even know what that is"): Open with axKit apps, axDown or axJSON, does the same.
 - AF-3.3 **Open folder…** (Ctrl+O): the Windows folder picker. **Open recent folder ▸**: the last ten folders opened
   by command, "1. name (path)" (AX-9.5): the start, Open folder, Go to folder, a recent item, and the folder the
   window closed on; Enter and Backspace browse without joining the list, so that a walk through a tree does not fill
@@ -240,7 +238,7 @@ folder of the file or project in hand, and sends back. It works entirely offline
   order leaves the letter order alone, and the commands that need a folder say "Choose a drive first" (New folder,
   Paste, Rename, Delete, Cut, Copy, Ctrl+D, Play folder, Add to queue, Show current folder in ▸ the other apps); Show
   current folder in ▸ File Explorer opens File Explorer's own This PC. The other items of the entry's menu work on a
-  drive as on a folder (Open in axKit ▸, Show in File Explorer, Properties, Windows menu…).
+  drive as on a folder (Open with axKit apps ▸, Open with axKit access layers ▸, Show in File Explorer, Properties, Windows menu…).
 - AF-3.11 **The Drives menu** (asked 2026-10-21, for moving things to a stick and taking it out): **Navigation → Drives ▸**
   (its own menu on Alt+D until 2026-10-22, when it became a submenu at the user's ask and Alt+D went to Go to folder,
   AF-3.3) lists the ready drives as "1. Local Disk (C:)" (AX-9.5), each opening the drive's root and joining the
@@ -321,7 +319,7 @@ Every operation here is one line of the Actions list (AF-9) as well as its annou
   menu, the same items in the same order, on the selected entry (a right click selects the entry under it first, as
   File Explorer does). It is the window's own menu, fixed, with mnemonics and listed in F1, not the shell's (AF-D8).
   Its shape (AF-6.1; reshaped 2026-10-21 at the user's ask for File Explorer's plain words and one flat list): Open,
-  Open with ▸, Open in axKit ▸, Preview, Play folder in axMedia, Add to axMedia's queue | Cut, Copy | Rename,
+  Open with ▸, Open with axKit apps ▸, Open with axKit access layers ▸, Preview, Play folder in axMedia, Add to axMedia's queue | Cut, Copy | Rename,
   Delete | Move to folder…, Compress to zip, Extract here | Copy path, Show in File
   Explorer, Information, Properties | Windows menu… | Selection ▸; Paste, New folder and New text file act on the folder and are in Actions (2026-11-11). There is one menu, the bar's Context menu, the standard drop-down
   (AX-6.6); the list has no context menu of its own (AF-D13). On a line that is no entry (an empty folder's, the
@@ -348,13 +346,15 @@ Every operation here is one line of the Actions list (AF-9) as well as its annou
   longer than a second; after a move the clipboard is cleared, as File Explorer does. "Nothing to paste" without
   files on the clipboard; "Already in this folder" for a cut entry pasted where it is; "Already pasting" for a cut
   whose files a paste is still moving (AF-4.5).
-- AF-4.9 **Open in axKit ▸**: one item per app of the bundle that opens a path (`Dispatch.Apps` whose `Opens` is not
-  Nothing: the utilities, axStart, axClip, axCalc and axProcess, take none), in the bundle's groups with their
-  separators (AX-9.2), a new window of that app on the entry by what it opens (`Dispatch.PathFor`): axDown, axJSON,
+- AF-4.9 **Open with axKit apps ▸** (A) **and Open with axKit access layers ▸** (S; one Open in axKit ▸ until
+  2026-11-23, the maintainer: "you can call open with axKit Apps and open with axKit Access Layers as separate
+  things"): one item per app of the bundle that opens a path (`Dispatch.Apps` whose `Opens` is not Nothing), the
+  standalone apps in the first and the access layers in the second, in the bundle's groups with their separators
+  (AX-9.2), a new window of that app on the entry by what it opens (`Dispatch.PathFor`): axDown, axJSON,
   axPreview and axPass on the file ("Not a file" on a folder), axMedia on the file with its folder's media files after
   it, or on a folder's (axMedia hands them to its open window itself), axGIT on the repository that holds the entry,
   axFile on the folder (or the file in its folder), axClaude, axTerminal and axTask on the folder, or on the entry's
-  folder for a file; Editor (Ctrl+E), the submenu's first item, is the quick way to the right editor.
+  folder for a file.
 - AF-4.10 (Ctrl+I inside the open context menu) went with the context menu on 2026-10-23 (AF-D13): the bar's Item
   menu is a standard drop-down and does not take it; Ctrl+I in the list says the entry.
 - AF-4.11 **The user's own programs in Open with ▸** (asked 2026-10-21): a list of programs and scripts, kept in the
@@ -450,8 +450,8 @@ and the started process finds its open window and hands the paths over with the 
   (C:) … | ─ | This PC | ─ | Eject this drive | Drive properties; AF-3.11) | Go to folder… Ctrl+G | Up one level
   Backspace | ─ | The Actions list (AF-9.1). **Context (C)**, by the list that last had the focus (AX-9.11): in the
   folder list, the entry's menu (AF-4.6): Open Enter | Open with ▸ (Windows default | Choose a program… | ─ | 1. name
-  (path) … or No programs of your own yet) | Open in axKit ▸ (Editor Ctrl+E | ─ |
-  axClaude | axTerminal | axGIT | ─ | axFile | axDown | axJSON | axPreview | axMedia | ─ | axTask | axPass) | Preview
+  (path) … or No programs of your own yet) | Open with axKit apps ▸ (the standalone apps that open a path, by group) |
+  Open with axKit access layers ▸ (the access layers that open a path, by group) | Preview
   Shift+Enter | Play folder in axMedia Ctrl+Enter | Add to axMedia's queue Ctrl+Shift+Q | ─ | Cut Ctrl+X | Copy Ctrl+C |
   ─ | Rename F2 | Delete Delete | ─ | Move to folder… | Compress to zip | Extract here | ─ | Copy path Ctrl+Shift+C |
   Show in File Explorer Ctrl+Shift+W | Information Ctrl+I | Properties Alt+Enter | ─ | Windows menu… | ─ | Selection ▸
@@ -467,7 +467,7 @@ and the started process finds its open window and hands the paths over with the 
 - AF-6.2 Keys (AX-8). Bundle-wide: F1, the control keys (Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6, between
   the folder list and the Actions list, AF-9.1), Ctrl+F, F3, Shift+F3, Ctrl+S ("Nothing to save here"), Ctrl+Plus,
   Ctrl+Minus, Page Up and Page Down (the list's own here), Alt+F4. Window-specific (`AxFileKeys`): Enter,
-  Shift+Enter, Backspace, Alt+Up, Left, Right, F5, F2, Delete, Ctrl+N, Ctrl+O, Ctrl+G, Alt+D, Ctrl+D, Ctrl+W, Ctrl+Shift+W, Ctrl+E,
+  Shift+Enter, Backspace, Alt+Up, Left, Right, F5, F2, Delete, Ctrl+N, Ctrl+O, Ctrl+G, Alt+D, Ctrl+D, Ctrl+W, Ctrl+Shift+W,
   Ctrl+I, Ctrl+Shift+N, Ctrl+Shift+T, Ctrl+Shift+C, Escape, Shift+Up, Shift+Down, Shift+Home,
   Shift+End, Space, Shift+Space, Ctrl+A, Ctrl+Shift+A, Ctrl+Shift+Q (AF-5), Shift+F10, the Applications key,
   Alt+Enter, Ctrl+Z (AF-4.14), Ctrl+X, Ctrl+C, Ctrl+V. Enter, Shift+Enter, Backspace, Left, Right, Space, Escape, F2, Delete,
@@ -478,7 +478,7 @@ and the started process finds its open window and hands the paths over with the 
   (AF-D13, AX-9.11; in the Actions list since 2026-11-22). The keys between the two lists, Right and Left, the
   selection's keys, the two menu keys and Escape are the navigator's own commands (`ItemKeys`, `SelectionKeys`; AF-D14);
   `AxFileKeys` names them for this window. The collision test covers the table and lists the keys other windows use
-  otherwise (Ctrl+N, Ctrl+G, Ctrl+E, Ctrl+C, Ctrl+Shift+C). Ctrl+Enter is the bundle's main action
+  otherwise (Ctrl+N, Ctrl+G, Ctrl+C, Ctrl+Shift+C). Ctrl+Enter is the bundle's main action
   (AX-8.10, `BundleKeys.MainAction`), here Play folder in axMedia (AF-5.1) while the folder list has the focus, the edge
   sound elsewhere.
 - AF-6.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axFile/user-guide.md` is embedded (Help → User
@@ -505,7 +505,7 @@ terminal or an app runs in it, or the file is open", "Failed: Access denied: a f
 or Windows protects the place" (AF-4.5); and the guards "No folder" (nothing
 listed yet), "No items in this folder" (a command on an empty folder's one item, AF-2.2), "No names contain <text>"
 (the same under a filter, AF-3.8), "Not shown: …" (the same on the list's last line, AF-2.2), "Nothing selected",
-"Choose a drive first" (a folder command at This PC, AF-3.10), "Not a file" (Ctrl+E or Open with… on a folder), "Not
+"Choose a drive first" (a folder command at This PC, AF-3.10), "Not a file" (Open with… on a folder), "Not
 a zip file" (Extract here, AF-4.12), "Name unchanged" (a rename to the same name), "Nothing to paste" (no files on the
 clipboard), "Already in this folder" (a cut entry pasted where it is), "Already pasting" (a cut still on its way,
 AF-4.5), "Reads the same as <name>, which is already here" (AF-4.2), "Type a name" and the other reasons of `FileOperations.CheckName`. A new selection is NVDA's own
@@ -703,7 +703,7 @@ AF-D4 (the volume) and AF-D6 (the queue fixed at Enter) went to axMedia with the
 - Built 2026-10-19 as a first draft, on the branch `axFile`: the window, the four operations, the player on MFPlay, the
   wiring into the bundle, the tests of the pure code, the guide and the test plan.
 - 2026-10-20: the entry's menu (AF-4.6) and Windows' own ways (AF-4.7, AF-D8); File operations with cut, copy and
-  paste (AF-4.8), the rename in place (AF-4.2), Open in axKit ▸ (AF-4.9), Enter's fallback to the Open with dialog
+  paste (AF-4.8), the rename in place (AF-4.2), Open with axKit apps and access layers (AF-4.9), Enter's fallback to the Open with dialog
   (AF-3.2, AF-4.7), Ctrl+I inside the open menu (AF-4.10).
 - Released as 3.1.0 on 2026-10-21; the user's NVDA pass of the whole test plan passed the same day.
 - 2026-10-21, after the release: the one item of an empty folder (AF-2.2), Ctrl+N (AF-3.3), the selection with Space

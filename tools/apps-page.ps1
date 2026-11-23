@@ -24,7 +24,7 @@ $root = Split-Path -Parent $MyInvocation.MyCommand.Path | Split-Path -Parent
 $documentPath = Join-Path $root 'docs\axKit\apps.md'
 $apps = @(Get-AxKitApps $root)
 
-$groupNames = @{ Files = 'Files'; Organise = 'Organise'; Utilities = 'Utilities'; AccessLayers = 'Access layers'; Claude = 'Claude (access layers for Claude Code)' }
+$groupNames = @{ GettingAround = 'getting around'; Documents = 'documents and media'; Tools = 'tools'; Programs = 'programs'; Ai = 'AI'; Utilities = 'utilities' }
 $opens = @{ Nothing = 'nothing'; Folders = 'a folder'; Files = 'a file'; FilesAndFolders = 'a file or a folder' }
 
 function Existing([string]$relative) { if (Test-Path -LiteralPath (Join-Path $root $relative)) { '`' + $relative.Replace('\', '/') + '`' } }
@@ -38,12 +38,26 @@ $lines.Add('points here. The shared pieces every app stands on are `src/AxKit.Co
 $lines.Add('window base and the shared controls), with their notes in each folder''s `CLAUDE.md`; the executable is `src/AxKit`.')
 $lines.Add('A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).')
 
+# The app keys (SPEC AX-8.18 rule 6, AxKit.Core/AppLaunchKeys, whose rule this is and whose test, AppLaunchKeysTests,
+# holds this page to it): each group of a kind takes one block of four function keys, Ctrl for an app, Ctrl+Shift for
+# an access layer; within the block the apps in their order.
+$keyOf = @{}
+foreach ($layerKind in @($false, $true)) {
+    $block = -1; $place = 0; $last = ''
+    foreach ($app in @($apps | Where-Object { [bool]$_.AccessLayerFor -eq $layerKind })) {
+        if ($app.Group -ne $last) { $block++; $place = 0; $last = $app.Group }
+        $place++
+        $number = $block * 4 + $place
+        if ($place -le 4 -and $number -le 12) { $keyOf[$app.Name] = $(if ($layerKind) { 'Ctrl+Shift+F' } else { 'Ctrl+F' }) + $number }
+    }
+}
+
 $lastGroup = ''
 foreach ($app in $apps) {
     if ($app.Group -ne $lastGroup) {
         $lastGroup = $app.Group
         $lines.Add('')
-        $lines.Add('## ' + $groupNames[$app.Group])
+        $lines.Add('## ' + $(if ($app.AccessLayerFor) { 'Access layers: ' } else { 'Apps: ' }) + $groupNames[$app.Group])
     }
 
     $lines.Add('')
@@ -53,6 +67,7 @@ foreach ($app in $apps) {
     $lines.Add("- What: $what.")
     if ($app.AccessLayerFor) { $lines.Add("- Access layer for: $($app.AccessLayerFor), which must be installed; the app reaches the network only through it.") }
     $facts = @("command ``axkit $($app.Verb)``", "opens $($opens[$app.Opens])")
+    if ($keyOf.ContainsKey($app.Name)) { $facts = @("key $($keyOf[$app.Name]) in every axKit window") + $facts }
     if ($app.AtSignIn) { $facts += 'runs in the background from sign-in' }
     if ($app.InBackground) { $facts += 'one of its windows runs in the background from sign-in' }
     if ($app.StoreEntry) { $facts += 'has a Start menu entry in the Store''s copy' }

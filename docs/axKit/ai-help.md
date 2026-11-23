@@ -487,7 +487,7 @@ file of the working folder.
 - **The Store's copy.** The Store allows eight app entries and a startup task hangs on an entry (bundle AX-13.2); the
   eight are taken (axClaude, axDown, axFile, axTerminal, axGIT, axTask, axStart, axClip). axHelp and axDescribe start
   at sign-in in the GitHub install (the Run key, as axStart) and have no sign-in start in the Store's copy, where they
-  are started from any window's New window and then keep running; which eight the Store shows is the user's to change
+  are started from any window's Access layers and then keep running; which eight the Store shows is the user's to change
   in `Dispatch.Apps`. The user answered on 2026-11-11: axHelp gets an entry, in axGIT's place, so from the next Store
   package it has its startup task there too (axDescribe merged into it in 5.7.0).
 
@@ -504,8 +504,9 @@ Later the same evening, after the first use (5.6.0):
   in axKit", said as "Claude on" and "Claude off".
 - **"group the claude related apps in the axkit menu so that a user can either enable or disable the entire claude
   suite and still use the axkit apps"**: one Claude submenu in the axKit menu holds the switch, the question, the
-  folders, the working folder and the AI tools (AX-9.1); the Claude apps (axClaude, axMCP, axHelp, axDescribe) stand
-  as the last group of New window and every list of apps (`AppGroup.Claude`, AX-9.2). The switch is AI help's: axClaude
+  folders, the working folder and the AI tools (AX-9.1); the Claude apps (axClaude, axMCP, axHelp, axDescribe) stood
+  as the last group of every list of apps until 2026-11-23, when axClaude became the AI group and axHelp and axMCP
+  the access layers' utilities (`AppGroup.Ai`, `AppGroup.Utilities`, AX-9.2). The switch is AI help's: axClaude
   itself, axMCP and the AI tools keep their own agreements and switches, since each is its own access layer and the
   user turns each on knowingly; every other app of axKit works with all of them off (G2).
 - **"simplify the app menus and especially the axkit menu which is now hard to find the new window"**: the axKit menu's

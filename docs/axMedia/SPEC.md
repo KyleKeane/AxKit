@@ -16,7 +16,7 @@ One queue in one window: a list of the files to play, in order, the one playing 
 plays the file under the selection and the rest follow; the transport keys pause, seek, skip, change the speed and say
 the position on demand; the keyboard's own keys set the volume; what plays is in the status bar and the title. The
 window is reached from axFile (Enter on a sound or video file once axMedia is the user's default program for it,
-Play folder, Add to queue, Open in axKit), from File Explorer (Open with axKit on a media file, or as the default
+Play folder, Add to queue, Open with axKit apps), from File Explorer (Open with axKit on a media file, or as the default
 program), from the Start menu, the Window menu and the command line. A start with files while an axMedia window is
 open hands them to that window rather than opening another (AM-1.2). A video's picture is drawn in an area at the
 top of the window. It works entirely offline (bundle G6).
@@ -27,7 +27,7 @@ top of the window. It works entirely offline (bundle G6).
 - **G2 The queue is the thing.** A folder of files in order is a playlist; so is what was added from anywhere. The
   queue is fixed when play starts and the user is free to roam elsewhere (AM-D2).
 - **G3 One player.** axFile and the others hand files to the axMedia window that is open; a second window is a
-  deliberate act (the Window menu's New window).
+  deliberate act (the Window menu's Apps, or its key).
 - **G4 Streamlined.** What axFile's player had and no more (AF-5): the transport, the speed, the position; the rest
   waits (§9).
 - **G5 Nothing spoken unprompted** (AX-7.3) but two things the user asked for by playing the queue: the name of the
@@ -43,7 +43,7 @@ top of the window. It works entirely offline (bundle G6).
    front: NVDA reads "03 Chapter 3.mp3 - axMedia window", then "Queue, 12 items, 03 Chapter 3.mp3 (playing), 3 of
    12". Ctrl+Enter: "Paused at 12:40". Ctrl+Enter: "Playing". Ctrl+Left: "12:25". Ctrl+Up: "Speed 1.25". Ctrl+Q:
    "Playing 03 Chapter 3.mp3, 12:52 of 45:30, speed 1.25". Without that default, Enter opens the file in whatever
-   plays it on the machine, and Item → Open in axKit → axMedia does the same as above.
+   plays it on the machine, and Context → Open with axKit apps → axMedia does the same as above.
 2. The chapter ends: "Playing 04 Chapter 4.mp3" and the next plays; the window can be left in the background, Alt+Tab
    or the Window menu brings the keys back.
 3. Back in axFile, Space on two folders and Ctrl+Shift+Q: "Added 24 to axMedia's queue"; the sound goes on and the
@@ -65,12 +65,12 @@ top of the window. It works entirely offline (bundle G6).
   with an empty queue (§9 for the last queue). Start menu entry `axKit axMedia`, console command `axMedia`, File
   Explorer's Open with axKit ▸ axMedia on files of the media kinds (AM-4.1) and axMedia under Windows' own Open with for
   them (type name "Media file (axMedia)"), so that the user can make it the default program for a kind in Windows'
-  settings (the installer cannot; the guide says how), the Window menu's New window (AX-9). A media file alone on the
+  settings (the installer cannot; the guide says how), the Window menu's Apps (AX-9). A media file alone on the
   command line (`AxKit song.mp3`) starts axMedia (AX-1.2).
 - AM-1.2 **One player.** A start with paths, from axFile, from File Explorer (a double click once axMedia is the
   default, or Open with axKit) or from the command line, hands them to the axMedia window that is open, the most
   recent by Z order when there are several, and ends; it opens a window of its own only when there is none, or with
-  `--new` (the Window menu's New window passes it). A play brings the window to the front, since the user chose to
+  `--new` (the Window menu's Apps passes it). A play brings the window to the front, since the user chose to
   open the file in its app; an add leaves the focus where it is, and axFile says "Added 24 to axMedia's queue"
   (AM-D3). axFile does nothing special: it starts the app on the paths, with `--add` for Add to queue; Enter on a
   media file is Windows' default program, axMedia when the user has chosen it (`docs/axFile/SPEC.md` section 9).
@@ -295,7 +295,7 @@ events are posted back to it (AX-7.5).
 - `tests/AxMedia.Tests`: the queue (moved tests), a folder's media files in order, the settings' defaults and
   sanitising, the player's reason texts; `tests/AxKit.Tests` takes `MediaFilesTests` with the move and gains
   `AppMessage`'s text form (the verb and the paths in and out).
-- Playing is checked by ear and with NVDA, `docs/axMedia/nvda-test-plan.md`: the hand-over from axFile (Open in axKit,
+- Playing is checked by ear and with NVDA, `docs/axMedia/nvda-test-plan.md`: the hand-over from axFile (Open with axKit apps,
   Play folder, Add to queue, and Enter once axMedia is the default, with and without an axMedia window open), from
   File Explorer, the transport keys, the speed and the pitch, a video, a file Windows cannot decode, the background
   announcement, two axMedia windows.

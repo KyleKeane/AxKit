@@ -269,7 +269,7 @@ public abstract partial class AxKitForm : Form
         }
     }
 
-    /// <summary>The Window menu (AX-9.1): New window, Open windows, Recently closed, Close all windows; the window puts it after Options, which follows its own menus (Navigate last of them).</summary>
+    /// <summary>The Window menu (AX-9.1): Apps, Access layers, Open windows, Recently closed, Close all windows; the window puts it after Options, which follows its own menus (Navigate last of them).</summary>
     private WindowMenu CreateWindowMenu() => new(this);
 
     /// <summary>
@@ -807,7 +807,7 @@ public abstract partial class AxKitForm : Form
         }
 
         // AX-8.18 rule 6: Ctrl with a function key opens a standalone app, Ctrl+Shift with one an access layer, from
-        // every window, as the Window menu's New window does.
+        // every window, as the Window menu's Apps and Access layers do.
         if (BundleKeys.AppOfLaunchKey(keyData) is { } launched)
         {
             WindowMenu.Start(launched.Verb, null);

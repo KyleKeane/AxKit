@@ -33,8 +33,18 @@ public static class BundleHelp
     /// <summary>F8's line, the same in every F1 text (AX-7.10, 2026-11-15).</summary>
     public const string StatusLine = "  F8: say the status, what the status bar at the bottom of the window holds, said by axKit itself; in a notice too";
 
-    /// <summary>The app keys (AX-8.18 rule 6), in every window's F1 text; the Window menu's New window shows each app's own.</summary>
-    public const string AppKeysLine = "  Ctrl with a function key: open a standalone axKit app, Ctrl+F1 axFile, Ctrl+F2 axDown, and on in the order of the Window menu; Ctrl+Shift with a function key: an access layer, Ctrl+Shift+F1 axTerminal and on. Window, New window shows each app's key";
+    /// <summary>The app keys (AX-8.18 rule 6), in every window's F1 text; the Window menu's Apps and Access layers show each app's own.</summary>
+    public static string AppKeysLine { get; } =
+        "  Ctrl with a function key: open an axKit app, each group on its block of four keys: " + Blocks(shift: false)
+        + ". Ctrl+Shift with a function key: open an access layer: " + Blocks(shift: true)
+        + ". Alt+W, A lists the apps and Alt+W, L the access layers, each with its key";
+
+    /// <summary>"F1 to F4 getting around, axStart, axFile, ...; F5 to F8 ...": the blocks of one kind, from <see cref="AppLaunchKeys"/>.</summary>
+    private static string Blocks(bool shift) => string.Join("; ", AppLaunchKeys.Default.Where(key => key.Shift == shift).GroupBy(key => key.App.Group).Select(group =>
+    {
+        var first = ((group.First().Number - 1) / AppLaunchKeys.Block * AppLaunchKeys.Block) + 1;
+        return $"F{first} to F{first + AppLaunchKeys.Block - 1} {Dispatch.GroupName(group.Key)}, " + string.Join(", ", group.Select(key => key.App.Name));
+    }));
 
     /// <summary>
     /// The first line and the bundle's section, ending in a blank line so that the app's own sections follow. In the

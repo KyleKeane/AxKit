@@ -47,7 +47,7 @@ Run with NVDA before a release, after `scripts to run-individual-apps\run-axCalc
 
 1. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back.
 2. F1: the Keyboard shortcuts notice; h moves by heading; Escape closes it. Help, User guide: this guide; Escape.
-3. Alt+W: the Window menu; New window lists axCalc. Alt+H, About, Version names axCalc among the apps.
+3. Alt+W: the Window menu; Apps lists axCalc, with its key. Alt+H, About, Version names axCalc among the apps.
 4. Ctrl+Shift+P, type `bases`, Enter: the bases of the last answer are said.
 
 ## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)

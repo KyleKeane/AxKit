@@ -8,7 +8,7 @@ axMedia is part of axKit. Installing axKit (see the axKit guide: Help, About, ax
 
 ## Start
 
-- From axFile: Enter on a sound or video file, once axMedia is its default program in Windows; otherwise the entry's menu (Shift+F10), Open in axKit, axMedia. Either way the file plays with the folder's other sound and video files after it, in name order, and the axMedia window comes to the front. axFile's Ctrl+Enter plays the whole folder here from the first file; Ctrl+Shift+Q adds the entry, or the selected entries, to the end of the queue without taking you out of axFile, "Added 24 to axMedia's queue".
+- From axFile: Enter on a sound or video file, once axMedia is its default program in Windows; otherwise the entry's menu (Shift+F10), Open with axKit apps, axMedia. Either way the file plays with the folder's other sound and video files after it, in name order, and the axMedia window comes to the front. axFile's Ctrl+Enter plays the whole folder here from the first file; Ctrl+Shift+Q adds the entry, or the selected entries, to the end of the queue without taking you out of axFile, "Added 24 to axMedia's queue".
 - File Explorer: right-click a sound or video file, open `Open with axKit` and choose axMedia; or double-click it once axMedia is its default program.
 - Start menu: `axKit axMedia`. Press the Windows key and type `axm`. The window opens with an empty queue; Ctrl+O adds files.
 - Console: `axmedia C:\Music\Dune\03.mp3` (the file with the folder's others after it), `axmedia C:\Music\Dune` (the folder from the first file), `axmedia a.mp3 b.mp3` (those, in order), `axmedia --add C:\Music\More` (added to the end of the queue, nothing starts).

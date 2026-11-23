@@ -15,7 +15,7 @@ public sealed record Launch(string App, string[] Arguments, string? Error = null
 /// <paramref name="Group"/> is its place among the apps (AX-9.2: the Window menu's lists keep the groups together with a
 /// separator between them); <paramref name="Opens"/> what it opens from a path; <paramref name="ShowIn"/> whether every
 /// window's Show current folder in submenu offers it (AX-9.10). Every list of apps in the windows reads these, so a new
-/// app is in the Window menu, Open in axKit, the Show in submenus and Recently closed by its line in <see cref="Dispatch.Apps"/>.
+/// app is in the Window menu, axFile's Open with axKit apps and access layers, the Show in submenus and Recently closed by its line in <see cref="Dispatch.Apps"/>.
 /// The properties below are for the scripts (docs/axKit/app-kit.md AK-4.1): the installer reads them through
 /// <c>AxKit.exe apps</c> (<see cref="Dispatch.Listing"/>), tools/make-icon.ps1 and run.ps1 off this file.
 /// </summary>
@@ -57,13 +57,13 @@ public sealed record App(string Name, string Verb, string Project, AppGroup Grou
     /// <summary>
     /// Whether the Store's package has a Start menu entry for the app (docs/axKit/SPEC.md AX-13.2): the Store allows
     /// eight per package and no hidden one (measured 2026-11-09), so these are the maintainer's eight; every other app
-    /// is reached by its console command, by a file of its kind, by the Window menu's New window and from axFile.
+    /// is reached by its console command, by a file of its kind, by the Window menu's Apps or Access layers and from axFile.
     /// </summary>
     public bool StoreEntry { get; init; }
 
     /// <summary>
     /// The program an access layer works through ("Claude Code"), empty for a standalone app (AX-11.1): an app that
-    /// starts or talks to a program axKit does not include is an access layer, in <see cref="AppGroup.AccessLayers"/>.
+    /// starts or talks to a program axKit does not include is an access layer, in <see cref="AppGroup.Programs"/>, <see cref="AppGroup.Ai"/> or <see cref="AppGroup.Utilities"/>.
     /// </summary>
     public string AccessLayerFor { get; init; } = "";
 
@@ -83,20 +83,27 @@ public sealed record AppIcon(string Letters, int Red, int Green, int Blue);
 /// <summary>The groups of the apps, in the Window menu's order (AX-9.2): the standalone apps' groups, then the access layers (AX-11.3).</summary>
 public enum AppGroup
 {
-    /// <summary>Files and what is in them: the file manager, the editors, the viewer, the player.</summary>
-    Files,
+    // Each group takes one block of four function keys (AX-8.18 rule 6, the maintainer's ask of 2026-11-23), so that
+    // a group holds at most four apps: the standalone apps on Ctrl+F1 to F4, F5 to F8 and F9 to F12, the access layers
+    // on Ctrl+Shift+F1 to F4 and F5 to F8.
 
-    /// <summary>Lists of one's own: tasks.</summary>
-    Organise,
+    /// <summary>Getting around the computer: the launcher, the files, the clipboard, the templates (Ctrl+F1 to F4).</summary>
+    GettingAround,
 
-    /// <summary>Small tools for the whole computer: the launcher, the clipboard, the calculator, the processes.</summary>
+    /// <summary>Documents and media: the editors, the viewer, the player (Ctrl+F5 to F8).</summary>
+    Documents,
+
+    /// <summary>Tools: tasks, the calculator, the processes, the automations (Ctrl+F9 to F12).</summary>
+    Tools,
+
+    /// <summary>The access layers over a program axKit does not include (AX-11.1): the shells, Git, KeePassXC (Ctrl+Shift+F1 to F4).</summary>
+    Programs,
+
+    /// <summary>The AI access layers (AX-11.1): axClaude, and the other agents to come (Ctrl+Shift+F5 to F8; the maintainer, 2026-11-23: "make the ai function keys be there own group").</summary>
+    Ai,
+
+    /// <summary>The access layers that are utilities: axHelp, axMCP (Ctrl+Shift+F9 to F12; the maintainer, 2026-11-23: "axhelp and axMCP are probably more in the utilities").</summary>
     Utilities,
-
-    /// <summary>The apps that work through a program axKit does not include (AX-11.1): Git, the shells, KeePassXC; after the standalone apps.</summary>
-    AccessLayers,
-
-    /// <summary>The access layers for Claude Code and its MCP servers (AX-11.1): axClaude, axMCP, axHelp, one group so that everything of Claude stands together, last (AX-9.2, 5.6.0; the user's ask of 2026-11-09).</summary>
-    Claude,
 }
 
 /// <summary>What an app opens from a path: a file's app given a folder is refused, a folder's app given a file gets the file's folder.</summary>
@@ -147,96 +154,107 @@ public static class Dispatch
     /// <summary>Not an app: the apps of <see cref="Apps"/> as JSON on standard output, for install.ps1 (AX-1.4, AX-2.3).</summary>
     public const string Listing = "apps";
 
+    /// <summary>A group's name in running text, the F1 texts' and the documents' (AX-9.2): "getting around", "documents and media".</summary>
+    public static string GroupName(AppGroup group) => group switch
+    {
+        AppGroup.GettingAround => "getting around",
+        AppGroup.Documents => "documents and media",
+        AppGroup.Tools => "tools",
+        AppGroup.Programs => "programs",
+        AppGroup.Ai => "AI",
+        _ => "utilities",
+    };
+
     /// <summary>The keyword of every access layer's title (AX-11.2): "axClaude, access layer for Claude Code".</summary>
     public const string AccessLayer = "access layer";
 
     /// <summary>
     /// The apps, in the order every list of the windows shows them, by group (AX-9.2, 2026-10-24), the standalone apps
     /// first and the access layers last (AX-11.3, a test keeps it so): one line here puts an
-    /// app in the Window menu, axFile's Open in axKit, the Show in submenus and Recently closed, and with its properties in
+    /// app in the Window menu, axFile's Open with axKit apps and access layers, the Show in submenus and Recently closed, and with its properties in
     /// the installer's Start menu, File Explorer and Open with entries and the icon script. tools/new-app.ps1 writes a
     /// new app's line; each entry starts with <c>new("name", Verb, "Project", ...</c> on a line of its own, which the
     /// scripts read (tools/apps.ps1).
     /// </summary>
     public static readonly IReadOnlyList<App> Apps =
     [
-        new("axFile", AxFile, "AxFile", AppGroup.Files, Opens.FilesAndFolders, ShowIn: true)
+        new("axStart", AxStart, "AxStart", AppGroup.GettingAround, Opens.Nothing)
+        {
+            Description = "axStart, a program launcher behind a hotkey", Icon = new("As", 150, 90, 20), AtSignIn = true, StoreEntry = true,
+        },
+        new("axFile", AxFile, "AxFile", AppGroup.GettingAround, Opens.FilesAndFolders, ShowIn: true)
         {
             Description = "axFile, a file manager for one folder", Icon = new("Af", 90, 50, 130), StoreEntry = true,
         },
-        new("axDown", AxDown, "AxDown", AppGroup.Files, Opens.Files)
+        new("axClip", AxClip, "AxClip", AppGroup.GettingAround, Opens.Nothing)
+        {
+            Description = "axClip, a clipboard history behind a hotkey", Icon = new("Ab", 160, 50, 50), AtSignIn = true, StoreEntry = true,
+        },
+        new("axTemplate", AxTemplate, "AxTemplate", AppGroup.GettingAround, Opens.Nothing)
+        {
+            Description = "axTemplate, your templates, put in anywhere", Icon = new("Ae", 80, 80, 120), InBackground = true,
+        },
+        new("axDown", AxDown, "AxDown", AppGroup.Documents, Opens.Files)
         {
             Description = "axDown, a plain editor for Markdown and text files", Icon = new("Ad", 31, 110, 70), StoreEntry = true,
             OpenWith = [".md", ".markdown", ".txt"], TypeName = "Text document (axDown)",
         },
-        new("axJSON", AxJSON, "AxJSON", AppGroup.Files, Opens.Files)
+        new("axJSON", AxJSON, "AxJSON", AppGroup.Documents, Opens.Files)
         {
             Description = "axJSON, an editor for JSON files", Icon = new("Aj", 120, 70, 20),
             Types = [".json"], OpenWith = [".json"], TypeName = "JSON document (axJSON)",
         },
-        new("axPreview", AxPreview, "AxPreview", AppGroup.Files, Opens.Files)
+        new("axPreview", AxPreview, "AxPreview", AppGroup.Documents, Opens.Files)
         {
             Description = "axPreview, a read-only viewer for text files", Icon = new("Ap", 70, 70, 140),
             OpenWith = ["*"], TypeName = "File (axPreview)",
         },
-        new("axMedia", AxMedia, "AxMedia", AppGroup.Files, Opens.FilesAndFolders)
+        new("axMedia", AxMedia, "AxMedia", AppGroup.Documents, Opens.FilesAndFolders)
         {
             Description = "axMedia, a player for sound and video files", Icon = new("Am", 20, 100, 110), Explorer = Opens.Files,
             Types = [.. MediaFiles.SoundExtensions, .. MediaFiles.VideoExtensions], OpenWith = [.. MediaFiles.SoundExtensions, .. MediaFiles.VideoExtensions],
             TypeName = "Media file (axMedia)",
         },
-        new("axTask", AxTask, "AxTask", AppGroup.Organise, Opens.Folders)
+        new("axTask", AxTask, "AxTask", AppGroup.Tools, Opens.Folders)
         {
             Description = "axTask, tasks and lists", Icon = new("Ak", 30, 120, 80), StoreEntry = true,
         },
-        new("axStart", AxStart, "AxStart", AppGroup.Utilities, Opens.Nothing)
-        {
-            Description = "axStart, a program launcher behind a hotkey", Icon = new("As", 150, 90, 20), AtSignIn = true, StoreEntry = true,
-        },
-        new("axClip", AxClip, "AxClip", AppGroup.Utilities, Opens.Nothing)
-        {
-            Description = "axClip, a clipboard history behind a hotkey", Icon = new("Ab", 160, 50, 50), AtSignIn = true, StoreEntry = true,
-        },
-        new("axCalc", AxCalc, "AxCalc", AppGroup.Utilities, Opens.Nothing)
+        new("axCalc", AxCalc, "AxCalc", AppGroup.Tools, Opens.Nothing)
         {
             Description = "axCalc, a calculator with a history", Icon = new("Ac", 90, 100, 30),
         },
-        new("axProcess", AxProcess, "AxProcess", AppGroup.Utilities, Opens.Nothing)
+        new("axProcess", AxProcess, "AxProcess", AppGroup.Tools, Opens.Nothing)
         {
             Description = "axProcess, the processes, services and startup programs", Icon = new("Ar", 120, 40, 90),
         },
-        new("axAutomate", AxAutomate, "AxAutomate", AppGroup.Utilities, Opens.Folders)
+        new("axAutomate", AxAutomate, "AxAutomate", AppGroup.Tools, Opens.Folders)
         {
             Description = "axAutomate, workflows that drive the windows of axKit", Icon = new("Aa", 80, 80, 120),
         },
-        new("axTemplate", AxTemplate, "AxTemplate", AppGroup.Utilities, Opens.Nothing)
-        {
-            Description = "axTemplate, your templates, put in anywhere", Icon = new("Ae", 80, 80, 120), InBackground = true,
-        },
-        new("axTerminal", AxTerminal, "AxTerminal", AppGroup.AccessLayers, Opens.Folders, ShowIn: true)
+        new("axTerminal", AxTerminal, "AxTerminal", AppGroup.Programs, Opens.Folders, ShowIn: true)
         {
             AccessLayerFor = "your shell", Description = "axTerminal, access layer for your shell: PowerShell, Command Prompt or Git Bash as a transcript", Icon = new("At", 40, 40, 40), StoreEntry = true,
         },
-        new("axGIT", AxGit, "AxGit", AppGroup.AccessLayers, Opens.FilesAndFolders, ShowIn: true)
+        new("axGIT", AxGit, "AxGit", AppGroup.Programs, Opens.FilesAndFolders, ShowIn: true)
         {
             AccessLayerFor = "Git", Description = "axGIT, access layer for Git: one repository's changes, log and branches", Icon = new("Ag", 110, 40, 40), Explorer = Opens.Folders,
         },
-        new("axPass", AxPass, "AxPass", AppGroup.AccessLayers, Opens.Files)
+        new("axPass", AxPass, "AxPass", AppGroup.Programs, Opens.Files)
         {
             AccessLayerFor = "KeePassXC", Description = "axPass, access layer for KeePassXC: a KeePass password database", Icon = new("Aw", 20, 40, 100),
             Types = [".kdbx"], OpenWith = [".kdbx"], TypeName = "KeePass database (axPass)",
         },
-        new("axClaude", AxClaude, "AxClaude", AppGroup.Claude, Opens.Folders, ShowIn: true)
+        new("axClaude", AxClaude, "AxClaude", AppGroup.Ai, Opens.Folders, ShowIn: true)
         {
             AccessLayerFor = "Claude Code", Description = "axClaude, access layer for Claude Code: its conversation as plain text", Icon = new("Ax", 31, 78, 121), StoreEntry = true,
         },
-        new("axMCP", AxMCP, "AxMCP", AppGroup.Claude, Opens.Folders)
-        {
-            Description = "axMCP, access layer for MCP servers: the tools, resources and prompts of any MCP server on this computer, started and run by hand", AccessLayerFor = "MCP servers", Icon = new("Mc", 70, 60, 110),
-        },
-        new("axHelp", AxHelp, "AxHelp", AppGroup.Claude, Opens.Nothing)
+        new("axHelp", AxHelp, "AxHelp", AppGroup.Utilities, Opens.Nothing)
         {
             Description = "axHelp, access layer for Claude Code: your conversation with Claude and a screenshot into it, from anywhere, behind two hotkeys", AccessLayerFor = "Claude Code", Icon = new("Ah", 60, 90, 150), AtSignIn = true, StoreEntry = true,
+        },
+        new("axMCP", AxMCP, "AxMCP", AppGroup.Utilities, Opens.Folders)
+        {
+            Description = "axMCP, access layer for MCP servers: the tools, resources and prompts of any MCP server on this computer, started and run by hand", AccessLayerFor = "MCP servers", Icon = new("Mc", 70, 60, 110),
         },
     ];
 

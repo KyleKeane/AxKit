@@ -183,7 +183,7 @@ expect focus "value":"a.txt"
 # Check: The entry's menu holds its items in order
 # 3.7 Manual: the entry's menu as a context menu (Shift+F10, the Applications key) and the menu bar (Alt+I, 3.7a, 3.7b's
 # Alt+S) cannot be opened from the channel; the items and their order are the menu's, checked through the palette's list.
-expect commands "Open, Context, Enter","Editor, Context, Open in axKit, Ctrl\u002BE"
+expect commands "Open, Context, Enter"
 expect commands "Preview, Context, Shift\u002BEnter","Play folder in axMedia, Context, Ctrl\u002BEnter","Add to axMedia\u0027s queue, Context, Ctrl\u002BShift\u002BQ","Cut, Context, Ctrl\u002BX","Copy, Context, Ctrl\u002BC","Rename, Context, F2","Delete, Context, Delete","Move to folder, Context","Compress to zip, Context","Extract here, Context","Copy path, Context, Ctrl\u002BShift\u002BC","Show in File Explorer, Context, Ctrl\u002BShift\u002BW","Information, Context, Ctrl\u002BI","Properties, Context, Alt\u002BEnter","Windows menu, Context"
 # Check: The selection's commands never act on the current entry alone
 # 3.7b Selection: Select all and Deselect all in Actions, the rest in Context, Selection; its operations never fall back to the current entry.
@@ -204,12 +204,12 @@ expect said ! None selected
 # Manual (3.7b): Alt+S, C "Copied 2 items" writes the clipboard. Manual (3.8): Ctrl+I inside the open context menu.
 
 # Check: A folder opened in an app that takes a file is said as not a file
-# 3.9 Open in axKit on a folder: "Not a file" for the apps that take a file (nothing starts).
+# 3.9 Open with axKit apps on a folder: "Not a file" for the apps that take a file (nothing starts).
 keys home
 expect focus "value":"bundle, folder"
-menu axDown, Context, Open in axKit
+menu axDown, Context, Open with axKit apps
 expect said ! Not a file
-menu axPreview, Context, Open in axKit
+menu axPreview, Context, Open with axKit apps
 expect said ! Not a file
 # Manual (3.9): D on a .txt file and T on a folder start axDown and axTerminal, windows outside this one.
 # Manual (3.10, 3.11, 3.12): Properties, Choose a program, the Windows menu and Open with's own programs are Windows'

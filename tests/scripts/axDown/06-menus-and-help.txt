@@ -74,8 +74,8 @@ expect focus a.md
 # written here failed); the whole sentence is BundleAbout's, tested there.
 menu Version
 expect state "notice":"axKit
-expect state Standalone apps, which need only Windows: axFile, axDown, axJSON, axPreview, axMedia, axTask, axStart, axClip, axCalc, axProcess, axAutomate
-expect state axTerminal for your shell, axGIT for Git, axPass for KeePassXC, axClaude for Claude Code, axMCP for MCP servers, axHelp for Claude Code.
+expect state Standalone apps, which need only Windows: axStart, axFile, axClip, axTemplate, axDown, axJSON, axPreview, axMedia, axTask, axCalc, axProcess, axAutomate.
+expect state axTerminal for your shell, axGIT for Git, axPass for KeePassXC, axClaude for Claude Code, axHelp for Claude Code, axMCP for MCP servers.
 expect state Settings: 
 expect state Logs: 
 keys escape
@@ -167,4 +167,4 @@ expect quiet 1000
 # 6.6 manual: save as, Enter opens the Windows Save as picker; Alt+H, P needs the menu bar's menu mode.
 # Check: The command for a new axDown window is in the palette
 # Alt+W, New window, axDown is in the palette; the recent lists are too, played in 14-recent-from-the-palette.
-expect commands "axDown, Window, New window, Ctrl+F2"
+expect commands "axDown, Window, Apps, Ctrl+F5"

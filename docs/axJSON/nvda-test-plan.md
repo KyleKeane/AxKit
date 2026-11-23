@@ -70,7 +70,7 @@ The runner's script is `tests/scripts/axJSON/07-options.txt`. By hand: in axTask
 
 ## 4. The Window menu and About
 
-1. Alt+W, N: New window lists every app of the bundle; Alt+W, N, J starts a new axJSON window.
+1. Alt+W, A: Apps lists every standalone app and Alt+W, L every access layer; Alt+W, A, J starts a new axJSON window.
 2. Alt+W, O: Open windows lists the other axKit windows, most recent first. Alt+H, About, Version names every app.
 
 ## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)

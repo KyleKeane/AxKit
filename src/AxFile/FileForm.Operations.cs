@@ -716,7 +716,7 @@ public sealed partial class FileForm
     private void NewWindow() => WindowMenu.Start(Dispatch.AxFile, RealFolder);
 
     /// <summary>
-    /// Item → Open in axKit → one app (AF-4.9): a new window of it on the entry, by what the app opens
+    /// Context → Open with axKit apps or access layers → one app (AF-4.9): a new window of it on the entry, by what the app opens
     /// (<see cref="Dispatch.PathFor"/>): a file's app on the file, a folder's app on the folder or a file's folder, axGIT
     /// on the repository that holds it, axFile on the folder or the file in its folder; "Not a file" for a folder given
     /// to an app of files.
@@ -736,23 +736,6 @@ public sealed partial class FileForm
         {
             Announce("Not a file", true);
         }
-    }
-
-    /// <summary>Item → Open in editor (Ctrl+E): the file in axJSON for .json and axDown for anything else, whatever Enter would do with it.</summary>
-    private void OpenInEditor()
-    {
-        if (!TryEntry(out var entry))
-        {
-            return;
-        }
-
-        if (entry.IsFolder)
-        {
-            Announce("Not a file", true);
-            return;
-        }
-
-        WindowMenu.Start(Dispatch.EditorOf(entry.Path), entry.Path);
     }
 
     /// <summary>Item → Open with → Windows default (AF-4.7): the program Windows has for the entry, a folder in File Explorer, or the dialog that picks one.</summary>

@@ -38,10 +38,10 @@ menu Add to axMedia's queue, Context
 expect said ! No sound or video files to add
 
 # Check: A folder is not a file for axPreview
-# 4.4 Open in axKit, axPreview on a folder: "Not a file".
+# 4.4 Open with axKit apps, axPreview on a folder: "Not a file".
 keys home
 expect focus "value":"a-folder-for-not-a-file, folder"
-menu axPreview, Context, Open in axKit
+menu axPreview, Context, Open with axKit apps
 expect said ! Not a file
 
 # Goal: Read a file in axPreview

@@ -184,7 +184,8 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
 - AD-4.4 Help: Keyboard shortcuts (F1), User guide, Markdown resources ▸ (Markdown basics, `https://commonmark.org/help/`;
   GitHub Flavored Markdown, `https://github.github.com/gfm/`; in the browser), as axClaude's Help has Claude Code
   resources; the app's own items only.
-- AD-4.5 axKit: the bundle's menu (AX-9), between Options and Help, the same in every window of axKit: New window (axClaude,
+- AD-4.5 axKit: the bundle's menu (AX-9), between Options and Help, 
+
   axDown), Recently closed (the last ten files and folders any axKit window held, AX-9.4; axDown adds its file when the
   window closes or opens another); Open windows (the other open axKit windows, most recently used first), Close all
   windows (every axKit window closes as on Alt+F4, asking about unsaved changes where there are any); Claude (the

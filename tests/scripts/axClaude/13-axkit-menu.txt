@@ -19,8 +19,8 @@ expect said Ready
 # version, and About with Version, Licence, Attribution, axKit guide and axKit on GitHub (which opens the browser on the
 # user's desktop: manual). Open windows, Open windows by type and Recently closed fill themselves as the menu opens,
 # and the command list leaves such submenus out: their steps (2, 4 and 5) are left manual.
-expect commands axDown, Window, New window
-expect commands axClaude, access layer for Claude Code, Window, New window
+expect commands axDown, Window, Apps
+expect commands axClaude, access layer for Claude Code, Window, Access layers
 expect commands Close all windows, Window
 expect commands Check for updates (axKit
 expect commands Version, Help, About

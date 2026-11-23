@@ -21,8 +21,8 @@
   references (a glob), the Window menu and the other lists of the windows.
 
 .EXAMPLE
-  .\tools\new-app.ps1 axList list Organise Files -Description 'axList, lists of plain lines'
-  .\tools\new-app.ps1 axOCR ocr Utilities Files -Description 'axOCR, the text of a picture' -IconLetters Ao -IconRgb 60,90,40
+  .\tools\new-app.ps1 axList list Tools Files -Description 'axList, lists of plain lines'
+  .\tools\new-app.ps1 axOCR ocr Documents Files -Description 'axOCR, the text of a picture' -IconLetters Ao -IconRgb 60,90,40
 #>
 [CmdletBinding()]
 param(
@@ -30,9 +30,10 @@ param(
     [Parameter(Mandatory = $true, Position = 0)] [string]$Name,
     # What AxKit.exe takes: list.
     [Parameter(Mandatory = $true, Position = 1)] [string]$Verb,
-    # Its group in the Window menu (AX-9.2): Files, Organise, Utilities, or AccessLayers for an app that works through a
+    # Its group in the Window menu and its block of four function keys (AX-9.2, AX-8.18 rule 6): GettingAround, Documents,
+    # Tools (apps); Programs, Ai or Utilities for an access layer, an app that works through a
     # program axKit does not include (AX-11.1; its line in Dispatch.Apps then needs AccessLayerFor, which a test asks for).
-    [Parameter(Mandatory = $true, Position = 2)] [ValidateSet('Files', 'Organise', 'Utilities', 'AccessLayers')] [string]$Group,
+    [Parameter(Mandatory = $true, Position = 2)] [ValidateSet('GettingAround', 'Documents', 'Tools', 'Programs', 'Ai', 'Utilities')] [string]$Group,
     # What it opens from a path: Nothing, Folders, Files or FilesAndFolders.
     [Parameter(Mandatory = $true, Position = 3)] [ValidateSet('Nothing', 'Folders', 'Files', 'FilesAndFolders')] [string]$Opens,
     # The Start menu's description: the name, a comma, what the app is.
@@ -580,7 +581,7 @@ New-TextFile "docs\$Name\user-guide.md" @'
 
 ## Install
 
-{{Name}} is part of axKit. Installing axKit (see the axKit guide in the Help, About) gives you a Start menu entry `axKit {{Name}}` and a console command `{{Name}}`. Any axKit window starts one too: Alt+A, New window, {{Name}}.
+{{Name}} is part of axKit. Installing axKit (see the axKit guide in the Help, About) gives you a Start menu entry `axKit {{Name}}` and a console command `{{Name}}`. Any axKit window starts one too: Alt+W, Apps (or Access layers, for an access layer), {{Name}}, or its key, which F1 lists.
 
 ## Start
 
@@ -657,7 +658,7 @@ exit $LASTEXITCODE
 $written.Add("src\AxKit\$Project.ico")
 
 # ---- the registration places ----
-$groups = 'Files', 'Organise', 'Utilities', 'AccessLayers'
+$groups = 'GettingAround', 'Documents', 'Tools', 'Programs', 'Ai', 'Utilities'
 Edit-TextFile 'src\AxKit.Core\Dispatch.cs' {
     param($text, $nl)
     # The verb constant, after the last app's.

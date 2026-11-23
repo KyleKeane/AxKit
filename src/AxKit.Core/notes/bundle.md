@@ -2,7 +2,7 @@
 
 - `Dispatch` (AX-1): which app a command line starts; `Apps`, each app's name, verb, project, `AppGroup`, what it
   `Opens` and whether Show in offers it, in the order every list of apps shows (AX-9.2), the one source of the axKit
-  menu, Open in axKit, the Show in submenus and the inventory test; `Of` (an app by its verb), `PathFor` (the path an
+  menu's Apps and Access layers, axFile's Open with axKit apps and access layers, the Show in submenus and the inventory test; `Of` (an app by its verb), `PathFor` (the path an
   app is started on from a file or folder in hand), `EditorOf`; `AtSignIn` marks the apps that run from sign-in
   (axStart, axClip) for the installer and the package; `WithApplicationVerb` (docs/axKit/store-distribution.md 3.2,
   2026-11-08) puts the verb of the package entry a process was started from first ("AxDown" is down, "AxStartSignIn"

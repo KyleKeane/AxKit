@@ -40,7 +40,6 @@ public static class AxFileKeys
     public const Keys GoToFolderAlso = Keys.Alt | Keys.D;
     public const Keys ShowInExplorer = Keys.Control | Keys.W;
     public const Keys ShowItemInExplorer = Keys.Control | Keys.Shift | Keys.W;
-    public const Keys OpenInEditor = Keys.Control | Keys.E;
 
     /// <summary>The entry's size and date; in the Actions list, the line's number and time.</summary>
     public const Keys Information = Keys.Control | Keys.I;
@@ -126,7 +125,6 @@ public static class AxFileKeys
         ("Go to folder, File Explorer's address bar key", GoToFolderAlso),
         ("Show the folder in File Explorer", ShowInExplorer),
         ("Show the entry in File Explorer", ShowItemInExplorer),
-        ("Open the file in its editor", OpenInEditor),
         ("Information about the entry, or the action's number and time", Information),
         ("New folder", NewFolder),
         ("New text file", NewFile),
