@@ -115,6 +115,12 @@ selected ones (TK-4.4, TK-4.7).
 - **TK-4.1 The default fields.** A list made in axTask (Ctrl+Shift+N) gets the fields of the list selected or shown,
   or Done (`check`), Start (`date`) and Due (`date`), empty. A folder with no `list.json` and no item gets these same
   fields, its configuration written in the same step as its first item.
+- **TK-4.1a The day an item was made** (the maintainer's wish of the old feature list, item 25: "we should have a
+  creation date for each item"; built 2026-11-23). A list whose configuration names a field titled Created (any case),
+  of type `date` or `datetime`, gets today's date in it, or the moment, for every item added, by Ctrl+N or by an AI
+  tool (TK-8.3); a value the tool gives is kept. Nothing fills it later, so items made before the field was named keep it
+  empty, and a Created of another type is left alone. `TaskRules.WithCreated`. The record of every change, the
+  item's second half, is not built.
 - **TK-4.2 A task** is an item of a list whose configuration names a `check` field titled Done: a list of things that
   are not tasks is a list without it (the user's ask: plain lists and checklists, and an easy way between them). "Add
   Done to every item" and "Remove Done from every item" in Actions switch a whole list between the two, in its

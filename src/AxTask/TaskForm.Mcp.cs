@@ -138,7 +138,7 @@ public sealed partial class TaskForm
         var path = ItemFiles.FreePath(list.Folder, ItemFiles.FileStem(title), ".json");
         var said = $"{McpRun.Speaker(client)} added {title} to {list.Name}";
         var shownHere = _smart is null && !Gathered && _folder.Equals(list.Folder, StringComparison.OrdinalIgnoreCase);
-        var file = ItemFolder.NewItemFile(item, config);
+        var file = TaskRules.WithCreated(ItemFolder.NewItemFile(item, config), config, DateTime.Now);
         if (!Commit(new Step(NewItemParts(list.Folder, (config, read.Text), path, file), said), shownHere ? path : SelectedKey()))
         {
             return new { error = $"{title} could not be written; the window shows why." };

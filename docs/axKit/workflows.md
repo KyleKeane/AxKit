@@ -914,6 +914,8 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Add an item to a list from the top level
 25. **Open a folder of lists used lately**
     - Open a folder of lists used lately
+26. **Keep the day each item was made**
+    - Add an item, and its Created field holds the day
 
 ## axTemplate
 

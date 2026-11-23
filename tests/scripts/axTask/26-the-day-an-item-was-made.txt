@@ -1,0 +1,24 @@
+# Workflow: Keep the day each item was made
+# axTask, docs/axTask/user-guide.md "The fields of a list" and SPEC.md TK-4.1a: a list whose configuration names a
+# field Created, of type date, gets today's date there for every item added; the day itself changes with the
+# calendar, so the file is asked for a date of this century.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Created","type":"date","value":""}],"actions":[]}
+file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false,"Created":""}
+start task {temp}\tasks
+expect focus Your lists, heading level 1
+keys down
+expect focus Home, list, 1 item
+keys right
+expect focus Fix the tap
+
+# Goal: Add an item, and its Created field holds the day
+keys ctrl+n
+expect state "notice":"New item"
+type Paint the door
+keys enter
+expect said Added Paint the door
+expect focus Paint the door
+run findstr /r /c:"Created.: .20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]" "tasks\Home\Paint the door.json"
+# Check: An item made before keeps its empty Created
+run powershell -NoProfile -Command "if ((Get-Content -Raw 'tasks\Home\Fix the tap.json').Contains('20')) { exit 1 } else { exit 0 }"

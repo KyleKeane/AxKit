@@ -1028,3 +1028,14 @@ Starts with: Open axTask with the folder work. Close the window. Open axTask wit
 3. Press Enter.
     You hear: Folder work.
 4. Press Down.
+
+## Keep the day each item was made
+
+Starts with: Open axTask with the folder tasks.
+
+### Add an item, and its Created field holds the day
+
+1. Press Ctrl+N (New item; Actions menu).
+2. Type: Paint the door
+3. Press Enter.
+    You hear: Added Paint the door.

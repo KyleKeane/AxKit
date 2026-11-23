@@ -226,7 +226,7 @@ public sealed partial class TaskForm
 
             var path = ItemFiles.FreePath(folder, ItemFiles.FileStem(title), ".json");
             var said = inList ? "Added " + title : $"Added {title} to {listName}";
-            Commit(new Step(NewItemParts(folder, list, path, FlatItem.New(title, list.Config)), said), inList ? path : folder);
+            Commit(new Step(NewItemParts(folder, list, path, TaskRules.WithCreated(FlatItem.New(title, list.Config), list.Config, DateTime.Now)), said), inList ? path : folder);
         }, typed => typed.Trim().Length == 0 ? "Type the item's title" : null);
     }
 

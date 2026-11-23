@@ -170,6 +170,9 @@ what it is, and adds the one you choose (axJSON's guide, "Choose instead of typi
 - `item fields` are the fields of its items, in the order they are shown after the Title. Each has a `title`, a
   `type` (`text`, `longtext`, `number`, `date`, `datetime`, `check`, `choice` or `link`), the `value` a new item
   starts with, and for a choice its `options`.
+- A field titled `Created`, of type `date` or `datetime`, keeps the day each item was made: an item you add, with
+  Ctrl+N or through an AI tool, gets today's date there, or the moment for a date and time. Items made before the field
+  was there keep it empty.
 - `actions` are the list's action keys, further down.
 
 What happens when you change the fields:

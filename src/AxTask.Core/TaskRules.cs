@@ -13,6 +13,31 @@ public static class TaskRules
     public const string StartField = "Start";
     public const string DueField = "Due";
 
+    /// <summary>The field a list may name for the day an item was made (SPEC.md TK-4.1a): filled as the item is added, and never after.</summary>
+    public const string CreatedField = "Created";
+
+    /// <summary>
+    /// A new item with its Created filled (TK-4.1a): when the list's configuration names a field Created of type date, or
+    /// date and time, and the item holds no value for it, today's date, or the moment, in the file's form; any other item
+    /// as it is. Only a new item gets it: a list that names Created after its items were made leaves theirs empty.
+    /// </summary>
+    public static FlatItem WithCreated(FlatItem item, ListConfig config, DateTime now)
+    {
+        var field = config.ItemFields.FirstOrDefault(field => field.Title.Equals(CreatedField, StringComparison.OrdinalIgnoreCase));
+        if (field is null || item.Text(field.Title).Length > 0)
+        {
+            return item;
+        }
+
+        var value = field.Type switch
+        {
+            FieldTypes.Date => FieldTypes.DateText(DateOnly.FromDateTime(now)),
+            FieldTypes.DateTime => FieldTypes.DateTimeText(now),
+            _ => null,
+        };
+        return value is null ? item : item.With(field.Title, JsonValue.Create(value), config);
+    }
+
     /// <summary>TK-4.1: what a list without a template gives a new item.</summary>
     public static readonly IReadOnlyList<ItemField> DefaultTemplate =
     [
