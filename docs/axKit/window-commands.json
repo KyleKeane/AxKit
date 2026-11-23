@@ -848,6 +848,7 @@
         {"label": "Open settings file", "menu": "Options, Developer", "key": "", "also": [], "keyText": "", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Check for updates at start", "menu": "Options, General", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "Start with Windows", "menu": "Options, General", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},
+        {"label": "Entry sounds", "menu": "Options, Text", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Font", "menu": "Options, Text", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Larger text", "menu": "Options, Text", "key": "ctrl+plus", "also": [], "keyText": "Ctrl+Plus", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Say new line", "menu": "Options, Text", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},

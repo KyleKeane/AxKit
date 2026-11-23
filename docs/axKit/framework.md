@@ -279,9 +279,16 @@ NVDA pass recorded. A piece that changes what a user does updates the app's spec
 
 **B. The navigator made general, with nothing changing for axTask, axPass, axMCP and axAutomate**
 
-3. A level read off the UI thread, with a late answer dropped and "reading" said (FW-4.7, point 1).
-4. The second pane as fields, a text, a log, or none (point 2).
-5. Filter and sort, the line of an empty level, the rows in the palette (points 3, 5, 6).
+3. A level read off the UI thread, with a late answer dropped and "reading" said (FW-4.7, point 1). Not built
+   in the type, and open: axProcess, axGIT and axFile moved onto the navigator with their own reads, each
+   started through the type's hooks, so nothing forced a shared one. The assistant's reading, 2026-11-22, not
+   the maintainer's decision: his word is asked, since this is a step of the plan he cleared.
+4. The second pane as fields, a text, a log, or none (point 2). Built, 2026-11-22 (FW-4.7).
+5. Filter and sort, the line of an empty level, the rows in the palette (points 3, 5, 6). Built, 2026-11-22:
+   filter and sort in every navigator (FW-4.10a), the line of an empty level and the line of what is not shown
+   (FW-4.7). Not built, and open for the same reason as step 3: the rows in the command palette, which axFile
+   alone offers, through the window base's hook; whether every navigator should offer its rows there, now that
+   every one has a filter, is asked of the maintainer.
 
 **C. The apps moved, smallest first**
 

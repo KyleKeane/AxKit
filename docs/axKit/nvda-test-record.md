@@ -6,6 +6,26 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-22: the list under a field in the hotkey windows and the palette, and axDown's format commands; by the assistant with NVDA listening (branch `axfile-navigator` ef8f3671)
+
+`.\nvda-pass.ps1 -Only` every script of axStart, axClip, axHelp, axDown, axJSON and axPreview, from the branch's
+own folder, behind the spoken countdown, the maintainer away at his word (NVDA passes without his approval), NVDA
+2025.3.3 with the OneCore voice, Windows 11 Pro 10.0.26200, the build 5.10.0 of commit ef8f3671, the tree clean: 43
+scripts, 270 goals and checks, all passed at the first run.
+
+| What | Scripts | Result |
+|---|---|---|
+| axStart and axClip with the list under the field as the bundle's list (framework step 12): typing, the first match said, Down, Up, the page keys, first and last, the edge sound at an end, nothing found | 8 | Passed |
+| axHelp, its two scripts, which are live: the window, the hotkey, the conversation started with the real Claude Code | 2 | Passed |
+| axDown, every script, the command palette among them (its list is the same list now), and the new `17-format.txt`: a heading by Shift+Alt+Right and Shift+Alt+Left and from the menu, bold on a word by Ctrl+B, italic on a selection, list items on two lines and one undo, the refusal in navigation mode; every sentence spoken by NVDA ("Heading 1", "No heading", "Bold on", "List item on, 2 lines") | 17 | Passed |
+| axJSON and axPreview on the editor shell that takes an app's format commands | 16 | Passed |
+
+The pass ended with the note that the command inventory was stale for axHelp: "Entry sounds", an item of Options,
+Text since the entry sounds came (step 2), was never written there, since axHelp's scripts are live and are left
+out of every run of the folder. Written after the pass by one more run of axHelp's first script, on the hidden
+desktop. By ear, and the maintainer's: the three keys of the format commands and the words "on" and "off"
+(docs/axDown/SPEC.md AD-12.6).
+
 ## 2026-11-22: the console window's shared field, menus and session steps; by the assistant with NVDA listening (branch `axfile-navigator` f8f3c2e6)
 
 `.\nvda-pass.ps1 -Only` every script of axClaude, axTerminal and axCalc, from the branch's own folder, behind the

@@ -38,6 +38,7 @@ every window" or under a heading that names the windows without it; under an app
 - Test a key. Menu: Help, Diagnostics. Key: none. Mark: act.
 - Open settings file. Menu: Options, Developer. Key: none. Mark: open.
 - Check for updates at start. Menu: Options, General. Key: none. Mark: act.
+- Entry sounds. Menu: Options, Text. Key: none. Mark: change.
 - Font. Menu: Options, Text. Key: none. Mark: change.
 - Larger text. Menu: Options, Text. Key: Ctrl+Plus. Mark: change.
 - Say new line. Menu: Options, Text. Key: none. Mark: change.
@@ -63,10 +64,6 @@ every window" or under a heading that names the windows without it; under an app
 - axStart. Menu: Window, New window. Key: none. Mark: open.
 - axTask. Menu: Window, New window. Key: none. Mark: open.
 - axTerminal, access layer for your shell. Menu: Window, New window. Key: none. Mark: act.
-
-## In every window but axClip, axHelp and axPass
-
-- Entry sounds. Menu: Options, Text. Key: none. Mark: change.
 
 ## In every window but axClip, axHelp, axPass and axStart
 
