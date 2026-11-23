@@ -381,4 +381,69 @@ public sealed class KeyTests
 
         Assert.True(wrong.Count == 0, "A key of a table without a chord of its own (AxKit.Core/KeyChord): " + string.Join("; ", wrong));
     }
+
+    /// <summary>
+    /// Keys a guide may name in bold that are no key of a table: Windows' own close, which every window's Exit or Hide
+    /// is on, and the access keys of the menus the bar holds in every window (bundle AX-9.1), which WinForms gives
+    /// each menu from its name.
+    /// </summary>
+    private static readonly string[] KeysOfNoTable = ["Alt+F4", "Alt+S", "Alt+A", "Alt+N", "Alt+C", "Alt+O", "Alt+W", "Alt+K", "Alt+H"];
+
+    /// <summary>
+    /// Every key a user guide names in bold (docs/&lt;app&gt;/user-guide.md, "**Ctrl+I** says ...") is a key of its
+    /// window: of its table, the bundle's and the shared tables (BundleKeys, ItemKeys, SelectionKeys, EditorKeys), a
+    /// background app's hotkey as it starts, or a row of the window's command inventory (docs/axKit/window-commands.json;
+    /// the maintainer, 2026-11-23: "make the documentation fully automatically made from the underlying data spec for
+    /// things like keyboards to avoid documentation drift", step 4 of that item). A key changed in its table and left
+    /// in a guide's prose fails here. Only chords with a modifier and function keys are looked at.
+    /// </summary>
+    [Fact]
+    public void Every_key_a_guide_names_in_bold_is_a_key_of_its_window()
+    {
+        var root = LayoutTests.RepositoryRoot();
+        var inventory = System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(Path.Combine(root, "docs", "axKit", "window-commands.json")))!["apps"]!.AsArray();
+        var shared = BundleKeys.All.Concat(BundleKeys.SystemWide).Concat(ItemKeys.All).Concat(SelectionKeys.All).Concat(EditorKeys.All)
+            .Select(key => NameOf(key.Key)).Concat(KeysOfNoTable).ToList();
+        var chord = new System.Text.RegularExpressions.Regex(@"^(?:(?:Ctrl|Alt|Shift|Windows)\+)+(?:[A-Z][A-Za-z]*|F[0-9]+|[0-9])$|^F[0-9]+$");
+        var bold = new System.Text.RegularExpressions.Regex(@"\*\*([^*]+)\*\*");
+        var wrong = new List<string>();
+        foreach (var app in AxKit.Core.Dispatch.Apps)
+        {
+            var guide = Path.Combine(root, "docs", app.Name, "user-guide.md");
+            if (!File.Exists(guide))
+            {
+                continue;
+            }
+
+            var known = new HashSet<string>(shared, StringComparer.OrdinalIgnoreCase);
+            foreach (var window in Windows.Where(window => window.Key == app.Name || (app.Name == "axTemplate" && window.Key == TemplateLauncher)))
+            {
+                known.UnionWith(window.Value.Select(key => NameOf(key.Key)));
+            }
+
+            foreach (var row in inventory.Where(row => (string?)row!["app"] == app.Name).SelectMany(row => row!["commands"]!.AsArray()))
+            {
+                if ((string?)row!["keyText"] is { Length: > 0 } text)
+                {
+                    known.Add(text.TrimEnd('.'));
+                }
+            }
+
+            foreach (System.Text.RegularExpressions.Match match in bold.Matches(File.ReadAllText(guide)))
+            {
+                foreach (var part in System.Text.RegularExpressions.Regex.Split(match.Groups[1].Value, @",\s*|\s+or\s+|\s+and\s+"))
+                {
+                    var key = part.Trim();
+                    if (chord.IsMatch(key) && !known.Contains(key))
+                    {
+                        wrong.Add($"docs/{app.Name}/user-guide.md: **{key}**");
+                    }
+                }
+            }
+        }
+
+        Assert.True(wrong.Count == 0, "A key a guide names in bold that no table of its window has (a key changed and the guide left behind):\n" + string.Join("\n", wrong.Distinct()));
+
+        static string NameOf(Keys key) => BundleKeys.Text(key).TrimEnd('.');
+    }
 }
