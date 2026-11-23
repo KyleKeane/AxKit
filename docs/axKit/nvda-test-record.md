@@ -6,6 +6,25 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-22: Filter and Sort by in every navigator, and axMedia's Ctrl+Enter and add; by the assistant with NVDA listening (branch `axfile-navigator` c22a5fd4)
+
+`.\nvda-pass.ps1 -Only` every script of the eight apps on the navigator, from the branch's own folder, behind the
+spoken countdown, the maintainer away at his word ("you are clear to do whatever gets the work done, including nvda
+pass without my approval"), NVDA 2025.3.3 with the OneCore voice, Windows 11 Pro 10.0.26200, the build 5.10.0 of
+commit c22a5fd4, the tree clean: 69 scripts, 537 goals and checks, none failed and none run twice.
+
+| What | Scripts | Result |
+|---|---|---|
+| axFile: the filter as the navigator's (the list named "N items, filter text, n shown", the line of a filter nothing passes, Escape after the selection, a mark the filter hides dropped), Sort by Name, Date and Size; every other script | 13 | Passed |
+| axTask: `22-filter-and-sort.txt`, new (the filter under headings, Escape, Sort by Name and back); every other script | 22 | Passed |
+| axMedia: `09-filter-the-queue.txt`, new (the filter, Enter under it plays the file shown, Sort by Name reorders the queue and The order added puts it back); Ctrl+Enter plays with nothing playing, and the add that opened the window said as you arrive (`02-hand-over.txt`); every other script | 9 | Passed |
+| axProcess: Sort by with its three orders under its new name; every other script | 6 | Passed |
+| axPass, axMCP, axAutomate, axGIT: every script | 19 | Passed |
+
+Not heard by a person: how the list's name under a filter reads, and whether the filter should look at more than
+the name. Not covered by a script: the filter in axPass, axMCP, axAutomate and axGIT beyond the command being there
+(the code is the navigator's one piece, heard in axFile, axTask and axMedia).
+
 ## 2026-11-22: axFile's rename on the navigator's rename box; by the assistant with NVDA listening (branch `axfile-navigator` b80893ce)
 
 `.\nvda-pass.ps1 -Only` every script of axFile, from the branch's own folder, behind the spoken countdown, the
