@@ -206,8 +206,6 @@ internal sealed partial class MainForm : ConsoleForm
         // Claude Code's hooks (MainForm.Hooks.cs): its version is asked here already, so that the start does not wait for it.
         WireHooks();
         WireStream();
-        Input.KeyDown += OnInputKeyDown;
-        Transcript.LineChosen += QuoteLineInMessage;
         BuildMenus();
         // The raw recording is of the pseudo console's bytes (SM-6.5): in a window the stream feeds its item is there,
         // so that the menus are the same, and not available, since it would say "Recording started" and write nothing.

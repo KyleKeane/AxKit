@@ -10,51 +10,36 @@ internal sealed partial class MainForm
 {
     // ---- the message field and the sending (FR-2); the paced write queue is the console window's ----
 
-    private void OnInputKeyDown(object? sender, KeyEventArgs e)
-    {
-        // The keys come from the tables (AxClaudeKeys, BundleKeys), matched with their modifiers.
-        switch (e.KeyData)
-        {
-            case AxClaudeKeys.Enter:
-                // Enter sends; Shift+Enter is the field's own new line (FR-2.1).
-                e.Handled = e.SuppressKeyPress = true;
-                SendInput();
-                break;
-            case AxClaudeKeys.Escape:
-                // A guard (FR-2.3, D20): Escape is a reflex key for screen reader users, and Claude takes it as an interrupt.
-                e.SuppressKeyPress = true;
-                Announce("Shift+Escape interrupts", true);
-                break;
-                // Plain Up and Down only move the caret (D13): text appearing in the field on an arrow key confused the reading.
-        }
-    }
+    // The field's keys are the console window's (AxKit.Forms/ConsoleForm.Field.cs; framework step 11): Enter sends
+    // and Shift+Enter is the field's own new line (FR-2.1); Escape is a guard that only speaks (FR-2.3, D20:
+    // Escape is a reflex key for screen reader users, and Claude takes it as an interrupt); Ctrl+Enter sends as
+    // Enter does. Plain Up and Down only move the caret (D13). What is axClaude's own follows.
+
+    /// <summary>Enter and Ctrl+Enter in the message field: the message goes to Claude (FR-2.1).</summary>
+    protected override void SendField() => SendInput();
+
+    protected override string SendFieldName => "Send the message";
+
+    protected override string EscapeGuardText => "Shift+Escape interrupts";
 
     /// <summary>The literal lines around a quoted conversation line in the message, so Claude can tell it from the user's words (FR-2.9).</summary>
     private const string QuoteMarker = "_ start of copied line from conversation history _";
     private const string CommentMarker = "_ start of comment on the copied line _";
 
     /// <summary>
-    /// Enter on a conversation line appends the line to the message under the marker and a line naming its number,
-    /// separated from what is there by a blank line, then the comment marker, and moves the focus into the field
-    /// with the caret on the empty line under it, ready for the comment (FR-2.9). The conversation caret stays
-    /// where it is, so Alt+2 comes back to the same line.
+    /// Enter on a conversation line (FR-2.9): the line is appended to the message under the marker and a line
+    /// naming its number, separated from what is there by a blank line, then the comment marker; the console
+    /// window puts the focus into the field with the caret on the empty line under it, ready for the comment, and
+    /// says "Line 12 copied". The conversation caret stays where it is, so Alt+2 comes back to the same line.
     /// </summary>
-    private void QuoteLineInMessage(int number, int count, string text)
+    protected override (string Field, string Said) WithLine(string existing, int number, int count, string line)
     {
-        if (Area.Current is not null)
-        {
-            // The field is hidden behind Claude's question: the quote would land unseen and the comment in the list.
-            Announce("Answer Claude first; the message field is hidden while it asks", true);
-            return;
-        }
-
-        var existing = Input.Text.TrimEnd('\r', '\n');
-        var quote = $"{QuoteMarker}\r\nLine {number} of {count}:\r\n{text}\r\n{CommentMarker}\r\n";
-        Input.Text = existing.Length == 0 ? quote : existing + "\r\n\r\n" + quote;
-        Input.Select(Input.TextLength, 0);
-        Announce($"Line {number} copied", true);
-        GoTo(BottomControl);
+        var quote = $"{QuoteMarker}\r\nLine {number} of {count}:\r\n{line}\r\n{CommentMarker}\r\n";
+        return (existing.Length == 0 ? quote : existing + "\r\n\r\n" + quote, $"Line {number} copied");
     }
+
+    /// <summary>The field is hidden behind Claude's question: the quote would land unseen and the comment in the list.</summary>
+    protected override string? LineRefusedWhileAreaOpen => "Answer Claude first; the message field is hidden while it asks";
 
     /// <summary>
     /// Text that answers what Claude waits on: any text on an "Enter text for" row; else one of the question's keys,

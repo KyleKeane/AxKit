@@ -14,14 +14,14 @@ public static class AxTerminalKeys
 {
     // Anywhere in the window.
     // The window's places are on Alt+1, 2 and 3 (bundle AX-8.14, the maintainer's decision of 2026-11-16).
-    public const Keys GoToField = Keys.Alt | Keys.D1;
-    public const Keys GoToTerminal = Keys.Alt | Keys.D2;
+    public const Keys GoToField = ConsoleKeys.GoToField;
+    public const Keys GoToTerminal = ConsoleKeys.GoToView;
     /// <summary>The same three on Ctrl, their key until 2026-11-16: further keys of the same commands, shown in no menu, with nothing extra said (AX-8.14).</summary>
-    public const Keys GoToFieldAlso = Keys.Control | Keys.D1;
-    public const Keys GoToTerminalAlso = Keys.Control | Keys.D2;
-    public const Keys LatestOutputAlso = Keys.Control | Keys.D3;
+    public const Keys GoToFieldAlso = ConsoleKeys.GoToFieldAlso;
+    public const Keys GoToTerminalAlso = ConsoleKeys.GoToViewAlso;
+    public const Keys LatestOutputAlso = ConsoleKeys.LatestAlso;
     /// <summary>Navigate → Latest output: the newest output marker, from anywhere, the third place after the field and the terminal (AT-2.2).</summary>
-    public const Keys LatestOutput = Keys.Alt | Keys.D3;
+    public const Keys LatestOutput = ConsoleKeys.Latest;
     /// <summary>Escape to the shell (AT-3.5); Ctrl+Escape is Windows' own.</summary>
     public const Keys SendEscape = Keys.Shift | Keys.Escape;
     /// <summary>Ctrl+C to the shell, the interrupt (AT-3.5); plain Ctrl+C copies.</summary>
@@ -49,8 +49,8 @@ public static class AxTerminalKeys
     // Escape is the guard in the field and clears the selection or returns to the field in the terminal.
     // Ctrl+Enter is the bundle's main action (BundleKeys.MainAction, AX-8.10): in the field it sends as Enter does.
     // Send without recording (AT-3.4) has no key since 2026-11-14: the Actions menu and the palette run it.
-    public const Keys Enter = Keys.Return;
-    public const Keys Escape = Keys.Escape;
+    public const Keys Enter = ConsoleKeys.Send;
+    public const Keys Escape = ConsoleKeys.Guard;
     /// <summary>In the command field: the command before, from the recent list (AT-3.9), in place of the bundle's paragraph up.</summary>
     public const Keys OlderCommand = Keys.Control | Keys.Up;
     /// <summary>In the command field: the command after, then the draft (AT-3.9), in place of the bundle's paragraph down.</summary>

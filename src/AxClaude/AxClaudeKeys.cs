@@ -14,14 +14,14 @@ public static class AxClaudeKeys
 {
     // Anywhere in the window.
     // The window's places are on Alt+1, 2 and 3 (bundle AX-8.14, the maintainer's decision of 2026-11-16).
-    public const Keys GoToField = Keys.Alt | Keys.D1;
-    public const Keys GoToConversation = Keys.Alt | Keys.D2;
+    public const Keys GoToField = ConsoleKeys.GoToField;
+    public const Keys GoToConversation = ConsoleKeys.GoToView;
     /// <summary>The same three on Ctrl, their key until 2026-11-16: further keys of the same commands, shown in no menu, with nothing extra said (AX-8.14).</summary>
-    public const Keys GoToFieldAlso = Keys.Control | Keys.D1;
-    public const Keys GoToConversationAlso = Keys.Control | Keys.D2;
-    public const Keys LatestResponseAlso = Keys.Control | Keys.D3;
+    public const Keys GoToFieldAlso = ConsoleKeys.GoToFieldAlso;
+    public const Keys GoToConversationAlso = ConsoleKeys.GoToViewAlso;
+    public const Keys LatestResponseAlso = ConsoleKeys.LatestAlso;
     /// <summary>Navigate → Latest response: the newest output marker, from anywhere, the third place after the field and the conversation (FR-5, FR-6.5); Ctrl+Shift+O until 2.6.1.</summary>
-    public const Keys LatestResponse = Keys.Alt | Keys.D3;
+    public const Keys LatestResponse = ConsoleKeys.Latest;
     public const Keys Interrupt = Keys.Shift | Keys.Escape;
     public const Keys SendNow = Keys.Control | Keys.Shift | Keys.S;
     public const Keys SendCtrlC = Keys.Control | Keys.Shift | Keys.C;
@@ -52,8 +52,8 @@ public static class AxClaudeKeys
     // conversation; Escape is the guard in the field (D20) and clears the selection or returns to the field in the
     // conversation. Ctrl+Up and Ctrl+Down are the bundle's paragraph keys in both (FR-2.1); Send Up and Send Down
     // to Claude are menu items without a key since 2.4.0.
-    public const Keys Enter = Keys.Return;
-    public const Keys Escape = Keys.Escape;
+    public const Keys Enter = ConsoleKeys.Send;
+    public const Keys Escape = ConsoleKeys.Guard;
 
     /// <summary>In the conversation with a selection: copies it and says so (FR-3.11); the control's own copy otherwise.</summary>
     public const Keys CopySelection = Keys.Control | Keys.C;

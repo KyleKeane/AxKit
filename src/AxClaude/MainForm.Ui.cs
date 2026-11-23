@@ -50,8 +50,8 @@ internal sealed partial class MainForm
         Add(claude, new Command("Force Claude to res&tart", AxClaudeKeys.RestartClaude, RestartClaude) { Mark = CommandMark.Act });
         claude.DropDownItems.Add(new ToolStripSeparator());
         claude.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Send &message", null, (_, _) => SendInput()) { ShortcutKeyDisplayString = "Enter in the message field" }, CommandMark.Act));
-        // Ctrl+Enter, the bundle's main action (AX-8.10 rule 3): in the message field it sends the message, as Enter does.
-        AddKey(new Command("Send the message", BundleKeys.MainAction, SendInput) { When = () => Input.Focused, Mark = CommandMark.Act });
+        // Ctrl+Enter, the bundle's main action (AX-8.10 rule 3), sends the message from the field as Enter does: the
+        // console window's command, named by SendFieldName.
         Add(claude, new Command("Send &queued messages now", AxClaudeKeys.SendNow, SendNow) { Mark = CommandMark.Act });
         // The interrupt key (FR-2.3). Ctrl+Escape opens the Start menu and never reaches the app.
         Add(claude, new Command("&Interrupt", AxClaudeKeys.Interrupt, Interrupt) { Mark = CommandMark.Act });
@@ -75,17 +75,9 @@ internal sealed partial class MainForm
         claude.DropDownItems.Add(sendKey);
 
         var navigate = new ToolStripMenuItem();
-        // The places on Alt+1, 2 and 3, each with its older Ctrl key as a further key of the same command (bundle AX-8.14).
-        Place(new Command("&Message field", AxClaudeKeys.GoToField, () => GoTo(BottomControl)) { Mark = CommandMark.Open }, AxClaudeKeys.GoToFieldAlso);
-        Place(new Command("&Conversation", AxClaudeKeys.GoToConversation, () => GoTo(Transcript)) { Mark = CommandMark.Open }, AxClaudeKeys.GoToConversationAlso);
-        Place(new Command("&Latest response", AxClaudeKeys.LatestResponse, Transcript.JumpToLatestResponse) { Mark = CommandMark.Open }, AxClaudeKeys.LatestResponseAlso);
-        void Place(Command command, Keys also)
-        {
-            Add(navigate, command);
-            AddKey(command with { Key = also });
-        }
-
-
+        // The places on Alt+1, 2 and 3, each with its older Ctrl key as a further key of the same command (bundle
+        // AX-8.14): the console window's, under axClaude's names for them.
+        AddPlaceItems(navigate, "&Message field", "&Conversation", "&Latest response");
         Add(navigate, new Command("Claude's &question again", AxClaudeKeys.ReadQuestion, ReadQuestionAgain) { Mark = CommandMark.Read });
         navigate.DropDownItems.Add(new ToolStripSeparator());
         AddFindItems(navigate);

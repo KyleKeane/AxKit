@@ -44,6 +44,9 @@ public abstract partial class ConsoleForm : ConversationForm
         CommandPalette.RefreshedOnOpening(RecentFoldersInNewWindowItem, FillRecentFoldersInNewWindow);
         FillRecentFoldersInNewWindow();
 
+        // The field's keys, Ctrl+Enter and a line taken into the field (ConsoleForm.Field.cs).
+        WireField();
+
         _quiet.Tick += (_, _) =>
         {
             _quiet.Stop();

@@ -299,6 +299,10 @@ NVDA pass recorded. A piece that changes what a user does updates the app's spec
 
 11. What axClaude and axTerminal each do the same way, lifted into the type, in two or three commits: the field's
     keys and a line taken into it; the menus and options; the folder, the restart and the closing question.
+    The first part is built, 2026-11-22 (`ConsoleForm.Field.cs`, `ConsoleKeys`): Enter and the Escape guard in
+    the field, Ctrl+Enter as a command, a line taken into the field, and the places on Alt+1 to Alt+3. Nothing
+    changed for the user in either app; what is sent, the guard's words and the shape of a taken line stay each
+    app's.
 12. The hotkey window's list as the canonical list, and axHelp's text and field as the conversation's components.
 
 **E. axFile, last and with the most care**

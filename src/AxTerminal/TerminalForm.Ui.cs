@@ -86,23 +86,15 @@ internal sealed partial class TerminalForm
         Add(shell, new Command("&Recent commands...", AxTerminalKeys.RecentCommands, ShowRecentCommands) { Mark = CommandMark.Open });
         // No key of its own since 2026-11-14 (AT-3.4, bundle AX-8.10 rule 3): the menu and the palette run it.
         shell.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Send &without recording", null, (_, _) => SendInput(record: false)), CommandMark.Act));
-        // Ctrl+Enter, the bundle's main action (AX-8.10 rule 3): in the command field it sends the command, exactly as Enter does.
-        AddKey(new Command("Send the command", BundleKeys.MainAction, () => SendInput(record: true)) { When = () => Input.Focused, Mark = CommandMark.Act });
+        // Ctrl+Enter, the bundle's main action (AX-8.10 rule 3), sends the command from the field exactly as Enter
+        // does: the console window's command, named by SendFieldName.
         shell.DropDownItems.Add(new ToolStripSeparator());
         Add(shell, new Command("What is r&unning", AxTerminalKeys.WhatIsRunning, SayWhatIsRunning) { Mark = CommandMark.Read });
 
         var navigate = new ToolStripMenuItem();
-        // The places on Alt+1, 2 and 3, each with its older Ctrl key as a further key of the same command (bundle AX-8.14).
-        Place(new Command("&Command field", AxTerminalKeys.GoToField, () => GoTo(BottomControl)) { Mark = CommandMark.Open }, AxTerminalKeys.GoToFieldAlso);
-        Place(new Command("&Terminal", AxTerminalKeys.GoToTerminal, () => GoTo(Transcript)) { Mark = CommandMark.Open }, AxTerminalKeys.GoToTerminalAlso);
-        Place(new Command("&Latest output", AxTerminalKeys.LatestOutput, Transcript.JumpToLatestResponse) { Mark = CommandMark.Open }, AxTerminalKeys.LatestOutputAlso);
-        void Place(Command command, Keys also)
-        {
-            Add(navigate, command);
-            AddKey(command with { Key = also });
-        }
-
-
+        // The places on Alt+1, 2 and 3, each with its older Ctrl key as a further key of the same command (bundle
+        // AX-8.14): the console window's, under axTerminal's names for them.
+        AddPlaceItems(navigate, "&Command field", "&Terminal", "&Latest output");
         navigate.DropDownItems.Add(new ToolStripSeparator());
         AddFindItems(navigate);
         navigate.DropDownItems.Add(new ToolStripSeparator());

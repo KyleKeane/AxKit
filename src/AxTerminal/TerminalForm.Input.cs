@@ -8,30 +8,32 @@ internal sealed partial class TerminalForm
 {
     // ---- the command field and the sending (AT-3); the paced write queue is the console window's ----
 
-    private void OnInputKeyDown(object? sender, KeyEventArgs e)
+    // The field's keys are the console window's (AxKit.Forms/ConsoleForm.Field.cs; framework step 11): Enter sends
+    // and Shift+Enter is the field's own new line; Escape is the guard (AT-3.5: a reflex key, and the shell would
+    // take it as an edit of its line); Ctrl+Enter sends as Enter does. What is axTerminal's own follows.
+
+    /// <summary>Enter and Ctrl+Enter in the command field: the command goes to the shell, and into the recent commands (AT-3.1).</summary>
+    protected override void SendField() => SendInput(record: true);
+
+    protected override string SendFieldName => "Send the command";
+
+    /// <summary>
+    /// The history of commands on Ctrl+Up and Ctrl+Down (AT-3.3), before the field's Enter and Escape. The bundle's
+    /// page and paragraph keys (AX-8.2) are the field's own (AxKitTextBox), after this: Ctrl+Up and Ctrl+Down are
+    /// the history here, Shift with them still selects by paragraph.
+    /// </summary>
+    protected override bool OnFieldKey(Keys key)
     {
-        switch (e.KeyData)
+        switch (key)
         {
-            case AxTerminalKeys.Enter:
-                // Enter sends; Shift+Enter is the field's own new line.
-                e.Handled = e.SuppressKeyPress = true;
-                SendInput(record: true);
-                break;
-            case AxTerminalKeys.Escape:
-                // The guard (AT-3.5): a reflex key, and the shell would take it as an edit of its line.
-                e.SuppressKeyPress = true;
-                Announce(EscapeGuardText, true);
-                break;
             case AxTerminalKeys.OlderCommand:
-                e.Handled = e.SuppressKeyPress = true;
                 Recall(_history.Older(FieldText()));
-                break;
+                return true;
             case AxTerminalKeys.NewerCommand:
-                e.Handled = e.SuppressKeyPress = true;
                 Recall(_history.Newer(FieldText()));
-                break;
-                // The bundle's page and paragraph keys (AX-8.2) are the field's own (AxKitTextBox), after this handler:
-                // Ctrl+Up and Ctrl+Down are the history here, Shift with them still selects by paragraph.
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -147,21 +149,11 @@ internal sealed partial class TerminalForm
 
     /// <summary>
     /// Enter on a terminal line (AT-3.7): the line's text goes into the field, after a new line when the field holds
-    /// text, and the focus goes there with the caret at the end, to run or edit it. No quote markers (AT-D4).
+    /// text; the console window puts the focus there with the caret at the end, to run or edit it, closing what
+    /// stood in the field's place, and says "Line copied". No quote markers (AT-D4).
     /// </summary>
-    private void CopyLineToField(int number, int count, string text)
-    {
-        if (Area.Current is not null)
-        {
-            CloseArea();
-        }
-
-        var existing = Input.Text.TrimEnd('\r', '\n');
-        Input.Text = existing.Length == 0 ? text : existing + "\r\n" + text;
-        Input.Select(Input.TextLength, 0);
-        Announce("Line copied", true);
-        GoTo(Input);
-    }
+    protected override (string Field, string Said) WithLine(string existing, int number, int count, string line) =>
+        (existing.Length == 0 ? line : existing + "\r\n" + line, "Line copied");
 
     /// <summary>
     /// Ctrl+R (AT-3.6): the window's recent commands as a list in the field's place, the newest first; Enter puts the
