@@ -522,6 +522,12 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     `Documents\axKit\Claude`, where Claude Code keeps its notes for the user (ai-help.md AH-D6; `Documents\axKit
     Claude` until 2026-11-23, which stays in use on the same rule). A later app with content of the
     user's own puts it in a folder of its own beside them.
+  - The update moves them in (the maintainer's choice of 2026-11-23, "Move both on update";
+    `AppPaths.TakeOverUserFolders`, at the start of every process before anything reads a setting, never in a test
+    run): `Documents\Tasks` into `Tasks` when it holds axTask's lists and axTask's settings do not name it as a
+    folder the user chose; `Documents\axKit Claude` into `Claude` unless AI help's settings name it. Entry by entry,
+    so that a move held up by a file in use finishes at a later start, the old folder in use meanwhile (the rule
+    above). Claude Code finds its conversations by the folder's path, so axHelp starts a new one after the move.
   - The test of which place: nothing under `Documents\axKit` is needed for axKit to run, and deleting any of it
     breaks nothing (a list's `list.json` is written again); and the content is the user's, not axKit's.
   - Why it matters most in the Store's copy: AppData is the package's private folder there (AX-5.5, AX-13.5),

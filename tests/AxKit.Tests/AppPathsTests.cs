@@ -26,6 +26,32 @@ public sealed class AppPathsTests
         Assert.DoesNotContain("AppData", AppPaths.UserFolder, StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>AX-5.11: an update moves Documents\Tasks only when it holds axTask's lists, since the name is a common one.</summary>
+    [Fact]
+    public void A_folder_is_axTasks_only_when_it_holds_a_list_or_a_smart_list()
+    {
+        using var temp = new TempFolder("axkit-tests");
+        Assert.False(AppPaths.IsTaskFolder(Path.Combine(temp.Path, "missing")));
+        temp.File(@"Tasks\notes.txt", "another program's");
+        Assert.False(AppPaths.IsTaskFolder(Path.Combine(temp.Path, "Tasks")));
+        temp.File(@"Tasks\Home\list.json", "{}");
+        Assert.True(AppPaths.IsTaskFolder(Path.Combine(temp.Path, "Tasks")));
+        temp.File(@"Smart\All tasks.filter.json", "{}");
+        Assert.True(AppPaths.IsTaskFolder(Path.Combine(temp.Path, "Smart")));
+    }
+
+    /// <summary>AX-5.11: a folder the user chose in a settings file is never moved by an update.</summary>
+    [Fact]
+    public void A_settings_file_names_a_folder_whatever_its_case_and_last_separator()
+    {
+        Assert.True(AppPaths.NamesFolder("""{ "folder": "D:\\Docs\\Tasks\\" }""", "folder", @"d:\docs\tasks"));
+        Assert.True(AppPaths.NamesFolder("""{ "WorkingFolder": "D:\\Docs\\axKit Claude" }""", "workingFolder", @"D:\Docs\axKit Claude"));
+        Assert.False(AppPaths.NamesFolder("""{ "folder": "D:\\Lists" }""", "folder", @"D:\Docs\Tasks"));
+        Assert.False(AppPaths.NamesFolder("""{ "folder": null }""", "folder", @"D:\Docs\Tasks"));
+        Assert.False(AppPaths.NamesFolder(null, "folder", @"D:\Docs\Tasks"));
+        Assert.False(AppPaths.NamesFolder("{ not json", "folder", @"D:\Docs\Tasks"));
+    }
+
     /// <summary>AX-5.11: axTask's lists are in the new place, but for someone whose lists are in Documents\Tasks and nowhere else.</summary>
     [Fact]
     public void The_tasks_folder_is_the_new_one_unless_only_the_earlier_one_is_there()

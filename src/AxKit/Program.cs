@@ -73,6 +73,8 @@ internal static class Program
         SystemPrograms.KeepCurrentFolderOffSearches();
         // The folders of Axit, the bundle's name up to 4.0.0, taken over before anything reads a setting (AX-5.4).
         AppPaths.TakeOverOldFolders();
+        // What the user keeps, moved into Documents\axKit by the first start of a version that keeps it there (AX-5.11).
+        AppPaths.TakeOverUserFolders();
         ApplicationConfiguration.Initialize();
         // AX-7.7: the windows are light or dark as Windows is; a high contrast theme takes over as it always has.
         Application.SetColorMode(SystemColorMode.System);

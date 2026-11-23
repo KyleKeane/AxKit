@@ -59,7 +59,9 @@ axPreview, which reads the text in it without Claude.
 ## axHelp's folder and model
 
 Claude works in its own folder, Documents, axKit, Claude (Actions, Claude's working folder opens it in axFile). Its
-conversations, the permissions you give with "always" and its instructions stay there, apart from your projects. The
+conversations, the permissions you give with "always" and its instructions stay there, apart from your projects.
+Until November 2026 the folder was Documents, axKit Claude; an update moves it, and axHelp then starts a new
+conversation, with your instructions and permissions kept. The
 file CLAUDE.md there holds Claude's standing instructions for axHelp, short spoken replies among them; change it as you
 like. The folder `.claude\agents` holds the agent.
 

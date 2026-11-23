@@ -426,9 +426,10 @@ file of the working folder.
   first needed and opened from the menu, gathers it and gives the user one place to write Claude standing
   instructions. The allowed folders stay what they were, `--add-dir` each. It was `Documents\axKit Claude` until
   2026-11-23, when the maintainer chose to move it into axKit's folder of what the user keeps (bundle AX-5.11); an
-  existing `Documents\axKit Claude` stays in use while the new folder is not there (`AiSettings.WorkingFolderFor`).
-  Claude Code finds its sessions by the folder's name, so a conversation of the old folder is taken up only there:
-  the user moves the folder's contents himself when he wants them in the new place.
+  update moves an existing `Documents\axKit Claude` in at its first start, unless the settings name it
+  (`AppPaths.TakeOverUserFolders`, his choice, "Move both on update"); while it cannot be moved it stays in use
+  (`AiSettings.WorkingFolderFor`). Claude Code finds its sessions by the folder's path, so axHelp starts a new
+  conversation after the move; the folder's CLAUDE.md and the permissions given with "always" move with it.
 - **AH-D7 The guides as files, the instruction as a rule file** (2026-11-15, AH-7). Three ways to tell Claude about
   the guides were weighed. A line in the working folder's CLAUDE.md reaches only new folders: the file is the user's
   and is written once. Claude Code's `--append-system-prompt` works in print mode and in a conversation, but Claude

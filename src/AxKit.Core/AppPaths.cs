@@ -32,10 +32,105 @@ public static class AppPaths
     /// <summary>
     /// axTask's top folder of lists when the user set none (docs/axKit/SPEC.md AX-5.11): <c>Tasks</c> in
     /// <see cref="UserFolder"/>; for someone whose lists are in <c>Documents\Tasks</c> already, the default until
-    /// 2026-11-23, and who has none in the new place, that folder still. Asked of the disk once, as the process starts.
+    /// 2026-11-23, and who has none in the new place, that folder still (an update moves it, <see cref="TakeOverUserFolders"/>;
+    /// one that could not be moved stays in use). Asked of the disk at each use, so that it is asked after that move.
     /// </summary>
-    public static string TasksFolder { get; } =
+    public static string TasksFolder =>
         TasksFolderFor(UserFolder, Path.Combine(Path.GetDirectoryName(UserFolder)!, "Tasks"), Directory.Exists);
+
+    /// <summary>
+    /// The first start of a version that keeps the user's content in <see cref="UserFolder"/> (AX-5.11; the
+    /// maintainer's choice of 2026-11-23, "Move both on update"): what the earlier defaults held moves in, by
+    /// <see cref="TakeOverFolder"/>, entry by entry, so that a start that could not move everything (OneDrive or an
+    /// older axTask holding a file) finishes the next time, and the folder not yet moved stays in use meanwhile.
+    /// <c>Documents\Tasks</c> into <c>Tasks</c>, only when it holds axTask's lists (<see cref="IsTaskFolder"/>: the
+    /// name is a common one) and axTask's settings do not name it as a folder the user chose; <c>Documents\axKit
+    /// Claude</c> into <c>Claude</c>, unless AI help's settings name it. Claude Code finds its conversations by the
+    /// folder's path, so axHelp starts a new conversation after the move; the folder's own files, its CLAUDE.md and
+    /// its permissions, move with it. Never in a test run, whose folders are its own.
+    /// </summary>
+    public static void TakeOverUserFolders()
+    {
+        if (AutomationEnvironment.Home is not null)
+        {
+            return;
+        }
+
+        var documents = Path.GetDirectoryName(UserFolder)!;
+        var tasks = Path.Combine(documents, "Tasks");
+        if (IsTaskFolder(tasks) && !NamesFolder(ReadOrNull(SettingsFile("axTask")), "folder", tasks))
+        {
+            TakeOverFolder(tasks, Path.Combine(UserFolder, "Tasks"));
+        }
+
+        var claude = Path.Combine(documents, "axKit Claude");
+        if (Directory.Exists(claude) && !NamesFolder(ReadOrNull(AiHelpFile), "workingFolder", claude))
+        {
+            TakeOverFolder(claude, Path.Combine(UserFolder, "Claude"));
+        }
+    }
+
+    /// <summary>Whether a folder holds axTask's lists: a <c>list.json</c> in it or in a folder of it, or a smart list (<c>.filter.json</c>).</summary>
+    public static bool IsTaskFolder(string folder)
+    {
+        try
+        {
+            return Directory.Exists(folder)
+                && (File.Exists(Path.Combine(folder, "list.json"))
+                    || Directory.EnumerateFiles(folder, "*.filter.json").Any()
+                    || Directory.EnumerateDirectories(folder).Any(list => File.Exists(Path.Combine(list, "list.json"))));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>Whether a settings file's text names <paramref name="folder"/> in its property <paramref name="name"/> (case and a last separator not minded); false for no text and a text that does not read.</summary>
+    public static bool NamesFolder(string? settingsText, string name, string folder)
+    {
+        if (string.IsNullOrWhiteSpace(settingsText))
+        {
+            return false;
+        }
+
+        try
+        {
+            using var document = System.Text.Json.JsonDocument.Parse(settingsText, new System.Text.Json.JsonDocumentOptions { CommentHandling = System.Text.Json.JsonCommentHandling.Skip, AllowTrailingCommas = true });
+            if (document.RootElement.ValueKind != System.Text.Json.JsonValueKind.Object)
+            {
+                return false;
+            }
+
+            foreach (var member in document.RootElement.EnumerateObject())
+            {
+                if (string.Equals(member.Name, name, StringComparison.OrdinalIgnoreCase)
+                    && member.Value.ValueKind == System.Text.Json.JsonValueKind.String
+                    && member.Value.GetString() is { Length: > 0 } named)
+                {
+                    return string.Equals(Path.TrimEndingDirectorySeparator(Path.GetFullPath(named)), Path.TrimEndingDirectorySeparator(Path.GetFullPath(folder)), StringComparison.OrdinalIgnoreCase);
+                }
+            }
+
+            return false;
+        }
+        catch (Exception ex) when (ex is System.Text.Json.JsonException or ArgumentException or NotSupportedException or PathTooLongException)
+        {
+            return false;
+        }
+    }
+
+    private static string? ReadOrNull(string path)
+    {
+        try
+        {
+            return File.Exists(path) ? File.ReadAllText(path) : null;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return null;
+        }
+    }
 
     /// <summary>The rule of <see cref="TasksFolder"/>, pure: the new place, unless only the earlier one is there.</summary>
     public static string TasksFolderFor(string userFolder, string earlier, Func<string, bool> exists)
