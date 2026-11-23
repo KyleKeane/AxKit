@@ -6,6 +6,19 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-23: templates in the editors; by the assistant with NVDA listening (branch `axfile-navigator` 07b23771)
+
+`.\nvda-pass.ps1 -Only` every script of axDown, axJSON and axPreview, from the branch's own folder, behind the spoken
+countdown, the maintainer away at his word, NVDA 2025.3.3 with the OneCore voice, Windows 11 Pro 10.0.26200, the
+build 5.10.0 of commit 07b23771, the tree clean: 34 scripts, 219 goals and checks, all passed at the first run.
+
+| What | Scripts | Result |
+|---|---|---|
+| axDown, `18-templates.txt`: Link around a selected word with the address typed between the round brackets, Table with a word typed into its first cell, a template of the user's own from the command palette with the selection carried in, "insert template" in the palette, one undo, the refusal in navigation mode; "Link inserted", "Table inserted", "Meeting inserted" spoken | 1 | Passed |
+| axDown's other scripts, axJSON and axPreview on the editor shell with the templates menu and the Templates folder item | 33 | Passed |
+
+By ear, and the maintainer's: whether "inserted" is the right word, and how the caret's place after a template feels.
+
 ## 2026-11-23: the navigators after four changes from the maintainer's answers; by the assistant with NVDA listening (branch `axfile-navigator` a99a6c08)
 
 `.\nvda-pass.ps1 -Only` every script of the eight navigators (axFile, axGIT, axProcess, axTask, axPass, axMCP,
