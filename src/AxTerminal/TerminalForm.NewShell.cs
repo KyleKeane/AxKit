@@ -251,11 +251,11 @@ internal sealed partial class TerminalForm
             SwitchShell(kind);
         }, AxKit.Core.ConsentTarget.Shell(ShellLauncher.Describe(kind)));
 
-    /// <summary>The bundle's folder picker (one of the few separate windows, AX-7.2), on the folder or the user's profile; null when it was cancelled.</summary>
-    private string? PickFolder(string? start) =>
-        ChooseFolder("Choose the folder the shell starts in", start ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+    /// <summary>What the bundle's folder picker (one of the few separate windows, AX-7.2; the console window's PickFolder) says it is for.</summary>
+    protected override string FolderPickerText => "Choose the folder the shell starts in";
 
-    private void SetFolder(string folder)
+    /// <summary>The folder made the shell's: the one left behind joins Recently closed.</summary>
+    protected override void SetFolder(string folder)
     {
         if (!string.Equals(_folder, folder, StringComparison.OrdinalIgnoreCase))
         {
@@ -266,19 +266,12 @@ internal sealed partial class TerminalForm
         _folder = folder;
     }
 
-    /// <summary>Session → Open recent folder: a shell in that folder, the transcript cleared, with a system line and an announcement.</summary>
-    protected override void SwitchFolder(string folder)
-    {
-        if (!Directory.Exists(folder))
-        {
-            Fail("The folder no longer exists: " + folder);
-            return;
-        }
-
-        SetFolder(folder);
-        Announce($"Folder {PathName.Of(folder)}", false);
+    /// <summary>
+    /// Session → Open recent folder (the console window's SwitchFolder, which checks the folder, sets it and says
+    /// "Folder name" first): a shell in that folder, the transcript cleared, with a system line.
+    /// </summary>
+    protected override void StartInFolder(string folder) =>
         Relaunch($"New session: {ShellName} in {folder}", clearTranscript: true);
-    }
 
     /// <summary>Session → Show current folder in → File Explorer (Ctrl+W): the shell's current directory, one of the system's own windows; "Folder missing" is the base's (AX-9.10).</summary>
     private void ShowInExplorer() => OpenInExplorer(CurrentDirectory);

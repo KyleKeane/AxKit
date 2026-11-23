@@ -47,7 +47,7 @@ internal sealed partial class MainForm
         // "Claude Code" since 5.7.0: the bundle's axKit menu holds a Claude submenu (AI help, AX-9.1); this menu is the program.
         var claude = new ToolStripMenuItem();
         // The process first (FR-1.8), then the turn.
-        Add(claude, new Command("Force Claude to res&tart", AxClaudeKeys.RestartClaude, RestartClaude) { Mark = CommandMark.Act });
+        Add(claude, new Command("Force Claude to res&tart", AxClaudeKeys.RestartClaude, RestartProgram) { Mark = CommandMark.Act });
         claude.DropDownItems.Add(new ToolStripSeparator());
         claude.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Send &message", null, (_, _) => SendInput()) { ShortcutKeyDisplayString = "Enter in the message field" }, CommandMark.Act));
         // Ctrl+Enter, the bundle's main action (AX-8.10 rule 3), sends the message from the field as Enter does: the
@@ -86,12 +86,9 @@ internal sealed partial class MainForm
 
         // The settings: a submenu for each kind, nothing outside one. Each check item is saved as it is toggled.
         var options = new ToolStripMenuItem();
-        var sounds = new ToolStripMenuItem("&Sounds");
-        sounds.DropDownItems.Add(Toggle("&Chimes: ready, sent, replying, done, question", _settings.SoundOnBell, v => _settings.SoundOnBell = v));
-        sounds.DropDownItems.Add(Toggle("&Ticks for new lines and tool calls", _settings.ClickOnNewLine, v => _settings.ClickOnNewLine = v));
-        // FR-7.9: starts or stops at once when toggled during a turn; Ctrl+M anywhere flips the same item.
-        sounds.DropDownItems.Add(CreateMusicItem("&Background music while Claude works", AxClaudeKeys.ToggleMusic));
-        options.DropDownItems.Add(sounds);
+        // Sounds, the console window's menu under axClaude's words. FR-7.9: the music starts or stops at once when
+        // toggled during a turn; Ctrl+M anywhere flips the same item.
+        options.DropDownItems.Add(CreateSoundsMenu("&Chimes: ready, sent, replying, done, question", "&Ticks for new lines and tool calls", "&Background music while Claude works", AxClaudeKeys.ToggleMusic));
         // FR-7.10: the sounds and the words of work in the background, and the pause between the recurring chords.
         options.DropDownItems.Add(CreateBackgroundMenu());
 
@@ -120,11 +117,8 @@ internal sealed partial class MainForm
         announcements.DropDownItems.Add(Toggle("Claude's own &notices, such as \"accept edits on\"", _settings.AnnounceClaudeNotices, v => _settings.AnnounceClaudeNotices = v));
         options.DropDownItems.Add(announcements);
 
-        var done = new ToolStripMenuItem("When Claude is &done");
-        done.DropDownItems.Add(Toggle("&Announce \"Done\"", _settings.AnnounceBell, v => _settings.AnnounceBell = v));
-        done.DropDownItems.Add(Toggle("&Flash the taskbar button", _settings.FlashTaskbar, v => _settings.FlashTaskbar = v));
-        done.DropDownItems.Add(Toggle("&Louder alert when the window is in the background", _settings.BackgroundAlert, v => _settings.BackgroundAlert = v));
-        options.DropDownItems.Add(done);
+        // When Claude is done: the console window's menu; the word's switch is axClaude's own setting.
+        options.DropDownItems.Add(CreateDoneMenu("When Claude is &done", _settings.AnnounceBell, v => _settings.AnnounceBell = v));
 
         // D33: with the list off, what Claude waits on is only announced, as before 1.4.0: no control area, no guard, no waiting screens.
         var questions = new ToolStripMenuItem("&Questions");

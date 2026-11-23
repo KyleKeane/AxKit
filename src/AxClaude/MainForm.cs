@@ -312,20 +312,18 @@ internal sealed partial class MainForm : ConsoleForm
         _ => null,
     };
 
-    protected override bool AskBeforeClosing()
+    /// <summary>
+    /// The Close axClaude? notice (FR-1.7): what Claude is doing, what closing does to it; none while Claude neither
+    /// works nor has work in the background. Enter closes, Escape keeps the window: the buttons are the console
+    /// window's (Close anyway, Keep working).
+    /// </summary>
+    protected override ConsoleQuestion? ClosingQuestion()
     {
         if (!ClaudeBusy && ClaudeBackground is null)
         {
-            return false;
+            return null;
         }
 
-        ConfirmClose();
-        return true;
-    }
-
-    /// <summary>The Close axClaude? notice (FR-1.7): what Claude is doing, what closing does to it. Enter closes, Escape keeps the window.</summary>
-    private void ConfirmClose()
-    {
         var background = ClaudeBackground;
         string state;
         if (ClaudeBusy)
@@ -352,10 +350,10 @@ internal sealed partial class MainForm : ConsoleForm
         var consequence = !RestartPending
             ? $"If you close now, {stops}."
             : $"If you close now, {stops} and the updated axClaude starts again.";
-        ShowNotice(Notice.Ask("Close axClaude?",
+        return new ConsoleQuestion("Close axClaude?",
             $"{state}. {consequence}\n" +
             "What is done so far is saved. Start axClaude again to carry on.",
-            "&Close anyway", CloseConfirmed, "&Keep working", KeepWorkingAfterUpdate));
+            "&Keep working");
     }
 
     /// <summary>Claude is in the middle of a turn: working, waiting for an answer, or holding a message sent while it worked.</summary>

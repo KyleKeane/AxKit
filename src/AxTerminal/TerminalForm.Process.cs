@@ -77,24 +77,19 @@ internal sealed partial class TerminalForm
 
     /// <summary>
     /// Session → Restart shell (Ctrl+Shift+R, AT-1.6): the same shell again in its current directory, the transcript
-    /// kept. A running command is ended only after the Restart the shell? notice; an ended shell starts at once.
+    /// kept. A running command is ended only after the Restart the shell? notice; an ended shell, or one with
+    /// nothing running, starts at once. The steps are the console window's (<see cref="ConsoleForm.RestartProgram"/>):
+    /// the question first while there is one, "Restarting", then <see cref="RestartNow"/>.
     /// </summary>
-    private void RestartShell()
-    {
-        if (ProcessRunning && _model.Running)
-        {
-            ShowNotice(Notice.Ask("Restart the shell?",
+    protected override ConsoleQuestion? RestartQuestion() =>
+        ProcessRunning && _model.Running
+            ? new ConsoleQuestion("Restart the shell?",
                 $"{_model.RunningCommand} is still running. Restarting ends it and starts the shell again in the same folder. The transcript stays in the window.",
-                "&Restart now", ForceRestart, "&Keep it running"));
-            return;
-        }
+                "&Keep it running")
+            : null;
 
-        ForceRestart();
-    }
-
-    private void ForceRestart()
+    protected override void RestartNow()
     {
-        Announce("Restarting", false);
         _folder = Directory.Exists(CurrentDirectory) ? CurrentDirectory : _folder;
         Relaunch("Restarting the shell", clearTranscript: false);
     }

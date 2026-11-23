@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- For developers: what axClaude's and axTerminal's windows each did the same way is one piece of the console window now (framework step 11): the field's keys and a line taken into the field (`ConsoleForm.Field.cs`, `ConsoleKeys`), the Sounds and "When it is done" menus (`ConsoleForm.Options.cs`), and the question before closing, the restart with its question and the switch to another folder (`ConsoleForm.Session.cs`). Nothing changes for the user of either app: the same keys, the same words, the same commands.
 - axMedia: **Ctrl+Enter now plays, as well as pausing and resuming.** With files in the queue and nothing playing it plays the file you are on, "Playing 03 Chapter 3.mp3". Until now it said "Nothing playing".
 - axMedia: when axFile adds a file with Ctrl+Shift+Q and axMedia was not open, the axMedia window that opens now says "Added 1" as you arrive in it. Windows can bring that new window to the front, and then what axFile said was lost.
 - axKit: two windows of one app closed at the same instant no longer lose a setting that one of them changed. The save of a settings file is kept apart from another window's save of the same file.

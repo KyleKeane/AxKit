@@ -302,7 +302,17 @@ NVDA pass recorded. A piece that changes what a user does updates the app's spec
     The first part is built, 2026-11-22 (`ConsoleForm.Field.cs`, `ConsoleKeys`): Enter and the Escape guard in
     the field, Ctrl+Enter as a command, a line taken into the field, and the places on Alt+1 to Alt+3. Nothing
     changed for the user in either app; what is sent, the guard's words and the shape of a taken line stay each
-    app's.
+    app's. The second and third parts are built the same day: Options, Sounds and "When … is done"
+    (`ConsoleForm.Options.cs`), and the question before closing, the restart with its question and the switch to
+    another folder (`ConsoleForm.Session.cs`), each as the console window's steps over the app's own words and
+    conditions. Left where they are, each for a reason, and open to the maintainer's word: the Session menu (the
+    two share an order and four items, and each has its own block in the middle, so a builder would be slots
+    around almost nothing); the speech choice (two enumerations of the two apps' own); stopping the program and
+    its end (all but one line is each app's own); the consent before the first start (the shared piece is the
+    window base's `HasConsent` already); and the guards of a key sent while nothing runs, where the two differ in
+    behaviour: axTerminal says "The shell ended" on every such key, axClaude says "Claude stopped" for a message
+    and nothing for Interrupt, Send key and Next permission mode. Making axClaude say it there too is a change of
+    what axClaude does, and is a line of the step's item for his word.
 12. The hotkey window's list as the canonical list, and axHelp's text and field as the conversation's components.
 
 **E. axFile, last and with the most care**

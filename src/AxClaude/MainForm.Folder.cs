@@ -29,12 +29,11 @@ internal sealed partial class MainForm
         OpenInExplorer(_folder);
     }
 
-    /// <summary>The bundle's folder picker (one of the few separate windows, D23), on the folder or the user's profile; null when it was cancelled.</summary>
-    private string? PickFolder(string? start) =>
-        ChooseFolder("Choose the project folder for Claude", start ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+    /// <summary>What the bundle's folder picker (one of the few separate windows, D23; the console window's PickFolder) says it is for.</summary>
+    protected override string FolderPickerText => "Choose the project folder for Claude";
 
     /// <summary>Makes the folder the project folder: the title and the status bar follow, and the default arguments apply there again (FR-9.1).</summary>
-    private void SetFolder(string folder)
+    protected override void SetFolder(string folder)
     {
         if (_folder is { } old && !string.Equals(old, folder, StringComparison.OrdinalIgnoreCase))
         {
@@ -69,19 +68,12 @@ internal sealed partial class MainForm
     /// <summary>The project folder, for the bundle's Recently closed list (AX-9.4).</summary>
     protected override string? PathInHand => _folder;
 
-    /// <summary>Restarts Claude in another folder (Open folder, Open recent folder), with a system line and an announcement.</summary>
-    protected override void SwitchFolder(string folder)
-    {
-        if (!Directory.Exists(folder))
-        {
-            Fail("The folder no longer exists: " + folder);
-            return;
-        }
-
-        SetFolder(folder);
-        Announce($"Folder {PathName.Of(folder)}", false);
-        // Another folder is another conversation (FR-8.3): the window is cleared, and what Claude prints there, a
-        // replay with its blocks when the folder has one, arrives as at the first start of the app.
+    /// <summary>
+    /// Claude again in another folder (Open folder, Open recent folder; the console window's SwitchFolder, which
+    /// checks the folder, sets it and says "Folder name" first), with a system line. Another folder is another
+    /// conversation (FR-8.3): the window is cleared, and what Claude prints there, a replay with its blocks when
+    /// the folder has one, arrives as at the first start of the app.
+    /// </summary>
+    protected override void StartInFolder(string folder) =>
         Relaunch($"Project folder changed to {folder}", clearConversation: true);
-    }
 }

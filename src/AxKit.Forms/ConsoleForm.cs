@@ -84,11 +84,8 @@ public abstract partial class ConsoleForm : ConversationForm
     /// <summary>The program's process ended with <paramref name="code"/>, its last output in and the process stopped: the window's system line and announcement.</summary>
     protected abstract void OnProcessExited(int code);
 
-    /// <summary>Alt+F4 with the program in the middle of something: true when the window asked first (a notice whose Close anyway calls <see cref="CloseConfirmed"/>), false to close now.</summary>
-    protected abstract bool AskBeforeClosing();
-
-    /// <summary>Open recent folder (axClaude FR-8.1, axTerminal AT-1.5): the program again in that folder.</summary>
-    protected abstract void SwitchFolder(string folder);
+    // The question before closing, the restart with its question and the switch to another folder are in
+    // ConsoleForm.Session.cs: the steps are the console window's, the words and the conditions each app's.
 
     // ---- the window base's hooks, filled in for both console windows ----
 

@@ -61,7 +61,7 @@ internal sealed partial class TerminalForm
         session.DropDownItems.Add(installPwsh);
         session.DropDownItems.Add(installBash);
         session.DropDownItems.Add(new ToolStripSeparator());
-        Add(session, new Command("Res&tart shell", AxTerminalKeys.RestartShell, RestartShell) { Mark = CommandMark.Act });
+        Add(session, new Command("Res&tart shell", AxTerminalKeys.RestartShell, RestartProgram) { Mark = CommandMark.Act });
         Add(session, new Command("&Clear transcript", AxTerminalKeys.ClearTranscript, ClearTranscript) { Mark = CommandMark.Change });
         session.DropDownItems.Add(new ToolStripSeparator());
         Add(session, new Command("Say current fol&der", AxTerminalKeys.SayFolder, SayFolder) { Mark = CommandMark.Read });
@@ -102,11 +102,8 @@ internal sealed partial class TerminalForm
 
         // The settings: a submenu for each kind, nothing outside one. Each check item is saved as it is toggled.
         var options = new ToolStripMenuItem();
-        var sounds = new ToolStripMenuItem("&Sounds");
-        sounds.DropDownItems.Add(Toggle("&Chimes: ready, sent, done, question", _settings.SoundOnBell, v => _settings.SoundOnBell = v));
-        sounds.DropDownItems.Add(Toggle("&Ticks for new lines", _settings.ClickOnNewLine, v => _settings.ClickOnNewLine = v));
-        sounds.DropDownItems.Add(CreateMusicItem("&Background music while a command runs", AxTerminalKeys.ToggleMusic));
-        options.DropDownItems.Add(sounds);
+        // Sounds, the console window's menu under axTerminal's words.
+        options.DropDownItems.Add(CreateSoundsMenu("&Chimes: ready, sent, done, question", "&Ticks for new lines", "&Background music while a command runs", AxTerminalKeys.ToggleMusic));
 
         // AT-5.3: one of two, shown checked like a radio group; the choice is announced, since the menu closes on it.
         var speech = new ToolStripMenuItem("S&peech");
@@ -116,12 +113,9 @@ internal sealed partial class TerminalForm
         speech.DropDownItems.Add(Toggle("Say &when a program asks", _settings.AnnounceQuestions, v => _settings.AnnounceQuestions = v));
         options.DropDownItems.Add(speech);
 
-        var done = new ToolStripMenuItem("When a command is &done");
-        // AT-5.1: the word, as axClaude's Options, When Claude is done, Announce "Done"; each app has its own.
-        done.DropDownItems.Add(Toggle("&Announce \"Done\"", _settings.AnnounceDone, v => _settings.AnnounceDone = v));
-        done.DropDownItems.Add(Toggle("&Flash the taskbar button", _settings.FlashTaskbar, v => _settings.FlashTaskbar = v));
-        done.DropDownItems.Add(Toggle("&Louder alert when the window is in the background", _settings.BackgroundAlert, v => _settings.BackgroundAlert = v));
-        options.DropDownItems.Add(done);
+        // When a command is done: the console window's menu. AT-5.1: the word, as axClaude's Options, When Claude is
+        // done, Announce "Done"; each app has its own switch for it.
+        options.DropDownItems.Add(CreateDoneMenu("When a command is &done", _settings.AnnounceDone, v => _settings.AnnounceDone = v));
 
         options.DropDownItems.Add(CreateTextMenu(TranscriptTextItems()));
         options.DropDownItems.Add(CreateGeneralMenu());

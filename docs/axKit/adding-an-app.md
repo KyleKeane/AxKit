@@ -57,7 +57,7 @@ Its own code is the outline and the commands (pure, in its Core, tested), its ke
 `EditorKeys.All` plus its letters) and its texts. An app around a program in a pseudo console derives its window from
 `AxKit.Forms/ConsoleForm`, as axClaude and axTerminal do: its settings class from `AxKit.Core/ConsoleSettings`, its model
 from `AxKit.Core/Transcript/LineStore`, and the window fills in the console hooks (`Working`, `OnTranscriptChanged`,
-`UpdateStatus`, `OnProcessExited`, `AskBeforeClosing`, `SwitchFolder`, `ProcessConsoleKey`) besides
+`UpdateStatus`, `OnProcessExited`, `ProcessConsoleKey`; for the field `SendField`, `SendFieldName`, `EscapeGuardText` and `WithLine`; for the session `ClosingQuestion`, `RestartQuestion`, `RestartNow`, `FolderPickerText`, `SetFolder` and `StartInFolder`) besides
 the base's. The rest of this section is for a window of a new kind.
 
 - `AxThing.csproj` (net10.0-windows, WinForms), referencing `AxThing.Core`, `AxKit.Core` and `AxKit.Forms`, embedding

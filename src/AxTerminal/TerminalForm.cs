@@ -147,20 +147,18 @@ internal sealed partial class TerminalForm : ConsoleForm
     /// After Update and restart, Keep running keeps the installed update for the next start and says so, as axClaude's
     /// Keep working does (bundle AX-3.5; until 2026-11-09 the restart was dropped without a word).
     /// </summary>
-    protected override bool AskBeforeClosing()
+    protected override ConsoleQuestion? ClosingQuestion()
     {
         if (!ProcessRunning || !_model.Running)
         {
-            return false;
+            return null;
         }
 
         var consequence = RestartPending
             ? "Closing the window ends the shell and the command with it, and the updated axTerminal starts again."
             : "Closing the window ends the shell and the command with it.";
-        ShowNotice(Notice.Ask("A command is still running",
-            $"{_model.RunningCommand} is still running. {consequence}",
-            "&Close anyway", CloseConfirmed, "&Keep running", KeepWorkingAfterUpdate));
-        return true;
+        // The buttons are the console window's: Close anyway, and Keep running.
+        return new ConsoleQuestion("A command is still running", $"{_model.RunningCommand} is still running. {consequence}", "&Keep running");
     }
 
     // ---- what the window base and the console window ask for (bundle AX-6.5) ----

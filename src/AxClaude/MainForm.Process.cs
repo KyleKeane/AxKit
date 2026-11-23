@@ -15,14 +15,15 @@ internal sealed partial class MainForm
 
     /// <summary>
     /// Claude → Force Claude to restart (Ctrl+Shift+R, FR-1.8): the same folder and arguments; the conversation
-    /// stays. A running Claude is stopped only after the Force Claude to restart? notice; a stopped one starts at once.
+    /// stays. A running Claude is stopped only after the Force Claude to restart? notice; a stopped one starts at
+    /// once. The steps are the console window's (<see cref="ConsoleForm.RestartProgram"/>): the question first
+    /// while there is one, "Restarting", then <see cref="RestartNow"/>.
     /// </summary>
-    private void RestartClaude()
+    protected override ConsoleQuestion? RestartQuestion()
     {
         if (!ProcessRunning)
         {
-            ForceRestart();
-            return;
+            return null;
         }
 
         var state = !ClaudeBusy ? string.Empty
@@ -33,16 +34,12 @@ internal sealed partial class MainForm
             state += $"Claude has work running in the background ({background}). ";
         }
 
-        ShowNotice(Notice.Ask("Force Claude to restart?",
+        return new ConsoleQuestion("Force Claude to restart?",
             state + "Restarting immediately quits Claude Code and terminates any processes it runs in the background, then starts it again in the same folder with the same options. The conversation stays in the window.",
-            "&Restart now", ForceRestart, "&Keep Claude running"));
+            "&Keep Claude running");
     }
 
-    private void ForceRestart()
-    {
-        Announce("Restarting", false);
-        Relaunch("Restarting Claude");
-    }
+    protected override void RestartNow() => Relaunch("Restarting Claude");
 
     /// <summary>FR-13.2: Claude Code's version, asked once for each program file in a run of the app; null until Claude has been found once (FR-13.3 names it).</summary>
     private string? _claudeVersion;
