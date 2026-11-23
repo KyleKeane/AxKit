@@ -207,11 +207,18 @@ answer to a key.
   "No templates yet: Ctrl+N makes one". Filter and Sort by are the navigator's (bundle AX-8.17); Space selects
   (AX-8.16); type-to-find and the edge sound are the list's.
 - TP-8.3 **The second pane is the template's fields** (the navigator's pane of fields, IA-2.3): Title, Text, and
-  the checks of TP-2.2. Tab goes to it and back. Enter on a field changes it as in every item window (IA-5): Text
-  in a field of several lines, a check with Space or Enter, Right and Left.
-- TP-8.4 **On a template**: Enter goes to its fields. Ctrl+N makes a new one: a notice asks its name, the item is
+  the checks of TP-2.2, for reading. Tab goes to it and back. Enter on a field opens the template's form in that
+  field (TP-8.3a); a check also changes with Space, Right and Left in place.
+- TP-8.3a **The template's form** (the maintainer, 2026-11-23: "axtemplate should work like axtask in that enter on
+  any template should open a form with all fields. axtemplate should have a read only preview in the details pane
+  like axtask. enter on an item in the details view should just open the form and can place the focus on that
+  element in the list"): Enter on a template opens one form with every field, the item window's form, the same as
+  axTask's (bundle AX-8.10 rule 17): the name, the Text in a box of several lines, a check box for each place.
+  Ctrl+Enter or Save writes every change as one step, which Ctrl+Z takes back; a new name renames the file, and a
+  name another template has is refused in the form, the focus in the name. Escape leaves, nothing changed.
+- TP-8.4 **On a template**: Enter opens its form (TP-8.3a). Ctrl+N makes a new one: a notice asks its name, the item is
   made with an empty text and no check, and it is selected; a name another template has, whatever its capitals,
-  is refused with the notice kept. F2 renames it in place (bundle AX-8.7), and so does its Title field; its file
+  is refused with the notice kept. F2 renames it in place (bundle AX-8.7), and so does its form's name; its file
   is renamed with it. Delete deletes the template, or the selected ones, after a question that names it or their
   count (TP-D9). Ctrl+Z takes back the last change, whichever it was: a field, a rename, a new template, a
   deletion; up to fifty, for as long as the window is open, and never over a file that changed on disk since

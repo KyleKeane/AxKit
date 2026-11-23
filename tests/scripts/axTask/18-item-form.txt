@@ -22,9 +22,9 @@ expect state "notice":"Fields of Fix the tap"
 expect focus "name":"Type the title","role":"Text","value":"Fix the tap"
 expect said ♪ FormOpen
 expect said Fields of Fix the tap, form
-refuse said The fields of Fix the tap, in the order of its list
+refuse said The fields of Fix the tap. Tab moves
 keys ctrl+q
-expect said ! The fields of Fix the tap, in the order of its list
+expect said ! The fields of Fix the tap. Tab moves
 expect said 1 more field kept: Sprint
 keys tab
 expect focus "name":"Done"

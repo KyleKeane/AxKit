@@ -57,7 +57,7 @@ Only in a test run, on a desktop of its own, never in your windows.
 
 ## 2. The functions
 
-A function is a command of a window (`docs/axKit/command-language.md`): 1898 in the inventory, of which 280 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
+A function is a command of a window (`docs/axKit/command-language.md`): 1896 in the inventory, of which 278 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
 
 ### The marks, and the events a command of each mark ends in
 
@@ -89,7 +89,7 @@ A function is a command of a window (`docs/axKit/command-language.md`): 1898 in 
 - `help`, the Help menu: The keys (F1), the user guide, the command palette, sending a report (F4), about, diagnostics and the key test.
   - 284 commands in 18 apps: read 162, open 18, act 104.
 - `keys-alone`: Commands that are a key with no menu item, because their meaning depends on where the focus is: Tab between panes, Enter on a row, Right into a list, F3 for find next. An AI tool never runs these.
-  - 280 rows of the inventory.
+  - 278 rows of the inventory.
 - `control-keys`: Not commands at all: the keys a control handles itself, the arrows in a list or a text and typing in a field. The inventory does not hold them; the families of keys do.
 
 ## 3. The events
@@ -455,7 +455,7 @@ Very short, right after your key and over before NVDA speaks. Each says how the 
   - Chosen: Asked 2026-10-22; made louder and given its upper note on 2026-10-23 after it was lost under speech. Not chosen from candidates.
   - Switch: None: it always plays.
   - The sound of: `nothing-found`, `edge`, `no-command`, `refused`.
-  - Played from 20 files: AxFile/FileForm.Browse.cs, AxFile/FileForm.Completion.cs, AxKit.Forms/AxKitForm.cs, AxKit.Forms/AxKitForm.Modes.cs, AxKit.Forms/AxKitForm.Notices.cs, AxKit.Forms/AxKitList.cs, AxKit.Forms/AxKitTextBox.cs, AxKit.Forms/EditKeys.cs, AxKit.Forms/ItemForm.cs, AxKit.Forms/ItemForm.Fields.cs, AxKit.Forms/ListSelection.cs, AxKit.Forms/OverlayPanel.cs, AxKit.Forms/TextEditorForm.cs, AxKit.Forms/TranscriptView.cs, AxTask/TaskForm.Actions.cs, AxTask/TaskForm.Approvals.cs, AxTask/TaskForm.Commands.cs, AxTask/TaskForm.cs, AxTask/TaskForm.Projects.cs, AxTerminal/TerminalForm.Input.cs.
+  - Played from 21 files: AxFile/FileForm.Browse.cs, AxFile/FileForm.Completion.cs, AxKit.Forms/AxKitForm.cs, AxKit.Forms/AxKitForm.Modes.cs, AxKit.Forms/AxKitForm.Notices.cs, AxKit.Forms/AxKitList.cs, AxKit.Forms/AxKitTextBox.cs, AxKit.Forms/EditKeys.cs, AxKit.Forms/FormControls.cs, AxKit.Forms/ItemForm.cs, AxKit.Forms/ItemForm.Fields.cs, AxKit.Forms/ListSelection.cs, AxKit.Forms/OverlayPanel.cs, AxKit.Forms/TextEditorForm.cs, AxKit.Forms/TranscriptView.cs, AxTask/TaskForm.Actions.cs, AxTask/TaskForm.Approvals.cs, AxTask/TaskForm.Commands.cs, AxTask/TaskForm.cs, AxTask/TaskForm.Projects.cs, AxTerminal/TerminalForm.Input.cs.
 - `Heading`: G4 leaping an octave to G5, 85 ms.
   - Chosen: Asked 2026-11-11. Not chosen from candidates.
   - Switch: Options, Text, Sound on headings, in every window.

@@ -698,7 +698,7 @@ Starts with: Open axTask with the folder tasks.
     You hear the sound FormOpen.
     You hear: Fields of Fix the tap, form.
 2. Press Ctrl+Q (Read in full; Context menu).
-    You hear: The fields of Fix the tap, in the order of its list.
+    You hear: The fields of Fix the tap. Tab moves.
     You hear: 1 more field kept: Sprint.
 3. Press Tab 8 times.
 

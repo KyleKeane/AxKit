@@ -917,7 +917,7 @@ Steps and keys: `docs/axKit/workflows/axTemplate.md` (in Claude's working folder
 
 1. **Make, write, rename and delete a template in axTemplate's browser**
     - Make a template
-    - Write the text of a template
+    - Write the text of a template in its form
     - Rename a template
     - Delete a template and bring it back
     - Rename a template from its Title field

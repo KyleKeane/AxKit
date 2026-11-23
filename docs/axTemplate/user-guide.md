@@ -33,7 +33,7 @@ How the caret gets to its place: where the program shows its text to screen read
 
 - Up, Down, Home and End move through the templates. Typing the start of a name jumps to it.
 - Ctrl+N makes a new template: a notice asks its name. Enter adds it, with an empty text.
-- Enter or Tab goes to the template's fields, on the right. Escape or Tab comes back.
+- Enter opens the template's form: every field in one place, the name first, then the Text, then the checks. Tab or Ctrl+Down goes to the next field, Shift+Tab or Ctrl+Up to the one before. Ctrl+Enter saves everything as one change, which Ctrl+Z takes back; Escape leaves and changes nothing. A new name renames the file too.
 - F2 renames the template. Its file is renamed with it.
 - Delete deletes the template after a question. With several selected (Space selects), it deletes those, and the question says how many.
 - Ctrl+Z takes back the last change, whichever it was: a field, a rename, a new template, a deletion. It works for as long as the window is open; a template deleted before the window was closed is gone.
@@ -41,11 +41,11 @@ How the caret gets to its place: where the program shows its text to screen read
 - Ctrl+J opens the template's file in axJSON.
 - Ctrl+Q reads every field of the template. F5 reads the templates again.
 
-### The fields, on the right
+### The fields, on the right, to read
 
 - Title is the template's name.
-- Text is what is put in. Enter opens it as a field of several lines: there Enter is a new line, and Ctrl+Enter keeps the text.
-- Then come checks, one for each place inside axKit where the template also shows: Every axKit app first, then one for each app. Space checks or unchecks. These are for a step that is built later, the templates in the command palette of the axKit apps; today they are only kept. The launcher lists every template whatever its checks.
+- Text is what is put in. In the form it is a box of several lines: there Enter is a new line.
+- Then come checks, one for each place inside axKit where the template also shows: Every axKit app first, then one for each app. Space checks or unchecks one right here. Enter on any field opens the form with the focus in that field. These are for a step that is built later, the templates in the command palette of the axKit apps; today they are only kept. The launcher lists every template whatever its checks.
 
 ### The marks in a text
 

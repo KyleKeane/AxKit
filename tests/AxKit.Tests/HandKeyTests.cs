@@ -72,7 +72,6 @@ public sealed partial class HandKeyTests
         ["src/AxTask/TaskForm.Actions.cs"] = 3,
         ["src/AxTask/TaskForm.Commands.cs"] = 16,
         ["src/AxTask/TaskForm.Conversion.cs"] = 2,
-        ["src/AxTask/TaskForm.ItemForm.cs"] = 2,
         ["src/AxTask/TaskForm.Mcp.cs"] = 1,
         ["src/AxTask/TaskForm.Projects.cs"] = 1,
         ["src/AxTask/TaskForm.cs"] = 14,

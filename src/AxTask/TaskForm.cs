@@ -155,10 +155,6 @@ public sealed partial class TaskForm : ItemForm
         AddKey(new Command("Back from the search", ItemKeys.Back, UpLevel) { When = () => InSearch() && Selection.Count == 0, Mark = CommandMark.Open });
         // TK-4.6: Enter on a file that does not read as an item opens it in axJSON; on the gathering lists' row of them it reads the row.
         AddKey(new Command("Open the file in axJSON", ItemKeys.Open, OpenUnreadable) { When = OnUnreadable, Mark = CommandMark.Open });
-        // AF-14.1, AF-14.2: Enter on an item, and on a field of one in the detail pane, opens the item's form
-        // (TaskForm.ItemForm.cs); everywhere else Enter is the shared window's.
-        AddKey(new Command("Open the item's form", ItemKeys.Open, OpenFormOfSelected) { When = OnFormItem, Mark = CommandMark.Open });
-        AddKey(new Command("Change the item in its form", ItemKeys.Open, OpenFormAtField) { When = OnFormField, Mark = CommandMark.Change });
         PlaceControls(_menu);
         Start(path);
     }

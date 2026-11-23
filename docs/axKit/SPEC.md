@@ -733,7 +733,22 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
      choose one thing from, which is one question; and a password asked twice, axPass's master password for a new
      database and an entry's new password, each in the notice's own hidden field, which is emptied as the notice
      closes (S-17).
-
+  15. **Ctrl+Down and Ctrl+Up move to the next and the previous field of any form** (the maintainer, 2026-11-23:
+     "ctrl+up and down should go to next field in a form"), from any of its controls, the edge sound past the first or
+     the last; in a form a box of several lines gives up its paragraph keys, which are the same keys
+     (`FormControls.ProcessCmdKey`). Every form has it, since every form is `FormControls`.
+  16. **Every field of a form has a key, its name and its number**, by which it is focused, its text selected, or the
+     form started in it (`FormControls.Key`, `Focus`, `StartIn`; the maintainer, 2026-11-23: "it should be easy
+     to mark each field in a form with an uuid or number or label that can be used to select it and select its
+     contents or place focus there"). The AI tools, a find by a field's name and a navigation mode in a form build on
+     these keys (their item in the priorities list).
+  17. **The item window's form is one for every app of it** (the maintainer, 2026-11-23: "a form is a form and a detail
+     pane list is a detail pane list and the item list is an item list ... easy to adjust without manual updates in
+     multiple places"): Enter on a row opens the row's form, every field in its document's order, and Enter on a field
+     of the detail pane opens the same form in that field (`AxKit.Forms/ItemForm.Form.cs`, the rules
+     `AxKit.Core/ItemFormRules`). An app says only which rows have a form, with the item's document and what a save
+     writes (`FormOf`, an `ItemFormSource`); axTask and axTemplate do (TK-4.0a, TP-8.3a). The detail pane stays for
+     reading, with its one-key changes (rule 4).
   What Ctrl+Enter does, per app. A window gives the key its main action as a command on `BundleKeys.MainAction`;
   no window's key table holds Ctrl+Enter, and `KeyTests` fails on one that does.
 

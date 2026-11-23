@@ -54,7 +54,8 @@ public sealed class BrowserForm : ItemForm
         actions.DropDownItems.Add(Item("Select &all", SelectAllRows, SelectionKeys.SelectAll, CommandMark.Change));
         actions.DropDownItems.Add(Item("&Deselect all", SelectNoRows, SelectionKeys.SelectNone, CommandMark.Change));
 
-        _templateMenu.DropDownItems.Add(Item("&Open its fields", OpenSelected, ItemKeys.Open, CommandMark.Open));
+
+        _templateMenu.DropDownItems.Add(Item("&Open its form", OpenFormOfSelected, ItemKeys.Open, CommandMark.Open));
         Add(_templateMenu, new Command("&Copy its text", BundleKeys.MainAction, CopySelected) { When = NotRenaming, Mark = CommandMark.Read });
         Add(_templateMenu, new Command("Open its file in ax&JSON", AxTemplateKeys.OpenInJson, OpenInJson) { When = NotRenaming, Mark = CommandMark.Open });
         _templateMenu.DropDownItems.Add(Item("Read in &full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
@@ -65,7 +66,7 @@ public sealed class BrowserForm : ItemForm
         _templateMenu.DropDownItems.Add(Item("Se&lect or deselect", SelectRow, SelectionKeys.Select, CommandMark.Change));
         _templateMenu.DropDownItems.Add(Item("Select to &here", SelectToHere, SelectionKeys.SelectTo, CommandMark.Change));
 
-        _fieldMenu.DropDownItems.Add(CommandPalette.NeverForAiTools(Item("&Change...", ChangeField, ItemKeys.Open, CommandMark.Change)));
+        _fieldMenu.DropDownItems.Add(CommandPalette.NeverForAiTools(Item("&Change...", OpenFormAtField, ItemKeys.Open, CommandMark.Change)));
         _fieldMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
 
         var options = new ToolStripMenuItem("&Options");
@@ -358,6 +359,56 @@ public sealed class BrowserForm : ItemForm
             Announce("Not a template: Ctrl+J opens the file in axJSON to mend", true);
         }
     });
+
+    // ---- the template's form (TP-8.3a): the item window's, as axTask's ----
+
+    /// <summary>
+    /// A template's form (the maintainer, 2026-11-23: "enter on any template should open a form with all fields"):
+    /// the item window's own (ItemForm.Form.cs), the same as axTask's, over the document the pane shows. A new name
+    /// that another template has is refused in the form, and a save writes every change as one step, the file renamed
+    /// with a new Title, as F2 does.
+    /// </summary>
+    protected override ItemFormSource? FormOf(ItemRow row)
+    {
+        if (row.Tag is not TemplateFile { Item: { } item, Text: not null } file)
+        {
+            return null;
+        }
+
+        var shown = ItemView.Document(ItemView.Of(item, _config));
+        return new ItemFormSource(file.Title, shown, (changed, said) => SaveTemplateForm(file, shown, changed, said))
+        {
+            Refuse = changed => TemplateStore.NameRefused(changed.Title.Trim(), Names(), own: file.Title) is { } why ? (ItemDocument.TitleField, why) : null,
+            Note = "The marks {caret}, {selection} and {clipboard} in the Text work as the guide says.",
+        };
+    }
+
+    private void SaveTemplateForm(TemplateFile file, ItemDocument shown, ItemDocument changed, string said)
+    {
+        if (!Fresh(file))
+        {
+            return;
+        }
+
+        var name = changed.Title.Trim().Length > 0 ? changed.Title.Trim() : file.Title;
+        var parts = new List<FileChange> { FileChange.Write(file.Path, file.Text, ItemView.Changed(file.Item!, shown, changed, _config).ToText()) };
+        var to = file.Path;
+        if (name != file.Title)
+        {
+            to = ItemFiles.FreePath(_folder, ItemFiles.FileStem(name), ".json", own: file.Path);
+            // A change of capitals alone keeps the file: Windows holds both names for the same one.
+            if (!string.Equals(to, file.Path, StringComparison.OrdinalIgnoreCase))
+            {
+                parts.Add(FileChange.Move(file.Path, to));
+            }
+            else
+            {
+                to = file.Path;
+            }
+        }
+
+        Commit(new Step(parts, said), to);
+    }
 
     // ---- the changes (IA-5.4, IA-5.5) ----
 

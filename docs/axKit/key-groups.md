@@ -175,7 +175,6 @@ The keys:
 - Enter, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Open.
 - Enter, axAutomate, axMCP, axPass, axTask and axTemplate: Change the field.
 - Enter, axCalc: Answer.
-- Enter, axTask: Change the item in its form.
 - Enter, axProcess: Details.
 - Enter, axFile: Go to the action's place.
 - Enter, axTask: Open it where it lives.
@@ -183,7 +182,6 @@ The keys:
 - Enter, axHelp: Open the conversation.
 - Enter, axPreview: Open the detail.
 - Enter, axTask: Open the file in axJSON.
-- Enter, axTask: Open the item's form.
 - Enter, axClip: Paste.
 - Enter, axTemplate: Put in.
 - Enter, axMCP: Read the resource.

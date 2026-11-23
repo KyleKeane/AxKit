@@ -578,7 +578,8 @@ public abstract partial class ItemForm : AxKitForm
         Shared(new Command("Up a level", ItemKeys.UpAlso, UpLevel) { When = InNavigator, Mark = CommandMark.Open });
         Shared(new Command("Previous section", ItemKeys.PreviousSection, () => JumpSection(-1)) { When = InNavigator, Mark = CommandMark.Open });
         Shared(new Command("Next section", ItemKeys.NextSection, () => JumpSection(1)) { When = InNavigator, Mark = CommandMark.Open });
-        Shared(new Command("Open", ItemKeys.Open, OpenSelected) { When = InNavigator, Mark = CommandMark.Open });
+        // Enter opens the row's form where the app gives one (ItemForm.Form.cs), and does Enter's own work elsewhere.
+        Shared(new Command("Open", ItemKeys.Open, OpenFormOfSelected) { When = InNavigator, Mark = CommandMark.Open });
         if (HasDetailPane)
         {
             Shared(new Command("To the detail pane", ItemKeys.OtherPane, () => DetailPane.Select()) { When = InNavigator, Mark = CommandMark.Open });
@@ -636,7 +637,7 @@ public abstract partial class ItemForm : AxKitForm
         }
 
         // The detail pane's keys.
-        Shared(new Command("Change the field", ItemKeys.Open, ChangeField) { When = InDetail, Mark = CommandMark.Change });
+        Shared(new Command("Change the field", ItemKeys.Open, OpenFormAtField) { When = InDetail, Mark = CommandMark.Change });
         Shared(new Command("To the navigator", ItemKeys.OtherPane, () => Navigator.Select()) { When = InDetail, Mark = CommandMark.Open });
         Shared(new Command("To the navigator", ItemKeys.OtherPaneBack, () => Navigator.Select()) { When = InDetail, Mark = CommandMark.Open });
         Shared(new Command("To the navigator", ItemKeys.Back, () => Navigator.Select()) { When = InDetail, Mark = CommandMark.Open });

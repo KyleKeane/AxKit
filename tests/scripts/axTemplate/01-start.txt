@@ -42,15 +42,41 @@ expect state "notice":"New template"
 keys escape
 expect focus Thanks
 
-# Goal: Write the text of a template
-# 3.1 Enter goes to the fields: Title, Text, then the checks (TP-8.3, TP-2.2).
+# Goal: Write the text of a template in its form
+# 3.1 Enter on a template opens its form with every field, the focus in the name; Tab to the Text; Ctrl+Enter saves
+# them all as one step (TP-8.3a, the maintainer's ask of 2026-11-23).
 keys enter
+expect state "notice":"Fields of Thanks"
+expect focus Type the title
+keys tab
+expect focus Type Text; Enter makes a new line
+type Thank you, {clipboard}.{caret}
+keys ctrl+enter
+expect said Saved Thanks. Text
+expect state "notice":null
+
+# Check: Enter on a field of the pane opens the form in that field
+# 3.2 The pane is for reading: Title, Text, then the checks (TP-8.3, TP-2.2); Enter on one opens the form there,
+# Escape leaves it with nothing changed, and Space turns a check on in place.
+keys tab
 expect focus Title
 keys down
 expect focus Text
 keys enter
-type Thank you, {clipboard}.{caret}
-keys ctrl+enter
+expect state "notice":"Fields of Thanks"
+expect focus Type Text; Enter makes a new line
+# Ctrl+Up and Ctrl+Down move between the fields of any form, the edge sound before the first (the maintainer, 2026-11-23).
+keys ctrl+up
+expect focus Type the title
+keys ctrl+up
+expect said ♪ Edge
+expect focus Type the title
+keys ctrl+down
+expect focus Type Text; Enter makes a new line
+keys ctrl+down
+expect focus Every axKit app
+keys escape
+expect state "notice":null
 expect focus Text
 keys down
 expect focus Every axKit app
@@ -95,12 +121,15 @@ keys down
 expect focus Text, long text, Thank you, {clipboard}.{caret}
 
 # Goal: Rename a template from its Title field
-# 4.4 The Title in the pane of fields is the same rename (TP-8.4).
+# 4.4 Enter on the Title in the pane opens the form in its name; a new name saved renames the file (TP-8.3a, TP-8.4).
 keys up
 expect focus Title, text, Thanks
 keys enter
+expect state "notice":"Fields of Thanks"
+expect focus Type the title
+keys ctrl+a
 type Greeting
-keys enter
-expect said Renamed Greeting
+keys ctrl+enter
+expect said Saved Greeting. Title: Greeting
 keys escape
 expect focus Greeting

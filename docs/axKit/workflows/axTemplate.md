@@ -18,17 +18,13 @@ Starts with: Open axTemplate.
 3. Press Enter.
     You hear: Added Thanks.
 
-### Write the text of a template
+### Write the text of a template in its form
 
 1. Press Enter.
-2. Press Down.
-3. Press Enter.
-4. Type: Thank you, {clipboard}.{caret}
-5. Press Ctrl+Enter (Put in, with that program's selection; Context menu).
-6. Press Down.
-7. Press Space.
-8. Press Down.
-9. Press Escape.
+2. Press Tab.
+3. Type: Thank you, {clipboard}.{caret}
+4. Press Ctrl+Enter (Put in, with that program's selection; Context menu).
+    You hear: Saved Thanks. Text.
 
 ### Rename a template
 
@@ -49,10 +45,11 @@ Starts with: Open axTemplate.
 
 1. Press Up.
 2. Press Enter.
-3. Type: Greeting
-4. Press Enter.
-    You hear: Renamed Greeting.
-5. Press Escape.
+3. Press Ctrl+A (Select all; Actions menu).
+4. Type: Greeting
+5. Press Ctrl+Enter (Put in, with that program's selection; Context menu).
+    You hear: Saved Greeting. Title: Greeting.
+6. Press Escape.
 
 ## Delete several templates, and meet a file that is no template, in axTemplate's browser
 

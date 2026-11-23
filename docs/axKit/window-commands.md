@@ -966,7 +966,6 @@ every window" or under a heading that names the windows without it; under an app
 - Action key Shift+9. Menu: none, a key alone. Key: Ctrl+Shift+9. Mark: act. Never run by AI tools.
 - Back from the search. Menu: none, a key alone. Key: Escape. Mark: open. Never run by AI tools.
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
-- Change the item in its form. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
 - Check the field. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
 - Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
@@ -980,7 +979,6 @@ every window" or under a heading that names the windows without it; under an app
 - Open. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
 - Open it where it lives. Menu: none, a key alone. Key: Right. Also: Enter. Mark: open. Never run by AI tools.
 - Open the file in axJSON. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
-- Open the item's form. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
 - Previous heading level 1. Menu: none, a key alone. Key: Ctrl+Shift+1. Mark: read. Never run by AI tools.
 - Previous heading level 2. Menu: none, a key alone. Key: Ctrl+Shift+2. Mark: read. Never run by AI tools.
 - Previous heading level 3. Menu: none, a key alone. Key: Ctrl+Shift+3. Mark: read. Never run by AI tools.

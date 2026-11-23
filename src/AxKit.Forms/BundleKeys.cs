@@ -86,8 +86,8 @@ public static class BundleKeys
     [
         ("Page up", PageUp),
         ("Page down", PageDown),
-        ("Paragraph up", ParagraphUp),
-        ("Paragraph down", ParagraphDown),
+        ("Paragraph up; in a form, the previous field", ParagraphUp),
+        ("Paragraph down; in a form, the next field", ParagraphDown),
         ("Select to the paragraph above", SelectParagraphUp),
         ("Select to the paragraph below", SelectParagraphDown),
         ("Keyboard shortcuts", Shortcuts),
