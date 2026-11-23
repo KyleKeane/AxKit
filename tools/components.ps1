@@ -92,7 +92,13 @@ $lines.Add('')
 $lines.Add('## The window types')
 foreach ($type in $data.'window types') {
     $made = @($type.panes | ForEach-Object { $id = $_; ($data.components | Where-Object { $_.id -eq $id }).title.ToLowerInvariant() })
-    $here = @($data.apps | Where-Object { $_.type -eq $type.id } | ForEach-Object { $_.app })
+    # An app is on the type of its window, and one with a second whole window (axTemplate's launcher) on that
+    # window's type too, said as its second.
+    $here = @($data.apps | ForEach-Object {
+            $second = $_.PSObject.Properties['second type']
+            if ($_.type -eq $type.id) { $_.app }
+            elseif ($second -and $second.Value -eq $type.id) { "$($_.app) (its second window)" }
+        })
     $coming = @($data.apps | Where-Object { $_.type -ne $type.id -and $_.'to be' -eq $type.id } | ForEach-Object { $_.app })
     $lines.Add('')
     $lines.Add("### $($type.title)")
@@ -118,6 +124,8 @@ $lines.Add('| App | Type today | To be | Note |')
 $lines.Add('|---|---|---|---|')
 foreach ($app in $data.apps) {
     $today = if ($app.type) { $app.type } else { 'a window of its own' }
+    $secondType = $app.PSObject.Properties['second type']
+    if ($secondType -and $secondType.Value) { $today = "$today, and $($secondType.Value) for its second window" }
     $lines.Add("| $($app.app) | $today | $($app.'to be') | $($app.note) |")
 }
 

@@ -54,6 +54,7 @@ foreach ($app in $apps) {
     if ($app.AccessLayerFor) { $lines.Add("- Access layer for: $($app.AccessLayerFor), which must be installed; the app reaches the network only through it.") }
     $facts = @("command ``axkit $($app.Verb)``", "opens $($opens[$app.Opens])")
     if ($app.AtSignIn) { $facts += 'runs in the background from sign-in' }
+    if ($app.InBackground) { $facts += 'one of its windows runs in the background from sign-in' }
     if ($app.StoreEntry) { $facts += 'has a Start menu entry in the Store''s copy' }
     $lines.Add('- ' + ($facts -join '; ') + '.')
     $code = @((Existing "src\$($app.Project)"), (Existing "src\$($app.Project).Core")) | Where-Object { $_ }

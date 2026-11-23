@@ -13,7 +13,13 @@ namespace AxKit.Tests;
 /// </summary>
 public sealed class ComponentsTests
 {
-    private sealed record AppRow(string App, string Window, string Type, string ToBe);
+    /// <summary>
+    /// An app's row. <see cref="SecondWindow"/> and <see cref="SecondType"/> are empty but for an app that has a
+    /// second whole window of another bundle type, each a start of its own (axTemplate's launcher beside its
+    /// browser, docs/axTemplate/SPEC.md TP-D8, the maintainer's answers of 2026-11-23): the file names it, so that a
+    /// second window class is still never there by accident.
+    /// </summary>
+    private sealed record AppRow(string App, string Window, string Type, string ToBe, string SecondWindow, string SecondType);
 
     private static JsonDocument File() =>
         JsonDocument.Parse(System.IO.File.ReadAllText(Path.Combine(LayoutTests.RepositoryRoot(), "docs", "axKit", "components.json")));
@@ -21,7 +27,9 @@ public sealed class ComponentsTests
     private static List<AppRow> Apps(JsonDocument document) =>
         [.. document.RootElement.GetProperty("apps").EnumerateArray().Select(app => new AppRow(
             app.GetProperty("app").GetString()!, app.GetProperty("window").GetString()!,
-            app.GetProperty("type").GetString()!, app.GetProperty("to be").GetString()!))];
+            app.GetProperty("type").GetString()!, app.GetProperty("to be").GetString()!,
+            app.TryGetProperty("second window", out var second) ? second.GetString()! : string.Empty,
+            app.TryGetProperty("second type", out var secondType) ? secondType.GetString()! : string.Empty))];
 
     /// <summary>
     /// The classes an app's window of a type may derive from: the type's class, and for a type whose window can stand
@@ -94,9 +102,22 @@ public sealed class ComponentsTests
                 problems.Add($"{row.App}: {row.Window} derives from {derivesFrom}; the file says {(row.Type.Length == 0 ? "a window of its own, on AxKitForm" : $"the type {row.Type}, {string.Join(" or ", wanted)}")}.");
             }
 
-            foreach (var other in windows.Where(window => window.Key != row.Window))
+            // A second window the file names: a class of the app's, on its own type's class, never on the bare base.
+            if (row.SecondWindow.Length > 0)
             {
-                problems.Add($"{row.App}: a second window class, {other.Key} : {other.Value}; an app has one window (AX-7.2).");
+                if (!windows.TryGetValue(row.SecondWindow, out var secondFrom))
+                {
+                    problems.Add($"{row.App}: {project} declares no window class {row.SecondWindow}, the file's second window.");
+                }
+                else if (!types.TryGetValue(row.SecondType, out var secondWanted) || !secondWanted.Contains(secondFrom))
+                {
+                    problems.Add($"{row.App}: the second window {row.SecondWindow} derives from {secondFrom}; the file says the type {row.SecondType}.");
+                }
+            }
+
+            foreach (var other in windows.Where(window => window.Key != row.Window && window.Key != row.SecondWindow))
+            {
+                problems.Add($"{row.App}: a window class the file does not name, {other.Key} : {other.Value}; an app has one window (AX-7.2), or a second one of a bundle type that the file names.");
             }
         }
 

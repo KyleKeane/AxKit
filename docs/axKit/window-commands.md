@@ -1004,14 +1004,24 @@ every window" or under a heading that names the windows without it; under an app
 
 - Deselect all. Menu: Actions. Key: Ctrl+Shift+A. Also: Escape. Mark: change.
 - New template. Menu: Actions. Key: Ctrl+N. Mark: change. Never run by AI tools.
+- No actions here yet. Menu: Actions. Key: none. Mark: read.
 - Select all. Menu: Actions. Key: Ctrl+A. Mark: change.
 - Undo. Menu: Actions. Key: Ctrl+Z. Mark: change. Never run by AI tools.
+- Copy without putting in. Menu: Context. Key: Shift+Enter. Mark: act.
 - No templates yet: Ctrl+N makes one. Menu: Context. Key: none. Mark: read.
+- Put in. Menu: Context. Key: Enter. Mark: act.
+- Read in full. Menu: Context. Key: Ctrl+Q. Mark: read.
 - The marks of a template. Menu: Help, axTemplate resources. Key: none. Mark: act.
 - Nothing to move to here yet. Menu: Navigation. Key: none. Mark: read.
 - Filter. Menu: Options. Key: none. Mark: change.
+- Hotkey. Menu: Options. Key: none. Mark: open.
+- Say the first match while typing. Menu: Options, General. Key: none. Mark: change.
+- Start with Windows. Menu: Options, General. Key: none. Mark: act.
 - Name. Menu: Options, Sort by. Key: none. Mark: change.
 - The list's own order. Menu: Options, Sort by. Key: none. Mark: change.
+- Hide. Menu: Session. Key: Escape. Mark: change.
+- Open the browser. Menu: Session. Key: Ctrl+B. Mark: open.
+- Quit axTemplate. Menu: Session. Key: none. Mark: act.
 - Refresh. Menu: Session. Key: F5. Mark: read.
 - axClaude, access layer for Claude Code. Menu: Session, Show the templates' folder in. Key: none. Mark: act.
 - axFile. Menu: Session, Show the templates' folder in. Key: none. Mark: open.
@@ -1026,9 +1036,15 @@ every window" or under a heading that names the windows without it; under an app
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
 - Find previous. Menu: none, a key alone. Key: Shift+F3. Mark: read. Never run by AI tools.
+- First match. Menu: none, a key alone. Key: Ctrl+Home. Mark: read. Never run by AI tools.
 - Into the list. Menu: none, a key alone. Key: Right. Mark: open. Never run by AI tools.
+- Last match. Menu: none, a key alone. Key: Ctrl+End. Mark: read. Never run by AI tools.
 - New item. Menu: none, a key alone. Key: Ctrl+N. Mark: change. Never run by AI tools.
+- Next match. Menu: none, a key alone. Key: Down. Mark: read. Never run by AI tools.
 - Open. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
+- Page down. Menu: none, a key alone. Key: Page Down. Mark: read. Never run by AI tools.
+- Page up. Menu: none, a key alone. Key: Page Up. Mark: read. Never run by AI tools.
+- Previous match. Menu: none, a key alone. Key: Up. Mark: read. Never run by AI tools.
 - Read in full. Menu: none, a key alone. Key: Ctrl+Q. Mark: read. Never run by AI tools.
 - Rename. Menu: none, a key alone. Key: F2. Mark: change. Never run by AI tools.
 - Select or deselect. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.

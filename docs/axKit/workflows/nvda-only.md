@@ -110,6 +110,18 @@ Starts with: Open axFile with the folder f.
 1. Press End.
 2. Press Shift+C 2 times.
 
+## Put a template into another window from axTemplate's launcher, with NVDA
+
+Starts with: Open axDown with the file notes.md. Start axTemplate again with --launcher. A new window opens: go to it.
+
+NVDA says: notes.md.
+NVDA says: Search templates.
+1. Type: thanks
+2. Press Down.
+    NVDA says: Thanks, 1 of 1.
+3. Press Enter.
+4. Go to the axDown window.
+
 ## Hear the caution of a command another program put into the command field
 
 Starts with: Open axTerminal with the folder myproject --command Write-Output "two words".

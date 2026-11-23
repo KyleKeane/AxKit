@@ -3,7 +3,7 @@
 Written by `tools/key-map.ps1` from `docs/axKit/window-commands.json`, `src/AxKit.Forms/BundleKeys.cs` and
 `docs/axKit/key-families.json`; never edit it by hand. Every key of every window and what it does in each app.
 
-The inventory holds 705 commands with a key in 18 apps, on 126 different keys, counting the
+The inventory holds 716 commands with a key in 18 apps, on 126 different keys, counting the
 second keys some commands answer. 50 keys have one meaning wherever they are; 76 have several.
 21 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
 are window keys, each in its window's own table.
@@ -16,10 +16,10 @@ commands of each app's window; the keys of a text box or a list itself (the arro
 In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 
 - L. Window key, in axPreview alone: Say the line.
-- Down arrow. Window key, in axClip and axStart: Next match.
-- Page Down. Bundle key, in axClip and axStart: Page down.
-- Page Up. Bundle key, in axClip and axStart: Page up.
-- Up arrow. Window key, in axClip and axStart: Previous match.
+- Down arrow. Window key, in axClip, axStart and axTemplate: Next match.
+- Page Down. Bundle key, in axClip, axStart and axTemplate: Page down.
+- Page Up. Bundle key, in axClip, axStart and axTemplate: Page up.
+- Up arrow. Window key, in axClip, axStart and axTemplate: Previous match.
 - F1. Bundle key, in every app: Keyboard shortcuts.
 - Shift+F1. Bundle key, in every app: Ask about this window.
 - F2. Window key, in axAutomate, axFile, axMCP, axPass, axTask and axTemplate: Rename.
@@ -33,8 +33,8 @@ In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 - Ctrl+V. Window key, in axFile alone: Paste.
 - Ctrl+X. Window key, in axFile alone: Cut.
 - Ctrl+Y. Window key, in axDown and axJSON: Redo.
-- Ctrl+End. Window key, in axClip and axStart: Last match.
-- Ctrl+Home. Window key, in axClip and axStart: First match.
+- Ctrl+End. Window key, in axClip, axStart and axTemplate: Last match.
+- Ctrl+Home. Window key, in axClip, axStart and axTemplate: First match.
 - Ctrl+Left arrow. Window key, in axMedia alone: Back 15 seconds.
 - Ctrl+Minus. Bundle key, in every app: Smaller text.
 - Ctrl+Plus. Bundle key, in every app: Larger text.
@@ -72,7 +72,7 @@ The most spread first: the number of meanings, then the number of apps.
 
 ### Enter
 
-Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axHelp, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask and axTemplate. 17 meanings.
+Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axHelp, axMCP, axMedia, axPass, axPreview, axProcess, axStart, axTask and axTemplate. 18 meanings.
 
 - axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Open.
 - axAutomate, axMCP, axPass, axTask and axTemplate: Change the field.
@@ -87,6 +87,7 @@ Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axHelp, axMCP, axMedia
 - axTask: Open the file in axJSON.
 - axTask: Open the item's form.
 - axClip: Paste.
+- axTemplate: Put in.
 - axMCP: Read the resource.
 - axGIT: Show diff.
 - axStart: Start.
@@ -125,7 +126,7 @@ Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axHelp, axMCP, axMedia
 - axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Clear the filter.
 - axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Deselect all.
 - axAutomate, axMCP, axPass, axTask and axTemplate: To the navigator.
-- axClip, axHelp and axStart: Hide.
+- axClip, axHelp, axStart and axTemplate: Hide.
 - axFile and axGIT: To the list.
 - axTask: Back from the search.
 - axCalc: Clear the field.
@@ -495,6 +496,14 @@ Window key, in axClaude, axDown, axGIT and axJSON. 3 meanings.
 - axClaude: Send queued messages now.
 - axGIT: Stage.
 
+### Ctrl+B
+
+Window key, in axClaude, axDown and axTemplate. 3 meanings.
+
+- axDown: Bold.
+- axTemplate: Open the browser.
+- axClaude: What runs in the background.
+
 ### Ctrl+C
 
 Window key, in axFile, axPreview and axProcess. 3 meanings.
@@ -542,6 +551,14 @@ Window key, in axGIT, axJSON and axTask. 3 meanings.
 - axGIT: Fetch.
 - axTask: Find in every list.
 - axJSON: Format.
+
+### Shift+Enter
+
+Window key, in axClip, axFile and axTemplate. 3 meanings.
+
+- axClip: Copy without pasting.
+- axTemplate: Copy without putting in.
+- axFile: Preview.
 
 ### Ctrl+D
 
@@ -698,13 +715,6 @@ Window key, in axDown, axFile and axPreview. 2 meanings.
 - axDown and axPreview: Table.
 - axFile: New text file.
 
-### Ctrl+B
-
-Window key, in axClaude and axDown. 2 meanings.
-
-- axDown: Bold.
-- axClaude: What runs in the background.
-
 ### Ctrl+P
 
 Window key, in axClip and axTerminal. 2 meanings.
@@ -732,13 +742,6 @@ Window key, in axFile and axJSON. 2 meanings.
 
 - axJSON: Previous value.
 - axFile: Up one level.
-
-### Shift+Enter
-
-Window key, in axClip and axFile. 2 meanings.
-
-- axClip: Copy without pasting.
-- axFile: Preview.
 
 ### Shift+Escape
 

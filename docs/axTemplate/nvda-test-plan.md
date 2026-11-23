@@ -1,6 +1,6 @@
 # axTemplate NVDA test plan
 
-Run with NVDA before a release, after `scripts to run-individual-apps\run-axTemplate.ps1` (or `.\run.ps1 -App template`). Every step says what NVDA should read; a step that reads differently is a defect. The specification is `docs/axTemplate/SPEC.md` (TP-n.m). Sections 1 to 6 are the browser and are run by `tests/scripts/axTemplate` too; the launcher's sections come with it (SPEC.md section 8, step 2).
+Run with NVDA before a release, after `scripts to run-individual-apps\run-axTemplate.ps1` (or `.\run.ps1 -App template`), with axDown open on a scratch file. Every step says what NVDA should read; a step that reads differently is a defect. The specification is `docs/axTemplate/SPEC.md` (TP-n.m). Sections 1 to 6 are the browser, 7 to 9 the launcher; `tests/scripts/axTemplate` runs them too, but for the paste into another window (8.1), which `tests/nvda-scripts/axTemplate-put-in.txt` runs with NVDA.
 
 The steps change your own templates' folder: use a template made for the test, and delete it at the end.
 
@@ -40,3 +40,27 @@ The steps change your own templates' folder: use a template made for the test, a
 1. Put a file `broken.json` holding `[1, 2]` into the templates' folder, F5: the list has "broken, not a template".
 2. F2 on it: "Not a template: Ctrl+J opens the file in axJSON to mend". Tab: its details say the same.
 3. A template whose file holds a value no field names: its pane ends with "1 more field kept: …".
+
+## 7. The launcher and its hotkey (TP-1, TP-3)
+
+1. With axTemplate's browser started once, and closed again: in axDown, Ctrl+Shift+Apostrophe: "axTemplate window, Search templates, edit". Escape: the launcher hides and NVDA reads axDown; typing goes there.
+2. Ctrl+Shift+Apostrophe, Down: the second template, "…, 2 of N". At the last one, Down plays the low edge sound and reads it again. Ctrl+Home, Ctrl+End: the first and the last.
+3. Type a word that only one template's text holds: after a moment that template, "…, 1 of 1". Type a word nothing holds, Down: "No template matches …".
+4. Ctrl+Shift+Apostrophe while the launcher shows: it hides. Alt+F4 in the launcher: it hides, it does not end; the hotkey brings it back.
+
+## 8. Using a template (TP-4)
+
+1. In axDown, put the caret on an empty line. Ctrl+Shift+Apostrophe, type the start of a template's name, Enter: the launcher hides, NVDA reads axDown, and the template's text is pasted at the caret.
+2. Copy a word in axDown, then use a template whose text holds `{clipboard}`: the word stands in its place.
+3. Ctrl+Shift+Apostrophe, a template, Shift+Enter: "Copied", the launcher hides; nothing is pasted; Ctrl+V in axDown pastes it.
+4. Ctrl+Q on a template: the notice titled with its name and "1 line" or its count, the text with its marks; Escape.
+5. Ctrl+Shift+Apostrophe with nothing typed: the template used last is first.
+
+## 9. The browser, settings and the rest (TP-4.6, TP-7)
+
+1. Ctrl+B in the launcher: it hides and the browser opens, "Templates - axTemplate window".
+2. Options, Hotkey in the launcher: the notice that takes the next key; press Ctrl+Alt+Shift+T, Enter: "Hotkey Ctrl+Alt+Shift+T", and the new key shows the launcher. Set it back to Ctrl+Shift+Apostrophe.
+3. F1 in the launcher: its own keys, Ctrl+B among them; Escape.
+4. Session, Quit axTemplate: the launcher ends, and the hotkey does nothing until axTemplate is started again.
+
+By ear, and the maintainer's: how the launcher comes up over other programs, whether the paste lands every time, and the key Ctrl+Shift+Apostrophe under the fingers.

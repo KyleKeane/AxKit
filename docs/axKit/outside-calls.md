@@ -225,7 +225,7 @@ Calls (7):
   Code: `return Process.Start(info);`
 - **shared by every app**, `src/AxKit/Program.cs`, in `Program.StartedAsOpenWithLink`, by `Process.Start`: starts AxKit.exe itself with the same arguments when this process was started under an app's hard-linked name from Windows' Open with (axDown.exe), so that every window runs as AxKit.exe (AX-2.3).
   Code: `using var started = System.Diagnostics.Process.Start(start);`
-- **shared by every app**, `src/AxKit/Program.cs`, in `Program.StartBackgroundAppsOnce`, by `Process.Start`: starts AxKit.exe itself as a background app (axStart, axClip, axHelp), hidden, at the first start of the Store's copy after its install (AX-13.4a).
+- **shared by every app**, `src/AxKit/Program.cs`, in `Program.StartBackgroundApps`, by `Process.Start`: starts AxKit.exe itself as a background app (axStart, axClip, axHelp, axTemplate's launcher), hidden, at the first start of the Store's copy after its install, and the launcher also after an update and with the sign-in's startup tasks (AX-13.4a, AX-13.4b).
   Code: `using var started = System.Diagnostics.Process.Start(start);`
 
 #### Workflow commands
@@ -371,7 +371,7 @@ Used in 20 places:
 - `src/AxKit.Forms/UpdateFlow.cs`, in `UpdateFlow.OpenStorePage`, for Windows.
 - `src/AxKit.Forms/WindowMenu.cs`, in `WindowMenu.StartKept`, for axKit.
 - `src/AxKit/Program.cs`, in `Program.StartedAsOpenWithLink`, for axKit.
-- `src/AxKit/Program.cs`, in `Program.StartBackgroundAppsOnce`, for axKit.
+- `src/AxKit/Program.cs`, in `Program.StartBackgroundApps`, for axKit.
 - `src/AxStart/AppsFolder.cs`, in `AppsFolder.Start`, for User programs.
 
 ### new Process, program

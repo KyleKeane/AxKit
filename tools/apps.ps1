@@ -52,6 +52,7 @@ function Get-AxKitApps([string]$Root) {
             Description = if ($description.Success) { $description.Groups['text'].Value } else { '' }
             AccessLayerFor = if ($layer.Success) { $layer.Groups['text'].Value } else { '' }
             AtSignIn = $body -match 'AtSignIn = true'
+            InBackground = $body -match 'InBackground = true'
             StoreEntry = $body -match 'StoreEntry = true'
             Icon = if ($icon.Success) {
                 [pscustomobject]@{ Letters = $icon.Groups['letters'].Value; Rgb = @([int]$icon.Groups['r'].Value, [int]$icon.Groups['g'].Value, [int]$icon.Groups['b'].Value) }

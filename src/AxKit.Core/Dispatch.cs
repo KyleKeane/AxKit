@@ -45,6 +45,16 @@ public sealed record App(string Name, string Verb, string Project, AppGroup Grou
     public bool AtSignIn { get; init; }
 
     /// <summary>
+    /// Whether the app has a process that runs in the background as the <see cref="AtSignIn"/> apps do, started
+    /// with <c>&lt;verb&gt; --hidden</c>, without a Store entry of its own and so without a startup task of the
+    /// package: axTemplate's launcher (docs/axTemplate/SPEC.md TP-1.4; the maintainer's word of 2026-11-23: its hotkey
+    /// is on for everyone after an installation and after an update). The installer starts it and its first run
+    /// writes the Run key, as for the others; in the Store's copy it is started with them
+    /// (<see cref="StoreFirstStart"/>, docs/axKit/SPEC.md AX-13.4b).
+    /// </summary>
+    public bool InBackground { get; init; }
+
+    /// <summary>
     /// Whether the Store's package has a Start menu entry for the app (docs/axKit/SPEC.md AX-13.2): the Store allows
     /// eight per package and no hidden one (measured 2026-11-09), so these are the maintainer's eight; every other app
     /// is reached by its console command, by a file of its kind, by the Window menu's New window and from axFile.
@@ -201,7 +211,7 @@ public static class Dispatch
         },
         new("axTemplate", AxTemplate, "AxTemplate", AppGroup.Utilities, Opens.Nothing)
         {
-            Description = "axTemplate, your templates, put in anywhere", Icon = new("Ae", 80, 80, 120),
+            Description = "axTemplate, your templates, put in anywhere", Icon = new("Ae", 80, 80, 120), InBackground = true,
         },
         new("axTerminal", AxTerminal, "AxTerminal", AppGroup.AccessLayers, Opens.Folders, ShowIn: true)
         {

@@ -325,7 +325,17 @@ public sealed class BrowserForm : ItemForm
 
     /// <summary>Ctrl+Enter (TP-8.4): the template's text on the clipboard with every mark filled with nothing, for a look at what it makes.</summary>
     private void CopySelected() => WithTemplate(file =>
-        CopyText(TextTemplate.Expand(file.Item!.Text(TemplateStore.TextField), string.Empty, string.Empty).Text, "Copied"));
+    {
+        var made = TextTemplate.Expand(file.Item!.Text(TemplateStore.TextField), string.Empty, string.Empty).Text;
+        if (made.Length == 0)
+        {
+            // The clipboard takes no empty text; a new template has none yet.
+            Announce(TemplateStore.NoTextYet(file.Title) + ": Enter goes to its fields", true);
+            return;
+        }
+
+        CopyText(made, "Copied");
+    });
 
     /// <summary>Ctrl+J: the template's file in axJSON, where a field is added or a broken file mended.</summary>
     private void OpenInJson() => WithRow(row =>

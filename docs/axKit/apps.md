@@ -125,11 +125,11 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 ### axTemplate
 
 - What: your templates, put in anywhere.
-- command `axkit template`; opens nothing.
+- command `axkit template`; opens nothing; one of its windows runs in the background from sign-in.
 - Code: `src/AxTemplate` (the window), `src/AxTemplate.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxTemplate.Tests`.
 - Documents: `docs/axTemplate/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axTemplate/`, 2 scripts (their workflows are in `docs/axKit/workflows/axTemplate.md`).
+- Automated checks: `tests/scripts/axTemplate/`, 3 scripts (their workflows are in `docs/axKit/workflows/axTemplate.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axTemplate.ps1`, or `run.ps1 -App template`.
 
 ## Access layers

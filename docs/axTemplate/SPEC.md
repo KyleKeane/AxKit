@@ -66,14 +66,23 @@ answer to a key.
 - TP-1.1 **A plain start** (`axKit template`, or Window, New window, axTemplate) shows the browser (TP-8), and
   starts the launcher in the background when it does not run yet, so that the hotkey works from then on (his
   answer: "The browser").
-- TP-1.2 **The launcher** (`axKit template --launcher`, with `--hidden` at sign-in) is as axClip (CP-1): a
-  background process with one hidden window, one copy at a time, brought up by its hotkey, hidden by Escape,
-  Alt+F4 and the focus going to another program; only Quit ends it.
+- TP-1.2 **The launcher** is as axClip (CP-1): a background process with one hidden window, one copy at a time,
+  brought up by its hotkey, hidden by Escape, Alt+F4 and the focus going to another program; only Quit ends it.
+  `axKit template --launcher` shows its field (a second start hands "show" to the running one);
+  `axKit template --hidden` runs it hidden, which is what a sign-in start and the browser's start of it are.
 - TP-1.3 The hotkey is the user's to change (Options, Hotkey). At first **Ctrl+Shift+Apostrophe** (TP-D1).
-- TP-1.4 In the Store's copy axTemplate has no entry and no startup task of its own (his answer: "No entry of its
-  own"): the package's eight entries are taken (bundle AX-13.2). There it is started from any axKit window, Window,
-  New window, and the launcher then runs until Quit. In the copy from GitHub, Options, General, Start with Windows
-  starts the launcher at sign-in, as axClip's.
+- TP-1.4 **The hotkey is on for everyone after an installation and after an update** (the maintainer's word of
+  2026-11-23: "you should automentically enable the axtemplate global hotkey for all users on installation and
+  update"), with nothing for the user to start first. Options, General, Start with Windows, in the launcher's
+  window, is the one switch that says no; it is on at first.
+  - The copy from GitHub: the installer starts the launcher, hidden, after every installation and update, as it
+    starts axStart, axClip and axHelp; the launcher's first run writes its value under the Run key, so Windows
+    starts it at every sign-in from then on.
+  - The Store's copy: axTemplate has no entry of its own (his answer: "No entry of its own": the package's eight
+    are taken, bundle AX-13.2), and so no startup task. axKit starts the launcher itself there (bundle AX-13.4b):
+    with the first start of any app after the installation, with the first start of any app after an update, and
+    at every sign-in, when the startup task of axStart, axClip or axHelp starts its app.
+  - Quit ends the launcher until the next of those starts, or until axTemplate is started (TP-1.1).
 
 ### TP-2 The templates
 
@@ -164,9 +173,11 @@ answer to a key.
 - TP-7.2 Settings (`%APPDATA%\AxKit\axTemplate.json`): the hotkey, Start with Windows, Say the first match while
   typing (the hotkey windows' three), the names of the templates used last, and the browser's window place.
 - TP-7.3 The log holds that a template was put in, never its name or its text (bundle rule 6). axTemplate makes
-  no network request (rule 8). Its outside calls are axClip's: the clipboard, and keys sent to the program in
-  front (the paste key, the Left keys, and with Ctrl+Enter the copy key); they are on
-  `docs/axKit/outside-calls.md`.
+  no network request (rule 8). What it does outside its windows is what axClip does: the clipboard, and keys sent
+  to the program in front (the paste key, the Left keys, and with Ctrl+Enter the copy key), through the one
+  place that sends keys (`AxKit.Forms/KeySender`). Its program starts are the bundle's own, of another axKit
+  window (the launcher by the browser, the browser by the launcher, axJSON on a template's file), which
+  `docs/axKit/outside-calls.md` lists under the Window menu's start.
 
 ### TP-8 The browser
 
@@ -273,8 +284,12 @@ Asked one at a time through the question tool, after he had the first specificat
 
 ## 9. Status
 
-Step 1 is built (2026-11-23): the store, the finding and the settings in `AxTemplate.Core` with their tests, and
-the browser, `BrowserForm`, which a plain start shows; its window checks are `tests/scripts/axTemplate`. The
-launcher is step 2: until it is built the hotkey does nothing, and a template is used by copying it from the
-browser (Ctrl+Enter). Also there from 2026-11-23: the marks and their code (`AxKit.Core/TextTemplate`), and the
-editors' Insert template menu, which reads plain files of `templates\<app>` until step 4.
+Steps 1 and 2 are built (2026-11-23). Step 1: the store, the finding and the settings in `AxTemplate.Core` with
+their tests, and the browser, `BrowserForm`, which a plain start shows. Step 2: the launcher, `LauncherForm`,
+behind Ctrl+Shift+Apostrophe: the finding, Enter with the paste, Shift+Enter, Ctrl+Q, Ctrl+B, and the plain start
+that starts it hidden. The window checks of both are `tests/scripts/axTemplate`. Not yet, step 3: Ctrl+Enter with
+the other program's selection (`{selection}` is empty from the launcher until then), the clipboard given back
+and marked against histories (a template put in stays on the clipboard, and axClip keeps it), and the caret
+moved back to `{caret}` (it stays at the end of what was pasted). Also there from 2026-11-23: the marks and
+their code (`AxKit.Core/TextTemplate`), and the editors' Insert template menu, which reads plain files of
+`templates\<app>` until step 4.

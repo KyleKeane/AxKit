@@ -10,6 +10,9 @@ namespace AxKit.Tests;
 /// </summary>
 public sealed class KeyTests
 {
+    /// <summary>The name of the one table that is no app's first window: axTemplate's launcher, beside its browser (TP-D8).</summary>
+    private const string TemplateLauncher = "axTemplate launcher";
+
     private static readonly IReadOnlyDictionary<string, IReadOnlyList<(string Name, Keys Key)>> Windows =
         new Dictionary<string, IReadOnlyList<(string Name, Keys Key)>>
         {
@@ -31,6 +34,8 @@ public sealed class KeyTests
             ["axHelp"] = AxHelp.AxHelpKeys.All,
             ["axAutomate"] = AxAutomate.AxAutomateKeys.All,
             ["axTemplate"] = AxTemplate.AxTemplateKeys.All,
+            // axTemplate's second window, the launcher behind the hotkey (docs/axTemplate/SPEC.md TP-D8): a table of its own.
+            [TemplateLauncher] = AxTemplate.AxTemplateKeys.Launcher,
         };
 
     /// <summary>
@@ -65,7 +70,8 @@ public sealed class KeyTests
     [Fact]
     public void The_tables_name_exactly_the_apps()
     {
-        var apps = AxKit.Core.Dispatch.Apps.Select(app => app.Name).OrderBy(name => name, StringComparer.Ordinal).ToList();
+        // And the one second window of an app, which has a table and an F1 text of its own.
+        var apps = AxKit.Core.Dispatch.Apps.Select(app => app.Name).Append(TemplateLauncher).OrderBy(name => name, StringComparer.Ordinal).ToList();
         Assert.Equal(apps, Windows.Keys.OrderBy(name => name, StringComparer.Ordinal));
         Assert.Equal(apps, F1Texts.Keys.OrderBy(name => name, StringComparer.Ordinal));
     }
@@ -196,6 +202,7 @@ public sealed class KeyTests
         ["axHelp"] = AxHelp.HelpText.Shortcuts,
         ["axAutomate"] = AxAutomate.HelpText.Shortcuts,
         ["axTemplate"] = AxTemplate.HelpText.Shortcuts,
+        [TemplateLauncher] = AxTemplate.HelpText.LauncherShortcuts,
     };
 
     /// <summary>

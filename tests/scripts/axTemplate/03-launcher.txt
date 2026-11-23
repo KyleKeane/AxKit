@@ -1,0 +1,97 @@
+# Workflow: Find a template in the launcher and use it
+# axTemplate's launcher (docs/axTemplate/nvda-test-plan.md sections 7 to 9; SPEC TP-1.2, TP-3, TP-4): the search
+# field, the match keys and the commands that stay inside the window. Run by tools/AxAutomate on a desktop of its
+# own (docs/axKit/automation.md). The hotkey is one nobody uses, so that the run never takes the user's.
+#
+# Enter, which pastes into the program in front, acts outside the window: not run here, it stays for the NVDA plan.
+file home\AxKit\axTemplate.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F7", "sayFirstMatch": false}
+file home\AxKit\templates\Greeting.json {"schema": "list.json", "Title": "Greeting", "Text": "Dear {clipboard}, the sprint starts {caret}"}
+file "home\AxKit\templates\Sprint notes.json" {"schema": "list.json", "Title": "Sprint notes", "Text": ""}
+file home\AxKit\templates\Thanks.json {"schema": "list.json", "Title": "Thanks", "Text": "Thank you very much"}
+file home\AxKit\templates\broken.json [1, 2]
+
+start template --launcher
+# Check: The launcher's command list holds every key of its own
+check commands
+expect focus Search templates
+expect state "title":"axTemplate"
+
+# Goal: Move through the templates
+# TP-3.2, TP-3.4: an empty field lists every template by name, a file that is no template left out (TP-2.4); Down and
+# Up move with the caret kept in the field, the edge sound at an end.
+keys down
+expect said Sprint notes, 2 of 3
+keys down
+expect said Thanks, 3 of 3
+keys down
+expect said ♪ Edge
+do First match
+expect said Greeting, 1 of 3
+
+# Goal: Find a template by a word of its name or its text
+# TP-3.2: a name that holds the word first, then a text that holds it; a word nothing holds says so.
+type sprint
+keys down
+expect said Greeting, 2 of 2
+keys up
+expect said Sprint notes, 1 of 2
+keys ctrl+a
+type zzz
+keys down
+expect said No template matches zzz
+
+# Check: A template without a text is not put in
+# TP-4.7: its name and where its text is written; the launcher stays.
+keys ctrl+a
+type notes
+do Copy without putting in
+expect said Sprint notes has no text yet: Ctrl+B opens the browser, where it is written
+expect focus Search templates
+
+# Goal: Read a template before using it
+# TP-4.5: Ctrl+Q shows the template's own text, marks and all; Escape closes it.
+keys ctrl+a
+type greet
+do Read in full
+expect state "notice":"Greeting, 1 line"
+expect text Dear {clipboard}, the sprint starts {caret}
+keys escape
+expect state "notice":null
+expect focus Search templates
+
+# Goal: Copy a template without putting it in
+# TP-4.4: Shift+Enter puts the text on the clipboard and hides the launcher. A second start shows it again with
+# the field empty, and the template used last is first (TP-3.2).
+keys ctrl+a
+type thanks
+do Copy without putting in
+expect said Copied
+launch template --launcher
+expect focus "name":"Search templates","role":"Text","value":""
+keys down
+expect said Greeting, 2 of 3
+keys up
+expect said Thanks, 1 of 3
+
+# Check: The shortcuts name the launcher's keys
+do Keyboard shortcuts
+expect state "notice":"Keyboard shortcuts"
+expect text Ctrl+B: open the browser
+keys escape
+expect focus Search templates
+
+# Goal: Open the browser from the launcher
+# TP-4.6: Ctrl+B opens the browser, a window of its own, on the same templates.
+do Open the browser
+adopt
+expect state "title":"Templates - axTemplate
+expect focus broken, not a template
+close
+use 1
+
+# Goal: Quit the launcher
+# Quit axTemplate, the one close that ends the launcher.
+launch template --launcher
+expect focus Search templates
+menu Quit axTemplate
+expect closed

@@ -69,3 +69,61 @@ Starts with: Open axTemplate.
     You hear: Deleted 2 templates.
 7. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Deleted 2 templates.
+
+## Find a template in the launcher and use it
+
+Starts with: Open axTemplate with --launcher.
+
+### Move through the templates
+
+1. Press Down.
+    You hear: Sprint notes, 2 of 3.
+2. Press Down.
+    You hear: Thanks, 3 of 3.
+3. Press Down.
+    You hear the sound Edge.
+4. Press Ctrl+Home (First match).
+    You hear: Greeting, 1 of 3.
+
+### Find a template by a word of its name or its text
+
+1. Type: sprint
+2. Press Down.
+    You hear: Greeting, 2 of 2.
+3. Press Up.
+    You hear: Sprint notes, 1 of 2.
+4. Press Ctrl+A (Select all; Actions menu).
+5. Type: zzz
+6. Press Down.
+    You hear: No template matches zzz.
+
+### Read a template before using it
+
+1. Press Ctrl+A (Select all; Actions menu).
+2. Type: greet
+3. Press Ctrl+Q (Read in full; Context menu).
+4. Press Escape.
+
+### Copy a template without putting it in
+
+1. Press Ctrl+A (Select all; Actions menu).
+2. Type: thanks
+3. Press Shift+Enter (Copy without putting in; Context menu).
+    You hear: Copied.
+4. Start axTemplate again with --launcher.
+5. Press Down.
+    You hear: Greeting, 2 of 3.
+6. Press Up.
+    You hear: Thanks, 1 of 3.
+
+### Open the browser from the launcher
+
+1. Press Ctrl+B (Open the browser; Session menu).
+2. A new window opens: go to it.
+3. Close the window.
+4. Go to the axTemplate window.
+
+### Quit the launcher
+
+1. Start axTemplate again with --launcher.
+2. Choose Quit axTemplate in the Session menu.

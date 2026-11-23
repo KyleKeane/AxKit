@@ -26,4 +26,41 @@ public static class AxTemplateKeys
         .. SelectionKeys.WithoutSpaceAndEscape,
         ("The template's file in axJSON", OpenInJson),
     ];
+
+    // ---- the launcher (TP-3.4, TP-4): a window of its own, so a table of its own ----
+
+    /// <summary>The match after the selected one (TP-3.4); the caret stays in the field.</summary>
+    public const Keys NextMatch = Keys.Down;
+
+    public const Keys PreviousMatch = Keys.Up;
+    public const Keys FirstMatch = Keys.Control | Keys.Home;
+    public const Keys LastMatch = Keys.Control | Keys.End;
+
+    /// <summary>Put the template into the program that was in front (TP-4.1).</summary>
+    public const Keys PutIn = Keys.Return;
+
+    /// <summary>The filled text on the clipboard, nothing pasted (TP-4.4).</summary>
+    public const Keys CopyOnly = Keys.Shift | Keys.Return;
+
+    /// <summary>The template's own text in a notice (TP-4.5).</summary>
+    public const Keys ReadInFull = Keys.Control | Keys.Q;
+
+    /// <summary>The browser, where templates are made and changed (TP-4.6).</summary>
+    public const Keys OpenBrowser = Keys.Control | Keys.B;
+
+    public const Keys Hide = Keys.Escape;
+
+    /// <summary>Every key of the launcher with its name, for the collision test and its F1 text.</summary>
+    public static readonly IReadOnlyList<(string Name, Keys Key)> Launcher =
+    [
+        ("Next match", NextMatch),
+        ("Previous match", PreviousMatch),
+        ("First match", FirstMatch),
+        ("Last match", LastMatch),
+        ("Put the template in", PutIn),
+        ("Copy without putting in", CopyOnly),
+        ("Read in full", ReadInFull),
+        ("Open the browser", OpenBrowser),
+        ("Hide", Hide),
+    ];
 }

@@ -126,7 +126,7 @@
     { "app": "axCalc", "window": "CalcForm", "type": "conversation", "to be": "conversation", "note": "The shape without a program behind it: its text is the answers given." },
     { "app": "axProcess", "window": "ProcessForm", "type": "navigator", "to be": "navigator", "note": "Three lists of This computer, read off the UI thread, and no second pane; it starts inside Processes." },
     { "app": "axAutomate", "window": "AutomateForm", "type": "navigator", "to be": "navigator", "note": "" },
-    { "app": "axTemplate", "window": "BrowserForm", "type": "navigator", "to be": "navigator", "note": "The browser of the templates; the launcher behind the hotkey, on the hotkey window, is its next step (docs/axTemplate/SPEC.md TP-D8)." },
+    { "app": "axTemplate", "window": "BrowserForm", "type": "navigator", "to be": "navigator", "second window": "LauncherForm", "second type": "hotkey", "note": "Two windows, each a start of its own (docs/axTemplate/SPEC.md TP-D8): the browser of the templates, and the launcher behind the hotkey." },
     { "app": "axTerminal", "window": "TerminalForm", "type": "conversation", "to be": "conversation", "note": "" },
     { "app": "axGIT", "window": "GitForm", "type": "navigator", "to be": "navigator", "note": "Three lists of the repository, read through git off the UI thread, with a text as second pane; it starts inside Changes." },
     { "app": "axPass", "window": "PassForm", "type": "navigator", "to be": "navigator", "note": "" },

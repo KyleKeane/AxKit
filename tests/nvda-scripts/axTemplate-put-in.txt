@@ -1,0 +1,19 @@
+# Workflow: Put a template into another window from axTemplate's launcher, with NVDA
+# NVDA tier (docs/axKit/automation.md, tier 3): Enter in the launcher hides it, gives the front back to the window
+# that had it, and pastes the template there (docs/axTemplate/SPEC.md TP-4.1). Only a desktop with a real front
+# window shows that, so it is run only with --nvda, at the user's word, with the user away from the keyboard. The
+# other window is axDown on a file of the run's own; the launcher's hotkey is one nobody uses.
+file home\AxKit\axTemplate.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F7", "sayFirstMatch": false}
+file home\AxKit\templates\Thanks.json {"schema": "list.json", "Title": "Thanks", "Text": "Thank you very much"}
+file notes.md A line.
+start down {temp}\notes.md
+expect spoken notes.md
+launch template --launcher
+adopt
+expect spoken Search templates
+type thanks
+keys down
+expect spoken Thanks, 1 of 1
+keys enter
+use 1
+expect text Thank you very much

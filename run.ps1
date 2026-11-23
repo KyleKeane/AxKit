@@ -90,6 +90,17 @@ if (-not $NoBuild) {
         Wait-Process -Id $process.Id -Timeout 10 -ErrorAction SilentlyContinue
     }
 
+    # axTemplate's launcher (AxKit.exe template --hidden, or --launcher; docs/axTemplate/SPEC.md TP-1.2) runs on in
+    # the background as they do, once its browser was opened, and holds the folder too. It is ended here and started
+    # again, hidden, after the build, when it ran; the browser is a window the user closes.
+    $templateLauncher = @(Get-CimInstance Win32_Process -Filter "Name = 'AxKit.exe'" |
+        Where-Object { $_.ExecutablePath -eq $exe -and $_.CommandLine -match '\stemplate\s+--(hidden|launcher)(\s|$)' })
+    foreach ($process in $templateLauncher) {
+        Write-Host "Ending axTemplate's launcher (process $($process.ProcessId)), which holds the build folder; it starts again after the build."
+        Stop-Process -Id $process.ProcessId -Force
+        Wait-Process -Id $process.ProcessId -Timeout 10 -ErrorAction SilentlyContinue
+    }
+
     # axHelp's conversation hides when it is closed and runs on (axClaude FR-9.6, 2026-11-15): an axClaude process no
     # window shows, with Claude Code under it and, when the AI tools are on, their broker, another AxKit.exe of this
     # folder. Ending axHelp by force above leaves it running, unseen, and the build then fails on files in use (the
@@ -129,6 +140,9 @@ if (-not $NoBuild) {
         foreach ($verb in @($background | ForEach-Object Verb | Where-Object { $_ -ne 'describe' } | Sort-Object -Unique)) {
             Start-Process -FilePath $exe -ArgumentList $verb, '--hidden' -WindowStyle Hidden
         }
+        if ($templateLauncher.Count -gt 0) {
+            Start-Process -FilePath $exe -ArgumentList 'template', '--hidden' -WindowStyle Hidden
+        }
         exit 1
     }
 
@@ -156,6 +170,13 @@ foreach ($verb in 'start', 'clip', 'help') {
         Write-Host "Starting axKit $verb in the background, hidden."
         Start-Process -FilePath $exe -ArgumentList $verb, '--hidden' -WindowStyle Hidden
     }
+}
+
+# axTemplate's launcher, when the build ended it above: again from the build that is there. Not when axTemplate
+# itself is being started, whose browser starts the launcher.
+if (-not $NoBuild -and $templateLauncher.Count -gt 0 -and $App -ne 'template') {
+    Write-Host "Starting axTemplate's launcher in the background, hidden."
+    Start-Process -FilePath $exe -ArgumentList 'template', '--hidden' -WindowStyle Hidden
 }
 
 if (-not $NoBuild -and $built -ne 0) {

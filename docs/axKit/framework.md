@@ -209,7 +209,8 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
 
 - FW-4.11 A window that a key brings up from anywhere: a field that always holds the caret, and under it a list
   the arrow keys move through from the field. Enter does the app's thing with the row; Escape hides.
-- Apps today: axStart, axClip, and axHelp, whose own window is one text to read and no list: its conversation
+- Apps today: axStart, axClip, axTemplate's launcher (the app's second window, beside its browser on the
+  navigator), and axHelp, whose own window is one text to read and no list: its conversation
   is an axClaude window titled "axHelp", which the hotkey brings up (docs/axHelp/SPEC.md HE-2).
 - FW-4.12 Its list never takes the focus, and is the canonical list in this one mode (`AxKitList.Field`, built
   2026-11-22, step 12; until then a plain list box): no tab stop, a focus it is given goes back to the field,
@@ -244,11 +245,15 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
 | axStart | hotkey | hotkey | finding programs, starting them |
 | axClip | hotkey | hotkey | the clipboard's history |
 | axHelp | hotkey, a text; its conversation an axClaude window | the same: the conversation is the conversation window already | the conversation with Claude about axKit, the screenshot |
+| axTemplate | navigator for its browser, hotkey for its launcher: two windows, each a start of its own (2026-11-23, docs/axTemplate/SPEC.md TP-D8) | the same | the templates' folder as a list of the item format, the finding, the paste into the program in front |
 
 ## 6. What an app may hold
 
 - FW-6.1 An app's window class derives from one of the type classes and from nothing else. Only the type classes
-  derive from the window base.
+  derive from the window base. An app has one window class; one that needs a second whole window of another type
+  (axTemplate: a launcher called in the middle of other work, a browser that is sat in) names it in
+  `components.json` (`second window`, `second type`), and each is a start of its own, never a window one opens
+  over the other.
 - FW-6.2 An app makes no control of its own kind: every control it places is a component of section 3.
 - FW-6.3 An app's code is: where its rows or its text come from and how a change is written; its commands on
   them, each one entry of the window's command list; its key table; its talk with the program under it, behind

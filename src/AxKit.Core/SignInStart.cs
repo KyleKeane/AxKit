@@ -45,6 +45,32 @@ public static class SignInStart
     }
 
     /// <summary>
+    /// Whether an app's settings file says that its Start with Windows is off: the JSON text holds
+    /// <c>"startWithWindows": false</c>. No text, a text that is not JSON, and a file without the value are not off:
+    /// the setting is on at first. For a background app without a startup task of its own in the Store's copy, which
+    /// is started with the others there and has only its own setting to say no (<see cref="StoreFirstStart"/>).
+    /// </summary>
+    public static bool TurnedOff(string? settingsText)
+    {
+        if (string.IsNullOrWhiteSpace(settingsText))
+        {
+            return false;
+        }
+
+        try
+        {
+            using var document = System.Text.Json.JsonDocument.Parse(settingsText, new System.Text.Json.JsonDocumentOptions { CommentHandling = System.Text.Json.JsonCommentHandling.Skip, AllowTrailingCommas = true });
+            return document.RootElement.ValueKind == System.Text.Json.JsonValueKind.Object
+                && document.RootElement.EnumerateObject().Any(member =>
+                    string.Equals(member.Name, "startWithWindows", StringComparison.OrdinalIgnoreCase) && member.Value.ValueKind == System.Text.Json.JsonValueKind.False);
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Windows' Startup apps page (Settings, Apps, Startup), where the Store's copy's sign-in start is turned on or off
     /// (AX-13.4). False when Windows could not open it.
     /// </summary>

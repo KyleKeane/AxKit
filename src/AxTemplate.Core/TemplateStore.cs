@@ -276,6 +276,9 @@ public static class TemplateStore
         return tail.ReplaceLineEndings("\n").Length;
     }
 
+    /// <summary>What is said of a template whose text makes nothing to copy or put in: the clipboard takes no empty text (TP-4.7, TP-8.4).</summary>
+    public static string NoTextYet(string title) => $"{title} has no text yet";
+
     /// <summary>The value of a check as the item's file holds it.</summary>
     public static JsonNode Checked(bool value) => JsonValue.Create(value);
 }

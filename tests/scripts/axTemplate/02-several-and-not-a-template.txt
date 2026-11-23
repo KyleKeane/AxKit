@@ -1,8 +1,8 @@
 # Workflow: Delete several templates, and meet a file that is no template, in axTemplate's browser
 # axTemplate's browser (docs/axTemplate/nvda-test-plan.md sections 5 and 6; SPEC TP-2.1, TP-2.4, TP-8.2, TP-8.4): a
 # folder that holds templates already, without a list.json, and one file that is not an item. Run by tools/AxAutomate
-# on a desktop of its own (docs/axKit/automation.md).
-file home\AxKit\axTemplate.json {"checkForUpdates": false}
+# on a desktop of its own (docs/axKit/automation.md). The launcher the browser starts gets a hotkey nobody uses.
+file home\AxKit\axTemplate.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F7", "sayFirstMatch": false}
 file home\AxKit\templates\Alpha.json {"schema": "list.json", "Title": "Alpha", "Text": "First {caret}"}
 file home\AxKit\templates\Beta.json {"schema": "list.json", "Title": "Beta", "Text": "Second", "axDown": true, "Sprint": "kept"}
 file home\AxKit\templates\Gamma.json {"schema": "list.json", "Title": "Gamma", "Text": "Third"}

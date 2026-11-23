@@ -39,6 +39,24 @@ public static class HelpText
           Ctrl+S: nothing to save here; a template is kept as you change it
         """ + BundleHelp.FilterAndSortSection() + BundleHelp.NoticesSection("axTemplate", "the panes");
 
+    /// <summary>The launcher's F1 text (SPEC.md TP-7.1), as axClip's: the bundle's section with what Alt+F4 does here, then the launcher's own keys.</summary>
+    public static readonly string LauncherShortcuts = BundleHelp.Section(
+        "axTemplate",
+        [
+            "Ctrl+F, F3 and Shift+F3: find in a notice's text",
+        ],
+        altF4: "hide the launcher (Quit axTemplate, in its first menu, ends it)") + """
+        ## The launcher
+          Ctrl+Shift+Apostrophe, or the hotkey you chose: show the launcher from anywhere; again: hide it
+          Type: only the templates that hold every word typed, in their name or in their text; names first
+          Down, Up: the next or the previous template. Ctrl+Home, Ctrl+End: the first or the last. Page Down, Page Up: a screen
+          Enter: put the template into the program you were in
+          Shift+Enter: put the template's text on the clipboard without putting it in
+          Ctrl+Q: read the template's text
+          Ctrl+B: open the browser, where templates are made and changed
+          Escape: hide the launcher
+        """ + BundleHelp.NoticesSection("axTemplate", "the list");
+
     /// <summary>docs/axTemplate/user-guide.md, embedded by AxTemplate.csproj.</summary>
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axTemplate/user-guide.md");
 }

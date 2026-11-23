@@ -111,7 +111,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
 - **axHelp** (asked 2026-10-23 as AxAsk, built 2026-11-09; rebuilt in 5.7.0 as two hotkeys into one conversation in axClaude, with axDescribe, asked as AxSee, merged in; an access layer, AX-11, for Claude Code): `AxKit.exe help [--hidden | <picture>]` (`describe`, the former verb, the same), Start entry `axKit axHelp`, command `axHelp`: a background process whose hotkey, Ctrl+Shift+Slash (the question mark's key, AX-8.11), brings up the conversation, an axClaude window on Claude's working folder titled axHelp, on a model of axHelp's own, and whose second hotkey, Ctrl+Shift+Comma, puts a picture of the window in front into it (`docs/axHelp/SPEC.md`).
 
 - **axAutomate** (asked 2026-11-10, built 2026-11-11 as a viewer first): `AxKit.exe automate [<folder>]`, Start entry `axKit axAutomate`, command `axAutomate`: the workflows that drive axKit's windows, the automated checks of every app first, read step by step in the item apps' window (`docs/axAutomate/SPEC.md`).
-- **axTemplate** (asked 2026-11-23, its browser built the same day): `AxKit.exe template`, Start entry `axKit axTemplate`, command `axTemplate`: the user's templates, each an item of the item format in one folder, with a browser on the item apps' window and, as its next step, a launcher behind a hotkey (Ctrl+Shift+Apostrophe unless the user chose another) that puts a template into the program in front (`docs/axTemplate/SPEC.md`).
+- **axTemplate** (asked 2026-11-23, its browser and its launcher built the same day): `AxKit.exe template [--launcher | --hidden]`, Start entry `axKit axTemplate`, command `axTemplate`: the user's templates, each an item of the item format in one folder, with a browser on the item apps' window and a launcher behind a hotkey (Ctrl+Shift+Apostrophe unless the user chose another), a background process as axClip's, that puts a template into the program in front (`docs/axTemplate/SPEC.md`). The one app with two windows, each of a bundle type (TP-D8).
 ## 4. Functional requirements
 
 ### AX-1 Launch and dispatch
@@ -144,7 +144,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
 - AX-1.8 In the Store's copy (AX-13), a process started from one of the package's entries takes the entry's verb when
   the command line carries none (`Dispatch.WithApplicationVerb` with `PackageIdentity.ApplicationId`, before `Decide`).
 - AX-1.9 **A background app that does not answer** (2026-11-16, `repairs.md` R-65; `AxKit.Core/BackgroundStart`,
-  tested in `BackgroundStartTests`, and `AxKit.Forms/AppHost.OneCopy`, the one start of axStart, axClip and axHelp).
+  tested in `BackgroundStartTests`, and `AxKit.Forms/AppHost.OneCopy`, the one start of axStart, axClip, axHelp and axTemplate's launcher).
   Each runs one copy, hidden, held by a named mutex; a second start hands its wish to the first copy's window ("show",
   or axHelp's picture) and ends. When the first copy hung, its hotkey was dead and starting the app again did
   nothing, without a word. Now the second start waits up to three seconds for the first copy's window (a copy that
@@ -718,6 +718,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   | axGIT | commit what is staged (AG-3.5) | the same |
   | axMCP | call the tool or fetch the prompt selected (MP-3.4) | the same |
   | axFile | in the folder list, play the folder in axMedia (AF-5.1) | the same; outside the folder list the edge sound |
+  | axTemplate | not there (begun 2026-11-23) | in the browser, copies the template's text, its marks filled with nothing (TP-8.4); in the launcher the edge sound, until it takes the other program's selection first (TP-4.2, not built yet) |
   | axDown, axJSON | a line break in the text (the edit control's own) | the edge sound; Enter makes the line break |
   | axPreview, axMedia, axProcess, axCalc, axTask, axPass, axAutomate, axStart, axClip, axHelp | nothing of axKit's (the focused control's own, if any) | the edge sound |
 - AX-8.11 **The system-wide keys are on Ctrl+Shift** (the user's decision of 2026-11-14). A system-wide key is a
@@ -730,7 +731,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   | Ctrl+Shift+Slash, the question mark's key | axHelp's conversation with Claude (HE-4.1) | `AxHelp.Core/HelpSettings.DefaultHotkey`; Options, Hotkey in axHelp |
   | Ctrl+Shift+Comma, the less-than sign's key | a screenshot of the window in front into axHelp's conversation (HE-4.1) | `HelpSettings.DefaultScreenshotHotkey`; `screenshotHotkey` in `axHelp.json` |
   | Ctrl+Shift+Semicolon | axClip's search field over the clipboard history (CP-1.3) | `AxClip.Core/ClipSettings.DefaultHotkey`; Options, Hotkey in axClip |
-  | Ctrl+Shift+Apostrophe | axTemplate's search field over the templates (TP-1.3; the launcher is being built, and until then nothing registers the key) | `AxTemplate.Core/TemplateSettings.DefaultHotkey` |
+  | Ctrl+Shift+Apostrophe | axTemplate's search field over the templates (TP-1.3) | `AxTemplate.Core/TemplateSettings.DefaultHotkey`; Options, Hotkey in axTemplate's launcher |
   | Ctrl+Shift+Period, the greater-than sign's key | reserved for a later help launcher; nothing registers it | written here alone |
 
   The Windows+Alt keys, axHelp's Windows+Alt+H and Windows+Alt+S and axClip's Windows+Alt+V, are retired: the user
@@ -1517,10 +1518,22 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
 - AX-13.4a **The background apps right after the install** (the user's report of 2026-11-14 from a second computer:
   axStart's hotkey did nothing until Windows was restarted). Windows runs a package's startup tasks at a sign-in, and
   only after an app of the package was started once. So the first start of any app of the Store's copy starts axStart,
-  axClip and axHelp itself, hidden, once per install (`StoreFirstStart`, `Program.StartBackgroundAppsOnce`): a marker
+  axClip and axHelp itself, hidden, once per install (`StoreFirstStart`, `Program.StartBackgroundApps`): a marker
   file in the package's private folder says it was done and goes with an uninstall. Afterwards Windows' Startup apps
   page alone decides, so an app turned off there is never started by axKit. Never in a test run. Nothing is said:
   the apps wait behind their hotkeys as they do after a sign-in.
+- AX-13.4b **A background app without a startup task** (2026-11-23; the maintainer's word that axTemplate's hotkey
+  is on for everyone after an installation and after an update, docs/axTemplate/SPEC.md TP-1.4). axTemplate's
+  launcher runs in the background as axClip does, and has no entry in the package (the eight are taken, AX-13.2),
+  so Windows has no startup task for it and no line on its Startup apps page (`Dispatch.App.InBackground`). axKit
+  starts it itself in the Store's copy, hidden, at three moments: with the first start after the install
+  (AX-13.4a); with the first start of any app after an update, which the marker tells by holding the version it
+  was written for (a marker of before this rule is empty, so the update that brings the launcher starts it); and
+  whenever a startup task starts its app hidden, which is the sign-in. After the first start, its own setting
+  says no: Options, General, Start with Windows in its window is the toggle of that setting there, not Windows'
+  page (`SignInStart.TurnedOff`, read from its settings file as the process starts). A start of it while it runs
+  ends by itself, as every second start of a background app. In the copy from GitHub the installer starts it with
+  the others, and its first run writes its Run value.
 - AX-13.5 **AppData and the programs axKit starts.** A packaged desktop app's new files under AppData Local and Roaming
   land in the package's private folder (`%LOCALAPPDATA%\Packages\axKit.axKit_<hash>\LocalCache`), its writes under HKCU
   in a private hive, and its package folder is read-only (measured 2026-11-08). So axKit's own files of AX-5 go with the

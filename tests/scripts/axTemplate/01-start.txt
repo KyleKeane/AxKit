@@ -1,8 +1,9 @@
 # Workflow: Make, write, rename and delete a template in axTemplate's browser
 # axTemplate's browser (docs/axTemplate/nvda-test-plan.md sections 1 to 4; SPEC TP-8, TP-2.1, TP-2.2), run by
 # tools/AxAutomate on a desktop of its own (docs/axKit/automation.md). The templates' folder is the run's own home,
-# empty at the start: the browser makes it and its list.json.
-file home\AxKit\axTemplate.json {"checkForUpdates": false}
+# empty at the start: the browser makes it and its list.json. The browser starts the launcher (TP-1.1), whose
+# hotkey here is one nobody uses, so that the run never takes the user's.
+file home\AxKit\axTemplate.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F7", "sayFirstMatch": false}
 
 start template
 check commands
@@ -25,6 +26,11 @@ keys enter
 expect said Added Thanks
 expect focus Thanks
 expect state Templates, 1 template
+
+# Check: A template without a text has nothing to copy
+# 2.1a Ctrl+Enter on the new template says so; nothing is put on the clipboard.
+keys ctrl+enter
+expect said Thanks has no text yet: Enter goes to its fields
 
 # Check: A name that is taken is refused
 # 2.2 The same name again, whatever its capitals: said, and the notice kept.

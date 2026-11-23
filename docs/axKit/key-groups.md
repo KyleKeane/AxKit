@@ -151,6 +151,7 @@ The keys:
 - Enter, axTask: Open the file in axJSON.
 - Enter, axTask: Open the item's form.
 - Enter, axClip: Paste.
+- Enter, axTemplate: Put in.
 - Enter, axMCP: Read the resource.
 - Enter, axGIT: Show diff.
 - Enter, axStart: Start.
@@ -165,7 +166,7 @@ The keys:
 - Escape, axAutomate, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Clear the filter.
 - Escape, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Deselect all.
 - Escape, axAutomate, axMCP, axPass, axTask and axTemplate: To the navigator.
-- Escape, axClip, axHelp and axStart: Hide.
+- Escape, axClip, axHelp, axStart and axTemplate: Hide.
 - Escape, axFile and axGIT: To the list.
 - Escape, axTask: Back from the search.
 - Shift+Escape, axClaude: Interrupt.
@@ -217,13 +218,13 @@ Windows' own keys, as in every program:
 
 - Backspace, axAutomate, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Up a level.
 - Backspace, axFile: Up one level.
-- Down arrow, axClip and axStart: Next match.
+- Down arrow, axClip, axStart and axTemplate: Next match.
 - Left arrow, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Up a level.
 - Left arrow, axAutomate, axMCP, axPass, axTask and axTemplate: The previous value of the field.
 - Left arrow, axProcess: Up to This computer.
 - Left arrow, axGIT: Up to the repository.
-- Page Down, axClip and axStart: Page down.
-- Page Up, axClip and axStart: Page up.
+- Page Down, axClip, axStart and axTemplate: Page down.
+- Page Up, axClip, axStart and axTemplate: Page up.
 - Right arrow, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Into the list.
 - Right arrow, axAutomate, axMCP, axPass, axTask and axTemplate: The next value of the field.
 - Right arrow, axTask: Open it where it lives.
@@ -233,7 +234,7 @@ Windows' own keys, as in every program:
 - Tab, axFile and axGIT: To the list.
 - Tab, axFile: To the Actions list.
 - Tab, axGIT: To the text.
-- Up arrow, axClip and axStart: Previous match.
+- Up arrow, axClip, axStart and axTemplate: Previous match.
 - Shift+Tab, axAutomate, axMCP, axPass, axTask and axTemplate: To the detail pane.
 - Shift+Tab, axAutomate, axMCP, axPass, axTask and axTemplate: To the navigator.
 - Shift+Tab, axCalc, axClaude and axTerminal: Switch between the view and the field.
@@ -304,6 +305,7 @@ Ctrl and a letter does something to what you are on, and the letter is the first
 The keys:
 
 - Ctrl+B, axDown: Bold.
+- Ctrl+B, axTemplate: Open the browser.
 - Ctrl+D, axFile: Add or remove this folder.
 - Ctrl+D, axFile: Add to or remove from Favorites.
 - Ctrl+D, axHelp: Put a picture file into the conversation.
@@ -548,6 +550,7 @@ The keys:
 - Ctrl+Enter, axTerminal: Send the command.
 - Ctrl+Enter, axClaude: Send the message.
 - Shift+Enter, axClip: Copy without pasting.
+- Shift+Enter, axTemplate: Copy without putting in.
 - Shift+Enter, axFile: Preview.
 
 Windows' own keys, as in every program:
@@ -562,8 +565,8 @@ Ctrl with an arrow takes a bigger step: Ctrl+Up and Ctrl+Down go to the previous
 The keys:
 
 - Ctrl+Down arrow, axAutomate, axGIT, axMCP, axPass, axProcess and axTask: Next section.
-- Ctrl+End, axClip and axStart: Last match.
-- Ctrl+Home, axClip and axStart: First match.
+- Ctrl+End, axClip, axStart and axTemplate: Last match.
+- Ctrl+Home, axClip, axStart and axTemplate: First match.
 - Ctrl+Left arrow, axMedia: Back 15 seconds.
 - Ctrl+Right arrow, axMedia: Forward 15 seconds.
 - Ctrl+Up arrow, axAutomate, axGIT, axMCP, axPass, axProcess and axTask: Previous section.

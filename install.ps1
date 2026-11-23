@@ -14,7 +14,8 @@
       under Windows' own "Open with" for .md, .markdown and .txt, axJSON for .json, axMedia for the sound and video
       kinds, axPreview for .txt, .md, .markdown, .log and .json, so that the user can make an app the default program
       for a kind in Settings, Default apps,
-    - axStart, the program launcher, and axClip, the clipboard history, running in the background from sign-in (a value
+    - axStart, the program launcher, axClip, the clipboard history, axHelp and the launcher of axTemplate, your
+      templates behind Ctrl+Shift+Apostrophe, running in the background from sign-in (a value
       under the user's Run key that each writes itself): they are stopped before an install or a removal, and started
       again, hidden, after an install,
     - the console commands axClaude, axDown, axJSON, axGIT, axTerminal, axFile, axMedia, axPreview, axStart, axProcess, axTask, axPass, axCalc, axClip, axMCP, axHelp and axKit, each in the app's own case since 5.6.0, so that a screen reader says the name as it is (a folder
@@ -267,14 +268,20 @@ $background = @(
     @{ Verb = 'start'; Name = 'axStart'; Settings = 'axStart.json'; What = 'the launcher'; Started = 'axStart, the launcher, runs in the background: Ctrl+Shift+Space, or the hotkey you chose, brings up its search field' },
     @{ Verb = 'clip'; Name = 'axClip'; Settings = 'axClip.json'; What = 'the clipboard history'; Started = 'axClip, the clipboard history, runs in the background: Ctrl+Shift+Semicolon, or the hotkey you chose, brings it up' },
     @{ Verb = 'help'; Name = 'axHelp'; Settings = 'axHelp.json'; What = 'the conversation with Claude'; Started = 'axHelp runs in the background: Ctrl+Shift+Slash (the question mark key) brings up your conversation with Claude, Ctrl+Shift+Comma (the less-than key) puts a picture of the screen into it' },
+    # axTemplate's launcher (docs/axTemplate/SPEC.md TP-1.2): the one of its two windows that runs in the background,
+    # told by its arguments (Words), since the plain verb is its browser, a window like any other. It is started
+    # after every installation and update as the others are (the maintainer's word of 2026-11-23: its hotkey is on
+    # for everyone), unless its Start with Windows was turned off.
+    @{ Verb = 'template'; Words = 'template\s+--(hidden|launcher)'; Name = 'axTemplate'; Settings = 'axTemplate.json'; What = "the templates' launcher"; Started = "axTemplate's launcher runs in the background: Ctrl+Shift+Apostrophe, or the hotkey you chose, brings up your templates" },
     # axDescribe merged into axHelp in 5.7.0: an older one is stopped for the installation and not started again.
     @{ Verb = 'describe'; Name = 'axDescribe'; Settings = 'axDescribe.json'; What = 'the former screen description'; Started = ''; Former = $true }
 )
 function Stop-Background {
     foreach ($app in $background) {
         # Under the old name too: an Axit.exe from sign-in holds its folder and its hotkey.
+        $words = if ($app.Words) { $app.Words } else { $app.Verb }
         $running = @(Get-CimInstance Win32_Process -Filter "Name = 'AxKit.exe' OR Name = 'Axit.exe'" -ErrorAction SilentlyContinue |
-            Where-Object { $_.CommandLine -match ('^"?[^"]*\\(AxKit|Axit)[^"\\]*\.exe"?\s+' + $app.Verb + '(\s|$)') })
+            Where-Object { $_.CommandLine -match ('^"?[^"]*\\(AxKit|Axit)[^"\\]*\.exe"?\s+' + $words + '(\s|$)') })
         foreach ($process in $running) {
             try { Stop-Process -Id $process.ProcessId -Force -ErrorAction Stop; Wait-Process -Id $process.ProcessId -Timeout 10 -ErrorAction SilentlyContinue } catch { }
         }

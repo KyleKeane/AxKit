@@ -87,7 +87,7 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 - What: For something called from anywhere in Windows with a key: a field that always holds the caret, and under it a list the arrow keys move through from the field.
 - Made of: the field; the list.
 - Moving: Down and Up move through the list while you type. Enter does the app's thing with the row. Escape hides the window.
-- Apps on it: axStart, axClip, axHelp.
+- Apps on it: axStart, axClip, axTemplate (its second window), axHelp.
 - The code: `HotkeyForm`, `src/AxKit.Forms/HotkeyForm.cs`.
 
 ## The apps
@@ -107,7 +107,7 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 | axCalc | conversation | conversation | The shape without a program behind it: its text is the answers given. |
 | axProcess | navigator | navigator | Three lists of This computer, read off the UI thread, and no second pane; it starts inside Processes. |
 | axAutomate | navigator | navigator |  |
-| axTemplate | navigator | navigator | The browser of the templates; the launcher behind the hotkey, on the hotkey window, is its next step (docs/axTemplate/SPEC.md TP-D8). |
+| axTemplate | navigator, and hotkey for its second window | navigator | Two windows, each a start of its own (docs/axTemplate/SPEC.md TP-D8): the browser of the templates, and the launcher behind the hotkey. |
 | axTerminal | conversation | conversation |  |
 | axGIT | navigator | navigator | Three lists of the repository, read through git off the UI thread, with a text as second pane; it starts inside Changes. |
 | axPass | navigator | navigator |  |

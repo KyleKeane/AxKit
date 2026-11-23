@@ -94,7 +94,7 @@ internal static class Program
 
         if (Runs.TryGetValue(launch.App, out var run))
         {
-            StartBackgroundAppsOnce(launch.App);
+            StartBackgroundApps(launch.App, launch.Arguments);
             // AX-1.6: the taskbar's id is the app's project name, AxKit.AxClaude and so on.
             SetAppId("AxKit." + Dispatch.Of(launch.App).Project);
             run(launch.Arguments);
@@ -189,34 +189,58 @@ internal static class Program
     private static extern bool AllowSetForegroundWindow(int processId);
 
     /// <summary>
-    /// AX-13.4a: the first start of any app of the Store's copy starts the background apps (axStart, axClip, axHelp),
-    /// hidden, once per install, since Windows runs their startup tasks only from the next sign-in
-    /// (<see cref="StoreFirstStart"/>). A start that fails is left to that sign-in.
+    /// AX-13.4a, AX-13.4b: the Store's copy starts its background apps itself where Windows does not
+    /// (<see cref="StoreFirstStart"/>, which holds the rules). The first start of any app after the install starts
+    /// them all, hidden, since Windows runs the startup tasks only from the next sign-in. axTemplate's launcher has
+    /// no startup task, so it is also started with the first start after an update, and whenever a startup task
+    /// starts its app hidden, unless its own Start with Windows setting is off. A start that fails is left to the
+    /// next of these.
     /// </summary>
-    private static void StartBackgroundAppsOnce(string startedApp)
+    private static void StartBackgroundApps(string startedApp, IReadOnlyList<string> arguments)
     {
-        if (!StoreFirstStart.Due(PackageIdentity.IsPackaged, AutomationEnvironment.Requested, File.Exists(StoreFirstStart.MarkerFile))
-            || Environment.ProcessPath is not { } path
-            || !StoreFirstStart.Mark())
+        if (!StoreFirstStart.Applies(PackageIdentity.IsPackaged, AutomationEnvironment.Requested) || Environment.ProcessPath is not { } path)
         {
             return;
         }
 
-        foreach (var verb in StoreFirstStart.Verbs(startedApp))
+        // The marker is written before anything is started for a first start or an update; when it cannot be
+        // written, neither is due, so that a folder that cannot be written never means several starts with every window.
+        var marker = StoreFirstStart.Marker();
+        if (marker != BundleInfo.Version && !StoreFirstStart.Mark(BundleInfo.Version))
+        {
+            marker = BundleInfo.Version;
+        }
+
+        foreach (var verb in StoreFirstStart.ToStart(startedApp, arguments.Contains("--hidden"), marker, BundleInfo.Version, StartWithWindowsOff))
         {
             try
             {
                 var start = new System.Diagnostics.ProcessStartInfo(path) { UseShellExecute = false };
                 start.ArgumentList.Add(verb);
                 start.ArgumentList.Add("--hidden");
-                // Outside call, program, axKit: starts AxKit.exe itself as a background app (axStart, axClip, axHelp),
-                // hidden, at the first start of the Store's copy after its install (AX-13.4a).
+                // Outside call, program, axKit: starts AxKit.exe itself as a background app (axStart, axClip, axHelp,
+                // axTemplate's launcher), hidden, at the first start of the Store's copy after its install, and the
+                // launcher also after an update and with the sign-in's startup tasks (AX-13.4a, AX-13.4b).
                 using var started = System.Diagnostics.Process.Start(start);
             }
             catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException)
             {
-                // Windows starts it at the next sign-in.
+                // Windows starts it at the next sign-in, or the next of these starts does.
             }
+        }
+    }
+
+    /// <summary>Whether the app's own settings file says its Start with Windows is off; a file that is not there or cannot be read does not.</summary>
+    private static bool StartWithWindowsOff(App app)
+    {
+        try
+        {
+            var file = AppPaths.SettingsFile(app.Name);
+            return File.Exists(file) && SignInStart.TurnedOff(File.ReadAllText(file));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return false;
         }
     }
 
