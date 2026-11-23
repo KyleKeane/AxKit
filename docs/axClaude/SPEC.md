@@ -445,7 +445,7 @@ While a notice shows: Tab / Shift+Tab between text, field and buttons; Enter the
 | Start | `Ready` |
 | Claude exited | `Claude stopped` |
 | No conversation to continue | `Nothing to continue, new conversation` (FR-9.1) |
-| Send while stopped | `Claude stopped. Ctrl+Shift+R starts it` |
+| Send while stopped; and, since 2026-11-22, the interrupt, Send key and Next permission mode while stopped (they were silent; over the stream they said it already) | `Claude stopped. Ctrl+Shift+R starts it` |
 | Send in the moment a start still waits for Claude Code's version (at most 2 s, `events-and-grounding.md` EG-2.4; the status bar says starting) | `Claude is starting`; the text stays in the field |
 | Send while Claude asks, with other text in the field | `Not sent, Claude asks: <title>. Enter again sends` (FR-2.10) |
 | Folder changed | `Folder <name>` |

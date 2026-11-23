@@ -27,6 +27,11 @@ keys enter
 expect said Claude stopped. Ctrl+Shift+R starts it
 expect focus "name":"Message to Claude","role":"Text","value":"hello"
 keys ctrl+a delete
+# Check: The interrupt says that Claude is stopped
+# A key meant for Claude is never silent while nothing runs: the same sentence as for a message.
+said
+do Interrupt
+expect said Claude stopped. Ctrl+Shift+R starts it
 # Goal: Start a stopped Claude again
 # Step 2: Ctrl+Shift+R restarts a stopped Claude at once, without a notice: "Ready" again.
 keys ctrl+shift+r

@@ -102,7 +102,7 @@ the app follows its spec, the plan's step reads as below.
 
 ## 8. Lifecycle
 
-1. Type `/exit`, Enter: "Claude stopped"; the status says "stopped"; the message field still works. Type a word, Enter: "Claude stopped. Ctrl+Shift+R starts it" and the word is still in the field.
+1. Type `/exit`, Enter: "Claude stopped"; the status says "stopped"; the message field still works. Type a word, Enter: "Claude stopped. Ctrl+Shift+R starts it" and the word is still in the field. Shift+Escape, and Claude, Next permission mode: the same sentence, never silence.
 2. Ctrl+Shift+R restarts the stopped Claude at once, without a notice; "Ready" again.
 2a. With Claude running, Ctrl+Shift+R: the "Force Claude to restart?" notice, whose text ends "Enter: Restart now. Escape: Keep Claude running." Escape: the focus is back where it was and Claude still runs. Ctrl+Shift+R, Enter: "Restarting", then "Ready". With a background command running (ask Claude to run `sleep 120` in the background), the notice starts "Claude has work running in the background (1 shell)."
 3. Alt+F4 while the status says "ready": the app closes within two seconds; Task Manager shows no `claude.exe`.

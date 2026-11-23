@@ -321,9 +321,9 @@ NVDA pass recorded. A piece that changes what a user does updates the app's spec
     around almost nothing); the speech choice (two enumerations of the two apps' own); stopping the program and
     its end (all but one line is each app's own); the consent before the first start (the shared piece is the
     window base's `HasConsent` already); and the guards of a key sent while nothing runs, where the two differ in
-    behaviour: axTerminal says "The shell ended" on every such key, axClaude says "Claude stopped" for a message
-    and nothing for Interrupt, Send key and Next permission mode. Making axClaude say it there too is a change of
-    what axClaude does, and is a line of the step's item for his word.
+    behaviour: axTerminal says "The shell ended" on every such key, axClaude said "Claude stopped" for a message
+    and nothing for Interrupt, Send key and Next permission mode. axClaude says it for those too since the same
+    night (the rule of 2026-10-22, never silence; the words are each app's own, so the guards stay each app's).
 12. The hotkey window's list as the canonical list, and axHelp's text and field as the conversation's components.
     Built, 2026-11-22: the list under the field is `AxKitList` in its mode for that (FW-4.12), in axStart, axClip
     and, on its second use, under the command palette's field; one move from the field with its sounds in place

@@ -53,13 +53,28 @@ internal sealed partial class MainForm
             ? question.Accepts(text)
             : text is ClaudeCodeTexts.Yes or ClaudeCodeTexts.No or ClaudeCodeTexts.YesCapital or ClaudeCodeTexts.NoCapital || text.All(char.IsAsciiDigit));
 
+    /// <summary>
+    /// Nothing runs to take a message or a key: said, with the key that starts Claude again, or "Claude is starting"
+    /// while a start still waits for Claude Code's version (events-and-grounding.md EG-2.4). True when it was said,
+    /// and the caller sends nothing. Never silence on a key (FR-2.3, FR-2.4, FR-11; until 2026-11-22 the interrupt,
+    /// a key of Claude Code's own and the next permission mode did nothing and said nothing while Claude was stopped).
+    /// </summary>
+    private bool StoppedSaid()
+    {
+        if (ProcessRunning)
+        {
+            return false;
+        }
+
+        Announce(_hookVersionWait ? "Claude is starting" : "Claude stopped. Ctrl+Shift+R starts it", true);
+        return true;
+    }
+
     private void SendInput()
     {
-        if (!ProcessRunning)
+        // The text stays in the field: nothing was sent, and it is wanted again after a restart, or in a moment.
+        if (StoppedSaid())
         {
-            // The text stays in the field: nothing was sent, and it is wanted again after a restart; or in a moment,
-            // while a start still waits for Claude Code's version (events-and-grounding.md EG-2.4).
-            Announce(_hookVersionWait ? "Claude is starting" : "Claude stopped. Ctrl+Shift+R starts it", true);
             return;
         }
 
@@ -258,6 +273,11 @@ internal sealed partial class MainForm
             return;
         }
 
+        if (StoppedSaid())
+        {
+            return;
+        }
+
         ClearWrites();
         Write(ClaudeCodeKeys.Escape);
         FlowActed(UserAction.Escaped);
@@ -269,6 +289,11 @@ internal sealed partial class MainForm
         if (Streams)
         {
             StreamNextMode();
+            return;
+        }
+
+        if (StoppedSaid())
+        {
             return;
         }
 
@@ -284,6 +309,11 @@ internal sealed partial class MainForm
         if (Streams)
         {
             SayNotWithStream();
+            return;
+        }
+
+        if (StoppedSaid())
+        {
             return;
         }
 
