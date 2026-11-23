@@ -675,6 +675,34 @@ Starts with: Open axDown with the file format.md.
 4. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone.
 
+## Put a template in at the caret: a link around the selected words, a table, and a template of your own
+
+Starts with: Open axDown with the file doc.md.
+
+### Make the selected word a link and type its address
+
+1. Press Shift+End.
+2. Choose Link in the Actions menu, Insert template.
+    You hear: Link inserted.
+3. Type: https://example.org
+
+### Put in a table and type into its first cell
+
+1. Press Ctrl+End.
+2. Choose Table in the Actions menu, Insert template.
+    You hear: Table inserted.
+3. Type: Name
+
+### Put in a template of your own from the command palette, with the selected words carried into it
+
+1. Press Ctrl+Home, Down, Down, Shift+End.
+2. Press Ctrl+Shift+P (Command palette; Help menu).
+3. Type: meeting
+    You hear: Actions, Insert template.
+4. Press Enter.
+    You hear: Meeting inserted.
+5. Type: of Monday
+
 ## Answer a notice and use the command palette
 
 Starts with: Open axDown with the file notes.md.

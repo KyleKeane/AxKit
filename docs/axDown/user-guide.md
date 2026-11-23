@@ -52,6 +52,19 @@ Actions, Format (Alt+A, F) writes Markdown's marks for you. Every command there 
 
 In navigation mode nothing changes the text, these commands included.
 
+## Templates
+
+Actions, Insert template (Alt+A, T) puts a ready-made piece of text in at the caret. axDown has three of its own, and every file you keep in your templates folder is one more.
+
+- **Link.** Select the words that should be the link's text, then Insert template, Link: axDown writes the square brackets around them and the round brackets after, and the caret waits between the round brackets for the address. With nothing selected the square brackets are empty.
+- **Table.** A table of two columns and two rows, with the caret in the first cell.
+- **Code block.** A fenced block; what you had selected is inside it.
+- **Your own.** Options, General, Templates folder opens the folder in axFile; axDown makes it the first time. Every file there is a template, named by its file: `Meeting notes.md` is "Meeting notes" in the menu. Write one as you write any file.
+
+In a template of your own, three marks have a meaning, and everything else is put in as you wrote it: `{caret}` is where the caret lands (after the text when you leave it out), `{selection}` is the text you had selected when you chose the template, and `{clipboard}` is the text on the clipboard at that moment.
+
+Every template is a command, so the command palette finds it: Ctrl+Shift+P, type "insert template" to hear them all, or the template's name. axDown says "Link inserted", and one Ctrl+Z takes a template back. In navigation mode nothing is put in.
+
 ## Text size and fonts
 
 Ctrl+Plus and Ctrl+Minus make the text larger and smaller, and axDown says the new size. Options, Text, Font opens the Windows font dialog. Both are remembered.
@@ -59,10 +72,10 @@ Ctrl+Plus and Ctrl+Minus make the text larger and smaller, and axDown says the n
 ## Menus
 
 - **Session**: New, Open, Open recent file (each as a number, the file's name and its full path), Save, Save as, Show current file in (File Explorer, Ctrl+W; axClaude, Claude in the file's folder; axTerminal, a shell in the file's folder; axGIT, a git manager on the repository that holds the file; axFile, the file's folder with the file selected), Exit.
-- **Actions**: Undo, Redo, and Format: Heading 1 to Heading 6, Heading deeper (Shift+Alt+Right), Heading shallower (Shift+Alt+Left), Bold (Ctrl+B), Italic, Code, List item, Block quote.
+- **Actions**: Undo, Redo, Format (Heading 1 to Heading 6, Heading deeper with Shift+Alt+Right, Heading shallower with Shift+Alt+Left, Bold with Ctrl+B, Italic, Code, List item, Block quote) and Insert template (Link, Table, Code block, then your own).
 - **Context**: Cut, Copy, Paste, Select all, on the selection. Shift+F10, the Applications key or a right click in the text opens it.
 - **Navigation**: Find, Find next, Find previous, Go to line, and the submenus Next and Previous, each with Heading, Heading level 1 to 6, Link, List, List item, Block quote and Table.
-- **Options**: Text (Word wrap, Say new line, Sound on headings, Font, Larger text, Smaller text, Windows text size), General (Check for updates at start) and Developer (Open settings file, which opens axDown.json in a new axJSON window).
+- **Options**: Text (Word wrap, Say new line, Sound on headings, Font, Larger text, Smaller text, Windows text size), General (Check for updates at start, Templates folder) and Developer (Open settings file, which opens axDown.json in a new axJSON window).
 - **Window**, **axKit** and **Help**: the bundle's menus, the same in every axKit window, with Options just before Window. Window (Alt+W) starts a new window of any app, lists the open axKit windows (the one you were in last first: Alt+W, O, 1 takes you back to it), reopens a file or folder closed lately and closes all windows. axKit (Alt+K) holds what is the whole bundle's: Claude (the switch Use Claude in axKit, Ask about this window with Shift+F1, Folders Claude may read, Claude's working folder), the AI tools and the theme. Help (Alt+H) has the command palette (Ctrl+Shift+P), the keyboard shortcuts (F1), this guide, the app's resource pages, Send a report (F4), Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About.
 
 ## Settings

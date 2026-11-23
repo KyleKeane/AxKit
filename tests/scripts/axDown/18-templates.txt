@@ -1,0 +1,63 @@
+# Workflow: Put a template in at the caret: a link around the selected words, a table, and a template of your own
+# axDown: Actions, Insert template (docs/axDown/SPEC.md AD-13; docs/axDown/nvda-test-plan.md, section 11). A template
+# is text put in at the caret in the place of the selection, with the caret where the template says and the selected
+# text carried in; the app's own come first, then the files of the templates folder. Every one is a command, so the
+# command palette finds them under the word "template".
+file home\AxKit\axDown.json {"checkForUpdates": false}
+file home\AxKit\templates\axDown\Meeting.md # Meeting {caret}\n\nPresent: {selection}\n
+file doc.md axKit\n\nAda and Grace\n
+
+start down {temp}\doc.md
+expect focus doc.md
+
+# Goal: Make the selected word a link and type its address
+# The selected word becomes the link's text, and the caret waits between the round brackets.
+keys shift+end
+do Link, Actions, Insert template
+expect said ! Link inserted
+expect focus {"name":"doc.md","role":"Text","value":"[axKit]()"}
+type https://example.org
+expect focus {"name":"doc.md","role":"Text","value":"[axKit](https://example.org)"}
+
+# Goal: Put in a table and type into its first cell
+keys ctrl+end
+do Table, Actions, Insert template
+expect said ! Table inserted
+type Name
+expect focus {"name":"doc.md","role":"Text","value":"| Name |  |"}
+expect text | --- | --- |
+
+# Goal: Put in a template of your own from the command palette, with the selected words carried into it
+# The file Meeting.md of the templates folder is the template "Meeting": the palette finds it by its name.
+keys ctrl+home down down shift+end
+do Command palette
+type meeting
+expect said Meeting
+expect said Actions, Insert template
+keys enter
+expect said ! Meeting inserted
+type of Monday
+expect focus {"name":"doc.md","role":"Text","value":"# Meeting of Monday"}
+expect text Present: Ada and Grace
+
+# Check: The word "template" in the palette lists the templates
+# The menu's name finds them all: the three of axDown's own and the one of the folder.
+do Command palette
+type insert template
+expect said Link, Actions, Insert template, 1 of 4
+keys escape
+
+# Check: One Ctrl+Z takes a template back
+keys ctrl+z
+expect said ! Undone
+keys ctrl+z
+expect said ! Undone
+expect text Ada and Grace
+
+# Check: In navigation mode no template is put in
+keys ctrl+space
+expect said ! Navigation mode
+said
+do Table, Actions, Insert template
+expect said ♪ Edge
+expect said ! Navigation mode: press Ctrl+Space to edit

@@ -35,7 +35,16 @@ public static class AxDownApp
             ("&GitHub Flavored Markdown", "https://github.github.com/gfm/"),
         ],
         Commands: [],
-        Format: FormatCommands());
+        Format: FormatCommands(),
+        Templates:
+        [
+            // SPEC.md AD-13.3: the selected words become the link's text, and the caret waits where the address goes.
+            new EditorTemplate("&Link", "[{selection}]({caret})"),
+            // Two columns and two rows, the caret in the first cell.
+            new EditorTemplate("&Table", "| {caret} |  |\n| --- | --- |\n|  |  |"),
+            // A fenced block with the selection inside it and the caret after it.
+            new EditorTemplate("&Code block", "```\n{selection}{caret}\n```"),
+        ]);
 
     /// <summary>
     /// Actions, Format (SPEC.md AD-12): each item one function of <see cref="MarkdownEdit"/> on the caret's line

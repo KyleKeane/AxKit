@@ -47,6 +47,11 @@ public static class HelpText
           In the menu, without a key: Heading 1 to Heading 6, Italic, Code, List item, Block quote. Each is a toggle: chosen again on the same text, it takes the format away
           List item and Block quote act on every line of a selection
 
+        ## Templates (Actions, Insert template)
+          Link: square brackets around the selected words, round brackets after, the caret between them for the address. Table: two columns, two rows. Code block: a fenced block around the selection
+          Your own: every file of your templates folder is one more; Options, General, Templates folder opens it. In such a file {caret} is where the caret lands, {selection} the text you had selected, {clipboard} the clipboard's text
+          No key: the menu, or the command palette, Ctrl+Shift+P, with "insert template" or the template's name. Said "Link inserted"; one Ctrl+Z takes it back
+
         ## Navigation mode
           Ctrl+Space: navigation mode, said "Navigation mode"; again: edit mode, said "Edit mode". The status bar shows "navigation mode" after the file's name. Every window starts in edit mode
           The letters of the Ctrl keys above, without Ctrl: h and Shift+H heading, 1 to 6 and Shift with them a heading of that level, k link, l list, i list item, q block quote, t table, each the next one and with Shift the previous one

@@ -154,6 +154,17 @@ public sealed partial class TextEditorForm : AxKitForm
 
                 edit.DropDownItems.Add(format);
             }
+
+            if (_app.Templates is { } templates)
+            {
+                // The app's templates and the user's own (AD-13), put in at the caret.
+                if (_app.Format is not { Count: > 0 })
+                {
+                    edit.DropDownItems.Add(new ToolStripSeparator());
+                }
+
+                edit.DropDownItems.Add(CreateTemplatesMenu(templates));
+            }
         }
 
         var navigate = new ToolStripMenuItem();
@@ -181,7 +192,10 @@ public sealed partial class TextEditorForm : AxKitForm
         _wordWrapItem = Add(wordWrap);
         _wordWrapItem.Checked = WordWrapPreference;
         options.DropDownItems.Add(CreateTextMenu(_wordWrapItem));
-        options.DropDownItems.Add(CreateGeneralMenu());
+        // General: the templates folder, for an editor that has templates (AD-13.4).
+        options.DropDownItems.Add(_app.Templates is null
+            ? CreateGeneralMenu()
+            : CreateGeneralMenu(CommandPalette.Marked(new ToolStripMenuItem("&Templates folder", null, (_, _) => OpenTemplatesFolder()), CommandMark.Open)));
         options.DropDownItems.Add(CreateDeveloperMenu());
 
         // As axClaude's Claude Code resources: where the file format is explained, in the browser (AD-4.4).

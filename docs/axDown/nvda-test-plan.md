@@ -220,6 +220,21 @@ On a copy of `manual_tests/axDown/_main.md`, or any Markdown file.
 7. Ctrl+Space, then Ctrl+B: the edge sound and "Navigation mode: press Ctrl+Space to edit"; nothing changed.
 8. By ear, the maintainer's: whether "on" and "off" are the right words, and whether the three keys sit well.
 
+## 11. Templates (SPEC.md AD-13, 2026-11-23)
+
+1. Select a word, Alt+A, T, L: "Link inserted"; the word stands in square brackets, and what you type next goes
+   between the round brackets. With nothing selected: "Link inserted", empty square brackets.
+2. Alt+A, T, T: "Table inserted", two columns and two rows; what you type goes into the first cell.
+3. Select two lines, Alt+A, T, C: "Code block inserted", the lines inside the fence.
+4. Options, General, Templates folder: axFile opens on the folder. Put a file `Meeting.md` there with the text
+   `# Meeting {caret}` and a second line `Present: {selection}`. Back in axDown, select a name, Alt+A, T: the menu
+   ends with "1. Meeting"; Enter: "Meeting inserted", the caret after "# Meeting ", the name after "Present: ".
+5. Ctrl+Shift+P, `insert template`: the first match "Link, Actions, Insert template, 1 of 4"; Down reads the others.
+   Ctrl+Shift+P, `meeting`, Enter: "Meeting inserted".
+6. Ctrl+Z after any of them: "Undone", the whole template gone in one step.
+7. Ctrl+Space, then Alt+A, T, L: the edge sound and "Navigation mode: press Ctrl+Space to edit".
+8. With no file in the folder, the menu's last item reads "No templates of your own yet" and does nothing.
+
 ## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)
 
 1. In the text with a word selected, Shift+F10: Context opens on "Cut Ctrl+X" and NVDA reads it, not the edit control's own menu; the Applications key and a right click the same; Escape: back in the text, the caret and the selection where they were. Alt, then Right along the bar: Session, Actions, Navigation, Context, Options, Window, axKit, Help.

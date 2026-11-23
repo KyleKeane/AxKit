@@ -321,6 +321,9 @@ every window" or under a heading that names the windows without it; under an app
 - Heading shallower. Menu: Actions, Format. Key: Shift+Alt+Left. Mark: change.
 - Italic. Menu: Actions, Format. Key: none. Mark: change.
 - List item. Menu: Actions, Format. Key: none. Mark: change.
+- Code block. Menu: Actions, Insert template. Key: none. Mark: change.
+- Link. Menu: Actions, Insert template. Key: none. Mark: change.
+- Table. Menu: Actions, Insert template. Key: none. Mark: change.
 - Copy. Menu: Context. Key: Ctrl+C. Mark: act.
 - Cut. Menu: Context. Key: Ctrl+X. Mark: act.
 - Paste. Menu: Context. Key: Ctrl+V. Mark: act.
@@ -355,6 +358,7 @@ every window" or under a heading that names the windows without it; under an app
 - List. Menu: Navigation, Previous. Key: Ctrl+Shift+L. Mark: read.
 - List item. Menu: Navigation, Previous. Key: Ctrl+Shift+I. Mark: read.
 - Table. Menu: Navigation, Previous. Key: Ctrl+Shift+T. Mark: read.
+- Templates folder. Menu: Options, General. Key: none. Mark: open.
 - Word wrap. Menu: Options, Text. Key: Ctrl+Shift+W. Mark: change.
 - New. Menu: Session. Key: Ctrl+N. Mark: change.
 - New window. Menu: Session. Key: Ctrl+Shift+N. Mark: open.
@@ -566,6 +570,7 @@ every window" or under a heading that names the windows without it; under an app
 - Item. Menu: Navigation, Previous. Key: Ctrl+Shift+I. Mark: read.
 - Key. Menu: Navigation, Previous. Key: Ctrl+Shift+K. Mark: read.
 - Object. Menu: Navigation, Previous. Key: Ctrl+Shift+J. Mark: read.
+- Templates folder. Menu: Options, General. Key: none. Mark: open.
 - Word wrap. Menu: Options, Text. Key: Ctrl+Shift+W. Mark: change.
 - New. Menu: Session. Key: Ctrl+N. Mark: change.
 - New window. Menu: Session. Key: Ctrl+Shift+N. Mark: open.

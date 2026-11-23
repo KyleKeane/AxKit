@@ -14,6 +14,9 @@ public static class AppPaths
     public static string SettingsFolder { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit");
 
+    /// <summary>The folder of an editor's templates of the user's own (docs/axDown/SPEC.md AD-13.4): each file there is one template of that app.</summary>
+    public static string TemplatesFolder(string app) => Path.Combine(SettingsFolder, "templates", app);
+
     /// <summary>The key of the settings' seal and the names of the sealed files (AX-5.6), kept with DPAPI; beside the AI tools' key, never roamed.</summary>
     public static string SettingsSealFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "settings-seal.key");

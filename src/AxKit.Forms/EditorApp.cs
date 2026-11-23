@@ -22,6 +22,7 @@ namespace AxKit.Forms;
 /// <param name="Render">For a viewer: what a file shows, from the renderer that takes it (AP-7); null reads every file as text.</param>
 /// <param name="Details">For a viewer: the Details list's lines of a file, given its page's Contents lines (AP-6), run off the UI thread; null for a window without the list.</param>
 /// <param name="Format">The app's commands that change the format of the caret's line or of the selection, in a Format submenu of Actions: axDown's headings, bold, italic, code, list item and block quote (docs/axDown/SPEC.md AD-12); null for none.</param>
+/// <param name="Templates">The app's own templates, first in Actions, Insert template, before the files of the user's templates folder (docs/axDown/SPEC.md AD-13): axDown's link, table and code block; empty for an editor that has the user's alone (axJSON); null for no such menu (the viewer).</param>
 public sealed record EditorApp(
     string Name,
     string Verb,
@@ -39,7 +40,11 @@ public sealed record EditorApp(
     Func<string, ViewerPage>? Render = null,
     Func<string, IReadOnlyList<string>, IReadOnlyList<string>>? Details = null,
     IReadOnlyList<EditorOffer>? Offers = null,
-    IReadOnlyList<EditorChange>? Format = null);
+    IReadOnlyList<EditorChange>? Format = null,
+    IReadOnlyList<EditorTemplate>? Templates = null);
+
+/// <summary>A template of an editor app's own (docs/axDown/SPEC.md AD-13): its menu label with a mnemonic, and its text with the marks of <c>AxKit.Core.TextTemplate</c>.</summary>
+public sealed record EditorTemplate(string Label, string Text);
 
 /// <summary>Where the viewer's Ctrl+E goes (docs/axPreview/SPEC.md AP-7.3): the file's editor, axMedia, or the program Windows has for it.</summary>
 public enum ViewerWayOut

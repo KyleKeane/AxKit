@@ -31,6 +31,7 @@ public static class HelpText
           Alt+Right: the values the member at the caret can take, as a list; Up and Down move in it, Enter writes the one chosen, Escape leaves. "type", "does", "key", a choice's options, true or false
           Alt+Down and Alt+Up: the next and the previous value, written in line and said with its place, "type: date, 4 of 8"
           Alt+Left: add a member: the members the object at the caret can have and does not have yet, each with what it is; Enter adds the one chosen with a first value and puts the caret on it
+          Actions, Insert template: every file of your templates folder, put in at the caret; Options, General, Templates folder opens the folder. In such a file {caret} is where the caret lands, {selection} the text you had selected, {clipboard} the clipboard's text
           Ctrl+Shift+W: word wrap on or off
 
         ## The text

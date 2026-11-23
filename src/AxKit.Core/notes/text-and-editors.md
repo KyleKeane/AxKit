@@ -20,6 +20,7 @@
   more or fewer), `Bold`, `Italic` and `Code` (around the selection, or the caret's word, or empty marks to type
   into; two or three asterisks are bold, one or three italic), `ListItem` and `BlockQuote` (on every line the
   selection touches; empty lines carried along and not counted). A line's ending is never touched.
+- `TextTemplate` with `TemplateText` (docs/axDown/SPEC.md AD-13, 2026-11-23): an editor's template, plain text with three marks: `{caret}` where the caret lands (the first one; after the text without one), `{selection}` the text selected when the template was chosen, `{clipboard}` the clipboard's text. `Expand` fills them and gives the text and the caret's offset; what comes in through a mark is never read for marks, other braces are the template's own, line endings become CR LF. `NameOf` names a template file by its file name. Placeholders and forms are paused, the maintainer's word.
 - `TextDocument` (docs/axDown/SPEC.md AD-3; from AxDown.Core, axJSON): a text file as an editor window holds it, with
   the encoding, the byte order mark and the line ending it came with, so that `ToBytes` writes it back as it was,
   every line ending of the text the file's (a lone LF pasted from a Unix clipboard included); `FromBytes` and

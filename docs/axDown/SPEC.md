@@ -172,7 +172,7 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
   AG-1.4) and axFile (the file's folder listed with the file selected, docs/axFile/SPEC.md AF-1.3), the bundle's one
   submenu (AX-9.10); then Exit (Alt+F4).
 - AD-4.2 Edit: Undo (Ctrl+Z) and Redo (Ctrl+Y) over the window's own history (AD-2.5), then Cut, Copy, Paste,
-  Select all (the control's own, listed for discoverability), and Format ▸, the format commands of AD-12.
+  Select all (the control's own, listed for discoverability), Format ▸, the format commands of AD-12, and Insert template ▸, the templates of AD-13.
   Navigate (as axClaude's): Find… (Ctrl+F), Find next (F3), Find previous (Shift+F3), Go to line… (Ctrl+G), then the
   submenus Next and Previous with one item per kind of section 9, made from the key pairs of the table: the kind's
   name with NVDA's letter as the mnemonic ("Heading", "Heading level 1" to "6", "Link", "List", "List item", "Block
@@ -266,7 +266,7 @@ window has the accessible role Window, as axClaude's has, so that NVDA names it;
 then. Afterwards, spoken through one UI Automation notification on the editor (AX-7.3), and only these: "Saved" (after a save and
 after Save as); "Reloaded, <name> changed on disk" and "<name> changed on disk; Save will ask" on coming back to the window, "Reloaded" after Reload and lose mine (AD-3.6); "Not found" (find); "Line n of m" after Go to line, or "Not a line number"; "Word wrap on" / "Word wrap off"; "Undone", "Redone", "Nothing to undo", "Nothing to redo" (AD-2.5); "Text size n"; "No file yet" (Show current file in on Untitled);
 "Install, heading level 2" after a heading jump, "No next heading" / "No previous heading" when there is none;
-the format commands' sentences, "Heading 2", "No heading", "Bold on", "Bold off", "List item on, 3 lines" and their like (AD-12);
+a template's name and "inserted", "Link inserted" (AD-13); the format commands' sentences, "Heading 2", "No heading", "Bold on", "Bold off", "List item on, 3 lines" and their like (AD-12);
 "Navigation mode" / "Edit mode" on Ctrl+Space, and "Navigation mode: press Ctrl+Space to edit", after the edge sound, for a menu command that would change the text in navigation mode (AD-5.3);
 "Copied" is NVDA's own. Opening a file speaks nothing of its own: the focus arrives in the editor and NVDA reads
 its name (the file's) and the first line.
@@ -333,8 +333,47 @@ assistant's recommendations; which commands, which keys and what is said are ope
   `EditorApp.Format` (`EditorChange`), and the shell holds the submenu, the undo step, the refusal in navigation
   mode and the saying, for every editor that names format commands. **Open, for the maintainer:** the three keys;
   whether Italic, Code, List item and Block quote should have keys at the cost of others; the words "on" and
-  "off"; and the next step he asked for with this one, templates put in at the caret (a table, a code block, a
-  link, his own files) and axJSON's own format commands (the priorities list's item on templates in the editors).
+  "off". The templates he asked for with this one are AD-13, built the next day; axJSON's own format commands, if
+  any are wanted beside Format, are not.
+
+### AD-13 Templates
+
+The second half of the maintainer's ask of 2026-11-22 ("template injection"), narrowed by him on 2026-11-23: "let
+us pause on anything beyond the simple template injection with cursor placement ... please build the simeple
+framework and then we can extend it later". Asked which templates he wanted first, he chose all four offered: a
+link, a table, a code block, and files of his own.
+
+- AD-13.1 **Where.** Actions, Insert template: a submenu, after Format. Its items are the app's own templates, then
+  the user's, made again each time the menu opens. Every item is a command, so the command palette lists them all:
+  Ctrl+Shift+P and "template" shows every one, and a template's name finds it (his word: "this is probably the
+  command palette with typing template"). No key of its own, and no text expander.
+- AD-13.2 **What a template is.** Plain text, put in at the caret in the place of the selection, as one undo step
+  (AD-2.5). Three marks, and nothing else to learn (`AxKit.Core/TextTemplate`):
+  - `{caret}`: where the caret lands. The first one counts; without one the caret lands after the text.
+  - `{selection}`: the text that was selected when the template was chosen; empty when nothing was.
+  - `{clipboard}`: the clipboard's text at that moment; empty when it holds none. The clipboard is read only for a
+    template that names it. (The assistant's reading of "templates can take clipboard contents as a passthrough";
+    his to strike.)
+  Every other character is the template's own, braces too. What comes in through a mark is put in as it is and
+  never read for marks. Line endings become the edit control's.
+- AD-13.3 **axDown's own templates.**
+  - **Link**: `[{selection}]({caret})`. The selected words become the link's text and the caret waits where the
+    address goes; with nothing selected the text is empty (his example).
+  - **Table**: two columns and two rows, the caret in the first cell.
+  - **Code block**: a fenced block with the selection inside it and the caret after it.
+- AD-13.4 **The user's own.** Each file of `%APPDATA%\AxKit\templates\axDown` is one template, named by its file
+  without the extension, in the order of the names, numbered in the menu as the recent files are. Options,
+  General, Templates folder makes the folder when it is not there and opens it in axFile; a template is written
+  in axDown itself. A file larger than 64 KB, or one that cannot be read, is said and nothing is put in. With no
+  file there, the menu's last item says "No templates of your own yet" and does nothing.
+- AD-13.5 **What is said.** The template's name and "inserted": "Link inserted", "Meeting notes inserted". NVDA
+  reads nothing by itself when text arrives this way. In navigation mode nothing is put in: the edge sound and
+  "Navigation mode: press Ctrl+Space to edit" (AD-5.3).
+- AD-13.6 **In code.** The marks are filled by a pure function (`TextTemplate.Expand`, `TextTemplateTests`). The
+  editor shell holds the menu, the folder, the reading of a file off the UI thread, the undo step and the saying
+  for every editor that names templates (`EditorApp.Templates`); axJSON has the menu with the user's files of
+  `templates\axJSON` and no templates of its own yet. **Paused, his word:** placeholders to fill and a key that
+  finds the next one, a form behind a template, a text expander.
 
 ## 5. User interface
 

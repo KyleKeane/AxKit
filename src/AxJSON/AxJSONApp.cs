@@ -50,7 +50,9 @@ public static class AxJSONApp
             new EditorOffer("Ne&xt value", AxJSONKeys.NextValue, (text, caret, path) => Stepped(JsonOffers.Step(text, caret, 1, name => ReadLinked(path, name)))),
             new EditorOffer("Pre&vious value", AxJSONKeys.PreviousValue, (text, caret, path) => Stepped(JsonOffers.Step(text, caret, -1, name => ReadLinked(path, name)))),
             new EditorOffer("Add a &member...", AxJSONKeys.AddMember, (text, caret, path) => Shown(JsonOffers.Members(text, caret, name => ReadLinked(path, name)))),
-        ]);
+        ],
+        // No templates of its own yet: Actions, Insert template holds the files of the user's templates folder (docs/axDown/SPEC.md AD-13).
+        Templates: []);
 
     public static void Run(string[] args) => EditorHost.Run(App, Usage, args);
 

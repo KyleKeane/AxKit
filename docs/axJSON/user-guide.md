@@ -71,7 +71,7 @@ Ctrl+Plus and Ctrl+Minus make the text larger and smaller, and axJSON says the n
 ## Menus
 
 - **Session**: New, Open, Open recent file, Save, Save as, Show current file in (File Explorer, Ctrl+W; axClaude, Claude in the file's folder; axTerminal, a shell in the file's folder; axGIT, a git manager on the repository that holds the file; axFile, the file's folder with the file selected), Exit.
-- **Actions**: Undo, Redo, Format (Ctrl+Shift+F).
+- **Actions**: Undo, Redo, Format (Ctrl+Shift+F), the choices of a place (Alt with an arrow), and Insert template: every file of your templates folder is a piece of JSON put in at the caret, with `{caret}` for where the caret lands, `{selection}` for the text you had selected and `{clipboard}` for the clipboard's text. Options, General, Templates folder opens the folder in axFile. The command palette finds a template by its name, or all of them under "insert template".
 - **Context**: Cut, Copy, Paste, Select all, on the selection; Shift+F10 opens it.
 - **Navigation**: Find, Find next, Find previous, Go to line, and the submenus Next and Previous, each with Key, Object, Array, Item and Error.
 - **Options**: Text (Word wrap, Font, Larger text, Smaller text, Windows text size), General (Check for updates at start) and Developer (Open settings file, which opens axJSON.json in a new axJSON window).

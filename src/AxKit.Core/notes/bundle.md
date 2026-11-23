@@ -19,7 +19,7 @@
 - `StoreListing` (AX-13, 2026-11-08): the Store ID and the addresses made from it (the Store page `ms-windows-store:`,
   the web page, the `winget install` line).
 - `BundleInfo`: the version, read from the executable.
-- `AppPaths` (AX-5.1): settings, logs, updates and the recently closed list under the `AxKit` folders; `ConsentFile`;
+- `AppPaths` (AX-5.1): settings, logs, updates and the recently closed list under the `AxKit` folders; `TemplatesFolder(app)`, an editor's templates of the user's own (2026-11-23); `ConsentFile`;
   `SettingsFolder` and `SettingsSealFile` (AX-5.6);
   `TakeOverOldFolders` (AX-5.4, 2026-11-05), the Axit folders of up to 4.0.0 moved into them on the first start, entry
   by entry through `TakeOverFolder`, tested in `AppPathsTests`; `OneAtATime` (2026-11-09), the name of the mutex that
