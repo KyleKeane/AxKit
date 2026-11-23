@@ -456,6 +456,33 @@ public sealed class GoalTests
         Assert.Empty(empty);
     }
 
+    /// <summary>
+    /// A workflow's, a goal's and a check's title goes into the workflow record as it is, and the record holds no
+    /// backslash (WF-6.4, <c>RepositoryWorkflowTests.The_record_is_well_formed</c>): a double quote in a title is
+    /// written there with one. Found only after an NVDA pass had recorded such a title (2026-11-23), which failed the
+    /// record's test on main; held here, where the script is written. Name a word in a title without quotes.
+    /// </summary>
+    [Fact]
+    public void No_title_of_the_repository_holds_a_double_quote_or_a_backslash()
+    {
+        var marked = new List<string>();
+        foreach (var path in RepositoryScripts())
+        {
+            var lines = File.ReadAllLines(path);
+            for (var i = 0; i < lines.Length; i++)
+            {
+                var line = lines[i];
+                if ((line.StartsWith("# Workflow:", StringComparison.Ordinal) || line.StartsWith("# Goal:", StringComparison.Ordinal) || line.StartsWith("# Check:", StringComparison.Ordinal))
+                    && (line.Contains('"') || line.Contains('\\')))
+                {
+                    marked.Add($"{path}, line {i + 1}: {line}");
+                }
+            }
+        }
+
+        Assert.Empty(marked);
+    }
+
     [Fact]
     public void A_goal_without_an_input_step_is_found()
     {

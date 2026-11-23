@@ -40,7 +40,7 @@ type of Monday
 expect focus {"name":"doc.md","role":"Text","value":"# Meeting of Monday"}
 expect text Present: Ada and Grace
 
-# Check: The word "template" in the palette lists the templates
+# Check: The words insert template in the palette list every template
 # The menu's name finds them all: the three of axDown's own and the one of the folder.
 do Command palette
 type insert template
