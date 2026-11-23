@@ -195,7 +195,7 @@ public sealed partial class TextEditorForm : AxKitForm
         // General: the templates folder, for an editor that has templates (AD-13.4).
         options.DropDownItems.Add(_app.Templates is null
             ? CreateGeneralMenu()
-            : CreateGeneralMenu(CommandPalette.Marked(new ToolStripMenuItem("&Templates folder", null, (_, _) => OpenTemplatesFolder()), CommandMark.Open)));
+            : CreateGeneralMenu(CommandPalette.Marked(new ToolStripMenuItem("&Templates in axTemplate", null, (_, _) => OpenTemplates()), CommandMark.Open)));
         options.DropDownItems.Add(CreateDeveloperMenu());
 
         // As axClaude's Claude Code resources: where the file format is explained, in the browser (AD-4.4).

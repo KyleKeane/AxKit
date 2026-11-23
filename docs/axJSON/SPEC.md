@@ -112,9 +112,9 @@ otherwise. Native fields mean NVDA reads them by itself, and the caret cannot le
 ### AJ-4 Menus, keys, texts
 
 - AJ-4.1 The menus are the shell's (AD-4) with axJSON's additions: Edit → Format (Ctrl+Shift+F) after the control's
-  own items, then Choose a value… and Add a member… (AJ-5), then Insert template ▸, the files of the user's folder
-  `templates\axJSON` (the editor shell's templates, docs/axDown/SPEC.md AD-13, 2026-11-23; axJSON has none of its own
-  yet), with Options, General, Templates folder; Navigate → Next and Previous with the kinds of AJ-2.2; Help → JSON resources ▸ (JSON syntax,
+  own items, then Choose a value… and Add a member… (AJ-5), then Insert template ▸, axTemplate's templates checked for
+  axJSON or for every axKit app (the editor shell's templates, docs/axDown/SPEC.md AD-13; axJSON has none of its
+  own yet), with Options, General, Templates in axTemplate; Navigate → Next and Previous with the kinds of AJ-2.2; Help → JSON resources ▸ (JSON syntax,
   `https://www.json.org/json-en.html`; Claude Code settings, `https://code.claude.com/docs/en/settings`), as axDown's
   Help has Markdown resources.
 - AJ-4.2 Keys (AX-8): the shell's (`EditorKeys`, included in `AxJSONKeys.All`), then Ctrl+K, Ctrl+J, Ctrl+L, Ctrl+I,

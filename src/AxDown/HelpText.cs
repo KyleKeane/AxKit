@@ -49,7 +49,7 @@ public static class HelpText
 
         ## Templates (Actions, Insert template)
           Link: square brackets around the selected words, round brackets after, the caret between them for the address. Table: two columns, two rows. Code block: a fenced block around the selection
-          Your own: every file of your templates folder is one more; Options, General, Templates folder opens it. In such a file {caret} is where the caret lands, {selection} the text you had selected, {clipboard} the clipboard's text
+          Your own: every template of axTemplate checked for axDown or for every axKit app is one more; Options, General, Templates in axTemplate opens axTemplate, where you write them. In a template {caret} is where the caret lands, {selection} the text you had selected, {clipboard} the clipboard's text
           No key: the menu, or the command palette, Ctrl+Shift+P, with "insert template" or the template's name. Said "Link inserted"; one Ctrl+Z takes it back
 
         ## Navigation mode

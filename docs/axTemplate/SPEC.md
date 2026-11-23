@@ -294,16 +294,16 @@ Asked one at a time through the question tool, after he had the first specificat
 
 ## 9. Status
 
-Steps 1 and 2 are built (2026-11-23). Step 1: the store, the finding and the settings in `AxTemplate.Core` with
-their tests, and the browser, `BrowserForm`, which a plain start shows. Step 2: the launcher, `LauncherForm`,
+Steps 1 to 4 are built (2026-11-23). Step 1: the store, the finding and the settings, with their tests (the store
+is `AxKit.Core/TemplateStore` since step 4), and the browser, `BrowserForm`, which a plain start shows. Step 2: the launcher, `LauncherForm`,
 behind Ctrl+Shift+Apostrophe: the finding, Enter with the paste, Shift+Enter, Ctrl+Q, Ctrl+B, and the plain start
 that starts it hidden, with the hotkey on for everyone after an installation and an update (TP-1.4). Step 3:
 Ctrl+Enter with the other program's selection, the template on the clipboard marked against histories
 (`AxKit.Forms/PrivateClipboard`) and the clipboard's text of before given back 550 ms after the paste key, when
 nothing else was copied since, and the caret moved back to `{caret}` by Left keys 150 ms after the paste key
 (`AxKit.Forms/KeySender`). The window checks are `tests/scripts/axTemplate`; what only a real front window shows
-(the paste, the caret, the clipboard, the selection) is `tests/nvda-scripts/axTemplate-put-in.txt`. Steps 4 to 6
-are not built: the editors read the items, the templates in every axKit window, axAutomate's step. Also there
-from 2026-11-23: the marks and
-their code (`AxKit.Core/TextTemplate`), and the editors' Insert template menu, which reads plain files of
-`templates\<app>` until step 4.
+(the paste, the caret, the clipboard, the selection) is `tests/nvda-scripts/axTemplate-put-in.txt`. Step 4: the
+editors' Insert template (axDown, axJSON; docs/axDown/SPEC.md AD-13.4) lists the templates checked for the app or
+for every axKit app, in place of the plain files they read before, and Options, General, Templates in axTemplate
+opens the browser. Steps 5 and 6 are not built: the templates in every other axKit window with a field, and
+axAutomate's step. The marks and their code are `AxKit.Core/TextTemplate`, shared with the editors.

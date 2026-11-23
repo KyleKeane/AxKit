@@ -1,10 +1,13 @@
 # Workflow: Put a template in at the caret: a link around the selected words, a table, and a template of your own
 # axDown: Actions, Insert template (docs/axDown/SPEC.md AD-13; docs/axDown/nvda-test-plan.md, section 11). A template
 # is text put in at the caret in the place of the selection, with the caret where the template says and the selected
-# text carried in; the app's own come first, then the files of the templates folder. Every one is a command, so the
-# command palette finds them under the word "template".
+# text carried in; the app's own come first, then axTemplate's templates checked for axDown or for every axKit
+# app (TP-5); one checked for axJSON alone is not listed. Every one is a command, so the command palette finds them
+# under the word "template". The test's template is one line: a file step turns every \n, and JSON's \u000a too,
+# into a line break, which a JSON string may not hold.
 file home\AxKit\axDown.json {"checkForUpdates": false}
-file home\AxKit\templates\axDown\Meeting.md # Meeting {caret}\n\nPresent: {selection}\n
+file home\Documents\axKit\Templates\Meeting.json {"schema": "list.json", "Title": "Meeting", "Text": "# Meeting {caret}, present: {selection}", "axDown": true}
+file "home\Documents\axKit\Templates\JSON only.json" {"schema": "list.json", "Title": "JSON only", "Text": "{}", "axJSON": true}
 file doc.md axKit\n\nAda and Grace\n
 
 start down {temp}\doc.md
@@ -28,7 +31,7 @@ expect focus {"name":"doc.md","role":"Text","value":"| Name |  |"}
 expect text | --- | --- |
 
 # Goal: Put in a template of your own from the command palette, with the selected words carried into it
-# The file Meeting.md of the templates folder is the template "Meeting": the palette finds it by its name.
+# axTemplate's template Meeting, checked for axDown: the palette finds it by its name.
 keys ctrl+home down down shift+end
 do Command palette
 type meeting
@@ -37,11 +40,10 @@ expect said Actions, Insert template
 keys enter
 expect said ! Meeting inserted
 type of Monday
-expect focus {"name":"doc.md","role":"Text","value":"# Meeting of Monday"}
-expect text Present: Ada and Grace
+expect focus {"name":"doc.md","role":"Text","value":"# Meeting of Monday, present: Ada and Grace"}
 
 # Check: The words insert template in the palette list every template
-# The menu's name finds them all: the three of axDown's own and the one of the folder.
+# The menu's name finds them all: the three of axDown's own and the one checked for axDown, not the one for axJSON.
 do Command palette
 type insert template
 expect said Link, Actions, Insert template, 1 of 4

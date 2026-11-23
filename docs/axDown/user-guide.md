@@ -59,7 +59,7 @@ Actions, Insert template (Alt+A, T) puts a ready-made piece of text in at the ca
 - **Link.** Select the words that should be the link's text, then Insert template, Link: axDown writes the square brackets around them and the round brackets after, and the caret waits between the round brackets for the address. With nothing selected the square brackets are empty.
 - **Table.** A table of two columns and two rows, with the caret in the first cell.
 - **Code block.** A fenced block; what you had selected is inside it.
-- **Your own.** Options, General, Templates folder opens the folder in axFile; axDown makes it the first time. Every file there is a template, named by its file: `Meeting notes.md` is "Meeting notes" in the menu. Write one as you write any file.
+- **Your own.** Your templates are written in axTemplate (Options, General, Templates in axTemplate opens it). A template shows here when its check for axDown, or for every axKit app, is on; it is listed by its name after axDown's own.
 
 In a template of your own, three marks have a meaning, and everything else is put in as you wrote it: `{caret}` is where the caret lands (after the text when you leave it out), `{selection}` is the text you had selected when you chose the template, and `{clipboard}` is the text on the clipboard at that moment.
 

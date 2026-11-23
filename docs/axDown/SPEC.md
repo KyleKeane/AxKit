@@ -361,18 +361,20 @@ link, a table, a code block, and files of his own.
     address goes; with nothing selected the text is empty (his example).
   - **Table**: two columns and two rows, the caret in the first cell.
   - **Code block**: a fenced block with the selection inside it and the caret after it.
-- AD-13.4 **The user's own.** Each file of `%APPDATA%\AxKit\templates\axDown` is one template, named by its file
-  without the extension, in the order of the names, numbered in the menu as the recent files are. Options,
-  General, Templates folder makes the folder when it is not there and opens it in axFile; a template is written
-  in axDown itself. A file larger than 64 KB, or one that cannot be read, is said and nothing is put in. With no
-  file there, the menu's last item says "No templates of your own yet" and does nothing.
+- AD-13.4 **The user's own** are axTemplate's (docs/axTemplate/SPEC.md TP-5, step 4, 2026-11-23; plain files of
+  `%APPDATA%\AxKit\templates\axDown` until then, never released): every template whose check for axDown, or for
+  every axKit app, is on, by its name, in the order of the names, numbered in the menu as the recent files are.
+  They are read off the UI thread as the window comes up and each time it is active again, and a template's file
+  is read again when it is chosen, so that a change made in axTemplate a moment ago is in. Options, General,
+  Templates in axTemplate opens axTemplate's browser, where templates are written and checked for an app. With
+  none for axDown, the menu's last item says "No templates of your own for axDown yet" and does nothing.
 - AD-13.5 **What is said.** The template's name and "inserted": "Link inserted", "Meeting notes inserted". NVDA
   reads nothing by itself when text arrives this way. In navigation mode nothing is put in: the edge sound and
   "Navigation mode: press Ctrl+Space to edit" (AD-5.3).
 - AD-13.6 **In code.** The marks are filled by a pure function (`TextTemplate.Expand`, `TextTemplateTests`). The
-  editor shell holds the menu, the folder, the reading of a file off the UI thread, the undo step and the saying
-  for every editor that names templates (`EditorApp.Templates`); axJSON has the menu with the user's files of
-  `templates\axJSON` and no templates of its own yet. **Paused, his word:** placeholders to fill and a key that
+  editor shell holds the menu, the reading of axTemplate's templates off the UI thread
+  (`AxKit.Core/TemplateStore`), the undo step and the saying for every editor that names templates
+  (`EditorApp.Templates`); axJSON has the menu with the templates checked for axJSON and none of its own yet. **Paused, his word:** placeholders to fill and a key that
   finds the next one, a form behind a template, a text expander.
 
 ## 5. User interface

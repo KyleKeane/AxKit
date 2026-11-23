@@ -226,9 +226,10 @@ On a copy of `manual_tests/axDown/_main.md`, or any Markdown file.
    between the round brackets. With nothing selected: "Link inserted", empty square brackets.
 2. Alt+A, T, T: "Table inserted", two columns and two rows; what you type goes into the first cell.
 3. Select two lines, Alt+A, T, C: "Code block inserted", the lines inside the fence.
-4. Options, General, Templates folder: axFile opens on the folder. Put a file `Meeting.md` there with the text
-   `# Meeting {caret}` and a second line `Present: {selection}`. Back in axDown, select a name, Alt+A, T: the menu
-   ends with "1. Meeting"; Enter: "Meeting inserted", the caret after "# Meeting ", the name after "Present: ".
+4. Options, General, Templates in axTemplate: axTemplate's browser opens. Make a template `Meeting` with the text
+   `# Meeting {caret}` and a second line `Present: {selection}`, and check axDown. Back in axDown, select a name,
+   Alt+A, T: the menu ends with "1. Meeting"; Enter: "Meeting inserted", the caret after "# Meeting ", the name
+   after "Present: ". A template checked for axJSON alone is not in axDown's menu.
 5. Ctrl+Shift+P, `insert template`: the first match "Link, Actions, Insert template, 1 of 4"; Down reads the others.
    Ctrl+Shift+P, `meeting`, Enter: "Meeting inserted".
 6. Ctrl+Z after any of them: "Undone", the whole template gone in one step.

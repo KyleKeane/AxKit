@@ -14,9 +14,6 @@ public static class AppPaths
     public static string SettingsFolder { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit");
 
-    /// <summary>The folder of an editor's templates of the user's own (docs/axDown/SPEC.md AD-13.4): each file there is one template of that app.</summary>
-    public static string TemplatesFolder(string app) => Path.Combine(SettingsFolder, "templates", app);
-
     /// <summary>
     /// The folder of what the user writes with axKit and would want to keep, find, back up or sync: <c>axKit</c> in
     /// the user's Documents (docs/axKit/SPEC.md AX-5.11; the maintainer's decision of 2026-11-23). Settings, logs and
