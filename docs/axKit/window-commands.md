@@ -628,7 +628,7 @@ every window" or under a heading that names the windows without it; under an app
 - Faster. Menu: Actions. Key: Ctrl+Up. Mark: change.
 - Forward 15 seconds. Menu: Actions. Key: Ctrl+Right. Mark: open.
 - Normal speed. Menu: Actions. Key: none. Mark: change.
-- Pause or resume. Menu: Actions. Key: Ctrl+Enter. Mark: open.
+- Play, pause or resume. Menu: Actions. Key: Ctrl+Enter. Mark: open.
 - Select all. Menu: Actions. Key: Ctrl+A. Mark: change.
 - Slower. Menu: Actions. Key: Ctrl+Down. Mark: change.
 - What is playing. Menu: Actions. Key: Ctrl+Q. Mark: read.

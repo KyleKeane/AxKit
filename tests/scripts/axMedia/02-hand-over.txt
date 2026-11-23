@@ -16,16 +16,20 @@ silence ch\gamma.wav 30000
 
 # Goal: Add a folder to the queue with no window open
 # Step 4 (second half, AM-1.2, AM-D3): an add with no axMedia window open opens one with the queue and nothing
-# playing; an add says nothing in axMedia (axFile says it).
+# playing, and says "Added 3" once you are in it: a new window may come to the front, and then what axFile said is lost.
 # The app shows that window without activation; the runner activates it, as the user's switching to it would (every
 # started window is, since 2026-11-01), and the queue is read through Ctrl+I, which the window takes from anywhere.
 start media --add {temp}\ch
 expect state "title":"axMedia"
-expect quiet 1000
+expect said ! Added 3
 keys ctrl+q
 expect said ! Nothing playing
 keys ctrl+i
 expect said ! alpha.wav, 1 of 3
+# Goal: Start playing with the main action key
+# AM-4.3: a queue with nothing playing: Ctrl+Enter plays the file you are on, as it pauses and resumes one that plays.
+keys ctrl+enter
+expect said ! Playing alpha.wav
 close
 wait 1500
 

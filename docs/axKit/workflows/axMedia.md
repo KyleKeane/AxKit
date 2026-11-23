@@ -17,7 +17,7 @@ command's in this version of axKit.
 
 1. Open axMedia with the folder ch.
     You hear: Playing alpha.wav.
-2. Press Ctrl+Enter (Pause or resume; Actions menu).
+2. Press Ctrl+Enter (Play, pause or resume; Actions menu).
     You hear words such as: Paused at.
 
 ### Move through the queue
@@ -81,11 +81,17 @@ command's in this version of axKit.
 ### Add a folder to the queue with no window open
 
 1. Open axMedia with --add the folder ch.
+    You hear: Added 3.
 2. Press Ctrl+Q (What is playing; Actions menu).
     You hear: Nothing playing.
 3. Press Ctrl+I.
     You hear: alpha.wav, 1 of 3.
-4. Close the window.
+
+### Start playing with the main action key
+
+1. Press Ctrl+Enter (Play, pause or resume; Actions menu).
+    You hear: Playing alpha.wav.
+2. Close the window.
 
 ### Play a file with its folder around it
 
@@ -113,18 +119,18 @@ command's in this version of axKit.
 
 1. Open axMedia with the folder p.
     You hear: Playing first.wav.
-2. Press Ctrl+Enter (Pause or resume; Actions menu).
+2. Press Ctrl+Enter (Play, pause or resume; Actions menu).
     You hear: Paused at 0:0.
-3. Press Ctrl+Enter (Pause or resume; Actions menu).
+3. Press Ctrl+Enter (Play, pause or resume; Actions menu).
     You hear: Playing.
-4. Press Ctrl+Enter (Pause or resume; Actions menu).
+4. Press Ctrl+Enter (Play, pause or resume; Actions menu).
     You hear: Paused at 0:0.
-5. Press Ctrl+Enter (Pause or resume; Actions menu).
+5. Press Ctrl+Enter (Play, pause or resume; Actions menu).
     You hear: Playing.
 
 ### Move forward, back and to a time
 
-1. Press Ctrl+Enter (Pause or resume; Actions menu).
+1. Press Ctrl+Enter (Play, pause or resume; Actions menu).
     You hear: Paused at 0:0.
 2. Press Ctrl+Right (Forward 15 seconds; Actions menu).
     You hear: 0:1.
@@ -134,7 +140,7 @@ command's in this version of axKit.
 5. Type: 0:30
 6. Press Enter.
     You hear: 0:30.
-7. Press Ctrl+Enter (Pause or resume; Actions menu).
+7. Press Ctrl+Enter (Play, pause or resume; Actions menu).
     You hear: Playing.
 
 ### Change the playing speed
@@ -243,9 +249,9 @@ Starts with: Open axMedia with the folder ch.
 
 ### Pause and resume with Ctrl+Enter
 
-1. Press Ctrl+Enter (Pause or resume; Actions menu).
+1. Press Ctrl+Enter (Play, pause or resume; Actions menu).
     You hear words such as: Paused at.
-2. Press Ctrl+Enter (Pause or resume; Actions menu).
+2. Press Ctrl+Enter (Play, pause or resume; Actions menu).
     You hear: Playing.
 
 ### Select files with Space and with Shift and an arrow

@@ -272,8 +272,8 @@ Bundle key, in axClaude, axFile, axGIT, axMedia, axTask and axTerminal. 6 meanin
 
 - axGIT: Commit.
 - axTask: Done or not done.
-- axMedia: Pause or resume.
 - axFile: Play folder in axMedia.
+- axMedia: Play, pause or resume.
 - axTerminal: Send the command.
 - axClaude: Send the message.
 

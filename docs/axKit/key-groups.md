@@ -534,8 +534,8 @@ The keys:
 
 - Ctrl+Enter, axGIT: Commit.
 - Ctrl+Enter, axTask: Done or not done.
-- Ctrl+Enter, axMedia: Pause or resume.
 - Ctrl+Enter, axFile: Play folder in axMedia.
+- Ctrl+Enter, axMedia: Play, pause or resume.
 - Ctrl+Enter, axTerminal: Send the command.
 - Ctrl+Enter, axClaude: Send the message.
 - Shift+Enter, axClip: Copy without pasting.

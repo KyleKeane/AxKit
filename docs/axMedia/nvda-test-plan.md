@@ -58,4 +58,4 @@ The runner's script is `tests/scripts/axMedia/07-selection.txt`.
 4. Select the file playing and one more, Delete: "Removed 2 files", then the next file left plays, or "End of
    queue" when none is left.
 5. Ctrl+A: "n selected". Escape: "None selected". On the empty queue, Space: "Queue is empty".
-6. Ctrl+Enter: "Paused at …"; Ctrl+Enter: "Playing"; from the list and with the Go to time notice closed.
+6. Ctrl+Enter: "Paused at …"; Ctrl+Enter: "Playing"; from the list and with the Go to time notice closed. With files queued and nothing playing (axFile's Ctrl+Shift+Q on a file while axMedia is closed, which opens axMedia and says "Added 1" as you arrive): Ctrl+Enter: "Playing <name>".

@@ -25,7 +25,7 @@ expect said ! Queue is empty
 keys ctrl+q
 expect said ! Nothing playing
 keys ctrl+enter
-expect said ! Nothing playing
+expect said ! Queue is empty
 expect quiet 500
 close
 wait 1500

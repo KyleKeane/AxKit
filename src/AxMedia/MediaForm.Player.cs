@@ -109,8 +109,14 @@ public sealed partial class MediaForm
         FillList();
     }
 
-    /// <summary>Space in the list, Ctrl+P anywhere, Play → Pause or resume (AM-4.3).</summary>
-    private void PauseResume()
+    /// <summary>
+    /// Ctrl+Enter anywhere, Actions → Play, pause or resume (AM-4.3): what plays is paused, what is paused goes
+    /// on, and with nothing playing the file you are on plays (the maintainer, 2026-11-22: "axMedia should also
+    /// use ctrl+enter to play, pause, or resume; presently it did not play even though there were files in the
+    /// queue": it said "Nothing playing" until then). An empty queue says so; a file that is being opened is left
+    /// to open.
+    /// </summary>
+    private void PlayPauseResume()
     {
         switch (_player?.State)
         {
@@ -126,8 +132,17 @@ public sealed partial class MediaForm
                 UpdateStatusBar();
                 Announce("Playing", true);
                 break;
+            case PlayerState.Opening:
+                break;
             default:
-                Announce("Nothing playing", true);
+                // The file you are on; the first of the queue when you are on no file's row (a filter nothing passes).
+                if (!_queue.Select(QueueIndex() >= 0 ? QueueIndex() : 0))
+                {
+                    Announce(PlayQueue.EmptyText, true);
+                    break;
+                }
+
+                PlayCurrent(prompted: true);
                 break;
         }
     }

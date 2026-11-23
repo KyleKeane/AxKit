@@ -26,7 +26,7 @@ public static class HelpText
           Ctrl+S: nothing to save here; axMedia says so
 
         ## Playing
-          Ctrl+Enter, from anywhere in the window: pause, or resume
+          Ctrl+Enter, from anywhere in the window: play the file you are on when nothing plays; pause; resume
           Ctrl+Right, Ctrl+Left: 15 seconds forward or back. Ctrl+T: go to a time, 12:40 or 1:02:10 or seconds
           Ctrl+Shift+Right, Ctrl+Shift+Left: the next or the previous file of the queue
           Ctrl+Up, Ctrl+Down: faster or slower by a quarter, the voice's pitch kept; Actions, Normal speed goes back to 1

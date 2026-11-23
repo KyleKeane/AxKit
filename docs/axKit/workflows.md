@@ -615,6 +615,7 @@ Steps and keys: `docs/axKit/workflows/axMedia.md` (in Claude's working folder: `
     - Remove files and clear the queue
 2. **Add files to the queue from another app**
     - Add a folder to the queue with no window open
+    - Start playing with the main action key
     - Play a file with its folder around it
     - Play a file in the open window
     - Add a folder to the open window's queue

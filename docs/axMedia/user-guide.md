@@ -47,14 +47,14 @@ Until 5.10.0 Space paused the sound in the list. Pause is Ctrl+Enter now, from a
 
 ## Playing
 
-- **Ctrl+Enter**, from anywhere in the window, pauses, "Paused at 12:40", and resumes, "Playing".
+- **Ctrl+Enter**, from anywhere in the window, plays the file you are on when nothing is playing, "Playing 03 Chapter 3.mp3"; pauses what plays, "Paused at 12:40"; and resumes, "Playing".
 - **Ctrl+Right** and **Ctrl+Left** move 15 seconds forward or back and say the new position, "12:25".
 - **Ctrl+Shift+Right** and **Ctrl+Shift+Left** play the next or the previous file of the queue; "First file" and "End of queue" at the ends.
 - **Ctrl+Up** and **Ctrl+Down** make it faster or slower by a quarter, between a half and three times: "Speed 1.25". The voice keeps its pitch. Actions, Normal speed goes back to 1. The speed stays for the next file and the next window.
 - **Ctrl+T** goes to a time: `12:40`, `1:02:10`, or `750` for seconds.
 - **Ctrl+Q** says what is playing: "Playing 03 Chapter 3.mp3, 12:52 of 45:30, speed 1.25", or "Nothing playing".
 - Options, Say each file as it starts (on by default) is the one thing axMedia says on its own: the next file's name when the queue moves on. Turn it off to hear nothing between chapters.
-- Closing the window stops the sound; there is no Stop key, Ctrl+Enter pauses.
+- Closing the window stops the sound; there is no Stop key, Ctrl+Enter pauses and plays.
 
 The volume is Windows' own: your keyboard's volume keys work from anywhere. A video's picture is drawn in an area at the top of the window while it plays; the keys are the same. The formats are whatever Windows decodes: MP3, WAV, WMA, M4A and M4B, AAC and FLAC are built in; OGG, Opus and some video formats need the free codec extensions from the Microsoft Store (Help, Media resources). A file Windows cannot play is said, "Cannot play clip.ogg: this kind of file is not supported", and the next plays.
 
@@ -63,7 +63,7 @@ The volume is Windows' own: your keyboard's volume keys work from anywhere. A vi
 The menu bar is the same eight menus in every axKit window.
 
 - **Session**: New window (Ctrl+N), Open files (Ctrl+O), Open folder (Ctrl+Shift+O), Open recent, Clear queue, Show current file in (File Explorer Ctrl+W, axClaude, axTerminal, axGIT, axFile), Exit.
-- **Actions**: Pause or resume (Ctrl+Enter), Forward 15 seconds, Back 15 seconds, Faster, Slower, Normal speed, What is playing (Ctrl+Q).
+- **Actions**: Play, pause or resume (Ctrl+Enter), Forward 15 seconds, Back 15 seconds, Faster, Slower, Normal speed, What is playing (Ctrl+Q).
 - **Navigation**: Next file, Previous file, Go to time (Ctrl+T).
 - **Context**: what acts on the file you are on in the queue: Play (Enter), Remove (Delete), Information (Ctrl+I). Shift+F10 opens it.
 - **Options**: Filter (only the files whose name contains a text; Escape in the queue clears it), Sort by (Name puts the queue itself in the order of the names, so that the files play in that order; The order added puts it back), Say each file as it starts, Text (font and size), General (the update check), Developer (the settings file, diagnostics).

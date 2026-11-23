@@ -73,7 +73,7 @@ public sealed partial class MediaForm : ItemForm
         // pauses and resumes from anywhere in the window (AM-D7 as of 2026-11-22, the maintainer: "space in axmedia
         // should select and ctrl+enter should become play/pause"; Space and Ctrl+P until then).
         var play = new ToolStripMenuItem();
-        Add(play, new Command("P&ause or resume", BundleKeys.MainAction, PauseResume) { Mark = CommandMark.Open });
+        Add(play, new Command("Play, p&ause or resume", BundleKeys.MainAction, PlayPauseResume) { Mark = CommandMark.Open });
         Add(play, new Command($"&Forward {_settings.SeekSeconds} seconds", AxMediaKeys.Forward, () => Seek(_settings.SeekSeconds)) { Mark = CommandMark.Open });
         Add(play, new Command($"&Back {_settings.SeekSeconds} seconds", AxMediaKeys.Back, () => Seek(-_settings.SeekSeconds)) { Mark = CommandMark.Open });
         play.DropDownItems.Add(new ToolStripSeparator());
@@ -277,6 +277,39 @@ public sealed partial class MediaForm : ItemForm
         }
     }
 
+    /// <summary>How many files the add that opened this window brought, until it has been said (AM-D3); 0 otherwise.</summary>
+    private int _addedAtStart;
+
+    /// <summary>Whether this window is the active one, as Windows last told it (the activation and its end).</summary>
+    private bool _active;
+
+    protected override void OnActivated(EventArgs e)
+    {
+        base.OnActivated(e);
+        _active = true;
+        SayAddedAtStart();
+    }
+
+    protected override void OnDeactivate(EventArgs e)
+    {
+        _active = false;
+        base.OnDeactivate(e);
+    }
+
+    /// <summary>"Added 1", once, for the add that opened this window, when the window is the one in front (AM-D3).</summary>
+    private void SayAddedAtStart()
+    {
+        if (_addedAtStart == 0 || !_active)
+        {
+            return;
+        }
+
+        var added = _addedAtStart;
+        _addedAtStart = 0;
+        // Posted, so that it follows what NVDA reads of the window as the focus arrives.
+        BeginInvoke(() => Announce($"Added {added}", true));
+    }
+
     /// <summary>The file in hand, for Recently closed (AX-9.4); chosen there, it plays with its folder again.</summary>
     protected override string? PathInHand => FileInHand;
 
@@ -326,17 +359,28 @@ public sealed partial class MediaForm : ItemForm
     /// <summary>
     /// What a start or a hand-over asks (AM-1.1, AM-3.2): a play replaces the queue (one file with its folder's media
     /// files around it, a folder's files, several paths expanded), plays, and brings the window to the front, the
-    /// starting process having let it (AppMessage); an add appends and says nothing here, since axFile says it
-    /// (AM-D3). A single path is remembered for Open recent.
+    /// starting process having let it (AppMessage); an add appends. An add to a window that is open says nothing
+    /// here, since axFile, where the user is, says it (AM-D3). An add that opens the window is said here, "Added
+    /// 1", when the user arrives in it (<see cref="OnActivated"/>): Windows may bring a new window to the front
+    /// though it is shown without activation, NVDA then reads that window, and what axFile said is lost (the
+    /// maintainer, 2026-11-22: "when there is only one item added into axMedia it is not announced"). A single
+    /// path is remembered for Open recent.
     /// </summary>
     private async Task ApplyAsync(HandOver message)
     {
         if (message.Verb == AppMessage.Add)
         {
             var paths = await Task.Run(() => MediaFolder.Expand(message.Paths));
-            _queue.Add(paths);
+            var added = _queue.Add(paths);
             FillList();
             RememberPath(message.Paths);
+            if (ReferenceEquals(message, _start) && added > 0)
+            {
+                // Said once the window is the one in front; at once when it is already.
+                _addedAtStart = added;
+                SayAddedAtStart();
+            }
+
             return;
         }
 

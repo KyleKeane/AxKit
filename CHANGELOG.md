@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- axMedia: **Ctrl+Enter now plays, as well as pausing and resuming.** With files in the queue and nothing playing it plays the file you are on, "Playing 03 Chapter 3.mp3". Until now it said "Nothing playing".
+- axMedia: when axFile adds a file with Ctrl+Shift+Q and axMedia was not open, the axMedia window that opens now says "Added 1" as you arrive in it. Windows can bring that new window to the front, and then what axFile said was lost.
+- axKit: two windows of one app closed at the same instant no longer lose a setting that one of them changed. The save of a settings file is kept apart from another window's save of the same file.
+- axClaude: a fault that could close the whole window when the experimental stream source (Options, Developer, off by default) was let go of as it started is fixed.
 - axKit: **every navigator's list can be filtered and sorted.** In axTask, axPass, axMCP, axAutomate, axMedia, axProcess, axGIT and axFile the Options menu now begins with Filter and Sort by. Filter (Alt+O, then F) shows only what has a text in its name, and the list's name says so: "Home, 4 items, filter tap, 1 shown". An empty text clears it, and so does Escape in the list once nothing is selected; going into another list drops it. Sort by puts the list in the order of its names or back in its own order. Neither has a key; both are in the command palette.
 - axFile: **Filter lost its key, Ctrl+Shift+F, and its words changed.** It is Options, Filter, as in every navigator. The list under a filter is named "24 items, filter chap, 3 shown", where it was "3 of 24 items, filter chap". Sort by is as it was: Name, Date or Size.
 - axProcess: "Sort processes by" is now "Sort by", in the same place as in every navigator, with the same three orders: Memory, Processor and Name.

@@ -157,7 +157,7 @@ top of the window. It works entirely offline (bundle G6).
   it names, and left alone (2026-10-23; the old file's failure skipped the new one). A Windows without the media components (an N edition without the Media Feature Pack has no `mfplay.dll`)
   gives "Cannot play <name>: the media player could not be created: Windows' media components are missing…", not a
   crash (2026-10-23).
-- AM-4.3 **Keys**, from anywhere in the window: **Ctrl+Enter**, the bundle's main action key, pauses or resumes (AM-D7)
+- AM-4.3 **Keys**, from anywhere in the window: **Ctrl+Enter**, the bundle's main action key, plays, pauses or resumes (AM-D7): with nothing playing it plays the file you are on, "Playing <name>" (since 2026-11-22, the maintainer: "axMedia should also use ctrl+enter to play, pause, or resume"; "Nothing playing" until then), and "Queue is empty" with nothing queued; otherwise it pauses or resumes
   ("Paused at 12:40" / "Playing"); **Ctrl+Right** and **Ctrl+Left** move 15 seconds forward or back (`seekSeconds`),
   saying the position reached, "12:25", the file's end at most (until 2026-10-23 the position asked for, past the
   end included); **Ctrl+Shift+Right** and **Ctrl+Shift+Left** the next and the previous file ("Playing <name>"; "First
@@ -175,7 +175,7 @@ top of the window. It works entirely offline (bundle G6).
 
 - AM-5.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** New window Ctrl+N | Open files… Ctrl+O |
   Open folder… Ctrl+Shift+O | Open recent ▸ | ─ | Clear queue | ─ | Show current file in ▸ (File Explorer Ctrl+W |
-  axClaude | axTerminal | axGIT | axFile) | ─ | Exit Alt+F4. **Actions (A):** Pause or resume Ctrl+Enter | Forward 15
+  axClaude | axTerminal | axGIT | axFile) | ─ | Exit Alt+F4. **Actions (A):** Play, pause or resume Ctrl+Enter | Forward 15
   seconds Ctrl+Right | Back 15 seconds Ctrl+Left | ─ | Faster Ctrl+Up | Slower Ctrl+Down | Normal
   speed | ─ | What is playing Ctrl+Q. **Navigation (N):** Next file Ctrl+Shift+Right | Previous file Ctrl+Shift+Left |
   Go to time… Ctrl+T. **Context (C)**, the file selected (AX-9.11; Shift+F10, the Applications key and a right click in
@@ -264,7 +264,7 @@ events are posted back to it (AX-7.5).
   order, hidden files left out, so that the hand-over is a path, not a list.
 - **AM-D3 Play takes the focus, Add does not.** Opening a media file in axMedia is opening it in its app, as opening a
   Markdown file in axDown is; the keys are then where the sound is. Add to queue is a background act, answered in
-  axFile; a window that an add opens, when none was open, shows without activation and stays behind. Enter in axFile itself is Windows' default program (the user's decision of 2026-10-22, `docs/axPreview/SPEC.md`
+  axFile; a window that an add opens, when none was open, shows without activation and is meant to stay behind. Windows may bring a new window to the front all the same, and NVDA then reads that window and what axFile said is lost: so the window an add opened says "Added 1" itself, once, when the user arrives in it (2026-11-22, the maintainer: "when there is only one item added into axMedia it is not announced"). Enter in axFile itself is Windows' default program (the user's decision of 2026-10-22, `docs/axPreview/SPEC.md`
   AP-D2): axMedia gets Enter when the user has made it the default for the kind, as in File Explorer.
 - **AM-D4 The hand-over is a window message, sent by the app to itself.** A second axMedia process started with
   paths finds the open window and hands them over with `WM_COPYDATA`, Win32 of the plainest kind, synchronous and

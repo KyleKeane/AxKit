@@ -1078,7 +1078,7 @@
         {"label": "Faster", "menu": "Actions", "key": "ctrl+up", "also": [], "keyText": "Ctrl+Up", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Forward 15 seconds", "menu": "Actions", "key": "ctrl+right", "also": [], "keyText": "Ctrl+Right", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Normal speed", "menu": "Actions", "key": "", "also": [], "keyText": "", "mark": "change", "keyOnly": false, "ai": true},
-        {"label": "Pause or resume", "menu": "Actions", "key": "ctrl+enter", "also": [], "keyText": "Ctrl+Enter", "mark": "open", "keyOnly": false, "ai": true},
+        {"label": "Play, pause or resume", "menu": "Actions", "key": "ctrl+enter", "also": [], "keyText": "Ctrl+Enter", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Select all", "menu": "Actions", "key": "ctrl+a", "also": [], "keyText": "Ctrl+A", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Slower", "menu": "Actions", "key": "ctrl+down", "also": [], "keyText": "Ctrl+Down", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "What is playing", "menu": "Actions", "key": "ctrl+q", "also": [], "keyText": "Ctrl+Q", "mark": "read", "keyOnly": false, "ai": true},
