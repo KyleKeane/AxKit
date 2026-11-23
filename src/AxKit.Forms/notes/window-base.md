@@ -76,7 +76,7 @@ Part of the notes of `src/AxKit.Forms` (the index is `src/AxKit.Forms/CLAUDE.md`
   - A submenu filled as it opens is `RefreshedOnOpening(menu, fill)` where its filling is attached, so that every reader fills it first (Open recent, the Window menu's lists); one too slow to fill for every reading is `NoEntry` (axFile's Drives, the Open with submenus), left out of the entries with everything under it, as is the one line that says a list is empty. **A new self-filling submenu is one of the two**, or the palette lists it empty or with last time's items.
   - `RefreshedOnOpening(menu, refresh)` attaches a refresh that changes items as the menu opens (axFile's Undo text, axTerminal's checked shell) and marks the menu so that `Commands` runs it before reading (2026-10-23).
   - The palette's flow is the window base's (`ShowCommandPalette` from `BundleKeys.CommandPalette` in `ProcessCmdKey` after the menu-mode check, and Help → Command palette, the first item `CreateHelpMenu` places):
-    - a notice whose `OverlayInput` has `Changed` and `ListName`, so that `OverlayPanel` shows `_matches`, a list that never takes the focus, under the field (`SetMatches`, `MatchIndex`, `SelectMatch`, `MatchPage`);
+    - a notice whose `OverlayInput` has `Changed` and `ListName`, so that `OverlayPanel` shows `_matches`, an `AxKitList` with its `Field` set, under the field (`SetMatches`, `MatchIndex`, `MoveMatch`, `MatchPage`);
     - the field's `KeyHook` moves through the matches;
     - the 300 ms `_paletteSpeak` timer says the first match;
     - Run is a `StaysOpen` choice that closes the notice itself and posts the entry's action, so that the focus is back where it was (the notice rule) before the command runs.

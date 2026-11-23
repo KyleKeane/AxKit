@@ -622,9 +622,11 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   selection. Up or Home on the first item and Down or End on the last play the edge earcon too, since the key moves
   nothing. Both are built into one control, `AxKit.Forms/AxKitList`, the list of every app (`AxKit.Core/TypeAhead` the
   search, tested): a window makes an `AxKitList` and has them, and gives it the names to search only when its items
-  are not all names (`Names`). `ListTests` fails on a plain `ListBox` in an app; the lists that never take a typed
-  letter are its named exceptions: axStart's and axClip's matches and the palette's, never focused, and a question's
-  answers, whose letters are the screen's keys (axClaude D33).
+  are not all names (`Names`). `ListTests` fails on a plain `ListBox` in an app; its one named exception is a
+  question's answers, whose letters are the screen's keys (axClaude D33). The lists under a field that keeps the
+  caret (axStart's and axClip's matches and the palette's, never focused) are the same control in its mode for
+  that since 2026-11-22 (`AxKitList.Field`, docs/axKit/framework.md FW-4.12): the field's keys move the selection,
+  with the edge earcon at an end, and nothing typed reaches the list.
 - AX-8.7 F2 renames in place in every list whose items can be renamed (the user's rule, 2026-10-24; axFile's AF-4.2
   since 2026-10-20): a box named "New name" over the item, holding its name with the part that changes selected (a
   file's name before its extension); Enter takes it, and a name the window refuses is said and the box stays; Escape,

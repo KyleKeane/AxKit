@@ -137,7 +137,7 @@ public sealed class OverlayPanel : Panel
     private readonly AxKitTextBox _input = new();
     private readonly FlowLayoutPanel _buttons = new();
     private readonly ProgressBar _progress = new();
-    private readonly ListBox _matches = new();
+    private readonly AxKitList _matches = new();
     private readonly AxKitCheckBox _consent = new();
 
     /// <summary>The consent sentence whose box the user checked, kept for the same notice shown again after Ctrl+F (a new record each time, so by its text); cleared when the notice is answered.</summary>
@@ -190,12 +190,11 @@ public sealed class OverlayPanel : Panel
         _input.TextChanged += (_, _) => _inputSpec?.Changed?.Invoke();
 
         // The matches under the field (OverlayInput.ListName): for the eyes and NVDA's object navigation, never the
-        // focus, as axStart's list (AS-D2); the field's keys move the selection.
+        // focus, as axStart's list (AS-D2); the field's keys move the selection: the bundle's list in its mode
+        // under a field that keeps the caret (framework FW-4.12).
         _matches.Dock = DockStyle.Fill;
-        _matches.IntegralHeight = false;
-        _matches.TabStop = false;
+        _matches.Field = _input;
         _matches.Visible = false;
-        _matches.GotFocus += (_, _) => _input.Focus();
 
         _buttons.Dock = DockStyle.Bottom;
         _buttons.FlowDirection = FlowDirection.LeftToRight;
@@ -297,24 +296,16 @@ public sealed class OverlayPanel : Panel
     }
 
     /// <summary>The list under the field (OverlayInput.ListName) filled anew, named "Commands, 3", the first line selected.</summary>
-    public void SetMatches(IReadOnlyList<string> lines, string name)
-    {
-        _matches.BeginUpdate();
-        _matches.Items.Clear();
-        _matches.Items.AddRange(lines.Select(line => (object)line).ToArray());
-        _matches.EndUpdate();
-        _matches.AccessibleName = name;
-        _matches.SelectedIndex = lines.Count > 0 ? 0 : -1;
-    }
+    public void SetMatches(IReadOnlyList<string> lines, string name) => _matches.Fill(lines, name, 0);
 
     /// <summary>The selected line of the list under the field.</summary>
     public int MatchIndex => _matches.SelectedIndex;
 
-    /// <summary>Selects a line of the list under the field.</summary>
-    public void SelectMatch(int index) => _matches.SelectedIndex = index;
+    /// <summary>The selection of the list under the field moved to a line, kept within the <paramref name="count"/> matches: the line it is on, the edge sound at an end, and -1 with the sound of nothing found when there is no match (<see cref="AxKitList.MoveFromField"/>).</summary>
+    public int MoveMatch(int index, int count) => _matches.MoveFromField(index, count);
 
     /// <summary>The lines the list shows at once, for Page Up and Page Down.</summary>
-    public int MatchPage => Math.Max(1, _matches.ClientSize.Height / Math.Max(1, _matches.ItemHeight));
+    public int MatchPage => _matches.PageRows;
 
     /// <summary>The first line of the text changed while the notice shows (<see cref="Notice.HeadLine"/>): the folder of New session.</summary>
     public void SetHeadLine(string? line)

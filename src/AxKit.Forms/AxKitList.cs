@@ -156,7 +156,78 @@ public class AxKitList : ListBox
     protected override void OnEnter(EventArgs e)
     {
         base.OnEnter(e);
-        (FindForm() as AxKitForm)?.SoundOnEntry(this, EventKind.ListEntered);
+        if (_field is null)
+        {
+            (FindForm() as AxKitForm)?.SoundOnEntry(this, EventKind.ListEntered);
+        }
+    }
+
+    // ---- the list under a field that keeps the caret (framework FW-4.12, 2026-11-22) ----
+
+    private Control? _field;
+
+    /// <summary>
+    /// The field that keeps the caret while this list shows its matches under it (the hotkey window's list and the
+    /// one under a notice's field, the command palette's; docs/axStart/SPEC.md AS-D2, bundle AX-10): the list is no
+    /// tab stop, a focus it is given (a click) goes back to the field, and that is no entry, so no sound of one. The
+    /// field's keys move the selection through <see cref="MoveFromField"/>. Nothing typed reaches the list, so
+    /// type-to-find rests; and since Space types into the field, such a list has no selection of several (the one
+    /// exception to "Space selects", framework decision 7). Null, as at first, for a list the user moves in.
+    /// </summary>
+    [System.ComponentModel.Browsable(false)]
+    [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+    public Control? Field
+    {
+        get => _field;
+        set
+        {
+            _field = value;
+            TabStop = value is null;
+        }
+    }
+
+    protected override void OnGotFocus(EventArgs e)
+    {
+        base.OnGotFocus(e);
+        _field?.Focus();
+    }
+
+    /// <summary>
+    /// The list under a field filled anew: the matches, or the one line <paramref name="nothing"/> when there are
+    /// none, named <paramref name="name"/> ("Programs, 3"), the selection on <paramref name="select"/>.
+    /// </summary>
+    public void FillMatches(IReadOnlyList<string> labels, string nothing, string name, int select) =>
+        Fill(labels.Count > 0 ? labels : [nothing], name, select);
+
+    /// <summary>How many rows the list shows at once: the step of Page Down and Page Up from the field.</summary>
+    [System.ComponentModel.Browsable(false)]
+    public int PageRows => Math.Max(1, ClientSize.Height / Math.Max(1, ItemHeight));
+
+    /// <summary>
+    /// The selection moved from the field to <paramref name="target"/>, kept within the <paramref name="count"/>
+    /// matches, and the row it is on returned for the window to say. At an end nothing moves and the edge sound
+    /// comes first, the row said all the same, so that the last thing heard is the position and not the typed text
+    /// (AS-3.3, AX-10.4). With no match (the list holds the one line that says so) the sound of nothing found, and -1.
+    /// </summary>
+    public int MoveFromField(int target, int count)
+    {
+        if (count <= 0)
+        {
+            EventDoor.Raise(EventKind.NothingFound, EventSound.Edge);
+            return -1;
+        }
+
+        target = Math.Clamp(target, 0, count - 1);
+        if (target == SelectedIndex)
+        {
+            EventDoor.Raise(EventKind.Edge);
+        }
+        else
+        {
+            SelectForCommand(target);
+        }
+
+        return target;
     }
 
     protected override void OnSelectedIndexChanged(EventArgs e)

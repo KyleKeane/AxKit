@@ -124,11 +124,10 @@ public abstract class HotkeyForm : AxKitForm
         SearchField.TabIndex = 0;
         SearchField.TextChanged += (_, _) => OnTyped();
 
-        // The matches: for the eyes and NVDA's object navigation, never the focus (AS-D2).
+        // The matches: for the eyes and NVDA's object navigation, never the focus (AS-D2): the bundle's list in
+        // its mode under a field that keeps the caret (framework FW-4.12).
         Matches.Dock = DockStyle.Fill;
-        Matches.IntegralHeight = false;
-        Matches.TabStop = false;
-        Matches.GotFocus += (_, _) => SearchField.Focus();
+        Matches.Field = SearchField;
 
         _speak.Tick += (_, _) =>
         {
@@ -189,24 +188,12 @@ public abstract class HotkeyForm : AxKitForm
     /// <summary>The one field, which always has the caret (AS-3.1, CP-2.1); the app names it.</summary>
     protected AxKitTextBox SearchField { get; } = new();
 
-    /// <summary>The matches under the field, never focused (AS-D2); the app names it in <see cref="ShowMatches"/>.</summary>
-    protected ListBox Matches { get; } = new();
+    /// <summary>The matches under the field, never focused (AS-D2): the bundle's list with <see cref="AxKitList.Field"/> set; the app names it in <see cref="ShowMatches"/>.</summary>
+    protected AxKitList Matches { get; } = new();
 
     /// <summary>The list made from <paramref name="labels"/>, or the one line <paramref name="nothing"/> when there are none, named <paramref name="name"/>, the selection on <paramref name="index"/>.</summary>
-    protected void ShowMatches(IReadOnlyList<string> labels, string nothing, string name, int index)
-    {
-        Matches.BeginUpdate();
-        Matches.Items.Clear();
-        Matches.Items.AddRange(labels.Select(label => (object)label).ToArray());
-        if (labels.Count == 0)
-        {
-            Matches.Items.Add(nothing);
-        }
-
-        Matches.EndUpdate();
-        Matches.AccessibleName = name;
-        Matches.SelectedIndex = index;
-    }
+    protected void ShowMatches(IReadOnlyList<string> labels, string nothing, string name, int index) =>
+        Matches.FillMatches(labels, nothing, name, index);
 
     /// <summary>
     /// The keys that move through the matches with the caret kept in the field (AS-3.3, CP-2.4), as commands of the
@@ -217,14 +204,11 @@ public abstract class HotkeyForm : AxKitForm
     {
         AddKey(new Command("Next match", next, () => SelectMatch(Matches.SelectedIndex + 1)) { Mark = CommandMark.Read });
         AddKey(new Command("Previous match", previous, () => SelectMatch(Matches.SelectedIndex - 1)) { Mark = CommandMark.Read });
-        AddKey(new Command("Page down", BundleKeys.PageDown, () => SelectMatch(Math.Min(Matches.SelectedIndex + MatchPage, MatchCount - 1))) { Mark = CommandMark.Read });
-        AddKey(new Command("Page up", BundleKeys.PageUp, () => SelectMatch(Math.Max(Matches.SelectedIndex - MatchPage, 0))) { Mark = CommandMark.Read });
+        AddKey(new Command("Page down", BundleKeys.PageDown, () => SelectMatch(Math.Min(Matches.SelectedIndex + Matches.PageRows, MatchCount - 1))) { Mark = CommandMark.Read });
+        AddKey(new Command("Page up", BundleKeys.PageUp, () => SelectMatch(Math.Max(Matches.SelectedIndex - Matches.PageRows, 0))) { Mark = CommandMark.Read });
         AddKey(new Command("First match", first, () => SelectMatch(0)) { Mark = CommandMark.Read });
         AddKey(new Command("Last match", last, () => SelectMatch(MatchCount - 1)) { Mark = CommandMark.Read });
     }
-
-    /// <summary>How many matches the list shows at once: the step of Page Down and Page Up.</summary>
-    private int MatchPage => Math.Max(1, Matches.ClientSize.Height / Math.Max(1, Matches.ItemHeight));
 
     private void OnTyped()
     {
@@ -251,24 +235,8 @@ public abstract class HotkeyForm : AxKitForm
     private void SelectMatch(int target)
     {
         _speak.Stop();
-        if (MatchCount == 0)
-        {
-            EventDoor.Raise(EventKind.NothingFound, EventSound.Edge);
-            Announce(NothingSaid, true);
-            return;
-        }
-
-        target = Math.Clamp(target, 0, MatchCount - 1);
-        if (target == Matches.SelectedIndex)
-        {
-            EventDoor.Raise(EventKind.Edge);
-        }
-        else
-        {
-            Matches.SelectedIndex = target;
-        }
-
-        Announce(SpokenMatch(target), true);
+        var on = Matches.MoveFromField(target, MatchCount);
+        Announce(on < 0 ? NothingSaid : SpokenMatch(on), true);
     }
 
     // ---- the window ----

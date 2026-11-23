@@ -16,8 +16,8 @@ Part of the notes of `src/AxKit.Forms` (the index is `src/AxKit.Forms/CLAUDE.md`
   - `ForegroundBefore` is the window a paste goes to.
   - The hotkeys at first are on Ctrl+Shift since 2026-11-14 (bundle AX-8.11): axStart's Ctrl+Shift+Space, axHelp's Ctrl+Shift+Slash and, as its second hotkey, Ctrl+Shift+Comma, axClip's Ctrl+Shift+Semicolon; Ctrl+Shift+Period is kept and registered by nothing. A retired default in a settings file is taken over by the settings class before the window reads it (`HotkeySettings.TakenOver`), so nothing of it is here.
   - The search field over the matches is here too since 2026-10-24 (both apps had it line for line):
-    - `SearchField` and `Matches` (never focused, AS-D2: no tab stop, and a focus it is given goes back to the field), `ShowMatches`;
+    - `SearchField` and `Matches` (never focused, AS-D2: the bundle's `AxKitList` with its `Field` set since 2026-11-22, framework step 12, so no tab stop, a focus it is given goes back to the field, and no entry sound; `notes/controls.md`), `ShowMatches` (the list's `FillMatches`);
     - the 300 ms timer that says the first match;
-    - `AddMatchKeys` (six commands with the app's keys: Down, Up, Page Down, Page Up, first, last) and `SelectMatch` with the edge earcon.
+    - `AddMatchKeys` (six commands with the app's keys: Down, Up, Page Down, Page Up, first, last) and `SelectMatch`, which moves through the list's `MoveFromField` (the edge earcon at an end, the sound of nothing found) and says the match.
   - The app fills in `PrepareShowing`, `AfterShowing`, `OnHiding`, and for the matches `MatchCount`, `SpokenMatch`, `NothingSaid` and `Refill`.
   - The gotchas of the foreground are in `src/AxStart/CLAUDE.md`.

@@ -88,26 +88,10 @@ public abstract partial class AxKitForm
         }
 
         _paletteSpeak.Stop();
-        if (_paletteShown.Count == 0)
-        {
-            EventDoor.Raise(EventKind.NothingFound, EventSound.Edge);
-            Announce(Palette.NoMatch(Overlay.InputText), true);
-            return true;
-        }
-
-        wanted = Math.Clamp(wanted, 0, _paletteShown.Count - 1);
-        if (wanted == index)
-        {
-            // At an end nothing moves: the edge earcon, and then the match again, so that the last thing heard is
-            // the position and not the typed text (AX-10.4).
-            EventDoor.Raise(EventKind.Edge);
-        }
-        else
-        {
-            Overlay.SelectMatch(wanted);
-        }
-
-        Announce(Palette.Spoken(_paletteShown[wanted], wanted, _paletteShown.Count), true);
+        // At an end nothing moves: the edge earcon, and then the match again, so that the last thing heard is the
+        // position and not the typed text (AX-10.4); the list under the field does it, as the hotkey windows' does.
+        var on = Overlay.MoveMatch(wanted, _paletteShown.Count);
+        Announce(on < 0 ? Palette.NoMatch(Overlay.InputText) : Palette.Spoken(_paletteShown[on], on, _paletteShown.Count), true);
         return true;
     }
 

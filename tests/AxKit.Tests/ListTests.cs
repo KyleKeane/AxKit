@@ -13,11 +13,9 @@ public sealed class ListTests
     /// <summary>The plain list boxes allowed, by file, with why.</summary>
     private static readonly IReadOnlyDictionary<string, string> Allowed = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
-        // axStart's matches and axClip's items never take the focus: the caret stays in the search field
-        // (docs/axStart/SPEC.md AS-D2, docs/axClip/SPEC.md CP-2.1); the list is HotkeyForm's since 2026-10-24.
-        [Path.Combine("src", "AxKit.Forms", "HotkeyForm.cs")] = "never focused",
-        // The command palette's matches under its field, never focused (AX-10).
-        [Path.Combine("src", "AxKit.Forms", "OverlayPanel.cs")] = "never focused",
+        // The lists under a field that keeps the caret (the hotkey windows' matches, the command palette's) were
+        // here until 2026-11-22: they are the bundle's list too now, in its mode for that (AxKitList.Field,
+        // framework FW-4.12).
         // A question's answers: their letters are the screen's own keys (axClaude D33), not a search.
         [Path.Combine("src", "AxKit.Forms", "ControlArea.cs")] = "letters are keys",
     };

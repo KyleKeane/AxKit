@@ -207,10 +207,14 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
 
 - FW-4.11 A window that a key brings up from anywhere: a field that always holds the caret, and under it a list
   the arrow keys move through from the field. Enter does the app's thing with the row; Escape hides.
-- Apps today: axStart, axClip, and axHelp, which has a text and no list.
-- FW-4.12 Its list is a plain list box that never takes the focus; it becomes the canonical list in this one mode.
-  Since the field has the keyboard, Space types a space there: this type's list has no selection of several, the
-  one stated exception to FW-3.1 (section 9, decision 7).
+- Apps today: axStart, axClip, and axHelp, whose own window is one text to read and no list: its conversation
+  is an axClaude window titled "axHelp", which the hotkey brings up (docs/axHelp/SPEC.md HE-2).
+- FW-4.12 Its list never takes the focus, and is the canonical list in this one mode (`AxKitList.Field`, built
+  2026-11-22, step 12; until then a plain list box): no tab stop, a focus it is given goes back to the field,
+  no entry sound, and the field's keys move it (`MoveFromField`: the edge sound at an end, the sound of nothing
+  found when nothing matches). The list under a notice's field, the command palette's, is the same list in the
+  same mode. Since the field has the keyboard, Space types a space there: this type's list has no selection of
+  several, the one stated exception to FW-3.1 (section 9, decision 7).
 
 ### 4.5 The graph (later)
 
@@ -237,7 +241,7 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
 | axCalc | conversation | conversation | the evaluator, variables, bases |
 | axStart | hotkey | hotkey | finding programs, starting them |
 | axClip | hotkey | hotkey | the clipboard's history |
-| axHelp | hotkey, a text | hotkey, with the conversation window's text and field | the conversation with Claude about axKit |
+| axHelp | hotkey, a text; its conversation an axClaude window | the same: the conversation is the conversation window already | the conversation with Claude about axKit, the screenshot |
 
 ## 6. What an app may hold
 
@@ -314,6 +318,10 @@ NVDA pass recorded. A piece that changes what a user does updates the app's spec
     and nothing for Interrupt, Send key and Next permission mode. Making axClaude say it there too is a change of
     what axClaude does, and is a line of the step's item for his word.
 12. The hotkey window's list as the canonical list, and axHelp's text and field as the conversation's components.
+    Built, 2026-11-22: the list under the field is `AxKitList` in its mode for that (FW-4.12), in axStart, axClip
+    and, on its second use, under the command palette's field; one move from the field with its sounds in place
+    of two copies. Nothing changes for the user, but that a clipboard text or a program's name with hidden
+    characters shows them, as every list does. axHelp had nothing to move (section 9, decision 8).
 
 **E. axFile, last and with the most care**
 
@@ -364,7 +372,11 @@ Each removes something that exists today. Each can be turned back while its piec
 7. **No selection of several in the hotkey windows**, since Space types into their field: the one exception to
    "Space selects".
 8. **axHelp** stays a hotkey window, since being called from anywhere is its point, with the conversation
-   window's text and field inside it.
+   window's text and field inside it. Looked at when step 12 was built, 2026-11-22: this was written from the
+   axHelp of before 5.7.0, which had a text and a field of its own. Since 5.7.0 its conversation is an axClaude
+   window titled "axHelp" (his ask of 2026-11-10, "just like axClaude ... a seamless conversation"), so the
+   conversation is the conversation window whole, and axHelp's own window is one text to read, a component
+   already (FW-3.2). Nothing was there to move; said to him in the step's item.
 9. **The second pane of the navigator** in three kinds (fields, text, log), no more.
 10. **Enter on a row** keeps the app's own opening (a form in axTask, the file in axFile, the text in axGIT, the
     details in axProcess, play in axMedia): the one key in which apps of the type differ.
