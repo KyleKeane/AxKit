@@ -111,7 +111,7 @@ public sealed class FormControls : FlowLayoutPanel
             case Keys.Return:
                 ToggleNavigation();
                 return true;
-            case Keys.Space when Fields().FirstOrDefault(control => control.ContainsFocus) is AxKitCheckBox or FormCheckList:
+            case Keys.Space when Fields().FirstOrDefault(control => control.ContainsFocus) is AxKitCheckBox or FormCheckList or FormRadioList || ActiveButton():
                 return false;
             case >= Keys.A and <= Keys.Z or >= Keys.D0 and <= Keys.D9:
                 FindField(code is >= Keys.A and <= Keys.Z ? (char)('a' + (code - Keys.A)) : (char)('0' + (code - Keys.D0)));
@@ -124,6 +124,9 @@ public sealed class FormControls : FlowLayoutPanel
                 return true;
         }
     }
+
+    /// <summary>Whether a button of the form has the focus (Check all, Uncheck all): Space presses it in navigation mode too.</summary>
+    private bool ActiveButton() => Controls.OfType<Button>().Any(button => button.Focused);
 
     /// <summary>The fields in the form's order: the controls a value is typed or chosen in.</summary>
     private List<Control> Fields() => [.. _wide.Concat(Controls.OfType<AxKitCheckBox>()).OrderBy(Controls.GetChildIndex)];
@@ -232,6 +235,15 @@ public sealed class FormControls : FlowLayoutPanel
     public FormCheckList AddCheckList(string name, IReadOnlyList<(string Name, bool Checked)> items)
     {
         var list = new FormCheckList(items) { AccessibleName = name, Margin = new Padding(0) };
+        list.Height = list.ItemHeight * Math.Clamp(items.Count, 1, 8) + 6;
+        Add(list, name);
+        return list;
+    }
+
+    /// <summary>A choice of one as a list where Space chooses (rule 20): one Tab stop, the arrows move without choosing.</summary>
+    public FormRadioList AddRadioList(string name, IReadOnlyList<string> items, int chosen)
+    {
+        var list = new FormRadioList(items, chosen) { AccessibleName = name, Margin = new Padding(0) };
         list.Height = list.ItemHeight * Math.Clamp(items.Count, 1, 8) + 6;
         Add(list, name);
         return list;

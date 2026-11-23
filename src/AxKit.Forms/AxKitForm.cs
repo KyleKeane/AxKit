@@ -699,6 +699,71 @@ public abstract partial class AxKitForm : Form
     /// Enter and Escape reach the notice's buttons through AcceptButton and CancelButton); F1 shows the shortcuts,
     /// Ctrl+Shift+P the palette, Ctrl+S saves; then the window's own keys.
     /// </summary>
+    /// <summary>
+    /// The keys of the whole window, which need no selection and no caret (AX-6.6a): F1, the palette, F4, asking
+    /// Claude, Ctrl+S and the app keys. They work from the window and from an open menu.
+    /// </summary>
+    private static bool IsWindowKey(Keys keyData) =>
+        keyData is BundleKeys.Shortcuts or BundleKeys.CommandPalette or BundleKeys.Report or BundleKeys.AskClaude or BundleKeys.AskClaudeAlso or BundleKeys.Save
+        || BundleKeys.AppOfLaunchKey(keyData) is not null;
+
+    /// <summary>A key of the whole window run (<see cref="IsWindowKey"/>): true when it was one.</summary>
+    private bool RunWindowKey(Keys keyData)
+    {
+        switch (keyData)
+        {
+            case BundleKeys.Shortcuts:
+                ShowNotice(Notice.Plain("Keyboard shortcuts", Shortcuts));
+                return true;
+            case BundleKeys.CommandPalette:
+                ShowCommandPalette();
+                return true;
+            case BundleKeys.Report:
+                ShowReport();
+                return true;
+            case BundleKeys.AskClaude:
+            case BundleKeys.AskClaudeAlso:
+                AskAboutThisWindow();
+                return true;
+            case BundleKeys.Save:
+                SaveCommand();
+                return true;
+        }
+
+        // AX-8.18 rule 6: Ctrl with a function key opens a standalone app, Ctrl+Shift with one an access layer, from
+        // every window, as the axKit menu's Apps and Access layers do.
+        if (BundleKeys.AppOfLaunchKey(keyData) is { } launched)
+        {
+            WindowMenu.Start(launched.Verb, null);
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>Every open drop-down of the bar closed, from the one the key came to up to the top one, so that the menu mode ends.</summary>
+    private static void CloseMenus(ToolStrip strip)
+    {
+        var top = strip as ToolStripDropDown;
+        while (top?.OwnerItem?.Owner is ToolStripDropDown parent)
+        {
+            top = parent;
+        }
+
+        top?.Close(ToolStripDropDownCloseReason.Keyboard);
+        if ((top?.OwnerItem?.Owner ?? strip) is MenuStrip bar)
+        {
+            // The bar itself left: its item no longer selected, so that the menu mode ends with the drop-down.
+            foreach (ToolStripItem item in bar.Items)
+            {
+                if (item.Selected && item is ToolStripMenuItem menu)
+                {
+                    menu.HideDropDown();
+                }
+            }
+        }
+    }
+
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
         switch (keyData)
@@ -786,36 +851,29 @@ public abstract partial class AxKitForm : Form
         // ProcessCmdKey hands them up to the window: they are the menu's (AX-6.6), or Right in axFile's list opened
         // the entry instead of moving to the next menu (2026-10-22); F1 opened the shortcuts over an open menu and
         // disabled the bar under it (2026-10-23).
-        if (FromHandle(msg.HWnd) is ToolStrip)
+        if (FromHandle(msg.HWnd) is ToolStrip strip)
         {
+            // AX-6.6a (the maintainer, 2026-11-23: "any hotkey that does not need a selection or caret should work when
+            // focus is on the menu"): a key of the whole window works from an open menu too. The menu closes first and
+            // the key runs once it has, so that nothing opens over a menu (the F1 fault of 2026-10-23). F8 only says.
+            if (keyData == BundleKeys.SayStatus)
+            {
+                SayStatus();
+                return true;
+            }
+
+            if (IsWindowKey(keyData))
+            {
+                CloseMenus(strip);
+                BeginInvoke(() => RunWindowKey(keyData));
+                return true;
+            }
+
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        switch (keyData)
+        if (RunWindowKey(keyData))
         {
-            case BundleKeys.Shortcuts:
-                ShowNotice(Notice.Plain("Keyboard shortcuts", Shortcuts));
-                return true;
-            case BundleKeys.CommandPalette:
-                ShowCommandPalette();
-                return true;
-            case BundleKeys.Report:
-                ShowReport();
-                return true;
-            case BundleKeys.AskClaude:
-            case BundleKeys.AskClaudeAlso:
-                AskAboutThisWindow();
-                return true;
-            case BundleKeys.Save:
-                SaveCommand();
-                return true;
-        }
-
-        // AX-8.18 rule 6: Ctrl with a function key opens a standalone app, Ctrl+Shift with one an access layer, from
-        // every window, as the axKit menu's Apps and Access layers do.
-        if (BundleKeys.AppOfLaunchKey(keyData) is { } launched)
-        {
-            WindowMenu.Start(launched.Verb, null);
             return true;
         }
 

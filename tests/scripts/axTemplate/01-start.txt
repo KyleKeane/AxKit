@@ -91,6 +91,16 @@ expect focus Type Text; Enter makes a new line
 keys enter
 expect said Edit mode
 expect focus Type Text; Enter makes a new line
+# Check all and Uncheck all, just before the list of apps (AX-8.10 rule 19, the maintainer's ask of 2026-11-23).
+keys ctrl+down
+keys shift+tab
+expect focus Uncheck all
+keys space
+expect said None checked
+keys shift+tab
+expect focus Check all
+keys space
+expect said All 5 checked
 keys escape
 expect state "notice":null
 expect focus Text

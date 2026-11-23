@@ -100,6 +100,7 @@ public abstract partial class ItemForm
                 var group = controls.Skip(i).Take(run).ToList();
                 FormCheckList? list = null;
                 form.AddButton("Check &all", () => list?.SetAll(true));
+                form.AddButton("U&ncheck all", () => list?.SetAll(false));
                 list = form.AddCheckList(source.ChecksName, [.. group.Select(check => (check.Name, check.Checked))]);
                 for (var line = 0; line < group.Count; line++)
                 {
