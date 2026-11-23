@@ -25,8 +25,8 @@ expect commands "axStart, axKit, Apps, Ctrl+F1"
 # a new app joins its end.
 menu Version
 expect state "notice":"axKit
-expect state Standalone apps, which need only Windows: axFile, axDown, axJSON, axPreview, axMedia, axTask, axStart, axClip, axCalc, axProcess, axAutomate
-expect state axTerminal for your shell, axGIT for Git, axPass for KeePassXC, axClaude for Claude Code, axMCP for MCP servers, axHelp for Claude Code.
+expect state Standalone apps, which need only Windows: axStart, axFile, axClip, axTemplate, axDown, axJSON, axPreview, axMedia, axTask, axCalc, axProcess, axAutomate.
+expect state axTerminal for your shell, axGIT for Git, axPass for KeePassXC, axClaude for Claude Code, axHelp for Claude Code, axMCP for MCP servers.
 keys escape
 expect state "notice":null
 expect focus settings.json
