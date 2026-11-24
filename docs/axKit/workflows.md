@@ -920,6 +920,10 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Open a folder of lists used lately
 26. **Keep the day each item was made**
     - Add an item, and its Created field holds the day
+27. **Put a list in your own order**
+    - Move an item down and up in its list
+    - Move an item to the bottom of its list, and take it back
+    - Put new items at the top of a list
 
 ## axTemplate
 

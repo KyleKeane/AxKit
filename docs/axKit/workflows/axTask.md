@@ -1039,3 +1039,32 @@ Starts with: Open axTask with the folder tasks.
 2. Type: Paint the door
 3. Press Enter.
     You hear: Added Paint the door.
+
+## Put a list in your own order
+
+Starts with: Open axTask with the folder tasks.
+
+### Move an item down and up in its list
+
+1. Press Ctrl+Shift+Down.
+    You hear: Moved down: Apples, 2 of 3.
+2. Press Ctrl+Shift+Up.
+    You hear: Moved up: Apples, 1 of 3.
+
+### Move an item to the bottom of its list, and take it back
+
+1. Press Ctrl+Shift+End.
+    You hear: Moved to the bottom: Apples, 3 of 3.
+2. Press Up.
+3. Press Ctrl+Z (Undo; Actions menu).
+    You hear: Undone: Moved to the bottom: Apples, 3 of 3.
+
+### Put new items at the top of a list
+
+1. Choose the menu item New items at the top of this list.
+    You hear: New items go to the top of Home.
+2. Press Ctrl+N (New item; Actions menu).
+3. Type: Dates
+4. Press Enter.
+    You hear: Added Dates.
+5. Press Home.
