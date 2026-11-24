@@ -14,6 +14,7 @@ After his rebuild. Passed:
   (axTemplate TP-4.8).
 - The same template into axTerminal's command field went in with both lines, as TP-4.8 says for a field of several
   lines where Enter sends; Enter then ran both commands, and both echoes were heard.
+- Ctrl+F1 with a menu of the window open opens axStart (bundle AX-6.6a), the bug he found on 2026-11-24.
 
 ## 2026-11-24: every app but axClaude, and the NVDA-only scripts; by the assistant with NVDA listening (`main` 96a4f3c3)
 
