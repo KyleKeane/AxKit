@@ -12,16 +12,15 @@ every window" or under a heading that names the windows without it; under an app
 - Let AI tools read and open axKit. Menu: axKit, AI tools. Key: none. Mark: act. Never run by AI tools.
 - Let AI tools run commands. Menu: axKit, AI tools. Key: none. Mark: act. Never run by AI tools.
 - Read the log. Menu: axKit, AI tools. Key: none. Mark: act. Never run by AI tools.
+- Choose Claude Code's program. Menu: axKit, Claude. Key: none. Mark: act. Never run by AI tools.
+- Choose Claude's working folder. Menu: axKit, Claude. Key: none. Mark: act. Never run by AI tools.
 - Folders Claude may read. Menu: axKit, Claude. Key: none. Mark: act. Never run by AI tools.
 - Use Claude in axKit. Menu: axKit, Claude. Key: none. Mark: act. Never run by AI tools.
 
-## In every window but axHelp
-
-- Choose Claude Code's program. Menu: axKit, Claude. Key: none. Mark: act. Never run by AI tools.
-- Choose Claude's working folder. Menu: axKit, Claude. Key: none. Mark: act. Never run by AI tools.
-
 ## In every window but axClip and axPass
 
+- Check for updates at start. Menu: axKit. Key: none. Mark: act.
+- Open the sounds folder. Menu: axKit. Key: none. Mark: open.
 - axClaude, access layer for Claude Code. Menu: axKit, Access layers. Key: Ctrl+Shift+F5. Mark: act.
 - axGIT, access layer for Git. Menu: axKit, Access layers. Key: Ctrl+Shift+F2. Mark: open.
 - axHelp, access layer for Claude Code. Menu: axKit, Access layers. Key: Ctrl+Shift+F9. Mark: open.
@@ -69,11 +68,6 @@ every window" or under a heading that names the windows without it; under an app
 - Windows text size. Menu: Options, Text. Key: none. Mark: change.
 - Close all windows. Menu: Window. Key: none. Mark: act.
 - Say the status. Menu: Window. Key: F8. Mark: read.
-
-## In every window but axClip, axHelp and axPass
-
-- Check for updates at start. Menu: axKit. Key: none. Mark: act.
-- Open the sounds folder. Menu: axKit. Key: none. Mark: open.
 
 ## In every window but axClip, axHelp, axPass and axStart
 

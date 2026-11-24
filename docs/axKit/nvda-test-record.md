@@ -6,6 +6,36 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-24: every app and the NVDA-only scripts; by the assistant with NVDA listening (`main` e8536af1)
+
+`.\nvda-pass.ps1`, behind the spoken countdown, after the maintainer's yes through the question tool, the same NVDA,
+voice and Windows as the passes below. 204 scripts, 1287 goals passed, 7 failed, 19 not run; 14:19 to 15:41.
+
+| What | Scripts | Result |
+|---|---|---|
+| The day's changes: Saved alone (axTask, axTemplate), the entering sound at every showing (axStart, axClip, axHelp), Set fields and Clear fields (axTask `28`), the AI tools' Open question (mcp `01`), axFile's new files of each kind, the list guard (axTerminal `02-commands`) | 14 | Passed |
+| Every other app's window scripts | 179 | Passed but five, below |
+| NVDA-only | 8 | Passed but three, below |
+
+Found:
+- `axTerminal\02-commands.txt`, which failed in the pass below on Windows Forms' list error, passed: the guard in
+  `AxKitList` holds. Its item is done.
+- NVDA did not speak an announcement made as the window opened, while it read the window and the focus:
+  `axClaude\25-edit-modes.txt` step 13 and `axClaude\29-stand-in-turn.txt` step 20 ("Ready"),
+  `axMedia\03b-cannot-play.txt` step 20 ("Cannot play a-broken.mp3", which passed in the pass below), and
+  `axDown-notices.txt` step 15 ("notes.md" after Escape from the palette, passed below). The window said each one;
+  the same race as axTerminal's `13-handed-command` on 2026-11-19, which passed three times when run alone. Heard
+  again in the next pass.
+- `axClaude\05-modes.txt` step 124 and `axClaude\09-options.txt` step 133, live turns of Claude Code: the second
+  reply did not begin within 60 seconds, and with "first lines" the reply's first line was heard as "Alpha", the
+  first line of the reply before. Run again on the hidden desktop, below.
+- `axClaude-say-all.txt` step 35: Claude Code still working 10 seconds after its reply was read, as in the pass
+  below; a live script, waiting on the network.
+- `axTask-template-in-a-form.txt` step 24: the field's menu opened ("Context menu") and held no template, as it
+  should while the forms' templates are switched off (TP-5.5); the script waits for them.
+- The command inventory lacked four rows of axHelp's axKit menu (Claude's working folder and program, the sounds
+  folder, the update switch); written from axHelp's scripts.
+
 ## 2026-11-24: the moved hotkeys and a template of several lines; by the maintainer, by ear (`main` a1066a05)
 
 After his rebuild. Passed:

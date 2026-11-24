@@ -57,7 +57,7 @@ Only in a test run, on a desktop of its own, never in your windows.
 
 ## 2. The functions
 
-A function is a command of a window (`docs/axKit/command-language.md`): 1967 in the inventory, of which 278 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
+A function is a command of a window (`docs/axKit/command-language.md`): 1971 in the inventory, of which 278 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
 
 ### The marks, and the events a command of each mark ends in
 
@@ -85,7 +85,7 @@ A function is a command of a window (`docs/axKit/command-language.md`): 1967 in 
 - `window`, the Window menu: The other windows of axKit: a new window of any app, close all windows, say the status.
   - 36 commands in 18 apps: read 18, act 18.
 - `axkit`, the axKit menu: The services of the whole bundle: the AI tools and what they may do, Claude for AI help, the theme.
-  - 608 commands in 18 apps: open 341, change 36, act 231.
+  - 612 commands in 18 apps: open 342, change 36, act 234.
 - `help`, the Help menu: The keys (F1), the user guide, the command palette, sending a report (F4), about, diagnostics and the key test.
   - 284 commands in 18 apps: read 162, open 18, act 104.
 - `keys-alone`: Commands that are a key with no menu item, because their meaning depends on where the focus is: Tab between panes, Enter on a row, Right into a list, F3 for find next. An AI tool never runs these.
