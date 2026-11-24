@@ -301,8 +301,39 @@ public class AxKitList : ListBox
         }
     }
 
+    private const int WM_DESTROY = 0x0002;
+
+    /// <summary>
+    /// The list's handle destroyed, again when Windows Forms' own release of its items' accessible objects meets a
+    /// change: as it disconnects each item from UI Automation, a screen reader reading the list can make a new item
+    /// object, and the walk over them throws "Collection was modified" before anything else of the close was done
+    /// (axTerminal's recent commands with NVDA listening, 2026-11-24; ListBox.ReleaseUiaProvider in Control.WmDestroy).
+    /// The close is simply run again; a third failure is thrown as before.
+    /// </summary>
+    private void Destroy(ref Message m)
+    {
+        for (var attempt = 1; ; attempt++)
+        {
+            try
+            {
+                base.WndProc(ref m);
+                return;
+            }
+            catch (InvalidOperationException ex) when (attempt < 3 && ex.StackTrace?.Contains("ReleaseUiaProvider", StringComparison.Ordinal) == true)
+            {
+                Log.Info($"A list's accessible items changed as it closed, closed again ({attempt}): {ex.Message}");
+            }
+        }
+    }
+
     protected override void WndProc(ref Message m)
     {
+        if (m.Msg == WM_DESTROY)
+        {
+            Destroy(ref m);
+            return;
+        }
+
         if (!IsKey(m.Msg))
         {
             base.WndProc(ref m);
