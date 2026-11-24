@@ -127,8 +127,8 @@
 //   said                      prints the timeline since the last look (! interrupting, ♪ sound, → focus, · value)
 //   text | list | commands | state | focus   prints the focused text's lines, the focused list's items, the menus'
 //                             commands, the window's state (title, notice and its text, status bar), the focus
-//   check commands            fails when the window's command list has a problem: a key the F1 text does not name, a
-//                             command that never runs because an earlier one takes its key everywhere (app-kit AK-2.4)
+//   check commands            fails when the window's command list has a problem: a command that never runs because
+//                             an earlier one takes its key everywhere, an entry without its mark (app-kit AK-2.4)
 //   mcp start                 (after a start) the runner becomes an MCP client: AxKit.exe mcp as its child, with the
 //                             run's settings and key (docs/axKit/mcp.md MC-6)
 //   mcp call <tool> [<json>]  sends a tools/call without waiting; {window} is the id the last axkit_windows answer named

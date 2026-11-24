@@ -13,7 +13,7 @@ axKit is built for people who use a screen reader, and every change is judged by
 - **One app, one set of folders.** An app never references another app; shared code lives in `AxKit.Core` and `AxKit.Forms` and moves there on its second use (`LayoutTests` checks the references).
 - **Plain code.** .NET 10 and WinForms, no NuGet packages in the apps (`StackTests` checks the project files), no dependency injection, no interfaces with one implementation. A smaller model, or a new contributor, should be able to change one app with only that app's folders in view.
 - **Accessibility first** (AX-7): every control has an accessible name, everything works without a mouse, the caret moves only on the user's own command, and the result of a command is one announcement. Questions and errors are notices inside the window, never a second window (`SecondWindowTests`).
-- **Keys** live in one table per window, or in `BundleKeys` when they mean the same everywhere; a test fails on a collision, and another on a key the F1 text does not name.
+- **Keys** live in one table per window, or in `BundleKeys` when they mean the same everywhere; a test fails on a collision; every F1 text lists every key of its window, made from the window's commands (AX-7.2a), and a key name typed by hand in the code is held by `HandKeyTests`.
 - **No personal data and no secrets**: no e-mail address, no path with an account name in it, no token and no private key, anywhere in the repository (`PrivacyTests`).
 - **Scripts** are ASCII, name no local variable like one of their parameters, and sort a page with `Sort-Ordinal` (`tools/ordinal.ps1`), never `Sort-Object` (`tools/script-lint.ps1`, which `test.ps1` runs, says why).
 

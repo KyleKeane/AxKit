@@ -3,6 +3,7 @@
 ## Unreleased
 
 - axKit: **an AI tool can run a command that asks for a text, with its text**: Find, Go to line, a filter, a name. The text is typed into the field the command opens and its button pressed, as you would, and you hear "Claude ran Find with the text budget". A field that was already asking you something is never filled, nor a password field; a command that acts outside the window still asks you first, and the question names the text.
+- axKit: **F1 lists every key of the window**, made from the window's own commands as F1 opens: by menu, then the keys with no menu item. A key changed in its table is changed there at once, and none can be missing.
 - axKit: **an AI tool can read a form's fields and move you to one**: what the window's form holds, field by field, and the focus put on the field you ask for ("Claude moved to Due"). It never types, checks or sends; the form stays yours to fill.
 - axDown, axJSON, axPreview: **Navigate, Find first** finds the first place a text stands in the file, wherever the caret is; F3 goes on from there.
 
