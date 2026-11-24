@@ -14,6 +14,7 @@ Starts with: Open axCalc.
 ### Open another app with its key from an open menu
 
 1. Press Alt+S.
+    NVDA says: Save history.
 2. Press Ctrl+F5 (axDown; axKit menu, Apps).
 3. A new window opens: go to it.
 4. Close the window.
@@ -131,6 +132,7 @@ Starts with: Open axTask with the folder tasks.
 1. Press Enter.
 2. Press Tab.
 3. Press Shift+F10.
+    NVDA says: Thanks.
 4. Press Enter.
     You hear: Thanks inserted.
 5. Press Escape.

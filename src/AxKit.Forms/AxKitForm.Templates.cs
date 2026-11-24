@@ -56,6 +56,9 @@ public abstract partial class AxKitForm
     /// own context menu holds them in place of Windows' edit menu, whose commands are keys. A field that is only read or
     /// holds a password has none. The folder is read again, off the UI thread, as the form opens.
     /// </summary>
+    /// <summary>Whether the forms' fields get their menu of templates (TP-5.5): off until the NVDA pass hears the menu open (tests/nvda-scripts/axTask-template-in-a-form.txt).</summary>
+    private static readonly bool FormTemplatesOn = false;
+
     private void OfferTemplatesInForm(FormControls controls)
     {
         if (!TemplateStore.AppsWithField.Contains(AppName, StringComparer.Ordinal))

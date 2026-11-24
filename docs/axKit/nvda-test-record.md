@@ -33,6 +33,15 @@ Found:
 - `axClaude-say-all.txt` step 35: Claude Code was still working 10 seconds after its reply was read; a live script,
   waiting on the network. Not mended.
 
+Two short passes after, the same day, of `axCalc-keys-from-a-menu` and `axTask-template-in-a-form` alone, each after
+the maintainer's yes:
+- b99ba578: both failed again. The runner's focus does not see a menu's item, while NVDA said it ("Session expanded
+  ... Save history"): menu checks read `expect spoken` since (d781e3d8). The form's menu still opened nothing: F10 is
+  the menu key, and its release closed a menu shown at once; it waits for the keys to be up since.
+- d781e3d8: `axCalc-keys-from-a-menu` **passed**: Ctrl+F5 from an open menu opens axDown, F1 from an open menu shows
+  the keys (bundle AX-6.6a). `axTask-template-in-a-form` failed a third time, NVDA heard only cancels after
+  Shift+F10; the forms' templates (TP-5.5) are switched off until a pass hears them.
+
 ## 2026-11-23: axTemplate's launcher, axClip, axStart; by the assistant with NVDA listening (branch `axfile-navigator` 89d4ac77 to 941301c4)
 
 `.\nvda-pass.ps1 -Only` axTemplate's, axClip's and axStart's scripts and `zz-nvda\axTemplate-put-in.txt`, from the
