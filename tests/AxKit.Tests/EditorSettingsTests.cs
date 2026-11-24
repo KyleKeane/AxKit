@@ -11,7 +11,7 @@ public sealed class EditorSettingsTests
         var path = Path.Combine(Path.GetTempPath(), "axdown-tests", Guid.NewGuid().ToString("N"), "axDown.json");
         try
         {
-            var settings = new EditorSettings { FontFamily = "Consolas", FontSize = 14, FontBold = true, CheckForUpdates = false };
+            var settings = new EditorSettings { FontFamily = "Consolas", FontSize = 14, FontBold = true };
             settings.Window = new WindowPlacement { X = 10, Y = 20, Width = 800, Height = 600, Maximized = true };
             settings.RememberFile(@"C:\work\a.md");
             settings.Save(path);
@@ -21,7 +21,6 @@ public sealed class EditorSettingsTests
             Assert.Equal("Consolas", loaded.FontFamily);
             Assert.Equal(14, loaded.FontSize);
             Assert.True(loaded.FontBold);
-            Assert.False(loaded.CheckForUpdates);
             Assert.True(loaded.Window!.Maximized);
             Assert.Equal([@"C:\work\a.md"], loaded.RecentFiles);
             // Word wrap left the file for the theme's display settings (TH-6); a key from an earlier version is ignored.
@@ -43,7 +42,6 @@ public sealed class EditorSettingsTests
         Assert.Null(error);
         Assert.Null(settings.FontFamily);
         Assert.Equal(0, settings.FontSize);
-        Assert.True(settings.CheckForUpdates);
         Assert.Null(settings.Window);
     }
 

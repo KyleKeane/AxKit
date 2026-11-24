@@ -1,8 +1,10 @@
 namespace AxKit.Core;
 
 /// <summary>
-/// What every window of the bundle remembers between runs (docs/axKit/SPEC.md AX-5.3, AX-6.5): the text font, the
-/// update check and the window's place. Each app's settings class derives from it and adds its own; the file keeps
+/// What every window of the bundle remembers between runs (docs/axKit/SPEC.md AX-5.3, AX-6.5): the text font and the
+/// window's place. The update check at start was each app's until 2026-11-24 and is the bundle's now
+/// (<see cref="BundleSettings"/>); an older file's <c>checkForUpdates</c> is kept among the members this version does
+/// not know, and is read once by <see cref="BundleSettings.FromApps"/>. Each app's settings class derives from it and adds its own; the file keeps
 /// the app's shape, since every property serializes under its own name. The window base (<c>AxKit.Forms/AxKitForm</c>)
 /// reads and writes these without knowing the app.
 /// </summary>
@@ -15,9 +17,6 @@ public abstract class WindowSettings
     public float FontSize { get; set; }
 
     public bool FontBold { get; set; }
-
-    /// <summary>Ask GitHub once at startup whether a newer release exists (AX-3).</summary>
-    public bool CheckForUpdates { get; set; } = true;
 
     public WindowPlacement? Window { get; set; }
 

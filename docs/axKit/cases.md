@@ -7,8 +7,8 @@ every proof and every sentence named here to the code (`docs/axKit/SPEC.md` AX-5
 
 ## Where it stands
 
-- 62 cases, 53 with a proof, 9 without.
-- A settings file: 17.
+- 63 cases, 54 with a proof, 9 without.
+- A settings file: 18.
 - A sealed setting: 12.
 - A key: 4.
 - A remembered path: 2.
@@ -66,6 +66,14 @@ every proof and every sentence named here to the code (`docs/axKit/SPEC.md` AX-5
 - The file: `AppPaths.ReportsFile`.
 - Proved by: `AxKit.Tests/ReportSenderTests.The_reporter_id_is_made_once_and_kept`.
 - From: RP-6.3.
+
+**C-63, every app.**
+
+- Does: Without the bundle's settings file the update check at start follows the apps' own settings of before: off when any app had turned it off, on otherwise; the first change in the axKit menu writes the file.
+- Says: Nothing
+- The file: `AppPaths.BundleSettingsFile`.
+- Proved by: `AxKit.Tests/BundleSettingsTests.Without_the_file_the_switch_follows_the_apps_of_before`.
+- From: AX-3.1.
 
 ### A settings file: cannot be opened
 

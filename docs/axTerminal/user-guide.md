@@ -103,7 +103,7 @@ Before a custom shell or a shell of your own first starts, axTerminal asks once 
 
 ## Updates
 
-Alt+H, Check for updates asks GitHub for a newer axKit; Update to installs it and starts axTerminal again with a new shell in the same folder. Options, General, Check for updates at start turns the check at start off.
+Alt+H, Check for updates asks GitHub for a newer axKit; Update to installs it and starts axTerminal again with a new shell in the same folder. axKit menu, Check for updates at start turns the check at start off, for every app.
 
 ## If something goes wrong
 

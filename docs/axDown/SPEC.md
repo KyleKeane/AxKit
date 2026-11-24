@@ -179,7 +179,7 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
   quote", "Table") and the key, Ctrl+letter under Next and Ctrl+Shift+letter under Previous (AD-5, §9).
 - AD-4.3 Options, as axClaude's: every setting lives in the submenu for what it is about, none outside one. Text ▸:
   Word wrap (checked; Ctrl+Shift+W), Font…, Larger text (Ctrl+Plus), Smaller text (Ctrl+Minus), Windows text size.
-  General ▸: Check for updates at start (bundle AX-3.1). Developer ▸: Open settings file (axDown.json, written first, in a new axJSON window; the window base's
+  The update check at start is the bundle's, in the axKit menu (bundle AX-3.1). Developer ▸: Open settings file (axDown.json, written first, in a new axJSON window; the window base's
   `OpenSettingsFile`, the same in every window since 2.12.0, a new axDown window before). Copy diagnostics (AD-11) is Help, Diagnostics since 2026-11-15, the bundle's (AX-9.1).
 - AD-4.4 Help: Keyboard shortcuts (F1), User guide, Markdown resources ▸ (Markdown basics, `https://commonmark.org/help/`;
   GitHub Flavored Markdown, `https://github.github.com/gfm/`; in the browser), as axClaude's Help has Claude Code

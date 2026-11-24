@@ -298,7 +298,35 @@ public abstract partial class AxKitForm : Form
         menu.DropDownItems.Add(CreateClaudeMenu());
         menu.DropDownItems.Add(CreateMcpMenu());
         menu.DropDownItems.Add(CreateThemeMenu());
+        if (!PackageIdentity.IsPackaged)
+        {
+            // AX-3.1 (the maintainer's answer of 2026-11-24, "One switch for all"): the update check at start is the
+            // bundle's, one switch for every app, read as the menu opens since another window may have changed it.
+            // The Store's copy makes no check at start (AX-13.3), so it has no switch. Act for the AI tools: on, it is a
+            // network contact at every start (docs/axKit/repairs.json R-04).
+            var check = CommandPalette.Marked(new ToolStripMenuItem("Check for &updates at start", null, (_, _) => ToggleBundleUpdateCheck()), CommandMark.Act);
+            menu.DropDownItems.Add(new ToolStripSeparator());
+            menu.DropDownItems.Add(check);
+            CommandPalette.RefreshedOnOpening(menu, () => check.Checked = BundleSettings.Load().CheckForUpdates);
+        }
+
         return menu;
+    }
+
+    /// <summary>axKit, Check for updates at start: the bundle's one switch turned over and saved, its new state said.</summary>
+    private void ToggleBundleUpdateCheck()
+    {
+        var settings = BundleSettings.Load();
+        settings.CheckForUpdates = !settings.CheckForUpdates;
+        try
+        {
+            settings.Save(BundleSettings.DefaultPath);
+            Announce(MenuText.CheckSaid("Check for updates at start", settings.CheckForUpdates), true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            Failed("Check for updates at start", "The bundle's settings could not be written: " + ex.Message);
+        }
     }
 
     /// <summary>
@@ -399,20 +427,16 @@ public abstract partial class AxKitForm : Form
         return menu;
     }
 
-    /// <summary>Options → General: Check for updates at start (AX-3.1), then the window's own items.</summary>
+    /// <summary>
+    /// Options → General: the window's own general items. The update check at start was its first item until
+    /// 2026-11-24; it is the axKit menu's now, one switch for the bundle (AX-3.1).
+    /// </summary>
     protected ToolStripMenuItem CreateGeneralMenu(params ToolStripItem[] own)
     {
         var menu = new ToolStripMenuItem("&General");
-        if (!PackageIdentity.IsPackaged)
-        {
-            // The Store's copy makes no check at start (AX-13.3), so it has no setting for one.
-            // Act for the AI tools: on, it is a network contact at every start (docs/axKit/repairs.json R-04).
-            menu.DropDownItems.Add(Toggle("Check for &updates at start", Settings.CheckForUpdates, v => Settings.CheckForUpdates = v, CommandMark.Act));
-        }
-
         menu.DropDownItems.AddRange(own);
-        // In the Store's copy a window with no item of its own would show an empty General: the menus and the
-        // command list pass over an item that is not Available (found by the Store copy's NVDA pass, 2026-11-14).
+        // A window with no item of its own would show an empty General: the menus and the command list pass over an
+        // item that is not Available (found by the Store copy's NVDA pass, 2026-11-14).
         menu.Available = menu.DropDownItems.Count > 0;
         return menu;
     }
@@ -622,7 +646,7 @@ public abstract partial class AxKitForm : Form
 
         // Never in a test run (docs/axKit/automation.md): a network call, and a logged error when it fails. Never in the
         // Store's copy, which the Microsoft Store keeps current and which asks GitHub only on Check for updates (AX-13.3).
-        if (Settings.CheckForUpdates && !BundleInfo.IsDevelopmentBuild && !AutomationChannel.Requested && !PackageIdentity.IsPackaged)
+        if (!BundleInfo.IsDevelopmentBuild && !AutomationChannel.Requested && !PackageIdentity.IsPackaged && BundleSettings.Load().CheckForUpdates)
         {
             CheckForUpdates(manual: false);
         }

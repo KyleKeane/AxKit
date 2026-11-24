@@ -95,7 +95,7 @@ public sealed partial class CommandMarkTests
         (Path.Combine("src", "AxProcess", "ProcessForm.cs"), "Item(\"&Remove...\", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act)", "deletes an entry of what starts with Windows"),
         (Path.Combine("src", "AxKit.Forms", "ConsoleForm.cs"), "CommandMark.Act, SwitchFolder", "a console's recent folder starts Claude Code or a shell again"),
         (Path.Combine("src", "AxKit.Forms", "ConsoleForm.cs"), "CommandMark.Act, OpenInNewWindow", "starts Claude Code or a shell in a new window"),
-        (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "v => Settings.CheckForUpdates = v, CommandMark.Act", "turns a network contact on"),
+        (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "ToggleBundleUpdateCheck()), CommandMark.Act", "turns a network contact on"),
         (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "OpenReports()), CommandMark.Act", "sends the unsent reports to GitHub"),
         (Path.Combine("src", "AxKit.Forms", "HotkeyForm.cs"), "}, CommandMark.Act); // Writes the user's Run key", "writes the user's Run key"),
         (Path.Combine("src", "AxKit.Forms", "WindowMenu.cs"), "McpTools.NeverOpened.Contains(verb) ? CommandMark.Act", "a new axClaude or axTerminal window starts a program"),

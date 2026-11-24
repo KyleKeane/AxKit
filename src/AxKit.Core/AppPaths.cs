@@ -151,6 +151,10 @@ public static class AppPaths
     public static string ConsentFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "consent.json");
 
+    /// <summary>The settings of the whole bundle (AX-3.1, 2026-11-24): the update check at start, one switch for every app.</summary>
+    public static string BundleSettingsFile { get; } =
+        Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "bundle.json");
+
     /// <summary>The theme (docs/axKit/theme.md TH-1.1): a colour or "system" for every class of object the windows draw; one file for the bundle.</summary>
     public static string ThemeFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "theme.json");

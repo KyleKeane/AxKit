@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- axKit: **one Check for updates at start, in the axKit menu, for every app**, in place of each app's own in Options, General. If you had turned it off in any app, it starts off.
+- axKit: **the window's keys work with a menu open**: Ctrl or Ctrl+Shift with a function key opens the app, F1 the keys, and so on, with any drop-down of the menus open, not only on the bar.
+
 - axKit: **an AI tool can draft a report for you**: Claude fills the Send a report form in an axKit window, says it drafted it and that it can be wrong, and you read, change and send it yourself, or cancel. Claude can never send a report.
 
 - axHelp: **after the steps of a task, Claude may offer to carry them out** in the open window through axKit's AI tools, once, saying it is an AI that can be wrong; nothing runs before your yes, and you hear each command as it runs.

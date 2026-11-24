@@ -181,7 +181,7 @@ top of the window. It works entirely offline (bundle G6).
   Go to time… Ctrl+T. **Context (C)**, the file selected (AX-9.11; Shift+F10, the Applications key and a right click in
   the queue): Play Enter | Remove Delete | Information Ctrl+I | ─ | Select or deselect Space | Select to here Shift+Space; one
   item, "Queue is empty", the empty line's words, while it is empty ("Nothing in the queue" until 2026-11-22). **Options
-  (O):** Say each file as it starts ✓ | Text ▸ | General ▸ (Check for updates at start ✓) | Developer ▸ (Open settings
+  (O):** Say each file as it starts ✓ | Text ▸ | Developer ▸ (Open settings
   file). **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Media resources ▸ (Formats Windows plays, Microsoft's
   page on Media Foundation; Free codecs in the Microsoft Store, a Store search for media extensions; each in the
   browser). Every item has a mnemonic (AX-7.4).

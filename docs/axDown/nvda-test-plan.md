@@ -110,7 +110,7 @@ letter), and a `long.md` with headings and lines longer than the window.
    "No other open windows", which NVDA reads and which does nothing. Close a window that has `plain.txt` open: in another window Alt+W, R reads "1. plain.txt
    (<path>) - axDown" and Enter opens it in a new window; Session, Open on another file puts the one you left there too. Alt+W, C
    (Close all windows) with unsaved changes in one window: that window asks "Save changes?" and the others close.
-5. Options, General, Check for updates at start: read as checked; Enter unchecks it. Help, Diagnostics, Copy diagnostics: "Copied diagnostics"; Options, Developer, Open settings file: a new axJSON
+5. axKit menu, Check for updates at start: read as checked; Enter unchecks it. Help, Diagnostics, Copy diagnostics: "Copied diagnostics"; Options, Developer, Open settings file: a new axJSON
    window on `axDown.json`. Help, Markdown resources, Markdown basics: the browser opens commonmark.org; GitHub
    Flavored Markdown opens its page.
 6. The command palette (bundle AX-10), with the caret in the middle of a line. Ctrl+Shift+P: "Command palette",

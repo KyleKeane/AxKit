@@ -118,7 +118,7 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
   Clear history… Ctrl+Shift+Delete. **Navigation (N):** one item saying there is nothing yet. **Context (C)**, the clip
   the selection is on (AX-9.11): Paste Enter | Copy without pasting Shift+Enter | Read in full Ctrl+Q | Remove Delete.
   **Options (O):** Hotkey… | Pause
-  recording Ctrl+P ✓ | Keep history between runs ✓ | Text ▸ | General ▸ (Check for updates at start | Start with
+  recording Ctrl+P ✓ | Keep history between runs ✓ | Text ▸ | General ▸ (Start with
   Windows ✓ | Say the first match while typing ✓) | Developer ▸. **Window (W)** (before Options), **axKit (K)** (AX-9.1). **Help (H):** Keyboard
   shortcuts F1 | User guide | ─ | Windows resources ▸ (Clipboard in Windows). Every item has a mnemonic.
 - CP-5.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, Page Up, Page Down, Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific

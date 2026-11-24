@@ -283,7 +283,11 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
 
 - AX-3.1 One version for the bundle, `<Version>` in `src/AxKit/AxKit.csproj`. A newer GitHub release is offered as
   axClaude does (`docs/axClaude/SPEC.md` FR-1.10, D25): asked once at startup when the setting is on, a notice with
-  the release notes and four buttons: I accept all terms, install and restart (Enter), I accept all terms, install and close, Open release page, Later
+  the release notes. The setting is the bundle's, one switch for every app (the maintainer's answer of 2026-11-24,
+  "One switch for all"): axKit menu, Check for updates at start, on by default, in `%APPDATA%\AxKit\bundle.json`
+  (`AxKit.Core/BundleSettings`); until then each app had its own in Options, General, and the first time the bundle's
+  file is not there the switch starts off if any app had turned its own off. The notice has
+  four buttons: I accept all terms, install and restart (Enter), I accept all terms, install and close, Open release page, Later
   (Escape). A development build (Debug, as `run.ps1` makes it) does not ask at startup, since its version is whatever
   the working tree said when it was last built; Check for updates still asks. Every window's Help menu ends with Check for updates (axKit <version>), always, naming the version in use
   and asking GitHub again every time, Update to axKit <version> below it while a newer release is known, and About, the

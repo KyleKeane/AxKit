@@ -19,8 +19,8 @@ when you send a report:
   of `https://api.github.com/repos/KyleKeane/AxKit/releases/latest` with the headers `User-Agent: AxKit/<version>` and
   `Accept: application/vnd.github+json`. It carries the version you have and, as every web request does, your network
   address; nothing else. GitHub's privacy statement applies to it:
-  <https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement>. Turn it off in any window:
-  Options, General, Check for updates at start. You can still check by hand (Help, Check for updates). A copy
+  <https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement>. Turn it off in any window,
+  for every app at once: axKit menu, Check for updates at start. You can still check by hand (Help, Check for updates). A copy
   installed from the Microsoft Store makes no check at start and has no such setting; Check for updates by hand makes
   the same one request, and its notice opens axKit's page in the Store app, which is Microsoft's and runs under
   Microsoft's privacy statement, <https://privacy.microsoft.com/privacystatement>, as the Store's own updating of the

@@ -157,7 +157,7 @@ taskbar. It works entirely offline (bundle G6).
   program the selection is on (AX-9.11): Start Enter | Start as administrator Ctrl+Shift+Enter | Open file location
   Ctrl+O | Information Ctrl+I. **Options (O):** Hotkey… | Text ▸ (Font… |
   Larger text | Smaller text | Windows text size) | General ▸ (Start with Windows ✓ | Say the first match while typing
-  ✓ | Check for updates at start ✓) | Developer ▸ (Open settings file). **Window (W)**, **axKit (K)** (AX-9.1).
+  ✓) | Developer ▸ (Open settings file). **Window (W)**, **axKit (K)** (AX-9.1).
   **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Windows resources ▸ (Keyboard shortcuts in Windows). Every
   item has a mnemonic (AX-7.4).
 - AS-5.3 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, Ctrl+Plus, Ctrl+Minus, Ctrl+S ("Nothing to save here", the
