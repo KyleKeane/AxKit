@@ -431,7 +431,7 @@ One connection, client to server, then the client closes:
 A body, as Claude Code 2.1.325 sends a Stop event (shortened; the paths written with `%USERPROFILE%`):
 
 ```json
-{"session_id":"7aac8697-1111-4222-8333-444444444444","transcript_path":"%USERPROFILE%\\.claude\\projects\\C--Temp-axclaude-fixture\\7aac8697-1111-4222-8333-444444444444.jsonl","cwd":"C:\\Temp\\axclaude-fixture","hook_event_name":"Stop","prompt_id":"5d0c1f6e-aaaa-4bbb-8ccc-dddddddddddd","permission_mode":"auto","stop_hook_active":false,"last_assistant_message":"ok","background_tasks":[{"id":"b0jdigiy3","type":"shell","status":"running","description":"Run ping in background","command":"ping -n 8 127.0.0.1"}],"session_crons":[]}
+{"session_id":"00000000-0000-4000-8000-000000000001","transcript_path":"%USERPROFILE%\\.claude\\projects\\C--Temp-axclaude-fixture\\00000000-0000-4000-8000-000000000001.jsonl","cwd":"C:\\Temp\\axclaude-fixture","hook_event_name":"Stop","prompt_id":"00000000-0000-4000-8000-000000000002","permission_mode":"auto","stop_hook_active":false,"last_assistant_message":"ok","background_tasks":[{"id":"b0jdigiy3","type":"shell","status":"running","description":"Run ping in background","command":"ping -n 8 127.0.0.1"}],"session_crons":[]}
 ```
 
 `ClaudeCodeHooks.Parse` reads the fields of EG-2.1 and nothing else, and returns:
@@ -567,7 +567,7 @@ A JSON file a window script writes with its `file` step. Since that step turns `
 ```json
 {
   "version": "2.1.325 (stand-in)",
-  "session": "11111111-2222-4333-8444-555555555555",
+  "session": "00000000-0000-4000-8000-000000000003",
   "home": "home",
   "steps": [
     { "frame": ["claude: started", "auto mode on (shift+tab to cycle)", "$"], "clear": true },
