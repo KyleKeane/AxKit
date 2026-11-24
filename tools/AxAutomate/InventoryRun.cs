@@ -97,7 +97,11 @@ internal static class InventoryRun
         var suite = Path.Combine(_repository, "tests", "scripts");
         var played = playing.Select(Path.GetFullPath).ToHashSet(StringComparer.OrdinalIgnoreCase);
         _wholeSuite = _mode == RunOptions.Write && Directory.Exists(suite)
-            && Directory.GetFiles(suite, "*.txt", SearchOption.AllDirectories).Where(Lists).All(file => played.Contains(Path.GetFullPath(file)));
+            // The live scripts are left out of a run without --live (they start the real Claude Code), so the suite is
+            // the others; the menus they list are the same windows' menus the others list.
+            && Directory.GetFiles(suite, "*.txt", SearchOption.AllDirectories)
+                .Where(file => !ScriptReader.IsLive(ScriptReader.NeedsOfFile(file)) && Lists(file))
+                .All(file => played.Contains(Path.GetFullPath(file)));
         if (_wholeSuite)
         {
             say("--inventory write: every script that lists a window's commands plays, so the rows no window lists are removed, as --inventory rewrite does.");

@@ -224,7 +224,8 @@ where a step is a command the tools may run (WF-9), and the existing scripts mov
   writing run changed (the inventory, and then the pages by `tools\workflows.ps1`) are committed with the change
   that made them differ, never left changed in the working tree (WF-11.4).
 - WF-2.9a **A write of the whole suite removes what no window lists** (2026-11-24, the key documents item's step 5):
-  when `--inventory write` plays every script under `tests/scripts` that lists a window's commands, it writes as
+  when `--inventory write` plays every script under `tests/scripts` that lists a window's commands (the live scripts
+  aside, which a run without `--live` leaves out and whose windows the others list too), it writes as
   `rewrite` does, each whole app's rows only those the run saw, and says so in one line; a renamed or removed menu
   item's old row then goes by itself, where it needed a remembered `rewrite` before (`InventoryRun.Playing`).
 - WF-2.10 **Checking, whenever the window checks run** (`--inventory check`, the default when the repository is

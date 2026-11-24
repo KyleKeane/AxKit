@@ -3,9 +3,9 @@
 Written by `tools/key-map.ps1` from `docs/axKit/window-commands.json`, `src/AxKit.Forms/BundleKeys.cs` and
 `docs/axKit/key-families.json`; never edit it by hand. Every key of every window and what it does in each app.
 
-The inventory holds 1038 commands with a key in 18 apps, on 144 different keys, counting the
-second keys some commands answer. 68 keys have one meaning wherever they are; 76 have several.
-21 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
+The inventory holds 1042 commands with a key in 18 apps, on 148 different keys, counting the
+second keys some commands answer. 72 keys have one meaning wherever they are; 76 have several.
+23 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
 are window keys, each in its window's own table.
 
 A key has one meaning when every command on it carries the same name in every app. The inventory lists the
@@ -72,9 +72,13 @@ In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 - Ctrl+Shift+V. Window key, in axPreview alone: Read the clipboard's picture.
 - Ctrl+Shift+Z. Window key, in axDown and axJSON: Redo.
 - Ctrl+Shift+Delete. Window key, in axCalc and axClip: Clear history.
+- Ctrl+Shift+Down arrow. Bundle key, in axTask alone: Move down in the list.
+- Ctrl+Shift+End. Window key, in axTask alone: Move to the bottom of the list.
 - Ctrl+Shift+Enter. Window key, in axStart alone: Start as administrator.
+- Ctrl+Shift+Home. Window key, in axTask alone: Move to the top of the list.
 - Ctrl+Shift+Left arrow. Window key, in axMedia alone: Previous file.
 - Ctrl+Shift+Right arrow. Window key, in axMedia alone: Next file.
+- Ctrl+Shift+Up arrow. Bundle key, in axTask alone: Move up in the list.
 - Alt+D. Window key, in axFile alone: Go to folder.
 - Alt+Down arrow. Window key, in axJSON alone: Next value.
 - Alt+Enter. Window key, in axFile alone: Properties.
@@ -771,8 +775,6 @@ Window key, in axClaude and axTerminal. 2 meanings.
 These are keys of `BundleKeys` that work inside a text or a control and are no command of a window's list.
 
 - Ctrl+Space: `BundleKeys.ToggleMode`.
-- Ctrl+Shift+Up arrow: `BundleKeys.SelectParagraphUp`.
-- Ctrl+Shift+Down arrow: `BundleKeys.SelectParagraphDown`.
 
 ## Key families, proposed
 

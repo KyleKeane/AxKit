@@ -15,6 +15,11 @@ every window" or under a heading that names the windows without it; under an app
 - Folders Claude may read. Menu: axKit, Claude. Key: none. Mark: act. Never run by AI tools.
 - Use Claude in axKit. Menu: axKit, Claude. Key: none. Mark: act. Never run by AI tools.
 
+## In every window but axHelp
+
+- Choose Claude Code's program. Menu: axKit, Claude. Key: none. Mark: act. Never run by AI tools.
+- Choose Claude's working folder. Menu: axKit, Claude. Key: none. Mark: act. Never run by AI tools.
+
 ## In every window but axClip and axPass
 
 - axClaude, access layer for Claude Code. Menu: axKit, Access layers. Key: Ctrl+Shift+F5. Mark: act.
@@ -925,8 +930,12 @@ every window" or under a heading that names the windows without it; under an app
 - Decline this report. Menu: Context. Key: none. Mark: act. Never run by AI tools.
 - Done or not done. Menu: Context. Key: Ctrl+Enter. Mark: change.
 - Edit the list's configuration. Menu: Context. Key: Ctrl+J. Mark: open.
+- Move down in the list. Menu: Context. Key: Ctrl+Shift+Down. Mark: change.
 - Move to a list. Menu: Context. Key: Ctrl+M. Mark: change.
 - Move to section. Menu: Context. Key: Ctrl+M. Mark: change.
+- Move to the bottom of the list. Menu: Context. Key: Ctrl+Shift+End. Mark: change.
+- Move to the top of the list. Menu: Context. Key: Ctrl+Shift+Home. Mark: change.
+- Move up in the list. Menu: Context. Key: Ctrl+Shift+Up. Mark: change.
 - Open in axJSON. Menu: Context. Key: Ctrl+J. Mark: open.
 - Open its form. Menu: Context. Key: Enter. Mark: open.
 - Read in full. Menu: Context. Key: Ctrl+Q. Mark: read.
@@ -946,6 +955,7 @@ every window" or under a heading that names the windows without it; under an app
 - Approval passphrase. Menu: Options. Key: none. Mark: act. Never run by AI tools.
 - Filter. Menu: Options. Key: none. Mark: change.
 - Hide done tasks. Menu: Options. Key: Ctrl+Shift+D. Mark: change.
+- New items at the top of this list. Menu: Options. Key: none. Mark: change.
 - Name. Menu: Options, Sort by. Key: none. Mark: change.
 - The list's own order. Menu: Options, Sort by. Key: none. Mark: change.
 - Refresh. Menu: Session. Key: F5. Mark: read.

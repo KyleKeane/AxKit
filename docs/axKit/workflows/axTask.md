@@ -1046,14 +1046,14 @@ Starts with: Open axTask with the folder tasks.
 
 ### Move an item down and up in its list
 
-1. Press Ctrl+Shift+Down.
+1. Press Ctrl+Shift+Down (Move down in the list; Context menu).
     You hear: Moved down: Apples, 2 of 3.
-2. Press Ctrl+Shift+Up.
+2. Press Ctrl+Shift+Up (Move up in the list; Context menu).
     You hear: Moved up: Apples, 1 of 3.
 
 ### Move an item to the bottom of its list, and take it back
 
-1. Press Ctrl+Shift+End.
+1. Press Ctrl+Shift+End (Move to the bottom of the list; Context menu).
     You hear: Moved to the bottom: Apples, 3 of 3.
 2. Press Up.
 3. Press Ctrl+Z (Undo; Actions menu).
@@ -1061,7 +1061,7 @@ Starts with: Open axTask with the folder tasks.
 
 ### Put new items at the top of a list
 
-1. Choose the menu item New items at the top of this list.
+1. Choose New items at the top of this list in the Options menu.
     You hear: New items go to the top of Home.
 2. Press Ctrl+N (New item; Actions menu).
 3. Type: Dates

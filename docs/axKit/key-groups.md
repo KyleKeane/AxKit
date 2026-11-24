@@ -637,5 +637,9 @@ The keys:
 
 These keys of the inventory match no group's pattern. Most are the arrows and the keys of a list or a text.
 
+- Ctrl+Shift+Down arrow: Move down in the list.
+- Ctrl+Shift+End: Move to the bottom of the list.
+- Ctrl+Shift+Home: Move to the top of the list.
+- Ctrl+Shift+Up arrow: Move up in the list.
 - Shift+Alt+Left arrow: Heading shallower.
 - Shift+Alt+Right arrow: Heading deeper.
