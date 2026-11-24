@@ -45,7 +45,7 @@ expect said ! Nothing to save here
 expect commands axMedia, axKit, Apps
 expect commands Close all windows, Window
 expect commands Version, Help, About
-expect commands Check for updates at start, Options, General
+expect commands Check for updates at start, axKit
 
 # Step 4: Copy diagnostics writes to the clipboard, which is the user's (the test desktop shares the window
 # station's clipboard), so it is not run here; left to the NVDA pass.

@@ -58,15 +58,15 @@ dated pass; then the script writes this page again.
 
 No longer owed: the script each names passed with NVDA listening (`docs/axKit/workflow-record.json`).
 
-- R-53: axTerminal's refusal of shells in a settings file whose seal does not check. Heard: `tests/scripts/axTerminal/08-user-shells.txt` passed with NVDA at 656663e1.
-- R-53: axGIT's refusal of trusted repositories in a settings file whose seal does not check. Heard: `tests/scripts/axGIT/07-own-programs.txt` passed with NVDA at a99a6c08.
-- R-53: axMCP's refusal of servers in a settings file whose seal does not check. Heard: `tests/scripts/axMCP/02-your-servers-errors-prompts.txt` passed with NVDA at a99a6c08.
-- R-53: axFile's refusal of programs of Open with in a settings file whose seal does not check. Heard: `tests/scripts/axFile/10-settings-changed-outside.txt` passed with NVDA at a99a6c08.
+- R-53: axTerminal's refusal of shells in a settings file whose seal does not check. Heard: `tests/scripts/axTerminal/08-user-shells.txt` passed with NVDA at 96a4f3c3.
+- R-53: axGIT's refusal of trusted repositories in a settings file whose seal does not check. Heard: `tests/scripts/axGIT/07-own-programs.txt` passed with NVDA at 96a4f3c3.
+- R-53: axMCP's refusal of servers in a settings file whose seal does not check. Heard: `tests/scripts/axMCP/02-your-servers-errors-prompts.txt` passed with NVDA at 96a4f3c3.
+- R-53: axFile's refusal of programs of Open with in a settings file whose seal does not check. Heard: `tests/scripts/axFile/10-settings-changed-outside.txt` passed with NVDA at 96a4f3c3.
 - R-53: axClaude's refusal of claudePath in a settings file whose seal does not check. Heard: `tests/scripts/axClaude/33-settings-changed-outside.txt` passed with NVDA at f8f3c2e6.
-- R-63: the notice of an item window when the settings cannot be saved. Heard: `tests/scripts/axTask/11-settings-not-saved.txt` passed with NVDA at a99a6c08.
-- R-63: the system line of a console window when the settings cannot be saved. Heard: `tests/scripts/axTerminal/12-settings-not-saved.txt` passed with NVDA at 656663e1.
-- R-64: the sentence that a remembered path is on the network and was not opened. Heard: `tests/scripts/axFile/10-settings-changed-outside.txt` passed with NVDA at a99a6c08.
-- R-66: a damaged item named in its list in axTask. Heard: `tests/scripts/axTask/10-damaged-item.txt` passed with NVDA at a99a6c08.
-- R-69: the sentence of axClip at its first showing when the kept history could not be read. Heard: `tests/scripts/axClip/03-history-not-read.txt` passed with NVDA at 941301c4.
-- R-72: the first press of an action key of a list that moves or opens, in axTask. Heard: `tests/scripts/axTask/04-action-keys.txt` passed with NVDA at a99a6c08.
-- R-74: the details of a started server in axMCP with their error lines. Heard: `tests/scripts/axMCP/01-start.txt` passed with NVDA at a99a6c08.
+- R-63: the notice of an item window when the settings cannot be saved. Heard: `tests/scripts/axTask/11-settings-not-saved.txt` passed with NVDA at 96a4f3c3.
+- R-63: the system line of a console window when the settings cannot be saved. Heard: `tests/scripts/axTerminal/12-settings-not-saved.txt` passed with NVDA at 96a4f3c3.
+- R-64: the sentence that a remembered path is on the network and was not opened. Heard: `tests/scripts/axFile/10-settings-changed-outside.txt` passed with NVDA at 96a4f3c3.
+- R-66: a damaged item named in its list in axTask. Heard: `tests/scripts/axTask/10-damaged-item.txt` passed with NVDA at 96a4f3c3.
+- R-69: the sentence of axClip at its first showing when the kept history could not be read. Heard: `tests/scripts/axClip/03-history-not-read.txt` passed with NVDA at 96a4f3c3.
+- R-72: the first press of an action key of a list that moves or opens, in axTask. Heard: `tests/scripts/axTask/04-action-keys.txt` passed with NVDA at 96a4f3c3.
+- R-74: the details of a started server in axMCP with their error lines. Heard: `tests/scripts/axMCP/01-start.txt` passed with NVDA at 96a4f3c3.

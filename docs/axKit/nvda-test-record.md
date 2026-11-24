@@ -6,6 +6,33 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-24: every app but axClaude, and the NVDA-only scripts; by the assistant with NVDA listening (`main` 96a4f3c3)
+
+`.\nvda-pass.ps1 -Skip axClaude`, behind the spoken countdown, after the maintainer's yes through the question tool,
+the same NVDA, voice and Windows as the passes below. 155 scripts, 1017 goals passed, 11 failed, 11 not run.
+
+| What | Scripts | Result |
+|---|---|---|
+| Every app's window scripts but axClaude's: forms, Favorites, the list's own order, axHelp's offer, the drafted report, the titles | 147 | Passed but three, below |
+| NVDA-only: `axDown-dialog-focus`, `axDown-notices`, `axFile-letter-backwards`, `axTemplate-put-in`, `axTerminal-handed-command` | 5 | Passed |
+| NVDA-only: `axCalc-keys-from-a-menu` (AX-6.6a), `axTask-template-in-a-form` (TP-5.5), `axClaude-say-all` | 3 | Failed, below |
+
+Found:
+- `axMedia\04-text-notices.txt` step 48, `mcp\05-run-asks-in-a-list.txt` step 40 (and `axClaude\18-offered-command.txt`
+  step 128, not run): the scripts named the update switch under Options, General, where it was until it became the
+  bundle's one switch in the axKit menu (77b6345f). The scripts mended; both pass on the hidden desktop.
+- `axCalc-keys-from-a-menu.txt` step 12: Alt+S opened Session on its first item, Save history, where the script
+  expected Exit. The key under test was never reached; the script mended, heard again in the next pass.
+- `axTask-template-in-a-form.txt` step 24: Shift+F10 in a form's field opened nothing. The window now opens the
+  field's own menu itself while a notice shows (`AxKitForm.ShowFieldMenu`); the hidden desktop cannot open a menu,
+  so it is heard again in the next pass.
+- `axTerminal\02-commands.txt` step 148: an unexpected error inside Windows Forms' list code, as a list was destroyed
+  while NVDA read it (Collection was modified, `ListBoxAccessibleObject.ResetListItemAccessibleObjects`). The script
+  passes on the hidden desktop. Its item: "axTerminal: an unexpected error in Windows Forms' list as a list closes,
+  with NVDA listening".
+- `axClaude-say-all.txt` step 35: Claude Code was still working 10 seconds after its reply was read; a live script,
+  waiting on the network. Not mended.
+
 ## 2026-11-23: axTemplate's launcher, axClip, axStart; by the assistant with NVDA listening (branch `axfile-navigator` 89d4ac77 to 941301c4)
 
 `.\nvda-pass.ps1 -Only` axTemplate's, axClip's and axStart's scripts and `zz-nvda\axTemplate-put-in.txt`, from the

@@ -595,6 +595,24 @@ public abstract partial class AxKitForm : Form
     private const int VK_OEM_PERIOD = 0xBE;
     private const int WM_CONTEXTMENU = 0x007B;
 
+    /// <summary>The menu of the focused text field of a notice, its first item selected, at the caret; false when the field has none of its own (TP-5.5: a form's field with its templates).</summary>
+    private bool ShowFieldMenu()
+    {
+        if (Control.FromChildHandle(User32.GetFocus()) is not TextBoxBase { ContextMenuStrip: { } strip } box || box.FindForm() != this)
+        {
+            return false;
+        }
+
+        var caret = box.GetPositionFromCharIndex(Math.Min(box.SelectionStart, Math.Max(0, box.TextLength - 1)));
+        strip.Show(box, new Point(Math.Max(0, caret.X), Math.Max(0, caret.Y) + box.Font.Height));
+        if (strip.Items.Count > 0)
+        {
+            strip.Items[0].Select();
+        }
+
+        return true;
+    }
+
     /// <summary>Windows' own key for the context menu, which the windows' tables hold for their lists; <see cref="BundleKeys.ContextMenu"/> runs what it runs.</summary>
     private const Keys ContextMenuOfWindows = Keys.Shift | Keys.F10;
 
@@ -921,6 +939,11 @@ public abstract partial class AxKitForm : Form
                 // for a context menu, to the focused control, as Windows makes it for Shift+F10: the control's
                 // stand-in opens the bar's Context menu (ContextFromControl), a plain edit control shows its own
                 // menu, and a control with neither does nothing. Posted, so the menu's loop starts after this key.
+                if (NoticeOpen && ShowFieldMenu())
+                {
+                    return true;
+                }
+
                 if (NoticeOpen || !(ProcessWindowKey(ContextMenuOfWindows) || RunCommandKey(ContextMenuOfWindows)))
                 {
                     var focus = User32.GetFocus();
@@ -975,6 +998,14 @@ public abstract partial class AxKitForm : Form
             {
                 // AX-7.11: the notice's text on demand, a form's explanation among them, which is not said at opening.
                 Overlay.SayText();
+                return true;
+            }
+
+            // TP-5.5: a form field's own menu (its templates) opened by the window, at the caret, for Shift+F10 and the
+            // Applications key: the key does not reach the field as a request for its menu while the notice holds it
+            // (the NVDA pass of 2026-11-24 heard nothing open).
+            if (keyData is ContextMenuOfWindows or Keys.Apps && ShowFieldMenu())
+            {
                 return true;
             }
 

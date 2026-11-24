@@ -9,7 +9,7 @@ expect focus Expression
 
 # Goal: Open another app with its key from an open menu
 keys alt+s
-expect focus Exit
+expect focus Save history
 keys ctrl+f5
 adopt
 expect state "title":"axDown Untitled"
@@ -19,7 +19,7 @@ expect focus Expression
 
 # Check: F1 from an open menu shows the keys
 keys alt+s
-expect focus Exit
+expect focus Save history
 keys f1
 expect state "notice":"Keyboard shortcuts"
 keys escape
