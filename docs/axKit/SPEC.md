@@ -1068,7 +1068,9 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   app adds them and none can be without them. Neither has a key (his choice of the same day, when the one key
   axFile had, Ctrl+Shift+F, was Find everywhere in axTask and Fetch in axGIT); both are in the command palette.
   - **Filter…** opens the notice "Filter" with the field "Name contains". The level then shows only the rows
-    whose name contains the text, in any case, and the list's name says so after the level's own: "Home, 4
+    whose name contains the text, in any case (a text with `*` or `?` is a pattern over the whole name instead,
+    `*.mp3` or `chapter ?`, so that Select all after it chooses the entries by a pattern for one operation on them
+    all; `ListArrange.Passes`, asked 2026-11-22), and the list's name says so after the level's own: "Home, 4
     items, filter tap, 1 shown" ("3 of 24 items, filter chap" in axFile until then). What is said is the
     list's new name and the row landed on. A heading stays while a row under it, up to the next heading,
     passes; a heading's own name is not looked at. A level whose rows all fail the filter shows the one line

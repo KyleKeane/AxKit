@@ -37,6 +37,15 @@ public sealed class ListArrangeTests
     }
 
     [Fact]
+    public void A_star_or_a_question_mark_makes_the_filter_a_pattern_over_the_whole_name()
+    {
+        ArrangeRow[] rows = [Item("Chapter 1.mp3"), Item("Chapter 12.mp3"), Item("notes.md"), Item("mp3 list.txt")];
+        Assert.Equal(["Chapter 1.mp3", "Chapter 12.mp3"], Names(rows, ListArrange.Filter(rows, "*.MP3")));
+        Assert.Equal(["Chapter 1.mp3"], Names(rows, ListArrange.Filter(rows, "chapter ?.mp3")));
+        Assert.Equal(["Chapter 1.mp3", "Chapter 12.mp3", "mp3 list.txt"], Names(rows, ListArrange.Filter(rows, "mp3")));
+    }
+
+    [Fact]
     public void A_heading_stays_while_a_row_under_it_passes_and_its_own_name_is_not_looked_at()
     {
         ArrangeRow[] rows = [Heading("Your lists"), Item("Shopping"), Item("Home"), Heading("Shop lists"), Item("Today"), Heading("Date lists"), Item("Shop hours")];

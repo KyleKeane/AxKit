@@ -48,7 +48,17 @@ public static class ListArrange
     }
 
     /// <summary>
-    /// The rows whose name contains <paramref name="text"/>, without regard to case, in the order given; all of
+    /// Whether a name passes the filter: it contains the text, without regard to case; or, when the text holds a
+    /// <c>*</c> or a <c>?</c>, the whole name matches it as a pattern, <c>*</c> any characters and <c>?</c> one
+    /// (<c>*.mp3</c>, <c>chapter ?</c>; asked 2026-11-22: choose entries by a pattern, then act on them all).
+    /// </summary>
+    public static bool Passes(string name, string text) =>
+        text.AsSpan().IndexOfAny('*', '?') >= 0
+            ? System.IO.Enumeration.FileSystemName.MatchesSimpleExpression(text, name, ignoreCase: true)
+            : name.Contains(text, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// The rows whose name passes the filter (<see cref="Passes"/>), in the order given; all of
     /// them for an empty text. A heading stays while a row under it, up to the next heading, passes; a heading's
     /// own name is not looked at.
     /// </summary>
@@ -69,7 +79,7 @@ public static class ListArrange
                 continue;
             }
 
-            if (!rows[i].Name.Contains(text, StringComparison.OrdinalIgnoreCase))
+            if (!Passes(rows[i].Name, text))
             {
                 continue;
             }

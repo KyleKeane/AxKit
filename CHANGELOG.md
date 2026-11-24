@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axKit: **the filter takes a pattern**: in every navigator, Options, Filter with a star or a question mark matches the whole name, `*.mp3` for instance; Ctrl+A then selects them all for one operation.
 - axFile: **New Markdown file and New JSON file** in Actions, beside New text file, each with its name open for editing.
 - axKit: **after the Microsoft Store updates axKit**, Windows starts axStart, axClip and axHelp again by themselves, so their hotkeys work without opening an app first.
 - axKit: **the first start from the Microsoft Store keeps the window you opened in front**, so NVDA reads it: axStart, axClip and axHelp start in the background only once it is.

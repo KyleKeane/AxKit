@@ -127,7 +127,7 @@ public abstract partial class ItemForm
 
     /// <summary>Options → Filter…: the notice "Filter" with the field "Name contains"; an empty field clears the filter.</summary>
     private void ShowFilter() =>
-        AskText("Filter", "Only what has the text in its name is listed; empty clears the filter.", "Name contains:", "Name contains", _filter, "&Filter",
+        AskText("Filter", "Only what has the text in its name is listed; with * or ? the whole name is matched as a pattern, *.mp3 for instance; empty clears the filter.", "Name contains:", "Name contains", _filter, "&Filter",
             typed => ApplyFilter(typed.Trim()), required: false, emptyMessage: string.Empty);
 
     /// <summary>
