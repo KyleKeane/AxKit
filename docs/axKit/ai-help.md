@@ -69,9 +69,13 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
   read) saves them as they are then in use, shows the notice **AI help** with "AI help's settings were changed
   outside axKit and are not used: Claude is off, it may read no folder of yours, and Claude Code and its working
   folder are the usual ones. Turn Claude on and add the folders again from the axKit menu, Claude." and does not go
-  on with what was asked (`AiHelpFlow.ChangedOutside`), so the notice is shown once. `claudePath` and `workingFolder`
-  have no menu item yet: they can be set by hand only in a file axKit has not sealed yet (a new one, as the
-  automation's is); afterwards a hand change is refused as above. Tested in `SettingsSealTests`.
+  on with what was asked (`AiHelpFlow.ChangedOutside`), so the notice is shown once. A hand change of a sealed file is
+  refused as above; `claudePath` and `workingFolder` are set in axKit instead (AH-1.1b). Tested in `SettingsSealTests`.
+- AH-1.1b **Claude Code's program and Claude's working folder, chosen in axKit** (2026-11-24): axKit, Claude, Choose
+  Claude's working folder... (Windows' folder picker, opened on the folder in use) and Choose Claude Code's program...
+  (Windows' file picker for claude.exe or claude.cmd, opened where the program in use is) write `workingFolder` and
+  `claudePath` and seal the file anew; each says what is now in use ("Claude's working folder: C:\Work\Claude"), and
+  Cancel says what stays. Neither is offered to an AI tool (AK-2.6, exception 3), as Folders Claude may read is not.
 - AH-1.2 Turning it on shows the consent notice of AX-11.4 for Claude Code, recorded under the app "AI help" and the
   target Claude Code (one agreement for the service, however many windows use it); the notice says what goes to
   Anthropic: the question, what the window gathered, and the files Claude reads in the allowed folders, under the

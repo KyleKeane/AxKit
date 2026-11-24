@@ -327,6 +327,64 @@ internal sealed class AiHelpFlow
         });
     }
 
+    // ---- Claude Code's program and Claude's working folder, chosen in axKit (AH-1.1b, 2026-11-24) ----
+
+    /// <summary>
+    /// axKit, Claude, Choose Claude's working folder (AH-1.1b): the folder Claude Code starts in, through Windows' folder
+    /// picker, saved and sealed with the other settings (AH-1.1a, R-53), since a hand edit of the sealed file is refused.
+    /// Cancel keeps the folder and says which it is.
+    /// </summary>
+    public void ChooseWorkingFolder()
+    {
+        var settings = AiSettings.Load(AiSettings.DefaultPath, out var problem);
+        if (ChangedOutside(settings, problem))
+        {
+            return;
+        }
+
+        var now = settings.ResolvedWorkingFolder();
+        var folder = _form.ChooseFolder("Choose Claude's working folder", Directory.Exists(now) ? now : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+        if (folder is null)
+        {
+            _form.Announce("Claude's working folder stays " + now, true);
+            return;
+        }
+
+        settings.WorkingFolder = folder;
+        if (SaveAi(settings))
+        {
+            _form.Announce("Claude's working folder: " + folder, true);
+        }
+    }
+
+    /// <summary>
+    /// axKit, Claude, Choose Claude Code's program (AH-1.1b): Claude Code's program file when it is not where axKit
+    /// looks, through Windows' file picker, saved and sealed. Cancel keeps it and says which is used.
+    /// </summary>
+    public void ChooseClaudeProgram()
+    {
+        var settings = AiSettings.Load(AiSettings.DefaultPath, out var problem);
+        if (ChangedOutside(settings, problem))
+        {
+            return;
+        }
+
+        var found = settings.FindClaude();
+        var path = _form.ChooseFile("Choose Claude Code's program", "Claude Code (claude.exe, claude.cmd)|claude.exe;claude.cmd|Programs (*.exe, *.cmd)|*.exe;*.cmd",
+            found is null ? null : Path.GetDirectoryName(found));
+        if (path is null)
+        {
+            _form.Announce(found is null ? "Claude Code's program stays unset: axKit looks in the usual places" : "Claude Code's program stays " + found, true);
+            return;
+        }
+
+        settings.ClaudePath = path;
+        if (SaveAi(settings))
+        {
+            _form.Announce("Claude Code's program: " + path, true);
+        }
+    }
+
     // ---- the folders Claude may read (AH-2.3) ----
 
     /// <summary>axKit, AI help, Folders Claude may read: the list as a notice, with Add and Remove.</summary>

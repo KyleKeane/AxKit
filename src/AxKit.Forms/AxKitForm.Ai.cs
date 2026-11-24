@@ -37,6 +37,9 @@ public abstract partial class AxKitForm
         menu.DropDownItems.Add(new ToolStripSeparator());
         menu.DropDownItems.Add(CommandPalette.NeverForAiTools(new ToolStripMenuItem("&Folders Claude may read...", null, (_, _) => ShowAiFolders())));
         menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Claude's &working folder", null, (_, _) => OpenAiWorkingFolder()), CommandMark.Open));
+        // AH-1.1b: the two run-deciding settings, sealed since R-53, chosen here; never offered to an AI tool, as the folders are not.
+        menu.DropDownItems.Add(CommandPalette.NeverForAiTools(new ToolStripMenuItem("&Choose Claude's working folder...", null, (_, _) => _ai.ChooseWorkingFolder())));
+        menu.DropDownItems.Add(CommandPalette.NeverForAiTools(new ToolStripMenuItem("Choose Claude Code's &program...", null, (_, _) => _ai.ChooseClaudeProgram())));
         CommandPalette.RefreshedOnOpening(menu, () => on.Checked = AiSettings.Load(AiSettings.DefaultPath, out _).Enabled);
         return menu;
     }

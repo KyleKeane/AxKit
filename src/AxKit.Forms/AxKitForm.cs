@@ -1224,6 +1224,18 @@ public abstract partial class AxKitForm : Form
         return ShowSystemDialog(dialog) == DialogResult.OK && dialog.SelectedPath.Length > 0 ? dialog.SelectedPath : null;
     }
 
+    /// <summary>The Windows file picker for a file that is there, titled with <paramref name="title"/>, with <paramref name="filter"/> and opened in <paramref name="start"/>: the file chosen, or null.</summary>
+    protected internal string? ChooseFile(string title, string filter, string? start = null)
+    {
+        using var dialog = new OpenFileDialog { Title = title, Filter = filter, CheckFileExists = true };
+        if (start is not null && Directory.Exists(start))
+        {
+            dialog.InitialDirectory = start;
+        }
+
+        return ShowSystemDialog(dialog) == DialogResult.OK && dialog.FileName.Length > 0 ? dialog.FileName : null;
+    }
+
     /// <summary>A page in the default browser; a failure is a notice. Help, About, axKit on GitHub calls it for the repository page.</summary>
     protected internal void OpenUrl(string url)
     {

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- axKit: **axKit menu, Claude: Choose Claude's working folder and Choose Claude Code's program**, each through the Windows picker. Their settings are sealed, so a hand edit of the file is refused; these are now the way to change them.
+
 - axTask: **put a list in your own order.** Ctrl+Shift+Up and Ctrl+Shift+Down move the item you are on, Ctrl+Shift+Home and Ctrl+Shift+End to the top or the bottom; the list keeps the order, and Ctrl+Z takes a move back. Options, New items at the top of this list puts new items first. A list you never reorder stays by name.
 
 - axKit: **a window's title starts with its app**, then what it holds: "axFile folder C:\work\music", "axDown file C:\work\notes.md", "axClaude, access layer for Claude Code folder C:\work". As the focus lands on a new window, NVDA says the app before the place, and the full path tells two folders of one name apart.
