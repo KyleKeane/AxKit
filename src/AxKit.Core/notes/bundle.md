@@ -89,7 +89,7 @@
   `RetiredDefaults` with `TakenOver` (AX-8.11): a file's retired default becomes the new one on loading (axClip and axTemplate swapped theirs on 2026-11-23).
   `AxKit.Forms/HotkeyForm` reads it without knowing the app.
 - `Log`: one file per app; each app calls `Log.UseApp` first thing in its `Run`.
-- `Updates/UpdateCheck` (the latest GitHub release: JSON parsing, version comparison; the repository name lives here)
+- `Updates/UpdateCheck` (the latest GitHub release: JSON parsing, version comparison, `FetchWithRetryAsync` asking once more after a passing failure, a name not found or no connection, AX-3.1; the repository name lives here)
   and `Updates/Updater` (the download and the hand-over to `install.ps1`, AX-3); `Updates/ReleaseSigning`, the release
   key's public half and the check of a zip's signature before anything is installed (AX-3.4, S-27).
 - `Events/EventKind`, `EventSound`, `EventPresenter` (docs/axKit/events.md EV-3, EV-5.2, 2026-11-17): the kinds of event of axKit as one closed list, 52 values in the order and the six classes of docs/axKit/families.json, where each is described for people; the sounds by name; and the one table that gives a kind its sound or none (`SoundsOf`, `Allows`; made once, so that asking allocates nothing), with a kind's id as the file writes it (`Id`, `Of`). Three kinds still have two sounds, and a place that raises one names which it plays; `EventKindTests` pins exactly those and holds the kinds, the sounds and the table to the file both ways. A kind is added in the enumeration and in the file together, at its place in the file's order; a sound is given to a kind here and in the file, only by the maintainer's ear. The door that plays them is `AxKit.Forms/EventDoor`.

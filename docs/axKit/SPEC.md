@@ -290,7 +290,11 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   four buttons: I accept all terms, install and restart (Enter), I accept all terms, install and close, Open release page, Later
   (Escape). A development build (Debug, as `run.ps1` makes it) does not ask at startup, since its version is whatever
   the working tree said when it was last built; Check for updates still asks. Every window's Help menu ends with Check for updates (axKit <version>), always, naming the version in use
-  and asking GitHub again every time, Update to axKit <version> below it while a newer release is known, and About, the
+  and asking GitHub again every time (a check whose first try fails because GitHub's name is not found or no
+  connection is made asks once more two seconds later before it says "GitHub could not be reached", since right after
+  the Microsoft Store's update the network can still be coming up, `UpdateCheck.FetchWithRetryAsync`, `KyleKeane/AxKit-reports issue 11`;
+  the Store's copy's notice of a failure adds that the Store installs its updates by itself and the check only asks
+  GitHub for the newest version), Update to axKit <version> below it while a newer release is known, and About, the
   bundle's About in sections (AX-9.9, `AxKit.Core/BundleAbout`), the same in every window. Every text of the update
   flow names axKit, never an app: the version is the bundle's.
 - AX-3.2 Either update runs behind one notice with one progress bar (`Notice.Progress`; NVDA reports a progress bar

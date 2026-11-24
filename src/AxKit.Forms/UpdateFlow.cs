@@ -60,7 +60,9 @@ internal sealed class UpdateFlow
             if (manual && !_form.IsDisposed)
             {
                 _form.ShowNotice(new Notice("Check for updates",
-                    $"GitHub could not be reached: {ex.Message}\nThe releases page: {UpdateCheck.ReleasesPage}",
+                    $"GitHub could not be reached: {ex.Message}\n" +
+                    (PackageIdentity.IsPackaged ? "This copy of axKit comes from the Microsoft Store, which installs its updates by itself; this check only asks GitHub for the newest version.\n" : string.Empty) +
+                    $"The releases page: {UpdateCheck.ReleasesPage}",
                 [
                     new OverlayChoice("&Open releases page", () => _form.OpenUrl(UpdateCheck.ReleasesPage), StaysOpen: true),
                     OverlayChoice.Close,

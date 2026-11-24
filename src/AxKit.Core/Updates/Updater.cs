@@ -34,8 +34,13 @@ public static class Updater
             what.Trim(),
         ]), names);
 
-    /// <summary>The latest release, or null when none is published. Throws when GitHub cannot be reached.</summary>
-    public static Task<ReleaseInfo?> CheckAsync(CancellationToken cancellation) => UpdateCheck.FetchLatestAsync(Http, cancellation);
+    /// <summary>
+    /// The latest release, or null when none is published; a passing failure is asked once more (AX-3.1). Throws when
+    /// GitHub cannot be reached.
+    /// </summary>
+    public static Task<ReleaseInfo?> CheckAsync(CancellationToken cancellation) =>
+        UpdateCheck.FetchWithRetryAsync(token => UpdateCheck.FetchLatestAsync(Http, token), UpdateCheck.RetryDelay,
+            ex => Log.Info("The update check failed once, asking once more: " + ex.Message), cancellation);
 
     /// <summary>
     /// Downloads and extracts the release's zip and returns the folder that holds the new program file and install.ps1.

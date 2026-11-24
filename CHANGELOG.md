@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- axKit: **Check for updates tries once more** before it says GitHub could not be reached, when the first try found no network, as can happen right after the Microsoft Store's update.
+
 - axKit: **two hotkeys move.** axClip is Ctrl+Shift+Comma now, and axHelp's screenshot Ctrl+Shift+Period; Ctrl+Shift+Apostrophe is kept for axAutomate's launcher, which comes later. If you never changed them, your settings move by themselves; a key you chose stays yours.
 
 - axTemplate: **a template of several lines where lines do not fit.** Into a field of one line it goes in on one line; into a terminal, which runs each line as it is pasted, the launcher asks first. Insert template inside axKit does the same for a field of one line.

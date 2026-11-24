@@ -21,6 +21,51 @@ public class UpdateCheckTests
         """;
 
     [Fact]
+    public async Task A_name_not_found_is_asked_once_more_and_the_second_answer_counts()
+    {
+        var calls = 0;
+        Exception? heard = null;
+        var release = await UpdateCheck.FetchWithRetryAsync(_ =>
+        {
+            calls++;
+            return calls == 1
+                ? throw new HttpRequestException(HttpRequestError.NameResolutionError, "No such host is known")
+                : Task.FromResult(UpdateCheck.Parse(Release));
+        }, TimeSpan.Zero, ex => heard = ex, CancellationToken.None);
+
+        Assert.Equal(2, calls);
+        Assert.NotNull(heard);
+        Assert.Equal(new Version(1, 2, 3), release!.Version);
+    }
+
+    [Fact]
+    public async Task A_second_passing_failure_is_the_callers_to_say()
+    {
+        var calls = 0;
+        await Assert.ThrowsAsync<HttpRequestException>(() => UpdateCheck.FetchWithRetryAsync(_ =>
+        {
+            calls++;
+            throw new HttpRequestException(HttpRequestError.ConnectionError, "refused");
+        }, TimeSpan.Zero, _ => { }, CancellationToken.None));
+
+        Assert.Equal(2, calls);
+    }
+
+    [Fact]
+    public async Task An_answer_of_GitHubs_is_not_asked_again()
+    {
+        var calls = 0;
+        await Assert.ThrowsAsync<HttpRequestException>(() => UpdateCheck.FetchWithRetryAsync(_ =>
+        {
+            calls++;
+            throw new HttpRequestException("Forbidden", null, System.Net.HttpStatusCode.Forbidden);
+        }, TimeSpan.Zero, _ => { }, CancellationToken.None));
+
+        Assert.Equal(1, calls);
+        Assert.False(UpdateCheck.Passing(new TaskCanceledException()));
+    }
+
+    [Fact]
     public void The_latest_release_gives_its_version_notes_page_and_zip()
     {
         var release = UpdateCheck.Parse(Release);

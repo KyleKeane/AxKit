@@ -136,4 +136,34 @@ public static class UpdateCheck
         response.EnsureSuccessStatusCode();
         return Parse(await response.Content.ReadAsStringAsync(cancellation).ConfigureAwait(false));
     }
+
+    /// <summary>How long a check waits before it asks once more after a failure a moment may cure (<see cref="Passing"/>).</summary>
+    public static readonly TimeSpan RetryDelay = TimeSpan.FromSeconds(2);
+
+    /// <summary>
+    /// A failure a moment may cure: GitHub's name not found, or no connection made. Right after the Microsoft Store's
+    /// update the network can still be coming up, and the second check works (AX-3.1). An answer of GitHub's, such as an
+    /// error status, is not one: asking again would only repeat it.
+    /// </summary>
+    public static bool Passing(Exception ex) =>
+        ex is HttpRequestException { HttpRequestError: HttpRequestError.NameResolutionError or HttpRequestError.ConnectionError };
+
+    /// <summary>
+    /// <paramref name="fetch"/>, and once more after <paramref name="delay"/> when the first failure was a passing one;
+    /// the second failure is the caller's to say. <paramref name="retried"/> hears the first failure, for the log.
+    /// </summary>
+    public static async Task<ReleaseInfo?> FetchWithRetryAsync(Func<CancellationToken, Task<ReleaseInfo?>> fetch, TimeSpan delay, Action<Exception> retried, CancellationToken cancellation)
+    {
+        try
+        {
+            return await fetch(cancellation).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (Passing(ex))
+        {
+            retried(ex);
+        }
+
+        await Task.Delay(delay, cancellation).ConfigureAwait(false);
+        return await fetch(cancellation).ConfigureAwait(false);
+    }
 }
