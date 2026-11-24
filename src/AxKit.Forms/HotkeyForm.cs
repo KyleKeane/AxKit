@@ -452,6 +452,9 @@ public abstract class HotkeyForm : AxKitForm
         }
 
         _capturing = false;
+        // AX-7.11: the next showing enters the field afresh, so that its entry sound plays every time and not only on
+        // the first (the maintainer's choice, 2026-11-24); a field still active from before would get no entry.
+        ActiveControl = null;
         Hide();
         if (giveBack)
         {

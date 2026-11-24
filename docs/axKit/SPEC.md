@@ -1868,7 +1868,9 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
     conversation's text among them, a field otherwise), the form (`FormControls.OnEnter`, once for all its
     controls, which are silent as the focus moves between them) and the answers in the field's place
     (`ControlArea`'s list). So it sounds when something opens, when Tab or F6 moves to another pane, when the
-    focus comes back from a notice, and when a window starts; moving inside a component is silent. No window
+    focus comes back from a notice, and when a window starts; a window of a hotkey (axStart, axClip, axHelp,
+    axTemplate's launcher) clears its active control as it hides, so that every showing enters its field afresh and
+    sounds, not only the first (the maintainer's choice, 2026-11-24); moving inside a component is silent. No window
     raises an entry, and a component cannot be used without it. The rename box in a list is a field and sounds as
     one.
   - **One sound for one command** (`AxKitForm.SoundOnEntry`): the entry is played once the window's thread has

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- axTask and axTemplate: **saving an item's form says just "Saved"**; NVDA then reads the item with what changed, once.
+- axStart, axClip and axHelp: **the entering sound plays every time the hotkey brings the window up**, not only the first time.
 - axKit: **the filter takes a pattern**: in every navigator, Options, Filter with a star or a question mark matches the whole name, `*.mp3` for instance; Ctrl+A then selects them all for one operation.
 - axFile: **New Markdown file and New JSON file** in Actions, beside New text file, each with its name open for editing.
 - axKit: **after the Microsoft Store updates axKit**, Windows starts axStart, axClip and axHelp again by themselves, so their hotkeys work without opening an app first.
