@@ -203,9 +203,12 @@ page by hand; run its script and commit the page.
   with it in a clean copy of the last commit, builds it and runs its tests and the bundle's checks of every app's
   places, so that the script cannot fall behind the framework unseen; run it after a change to either, and before a
   release.
-- `tools/push-check.ps1`: what the pre-push hook runs before anything leaves the computer: `tests/AxKit.Tests` always,
-  the test projects of the apps the pushed commits changed (every project when shared code changed), the page checks,
-  `tools/upstream.ps1 -Check` and `tools/script-lint.ps1`; a failure refuses the push.
+- `tools/push-check.ps1`: what the pre-push hook runs before anything leaves the computer: first the page checks,
+  `tools/upstream.ps1 -Check` and `tools/script-lint.ps1`, every one, so that all the stale pages are named at once and
+  in seconds; then `tests/AxKit.Tests` always and the test projects of the apps the pushed commits changed (every
+  project when shared code changed); a failure refuses the push.
+- `tools/pages.ps1`: every generated page written again in one run, the same scripts the checks run; run it before a
+  commit that changed a script, a command, a key or a document.
 - `tools/make-icon.ps1`: the apps' icons from `Dispatch.Apps`. `tools/make-test-pictures.ps1`: the three test
   pictures of axHelp's screenshots in `tests/fixtures/pictures`, run only to change them.
 - `tools/session-start.ps1`: the start of a working session in one run, four checks in order, each by the script that

@@ -47,6 +47,30 @@ if ($shared) {
 }
 
 Write-Host "Push check: the test projects $($projects -join ', '), then the page and script checks."
+# The quick checks first, every one of them, so that a push learns of all its stale pages at once and in seconds,
+# before the tests' minutes (2026-11-24: two pushes in a row were refused one page at a time, after the tests).
+$stale = New-Object System.Collections.Generic.List[string]
+foreach ($page in 'outside-calls', 'workflows', 'repairs', 'apps-page', 'cases', 'key-map', 'families', 'owed', 'components', 'guide-menus', 'doc-menus') {
+    $lines = @(& (Join-Path $root "tools\$page.ps1") -Check 2>&1 | ForEach-Object { "$_" })
+    if ($LASTEXITCODE -ne 0) {
+        $lines | ForEach-Object { Write-Host "  $_" }
+        $stale.Add("tools\$page.ps1")
+    }
+}
+
+foreach ($check in 'upstream', 'script-lint') {
+    $lines = @(& (Join-Path $root "tools\$check.ps1") -Check 2>&1 | ForEach-Object { "$_" })
+    if ($LASTEXITCODE -ne 0) {
+        $lines | ForEach-Object { Write-Host "  $_" }
+        $stale.Add("tools\$check.ps1 -Check")
+    }
+}
+
+if ($stale.Count -gt 0) {
+    Write-Host "Push check: these checks failed: $($stale -join ', '). Run each page script without -Check (or tools\pages.ps1 for all of them), commit what they write, and push again."
+    exit 1
+}
+
 try {
     foreach ($project in $projects) {
         $path = Join-Path $root "tests\$project.Tests\$project.Tests.csproj"
@@ -62,24 +86,6 @@ try {
     }
 } finally {
     & dotnet build-server shutdown 2>&1 | Out-Null
-}
-
-foreach ($page in 'outside-calls', 'workflows', 'repairs', 'apps-page', 'cases', 'key-map', 'families', 'owed', 'components', 'guide-menus', 'doc-menus') {
-    $lines = @(& (Join-Path $root "tools\$page.ps1") -Check 2>&1 | ForEach-Object { "$_" })
-    if ($LASTEXITCODE -ne 0) {
-        $lines | ForEach-Object { Write-Host "  $_" }
-        Write-Host "Push check: the page check tools\$page.ps1 -Check failed: run tools\$page.ps1 and commit the page it writes."
-        exit 1
-    }
-}
-
-foreach ($check in 'upstream', 'script-lint') {
-    $lines = @(& (Join-Path $root "tools\$check.ps1") -Check 2>&1 | ForEach-Object { "$_" })
-    if ($LASTEXITCODE -ne 0) {
-        $lines | ForEach-Object { Write-Host "  $_" }
-        Write-Host "Push check: tools\$check.ps1 -Check failed."
-        exit 1
-    }
 }
 
 Write-Host 'Push check: every check passed.'
