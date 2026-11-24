@@ -57,6 +57,7 @@ internal static class InventoryRun
             return null;
         }
 
+        _repository = repository!;
         _path = Path.Combine(repository!, "docs", "axKit", "window-commands.json");
         _temp = temp;
         _profile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -90,8 +91,26 @@ internal static class InventoryRun
             say($"--inventory {_mode}: {scripts.Count - playing.Count} of {scripts.Count} script(s) passed over, since they hold neither a check commands nor a do step.");
         }
 
+        // WF-2.9a: a write that plays every script of the repository that lists a window's commands knows every row there
+        // is, so it removes the rows no window listed, as a rewrite does (a menu item renamed or gone left its old row
+        // behind under write, which needed a remembered rewrite until 2026-11-24).
+        var suite = Path.Combine(_repository, "tests", "scripts");
+        var played = playing.Select(Path.GetFullPath).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        _wholeSuite = _mode == RunOptions.Write && Directory.Exists(suite)
+            && Directory.GetFiles(suite, "*.txt", SearchOption.AllDirectories).Where(Lists).All(file => played.Contains(Path.GetFullPath(file)));
+        if (_wholeSuite)
+        {
+            say("--inventory write: every script that lists a window's commands plays, so the rows no window lists are removed, as --inventory rewrite does.");
+        }
+
         return playing;
     }
+
+    /// <summary>The repository the run writes into; empty under <c>off</c>.</summary>
+    private static string _repository = string.Empty;
+
+    /// <summary>Whether a write plays the whole suite of scripts that list commands, and so writes as a rewrite (WF-2.9a).</summary>
+    private static bool _wholeSuite;
 
     /// <summary>
     /// A script's snapshots taken in: checked against the inventory under <c>check</c> (WF-2.10), kept for the end
@@ -199,7 +218,7 @@ internal static class InventoryRun
         }
 
         IReadOnlyList<InventoryApp> written;
-        if (_mode == RunOptions.Rewrite)
+        if (_mode == RunOptions.Rewrite || _wholeSuite)
         {
             var whole = Seen.Select(snapshot => snapshot.App)
                 .Where(app => !FailedApps.Contains(app) && ListedWhole.Contains(app))
