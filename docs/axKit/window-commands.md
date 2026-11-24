@@ -937,6 +937,7 @@ every window" or under a heading that names the windows without it; under an app
 - A heading: nothing to act on. Menu: Context. Key: none. Mark: read.
 - Approve this report. Menu: Context. Key: none. Mark: act. Never run by AI tools.
 - Archive. Menu: Context. Key: Delete. Mark: act.
+- Clear fields. Menu: Context. Key: none. Mark: change.
 - Decline this report. Menu: Context. Key: none. Mark: act. Never run by AI tools.
 - Done or not done. Menu: Context. Key: Ctrl+Enter. Mark: change.
 - Edit the list's configuration. Menu: Context. Key: Ctrl+J. Mark: open.
@@ -952,8 +953,10 @@ every window" or under a heading that names the windows without it; under an app
 - Rename. Menu: Context. Key: F2. Mark: change.
 - Select or deselect. Menu: Context. Key: Space. Mark: change.
 - Select to here. Menu: Context. Key: Shift+Space. Mark: change.
+- Set fields. Menu: Context. Key: none. Mark: change.
 - Show in axFile. Menu: Context. Key: Ctrl+E. Mark: open.
 - Later. Menu: Context, Actions of this list. Key: Ctrl+2. Mark: act.
+- No actions in this list. Menu: Context, Actions of this list. Key: none. Mark: read.
 - Priority high. Menu: Context, Actions of this list. Key: Ctrl+1. Mark: act.
 - Read the last output. Menu: Context, Actions of this list. Key: none. Mark: read.
 - JSON. Menu: Help, Item resources. Key: none. Mark: act.

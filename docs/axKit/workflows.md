@@ -925,6 +925,9 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Move an item down and up in its list
     - Move an item to the bottom of its list, and take it back
     - Put new items at the top of a list
+28. **Set or clear fields of several items at once**
+    - Set fields of the selected items
+    - Clear fields of the selected items
 
 ## axTemplate
 

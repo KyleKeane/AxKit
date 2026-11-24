@@ -62,6 +62,11 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
   on several tasks marks them done while any is not, not done only when every one is), `DoneSaid` ("Done: 2 tasks. 1
   was done already. 1 selected item is not a task."), `Items` ("3 items"). The marks themselves and their words are
   the bundle's, `AxKit.Core/Marks`. Tested in `ManyItemsTests`.
+- `ManyFields` (TK-4.7a, 2026-11-24): Set fields and Clear fields on several items: `Controls` (the list's fields but
+  the Title, each starting as "leave": an empty box, `Leave` before a choice's options, a check as Leave, Checked,
+  Not checked), `Set` (what was filled in, by field title, parsed as the item's form parses it; the first refusal
+  with its control), `Clearable` and `Cleared` (a check unchecked, anything else an empty text). Tested in
+  `ManyFieldsTests`.
 - `TaskRules` (TK-4): Done, Start and Due, `DefaultTemplate`, `TemplateOf` (the fields of a list's configuration),
   `IsTask`, `IsDone`, `Due`, `Summary`, `TemplateWithDone` (a checklist or a plain list is the configuration's
   alone, AF-13.3: no item's file is touched), `DoneIndex`.

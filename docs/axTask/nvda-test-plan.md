@@ -278,6 +278,12 @@ The runner's script is `tests/scripts/axTask/20-selection.txt`.
     list's name", the focus in the name's field. Type a name, Enter: "<item> moved to <name>"; the new list is among
     the lists with the same fields. Ctrl+Z: the item is back and the list is gone.
 12. On a list at the top level, Ctrl+M: "Move <list>", the sections, as before.
+13. Select two items, Context, Set fields (TK-4.7a): the form's sound and "Set fields, form"; NVDA reads the first
+    control on "Leave as it is". Tab through: each choice and check on "Leave as it is", each box empty. Choose a
+    value in one choice, type in one box, Ctrl+Enter: "Fields set: 2 items", and both items read with it. Ctrl+Z:
+    "Undone: Fields set: 2 items".
+14. Context, Clear fields: "Clear fields, form", the list "Check the fields to empty"; Ctrl+Enter at once: "Check at
+    least one field to empty". Space on one field, Ctrl+Enter: "Fields cleared: 2 items". Ctrl+Z takes it back.
 
 ## 12. What opens says its kind (bundle AX-7.11)
 

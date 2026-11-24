@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axTask: **Set fields and Clear fields of several items**: select items, then Context, Set fields for a form where only what you fill in is written into all of them, or Clear fields to check the fields to empty. One step for Ctrl+Z.
 - axTask and axTemplate: **saving an item's form says just "Saved"**; NVDA then reads the item with what changed, once.
 - axStart, axClip and axHelp: **the entering sound plays every time the hotkey brings the window up**, not only the first time.
 - axKit: **the filter takes a pattern**: in every navigator, Options, Filter with a star or a question mark matches the whole name, `*.mp3` for instance; Ctrl+A then selects them all for one operation.

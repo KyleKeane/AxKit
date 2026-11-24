@@ -224,9 +224,28 @@ selected ones (TK-4.4, TK-4.7).
     the run refuses the run, as a change of the item does.
   - The rules of Done on several and the words are pure code, `AxTask.Core/ManyItems`, tested; the window's part
     is `TaskForm.Targets`. Checked by `tests/scripts/axTask/20-selection.txt`.
-  - Not built yet, each with its item in the priorities list: Set fields of the selected items in one form (a
-    list's set action, with or without a form of its own, does it meanwhile), and selecting lists at the top
-    level.
+  - Not built yet, with its item in the priorities list: selecting lists at the top level.
+- **TK-4.7a Set fields and Clear fields of several items** (2026-11-24, the maintainer's choice: "the first option is
+  what i want, but then we need to give a separate mechanism for clearing fields which can be a separate dialog that
+  has a list of all fields and the user can check the ones they want to clear"). Context, **Set fields…** and
+  **Clear fields…**, no key, on the selected items or the item you are on, all of one list (items of several lists,
+  as a smart list can show, are refused: "The selected items are in several lists: select items of one list, whose
+  fields the form shows").
+  - **Set fields…** is a form (bundle AX-8.10) titled "Set fields", one control for each field of the list but the
+    Title, in its order, every one starting as "leave": a text box empty, a choice on "Leave as it is" before its
+    options, and a check as a list of three lines, Leave as it is, Checked, Not checked (a check box has only two
+    states). What is filled in is written into every item, each value taken as the item's form takes it (a date as
+    today or +3, a link as the other item's title); what is left leaves each item's own value. "Fields set: 2
+    items", or "Fields set: Priority: High" for one; "Nothing changed" when everything was left. A value refused
+    names its field and keeps the form open.
+  - **Clear fields…** is a form titled "Clear fields" with one list, "Check the fields to empty: Space checks or
+    unchecks", of the list's fields but the Title; the checked ones are emptied in every item (a text, a date or a
+    choice made empty, a check unchecked), "Fields cleared: 2 items". With none checked it says "Check at least one
+    field to empty" and stays.
+  - Each is one step for Ctrl+Z, and checks every item against its file first (IA-5.5), through the same write as
+    a list's set action (`TaskForm.SetFields`). The rules are `AxTask.Core/ManyFields`, tested in
+    `ManyFieldsTests`; the window's part is `TaskForm.ManyFields.cs`; checked by
+    `tests/scripts/axTask/28-set-and-clear-fields.txt`.
 - **TK-4.8 Filter and sort** (2026-11-22; the navigator's, bundle AX-8.17). Options → Filter… shows only the rows of the level whose name contains a text (lists at the top level, items in a list), a heading staying while a row under it passes; Options → Sort by ▸ Name puts the rows in the order of their names, under each heading among themselves, and The list's own order puts them back. Neither changes a file: the order of a list on disk and its smart lists are untouched.
 - **TK-4.9 A list's own order** (the maintainer's ask, "editable lists like axtask should have the ability to be
   reordered", the keys settled on 2026-11-21: Ctrl with an arrow moves the cursor, Ctrl+Shift with Up or Down moves an

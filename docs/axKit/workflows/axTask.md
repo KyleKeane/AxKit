@@ -1068,3 +1068,37 @@ Starts with: Open axTask with the folder tasks.
 4. Press Enter.
     You hear: Added Dates.
 5. Press Home.
+
+## Set or clear fields of several items at once
+
+Starts with: Open axTask with the folder tasks.
+
+### Set fields of the selected items
+
+1. Press Space.
+2. Press Down.
+3. Press Space.
+    You hear: Selected, 2 selected.
+4. Choose Set fields in the Context menu.
+    You hear: Set fields, form.
+5. Press Tab.
+6. Press Down.
+7. Press Tab.
+8. Type: Garage
+9. Press Ctrl+Enter (Done or not done; Context menu).
+    You hear: Fields set: 2 items.
+10. Press Ctrl+Z (Undo; Actions menu).
+    You hear: Undone: Fields set: 2 items.
+
+### Clear fields of the selected items
+
+1. Choose Clear fields in the Context menu.
+    You hear: Clear fields, form.
+2. Press Ctrl+Enter (Done or not done; Context menu).
+    You hear: Check at least one field to empty.
+3. Press End.
+4. Press Space.
+5. Press Ctrl+Enter (Done or not done; Context menu).
+    You hear: Fields cleared: 2 items.
+6. Press Ctrl+Z (Undo; Actions menu).
+    You hear: Undone: Fields cleared: 2 items.

@@ -105,6 +105,9 @@ public sealed partial class TaskForm : ItemForm
         // TK-4.7: Ctrl+M, the move key, on an item or with items selected: to a list chosen in a form, or a new one.
         // On a list with nothing selected the key is the List menu's Move to section (OnListToMove).
         Add(_itemMenu, new Command("Mo&ve to a list...", AxTaskKeys.MoveToSection, MoveToList) { When = OnItemsToMove, Mark = CommandMark.Change });
+        // TK-4.7a: fields set, or emptied, on the selected items, or the current one, as one step.
+        Add(_itemMenu, new Command("Set &fields...", Keys.None, SetFieldsOfItems) { Mark = CommandMark.Change });
+        Add(_itemMenu, new Command("Cl&ear fields...", Keys.None, ClearFieldsOfItems) { Mark = CommandMark.Change });
         // TK-4.9: the item moved in its list's own order.
         AddOrderCommands(_itemMenu);
         _itemMenu.DropDownItems.Add(new ToolStripSeparator());

@@ -1,0 +1,73 @@
+# Workflow: Set or clear fields of several items at once
+# axTask, docs/axTask/SPEC.md TK-4.7a (the maintainer's choice of 2026-11-24): Context, Set fields opens a form of the
+# list's fields where everything starts as "leave", so that only what is filled in is written into every selected
+# item; Clear fields lists the fields to empty. Each is one step for Ctrl+Z.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Priority","type":"choice","value":"","options":["High","Low"]},{"title":"Room","type":"text","value":""}],"actions":[]}
+file "tasks\Home\Buy paint.json" {"schema":"list.json","Title":"Buy paint","Done":false,"Priority":"Low","Room":"Shed"}
+file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":true,"Priority":"Low","Room":"Kitchen"}
+file "tasks\Home\Oil the hinge.json" {"schema":"list.json","Title":"Oil the hinge","Done":false,"Priority":"Low","Room":"Hall"}
+start task {temp}\tasks
+expect focus Your lists, heading level 1
+keys down
+expect focus Home, list, 3 items
+keys right
+expect focus Buy paint
+
+# Check: The two commands are in the item's menu
+check commands
+expect commands Set fields, Context
+expect commands Clear fields, Context
+
+# Goal: Set fields of the selected items
+# Two items selected; the form starts with Done on "Leave as it is", Priority on "Leave as it is" and Room empty.
+# Priority set to High and Room typed: both items get them, and Done stays as each had it.
+keys space
+keys down
+keys space
+expect said ! Selected, 2 selected
+do Set fields
+expect state "notice":"Set fields"
+expect said Set fields, form
+expect focus "value":"Leave as it is"
+keys tab
+expect focus "name":"Choose Priority"
+keys down
+expect focus "value":"High"
+keys tab
+type Garage
+keys ctrl+enter
+expect said ! Fields set: 2 items
+run findstr /l /c:"\"Priority\": \"High\"" "tasks\Home\Buy paint.json"
+run findstr /l /c:"\"Room\": \"Garage\"" "tasks\Home\Fix the tap.json"
+run findstr /l /c:"\"Done\": true" "tasks\Home\Fix the tap.json"
+run findstr /l /c:"\"Done\": false" "tasks\Home\Buy paint.json"
+# The item not selected is untouched, its file as it was written.
+run findstr /l /c:"\"Room\":\"Hall\"" "tasks\Home\Oil the hinge.json"
+do Undo
+expect said ! Undone: Fields set: 2 items
+run findstr /l /c:"\"Room\":\"Kitchen\"" "tasks\Home\Fix the tap.json"
+
+# Check: A form left as it started changes nothing
+do Set fields
+expect state "notice":"Set fields"
+keys ctrl+enter
+expect said ! Nothing changed
+
+# Goal: Clear fields of the selected items
+# The fields to empty are checked with Space; Room is emptied in both, and nothing else.
+do Clear fields
+expect state "notice":"Clear fields"
+expect said Clear fields, form
+# With nothing checked the form says what it needs and stays.
+keys ctrl+enter
+expect said Check at least one field to empty
+keys end
+keys space
+keys ctrl+enter
+expect said ! Fields cleared: 2 items
+run findstr /l /c:"\"Room\": \"\"" "tasks\Home\Buy paint.json"
+run findstr /l /c:"\"Priority\": \"Low\"" "tasks\Home\Buy paint.json"
+do Undo
+expect said ! Undone: Fields cleared: 2 items
+run findstr /l /c:"\"Room\":\"Shed\"" "tasks\Home\Buy paint.json"
