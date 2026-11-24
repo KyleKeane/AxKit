@@ -145,7 +145,11 @@ answer to a key.
   a terminal, where Ctrl+C ends the running command: the choice is the user's, each time (TP-D4).
 - TP-4.3 **The clipboard afterwards.** The template's text is put on the clipboard marked as not for a clipboard
   history, the mark password managers use, so that axClip and Windows' own history do not keep it. When the
-  clipboard held plain text before, that text is put back once the paste is done (TP-D6).
+  clipboard held plain text before, that text is put back once the paste is done (TP-D6). Where the caret's mark
+  cannot be found, "done" is a wait after the paste key that the user chooses: the launcher's Options, General, Wait
+  before the clipboard comes back, 0.3, 0.6 (the default), 1, 2 or 4 seconds, saved as `giveBackMs` (the
+  maintainer's answer of 2026-11-24, "a setting for it"); a choice is said, "The clipboard comes back 2 seconds
+  after a template is put in".
 - TP-4.4 Shift+Enter puts the filled text on the clipboard without pasting, and the window hides; nothing is
   said, as in axClip (CP-4.2, the maintainer's choice of 2026-11-23: a word said as the window hides is never
   heard, and coming back is the sign). For a
@@ -288,8 +292,8 @@ answer to a key.
   should not fill a clipboard history with templates. What is given back is the text the clipboard held when the
   launcher came up, so the copy that Ctrl+Enter makes in the other program is undone with it; a clipboard that
   held a picture or files then is not given back (the launcher takes only its text). The other program is asked
-  to paste and cannot say when it has, so the text goes back after a fixed wait, about half a second after the
-  paste key: a program slower than that pastes the old text, and the guide names Shift+Enter for such a one. The
+  to paste and cannot say when it has, so the text goes back after a wait, 0.6 seconds after the paste key unless
+  the user chose another (TP-4.3): a program slower than that pastes the old text, and the guide names Shift+Enter for such a one. The
   wait is the same every time, not a guess at the program (the maintainer's rule of no hidden thresholds is
   about behaviour the user sees differing by a measure; this is one fixed step). Open to his ear and his use.
 - **TP-D7 A template is the user's own text.** axTemplate reads no template from outside its folder, takes none

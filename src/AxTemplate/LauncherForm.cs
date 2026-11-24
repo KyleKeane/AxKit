@@ -22,9 +22,6 @@ public sealed class LauncherForm : HotkeyForm
     /// <summary>How long after the paste key the Left keys wait, so that the program has taken the paste before its caret is moved (TP-2.3); 150 ms until 2026-11-23, too short for a slow program.</summary>
     private const int SettleMs = 300;
 
-    /// <summary>How long after that the clipboard's text of before is given back (TP-4.3): a program that pastes late would paste the old text.</summary>
-    private const int GiveBackMs = 600;
-
     /// <summary>How long the keys of the user's hand may stay down before the sequence goes on anyway (TP-D10).</summary>
     private const int ModifiersMs = 1500;
 
@@ -69,7 +66,7 @@ public sealed class LauncherForm : HotkeyForm
         var options = new ToolStripMenuItem();
         options.DropDownItems.Add(HotkeyItem());
         options.DropDownItems.Add(CreateTextMenu());
-        options.DropDownItems.Add(CreateGeneralMenu(StartWithWindowsItem(), SayFirstMatchItem()));
+        options.DropDownItems.Add(CreateGeneralMenu(StartWithWindowsItem(), SayFirstMatchItem(), GiveBackMenu()));
         options.DropDownItems.Add(CreateDeveloperMenu());
 
         var help = CreateHelpMenu(HelpText.UserGuide, "axTemplate &resources",
@@ -252,6 +249,37 @@ public sealed class LauncherForm : HotkeyForm
     /// before is given back. When another window is in front by then, no key is sent and the text waits on the
     /// clipboard.
     /// </summary>
+    /// <summary>
+    /// Options, General, Wait before the clipboard comes back (TP-4.3, TP-D6): one checked item per choice of
+    /// <see cref="TemplateSettings.GiveBackChoices"/>; a choice is saved and said.
+    /// </summary>
+    private ToolStripMenuItem GiveBackMenu()
+    {
+        var menu = new ToolStripMenuItem("&Wait before the clipboard comes back");
+        foreach (var choice in TemplateSettings.GiveBackChoices)
+        {
+            // The mnemonic on the digit that tells the choices apart: 0.&3, 0.&6, &1, &2, &4.
+            var words = TemplateSettings.SaidWait(choice);
+            var said = (choice < 1000 ? words.Insert(2, "&") : "&" + words) + (choice == TemplateSettings.DefaultGiveBackMs ? ", the default" : "");
+            var item = CommandPalette.Marked(new ToolStripMenuItem(said, null, (_, _) =>
+            {
+                _settings.GiveBackMs = choice;
+                SaveSettings();
+                Announce($"The clipboard comes back {TemplateSettings.SaidWait(choice)} after a template is put in", true);
+            }), CommandMark.Change);
+            menu.DropDownItems.Add(item);
+        }
+
+        menu.DropDownOpening += (_, _) =>
+        {
+            for (var i = 0; i < TemplateSettings.GiveBackChoices.Count; i++)
+            {
+                ((ToolStripMenuItem)menu.DropDownItems[i]).Checked = TemplateSettings.GiveBackChoices[i] == _settings.GiveBackMs;
+            }
+        };
+        return menu;
+    }
+
     private void PutIn(bool takeSelection) => Do(async () =>
     {
         if (await TextAsync() is not { } text)
@@ -339,7 +367,8 @@ public sealed class LauncherForm : HotkeyForm
                 KeySender.SendLeft(TemplateStore.LeftKeys(made));
             }
 
-            await Task.Delay(GiveBackMs);
+            // How long is the user's setting (TP-4.3, Options, Wait before the clipboard comes back): a program that pastes late would paste the old text.
+            await Task.Delay(_settings.GiveBackMs);
         }
 
         GiveBack(before, sequence);

@@ -223,6 +223,20 @@ public sealed class TemplateTests : IDisposable
         Assert.Null(error);
         Assert.Equal("Ctrl+Shift+Semicolon", settings.HotkeyText);
         Assert.Empty(settings.RecentTemplates);
+        Assert.Equal(600, settings.GiveBackMs);
+    }
+
+    /// <summary>TP-4.3, TP-D6: the wait before the clipboard comes back is one of the menu's choices; another number is the default again.</summary>
+    [Fact]
+    public void The_clipboard_wait_is_one_of_its_choices()
+    {
+        Directory.CreateDirectory(_folder);
+        var path = Path.Combine(_folder, "axTemplate.json");
+        File.WriteAllText(path, """{ "giveBackMs": 2000 }""");
+        Assert.Equal(2000, TemplateSettings.Load(path, out _).GiveBackMs);
+        File.WriteAllText(path, """{ "giveBackMs": 5 }""");
+        Assert.Equal(600, TemplateSettings.Load(path, out _).GiveBackMs);
+        Assert.Equal(["0.3 seconds", "0.6 seconds", "1 second", "2 seconds", "4 seconds"], TemplateSettings.GiveBackChoices.Select(TemplateSettings.SaidWait));
     }
 
     [Fact]

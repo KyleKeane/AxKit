@@ -26,6 +26,7 @@ The launcher needs no start of yours. It runs in the background from the moment 
 - Ctrl+Q reads the template's text before you use it. In a terminal, a template of several lines runs each line as it is pasted, as any paste of several lines does.
 - Ctrl+B opens the browser.
 - Options, Hotkey changes the key. Session, Quit axTemplate ends the launcher; closing its window only hides it.
+- Options, General, Wait before the clipboard comes back: what you had copied is put back on the clipboard after a template goes in. Where the launcher cannot see the program's text, it waits 0.6 seconds after pasting first; if a slow program pastes your old clipboard in place of the template, choose 1, 2 or 4 seconds.
 
 How the caret gets to its place: where the program shows its text to screen readers (Word, Notepad, a field in a browser), the template is pasted with the mark `{caret}` still in it, and the launcher finds that mark back from the caret, selects it and deletes it, so the caret is exactly there, however slowly the program pastes. Where it does not (a terminal, some older programs), the caret is moved back with Left keys, one for each character after the mark; a program that changes what is pasted, by indenting it or closing a bracket by itself, can leave it a little off there. If you ever find `{caret}` left in your text, the program did not let the launcher find it in time: delete it yourself, and tell the maintainer with F4. The launcher waits until you have let go of Ctrl and Shift before it sends anything.
 
