@@ -1671,7 +1671,11 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   axClip and axHelp itself, hidden, once per install (`StoreFirstStart`, `Program.StartBackgroundApps`): a marker
   file in the package's private folder says it was done and goes with an uninstall. Afterwards Windows' Startup apps
   page alone decides, so an app turned off there is never started by axKit. Never in a test run. Nothing is said:
-  the apps wait behind their hotkeys as they do after a sign-in.
+  the apps wait behind their hotkeys as they do after a sign-in. When the app the user started shows a window, they
+  are started once that window is in front (at most five seconds later), so that each gives the foreground back to it
+  as its hidden window is made (AS-3.4); started earlier, they gave it to the window in front before, and axStart's
+  first start said nothing (`KyleKeane/AxKit-reports issue 15`). Should that app end within those seconds, they wait
+  for the next sign-in.
 - AX-13.4b **A background app without a startup task** (2026-11-23; the maintainer's word that axTemplate's hotkey
   is on for everyone after an installation and after an update, docs/axTemplate/SPEC.md TP-1.4). axTemplate's
   launcher runs in the background as axClip does, and has no entry in the package (the eight are taken, AX-13.2),

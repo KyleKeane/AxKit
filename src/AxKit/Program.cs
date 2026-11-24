@@ -213,7 +213,50 @@ internal static class Program
             marker = BundleInfo.Version;
         }
 
-        foreach (var verb in StoreFirstStart.ToStart(startedApp, arguments.Contains("--hidden"), marker, BundleInfo.Version, StartWithWindowsOff))
+        var hidden = arguments.Contains("--hidden");
+        var verbs = StoreFirstStart.ToStart(startedApp, hidden, marker, BundleInfo.Version, StartWithWindowsOff);
+        if (verbs.Count == 0)
+        {
+            return;
+        }
+
+        if (hidden)
+        {
+            StartHidden(path, verbs);
+            return;
+        }
+
+        // A window the user opened comes first (AX-13.4a; KyleKeane/AxKit-reports issue 15: axStart said nothing on its
+        // first start): a background app started before it is in front can take the foreground as its hidden window is
+        // made and give it back to the window in front when it started, which was not this one. Started once this
+        // window is in front, each gives the foreground back to it (HotkeyForm's rule, AS-3.4).
+        new Thread(() =>
+        {
+            for (var waited = 0; waited < 5000 && !OwnWindowInFront(); waited += 100)
+            {
+                Thread.Sleep(100);
+            }
+
+            StartHidden(path, verbs);
+        }) { IsBackground = true, Name = "Background apps" }.Start();
+    }
+
+    /// <summary>Whether the window in front is this process's own.</summary>
+    private static bool OwnWindowInFront()
+    {
+        GetWindowThreadProcessId(GetForegroundWindow(), out var owner);
+        return owner == (uint)Environment.ProcessId;
+    }
+
+    [DllImport("user32.dll")]
+    private static extern nint GetForegroundWindow();
+
+    [DllImport("user32.dll")]
+    private static extern uint GetWindowThreadProcessId(nint window, out uint processId);
+
+    private static void StartHidden(string path, IReadOnlyList<string> verbs)
+    {
+        foreach (var verb in verbs)
         {
             try
             {

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axKit: **the first start from the Microsoft Store keeps the window you opened in front**, so NVDA reads it: axStart, axClip and axHelp start in the background only once it is.
 - axKit: **Check for updates tries once more** before it says GitHub could not be reached, when the first try found no network, as can happen right after the Microsoft Store's update.
 
 - axKit: **two hotkeys move.** axClip is Ctrl+Shift+Comma now, and axHelp's screenshot Ctrl+Shift+Period; Ctrl+Shift+Apostrophe is kept for axAutomate's launcher, which comes later. If you never changed them, your settings move by themselves; a key you chose stays yours.

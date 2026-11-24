@@ -678,6 +678,16 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: the Store's copy after its install and after its update (2026-11-24, bundle AX-13.4a and AX-3.1; `KyleKeane/AxKit-reports issues 11, 13 and 15`)
+
+Built from the reports and by reasoning; the Store's install cannot be made on the runner's desktop. On a computer
+where axKit was never installed, after installing it from the Store, by ear with NVDA:
+
+1. Open axStart from the Start menu: NVDA reads its list at once, the first time.
+2. Ctrl+Shift+Comma brings up axClip and Ctrl+Shift+Slash axHelp, with no other app opened first.
+3. After the Store installs the next release: Check for updates says the version and does not say GitHub could not
+   be reached; axStart's hotkey works without opening another app first.
+
 ## Owed: the state from the event core, 2026-11-17 (`docs/axClaude/events-and-grounding.md` EG-6.1 to EG-6.4, WP-A16)
 
 Built and passing: every test, the stand-in script 34, and all 36 scripts of axClaude against Claude Code 2.1.326 on
