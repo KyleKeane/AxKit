@@ -535,6 +535,17 @@ which overwrote what the user had there. Now it offers the command through a too
   not run it itself, which can be because Claude Code's own permission or safety checks refused it, so run it with
   care; read all the details and the conversation first, and do not run what you do not understand; running it is
   your own act, and what it does is yours to answer for (`AiCaution.Command`).
+- MC-9.11 **A report drafted by an AI tool** (`axkit_draft_report`, 2026-11-24; the maintainer's request through axHelp:
+  an AI tool may draft a Send a report submission and show it for review before anything is sent, the review every
+  time): `text` (at most 4000 characters, `McpReport.Refusal`) and `kind` (bug, feature or feedback). The newest axKit
+  window opens its report form (bundle AX-12, docs/axKit/reports.md) with the words filled, a first line saying who
+  drafted them ("(Drafted by Claude, an AI tool; read by me before sending.)", which the report keeps unless the user
+  takes it out), the kind chosen, and the form's text starting with `AiCaution.Drafted`, said as the form opens: who
+  drafted it, that it can be wrong, to read every word, and that nothing is sent until the user presses Send. The AI
+  tool can never send: only the user's own Send or Ctrl+Enter does, and Escape cancels and keeps nothing. As an
+  offered command, it is not held to the run switch, since nothing happens before the user acts; it is refused in
+  axPass and axClip, while a notice or a dialog is open, in the key test and while the user works in the window in
+  front (MC-7.8). The answer says the form waits there and nothing is sent.
 Decisions:
 
 - MC-D17 **A tool call, never a marker in Claude's text.** A marker would be forged by any file Claude prints.

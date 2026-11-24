@@ -21,14 +21,16 @@ internal sealed class ReportControls
 
     /// <param name="plain">What the window adds unless the user asks for more (RP-4.2a): nothing that can name their files.</param>
     /// <param name="full">The fuller form, redacted, shown and sent when the user checks the detail box.</param>
-    public ReportControls(ReportContext plain, ReportContext full)
+    /// <param name="draft">The words an AI tool drafted (docs/axKit/mcp.md MC-9.11), put in the words' box for the user to read and change; null for none.</param>
+    /// <param name="kind">The kind the draft names, or null for the first.</param>
+    public ReportControls(ReportContext plain, ReportContext full, string? draft = null, ReportKind? kind = null)
     {
         _context = plain;
         // Enter makes a new line, as in every text box of several lines (the user's decision, 2026-11-14: a stray
         // Enter had sent an unfinished report that morning).
-        _words = Panel.AddLines("Your report", rows: 5);
+        _words = Panel.AddLines("Your report", rows: 5, draft ?? string.Empty);
         // NVDA reads the selected kind itself as the list moves; the app adds nothing (AX-7).
-        _kind = Panel.AddList("Kind", ReportKinds.Names, 0);
+        _kind = Panel.AddList("Kind", ReportKinds.Names, kind is { } chosen ? Math.Max(0, ReportKinds.All.ToList().IndexOf(chosen)) : 0);
         _detail = Panel.AddCheck(ReportPrivacy.DetailBox);
         // What is sent is the window's own words in one form or the other; a change of the box fills it afresh.
         _detail.CheckedChanged += (_, _) => Fill(_detail.Checked ? full : plain);

@@ -202,6 +202,7 @@ internal sealed class McpChannel
                 "pair" => Pair(argument),
                 "run" => Run(argument),
                 "field" => FocusField(argument),
+                "report" => DraftReport(argument),
                 "app" => App(argument),
                 _ => OnWindow(() => Execute(verb)),
             };
@@ -430,6 +431,16 @@ internal sealed class McpChannel
         var client = McpProtocol.Text(request?["client"]) ?? "An AI tool";
         var allowed = McpAccess.RunsCommands;
         return JsonSerializer.Serialize(OnWindow(() => _form.McpFocusField(field, select, client, allowed)), Plain);
+    }
+
+    /// <summary>MC-9.11: <c>axkit_draft_report</c>, the report form opened with the AI tool's draft (<see cref="AxKitForm.McpDraftReport"/>).</summary>
+    private string DraftReport(string argument)
+    {
+        var request = System.Text.Json.Nodes.JsonNode.Parse(argument);
+        var text = McpProtocol.Text(request?["text"]) ?? string.Empty;
+        var kind = McpProtocol.Text(request?["kind"]);
+        var client = McpProtocol.Text(request?["client"]) ?? "An AI tool";
+        return JsonSerializer.Serialize(OnWindow(() => _form.McpDraftReport(text, kind, client)), Plain);
     }
 
     /// <summary>How long an app request may take in all: under the broker's 25 s wait, so that the client hears this answer.</summary>

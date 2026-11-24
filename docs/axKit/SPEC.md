@@ -1538,7 +1538,9 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   written it: read the explanation before you run it" and its text begins with `AiCaution.Action`; Cancel is where
   Enter is); axHelp's offer to carry out the steps it gave (`docs/axKit/ai-help.md` AH-7.3b, 2026-11-24: Claude says
   `AiCaution.OfferToDo` with the offer, word for word, and runs nothing before the user's yes; each command then
-  runs as MC-7 says, heard, an act asked first). With the screen, Claude Code draws
+  runs as MC-7 says, heard, an act asked first); a report an AI tool drafted (`docs/axKit/mcp.md` MC-9.11,
+  2026-11-24: the form's text starts with `AiCaution.Drafted`, its words with who drafted them, and only the user's
+  Send sends). With the screen, Claude Code draws
   that question itself, and the window shows it as Claude Code wrote it. axClaude's conversation itself is Claude
   Code's own output, shown as it comes, under the access layer's consent (AX-11.4). These are reminders in plain
   words, as the consent notices are (AX-11.10), not legal advice. A new feature of this kind brings its caution in

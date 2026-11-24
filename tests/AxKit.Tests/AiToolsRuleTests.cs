@@ -83,7 +83,9 @@ public sealed class AiToolsRuleTests
     public void The_file_is_short_and_its_own_lines_are_short()
     {
         var lines = AiToolsRule.Text.Split('\n');
-        Assert.InRange(lines.Length, 60, 170);
+        // Each tool brings five lines (its heading, its description and three of guidance): 170 until 2026-11-24,
+        // when axkit_window_field and axkit_draft_report came.
+        Assert.InRange(lines.Length, 60, 190);
         Assert.DoesNotContain('\r', AiToolsRule.Text);
         // The hand-written lines stay short; a tool's description and guidance and the caution are one line each.
         var descriptions = McpTools.All.Select(tool => tool.Description).ToHashSet(StringComparer.Ordinal);

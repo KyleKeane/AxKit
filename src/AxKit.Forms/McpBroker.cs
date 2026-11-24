@@ -144,6 +144,23 @@ public static class McpBroker
             return Ask(key, target, "field " + JsonSerializer.Serialize(new { field = McpProtocol.Text(arguments["field"]), select, client = paired }));
         }
 
+        if (tool == McpTools.DraftReport)
+        {
+            // MC-9.11: the newest axKit window opens its report form with the draft; nothing is sent by the tool.
+            if (McpReport.Refusal(McpProtocol.Text(arguments["text"])) is { } badDraft)
+            {
+                return new McpResult(badDraft, true);
+            }
+
+            if (Windows(key).FirstOrDefault() is not { } newest)
+            {
+                return new McpResult("Open any axKit window first: the report form opens in one.", true);
+            }
+
+            var drafter = McpAccess.Find(McpAccess.Load(), program)?.Name ?? client;
+            return Ask(key, newest.Pipe, "report " + JsonSerializer.Serialize(new { text = McpProtocol.Text(arguments["text"]), kind = McpProtocol.Text(arguments["kind"]), client = drafter }));
+        }
+
         if (tool == McpTools.Offer)
         {
             return Offer(key, arguments, McpAccess.Find(McpAccess.Load(), program)?.Name ?? client);

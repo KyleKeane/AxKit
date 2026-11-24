@@ -598,6 +598,34 @@ public abstract partial class AxKitForm
         };
     }
 
+    /// <summary>
+    /// <c>axkit_draft_report</c> (MC-9.11), on the window's thread: the report form opened with the AI tool's draft for the
+    /// user to read, change and send, or cancel; the AI tool never sends. Refused in axPass and axClip, while a notice or
+    /// a Windows dialog is open or the key test runs, and while the user works in the window in front (MC-7.8); not
+    /// held to the run switch, since nothing happens before the user's own Send, as an offered command is not.
+    /// </summary>
+    internal object McpDraftReport(string text, string? kind, string client)
+    {
+        if (McpRun.AppRefusal(AppVerb) is { } refused)
+        {
+            return new { error = refused };
+        }
+
+        if (CommandGate.Window(CommandOrigin.AiTool, McpGateState(allowed: true) with { AppServesNoAiTool = false }) is { } held)
+        {
+            return new { error = McpRefusal(held) };
+        }
+
+        if (!_reports.ShowReport(McpReport.Words(client, text), McpReport.Kind(kind), McpRun.Speaker(client)))
+        {
+            return new { error = McpRun.NoticeShown(Overlay.Shown?.Title) };
+        }
+
+        ChimeForMcp();
+        FlashIfBehind();
+        return new { opened = McpReport.Opened };
+    }
+
     /// <summary>The form the notice shown is (AX-8.10), or null.</summary>
     private FormControls? OpenForm() => NoticeOpen ? Overlay.Shown?.Custom as FormControls : null;
 

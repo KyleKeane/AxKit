@@ -63,6 +63,13 @@ public static class AiCaution
     /// </summary>
     public const string OfferToDo = "Claude, an AI, would run these steps for you through axKit's AI tools. It can be wrong; you hear each command as it runs, and a command that acts outside the window asks you first. Say yes only if you want it done.";
 
+    /// <summary>
+    /// The first words of the report form an AI tool filled (docs/axKit/mcp.md MC-9.11): who wrote the draft, that it
+    /// can be wrong, and that nothing is sent but by the user's own Send.
+    /// </summary>
+    public static string Drafted(string who) =>
+        $"{who}, an AI model, drafted this report. It can be wrong: read every word, change what is not so, and send it only if it says what you mean. Nothing is sent until you press Send.";
+
     /// <summary>In the question an AI tool's run of a window command asks.</summary>
     public const string Request = "The request comes from an AI tool, which can be wrong: allow it only if you know what the command will do here.";
 }

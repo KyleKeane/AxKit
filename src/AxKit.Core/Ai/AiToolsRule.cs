@@ -82,6 +82,10 @@ public static class AiToolsRule
             "when the user asks to go to a field of the form a window shows (\"take me to the due date\"), after axkit_window_state listed the fields under form.",
             "to fill the field, check a box or send the form: it only moves the focus, and the user types and sends.",
             "before: \"I will move to Due in the axTask form.\" After: that the focus is there and the user can type."),
+        [McpTools.DraftReport] = new(
+            "when the user asks you to report a bug, an idea or feedback about axKit to its maintainer.",
+            "to send anything: you cannot. Not for something the user did not ask to report, and never with their files' names or paths unless they asked.",
+            "before: what you will put in the report. After: that the form waits in the axKit window for them to read and send."),
         [McpTools.TaskLists] = new(
             "before the other two task tools, for the lists' names; and for \"what lists do I have\".",
             "when no axTask window is open: open one with axkit_open, app task, no path, then call it again.",

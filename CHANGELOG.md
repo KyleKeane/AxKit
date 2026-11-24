@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- axKit: **an AI tool can draft a report for you**: Claude fills the Send a report form in an axKit window, says it drafted it and that it can be wrong, and you read, change and send it yourself, or cancel. Claude can never send a report.
+
 - axHelp: **after the steps of a task, Claude may offer to carry them out** in the open window through axKit's AI tools, once, saying it is an AI that can be wrong; nothing runs before your yes, and you hear each command as it runs.
 
 - axKit: **axKit menu, Claude: Choose Claude's working folder and Choose Claude Code's program**, each through the Windows picker. Their settings are sealed, so a hand edit of the file is refused; these are now the way to change them.
