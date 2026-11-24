@@ -60,6 +60,8 @@ one after a question, Ctrl+Z takes the last of these back. Space selects one of 
 Escape none); Delete then removes all the selected after one question, and one Ctrl+Z brings them all back. Claude Code's own servers are changed in Claude Code, with
 `claude mcp add` and `claude mcp remove`; axMCP only reads its files.
 
+In a form, Shift+F10 in a field to type in lists your templates checked for axMCP in axTemplate (a command line you often type, for instance); Enter puts the one you are on in at the caret.
+
 ## Menus
 
 Each menu with its commands and their keys, as the window lists them:

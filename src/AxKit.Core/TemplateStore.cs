@@ -186,11 +186,13 @@ public static class TemplateStore
 
     /// <summary>
     /// The apps that get a check of their own (TP-2.2, TP-5.2), by name, in the bundle's order: the ones whose window
-    /// has a field or a text that Actions, Insert template puts a template into (the editors, the conversation windows).
-    /// A new one is added here; the folder's configuration gains its check the next time axTemplate reads it
-    /// (<see cref="ConfigurationToWrite"/>). The fields of notices, in every app, are reached by the launcher.
+    /// has a field or a text that Actions, Insert template puts a template into (the editors, the conversation windows),
+    /// and the ones whose forms are where text is written (axTask, axPass, axMCP; the maintainer's answer of
+    /// 2026-11-24, "Insert template in forms too"), where Shift+F10 in a form's field lists the templates (TP-5.5); a
+    /// form of any app here has that menu. A new one is added here; the folder's configuration gains its check the
+    /// next time axTemplate reads it (<see cref="ConfigurationToWrite"/>). Other notices' fields are reached by the launcher.
     /// </summary>
-    public static readonly IReadOnlyList<string> AppsWithField = ["axDown", "axJSON", "axCalc", "axTerminal", "axClaude"];
+    public static readonly IReadOnlyList<string> AppsWithField = ["axDown", "axJSON", "axTask", "axCalc", "axTerminal", "axPass", "axClaude", "axMCP"];
 
     /// <summary>
     /// The folder made ready and read (TP-2.1, TP-2.5): made when it is not there, its configuration written when

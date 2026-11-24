@@ -43,13 +43,78 @@ public abstract partial class AxKitForm
         var kept = menu.DropDownItems.Count;
         CommandPalette.RefreshedOnOpening(menu, () => FillUserTemplates(menu, kept, insert));
         FillUserTemplates(menu, kept, insert);
-        Activated += (_, _) => ReadUserTemplates(menu, kept, insert);
-        ReadUserTemplates(menu, kept, insert);
+        Activated += (_, _) => ReadUserTemplates(() => FillUserTemplates(menu, kept, insert));
+        ReadUserTemplates(() => FillUserTemplates(menu, kept, insert));
         return menu;
     }
 
-    /// <summary>The templates' folder read off the UI thread, then the menu filled again from what it gave.</summary>
-    private void ReadUserTemplates(ToolStripMenuItem menu, int kept, Action<string, string> insert) => Do(async () =>
+    /// <summary>
+    /// A form's text fields, in an app whose templates have a check (<see cref="TemplateStore.AppsWithField"/>; TP-5.5,
+    /// the maintainer's answer of 2026-11-24, "Insert template in forms too"): Shift+F10, the Applications key or a right
+    /// click on one lists the templates checked for this app, numbered, and one chosen is put in at the field's caret as
+    /// Insert template puts it in. The form is a notice, where no command of the bar is offered (AX-8.12), so the field's
+    /// own context menu holds them in place of Windows' edit menu, whose commands are keys. A field that is only read or
+    /// holds a password has none. The folder is read again, off the UI thread, as the form opens.
+    /// </summary>
+    private void OfferTemplatesInForm(FormControls controls)
+    {
+        if (!TemplateStore.AppsWithField.Contains(AppName, StringComparer.Ordinal))
+        {
+            return;
+        }
+
+        var boxes = TextFieldsOf(controls).ToList();
+        if (boxes.Count == 0)
+        {
+            return;
+        }
+
+        ReadUserTemplates(() => { });
+        foreach (var box in boxes)
+        {
+            var strip = new ContextMenuStrip { AccessibleName = "Templates" };
+            // Filled now as well as at each opening: an empty strip never raises Opening.
+            FillFieldTemplates(strip, box);
+            strip.Opening += (_, _) => FillFieldTemplates(strip, box);
+            box.ContextMenuStrip = strip;
+            box.Disposed += (_, _) => strip.Dispose();
+        }
+    }
+
+    private static IEnumerable<AxKitTextBox> TextFieldsOf(Control parent)
+    {
+        foreach (Control control in parent.Controls)
+        {
+            if (control is AxKitTextBox { ReadOnly: false, UseSystemPasswordChar: false, PasswordChar: '\0' } box)
+            {
+                yield return box;
+            }
+
+            foreach (var inner in TextFieldsOf(control))
+            {
+                yield return inner;
+            }
+        }
+    }
+
+    /// <summary>A form field's menu of templates: the user's for this app as the last read gave them, or one line that says there are none.</summary>
+    private void FillFieldTemplates(ContextMenuStrip strip, AxKitTextBox box)
+    {
+        strip.Items.Clear();
+        for (var i = 0; i < _userTemplates.Count; i++)
+        {
+            var template = _userTemplates[i];
+            strip.Items.Add(CommandPalette.Marked(new ToolStripMenuItem(AxKitWindows.Label(i, template.Title), null, (_, _) => InsertUserTemplate(template, (name, text) => InsertInto(box, name, text))), CommandMark.Change));
+        }
+
+        if (_userTemplates.Count == 0)
+        {
+            strip.Items.Add(CommandPalette.Marked(new ToolStripMenuItem($"&No templates of your own for {AppName} yet: axTemplate makes them", null, (_, _) => Announce($"No templates of your own for {AppName} yet", true)), CommandMark.Read));
+        }
+    }
+
+    /// <summary>The templates' folder read off the UI thread, then <paramref name="filled"/> run with what it gave.</summary>
+    private void ReadUserTemplates(Action filled) => Do(async () =>
     {
         var read = ++_templateReads;
         var app = AppName;
@@ -71,7 +136,7 @@ public abstract partial class AxKitForm
         }
 
         _userTemplates = templates;
-        FillUserTemplates(menu, kept, insert);
+        filled();
     });
 
     /// <summary>The user's templates after the window's own, numbered as the recent files are; one line that says so when there are none.</summary>
@@ -128,6 +193,17 @@ public abstract partial class AxKitForm
         if (TemplateField is not { } field || !field.Visible || !field.Enabled || field.ReadOnly)
         {
             Announce("No field to put a template into now", true);
+            return;
+        }
+
+        InsertInto(field, name, template);
+    }
+
+    /// <summary>A template put into <paramref name="field"/> as <see cref="InsertIntoTemplateField"/> describes: a form's field too (TP-5.5).</summary>
+    private void InsertInto(AxKitTextBox field, string name, string template)
+    {
+        if (field.IsDisposed)
+        {
             return;
         }
 

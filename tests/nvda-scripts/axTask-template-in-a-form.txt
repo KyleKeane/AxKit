@@ -1,0 +1,29 @@
+# Workflow: Put a template into a field of a form
+# Needs: the foreground; run only with --nvda, the user away.
+# NVDA tier (docs/axKit/automation.md, tier 3): axTemplate TP-5.5 (the maintainer's answer of 2026-11-24, "Insert
+# template in forms too"): in a form of axTask, axPass or axMCP, Shift+F10 in a text field lists the templates checked
+# for that app, and the one chosen goes in at the caret. A context menu opens only in the window in front, so this is
+# no hidden-desktop script.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file home\Documents\axKit\Templates\Thanks.json {"schema": "list.json", "Title": "Thanks", "Text": "Thank you, {caret}!", "axTask": true}
+file home\Documents\axKit\Templates\Elsewhere.json {"schema": "list.json", "Title": "Elsewhere", "Text": "Not here", "axDown": true}
+file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Room","type":"text","value":""}],"actions":[]}
+file tasks\Home\Washer.json {"schema":"list.json","Title":"Washer"}
+start task {temp}\tasks
+expect focus Your lists, heading level 1
+keys down
+keys right
+expect focus Washer
+
+# Goal: Choose a template from a form field's menu
+keys enter
+expect state "notice":"Fields of Washer"
+keys tab
+expect focus Type Room
+keys shift+f10
+expect focus Thanks
+refuse focus Elsewhere
+keys enter
+expect said Thanks inserted
+expect focus "value":"Thank you, !"
+keys escape

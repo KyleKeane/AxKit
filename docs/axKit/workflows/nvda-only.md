@@ -122,6 +122,19 @@ Starts with: Open axFile with the folder f.
 1. Press End.
 2. Press Shift+C 2 times.
 
+## Put a template into a field of a form
+
+Starts with: Open axTask with the folder tasks.
+
+### Choose a template from a form field's menu
+
+1. Press Enter.
+2. Press Tab.
+3. Press Shift+F10.
+4. Press Enter.
+    You hear: Thanks inserted.
+5. Press Escape.
+
 ## Put a template into another window from axTemplate's launcher, with NVDA
 
 Starts with: Open axDown with the file notes.md.

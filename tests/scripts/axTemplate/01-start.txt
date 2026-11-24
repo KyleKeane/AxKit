@@ -100,7 +100,7 @@ expect said None checked
 keys shift+tab
 expect focus Check all
 keys space
-expect said All 5 checked
+expect said All 8 checked
 keys escape
 expect state "notice":null
 expect focus Text

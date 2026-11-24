@@ -146,7 +146,7 @@ answer to a key.
 - TP-4.3 **The clipboard afterwards.** The template's text is put on the clipboard marked as not for a clipboard
   history, the mark password managers use, so that axClip and Windows' own history do not keep it. When the
   clipboard held plain text before, that text is put back once the paste is done (TP-D6). Where the caret's mark
-  cannot be found, "done" is a wait after the paste key that the user chooses: the launcher's Options, General, Wait
+  cannot be found, "done" is a wait after the paste key that the user chooses: the launcher's Options, Wait
   before the clipboard comes back, 0.3, 0.6 (the default), 1, 2 or 4 seconds, saved as `giveBackMs` (the
   maintainer's answer of 2026-11-24, "a setting for it"); a choice is said, "The clipboard comes back 2 seconds
   after a template is put in".
@@ -173,10 +173,20 @@ answer to a key.
   into now" (`AxKitForm.Templates.cs`, `TemplateField`).
 - TP-5.2 **Which apps** (his answer: "Every app with a field"): the editors, axDown and axJSON, in their text;
   axClaude in its message field and axTerminal in its command field; axCalc in its expression field (the
-  conversation windows' field at the bottom). The fields of forms and notices in every window, an item's form in
-  axTask, axPass and axMCP among them, are reached by the launcher, Ctrl+Shift+Semicolon, which puts a template
-  into whatever field had the focus, axKit's own too: the palette does not open over a notice (bundle AX-10.1), so
-  it cannot offer them (the assistant's finding while building, 2026-11-23; open to the maintainer's word).
+  conversation windows' field at the bottom); and the forms of axTask, axPass and axMCP, where text is written
+  (TP-5.5). Each has its check in a template's form (`TemplateStore.AppsWithField`). The fields of other notices
+  are reached by the launcher, Ctrl+Shift+Semicolon, which puts a template into whatever field had the focus,
+  axKit's own too.
+- TP-5.5 **In a form** (the maintainer's answer of 2026-11-24, "Insert template in forms too"; until then the
+  launcher alone). A form is a notice, where the palette does not open and no command of the bar is offered (bundle
+  AX-10.1, AX-8.12), so the templates are on the field itself: in a form of an app of TP-5.2, Shift+F10, the
+  Applications key or a right click in a text field opens a menu of the templates checked for that app, numbered
+  as Insert template numbers them, and the one chosen is put in at the caret, the selection and the clipboard
+  filled as TP-5.1 fills them, "Thanks inserted" said. With none, the one line "No templates of your own for axTask
+  yet: axTemplate makes them". This menu stands in the place of Windows' edit menu of the field, whose commands are
+  all keys; a field only read, or one that holds a password, keeps Windows' menu and gets no templates. The folder
+  is read again off the UI thread as the form opens (`AxKitForm.OfferTemplatesInForm`). Checked in the NVDA pass,
+  `tests/nvda-scripts/axTask-template-in-a-form.txt`, since a context menu opens only in the window in front.
 - TP-5.3 The editors keep their own templates (AD-13.3: axDown's Link, Table and Code block) before the user's.
 - TP-5.4 A template is put into a field and never sent: in axTerminal's command field and axClaude's message
   field the user reads it and presses Enter, as for any text put there.

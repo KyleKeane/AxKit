@@ -104,6 +104,8 @@ Ctrl+E, the detail pane, and an action that opens something or runs a program.
 
 ## Changing things
 
+In an item's form, Shift+F10 in a field to type in lists your templates checked for axTask in axTemplate; Enter puts the one you are on in at the caret.
+
 In the navigator:
 
 - Ctrl+N adds an item to the list shown. It gets the fields of its list: Done, Start and Due in a list made by

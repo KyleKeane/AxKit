@@ -53,6 +53,8 @@ in a password field rather than in the notes.
 
 ## Changing entries
 
+- In a form, Shift+F10 in a field to type in lists your templates checked for axPass in axTemplate; Enter puts the one you are on in at the caret. A password field has none.
+
 - Enter on a field changes it: Title, UserName, URL and Notes in a notice; Notes is a field of several lines, where
   Enter makes a new line and Tab then Enter on Save keeps it. A field cannot be emptied here: KeePassXC's tool
   takes an empty value as no change, so axPass says "URL cannot be emptied here" and the field keeps its text; empty

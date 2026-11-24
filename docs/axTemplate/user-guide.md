@@ -26,7 +26,7 @@ The launcher needs no start of yours. It runs in the background from the moment 
 - Ctrl+Q reads the template's text before you use it. In a terminal, a template of several lines runs each line as it is pasted, as any paste of several lines does.
 - Ctrl+B opens the browser.
 - Options, Hotkey changes the key. Session, Quit axTemplate ends the launcher; closing its window only hides it.
-- Options, General, Wait before the clipboard comes back: what you had copied is put back on the clipboard after a template goes in. Where the launcher cannot see the program's text, it waits 0.6 seconds after pasting first; if a slow program pastes your old clipboard in place of the template, choose 1, 2 or 4 seconds.
+- Options, Wait before the clipboard comes back: what you had copied is put back on the clipboard after a template goes in. Where the launcher cannot see the program's text, it waits 0.6 seconds after pasting first; if a slow program pastes your old clipboard in place of the template, choose 1, 2 or 4 seconds.
 
 How the caret gets to its place: where the program shows its text to screen readers (Word, Notepad, a field in a browser), the template is pasted with the mark `{caret}` still in it, and the launcher finds that mark back from the caret, selects it and deletes it, so the caret is exactly there, however slowly the program pastes. Where it does not (a terminal, some older programs), the caret is moved back with Left keys, one for each character after the mark; a program that changes what is pasted, by indenting it or closing a bracket by itself, can leave it a little off there. If you ever find `{caret}` left in your text, the program did not let the launcher find it in time: delete it yourself, and tell the maintainer with F4. The launcher waits until you have let go of Ctrl and Shift before it sends anything.
 
@@ -46,7 +46,7 @@ How the caret gets to its place: where the program shows its text to screen read
 
 - Title is the template's name.
 - Text is what is put in. In the form it is a box of several lines: there Enter is a new line.
-- Then come checks, one for each axKit app where the template also shows. Space checks or unchecks one right here. In the form they are one list: Down and Up move through the apps, Space checks or unchecks one, Ctrl+A checks them all, and the Check all and Uncheck all buttons just before the list check or uncheck them all. Enter on any field opens the form with the focus in that field. These are for a step that is built later, the templates in the command palette of the axKit apps; today they are only kept. The launcher lists every template whatever its checks.
+- Then come checks, one for each axKit app where the template also shows. Space checks or unchecks one right here. In the form they are one list: Down and Up move through the apps, Space checks or unchecks one, Ctrl+A checks them all, and the Check all and Uncheck all buttons just before the list check or uncheck them all. Enter on any field opens the form with the focus in that field. A template checked for an app is in that app's Actions, Insert template and in its command palette: axDown, axJSON, axCalc, axTerminal and axClaude. For axTask, axPass and axMCP it is in their forms: in a field to type in, Shift+F10 (or the Applications key) lists the templates checked for that app, and Enter puts the one you are on in at the caret. The launcher lists every template whatever its checks.
 
 ### The marks in a text
 

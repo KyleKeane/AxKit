@@ -257,6 +257,8 @@ public abstract partial class AxKitForm
     /// </summary>
     protected internal void ShowForm(string title, string text, FormControls controls, string button, Action act, Func<(Control Field, string Said)?>? missing = null, Action? cancelled = null, bool sayText = false)
     {
+        // TP-5.5: the templates on Shift+F10 in its text fields, in an app whose templates have a check.
+        OfferTemplatesInForm(controls);
         // AX-8.10 rules 15 and 18: the keys every form has, at the end of its explanation, from the key table.
         ShowNotice(new Notice(title, text + " " + FormControls.KeysLine,
         [

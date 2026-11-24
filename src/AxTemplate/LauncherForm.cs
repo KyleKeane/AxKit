@@ -66,7 +66,9 @@ public sealed class LauncherForm : HotkeyForm
         var options = new ToolStripMenuItem();
         options.DropDownItems.Add(HotkeyItem());
         options.DropDownItems.Add(CreateTextMenu());
-        options.DropDownItems.Add(CreateGeneralMenu(StartWithWindowsItem(), SayFirstMatchItem(), GiveBackMenu()));
+        options.DropDownItems.Add(CreateGeneralMenu(StartWithWindowsItem(), SayFirstMatchItem()));
+        // A submenu of choices: on Options itself, since a menu item is never deeper than three (AX-9).
+        options.DropDownItems.Add(GiveBackMenu());
         options.DropDownItems.Add(CreateDeveloperMenu());
 
         var help = CreateHelpMenu(HelpText.UserGuide, "axTemplate &resources",
@@ -250,7 +252,7 @@ public sealed class LauncherForm : HotkeyForm
     /// clipboard.
     /// </summary>
     /// <summary>
-    /// Options, General, Wait before the clipboard comes back (TP-4.3, TP-D6): one checked item per choice of
+    /// Options, Wait before the clipboard comes back (TP-4.3, TP-D6): one checked item per choice of
     /// <see cref="TemplateSettings.GiveBackChoices"/>; a choice is saved and said.
     /// </summary>
     private ToolStripMenuItem GiveBackMenu()
