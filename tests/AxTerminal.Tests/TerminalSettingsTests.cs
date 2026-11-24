@@ -22,7 +22,6 @@ public sealed class TerminalSettingsTests
         Assert.True(settings.AnnounceDone);
         Assert.Equal(OutputSpeechMode.All, settings.OutputSpeech);
         Assert.Equal(20000, settings.MaxTranscriptLines);
-        Assert.True(settings.CheckForUpdates);
     }
 
     [Fact]

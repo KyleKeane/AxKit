@@ -15,7 +15,6 @@ public sealed class FileSettingsTests
         Assert.False(settings.ShowDotFiles);
         Assert.Equal(SortBy.Name, settings.SortBy);
         Assert.Empty(settings.Favorites);
-        Assert.True(settings.CheckForUpdates);
     }
 
     [Fact]

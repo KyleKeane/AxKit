@@ -71,6 +71,5 @@ public sealed class MCPSealTests
         settings = MCPSettings.Load(path, out error);
         Assert.Equal(MCPSettings.ServersNotUsed + " " + AxKit.Core.SettingsSeal.CopyKept, error);
         Assert.Empty(settings.Servers);
-        Assert.False(settings.CheckForUpdates);
     }
 }

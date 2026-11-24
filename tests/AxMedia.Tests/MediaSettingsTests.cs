@@ -13,7 +13,6 @@ public sealed class MediaSettingsTests
         Assert.Equal(1, settings.Speed);
         Assert.Equal(15, settings.SeekSeconds);
         Assert.Empty(settings.Recent);
-        Assert.True(settings.CheckForUpdates);
     }
 
     [Fact]
