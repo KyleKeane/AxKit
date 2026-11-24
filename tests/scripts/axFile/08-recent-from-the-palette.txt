@@ -21,7 +21,8 @@ expect focus "name":"Path"
 type {temp}\cellar
 keys enter
 expect said ! cellar, 1 item, barrel.txt
-expect state "title":"cellar - axFile"
+expect state "title":"axFile folder 
+expect state \cellar","notice"
 expect commands "1. cellar (
 expect commands "2. orchard (
 
@@ -35,7 +36,8 @@ expect said Session, Open recent folder
 keys enter
 expect said ! orchard, 2 items, inner, folder
 expect state "notice":null
-expect state "title":"orchard - axFile"
+expect state "title":"axFile folder 
+expect state \orchard","notice"
 expect focus inner, folder
 expect commands "1. orchard (
 expect commands "2. cellar (

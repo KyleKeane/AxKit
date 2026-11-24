@@ -8,9 +8,11 @@ file one.md # One\n\nThe first file.
 file two.md # Two\n\nThe second file.
 
 start down {temp}\one.md
-expect state "title":"one.md - axDown"
+expect state "title":"axDown file 
+expect state \one.md","notice"
 start down {temp}\two.md
-expect state "title":"two.md - axDown"
+expect state "title":"axDown file 
+expect state \two.md","notice"
 wait 500
 
 # Goal: Open a recent file from the palette
@@ -22,13 +24,14 @@ expect said one.md
 expect said Open recent file
 keys enter
 expect state "notice":null
-expect state "title":"one.md - axDown"
+expect state "title":"axDown file 
+expect state \one.md","notice"
 
 # Goal: Find another open window from the palette
 # The Window menu's lists are there too: the other window by its title, and nothing recently closed yet.
 do Command palette
 type open windows
-expect said one.md - axDown, Window, Open windows
+expect said \one.md, Window, Open windows
 keys escape
 expect state "notice":null
 
@@ -46,5 +49,6 @@ expect said 1. one.md
 expect said Window, Recently closed
 keys enter
 adopt
-expect state "title":"one.md - axDown"
+expect state "title":"axDown file 
+expect state \one.md","notice"
 expect focus "value":"# One

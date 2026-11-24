@@ -15,7 +15,7 @@ file tasks\Personal\list.json {"format":"axkit-list 2","details":{"Notes":""},"i
 file "tasks\Personal\Buy milk.json" {"schema":"list.json","Title":"Buy milk","Done":false,"Due":""}
 file "tasks\Personal\Old chore.json" {"schema":"list.json","Title":"Old chore","Done":true}
 start task {temp}\tasks
-expect state Lists - axTask
+expect state "title":"axTask Lists
 type pe
 expect focus Personal, list, 2 items
 keys right

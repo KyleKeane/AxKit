@@ -13,7 +13,8 @@ expect said ! No theme file: axKit menu, Theme, Edit theme file makes one
 # Goal: Make a theme file and open it
 menu Edit theme file
 adopt
-expect state theme.json - axJSON
+expect state "title":"axJSON file 
+expect state \theme.json","notice"
 expect text axkit-theme 1
 close
 use 1
@@ -31,7 +32,8 @@ do Word wrap
 expect said ! Word wrap off
 menu Edit theme file
 adopt
-expect state theme.json - axJSON
+expect state "title":"axJSON file 
+expect state \theme.json","notice"
 expect text "wordWrap": false
 close
 use 1

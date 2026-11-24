@@ -40,4 +40,5 @@ expect state Line 1, Column 1 ·
 # Check: Nothing in the text changed
 # Nothing changed in the text.
 expect text "lines":["{","  \"model\": \"opus\"","}"]
-expect state "title":"settings.json - axJSON"
+expect state "title":"axJSON file 
+expect state \settings.json","notice"

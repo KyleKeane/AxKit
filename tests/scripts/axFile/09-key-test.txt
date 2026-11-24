@@ -46,7 +46,8 @@ expect said ! Alt+F4: Exit
 # Check: Nothing pressed in the key test was carried out
 # Nothing was carried out: the same folder, the same entry, no notice.
 expect state "notice":null
-expect state "title":"orchard - axFile"
+expect state "title":"axFile folder 
+expect state \orchard","notice"
 expect focus "value":"inner
 expect list "count":3
 

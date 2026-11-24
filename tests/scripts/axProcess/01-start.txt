@@ -17,7 +17,7 @@ run powershell -NoProfile -Command "Start-Process '.\axkitscript01.exe' -Argumen
 start process
 # The window's command list: every key of its own in the F1 text, none shadowed (docs/axKit/app-kit.md AK-2.4).
 check commands
-expect state This computer - axProcess
+expect state "title":"axProcess This computer
 # The list is named "Processes, reading" while the first read runs; the status bar says "Reading…" until it is done.
 expect state "status":["Processes,
 expect said Processes,

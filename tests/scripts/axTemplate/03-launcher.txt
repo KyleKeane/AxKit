@@ -84,7 +84,7 @@ expect focus Search templates
 # TP-4.6: Ctrl+B opens the browser, a window of its own, on the same templates.
 do Open the browser
 adopt
-expect state "title":"Templates - axTemplate
+expect state "title":"axTemplate Templates
 expect focus broken, not a template
 close
 use 1

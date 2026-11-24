@@ -81,7 +81,7 @@ start pass
 use 1
 mcp call axkit_windows
 refuse mcp axPass
-expect mcp "title": "notes.md - axDown"
+expect mcp "title": "axDown file 
 
 # Check: Opening a program's app, a missing window and a partial path are refused
 # The refusals: an app that starts a program, a window that is not there, a path that is not a full one.

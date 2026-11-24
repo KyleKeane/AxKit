@@ -13,7 +13,7 @@ file fake.ps1 [Console]::Error.WriteLine('axkitfake warns of nothing')\n$in = [C
 start mcpclient {temp}
 # The window's command list: every key of its own in the F1 text, none shadowed (docs/axKit/app-kit.md AK-2.4).
 check commands
-expect state Servers - axMCP, access layer for MCP servers
+expect state "title":"axMCP, access layer for MCP servers Servers
 expect focus Servers
 type fake
 expect focus fake, stdio, stopped
@@ -40,7 +40,7 @@ keys enter
 expect said fake, starting
 expect said ! fake, running, Tools 1, Resources 1, Prompts 0
 expect focus Tools, 1
-expect state fake - axMCP, access layer for MCP servers
+expect state "title":"axMCP, access layer for MCP servers fake
 
 # Check: A started server's details end with what it wrote to its standard error
 # MP-10 and the bundle's repair R-74: the count, then the newest lines, here and never in the log (the log holds each
@@ -87,7 +87,8 @@ expect focus text (required), text, hello
 # Goal: Open a tool's answer in axJSON
 keys ctrl+j
 adopt
-expect state last-result.json - axJSON
+expect state "title":"axJSON file 
+expect state \last-result.json","notice"
 close
 use 1
 

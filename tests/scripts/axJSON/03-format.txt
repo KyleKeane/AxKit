@@ -18,7 +18,8 @@ expect focus {"name":"one-line.json","role":"Text","value":"{"}
 keys down
 expect focus {"name":"one-line.json","role":"Text","value":"  \u0022model\u0022: \u0022opus\u0022,"}
 expect text     \u0022Bash\u0022,
-expect state *one-line.json - axJSON
+expect state "title":"axJSON file *
+expect state \one-line.json","notice"
 # 3.1, Ctrl+Z and Ctrl+Y after the Format: at the end of this script, since it fails (see the report).
 
 # Goal: Format and repair a broken file
@@ -45,12 +46,14 @@ start json {temp}\missing-value.json
 expect focus missing-value.json
 keys ctrl+shift+f
 expect said ! Not valid JSON: line 4, expected a value, found ','
-expect state "title":"missing-value.json - axJSON"
+expect state "title":"axJSON file 
+expect state \missing-value.json","notice"
 expect text "  \u0022count\u0022: ,"
 # Edit, Format does the same as the key.
 menu Format
 expect said ! Not valid JSON: line 4, expected a value, found ','
-expect state "title":"missing-value.json - axJSON"
+expect state "title":"axJSON file 
+expect state \missing-value.json","notice"
 
 # Check: A formatted file is said as already formatted
 # 3.4: Ctrl+Shift+F on a formatted file: "Already formatted", nothing changes, no star in the title.
@@ -58,7 +61,8 @@ start json {temp}\formatted.json
 expect focus formatted.json
 keys ctrl+shift+f
 expect said ! Already formatted
-expect state "title":"formatted.json - axJSON"
+expect state "title":"axJSON file 
+expect state \formatted.json","notice"
 keys ctrl+z
 expect said ! Nothing to undo
 

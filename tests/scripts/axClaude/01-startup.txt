@@ -11,8 +11,7 @@ start claude {temp}\fresh -- --model haiku
 # The window's command list: every key of its own in the F1 text, none shadowed (docs/axKit/app-kit.md AK-2.4).
 check commands
 expect said → Message to Claude (Text)
-expect state fresh (
-expect state ) - axClaude
+expect state "title":"axClaude, access layer for Claude Code folder
 # Goal: Move between the conversation and Claude's question, then answer it
 # Step 5 with a question's list in the field's place: Claude's trust question is the list; Tab and Shift+Tab move
 # between the conversation and the list, never to the hidden message field.

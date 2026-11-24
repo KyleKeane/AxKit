@@ -12,18 +12,20 @@ start json
 # Check: The window's command list holds every key of its own
 # The window's command list: every key of its own in the F1 text, none shadowed (docs/axKit/app-kit.md AK-2.4).
 check commands
-expect state Untitled - axJSON
+expect state "title":"axJSON Untitled"
 expect focus {"name":"Untitled","role":"Text","value":""}
 expect quiet 1000
 
 # Goal: Open a JSON file
 # 1.2: the json verb (axjson settings.json) and a .json file alone (axkit settings.json) both open axJSON on the file.
 start json {temp}\settings.json
-expect state "title":"settings.json - axJSON"
+expect state "title":"axJSON file 
+expect state \settings.json","notice"
 expect focus {"name":"settings.json","role":"Text","value":"{"}
 expect quiet 1000
 start {temp}\settings.json
-expect state "title":"settings.json - axJSON"
+expect state "title":"axJSON file 
+expect state \settings.json","notice"
 expect focus settings.json
 
 # Goal: Reload a file that another program changed
@@ -44,4 +46,5 @@ expect focus Reload and lose mine
 keys enter
 expect said Reloaded
 expect text added
-expect state "title":"settings.json - axJSON"
+expect state "title":"axJSON file 
+expect state \settings.json","notice"

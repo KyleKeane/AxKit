@@ -16,7 +16,7 @@ check commands
 # Step 1: the window and the field; after a moment the ping and "Ready".
 expect focus Command
 expect state "title":"myproject -
-expect state - axTerminal, access layer for your shell"
+expect state "title":"axTerminal, access layer for your shell folder 
 expect said Ready
 expect said ♪ Ready
 

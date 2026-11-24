@@ -735,7 +735,10 @@ public sealed partial class TextEditorForm : AxKitForm
 
     private void UpdateTitle()
     {
-        SetTitle((_changed ? "*" : string.Empty) + DocumentName);
+        // After the app's name, "file" and the file's full path (the user's ask of 2026-11-23); the star of unsaved
+        // changes before the path, as it stood before the name; an untitled text by its name.
+        var star = _changed ? "*" : string.Empty;
+        SetTitle(_path is null ? star + DocumentName : $"file {star}{_path}");
         _editor.AccessibleName = DocumentName;
         UpdateEditItem();
     }

@@ -21,7 +21,7 @@ start task {temp}\tasks
 # Check: The window's command list holds every key of its own
 # The window's command list: every key of its own in the F1 text, none shadowed (docs/axKit/app-kit.md AK-2.4).
 check commands
-expect state Lists - axTask
+expect state "title":"axTask Lists
 expect focus Your lists, heading level 1, 4 lists
 # Goal: Move among the lists by their headings
 do Previous section
@@ -63,7 +63,7 @@ expect focus Home, list, 2 items
 # 1.2 Right into Home: its name, its count, the first row.
 keys right
 expect said ! Home, 2 items, 1 file not shown, Fix the tap, due 30 October 2099
-expect state Home - axTask
+expect state "title":"axTask Home
 # Goal: Hear the status bar
 # F8, Say the status (bundle AX-7.10), from the navigator: the status bar said by axKit itself.
 do Say the status

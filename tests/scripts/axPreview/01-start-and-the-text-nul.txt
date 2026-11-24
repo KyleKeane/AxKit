@@ -14,7 +14,7 @@ run powershell -NoProfile -Command "[IO.File]::WriteAllText('nul-later.txt', ('A
 start preview {temp}\nul-later.txt
 expect state "notice":"Error"
 expect state nul-later.txt is not a text file (it holds a NUL character).
-expect state "title":"Untitled - axPreview"
+expect state "title":"axPreview Untitled"
 wait 1200
 keys escape
 expect state "notice":null

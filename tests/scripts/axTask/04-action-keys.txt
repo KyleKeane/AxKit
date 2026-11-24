@@ -10,7 +10,7 @@ file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item 
 file tasks\Later\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
 start task {temp}\tasks
 check commands
-expect state Lists - axTask
+expect state "title":"axTask Lists
 # Check: Action keys act only inside a list
 # Step 1: the digits act in a list only; at the top Ctrl+1 to Ctrl+3 go by heading (TK-D14); Ctrl+0 is All tasks
 # (TK-7a.1, RP-8.4).

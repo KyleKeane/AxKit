@@ -17,7 +17,8 @@ start preview {temp}\README.md
 # Check: The window's command list holds every key of its own
 # The window's command list: every key of its own in the F1 text, none shadowed (docs/axKit/app-kit.md AK-2.4).
 check commands
-expect state "title":"README.md - axPreview"
+expect state "title":"axPreview file 
+expect state \README.md","notice"
 expect focus {"name":"README.md","role":"Text","value":"# Readme for the preview tests"}
 expect quiet 1000
 # 1.1 manual: the menu bar (Alt) needs the foreground; its menus as the palette reads them: File, Navigation, Options,
@@ -38,7 +39,8 @@ expect focus This file has headings, links, lists
 type xyz
 keys ctrl+v
 expect quiet 1000
-expect state "title":"README.md - axPreview"
+expect state "title":"axPreview file 
+expect state \README.md","notice"
 expect focus {"name":"README.md","role":"Text","value":"This file has headings, links, lists, a block quote and a table, for the navigation keys."}
 # Check: Selecting a line says nothing of axPreview's own
 # Shift+Down selects a line, without a word of axPreview's.
@@ -175,7 +177,8 @@ expect commands "Edit in axDown, Session, Ctrl\u002BE"
 # 1.8: a plain text file has no headings: Ctrl+H, "No next heading".
 # 1.8 manual: Ctrl+O is the Windows file picker; Alt+F, R, Open recent, is a submenu filled as it opens.
 start preview --new {temp}\plain.txt
-expect state "title":"plain.txt - axPreview"
+expect state "title":"axPreview file 
+expect state \plain.txt","notice"
 expect focus plain.txt
 keys ctrl+h
 expect said ! No next heading
@@ -185,7 +188,8 @@ expect said ! No next heading
 # text (AP-7.2, since 2026-10-24; "Not a text file" before), this one having none; over 32 MB a text is "Too large",
 # naming the size; a .log opens.
 start preview --new {temp}\tool.exe
-expect state "title":"tool.exe - axPreview"
+expect state "title":"axPreview file 
+expect state \tool.exe","notice"
 expect focus No readable text was found in tool.exe.
 expect commands "Open in Windows\u0027 program, Session, Ctrl\u002BE"
 start preview --new {temp}\too-large.txt
@@ -196,7 +200,8 @@ wait 1200
 keys enter
 expect state "notice":null
 start preview --new {temp}\app.log
-expect state "title":"app.log - axPreview"
+expect state "title":"axPreview file 
+expect state \app.log","notice"
 expect focus 2026-10-22 09:00:01 INFO  The log file starts.
 
 # Check: A file that does not exist is said in a notice and the window has no file
@@ -205,7 +210,7 @@ expect focus 2026-10-22 09:00:01 INFO  The log file starts.
 start preview --new {temp}\gone.txt
 expect state "notice":"File not found"
 expect state gone.txt does not exist.
-expect state "title":"Untitled - axPreview"
+expect state "title":"axPreview Untitled"
 # A notice that opens by itself holds the answering keys for a second (KeyHold), so the Enter waits.
 wait 1200
 keys enter

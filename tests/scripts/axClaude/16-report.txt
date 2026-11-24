@@ -64,7 +64,7 @@ keys space
 expect said checked
 keys tab
 expect focus "name":"What is sent with your report"
-expect text window: report
+expect text window: axClaude, access layer for Claude Code folder
 expect text Message to Claude, line 1 of 1
 keys shift+tab
 keys space

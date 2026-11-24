@@ -11,9 +11,11 @@ file cellar.txt The barrel file, line 1.\nLine 2.
 
 # The start and the file handed over to the open window (AP-1.2) each make a recent entry, the newest first.
 start preview {temp}\orchard.md
-expect state "title":"orchard.md - axPreview"
+expect state "title":"axPreview file 
+expect state \orchard.md","notice"
 launch preview {temp}\cellar.txt
-expect state "title":"cellar.txt - axPreview"
+expect state "title":"axPreview file 
+expect state \cellar.txt","notice"
 expect focus {"name":"cellar.txt","role":"Text","value":"The barrel file, line 1."}
 expect commands "1. cellar.txt (
 expect commands "2. orchard.md (
@@ -30,7 +32,8 @@ expect said 2. orchard.md (
 expect said Session, Open recent
 keys enter
 expect state "notice":null
-expect state "title":"orchard.md - axPreview"
+expect state "title":"axPreview file 
+expect state \orchard.md","notice"
 expect focus {"name":"orchard.md","role":"Text","value":"# Orchard"}
 expect commands "1. orchard.md (
 expect commands "2. cellar.txt (
