@@ -10,6 +10,12 @@ root=$(git rev-parse --show-toplevel)
 # git hands a hook GIT_DIR and its kin; the sync must not inherit them, or every git call of its own would act on this
 # repository whatever folder it names (the script drops them too).
 unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_COMMON_DIR GIT_PREFIX
+# The tests and checks of what is pushed (tools/push-check.ps1, 2026-11-24): the bundle's own tests always, the changed
+# apps' tests, the page and script checks. A failure stops the push before anything leaves the computer.
+if ! powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$root/tools/push-check.ps1" </dev/null; then
+  echo "Push refused: a test or a check failed (the lines above)."
+  exit 1
+fi
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$root/tools/sync-repos.ps1" </dev/null
 # The one thing that stops a push (docs/axKit/outside-reports.md OR-7.1, 2026-11-21): an item from an outside report
 # worked on without the maintainer's signed approval, or an approval that no longer verifies. Local, no network.
