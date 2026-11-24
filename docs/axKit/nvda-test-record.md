@@ -6,6 +6,15 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-24: the moved hotkeys and a template of several lines; by the maintainer, by ear (`main` a1066a05)
+
+After his rebuild. Passed:
+- Ctrl+Shift+Comma brings up axClip, and Ctrl+Shift+Period takes axHelp's screenshot (bundle AX-8.11).
+- A template of two lines from the launcher into PowerShell: the launcher asked how to put it in before pasting
+  (axTemplate TP-4.8).
+- The same template into axTerminal's command field went in with both lines, as TP-4.8 says for a field of several
+  lines where Enter sends; Enter then ran both commands, and both echoes were heard.
+
 ## 2026-11-24: every app but axClaude, and the NVDA-only scripts; by the assistant with NVDA listening (`main` 96a4f3c3)
 
 `.\nvda-pass.ps1 -Skip axClaude`, behind the spoken countdown, after the maintainer's yes through the question tool,
