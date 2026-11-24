@@ -35,8 +35,8 @@ How the caret gets to its place: where the program shows its text to screen read
 - Ctrl+N makes a new template: its form opens, empty. Type the name, Tab to the Text and write it, check where it shows, then Ctrl+Enter, or Enter from the name, adds it.
 - Enter opens the template's form: every field in one place, the name first, then the Text, then the checks. Tab or Ctrl+Down goes to the next field, Shift+Tab or Ctrl+Up to the one before. Ctrl+Enter saves everything as one change, which Ctrl+Z takes back; Escape leaves and changes nothing. A new name renames the file too.
 - F2 renames the template. Its file is renamed with it.
-- Delete deletes the template after a question. With several selected (Space selects), it deletes those, and the question says how many.
-- Ctrl+Z takes back the last change, whichever it was: a field, a rename, a new template, a deletion. It works for as long as the window is open; a template deleted before the window was closed is gone.
+- Delete (Template, Archive) moves the template into the Archive folder beside your templates, after a question. With several selected (Space selects), it moves those, and the question says how many. Nothing is lost: the Archive folder is in your templates' folder, which Session, Show the templates' folder in opens, and a file moved back out of it is a template again.
+- Ctrl+Z takes back the last change, whichever it was: a field, a rename, a new template, an archiving. It works for as long as the window is open.
 - Ctrl+Enter copies the template's text to the clipboard, with its marks filled with nothing, so that you can paste it somewhere and see what it makes.
 - Ctrl+J opens the template's file in axJSON.
 - Ctrl+Q reads every field of the template. F5 reads the templates again.

@@ -33,13 +33,13 @@ Starts with: Open axTemplate.
 3. Press Enter.
     You hear: Renamed Thank you note.
 
-### Delete a template and bring it back
+### Archive a template and bring it back
 
 1. Press Delete.
 2. Press Enter.
-    You hear: Deleted Thank you note.
+    You hear: Archived Thank you note.
 3. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: Deleted Thank you note.
+    You hear: Undone: Archived Thank you note.
 
 ### Rename a template from its Title field
 
@@ -55,7 +55,7 @@ Starts with: Open axTemplate.
 
 Starts with: Open axTemplate.
 
-### Delete several templates at once
+### Archive several templates at once
 
 1. Press Home.
 2. Press Space.
@@ -63,9 +63,9 @@ Starts with: Open axTemplate.
 4. Press Space.
 5. Press Delete.
 6. Press Enter.
-    You hear: Deleted 2 templates.
+    You hear: Archived 2 templates.
 7. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: Deleted 2 templates.
+    You hear: Undone: Archived 2 templates.
 
 ## Find a template in the launcher and use it
 

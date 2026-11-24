@@ -126,15 +126,15 @@ keys enter
 expect said Renamed Thank you note
 expect focus Thank you note
 
-# Goal: Delete a template and bring it back
-# 4.2 Delete asks; Ctrl+Z brings the template back (TP-8.4).
+# Goal: Archive a template and bring it back
+# 4.2 Delete asks, and moves the template into the Archive folder; Ctrl+Z brings it back (TP-8.4, TP-D9).
 keys delete
-expect state "notice":"Delete Thank you note?"
+expect state "notice":"Archive Thank you note?"
 keys enter
-expect said Deleted Thank you note
+expect said Archived Thank you note
 expect focus No templates yet: Ctrl+N makes one
 keys ctrl+z
-expect said Undone: Deleted Thank you note
+expect said Undone: Archived Thank you note
 expect focus Thank you note
 
 # Check: Ctrl+Z takes a rename back, the file with it

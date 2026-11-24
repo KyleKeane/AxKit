@@ -25,13 +25,13 @@ The steps change your own templates' folder: use a template made for the test, a
 ## 4. Rename, delete, undo (TP-8.4)
 
 1. F2, type `Thank you note`, Enter: "Renamed Thank you note", the list on it.
-2. Delete: the notice "Delete Thank you note?" with "Ctrl+Z brings back what was deleted, for as long as this window is open." Enter: "Deleted Thank you note".
-3. Ctrl+Z: "Undone: Deleted Thank you note", the list on it. Ctrl+Z again: "Undone: Renamed Thank you note", the list on Thanks, its Text as it was.
+2. Delete: the notice "Archive Thank you note?" with "It moves to the Archive folder beside your templates, where axFile finds it; Ctrl+Z brings it back while this window is open." Enter: "Archived Thank you note"; the file is in the Archive folder.
+3. Ctrl+Z: "Undone: Archived Thank you note", the list on it. Ctrl+Z again: "Undone: Renamed Thank you note", the list on Thanks, its Text as it was.
 4. Tab, Enter on Title, type `Greeting`, Enter: "Renamed Greeting"; Escape: the list on Greeting.
 
 ## 5. Several at once, and reading again (TP-8.2, TP-8.5)
 
-1. With three templates: Space on two of them, each "…, selected". Delete: "Delete 2 templates?"; Enter: "Deleted 2 templates". Ctrl+Z: "Undone: Deleted 2 templates", both back.
+1. With three templates: Space on two of them, each "…, selected". Delete: "Archive 2 templates?"; Enter: "Archived 2 templates". Ctrl+Z: "Undone: Archived 2 templates", both back.
 2. F5: "Refreshed: Templates, 3 templates".
 3. Ctrl+J on a template: axJSON opens its file. Change its Text there, save, and come back to axTemplate: the pane shows the new text without a key.
 

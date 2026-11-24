@@ -41,7 +41,7 @@ expect focus 1 more field kept: Sprint
 keys escape
 expect focus Beta
 
-# Goal: Delete several templates at once
+# Goal: Archive several templates at once
 # 5.1 Space selects; Delete then asks with their count, and one Ctrl+Z brings them all back (TP-8.2, TP-8.4).
 keys home
 keys space
@@ -50,13 +50,13 @@ keys down
 keys space
 expect focus Beta, selected
 keys delete
-expect state "notice":"Delete 2 templates?"
+expect state "notice":"Archive 2 templates?"
 keys enter
-expect said Deleted 2 templates
+expect said Archived 2 templates
 expect state Templates, 1 template
 expect focus broken, not a template
 keys ctrl+z
-expect said Undone: Deleted 2 templates
+expect said Undone: Archived 2 templates
 expect state Templates, 3 templates
 expect focus Alpha
 

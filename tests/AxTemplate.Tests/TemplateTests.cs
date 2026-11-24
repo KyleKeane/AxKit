@@ -153,6 +153,13 @@ public sealed class TemplateTests : IDisposable
         FileChange[] deleted = [new FileChange("t\\Thanks.json", thanks, null)];
         Assert.Equal(["Zebra"], TemplateStore.After(after, deleted).Select(file => file.Title));
         Assert.Equal(["Thanks", "Zebra"], TemplateStore.After(TemplateStore.After(after, deleted), deleted, undone: true).Select(file => file.Title));
+        Assert.False(TemplateStore.MovesAcrossFolders(renamed));
+
+        // Archived (TP-D9): moved into the folder's Archive, out of the list; its undo is read from the disk again.
+        FileChange[] archived = [FileChange.Move("t\\Thanks.json", Path.Combine(TemplateStore.ArchiveFolder("t"), "Thanks.json"))];
+        Assert.Equal("t\\Archive\\Thanks.json", archived[0].To);
+        Assert.Equal(["Zebra"], TemplateStore.After(after, archived).Select(file => file.Title));
+        Assert.True(TemplateStore.MovesAcrossFolders(archived));
 
         // A text that is no item is a file that is no template.
         var broken = TemplateStore.After(none, [FileChange.Write("t\\x.json", null, "[1]")]);

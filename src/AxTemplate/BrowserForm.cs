@@ -61,7 +61,7 @@ public sealed class BrowserForm : ItemForm
         _templateMenu.DropDownItems.Add(Item("Read in &full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
         _templateMenu.DropDownItems.Add(new ToolStripSeparator());
         _templateMenu.DropDownItems.Add(CommandPalette.NeverForAiTools(Item("&Rename", RenameSelected, ItemKeys.Rename, CommandMark.Change)));
-        _templateMenu.DropDownItems.Add(CommandPalette.NeverForAiTools(Item("&Delete", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act)));
+        _templateMenu.DropDownItems.Add(CommandPalette.NeverForAiTools(Item("Ar&chive", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act)));
         _templateMenu.DropDownItems.Add(new ToolStripSeparator());
         _templateMenu.DropDownItems.Add(Item("Se&lect or deselect", SelectRow, SelectionKeys.Select, CommandMark.Change));
         _templateMenu.DropDownItems.Add(Item("Select to &here", SelectToHere, SelectionKeys.SelectTo, CommandMark.Change));
@@ -280,30 +280,60 @@ public sealed class BrowserForm : ItemForm
         Commit(new Step(parts, "Renamed " + name), to);
     }
 
-    /// <summary>Delete: the selected templates, or the one the navigator is on, after a question; Ctrl+Z brings them back.</summary>
+    /// <summary>
+    /// Delete: the selected templates, or the one the navigator is on, after a question, moved into the folder's
+    /// Archive (TP-D9; the maintainer's answer of 2026-11-24: "make an archive directory just like we do with axtask so
+    /// old items can be recovered"), where axFile reaches them and the browser and the launcher do not; Ctrl+Z brings
+    /// them back while the window is open, and later they are moved back by hand.
+    /// </summary>
     protected override void DeleteRow(ItemRow row)
     {
         var rows = SelectedRows() is { Count: > 0 } selected ? selected : [row];
         var files = rows.Select(one => one.Tag).OfType<TemplateFile>().ToList();
         if (files.FirstOrDefault(file => file.Text is null) is { } unread)
         {
-            Announce($"{unread.Title} could not be read, so {BundleKeys.Text(ItemKeys.Undo)} could not bring it back: delete its file in axFile", true);
+            Announce($"{unread.Title} could not be read: move its file away in axFile", true);
             return;
         }
 
         var what = files.Count == 1 ? files[0].Title : $"{files.Count} templates";
-        ShowNotice(Notice.Ask($"Delete {what}?", $"{BundleKeys.Text(ItemKeys.Undo)} brings back what was deleted, for as long as this window is open.", "&Delete", () =>
+        ShowNotice(Notice.Ask($"Archive {what}?", $"It moves to the Archive folder beside your templates, where axFile finds it; {BundleKeys.Text(ItemKeys.Undo)} brings it back while this window is open.", "&Archive", () =>
         {
             if (!files.All(Fresh))
             {
                 return;
             }
 
-            // The selection lands on the row after the last one deleted, or the one before the first.
+            var archive = TemplateStore.ArchiveFolder(_folder);
+            try
+            {
+                Directory.CreateDirectory(archive);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                Failed("Archive", $"The Archive folder could not be made: {ex.Message}");
+                return;
+            }
+
+            // Each to a name of its own there: an earlier template of the same name may be archived already.
+            var taken = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var parts = new List<FileChange>();
+            foreach (var file in files)
+            {
+                var to = ItemFiles.FreePath(archive, Path.GetFileNameWithoutExtension(file.Path), ".json");
+                for (var n = 2; !taken.Add(to); n++)
+                {
+                    to = Path.Combine(archive, $"{Path.GetFileNameWithoutExtension(file.Path)} {n}.json");
+                }
+
+                parts.Add(FileChange.Move(file.Path, to));
+            }
+
+            // The selection lands on the row after the last one archived, or the one before the first.
             var gone = rows.Select(one => one.Key).ToHashSet(StringComparer.OrdinalIgnoreCase);
             var last = Rows.ToList().FindLastIndex(one => gone.Contains(one.Key));
             var next = Rows.Skip(last + 1).FirstOrDefault() ?? Rows.LastOrDefault(one => !gone.Contains(one.Key));
-            Commit(new Step([.. files.Select(file => new FileChange(file.Path, file.Text, null))], "Deleted " + what), next?.Key);
+            Commit(new Step(parts, "Archived " + what), next?.Key);
         }));
     }
 
@@ -335,6 +365,14 @@ public sealed class BrowserForm : ItemForm
         }
 
         Log.Info("Undone a step");
+        if (TemplateStore.MovesAcrossFolders(step.Parts))
+        {
+            // Back from the Archive (TP-D9): the folder read again, the template selected where it is again.
+            Announce("Undone: " + step.Said, true);
+            _ = ReadFolderAsync(step.Parts[0].Path, announce: false);
+            return;
+        }
+
         _files = TemplateStore.After(_files, step.Parts, undone: true);
         // The selection on what the step touched first, where it is again.
         Fill(step.Parts[0].Path);

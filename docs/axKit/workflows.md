@@ -933,10 +933,10 @@ Steps and keys: `docs/axKit/workflows/axTemplate.md` (in Claude's working folder
     - Make a template
     - Write the text of a template in its form
     - Rename a template
-    - Delete a template and bring it back
+    - Archive a template and bring it back
     - Rename a template from its Title field
 2. **Delete several templates, and meet a file that is no template, in axTemplate's browser**
-    - Delete several templates at once
+    - Archive several templates at once
 3. **Find a template in the launcher and use it**
     - Move through the templates
     - Find a template by a word of its name or its text

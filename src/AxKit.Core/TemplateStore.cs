@@ -169,6 +169,9 @@ public static class TemplateStore
         return files;
     }
 
+    /// <summary>The folder's Archive (TP-D9, 2026-11-24): where a deleted template goes, as axTask's Archive; a folder inside the templates' folder, which neither the browser nor the launcher reads.</summary>
+    public static string ArchiveFolder(string folder) => System.IO.Path.Combine(folder, "Archive");
+
     /// <summary>
     /// Every template of the folder (TP-2.1), in the order of their names, and the files that are none. Reads the
     /// disk: call it off the UI thread.
@@ -208,6 +211,13 @@ public static class TemplateStore
         return new TemplateList(Configuration(existing), Files(folder));
     }
 
+    /// <summary>Whether a step moves a file between two folders (a template into the Archive, TP-D9): its undo is read from the disk again, not worked out by <see cref="After"/>.</summary>
+    public static bool MovesAcrossFolders(IReadOnlyList<FileChange> parts) =>
+        parts.Any(part => part.IsMove && !SameFolder(part.Path, part.To!));
+
+    private static bool SameFolder(string a, string b) =>
+        string.Equals(System.IO.Path.GetDirectoryName(a), System.IO.Path.GetDirectoryName(b), StringComparison.OrdinalIgnoreCase);
+
     /// <summary>
     /// The files as they are after a change the browser made itself, or after its undo, without reading the disk
     /// again: a file written is read from its new text, one removed is gone, one moved has its new path.
@@ -220,7 +230,9 @@ public static class TemplateStore
             if (part.IsMove)
             {
                 var (from, to) = undone ? (part.To!, part.Path) : (part.Path, part.To!);
-                if (now.Remove(from, out var moved))
+                // A move out of the folder (into the Archive, TP-D9) leaves the list; the window reads the folder again
+                // for a move back in, since what was moved away is not held here (MovesAcrossFolders).
+                if (now.Remove(from, out var moved) && SameFolder(from, to))
                 {
                     now[to] = moved with { Path = to };
                 }

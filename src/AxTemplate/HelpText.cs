@@ -18,7 +18,7 @@ public static class HelpText
           Enter, Tab, {{BundleKeys.Text(BundleKeys.NextControl)}} or F6: to the template's fields
           {{BundleKeys.Text(ItemKeys.New)}}: a new template; a notice asks its name, and it is made with an empty text
           F2: rename the template; its file is renamed with it
-          Delete: delete the template, or the selected ones, after a question
+          Delete: move the template, or the selected ones, into the Archive folder, after a question
           {{BundleKeys.Text(BundleKeys.MainAction)}}: copy the template's text, its marks filled with nothing, to see what it makes
           {{BundleKeys.Text(AxTemplateKeys.OpenInJson)}}: the template's file in axJSON
           Space: select the template, or deselect it again; a selected template reads ", selected". {{BundleKeys.Text(SelectionKeys.SelectDown)}}, {{BundleKeys.Text(SelectionKeys.SelectUp)}}, {{BundleKeys.Text(SelectionKeys.SelectToStart)}}, {{BundleKeys.Text(SelectionKeys.SelectToEnd)}}: select as you move. {{BundleKeys.Text(SelectionKeys.SelectTo)}}: select from the nearest selected template to here. {{BundleKeys.Text(SelectionKeys.SelectAll)}}: all. {{BundleKeys.Text(SelectionKeys.SelectNone)}} or Escape: none

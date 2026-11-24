@@ -223,9 +223,11 @@ answer to a key.
 - TP-8.4 **On a template**: Enter opens its form (TP-8.3a). Ctrl+N opens the same form, empty (the maintainer, 2026-11-23: "adding a new template should open the full form
   rather than the smaller naming dialog"): Add makes the template with everything typed in it and selects it; a
   name another template has, whatever its capitals, is refused in the form, the focus in the name. F2 renames it in place (bundle AX-8.7), and so does its form's name; its file
-  is renamed with it. Delete deletes the template, or the selected ones, after a question that names it or their
-  count (TP-D9). Ctrl+Z takes back the last change, whichever it was: a field, a rename, a new template, a
-  deletion; up to fifty, for as long as the window is open, and never over a file that changed on disk since
+  is renamed with it. Delete (Template, Archive) moves the template, or the selected ones, into the folder's
+  `Archive` folder after a question that names it or their count (TP-D9); a name the Archive has already gets a
+  number. Neither the browser nor the launcher reads the Archive; axFile reaches it, and a file moved back is a
+  template again. Ctrl+Z takes back the last change, whichever it was: a field, a rename, a new template, an
+  archiving; up to fifty, for as long as the window is open, and never over a file that changed on disk since
   (item-apps IA-5.4). Ctrl+Enter puts the template's text on the clipboard, marks filled with nothing, "Copied",
   for a look at what it makes. Ctrl+J opens the template's file in axJSON, and Session, Show the templates'
   folder in, opens the folder in File Explorer or axFile.
@@ -298,12 +300,12 @@ answer to a key.
   each is new: until now every app is one window type (framework section 5). They are no second window in the
   sense of bundle AX-7.2, which rules out dialogs of an app's own: each is a whole window of a bundle type, as
   axHelp's small window and its conversation are.
-- **TP-D9 Delete deletes, and Ctrl+Z brings back** (the assistant's choice while building, 2026-11-23, open to the
-  maintainer's word). The specification first said the Recycle Bin. The item apps' changes with their undo
-  (`AxKit.Core/Changes`, moved from axTask on this second use) give one Ctrl+Z for every change, a deletion
-  among them, with the check that nothing changed on disk since; the Recycle Bin's code is axFile's own and would
-  be a second way to take a deletion back. The price: once the window is closed, a deleted template is gone. The
-  question before a deletion says so.
+- **TP-D9 Delete archives, and Ctrl+Z brings back** (the maintainer's answer of 2026-11-24: "make an archive
+  directory just like we do with axtask so old items can be recovered"). The specification first said the Recycle
+  Bin; the first build (2026-11-23) deleted the file, with Ctrl+Z for as long as the window was open. Now the file
+  is moved into `Archive` beside the templates, one move of `AxKit.Core/Changes`, so that the same Ctrl+Z takes it
+  back with the check that nothing changed on disk since, and after the window closed the file is still there to
+  move back in axFile. The undo of a move out of the folder reads the folder again (`TemplateStore.MovesAcrossFolders`).
 
 ## 7. The maintainer's answers, 2026-11-23
 
