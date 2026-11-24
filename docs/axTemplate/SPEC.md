@@ -160,6 +160,24 @@ answer to a key.
   nothing: it finds and puts in.
 - TP-4.7 A command with no template says "No templates yet: Ctrl+B opens the browser, where one is made" or the
   no-match line.
+- TP-4.8 **Line breaks where the place cannot take them** (the maintainer's question of 2026-11-24: "do we need to
+  flatten newlines from templates that are being inserted into textfields that do not support newlines? ...
+  potentially we need to have a way for things to communicate whether they can handle newlines"). What the place
+  does with a line break is read from Windows before anything is sent, never guessed (`AxTemplate.Core/PasteTarget`,
+  `WindowInFront`): the class of the window it came from, and the class and style of the control with the focus in
+  its thread.
+  - A field of one line (an edit control without `ES_MULTILINE`, Windows' own or a WinForms one) keeps only the
+    first line of a paste, so a template of several lines goes in on one line: each break, with the blanks around
+    it, becomes one space, and the caret keeps its place (`TextTemplate.OneLine`).
+  - A console (Windows' console host, Windows Terminal) runs each line as it is pasted. Before a template of several
+    lines goes into one, the launcher asks, still in front: "Deploy has 3 lines, and a terminal runs each line as it
+    is pasted. Put it in how?", with Put it in on one line (Enter), Put it in as it is, each line runs, and Cancel.
+  - Anything else keeps the template as it is: a text of several lines, and a control that says nothing of itself
+    (a browser's field, which takes the breaks out of a field of one line by itself).
+  - Inside axKit (TP-5) the field says it itself: Insert template into a field of one line puts it in on one line
+    and says "Thanks inserted on one line". axKit's own fields where Enter sends (axTerminal's command, axClaude's
+    message) take several lines: nothing runs until the user presses Enter.
+  - Tested in `PasteTargetTests`; the launcher's question in a console is checked by ear.
 
 ### TP-5 In the axKit apps
 

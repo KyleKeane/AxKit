@@ -244,14 +244,6 @@ public sealed class LauncherForm : HotkeyForm
     private const string MakesNothing = "This template makes no text now: what its marks stand for is empty";
 
     /// <summary>
-    /// Enter (TP-4.1) and Ctrl+Enter (TP-4.2): the window hides and gives the front back; once the program it came
-    /// from is in front again, Ctrl+Enter first sends it the copy key and takes what it copies as the template's
-    /// selection; then the filled text goes on the clipboard, marked as not for a clipboard history (TP-4.3), the
-    /// paste key is sent, the caret is moved back to its mark by Left keys (TP-2.3), and the clipboard's text of
-    /// before is given back. When another window is in front by then, no key is sent and the text waits on the
-    /// clipboard.
-    /// </summary>
-    /// <summary>
     /// Options, Wait before the clipboard comes back (TP-4.3, TP-D6): one checked item per choice of
     /// <see cref="TemplateSettings.GiveBackChoices"/>; a choice is saved and said.
     /// </summary>
@@ -282,7 +274,31 @@ public sealed class LauncherForm : HotkeyForm
         return menu;
     }
 
-    private void PutIn(bool takeSelection) => Do(async () =>
+    /// <summary>
+    /// Enter (TP-4.1) and Ctrl+Enter (TP-4.2): the window hides and gives the front back; once the program it came
+    /// from is in front again, Ctrl+Enter first sends it the copy key and takes what it copies as the template's
+    /// selection; then the filled text goes on the clipboard, marked as not for a clipboard history (TP-4.3), the
+    /// paste key is sent, the caret is moved back to its mark by Left keys (TP-2.3), and the clipboard's text of
+    /// before is given back. When another window is in front by then, no key is sent and the text waits on the
+    /// clipboard. A template of several lines (TP-4.8) goes into a field of one line made one line, and into a
+    /// terminal only after a question, <paramref name="breaks"/> then the answer.
+    /// </summary>
+    /// <summary>
+    /// TP-4.8: a template of several lines for a terminal, which runs each line as it is pasted: asked in the launcher
+    /// before it hides, one line the first answer, as it is the second, nothing the cancel.
+    /// </summary>
+    private void AskBeforeLinesRun(bool takeSelection, int lines)
+    {
+        var title = Selected?.Title ?? "This template";
+        ShowNotice(new Notice($"{PasteTarget.ConsoleQuestion(title, lines)}. Put it in how?", "Put it in on one line: its lines joined by spaces, nothing run until you press Enter. Put it in as it is: each line runs as it arrives. Cancel: nothing is put in.",
+        [
+            new OverlayChoice("Put it in on &one line", () => PutIn(takeSelection, LineBreaks.OneLine), IsDefault: true),
+            new OverlayChoice("Put it in &as it is, each line runs", () => PutIn(takeSelection, LineBreaks.Kept)),
+            new OverlayChoice("&Cancel", IsCancel: true),
+        ]));
+    }
+
+    private void PutIn(bool takeSelection, LineBreaks? breaks = null) => Do(async () =>
     {
         if (await TextAsync() is not { } text)
         {
@@ -297,6 +313,14 @@ public sealed class LauncherForm : HotkeyForm
         }
 
         var target = ForegroundBefore;
+        var lineBreaks = breaks ?? WindowInFront.LineBreaksOf(target);
+        var preview = TextTemplate.Expand(text, string.Empty, before);
+        if (breaks is null && lineBreaks == LineBreaks.EachLineRuns && TextTemplate.HasLines(preview))
+        {
+            AskBeforeLinesRun(takeSelection, PasteTarget.LinesOf(preview.Text));
+            return;
+        }
+
         // TP-7.3: that a template was put in, never its name or its text.
         Log.Info("Hidden: a template put in");
         HideWindow();
@@ -321,6 +345,13 @@ public sealed class LauncherForm : HotkeyForm
             : text.Contains(TextTemplate.SelectionMark, StringComparison.Ordinal) ? await Task.Run(FocusedText.SelectedText) ?? string.Empty
             : string.Empty;
         var made = TextTemplate.Expand(text, selection, before);
+        if (lineBreaks == LineBreaks.OneLine && TextTemplate.HasLines(made))
+        {
+            // TP-4.8: a field of one line keeps only a paste's first line.
+            made = TextTemplate.OneLine(made);
+            Log.Info("The template was put in on one line");
+        }
+
         if (made.Text.Length == 0)
         {
             Log.Info("Nothing was pasted: the template made no text");
@@ -443,7 +474,7 @@ public sealed class LauncherForm : HotkeyForm
         }
     });
 
-    /// <summary>Ctrl+Q (TP-4.5): the template's own text, marks and all, in a notice.</summary>
+    /// <summary>Ctrl+Q (TP-4.8): the template's own text, marks and all, in a notice.</summary>
     private void ReadInFull()
     {
         if (Selected is not { } template)

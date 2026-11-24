@@ -66,6 +66,65 @@ public static class TextTemplate
         return new TemplateText(text.ToString(), caret < 0 ? text.Length : caret);
     }
 
+    /// <summary>Whether a filled template holds more than one line.</summary>
+    public static bool HasLines(TemplateText made) => made.Text.AsSpan().IndexOfAny('\r', '\n') >= 0;
+
+    /// <summary>
+    /// A filled template made one line, for a field that holds one (docs/axTemplate/SPEC.md TP-4.8; the maintainer's
+    /// question of 2026-11-24): each line break, with the spaces and tabs around it, becomes one space, and the breaks
+    /// at the start and the end go; the caret stays before the same character, or at the space a break became.
+    /// </summary>
+    public static TemplateText OneLine(TemplateText made)
+    {
+        var source = made.Text;
+        var text = new System.Text.StringBuilder(source.Length);
+        var caret = -1;
+        var at = 0;
+        while (at < source.Length)
+        {
+            if (at == made.Caret)
+            {
+                caret = text.Length;
+            }
+
+            if (source[at] is not ('\r' or '\n'))
+            {
+                text.Append(source[at]);
+                at++;
+                continue;
+            }
+
+            // The break and the blanks on both sides of it, one space in their place unless at an end.
+            while (text.Length > 0 && text[^1] is ' ' or '\t')
+            {
+                text.Length--;
+            }
+
+            // A caret among the blanks just taken away stays where they were.
+            caret = Math.Min(caret, text.Length);
+            var end = at;
+            while (end < source.Length && source[end] is '\r' or '\n' or ' ' or '\t')
+            {
+                end++;
+            }
+
+            if (caret < 0 && made.Caret > at && made.Caret <= end)
+            {
+                caret = text.Length + (text.Length > 0 && end < source.Length ? 1 : 0);
+            }
+
+            if (text.Length > 0 && end < source.Length)
+            {
+                text.Append(' ');
+            }
+
+            at = end;
+        }
+
+        var result = text.ToString();
+        return new TemplateText(result, Math.Min(caret < 0 ? result.Length : caret, result.Length));
+    }
+
     /// <summary>The name a template file gives its menu item: the file's name without its extension.</summary>
     public static string NameOf(string path) => Path.GetFileNameWithoutExtension(path);
 

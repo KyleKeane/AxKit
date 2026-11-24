@@ -212,6 +212,13 @@ public abstract partial class AxKitForm
 
         var clipboard = template.Contains(TextTemplate.ClipboardMark, StringComparison.Ordinal) ? TemplateClipboardText() : string.Empty;
         var made = TextTemplate.Expand(template, field.SelectedText, clipboard);
+        // TP-4.8: a field of one line says so itself, and gets the template on one line.
+        var oneLine = !field.Multiline && TextTemplate.HasLines(made);
+        if (oneLine)
+        {
+            made = TextTemplate.OneLine(made);
+        }
+
         // The field's own line endings; the caret's place counted in them.
         var text = made.Text.ReplaceLineEndings("\r\n");
         var caret = made.Text[..made.Caret].ReplaceLineEndings("\r\n").Length;
@@ -219,7 +226,7 @@ public abstract partial class AxKitForm
         field.Focus();
         field.SelectedText = text;
         field.Select(Math.Min(start + caret, field.TextLength), 0);
-        Announce($"{name} inserted", true);
+        Announce(oneLine ? $"{name} inserted on one line" : $"{name} inserted", true);
     }
 
     /// <summary>The clipboard's text, empty when it holds none or another program holds the clipboard at this moment.</summary>

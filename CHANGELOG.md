@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- axTemplate: **a template of several lines where lines do not fit.** Into a field of one line it goes in on one line; into a terminal, which runs each line as it is pasted, the launcher asks first. Insert template inside axKit does the same for a field of one line.
+
 - axKit: **your own sounds.** axKit menu, Open the sounds folder: put a WAV file there named as one of axKit's sounds (sound names.txt in the folder lists them, edge.wav for instance) and it plays in place of axKit's own from the next start; take it away and axKit's comes back.
 
 - axKit: **one Check for updates at start, in the axKit menu, for every app**, in place of each app's own in Options, General. If you had turned it off in any app, it starts off.
