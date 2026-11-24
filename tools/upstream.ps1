@@ -13,7 +13,8 @@ Without an option: one line per program, the installed version and the verified 
 Quick, no build: run it at the start of a session. Exit code 0 when none changed, 1 when one did.
 
 -Verify [<program>]: runs the checks of every changed program, or of the one named (by its id or its name), each
-check once: the test projects through test.ps1, the scripts through tools\AxAutomate on its own desktop, with
+check once, on the last commit (a clean copy of it in the temporary folder when the working tree has changes not
+committed, so that another session's work in progress is never taken for the program's change): the test projects through test.ps1, the scripts through tools\AxAutomate on its own desktop, with
 --inventory off --traces off: the question is the outside program, not the windows' menus or the kept traces, so the
 runner's exit codes stay 0, 1 and 2 (docs/axKit/user-workflows.md WF-2.10, WF-5.8, WF-11.5). Where all of
 a program's checks pass, its new version and today's date are written into the file. Where one fails, the file keeps
@@ -197,6 +198,8 @@ function Get-Problems($document) {
 # One check, run once in a run of -Verify however many programs name it: 'passed', 'failed' or 'could not run',
 # with the lines that say what failed.
 $results = @{}
+# Where the checks run: this checkout, or a clean copy of its last commit when the working tree has changes (below).
+$checkRoot = $root
 function Invoke-Check([string]$kind, [string]$target) {
     $key = "$kind $target"
     if ($results.ContainsKey($key)) { return $results[$key] }
@@ -204,7 +207,7 @@ function Invoke-Check([string]$kind, [string]$target) {
     $detail = New-Object System.Collections.Generic.List[string]
     if ($kind -eq 'tests') {
         Write-Host "Running the test project $target..."
-        & (Join-Path $root 'test.ps1') $target | ForEach-Object { Write-Host $_ }
+        & (Join-Path $checkRoot 'test.ps1') $target | ForEach-Object { Write-Host $_ }
         if ($LASTEXITCODE -ne 0) { $state = 'failed'; $detail.Add("the test project tests/$target.Tests failed (its failing tests are named above)") }
     } elseif ($kind -eq 'probes') {
         # Claude Code's non-interactive stream, measured (tools\ClaudeProbe stream, docs/axClaude/stream.md): its cases
@@ -215,10 +218,10 @@ function Invoke-Check([string]$kind, [string]$target) {
         $failedCases = New-Object System.Collections.Generic.List[string]
         $code = 2
         try {
-            & dotnet build (Join-Path $root 'tools\ClaudeProbe\ClaudeProbe.csproj') -c Release -v q -nologo -o $probeFolder | Out-Null
+            & dotnet build (Join-Path $checkRoot 'tools\ClaudeProbe\ClaudeProbe.csproj') -c Release -v q -nologo -o $probeFolder | Out-Null
             if ($LASTEXITCODE -eq 0) {
                 $current = ''
-                & (Join-Path $probeFolder 'ClaudeProbe.exe') $target --shape (Join-Path $root 'docs\axClaude\stream-shape.json') | ForEach-Object {
+                & (Join-Path $probeFolder 'ClaudeProbe.exe') $target --shape (Join-Path $checkRoot 'docs\axClaude\stream-shape.json') | ForEach-Object {
                     Write-Host $_
                     if ($_ -match '^== ([^:]+):') { $current = $Matches[1] }
                     elseif ($_ -match '^\s+FAILED: (.+)$') { $failedCases.Add("${current}: $($Matches[1])") }
@@ -241,7 +244,7 @@ function Invoke-Check([string]$kind, [string]$target) {
         $current = ''
         $steps = New-Object System.Collections.Generic.List[string]
         try {
-            & dotnet run --project (Join-Path $root 'tools\AxAutomate') -c Release -- (Join-Path $root (Join-Path 'tests\scripts' $target)) --build --inventory off --traces off --live | ForEach-Object {
+            & dotnet run --project (Join-Path $checkRoot 'tools\AxAutomate') -c Release -- (Join-Path $checkRoot (Join-Path 'tests\scripts' $target)) --build --inventory off --traces off --live | ForEach-Object {
                 Write-Host $_
                 if ($_ -match '^== (.+)$') { $current = $Matches[1] }
                 elseif ($_ -match '^FAIL') { $steps.Add("$(if ($current) { $current } else { $target }): $_") }
@@ -333,6 +336,25 @@ if ($chosen.Count -eq 0) {
 
 # The runner and test.ps1 write a failing step to stderr; as in test.ps1, the exit codes are the check.
 $ErrorActionPreference = 'Continue'
+
+# A working tree with changes not committed (another session's work in the same checkout) is not what a check of an
+# outside program should meet: on 2026-11-24 a window title changed by another session failed four live scripts of
+# Claude Code that passed on the last commit. The checks then run in a clean copy of the last commit, a worktree in
+# the temporary folder, removed after; only the file here is written.
+$worktree = $null
+if ($File -eq '' -and @(& git -C $root status --porcelain --untracked-files=no).Count -gt 0) {
+    $worktree = Join-Path ([IO.Path]::GetTempPath()) ('axkit-upstream-' + (Split-Path -Leaf $root))
+    if (Test-Path -LiteralPath $worktree) { & git -C $root worktree remove --force $worktree 2>&1 | Out-Null }
+    & git -C $root worktree add --detach $worktree HEAD 2>&1 | Out-Null
+    if ($LASTEXITCODE -eq 0) {
+        $checkRoot = $worktree
+        Write-Host 'The working tree has changes not committed: the checks run on the last commit, in a clean copy of it.'
+    } else {
+        $worktree = $null
+        Write-Host 'The working tree has changes not committed, and no clean copy of the last commit could be made: the checks run on the working tree, changes and all.'
+    }
+}
+
 $failedAny = $false
 $blockedAny = $false
 $summary = New-Object System.Collections.Generic.List[string]
@@ -392,6 +414,8 @@ foreach ($entry in $chosen) {
         foreach ($line in $detail) { $summary.Add("  $line") }
     }
 }
+
+if ($worktree) { & git -C $root worktree remove --force $worktree 2>&1 | Out-Null }
 
 Write-Host ''
 $summary | ForEach-Object { Write-Host $_ }
