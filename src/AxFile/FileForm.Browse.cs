@@ -125,7 +125,7 @@ public sealed partial class FileForm
     /// list stays. With <paramref name="remember"/> the folder joins the recent list (AF-3.3). Another folder than the
     /// one shown is announced with its count and the entry landed on, "docs, 5 items, plan.md" (AF-3.1), unless
     /// <paramref name="announce"/> is off: the start, which NVDA reads itself, an undo, which says what it undid, and
-    /// the Actions list's Enter, which moves the focus first.
+    /// Recent operations and the Favorites list's Enter, which move the focus first.
     /// </summary>
     private async Task<bool> ShowFolderAsync(string folder, string? select, bool remember, bool announce = true)
     {
@@ -292,9 +292,9 @@ public sealed partial class FileForm
     // The shared piece makes each item (an entry's label, with ", selected" while it is, S-42's hidden characters
     // made visible), rewrites the items whose mark flipped and says what the key says; its keys are the item
     // window's commands (Space, Shift+Space, Ctrl+A, Ctrl+Shift+A, Shift with the arrows, Home and End), which on
-    // a line that is no entry say that line (NothingToSelect). A change of the marks is no line of the Actions
-    // list (it was one until 2026-11-22, AF-9.2): Space and Escape take a selection back, and the status bar says
-    // how many are selected.
+    // a line that is no entry say that line (NothingToSelect). A change of the marks is no operation of the
+    // window's history (it was one until 2026-11-22, AF-9.2): Space and Escape take a selection back, and the
+    // status bar says how many are selected.
 
     /// <summary>A Selection menu operation (AF-3.7): on the marked entries alone, "None selected" when there are none, never the current entry.</summary>
     private void OnMarks(Action operation)
@@ -423,28 +423,7 @@ public sealed partial class FileForm
         }
     }
 
-    // ---- favorites (AF-3.9) ----
-
-    /// <summary>Folder → Favorites ▸: the pinned folders that still exist as "1. name (path)", or "No favorites yet", then the key's item.</summary>
-    private void FillFavorites()
-    {
-        RecentMenu.FillFolders(_favoritesItem, _settings.Favorites, "&No favorites yet", CommandMark.Open, target => Do(() => ShowFolderAsync(target, null, remember: true)));
-        _favoritesItem.DropDownItems.Add(new ToolStripSeparator());
-        _favoritesItem.DropDownItems.Add(Item("&Add or remove this folder", ToggleFavorite, AxFileKeys.Favorite, CommandMark.Change));
-    }
-
-    /// <summary>Ctrl+D: the folder shown pinned, "Added to Favorites", or unpinned again, "Removed from Favorites".</summary>
-    private void ToggleFavorite()
-    {
-        if (!TryFolder(out var folder))
-        {
-            return;
-        }
-
-        var added = _settings.ToggleFavorite(folder);
-        SaveSettings();
-        Announce(added ? "Added to Favorites" : "Removed from Favorites", true);
-    }
+    // The favorites (AF-3.9) and their list (AF-9.1) are FileForm.Favorites.cs.
 
     /// <summary>The folder above a folder that is gone, the first one that exists; null when none is.</summary>
     private static string? NearestExisting(string folder)

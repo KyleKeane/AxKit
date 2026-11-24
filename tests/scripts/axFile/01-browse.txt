@@ -78,19 +78,19 @@ type zzz
 expect said ♪ Edge
 expect focus coconut.txt
 wait 1200
-# Goal: Move between the list and the Actions list
-# Tab to the Actions list and back; F6 and Ctrl+Tab the same, Escape back.
+# Goal: Move between the list and the Favorites list
+# Tab to the Favorites list and back; F6 and Ctrl+Tab the same, Escape back.
 keys tab
-expect focus "name":"Actions"
-expect focus No actions yet
+expect focus "name":"Favorites"
+expect focus No favorites yet
 keys shift+tab
 expect focus coconut.txt
 keys f6
-expect focus "name":"Actions"
+expect focus "name":"Favorites"
 keys escape
 expect focus coconut.txt
 keys ctrl+tab
-expect focus "name":"Actions"
+expect focus "name":"Favorites"
 keys escape
 expect focus coconut.txt
 
@@ -197,7 +197,7 @@ keys right
 expect said ! C:\,
 keys backspace
 expect said ! This PC,
-# Manual (1.4): Alt+D with a drive's number and Alt+F, V with a favorite: the Drives and Favorites submenus are filled as they open and cannot be reached by the channel (no menu mode on the test desktop, not in the command palette).
+# Manual (1.4): Alt+N, E with a drive's number and Alt+N, V with a favorite: the Drives and Favorites submenus are filled as they open and cannot be reached by the channel (no menu mode on the test desktop, not in the command palette).
 
 # Goal: Move down and up the folder tree
 # 1.4b Left and Right.
@@ -328,11 +328,18 @@ keys backspace
 expect said ! nav, 13 items, level-1-enter-me, folder
 
 # Goal: Add a folder to the favorites and remove it
-# 1.8 Manual: Ctrl+O is the Windows folder picker, the Open recent folder submenu is filled as it opens (not in the palette), Ctrl+N starts a second window the runner cannot reach. Favorites: Ctrl+D adds and removes.
+# 1.8 Manual: Ctrl+O is the Windows folder picker, the Open recent folder submenu is filled as it opens (not in the palette), Ctrl+N starts a second window the runner cannot reach. Favorites: Ctrl+D adds and removes, and the Favorites list follows (section 6 has the list's own steps).
 keys ctrl+d
 expect said ! Added to Favorites
+keys tab
+expect focus "name":"Favorites"
+expect focus nav (
+keys shift+tab
 keys ctrl+d
 expect said ! Removed from Favorites
+keys tab
+expect focus No favorites yet
+keys shift+tab
 
 # Goal: Refresh the folder after a change from outside
 # 1.9 A file added from outside: F5 reads the folder again, "Refreshed", the entry kept. (Coming back to the window with Alt+Tab is manual: the test window is never activated.)

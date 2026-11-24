@@ -70,8 +70,8 @@
   again, `Clear` for another level), each over the shown rows (a
   `MarkRow`: the key its mark is kept by, its name, and whether it can be selected at all, a heading cannot and is
   passed over by the keys that select many) and returning a `MarkChange`: the rows whose mark flipped and the words
-  said (until 2026-11-22 also the line axFile's Actions list kept for the change and what its undo needed; that
-  list holds only what changed files since). The words of a selection ("Selected, 3 selected", "None
+  said (until 2026-11-22 also the line axFile's history of operations kept for the change and what its undo
+  needed; that history holds only what changed files since). The words of a selection ("Selected, 3 selected", "None
   selected") are made here and nowhere else. `Items` is "1 item", "3 items". The window's side is
   `AxKit.Forms/ListSelection`.
 - `ListArrange`, with `ArrangeRow` (docs/axKit/framework.md FW-4.10a, 2026-11-22; the filter from AxFile.Core's `FolderListing`, for every navigator): the filter and the sort of a navigator's list, as positions in the rows given (an `ArrangeRow`: its name, whether it is a list one goes into, whether it is a heading). `ByName` (Windows' natural order, lists first, a heading left in its place and the rows under it ordered among themselves), `Filter` (the names that contain a text in any case; a heading stays while a row under it passes, its own name not looked at), `Name` (the list's name under a filter, "Home, 4 items, filter tap, 1 shown") and `NoMatch` ("No names contain chap"). The window's side is `AxKit.Forms/ItemForm.Arrange.cs`.

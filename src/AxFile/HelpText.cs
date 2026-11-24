@@ -10,16 +10,16 @@ public static class HelpText
     public static readonly string Shortcuts = BundleHelp.Section(
         "axFile",
         [
-            "Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6: between the folder list and the Actions list",
+            "Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6: between the folder list and the Favorites list",
             "Ctrl+F: find an entry whose name contains the text. F3 and Shift+F3: the next or the previous match",
         ]) + """
         ## Moving around
           Arrow keys, Home, End, Page Up, Page Down: through the entries. At the first or the last entry, a key that cannot move plays one short low note
           Type the start of a name, the letters within a second of each other: the first name starting with it, as in File Explorer; the same letter again, the next such name; Shift with a letter, the same backwards; the low note when no name starts with it
           Enter or Right Arrow on a folder: into it; Right on a file plays the low note and never opens it. Backspace, Left Arrow or Alt+Up: the folder above, the one you left selected; from a drive's top, This PC with the drives. Each says the folder, its count and the entry you land on: "docs, 5 items, plan.md"
-          Ctrl+G or Alt+D: go to a typed path, %USERPROFILE%\Downloads for instance; in its field, Down and Up complete the path from what you typed, "Documents, folder, 2 of 5", and Right at the end of a completed folder goes into it. Ctrl+O: the Windows folder picker. Session, Open recent folder and Session, Favorites: by number. Ctrl+D: add this folder to Favorites, or remove it
+          Ctrl+G or Alt+D: go to a typed path, %USERPROFILE%\Downloads for instance; in its field, Down and Up complete the path from what you typed, "Documents, folder, 2 of 5", and Right at the end of a completed folder goes into it. Ctrl+O: the Windows folder picker. Session, Open recent folder and Navigation, Favorites: by number. Ctrl+D: add this folder to Favorites, or remove it
           Ctrl+N: a new axFile window on this folder. F5: read the folder again
-          Session, Drives: the drives by number, This PC, Eject this drive, Drive properties
+          Navigation, Drives: the drives by number, This PC, Eject this drive, Drive properties
 
         ## Opening
           Enter on a file: the program Windows has for it (the one you made its default: axDown, axMedia, axPreview or any other), or the Windows dialog that picks one when there is none
@@ -42,8 +42,9 @@ public static class HelpText
           F2: rename in place, in a box over the entry with the name before the extension selected; Enter renames, Escape keeps the name. Delete: to the Recycle Bin, after a question
           Ctrl+X, Ctrl+C, Ctrl+V: cut, copy or paste as files, to and from File Explorer too; a pasted name already in the folder gets a number. Ctrl+Shift+C: copy the entry's full path, or every selected entry's, one per line
           In the entry's menu: Move to folder, Compress to zip, Extract here
-          Ctrl+Z: undo the newest operation that can be undone, one per press, the last twenty: a rename renamed back, a new folder or file removed while still empty, a move moved back, a paste's copies or a zip sent to the Recycle Bin, a delete restored from it. Session, Undo names what it would undo
-          Every operation runs on its own: a second paste, delete or zip can start while the first runs
+          Ctrl+Z: undo the newest operation that can be undone, one per press, the last twenty: a rename renamed back, a new folder or file removed while still empty, a move moved back, a paste's copies or a zip sent to the Recycle Bin, a delete restored from it. Actions, Undo names what it would undo
+          Every operation runs on its own: a second paste, delete or zip can start while the first runs; the status bar shows the newest operation's line, "Compressing, 40 of 120 files" while it runs
+          Actions, Recent operations: the operations of this window, newest first, "Copied 3 items, 21:04", "…, undone" once taken back; Enter on one goes to where it left things, Escape closes the list. Selecting writes none
 
         ## Information
           Ctrl+I: the entry's size and date; for a drive, the free space
@@ -51,11 +52,10 @@ public static class HelpText
           NVDA+End: the status bar: the newest operation and how many entries are selected on the left, the folder's full path on the right
           Ctrl+S: nothing to save here; axFile says so
 
-        ## The Actions list
-          Under the folder list, always; "No actions yet" until the first operation. Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6 moves between the two lists, Escape goes back to the folder list, Session, Actions goes there
-          Two sections, each under a header line: Running, the operations under way; Operations, the ones done. Newest last in each
-          One line per operation: "Renamed notes.md to todo.md", "Copied 3 items", "Compressing, 40 of 120 files" while it runs, "Failed: …", "…, undone" once taken back. Selecting writes no line
-          Enter: go to where it happened, the folder list on the entry it made or moved. Ctrl+Z: undo this line, whatever its place. Ctrl+I: its section, number and time, "Operations, 3 of 12, 21:04". Shift+F10 or the Applications key: the Context menu with these for the line
+        ## The Favorites list
+          Under the folder list, always; "No favorites yet" until the first. Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6 moves between the two lists, Escape goes back to the folder list, Navigation, The Favorites list goes there
+          One line per favorite, in the order added: its name, then its full path, "Music (C:\Music)". Ctrl+D in any folder adds it, and selects it here
+          Enter: the folder in the folder list, the focus there. Delete: take it out of the favorites; the folder itself stays. Ctrl+I: its full path and place, "C:\Music, 2 of 3". Shift+F10 or the Applications key: the Context menu with these for the line
         """ + BundleHelp.FilterAndSortSection("Name, Date or Size, folders first") + BundleHelp.NoticesSection("axFile", "the lists");
 
     /// <summary>docs/axFile/user-guide.md, embedded by AxFile.csproj.</summary>

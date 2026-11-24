@@ -330,9 +330,11 @@ function Build-AxFile([string]$d) {
     Write-Text (Join-Path $undo 'rename-here-then-in-file-explorer.txt') 'Rename in axFile, rename again in File Explorer, then Ctrl+Z: Not undone.'
     Write-Text (Join-Path $undo 'compress-then-undo\inside.txt') 'Compress the folder, then Ctrl+Z.'
 
-    # The Actions list (section 6).
-    $act = New-Folder (Join-Path $d 'actions-list')
-    Write-Text (Join-Path $act 'start-here.txt') 'Make temp here with Ctrl+Shift+N, then Tab to the Actions list.'
+    # The Favorites list and Recent operations (section 6).
+    $act = New-Folder (Join-Path $d 'favorites-and-recent-operations')
+    Write-Text (Join-Path $act 'favorite-me\readme.txt') 'Enter here, Ctrl+D, then Tab: the Favorites list.'
+    Write-Text (Join-Path $act 'favorite-me-too\readme.txt') 'Enter here, Ctrl+D: a second favorite.'
+    Write-Text (Join-Path $act 'start-here.txt') 'Make temp here with Ctrl+Shift+N, then Alt+A, O: Recent operations.'
     Write-Text (Join-Path $act 'subfolder-for-inner\readme.txt') 'Enter here, Ctrl+Shift+N inner.'
     Write-Text (Join-Path $act 'zip-two-files-1.txt') 'Select me and the second, Compress to zip.'
     Write-Text (Join-Path $act 'zip-two-files-2.txt') 'Select me and the first, Compress to zip.'

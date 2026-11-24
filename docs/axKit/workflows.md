@@ -414,7 +414,7 @@ Steps and keys: `docs/axKit/workflows/axFile.md` (in Claude's working folder: `w
     - Open a folder in axFile
     - Move through the list of files
     - Find a file by typing its name
-    - Move between the list and the Actions list
+    - Move between the list and the Favorites list
     - Hear the status bar
     - Open a folder in the list
     - Go back to the folder above
@@ -463,14 +463,18 @@ Steps and keys: `docs/axKit/workflows/axFile.md` (in Claude's working folder: `w
     - Hear the version of axKit
     - Run a command from the command palette
     - Open axFile on the last folder
-6. **Undo a file operation from the Actions list**
-    - Move to the Actions list from the menu
-    - See the last operation in the Actions list
-    - Go to the folder of an operation from its line
-    - Undo an operation from the Actions list
+6. **Keep favorite folders and go back to recent operations**
+    - Move to the Favorites list from the menu
+    - Add a folder to the Favorites list
+    - Open a favorite from the Favorites list
+    - Remove a favorite from the Favorites list
+    - See the last operation in the status bar
+    - Read the recent operations again
+    - Go to the folder of an operation from Recent operations
+    - Undo the newest operation from either list
     - Go to an operation done in another folder
     - Undo the newest operation from the folder list
-    - Select entries without a line in the Actions list
+    - Select entries without an operation
     - Select every entry from the marked one to here
 7. **Move files to a folder you type**
     - Move a file into a folder by typing its name

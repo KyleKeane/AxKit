@@ -230,7 +230,7 @@ library dependency (B-10: `git.exe` and the file system through the APIs already
   (AF-D2), until 2026-10-22, when the user split it out as an app of its own with one queue, together with
   **axPreview**, a read-only viewer for one file, so that axFile is file operations and management only; the
   specifications are `docs/axMedia/SPEC.md` and `docs/axPreview/SPEC.md`, the inventory of the split
-  the split's inventory of 2026-10-22, in the git history, and axFile's pane becomes its Actions list (`docs/axFile/SPEC.md` AF-9); all three
+  the split's inventory of 2026-10-22, in the git history, and axFile's pane becomes its list of operations (`docs/axFile/SPEC.md` AF-D3; the Favorites list since 2026-11-23); all three
   built the same day on the branch `split`, released in 3.3.1 and passed under NVDA the same day. As first built, the player was:
   Enter on a sound or video file plays it and the folder's media files follow in order; pause, seek, next, previous,
   speed, go to time, what is playing on Ctrl+Q; Windows' own decoders through one P/Invoke seam (MCI or MFPlay, chosen

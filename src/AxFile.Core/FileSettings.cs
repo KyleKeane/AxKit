@@ -27,7 +27,7 @@ public sealed class FileSettings : WindowSettings
     /// <summary>The list's order (AF-3.8), kept for the next folder and the next window.</summary>
     public SortBy SortBy { get; set; } = SortBy.Name;
 
-    /// <summary>The folders the user pinned with Ctrl+D (AF-3.9), in the order added, for Folder → Favorites.</summary>
+    /// <summary>The folders the user pinned with Ctrl+D (AF-3.9), in the order added, for the Favorites list and Navigation → Favorites.</summary>
     public List<string> Favorites { get; set; } = [];
 
     /// <summary>The user's own programs and scripts of Open with a custom program ▸ (AF-4.11), in the order added.</summary>
@@ -112,5 +112,16 @@ public sealed class FileSettings : WindowSettings
 
         Favorites.Add(folder);
         return true;
+    }
+
+    /// <summary>Removes the folder from the favorites (Delete in the Favorites list, AF-9.1); false when it was not one.</summary>
+    public bool RemoveFavorite(string folder) =>
+        Favorites.RemoveAll(f => string.Equals(f, folder, StringComparison.OrdinalIgnoreCase)) > 0;
+
+    /// <summary>A favorite's line in the Favorites list (AF-9.1): its name, then its full path, "Music (C:\Music)"; a drive's or a share's root by its path alone.</summary>
+    public static string FavoriteLine(string folder)
+    {
+        var name = PathName.Of(folder);
+        return name.Length == 0 || string.Equals(name, folder, StringComparison.OrdinalIgnoreCase) ? folder : $"{name} ({folder})";
     }
 }

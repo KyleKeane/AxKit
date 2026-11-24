@@ -176,8 +176,8 @@ and an error naming a file that could not be opened.
   come, so that a reload does not move the user). Tab and Shift+Tab (the read-only text takes no Tab; the Go to line
   field comes between while it shows), and the bundle's Ctrl+Tab, Ctrl+Shift+Tab and F6, move between the two; a file
   opened or handed over puts the focus on the content, as now.
-- AP-6.2 **What it lists**, one line each, "Name: value", in three groups with a heading line each, as axFile's
-  Actions list has sections:
+- AP-6.2 **What it lists**, one line each, "Name: value", in three groups with a heading line each, as a navigator's list
+  has sections:
   1. **File:** Name, Folder, Size ("12.1 KB, 12,345 bytes"), Type (Windows' name for the kind, "Markdown File", and
      the extension), Modified, Created, Accessed (the dates as the bundle writes them, with the time), Attributes
      (Read-only, Hidden, System, Compressed, Encrypted, Offline, a link; Archive and Normal, set on nearly every file,

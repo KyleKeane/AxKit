@@ -44,7 +44,7 @@ Section 1, step 13; section 3, step 7b; section 6, steps 8 and 9.
 - Space, Shift+Down, Shift+Up, Shift+Home, Shift+End, Shift+Space, Ctrl+A, Ctrl+Shift+A, Escape.
 - Escape with entries selected: "None selected". With a filter on and entries selected, the first Escape deselects and the second clears the filter.
 - Alt+S, the Selection menu, with and without selected entries.
-- Tab to the Actions list: the Selection section has a line for each change; Ctrl+Z on one puts the selection back.
+- Ctrl+Z after selecting: an operation is undone, never the selection; Actions, Recent operations has no line for a selection.
 
 ## file-operations
 
@@ -56,7 +56,7 @@ Section 3, steps 1 to 13.
 - `docs`: Shift+F10, Z makes `docs.zip`, again `docs - 2.zip`.
 - `existing-archive-extract-me.zip`: Shift+F10, X extracts it. `not-a-zip.txt`: "Not a zip file".
 - `paste-into-this-folder`: the target for Ctrl+X and Ctrl+V.
-- `big-folder-copy-twice-at-once`: 200 files, 50 MB; Ctrl+C, then Ctrl+V twice quickly, to see two copies run side by side in the Actions list.
+- `big-folder-copy-twice-at-once`: 200 files, 50 MB; Ctrl+C, then Ctrl+V twice quickly, to see two copies run side by side in Actions, Recent operations.
 - `in-use-open-a-terminal-in-me-then-rename`: Shift+F10, A, T opens axTerminal in it; then F2 fails with "In use by another program". Close the terminal and F2 works.
 - Ctrl+Shift+N and Ctrl+Shift+T make new entries here.
 
@@ -64,9 +64,9 @@ Section 3, steps 1 to 13.
 
 Section 3, step 14. Each file says by its name what to do before Ctrl+Z: `rename-then-undo.txt`, `copy-then-undo.txt`, `delete-then-undo.txt`, the two `delete-two-then-undo` files, the two `move-two-then-undo` files, `rename-here-then-in-file-explorer.txt` (for "Not undone"), and the folder `compress-then-undo`.
 
-## actions-list
+## favorites-and-recent-operations
 
-Section 6, steps 1 to 7. Start on this folder: Tab reads "No actions yet". `start-here.txt` sits beside where you make `temp`; `subfolder-for-inner` is where step 4 makes `inner`; the two `zip-two-files` files are for step 5. For the long copy of step 8, use `file-operations\big-folder-copy-twice-at-once`.
+Section 6. Start on this folder: Alt+A, O says "No operations yet". `favorite-me` and `favorite-me-too` are the folders to add with Ctrl+D (steps 2 and 3); `start-here.txt` sits beside where you make `temp` (step 5); `subfolder-for-inner` is where step 6 makes `inner`; the two `zip-two-files` files are for step 7. For the long copy of step 7, use `file-operations\big-folder-copy-twice-at-once`.
 
 ## changes-from-file-explorer
 

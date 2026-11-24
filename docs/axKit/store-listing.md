@@ -56,7 +56,7 @@ The first sentence names what the access layers need (policy 10.2.4); the rest i
 > The apps: axClaude, a front end for Claude Code that shows the conversation as plain text you move through line by
 > line; axDown, a plain editor for Markdown and text files with navigation by heading, link and list; axJSON, the same
 > editor for JSON files with a Format command; axGIT, a git manager for one repository; axTerminal, your shell as a
-> transcript; axFile, a file manager for one folder with an Actions list of everything you can undo; axMedia, a player
+> transcript; axFile, a file manager for one folder, with your favourite folders beside it and Ctrl+Z for every operation; axMedia, a player
 > for sound and video files with one queue; axPreview, a read-only viewer for a text file; axStart, a program launcher
 > behind a hotkey; axProcess, the processes, services and startup programs as one list; axTask, tasks and lists as a
 > folder of small files; axPass, a KeePass password database read and changed by ear; axCalc, a calculator with a
@@ -83,7 +83,7 @@ The `CHANGELOG.md` section of the version, as the release notes carry it.
 - axJSON: the same editor for JSON files, with navigation by key and a Format command.
 - axGIT: one repository's changes, log and branches as lists; commit, discard, fetch, pull and push after your consent.
 - axTerminal: PowerShell, Command Prompt or Git Bash as a transcript, with the output of each command found by a key.
-- axFile: a file manager for one folder, with an Actions list of every operation and Ctrl+Z for each.
+- axFile: a file manager for one folder, with a Favorites pane, a list of recent operations and Ctrl+Z for each.
 - axMedia: a player for sound and video files with one queue, speed and pitch control.
 - axPreview: a read-only viewer for one text file, with the same navigation keys as the editors.
 - axStart: a program launcher behind a global hotkey, with the first match spoken as you type.
@@ -121,7 +121,7 @@ folder's path and an account's name is personal data; checked by eye against tha
 first run had the maintainer's folder in axFile's status bar and was retaken). The captions, in the files' order:
 
 1. axDown with the axKit guide: "axDown: a Markdown file, moved through by heading, link and list."
-2. axFile with a folder and its Actions list: "axFile: one folder, and every action listed to undo."
+2. axFile with a folder and its Favorites list: "axFile: one folder, your favourite folders, and every operation to undo."
 3. axTask with a list: "axTask: tasks and lists as small files, with typed fields."
 4. axJSON with a JSON file: "axJSON: a JSON file, moved through by key, with a Format command."
 5. axCalc with its history: "axCalc: one expression field and a history list."

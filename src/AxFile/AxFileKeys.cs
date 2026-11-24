@@ -7,12 +7,12 @@ namespace AxFile;
 /// items, the window's command list (<c>FileForm</c>, app-kit AK-2) and the F1 text read this table. The bundle-wide keys
 /// (F1, the control keys, find, Ctrl+S, text size) are <c>AxKit.Forms.BundleKeys</c>. Enter, Backspace, Space, F2,
 /// Delete, Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A, Ctrl+Shift+A, Shift+F10 and the Applications key act in the folder list
-/// only; in the Actions list Enter, Ctrl+Z, Ctrl+I and Escape act on its line; in a notice's field or the rename box
+/// only; in the Favorites list Enter, Delete, Ctrl+I and Escape act on its line; in a notice's field or the rename box
 /// they are the field's own.
 /// </summary>
 public static class AxFileKeys
 {
-    /// <summary>In the folder list: Enter opens the entry (a folder in the list, a file in the program Windows has for it); in the Actions list: where the action left things.</summary>
+    /// <summary>In the folder list: Enter opens the entry (a folder in the list, a file in the program Windows has for it); in the Favorites list: the favorite in the folder list.</summary>
     public const Keys Open = Keys.Return;
 
     /// <summary>In the folder list: the file read in axPreview (AF-3.2); a folder in a new axFile window, File Explorer's Shift+Enter.</summary>
@@ -31,7 +31,7 @@ public static class AxFileKeys
     /// <summary>The folder shown added to Favorites, or removed from them (AF-3.9); the browsers' bookmark key.</summary>
     public const Keys Favorite = Keys.Control | Keys.D;
 
-    /// <summary>In the folder list: the selection cleared while entries are selected, otherwise the filter; nothing while there is neither. In the Actions list: back to the folder list.</summary>
+    /// <summary>In the folder list: the selection cleared while entries are selected, otherwise the filter; nothing while there is neither. In the Favorites list: back to the folder list.</summary>
     public const Keys Clear = SelectionKeys.Clear;
     public const Keys OpenFolder = Keys.Control | Keys.O;
     public const Keys GoToFolder = Keys.Control | Keys.G;
@@ -41,7 +41,7 @@ public static class AxFileKeys
     public const Keys ShowInExplorer = Keys.Control | Keys.W;
     public const Keys ShowItemInExplorer = Keys.Control | Keys.Shift | Keys.W;
 
-    /// <summary>The entry's size and date; in the Actions list, the line's number and time.</summary>
+    /// <summary>The entry's size and date; in the Favorites list, the favorite's full path and its place.</summary>
     public const Keys Information = Keys.Control | Keys.I;
     public const Keys NewFolder = Keys.Control | Keys.Shift | Keys.N;
 
@@ -51,7 +51,7 @@ public static class AxFileKeys
     /// <summary>In the list: the rename in place, a box over the entry (AF-4.2).</summary>
     public const Keys Rename = Keys.F2;
 
-    /// <summary>In the list: the Delete question.</summary>
+    /// <summary>In the folder list: the Delete question; in the Favorites list: the favorite taken out of the favorites.</summary>
     public const Keys Delete = Keys.Delete;
 
     public const Keys CopyPath = Keys.Control | Keys.Shift | Keys.C;
@@ -69,7 +69,7 @@ public static class AxFileKeys
     // Ctrl+Shift+A) are the bundle's, AxKit.Forms/SelectionKeys (AX-8.16), the same in every window with a selection;
     // the table below includes them.
 
-    /// <summary>In either list: the bar's Context menu on the entry, or on the Actions list's line, opened as Alt and C open it (AF-4.6, AF-D13, AX-9.11). The navigator's key (<see cref="ItemKeys"/>).</summary>
+    /// <summary>In either list: the bar's Context menu on the entry, or on the Favorites list's line, opened as Alt and C open it (AF-4.6, AF-D13, AX-9.11). The navigator's key (<see cref="ItemKeys"/>).</summary>
     public const Keys ContextMenu = ItemKeys.ItemMenu;
 
     /// <summary>In either list: the same, from the Applications key.</summary>
@@ -78,7 +78,7 @@ public static class AxFileKeys
     /// <summary>The Windows Properties sheet of the entry, File Explorer's key for it (AF-4.7).</summary>
     public const Keys Properties = Keys.Alt | Keys.Return;
 
-    /// <summary>The newest operation of this window taken back (AF-4.14); in the Actions list, the line under the selection (AF-9.3).</summary>
+    /// <summary>The newest operation of this window taken back (AF-4.14), in either list.</summary>
     public const Keys Undo = Keys.Control | Keys.Z;
 
     /// <summary>In either list, at the first entry: the edge earcon (AF-3.6; the bundle's `AxKitList` since 2026-10-24); the list's own key everywhere else. In the Go to folder field: the previous completion (AF-3.3).</summary>
@@ -112,34 +112,34 @@ public static class AxFileKeys
     /// <summary>Every key of the window with its name, for the collision test and the F1 text.</summary>
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
     [
-        ("Open (in the folder list); go to the action's place (in the Actions list)", Open),
+        ("Open (in the folder list); open the favorite (in the Favorites list)", Open),
         ("Preview in axPreview, or a folder in a new window (in the folder list)", Preview),
         ("Up one level (in the folder list)", Up),
         ("Up one level", UpAlso),
         ("New window", NewWindow),
         ("Refresh", Refresh),
         ("Add to or remove from Favorites", Favorite),
-        ("Clear the selection, or else the filter (in the folder list); back to the folder list (in the Actions list)", Clear),
+        ("Clear the selection, or else the filter (in the folder list); back to the folder list (in the Favorites list)", Clear),
         ("Open folder", OpenFolder),
         ("Go to folder", GoToFolder),
         ("Go to folder, File Explorer's address bar key", GoToFolderAlso),
         ("Show the folder in File Explorer", ShowInExplorer),
         ("Show the entry in File Explorer", ShowItemInExplorer),
-        ("Information about the entry, or the action's number and time", Information),
+        ("Information about the entry, or the favorite's full path", Information),
         ("New folder", NewFolder),
         ("New text file", NewFile),
         ("Rename (in the folder list)", Rename),
-        ("Delete (in the folder list)", Delete),
+        ("Delete (in the folder list); remove from Favorites (in the Favorites list)", Delete),
         ("Copy path", CopyPath),
         ("Cut (in the folder list)", Cut),
         ("Copy (in the folder list)", Copy),
         ("Paste (in the folder list)", Paste),
         // The bundle's selection keys (AX-8.16), in the folder list; Escape is the entry above, with its second meaning here.
         .. SelectionKeys.All.Where(key => key.Key != SelectionKeys.Clear),
-        ("Context menu: the entry's, or the line's in the Actions list", ContextMenu),
+        ("Context menu: the entry's, or the favorite's in the Favorites list", ContextMenu),
         ("Context menu, from the Applications key", ContextMenuAlso),
         ("Properties", Properties),
-        ("Undo the newest operation, or the action under the selection (in the Actions list)", Undo),
+        ("Undo the newest operation", Undo),
         ("The edge earcon at the first entry (in a list); the previous completion (in the Go to folder field)", FirstItem),
         ("The edge earcon at the first entry (in a list)", FirstItemAlso),
         ("The edge earcon at the last entry (in a list); the next completion (in the Go to folder field)", LastItem),

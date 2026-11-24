@@ -26,13 +26,13 @@ command's in this version of axKit.
 2. Type: c
 3. Type: c
 
-### Move between the list and the Actions list
+### Move between the list and the Favorites list
 
 1. Press Tab.
 2. Press Shift+Tab.
-3. Press F6 (Switch between the list and the Actions list).
+3. Press F6 (Switch between the list and the Favorites list).
 4. Press Escape.
-5. Press Ctrl+Tab (Switch between the list and the Actions list).
+5. Press Ctrl+Tab (Switch between the list and the Favorites list).
 6. Press Escape.
 
 ### Hear the status bar
@@ -169,8 +169,12 @@ command's in this version of axKit.
 
 1. Press Ctrl+D.
     You hear: Added to Favorites.
-2. Press Ctrl+D.
+2. Press Tab.
+3. Press Shift+Tab.
+4. Press Ctrl+D.
     You hear: Removed from Favorites.
+5. Press Tab.
+6. Press Shift+Tab.
 
 ### Refresh the folder after a change from outside
 
@@ -537,88 +541,120 @@ Starts with: Open axFile with the folder pal.
 1. Close the window.
 2. Open axFile.
 
-## Undo a file operation from the Actions list
+## Keep favorite folders and go back to recent operations
 
 Starts with: Open axFile with the folder act.
 
-### Move to the Actions list from the menu
+### Move to the Favorites list from the menu
 
-1. Choose The Actions list in the Navigation menu.
+1. Choose The Favorites list in the Navigation menu.
 2. Press Shift+Tab.
+3. Press F6 (Switch between the list and the Favorites list).
+4. Press Shift+Tab.
+5. Press Ctrl+Tab (Switch between the list and the Favorites list).
+6. Press Shift+Tab.
 
-### See the last operation in the Actions list
+### Add a folder to the Favorites list
+
+1. Press Enter.
+    You hear: favorite-me, 1 item, readme.txt.
+2. Press Ctrl+D.
+    You hear: Added to Favorites.
+3. Press Backspace.
+    You hear: act, 8 items, favorite-me, folder.
+4. Press Down.
+5. Press Enter.
+    You hear: favorite-me-too, 1 item, readme.txt.
+6. Press Ctrl+D.
+    You hear: Added to Favorites.
+7. Press Tab.
+8. Press Escape.
+9. Press Backspace.
+    You hear: act, 8 items, favorite-me-too, folder.
+
+### Open a favorite from the Favorites list
+
+1. Press Tab.
+2. Press Home.
+3. Press Enter.
+    You hear: favorite-me, 1 item, readme.txt.
+4. Press Tab.
+5. Press Ctrl+I.
+    You hear: favorite-me, 1 of 2.
+
+### Remove a favorite from the Favorites list
+
+1. Press Delete.
+    You hear: Removed from Favorites.
+2. Press Escape.
+3. Press Backspace.
+    You hear: act, 8 items, favorite-me, folder.
+
+### See the last operation in the status bar
 
 1. Press Ctrl+Shift+N (New folder; Actions menu).
 2. Type: temp
 3. Press Enter.
     You hear: Created temp.
-4. Press Tab.
-5. Press Up.
+
+### Read the recent operations again
+
+1. Press F2 (Rename; Context menu).
+2. Type: notes
+3. Press Enter.
+    You hear: Renamed to notes.
+4. Choose Recent operations in the Actions menu.
+5. Press Down.
 6. Press Escape.
-7. Press F6 (Switch between the list and the Actions list).
-8. Press Shift+Tab.
-9. Press Ctrl+Tab (Switch between the list and the Actions list).
-10. Press Shift+Tab.
 
-### Go to the folder of an operation from its line
+### Go to the folder of an operation from Recent operations
 
-1. Press Up.
-2. Press Enter.
-3. Press Tab.
-4. Press Down.
-5. Press Enter.
+1. Choose Recent operations in the Actions menu.
+2. Press Down.
+3. Press Enter.
 
-### Undo an operation from the Actions list
+### Undo the newest operation from either list
 
 1. Press Tab.
 2. Press Ctrl+Z.
     You hear: Undone: renamed back to temp.
 3. Press Escape.
-4. Press Tab.
-5. Press Ctrl+Z.
-    You hear: Already undone.
-6. Press Enter.
-7. Press Tab.
-8. Press Ctrl+I.
-    You hear words such as: Operations, 2 of 2.
-9. Press Home.
-10. Press Ctrl+I.
-    You hear: Operations.
-11. Press Escape.
+4. Choose Recent operations in the Actions menu.
+5. Press Escape.
 
 ### Go to an operation done in another folder
 
-1. Press Home.
-2. Press Enter.
+1. Press Ctrl+F (Find).
+2. Type: subfolder
+3. Press Enter 2 times.
     You hear: subfolder-for-inner, 1 item, readme.txt.
-3. Press Ctrl+Shift+N (New folder; Actions menu).
-4. Type: inner
-5. Press Enter.
+4. Press Ctrl+Shift+N (New folder; Actions menu).
+5. Type: inner
+6. Press Enter.
     You hear: Created inner.
-6. Press Backspace.
-    You hear: act, 7 items, subfolder-for-inner, folder.
-7. Press Tab.
-8. Press Enter.
+7. Press Backspace.
+    You hear: act, 9 items, subfolder-for-inner, folder.
+8. Choose Recent operations in the Actions menu.
+9. Press Enter.
     You hear: subfolder-for-inner, 2 items, inner, folder.
-9. Press Backspace.
-    You hear: act, 7 items, subfolder-for-inner, folder.
+10. Press Backspace.
+    You hear: act, 9 items, subfolder-for-inner, folder.
 
 ### Undo the newest operation from the folder list
 
 1. Press Ctrl+Z (Undo delete; Actions menu).
     You hear: Undone: 2 items restored.
 
-### Select entries without a line in the Actions list
+### Select entries without an operation
 
 1. Press Ctrl+F (Find).
 2. Type: start-here
 3. Press Enter.
 4. Press Space.
     You hear: Selected.
-5. Press Tab.
-6. Press End.
-7. Press Escape.
-8. Press Space.
+5. Choose Recent operations in the Actions menu.
+6. Press Escape.
+7. Press Space.
     You hear: Deselected.
 
 ### Select every entry from the marked one to here

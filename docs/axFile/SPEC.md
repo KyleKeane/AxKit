@@ -15,9 +15,10 @@ does what File Explorer does: a folder opens in the list, a file opens in the pr
 Windows (axDown, axJSON, axMedia, axPreview or any other, once chosen there); Shift+Enter reads a file in axPreview;
 Backspace goes up. The operations, each one notice or one announcement: new folder, new text file, rename in place,
 delete to the Recycle Bin, cut, copy and paste as files, move to a new folder, compress to zip and extract, copy the
-path; marks with Space for several at once; sort, filter, Favorites, This PC and the drives. Every operation is a
-line of the **Actions** list under the folder list, where it can be read again, undone (Ctrl+Z) and walked back to
-(Enter). Sound and video go to axMedia (Play folder, Add to queue), reading to axPreview, everything else in Windows
+path; marks with Space for several at once; sort, filter, Favorites, This PC and the drives. Two panes: the folder
+list and, under it, the **Favorites** list of the folders pinned with Ctrl+D, where Enter shows one. Every operation is
+kept in the window's history: the status bar shows the newest, Ctrl+Z takes them back newest first, and Actions →
+**Recent operations** reads them again and goes to where one left things. Sound and video go to axMedia (Play folder, Add to queue), reading to axPreview, everything else in Windows
 is one item away (Open with, Properties, the Windows menu). The window is reached from the other windows on the
 folder of the file or project in hand, and sends back. It works entirely offline (bundle G6).
 
@@ -32,9 +33,9 @@ folder of the file or project in hand, and sends back. It works entirely offline
 - **G4 Streamlined.** The plan's worry on record: a file tree's behaviour is endless. The operations are the ones
   named here and no more (AF-D5).
 - **G5 Nothing spoken unprompted** (AX-7.3), and nothing answered with silence: a command's result is one short
-  announcement, a change of folder names the folder, a key that moves nothing says so (AF-3.1, AF-3.6); the Actions
-  list is where the rest can be read when wanted.
-- **Non-goals.** A tree or a second folder pane; drag and drop; a properties dialog of our own; search across folders;
+  announcement, a change of folder names the folder, a key that moves nothing says so (AF-3.1, AF-3.6); Recent
+  operations is where the operations can be read again when wanted (AF-9.3).
+- **Non-goals.** A tree or a second folder pane (the second pane is the Favorites list, AF-9.1, not a folder view); drag and drop; a properties dialog of our own; search across folders;
   file type associations of our own (Windows' own, AF-D2); a player, a viewer or an editor inside the window (the
   other apps'); a permanent delete (§7).
 
@@ -48,17 +49,19 @@ folder of the file or project in hand, and sends back. It works entirely offline
    plan.md"; Shift+Enter on `plan.md`: axPreview shows it to read. Backspace:
    "myproject, 12 items, docs, folder".
 3. Ctrl+Shift+N, type `notes`, Enter: "Created notes", the folder selected. F2 on it, type `Notes`, Enter: "Renamed to
-   Notes". Delete: "Delete Notes? It goes to the Recycle Bin with everything in it.", Enter: "Deleted Notes". Tab:
-   "Actions, list, Deleted Notes, 3 of 3"; Ctrl+Z: "Undone: Notes restored", the folder list on Notes; Tab: the line
-   reads "Deleted Notes, undone".
+   Notes". Delete: "Delete Notes? It goes to the Recycle Bin with everything in it.", Enter: "Deleted Notes".
+   Ctrl+Z: "Undone: Notes restored", the folder list on Notes; Actions → Recent operations: the first line reads
+   "Deleted Notes, undone, 21:04".
 4. Ctrl+Shift+C on `report.pdf`: "Copied path"; Enter on it: the PDF opens in the program Windows has for it.
 5. Ctrl+F, type `chap`, Enter: the first entry whose name holds it is selected; F3 the next.
 6. Ctrl+G, type `%USERPROFILE%\Downloads`, Enter: the list is the Downloads folder.
 7. Space on `a.txt`: "Selected"; Down, Space: "Selected, 2 selected"; Up: "a.txt, selected"; Ctrl+X: "Cut 2 items";
-   Enter on `docs`, Ctrl+V: "Pasted 2 items". Later, in another folder, Tab to the Actions list, Up to "Moved 2
-   items", Enter: the list is `docs` with `a.txt` selected.
+   Enter on `docs`, Ctrl+V: "Pasted 2 items". Later, in another folder, Actions → Recent operations, Down to "Moved
+   2 items, 21:05", Enter: the list is `docs` with `a.txt` selected.
 8. Space on two folders of chapters, Ctrl+Shift+Q: "Added 24 to axMedia's queue"; the focus stays here and the sound
    goes on in axMedia.
+9. In `D:\Downloads`, Ctrl+D: "Added to Favorites". Later, in another folder, Tab: "Favorites, list, Downloads
+   (D:\Downloads), 1 of 1"; Enter: "Downloads, 12 items, setup.exe", the focus in the folder list.
 
 ## 4. Functional requirements
 
@@ -90,10 +93,10 @@ folder of the file or project in hand, and sends back. It works entirely offline
 ### AF-2 The window
 
 - AF-2.1 From the top: the menu bar; the folder list, named with its count alone, "N items" ("24 items"; "1 item";
-  "Empty" for none; "24 items, filter chap, 3 shown" under a filter, AF-3.8); the Actions list under it, always (AF-9);
-  the status bar. A notice takes the place of both lists while it shows (AX-6.4). Tab, Shift+Tab, Ctrl+Tab,
+  "Empty" for none; "24 items, filter chap, 3 shown" under a filter, AF-3.8); the Favorites list under it, always
+  (AF-9.1); the status bar. A notice takes the place of both lists while it shows (AX-6.4). Tab, Shift+Tab, Ctrl+Tab,
   Ctrl+Shift+Tab and F6 move between the two lists (AX-8.2), the window's two controls. The window is the
-  bundle's navigator (AF-D14): a folder is a level, its entries the rows, and the Actions list the second pane.
+  bundle's navigator (AF-D14): a folder is a level, its entries the rows, and the Favorites list the second pane.
 - AF-2.2 Items: a file by its name as it is; a folder as "<name>, folder"; a drive of This PC as "<label> (C:), drive"
   (AF-3.10). Folders first, then files, each group in
   Windows' natural order (`StrCmpLogicalW`, so that `2` comes before `10`). Hidden and system entries are left out,
@@ -106,7 +109,7 @@ folder of the file or project in hand, and sends back. It works entirely offline
   update. An empty folder shows one item, "No items in this folder", selected, so that the list is never empty and the
   reason is read (the bundle's rule for empty lists, AX-9.5). Neither that item nor the not-shown line is an entry: a
   command on either says the line itself (AF-7).
-- AF-2.3 The title is `<folder name> - axFile`. The status bar's left label: the newest file operation's line in the Actions list
+- AF-2.3 The title is `<folder name> - axFile`. The status bar's left label: the newest file operation's line (AF-9.2)
   ("Copied 3 items", "Compressing, 40 of 120 files"), empty before the first operation; while a folder is being read,
   "Reading…" in its place (the navigator's state for work off the UI thread, framework FW-4.7 point 1, 2026-11-23),
   and after it, while entries are selected, how many, as in every navigator ("Copied 3 items, 2 selected"; "2 selected"
@@ -122,7 +125,7 @@ folder of the file or project in hand, and sends back. It works entirely offline
   This PC, "Top". **Right Arrow** on a folder or a drive opens it, as Enter; **Left Arrow** goes up, as Backspace
   (asked 2026-10-22: the keys of a tree on the flat list, AF-D12). Right never opens a file: on a file, or on a line
   that is not an entry, it sounds the edge earcon (AF-3.6), as Left does at This PC. Every change of folder (Enter, Backspace, Go to folder, Open folder, a recent folder or a favorite,
-  a drive, This PC, Enter on a line of the Actions list) is announced as the folder's name, the list's count and the
+  a drive, This PC, Enter in the Favorites list, an operation chosen in Recent operations) is announced as the folder's name, the list's count and the
   entry landed on, "docs, 5 items, plan.md" ("This PC, 3 items, Local Disk (C:), drive"; "temp, No items in this
   folder"), through one notification that cuts short NVDA's own reading of the new entry (asked 2026-10-22: the entry
   alone did not tell the folder landed in from the folder under the focus; the first build left it to NVDA). The
@@ -163,13 +166,13 @@ folder of the file or project in hand, and sends back. It works entirely offline
   prefix is searched whole, so that a name with a doubled letter inside it ("aab") is found (`AxKit.Core/TypeAhead`,
   tested, the bundle's since 2026-10-24, AX-8.6; until 2026-10-23 the doubled letter made the one-letter cycle); Shift
   with a letter searches the same way backwards (2026-10-24); the edge earcon when no name starts with it (both lists are
-  the bundle's `AxKitList` since 2026-10-24, which has the type-ahead and the edge earcon built in). The Actions
-  list takes typed letters the same way. The list box's own
+  the bundle's `AxKitList` since 2026-10-24, which has the type-ahead and the edge earcon built in). The Favorites
+  list takes typed letters the same way, over its lines. The list box's own
   one-letter jump gives way to this (`AxKit.Forms/AxKitList`, AX-8.6); Space is the selection's key (AF-3.7), so a name is typed up
   to its first space. At the ends, where a key moves nothing, the window sounds the **edge earcon** rather than
   nothing (asked 2026-10-22, an earcon rather than words, since "First item" and the entry again were noise): one
   short low note (`Sounds.Edge`, A3 for 60 ms) on Up or Home at the first entry and Down or End at the last, in the
-  folder list and the Actions list alike (`AxFileKeys.FirstItem`, `LastItem` and their seconds; the keys are the
+  folder list and the Favorites list alike (`AxFileKeys.FirstItem`, `LastItem` and their seconds; the keys are the
   list's own everywhere else, `AxKitList`). **Find** (Ctrl+F, the bundle's Find notice with the field "Name contains") selects the first entry
   whose name holds the text, F3 and Shift+F3 the next and the previous. NVDA reads the selected entry; the app adds nothing.
 - AF-3.7 **Selection** (asked 2026-10-21). The list stays a single-selection list box, where the arrow keys choose
@@ -195,8 +198,8 @@ folder of the file or project in hand, and sends back. It works entirely offline
   operations that take the marked entries, Cut, Copy, Delete, Move to folder…, Compress to zip, Add to axMedia's
   queue, Copy path; its operations never fall back to the current entry: "None selected" when nothing is marked (asked
   2026-10-22: one menu for the entry, Item, one for the marks, Selection, one for the folder, Folder, so that the
-  target is the menu's name and no mode is needed). A change of the marks is no line of the Actions list
-  (it was one, taken back with Ctrl+Z on the line, from 2026-10-22 to 2026-11-22; AF-9.2): Space on an entry and
+  target is the menu's name and no mode is needed). A change of the marks is no operation of the window's history
+  (it was one, taken back on its own line, from 2026-10-22 to 2026-11-22; AF-9.2): Space on an entry and
   Escape take a selection back, and the status bar says how many are selected (AF-2.3). The marks live in one
   folder: showing another folder drops them, a refresh of the same folder keeps those still there, and a renamed or
   deleted entry loses its mark. The marks are on the entries the list shows: a filter, a new order or a read drops
@@ -225,8 +228,9 @@ folder of the file or project in hand, and sends back. It works entirely offline
   folder shown, "Added to Favorites", or unpins it when it is one, "Removed from Favorites"; the browsers' bookmark
   key. **Navigation → Favorites ▸** lists them as "1. name (path)" (AX-9.5) in the order they were added, those that
   still exist, or "No favorites yet", with the key's item under a separator; choosing one shows the folder and it
-  joins the recent list. The favorites are a setting (`favorites`, AF-8.1), so every window and the next start
-  have them.
+  joins the recent list. The favorites are a setting (`favorites`, AF-8.1, not sealed), so every window and the next
+  start have them. The same folders are the **Favorites list**, the window's second pane (AF-9.1, since 2026-11-23),
+  where a folder Ctrl+D adds is selected, so that Tab lands on it.
 - AF-3.10 **This PC** (asked 2026-10-21): the level above the drives. Backspace or Alt+Up at a drive's root shows it,
   the drive just left selected; its entries are the ready drives in letter order, "Local Disk (C:), drive" (the
   volume's label, or the kind's name, Local Disk, Removable Disk, CD Drive, Network Drive, when it has none;
@@ -257,7 +261,7 @@ folder of the file or project in hand, and sends back. It works entirely offline
 
 ### AF-4 Operations
 
-Every operation here is one line of the Actions list (AF-9) as well as its announcement.
+Every operation here is an entry of the window's history (AF-9.2) as well as its announcement.
 
 - AF-4.1 **New folder…** (Ctrl+Shift+N): the notice "New folder" with the field "Name" and the buttons Create and
   Cancel; Create makes it in the current folder, selects it and says "Created <name>". A name refused by AF-4.2's rules
@@ -291,7 +295,7 @@ Every operation here is one line of the Actions list (AF-9) as well as its annou
   "Deleted n items", and the first entry after the current one that stays is selected, else the last one before it.
   A permanent delete is not offered (§7).
 - AF-4.4 **Copy path** (Ctrl+Shift+C): the full path to the clipboard, "Copied path"; with entries marked, each path
-  on a line, "Copied n paths". Not an operation on disk: no line in the Actions list.
+  on a line, "Copied n paths". Not an operation on disk: no entry in the history.
 - AF-4.5 A failure (a name taken, a file in use, access denied) is one announcement, "Failed: <Windows' message>",
   when it is one line, a notice otherwise (axGIT AG-7), and the operation's line reads "Failed: <reason>". Two of
   Windows' messages are said with what they mean here, since both come from something outside axFile: "In use by
@@ -301,7 +305,7 @@ Every operation here is one line of the Actions list (AF-9) as well as its annou
   file inside is open in another program, or Windows protects the place". **Every operation runs on a thread of its
   own** (a task for the reads, the rename and the new folder; a single-threaded-apartment thread per shell operation
   for copy, move, delete and the Recycle Bin's Restore) and the window never waits for one: a second paste, delete or
-  zip starts while the first runs, each with its own line in the Actions list (AF-9.2). One runner, `FileForm.RunOperation`, runs each of them:
+  zip starts while the first runs, each with its own entry in the history (AF-9.2). One runner, `FileForm.RunOperation`, runs each of them:
   its line from Begin to End, the paths it writes or moves away held in flight while it runs, "<doing>, please
   wait" when it passes a second (Pasting, Deleting, Moving, Compressing, Extracting), its failure on the line and
   said, and its result shown and said; an operation that ends at once (a rename, a new folder or file) goes through
@@ -382,7 +386,7 @@ Every operation here is one line of the Actions list (AF-9) as well as its annou
   (AF-3.7), into a new zip in the folder shown, named after the one entry without its extension ("notes.zip") or
   after the folder for several ("Dune.zip"), "name - 2.zip" when the name is taken (the name is taken the moment the
   compress starts, so two at once never share one), a folder's contents under its name; "Compressed to <name>", the
-  zip selected; "Compressing, please wait" when it passes a second, the line
+  zip selected; "Compressing, please wait" when it passes a second, the operation's line in the status bar
   counting the files meanwhile (AF-9.2). **Extract here** on a `.zip` makes a new folder named after it next to it
   ("Dune", or "Dune - 2" when taken) and extracts into it, so that nothing is written over; "Extracted to <name>",
   the folder selected; "Not a zip file" on anything else. A failure is "Failed: <reason>" (AF-4.5). Other archive
@@ -397,17 +401,17 @@ Every operation here is one line of the Actions list (AF-9) as well as its annou
   or its own subfolder is "Cannot move a folder into itself". The move is the shell's (AF-4.8, undo allowed, names
   chosen first); "Moved <name> into <folder>" or "Moved n items into <folder>", the folder selected when it is here.
 - AF-4.14 **Undo** (asked 2026-10-21). **Ctrl+Z** (Actions → Undo <operation>, named after what it would undo, "Undo
-  rename") takes back the newest file operation of the Actions list that can be taken back (AF-9.3; never a change of the
-  marks, which is taken back on its own line only, decided 2026-10-22, so that Ctrl+Z after a paste does not unmark
-  an entry instead), one per press, and selects the entry it touched: Rename, renamed back; New folder and New text file, deleted while still empty ("Not undone:
+  rename") takes back the newest file operation of the window's history that can be taken back (AF-9.2; never a
+  change of the marks, decided 2026-10-22, so that Ctrl+Z after a paste does not unmark an entry instead), one per
+  press, from either list (since 2026-11-23, AF-D3), and selects the entry it touched: Rename, renamed back; New folder and New text file, deleted while still empty ("Not undone:
   notes has files now" otherwise); a paste that moved and Move to folder, moved back where they were, the new
   folder removed when it is empty; a paste that copied, Compress to zip and Extract here, the copies, the zip or the
   extracted folder sent to the Recycle Bin; Delete, brought back from the Recycle Bin, the shell's own undelete on the
   Recycle Bin's item, the one step that needs the shell again (the bin's items are matched by the original path their
   `$I` record holds, the latest deletion of each, and restored in one Restore command; "Not in the Recycle Bin any
   more" when none is there). "Undone: <what>" each time ("Undone: renamed back to <name>", "Undone: <name> removed",
-  "Undone: moved back", "Undone: <what> sent to the Recycle Bin", "Undone: <what> restored"), the line reading ",
-  undone" afterwards; an entry changed since by anything else (renamed in File Explorer meanwhile), "Not undone:
+  "Undone: moved back", "Undone: <what> sent to the Recycle Bin", "Undone: <what> restored"), its line reading ",
+  undone" afterwards (in the status bar and Recent operations); an entry changed since by anything else (renamed in File Explorer meanwhile), "Not undone:
   <name> has changed", "Not undone: <name> has files now" / "has content now" (a new folder or file filled
   meanwhile), "Not undone: <name> is already here" (the place it would go back to is taken; a rename that changed
   only the case is not "already here"), the line saying so and dropped from what Undo takes next, as is a delete
@@ -444,11 +448,11 @@ and the started process finds its open window and hands the paths over with the 
 
 - AF-6.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** New window Ctrl+N | Open folder…
   Ctrl+O | Open recent folder ▸ | ─ | Refresh F5 | ─ | Show current folder in ▸ (File Explorer Ctrl+W | axClaude |
-  axTerminal | axGIT) | ─ | Exit Alt+F4. **Actions (A):** Undo <operation> Ctrl+Z (AF-4.14) | New folder… Ctrl+Shift+N |
+  axTerminal | axGIT) | ─ | Exit Alt+F4. **Actions (A):** Undo <operation> Ctrl+Z (AF-4.14) | Recent operations… (AF-9.3) | ─ | New folder… Ctrl+Shift+N |
   New text file Ctrl+Shift+T | Paste Ctrl+V | ─ | Select all Ctrl+A | Deselect all Ctrl+Shift+A. **Navigation (N):**
   Favorites ▸ (1. name (path) … or No favorites yet | ─ | Add or remove this folder Ctrl+D) | Drives ▸ (1. Local Disk
   (C:) … | ─ | This PC | ─ | Eject this drive | Drive properties; AF-3.11) | Go to folder… Ctrl+G | Up one level
-  Backspace | ─ | The Actions list (AF-9.1). **Context (C)**, by the list that last had the focus (AX-9.11): in the
+  Backspace | ─ | The Favorites list (AF-9.1). **Context (C)**, by the list that last had the focus (AX-9.11): in the
   folder list, the entry's menu (AF-4.6): Open Enter | Open with ▸ (Windows default | Choose a program… | ─ | 1. name
   (path) … or No programs of your own yet) | Open with axKit apps ▸ (the standalone apps that open a path, by group) |
   Open with axKit access layers ▸ (the access layers that open a path, by group) | Preview
@@ -457,25 +461,25 @@ and the started process finds its open window and hands the paths over with the 
   Show in File Explorer Ctrl+Shift+W | Information Ctrl+I | Properties Alt+Enter | ─ | Windows menu… | ─ | Selection ▸
   (Select or deselect this entry Space | Select to here Shift+Space | ─ | Cut Ctrl+X | Copy Ctrl+C | Delete Delete | ─ |
   Move to folder… | Compress to zip | Add to axMedia's queue Ctrl+Shift+Q | Copy paths Ctrl+Shift+C; AF-3.7, the
-  operations on the marks alone); in the Actions list, its line (AF-9.3): Go to where it happened Enter | Undo this
-  action Ctrl+Z | Its number and time Ctrl+I. **Options (O):** Filter… | Sort by ▸ (Name ✓ | Date | Size) | ─ | Add a program to Open with… | Remove a program from Open with ▸ | ─
+  operations on the marks alone); in the Favorites list, its line (AF-9.1): Open Enter | Remove from Favorites
+  Delete. **Options (O):** Filter… | Sort by ▸ (Name ✓ | Date | Size) | ─ | Add a program to Open with… | Remove a program from Open with ▸ | ─
   | Text ▸ (Font… | Larger text Ctrl+Plus | Smaller text Ctrl+Minus | Windows text size) | General ▸ (Check for updates
   at start ✓ | Show hidden files and folders | Show files and folders starting with a period) | Developer ▸ (Open
   settings file). **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Keyboard shortcuts F1 | User
   guide | ─ | File resources ▸ (Keyboard shortcuts in Windows, the Microsoft page, in the browser). Every item has a
   mnemonic (AX-7.4).
 - AF-6.2 Keys (AX-8). Bundle-wide: F1, the control keys (Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6, between
-  the folder list and the Actions list, AF-9.1), Ctrl+F, F3, Shift+F3, Ctrl+S ("Nothing to save here"), Ctrl+Plus,
+  the folder list and the Favorites list, AF-9.1), Ctrl+F, F3, Shift+F3, Ctrl+S ("Nothing to save here"), Ctrl+Plus,
   Ctrl+Minus, Page Up and Page Down (the list's own here), Alt+F4. Window-specific (`AxFileKeys`): Enter,
   Shift+Enter, Backspace, Alt+Up, Left, Right, F5, F2, Delete, Ctrl+N, Ctrl+O, Ctrl+G, Alt+D, Ctrl+D, Ctrl+W, Ctrl+Shift+W,
   Ctrl+I, Ctrl+Shift+N, Ctrl+Shift+T, Ctrl+Shift+C, Escape, Shift+Up, Shift+Down, Shift+Home,
   Shift+End, Space, Shift+Space, Ctrl+A, Ctrl+Shift+A, Ctrl+Shift+Q (AF-5), Shift+F10, the Applications key,
   Alt+Enter, Ctrl+Z (AF-4.14), Ctrl+X, Ctrl+C, Ctrl+V. Enter, Shift+Enter, Backspace, Left, Right, Space, Escape, F2, Delete,
   Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A, Ctrl+Shift+A, Shift+Space, Ctrl+Enter, Ctrl+Shift+Q and the Shift arrows
-  act only while the folder list has the focus (in the Actions list, Enter, Escape, Ctrl+Z and Ctrl+I
-  act on its line, AF-9.3; in a notice's field or the rename box they are the field's); Shift+F10 and the
-  Applications key open the bar's Context menu from either list, on the entry or on the Actions list's line
-  (AF-D13, AX-9.11; in the Actions list since 2026-11-22). The keys between the two lists, Right and Left, the
+  act only while the folder list has the focus (in the Favorites list, Enter, Delete, Ctrl+I and Escape
+  act on its line, AF-9.1; Ctrl+Z is Undo in either list; in a notice's field or the rename box they are the field's);
+  Shift+F10 and the Applications key open the bar's Context menu from either list, on the entry or on the Favorites
+  list's line (AF-D13, AX-9.11; in the second pane since 2026-11-22). The keys between the two lists, Right and Left, the
   selection's keys, the two menu keys and Escape are the navigator's own commands (`ItemKeys`, `SelectionKeys`; AF-D14);
   `AxFileKeys` names them for this window. The collision test covers the table and lists the keys other windows use
   otherwise (Ctrl+N, Ctrl+G, Ctrl+C, Ctrl+Shift+C). Ctrl+Enter is the bundle's main action
@@ -496,9 +500,8 @@ AF-3.10), "Ejecting <name>" (AF-3.11), "Added <name>", "Removed <name>", "Starte
 <name>", "Extracted to <name>", "Compressing, please wait", "Extracting, please wait" (AF-4.12), "Pasted <name>",
 "Pasted n items", "Pasted n items, m already pasting" (AF-4.5), "Pasting, please wait" (a paste longer than a second), "Deleting, please wait", "Moving, please wait" (the same, AF-4.5), "Added n to axMedia's queue", "No sound or
 video files here", "No sound or video files to add" (AF-5), "Undone: …", "Not undone: …", "Nothing to undo", "Undo is
-still running" (AF-4.14), "No actions yet",
-"Still running", "Already undone", "Nothing to undo here", "<section>, n of m, hh:mm", "Running", "Operations" (a header line),
-"Folder not found" (the Actions list, AF-9.3), "Refreshed", "Not found: <path>", "Failed: <message>", "<name>, <size>,
+still running" (AF-4.14), "No operations yet", "Still running", "Folder not found" (Recent operations, AF-9.3),
+"No favorites yet", "<path>, n of m" (Ctrl+I in the Favorites list, AF-9.1), "Refreshed", "Not found: <path>", "Failed: <message>", "<name>, <size>,
 modified <date>" (Ctrl+I), "Not found" (find), "Nothing to save here", "Text size n", "Windows text size", "Copied
 diagnostics", "<name>, <size>, modified <date>, n selected" (Ctrl+I with marks), "Failed: In use by another program: a
 terminal or an app runs in it, or the file is open", "Failed: Access denied: a file inside is open in another program,
@@ -528,50 +531,52 @@ and a typed name no entry starts with (AF-3.6).
 - AF-8.2 The log is `%LOCALAPPDATA%\AxKit\logs\axFile.log`: the start, the exit, the errors of the operations with
   Windows' message; no names of files or folders.
 
-### AF-9 The Actions list
+### AF-9 The Favorites list and the history of operations
 
-- AF-9.1 **What it is.** A second list under the folder list, "Actions", with every file operation of this window
-  as one line, in two sections (AF-9.2), so that what was done can be read again,
-  taken back and walked back to. It holds only what changed files (the maintainer's direction of 2026-11-22,
-  docs/axKit/framework.md section 9; the changes of the selection were lines of a third section until then). It is there from the first
-  moment, with the one line "No actions yet" until the first operation (AX-9.5; asked 2026-10-22: a pane that appears
-  later leaves Tab and Shift+Tab with nowhere to go), hidden only while a notice shows; a third of the window at
-  most; **Tab**, **Shift+Tab**, **Ctrl+Tab**, **Ctrl+Shift+Tab** and **F6** move between the folder list and it
-  (AX-8.2), **Escape** in it goes back to the folder list, Navigation → **The Actions list** puts the focus in it. One list, not tabs: NVDA reads a list and its place in it, and the two lists are reached with the
-  keys every axKit window uses for its controls (AF-D1). Each command's result is one announcement on the list that has
-  the focus (AF-7); nothing is spoken on an arrow key (AF-D7). The newest line is the status bar's left text (AF-2.3).
-- AF-9.2 **The lines.** Two sections, each a header line ("Running", "Operations") over its lines, a
-  section present only while it has lines (asked 2026-10-22; AF-D11): **Running**, the operations under way, pinned at
-  the top so that what is going on is one Tab and Home away; **Operations**, the file operations done, failed or undone.
-  A change of the selection has no line (AF-3.7). Within a section the lines are in time order,
-  newest last; "No actions yet" is the one line while both are empty. The operations' lines, the last fifty kept,
-  gone with the window: "Renamed notes.md to
-  todo.md", "Created temp", "Created New file.txt", "Moved 3 items into bundle", "Copied 3 items", "Moved 2 items",
-  "Compressed to docs.zip", "Extracted to docs - 2", "Deleted notes.md", "Deleted 2 items". A running operation reads
-  what it is doing, "Copying 3 items", "Deleting 2 items", "Compressing, 40 of 120 files" (a few times a second at
-  most; a paste through the shell has no count to give), and its line is replaced when it ends; a failure, "Failed:
-  <reason>"; a line that was undone, "Renamed notes.md to todo.md, undone"; one that could not be undone when asked,
-  "…, not undone: notes.md has changed". When a line is added while the focus is in the folder list, it is the
-  selected line of the Actions list, so that Tab lands on it; while the focus is in the Actions list the line the user
-  is on stays selected (by line, not by place, since at fifty the oldest falls off) and only the changed line is
-  rewritten, a running line under the focus being left until it ends, so that a zip's count is not reselected under
-  NVDA four times a second. Nothing is spoken for a line (the operation's own
-  announcement, AF-7, is what is heard). Cut, Copy, Copy path, Open, the hand-overs and Favorites change nothing on
-  disk and have no line. The status bar shows the newest line, and after it how many entries are selected (AF-2.3).
-- AF-9.3 **On a line.** **Enter** goes where the action left things: the folder list shows the folder and selects the
-  entry the action made, renamed or moved (the new folder for a move into one, the first entry for a paste; the folder
-  alone for a delete), and takes the focus, before the folder is said (AF-3.1), so that NVDA's reading of the list
-  does not cut the announcement short (2026-10-23); once the line is undone, where the undo put things back; "Still running"
-  on a running line, "Folder not found" when the place is gone. **Ctrl+Z** takes that line back, whatever its place,
-  with AF-4.14's checks and texts; a line that cannot be says why: "Still running", "Already undone", "Not undone:
-  <reason>" again, or "Nothing to undo here" (a failed line, or one older than the twenty undoable). Ctrl+Z in the
-  folder list takes the newest undoable operation (AF-4.14). **Ctrl+I** says the line's
-  section, number in it and time, "Operations, 3 of 12, 21:04". On a header line and on "No actions yet", Enter, Ctrl+Z
-  and Ctrl+I say the line. Delete does nothing (an action is a record, not an
-  entry). There is no redo.
-- AF-9.4 **Later uses**, noted so that the shape allows them: the matches of a search through a folder's tree, a
-  folder's summary on Ctrl+I over a folder (its counts and size, which take a walk of the tree). None is in the
-  first build.
+The maintainer, 2026-11-23: "axfile should have two panes i think it should have a favorites and the current file
+tree. you can get rid of the actions." The second pane is the Favorites list since that day; the history of the
+operations stays, behind a command (AF-D3).
+
+- AF-9.1 **The Favorites list.** A second list under the folder list, "Favorites", with the folders pinned with
+  Ctrl+D (AF-3.9), one line each in the order added: the folder's name, then its full path, "Music (C:\Music)"; a
+  drive's or a share's root by its path alone (`FileSettings.FavoriteLine`, tested). It is there from the first moment,
+  with the one line "No favorites yet" until the first (AX-9.5; a pane that appears later leaves Tab and Shift+Tab
+  with nowhere to go), hidden only while a notice shows; a third of the window. **Tab**, **Shift+Tab**, **Ctrl+Tab**,
+  **Ctrl+Shift+Tab** and **F6** move between the folder list and it (AX-8.2), **Escape** in it goes back to the
+  folder list, Navigation → **The Favorites list** puts the focus in it. **Enter** (or a double click) shows the
+  folder in the folder list with its first entry selected and moves the focus there before the folder is said
+  (AF-3.1), so that NVDA's reading of the list does not cut the announcement short; the folder joins the recent list,
+  as a favorite chosen from the submenu does; a favorite that is gone gives the "Folder not found" notice and its
+  nearest parent (AF-3.5). **Delete** takes the favorite out of the favorites, "Removed from Favorites"; the folder
+  itself is not touched, and there is no undo (the favorites are a setting, AF-4.14). **Ctrl+I** says the
+  favorite's full path and place, "C:\Music, 2 of 3". On "No favorites yet", Enter, Delete and Ctrl+I say that line.
+  Shift+F10 and the Applications key open Context with the line's Open and Remove from Favorites (AX-9.11). Type-ahead
+  goes over the lines (AF-3.6). Ctrl+D anywhere in the window adds the folder shown and selects it here, so that Tab
+  lands on it, or takes it out again; nothing is spoken for the list filling again (the command's own words are what
+  is heard). The list is filled from the settings without looking at the disk, so that a favorite on the network
+  never holds the window; a second window sees a favorite added in the first at its next start (the settings are the
+  window's, AF-8.1). Navigation → Favorites ▸ lists the same folders with numbers (AF-3.9).
+- AF-9.2 **The history of operations.** Every file operation of this window is an entry of its history
+  (`ActionLog`, tested), in time order, the last fifty kept and the last twenty undoable, gone with the window: "Renamed
+  notes.md to todo.md", "Created temp", "Created New file.txt", "Moved 3 items into bundle", "Copied 3 items", "Moved
+  2 items", "Compressed to docs.zip", "Extracted to docs - 2", "Deleted notes.md", "Deleted 2 items". A running
+  operation reads what it is doing, "Copying 3 items", "Deleting 2 items", "Compressing, 40 of 120 files" (a few times
+  a second at most; a paste through the shell has no count to give), and its line is replaced when it ends; a
+  failure, "Failed: <reason>"; an entry that was undone, "Renamed notes.md to todo.md, undone"; one that could not be
+  undone when asked, "…, not undone: notes.md has changed". The status bar's left label is the newest entry's line
+  (AF-2.3), so that a running zip's count is there with NVDA+End. Nothing is spoken for an entry (the operation's own
+  announcement, AF-7, is what is heard). A change of the selection has no entry (AF-3.7); Cut, Copy, Copy path, Open,
+  the hand-overs and Favorites change nothing on disk and have none. Ctrl+Z takes back the newest entry that can be,
+  one per press, in either list (AF-4.14).
+- AF-9.3 **Recent operations.** Actions → **Recent operations…** shows the history in a notice "Recent operations"
+  with the bundle's list, newest first, each line with its time, "Copied 3 items, 21:04" (a running one "Copying 3
+  items, running"); "No operations yet" is said instead before the first. **Enter** (the notice's Choose) goes to where
+  the chosen operation left things: the folder list shows the folder and selects the entry it made, renamed or moved
+  (the new folder for a move into one, the first entry for a paste; the folder alone for a delete), and takes the
+  focus before the folder is said (AF-3.1); once the operation is undone, where the undo put things back; "Still
+  running" for a running one, "Folder not found" when the place is gone. **Escape** closes the notice where the focus
+  was. The list is what the history held when it opened. An operation is taken back with Ctrl+Z only, newest first;
+  there is no undo of one line out of order and no redo.
 
 ## 5. Architecture
 
@@ -582,13 +587,14 @@ src/AxFile.Core/    class library (net10.0): FolderListing (a folder's entries a
                     check, new folder, rename, delete to the Recycle Bin, copy and move into a folder, the last three
                     through SHFileOperationW, the undo checks and inverses, the messages), Operation and
                     OperationKind (one operation with what its undo needs and where it left things), ActionLog and
-                    ActionEntry (the Actions list's lines and states, the limits), RecycleBin (the $I records; the
+                    ActionEntry (the history of operations, its states, the limits), RecycleBin (the $I records; the
                     marks on the shown entries are AxKit.Core's Marks since 2026-11-22, AX-8.16),
                     UserPrograms and UserProgram (the user's own programs; AF-4.11), Archives (a zip from entries, a
-                    zip into a new folder, free names; AF-4.12), FileSettings; references AxKit.Core (MediaFiles for
+                    zip into a new folder, free names; AF-4.12), FileSettings (with the favorites); references AxKit.Core (MediaFiles for
                     the hand-over counts, NaturalOrder, Dispatch for the editor's verb)
-src/AxFile/         class library (net10.0-windows): AxFileApp (Run, Usage), FileForm (the window, on AxKitForm, in
-                    four partial files: the controls, menus, hooks and keys; Browse; Operations; Actions), AxFileKeys,
+src/AxFile/         class library (net10.0-windows): AxFileApp (Run, Usage), FileForm (the window, on ItemForm, AF-D14,
+                    in seven partial files: the controls, menus, hooks and keys; Browse; Completion; Favorites;
+                    Operations; Programs; History), AxFileKeys,
                     HelpText (F1 text, the embedded guide), Shell (Windows' own ways with an entry: the
                     Open with dialog, the Properties sheet, the shell's context menu through IShellFolder and
                     IContextMenu, Eject, the Recycle Bin's Restore; AF-4.7); references AxFile.Core, AxKit.Core, AxKit.Forms
@@ -607,7 +613,7 @@ and AxPreview.Core since the split; `MediaFiles` and `NaturalOrder` moved to `Ax
 
 - **AF-D1 One list, no tree; two lists, no tabs.** A tree view asks a screen reader user to track depth and expansion;
   a list of one folder with Backspace for up is what File Explorer's main pane is, and NVDA reads a list box best. The
-  path in the status bar is the depth. The Actions list is a second list under it rather than a tab control: the
+  path in the status bar is the depth. The Favorites list is a second list under it rather than a tab control: the
   bundle's control keys already move between a window's controls, and a tab control would be a third thing to learn.
 - **AF-D2 Enter is Windows'; playing and reading are other apps'.** The first build routed Enter itself (`.md` to
   axDown, `.json` to axJSON, media to its own player) and carried the player and later a preview pane as features of
@@ -620,10 +626,19 @@ and AxPreview.Core since the split; `MediaFiles` and `NaturalOrder` moved to `Ax
   one player for the whole bundle, a viewer with the whole window and the editors' keys, a file manager with one job,
   and a list that mirrors what Explorer does. Shift+Enter is the viewer's own key, since it has no other meaning on a
   file in a list; the hand-overs are one window message (`AppMessage`, AM-D4), nothing on the network.
-- **AF-D3 The Actions list over a history.** Undo came first as a hidden history of twenty operations (2026-10-21);
-  the user's ask of 2026-10-22, a list of every operation taken, to review, undo and jump to, made the history
-  visible: one line per operation with its state, Ctrl+Z on any line, Enter to its place. The list is the record,
-  not a second folder view: it holds text, and the folder list does the showing.
+- **AF-D3 The favorites in the pane, the history behind a command.** Undo came first as a hidden history of twenty
+  operations (2026-10-21); the user's ask of 2026-10-22, a list of every operation taken, to review, undo and jump
+  to, made the history visible as the second pane under the folder list: one line per operation with its state,
+  Ctrl+Z on any line, Enter to its place. On 2026-11-23 the maintainer asked for two panes, the favorites and the
+  current file tree, and let the pane of operations go. The second pane is now the Favorites list (AF-9.1): the
+  places one goes back to, which were a submenu only (AF-3.9). The history stays, without a pane (AF-9.2, AF-9.3):
+  Ctrl+Z takes back the newest operation, as before, now from either list; the status bar shows the newest line, a
+  running count included; Actions → Recent operations lists the operations newest first in the bundle's notice with a
+  list, where Enter goes to the chosen one's place. A notice was chosen over a submenu because a submenu filled as it
+  opens cannot be reached by the automated checks nor read by the AI tools as a list, and over a third pane because
+  the maintainer asked for two. What went with the pane: Ctrl+Z on one line whatever its place (undo is in order,
+  newest first), Ctrl+I's section and number (the time is in the line), and the running line under the focus (its
+  count is in the status bar).
 - **AF-D5 Streamlined operations.** New folder, rename, delete and copy the path were the first four; cut, copy and
   paste came at the user's ask on 2026-10-20, as files on the clipboard in File Explorer's own formats (`CF_HDROP`
   and the preferred drop effect) so that the two exchange them, with the shell doing the copy or the move (a dash and
@@ -653,14 +668,11 @@ and AxPreview.Core since the split; `MediaFiles` and `NaturalOrder` moved to `Ax
   to keep the marks winning, and the menus carry the rest: Item is the entry, Selection is the marks (its operations
   say "None selected" rather than fall back), Folder is the folder. The decision is recorded so that the first rule
   is not proposed again.
-- **AF-D11 Sections as header lines in one list.** Asked 2026-10-22: the running operations pinned at the top, the
-  operations next, the changes of the marks last. Three list boxes would be three Tab stops and a plain list cannot
-  mark a group; so one list with a header line over each section that has lines, a header being an item NVDA reads
-  like any other and Enter, Ctrl+Z and Ctrl+I answer with its name. The marks' changes were in the list, at the user's
-  ask, but outside Ctrl+Z in the folder list (AF-4.14): a selection undone by the key meant for a paste would surprise.
-  On 2026-11-22 they left the list (docs/axKit/framework.md section 9, taken under the maintainer's word not to hold
-  on to the current design): the selection is the navigator's, the same in every app, and a log of what changed
-  files is one thing where a log of files and marks was two. Two sections remain.
+- **AF-D11 Sections as header lines in one list** (2026-10-22 to 2026-11-23). The pane of operations had the running
+  operations pinned at the top under a header line, then the operations, and until 2026-11-22 the changes of the
+  marks (they left it then, docs/axKit/framework.md section 9: the selection is the navigator's, the same in every
+  app). With the pane gone (AF-D3), Recent operations is one list, newest first, a running operation marked ",
+  running" in its line rather than in a section of its own.
 
 - **AF-D12 No tree; the tree's keys on the list, and completion in Go to folder.** Asked 2026-10-22: a tree to drive
   through folders and drives, or an AxOpen app with a tree and typing. A tree (always, or as a pane beside the list as
@@ -675,11 +687,11 @@ and AxPreview.Core since the split; `MediaFiles` and `NaturalOrder` moved to `Ax
   maintainer: every app on one of a few window types, axFile unified with the item navigator). axFile had a window
   of its own, the last app that did. Since then `FileForm` derives from `ItemForm`: a folder is a level and each
   shown entry a row (a folder a list, a file an item, the row's key its path); the folder list is the navigator,
-  the Actions list its second pane as a log; the two lists, the split between them, the status bar, the marks of
+  the pane of operations its second pane as a log (the Favorites list since 2026-11-23, AF-D3); the two lists, the split between them, the status bar, the marks of
   the selection (AX-8.16), the pane keys, Right and Left, the Context keys and Escape are the navigator's. What
   changed for the user is small and named where it applies: the status bar ends with how many entries are selected
   (AF-2.3), Context on a line that is no entry holds that line's words (AF-4.6), and Shift+F10 and the Applications
-  key open the line's menu in the Actions list (AF-6.2). Enter, Backspace, F2, Delete, find,
+  key open the line's menu in the second pane (AF-6.2). Enter, Backspace, F2, Delete, find,
   refresh and undo stay axFile's own commands, each on the navigator's condition for its place, with the words,
   the order and the marks they had (opening a file, a rename and a delete are acts an AI tool asks about first,
   where the navigator's own Open and Rename are not); the rename box and its steps are the navigator's, axFile
@@ -695,7 +707,9 @@ AF-D4 (the volume) and AF-D6 (the queue fixed at Enter) went to axMedia with the
   (AF-4.8); a paste of many items that names them.
 - Shift+Delete, a permanent delete, after its own question.
 - A "media only" filter of the list (the name filter and the sort orders came 2026-10-21, AF-3.8).
-- Keeping the Actions list for the next start of the window on the same folder.
+- Keeping the history of operations for the next start of the window on the same folder.
+- A key for Recent operations (none yet, 2026-11-23); moving a favorite up or down in the Favorites list; the
+  Favorites list of one window following a favorite added in another without a restart.
 
 ## 8. Status
 
@@ -714,7 +728,7 @@ AF-D4 (the volume) and AF-D6 (the queue fixed at Enter) went to axMedia with the
   pane, the lookalike guard (AF-4.2) and the Shift range (AF-3.7); released in 3.2.0, 3.2.1 and 3.2.2. Not yet checked
   with NVDA from Ctrl+N on.
 - 2026-10-22: the split, on the branch `split` (the split's inventory of 2026-10-22, in the git history): the player became axMedia and the
-  preview axPreview; Enter follows Windows' default program (AF-D2); the pane became the Actions list (AF-9, AF-D3)
+  preview axPreview; Enter follows Windows' default program (AF-D2); the pane became the list of operations (AF-D3)
   with Enter to the action's place and Ctrl+Z on a line, at the user's ask; the Player menu, its keys, the video area,
   the queue and the settings `speed`, `seekSeconds` and `sayEachFile` left the window; `MediaFiles` and `NaturalOrder`
   moved to `AxKit.Core`. The window shrank by a third. Not yet checked with NVDA (test plan sections 3.14, 4 and 6).
@@ -729,14 +743,19 @@ AF-D4 (the volume) and AF-D6 (the queue fixed at Enter) went to axMedia with the
   entry alone did not tell the folder landed in from the folder under the focus, and silence at an end told nothing;
   then File Explorer's type-ahead, several letters into one prefix (AF-3.6), at the user's ask.
 - 2026-10-22, later: the edge earcon in place of "First item", "Last item" and "No names start with" (AF-3.6, the
-  bundle's `Sounds.Edge`), the Actions list there from the start with "No actions yet" (AF-9.1), so that Tab and
+  bundle's `Sounds.Edge`), the list of operations there from the start with its one line until the first (AF-D3), so that Tab and
   Shift+Tab always have the second control, and a pass over the F1 text, the guide and the notes to put every feature
   in one place each, at the user's ask ("I have lost track of all the features").
 - 2026-10-22, later: Shift+Space (AF-3.7), the Selection menu with the operations on the marks (AF-3.7, AF-6.1,
-  AF-D10), the changes of the marks as lines of the Actions list, taken back on their line (AF-9.2, AF-9.3), and the
-  list in three sections under header lines, the running operations first (AF-9.2, AF-D11), at the user's ask;
+  AF-D10), the changes of the marks as lines of the list of operations, taken back on their line (AF-D11), and the
+  list in three sections under header lines, the running operations first (AF-D11), at the user's ask;
   specified first, built the same day. Not yet checked with NVDA (test plan 3.7b, 6.8, 6.9).
 - 2026-10-22, later: Escape deselects (AF-3.7); Left and Right as a tree's keys and completion in the Go to folder
   field (AF-3.1, AF-3.3, AF-D12), at the user's ask; then the Drives menu as a submenu of Folder and Alt+D for Go to
   folder (AF-3.11, AF-6.1). Not yet checked with NVDA (test plan 1.4b, 1.7, 1.12a, 3.7a).
 - 2026-10-22: released in 3.3.1 (3.3.0 tagged, not published). The whole NVDA test plan marked passed at the user's word, no step reported failing; the record by step is `docs/axKit/nvda-test-record.md`.
+- 2026-11-23, on the branch `autonomous/2026-11-23`, at the maintainer's word ("axfile should have two panes i think it
+  should have a favorites and the current file tree. you can get rid of the actions."): the second pane is the
+  Favorites list (AF-9.1), Enter to a favorite and Delete to take one out; the pane of operations went, the history
+  staying behind Ctrl+Z, now from either list, the status bar and Actions → Recent operations (AF-9.2, AF-9.3, AF-D3).
+  Not yet checked with NVDA (test plan section 6).

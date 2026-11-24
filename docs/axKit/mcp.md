@@ -299,7 +299,7 @@ menu, the palette and the automated checks in the table of `command-language.md`
   answer is that the user is asked); the tool's answer says "The window asks the user whether to run Delete". No key
   tool exists, so only the user's own key answers. What a command would act on is the window's own description of its
   selection (`AxKitForm.McpTarget`, compared whole, shown at most 200 characters, `McpRun.AskText`): axFile's selected
-  entries, or the current one, in the folder shown ("a.txt and b.txt in files"; the Actions list's line when it has
+  entries, or the current one, in the folder shown ("a.txt and b.txt in files"; the Favorites list's line when it has
   the focus), axStart's selected program, axProcess's selected process with its ID, service or startup program,
   axGIT's selected file, commit or branch, the item apps' selected row; any other window gives the focused control's
   name and, for a list, its selected item; nothing selected leaves the words out.

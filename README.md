@@ -16,7 +16,7 @@ axKit was called Axit up to 4.0.0 and was renamed on 2026-11-05, since a commerc
 
 - **axDown**: a barebones editor for Markdown and text files that writes a file back exactly as it found it, with keys for headings, links, lists, quotes and tables.
 - **axJSON**: the same editor for JSON, with keys for keys, objects, arrays, items and errors, and a Format command that repairs what it can.
-- **axFile**: a file manager for one folder, with an Actions list of every operation that Ctrl+Z can take back, selection, zip files, favourites and the drives.
+- **axFile**: a file manager for one folder in two panes, the folder and your favourite folders, with every operation one Ctrl+Z from being taken back, selection, zip files and the drives.
 - **axMedia**: a player for sound and video files with one queue, speed with the pitch kept, and seeking by key.
 - **axPreview**: a read-only viewer for one text file, with the editors' navigation keys.
 - **axStart**: a program launcher. One key from anywhere, Ctrl+Shift+Space unless you choose another, brings up a search field over the Start menu's programs; Down and Up move through the matches while the caret stays in the field.
