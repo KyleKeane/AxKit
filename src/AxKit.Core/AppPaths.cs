@@ -151,6 +151,10 @@ public static class AppPaths
     public static string ConsentFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "consent.json");
 
+    /// <summary>The user's own sounds (AX-7.12, 2026-11-24): a WAV file named as a sound plays in its place (<c>Audio/CustomSounds</c>).</summary>
+    public static string SoundsFolder { get; } =
+        Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "sounds");
+
     /// <summary>The settings of the whole bundle (AX-3.1, 2026-11-24): the update check at start, one switch for every app.</summary>
     public static string BundleSettingsFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "bundle.json");

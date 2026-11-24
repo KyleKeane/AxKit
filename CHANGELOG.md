@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- axKit: **your own sounds.** axKit menu, Open the sounds folder: put a WAV file there named as one of axKit's sounds (sound names.txt in the folder lists them, edge.wav for instance) and it plays in place of axKit's own from the next start; take it away and axKit's comes back.
+
 - axKit: **one Check for updates at start, in the axKit menu, for every app**, in place of each app's own in Options, General. If you had turned it off in any app, it starts off.
 - axKit: **the window's keys work with a menu open**: Ctrl or Ctrl+Shift with a function key opens the app, F1 the keys, and so on, with any drop-down of the menus open, not only on the bar.
 

@@ -1889,6 +1889,16 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
     (the kinds, the table and the door), `ComponentsTests` (only the components name the four kinds);
     `tests/scripts/axTask/21-what-opens.txt` hears each of the four and the switch, `18-item-form.txt` and
     `20-selection.txt` the form's sound, its words and Ctrl+Q.
+- AX-7.12 **Your own sounds** (asked 2026-11-15, "I want the folder"; built at the maintainer's word of 2026-11-24):
+  a WAV file in `%APPDATA%\AxKit\sounds` named as one of axKit's sounds (`edge.wav`, `notice.wav`, `working-music.wav`;
+  the 23 names are `AxKit.Core/Audio/CustomSounds.Names`) plays in place of the built-in one, from the next start of a
+  window, since every sound is made once as the first one plays; taking the file away brings the built-in one back.
+  axKit menu, Open the sounds folder makes the folder when it is missing, writes `sound names.txt` there with every
+  name and what it is, and shows the folder in axFile. A file of any common shape is taken (PCM of 8, 16, 24 or 32
+  bits, or 32-bit float, mono or stereo, any rate) and made into the one shape the sound devices play, 16-bit mono at
+  the bundle's rate; a file that is not one, or longer than 60 seconds, is passed over, the built-in sound plays, and
+  the log says why. Which kind of event plays which sound is unchanged (rule 13, `EventPresenter`); only the sound's
+  samples are the user's. The background chords, made by count, have no file. Tested in `CustomSoundsTests`.
 
 ## 5. Architecture
 

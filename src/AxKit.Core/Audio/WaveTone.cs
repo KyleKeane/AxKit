@@ -456,7 +456,8 @@ public static class WaveTone
     private static short Sample(double hertz, int index, double amplitude) =>
         (short)(Math.Sin(2 * Math.PI * hertz * index / SampleRate) * amplitude * short.MaxValue);
 
-    private static byte[] Wav(short[] samples)
+    /// <summary>16-bit mono PCM samples at <see cref="SampleRate"/> as a WAV file: the one shape every sound of the bundle is played in.</summary>
+    internal static byte[] Wav(short[] samples)
     {
         var dataLength = samples.Length * 2;
         var wav = new byte[HeaderLength + dataLength];

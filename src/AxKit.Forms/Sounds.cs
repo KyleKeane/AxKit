@@ -197,35 +197,44 @@ internal static class Sounds
         }
     }
 
+    /// <summary>
+    /// The sound <paramref name="name"/> as the user's own file gives it (AX-7.12, <see cref="CustomSounds"/>), read once
+    /// as the sounds are made, or the built-in one; never in a test run, whose sounds are recorded and not played. A file
+    /// not used is said in the log. (A method, not a field: the fields below are made in their order, before any field
+    /// after them.)
+    /// </summary>
+    private static byte[] Own(string name, byte[] made) =>
+        AutomationEnvironment.Requested ? made : CustomSounds.Or(AppPaths.SoundsFolder, name, made, problem => Log.Info(problem));
+
     // A typewriter-like strike, a burst of noise over a 1.5 kHz tone that dies away within 10 ms: a line from Claude
     // arrived (the 1.3.0 sound, which the user likes; softer versions were tried in 2.4.0 and went unheard under
     // speech). A tiny mouth pop, 30 ms, its pitch falling from 700 towards 300 Hz: a tool call arrived. Chosen by the
     // user by ear on 2026-11-15, the first of three pops ("something more like a tiny mouth pop so it is not
     // elongated"); until then two lower knocks of noise and tone, 650 and 850 Hz, at 0.5, which he heard as jarring.
-    private static readonly Sound LineTick = new(WaveTone.Strikes(0.4, 10, 0.5, 1500));
-    private static readonly Sound ToolPop = new(WaveTone.Pop(0.3, 700, 300, 0.006, 0.030));
+    private static readonly Sound LineTick = new(Own("click", WaveTone.Strikes(0.4, 10, 0.5, 1500)));
+    private static readonly Sound ToolPop = new(Own("tool", WaveTone.Pop(0.3, 700, 300, 0.006, 0.030)));
 
     // C6 alone, a high ping: Claude is ready. A4 alone, low: the message went out. C5, E5, G5 up to a long note:
     // Claude starts replying. The same notes down, G5, E5, C5: the turn is done. Two E5s: Claude needs an answer.
     // A quick C6-E6 trill: the answer notice opened in place of the conversation.
-    private static readonly Sound ReadyChime = new(WaveTone.Notes(0.35, (1046.5, 120)));
-    private static readonly Sound SentChime = new(WaveTone.Notes(0.35, (440, 80)));
-    private static readonly Sound RespondingChime = new(WaveTone.Notes(0.35, (523.25, 90), (659.25, 90), (783.99, 220)));
-    private static readonly Sound DoneChime = new(WaveTone.Notes(0.35, (783.99, 90), (659.25, 90), (523.25, 220)));
-    private static readonly Sound QuestionChime = new(WaveTone.Notes(0.35, (659.25, 70), (0, 40), (659.25, 110)));
-    private static readonly Sound NoticeChime = new(WaveTone.Notes(0.35, (1046.5, 45), (1318.5, 45), (1046.5, 45), (1318.5, 110)));
+    private static readonly Sound ReadyChime = new(Own("ready", WaveTone.Notes(0.35, (1046.5, 120))));
+    private static readonly Sound SentChime = new(Own("sent", WaveTone.Notes(0.35, (440, 80))));
+    private static readonly Sound RespondingChime = new(Own("responding", WaveTone.Notes(0.35, (523.25, 90), (659.25, 90), (783.99, 220))));
+    private static readonly Sound DoneChime = new(Own("done", WaveTone.Notes(0.35, (783.99, 90), (659.25, 90), (523.25, 220))));
+    private static readonly Sound QuestionChime = new(Own("question", WaveTone.Notes(0.35, (659.25, 70), (0, 40), (659.25, 110))));
+    private static readonly Sound NoticeChime = new(Own("notice", WaveTone.Notes(0.35, (1046.5, 45), (1318.5, 45), (1046.5, 45), (1318.5, 110))));
 
     // Five short swoops falling from 2400 to 900 Hz, 80 ms each, 400 ms in all: a command offered for the user to run
     // themselves (axClaude FR-2.12, asked 2026-11-13). An alarm, not a chime, louder than the chimes. Chosen by the
     // user by ear the same day, played to him one by one: two low knocks and a note an octave up were too mild; seven
     // fast struck taps, rising swoops, slower falling swoops and three of these were heard and passed over.
-    private static readonly Sound OfferChime = new(WaveTone.Swoops(0.5, 2400, 900, 80, 5));
+    private static readonly Sound OfferChime = new(Own("offer", WaveTone.Swoops(0.5, 2400, 900, 80, 5)));
 
     // A3 alone, short and low: the edge, nothing there (a list's first or last entry under Up or Down, a typed name no
     // entry starts with; axFile AF-3.6). An earcon where a sentence would be noise, asked 2026-10-22. A4 falling to
     // A3, louder than the chimes: A3 alone at 0.35 was lost under the speech that follows it (2026-10-23), and A4
     // carries on small speakers where A3 hardly does.
-    private static readonly Sound EdgeTick = new(WaveTone.Notes(0.6, (440, 45), (220, 90)));
+    private static readonly Sound EdgeTick = new(Own("edge", WaveTone.Notes(0.6, (440, 45), (220, 90))));
 
     // The three sounds of a plain key in a text's navigation mode (AX-8.13), all chosen by the maintainer by ear on
     // 2026-11-16 from a script that played candidates. A high glassy tick, a pure 3800 Hz of 6 ms: the key was taken
@@ -233,42 +242,42 @@ internal static class Sounds
     // noise) resembled. A buzzy 150 Hz tone of 110 ms: the command ran and there was nothing of its kind to go to. A
     // wooden bonk of 70 ms, falling from 420 Hz: the key has no command at all ("more deadpan and bonk like" than the
     // blips heard first). The candidates heard and kept for later are in docs/axKit/earcons.md, "Candidates kept".
-    private static readonly Sound NavKeyClick = new(WaveTone.Tick(0.3, 3800, 3800, 0.006, 10, 700, 0.0));
-    private static readonly Sound NothingTone = new(WaveTone.Flat(0.3, 150, 110, 6, buzzy: true));
-    private static readonly Sound UnassignedKnock = new(WaveTone.Knock(0.4, 420, 260, 0.008, 0.022, 2.76, 0.5, 70));
+    private static readonly Sound NavKeyClick = new(Own("nav-key", WaveTone.Tick(0.3, 3800, 3800, 0.006, 10, 700, 0.0)));
+    private static readonly Sound NothingTone = new(Own("nothing", WaveTone.Flat(0.3, 150, 110, 6, buzzy: true)));
+    private static readonly Sound UnassignedKnock = new(Own("unassigned", WaveTone.Knock(0.4, 420, 260, 0.008, 0.022, 2.76, 0.5, 70)));
 
     // E5 up to A5, short: a command recalled into a field (axTerminal AT-3.9, asked 2026-10-23), rising where the edge falls.
-    private static readonly Sound RecallTick = new(WaveTone.Notes(0.45, (659.25, 35), (880, 50)));
+    private static readonly Sound RecallTick = new(Own("recall", WaveTone.Notes(0.45, (659.25, 35), (880, 50))));
 
     // G4 leaping an octave to G5, 85 ms in all: a move onto a heading (AX-7.9, asked 2026-11-11), before NVDA reads it.
     // An octave where the recall rises a fourth and the edge falls, and over before NVDA starts speaking.
-    private static readonly Sound HeadingTick = new(WaveTone.Notes(0.45, (392, 30), (783.99, 55)));
+    private static readonly Sound HeadingTick = new(Own("heading", WaveTone.Notes(0.45, (392, 30), (783.99, 55))));
 
     // The four sounds of a way of working starting (AX-7.11, chosen by ear 2026-11-22): bell pings, three beeps up and
     // then the kind going down. The samples are AxKit.Core's, Audio/OpeningSounds.
-    private static readonly Sound FormOpenTone = new(OpeningSounds.Form());
-    private static readonly Sound ListOpenTone = new(OpeningSounds.List());
-    private static readonly Sound FieldOpenTone = new(OpeningSounds.Field());
-    private static readonly Sound TextOpenTone = new(OpeningSounds.Text());
+    private static readonly Sound FormOpenTone = new(Own("form-open", OpeningSounds.Form()));
+    private static readonly Sound ListOpenTone = new(Own("list-open", OpeningSounds.List()));
+    private static readonly Sound FieldOpenTone = new(Own("field-open", OpeningSounds.Field()));
+    private static readonly Sound TextOpenTone = new(Own("text-open", OpeningSounds.Text()));
 
     // G5, C6 up to a held E6, and once more: longer and louder than the chimes, so that Claude finishing or asking is
     // heard from another window, where the done chime was missed (axClaude FR-7.3).
-    private static readonly Sound AlertChime = new(WaveTone.Notes(0.6, (783.99, 100), (1046.5, 100), (1318.5, 300), (0, 200), (783.99, 100), (1046.5, 100), (1318.5, 500)));
+    private static readonly Sound AlertChime = new(Own("alert", WaveTone.Notes(0.6, (783.99, 100), (1046.5, 100), (1318.5, 300), (0, 200), (783.99, 100), (1046.5, 100), (1318.5, 500))));
 
     // A pad of four slow chords with a soft high ping in each, 14 s that loop without a seam while Claude works
     // (axClaude FR-7.9; AmbientSounds.WorkingMusic, the one place it is made; asked 2026-11-15: gentler, like the lift
     // of a building of the future). On a device of its own. Before it: sixteen soft plucked notes, an arpeggio at
     // 500 ms a note (WaveTone.Plucks), and before that a version at half the chimes' peak with a music-box ring,
     // which was too much over NVDA's speech.
-    private static readonly Sound WorkingMusic = new(AmbientSounds.WorkingMusic(), loops: true);
+    private static readonly Sound WorkingMusic = new(Own("working-music", AmbientSounds.WorkingMusic()), loops: true);
 
     // The sounds of work in the background (axClaude FR-7.10, asked 2026-11-15): a start and an end are events,
     // punctuation, three quick bell notes with a sparkle; what arrives rises, what leaves falls (his rule). The
     // recurring sound is a slow soft chord with a long tail, one of the working music's four at random, with a tone
     // more for each thing running. All were chosen by the user by ear (2026-11-15); each is one method of AxKit.Core's
     // AmbientSounds, held to what he heard by its tests.
-    private static readonly Sound BackgroundStartTone = new(AmbientSounds.BackgroundStart());
-    private static readonly Sound BackgroundFinishTone = new(AmbientSounds.BackgroundFinish());
+    private static readonly Sound BackgroundStartTone = new(Own("background-start", AmbientSounds.BackgroundStart()));
+    private static readonly Sound BackgroundFinishTone = new(Own("background-finish", AmbientSounds.BackgroundFinish()));
 
     // The chords, by chord and number of things: made at their first use, off the UI thread (some tens of
     // milliseconds each, rule 3), and kept for the life of the process like every other sound; 200 KB each.

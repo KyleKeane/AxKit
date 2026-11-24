@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using AxKit.Core;
+using AxKit.Core.Audio;
 using AxKit.Core.Events;
 using AxKit.Core.Mcp;
 using AxKit.Core.Updates;
@@ -298,6 +299,8 @@ public abstract partial class AxKitForm : Form
         menu.DropDownItems.Add(CreateClaudeMenu());
         menu.DropDownItems.Add(CreateMcpMenu());
         menu.DropDownItems.Add(CreateThemeMenu());
+        // AX-7.12: the user's own sounds, a WAV file named as a sound in place of the built-in one.
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Open the &sounds folder", null, (_, _) => OpenSoundsFolder()), CommandMark.Open));
         if (!PackageIdentity.IsPackaged)
         {
             // AX-3.1 (the maintainer's answer of 2026-11-24, "One switch for all"): the update check at start is the
@@ -311,6 +314,27 @@ public abstract partial class AxKitForm : Form
         }
 
         return menu;
+    }
+
+    /// <summary>
+    /// axKit, Open the sounds folder (AX-7.12): the folder made when it is missing, with the file that lists the names a
+    /// sound file may have written again, and shown in axFile.
+    /// </summary>
+    private void OpenSoundsFolder()
+    {
+        try
+        {
+            Directory.CreateDirectory(AppPaths.SoundsFolder);
+            File.WriteAllText(Path.Combine(AppPaths.SoundsFolder, CustomSounds.NamesFile), CustomSounds.NamesText());
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            Failed("Sounds folder", "The sounds folder could not be made: " + ex.Message);
+            return;
+        }
+
+        WindowMenu.Start(Dispatch.AxFile, AppPaths.SoundsFolder);
+        Announce("The sounds folder, in axFile: a WAV file named as a sound plays in its place from the next start; sound names.txt lists the names", true);
     }
 
     /// <summary>axKit, Check for updates at start: the bundle's one switch turned over and saved, its new state said.</summary>
