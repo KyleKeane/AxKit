@@ -51,6 +51,8 @@ public abstract partial class AxKitForm : Form
         _reports = new ReportFlow(this);
         _ai = new AiHelpFlow(this);
         _aiTools = new AiToolsSetup(this);
+        // AX-6.6a: the window's keys from an open drop-down of its menus.
+        AddMenuKeyFilter();
         // With the role Window, NVDA speaks the window when it opens ("notes.md - axDown window") before the focused
         // control; without it the window is a nameless pane to NVDA and the app is never named (AX-7.1).
         AccessibleRole = AccessibleRole.Window;
@@ -721,7 +723,7 @@ public abstract partial class AxKitForm : Form
     private void ShowShortcuts() => ShowNotice(Notice.Plain("Keyboard shortcuts", ShortcutsText()));
 
     /// <summary>The whole F1 text: <see cref="Shortcuts"/> and the section made from the commands; Ask about this window reads it too.</summary>
-    protected internal string ShortcutsText() => Shortcuts.TrimEnd('\n') + "\n\n" + KeyReference.Section(CommandRows().Commands);
+    protected internal string ShortcutsText() => (Shortcuts.TrimEnd('\r', '\n') + "\n\n" + KeyReference.Section(CommandRows().Commands)).ReplaceLineEndings("\r\n");
 
     /// <summary>A key of the whole window run (<see cref="IsWindowKey"/>): true when it was one.</summary>
     private bool RunWindowKey(Keys keyData)
@@ -755,6 +757,74 @@ public abstract partial class AxKitForm : Form
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// AX-6.6a with an open drop-down (the maintainer, 2026-11-24: "ctrl+function does not work when focus is on menu
+    /// of window"): WinForms hands the keys of an open drop-down to the drop-down, a window of its own whose keys never
+    /// reach the form's <see cref="ProcessCmdKey"/> (which sees them only while the bar itself has them). This filter of
+    /// the thread's messages sees a key before the drop-down does: a key of the whole window closes the menus and runs
+    /// once they have closed, F8 says the status with the menu still open, and every other key goes on to the menu.
+    /// One filter for the process, added with the first window.
+    /// </summary>
+    private sealed class MenuKeyFilter : IMessageFilter
+    {
+        private const int WmKeyDown = 0x0100;
+        private const int WmSysKeyDown = 0x0104;
+
+        public bool PreFilterMessage(ref Message m)
+        {
+            if (m.Msg is not (WmKeyDown or WmSysKeyDown) || Control.FromHandle(m.HWnd) is not ToolStripDropDown dropDown || WindowOf(dropDown) is not { } form)
+            {
+                return false;
+            }
+
+            var keyData = (Keys)(int)m.WParam | Control.ModifierKeys;
+            return form.TakeMenuKey(dropDown, keyData);
+        }
+
+        /// <summary>The axKit window whose menu bar the drop-down hangs from, through its owner items; null for any other.</summary>
+        private static AxKitForm? WindowOf(ToolStripDropDown dropDown)
+        {
+            ToolStrip? strip = dropDown;
+            while (strip is ToolStripDropDown { OwnerItem.Owner: { } owner })
+            {
+                strip = owner;
+            }
+
+            return strip?.FindForm() as AxKitForm;
+        }
+    }
+
+    private static bool _menuKeyFilterAdded;
+
+    /// <summary>The filter added once, from the first window's constructor.</summary>
+    private static void AddMenuKeyFilter()
+    {
+        if (!_menuKeyFilterAdded)
+        {
+            _menuKeyFilterAdded = true;
+            Application.AddMessageFilter(new MenuKeyFilter());
+        }
+    }
+
+    /// <summary>A key pressed in an open drop-down of this window's bar: true when it was a key of the whole window and is taken.</summary>
+    private bool TakeMenuKey(ToolStrip dropDown, Keys keyData)
+    {
+        if (keyData == BundleKeys.SayStatus)
+        {
+            SayStatus();
+            return true;
+        }
+
+        if (!IsWindowKey(keyData))
+        {
+            return false;
+        }
+
+        CloseMenus(dropDown);
+        BeginInvoke(() => RunWindowKey(keyData));
+        return true;
     }
 
     /// <summary>Every open drop-down of the bar closed, from the one the key came to up to the top one, so that the menu mode ends.</summary>

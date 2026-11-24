@@ -1300,7 +1300,12 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   of the whole window, which need no selection and no caret: F1, the command palette, F4, asking Claude, Ctrl+S and
   the app keys (AX-8.18 rule 6). The menu closes first and the key runs once it has, so that nothing opens over an
   open menu (F1 did that on 2026-10-23 and left the bar unusable). F8 says the status and leaves the menu open; the
-  text size keys worked there already. `AxKitForm.IsWindowKey`, `RunWindowKey`, `CloseMenus`.
+  text size keys worked there already. `AxKitForm.IsWindowKey`, `RunWindowKey`, `CloseMenus`. With a drop-down
+  open, WinForms hands the keys to the drop-down, a window of its own, and the form never sees them (found by the
+  maintainer on 2026-11-24, when the first version worked on the bar alone): a filter of the thread's messages
+  (`AxKitForm.MenuKeyFilter`, added once with the first window) takes such a key before the drop-down does, for the
+  window whose bar the drop-down hangs from. Menu mode opens only in the window in front, so the check is an NVDA-tier
+  script (`tests/nvda-scripts/axCalc-keys-from-a-menu.txt`).
 
 ### AX-10 The command palette
 

@@ -1042,14 +1042,16 @@ Steps and keys: `docs/axKit/workflows/ai-tools.md` (in Claude's working folder: 
 
 Steps and keys: `docs/axKit/workflows/nvda-only.md` (in Claude's working folder: `workflows-nvda-only.md`).
 
-1. **Hear an offered command as NVDA reads it**
-2. **Read a long reply with Say all while Claude writes**
-3. **Come back to the right place after a Windows dialog**
-4. **Hear axDown's notices and palette with NVDA**
-5. **Find a name backwards with Shift and a letter**
+1. **Use the window's keys from an open menu**
+    - Open another app with its key from an open menu
+2. **Hear an offered command as NVDA reads it**
+3. **Read a long reply with Say all while Claude writes**
+4. **Come back to the right place after a Windows dialog**
+5. **Hear axDown's notices and palette with NVDA**
+6. **Find a name backwards with Shift and a letter**
     - Go back to the name before with Shift and its letter
-6. **Put a template into another window from axTemplate's launcher, with NVDA**
+7. **Put a template into another window from axTemplate's launcher, with NVDA**
     - Put a template in where the caret was
     - Put a template in around what is selected
-7. **Hear the caution of a command another program put into the command field**
+8. **Hear the caution of a command another program put into the command field**
     - Hear that another program put the command there, before the command, and again on coming back to the field

@@ -7,6 +7,18 @@ cut short. After "Type:" comes the text to type, to the end of the line, with no
 the words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
 command's in this version of axKit.
 
+## Use the window's keys from an open menu
+
+Starts with: Open axCalc.
+
+### Open another app with its key from an open menu
+
+1. Press Alt+S.
+2. Press Ctrl+F5 (axDown; axKit menu, Apps).
+3. A new window opens: go to it.
+4. Close the window.
+5. Go to the axCalc window.
+
 ## Hear an offered command as NVDA reads it
 
 Starts with: Open axClaude with the folder heard.
