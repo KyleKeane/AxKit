@@ -101,18 +101,18 @@ expect focus a.md
 # desktop (manual).
 
 # Goal: Turn the update check at start on or off
-# 6.5: Options, General, Check for updates at start, a checked item that says its new state.
+# 6.5: axKit, Check for updates at start, one switch for every app (bundle AX-3.1), a checked item that says its new state.
 # Through the palette, which says the new state; the runner's menu step runs the item without saying it.
 do Command palette
 expect focus Search commands
 type check for updates at start
-expect said Check for updates at start, Options, General, 1 of 1
+expect said Check for updates at start, axKit, 1 of 1
 keys enter
 expect said Check for updates at start, checked
 do Command palette
 expect focus Search commands
 type check for updates at start
-expect said Check for updates at start, Options, General, checked, 1 of 1
+expect said Check for updates at start, axKit, checked, 1 of 1
 keys enter
 expect said Check for updates at start, not checked
 expect focus a.md

@@ -239,12 +239,12 @@ Starts with: Open axDown with the file a.md.
 
 1. Press Ctrl+Shift+P (Command palette; Help menu).
 2. Type: check for updates at start
-    You hear: Check for updates at start, Options, General, 1 of 1.
+    You hear: Check for updates at start, axKit, 1 of 1.
 3. Press Enter.
     You hear: Check for updates at start, checked.
 4. Press Ctrl+Shift+P (Command palette; Help menu).
 5. Type: check for updates at start
-    You hear: Check for updates at start, Options, General, checked, 1 of 1.
+    You hear: Check for updates at start, axKit, checked, 1 of 1.
 6. Press Enter.
     You hear: Check for updates at start, not checked.
 

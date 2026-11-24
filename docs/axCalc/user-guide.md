@@ -56,7 +56,7 @@ Each menu with its commands and their keys, as the window lists them:
 - **Actions**: Answer (Enter); Answer in other bases (Ctrl+I); Clear history (Ctrl+Shift+Delete); Clear variables; Copy answer (Ctrl+Shift+C); Say the last answer (Ctrl+Q); Variables; Copy answer in (Binary, Hexadecimal, Octal).
 - **Navigation**: Find (Ctrl+F); Find next (F3); Find previous (Shift+F3); Next bookmark (K in the history); Previous bookmark (Shift+K in the history).
 - **Context**: Bookmark this line (Ctrl+Shift+K, or M in the history); Copy the selection (Ctrl+C in the history); Take this line's expression into the field (Enter in the history).
-- **Options**: Keep history between runs; Angles (Degrees, Radians); Developer (Open settings file); General (Check for updates at start); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
+- **Options**: Keep history between runs; Angles (Degrees, Radians); Developer (Open settings file); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
 - Keys without a menu item: Escape (Clear the field); Tab (Switch between the view and the field).
 - **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
 <!-- end of the menus -->

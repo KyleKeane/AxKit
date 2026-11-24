@@ -60,7 +60,6 @@ every window" or under a heading that names the windows without it; under an app
 - Copy diagnostics. Menu: Help, Diagnostics. Key: none. Mark: act.
 - Test a key. Menu: Help, Diagnostics. Key: none. Mark: act.
 - Open settings file. Menu: Options, Developer. Key: none. Mark: open.
-- Check for updates at start. Menu: Options, General. Key: none. Mark: act.
 - Entry sounds. Menu: Options, Text. Key: none. Mark: change.
 - Font. Menu: Options, Text. Key: none. Mark: change.
 - Larger text. Menu: Options, Text. Key: Ctrl+Plus. Mark: change.
@@ -70,6 +69,11 @@ every window" or under a heading that names the windows without it; under an app
 - Windows text size. Menu: Options, Text. Key: none. Mark: change.
 - Close all windows. Menu: Window. Key: none. Mark: act.
 - Say the status. Menu: Window. Key: F8. Mark: read.
+
+## In every window but axClip, axHelp and axPass
+
+- Check for updates at start. Menu: axKit. Key: none. Mark: act.
+- Open the sounds folder. Menu: axKit. Key: none. Mark: open.
 
 ## In every window but axClip, axHelp, axPass and axStart
 
@@ -243,6 +247,8 @@ every window" or under a heading that names the windows without it; under an app
 ## axClip
 
 - Clear history. Menu: Actions. Key: Ctrl+Shift+Delete. Mark: act. Never run by AI tools.
+- Check for updates at start. Menu: axKit. Key: none. Mark: act. Never run by AI tools.
+- Open the sounds folder. Menu: axKit. Key: none. Mark: open. Never run by AI tools.
 - axClaude, access layer for Claude Code. Menu: axKit, Access layers. Key: Ctrl+Shift+F5. Mark: act. Never run by AI tools.
 - axGIT, access layer for Git. Menu: axKit, Access layers. Key: Ctrl+Shift+F2. Mark: open. Never run by AI tools.
 - axHelp, access layer for Claude Code. Menu: axKit, Access layers. Key: Ctrl+Shift+F9. Mark: open. Never run by AI tools.
@@ -290,7 +296,6 @@ every window" or under a heading that names the windows without it; under an app
 - Keep history between runs. Menu: Options. Key: none. Mark: change. Never run by AI tools.
 - Pause recording. Menu: Options. Key: Ctrl+P. Mark: change. Never run by AI tools.
 - Open settings file. Menu: Options, Developer. Key: none. Mark: open. Never run by AI tools.
-- Check for updates at start. Menu: Options, General. Key: none. Mark: act. Never run by AI tools.
 - Say the first match while typing. Menu: Options, General. Key: none. Mark: change. Never run by AI tools.
 - Start with Windows. Menu: Options, General. Key: none. Mark: act. Never run by AI tools.
 - Entry sounds. Menu: Options, Text. Key: none. Mark: change. Never run by AI tools.
@@ -366,6 +371,7 @@ every window" or under a heading that names the windows without it; under an app
 - List. Menu: Navigation, Previous. Key: Ctrl+Shift+L. Mark: read.
 - List item. Menu: Navigation, Previous. Key: Ctrl+Shift+I. Mark: read.
 - Table. Menu: Navigation, Previous. Key: Ctrl+Shift+T. Mark: read.
+- Check for updates at start. Menu: Options, General. Key: none. Mark: act.
 - Templates in axTemplate. Menu: Options, General. Key: none. Mark: open.
 - Word wrap. Menu: Options, Text. Key: Ctrl+Shift+W. Mark: change.
 - New. Menu: Session. Key: Ctrl+N. Mark: change.
@@ -544,6 +550,7 @@ every window" or under a heading that names the windows without it; under an app
 - Balanced (Sonnet). Menu: Options, Conversation model. Key: none. Mark: change.
 - Fast (Haiku). Menu: Options, Conversation model. Key: none. Mark: change.
 - Strongest (Opus). Menu: Options, Conversation model. Key: none. Mark: change.
+- Check for updates at start. Menu: Options, General. Key: none. Mark: act.
 - Start with Windows. Menu: Options, General. Key: none. Mark: act.
 - Hide. Menu: Session. Key: Escape. Mark: change.
 - Quit axHelp. Menu: Session. Key: none. Mark: act.
@@ -693,6 +700,8 @@ every window" or under a heading that names the windows without it; under an app
 - New group. Menu: Actions. Key: Ctrl+Shift+N. Mark: change. Never run by AI tools.
 - Select all entries. Menu: Actions. Key: Ctrl+A. Mark: change. Never run by AI tools.
 - Undo. Menu: Actions. Key: Ctrl+Z. Mark: change. Never run by AI tools.
+- Check for updates at start. Menu: axKit. Key: none. Mark: act. Never run by AI tools.
+- Open the sounds folder. Menu: axKit. Key: none. Mark: open. Never run by AI tools.
 - axClaude, access layer for Claude Code. Menu: axKit, Access layers. Key: Ctrl+Shift+F5. Mark: act. Never run by AI tools.
 - axGIT, access layer for Git. Menu: axKit, Access layers. Key: Ctrl+Shift+F2. Mark: open. Never run by AI tools.
 - axHelp, access layer for Claude Code. Menu: axKit, Access layers. Key: Ctrl+Shift+F9. Mark: open. Never run by AI tools.
@@ -738,7 +747,6 @@ every window" or under a heading that names the windows without it; under an app
 - Filter. Menu: Options. Key: none. Mark: change. Never run by AI tools.
 - KeePassXC's tool. Menu: Options. Key: none. Mark: act. Never run by AI tools.
 - Open settings file. Menu: Options, Developer. Key: none. Mark: open. Never run by AI tools.
-- Check for updates at start. Menu: Options, General. Key: none. Mark: act. Never run by AI tools.
 - 10 minutes. Menu: Options, Lock after. Key: none. Mark: change. Never run by AI tools.
 - 30 minutes. Menu: Options, Lock after. Key: none. Mark: change. Never run by AI tools.
 - 5 minutes. Menu: Options, Lock after. Key: none. Mark: change. Never run by AI tools.
@@ -1033,6 +1041,11 @@ every window" or under a heading that names the windows without it; under an app
 - Start with Windows. Menu: Options, General. Key: none. Mark: act.
 - Name. Menu: Options, Sort by. Key: none. Mark: change.
 - The list's own order. Menu: Options, Sort by. Key: none. Mark: change.
+- 0.3 seconds. Menu: Options, Wait before the clipboard comes back. Key: none. Mark: change.
+- 0.6 seconds, the default. Menu: Options, Wait before the clipboard comes back. Key: none. Mark: change.
+- 1 second. Menu: Options, Wait before the clipboard comes back. Key: none. Mark: change.
+- 2 seconds. Menu: Options, Wait before the clipboard comes back. Key: none. Mark: change.
+- 4 seconds. Menu: Options, Wait before the clipboard comes back. Key: none. Mark: change.
 - Hide. Menu: Session. Key: Escape. Mark: change.
 - Open the browser. Menu: Session. Key: Ctrl+B. Mark: open.
 - Quit axTemplate. Menu: Session. Key: none. Mark: act.

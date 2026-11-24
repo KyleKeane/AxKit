@@ -48,7 +48,7 @@ Each menu with its commands and their keys, as the window lists them:
 - **Actions**: No actions here yet.
 - **Navigation**: Nothing to move to here yet.
 - **Context**: Information (Ctrl+I); Open file location (Ctrl+O); Start (Enter); Start as administrator (Ctrl+Shift+Enter).
-- **Options**: Hotkey; Developer (Open settings file); General (Check for updates at start, Say the first match while typing, Start with Windows); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
+- **Options**: Hotkey; Developer (Open settings file); General (Say the first match while typing, Start with Windows); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
 - Keys without a menu item: Ctrl+Home (First match); Ctrl+End (Last match); Down (Next match); Page Down (Page down); Page Up (Page up); Up (Previous match).
 - **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
 <!-- end of the menus -->

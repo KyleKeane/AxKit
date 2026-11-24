@@ -847,7 +847,7 @@ Starts with: Open axClaude with the folder upd.
 
 ### Turn off the update check at start
 
-1. Choose Check for updates at start in the Options menu, General.
+1. Choose Check for updates at start in the axKit menu.
 2. Close the window.
 3. Open axClaude with the folder upd.
     You hear: Ready.

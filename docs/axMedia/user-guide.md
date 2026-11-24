@@ -67,7 +67,7 @@ Each menu with its commands and their keys, as the window lists them:
 - **Actions**: Back 15 seconds (Ctrl+Left); Deselect all (Ctrl+Shift+A); Faster (Ctrl+Up); Forward 15 seconds (Ctrl+Right); Normal speed; Play, pause or resume (Ctrl+Enter); Select all (Ctrl+A); Slower (Ctrl+Down); What is playing (Ctrl+Q).
 - **Navigation**: Go to time (Ctrl+T); Next file (Ctrl+Shift+Right); Previous file (Ctrl+Shift+Left).
 - **Context**: Queue is empty.
-- **Options**: Filter; Say each file as it starts; Developer (Open settings file); General (Check for updates at start); Sort by (Name, The order added); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
+- **Options**: Filter; Say each file as it starts; Developer (Open settings file); Sort by (Name, The order added); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
 - Keys without a menu item: Ctrl+Tab (Back to the list); Escape (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); F3 (Find next); Shift+F3 (Find previous); Right (Into the list); Enter (Open); Space (Select or deselect); Shift+Space (Select to here); Shift+Home (Select to the first file); Shift+End (Select to the last file); Shift+Down (Select to the next file); Shift+Up (Select to the previous file); Shift+F10 (The Context menu); Left (Up a level).
 - **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
 <!-- end of the menus -->
