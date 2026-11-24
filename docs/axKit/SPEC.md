@@ -1359,15 +1359,31 @@ is, every app that works through another program or service says so wherever its
 inside the window and before the first connection, that axKit is only the access layer and that the other program's
 terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the full text this section points to.
 
-- AX-11.1 **Two kinds of app.** A **standalone app** needs only Windows and works with the network off (axDown,
-  axJSON, axFile, axMedia, axPreview, axStart, axProcess, axTask, axCalc, axClip). An **access layer** shows what
-  another program does and passes the user's commands to it; that program does the work, under its maker's terms:
-  axClaude for Claude Code (and through it Anthropic's service), axGIT for Git (and the servers of a repository's
-  remotes), axTerminal for the user's shells (PowerShell, Command Prompt, Git Bash, PowerShell 7), axPass for
-  KeePassXC, axMCP for MCP servers, axHelp for Claude Code through axClaude (`docs/axHelp/SPEC.md`).
-  `Dispatch.Apps` holds it: `App.AccessLayerFor`, the program's name ("Claude Code", "Git", "your shell",
-  "KeePassXC"), empty for a standalone app. A new app that starts or talks to a program axKit does not include is an
-  access layer.
+- AX-11.1 **Two kinds of app.** A **standalone app** needs only Windows and works with the network off. An **access
+  layer** shows what another program does and passes the user's commands to it; that program does the work, under
+  its maker's terms (axClaude for Claude Code and through it Anthropic's service, axGIT for Git and the servers of a
+  repository's remotes, axTerminal for the user's shells, axPass for KeePassXC, axMCP for MCP servers, axHelp for
+  Claude Code through axClaude). Which app is which is written once, in `Dispatch.Apps`: `App.AccessLayerFor`, the
+  program's name ("Claude Code", "Git", "your shell", "KeePassXC"), empty for a standalone app; `docs/axKit/apps.md`
+  lists the two kinds apart, written from it, and no other list of them is kept by hand. A new app that starts or
+  talks to a program axKit does not include is an access layer.
+- AX-11.1a **The principles of each kind** (the maintainer's words of 2026-11-22: "axkit standalone apps should be as
+  barebones functional as possible and avoid any network requests or other things that might impact performance and
+  reliability. the access layers should serve as stable interfaces and have very clear boundaries about how they
+  function and when responsibility is handed to the user to perform an action on the underlying program"; and "a
+  clear distinction between these apps that will just work out of the box and those that require a bit of
+  configuration and installation"). Each new feature is held to its kind's:
+  - A standalone app works out of the box: nothing to install or sign in to, no network request of its own (root
+    rule 8; the update check and the report sender are the bundle's, never an app's), nothing that costs speed or
+    reliability for an ornament; its data is plain files the user can read, copy and keep (AX-5.11).
+  - An access layer is a stable interface over a program that changes: what the user hears and presses stays when
+    the program changes (root rule 12), everything read from or sent to the program goes through the layer's one
+    place for it, and the boundary is said in words: before the program first runs, the consent notice (AX-11.4);
+    when the program is missing, the notice that offers its maker's install (AX-2.9); when a step is the program's
+    own and not axKit's (a sign-in, a permission the program asks, a command offered to run), the user is told that
+    it is the program's and decides, and axKit never answers for the program or for the user.
+  - Where they meet: a standalone app never needs an access layer to do its work; an access layer may hand its
+    results to a standalone app (axGIT's file to axDown) as the user's own opening would.
 - AX-11.2 **The keyword.** An access layer's name is never shown alone: wherever the user meets it, it reads
   "<name>, access layer for <program>" ("axClaude, access layer for Claude Code"), from one place,
   `App.Title` (the name alone for a standalone app; the phrase "access layer" is one constant). That is: the window
