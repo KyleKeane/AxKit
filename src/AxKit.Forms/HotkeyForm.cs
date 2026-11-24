@@ -274,6 +274,7 @@ public abstract class HotkeyForm : AxKitForm
         base.OnHandleCreated(e);
         // AS-1.3: the Run key as the setting says, on every start (the installed program alone writes it; the Store's copy never).
         SignInStart.Apply(AppName, AppVerb, _settings.StartWithWindows);
+        RestartAfterUpdate();
         if (!Register(CurrentHotkey))
         {
             // AS-4.3: never a window that cannot be reached. Posted: not inside the handle's creation, where Show would
@@ -297,6 +298,30 @@ public abstract class HotkeyForm : AxKitForm
             Log.Info(_secondRegistered ? $"Second hotkey {second} registered" : $"The second hotkey {second} could not be registered");
         }
     }
+
+    private const int RESTART_NO_CRASH = 1;
+    private const int RESTART_NO_HANG = 2;
+    private const int RESTART_NO_REBOOT = 8;
+
+    /// <summary>
+    /// AX-13.4c: in the Store's copy, Windows starts this background app again, hidden, after the Store has ended it to
+    /// install an update, so that its hotkey works with no app opened first (KyleKeane/AxKit-reports issue 13). Only
+    /// after an update: a crash, a hang and a restart of Windows are left as they were (the sign-in's startup task
+    /// starts it then). An app that was not running is not started.
+    /// </summary>
+    private void RestartAfterUpdate()
+    {
+        if (!PackageIdentity.IsPackaged || AutomationEnvironment.Requested)
+        {
+            return;
+        }
+
+        var result = RegisterApplicationRestart($"{AppVerb} --hidden", RESTART_NO_CRASH | RESTART_NO_HANG | RESTART_NO_REBOOT);
+        Log.Info(result == 0 ? "Registered to start again after an update" : $"Not registered to start again after an update: {result:X}");
+    }
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+    private static extern int RegisterApplicationRestart(string commandLine, int flags);
 
     protected override void OnHandleDestroyed(EventArgs e)
     {

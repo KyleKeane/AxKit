@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axKit: **after the Microsoft Store updates axKit**, Windows starts axStart, axClip and axHelp again by themselves, so their hotkeys work without opening an app first.
 - axKit: **the first start from the Microsoft Store keeps the window you opened in front**, so NVDA reads it: axStart, axClip and axHelp start in the background only once it is.
 - axKit: **Check for updates tries once more** before it says GitHub could not be reached, when the first try found no network, as can happen right after the Microsoft Store's update.
 

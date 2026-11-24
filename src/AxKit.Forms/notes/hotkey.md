@@ -4,7 +4,7 @@ Part of the notes of `src/AxKit.Forms` (the index is `src/AxKit.Forms/CLAUDE.md`
 
 - `HotkeyForm` (docs/axStart/SPEC.md AS-1, AS-3.4, AS-4; from axStart's `StartForm` on its second use, axClip, 2026-10-23, moved unchanged): the window of a background app on `AxKitForm`:
   - `SetVisibleCore` (the first showing only makes the handle);
-  - `OnHandleCreated` (the hotkey registered, or the window shown with the notice that it is taken; shown unless started hidden);
+  - `OnHandleCreated` (the hotkey registered, or the window shown with the notice that it is taken; shown unless started hidden; in the Store's copy `RestartAfterUpdate` asks Windows to start the app again, hidden, after an update only, bundle AX-13.4c);
   - `OnFormClosing` (Alt+F4 and Close all windows hide; `Quit`, the update and Windows' end close);
   - `WndProc` (an activation while hidden gives the front back; `WM_HOTKEY` shows, hides, or is captured in the Hotkey notice);
   - `TakeHandOver` (`show`);

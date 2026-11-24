@@ -678,7 +678,7 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
-## Owed: the Store's copy after its install and after its update (2026-11-24, bundle AX-13.4a and AX-3.1; `KyleKeane/AxKit-reports issues 11, 13 and 15`)
+## Owed: the Store's copy after its install and after its update (2026-11-24, bundle AX-13.4a, AX-13.4c and AX-3.1; `KyleKeane/AxKit-reports issues 11, 13 and 15`)
 
 Built from the reports and by reasoning; the Store's install cannot be made on the runner's desktop. On a computer
 where axKit was never installed, after installing it from the Store, by ear with NVDA:

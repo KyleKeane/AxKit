@@ -1688,6 +1688,14 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   page (`SignInStart.TurnedOff`, read from its settings file as the process starts). A start of it while it runs
   ends by itself, as every second start of a background app. In the copy from GitHub the installer starts it with
   the others, and its first run writes its Run value.
+- AX-13.4c **The background apps after an update** (`KyleKeane/AxKit-reports issue 13`, 2026-11-18: after the Store
+  installed 5.10.0, axStart's hotkey did nothing until axDown was opened). The Store ends the package's running
+  processes to update it, and its startup tasks run only at a sign-in. So each background app of the hotkey window
+  (axStart, axClip, axHelp) registers with Windows, as its window's handle is made, to be started again after an
+  update only (`RegisterApplicationRestart` with its verb and `--hidden`, not after a crash, a hang or a restart of
+  Windows; `HotkeyForm.RestartAfterUpdate`), in the Store's copy alone and never in a test run. Windows starts again
+  only what was running; an app the user had quit or turned off stays so. Should Windows not start it, the first
+  app opened after the update does no more than before (AX-13.4b).
 - AX-13.5 **AppData and the programs axKit starts.** A packaged desktop app's new files under AppData Local and Roaming
   land in the package's private folder (`%LOCALAPPDATA%\Packages\axKit.axKit_<hash>\LocalCache`), its writes under HKCU
   in a private hive, and its package folder is read-only (measured 2026-11-08). So axKit's own files of AX-5 go with the
