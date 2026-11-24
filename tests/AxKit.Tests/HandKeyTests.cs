@@ -27,7 +27,7 @@ public sealed partial class HandKeyTests
         ["src/AxClaude/MainForm.Ui.cs"] = 2,
         ["src/AxClip/HelpText.cs"] = 1,
         ["src/AxDown/HelpText.cs"] = 25,
-        ["src/AxFile/HelpText.cs"] = 44,
+        ["src/AxFile/HelpText.cs"] = 3,
         ["src/AxGit/HelpText.cs"] = 11,
         ["src/AxHelp.Core/WorkingFolderFiles.cs"] = 1,
         ["src/AxHelp/HelpText.cs"] = 4,
