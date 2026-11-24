@@ -36,6 +36,11 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
   files not shown; `ReadAll` gives a top folder's items and those files in one reading, `UnreadableRow` and
   `UnreadableSummary` are the two sentences.
 - The changes on disk and their undo (`Changes`, `Step`, `FileChange`, IA-5.4) are `AxKit.Core`'s since 2026-11-23, on their second use, axTemplate's browser; this project and the window use them from there.
+- `ListOrder` (SPEC.md TK-4.9, TK-4.10, 2026-11-24): a list's own order, the configuration's `order` (the items'
+  file names without ".json") and `new items` (`top` or `bottom`): `Of`, `NewAtTop`, `Arrange` (named items in the
+  order, the others by name after, or before for top), `Moved` and `MovedAmong` (a move among the items shown, hidden
+  done tasks kept in place), `Renamed`, `Added`, `WithOrder`, `WithNewItems`, `Said`. `ItemFolder.Read` arranges by
+  it. Tested in `ListOrderTests`.
 - `Links` (IA-D3): `AfterMove` (the writes that keep every link pointing where it did when a file or a folder moves,
   both the links to it and the links it holds), `Spoken` ("missing: name"), `Remap`.
 - The item's form rules, `ItemFormRules`, moved to `AxKit.Core` on 2026-11-23 (its second use, axTemplate's form; `src/AxKit.Core/notes/text-and-editors.md`).

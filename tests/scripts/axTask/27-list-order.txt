@@ -1,0 +1,44 @@
+# Workflow: Put a list in your own order
+# axTask, docs/axTask/user-guide.md "Putting a list in your own order" and SPEC.md TK-4.9, TK-4.10: Ctrl+Shift+Up and
+# Down move the item you are on, Ctrl+Shift+Home and End to the top and the bottom, written into the list's
+# configuration as its order; Ctrl+Z takes a move back; Options, New items at the top of this list puts a new item first.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
+file "tasks\Home\Apples.json" {"schema":"list.json","Title":"Apples","Done":false}
+file "tasks\Home\Bread.json" {"schema":"list.json","Title":"Bread","Done":false}
+file "tasks\Home\Cheese.json" {"schema":"list.json","Title":"Cheese","Done":false}
+start task {temp}\tasks
+expect focus Your lists, heading level 1
+keys down
+expect focus Home, list, 3 items
+keys right
+expect focus Apples
+
+# Goal: Move an item down and up in its list
+keys ctrl+shift+down
+expect said Moved down: Apples, 2 of 3
+expect focus Apples
+run findstr /l /c:"\"order\"" "tasks\Home\list.json"
+keys ctrl+shift+up
+expect said Moved up: Apples, 1 of 3
+# Check: At the top an item moves no further
+keys ctrl+shift+up
+expect said ♪ Edge
+
+# Goal: Move an item to the bottom of its list, and take it back
+keys ctrl+shift+end
+expect said Moved to the bottom: Apples, 3 of 3
+keys up
+expect focus Cheese
+keys ctrl+z
+expect said Undone: Moved to the bottom: Apples, 3 of 3
+
+# Goal: Put new items at the top of a list
+menu New items at the top of this list
+expect said New items go to the top of Home
+keys ctrl+n
+type Dates
+keys enter
+expect said Added Dates
+keys home
+expect focus Dates

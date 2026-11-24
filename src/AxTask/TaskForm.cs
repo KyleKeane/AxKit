@@ -105,6 +105,8 @@ public sealed partial class TaskForm : ItemForm
         // TK-4.7: Ctrl+M, the move key, on an item or with items selected: to a list chosen in a form, or a new one.
         // On a list with nothing selected the key is the List menu's Move to section (OnListToMove).
         Add(_itemMenu, new Command("Mo&ve to a list...", AxTaskKeys.MoveToSection, MoveToList) { When = OnItemsToMove, Mark = CommandMark.Change });
+        // TK-4.9: the item moved in its list's own order.
+        AddOrderCommands(_itemMenu);
         _itemMenu.DropDownItems.Add(new ToolStripSeparator());
         // The selection (AX-8.16, TK-4.7): the keys are the item window's commands; these items show them. Done,
         // Archive and the list's actions that set or move act on the selected items when there are any.
@@ -143,6 +145,15 @@ public sealed partial class TaskForm : ItemForm
         var options = new ToolStripMenuItem();
         _hideDoneItem = Add(options, new Command("&Hide done tasks", AxTaskKeys.HideDone, ToggleHideDone) { When = NotRenaming, Mark = CommandMark.Change });
         _hideDoneItem.Checked = settings.HideDone;
+        // TK-4.10: where a new item of the list shown lands, the list's own setting, read as Options opens.
+        var newAtTop = CommandPalette.Marked(new ToolStripMenuItem("New items at the &top of this list", null, (_, _) => ToggleNewItemsAtTop()), CommandMark.Change);
+        options.DropDownItems.Add(newAtTop);
+        CommandPalette.RefreshedOnOpening(options, () =>
+        {
+            var inList = !AtTop && _smart is null && !Gathered && !IsArchiveFolder(_folder);
+            newAtTop.Enabled = inList;
+            newAtTop.Checked = inList && ListOrder.NewAtTop(ItemFolder.ReadConfig(_folder).Config);
+        });
         options.DropDownItems.Add(new ToolStripSeparator());
         options.DropDownItems.AddRange(CreateProjectFolderItems());
         options.DropDownItems.Add(CreateApprovalKeyItem());

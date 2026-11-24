@@ -147,6 +147,9 @@ public static class ItemFolder
 
         items.Sort((a, b) => NaturalOrder.Instance.Compare(NameOf(a), NameOf(b)));
         unreadable.Sort(NaturalOrder.Instance.Compare);
+        // TK-4.9: the list's own order, when its configuration has one; the items it does not name stay by name, after
+        // it, or before it when new items go to the top (TK-4.10).
+        items = ListOrder.Arrange(items, item => Path.GetFileNameWithoutExtension(item.Path), ListOrder.Of(own.Config), ListOrder.NewAtTop(own.Config));
         return new FolderLevel(items, notShown, unreadable) { List = own };
     }
 

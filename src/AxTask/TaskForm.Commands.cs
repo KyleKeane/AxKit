@@ -230,13 +230,24 @@ public sealed partial class TaskForm
         }, typed => typed.Trim().Length == 0 ? "Type the item's title" : null);
     }
 
-    /// <summary>The writes of a new item: its file, and before it the list's configuration when the list has none on disk yet (AF-11.1), so that the item is read through a file that is there.</summary>
+    /// <summary>
+    /// The writes of a new item: its file, and before it the list's configuration when the list has none on disk yet
+    /// (AF-11.1), so that the item is read through a file that is there, or when the list's order takes the new item at
+    /// its top or its bottom (TK-4.10, <see cref="ListOrder.Added"/>).
+    /// </summary>
     private static List<FileChange> NewItemParts(string folder, (ListConfig Config, string? Text) list, string path, FlatItem item)
     {
         var parts = new List<FileChange>();
-        if (list.Text is null)
+        var config = list.Config;
+        var shown = ItemFolder.Read(folder).Items.Select(file => Path.GetFileNameWithoutExtension(file.Path)).ToList();
+        if (ListOrder.Added(ListOrder.Of(config), shown, Path.GetFileNameWithoutExtension(path), ListOrder.NewAtTop(config)) is { } order)
         {
-            parts.Add(FileChange.Write(Path.Combine(folder, ItemDocument.ListFile), null, list.Config.ToText()));
+            config = ListOrder.WithOrder(config, order);
+        }
+
+        if (list.Text is null || !ReferenceEquals(config, list.Config))
+        {
+            parts.Add(FileChange.Write(Path.Combine(folder, ItemDocument.ListFile), list.Text, config.ToText()));
         }
 
         parts.Add(FileChange.Write(path, null, item.ToText()));

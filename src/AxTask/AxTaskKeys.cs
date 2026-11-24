@@ -24,6 +24,17 @@ public static class AxTaskKeys
     public const Keys MoveToSection = Keys.Control | Keys.M;
 
     /// <summary>
+    /// An item moved in its list's own order (SPEC.md TK-4.9; the maintainer settled it on 2026-11-21: Ctrl with an arrow
+    /// moves the cursor, Ctrl+Shift with Up or Down moves an item). The bundle's Select to the paragraph keys, which
+    /// mean nothing in a list, are taken on purpose here (KeyTests' Overrides); Home and End go to the top and bottom.
+    /// </summary>
+    public const Keys MoveItemUp = Keys.Control | Keys.Shift | Keys.Up;
+
+    public const Keys MoveItemDown = Keys.Control | Keys.Shift | Keys.Down;
+    public const Keys MoveItemToTop = Keys.Control | Keys.Shift | Keys.Home;
+    public const Keys MoveItemToBottom = Keys.Control | Keys.Shift | Keys.End;
+
+    /// <summary>
     /// The eighteen keys an action of a list may have, and no other (docs/axTask/forms-framework.md AF-6.1): 1 to 9
     /// are Ctrl+1 to Ctrl+9, 10 to 18 Ctrl+Shift+1 to Ctrl+Shift+9. No action can take a key of the window or the
     /// bundle, by construction.
@@ -62,6 +73,10 @@ public static class AxTaskKeys
         ("All tasks", AllTasks),
         ("Move: a list to a section, an item or the selected items to a list", MoveToSection),
         ("Find in every list", FindEverywhere),
+        ("Move the item up in its list", MoveItemUp),
+        ("Move the item down in its list", MoveItemDown),
+        ("Move the item to the top of its list", MoveItemToTop),
+        ("Move the item to the bottom of its list", MoveItemToBottom),
         // Ctrl+1 to Ctrl+3 are one entry each: the next heading at a top level, the action key in a list (TK-D14, TK-D20).
         ("Action key 1 in a list, the next heading of level 1 at a top level", NextHeading1),
         ("Action key 2 in a list, the next heading of level 2 at a top level", NextHeading2),

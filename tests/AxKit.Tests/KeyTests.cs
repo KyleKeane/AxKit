@@ -60,6 +60,9 @@ public sealed class KeyTests
         // axMedia: faster and slower (docs/axMedia/SPEC.md AM-D8, the user's choice of 2026-11-14); a list, no text.
         ("axMedia", Keys.Control | Keys.Up),
         ("axMedia", Keys.Control | Keys.Down),
+        // axTask: an item moved in its list's order (SPEC.md TK-4.9, the maintainer's keys of 2026-11-21); in a list.
+        ("axTask", Keys.Control | Keys.Shift | Keys.Up),
+        ("axTask", Keys.Control | Keys.Shift | Keys.Down),
     ];
 
     /// <summary>

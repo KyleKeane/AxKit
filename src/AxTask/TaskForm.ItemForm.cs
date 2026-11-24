@@ -79,6 +79,13 @@ public sealed partial class TaskForm
             {
                 parts.Add(FileChange.Move(item.Path, to));
                 parts.AddRange(Links.AfterMove(ItemFolder.AllItems(TopOf(item.Path)), item.Path, to, skip: item.Path));
+                // TK-4.9: the renamed item keeps its place in the list's own order.
+                var folder = Path.GetDirectoryName(item.Path)!;
+                var list = ItemFolder.ReadConfig(folder);
+                if (list.Config is { } config && ListOrder.Renamed(ListOrder.Of(config), Path.GetFileNameWithoutExtension(item.Path), Path.GetFileNameWithoutExtension(to)) is { } order)
+                {
+                    parts.Add(FileChange.Write(Path.Combine(folder, ItemDocument.ListFile), list.Text, ListOrder.WithOrder(config, order).ToText()));
+                }
             }
         }
 

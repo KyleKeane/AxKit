@@ -29,6 +29,7 @@ public static class HelpText
           {BundleKeys.Text(ItemKeys.New)}: a new item in this list. {BundleKeys.Text(ItemKeys.NewList)}: a new list, in the section of the line you are on
           {BundleKeys.Text(AxTaskKeys.MoveToSection)} on a list: move it to a section, or to a new one; its Section field in the detail pane does the same
           {BundleKeys.Text(AxTaskKeys.MoveToSection)} on an item, or with items selected: move it, or all of them, to a list you choose in a form, or to a new list you name there, as one step for {BundleKeys.Text(ItemKeys.Undo)}: "3 items moved to Later"
+          {BundleKeys.Text(AxTaskKeys.MoveItemUp)}, {BundleKeys.Text(AxTaskKeys.MoveItemDown)}: move the item you are on up or down in its list, which keeps that order from then on: "Moved up: Fix the tap, 3 of 12". {BundleKeys.Text(AxTaskKeys.MoveItemToTop)}, {BundleKeys.Text(AxTaskKeys.MoveItemToBottom)}: to the top or the bottom. Options, New items at the top of this list puts each new item there
           F2: rename in place: a box over the line, Enter keeps the new name, Escape the old. Delete: move to the Archive; {BundleKeys.Text(ItemKeys.Undo)} brings it back
           {BundleKeys.Text(ItemKeys.ReadAll)}: read every field of the item
           Ctrl+0: All tasks, every task not done

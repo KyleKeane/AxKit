@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- axTask: **put a list in your own order.** Ctrl+Shift+Up and Ctrl+Shift+Down move the item you are on, Ctrl+Shift+Home and Ctrl+Shift+End to the top or the bottom; the list keeps the order, and Ctrl+Z takes a move back. Options, New items at the top of this list puts new items first. A list you never reorder stays by name.
+
 - axKit: **a window's title starts with its app**, then what it holds: "axFile folder C:\work\music", "axDown file C:\work\notes.md", "axClaude, access layer for Claude Code folder C:\work". As the focus lands on a new window, NVDA says the app before the place, and the full path tells two folders of one name apart.
 
 - axKit: **an AI tool can run a command that asks for a text, with its text**: Find, Go to line, a filter, a name. The text is typed into the field the command opens and its button pressed, as you would, and you hear "Claude ran Find with the text budget". A field that was already asking you something is never filled, nor a password field; a command that acts outside the window still asks you first, and the question names the text.

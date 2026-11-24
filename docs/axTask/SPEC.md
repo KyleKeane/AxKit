@@ -227,6 +227,21 @@ selected ones (TK-4.4, TK-4.7).
     list's set action, with or without a form of its own, does it meanwhile), and selecting lists at the top
     level.
 - **TK-4.8 Filter and sort** (2026-11-22; the navigator's, bundle AX-8.17). Options → Filter… shows only the rows of the level whose name contains a text (lists at the top level, items in a list), a heading staying while a row under it passes; Options → Sort by ▸ Name puts the rows in the order of their names, under each heading among themselves, and The list's own order puts them back. Neither changes a file: the order of a list on disk and its smart lists are untouched.
+- **TK-4.9 A list's own order** (the maintainer's ask, "editable lists like axtask should have the ability to be
+  reordered", the keys settled on 2026-11-21: Ctrl with an arrow moves the cursor, Ctrl+Shift with Up or Down moves an
+  item; built 2026-11-24). In a list of the user's own, on an item: Ctrl+Shift+Up and Ctrl+Shift+Down move it one
+  place, Ctrl+Shift+Home and Ctrl+Shift+End to the top and the bottom (the Item menu's Move up, Move down, Move to
+  the top, Move to the bottom), each one step for Ctrl+Z: "Moved up: Fix the tap, 3 of 12"; at an end the edge sound
+  and nothing else. The order is the list's configuration's member `order`, the items' file names without ".json"
+  (`AxTask.Core/ListOrder`): the items it names come in its order, the others by name after them. A move among the
+  items shown while done tasks are hidden keeps the hidden ones where they were. A rename keeps the item's place;
+  an item archived or moved away leaves its name behind, which counts for nothing. Not at the top, in a smart list,
+  the search or the Archive. A list without the member shows its items by name, as before.
+- **TK-4.10 Where a new item lands** (the maintainer's ask: "a setting to let the user choose to add things at the
+  top or bottom of a list"; built 2026-11-24): Options, New items at the top of this list, a check of the list
+  shown, its configuration's member `new items`, `"bottom"` at first. At the top a new item (Ctrl+N, an AI tool's
+  add) stands first, the order written with it; at the bottom it stands last in a list that has an order, and in one
+  without, by its name as before. The configuration's file can say it too, and axJSON edits it (Ctrl+J).
 
 ## 5. All tasks and the smart lists
 

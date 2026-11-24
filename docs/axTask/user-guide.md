@@ -92,6 +92,13 @@ With items selected, these act on all of them, each as one step that Ctrl+Z take
 
 To make a list out of what a smart list or a tag shows: go into it, Ctrl+A, Ctrl+M, A new list.
 
+### Putting a list in your own order
+
+In a list, Ctrl+Shift+Up and Ctrl+Shift+Down move the item you are on one place up or down, and Ctrl+Shift+Home and
+Ctrl+Shift+End move it to the top or the bottom: "Moved up: Fix the tap, 3 of 12". The list keeps that order from
+then on, and Ctrl+Z takes a move back. Options, New items at the top of this list puts every new item first instead
+of last. A list you never reorder shows its items by name, as before.
+
 Everything else stays on the one item you are on, whatever is selected: Enter and its form, F2, Ctrl+Q, Ctrl+J,
 Ctrl+E, the detail pane, and an action that opens something or runs a program.
 
