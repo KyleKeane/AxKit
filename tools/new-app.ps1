@@ -6,9 +6,10 @@
 .DESCRIPTION
   Run it from a clean working tree on a branch of its own; review the result with git diff, then build and run the tests
   (test.ps1). It writes:
-    - src\<Project> (the window: <Project>.csproj, <Project>App.cs, <Project>Keys.cs, <Short>Form.cs on the window
-      base AxKitForm, HelpText.cs, CLAUDE.md), src\<Project>.Core (<Short>Settings.cs, <Short>Lines.cs, CLAUDE.md) and
-      tests\<Project>.Tests, all modelled on axCalc, the smallest app;
+    - src\<Project> (the window: <Project>.csproj, <Project>App.cs, <Project>Keys.cs, <Short>Form.cs on the
+      bundle's navigator ItemForm, every app being on a window type, HelpText.cs, CLAUDE.md), src\<Project>.Core
+      (<Short>Settings.cs, <Short>Lines.cs, CLAUDE.md) and tests\<Project>.Tests, and the window's line in
+      docs\axKit\components.json; tools\check-new-app.ps1 makes an app with it in a clean copy and builds and tests it;
     - docs\<Name>\SPEC.md, user-guide.md and nvda-test-plan.md as stubs, run-<Name>.ps1, and
       tests\scripts\<Name>\01-start.txt for tools\AxAutomate;
     - the app's line in Dispatch.Apps with its verb constant and its usage line (src\AxKit.Core\Dispatch.cs), its line
@@ -68,7 +69,7 @@ $what = if ($Description) { $Description } else { "$Name, a new app of the bundl
 if (-not $what.StartsWith("$Name, ")) { throw "The description starts with the name and a comma: '$Name, what it is'" }
 $what = $what.Substring($Name.Length + 2)
 $Description = "$Name, $what"
-if (($Group -eq 'AccessLayers') -ne [bool]$AccessLayerFor) { throw "An app of the group AccessLayers names its program with -AccessLayerFor, and no other app does." }
+if (($Group -in 'Programs', 'Ai', 'Utilities') -ne [bool]$AccessLayerFor) { throw "An access layer (the groups Programs, Ai and Utilities) names its program with -AccessLayerFor, and no other app does." }
 $title = if ($AccessLayerFor) { "$Name, access layer for $AccessLayerFor" } else { $Name }
 if ($AccessLayerFor) { $Description = "${title}: $what" }
 
@@ -262,25 +263,34 @@ using AxKit.Forms;
 namespace {{Project}};
 
 /// <summary>
-/// {{Name}}'s window (SPEC.md {{P}}-2): a menu bar and one list, on the bundle's window base (<see cref="AxKitForm"/>),
-/// which holds the notices, the fonts, the window's place, find and the update flow. A first draft from
-/// tools/new-app.ps1; axCalc's <c>CalcForm</c> is the small example of a window grown from here.
+/// {{Name}}'s window (SPEC.md {{P}}-2): the bundle's navigator, <see cref="ItemForm"/> (docs/axKit/framework.md, every
+/// app on a window type), which holds the list, the detail pane, the moves, the shared keys, the notices, the fonts,
+/// the window's place and the update flow. One level of lines; nothing changes yet, and each change is refused in one
+/// sentence. A first draft from tools/new-app.ps1; axAutomate's <c>AutomateForm</c> is an example of a window grown
+/// from here.
 /// </summary>
-public sealed class {{Short}}Form : AxKitForm
+public sealed class {{Short}}Form : ItemForm
 {
+    private const string ViewOnly = "{{Name}} only shows its lines so far";
+
     private readonly MenuStrip _menu = new();
-    private readonly AxKitList _list = new();
+    private readonly ToolStripMenuItem _sessionMenu = new("&Session");
+    private readonly ToolStripMenuItem _actionsMenu = new();
+    private readonly string? _path;
     private readonly IReadOnlyList<string> _lines;
 
     public {{Short}}Form(string? path, {{Short}}Settings settings, string? settingsError)
         : base({{Project}}App.Name, settings, {{Short}}Settings.DefaultPath, settingsError)
     {
+        _path = path;
         _lines = {{Short}}Lines.For(path);
-        Text = {{Short}}Lines.Title(path) + " - " + {{Project}}App.Name;
 
         // ---- menus and keys ({{P}}-7): one command list (docs/axKit/app-kit.md AK-2), each key from the tables ----
-        var first = new ToolStripMenuItem("&Session");
-        first.DropDownItems.Add(CreateExitItem());
+        _sessionMenu.DropDownItems.Add(CreateExitItem());
+
+        // Context (AX-9.11): what acts on the line the focus is on.
+        var lineMenu = new ToolStripMenuItem("&Line");
+        lineMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
 
         // Options, as the other windows' (AX-6): the window's own submenus and items first, then Text, General, Developer.
         var options = new ToolStripMenuItem("&Options");
@@ -291,58 +301,48 @@ public sealed class {{Short}}Form : AxKitForm
         var help = CreateHelpMenu(HelpText.UserGuide, "{{Name}} &resources",
             [("&Adding an app to axKit", "https://github.com/KyleKeane/AxKit/blob/main/docs/axKit/adding-an-app.md")]);
 
-        // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
-        _menu.Items.AddRange([first, options, CreateWindowMenu(), CreateAxKitMenu(), help]);
-        MainMenuStrip = _menu;
-
-        AddKey(new Command("Find in the list", BundleKeys.Find, () => ShowFindInList(_list, () => _lines)) { Mark = CommandMark.Read });
-        AddKey(new Command("Find next", BundleKeys.FindNext, () => FindInList(_list, () => _lines, 1)) { Mark = CommandMark.Read });
-        AddKey(new Command("Find previous", BundleKeys.FindPrevious, () => FindInList(_list, () => _lines, -1)) { Mark = CommandMark.Read });
-
-        // ---- the list ({{P}}-2.1) ----
-        _list.IntegralHeight = false;
-        _list.Dock = DockStyle.Fill;
-        _list.TabIndex = 0;
-        _list.AccessibleName = "{{Short}}";
-        _list.Items.AddRange(_lines.Select(line => (object)line).ToArray());
-        _list.SelectedIndex = 0;
-
-        // Docked from the last control to the first: the menu takes the top, the list (or the notice over it) the rest.
-        Controls.AddRange([Overlay, _list, _menu]);
-
-        ApplyTextFont();
-        RestoreWindow();
+        // The bundle's eight menus (AX-9.1), Window, axKit and Help ending the bar in every window.
+        PlaceMenuBar(_menu, _sessionMenu, _actionsMenu, new ToolStripMenuItem(), CreateContextMenu(lineMenu, lineMenu, lineMenu), options, help);
+        PlaceControls(_menu);
+        Fill(select: null);
     }
 
     // ---- what the window base asks for ----
 
     protected override string Shortcuts => HelpText.Shortcuts;
 
-    protected override void HideForNotice() => _list.Visible = false;
+    protected override IReadOnlyList<string> RestartArguments() => _path is null ? [Dispatch.{{Constant}}] : [Dispatch.{{Constant}}, _path];
 
-    protected override void ShowAfterNotice() => _list.Visible = true;
+    // ---- the one level ({{P}}-2.1) ----
 
-    protected override Control FocusTarget => _list;
-
-    protected override void ApplyFont(Font font) => _list.Font = font;
-
-    protected override IReadOnlyList<string> RestartArguments() => [Dispatch.{{Constant}}];
-
-    protected override void OnShown(EventArgs e)
+    protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel()
     {
-        if (!NoticeOpen)
-        {
-            _list.Select();
-        }
-
-        base.OnShown(e);
+        var rows = _lines.Select((line, i) => new ItemRow(false, "line:" + i, line, line)).ToList();
+        var title = {{Short}}Lines.Title(_path);
+        return (rows, $"{title}, {rows.Count} lines", title, _path ?? string.Empty);
     }
+
+    protected override ItemDetail DetailOf(ItemRow? row) =>
+        new("Details", row?.Key, null, [new ItemDetailLine(row?.Label ?? "Nothing selected")]);
+
+    // ---- what this draft refuses ----
+
+    protected override string? RenameRefused(ItemRow row) => ViewOnly;
+
+    protected override void DeleteRow(ItemRow row) => Announce(ViewOnly, true);
+
+    protected override void NewItem() => Announce(ViewOnly, true);
+
+    protected override void NewList() => Announce(ViewOnly, true);
+
+    protected override void Undo() => Announce("Nothing to undo: nothing changes here", true);
 }
 '@
 
 New-TextFile "src\$Project\HelpText.cs" @'
 using System.Reflection;
 using AxKit.Core;
+using AxKit.Forms;
 
 namespace {{Project}};
 
@@ -353,7 +353,7 @@ public static class HelpText
     public static readonly string Shortcuts = BundleHelp.Section(
         "{{Name}}",
         [
-            "Ctrl+F: find a line in the list. F3 and Shift+F3: next or previous match",
+            $"{BundleKeys.Text(BundleKeys.Find)}: find a line in the list. {BundleKeys.Text(BundleKeys.FindNext)} and {BundleKeys.Text(BundleKeys.FindPrevious)}: next or previous match",
         ]) + """
         ## {{Name}}
           Up and Down: the lines of the list
@@ -550,7 +550,8 @@ numbered {{P}}-n.m. The bundle's rules are `docs/axKit/SPEC.md` (AX-7 accessibil
 
 ### {{P}}-2 The window
 
-- {{P}}-2.1 One list, named "{{Short}}", with the focus at start; its title ends in " - {{Name}}".
+- {{P}}-2.1 The bundle's navigator with one level of lines, named with their count, the focus in it at start; its
+  title starts with "{{Name}}" (bundle AX-9.6).
 
 ### {{P}}-7 Keys
 
@@ -707,6 +708,16 @@ Edit-TextFile 'src\AxKit.Core\AxKit.Core.csproj' {
     return Add-AfterLast $text $nl '^    <EmbeddedResource Include="\.\./\.\./docs/ax\w+/user-guide\.md" LogicalName="Guide\.ax\w+\.md" />' "    <EmbeddedResource Include=`"../../docs/$Name/user-guide.md`" LogicalName=`"Guide.$Name.md`" />"
 }
 
+# The app's window type in the components document (docs/axKit/framework.md, ComponentsTests): the navigator.
+Edit-TextFile 'docs\axKit\components.json' {
+    param($text, $nl)
+    $found = [regex]::Matches($text, '(?m)^    \{ "app": "ax\w+", "window": [^\r\n]*\}(?=\r?$)')
+    if ($found.Count -eq 0) { return $text }
+    $last = $found[$found.Count - 1]
+    $line = "    { `"app`": `"$Name`", `"window`": `"${short}Form`", `"type`": `"navigator`", `"to be`": `"navigator`", `"note`": `"A first draft from tools/new-app.ps1.`" }"
+    return $text.Insert($last.Index + $last.Length, ",$nl$line")
+}
+
 Edit-TextFile 'tests\AxKit.Tests\KeyTests.cs' {
     param($text, $nl)
     $text = Add-AfterLast $text $nl '^            \["[^"]+"\] = \w+\.\w+Keys\.All,' "            [`"$Name`"] = $Project.${Project}Keys.All,"
@@ -731,7 +742,8 @@ foreach ($form in '.github\ISSUE_TEMPLATE\bug.yml', '.github\ISSUE_TEMPLATE\idea
 
 Edit-TextFile 'docs\axKit\SPEC.md' {
     param($text, $nl)
-    $text = [regex]::Replace($text, '(- AX-1\.1 The first argument may be a verb naming an app: [^\r\n]*?`)( \(the one list is)', "`$1, ``$Verb```$2")
+    # The new verb after the last of the list, whatever follows the list in the sentence.
+    $text = [regex]::Replace($text, '(- AX-1\.1 The first argument may be a verb naming an app: (?:`[a-z0-9]+`, )*`[a-z0-9]+`)', "`$1, ``$Verb``")
     $text = [regex]::Replace($text, '(`AxKit\.Ax\w+`)\), so the', "`$1, ``AxKit.$Project``), so the")
     # Section 3: a draft entry after the last app's.
     $section = $text.IndexOf("$nl## 4. ")

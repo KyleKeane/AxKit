@@ -198,12 +198,19 @@ page by hand; run its script and commit the page.
 
 ## Other tools
 
-- `tools/new-app.ps1 <Name> <verb> <group> <opens>`: a new app, its folders, a first window, its documents and its
-  registration places (`adding-an-app.md`).
+- `tools/new-app.ps1 <Name> <verb> <group> <opens>`: a new app, its folders, a first window on the navigator, its
+  documents and its registration places (`adding-an-app.md`). `tools/check-new-app.ps1` makes the throwaway app axZeta
+  with it in a clean copy of the last commit, builds it and runs its tests and the bundle's checks of every app's
+  places, so that the script cannot fall behind the framework unseen; run it after a change to either, and before a
+  release.
+- `tools/push-check.ps1`: what the pre-push hook runs before anything leaves the computer: `tests/AxKit.Tests` always,
+  the test projects of the apps the pushed commits changed (every project when shared code changed), the page checks,
+  `tools/upstream.ps1 -Check` and `tools/script-lint.ps1`; a failure refuses the push.
 - `tools/make-icon.ps1`: the apps' icons from `Dispatch.Apps`. `tools/make-test-pictures.ps1`: the three test
   pictures of axHelp's screenshots in `tests/fixtures/pictures`, run only to change them.
 - `tools/session-start.ps1`: the start of a working session in one run, four checks in order, each by the script that
-  owns it: `git fetch origin` and whether `main` (and the branch in hand) lacks commits of `origin/main`;
+  owns it: `git fetch origin` and whether `main` (and the branch in hand) lacks commits of `origin/main`, and every
+  worktree's branch that holds commits `main` lacks (work finished beside main and never merged);
   `tools/sync-repos.ps1 -Status`; `tools/reports-check.ps1`; `tools/upstream.ps1`. One line each, starting with what
   was checked and ending with "ok" or with what to do ("code: main is 2 commits behind origin/main: git pull
   --ff-only"; "reports: 1 open report without an item: read it and write its item"), the owning script's own lines
