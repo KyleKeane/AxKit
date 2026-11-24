@@ -31,10 +31,10 @@ public sealed class EmbeddedTextTests
     }
 
     /// <summary>
-    /// The guides whose Menus section is still written by hand, to be converted: the list only shrinks. axFile's guide
-    /// is changed with axFile's own work, which runs beside this conversion (2026-11-23).
+    /// The guides whose Menus section is still written by hand: none since 2026-11-24, when axFile's joined; the list
+    /// stays empty.
     /// </summary>
-    private static readonly string[] MenusByHand = ["axFile"];
+    private static readonly string[] MenusByHand = [];
 
     /// <summary>
     /// Every app's guide has its Menus section written from the command inventory (docs/axKit/documents.md; the

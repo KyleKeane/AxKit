@@ -1,4 +1,5 @@
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Forms;
 using AxTask.Core;
 
@@ -45,7 +46,7 @@ public sealed partial class TaskForm
         var from = shown.FindIndex(name => name.Equals(StemOf(item.Path), StringComparison.OrdinalIgnoreCase));
         if (ListOrder.MovedAmong(all, shown, from, by) is not { } moved)
         {
-            EventDoor.Raise(AxKit.Core.Events.EventKind.Edge);
+            EventDoor.Raise(EventKind.Edge);
             return;
         }
 
