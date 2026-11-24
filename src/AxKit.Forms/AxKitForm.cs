@@ -603,13 +603,32 @@ public abstract partial class AxKitForm : Form
             return false;
         }
 
-        var caret = box.GetPositionFromCharIndex(Math.Min(box.SelectionStart, Math.Max(0, box.TextLength - 1)));
-        strip.Show(box, new Point(Math.Max(0, caret.X), Math.Max(0, caret.Y) + box.Font.Height));
-        if (strip.Items.Count > 0)
+        // Once the keys that asked are up, as OpenBarMenu waits: F10 is itself the menu key, and its release closed a
+        // menu shown at once (the second NVDA pass of 2026-11-24 heard nothing open).
+        var waited = 0;
+        var timer = new System.Windows.Forms.Timer { Interval = 20 };
+        timer.Tick += (_, _) =>
         {
-            strip.Items[0].Select();
-        }
+            waited += timer.Interval;
+            if ((IsDown(VK_SHIFT) || IsDown(VK_F10) || IsDown(VK_APPS) || IsDown(VK_CONTROL) || IsDown(VK_OEM_PERIOD)) && waited < 3000)
+            {
+                return;
+            }
 
+            timer.Dispose();
+            if (box.IsDisposed || !box.Focused)
+            {
+                return;
+            }
+
+            var caret = box.GetPositionFromCharIndex(Math.Min(box.SelectionStart, Math.Max(0, box.TextLength - 1)));
+            strip.Show(box, new Point(Math.Max(0, caret.X), Math.Max(0, caret.Y) + box.Font.Height));
+            if (strip.Items.Count > 0)
+            {
+                strip.Items[0].Select();
+            }
+        };
+        timer.Start();
         return true;
     }
 

@@ -21,8 +21,8 @@ expect state "notice":"Fields of Washer"
 keys tab
 expect focus Type Room
 keys shift+f10
-expect focus Thanks
-refuse focus Elsewhere
+expect spoken Thanks
+refuse spoken Elsewhere
 keys enter
 expect said Thanks inserted
 expect focus "value":"Thank you, !"
