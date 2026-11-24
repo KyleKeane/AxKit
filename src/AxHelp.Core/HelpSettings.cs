@@ -22,11 +22,11 @@ public sealed class HelpSettings : HotkeySettings
     /// <summary>Windows+Alt+H, the conversation's default until 2026-11-14 (HE-D5): a file that holds it is taken over to the new one.</summary>
     protected override IReadOnlyList<Hotkey> RetiredDefaults => [new(Hotkey.Windows | Hotkey.Alt, 'H')];
 
-    /// <summary>Ctrl+Shift+Comma, the less-than sign's key (HE-4.1, bundle AX-8.11): the screenshot into the conversation.</summary>
-    public static Hotkey DefaultScreenshotHotkey => new(Hotkey.Control | Hotkey.Shift, 0xBC);
+    /// <summary>Ctrl+Shift+Period, the greater-than sign's key (HE-4.1, bundle AX-8.11; the maintainer's move of 2026-11-24, which gave Ctrl+Shift+Comma to axClip): the screenshot into the conversation.</summary>
+    public static Hotkey DefaultScreenshotHotkey => new(Hotkey.Control | Hotkey.Shift, 0xBE);
 
     /// <summary>Windows+Alt+S, the screenshot's default until 2026-11-14 (HE-D5), taken over as the conversation's is.</summary>
-    public static Hotkey RetiredScreenshotHotkey => new(Hotkey.Windows | Hotkey.Alt, 'S');
+    public static IReadOnlyList<Hotkey> RetiredScreenshotHotkeys => [new(Hotkey.Windows | Hotkey.Alt, 'S'), new(Hotkey.Control | Hotkey.Shift, 0xBC)];
 
     /// <summary>The screenshot's hotkey as text, the file's <c>screenshotHotkey</c>; <see cref="ScreenshotKey"/> reads it.</summary>
     [JsonPropertyName("screenshotHotkey")]
@@ -107,7 +107,11 @@ public sealed class HelpSettings : HotkeySettings
     {
         var settings = SettingsFile.Load<HelpSettings>(path, out error);
         settings.SanitizeHotkey();
-        settings.ScreenshotHotkeyText = TakenOver(settings.ScreenshotHotkeyText, RetiredScreenshotHotkey, DefaultScreenshotHotkey) ?? string.Empty;
+        foreach (var retired in RetiredScreenshotHotkeys)
+        {
+            settings.ScreenshotHotkeyText = TakenOver(settings.ScreenshotHotkeyText, retired, DefaultScreenshotHotkey) ?? string.Empty;
+        }
+
         settings.ScreenshotHotkeyText = settings.ScreenshotKey.ToString();
         var model = ModelOrDefault(settings.Model);
         if (!string.IsNullOrWhiteSpace(settings.Model) && model != settings.Model.Trim())

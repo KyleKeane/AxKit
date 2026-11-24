@@ -156,7 +156,7 @@ public sealed class KeyTests
 
     /// <summary>
     /// AX-8.11: the list the test above reads holds the hotkeys the background apps really start with (a default
-    /// changed in its settings class must change here), Ctrl+Shift+Period, kept and registered by nothing, and no
+    /// changed in its settings class must change here), Ctrl+Shift+Apostrophe, kept for axAutomate's launcher and registered by nothing, and no
     /// Windows+Alt key of axHelp's or axClip's, retired on 2026-11-14.
     /// </summary>
     [Fact]
@@ -174,10 +174,10 @@ public sealed class KeyTests
             AsKeys(help.ScreenshotKey),
             AsKeys(clip),
             AsKeys(template),
-            Keys.Control | Keys.Shift | Keys.OemPeriod,
+            Keys.Control | Keys.Shift | Keys.OemQuotes,
         ];
         Assert.Equal(expected, BundleKeys.SystemWide.Select(k => k.Key));
-        Assert.Equal(["Ctrl+Shift+Space", "Ctrl+Shift+Slash", "Ctrl+Shift+Comma", "Ctrl+Shift+Apostrophe", "Ctrl+Shift+Semicolon"], new[] { start, help.Key, help.ScreenshotKey, clip, template }.Select(key => key.ToString()));
+        Assert.Equal(["Ctrl+Shift+Space", "Ctrl+Shift+Slash", "Ctrl+Shift+Period", "Ctrl+Shift+Comma", "Ctrl+Shift+Semicolon"], new[] { start, help.Key, help.ScreenshotKey, clip, template }.Select(key => key.ToString()));
 
         static Keys AsKeys(AxKit.Core.Hotkey hotkey) =>
             (Keys)hotkey.Key

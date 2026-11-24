@@ -36,7 +36,6 @@ public sealed class HotkeyTests
     [InlineData("")]
     [InlineData("Ctrl+")]
     [InlineData("Hyper+Space")]
-    [InlineData("Ctrl+Period")]
     public void Nonsense_is_not_a_hotkey(string text)
     {
         Assert.Null(Hotkey.Parse(text));
@@ -48,7 +47,7 @@ public sealed class HotkeyTests
         Assert.Equal("Use Ctrl, Alt or the Windows key with it", new Hotkey(Hotkey.Shift, 0x41).Refusal());
         Assert.Equal("Use Ctrl, Alt or the Windows key with it", new Hotkey(0, 0x20).Refusal());
         Assert.Null(new Hotkey(Hotkey.Windows, 0x41).Refusal());
-        Assert.Equal("That key cannot be a hotkey", new Hotkey(Hotkey.Control, 0xBE).Refusal());
+        Assert.Contains("Context menu", new Hotkey(Hotkey.Control, 0xBE).Refusal(), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -60,15 +59,16 @@ public sealed class HotkeyTests
         Assert.Null(Hotkey.Parse(odd.ToString()));
     }
 
-    /// <summary>AX-8.11: the period's key is kept for a later help launcher, so it is no hotkey's key, while Slash, Comma and Semicolon are.</summary>
+    /// <summary>AX-8.11: Slash, Comma, Semicolon and Period are hotkey keys (axHelp's screenshot on Ctrl+Shift+Period since 2026-11-24), Period only with Shift: Ctrl+Period is the Context menu in every axKit window.</summary>
     [Fact]
-    public void Slash_comma_and_semicolon_are_hotkey_keys_and_period_is_not()
+    public void Slash_comma_semicolon_and_period_with_shift_are_hotkey_keys()
     {
         Assert.Null(new Hotkey(Hotkey.Control | Hotkey.Shift, 0xBF).Refusal());
         Assert.Null(new Hotkey(Hotkey.Control | Hotkey.Shift, 0xBC).Refusal());
         Assert.Null(new Hotkey(Hotkey.Control | Hotkey.Shift, 0xBA).Refusal());
-        Assert.Equal("That key cannot be a hotkey", new Hotkey(Hotkey.Control | Hotkey.Shift, 0xBE).Refusal());
-        Assert.Null(Hotkey.Parse("Ctrl+Shift+Period"));
+        Assert.Null(new Hotkey(Hotkey.Control | Hotkey.Shift, 0xBE).Refusal());
+        Assert.Equal(new Hotkey(Hotkey.Control | Hotkey.Shift, 0xBE), Hotkey.Parse("Ctrl+Shift+Period"));
+        Assert.Contains("Context menu", Hotkey.Parse("Ctrl+Period")!.Refusal(), StringComparison.Ordinal);
     }
 
     // ---- a retired default taken over (AX-8.11; HotkeySettings.TakenOver) ----

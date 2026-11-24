@@ -46,7 +46,7 @@ stronger model, and tells you so.
 
 ## Pictures of the screen
 
-Press Ctrl+Shift+Comma, the key with the less-than sign, in any program: axHelp takes a picture of the window in front, the conversation comes up with
+Press Ctrl+Shift+Period, the key with the greater-than sign, in any program: axHelp takes a picture of the window in front, the conversation comes up with
 "Screenshot of" and the picture's path in its message field, and the path is on the clipboard too. Type your question
 after it ("which button is the default?") and press Enter; with no question, Claude says what the window shows.
 

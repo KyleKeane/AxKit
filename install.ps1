@@ -266,8 +266,8 @@ function Get-Version([string]$path) {
 $runKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
 $background = @(
     @{ Verb = 'start'; Name = 'axStart'; Settings = 'axStart.json'; What = 'the launcher'; Started = 'axStart, the launcher, runs in the background: Ctrl+Shift+Space, or the hotkey you chose, brings up its search field' },
-    @{ Verb = 'clip'; Name = 'axClip'; Settings = 'axClip.json'; What = 'the clipboard history'; Started = 'axClip, the clipboard history, runs in the background: Ctrl+Shift+Apostrophe, or the hotkey you chose, brings it up' },
-    @{ Verb = 'help'; Name = 'axHelp'; Settings = 'axHelp.json'; What = 'the conversation with Claude'; Started = 'axHelp runs in the background: Ctrl+Shift+Slash (the question mark key) brings up your conversation with Claude, Ctrl+Shift+Comma (the less-than key) puts a picture of the screen into it' },
+    @{ Verb = 'clip'; Name = 'axClip'; Settings = 'axClip.json'; What = 'the clipboard history'; Started = 'axClip, the clipboard history, runs in the background: Ctrl+Shift+Comma, or the hotkey you chose, brings it up' },
+    @{ Verb = 'help'; Name = 'axHelp'; Settings = 'axHelp.json'; What = 'the conversation with Claude'; Started = 'axHelp runs in the background: Ctrl+Shift+Slash (the question mark key) brings up your conversation with Claude, Ctrl+Shift+Period (the greater-than key) puts a picture of the screen into it' },
     # axTemplate's launcher (docs/axTemplate/SPEC.md TP-1.2): the one of its two windows that runs in the background,
     # told by its arguments (Words), since the plain verb is its browser, a window like any other. It is started
     # after every installation and update as the others are (the maintainer's word of 2026-11-23: its hotkey is on

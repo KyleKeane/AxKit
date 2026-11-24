@@ -15,7 +15,7 @@ public static class HelpText
         ],
         altF4: "hide axClip (Quit axClip, in its first menu, ends it)") + $"""
         ## axClip
-          Ctrl+Shift+Apostrophe, or the hotkey you chose: show axClip from anywhere; again: hide it
+          Ctrl+Shift+Comma, or the hotkey you chose: show axClip from anywhere; again: hide it
           Type: only the items that hold every word typed
           Down, Up: the next or the previous item. {BundleKeys.Text(AxClipKeys.FirstMatch)}, {BundleKeys.Text(AxClipKeys.LastMatch)}: the first or the last. Page Down, Page Up: a screen
           Enter: paste the item into the program you were in

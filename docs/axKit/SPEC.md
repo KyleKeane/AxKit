@@ -103,12 +103,12 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   every answer to read back, copy and recall, and Ctrl+I says an answer in hexadecimal, binary and octal.
   Specification `docs/axCalc/SPEC.md`, guide `docs/axCalc/user-guide.md`, test plan `docs/axCalc/nvda-test-plan.md`.
 - **axClip** (2026-10-23, branch `axClip`): `AxKit.exe clip [--hidden]`, Start entry `axKit axClip`, command `axClip`, no File
-  Explorer entry. A clipboard history behind a hotkey (Ctrl+Shift+Apostrophe unless the user chose another): a background
+  Explorer entry. A clipboard history behind a hotkey (Ctrl+Shift+Comma unless the user chose another): a background
   process from sign-in, as axStart, on the bundle's `HotkeyForm`, with one search field over the text of every copy;
   Enter pastes into the program that was in front. Specification `docs/axClip/SPEC.md`, guide
   `docs/axClip/user-guide.md`, test plan `docs/axClip/nvda-test-plan.md`.
 - **axMCP** (asked and built 2026-11-09; an access layer, AX-11, for MCP servers): `AxKit.exe mcpclient [<folder>]`, Start entry `axKit axMCP`, command `axMCP`: the MCP servers Claude Code knows on this computer and the user's own, in the item apps' window (`item-apps.md`); a server started by hand as a child process on its standard input and output shows its tools, resources and prompts, a tool's arguments are the detail pane's fields, Ctrl+Enter calls it and the result is a notice text; remote servers are listed and not started (its MP-D2). Specification `docs/axMCP/SPEC.md`, guide `docs/axMCP/user-guide.md`, test plan `docs/axMCP/nvda-test-plan.md`.
-- **axHelp** (asked 2026-10-23 as AxAsk, built 2026-11-09; rebuilt in 5.7.0 as two hotkeys into one conversation in axClaude, with axDescribe, asked as AxSee, merged in; an access layer, AX-11, for Claude Code): `AxKit.exe help [--hidden | <picture>]` (`describe`, the former verb, the same), Start entry `axKit axHelp`, command `axHelp`: a background process whose hotkey, Ctrl+Shift+Slash (the question mark's key, AX-8.11), brings up the conversation, an axClaude window on Claude's working folder titled axHelp, on a model of axHelp's own, and whose second hotkey, Ctrl+Shift+Comma, puts a picture of the window in front into it (`docs/axHelp/SPEC.md`).
+- **axHelp** (asked 2026-10-23 as AxAsk, built 2026-11-09; rebuilt in 5.7.0 as two hotkeys into one conversation in axClaude, with axDescribe, asked as AxSee, merged in; an access layer, AX-11, for Claude Code): `AxKit.exe help [--hidden | <picture>]` (`describe`, the former verb, the same), Start entry `axKit axHelp`, command `axHelp`: a background process whose hotkey, Ctrl+Shift+Slash (the question mark's key, AX-8.11), brings up the conversation, an axClaude window on Claude's working folder titled axHelp, on a model of axHelp's own, and whose second hotkey, Ctrl+Shift+Period, puts a picture of the window in front into it (`docs/axHelp/SPEC.md`).
 
 - **axAutomate** (asked 2026-11-10, built 2026-11-11 as a viewer first): `AxKit.exe automate [<folder>]`, Start entry `axKit axAutomate`, command `axAutomate`: the workflows that drive axKit's windows, the automated checks of every app first, read step by step in the item apps' window (`docs/axAutomate/SPEC.md`).
 - **axTemplate** (asked 2026-11-23, its browser and its launcher built the same day): `AxKit.exe template [--launcher | --hidden]`, Start entry `axKit axTemplate`, command `axTemplate`: the user's templates, each an item of the item format in one folder, with a browser on the item apps' window and a launcher behind a hotkey (Ctrl+Shift+Semicolon unless the user chose another), a background process as axClip's, that puts a template into the program in front (`docs/axTemplate/SPEC.md`). The one app with two windows, each of a bundle type (TP-D8).
@@ -798,10 +798,10 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   | --- | --- | --- |
   | Ctrl+Shift+Space | axStart's search field (AS-4.1) | `AxKit.Core/Hotkey.Default`; Options, Hotkey in axStart |
   | Ctrl+Shift+Slash, the question mark's key | axHelp's conversation with Claude (HE-4.1) | `AxHelp.Core/HelpSettings.DefaultHotkey`; Options, Hotkey in axHelp |
-  | Ctrl+Shift+Comma, the less-than sign's key | a screenshot of the window in front into axHelp's conversation (HE-4.1) | `HelpSettings.DefaultScreenshotHotkey`; `screenshotHotkey` in `axHelp.json` |
-  | Ctrl+Shift+Apostrophe | axClip's search field over the clipboard history (CP-1.3) | `AxClip.Core/ClipSettings.DefaultHotkey`; Options, Hotkey in axClip |
+  | Ctrl+Shift+Period, the greater-than sign's key | a screenshot of the window in front into axHelp's conversation (HE-4.1, HE-4.3) | `HelpSettings.DefaultScreenshotHotkey`; `screenshotHotkey` in `axHelp.json` |
+  | Ctrl+Shift+Comma, the less-than sign's key | axClip's search field over the clipboard history (CP-1.3) | `AxClip.Core/ClipSettings.DefaultHotkey`; Options, Hotkey in axClip |
   | Ctrl+Shift+Semicolon | axTemplate's search field over the templates (TP-1.3) | `AxTemplate.Core/TemplateSettings.DefaultHotkey`; Options, Hotkey in axTemplate's launcher |
-  | Ctrl+Shift+Period, the greater-than sign's key | reserved for a later help launcher; nothing registers it | written here alone |
+  | Ctrl+Shift+Apostrophe | kept for axAutomate's launcher, to be built (its item); nothing registers it | written here alone |
 
   The Windows+Alt keys, axHelp's Windows+Alt+H and Windows+Alt+S and axClip's Windows+Alt+V, are retired: the user
   expected other programs to take them or to act on them. A settings file that still holds one of them is taken over to the new key as it is
@@ -811,11 +811,15 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   a default that left the list. axMedia's Faster and Slower, on Ctrl+Shift+Period and Ctrl+Shift+Comma until then,
   are Ctrl+Up and Ctrl+Down (AM-D8). Outside axKit, Word and Outlook lose their larger and smaller font on the comma
   and period keys while axHelp runs; the user was told. A hotkey's key is one of `Hotkey.Names`: a letter, a digit,
-  a function key, a navigation key, Slash, Comma, Semicolon or Apostrophe, never Period. axClip's key joined the
+  a function key, a navigation key, Slash, Comma, Semicolon, Apostrophe or Period, Period only with Shift, since
+  Ctrl+Period is the Context menu in every window (AX-8.15). axClip's key joined the
   same day by a second decision of the user's (CP-D1), on Semicolon. axTemplate's came on 2026-11-23 on Apostrophe,
   the key to the right, and the same day the user swapped them: templates are used more, so axTemplate has
-  Ctrl+Shift+Semicolon and axClip Ctrl+Shift+Apostrophe (CP-D1, TP-D1). No window uses either. A settings file that
-  holds an app's old default is taken over to the new one as it is read (`HotkeySettings.RetiredDefaults`).
+  Ctrl+Shift+Semicolon and axClip Ctrl+Shift+Apostrophe (CP-D1, TP-D1). On 2026-11-24 the user moved them again for
+  axAutomate's launcher (its item): Apostrophe kept for it, axClip on Comma, axHelp's screenshot on Period, the key
+  kept until then for a later help launcher. No window uses any of them. A settings file that
+  holds an app's old default is taken over to the new one as it is read (`HotkeySettings.RetiredDefaults`, and
+  `HelpSettings.RetiredScreenshotHotkeys` for the screenshot).
 - AX-8.12 **The key test: whether a key reaches the window, and what it does there** (2026-11-15, the user's
   decision, after a function key that never reached axClaude: the keyboard had made it another key). Every window
   has **Help, Diagnostics, Test a key**, in the menu and the command palette, with no key of its own; it is not
@@ -1000,8 +1004,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     menu (`WM_CONTEXTMENU`) to the focused control, as Windows does for Shift+F10: a text whose stand-in opens the
     bar's Context menu opens it (AX-9.11), a plain edit control shows Windows' own menu, and a control with neither
     does nothing. No window gets a menu it did not have. The bar's menu opens once Ctrl and the period key are up,
-    as it waits for Shift and F10. Not in menu mode, where the keys are the menu's. Ctrl+Shift+Period stays
-    reserved.
+    as it waits for Shift and F10. Not in menu mode, where the keys are the menu's. Ctrl+Shift+Period is
+    axHelp's screenshot (AX-8.11), and Ctrl+Period can be no hotkey.
   - Neither is in a window's table or is a system-wide key (`KeyTests`); both are in every F1 text, in the key test
     (AX-8.12) and in the window's list of its commands as further keys of the commands they run.
 - AX-8.16 **Selecting things in a list: Space, and one piece of code for every window** (the maintainer's decision

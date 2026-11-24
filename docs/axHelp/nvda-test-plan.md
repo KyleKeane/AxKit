@@ -46,7 +46,7 @@ need a real reply and a real screen and are the user's by ear.
 
 ## 3. Screenshots and pictures (HE-3)
 
-1. In Notepad with a line typed, Ctrl+Shift+Comma: the conversation comes up, its field holding "Screenshot of "Untitled -
+1. In Notepad with a line typed, Ctrl+Shift+Period: the conversation comes up, its field holding "Screenshot of "Untitled -
    Notepad": <path> " with the caret at the end; Ctrl+V in Notepad later pastes the same path.
 2. Type "what does it say?", Enter: the reply reads the line (real).
 3. In axHelp's window, Ctrl+D: the Windows file picker, "Choose a picture to put into the conversation"; type the path of
@@ -66,11 +66,11 @@ need a real reply and a real screen and are the user's by ear.
 
 1. With axHelp ended, set `"hotkey": "Windows+Alt+H"` and `"screenshotHotkey": "Windows+Alt+S"` in
    `%APPDATA%\AxKit\axHelp.json`, as 5.8.0 left them. Start axHelp: its text names Ctrl+Shift+Slash and
-   Ctrl+Shift+Comma; Windows+Alt+H does nothing; Ctrl+Shift+Slash, the question mark's key, brings the conversation up.
+   Ctrl+Shift+Period; Windows+Alt+H does nothing; Ctrl+Shift+Slash, the question mark's key, brings the conversation up.
 2. Options, Hotkey, press Ctrl+Alt+J, Enter: "Hotkey Ctrl+Alt+J". Quit axHelp and start it again: Ctrl+Alt+J still
    brings the conversation up, and Ctrl+Shift+Slash does not. Set it back: Options, Hotkey, Ctrl+Shift+Slash, Enter.
-3. In an axKit window (axDown, axMedia) with axHelp running, Ctrl+Shift+Period: nothing of axKit's happens.
-4. In Word with axHelp running: Ctrl+Shift+Comma takes the screenshot, not the smaller font (expected, HE-D5).
+3. In an axKit window (axDown, axMedia) with axHelp running, Ctrl+Shift+Apostrophe: nothing of axKit's happens (kept for axAutomate's launcher).
+4. In Word with axHelp running: Ctrl+Shift+Period takes the screenshot, not the larger font (expected, HE-D5).
 
 ## 6. The conversation hides and comes back (HE-1.3, HE-2.1, HE-2.7, 2026-11-15)
 
@@ -86,7 +86,7 @@ what the foreground and NVDA do on the real desktop is by ear.
    Ctrl+Shift+Slash from another program: the focus is in the message field.
 4. Send "count slowly to five", Alt+F4 at once: nothing is spoken, no tick or chime while it is hidden.
    Ctrl+Shift+Slash a little later: "Done" is said once, the reply is in the conversation (h, Alt+3).
-5. With the conversation hidden, Ctrl+Shift+Comma in Notepad: the conversation comes up with the screenshot's line.
+5. With the conversation hidden, Ctrl+Shift+Period in Notepad: the conversation comes up with the screenshot's line.
 6. In the conversation, Session, End Claude and close this window: the window closes (Task Manager: its `AxKit.exe
    claude` and Claude Code are gone). Ctrl+Shift+Slash starts it afresh, the conversation continued.
 7. With the conversation hidden, axHelp's window, Session, Quit axHelp: both processes end.

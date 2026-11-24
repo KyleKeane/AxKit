@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- axKit: **two hotkeys move.** axClip is Ctrl+Shift+Comma now, and axHelp's screenshot Ctrl+Shift+Period; Ctrl+Shift+Apostrophe is kept for axAutomate's launcher, which comes later. If you never changed them, your settings move by themselves; a key you chose stays yours.
+
 - axTemplate: **a template of several lines where lines do not fit.** Into a field of one line it goes in on one line; into a terminal, which runs each line as it is pasted, the launcher asks first. Insert template inside axKit does the same for a field of one line.
 
 - axKit: **your own sounds.** axKit menu, Open the sounds folder: put a WAV file there named as one of axKit's sounds (sound names.txt in the folder lists them, edge.wav for instance) and it plays in place of axKit's own from the next start; take it away and axKit's comes back.

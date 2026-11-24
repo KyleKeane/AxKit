@@ -12,11 +12,11 @@ namespace AxClip.Core;
 /// </summary>
 public sealed class ClipSettings : HotkeySettings
 {
-    /// <summary>Ctrl+Shift+Apostrophe (CP-D1, bundle AX-8.11; since 2026-11-23, the maintainer's swap with axTemplate, whose templates are used more).</summary>
-    protected override Hotkey DefaultHotkey => new(Hotkey.Control | Hotkey.Shift, 0xDE);
+    /// <summary>Ctrl+Shift+Comma (CP-D1, bundle AX-8.11; since 2026-11-24, the maintainer's move that gives Ctrl+Shift+Apostrophe to axAutomate's launcher; Apostrophe since the swap with axTemplate of 2026-11-23 before that).</summary>
+    protected override Hotkey DefaultHotkey => new(Hotkey.Control | Hotkey.Shift, 0xBC);
 
     /// <summary>Windows+Alt+V, the default until 2026-11-14, and Ctrl+Shift+Semicolon, until 2026-11-23 (CP-D1): a file that holds one is taken over to the new default.</summary>
-    protected override IReadOnlyList<Hotkey> RetiredDefaults => [new(Hotkey.Windows | Hotkey.Alt, 'V'), new(Hotkey.Control | Hotkey.Shift, 0xBA)];
+    protected override IReadOnlyList<Hotkey> RetiredDefaults => [new(Hotkey.Windows | Hotkey.Alt, 'V'), new(Hotkey.Control | Hotkey.Shift, 0xBA), new(Hotkey.Control | Hotkey.Shift, 0xDE)];
 
     public bool KeepHistory { get; set; }
 

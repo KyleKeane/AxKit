@@ -11,7 +11,7 @@ code means this file.
 axHelp is a conversation with Claude from anywhere on the computer. One hotkey (Ctrl+Shift+Slash, the question mark's key) brings it up: an
 axClaude window on Claude's own working folder, titled "axHelp", with the focus in its message field. It is one
 conversation that goes on until the user clears it, read with axClaude's keys, its replies spoken as axClaude speaks
-them, and Claude Code in it may do work on the computer, asking before each change. A second hotkey (Ctrl+Shift+Comma)
+them, and Claude Code in it may do work on the computer, asking before each change. A second hotkey (Ctrl+Shift+Period)
 takes a picture of the window in front and drops its path into that conversation's message field, so that a question
 about the screen is one key and a sentence. `AxKit.exe help [--hidden | <picture>]`, Start entry `axKit axHelp`,
 command `axHelp`; a background process from sign-in, as axStart and axClip. It is an access layer (AX-11.1): Claude
@@ -32,7 +32,7 @@ agreement (AX-11.4) asked the first time.
 - In Word, Ctrl+Shift+Slash: "axHelp" and the message field. "how do I make a table of contents", Enter; the reply is
   spoken as it comes. Later, Ctrl+Shift+Slash again: the same conversation, the earlier answer still there under h and the
   reply keys.
-- A dialog NVDA reads badly: Ctrl+Shift+Comma. The conversation comes up with "Screenshot of "Save changes?": C:\...\
+- A dialog NVDA reads badly: Ctrl+Shift+Period. The conversation comes up with "Screenshot of "Save changes?": C:\...\
   2026-11-10 14.02.11.png " in its field; type "which button is the default?", Enter.
 - "Move every PDF in my Downloads folder into a folder named Papers": the conversation hands it to its agent, Claude
   Code asks before it moves anything, and says what it did.
@@ -242,7 +242,7 @@ agreement (AX-11.4) asked the first time.
 ### HE-4 The hotkeys
 
 - HE-4.1 Ctrl+Shift+Slash, the question mark's key, for the conversation (changed in Options, Hotkey, AS-4.2) and
-  Ctrl+Shift+Comma, the less-than sign's key, for the screenshot (`screenshotHotkey` in `axHelp.json`), each kept in
+  Ctrl+Shift+Period, the greater-than sign's key, for the screenshot (`screenshotHotkey` in `axHelp.json`), each kept in
   the settings (HE-D5; the bundle's system-wide keys, AX-8.11). The conversation's hotkey
   while axHelp's own window is in front hides it. A taken conversation hotkey shows the window with the notice (AS-4.3);
   a taken screenshot hotkey is said in the window's text.
@@ -250,8 +250,11 @@ agreement (AX-11.4) asked the first time.
   is taken over to the new key as it is read, each of the two on its own (`HelpSettings.Load` through
   `HotkeySettings.TakenOver`), and written with the next save; a key the user chose is kept. A user who had chosen
   Windows+Alt+H themselves cannot be told from one who never chose: they get the new key and choose again.
-- HE-4.3 Ctrl+Shift+Period, the greater-than sign's key, is kept for a later help launcher (AX-8.11): axHelp
-  registers nothing on it, and it cannot be chosen as a hotkey.
+- HE-4.3 Ctrl+Shift+Period, the greater-than sign's key, kept for a later help launcher until 2026-11-24, is the
+  screenshot's since the maintainer's move of that day, which gave Ctrl+Shift+Comma, the screenshot's until then, to
+  axClip (AX-8.11); a file that holds Ctrl+Shift+Comma or Windows+Alt+S for the screenshot is taken over to it
+  (`HelpSettings.RetiredScreenshotHotkeys`). Ctrl+Period without Shift cannot be a hotkey: it is the Context menu in
+  every axKit window.
 
 ### HE-5 Settings
 

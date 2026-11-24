@@ -23,7 +23,7 @@ public sealed class HelpTests : IDisposable
         var settings = HelpSettings.Load(path, out var error);
         Assert.Null(error);
         Assert.Equal("Ctrl+Shift+Slash", settings.Key.ToString());
-        Assert.Equal("Ctrl+Shift+Comma", settings.ScreenshotKey.ToString());
+        Assert.Equal("Ctrl+Shift+Period", settings.ScreenshotKey.ToString());
         Assert.Equal(HelpSettings.FastModel, settings.Model);
 
         settings.ScreenshotHotkeyText = "Ctrl+Alt+Shift+F11";
@@ -38,7 +38,7 @@ public sealed class HelpTests : IDisposable
         File.WriteAllText(path, """{ "screenshotHotkey": "nonsense", "model": " ", "exchanges": [ { "question": "q", "answer": "a" } ] }""");
         var old = HelpSettings.Load(path, out error);
         Assert.Null(error);
-        Assert.Equal("Ctrl+Shift+Comma", old.ScreenshotKey.ToString());
+        Assert.Equal("Ctrl+Shift+Period", old.ScreenshotKey.ToString());
         Assert.Equal(HelpSettings.FastModel, old.Model);
     }
 
@@ -52,7 +52,7 @@ public sealed class HelpTests : IDisposable
         var settings = HelpSettings.Load(path, out var error);
         Assert.Null(error);
         Assert.Equal("Ctrl+Shift+Slash", settings.HotkeyText);
-        Assert.Equal("Ctrl+Shift+Comma", settings.ScreenshotHotkeyText);
+        Assert.Equal("Ctrl+Shift+Period", settings.ScreenshotHotkeyText);
         // Nothing else of the file changes.
         Assert.Equal("opus", settings.Model);
         Assert.False(settings.StartWithWindows);
@@ -62,10 +62,10 @@ public sealed class HelpTests : IDisposable
         var text = File.ReadAllText(path);
         Assert.DoesNotContain("Alt", text, StringComparison.Ordinal);
         Assert.Contains("Slash", text, StringComparison.Ordinal);
-        Assert.Contains("Comma", text, StringComparison.Ordinal);
+        Assert.Contains("Period", text, StringComparison.Ordinal);
         var again = HelpSettings.Load(path, out _);
         Assert.Equal("Ctrl+Shift+Slash", again.Key.ToString());
-        Assert.Equal("Ctrl+Shift+Comma", again.ScreenshotKey.ToString());
+        Assert.Equal("Ctrl+Shift+Period", again.ScreenshotKey.ToString());
     }
 
     /// <summary>HE-4.2: a key the user chose stays, and one retired key in the file does not move the other.</summary>
@@ -77,7 +77,7 @@ public sealed class HelpTests : IDisposable
         File.WriteAllText(path, """{ "hotkey": "Ctrl+Alt+J", "screenshotHotkey": "Windows+Alt+S" }""");
         var mixed = HelpSettings.Load(path, out _);
         Assert.Equal("Ctrl+Alt+J", mixed.HotkeyText);
-        Assert.Equal("Ctrl+Shift+Comma", mixed.ScreenshotHotkeyText);
+        Assert.Equal("Ctrl+Shift+Period", mixed.ScreenshotHotkeyText);
 
         File.WriteAllText(path, """{ "hotkey": "Windows+Alt+H", "screenshotHotkey": "Windows+Alt+F9" }""");
         var other = HelpSettings.Load(path, out _);

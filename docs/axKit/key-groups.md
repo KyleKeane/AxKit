@@ -54,10 +54,10 @@ The keys:
 
 - Ctrl+Shift+Space: axStart's search field.
 - Ctrl+Shift+Slash: axHelp's conversation.
-- Ctrl+Shift+Comma: axHelp's screenshot.
-- Ctrl+Shift+APOSTROPHE: axClip's search field.
+- Ctrl+Shift+Period: axHelp's screenshot.
+- Ctrl+Shift+Comma: axClip's search field.
 - Ctrl+Shift+Semicolon: axTemplate's search field.
-- Ctrl+Shift+Period: Kept for a later help launcher.
+- Ctrl+Shift+APOSTROPHE: Kept for axAutomate's launcher.
 
 ## The same in every axKit window
 

@@ -295,7 +295,7 @@ answer to a key.
   He first chose Apostrophe, the key to the right of axClip's Semicolon; the same day, after using it, he swapped
   the two: "i think templates should be ctrl+shift+; since it will be used more". axTemplate has Semicolon, axClip
   Apostrophe; a settings file of either that holds its old default is taken over to the new one as it is read.
-  Ctrl+Shift+Period stays kept and unused.
+  On 2026-11-24 axClip moved on to Comma and Apostrophe was kept for axAutomate's launcher (bundle AX-8.11).
 - **TP-D2 A template is an item; where it shows is its checks.** First specified as plain files, with the folder a
   file lies in saying where it shows. The maintainer wanted JSON, as axTask, and the most reuse: an item brings
   the browser's fields, forms, undo and file handling with it, and a check per app says where it shows, in the

@@ -54,7 +54,7 @@ The steps change your own templates' folder: use a template made for the test, a
 2. Copy a word in axDown, then use a template whose text holds `{clipboard}`: the word stands in its place. Ctrl+V afterwards pastes the word again: the clipboard was given back.
 2a. Use a template whose text holds `{caret}` in its middle, then type a letter: it lands where the mark was.
 2b. Select a word in axDown, Ctrl+Shift+Semicolon, a template whose text is `[{selection}]({caret})`, Ctrl+Enter: the word is now in square brackets, and what you type goes between the round ones.
-2c. With axClip running: after any of these, Ctrl+Shift+Apostrophe: the template's text is not among axClip's items.
+2c. With axClip running: after any of these, Ctrl+Shift+Comma: the template's text is not among axClip's items.
 2d. A new template, with no text yet: Enter says "… has no text yet: Ctrl+B opens the browser, where it is written", and the launcher stays.
 3. Ctrl+Shift+Semicolon, a template, Shift+Enter: the launcher hides and NVDA reads the window you were in; nothing is said by the launcher and nothing is pasted; Ctrl+V in axDown pastes it.
 4. Ctrl+Q on a template: the notice titled with its name and "1 line" or its count, the text with its marks; Escape.

@@ -88,6 +88,11 @@ public sealed record Hotkey(int Modifiers, int Key)
             return "That key cannot be a hotkey";
         }
 
+        if (Key == 0xBE && (Modifiers & Shift) == 0)
+        {
+            return "Ctrl and the period key are the Context menu in every axKit window: use Shift with it";
+        }
+
         return (Modifiers & (Control | Alt | Windows)) == 0 ? "Use Ctrl, Alt or the Windows key with it" : null;
     }
 
@@ -110,13 +115,15 @@ public sealed record Hotkey(int Modifiers, int Key)
             [0x27] = "Right",
             [0x28] = "Down",
             // The punctuation keys of the bundle's own system-wide keys (docs/axKit/SPEC.md AX-8.11): axHelp's
-            // Ctrl+Shift+Slash, the question mark's key, and Ctrl+Shift+Comma, the less-than sign's, and axTemplate's
-            // Ctrl+Shift+Semicolon. The period, the greater-than sign's key, is kept for a later help launcher and so
-            // is no hotkey's key.
+            // Ctrl+Shift+Slash, the question mark's key, and its screenshot's Ctrl+Shift+Period, the greater-than
+            // sign's, which was kept for a later help launcher until the maintainer gave it to that on 2026-11-24;
+            // axClip's Ctrl+Shift+Comma, the less-than sign's, the same day; and axTemplate's Ctrl+Shift+Semicolon.
+            // The period never without Shift: Ctrl+Period is the Context menu in every axKit window (Refusal).
             [0xBF] = "Slash",
+            [0xBE] = "Period",
             [0xBC] = "Comma",
             [0xBA] = "Semicolon",
-            // The key to the right of Semicolon (2026-11-23): axClip's Ctrl+Shift+Apostrophe since the swap that gave
+            // The key to the right of Semicolon (2026-11-23): axClip's Ctrl+Shift+Apostrophe from the swap that gave
             // axTemplate Semicolon (docs/axTemplate/SPEC.md TP-D1).
             [0xDE] = "Apostrophe",
         };
