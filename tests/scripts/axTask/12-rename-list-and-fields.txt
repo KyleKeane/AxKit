@@ -61,7 +61,8 @@ expect focus Place, text, empty
 keys enter
 type Hall
 keys enter
-expect said ! Place: Hall
+expect said ! Saved
+expect focus Place, text, Hall
 run findstr /l /c:"\"Room\": \"Kitchen\"" "tasks\House\Fix the tap.json"
 run findstr /l /c:"\"Place\": \"Hall\"" "tasks\House\Fix the tap.json"
 

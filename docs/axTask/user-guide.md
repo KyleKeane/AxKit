@@ -128,8 +128,8 @@ The item's form:
   - a choice is a list of its options: Up and Down move, and nothing is chosen until you leave the list. While the
     field holds none of them the list starts on "Not chosen";
   - a link is a box that takes the title of the item it points to, in any list.
-- Ctrl+Enter, or the Save button, saves everything you changed as one step, and says it once: "Saved Fix the tap.
-  Due: 2 November 2026, Monday. Priority: High". Ctrl+Z takes the whole step back. Enter saves too, from a box of one
+- Ctrl+Enter, or the Save button, saves everything you changed as one step, and says "Saved"; NVDA then reads the item
+  where the focus lands, with what changed. Ctrl+Z takes the whole step back. Enter saves too, from a box of one
   line, a list or a check box. A title you changed renames the item and its file, and the links to it follow.
 - Escape leaves the form and nothing is changed. A value a field does not take ("30 Febuary") is said with the focus
   in its box, and the form stays open.

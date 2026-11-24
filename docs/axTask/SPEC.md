@@ -101,8 +101,9 @@ selected ones (TK-4.4, TK-4.7).
   takes ("Type Due: a date such as 2026-11-30, today, tomorrow, +3 or a weekday; empty for none"), a choice a list of
   its options ("Choose Priority"; with "Not chosen" first while the field holds none of them), a link a box for the
   other item's title. Ctrl+Enter or Save, and Enter from a box of one line, a list or a check box, saves every field
-  that was changed as one undo step, said once: "Saved Fix the tap. Due: 2 November 2026, Monday. Priority: High";
-  nothing changed says "Nothing changed". A changed Title renames the item's file, the links following, as F2 does.
+  that was changed as one undo step, said once: "Saved" (the item and what changed are heard as the list reads the
+  item the focus goes back to; the maintainer's choice of 2026-11-24, when the title and the changed fields said
+  here were heard twice); nothing changed says "Nothing changed". A changed Title renames the item's file, the links following, as F2 does.
   A value a field does not take is said with its field's name and the focus in its box, and the form stays. A
   control left as it was changes nothing of its field, so a value the form cannot show as it is (a link whose item
   is gone, a value of the type the field had before, shown as text) is never rewritten. Escape leaves and nothing is

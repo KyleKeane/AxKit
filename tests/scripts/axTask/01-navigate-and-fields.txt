@@ -173,7 +173,7 @@ keys down
 expect focus "value":"High"
 keys down
 keys enter
-expect said Priority: Low
+expect said Saved
 expect focus Priority, choice, Low
 run findstr /l /c:"\"Priority\": \"Low\"" "tasks\Home\Fix the tap.json"
 

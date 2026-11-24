@@ -83,7 +83,7 @@ Starts with: Open axTask with the folder tasks.
 2. Press Enter.
 3. Press Down 2 times.
 4. Press Enter.
-    You hear: Priority: Low.
+    You hear: Saved.
 
 ### Change a choice to its previous or next value
 
@@ -187,7 +187,7 @@ Starts with: Open axTask with the folder tasks.
 5. Press Enter.
 6. Type: Washer
 7. Press Enter.
-    You hear: Waits on: Washer.
+    You hear: Saved.
 
 ### Make a checklist a plain list and back
 
@@ -722,9 +722,9 @@ Starts with: Open axTask with the folder tasks.
 16. Press Tab.
 17. Type: Washer
 18. Press Ctrl+Enter (Done or not done; Context menu).
-    You hear: Saved Fix the tap. Done: done. Due: 2 November 2099, Monday. Priority: Normal. Room: Hall. Notes: First line, and 1 more line. Waits on: Washer.
+    You hear: Saved.
 19. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: Saved Fix the tap.
+    You hear: Undone: Saved.
 
 ### Rename an item in its form
 
@@ -732,13 +732,13 @@ Starts with: Open axTask with the folder tasks.
 2. Press Tab 6 times.
 3. Type: Washer
 4. Press Ctrl+Enter (Done or not done; Context menu).
-    You hear: Saved Fix the tap. Waits on: Washer.
+    You hear: Saved.
 5. Press Down.
 6. Press Enter.
 7. Press Ctrl+A (Select all; Actions menu).
 8. Type: Washer 15 mm
 9. Press Enter.
-    You hear: Saved Washer 15 mm. Title: Washer 15 mm.
+    You hear: Saved.
 
 ### Open the form on a field from the detail pane
 
@@ -749,7 +749,7 @@ Starts with: Open axTask with the folder tasks.
 5. Press Ctrl+A (Select all; Actions menu).
 6. Type: Bathroom
 7. Press Enter.
-    You hear: Saved Fix the tap. Room: Bathroom.
+    You hear: Saved.
 8. Press Home.
 9. Press Down.
 10. Press Space.

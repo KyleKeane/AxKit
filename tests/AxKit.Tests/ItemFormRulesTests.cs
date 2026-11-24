@@ -84,7 +84,7 @@ public sealed class ItemFormRulesTests
         Assert.Same(item, changed);
         Assert.Equal(-1, control);
         Assert.Null(refused);
-        Assert.Equal("Nothing changed", ItemFormRules.Said(item, changed!, field => FieldTypes.Spoken(field)));
+        Assert.Equal("Nothing changed", ItemFormRules.Said(item, changed!));
     }
 
     [Fact]
@@ -120,9 +120,8 @@ public sealed class ItemFormRulesTests
         // The item handed in is as it was.
         Assert.Equal("Fix the tap", item.Title);
 
-        var said = ItemFormRules.Said(item, changed, field => FieldTypes.Spoken(field));
-        Assert.StartsWith("Saved Fix the sink. Title: Fix the sink. Done: done. Due: 24 November 2026, Tuesday. ", said);
-        Assert.Contains("Priority: High", said, StringComparison.Ordinal);
+        Assert.Equal("Saved", ItemFormRules.Said(item, changed));
+        Assert.Equal("Nothing changed", ItemFormRules.Said(item, item));
     }
 
     [Theory]

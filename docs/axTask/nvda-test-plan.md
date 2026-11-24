@@ -41,13 +41,13 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
 ## 2. Changing (IA-5, TK-4)
 
 1. On Fix the tap, Ctrl+Enter: "Done: Fix the tap"; Ctrl+Enter: "Not done: Fix the tap". Ctrl+J: axJSON shows the item as its values, `"Done": false` among them, and `"schema": "list.json"` first.
-2. In its fields, Enter on Due: the item's form with the focus in Due's box; type `+3`, Enter: "Saved Fix the tap. Due: …, " three days from today, and the focus is back on Due in the fields. Enter again, type `30 Febuary`, Enter: "Due: Not a date: …"
+2. In its fields, Enter on Due: the item's form with the focus in Due's box; type `+3`, Enter: "Saved", and the focus is back on Due in the fields, read with the date three days from today. Enter again, type `30 Febuary`, Enter: "Due: Not a date: …"
    and the form stays, the focus in Due's box; Escape.
 3. Ctrl+N in the fields: the knock of a key with no command, and no
    notice opens; F2 on Due and Delete knock the same way and change nothing (the fields of an item are its list's,
    `forms-framework.md` AF-13.3). Down to "Priority, choice, empty", a field of the list that this item's file does not
-   hold yet. Enter on it: the item's form with the focus in the list "Choose Priority" on "Not chosen"; Down twice, Enter: "Saved Fix the tap. Priority:
-   Low", written into the file with this first value. Left on it: "Priority: High", once; Left again: the edge sound, nothing said; Right: "Priority: Low"; Right
+   hold yet. Enter on it: the item's form with the focus in the list "Choose Priority" on "Not chosen"; Down twice, Enter: "Saved", then Priority read with
+   Low, written into the file with this first value. Left on it: "Priority: High", once; Left again: the edge sound, nothing said; Right: "Priority: Low"; Right
    again: the edge sound, it does not go round; Ctrl+Z: "Undone: Priority: Low", one step. On Done: Right: "Done:
    done"; Right again: the edge sound; Left: "Done: not done"; Left again: the edge sound. On Title or Due: Right and
    Left play the edge sound and change nothing; neither key leaves the pane (IA-5.6).
@@ -239,12 +239,12 @@ The runner's script is `tests/scripts/axTask/18-item-form.txt`.
    Shift+Tab goes back the same way.
 3. In the list of Priority, Up and Down move and NVDA reads each option; nothing is saved by moving.
 4. Change the title's box and press Escape: the form closes, the row reads as before.
-5. Enter again; Space on Done, a new date in Due, Down in Priority; Ctrl+Enter: "Saved Fix the tap. Done: done. Due:
-   …. Priority: …", once, and the row reads the new state. Ctrl+Z: "Undone: Saved Fix the tap…", all three back.
+5. Enter again; Space on Done, a new date in Due, Down in Priority; Ctrl+Enter: "Saved", once, and the row reads the new state (Done, Due,
+   Priority). Ctrl+Z: "Undone: Saved", all three back.
 6. Enter, type `30 Febuary` into Due, Ctrl+Enter: the refusal sound, "Due: Not a date: 30 Febuary. …", the focus in
    Due's box, the form still open. Escape.
 7. Enter, Ctrl+Enter with nothing changed: "Nothing changed".
-8. Enter, change the title, Enter: "Saved <new title>. Title: <new title>"; Ctrl+E shows the file renamed.
+8. Enter, change the title, Enter: "Saved", and the new title read; Ctrl+E shows the file renamed.
 9. Tab to the fields, Down to Due, Enter: the same form, the focus in Due's box at once. Save: the focus is back on
    Due in the fields, with its new value.
 10. On Water plants, Enter: the explanation ends with "1 more field kept: Sprint: they are in the item's file and no

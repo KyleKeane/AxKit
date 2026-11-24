@@ -50,7 +50,7 @@ expect focus Waits on, link, empty
 keys enter
 type Washer
 keys enter
-expect said ! Waits on: Washer
+expect said ! Saved
 run findstr /l /c:"../Shopping/Washer.json" "tasks\Home\Fix the tap.json"
 # Check: A link to an item that does not exist is refused
 keys enter

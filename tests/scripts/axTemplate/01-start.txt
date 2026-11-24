@@ -52,7 +52,7 @@ keys tab
 expect focus Type Text; Enter makes a new line
 type Thank you, {clipboard}.{caret}
 keys ctrl+enter
-expect said Saved Thanks. Text
+expect said Saved
 expect state "notice":null
 
 # Check: Enter on a field of the pane opens the form in that field
@@ -156,6 +156,6 @@ expect focus Type the title
 keys ctrl+a
 type Greeting
 keys ctrl+enter
-expect said Saved Greeting. Title: Greeting
+expect said Saved
 keys escape
 expect focus Greeting

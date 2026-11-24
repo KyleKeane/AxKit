@@ -678,6 +678,15 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: the maintainer's choices of 2026-11-24, by ear
+
+Built and passing on the runner's desktop, which plays no sound:
+
+1. axStart's hotkey three times, Escape between: the entering sound with every showing, not only the first; the
+   same in axClip and axHelp.
+2. axTask, an item's form, a field changed, Ctrl+Enter: "Saved", then the item where the focus lands, read once
+   with what changed.
+
 ## Owed: the Store's copy after its install and after its update (2026-11-24, bundle AX-13.4a, AX-13.4c and AX-3.1; `KyleKeane/AxKit-reports issues 11, 13 and 15`)
 
 Built from the reports and by reasoning; the Store's install cannot be made on the runner's desktop. On a computer

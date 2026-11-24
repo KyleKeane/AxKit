@@ -184,7 +184,7 @@ public abstract partial class ItemForm
             return;
         }
 
-        var said = ItemFormRules.Said(source.Document, changed, field => SpokenValue(SelectedRow(), field));
+        var said = ItemFormRules.Said(source.Document, changed);
         if (ReferenceEquals(changed, source.Document))
         {
             Announce(said, true);

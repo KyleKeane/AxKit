@@ -8,14 +8,15 @@ dated pass; then the script writes this page again.
 
 ## Where it stands
 
-- 29 owed in all.
-- Owed a hearing with NVDA: 13.
+- 30 owed in all.
+- Owed a hearing with NVDA: 14.
 - Owed a live check with a real outside program or situation: 7.
 - Owed a window check on the hidden desktop: 8.
 - Owed a test in code: 1.
 
 ## Owed a hearing with NVDA
 
+- The NVDA test record: the maintainer's choices of 2026-11-24, by ear. The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - The NVDA test record: the Store's copy after its install and after its update (2026-11-24, bundle AX-13.4a, AX-13.4c and AX-3.1; `KyleKeane/AxKit-reports issues 11, 13 and 15`). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - The NVDA test record: the state from the event core, 2026-11-17 (`docs/axClaude/events-and-grounding.md` EG-6.1 to EG-6.4, WP-A16). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - The NVDA test record: the keys and sounds of 2026-11-16 (Alt+1 to 3, Ctrl+Period, Ctrl+Slash, navigation mode's three sounds; `docs/axKit/SPEC.md` AX-8.13 to AX-8.15). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.

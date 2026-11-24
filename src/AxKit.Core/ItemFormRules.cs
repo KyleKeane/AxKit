@@ -171,20 +171,20 @@ public static class ItemFormRules
     }
 
     /// <summary>
-    /// What a save says, once: "Saved Fix the tap. Due: 30 November 2026, Monday. Priority: High", each field that
-    /// changed with its new value as the detail pane reads it; "Nothing changed" when none did.
+    /// What a save says, once: "Saved", or "Nothing changed" when no field did. The item and what changed are heard as
+    /// the list reads the item the focus goes back to (the maintainer's choice, 2026-11-24: until then the title and
+    /// every changed field were said here, and the list read them again).
     /// </summary>
-    public static string Said(ItemDocument before, ItemDocument after, Func<ItemField, string> spoken)
+    public static string Said(ItemDocument before, ItemDocument after)
     {
-        var changes = new List<string>();
         for (var i = 0; i < after.Fields.Count && i < before.Fields.Count; i++)
         {
             if (!JsonNode.DeepEquals(before.Fields[i].Value, after.Fields[i].Value))
             {
-                changes.Add($"{after.Fields[i].Title}: {spoken(after.Fields[i])}");
+                return "Saved";
             }
         }
 
-        return changes.Count == 0 ? "Nothing changed" : $"Saved {(after.Title.Length == 0 ? "the item" : after.Title)}. {string.Join(". ", changes)}";
+        return "Nothing changed";
     }
 }

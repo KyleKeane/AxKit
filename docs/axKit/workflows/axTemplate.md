@@ -24,7 +24,7 @@ Starts with: Open axTemplate.
 2. Press Tab.
 3. Type: Thank you, {clipboard}.{caret}
 4. Press Ctrl+Enter (Put in, with that program's selection; Context menu).
-    You hear: Saved Thanks. Text.
+    You hear: Saved.
 
 ### Rename a template
 
@@ -48,7 +48,7 @@ Starts with: Open axTemplate.
 3. Press Ctrl+A (Select all; Actions menu).
 4. Type: Greeting
 5. Press Ctrl+Enter (Put in, with that program's selection; Context menu).
-    You hear: Saved Greeting. Title: Greeting.
+    You hear: Saved.
 6. Press Escape.
 
 ## Delete several templates, and meet a file that is no template, in axTemplate's browser
