@@ -65,13 +65,16 @@ function Get-MenuLines($commands) {
 }
 
 $stale = New-Object System.Collections.Generic.List[string]
+$unmarked = New-Object System.Collections.Generic.List[string]
 $written = 0
 foreach ($app in $inventory.apps) {
     $guide = Join-Path $root "docs\$($app.app)\user-guide.md"
     if (-not (Test-Path -LiteralPath $guide)) { continue }
     $text = [IO.File]::ReadAllText($guide)
     $start = $text.IndexOf($startMarker)
-    if ($start -lt 0) { continue }
+    # Every guide of an app the inventory holds has the section (2026-11-24): one listed by hand falls behind the
+    # window, as axFile's did.
+    if ($start -lt 0) { $unmarked.Add("docs/$($app.app)/user-guide.md"); continue }
     $nl = if ($text.Contains("`r`n")) { "`r`n" } else { "`n" }
     $end = $text.IndexOf($endMarker, $start)
     if ($end -lt 0) { throw "docs\$($app.app)\user-guide.md has the start marker of the menus and not its end." }
@@ -79,6 +82,11 @@ foreach ($app in $inventory.apps) {
     $new = $text.Substring(0, $start) + $startMarker + $nl + $body + $nl + $text.Substring($end)
     if ($new -ceq $text) { continue }
     if ($Check) { $stale.Add("docs/$($app.app)/user-guide.md") } else { [IO.File]::WriteAllText($guide, $new, (New-Object System.Text.UTF8Encoding($false))); $written++ }
+}
+
+if ($unmarked.Count -gt 0) {
+    Write-Host "These guides have no Menus section written from the inventory: $($unmarked -join ', '). Put the two marker lines in their Menus section (as docs/axCalc/user-guide.md has them) and run tools\guide-menus.ps1."
+    exit 1
 }
 
 if ($Check) {

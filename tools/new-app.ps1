@@ -581,13 +581,22 @@ New-TextFile "docs\$Name\user-guide.md" @'
 
 ## Install
 
-{{Name}} is part of axKit. Installing axKit (see the axKit guide in the Help, About) gives you a Start menu entry `axKit {{Name}}` and a console command `{{Name}}`. Any axKit window starts one too: Alt+W, Apps (or Access layers, for an access layer), {{Name}}, or its key, which F1 lists.
+{{Name}} is part of axKit. Installing axKit (see the axKit guide in the Help, About) gives you a Start menu entry `axKit {{Name}}` and a console command `{{Name}}`. Any axKit window starts one too: Alt+K, Apps (or Access layers, for an access layer), {{Name}}, or its key, which F1 lists.
 
 ## Start
 
-The window ends its title in "- {{Name}}", and the focus starts in its list.
+The window's title starts with "{{Name}}", and the focus starts in its list.
 
 ## Use
+
+## Menus
+
+The menu bar is the same eight menus in every axKit window.
+
+Each menu with its commands and their keys, as the window lists them:
+
+<!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
+<!-- end of the menus -->
 
 ## Settings
 
