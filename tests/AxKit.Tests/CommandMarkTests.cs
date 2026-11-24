@@ -16,7 +16,7 @@ public sealed partial class CommandMarkTests
         (Path.Combine("src", "AxFile", "FileForm.cs"), "&Delete", "deletes"),
         (Path.Combine("src", "AxFile", "FileForm.cs"), "&Paste", "copies or moves files"),
         (Path.Combine("src", "AxFile", "FileForm.cs"), "Windows men&u...", "the shell's menu runs anything"),
-        (Path.Combine("src", "AxHelp", "HelpForm.cs"), "&Open the conversation", "starts Claude Code in an axClaude window (MC-6.5's NeverOpened)"),
+        (Path.Combine("src", "AxHelp", "HelpForm.cs"), "&Open the conversation", "starts Claude Code in an axClaude window (MC-6.5's StartsAProgram)"),
         (Path.Combine("src", "AxHelp", "HelpForm.cs"), "Put a picture &file into the conversation...", "starts Claude Code in an axClaude window"),
         (Path.Combine("src", "AxKit.Forms", "TextEditorForm.Viewer.cs"), "Read the clipboard's &picture", "brings in the clipboard, which the AI tools could not read (MC-7.6)"),
         (Path.Combine("src", "AxGit", "GitForm.cs"), "&Stage", "changes the repository"),
@@ -98,7 +98,7 @@ public sealed partial class CommandMarkTests
         (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "ToggleBundleUpdateCheck()), CommandMark.Act", "turns a network contact on"),
         (Path.Combine("src", "AxKit.Forms", "AxKitForm.cs"), "OpenReports()), CommandMark.Act", "sends the unsent reports to GitHub"),
         (Path.Combine("src", "AxKit.Forms", "HotkeyForm.cs"), "}, CommandMark.Act); // Writes the user's Run key", "writes the user's Run key"),
-        (Path.Combine("src", "AxKit.Forms", "WindowMenu.cs"), "McpTools.NeverOpened.Contains(verb) ? CommandMark.Act", "a new axClaude or axTerminal window starts a program"),
+        (Path.Combine("src", "AxKit.Forms", "WindowMenu.cs"), "McpTools.StartsAProgram.Contains(verb) ? CommandMark.Act", "a new axClaude or axTerminal window starts a program"),
         (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "v => _settings.ReviewAnswers = v, CommandMark.Act", "the review is the user's own check of what goes to Claude"),
         (Path.Combine("src", "AxClaude", "MainForm.Ui.cs"), "}, CommandMark.Act))); // Writes into the project repository", "writes into the user's repository"),
         // The two sources of the events (docs/axClaude/events-and-grounding.md EG-9, pinned 2026-11-17).

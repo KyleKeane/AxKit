@@ -80,21 +80,34 @@ public sealed class McpTests
         Assert.Equal(["calc"], Arguments("calc", null));
         // A file given to an app that opens folders only: its folder (Dispatch.PathFor).
         Assert.Equal(["mcpclient", Path.GetDirectoryName(file)!], Arguments("mcpclient", file));
-        // axTask only on the user's own top folder (MC-D12).
         Assert.Equal(["task"], Arguments("task", null));
+        // MC-6.5a: axTask on a folder, axClaude and axTerminal are checked the same way, and asked of the user first.
+        Assert.Equal(["task", folder], Arguments("task", folder));
+        Assert.Equal(["claude", folder], Arguments("claude", folder));
+        Assert.Equal(["terminal"], Arguments("terminal", null));
+    }
+
+    [Fact]
+    public void An_app_that_starts_a_program_and_axTask_on_a_folder_are_asked_first()
+    {
+        Assert.True(McpTools.AsksFirst("claude", null));
+        Assert.True(McpTools.AsksFirst("terminal", @"C:\work"));
+        Assert.True(McpTools.AsksFirst("task", @"C:\work"));
+        Assert.False(McpTools.AsksFirst("task", null));
+        Assert.False(McpTools.AsksFirst("down", @"C:\work\notes.md"));
+        Assert.StartsWith("makes it the folder axTask works in", McpTools.OpenMeans("task"), StringComparison.Ordinal);
+        Assert.Contains("can be wrong", AiCaution.OpenAsked("Claude"), StringComparison.Ordinal);
     }
 
     [Theory]
     [InlineData("nosuch", null, "No app")]
-    [InlineData("claude", null, "starts a program")]
-    [InlineData("terminal", null, "starts a program")]
     [InlineData("down", "notes.md", "full path")]
     [InlineData("down", @"\\server\share\notes.md", "full path")]
     [InlineData("down", @"C:\nothing-here\x.md", "no file or folder")]
     [InlineData("down", "FOLDER", "does not open a folder")]
     [InlineData("calc", "FOLDER", "does not open a folder")]
     [InlineData("down", @"C:\linked", "through a link")]
-    [InlineData("task", "FOLDER", "only on your own lists")]
+    [InlineData("task", @"\\server\share\lists", "full path")]
     public void Open_refuses_with_a_reason(string verb, string? path, string reason)
     {
         var folder = Path.GetTempPath();

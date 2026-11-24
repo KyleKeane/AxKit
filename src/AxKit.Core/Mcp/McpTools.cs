@@ -28,8 +28,25 @@ public static class McpTools
     /// <summary>The apps that serve no pipe and so cannot be read (MC-4.1, MC-4.2): the password database and the clipboard history.</summary>
     public static readonly IReadOnlyList<string> NeverRead = [Dispatch.AxPass, Dispatch.AxClip];
 
-    /// <summary>The apps <c>axkit_open</c> refuses: each starts a program as it opens (Claude Code, a shell), which is an act (MC-3.1), for a later stage with its confirmation.</summary>
-    public static readonly IReadOnlyList<string> NeverOpened = [Dispatch.AxClaude, Dispatch.AxTerminal];
+    /// <summary>The apps that start a program as they open (Claude Code, a shell), which is an act (MC-3.1): <c>axkit_open</c> asks the user first (MC-6.5a).</summary>
+    public static readonly IReadOnlyList<string> StartsAProgram = [Dispatch.AxClaude, Dispatch.AxTerminal];
+
+    /// <summary>
+    /// Whether <c>axkit_open</c> asks the user in a window before the app opens (MC-6.5a; the maintainer's choice of
+    /// 2026-11-24, "Yes, asked each time"): an app that starts a program, and axTask on a folder, which makes that
+    /// folder the one it works in (MC-D12). <paramref name="verb"/> is the app's own verb, as <see cref="OpenArguments"/> gives it.
+    /// </summary>
+    public static bool AsksFirst(string verb, string? path) =>
+        StartsAProgram.Contains(verb) || (verb == Dispatch.AxTask && !string.IsNullOrWhiteSpace(path));
+
+    /// <summary>What opening the app does, for the question (MC-6.5a): the words after "This".</summary>
+    public static string OpenMeans(string verb) => verb switch
+    {
+        Dispatch.AxTask => "makes it the folder axTask works in: axTask shows its lists from now on, and the AI tools can read them and add to them.",
+        Dispatch.AxClaude => "starts Claude Code there, which can read and change the files of that folder as you allow it.",
+        Dispatch.AxTerminal => "starts a shell there, which runs whatever is typed into it.",
+        _ => "opens the app.",
+    };
 
     /// <summary>The window tools, which take the window's id from <c>axkit_windows</c>, and the request each sends to the window.</summary>
     public static readonly IReadOnlyDictionary<string, string> WindowRequests = new Dictionary<string, string>
@@ -177,24 +194,14 @@ public static class McpTools
             return (null, $"No app has the verb {verb}; axkit_apps lists them.");
         }
 
-        if (NeverOpened.Contains(app.Verb))
-        {
-            return (null, $"{app.Name} starts a program as it opens, which AI tools cannot do yet: the user opens it.");
-        }
-
         if (string.IsNullOrWhiteSpace(path))
         {
             return ([app.Verb], null);
         }
 
         // MC-D12 (2026-11-11): axTask started on a folder makes that folder its top folder and saves it, and the
-        // typed tools reach the top folder's lists: a client choosing it could read and write item files anywhere.
-        // So the tools open axTask only on the user's own top folder.
-        if (app.Verb == Dispatch.AxTask)
-        {
-            return (null, "axTask opens through the AI tools only on your own lists: call axkit_open with app task and no path; the user chooses its folder.");
-        }
-
+        // typed tools reach the top folder's lists. So it opens on a folder only after the user's yes (AsksFirst),
+        // never at a client's word alone.
         if (!Path.IsPathFullyQualified(path) || path.StartsWith(@"\\", StringComparison.Ordinal))
         {
             return (null, "The path must be a full path on this computer, such as C:\\work\\notes.md.");

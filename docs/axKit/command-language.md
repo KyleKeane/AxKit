@@ -67,8 +67,8 @@ tools mode).
   6. **An AI tool**, `axkit_window_run` (`mcp.md` MC-7): an AI client the user paired names a command of a window.
 - CL-2.2 **Not built: speech.** No origin takes spoken or typed sentences. Section 8 (e) says where it would join.
 - CL-2.3 **AI tools that are not a window's command**, named here so that the table is not read as covering them;
-  each keeps its own rules in `mcp.md`: `axkit_open` (opens an app on a path; never axClaude or axTerminal, never
-  axTask on a path, MC-6.5, MC-D12), `axkit_task_add` (adds an item to a list of the open axTask window, behind Let
+  each keeps its own rules in `mcp.md`: `axkit_open` (opens an app on a path; axClaude, axTerminal and axTask on a path
+  only after the user's yes in a window, MC-6.5, MC-6.5a, MC-D12), `axkit_task_add` (adds an item to a list of the open axTask window, behind Let
   AI tools run commands, said, never asked, MC-8.3) and `axkit_offer_command` (a shell command offered to the user
   in axClaude, asked every time, MC-9). The reading tools read and run nothing.
 - CL-2.4 **Whoever starts a command, what runs is the window's own command**: the same code the menu item runs.
@@ -351,7 +351,7 @@ Each origin, by function and file, down to the code that runs the command.
 - CL-6.4 **Good paths asked for and not built**, each its own piece of work later:
   1. Add an item, or make a list, in a folder the user names (today `axkit_task_add` reaches only the lists of the
      open axTask window, MC-D12).
-  2. Open axTask on a folder (today refused by `axkit_open`, MC-D12, since it would make the folder the top folder).
+  2. Open axTask on a folder (built 2026-11-24: `axkit_open` asks the user first, MC-6.5a, since it makes the folder the top folder).
   3. Commands that take an argument: move to a folder, rename to a name, go to a line (today a command that needs one
      asks the user in its own notice, MC-7.7).
   4. A report drafted by an AI for the user to review and send (today only the user writes a report, F4).

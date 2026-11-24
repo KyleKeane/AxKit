@@ -180,9 +180,9 @@ public static class McpBroker
 
         return tool switch
         {
-            McpTools.Apps => new McpResult(JsonSerializer.Serialize(Dispatch.Apps.Select(app => new { verb = app.Verb, name = app.Name, opens = app.Opens.ToString().ToLowerInvariant(), read = !McpTools.NeverRead.Contains(app.Verb), opened = !McpTools.NeverOpened.Contains(app.Verb) }), Readable)),
+            McpTools.Apps => new McpResult(JsonSerializer.Serialize(Dispatch.Apps.Select(app => new { verb = app.Verb, name = app.Name, opens = app.Opens.ToString().ToLowerInvariant(), read = !McpTools.NeverRead.Contains(app.Verb), asksFirst = McpTools.StartsAProgram.Contains(app.Verb) }), Readable)),
             McpTools.Windows => new McpResult(JsonSerializer.Serialize(Windows(key).Select(w => new { window = w.Id, app = w.App, title = w.Title }), Readable)),
-            McpTools.Open => Open(McpProtocol.Text(arguments["app"]), McpProtocol.Text(arguments["path"])),
+            McpTools.Open => Open(key, McpProtocol.Text(arguments["app"]), McpProtocol.Text(arguments["path"]), McpAccess.Find(McpAccess.Load(), program)?.Name ?? client),
             _ => new McpResult($"No tool {tool}.", true),
         };
     }
@@ -423,13 +423,29 @@ public static class McpBroker
         }
     }
 
-    /// <summary>MC-6.5: an app on a path or none, as its own process; the arguments as a list, never through a shell.</summary>
-    private static McpResult Open(string? verb, string? path)
+    /// <summary>
+    /// MC-6.5: an app on a path or none, as its own process; the arguments as a list, never through a shell. An app that
+    /// starts a program, and axTask on a folder, are asked of the user first (MC-6.5a): in the window that started
+    /// this session's Claude Code (axClaude, axHelp), or the newest axKit window; that window opens the app on a yes.
+    /// </summary>
+    private static McpResult Open(byte[] key, string? verb, string? path, string client)
     {
         var (arguments, refusal) = McpTools.OpenArguments(verb, path, Directory.Exists, File.Exists, McpTools.PassesLink);
         if (arguments is null)
         {
             return new McpResult(refusal!, true);
+        }
+
+        if (McpTools.AsksFirst(arguments[0], arguments.Length > 1 ? arguments[1] : null))
+        {
+            var windows = Windows(key);
+            var ancestors = Ancestors();
+            if ((windows.FirstOrDefault(window => ancestors.Contains(window.ProcessId)) ?? windows.FirstOrDefault()) is not { } asker)
+            {
+                return new McpResult("Open any axKit window first: the user is asked there before this app opens.", true);
+            }
+
+            return Ask(key, asker.Pipe, "open " + JsonSerializer.Serialize(new { arguments, client }));
         }
 
         // Through the shell, which hands the new process none of this one's handles: a window holding the client's

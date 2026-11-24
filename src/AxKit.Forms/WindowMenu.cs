@@ -93,7 +93,7 @@ public sealed class WindowMenu : ToolStripMenuItem
     }
 
     /// <summary>Starting an app is open, but axClaude and axTerminal start Claude Code or a shell as they open: act (docs/axKit/mcp.md MC-3.1, app-kit.md AK-2.5).</summary>
-    public static CommandMark OpenMark(string verb) => AxKit.Core.Mcp.McpTools.NeverOpened.Contains(verb) ? CommandMark.Act : CommandMark.Open;
+    public static CommandMark OpenMark(string verb) => AxKit.Core.Mcp.McpTools.StartsAProgram.Contains(verb) ? CommandMark.Act : CommandMark.Open;
 
     private nint Current() => _owner.IsHandleCreated ? _owner.Handle : 0;
 

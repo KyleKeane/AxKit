@@ -203,6 +203,7 @@ internal sealed class McpChannel
                 "run" => Run(argument),
                 "field" => FocusField(argument),
                 "report" => DraftReport(argument),
+                "open" => AskToOpen(argument),
                 "app" => App(argument),
                 _ => OnWindow(() => Execute(verb)),
             };
@@ -441,6 +442,15 @@ internal sealed class McpChannel
         var kind = McpProtocol.Text(request?["kind"]);
         var client = McpProtocol.Text(request?["client"]) ?? "An AI tool";
         return JsonSerializer.Serialize(OnWindow(() => _form.McpDraftReport(text, kind, client)), Plain);
+    }
+
+    /// <summary>MC-6.5a: <c>axkit_open</c> of an app asked first, the question shown in this window (<see cref="AxKitForm.McpAskToOpen"/>).</summary>
+    private string AskToOpen(string argument)
+    {
+        var request = System.Text.Json.Nodes.JsonNode.Parse(argument);
+        var arguments = (request?["arguments"] as System.Text.Json.Nodes.JsonArray)?.Select(McpProtocol.Text).OfType<string>().ToList() ?? [];
+        var client = McpProtocol.Text(request?["client"]) ?? "An AI tool";
+        return JsonSerializer.Serialize(OnWindow(() => _form.McpAskToOpen(arguments, client)), Plain);
     }
 
     /// <summary>How long an app request may take in all: under the broker's 25 s wait, so that the client hears this answer.</summary>

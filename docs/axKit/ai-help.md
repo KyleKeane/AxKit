@@ -368,7 +368,7 @@ file of the working folder.
      axKit's tools are there, the answer is yes;
   2. **the language rules**: what the user is likely to say and what answers it. "What is on my screen", "what is
      open": `axkit_windows`, then `axkit_window_state`, then `axkit_window_text` or `axkit_window_list`. "What did
-     it just say": `axkit_window_said`. "Open ...": `axkit_apps`, `axkit_open`, never axClaude or axTerminal.
+     it just say": `axkit_window_said`. "Open ...": `axkit_apps`, `axkit_open`; axClaude, axTerminal and axTask on a folder are asked of the user first (mcp.md MC-6.5a).
      "Press, run, turn on, do X in that window": `axkit_window_commands` for the label, the command said first,
      then `axkit_window_run`, only while the user allows commands to run. "Add a task", "remind me":
      `axkit_task_lists`, `axkit_task_add`. "What are my tasks": `axkit_task_lists`, `axkit_task_items`. "How do

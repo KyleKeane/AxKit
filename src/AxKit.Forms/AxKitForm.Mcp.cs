@@ -626,6 +626,41 @@ public abstract partial class AxKitForm
         return new { opened = McpReport.Opened };
     }
 
+    /// <summary>
+    /// <c>axkit_open</c> of an app asked first (docs/axKit/mcp.md MC-6.5a), on the window's thread: the arguments checked
+    /// again here, then the question "Open axTask?" with the AI caution, what opening does and where, No first and the
+    /// default; Open starts the app as the Window menu does. Refused as a drafted report is (MC-7.8: a notice or a
+    /// Windows dialog open, the key test, the user's hands); not held to the run switch, since nothing happens before
+    /// the user's own Open.
+    /// </summary>
+    internal object McpAskToOpen(IReadOnlyList<string> arguments, string client)
+    {
+        if (CommandGate.Window(CommandOrigin.AiTool, McpGateState(allowed: true) with { AppServesNoAiTool = false }) is { } held)
+        {
+            return new { error = McpRefusal(held) };
+        }
+
+        var (checkedArguments, refusal) = McpTools.OpenArguments(arguments.Count > 0 ? arguments[0] : null, arguments.Count > 1 ? arguments[1] : null, Directory.Exists, File.Exists, McpTools.PassesLink);
+        if (checkedArguments is null)
+        {
+            return new { error = refusal };
+        }
+
+        var app = Dispatch.Of(checkedArguments[0]);
+        var path = checkedArguments.Length > 1 ? checkedArguments[1] : null;
+        var who = McpRun.Speaker(client);
+        var where = path is null ? string.Empty : $" on {path}";
+        var text = $"{AiCaution.OpenAsked(who)}\n\n{who} asks to open {app.Name}{where}. This {McpTools.OpenMeans(app.Verb)}";
+        ShowNotice(new Notice($"Open {app.Name}?", text,
+        [
+            new OverlayChoice("&No", () => Announce($"{app.Name} not opened", true), IsDefault: true, IsCancel: true),
+            new OverlayChoice("&Open", () => WindowMenu.StartWith(app.Verb, [.. checkedArguments.Skip(1)])),
+        ]) { Unprompted = true });
+        ChimeForMcp();
+        FlashIfBehind();
+        return new { asked = $"The user is asked in this {AppName} window whether to open {app.Name}{where}; it opens only if they choose Open." };
+    }
+
     /// <summary>The form the notice shown is (AX-8.10), or null.</summary>
     private FormControls? OpenForm() => NoticeOpen ? Overlay.Shown?.Custom as FormControls : null;
 

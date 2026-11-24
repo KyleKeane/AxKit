@@ -418,7 +418,7 @@ What happens to a report once it is in, its harm review and the maintainer's sig
   `claude` or `terminal` starts its program only in a folder on a drive of this computer: on
   a share or a mapped drive the key says "Not started: axTerminal would run in a folder that is not on a drive of this
   computer" and starts nothing, since a `list.json` may come from a list the user did not write (security audit S-5's
-  rule; the AI tools' `axkit_open` never starts the two at all, mcp.md; 2026-11-09). For the same reason a `move` or
+  rule; the AI tools' `axkit_open` starts the two only after the user's yes in a window, mcp.md MC-6.5a; 2026-11-09, asked since 2026-11-24). For the same reason a `move` or
   an `open` that this install neither wrote nor accepted is said at the first press and done at the second
   (docs/axTask/SPEC.md TK-7a.3, 2026-11-16).
 - **RP-8.2 Assigning them.** *(Until 2026-11-21; since then an action is written in the list's configuration, `list.json`, edited in axJSON from the list, and axTask has no form for it: docs/axTask/forms-framework.md section 10.)* Actions → "Action keys…": one form of standard controls (bundle AX-8.10, since

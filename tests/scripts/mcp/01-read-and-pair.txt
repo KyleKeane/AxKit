@@ -83,10 +83,18 @@ mcp call axkit_windows
 refuse mcp axPass
 expect mcp "title": "axDown file 
 
-# Check: Opening a program's app, a missing window and a partial path are refused
-# The refusals: an app that starts a program, a window that is not there, a path that is not a full one.
+# Check: Opening a program's app is asked of the user first, and No opens nothing
+# MC-6.5a: axClaude starts a program, so the axKit window asks "Open axClaude?" with the AI caution, No the default;
+# the client hears that the user is asked. Escape is No: nothing starts.
 mcp call axkit_open {"app":"claude"}
-expect mcp error: axClaude starts a program
+expect mcp The user is asked in this axDown window whether to open axClaude
+expect state "notice":"Open axClaude?"
+expect state an AI model, asks for this
+keys escape
+expect said ! axClaude not opened
+
+# Check: A missing window and a partial path are refused
+# The refusals: a window that is not there, a path that is not a full one.
 mcp call axkit_window_text {"window":"0000000000000000"}
 expect mcp error: No such window
 mcp call axkit_open {"app":"down","path":"notes.md"}

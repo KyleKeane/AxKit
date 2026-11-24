@@ -106,8 +106,8 @@ public static class AiToolsRule
             "in one sentence what the command is for, then end your turn. Never urge the user to say yes."),
         [McpTools.Open] = new(
             "for \"open ...\", \"show me that folder\", \"open it in axDown\", with the full path.",
-            "for axClaude or axTerminal, which the user opens; for axTask with a path; for a path on a share.",
-            "before: \"I will open notes.md in axDown.\" The user hears the window open."),
+            "for a path on a share. axClaude, axTerminal and axTask on a folder are asked of the user first, in an axKit window.",
+            "before: \"I will open notes.md in axDown.\" The user hears the window open, or, for one asked first, the question."),
     };
 
     /// <summary>The rule file's text (AH-8.2).</summary>
@@ -116,7 +116,7 @@ public static class AiToolsRule
     private static string Build()
     {
         var neverRead = string.Join(" and ", McpTools.NeverRead.Select(verb => Dispatch.Of(verb).Name));
-        var neverOpened = string.Join(" and ", McpTools.NeverOpened.Select(verb => Dispatch.Of(verb).Name));
+        var asksFirst = string.Join(" and ", McpTools.StartsAProgram.Select(verb => Dispatch.Of(verb).Name));
         var text = new StringBuilder();
         text.Append($"""
             # axKit's AI tools
@@ -152,7 +152,7 @@ public static class AiToolsRule
             - "What did it just say", "I missed that": {McpTools.Said}.
             - "Read me the file", "what is in the list": {McpTools.Text} or {McpTools.List}.
             - "Open ...", "show me that folder": {McpTools.Apps} for the verb when unsure, then {McpTools.Open}.
-              Never {neverOpened} this way: the user opens those.
+              {asksFirst}, and axTask on a folder, are asked of the user first: say why you ask, then wait.
             - "Press ...", "run ...", "turn on ...", "do X in that window": {McpTools.Commands} to find the
               command by its label, say which command you will run, then {McpTools.Run}.
               Only while the user allows commands to run.

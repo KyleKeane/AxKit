@@ -46,7 +46,7 @@ public sealed class AiToolsRuleTests
         Assert.StartsWith("# axKit's AI tools\n", text, StringComparison.Ordinal);
         Assert.Contains("\"What did it just say\", \"I missed that\": axkit_window_said.", text, StringComparison.Ordinal);
         Assert.Contains("the guides in the folder documentation, not a tool", text, StringComparison.Ordinal);
-        Assert.Contains("Never axClaude and axTerminal this way", text, StringComparison.Ordinal);
+        Assert.Contains("axClaude and axTerminal, and axTask on a folder, are asked of the user first", text, StringComparison.Ordinal);
         Assert.Contains("axPass and axClip are never readable", text, StringComparison.Ordinal);
         Assert.Contains("Nothing answers a question a window asks the user", text, StringComparison.Ordinal);
         Assert.Contains("A refused call is not retried another way", text, StringComparison.Ordinal);

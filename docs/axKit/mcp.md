@@ -182,11 +182,22 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   2026-11-15 the focused field came first there too, so the tool read the empty message field and never the
   conversation; each kind of window says its main text, `AxKitForm.McpMainText`; a secret field "protected"), `axkit_window_commands` (the window's command list: label, key,
   mark, and since 2026-11-11 the menus that hold it; MC-7 runs one) and `axkit_window_said` (what the window announced since the last call, the
-  last 50). `axkit_open` (`open`): an app by its verb, on a path or none, but axClaude and axTerminal, which start a program as they open (an act, MC-3.1), and axTask on a path (MC-D12: it would make the path its top folder); the path fully qualified, on this computer
+  last 50). `axkit_open` (`open`): an app by its verb, on a path or none (axClaude and axTerminal, which start a program as they open, an act, MC-3.1, and axTask on a path, which makes the path its top folder, MC-D12, only after the user's yes, MC-6.5a); the path fully qualified, on this computer
   (`LocalPaths`), through no link (a junction or a symbolic link, which may lead to a share; asked part by part
   before anything follows it), existing, and of a kind the app opens (`Dispatch.PathFor`); started as
   `AxKit.exe <verb> <path>` with the arguments as a list, through ShellExecute on the program file itself, never through
   a command interpreter (ShellExecute hands the new window none of the broker's handles).
+- MC-6.5a **Asked first** (the maintainer's choice of 2026-11-24, "Yes, asked each time", after Claude, refused axTask
+  on the management folder, wrote list files directly). axClaude and axTerminal on a folder or none, and axTask on a
+  folder (`McpTools.AsksFirst`), are not started by the broker. It sends the checked arguments to the window whose
+  process started this session's Claude Code (axClaude, axHelp; the same search as MC-9's offer), or else the newest
+  axKit window, and that window checks them again and asks (`AxKitForm.McpAskToOpen`): the notice "Open axTask?" whose
+  text starts with the AI caution (`AiCaution.OpenAsked`), then "Claude asks to open axTask on <folder>. This makes it
+  the folder axTask works in: ..." (`McpTools.OpenMeans`; for axClaude, Claude Code starting there, for axTerminal a
+  shell), the buttons No, first, the default and Escape, and Open, which starts the app as the Window menu does. No
+  says "axTask not opened". The client's answer is at once: "The user is asked in this <app> window whether to open
+  axTask; it opens only if they choose Open." Refused as a drafted report is (MC-7.8: a notice or a Windows dialog open,
+  the key test, the user typing); not held to the run switch, since nothing happens before the user's own Open.
 - MC-6.6 **Limits and the log**: at most 10 calls a second; every call in `%LOCALAPPDATA%\AxKit\mcp-audit.log`, one
   line: the time, the client's name and program, the tool, the first 16 hex digits of the SHA-256 of its arguments,
   and the result (done, refused and why, failed). The arguments themselves are not written.
@@ -379,7 +390,7 @@ After the review of 2026-11-11:
   unasked by forgetting it; the same test pins the act commands that start a program or reach past the window:
   axFile's Open (a file opens in its program, a script or a program run itself; a client that wants a folder opens
   axFile on it with `axkit_open`), axHelp's Open the conversation and Put a picture file into the conversation (they
-  start Claude Code, as MC-6.5 refuses for `axkit_open`), axPreview's Read the clipboard's picture (MC-7.6), axGIT's
+  start Claude Code, which `axkit_open` asks the user first for, MC-6.5a), axPreview's Read the clipboard's picture (MC-7.6), axGIT's
   Stage or unstage, Stage all and Unstage all (the repository changes), axStart's Start, the console windows' New
   session and restarts, axMCP's Call. Copies to the clipboard are act too (the user's clipboard is outside the window):
   axCalc's Copy answer, axFile's Copy path and axProcess's Copy line are pinned.
@@ -444,9 +455,9 @@ to reverse:
 - MC-D12 **Only the window's own lists.** The lists of its top folder (the user's, from axTask's settings, even while
   a project is shown as the top) and of the projects it found under its project folders; a list named by a path
   elsewhere is refused. axPass is never reachable (its windows serve no pipe, MC-6.2). So that a client never chooses
-  the top folder itself, `axkit_open` starts axTask only with no path, on the user's own top folder (a start on a
-  folder makes it the top and saves it): "axTask opens through the AI tools only on your own lists" (found at review,
-  2026-11-11).
+  the top folder itself, `axkit_open` starts axTask on a folder only after the user's yes (MC-6.5a, since
+  2026-11-24; until then it was refused, "axTask opens through the AI tools only on your own lists", found at review,
+  2026-11-11): a start on a folder makes it the top and saves it.
 - MC-D13 **A field the list does not have is refused**, with the fields it has ("Notes is not a field of this list.
   Its fields: Done, Start, Due."), since 2026-11-21. Until then such a field was added after the others, so that
   "Notes" worked in a list without it. Since an item is its values read through its list's configuration
