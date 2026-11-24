@@ -100,6 +100,6 @@ refuse state navigation mode
 keys home
 type X
 expect focus {"name":"modes.md","role":"Text","value":"X- one"}
-expect state *modes.md
+expect state "title":"axDown file *
 do Undo
 expect said ! Undone
