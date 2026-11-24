@@ -40,14 +40,14 @@ start media {temp}\ch\beta.wav
 expect said ! Playing beta.wav
 expect list ["alpha.wav","beta.wav (playing)","gamma.wav"]
 expect focus beta.wav (playing)
-expect state "title":"beta.wav - axMedia"
+expect state "title":"axMedia beta.wav"
 expect state "2 of 3, speed 1"
 
 # Goal: Play a file in the open window
 # Step 6 (first part): axmedia <file> with a window open: handed over, the open window plays it, no second window.
 launch media {temp}\ch\alpha.wav
 expect said ! Playing alpha.wav
-expect state "title":"alpha.wav - axMedia"
+expect state "title":"axMedia alpha.wav"
 # Goal: Add a folder to the open window's queue
 # Step 6 (second part): axmedia --add <folder> with a window open: the open window's queue grows.
 launch media --add {temp}\ch
@@ -59,7 +59,7 @@ expect list ["alpha.wav (playing)","beta.wav","gamma.wav","alpha.wav","beta.wav"
 start media --new {temp}\ch\gamma.wav
 expect said ! Playing gamma.wav
 expect list ["alpha.wav","beta.wav","gamma.wav (playing)"]
-expect state "title":"gamma.wav - axMedia"
+expect state "title":"axMedia gamma.wav"
 use 2
-expect state "title":"alpha.wav - axMedia"
+expect state "title":"axMedia alpha.wav"
 expect quiet 500

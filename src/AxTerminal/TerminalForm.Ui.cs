@@ -143,10 +143,13 @@ internal sealed partial class TerminalForm
         Announce(MenuText.Plain(SpeechChoices.First(c => c.Mode == mode).Text), true);
     }
 
-    /// <summary>The title is the current directory's name (AT-2.3), which the Window menu lists the window by.</summary>
+    /// <summary>
+    /// The title (AT-2.3), which the Window menu lists the window by: the app first, then "folder" and the current
+    /// directory's full path, then the shell (the user's ask of 2026-11-23: the app before the place).
+    /// </summary>
     private void UpdateTitle()
     {
-        var text = $"{PathName.Of(CurrentDirectory)} - {ShellName} - {AppTitle}";
+        var text = $"{AppTitle} folder {CurrentDirectory} {ShellName}";
         if (Text != text)
         {
             Text = text;

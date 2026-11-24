@@ -109,7 +109,7 @@ folder of the file or project in hand, and sends back. It works entirely offline
   update. An empty folder shows one item, "No items in this folder", selected, so that the list is never empty and the
   reason is read (the bundle's rule for empty lists, AX-9.5). Neither that item nor the not-shown line is an entry: a
   command on either says the line itself (AF-7).
-- AF-2.3 The title is `<folder name> - axFile`. The status bar's left label: the newest file operation's line (AF-9.2)
+- AF-2.3 The title is `axFile folder <the folder's full path>` (the app first, the maintainer's ask of 2026-11-23, bundle AX-9.6; until then `<folder name> - axFile`); `axFile This PC` on This PC. The status bar's left label: the newest file operation's line (AF-9.2)
   ("Copied 3 items", "Compressing, 40 of 120 files"), empty before the first operation; while a folder is being read,
   "Reading…" in its place (the navigator's state for work off the UI thread, framework FW-4.7 point 1, 2026-11-23),
   and after it, while entries are selected, how many, as in every navigator ("Copied 3 items, 2 selected"; "2 selected"

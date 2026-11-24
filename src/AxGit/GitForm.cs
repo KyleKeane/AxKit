@@ -192,12 +192,12 @@ public sealed partial class GitForm : ItemForm
     /// <summary>
     /// The level shown: at the top the three lists, each with its count once it has been read; in a list its rows
     /// as last read from git. Without a repository there are no rows, and the list and the title say so. The
-    /// title is the repository's folder; the status bar's second part is its path.
+    /// title is "folder" and the repository's full path after the app's name; the status bar's second part is its path.
     /// </summary>
     protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel() =>
         _root is null
             ? ([], "No repository", "No repository", string.Empty)
-            : (LevelRows(), LevelName(_root), PathName.Of(_root), _root);
+            : (LevelRows(), LevelName(_root), FolderTitle(_root), _root);
 
     private IReadOnlyList<ItemRow> LevelRows() => _level switch
     {
@@ -435,7 +435,7 @@ public sealed partial class GitForm : ItemForm
         Selection.Clear();
         TextPane.Clear();
         TextPane.AccessibleName = "Details";
-        SetTitle(PathName.Of(root));
+        SetTitle(FolderTitle(root));
         _settings.RememberRepository(root);
         SaveSettings();
         Log.Info($"Opened {root}");

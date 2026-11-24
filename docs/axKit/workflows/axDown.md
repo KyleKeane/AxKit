@@ -539,7 +539,7 @@ Starts with: Open axDown with the file one.md. Open axDown with the file two.md.
 
 1. Press Ctrl+Shift+P (Command palette; Help menu).
 2. Type: open windows
-    You hear: one.md - axDown, Window, Open windows.
+    You hear words such as: one.md, Window, Open windows.
 3. Press Escape.
 
 ### Reopen a window that was closed

@@ -179,5 +179,5 @@ expect said ! Removed more
 # top): the user's own list that was open before the search, never the project's Home shown last.
 close
 start task
-expect state Home - axTask
+expect state "title":"axTask Home
 expect focus "name":"Home, 1 item","role":"List","value":"Buy a tap"

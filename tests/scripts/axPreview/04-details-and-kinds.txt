@@ -44,7 +44,8 @@ expect focus "value":"Words: 5"
 # Goal: Read a Word document
 # 5.6: a Word document is its text, its heading a Markdown heading, so Ctrl+H finds it; the status bar names the kind.
 start preview --new {temp}\report.docx
-expect state "title":"report.docx - axPreview"
+expect state "title":"axPreview file 
+expect state \report.docx","notice"
 expect focus {"name":"report.docx","role":"Text","value":"# Install"}
 expect state Word document
 keys ctrl+end

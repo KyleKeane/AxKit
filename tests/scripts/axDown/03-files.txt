@@ -52,11 +52,12 @@ run fc /b plain.txt plain.before
 # 3.4a: Ctrl+Shift+N: a new axDown window on Untitled, empty; this one is unchanged (AD-4.1, 2026-11-09).
 do New window
 adopt
-expect state Untitled - axDown
+expect state "title":"axDown Untitled"
 expect focus {"name":"Untitled","role":"Text","value":""}
 close
 use 4
-expect state plain.txt - axDown
+expect state "title":"axDown file 
+expect state \plain.txt","notice"
 # Goal: Start a new document when the text has changes
 # 3.4: Ctrl+N with unsaved changes: the question; Escape cancels and the text stays; Enter saves, then Untitled.
 type Added.
@@ -65,12 +66,13 @@ expect state "notice":"Save changes to plain.txt?"
 keys escape
 expect state "notice":null
 expect focus Added.Plain text file, line 1.
-expect state *plain.txt - axDown
+expect state "title":"axDown file *
+expect state \plain.txt","notice"
 do New
 expect state "notice":"Save changes to plain.txt?"
 keys enter
 expect said ! Saved
-expect state Untitled - axDown
+expect state "title":"axDown Untitled"
 expect focus {"name":"Untitled","role":"Text","value":""}
 run findstr /c:"Added.Plain text file" plain.txt
 
@@ -104,7 +106,8 @@ keys enter
 expect said Reloaded
 expect focus Added.Plain text file, line 1.
 expect text Another line, added by another program.
-expect state "title":"plain.txt - axDown"
+expect state "title":"axDown file 
+expect state \plain.txt","notice"
 # Goal: Save over the changes of another program
 # Changed on disk again, a change here, Ctrl+S, Enter on Write over: "Saved".
 wait 1100
@@ -147,7 +150,8 @@ close
 expect state "notice":"Save changes to wide.txt?"
 keys escape
 expect state "notice":null
-expect state *wide.txt - axDown
+expect state "title":"axDown file *
+expect state \wide.txt","notice"
 close
 expect state "notice":"Save changes to wide.txt?"
 keys tab tab

@@ -3,7 +3,7 @@ namespace AxKit.Core;
 /// <summary>A top-level window of one of the bundle's processes: its handle and its title.</summary>
 public sealed record AxKitWindow(nint Handle, string Title)
 {
-    /// <summary>The app the title ends with ("notes.md - axDown" is axDown's); the whole title when it has no " - ".</summary>
+    /// <summary>The app the title starts with ("axDown file C:\work\notes.md" is axDown's); the whole title when it is one word.</summary>
     public string App => AxKitWindows.AppOf(Title);
 }
 
@@ -14,13 +14,15 @@ public sealed record AxKitWindow(nint Handle, string Title)
 /// </summary>
 public static class AxKitWindows
 {
+    /// <summary>
+    /// The app a window's title names first (the title starts with the app since 2026-11-23, the user's ask): the
+    /// title up to its first space or comma, since no app's name has either; an access layer's title starts with its
+    /// whole title, "axClaude, access layer for Claude Code" (AX-11.2).
+    /// </summary>
     public static string AppOf(string title)
     {
-        var at = title.LastIndexOf(" - ", StringComparison.Ordinal);
-        var app = at < 0 ? title : title[(at + 3)..];
-        // An access layer's title ends with its whole title, "axClaude, access layer for Claude Code" (AX-11.2); no app's name has a comma.
-        var comma = app.IndexOf(", ", StringComparison.Ordinal);
-        return comma < 0 ? app : app[..comma];
+        var end = title.IndexOfAny([' ', ',']);
+        return end < 0 ? title : title[..end];
     }
 
     /// <summary>The Open windows list: the windows of the bundle's apps other than the current one, most recently used first.</summary>

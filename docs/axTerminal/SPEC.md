@@ -221,7 +221,9 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   (bundle AX-8.2); Alt+1 the field, Alt+2 the view, Alt+3 the view at the latest output marker, from anywhere (Ctrl+1, Ctrl+2 and Ctrl+3, the keys until 2026-11-16, stay as further keys of the same commands for now, bundle AX-8.14), each
   naming the control when it has the focus already (axClaude FR-6.5, D26). The focus starts in the field and stays
   there after sending.
-- AT-2.3 The title is `<current directory's name> - <the shell's name> - axTerminal`, the directory being the shell's (9;9) and the start
+- AT-2.3 The title is `axTerminal, access layer for your shell folder <current directory's full path> <the shell's
+  name>` (the app first, the maintainer's ask of 2026-11-23, bundle AX-9.6; until then `<directory's name> - <shell>
+  - axTerminal`), the directory being the shell's (9;9) and the start
   folder before the first mark. The status bar's left label: `Idle`, `Running: dotnet test`, `Shell ended`,
   `Starting`; the right label: the shell's last prompt, the row's text between the `A` and `B` marks
   (`PS C:\src\myproject>`), or the full directory before the first prompt. No AccessibleName, no Spring (axClaude

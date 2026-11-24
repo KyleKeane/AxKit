@@ -1230,7 +1230,14 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   - axTask's limit: its top folder is read on the window's thread whatever it is on (docs/axTask/SPEC.md TK-D3), so
     a top folder on a share that is away still waits.
 - AX-9.6 The windows are the visible, unowned, titled top-level windows of every process named as this one, told
-  apart by the end of their title (" - axClaude", " - axDown"; AD-10, axClaude's `<folder> (<path>) - axClaude`); a window of
+  apart by the start of their title. Since 2026-11-24 a title is the app's title first, then what the window holds
+  (the maintainer's ask of 2026-11-23: "when focus lands on a new axKit window, it should say the app name before
+  the session location"; `AxKitForm.SetTitle`): "axDown file C:\work\notes.md", "axFile folder C:\work\music",
+  "axClaude, access layer for Claude Code folder C:\work", "axTerminal, access layer for your shell folder C:\work
+  PowerShell"; a window that holds a folder says "folder" and its full path (`FolderTitle`), an editor "file" and
+  the file's full path (an unsaved change's star before the path), and a window that holds nothing has the app's
+  title alone. The app is read off the title up to its first space or comma (`AxKitWindows.AppOf`). Before, a
+  title ended with the app (" - axDown"). A window of
   none of the apps (the bundle's own message box, AX-1.4) is listed nowhere. The lists are pure code in
   `AxKit.Core/AxKitWindows` and `AxKit.Core/RecentlyClosed`, unit tested; only the listing and the switch (user32
   `EnumWindows`, `SetForegroundWindow`) and the menu itself are in `WindowMenu`.

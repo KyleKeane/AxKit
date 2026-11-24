@@ -71,7 +71,8 @@ expect focus "value":"docs, folder"
 # 5.5 Close the window and start axFile without a folder: it opens on the same folder, the last one.
 close
 start file
-expect state "title":"pal - axFile"
+expect state "title":"axFile folder 
+expect state \pal","notice"
 # A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
 wait 500
 expect focus "value":"docs, folder"

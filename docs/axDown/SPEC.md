@@ -291,7 +291,9 @@ reads it with NVDA+End; nothing is spoken automatically.
 
 ### AD-10 Title
 
-`notes.md - axDown`, `*notes.md - axDown` with unsaved changes (the Notepad convention, AD-D5), `Untitled - axDown`.
+`axDown file C:\work\notes.md`, `axDown file *C:\work\notes.md` with unsaved changes (the Notepad convention,
+AD-D5), `axDown Untitled`: the app first, then "file" and the full path (the maintainer's ask of 2026-11-23, bundle
+AX-9.6; until then `notes.md - axDown`).
 
 ### AD-11 Errors and diagnostics
 

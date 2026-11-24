@@ -16,7 +16,7 @@ file flows\01-script.txt # A script.\n\nstart down\nwait 100\nclose
 file flows\02-marks.workflow.json {"format": "axkit-workflow 1", "title": "Marks", "covers": "a made-up plan, section 1", "steps": [{"do": "start", "arguments": "down"}, {"do": "expect said", "text": "x", "on failure": "continue"}, {"do": "menu", "name": "Close all windows", "on failure": "continue", "report": "Not closed"}, {"do": "expect said", "text": "y", "otherwise": [{"do": "close"}]}]}
 
 start automate {temp}\flows
-expect state "title":"flows - axAutomate"
+expect state "title":"axAutomate flows"
 expect focus 01-script, workflow, 3 steps
 
 # Goal: Find a workflow by typing the start of its name
@@ -99,7 +99,8 @@ expect focus Marks, workflow, 5 steps
 # Ctrl+J on a workflow file: an axJSON window on the file (a window of this run).
 keys ctrl+j
 adopt
-expect state "title":"02-marks.workflow.json - axJSON"
+expect state "title":"axJSON file 
+expect state \02-marks.workflow.json","notice"
 close
 use 1
 
@@ -109,7 +110,8 @@ keys home
 expect focus 01-script, workflow, 3 steps
 keys ctrl+j
 adopt
-expect state "title":"01-script.txt - axDown"
+expect state "title":"axDown file 
+expect state \01-script.txt","notice"
 close
 use 1
 expect focus 01-script, workflow, 3 steps

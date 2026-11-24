@@ -64,7 +64,8 @@ expect commands 1. Remove Test cmd, Session, Remove a shell
 # Started from Switch shell: the title and the system line name it; cmd's own output in the terminal.
 menu 1. Test cmd
 expect said Test cmd
-expect state "myproject - Test cmd - axTerminal, access layer for your shell"
+expect state "title":"axTerminal, access layer for your shell folder 
+expect state \myproject Test cmd","notice"
 expect commands 1. Test cmd (cmd.exe /k), Session, Switch shell, checked
 do Terminal
 expect text "System: Switched to Test cmd in
@@ -91,7 +92,8 @@ close
 # Check: The shell in use starts again in the next window
 # Remembered for the next window: the same shell starts again.
 start terminal {temp}\work\myproject
-expect state "myproject - Test cmd - axTerminal, access layer for your shell"
+expect state "title":"axTerminal, access layer for your shell folder 
+expect state \myproject Test cmd","notice"
 do Terminal
 expect text "System: Shell started: Test cmd, command line cmd.exe /k, in
 do Command field
@@ -101,7 +103,7 @@ do Command field
 menu 1. Remove Test cmd
 expect said Removed Test cmd
 expect state "title":"myproject - 
-refuse state - Test cmd - axTerminal
+refuse state Test cmd","notice"
 # With none yet, Remove a shell holds one line that says so; it does nothing, so it is no command of the list
 # (docs/axKit/app-kit.md AK-2.5: the line that says a list is empty is never an entry).
 refuse commands No shells of your own yet
@@ -116,8 +118,8 @@ wait 2000
 file home\AxKit\axTerminal.json {"checkForUpdates": false, "shell": "custom", "customShell": "cmd.exe /k", "userShells": [{"name": "Planted", "commandLine": "cmd.exe /k"}]}
 start terminal {temp}\work\myproject
 expect said Ready
-refuse state - Planted - axTerminal
-refuse state - Custom shell - axTerminal
+refuse state Planted","notice"
+refuse state Custom shell","notice"
 refuse commands Planted
 do Terminal
 # The text is matched as the channel writes it, where an apostrophe is escaped: the part after it.

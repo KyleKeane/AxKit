@@ -130,7 +130,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
   Space selects files in Changes (bundle AX-8.16; AG-3.2, AG-3.4a): a selected file reads ", selected", the status
   bar counts them, Shift with an arrow selects as it moves, Shift+Space to here, Ctrl+A all, Ctrl+Shift+A and
   Escape none. A commit and a branch are not selected, since nothing acts on several of them: the edge sound.
-- AG-2.3 The title is `<repository folder name> - axGIT`, "No repository - axGIT" without one. The status bar's left
+- AG-2.3 The title is `axGIT, access layer for Git folder <the repository's full path>` (the app first, the maintainer's ask of 2026-11-23, bundle AX-9.6; until then `<repository folder name> - axGIT`), and the app's title with "No repository" without one. The status bar's left
   label: the branch, then the upstream state when there is an upstream ("main · 2 ahead" / "main · 1 behind" / "main
   · up to date" / "main · no upstream"), then the counts ("3 changed, 1 staged"); "Working: pull…" while a command
   runs. The right label: the repository's full path. No AccessibleName, no Spring (axClaude §6.2).

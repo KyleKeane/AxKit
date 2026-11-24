@@ -8,21 +8,21 @@ public sealed class AxKitWindowsTests
     /// <summary>In Z order, the most recently used first; handle 3 is the bundle's own message box, no app's window.</summary>
     private static readonly IReadOnlyList<AxKitWindow> Windows =
     [
-        new(1, "*notes.md - axDown"),
-        new(2, "my - project - axClaude"),
+        new(1, "axDown file *C:\\work\\notes.md"),
+        new(2, "axClaude, access layer for Claude Code folder C:\\my - project"),
         new(3, "axKit"),
         new(4, "axClaude"),
-        new(5, "Untitled - axDown"),
+        new(5, "axDown Untitled"),
     ];
 
     [Theory]
-    [InlineData("notes.md - axDown", "axDown")]
-    [InlineData("*notes.md - axDown", "axDown")]
-    [InlineData("my - project - axClaude", "axClaude")]
+    [InlineData("axDown file C:\\work\\notes.md", "axDown")]
+    [InlineData("axDown file *C:\\work\\notes.md", "axDown")]
+    [InlineData("axFile folder C:\\work\\music", "axFile")]
     [InlineData("axClaude", "axClaude")]
-    [InlineData("my - project (C:\\my - project) - axClaude, access layer for Claude Code", "axClaude")]
+    [InlineData("axClaude, access layer for Claude Code folder C:\\my - project", "axClaude")]
     [InlineData("axClaude, access layer for Claude Code", "axClaude")]
-    public void The_app_is_what_the_title_ends_with(string title, string app) => Assert.Equal(app, AxKitWindows.AppOf(title));
+    public void The_app_is_what_the_title_starts_with(string title, string app) => Assert.Equal(app, AxKitWindows.AppOf(title));
 
     [Fact]
     public void Open_windows_is_every_other_app_window_in_the_order_given()

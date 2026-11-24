@@ -68,7 +68,8 @@ close
 expect state "notice":"Save changes to settings.json?"
 keys escape
 expect state "notice":null
-expect state *settings.json - axJSON
+expect state "title":"axJSON file *
+expect state \settings.json","notice"
 close
 expect state "notice":"Save changes to settings.json?"
 keys tab tab

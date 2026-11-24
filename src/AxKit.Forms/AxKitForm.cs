@@ -78,8 +78,15 @@ public abstract partial class AxKitForm : Form
     /// <summary>The app's name as the user meets it (AX-11.2): "axClaude, access layer for Claude Code" for an access layer, the name alone otherwise; window titles end with it.</summary>
     protected string AppTitle => Dispatch.ByName(AppName)?.Title ?? AppName;
 
-    /// <summary>The title (AX-11.2): what the window holds, " - " and the app's title; the app's title alone for nothing.</summary>
-    protected void SetTitle(string? first) => Text = first is null ? AppTitle : $"{first} - {AppTitle}";
+    /// <summary>
+    /// The title (AX-11.2): the app's title first, then what the window holds, so that NVDA says the app before the
+    /// place as the focus lands on a new window ("axFile folder C:\work\music", the user's ask of 2026-11-23);
+    /// the app's title alone for nothing.
+    /// </summary>
+    protected void SetTitle(string? held) => Text = held is null ? AppTitle : $"{AppTitle} {held}";
+
+    /// <summary>What a window that holds a folder gives <see cref="SetTitle"/>: the word "folder" and the folder's full path.</summary>
+    protected static string FolderTitle(string folder) => $"folder {folder}";
 
     /// <summary>The app's settings as the base needs them: the font, the update check and the window's place.</summary>
     protected WindowSettings Settings { get; }

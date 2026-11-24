@@ -7,7 +7,7 @@ file home\AxKit\axTemplate.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+S
 
 start template
 check commands
-expect state "title":"Templates - axTemplate
+expect state "title":"axTemplate Templates
 expect focus No templates yet: Ctrl+N makes one
 
 # Check: The keys are read with F1
