@@ -102,7 +102,7 @@ do Command field
 # Removed while in use: off both lists, the machine's default shell started in its place in the same folder.
 menu 1. Remove Test cmd
 expect said Removed Test cmd
-expect state "title":"myproject - 
+expect state "title":"axTerminal, access layer for your shell folder 
 refuse state Test cmd","notice"
 # With none yet, Remove a shell holds one line that says so; it does nothing, so it is no command of the list
 # (docs/axKit/app-kit.md AK-2.5: the line that says a list is empty is never an entry).

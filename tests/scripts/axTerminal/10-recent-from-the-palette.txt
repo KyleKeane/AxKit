@@ -18,7 +18,7 @@ close
 expect closed
 start terminal {temp}\work\cellar
 expect said ♪ Ready
-expect state "title":"cellar -
+expect state cellar Windows PowerShell"
 expect commands "1. cellar (
 expect commands "2. orchard (
 expect commands Session, Open recent folder in new window
@@ -35,7 +35,7 @@ keys enter
 expect said Folder orchard
 expect said ♪ Ready
 expect state "notice":null
-expect state "title":"orchard -
+expect state orchard Windows PowerShell"
 expect state \\work\\orchard>"]
 expect focus "name":"Command"
 expect commands "1. orchard (
