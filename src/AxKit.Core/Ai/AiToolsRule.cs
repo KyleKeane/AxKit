@@ -73,7 +73,7 @@ public static class AiToolsRule
             "as a history: it holds only what was said since your last call, the last 50.",
             "repeat the announcement as it was said, then explain if needed."),
         [McpTools.Run] = new(
-            "when the user asks you to do something in a window that one of its commands does.",
+            "when the user asks you to do something in a window that one of its commands does, or said yes to your offer to carry out steps you gave.",
             "to answer a notice or a question the window shows; to try a command the user did not ask for; "
             + "in a window the user is typing in; as a second try after a refusal.",
             "before: \"I will run Word wrap in axDown.\" After: what the window said. "

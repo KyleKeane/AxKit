@@ -248,8 +248,11 @@ public sealed class AiDocumentationTests
         Assert.True(read > 0 && notCovered > read, "The rule's own sentences are kept, word for word.");
         Assert.True(rule.IndexOf(sentences[0], StringComparison.Ordinal) > notCovered, "The sentences of WF-8.3 come after the rule's own.");
 
-        // WF-D-24: nothing tells Claude to offer to do the steps; when Claude may run a command is the AI tools' rule's.
-        Assert.DoesNotContain("offer", rule, StringComparison.OrdinalIgnoreCase);
+        // WF-D-24, AH-7.3b (the maintainer's decision of 2026-11-16, "Explain, then offer to do it"): Claude may offer
+        // once to carry out the steps, with the caution in AiCaution's words, and runs nothing before the user's yes.
+        Assert.Contains("you may offer once", rule, StringComparison.Ordinal);
+        Assert.Contains(AiCaution.OfferToDo, rule, StringComparison.Ordinal);
+        Assert.Contains("Run nothing until the user says yes.", rule, StringComparison.Ordinal);
     }
 
     [Fact]

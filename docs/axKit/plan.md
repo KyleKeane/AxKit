@@ -44,8 +44,8 @@ the restart by the app itself (2.3.0).
 - **Guided learning, step by step** (the user's direction, 2026-11-16; recorded as a direction, not to be built
   yet): new users are coming, and on some days a person wants a thing done for them, on others they have the
   capacity to learn it. Three ways to one goal, all from the same source, the goals of `docs/axKit/workflows.md`
-  (`user-workflows.md`): read the steps (built: the how-to pages, axHelp); have Claude do it (the list item "axHelp:
-  after the steps, offer to carry them out", through the AI tools, each action asked first, rule 11); and be talked
+  (`user-workflows.md`): read the steps (built: the how-to pages, axHelp); have Claude do it (built 2026-11-24:
+  axHelp offers once after the steps and runs nothing before a yes, ai-help.md AH-7.3b, rule 11); and be talked
   through it, one step at a time, each step marked done as the user does it, the next one said only then. The
   third is this entry. What it would rest on, all of which exists or is being built: a goal's steps as data (the
   scripts' goal lines and `do` steps), the windows' own events to tell that a step happened (the automation

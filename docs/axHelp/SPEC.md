@@ -146,7 +146,8 @@ agreement (AX-11.4) asked the first time.
   checks' example names said to be examples and replaced by the user's own, nothing else changed; never a key or a
   menu that no workflows file, `window-commands.md` or guide names, `window-commands.md` deciding where a guide
   differs; and, where no goal covers the question, the app's guide and `window-commands.md`, saying when it is not
-  sure. Nothing there tells Claude to offer to do the steps. These files are axKit's, unlike the
+  sure; then, once, an offer to carry the steps out through the AI tools, with the caution of
+  `AiCaution.OfferToDo`, nothing run before the user's yes (`ai-help.md` AH-7.3b). These files are axKit's, unlike the
   two of HE-2.4: written where missing, written again where one no longer holds axKit's text (`ai-help.md` AH-7.7:
   compared with the text built into axKit, in code alone, so that a file a user, another program or Claude itself
   changed cannot mislead an answer) and written again by each new version of axKit (the marker

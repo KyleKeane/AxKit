@@ -272,8 +272,15 @@ simple and manageable." Both uses of the working folder get it: Shift+F1 (AH-6) 
   something goes wrong, `cases.md`; what axKit contacts or runs outside itself, `privacy.md`, and `outside-calls.md`
   for the exact list; what changed in a version, `changelog.md`, searched with Grep; and that `families.md`,
   `cases.md` and `outside-calls.md` are written from axKit's source and name its files and tests, which stay out of
-  an answer unless the user asks for them. Nothing in it tells Claude to offer to do the steps (WF-D-24):
-  when Claude may run a command stays the AI tools' rule file's (AH-8). **AH-7.3a** (2026-11-16, from the user's own
+  an answer unless the user asks for them. **AH-7.3b** (the maintainer's decision of 2026-11-16, "Explain, then
+  offer to do it"; built 2026-11-24, WF-D-24): after the steps, Claude may offer once, in one sentence, to carry them
+  out in the open window through the AI tools, when the tools are there and a window of that app is open, saying
+  `AiCaution.OfferToDo` word for word ("Claude, an AI, would run these steps for you through axKit's AI tools. It
+  can be wrong; you hear each command as it runs, and a command that acts outside the window asks you first. Say yes
+  only if you want it done."); it runs nothing before the user's yes, then each step's command with
+  `axkit_window_run`, leaving a step that is a key alone to the user; without the run switch it says where to allow
+  it instead of offering. What a run may do stays the AI tools' rule file's (AH-8), whose Use line for the run names
+  the user's yes to such an offer. **AH-7.3a** (2026-11-16, from the user's own
   axHelp session, in which Claude remarked on the hour and on rest): the file ends with one paragraph
   (`AiDocumentation.Manner`): never remark on the user's rest, health or the time of day unless the user asks, no
   word that it is late or early, no suggestion of a break, sleep or stopping for the day; the computer's clock may

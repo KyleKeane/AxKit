@@ -89,7 +89,9 @@ tools read and open axKit, in any window. The conversation then gets the tools b
 you can say "what is in my axDown window", "what did it just say", "open my Downloads folder in axFile" or "remind
 me on Friday to call the dentist". While the tools are off, nothing changes: Claude has none of them, and tells you
 where to turn them on if you ask for something that needs them. Running a window's commands and adding tasks need
-the second switch too, Let AI tools run commands. The first time Claude uses a tool, Claude Code asks whether it
+the second switch too, Let AI tools run commands. After Claude has given you the steps of a task, it may offer once
+to carry them out for you in the open window, saying that it is an AI, that it can be wrong, and that you hear each
+command as it runs; nothing runs unless you say yes, and a step that is a key for you to press stays yours. The first time Claude uses a tool, Claude Code asks whether it
 may, as it asks before any tool, and an axKit window may ask once whether Claude Code may use axKit. What Claude
 reads from a window becomes part of the conversation, as a file it reads does. axKit also keeps a file of
 instructions for Claude about these tools, `.claude\rules\axkit-tools.md` in the folder; it is axKit's, written

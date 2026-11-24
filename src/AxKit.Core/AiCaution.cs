@@ -56,6 +56,13 @@ public static class AiCaution
         + "Read all the details here before you run anything. If you do not understand what it does, do not run it. "
         + "Running it is your own act, as if you had typed it: what it does to your files, your accounts and your computer is yours to answer for, not axKit's and not its maker's.";
 
+    /// <summary>
+    /// With axHelp's offer to carry out the steps it gave (docs/axKit/ai-help.md AH-7.3b; the maintainer's decision of
+    /// 2026-11-16, "Explain, then offer to do it"): who would act, that it can be wrong, that each command is heard,
+    /// and that saying yes is the user's own choice. Claude says it with the offer, word for word.
+    /// </summary>
+    public const string OfferToDo = "Claude, an AI, would run these steps for you through axKit's AI tools. It can be wrong; you hear each command as it runs, and a command that acts outside the window asks you first. Say yes only if you want it done.";
+
     /// <summary>In the question an AI tool's run of a window command asks.</summary>
     public const string Request = "The request comes from an AI tool, which can be wrong: allow it only if you know what the command will do here.";
 }

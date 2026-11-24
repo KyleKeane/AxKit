@@ -82,8 +82,9 @@ public static class AiDocumentation
 
     /// <summary>
     /// What the rule file says (AH-7.3), and since WF-8.3 how to answer from the workflow pages: their sentences
-    /// follow the guides' word for word. None tells Claude to offer to do the steps (WF-D-24): when Claude may run a
-    /// command stays the AI tools' rule file's. It ends with <see cref="Manner"/>.
+    /// follow the guides' word for word. Since 2026-11-16's decision (WF-D-24, AH-7.3b) Claude may offer, once, to
+    /// carry out the steps it gave, with <see cref="AiCaution.OfferToDo"/>, running nothing before the user's yes; what a
+    /// run may do stays the AI tools' rule file's. It ends with <see cref="Manner"/>.
     /// </summary>
     public const string Rule = $"""
         # axKit's guides
@@ -118,6 +119,13 @@ public static class AiDocumentation
 
         When no goal covers the question, look in the app's guide and in window-commands.md, and say when you are not
         sure.
+
+        After you have given the steps, you may offer once, in one sentence, to carry them out in the open window
+        with axKit's AI tools, when the tools are there and a window of that app is open. Say this with the offer,
+        word for word: "{AiCaution.OfferToDo}" Run nothing until the user says yes. Then run each step's command
+        with axkit_window_run, the command a step names, never a key the user must press; a step that is a key
+        alone (Tab, Enter on a row, typing) stays the user's: say it. When the user has not allowed commands to
+        run, say where to allow it instead of offering.
 
         For what a sound means, or what axKit says when something happens, read families.md. For what axKit does
         when something goes wrong (a settings file that does not read, a program that is missing), read cases.md.

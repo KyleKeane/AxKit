@@ -67,8 +67,8 @@ where a step is a command the tools may run (WF-9), and the existing scripts mov
 - Non-goal: the F1 texts written from the command list, though the user's item names them among the texts that
   follow a changed key (WF-D-25): they stay hand-written tonight; `check commands` keeps failing on a key they lack
   (AK-2.4).
-- Non-goal: a Help menu item or a section of a user guide that shows the how-to (WF-D-23), and axHelp offering to do
-  what it explains (WF-D-24): both are the user's to decide.
+- Non-goal: a Help menu item or a section of a user guide that shows the how-to (WF-D-23), the user's to decide.
+  axHelp offering to do what it explains (WF-D-24) was decided on 2026-11-16 and built on 2026-11-24.
 - Non-goal: goals, traces or the workflow record in axAutomate's window. The window reads a goal line as the note it
   is and writes no outcome to a file (AU-D10 stands); what a window says does not change (section 10 names what
   could follow).
@@ -553,8 +553,9 @@ where a step is a command the tools may run (WF-9), and the existing scripts mov
   - "When no goal covers the question, look in the app's guide and in window-commands.md, and say when you are not
     sure."
 
-  No sentence of the rule or of the pages tells Claude to offer to do the steps (WF-D-24); when Claude may run a
-  command for the user stays what the AI tools' own rule file says.
+  Since 2026-11-24 the rule also lets Claude offer once to carry out the steps, with the caution of
+  `AiCaution.OfferToDo` and nothing run before the user's yes (WF-D-24, ai-help.md AH-7.3b); what a run may do
+  stays what the AI tools' own rule file says.
 - WF-8.4 **The AI tools' rule** (`AiToolsRule.Text`) changes one entry, which becomes two lines, since a
   hand-written line of the file holds at most 112 characters (`AiToolsRuleTests`): the line
   `- "How do I ... in axFile", "which key ...": the workflows and` and, indented by two spaces as the file's other
@@ -1659,10 +1660,10 @@ what it was before. One item of the priorities list holds them all for the user 
   and where he wants to meet the how-to is his to say (the requirements' open question). To reverse: a Help item
   that shows the app's page in a notice, as User guide does. (Taken by the assistant on 2026-11-15 for the user to
   confirm.)
-- **WF-D-24 axHelp explains; whether it also offers to do the steps is not decided here.** The requirements leave
-  that question to the user. No sentence of the pages or of the rule tells Claude to offer; the AI tools' own rule
-  file says, as before, when Claude may run a command. (Taken by the assistant on 2026-11-15 for the user to
-  confirm.)
+- **WF-D-24 axHelp explains, then offers to do the steps.** Taken by the assistant on 2026-11-15 as "explains only";
+  reversed by the user on 2026-11-16 through the question tool ("Explain, then offer to do it") and built on
+  2026-11-24: the guides' rule lets Claude offer once, with `AiCaution.OfferToDo`, and run nothing before the
+  user's yes (ai-help.md AH-7.3b).
 - **WF-D-25 The F1 texts stay written by hand tonight, though the user's item names them.** Writing them from the
   command list changes what every window's F1 says and needs a pass by ear; `check commands` keeps failing on a key
   they lack, so a changed key cannot leave them behind unnoticed. It is the first thing left for later (section 10).
@@ -1799,7 +1800,7 @@ Left for later, each with where it would start:
 - The F1 texts written from the command list (AK-2.3's plan), which the user's item names: a key changed in its
   table followed by every text. It changes what every window's F1 says and needs a pass by ear (WF-D-25).
 - A place in a window where the user meets the how-to: a Help item that shows the app's page in a notice, or a
-  section of each user guide (WF-D-23); and whether axHelp offers to do what it explains (WF-D-24).
+  section of each user guide (WF-D-23).
 - Goals in axAutomate's window: a goal row above its steps, "failed at step 7, in the goal Go to a line" at a run's
   end (`StepText.Rows`, `RunSentences.Ended`); the user's to decide (WF-D-21).
 - The `menu` step on the resolver (WF-1.8, WF-10.6).

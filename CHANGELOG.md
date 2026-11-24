@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- axHelp: **after the steps of a task, Claude may offer to carry them out** in the open window through axKit's AI tools, once, saying it is an AI that can be wrong; nothing runs before your yes, and you hear each command as it runs.
+
 - axKit: **axKit menu, Claude: Choose Claude's working folder and Choose Claude Code's program**, each through the Windows picker. Their settings are sealed, so a hand edit of the file is refused; these are now the way to change them.
 
 - axTask: **put a list in your own order.** Ctrl+Shift+Up and Ctrl+Shift+Down move the item you are on, Ctrl+Shift+Home and Ctrl+Shift+End to the top or the bottom; the list keeps the order, and Ctrl+Z takes a move back. Options, New items at the top of this list puts new items first. A list you never reorder stays by name.
