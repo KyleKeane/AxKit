@@ -103,6 +103,16 @@ try {
         # Outside call, program, dotnet: runs one test project of this repository in Release, as test.ps1 does.
         $lines = @(& dotnet test $path --configuration Release --nologo -v q 2>&1 | ForEach-Object { "$_" })
         if ($LASTEXITCODE -ne 0) {
+            # Files edited while the check ran (2026-11-24: a push refused on a half-made change that was never
+            # committed): the failure says nothing of the commits, so the whole check runs again on a clean copy.
+            if (@(& git -C $root status --porcelain --untracked-files=no).Count -gt 0) {
+                Write-Host "Push check: $project.Tests failed, but files changed while the check ran; it runs again on a clean copy of HEAD."
+                & dotnet build-server shutdown 2>&1 | Out-Null
+                # Outside call, program, powershell: this script again, which now finds the tree changed and uses a clean copy.
+                & (Get-Process -Id $PID).Path -NoProfile -ExecutionPolicy Bypass -File $MyInvocation.MyCommand.Path
+                exit $LASTEXITCODE
+            }
+
             $lines | Where-Object { $_ -match 'error|Assert|Expected|Actual|Failed |\[FAIL\]' } | Select-Object -First 40 | ForEach-Object { Write-Host "  $_" }
             Write-Host "Push check: $project.Tests failed."
             exit 1
