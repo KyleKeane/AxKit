@@ -255,6 +255,9 @@ never a separate window.
   column follow every match, whatever opened the notice and whatever answered it (a key, the menu, the command
   palette, an AI tool's run): the notice's Find next is the window's own find (`TextEditorForm.FindInEditor`,
   2026-11-16; until then they followed only by the key-up of the key pressed).
+- AD-6.3a Find first (Navigate menu, no key): the same notice, but its Find next searches from the top of the file,
+  so the first place the text stands is found wherever the caret was; "Not found" leaves the caret where it was; F3
+  goes on from the match. An AI tool runs it with its text (docs/axKit/mcp.md MC-7.9).
 - AD-6.4 Go to line: a field in the question area under the editor, named "Go to line (now line 12, column 4)";
   Enter moves the caret to the start of that line (clamped to the last) and says "Line n of m", or "Not a line
   number" when the text is not a number, the caret staying; Escape cancels; the name is how the position is read on

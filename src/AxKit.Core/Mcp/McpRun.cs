@@ -128,10 +128,48 @@ public static class McpRun
     }
 
     /// <summary>What the window says as a command runs for an AI tool (MC-7.5): "Claude ran Word wrap".</summary>
-    public static string Said(string client, string label) => $"{Speaker(client)} ran {Plain(label)}";
+    public static string Said(string client, string label, string? text = null) => $"{Speaker(client)} ran {Named(label, text)}";
+
+    /// <summary>The longest text a run carries for the field a command asks for (MC-7.9): a field of one line.</summary>
+    public const int TextLimit = 1000;
+
+    /// <summary>
+    /// MC-7.9: why a run's text is refused before anything runs, or null: a field a command asks for takes one line of
+    /// at most <see cref="TextLimit"/> characters. Null for no text.
+    /// </summary>
+    public static string? TextRefusal(string? text) => text switch
+    {
+        null => null,
+        { Length: 0 } => "The text is empty: leave it out for a command that asks for none.",
+        { Length: > TextLimit } => $"The text is longer than {TextLimit} characters: the field a command asks for takes one line.",
+        _ when text.Contains('\n') || text.Contains('\r') => "The text has a line break: the field a command asks for takes one line.",
+        _ => null,
+    };
+
+    /// <summary>MC-7.9: what the answer says when the command ran and opened no field for the text.</summary>
+    public const string TextNotAsked = "The command asked for no text, so the text was not used.";
+
+    /// <summary>MC-7.9: what the answer says when the field the command opened hides what is typed (a password): an AI tool never fills one.</summary>
+    public const string TextHidden = "The command asks for a password, which AI tools never type: the user answers its question.";
+
+    /// <summary>MC-7.10: what <c>axkit_window_field</c> answers when the window shows no form.</summary>
+    public const string NoForm = "The window shows no form: axkit_window_state names the notice it shows, if any. A form's fields are listed under form there.";
+
+    /// <summary>MC-7.10: what it answers for a call without a field.</summary>
+    public const string NoFieldNamed = "Name the field: its number, its name or its key, as axkit_window_state lists them under form.";
+
+    /// <summary>MC-7.10: what it answers for a field the form does not have.</summary>
+    public static string NoSuchField(string field) => $"The form has no field {ShownTarget(field)}: axkit_window_state lists its fields under form.";
+
+    /// <summary>MC-7.10: what the window says as an AI tool puts the focus on a field: "Claude moved to Due".</summary>
+    public static string MovedTo(string client, string field) => $"{Speaker(client)} moved to {ShownTarget(field)}";
+
+    /// <summary>A command's label as the user hears it, with the text it is run with when there is one (MC-7.9): "Find with the text budget".</summary>
+    public static string Named(string label, string? text) =>
+        text is null ? Plain(label) : $"{Plain(label)} with the text {ShownTarget(text)}";
 
     /// <summary>The title of the question an act command asks first (MC-7.3): "Claude asks to run Delete".</summary>
-    public static string AskTitle(string client, string label) => $"{McpOffer.Label}: {Speaker(client)} asks to run {Plain(label)}";
+    public static string AskTitle(string client, string label, string? text = null) => $"{McpOffer.Label}: {Speaker(client)} asks to run {Named(label, text)}";
 
     /// <summary>
     /// The answers of the question as a list (MC-7.3), in the order of an offered command's (<see cref="McpOffer.Answers"/>):
@@ -153,17 +191,17 @@ public static class McpRun
     public const string NoButton = "&No, do not run it";
 
     /// <summary>The list's name, read each time the focus comes to it: the label every offer starts with, who asks, the command with its menus and what it would act on, and that an AI asks (<see cref="AiCaution"/>).</summary>
-    public static string AskName(string client, string label, string menu, string target)
+    public static string AskName(string client, string label, string menu, string target, string? text = null)
     {
         var place = menu.Length > 0 ? $" ({menu})" : string.Empty;
         var on = target.Trim().Length > 0 ? $" on {ShownTarget(target)}" : string.Empty;
-        return $"{McpOffer.Start(McpOffer.ReachWindow)}. {Speaker(client)} asks to run this window's command {Plain(label)}{place}{on}. {AiCaution.Asked(Speaker(client))}";
+        return $"{McpOffer.Start(McpOffer.ReachWindow)}. {Speaker(client)} asks to run this window's command {Named(label, text)}{place}{on}. {AiCaution.Asked(Speaker(client))}";
     }
 
     public const string ExplainTitle = "Command offer: about this window command";
 
     /// <summary>The explanation the list's first answer opens, a text to read by line and by heading: the caution first (bundle AX-11.12), the command, what it would act on, what an act may do, and what each answer does.</summary>
-    public static string ExplainText(string client, string label, string menu, string target)
+    public static string ExplainText(string client, string label, string menu, string target, string? text = null)
     {
         var who = Speaker(client);
         var shown = ShownTarget(target);
@@ -171,6 +209,7 @@ public static class McpRun
             + $"axKit does not know why {who} asks: the conversation with it may say. If you do not know what the command will do here, do not allow it. Allowing it is your own act.\n\n"
             + "# How far it reaches\n\nIt acts outside this window: it may delete, move, send, open or start a program, or end something, exactly as when you run it yourself. It is this window's own menu command and does only what that menu item does; it is not a shell command.\n\n"
             + $"# The command\n\n{Plain(label)}{(menu.Length > 0 ? $", in the menu {menu}" : string.Empty)}.\n\n"
+            + (text is null ? string.Empty : $"# The text it is run with\n\n{ShownTarget(text)}\n\nIt is typed into the field the command asks for, and the field's main button pressed, as you would.\n\n")
             + $"# What it would act on\n\n{(shown.Length > 0 ? shown : "Nothing in particular: the window names no selection.")}\n\n"
             + "# What your answers do\n\n"
             + "Yes, run it runs the command once, now, and not at all if what is selected has changed meanwhile.\n\n"
@@ -203,11 +242,11 @@ public static class McpRun
     /// on (<paramref name="target"/>, the window's selection as <c>McpTarget</c> describes it; left out when empty), what
     /// an act may do, and that a changed selection stops it.
     /// </summary>
-    public static string AskText(string client, string label, string menu, string target)
+    public static string AskText(string client, string label, string menu, string target, string? text = null)
     {
         var place = menu.Length > 0 ? $" ({menu})" : string.Empty;
         var on = target.Trim().Length > 0 ? $" on {ShownTarget(target)}" : string.Empty;
-        return $"{Speaker(client)} asks to run {Plain(label)}{place}{on} in this window. It acts outside the window: it may delete, move, send, open or start a program, or end something, as when you run it yourself. {AiCaution.Request}\n\n"
+        return $"{Speaker(client)} asks to run {Named(label, text)}{place}{on} in this window. It acts outside the window: it may delete, move, send, open or start a program, or end something, as when you run it yourself. {AiCaution.Request}\n\n"
             + "Yes, run it runs it once, now, and not at all if what is selected has changed meanwhile. No, do not run it, does not.";
     }
 

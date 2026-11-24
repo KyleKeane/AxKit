@@ -1005,6 +1005,7 @@ Steps and keys: `docs/axKit/workflows/ai-tools.md` (in Claude's working folder: 
     - Let AI tools run commands
     - Let an AI tool run a window's command
     - Let an AI tool change a setting
+    - Let an AI tool run a command with its text
     - Stop AI tools from running commands
 3. **Approve or deny an AI tool before it acts**
     - Read the explanation of a command an AI tool asks to run
@@ -1025,6 +1026,9 @@ Steps and keys: `docs/axKit/workflows/ai-tools.md` (in Claude's working folder: 
 6. **Let an AI tool read a console window's conversation while you type**
     - Let an AI tool read the terminal while you type
     - Turn the AI tools off
+7. **Let an AI tool read a form's fields and move to one**
+    - Let an AI tool read the fields of a form
+    - Let an AI tool move to a field of a form
 
 ## NVDA only
 

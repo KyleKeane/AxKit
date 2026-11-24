@@ -55,7 +55,7 @@ public abstract partial class AxKitForm
 
     /// <summary>What this window knows about itself (AH-6.2), redacted as a report is (RP-4.2): never the text of a document.</summary>
     internal WindowContext ContextOfThisWindow() =>
-        new(AppTitle, Text, Redaction.Redact(FocusDescription()), Shortcuts, _userGuide?.Invoke(),
+        new(AppTitle, Text, Redaction.Redact(FocusDescription()), ShortcutsText(), _userGuide?.Invoke(),
             Recent.Lines(DateTime.UtcNow).Select(line => Redaction.Redact(line)).ToList());
 
     /// <summary>

@@ -54,7 +54,7 @@ After the kit:
   its mark, and the act commands and items that start a program or reach past the window are pinned
   (`tests/AxKit.Tests/CommandMarkTests`, `mcp.md` MC-D7); no menu item with a click is made without a mark (the same
   tests, read off the sources, and the compiler for `Item`). And from the built window: `check commands`, which every
-  app's first script asks (`AxKitForm.CommandProblems`), fails on a key the F1 text does not name, on a command that
+  app's first script asks (`AxKitForm.CommandProblems`), fails on a command that
   never runs (an earlier command has its key everywhere, or under the very condition it has itself: its row would
   name a key that does the other command, as axAutomate's Refresh stood on F5, which runs there, until 2026-11-21),
   and on any entry of the menus as they stand that states no mark, however it was made. A shared piece that adds

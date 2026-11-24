@@ -116,6 +116,27 @@ public sealed class ControlArea : Panel
             }
         };
         Finish(field, Place(field, name), focus, hold);
+        _fieldEnter = enter;
+    }
+
+    /// <summary>What Enter in the field shown does; null while the area shows no field.</summary>
+    private Action<string>? _fieldEnter;
+
+    /// <summary>
+    /// The field shown, typed into and entered as the user's Enter would (docs/axKit/mcp.md MC-7.9: the text an AI tool's
+    /// run of a command carries, for the field that command opened, never one that was there before); false when the
+    /// area shows no field.
+    /// </summary>
+    public bool Fill(string text)
+    {
+        if (Current is not TextBoxBase field || _fieldEnter is not { } enter)
+        {
+            return false;
+        }
+
+        field.Text = text;
+        enter(text);
+        return true;
     }
 
     /// <summary>The area empties and hides; the window has put the message field back.</summary>
@@ -123,6 +144,7 @@ public sealed class ControlArea : Panel
     {
         Current?.Dispose();
         Current = null;
+        _fieldEnter = null;
         Visible = false;
     }
 

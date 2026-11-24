@@ -201,6 +201,7 @@ internal sealed class McpChannel
             {
                 "pair" => Pair(argument),
                 "run" => Run(argument),
+                "field" => FocusField(argument),
                 "app" => App(argument),
                 _ => OnWindow(() => Execute(verb)),
             };
@@ -345,6 +346,7 @@ internal sealed class McpChannel
         var request = System.Text.Json.Nodes.JsonNode.Parse(argument);
         var name = McpProtocol.Text(request?["command"]);
         var menu = McpProtocol.Text(request?["menu"]);
+        var text = McpProtocol.Text(request?["text"]);
         var client = McpProtocol.Text(request?["client"]) ?? "An AI tool";
         lock (_gate)
         {
@@ -357,7 +359,7 @@ internal sealed class McpChannel
             // MC-7.6: the sealed switch read here, on the pipe's thread, so that the window's thread never waits on the file
             // (bundle rule 3); the window refuses when it is off.
             var allowed = McpAccess.RunsCommands;
-            var (error, label, asked, ticket) = OnWindow(() => _form.McpRunCommand(name, menu, client, allowed));
+            var (error, label, asked, ticket) = OnWindow(() => _form.McpRunCommand(name, menu, client, allowed, text));
             if (error is not null)
             {
                 return JsonSerializer.Serialize(new { error }, RunAnswer);
@@ -387,11 +389,13 @@ internal sealed class McpChannel
                 return JsonSerializer.Serialize(new { said, closed = "The window closed; whether the command ran is not known." }, RunAnswer);
             }
 
-            var (notice, noticeText, dialog, ran, notRun) = OnWindow(() => _form.McpAfterRun(ticket));
+            var (notice, noticeText, dialog, ran, notRun, textNote) = OnWindow(() => _form.McpAfterRun(ticket));
             return JsonSerializer.Serialize(new
             {
                 // "ran" only for a run the window took up and ran (MC-7.1): never for one that a notice or the switch stopped.
                 ran = !asked && ran == true ? label : null,
+                // MC-7.9: what became of the text, when it was not typed into the field the command asked for.
+                text = !asked && ran == true ? textNote : null,
                 notRun = !asked && ran == false ? $"{label} did not run: {notRun}." : null,
                 unknown = !asked && ran is null ? $"Whether {label} ran is not known yet: axkit_window_said tells." : null,
                 asked = asked ? $"The window asks the user whether to run {label}; the user answers there, and axkit_window_said tells what came of it." : null,
@@ -412,6 +416,20 @@ internal sealed class McpChannel
                 _heard = null;
             }
         }
+    }
+
+    /// <summary>
+    /// MC-7.10: <c>axkit_window_field</c>, the focus put on a field of the form the window shows
+    /// (<see cref="AxKitForm.McpFocusField"/>); the sealed switch read here, off the window's thread, as for a run.
+    /// </summary>
+    private string FocusField(string argument)
+    {
+        var request = System.Text.Json.Nodes.JsonNode.Parse(argument);
+        var field = McpProtocol.Text(request?["field"]);
+        var select = request?["select"] is System.Text.Json.Nodes.JsonValue value && value.TryGetValue<bool>(out var yes) && yes;
+        var client = McpProtocol.Text(request?["client"]) ?? "An AI tool";
+        var allowed = McpAccess.RunsCommands;
+        return JsonSerializer.Serialize(OnWindow(() => _form.McpFocusField(field, select, client, allowed)), Plain);
     }
 
     /// <summary>How long an app request may take in all: under the broker's 25 s wait, so that the client hears this answer.</summary>

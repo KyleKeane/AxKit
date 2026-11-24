@@ -1,0 +1,64 @@
+# Workflow: Let an AI tool read a form's fields and move to one
+# axkit_window_state and axkit_window_field (docs/axKit/mcp.md MC-7.10): while a window shows a form, the state lists
+# its fields with their numbers, names, kinds and values, and the field tool puts the focus on one by its name or its
+# number, said in the window; it never types or sends. The runner is the MCP client; the form is axTemplate's new
+# template form (TP-8.4), in the run's own templates folder.
+file home\AxKit\axTemplate.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F7", "sayFirstMatch": false}
+start template
+expect focus No templates yet: Ctrl+N makes one
+
+# The access on and the runner paired, as in 01-read-and-pair.
+menu Let AI tools read and open axKit
+expect state "notice":"Turn on AI tools?"
+keys enter
+expect said AI tools on
+try said Not in a test run
+mcp start
+mcp call axkit_windows
+expect state "notice":"axAutomate asks to use axKit"
+wait 1500
+keys tab
+expect focus I understand
+keys space
+expect said ! checked
+keys tab
+expect focus &Allow
+keys enter
+expect said axAutomate may read axKit
+expect mcp "app": "axTemplate"
+menu Let AI tools run commands
+expect said AI tools may run commands: each is said as it runs
+
+# Goal: Let an AI tool read the fields of a form
+# MC-7.10: the state lists the form's fields under form, the focused one marked.
+keys ctrl+n
+expect state "notice":"New template"
+type Thanks
+mcp call axkit_window_state {"window":"{window}"}
+expect mcp "value": "Thanks"
+mcp call axkit_window_state {"window":"{window}"}
+expect mcp "kind": "text of several lines"
+
+# Goal: Let an AI tool move to a field of a form
+# MC-7.10: by its name; the window says who moved the focus, and nothing is typed.
+# Under NVDA the keys are real input: the window in front moves the focus only after 3 s without one (MC-7.8).
+wait 3500
+mcp call axkit_window_field {"window":"{window}","field":"Text"}
+expect mcp "focused": "Text"
+expect said axAutomate moved to Text
+expect focus Text
+# Check: A field is found by its number, its text selected when asked, and an unknown field is refused
+wait 3500
+mcp call axkit_window_field {"window":"{window}","field":"1","select":true}
+expect mcp "focused":
+expect focus "value":"Thanks"
+wait 3500
+mcp call axkit_window_field {"window":"{window}","field":"No such field"}
+expect mcp error: The form has no field No such field
+keys escape
+expect focus No templates yet: Ctrl+N makes one
+
+# Check: Without a form the field tool is refused
+wait 3500
+mcp call axkit_window_field {"window":"{window}","field":"Text"}
+expect mcp error: The window shows no form

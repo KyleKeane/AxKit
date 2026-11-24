@@ -762,9 +762,17 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
      a check box each, after his question whether checks take a Tab each or the arrows; both are Windows' own, a check
      box each for a few unlike options, one list for many of a kind): one Tab stop, Down and Up through the lines, Space
      checks or unchecks the line, Ctrl+A checks every line and Ctrl+Shift+A none, each line saying "checked" or "not
-     checked"; a Check all button just before it (`AxKit.Forms/FormCheckList`, `FormControls.AddCheckList`,
-     `AddButton`). The item form makes one of two or more checks in a row (`ItemForm.Form.cs`), named by the
-     source's `ChecksName`; in navigation mode a typed name lands on its line.  What Ctrl+Enter does, per app. A window gives the key its main action as a command on `BundleKeys.MainAction`;
+     checked"; Check all and Uncheck all buttons just before it (`AxKit.Forms/FormCheckList`,
+     `FormControls.AddCheckList`, `AddButton`). The item form makes one of two or more checks in a row
+     (`ItemForm.Form.cs`), named by the source's `ChecksName`; in navigation mode a typed name lands on its line,
+     and Space presses a button there too.
+  20. **A choice of one can be a list where Space chooses** (the maintainer, 2026-11-23: "please also make a radio
+     button list since that will be needed eventually"): one Tab stop, Down and Up move without choosing, as the
+     arrows explore in every list of the bundle, Space chooses the line and the one chosen before is chosen no longer,
+     each line saying "chosen" or "not chosen" (`AxKit.Forms/FormRadioList`, `FormControls.AddRadioList`). Built
+     ahead of its first use; a plain choice where the line selected is the answer stays `AddList`.
+
+  What Ctrl+Enter does, per app. A window gives the key its main action as a command on `BundleKeys.MainAction`;
   no window's key table holds Ctrl+Enter, and `KeyTests` fails on one that does.
 
   | App | Until 2026-11-14 | Now |
@@ -1279,6 +1287,14 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   Right opened the entry in the list instead of moving along the bar, 2026-10-22; F1 opened the shortcuts over an
   open menu, 2026-10-23).
 
+- AX-6.6a **The window's own keys work from an open menu** (the maintainer, 2026-11-23: "ctrl+function and
+  ctrl+shift+function keys do not work when focus is on a menu in axkit ... any hotkey that does not need a selection
+  or caret should work when focus is on the menu"). In menu mode the keys belong to the menu (AX-6.6), except the keys
+  of the whole window, which need no selection and no caret: F1, the command palette, F4, asking Claude, Ctrl+S and
+  the app keys (AX-8.18 rule 6). The menu closes first and the key runs once it has, so that nothing opens over an
+  open menu (F1 did that on 2026-10-23 and left the bar unusable). F8 says the status and leaves the menu open; the
+  text size keys worked there already. `AxKitForm.IsWindowKey`, `RunWindowKey`, `CloseMenus`.
+
 ### AX-10 The command palette
 
 The user's ask of 2026-10-21, specified 2026-10-22: one key in every window finds any of the window's commands by
@@ -1697,6 +1713,14 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   find walk them (asked 2026-10-23), and every text ends with the bundle's Notices section, where the app's notices
   appear and a notice's keys, the same words in every window (`BundleHelp.NoticesSection`, 2026-11-09; five texts had a
   shorter section or none).
+- AX-7.2a Every key of the window is in its F1 text by construction (the maintainer, 2026-11-23: one source of truth
+  for the keys, nothing kept by hand): after the app's own text comes "## Every key of this window", made as F1 opens
+  from the window's command list as it stands (`AxKit.Core/KeyReference`, from `AxKitForm.CommandRows`): a heading per
+  top menu ("### File menu") with a line per command that has a key ("Ctrl+O: Open", a submenu after the label:
+  "Ctrl+H: Heading (Next)"), then "### Keys with no menu item". Ask about this window hands Claude the same whole
+  text. The app's own part says what the commands cannot (a list's letters, what Enter does where, an expression's
+  syntax), and no check holds it to naming every key any more (`check commands` did until 2026-11-23), so that it
+  shrinks to that; its key names come from the key tables (`HandKeyTests`).
 - AX-7.3 The caret never moves except as the direct result of the user's own command. The result of a navigation
   command is announced through a UI Automation notification, joined into one notification when several things arrive
   at once. Nothing speaks on a plain arrow key; information is given on demand. Two notifications raised back to back

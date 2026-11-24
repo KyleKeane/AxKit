@@ -121,8 +121,27 @@ public static class McpBroker
             }
 
             var paired = McpAccess.Find(current, program)?.Name ?? client;
-            var run = "run " + JsonSerializer.Serialize(new { command = McpProtocol.Text(arguments["command"]), menu = McpProtocol.Text(arguments["menu"]), client = paired });
+            var run = "run " + JsonSerializer.Serialize(new { command = McpProtocol.Text(arguments["command"]), menu = McpProtocol.Text(arguments["menu"]), text = McpProtocol.Text(arguments["text"]), client = paired });
             return Ask(key, target, run, RunAnswerMs);
+        }
+
+        if (tool == McpTools.Field)
+        {
+            // MC-7.10: as a run, the switch asked here for the answer's words and again by the window.
+            var current = McpAccess.Load();
+            if (!McpAccess.RunsCommandsIn(current))
+            {
+                return new McpResult(McpRun.SwitchOff, true);
+            }
+
+            if (McpProtocol.Text(arguments["window"]) is not { } window || PipeOf(window) is not { } target)
+            {
+                return new McpResult("No such window: axkit_windows lists the ids.", true);
+            }
+
+            var paired = McpAccess.Find(current, program)?.Name ?? client;
+            var select = arguments["select"] is System.Text.Json.Nodes.JsonValue value && value.TryGetValue<bool>(out var yes) && yes;
+            return Ask(key, target, "field " + JsonSerializer.Serialize(new { field = McpProtocol.Text(arguments["field"]), select, client = paired }));
         }
 
         if (tool == McpTools.Offer)

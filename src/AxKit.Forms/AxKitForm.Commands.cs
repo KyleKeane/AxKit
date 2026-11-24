@@ -127,11 +127,11 @@ public abstract partial class AxKitForm
     /// click (<c>Run</c>), whoever clicks. The user's own choice in a menu is WinForms' click and does not
     /// pass here.
     /// </summary>
-    private void ClickFor(CommandOrigin origin, ToolStripMenuItem item, string name, string? client = null)
+    private void ClickFor(CommandOrigin origin, ToolStripMenuItem item, string name, string? client = null, string? text = null)
     {
         if (origin == CommandOrigin.AiTool)
         {
-            AnnounceBefore(McpRun.Said(client ?? string.Empty, name));
+            AnnounceBefore(McpRun.Said(client ?? string.Empty, name, text));
             // One chime and flash for a burst of runs, not one per run.
             ChimeForMcp();
         }

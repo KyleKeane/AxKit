@@ -96,6 +96,30 @@ expect mcp error: The window shows the user a notice
 keys escape
 expect focus notes.md
 
+# Goal: Let an AI tool run a command with its text
+# MC-7.9: Find first with a text: the text typed into the field the command opens and its main button pressed, as
+# the user would; the window says the text with who ran it.
+# Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
+wait 3500
+mcp call axkit_window_run {"window":"{window}","command":"Find first","text":"second"}
+expect mcp "ran": "Find first
+expect said axAutomate ran Find first with the text second
+expect focus notes.md
+# Check: A field under the editor takes the text too, and a command with no field says the text was not used
+# MC-7.9: Go to line asks in the field under the editor; Word wrap asks for nothing and the answer says so.
+wait 3500
+mcp call axkit_window_run {"window":"{window}","command":"Go to line","text":"2"}
+expect said Line 2 of 5
+wait 3500
+mcp call axkit_window_run {"window":"{window}","command":"Word wrap","text":"x"}
+expect mcp The command asked for no text, so the text was not used.
+wait 3500
+mcp call axkit_window_run {"window":"{window}","command":"Word wrap"}
+expect mcp "ran": "Word wrap"
+wait 3500
+mcp call axkit_window_run {"window":"{window}","command":"Find","text":"two\nlines"}
+expect mcp error: The text has a line break
+
 # Check: Nothing runs while the key test runs, and the window is still read
 # Bundle AX-8.12: while the window's key test runs nothing is carried out, an AI tool's command no more than a key's;
 # the window is read as ever. After Escape the command runs again.
