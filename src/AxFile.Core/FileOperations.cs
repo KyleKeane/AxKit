@@ -101,10 +101,13 @@ public static class FileOperations
         return path;
     }
 
-    /// <summary>Makes an empty file in <paramref name="folder"/>, "New file.txt", or "New file - 2.txt" when that is taken (AF-4.1), and returns its path.</summary>
-    public static string CreateFile(string folder)
+    /// <summary>
+    /// Makes an empty file in <paramref name="folder"/>, "New file.txt", or "New file - 2.txt" when that is taken
+    /// (AF-4.1), with <paramref name="extension"/> in place of ".txt" for another kind (".md", ".json"), and returns its path.
+    /// </summary>
+    public static string CreateFile(string folder, string extension = ".txt")
     {
-        var path = ItemFiles.FreePath(folder, "New file", ".txt");
+        var path = ItemFiles.FreePath(folder, "New file", extension);
         File.WriteAllBytes(path, []);
         return path;
     }

@@ -18,3 +18,18 @@ keys ctrl+z
 expect said ! Undone: New file.txt removed
 expect list "count":1
 run cmd /c if exist "u\New file.txt" (exit 1) else (exit 0)
+
+# Goal: Make a new Markdown file and a new JSON file
+# Actions, New Markdown file and New JSON file (AF-4.1): the same rename box on "New file.md" and "New file.json".
+do New Markdown file
+expect focus "value":"New file.md"
+keys escape
+do New JSON file
+expect focus "value":"New file.json"
+keys escape
+expect list "count":3
+keys ctrl+z
+expect said ! Undone: New file.json removed
+keys ctrl+z
+expect said ! Undone: New file.md removed
+expect list "count":1

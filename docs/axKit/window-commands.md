@@ -390,6 +390,8 @@ every window" or under a heading that names the windows without it; under an app
 
 - Deselect all. Menu: Actions. Key: Ctrl+Shift+A. Also: Escape. Mark: change.
 - New folder. Menu: Actions. Key: Ctrl+Shift+N. Mark: act.
+- New JSON file. Menu: Actions. Key: none. Mark: act.
+- New Markdown file. Menu: Actions. Key: none. Mark: act.
 - New text file. Menu: Actions. Key: Ctrl+Shift+T. Mark: act.
 - Paste. Menu: Actions. Key: Ctrl+V. Mark: act.
 - Recent operations. Menu: Actions. Key: none. Mark: read.

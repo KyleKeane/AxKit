@@ -781,6 +781,17 @@ Starts with: Open axFile with the folder u.
 3. Press Ctrl+Z.
     You hear: Undone: New file.txt removed.
 
+### Make a new Markdown file and a new JSON file
+
+1. Choose New Markdown file in the Actions menu.
+2. Press Escape.
+3. Choose New JSON file in the Actions menu.
+4. Press Escape.
+5. Press Ctrl+Z.
+    You hear: Undone: New file.json removed.
+6. Press Ctrl+Z.
+    You hear: Undone: New file.md removed.
+
 ## Hear why a folder a program runs in cannot be renamed
 
 Starts with: Open axFile with the folder r.

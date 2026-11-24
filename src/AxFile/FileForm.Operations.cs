@@ -235,9 +235,12 @@ public sealed partial class FileForm
     /// <summary>
     /// Item → New text file (Ctrl+Shift+T, AF-4.1): an empty "New file.txt" made and selected, and the
     /// rename box opened on it with the whole name selected, so that the name typed, extension included, replaces
-    /// it; "Created <name>" when the box cannot open (the file hidden by the filter, the focus elsewhere).
+    /// it; "Created <name>" when the box cannot open (the file hidden by the filter, the focus elsewhere). New Markdown
+    /// file and New JSON file do the same with ".md" and ".json" (asked 2026-11-22).
     /// </summary>
-    private void NewFile()
+    private void NewFile() => NewFile(".txt");
+
+    private void NewFile(string extension)
     {
         if (!TryFolder(out var folder))
         {
@@ -249,7 +252,7 @@ public sealed partial class FileForm
             var path = string.Empty;
             var inView = await RunAtOnceAsync(folder, "New file failed", () =>
             {
-                path = FileOperations.CreateFile(folder);
+                path = FileOperations.CreateFile(folder, extension);
                 var name = Path.GetFileName(path);
                 return new Outcome($"Created {name}", new Operation(OperationKind.NewFile, [], [path]), name);
             }, sayInView: false);

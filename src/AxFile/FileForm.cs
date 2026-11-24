@@ -90,6 +90,8 @@ public sealed partial class FileForm : ItemForm
         actions.DropDownItems.Add(new ToolStripSeparator());
         Add(actions, new Command("&New folder...", AxFileKeys.NewFolder, NewFolder) { Mark = CommandMark.Act });
         Add(actions, new Command("New text &file", AxFileKeys.NewFile, NewFile) { Mark = CommandMark.Act });
+        Add(actions, new Command("New &Markdown file", Keys.None, () => NewFile(".md")) { Mark = CommandMark.Act });
+        Add(actions, new Command("New &JSON file", Keys.None, () => NewFile(".json")) { Mark = CommandMark.Act });
         Add(actions, new Command("&Paste", AxFileKeys.Paste, Paste) { When = InNavigator, Mark = CommandMark.Act });
         actions.DropDownItems.Add(new ToolStripSeparator());
         // AF-1.3: the way to the other windows, on the folder shown. The base makes the submenu around its File

@@ -272,7 +272,9 @@ Every operation here is an entry of the window's history (AF-9.2) as well as its
   `FileOperations.CreateFile`, tested) is made in the current folder and selected, and the rename box (AF-4.2) opens
   on it at once with the whole name selected, not the stem alone, so that the name typed with its extension
   replaces it; Enter renames it, Escape keeps "New file.txt". When the box cannot open (the file hidden by the
-  filter, the focus not on the list), "Created <name>" instead.
+  filter, the focus not on the list), "Created <name>" instead. **New Markdown file** and **New JSON file** (Actions,
+  no key; asked 2026-11-22: a new file of each kind axKit edits) do the same with "New file.md" and "New file.json",
+  empty too, so that Undo removes them as it removes a new text file.
 - AF-4.2 **Rename** (F2): in place, as in File Explorer: a box ("New name") opens over the entry holding its name, the
   part before the extension selected (the whole name for a folder), so that typing replaces the name and keeps the
   extension; Enter renames, "Renamed to <new name>", the entry selected under its new name; Escape, or leaving the box
@@ -449,7 +451,7 @@ and the started process finds its open window and hands the paths over with the 
 - AF-6.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** New window Ctrl+N | Open folder…
   Ctrl+O | Open recent folder ▸ | ─ | Refresh F5 | ─ | Show current folder in ▸ (File Explorer Ctrl+W | axClaude |
   axTerminal | axGIT) | ─ | Exit Alt+F4. **Actions (A):** Undo <operation> Ctrl+Z (AF-4.14) | Recent operations… (AF-9.3) | ─ | New folder… Ctrl+Shift+N |
-  New text file Ctrl+Shift+T | Paste Ctrl+V | ─ | Select all Ctrl+A | Deselect all Ctrl+Shift+A. **Navigation (N):**
+  New text file Ctrl+Shift+T | New Markdown file | New JSON file | Paste Ctrl+V | ─ | Select all Ctrl+A | Deselect all Ctrl+Shift+A. **Navigation (N):**
   Favorites ▸ (1. name (path) … or No favorites yet | ─ | Add or remove this folder Ctrl+D) | Drives ▸ (1. Local Disk
   (C:) … | ─ | This PC | ─ | Eject this drive | Drive properties; AF-3.11) | Go to folder… Ctrl+G | Up one level
   Backspace | ─ | The Favorites list (AF-9.1). **Context (C)**, by the list that last had the focus (AX-9.11): in the

@@ -568,6 +568,8 @@
       "commands": [
         {"label": "Deselect all", "menu": "Actions", "key": "ctrl+shift+a", "also": ["escape"], "keyText": "Ctrl+Shift+A", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "New folder", "menu": "Actions", "key": "ctrl+shift+n", "also": [], "keyText": "Ctrl+Shift+N", "mark": "act", "keyOnly": false, "ai": true},
+        {"label": "New JSON file", "menu": "Actions", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},
+        {"label": "New Markdown file", "menu": "Actions", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "New text file", "menu": "Actions", "key": "ctrl+shift+t", "also": [], "keyText": "Ctrl+Shift+T", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "Paste", "menu": "Actions", "key": "ctrl+v", "also": [], "keyText": "Ctrl+V", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "Recent operations", "menu": "Actions", "key": "", "also": [], "keyText": "", "mark": "read", "keyOnly": false, "ai": true},

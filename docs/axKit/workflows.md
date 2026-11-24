@@ -489,6 +489,7 @@ Steps and keys: `docs/axKit/workflows/axFile.md` (in Claude's working folder: `w
     - Change one setting in each of two windows
 12. **Take back a new text file**
     - Undo a new text file
+    - Make a new Markdown file and a new JSON file
 13. **Hear why a folder a program runs in cannot be renamed**
     - Rename the folder once the program has ended
 

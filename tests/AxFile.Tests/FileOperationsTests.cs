@@ -99,6 +99,16 @@ public sealed class FileOperationsTests : IDisposable
     }
 
     [Fact]
+    public void A_new_file_of_another_kind_has_its_ending_and_is_empty()
+    {
+        var markdown = FileOperations.CreateFile(_folder.Path, ".md");
+        var json = FileOperations.CreateFile(_folder.Path, ".json");
+        Assert.Equal(Path.Combine(_folder.Path, "New file.md"), markdown);
+        Assert.Equal(Path.Combine(_folder.Path, "New file.json"), json);
+        Assert.Equal(0, new FileInfo(json).Length);
+    }
+
+    [Fact]
     public void A_file_and_a_folder_are_renamed_in_place()
     {
         var file = FileOperations.Rename(Path.Combine(_folder.Path, "notes.md"), "todo.md");

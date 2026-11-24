@@ -189,7 +189,7 @@ expect commands "Preview, Context, Shift\u002BEnter","Play folder in axMedia, Co
 # 3.7b Selection: Select all and Deselect all in Actions, the rest in Context, Selection; its operations never fall back to the current entry.
 expect commands "Select all, Actions, Ctrl\u002BA","Deselect all, Actions, Ctrl\u002BShift\u002BA"
 expect commands "Select or deselect this entry, Context, Selection, Space","Select to here, Context, Selection, Shift\u002BSpace","Cut, Context, Selection, Ctrl\u002BX","Copy, Context, Selection, Ctrl\u002BC","Delete, Context, Selection, Delete","Move to folder, Context, Selection","Compress to zip, Context, Selection","Add to axMedia\u0027s queue, Context, Selection, Ctrl\u002BShift\u002BQ","Copy paths, Context, Selection, Ctrl\u002BShift\u002BC"
-expect commands "New folder, Actions, Ctrl\u002BShift\u002BN","New text file, Actions, Ctrl\u002BShift\u002BT","Paste, Actions, Ctrl\u002BV"
+expect commands "New folder, Actions, Ctrl\u002BShift\u002BN","New text file, Actions, Ctrl\u002BShift\u002BT","New Markdown file, Actions","New JSON file, Actions","Paste, Actions, Ctrl\u002BV"
 menu Cut, Context, Selection
 expect said ! None selected
 menu Select all, Actions
