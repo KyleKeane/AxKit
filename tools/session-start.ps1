@@ -8,7 +8,8 @@
   Five checks, in this order, each by the script that owns it; none of them is changed or copied here:
 
     1. git fetch origin, then how many commits main lacks of origin/main (and the branch in hand, when it is another);
-       and how GitHub's build of origin/main's newest commit ended (gh), since a push that git took can still fail there.
+       and how GitHub's build of origin/main's newest commit ended (gh), since a push that git took can still fail there;
+       and every worktree's branch that holds commits main lacks (finished work left beside main, 2026-11-23).
     2. tools\sync-repos.ps1 -Status: the management lists and the reports clone, fetched and compared, nothing
        committed, pulled or pushed.
     3. tools\reports-check.ps1: the reports on GitHub against the items of the priorities list (CLAUDE.md rule 9).
@@ -99,6 +100,25 @@ if (-not $hasMain -or -not $hasOrigin) {
         } else {
             Write-Host "code: the branch $branch has everything of origin/main: ok"
         }
+    }
+}
+
+# ---- 1a. the worktrees: work finished on a branch beside and never brought into main ----
+# On 2026-11-23 a night's work landed on two branches in worktrees beside this one, and no one merged them: the next
+# day the maintainer believed it undone, and one of its items was built a second time. So every worktree's branch
+# that holds commits main lacks is named here, until it is merged or removed.
+
+if ($hasMain) {
+    $worktreeBranches = @(& git -C $root worktree list --porcelain 2>$null | Where-Object { $_ -like 'branch refs/heads/*' } | ForEach-Object { $_.Substring('branch refs/heads/'.Length) } | Where-Object { $_ -ne 'main' })
+    $unmerged = New-Object System.Collections.Generic.List[string]
+    foreach ($other in $worktreeBranches) {
+        $ahead = [int]"$(& git -C $root rev-list --count main..$other 2>$null)".Trim()
+        if ($ahead -gt 0) { $unmerged.Add("$other has $(Get-Plural $ahead 'commit' 'commits') main lacks") }
+    }
+    if ($unmerged.Count -gt 0) {
+        Write-Asked "worktrees: work beside main is not merged: merge it into main once its checks pass, or remove the worktree and its branch" $unmerged
+    } else {
+        Write-Host "worktrees: $(Get-Plural $worktreeBranches.Count 'branch beside main' 'branches beside main'), nothing unmerged: ok"
     }
 }
 
