@@ -25,6 +25,31 @@ param()
 $ErrorActionPreference = 'Continue'
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 
+# What is pushed is the commits, not the files on disk: with changes not committed (work in progress, or another
+# session's), the checks run on a clean copy of HEAD, a worktree in the temporary folder, and this script is run again
+# there (2026-11-24: an edit made while a push was being checked broke the build the check was testing).
+if (@(& git -C $root status --porcelain --untracked-files=no).Count -gt 0) {
+    $copy = Join-Path ([IO.Path]::GetTempPath()) ('axkit-push-' + (Split-Path -Leaf $root))
+    if (Test-Path -LiteralPath $copy) { & git -C $root worktree remove --force $copy 2>&1 | Out-Null }
+    # Outside call, program, git: a worktree of HEAD in the temporary folder, for the checks alone.
+    & git -C $root worktree add --detach $copy HEAD 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host 'Push check: the working tree has changes not committed, and no clean copy of HEAD could be made: commit or put them aside, then push again.'
+        exit 1
+    }
+
+    Write-Host 'Push check: the working tree has changes not committed; the checks run on a clean copy of HEAD.'
+    try {
+        # Outside call, program, powershell: this script, in the clean copy.
+        & (Get-Process -Id $PID).Path -NoProfile -ExecutionPolicy Bypass -File (Join-Path $copy 'tools\push-check.ps1')
+        $code = $LASTEXITCODE
+    } finally {
+        & git -C $root worktree remove --force $copy 2>&1 | Out-Null
+    }
+
+    exit $code
+}
+
 $all = @(Get-ChildItem -Path (Join-Path $root 'tests') -Filter '*.Tests.csproj' -Recurse -File |
     Where-Object { $_.FullName -notmatch '\\(bin|obj)\\' } | ForEach-Object { $_.BaseName -replace '\.Tests$', '' })
 
