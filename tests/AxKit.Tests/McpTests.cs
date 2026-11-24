@@ -413,6 +413,22 @@ public sealed class McpTests
     }
 
     [Fact]
+    public void A_run_with_a_text_names_the_text_and_refuses_what_one_line_cannot_take()
+    {
+        // MC-7.9: the text joins what the user hears, its & kept, its hidden characters shown.
+        Assert.Equal("Claude ran Find with the text budget & plan", McpRun.Said("claude-code", "&Find...", "budget & plan"));
+        Assert.Equal("Command offer: Claude asks to run Commit with the text fix", McpRun.AskTitle("Claude Code", "&Commit...", "fix"));
+        Assert.Contains("with the text fix", McpRun.AskName("Claude Code", "&Commit...", string.Empty, string.Empty, "fix"), StringComparison.Ordinal);
+        Assert.Contains("# The text it is run with\n\nfix", McpRun.ExplainText("Claude Code", "&Commit...", string.Empty, string.Empty, "fix"), StringComparison.Ordinal);
+        Assert.DoesNotContain("The text it is run with", McpRun.ExplainText("Claude Code", "&Commit...", string.Empty, string.Empty), StringComparison.Ordinal);
+        Assert.Null(McpRun.TextRefusal(null));
+        Assert.Null(McpRun.TextRefusal("budget"));
+        Assert.NotNull(McpRun.TextRefusal(string.Empty));
+        Assert.NotNull(McpRun.TextRefusal("two\nlines"));
+        Assert.NotNull(McpRun.TextRefusal(new string('x', McpRun.TextLimit + 1)));
+    }
+
+    [Fact]
     public void The_question_as_a_list_is_an_offer_that_starts_on_the_explanation()
     {
         // The label every offer starts with, who asks, the command with its menus and target, and that an AI asks.

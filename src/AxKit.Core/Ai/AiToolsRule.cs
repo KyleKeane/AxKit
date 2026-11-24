@@ -78,6 +78,10 @@ public static class AiToolsRule
             + "in a window the user is typing in; as a second try after a refusal.",
             "before: \"I will run Word wrap in axDown.\" After: what the window said. "
             + "When the answer says the window asks the user, say that the question waits in that window."),
+        [McpTools.Field] = new(
+            "when the user asks to go to a field of the form a window shows (\"take me to the due date\"), after axkit_window_state listed the fields under form.",
+            "to fill the field, check a box or send the form: it only moves the focus, and the user types and sends.",
+            "before: \"I will move to Due in the axTask form.\" After: that the focus is there and the user can type."),
         [McpTools.TaskLists] = new(
             "before the other two task tools, for the lists' names; and for \"what lists do I have\".",
             "when no axTask window is open: open one with axkit_open, app task, no path, then call it again.",
@@ -148,6 +152,8 @@ public static class AiToolsRule
             - "Press ...", "run ...", "turn on ...", "do X in that window": {McpTools.Commands} to find the
               command by its label, say which command you will run, then {McpTools.Run}.
               Only while the user allows commands to run.
+            - "Find X", "go to line 40": {McpTools.Run} with the command (Find first, Find, Go to line) and its text.
+            - "Take me to the due date", "go to the name field" in a form: {McpTools.State}, then {McpTools.Field}.
             - "Add a task", "remind me", "put it on my list": {McpTools.TaskLists}, then {McpTools.TaskAdd}.
             - "What are my tasks", "what is due": {McpTools.TaskLists}, then {McpTools.TaskItems}.
             - "How do I ... in axFile", "which key ...": the workflows and
@@ -188,7 +194,9 @@ public static class AiToolsRule
             - A command that acts outside its window (marked act) asks the user first, in that window.
             - A refused call is not retried another way: no other tool, no shell command, no script that sends keys.
               Say what was refused, in the tool's own words, and what the user can do about it.
-            - The tools do not type text into a window and do not press keys.
+            - The tools press no keys. They type a text only into the one field a command you run asks for
+              ({McpTools.Run} with its text: the words to find, a line number, a name), never into a form's fields,
+              which the user fills; {McpTools.Field} only moves the focus to one.
 
             ## When the tools are not there
 

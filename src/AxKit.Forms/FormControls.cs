@@ -3,6 +3,9 @@ using AxKit.Core.Events;
 
 namespace AxKit.Forms;
 
+/// <summary>One field of a form as the AI tools read it (docs/axKit/mcp.md MC-7.10): its number from 1, its name, its keys, its kind, its value (null for a password), whether it has the focus.</summary>
+public sealed record FormFieldShown(int Number, string Name, IReadOnlyList<string> Keys, string Kind, object? Value, bool Focused);
+
 /// <summary>
 /// The controls of a form (docs/axKit/SPEC.md AX-8.10): standard controls in Tab order, each with a caption over it
 /// and its <c>AccessibleName</c>, an instruction, which NVDA reads itself. The one piece every form of the bundle is
@@ -182,8 +185,10 @@ public sealed class FormControls : FlowLayoutPanel
         }
     }
 
+    /// <summary>A field's name: its first key, or its caption; a check list's caption always, since its lines are keyed by their own names.</summary>
     private string NameOf(Control control) =>
-        _keys.FirstOrDefault(pair => pair.Value == control).Key ?? (_captions.TryGetValue(control, out var caption) ? caption : control.AccessibleName ?? string.Empty);
+        (control is FormCheckList ? null : _keys.FirstOrDefault(pair => pair.Value == control && !pair.Key.All(char.IsAsciiDigit)).Key)
+        ?? (_captions.TryGetValue(control, out var caption) ? caption : control.AccessibleName ?? string.Empty);
 
     /// <summary>Whether a text box here takes Enter as a new line: the form's text then says its keys itself (<see cref="Notice.KeyLine"/>).</summary>
     public bool EnterMakesNewLine { get; private set; }
@@ -327,6 +332,90 @@ public sealed class FormControls : FlowLayoutPanel
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// The form's fields as the AI tools read them (docs/axKit/mcp.md MC-7.10): in the form's order, each with its
+    /// number from 1, its name, its keys, its kind, its value and whether it has the focus. A field that hides what is
+    /// typed gives no value; a check list gives its lines as NVDA reads them.
+    /// </summary>
+    public IReadOnlyList<FormFieldShown> Shown() =>
+    [
+        .. Fields().Select((control, at) => new FormFieldShown(NumberOf(control, at), NameOf(control),
+            [.. _keys.Where(pair => pair.Value == control).Select(pair => pair.Key)], KindOf(control), ValueOf(control), control.ContainsFocus)),
+    ];
+
+    /// <summary>A field's number: the number it is keyed by (the item form numbers its fields itself), else its place from 1.</summary>
+    private int NumberOf(Control control, int at) =>
+        _keys.Where(pair => pair.Value == control && pair.Key.All(char.IsAsciiDigit)).Select(pair => int.Parse(pair.Key, System.Globalization.CultureInfo.InvariantCulture)).DefaultIfEmpty(at + 1).Min();
+
+    private static string KindOf(Control control) => control switch
+    {
+        FormCheckList => "check list",
+        FormRadioList => "choice of one",
+        AxKitCheckBox => "check box",
+        ListBox => "list",
+        TextBoxBase { Multiline: true } => "text of several lines",
+        _ => "text",
+    };
+
+    private static object? ValueOf(Control control) => control switch
+    {
+        TextBox { UseSystemPasswordChar: true } or TextBox { PasswordChar: not '\0' } => null,
+        TextBoxBase box => box.Text,
+        AxKitCheckBox box => box.Checked ? "checked" : "not checked",
+        FormCheckList or FormRadioList => ((ListBox)control).Items.Cast<object>().Select(item => item.ToString()).ToArray(),
+        ListBox list => list.SelectedItem?.ToString(),
+        _ => null,
+    };
+
+    /// <summary>
+    /// The focus put in the field <paramref name="wanted"/> names (MC-7.10): its key, its number from 1, its name, or a
+    /// line of a check list by its name, without regard to case; its text selected when <paramref name="selectContents"/>.
+    /// The field's name, or null when nothing here is so named.
+    /// </summary>
+    public string? Reach(string wanted, bool selectContents)
+    {
+        if (Locate(wanted) is not { } found)
+        {
+            return null;
+        }
+
+        found.Control.Select();
+        if (found.Line >= 0 && found.Control is FormCheckList list)
+        {
+            list.SelectedIndex = found.Line;
+        }
+        else if (selectContents && found.Control is TextBoxBase box)
+        {
+            box.SelectAll();
+        }
+
+        return found.Name;
+    }
+
+    /// <summary>The name of the field <paramref name="wanted"/> names, as <see cref="Reach"/> finds it, or null; nothing moves.</summary>
+    public string? NameOfField(string wanted) => Locate(wanted)?.Name;
+
+    private (Control Control, int Line, string Name)? Locate(string wanted)
+    {
+        var fields = Fields();
+        var text = wanted.Trim();
+        // A line of a check list by its name first: the item form keys each line by its name, and the key gives the list.
+        foreach (var checks in fields.OfType<FormCheckList>())
+        {
+            var line = checks.ItemNames.ToList().FindIndex(name => string.Equals(name, text, StringComparison.OrdinalIgnoreCase));
+            if (line >= 0)
+            {
+                return (checks, line, checks.ItemNames[line]);
+            }
+        }
+
+        // Then a key, then a place from 1 where the form keys no numbers itself, then a name.
+        var control = Field(text)
+            ?? (int.TryParse(text, out var number) && number >= 1 && number <= fields.Count && !_keys.Keys.Any(key => key.All(char.IsAsciiDigit)) ? fields[number - 1] : null)
+            ?? fields.FirstOrDefault(field => string.Equals(NameOf(field), text, StringComparison.OrdinalIgnoreCase));
+        return control is null ? null : (control, -1, NameOf(control));
     }
 
     /// <summary>The form started in the control a key names: <see cref="StartIn"/> by key.</summary>

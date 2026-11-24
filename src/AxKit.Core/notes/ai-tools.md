@@ -40,5 +40,7 @@
   switch itself is `McpSettings.RunCommands`, sealed (its " run" in the seal only while on, so older files still
   check), `McpAccess.RunsCommands` over the pure `RunsCommandsIn`, and `SetRunCommands`; `Switched` (the access off
   takes the switch with it) and `Forgotten` (Forget: the clients and the switch) are the pure halves of `SetEnabled`
-  and `ForgetAll` (MC-D9).
+  and `ForgetAll` (MC-D9). A run's text (MC-7.9, 2026-11-23): `TextRefusal` (one line, at most `TextLimit`
+  characters), `Named` (the label with "with the text ..." for `Said`, `AskTitle`, `AskName`, `AskText`,
+  `ExplainText`), and the answer's words `TextNotAsked` and `TextHidden`.
 - `ClaudeCodeProgram`, the options of a run that obeys nothing of its folder (ai-help.md AH-2.6, 2026-11-16): `StrictMcpConfigOption`, `SettingsOption` (axClaude's `ClaudeCodeHooks.SettingsOption` is this one), `NoHooksSettings` (`{"disableAllHooks":true}`) and `WriteNoHooksSettings`, which writes the file when it holds anything else. Always a file, never the JSON on the command line: `claude.cmd` is refused an argument with a double quote. A new option of Claude Code's that AxKit.Core passes goes here.

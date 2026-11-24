@@ -171,6 +171,7 @@ public sealed partial class TextEditorForm : AxKitForm
         Add(navigate, new Command("&Find...", BundleKeys.Find, ShowFindInEditor) { Mark = CommandMark.Read });
         Add(navigate, new Command("Find &next", BundleKeys.FindNext, () => FindInEditor(1)) { Mark = CommandMark.Read });
         Add(navigate, new Command("Find pre&vious", BundleKeys.FindPrevious, () => FindInEditor(-1)) { Mark = CommandMark.Read });
+        Add(navigate, new Command("Find fi&rst...", Keys.None, ShowFindFirstInEditor) { Mark = CommandMark.Read });
         Add(navigate, new Command("&Go to line...", EditorKeys.GoToLine, ShowGoToLine) { Mark = CommandMark.Read });
         navigate.DropDownItems.Add(new ToolStripSeparator());
         // One item per kind under Next and under Previous, from the key pairs of the app's table (AD-D7, AX-7.2).
@@ -646,6 +647,26 @@ public sealed partial class TextEditorForm : AxKitForm
     /// ran (docs/axKit/user-workflows.md WF-9.6).
     /// </summary>
     private void ShowFindInEditor() => ShowFind(_ => FindInEditor(1));
+
+    /// <summary>
+    /// Navigate, Find first (AD-6.3a): the Find notice, whose Find next searches from the top of the file, so that the
+    /// first place the text stands is found wherever the caret was; F3 then goes on from there. A menu command with no
+    /// key, so that the palette and the AI tools reach it with its text (docs/axKit/mcp.md MC-7.9).
+    /// </summary>
+    private void ShowFindFirstInEditor() => ShowFind(_ =>
+    {
+        // "Not found" leaves the caret where it was.
+        var (start, length) = (_editor.SelectionStart, _editor.SelectionLength);
+        _editor.Select(0, 0);
+        if (FindNext(_editor, 1))
+        {
+            ScheduleStatus();
+        }
+        else
+        {
+            _editor.Select(start, length);
+        }
+    });
 
     /// <summary>F3 and Shift+F3, and the Find notice's Find next: the base's find on the editor, then the status bar for the new caret; the Find notice when nothing was searched for yet.</summary>
     private void FindInEditor(int direction)

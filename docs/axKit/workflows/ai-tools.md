@@ -76,6 +76,12 @@ Starts with: Open axDown with the file notes.md.
 2. Call the tool axkit_window_run.
     You hear: axAutomate ran Say new line. Say new line on.
 
+### Let an AI tool run a command with its text
+
+1. Call the tool axkit_window_run.
+    The tool answers with ran: Find first.
+    You hear: axAutomate ran Find first with the text second.
+
 ### Stop AI tools from running commands
 
 1. Choose Let AI tools run commands in the axKit menu, AI tools.
@@ -186,3 +192,22 @@ Starts with: Open axTerminal with the folder myproject.
 
 1. Choose Let AI tools read and open axKit in the axKit menu, AI tools.
     You hear: AI tools off.
+
+## Let an AI tool read a form's fields and move to one
+
+Starts with: Open axTemplate.
+
+### Let an AI tool read the fields of a form
+
+1. Press Ctrl+N.
+2. Type: Thanks
+3. Call the tool axkit_window_state.
+    The tool answers with value: Thanks.
+4. Call the tool axkit_window_state.
+    The tool answers with kind: text of several lines.
+
+### Let an AI tool move to a field of a form
+
+1. Call the tool axkit_window_field.
+    The tool answers with focused: Text.
+    You hear: axAutomate moved to Text.

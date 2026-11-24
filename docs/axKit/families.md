@@ -57,7 +57,7 @@ Only in a test run, on a desktop of its own, never in your windows.
 
 ## 2. The functions
 
-A function is a command of a window (`docs/axKit/command-language.md`): 1896 in the inventory, of which 278 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
+A function is a command of a window (`docs/axKit/command-language.md`): 1899 in the inventory, of which 278 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
 
 ### The marks, and the events a command of each mark ends in
 
@@ -75,7 +75,7 @@ A function is a command of a window (`docs/axKit/command-language.md`): 1896 in 
 - `session`, the Session menu: What the window holds as a whole: open, new, save, refresh, restart, hide, exit, and the same place opened in another app.
   - 114 commands in 18 apps: read 10, open 41, change 16, act 47.
 - `navigation`, the Navigation menu: Go somewhere in what the window holds: find, the next heading, link or list, go to a line, a bookmark, the next file.
-  - 118 commands in 18 apps: read 88, open 29, change 1.
+  - 121 commands in 18 apps: read 91, open 29, change 1.
 - `actions`, the Actions menu: Do something with the whole of what the window holds: undo and redo, run, push and pull, a new item, interrupt.
   - 127 commands in 18 apps: read 11, open 7, change 59, act 50.
 - `context`, the Context menu: Do something with the one thing the focus is on: copy, cut, paste, rename, delete, open, information. Shift+F10 and Ctrl+Period open it.

@@ -22,6 +22,7 @@ public static class McpTools
     public const string TaskItems = "axkit_task_items";
     public const string TaskAdd = "axkit_task_add";
     public const string Offer = "axkit_offer_command";
+    public const string Field = "axkit_window_field";
 
     /// <summary>The apps that serve no pipe and so cannot be read (MC-4.1, MC-4.2): the password database and the clipboard history.</summary>
     public static readonly IReadOnlyList<string> NeverRead = [Dispatch.AxPass, Dispatch.AxClip];
@@ -62,7 +63,8 @@ public static class McpTools
         new(Text, "The lines of the window's main text, at most 1 MB: an editor's file, a viewer's, the text field the focus is in, and in axClaude and axTerminal the conversation or the terminal wherever the focus is. When the focus is in another text field (axClaude's message field), its name and caret line are given beside it, never its text.", Schema(("window", "The window's id from axkit_windows."))),
         new(Commands, "The window's commands as the user's command palette lists them, every menu item: the commands, the settings with whether each is checked, the recent files and windows; each with its label, the menus that hold it, the key, and the mark (read, open, change, act). axkit_window_run runs one by its label.", Schema(("window", "The window's id from axkit_windows."))),
         new(Said, "What the window announced to the user since the last call, the last 50 announcements.", Schema(("window", "The window's id from axkit_windows."))),
-        new(Run, "Runs one command of a window, as its menu item would, by its label from axkit_window_commands, and gives what the window then said, or the question it now asks the user. Only while the user allows AI tools to run commands; never in axPass; never an answer to the window's question, which the user gives; a command that acts outside the window (marked act) asks the user first. The window says who ran it.", Require(Schema(("window", "The window's id from axkit_windows."), ("command", "The command's label as axkit_window_commands lists it, such as Word wrap."), ("menu", "Optional: the menus that hold it as axkit_window_commands lists them, such as Navigate, Next, when two commands share a label.")), "window", "command")),
+        new(Run, "Runs one command of a window, as its menu item would, by its label from axkit_window_commands, and gives what the window then said, or the question it now asks the user. Only while the user allows AI tools to run commands; never in axPass; never an answer to the window's question, which the user gives; a command that acts outside the window (marked act) asks the user first. The window says who ran it.", Require(Schema(("window", "The window's id from axkit_windows."), ("command", "The command's label as axkit_window_commands lists it, such as Word wrap."), ("menu", "Optional: the menus that hold it as axkit_window_commands lists them, such as Navigate, Next, when two commands share a label."), ("text", "Optional: for a command that asks for a text (Find, Go to line, a filter, a name), the text, one line: typed into the field it asks for and its main button pressed, as the user would. Never for a password.")), "window", "command")),
+        new(Field, "Puts the focus on one field of the form a window shows (axkit_window_state lists its fields under form, with their numbers, names, kinds and values), so that the user goes on there: by its number, its name or its key, its text selected when select is true. It never types, checks or presses anything: the user fills and sends the form. Only while the user allows AI tools to run commands; never in axPass. The window says who moved the focus.", FieldSchema()),
         new(TaskLists, "The user's axTask lists as the open axTask window reaches them: the lists of its top folder and of the project folders it found, each with its name for axkit_task_items and axkit_task_add, its place, its number of items and of tasks not done. Needs an open axTask window: axkit_open with the app task opens one.", Schema()),
         new(TaskItems, "The items of one axTask list, each with its fields (title, type, value). Done items are left out unless done is true.", TaskItemsSchema()),
         new(TaskAdd, "Adds an item to one axTask list, made from the list's template as the window's New item makes it: a Title and optional field values, a date as 2026-11-18, today, tomorrow, +7 or a weekday such as Monday, a choice as one of its options (Priority: High), anything else as text (Notes). Only while the user allows AI tools to run commands; the window says who added it, and Ctrl+Z there takes it back. It never changes or deletes an item.", TaskAddSchema()),
@@ -133,6 +135,15 @@ public static class McpTools
             ["description"] = "Optional: other fields by their title, each a text as the user would type it, such as {\"Due\": \"2026-11-18\", \"Priority\": \"High\", \"Notes\": \"Ask about Tuesday\"}.",
             ["additionalProperties"] = new JsonObject { ["type"] = "string" },
         };
+        return schema;
+    }
+
+    private static JsonObject FieldSchema()
+    {
+        var schema = Require(Schema(
+            ("window", "The window's id from axkit_windows."),
+            ("field", "The field's number from 1, its name or its key, as axkit_window_state lists them under form; a line of a check list by its name.")), "window", "field");
+        schema["properties"]!["select"] = new JsonObject { ["type"] = "boolean", ["description"] = "Optional: true to select the field's text, so that what the user types replaces it." };
         return schema;
     }
 

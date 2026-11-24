@@ -332,8 +332,29 @@ menu, the palette and the automated checks in the table of `command-language.md`
   ends in `notRun` "the user was working in the window" (`McpRun.UserWasBusy`; nothing ran, so a client may ask
   again). A window behind is never typed in, so it runs there, heard as
   MC-7.5 says. The user's own Run of an act command is not held to it, since that Run is the key just pressed.
-- MC-7.7 **Not in this part**: arguments for a command (a path, a name, a text: a command that needs one asks the
-  user in its own notice), typed data tools (section 9, through a window rather than without one, MC-D10), the scopes
+- MC-7.9 **A command with its text** (the maintainer's ask of 2026-11-23: what the menu can do, an AI tool can do
+  too): `axkit_window_run` takes an optional `text`, one line of at most 1000 characters (`McpRun.TextRefusal`), for
+  a command that asks for one (Find, Find first, Go to line, a filter, a name). The command runs as before; the field
+  it then opens, a notice's field or a field in the window's control area, gets the text and its main button or Enter
+  is pressed, as the user would (`AxKitForm.FillForMcp`). Only a field the run's own click opened is filled: a field
+  that was already asking the user something (axClaude's question) never is, and a notice is always the command's
+  own, since no run starts while one is open. A password field is never filled ("The command asks for a password,
+  which AI tools never type"); a command that opened no field ran, and the answer's `text` says the text was not used.
+  The user hears "Claude ran Find with the text budget" (`McpRun.Said`), and an act command's question names the
+  text, its explanation under a heading of its own (`McpRun.AskName`, `ExplainText`). Which commands take a text is
+  never written by hand: it is whatever field the command opens.
+- MC-7.10 **A form's fields** (the maintainer, 2026-11-23: "each form should have nicely defined elements that can be
+  accessed using mcp"): while a window shows a form (AX-8.10), `axkit_window_state` lists its fields under `form`,
+  in the form's order, each with its number from 1, its name, its keys (the item form's field names and numbers,
+  `FormControls.Key`), its kind, its value (none for a password field; a check list's lines as NVDA reads them) and
+  whether it has the focus (`FormControls.Shown`). `axkit_window_field` puts the focus on one, named by its key, its
+  number or its name, or on a line of a check list by its name, its text selected when `select` is true
+  (`FormControls.Reach`, `AxKitForm.McpFocusField`); the window says "Claude moved to Due" before NVDA reads the
+  field. It never types, checks or presses anything: the user fills and sends the form. Only while the user allows
+  commands to run, never in axPass or axClip, and refused for the gate's reasons but the notice, which here is the
+  form itself: the key test, a Windows dialog, the user working in the window (MC-7.8).
+- MC-7.7 **Not in this part**: a path or a choice for a command that asks with something other than a one-line field
+  (a list, a Windows dialog), typed data tools (section 9, through a window rather than without one, MC-D10), the scopes
   per client and app of MC-3.1, "Allow for this session" (MC-3.3).
 
 Decisions taken for the user while away (2026-11-11), each one line to reverse:

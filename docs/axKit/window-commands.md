@@ -333,6 +333,7 @@ every window" or under a heading that names the windows without it; under an app
 - GitHub Flavored Markdown. Menu: Help, Markdown resources. Key: none. Mark: act.
 - Markdown basics. Menu: Help, Markdown resources. Key: none. Mark: act.
 - Find. Menu: Navigation. Key: Ctrl+F. Mark: read.
+- Find first. Menu: Navigation. Key: none. Mark: read.
 - Find next. Menu: Navigation. Key: F3. Mark: read.
 - Find previous. Menu: Navigation. Key: Shift+F3. Mark: read.
 - Go to line. Menu: Navigation. Key: Ctrl+G. Mark: read.
@@ -557,6 +558,7 @@ every window" or under a heading that names the windows without it; under an app
 - Claude Code settings. Menu: Help, JSON resources. Key: none. Mark: act.
 - JSON syntax. Menu: Help, JSON resources. Key: none. Mark: act.
 - Find. Menu: Navigation. Key: Ctrl+F. Mark: read.
+- Find first. Menu: Navigation. Key: none. Mark: read.
 - Find next. Menu: Navigation. Key: F3. Mark: read.
 - Find previous. Menu: Navigation. Key: Shift+F3. Mark: read.
 - Go to line. Menu: Navigation. Key: Ctrl+G. Mark: read.
@@ -796,6 +798,7 @@ every window" or under a heading that names the windows without it; under an app
 - GitHub Flavored Markdown. Menu: Help, Markdown resources. Key: none. Mark: act.
 - Markdown basics. Menu: Help, Markdown resources. Key: none. Mark: act.
 - Find. Menu: Navigation. Key: Ctrl+F. Mark: read.
+- Find first. Menu: Navigation. Key: none. Mark: read.
 - Find next. Menu: Navigation. Key: F3. Mark: read.
 - Find previous. Menu: Navigation. Key: Shift+F3. Mark: read.
 - Go to line. Menu: Navigation. Key: Ctrl+G. Mark: read.

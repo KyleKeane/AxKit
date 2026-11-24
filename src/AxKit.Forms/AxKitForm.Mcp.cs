@@ -37,8 +37,14 @@ public abstract partial class AxKitForm
     /// The palette's entries are searched (<see cref="ToolEntries"/>, AK-2.5): every menu item, a setting or a recent
     /// file among them, with its mark (an item with none is act, and asks); the AI tools' own switches are not there.
     /// </summary>
-    internal (string? Error, string Label, bool Asked, int Ticket) McpRunCommand(string? name, string? menu, string client, bool allowed)
+    internal (string? Error, string Label, bool Asked, int Ticket) McpRunCommand(string? name, string? menu, string client, bool allowed, string? text = null)
     {
+        // MC-7.9: a text the field of one line could not take is refused before anything else is asked.
+        if (McpRun.TextRefusal(text) is { } badText)
+        {
+            return (badText, string.Empty, false, 0);
+        }
+
         // The gate's part that needs no command (docs/axKit/command-language.md section 3), asked before the menus
         // are read, since reading them fills the lists that fill as they open: the app, the switch, the key test, a
         // notice, a Windows dialog, the user's hands, in that order.
@@ -73,12 +79,12 @@ public abstract partial class AxKitForm
 
         if (verdict.Answer == CommandAnswer.AsksFirst)
         {
-            AskToRunMcp(client, label, menus, McpTarget());
+            AskToRunMcp(client, label, menus, McpTarget(), text);
             return (null, label, true, 0);
         }
 
         var ticket = ++_mcpRunTickets;
-        _mcpRun = (ticket, false, null);
+        _mcpRun = (ticket, false, null, null);
         BeginInvoke(() =>
         {
             // The outcome is kept before the click, which may hold this thread in a Windows dialog. The user may have
@@ -87,13 +93,93 @@ public abstract partial class AxKitForm
                 ?? (McpRun.IsUserBusy(GetForegroundWindow() == Handle, UserIdleMs()) ? McpRun.UserWasBusy : null);
             var item = notRun is null ? ToolItem(label, menus) : null;
             notRun ??= item is null ? NotAvailableNow : null;
-            _mcpRun = (ticket, true, notRun);
+            _mcpRun = (ticket, true, notRun, null);
             if (item is not null)
             {
-                RunForMcp(client, label, item);
+                RunForMcp(client, label, item, text, note =>
+                {
+                    if (_mcpRun.Ticket == ticket)
+                    {
+                        _mcpRun = (_mcpRun.Ticket, _mcpRun.Done, _mcpRun.NotRun, note);
+                    }
+                });
             }
         });
         return (null, label, false, ticket);
+    }
+
+    /// <summary>
+    /// MC-7.9: the text of a run typed into the field the command asked for, and the field's main button pressed, as the
+    /// user would: the notice the click opened with its field, at once or, for a command that opens it a moment later,
+    /// after the messages already posted. <paramref name="noted"/> gets null when the text was used, else why not: the
+    /// command asked for no text, or its field hides what is typed (a password), which an AI tool never fills.
+    /// </summary>
+    private void FillForMcp(string text, IReadOnlyList<(ControlArea Area, Control? Shown)> before, Action<string?> noted, bool again = true)
+    {
+        if (IsDisposed)
+        {
+            return;
+        }
+
+        // A notice is always the command's own: no run starts while one is open (the gate's Notice).
+        if (NoticeOpen && Overlay.Shown?.Input is { } input)
+        {
+            if (input.Hidden)
+            {
+                noted(McpRun.TextHidden);
+                return;
+            }
+
+            Overlay.SetInputText(text);
+            noted(null);
+            Overlay.PressDefault();
+            return;
+        }
+
+        // A field in a window's control area (Go to line), only one that came with this click: a field already there
+        // asks the user something (axClaude's question), which an AI tool never answers.
+        foreach (var area in ControlAreas())
+        {
+            var was = before.FirstOrDefault(seen => seen.Area == area).Shown;
+            if (area.Current is TextBoxBase && area.Current != was)
+            {
+                noted(null);
+                area.Fill(text);
+                return;
+            }
+        }
+
+        if (again && !NoticeOpen)
+        {
+            BeginInvoke(() => FillForMcp(text, before, noted, again: false));
+        }
+        else
+        {
+            noted(McpRun.TextNotAsked);
+        }
+    }
+
+    /// <summary>MC-7.9: every control area of the window with what it shows now, taken before a run's click so that only a field the click opened is filled.</summary>
+    private List<(ControlArea Area, Control? Shown)> ShownInAreas() => [.. ControlAreas().Select(area => (area, area.Current))];
+
+    /// <summary>The window's control areas, wherever they sit among its controls.</summary>
+    private IEnumerable<ControlArea> ControlAreas()
+    {
+        var pending = new Stack<Control>([this]);
+        while (pending.Count > 0)
+        {
+            foreach (Control child in pending.Pop().Controls)
+            {
+                if (child is ControlArea area)
+                {
+                    yield return area;
+                }
+                else
+                {
+                    pending.Push(child);
+                }
+            }
+        }
     }
 
     /// <summary>Why a run does not happen when its entry is no longer among the window's entries: disabled, renamed, or its list made anew without it.</summary>
@@ -202,8 +288,8 @@ public abstract partial class AxKitForm
     /// <summary>Until when an act's run is refused without asking, after the user's Deny (milliseconds of <see cref="Environment.TickCount64"/>).</summary>
     private long _mcpRunDeniedUntil;
 
-    /// <summary>The last posted run (MC-7.1): its ticket, whether it was taken up, and why it did not run, null when it ran.</summary>
-    private (int Ticket, bool Done, string? NotRun) _mcpRun;
+    /// <summary>The last posted run (MC-7.1): its ticket, whether it was taken up, why it did not run (null when it ran), and why its text was not used (MC-7.9, null when it was or there was none).</summary>
+    private (int Ticket, bool Done, string? NotRun, string? TextNote) _mcpRun;
 
     private int _mcpRunTickets;
 
@@ -212,11 +298,11 @@ public abstract partial class AxKitForm
     /// for the run of <paramref name="ticket"/>, whether it ran (null while not known: not taken up yet, or another run
     /// came after it) and why not.
     /// </summary>
-    internal (string? Notice, string? NoticeText, bool Dialog, bool? Ran, string? NotRun) McpAfterRun(int ticket)
+    internal (string? Notice, string? NoticeText, bool Dialog, bool? Ran, string? NotRun, string? TextNote) McpAfterRun(int ticket)
     {
-        var (current, done, notRun) = _mcpRun;
+        var (current, done, notRun, textNote) = _mcpRun;
         bool? ran = current == ticket && done ? notRun is null : null;
-        return (NoticeOpen ? Overlay.Shown?.Title : null, NoticeOpen ? Overlay.Shown?.Text : null, DialogShowing, ran, ran == false ? notRun : null);
+        return (NoticeOpen ? Overlay.Shown?.Title : null, NoticeOpen ? Overlay.Shown?.Text : null, DialogShowing, ran, ran == false ? notRun : null, ran == true ? textNote : null);
     }
 
     /// <summary>Why a run that waited (posted, or asked of the user) does not run now, or null when it runs: checked again at the moment it would run.</summary>
@@ -245,7 +331,15 @@ public abstract partial class AxKitForm
     /// would. A window that is not in front chimes and flashes on the taskbar as well, since NVDA does not speak the
     /// notifications of a window behind (<see cref="Raise"/>).
     /// </summary>
-    private void RunForMcp(string client, string label, ToolStripMenuItem item) => ClickFor(CommandOrigin.AiTool, item, label, client);
+    private void RunForMcp(string client, string label, ToolStripMenuItem item, string? text = null, Action<string?>? noted = null)
+    {
+        IReadOnlyList<(ControlArea Area, Control? Shown)> before = text is null ? [] : ShownInAreas();
+        ClickFor(CommandOrigin.AiTool, item, label, client, text);
+        if (text is not null)
+        {
+            FillForMcp(text, before, noted ?? (_ => { }));
+        }
+    }
 
     /// <summary>When a run in this window behind last chimed (<see cref="Environment.TickCount64"/>), -1 for never.</summary>
     private long _mcpLastChime = -1;
@@ -295,7 +389,7 @@ public abstract partial class AxKitForm
     /// (found again then, <see cref="ToolItem"/>) and the window's selection still the one the question named
     /// (<paramref name="target"/>, <see cref="McpTarget"/>).
     /// </summary>
-    private void AskToRunMcp(string client, string label, string menu, RunTarget target)
+    private void AskToRunMcp(string client, string label, string menu, RunTarget target, string? text)
     {
         // The control that has the focus now is the one the target was read from, and the one a Yes reads it from again.
         var asked = FocusedControl();
@@ -324,7 +418,7 @@ public abstract partial class AxKitForm
                     return;
                 }
 
-                RunForMcp(client, label, item);
+                RunForMcp(client, label, item, text);
             });
         }
 
@@ -336,8 +430,8 @@ public abstract partial class AxKitForm
 
         // Where the window has a place for it, the question is the list an offered command's is (MC-7.3, MC-9.4): the
         // window's content stays there to read, and the list starts on the answer that only explains.
-        var request = new OfferedRequest(McpRun.AskName(client, label, menu, target.Shown), McpRun.AskText(client, label, menu, target.Shown),
-            McpRun.ExplainTitle, McpRun.ExplainText(client, label, menu, target.Shown), McpRun.Answers, McpRun.Explain, McpRun.No, answer =>
+        var request = new OfferedRequest(McpRun.AskName(client, label, menu, target.Shown, text), McpRun.AskText(client, label, menu, target.Shown, text),
+            McpRun.ExplainTitle, McpRun.ExplainText(client, label, menu, target.Shown, text), McpRun.Answers, McpRun.Explain, McpRun.No, answer =>
             {
                 if (answer != McpRun.Yes)
                 {
@@ -366,7 +460,7 @@ public abstract partial class AxKitForm
             EventDoor.Raise(EventKind.AiAsksToRun);
         }
 
-        ShowNotice(new Notice(McpRun.AskTitle(client, label), request.Text,
+        ShowNotice(new Notice(McpRun.AskTitle(client, label, text), request.Text,
         [
             new OverlayChoice(McpRun.YesButton, () =>
             {
@@ -489,7 +583,7 @@ public abstract partial class AxKitForm
         McpChannel.Start(this, AppVerb);
     }
 
-    /// <summary>What the pipe's <c>state</c> reads (MC-6.5): the title, the notice and its text, the status bar, the focused control and its value.</summary>
+    /// <summary>What the pipe's <c>state</c> reads (MC-6.5): the title, the notice and its text, the status bar, the focused control and its value, and the fields of a form the notice is (MC-7.10).</summary>
     internal object McpState()
     {
         var focused = Control.FromChildHandle(GetFocus());
@@ -498,9 +592,58 @@ public abstract partial class AxKitForm
             title = Text,
             notice = NoticeOpen ? Overlay.Shown?.Title : null,
             noticeText = NoticeOpen ? Overlay.Shown?.Text : null,
+            form = OpenForm()?.Shown().Select(field => new { number = field.Number, name = field.Name, keys = field.Keys, kind = field.Kind, value = field.Value, focused = field.Focused }).ToArray(),
             status = StatusTexts(),
             focus = focused is null || focused.FindForm() != this ? null : new { name = focused.AccessibleName, value = WindowReading.ValueOf(focused) },
         };
+    }
+
+    /// <summary>The form the notice shown is (AX-8.10), or null.</summary>
+    private FormControls? OpenForm() => NoticeOpen ? Overlay.Shown?.Custom as FormControls : null;
+
+    /// <summary>
+    /// <c>axkit_window_field</c> (MC-7.10), on the window's thread: the focus put on one field of the form the window
+    /// shows, by its key, number or name, its text selected when asked, after the words that say who moved it; never
+    /// a value typed, a box checked or a button pressed, which stay the user's. Refused in the apps whose commands an AI
+    /// tool never runs, while the switch is off, without a form, and for the gate's other reasons but the notice, which
+    /// here is the form itself: the key test, a Windows dialog, the user's hands.
+    /// </summary>
+    internal object McpFocusField(string? field, bool selectContents, string client, bool allowed)
+    {
+        if (McpRun.AppRefusal(AppVerb) is { } refused)
+        {
+            return new { error = refused };
+        }
+
+        if (!allowed)
+        {
+            return new { error = McpRun.SwitchOff };
+        }
+
+        if (OpenForm() is not { } form)
+        {
+            return new { error = McpRun.NoForm };
+        }
+
+        if (CommandGate.Window(CommandOrigin.AiTool, McpGateState(allowed: true) with { AppServesNoAiTool = false, NoticeOpen = false }) is { } held)
+        {
+            return new { error = McpRefusal(held) };
+        }
+
+        if (string.IsNullOrWhiteSpace(field))
+        {
+            return new { error = McpRun.NoFieldNamed };
+        }
+
+        if (form.NameOfField(field) is not { } name)
+        {
+            return new { error = McpRun.NoSuchField(field) };
+        }
+
+        AnnounceBefore(McpRun.MovedTo(client, name));
+        ChimeForMcp();
+        form.Reach(field, selectContents);
+        return new { focused = name };
     }
 
     /// <summary>

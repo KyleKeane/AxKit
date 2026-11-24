@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- axKit: **an AI tool can run a command that asks for a text, with its text**: Find, Go to line, a filter, a name. The text is typed into the field the command opens and its button pressed, as you would, and you hear "Claude ran Find with the text budget". A field that was already asking you something is never filled, nor a password field; a command that acts outside the window still asks you first, and the question names the text.
+- axKit: **an AI tool can read a form's fields and move you to one**: what the window's form holds, field by field, and the focus put on the field you ask for ("Claude moved to Due"). It never types, checks or sends; the form stays yours to fill.
+- axDown, axJSON, axPreview: **Navigate, Find first** finds the first place a text stands in the file, wherever the caret is; F3 goes on from there.
+
 - axKit: **a group of checks in a form is one list.** Down and Up move through it, Space checks or unchecks a line, Ctrl+A checks them all, and Check all and Uncheck all buttons stand just before it. For a choice of one there is now the same kind of list, where Space chooses a line; nothing uses it yet.
 - axKit: **the window's own keys work from an open menu**: F1, the command palette, F4, asking Claude, Ctrl+S and the app keys close the menu and do their work; F8 says the status with the menu still open. axTemplate's apps are such a list; its Every axKit app check is gone, Check all does it.
 - axKit: **Ctrl+Space in any form: navigation mode.** Nothing is typed; typing the start of a field's name, or its number, goes to that field; Down and Up move between the fields; Enter goes back to typing there. Ctrl+Q in a form reads these keys with its explanation.
