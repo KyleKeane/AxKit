@@ -8,7 +8,7 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 - The root `CLAUDE.md`: the rules of the bundle, the constraints and the environment's gotchas.
 - `apps.md` (generated): the apps, each with its command, its code, its tests, its documents and its checks.
 - `commands.md`: every command and script, and which check holds which rule (its section Test).
-- An app's own `docs/<app>/SPEC.md`, `user-guide.md` and `nvda-test-plan.md`, and the `CLAUDE.md` notes beside its code. The shared window code's notes are an index, `src/AxKit.Forms/CLAUDE.md`, over one file per kind of window in `src/AxKit.Forms/notes` (the window base, the controls, the console window, the editor shell, the item window, the hotkey window, AI and automation): read the file of the kind you change. The notes of axClaude's window, `src/AxClaude/CLAUDE.md`, likewise point to two files in `src/AxClaude/notes`: a window that hides on closing, and the machinery beside the screen (the event core, the session file's reader, the hooks). The notes of its pure code, `src/AxClaude.Core/CLAUDE.md`, point to `src/AxClaude.Core/notes/stream.md` for the stream.
+- An app's own `docs/<app>/SPEC.md`, `user-guide.md` and `nvda-test-plan.md`, and the `CLAUDE.md` notes beside its code. The shared window code's notes are an index, `src/AxKit.Forms/CLAUDE.md`, over one file per kind of window in `src/AxKit.Forms/notes`, which that index lists: read the file of the kind you change. The pure shared code's notes are `src/AxKit.Core/CLAUDE.md`, over `src/AxKit.Core/notes`, the same way. The notes of axClaude's window, `src/AxClaude/CLAUDE.md`, likewise point to two files in `src/AxClaude/notes`: a window that hides on closing, and the machinery beside the screen (the event core, the session file's reader, the hooks). The notes of its pure code, `src/AxClaude.Core/CLAUDE.md`, point to `src/AxClaude.Core/notes/stream.md` for the stream.
 
 ## Specifications
 
@@ -28,13 +28,13 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 - `access-layers.md`: the programs under the access layers (Claude Code, Git, KeePassXC's tool, the shells, MCP
   servers), where each one's texts, options and protocol are written, what is read from it and how, what guards it,
   and what is still outside that one place (root `CLAUDE.md`, rule 12).
-- `docs/axClaude/stream.md` (a report, 2026-11-17, deciding nothing): Claude Code's non-interactive stream as a third
+- `docs/axClaude/stream.md` (a report, 2026-11-17, whose decision was taken: the stream became a second source, `stream-mode.md`): Claude Code's non-interactive stream as a third
   way for axClaude to learn what Claude does, beside the screen and the session file with the hooks: what the
   documentation says, what `tools/ClaudeProbe stream` measured in twenty-four cases, the stream in the kinds of event of
   `families.json`, what a window over it would and would not need, and the ways to go. `stream-shape.json` beside it
   (written by the probe, never by hand) holds the keys of every kind of line seen, without a value. The code that
-  knows the stream's words is `src/AxClaude.Core/Streaming/ClaudeCodeStream.cs`; no window uses it yet.
-- `docs/axClaude/stream-mode.md` (SM-n.m; a specification, 2026-11-17, nothing of it built): the stream as a second
+  knows the stream's words is `src/AxClaude.Core/Streaming/ClaudeCodeStream.cs`; the window's stream source uses it.
+- `docs/axClaude/stream-mode.md` (SM-n.m; a specification, 2026-11-17; stages 1 to 5 built, behind the setting `claudeSource`): the stream as a second
   source of axClaude's window behind a switch: the seam (one model with two sources, `ClaudeModel`), the stream's
   model, host and relay, what the window sends, what the stream does not have, the folder's trust and the
   questions, sessions, the switch, the checks, the path in eight stages, and what is the maintainer's to decide.
@@ -50,6 +50,11 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 - `reports.md` (RP-n): the reports from every window (F4), encrypted on the user's computer and sent to GitHub as
   issues of the private reports repository; the envelope; axTask's action keys, and why its GitHub lists were
   removed.
+- `outside-reports.md` (OR-n): what is done with a report that comes from outside: its entry in the outside reports
+  list with the harm review and a proposed scope, the maintainer's signed approval in axTask, and the checks that hold
+  it (rule 9). The approval key's public half is `approval-key.pub` beside it, written by `tools/pin-approval-key.ps1`.
+- `axkit-list 2.options.json`: the options of the list format, for other programs that write axTask's lists; held to
+  `ListOptions` by `ListOptionsTests`.
 - `theme.md` (TH-n): the theme file, every colour from one JSON file, and the display settings.
 - `earcons.md`: the classes of sound, a proposal of 2026-11-14 not built: each class of interaction (a tick, a move,
   a turn, an ask whose number of knocks says how much is asked, code that asks to run) with the pattern that names it and the
@@ -83,13 +88,13 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
   events (every kind of thing that can happen, with its sound or none and its words) and the sounds; then each family
   of keys with the sounds that can follow one, and the events with no sound. `families.json` is written by hand and
   held to the code by the script: every sound of `Sounds.cs`, every file that plays one, every menu of the inventory
-  and every family of keys must be named there. `"status": "proposed"`; it describes what the code does and changes
-  nothing. The key families stay in `key-families.json` and the sounds' design in `earcons.md`.
-- `events.md` (EV-n.m; a proposal of 2026-11-17 for the maintainer to read, nothing built): one event schema of
+  and every family of keys must be named there; since rule 13 (2026-11-17) `EventKindTests` holds `EventKind` to it, so
+  a new kind of event is written there first. The key families stay in `key-families.json` and the sounds' design in `earcons.md`.
+- `events.md` (EV-n.m; a proposal of 2026-11-17, its step 2 built: `EventKind`, the door `AxKit.Forms/EventDoor` and `EventPresenter`, rule 13): one event schema of
   axKit's own, the kinds of `families.json`; each outside program behind an adapter that may only raise events of it;
   one door through which a window raises an event and by which each kind gets its sound and its words; the tests
   that would hold the boundary; the path in four steps; what is his to decide.
-- `framework.md` (FW-n.m; a proposal of 2026-11-22 at the maintainer's direction, nothing built from it yet): the
+- `framework.md` (FW-n.m; a proposal of 2026-11-22 at the maintainer's direction, built: every app is on one of the types, `components.json` and `ComponentsTests` hold it): the
   smallest set of window types (the conversation window, the editor, the navigator, the hotkey window; a graph much
   later), the canonical components each is made of with their entry events, every app mapped onto a type and what
   goes for it, the tests that would hold it, the work in sixteen small pieces, and the decisions taken and open.
@@ -156,7 +161,10 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 ## The repository's pages
 
 - `README.md`, `CONTRIBUTING.md`, `SECURITY.md`, `GOVERNANCE.md`, `CODE_OF_CONDUCT.md`, `THIRD-PARTY-NOTICES.md`,
-  `CHANGELOG.md` at the root.
+  `CHANGELOG.md` at the root; `NOTICE.md`, what axKit does, what each program under an access layer does and what is the
+  user's, embedded in the app.
+- The Menus section of each app's `user-guide.md` is written from the command inventory by `tools/guide-menus.ps1`, never
+  by hand; `tools/pages.ps1` writes it with every other generated page.
 - `PRIVACY.md`: everything axKit contacts. It changes in the same commit as any new network contact or program axKit
   starts (rule 8).
 - `docs/feature_requests/README.md`: points to the reports repository `KyleKeane/AxKit-reports`, where feature
