@@ -6,6 +6,27 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-25: the day's changes; by the assistant with NVDA listening (`main` e8de38c8)
+
+`.\nvda-pass.ps1 -Only` ten scripts, the maintainer away for eight hours at his word ("i will go away for eight
+hours, please work autonomously to finish everything you can"), behind the spoken countdown, the same NVDA, voice
+and Windows as below. 23 goals passed, 1 failed, 5 not run; 8 of 10 scripts passed.
+
+| What | Scripts | Result |
+|---|---|---|
+| axTask, Ctrl+N typing the title in the list (TK-4.3b) and the title's date and !priority (TK-4.3c): `13`, `26` | 2 | Passed |
+| axStart, what was closed lately among the matches (AS-2.5): `05-recently-closed` | 1 | Passed |
+| axClaude over the stream, Claude's questions with the answer's record in the conversation: `42-stream-questions` | 1 | Passed |
+| axClaude, Ready as the window opens: `25-edit-modes`, `29-stand-in-turn` | 2 | Passed |
+| A template in a form's field (TP-5.5): `axTask-template-in-a-form` | 1 | Passed |
+| axDown's notices: `axDown-notices` | 1 | Passed |
+| axMedia, a first file that cannot play as the window opens: `03b-cannot-play` | 1 | Failed: "Cannot play a-broken.mp3" was raised after the hold and not spoken; NVDA said the window, the list, the row and "Playing b-good.wav" |
+| axClaude over the stream, the trust question as the window opens, then Choose the model and the effort: `50-stream-choices` | 1 | Failed at its first step: the notice's title "Start Claude Code in this folder?" not spoken (NVDA read the window, the message field and the notice's text); the four goals after it not run |
+
+Both failures are one cause: NVDA read the newly active window later than the hold of 2026-11-25 waits, and that
+reading cancelled the words. Its item: "what a window says as it opens is still cut off by NVDA's late reading".
+The template in a form's field, whose menu NVDA had not read in three passes, passed here.
+
 ## 2026-11-24, evening: the day's changes and the afternoon's failures; by the assistant with NVDA listening (`main` 5d86519e and the fix after it)
 
 `.\nvda-pass.ps1 -Only` eleven scripts, the maintainer away for the evening at his word ("i will be away for eight
@@ -761,6 +782,9 @@ and what it still waits on is here, by ear with NVDA:
    list page heard; then the id taken off the list. The sender's side is held by `ReportSenderTests`; no window
    script can reach it, since a build made for the scripts carries no sending token (item "a private repository
    and reports encrypted").
+7. axTemplate in the maintainer's own use: a template put in from the launcher in Word, a browser and a terminal,
+   where the caret was (docs/axTemplate/SPEC.md; the item "axTemplate: templates as an app of their own", closed
+   2026-11-25 when the template in a form's field passed with NVDA).
 
 ## Owed: the maintainer's choices of 2026-11-24, by ear
 
