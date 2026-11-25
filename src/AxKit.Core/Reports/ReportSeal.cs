@@ -260,6 +260,5 @@ public static class ReportSeal
     private static byte[] Associated(ReportEnvelope envelope) =>
         Encoding.UTF8.GetBytes($"{envelope.Format}\n{envelope.Reporter:D}\n{envelope.Version}\n{envelope.Kind}\n{envelope.Key}\n{envelope.Method}");
 
-    private static string? Member(JsonElement root, string name) =>
-        root.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.String ? value.GetString() : null;
+    private static string? Member(JsonElement root, string name) => JsonElements.GetString(root, name);
 }

@@ -1089,7 +1089,7 @@ public abstract partial class ItemForm : AxKitForm
     private IReadOnlyList<string> NavigatorLabels() => _rows.Select(row => row.Label).ToList();
 
     /// <summary>"1 item", "3 items".</summary>
-    protected static string Count(int count, string noun) => $"{count} {(count == 1 ? noun : noun + "s")}";
+    protected static string Count(int count, string noun) => MenuText.Count(count, noun);
 
     // ---- the detail pane (IA-2.3) ----
 

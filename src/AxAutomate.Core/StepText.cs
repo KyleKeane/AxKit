@@ -167,7 +167,7 @@ public static class StepText
         return seconds == 1 ? "1 second" : seconds.ToString("0.###", CultureInfo.InvariantCulture) + " seconds";
     }
 
-    public static string Count(int count, string noun) => $"{count} {(count == 1 ? noun : noun + "s")}";
+    public static string Count(int count, string noun) => AxKit.Core.MenuText.Count(count, noun);
 
     /// <summary>A key or a word with a capital: "ctrl" is "Ctrl", "p" is "P", "f1" is "F1".</summary>
     private static string Capital(string word) =>

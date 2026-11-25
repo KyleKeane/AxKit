@@ -361,8 +361,7 @@ internal sealed class AutomationChannel : IMessageFilter
 
         return _form.Choose(label, menu) is { } refusal ? new { error = refusal } : new { ok = true };
 
-        static string? Property(JsonElement root, string name) =>
-            root.ValueKind == JsonValueKind.Object && root.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.String ? value.GetString() : null;
+        static string? Property(JsonElement root, string name) => JsonElements.GetString(root, name);
     }
 
     /// <summary>The NVDA tier (docs/axKit/automation.md, tier 3): the window to the front, so that NVDA follows it and the keyboard reaches it; only on the user's desktop, at the user's word.</summary>

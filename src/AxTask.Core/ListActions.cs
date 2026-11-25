@@ -83,17 +83,15 @@ public sealed record ConfiguredAction(string Name, string Does, JsonNode Source)
         ListActions.MoveKind => $"moves to {To}",
         ListActions.OpenKind => $"opens {Open}",
         ListActions.RunKind => $"runs {Program}"
-            + (Arguments.Count == 0 ? " without arguments" : $" with {Count(Arguments.Count, "argument")}: {string.Join(", ", Arguments)}")
+            + (Arguments.Count == 0 ? " without arguments" : $" with {MenuText.Count(Arguments.Count, "argument")}: {string.Join(", ", Arguments)}")
             + (Input is null ? string.Empty : $"; gives it {Input} as input")
             + (Folder is null ? string.Empty : $"; in the folder {Folder}")
             + (Seconds == ListActions.DefaultSeconds ? string.Empty : $"; for {Seconds} seconds at most")
             + (Then.Count == 0 ? string.Empty : "; then sets " + ActionKeys.SpokenSet(Then)),
-        ListActions.TerminalKind => $"puts a command of {Count(Command.Count, "part")} into axTerminal's command field, for you to send: {string.Join(", ", Command)}"
+        ListActions.TerminalKind => $"puts a command of {MenuText.Count(Command.Count, "part")} into axTerminal's command field, for you to send: {string.Join(", ", Command)}"
             + (Folder is null ? string.Empty : $"; in the folder {Folder}"),
         _ => "does nothing",
     };
-
-    private static string Count(int count, string noun) => $"{count} {(count == 1 ? noun : noun + "s")}";
 }
 
 /// <summary>

@@ -17,5 +17,8 @@ public static class MenuText
     /// words: the command palette and the automation channel's choose both say it through the window base's
     /// <c>ClickFor</c>.
     /// </summary>
+    /// <summary>A number with its noun, spoken: "1 item", "3 items" (the one plural rule, written in four places until 2026-11-24).</summary>
+    public static string Count(int count, string noun) => $"{count} {(count == 1 ? noun : noun + "s")}";
+
     public static string CheckSaid(string name, bool isChecked) => $"{name}, {(isChecked ? "checked" : "not checked")}";
 }

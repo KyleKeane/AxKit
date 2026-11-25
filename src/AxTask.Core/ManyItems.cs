@@ -21,7 +21,7 @@ public static class ManyItems
     /// </summary>
     public static string DoneSaid(bool now, int changed, int already, int notTasks)
     {
-        var said = $"{(now ? "Done" : "Not done")}: {Count(changed, "task")}";
+        var said = $"{(now ? "Done" : "Not done")}: {MenuText.Count(changed, "task")}";
         if (already > 0)
         {
             said += $". {already} {(already == 1 ? "was" : "were")} {(now ? "done" : "not done")} already";
@@ -29,7 +29,7 @@ public static class ManyItems
 
         if (notTasks > 0)
         {
-            said += $". {Count(notTasks, "selected item")} {(notTasks == 1 ? "is not a task" : "are not tasks")}";
+            said += $". {MenuText.Count(notTasks, "selected item")} {(notTasks == 1 ? "is not a task" : "are not tasks")}";
         }
 
         return said + (already > 0 || notTasks > 0 ? "." : string.Empty);
@@ -37,6 +37,4 @@ public static class ManyItems
 
     /// <summary>"3 items", "1 item".</summary>
     public static string Items(int count) => Marks.Items(count);
-
-    private static string Count(int count, string noun) => $"{count} {(count == 1 ? noun : noun + "s")}";
 }

@@ -779,8 +779,7 @@ public static class ClaudeCodeStream
     /// <summary>Whether an end line is the end of a turn the user interrupted (<see cref="InterruptLine"/>).</summary>
     public static bool Interrupted(StreamLine end) => end.Failed && end.Terminal.StartsWith(AbortedTerminal, StringComparison.Ordinal);
 
-    private static string Text(JsonElement element, string name) =>
-        element.ValueKind == JsonValueKind.Object && element.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.String ? value.GetString() ?? string.Empty : string.Empty;
+    private static string Text(JsonElement element, string name) => AxKit.Core.JsonElements.GetString(element, name) ?? string.Empty;
 
     private static bool Flag(JsonElement element, string name) =>
         element.ValueKind == JsonValueKind.Object && element.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.True;
