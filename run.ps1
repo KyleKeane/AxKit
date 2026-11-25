@@ -26,8 +26,10 @@
   The folder "scripts to run-individual-apps" holds one script per app (run-axClaude.ps1, run-axDown.ps1 and so on): each passes
   -App for you and takes the same other arguments.
   If PowerShell refuses to run scripts: powershell -ExecutionPolicy Bypass -File .\run.ps1
-  Close a running axKit window first: the build writes into the folder it holds open. axStart and axClip, which run in
-  the background, are ended before the build; they and axHelp are started hidden after it, whether they ran before or not.
+  Close a running axKit window first: the build writes into the folder it holds open. What runs in the background from
+  the same folder is ended before the build: axStart, axClip, axHelp with its hidden conversation, axTemplate's
+  launcher, and a broker of the AI tools whose Claude Code has ended; the background apps and the launcher are started
+  hidden after it, whether they ran before or not.
 #>
 [CmdletBinding()]
 param(

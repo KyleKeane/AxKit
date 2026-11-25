@@ -110,7 +110,7 @@ function Get-ReleaseKeyProblem {
 function Get-WindowPassProblem {
     & (Join-Path $root 'tools\window-passes.ps1') -Check | Out-Host
     if ($LASTEXITCODE -ne 0) {
-        return "The windows named above changed after their last recorded pass. Run each one's scripts with --record, commit the record, then run this again."
+        return "The windows named above changed after their last recorded pass. Run tools\window-passes.ps1 -Run (their scripts with --record, on one build), commit the record, then run this again."
     }
 }
 

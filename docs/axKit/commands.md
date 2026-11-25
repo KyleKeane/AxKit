@@ -106,8 +106,9 @@ points here. Each app's own commands are in its `CLAUDE.md`.
 
 ## The generated pages
 
-Each is written by its script from its sources and checked by `test.ps1` and `build.yml` with `-Check`. Never edit a
-page by hand; run its script and commit the page.
+Each is written by its script from its sources and checked by `test.ps1`, the push check and `build.yml` with
+`-Check`. Never edit a page by hand: `tools/pages.ps1` writes every one of them in one run (each page's own script
+writes it alone), and the pages it wrote are committed.
 
 - `tools/outside-calls.ps1` writes `outside-calls.md`: everything axKit reaches outside its process, from the
   `Outside call, <kind>, <what is reached>:` comment that every network request, program start and pipe in `src`
@@ -126,7 +127,9 @@ page by hand; run its script and commit the page.
 - `tools/apps-page.ps1` writes `apps.md`: the apps from `Dispatch.Apps`, each with its command and its folders.
 - `tools/doc-menus.ps1 -Check` reads every menu path the documents name ("Alt+K, Apps", "the Window menu's Open windows") and fails on one the windows do not have, the names from the command inventory and the window base's code.
 - `tools/guide-menus.ps1` writes the Menus section of each app's user guide, between its two marker lines, from `window-commands.json`: every menu with its commands and keys, so that no guide lists them by hand.
-  `tools/apps.ps1` is the reader the other scripts share.
+- `tools/apps.ps1` is the reader of `Dispatch.Apps` the other scripts share.
+- `tools/components.ps1` writes `components.md` from `components.json`: the window types, their components and
+  which app is on which.
 - `tools/cases.ps1` writes `cases.md` from `cases.json`, the table of how each unexpected situation is handled (SPEC
   AX-5.10). A change to how a situation is handled changes its row, then the script is run; the fields are described
   at the top of the script.
@@ -198,9 +201,9 @@ page by hand; run its script and commit the page.
 
 - `tools/store-screenshots.ps1` takes the listing's screenshots, with the user away.
 - `tools/EdgeDrive` drives a Microsoft Edge window over the DevTools protocol, one command per run, for Partner
-  Center's website, where every release's package is uploaded by hand (`store-setup.md` sections 5 and 6).
-- No command submits to the Store: the route through Microsoft's API was built, never switched on, and removed on
-  2026-11-13, since the account is an Individual account (`store-setup.md` section 2).
+  Center's website (`store-setup.md` sections 5 and 6); `tools/store-submit.ps1`, above, does a release's
+  submission with it. Microsoft's API route was built, never switched on, and removed on 2026-11-13, since the
+  account is an Individual account (`store-setup.md` section 2).
 
 ## Other tools
 
@@ -217,10 +220,11 @@ page by hand; run its script and commit the page.
   commit that changed a script, a command, a key or a document.
 - `tools/make-icon.ps1`: the apps' icons from `Dispatch.Apps`. `tools/make-test-pictures.ps1`: the three test
   pictures of axHelp's screenshots in `tests/fixtures/pictures`, run only to change them.
-- `tools/session-start.ps1`: the start of a working session in one run, four checks in order, each by the script that
-  owns it: `git fetch origin` and whether `main` (and the branch in hand) lacks commits of `origin/main`, and every
-  worktree's branch that holds commits `main` lacks (work finished beside main and never merged);
-  `tools/sync-repos.ps1 -Status`; `tools/reports-check.ps1`; `tools/upstream.ps1`. One line each, starting with what
+- `tools/session-start.ps1`: the start of a working session in one run, its checks in order, each by the script that
+  owns it: `git fetch origin` and whether `main` (and the branch in hand) lacks commits of `origin/main`, every
+  worktree's branch that holds commits `main` lacks (work finished beside main and never merged), and how GitHub's
+  build of `origin/main` ended; `tools/sync-repos.ps1 -Status`; `tools/reports-check.ps1`;
+  `tools/outside-check.ps1`; `tools/upstream.ps1`. One line each, starting with what
   was checked and ending with "ok" or with what to do ("code: main is 2 commits behind origin/main: git pull
   --ff-only"; "reports: 1 open report without an item: read it and write its item"), the owning script's own lines
   indented under a line that asks for something. It commits and pushes nothing, here or beside, and says the same

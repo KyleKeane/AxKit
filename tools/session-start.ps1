@@ -5,7 +5,7 @@
   starting with what was checked and ending with "ok" or with what to do.
 
 .DESCRIPTION
-  Five checks, in this order, each by the script that owns it; none of them is changed or copied here:
+  Six lines, in this order, each by the script that owns it; none of them is changed or copied here:
 
     1. git fetch origin, then how many commits main lacks of origin/main (and the branch in hand, when it is another);
        and how GitHub's build of origin/main's newest commit ended (gh), since a push that git took can still fail there;
@@ -13,7 +13,9 @@
     2. tools\sync-repos.ps1 -Status: the management lists and the reports clone, fetched and compared, nothing
        committed, pulled or pushed.
     3. tools\reports-check.ps1: the reports on GitHub against the items of the priorities list (CLAUDE.md rule 9).
-    4. tools\upstream.ps1: the outside programs' versions against the ones the checks last passed with (rule 12).
+    4. tools\outside-check.ps1: no item from an outside report worked on without the maintainer's signed approval.
+    5. tools\upstream.ps1: the outside programs' versions against the ones the checks last passed with (rule 12).
+  The first check gives three lines: the code, the worktrees and GitHub's build.
 
   It commits nothing and pushes nothing, here or beside; what it changes is what a fetch changes, the remote-tracking
   branches of this repository and of the two beside it. Run twice, it says the same twice. Without the network it says
