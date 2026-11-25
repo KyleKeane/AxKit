@@ -28,6 +28,18 @@
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/hooks/claude-powershell-check.ps1",
+            "timeout": 15
+          }
+        ]
+      }
     ]
   }
 }
