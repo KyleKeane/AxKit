@@ -208,8 +208,10 @@ answer to a key.
   **Built and switched off** (`FormTemplatesOn`): three NVDA passes of 2026-11-24 heard no menu open after Shift+F10
   in a form's field, first because the key never reached the field as a request for its menu, then because F10's
   release closed it, and with the wait for the keys to be up still nothing was heard. A menu NVDA does not read in
-  place of Windows' edit menu is worse than none, so the forms keep Windows' menu, and the launcher puts a template in
-  there, until a pass hears it. The checks for axTask, axPass and axMCP are kept for it.
+  place of Windows' edit menu is worse than none, so the forms kept Windows' menu. The same evening the pass heard that
+  Windows' own menu is read in that field ("Context menu"), so the templates are shown as such a native menu since
+  (`AxKit.Forms/NativeMenu`, the first item selected, as axFile's shell menu does) and switched on again, to be heard in
+  the next pass; switched off again if that pass hears nothing. The checks for axTask, axPass and axMCP are kept for it.
 - TP-5.3 The editors keep their own templates (AD-13.3: axDown's Link, Table and Code block) before the user's.
 - TP-5.4 A template is put into a field and never sent: in axTerminal's command field and axClaude's message
   field the user reads it and presses Enter, as for any text put there.

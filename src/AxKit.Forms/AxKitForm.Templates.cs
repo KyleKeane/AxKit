@@ -56,8 +56,12 @@ public abstract partial class AxKitForm
     /// own context menu holds them in place of Windows' edit menu, whose commands are keys. A field that is only read or
     /// holds a password has none. The folder is read again, off the UI thread, as the form opens.
     /// </summary>
-    /// <summary>Whether the forms' fields get their menu of templates (TP-5.5): off until the NVDA pass hears the menu open (tests/nvda-scripts/axTask-template-in-a-form.txt).</summary>
-    private static readonly bool FormTemplatesOn = false;
+    /// <summary>
+    /// Whether the forms' fields get their menu of templates (TP-5.5): switched off on 2026-11-24 after three NVDA passes
+    /// heard no menu open, on again the same evening with the menu shown as Windows' own (NativeMenu), to be heard in the
+    /// next pass (tests/nvda-scripts/axTask-template-in-a-form.txt); set false again if that pass hears nothing.
+    /// </summary>
+    private static readonly bool FormTemplatesOn = true;
 
     private void OfferTemplatesInForm(FormControls controls)
     {
@@ -79,6 +83,8 @@ public abstract partial class AxKitForm
             // Filled now as well as at each opening: an empty strip never raises Opening.
             FillFieldTemplates(strip, box);
             strip.Opening += (_, _) => FillFieldTemplates(strip, box);
+            // The keyboard's menu is a native one (AxKitForm.ShowFieldMenu, NativeMenu), which raises no Opening: it fills the strip through this.
+            strip.Tag = (Action)(() => FillFieldTemplates(strip, box));
             box.ContextMenuStrip = strip;
             box.Disposed += (_, _) => strip.Dispose();
         }

@@ -621,12 +621,13 @@ public abstract partial class AxKitForm : Form
                 return;
             }
 
+            // Filled again from the templates as read now (the strip's Opening, which a native menu never raises), then
+            // shown as Windows' own popup menu, which NVDA reads (NativeMenu): the strip shown itself was heard by none
+            // of three NVDA passes.
+            (strip.Tag as Action)?.Invoke();
             var caret = box.GetPositionFromCharIndex(Math.Min(box.SelectionStart, Math.Max(0, box.TextLength - 1)));
-            strip.Show(box, new Point(Math.Max(0, caret.X), Math.Max(0, caret.Y) + box.Font.Height));
-            if (strip.Items.Count > 0)
-            {
-                strip.Items[0].Select();
-            }
+            var at = box.PointToScreen(new Point(Math.Max(0, caret.X), Math.Max(0, caret.Y) + box.Font.Height));
+            NativeMenu.Choose(this, strip.Items.OfType<ToolStripMenuItem>().ToList(), at);
         };
         timer.Start();
         return true;
