@@ -181,13 +181,7 @@ public sealed partial class GitForm : ItemForm
     /// </summary>
     protected override IReadOnlyCollection<Keys> KeysWithoutUse => [ItemKeys.Rename, ItemKeys.Undo, ItemKeys.NewList, ItemKeys.ReadAll];
 
-    protected override string? RenameRefused(ItemRow row) => "Nothing is renamed here";
-
     protected override void NewItem() => NewBranch();
-
-    protected override void NewList() => Announce("Nothing is made here", true);
-
-    protected override void Undo() => Announce("Nothing to undo here", true);
 
     /// <summary>
     /// The level shown: at the top the three lists, each with its count once it has been read; in a list its rows

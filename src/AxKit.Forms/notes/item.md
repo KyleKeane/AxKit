@@ -25,7 +25,7 @@ Part of the notes of `src/AxKit.Forms` (the index is `src/AxKit.Forms/CLAUDE.md`
     - the levels (`ReadLevel`, `EnterList`, `LeaveList`; `EntryRefused` for a list Right and Enter do not go into, its reason said, axMCP's remote server; an empty reason says nothing, the app having asked something itself, axTask's question before a list of the earlier format is converted);
     - the detail (`DetailOf`, `SpokenValue`);
     - the saving;
-    - the navigator's commands (`NewItem`, `NewList`, `RenameItem`, `RenameTo` (an item's rename by default), `RenameRefused`, `DeleteRow`, `Undo`);
+    - the navigator's commands (`NewItem`, `NewList`, `RenameItem`, `RenameTo` (an item's rename by default), `RenameRefused`, `DeleteRow`, `Undo`); `DeleteRow` alone must be written, the others say "Nothing is made here", "Nothing is renamed here" and "Nothing to undo here" by default, and an app that has no use for a key leaves it out with `KeysWithoutUse` rather than override it (2026-11-24, R-90);
     - whether its navigator has a selection (AX-8.16, 2026-11-22): `HasSelection` (no by default; axTask says yes), `CanSelectRow` (which rows; a heading never), `NothingToSelect` (its words on a row that cannot be selected; the edge sound by default);
     - and its three menus of a list, an item and a field, never on the bar, handed to `CreateContextMenu`, which makes the bar's Context from them (AX-9.11, 2026-11-11: the field's in the detail pane, the item's or the list's in the navigator by the pane that last had the focus, `_detailLast`; "Nothing selected" or "A heading: nothing to act on" otherwise; `SelectionMenusAvailable` and `NothingWhileUnavailable` for axPass's lock); Shift+F10 opens it.
   - `ItemKeys.All` is in each app's key table.

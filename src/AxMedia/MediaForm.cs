@@ -229,14 +229,9 @@ public sealed partial class MediaForm : ItemForm
     /// </summary>
     protected override IReadOnlyCollection<Keys> KeysWithoutUse => [ItemKeys.Rename, ItemKeys.Undo, ItemKeys.Refresh, ItemKeys.NewList];
 
-    protected override string? RenameRefused(ItemRow row) => "A file is renamed in axFile, not in the queue";
-
     /// <summary>Ctrl+N is New window here, the app's own command; the navigator's New item is never registered.</summary>
     protected override void NewItem() => NewWindow();
 
-    protected override void NewList() => Announce($"One queue to a window: {BundleKeys.Text(AxMediaKeys.NewWindow)} opens another window", true);
-
-    protected override void Undo() => Announce("Nothing to undo in the queue", true);
 
     /// <summary>Ctrl+S, as before the window was a navigator.</summary>
     protected override void SaveCommand() => Announce("Nothing to save here", true);

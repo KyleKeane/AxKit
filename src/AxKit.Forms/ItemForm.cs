@@ -124,8 +124,12 @@ public abstract partial class ItemForm : AxKitForm
     {
     }
 
-    /// <summary>F2 in the navigator (AX-8.7): why this row cannot be renamed, said instead of the box; null when it can.</summary>
-    protected abstract string? RenameRefused(ItemRow row);
+    /// <summary>
+    /// F2 in the navigator (AX-8.7): why this row cannot be renamed, said instead of the box; null when it can. Nothing
+    /// is renamed by default: an app that renames says when it cannot, and one that never does leaves the key out
+    /// (<see cref="KeysWithoutUse"/>), so that this default and the three below are said only where nothing else is.
+    /// </summary>
+    protected virtual string? RenameRefused(ItemRow row) => "Nothing is renamed here";
 
     /// <summary>How much of the row's name the rename box selects as it opens, from its start: all of it by default; axFile, a file's name before its extension.</summary>
     protected virtual int RenameSelectionLength(ItemRow row) => row.Name.Length;
@@ -139,14 +143,14 @@ public abstract partial class ItemForm : AxKitForm
     /// <summary>Delete in the navigator (IA-D4).</summary>
     protected abstract void DeleteRow(ItemRow row);
 
-    /// <summary>Ctrl+N in the navigator.</summary>
-    protected abstract void NewItem();
+    /// <summary>Ctrl+N in the navigator; nothing is made by default.</summary>
+    protected virtual void NewItem() => Announce("Nothing is made here", true);
 
-    /// <summary>Ctrl+Shift+N.</summary>
-    protected abstract void NewList();
+    /// <summary>Ctrl+Shift+N; nothing is made by default.</summary>
+    protected virtual void NewList() => Announce("Nothing is made here", true);
 
-    /// <summary>Ctrl+Z (IA-5.4).</summary>
-    protected abstract void Undo();
+    /// <summary>Ctrl+Z (IA-5.4); nothing to undo by default.</summary>
+    protected virtual void Undo() => Announce("Nothing to undo here", true);
 
     // ---- the bar's Context menu (AX-9.11, B-19, 2026-11-11; the three menus that acted on the selection until then) ----
 
