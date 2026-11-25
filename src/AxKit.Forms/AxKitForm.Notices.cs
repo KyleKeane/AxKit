@@ -382,9 +382,11 @@ public abstract partial class AxKitForm
     /// </summary>
     private readonly System.Windows.Forms.Timer _activationSay = new() { Interval = 100 };
 
-    private const int ActivationMs = 500;
-    private const int FocusStillMs = 400;
-    private const int ActivationMostMs = 2000;
+    // Lengthened on 2026-11-25 (from 500, 400 and 2000): NVDA read the newly active window later than that in the day's
+    // pass and cut off what the window said as it opened (axMedia 03b, axClaude 50).
+    private const int ActivationMs = 1000;
+    private const int FocusStillMs = 700;
+    private const int ActivationMostMs = 3000;
     private long _activatedTick;
     private long _focusChangedTick;
     private nint _lastFocus;

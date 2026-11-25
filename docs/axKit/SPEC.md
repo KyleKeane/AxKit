@@ -1791,7 +1791,7 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   announces before it has been activated for the first time waits for the activation and is said then, in order
   (`AxKitForm.Announce`, 2026-11-01): NVDA ignores a window that is not in front, and a window started by a program in
   the background comes up behind until it is activated, so what it said as it opened was lost. It is said once the
-  window has been in front for half a second and its focus has held still for 0.4 seconds, two seconds at most
+  window has been in front for a second and its focus has held still for 0.7 seconds, three seconds at most (lengthened on 2026-11-25 from half a second, 0.4 and two, which NVDA's reading of the window outlasted in that day's pass)
   (2026-11-25): said while NVDA had yet to read where the focus landed, the reading cut it off (axMedia's "Cannot
   play" as its window opened).
   A paste into an editable text, by Ctrl+V, Shift+Insert or an Edit menu's Paste, is said once the control has done it
