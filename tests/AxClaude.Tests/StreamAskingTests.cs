@@ -297,6 +297,39 @@ public sealed class StreamAskingTests
     }
 
     [Fact]
+    public void Claudes_own_questions_answered_as_a_whole_leave_the_record_the_screen_prints()
+    {
+        // stream-mode.md SM-7.5: the record Claude Code's screen prints in the answered question's place, its label and
+        // a row for each question, so that the conversation keeps the answer as with the screen.
+        var asking = Asking("two-questions");
+        Assert.Empty(asking.AnswerRecord);
+        Assert.Null(asking.Answer("2"));
+        Assert.Empty(asking.AnswerRecord);
+        Assert.NotNull(asking.Answer("1,3"));
+
+        Assert.Equal(
+            [ClaudeCodeTexts.AnsweredLabelText, "· What is your favourite colour? → Green", "· Which fruits do you like? → Apple, Cherry"],
+            asking.AnswerRecord);
+        // The screen's model knows the label and the rows by the same words.
+        Assert.Matches(ClaudeCodeTexts.AnsweredLabel(), asking.AnswerRecord[0]);
+        Assert.All(asking.AnswerRecord.Skip(1), row => Assert.StartsWith(ClaudeCodeTexts.AnsweredRowStart, row));
+
+        // The user's own words are the answer's.
+        var own = Asking("question");
+        Assert.Null(own.Answer("3"));
+        Assert.NotNull(own.Answer("tulip"));
+        Assert.Equal("· Which colour do you prefer? → tulip", own.AnswerRecord[^1]);
+
+        // A refusal answers nothing, and a tool call leaves no such record.
+        var refused = Asking("question");
+        Assert.NotNull(refused.Escape());
+        Assert.Empty(refused.AnswerRecord);
+        var tool = Asking("tool");
+        Assert.NotNull(tool.Answer(StreamAsking.OnceKey));
+        Assert.Empty(tool.AnswerRecord);
+    }
+
+    [Fact]
     public void A_choice_that_says_more_than_its_name_shows_Claudes_word_after_the_dash()
     {
         var question = Asking("question").Current;

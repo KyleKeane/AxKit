@@ -1,0 +1,60 @@
+# Workflow: Choose the model and the effort over Claude Code's stream
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/stream-mode.md SM-5.5 (2026-11-25): Claude Code's own pickers are screens the stream does not
+# have, so Choose the model and Choose the effort show a list of the window's own in the control area, made from what
+# the answer to the window's first request listed, and send the choice as the slash command with its value, which the
+# stream takes while the run goes on. The stand-in plays the recording of that answer, /model haiku, /effort low and a
+# message (tests/fixtures/streams/choices.jsonl, Claude Code 2.1.332).
+file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"replySpeech":"all"}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+file claude.cmd @"%AXKIT_STANDIN%" standin --stream choices %*
+start claude {temp}\st --claude {temp}\claude.cmd --source stream
+# The folder's question comes first (stream-mode.md SM-7.1): Enter is no, so the yes is its own button.
+expect said Start Claude Code in this folder?
+wait 1500
+keys tab
+keys enter
+expect said Ready
+
+# Goal: Choose the model from the list Claude Code gave
+menu Choose the model
+expect said Choose the model. 1. Default (recommended)
+expect list 5. Haiku 5.5 — Fastest for quick answers
+keys down
+keys down
+keys down
+keys down
+expect focus 5. Haiku 5.5
+keys enter
+expect said Sent: 5, Haiku 5.5
+expect state Claude: ready | manual mode on
+do Conversation
+expect text you: /model haiku
+expect text Set model to `Haiku 5.5` for this session only
+
+# Check: Escape closes the list and sends nothing
+do Message field
+menu Choose the effort
+expect said Choose the effort. 1. low
+expect list 5. max
+keys escape
+expect said Cancelled
+refuse text you: /effort
+
+# Goal: Choose the effort
+do Message field
+menu Choose the effort
+expect said Choose the effort. 1. low
+keys enter
+expect said Sent: 1, low
+expect state Claude: ready | manual mode on
+do Conversation
+expect text you: /effort low
+expect text Set effort level to low
+
+# Goal: Send a message after the choices
+do Message field
+type Say ok
+keys enter
+expect said Done. claude: ok

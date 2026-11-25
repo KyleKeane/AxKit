@@ -70,6 +70,13 @@ public abstract class ClaudeModel : LineStore
     /// <summary>The permission mode in force, in Claude Code's own words; null until the source has named one.</summary>
     public abstract string? Mode { get; protected set; }
 
+    /// <summary>
+    /// Claude Code is up and takes messages: what the window's Ready waits for. A screen is up once its mode line
+    /// names a mode; a source can also be up with no mode named yet (the stream's, when Claude Code does not answer
+    /// its first request in time; docs/axClaude/stream-mode.md SM-4.10).
+    /// </summary>
+    public virtual bool Up => Mode is not null;
+
     /// <summary>What a spinner row says beside "working"; null without a screen.</summary>
     public virtual string? Spinner { get; protected set; }
 

@@ -51,6 +51,8 @@ The window scripts use the same files: the stand-in of the stream (`tools/AxAuto
 | `worker` | Work handed to a subagent, and the turn Claude Code starts by itself when it hands back. |
 | `background` | A command run in the background, and the turn Claude Code starts by itself when it ends. |
 | `failure` | A model that does not exist: the error's words, a failed end, the process gone. |
+| `custom-command` | A custom command of the folder's own (`.claude/commands/probe-greet.md`, written by the probe first), which runs the model, then a message (2.1.332). |
+| `choices` | The first request's answer with the models and their efforts, then `/model haiku`, `/effort low` and a message (2.1.332). |
 
 ## What the recordings showed (Claude Code 2.1.327, 2026-11-17)
 
@@ -69,3 +71,9 @@ These are what the model is built on. Each is in the files; none is taken from t
 - **A subagent's own lines** carry the id of the call that started it; the lines of the conversation itself carry none.
 - **A failure of the service** (a model that does not exist) is a text of the assistant's marked as an error with a word for its kind, an end line marked as an error, and the process ends with code 1.
 - **The permission mode** set by the host is answered, a status line names the new mode, and the next start line names it too.
+
+## What the recordings of 2026-11-25 showed (Claude Code 2.1.332)
+
+- **A command that runs the model** (a custom command) comes back, unlike a command Claude Code runs by itself: a line of the user's marked as a replay, whose text is Claude Code's tags, `<command-message>probe-greet</command-message>` and `<command-name>/probe-greet</command-name>`, just before the turn's thinking and texts. The turn's end counts one turn (`custom-command`).
+- **The first request's answer** lists the models, each with the name Claude Code takes (`haiku`), the name it shows, its words, and the efforts it takes, low to high; one model listed none. The start line names the model in use by its full name (`choices`). The fixture keeps these and the mode and the version; since this day it also keeps the start line's model.
+- **`/model` and `/effort` with a value** are taken while the run goes on, as messages: each brings no replay of its own text, one text of the assistant's that says what was set "for this session only", and an end that counts no turn (`choices`).

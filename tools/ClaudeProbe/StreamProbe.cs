@@ -76,7 +76,11 @@ internal static class StreamProbe
     /// window at all. Claude Code is then given the relay's own configuration (<see cref="AskRelay.ConfigText"/>)
     /// and the pipe in its environment, as a window will give them. Empty for every other case.
     /// </param>
-    private sealed record Case(string Name, string What, string[] Options, string Permission, Step[] Steps, Func<Outcome, IEnumerable<string>> Problems, Func<Outcome, IEnumerable<string>>? Findings = null, int LimitSeconds = 90, bool Keeps = false, Func<Outcome, Case>? Next = null, string Relay = "");
+    /// <param name="Files">
+    /// Files written into the case's own folder before its process starts, each by its path under that folder and its
+    /// text (a custom command, <c>.claude/commands/&lt;name&gt;.md</c>); the folder is deleted with the run.
+    /// </param>
+    private sealed record Case(string Name, string What, string[] Options, string Permission, Step[] Steps, Func<Outcome, IEnumerable<string>> Problems, Func<Outcome, IEnumerable<string>>? Findings = null, int LimitSeconds = 90, bool Keeps = false, Func<Outcome, Case>? Next = null, string Relay = "", (string Path, string Text)[]? Files = null);
 
     private static Step Say(string text, Func<StreamLine, bool>? when = null, int delayMs = 0, string? what = null) =>
         new(when, delayMs, ClaudeCodeStream.UserLine(text), what ?? "a message");
@@ -430,6 +434,29 @@ internal static class StreamProbe
 
         new("failure", "a turn that fails: a model that does not exist", ["--model", "no-such-model-of-the-probe"], "allow",
             [Say("Reply with exactly: ok"), Close(Ended)], _ => [], LimitSeconds: 60),
+
+        // A slash command that runs the model: a custom command of the folder's own (stream-mode.md 13, the review of
+        // 2026-11-17: how its own line comes back, and how its replies are told from a command's print).
+        new("custom-command", "a custom command of the folder's, which runs the model, then a message", [], "allow",
+            [
+                Say("/probe-greet", what: "the custom command /probe-greet"),
+                Say("Reply with exactly: ok", Ended, 300, "a message after it"),
+                Close(Ended),
+            ],
+            o => EndedAtLeast(o, 2),
+            Files: [(Path.Combine(".claude", "commands", "probe-greet.md"), "Reply with exactly: greeted\n")]),
+
+        // What the window's lists of the model and the effort are made from (stream-mode.md SM-5.5): the first
+        // request's answer, then each value sent as its slash command, which the stream runs as a message.
+        new("choices", "the first request's models and efforts, then /model and /effort with a value, then a message", [], "allow",
+            [
+                new(null, 0, ClaudeCodeStream.InitializeLine("host-0"), "the first request"),
+                Say("/model haiku", line => line.Has(StreamKind.Control), 300, "the slash command /model with a name"),
+                Say("/effort low", Ended, 300, "the slash command /effort with a level"),
+                Say("Reply with exactly: ok", Ended, 300, "a message after them"),
+                Close(Ended),
+            ],
+            o => EndedAtLeast(o, 3), LimitSeconds: 120),
     ];
 
     /// <summary>From the status note that says compacting to the note of the boundary.</summary>
@@ -602,6 +629,13 @@ internal static class StreamProbe
                     if (c.Relay.Length > 0)
                     {
                         File.WriteAllText(relayConfig, AskRelay.ConfigText(Environment.ProcessPath!));
+                    }
+
+                    foreach (var (path, text) in c.Files ?? [])
+                    {
+                        var file = Path.Combine(folder, path);
+                        Directory.CreateDirectory(Path.GetDirectoryName(file)!);
+                        File.WriteAllText(file, text);
                     }
 
                     string[] options = recordFolder is null

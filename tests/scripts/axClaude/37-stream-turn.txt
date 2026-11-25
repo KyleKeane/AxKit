@@ -10,7 +10,7 @@ file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir st
 file claude.cmd @"%AXKIT_STANDIN%" standin --stream turn %*
-start claude {temp}\st --claude {temp}\claude.cmd --source stream
+start claude {temp}\st --claude {temp}\claude.cmd --source stream --record {temp}\stream.jsonl
 # The folder's question comes first (stream-mode.md SM-7.1): Enter is no, so the yes is its own button.
 expect said Start Claude Code in this folder?
 wait 1500
@@ -31,6 +31,13 @@ expect text # Input 1
 expect text Say ok
 expect text # Output 1 Reply from Claude
 expect text claude: ok
+
+# Check: The raw recording holds the stream's lines as Claude Code wrote them
+# --record over the stream (stream-mode.md SM-6.5): the lines, one a line, with the times in the index beside them.
+expect text System: Recording to
+run findstr /c:control_response stream.jsonl
+run findstr /c:num_turns stream.jsonl
+run findstr /c:elapsedMs stream.jsonl.chunks.txt
 
 # Check: The window says which source feeds it
 menu Say the event sources

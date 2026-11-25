@@ -30,7 +30,7 @@ internal sealed partial class MainForm
     {
         foreach (var setting in ClaudeCodeSettings.All.Where(setting => setting.Kind == ClaudeCodeSettingKind.SlashCommand))
         {
-            menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem(setting.Name, null, (_, _) => SendClaudeCodeCommand(setting.Target)), CommandMark.Act)); // Types a command into Claude Code
+            menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem(setting.Name, null, (_, _) => SendClaudeCodeCommand(setting)), CommandMark.Act)); // Types a command into Claude Code
         }
     }
 
@@ -172,25 +172,29 @@ internal sealed partial class MainForm
         }
     }
 
-    /// <summary>A slash command sent as the user's own typed command would go (FR-14.3): only into an idle Claude, so that it is no answer to a question and waits behind no turn.</summary>
-    private void SendClaudeCodeCommand(string command)
+    /// <summary>
+    /// A slash command sent as the user's own typed command would go (FR-14.3): only into an idle Claude, so that it
+    /// is no answer to a question and waits behind no turn. Over the stream, which has no pickers, the window's own
+    /// list asks for the value first (stream-mode.md SM-5.5).
+    /// </summary>
+    private void SendClaudeCodeCommand(ClaudeCodeSetting setting)
     {
+        var command = setting.Target;
         if (!ProcessRunning)
         {
             Announce(ClaudeStopped, true);
             return;
         }
 
-        if (Streams)
-        {
-            // stream-mode.md SM-5.5: these commands open Claude Code's own pickers, which the stream does not have.
-            SayNotWithStream();
-            return;
-        }
-
         if (!ClaudeIdle)
         {
             Refuse("Not sent: Claude is busy. Choose it again when Claude is done");
+            return;
+        }
+
+        if (Streams)
+        {
+            StreamChoose(setting);
             return;
         }
 

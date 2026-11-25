@@ -288,7 +288,10 @@ through `ClaudeCodeStream.Read`, and what a case expects is held to the lines.
 - `--shape <file>` writes the keys of every kind of line seen. The repository's copy is
   `docs/axClaude/stream-shape.json`, written by `tools\upstream.ps1 -Verify claude`.
 - A new case is a `Case` in `StreamProbe.cs`: its options, its steps, what must hold, and what is only reported. What
-  the model may or may not do (follow an instruction, hand work to a subagent) is reported, not required.
+  the model may or may not do (follow an instruction, hand work to a subagent) is reported, not required. A case's
+  `Files` (2026-11-25) are written into its own folder before its process starts, each by its path under the folder
+  and its text: a custom command (`.claude/commands/<name>.md`, the recording `custom-command`) or a folder's
+  settings; the folder is deleted with the run.
 - Three cases are of axKit's own relay (`relay`, `relay-refused`, `relay-gone`; `AskRelay`, the verb `AxKit.exe ask`).
   Claude Code is given the relay's own configuration and the pipe's name and secret in its environment, as a window
   will give them, and starts this program with the verb `ask`, which runs the same code as `AxKit.exe ask`; the probe
@@ -303,4 +306,6 @@ through `ClaudeCodeStream.Read`, and what a case expects is held to the lines.
   failed, every kept string is masked, and a file that still holds an address, an account path or a name is refused
   and deleted. The raw lines are never written to a file. It prints counts and, once at the end, the names of the
   keys the fixtures do not keep, so that a field the model turns out to need is added by name. The repository's
-  fixtures are recorded with `--record tests\fixtures\streams`; read each through before it is committed.
+  fixtures are recorded with `--record tests\fixtures\streams`; read each through before it is committed. Since
+  2026-11-25 the maker also keeps the start line's model and, of the first request's answer, the models with their
+  names, words and efforts (`Models`), and counts the dropped keys of the start line, a user line and that answer too.

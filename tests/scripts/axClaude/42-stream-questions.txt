@@ -56,4 +56,8 @@ run findstr /c:"the window's answer was allow" st\stream-standin.log
 do Conversation
 expect text Question: What is your favourite colour?
 expect text Question: Which fruits do you like?
+# The answers are on record as Claude Code's screen prints them (stream-mode.md SM-7.5).
+expect text User answered Claude's questions:
+expect text · What is your favourite colour? → teal
+expect text · Which fruits do you like? → Apple, Cherry
 expect text claude: thanks

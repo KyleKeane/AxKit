@@ -4,6 +4,12 @@
 
 - axTask: **a new item's due date and priority can be typed in its title**: "Buy milk tomorrow !high" adds "Buy milk", due tomorrow, priority High, and says so. A date can be 2026-12-01, today, tomorrow, +3 or a weekday; the priority word can be the start of one of the list's choices.
 - axClaude: **a reply over the stream reads as it does over the screen**: its Markdown marks are gone, so stars, backticks, fences and table bars are no longer shown or spoken; a table row reads "Column: cell." for each cell, as Claude Code's own screen reads it.
+- axClaude: **over the stream, a skill or a custom command answers as Claude does**: what Claude writes after `/your-command` is a reply, labelled "claude:", spoken and found with c, and the command stands as "you: /your-command", where a line of raw tags appeared and the replies were plain unspoken rows.
+- axClaude: **over the stream, your answers to Claude's questions stay in the conversation**: "User answered Claude's questions:" and each question with your answer, as with the screen.
+- axClaude: **over the stream, Choose the model and Choose the effort work**: a list of the models or the efforts Claude Code named comes up in the message field's place, the model in use marked; Enter sends your choice, Escape sends nothing. They said "Not with the stream source".
+- axClaude: **over the stream, Ready is said even when Claude Code does not answer the window's first question about itself**, five seconds after the start, where it waited for the first reply.
+- axClaude: **over the stream, Record raw stream for a bug report records**: every line Claude Code writes, to a `.jsonl` file, where the item was not available.
+- axClaude: **a window started with `--ai-tools` gives Claude Code axKit's AI tools over the stream too**, as it does over the screen.
 - axStart: **what you closed lately in axKit is found from anywhere**: the files and folders of the Window menu's Recently closed are among axStart's matches, first when nothing is typed, named as that menu names them; Enter opens one again in its app, Ctrl+O its folder in axFile.
 - axTask: **Ctrl+N in a list types the new title in the list itself**, as F2 renames: a row "New item" opens where the item will stand; Enter adds it, Escape drops it. Enter on the new item opens its form for the rest.
 - axKit: **what a window says as it opens is no longer cut off**: it waits until NVDA has read where the focus landed, so that a first file that cannot play, or Ready, is heard.

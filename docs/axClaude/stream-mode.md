@@ -8,8 +8,9 @@ stream's reader, model and host, from recordings of the real stream; the relay o
 fed by the stream, with its second ways to send; and the folder's trust and the questions in the control area. A
 window made for the stream can hold a conversation and answer what Claude asks. Not built yet: the older
 conversation shown when a session is taken up, the hand-over between the two sources (stage 6), and the live scripts
-(stage 8); a reply's text is made plain since 2026-11-25 (stage 7, SM-4.5). The points of section 12 are taken as proposed until the
-maintainer has heard the mode.
+(stage 8); a reply's text is made plain since 2026-11-25 (stage 7, SM-4.5). The open ends stages 4 and 5 left are
+built since the same day (section 13, the last part), but for the folder's yes, which is remembered for no folder
+until the maintainer says so. The points of section 12 are taken as proposed until the maintainer has heard the mode.
 
 It rests on three things made the same day: the measurements (`stream.md`, twenty cases, all passing), the door
 (`events.md`, section 10), and an inventory of the window, member by member, kept beside the lists until the
@@ -120,7 +121,9 @@ screen, or mixed).
   said by the window's existing rule, which waits for a mode, as with the screen. The answer also lists the
   commands the run takes, with their descriptions, and the models with their effort levels, which the window's
   own lists for a command, the model and the effort can be made from (SM-5.5); and it names the account, which is
-  never read.
+  never read. A Claude Code that does not answer the request is taken to be up once the request has waited five
+  seconds while the process runs (`StreamModel.FirstRequestUnanswered`, `ClaudeModel.Up`), and Ready is said then
+  by the same rule, not only after the first turn (built 2026-11-25).
 
 ## 5. What the window sends
 
@@ -138,9 +141,19 @@ the method writes keystrokes for the screen source and a line for the stream sou
   with it (SPEC.md FR-14.4).
 - SM-5.5 **Slash commands** (`/model`, `/effort`, `/compact`, `/clear`, the user's own): a message, which the stream
   runs as the command (measured). `/model` and `/effort` need their value with them, since no picker opens: the
-  window asks for it in the control area first.
-- SM-5.6 **A command Claude offers** (the `!` line of an offered command): not measured in the stream. Until it is,
-  an offer in stream mode says that it cannot be sent this way and how to run it (section 12).
+  window asks for it in the control area first. Built 2026-11-25: Choose the model and Choose the effort show a list
+  of the window's own (`Streaming/StreamChoice`), the models by the names Claude Code shows with its words about each,
+  the one in use marked when the start line names it by the same name, and the efforts every model takes, each once,
+  low to high, none marked (the answer does not say which is in force); Enter sends `/model` or `/effort` with the
+  value as the user's own typed command, Escape and the interrupt send nothing. Measured with Claude Code 2.1.332
+  (the fixture `choices`): both are taken while the run goes on, each answers with one line of print and an end that
+  counts no turn. Before the first request is answered there is nothing to list, and the item says so. A question
+  of Claude Code's that comes meanwhile goes first, and the list closes unanswered. A skill or a custom command runs
+  the model: its own line comes back as Claude Code's tags, which are read down to the command and never shown, and
+  its texts are Claude's replies (the fixture `custom-command`).
+- SM-5.6 **A command Claude offers** (the `!` line of an offered command): measured 2026-11-25 with Claude Code
+  2.1.332: a `!` line sent over the stream is no shell command; the model gets it as a message, and may call its own
+  shell tool for it. So an offer in stream mode says that it cannot be sent this way and how to run it (section 12).
 - SM-5.7 **Not sent at all in stream mode**, each said in a few words when asked for: Send queued messages now, the
   Send key submenu (Ctrl+C, Ctrl+D, Tab, the arrows), Ctrl+O's guard. Their menu items stay, so that the menus are
   the same in both modes, and say "Not with the stream source" (the words are section 12's).
@@ -160,7 +173,13 @@ mode each is simply absent, and the window says so where the user would look for
 - SM-6.4 **The count of waiting messages while a turn runs**: the window counts the messages it wrote and that have
   not come back.
 - SM-6.5 **The raw recording** of the console's bytes: with the stream source, Developer, Record raw stream records
-  the stream's lines instead, to a file that holds the conversation and is never committed.
+  the stream's lines instead, to a file that holds the conversation and is never committed. Built 2026-11-25: every
+  line Claude Code wrote, as it came, one a line, in a `.jsonl` file the save dialog proposes in
+  `%LOCALAPPDATA%\AxKit\recordings` (outside the project and the synced Documents folder, as the console's), with the
+  same index of each line's time beside it; `--record` does the same from the start. It is the raw stream, as the
+  console's recording is: it holds the user's words, Claude's, the folder's paths and the account the first
+  request's answer names, and is read only through a redacting tool, never committed. What the window wrote is not
+  in it, as the console's recording holds no keystroke.
 - SM-6.6 **The console's size, screen reader mode, the detailed view**: no meaning without a screen.
 
 ## 7. Safety: the folder's trust and the questions
@@ -184,7 +203,9 @@ mode each is simply absent, and the window says so where the user would look for
   names the tool and shows what it would do (the command, the file), read from the request.
 - SM-7.5 **Claude's own questions** (several questions, each with options, some with several answers, each with
   Other for the user's own words) are asked one after another in the control area as today, and go back in one
-  answer when the last is answered. Escape answers No to the whole.
+  answer when the last is answered. Escape answers No to the whole. The answer is written into the conversation as
+  the screen's record of it (since 2026-11-25): "User answered Claude's questions:" and a row for each question with
+  its answer, `LineKind.AnswerRecord`, the words `ClaudeCodeTexts`'s (`StreamAsking.AnswerRecord`).
 - SM-7.6 **What an AI asks for says so** (bundle rule 11): a permission question is Claude's request to run
   something; its first words say who asks, and running is never where the list starts.
 
@@ -318,7 +339,10 @@ off: they are the maintainer's to change by ear once the mode can be used, and e
 2. The trust question's words, and whether a yes is remembered for a folder or asked at every first start.
 3. The permission question's three answers and their words; whether "do not ask again in this session" is offered
    at all.
-4. What a menu item says that the stream cannot do: one short sentence, the same everywhere.
+4. What a menu item says that the stream cannot do: one short sentence, the same everywhere. (Choose the model and
+   Choose the effort no longer say it since 2026-11-25: the stream takes their values, and they ask with a list of
+   the window's own, SM-5.5. Whether that list should say that a model chosen holds for this session only, as
+   Claude Code's own line after it says, is the maintainer's to hear.)
 5. The words for Claude Code's own notes: compacting, the conversation emptied, the mode after a change.
 6. A reply's text: made plain as the screen shows it today (proposed), or shown as the Markdown it was written in.
 7. A command Claude offers, in stream mode: said to be unavailable until measured (proposed), or measured first.
@@ -437,7 +461,7 @@ was: its stand-in scripts pass unchanged, and nothing of its code runs different
   comes back to a mode the user's own settings put the run in and never reaches one the run was not in (SM-5.4).
   A bare Enter says "Nothing to send". What only a screen takes says "Not with the stream source": Send queued
   messages now, the Send key items, Ctrl+O, Choose the model and Choose the effort (their pickers are screens,
-  SM-5.5). A command an AI offers is refused at the door with words for the AI, so that nothing is offered that
+  SM-5.5; since 2026-11-25 these two have a list of the window's own). A command an AI offers is refused at the door with words for the AI, so that nothing is offered that
   could not be sent (SM-5.6).
 - The two switches of the screen's event sources stay in the menu and say, in a window the stream feeds, that the
   setting is for windows the screen feeds (SM-9.4 has what Say the event sources says).
@@ -450,7 +474,10 @@ was: its stand-in scripts pass unchanged, and nothing of its code runs different
   Claude Code does. Seven window scripts use it (`tests/scripts/axClaude/37` to `43`).
 - Left open by this stage, each on the priorities list: `--ai-tools` gives Claude Code nothing over the stream yet;
   how long Claude Code waits for its permission tool is not measured; a version of Claude Code that does not answer
-  the first request is ready only after its first turn.
+  the first request is ready only after its first turn. The first and the last are built since 2026-11-25 (the last
+  part of this section). The wait was measured the same day with 2.1.332: Claude Code waited twenty minutes for a
+  permission tool that held its answer and then took the late answer, so the relay's wait without a limit meets no
+  limit of Claude Code's in a person's time.
 
 **Stage 5, the folder's trust and the questions (2026-11-17).**
 
@@ -478,7 +505,7 @@ was: its stand-in scripts pass unchanged, and nothing of its code runs different
 - The interrupt on a waiting question is no to it and says "Cancelled"; the turn goes on, and an interrupt after
   that ends the turn (SM-5.3).
 - What was answered is not yet written into the conversation as Claude Code's screen writes its record of an
-  answered question; the question's line ("Question: …", found with q) is.
+  answered question; the question's line ("Question: …", found with q) is. Built since 2026-11-25 (SM-7.5).
 
 **What the review of stages 4 and 5 found, repaired the same day (2026-11-17).** Four readers went through the
 branch (threads and lifetime, safety, the screen source, what is heard), and the most severe findings were checked
@@ -498,13 +525,13 @@ by a second reader each. Nothing was found that changes a window the screen feed
 - A slash command that runs the model (a skill, a command of the user's) ends with its turn: its end line counts
   turns, where a command Claude Code runs by itself counts none, and the model waited for an end that never came,
   with Claude working for good. Not recorded yet: how such a command's own line comes back, and whether its replies
-  are told from a command's print, is on the priorities list.
+  are told from a command's print, is on the priorities list. Recorded and built since 2026-11-25 (SM-5.5).
 - A line of the stream with a value of another kind than the reader takes it for is passed over and never thrown
   on: the window reads on a thread where an exception would have ended it with the conversation.
 - A Claude Code over its stream is ended at once when the window closes for good, and the tree's failures to end
   are caught: the wait that would end it later dies with the window's process.
 - Record raw stream is not available in a window the stream feeds, and `--record` says so: it said "Recording
-  started" and wrote nothing (SM-6.5 is still to build).
+  started" and wrote nothing (SM-6.5 is still to build). Built since 2026-11-25 (SM-6.5): it records the stream's lines.
 
 **The audit of 2026-11-21.** A second reader went through the stream source as released in 5.10.0, for what the
 first review had missed. Repaired the same day, each with its test:
@@ -559,3 +586,22 @@ folder's program was never run (a folder whose servers the user approved in Clau
 one thing that is no fault and is worth knowing: Claude Code over its stream follows the user's own settings as with
 the screen, so a user whose Claude Code runs in auto mode is not asked about a command that mode allows by itself;
 the script names the default mode for its run.
+
+**The open ends after stage 5, built (2026-11-25).** Each from a recording first where Claude Code's side was not
+known (two new fixtures, `custom-command` and `choices`, Claude Code 2.1.332; the probe's stream cases can now write
+files into their folder first, a custom command among them):
+
+- *A skill or a custom command* (SM-5.5): its own line comes back as a replay of Claude Code's tags
+  (`<command-message>`, `<command-name>`, and `<command-args>` when it has any), just before its turn. Read as it
+  came, it was a message never sent, and a block of raw tags went into the conversation. The reader makes it a
+  `StreamKind.Command` with the command as typed; the model shows the echo the screen shows (`you: /name`, already
+  there for the window's own command) and takes the turn's texts as Claude's replies, labelled, spoken and found
+  with c, where they would have been a command's print.
+- *The answer to Claude's own questions* is on record as the screen's (SM-7.5).
+- *`--ai-tools`* gives Claude Code axKit's AI tools over the stream: their file beside the relay's under the one
+  `--mcp-config` (SPEC.md FR-9.7). Not measured live with the tools on.
+- *Choose the model and Choose the effort* are lists of the window's own (SM-5.5).
+- *A Claude Code that does not answer the first request* is ready five seconds after its start (SM-4.10). No version
+  that does not answer it was at hand, so the rule is held by a test of the model alone.
+- *The raw recording* records the stream's lines (SM-6.5).
+- Left as it was, by the maintainer's choice: the folder's yes is remembered for no folder (point 2 of section 12).

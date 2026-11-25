@@ -129,6 +129,41 @@ public class ClaudeCodeStreamTests
         Assert.Equal(["--model", "haiku", "--resume", "id"], ClaudeCodeStream.StartArguments("f.json", "tool", "haiku", ["--resume", "id"]).Skip(11));
         Assert.Equal(["--model", "opus"], ClaudeCodeStream.StartArguments("f.json", "tool", "haiku", ["--model", "opus"]).Skip(11));
         Assert.Equal(["--continue"], ClaudeCodeStream.StartArguments("f.json", "tool", string.Empty, ["--continue"]).Skip(11));
+
+        // --ai-tools (SPEC.md FR-9.7): the file of axKit's AI tools beside the relay's, under the same option, which takes several.
+        var withTools = ClaudeCodeStream.StartArguments("f.json", "tool", null, ["--continue"], @"C:\data\claude-mcp.json");
+        Assert.Equal(["--mcp-config", "f.json", @"C:\data\claude-mcp.json", "--permission-prompt-tool", "tool", "--continue"], withTools.Skip(7));
+        Assert.Equal(ClaudeCodeStream.StartArguments("f.json", "tool", null, []), ClaudeCodeStream.StartArguments("f.json", "tool", null, [], string.Empty));
+    }
+
+    [Fact]
+    public void A_command_that_runs_the_model_comes_back_as_its_tags_read_down_to_the_command()
+    {
+        // The fixture custom-command (2.1.332): the tags are read, never kept as a message's text.
+        var back = ClaudeCodeStream.Read("""{"type":"user","isReplay":true,"message":{"content":"<command-message>probe-greet</command-message>\n<command-name>/probe-greet</command-name>"}}""");
+        Assert.Equal([new StreamPart(StreamKind.Command, "/probe-greet", "", false)], back.Parts);
+
+        var withArguments = ClaudeCodeStream.Read("""{"type":"user","isReplay":true,"message":{"content":"<command-message>review</command-message>\n<command-name>/review</command-name>\n<command-args> main </command-args>"}}""");
+        Assert.Equal("/review main", Assert.Single(withArguments.Parts).Text);
+
+        // A message of the user's that only mentions a tag is a message.
+        var mention = ClaudeCodeStream.Read("""{"type":"user","isReplay":true,"message":{"content":"What does <command-name> mean?"}}""");
+        Assert.Equal(StreamKind.Message, Assert.Single(mention.Parts).Kind);
+    }
+
+    [Fact]
+    public void The_first_requests_answer_gives_the_models_and_a_start_line_the_model_in_use()
+    {
+        var answer = ClaudeCodeStream.Read("""{"type":"control_response","response":{"subtype":"success","request_id":"a-1","response":{"current_permission_mode":"default","models":[{"value":"haiku","displayName":"Haiku 5.5","description":"Fastest","supportedEffortLevels":["low","high"]},{"value":"old","displayName":"Old"},{"value":"two words"},{"displayName":"no value"},{"value":"x","supportedEffortLevels":["low","bad level"]}]}}}""");
+        Assert.Equal(["haiku", "old", "x"], answer.Models.Select(model => model.Value));
+        Assert.Equal(["low", "high"], answer.Models[0].Efforts);
+        Assert.Empty(answer.Models[1].Efforts);
+        // A level of more than one word is passed over: it is sent after its command as one word.
+        Assert.Equal(["low"], answer.Models[2].Efforts);
+
+        var start = ClaudeCodeStream.Read("""{"type":"system","subtype":"init","model":"claude-haiku-5-5","permissionMode":"default","session_id":"s"}""");
+        Assert.Equal("claude-haiku-5-5", start.Model);
+        Assert.Empty(ClaudeCodeStream.Read("""{"type":"result","subtype":"success"}""").Models);
     }
 
     [Theory]

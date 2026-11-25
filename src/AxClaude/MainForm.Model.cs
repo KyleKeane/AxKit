@@ -96,7 +96,7 @@ internal sealed partial class MainForm
             }
         }
 
-        if (!_readyAnnounced && ProcessRunning && _model.Mode is not null && !ClaudeWorks && !_model.PromptPending)
+        if (!_readyAnnounced && ProcessRunning && _model.Up && !ClaudeWorks && !_model.PromptPending)
         {
             _readyAnnounced = true;
             _model.HideReplay = false;
@@ -344,7 +344,7 @@ internal sealed partial class MainForm
             : _model.PendingScreen is { } screen && ScreenActions.IsInformation(screen) ? "showing " + ScreenActions.StatusName(screen)
             : _model.PromptPending ? "waiting for your answer"
             : ClaudeWorks ? ("working " + (_model.Spinner ?? string.Empty)).Trim()
-            : _model.Mode is not null ? "ready"
+            : _model.Up ? "ready"
             : "starting";
         var parts = new List<string> { "Claude: " + state };
         if (_model.QueuedMessages > 0)

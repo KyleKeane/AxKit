@@ -39,8 +39,10 @@ menu Ctrl+D
 expect said Not with the stream source
 keys ctrl+o
 expect said Not with the stream source
+# Choose the model is a list of the window's own over the stream, made from the first request's answer, which in
+# this recording lists no models (50-stream-choices.txt has one that does).
 menu Choose the model
-expect said Not with the stream source
+expect said Claude Code has not listed them. Type /model and a value as a message
 
 # Check: Nothing is interrupted or sent when there is nothing
 do Interrupt

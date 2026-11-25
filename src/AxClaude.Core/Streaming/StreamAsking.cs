@@ -188,6 +188,34 @@ public sealed class StreamAsking
             : null;
 
     /// <summary>
+    /// Once Claude's own questions are answered as a whole: the record Claude Code's screen prints in their place,
+    /// its label, then a row for each question with the answer given ("· Which colour? → Red"), so that the
+    /// conversation keeps what was answered as it does with the screen (<see cref="LineKind.AnswerRecord"/>). Empty
+    /// for a tool call's question, before the last answer, and after a refusal, which answers nothing.
+    /// </summary>
+    public IReadOnlyList<string> AnswerRecord
+    {
+        get
+        {
+            if (!_ask.IsQuestion || _at < _ask.Questions.Count)
+            {
+                return [];
+            }
+
+            List<string> rows = [ClaudeCodeTexts.AnsweredLabelText];
+            foreach (var asked in _ask.Questions)
+            {
+                if (_answers.TryGetValue(asked.Text, out var answer))
+                {
+                    rows.Add(ClaudeCodeTexts.AnsweredRowStart + Shown(asked.Text) + ClaudeCodeTexts.AnsweredArrow + Shown(answer));
+                }
+            }
+
+            return rows;
+        }
+    }
+
+    /// <summary>
     /// Escape. While the user's own words are awaited, back to the question's list, and null. Else no to the whole:
     /// the answer that refuses, also for Claude's own questions (SM-7.5).
     /// </summary>

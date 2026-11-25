@@ -33,10 +33,10 @@ public sealed class StreamModelTests
     }
 
     [Fact]
-    public void Nineteen_cases_are_recorded()
+    public void Twenty_one_cases_are_recorded()
     {
         // A fixture taken away by mistake would make the theory above pass with fewer cases.
-        Assert.Equal(19, StreamReplay.Cases().Count());
+        Assert.Equal(21, StreamReplay.Cases().Count());
     }
 
     [Fact]
@@ -220,8 +220,8 @@ public sealed class StreamModelTests
     public void A_slash_command_that_runs_the_model_ends_with_its_turn_and_leaves_Claude_idle()
     {
         // A skill or a custom command is a turn of the model's: its end line counts turns, where a command Claude
-        // Code runs by itself counts none. The command is no longer awaited either way; not recorded yet, so the
-        // lines here are the stream's shapes with a text of the test's own.
+        // Code runs by itself counts none. The command is no longer awaited either way; the lines here are the
+        // stream's shapes with a text of the test's own (the fixture custom-command records one such command).
         var model = new StreamModel();
         var bells = 0;
         model.Bell += () => bells++;
@@ -244,6 +244,91 @@ public sealed class StreamModelTests
         Assert.False(model.Working);
         Assert.Equal(2, bells);
         Assert.Equal("claude: hi", model.Lines[^1].Text);
+    }
+
+    [Fact]
+    public void A_custom_commands_own_line_is_its_echo_and_its_texts_are_replies()
+    {
+        // The fixture custom-command (Claude Code 2.1.332): the command's own line comes back as a replay of Claude
+        // Code's tags just before the turn's texts. The tags are never shown; the command keeps the echo it got when it
+        // was sent, as the screen shows one; and what Claude writes is a reply, labelled, spoken and found with c.
+        var log = StreamReplay.Run("custom-command", out var model);
+
+        Assert.DoesNotContain(model.Lines, line => line.Text.Contains("<command", StringComparison.Ordinal));
+        Assert.Single(model.Lines, line => line.Kind == LineKind.UserEcho && line.Text == "you: /probe-greet");
+        Assert.Equal(LineKind.ClaudeReply, model.Lines[1].Kind);
+        Assert.Equal("claude: greeted", model.Lines[1].Text);
+        // Its replies start a response, and its turn's end is Done; so does the message's after it.
+        Assert.Equal(2, log.Count(entry => entry == "    the response started"));
+        Assert.Equal(2, log.Count(entry => entry == "    the bell"));
+        Assert.False(model.Working);
+        Assert.Equal("claude: ok", model.Lines[^1].Text);
+    }
+
+    [Fact]
+    public void A_command_the_window_never_sent_gets_the_echo_the_screen_shows()
+    {
+        var model = new StreamModel();
+        model.Take(ClaudeCodeStream.Read("""{"type":"system","subtype":"init","permissionMode":"default","session_id":"s"}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"user","isReplay":true,"message":{"content":"<command-message>review</command-message>\n<command-name>/review</command-name>\n<command-args>main</command-args>"}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"text","text":"Looks fine"}]}}"""));
+
+        Assert.Equal(["you: /review main", "claude: Looks fine"], model.Lines.Select(line => line.Text));
+        Assert.Equal([LineKind.UserEcho, LineKind.ClaudeReply], model.Lines.Select(line => line.Kind));
+    }
+
+    [Fact]
+    public void The_first_requests_answer_lists_the_models_and_a_value_is_set_by_its_command()
+    {
+        // The fixture choices: the models with their efforts, before any message; /model and /effort with a value are
+        // taken mid-run as messages, each printing one line and ringing no bell.
+        var log = StreamReplay.Run("choices", out var model);
+
+        Assert.Equal(14, model.Models.Count);
+        var haiku = Assert.Single(model.Models, choice => choice.Value == "haiku");
+        Assert.Equal("Haiku 5.5", haiku.Name);
+        Assert.Equal(["low", "medium", "high", "xhigh", "max"], haiku.Efforts);
+        Assert.Empty(Assert.Single(model.Models, choice => choice.Value == "claude-haiku-4-5-20251001").Efforts);
+        Assert.Equal("claude-haiku-5-5", model.ModelInUse);
+        Assert.Contains(model.Lines, line => line.Kind == LineKind.Plain && line.Text.StartsWith("Set effort level to low", StringComparison.Ordinal));
+        Assert.Equal(1, log.Count(entry => entry == "    the bell"));
+    }
+
+    [Fact]
+    public void A_Claude_Code_that_does_not_answer_the_first_request_is_up_when_its_limit_has_passed()
+    {
+        // SM-4.10: Ready waits for the source to be up. Without an answer to the first request no mode is named until
+        // the first turn; the window's limit then says it is up all the same.
+        var model = new StreamModel();
+        var changes = 0;
+        model.Changed += () => changes++;
+        Assert.False(model.Up);
+
+        model.FirstRequestUnanswered();
+        Assert.True(model.Up);
+        Assert.Null(model.Mode);
+        Assert.Equal(1, changes);
+        model.FirstRequestUnanswered();
+        Assert.Equal(1, changes);
+
+        // A new run asks again.
+        model.ResetScreen();
+        Assert.False(model.Up);
+
+        // A mode named is up by itself, and the limit then changes nothing.
+        StreamReplay.Run("start", out var answered);
+        Assert.True(answered.Up);
+    }
+
+    [Fact]
+    public void The_record_of_an_answer_is_Claude_Codes_own_rows_and_no_reply()
+    {
+        var model = new StreamModel();
+        model.AddAnswerRecord([ClaudeCodeTexts.AnsweredLabelText, "· Which colour? → Red"]);
+        model.AddAnswerRecord([]);
+
+        Assert.Equal([LineKind.AnswerRecord, LineKind.AnswerRecord], model.Lines.Select(line => line.Kind));
+        Assert.All(model.Lines, line => Assert.True(line.Committed));
     }
 
     [Fact]

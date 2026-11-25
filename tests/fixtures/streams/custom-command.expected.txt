@@ -1,0 +1,37 @@
+> message: /probe-greet
+    no block for it
+    now: working, mode not known, 0 waiting
+< Started, mode default, model claude-haiku-5-5
+    now: working, mode manual mode on, 0 waiting
+< Note thinking_tokens
+< Note thinking_tokens
+< Command: /probe-greet
+< Thinking
+    the response started
+< Text: greeted
+< Note rate_limit_event
+< Ended, well, turns 1, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> message: Reply with exactly: ok
+    a block for it
+    now: working, mode manual mode on, 0 waiting
+< Started, mode default, model claude-haiku-5-5
+< Message: Reply with exactly: ok
+< Text: ok
+    the response started
+< Ended, well, turns 1, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> closed
+the process ended with code 0
+
+-- the conversation
+[UserEcho] you: /probe-greet
+[ClaudeReply] claude: greeted
+[InputMarker h1] # Input 1
+[UserMessage] Reply with exactly: ok
+[UserMessage] 
+[OutputMarker h1] # Output 1 Reply from Claude
+[UserMessage] 
+[ClaudeReply] claude: ok

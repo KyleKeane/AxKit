@@ -45,7 +45,21 @@ public enum StreamKind
 
     /// <summary>What a slash command printed, come back in the user's place inside Claude Code's own tag (<c>/compact</c>: "Compacted"); the text is what stands in the tag.</summary>
     CommandOutput,
+
+    /// <summary>
+    /// A slash command that runs the model (a skill, a custom command) taken up: its own line come back as a replay of
+    /// Claude Code's tags, just before the turn it starts (the fixture custom-command). The text is the command as
+    /// typed, its slash, its name and its arguments, read out of the tags.
+    /// </summary>
+    Command,
 }
+
+/// <summary>
+/// One model the first request's answer lists (the fixture choices): the name Claude Code takes for it
+/// (<c>/model haiku</c>), the name it shows, its words about it, and the efforts it takes, low to high, empty when it
+/// takes none.
+/// </summary>
+public sealed record StreamModelChoice(string Value, string Name, string Description, IReadOnlyList<string> Efforts);
 
 /// <summary>
 /// One thing a line holds. <see cref="Text"/> is the text of a <see cref="StreamKind.Text"/>, a
@@ -94,6 +108,12 @@ public sealed record StreamLine(IReadOnlyList<StreamPart> Parts, bool FromWorker
 
     /// <summary>The slash commands this run takes as a message, by name without the slash, on a <see cref="StreamKind.Started"/> line; the user's own commands and skills are among them, so the names are never logged as a list.</summary>
     public IReadOnlyList<string> Commands { get; init; } = [];
+
+    /// <summary>The model in use by its full name, on a <see cref="StreamKind.Started"/> line (<c>claude-haiku-5-5</c>); empty when not named.</summary>
+    public string Model { get; init; } = string.Empty;
+
+    /// <summary>The models the run can be given, on the answer to the first request (<see cref="ClaudeCodeStream.InitializeLine"/>); empty on every other line.</summary>
+    public IReadOnlyList<StreamModelChoice> Models { get; init; } = [];
 
     /// <summary>
     /// On a note of the kind status: Claude Code's word for what it is doing beside a turn (<c>compacting</c> while
@@ -202,10 +222,18 @@ public static class ClaudeCodeStream
     /// they were given. The file's option takes every word up to the next option, so an option always follows it.
     /// Nothing here asks less than the user's own Claude Code would (SM-7.2): no permission mode is named. And the
     /// session is kept in Claude Code's store, since it is the user's conversation: never <see cref="NoSessionOption"/>.
+    /// <paramref name="toolsConfigFile"/>, the file of axKit's AI tools (SPEC.md FR-9.7, docs/axKit/mcp.md MC-6.9), is
+    /// named beside the relay's when the window gives Claude Code the tools: the option takes several files.
     /// </summary>
-    public static IReadOnlyList<string> StartArguments(string relayConfigFile, string relayTool, string? model, IReadOnlyList<string> userArguments)
+    public static IReadOnlyList<string> StartArguments(string relayConfigFile, string relayTool, string? model, IReadOnlyList<string> userArguments, string? toolsConfigFile = null)
     {
-        List<string> arguments = [.. Options, ReplayOption, .. AxKit.Core.Mcp.McpClaudeCode.ConfigArguments(relayConfigFile), PermissionToolOption, relayTool];
+        List<string> arguments = [.. Options, ReplayOption, .. AxKit.Core.Mcp.McpClaudeCode.ConfigArguments(relayConfigFile)];
+        if (!string.IsNullOrEmpty(toolsConfigFile))
+        {
+            arguments.Add(toolsConfigFile);
+        }
+
+        arguments.AddRange([PermissionToolOption, relayTool]);
         if (!string.IsNullOrEmpty(model) && !userArguments.Contains(ModelOption))
         {
             arguments.Add(ModelOption);
@@ -454,6 +482,7 @@ public static class ClaudeCodeStream
                         Mode = Text(root, "permissionMode"),
                         Session = Text(root, "session_id"),
                         Commands = Texts(root, "slash_commands"),
+                        Model = Text(root, "model"),
                     };
                 case "system" when subtype == "status":
                     return StreamLine.Nothing with { Parts = [new(StreamKind.Note, subtype, string.Empty, false)], Status = Text(root, "status"), Mode = Text(root, "permissionMode") };
@@ -482,7 +511,8 @@ public static class ClaudeCodeStream
                 case "control_response":
                     var failed = !(root.TryGetProperty("response", out var response) && Text(response, "subtype") == "success");
                     // The answer to the request a host sends first (InitializeLine) names the permission mode in
-                    // force and Claude Code's version, before any message. It also names the account: never read.
+                    // force and Claude Code's version, before any message, and the models with their efforts. It
+                    // also names the account: never read.
                     var told = root.TryGetProperty("response", out var answered) && answered.ValueKind == JsonValueKind.Object && answered.TryGetProperty("response", out var inner) ? inner : default;
                     return StreamLine.Nothing with
                     {
@@ -490,6 +520,7 @@ public static class ClaudeCodeStream
                         Failed = failed,
                         Mode = Text(told, "current_permission_mode"),
                         Version = Text(told, "claude_code_version"),
+                        Models = ModelsOf(told),
                     };
                 case "stream_event":
                     var piece = root.TryGetProperty("event", out var happened) && happened.TryGetProperty("delta", out var delta) ? Text(delta, "text") : string.Empty;
@@ -567,6 +598,12 @@ public static class ClaudeCodeStream
                 var end = said.IndexOf(CommandOutputClose, StringComparison.Ordinal);
                 parts.Add(new(StreamKind.CommandOutput, said[CommandOutputOpen.Length..(end < 0 ? said.Length : end)].Trim(), string.Empty, false));
             }
+            else if (Tagged(said, CommandNameOpen, CommandNameClose) is { Length: > 0 } command)
+            {
+                // A command that runs the model, taken up: its own line is Claude Code's tags, never shown as they came.
+                var arguments = Tagged(said, CommandArgsOpen, CommandArgsClose) ?? string.Empty;
+                parts.Add(new(StreamKind.Command, arguments.Trim().Length > 0 ? command.Trim() + " " + arguments.Trim() : command.Trim(), string.Empty, false));
+            }
             else
             {
                 parts.Add(new(StreamKind.Message, said, string.Empty, false));
@@ -621,6 +658,54 @@ public static class ClaudeCodeStream
     /// <summary>Claude Code's tag around what a slash command printed, when that comes back in the user's place.</summary>
     private const string CommandOutputOpen = "<local-command-stdout>";
     private const string CommandOutputClose = "</local-command-stdout>";
+
+    /// <summary>
+    /// Claude Code's tags around a command that runs the model, when its own line comes back:
+    /// <c>&lt;command-message&gt;probe-greet&lt;/command-message&gt;\n&lt;command-name&gt;/probe-greet&lt;/command-name&gt;</c>
+    /// (2.1.332, the fixture custom-command), with its arguments in a third tag of their own when it has any.
+    /// </summary>
+    private const string CommandNameOpen = "<command-name>";
+    private const string CommandNameClose = "</command-name>";
+    private const string CommandArgsOpen = "<command-args>";
+    private const string CommandArgsClose = "</command-args>";
+
+    /// <summary>What stands between a tag and its end in a text; null when the tag is not there.</summary>
+    private static string? Tagged(string text, string open, string close)
+    {
+        var start = text.IndexOf(open, StringComparison.Ordinal);
+        if (start < 0)
+        {
+            return null;
+        }
+
+        start += open.Length;
+        var end = text.IndexOf(close, start, StringComparison.Ordinal);
+        return end < 0 ? null : text[start..end];
+    }
+
+    private static bool OneWord(string text) => !text.Any(c => char.IsWhiteSpace(c) || char.IsControl(c));
+
+    /// <summary>The models of the first request's answer: each with a name Claude Code takes; the efforts are the texts of its list.</summary>
+    private static IReadOnlyList<StreamModelChoice> ModelsOf(JsonElement told)
+    {
+        if (told.ValueKind != JsonValueKind.Object || !told.TryGetProperty("models", out var list) || list.ValueKind != JsonValueKind.Array)
+        {
+            return [];
+        }
+
+        var models = new List<StreamModelChoice>();
+        foreach (var model in list.EnumerateArray())
+        {
+            // A name or a level is sent back after its slash command as one word: one with a space or a control
+            // character in it could add a word of its own, and is passed over.
+            if (Text(model, "value") is { Length: > 0 } value && OneWord(value))
+            {
+                models.Add(new(value, Text(model, "displayName"), Text(model, "description"), [.. Texts(model, "supportedEffortLevels").Where(OneWord)]));
+            }
+        }
+
+        return models;
+    }
 
     /// <summary>
     /// The members of a tool's input that say what a call is about, in the order they are looked for: a command

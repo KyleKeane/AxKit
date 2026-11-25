@@ -424,14 +424,17 @@ switch on and a new window on a folder of your own:
 4. Claude's own questions (script 42): "Question 1 of 2:" and the question, the answers by number, "Other" last.
    Other: "Sent: 4, Other. Your words next", a field "You chose Other. Your answer"; Escape goes back to the list;
    words and Enter: "Sent:" with the words, "Next question". A question with several answers has check boxes:
-   Space ticks, Enter sends.
+   Space ticks, Enter sends. After the last answer the conversation holds "User answered Claude's questions:" and a
+   line for each question with its answer, as with the screen, and Claude's reply is not read with them.
 5. The interrupt (script 43): Shift+Escape on a waiting question says "Cancelled" and the turn goes on; Shift+Escape
    while Claude works says "Interrupted", F8 says "Claude: ready", and no "Done" is said. With nothing running:
    "Nothing to interrupt".
 6. The mode key and what only a screen takes (script 38): Ctrl+Shift+M says the next mode, "accept edits on", and
-   F8 has it. Send queued messages now, the Send key items, Ctrl+O and Choose the model say "Not with the stream
-   source". Enter in the empty message field says "Nothing to send". Whether that one sentence is the right one
-   (section 12, point 4).
+   F8 has it. Send queued messages now, the Send key items and Ctrl+O say "Not with the stream source". Enter in the
+   empty message field says "Nothing to send". Whether that one sentence is the right one (section 12, point 4).
+   Choose the model and Choose the effort (script 50): a list of the window's own, "Choose the model. 1. Default
+   (recommended)", the model in use marked; Enter says "Sent:" with the name, and the conversation gets "you: /model"
+   with the name and Claude Code's line under it; Escape says "Cancelled" and sends nothing.
 7. The end and the way back (script 39): when Claude Code ends by itself, "Claude stopped"; when that is within
    seconds of its start, a notice "Claude Code ended right after its start" offers "Open with the screen"; Escape
    stays. Options, Developer, Say the event sources: "Source: the stream. Claude Code runs." and the numbers.

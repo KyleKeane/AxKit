@@ -225,7 +225,8 @@ internal static class StreamFixtureMaker
         {
             case "system" when subtype == "init":
             {
-                var kept = Pick(line!, "type", "subtype", "claude_code_version", "permissionMode");
+                // The model in use too, by its name, for the window's list of the models (SM-5.5).
+                var kept = cleaner.Pick(line!, "init", "type", "subtype", "claude_code_version", "permissionMode", "model");
                 kept["session_id"] = cleaner.Ids.Of("session", line!["session_id"]);
                 return kept;
             }
@@ -315,7 +316,7 @@ internal static class StreamFixtureMaker
 
             case "user":
             {
-                var kept = Pick(line!, "type", "isReplay", "isSynthetic");
+                var kept = cleaner.Pick(line!, "user", "type", "isReplay", "isSynthetic", "isMeta");
                 kept["parent_tool_use_id"] = cleaner.Ids.Of("call", line!["parent_tool_use_id"]);
                 var content = (line["message"] as JsonObject)?["content"];
                 JsonNode? keptContent = null;
@@ -384,11 +385,18 @@ internal static class StreamFixtureMaker
                 if (line!["response"] is JsonObject response)
                 {
                     var answered = Pick(response, "subtype", "request_id");
-                    // Of what the first request's answer tells, the mode in force and the version alone: it also
-                    // names the account, the user's commands, agents and models, and none of that is kept.
+                    // Of what the first request's answer tells, the mode in force, the version and the models with
+                    // their efforts (what the window's lists of the model and the effort are made from, SM-5.5): it
+                    // also names the account and lists the user's commands and agents, and none of that is kept.
                     if (response["response"] is JsonObject told)
                     {
-                        answered["response"] = Pick(told, "current_permission_mode", "claude_code_version");
+                        var said = cleaner.Pick(told, "initialize", "current_permission_mode", "claude_code_version");
+                        if (told["models"] is JsonArray models)
+                        {
+                            said["models"] = Models(models, cleaner);
+                        }
+
+                        answered["response"] = said;
                     }
 
                     kept["response"] = answered;
@@ -424,6 +432,33 @@ internal static class StreamFixtureMaker
 
             return picked;
         }
+    }
+
+    /// <summary>The models the first request's answer lists: each with its name, its words and the efforts it takes; nothing else of them.</summary>
+    private static JsonArray Models(JsonArray models, Cleaner cleaner)
+    {
+        var kept = new JsonArray();
+        foreach (var model in models.OfType<JsonObject>())
+        {
+            var one = cleaner.Pick(model, "initialize.models", "value", "displayName", "description", "supportsEffort", "supportedEffortLevels");
+            if (model["supportedEffortLevels"] is JsonArray levels)
+            {
+                var texts = new JsonArray();
+                foreach (var level in levels)
+                {
+                    if (cleaner.Scalar(level) is { } text)
+                    {
+                        texts.Add(text);
+                    }
+                }
+
+                one["supportedEffortLevels"] = texts;
+            }
+
+            kept.Add(one);
+        }
+
+        return kept;
     }
 
     /// <summary>

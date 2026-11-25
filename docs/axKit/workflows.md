@@ -293,8 +293,12 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Refuse a command Claude asks to run
     - Stop a reply Claude is writing
     - Answer a question Claude asks you
-48. **Have a short exchange with Claude**
-49. **Answer a set of two questions from Claude**
+48. **Choose the model and the effort over Claude Code's stream**
+    - Choose the model from the list Claude Code gave
+    - Choose the effort
+    - Send a message after the choices
+49. **Have a short exchange with Claude**
+50. **Answer a set of two questions from Claude**
 
 ## axClip
 

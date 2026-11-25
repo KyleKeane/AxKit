@@ -44,7 +44,7 @@ public sealed class StreamModel : ClaudeModel
     /// <summary>The slash commands the window sent whose end line has not come: what the assistant writes meanwhile, with no message come back, is a command's print and no reply.</summary>
     private int _commands;
 
-    /// <summary>A message has come back in the turn that runs: from there on its texts are Claude's replies.</summary>
+    /// <summary>A message, or a command that runs the model, has come back in the turn that runs: from there on its texts are Claude's replies.</summary>
     private bool _taken;
 
     /// <summary><see cref="ResponseStarted"/> was raised for the turn that runs.</summary>
@@ -54,7 +54,7 @@ public sealed class StreamModel : ClaudeModel
     /// The turn that runs began with a slash command of the window's awaited and no message: its end line is that
     /// command's, whatever turns it counts. A command Claude Code runs by itself counts none (/model); a skill or a
     /// custom command runs the model and counts them, and without this its end left the command awaited, and Claude
-    /// working, for good (found by the review of 2026-11-17; not yet recorded).
+    /// working, for good (found by the review of 2026-11-17; recorded 2026-11-25, the fixture custom-command).
     /// </summary>
     private bool _commandTurn;
 
@@ -102,6 +102,53 @@ public sealed class StreamModel : ClaudeModel
     /// <summary>Claude Code's version as the first start line gave it; empty before.</summary>
     public string Version { get; private set; } = string.Empty;
 
+    /// <summary>The model in use by its full name, as the last start line gave it; empty before the first turn.</summary>
+    public string ModelInUse { get; private set; } = string.Empty;
+
+    /// <summary>The models the run can be given, as the answer to the first request listed them (SM-5.5); empty until it came.</summary>
+    public IReadOnlyList<StreamModelChoice> Models { get; private set; } = [];
+
+    /// <summary>The first request waited its limit unanswered while the process ran: Claude Code is up without a mode named.</summary>
+    private bool _upUnnamed;
+
+    /// <summary>Up when a mode is named, or when the first request went unanswered for its limit (SM-4.10): a Claude Code that does not answer it is ready before its first turn.</summary>
+    public override bool Up => Mode is not null || _upUnnamed;
+
+    /// <summary>
+    /// The first request has waited its limit and no answer came, while the process runs: Claude Code is taken to be
+    /// up, so that the window says Ready by its own rule without waiting for a first turn. Nothing when a mode is named.
+    /// </summary>
+    public void FirstRequestUnanswered()
+    {
+        if (Mode is not null || _upUnnamed)
+        {
+            return;
+        }
+
+        _upUnnamed = true;
+        RaiseChanged();
+    }
+
+    /// <summary>
+    /// The record of the user's answer to Claude's own questions, as Claude Code's screen prints it in the answered
+    /// question's place (<see cref="LineKind.AnswerRecord"/>; <see cref="StreamAsking.AnswerRecord"/> gives the rows):
+    /// Claude Code's words about the user, not Claude's reply, so it is no reply line and is not spoken as one.
+    /// </summary>
+    public void AddAnswerRecord(IReadOnlyList<string> rows)
+    {
+        if (rows.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var row in rows)
+        {
+            _lines.Add(Final(LineKind.AnswerRecord, row));
+        }
+
+        RaiseChanged();
+    }
+
     public override event Action? ResponseStarted;
 
     public override event Action<string>? Announcement;
@@ -136,6 +183,7 @@ public sealed class StreamModel : ClaudeModel
                 case StreamKind.Started:
                     Session = line.Session;
                     Version = Version.Length > 0 ? Version : line.Version;
+                    ModelInUse = line.Model.Length > 0 ? line.Model : ModelInUse;
                     changed |= SetMode(line.Mode, announce: false);
                     if (!_turn)
                     {
@@ -157,6 +205,10 @@ public sealed class StreamModel : ClaudeModel
 
                 case StreamKind.Message:
                     changed |= TakeMessage(part.Text);
+                    break;
+
+                case StreamKind.Command:
+                    changed |= TakeCommand(part.Text);
                     break;
 
                 case StreamKind.Text when !line.FromWorker:
@@ -198,6 +250,7 @@ public sealed class StreamModel : ClaudeModel
                     // The answer to the request a host sends first names the mode in force and the version, before
                     // any message: the first mode known is no change, and is not said.
                     Version = Version.Length > 0 ? Version : line.Version;
+                    Models = line.Models.Count > 0 ? line.Models : Models;
                     changed |= SetMode(line.Mode, announce: false);
                     break;
 
@@ -380,6 +433,9 @@ public sealed class StreamModel : ClaudeModel
         Background = null;
         BackgroundAgents = [];
         Session = string.Empty;
+        ModelInUse = string.Empty;
+        Models = [];
+        _upUnnamed = false;
     }
 
     /// <summary>A message came back: its block goes in now unless it went in when it was sent, and it is no longer awaited.</summary>
@@ -401,6 +457,25 @@ public sealed class StreamModel : ClaudeModel
         Place(sent);
         Count();
         return placed;
+    }
+
+    /// <summary>
+    /// A slash command that runs the model was taken up (a skill, a custom command; the fixture custom-command): its
+    /// own line comes back as Claude Code's tags, which are never shown. From here the turn's texts are Claude's
+    /// replies, labelled, spoken and found as any reply, and no command's print. The window's own command has its
+    /// echo since it was sent, as the screen shows one (<c>you: /name</c>); a command the window never sent gets the
+    /// same echo here.
+    /// </summary>
+    private bool TakeCommand(string command)
+    {
+        _taken = true;
+        if (_commands > 0)
+        {
+            return false;
+        }
+
+        _lines.Add(Final(LineKind.UserEcho, $"{ClaudeCodeTexts.YouLabel} {command}"));
+        return true;
     }
 
     /// <summary>A text of the assistant's: the service's error, a slash command's print, or a reply of Claude's, by what the turn is.</summary>

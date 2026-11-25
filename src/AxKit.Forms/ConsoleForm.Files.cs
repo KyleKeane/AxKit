@@ -55,13 +55,14 @@ public abstract partial class ConsoleForm
             return;
         }
 
+        var (title, filter, extension) = RecordingFile;
         using var dialog = new SaveFileDialog
         {
-            Title = "Record the raw console stream",
-            Filter = "Console recording (*.vt)|*.vt|All files (*.*)|*.*",
-            FileName = $"{AppName.ToLowerInvariant()}-{DateTime.Now:yyyyMMdd-HHmm}.vt",
+            Title = title,
+            Filter = filter,
+            FileName = $"{AppName.ToLowerInvariant()}-{DateTime.Now:yyyyMMdd-HHmm}.{extension}",
             AddExtension = true,
-            DefaultExt = "vt",
+            DefaultExt = extension,
             // A recording holds everything on screen, account details and paths included: outside the project (axClaude
             // D34), and in the local profile rather than Documents, which OneDrive often syncs (security audit S-24).
             InitialDirectory = RecordingsFolder(),
@@ -71,6 +72,22 @@ public abstract partial class ConsoleForm
             StartRecording(dialog.FileName);
         }
     }
+
+    /// <summary>
+    /// The save dialog's title, filter and extension for a recording: the console's bytes as a <c>.vt</c> file. A window
+    /// that is fed otherwise names its own (axClaude over Claude Code's stream: its lines, a <c>.jsonl</c> file).
+    /// </summary>
+    protected virtual (string Title, string Filter, string Extension) RecordingFile =>
+        ("Record the raw console stream", "Console recording (*.vt)|*.vt|All files (*.*)|*.*", "vt");
+
+    /// <summary>A recording runs: what a window fed otherwise asks before it makes the bytes to <see cref="Record"/>.</summary>
+    protected bool Recording => _recorder is not null;
+
+    /// <summary>
+    /// What a window fed otherwise than by the pseudo console records, as it came, on the thread that read it: the
+    /// same file, index and folder as the console's bytes. Nothing while no recording runs.
+    /// </summary>
+    protected void Record(ReadOnlySpan<byte> data) => _recorder?.Write(data);
 
     /// <summary>%LOCALAPPDATA%\AxKit\recordings, made when first asked for.</summary>
     private static string RecordingsFolder()

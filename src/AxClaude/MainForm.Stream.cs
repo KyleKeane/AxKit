@@ -30,6 +30,17 @@ internal sealed partial class MainForm
     /// <summary>As many of the last lines Claude Code wrote as errors as are shown when it ends by itself.</summary>
     private const int StreamErrorLines = 5;
 
+    /// <summary>How long the first request waits for its answer (measured: some 0.6 s) before Claude Code is taken to be up without it (SM-4.10).</summary>
+    private const int StreamFirstRequestMs = 5000;
+
+    /// <summary>The window's own list of a value for Choose the model or Choose the effort (SM-5.5); null when none is asked.</summary>
+    private StreamChoice? _choosing;
+
+    /// <summary>The recording of a window the stream feeds holds the stream's lines (SM-6.5): a JSON Lines file, beside its index of times.</summary>
+    protected override (string Title, string Filter, string Extension) RecordingFile => Streams
+        ? ("Record Claude Code's stream", "Stream recording (*.jsonl)|*.jsonl|All files (*.*)|*.*", "jsonl")
+        : base.RecordingFile;
+
     /// <summary>The way back (SM-9.3), said under what went wrong.</summary>
     private const string ScreenOfferWords = "You can open this folder with the screen instead, as axClaude has always worked: axClaude starts again on the same folder, and this window closes.";
 
@@ -141,7 +152,18 @@ internal sealed partial class MainForm
             return;
         }
 
-        var line = ClaudeLauncher.BuildCommandLine(claude, ClaudeCodeStream.StartArguments(AppPaths.ClaudeAskFile, AskRelay.ToolName, _options.Model, ClaudeArgs));
+        // FR-9.7 (docs/axKit/mcp.md MC-6.9): axKit's AI tools, as with the screen, by their file beside the relay's,
+        // only in a window started with --ai-tools and while the user has them on. A line cmd.exe would refuse because
+        // of the file's path starts without the tools rather than not at all.
+        var toolsFile = AiToolsArguments().Count > 0 ? AppPaths.McpClaudeConfigFile : null;
+        var line = ClaudeLauncher.BuildCommandLine(claude, ClaudeCodeStream.StartArguments(AppPaths.ClaudeAskFile, AskRelay.ToolName, _options.Model, ClaudeArgs, toolsFile));
+        if (toolsFile is not null && line.Refusal is { } toolsRefusal)
+        {
+            Log.Error("Claude Code started without axKit's AI tools: " + toolsRefusal);
+            toolsFile = null;
+            line = ClaudeLauncher.BuildCommandLine(claude, ClaudeCodeStream.StartArguments(AppPaths.ClaudeAskFile, AskRelay.ToolName, _options.Model, ClaudeArgs));
+        }
+
         if (line.Refusal is { } refusal)
         {
             // FR-1.2: npm's claude.cmd runs through cmd.exe, and an argument cmd.exe would act on is refused.
@@ -165,7 +187,7 @@ internal sealed partial class MainForm
         StreamHost? host = null;
         try
         {
-            host = StreamHost.Start(new StreamHostOptions(line, folder, ClaudeLauncher.BuildEnvironment(askPipe: questions.VariableValue)), text => Hand((ReadStreamLine(text), 0)), code => Hand((null, code)));
+            host = StreamHost.Start(new StreamHostOptions(line, folder, ClaudeLauncher.BuildEnvironment(askPipe: questions.VariableValue)), Received, code => Hand((null, code)));
         }
         catch (Exception ex) when (ex is Win32Exception or InvalidOperationException or ArgumentException or IOException)
         {
@@ -185,15 +207,35 @@ internal sealed partial class MainForm
         _streamLines = 0;
         _streamUnknown = 0;
         _streamAsked = 0;
-        // FR-9.7: the AI tools are given to Claude Code in its pseudo console alone so far.
-        if (_options.AiTools)
+        if (toolsFile is not null)
         {
-            Log.Info("Stream: axKit's AI tools are not given to Claude Code over its stream");
+            Log.Info("Stream: axKit's AI tools are given to Claude Code");
         }
 
         host.Write(ClaudeCodeStream.InitializeLine(NextStreamRequest()));
+        // SM-4.10: a Claude Code that does not answer the first request is up all the same once it has waited its
+        // limit, and Ready is said then, not only after the first turn.
+        After(StreamFirstRequestMs, () =>
+        {
+            if (ReferenceEquals(_stream, host) && model.Mode is null)
+            {
+                Log.Info($"Stream: the first request was not answered within {StreamFirstRequestMs} ms; Claude Code is taken to be up");
+                model.FirstRequestUnanswered();
+            }
+        });
         ClaudeStarted();
         return;
+
+        // On the reader's thread: the line as it came into the recording when one runs (SM-6.5), then read down.
+        void Received(string text)
+        {
+            if (Recording)
+            {
+                Record(Encoding.UTF8.GetBytes(text + "\n"));
+            }
+
+            Hand((ReadStreamLine(text), 0));
+        }
 
         void Hand((StreamLine? Line, int ExitCode) item)
         {
@@ -298,6 +340,15 @@ internal sealed partial class MainForm
             return;
         }
 
+        if (_choosing is not null)
+        {
+            // The window's own list of a value: closed, and nothing sent.
+            UserActedNow();
+            StreamChoiceOver();
+            Announce("Cancelled", false);
+            return;
+        }
+
         if (!_model.Working)
         {
             Refuse("Nothing to interrupt");
@@ -364,6 +415,7 @@ internal sealed partial class MainForm
         _askChannel?.Stop();
         _askChannel = null;
         _asking = null;
+        _choosing = null;
         _askedRequest = null;
         _askedWaiting.Clear();
         _streamModel?.Answered();
@@ -422,6 +474,9 @@ internal sealed partial class MainForm
             return;
         }
 
+        // What Claude Code asks goes before the window's own list of a value, which closes unanswered: an answer to
+        // the one must never be taken for the other.
+        _choosing = null;
         _streamAsked++;
         if (ClaudeCodeStream.ReadAsk(request.Question) is not { } ask)
         {
@@ -436,28 +491,84 @@ internal sealed partial class MainForm
         model.Ask(_asking.Current);
     }
 
-    /// <summary>The user's answer to what Claude Code asks (SM-5.2): the key of an answer, several keys, or their own words after Other.</summary>
+    /// <summary>
+    /// The user's answer to what Claude Code asks (SM-5.2): the key of an answer, several keys, or their own words
+    /// after Other; or the key of the window's own list of a value (SM-5.5).
+    /// </summary>
     private void StreamAnswer(string given)
     {
         if (_asking is { } asking)
         {
             // A yes that stops the asking for a tool leaves its line in the conversation, where it can be found again.
             var standing = asking.StandingWords(given);
-            StreamAnswered(asking, asking.Answer(given));
+            var answer = asking.Answer(given);
+            if (answer is not null)
+            {
+                // Claude's own questions answered as a whole: their record in the conversation, as the screen prints it.
+                _streamModel?.AddAnswerRecord(asking.AnswerRecord);
+            }
+
+            StreamAnswered(asking, answer);
             if (standing is not null)
             {
                 _model.AddSystemLine(standing);
             }
         }
+        else if (_choosing is { } choosing && choosing.CommandFor(given) is { } command)
+        {
+            // The value chosen goes as its slash command, as the user's own typed command would.
+            StreamChoiceOver();
+            _model.Send(command, evenWhilePrompting: false);
+            _messageSent = true;
+            QueueWrites(command);
+        }
     }
 
-    /// <summary>Escape on what Claude Code asks (SM-5.3, SM-7.5): back to the list from the user's own words, else no to the whole.</summary>
+    /// <summary>Escape on what Claude Code asks (SM-5.3, SM-7.5): back to the list from the user's own words, else no to the whole. On the window's own list of a value, the list closes.</summary>
     private void StreamEscape()
     {
         if (_asking is { } asking)
         {
             StreamAnswered(asking, asking.Escape());
         }
+        else if (_choosing is not null)
+        {
+            StreamChoiceOver();
+        }
+    }
+
+    /// <summary>
+    /// Choose the model, Choose the effort over the stream (SM-5.5): a list of the window's own in the control area,
+    /// made from what the answer to the first request listed, shown by the window's existing code for a question;
+    /// the choice is sent as the slash command with its value. Claude is idle (the caller checked).
+    /// </summary>
+    private void StreamChoose(ClaudeCodeSetting setting)
+    {
+        if (_streamModel is not { } model || _asking is not null)
+        {
+            return;
+        }
+
+        var choice = setting.Id == "effort"
+            ? StreamChoice.Effort(setting.Target, model.Models)
+            : StreamChoice.Model(setting.Target, model.Models, model.ModelInUse);
+        if (choice is null)
+        {
+            Refuse($"Claude Code has not listed them. Type {setting.Target} and a value as a message");
+            return;
+        }
+
+        _choosing = choice;
+        UserActedNow();
+        model.Ask(choice.Question);
+    }
+
+    /// <summary>The window's own list of a value is over: nothing waits, and what the control area showed is closed by the settle.</summary>
+    private void StreamChoiceOver()
+    {
+        _choosing = null;
+        MarkWaitOver();
+        _streamModel?.Answered();
     }
 
     /// <summary>

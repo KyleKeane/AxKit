@@ -375,6 +375,12 @@ public static partial class ClaudeCodeTexts
     /// </summary>
     public const string AnsweredRowStart = "· ";
 
+    /// <summary>The label of that record as the screen prints it, a no-break space and a space after the bullet: what the stream's model writes in its place (docs/axClaude/stream-mode.md SM-7.5).</summary>
+    public const string AnsweredLabelText = "●  User answered Claude's questions:";
+
+    /// <summary>What stands between the question and the answer on a row of that record.</summary>
+    public const string AnsweredArrow = " → ";
+
     // ---- /config's rows ("Show tips: true", "Thinking mode: true (Thinking can't be turned off …)"; 2.1.282) ----
 
     public const string SettingSeparator = ": ";

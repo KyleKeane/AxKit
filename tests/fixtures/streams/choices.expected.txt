@@ -1,0 +1,42 @@
+> initialize
+< Control, done, 14 models
+    now: idle, mode manual mode on, 0 waiting
+> message: /model haiku
+    no block for it
+    now: working, mode manual mode on, 0 waiting
+< Started, mode default, model claude-haiku-5-5
+< Text: Set model to `Haiku 5.5` for this session only
+< Ended, well, turns 0, 
+    now: idle, mode manual mode on, 0 waiting
+> message: /effort low
+    no block for it
+    now: working, mode manual mode on, 0 waiting
+< Started, mode default, model claude-haiku-5-5
+< Text: Set effort level to low (this session only): Quick, straightforward im…
+< Ended, well, turns 0, 
+    now: idle, mode manual mode on, 0 waiting
+> message: Reply with exactly: ok
+    a block for it
+    now: working, mode manual mode on, 0 waiting
+< Started, mode default, model claude-haiku-5-5
+< Message: Reply with exactly: ok
+< Text: ok
+    the response started
+< Note rate_limit_event
+< Ended, well, turns 1, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> closed
+the process ended with code 0
+
+-- the conversation
+[UserEcho] you: /model haiku
+[Plain] Set model to `Haiku 5.5` for this session only
+[UserEcho] you: /effort low
+[Plain] Set effort level to low (this session only): Quick, straightforward implementation with minimal overhead
+[InputMarker h1] # Input 1
+[UserMessage] Reply with exactly: ok
+[UserMessage] 
+[OutputMarker h1] # Output 1 Reply from Claude
+[UserMessage] 
+[ClaudeReply] claude: ok

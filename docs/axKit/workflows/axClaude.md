@@ -1863,6 +1863,35 @@ Starts with: Open axClaude with the folder st --source stream.
     You hear: Done.
 4. Press Alt+2 (Conversation; Navigation menu).
 
+## Choose the model and the effort over Claude Code's stream
+
+Starts with: Open axClaude with the folder st --source stream.
+
+### Choose the model from the list Claude Code gave
+
+1. Choose Choose the model in the Actions menu.
+    You hear: Choose the model. 1. Default (recommended).
+2. Press Down 4 times.
+3. Press Enter.
+    You hear: Sent: 5, Haiku 5.5.
+4. Press Alt+2 (Conversation; Navigation menu).
+
+### Choose the effort
+
+1. Press Alt+1 (Message field; Navigation menu).
+2. Choose Choose the effort in the Actions menu.
+    You hear: Choose the effort. 1. low.
+3. Press Enter.
+    You hear: Sent: 1, low.
+4. Press Alt+2 (Conversation; Navigation menu).
+
+### Send a message after the choices
+
+1. Press Alt+1 (Message field; Navigation menu).
+2. Type: Say ok
+3. Press Enter.
+    You hear: Done. claude: ok.
+
 ## Have a short exchange with Claude
 
 Starts with: Open axClaude with the folder a.
