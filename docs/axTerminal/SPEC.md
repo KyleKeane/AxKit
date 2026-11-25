@@ -36,7 +36,7 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
 - **G4 Shared, not copied.** The ConPTY host, the parser, the screen model, the transcript mirror and the view move
   from axClaude into the shared projects on this, their second use (bundle AX-6.3, B-3); axTerminal adds the shell's
   own model and nothing twice.
-- **Non-goals.** The alternate screen and programs that redraw the whole screen (vim, nano, less, more, htop, a TUI
+- **Non-goals.** Until AT-9 is built (designed 2026-11-25): the alternate screen and programs that redraw the whole screen (vim, nano, less, more, htop, a TUI
   over ssh); colours, mouse reporting, tabs and panes; the shell's own line editing, history recall and Tab completion
   inside the field (AT-D5, §7); running Claude Code (axClaude's job, with its screen reader mode); elevation (start an
   elevated terminal from Windows). None of them is an error: a full screen program's rows are shown as rows, and
@@ -420,6 +420,48 @@ file). The speech of output (AT-5.3) and the texts of the notices are the rest.
   Developer → Record raw stream writes the console stream to a `.vt` file in the PtyCapture format for a fixture
   (axClaude FR-13), read back only through the redacting dump (bundle rule 6).
 
+### AT-9 The screen view of a full-screen program (designed 2026-11-25; not built)
+
+Decided by the maintainer on 2026-11-24 through the question tool, after a tester found Windows' `edit` unintelligible
+in axTerminal (2026-11-18): while a program holds the whole screen, axTerminal shows that screen as a page NVDA
+reads, and goes back to the conversation when the program leaves it. Designed from a recording of `edit` 1.2.1 at
+120 by 30 (2026-11-25, PtyCapture): it switches to the alternate screen (`ESC [?1049h`), turns on mouse reporting
+(`?1002`, `?1006`), focus events (`?1004`), bracketed paste, and asks the terminal for its sixteen colours
+(`OSC 4 ; n ; ?`); then it draws a menu bar whose letters to press are underlined (`F`ile, `E`dit, `V`iew,
+`H`elp), each line of the file behind its number and a vertical bar, and a scroll bar of block characters, all in
+colours of 24 bits; the keys sent after its first frame took no effect within the recording's two seconds, which is
+read as `edit` still waiting for the colours' answers (to measure first, AT-9.7).
+
+- AT-9.1 **When.** The program switches to the alternate screen (`ESC [?1049h`, also `?1047h` and `?47h`). The shared
+  screen model (`AxKit.Core/Vt/Screen`) keeps the alternate buffer apart from the main one, as a terminal does, and
+  raises that it changed; the conversation's lines are the main buffer's and are not touched. The view returns when the
+  program switches back (`?1049l`) or ends.
+- AT-9.2 **What is shown.** The conversation and the field give way to one read-only text, the screen: one line per
+  row, the rows' trailing spaces left out, the box-drawing and block characters (U+2500 to U+259F) shown as spaces,
+  since NVDA would name each one ("vertical line", "full block") on every line. Its name says what it is:
+  "Screen of edit, keys go to the program".
+- AT-9.3 **Two ways to be in it.** Keys go to the program (every key, as a terminal sends it, but axTerminal's own
+  way out of the view and the bundle's F1 and Alt+F4); the caret of the text stands where the program's cursor
+  stands, so that NVDA reads the program's line as the cursor moves, which the user's own keys caused. A key of
+  axTerminal's table (AT-6; the chord to choose, section 7) turns to reading the screen: the keys stay in the text,
+  the arrows and NVDA's own reading keys read the page, nothing reaches the program, and the same key goes back.
+  The status bar says which way is in force; the switch is said in two words, "Reading the screen", "Keys to edit".
+- AT-9.4 **What is said by itself.** Nothing on a redraw. After a key sent to the program, the line the cursor ends on
+  is read by NVDA through the caret, as in a terminal; and a row that is marked (reverse video, or a background
+  other than the screen's own: an open menu's selected entry, a dialog's button in focus) is said once when the mark
+  moves to another row or another place, "File menu: Open" read off the row, since that is where a full-screen
+  program shows its focus. The screen model gains that one attribute per cell, marked or not, and no other colour.
+- AT-9.5 **The rows updated** at a frame's end, as the conversation's are (AT-4), only the rows that changed, the
+  caret kept on its row when the program's cursor did not move; a program that redraws without end (a clock, a
+  progress bar) is said nothing about.
+- AT-9.6 **What is not done.** Mouse reporting is ignored (no mouse events are sent); the program's colours are not
+  shown or said; the alternate screen's rows never enter the conversation, its export or its find.
+- AT-9.7 **To measure before the build**, with a recording each, in the record-fixture skill's way: whether `edit`
+  waits for the answers to its colour questions (and if so, axTerminal answers them with the theme's sixteen
+  colours, as a terminal does); `edit`'s menus, a dialog (Save as, Find) and its status line, opened with the keys
+  and read off the screen model; `less` or `more` over a long file; a program that leaves the alternate screen by
+  ending with Ctrl+C. Each becomes a fixture under `tests/fixtures` and a window script; the build follows them.
+
 ## 5. Architecture
 
 ```
@@ -522,6 +564,10 @@ its notes record what moved.
 - A history that persists across windows (`CommandHistory` to the settings file; AT-3.4 keeps the secrets out of it).
 - Whether a `D` mark with a non-zero code should classify the output's last lines as errors for `e`.
 - PowerShell 7 is untested here (the machine has Windows PowerShell 5.1 only); its snippet is the same.
+- The screen view (AT-9), for the maintainer: the key that turns between keys to the program and reading the screen
+  (it must reach axTerminal while every other key goes to the program, so a chord no full-screen program uses:
+  Ctrl+Shift with a punctuation key, by AX-8.18); whether box-drawing characters are spaces (proposed) or kept; whether
+  a marked row is said by itself (proposed) or only on a key.
 
 ## 8. Status
 
