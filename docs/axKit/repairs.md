@@ -6,20 +6,163 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ## Where it stands
 
-- **done**: 67 (12 high, 29 medium, 26 low)
+- **open**: 20 (8 medium, 12 low)
+- **done**: 73 (13 high, 33 medium, 27 low)
 - **deferred**: 1 (1 medium)
 - **declined**: 6 (4 medium, 2 low)
 
 ## The principles
 
-- **P1. Say the effect where the thing is made.** Whoever makes a menu item, a command or a run states what it does and what it acts on; nothing important rests on a default. What states nothing is treated as the most careful case. (25 findings)
-- **P2. One source, generated views.** A fact lives in one place (the menu bar, Dispatch.Apps, a JSON list); every page or list that repeats it is written by a script and checked by the same gate on the developer's computer and in CI. (6 findings)
-- **P3. A failure says what, why and where to read.** Every refusal, error and failed check names the thing, the reason and the document or command that helps; nothing fails silently and nothing passes silently against the wrong thing. (7 findings)
-- **P4. Bounded and cleaned up.** Every wait has a limit, every held resource is released on every path (try/finally), every input from outside has a size limit. (20 findings)
+- **P1. Say the effect where the thing is made.** Whoever makes a menu item, a command or a run states what it does and what it acts on; nothing important rests on a default. What states nothing is treated as the most careful case. (27 findings)
+- **P2. One source, generated views.** A fact lives in one place (the menu bar, Dispatch.Apps, a JSON list); every page or list that repeats it is written by a script and checked by the same gate on the developer's computer and in CI. (14 findings)
+- **P3. A failure says what, why and where to read.** Every refusal, error and failed check names the thing, the reason and the document or command that helps; nothing fails silently and nothing passes silently against the wrong thing. (9 findings)
+- **P4. Bounded and cleaned up.** Every wait has a limit, every held resource is released on every path (try/finally), every input from outside has a size limit. (22 findings)
 - **P5. An entry is its name, never a held object.** What is found in one moment and used in another (a menu item, a file, a selection) is found again by its identity when it is used, and refused when it is gone or changed. (4 findings)
 - **P6. Writes are whole or not at all.** A file a user or the app depends on is written through a temporary file and put in place in one step; an undo step is dropped only once it has been applied. (2 findings)
-- **P7. Tests check the built thing.** What matters is checked on the running window or the built data; a test that reads source text is lint, a help and never the proof. (1 finding)
-- **P8. Documents describe the present.** Reference text says what is true now, in small files a reader with little context can hold; history lives in the changelog and git; open work lives in the priorities list. (9 findings)
+- **P7. Tests check the built thing.** What matters is checked on the running window or the built data; a test that reads source text is lint, a help and never the proof. (5 findings)
+- **P8. Documents describe the present.** Reference text says what is true now, in small files a reader with little context can hold; history lives in the changelog and git; open work lives in the priorities list. (17 findings)
+
+## Open
+
+### R-81, medium, tooling: test.ps1 checks the pages after every test and names one stale page at a time
+
+- Where: test.ps1; tools/pages.ps1; tools/push-check.ps1; .github/workflows/build.yml
+- Principle: P2
+- Fix: One entry point, tools/pages.ps1 -Check, run before the tests by test.ps1 and push-check.ps1, collecting every failure with the right fix for each kind; the four copies of the list of page checks become that one.
+- Note: Found on 2026-11-24 by the audit of the tools, met the same evening: every stale page cost a full test run. doc-menus writes nothing, so its failure is fixed in the documents. Whether build.yml keeps one named step per check is the maintainer's choice.
+
+### R-82, medium, tooling: The push check chooses the test projects wrongly
+
+- Where: tools/push-check.ps1
+- Principle: P7
+- Fix: src/AxKit runs AxKit.Tests alone; tests/Shared, tests/Directory.Build.props and global.json run every project; tests/fixtures runs the projects that read fixtures.
+- Note: Found on 2026-11-24 by the audit of the tools: a change to the shared test helpers or the fixtures ran AxKit.Tests alone, and a release commit reran everything.
+
+### R-83, medium, tooling: The folders beside the repository are found eight ways, and some checks pass in silence in a worktree
+
+- Where: tools/item-of-commit.ps1; tools/item.ps1; tools/outside-check.ps1; tools/outside-report.ps1; tools/pin-approval-key.ps1; tools/reports-check.ps1; tools/sync-repos.ps1; test.ps1
+- Principle: P3
+- Fix: One function finds them through git's common directory, used by every script; a check that cannot find them says so.
+- Note: Found on 2026-11-24 by the audit of the tools: in a worktree not beside the checkout the outside check exits 0 without a word and the commit hook marks no item.
+
+### R-85, medium, tooling: A run with --inventory write adds rows and never removes one
+
+- Where: tools/AxAutomate; docs/axKit/window-commands.json
+- Principle: P8
+- Fix: A window whose whole command list a run read (check commands) has its rows replaced, so a renamed or moved command leaves no old row.
+- Note: Found on 2026-11-24: the old rows of the update switch and of the editors' Ctrl+Tab stayed beside the new ones, and the guides' Menus sections named the old menu.
+
+### R-86, medium, docs: The root CLAUDE.md is 34 bytes under its limit, and its list of window kinds leaves out axTemplate
+
+- Where: CLAUDE.md; src/AxKit.Forms/CLAUDE.md
+- Principle: P2
+- Fix: The window kinds as a pointer to docs/axKit/components.md, written from components.json; the probe gotcha moved to automation.md.
+- Note: Found on 2026-11-24 by the audit of the documents. Trimming the mechanics of rule 9 is the maintainer's choice: the words of his rules.
+
+### R-90, medium, framework: The item window forces overrides that can never run
+
+- Where: src/AxKit.Forms/ItemForm.cs; src/AxProcess/ProcessForm.cs; src/AxGit/GitForm.cs; src/AxMedia/MediaForm.cs
+- Principle: P2
+- Fix: NewItem, NewList, Undo and RenameRefused virtual with a default; the unreachable overrides of axProcess, axGIT and axMedia removed, KeysWithoutUse alone saying what an app does not use.
+- Note: Found on 2026-11-24 by the audit of the code.
+
+### R-95, medium, forms: Failures, refusals and switches sound and read differently from app to app
+
+- Where: src/AxKit.Forms/AxKitForm.Notices.cs; src/AxKit.Forms/AxKitForm.Theme.cs; src/AxTask/TaskForm.Actions.cs; src/AxMCP/MCPForm.cs
+- Principle: P1
+- Fix: One Refuse(said) on the window base with the refused sound; Fail through Failed; a switch said through CheckSaid.
+- Note: Found on 2026-11-24 by the audit of the code: the refused sound and an announce written inline 17 times, apps that refuse without a sound, three wordings of a switch, ShowError used directly. What is heard changes, so it is the maintainer's to decide.
+
+### R-98, medium, tooling: Rules written as rules with no check
+
+- Where: CHANGELOG.md; src/AxKit.Forms/AxKitForm.cs; tests/AxKit.Tests
+- Principle: P7
+- Fix: The app prefix of every bullet under Unreleased; a control without an accessible name in check commands; a plain-code test (no interface, no WinForms in a Core project, UI Automation notifications in Announcer alone); the caution words only from AiCaution.
+- Note: Found on 2026-11-24 by the audit of the tests. The AiCaution check waits on two texts that may not be the AI case (TaskForm.Actions.cs, HandedCommand.cs).
+
+### R-100, low, tooling: test.ps1 starts the build eighteen times
+
+- Where: test.ps1; Directory.Build.rsp
+- Principle: P4
+- Fix: One dotnet test over a solution filter of the test projects, in Release, if a measurement on the 7 GB computer shows it is faster and fits.
+- Note: Found on 2026-11-24 by the audit of the tools. It changes the one-by-one rule of the root CLAUDE.md and commands.md, so it is measured first and the rule's change is the maintainer's.
+
+### R-84, low, tooling: The hooks-installed check is written twice and the copies disagree on worktrees
+
+- Where: test.ps1; release.ps1
+- Principle: P2
+- Fix: One function, accepting a worktree's common hooks folder.
+- Note: Found on 2026-11-24 by the audit of the tools. Whether it sets core.hooksPath itself instead of refusing is the maintainer's choice.
+
+### R-87, low, docs: commands.md and session-start disagree with the scripts
+
+- Where: docs/axKit/commands.md; tools/session-start.ps1; docs/axKit/development-environment.md; release.ps1; run.ps1
+- Principle: P8
+- Fix: session-start's six checks named; components.ps1 and pages.ps1 listed with the generated pages; the sentence that no command submits to the Store taken out; release.ps1 names window-passes.ps1 -Run; run.ps1's header says what it ends.
+- Note: Found on 2026-11-24 by the audits of the documents and the tools.
+
+### R-88, low, docs: Notes and plans behind the code
+
+- Where: src/AxKit/CLAUDE.md; src/AxKit.Forms/CLAUDE.md; docs/axKit/framework.md; docs/axKit/ai-help.md; docs/axKit/plan.md; manual_tests/_main.md; docs/axClaude/stream.md
+- Principle: P8
+- Fix: The ask relay is started by the stream source; axTemplate's two windows in the Forms index; eighteen apps; the screenshot on Period; axTemplate out of Parked; axPass and axTask in the manual tests; stream.md says its decision was taken.
+- Note: Found on 2026-11-24 by the audit of the documents.
+
+### R-89, low, docs: axClaude's window notes are 26 KB, with one bullet of 6,555 characters and gotchas of every window
+
+- Where: src/AxClaude/CLAUDE.md; src/AxKit.Forms/notes; src/AxClaude.Core/notes/stream.md
+- Principle: P8
+- Fix: One short bullet per partial file; the WinForms and NVDA gotchas that are not axClaude's moved to the Forms notes; stream.md in a section per file.
+- Note: Found on 2026-11-24 by the audit of the documents. Next at the 32 KB limit: AxClaude.Core, AxFile, controls.md, AxAutomate.Core, window-base.md.
+
+### R-91, low, framework: The undo stack is written three times
+
+- Where: src/AxTask/TaskForm.Commands.cs; src/AxTemplate/BrowserForm.cs; src/AxPass/PassForm.Commands.cs
+- Principle: P2
+- Fix: A small StepHistory in AxKit.Core beside Changes, its cap a parameter.
+- Note: Found on 2026-11-24 by the audit of the code. axPass has a Step of its own and follows later.
+
+### R-92, low, framework: The same Windows functions are declared in several files
+
+- Where: src/AxKit.Forms/User32.cs; src/AxKit.Forms/NativeMenu.cs; src/AxFile/Shell.cs; src/AxKit.Forms/AxKitForm.Mcp.cs; src/AxPass/PassForm.cs; src/AxKit.Forms/ConsoleForm.Signals.cs; src/AxKit/Program.cs; src/AxTemplate/WindowInFront.cs; src/AxClaude/MainForm.PutAway.cs; src/AxProcess.Core/SystemInfo.cs; src/AxKit.Core/ThisProgram.cs; src/AxKit.Forms/UserPipe.cs
+- Principle: P2
+- Fix: Each in one place: the popup menu tracking in NativeMenu, the idle time, the taskbar flash, the window thread and long in User32, a process's image path and a pipe's server in ThisProgram.
+- Note: Found on 2026-11-24 by the audit of the code: 33 functions are declared more than once. The shell menu's move needs an NVDA hearing of axFile's Windows menu.
+
+### R-93, low, framework: Members no code calls
+
+- Where: src/AxFile/FileForm.Browse.cs; src/AxKit.Forms/AxKitForm.cs; src/AxKit.Forms/AxKitForm.Find.cs; src/AxKit.Forms/ItemForm.Arrange.cs; src/AxKit.Forms/FormControls.cs; src/AxKit.Core/FlatItem.cs; src/AxKit.Core/Mcp/McpRun.cs
+- Principle: P8
+- Fix: IndexOfName, KeyTakenAnywhere, AddFindInListKeys, FilterText, FieldKeys, WithSchema and McpRun.SwitchLabel removed with the notes that name them; AddRadioList stays, its spec's.
+- Note: Found on 2026-11-24 by the audit of the code, each name searched across src, tests and tools.
+
+### R-94, low, core: Small helpers written several times
+
+- Where: src/AxAutomate.Core/StepText.cs; src/AxKit.Forms/ItemForm.cs; src/AxTask.Core/ListActions.cs; src/AxTask.Core/ManyItems.cs; src/AxKit.Core/JsonElements.cs; src/AxKit.Core/Reports/ReportSeal.cs; src/AxKit.Forms/AutomationChannel.cs; src/AxClaude.Core/Streaming/ClaudeCodeStream.cs
+- Principle: P2
+- Fix: One Count(number, noun) in AxKit.Core; JsonElements public and used where a string member is read by hand (ReportSeal's copy can throw on a value that is not an object).
+- Note: Found on 2026-11-24 by the audit of the code.
+
+### R-96, low, tooling: Test helpers copied across the test projects
+
+- Where: tests/Shared/SourceTexts.cs; tests/AxKit.Tests/LayoutTests.cs; tests/AxAutomate.Tests; tests/AxClaude.Tests/TestHelpers.cs; tests/AxTerminal.Tests/TestHelpers.cs
+- Principle: P2
+- Fix: SourceTexts.RepositoryRoot and one list of C# files without bin and obj used everywhere; the fixture helpers in tests/Shared/Fixtures.cs.
+- Note: Found on 2026-11-24 by the audit of the tests: the repository root is found in 16 copies; six source checks skip obj and not bin.
+
+### R-97, low, tooling: Window scripts carry a setting that does nothing and sections that check nothing
+
+- Where: tests/scripts
+- Principle: P7
+- Fix: checkForUpdates false taken out of the 200 scripts (a test run never checks at start), its comments with it; expect closed where three sections end on a close with no check; a test that every section holds a check.
+- Note: Found on 2026-11-24 by the audit of the tests. A shared setup step for the consent file and axTask's lists would follow.
+
+### R-99, low, tooling: Checks pinned to exact code text
+
+- Where: tests/AxKit.Tests/CommandMarkTests.cs; tests/AxKit.Tests/WindowReachTests.cs
+- Principle: P7
+- Fix: The act marks pinned as rows of the command inventory, not as substrings of the code.
+- Note: Found on 2026-11-24 by the audit of the tests: 33 substrings break on any reformat.
 
 ## Done
 
@@ -124,6 +267,15 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: The consent's target is the whole of what would run: the name, the program's resolved path, the arguments, the environment's names with a hash of their values, and the folder; a differing one asks again and the notice reads the command line.
 - Checked by: tests/AxMCP.Tests/ServerConsentTests (An_agreement_counts_for_the_same_definition_and_for_no_other, Arguments_cannot_be_moved_between_each_other_under_one_mark, The_notice_reads_the_whole_command_line_the_folder_and_the_variables_names_and_never_a_value); tests/scripts/axMCP/01-start and 02-your-servers-errors-prompts, which now give the agreement in the run and hear the command line in the notice; owed: a hearing of the notice with NVDA, and a live start of a server of Claude Code's own files with environment variables
 - Note: Found on 2026-11-16 by the second reading of the resilience audit. The servers of Claude Code's own files (.claude.json, a folder's .mcp.json) are not axKit's to seal, so a rewritten one of a name agreed to earlier started without a question.
+
+### R-75, high, tooling: reports-check printed the account path of the lists on every push
+
+- Where: tools/reports-check.ps1
+- Principle: P3
+- Fix: The sentence names where the lists are looked for in words, never the path.
+- Checked by: read; tests/AxKit.Tests HookTests and the reports tests pass
+- Commit: e7f45a49
+- Note: Found on 2026-11-24 by the audit of the tools (rule 6): the path holds the account folder, and sync-repos runs the check with every push.
 
 ### R-01, medium, security: Recent folders of axClaude and axTerminal started Claude Code or a shell for an AI tool without asking
 
@@ -373,6 +525,42 @@ found and what became of each finding: change the JSON in the same commit as the
 - Checked by: tests/AxTerminal.Tests/TerminalSealTests (A_member_this_version_does_not_know_is_kept_and_is_under_no_seal); tests/AxKit.Tests/ConsentTests (Members_this_version_does_not_know_are_kept_in_the_consent_file_and_in_the_recently_closed_list)
 - Note: Found on 2026-11-16 by the second reading. It helps from this version on: an older copy on the same computer still drops them, the seal of R-53 among them.
 
+### R-76, medium, tooling: The commit hook read the commit message as ANSI
+
+- Where: tools/item-of-commit.ps1
+- Principle: P4
+- Fix: The message is read as UTF-8, as git writes it and as the items are read.
+- Checked by: read; ItemScriptTests pass
+- Commit: e7f45a49
+- Note: Found on 2026-11-24 by the audit of the tools: a word of an item title with a letter outside ASCII never matched.
+
+### R-77, medium, tooling: The pre-push hook synced the lists before its one refusal and tested a push of tags
+
+- Where: tools/hooks/pre-push
+- Principle: P1
+- Fix: The outside check first, the push check only when a branch is pushed, the sync last.
+- Checked by: sh -n on the hook; HookTests pass; the next pushes
+- Commit: e7f45a49
+- Note: Found on 2026-11-24 by the audit of the tools.
+
+### R-78, medium, docs: The README and the axKit guide gave old hotkeys and keys and put axTemplate among the access layers
+
+- Where: README.md; docs/axKit/README.md
+- Principle: P8
+- Fix: The keys as the key table has them, Ctrl+Enter and Ctrl+0 in axTask, axTemplate among the apps that stand alone with its Start menu entry and command.
+- Checked by: read against BundleKeys.SystemWide, AxTaskKeys and install.ps1; the document tests pass
+- Commit: 7d9416bd
+- Note: Found on 2026-11-24 by the audit of the documents.
+
+### R-79, medium, docs: Four documents and two guides named the update switch under Options, General
+
+- Where: SECURITY.md; NOTICE.md; docs/axAutomate/user-guide.md; tools/outside-calls.ps1; docs/axKit/window-commands.json
+- Principle: P8
+- Fix: The axKit menu everywhere; the two old rows of the inventory removed and the pages written again.
+- Checked by: tools/pages.ps1 and test.ps1 page checks
+- Commit: b0efb41d
+- Note: Found on 2026-11-24 by the audit of the documents. Why the rows stayed is R-85.
+
 ### R-04, low, security: Settings whose effect is more than a setting were marked change
 
 - Where: src/AxKit.Forms/HotkeyForm.cs; src/AxKit.Forms/AxKitForm.cs; src/AxClaude/MainForm.Ui.cs
@@ -588,6 +776,15 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: The log holds a line's length; the text stays in the window.
 - Checked by: tests/AxMCP.Tests/StdioServerTests (An_error_line_is_kept_for_the_window_and_only_its_length_is_logged, What_a_started_server_writes_to_its_standard_error_is_not_in_the_log, the second through a real process); tests/scripts/axMCP still pass; on the test desktop (2026-11-16): tests/scripts/axMCP/01-start, the fake server writes a line to its standard error as it starts and the started server's details end with the words Error lines: 1, shown below, and the line; owed: a hearing of them
 - Note: Found on 2026-11-16 by the second reading: the fuller form of a report would carry the lines. Until now the lines were nowhere in the window, only in the log. They are kept in memory, the last 50 since the server's start, and the details of a started server end with "Error lines: none" or their number and the newest ten; the log holds "<server>: error line 3, 41 characters" (docs/axMCP/SPEC.md MP-10).
+
+### R-80, low, docs: documents.md said of four built pieces that nothing was built, and left documents out
+
+- Where: docs/axKit/documents.md
+- Principle: P8
+- Fix: The status of the stream source, the event schema, the framework and families.json corrected; outside-reports.md, approval-key.pub, the list options file, NOTICE.md and the generated Menus sections listed.
+- Checked by: NotesTests and the document tests pass
+- Commit: 7ab6a19f
+- Note: Found on 2026-11-24 by the audit of the documents.
 
 ## Deferred
 
