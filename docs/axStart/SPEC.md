@@ -83,7 +83,9 @@ taskbar. It works entirely offline (bundle G6).
   order: a name that starts with the text first, then one whose word starts with it, then any other match; within
   each (placed by the text's first word, so that `win power` sits with the names starting with `win`), the programs
   started from axStart more often first, then by name in File Explorer's order
-  (`AxKit.Core/NaturalOrder`). An empty field matches every program, the most started first.
+  (`AxKit.Core/NaturalOrder`). An empty field matches every program, the most started first. What was closed lately
+  in an axKit window comes before the programs of the same place, the newest first, and first of all in an empty
+  field (AS-2.5).
 - AS-2.3 **Starting** (Enter): the selected match, or the first when the selection was never moved, through the shell
   (`ShellExecuteEx` on `shell:AppsFolder\<parsing name>`), so that a packaged app starts as the Start menu starts it;
   the window hides first, so that the program comes up in front. Ctrl+Shift+Enter starts it as administrator (the
@@ -92,6 +94,14 @@ taskbar. It works entirely offline (bundle G6).
   one for the program's name (AS-5.1).
 - AS-2.4 **Open file location** (Ctrl+O) on a desktop program: axFile on the shortcut's target's folder, the target
   selected; on a packaged app, "No file location for <name>".
+- AS-2.5 **What was closed lately** (asked 2026-11-22, "from another app like axstart ... launch the list of recent
+  axit files and apps so that i can quickly get back to them"; built 2026-11-25): the bundle's Recently closed
+  (AX-9.5, the same list as the Window menu's, an entry whose file is gone left out) is matched with the programs,
+  each entry named as that menu names it, "notes.md (C:\notes\notes.md) - axDown". Enter opens it again in its app,
+  a new window of this program file, as the menu does; Ctrl+O opens its folder in axFile; Ctrl+I says its name and
+  "recently closed"; Ctrl+Shift+Enter says "Not for a recently closed item". The list is read with the programs, on
+  every showing, off the window's thread; an opening counts no start. The field's name is "Search programs and
+  recently closed".
 
 ### AS-3 The window
 

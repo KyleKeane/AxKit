@@ -1,0 +1,46 @@
+# Workflow: Get back to a file closed lately
+# axStart, SPEC AS-2.5: what was closed in an axKit window is among the matches, named as the Window menu names it,
+# first in an empty field; Ctrl+I says it was recently closed; Enter opens it again in its app, a new window of
+# this run. The run's own settings: no update check.
+file home\AxKit\axDown.json {"checkForUpdates": false}
+file home\AxKit\axStart.json {"hotkey": "Ctrl+Alt+Shift+F8", "checkForUpdates": false}
+file notes.md # Notes for axStart\n\nA line to come back to.
+
+# Close a file in axDown, so that it is in the bundle's Recently closed.
+start down {temp}\notes.md
+expect focus notes.md
+keys alt+f4
+expect closed
+
+# Goal: Find a file closed lately
+# An empty field: the file closed lately comes first, as the Window menu names it; typing part of its name finds it.
+start start
+expect focus "name":"Search programs and recently closed","role":"Text","value":""
+wait 5000
+do First match
+expect said notes.md (
+expect said - axDown, 1 of
+type notes.md
+expect said - axDown, 1 of 1
+
+# Goal: Hear what a match closed lately is
+do Information
+expect said , recently closed
+
+# Goal: Open a file closed lately again
+# Enter: axStart hides and axDown opens the file again, a window of this run.
+keys enter
+adopt
+expect focus notes.md
+keys alt+f4
+expect closed
+
+# Check: Start as administrator is refused for a file closed lately
+use 2
+launch start
+type notes.md
+expect said - axDown, 1 of 1
+do Start as administrator
+expect said ! Not for a recently closed item
+menu Quit axStart
+expect closed

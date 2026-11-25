@@ -63,7 +63,7 @@ expect said ! No programs match
 # AS-3.4: Escape hides the window whatever the field holds; a second start shows it again with the field empty.
 keys escape
 launch start
-expect focus "name":"Search programs","role":"Text","value":""
+expect focus "name":"Search programs and recently closed","role":"Text","value":""
 
 # Goal: Quit axStart
 # Quit axStart, the one close that ends the process (AS-1.4).

@@ -32,7 +32,7 @@ expect said PowerShell
 # Check: Tab keeps the focus in the field
 # 2.8 Tab: the focus stays in the field.
 keys tab
-expect focus "name":"Search programs","role":"Text","value":"win power"
+expect focus "name":"Search programs and recently closed","role":"Text","value":"win power"
 # Check: Nothing is saved, and the shortcuts give the field back with its text
 # 2.9 Ctrl+S: nothing to save; F1: the shortcuts, and Escape gives the field back with its text.
 keys ctrl+s
@@ -41,7 +41,7 @@ do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 keys escape
 expect state "notice":null
-expect focus "name":"Search programs","role":"Text","value":"win power"
+expect focus "name":"Search programs and recently closed","role":"Text","value":"win power"
 
 # Check: A Store app has no administrator start and no file location
 # 3.5 and 3.7 A Store app has no administrator start and no file location.

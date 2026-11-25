@@ -130,3 +130,27 @@ Starts with: Open axStart.
     You hear: A: types the letter.
 8. Press F9.
     You hear: F9: no command of this window.
+
+## Get back to a file closed lately
+
+Starts with: Open axDown with the file notes.md.
+
+### Find a file closed lately
+
+1. Open axStart.
+2. Press Ctrl+Home (First match).
+    You hear words such as: notes.md.
+    You hear words such as: - axDown, 1.
+3. Type: notes.md
+    You hear: - axDown, 1 of 1.
+
+### Hear what a match closed lately is
+
+1. Press Ctrl+I (Information; Context menu).
+    You hear words such as: recently closed.
+
+### Open a file closed lately again
+
+1. Press Enter.
+2. A new window opens: go to it.
+3. Press Alt+F4.

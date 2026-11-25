@@ -15,7 +15,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxStart` (the window), `src/AxStart.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxStart.Tests`.
 - Documents: `docs/axStart/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axStart/`, 4 scripts (their workflows are in `docs/axKit/workflows/axStart.md`).
+- Automated checks: `tests/scripts/axStart/`, 5 scripts (their workflows are in `docs/axKit/workflows/axStart.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axStart.ps1`, or `run.ps1 -App start`.
 
 ### axFile

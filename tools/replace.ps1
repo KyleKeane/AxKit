@@ -36,7 +36,10 @@ $root = Split-Path -Parent $PSScriptRoot
 $edits = @()
 if ($Pairs) {
     if (-not (Test-Path -LiteralPath $Pairs)) { Write-Host "No pairs file: $Pairs"; exit 2 }
-    foreach ($pair in @(Get-Content -LiteralPath $Pairs -Raw -Encoding UTF8 | ConvertFrom-Json)) {
+    # Assigned first: Windows PowerShell 5.1's ConvertFrom-Json gives a JSON array to the pipe as one object, and a
+    # foreach over the pipe's result saw a single pair holding every file (2026-11-25).
+    $list = Get-Content -LiteralPath $Pairs -Raw -Encoding UTF8 | ConvertFrom-Json
+    foreach ($pair in $list) {
         $edits += [pscustomobject]@{ File = "$($pair.file)"; Old = "$($pair.old)"; New = "$($pair.new)"; All = [bool]$pair.all }
     }
 } elseif ($File -and $Old) {

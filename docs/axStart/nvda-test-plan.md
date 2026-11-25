@@ -8,7 +8,7 @@ Before starting: install the build (`publish.ps1`), or quit any running axStart 
 
 ## 1. Bringing it up and putting it away
 
-1. In axClaude, press Ctrl+Shift+Space: NVDA says "axStart window, Search programs, edit" and nothing else.
+1. In axClaude, press Ctrl+Shift+Space: NVDA says "axStart window, Search programs and recently closed, edit" and nothing else.
 2. Escape: axStart is gone and axClaude has the focus again, on the line it was on.
 3. From File Explorer, then from the desktop (Windows+D): Ctrl+Shift+Space brings the field up each time, in front.
 5a. Bring it up, then NVDA+N: the NVDA menu opens and the launcher stays; Escape: the menu closes and the field has the focus again. NVDA+Ctrl+G (the NVDA settings), then close it: the same.

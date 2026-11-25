@@ -801,6 +801,10 @@ Steps and keys: `docs/axKit/workflows/axStart.md` (in Claude's working folder: `
     - Quit axStart
 4. **Find out whether a key arrives and what it does, in a hotkey window**
     - Test what a key does
+5. **Get back to a file closed lately**
+    - Find a file closed lately
+    - Hear what a match closed lately is
+    - Open a file closed lately again
 
 ## axTask
 

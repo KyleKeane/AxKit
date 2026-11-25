@@ -5,26 +5,40 @@ namespace AxStart.Core;
 /// <summary>
 /// Which programs match the typed text, and in what order (SPEC.md AS-2.2). A name matches when it holds every word of
 /// the text, case and accents ignored. A name that starts with the text's first word comes first, then one with a
-/// word that starts with it, then any other match; within each, the programs axStart started more often first, then the names
-/// in File Explorer's order. An empty text matches every program, the most started first.
+/// word that starts with it, then any other match; within each, what was closed lately in an axKit window first, the
+/// newest first (AS-2.5), then the programs axStart started more often, then the names in File Explorer's order. An
+/// empty text matches everything: the recently closed first, then every program, the most started first.
 /// </summary>
 public static class ProgramMatch
 {
-    public static IReadOnlyList<ProgramEntry> Find(IReadOnlyList<ProgramEntry> programs, string text, IReadOnlyDictionary<string, int> starts)
+    public static IReadOnlyList<ProgramEntry> Find(IReadOnlyList<ProgramEntry> programs, string text, IReadOnlyDictionary<string, int> starts) =>
+        Find(programs, [], text, starts);
+
+    /// <summary>The matches among the programs and the recently closed entries (<paramref name="recent"/>, the newest first).</summary>
+    public static IReadOnlyList<ProgramEntry> Find(IReadOnlyList<ProgramEntry> programs, IReadOnlyList<ProgramEntry> recent, string text, IReadOnlyDictionary<string, int> starts)
     {
         var words = TextMatch.Words(text);
-        var matches = new List<(ProgramEntry Entry, int Rank)>();
+        var matches = new List<(ProgramEntry Entry, int Rank, int Order)>();
+        for (var i = 0; i < recent.Count; i++)
+        {
+            if (TextMatch.Rank(TextMatch.Fold(recent[i].Name), words) is { } rank)
+            {
+                matches.Add((recent[i], rank, i));
+            }
+        }
+
         foreach (var entry in programs)
         {
             // The first word places it: "win power" puts "Windows PowerShell" with the names starting with "win".
             if (TextMatch.Rank(TextMatch.Fold(entry.Name), words) is { } rank)
             {
-                matches.Add((entry, rank));
+                matches.Add((entry, rank, int.MaxValue));
             }
         }
 
         return matches
             .OrderBy(match => match.Rank)
+            .ThenBy(match => match.Order)
             .ThenByDescending(match => starts.TryGetValue(match.Entry.Name, out var count) ? count : 0)
             .ThenBy(match => match.Entry.Name, NaturalOrder.Instance)
             .Select(match => match.Entry)

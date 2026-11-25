@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axStart: **what you closed lately in axKit is found from anywhere**: the files and folders of the Window menu's Recently closed are among axStart's matches, first when nothing is typed, named as that menu names them; Enter opens one again in its app, Ctrl+O its folder in axFile.
 - axTask: **Ctrl+N in a list types the new title in the list itself**, as F2 renames: a row "New item" opens where the item will stand; Enter adds it, Escape drops it. Enter on the new item opens its form for the rest.
 - axKit: **what a window says as it opens is no longer cut off**: it waits until NVDA has read where the focus landed, so that a first file that cannot play, or Ready, is heard.
 - axKit: **every app refuses, fails and says a switch the same way**: a command that cannot act now plays the refused sound and says why, in every app, where most refused in silence; an error notice sounds as a failure everywhere; Word wrap, Hide done tasks and the theme's switches say "checked" or "not checked", as every other switch does.

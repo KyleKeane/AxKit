@@ -11,6 +11,12 @@ public enum ProgramKind
 
     /// <summary>A desktop program the shell names by an id of its own, with no path to show.</summary>
     Other,
+
+    /// <summary>
+    /// What was closed lately in an axKit window (AS-2.5; the bundle's Recently closed, AX-9.5): a file or folder and
+    /// the app it was open in, opened again in that app.
+    /// </summary>
+    Recent,
 }
 
 /// <summary>
@@ -18,8 +24,15 @@ public enum ProgramKind
 /// the shell starts it by (<c>shell:AppsFolder\&lt;parsing name&gt;</c>), its kind, and the program file's path when the
 /// parsing name holds one.
 /// </summary>
-public sealed record ProgramEntry(string Name, string ParsingName, ProgramKind Kind, string? Target)
+public sealed record ProgramEntry(string Name, string ParsingName, ProgramKind Kind, string? Target, string? AppVerb = null)
 {
+    /// <summary>
+    /// A recently closed item as a match (AS-2.5): named as the Window menu names it ("notes.md (C:\notes\notes.md) -
+    /// axDown", <paramref name="title"/>), opened again with the app's verb; an app that holds no file has no target.
+    /// </summary>
+    public static ProgramEntry Recent(string title, string appVerb, string path) =>
+        new(title, path, ProgramKind.Recent, path.Length == 0 ? null : path, appVerb);
+
     /// <summary>
     /// An entry from what the shell gives for it. A packaged app's parsing name has a '!' between the package and the
     /// app; a desktop program's is a path, either whole or under a known folder written as its id
@@ -53,6 +66,7 @@ public sealed record ProgramEntry(string Name, string ParsingName, ProgramKind K
     {
         ProgramKind.Desktop => $"{Name}, desktop program, {Target}",
         ProgramKind.Store => $"{Name}, Store app",
+        ProgramKind.Recent => $"{Name}, recently closed",
         _ => $"{Name}, program",
     };
 }

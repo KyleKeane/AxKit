@@ -68,6 +68,35 @@ public sealed class ProgramMatchTests
     }
 
     [Fact]
+    public void What_was_closed_lately_comes_first_the_newest_first_and_before_the_programs_of_its_place()
+    {
+        IReadOnlyList<ProgramEntry> recent =
+        [
+            ProgramEntry.Recent(@"notes.md (C:\notes\notes.md) - axDown", "down", @"C:\notes\notes.md"),
+            ProgramEntry.Recent(@"budget.json (C:\b\budget.json) - axJSON", "json", @"C:\b\budget.json"),
+        ];
+        var starts = new Dictionary<string, int> { ["Calculator"] = 5 };
+
+        var empty = ProgramMatch.Find(Programs, recent, "", starts).Select(entry => entry.Name).ToList();
+        Assert.Equal(Programs.Count + 2, empty.Count);
+        Assert.StartsWith("notes.md", empty[0]);
+        Assert.StartsWith("budget.json", empty[1]);
+        Assert.Equal("Calculator", empty[2]);
+
+        // "note": notes.md starts with it, as Notepad and Notepad++ do, and comes first of them; then a word starting
+        // with it (Sticky Notes), then it anywhere (OneNote).
+        var note = ProgramMatch.Find(Programs, recent, "note", NoStarts).Select(entry => entry.Name).ToList();
+        Assert.StartsWith("notes.md", note[0]);
+        Assert.Equal(["Sticky Notes", "OneNote"], note[^2..]);
+
+        var entry = ProgramMatch.Find(Programs, recent, "budget", NoStarts).Single();
+        Assert.Equal(ProgramKind.Recent, entry.Kind);
+        Assert.Equal("json", entry.AppVerb);
+        Assert.Equal(@"C:\b\budget.json", entry.Target);
+        Assert.Equal(@"budget.json (C:\b\budget.json) - axJSON, recently closed", entry.Information);
+    }
+
+    [Fact]
     public void A_text_nothing_matches_says_so()
     {
         Assert.Empty(Names("xyz"));

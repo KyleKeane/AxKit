@@ -20,6 +20,7 @@ public sealed class StartForm : HotkeyForm
     private readonly StatusStrip _status = new();
     private readonly ToolStripStatusLabel _countLabel;
     private IReadOnlyList<ProgramEntry> _programs = [];
+    private IReadOnlyList<ProgramEntry> _recent = [];
     private IReadOnlyList<ProgramEntry> _matches = [];
     private bool _reading;
 
@@ -56,7 +57,7 @@ public sealed class StartForm : HotkeyForm
         MainMenuStrip = _menu;
 
         // ---- the field and the matches (AS-3.1, AS-D2): HotkeyForm's, named here ----
-        SearchField.AccessibleName = "Search programs";
+        SearchField.AccessibleName = "Search programs and recently closed";
         Matches.AccessibleName = "Programs, 0";
         Matches.DoubleClick += (_, _) => StartSelected(administrator: false);
 
@@ -152,7 +153,7 @@ public sealed class StartForm : HotkeyForm
     /// <summary>The list made again from the typed text, the selection on <paramref name="keep"/> when it is still there, the first otherwise.</summary>
     private void Fill(string? keep)
     {
-        _matches = ProgramMatch.Find(_programs, SearchField.Text, _settings.Starts);
+        _matches = ProgramMatch.Find(_programs, _recent, SearchField.Text, _settings.Starts);
         var index = keep is null ? 0 : Math.Max(0, _matches.ToList().FindIndex(entry => entry.Name == keep));
         ShowMatches(_matches.Select(entry => entry.Name).ToList(), _programs.Count == 0 ? "Reading the programs" : ProgramMatch.NoMatch(SearchField.Text), $"Programs, {_matches.Count}", index);
         _countLabel.Text = $"{_programs.Count} programs";
@@ -170,12 +171,16 @@ public sealed class StartForm : HotkeyForm
         try
         {
             var programs = await AppsFolder.ReadAsync();
+            // The bundle's Recently closed (AS-2.5, AX-9.5), read off the UI thread: its entries whose file is gone
+            // are left out by the check of each path.
+            var recent = await Task.Run(ReadRecent);
             if (IsDisposed)
             {
                 return;
             }
 
             _programs = programs;
+            _recent = recent;
             Log.Info($"Read {programs.Count} programs");
             Fill(Selected?.Name);
             if (announce)
@@ -189,13 +194,37 @@ public sealed class StartForm : HotkeyForm
         }
     }
 
-    // ---- what is done with a match (AS-2.3, AS-2.4, AS-3.3) ----
+    /// <summary>What was closed lately in an axKit window, the newest first, as matches named as the Window menu names them (AS-2.5).</summary>
+    private static IReadOnlyList<ProgramEntry> ReadRecent() =>
+    [
+        .. RecentlyClosed.Load()
+            .Where(item => Dispatch.ByName(item.App) is not null)
+            .Select(item => ProgramEntry.Recent(RecentlyClosed.Title(item), Dispatch.ByName(item.App)!.Verb, item.Path)),
+    ];
+
+    // ---- what is done with a match (AS-2.3, AS-2.4, AS-2.5, AS-3.3) ----
 
     private void StartSelected(bool administrator)
     {
         if (Selected is not { } entry)
         {
             SayFirstOrNothing();
+            return;
+        }
+
+        if (entry.Kind == ProgramKind.Recent)
+        {
+            if (administrator)
+            {
+                Refuse("Not for a recently closed item");
+                return;
+            }
+
+            // Opened again in its app, as the Window menu's Recently closed does: a new window of this program file.
+            Log.Info("Hidden: a recently closed item opened again");
+            HideWindow(giveBack: false);
+            WindowMenu.Start(entry.AppVerb!, entry.Target);
+            Do(GiveForegroundBackLaterAsync);
             return;
         }
 

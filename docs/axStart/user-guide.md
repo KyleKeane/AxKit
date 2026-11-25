@@ -1,6 +1,6 @@
 # axStart user guide
 
-axStart is a program launcher, made for screen reader users: one key from anywhere brings up a search field, you type part of a program's name, Down and Up move through the programs that match while the caret stays in the field, and Enter starts the one you are on. The programs are the ones the Start menu has, the desktop programs and the Store apps (Settings, Calculator) alike. There are no web results, no files and no suggestions.
+axStart is a program launcher, made for screen reader users: one key from anywhere brings up a search field, you type part of a program's name, Down and Up move through the programs that match while the caret stays in the field, and Enter starts the one you are on. The programs are the ones the Start menu has, the desktop programs and the Store apps (Settings, Calculator) alike. What you closed lately in axKit is there too. There are no web results and no suggestions.
 
 ## Install and start
 
@@ -10,7 +10,7 @@ You can also start it from the Start menu, `axKit axStart`, or the console, `axS
 
 ## Finding and starting a program
 
-1. Press **Ctrl+Shift+Space** from any program. NVDA says "axStart window, Search programs, edit".
+1. Press **Ctrl+Shift+Space** from any program. NVDA says "axStart window, Search programs and recently closed, edit".
 2. Type part of the name, for example `calc`. After a short pause axStart says the first match and how many there are: "Calculator, 1 of 2". "No programs match xyz" when nothing does.
 3. **Down** and **Up** move to the next and the previous match, each said with its place: "Notepad++, 2 of 3". **Page Down** and **Page Up** move a page of matches, **Ctrl+Home** and **Ctrl+End** to the first and the last. At either end a low note sounds and nothing moves.
 4. **Enter** starts the match you are on. axStart goes away and the program comes up in front.
@@ -18,6 +18,10 @@ You can also start it from the Start menu, `axKit axStart`, or the console, `axS
 The caret never leaves the field: you can type more, Backspace, Delete, Left and Right at any moment, and the matches follow what is typed, the first one selected again.
 
 How matching works: every word you type must be in the name, in any order, with case and accents ignored; `win power` finds "Windows PowerShell". Names that start with what you typed come first, then names with a word that starts with it, then the rest. Among those, the programs you start most often from axStart come first.
+
+## Getting back to what you closed
+
+The files and folders you closed lately in axKit's windows are among the matches too, named as the Window menu's Recently closed names them: "notes.md (C:\notes\notes.md) - axDown". With nothing typed they come first, the newest first; type part of a name to find one. **Enter** opens it again in the app it was open in, **Ctrl+O** opens its folder in axFile, and **Ctrl+I** says its name and "recently closed". A file that is gone is not listed.
 
 ## More keys in the field
 
