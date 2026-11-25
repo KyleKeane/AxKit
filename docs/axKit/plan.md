@@ -28,6 +28,10 @@ use, unchanged. One installer, one updater, one version, one changelog, one rele
    test (bundle SPEC AX-8); the notices and the question area are shared, not copied (AX-6.4).
 8. Plain code only (B-10), zero third-party dependencies, and the working app never broken: the transition ran on
    a branch, one step per commit, every commit building and passing the tests, merged after NVDA checks.
+9. After 5.9.1 (2026-11-15) the direction is the core mechanics, stable through the maintainer's own use: his
+   reports and the problems he meets first, faults in what exists before anything new, small and frequent
+   releases, new features only where they remove friction he met. New apps and large features wait (the section
+   "Parked on 2026-11-25" below).
 
 ## What was built, in order (all on 2026-10-02)
 

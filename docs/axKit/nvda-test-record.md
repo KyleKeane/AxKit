@@ -734,6 +734,28 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: what the closed items of 2026-11-25 left for the ear (the backlog cleared at the maintainer's word)
+
+Each was built and passed its scripts; its item was closed so that the priorities list holds only work to finish,
+and what it still waits on is here, by ear with NVDA:
+
+1. A window that says something as it opens (axMedia with a file it cannot play as its first; axClaude's Ready):
+   the words are heard after NVDA's reading of the window and its focus, not cut off (AX-7.1, the hold of
+   2026-11-25; item "of two announcements some tens of milliseconds apart").
+2. axHelp asked what a sound means, how to do a task in two apps, and what an app can do: the answer comes from the
+   pages it carries (items "every document that says what axKit does" and "workflows as one source").
+3. axClaude in daily use: a long streaming reply read with NVDA+A from the top; a feedback survey of Claude Code's as
+   a question; in an offered command the copy answer, the concern to its end and the breakdown section; a real
+   /login, its last screen as a list; whether the reading place ever jumps (the time and the line count); speech
+   order at a turn's end and on the way back from being put away (items "the things only the user's ear can check"
+   and "speech order breaks").
+4. The forms (the item "the new forms by ear"): the field first, then the explanation, as a form opens; whether the
+   explanation at every opening is too much for axTask's Action keys and axTerminal's Add a shell; Enter in a
+   one-line field with later fields empty; Action keys refilling the fields as the key list moves; whether axPass's
+   new entry password should be a form.
+5. At a sign-in: axStart, started hidden, leaves the focus where Windows put it, and the first key reaches that
+   window (AS-3.4; the item "axStart: whether it takes the focus").
+
 ## Owed: the maintainer's choices of 2026-11-24, by ear
 
 Built and passing on the runner's desktop, which plays no sound:
