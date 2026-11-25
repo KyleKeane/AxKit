@@ -19,14 +19,11 @@ internal static class Shell
     private const uint CmfNormal = 0;
     private const uint IdFirst = 1;
     private const uint IdLast = 0x7FFF;
-    private const uint TpmReturnCmd = 0x0100;
     private const int SwShowNormal = 1;
-    private const int WmKeyDown = 0x0100;
     private const int WmInitMenuPopup = 0x0117;
     private const int WmMenuChar = 0x0120;
     private const int WmMeasureItem = 0x002C;
     private const int WmDrawItem = 0x002B;
-    private const int VkDown = 0x28;
     private const uint SeeMaskInvokeIdList = 0x0000000C;
     private const uint SeeMaskFlagNoUi = 0x00000400;
     private const uint CmicMaskUnicode = 0x00004000;
@@ -91,8 +88,7 @@ internal static class Shell
         {
             // Selects the first item for the keyboard before the menu's loop takes over, as the shell does for Shift+F10.
             s_tracking = parts.Handler;
-            PostMessage(owner, WmKeyDown, VkDown, 0);
-            var id = TrackPopupMenuEx(parts.Menu, TpmReturnCmd, at.X, at.Y, owner, 0);
+            var id = AxKit.Forms.NativeMenu.Track(parts.Menu, owner, at);
             s_tracking = null;
             if (id == 0)
             {
@@ -467,8 +463,6 @@ internal static class Shell
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool DestroyMenu(nint menu);
 
-    [DllImport("user32.dll", ExactSpelling = true)]
-    private static extern uint TrackPopupMenuEx(nint menu, uint flags, int x, int y, nint owner, nint parameters);
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     private struct ShellExecuteInfo

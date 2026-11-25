@@ -29,8 +29,7 @@ public static class NativeMenu
                 AppendMenuW(menu, items[i].Enabled ? MfString : MfString | MfGrayed, (nuint)(i + 1), items[i].Text ?? string.Empty);
             }
 
-            User32.PostMessage(owner.Handle, WmKeyDown, VkDown, 0);
-            var id = (int)TrackPopupMenuEx(menu, TpmReturnCmd, screenPoint.X, screenPoint.Y, owner.Handle, 0);
+            var id = (int)Track(menu, owner.Handle, screenPoint);
             if (id < 1 || id > items.Count)
             {
                 return false;
@@ -43,6 +42,18 @@ public static class NativeMenu
         {
             DestroyMenu(menu);
         }
+    }
+
+    /// <summary>
+    /// A native popup menu tracked at <paramref name="screenPoint"/> with its first item selected for the keyboard: a
+    /// Down posted just before the menu's loop takes over, as File Explorer's Shift+F10 does, so that NVDA reads the
+    /// item; the chosen item's id, 0 for none. axFile's shell menu and <see cref="Choose"/> track through it (repairs
+    /// R-101, 2026-11-25: written in both until then).
+    /// </summary>
+    public static uint Track(nint menu, nint owner, Point screenPoint)
+    {
+        User32.PostMessage(owner, WmKeyDown, VkDown, 0);
+        return TrackPopupMenuEx(menu, TpmReturnCmd, screenPoint.X, screenPoint.Y, owner, 0);
     }
 
     private const uint MfString = 0x0000;
