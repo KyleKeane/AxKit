@@ -45,6 +45,15 @@ the restart by the app itself (2.3.0).
 
 ## Still to come
 
+- **A chat app over REST chat APIs** (asked 2026-11-25, high priority, name to settle, axChat proposed; design with
+  Fable first, nothing built): a conversation like axClaude's over an HTTP chat API (llama.cpp's server, any
+  OpenAI-compatible server, Anthropic, Ollama), the user picking a named API dialect, giving its address and key,
+  and pressing Go, one step; dialects as data files mapping each API's requests and streamed events onto axKit's
+  own events, with presets and the user's own; the conversation window axClaude has. A specialized chat app rather
+  than a general REST tool, for the streaming, the history the client resends, a reply's parts and the model list.
+  To settle first: a third network contact of axKit's own code (rule 8) and the AI caution on every reply (rule 11).
+  The analysis is in the item "axChat (name to settle)" of the priorities list.
+
 - **Guided learning, step by step** (the user's direction, 2026-11-16; recorded as a direction, not to be built
   yet): new users are coming, and on some days a person wants a thing done for them, on others they have the
   capacity to learn it. Three ways to one goal, all from the same source, the goals of `docs/axKit/workflows.md`
