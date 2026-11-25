@@ -8,8 +8,8 @@ dated pass; then the script writes this page again.
 
 ## Where it stands
 
-- 30 owed in all.
-- Owed a hearing with NVDA: 14.
+- 32 owed in all.
+- Owed a hearing with NVDA: 16.
 - Owed a live check with a real outside program or situation: 7.
 - Owed a window check on the hidden desktop: 8.
 - Owed a test in code: 1.
@@ -30,6 +30,8 @@ dated pass; then the script writes this page again.
 - R-56: the sentence of the AI tools submenu when the setting was changed outside axKit or its key is gone.
 - R-57: the end of the sentence after a report is sent, which says how many waiting reports were not sent.
 - R-61: axMCP's notice that reads a server's whole command line before it is agreed to.
+- R-95: the refused sound in the apps that refused in silence until 2026-11-25, and the switches' checked and not checked.
+- R-101: axFile's Windows menu opens with its first item read, now tracked through NativeMenu.Track.
 
 ## Owed a live check with a real outside program or situation
 

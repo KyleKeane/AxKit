@@ -6,8 +6,7 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ## Where it stands
 
-- **open**: 9 (2 medium, 7 low)
-- **done**: 85 (13 high, 39 medium, 33 low)
+- **done**: 94 (13 high, 41 medium, 40 low)
 - **deferred**: 1 (1 medium)
 - **declined**: 6 (4 medium, 2 low)
 
@@ -21,71 +20,6 @@ found and what became of each finding: change the JSON in the same commit as the
 - **P6. Writes are whole or not at all.** A file a user or the app depends on is written through a temporary file and put in place in one step; an undo step is dropped only once it has been applied. (2 findings)
 - **P7. Tests check the built thing.** What matters is checked on the running window or the built data; a test that reads source text is lint, a help and never the proof. (5 findings)
 - **P8. Documents describe the present.** Reference text says what is true now, in small files a reader with little context can hold; history lives in the changelog and git; open work lives in the priorities list. (17 findings)
-
-## Open
-
-### R-95, medium, forms: Failures, refusals and switches sound and read differently from app to app
-
-- Where: src/AxKit.Forms/AxKitForm.Notices.cs; src/AxKit.Forms/AxKitForm.Theme.cs; src/AxTask/TaskForm.Actions.cs; src/AxMCP/MCPForm.cs
-- Principle: P1
-- Fix: One Refuse(said) on the window base with the refused sound; Fail through Failed; a switch said through CheckSaid.
-- Note: Found on 2026-11-24 by the audit of the code: the refused sound and an announce written inline 17 times, apps that refuse without a sound, three wordings of a switch, ShowError used directly. What is heard changes, so it is the maintainer's to decide.
-
-### R-98, medium, tooling: Rules written as rules with no check
-
-- Where: CHANGELOG.md; src/AxKit.Forms/AxKitForm.cs; tests/AxKit.Tests
-- Principle: P7
-- Fix: The app prefix of every bullet under Unreleased; a control without an accessible name in check commands; a plain-code test (no interface, no WinForms in a Core project, UI Automation notifications in Announcer alone); the caution words only from AiCaution.
-- Note: Found on 2026-11-24 by the audit of the tests. The AiCaution check waits on two texts that may not be the AI case (TaskForm.Actions.cs, HandedCommand.cs). Done on 2026-11-24: ChangelogTests (efda356d) and PlainCodeTests (0daa39bc). Left: a control without an accessible name in check commands, and the caution words only from AiCaution.
-
-### R-100, low, tooling: test.ps1 starts the build eighteen times
-
-- Where: test.ps1; Directory.Build.rsp
-- Principle: P4
-- Fix: One dotnet test over a solution filter of the test projects, in Release, if a measurement on the 7 GB computer shows it is faster and fits.
-- Note: Found on 2026-11-24 by the audit of the tools. It changes the one-by-one rule of the root CLAUDE.md and commands.md, so it is measured first and the rule's change is the maintainer's.
-
-### R-101, low, framework: The popup menu tracking is written twice
-
-- Where: src/AxKit.Forms/NativeMenu.cs; src/AxFile/Shell.cs
-- Principle: P2
-- Fix: NativeMenu.Track(menu, owner, point): the Down posted, then TrackPopupMenuEx, used by axFile's shell menu and by NativeMenu.Choose; the shell's own CreatePopupMenu and DestroyMenu too.
-- Note: Split off R-92 on 2026-11-24: axFile's Windows menu must be heard with NVDA after the change, since a menu that opens with nothing selected reads nothing.
-
-### R-84, low, tooling: The hooks-installed check is written twice and the copies disagree on worktrees
-
-- Where: test.ps1; release.ps1
-- Principle: P2
-- Fix: One function, accepting a worktree's common hooks folder.
-- Note: Found on 2026-11-24 by the audit of the tools. Whether it sets core.hooksPath itself instead of refusing is the maintainer's choice.
-
-### R-89, low, docs: axClaude's window notes are 26 KB, with one bullet of 6,555 characters and gotchas of every window
-
-- Where: src/AxClaude/CLAUDE.md; src/AxKit.Forms/notes; src/AxClaude.Core/notes/stream.md
-- Principle: P8
-- Fix: One short bullet per partial file; the WinForms and NVDA gotchas that are not axClaude's moved to the Forms notes; stream.md in a section per file.
-- Note: Found on 2026-11-24 by the audit of the documents. Next at the 32 KB limit: AxClaude.Core, AxFile, controls.md, AxAutomate.Core, window-base.md.
-
-### R-96, low, tooling: Test helpers copied across the test projects
-
-- Where: tests/Shared/SourceTexts.cs; tests/AxKit.Tests/LayoutTests.cs; tests/AxAutomate.Tests; tests/AxClaude.Tests/TestHelpers.cs; tests/AxTerminal.Tests/TestHelpers.cs
-- Principle: P2
-- Fix: SourceTexts.RepositoryRoot and one list of C# files without bin and obj used everywhere; the fixture helpers in tests/Shared/Fixtures.cs.
-- Note: Found on 2026-11-24 by the audit of the tests: the repository root is found in 16 copies; six source checks skip obj and not bin. Done on 2026-11-24 (115719ef): the repository root is SourceTexts.RepositoryRoot everywhere, LayoutTests' copy and three inline ones gone. Left: the fixture helpers of AxClaude.Tests and AxTerminal.Tests, and one list of C# files without bin and obj.
-
-### R-97, low, tooling: Window scripts carry a setting that does nothing and sections that check nothing
-
-- Where: tests/scripts
-- Principle: P7
-- Fix: checkForUpdates false taken out of the 200 scripts (a test run never checks at start), its comments with it; expect closed where three sections end on a close with no check; a test that every section holds a check.
-- Note: Found on 2026-11-24 by the audit of the tests. A shared setup step for the consent file and axTask's lists would follow.
-
-### R-99, low, tooling: Checks pinned to exact code text
-
-- Where: tests/AxKit.Tests/CommandMarkTests.cs; tests/AxKit.Tests/WindowReachTests.cs
-- Principle: P7
-- Fix: The act marks pinned as rows of the command inventory, not as substrings of the code.
-- Note: Found on 2026-11-24 by the audit of the tests: 33 substrings break on any reformat.
 
 ## Done
 
@@ -538,6 +472,24 @@ found and what became of each finding: change the JSON in the same commit as the
 - Commit: 1d796a97
 - Note: Found on 2026-11-24 by the audit of the code.
 
+### R-95, medium, forms: Failures, refusals and switches sound and read differently from app to app
+
+- Where: src/AxKit.Forms/AxKitForm.Notices.cs; src/AxKit.Forms/AxKitForm.Theme.cs; src/AxTask/TaskForm.Actions.cs; src/AxMCP/MCPForm.cs
+- Principle: P1
+- Fix: One Refuse(said) on the window base with the refused sound; Fail through Failed; a switch said through CheckSaid.
+- Checked by: every test project passes; every app's window scripts pass on the hidden desktop (the run of 2026-11-25, c025d9ec)
+- Commit: 3f13b6d1
+- Note: Found on 2026-11-24 by the audit of the code: the refused sound and an announce written inline 17 times, apps that refuse without a sound, three wordings of a switch, ShowError used directly. What is heard changes, so it is the maintainer's to decide.
+
+### R-98, medium, tooling: Rules written as rules with no check
+
+- Where: CHANGELOG.md; src/AxKit.Forms/AxKitForm.cs; tests/AxKit.Tests
+- Principle: P7
+- Fix: The app prefix of every bullet under Unreleased; a control without an accessible name in check commands; a plain-code test (no interface, no WinForms in a Core project, UI Automation notifications in Announcer alone); the caution words only from AiCaution.
+- Checked by: ChangelogTests, PlainCodeTests, AiCautionWordsTests; check commands names an unnamed control
+- Commit: d044f902
+- Note: Found on 2026-11-24 by the audit of the tests. The AiCaution check waits on two texts that may not be the AI case (TaskForm.Actions.cs, HandedCommand.cs). Done on 2026-11-24: ChangelogTests (efda356d) and PlainCodeTests (0daa39bc). Left: a control without an accessible name in check commands, and the caution words only from AiCaution.
+
 ### R-04, low, security: Settings whose effect is more than a setting were marked change
 
 - Where: src/AxKit.Forms/HotkeyForm.cs; src/AxKit.Forms/AxKitForm.cs; src/AxClaude/MainForm.Ui.cs
@@ -579,6 +531,24 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: A menu whose list is showing is read as it stands; the placeholder of an empty list is left out of the entries.
 - Checked by: tests/AxKit.Tests/CommandPaletteTests
 - Commit: af0fac3
+
+### R-100, low, tooling: test.ps1 starts the build eighteen times
+
+- Where: test.ps1; Directory.Build.rsp
+- Principle: P4
+- Fix: One dotnet test over a solution filter of the test projects, in Release, if a measurement on the 7 GB computer shows it is faster and fits.
+- Checked by: measured: 205 s one by one, 171 s in one run, the same free memory; every test project passes in one run
+- Commit: 757e9b50
+- Note: Found on 2026-11-24 by the audit of the tools. It changes the one-by-one rule of the root CLAUDE.md and commands.md, so it is measured first and the rule's change is the maintainer's.
+
+### R-101, low, framework: The popup menu tracking is written twice
+
+- Where: src/AxKit.Forms/NativeMenu.cs; src/AxFile/Shell.cs
+- Principle: P2
+- Fix: NativeMenu.Track(menu, owner, point): the Down posted, then TrackPopupMenuEx, used by axFile's shell menu and by NativeMenu.Choose; the shell's own CreatePopupMenu and DestroyMenu too.
+- Checked by: the tests pass; owed a hearing of axFile's Windows menu
+- Commit: 0eac476c
+- Note: Split off R-92 on 2026-11-24: axFile's Windows menu must be heard with NVDA after the change, since a menu that opens with nothing selected reads nothing.
 
 ### R-16, low, framework: Dead code and stale notes in the command layer
 
@@ -763,6 +733,15 @@ found and what became of each finding: change the JSON in the same commit as the
 - Commit: 7ab6a19f
 - Note: Found on 2026-11-24 by the audit of the documents.
 
+### R-84, low, tooling: The hooks-installed check is written twice and the copies disagree on worktrees
+
+- Where: test.ps1; release.ps1
+- Principle: P2
+- Fix: One function, accepting a worktree's common hooks folder.
+- Checked by: the release rehearsal passes the hooks check; the release script tests pass
+- Commit: a4de5e5d
+- Note: Found on 2026-11-24 by the audit of the tools. Whether it sets core.hooksPath itself instead of refusing is the maintainer's choice.
+
 ### R-87, low, docs: commands.md and session-start disagree with the scripts
 
 - Where: docs/axKit/commands.md; tools/session-start.ps1; docs/axKit/development-environment.md; release.ps1; run.ps1
@@ -780,6 +759,15 @@ found and what became of each finding: change the JSON in the same commit as the
 - Checked by: NotesTests pass, the backticked names exist
 - Commit: 3f3d6f4f
 - Note: Found on 2026-11-24 by the audit of the documents.
+
+### R-89, low, docs: axClaude's window notes are 26 KB, with one bullet of 6,555 characters and gotchas of every window
+
+- Where: src/AxClaude/CLAUDE.md; src/AxKit.Forms/notes; src/AxClaude.Core/notes/stream.md
+- Principle: P8
+- Fix: One short bullet per partial file; the WinForms and NVDA gotchas that are not axClaude's moved to the Forms notes; stream.md in a section per file.
+- Checked by: NotesTests pass: the names of the moved gotchas exist; the Forms index lists the new file
+- Commit: 246d36c6
+- Note: Found on 2026-11-24 by the audit of the documents. Next at the 32 KB limit: AxClaude.Core, AxFile, controls.md, AxAutomate.Core, window-base.md.
 
 ### R-91, low, framework: The undo stack is written three times
 
@@ -816,6 +804,33 @@ found and what became of each finding: change the JSON in the same commit as the
 - Checked by: the tests of AxKit, AxClaude, AxTask and AxAutomate pass
 - Commit: aa4d75e0
 - Note: Found on 2026-11-24 by the audit of the code.
+
+### R-96, low, tooling: Test helpers copied across the test projects
+
+- Where: tests/Shared/SourceTexts.cs; tests/AxKit.Tests/LayoutTests.cs; tests/AxAutomate.Tests; tests/AxClaude.Tests/TestHelpers.cs; tests/AxTerminal.Tests/TestHelpers.cs
+- Principle: P2
+- Fix: SourceTexts.RepositoryRoot and one list of C# files without bin and obj used everywhere; the fixture helpers in tests/Shared/Fixtures.cs.
+- Checked by: every test project passes
+- Commit: fa2ac521
+- Note: Found on 2026-11-24 by the audit of the tests: the repository root is found in 16 copies; six source checks skip obj and not bin. Done on 2026-11-24 (115719ef): the repository root is SourceTexts.RepositoryRoot everywhere, LayoutTests' copy and three inline ones gone. Left: the fixture helpers of AxClaude.Tests and AxTerminal.Tests, and one list of C# files without bin and obj.
+
+### R-97, low, tooling: Window scripts carry a setting that does nothing and sections that check nothing
+
+- Where: tests/scripts
+- Principle: P7
+- Fix: checkForUpdates false taken out of the 200 scripts (a test run never checks at start), its comments with it; expect closed where three sections end on a close with no check; a test that every section holds a check.
+- Checked by: the full window run of 2026-11-25 passes, axDown's 06 with its setting back (c025d9ec)
+- Commit: 3f13b6d1
+- Note: Found on 2026-11-24 by the audit of the tests. A shared setup step for the consent file and axTask's lists would follow.
+
+### R-99, low, tooling: Checks pinned to exact code text
+
+- Where: tests/AxKit.Tests/CommandMarkTests.cs; tests/AxKit.Tests/WindowReachTests.cs
+- Principle: P7
+- Fix: The pinned pieces compared with every white space taken out of both, so that a reformat passes and a rename fails; pinning them as inventory rows was weighed and not done, since several items show only in states the scripts never reach.
+- Checked by: CommandMarkTests pass
+- Commit: 53b3bd38
+- Note: Found on 2026-11-24 by the audit of the tests: 33 substrings break on any reformat.
 
 ## Deferred
 
