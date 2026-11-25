@@ -6,8 +6,8 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ## Where it stands
 
-- **open**: 17 (7 medium, 10 low)
-- **done**: 76 (13 high, 34 medium, 29 low)
+- **open**: 11 (2 medium, 9 low)
+- **done**: 82 (13 high, 39 medium, 30 low)
 - **deferred**: 1 (1 medium)
 - **declined**: 6 (4 medium, 2 low)
 
@@ -23,41 +23,6 @@ found and what became of each finding: change the JSON in the same commit as the
 - **P8. Documents describe the present.** Reference text says what is true now, in small files a reader with little context can hold; history lives in the changelog and git; open work lives in the priorities list. (17 findings)
 
 ## Open
-
-### R-81, medium, tooling: test.ps1 checks the pages after every test and names one stale page at a time
-
-- Where: test.ps1; tools/pages.ps1; tools/push-check.ps1; .github/workflows/build.yml
-- Principle: P2
-- Fix: One entry point, tools/pages.ps1 -Check, run before the tests by test.ps1 and push-check.ps1, collecting every failure with the right fix for each kind; the four copies of the list of page checks become that one.
-- Note: Found on 2026-11-24 by the audit of the tools, met the same evening: every stale page cost a full test run. doc-menus writes nothing, so its failure is fixed in the documents. Whether build.yml keeps one named step per check is the maintainer's choice.
-
-### R-82, medium, tooling: The push check chooses the test projects wrongly
-
-- Where: tools/push-check.ps1
-- Principle: P7
-- Fix: src/AxKit runs AxKit.Tests alone; tests/Shared, tests/Directory.Build.props and global.json run every project; tests/fixtures runs the projects that read fixtures.
-- Note: Found on 2026-11-24 by the audit of the tools: a change to the shared test helpers or the fixtures ran AxKit.Tests alone, and a release commit reran everything.
-
-### R-83, medium, tooling: The folders beside the repository are found eight ways, and some checks pass in silence in a worktree
-
-- Where: tools/item-of-commit.ps1; tools/item.ps1; tools/outside-check.ps1; tools/outside-report.ps1; tools/pin-approval-key.ps1; tools/reports-check.ps1; tools/sync-repos.ps1; test.ps1
-- Principle: P3
-- Fix: One function finds them through git's common directory, used by every script; a check that cannot find them says so.
-- Note: Found on 2026-11-24 by the audit of the tools: in a worktree not beside the checkout the outside check exits 0 without a word and the commit hook marks no item.
-
-### R-85, medium, tooling: A run with --inventory write adds rows and never removes one
-
-- Where: tools/AxAutomate; docs/axKit/window-commands.json
-- Principle: P8
-- Fix: A window whose whole command list a run read (check commands) has its rows replaced, so a renamed or moved command leaves no old row.
-- Note: Found on 2026-11-24: the old rows of the update switch and of the editors' Ctrl+Tab stayed beside the new ones, and the guides' Menus sections named the old menu.
-
-### R-90, medium, framework: The item window forces overrides that can never run
-
-- Where: src/AxKit.Forms/ItemForm.cs; src/AxProcess/ProcessForm.cs; src/AxGit/GitForm.cs; src/AxMedia/MediaForm.cs
-- Principle: P2
-- Fix: NewItem, NewList, Undo and RenameRefused virtual with a default; the unreachable overrides of axProcess, axGIT and axMedia removed, KeysWithoutUse alone saying what an app does not use.
-- Note: Found on 2026-11-24 by the audit of the code.
 
 ### R-95, medium, forms: Failures, refusals and switches sound and read differently from app to app
 
@@ -107,13 +72,6 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P2
 - Fix: Each in one place: the popup menu tracking in NativeMenu, the idle time, the taskbar flash, the window thread and long in User32, a process's image path and a pipe's server in ThisProgram.
 - Note: Found on 2026-11-24 by the audit of the code: 33 functions are declared more than once. The shell menu's move needs an NVDA hearing of axFile's Windows menu.
-
-### R-93, low, framework: Members no code calls
-
-- Where: src/AxFile/FileForm.Browse.cs; src/AxKit.Forms/AxKitForm.cs; src/AxKit.Forms/AxKitForm.Find.cs; src/AxKit.Forms/ItemForm.Arrange.cs; src/AxKit.Forms/FormControls.cs; src/AxKit.Core/FlatItem.cs; src/AxKit.Core/Mcp/McpRun.cs
-- Principle: P8
-- Fix: IndexOfName, KeyTakenAnywhere, AddFindInListKeys, FilterText, FieldKeys, WithSchema and McpRun.SwitchLabel removed with the notes that name them; AddRadioList stays, its spec's.
-- Note: Found on 2026-11-24 by the audit of the code, each name searched across src, tests and tools.
 
 ### R-94, low, core: Small helpers written several times
 
@@ -540,6 +498,42 @@ found and what became of each finding: change the JSON in the same commit as the
 - Commit: b0efb41d
 - Note: Found on 2026-11-24 by the audit of the documents. Why the rows stayed is R-85.
 
+### R-81, medium, tooling: test.ps1 checks the pages after every test and names one stale page at a time
+
+- Where: test.ps1; tools/pages.ps1; tools/push-check.ps1; .github/workflows/build.yml
+- Principle: P2
+- Fix: One entry point, tools/pages.ps1 -Check, run before the tests by test.ps1 and push-check.ps1, collecting every failure with the right fix for each kind; the four copies of the list of page checks become that one.
+- Checked by: test.ps1 and the push of 2026-11-24 evening ran it before the tests: Every quick check passed
+- Commit: 3d90ca3a
+- Note: Found on 2026-11-24 by the audit of the tools, met the same evening: every stale page cost a full test run. doc-menus writes nothing, so its failure is fixed in the documents. Whether build.yml keeps one named step per check is the maintainer's choice.
+
+### R-82, medium, tooling: The push check chooses the test projects wrongly
+
+- Where: tools/push-check.ps1
+- Principle: P7
+- Fix: src/AxKit runs AxKit.Tests alone; tests/Shared, tests/Directory.Build.props and global.json run every project; tests/fixtures runs the projects that read fixtures.
+- Checked by: read; HookTests pass
+- Commit: 46ab6052
+- Note: Found on 2026-11-24 by the audit of the tools: a change to the shared test helpers or the fixtures ran AxKit.Tests alone, and a release commit reran everything.
+
+### R-83, medium, tooling: The folders beside the repository are found eight ways, and some checks pass in silence in a worktree
+
+- Where: tools/item-of-commit.ps1; tools/item.ps1; tools/outside-check.ps1; tools/outside-report.ps1; tools/pin-approval-key.ps1; tools/reports-check.ps1; tools/sync-repos.ps1; test.ps1
+- Principle: P3
+- Fix: One function finds them through git's common directory, used by every script; a check that cannot find them says so.
+- Checked by: item.ps1, reports-check and outside-check run through it; the commit hook found its item; the script tests pass
+- Commit: dbe33723
+- Note: Found on 2026-11-24 by the audit of the tools: in a worktree not beside the checkout the outside check exits 0 without a word and the commit hook marks no item.
+
+### R-85, medium, tooling: A run with --inventory write adds rows and never removes one
+
+- Where: tools/AxAutomate; docs/axKit/window-commands.json
+- Principle: P8
+- Fix: A write of part of the suite says that the rows it did not see are kept, with the two runs that remove them (a write of the whole suite, WF-2.9a, or a rewrite of the app's scripts): replacing an app's rows from its own folder would drop the rows other folders' scripts list in other states.
+- Checked by: AxAutomate.Tests pass; WF-2.9a says it
+- Commit: 9b74855e
+- Note: Found on 2026-11-24: the old rows of the update switch and of the editors' Ctrl+Tab stayed beside the new ones, and the guides' Menus sections named the old menu.
+
 ### R-86, medium, docs: The root CLAUDE.md is 34 bytes under its limit, and its list of window kinds leaves out axTemplate
 
 - Where: CLAUDE.md; src/AxKit.Forms/CLAUDE.md
@@ -548,6 +542,15 @@ found and what became of each finding: change the JSON in the same commit as the
 - Checked by: NotesTests (the size limit) and ComponentsTests pass; components.md is current
 - Commit: 0d424f83
 - Note: Found on 2026-11-24 by the audit of the documents. Trimming the mechanics of rule 9 is the maintainer's choice: the words of his rules.
+
+### R-90, medium, framework: The item window forces overrides that can never run
+
+- Where: src/AxKit.Forms/ItemForm.cs; src/AxProcess/ProcessForm.cs; src/AxGit/GitForm.cs; src/AxMedia/MediaForm.cs
+- Principle: P2
+- Fix: NewItem, NewList, Undo and RenameRefused virtual with a default; the unreachable overrides of axProcess, axGIT and axMedia removed, KeysWithoutUse alone saying what an app does not use.
+- Checked by: axProcess, axGIT and axMedia window scripts pass on the hidden desktop with the inventory unchanged
+- Commit: 1d796a97
+- Note: Found on 2026-11-24 by the audit of the code.
 
 ### R-04, low, security: Settings whose effect is more than a setting were marked change
 
@@ -791,6 +794,15 @@ found and what became of each finding: change the JSON in the same commit as the
 - Checked by: NotesTests pass, the backticked names exist
 - Commit: 3f3d6f4f
 - Note: Found on 2026-11-24 by the audit of the documents.
+
+### R-93, low, framework: Members no code calls
+
+- Where: src/AxFile/FileForm.Browse.cs; src/AxKit.Forms/AxKitForm.cs; src/AxKit.Forms/AxKitForm.Find.cs; src/AxKit.Forms/ItemForm.Arrange.cs; src/AxKit.Forms/FormControls.cs; src/AxKit.Core/FlatItem.cs; src/AxKit.Core/Mcp/McpRun.cs
+- Principle: P8
+- Fix: IndexOfName, KeyTakenAnywhere, AddFindInListKeys, FilterText, FieldKeys, WithSchema and McpRun.SwitchLabel removed with the notes that name them; AddRadioList stays, its spec's.
+- Checked by: each name searched across src, tests and tools; the tests of AxKit, AxFile, AxMCP and AxTask pass
+- Commit: 39dbad6c
+- Note: Found on 2026-11-24 by the audit of the code, each name searched across src, tests and tools.
 
 ## Deferred
 
