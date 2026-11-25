@@ -1,0 +1,52 @@
+# Workflow: Find, filter and sort the servers in axMCP
+# axMCP, docs/axMCP/user-guide.md "Filter and sort", and the navigator's Ctrl+F, F3 and Shift+F3 (bundle AX-8.17,
+# docs/axKit/framework.md FW-4.10a): the same in every item window. Three servers of your own and one of the run
+# folder's .mcp.json, none ever started; this computer may have servers of its own, so rows are found by name and the
+# names start with zz or probe.
+file home\AxKit\axMCP.json {"servers": [{"name": "zzbeta", "commandLine": "cmd /c echo"}, {"name": "probe-other", "commandLine": "cmd /c echo"}, {"name": "zzalpha", "commandLine": "cmd /c echo"}]}
+file .mcp.json {"mcpServers":{"zzproj":{"command":"cmd","args":["/c","echo"]}}}
+
+start mcpclient {temp}
+expect state "title":"axMCP, access layer for MCP servers Servers
+expect focus Servers
+type zzproj
+expect focus zzproj, stdio, stopped
+# A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
+wait 500
+
+# Goal: Find a server and go to the next and the previous match
+# Ctrl+F, "zz", Enter: the next server whose name holds it, past the one in hand; F3 on, round the end; Shift+F3 back.
+do Find in the list
+expect state "notice":"Find"
+type zz
+keys enter
+expect focus zzbeta, stdio, stopped
+do Find next
+expect focus zzalpha, stdio, stopped
+do Find next
+expect focus zzproj, stdio, stopped
+do Find previous
+expect focus zzalpha, stdio, stopped
+
+# Goal: Show only the servers whose name contains a text
+# Options, Filter, "zz": the three that hold it, under their sections; probe-other is not listed. Escape clears it.
+do Filter
+expect focus "name":"Name contains"
+type zz
+keys enter
+expect said ! filter zz, 3 shown
+expect list "zzbeta, stdio, stopped","zzalpha, stdio, stopped"
+expect list zzproj, stdio, stopped
+refuse list probe-other
+keys escape
+expect said ! Filter cleared
+expect list "zzbeta, stdio, stopped","probe-other, stdio, stopped","zzalpha, stdio, stopped"
+
+# Goal: Put the servers in the order of their names
+# Options, Sort by, Name: Your servers by name; then the list's own order again.
+menu Name, Options, Sort by
+expect said ! Sorted by name
+expect list "probe-other, stdio, stopped","zzalpha, stdio, stopped","zzbeta, stdio, stopped"
+menu The list's own order, Options, Sort by
+expect said ! Sorted by the list's own order
+expect list "zzbeta, stdio, stopped","probe-other, stdio, stopped","zzalpha, stdio, stopped"

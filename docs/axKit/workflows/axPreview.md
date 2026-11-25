@@ -210,3 +210,20 @@ Starts with: Open axPreview with the file orchard.md. Start axPreview again with
     You hear words such as: 2. orchard.md.
     You hear: Session, Open recent.
 3. Press Enter.
+
+## Read a PowerPoint presentation and an OpenDocument text
+
+### Read a PowerPoint presentation slide by slide
+
+1. Open axPreview with the file deck.pptx.
+2. Press Down.
+3. Press Ctrl+H (Heading; Navigation menu, Next).
+    You hear: Slide 2, heading level 2.
+4. Press Down.
+
+### Read an OpenDocument text by its headings
+
+1. Open axPreview with --new the file garden.odt.
+2. Press Ctrl+H (Heading; Navigation menu, Next).
+    You hear: Tools, heading level 2.
+3. Press Down 2 times.

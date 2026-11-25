@@ -1,0 +1,46 @@
+# Workflow: Read a PowerPoint presentation and an OpenDocument text
+# axPreview, docs/axPreview/SPEC.md AP-7.2 item 2 (04-details-and-kinds has the Word document): a presentation is
+# its slides, each "## Slide N" followed by its text, and an OpenDocument text its headings as Markdown headings, its
+# list items with "- " and a table row as its cells; Ctrl+H moves by heading and slide. Both files are made here: the
+# XML parts written by file steps and zipped by Windows PowerShell, which names the parts with backslashes, as 04's
+# Word document is.
+# The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
+file pptx\ppt\slides\slide1.xml <p:sld xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><p:cSld><p:spTree><p:sp><p:txBody><a:p><a:r><a:t>Welcome</a:t></a:r></a:p><a:p><a:r><a:t>Agenda for today</a:t></a:r></a:p></p:txBody></p:sp></p:spTree></p:cSld></p:sld>
+file pptx\ppt\slides\slide2.xml <p:sld xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><p:cSld><p:spTree><p:sp><p:txBody><a:p><a:r><a:t>Results</a:t></a:r></a:p><a:p><a:r><a:t>Sales went up.</a:t></a:r></a:p></p:txBody></p:sp></p:spTree></p:cSld></p:sld>
+file odt\content.xml <office:document-content xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"><office:body><office:text><text:h text:outline-level="1">Garden</text:h><text:p>Water the beans.</text:p><text:h text:outline-level="2">Tools</text:h><text:list><text:list-item><text:p>Spade</text:p></text:list-item></text:list><table:table><table:table-row><table:table-cell><text:p>Rake</text:p></table:table-cell><table:table-cell><text:p>2</text:p></table:table-cell></table:table-row></table:table></office:text></office:body></office:document-content>
+run powershell -NoProfile -Command "Add-Type -AssemblyName System.IO.Compression.FileSystem; [IO.Compression.ZipFile]::CreateFromDirectory('pptx', 'deck.pptx'); [IO.Compression.ZipFile]::CreateFromDirectory('odt', 'garden.odt')"
+
+# Goal: Read a PowerPoint presentation slide by slide
+# The first slide's heading, its text under it; Ctrl+H the next slide; the status bar names the kind.
+start preview {temp}\deck.pptx
+expect state "title":"axPreview file
+expect state \deck.pptx","notice"
+expect focus {"name":"deck.pptx","role":"Text","value":"## Slide 1"}
+expect state PowerPoint presentation
+keys down
+expect focus Welcome
+keys ctrl+h
+expect said ! Slide 2, heading level 2
+keys down
+expect focus Results
+# Check: The Details list counts the slides
+keys tab
+type slid
+expect focus "value":"Slides: 2"
+
+# Goal: Read an OpenDocument text by its headings
+# Its first heading a level 1 heading, Ctrl+H the next at level 2, then the list item and the table row under it.
+start preview --new {temp}\garden.odt
+expect state \garden.odt","notice"
+expect focus {"name":"garden.odt","role":"Text","value":"# Garden"}
+expect state OpenDocument text
+keys ctrl+h
+expect said ! Tools, heading level 2
+keys down
+expect focus - Spade
+keys down
+expect focus Rake
+# Check: The Details list counts the tables
+keys tab
+type tab
+expect focus "value":"Tables: 1"

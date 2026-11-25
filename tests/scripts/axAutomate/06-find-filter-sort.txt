@@ -1,0 +1,49 @@
+# Workflow: Find, filter and sort the workflows of a folder
+# axAutomate, docs/axAutomate/user-guide.md "Filter and sort", and the navigator's Ctrl+F, F3 and Shift+F3 (bundle
+# AX-8.17, docs/axKit/framework.md FW-4.10a): the same in every item window. A workflow file is listed by its title,
+# so the first file, titled Zebra check, stands first in the folder's own order and last by name. Nothing is run.
+mkdir flows
+file flows\01-zebra.workflow.json {"format": "axkit-workflow 1", "title": "Zebra check", "steps": [{"do": "start", "arguments": "down"}, {"do": "close"}]}
+file flows\02-apple.txt # A script.\n\nstart down\nclose
+file flows\03-apricot.txt # Another script.\n\nstart down\nclose
+
+start automate {temp}\flows
+expect state "title":"axAutomate flows"
+expect focus Zebra check, workflow, 2 steps
+# A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
+wait 500
+
+# Goal: Find a workflow and go to the next and the previous match
+# Ctrl+F, "ap", Enter: the first workflow whose name holds it; F3 on, round the end; Shift+F3 back.
+do Find in the list
+expect state "notice":"Find"
+type ap
+keys enter
+expect focus 02-apple, workflow, 2 steps
+do Find next
+expect focus 03-apricot, workflow, 2 steps
+do Find next
+expect focus 02-apple, workflow, 2 steps
+do Find previous
+expect focus 03-apricot, workflow, 2 steps
+
+# Goal: Show only the workflows whose name contains a text
+# Options, Filter, "ap": the two that hold it; Escape, with nothing selected, clears it.
+do Filter
+expect focus "name":"Name contains"
+type ap
+keys enter
+expect said ! filter ap, 2 shown
+expect list "items":["02-apple, workflow, 2 steps","03-apricot, workflow, 2 steps"]
+keys escape
+expect said ! Filter cleared
+expect list "items":["Zebra check, workflow, 2 steps","02-apple, workflow, 2 steps","03-apricot, workflow, 2 steps"]
+
+# Goal: Put the workflows in the order of their names
+# Options, Sort by, Name: Zebra check goes last; then the folder's own order again.
+menu Name, Options, Sort by
+expect said ! Sorted by name
+expect list "items":["02-apple, workflow, 2 steps","03-apricot, workflow, 2 steps","Zebra check, workflow, 2 steps"]
+menu The list's own order, Options, Sort by
+expect said ! Sorted by the list's own order
+expect list "items":["Zebra check, workflow, 2 steps","02-apple, workflow, 2 steps","03-apricot, workflow, 2 steps"]

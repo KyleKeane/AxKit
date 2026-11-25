@@ -166,3 +166,31 @@ Starts with: Open axAutomate with the folder flows.
     You hear: Running 2 selected workflows.
     You hear: 01-quick passed, 2 steps.
     You hear: 03-later passed, 2 steps.
+
+## Find, filter and sort the workflows of a folder
+
+Starts with: Open axAutomate with the folder flows.
+
+### Find a workflow and go to the next and the previous match
+
+1. Press Ctrl+F (Find in the list).
+2. Type: ap
+3. Press Enter.
+4. Press F3 2 times (Find next).
+5. Press Shift+F3 (Find previous).
+
+### Show only the workflows whose name contains a text
+
+1. Choose Filter in the Options menu.
+2. Type: ap
+3. Press Enter.
+    You hear: filter ap, 2 shown.
+4. Press Escape.
+    You hear: Filter cleared.
+
+### Put the workflows in the order of their names
+
+1. Choose Name in the Options menu, Sort by.
+    You hear: Sorted by name.
+2. Choose The list's own order in the Options menu, Sort by.
+    You hear: Sorted by the list's own order.

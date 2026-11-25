@@ -264,3 +264,39 @@ Starts with: Open axPass with the file test.kdbx.
 1. Press Delete.
 2. Press Alt+D.
     You hear: Deleted Share.
+
+## Find, filter, sort and select entries of a password database
+
+Starts with: Open axPass with the file test.kdbx.
+
+### Find an entry and go to the next and the previous match
+
+1. Press Ctrl+F (Find in the list).
+2. Type: bank
+3. Press Enter.
+4. Press F3 2 times (Find next).
+5. Press Shift+F3 (Find previous).
+
+### Show only the entries whose name contains a text
+
+1. Choose Filter in the Options menu.
+2. Type: bank
+3. Press Enter.
+    You hear: filter bank, 2 shown.
+4. Press Escape.
+    You hear: Filter cleared.
+
+### Put the entries in the order of their names
+
+1. Choose Name in the Options menu, Sort by.
+    You hear: Sorted by name.
+2. Choose The list's own order in the Options menu, Sort by.
+    You hear: Sorted by the list's own order.
+
+### Select entries as you move and deselect them all
+
+1. Type: bank
+2. Press Space.
+3. Press Shift+Down.
+4. Press Ctrl+Shift+A (Deselect all; Actions menu).
+    You hear: None selected.

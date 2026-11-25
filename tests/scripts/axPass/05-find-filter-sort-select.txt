@@ -1,0 +1,80 @@
+# Workflow: Find, filter, sort and select entries of a password database
+# Needs: KeePassXC installed in C:\Program Files\KeePassXC (the script makes its test database with keepassxc-cli.exe there).
+# axPass, docs/axPass/user-guide.md "Filter and sort" and "Changing entries" (Space, Shift+Down, Ctrl+Shift+A), and
+# the navigator's Ctrl+F, F3 and Shift+F3 (SPEC PW-D5, bundle AX-8.16, AX-8.17). The database is a test one made here
+# by KeePassXC's own tool, its master password a test value; nothing here changes it.
+# The idle lock off: it counts real input only, which the runner's keys are not.
+file home\AxKit\axPass.json {"lockMinutes": 0}
+# The access layers' reminder agreed to already (AX-11.5); 02-consent has it.
+file home\AxKit\consent.json {"items":[{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+file twice.txt test-master-1\ntest-master-1\n
+file once.txt test-master-1\n
+run "C:\Program Files\KeePassXC\keepassxc-cli.exe" db-create -q -p test.kdbx < twice.txt
+run "C:\Program Files\KeePassXC\keepassxc-cli.exe" mkdir -q test.kdbx Email < once.txt
+run "C:\Program Files\KeePassXC\keepassxc-cli.exe" add -q test.kdbx "Bank one" < once.txt
+run "C:\Program Files\KeePassXC\keepassxc-cli.exe" add -q test.kdbx "Bank two" < once.txt
+run "C:\Program Files\KeePassXC\keepassxc-cli.exe" add -q -u top test.kdbx "Alarm code" < once.txt
+
+start pass {temp}\test.kdbx
+expect focus Type the master password to unlock test
+type test-master-1
+keys enter
+expect said ! test, 4 items, Email, group
+# A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
+wait 500
+
+# Goal: Find an entry and go to the next and the previous match
+# Ctrl+F, part of a name, Enter: the first match; F3 the next, round the end to the first; Shift+F3 back.
+do Find in the list
+expect state "notice":"Find"
+type bank
+keys enter
+expect focus Bank one
+do Find next
+expect focus Bank two
+do Find next
+expect focus Bank one
+do Find previous
+expect focus Bank two
+# Check: A text no name holds is not found
+do Find in the list
+type zzq
+keys enter
+expect said ! Not found
+expect focus Bank two
+
+# Goal: Show only the entries whose name contains a text
+# Options, Filter, "bank": the list's name says the filter and how many pass; Escape clears it.
+do Filter
+expect focus "name":"Name contains"
+type bank
+keys enter
+expect said ! filter bank, 2 shown
+refuse list Alarm code
+refuse list Email, group
+keys escape
+expect said ! Filter cleared
+expect list Alarm code
+
+# Goal: Put the entries in the order of their names
+# Options, Sort by, Name: the group first, then Alarm code before the two Bank entries; then the database's own order
+# again. The two Bank entries have no user name, so their rows are their titles alone.
+menu Name, Options, Sort by
+expect said ! Sorted by name
+expect list "items":["Email, group, 0 items","Alarm code","Bank one","Bank two"]
+menu The list's own order, Options, Sort by
+expect said ! Sorted by the list's own order
+expect list "items":["Email, group, 0 items","Bank one","Bank two","Alarm code"]
+
+# Goal: Select entries as you move and deselect them all
+# Space on Bank one, Shift+Down to Bank two: both selected, the status bar counts them; Ctrl+Shift+A, none.
+type bank
+expect focus Bank one
+keys space
+expect focus Bank one, selected
+keys shift+down
+expect focus Bank two, selected
+expect state 2 selected
+do Deselect all
+expect said ! None selected
+refuse list , selected

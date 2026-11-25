@@ -77,7 +77,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxPreview` (the window), `src/AxPreview.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxPreview.Tests`.
 - Documents: `docs/axPreview/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axPreview/`, 7 scripts (their workflows are in `docs/axKit/workflows/axPreview.md`).
+- Automated checks: `tests/scripts/axPreview/`, 8 scripts (their workflows are in `docs/axKit/workflows/axPreview.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axPreview.ps1`, or `run.ps1 -App preview`.
 
 ### axMedia
@@ -129,7 +129,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxAutomate` (the window), `src/AxAutomate.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxAutomate.Tests`.
 - Documents: `docs/axAutomate/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axAutomate/`, 5 scripts (their workflows are in `docs/axKit/workflows/axAutomate.md`).
+- Automated checks: `tests/scripts/axAutomate/`, 6 scripts (their workflows are in `docs/axKit/workflows/axAutomate.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axAutomate.ps1`, or `run.ps1 -App automate`.
 
 ## Access layers: programs
@@ -164,7 +164,7 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxPass` (the window), `src/AxPass.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxPass.Tests`.
 - Documents: `docs/axPass/` (`kdbx-notes.md`, `nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axPass/`, 4 scripts (their workflows are in `docs/axKit/workflows/axPass.md`).
+- Automated checks: `tests/scripts/axPass/`, 5 scripts (their workflows are in `docs/axKit/workflows/axPass.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axPass.ps1`, or `run.ps1 -App pass`.
 
 ## Access layers: AI
@@ -201,5 +201,5 @@ A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
 - Code: `src/AxMCP` (the window), `src/AxMCP.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxMCP.Tests`.
 - Documents: `docs/axMCP/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axMCP/`, 3 scripts (their workflows are in `docs/axKit/workflows/axMCP.md`).
+- Automated checks: `tests/scripts/axMCP/`, 4 scripts (their workflows are in `docs/axKit/workflows/axMCP.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axMCP.ps1`, or `run.ps1 -App mcpclient`.

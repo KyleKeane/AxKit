@@ -37,6 +37,10 @@ Steps and keys: `docs/axKit/workflows/axAutomate.md` (in Claude's working folder
     - Stop the run of a folder partway
     - Read on the rows how far a stopped run came
     - Run only the workflows you selected
+6. **Find, filter and sort the workflows of a folder**
+    - Find a workflow and go to the next and the previous match
+    - Show only the workflows whose name contains a text
+    - Put the workflows in the order of their names
 
 ## axCalc
 
@@ -619,6 +623,10 @@ Steps and keys: `docs/axKit/workflows/axMCP.md` (in Claude's working folder: `wo
     - Call the tool and move by the headings of its result
     - Find a word in a result
     - Start a server again after it stopped
+4. **Find, filter and sort the servers in axMCP**
+    - Find a server and go to the next and the previous match
+    - Show only the servers whose name contains a text
+    - Put the servers in the order of their names
 
 ## axMedia
 
@@ -704,6 +712,11 @@ Steps and keys: `docs/axKit/workflows/axPass.md` (in Claude's working folder: `w
     - Make a new group
     - Move a group to the Recycle Bin
     - Delete an entry for good from the Recycle Bin
+5. **Find, filter, sort and select entries of a password database**
+    - Find an entry and go to the next and the previous match
+    - Show only the entries whose name contains a text
+    - Put the entries in the order of their names
+    - Select entries as you move and deselect them all
 
 ## axPreview
 
@@ -742,6 +755,9 @@ Steps and keys: `docs/axKit/workflows/axPreview.md` (in Claude's working folder:
     - Select all the text from the command palette
 7. **Open a recent file in axPreview from the command palette**
     - Open a recent file from the palette
+8. **Read a PowerPoint presentation and an OpenDocument text**
+    - Read a PowerPoint presentation slide by slide
+    - Read an OpenDocument text by its headings
 
 ## axProcess
 

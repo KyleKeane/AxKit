@@ -261,3 +261,31 @@ Starts with: Open axMCP with the test folder.
     You hear: zzfake, stopped (exit code 3), Stopped (exit code 3): Enter starts it again.
 2. Press Enter.
     You hear: zzfake, running, Tools 2, Resources 0, Prompts 0.
+
+## Find, filter and sort the servers in axMCP
+
+Starts with: Open axMCP with the test folder.
+
+### Find a server and go to the next and the previous match
+
+1. Press Ctrl+F (Find in the list).
+2. Type: zz
+3. Press Enter.
+4. Press F3 2 times (Find next).
+5. Press Shift+F3 (Find previous).
+
+### Show only the servers whose name contains a text
+
+1. Choose Filter in the Options menu.
+2. Type: zz
+3. Press Enter.
+    You hear: filter zz, 3 shown.
+4. Press Escape.
+    You hear: Filter cleared.
+
+### Put the servers in the order of their names
+
+1. Choose Name in the Options menu, Sort by.
+    You hear: Sorted by name.
+2. Choose The list's own order in the Options menu, Sort by.
+    You hear: Sorted by the list's own order.
