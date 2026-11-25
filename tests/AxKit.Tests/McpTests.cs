@@ -395,7 +395,8 @@ public sealed class McpTests
     [InlineData("Delete", null, "no command Delete: axkit_window_commands lists them.")]
     [InlineData("  ", null, "Name the command")]
     [InlineData(null, null, "Name the command")]
-    [InlineData("Word", null, "no command Word")]
+    [InlineData("Word", null, "no command Word; the nearest: Word wrap")]
+    [InlineData("Heading level", null, "no command Heading level; the nearest: Heading, Navigate, Next; Heading, Navigate, Previous. axkit_window_commands lists them all.")]
     public void A_name_that_names_no_command_or_two_is_refused(string? name, string? menu, string reason)
     {
         var (found, refusal) = McpRun.Find(EditorCommands, name, menu);

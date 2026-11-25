@@ -390,7 +390,12 @@ Each origin, by function and file, down to the code that runs the command.
   name, `TextMatch` for the offer, and one rule for the nearest candidates, so that the AI tool's refusal names them
   as `do`'s does; `choose` and the `menu` step move onto it (WF-1.8). Touches `AxKit.Core` (`CommandNames`, `Palette`,
   `McpRun.Find`), `CommandPalette.Find`, `AutomationChannel.Menu`. Small, but the tool's refusal sentences are pinned
-  by scripts and change with them.
+  by scripts and change with them. **Built 2026-11-25:** the AI tool and `do` resolve through `CommandNames.Resolve`,
+  and the tool's refusal of an unknown name now names the nearest commands by the same rule as `do`'s ("The window
+  has no command Word; the nearest: Word wrap. axkit_window_commands lists them all."); `choose` finds its item by
+  the exact label and menus, which is the resolver's rule over the menu bar (`CommandPalette.Find`). The `menu` step
+  keeps its own match, the first palette line that starts with the text, on purpose: it is the scripts' shorthand in
+  some two hundred workflows, never an origin the user or an AI meets.
 - (c) **Checks over the inventory**, in `test.ps1`, without a window: one name means one thing across apps or is a
   listed exception (Undo is change in the editors and act in axFile); one chord, one family, once the families are
   settled (CL-7.2); names that change with the state (axFile's Undo, which the inventory holds as Undo, Undo rename,

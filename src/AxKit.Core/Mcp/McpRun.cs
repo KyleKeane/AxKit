@@ -79,11 +79,15 @@ public static class McpRun
     /// </summary>
     public static (int Index, string? Refusal) Find(IReadOnlyList<McpCommandName> commands, string? name, string? menu)
     {
-        var found = CommandNames.Resolve([.. commands.Select(command => new CommandName(command.Label, command.Menu))], name, menu);
+        var names = commands.Select(command => new CommandName(command.Label, command.Menu)).ToList();
+        var found = CommandNames.Resolve(names, name, menu);
+        // The nearest commands, as the checks' do step names them (command-language.md section 8 (b)): one rule for both.
+        var nearest = found.Candidates.Select(i => CommandNames.Line(names[i])).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         return found.Match switch
         {
             CommandMatch.Found => (found.Index, null),
             CommandMatch.NoName => (-1, "Name the command, as axkit_window_commands lists it."),
+            CommandMatch.Unknown when nearest.Count > 0 => (-1, $"The window has no command {found.Wanted}; the nearest: {string.Join("; ", nearest)}. axkit_window_commands lists them all."),
             CommandMatch.Unknown => (-1, $"The window has no command {found.Wanted}: axkit_window_commands lists them."),
             CommandMatch.UnknownInMenu => (-1, $"The window has no command {found.Wanted} in the menu {found.WantedMenu}: axkit_window_commands lists the commands with their menus."),
             _ => (-1, $"The window has several commands named {found.Wanted}: give the menu too, one of: {string.Join("; ", found.Candidates.Select(i => commands[i].Menu.Length > 0 ? commands[i].Menu : "no menu"))}."),
