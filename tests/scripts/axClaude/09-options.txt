@@ -192,13 +192,15 @@ expect state "notice":"Find"
 keys escape
 expect state "notice":"Keyboard shortcuts"
 expect focus Keyboard shortcuts
-# Check: The shortcuts end with Claude Code itself and the notices
-# The text ends with Claude Code itself and then the Notices section every window has (2026-11-09): Ctrl+End, then
-# Shift+H back twice.
+# Check: The shortcuts end with Claude Code itself, the notices and every key
+# The app's own text ends with Claude Code itself and then the Notices section every window has (2026-11-09); every
+# key of the window follows, made from its commands (AX-7.2a, 2026-11-24). Ctrl+End, then Shift+2 back three times.
 keys ctrl+end
-keys shift+h
+keys shift+2
+expect said ! Every key of this window, heading level 2
+keys shift+2
 expect said ! Notices, heading level 2
-keys shift+h
+keys shift+2
 expect said ! Claude Code itself, heading level 2
 # Check: The shortcuts' Close button and Escape lead back to the message field
 # Tab: the Close button; Tab again: the text. NVDA+End reading the status bar is NVDA's (manual). Escape closes it and

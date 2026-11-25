@@ -28,7 +28,11 @@ Found:
   again in the next pass.
 - `axClaude\05-modes.txt` step 124 and `axClaude\09-options.txt` step 133, live turns of Claude Code: the second
   reply did not begin within 60 seconds, and with "first lines" the reply's first line was heard as "Alpha", the
-  first line of the reply before. Run again on the hidden desktop, below.
+  first line of the reply before. Run again on the hidden desktop: 05 failed at the same step with Claude Code
+  2.1.331 and passed with 2.1.330. A recording showed why: 2.1.331 puts an interrupted message back on its prompt,
+  and the next message was typed after it, the two sent as one. The window empties that prompt first now (axClaude
+  SPEC.md FR-2.3a); 05 passes with 2.1.331. The "Alpha" of 09 did not come again; 09 then failed at step 200, where
+  F1 now ends with every key of the window (AX-7.2a): the script steps back over that part, and 09 passes.
 - `axClaude-say-all.txt` step 35: Claude Code still working 10 seconds after its reply was read, as in the pass
   below; a live script, waiting on the network.
 - `axTask-template-in-a-form.txt` step 24: the field's menu opened ("Context menu") and held no template, as it
