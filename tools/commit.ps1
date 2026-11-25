@@ -54,7 +54,13 @@ try {
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
     & git -C $root diff --cached --quiet
     if ($LASTEXITCODE -eq 0) { Write-Host 'Nothing staged: nothing to commit.'; exit 2 }
-    & git -C $root commit -q -F $file
+    # Only the paths named go in, whatever else is staged (a refused commit once left a file staged, and the next
+    # commit took it along, 2026-11-25).
+    if ($All) {
+        & git -C $root commit -q -F $file
+    } else {
+        & git -C $root commit -q -F $file -- $Paths
+    }
     $code = $LASTEXITCODE
     if ($code -eq 0) { & git -C $root log -1 --format='%h %s' }
     exit $code
