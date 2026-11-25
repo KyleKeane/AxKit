@@ -60,7 +60,10 @@ $projects = New-Object System.Collections.Generic.List[string]
 $projects.Add('AxKit')
 $shared = $false
 foreach ($file in $changed) {
-    if ($file -match '^src/AxKit(\.Core|\.Forms)?/' -or $file -match '^Directory\.Build\.') { $shared = $true; continue }
+    # What every test project compiles or reads (docs/axKit/repairs.json R-82): the shared code, the build's settings,
+    # the shared test helpers and their props, the fixtures, the SDK's version. src/AxKit itself, the executable, is
+    # referenced by no test project and runs AxKit.Tests alone, which always runs.
+    if ($file -match '^src/AxKit\.(Core|Forms)/' -or $file -match '^Directory\.Build\.' -or $file -match '^global\.json$' -or $file -match '^tests/(Shared/|fixtures/|Directory\.Build\.)') { $shared = $true; continue }
     if ($file -match '^(src|tests)/(Ax[A-Za-z0-9]+?)(\.Core|\.Tests)?/') {
         $name = $Matches[2]
         if ($all -contains $name -and -not $projects.Contains($name)) { $projects.Add($name) }
