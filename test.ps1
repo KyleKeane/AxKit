@@ -4,8 +4,10 @@
 
 .DESCRIPTION
   The test projects are found under tests\ (every *.Tests.csproj), so a new app's tests are included without an edit
-  here. They run one by one, never through the solution: the solution would build src\AxKit into the bin\Debug that a
-  running axKit holds open. Release is what the workflows build, and only Release treats warnings as errors
+  here. They run in one dotnet test over a solution filter of the test projects alone, written for the run (no test
+  project references src\AxKit, so the bin\Debug a running axKit holds open is never touched; one run was 17 per cent
+  faster than one project at a time on the development computer, with the same free memory, 2026-11-25, repairs
+  R-100); one app's tests run alone. Never through the whole solution: it would build src\AxKit into that bin\Debug. Release is what the workflows build, and only Release treats warnings as errors
   (Directory.Build.props), so a test that passes in Debug can still stop a release; 3.3.0 was lost that way.
   release.ps1 and run.ps1 -Test call this script. Exit code 0 when every project passed, otherwise the first failure's.
   A run of every project ends with the checks build.yml also makes: the generated pages (outside calls, workflows,
@@ -70,12 +72,32 @@ try {
     # PowerShell would turn that line into a terminating error under Stop and end the run at the first failure. The
     # exit code below is the check.
     $ErrorActionPreference = 'Continue'
-    foreach ($project in $projects) {
-        Write-Host "Testing $($project.BaseName)..."
-        dotnet test $project.FullName --configuration Release --nologo -v q
-        if ($LASTEXITCODE -ne 0) {
-            Write-Host "$($project.BaseName) failed."
-            exit $LASTEXITCODE
+    if ($Only -eq '') {
+        # Every project in one run: a solution filter of the test projects, written to a temporary folder for this run
+        # from the projects found, so that a new app's tests need no edit anywhere.
+        $filter = Join-Path ([IO.Path]::GetTempPath()) ("axkit-tests-" + [Guid]::NewGuid().ToString('N') + ".slnf")
+        $names = @($projects | ForEach-Object { $_.FullName.Substring($root.Length + 1) })
+        $json = [ordered]@{ solution = [ordered]@{ path = (Join-Path $root 'AxKit.sln'); projects = $names } } | ConvertTo-Json -Depth 4
+        [IO.File]::WriteAllText($filter, $json, (New-Object System.Text.UTF8Encoding($false)))
+        Write-Host "Testing $($projects.Count) test projects in one run..."
+        try {
+            dotnet test $filter --configuration Release --nologo -v q
+            $code = $LASTEXITCODE
+        } finally {
+            Remove-Item -LiteralPath $filter -ErrorAction SilentlyContinue
+        }
+        if ($code -ne 0) {
+            Write-Host "A test project failed (the lines above name it)."
+            exit $code
+        }
+    } else {
+        foreach ($project in $projects) {
+            Write-Host "Testing $($project.BaseName)..."
+            dotnet test $project.FullName --configuration Release --nologo -v q
+            if ($LASTEXITCODE -ne 0) {
+                Write-Host "$($project.BaseName) failed."
+                exit $LASTEXITCODE
+            }
         }
     }
 } finally {
