@@ -245,6 +245,9 @@ priorities list, found by the title in the line. An idea comes back by a new ite
   (2026-11-22). Item: "axTask: the lists on a phone".
 - **Placeholders in a template and a form behind it** (paused 2026-11-23). Item: "Editors: placeholders to fill in a
   template".
+- **The item window's file field** (proposed 2026-11-14 for the earcon lists, which were removed on 2026-11-17;
+  parked at his word on 2026-11-25): a field holding a file beside the item, opened in the axKit app for its kind or
+  played in place with Enter. Item: "Item window: a file field".
 
 ## Later apps (recorded 2026-10-18)
 
