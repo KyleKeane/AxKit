@@ -82,13 +82,8 @@ function Get-BehindProblem {
 # setting of the clone, made once (docs/axKit/development-environment.md section 4).
 # The setting may hold the folder as written there, tools/hooks, or its full path: both name the same folder.
 function Get-HooksProblem {
-    $hooks = "$(git -C $root config --get core.hooksPath)".Trim()
-    $hooksFolder = ''
-    if ($hooks) {
-        $hooksFolder = if ([IO.Path]::IsPathRooted($hooks)) { $hooks } else { Join-Path $root $hooks }
-        $hooksFolder = [IO.Path]::GetFullPath($hooksFolder).TrimEnd('\')
-    }
-    if ($hooksFolder -ine [IO.Path]::GetFullPath((Join-Path $root 'tools\hooks')).TrimEnd('\')) {
+    . (Join-Path $root 'tools\siblings.ps1')
+    if (-not (Test-HooksInstalled $root)) {
         return "The pre-push hook is not installed in this clone. Run once: git config core.hooksPath tools/hooks (docs/axKit/development-environment.md section 4), then run this again."
     }
 }

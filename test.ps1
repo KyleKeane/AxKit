@@ -47,19 +47,9 @@ if ($Only -ne '') {
 # lists to keep. The setting may hold tools/hooks or the folder's full path, as release.ps1's check allows. In a
 # worktree beside the checkout (a branch's own folder) the setting is the checkout's, with the full path of its
 # hooks, and those are the hooks that run there: that passes too.
-if (Test-Path -LiteralPath (Join-Path $root '..\axkit-management')) {
-    $hooks = "$(git -C $root config --get core.hooksPath)".Trim()
-    $hooksFolder = ''
-    if ($hooks) {
-        $hooksFolder = if ([IO.Path]::IsPathRooted($hooks)) { $hooks } else { Join-Path $root $hooks }
-        $hooksFolder = [IO.Path]::GetFullPath($hooksFolder).TrimEnd('\')
-    }
-    $installed = @([IO.Path]::GetFullPath((Join-Path $root 'tools\hooks')).TrimEnd('\'))
-    $common = "$(git -C $root rev-parse --path-format=absolute --git-common-dir)".Trim()
-    if ($common) {
-        $installed += [IO.Path]::GetFullPath((Join-Path (Split-Path -Parent $common) 'tools\hooks')).TrimEnd('\')
-    }
-    if ($installed -inotcontains $hooksFolder) {
+. (Join-Path $root 'tools\siblings.ps1')
+if (Test-Path -LiteralPath (Get-BesideFolder 'axkit-management')) {
+    if (-not (Test-HooksInstalled $root)) {
         Write-Host 'The git hooks are not installed in this clone, so no commit marks its item and no push syncs the lists. Run once: git config core.hooksPath tools/hooks'
         exit 1
     }
