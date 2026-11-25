@@ -12,7 +12,7 @@ public sealed class CheckBoxTests
     [Fact]
     public void Every_check_box_is_the_bundles_check_box()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var offenders = new List<string>();
         foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
         {

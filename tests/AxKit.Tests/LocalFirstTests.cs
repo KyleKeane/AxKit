@@ -16,7 +16,7 @@ public sealed class LocalFirstTests
     [Fact]
     public void Only_the_updater_and_the_report_sender_reach_the_network()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var outside = new List<string>();
         var inside = 0;
         foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))

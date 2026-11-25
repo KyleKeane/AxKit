@@ -17,7 +17,7 @@ public sealed class SystemProgramsTests
         // S-1: the switch cmd.exe and Windows read; Program.Main sets it first thing, and every child inherits the environment.
         SystemPrograms.KeepCurrentFolderOffSearches();
         Assert.Equal("1", Environment.GetEnvironmentVariable(SystemPrograms.NoCurrentFolderSearch));
-        Assert.Contains("SystemPrograms.KeepCurrentFolderOffSearches();", File.ReadAllText(Path.Combine(LayoutTests.RepositoryRoot(), "src", "AxKit", "Program.cs")), StringComparison.Ordinal);
+        Assert.Contains("SystemPrograms.KeepCurrentFolderOffSearches();", File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit", "Program.cs")), StringComparison.Ordinal);
     }
 
     // docs/axKit/repairs.json R-24: the one command line for a program that may be a batch file.

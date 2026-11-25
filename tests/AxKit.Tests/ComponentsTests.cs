@@ -22,7 +22,7 @@ public sealed class ComponentsTests
     private sealed record AppRow(string App, string Window, string Type, string ToBe, string SecondWindow, string SecondType);
 
     private static JsonDocument File() =>
-        JsonDocument.Parse(System.IO.File.ReadAllText(Path.Combine(LayoutTests.RepositoryRoot(), "docs", "axKit", "components.json")));
+        JsonDocument.Parse(System.IO.File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "docs", "axKit", "components.json")));
 
     private static List<AppRow> Apps(JsonDocument document) =>
         [.. document.RootElement.GetProperty("apps").EnumerateArray().Select(app => new AppRow(
@@ -46,7 +46,7 @@ public sealed class ComponentsTests
     private static Dictionary<string, string> WindowClassesOf(string project)
     {
         var found = new Dictionary<string, string>(StringComparer.Ordinal);
-        var folder = Path.Combine(LayoutTests.RepositoryRoot(), "src", project);
+        var folder = Path.Combine(SourceTexts.RepositoryRoot(), "src", project);
         foreach (var file in Directory.GetFiles(folder, "*.cs", SearchOption.AllDirectories)
             .Where(file => !file.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar, StringComparison.Ordinal)
                 && !file.Contains(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar, StringComparison.Ordinal)))
@@ -152,7 +152,7 @@ public sealed class ComponentsTests
             "AxKit.Forms/AxKitList.cs", "AxKit.Forms/AxKitTextBox.cs", "AxKit.Forms/FormControls.cs", "AxKit.Forms/ControlArea.cs",
             "AxKit.Forms/AxKitForm.Theme.cs",
         ];
-        var source = Path.Combine(LayoutTests.RepositoryRoot(), "src");
+        var source = Path.Combine(SourceTexts.RepositoryRoot(), "src");
         var elsewhere = Directory.GetFiles(source, "*.cs", SearchOption.AllDirectories)
             .Where(file => !file.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar, StringComparison.Ordinal)
                 && !file.Contains(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar, StringComparison.Ordinal))
@@ -167,7 +167,7 @@ public sealed class ComponentsTests
     public void What_the_file_names_exists()
     {
         using var document = File();
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         using var keys = JsonDocument.Parse(System.IO.File.ReadAllText(Path.Combine(root, "docs", "axKit", "key-families.json")));
         var families = keys.RootElement.GetProperty("families").EnumerateArray().Select(family => family.GetProperty("id").GetString()).ToHashSet();
         foreach (var component in document.RootElement.GetProperty("components").EnumerateArray())

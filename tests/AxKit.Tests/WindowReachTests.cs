@@ -32,7 +32,7 @@ public sealed class WindowReachTests
     [Fact]
     public void Other_processes_windows_are_found_in_the_one_filtered_place()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var offenders = new List<string>();
         var used = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
@@ -72,7 +72,7 @@ public sealed class WindowReachTests
     [Fact]
     public void The_one_place_asks_the_runs_membership_wherever_it_finds_a_window()
     {
-        var source = File.ReadAllText(Path.Combine(LayoutTests.RepositoryRoot(), "src", "AxKit.Forms", "BundleWindows.cs"));
+        var source = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms", "BundleWindows.cs"));
         // Visible filters the processes, Titled and Reachable go through the private Reachable.
         Assert.Contains("Where(RunMembership.Reaches)", source, StringComparison.Ordinal);
         Assert.Contains("ThisProgram.Runs(processId) && RunMembership.Reaches((int)processId)", source, StringComparison.Ordinal);
@@ -82,7 +82,7 @@ public sealed class WindowReachTests
     [Fact]
     public void A_hand_over_is_sent_and_taken_only_through_that_check()
     {
-        var source = File.ReadAllText(Path.Combine(LayoutTests.RepositoryRoot(), "src", "AxKit.Forms", "AppMessage.cs"));
+        var source = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms", "AppMessage.cs"));
         Assert.Contains("private static bool IsThisProgram(nint window) => BundleWindows.Reachable(window);", source, StringComparison.Ordinal);
         // Both ends: the window a hand-over goes to, and the window it says it came from.
         Assert.Contains("if (!IsThisProgram(target))", source, StringComparison.Ordinal);
@@ -92,7 +92,7 @@ public sealed class WindowReachTests
     [Fact]
     public void A_process_of_a_run_takes_its_mark_before_anything_else_of_the_program()
     {
-        var source = File.ReadAllText(Path.Combine(LayoutTests.RepositoryRoot(), "src", "AxKit", "Program.cs"));
+        var source = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit", "Program.cs"));
         var capture = source.IndexOf("AutomationEnvironment.Capture();", StringComparison.Ordinal);
         var join = source.IndexOf("RunMembership.Join();", StringComparison.Ordinal);
         var decide = source.IndexOf("Dispatch.Decide(args)", StringComparison.Ordinal);

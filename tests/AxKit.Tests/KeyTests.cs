@@ -403,7 +403,7 @@ public sealed class KeyTests
     [Fact]
     public void Every_key_a_guide_names_in_bold_is_a_key_of_its_window()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var inventory = System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(Path.Combine(root, "docs", "axKit", "window-commands.json")))!["apps"]!.AsArray();
         var shared = BundleKeys.All.Concat(BundleKeys.SystemWide).Concat(ItemKeys.All).Concat(SelectionKeys.All).Concat(EditorKeys.All)
             .Select(key => NameOf(key.Key)).Concat(KeysOfNoTable).ToList();

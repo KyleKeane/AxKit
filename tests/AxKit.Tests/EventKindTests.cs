@@ -31,7 +31,7 @@ public sealed class EventKindTests
     }
 
     private static JsonDocument Families() =>
-        JsonDocument.Parse(File.ReadAllText(Path.Combine(LayoutTests.RepositoryRoot(), "docs", "axKit", "families.json")));
+        JsonDocument.Parse(File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "docs", "axKit", "families.json")));
 
     [Fact]
     public void The_kinds_in_code_are_the_files_kinds_in_its_order()

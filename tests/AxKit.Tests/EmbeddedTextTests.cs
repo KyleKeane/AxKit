@@ -19,7 +19,7 @@ public sealed class EmbeddedTextTests
     [Fact]
     public void A_guide_with_the_menus_markers_has_its_menus_written()
     {
-        foreach (var guide in Directory.GetFiles(Path.Combine(LayoutTests.RepositoryRoot(), "docs"), "user-guide.md", SearchOption.AllDirectories))
+        foreach (var guide in Directory.GetFiles(Path.Combine(SourceTexts.RepositoryRoot(), "docs"), "user-guide.md", SearchOption.AllDirectories))
         {
             var lines = File.ReadAllLines(guide);
             var start = Array.FindIndex(lines, line => line.StartsWith("<!-- menus: written by tools/guide-menus.ps1", StringComparison.Ordinal));
@@ -44,7 +44,7 @@ public sealed class EmbeddedTextTests
     [Fact]
     public void Every_apps_guide_has_its_menus_written_from_the_inventory()
     {
-        var docs = Path.Combine(LayoutTests.RepositoryRoot(), "docs");
+        var docs = Path.Combine(SourceTexts.RepositoryRoot(), "docs");
         var byHand = new List<string>();
         foreach (var app in Dispatch.Apps)
         {

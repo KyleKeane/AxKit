@@ -13,7 +13,7 @@ public sealed class TextBoxTests
     [Fact]
     public void Every_edit_control_is_the_bundles_text_box()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var made = new List<string>();
         var subscribed = new List<string>();
         foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))

@@ -33,7 +33,7 @@ public sealed partial class NotesTests
     [Fact]
     public void Every_name_the_notes_give_in_backticks_exists_in_the_sources()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var words = new HashSet<string>(StringComparer.Ordinal);
         foreach (var folder in new[] { "src", "tools", "tests" })
         {
@@ -89,7 +89,7 @@ public sealed partial class NotesTests
     [Fact]
     public void The_notes_stay_small_enough_to_hold()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var large = new List<string>();
         var rootNotes = new FileInfo(Path.Combine(root, "CLAUDE.md"));
         if (rootNotes.Length > RootAtMost)

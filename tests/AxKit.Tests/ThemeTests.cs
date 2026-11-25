@@ -223,7 +223,7 @@ public sealed class ThemeTests
     public void No_app_paints_a_colour_of_its_own()
     {
         // docs/axKit/theme.md TH-5.2, bundle AX-7.7: a colour comes from the theme's classes, never from a window's code.
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var offenders = new List<string>();
         foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
         {

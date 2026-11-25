@@ -38,7 +38,7 @@ public sealed partial class EventDoorTests
     /// <summary>Every source file under src with its path from the repository's root and its lines without their comments.</summary>
     private static IEnumerable<(string Relative, IReadOnlyList<string> Code)> Sources()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
         {
             var relative = Path.GetRelativePath(root, file);
@@ -146,7 +146,7 @@ public sealed partial class EventDoorTests
     [Fact]
     public void The_door_sends_each_sound_to_the_method_of_its_name()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var door = File.ReadAllText(Path.Combine(root, Door));
         var cases = DoorCase().Matches(door).Select(match => (Sound: match.Groups[1].Value, Method: match.Groups[2].Value)).ToList();
         Assert.All(cases, pair => Assert.Equal(pair.Sound, pair.Method));
@@ -166,7 +166,7 @@ public sealed partial class EventDoorTests
     [Fact]
     public void Sounds_is_internal_to_the_shared_window_pieces()
     {
-        var sounds = File.ReadAllText(Path.Combine(LayoutTests.RepositoryRoot(), SoundsFile));
+        var sounds = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), SoundsFile));
         Assert.Contains("\ninternal static class Sounds", sounds.ReplaceLineEndings("\n"), StringComparison.Ordinal);
         Assert.DoesNotContain("public static class Sounds", sounds, StringComparison.Ordinal);
     }

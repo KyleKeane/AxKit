@@ -52,7 +52,7 @@ public sealed class AppLaunchKeysTests
     [Fact]
     public void The_apps_page_gives_every_app_its_key_kind_and_group()
     {
-        var page = File.ReadAllText(Path.Combine(LayoutTests.RepositoryRoot(), "docs", "axKit", "apps.md")).Replace("\r\n", "\n");
+        var page = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "docs", "axKit", "apps.md")).Replace("\r\n", "\n");
         var keys = AppLaunchKeys.Default;
         foreach (var app in Dispatch.Apps)
         {
@@ -76,7 +76,7 @@ public sealed class AppLaunchKeysTests
     [Fact]
     public void The_command_inventory_holds_the_app_keys_as_the_code_gives_them()
     {
-        using var document = System.Text.Json.JsonDocument.Parse(File.ReadAllText(Path.Combine(LayoutTests.RepositoryRoot(), "docs", "axKit", "window-commands.json")));
+        using var document = System.Text.Json.JsonDocument.Parse(File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "docs", "axKit", "window-commands.json")));
         string[] windowSubmenus = ["Window, Open windows", "Window, Recently closed"];
         var wrong = new List<string>();
         foreach (var app in document.RootElement.GetProperty("apps").EnumerateArray())

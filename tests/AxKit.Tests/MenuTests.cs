@@ -13,7 +13,7 @@ public sealed class MenuTests
     [Fact]
     public void No_menu_item_gets_a_hand_made_drop_down()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var offenders = new List<string>();
         foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
         {
@@ -43,7 +43,7 @@ public sealed class MenuTests
     [Fact]
     public void No_menu_item_spells_an_app_the_old_way()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var offenders = new List<string>();
         foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
         {
@@ -88,7 +88,7 @@ public sealed class MenuTests
     [Fact]
     public void Every_window_places_its_bar_through_the_base()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var offenders = new List<string>();
         foreach (var project in Directory.GetDirectories(Path.Combine(root, "src")))
         {

@@ -17,7 +17,7 @@ public sealed class UpstreamTests
 
     private static List<JsonElement> Programs()
     {
-        var path = Path.Combine(LayoutTests.RepositoryRoot(), "docs", "axKit", "upstream.json");
+        var path = Path.Combine(SourceTexts.RepositoryRoot(), "docs", "axKit", "upstream.json");
         using var document = JsonDocument.Parse(File.ReadAllText(path));
         return document.RootElement.GetProperty("programs").EnumerateArray().Select(entry => entry.Clone()).ToList();
     }
@@ -40,7 +40,7 @@ public sealed class UpstreamTests
     [Fact]
     public void Every_entry_has_its_fields_and_names_checks_that_exist()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         foreach (var entry in Programs())
         {
             var id = entry.GetProperty("id").GetString();
@@ -76,7 +76,7 @@ public sealed class UpstreamTests
     [Fact]
     public void The_script_is_ASCII_keeps_its_modes_and_is_run_by_the_tests_and_named_in_the_notes()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var script = File.ReadAllText(Path.Combine(root, "tools", "upstream.ps1"));
 
         // Windows PowerShell 5.1 reads a script without a byte order mark as ANSI: the script stays ASCII.
@@ -108,7 +108,7 @@ public sealed class UpstreamTests
     [Fact]
     public void A_run_meets_one_version_of_Claude_Code_and_the_watch_says_when_it_did_not()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         Assert.Equal("DISABLE_AUTOUPDATER", AxKit.Core.ClaudeCodeProgram.NoBackgroundUpdateVariable);
 
         foreach (var tool in new[] { Path.Combine("tools", "AxAutomate", "Program.cs"), Path.Combine("tools", "ClaudeProbe", "Program.cs") })

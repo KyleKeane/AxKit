@@ -28,7 +28,7 @@ public sealed class SecondWindowTests
     [Fact]
     public void No_message_box_dialog_or_bare_form_outside_the_allowed_files()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var offenders = new List<string>();
         foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
         {
@@ -64,7 +64,7 @@ public sealed class SecondWindowTests
     [Fact]
     public void Every_allowed_file_still_needs_its_place_in_the_list()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var idle = Allowed.Keys
             .Where(relative => !File.Exists(Path.Combine(root, relative)) || !Makers.Any(maker => File.ReadAllText(Path.Combine(root, relative)).Contains(maker, StringComparison.Ordinal)))
             .ToList();

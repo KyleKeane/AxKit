@@ -41,7 +41,7 @@ public sealed partial class CommandMarkTests
     [Fact]
     public void Every_command_states_its_mark()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var offenders = new List<string>();
         foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
         {
@@ -67,7 +67,7 @@ public sealed partial class CommandMarkTests
     [Fact]
     public void Commands_that_act_outside_their_window_stay_marked_act()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         foreach (var (file, label, why) in PinnedAct)
         {
             var text = File.ReadAllText(Path.Combine(root, file));
@@ -131,7 +131,7 @@ public sealed partial class CommandMarkTests
     [Fact]
     public void Menu_items_that_act_outside_their_window_stay_marked_act()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         foreach (var (file, text, why) in PinnedActItems)
         {
             Assert.True(File.ReadAllText(Path.Combine(root, file)).Contains(text, StringComparison.Ordinal), $"{file}: must still state act ({why}); looked for: {text}. See docs/axKit/app-kit.md AK-2.5.");
@@ -149,7 +149,7 @@ public sealed partial class CommandMarkTests
     [Fact]
     public void Every_menu_item_made_with_a_click_states_its_mark()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var unmarked = new List<string>();
         foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
         {

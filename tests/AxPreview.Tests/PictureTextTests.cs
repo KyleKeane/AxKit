@@ -89,14 +89,5 @@ public sealed class PictureTextTests
         Assert.Contains(lines!, line => line.Contains("2026", StringComparison.Ordinal));
     }
 
-    private static string RepositoryRoot()
-    {
-        var folder = new DirectoryInfo(AppContext.BaseDirectory);
-        while (folder is not null && !File.Exists(Path.Combine(folder.FullName, "AxKit.sln")))
-        {
-            folder = folder.Parent;
-        }
-
-        return folder?.FullName ?? throw new InvalidOperationException("The repository root was not found above " + AppContext.BaseDirectory);
-    }
+    private static string RepositoryRoot() => SourceTexts.RepositoryRoot();
 }

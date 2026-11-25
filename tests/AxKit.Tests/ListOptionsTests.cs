@@ -104,7 +104,7 @@ public sealed class ListOptionsTests
     [Fact]
     public void The_options_file_is_what_the_table_writes()
     {
-        var path = Path.Combine(LayoutTests.RepositoryRoot(), "docs", "axKit", ListOptions.FileName);
+        var path = Path.Combine(SourceTexts.RepositoryRoot(), "docs", "axKit", ListOptions.FileName);
         var written = ListOptions.Table.ToJson();
         if (Environment.GetEnvironmentVariable("AXKIT_UPDATE_OPTIONS") == "1")
         {

@@ -80,7 +80,7 @@ public sealed class CasesTests
     [Fact]
     public void Every_proof_names_a_test_or_a_script_that_exists_and_a_row_without_one_says_what_is_owed()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var problems = new List<string>();
         foreach (var row in Read(File.ReadAllText(CasesPath())).Rows)
         {
@@ -107,7 +107,7 @@ public sealed class CasesTests
     [Fact]
     public void Every_constant_named_under_words_exists_and_its_text_is_in_what_the_row_says()
     {
-        var sources = Sources(Path.Combine(LayoutTests.RepositoryRoot(), "src"));
+        var sources = Sources(Path.Combine(SourceTexts.RepositoryRoot(), "src"));
         var problems = new List<string>();
         foreach (var row in Read(File.ReadAllText(CasesPath())).Rows)
         {
@@ -132,7 +132,7 @@ public sealed class CasesTests
     [Fact]
     public void Every_settings_file_and_every_settings_class_has_a_row()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var rows = Read(File.ReadAllText(CasesPath())).Rows;
         var problems = new List<string>();
 
@@ -354,5 +354,5 @@ public sealed class CasesTests
 
     private static string Quoted(IReadOnlyList<string> texts) => "[" + string.Join(", ", texts.Select(Quoted)) + "]";
 
-    private static string CasesPath() => Path.Combine(LayoutTests.RepositoryRoot(), "docs", "axKit", "cases.json");
+    private static string CasesPath() => Path.Combine(SourceTexts.RepositoryRoot(), "docs", "axKit", "cases.json");
 }

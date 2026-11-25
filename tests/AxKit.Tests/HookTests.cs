@@ -13,7 +13,7 @@ public sealed class HookTests
     [InlineData("commit-msg", "tools/item-of-commit.ps1")]
     public void A_hook_is_a_shell_script_with_unix_line_ends_that_runs_its_script(string hook, string script)
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var bytes = File.ReadAllBytes(Path.Combine(root, "tools", "hooks", hook));
         var text = System.Text.Encoding.UTF8.GetString(bytes);
         Assert.StartsWith("#!/bin/sh\n", text, StringComparison.Ordinal);
@@ -27,7 +27,7 @@ public sealed class HookTests
     [Fact]
     public void The_commit_hook_refuses_a_message_without_its_item_and_marks_the_item()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         // The hook passes the script's exit code on: nothing after the script's line, and no "exit 0".
         var hook = File.ReadAllText(Path.Combine(root, "tools", "hooks", "commit-msg"));
         Assert.DoesNotContain("exit 0", hook, StringComparison.Ordinal);
@@ -50,7 +50,7 @@ public sealed class HookTests
     [Fact]
     public void Every_push_says_where_the_reports_and_the_list_disagree()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var check = File.ReadAllText(Path.Combine(root, "tools", "reports-check.ps1"));
         // The three disagreements, and the words that tie an item to its reports.
         Assert.Contains("Reports: new:", check, StringComparison.Ordinal);

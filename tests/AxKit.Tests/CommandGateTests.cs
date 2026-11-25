@@ -422,7 +422,7 @@ public sealed partial class CommandGateTests
     public void Every_cell_the_document_s_table_names_has_a_test_named_after_it()
     {
         var cells = CellsOfTheDocument();
-        var tests = TestName().Matches(File.ReadAllText(Path.Combine(LayoutTests.RepositoryRoot(), "tests", "AxKit.Tests", "CommandGateTests.cs")))
+        var tests = TestName().Matches(File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "tests", "AxKit.Tests", "CommandGateTests.cs")))
             .Select(match => match.Groups[1].Value).ToList();
         var missing = cells.Where(cell => !tests.Any(test => test.StartsWith(cell + "_", StringComparison.Ordinal))).ToList();
         Assert.True(missing.Count == 0, "docs/axKit/command-language.md section 3 names cells that no test of CommandGateTests is named after: " + string.Join(", ", missing));
@@ -454,7 +454,7 @@ public sealed partial class CommandGateTests
     /// </summary>
     private static List<string> CellsOfTheDocument()
     {
-        var lines = File.ReadAllLines(Path.Combine(LayoutTests.RepositoryRoot(), "docs", "axKit", "command-language.md"));
+        var lines = File.ReadAllLines(Path.Combine(SourceTexts.RepositoryRoot(), "docs", "axKit", "command-language.md"));
         var start = Array.FindIndex(lines, line => line.StartsWith("## 3.", StringComparison.Ordinal));
         var end = Array.FindIndex(lines, start + 1, line => line.StartsWith("The conditions:", StringComparison.Ordinal));
         Assert.True(start >= 0 && end > start, "command-language.md: section 3 or its line The conditions: was not found");

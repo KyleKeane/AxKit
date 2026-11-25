@@ -54,14 +54,7 @@ public sealed class FrontTests
     [Fact]
     public void Nvda_pass_shows_the_stopped_runs_lines()
     {
-        var root = new DirectoryInfo(AppContext.BaseDirectory);
-        while (root is not null && !File.Exists(Path.Combine(root.FullName, "AxKit.sln")))
-        {
-            root = root.Parent;
-        }
-
-        Assert.NotNull(root);
-        var script = File.ReadAllText(Path.Combine(root.FullName, "nvda-pass.ps1"));
+        var script = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "nvda-pass.ps1"));
         Assert.Contains("|STOPPED|", script, StringComparison.Ordinal);
         Assert.Contains("|The NVDA tier|", script, StringComparison.Ordinal);
     }

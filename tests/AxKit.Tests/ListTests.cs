@@ -23,7 +23,7 @@ public sealed class ListTests
     [Fact]
     public void Every_list_a_user_types_in_is_the_bundles_list()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var offenders = new List<string>();
         foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
         {

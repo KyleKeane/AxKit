@@ -13,7 +13,7 @@ public sealed class LayoutTests
     [Fact]
     public void References_point_one_way()
     {
-        var root = RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var problems = new List<string>();
         foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.csproj", SearchOption.AllDirectories))
         {
@@ -55,14 +55,4 @@ public sealed class LayoutTests
     private static string AppOf(string project) =>
         project.EndsWith(".Core", StringComparison.Ordinal) ? project[..^".Core".Length] : project;
 
-    internal static string RepositoryRoot()
-    {
-        var dir = new DirectoryInfo(AppContext.BaseDirectory);
-        while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "AxKit.sln")))
-        {
-            dir = dir.Parent;
-        }
-
-        return dir?.FullName ?? throw new InvalidOperationException("AxKit.sln not found above the test directory.");
-    }
 }

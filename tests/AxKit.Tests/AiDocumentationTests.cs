@@ -16,7 +16,7 @@ public sealed class AiDocumentationTests
     [Fact]
     public void Every_app_has_its_guide_among_the_files_as_the_repository_has_it()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var files = AiDocumentation.Files("1.2.3").ToDictionary(file => file.Path, file => file.Text);
         foreach (var app in Dispatch.Apps)
         {
@@ -37,7 +37,7 @@ public sealed class AiDocumentationTests
     {
         // WF-8.1, WF-8.2: the pages tools/workflows.ps1 wrote, embedded as they were when axKit was built; their text
         // is the generator's, so what is pinned here is which files there are, where, and in what order.
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var docs = Path.Combine(root, "docs", "axKit");
         var files = AiDocumentation.Files("1.2.3").ToDictionary(file => file.Path, file => file.Text);
         Assert.Equal(Normal(File.ReadAllText(Path.Combine(docs, "workflows.md"))), Normal(files[Path.Combine("documentation", "workflows.md")]));
@@ -89,7 +89,7 @@ public sealed class AiDocumentationTests
     [Fact]
     public void The_further_pages_are_among_the_files_as_the_repository_has_them_and_the_rule_names_each()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var files = AiDocumentation.Files("1.2.3").ToDictionary(file => file.Path, file => file.Text);
         var index = AiDocumentation.Files("1.2.3")[0].Text;
         var rule = Regex.Replace(AiDocumentation.Rule, @"\s+", " ");
@@ -181,7 +181,7 @@ public sealed class AiDocumentationTests
         };
         carried.UnionWith(AiDocumentation.FurtherPages.Select(page => page.Source));
 
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var found = Directory.GetFiles(Path.Combine(root, "docs", "axKit"), "*.md").Select(file => "docs/axKit/" + Path.GetFileName(file))
             .Concat(Directory.GetFiles(root, "*.md").Select(file => Path.GetFileName(file)))
             .ToList();

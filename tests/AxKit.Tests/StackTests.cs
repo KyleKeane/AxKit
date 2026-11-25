@@ -14,7 +14,7 @@ public sealed partial class StackTests
     [Fact]
     public void No_project_outside_the_tests_takes_a_package_or_WPF()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var problems = new List<string>();
         foreach (var file in FilesOutsideTests(root, "*.csproj", "*.props", "*.targets"))
         {
@@ -35,7 +35,7 @@ public sealed partial class StackTests
     [Fact]
     public void No_source_outside_the_tests_makes_a_web_view()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var problems = new List<string>();
         foreach (var file in FilesOutsideTests(root, "*.cs"))
         {

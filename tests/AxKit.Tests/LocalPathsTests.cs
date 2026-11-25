@@ -72,7 +72,7 @@ public sealed class LocalPathsTests
         // settings.RecentRepositories, settings.Folder) together with Directory.Exists or File.Exists goes through
         // LocalPaths (the start, AX-9.5a) or RecentMenu (the Open recent submenus, AX-9.5), which ask only about a
         // path on a drive of this computer. A check written over two lines is not seen.
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var offenders = new List<string>();
         foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
         {

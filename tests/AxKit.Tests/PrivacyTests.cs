@@ -54,7 +54,7 @@ public partial class PrivacyTests
     [Fact]
     public void The_repository_holds_no_email_address_or_account_path()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var found = new List<string>();
         foreach (var file in RepositoryFiles(root))
         {
@@ -76,7 +76,7 @@ public partial class PrivacyTests
     [Fact]
     public void The_repository_holds_no_token_or_private_key()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var found = new List<string>();
         foreach (var file in RepositoryFiles(root))
         {
@@ -104,7 +104,7 @@ public partial class PrivacyTests
     [Fact]
     public void The_documents_do_not_say_when_the_maintainer_sleeps_or_where_his_clock_is()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var found = new List<string>();
         foreach (var file in Directory.EnumerateFiles(Path.Combine(root, "docs"), "*.md", SearchOption.AllDirectories)
             .Where(file => !file.Contains(Path.Combine("docs", "background_info"), StringComparison.OrdinalIgnoreCase)))

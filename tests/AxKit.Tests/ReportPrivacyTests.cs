@@ -109,7 +109,7 @@ public class ReportPrivacyTests
     [Fact]
     public void The_report_form_starts_plain_and_the_fuller_form_is_a_box_the_user_checks()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var flow = File.ReadAllText(Path.Combine(root, "src", "AxKit.Forms", "ReportFlow.cs"));
         var controls = File.ReadAllText(Path.Combine(root, "src", "AxKit.Forms", "ReportControls.cs"));
 

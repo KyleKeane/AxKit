@@ -18,7 +18,7 @@ public sealed class ItemScriptTests
     private static ProcessResult Script(string script, string lists, params string[] arguments)
     {
         var start = new ProcessStartInfo(SystemPrograms.PowerShell);
-        foreach (var argument in new[] { "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", Path.Combine(LayoutTests.RepositoryRoot(), "tools", script) }.Concat(arguments).Concat(["-Lists", lists]))
+        foreach (var argument in new[] { "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", Path.Combine(SourceTexts.RepositoryRoot(), "tools", script) }.Concat(arguments).Concat(["-Lists", lists]))
         {
             start.ArgumentList.Add(argument);
         }
@@ -243,7 +243,7 @@ public sealed class ItemScriptTests
         Assert.True(Field(file, "Done").GetBoolean());
 
         // The scripts share one way of naming an item, and the rule names the tool where every session reads it.
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         Assert.Contains("items.ps1", File.ReadAllText(Path.Combine(root, "tools", "item-of-commit.ps1")), StringComparison.Ordinal);
         Assert.Contains("items.ps1", File.ReadAllText(Path.Combine(root, "tools", "item.ps1")), StringComparison.Ordinal);
         Assert.Contains("tools/item.ps1", File.ReadAllText(Path.Combine(root, "CLAUDE.md")), StringComparison.Ordinal);

@@ -515,7 +515,7 @@ public sealed class McpTests
         // the question was asked from and only then read the target again; the other order compares the question's own
         // list or button. The comparison is in one place, Yes(); the list's answer selects the control before it calls
         // Yes(), and the notice's button closes the notice (which selects it) before it does.
-        var text = File.ReadAllText(Path.Combine(LayoutTests.RepositoryRoot(), "src", "AxKit.Forms", "AxKitForm.Mcp.cs"));
+        var text = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms", "AxKitForm.Mcp.cs"));
         var ask = text.IndexOf("private void AskToRunMcp(", StringComparison.Ordinal);
         var end = text.IndexOf("protected sealed record OfferedRequest(", ask, StringComparison.Ordinal);
         Assert.True(ask > 0 && end > ask);

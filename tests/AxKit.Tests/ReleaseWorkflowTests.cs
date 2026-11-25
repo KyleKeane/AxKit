@@ -11,7 +11,7 @@ namespace AxKit.Tests;
 /// </summary>
 public sealed class ReleaseWorkflowTests
 {
-    private static string WorkflowsFolder => Path.Combine(LayoutTests.RepositoryRoot(), ".github", "workflows");
+    private static string WorkflowsFolder => Path.Combine(SourceTexts.RepositoryRoot(), ".github", "workflows");
 
     [Fact]
     public void The_release_publishes_zips_and_packages_in_its_own_job_after_the_tests()

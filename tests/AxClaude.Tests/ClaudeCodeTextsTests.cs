@@ -215,14 +215,5 @@ public sealed class ClaudeCodeTextsTests
         return found;
     }
 
-    private static string RepositoryRoot()
-    {
-        var dir = new DirectoryInfo(AppContext.BaseDirectory);
-        while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "AxKit.sln")))
-        {
-            dir = dir.Parent;
-        }
-
-        return dir?.FullName ?? throw new InvalidOperationException("AxKit.sln not found above the test directory.");
-    }
+    private static string RepositoryRoot() => SourceTexts.RepositoryRoot();
 }

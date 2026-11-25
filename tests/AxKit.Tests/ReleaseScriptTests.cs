@@ -20,7 +20,7 @@ public sealed class ReleaseScriptTests
     /// <summary>The script's lines of code: without the help block at its top and without comment lines.</summary>
     private static List<string> CodeLines(string script)
     {
-        var path = Path.Combine(LayoutTests.RepositoryRoot(), script.Replace('/', Path.DirectorySeparatorChar));
+        var path = Path.Combine(SourceTexts.RepositoryRoot(), script.Replace('/', Path.DirectorySeparatorChar));
         var lines = new List<string>();
         var inHelp = false;
         foreach (var line in File.ReadAllLines(path))
@@ -49,7 +49,7 @@ public sealed class ReleaseScriptTests
     public void The_script_is_ascii(string script)
     {
         // Windows PowerShell 5.1 reads a script without a byte order mark as ANSI.
-        var bytes = File.ReadAllBytes(Path.Combine(LayoutTests.RepositoryRoot(), script.Replace('/', Path.DirectorySeparatorChar)));
+        var bytes = File.ReadAllBytes(Path.Combine(SourceTexts.RepositoryRoot(), script.Replace('/', Path.DirectorySeparatorChar)));
         Assert.DoesNotContain(bytes, b => b > 127);
     }
 

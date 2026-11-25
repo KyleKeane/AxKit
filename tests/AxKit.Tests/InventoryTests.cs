@@ -18,7 +18,7 @@ public sealed class InventoryTests
     [Fact]
     public void Every_app_has_its_places()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var missing = new List<string>();
         void Expect(string app, bool present, string place)
         {

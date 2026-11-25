@@ -91,7 +91,7 @@ public sealed partial class HandKeyTests
     [Fact]
     public void A_key_name_is_typed_only_in_the_key_tables()
     {
-        var root = LayoutTests.RepositoryRoot();
+        var root = SourceTexts.RepositoryRoot();
         var found = new SortedDictionary<string, int>(StringComparer.Ordinal);
         foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
         {
