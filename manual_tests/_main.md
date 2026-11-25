@@ -20,6 +20,8 @@ Git ignores everything the script makes, so a test pass never changes the reposi
 - `axGIT`: a scratch repository with history, a second branch, changes of every kind and its own local remote; a folder that is not a repository.
 - `axTerminal`: a start folder with a subfolder and small scripts: a question, many lines, a long run, a failure.
 - `axClaude`: a folder Claude has never seen, an empty folder, a project folder.
+- `axTask`: a folder of lists, as `prepare.ps1 axtask` makes it again.
+- `axPass`: a KeePass database made with KeePassXC's own tool (KeePassXC must be installed).
 
 ## The sounds
 
@@ -27,4 +29,4 @@ The sound files are made with Windows' own speech voice. Each one says what it i
 
 ## Order
 
-The apps are independent. A full pass before a release: axFile, then axMedia and axPreview (axFile hands over to both), then axDown, axJSON, axGIT, axTerminal and axClaude.
+The apps are independent. A full pass before a release: axFile, then axMedia and axPreview (axFile hands over to both), then axDown, axJSON, axGIT, axTerminal, axClaude, axTask and axPass.

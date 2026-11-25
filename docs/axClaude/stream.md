@@ -5,7 +5,7 @@ A report, not a specification: it decides nothing and changes no behaviour. It a
 its screen, or as the main way. Written 2026-11-17 from two sources: Claude Code's own documentation as it stood
 that day, and measurements made that day against Claude Code 2.1.326 with `tools/ClaudeProbe stream`.
 
-The decision is the maintainer's and is not taken here. What is built so far is only what measures: the reader of
+The decision was taken on 2026-11-17: the stream became a second source of axClaude's window, `stream-mode.md`, stages 1 to 5 built. What follows is the report as it was written. It said then: the decision is the maintainer's and is not taken here. What is built so far is only what measures: the reader of
 the stream's lines (`src/AxClaude.Core/Streaming/ClaudeCodeStream.cs`, with `ClaudeCodeStreamTests`), which no
 window uses, and the probe.
 

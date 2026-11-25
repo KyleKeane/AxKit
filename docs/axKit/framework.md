@@ -29,7 +29,7 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
   window, the editor, the navigator, the hotkey window. A fifth, the graph, comes much later and is not started.
 - **An app adds only** its data (what the rows or the text are, how they are read and written), its commands on
   them, its keys, and its message passing with the program under it.
-- **Today** all seventeen apps are on a type; of the five that had a window of their own when this was
+- **Today** all eighteen apps are on a type; of the five that had a window of their own when this was
   written, axMedia, axProcess, axGIT and axFile are navigators and axCalc is a conversation window since
   2026-11-22. The work left is to move the rest of axFile's commands onto the navigator's own (steps 13 to 15), to
   make every list of items the one selectable list, and to lift what two apps of one type still do each in their
