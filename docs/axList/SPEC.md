@@ -109,8 +109,8 @@ A checkbox in a list is a convenience of Markdown, not a task manager (LI-D1).
   lines do not move or indent ("Only list items move").
 - LI-4.7 Ctrl+T turns a bullet or numbered item into a checkbox item (not done) and a checkbox item into a bullet:
   "<text> is a task", "<text> is not a task".
-- LI-4.8 Ctrl+Shift+D hides the done checkbox items of the Items view, and shows them again: "Done tasks hidden",
-  "Done tasks shown"; the choice is kept (LI-8.1). The list box's name says "N items, M done hidden".
+- LI-4.8 Ctrl+Shift+D hides the done checkbox items of the Items view, and shows them again: "Hide done tasks, checked",
+  "Hide done tasks, not checked"; the choice is kept (LI-8.1). The list box's name says "N items, M done hidden".
 - LI-4.9 Ctrl+Z undoes the last change to the open list, one step at a time, ten steps back at most, while the window
   is open: "Undone: <what>" ("Undone: Done: Milk"); "Nothing to undo" otherwise. Undo writes the file as it was before
   the step, if the file has not changed on disk since; otherwise it says "The list changed on disk, so the last step

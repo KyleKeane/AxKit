@@ -317,7 +317,7 @@ public sealed class ProcessForm : ItemForm
         [$"Level: {LevelIdentity()}, {Rows.Count} rows, processes sorted by {ProcessTable.SortName(_settings.SortBy)}"];
 
     /// <summary>Ctrl+S, the bundle's save key: nothing to save, and the keys that act said (PR-6.2).</summary>
-    protected override void SaveCommand() => Announce("Nothing to save here. F5 refreshes, Delete ends a process", true);
+    protected override void SaveCommand() => Refuse("Nothing to save here. F5 refreshes, Delete ends a process");
 
     protected override void OnShown(EventArgs e)
     {
@@ -513,7 +513,7 @@ public sealed class ProcessForm : ItemForm
                 ]));
                 return;
             default:
-                Announce("Nothing selected", true);
+                Refuse("Nothing selected");
                 return;
         }
     }
@@ -523,7 +523,7 @@ public sealed class ProcessForm : ItemForm
     {
         if (CurrentProcess() is not { } row)
         {
-            Announce("Nothing selected", true);
+            Refuse("Nothing selected");
             return;
         }
 
@@ -626,7 +626,7 @@ public sealed class ProcessForm : ItemForm
                 Announce("Show program is for a process or a startup program", true);
                 return;
             default:
-                Announce("Nothing selected", true);
+                Refuse("Nothing selected");
                 return;
         }
 
@@ -644,7 +644,7 @@ public sealed class ProcessForm : ItemForm
     {
         if (SelectedRow() is not { } row)
         {
-            Announce("Nothing selected", true);
+            Refuse("Nothing selected");
             return;
         }
 
@@ -683,7 +683,7 @@ public sealed class ProcessForm : ItemForm
     {
         if (CurrentService() is not { } row)
         {
-            Announce("Nothing selected", true);
+            Refuse("Nothing selected");
             return;
         }
 
@@ -741,7 +741,7 @@ public sealed class ProcessForm : ItemForm
     {
         if (CurrentStartup() is not { } entry)
         {
-            Announce("Nothing selected", true);
+            Refuse("Nothing selected");
             return;
         }
 

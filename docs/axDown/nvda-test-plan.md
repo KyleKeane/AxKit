@@ -26,12 +26,12 @@ letter), and a `long.md` with headings and lines longer than the window.
    not leave the editor). Ctrl+Z: "Undone", the whole sentence is gone in one step; Ctrl+Y: "Redone", it is back.
 3. Page Down moves a screen and reaches the last line; Page Up the first. In a short file both do something.
 3a. In the tutorial file, Ctrl+Down moves to the first line of the next paragraph (a line with text after a blank line), one paragraph per press however many rows it wraps to, a heading with blank lines around it being a paragraph of its own; Ctrl+Up goes to the start of the current paragraph, then to the one before; from the last paragraph Ctrl+Down goes to the end of the file. Ctrl+Shift+Down: NVDA says the text selected; Ctrl+Shift+Up: unselected. The status bar's line number follows.
-4. Ctrl+Shift+W: "Word wrap off"; a long line is now one line; the caret stays on the same character. Again:
-   "Word wrap on"; the caret stays.
+4. Ctrl+Shift+W: "Word wrap, not checked"; a long line is now one line; the caret stays on the same character. Again:
+   "Word wrap, checked"; the caret stays.
 5. Ctrl+M, Ctrl+H, Ctrl+I, Ctrl+J insert nothing.
 5a. New line said (AD-2.8, bundle AX-7.8; `tests/scripts/axDown/12-say-new-line.txt`). At the end of a line, type a
    word and press Enter: NVDA says the word, then "new line". Enter in the middle of a line: "new line". Options,
-   Text, Say new line: "Say new line off"; Enter makes a line and nothing is said. Again: "Say new line on", and
+   Text, Say new line: "Say new line, not checked"; Enter makes a line and nothing is said. Again: "Say new line, checked", and
    Enter says "new line" again. Arrow keys say nothing of it. In an item app's long text field (axTask, a list's
    Notes), Enter says "new line"; Tab, then Enter on Save keeps the text and says no "new line". In axTerminal,
    Shift+Enter in the command field says "new line" and Enter, which runs the command, does not.
@@ -39,7 +39,7 @@ letter), and a `long.md` with headings and lines longer than the window.
    heading's line: a short rising sound, then NVDA reads the heading; Down off it, and onto a plain line: no sound.
    Ctrl+Home onto a first-line heading and the heading jumps (Navigation, Next, Heading): the sound first. A `#` line in a
    fenced code block: no sound. A long heading wrapped over two rows sounds once. Options, Text, Sound on headings:
-   "Sound on headings off", and Down onto a heading is silent; again: "Sound on headings on". In axPreview the same on
+   "Sound on headings, not checked", and Down onto a heading is silent; again: "Sound on headings, checked". In axPreview the same on
    a Markdown file, and in any notice's text (F1) h and Down onto a heading line. By ear: is the sound over before NVDA
    starts, and does it carry over speech at your rate?
 6. Undo and redo (AD-2.5). Type a word, wait two seconds, type another: Ctrl+Z removes the second word only, Ctrl+Z

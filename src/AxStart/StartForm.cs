@@ -225,7 +225,7 @@ public sealed class StartForm : HotkeyForm
 
         if (entry.Target is not { } target)
         {
-            Announce($"No file location for {entry.Name}", true);
+            Refuse($"No file location for {entry.Name}");
             return;
         }
 

@@ -2,7 +2,7 @@
 # axStart: Help, Diagnostics, Test a key (docs/axKit/SPEC.md AX-8.12). Every key is said with what it does in the
 # search field and none is carried out: no letter typed, no match moved to, the window not hidden; Escape ends it
 # at once and hides nothing, and only after that does Escape hide the window again. The hotkey is one nobody uses, as in 01-basics.
-file home\AxKit\axStart.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F11", "sayFirstMatch": false}
+file home\AxKit\axStart.json {"hotkey": "Ctrl+Alt+Shift+F11", "sayFirstMatch": false}
 
 start start
 expect focus Search programs

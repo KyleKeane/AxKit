@@ -114,8 +114,7 @@ public abstract partial class AxKitForm
             return false;
         }
 
-        EventDoor.Raise(EventKind.Refused);
-        Announce(TextModes.Refused(BundleKeys.Text(BundleKeys.ToggleMode)), true);
+        Refuse(TextModes.Refused(BundleKeys.Text(BundleKeys.ToggleMode)));
         return true;
     }
 

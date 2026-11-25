@@ -3,7 +3,7 @@
 # tools/AxAutomate on a desktop of its own (docs/axKit/automation.md). The templates' folder is the run's own home,
 # empty at the start: the browser makes it and its list.json. The browser starts the launcher (TP-1.1), whose
 # hotkey here is one nobody uses, so that the run never takes the user's.
-file home\AxKit\axTemplate.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F7", "sayFirstMatch": false}
+file home\AxKit\axTemplate.json {"hotkey": "Ctrl+Alt+Shift+F7", "sayFirstMatch": false}
 
 start template
 check commands

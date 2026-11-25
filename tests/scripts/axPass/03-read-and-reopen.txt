@@ -4,7 +4,7 @@
 # the Lock after setting said (5.3, the words only: the lock itself waits minutes on the real keyboard's idle time,
 # which a run cannot make), and a start without a file asking for the database it had last (5.4; PW-4.1).
 # The idle lock off at first, as in 01; it is chosen only while the database is locked, where it has nothing to lock.
-file home\AxKit\axPass.json {"checkForUpdates": false, "lockMinutes": 0}
+file home\AxKit\axPass.json {"lockMinutes": 0}
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
 file twice.txt test-master-1\ntest-master-1\n

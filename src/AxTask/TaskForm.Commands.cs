@@ -83,8 +83,7 @@ public sealed partial class TaskForm
         var done = TaskRules.DoneIndex(item.Document);
         if (done < 0)
         {
-            EventDoor.Raise(EventKind.Refused);
-            Announce("Not a task", true);
+            Refuse("Not a task");
             return;
         }
 
@@ -132,8 +131,7 @@ public sealed partial class TaskForm
             return true;
         }
 
-        EventDoor.Raise(EventKind.Refused);
-        Announce(problem + $": nothing of the item is changed until it is there and reads. {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} on the list opens it", true);
+        Refuse(problem + $": nothing of the item is changed until it is there and reads. {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} on the list opens it");
         return false;
     }
 
@@ -156,8 +154,7 @@ public sealed partial class TaskForm
             return (ItemFolder.StarterConfig(folder), null);
         }
 
-        EventDoor.Raise(EventKind.Refused);
-        Announce(ConfigurationProblem(folder) ?? "The list's configuration does not read", true);
+        Refuse(ConfigurationProblem(folder) ?? "The list's configuration does not read");
         return null;
     }
 
@@ -299,7 +296,7 @@ public sealed partial class TaskForm
     {
         if (SelectedRow() is not { IsList: true, Tag: null } row || ItemFolder.IsArchive(TopFolder, row.Key) || !AtTop)
         {
-            Announce("Select a list among the sections first", true);
+            Refuse("Select a list among the sections first");
             return;
         }
 
@@ -417,7 +414,7 @@ public sealed partial class TaskForm
         if (row.Tag is FoundItem)
         {
             // The links to it are kept within its own folder of lists, which the search's level is not (TK-7b.4).
-            Announce("Open it where it lives first: Enter in the navigator", true);
+            Refuse("Open it where it lives first: Enter in the navigator");
             return;
         }
 
@@ -468,7 +465,7 @@ public sealed partial class TaskForm
 
         if (row.Tag is FoundItem)
         {
-            Announce("Open it where it lives first: Enter", true);
+            Refuse("Open it where it lives first: Enter");
             return;
         }
 
@@ -508,7 +505,7 @@ public sealed partial class TaskForm
         var items = Targets();
         if (SelectedRows().Any(row => row.Tag is FoundItem))
         {
-            Announce("Open an item where it lives first: Enter. The search archives nothing", true);
+            Refuse("Open an item where it lives first: Enter. The search archives nothing");
             return;
         }
 
@@ -551,7 +548,7 @@ public sealed partial class TaskForm
     {
         if (Gathered)
         {
-            Announce("Open an item where it lives first: Enter. The search moves nothing", true);
+            Refuse("Open an item where it lives first: Enter. The search moves nothing");
             return;
         }
 
@@ -618,7 +615,7 @@ public sealed partial class TaskForm
         var folder = SelectedRow() is { IsList: true, Tag: null } row && !DetailPane.Focused ? row.Key : _smart is null && !AtTop ? _folder : null;
         if (folder is null)
         {
-            Announce("Open a list first", true);
+            Refuse("Open a list first");
             return;
         }
 
@@ -667,7 +664,7 @@ public sealed partial class TaskForm
         if (row.Tag is FoundItem)
         {
             // A link is looked for among the items of its own folder of lists (TK-7b.4).
-            Announce("Open it where it lives first: Shift+Tab, then Enter", true);
+            Refuse("Open it where it lives first: Shift+Tab, then Enter");
             return true;
         }
 
@@ -705,7 +702,7 @@ public sealed partial class TaskForm
     {
         if (_undo.TakeLast() is not { } step)
         {
-            Announce("Nothing to undo", true);
+            Refuse("Nothing to undo");
             return;
         }
 
@@ -713,7 +710,7 @@ public sealed partial class TaskForm
         {
             if (Changes.CheckUndo(step) is { } why)
             {
-                Announce($"Cannot undo {step.Said}: {why}", true);
+                Refuse($"Cannot undo {step.Said}: {why}");
                 return;
             }
 
@@ -741,7 +738,7 @@ public sealed partial class TaskForm
         _hideDoneItem.Checked = _settings.HideDone;
         SaveSettings();
         Fill(SelectedKey());
-        Announce(_settings.HideDone ? "Done tasks hidden" : "Done tasks shown", true);
+        Announce(MenuText.CheckSaid("Hide done tasks", _settings.HideDone), true);
     }
 
     /// <summary>What F2 and Delete say on a file that does not read as an item (TK-4.6): nothing of axTask's changes it.</summary>
@@ -780,7 +777,7 @@ public sealed partial class TaskForm
                 EditConfiguration(row.Key, row.Name);
                 return;
             default:
-                Announce("Nothing selected", true);
+                Refuse("Nothing selected");
                 return;
         }
     }
@@ -882,7 +879,7 @@ public sealed partial class TaskForm
     {
         if (ShownDetail.Source is not FileSource source || Path.GetDirectoryName(source.Path) is not { } folder)
         {
-            Announce("Select a list or an item first", true);
+            Refuse("Select a list or an item first");
             return;
         }
 

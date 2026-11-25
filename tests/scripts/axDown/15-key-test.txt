@@ -1,7 +1,6 @@
 # Workflow: Find out whether a key arrives and what it does
 # axDown: Help, Diagnostics, Test a key (docs/axKit/SPEC.md AX-8.12; docs/axDown/nvda-test-plan.md, section 6). While the
 # test runs every key is said with what it does here and none is carried out; Escape ends it.
-file home\AxKit\axDown.json {"checkForUpdates": false}
 file a.md # A file for the key test\n\nSome text here.\nMore text.
 
 start down {temp}\a.md

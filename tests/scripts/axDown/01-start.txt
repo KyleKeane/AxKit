@@ -4,7 +4,6 @@
 # 1.2 manual: File Explorer's Open with axKit submenu is the shell's menu, outside the window.
 # 1.4 manual: Alt+Tab is the system's window switcher, which needs the foreground.
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-file home\AxKit\axDown.json {"checkForUpdates": false}
 file plain.txt Plain text file, line 1.\nLine 2 of the plain text file.\nLine 3: nothing special here.\nLine 4, the last line.
 
 # Goal: Open axDown with an empty document

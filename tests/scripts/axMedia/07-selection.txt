@@ -3,7 +3,6 @@
 # axmedia should select and ctrl+enter should become play/pause"): Space selects the file you are on, Shift with an
 # arrow selects as it moves, Ctrl+A every file, Escape gives the selection up; Delete then takes the selected files
 # out of the queue. Ctrl+Enter pauses and resumes. Every sound is the runner's silence.
-file home\AxKit\axMedia.json {"checkForUpdates":false}
 mkdir ch
 silence ch\alpha.wav 30000
 silence ch\beta.wav 30000

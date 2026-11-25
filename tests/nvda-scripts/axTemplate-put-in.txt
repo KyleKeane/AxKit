@@ -5,7 +5,7 @@
 # that window's selection first (TP-4.2). Only a desktop with a real front window shows that, so it is run only with
 # --nvda, at the user's word, with the user away from the keyboard. The other window is axDown on a file of the
 # run's own; the launcher's hotkey is one nobody uses.
-file home\AxKit\axTemplate.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F7", "sayFirstMatch": false}
+file home\AxKit\axTemplate.json {"hotkey": "Ctrl+Alt+Shift+F7", "sayFirstMatch": false}
 file home\Documents\axKit\Templates\Thanks.json {"schema": "list.json", "Title": "Thanks", "Text": "Dear {caret}, thank you for {clipboard}"}
 file home\Documents\axKit\Templates\Link.json {"schema": "list.json", "Title": "Link", "Text": "[{selection}]({caret})"}
 file notes.md A line.

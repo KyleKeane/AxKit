@@ -11,7 +11,7 @@
 # Claude Code writes when it hands the prompt back: nothing at all. Speak replies is all lines, so that the reply's
 # words are heard. A second window, with the file-only setting eventCore set to shadow, hears "Done" by the old rule,
 # the bell and the settle.
-file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false,"replySpeech":"all"}
+file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"replySpeech":"all"}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir dn
 mkdir sh
@@ -92,7 +92,7 @@ expect said Core: in charge of state and Done.
 # A second window, started with the file-only setting eventCore set to shadow: the core computes beside the window
 # and decides nothing. The same first turn: "Done" with its chime, 400 ms after the bell; the order of the reply's
 # words and "Done" is the window's two timers' there and is not asked for.
-file home\AxKit\axClaude.json {"checkForUpdates":false,"replySpeech":"all","eventCore":"shadow"}
+file home\AxKit\axClaude.json {"replySpeech":"all","eventCore":"shadow"}
 start claude {temp}\sh --claude {temp}\claude.cmd -- --model haiku
 expect said Ready
 menu Say the event sources

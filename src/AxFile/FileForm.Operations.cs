@@ -155,7 +155,7 @@ public sealed partial class FileForm
 
         if (entry.Operation is not { } operation)
         {
-            Announce("Nothing to undo", true);
+            Refuse("Nothing to undo");
             return;
         }
 
@@ -312,7 +312,7 @@ public sealed partial class FileForm
                 if (sources.Any(source => string.Equals(source, target, StringComparison.OrdinalIgnoreCase)
                     || target.StartsWith(source.TrimEnd('\\') + "\\", StringComparison.OrdinalIgnoreCase)))
                 {
-                    Announce("Cannot move a folder into itself", true);
+                    Refuse("Cannot move a folder into itself");
                     return;
                 }
 
@@ -526,7 +526,7 @@ public sealed partial class FileForm
             var data = Clipboard.GetDataObject();
             if (data is null || !data.GetDataPresent(DataFormats.FileDrop))
             {
-                Announce("Nothing to paste", true);
+                Refuse("Nothing to paste");
                 return;
             }
 
@@ -561,7 +561,7 @@ public sealed partial class FileForm
 
         if (paths.Count == 0)
         {
-            Announce("Nothing to paste", true);
+            Refuse("Nothing to paste");
             return;
         }
 
@@ -642,7 +642,7 @@ public sealed partial class FileForm
 
         if (entry.IsFolder || !Archives.IsZip(entry.Path))
         {
-            Announce("Not a zip file", true);
+            Refuse("Not a zip file");
             return;
         }
 
@@ -681,7 +681,7 @@ public sealed partial class FileForm
     {
         if (_folder is null)
         {
-            Announce("No folder", true);
+            Refuse("No folder");
             return;
         }
 
@@ -737,7 +737,7 @@ public sealed partial class FileForm
         }
         else
         {
-            Announce("Not a file", true);
+            Refuse("Not a file");
         }
     }
 

@@ -3,7 +3,6 @@
 # is asked of the user in the window first, as the list an offered command's question is: the offer's sound, a name that
 # starts with Command offer, the first answer only explains, Yes, run it runs it once, said with who asked, Escape is
 # No. axFile has no section to leave in view, so the list covers the whole window and the arrows answer it.
-file home\AxKit\axFile.json {"checkForUpdates": false}
 file files\notes.md Some notes.
 start file {temp}\files
 expect focus notes.md

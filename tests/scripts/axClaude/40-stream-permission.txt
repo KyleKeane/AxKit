@@ -6,7 +6,7 @@
 # the window named) to the window's own pipe, and is asked in the control area as a question of Claude's is: who asks
 # and for what, the caution with it every time, no where the list starts, and an answer that only explains. The
 # stand-in plays the recording of a Bash call that was allowed (tests/fixtures/streams/tool.jsonl).
-file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false,"replySpeech":"all"}
+file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"replySpeech":"all"}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir st
 file claude.cmd @"%AXKIT_STANDIN%" standin --stream tool %*

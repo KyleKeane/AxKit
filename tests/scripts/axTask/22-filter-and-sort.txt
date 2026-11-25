@@ -2,7 +2,6 @@
 # axTask (docs/axTask/SPEC.md TK-4.8; docs/axKit/framework.md FW-4.10a): Options, Filter narrows a level to the rows
 # whose name contains a text, and Options, Sort by puts them in the order of their names or back in the list's own.
 # Both are the navigator's, the same in every app. A heading stays while a row under it passes the filter.
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
 file tasks\Home\Tap.json {"schema":"list.json","Title":"Tap","Done":false}
 file tasks\Home\Apples.json {"schema":"list.json","Title":"Apples","Done":false}

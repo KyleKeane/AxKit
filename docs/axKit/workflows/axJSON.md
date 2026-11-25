@@ -207,9 +207,9 @@ Starts with: Open axJSON with the file settings.json.
     You hear: Line 6 of 8.
 4. Press Right 3 times.
 5. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
-    You hear: Word wrap off.
+    You hear: Word wrap, not checked.
 6. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
-    You hear: Word wrap on.
+    You hear: Word wrap, checked.
 
 ### Save a change to a JSON file
 

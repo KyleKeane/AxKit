@@ -77,7 +77,7 @@ public sealed partial class AutomateForm
         {
             if (_levelWorkflows == 0)
             {
-                Announce("No workflows in this folder to run; a folder inside it runs from inside it", true);
+                Refuse("No workflows in this folder to run; a folder inside it runs from inside it");
                 return;
             }
 
@@ -123,7 +123,7 @@ public sealed partial class AutomateForm
     {
         if (!Running)
         {
-            Announce("No run is going on", true);
+            Refuse("No run is going on");
             return;
         }
 
@@ -354,7 +354,7 @@ public sealed partial class AutomateForm
         var path = _workflow?.Path ?? (SelectedRow()?.Tag is FolderEntry { IsFolder: false } entry ? entry.Path : null);
         if (path is null)
         {
-            Announce("No workflow selected", true);
+            Refuse("No workflow selected");
             return;
         }
 

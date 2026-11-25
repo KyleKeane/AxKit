@@ -4,7 +4,7 @@
 # and are asked one after another in the control area, each with its choices and Other for the user's own words; the
 # answers go back together after the last. The stand-in plays the recording of two questions, the second with several
 # answers (tests/fixtures/streams/two-questions.jsonl).
-file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false,"replySpeech":"all"}
+file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"replySpeech":"all"}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir st
 file claude.cmd @"%AXKIT_STANDIN%" standin --stream two-questions %*

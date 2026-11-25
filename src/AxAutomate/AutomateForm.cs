@@ -281,7 +281,7 @@ public sealed partial class AutomateForm : ItemForm
 
     protected override void NewList() => Announce(ViewOnly, true);
 
-    protected override void Undo() => Announce("Nothing to undo: nothing changes here", true);
+    protected override void Undo() => Refuse("Nothing to undo: nothing changes here");
 
     // ---- its own commands ----
 
@@ -309,7 +309,7 @@ public sealed partial class AutomateForm : ItemForm
         var path = _workflow?.Path ?? (SelectedRow()?.Tag is FolderEntry { IsFolder: false } entry ? entry.Path : null);
         if (path is null)
         {
-            Announce("No workflow selected", true);
+            Refuse("No workflow selected");
             return;
         }
 

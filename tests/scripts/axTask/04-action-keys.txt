@@ -4,7 +4,6 @@
 # was made as a GitHub list, with the "github" member and the keys such a list had, and is an ordinary list now.
 file tasks\Issues\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Kind","type":"choice","value":"unlabelled","options":["Feedback","Bug","Feature request","unlabelled"]},{"title":"Number","type":"number","value":""},{"title":"Issue","type":"link","value":""},{"title":"Notes","type":"longtext","value":""}],"actions":[{"name":"Make it a bug","key":"Ctrl+1","does":"set","set":{"Kind":"Bug"}},{"name":"Open on GitHub","key":"Ctrl+5","does":"open","open":"Issue"},{"name":"Open in axClaude","key":"Ctrl+6","does":"open","open":"axClaude"}],"github":{"repository":"owner/repo","state":"open"}}
 file "tasks\Issues\12 The list loses my place.json" {"schema":"list.json","Title":"The list loses my place","Kind":"unlabelled","Number":12,"Issue":"","Notes":""}
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[{"name":"Done","key":"Ctrl+1","does":"set","set":{"Done":true}},{"name":"Later","key":"Ctrl+2","does":"move","to":"../Later"}]}
 file tasks\Later\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}

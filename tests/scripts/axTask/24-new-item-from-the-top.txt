@@ -2,7 +2,6 @@
 # axTask, docs/axTask/user-guide.md "Changing things" and SPEC.md TK-4.3a: Ctrl+N on a list among the sections asks for
 # the title and adds the item to that list, made from the list's fields; the focus stays on the list. On a heading it
 # says where items go, as before.
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Room","type":"text","value":""}],"actions":[]}
 file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false,"Room":"Kitchen"}
 start task {temp}\tasks

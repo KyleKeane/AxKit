@@ -4,7 +4,6 @@
 # template in forms too"): in a form of axTask, axPass or axMCP, Shift+F10 in a text field lists the templates checked
 # for that app, and the one chosen goes in at the caret. A context menu opens only in the window in front, so this is
 # no hidden-desktop script.
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file home\Documents\axKit\Templates\Thanks.json {"schema": "list.json", "Title": "Thanks", "Text": "Thank you, {caret}!", "axTask": true}
 file home\Documents\axKit\Templates\Elsewhere.json {"schema": "list.json", "Title": "Elsewhere", "Text": "Not here", "axDown": true}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Room","type":"text","value":""}],"actions":[]}

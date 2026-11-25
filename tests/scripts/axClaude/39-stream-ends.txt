@@ -4,7 +4,7 @@
 # recording of a failure of the service, which ends Claude Code with the code 1 right after the message
 # (tests/fixtures/streams/failure.jsonl). The window says that Claude stopped, as it does for the screen, and since the
 # end came within seconds of the start, a notice offers to open the folder with the screen instead; Escape stays.
-file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false}
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir st
 file claude.cmd @"%AXKIT_STANDIN%" standin --stream failure %*

@@ -3,7 +3,6 @@
 # command that acts outside the window is asked as the list an offered command's question is: the offer's sound, a name
 # that starts with Command offer, the first answer only explains, Yes, run it runs it once, Escape is No. The text
 # stays there to read while the question waits.
-file home\AxKit\axDown.json {"checkForUpdates": false}
 file notes.md # Notes\nFirst line of the notes.
 start down {temp}\notes.md
 expect focus notes.md

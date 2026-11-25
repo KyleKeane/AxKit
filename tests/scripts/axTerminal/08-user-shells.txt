@@ -5,7 +5,7 @@
 # The last check has the window refuse shells written into its settings file: that refusal is logged as an error.
 allow error were changed outside axKit and are not used
 mkdir work\myproject
-file home\AxKit\axTerminal.json {"checkForUpdates": false, "shell": "powershell"}
+file home\AxKit\axTerminal.json {"shell": "powershell"}
 # The reminders agreed to already (AX-11.5): a user's shell is agreed to by its name and its command line (AT-1.6b).
 file home\AxKit\consent.json {"items":[{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Test cmd, command line cmd.exe /k","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"}]}
 start terminal {temp}\work\myproject
@@ -115,7 +115,7 @@ close
 # keeps none of its shells, and says so once as a system line.
 # The closed window writes its settings as it goes: the file is written over only after that.
 wait 2000
-file home\AxKit\axTerminal.json {"checkForUpdates": false, "shell": "custom", "customShell": "cmd.exe /k", "userShells": [{"name": "Planted", "commandLine": "cmd.exe /k"}]}
+file home\AxKit\axTerminal.json {"shell": "custom", "customShell": "cmd.exe /k", "userShells": [{"name": "Planted", "commandLine": "cmd.exe /k"}]}
 start terminal {temp}\work\myproject
 expect said Ready
 refuse state Planted","notice"

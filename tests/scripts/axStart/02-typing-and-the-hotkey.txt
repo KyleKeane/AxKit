@@ -4,7 +4,7 @@
 # notices keeping the field's text, the refusals for a Store app, and the Hotkey notice. Starting a program, File
 # Explorer and the Start menu are outside the window (manual). The hotkey is one nobody uses, unlike 01-basics', so
 # that the two never meet.
-file home\AxKit\axStart.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F10", "sayFirstMatch": true}
+file home\AxKit\axStart.json {"hotkey": "Ctrl+Alt+Shift+F10", "sayFirstMatch": true}
 
 start start
 expect focus Search programs

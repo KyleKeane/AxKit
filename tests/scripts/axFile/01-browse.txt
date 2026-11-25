@@ -19,7 +19,6 @@ file nav\level-1-enter-me\level-2-enter-me\level-2-file.txt A file on level 2.
 mkdir nav\empty-folder-no-items
 
 # The run's own settings: no update check at the start, which is a network call (bundle G6).
-file home\AxKit\axFile.json {"checkForUpdates": false}
 
 # Goal: Open a folder in axFile
 # 1.1 The start: the title names the folder, the list its count, the first entry selected; nothing announced.

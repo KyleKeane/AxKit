@@ -3,7 +3,7 @@
 # of axTemplate checked for axCalc, or for every axKit app, is a command of the window, so the palette finds it by
 # its name; it is put into the field at the caret with the caret where the template says, and it is never sent. One
 # checked for axDown alone is not listed.
-file home\AxKit\axCalc.json {"checkForUpdates": false, "keepHistory": false}
+file home\AxKit\axCalc.json {"keepHistory": false}
 file home\Documents\axKit\Templates\Circle.json {"schema": "list.json", "Title": "Circle area", "Text": "pi*{caret}^2", "axCalc": true}
 file home\Documents\axKit\Templates\Everywhere.json {"schema": "list.json", "Title": "Answer twice", "Text": "{selection}*2", "Every axKit app": true}
 file home\Documents\axKit\Templates\Down.json {"schema": "list.json", "Title": "Meeting notes", "Text": "# Meeting", "axDown": true}

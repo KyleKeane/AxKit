@@ -1,7 +1,6 @@
 # Workflow: Manage services and startup programs
 # axProcess: the Services and Startup views (docs/axProcess/nvda-test-plan.md sections 3 and 4; SPEC PR-4, PR-5).
 # Read only: no service is started or stopped here, since a run with administrator rights would do it for real.
-file home\AxKit\axProcess.json {"checkForUpdates": false}
 # In a test run the Startup view reads a stand-in of the run's own, never this computer's start-up places (PR-5.8):
 # one file in the run's stand-in for your Startup folder, so that the view has an entry.
 file home\AxKit\startup\yours\Morning.lnk a stand-in for a shortcut

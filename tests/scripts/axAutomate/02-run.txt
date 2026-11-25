@@ -4,7 +4,6 @@
 # on a desktop of its own; the window's runs start their windows on a further desktop of their own. In the workflows'
 # lines {temp} is the inner run's {temp} (this runner fills in its own first), and a file name never starts with n
 # after a backslash, which a file step reads as a new line.
-file home\AxKit\axAutomate.json {"checkForUpdates": false}
 mkdir flows
 file flows\01-passes.txt # A workflow that passes.\n\nfile a.md Some text\nstart down {temp}\a.md\nexpect focus a.md\nclose
 file flows\02-fails.txt # A workflow that fails at its second step.\n\nstart down\nexpect focus Nothing like this\nclose

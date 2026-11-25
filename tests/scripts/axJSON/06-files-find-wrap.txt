@@ -2,7 +2,6 @@
 # axJSON, the editor tasks its user guide shares with axDown (docs/axJSON/user-guide.md, Files, Find and go to a line,
 # Write and read): the same editor shell, so the same words; until 2026-11-16 only axDown's scripts drove them.
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-file home\AxKit\axJSON.json {"checkForUpdates": false}
 file settings.json {\n  "model": "opus",\n  "note": "apple one",\n  "count": 3,\n  "other": "apple two",\n  "long": "This value is a long line, longer than the window is wide, so that word wrap has something to wrap when it is on, and the caret stays on the same character when it is turned off and on again.",\n  "on": true\n}
 
 start json {temp}\settings.json
@@ -43,10 +42,10 @@ keys enter
 expect said ! Line 6 of 8
 keys right right right
 do Word wrap
-expect said ! Word wrap off
+expect said ! Word wrap, not checked
 expect state Line 6, Column 4 ·
 do Word wrap
-expect said ! Word wrap on
+expect said ! Word wrap, checked
 expect state Line 6, Column 4 ·
 
 # Goal: Save a change to a JSON file

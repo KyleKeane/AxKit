@@ -217,12 +217,12 @@ Starts with: Open axTask with the folder tasks.
 ### Hide and show done tasks
 
 1. Press Ctrl+Shift+D (Hide done tasks; Options menu).
-    You hear: Done tasks hidden.
+    You hear: Hide done tasks, checked.
 2. Press Left.
 3. Press Right.
     You hear: Home, 1 item, 1 done hidden.
 4. Press Ctrl+Shift+D (Hide done tasks; Options menu).
-    You hear: Done tasks shown.
+    You hear: Hide done tasks, not checked.
 
 ## Group lists into sections
 
@@ -948,11 +948,11 @@ Starts with: Open axTask with the folder tasks.
 ### Turn the entry sounds off and on
 
 1. Choose Entry sounds in the Options menu, Text.
-    You hear: Entry sounds off.
+    You hear: Entry sounds, not checked.
 2. Press F1 (Keyboard shortcuts; Help menu).
 3. Press Escape.
 4. Choose Entry sounds in the Options menu, Text.
-    You hear: Entry sounds on.
+    You hear: Entry sounds, checked.
 5. Press F1 (Keyboard shortcuts; Help menu).
     You hear the sound TextOpen.
 6. Press Escape.

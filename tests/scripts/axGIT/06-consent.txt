@@ -3,7 +3,6 @@
 # axGIT: the reminder before the first repository opens (docs/axKit/SPEC.md AX-11.4, AX-11.5; the Owed list of
 # docs/axKit/nvda-test-record.md). A fresh run's home has no consent, so the reminder comes first. With --nvda
 # (nvda-pass.ps1) every expected line must be spoken by NVDA too.
-file home\AxKit\axGIT.json {"checkForUpdates": false}
 run git init -q -b main repo
 file repo\a.txt hello
 start git {temp}\repo

@@ -3,7 +3,6 @@
 # each field of its list's configuration, in its order. Tab moves between the controls, Ctrl+Enter saves them all as
 # one step for Ctrl+Z, Escape leaves and nothing is changed. Enter on a field in the detail pane opens the same form
 # with the focus in that field. The detail pane stays for reading, with its one-key changes.
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Due","type":"date","value":""},{"title":"Priority","type":"choice","value":"","options":["High","Normal","Low"]},{"title":"Room","type":"text","value":""},{"title":"Notes","type":"longtext","value":""},{"title":"Waits on","type":"link","value":""}],"actions":[]}
 file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false,"Due":"2099-10-30","Room":"Kitchen","Sprint":"October"}
 file tasks\Home\Washer.json {"schema":"list.json","Title":"Washer","Done":false}

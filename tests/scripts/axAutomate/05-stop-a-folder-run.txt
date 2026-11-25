@@ -5,7 +5,6 @@
 # and has the other reasons a workflow cannot run). Run by tools/AxAutomate on a desktop of its own; the window's runs
 # start their windows on a further desktop of their own. In the workflows' lines a file name never starts with n
 # after a backslash, which a file step reads as a new line.
-file home\AxKit\axAutomate.json {"checkForUpdates": false}
 mkdir flows
 file flows\01-quick.txt # A workflow that passes at once.\n\nstart down\nclose
 file flows\02-waits.txt # A workflow that takes its time.\n\nstart down\nwait 3000\nwait 3000\nclose

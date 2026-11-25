@@ -5,8 +5,8 @@
 # the run's own working folder (AI help's, under the run's home), titled axHelp, with Claude Code on Haiku, axHelp's
 # fast model; axClaude's agreement is recorded already, as the other access layers' scripts do. The hotkeys are keys
 # nobody uses: the scripts reach the conversation through Enter in axHelp's window and through a start with a picture.
-file home\AxKit\axHelp.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F9", "screenshotHotkey": "Ctrl+Alt+Shift+F11", "model": "haiku"}
-file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates": false}
+file home\AxKit\axHelp.json {"hotkey": "Ctrl+Alt+Shift+F9", "screenshotHotkey": "Ctrl+Alt+Shift+F11", "model": "haiku"}
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 file blocks.b64 iVBORw0KGgoAAAANSUhEUgAAADAAAAAgCAYAAABU1PscAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADvSURBVFhH7Y8xCsRAEMP2/5++62WDESnCQgRqDBqY87ucw+E2vgfeJh4455kTBlaei6E0xgkDK8/FUBrjhIGV52IojXHCwMpzMZTGOGFg5bkYSmOcMLDyXAylMU4YWHkuhtIYJwysPBdDaYwTBlaei6E0xgkDK8/FUBrjhIGV52IojXHCwMpzMZTGOGFg5bkYSmOcMLDyXAylMU4YWHkuhtIYJwysPBdDaYwTBlaei6E0xgkDK8/FUBrjhIGV52IojXHCwMpzMZTGOGFg5bkYSmOcMLDyXAylMU4YWHkuhtIYJwysPMfhNr4H3ub6B/6n0O8Aed7pxwAAAABJRU5ErkJggg==
 run certutil -f -decode blocks.b64 blocks.png

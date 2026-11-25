@@ -2,7 +2,6 @@
 # axTask, docs/axTask/user-guide.md "Smart lists": Actions, New smart list asks its name, makes a small file whose
 # conditions start as All tasks', says so, and opens the file in axJSON to change. The new list stands under Smart
 # lists with the number of tasks it shows.
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
 file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false}
 file "tasks\Home\Old job.json" {"schema":"list.json","Title":"Old job","Done":true}

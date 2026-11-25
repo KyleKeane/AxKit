@@ -300,7 +300,7 @@ internal sealed partial class MainForm
 
         if (!_model.Working)
         {
-            Announce("Nothing to interrupt", true);
+            Refuse("Nothing to interrupt");
             return;
         }
 

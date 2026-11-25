@@ -6,8 +6,8 @@
 # has just arrived; Alt+F4 hides it again; its own command ends it. What brings it up is the "show" hand-over, which
 # axHelp's Open the conversation sends to the window titled axHelp: axHelp's window is the second one here.
 # The window place saved maximized, as a user's is: a hidden start must not lose it (20.5).
-file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false,"window":{"x":40,"y":40,"width":900,"height":600,"maximized":true}}
-file home\AxKit\axHelp.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F9", "screenshotHotkey": "Ctrl+Alt+Shift+F11", "model": "haiku"}
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"window":{"x":40,"y":40,"width":900,"height":600,"maximized":true}}
+file home\AxKit\axHelp.json {"hotkey": "Ctrl+Alt+Shift+F9", "screenshotHotkey": "Ctrl+Alt+Shift+F11", "model": "haiku"}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 run mkdir "home\Documents\axKit\Claude"
 

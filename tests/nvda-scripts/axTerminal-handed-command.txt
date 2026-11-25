@@ -4,7 +4,7 @@
 # the field the focus lands in, before the command, and nothing can cut it off; as an announcement it was once lost
 # behind NVDA's reading of the opening window (the pass of 2026-11-22). Run only with --nvda, with the user away.
 mkdir myproject
-file home\AxKit\axTerminal.json {"checkForUpdates": false, "fontSize": 6, "window": {"x": 0, "y": 0, "width": 1600, "height": 900, "maximized": true}}
+file home\AxKit\axTerminal.json {"fontSize": 6, "window": {"x": 0, "y": 0, "width": 1600, "height": 900, "maximized": true}}
 file home\AxKit\consent.json {"items":[{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"}]}
 start terminal {temp}\myproject --command Write-Output "two words"
 

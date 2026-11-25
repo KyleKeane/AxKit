@@ -3,7 +3,6 @@
 # docs/axKit/nvda-test-record.md). Each shell is its own consent; the default shell here is Windows PowerShell or
 # PowerShell 7, so the texts name neither. With --nvda (nvda-pass.ps1) every expected line must be spoken by NVDA too.
 mkdir myproject
-file home\AxKit\axTerminal.json {"checkForUpdates": false}
 start terminal {temp}\myproject
 
 # Goal: Agree to the reminder and start the shell

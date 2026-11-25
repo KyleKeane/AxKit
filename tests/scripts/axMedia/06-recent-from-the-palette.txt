@@ -6,7 +6,6 @@
 # Every sound is the runner's silence; nothing reaches the speakers.
 
 # The run's own settings (AXKIT_HOME): no update check at start, which goes to the network.
-file home\AxKit\axMedia.json {"checkForUpdates":false}
 mkdir chapters
 silence chapters\alpha.wav 30000
 silence chapters\beta.wav 30000

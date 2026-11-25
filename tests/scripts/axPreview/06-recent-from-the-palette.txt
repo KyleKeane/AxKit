@@ -5,7 +5,6 @@
 # the command palette reads every Open recent list (docs/axKit/SPEC.md AX-10.2), so the entry is one search away:
 # Ctrl+Shift+P, part of the name, Enter.
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-file home\AxKit\axPreview.json {"checkForUpdates": false}
 file orchard.md # Orchard\n\nThe apple file.
 file cellar.txt The barrel file, line 1.\nLine 2.
 

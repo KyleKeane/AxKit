@@ -18,8 +18,8 @@ public abstract partial class AxKitForm
     /// <summary>Inside a notice button's action: a notice the action opens continues the chain, so nothing is remembered again and the hooks fire once.</summary>
     private bool _chaining;
 
-    /// <summary>The crash handler's report, shown inside the window like every other notice.</summary>
-    public void ShowError(string title, string message) => ShowNotice(Notice.Plain(title, message) with { Unprompted = true });
+    /// <summary>An error notice (the crash handler's report, <see cref="Fail"/>'s, an app's own error): shown inside the window like every other notice, and of the failure kind, so that an error sounds the same in every window (docs/axKit/repairs.json R-95, 2026-11-25).</summary>
+    public void ShowError(string title, string message) => ShowNotice(Notice.Plain(title, message) with { Unprompted = true, Kind = EventKind.Failed });
 
     /// <summary>
     /// The one place a notice is shown; callers pass only its content. It adds the chime of a notice the user did
@@ -196,6 +196,18 @@ public abstract partial class AxKitForm
         return multiline && lines > 1 ? $"Pasted, {lines} lines" : "Pasted";
     }
 
+    /// <summary>
+    /// A command that cannot act now (nothing selected, nothing to undo, not in this list): the refused sound and its
+    /// words, said once, interrupting. The one way every window refuses (docs/axKit/repairs.json R-95, the maintainer's
+    /// choice of 2026-11-25, "same everywhere"): until then the sound and the words were written as a pair in sixteen
+    /// places, axTask had a copy of its own, and most windows refused without the sound.
+    /// </summary>
+    protected internal void Refuse(string said)
+    {
+        EventDoor.Raise(EventKind.Refused);
+        Announce(said, true);
+    }
+
     /// <summary>A failed command's reason: one announcement, "Failed: ...", when it is one line; a notice with all of it when it is more (axGIT AG-7, axFile AF-4.5).</summary>
     protected internal void Failed(string title, string text)
     {
@@ -280,8 +292,7 @@ public abstract partial class AxKitForm
                     return true;
                 }
 
-                EventDoor.Raise(EventKind.Refused);
-                Announce(lacking.Said, true);
+                Refuse(lacking.Said);
                 lacking.Field.Select();
                 return false;
             },

@@ -1795,6 +1795,12 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   (2026-10-25, the user's ask: the edit control's own paste is silent): "Pasted", "Pasted, 3 lines" for several into a
   text of several lines, "Nothing to paste as text" when the clipboard holds none; never the text itself, which may be a
   password (`AxKitForm.SayPasteAfter`). A read-only text pastes nothing and says nothing.
+- AX-7.3c One way to refuse, to fail and to say a switch (the maintainer's choice of 2026-11-25, "same everywhere"; repairs
+  R-95): a command that cannot act now (nothing selected, nothing to undo, nothing to paste, not in this list) plays
+  the refused sound and says why, interrupting, through the window base's `Refuse`; an error notice is of the failure
+  kind in every window (`ShowError`, `Fail`); a switch toggled says its menu item's name with "checked" or "not
+  checked" (`MenuText.CheckSaid`), Word wrap, Hide done tasks and the theme's switches included, which said "on" and
+  "off" or words of their own until then. An answer that is empty ("No variables", "No changes") is no refusal.
 - AX-7.4 Enter and Escape reach a notice's buttons from every control (`AcceptButton`, `CancelButton`); handled keys
   set `SuppressKeyPress`; NVDA's own key combinations are never intercepted and no global keyboard hook is installed.
 - AX-7.5 The UI thread never blocks on I/O; background work is marshalled to the UI thread and batched.
@@ -1817,7 +1823,7 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   notice's button or meets a read-only text says nothing of it, and a line break with an editor's indent after it
   counts. One setting for every window, on by default: Options, Text, Say new line, in every window's menu, palette
   and F1 text (`BundleHelp.Section`), kept in the theme file's display settings as `display.sayNewLine`
-  (`docs/axKit/theme.md` TH-6.5), so that a change in one window holds in all; it says "Say new line on" or "Say new
+  (`docs/axKit/theme.md` TH-6.5), so that a change in one window holds in all; it says "Say new line, checked" or "Say new
   line off".
 - AX-7.9 A heading reached is heard before it is read (2026-11-11, the user: "an earcon as an option for each
   navigation event that moves into a heading across all apps so that down arrow gives a sound before speaking a heading
@@ -1832,7 +1838,7 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   left out (their headings are line kinds the text does not mark unless Markers in the text is on). One setting for
   every window, on by default: Options, Text, Sound on headings, in every window's menu, palette and F1 text, kept in
   the theme file's display settings as `display.headingSound` (`docs/axKit/theme.md` TH-6.6); it says "Sound on
-  headings on" or "Sound on headings off".
+  headings on" or "Sound on headings, not checked".
 - AX-7.10 **Say the status: F8 in every window** (2026-11-15; the key is the user's choice). Every window's status
   bar is two labels of a native status strip (`StatusLayout.Pair`), which NVDA reads with NVDA+End. NVDA finds a
   status bar by a lookup on the screen, at the bottom-left of the foreground window (the reason for
@@ -1896,7 +1902,7 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
     beside the call from another window that is longer than half a second, as he chose it; the others are under
     half a second.
   - **The switch**: Options, Text, **Entry sounds**, on at first, the same in every window
-    (`display.openingSounds` of the theme file, `docs/axKit/theme.md` TH-6.7); "Entry sounds on" or "off".
+    (`display.openingSounds` of the theme file, `docs/axKit/theme.md` TH-6.7); "Entry sounds, checked" or "not checked".
   - **The words of a form.** The focus starts in the form's first control and never on its text. After NVDA has
     read that control, the window says the title and the one word: "Move 2 items, form". The explanation is not
     said at opening (until 2026-11-22 it was, whole, and partly a second time as the focus passed over the

@@ -3,7 +3,6 @@
 # axClaude, docs/axClaude/SPEC.md FR-7.4 and D10 (2026-11-21, the maintainer's word: "we must speak claude results on
 # by default"): a settings file that says nothing of the replies, as a new install has it, speaks every line of a
 # reply. The stand-in plays the turn of 29-stand-in-turn.txt; the other scripts name the options they test.
-file home\AxKit\axClaude.json {"checkForUpdates":false}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir st
 # The stand-in: claude.cmd calls the runner's own program with the scenario beside it and Claude Code's arguments.

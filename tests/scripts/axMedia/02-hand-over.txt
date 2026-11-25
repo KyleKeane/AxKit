@@ -8,7 +8,6 @@
 # hand-over each, from another app's window (above), and the front window and NVDA's reading of it are tier 3.
 # Step 5: Windows' default program and File Explorer are the system's, outside the test desktop.
 
-file home\AxKit\axMedia.json {"checkForUpdates":false}
 mkdir ch
 silence ch\alpha.wav 30000
 silence ch\beta.wav 30000

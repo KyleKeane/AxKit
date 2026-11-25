@@ -489,7 +489,7 @@ public sealed class HelpForm : HotkeyForm
         var last = Directory.Exists(folder) ? Directory.GetFiles(folder, "*.png").OrderByDescending(file => file, StringComparer.Ordinal).FirstOrDefault() : null;
         if (last is null)
         {
-            Announce("No screenshot yet: the screenshot's hotkey takes one", true);
+            Refuse("No screenshot yet: the screenshot's hotkey takes one");
             return;
         }
 

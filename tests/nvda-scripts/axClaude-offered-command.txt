@@ -5,7 +5,7 @@
 # answer as it arrives; each answer is read as the arrows reach it; the explanation is read as a notice and the list
 # is read again, by its name with the command, when the focus comes back from it and from the conversation; the
 # concern's field is read by its instruction.
-file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false}
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir heard
 start claude {temp}\heard -- --model haiku

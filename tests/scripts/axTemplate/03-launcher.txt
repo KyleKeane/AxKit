@@ -4,7 +4,7 @@
 # own (docs/axKit/automation.md). The hotkey is one nobody uses, so that the run never takes the user's.
 #
 # Enter, which pastes into the program in front, acts outside the window: not run here, it stays for the NVDA plan.
-file home\AxKit\axTemplate.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F7", "sayFirstMatch": false}
+file home\AxKit\axTemplate.json {"hotkey": "Ctrl+Alt+Shift+F7", "sayFirstMatch": false}
 file home\Documents\axKit\Templates\Greeting.json {"schema": "list.json", "Title": "Greeting", "Text": "Dear {clipboard}, the sprint starts {caret}"}
 file "home\Documents\axKit\Templates\Sprint notes.json" {"schema": "list.json", "Title": "Sprint notes", "Text": ""}
 file home\Documents\axKit\Templates\Thanks.json {"schema": "list.json", "Title": "Thanks", "Text": "Thank you very much"}

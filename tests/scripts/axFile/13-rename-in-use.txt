@@ -7,7 +7,6 @@
 # computer), its window hidden and its working folder the folder to rename. It is started apart from the runner's
 # command (run's own children end with the command, since it reads their output), as axProcess/01-start starts its
 # ping. Nothing ends it: the script waits for it to end by itself, by the process id it wrote down at the start.
-file home\AxKit\axFile.json {"checkForUpdates": false}
 mkdir r\held
 file r\held\inside.txt A file inside the folder a program runs in.
 file r\other.txt Another entry of the folder shown.

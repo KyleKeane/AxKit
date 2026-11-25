@@ -82,7 +82,7 @@ public sealed partial class TaskForm
 
         if (parts.Count == 0)
         {
-            Announce("Nothing to convert", true);
+            Refuse("Nothing to convert");
             Fill(select);
             return;
         }

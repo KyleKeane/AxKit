@@ -48,7 +48,7 @@ public sealed partial class TaskForm
     {
         if (AtTop || _smart is not null || Gathered || IsArchiveFolder(_folder))
         {
-            Announce("Open a list of yours first: the setting is the list's own", true);
+            Refuse("Open a list of yours first: the setting is the list's own");
             return;
         }
 
@@ -76,7 +76,7 @@ public sealed partial class TaskForm
         var title = ItemFolder.NameOf(item);
         if (!ItemHistory.On(ItemFolder.ReadConfig(folder).Config))
         {
-            Announce($"No history is kept for {Path.GetFileName(folder)}: Options, Keep a history of changes in this list turns it on", true);
+            Refuse($"No history is kept for {Path.GetFileName(folder)}: Options, Keep a history of changes in this list turns it on");
             return;
         }
 

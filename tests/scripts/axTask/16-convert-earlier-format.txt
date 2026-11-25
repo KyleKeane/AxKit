@@ -3,7 +3,6 @@
 # title, type and value objects) is not opened. Its row says so, Right or Enter asks once, and Convert keeps a copy
 # among the Archived lists and writes the list's configuration and every item anew, as one step for Ctrl+Z. The
 # gathering lists leave such a list out and say so. Two lists here, so that one answer can take both.
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file tasks\Home\list.json {"format": "axkit-list 1", "fields": [{"title": "Notes", "type": "longtext", "value": "Things at home."}], "new item": [{"title": "Done", "type": "check", "value": false}, {"title": "Due", "type": "date", "value": ""}], "keys": {"1": {"name": "Finish", "set": {"Done": true}}}}
 file "tasks\Home\Fix the tap.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Fix the tap"}, {"title": "Done", "type": "check", "value": false}, {"title": "Due", "type": "date", "value": "2099-10-30"}, {"title": "Room", "type": "text", "value": "Kitchen"}]}
 file "tasks\Home\Water plants.json" {"format": "axkit-item 1", "fields": [{"title": "Title", "type": "text", "value": "Water plants"}, {"title": "Done", "type": "check", "value": true}]}

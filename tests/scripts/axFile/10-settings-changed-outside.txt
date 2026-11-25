@@ -18,7 +18,7 @@ close
 # Check: Programs of Open with another program wrote into the settings are not used
 # The closed window writes its settings as it goes: the file is written over only after that, without the seal.
 wait 2000
-file home\AxKit\axFile.json {"checkForUpdates": false, "programs": [{"name": "Planted", "path": "C:/planted/run.exe"}]}
+file home\AxKit\axFile.json {"programs": [{"name": "Planted", "path": "C:/planted/run.exe"}]}
 start file {temp}\here
 expect state "notice":"Settings"
 # The text is matched as the channel writes it, where an apostrophe is escaped: the part after it.
@@ -32,6 +32,6 @@ close
 # A start without a folder goes to the remembered one; on the network it is not looked at, the home folder is shown,
 # and the window says why. No request reaches the network: the path is never asked about.
 wait 2000
-file home\AxKit\axFile.json {"checkForUpdates": false, "lastFolder": "\\\\away-server\\share\\folder"}
+file home\AxKit\axFile.json {"lastFolder": "\\\\away-server\\share\\folder"}
 start file
 expect said is on the network and was not opened at start

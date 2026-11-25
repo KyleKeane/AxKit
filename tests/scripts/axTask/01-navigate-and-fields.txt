@@ -3,7 +3,6 @@
 # docs/axKit/item-apps.md IA-2, IA-3, IA-5). A scratch folder of lists; findstr checks what reached the file.
 # Each list's list.json names the fields of its items (docs/axTask/forms-framework.md section 13): Home and Shopping
 # are checklists, Home with a choice; Jottings is a plain list, whose items are no tasks.
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Start","type":"date","value":""},{"title":"Due","type":"date","value":""},{"title":"Priority","type":"choice","value":"","options":["High","Low"]}],"actions":[]}
 file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false,"Start":"","Due":"2099-10-30"}
 file "tasks\Home\Water plants.json" {"schema":"list.json","Title":"Water plants","Done":true}

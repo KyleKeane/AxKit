@@ -5,7 +5,6 @@
 # backwards, from the entry before yours and round the end. The list reads the Shift key itself, which the desktop
 # tier's posted keys do not hold down (found 2026-11-17: there Shift+C went forwards), so only this tier can check it;
 # the rule itself is tested in TypeAheadTests.
-file home\AxKit\axFile.json {"checkForUpdates": false}
 mkdir f
 file f\apple.txt a
 file f\banana.txt b

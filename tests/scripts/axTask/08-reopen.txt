@@ -2,7 +2,6 @@
 # axTask: the list open when the window closed opens at the next start without a folder (docs/axTask/nvda-test-plan.md
 # 4.4); a smart list or the top level open at the close leaves the next start at the top; a start that names the
 # folder opens its top level whatever was open last.
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
 file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false}
 file tasks\Shopping\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}

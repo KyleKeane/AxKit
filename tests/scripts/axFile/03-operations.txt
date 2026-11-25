@@ -3,7 +3,6 @@
 # The files are those of manual_tests/prepare.ps1 axfile (file-operations, undo-ctrl-z), made in {temp}.
 # Not here: every step that puts something on the clipboard (Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+Shift+C, the Selection
 # menu's Cut, Copy and Copy paths): the test desktop shares the system clipboard with the user.
-file home\AxKit\axFile.json {"checkForUpdates": false}
 file ops\a.txt The a.txt of the rename and copy steps.
 file ops\rename-me.txt F2 on me.
 file ops\move-into-new-folder-1.txt Move me.

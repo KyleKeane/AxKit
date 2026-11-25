@@ -195,7 +195,7 @@ public sealed class CalcForm : ConversationForm
     {
         if (CurrentValue() is not { } value)
         {
-            Announce("No answer yet", true);
+            Refuse("No answer yet");
             return;
         }
 
@@ -206,7 +206,7 @@ public sealed class CalcForm : ConversationForm
     {
         if (CurrentValue() is not { } value)
         {
-            Announce("No answer yet", true);
+            Refuse("No answer yet");
             return;
         }
 
@@ -218,7 +218,7 @@ public sealed class CalcForm : ConversationForm
     {
         if (CurrentValue() is not { } value)
         {
-            Announce("No answer yet", true);
+            Refuse("No answer yet");
             return;
         }
 

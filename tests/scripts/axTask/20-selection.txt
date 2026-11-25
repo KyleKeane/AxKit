@@ -3,7 +3,6 @@
 # you are on, Shift with an arrow selects as it moves, Ctrl+A every item shown, Escape gives the selection up. Ctrl+Enter
 # (done or not done), Delete (archive) and the list's actions that set fields or move then act on all the selected
 # items as one step, which Ctrl+Z takes back. The keys, the words and the marks are the bundle's shared selection.
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Priority","type":"text","value":""}],"actions":[{"name":"Priority high","key":"Ctrl+1","does":"set","set":{"Priority":"High"}},{"name":"Later","key":"Ctrl+2","does":"move","to":"../Later"}]}
 file "tasks\Home\Buy paint.json" {"schema":"list.json","Title":"Buy paint","Done":false}
 file "tasks\Home\Call the plumber.json" {"schema":"list.json","Title":"Call the plumber","Done":false}

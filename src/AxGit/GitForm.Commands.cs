@@ -232,7 +232,7 @@ public sealed partial class GitForm
     {
         if (_root is null)
         {
-            Announce("No repository", true);
+            Refuse("No repository");
             return;
         }
 
@@ -246,7 +246,7 @@ public sealed partial class GitForm
         var staged = _repo.StagedCount;
         if (staged == 0)
         {
-            Announce($"Nothing staged. {BundleKeys.Text(AxGitKeys.Stage).TrimEnd('.')} stages the selected files", true);
+            Refuse($"Nothing staged. {BundleKeys.Text(AxGitKeys.Stage).TrimEnd('.')} stages the selected files");
             return;
         }
 
@@ -280,7 +280,7 @@ public sealed partial class GitForm
     {
         if (CurrentCommit() is not { } commit)
         {
-            Announce("No commit selected", true);
+            Refuse("No commit selected");
             return;
         }
 
@@ -305,7 +305,7 @@ public sealed partial class GitForm
     {
         if (CurrentBranch() is not { } branch)
         {
-            Announce("No branch selected", true);
+            Refuse("No branch selected");
             return;
         }
 
@@ -337,7 +337,7 @@ public sealed partial class GitForm
     {
         if (_root is null)
         {
-            Announce("No repository", true);
+            Refuse("No repository");
             return;
         }
 

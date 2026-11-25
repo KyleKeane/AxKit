@@ -7,7 +7,7 @@
 # The test desktop shares the clipboard with the user's session: as 01-basics does, the script copies texts of its own
 # through clip, which stay on the clipboard after the run, and every step filters on them, so that nothing the user
 # copies is ever said here.
-file home\AxKit\axClip.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F11", "sayFirstMatch": false}
+file home\AxKit\axClip.json {"hotkey": "Ctrl+Alt+Shift+F11", "sayFirstMatch": false}
 file copy.ps1 # Copies its arguments, one line each, and reads the clipboard back: clip.exe gives up silently when another program holds the clipboard open (the NVDA pass, 2026-11-15).\n$v = $args -join "`r`n"\nfor ($i = 0; $i -lt 20; $i++) { try { Set-Clipboard -Value $v; if ((Get-Clipboard -Raw) -eq $v) { exit 0 } } catch { }; Start-Sleep -Milliseconds 100 }\nexit 1
 # A copy goes through copy.ps1, which reads the clipboard back and tries again: clip.exe gave up without a word while
 # the user's own axClip and NVDA read the same clipboard, and a copy was missing from the history (2026-11-15).

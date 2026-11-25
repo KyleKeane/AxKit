@@ -3,7 +3,6 @@
 # a script) shows each item with every value as text, and says why; nothing of such an item is changed. Edit the
 # list's configuration (Ctrl+J on the list) writes the file first, with the fields the items hold, and from then on
 # the items are read through it. Opening axJSON itself is not checked here: the hand-over is the bundle's.
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file tasks\Notes\Idea.json {"schema":"list.json","Title":"Idea","Done":false,"Size":3,"Notes":"One line"}
 file tasks\Empty\keep.txt a folder with no item yet
 start task {temp}\tasks

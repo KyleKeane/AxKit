@@ -2,7 +2,6 @@
 # axTask, docs/axTask/user-guide.md "The fields of a list" and SPEC.md TK-4.1a: a list whose configuration names a
 # field Created, of type date, gets today's date there for every item added; the day itself changes with the
 # calendar, so the file is asked for a date of this century.
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Created","type":"date","value":""}],"actions":[]}
 file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false,"Created":""}
 start task {temp}\tasks

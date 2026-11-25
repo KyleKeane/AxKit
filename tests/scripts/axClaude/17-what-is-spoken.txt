@@ -4,7 +4,7 @@
 # announcement switches, the words that keep a reply line silent, and the two feedback items under Questions. A switch
 # silences the word only: the chime stays. The survey itself cannot be forced in a run (the launcher strips Claude's
 # variables), so its dismissal is a unit of the window left to ordinary use; its switch is checked here.
-file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false,"announceReady":false,"announceSent":false,"announceResponding":false,"announceClaudeNotices":false}
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"announceReady":false,"announceSent":false,"announceResponding":false,"announceClaudeNotices":false}
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir spoken

@@ -29,8 +29,7 @@ public sealed partial class TaskForm
     {
         if (SelectedRow() is not { Tag: ItemFile entry } || !OutsideReports.IsList(Path.GetDirectoryName(entry.Path) ?? string.Empty))
         {
-            EventDoor.Raise(EventKind.Refused);
-            Announce("Approve and Decline act on an entry of the outside reports list: open the list and choose an entry", true);
+            Refuse("Approve and Decline act on an entry of the outside reports list: open the list and choose an entry");
             return;
         }
 
@@ -41,16 +40,14 @@ public sealed partial class TaskForm
 
         if (OutsideReports.Refusal(entry.Flat) is { } refused)
         {
-            EventDoor.Raise(EventKind.Refused);
-            Announce(refused, true);
+            Refuse(refused);
             return;
         }
 
         var keyFile = OutsideReports.KeyFileOf(Path.GetDirectoryName(entry.Path)!);
         if (!File.Exists(keyFile))
         {
-            EventDoor.Raise(EventKind.Refused);
-            Announce("No approval passphrase is set up yet: Options, Approval passphrase", true);
+            Refuse("No approval passphrase is set up yet: Options, Approval passphrase");
             return;
         }
 
@@ -95,8 +92,7 @@ public sealed partial class TaskForm
 
         if (signature is null)
         {
-            EventDoor.Raise(EventKind.Refused);
-            Announce(failed ?? "Nothing was signed", true);
+            Refuse(failed ?? "Nothing was signed");
             return;
         }
 
@@ -117,8 +113,7 @@ public sealed partial class TaskForm
     {
         if (!OutsideReports.IsList(_folder))
         {
-            EventDoor.Raise(EventKind.Refused);
-            Announce("Open the outside reports list first: the approval key is kept beside it", true);
+            Refuse("Open the outside reports list first: the approval key is kept beside it");
             return;
         }
 
@@ -133,8 +128,7 @@ public sealed partial class TaskForm
         // pinned yet, and a second one would be signed by a key the code repository never pinned.
         if (File.Exists(Path.Combine(Path.GetDirectoryName(keyFile)!, OutsideReports.ChangeFileName)))
         {
-            EventDoor.Raise(EventKind.Refused);
-            Announce("The last change of the approval passphrase is not pinned in the code repository yet: have it pinned first, then change it again", true);
+            Refuse("The last change of the approval passphrase is not pinned in the code repository yet: have it pinned first, then change it again");
             return;
         }
 
@@ -180,8 +174,7 @@ public sealed partial class TaskForm
                 Overlay.SetInputText(string.Empty);
                 if (typed.Length < Approvals.MinimumPassphrase)
                 {
-                    EventDoor.Raise(EventKind.Refused);
-                    Announce($"The passphrase needs {Approvals.MinimumPassphrase} characters at least: nothing changed", true);
+                    Refuse($"The passphrase needs {Approvals.MinimumPassphrase} characters at least: nothing changed");
                     return;
                 }
 
@@ -193,8 +186,7 @@ public sealed partial class TaskForm
                         Overlay.SetInputText(string.Empty);
                         if (again != typed)
                         {
-                            EventDoor.Raise(EventKind.Refused);
-                            Announce("The two passphrases differ: nothing changed", true);
+                            Refuse("The two passphrases differ: nothing changed");
                             return;
                         }
 
@@ -253,8 +245,7 @@ public sealed partial class TaskForm
 
         if (failed is not null)
         {
-            EventDoor.Raise(EventKind.Refused);
-            Announce(failed, true);
+            Refuse(failed);
         }
     }
 

@@ -1,7 +1,6 @@
 # Workflow: Take back a new text file
 # axFile, docs/axFile/user-guide.md "File operations", Ctrl+Z (SPEC AF-4.14): a new text file is removed by Ctrl+Z,
 # as a new folder is (03-operations.txt), and the list is as it was.
-file home\AxKit\axFile.json {"checkForUpdates": false}
 mkdir u
 file u\keep.txt keep
 start file {temp}\u

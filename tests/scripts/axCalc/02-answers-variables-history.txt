@@ -3,7 +3,6 @@
 # expression, Up and Down left to the field, angles, bases of a fraction, editing a history entry, Find landing on a
 # match, clearing the history and the variables, and the history kept between runs. Ctrl+S and the copy to the
 # clipboard (4.6, 3.3) are the Windows save dialog and the user's clipboard (manual).
-file home\AxKit\axCalc.json {"checkForUpdates": false}
 
 start calc
 expect focus Expression

@@ -110,7 +110,7 @@ public sealed partial class TaskForm
         if (ListActions.Read(CurrentListDetails).FirstOrDefault(known => known.Key == key) is not { } action)
         {
             EventDoor.Raise(EventKind.NoCommand, EventSound.Edge);
-            Announce($"No action on {ListActions.KeyText(key)} in this list; its actions are written in its configuration, {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} on the list", true);
+            Refuse($"No action on {ListActions.KeyText(key)} in this list; its actions are written in its configuration, {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} on the list");
             return;
         }
 
@@ -305,13 +305,6 @@ public sealed partial class TaskForm
         }
     }
 
-    /// <summary>A refusal: its sound, and its words said once.</summary>
-    private void Refuse(string said)
-    {
-        EventDoor.Raise(EventKind.Refused);
-        Announce(said, true);
-    }
-
     /// <summary>
     /// Whether an action that moves the item or opens something may act now (SPEC.md TK-7a.3; bundle repairs R-72):
     /// yes when the user accepted it before. Otherwise the first press says what it does in this list and does
@@ -368,7 +361,7 @@ public sealed partial class TaskForm
         var top = TopFolder.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
         if (!Directory.Exists(target) || !target.StartsWith(top, StringComparison.OrdinalIgnoreCase) || ItemFolder.IsArchive(TopFolder, target) || target.Equals(folder, StringComparison.OrdinalIgnoreCase))
         {
-            Announce($"No list to move to at {move}", true);
+            Refuse($"No list to move to at {move}");
             return;
         }
 
@@ -724,7 +717,7 @@ public sealed partial class TaskForm
     {
         if (_runStop is not { } stop || _running is null)
         {
-            Announce("No action is running", true);
+            Refuse("No action is running");
             return;
         }
 
@@ -736,7 +729,7 @@ public sealed partial class TaskForm
     {
         if (_lastOutput is not { } last)
         {
-            Announce("No action has run a program in this window yet", true);
+            Refuse("No action has run a program in this window yet");
             return;
         }
 

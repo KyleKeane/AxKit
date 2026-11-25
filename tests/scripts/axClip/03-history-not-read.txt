@@ -3,7 +3,7 @@
 # said once at the first showing and the history starts empty (docs/axClip/nvda-test-plan.md 4.2a; SPEC CP-3.6;
 # docs/axKit/repairs.json R-69). The file's protectedHistory here is text no account protected. The hotkey is one
 # nobody uses, as in 01-basics, and every step filters on the script's own text.
-file home\AxKit\axClip.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F11", "sayFirstMatch": false, "keepHistory": true, "protectedHistory": "bm90IHByb3RlY3RlZA=="}
+file home\AxKit\axClip.json {"hotkey": "Ctrl+Alt+Shift+F11", "sayFirstMatch": false, "keepHistory": true, "protectedHistory": "bm90IHByb3RlY3RlZA=="}
 
 # Check: A kept history that cannot be read is said once and the history starts empty
 start clip

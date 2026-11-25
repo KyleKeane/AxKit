@@ -152,7 +152,7 @@ public sealed partial class MediaForm
     {
         if (_player is not { State: PlayerState.Playing or PlayerState.Paused } player)
         {
-            Announce("Nothing playing", true);
+            Refuse("Nothing playing");
             return;
         }
 
@@ -166,7 +166,7 @@ public sealed partial class MediaForm
     {
         if (_queue.Playing < 0 || _player is null)
         {
-            Announce("Nothing playing", true);
+            Refuse("Nothing playing");
             return;
         }
 
@@ -220,7 +220,7 @@ public sealed partial class MediaForm
     {
         if (_player is not { State: PlayerState.Playing or PlayerState.Paused })
         {
-            Announce("Nothing playing", true);
+            Refuse("Nothing playing");
             return;
         }
 
@@ -242,7 +242,7 @@ public sealed partial class MediaForm
         var state = _player?.State;
         if (_player is null || state is not (PlayerState.Playing or PlayerState.Paused))
         {
-            Announce("Nothing playing", true);
+            Refuse("Nothing playing");
             return;
         }
 

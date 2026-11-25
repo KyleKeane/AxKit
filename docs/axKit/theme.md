@@ -144,7 +144,7 @@ that no window has a line of its own for it):
   window, as Options, Developer, Open settings file does.
 - **Reload theme**: TH-3.4.
 - **Theme on**: a checked item, `enabled`; toggling writes the file (and makes it from the template when there is none)
-  and says "Theme on" or "Theme off".
+  and says "Theme on, checked" or "Theme on, not checked".
 
 No key of its own: three menu items, reached by the menu, by the palette (AX-10) or by Alt, O, T, H. F1 names nothing new.
 
@@ -157,7 +157,7 @@ No key of its own: three menu items, reached by the menu, by the palette (AX-10)
   `Color.FromArgb`, `Color.<Name>`, `SystemColors.` and `BackColor =` or `ForeColor =` are allowed in
   `AxKit.Forms/Theme*.cs` and axMedia's video area alone (G4; the console field's tints move into the theme's defaults).
 - TH-5.3 A step in the automation scripts (axDown): Options, Theme, Edit theme file opens axJSON on `theme.json`
-  (`adopt`), Reload says "Theme reloaded"; Ctrl+Shift+W says "Word wrap off" and the file then holds
+  (`adopt`), Reload says "Theme reloaded"; Ctrl+Shift+W says "Word wrap, not checked" and the file then holds
   `"wordWrap": false` (TH-6). Nothing more for NVDA: no focus or announcement changes beyond those sentences.
 
 ### TH-6 Display settings
@@ -182,18 +182,18 @@ whatever `enabled` says and under high contrast too, since none of it is a colou
   setting per app. A per-window setting (the font, each app's own since the texts differ) stays in the app's file.
 - TH-6.5 `display.sayNewLine` (true by default; 2026-11-11, bundle AX-7.8, B-18): whether a line break typed into a
   field is said, "new line", in every window. Options, Text, Say new line in any window writes it the same way as word
-  wrap (`Theme.SetSayNewLine`), says "Say new line on" or "Say new line off", and every other window takes it when next
+  wrap (`Theme.SetSayNewLine`), says "Say new line, checked" or "Say new line, not checked", and every other window takes it when next
   activated (TH-3.2), its Text menu checked as it opens.
   The template carries it beside `wordWrap`; a value that is not `true` or `false` is on and counted (TH-6.3).
 - TH-6.6 `display.headingSound` (true by default; 2026-11-11, bundle AX-7.9): whether a key that lands on a heading,
   a heading row of a list or a Markdown heading in a text, plays the heading sound before it is read, in every window.
   Options, Text, Sound on headings in any window writes it as TH-6.5 does (`Theme.SetHeadingSound`), says "Sound on
-  headings on" or "Sound on headings off", and every other window takes it when next activated (TH-3.2). The template
+  headings on" or "Sound on headings, not checked", and every other window takes it when next activated (TH-3.2). The template
   carries it beside `sayNewLine`; a value that is not `true` or `false` is on and counted (TH-6.3).
 - TH-6.7 `display.openingSounds` (true by default; 2026-11-22, bundle AX-7.11): whether a form, a list to choose
   from, a field to type in or a text to read that opens in a window at the user's command plays the sound of its
   kind first, in every window, whenever the focus enters it. Options, Text, Entry sounds in any window writes it as TH-6.5 does
-  (`Theme.SetOpeningSounds`), says "Entry sounds on" or "off", and every other window takes it when
+  (`Theme.SetOpeningSounds`), says "Entry sounds, checked" or "not checked", and every other window takes it when
   next activated (TH-3.2). The template carries it beside `headingSound`; a value that is not `true` or `false` is
   on and counted (TH-6.3).
 

@@ -10,7 +10,7 @@
 # writer would, stop the reader for the session; the switch off says off; on again, the reader starts with what the
 # file gains from then on, so the second turn's three entries are read and the three broken lines behind it are not.
 # Nothing here is heard that was not heard before: "Done" comes at the turn's end, since 2026-11-17 from the event core (WP-A17), as in script 28.
-file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false,"claudeHooks":true}
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"claudeHooks":true}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir sf
 # The stand-in: claude.cmd calls the runner's own program with the scenario beside it and Claude Code's arguments.

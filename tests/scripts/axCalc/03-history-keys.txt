@@ -6,7 +6,7 @@
 # palette). SPEC AC-4.1, AC-5. The history is a text since 2026-11-22 (docs/axKit/framework.md step 9; a list until
 # then, where Delete removed an entry and a typed character found one). Not run: 3.3 and 4.2's Ctrl+Shift+C (the
 # user's clipboard), 4.6 (the Windows save dialog).
-file home\AxKit\axCalc.json {"checkForUpdates": false, "keepHistory": false}
+file home\AxKit\axCalc.json {"keepHistory": false}
 
 start calc
 expect focus Expression

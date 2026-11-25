@@ -143,7 +143,7 @@ public sealed partial class FileForm
 
         if (!ShownEntries().Any(entry => !entry.IsFolder && MediaFiles.IsMedia(entry.Path)))
         {
-            Announce("No sound or video files here", true);
+            Refuse("No sound or video files here");
             return;
         }
 
@@ -173,7 +173,7 @@ public sealed partial class FileForm
             var count = await Task.Run(() => MediaCount(targets));
             if (count == 0)
             {
-                Announce("No sound or video files to add", true);
+                Refuse("No sound or video files to add");
                 return;
             }
 

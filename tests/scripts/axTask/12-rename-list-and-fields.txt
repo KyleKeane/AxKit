@@ -4,7 +4,6 @@
 # AF-13.4): a field the configuration no longer names is hidden and its value kept; named again, it shows with the
 # value it had; a configuration that does not read is said, and nothing of the list is changed until it reads again.
 # The configuration is changed here as axJSON would save it: the file written, then Refresh.
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Room","type":"text","value":""}],"actions":[]}
 file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Room":"Kitchen"}
 start task {temp}\tasks

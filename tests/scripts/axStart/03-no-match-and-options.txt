@@ -6,7 +6,7 @@
 # listening the keys are real, so the key goes to that program and never reaches the field; it stays a step of the
 # manual plan. 2.6's name with an accent (it needs such a program in the user's Start menu), starting programs, File
 # Explorer, the Start menu and signing in (outside the window).
-file home\AxKit\axStart.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F8", "sayFirstMatch": true}
+file home\AxKit\axStart.json {"hotkey": "Ctrl+Alt+Shift+F8", "sayFirstMatch": true}
 
 start start
 expect focus Search programs

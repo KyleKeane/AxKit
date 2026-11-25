@@ -4,7 +4,6 @@
 # The runner's keys have no plus or minus key, so Ctrl+Plus and Ctrl+Minus run as their menu items, Options, Text,
 # Larger text and Smaller text. The sizes assume the Windows system font at 9 points, which fresh settings start from.
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-file home\AxKit\axPreview.json {"checkForUpdates": false}
 file README.md # Readme\n\n## Install\n\nRun the installer.\n\n## Last heading\n\nThe last line.
 
 start preview {temp}\README.md

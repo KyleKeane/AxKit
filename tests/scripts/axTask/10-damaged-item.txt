@@ -2,8 +2,6 @@
 # axTask: a JSON file that does not read as an item is a row of its list, and the lists that gather items say how
 # many they could not read and where (docs/axTask/SPEC.md TK-4.6; docs/axKit/repairs.md R-66). A scratch folder of
 # lists with one whole task and one file that is not JSON.
-file home\AxKit\axTask.json {"checkForUpdates": false}
-file home\AxKit\axJSON.json {"checkForUpdates": false}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
 file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false}
 file tasks\Home\Broken.json { "format": "axkit-item 1", "fields": [ nope

@@ -113,7 +113,7 @@ the origin.
 - **An AI tool, `axkit_window_run`**
   - read: runs and is said: "Claude ran Say the status", joined to the command's own words in one announcement.
   - open: runs and is said: "Claude ran Go to line".
-  - change: runs and is said: "Claude ran Word wrap. Word wrap off".
+  - change: runs and is said: "Claude ran Word wrap. Word wrap, not checked".
   - act: **asks first**. The question is a list, with the offer's chime, named "Command offer. Claude asks to run this
     window's command Delete (Actions) on a.txt in files. Asked by Claude, an AI: read the explanation before you allow
     it". Its answers: **Explain this command**, where the list starts and which only explains; **Yes, run it**;

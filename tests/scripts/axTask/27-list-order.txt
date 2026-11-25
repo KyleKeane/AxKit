@@ -2,7 +2,6 @@
 # axTask, docs/axTask/user-guide.md "Putting a list in your own order" and SPEC.md TK-4.9, TK-4.10: Ctrl+Shift+Up and
 # Down move the item you are on, Ctrl+Shift+Home and End to the top and the bottom, written into the list's
 # configuration as its order; Ctrl+Z takes a move back; Options, New items at the top of this list puts a new item first.
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
 file "tasks\Home\Apples.json" {"schema":"list.json","Title":"Apples","Done":false}
 file "tasks\Home\Bread.json" {"schema":"list.json","Title":"Bread","Done":false}

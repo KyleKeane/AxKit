@@ -2,7 +2,6 @@
 # axTask, docs/axTask/SPEC.md TK-4.11 (the maintainer's ask of 2026-11-22, built 2026-11-24): a list keeps no history
 # until Options, Keep a history of changes in this list turns it on; then every change and every undo adds its lines to
 # history.jsonl beside list.json, and Context, Item, History reads the item's changes, newest first.
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Room","type":"text","value":""}],"actions":[]}
 file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false,"Room":"Kitchen"}
 start task {temp}\tasks

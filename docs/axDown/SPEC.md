@@ -108,7 +108,7 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
   decided for every field, bundle AX-7.8 and B-18): Enter in the text, at the end of a line or in its middle, says
   "new line" through the window's one announcement, after NVDA's own echo of the word typed; the editor itself does
   nothing for it, since the bundle's edit control (`AxKitTextBox`, AD-2.1) says it in every window. Options, Text, Say
-  new line turns it off and on for every window of axKit ("Say new line off", "Say new line on"), kept in the theme
+  new line turns it off and on for every window of axKit ("Say new line, not checked", "Say new line, checked"), kept in the theme
   file beside word wrap (theme.md TH-6.5). axPreview's read-only text says nothing on Enter.
 
 ### AD-3 Files
@@ -269,7 +269,7 @@ never a separate window.
 On opening, NVDA speaks the window ("README.md - axDown window"), then the field ("README.md edit multi line"): the
 window has the accessible role Window, as axClaude's has, so that NVDA names it; nothing of axDown's own is spoken
 then. Afterwards, spoken through one UI Automation notification on the editor (AX-7.3), and only these: "Saved" (after a save and
-after Save as); "Reloaded, <name> changed on disk" and "<name> changed on disk; Save will ask" on coming back to the window, "Reloaded" after Reload and lose mine (AD-3.6); "Not found" (find); "Line n of m" after Go to line, or "Not a line number"; "Word wrap on" / "Word wrap off"; "Undone", "Redone", "Nothing to undo", "Nothing to redo" (AD-2.5); "Text size n"; "No file yet" (Show current file in on Untitled);
+after Save as); "Reloaded, <name> changed on disk" and "<name> changed on disk; Save will ask" on coming back to the window, "Reloaded" after Reload and lose mine (AD-3.6); "Not found" (find); "Line n of m" after Go to line, or "Not a line number"; "Word wrap, checked" / "Word wrap, not checked"; "Undone", "Redone", "Nothing to undo", "Nothing to redo" (AD-2.5); "Text size n"; "No file yet" (Show current file in on Untitled);
 "Install, heading level 2" after a heading jump, "No next heading" / "No previous heading" when there is none;
 a template's name and "inserted", "Link inserted" (AD-13); the format commands' sentences, "Heading 2", "No heading", "Bold on", "Bold off", "List item on, 3 lines" and their like (AD-12);
 "Navigation mode" / "Edit mode" on Ctrl+Space, and "Navigation mode: press Ctrl+Space to edit", after the edge sound, for a menu command that would change the text in navigation mode (AD-5.3);

@@ -360,7 +360,7 @@ public sealed class MCPForm : ItemForm
     {
         if (detail.Key is null || _server is null || RunningOf(_server) is not { } running)
         {
-            Announce("Nothing to change here", true);
+            Refuse("Nothing to change here");
             return;
         }
 
@@ -482,7 +482,7 @@ public sealed class MCPForm : ItemForm
                 Announce("Only Your servers are removed here; a server of Claude Code's goes with claude mcp remove", true);
                 break;
             default:
-                Announce("Nothing to remove here", true);
+                Refuse("Nothing to remove here");
                 break;
         }
     }
@@ -533,7 +533,7 @@ public sealed class MCPForm : ItemForm
     {
         if (_undo is not { } step)
         {
-            Announce("Nothing to undo", true);
+            Refuse("Nothing to undo");
             return;
         }
 
@@ -581,7 +581,7 @@ public sealed class MCPForm : ItemForm
         }
 
         var target = ServerConsent.For(server, program, StdioServer.FolderOf(server.Folder ?? _folder));
-        if (HasConsent(target, $"Before axMCP starts {server.Name}", "&Connect", () => StartServer(server), () => Announce($"Not connected to {server.Name}", true)))
+        if (HasConsent(target, $"Before axMCP starts {server.Name}", "&Connect", () => StartServer(server), () => Refuse($"Not connected to {server.Name}")))
         {
             StartServer(server);
         }
@@ -665,7 +665,7 @@ public sealed class MCPForm : ItemForm
         var server = _server ?? SelectedRow()?.Tag as McpServer;
         if (server is null)
         {
-            Announce("Select a server first", true);
+            Refuse("Select a server first");
             return;
         }
 
@@ -699,7 +699,7 @@ public sealed class MCPForm : ItemForm
     {
         if (_server is null)
         {
-            Announce("Select a tool first: Right into a server, then into Tools", true);
+            Refuse("Select a tool first: Right into a server, then into Tools");
             return;
         }
 
@@ -725,7 +725,7 @@ public sealed class MCPForm : ItemForm
                 GetPrompt(running, row.Key, prompt);
                 break;
             default:
-                Announce("Select a tool or a prompt first", true);
+                Refuse("Select a tool or a prompt first");
                 break;
         }
     }
@@ -842,7 +842,7 @@ public sealed class MCPForm : ItemForm
     {
         if (_lastResult is null)
         {
-            Announce("No result yet", true);
+            Refuse("No result yet");
             return;
         }
 

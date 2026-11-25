@@ -10,7 +10,6 @@
 # question; it stays a step of the manual plan. 1.9b's Shift with a letter: the channel's type has no Shift
 # (02-services-startup says the same). 4.2's Show program in axFile. An entry turned off reading "disabled" is in
 # 04-startup-turn-off-remove.
-file home\AxKit\axProcess.json {"checkForUpdates": false}
 file "home\AxKit\startup\yours\Morning notes.lnk" a stand-in for a shortcut
 start process
 # The first read done: the status bar says "Reading..." until then.

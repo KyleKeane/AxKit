@@ -61,7 +61,7 @@ public abstract partial class AxKitForm
         }
 
         LoadTheme();
-        Announce(on ? "Say new line on" : "Say new line off", true);
+        Announce(MenuText.CheckSaid("Say new line", on), true);
     }
 
     /// <summary>
@@ -85,7 +85,7 @@ public abstract partial class AxKitForm
         }
 
         LoadTheme();
-        Announce(on ? "Sound on headings on" : "Sound on headings off", true);
+        Announce(MenuText.CheckSaid("Sound on headings", on), true);
     }
 
     /// <summary>
@@ -109,7 +109,7 @@ public abstract partial class AxKitForm
         }
 
         LoadTheme();
-        Announce(on ? "Entry sounds on" : "Entry sounds off", true);
+        Announce(MenuText.CheckSaid("Entry sounds", on), true);
     }
 
     /// <summary>The entry a component asked for in this turn of the window's thread, played once the turn is over; the last asked wins.</summary>
@@ -329,6 +329,6 @@ public abstract partial class AxKitForm
         LoadTheme();
         PaintTheme(this);
         OnThemeChanged();
-        Announce(on ? "Theme on" : "Theme off", true);
+        Announce(MenuText.CheckSaid("Theme on", on), true);
     }
 }

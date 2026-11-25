@@ -4,7 +4,6 @@
 # palette, since Shift+F10 and Alt+C open the menu in menu mode, which only the foreground window enters.
 # Cut, Copy and Paste are only checked to be listed: the test desktop shares the clipboard with the user's session.
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-file home\AxKit\axJSON.json {"checkForUpdates": false}
 file settings.json {\n  "model": "opus"\n}
 
 start json {temp}\settings.json

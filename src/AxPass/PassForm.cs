@@ -383,7 +383,7 @@ public sealed partial class PassForm : ItemForm
         }
 
         // Bundle AX-11.5: before the first master password goes to KeePassXC's tool.
-        if (!HasConsent(ConsentTarget.KeePassXC, () => ShowUnlock(refused), () => Announce("Not connected to KeePassXC. Enter unlocks", true)))
+        if (!HasConsent(ConsentTarget.KeePassXC, () => ShowUnlock(refused), () => Refuse("Not connected to KeePassXC. Enter unlocks")))
         {
             return;
         }
@@ -556,7 +556,7 @@ public sealed partial class PassForm : ItemForm
     {
         if (_database is not { } database)
         {
-            Announce("No database open", true);
+            Refuse("No database open");
             return;
         }
 
@@ -576,7 +576,7 @@ public sealed partial class PassForm : ItemForm
     {
         if (_database is not { } database)
         {
-            Announce("No database open", true);
+            Refuse("No database open");
         }
         else if (!Directory.Exists(Backups.FolderFor(database)))
         {

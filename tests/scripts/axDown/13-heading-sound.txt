@@ -2,7 +2,6 @@
 # axDown: the heading sound (docs/axKit/SPEC.md AX-7.9, theme.md TH-6.6; asked 2026-11-11). A key that takes the caret
 # onto a Markdown heading's line plays it before NVDA reads the line, unless Options, Text, Sound on headings is off,
 # which is written into the theme file of the run's own home, so nothing of the user's is touched.
-file home\AxKit\axDown.json {"checkForUpdates": false}
 file headings.md # First heading\n\nA paragraph.\n\n## Second heading\nA line under it.\n\n```\n# not a heading in a fence\n```
 
 start down {temp}\headings.md
@@ -38,12 +37,12 @@ expect said ♪ Heading
 # Goal: Turn the heading sound off and on
 # The setting: off, then no sound; on again for the scripts after.
 menu Sound on headings
-expect said ! Sound on headings off
+expect said ! Sound on headings, not checked
 keys down down down down
 expect focus ## Second heading
 refuse said ♪ Heading
 menu Sound on headings
-expect said ! Sound on headings on
+expect said ! Sound on headings, checked
 keys up
 keys down
 expect said ♪ Heading

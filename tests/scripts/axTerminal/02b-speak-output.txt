@@ -4,7 +4,6 @@
 # maintainer's decision of 2026-11-22; until then the last line stood first, "listed.txt. Done"), and Options, When a
 # command is done, Announce "Done" turns the word off: the output is then said alone, and the chime still plays.
 mkdir myproject
-file home\AxKit\axTerminal.json {"checkForUpdates": false}
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
 file myproject\listed.txt x

@@ -2,7 +2,7 @@
 # axTemplate's browser (docs/axTemplate/nvda-test-plan.md sections 5 and 6; SPEC TP-2.1, TP-2.4, TP-8.2, TP-8.4): a
 # folder that holds templates already, without a list.json, and one file that is not an item. Run by tools/AxAutomate
 # on a desktop of its own (docs/axKit/automation.md). The launcher the browser starts gets a hotkey nobody uses.
-file home\AxKit\axTemplate.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F7", "sayFirstMatch": false}
+file home\AxKit\axTemplate.json {"hotkey": "Ctrl+Alt+Shift+F7", "sayFirstMatch": false}
 file home\Documents\axKit\Templates\Alpha.json {"schema": "list.json", "Title": "Alpha", "Text": "First {caret}"}
 file home\Documents\axKit\Templates\Beta.json {"schema": "list.json", "Title": "Beta", "Text": "Second", "axDown": true, "Sprint": "kept"}
 file home\Documents\axKit\Templates\Gamma.json {"schema": "list.json", "Title": "Gamma", "Text": "Third"}

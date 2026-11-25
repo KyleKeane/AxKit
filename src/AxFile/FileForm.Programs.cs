@@ -145,7 +145,7 @@ public sealed partial class FileForm
 
         if (entry.IsFolder)
         {
-            Announce("Not a file", true);
+            Refuse("Not a file");
             return;
         }
 

@@ -16,7 +16,7 @@ public sealed partial class GitForm
     {
         if (_root is null)
         {
-            Announce("No repository", true);
+            Refuse("No repository");
             return;
         }
 
@@ -98,7 +98,7 @@ public sealed partial class GitForm
     {
         if (_root is null)
         {
-            Announce("No repository", true);
+            Refuse("No repository");
             return;
         }
 
@@ -147,7 +147,7 @@ public sealed partial class GitForm
             : CurrentFile() is { } file ? [file] : [];
         if (files.Count == 0)
         {
-            Announce("No file selected", true);
+            Refuse("No file selected");
             return null;
         }
 

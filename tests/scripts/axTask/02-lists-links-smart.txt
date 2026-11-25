@@ -1,7 +1,6 @@
 # Workflow: Make lists, link items and use smart lists
 # axTask: a list's details, plain lists and checklists, links, smart lists, a change on disk (docs/axTask/nvda-test-plan.md
 # sections 1.8, 2.4, 2.8 to 2.10, 3 and 4; docs/axKit/item-apps.md IA-4.3, IA-5.5, IA-D3; SPEC TK-4, TK-5).
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Due","type":"date","value":""},{"title":"Waits on","type":"link","value":""}],"actions":[]}
 file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false,"Due":"2099-10-30","Waits on":""}
 file "tasks\Home\Water plants.json" {"schema":"list.json","Title":"Water plants","Done":true}
@@ -117,12 +116,12 @@ expect focus Fix the tap, due 2 November 2099
 # Goal: Hide and show done tasks
 # 4.1 Done tasks hidden and shown.
 do Hide done tasks
-expect said ! Done tasks hidden
+expect said ! Hide done tasks, checked
 keys left
 keys right
 expect said ! Home, 1 item, 1 done hidden
 do Hide done tasks
-expect said ! Done tasks shown
+expect said ! Hide done tasks, not checked
 
 # Check: A smart list with a condition not understood shows nothing and says so
 # 3.2 A smart list with a condition not understood shows nothing and says so.

@@ -338,7 +338,7 @@ public sealed partial class PassForm
     {
         if (_undo.Count == 0)
         {
-            Announce("Nothing to undo", true);
+            Refuse("Nothing to undo");
             return;
         }
 
@@ -350,7 +350,7 @@ public sealed partial class PassForm
         {
             // Said once and passed over, so that the next Ctrl+Z reaches the change before it.
             _undo.Remove(step);
-            Announce($"Not undone: {step.Said}. {why}", true);
+            Refuse($"Not undone: {step.Said}. {why}");
             return;
         }
 
@@ -588,7 +588,7 @@ public sealed partial class PassForm
             }
             else
             {
-                Announce($"Not opened: {entry.Name}'s URL is not a web address", true);
+                Refuse($"Not opened: {entry.Name}'s URL is not a web address");
             }
         }
         else
@@ -611,7 +611,7 @@ public sealed partial class PassForm
             return entry;
         }
 
-        Announce("Select an entry first", true);
+        Refuse("Select an entry first");
         return null;
     }
 
@@ -657,7 +657,7 @@ public sealed partial class PassForm
         }
 
         // Bundle AX-11.5: a new database is made by KeePassXC's tool too.
-        if (!HasConsent(ConsentTarget.KeePassXC, NewDatabase, () => Announce("Not connected to KeePassXC", true)))
+        if (!HasConsent(ConsentTarget.KeePassXC, NewDatabase, () => Refuse("Not connected to KeePassXC")))
         {
             return;
         }

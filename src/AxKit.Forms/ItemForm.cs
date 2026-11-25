@@ -144,13 +144,13 @@ public abstract partial class ItemForm : AxKitForm
     protected abstract void DeleteRow(ItemRow row);
 
     /// <summary>Ctrl+N in the navigator; nothing is made by default.</summary>
-    protected virtual void NewItem() => Announce("Nothing is made here", true);
+    protected virtual void NewItem() => Refuse("Nothing is made here");
 
     /// <summary>Ctrl+Shift+N; nothing is made by default.</summary>
-    protected virtual void NewList() => Announce("Nothing is made here", true);
+    protected virtual void NewList() => Refuse("Nothing is made here");
 
     /// <summary>Ctrl+Z (IA-5.4); nothing to undo by default.</summary>
-    protected virtual void Undo() => Announce("Nothing to undo here", true);
+    protected virtual void Undo() => Refuse("Nothing to undo here");
 
     // ---- the bar's Context menu (AX-9.11, B-19, 2026-11-11; the three menus that acted on the selection until then) ----
 

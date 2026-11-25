@@ -8,7 +8,6 @@
 # failing step (until 2026-11-21 the script found "PING", which another ping on the computer would have answered
 # to). It is started apart from the runner's command (run's own children end with the command, since it reads
 # their output), and named with its folder (.\), since a command prompt may be set not to look in the folder it is in.
-file home\AxKit\axProcess.json {"checkForUpdates": false}
 run copy /y %SystemRoot%\System32\PING.EXE axkitscript01.exe
 run powershell -NoProfile -Command "Start-Process '.\axkitscript01.exe' -ArgumentList '-n','120','127.0.0.1' -WindowStyle Hidden"
 

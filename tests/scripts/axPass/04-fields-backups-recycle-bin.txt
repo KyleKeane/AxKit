@@ -12,8 +12,7 @@
 # field are here since 2026-11-21: KeePassXC's tool cannot empty a field, and axPass says so in its own words
 # in both places. The change Ctrl+Z takes back is the URL's, from one address to another.
 # The idle lock off: it counts real input only, which the runner's keys are not.
-file home\AxKit\axPass.json {"checkForUpdates": false, "lockMinutes": 0}
-file home\AxKit\axFile.json {"checkForUpdates": false}
+file home\AxKit\axPass.json {"lockMinutes": 0}
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
 file twice.txt test-master-1\ntest-master-1\n

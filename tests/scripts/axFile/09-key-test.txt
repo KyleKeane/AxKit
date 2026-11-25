@@ -4,7 +4,6 @@
 mkdir orchard\inner
 file orchard\apple.txt The apple file.
 file orchard\berry.txt The berry file.
-file home\AxKit\axFile.json {"checkForUpdates": false}
 
 start file {temp}\orchard
 expect focus "name":"3 items"

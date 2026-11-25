@@ -4,7 +4,7 @@
 # in the control area once Claude is idle, starting on Explain; only Yes, run it sends it, as a ! line, and what it
 # prints joins the conversation. The runner is the MCP client, so it names the window; Claude Code itself is found by
 # the window it runs in.
-file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false}
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir offer

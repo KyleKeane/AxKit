@@ -5,7 +5,6 @@
 # installed program, which a test run must not touch.
 # 7.3 manual: Settings, Apps, axKit, Uninstall is Windows' own and removes the installation.
 # The run's own settings: no update check at start; the one check below is the one the step asks for.
-file home\AxKit\axDown.json {"checkForUpdates": false}
 file a.md # Updates
 
 start down {temp}\a.md

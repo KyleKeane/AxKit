@@ -2,7 +2,6 @@
 # axDown: Actions, Format (docs/axDown/SPEC.md AD-12; docs/axDown/nvda-test-plan.md, section 10). Each command is a
 # toggle on the caret's line or the selection, one undo step, one sentence; three have a key: Ctrl+B bold,
 # Shift+Alt+Right and Shift+Alt+Left a heading one level deeper and shallower.
-file home\AxKit\axDown.json {"checkForUpdates": false}
 file format.md Title\n\nmilk and eggs\n\ntea\ncoffee\n
 
 start down {temp}\format.md

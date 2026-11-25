@@ -5,7 +5,6 @@
 # its first start, and checks that a start without a folder opens it, twice.
 mkdir flows
 file flows\02-two.txt # A workflow.\n\nstart down\nwait 100\nclose
-file home\AxKit\axAutomate.json {"checkForUpdates": false}
 
 # Goal: Open a folder of workflows
 # AU-4.1 Started on a folder: it opens, and is the folder used last from then on.

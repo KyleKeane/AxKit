@@ -3,7 +3,6 @@
 # first and without the one in use; choosing one opens it as Top folder does. The submenu needs menu mode, which only
 # the foreground window enters, so the entry is reached through the command palette, which reads every recent list
 # (docs/axKit/SPEC.md AX-10.2).
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file work\Plans\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
 

@@ -473,7 +473,7 @@ public sealed partial class FileForm
     {
         if (_folder is null)
         {
-            Announce("No folder", true);
+            Refuse("No folder");
             return;
         }
 

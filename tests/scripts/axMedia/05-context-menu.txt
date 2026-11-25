@@ -6,7 +6,6 @@
 # Every sound is the runner's silence; nothing reaches the speakers.
 
 # The run's own settings (AXKIT_HOME): no update check at start, which goes to the network.
-file home\AxKit\axMedia.json {"checkForUpdates":false}
 
 # Check: An empty queue's Context menu says there is nothing in it
 # An empty queue: Context's one item says that there is nothing to act on, and says it again when chosen.

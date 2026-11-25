@@ -8,9 +8,6 @@
 # selected line alone today, which is the report's to name and not a step to write as passing.
 # Session, Refresh has no key here: F5 runs (AU-D8). The window lists Refresh without a key, so do Refresh chooses
 # the menu item; until 2026-11-21 the listing named Refresh on F5 and do Refresh started a run of every workflow.
-file home\AxKit\axAutomate.json {"checkForUpdates": false}
-file home\AxKit\axDown.json {"checkForUpdates": false}
-file home\AxKit\axJSON.json {"checkForUpdates": false}
 mkdir flows
 file flows\01-script.txt # A script.\n\nstart down\nwait 100\nclose
 file flows\02-marks.workflow.json {"format": "axkit-workflow 1", "title": "Marks", "covers": "a made-up plan, section 1", "steps": [{"do": "start", "arguments": "down"}, {"do": "expect said", "text": "x", "on failure": "continue"}, {"do": "menu", "name": "Close all windows", "on failure": "continue", "report": "Not closed"}, {"do": "expect said", "text": "y", "otherwise": [{"do": "close"}]}]}

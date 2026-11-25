@@ -2,7 +2,6 @@
 # axJSON, SPEC.md AJ-5 (docs/axTask/forms-framework.md section 12): for a list's configuration of axTask and for an
 # item of a list, a value that is one of a few is chosen from a list, and an object's missing members are added from
 # a list that says what each is. Any other file has no options, and says so. Nothing is validated or refused.
-file home\AxKit\axJSON.json {"checkForUpdates": false}
 file lists\Home\list.json {\n  "format": "axkit-list 2",\n  "details": { "Notes": "" },\n  "item fields": [\n    { "title": "Done", "type": "check", "value": false },\n    { "title": "Priority", "type": "choice", "value": "Normal", "options": ["High", "Normal", "Low"] }\n  ],\n  "actions": [\n    {\n      "name": "Later",\n      "does": "move",\n      "to": "../Later"\n    }\n  ]\n}\n
 file lists\Home\tap.json {\n  "schema": "list.json",\n  "Title": "Fix the tap",\n  "Done": false,\n  "Priority": "Normal"\n}\n
 file other.json {\n  "model": "opus"\n}\n

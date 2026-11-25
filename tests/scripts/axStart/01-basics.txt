@@ -4,7 +4,7 @@
 # HotkeyForm's, so this script is also the check that the list does what the key switch did before it. The hotkey is
 # one nobody uses, so that the run never takes the user's; Start with Windows stays on, which a development build
 # never writes (SignInStart), since off would remove the user's own sign-in value.
-file home\AxKit\axStart.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F11", "sayFirstMatch": false}
+file home\AxKit\axStart.json {"hotkey": "Ctrl+Alt+Shift+F11", "sayFirstMatch": false}
 
 start start
 # Check: The window's command list holds every key of its own

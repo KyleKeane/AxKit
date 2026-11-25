@@ -234,7 +234,7 @@ public sealed partial class MediaForm : ItemForm
 
 
     /// <summary>Ctrl+S, as before the window was a navigator.</summary>
-    protected override void SaveCommand() => Announce("Nothing to save here", true);
+    protected override void SaveCommand() => Refuse("Nothing to save here");
 
     // ---- what the window base asks for ----
 
@@ -383,7 +383,7 @@ public sealed partial class MediaForm : ItemForm
         if (queue.Count == 0)
         {
             WindowMenu.Activate(Handle);
-            Announce($"No sound or video files in {Describe(message.Paths)}", true);
+            Refuse($"No sound or video files in {Describe(message.Paths)}");
             return;
         }
 

@@ -2,7 +2,7 @@
 # axCalc: the field, the answer, the history and its keys (docs/axCalc/nvda-test-plan.md; SPEC AC-3 to AC-6). Every
 # key here is a command of the window's one list (docs/axKit/app-kit.md AK-2), so this script is also the check that the
 # list does what the key switch did before it.
-file home\AxKit\axCalc.json {"checkForUpdates": false, "keepHistory": false}
+file home\AxKit\axCalc.json {"keepHistory": false}
 
 start calc
 # Check: The window's command list holds every key of its own

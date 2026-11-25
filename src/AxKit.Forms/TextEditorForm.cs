@@ -776,7 +776,7 @@ public sealed partial class TextEditorForm : AxKitForm
         }
 
         ApplyWordWrap(on);
-        Announce(on ? "Word wrap on" : "Word wrap off", true);
+        Announce(MenuText.CheckSaid("Word wrap", on), true);
     }
 
     /// <summary>TH-6.2: the theme file changed under another window's Ctrl+Shift+W or in axJSON; the text follows it, the caret kept.</summary>

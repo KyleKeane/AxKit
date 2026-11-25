@@ -53,9 +53,9 @@ Starts with: Open axDown with the file long.md.
 
 1. Press Ctrl+Home, Ctrl+Down, Ctrl+Down, Right, Right, Right.
 2. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
-    You hear: Word wrap off.
+    You hear: Word wrap, not checked.
 3. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
-    You hear: Word wrap on.
+    You hear: Word wrap, checked.
 
 ### Move by page
 
@@ -266,9 +266,9 @@ Starts with: Open axDown with the file a.md.
     You hear the sound Edge.
     You hear: Word wrap, Options, Text, Ctrl+Shift+W, checked, 1 of 1.
 3. Press Enter.
-    You hear: Word wrap off.
+    You hear: Word wrap, not checked.
 4. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
-    You hear: Word wrap on.
+    You hear: Word wrap, checked.
 
 ## Check for updates and remove axKit
 
@@ -430,9 +430,9 @@ Starts with: Open axDown with the file notes.md.
 ### Turn the theme off and on
 
 1. Choose Theme on in the axKit menu, Theme.
-    You hear: Theme off.
+    You hear: Theme on, not checked.
 2. Choose Theme on in the axKit menu, Theme.
-    You hear: Theme on.
+    You hear: Theme on, checked.
 
 ## Ask Claude about the window you are in
 
@@ -497,10 +497,10 @@ Starts with: Open axDown with the file notes.md.
 ### Turn the spoken new line off and on
 
 1. Choose Say new line in the Options menu, Text.
-    You hear: Say new line off.
+    You hear: Say new line, not checked.
 2. Press End, Enter.
 3. Choose Say new line in the Options menu, Text.
-    You hear: Say new line on.
+    You hear: Say new line, checked.
 4. Press Enter.
     You hear: new line.
 
@@ -516,10 +516,10 @@ Starts with: Open axDown with the file headings.md.
 ### Turn the heading sound off and on
 
 1. Choose Sound on headings in the Options menu, Text.
-    You hear: Sound on headings off.
+    You hear: Sound on headings, not checked.
 2. Press Down 4 times.
 3. Choose Sound on headings in the Options menu, Text.
-    You hear: Sound on headings on.
+    You hear: Sound on headings, checked.
 4. Press Up.
 5. Press Down.
     You hear the sound Heading.

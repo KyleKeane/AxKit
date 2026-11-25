@@ -2,7 +2,6 @@
 # axTask, docs/axTask/user-guide.md "Changing things", in the detail pane: Enter on a date and time field takes a date
 # in words, a space and a time ("tomorrow 14:00"); a new item gets the fields of its list's configuration, each with
 # the value a new item starts with (docs/axTask/forms-framework.md AF-13.1, the "item fields" of list.json).
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Due","type":"datetime","value":""},{"title":"Room","type":"text","value":""}],"actions":[]}
 file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false,"Due":"","Room":"Kitchen"}
 start task {temp}\tasks

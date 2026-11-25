@@ -38,7 +38,7 @@ public sealed partial class GitForm
         }
 
         // Connect comes through here again, so that the first connection gets the sign-in line below (review, 2026-11-02).
-        if (!HasConsent(ConsentTarget.Server(host), () => Do(() => ToServerAsync(command)), () => Announce($"Not connected to {host}", true)))
+        if (!HasConsent(ConsentTarget.Server(host), () => Do(() => ToServerAsync(command)), () => Refuse($"Not connected to {host}")))
         {
             return;
         }

@@ -3,7 +3,7 @@
 # its fields with their numbers, names, kinds and values, and the field tool puts the focus on one by its name or its
 # number, said in the window; it never types or sends. The runner is the MCP client; the form is axTemplate's new
 # template form (TP-8.4), in the run's own templates folder.
-file home\AxKit\axTemplate.json {"checkForUpdates": false, "hotkey": "Ctrl+Alt+Shift+F7", "sayFirstMatch": false}
+file home\AxKit\axTemplate.json {"hotkey": "Ctrl+Alt+Shift+F7", "sayFirstMatch": false}
 start template
 expect focus No templates yet: Ctrl+N makes one
 

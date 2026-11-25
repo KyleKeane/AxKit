@@ -3,7 +3,6 @@
 # A second axPreview start hands its file to the open window and ends (AP-1.2), so every window after the first is
 # started with --new.
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-file home\AxKit\axPreview.json {"checkForUpdates": false}
 file README.md # Readme for the preview tests\n\nThis file has headings, links, lists, a block quote and a table, for the navigation keys.\n\n## Install\n\nRun the installer and follow the steps. Check for an update now and then: the word update is here for the find test.\n\n## Links\n\nThe project page is [axKit on GitHub](https://github.com/KyleKeane/AxKit). A bare address: https://www.example.com.\n\n## A list\n\n- first item of the list\n- second item of the list\n- third item of the list\n\n## A quote\n\n> A block quote, for Ctrl+Q.\n\n## A table\n\n| Key | What it does |\n| --- | --- |\n| Ctrl+H | next heading |\n| Ctrl+K | next link |\n\n## Last heading\n\nThe last line of the readme. Another update is mentioned here, for F3.
 file plain.txt Plain text file, line 1.\nLine 2 of the plain text file.\nLine 3: nothing special here.\nLine 4, the last line.
 file app.log 2026-10-22 09:00:01 INFO  The log file starts.\n2026-10-22 09:00:02 INFO  Line 2 of the log.\n2026-10-22 09:00:05 INFO  The last line of the log.
@@ -139,10 +138,10 @@ keys enter
 expect said ! Line 5 of 32
 expect state "status":["README.md","Line 5, Column 1 \u00B7 UTF-8 \u00B7 CRLF"]
 keys ctrl+shift+w
-expect said ! Word wrap off
+expect said ! Word wrap, not checked
 expect state Line 5, Column 1 \u00B7
 keys ctrl+shift+w
-expect said ! Word wrap on
+expect said ! Word wrap, checked
 expect state Line 5, Column 1 \u00B7
 
 # Check: Save has nothing to save here

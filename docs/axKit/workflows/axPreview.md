@@ -77,9 +77,9 @@ command's in this version of axKit.
 3. Press Enter.
     You hear: Line 5 of 32.
 4. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
-    You hear: Word wrap off.
+    You hear: Word wrap, not checked.
 5. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
-    You hear: Word wrap on.
+    You hear: Word wrap, checked.
 
 ### Read the keyboard shortcuts
 

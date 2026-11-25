@@ -183,7 +183,7 @@ internal sealed partial class MainForm
             // Claude may have started on something since the question showed.
             if (!ClaudeIdle)
             {
-                Announce("Not run: Claude is busy. Type it yourself after an exclamation mark when Claude is done", true);
+                Refuse("Not run: Claude is busy. Type it yourself after an exclamation mark when Claude is done");
             }
             else
             {
@@ -200,7 +200,7 @@ internal sealed partial class MainForm
             catch (ExternalException)
             {
                 // Another program holds the clipboard.
-                Announce("Not copied: the clipboard is in use. Not run", true);
+                Refuse("Not copied: the clipboard is in use. Not run");
             }
         }
         else
@@ -225,7 +225,7 @@ internal sealed partial class MainForm
                 CloseOffer();
                 if (!ClaudeIdle)
                 {
-                    Announce("Not run, and not reported: Claude is busy. Type /feedback yourself when Claude is done", true);
+                    Refuse("Not run, and not reported: Claude is busy. Type /feedback yourself when Claude is done");
                     return;
                 }
 

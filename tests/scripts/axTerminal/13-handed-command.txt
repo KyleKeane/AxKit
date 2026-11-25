@@ -6,7 +6,7 @@
 # deleted, the field is "Command" again. The shell is the default one of a fresh settings file, Windows PowerShell
 # or PowerShell 7, whose quoting rule is the same.
 mkdir myproject
-file home\AxKit\axTerminal.json {"checkForUpdates": false, "fontSize": 6, "window": {"x": 0, "y": 0, "width": 1600, "height": 900, "maximized": true}}
+file home\AxKit\axTerminal.json {"fontSize": 6, "window": {"x": 0, "y": 0, "width": 1600, "height": 900, "maximized": true}}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
 start terminal {temp}\myproject --command Write-Output "It's two words; Write-Output more"
 

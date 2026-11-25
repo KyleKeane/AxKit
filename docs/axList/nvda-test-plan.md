@@ -39,7 +39,7 @@ its section 10.
 7. Ctrl+N on "1. One", type `Half`, Enter: "Added Half"; the items read "1. One", "2. Half", "3. Two".
 8. Delete on Eggs: "Removed Eggs and 1 nested item". Ctrl+Z: "Undone: Removed Eggs and 1 nested item"; Eggs and Free
    range are back.
-9. Ctrl+Shift+D: "Done tasks hidden"; the list's name says "done hidden". Ctrl+Shift+D: "Done tasks shown".
+9. Ctrl+Shift+D: "Hide done tasks, checked"; the list's name says "done hidden". Ctrl+Shift+D: "Hide done tasks, not checked".
 10. In axDown, change Bread to Rye in Shopping.md and save; in axList, Space on Bread: "The list changed on disk; it
     has been read again", and the item reads Rye. F5: "Refreshed: …".
 11. Ctrl+C on an item: "Copied"; paste in axDown: the text. Ctrl+F, type `rye`, Enter: the item selected and read.

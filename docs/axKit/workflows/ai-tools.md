@@ -72,9 +72,9 @@ Starts with: Open axDown with the file notes.md.
 ### Let an AI tool change a setting
 
 1. Call the tool axkit_window_run.
-    You hear: axAutomate ran Say new line. Say new line off.
+    You hear: axAutomate ran Say new line. Say new line, not checked.
 2. Call the tool axkit_window_run.
-    You hear: axAutomate ran Say new line. Say new line on.
+    You hear: axAutomate ran Say new line. Say new line, checked.
 
 ### Let an AI tool run a command with its text
 

@@ -5,7 +5,6 @@
 # app (TP-5); one checked for axJSON alone is not listed. Every one is a command, so the command palette finds them
 # under the word "template". The test's template is one line: a file step turns every \n, and JSON's \u000a too,
 # into a line break, which a JSON string may not hold.
-file home\AxKit\axDown.json {"checkForUpdates": false}
 file home\Documents\axKit\Templates\Meeting.json {"schema": "list.json", "Title": "Meeting", "Text": "# Meeting {caret}, present: {selection}", "axDown": true}
 file "home\Documents\axKit\Templates\JSON only.json" {"schema": "list.json", "Title": "JSON only", "Text": "{}", "axJSON": true}
 file doc.md axKit\n\nAda and Grace\n

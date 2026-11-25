@@ -4,7 +4,6 @@
 # Shift+F10 and Alt+C open the menu in menu mode, which only the foreground window enters.
 # Copy is only checked to be listed: the test desktop shares the clipboard with the user's session.
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-file home\AxKit\axPreview.json {"checkForUpdates": false}
 file README.md # Readme\n\n## Install\n\nRun the installer.
 
 start preview {temp}\README.md

@@ -11,7 +11,7 @@ internal sealed partial class MainForm
     {
         if (_folder is null)
         {
-            Announce("No project folder", true);
+            Refuse("No project folder");
         }
 
         return _folder;
@@ -22,7 +22,7 @@ internal sealed partial class MainForm
     {
         if (_folder is null)
         {
-            Announce("No project folder", true);
+            Refuse("No project folder");
             return;
         }
 

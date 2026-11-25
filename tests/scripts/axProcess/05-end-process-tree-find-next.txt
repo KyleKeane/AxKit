@@ -11,7 +11,6 @@
 # name it, and a script stops at its first failing step. The copies are started apart from the runner's command
 # (run's own children end with the command, since it reads their output), as 01-start starts its ping; each copy is
 # named with its folder (.\), since a command prompt may be set not to look for a program in the folder it is in.
-file home\AxKit\axProcess.json {"checkForUpdates": false}
 run copy /y %SystemRoot%\System32\cmd.exe axkitscript05a.exe
 run copy /y %SystemRoot%\System32\cmd.exe axkitscript05b.exe
 run copy /y %SystemRoot%\System32\PING.EXE axkitscript05c.exe

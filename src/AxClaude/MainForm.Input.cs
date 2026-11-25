@@ -86,7 +86,7 @@ internal sealed partial class MainForm
             _keptMessage = text;
             var about = _model.PendingQuestion is { } waiting ? $": {waiting.Title}"
                 : _model.PendingScreen is { } screen ? $": {screen.Title}" : string.Empty;
-            Announce($"Not sent, Claude asks{about}. Enter again sends", true);
+            Refuse($"Not sent, Claude asks{about}. Enter again sends");
             return;
         }
 
@@ -96,7 +96,7 @@ internal sealed partial class MainForm
             // (stream-mode.md SM-7.4; the 2026-11-21 audit): a "2" typed for something Claude wrote, in the moment
             // before a tool call's question settles into the area, would allow that call with nothing of it heard.
             // The text stays in the field.
-            Announce("Not sent: Claude asks something, and its question opens in a moment", true);
+            Refuse("Not sent: Claude asks something, and its question opens in a moment");
             return;
         }
 
@@ -107,7 +107,7 @@ internal sealed partial class MainForm
             if (Streams)
             {
                 // No prompt row takes a bare Enter over the stream (stream-mode.md SM-5.7).
-                Announce("Nothing to send", true);
+                Refuse("Nothing to send");
                 return;
             }
 

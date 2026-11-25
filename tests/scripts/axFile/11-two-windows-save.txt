@@ -2,7 +2,6 @@
 # axFile, the bundle's repair R-62 (docs/axKit/repairs.md; SPEC AX-5): two windows of one app each change a setting;
 # the window that saves second keeps what the first saved meanwhile, so both changes are there at the next start.
 # Both windows read the settings before either changed them.
-file home\AxKit\axFile.json {"checkForUpdates": false}
 mkdir one
 mkdir two
 start file {temp}\one

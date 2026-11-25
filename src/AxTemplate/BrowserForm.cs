@@ -340,7 +340,7 @@ public sealed class BrowserForm : ItemForm
     {
         if (_undo.TakeLast() is not { } step)
         {
-            Announce("Nothing to undo", true);
+            Refuse("Nothing to undo");
             return;
         }
 
@@ -348,7 +348,7 @@ public sealed class BrowserForm : ItemForm
         {
             if (Changes.CheckUndo(step) is { } why)
             {
-                Announce($"Cannot undo {step.Said}: {why}", true);
+                Refuse($"Cannot undo {step.Said}: {why}");
                 return;
             }
 

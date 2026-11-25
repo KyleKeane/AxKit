@@ -2,8 +2,6 @@
 # axDown: the theme items every window has (docs/axKit/theme.md TH-4, TH-5.3). The theme file lives in the run's own
 # home, so nothing of the user's is touched: Reload with no file says what makes one; Edit theme file writes the
 # template and opens it in axJSON; Reload then says so; Theme on toggles the file's switch and says which.
-file home\AxKit\axDown.json {"checkForUpdates": false}
-file home\AxKit\axJSON.json {"checkForUpdates": false}
 file notes.md # Notes\n\nA line.
 start down {temp}\notes.md
 expect focus notes.md
@@ -23,13 +21,13 @@ menu Reload theme
 expect said ! Theme reloaded
 # Goal: Turn the theme off and on
 menu Theme on
-expect said ! Theme off
+expect said ! Theme on, not checked
 menu Theme on
-expect said ! Theme on
+expect said ! Theme on, checked
 # Check: Word wrap is kept in the theme file
 # TH-6: Ctrl+Shift+W writes the editors' word wrap into the same file; axJSON on it shows the value; back on for the scripts after.
 do Word wrap
-expect said ! Word wrap off
+expect said ! Word wrap, not checked
 menu Edit theme file
 adopt
 expect state "title":"axJSON file 
@@ -38,4 +36,4 @@ expect text "wordWrap": false
 close
 use 1
 do Word wrap
-expect said ! Word wrap on
+expect said ! Word wrap, checked

@@ -1,7 +1,6 @@
 # Workflow: Find a command in the menus, the palette and the help
 # axDown, test plan section 6 (Menus and help), driven from inside the window (docs/axDown/nvda-test-plan.md).
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-file home\AxKit\axDown.json {"checkForUpdates": false}
 file a.md # A file for the menus\n\nSome text here.\nMore text.
 
 start down {temp}\a.md
@@ -144,13 +143,13 @@ expect said ♪ Edge
 expect said ! Word wrap, Options, Text, Ctrl+Shift+W, checked, 1 of 1
 # Enter: the palette closes, the focus back in the editor at the same place, and the item's new state said.
 keys enter
-expect said Word wrap off
+expect said Word wrap, not checked
 expect focus {"name":"a.md","role":"Text","value":"Some text here."}
 expect state Line 3, Column 2 \u00B7
 expect commands "Word wrap, Options, Text, Ctrl\u002BShift\u002BW","Say new line, Options, Text
 # Back on: the setting is the run's theme file, which the scripts after this one share (docs/axKit/theme.md TH-6).
 do Word wrap
-expect said ! Word wrap on
+expect said ! Word wrap, checked
 # Check: A search with no match says so and runs nothing
 # No match: "No commands match xyz"; Enter says it again and the palette stays; Escape: back, nothing run.
 do Command palette

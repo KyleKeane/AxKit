@@ -2,7 +2,6 @@
 # axDown: Ctrl+Space, the mode key (docs/axKit/SPEC.md AX-8.13; docs/axDown/SPEC.md AD-5.3; docs/axDown/nvda-test-plan.md,
 # section 8). Navigation mode: the letters jump, a key that would type plays the edge sound and changes nothing; Ctrl+Space
 # again: edit mode, and typing types.
-file home\AxKit\axDown.json {"checkForUpdates": false}
 file modes.md # Modes\n\nThe first paragraph.\n\n## Links\n\nSee [GitHub](https://github.com) for more.\n\n## List\n\n- one\n- two\n\nThe end.
 
 start down {temp}\modes.md

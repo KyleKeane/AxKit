@@ -60,7 +60,7 @@ public sealed partial class TaskForm
     {
         if (AtTop || _smart is not null || Gathered || IsArchiveFolder(_folder))
         {
-            Announce("Open a list of yours first: the setting is the list's own", true);
+            Refuse("Open a list of yours first: the setting is the list's own");
             return;
         }
 

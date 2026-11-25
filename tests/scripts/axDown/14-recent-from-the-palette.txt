@@ -3,7 +3,6 @@
 # recent file, and the Window menu's Open windows and Recently closed are filled before the palette reads them, so
 # that each entry is one search away, Ctrl+Shift+P, a few letters, Enter. Shown in axDown; every app's Open recent and
 # every Window menu are the same pieces.
-file home\AxKit\axDown.json {"checkForUpdates": false}
 file one.md # One\n\nThe first file.
 file two.md # Two\n\nThe second file.
 

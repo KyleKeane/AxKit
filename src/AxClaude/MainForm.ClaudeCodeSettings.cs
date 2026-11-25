@@ -190,7 +190,7 @@ internal sealed partial class MainForm
 
         if (!ClaudeIdle)
         {
-            Announce("Not sent: Claude is busy. Choose it again when Claude is done", true);
+            Refuse("Not sent: Claude is busy. Choose it again when Claude is done");
             return;
         }
 

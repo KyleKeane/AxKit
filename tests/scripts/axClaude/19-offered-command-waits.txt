@@ -2,7 +2,7 @@
 # Needs: Claude Code signed in, the network and a live model (Haiku): the step that offers a command while Claude works needs a reply that takes a few seconds.
 # axkit_offer_command (docs/axKit/mcp.md MC-9.3, MC-9.4): an offer never interrupts. It waits behind a notice the
 # user reads and behind Claude's turn; three wait at most; they are asked one after another; Escape is No.
-file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false}
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir waits

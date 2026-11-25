@@ -2,7 +2,6 @@
 # axTask, docs/axTask/SPEC.md TK-4.7a (the maintainer's choice of 2026-11-24): Context, Set fields opens a form of the
 # list's fields where everything starts as "leave", so that only what is filled in is written into every selected
 # item; Clear fields lists the fields to empty. Each is one step for Ctrl+Z.
-file home\AxKit\axTask.json {"checkForUpdates": false}
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Priority","type":"choice","value":"","options":["High","Low"]},{"title":"Room","type":"text","value":""}],"actions":[]}
 file "tasks\Home\Buy paint.json" {"schema":"list.json","Title":"Buy paint","Done":false,"Priority":"Low","Room":"Shed"}
 file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":true,"Priority":"Low","Room":"Kitchen"}

@@ -19,7 +19,7 @@ public sealed partial class GitForm
     {
         if (_root is null)
         {
-            Announce("No repository", true);
+            Refuse("No repository");
             return null;
         }
 

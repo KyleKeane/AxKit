@@ -8,7 +8,6 @@ file orchard\apple.txt The apple file.
 file cellar\barrel.txt The barrel file.
 
 # The run's own settings: no update check at the start, which is a network call (bundle G6).
-file home\AxKit\axFile.json {"checkForUpdates": false}
 
 # The start and Go to folder each make a recent entry, the newest first.
 start file {temp}\orchard

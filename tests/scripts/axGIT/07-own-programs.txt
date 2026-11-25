@@ -71,7 +71,7 @@ close
 # without the seal trusts nothing, and the window says so in its Settings notice. Opened without a repository, so
 # that no notice of the repository's own comes in front of it.
 wait 2000
-file home\AxKit\axGIT.json {"checkForUpdates": false, "trustedRepositories": ["C:/planted"]}
+file home\AxKit\axGIT.json {"trustedRepositories": ["C:/planted"]}
 start git
 expect state "notice":"Settings"
 # The text is matched as the channel writes it, where an apostrophe is escaped: the part after it.

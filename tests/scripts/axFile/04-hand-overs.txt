@@ -6,7 +6,6 @@
 # Manual (4.3): Ctrl+Shift+Q on two folders with media and Shift+F10, Q on a chapter start axMedia (behind this window).
 # Manual (4.4): Shift+F10, A, M on a chapter or a folder and A, P on README.md start axMedia or axPreview.
 # Manual (4.5): Enter with axMedia or axPreview made the default program needs Windows' Default apps.
-file home\AxKit\axFile.json {"checkForUpdates": false}
 file hand\README.md # Read me\nA text to read.
 file hand\plain.txt A plain text.
 file hand\no-media-here\only-text.txt Ctrl+Enter here says No sound or video files here.

@@ -87,7 +87,7 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
 
 - New line (bundle AX-7.8): in a long text field such as a list's Notes, Enter says "new line"; the steps are axDown's plan, step 2.5a.
 
-1. Ctrl+Shift+D: "Done tasks hidden"; the list's name says "1 done hidden".
+1. Ctrl+Shift+D: "Hide done tasks, checked"; the list's name says "1 done hidden".
 2. Shift+F10 in each pane: Context opens with the commands of the list, the item or the field the focus is on, and NVDA reads its first item. Ctrl+Period, then let go of both keys: the same menu, read the same way (bundle AX-8.15); in a text field of a notice, Ctrl+Period shows what Shift+F10 shows there.
 3. F1: the keys; Help, User guide: this guide. Alt+H, About, Version names axTask.
 4. Close and start again without a folder: the list you had.
@@ -305,7 +305,7 @@ up, then the kind going down.
    its line; then "Move Fix the tap, form" and nothing more. Ctrl+Q: the explanation. Escape.
 5. Listen across the four that they are told apart at once, that each is over before the words matter, and that none
    is mistaken for the heading sound, the edge, a question's sound or the sound of background work starting.
-6. Options, Text, Entry sounds: "Entry sounds off"; F1, Ctrl+F, Ctrl+M and Tab between the panes are in
+6. Options, Text, Entry sounds: "Entry sounds, not checked"; F1, Ctrl+F, Ctrl+M and Tab between the panes are in
    silence, the form still saying its title and "form". Again: "on".
 7. A notice that opens by itself (an update offer, an error at start) still plays the notice sound and not one of
    these.

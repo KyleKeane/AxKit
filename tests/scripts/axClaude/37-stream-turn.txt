@@ -6,7 +6,7 @@
 # the window writes. The window's first request is answered with the permission mode, which is what Ready waits for;
 # the message comes back, the reply follows, and the turn's end is Done, said by the window's own rule for a bell.
 # Speak replies is all lines, so the reply is said, before Done.
-file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"checkForUpdates":false,"replySpeech":"all"}
+file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"replySpeech":"all"}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir st
 file claude.cmd @"%AXKIT_STANDIN%" standin --stream turn %*

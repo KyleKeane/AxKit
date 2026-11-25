@@ -149,7 +149,7 @@ On opening, NVDA speaks the window ("README.md - axPreview window") and the text
 line") and its first line; nothing of axPreview's own. Afterwards, one UI Automation notification each on the text,
 or on the notice while one shows (AX-7.3): "Line n of m" (`l`, and after Go to line; "Not a line number"), "Install,
 heading level 2" and the other elements, "No next <kind>" / "No previous <kind>", "Not found", "Reloaded",
-"Reloaded, <name> changed on disk", "Word wrap on" / "Word wrap off", "Nothing to save here", "Text read: N lines" /
+"Reloaded, <name> changed on disk", "Word wrap, checked" / "Word wrap, not checked", "Nothing to save here", "Text read: N lines" /
 "No text found in the picture" / "Text not read: <why>" (a picture, when Windows' reader answers, AP-7.2 item 4), "No
 picture on the clipboard. Alt+PrintScreen copies the window in front; PrintScreen the whole screen" and "The clipboard
 is busy; try again" (Ctrl+Shift+V), "No file yet" (Ctrl+E,

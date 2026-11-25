@@ -4,7 +4,6 @@
 # 2.1 to 2.4 from axFile are in axFile's 04-hand-overs; 2.5, File Explorer's Open with axKit and Windows' default
 # program, are outside the windows (manual).
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
-file home\AxKit\axPreview.json {"checkForUpdates": false}
 file README.md # Readme\n\nThe first window's file.
 file plain.txt Plain text file, line 1.\nLine 2.
 
