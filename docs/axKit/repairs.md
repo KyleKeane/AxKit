@@ -6,8 +6,8 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ## Where it stands
 
-- **open**: 20 (8 medium, 12 low)
-- **done**: 73 (13 high, 33 medium, 27 low)
+- **open**: 17 (7 medium, 10 low)
+- **done**: 76 (13 high, 34 medium, 29 low)
 - **deferred**: 1 (1 medium)
 - **declined**: 6 (4 medium, 2 low)
 
@@ -52,13 +52,6 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: A window whose whole command list a run read (check commands) has its rows replaced, so a renamed or moved command leaves no old row.
 - Note: Found on 2026-11-24: the old rows of the update switch and of the editors' Ctrl+Tab stayed beside the new ones, and the guides' Menus sections named the old menu.
 
-### R-86, medium, docs: The root CLAUDE.md is 34 bytes under its limit, and its list of window kinds leaves out axTemplate
-
-- Where: CLAUDE.md; src/AxKit.Forms/CLAUDE.md
-- Principle: P2
-- Fix: The window kinds as a pointer to docs/axKit/components.md, written from components.json; the probe gotcha moved to automation.md.
-- Note: Found on 2026-11-24 by the audit of the documents. Trimming the mechanics of rule 9 is the maintainer's choice: the words of his rules.
-
 ### R-90, medium, framework: The item window forces overrides that can never run
 
 - Where: src/AxKit.Forms/ItemForm.cs; src/AxProcess/ProcessForm.cs; src/AxGit/GitForm.cs; src/AxMedia/MediaForm.cs
@@ -93,20 +86,6 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P2
 - Fix: One function, accepting a worktree's common hooks folder.
 - Note: Found on 2026-11-24 by the audit of the tools. Whether it sets core.hooksPath itself instead of refusing is the maintainer's choice.
-
-### R-87, low, docs: commands.md and session-start disagree with the scripts
-
-- Where: docs/axKit/commands.md; tools/session-start.ps1; docs/axKit/development-environment.md; release.ps1; run.ps1
-- Principle: P8
-- Fix: session-start's six checks named; components.ps1 and pages.ps1 listed with the generated pages; the sentence that no command submits to the Store taken out; release.ps1 names window-passes.ps1 -Run; run.ps1's header says what it ends.
-- Note: Found on 2026-11-24 by the audits of the documents and the tools.
-
-### R-88, low, docs: Notes and plans behind the code
-
-- Where: src/AxKit/CLAUDE.md; src/AxKit.Forms/CLAUDE.md; docs/axKit/framework.md; docs/axKit/ai-help.md; docs/axKit/plan.md; manual_tests/_main.md; docs/axClaude/stream.md
-- Principle: P8
-- Fix: The ask relay is started by the stream source; axTemplate's two windows in the Forms index; eighteen apps; the screenshot on Period; axTemplate out of Parked; axPass and axTask in the manual tests; stream.md says its decision was taken.
-- Note: Found on 2026-11-24 by the audit of the documents.
 
 ### R-89, low, docs: axClaude's window notes are 26 KB, with one bullet of 6,555 characters and gotchas of every window
 
@@ -561,6 +540,15 @@ found and what became of each finding: change the JSON in the same commit as the
 - Commit: b0efb41d
 - Note: Found on 2026-11-24 by the audit of the documents. Why the rows stayed is R-85.
 
+### R-86, medium, docs: The root CLAUDE.md is 34 bytes under its limit, and its list of window kinds leaves out axTemplate
+
+- Where: CLAUDE.md; src/AxKit.Forms/CLAUDE.md
+- Principle: P2
+- Fix: The window kinds as a pointer to docs/axKit/components.md, written from components.json; the probe gotcha moved to automation.md.
+- Checked by: NotesTests (the size limit) and ComponentsTests pass; components.md is current
+- Commit: 0d424f83
+- Note: Found on 2026-11-24 by the audit of the documents. Trimming the mechanics of rule 9 is the maintainer's choice: the words of his rules.
+
 ### R-04, low, security: Settings whose effect is more than a setting were marked change
 
 - Where: src/AxKit.Forms/HotkeyForm.cs; src/AxKit.Forms/AxKitForm.cs; src/AxClaude/MainForm.Ui.cs
@@ -784,6 +772,24 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: The status of the stream source, the event schema, the framework and families.json corrected; outside-reports.md, approval-key.pub, the list options file, NOTICE.md and the generated Menus sections listed.
 - Checked by: NotesTests and the document tests pass
 - Commit: 7ab6a19f
+- Note: Found on 2026-11-24 by the audit of the documents.
+
+### R-87, low, docs: commands.md and session-start disagree with the scripts
+
+- Where: docs/axKit/commands.md; tools/session-start.ps1; docs/axKit/development-environment.md; release.ps1; run.ps1
+- Principle: P8
+- Fix: session-start's six checks named; components.ps1 and pages.ps1 listed with the generated pages; the sentence that no command submits to the Store taken out; release.ps1 names window-passes.ps1 -Run; run.ps1's header says what it ends.
+- Checked by: read against the scripts; ReleaseScriptTests and the script lint pass
+- Commit: d7ff0986
+- Note: Found on 2026-11-24 by the audits of the documents and the tools.
+
+### R-88, low, docs: Notes and plans behind the code
+
+- Where: src/AxKit/CLAUDE.md; src/AxKit.Forms/CLAUDE.md; docs/axKit/framework.md; docs/axKit/ai-help.md; docs/axKit/plan.md; manual_tests/_main.md; docs/axClaude/stream.md
+- Principle: P8
+- Fix: The ask relay is started by the stream source; axTemplate's two windows in the Forms index; eighteen apps; the screenshot on Period; axTemplate out of Parked; axPass and axTask in the manual tests; stream.md says its decision was taken.
+- Checked by: NotesTests pass, the backticked names exist
+- Commit: 3f3d6f4f
 - Note: Found on 2026-11-24 by the audit of the documents.
 
 ## Deferred
