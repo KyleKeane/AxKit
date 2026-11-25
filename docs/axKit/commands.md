@@ -34,7 +34,7 @@ points here. Each app's own commands are in its `CLAUDE.md`.
   collides, and its tables name exactly the apps of `Dispatch.Apps`), `InventoryTests` (every app in every place),
   `NotesTests` (the notes name what exists and stay small), `PrivacyTests` (no e-mail address, account path, GitHub
   token or private key in any file, `.claude` included), `HookTests` and `ReleaseScriptTests` (the hooks' and the
-  release scripts' shape), `ChangelogTests` (every bullet of `## Unreleased` names its apps as the release reads them).
+  release scripts' shape), `ChangelogTests` (every bullet of `## Unreleased` names its apps as the release reads them), `PlainCodeTests` (no interface but Windows' COM ones, no window code in a Core project, UI Automation notifications raised by `Announcer` alone).
 - `tools/AxAutomate <script or folder> (--build | --exe <AxKit.exe>)` plays the automated window checks of
   `tests/scripts` on a desktop of their own (`automation.md`). The run of an app's folder after a change to a window is
   given `--record`: `dotnet run --project tools\AxAutomate -c Release -- tests\scripts\<app> --build --record` enters
