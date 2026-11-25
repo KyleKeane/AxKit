@@ -346,8 +346,8 @@ Constants are named here once and used by name afterwards. All times are millise
 ### EG-9 Control and diagnostics
 
 - EG-9.1 Options, Developer, **Events from Claude Code's hooks** (setting `claudeHooks`, off at first, EG-D-9 as amended; subject to EG-2.5): off, no settings file is passed and no pipe is served, from the next start of Claude Code. Choosing it says so: "Events from Claude Code's hooks on, from the next start of Claude" or "... off, ...".
-- EG-9.2 Options, Developer, **Ground the conversation in Claude Code's session file** (setting `groundInSessionFile`, on at first): off, the reader stops at once, there is no record (EG-5.4), and nothing is bound, pinned or moved. On again, the reader starts with what the file gains from then on.
-- EG-9.3 Options, Developer, **Say the event sources** (a command, no key, mark "read"): says, interrupting, in numbers only, for example "Events. Marks: 14. Hooks: on, 9 received. Session file: followed, 212 entries. Core: in charge of state, Done and speech." The words for hooks are "off", "not passed, <reason in a word>", "on, N received" or "passed, none received"; for the session file "off", "not found", "followed, N entries" or "stopped, <reason in a word>"; for the core "in charge of ..." or "in shadow".
+- EG-9.2 Options, Developer, **Ground the conversation in Claude Code's session file** (setting `groundInSessionFile`, on at first): off, the reader stops at once, there is no record (EG-5.4), and nothing is bound, pinned or moved. On again, the reader starts with what the file gains from then on. Choosing it says "Grounding in Claude Code's session file on" or "... off"; in a window the stream feeds, which has no reader, only the setting changes, and the words end ", for windows the screen feeds; not used with the stream" (`docs/axClaude/stream-mode.md` SM-3.6).
+- EG-9.3 Options, Developer, **Say the event sources** (a command, no key, mark "read"): says, interrupting, in numbers only, for example "Events. Marks: 14. Hooks: on, 9 received. Session file: followed, 212 entries. Core: in charge of state and Done." The words for hooks are "off", "not passed" with ", <reason in a word>" when there is one, "on, N received" or "passed, none received"; for the session file "off", "not found", "followed, N entries" or "stopped" with ", <reason in a word>" when there is one; for the core "in charge of ..." (the families built, `FlowCharge`: state and Done since WP-A17), "in shadow" or "off after an error". In a window the stream feeds it says the stream's own sentence instead, "Source: the stream. ..." (`docs/axClaude/stream-mode.md` SM-9.4).
 - EG-9.4 Help, Diagnostics, Copy diagnostics gains these lines, numbers and fixed words only:
 
   ```
@@ -386,7 +386,7 @@ Constants are named here once and used by name afterwards. All times are millise
 - EG-11.3 **The stand-in.** `AxAutomate standin <scenario.json> <Claude Code's arguments>` plays a scenario (section 6.7) as Claude Code would in a window script: it answers `--version`, draws frames, marks and bells on the console, appends entries to a session file under the run's own folder, and starts the hook command of the `--settings` file it was given with the event on standard input, waited for or not as the file says. The runner puts its own program's path into `AXKIT_STANDIN` for the windows it starts; a script's `claude.cmd` is one line that calls it. It needs no Claude Code, no network and no model.
 - EG-11.4 **The probe** is a tool of the repository, `tools/ClaudeProbe`: it starts the installed Claude Code as axClaude does, registers hooks for that session alone, records the three streams on one clock, prints merged timelines with the profile path replaced, and makes fixtures (EG-11.1). It is a measuring tool, never shipped and never started by axKit; while a recording runs it listens on 127.0.0.1 for the hooks it measures, which axKit itself never does (EG-D-15).
 - EG-11.5 **Window scripts**, each a workflow with its label, run on a desktop of their own (`docs/axKit/automation.md`): 28 the event sources said on demand; 29 a turn played by the stand-in; 30 hooks through the stand-in; 31 hooks with Claude Code itself (no "Settings Warning", events received), which is the check `tools/upstream.ps1 -Verify` runs with the others of `tests/scripts/axClaude`; 32 the session file followed; 33 the export of the record; 34 the state from the marks, and a message sent during a reply's arrival; 35 Done after the reply, none for an interrupt; 36 the gate (a repaint, a summary, a question's rows, a real reply once); 37 background work listed by an event; 38 heading levels from the record; 39 a summary pinned; 40 a block moved behind its reply; 41 history bound at a start. Every existing script of `tests/scripts/axClaude` stays as it is and passes: the ones with a batch stand-in draw no marks and no events, so they are the test of the screen-only path.
-- EG-11.6 **The NVDA plan** (`docs/axClaude/nvda-test-plan.md`) gains section 23, Events and grounding: the steps of scripts 28 to 41, plus by ear: Done right after a spoken reply with no gap that feels like a pause; nothing spoken after a `/resume` picker redraws the conversation; a status of "working" through a long tool run; a message sent in the last moment of a reply standing after it.
+- EG-11.6 **The NVDA plan** (`docs/axClaude/nvda-test-plan.md`) gains section 25, Events and grounding (sections 23 and 24 were taken when it was written): the steps of scripts 28 to 41, plus by ear: Done right after a spoken reply with no gap that feels like a pause; nothing spoken after a `/resume` picker redraws the conversation; a status of "working" through a long tool run; a message sent in the last moment of a reply standing after it.
 - EG-11.7 **Source-reading tests.** `ClaudeCodePlacesTests` fails when one of Claude Code's event names or session file field names (`SessionStart`, `SubagentStop`, `hook_event_name`, `transcript_path`, `turn_duration`, `promptSource`, `isAbortedMidStream`, `queue-operation`) stands in a string of a file of `src/AxClaude.Core` or `src/AxClaude` other than `ClaudeCodeHooks.cs` and `ClaudeCodeTranscript.cs`.
 
 ## 6. Formats
@@ -598,10 +598,10 @@ A JSON file a window script writes with its `file` step. Since that step turns `
 | `assistant` (lines), `cut` | appends an `assistant` text entry; with `cut`, `isAbortedMidStream` and then the interrupt's `user` entry |
 | `toolUse` (name), `toolResult` | appends the tool call's entry, its result's entry |
 | `turnEnd` (ms) | appends `system` `turn_duration` |
-| `queue` (`enqueue`, `dequeue`), `text` | appends a `queue-operation` |
+| `queue` (`enqueue`, `dequeue`, `remove`), `text` | appends a `queue-operation` |
 | `raw` (object) | appends the object as one line: an unknown or a skipped kind |
 | `wait` (ms), `waitFile` (name in the working folder) | waits; the script makes the file |
-| `idle` | waits for ever |
+| `idle` | waits until the window stops Claude Code, which ends the stand-in (an hour at most) |
 
 The session file is `<the scenario's folder>\<home>\.claude\projects\<project folder name of the working folder>\<session>.jsonl`. With `--version` as its first argument the stand-in prints `version` and ends. A script's `claude.cmd`:
 
@@ -621,7 +621,7 @@ The session file is `<the scenario's folder>\<home>\.claude\projects\<project fo
 
 `src/AxKit` (the executable):
 
-- `Program.Main`: its first statement is `if (args.Length > 0 && args[0] == HookRelay.Verb) { HookRelay.Run(); return; }`; everything it did moves unchanged into a method `Start(string[] args)` that `Main` calls next, so that the hook's process loads nothing of WinForms.
+- `Program.Main`: its first statement is `if (args.Length > 0 && args[0] == HookRelay.Verb) { HookRelay.Run(); return; }`, and the stream mode's `AskRelay.Verb` is decided the same way right after it (`docs/axClaude/stream-mode.md` SM-7.3); everything it did moves unchanged into a method `Start(string[] args)` that `Main` calls next, so that the hook's process loads nothing of WinForms.
 
 `src/AxClaude.Core/Transcript` (Claude Code's screen, as today):
 
@@ -639,14 +639,14 @@ The session file is `<the scenario's folder>\<home>\.claude\projects\<project fo
 
 `src/AxClaude.Core/Pty`:
 
-- `ClaudeLauncher.BuildEnvironment(string? hookPipe = null)`: removes `HookFrame.Variable`, then sets it when a value is given (EG-2.8).
+- `ClaudeLauncher.BuildEnvironment(string? hookPipe = null, string? askPipe = null)`: removes `HookFrame.Variable`, then sets it when a value is given (EG-2.8); `askPipe` is the stream mode's (`docs/axClaude/stream-mode.md` SM-7.3).
 
 `src/AxClaude.Core/Record`:
 
 - `ClaudeCodeTranscript` (static; Claude Code's place): `public static string ProjectFolderName(string workingFolder);` `public static IReadOnlyList<string> ProjectsFolders(string home, IReadOnlyDictionary<string, string> childEnvironment, string? runHome);` `public static bool IsSessionFile(string path, IReadOnlyList<string> projectsFolders);` `public static RecordEntry? Parse(ReadOnlySpan<byte> line, long offset, out RecordLine what);` with `public enum RecordLine { Read, Skipped, NotJson, Unknown }`; `public static string ScreenKey(string source);` `public static IReadOnlyList<(string Key, int Level)> Headings(string source);` (WP-A20).
 - `RecordEntry`, `RecordKind`, `PromptOrigin` (6.3). `RecordText.Letters(ReadOnlySpan<char> text)` (neutral).
-- `RecordTail` (neutral): `public RecordTail(string path, long start, Func<ReadOnlySpan<byte>, long, RecordEntry?> parse);` `public IReadOnlyList<RecordEntry> Poll();` `public RecordTailState State { get; }` (`Following`, `Missing`, `Stopped`), its counters, and `public static IReadOnlyList<RecordEntry> ReadAll(string path, ...)`.
-- `RecordFinder` (neutral): `public void Note(IEnumerable<string> projectFolders);` `public string? Find(IReadOnlyCollection<string> sentKeys, Func<ReadOnlySpan<byte>, long, RecordEntry?> parse);`
+- `RecordTail` (neutral): the program's line reader is the delegate `public delegate RecordEntry? RecordLineParser(ReadOnlySpan<byte> line, long offset, out RecordLine what);` `public RecordTail(string path, long start, RecordLineParser parse);` `public IReadOnlyList<RecordEntry> Poll(long nowMs);` `public RecordTailState State { get; }` (`Following`, `Missing`, `Stopped`) with `StopReason`, its counters, and `public static IReadOnlyList<RecordEntry> ReadAll(string path, RecordLineParser parse, long end = long.MaxValue)`.
+- `RecordFinder` (neutral): `public void Note(IEnumerable<string> projectFolders);` `public string? Find(IReadOnlyCollection<string> sentKeys, RecordLineParser parse);`
 - `RecordExport.Render(IEnumerable<RecordEntry> entries)` (WP-A15); `RecordBinder.Levels(RecordEntry reply, IReadOnlyList<Line> lines)` (WP-A20).
 
 `src/AxClaude.Core/Flow` (neutral):
@@ -655,7 +655,7 @@ The session file is `<the scenario's folder>\<home>\.claude\projects\<project fo
 - `SessionFlow`: `public SessionFlow(SourceHealth health);` `public IReadOnlyList<FlowDecision> Handle(FlowInput input, long nowMs);` (the list is reused: read it at once) `public bool Working { get; }` `public bool Ending { get; }` `public int Generation { get; }` `public int Waiting { get; }` `public IReadOnlyList<FlowTask> Tasks { get; }`. Three files of one partial class: `SessionFlow.cs` (the turn, the state, Done, time), `SessionFlow.Gate.cs` (EG-5), `SessionFlow.Background.cs` (EG-7).
 - `SourceHealth`: the counters of EG-9.4 as plain fields, `public IReadOnlyList<string> Lines(string coreWords)` and `public string Said(string coreWords)`, the window giving the words for what the core is in charge of.
 - `FlowFeed` (static): `public static FrameSeen FromFrame(SessionModel model, Arrival arrival, bool asking, bool speechOn);` `public static MarkSeen? FromMark(char letter);` `public static FlowInput? FromHook(HookEvent e);` `public static FlowInput? FromEntry(RecordEntry e);`
-- `FlowShadow`: `public enum ShadowFact { SaidDone, SpokeLines, Working, Idle }` `public void Window(ShadowFact fact, int count, long nowMs);` `public void Core(FlowDecision decision, long nowMs);` `public string? TurnLine();` (the one line for a turn that both have ended, null until then).
+- `FlowShadow`: `public enum ShadowFact { SaidDone, Working, Idle }` `public void Window(ShadowFact fact, long nowMs);` `public void WindowSpoke(IReadOnlyList<Line> lines, long nowMs);` `public void QuestionOpen();` `public void Core(FlowDecision decision, long nowMs);` `public string? TurnLine(long nowMs);` (the one line for a turn that both have ended, null until then), the line made from the values of `ShadowKind` and `FlowState` alone (`FlowShadow.What`).
 
 `src/AxClaude.Core/AppSettings.cs`: `ClaudeHooks` (false), `GroundInSessionFile` (true), `EventCore` (`"on"`).
 
@@ -665,6 +665,7 @@ The session file is `<the scenario's folder>\<home>\.claude\projects\<project fo
 - `MainForm.Hooks.cs`: `HookChannel` (the pipe's thread, EG-2.7) and what `StartClaude` asks of it: the file written, the arguments, the variable's value.
 - `MainForm.Record.cs`: `RecordHost` (the reader's thread, the folder rule's polling, EG-3) and those partial methods.
 - `MainForm.cs`, `MainForm.Model.cs`, `MainForm.Process.cs`, `MainForm.Input.cs`, `MainForm.Area.cs`, `MainForm.Background.cs`, `MainForm.Ui.cs`, `MainForm.Export.cs`: the places that today decide from the screen ask the core instead, family by family (section 10).
+- Since 2026-11-17 a window can instead be fed by Claude Code's stream (`MainForm.Stream.cs`); in such a window none of the three files above is wired (`FlowWired`) and the window's own rules are in force, as with `eventCore` set to `shadow` (`docs/axClaude/stream-mode.md` SM-3.6).
 
 `tools/ClaudeProbe` (EG-11.4), `tools/AxAutomate/StandIn.cs` and three lines of `tools/AxAutomate/Program.cs` (EG-11.3).
 
@@ -736,7 +737,7 @@ Each change is made in the commit of the work package that changes the behaviour
   - Section 7.1 to 7.3: the new folders, the data flow with the two new threads (WP-A7). Section 8: D38, a pointer to section 8 here (WP-A7). Section 11: the risks of section 11 here. Section 12: status. Appendix C: `claudeHooks`, `groundInSessionFile`, `eventCore` (WP-A7).
 - `docs/axClaude/claude-screens.md`: the marks (4.1, 4.2 here in short); the ` · summary` row with its one sighting (WP-A21); the spinner's hook note; the rows a failed hook prints, as rows to recognise if they ever appear (WP-A12).
 - `docs/axClaude/user-guide.md`: Options, Developer: the two switches and the command (WP-A7); Session: the record's export (WP-A15); one paragraph on what changed in what is heard (WP-A17, WP-A18).
-- `docs/axClaude/nvda-test-plan.md`: section 23 (EG-11.6), a step with each package from WP-A7 on.
+- `docs/axClaude/nvda-test-plan.md`: section 25 (EG-11.6), a step with each package from WP-A7 on.
 - `docs/axKit/access-layers.md`, axClaude's section: the two new places, what is read and how (events through the pipe, the session file's lines), what guards them (the timeline fixtures, the replayer, `ClaudeCodePlacesTests`, script 31), and that the neutral pieces move on the second use (WP-A12).
 - `PRIVACY.md`: under axClaude, that axClaude asks Claude Code to start `AxKit.exe hook` for eight kinds of events of the session, which tells the window over a pipe on the computer that the event happened; that axClaude reads the session file Claude Code keeps for the conversation, in memory only, to check and order what it shows; that neither sends anything anywhere; under "Programs axKit runs", the hook; under "What stays on your computer", `claude-hooks.json` (WP-A12).
 - `README.md`, `docs/axKit/README.md`, `SECURITY.md`: where they state what axKit starts and opens, the same two sentences in their own words; the network statement is unchanged (WP-A12).
@@ -976,7 +977,7 @@ Packages that change what the user hears: WP-A16 to WP-A23. WP-A7 and WP-A15 add
   - `src/AxClaude.Core/AppSettings.cs`: `ClaudeHooks`, `GroundInSessionFile`, `EventCore`; `tests/AxClaude.Tests/SettingsTests.cs`: their defaults and their names in the file.
 - Creates `tests/AxClaude.Tests/FlowFeedTests.cs` (`A_frame_carries_the_models_work_epoch_and_proposals`, `Letters_A_C_D_become_marks_and_others_nothing`, `Each_hook_kind_becomes_its_neutral_input`, `Each_record_kind_becomes_its_neutral_input`) and `FlowShadowTests.cs` (`A_turn_where_both_say_Done_gives_the_two_times`, `A_Done_only_the_window_said_is_counted`, `Lines_one_spoke_and_the_other_did_not_are_counted`, `The_line_holds_numbers_and_fixed_words_only`).
 - Creates `tests/scripts/axClaude/28-event-sources.txt`, label "Hear where axClaude's events come from": a batch stand-in as in `27-workflow-progress.txt` that also writes the marks (`%E%]133;A%E%\`) and a bell (the character written `\u0007` in the `file` step). Ready; the two switches are in the command list, checked; `menu Say the event sources` gives `! Events. Marks: 0`; a turn (A, a working frame; then C, D, the bell and the reply's frame) gives "Done" by the old rule; the command then says `Marks: 3`, `Hooks: not passed`, `Session file: not found`, `Core: in shadow`.
-- Documents in the same patch: `docs/axClaude/SPEC.md` (FR-15, FR-12.3, 4.4, 7.1 to 7.3, D38, Appendix C; section 9), `docs/axClaude/user-guide.md` (the Developer items), `docs/axClaude/nvda-test-plan.md` (section 23, step 1), `docs/axKit/documents.md`, `src/AxClaude.Core/CLAUDE.md`, `src/AxClaude/CLAUDE.md`.
+- Documents in the same patch: `docs/axClaude/SPEC.md` (FR-15, FR-12.3, 4.4, 7.1 to 7.3, D38, Appendix C; section 9), `docs/axClaude/user-guide.md` (the Developer items), `docs/axClaude/nvda-test-plan.md` (section 25, step 1), `docs/axKit/documents.md`, `src/AxClaude.Core/CLAUDE.md`, `src/AxClaude/CLAUDE.md`.
 - Verify: `.\test.ps1`; scripts 28, 22 and 27 pass.
 - Must not touch: `Flow/SessionFlow*.cs`, `Record/RecordTail.cs`, `Record/RecordFinder.cs`, `tools/`, `BackgroundWork.cs`.
 - Hears: nothing that exists changes; one command and two switches are new. CHANGELOG: `axClaude: Options, Developer gains Events from Claude Code's hooks, Ground the conversation in Claude Code's session file and Say the event sources (docs/axClaude/events-and-grounding.md).`
@@ -1101,7 +1102,7 @@ Packages that change what the user hears: WP-A16 to WP-A23. WP-A7 and WP-A15 add
 - Changes every place of the window that reads `_model.Working` to read `ClaudeWorks`: `MainForm.Model.cs` (`UpdateStatus`, the argument of `_arrivals.Update`), `MainForm.cs` (`Working`, `ClaudeBusy`), `MainForm.Input.cs` (the "Queued" word, which also counts the ending; the Enter sent again), `MainForm.Area.cs`, `MainForm.Mcp.cs`, `MainForm.ClaudeCodeSettings.cs` (their idle tests). A search for `_model.Working` in `src/AxClaude` then finds only `ClaudeWorks` itself.
 - Creates `tests/scripts/axClaude/34-state-from-events.txt`, label "Know that Claude works, and send a message while a reply arrives" (the stand-in, with hooks and the session file): after A, a frame with neither spinner nor mode line: `expect state Claude: working`; after C, D and the bell and before the reply's frame, a message is typed and sent: `expect said Queued`; after the reply's frame and the echo, the conversation holds the first reply's last row before `# Input 2`; `Say the event sources` gives `Session file: followed` (the file the SessionStart event named) and `Core: in charge of state`.
 - Changes `tests/scripts/axClaude/28-event-sources.txt`: `Core: in charge of state`.
-- Documents: `docs/axClaude/SPEC.md` (FR-10.2, FR-4.7, D16, FR-7.9), `docs/axClaude/nvda-test-plan.md` (section 23), `src/AxClaude/CLAUDE.md`.
+- Documents: `docs/axClaude/SPEC.md` (FR-10.2, FR-4.7, D16, FR-7.9), `docs/axClaude/nvda-test-plan.md` (section 25), `src/AxClaude/CLAUDE.md`.
 - Verify: `.\test.ps1`; scripts 34, 28, 22, 27, 06 and 08 pass (06 and 08 are live).
 - Must not touch: `MainForm.Export.cs`, `MainForm.Ui.cs`, `docs/axClaude/user-guide.md` (WP-A15's in this wave).
 - Fallback: `Built` stays without `State`; the status is today's.

@@ -816,7 +816,7 @@ The answer of `commands data`, on one line:
 
 ```
 { "app": <the app's name as Dispatch.Apps has it>,
-  "notice": <the title of the notice the window shows, or null>,
+  "notice": <the title of the notice the window shows, "Key test" while the key test runs, or null>,
   "commands": [ <row>, ... ] }
 
 row = { "label":   <the plain label>,
@@ -844,7 +844,7 @@ axDown's window with a file open and the focus in the text gives, among its rows
 {"label":"Heading level 2","menu":"Navigation, Next","key":"ctrl+2","also":[],"keyText":"Ctrl+2","mark":"read","checked":null,"keyOnly":false,"ai":true,"now":"ctrl+2"},
 {"label":"Word wrap","menu":"Options, Text","key":"ctrl+shift+w","also":[],"keyText":"Ctrl+Shift+W","mark":"change","checked":true,"keyOnly":false,"ai":true,"now":"ctrl+shift+w"},
 {"label":"Keyboard shortcuts","menu":"Help","key":"f1","also":[],"keyText":"F1","mark":"read","checked":null,"keyOnly":false,"ai":true,"now":"f1"},
-{"label":"Between the text and the details","menu":"","key":"ctrl+tab","also":["ctrl+shift+tab","f6"],"keyText":"Ctrl+Tab","mark":"open","checked":null,"keyOnly":true,"ai":false,"now":"ctrl+tab"}
+{"label":"Between the text and the field under it","menu":"","key":"ctrl+tab","also":["ctrl+shift+tab","f6"],"keyText":"Ctrl+Tab","mark":"open","checked":null,"keyOnly":true,"ai":false,"now":"ctrl+tab"}
 ]}
 ```
 
@@ -1169,8 +1169,8 @@ public static class KeyChord
 
 The names: a letter or a digit by itself; `enter`, `escape` (also `esc`), `tab`, `space`, `backspace`, `delete`,
 `insert`, `up`, `down`, `left`, `right`, `home`, `end`, `pageup`, `pagedown`, `plus` (0xBB), `minus` (0xBD), `period`
-(0xBE), `comma` (0xBC), `apps` (0x5D), `f1` to `f12`, and new: `slash` (0xBF), `semicolon` (0xBA), `add` (0x6B),
-`subtract` (0x6D). The modifiers stay each parser's own (`ctrl`, `shift`, `alt`; the NVDA tier's `nvda` and `insert`).
+(0xBE), `comma` (0xBC), `apps` (0x5D), `f1` to `f12`, and new: `slash` (0xBF), `semicolon` (0xBA), `apostrophe`
+(0xDE), `add` (0x6B), `subtract` (0x6D). The modifiers stay each parser's own (`ctrl`, `shift`, `alt`; the NVDA tier's `nvda` and `insert`).
 
 `CommandListing.cs` (new, WP-B2), the listing's rows, pure:
 
@@ -1206,34 +1206,39 @@ lines; `Rule` gains the sentences of WF-8.3. `AxKit.Core.csproj` embeds `docs/ax
 
 - `BundleKeys.Chord(Keys key)` (new, WP-B2): `KeyChord.Text` of the key's code and modifiers; "" for `Keys.None` and
   for a key without a name.
-- `CommandPalette` (WP-B2): the item's record `ItemInfo` gains `Key`; `Keyed(ToolStripMenuItem item, Keys key)`
+- `CommandPalette` (WP-B2): the item's class `ItemInfo` gains `Key`; `Keyed(ToolStripMenuItem item, Keys key)`
   gives it and returns the item; `KeyOf(ToolStripItem item)` reads it (`Keys.None` when none was given, and the
   item's `ShortcutKeys` when that is set); `MenuEntry` gains the member `KeyData => CommandPalette.KeyOf(Item)`, no
   change to its constructor.
 - `AxKitForm.Item(text, action, key, mark)` (WP-B2): calls `CommandPalette.Keyed(item, key)` where it sets the
   display string. `AxKitForm.AddKey(command)`: also keeps the command in a second list, `_keyOnly`. The Help menu's
   "Send a report" item and the Window menu's "Say the status" item (`WindowMenu`), which set their display strings
-  by hand from a bundle key, are given that key with `Keyed`. The editor shell's four clipboard items
+  by hand from a bundle key, are given that key with `Keyed`, as is each app's item under Apps and Access layers
+  (`WindowMenu.NewWindowItem`, its launch key). The editor shell's four clipboard items
   (`TextEditorForm.AddClipboardItems`) are not: their keys are the EDIT control's own (WF-2.1, WF-D-30).
 - `AxKitForm.Commands.cs` (new partial file, WP-B2): `internal WindowCommands CommandRows()`: the entries of
   `CommandPalette.Entries(MainMenuStrip)` as `MenuCommand`s (label `entry.Name`, menus `entry.Menu`, key
   `BundleKeys.Chord(entry.KeyData)`, key text `entry.Key` without a trailing full stop, mark as `McpChannel` writes
   it, checked as `McpChannel` decides it, ai `CommandListing.Ai(CommandPalette.ForAiTools(item), AppVerb)`, which is
   false in a window of axPass or axClip), the commands of `_commands` with a key as `KeyCommand`s (label
-  `MenuText.Plain`, `Applies` from `When`, `KeyOnly` from `_keyOnly`), through `CommandListing.Rows`, with
-  `AppName` and the open notice's title. And `internal string? Choose(string label, string menus)`: the entry is
-  found by `CommandPalette.Find(MainMenuStrip, label, menus)`, the one function that finds an entry by exactly its
-  name and its menus (`PaletteEntry`, which `CommandPalette.Commands` gives, carries neither). Null gives the
-  refusal's text, "no menu item <label> in <menus> now". Otherwise the entry's item is clicked as `Commands` clicks
-  it: `PerformClick`, and for an item with `CheckOnClick`, `Announcer.Raise(this, "<name>, checked", true)` or
-  "<name>, not checked", as the channel's `Menu` has the palette say it; `Choose` then returns null.
+  `MenuText.Plain`, `Applies` from `When` and false while a notice shows, `KeyOnly` from `_keyOnly`), with two
+  further keys alone (Ctrl+Period beside the command of Shift+F10, and Ctrl+Slash for Ask about this window,
+  AX-8.15), through `CommandListing.Rows`, with `AppName` and the open notice's title; while the key test runs
+  (AX-8.12), the title is "Key test" and every row's `now` is empty. And
+  `internal string? Choose(string label, string menus)`: the entry is found by
+  `CommandPalette.Find(MainMenuStrip, label, menus)`, the one function that finds an entry by exactly its name and
+  its menus (`PaletteEntry`, which `CommandPalette.Commands` gives, carries neither). Null gives the
+  refusal's text, "no menu item <label> in <menus> now". Otherwise the entry's item is clicked by the window's one
+  click, `ClickFor(CommandOrigin.Choose, ...)` (CL-4.7), as the channel's `Menu` clicks it: `PerformClick`, and for
+  an item with `CheckOnClick`, `Announcer.Raise` of `MenuText.CheckSaid` ("<name>, checked" or "<name>, not
+  checked"); `Choose` then returns null.
 - `AutomationChannel` (WP-B2): `Execute` answers the line `commands data` before its `switch`, with the text of
   `CommandListing.Write(_form.CommandRows())` itself. That text is the JSON object already; through
   `JsonSerializer.Serialize(result, Plain)`, where every other answer goes, it would become a JSON string literal,
   which `CommandListing.Read` reads as none, and every `do` would fail. `choose <json>` answers an object through
   the serializer as the other requests do: `new { ok = true }` when `_form.Choose` returned null,
   `new { error = <its text> }` otherwise. `ParseKey` takes a key's code from `KeyChord.Code` in place of its own
-  table (the same names and codes, and the four new names).
+  table (the same names and codes, and the five new names).
 
 No window's behaviour changes: the menu items, the keys, the palette, the AI tools' list and `check commands` read
 what they read before.
