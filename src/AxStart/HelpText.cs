@@ -21,6 +21,7 @@ public static class HelpText
         ## In the search field
           The caret stays here: type and delete at any time
           Type part of a program's name; after a short pause the first match is said, "Calculator, 1 of 2"
+          What you closed lately in axKit's windows is among the matches too, first when nothing is typed: Enter opens it again in its app
           Down, Up: the next or the previous match, said with its place. Page Down, Page Up: a page of matches
           {BundleKeys.Text(AxStartKeys.FirstMatch)}, {BundleKeys.Text(AxStartKeys.LastMatch)}: the first or the last match. At the first or the last match, a key that cannot move plays one short low note and says the match again
           Enter: start the match. {BundleKeys.Text(AxStartKeys.StartAsAdministrator)}: start it as administrator (Windows asks first)
