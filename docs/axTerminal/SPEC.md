@@ -447,18 +447,24 @@ read as `edit` still waiting for the colours' answers (to measure first, AT-9.7)
   the arrows and NVDA's own reading keys read the page, nothing reaches the program, and the same key goes back.
   The status bar says which way is in force; the switch is said in two words, "Reading the screen", "Keys to edit".
 - AT-9.4 **What is said by itself.** Nothing on a redraw. After a key sent to the program, the line the cursor ends on
-  is read by NVDA through the caret, as in a terminal; and a row that is marked (reverse video, or a background
-  other than the screen's own: an open menu's selected entry, a dialog's button in focus) is said once when the mark
-  moves to another row or another place, "File menu: Open" read off the row, since that is where a full-screen
-  program shows its focus. The screen model gains that one attribute per cell, marked or not, and no other colour.
+  is read by NVDA through the caret, as in a terminal; and a marked run of a row (reverse video, or a background that
+  differs from the cells on both sides of it in that row: an open menu's selected entry, a dialog's button in focus)
+  is said once when the mark moves to another row or another place, "New File, Ctrl+N" read off the run, since that
+  is where a full-screen program shows its focus. Measured on `edit` (2026-11-25): its open File menu is a box of
+  one grey background on the screen's black, and the selected entry a green one inside it, so a background other
+  than the screen's own would mark the whole menu; the current line of its text has a lighter background across the
+  whole row, which marks nothing by this rule (the caret stands there). The screen model gains per cell its
+  background (or reverse video) as one number to compare, and no other colour.
 - AT-9.5 **The rows updated** at a frame's end, as the conversation's are (AT-4), only the rows that changed, the
   caret kept on its row when the program's cursor did not move; a program that redraws without end (a clock, a
   progress bar) is said nothing about.
 - AT-9.6 **What is not done.** Mouse reporting is ignored (no mouse events are sent); the program's colours are not
   shown or said; the alternate screen's rows never enter the conversation, its export or its find.
 - AT-9.7 **To measure before the build**, with a recording each, in the record-fixture skill's way: whether `edit`
-  waits for the answers to its colour questions (and if so, axTerminal answers them with the theme's sixteen
-  colours, as a terminal does); `edit`'s menus, a dialog (Save as, Find) and its status line, opened with the keys
+  waits for the answers to its colour questions (measured 2026-11-25: keys sent in its first second were not taken;
+  after four seconds without answers it typed, opened its File menu and quit with Ctrl+Q and N, exit code 0; so it
+  waits a few seconds and then goes on; axTerminal answering them with the theme's sixteen colours, as a terminal
+  does, would make it answer at once); `edit`'s menus, a dialog (Save as, Find) and its status line, opened with the keys
   and read off the screen model; `less` or `more` over a long file; a program that leaves the alternate screen by
   ending with Ctrl+C. Each becomes a fixture under `tests/fixtures` and a window script; the build follows them.
 

@@ -43,3 +43,4 @@ Review every recording before committing it: the session header names the accoun
 ## Other fixtures
 
 - `picture-text.png` (2026-11-09): a picture drawn with two lines of text, "Hello from axKit" and "Second line 2026", for axPreview's picture renderer (`tests/AxPreview.Tests/PictureTextTests`): Windows' reader must find both lines when this Windows has a recognition language.
+| `fullscreen-edit1.2.1-120x30.vt` | 2026-11-25 from a scratch folder holding `notes.txt` (three lines) | Windows' `edit` 1.2.1, a full-screen program, through PtyCapture (not axTerminal's launcher) | `fullscreen-edit.script` | axTerminal's screen view (SPEC.md AT-9): the alternate screen, mouse and focus reporting, the colour questions left unanswered (`edit` goes on after about four seconds), a line typed, the File menu opened (its box one background, the selected entry another) and closed, Ctrl+Q and N, exit 0 |

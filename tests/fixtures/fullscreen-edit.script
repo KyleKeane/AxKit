@@ -1,0 +1,20 @@
+# Windows' edit: does it take keys when its colour questions go unanswered? Waits are fixed sleeps.
+sleep 4000
+mark
+send \x1b[B
+sleep 1500
+send Hello from axTerminal.
+sleep 1500
+mark
+send \x1bf
+sleep 2000
+mark
+send \x1b
+sleep 1500
+mark
+send \x11
+sleep 2500
+mark
+send n
+sleep 2500
+exit 5000
