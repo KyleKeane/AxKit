@@ -21,7 +21,7 @@ the process ended with code 0
 [UserMessage] 
 [ClaudeReply h3] claude: Why Blue Feels Calm
 [Plain] 
-[Plain] Blue is the color most people name as their favorite, and it often signals **trust** and stability. It sits at the cool end of the spectrum, which is why it is linked to calm and focus.
+[Plain] Blue is the color most people name as their favorite, and it often signals trust and stability. It sits at the cool end of the spectrum, which is why it is linked to calm and focus.
 [Plain] 
 [Plain h3] ## Common Associations
 [Plain] 
@@ -29,6 +29,4 @@ the process ended with code 0
 [Plain] - Trust and reliability
 [Plain] - Calm and focus
 [Plain] 
-[Plain] ```
 [Plain] color: blue;
-[Plain] ```

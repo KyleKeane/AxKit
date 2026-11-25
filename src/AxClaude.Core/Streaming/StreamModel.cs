@@ -427,7 +427,8 @@ public sealed class StreamModel : ClaudeModel
         }
 
         Respond();
-        Add(LineKind.ClaudeReply, ClaudeCodeTexts.ClaudeLabel, lines);
+        // Made to read as the screen shows a reply (SM-4.5): the stream gives the Markdown it was written in.
+        Add(LineKind.ClaudeReply, ClaudeCodeTexts.ClaudeLabel, ClaudeCodeMarkdown.Plain(lines));
     }
 
     /// <summary>

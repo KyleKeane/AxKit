@@ -27,4 +27,4 @@ the process ended with code 0
 [UserMessage] 
 [ToolError] tool error: Write (probe-denied.txt)
 [Question] Question: Permission: Write
-[ClaudeReply] claude: No, it was not created: you declined the Write call, so `probe-denied.txt` does not exist in the working folder.
+[ClaudeReply] claude: No, it was not created: you declined the Write call, so probe-denied.txt does not exist in the working folder.

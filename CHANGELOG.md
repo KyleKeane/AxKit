@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axClaude: **a reply over the stream reads as it does over the screen**: its Markdown marks are gone, so stars, backticks, fences and table bars are no longer shown or spoken; a table row reads "Column: cell." for each cell, as Claude Code's own screen reads it.
 - axStart: **what you closed lately in axKit is found from anywhere**: the files and folders of the Window menu's Recently closed are among axStart's matches, first when nothing is typed, named as that menu names them; Enter opens one again in its app, Ctrl+O its folder in axFile.
 - axTask: **Ctrl+N in a list types the new title in the list itself**, as F2 renames: a row "New item" opens where the item will stand; Enter adds it, Escape drops it. Enter on the new item opens its form for the rest.
 - axKit: **what a window says as it opens is no longer cut off**: it waits until NVDA has read where the focus landed, so that a first file that cannot play, or Ready, is heard.

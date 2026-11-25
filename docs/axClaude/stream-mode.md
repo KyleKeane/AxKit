@@ -7,8 +7,8 @@ Claude does, off at first, with the screen as the default and the way back. Requ
 stream's reader, model and host, from recordings of the real stream; the relay of Claude's questions; the window
 fed by the stream, with its second ways to send; and the folder's trust and the questions in the control area. A
 window made for the stream can hold a conversation and answer what Claude asks. Not built yet: the older
-conversation shown when a session is taken up, the hand-over between the two sources (stage 6), a reply's text made
-plain (stage 7), and the live scripts (stage 8). The points of section 12 are taken as proposed until the
+conversation shown when a session is taken up, the hand-over between the two sources (stage 6), and the live scripts
+(stage 8); a reply's text is made plain since 2026-11-25 (stage 7, SM-4.5). The points of section 12 are taken as proposed until the
 maintainer has heard the mode.
 
 It rests on three things made the same day: the measurements (`stream.md`, twenty cases, all passing), the door
@@ -98,7 +98,10 @@ screen, or mixed).
 - SM-4.5 **A reply's text.** The stream gives a reply as Markdown source, where the screen gives rows that Claude
   Code has already made plain. One function makes the source read as the screen's rows do; it is tested against
   pairs taken from the timeline fixtures, which hold the screen and the source of the same replies. Headings are
-  taken from the source, where they are certain.
+  taken from the source, where they are certain. Built 2026-11-25: `Streaming/ClaudeCodeMarkdown`, its rules read off
+  the fixture `long-reply` (bold, italics and code spans lose their marks; a fence goes and its code stays as written;
+  a table row is "Column: cell." for each cell; a link whose text is its address is the address, another is "text
+  (address)"; a quote loses its mark; lists stay), tested in `ClaudeCodeMarkdownTests`.
 - SM-4.6 **The turn**: working from the message taken to the turn's end line; the end is raised as the model's
   `Bell`, so that the window says Done by its existing rule, after the reply's lines, which are in the model before
   the end line arrives. An interrupted turn says no Done: it says Interrupted. A turn that failed says Done as any turn does, after its error line, as with the screen (amended 2026-11-17: said nothing, it left the user without a word).
