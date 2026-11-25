@@ -65,7 +65,7 @@
   `Apply`). axTask asks before it converts; the report form's own list is converted when it is met.
 - `FieldStep` (AX-8.10 rule 4, IA-5.6): Right and Left on a field: a choice's next or previous value, a check
   checked or unchecked, null (the edge sound) otherwise, never a `Protected` type.
-- `Changes`, `Step` and `FileChange` (IA-5.4; from AxTask.Core on their second use, axTemplate's browser, 2026-11-23, moved unchanged): a change on disk as parts, writes and moves, `Apply`, `CheckUndo` (every path as the step left it, so that an edit made since is never lost), `Undo` (last part first; a new list's folder goes with its `list.json`), `ReadOrNull`. Tested where they came from, `tests/AxTask.Tests` (`FolderTests`, `LinksTests`).
+- `Changes`, `Step`, `FileChange` and `StepHistory`, the capped stack Ctrl+Z takes from (the last since 2026-11-24, R-91) (IA-5.4; from AxTask.Core on their second use, axTemplate's browser, 2026-11-23, moved unchanged): a change on disk as parts, writes and moves, `Apply`, `CheckUndo` (every path as the step left it, so that an edit made since is never lost), `Undo` (last part first; a new list's folder goes with its `list.json`), `ReadOrNull`. Tested where they came from, `tests/AxTask.Tests` (`FolderTests`, `LinksTests`).
 - `ItemFormRules` with `FormControl` and `FormValue` (docs/axTask/forms-framework.md AF-14.1, axTask's TK-4.0a, 2026-11-21; from AxTask.Core on its second use, axTemplate's form, 2026-11-23): an item's form, pure:
   `Controls` (one control per field of the item's document: its kind, text, check, lines or list, its name as an
   instruction, what it starts with; a choice that holds none of its options starts on `NotChosen`; a value its type

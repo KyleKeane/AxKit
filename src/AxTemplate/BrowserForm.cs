@@ -16,15 +16,14 @@ namespace AxTemplate;
 /// </summary>
 public sealed class BrowserForm : ItemForm
 {
-    /// <summary>How many changes Ctrl+Z can take back, the oldest dropped.</summary>
-    private const int MaxUndo = 50;
 
     private readonly string _folder;
     private readonly MenuStrip _menu = new();
     private readonly ToolStripMenuItem _listMenu = new("&List");
     private readonly ToolStripMenuItem _templateMenu = new("&Template");
     private readonly ToolStripMenuItem _fieldMenu = new("Fiel&d");
-    private readonly List<Step> _undo = [];
+    /// <summary>The changes Ctrl+Z can take back, fifty at most, the oldest dropped.</summary>
+    private readonly StepHistory _undo = new(50);
 
     private ListConfig _config = TemplateStore.Configuration(null);
     private IReadOnlyList<TemplateFile> _files = [];
@@ -339,14 +338,12 @@ public sealed class BrowserForm : ItemForm
 
     protected override void Undo()
     {
-        if (_undo.Count == 0)
+        if (_undo.TakeLast() is not { } step)
         {
             Announce("Nothing to undo", true);
             return;
         }
 
-        var step = _undo[^1];
-        _undo.RemoveAt(_undo.Count - 1);
         try
         {
             if (Changes.CheckUndo(step) is { } why)
@@ -527,10 +524,6 @@ public sealed class BrowserForm : ItemForm
         Log.Info("A change written");
         _files = TemplateStore.After(_files, step.Parts);
         _undo.Add(step);
-        if (_undo.Count > MaxUndo)
-        {
-            _undo.RemoveAt(0);
-        }
 
         Fill(select);
         Announce(step.Said, true);

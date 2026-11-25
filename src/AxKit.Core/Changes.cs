@@ -22,6 +22,42 @@ public sealed record FileChange(string Path, string? Before, string? After, stri
 public sealed record Step(IReadOnlyList<FileChange> Parts, string Said);
 
 /// <summary>
+/// The steps Ctrl+Z can take back, newest last, the oldest dropped past <paramref name="cap"/> (IA-5.4). One stack for
+/// every window that writes its changes as steps (axTask, axTemplate's browser), written twice until 2026-11-24
+/// (docs/axKit/repairs.json R-91).
+/// </summary>
+public sealed class StepHistory(int cap)
+{
+    private readonly List<Step> _steps = [];
+
+    public int Count => _steps.Count;
+
+    public void Add(Step step)
+    {
+        _steps.Add(step);
+        if (_steps.Count > cap)
+        {
+            _steps.RemoveAt(0);
+        }
+    }
+
+    /// <summary>The newest step, taken off the stack; null when there is none.</summary>
+    public Step? TakeLast()
+    {
+        if (_steps.Count == 0)
+        {
+            return null;
+        }
+
+        var step = _steps[^1];
+        _steps.RemoveAt(_steps.Count - 1);
+        return step;
+    }
+
+    public void Clear() => _steps.Clear();
+}
+
+/// <summary>
 /// The changes on disk and their undo (IA-5.4, IA-5.5). A step is applied part by part; undone in reverse, and only
 /// when every part is still as the step left it, so that an edit made since in axJSON or by a sync is never lost.
 /// </summary>

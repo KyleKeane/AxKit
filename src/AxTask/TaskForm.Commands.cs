@@ -14,9 +14,8 @@ namespace AxTask;
 /// </summary>
 public sealed partial class TaskForm
 {
-    private const int MaxUndo = 20;
-
-    private readonly List<Step> _undo = [];
+    /// <summary>The steps Ctrl+Z takes back, twenty at most.</summary>
+    private readonly StepHistory _undo = new(20);
 
     // ---- the navigator's commands ----
 
@@ -704,14 +703,12 @@ public sealed partial class TaskForm
     /// <summary>Ctrl+Z (IA-5.4): the last step taken back, when nothing changed what it left since.</summary>
     protected override void Undo()
     {
-        if (_undo.Count == 0)
+        if (_undo.TakeLast() is not { } step)
         {
             Announce("Nothing to undo", true);
             return;
         }
 
-        var step = _undo[^1];
-        _undo.RemoveAt(_undo.Count - 1);
         try
         {
             if (Changes.CheckUndo(step) is { } why)
@@ -1046,10 +1043,6 @@ public sealed partial class TaskForm
         PatchProjectItems(step.Parts);
         RecordHistory(step.Parts);
         _undo.Add(step);
-        if (_undo.Count > MaxUndo)
-        {
-            _undo.RemoveAt(0);
-        }
 
         Fill(select);
         Announce(step.Said, true);
