@@ -196,6 +196,52 @@ SQLite browser), **axHTTP** (a REST client), **axMail** (mail over IMAP and SMTP
 (Cryptomator vaults; AxCryptomator below), and, on record only, **AxWeb**, **AxCalendar** and **AxSettings**. Each is
 described under "Later apps".
 
+## Parked on 2026-11-25: far future, not to build yet
+
+The priorities list was cleared a second time at the user's word (2026-11-25, through the question tool: "Move them to
+plan.md"), so that it holds only work to be finished. Each of these he had called far future or not to be built yet;
+each is a line here, and its full notes (his words, the scope, the first thoughts) stay in its closed item of the
+priorities list, found by the title in the line. An idea comes back by a new item that points here.
+
+- **Installing the programs under an access layer** (2026-11-22): whether axKit installs KeePassXC or Claude Code
+  itself or separate helper scripts do, with the boundary of what axKit vouches for. Item: "Access layers: whether
+  axKit installs the program underneath".
+- **axClaude: a self-voicing option for replies** (2026-11-14, a reflection): replies spoken by axKit's own voice so
+  that their order is axKit's. Item: "axClaude: a self-voicing option for replies".
+- **axDown: a comment on a line, and Claude rewriting a line in place** (2026-11-14). Item: "axDown: a comment on a
+  line".
+- **axGitHub over gh** (asked again 2026-11-14, above under 2026-11-13): issues synchronized and acted on from axTask.
+  Item: "axGitHub: an app of its own for GitHub issues".
+- **axGithubCopilot** (2026-11-13): an access layer over the GitHub Copilot CLI sharing axClaude's code and window.
+  Item: "axGithubCopilot: an access layer".
+- **axHelp on the item in focus** (2026-11-15): "move this to my documents" said to axHelp about the focused item,
+  done for the user, with how to do it oneself as a follow-up. Item: "axHelp: a request about the item I am on".
+- **axHelp: a search index or grammar rules, and a log of questions and whether the answer served** (2026-11-17).
+  Item: "axHelp: a stronger way to find answers".
+- **axHelp and AI help for another AI service** (2026-11-22). Item: "axHelp and AI help: easy to configure".
+- **Natural-language operations through Shift+F1**, and what Shift+F1 is for beside axHelp (2026-11-24). Item:
+  "axHelp and Shift+F1: natural-language operations".
+- **A class and an id for every element, recent items and actions, analytics** (2026-11-24): the scaffolding for
+  localization, Shift+F1's context and unambiguous automation. Item: "axKit: a unique id for every item".
+- **An action history with undo across the open apps** (2026-11-23). Item: "axKit: an action history with undo".
+- **axKit's own Open and Save as**: its entry under "Still to come" says how. Item: "axKit: axKit's own Open and Save
+  as".
+- **Guided learning**: its entry under "Still to come". Item: "axKit: guided learning".
+- **Localization into other languages**, tied to the ids above. Item: "axKit: localization into other languages".
+- **Sound as events over OSC to a separate audio engine** (2026-11-14). Item: "axKit: sound as events sent over OSC".
+- **The keyboard actions of the focused item as a list on one key** (2026-11-21), beside the context menu and F1.
+  Item: "axKit: the keyboard actions of the item in focus".
+- **axTask: AI operations over a list**, such as grouping by theme (2026-11-22, from the old feature list). Item:
+  "axTask: AI operations over a list".
+- **axTask: a portable copy of a list or of all lists, and bringing one in** (2026-11-22). Item: "axTask: save a
+  copy of a list".
+- **axTask: the approval of outside reports made simpler** (2026-11-24), to discuss what felt slow first. Item:
+  "axTask: the approval of outside reports made simpler".
+- **axTask's lists on a phone**, synced by any service, with an open format anyone could write a viewer for
+  (2026-11-22). Item: "axTask: the lists on a phone".
+- **Placeholders in a template and a form behind it** (paused 2026-11-23). Item: "Editors: placeholders to fill in a
+  template".
+
 ## Later apps (recorded 2026-10-18)
 
 Each would be one more app of the bundle, a window per thing worked on, added the way `adding-an-app.md` says, with no
