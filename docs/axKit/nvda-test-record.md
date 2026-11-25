@@ -755,6 +755,12 @@ and what it still waits on is here, by ear with NVDA:
    new entry password should be a form.
 5. At a sign-in: axStart, started hidden, leaves the focus where Windows put it, and the first key reaches that
    window (AS-3.4; the item "axStart: whether it takes the focus").
+6. A live check of the blocked report (RP-6.4): the maintainer's own install id (Help, Your reports, or the notice's
+   Copy install id) put on `KyleKeane/AxKit-blocklist`'s list, a day after the last read or with the reports
+   settings' read time cleared, F4 and send: "Report not sent", the install id, Copy install id and Open the block
+   list page heard; then the id taken off the list. The sender's side is held by `ReportSenderTests`; no window
+   script can reach it, since a build made for the scripts carries no sending token (item "a private repository
+   and reports encrypted").
 
 ## Owed: the maintainer's choices of 2026-11-24, by ear
 
