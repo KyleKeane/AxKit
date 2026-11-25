@@ -139,6 +139,42 @@ Window key, in axAutomate, axDown, axFile, axGIT, axHelp, axJSON, axMedia, axPas
 - axGIT: Open repository.
 - axHelp: Open the last screenshot in axPreview.
 
+### F6
+
+Bundle key, in axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask, axTemplate and axTerminal. 7 meanings.
+
+- axAutomate, axMCP, axPass, axTask and axTemplate: Switch between the navigator and the detail pane.
+- axCalc, axClaude and axTerminal: Switch between the view and the field.
+- axMedia and axProcess: Back to the list.
+- axDown and axJSON: Between the text and the field under it.
+- axPreview: Between the text and the details.
+- axFile: Switch between the list and the Favorites list.
+- axGIT: Switch between the list and the text.
+
+### Ctrl+Tab
+
+Bundle key, in axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask, axTemplate and axTerminal. 7 meanings.
+
+- axAutomate, axMCP, axPass, axTask and axTemplate: Switch between the navigator and the detail pane.
+- axCalc, axClaude and axTerminal: Switch between the view and the field.
+- axMedia and axProcess: Back to the list.
+- axDown and axJSON: Between the text and the field under it.
+- axPreview: Between the text and the details.
+- axFile: Switch between the list and the Favorites list.
+- axGIT: Switch between the list and the text.
+
+### Ctrl+Shift+Tab
+
+Bundle key, in axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask, axTemplate and axTerminal. 7 meanings.
+
+- axAutomate, axMCP, axPass, axTask and axTemplate: Switch between the navigator and the detail pane.
+- axCalc, axClaude and axTerminal: Switch between the view and the field.
+- axMedia and axProcess: Back to the list.
+- axDown and axJSON: Between the text and the field under it.
+- axPreview: Between the text and the details.
+- axFile: Switch between the list and the Favorites list.
+- axGIT: Switch between the list and the text.
+
 ### Escape
 
 Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axHelp, axMCP, axMedia, axPass, axProcess, axStart, axTask and axTemplate. 7 meanings.
@@ -222,39 +258,6 @@ Bundle key, in axClaude, axFile, axGIT, axMedia, axTask, axTemplate and axTermin
 - axTemplate: Put in, with that program's selection.
 - axTerminal: Send the command.
 - axClaude: Send the message.
-
-### F6
-
-Bundle key, in axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask, axTemplate and axTerminal. 6 meanings.
-
-- axAutomate, axMCP, axPass, axTask and axTemplate: Switch between the navigator and the detail pane.
-- axDown, axJSON and axPreview: Between the text and the details.
-- axCalc, axClaude and axTerminal: Switch between the view and the field.
-- axMedia and axProcess: Back to the list.
-- axFile: Switch between the list and the Favorites list.
-- axGIT: Switch between the list and the text.
-
-### Ctrl+Tab
-
-Bundle key, in axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask, axTemplate and axTerminal. 6 meanings.
-
-- axAutomate, axMCP, axPass, axTask and axTemplate: Switch between the navigator and the detail pane.
-- axDown, axJSON and axPreview: Between the text and the details.
-- axCalc, axClaude and axTerminal: Switch between the view and the field.
-- axMedia and axProcess: Back to the list.
-- axFile: Switch between the list and the Favorites list.
-- axGIT: Switch between the list and the text.
-
-### Ctrl+Shift+Tab
-
-Bundle key, in axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask, axTemplate and axTerminal. 6 meanings.
-
-- axAutomate, axMCP, axPass, axTask and axTemplate: Switch between the navigator and the detail pane.
-- axDown, axJSON and axPreview: Between the text and the details.
-- axCalc, axClaude and axTerminal: Switch between the view and the field.
-- axMedia and axProcess: Back to the list.
-- axFile: Switch between the list and the Favorites list.
-- axGIT: Switch between the list and the text.
 
 ### Tab
 
@@ -897,7 +900,7 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 
 ### F-keys (F1 to F12 alone): say or show
 
-7 keys of the inventory. 14 misfits.
+7 keys of the inventory. 15 misfits.
 
 - F2, axAutomate, axFile, axMCP, axPass and axTask: Rename. Its kind: act on what is selected; Windows' own key for it.
 - F3, axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask and axTerminal: Find next. Its kind: go to a place; a bundle key.
@@ -908,7 +911,8 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 - F5, axPreview: Reload. Its kind: reads again.
 - F5, axAutomate: Run. Its kind: act on what is selected.
 - F6, axAutomate, axMCP, axPass and axTask: Switch between the navigator and the detail pane. Its kind: move between panes; a bundle key.
-- F6, axDown, axJSON and axPreview: Between the text and the details. Its kind: move between panes.
+- F6, axPreview: Between the text and the details. Its kind: move between panes.
+- F6, axDown and axJSON: Between the text and the field under it. Its kind: move between panes.
 - F6, axCalc, axClaude and axTerminal: Switch between the view and the field. Its kind: move between panes.
 - F6, axGIT: Switch between the list and the text. Its kind: move between panes.
 - F6, axMedia: Back to the list. Its kind: move between panes.

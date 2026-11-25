@@ -560,7 +560,7 @@
         {"label": "File Explorer", "menu": "Session, Show current file in", "key": "ctrl+w", "also": [], "keyText": "Ctrl+W", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Close all windows", "menu": "Window", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "Say the status", "menu": "Window", "key": "f8", "also": [], "keyText": "F8", "mark": "read", "keyOnly": false, "ai": true},
-        {"label": "Between the text and the details", "menu": "", "key": "ctrl+tab", "also": ["ctrl+shift+tab", "f6"], "keyText": "Ctrl+Tab", "mark": "open", "keyOnly": true, "ai": false}
+        {"label": "Between the text and the field under it", "menu": "", "key": "ctrl+tab", "also": ["ctrl+shift+tab", "f6"], "keyText": "Ctrl+Tab", "mark": "open", "keyOnly": true, "ai": false}
       ]
     },
     {
@@ -1018,7 +1018,7 @@
         {"label": "File Explorer", "menu": "Session, Show current file in", "key": "ctrl+w", "also": [], "keyText": "Ctrl+W", "mark": "open", "keyOnly": false, "ai": true},
         {"label": "Close all windows", "menu": "Window", "key": "", "also": [], "keyText": "", "mark": "act", "keyOnly": false, "ai": true},
         {"label": "Say the status", "menu": "Window", "key": "f8", "also": [], "keyText": "F8", "mark": "read", "keyOnly": false, "ai": true},
-        {"label": "Between the text and the details", "menu": "", "key": "ctrl+tab", "also": ["ctrl+shift+tab", "f6"], "keyText": "Ctrl+Tab", "mark": "open", "keyOnly": true, "ai": false}
+        {"label": "Between the text and the field under it", "menu": "", "key": "ctrl+tab", "also": ["ctrl+shift+tab", "f6"], "keyText": "Ctrl+Tab", "mark": "open", "keyOnly": true, "ai": false}
       ]
     },
     {

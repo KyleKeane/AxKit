@@ -204,8 +204,9 @@ Every key is bundle-wide (the same in every window of axKit, `AxKit.Forms/Bundle
 (`axDown/AxDownKeys`) (AX-8). The table is the spec of `AxDownKeys`; the F1 text reads from it.
 
 Bundle-wide (AX-8.2): F1 shortcuts; Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6 move between the window's
-controls (in axDown there is one, so they stay in the editor; in a notice they move between its text, field and
-buttons); Ctrl+F find, F3 and Shift+F3 next and previous; Ctrl+S save; Ctrl+Plus and Ctrl+Minus text size; Enter
+controls (in axDown the editor, and the field under it while Go to line or Find shows: Ctrl+Tab and F6 go to the
+field and back, "Between the text and the field under it", 2026-11-24; in a notice they move between its text, field
+and buttons); Ctrl+F find, F3 and Shift+F3 next and previous; Ctrl+S save; Ctrl+Plus and Ctrl+Minus text size; Enter
 and Escape on a notice; Page Up and Page Down one screen in an edit control; Ctrl+Up and Ctrl+Down the previous and
 next paragraph, with Shift selecting to there (AD-2.3); Ctrl+Space edit mode or navigation mode (AD-5.3); Alt+F4 exit; Alt and F10 the menu.
 

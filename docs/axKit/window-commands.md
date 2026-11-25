@@ -378,7 +378,7 @@ every window" or under a heading that names the windows without it; under an app
 - axGIT, access layer for Git. Menu: Session, Show current file in. Key: none. Mark: open.
 - axTerminal, access layer for your shell. Menu: Session, Show current file in. Key: none. Mark: act.
 - File Explorer. Menu: Session, Show current file in. Key: Ctrl+W. Mark: open.
-- Between the text and the details. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
+- Between the text and the field under it. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
 
 ## axFile
 
@@ -593,7 +593,7 @@ every window" or under a heading that names the windows without it; under an app
 - axGIT, access layer for Git. Menu: Session, Show current file in. Key: none. Mark: open.
 - axTerminal, access layer for your shell. Menu: Session, Show current file in. Key: none. Mark: act.
 - File Explorer. Menu: Session, Show current file in. Key: Ctrl+W. Mark: open.
-- Between the text and the details. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
+- Between the text and the field under it. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
 
 ## axMCP
 

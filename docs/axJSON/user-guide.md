@@ -78,7 +78,7 @@ Each menu with its commands and their keys, as the window lists them:
 - **Navigation**: Find (Ctrl+F); Find first; Find next (F3); Find previous (Shift+F3); Go to line (Ctrl+G); Next (Array (Ctrl+L), Error (Ctrl+E), Item (Ctrl+I), Key (Ctrl+K), Object (Ctrl+J)); Previous (Array (Ctrl+Shift+L), Error (Ctrl+Shift+E), Item (Ctrl+Shift+I), Key (Ctrl+Shift+K), Object (Ctrl+Shift+J)).
 - **Context**: Copy (Ctrl+C); Cut (Ctrl+X); Paste (Ctrl+V); Select all (Ctrl+A).
 - **Options**: Developer (Open settings file); General (Templates in axTemplate); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size, Word wrap (Ctrl+Shift+W)).
-- Keys without a menu item: Ctrl+Tab (Between the text and the details).
+- Keys without a menu item: Ctrl+Tab (Between the text and the field under it).
 - **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
 <!-- end of the menus -->
 

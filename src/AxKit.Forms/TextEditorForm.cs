@@ -208,9 +208,12 @@ public sealed partial class TextEditorForm : AxKitForm
         // The keys without a menu item: one main control, the editor, or the Go to line field while it shows; in the
         // viewer with its Details list, the text and the list in turn (AP-6.1); the viewer's line number. The keys the
         // edit control would act on first are OnEditorKeyDown's (AD-5.1).
+        // Named for what it moves between: an editor has no Details list, only the field under the text while one shows
+        // (Go to line, Find); the key stays taken there, so that Ctrl+Tab never types a tab into the text.
+        var panes = _app.ReadOnly && _app.Details is not null ? "Between the text and the details" : "Between the text and the field under it";
         foreach (var key in new[] { BundleKeys.NextControl, BundleKeys.PreviousControl, BundleKeys.NextControlAlso })
         {
-            AddKey(new Command("Between the text and the details", key, SwitchPane) { Mark = CommandMark.Open });
+            AddKey(new Command(panes, key, SwitchPane) { Mark = CommandMark.Open });
         }
 
         if (_app.ReadOnly)

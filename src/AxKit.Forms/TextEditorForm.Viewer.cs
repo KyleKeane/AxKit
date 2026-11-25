@@ -453,6 +453,7 @@ public sealed partial class TextEditorForm
             return;
         }
 
-        (_area.Current ?? _editor).Select();
+        // From the field under the text back to the text: without a Details list the key went to the field and stayed.
+        (_area.Current is { ContainsFocus: false } field ? field : _editor).Select();
     }
 }

@@ -29,6 +29,6 @@ Part of the notes of `src/AxKit.Forms` (the index is `src/AxKit.Forms/CLAUDE.md`
   - `OnActivated` waits while a dialog closes (`DialogShowing`); the caret arithmetic is `AxKit.Core.TextLines`.
   - The viewer's own part (the read-only setup, its File items, its keys, the hand-over, Reload, Edit in axDown or axJSON) is `TextEditorForm.Viewer.cs` (2026-10-23).
     - Since 2026-10-24 the read-only mode also takes `EditorApp.Render` (a `ViewerPage`: the document, the renderer's name for the status bar, the Contents lines and the `ViewerWayOut`) and `EditorApp.Details` (the lines of a Details list, `AxKitList`, docked under the text, read on a task, the same file's lines kept until the new ones come);
-    - `SwitchPane` takes Ctrl+Tab, Ctrl+Shift+Tab and F6 between the text and the list;
+    - `SwitchPane` takes Ctrl+Tab, Ctrl+Shift+Tab and F6 between the text and the list; in an editor, without the list, between the text and the field under it while one shows, named so (2026-11-24, the small faults' (12));
     - Ctrl+E goes by the page;
     - Session → Open with is filled from `Dispatch.Apps` as it opens (docs/axPreview/SPEC.md AP-6, AP-7).

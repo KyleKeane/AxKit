@@ -141,9 +141,10 @@ Exceptions today, which do another kind of thing:
 - F5, axPreview: Reload.
 - F5, axAutomate: Run.
 - F6, axAutomate, axMCP, axPass and axTask: Switch between the navigator and the detail pane.
-- F6, axDown, axJSON and axPreview: Between the text and the details.
 - F6, axCalc, axClaude and axTerminal: Switch between the view and the field.
 - F6, axMedia: Back to the list.
+- F6, axDown and axJSON: Between the text and the field under it.
+- F6, axPreview: Between the text and the details.
 - F6, axFile: Switch between the list and the Favorites list.
 - F6, axGIT: Switch between the list and the text.
 
@@ -231,15 +232,17 @@ Ctrl+Tab goes to the next part of the window and Ctrl+Shift+Tab to the one befor
 The keys:
 
 - Ctrl+Tab, axAutomate, axMCP, axPass, axTask and axTemplate: Switch between the navigator and the detail pane.
-- Ctrl+Tab, axDown, axJSON and axPreview: Between the text and the details.
 - Ctrl+Tab, axCalc, axClaude and axTerminal: Switch between the view and the field.
 - Ctrl+Tab, axMedia and axProcess: Back to the list.
+- Ctrl+Tab, axDown and axJSON: Between the text and the field under it.
+- Ctrl+Tab, axPreview: Between the text and the details.
 - Ctrl+Tab, axFile: Switch between the list and the Favorites list.
 - Ctrl+Tab, axGIT: Switch between the list and the text.
 - Ctrl+Shift+Tab, axAutomate, axMCP, axPass, axTask and axTemplate: Switch between the navigator and the detail pane.
-- Ctrl+Shift+Tab, axDown, axJSON and axPreview: Between the text and the details.
 - Ctrl+Shift+Tab, axCalc, axClaude and axTerminal: Switch between the view and the field.
 - Ctrl+Shift+Tab, axMedia and axProcess: Back to the list.
+- Ctrl+Shift+Tab, axDown and axJSON: Between the text and the field under it.
+- Ctrl+Shift+Tab, axPreview: Between the text and the details.
 - Ctrl+Shift+Tab, axFile: Switch between the list and the Favorites list.
 - Ctrl+Shift+Tab, axGIT: Switch between the list and the text.
 
