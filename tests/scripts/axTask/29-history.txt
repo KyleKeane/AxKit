@@ -1,0 +1,35 @@
+# Workflow: Keep a history of a list's changes and read an item's
+# axTask, docs/axTask/SPEC.md TK-4.11 (the maintainer's ask of 2026-11-22, built 2026-11-24): a list keeps no history
+# until Options, Keep a history of changes in this list turns it on; then every change and every undo adds its lines to
+# history.jsonl beside list.json, and Context, Item, History reads the item's changes, newest first.
+file home\AxKit\axTask.json {"checkForUpdates": false}
+file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Room","type":"text","value":""}],"actions":[]}
+file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false,"Room":"Kitchen"}
+start task {temp}\tasks
+expect focus Your lists, heading level 1
+keys down
+keys right
+expect focus Fix the tap
+
+# Check: A list keeps no history until it is turned on
+do History
+expect said No history is kept for Home
+
+# Goal: Turn on the history of a list
+do Keep a history of changes in this list
+expect said ! A history of changes is kept for Home
+run findstr /l /c:"\"keep history\": true" tasks\Home\list.json
+
+# Goal: Read what changed in an item
+# A task marked done and the mark undone: two lines, the undo recorded as the change it made.
+keys ctrl+enter
+expect said ! Done: Fix the tap
+run findstr /l /c:"\"field\":\"Done\",\"from\":false,\"to\":true" tasks\Home\history.jsonl
+do Undo
+expect said ! Undone: Done: Fix the tap
+run findstr /l /c:"\"field\":\"Done\",\"from\":true,\"to\":false" tasks\Home\history.jsonl
+do History
+expect state "notice":"History of Fix the tap, 2 changes"
+expect state Done: from checked to not checked
+keys escape
+expect focus Fix the tap

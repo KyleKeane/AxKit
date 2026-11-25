@@ -935,6 +935,7 @@ every window" or under a heading that names the windows without it; under an app
 - Decline this report. Menu: Context. Key: none. Mark: act. Never run by AI tools.
 - Done or not done. Menu: Context. Key: Ctrl+Enter. Mark: change.
 - Edit the list's configuration. Menu: Context. Key: Ctrl+J. Mark: open.
+- History. Menu: Context. Key: none. Mark: read.
 - Move down in the list. Menu: Context. Key: Ctrl+Shift+Down. Mark: change.
 - Move to a list. Menu: Context. Key: Ctrl+M. Mark: change.
 - Move to section. Menu: Context. Key: Ctrl+M. Mark: change.
@@ -962,6 +963,7 @@ every window" or under a heading that names the windows without it; under an app
 - Approval passphrase. Menu: Options. Key: none. Mark: act. Never run by AI tools.
 - Filter. Menu: Options. Key: none. Mark: change.
 - Hide done tasks. Menu: Options. Key: Ctrl+Shift+D. Mark: change.
+- Keep a history of changes in this list. Menu: Options. Key: none. Mark: change.
 - New items at the top of this list. Menu: Options. Key: none. Mark: change.
 - Name. Menu: Options, Sort by. Key: none. Mark: change.
 - The list's own order. Menu: Options, Sort by. Key: none. Mark: change.

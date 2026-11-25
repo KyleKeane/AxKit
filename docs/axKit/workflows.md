@@ -928,6 +928,9 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
 28. **Set or clear fields of several items at once**
     - Set fields of the selected items
     - Clear fields of the selected items
+29. **Keep a history of a list's changes and read an item's**
+    - Turn on the history of a list
+    - Read what changed in an item
 
 ## axTemplate
 

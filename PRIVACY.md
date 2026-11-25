@@ -65,7 +65,8 @@ when you send a report:
   where this copy cannot send at all, the notice offers to copy the report, not encrypted, to your own
   clipboard. GitHub's privacy statement applies to what is posted: <https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement>.
 
-axTask is local only and makes no network request. A list's own actions can start a program: an action written in
+axTask is local only and makes no network request. A list can keep a history of its changes, off until you turn it
+on in Options for that list: a file beside the list, on your computer, that nothing sends anywhere. A list's own actions can start a program: an action written in
 the list's configuration file (`list.json`) may name a program on your computer, which axTask runs when you choose
 the action, with what the selected item holds as its arguments. axTask asks you before such an action's first run and
 after every change to it, shows the program and every argument, and does not know what the program does or reaches:

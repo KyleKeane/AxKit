@@ -284,6 +284,10 @@ The runner's script is `tests/scripts/axTask/20-selection.txt`.
     "Undone: Fields set: 2 items".
 14. Context, Clear fields: "Clear fields, form", the list "Check the fields to empty"; Ctrl+Enter at once: "Check at
     least one field to empty". Space on one field, Ctrl+Enter: "Fields cleared: 2 items". Ctrl+Z takes it back.
+15. Context, History on an item of a list without a history: "No history is kept for Home: Options, Keep a history
+    of changes in this list turns it on". Turn it on there: "A history of changes is kept for Home". Ctrl+Enter, then
+    Ctrl+Z, then Context, History: "History of Fix the tap, 2 changes", the newest first, "Done: from checked to not
+    checked"; Escape back to the item (TK-4.11).
 
 ## 12. What opens says its kind (bundle AX-7.11)
 

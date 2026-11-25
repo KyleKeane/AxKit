@@ -1102,3 +1102,21 @@ Starts with: Open axTask with the folder tasks.
     You hear: Fields cleared: 2 items.
 6. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Fields cleared: 2 items.
+
+## Keep a history of a list's changes and read an item's
+
+Starts with: Open axTask with the folder tasks.
+
+### Turn on the history of a list
+
+1. Choose Keep a history of changes in this list in the Options menu.
+    You hear: A history of changes is kept for Home.
+
+### Read what changed in an item
+
+1. Press Ctrl+Enter (Done or not done; Context menu).
+    You hear: Done: Fix the tap.
+2. Press Ctrl+Z (Undo; Actions menu).
+    You hear: Undone: Done: Fix the tap.
+3. Choose History in the Context menu.
+4. Press Escape.

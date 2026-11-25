@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- axTask, axPass and axMCP: **templates in a form's field are back**, on Shift+F10 or the Applications key, now as Windows' own menu with the first template selected, which NVDA reads; to be heard in the next NVDA pass.
+- axTask: **a list can keep a history of its changes**: Options, Keep a history of changes in this list, off until you turn it on. Every change and every Ctrl+Z is then written with its time, the field and what it went from and to, on your computer beside the list; Context, History reads an item's changes, newest first.
 - axClaude: **a typed slash command's suggestions no longer flash into the conversation**: the list Claude Code draws above its prompt is hidden again, also with blank rows under it and with entries that carry another name in brackets, such as "/usage (cost)".
 - axDown and axJSON: **Ctrl+Tab and F6 are named for what they do**, "Between the text and the field under it", and now go back to the text from the Go to line or Find field.
 - axClaude: **the message after an interrupt goes alone again**: Claude Code 2.1.331 puts an interrupted message back on its prompt, where the next message was added to it and Claude received both as one, or no reply was heard. axClaude now empties that prompt first.

@@ -108,6 +108,8 @@ public sealed partial class TaskForm : ItemForm
         // TK-4.7a: fields set, or emptied, on the selected items, or the current one, as one step.
         Add(_itemMenu, new Command("Set &fields...", Keys.None, SetFieldsOfItems) { Mark = CommandMark.Change });
         Add(_itemMenu, new Command("Cl&ear fields...", Keys.None, ClearFieldsOfItems) { Mark = CommandMark.Change });
+        // TK-4.11: what changed in the item, from its list's history.
+        Add(_itemMenu, new Command("Histor&y", Keys.None, ShowItemHistory) { Mark = CommandMark.Read });
         // TK-4.9: the item moved in its list's own order.
         AddOrderCommands(_itemMenu);
         _itemMenu.DropDownItems.Add(new ToolStripSeparator());
@@ -151,11 +153,17 @@ public sealed partial class TaskForm : ItemForm
         // TK-4.10: where a new item of the list shown lands, the list's own setting, read as Options opens.
         var newAtTop = CommandPalette.Marked(new ToolStripMenuItem("New items at the &top of this list", null, (_, _) => ToggleNewItemsAtTop()), CommandMark.Change);
         options.DropDownItems.Add(newAtTop);
+        // TK-4.11: the list's history of changes, the list's own switch, off until turned on.
+        var keepHistory = CommandPalette.Marked(new ToolStripMenuItem("&Keep a history of changes in this list", null, (_, _) => ToggleKeepHistory()), CommandMark.Change);
+        options.DropDownItems.Add(keepHistory);
         CommandPalette.RefreshedOnOpening(options, () =>
         {
             var inList = !AtTop && _smart is null && !Gathered && !IsArchiveFolder(_folder);
+            var config = inList ? ItemFolder.ReadConfig(_folder).Config : null;
             newAtTop.Enabled = inList;
-            newAtTop.Checked = inList && ListOrder.NewAtTop(ItemFolder.ReadConfig(_folder).Config);
+            newAtTop.Checked = inList && ListOrder.NewAtTop(config);
+            keepHistory.Enabled = inList;
+            keepHistory.Checked = inList && ItemHistory.On(config);
         });
         options.DropDownItems.Add(new ToolStripSeparator());
         options.DropDownItems.AddRange(CreateProjectFolderItems());

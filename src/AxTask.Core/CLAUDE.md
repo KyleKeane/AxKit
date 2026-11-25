@@ -41,6 +41,11 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
   order, the others by name after, or before for top), `Moved` and `MovedAmong` (a move among the items shown, hidden
   done tasks kept in place), `Renamed`, `Added`, `WithOrder`, `WithNewItems`, `Said`. `ItemFolder.Read` arranges by
   it. Tested in `ListOrderTests`.
+- `ItemHistory` with `Entry` (SPEC.md TK-4.11, 2026-11-24): a list's history of changes, kept only when its
+  configuration's `keep history` is true (`On`, `With`), in `history.jsonl` beside list.json: `Lines` (a step's
+  parts as lines, per list folder: a field changed with from and to, made, removed, moved to or from another list;
+  only item files), `Undone` (an undo's parts as the change it makes), `Of` (one item's lines newest first, followed
+  back through its Title's changes) and `Said`. Tested in `ItemHistoryTests`.
 - `Links` (IA-D3): `AfterMove` (the writes that keep every link pointing where it did when a file or a folder moves,
   both the links to it and the links it holds), `Spoken` ("missing: name"), `Remap`.
 - The item's form rules, `ItemFormRules`, moved to `AxKit.Core` on 2026-11-23 (its second use, axTemplate's form; `src/AxKit.Core/notes/text-and-editors.md`).

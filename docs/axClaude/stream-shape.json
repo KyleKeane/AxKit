@@ -1,7 +1,7 @@
 {
   "format": "axkit-stream-shape 1",
   "note": "Written by tools/ClaudeProbe stream --shape, never by hand: the keys of every kind of line Claude Code's non-interactive stream gave in the probe's cases, with no value. A key that comes only now and then (thinking) may be in one run and not the next: the cases' own expectations, not this file, say whether the stream still works.",
-  "claudeCode": "2.1.331",
+  "claudeCode": "2.1.332",
   "lines": {
     "assistant": ["api_error_status","api_error_type","context_usage","error","is_api_error_message","local_command_run","local_command_source","message","parent_tool_use_id","request_id","session_id","thinking_display","thinking_duration_ms","timestamp","type","uuid","wire_tool_inputs"],
     "control_response/success": ["response","type"],

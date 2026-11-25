@@ -262,6 +262,17 @@ selected ones (TK-4.4, TK-4.7).
   shown, its configuration's member `new items`, `"bottom"` at first. At the top a new item (Ctrl+N, an AI tool's
   add) stands first, the order written with it; at the bottom it stands last in a list that has an order, and in one
   without, by its name as before. The configuration's file can say it too, and axJSON edits it (Ctrl+J).
+- **TK-4.11 A list's history of changes** (the maintainer's ask of 2026-11-22: "keep a record of all edits with a
+  time and the field that was edited and what it went from and what it changed to"; built 2026-11-24): Options, Keep
+  a history of changes in this list, a check of the list shown, its configuration's member `keep history`, absent at
+  first: a record of what the user does is kept only once he turns it on, and only on this computer. While it is on,
+  every change axTask makes in the list's items, and every Ctrl+Z, adds lines to `history.jsonl` beside `list.json`,
+  one JSON object a line, never rewritten: the local time, the item by its title then, and the field with its value
+  before and after, or `made`, `removed`, `moved to` or `moved from` with the other list. A change made outside axTask
+  (axJSON, a sync) is not in it. Context, Item, History reads the item's lines, newest first, followed back through
+  its renames, in a notice: "History of Fix the tap, 2 changes", each line "2026-11-24 18:30, Done: from not checked
+  to checked". Turned off, nothing more is written and the file stays. The shape is kept plain for the long-term item
+  of ids and history (`AxTask.Core/ItemHistory`).
 
 ## 5. All tasks and the smart lists
 

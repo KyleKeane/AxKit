@@ -57,7 +57,7 @@ Only in a test run, on a desktop of its own, never in your windows.
 
 ## 2. The functions
 
-A function is a command of a window (`docs/axKit/command-language.md`): 1971 in the inventory, of which 278 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
+A function is a command of a window (`docs/axKit/command-language.md`): 1973 in the inventory, of which 278 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
 
 ### The marks, and the events a command of each mark ends in
 
@@ -79,9 +79,9 @@ A function is a command of a window (`docs/axKit/command-language.md`): 1971 in 
 - `actions`, the Actions menu: Do something with the whole of what the window holds: undo and redo, run, push and pull, a new item, interrupt.
   - 130 commands in 18 apps: read 12, open 7, change 59, act 52.
 - `context`, the Context menu: Do something with the one thing the focus is on: copy, cut, paste, rename, delete, open, information. Shift+F10 and Ctrl+Period open it.
-  - 119 commands in 18 apps: read 16, open 27, change 27, act 49.
+  - 120 commands in 18 apps: read 17, open 27, change 27, act 49.
 - `options`, the Options menu: Settings, each said with its new state: text, speech, sounds, announcements, what happens when something is done.
-  - 277 commands in 18 apps: read 1, open 24, change 228, act 24.
+  - 278 commands in 18 apps: read 1, open 24, change 229, act 24.
 - `window`, the Window menu: The other windows of axKit: a new window of any app, close all windows, say the status.
   - 36 commands in 18 apps: read 18, act 18.
 - `axkit`, the axKit menu: The services of the whole bundle: the AI tools and what they may do, Claude for AI help, the theme.

@@ -731,6 +731,7 @@ public sealed partial class TaskForm
 
         Log.Info("Undone a step");
         PatchProjectItems(step.Parts);
+        RecordHistory(ItemHistory.Undone(step.Parts));
         // The selection on what the step touched first, where it is again.
         var first = step.Parts[0];
         Fill(first.IsMove ? first.Path : SelectedKey() ?? first.Path);
@@ -1043,6 +1044,7 @@ public sealed partial class TaskForm
     {
         Log.Info("A change written");
         PatchProjectItems(step.Parts);
+        RecordHistory(step.Parts);
         _undo.Add(step);
         if (_undo.Count > MaxUndo)
         {
