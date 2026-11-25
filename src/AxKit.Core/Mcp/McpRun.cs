@@ -202,7 +202,7 @@ public static class McpRun
     {
         var who = Speaker(client);
         var shown = ShownTarget(target);
-        return $"# Read this first\n\n{who}, an AI model, asks to run a command of this window, as if you had chosen it from the menu. {AiCaution.Request} "
+        return $"# Read this first\n\n{AiCaution.RunAsked(who)} {AiCaution.Request} "
             + $"axKit does not know why {who} asks: the conversation with it may say. If you do not know what the command will do here, do not allow it. Allowing it is your own act.\n\n"
             + "# How far it reaches\n\nIt acts outside this window: it may delete, move, send, open or start a program, or end something, exactly as when you run it yourself. It is this window's own menu command and does only what that menu item does; it is not a shell command.\n\n"
             + $"# The command\n\n{Plain(label)}{(menu.Length > 0 ? $", in the menu {menu}" : string.Empty)}.\n\n"

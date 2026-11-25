@@ -1208,9 +1208,35 @@ public abstract partial class AxKitForm : Form
             }
         }
 
+        // Rule 1 (AX-7): every control the keyboard reaches has a name NVDA says, asked of the built window as it stands,
+        // a notice's controls and the ones a window shows later included once they exist (docs/axKit/repairs.json R-98,
+        // 2026-11-25: until then no check held it). A button or a check box with its own text is named by it.
+        foreach (var control in Unnamed(this))
+        {
+            problems.Add($"A {control.GetType().Name} ({control.Name}) has no accessible name: give it one where it is made (root CLAUDE.md rule 1)");
+        }
+
         return problems;
 
         static string Plain(string label) => label.Replace("&", string.Empty, StringComparison.Ordinal).TrimEnd('.');
+
+        static IEnumerable<Control> Unnamed(Control parent)
+        {
+            foreach (Control control in parent.Controls)
+            {
+                var named = !string.IsNullOrWhiteSpace(control.AccessibleName)
+                    || (control is ButtonBase && !string.IsNullOrWhiteSpace(control.Text));
+                if (!named && control.TabStop && control is TextBoxBase or ListBox or ComboBox or TreeView or ButtonBase)
+                {
+                    yield return control;
+                }
+
+                foreach (var inner in Unnamed(control))
+                {
+                    yield return inner;
+                }
+            }
+        }
     }
 
     /// <summary>The first command with the key whose <see cref="Command.When"/> holds, run; true when there was one.</summary>

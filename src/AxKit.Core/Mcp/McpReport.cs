@@ -35,7 +35,7 @@ public static class McpReport
     /// user takes it out, so that the maintainer knows; then the draft, its hidden characters made visible.
     /// </summary>
     public static string Words(string client, string text) =>
-        $"(Drafted by {McpRun.Speaker(client)}, an AI tool; read by me before sending.)\r\n\r\n"
+        AiCaution.ReportMark(McpRun.Speaker(client)) + "\r\n\r\n"
         + string.Join("\r\n", text.Trim().ReplaceLineEndings("\n").Split('\n').Select(DisplayText.Visible));
 
     /// <summary>What the tool answers once the form is open: nothing is sent, and the user decides.</summary>

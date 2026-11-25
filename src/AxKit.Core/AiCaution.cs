@@ -78,6 +78,16 @@ public static class AiCaution
     public static string OpenAsked(string who) =>
         $"{who}, an AI model, asks for this. It can be wrong, and axKit has checked nothing of why it asks. Open it only if you want it open: that is your own choice.";
 
+    /// <summary>
+    /// The first line of the words of a report an AI tool drafted (docs/axKit/mcp.md MC-9.11), kept in the report unless
+    /// the user takes it out, so that the maintainer knows who wrote it. Here since 2026-11-25 (repairs R-98: rule 11's
+    /// words come from this class alone).
+    /// </summary>
+    public static string ReportMark(string who) => $"(Drafted by {who}, an AI tool; read by me before sending.)";
+
+    /// <summary>The first sentence of the notice of an AI tool's run of a window command (MC-7.3): who asks, and what is asked; <see cref="Request"/> follows it.</summary>
+    public static string RunAsked(string who) => $"{who}, an AI model, asks to run a command of this window, as if you had chosen it from the menu.";
+
     /// <summary>In the question an AI tool's run of a window command asks.</summary>
     public const string Request = "The request comes from an AI tool, which can be wrong: allow it only if you know what the command will do here.";
 }
