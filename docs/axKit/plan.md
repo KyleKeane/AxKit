@@ -45,8 +45,8 @@ the restart by the app itself (2.3.0).
 
 ## Still to come
 
-- **A chat app over REST chat APIs** (asked 2026-11-25, high priority, name to settle, axChat proposed; design with
-  Fable first, nothing built): a conversation like axClaude's over an HTTP chat API (llama.cpp's server, any
+- **axChat, a chat app over REST chat APIs** (asked 2026-11-25, high priority; the name his the same day; specified
+  in `docs/axChat/SPEC.md`, nothing built): a conversation like axClaude's over an HTTP chat API (llama.cpp's server, any
   OpenAI-compatible server, Anthropic, Ollama), the user picking a named API dialect, giving its address and key,
   and pressing Go, one step; dialects as data files mapping each API's requests and streamed events onto axKit's
   own events, with presets and the user's own; the conversation window axClaude has. A specialized chat app rather
