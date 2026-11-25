@@ -9,7 +9,7 @@ file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true
 file home\AxKit\axHelp.json {"hotkey": "Ctrl+Alt+Shift+F9", "screenshotHotkey": "Ctrl+Alt+Shift+F11", "model": "haiku"}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir away
-start claude {temp}\away --title axHelp --hide-on-close -- --model haiku
+start claude {temp}\away --title axHelp --hide-on-close -- --model haiku --effort low
 try said trust
 iffound wait 1500
 iffound keys enter

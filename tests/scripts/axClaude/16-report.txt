@@ -7,7 +7,7 @@ file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true
 # The access layer's reminder agreed to already (AX-11.5): this script is about the report.
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir report
-start claude {temp}\report -- --model haiku
+start claude {temp}\report -- --model haiku --effort low
 try said trust
 iffound wait 1500
 iffound keys enter

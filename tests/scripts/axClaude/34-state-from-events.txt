@@ -23,7 +23,7 @@ mkdir sh
 file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
 file scenario.json {"version":"2.1.325 (stand-in)","session":"11111111-2222-4333-8444-777777777777","home":"home","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"hook":"SessionStart","fields":{"source":"startup"}},{"waitFile":"go1"},{"mark":"A"},{"frame":["claude: started","you: Say ok","$"],"clear":true},{"user":["Say ok"],"source":"typed"},{"waitFile":"go2"},{"hook":"Stop","last":["A first row.","The last row of the reply."],"tasks":[]},{"mark":"C"},{"mark":"D"},{"bell":true},{"waitFile":"go3"},{"frame":["claude: started","you: Say ok","claude: A first row.","The last row of the reply.","Sautéed for 2s · done 4:07 PM","auto mode on (shift+tab to cycle)","$"],"clear":true},{"assistant":["A first row.","The last row of the reply."]},{"turnEnd":2345},{"wait":150},{"mark":"A"},{"frame":["claude: started","you: Say ok","claude: A first row.","The last row of the reply.","Sautéed for 2s · done 4:07 PM","you: Say more","Pollinating…","auto mode on (shift+tab to cycle)  ·  esc to interrupt","$"],"clear":true},{"user":["Say more"],"source":"typed"},{"wait":400},{"hook":"Stop","last":["more"],"tasks":[]},{"mark":"C"},{"mark":"D"},{"bell":true},{"wait":60},{"frame":["claude: started","you: Say ok","claude: A first row.","The last row of the reply.","Sautéed for 2s · done 4:07 PM","you: Say more","claude: more","Sautéed for 1s · done 4:08 PM","auto mode on (shift+tab to cycle)","$"],"clear":true},{"assistant":["more"]},{"turnEnd":1200},{"idle":true}]}
 
-start claude {temp}\sw --claude {temp}\claude.cmd -- --model haiku
+start claude {temp}\sw --claude {temp}\claude.cmd -- --model haiku --effort low
 expect said Ready
 # Goal: Know that Claude works while the screen shows no sign of it
 # Claude takes the message up: the start mark, and a frame with no spinner and no mode line. The status bar says
@@ -66,7 +66,7 @@ expect said Core: in charge of state and Done.
 # decides nothing. The same turn: after the start mark and the frame that shows no work the status bar says ready, as
 # the screen has it, and a message sent then is "Sent".
 file home\AxKit\axClaude.json {"claudeHooks":true,"eventCore":"shadow"}
-start claude {temp}\sh --claude {temp}\claude.cmd -- --model haiku
+start claude {temp}\sh --claude {temp}\claude.cmd -- --model haiku --effort low
 expect said Ready
 menu Say the event sources
 expect said Core: in shadow.

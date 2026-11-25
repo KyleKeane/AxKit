@@ -17,7 +17,7 @@ mkdir sf
 file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
 file scenario.json {"version":"2.1.324 (stand-in)","session":"11111111-2222-4333-8444-666666666666","home":"home","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"waitFile":"go1"},{"mark":"A"},{"frame":["claude: started","you: Say ok","Pollinating…","auto mode on (shift+tab to cycle)  ·  esc to interrupt","$"],"clear":true},{"user":["Say ok"],"source":"typed"},{"wait":600},{"mark":"C"},{"mark":"D"},{"bell":true},{"wait":60},{"frame":["claude: started","you: Say ok","claude: ok","Sautéed for 2s · done 4:07 PM","auto mode on (shift+tab to cycle)","$"],"clear":true},{"assistant":["ok"]},{"turnEnd":2345},{"waitFile":"go2"},{"mark":"A"},{"frame":["claude: started","you: Say ok","claude: ok","Sautéed for 2s · done 4:07 PM","you: Say more","Pollinating…","auto mode on (shift+tab to cycle)  ·  esc to interrupt","$"],"clear":true},{"user":["Say more"],"source":"typed"},{"wait":600},{"mark":"C"},{"mark":"D"},{"bell":true},{"wait":60},{"frame":["claude: started","you: Say ok","claude: ok","Sautéed for 2s · done 4:07 PM","you: Say more","claude: more","Sautéed for 1s · done 4:08 PM","auto mode on (shift+tab to cycle)","$"],"clear":true},{"assistant":["more"]},{"turnEnd":1200},{"idle":true}]}
 
-start claude {temp}\sf --claude {temp}\claude.cmd -- --model haiku
+start claude {temp}\sf --claude {temp}\claude.cmd -- --model haiku --effort low
 expect said Ready
 # Check: No session file is known before a message is sent
 # Before a message is sent nothing is looked for: no file is known.

@@ -10,7 +10,7 @@ file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code",
 mkdir st
 # Claude Code's own default permission mode is named for the run: a user whose settings choose another one (auto,
 # which allows a harmless command by itself) would get no question here, and the question is what this script checks.
-start claude {temp}\st --source stream -- --model haiku --permission-mode default
+start claude {temp}\st --source stream -- --model haiku --effort low --permission-mode default
 
 # Goal: Start Claude Code over its stream in a folder
 expect said Start Claude Code in this folder?

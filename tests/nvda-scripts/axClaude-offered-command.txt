@@ -8,7 +8,7 @@
 file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir heard
-start claude {temp}\heard -- --model haiku
+start claude {temp}\heard -- --model haiku --effort low
 expect said trust
 wait 1500
 keys enter

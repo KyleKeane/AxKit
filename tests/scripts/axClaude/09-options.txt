@@ -9,7 +9,7 @@ file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code",
 mkdir opts
 # Step 3: the raw stream recorded from the start (--record, the command line's form of Options, Developer, Record raw
 # stream; the menu item's file picker is a Windows dialog, left manual).
-start claude {temp}\opts --record {temp}\raw.vt -- --model haiku
+start claude {temp}\opts --record {temp}\raw.vt -- --model haiku --effort low
 expect said trust
 wait 1500
 keys enter
@@ -284,7 +284,7 @@ menu Time stamps on Input and Output lines
 # Step 1, the end: close and start again: the larger text is still in use (Larger text says 11).
 close
 wait 2000
-start claude {temp}\opts -- --model haiku --continue
+start claude {temp}\opts -- --model haiku --effort low --continue
 expect said Ready
 menu Larger text
 expect said Text size 11

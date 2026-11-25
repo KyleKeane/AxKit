@@ -45,5 +45,5 @@ close
 # Check: axClaude's Show current folder in lists axGIT
 # 2.1 axClaude on the repository: Session, Show current folder in, axGIT (Claude on Haiku; the trust question is
 # left unanswered, the menu is there from the start).
-start claude {temp}\repo -- --model haiku
+start claude {temp}\repo -- --model haiku --effort low
 expect commands "axGIT, access layer for Git, Session, Show current folder in"

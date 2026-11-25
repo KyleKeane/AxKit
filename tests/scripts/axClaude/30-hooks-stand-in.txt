@@ -28,7 +28,7 @@ file scenario.json {"version":"2.1.325 (stand-in)","session":"11111111-2222-4333
 file old\claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
 file old\scenario.json {"version":"2.1.324 (stand-in)","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"hook":"SessionStart","fields":{"source":"startup"}},{"idle":true}]}
 
-start claude {temp}\a --claude {temp}\claude.cmd -- --model haiku
+start claude {temp}\a --claude {temp}\claude.cmd -- --model haiku --effort low
 expect said Ready
 # Goal: Hear whether Claude Code's events reach the window
 # The session's start event has arrived: the hooks are on, one event received.
@@ -61,7 +61,7 @@ run findstr /c:"its path was not used" home\AxKit\logs\axClaude.log
 
 # Check: A Claude Code older than the events' table gets no hooks
 # A second window on the stand-in that says 2.1.324: the file is not passed, and the window works as it always did.
-start claude {temp}\b --claude {temp}\old\claude.cmd -- --model haiku
+start claude {temp}\b --claude {temp}\old\claude.cmd -- --model haiku --effort low
 expect said Ready
 wait 1500
 menu Say the event sources
@@ -72,7 +72,7 @@ expect said Hooks: not passed, version.
 # answer two seconds at most, then starts Claude without the hooks' file, which the log says; "Ready" comes as always.
 # The answer is in a moment later: Claude started again gets the file (a batch file starts no hook: none received).
 file slow\claude.cmd @echo off\nif "%~1"=="--version" goto version\nchcp 65001 >nul\nfor /f %%a in ('echo prompt $E^| cmd') do set "E=%%a"\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho auto mode on (shift+tab to cycle)\n<nul set /p "=$%E%[?25h"\n:idle\nping -n 2 127.0.0.1 >nul\ngoto idle\n:version\nping -n 5 127.0.0.1 >nul\necho 2.1.325 (stand-in)
-start claude {temp}\c --claude {temp}\slow\claude.cmd -- --model haiku
+start claude {temp}\c --claude {temp}\slow\claude.cmd -- --model haiku --effort low
 expect said Ready
 menu Say the event sources
 expect said Hooks: not passed, version.

@@ -11,7 +11,7 @@ file home\.claude\settings.json {\n  "theme": "dark",\n  "permissions": { "allow
 mkdir cs
 file claude.cmd @echo off\nif "%~1"=="--version" goto version\nchcp 65001 >nul\nfor /f %%a in ('echo prompt $E^| cmd') do set "E=%%a"\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho auto mode on (shift+tab to cycle)\n<nul set /p "=$%E%[?25h"\n:idle\nping -n 2 127.0.0.1 >nul\ngoto idle\n:version\necho 0.0.0 (stand-in)
 
-start claude {temp}\cs --claude {temp}\claude.cmd -- --model haiku
+start claude {temp}\cs --claude {temp}\claude.cmd -- --model haiku --effort low
 expect said Ready
 
 # Check: Feedback requests are not blocked at first

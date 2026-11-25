@@ -13,7 +13,7 @@ run mkdir "home\Documents\axKit\Claude"
 
 # 20.1 The hidden start: no window on view, and Claude Code's question about the new folder waits unspoken: no
 # announcement, no sound, no move of the focus.
-start claude "{temp}\home\Documents\axKit\Claude" --title axHelp --hide-on-close --hidden -- --model haiku
+start claude "{temp}\home\Documents\axKit\Claude" --title axHelp --hide-on-close --hidden -- --model haiku --effort low
 expect state "visible":false
 wait 8000
 refuse said trust
@@ -54,7 +54,7 @@ expect closed
 # Check: A hidden window never brought up ends at once and keeps its saved place
 # 20.5 A hidden start that is never brought up: axHelp's Quit asks it to end, and with nothing to lose it ends at
 # once, unseen. It was never where the user put a window, so the saved place stays as it was: still maximized.
-start claude "{temp}\home\Documents\axKit\Claude" --title axHelp --hide-on-close --hidden -- --model haiku
+start claude "{temp}\home\Documents\axKit\Claude" --title axHelp --hide-on-close --hidden -- --model haiku --effort low
 expect state "visible":false
 wait 6000
 expect state Claude: ready

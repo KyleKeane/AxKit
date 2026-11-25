@@ -11,7 +11,7 @@ mkdir st
 file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
 file scenario.json {"version":"2.1.325 (stand-in)","session":"11111111-2222-4333-8444-666666666666","home":"home","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"hook":"SessionStart","fields":{"source":"startup"}},{"idle":true}]}
 
-start claude {temp}\st --claude {temp}\claude.cmd -- --model haiku
+start claude {temp}\st --claude {temp}\claude.cmd -- --model haiku --effort low
 expect said Ready
 # A change of an option saves the settings, and so seals them: from now on this install has sealed the file.
 do Say new line
@@ -21,7 +21,7 @@ close
 # The closed window writes its settings as it goes: the file is written over only after that, without the seal.
 wait 2000
 file home\AxKit\axClaude.json {"claudePath":"C:/planted/claude.exe"}
-start claude {temp}\st --claude {temp}\claude.cmd -- --model haiku
+start claude {temp}\st --claude {temp}\claude.cmd -- --model haiku --effort low
 expect said Ready
 do Conversation
 # The text is matched as the channel writes it, where an apostrophe is escaped: the part after it.

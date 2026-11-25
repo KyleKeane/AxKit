@@ -14,7 +14,7 @@ mkdir es
 # ended by the escape character and a backslash, written without a line end; the bell is the character 7.
 file claude.cmd @echo off\nif "%~1"=="--version" goto version\nchcp 65001 >nul\nfor /f %%a in ('echo prompt $E^| cmd') do set "E=%%a"\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho auto mode on (shift+tab to cycle)\n<nul set /p "=$%E%[?25h"\n:wait1\nif exist go1 goto frame1\nping -n 2 127.0.0.1 >nul\ngoto wait1\n:frame1\n<nul set /p "=%E%]133;A%E%\"\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho you: Say ok\necho Thinking…\necho auto mode on (shift+tab to cycle)  ·  esc to interrupt\n<nul set /p "=$%E%[?25h"\n:wait2\nif exist go2 goto frame2\nping -n 2 127.0.0.1 >nul\ngoto wait2\n:frame2\n<nul set /p "=%E%]133;C%E%\%E%]133;D%E%\\u0007"\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho you: Say ok\necho claude: ok\necho auto mode on (shift+tab to cycle)\n<nul set /p "=$%E%[?25h"\n:idle\nping -n 2 127.0.0.1 >nul\ngoto idle\n:version\necho 0.0.0 (stand-in)
 
-start claude {temp}\es --claude {temp}\claude.cmd -- --model haiku
+start claude {temp}\es --claude {temp}\claude.cmd -- --model haiku --effort low
 expect said Ready
 # The two switches and the command are in Options, Developer; both switches are on.
 expect commands Events from Claude Code's hooks, Options, Developer, checked

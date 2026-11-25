@@ -10,7 +10,7 @@ file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir ask
-start claude {temp}\ask -- --model haiku
+start claude {temp}\ask -- --model haiku --effort low
 # Goal: Answer the trust question from the list
 # Step 1: a folder Claude has not seen, the focus in the message field: the trill, then "Permission Required:
 # Accessing workspace. <folder>, list, y. Yes, I trust this folder, 1 of 2" (the app's part: the question and the

@@ -16,7 +16,7 @@ mkdir st
 file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
 file scenario.json {"version":"2.1.325 (stand-in)","session":"11111111-2222-4333-8444-555555555555","home":"home","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"hook":"SessionStart","fields":{"source":"startup"}},{"waitFile":"go1"},{"mark":"A"},{"frame":["claude: started","you: Say ok","Pollinating…","auto mode on (shift+tab to cycle)  ·  esc to interrupt","$"],"clear":true},{"user":["Say ok"],"source":"typed"},{"wait":1500},{"hook":"Stop","last":["ok"],"tasks":[]},{"mark":"C"},{"mark":"D"},{"bell":true},{"wait":60},{"frame":["claude: started","you: Say ok","claude: ok","Sautéed for 2s · done 4:07 PM","auto mode on (shift+tab to cycle)","$"],"clear":true},{"assistant":["ok"]},{"turnEnd":2345},{"idle":true}],"history":[{"user":["An earlier question"]},{"assistant":["An earlier answer"]},{"turnEnd":1200}]}
 
-start claude {temp}\st --claude {temp}\claude.cmd -- --model haiku
+start claude {temp}\st --claude {temp}\claude.cmd -- --model haiku --effort low
 expect said Ready
 type Say ok
 keys enter
