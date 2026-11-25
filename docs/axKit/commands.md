@@ -15,8 +15,9 @@ points here. Each app's own commands are in its `CLAUDE.md`.
 
 ## Test
 
-- `test.ps1 [<App>]` runs every test project (or one) in Release, one by one, so that a running axKit's `bin` is never
-  touched, and then checks the generated pages and the scripts (below). It is what `release.ps1` and `run.ps1 -Test`
+- `test.ps1 [<App>]` first runs every quick check at once, `tools/pages.ps1 -Check` (the generated pages, the menu
+  paths the documents name, the record of the outside programs, the scripts; not with an app named), then every test
+  project (or one) in Release, one by one, so that a running axKit's `bin` is never touched. It is what `release.ps1` and `run.ps1 -Test`
   call. Run it before a commit. The workflows `build.yml` and `release.yml` run `dotnet test AxKit.sln`, the solution,
   in Release, and `build.yml` also builds the Store package (`publish.ps1 -Msix`); `test.ps1` does neither.
   Never `dotnet test AxKit.sln` while axKit runs: it builds into the running program's `bin`. Debug alone misses

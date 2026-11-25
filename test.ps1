@@ -65,6 +65,16 @@ if (Test-Path -LiteralPath (Join-Path $root '..\axkit-management')) {
     }
 }
 
+# The quick checks first, before the tests (docs/axKit/repairs.json R-81): every page a script writes, the menu paths the
+# documents name, the record of the outside programs and the scripts' rules, all named at once by tools\pages.ps1 -Check.
+# A stale page was found only by CI six times in three days until 2026-11-13, and then one at a time after the tests.
+if ($Only -eq '') {
+    & (Join-Path $root 'tools\pages.ps1') -Check
+    if ($LASTEXITCODE -ne 0) {
+        exit $LASTEXITCODE
+    }
+}
+
 try {
     # The runner writes a failing test to stderr; when this script's output is redirected (a log, a gate run), Windows
     # PowerShell would turn that line into a terminating error under Stop and end the run at the first failure. The
@@ -85,35 +95,5 @@ try {
 }
 
 Write-Host "All $($projects.Count) test projects passed."
-
-if ($Only -eq '') {
-    # The pages a script writes from the sources (docs/axKit/repairs.json R-30): build.yml checks them, and until
-    # 2026-11-13 this script did not, so a stale page was found only by CI, six times in three days. Each check says
-    # which script writes its page again.
-    foreach ($page in 'outside-calls', 'workflows', 'repairs', 'apps-page', 'cases', 'key-map', 'families', 'owed', 'components', 'guide-menus', 'doc-menus') {
-        & (Join-Path $root "tools\$page.ps1") -Check
-        if ($LASTEXITCODE -ne 0) {
-            Write-Host "The page check tools\$page.ps1 -Check failed: run tools\$page.ps1 (without -Check) and commit the page it writes."
-            exit $LASTEXITCODE
-        }
-    }
-
-    # The record of the outside programs' verified versions (docs/axKit/automation.md, When an outside program
-    # changes): only that it is well formed. The installed versions are compared by tools\upstream.ps1 alone, never
-    # here, since CI's computer has other versions.
-    & (Join-Path $root 'tools\upstream.ps1') -Check
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host 'The check tools\upstream.ps1 -Check failed: correct docs\axKit\upstream.json as its lines say.'
-        exit $LASTEXITCODE
-    }
-
-    # The scripts' rules (ASCII, parsing, no local named like a parameter): each was a gotcha of the root CLAUDE.md
-    # until 2026-11-16 and is now this check, whose lines say what to correct.
-    & (Join-Path $root 'tools\script-lint.ps1') -Check
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host 'The check tools\script-lint.ps1 -Check failed: correct the scripts as its lines say.'
-        exit $LASTEXITCODE
-    }
-}
 
 exit 0

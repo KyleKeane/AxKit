@@ -89,8 +89,10 @@ public sealed class UpstreamTests
         // The record itself stays ASCII too: the script writes it back whole.
         Assert.DoesNotContain(File.ReadAllText(Path.Combine(root, "docs", "axKit", "upstream.json")), c => c > 127);
 
-        // test.ps1 and CI check the record's shape; every session reads when to run the watch.
-        Assert.Contains("tools\\upstream.ps1') -Check", File.ReadAllText(Path.Combine(root, "test.ps1")), StringComparison.Ordinal);
+        // test.ps1 (through the one list of quick checks, tools/pages.ps1 -Check, since 2026-11-24, R-81) and CI check the
+        // record's shape; every session reads when to run the watch.
+        Assert.Contains("tools\\pages.ps1') -Check", File.ReadAllText(Path.Combine(root, "test.ps1")), StringComparison.Ordinal);
+        Assert.Contains("'upstream'", File.ReadAllText(Path.Combine(root, "tools", "pages.ps1")), StringComparison.Ordinal);
         Assert.Contains("./tools/upstream.ps1 -Check", File.ReadAllText(Path.Combine(root, ".github", "workflows", "build.yml")), StringComparison.Ordinal);
         Assert.Contains("tools\\upstream.ps1", File.ReadAllText(Path.Combine(root, "CLAUDE.md")), StringComparison.Ordinal);
     }

@@ -71,28 +71,13 @@ if ($shared) {
     foreach ($name in $all) { if (-not $projects.Contains($name)) { $projects.Add($name) } }
 }
 
-Write-Host "Push check: the test projects $($projects -join ', '), then the page and script checks."
+Write-Host "Push check: the quick checks, then the test projects $($projects -join ', ')."
 # The quick checks first, every one of them, so that a push learns of all its stale pages at once and in seconds,
-# before the tests' minutes (2026-11-24: two pushes in a row were refused one page at a time, after the tests).
-$stale = New-Object System.Collections.Generic.List[string]
-foreach ($page in 'outside-calls', 'workflows', 'repairs', 'apps-page', 'cases', 'key-map', 'families', 'owed', 'components', 'guide-menus', 'doc-menus') {
-    $lines = @(& (Join-Path $root "tools\$page.ps1") -Check 2>&1 | ForEach-Object { "$_" })
-    if ($LASTEXITCODE -ne 0) {
-        $lines | ForEach-Object { Write-Host "  $_" }
-        $stale.Add("tools\$page.ps1")
-    }
-}
-
-foreach ($check in 'upstream', 'script-lint') {
-    $lines = @(& (Join-Path $root "tools\$check.ps1") -Check 2>&1 | ForEach-Object { "$_" })
-    if ($LASTEXITCODE -ne 0) {
-        $lines | ForEach-Object { Write-Host "  $_" }
-        $stale.Add("tools\$check.ps1 -Check")
-    }
-}
-
-if ($stale.Count -gt 0) {
-    Write-Host "Push check: these checks failed: $($stale -join ', '). Run each page script without -Check (or tools\pages.ps1 for all of them), commit what they write, and push again."
+# before the tests' minutes (2026-11-24: two pushes in a row were refused one page at a time, after the tests); the
+# list of them is tools\pages.ps1 -Check's alone (docs/axKit/repairs.json R-81).
+& (Join-Path $root 'tools\pages.ps1') -Check
+if ($LASTEXITCODE -ne 0) {
+    Write-Host 'Push check: the quick checks above failed; nothing was pushed.'
     exit 1
 }
 
