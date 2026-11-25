@@ -1,6 +1,7 @@
 # Workflow: Find a command in the menus, the palette and the help
 # axDown, test plan section 6 (Menus and help), driven from inside the window (docs/axDown/nvda-test-plan.md).
-# The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
+# The run's own settings: the update check at start off, the switch this script turns on and off below.
+file home\AxKit\axDown.json {"checkForUpdates": false}
 file a.md # A file for the menus\n\nSome text here.\nMore text.
 
 start down {temp}\a.md
