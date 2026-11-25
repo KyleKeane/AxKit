@@ -155,7 +155,11 @@ internal static class Program
         }
 
         host.Dispose(); // Closes the console, which ends the client, and waits for the last of its output.
-        Console.Error.WriteLine($"[capture] wrote {recorder.Length} bytes to {outPath}");
+        recorder.Dispose();
+        // Session ids and the subscription tier masked byte for byte, so that a fixture holds neither and every cursor
+        // position stays right; the bytes are never edited by hand afterwards (Redaction.MaskRecording).
+        File.WriteAllBytes(outPath, Redaction.MaskRecording(File.ReadAllBytes(outPath)));
+        Console.Error.WriteLine($"[capture] wrote {recorder.Length} bytes to {outPath}, session ids and the tier masked");
         return 0;
     }
 

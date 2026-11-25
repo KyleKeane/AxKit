@@ -24,6 +24,20 @@ public partial class PrivacyTests
     }
 
     [Fact]
+    public void MaskRecording_masks_session_ids_and_the_tier_byte_for_byte()
+    {
+        // A cursor move before the id and a character of two bytes after it: neither changes, nor the length.
+        var recording = System.Text.Encoding.UTF8.GetBytes(
+            "\x1b[3;5Hclaude --resume e585e125-b63e-4a5e-af77-b2eb1f6ddaa2 · Opus 5.5 · Claude Max\x1b[0m");
+        var masked = Redaction.MaskRecording(recording);
+
+        Assert.Equal(recording.Length, masked.Length);
+        Assert.Equal(
+            "\x1b[3;5Hclaude --resume 00000000-0000-0000-0000-000000000000 · Opus 5.5 · Claude xxx\x1b[0m",
+            System.Text.Encoding.UTF8.GetString(masked));
+    }
+
+    [Fact]
     public void Redact_leaves_short_names_and_placeholders_alone()
     {
         Assert.Equal("C:\\Users\\<user>\\x, an Al fact", Redaction.Redact("C:\\Users\\<user>\\x, an Al fact", ["Al"]));

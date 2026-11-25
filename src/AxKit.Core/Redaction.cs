@@ -49,6 +49,24 @@ public static partial class Redaction
         return text;
     }
 
+    // The subscription tier Claude Code's header line names after the model ("· Claude Max").
+    [GeneratedRegex(@"(?<=Claude )(Max|Pro|Team|Enterprise)\b")]
+    private static partial Regex TierRegex();
+
+    /// <summary>
+    /// A recording's bytes with every session id and the subscription tier masked, each by as many bytes as it had
+    /// (zeros for an id's digits, x for the tier's letters), so that every cursor position of the recording stays
+    /// right (the item "the recordings under tests/fixtures hold Claude Code session ids and the subscription tier",
+    /// 2026-11-25). The bytes are read one character each (Latin-1), so nothing else of them changes.
+    /// </summary>
+    public static byte[] MaskRecording(byte[] recording)
+    {
+        var text = System.Text.Encoding.Latin1.GetString(recording);
+        text = IdRegex().Replace(text, match => Regex.Replace(match.Value, "[0-9a-fA-F]", "0"));
+        text = TierRegex().Replace(text, match => new string('x', match.Length));
+        return System.Text.Encoding.Latin1.GetBytes(text);
+    }
+
     /// <summary>The e-mail addresses and account paths in <paramref name="text"/>: what must never be committed.</summary>
     public static IEnumerable<string> Find(string text) =>
         EmailRegex().Matches(text).Concat(UserPathRegex().Matches(text)).Select(match => match.Value);
