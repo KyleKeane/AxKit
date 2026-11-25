@@ -29,7 +29,7 @@ public static class NativeMenu
                 AppendMenuW(menu, items[i].Enabled ? MfString : MfString | MfGrayed, (nuint)(i + 1), items[i].Text ?? string.Empty);
             }
 
-            PostMessage(owner.Handle, WmKeyDown, VkDown, 0);
+            User32.PostMessage(owner.Handle, WmKeyDown, VkDown, 0);
             var id = (int)TrackPopupMenuEx(menu, TpmReturnCmd, screenPoint.X, screenPoint.Y, owner.Handle, 0);
             if (id < 1 || id > items.Count)
             {
@@ -48,7 +48,7 @@ public static class NativeMenu
     private const uint MfString = 0x0000;
     private const uint MfGrayed = 0x0001;
     private const uint TpmReturnCmd = 0x0100;
-    private const uint WmKeyDown = 0x0100;
+    private const int WmKeyDown = 0x0100;
     private const nint VkDown = 0x28;
 
     [DllImport("user32.dll", ExactSpelling = true)]
@@ -64,8 +64,4 @@ public static class NativeMenu
     [DllImport("user32.dll", ExactSpelling = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool DestroyMenu(nint menu);
-
-    [DllImport("user32.dll", ExactSpelling = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool PostMessage(nint window, uint message, nint wParam, nint lParam);
 }

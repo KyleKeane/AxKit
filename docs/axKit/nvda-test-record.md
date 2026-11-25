@@ -6,6 +6,28 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-24, evening: the day's changes and the afternoon's failures; by the assistant with NVDA listening (`main` 5d86519e and the fix after it)
+
+`.\nvda-pass.ps1 -Only` eleven scripts, the maintainer away for the evening at his word ("i will be away for eight
+hours and want you to work autonomously"), behind the spoken countdown, the same NVDA, voice and Windows as below.
+50 goals passed, 2 failed, 1 not run; then the one script again after its fix.
+
+| What | Scripts | Result |
+|---|---|---|
+| axClaude after an interrupt (FR-2.3a, Claude Code 2.1.332), its options with F1's every key, `25-edit-modes`, `29-stand-in-turn`, `axClaude-say-all` | 5 | Passed |
+| axTask's Set and Clear fields (`28`) and the history of a list (`29`, TK-4.11) | 2 | Passed |
+| axDown's Go to line and Find (`04`, the field under the text), `axDown-notices` | 2 | Passed |
+| `axTask-template-in-a-form` (TP-5.5), the templates as Windows' own menu | 1 | Failed, then **passed** after the fix |
+| `axMedia\03b-cannot-play` | 1 | Failed, below |
+
+Found:
+- `axTask-template-in-a-form.txt` step 24: an unexpected error as Shift+F10 opened the menu: `NativeMenu` declared
+  `PostMessage` with exact spelling, and user32 has only `PostMessageW`. It uses `User32.PostMessage` now; heard again
+  alone: "Thanks" was spoken in the field's menu, Enter put it in. The forms' templates are heard for the first time.
+- `axMedia\03b-cannot-play.txt` step 20, a second time: "Cannot play a-broken.mp3" said as the window opens is cut off
+  by NVDA's reading of the window and its list, while "Playing b-good.wav" a moment later is heard. Written on the
+  item of announcements NVDA leaves out.
+
 ## 2026-11-24: every app and the NVDA-only scripts; by the assistant with NVDA listening (`main` e8536af1)
 
 `.\nvda-pass.ps1`, behind the spoken countdown, after the maintainer's yes through the question tool, the same NVDA,
