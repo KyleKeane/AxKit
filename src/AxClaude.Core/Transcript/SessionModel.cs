@@ -1134,7 +1134,9 @@ public sealed partial class SessionModel : ClaudeModel
         for (var r = 0; r <= cy; r++)
         {
             var line = _screen.LineAt(r);
-            if (line is not null && (LineClassifier.IsCompletionRow(line.Text) || (runStart >= 0 && LineClassifier.IsCompletionContinuation(line.Text))))
+            // Blank rows continue a run, never start one: since 2.1.326 Claude Code draws the draft row near the bottom
+            // and leaves the rows between the list and it empty (the slash-suggestions fixtures, 2026-11-24).
+            if (line is not null && (LineClassifier.IsCompletionRow(line.Text) || (runStart >= 0 && (line.Text.Length == 0 || LineClassifier.IsCompletionContinuation(line.Text)))))
             {
                 if (runStart < 0)
                 {

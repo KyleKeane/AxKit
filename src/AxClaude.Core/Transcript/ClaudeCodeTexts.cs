@@ -248,8 +248,11 @@ public static partial class ClaudeCodeTexts
     [GeneratedRegex(@"^Removed \d+ invisible characters? from your prompt$")]
     public static partial Regex RemovedFromPrompt();
 
-    /// <summary>The slash-command completion list: "/name    description" rows.</summary>
-    [GeneratedRegex(@"^/\S*\s{2,}\S")]
+    /// <summary>
+    /// The slash-command completion list: "/name    description" rows, a name with its other name in brackets too
+    /// ("/usage (cost)    Show session cost", 2.1.332, the slash-suggestions fixtures).
+    /// </summary>
+    [GeneratedRegex(@"^/\S*( \([^)]*\))?\s{2,}\S")]
     public static partial Regex CompletionRow();
 
     /// <summary>The indented continuation rows of the completion list.</summary>

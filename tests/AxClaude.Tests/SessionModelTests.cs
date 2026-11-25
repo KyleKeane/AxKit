@@ -232,6 +232,21 @@ public class SessionModelTests
     }
 
     [Fact]
+    public void A_completion_list_with_blank_rows_and_other_names_above_a_lower_draft_row_is_hidden()
+    {
+        // Claude Code 2.1.332 (recorded 2026-11-24 at 240 and 120 columns, the recordings not kept: their banner names
+        // the account's plan): the list from under the reply, an entry with its other name in brackets and a wrapped
+        // description among them, then empty rows, and the draft row near the bottom with the cursor on it.
+        var model = new SessionModel(80, 20);
+        Feed(model, $"{Esc}[?25lclaude: hello\r\nauto mode on (shift+tab to cycle)\r\n${Esc}[?25h");
+        Assert.Equal(["claude: hello"], Visible(model));
+
+        var pad = new string(' ', 36);
+        Feed(model, $"{Esc}[?25l{Esc}[2;1H/copy{new string(' ', 31)}Copy the last response{Esc}[K\r\n/computer-use{new string(' ', 23)}Read this skill before the first step{Esc}[K\r\n{pad}of any request{Esc}[K\r\n/usage (cost){new string(' ', 23)}Show session cost{Esc}[K\r\n/resume (continue){new string(' ', 18)}Resume a previous conversation{Esc}[K{Esc}[18;1H$ /co{Esc}[K{Esc}[?25h");
+        Assert.Equal(["claude: hello"], Visible(model));
+    }
+
+    [Fact]
     public void Rows_written_over_the_chrome_and_scrolled_away_inside_a_frame_are_content()
     {
         var model = new SessionModel(80, 6);
