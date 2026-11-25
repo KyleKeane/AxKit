@@ -105,6 +105,10 @@ internal sealed partial class MainForm : ConsoleForm
 
     /// <summary>A message kept out of a waiting question by the guard (FR-2.10, D33), sent after all when Enter is pressed again with the same text.</summary>
     private string? _keptMessage;
+
+    /// <summary>The last message sent, and whether an interrupt went to Claude since: Claude Code may have put it back on its prompt (FR-2.3a).</summary>
+    private string? _lastMessage;
+    private bool _interruptedSinceSend;
     private bool _readyAnnounced;
     private bool _messageSent;
     /// <summary>Claude's arguments after --ax-screen-reader, from the command line or the New session notice (FR-8.6); null is the default, --continue (FR-9.1). Restart keeps them.</summary>

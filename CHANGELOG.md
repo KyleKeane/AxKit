@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axClaude: **the message after an interrupt goes alone again**: Claude Code 2.1.331 puts an interrupted message back on its prompt, where the next message was added to it and Claude received both as one, or no reply was heard. axClaude now empties that prompt first.
 - axKit: **Claude can ask to open axTask on a folder, axClaude or axTerminal** through the AI tools: an axKit window asks you first, with the AI caution, what opening does and where; No is the default, and only your Open opens it.
 - axTask: **Set fields and Clear fields of several items**: select items, then Context, Set fields for a form where only what you fill in is written into all of them, or Clear fields to check the fields to empty. One step for Ctrl+Z.
 - axTask and axTemplate: **saving an item's form says just "Saved"**; NVDA then reads the item with what changed, once.

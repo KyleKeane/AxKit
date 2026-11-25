@@ -38,6 +38,14 @@ public static class ClaudeCodeKeys
     public const string CtrlC = "\x03";
     public const string CtrlD = "\x04";
 
+    /// <summary>
+    /// Ctrl+U: deletes the prompt's line from the cursor back to its start; Backspace then joins the line above, for
+    /// the next Ctrl+U. Together they empty a draft Claude Code put back after an interrupt (2.1.331, SPEC.md FR-2.3a;
+    /// recorded 2026-11-24 for one line and for two).
+    /// </summary>
+    public const string CtrlU = "\x15";
+    public const string Backspace = "\x7f";
+
     /// <summary>Ctrl+O, the detailed transcript view (SPEC.md D14: sent only to close that view should it be open).</summary>
     public const string CtrlO = "\x0f";
 

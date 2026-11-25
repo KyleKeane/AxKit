@@ -146,6 +146,8 @@ internal sealed partial class MainForm
         // "Queued" also for a turn that has ended and is not yet over (events-and-grounding.md EG-6.4): its reply's rows
         // may still be arriving, and the model holds the message's block back until Claude takes the message up.
         var queued = ClaudeInTurn;
+        ClearRestoredMessage();
+        _lastMessage = text;
         _model.Send(text, evenWhilePrompting: true);
         _messageSent = true;
         QueueWrites(text);
@@ -201,6 +203,36 @@ internal sealed partial class MainForm
         Enqueue(ClaudeCodeKeys.Enter, 50);
         StartWrites();
         FlowSent(text);
+    }
+
+    /// <summary>
+    /// FR-2.3a: since Claude Code 2.1.331 an interrupt can put the interrupted message back on Claude's prompt row,
+    /// where the next message was typed after it and both went as one (the NVDA pass of 2026-11-24). After an
+    /// interrupt, while the row still holds the last message, it is emptied first: Ctrl+U for each of its lines, with
+    /// Backspace between them. Only then: a message the row holds for another reason (an Enter Claude dropped) stays.
+    /// Nothing is said; the window behaves as before that version. The stream has no prompt row.
+    /// </summary>
+    private void ClearRestoredMessage()
+    {
+        var interrupted = _interruptedSinceSend;
+        _interruptedSinceSend = false;
+        if (Streams || !interrupted || _lastMessage is not { } last || !_model.PromptHolds(last))
+        {
+            return;
+        }
+
+        var lines = last.Split('\n').Length;
+        for (var i = 0; i < lines; i++)
+        {
+            if (i > 0)
+            {
+                Enqueue(ClaudeCodeKeys.Backspace, 30);
+            }
+
+            Enqueue(ClaudeCodeKeys.CtrlU, 30);
+        }
+
+        Log.Info($"Claude's prompt held the interrupted message again ({lines} lines): emptied before the next one");
     }
 
     /// <summary>How long a sent message may sit on Claude's prompt row before its Enter counts as dropped, and how often it is sent again.</summary>
@@ -280,6 +312,7 @@ internal sealed partial class MainForm
 
         ClearWrites();
         Write(ClaudeCodeKeys.Escape);
+        _interruptedSinceSend = true;
         FlowActed(UserAction.Escaped);
     }
 
@@ -318,5 +351,6 @@ internal sealed partial class MainForm
         }
 
         Write(key);
+        _interruptedSinceSend |= key == ClaudeCodeKeys.CtrlC;
     }
 }

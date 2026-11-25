@@ -424,13 +424,15 @@ public sealed partial class SessionModel : ClaudeModel
     /// </summary>
     public override bool PromptHolds(string text)
     {
-        var first = text.Trim().Replace("\r\n", "\n").Split('\n')[0].Trim();
+        var lines = text.Trim().Replace("\r\n", "\n").Split('\n');
+        var first = lines[0].Trim();
         if (first.Length == 0)
         {
             return false;
         }
 
-        for (var row = _screen.CursorRow; row >= 0 && row >= _screen.CursorRow - 4; row--)
+        // The cursor stands on the draft's last line: its prompt row is up to one row per line above, a few more for wrapping.
+        for (var row = _screen.CursorRow; row >= 0 && row >= _screen.CursorRow - 4 - lines.Length; row--)
         {
             if (_screen.LineAt(row) is { } line && line.Text.StartsWith(ClaudeCodeTexts.PromptDollar))
             {
