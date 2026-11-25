@@ -399,7 +399,7 @@ public class AxKitList : ListBox
     /// <see cref="EndRename"/> when it is taken (it stays open on a refusal the window says); Escape, or the focus
     /// leaving the box, ends it with the name kept. <paramref name="ended"/> is called whenever the box closes.
     /// </summary>
-    public void BeginRename(string text, int selectLength, Action<string> commit, Action? ended = null)
+    public void BeginRename(string text, int selectLength, Action<string> commit, Action? ended = null, string name = "New name")
     {
         if (SelectedIndex < 0 || Renaming)
         {
@@ -417,6 +417,8 @@ public class AxKitList : ListBox
         // AX-7.11: the rename box is a field, and says so itself as the focus enters it (AxKitTextBox.OnEnter).
         _renameCommit = commit;
         _renameEnded = ended;
+        // "New name" for a rename; a new item's title typed in place has a name of its own (axTask's Ctrl+N).
+        _renameBox.AccessibleName = name;
         _renameBox.Bounds = GetItemRectangle(SelectedIndex);
         _renameBox.Text = text;
         // The selection goes before the focus: a text box that gets the focus selects everything unless one was set.

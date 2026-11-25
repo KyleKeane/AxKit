@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- axTask: **Ctrl+N in a list types the new title in the list itself**, as F2 renames: a row "New item" opens where the item will stand; Enter adds it, Escape drops it. Enter on the new item opens its form for the rest.
+- axKit: **what a window says as it opens is no longer cut off**: it waits until NVDA has read where the focus landed, so that a first file that cannot play, or Ready, is heard.
 - axKit: **every app refuses, fails and says a switch the same way**: a command that cannot act now plays the refused sound and says why, in every app, where most refused in silence; an error notice sounds as a failure everywhere; Word wrap, Hide done tasks and the theme's switches say "checked" or "not checked", as every other switch does.
 - axClaude, axTerminal: **Down on the last line reaches what Claude just wrote** at the first press: output that waited for a moment after your key, or for NVDA's reading, is put in before the key moves the caret, where Down read the same line again and a second Down was needed.
 - axTask, axPass, axMCP: **templates in a form's field are back**, on Shift+F10 or the Applications key, now as Windows' own menu with the first template selected, which NVDA reads; to be heard in the next NVDA pass.

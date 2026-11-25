@@ -119,7 +119,8 @@ Ctrl+E, the detail pane, and an action that opens something or runs a program.
 
 In the navigator:
 
-- Ctrl+N adds an item to the list shown. It gets the fields of its list: Done, Start and Due in a list made by
+- Ctrl+N adds an item to the list shown: a row "New item" opens where it will stand, with a box to type its title
+  in, as F2 renames; Enter adds it, Escape drops it. It gets the fields of its list: Done, Start and Due in a list made by
   axTask, or the ones you wrote into the list's configuration ("The fields of a list", below).
 - On a list among your lists, Ctrl+N adds the item to that list without going into it: type the title and press
   Enter; axTask says "Added" and the title "to" the list, and you stay on the list.

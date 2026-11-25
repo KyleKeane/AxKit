@@ -37,7 +37,7 @@ expect focus Fix the tap, due
 # Ctrl+N in the list: the new item has the list's fields, in the list's order, each empty as the configuration
 # starts it; the first item keeps its own values.
 keys ctrl+n
-expect state "notice":"New item"
+expect focus Title of the new item
 type Paint the door
 keys enter
 expect state "notice":null

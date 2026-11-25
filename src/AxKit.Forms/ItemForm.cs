@@ -824,6 +824,48 @@ public abstract partial class ItemForm : AxKitForm
         });
     });
 
+    /// <summary>
+    /// A new item's title typed in the list itself (axTask TK-4.3; the maintainer's ask of 2026-11-22: "adding an item
+    /// should just happen in line in the same way editing the title does with f2"): a row "New item" at the top or the
+    /// bottom of the rows, the rename box over it, empty, named "Title of the new item". Enter with a title calls
+    /// <paramref name="made"/>, which writes the item and fills the level; Escape, or the focus leaving the box, takes
+    /// the row away again, and nothing was made.
+    /// </summary>
+    protected void NewItemInPlace(bool atTop, Action<string> made)
+    {
+        var before = Navigator.SelectedIndex;
+        var index = atTop ? 0 : _rows.Count;
+        Navigator.Items.Insert(index, "New item");
+        Navigator.SelectedIndex = index;
+        var taken = false;
+        Navigator.BeginRename(string.Empty, 0, title =>
+        {
+            if (title.Length == 0)
+            {
+                Refuse("Type the item's title, or Escape");
+                return;
+            }
+
+            taken = true;
+            Navigator.EndRename();
+            made(title);
+        }, () =>
+        {
+            if (taken)
+            {
+                return;
+            }
+
+            if (index < Navigator.Items.Count && Navigator.Items[index] is "New item")
+            {
+                Navigator.Items.RemoveAt(index);
+            }
+
+            Navigator.SelectedIndex = Math.Min(before, Navigator.Items.Count - 1);
+            Announce("No item made", true);
+        }, "Title of the new item");
+    }
+
     /// <summary>Shift+F10, the Applications key, a right click: the menu of the selection.</summary>
     protected void OpenPaneMenu()
     {

@@ -130,6 +130,14 @@ selected ones (TK-4.4, TK-4.7).
   it"; "Home is a checklist already" when there is nothing to switch).
 - **TK-4.3 The row summary** (IA-6): the Title, then "done" when Done is true, then "due" and the Due date when there is
   one: "Fix the tap, done, due 30 October". Overdue reads "overdue since 30 October".
+- **TK-4.3b Ctrl+N in a list: the title typed in place** (the maintainer's ask of the old feature list, item 11:
+  "adding an item should just happen in line in the same way editing the title does with f2"; built 2026-11-25). In
+  the list shown, Ctrl+N puts a row "New item" where the item will stand, at the top when new items go to the top
+  (TK-4.10) and at the bottom otherwise, and opens F2's box over it, empty, named "Title of the new item". Enter with
+  a title makes the item, "Added <title>", selected; Enter with nothing typed says "Type the item's title, or
+  Escape" and keeps the box; Escape, or the focus leaving the box, takes the row away and says "No item made".
+  The quick add is this; the detailed add is the item's form, Enter on it (TK-4.0a). In place of the notice that
+  asked for the title until then; from the top level the notice still asks (TK-4.3a).
 - **TK-4.3a Ctrl+N on a list at the top level** (the maintainer's wish of the old feature list, item 30: "ctrl+n in
   axtask when focused on a list should insert the task into the list that is in focus"; built 2026-11-23). With a
   list selected among the sections, Ctrl+N asks for the title "In <the list>." and adds the item to that list, made

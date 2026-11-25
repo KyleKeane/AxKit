@@ -13,7 +13,7 @@ expect focus Fix the tap
 
 # Goal: Add an item, and its Created field holds the day
 keys ctrl+n
-expect state "notice":"New item"
+expect focus Title of the new item
 type Paint the door
 keys enter
 expect said Added Paint the door
@@ -21,3 +21,12 @@ expect focus Paint the door
 run findstr /r /c:"Created.: .20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]" "tasks\Home\Paint the door.json"
 # Check: An item made before keeps its empty Created
 run powershell -NoProfile -Command "if ((Get-Content -Raw 'tasks\Home\Fix the tap.json').Contains('20')) { exit 1 } else { exit 0 }"
+# Check: Escape on the new row makes nothing
+# TK-4.3b: Ctrl+N opens the box on a row of its own; Escape takes the row away again, says so, and no file is made.
+keys ctrl+n
+expect focus Title of the new item
+type Not this one
+keys escape
+expect said ! No item made
+expect focus Paint the door
+run powershell -NoProfile -Command "if (Test-Path 'tasks\Home\Not this one.json') { exit 1 } else { exit 0 }"

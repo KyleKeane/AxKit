@@ -198,7 +198,14 @@ public sealed partial class TaskForm
             return;
         }
 
-        AskNewItem(_folder, Path.GetFileName(_folder), inList: true);
+        // TK-4.3: in the list shown, the title is typed in place, as F2 renames; from the top level the notice asks.
+        if (ConfigurationForChange(_folder) is not { } shown)
+        {
+            return;
+        }
+
+        var folder = _folder;
+        NewItemInPlace(ListOrder.NewAtTop(shown.Config), title => AddItem(folder, Path.GetFileName(folder), title, inList: true));
     }
 
     /// <summary>
@@ -213,17 +220,20 @@ public sealed partial class TaskForm
             return;
         }
 
-        AskText("New item", $"In {listName}.", "Title:", "Title", string.Empty, "&Add", title =>
-        {
-            if (ConfigurationForChange(folder) is not { } list)
-            {
-                return;
-            }
+        AskText("New item", $"In {listName}.", "Title:", "Title", string.Empty, "&Add", title => AddItem(folder, listName, title, inList), typed => typed.Trim().Length == 0 ? "Type the item's title" : null);
+    }
 
-            var path = ItemFiles.FreePath(folder, ItemFiles.FileStem(title), ".json");
-            var said = inList ? "Added " + title : $"Added {title} to {listName}";
-            Commit(new Step(NewItemParts(folder, list, path, TaskRules.WithCreated(FlatItem.New(title, list.Config), list.Config, DateTime.Now)), said), inList ? path : folder);
-        }, typed => typed.Trim().Length == 0 ? "Type the item's title" : null);
+    /// <summary>The new item written in <paramref name="folder"/>, from the notice or from the title typed in place.</summary>
+    private void AddItem(string folder, string listName, string title, bool inList)
+    {
+        if (ConfigurationForChange(folder) is not { } list)
+        {
+            return;
+        }
+
+        var path = ItemFiles.FreePath(folder, ItemFiles.FileStem(title), ".json");
+        var said = inList ? "Added " + title : $"Added {title} to {listName}";
+        Commit(new Step(NewItemParts(folder, list, path, TaskRules.WithCreated(FlatItem.New(title, list.Config), list.Config, DateTime.Now)), said), inList ? path : folder);
     }
 
     /// <summary>
