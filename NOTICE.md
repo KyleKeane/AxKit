@@ -174,7 +174,7 @@ include it.
 
 ## Services of the whole bundle
 
-- **The update check** asks GitHub for the latest release when a window starts; turn it off in Options, General. An
+- **The update check** asks GitHub for the latest release when a window starts; turn it off in the axKit menu, Check for updates at start. An
   update you choose downloads the release from this repository's releases page, checks its signature, and replaces
   the program for your Windows account only.
 - **Install it now**, in a missing program's notice, installs Git, KeePassXC, PowerShell 7 or Claude Code only when

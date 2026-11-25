@@ -119,7 +119,7 @@ read as a workflow. The format is in `docs/axAutomate/SPEC.md` section 3.
 
 ## Settings
 
-Options, Text sets the font and its size; Options, General the update check.
+Options, Text sets the font and its size; the axKit menu, Check for updates at start, the update check.
 
 ## Updates
 

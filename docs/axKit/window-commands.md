@@ -365,7 +365,6 @@ every window" or under a heading that names the windows without it; under an app
 - List. Menu: Navigation, Previous. Key: Ctrl+Shift+L. Mark: read.
 - List item. Menu: Navigation, Previous. Key: Ctrl+Shift+I. Mark: read.
 - Table. Menu: Navigation, Previous. Key: Ctrl+Shift+T. Mark: read.
-- Check for updates at start. Menu: Options, General. Key: none. Mark: act.
 - Templates in axTemplate. Menu: Options, General. Key: none. Mark: open.
 - Word wrap. Menu: Options, Text. Key: Ctrl+Shift+W. Mark: change.
 - New. Menu: Session. Key: Ctrl+N. Mark: change.
@@ -546,7 +545,6 @@ every window" or under a heading that names the windows without it; under an app
 - Balanced (Sonnet). Menu: Options, Conversation model. Key: none. Mark: change.
 - Fast (Haiku). Menu: Options, Conversation model. Key: none. Mark: change.
 - Strongest (Opus). Menu: Options, Conversation model. Key: none. Mark: change.
-- Check for updates at start. Menu: Options, General. Key: none. Mark: act.
 - Start with Windows. Menu: Options, General. Key: none. Mark: act.
 - Hide. Menu: Session. Key: Escape. Mark: change.
 - Quit axHelp. Menu: Session. Key: none. Mark: act.

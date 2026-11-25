@@ -125,7 +125,7 @@ Each menu with its commands and their keys, as the window lists them:
 - **Actions**: Claude's working folder; Open the conversation (Enter); Open the last screenshot in axPreview (Ctrl+O); Put a picture file into the conversation (Ctrl+D).
 - **Navigation**: Nothing to move to here yet.
 - **Context**: Nothing for the focus here yet.
-- **Options**: Hotkey; Keep the conversation ready in the background; Conversation model (Balanced (Sonnet), Fast (Haiku), Strongest (Opus)); Developer (Open settings file); General (Check for updates at start, Start with Windows); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
+- **Options**: Hotkey; Keep the conversation ready in the background; Conversation model (Balanced (Sonnet), Fast (Haiku), Strongest (Opus)); Developer (Open settings file); General (Start with Windows); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
 - **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
 <!-- end of the menus -->
 
