@@ -289,8 +289,12 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
 46. **Let Claude run a command over its stream, with Claude Code itself**
     - Start Claude Code over its stream in a folder
     - Answer Claude Code's own question for a command
-47. **Have a short exchange with Claude**
-48. **Answer a set of two questions from Claude**
+47. **Refuse a command, stop a reply and answer Claude's own question over the stream, with Claude Code itself**
+    - Refuse a command Claude asks to run
+    - Stop a reply Claude is writing
+    - Answer a question Claude asks you
+48. **Have a short exchange with Claude**
+49. **Answer a set of two questions from Claude**
 
 ## axClip
 

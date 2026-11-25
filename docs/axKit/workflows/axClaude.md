@@ -1831,6 +1831,38 @@ You hear: Start Claude Code in this folder?
     You hear: Done.
 5. Press Alt+2 (Conversation; Navigation menu).
 
+## Refuse a command, stop a reply and answer Claude's own question over the stream, with Claude Code itself
+
+Starts with: Open axClaude with the folder st --source stream.
+
+### Refuse a command Claude asks to run
+
+1. Type: Use your shell tool to run exactly this command, then tell me in one short sentence what happened: ping -n 2 127.0.0.1
+2. Press Enter.
+    You hear: Sent.
+    You hear: Claude asks to use.
+3. Press Enter.
+    You hear: Sent: 1, No.
+    You hear: Done.
+
+### Stop a reply Claude is writing
+
+1. Type: Write a numbered list of eighty different kinds of fruit, one on each line, with a short sentence about each.
+2. Press Enter.
+    You hear: Sent.
+3. Press Shift+Escape.
+    You hear: Interrupted.
+
+### Answer a question Claude asks you
+
+1. Type: Use your AskUserQuestion tool to ask me one question: which colour I prefer, with the two options Red and Blue. Then reply with only the colour I chose.
+2. Press Enter.
+    You hear: Sent.
+3. Press Enter.
+    You hear: Sent: 1.
+    You hear: Done.
+4. Press Alt+2 (Conversation; Navigation menu).
+
 ## Have a short exchange with Claude
 
 Starts with: Open axClaude with the folder a.

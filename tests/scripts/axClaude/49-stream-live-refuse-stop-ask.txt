@@ -1,0 +1,53 @@
+# Workflow: Refuse a command, stop a reply and answer Claude's own question over the stream, with Claude Code itself
+# Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
+# axClaude, docs/axClaude/stream-mode.md stage 8 (SM-10.4): what script 48 leaves of the stand-in scripts 37 to 43,
+# played against the real Claude Code: a permission refused (SM-7.4), a turn interrupted (SM-4.6: Interrupted, no
+# Done) and a question of Claude's own asked through the relay (SM-7.5). tools\upstream.ps1 -Verify claude runs it.
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+start claude {temp}\st --source stream -- --model haiku --effort low --permission-mode default
+
+expect said Start Claude Code in this folder?
+wait 1500
+keys tab
+expect focus Start Claude Code
+keys enter
+expect said Ready
+
+# Goal: Refuse a command Claude asks to run
+# The question starts on No (SM-7.4); Enter on it refuses, and Claude answers the refusal with words of its own.
+type Use your shell tool to run exactly this command, then tell me in one short sentence what happened: ping -n 2 127.0.0.1
+keys enter
+expect said Sent
+expect said Claude asks to use
+expect focus 1. No
+wait 1500
+keys enter
+expect said Sent: 1, No
+expect said Done
+expect state Claude: ready
+
+# Goal: Stop a reply Claude is writing
+# Shift+Escape interrupts the turn: Interrupted is said and no Done follows (SM-4.6).
+type Write a numbered list of eighty different kinds of fruit, one on each line, with a short sentence about each.
+keys enter
+expect said Sent
+expect state Claude: working
+wait 2000
+keys shift+escape
+expect said Interrupted
+expect state Claude: ready
+
+# Goal: Answer a question Claude asks you
+# Claude's own question tool reaches the window through the relay: its choices by number, Other last (SM-7.5).
+type Use your AskUserQuestion tool to ask me one question: which colour I prefer, with the two options Red and Blue. Then reply with only the colour I chose.
+keys enter
+expect said Sent
+expect focus 1. Red
+wait 1500
+keys enter
+expect said Sent: 1
+expect said Done
+do Conversation
+expect text Red
