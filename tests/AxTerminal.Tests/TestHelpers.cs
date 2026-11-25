@@ -10,22 +10,11 @@ internal static class TestHelpers
     public const string Esc = "\x1b";
     public const string Bel = "\a";
 
-    public static byte[] Fixture(string name) => File.ReadAllBytes(Path.Combine(Fixtures.Folder(), name));
+    public static byte[] Fixture(string name) => Fixtures.Bytes(name);
 
-    /// <summary>The console size a fixture was recorded at, from its name (<c>-240x50.vt</c>).</summary>
-    public static (int Columns, int Rows) FixtureSize(string name)
-    {
-        var match = System.Text.RegularExpressions.Regex.Match(name, @"-(\d+)x(\d+)\.vt$");
-        return match.Success ? (int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value)) : (120, 40);
-    }
+    public static (int Columns, int Rows) FixtureSize(string name) => Fixtures.Size(name);
 
-    /// <summary>The chunk index of a recording (<c>&lt;fixture&gt;.chunks.txt</c>): the offset, length and elapsed milliseconds of each read.</summary>
-    public static List<(int Offset, int Length, int Ms)> Chunks(string fixture) =>
-        File.ReadAllLines(Path.Combine(Fixtures.Folder(), fixture + ".chunks.txt"))
-            .Where(l => l.Length > 0 && char.IsDigit(l[0]))
-            .Select(l => l.Split(' '))
-            .Select(p => (Offset: int.Parse(p[0]), Length: int.Parse(p[1]), Ms: int.Parse(p[2])))
-            .ToList();
+    public static List<(int Offset, int Length, int Ms)> Chunks(string fixture) => Fixtures.Chunks(fixture);
 
     /// <summary>
     /// Replays a recording chunk by chunk with the app's quiet rule (a chunk 100 ms or more after the one before

@@ -36,14 +36,10 @@ internal static partial class TestHelpers
     ];
 
     /// <summary>The bytes of a recording in tests/fixtures.</summary>
-    public static byte[] Fixture(string name) => File.ReadAllBytes(Path.Combine(Fixtures.Folder(), name));
+    public static byte[] Fixture(string name) => Fixtures.Bytes(name);
 
     /// <summary>The console size a fixture was recorded at, from its name (<c>-240x50.vt</c>).</summary>
-    public static (int Columns, int Rows) FixtureSize(string name)
-    {
-        var match = SizeRegex().Match(name);
-        return match.Success ? (int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value)) : (120, 40);
-    }
+    public static (int Columns, int Rows) FixtureSize(string name) => Fixtures.Size(name);
 
     /// <summary>A model of the fixture's size fed the whole recording, with the last frame ended.</summary>
     public static SessionModel ParseFixture(string name)
@@ -78,12 +74,7 @@ internal static partial class TestHelpers
     /// the offset, length and elapsed milliseconds of each read. The header row, with or without a byte order mark,
     /// is skipped.
     /// </summary>
-    public static List<(int Offset, int Length, int Ms)> Chunks(string fixture) =>
-        File.ReadAllLines(Path.Combine(Fixtures.Folder(), fixture + ".chunks.txt"))
-            .Where(l => l.Length > 0 && char.IsDigit(l[0]))
-            .Select(l => l.Split(' '))
-            .Select(p => (Offset: int.Parse(p[0]), Length: int.Parse(p[1]), Ms: int.Parse(p[2])))
-            .ToList();
+    public static List<(int Offset, int Length, int Ms)> Chunks(string fixture) => Fixtures.Chunks(fixture);
 
     /// <summary>
     /// Replays a recording chunk by chunk, as its index lists them, with the app's quiet rule: a chunk that arrives
@@ -148,7 +139,4 @@ internal static partial class TestHelpers
 
         return text;
     }
-
-    [GeneratedRegex(@"-(\d+)x(\d+)\.vt$")]
-    private static partial Regex SizeRegex();
 }
