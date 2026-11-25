@@ -74,7 +74,11 @@ the path), then in Partner Center: Apps and games, axKit, "Update" (a new submis
 Packages, the file uploaded, the old package removed from the list, Save; What's new in this version under Store
 listings, the release's notes pasted (I put them on your clipboard); Submit to the Store. The Store does the rest:
 certification takes its hours or days, and the Store updates every installed copy by itself afterwards. Section 6 is
-the tool that takes these clicks off your hands.
+the tool that takes these clicks off your hands, and since 2026-11-24 one script does the five steps with it,
+`tools/store-submit.ps1 <version> -WhatsNew <file> [-Submit]` (`docs/axKit/commands.md`): it stops at a sign-in
+page, which is yours to answer in its Edge window, and at any step that does not show what the four submissions by
+hand showed, saying what it saw; without `-Submit` it leaves the update in draft for Submit to the Store by hand.
+Its rehearsal (`-Rehearse`) was run against 5.10.0 the same day and stopped, as it should, at the sign-in.
 
 ## 6. Automating the website: tools/EdgeDrive (built 2026-11-09, used for the first submission)
 

@@ -65,7 +65,11 @@ internal static class Program
                     return 0;
                 case "open":
                 {
-                    var created = JsonNode.Parse(await Http.GetStringAsync($"http://localhost:{Port}/json/new?{Uri.EscapeDataString(Arg(args, 1))}").ContinueWith(t => t.Result))!;
+                    // A PUT: Edge answers a GET of /json/new with 405 since 2026 (found on 2026-11-24, Certum's shop).
+                    using var request = new HttpRequestMessage(HttpMethod.Put, $"http://localhost:{Port}/json/new?{Uri.EscapeDataString(Arg(args, 1))}");
+                    using var response = await Http.SendAsync(request);
+                    response.EnsureSuccessStatusCode();
+                    var created = JsonNode.Parse(await response.Content.ReadAsStringAsync())!;
                     File.WriteAllText(TargetFile, created["id"]!.ToString());
                     Say($"Opened {created["id"]} on {created["url"]}");
                     return 0;

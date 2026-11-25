@@ -174,6 +174,12 @@ page by hand; run its script and commit the page.
   there); `ReleaseScriptTests` reads both scripts for the shape that keeps the rehearsal harmless.
 - `tools/sign-release.ps1 <version>`: signs a release's draft with the release key and publishes it; `release.ps1`
   calls it last, and it is run alone when a release stopped there (`-Rehearse` asks its questions only).
+- `tools/store-submit.ps1 <version> -WhatsNew <file> [-Submit]`, after a published release and only at the
+  maintainer's word: the release's `AxKit-<version>.msix` from GitHub into a new submission in Partner Center through
+  `tools/EdgeDrive` (store-setup.md sections 5 and 6): Start update, the package dropped and saved, "What's new" written
+  from the file and read back; `-Submit` also sends it for certification, without it the draft is left ready. It stops
+  with what it saw at any step that does not hold, and at a sign-in page, which is the maintainer's. `-Rehearse` reads
+  only: the package on GitHub and the overview's state.
 - `tools/release-key.ps1 <command>`: the release key (SPEC AX-3.4), kept in `%LOCALAPPDATA%\AxKit-release\release-key.bin`
   for the Windows account. `public` prints its public half, which must equal `AxKit.Core/Updates/ReleaseSigning`'s;
   `sign <zip>` and `verify <zip>` are `tools/sign-release.ps1`'s steps; `new` made the key once and refuses while one
