@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axTask: **a new item's due date and priority can be typed in its title**: "Buy milk tomorrow !high" adds "Buy milk", due tomorrow, priority High, and says so. A date can be 2026-12-01, today, tomorrow, +3 or a weekday; the priority word can be the start of one of the list's choices.
 - axClaude: **a reply over the stream reads as it does over the screen**: its Markdown marks are gone, so stars, backticks, fences and table bars are no longer shown or spoken; a table row reads "Column: cell." for each cell, as Claude Code's own screen reads it.
 - axStart: **what you closed lately in axKit is found from anywhere**: the files and folders of the Window menu's Recently closed are among axStart's matches, first when nothing is typed, named as that menu names them; Enter opens one again in its app, Ctrl+O its folder in axFile.
 - axTask: **Ctrl+N in a list types the new title in the list itself**, as F2 renames: a row "New item" opens where the item will stand; Enter adds it, Escape drops it. Enter on the new item opens its form for the rest.

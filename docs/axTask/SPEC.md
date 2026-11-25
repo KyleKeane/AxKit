@@ -138,6 +138,14 @@ selected ones (TK-4.4, TK-4.7).
   Escape" and keeps the box; Escape, or the focus leaving the box, takes the row away and says "No item made".
   The quick add is this; the detailed add is the item's form, Enter on it (TK-4.0a). In place of the notice that
   asked for the title until then; from the top level the notice still asks (TK-4.3a).
+- **TK-4.3c Plain words that fill the date and the priority** (the maintainer's ask of the old feature list, item 21;
+  the form of the words his choice of 2026-11-25; built the same day, `AxTask.Core/TitleWords`). At the end of a new
+  item's title, typed in place or in the notice: a date as the date fields take one (2026-12-01, today, tomorrow,
+  +3, a weekday) fills Due, and a word after an exclamation mark fills Priority with the first choice that starts
+  with it (!high, !l). They are read from the end, each kind once, in either order, and leave the title; a word is
+  taken only when the list has the field (Due a date or a date and time, Priority a choice) and the word names a
+  value of it, and never when it would leave the title empty. What is said names them: "Added Buy milk, due 26
+  November, priority High". Only a new item's title is read: a rename keeps every word.
 - **TK-4.3a Ctrl+N on a list at the top level** (the maintainer's wish of the old feature list, item 30: "ctrl+n in
   axtask when focused on a list should insert the task into the list that is in focus"; built 2026-11-23). With a
   list selected among the sections, Ctrl+N asks for the title "In <the list>." and adds the item to that list, made

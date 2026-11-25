@@ -231,9 +231,18 @@ public sealed partial class TaskForm
             return;
         }
 
+        // TK-4.3c: a date and a !priority at the end of the title fill Due and Priority and leave the title.
+        var words = TitleWords.Read(title, list.Config.ItemFields, DateOnly.FromDateTime(DateTime.Now));
+        title = words.Title;
+        var item = TaskRules.WithCreated(FlatItem.New(title, list.Config), list.Config, DateTime.Now);
+        foreach (var (field, value) in words.Values)
+        {
+            item = item.With(field, value, list.Config);
+        }
+
         var path = ItemFiles.FreePath(folder, ItemFiles.FileStem(title), ".json");
-        var said = inList ? "Added " + title : $"Added {title} to {listName}";
-        Commit(new Step(NewItemParts(folder, list, path, TaskRules.WithCreated(FlatItem.New(title, list.Config), list.Config, DateTime.Now)), said), inList ? path : folder);
+        var said = (inList ? "Added " + title : $"Added {title} to {listName}") + words.Said;
+        Commit(new Step(NewItemParts(folder, list, path, item), said), inList ? path : folder);
     }
 
     /// <summary>

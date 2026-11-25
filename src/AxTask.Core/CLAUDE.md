@@ -72,6 +72,7 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
   Not checked), `Set` (what was filled in, by field title, parsed as the item's form parses it; the first refusal
   with its control), `Clearable` and `Cleared` (a check unchecked, anything else an empty text). Tested in
   `ManyFieldsTests`.
+- `TitleWords` (TK-4.3c, 2026-11-25): a date and a !priority at the end of a new item's title, read from the end, each kind once, taken only when the list has Due (a date or date and time) or Priority (a choice) and the word names a value, never emptying the title; `Read` gives the title left, the values by field and `Said` (", due 26 November, priority High"). `TaskForm.AddItem` uses it. Tested in `TitleWordsTests`.
 - `TaskRules` (TK-4): Done, Start and Due, `DefaultTemplate`, `TemplateOf` (the fields of a list's configuration),
   `IsTask`, `IsDone`, `Due`, `Summary`, `TemplateWithDone` (a checklist or a plain list is the configuration's
   alone, AF-13.3: no item's file is touched), `DoneIndex`.

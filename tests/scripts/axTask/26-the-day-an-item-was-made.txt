@@ -30,3 +30,21 @@ keys escape
 expect said ! No item made
 expect focus Paint the door
 run powershell -NoProfile -Command "if (Test-Path 'tasks\Home\Not this one.json') { exit 1 } else { exit 0 }"
+
+# Goal: Give a new item its due date and priority in its title
+# TK-4.3c: a date and a !priority at the end of the title fill Due and Priority and leave the title.
+file tasks\Work\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false},{"title":"Due","type":"date","value":""},{"title":"Priority","type":"choice","value":"","options":["High","Normal","Low"]}],"actions":[]}
+keys left
+expect focus Home, list, 2 items
+keys down
+expect focus Work, list, 0 items
+keys right
+keys ctrl+n
+expect focus Title of the new item
+type Call the plumber tomorrow !high
+keys enter
+expect said Added Call the plumber, due 
+expect said , priority High
+expect focus Call the plumber
+run findstr /r /c:"Due.: .20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]" "tasks\Work\Call the plumber.json"
+run findstr /c:"High" "tasks\Work\Call the plumber.json"

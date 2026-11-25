@@ -1040,6 +1040,17 @@ Starts with: Open axTask with the folder tasks.
 3. Press Enter.
     You hear: Added Paint the door.
 
+### Give a new item its due date and priority in its title
+
+1. Press Left.
+2. Press Down.
+3. Press Right.
+4. Press Ctrl+N (New item; Actions menu).
+5. Type: Call the plumber tomorrow !high
+6. Press Enter.
+    You hear: Added Call the plumber, due.
+    You hear words such as: priority High.
+
 ## Put a list in your own order
 
 Starts with: Open axTask with the folder tasks.

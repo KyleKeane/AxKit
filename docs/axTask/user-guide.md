@@ -122,6 +122,11 @@ In the navigator:
 - Ctrl+N adds an item to the list shown: a row "New item" opens where it will stand, with a box to type its title
   in, as F2 renames; Enter adds it, Escape drops it. It gets the fields of its list: Done, Start and Due in a list made by
   axTask, or the ones you wrote into the list's configuration ("The fields of a list", below).
+- At the end of a new item's title, a date fills its Due field and a word after an exclamation mark its Priority:
+  "Buy milk tomorrow !high" adds "Buy milk", due tomorrow, priority High. A date can be 2026-12-01, today,
+  tomorrow, +3 for three days on, or a weekday; the priority word can be the start of one of the list's choices, !h
+  for High. They are taken out of the title, and axTask says what they filled: "Added Buy milk, due 26 November,
+  priority High". A list without a Due or a Priority field leaves the words in the title.
 - On a list among your lists, Ctrl+N adds the item to that list without going into it: type the title and press
   Enter; axTask says "Added" and the title "to" the list, and you stay on the list.
 - Ctrl+Shift+N makes a new list.
