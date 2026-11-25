@@ -17,6 +17,7 @@ public sealed class BundleHelpTests
                 "",
                 "## In every window of axKit",
                 "  F1: this list",
+                "  How to do a task: Help, User guide is axThing's guide; with AI help on, Ask about this window answers from the steps of axThing's tasks.",
                 "  Ctrl+Shift+P: the command palette: type part of a command's name, Down and Up through the matches, Enter runs it",
                 "  F4: report a bug, an idea or feedback to axKit's maintainer: type your words, Enter makes a new line; Tab goes on to the kind, a box for more detail and what is sent with your report; Ctrl+Enter or the Send button sends; Escape cancels and keeps nothing. The report is encrypted on your computer, and only the maintainer can read it",
                 "  Ctrl+Enter: the main action of where you are: it sends a form from any of its fields, keeps a long text from inside its box, presses a notice's main button, and does a window's main action where it has one; anywhere else, the edge sound and nothing more",

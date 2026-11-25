@@ -47,10 +47,19 @@ public static class BundleHelp
     }));
 
     /// <summary>
+    /// Where the steps of a task and the guide are, the line under F1's in every text (docs/axKit/user-workflows.md
+    /// WF-D-25, the maintainer's "Generate the whole text", 2026-11-16): the app's how-to page as Claude's working
+    /// folder holds it (<see cref="Ai.AiDocumentation.WorkflowPageName"/>, docs/axKit/ai-help.md AH-7.1), which Ask
+    /// about this window answers from, and the user guide in the Help menu. One sentence, no key typed.
+    /// </summary>
+    public static string HowToLine(string app) =>
+        $"  How to do a task: Help, User guide is {app}'s guide; with AI help on, Ask about this window answers from the steps of {app}'s tasks.";
+
+    /// <summary>
     /// The first line and the bundle's section, ending in a blank line so that the app's own sections follow. In the
-    /// section: F1, the command palette, the app's own <paramref name="lines"/> in their order (what Tab moves between,
-    /// what Ctrl+F finds, what Ctrl+S does, and in axClaude and axTerminal all their window keys), the text size, the
-    /// menu with Alt+F4, the bundle's menus. Lines are CRLF, as the notice's edit control shows them.
+    /// section: F1, where the how-to and the guide are (<see cref="HowToLine"/>), the command palette, the app's own
+    /// <paramref name="lines"/> in their order (what the generated key list cannot say), the text size, the menu with
+    /// Alt+F4, the bundle's menus. Lines are CRLF, as the notice's edit control shows them.
     /// </summary>
     /// <param name="app">The app's name, as in "Alt+F4: close axCalc".</param>
     /// <param name="lines">The app's lines of the section, without their indent.</param>
@@ -76,6 +85,7 @@ public static class BundleHelp
         text.Append("\r\n");
         text.Append("## ").Append(heading).Append("\r\n");
         text.Append("  F1: this list\r\n");
+        text.Append(HowToLine(app)).Append("\r\n");
         text.Append("  Ctrl+Shift+P: the command palette: type part of a command's name, Down and Up through the matches, Enter runs it\r\n");
         text.Append(ReportLine).Append("\r\n");
         text.Append(MainActionLine).Append("\r\n");

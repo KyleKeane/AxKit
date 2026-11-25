@@ -632,7 +632,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   reports as the same text again); Ctrl+Shift+P the command palette (AX-10); F4 a report to axKit's maintainer (docs/axKit/reports.md RP-2.1, 2026-11-07); F8 the status bar said by axKit itself, in a notice too (`BundleKeys.SayStatus`, AX-7.10, 2026-11-15); Ctrl+Space edit mode or navigation mode in an editable text of several lines (`BundleKeys.ToggleMode`, AX-8.13, 2026-11-15); Ctrl+Enter the main action of where the focus is (`BundleKeys.MainAction`, AX-8.10 rule 3, 2026-11-14); Shift+F1 a question to Claude about this window, Windows' own key for help about the thing in front (`docs/axKit/ai-help.md` AH-6, 2026-11-09), and Ctrl+Slash a further key of the same command (`BundleKeys.AskClaudeAlso`, AX-8.15, 2026-11-16); Ctrl+Period the context menu where the focus is, as Shift+F10 and the Applications key open it (`BundleKeys.ContextMenu`, AX-8.15, 2026-11-16); Alt+F4 exit; Alt and F10 the menu. Everything else is window-specific.
 - AX-8.3 Window-specific keys are defined once per window, in one table (`AxClaudeKeys`, `AxDownKeys`, `AxJSONKeys`, `AxGitKeys`, `AxTerminalKeys`, `AxFileKeys`, `AxMediaKeys`, `AxPreviewKeys`, `AxStartKeys`, `AxProcessKeys`, `AxTaskKeys`, `AxPassKeys`, `AxCalcKeys`, `AxClipKeys`), as constants
   with names that say what the key does. Changing a key is a change to that one line: the menu item and the key
-  handler read the table, and the F1 text names the same keys and is changed with it. Single-letter quick keys
+  handler read the table, and the F1 text's list of every key is made from the window's commands (AX-7.2a). Single-letter quick keys
   (axClaude's `h`, `i`, `o`) are in the table too. The text editor shell's keys (`AxKit.Forms/EditorKeys`: Ctrl+N new,
   Ctrl+O open, Ctrl+Shift+S save as, Ctrl+G go to line, Ctrl+Shift+W word wrap, Ctrl+W show in File Explorer) are
   defined once for every editor window, and each editor app's table includes them, so that one table per window
@@ -1778,9 +1778,15 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   from the window's command list as it stands (`AxKit.Core/KeyReference`, from `AxKitForm.CommandRows`): a heading per
   top menu ("### File menu") with a line per command that has a key ("Ctrl+O: Open", a submenu after the label:
   "Ctrl+H: Heading (Next)"), then "### Keys with no menu item". Ask about this window hands Claude the same whole
-  text. The app's own part says what the commands cannot (a list's letters, what Enter does where, an expression's
-  syntax), and no check holds it to naming every key any more (`check commands` did until 2026-11-23), so that it
-  shrinks to that; its key names come from the key tables (`HandKeyTests`).
+  text. The app's own part says only what the generated list cannot (the maintainer, 2026-11-16, "Generate the
+  whole text", user-workflows.md WF-D-25; trimmed in every app on 2026-11-25): what a key does in context (what is
+  said, where the focus goes, what a refusal means), the order of a task, the words to expect, the keys no command
+  carries (a list's letters, a hotkey, the edit control's own keys) and an expression's syntax, in plain sentences
+  under its section headings; a line that only named a key and its command's label is gone, since the list gives
+  it. No check holds that part to naming every key (`check commands` did until 2026-11-23, `KeyTests` until
+  2026-11-25); its key names come from the key tables (`HandKeyTests`). Under F1's line in the bundle's section, one
+  sentence (`BundleHelp.HowToLine`) points to the user guide in the Help menu and, with AI help on, to Ask about
+  this window, which answers from the app's how-to page (`workflows-<app>.md`, ai-help.md AH-7.1).
 - AX-7.3 The caret never moves except as the direct result of the user's own command. The result of a navigation
   command is announced through a UI Automation notification, joined into one notification when several things arrive
   at once. Nothing speaks on a plain arrow key; information is given on demand. Two notifications raised back to back

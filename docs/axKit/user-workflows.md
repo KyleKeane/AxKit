@@ -64,9 +64,8 @@ where a step is a command the tools may run (WF-9), and the existing scripts mov
   database, no network (bundle G6, B-10, AH-7.5).
 - Non-goal: a command identifier beside the label (WF-D-1).
 - Non-goal: a new AI tool (WF-D-9), raw keys or typing through the AI tools (`mcp.md`, non-goals).
-- Non-goal: the F1 texts written from the command list, though the user's item names them among the texts that
-  follow a changed key (WF-D-25): they stay hand-written tonight; `check commands` keeps failing on a key they lack
-  (AK-2.4).
+- The F1 texts written from the command list (WF-D-25), a non-goal of the night's work, were reversed by the user on
+  2026-11-16 and built later: the key list since 2026-11-23, the hand-written part trimmed on 2026-11-25.
 - Non-goal: a Help menu item or a section of a user guide that shows the how-to (WF-D-23), the user's to decide.
   axHelp offering to do what it explains (WF-D-24) was decided on 2026-11-16 and built on 2026-11-24.
 - Non-goal: goals, traces or the workflow record in axAutomate's window. The window reads a goal line as the note it
@@ -1671,10 +1670,16 @@ what it was before. One item of the priorities list holds them all for the user 
   reversed by the user on 2026-11-16 through the question tool ("Explain, then offer to do it") and built on
   2026-11-24: the guides' rule lets Claude offer once, with `AiCaution.OfferToDo`, and run nothing before the
   user's yes (ai-help.md AH-7.3b).
-- **WF-D-25 The F1 texts stay written by hand tonight, though the user's item names them.** Writing them from the
-  command list changes what every window's F1 says and needs a pass by ear; `check commands` keeps failing on a key
-  they lack, so a changed key cannot leave them behind unnoticed. It is the first thing left for later (section 10).
-  (Taken by the assistant on 2026-11-15 for the user to confirm.)
+- **WF-D-25 The F1 texts are generated whole from the commands; the hand-written part keeps only what they cannot
+  say.** Taken by the assistant on 2026-11-15 as "stay written by hand tonight"; reversed by the user on 2026-11-16
+  ("Generate the whole text"). Built in two steps: since 2026-11-23 every F1 text ends with "Every key of this
+  window", made as F1 opens from the window's command list (bundle SPEC.md AX-7.2a, `KeyReference`), so no key can
+  be missing; on 2026-11-25 each app's own part was trimmed to what that list does not say (what a key does in
+  context, the order of a task, the words to expect, the keys no command carries), and every text gained one
+  sentence, under F1's line, pointing to the user guide in the Help menu and, with AI help on, to Ask about this
+  window, which answers from the app's how-to page (`workflows-<app>.md`, WF-8.1; `BundleHelp.HowToLine`). The check that
+  held the hand-written part to every key of the table (`KeyTests`) went with it. A pass by ear of the new texts is
+  owed.
 - **WF-D-26 The goals' titles, and where each goal begins, were chosen by the build agents from the scripts'
   comments.** They are the user's vocabulary: a title is one comment line in a script and his to change, and the
   index (`docs/axKit/workflows.md`) is where he reads them all at once. (Taken by the assistant on 2026-11-15; on
@@ -1804,8 +1809,8 @@ Risks:
 
 Left for later, each with where it would start:
 
-- The F1 texts written from the command list (AK-2.3's plan), which the user's item names: a key changed in its
-  table followed by every text. It changes what every window's F1 says and needs a pass by ear (WF-D-25).
+- The F1 texts written from the command list (AK-2.3's plan): built (WF-D-25); a pass by ear of the new texts is
+  owed.
 - A place in a window where the user meets the how-to: a Help item that shows the app's page in a notice, or a
   section of each user guide (WF-D-23).
 - Goals in axAutomate's window: a goal row above its steps, "failed at step 7, in the goal Go to a line" at a run's

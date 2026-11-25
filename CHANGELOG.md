@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axKit: **F1 says what the key list cannot**: in every window, the keyboard shortcuts no longer repeat a key with its command's name, which the list of every key at the end gives; what is left is what a key does where you are, what is said and the words to expect. A new line under F1's names the app's how-to page, the steps of each task with their keys, which Ask about this window answers from, and the user guide in the Help menu.
 - axTask: **a new item's due date and priority can be typed in its title**: "Buy milk tomorrow !high" adds "Buy milk", due tomorrow, priority High, and says so. A date can be 2026-12-01, today, tomorrow, +3 or a weekday; the priority word can be the start of one of the list's choices.
 - axClaude: **over the stream, the conversation from before is shown and goes on in either source**: a window the stream feeds shows the earlier part of the folder's last conversation, "Input 1 from previous session" and on, as the screen shows it, where it started empty; and opening the folder the usual way afterwards goes on with that same conversation, where Claude Code's own --continue skipped it.
 - axClaude: **a reply over the stream reads as it does over the screen**: its Markdown marks are gone, so stars, backticks, fences and table bars are no longer shown or spoken; a table row reads "Column: cell." for each cell, as Claude Code's own screen reads it.

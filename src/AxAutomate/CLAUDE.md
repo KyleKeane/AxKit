@@ -25,7 +25,7 @@ The WinForms side of axAutomate: the item apps' window (`AxKit.Forms/ItemForm`) 
 
 ## Gotchas
 
-- `check commands` in the automation fails on a shared item key the F1 text does not name, even one this version only refuses: the refused keys have their line in the F1 text.
+- The F1 text's list of every key is made from the window's commands (bundle AX-7.2a), the keys this version only refuses among them; the hand-written part says in one sentence that they say so.
 - A run inside the runner's own hidden desktop starts its windows on a further desktop of its own; that works (`tests/scripts/axAutomate/02-run.txt`). In a script's `file` step, write `{temp}` for the inner run's `{temp}` and never a file name starting with n after a backslash (`\n` is a new line there).
 - The run's thread is a background thread: a window closed during a run starts a foreground thread that waits up to 15 s for the run, then ends the run's own processes (`Run.Abandon`), so the process never stays invisible. Every exception on the run's thread is caught: one escaping it would end the user's window.
 - Every call of `ScriptLines.CannotRun` or `Prepare` here passes `confined: true` (AU-6b.8). A run with `run` steps waits on its thread for the notice of `CommandsAllowed` (AU-D11), Cancel the default; a closed window or a stop is a Cancel.

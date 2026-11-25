@@ -209,33 +209,9 @@ public sealed class KeyTests
         [TemplateLauncher] = AxTemplate.HelpText.LauncherShortcuts,
     };
 
-    /// <summary>
-    /// The F1 text of every window names every key of its table that has a modifier or is a function key (AX-8.3:
-    /// the text is changed with the table), so that a key change never leaves the help text behind. Plain letters
-    /// and digits are left out: a letter is named by its word in the text ("h: the next heading").
-    /// </summary>
-    [Fact]
-    public void Every_window_key_is_named_in_its_F1_text()
-    {
-        var missing = new List<string>();
-        foreach (var (window, keys) in Windows)
-        {
-            foreach (var (name, key) in keys)
-            {
-                var code = key & Keys.KeyCode;
-                var modified = (key & Keys.Modifiers) != 0 && code != Keys.None;
-                var function = code is >= Keys.F1 and <= Keys.F24;
-                // A number row key's text ends in a full stop for speech ("Ctrl+1."); the help text writes it bare.
-                var text = BundleKeys.Text(key).TrimEnd('.');
-                if ((modified || function) && !F1Texts[window].Contains(text, StringComparison.OrdinalIgnoreCase))
-                {
-                    missing.Add($"{window}: {name} ({text})");
-                }
-            }
-        }
-
-        Assert.True(missing.Count == 0, "Not in the F1 text: " + string.Join("; ", missing));
-    }
+    // Every_window_key_is_named_in_its_F1_text held the hand-written part to naming every key of the window's table
+    // until 2026-11-25: the F1 text ends with every key made from the window's own commands since 2026-11-23
+    // (AX-7.2a, KeyReferenceTests), and its hand-written part says only what the generated list cannot (WF-D-25).
 
     /// <summary>Every F1 text names the axKit menu with its items in the bundle's words, the whole line (AX-9; only its start until 2026-10-24, when two texts had drifted), so that the menu is found from any window's help and the texts do not drift apart.</summary>
     [Fact]

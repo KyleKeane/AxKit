@@ -782,6 +782,9 @@ and what it still waits on is here, by ear with NVDA:
    list page heard; then the id taken off the list. The sender's side is held by `ReportSenderTests`; no window
    script can reach it, since a build made for the scripts carries no sending token (item "a private repository
    and reports encrypted").
+8. Every app's F1 text after its trim (2026-11-25, WF-D-25 built): F1 in each window, the text read through, what a
+   key does in context still there, the line "How to do a task" under F1's, the generated "Every key of this window"
+   after it; nothing a user needs gone.
 7. axTemplate in the maintainer's own use: a template put in from the launcher in Word, a browser and a terminal,
    where the caret was (docs/axTemplate/SPEC.md; the item "axTemplate: templates as an app of their own", closed
    2026-11-25 when the template in a form's field passed with NVDA).

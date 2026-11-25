@@ -79,7 +79,7 @@ expect said ! Windows text size
 keys f1
 expect state "notice":"Keyboard shortcuts"
 # The runner matches the raw JSON, where + is \u002B: a line of the text without one.
-expect state fetch, pull, push
+expect state any folder inside the repository will do
 wait 1200
 keys escape
 expect state "notice":null
