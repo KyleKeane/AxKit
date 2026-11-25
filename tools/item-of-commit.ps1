@@ -40,8 +40,8 @@ param(
 $ErrorActionPreference = 'Stop'
 
 if (-not $Lists) {
-    $repository = Split-Path $PSScriptRoot -Parent
-    $Lists = Join-Path (Split-Path $repository -Parent) 'axkit-management\priorities'
+    . (Join-Path $PSScriptRoot 'siblings.ps1')
+    $Lists = Join-Path (Get-BesideFolder 'axkit-management') 'priorities'
 }
 
 # No lists beside the repository: not the maintainer's computer. Every commit is allowed.

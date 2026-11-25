@@ -153,7 +153,7 @@ function Sync-Sibling {
 
 # The done items of the priorities list move into the Archive before the lists are committed (tools\item.ps1 archive;
 # the maintainer's ask of 2026-11-23: what is done is no longer in the list). Not with -Status, which changes nothing.
-$prioritiesList = Join-Path (Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)) '..\axkit-management\priorities'
+$prioritiesList = Join-Path $parent 'axkit-management\priorities'
 if (-not $Status -and (Test-Path -LiteralPath $prioritiesList)) {
     & (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) 'item.ps1') archive
 }

@@ -36,7 +36,7 @@ function Refuse([string]$why) {
 }
 
 if (-not $Repository) { $Repository = Split-Path $PSScriptRoot -Parent }
-if (-not $Management) { $Management = Join-Path (Split-Path $Repository -Parent) 'axkit-management' }
+if (-not $Management) { . (Join-Path $PSScriptRoot 'siblings.ps1'); $Management = Get-BesideFolder 'axkit-management' }
 
 $beside = Get-ApprovalKeyBesideLists $Management
 if ($null -eq $beside) { Refuse 'no approval key is set up beside the lists (axTask: Options, Approval passphrase).' }

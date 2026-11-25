@@ -30,7 +30,8 @@ param(
 
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 if (-not $Lists) {
-    $Lists = Join-Path (Split-Path -Parent (Split-Path -Parent $here)) 'axkit-management\priorities'
+    . (Join-Path $here 'siblings.ps1')
+    $Lists = Join-Path (Get-BesideFolder 'axkit-management') 'priorities'
 }
 if (-not (Test-Path $Lists)) {
     # Never the path itself: it holds the account's folder (root CLAUDE.md rule 6), and this runs with every push.

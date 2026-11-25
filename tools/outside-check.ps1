@@ -40,7 +40,7 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'approvals.ps1')
 
 if (-not $Repository) { $Repository = Split-Path $PSScriptRoot -Parent }
-if (-not $Management) { $Management = Join-Path (Split-Path $Repository -Parent) 'axkit-management' }
+if (-not $Management) { . (Join-Path $PSScriptRoot 'siblings.ps1'); $Management = Get-BesideFolder 'axkit-management' }
 $priorities = Join-Path $Management 'priorities'
 if (-not (Test-Path -LiteralPath $priorities)) {
     exit 0
