@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axClaude, axTerminal: **Down on the last line reaches what Claude just wrote** at the first press: output that waited for a moment after your key, or for NVDA's reading, is put in before the key moves the caret, where Down read the same line again and a second Down was needed.
 - axTask, axPass, axMCP: **templates in a form's field are back**, on Shift+F10 or the Applications key, now as Windows' own menu with the first template selected, which NVDA reads; to be heard in the next NVDA pass.
 - axTask: **a list can keep a history of its changes**: Options, Keep a history of changes in this list, off until you turn it on. Every change and every Ctrl+Z is then written with its time, the field and what it went from and to, on your computer beside the list; Context, History reads an item's changes, newest first.
 - axClaude: **a typed slash command's suggestions no longer flash into the conversation**: the list Claude Code draws above its prompt is hidden again, also with blank rows under it and with entries that carry another name in brackets, such as "/usage (cost)".

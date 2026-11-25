@@ -194,6 +194,12 @@ public sealed class TranscriptView : AxKitTextBox
             return;
         }
 
+        Apply(lines);
+    }
+
+    /// <summary>The lines put into the control now, whatever holds them back: <see cref="Sync"/>'s second half.</summary>
+    private void Apply(IReadOnlyList<Line> lines)
+    {
         _pending = null;
         var selectionStart = SelectionStart;
         var selectionEnd = selectionStart + SelectionLength;
@@ -293,6 +299,10 @@ public sealed class TranscriptView : AxKitTextBox
             _mirror.BreakAtEnd(caret - _mirror.StartAt(index));
         }
     }
+
+    /// <summary>Whether the caret is on the control's last row, where Down has nowhere to go.</summary>
+    private bool OnLastRow() =>
+        GetLineFromCharIndex(SelectionStart) >= (int)SendMessage(Handle, EM_GETLINECOUNT, IntPtr.Zero, IntPtr.Zero) - 1;
 
     /// <summary>A key press moved the caret: give the view a chance to join up a line the reader has left.</summary>
     private void SyncAfterKey()
@@ -394,6 +404,17 @@ public sealed class TranscriptView : AxKitTextBox
             e.Handled = e.SuppressKeyPress = true;
             ToggleBookmark();
             return;
+        }
+
+        // Down on the last row while output waits (the hold after a key, or the wait for the reader): the caret had
+        // nowhere to go, NVDA read the same line again, and a second Down was needed once the held line came in (the
+        // maintainer's report of 2026-11-25). What waits is put in first, before the key moves the caret, so that the
+        // text changes before NVDA reads and not while it does.
+        if (e.KeyCode == Keys.Down && e.Modifiers == Keys.None && _pending is { } held && OnLastRow())
+        {
+            _hold.Stop();
+            Apply(held);
+            Log.Info($"{AccessibleName}: Down at the end with output held: the held output was put in first");
         }
 
         _lastKeyTick = Environment.TickCount64;
