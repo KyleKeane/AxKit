@@ -21,8 +21,11 @@ public static class ThisProgram
     /// of any name that is free (the questions' relay, docs/axClaude/stream-mode.md SM-7.3; the 2026-11-21 audit).
     /// False when Windows cannot say.
     /// </summary>
-    public static bool Serves(System.IO.Pipes.NamedPipeClientStream pipe) =>
-        GetNamedPipeServerProcessId(pipe.SafePipeHandle.DangerousGetHandle(), out var server) && Runs(server);
+    public static bool Serves(System.IO.Pipes.NamedPipeClientStream pipe) => ServerOf(pipe) is { } server && Runs(server);
+
+    /// <summary>The process that serves a pipe this process connected to; null when Windows cannot say.</summary>
+    public static uint? ServerOf(System.IO.Pipes.NamedPipeClientStream pipe) =>
+        GetNamedPipeServerProcessId(pipe.SafePipeHandle.DangerousGetHandle(), out var server) ? server : null;
 
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern bool GetNamedPipeServerProcessId(nint pipe, out uint processId);
@@ -38,9 +41,10 @@ public static class ThisProgram
 
         try
         {
-            var size = 1024;
+            // A long path whole (Windows allows 32767 characters): axProcess shows every process's program file through it.
+            var size = 32768;
             var path = new StringBuilder(size);
-            return QueryFullProcessImageNameW(process, 0, path, ref size) ? path.ToString() : null;
+            return QueryFullProcessImageNameW(process, 0, path, ref size) ? path.ToString(0, size) : null;
         }
         finally
         {

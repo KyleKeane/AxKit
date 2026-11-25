@@ -244,15 +244,11 @@ internal static class Program
     /// <summary>Whether the window in front is this process's own.</summary>
     private static bool OwnWindowInFront()
     {
-        GetWindowThreadProcessId(GetForegroundWindow(), out var owner);
+        AxKit.Forms.User32.GetWindowThreadProcessId(AxKit.Forms.User32.GetForegroundWindow(), out var owner);
         return owner == (uint)Environment.ProcessId;
     }
 
-    [DllImport("user32.dll")]
-    private static extern nint GetForegroundWindow();
 
-    [DllImport("user32.dll")]
-    private static extern uint GetWindowThreadProcessId(nint window, out uint processId);
 
     private static void StartHidden(string path, IReadOnlyList<string> verbs)
     {

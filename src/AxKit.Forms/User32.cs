@@ -36,4 +36,50 @@ public static class User32
     /// <summary>The control with the keyboard focus in the calling thread's windows, active or not.</summary>
     [DllImport("user32.dll")]
     public static extern nint GetFocus();
+
+    /// <summary>A window's long value by its index (a style, GWL_STYLE -16, GWL_EXSTYLE -20).</summary>
+    [DllImport("user32.dll")]
+    public static extern nint GetWindowLongPtrW(nint hWnd, int index);
+
+    /// <summary>Milliseconds since the user's last key or mouse move in this session (<c>GetLastInputInfo</c>), -1 when Windows cannot tell: the AI tools' wait for a busy user, axPass's lock.</summary>
+    public static long IdleMilliseconds()
+    {
+        var info = new LastInputInfo { Size = (uint)Marshal.SizeOf<LastInputInfo>() };
+        return GetLastInputInfo(ref info) ? unchecked((uint)Environment.TickCount - info.Time) : -1;
+    }
+
+    /// <summary>The window flashed on the taskbar until it comes to the front (<c>FlashWindowEx</c>, all of it, until in front): a console window's turn that ended while the user was away, a notice an AI tool caused.</summary>
+    public static void FlashUntilForeground(nint window)
+    {
+        var info = new FlashInfo { Size = (uint)Marshal.SizeOf<FlashInfo>(), Window = window, Flags = FlashAll | FlashTimerNoForeground };
+        FlashWindowEx(ref info);
+    }
+
+    private const uint FlashAll = 3;
+    private const uint FlashTimerNoForeground = 12;
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct LastInputInfo
+    {
+        public uint Size;
+        public uint Time;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct FlashInfo
+    {
+        public uint Size;
+        public nint Window;
+        public uint Flags;
+        public uint Count;
+        public uint Timeout;
+    }
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetLastInputInfo(ref LastInputInfo info);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool FlashWindowEx(ref FlashInfo info);
 }

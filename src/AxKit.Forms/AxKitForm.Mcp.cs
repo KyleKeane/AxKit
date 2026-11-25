@@ -366,21 +366,7 @@ public abstract partial class AxKitForm
     }
 
     /// <summary>Milliseconds since the user's last key or mouse move in this session (<c>GetLastInputInfo</c>), -1 when Windows cannot tell.</summary>
-    private static long UserIdleMs()
-    {
-        var info = new LastInputInfo { Size = (uint)Marshal.SizeOf<LastInputInfo>() };
-        return GetLastInputInfo(ref info) ? unchecked((uint)Environment.TickCount - info.Time) : -1;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct LastInputInfo
-    {
-        public uint Size;
-        public uint Time;
-    }
-
-    [DllImport("user32.dll")]
-    private static extern bool GetLastInputInfo(ref LastInputInfo info);
+    private static long UserIdleMs() => User32.IdleMilliseconds();
 
     /// <summary>
     /// MC-7.3: a command that acts outside the window (a delete, a push, a program started) is asked of the user first,
@@ -567,8 +553,7 @@ public abstract partial class AxKitForm
     {
         if (GetForegroundWindow() != Handle)
         {
-            var info = new FlashInfo { Size = (uint)Marshal.SizeOf<FlashInfo>(), Window = Handle, Flags = FlashAll | FlashUntilForeground };
-            FlashWindowEx(ref info);
+            User32.FlashUntilForeground(Handle);
         }
     }
 
@@ -749,19 +734,4 @@ public abstract partial class AxKitForm
     /// <summary>The app's <see cref="Fail"/>, for the services the window holds.</summary>
     internal void ShowFailure(string message) => Fail(message);
 
-    private const uint FlashAll = 3;
-    private const uint FlashUntilForeground = 12;
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct FlashInfo
-    {
-        public uint Size;
-        public nint Window;
-        public uint Flags;
-        public uint Count;
-        public uint Timeout;
-    }
-
-    [DllImport("user32.dll")]
-    private static extern bool FlashWindowEx(ref FlashInfo info);
 }

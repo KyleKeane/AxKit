@@ -61,12 +61,8 @@ public static class UserPipe
         return line.Length > 0 ? line.ToString() : null;
     }
 
-    public static uint? ServerOf(NamedPipeClientStream pipe) =>
-        GetNamedPipeServerProcessId(pipe.SafePipeHandle.DangerousGetHandle(), out var id) ? id : null;
+    public static uint? ServerOf(NamedPipeClientStream pipe) => AxKit.Core.ThisProgram.ServerOf(pipe);
 
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern bool GetNamedPipeClientProcessId(nint pipe, out uint processId);
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool GetNamedPipeServerProcessId(nint pipe, out uint processId);
 }

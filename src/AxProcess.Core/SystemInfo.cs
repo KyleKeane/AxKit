@@ -29,7 +29,6 @@ public readonly record struct SystemTimes(long Idle, long Kernel, long User)
 /// </summary>
 public static class SystemInfo
 {
-    private const int ProcessQueryLimitedInformation = 0x1000;
 
     /// <summary>The physical memory, total and available, in bytes; zeros when Windows does not answer.</summary>
     public static (long Total, long Available) Memory()
@@ -42,25 +41,7 @@ public static class SystemInfo
         GetSystemTimes(out var idle, out var kernel, out var user) ? new SystemTimes(idle, kernel, user) : default;
 
     /// <summary>The program file of a running process, which works for most processes a user cannot open fully; null when Windows refuses or it has ended.</summary>
-    public static string? ProgramPath(int processId)
-    {
-        var handle = OpenProcess(ProcessQueryLimitedInformation, false, processId);
-        if (handle == IntPtr.Zero)
-        {
-            return null;
-        }
-
-        try
-        {
-            var buffer = new StringBuilder(32768);
-            var size = buffer.Capacity;
-            return QueryFullProcessImageName(handle, 0, buffer, ref size) ? buffer.ToString(0, size) : null;
-        }
-        finally
-        {
-            CloseHandle(handle);
-        }
-    }
+    public static string? ProgramPath(int processId) => processId < 0 ? null : ThisProgram.ImageOf((uint)processId);
 
     /// <summary>The lines of a process's details notice (PR-3.4): what Windows lets the user read, each on its own line.</summary>
     public static IReadOnlyList<string> Details(ProcessRow row)
@@ -131,14 +112,4 @@ public static class SystemInfo
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool GetSystemTimes(out long idle, out long kernel, out long user);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern IntPtr OpenProcess(int access, [MarshalAs(UnmanagedType.Bool)] bool inherit, int processId);
-
-    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool QueryFullProcessImageName(IntPtr process, int flags, StringBuilder name, ref int size);
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool CloseHandle(IntPtr handle);
 }

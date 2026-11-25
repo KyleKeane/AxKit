@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 using AxTemplate.Core;
+using static AxKit.Forms.User32;
 
 namespace AxTemplate;
 
@@ -55,12 +56,6 @@ internal static class WindowInFront
     [DllImport("user32.dll", SetLastError = true)]
     private static extern bool GetGUIThreadInfo(uint threadId, ref GUITHREADINFO info);
 
-    [DllImport("user32.dll")]
-    private static extern uint GetWindowThreadProcessId(nint window, out uint processId);
-
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     private static extern int GetClassNameW(nint window, StringBuilder name, int length);
-
-    [DllImport("user32.dll")]
-    private static extern nint GetWindowLongPtrW(nint window, int index);
 }

@@ -464,8 +464,7 @@ public sealed partial class PassForm : ItemForm
             return;
         }
 
-        var info = new LastInputInfo { Size = (uint)Marshal.SizeOf<LastInputInfo>() };
-        if (GetLastInputInfo(ref info) && (uint)Environment.TickCount - info.Time >= (uint)_settings.LockMinutes * 60_000)
+        if (User32.IdleMilliseconds() is var idle and >= 0 && idle >= (long)_settings.LockMinutes * 60_000)
         {
             Log.Info("Locked after the idle minutes");
             Lock();
@@ -588,15 +587,4 @@ public sealed partial class PassForm : ItemForm
             WindowMenu.Start(Dispatch.AxFile, Backups.FolderFor(database));
         }
     }
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct LastInputInfo
-    {
-        public uint Size;
-        public uint Time;
-    }
-
-    [DllImport("user32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool GetLastInputInfo(ref LastInputInfo info);
 }

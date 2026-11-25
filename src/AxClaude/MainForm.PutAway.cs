@@ -299,9 +299,6 @@ internal sealed partial class MainForm
     }
 
     [DllImport("user32.dll")]
-    private static extern nint GetWindowLongPtrW(nint hWnd, int index);
-
-    [DllImport("user32.dll")]
     private static extern nint SetWindowLongPtrW(nint hWnd, int index, nint value);
 
     [DllImport("user32.dll")]
