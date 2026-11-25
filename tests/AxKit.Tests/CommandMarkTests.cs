@@ -132,9 +132,12 @@ public sealed partial class CommandMarkTests
     public void Menu_items_that_act_outside_their_window_stay_marked_act()
     {
         var root = SourceTexts.RepositoryRoot();
+        // Compared with every white space taken out of both (docs/axKit/repairs.json R-99, 2026-11-25): a line broken or
+        // indented anew still matches, while a renamed label or call fails, which is when its mark is looked at again.
+        static string Squeezed(string s) => string.Concat(s.Where(c => !char.IsWhiteSpace(c)));
         foreach (var (file, text, why) in PinnedActItems)
         {
-            Assert.True(File.ReadAllText(Path.Combine(root, file)).Contains(text, StringComparison.Ordinal), $"{file}: must still state act ({why}); looked for: {text}. See docs/axKit/app-kit.md AK-2.5.");
+            Assert.True(Squeezed(File.ReadAllText(Path.Combine(root, file))).Contains(Squeezed(text), StringComparison.Ordinal), $"{file}: must still state act ({why}); looked for: {text}. See docs/axKit/app-kit.md AK-2.5.");
         }
     }
 
