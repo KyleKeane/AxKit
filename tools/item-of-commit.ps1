@@ -49,7 +49,9 @@ if (-not (Test-Path -LiteralPath $Lists)) {
     exit 0
 }
 
-$lines = @(Get-Content -LiteralPath $MessageFile | Where-Object { $_ -notmatch '^\s*#' })
+# git writes the message as UTF-8, and the items are read as UTF-8 (items.ps1): read as ANSI, a title's word with any
+# other letter than ASCII never matched.
+$lines = @(Get-Content -LiteralPath $MessageFile -Encoding UTF8 | Where-Object { $_ -notmatch '^\s*#' })
 $subject = ($lines | Where-Object { $_.Trim().Length -gt 0 } | Select-Object -First 1)
 if (-not $subject) {
     exit 0

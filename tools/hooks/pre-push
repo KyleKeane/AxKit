@@ -4,23 +4,37 @@
 # the code and nobody has to remember to back them up. Installed once per clone with
 #     git config core.hooksPath tools/hooks
 # (docs/axKit/development-environment.md section 4; release.ps1 refuses to run without it). A sibling's trouble is
-# printed and never stops the push; only the outside check below does. Kept with LF line endings (.gitattributes): sh does not
-# read CRLF.
+# printed and never stops the push; the outside check and the tests do. Kept with LF line endings (.gitattributes): sh
+# does not read CRLF.
 root=$(git rev-parse --show-toplevel)
 # git hands a hook GIT_DIR and its kin; the sync must not inherit them, or every git call of its own would act on this
 # repository whatever folder it names (the script drops them too).
 unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_COMMON_DIR GIT_PREFIX
-# The tests and checks of what is pushed (tools/push-check.ps1, 2026-11-24): the bundle's own tests always, the changed
-# apps' tests, the page and script checks. A failure stops the push before anything leaves the computer.
-if ! powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$root/tools/push-check.ps1" </dev/null; then
-  echo "Push refused: a test or a check failed (the lines above)."
-  exit 1
-fi
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$root/tools/sync-repos.ps1" </dev/null
-# The one thing that stops a push (docs/axKit/outside-reports.md OR-7.1, 2026-11-21): an item from an outside report
-# worked on without the maintainer's signed approval, or an approval that no longer verifies. Local, no network.
+# What is pushed, from git's standard input: a line per ref, "<local ref> <local sha> <remote ref> <remote sha>". A
+# push of tags alone (release.ps1 pushes its tag after main) or of deletions has no new code to test.
+branches=0
+while read -r local_ref local_sha remote_ref remote_sha; do
+  case "$local_ref" in
+    refs/tags/*) ;;
+    *) case "$local_sha" in 0000000000000000000000000000000000000000) ;; *) branches=1 ;; esac ;;
+  esac
+done
+# First the one check that is quick and stops a push for a reason no test sees (docs/axKit/outside-reports.md OR-7.1,
+# 2026-11-21): an item from an outside report worked on without the maintainer's signed approval, or an approval that
+# no longer verifies. Local, no network. Before the lists are synced, so that a refused push sends nothing.
 if ! powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$root/tools/outside-check.ps1" </dev/null; then
   echo "Push refused: see the lines above (docs/axKit/outside-reports.md)."
   exit 1
 fi
+# The tests and checks of what is pushed (tools/push-check.ps1, 2026-11-24): the bundle's own tests always, the changed
+# apps' tests, the page and script checks. A failure stops the push before anything leaves the computer.
+if [ "$branches" = 1 ]; then
+  if ! powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$root/tools/push-check.ps1" </dev/null; then
+    echo "Push refused: a test or a check failed (the lines above)."
+    exit 1
+  fi
+else
+  echo "Push check: tags or deletions only, no new code; the tests were run with the push of the branch."
+fi
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$root/tools/sync-repos.ps1" </dev/null
 exit 0

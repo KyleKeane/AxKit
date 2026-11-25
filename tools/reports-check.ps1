@@ -33,7 +33,8 @@ if (-not $Lists) {
     $Lists = Join-Path (Split-Path -Parent (Split-Path -Parent $here)) 'axkit-management\priorities'
 }
 if (-not (Test-Path $Lists)) {
-    Write-Host "Reports: the priorities list is not at $Lists; nothing checked."
+    # Never the path itself: it holds the account's folder (root CLAUDE.md rule 6), and this runs with every push.
+    Write-Host "Reports: the priorities list is not where it was looked for (axkit-management\priorities beside this repository, or -Lists); nothing checked."
     exit 2
 }
 
