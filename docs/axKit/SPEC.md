@@ -1790,7 +1790,10 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   piece lost its full stop as well, so a sentence ended differently joined than said alone). What a window
   announces before it has been activated for the first time waits for the activation and is said then, in order
   (`AxKitForm.Announce`, 2026-11-01): NVDA ignores a window that is not in front, and a window started by a program in
-  the background comes up behind until it is activated, so what it said as it opened was lost.
+  the background comes up behind until it is activated, so what it said as it opened was lost. It is said once the
+  window has been in front for half a second and its focus has held still for 0.4 seconds, two seconds at most
+  (2026-11-25): said while NVDA had yet to read where the focus landed, the reading cut it off (axMedia's "Cannot
+  play" as its window opened).
   A paste into an editable text, by Ctrl+V, Shift+Insert or an Edit menu's Paste, is said once the control has done it
   (2026-10-25, the user's ask: the edit control's own paste is silent): "Pasted", "Pasted, 3 lines" for several into a
   text of several lines, "Nothing to paste as text" when the clipboard holds none; never the text itself, which may be a

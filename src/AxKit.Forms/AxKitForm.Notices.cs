@@ -372,8 +372,22 @@ public abstract partial class AxKitForm
     /// </summary>
     private List<(string Text, bool Interrupt)>? _beforeActivation = [];
 
-    /// <summary>Half a second after the first activation: NVDA's foreground change and the notifications reach it by different roads, and a notification raised at the activation itself still found the window in the background.</summary>
-    private readonly System.Windows.Forms.Timer _activationSay = new() { Interval = 500 };
+    /// <summary>
+    /// What waited is said once the window has been in front for half a second and its focus has held still for
+    /// <see cref="FocusStillMs"/> (two seconds at most): NVDA's foreground change and the notifications reach it by
+    /// different roads, and a notification raised at the activation itself still found the window in the background;
+    /// and one raised while NVDA had yet to read where the focus landed was cut off by that reading (axMedia's "Cannot
+    /// play" as its window opened, the NVDA passes of 2026-11-24, which a fixed half second did not cover). The timer
+    /// looks every tenth of a second.
+    /// </summary>
+    private readonly System.Windows.Forms.Timer _activationSay = new() { Interval = 100 };
+
+    private const int ActivationMs = 500;
+    private const int FocusStillMs = 400;
+    private const int ActivationMostMs = 2000;
+    private long _activatedTick;
+    private long _focusChangedTick;
+    private nint _lastFocus;
 
     /// <summary>
     /// Announcements that do not interrupt, raised within <see cref="JoinMs"/> of the one before, go as one (AX-7.3):
@@ -492,6 +506,20 @@ public abstract partial class AxKitForm
         };
         _activationSay.Tick += (_, _) =>
         {
+            var now = Environment.TickCount64;
+            var focus = User32.GetFocus();
+            if (focus != _lastFocus)
+            {
+                _lastFocus = focus;
+                _focusChangedTick = now;
+            }
+
+            var since = now - _activatedTick;
+            if (since < ActivationMostMs && (since < ActivationMs || now - _focusChangedTick < FocusStillMs))
+            {
+                return;
+            }
+
             _activationSay.Stop();
             if (_beforeActivation is { } held)
             {
@@ -515,11 +543,13 @@ public abstract partial class AxKitForm
     /// <summary>Several announcements as one, the last with its own ending (<see cref="SaidTogether.Sentence"/>).</summary>
     private static string Sentence(IEnumerable<string> pieces) => SaidTogether.Sentence(pieces);
 
-    /// <summary>The first activation: what waited for it is said half a second on, so that NVDA has the window in front when the notifications arrive.</summary>
+    /// <summary>The first activation: what waited for it is said once NVDA has the window in front and has read where its focus is (<see cref="_activationSay"/>).</summary>
     private void SayWhatWaitedForActivation()
     {
         if (_beforeActivation is not null && !_activationSay.Enabled)
         {
+            _activatedTick = _focusChangedTick = Environment.TickCount64;
+            _lastFocus = User32.GetFocus();
             _activationSay.Start();
         }
     }
