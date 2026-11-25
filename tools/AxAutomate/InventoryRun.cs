@@ -240,6 +240,11 @@ internal static class InventoryRun
             {
                 written = CommandInventory.Merge(written, snapshot, _temp, _profile);
             }
+
+            // A write of part of the suite adds and replaces, and cannot know that a row it did not see is gone: another
+            // folder's scripts list the same window in states this run never reached. Said, so that a renamed or moved
+            // command's old row is not left in silence (docs/axKit/repairs.json R-85, the update switch of 2026-11-24).
+            lines.Add("Rows this run did not see are kept: a command renamed or gone keeps its old row until a write of the whole suite, or a --inventory rewrite of the app's scripts, removes it.");
         }
 
         var (added, replaced, removed) = Counted(_apps, written);

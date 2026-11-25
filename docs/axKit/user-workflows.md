@@ -227,7 +227,9 @@ where a step is a command the tools may run (WF-9), and the existing scripts mov
   when `--inventory write` plays every script under `tests/scripts` that lists a window's commands (the live scripts
   aside, which a run without `--live` leaves out and whose windows the others list too), it writes as
   `rewrite` does, each whole app's rows only those the run saw, and says so in one line; a renamed or removed menu
-  item's old row then goes by itself, where it needed a remembered `rewrite` before (`InventoryRun.Playing`).
+  item's old row then goes by itself, where it needed a remembered `rewrite` before (`InventoryRun.Playing`). A write
+  of part of the suite keeps the rows it did not see, since another folder's scripts list the same windows in other
+  states, and says so in one line with the two runs that remove them (2026-11-24, repairs R-85).
 - WF-2.10 **Checking, whenever the window checks run** (`--inventory check`, the default when the repository is
   found): every row of a snapshot must be in the command inventory under its app with the same label, menus, key,
   also, key text, mark, keyOnly and ai. A row that is missing or differs is a line of the run's end, under words
