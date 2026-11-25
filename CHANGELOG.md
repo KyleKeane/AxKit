@@ -3,6 +3,7 @@
 ## Unreleased
 
 - axTask: **a new item's due date and priority can be typed in its title**: "Buy milk tomorrow !high" adds "Buy milk", due tomorrow, priority High, and says so. A date can be 2026-12-01, today, tomorrow, +3 or a weekday; the priority word can be the start of one of the list's choices.
+- axClaude: **over the stream, the conversation from before is shown and goes on in either source**: a window the stream feeds shows the earlier part of the folder's last conversation, "Input 1 from previous session" and on, as the screen shows it, where it started empty; and opening the folder the usual way afterwards goes on with that same conversation, where Claude Code's own --continue skipped it.
 - axClaude: **a reply over the stream reads as it does over the screen**: its Markdown marks are gone, so stars, backticks, fences and table bars are no longer shown or spoken; a table row reads "Column: cell." for each cell, as Claude Code's own screen reads it.
 - axClaude: **over the stream, a skill or a custom command answers as Claude does**: what Claude writes after `/your-command` is a reply, labelled "claude:", spoken and found with c, and the command stands as "you: /your-command", where a line of raw tags appeared and the replies were plain unspoken rows.
 - axClaude: **over the stream, your answers to Claude's questions stay in the conversation**: "User answered Claude's questions:" and each question with your answer, as with the screen.

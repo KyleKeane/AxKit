@@ -427,7 +427,10 @@ when the hook says `async`. It needs no Claude Code, no network and no model, an
 - **The stand-in of the stream** (2026-11-17, `docs/axClaude/stream-mode.md` SM-10.2; `tools/AxAutomate/StreamStandIn.cs`,
   whose header is its manual): for a window the stream feeds, the stand-in is a process of lines, as Claude Code is
   with its stream options. A script's `claude.cmd` is `@"%AXKIT_STANDIN%" standin --stream <case> %*`, and the window
-  is started with `--source stream`. It writes no scenario: `<case>` names a recording of the real stream under
+  is started with `--source stream`. With `--session <record>` after the case, the stand-in first writes
+  `tests/fixtures/records/<record>.jsonl` as its conversation's session file where Claude Code keeps it, under a
+  `CLAUDE_CONFIG_DIR` inside the run's folder that the `claude.cmd` sets, so that a window started there after it takes
+  that conversation up (2026-11-25, script 51). It writes no scenario: `<case>` names a recording of the real stream under
   `tests/fixtures/streams` of the run's repository (a path to a `.jsonl` file is taken as it is), so a
   script follows what Claude Code 2.1.327 really wrote. The repository is the runner's own (`--repository`, or the
   folder above it that holds `AxKit.sln`), which the runner hands on in `AXKIT_STANDIN_REPOSITORY` as it hands its

@@ -297,8 +297,14 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Choose the model from the list Claude Code gave
     - Choose the effort
     - Send a message after the choices
-49. **Have a short exchange with Claude**
-50. **Answer a set of two questions from Claude**
+49. **See the earlier conversation when Claude Code's stream takes it up**
+    - Read the earlier conversation in a new window
+    - Go on with the conversation
+50. **Hand a conversation from Claude Code's stream to its screen and back, with Claude Code itself**
+    - Take the stream's conversation up with the screen
+    - Take the conversation up over the stream again and read its earlier part
+51. **Have a short exchange with Claude**
+52. **Answer a set of two questions from Claude**
 
 ## axClip
 

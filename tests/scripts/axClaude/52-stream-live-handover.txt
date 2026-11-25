@@ -1,0 +1,57 @@
+# Workflow: Hand a conversation from Claude Code's stream to its screen and back, with Claude Code itself
+# Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
+# axClaude, docs/axClaude/stream-mode.md SM-8.1 to SM-8.3 (stage 6, 2026-11-25). Measured with Claude Code 2.1.332: the
+# interactive program's --continue passes over a session the stream began, and the stream writes nothing of a
+# conversation it takes up. So a window the stream feeds keeps its session for the folder, a window the screen feeds
+# takes that session up by its id where --continue would have found nothing, and a window the stream feeds names the
+# folder's newest session and shows its earlier part from the session's file. Each window passes --continue after "--",
+# as a start without arguments does.
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir hand
+start claude {temp}\hand --source stream -- --model haiku --effort low --permission-mode default --continue
+expect said Start Claude Code in this folder?
+wait 1500
+keys tab
+keys enter
+expect said Ready
+wait 2000
+type Remember this word for later: kiwi. Reply with the single word noted.
+keys enter
+expect said Sent
+expect said Done
+wait 1000
+close
+wait 3000
+
+# Goal: Take the stream's conversation up with the screen
+start claude {temp}\hand -- --model haiku --effort low --continue
+# The interactive program asks for the folder's trust, which its stream never did.
+expect said trust
+wait 1500
+keys enter
+expect said Ready
+do Conversation
+expect text you: Remember this word for later: kiwi. Reply with the single word noted.
+wait 1000
+close
+wait 3000
+
+# Goal: Take the conversation up over the stream again and read its earlier part
+start claude {temp}\hand --source stream -- --model haiku --effort low --permission-mode default --continue
+expect said Start Claude Code in this folder?
+wait 1500
+keys tab
+keys enter
+expect said Ready
+do Conversation
+expect text # Input 1 from previous session
+expect text you: Remember this word for later: kiwi. Reply with the single word noted.
+do Message field
+type Which word did I ask you to remember? Reply with that word alone, in lower case.
+keys enter
+expect said Sent
+expect said Done
+do Conversation
+expect text # Output 1 Reply from Claude
+expect text claude: kiwi

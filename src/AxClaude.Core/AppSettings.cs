@@ -160,6 +160,48 @@ public sealed class AppSettings : ConsoleSettings
     /// <summary>Whether a word names the stream as the source: that word alone, in any case; everything else is the screen.</summary>
     public static bool IsStream(string? source) => string.Equals(source?.Trim(), SourceStream, StringComparison.OrdinalIgnoreCase);
 
+    /// <summary>How many folders <see cref="StreamSessions"/> keeps, the last used first.</summary>
+    public const int KeptStreamSessions = 30;
+
+    /// <summary>
+    /// For each folder, the session a window the stream feeds last ran there (docs/axClaude/stream-mode.md SM-8.3),
+    /// the last used first: the interactive program's <c>--continue</c> passes over a session the stream began, so a
+    /// window the screen feeds takes it up by this id (<c>Streaming/SessionHandover.ForScreen</c>). An id: never shown,
+    /// said or logged.
+    /// </summary>
+    public List<KeptSession> StreamSessions { get; set; } = [];
+
+    /// <summary>The session a window the stream feeds last ran in the folder; null when none is kept.</summary>
+    public string? StreamSessionOf(string folder) =>
+        StreamSessions.FirstOrDefault(kept => SameFolder(kept.Folder, folder))?.Session;
+
+    /// <summary>
+    /// Keeps the session a window the stream feeds runs in the folder, first in the list, over what
+    /// <paramref name="saved"/> holds (the list as the settings file has it now, which another window may have
+    /// changed since this one read it: the file's members are merged whole, R-62). False, and nothing changed, for
+    /// an id that is no session's and for the session already kept first for the folder.
+    /// </summary>
+    public bool KeepStreamSession(string folder, string session, IReadOnlyList<KeptSession>? saved = null)
+    {
+        if (!Streaming.SessionHandover.IsSessionId(session) || string.IsNullOrWhiteSpace(folder))
+        {
+            return false;
+        }
+
+        List<KeptSession> kept = [new KeptSession(folder, session), .. (saved ?? StreamSessions).Where(other => other is not null && !SameFolder(other.Folder, folder))];
+        kept = kept.Take(KeptStreamSessions).ToList();
+        if (kept.SequenceEqual(StreamSessions))
+        {
+            return false;
+        }
+
+        StreamSessions = kept;
+        return true;
+    }
+
+    private static bool SameFolder(string? one, string? other) =>
+        string.Equals(one?.TrimEnd('\\', '/'), other?.TrimEnd('\\', '/'), StringComparison.OrdinalIgnoreCase);
+
     public static string DefaultPath => AppPaths.SettingsFile("axClaude");
 
     /// <summary>Where axClaude 1.x kept the file, before the axKit bundle.</summary>
@@ -228,5 +270,14 @@ public sealed class AppSettings : ConsoleSettings
         SilentWords = SpeechFilter.Words(SpeechFilter.Text(SilentWords ?? []));
         EventCore = string.Equals(EventCore?.Trim(), EventCoreShadow, StringComparison.OrdinalIgnoreCase) ? EventCoreShadow : EventCoreOn;
         ClaudeSource = IsStream(ClaudeSource) ? SourceStream : SourceScreen;
+        // A kept session is put on a command line: only a folder and a session's id, each once, as many as are kept.
+        StreamSessions = (StreamSessions ?? [])
+            .Where(kept => kept is not null && !string.IsNullOrWhiteSpace(kept.Folder) && Streaming.SessionHandover.IsSessionId(kept.Session))
+            .DistinctBy(kept => kept.Folder.TrimEnd('\\', '/'), StringComparer.OrdinalIgnoreCase)
+            .Take(KeptStreamSessions)
+            .ToList();
     }
 }
+
+/// <summary>A folder and the session a window the stream feeds last ran there (<see cref="AppSettings.StreamSessions"/>).</summary>
+public sealed record KeptSession(string Folder, string Session);

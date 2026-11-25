@@ -208,7 +208,10 @@ public static class ClaudeCodeStream
     /// <summary>The option that takes up a saved session, followed by the session's id (<see cref="StreamLine.Session"/>).</summary>
     public const string ResumeOption = "--resume";
 
-    /// <summary>The option that takes up the folder's last session.</summary>
+    /// <summary>The short form of <see cref="ResumeOption"/>.</summary>
+    public const string ResumeShortOption = "-r";
+
+    /// <summary>The option that takes up the folder's last session: in the stream the newest of any source's, in the interactive program the newest it began itself (measured 2026-11-25, docs/axClaude/stream-mode.md section 13).</summary>
     public const string ContinueOption = "--continue";
 
     /// <summary>The option that names the model of a run, followed by the model's name.</summary>

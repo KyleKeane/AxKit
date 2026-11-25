@@ -1,0 +1,47 @@
+# Workflow: See the earlier conversation when Claude Code's stream takes it up
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/stream-mode.md SM-8.1 and SM-8.2 (stage 6, 2026-11-25): Claude Code's stream writes nothing of
+# the conversation it takes up, so a window the stream feeds names the folder's newest session before the start and
+# shows its older part from the session's file, as the screen shows a resumed one: the markers "from previous session",
+# the "you:" line, Claude's reply and its tool line. The first window's stand-in writes that file where Claude Code keeps
+# it (the run's own configuration folder, which claude.cmd names; tests/fixtures/records/stream-session.jsonl, the shape
+# a session the stream began was measured in); the second window, in the same folder, takes it up.
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+file claude.cmd @set "CLAUDE_CONFIG_DIR=%~dp0home\.claude"& "%AXKIT_STANDIN%" standin --stream turn --session stream-session %*
+start claude {temp}\st --claude {temp}\claude.cmd --source stream
+expect said Start Claude Code in this folder?
+wait 1500
+keys tab
+keys enter
+# A folder with no session yet: a new conversation, and nothing older to show.
+expect said Ready
+close
+wait 2000
+
+# Goal: Read the earlier conversation in a new window
+start claude {temp}\st --claude {temp}\claude.cmd --source stream
+expect said Start Claude Code in this folder?
+wait 1500
+keys tab
+keys enter
+expect said Ready
+do Conversation
+expect text # Input 1 from previous session
+expect text you: Remember this word for later: kiwi.
+expect text # Output 1 from previous session Reply from Claude
+expect text claude: Noted. I will remember it.
+expect text tool: Bash
+expect text claude: The folder holds two files.
+
+# Goal: Go on with the conversation
+do Message field
+type Say ok
+keys enter
+expect said Sent
+expect said Done
+# The new exchange counts from 1, after the earlier ones, as with the screen.
+do Conversation
+expect text # Output 1 Reply from Claude
+expect text claude: ok

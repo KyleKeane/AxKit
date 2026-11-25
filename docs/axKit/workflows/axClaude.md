@@ -1892,6 +1892,56 @@ Starts with: Open axClaude with the folder st --source stream.
 3. Press Enter.
     You hear: Done. claude: ok.
 
+## See the earlier conversation when Claude Code's stream takes it up
+
+Starts with: Open axClaude with the folder st --source stream. Close the window.
+
+### Read the earlier conversation in a new window
+
+1. Open axClaude with the folder st --source stream.
+    You hear: Start Claude Code in this folder?
+2. Press Tab.
+3. Press Enter.
+    You hear: Ready.
+4. Press Alt+2 (Conversation; Navigation menu).
+
+### Go on with the conversation
+
+1. Press Alt+1 (Message field; Navigation menu).
+2. Type: Say ok
+3. Press Enter.
+    You hear: Sent.
+    You hear: Done.
+4. Press Alt+2 (Conversation; Navigation menu).
+
+## Hand a conversation from Claude Code's stream to its screen and back, with Claude Code itself
+
+Starts with: Open axClaude with the folder hand --source stream. Close the window.
+
+### Take the stream's conversation up with the screen
+
+1. Open axClaude with the folder hand.
+    You hear: trust.
+2. Press Enter.
+    You hear: Ready.
+3. Press Alt+2 (Conversation; Navigation menu).
+4. Close the window.
+
+### Take the conversation up over the stream again and read its earlier part
+
+1. Open axClaude with the folder hand --source stream.
+    You hear: Start Claude Code in this folder?
+2. Press Tab.
+3. Press Enter.
+    You hear: Ready.
+4. Press Alt+2 (Conversation; Navigation menu).
+5. Press Alt+1 (Message field; Navigation menu).
+6. Type: Which word did I ask you to remember? Reply with that word alone, in lower case.
+7. Press Enter.
+    You hear: Sent.
+    You hear: Done.
+8. Press Alt+2 (Conversation; Navigation menu).
+
 ## Have a short exchange with Claude
 
 Starts with: Open axClaude with the folder a.

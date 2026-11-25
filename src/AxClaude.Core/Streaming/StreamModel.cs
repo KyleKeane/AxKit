@@ -1,3 +1,4 @@
+using AxClaude.Core.Record;
 using AxClaude.Core.Transcript;
 using AxKit.Core.Transcript;
 
@@ -147,6 +148,112 @@ public sealed class StreamModel : ClaudeModel
         }
 
         RaiseChanged();
+    }
+
+    /// <summary>
+    /// The older conversation of a session taken up again (docs/axClaude/stream-mode.md SM-8.2): the stream writes
+    /// nothing of it (measured), so the window reads the session's file and hands its entries here before the new
+    /// run's first line, and they become the lines the screen shows of a resumed conversation once Claude is ready
+    /// (SessionModel.MarkReplayedExchanges): each message the user wrote as its <c>you:</c> line under
+    /// <c># Input n from previous session</c>, and before the first reply line after it a blank line,
+    /// <c># Output n from previous session Reply from Claude</c> and a blank line, n counted from 1 apart from the
+    /// live exchanges, which go on counting from 1; a reply's text as its <c>claude:</c> lines, made plain as a live
+    /// reply's (SM-4.5); a tool call as its <c>tool:</c> line with the tool's name alone (the reader never reads a
+    /// call's input), turned into <c>tool error:</c> when its result failed; an interrupt and a compaction as a line
+    /// of the app's. Passed over: what Claude Code wrote in the user's place (commands, notes, a turn it began
+    /// itself), a subagent's entries, thinking, the queue, a question of Claude's own. Every line is final and none
+    /// is a reply of this run: the window says nothing of them, as of the screen's redrawn conversation. Returns how
+    /// many lines were added.
+    /// </summary>
+    public int ShowOlder(IReadOnlyList<RecordEntry> entries)
+    {
+        var before = _lines.Count;
+        var calls = new Dictionary<string, Line>(StringComparer.Ordinal);
+        var exchanges = 0;
+        var outputDue = false;
+        foreach (var entry in entries)
+        {
+            if (entry.Sidechain)
+            {
+                continue;
+            }
+
+            switch (entry.Kind)
+            {
+                case RecordKind.Prompt when entry.Origin != PromptOrigin.SelfStarted && !string.IsNullOrWhiteSpace(entry.Text):
+                    exchanges++;
+                    var marker = Final(LineKind.InputMarker, $"# Input {exchanges} {PreviousSession}");
+                    marker.HeadingLevel = 1;
+                    _lines.Add(marker);
+                    var message = entry.Text.Trim().Replace("\r\n", "\n").Split('\n');
+                    _lines.Add(Final(LineKind.UserEcho, $"{ClaudeCodeTexts.YouLabel} {message[0].TrimEnd()}"));
+                    foreach (var line in message.Skip(1))
+                    {
+                        _lines.Add(Final(LineKind.Plain, line.TrimEnd()));
+                    }
+
+                    outputDue = true;
+                    break;
+
+                case RecordKind.ReplyText when !string.IsNullOrWhiteSpace(entry.Text):
+                    OutputMarker(exchanges, ref outputDue);
+                    Add(LineKind.ClaudeReply, ClaudeCodeTexts.ClaudeLabel, ClaudeCodeMarkdown.Plain(entry.Text.Replace("\r\n", "\n").Split('\n')));
+                    break;
+
+                case RecordKind.ToolCall when entry.ToolName is { Length: > 0 } tool && tool != ClaudeCodeStream.QuestionTool:
+                    OutputMarker(exchanges, ref outputDue);
+                    var call = Final(LineKind.Tool, $"{ClaudeCodeTexts.ToolLabel} {tool}");
+                    _lines.Add(call);
+                    if (entry.ToolUseId is { Length: > 0 } id)
+                    {
+                        calls[id] = call;
+                    }
+
+                    break;
+
+                case RecordKind.ToolResult when entry.IsError && entry.ToolUseId is { } answered && calls.Remove(answered, out var failed):
+                    failed.Kind = LineKind.ToolError;
+                    failed.Text = ClaudeCodeTexts.ToolErrorLabel + failed.Text[ClaudeCodeTexts.ToolLabel.Length..];
+                    break;
+
+                case RecordKind.Interrupt:
+                    _lines.Add(Final(LineKind.System, "System: " + InterruptedWords));
+                    break;
+
+                case RecordKind.CompactBoundary:
+                    _lines.Add(Final(LineKind.System, "System: " + CompactedWords));
+                    break;
+            }
+        }
+
+        var added = _lines.Count - before;
+        if (added > 0)
+        {
+            Trim();
+            RaiseChanged();
+        }
+
+        return added;
+    }
+
+    /// <summary>The view holds a conversation, older or of this window: a message, a command's echo or a reply. An older conversation is shown only into a view that holds none, so that a restart never shows it twice.</summary>
+    public bool HoldsConversation => _lines.Any(line => line.Kind is LineKind.InputMarker or LineKind.UserEcho or LineKind.ClaudeReply);
+
+    /// <summary>The words of a marker of the older conversation, as the screen's model writes them for a replayed one.</summary>
+    private const string PreviousSession = "from previous session";
+
+    /// <summary>The output marker of an older exchange, before its first reply line, with a blank line on each side, as the screen's model inserts it.</summary>
+    private void OutputMarker(int exchange, ref bool due)
+    {
+        if (!due)
+        {
+            return;
+        }
+
+        due = false;
+        var marker = Final(LineKind.OutputMarker, $"# Output {exchange} {PreviousSession} Reply from Claude");
+        marker.HeadingLevel = 1;
+        _lines.AddRange([Final(LineKind.UserMessage, string.Empty), marker, Final(LineKind.UserMessage, string.Empty)]);
     }
 
     public override event Action? ResponseStarted;

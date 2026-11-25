@@ -4,6 +4,7 @@ using System.Text;
 using AxClaude.Core;
 using AxClaude.Core.Hooks;
 using AxClaude.Core.Pty;
+using AxClaude.Core.Record;
 using AxClaude.Core.Streaming;
 using AxKit.Core;
 using AxKit.Forms;
@@ -73,6 +74,12 @@ internal sealed partial class MainForm
     /// <summary>How many questions Claude Code asked in this run: for Say the event sources and the diagnostics.</summary>
     private int _streamAsked;
 
+    /// <summary>The starts of the stream in the life of the window, and its stops: a start that waited for the session's file is over when this has changed meanwhile.</summary>
+    private int _streamStarts;
+
+    /// <summary>The session of the run kept for the folder in the settings (SM-8.3); null from each start until the first start line names it. An id: never shown, said or logged.</summary>
+    private string? _streamSessionKept;
+
     /// <summary>The window is closing for good (set around the console window's closing, MainForm.PutAway.cs): a stream's Claude Code is then ended at once.</summary>
     private bool _windowCloses;
 
@@ -139,6 +146,41 @@ internal sealed partial class MainForm
             return;
         }
 
+        // SM-8.1, SM-8.2: the session is named before the start (the folder's newest in place of --continue), so that
+        // the window knows which conversation Claude Code takes up; the stream writes nothing of it, so its older part
+        // is read from the session's file, off this thread, and shown before the run's first line. Only into a view
+        // that holds no conversation yet: a restart keeps what the window shows.
+        var projectFolders = SessionHandover.ProjectFolders(SessionProjectsFolders(), folder);
+        var arguments = SessionHandover.ForStream(ClaudeArgs, SessionHandover.Newest(projectFolders));
+        var older = model.HoldsConversation ? null : SessionHandover.FileOf(projectFolders, SessionHandover.ResumedIn(arguments));
+        if (older is null)
+        {
+            StartStreamProcess(claude, model, folder, program, arguments, null, false);
+            return;
+        }
+
+        var start = ++_streamStarts;
+        Task.Run(() =>
+        {
+            var entries = SessionHandover.Read(older);
+            Post(() =>
+            {
+                // A stop, a restart or a close while the file was read: this start is over.
+                if (start == _streamStarts && !ProcessRunning && !_windowCloses)
+                {
+                    StartStreamProcess(claude, model, folder, program, arguments, entries, true);
+                }
+            });
+        });
+    }
+
+    /// <summary>
+    /// The start itself, the session named and its older conversation read (<paramref name="older"/>, null when it was
+    /// not to be read or could not be, which <paramref name="olderAsked"/> tells apart): the relay's file, the line,
+    /// the questions' pipe, the process, the first request; then the older conversation, before the run's first line.
+    /// </summary>
+    private void StartStreamProcess(string claude, StreamModel model, string folder, string program, IReadOnlyList<string> arguments, IReadOnlyList<RecordEntry>? older, bool olderAsked)
+    {
         try
         {
             if (AskRelay.WriteConfig(AppPaths.ClaudeAskFile, program))
@@ -156,12 +198,12 @@ internal sealed partial class MainForm
         // only in a window started with --ai-tools and while the user has them on. A line cmd.exe would refuse because
         // of the file's path starts without the tools rather than not at all.
         var toolsFile = AiToolsArguments().Count > 0 ? AppPaths.McpClaudeConfigFile : null;
-        var line = ClaudeLauncher.BuildCommandLine(claude, ClaudeCodeStream.StartArguments(AppPaths.ClaudeAskFile, AskRelay.ToolName, _options.Model, ClaudeArgs, toolsFile));
+        var line = ClaudeLauncher.BuildCommandLine(claude, ClaudeCodeStream.StartArguments(AppPaths.ClaudeAskFile, AskRelay.ToolName, _options.Model, arguments, toolsFile));
         if (toolsFile is not null && line.Refusal is { } toolsRefusal)
         {
             Log.Error("Claude Code started without axKit's AI tools: " + toolsRefusal);
             toolsFile = null;
-            line = ClaudeLauncher.BuildCommandLine(claude, ClaudeCodeStream.StartArguments(AppPaths.ClaudeAskFile, AskRelay.ToolName, _options.Model, ClaudeArgs));
+            line = ClaudeLauncher.BuildCommandLine(claude, ClaudeCodeStream.StartArguments(AppPaths.ClaudeAskFile, AskRelay.ToolName, _options.Model, arguments));
         }
 
         if (line.Refusal is { } refusal)
@@ -224,6 +266,14 @@ internal sealed partial class MainForm
             }
         });
         ClaudeStarted();
+        _streamSessionKept = null;
+        if (olderAsked)
+        {
+            // In this same turn of the window's thread, before any line of the new run can be handed over, and after
+            // the run's start, so that nothing of it is spoken (the window speaks from Ready on).
+            ShowStreamOlder(model, older);
+        }
+
         return;
 
         // On the reader's thread: the line as it came into the recording when one runs (SM-6.5), then read down.
@@ -395,6 +445,49 @@ internal sealed partial class MainForm
             _claudeVersion = model.Version;
             Log.Info($"Claude Code version: {_claudeVersion} (named over its stream)");
         }
+
+        if (model.Session.Length > 0 && model.Session != _streamSessionKept)
+        {
+            _streamSessionKept = model.Session;
+            KeepStreamSession(model.Session);
+        }
+    }
+
+    /// <summary>
+    /// The session the run is in, kept for its folder (SM-8.3), from its first start line on and anew after /clear,
+    /// which begins another (SM-8.4): a window of the screen started there takes it up by its id. Over the list as the
+    /// settings file has it now, since another window may have kept the session of its own folder meanwhile.
+    /// </summary>
+    private void KeepStreamSession(string session)
+    {
+        if (_launchedFolder is not { } folder)
+        {
+            return;
+        }
+
+        var saved = File.Exists(SettingsPath) ? SettingsFile.Load<AppSettings>(SettingsPath, out _).StreamSessions : null;
+        if (_settings.KeepStreamSession(folder, session, saved))
+        {
+            Log.Info("Stream: the session of the run is kept for its folder");
+            SaveSettings();
+        }
+    }
+
+    /// <summary>
+    /// The older conversation of the session taken up (SM-8.2), as the model makes it from the session file's entries;
+    /// a file that could not be read leaves the view as it is, with one line that says so. Numbers only in the log.
+    /// </summary>
+    private void ShowStreamOlder(StreamModel model, IReadOnlyList<RecordEntry>? entries)
+    {
+        if (entries is null)
+        {
+            Log.Info("Stream: the older conversation was not shown: its session file could not be read");
+            _model.AddSystemLine("The earlier part of this conversation could not be read from Claude Code's session file, so it is not shown here. Claude Code still has it.");
+            return;
+        }
+
+        var lines = model.ShowOlder(entries);
+        Log.Info($"Stream: the older conversation shown from its session file: {entries.Count} entries read, {lines} lines");
     }
 
     /// <summary>
@@ -404,6 +497,8 @@ internal sealed partial class MainForm
     /// </summary>
     private void StopStream(bool terminateAtOnce)
     {
+        // A start that still reads the session's file is over too.
+        _streamStarts++;
         if (_stream is not { } host)
         {
             return;

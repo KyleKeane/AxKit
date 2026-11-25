@@ -10,10 +10,14 @@
 // host wrote, the stand-in waits until the window has written that kind of thing to its standard input. So a script
 // follows a real turn of Claude Code 2.1.327 without Claude Code, the network or a model, and the window's own
 // writing is what moves the play on. It needs nothing of the user's and writes only stream-standin.log in the working
-// folder: kinds and numbers, never a text.
+// folder (kinds and numbers, never a text) and, with --session, a session file inside the run's folder.
 //
 // Usage:
-//   AxAutomate standin --stream <case | file.jsonl> <Claude Code's arguments>
+//   AxAutomate standin --stream <case | file.jsonl> [--session <record>] <Claude Code's arguments>
+//       --session writes tests/fixtures/records/<record>.jsonl as the session file of the stand-in's conversation,
+//       where Claude Code keeps it, before the play: under CLAUDE_CONFIG_DIR, which must lie in the run's folder
+//       (the script's claude.cmd sets it), so that a window started there after it takes that conversation up
+//       (docs/axClaude/stream-mode.md SM-8.2; script 51).
 //       <case> is a file's name without its ending under tests/fixtures/streams of the run's repository: the one the
 //       runner works in, which it hands to everything it starts in AXKIT_STANDIN_REPOSITORY (--repository, or the
 //       folder above the runner that holds AxKit.sln), else the one above this program. A runner built outside the
@@ -76,6 +80,15 @@ internal static class StreamStandIn
     public const string RepositoryVariable = "AXKIT_STANDIN_REPOSITORY";
 
     private const string VersionOption = "--version";
+
+    /// <summary>The stand-in's own option, right after the case: a file of tests/fixtures/records written as the session file of the stand-in's conversation (<see cref="WriteSession"/>).</summary>
+    private const string SessionOption = "--session";
+
+    /// <summary>The id of the session the stand-in writes: a session's id in Claude Code's form, which no real session has.</summary>
+    private const string StandInSession = "70000000-0000-4000-8000-000000000001";
+
+    /// <summary>The variable that names Claude Code's configuration folder.</summary>
+    private const string ConfigFolderVariable = "CLAUDE_CONFIG_DIR";
     private const string McpConfigOption = "--mcp-config";
     private const string PermissionToolOption = "--permission-prompt-tool";
     private const string Usage = "Usage: AxAutomate standin --stream <case | file.jsonl> <Claude Code's arguments>. See tools/AxAutomate/StreamStandIn.cs.";
@@ -101,11 +114,23 @@ internal static class StreamStandIn
         {
             var records = Records(FixturePath(args[0]));
             var claude = args[1..];
+            string? session = null;
+            if (claude.Length >= 2 && claude[0] == SessionOption)
+            {
+                session = claude[1];
+                claude = claude[2..];
+            }
+
             var version = records.Select(record => StringOf(record, "claudeCode")).FirstOrDefault(text => text is not null) ?? "0.0.0";
             if (claude.Length > 0 && claude[0] == VersionOption)
             {
                 Console.Out.WriteLine(version + " (stand-in)");
                 return 0;
+            }
+
+            if (session is not null)
+            {
+                WriteSession(session);
             }
 
             return Play(records, claude, version, ref relay);
@@ -121,6 +146,38 @@ internal static class StreamStandIn
         }
     }
 
+    /// <summary>
+    /// The session file Claude Code keeps of a conversation, as the stand-in's own (docs/axClaude/stream-mode.md
+    /// SM-8.2): a hand-written file of tests/fixtures/records copied as it is to
+    /// <c>&lt;CLAUDE_CONFIG_DIR&gt;\projects\&lt;the working folder's project folder&gt;\&lt;StandInSession&gt;.jsonl</c>, where
+    /// Claude Code would have written it, so that a window started in the same folder after it takes that
+    /// conversation up. Only into a configuration folder inside the run's own folder (the one the working folder is
+    /// in): a script's claude.cmd names it, and the user's own is never written. The project folder's name is Claude
+    /// Code's rule, which axClaude keeps in <c>ClaudeCodeTranscript.ProjectFolderName</c>: every character that is not
+    /// an ASCII letter or digit a hyphen.
+    /// </summary>
+    private static void WriteSession(string named)
+    {
+        var config = Environment.GetEnvironmentVariable(ConfigFolderVariable);
+        var run = Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(Environment.CurrentDirectory));
+        if (string.IsNullOrEmpty(config) || run is null
+            || !Path.GetFullPath(config).StartsWith(Path.TrimEndingDirectorySeparator(run) + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidDataException($"{SessionOption} writes a session file only into a configuration folder inside the run's own folder, named by {ConfigFolderVariable}.");
+        }
+
+        var source = FixturePath(named, "records");
+        var project = new StringBuilder();
+        foreach (var c in Path.TrimEndingDirectorySeparator(Environment.CurrentDirectory))
+        {
+            project.Append(char.IsAsciiLetterOrDigit(c) ? c : '-');
+        }
+
+        var folder = Path.Combine(Path.GetFullPath(config), "projects", project.ToString());
+        Directory.CreateDirectory(folder);
+        File.Copy(source, Path.Combine(folder, StandInSession + ".jsonl"), overwrite: true);
+    }
+
     private static int Refuse(string message)
     {
         Console.Error.WriteLine("stand-in: " + message);
@@ -132,7 +189,7 @@ internal static class StreamStandIn
     /// the runner names (<see cref="RepositoryVariable"/>), else the one above this program; the message names no
     /// folder, since the window shows it.
     /// </summary>
-    private static string FixturePath(string named)
+    private static string FixturePath(string named, string fixtures = "streams")
     {
         if (named.EndsWith(".jsonl", StringComparison.OrdinalIgnoreCase))
         {
@@ -146,7 +203,7 @@ internal static class StreamStandIn
             throw new InvalidDataException($"No repository to find the recording {named} in: the runner named none and none is above this program; give the path of a .jsonl file.");
         }
 
-        return Path.Combine(repository, "tests", "fixtures", "streams", named + ".jsonl");
+        return Path.Combine(repository, "tests", "fixtures", fixtures, named + ".jsonl");
     }
 
     private static List<JsonElement> Records(string path)

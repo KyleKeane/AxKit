@@ -6,9 +6,10 @@ Claude does, off at first, with the screen as the default and the way back. Requ
 1 to 5 of section 11 are built (section 13 says what each came to): the seam, which changes no behaviour; the
 stream's reader, model and host, from recordings of the real stream; the relay of Claude's questions; the window
 fed by the stream, with its second ways to send; and the folder's trust and the questions in the control area. A
-window made for the stream can hold a conversation and answer what Claude asks. Not built yet: the older
-conversation shown when a session is taken up, the hand-over between the two sources (stage 6), and the live scripts
-(stage 8); a reply's text is made plain since 2026-11-25 (stage 7, SM-4.5). The open ends stages 4 and 5 left are
+window made for the stream can hold a conversation and answer what Claude asks. Since 2026-11-25 a reply's text is
+made plain (stage 7, SM-4.5), and the sessions are built (stage 6, section 13, the last part): the older conversation
+shown when a session is taken up, and the hand-over between the two sources. Not built yet: the NVDA plan's section
+and the maintainer's own use (stage 8; the live scripts 48, 49 and 52 are there). The open ends stages 4 and 5 left are
 built since the same day (section 13, the last part), but for the folder's yes, which is remembered for no folder
 until the maintainer says so. The points of section 12 are taken as proposed until the maintainer has heard the mode.
 
@@ -213,16 +214,25 @@ mode each is simply absent, and the window says so where the user would look for
 
 - SM-8.1 **Continue**: the default start takes up the folder's last conversation. With the stream, `--continue` in
   a folder without one starts a new conversation and says nothing (measured), so the window's retry for the screen
-  is not needed.
+  is not needed. As built, the stream's window names the session itself: every `--continue` of its arguments
+  becomes `--resume` with the folder's newest session file, which is what the stream's own `--continue` takes up
+  (measured), so that the window knows before the start which conversation it is.
 - SM-8.2 **The older conversation**: a session taken up again writes nothing of what was said before (measured).
   The window fills its view from the session's file, read by the reader it has (`ClaudeCodeTranscript`), as markers
   and lines of the same kinds, before the first new line. A file it cannot read leaves the view empty with one
-  system line that says so.
+  system line that says so. As built, the lines are those the screen's model makes of a replayed conversation:
+  `# Input n from previous session`, the `you:` line, `# Output n from previous session Reply from Claude` before the
+  first reply line, the replies and the tool lines (the tool's name alone: the reader never reads a call's input),
+  numbered apart from the live exchanges, and nothing of them spoken. Only into a view that holds no conversation
+  yet, so that a restart in the window never shows it twice.
 - SM-8.3 **Handing a conversation between the sources**: Claude Code leaves a stream's sessions out of the
-  interactive program's own list and of its `--continue` (its documentation). So the window keeps the id of the
-  session it last ran in each folder, and a switch of the source in the same folder takes that session up by its
-  id. To be measured before stage 6: the screen source started with the id of a stream's session, and the other
-  way round.
+  interactive program's own list and of its `--continue` (its documentation; measured: also after the screen has
+  taken such a session up). So the window keeps the id of the session it last ran in each folder, and a switch of
+  the source in the same folder takes that session up by its id. Measured 2026-11-25 (section 13): either source
+  takes the other's session up by its id and writes on in the same file. As built, a window the stream feeds keeps
+  its session for the folder (the setting `streamSessions`), and a window the screen feeds turns `--continue` into
+  `--resume` with it while it is still the folder's newest session; the other way needs no id, since the stream's
+  window takes the folder's newest session, which is the screen's after the screen has used it.
 - SM-8.4 **`/clear`** begins a new session and says so with a line of its own (measured): the window empties the
   conversation as it does today and keeps the new id.
 
@@ -283,7 +293,8 @@ through all of them.
 4. **The window's second ways to send** (section 5) and the start of the stream source, behind the switch, with the
    stand-in scripts. Off.
 5. **The folder's trust, the questions in the control area, always for the session.**
-6. **Sessions**: the older conversation from the file, the id kept, the hand-over between the sources.
+6. **Sessions**: the older conversation from the file, the id kept, the hand-over between the sources. Built
+   2026-11-25 (section 13).
 7. **What the stream does not have, said plainly** (section 6), and the reply's text made plain (SM-4.5).
 8. **Live scripts, the NVDA plan's section, the user guide.** Then the maintainer's two hours.
 
@@ -605,3 +616,64 @@ files into their folder first, a custom command among them):
   that does not answer it was at hand, so the rule is held by a test of the model alone.
 - *The raw recording* records the stream's lines (SM-6.5).
 - Left as it was, by the maintainer's choice: the folder's yes is remembered for no folder (point 2 of section 12).
+
+**Stage 6, sessions (2026-11-25).** Measured first, live, with Claude Code 2.1.332 and Haiku, in one folder under the
+temporary folder, one session at a time, by a scratch program that printed kinds, counts and yes or no only (the
+probe's case `resume` had already shown that the stream takes up a session of its own by its id and writes none of
+it again). In order:
+
+1. A new session over the stream: its first request's answer names no session; the start line of the first turn
+   does. One session file, with an `enqueue`, a `dequeue`, a prompt without `promptSource` and the reply: no entry
+   for the turn's end (the hand-written `tests/fixtures/records/stream-session.jsonl` has this shape).
+2. The screen with `--continue` in that folder: Claude Code asked for the folder's trust, then said there was no
+   conversation to continue and ended. The stream's session is not the interactive program's to continue.
+3. The screen with `--resume` and the stream's id: no trust question (given in step 2), and the old conversation was
+   drawn (a `you:` row and a `claude:` row before any message); asked for the word, Claude knew it. Still one file:
+   the screen wrote on in the stream's, now with a typed prompt and a turn's end entry.
+4. The screen with `--continue` again: nothing to continue, as in step 2, though the screen itself had used that
+   session. So the stream's session stays out of the interactive `--continue` for good.
+5. A new session with the screen: a second file.
+6. The stream with `--resume` and the screen's id: the first request's answer names no session, nothing of the old
+   conversation came as a line before the message, the start line named the screen's session, Claude knew what the
+   screen had been told, and the screen's file grew; still two files.
+7. A second new session over the stream, then the stream with `--continue`: it took the newest, the stream's own.
+8. The screen with `--continue` after that: it took the screen's session of step 5 and drew it, the newest it began
+   itself, though the stream had written to it since.
+
+Built on that:
+
+- `AxClaude.Core/Streaming/SessionHandover`, pure but for two looks at files: `IsSessionId` (only a UUID in its usual
+  form goes on a command line, into the settings or into a file's name), `ProjectFolders`, `Newest` (the session
+  file written last, directly in the folder's project folders, by a name that is a session's id), `FileOf`,
+  `ResumedIn`, `ForStream` (each `--continue` becomes `--resume` with the newest session, or goes when there is none),
+  `ForScreen` (`--continue` becomes `--resume` with the kept session while that is the newest), `Read` (the whole
+  file through `RecordTail` and `ClaudeCodeTranscript.Parse`, null when it cannot be read). `ClaudeCodeStream` gained
+  `ResumeShortOption`.
+- `StreamModel.ShowOlder` makes the lines of SM-8.2 from the entries and `HoldsConversation` says whether the view
+  holds any. `AppSettings.StreamSessions` (`KeptSession`, the last 30 folders, sanitized as the file is read) with
+  `StreamSessionOf` and `KeepStreamSession`, which keeps over the list as the file has it now, since the file's
+  members are merged whole (R-62) and two windows of two folders would otherwise lose each other's.
+- The window (`MainForm.Stream.cs`): the start names the session before anything else of the start; when a session
+  file is to be shown, it is read on a thread of the pool and the start goes on in the window's thread when it is
+  read (a stop, a restart or a close meanwhile ends that start), and the older lines are added right after the run's
+  start, before any line of it can come and before Ready, from which on the window speaks. Each start line whose
+  session is new is kept for the folder (`KeepStreamSession`), which also follows `/clear` (SM-8.4). The screen's
+  start (`MainForm.Process.cs`, `ScreenClaudeArgs`) passes `--resume` with the kept session where `ForScreen` says so;
+  a restart hides the redrawn conversation as it does for `--continue`. The log has numbers and fixed words only.
+- Tests: `SessionHandoverTests` (16), from the hand-written session files of `tests/fixtures/records`; the stand-in
+  script `51-stream-older.txt`, for which the stand-in of the stream writes a session file of
+  `tests/fixtures/records` where Claude Code keeps it (`standin --stream <case> --session <record>`, only into a
+  configuration folder inside the run's folder, which the script's `claude.cmd` names), and a second window in the
+  same folder shows it; the live script `52-stream-live-handover.txt`: a conversation over the stream, the screen
+  taking it up, and the stream again, which shows the earlier part and goes on with it.
+
+Left, each for a reason:
+
+- A tool call of the older conversation is shown by its tool's name alone, where the screen's redrawn conversation
+  names what it was about: the session file's reader never reads a call's input (EG-3.4), and that rule stays.
+- What a window the screen feeds kept itself is not kept: its session is the folder's newest once it has written to
+  it, which is what the stream's window takes up, and its own `--continue` finds it.
+- A session the stream began is taken up by the screen only while it is the folder's newest: once a later session
+  has been written in the folder, the screen's `--continue` takes that one, as it always did, and the interactive
+  program's own list of sessions leaves the stream's out (documented). The window does not guess past the newest.
+- The NVDA plan's section for stream mode and the maintainer's own use (stage 8).

@@ -1,5 +1,6 @@
 using AxClaude.Core.Hooks;
 using AxClaude.Core.Pty;
+using AxClaude.Core.Streaming;
 using AxKit.Core;
 using AxKit.Core.Pty;
 using AxKit.Forms;
@@ -12,6 +13,29 @@ internal sealed partial class MainForm
 
     /// <summary>The arguments Claude gets after --ax-screen-reader: the chosen ones, or the default (FR-9.1).</summary>
     private IReadOnlyList<string> ClaudeArgs => _claudeArgs ?? (_nothingToContinue ? [] : ["--continue"]);
+
+    /// <summary>
+    /// The arguments a start of the screen passes: <see cref="ClaudeArgs"/>, but with --continue (the default or the
+    /// user's own) in a folder whose newest session is the one a window of Claude Code's stream last ran there
+    /// (docs/axClaude/stream-mode.md SM-8.3): the interactive program's --continue passes over a session the stream
+    /// began (measured), so that one is taken up by its id, and Claude Code draws its conversation as for any resumed
+    /// one. A restart replays it as the same --continue would (<see cref="Relaunch"/>).
+    /// </summary>
+    private IReadOnlyList<string> ScreenClaudeArgs()
+    {
+        if (!ClaudeArgs.Contains(ClaudeCodeStream.ContinueOption) || _folder is null || _settings.StreamSessionOf(_folder) is not { } kept)
+        {
+            return ClaudeArgs;
+        }
+
+        var arguments = SessionHandover.ForScreen(ClaudeArgs, kept, SessionHandover.Newest(SessionHandover.ProjectFolders(SessionProjectsFolders(), _folder)));
+        if (!arguments.Contains(ClaudeCodeStream.ContinueOption))
+        {
+            Log.Info("Claude Code takes up the session a window of its stream last ran in this folder");
+        }
+
+        return arguments;
+    }
 
     /// <summary>
     /// Claude → Force Claude to restart (Ctrl+Shift+R, FR-1.8): the same folder and arguments; the conversation
@@ -129,7 +153,7 @@ internal sealed partial class MainForm
             arguments.Add("--ax-screen-reader");
         }
 
-        arguments.AddRange(ClaudeArgs);
+        arguments.AddRange(ScreenClaudeArgs());
         // --model (FR-9.2): the window's own model on every start of Claude, the default --continue and its retry included (axHelp's conversation).
         if (_options.Model is { Length: > 0 } model && !ClaudeArgs.Contains("--model"))
         {
