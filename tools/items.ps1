@@ -49,6 +49,20 @@ function Find-ListItems($Items, [string]$Words) {
     return $found
 }
 
+# The titles nearest to words that found none (the review of the sessions of 2026-11-25: eight refusals of words that
+# named no item, each followed by a search by hand): the few that share the most words with them, as one line.
+function Get-NearestTitles($Items, [string]$Words, [int]$Count = 3) {
+    $wanted = @($Words.ToLowerInvariant() -split '[^a-z0-9]+' | Where-Object { $_.Length -gt 2 })
+    $scored = foreach ($item in $Items) {
+        $have = @($item.Title.ToLowerInvariant() -split '[^a-z0-9]+')
+        $shared = @($wanted | Where-Object { $have -contains $_ }).Count
+        if ($shared -gt 0) { [pscustomobject]@{ Title = $item.Title; Shared = $shared } }
+    }
+    $nearest = @($scored | Sort-Object -Property @{ Expression = 'Shared'; Descending = $true }, Title | Select-Object -First $Count | ForEach-Object { $_.Title })
+    if ($nearest.Count -eq 0) { return '' }
+    return ' The nearest titles: ' + ($nearest -join '; ') + '.'
+}
+
 function Get-ItemValue($Document, [string]$Name) {
     if ($null -eq $Document) { return $null }
     $property = $Document.PSObject.Properties[$Name]

@@ -132,7 +132,7 @@ foreach ($one in $named) {
     $words = $one.Words.TrimEnd('.')
     $found = @(Find-ListItems $items $words)
     if ($found.Count -eq 0) {
-        Refuse "no item's title holds '$words'. Write the item first (rule 9), or correct the words."
+        Refuse ("no item's title holds '$words'. Write the item first (rule 9), or correct the words." + (Get-NearestTitles $items $words))
     }
     if ($found.Count -gt 1) {
         $titles = ($found | Select-Object -First 6 | ForEach-Object { '    ' + $_.Title }) -join "`n"

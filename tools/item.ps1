@@ -86,7 +86,7 @@ function Get-FileStem([string]$of) {
 function Get-NamedItem([string]$words) {
     if (-not $words) { Refuse 'say which item with -Name <words of its title>.' }
     $found = @(Find-ListItems @(Get-ListItems $Lists) $words)
-    if ($found.Count -eq 0) { Refuse "no item's title holds '$words'." }
+    if ($found.Count -eq 0) { Refuse ("no item's title holds '$words'." + (Get-NearestTitles @(Get-ListItems $Lists) $words)) }
     if ($found.Count -gt 1) {
         $titles = ($found | Select-Object -First 6 | ForEach-Object { '    ' + $_.Title }) -join "`n"
         Refuse "'$words' names $($found.Count) items; use more of the title:`n$titles"

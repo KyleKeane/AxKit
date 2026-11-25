@@ -207,6 +207,38 @@ writes it alone), and the pages it wrote are committed.
   submission with it. Microsoft's API route was built, never switched on, and removed on 2026-11-13, since the
   account is an Individual account (`store-setup.md` section 2).
 
+## The assistant's tools
+
+Each removes a mistake the assistant made again and again, found from the sessions' history on 2026-11-25 (about
+54,000 tool calls, 887 failed): the mistake is in the script's header. The assistant uses these in place of a command
+made up for the occasion.
+
+- `tools/replace.ps1 -File <path> -Old <text> -New <text> [-All]`, or `-Pairs <file.json>` (an array of `file`, `old`,
+  `new`, `all`): exact replacements, each text found once (or every time, with `all`) or nothing is written; the
+  texts take the file's own line ends, and the file keeps its byte order mark and line ends. In place of a hand-made
+  `ReadAllText`, `Replace`, `WriteAllText` (846 uses, about 30 of them missed their text and went on).
+- `tools/commit.ps1 -Subject <line> -Body <text> -Item <words> | -ItemDone <words> | -ItemNone <reason> -Paths
+  <paths> | -All`: a commit with the item line of rule 9 and the attribution, the message as UTF-8 without a byte
+  order mark, only the paths named staged; the commit-msg hook still runs.
+- `tools/repair.ps1 <R-id> [-Status done -Commit <hash> -Verify <how>] [-Note <text>] [-Owed <kind: text>] [-Fix
+  <text>]`: one item of `repairs.json` changed in the file's own form, and `repairs.md` written again.
+- `tools/run-scripts.ps1 <scripts or folders>... [-Exe <AxKit.exe>] [-Live] [-Record] [-Inventory <mode>] [-Full]`:
+  window scripts on the hidden desktop from a runner built into a folder of its own under `%TEMP%`, so that a build
+  of `tools/AxAutomate` beside it (`upstream.ps1 -Verify`) meets no lock; several at once, the failures and one line a
+  script, redacted.
+- `tools/native.ps1 <program> <arguments>`: a program's error output as plain lines and its own exit code, last, as
+  `exit <code>`; Windows PowerShell 5.1 turns a program's error output under `2>&1` into errors and reports exit 1
+  although the program succeeded.
+- `tools/redact.ps1`: a filter for any output: the profile folder, the account name and e-mail addresses replaced
+  (rule 6).
+- `tools/doc-checks.ps1`: the page checks and the tests of notes, documents, keys, menu marks, the changelog and the
+  bundle's rules, in about a minute: what the assistant's edits failed most (about 110 failures of full runs). Before
+  `.\test.ps1`, not in its place.
+- `tools/hooks/claude-powershell-check.ps1`: Claude Code's check before each command of its PowerShell tool
+  (`.claude/settings.json`, PreToolUse): a command that does not parse as Windows PowerShell 5.1 is refused with the
+  parser's message and how to write it, before any of it runs.
+- `tools/item.ps1` and the commit-msg hook name the three nearest titles when words name no item.
+
 ## Other tools
 
 - `tools/new-app.ps1 <Name> <verb> <group> <opens>`: a new app, its folders, a first window on the navigator, its
