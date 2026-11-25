@@ -314,9 +314,6 @@ public sealed class FormControls : FlowLayoutPanel
     /// <summary>The control a key names, or null.</summary>
     public Control? Field(string key) => _keys.GetValueOrDefault(key);
 
-    /// <summary>The keys in the form's order, the first key of each control: what a list of the form's fields shows.</summary>
-    public IReadOnlyList<string> FieldKeys => [.. _keys.GroupBy(pair => pair.Value).Select(group => group.First().Key)];
-
     /// <summary>The focus put in the control a key names, its text selected when asked: false for a key that names none.</summary>
     public bool Focus(string key, bool selectContents = false)
     {

@@ -334,20 +334,6 @@ public sealed partial class FileForm
         return targets;
     }
 
-    /// <summary>The shown entry with that name, or that path (a drive of This PC is selected by its root); -1 when none.</summary>
-    private int IndexOfName(string name)
-    {
-        for (var i = 0; i < Rows.Count; i++)
-        {
-            if (Named((Entry)Rows[i].Tag!, name))
-            {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
     // ---- the Drives menu (AF-3.11) ----
 
     /// <summary>Drives ▸: the ready drives as "1. Local Disk (C:)", This PC, then Eject and Properties for the drive in hand.</summary>

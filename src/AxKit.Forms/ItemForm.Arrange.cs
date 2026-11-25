@@ -26,9 +26,6 @@ public abstract partial class ItemForm
 
     private int _sortChoice;
 
-    /// <summary>The filter text now, empty for none: an app asks when a thing it just made may be hidden by it.</summary>
-    protected string FilterText => _filter;
-
     /// <summary>
     /// The orders the list can be put in, by the words the menu and the announcement use ("name", "date"), the
     /// first being the one a window starts in. By default the level's own order, as the app gives its rows, and

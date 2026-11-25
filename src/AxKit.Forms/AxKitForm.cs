@@ -1158,14 +1158,6 @@ public abstract partial class AxKitForm : Form
     protected bool KeyTaken(Keys key) => _commands.Any(command => command.Key == key);
 
     /// <summary>
-    /// Whether a command added so far has the key and acts anywhere in the window (no <see cref="Command.When"/>):
-    /// a later command on the same key would never run. A shared piece that adds its keys after the app's own
-    /// leaves such a key to the app (the item window's Ctrl+N and Ctrl+Q under axMedia's New window and What is
-    /// playing, framework step 4), so that the window lists no command that cannot run.
-    /// </summary>
-    protected bool KeyTakenAnywhere(Keys key) => _commands.Any(command => command.Key == key && command.When is null);
-
-    /// <summary>
     /// Whether a command added so far would take the key from a later one that acts where <paramref name="when"/>
     /// says: it has the key and acts anywhere, or acts in that very place (the same condition). The later command
     /// would never run, which is what <see cref="CommandProblems"/> names. A shared piece that adds its keys after

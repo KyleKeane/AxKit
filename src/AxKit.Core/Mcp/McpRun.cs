@@ -27,9 +27,6 @@ public static class McpRun
     /// <summary>The apps whose commands an AI tool never runs (MC-7.4): the password database, and the clipboard history, which serves no pipe at all.</summary>
     public static readonly IReadOnlyList<string> NeverRun = [Dispatch.AxPass, Dispatch.AxClip];
 
-    /// <summary>The menu item of the switch (MC-7.2), in the axKit menu's AI tools submenu.</summary>
-    public const string SwitchLabel = "Let AI tools run commands";
-
     /// <summary>What the tool answers while the switch is off (MC-7.2), the way to allow it included.</summary>
     public const string SwitchOff = "The user has not allowed AI tools to run commands in axKit. The user allows it in any axKit window: axKit menu, AI tools, Let AI tools run commands.";
 

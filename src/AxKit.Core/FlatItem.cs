@@ -137,14 +137,6 @@ public sealed class FlatItem
         return new FlatItem(root);
     }
 
-    /// <summary>The item with its link set: read through another configuration from now on.</summary>
-    public FlatItem WithSchema(string schema)
-    {
-        var root = (JsonObject)_root.DeepClone();
-        root[SchemaKey] = schema;
-        return new FlatItem(root);
-    }
-
     private string? KeyOf(string name) =>
         name.Equals(SchemaKey, StringComparison.OrdinalIgnoreCase) ? null : _root.Select(pair => pair.Key).FirstOrDefault(key => key.Equals(name, StringComparison.OrdinalIgnoreCase));
 }
