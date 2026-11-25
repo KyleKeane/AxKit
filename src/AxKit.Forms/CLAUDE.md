@@ -15,6 +15,7 @@ The notes of each piece are in `src/AxKit.Forms/notes`, one file per kind of win
 - `notes/item.md`, the item window, the bundle's navigator (axTask, axPass, axMCP, axAutomate, axMedia, axProcess, axGIT, axFile, and axTemplate's browser, `BrowserForm`): `ContextBarMenu`, `ItemForm`, `ItemKeys`, `ItemRow`, `ItemDetail`, `ItemDetailLine`.
 - `notes/hotkey.md`, the hotkey window (axStart, axClip, axHelp, and axTemplate's launcher, `LauncherForm`): `HotkeyForm`, `KeySender`.
 - `notes/ai-and-automation.md`, AI help, the AI tools and the automation channel: `AutomationChannel`, AI help (`AxKitForm.Ai.cs`, `AiHelpFlow`), the AI tools (`McpChannel`, `McpBroker`, `AxKitForm.Mcp.cs`, `AiToolsSetup`), `UserPipe`, `WindowReading`.
+- `notes/gotchas.md`, what the Windows controls and NVDA taught every window: the EDIT control's scrolling and its paragraph keys, the status strip, the sounds' devices, a burst of notifications, `AcceptButton`, the system keys.
 
 ## Rules
 
@@ -23,4 +24,4 @@ The notes of each piece are in `src/AxKit.Forms/notes`, one file per kind of win
 - A sound is never played from a window or a control: raise the kind of event at `EventDoor` (`notes/controls.md`; `EventDoorTests`).
 - A one-shot timer is the base's `After`; a Windows dialog goes through `ShowSystemDialog`; a question, an error or a help text is a notice (`ShowNotice`), never a second window.
 
-Gotchas that live here are axClaude's and are kept in `src/AxClaude/CLAUDE.md` (the EDIT control, NVDA's reading after a key press, the notice state as a flag in the form, `AcceptButton` for Enter, Alt and F10 as `SC_KEYMENU`).
+The gotchas of the controls and NVDA that hold for every window are `notes/gotchas.md` (the EDIT control, the status strip, the sounds, a burst of notifications, `AcceptButton` for Enter); those that are axClaude's own stay in `src/AxClaude/CLAUDE.md` (NVDA's reading after a key press, the mirror, the control area's questions).
