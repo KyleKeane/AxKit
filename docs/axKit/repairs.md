@@ -6,15 +6,15 @@ found and what became of each finding: change the JSON in the same commit as the
 
 ## Where it stands
 
-- **open**: 11 (2 medium, 9 low)
-- **done**: 82 (13 high, 39 medium, 30 low)
+- **open**: 9 (2 medium, 7 low)
+- **done**: 85 (13 high, 39 medium, 33 low)
 - **deferred**: 1 (1 medium)
 - **declined**: 6 (4 medium, 2 low)
 
 ## The principles
 
 - **P1. Say the effect where the thing is made.** Whoever makes a menu item, a command or a run states what it does and what it acts on; nothing important rests on a default. What states nothing is treated as the most careful case. (27 findings)
-- **P2. One source, generated views.** A fact lives in one place (the menu bar, Dispatch.Apps, a JSON list); every page or list that repeats it is written by a script and checked by the same gate on the developer's computer and in CI. (14 findings)
+- **P2. One source, generated views.** A fact lives in one place (the menu bar, Dispatch.Apps, a JSON list); every page or list that repeats it is written by a script and checked by the same gate on the developer's computer and in CI. (15 findings)
 - **P3. A failure says what, why and where to read.** Every refusal, error and failed check names the thing, the reason and the document or command that helps; nothing fails silently and nothing passes silently against the wrong thing. (9 findings)
 - **P4. Bounded and cleaned up.** Every wait has a limit, every held resource is released on every path (try/finally), every input from outside has a size limit. (22 findings)
 - **P5. An entry is its name, never a held object.** What is found in one moment and used in another (a menu item, a file, a selection) is found again by its identity when it is used, and refused when it is gone or changed. (4 findings)
@@ -36,7 +36,7 @@ found and what became of each finding: change the JSON in the same commit as the
 - Where: CHANGELOG.md; src/AxKit.Forms/AxKitForm.cs; tests/AxKit.Tests
 - Principle: P7
 - Fix: The app prefix of every bullet under Unreleased; a control without an accessible name in check commands; a plain-code test (no interface, no WinForms in a Core project, UI Automation notifications in Announcer alone); the caution words only from AiCaution.
-- Note: Found on 2026-11-24 by the audit of the tests. The AiCaution check waits on two texts that may not be the AI case (TaskForm.Actions.cs, HandedCommand.cs).
+- Note: Found on 2026-11-24 by the audit of the tests. The AiCaution check waits on two texts that may not be the AI case (TaskForm.Actions.cs, HandedCommand.cs). Done on 2026-11-24: ChangelogTests (efda356d) and PlainCodeTests (0daa39bc). Left: a control without an accessible name in check commands, and the caution words only from AiCaution.
 
 ### R-100, low, tooling: test.ps1 starts the build eighteen times
 
@@ -44,6 +44,13 @@ found and what became of each finding: change the JSON in the same commit as the
 - Principle: P4
 - Fix: One dotnet test over a solution filter of the test projects, in Release, if a measurement on the 7 GB computer shows it is faster and fits.
 - Note: Found on 2026-11-24 by the audit of the tools. It changes the one-by-one rule of the root CLAUDE.md and commands.md, so it is measured first and the rule's change is the maintainer's.
+
+### R-101, low, framework: The popup menu tracking is written twice
+
+- Where: src/AxKit.Forms/NativeMenu.cs; src/AxFile/Shell.cs
+- Principle: P2
+- Fix: NativeMenu.Track(menu, owner, point): the Down posted, then TrackPopupMenuEx, used by axFile's shell menu and by NativeMenu.Choose; the shell's own CreatePopupMenu and DestroyMenu too.
+- Note: Split off R-92 on 2026-11-24: axFile's Windows menu must be heard with NVDA after the change, since a menu that opens with nothing selected reads nothing.
 
 ### R-84, low, tooling: The hooks-installed check is written twice and the copies disagree on worktrees
 
@@ -59,33 +66,12 @@ found and what became of each finding: change the JSON in the same commit as the
 - Fix: One short bullet per partial file; the WinForms and NVDA gotchas that are not axClaude's moved to the Forms notes; stream.md in a section per file.
 - Note: Found on 2026-11-24 by the audit of the documents. Next at the 32 KB limit: AxClaude.Core, AxFile, controls.md, AxAutomate.Core, window-base.md.
 
-### R-91, low, framework: The undo stack is written three times
-
-- Where: src/AxTask/TaskForm.Commands.cs; src/AxTemplate/BrowserForm.cs; src/AxPass/PassForm.Commands.cs
-- Principle: P2
-- Fix: A small StepHistory in AxKit.Core beside Changes, its cap a parameter.
-- Note: Found on 2026-11-24 by the audit of the code. axPass has a Step of its own and follows later.
-
-### R-92, low, framework: The same Windows functions are declared in several files
-
-- Where: src/AxKit.Forms/User32.cs; src/AxKit.Forms/NativeMenu.cs; src/AxFile/Shell.cs; src/AxKit.Forms/AxKitForm.Mcp.cs; src/AxPass/PassForm.cs; src/AxKit.Forms/ConsoleForm.Signals.cs; src/AxKit/Program.cs; src/AxTemplate/WindowInFront.cs; src/AxClaude/MainForm.PutAway.cs; src/AxProcess.Core/SystemInfo.cs; src/AxKit.Core/ThisProgram.cs; src/AxKit.Forms/UserPipe.cs
-- Principle: P2
-- Fix: Each in one place: the popup menu tracking in NativeMenu, the idle time, the taskbar flash, the window thread and long in User32, a process's image path and a pipe's server in ThisProgram.
-- Note: Found on 2026-11-24 by the audit of the code: 33 functions are declared more than once. The shell menu's move needs an NVDA hearing of axFile's Windows menu.
-
-### R-94, low, core: Small helpers written several times
-
-- Where: src/AxAutomate.Core/StepText.cs; src/AxKit.Forms/ItemForm.cs; src/AxTask.Core/ListActions.cs; src/AxTask.Core/ManyItems.cs; src/AxKit.Core/JsonElements.cs; src/AxKit.Core/Reports/ReportSeal.cs; src/AxKit.Forms/AutomationChannel.cs; src/AxClaude.Core/Streaming/ClaudeCodeStream.cs
-- Principle: P2
-- Fix: One Count(number, noun) in AxKit.Core; JsonElements public and used where a string member is read by hand (ReportSeal's copy can throw on a value that is not an object).
-- Note: Found on 2026-11-24 by the audit of the code.
-
 ### R-96, low, tooling: Test helpers copied across the test projects
 
 - Where: tests/Shared/SourceTexts.cs; tests/AxKit.Tests/LayoutTests.cs; tests/AxAutomate.Tests; tests/AxClaude.Tests/TestHelpers.cs; tests/AxTerminal.Tests/TestHelpers.cs
 - Principle: P2
 - Fix: SourceTexts.RepositoryRoot and one list of C# files without bin and obj used everywhere; the fixture helpers in tests/Shared/Fixtures.cs.
-- Note: Found on 2026-11-24 by the audit of the tests: the repository root is found in 16 copies; six source checks skip obj and not bin.
+- Note: Found on 2026-11-24 by the audit of the tests: the repository root is found in 16 copies; six source checks skip obj and not bin. Done on 2026-11-24 (115719ef): the repository root is SourceTexts.RepositoryRoot everywhere, LayoutTests' copy and three inline ones gone. Left: the fixture helpers of AxClaude.Tests and AxTerminal.Tests, and one list of C# files without bin and obj.
 
 ### R-97, low, tooling: Window scripts carry a setting that does nothing and sections that check nothing
 
@@ -795,6 +781,24 @@ found and what became of each finding: change the JSON in the same commit as the
 - Commit: 3f3d6f4f
 - Note: Found on 2026-11-24 by the audit of the documents.
 
+### R-91, low, framework: The undo stack is written three times
+
+- Where: src/AxTask/TaskForm.Commands.cs; src/AxTemplate/BrowserForm.cs; src/AxPass/PassForm.Commands.cs
+- Principle: P2
+- Fix: A small StepHistory in AxKit.Core beside Changes, its cap a parameter.
+- Checked by: tests/AxKit.Tests/StepHistoryTests; axTask's and axTemplate's window scripts pass on the hidden desktop
+- Commit: b50dd3df
+- Note: Found on 2026-11-24 by the audit of the code. axPass has a Step of its own and follows later.
+
+### R-92, low, framework: The same Windows functions are declared in several files
+
+- Where: src/AxKit.Forms/User32.cs; src/AxKit.Forms/NativeMenu.cs; src/AxFile/Shell.cs; src/AxKit.Forms/AxKitForm.Mcp.cs; src/AxPass/PassForm.cs; src/AxKit.Forms/ConsoleForm.Signals.cs; src/AxKit/Program.cs; src/AxTemplate/WindowInFront.cs; src/AxClaude/MainForm.PutAway.cs; src/AxProcess.Core/SystemInfo.cs; src/AxKit.Core/ThisProgram.cs; src/AxKit.Forms/UserPipe.cs
+- Principle: P2
+- Fix: Each in one place: the popup menu tracking in NativeMenu, the idle time, the taskbar flash, the window thread and long in User32, a process's image path and a pipe's server in ThisProgram.
+- Checked by: axProcess's, axPass's, axTemplate's and the AI tools' window scripts pass on the hidden desktop; the popup menu tracking is R-101
+- Commit: 9dc7bbbb
+- Note: Found on 2026-11-24 by the audit of the code: 33 functions are declared more than once. The shell menu's move needs an NVDA hearing of axFile's Windows menu.
+
 ### R-93, low, framework: Members no code calls
 
 - Where: src/AxFile/FileForm.Browse.cs; src/AxKit.Forms/AxKitForm.cs; src/AxKit.Forms/AxKitForm.Find.cs; src/AxKit.Forms/ItemForm.Arrange.cs; src/AxKit.Forms/FormControls.cs; src/AxKit.Core/FlatItem.cs; src/AxKit.Core/Mcp/McpRun.cs
@@ -803,6 +807,15 @@ found and what became of each finding: change the JSON in the same commit as the
 - Checked by: each name searched across src, tests and tools; the tests of AxKit, AxFile, AxMCP and AxTask pass
 - Commit: 39dbad6c
 - Note: Found on 2026-11-24 by the audit of the code, each name searched across src, tests and tools.
+
+### R-94, low, core: Small helpers written several times
+
+- Where: src/AxAutomate.Core/StepText.cs; src/AxKit.Forms/ItemForm.cs; src/AxTask.Core/ListActions.cs; src/AxTask.Core/ManyItems.cs; src/AxKit.Core/JsonElements.cs; src/AxKit.Core/Reports/ReportSeal.cs; src/AxKit.Forms/AutomationChannel.cs; src/AxClaude.Core/Streaming/ClaudeCodeStream.cs
+- Principle: P2
+- Fix: One Count(number, noun) in AxKit.Core; JsonElements public and used where a string member is read by hand (ReportSeal's copy can throw on a value that is not an object).
+- Checked by: the tests of AxKit, AxClaude, AxTask and AxAutomate pass
+- Commit: aa4d75e0
+- Note: Found on 2026-11-24 by the audit of the code.
 
 ## Deferred
 
