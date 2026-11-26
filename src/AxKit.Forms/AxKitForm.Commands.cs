@@ -1,4 +1,5 @@
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Core.Mcp;
 
 namespace AxKit.Forms;
@@ -113,7 +114,7 @@ public abstract partial class AxKitForm
     /// <see cref="CommandOrigin.Choose"/> for the automation channel's <c>commands</c> and its older <c>menu</c> step.
     /// </summary>
     internal List<PaletteEntry> MenuLines(CommandOrigin origin) =>
-        CommandPalette.Commands(MainMenuStrip, text => SayFor(origin, text), (item, name) => ClickFor(origin, item, name));
+        CommandPalette.Commands(MainMenuStrip, text => SayFor(origin, EventKind.Said, text), (item, name) => ClickFor(origin, item, name));
 
     /// <summary>
     /// Whether the command that runs now was clicked for an AI tool (MC-7.5): true only while its click runs. For a
@@ -154,23 +155,24 @@ public abstract partial class AxKitForm
 
         if (origin != CommandOrigin.AiTool && item.CheckOnClick)
         {
-            SayFor(origin, MenuText.CheckSaid(name, item.Checked));
+            SayFor(origin, EventKind.Changed, MenuText.CheckSaid(name, item.Checked));
         }
     }
 
     /// <summary>
     /// What a click for an origin says beside the command's own words, as each said it before: the palette through
-    /// the window's <see cref="Announce"/>, the automation channel straight through <see cref="Announcer.Raise"/>.
+    /// the window's <see cref="Announce(EventKind, string, bool)"/>, the automation channel straight on the window
+    /// (<see cref="EventDoor.SayOn"/>), each raised at the door with its kind.
     /// </summary>
-    private void SayFor(CommandOrigin origin, string text)
+    private void SayFor(CommandOrigin origin, EventKind kind, string text)
     {
         if (origin == CommandOrigin.Palette)
         {
-            Announce(text, true);
+            Announce(kind, text, true);
         }
         else
         {
-            Announcer.Raise(this, text, true);
+            EventDoor.SayOn(kind, this, text, true);
         }
     }
 }

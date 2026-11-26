@@ -1,3 +1,5 @@
+using AxKit.Core.Events;
+
 namespace AxKit.Forms;
 
 /// <summary>
@@ -38,7 +40,7 @@ public sealed class FormCheckList : AxKitList
     {
         Array.Fill(_checked, value);
         SetLines(Lines());
-        (FindForm() as AxKitForm)?.Announce(value ? $"All {_names.Count} checked" : "None checked", true);
+        (FindForm() as AxKitForm)?.Announce(EventKind.Changed, value ? $"All {_names.Count} checked" : "None checked", true);
     }
 
     /// <summary>The line on <paramref name="name"/> selected, the name compared without case; false for a name the list has not.</summary>
@@ -61,7 +63,7 @@ public sealed class FormCheckList : AxKitList
             _checked[at] = !_checked[at];
             SetLines(Lines());
             SelectedIndex = at;
-            (FindForm() as AxKitForm)?.Announce(_checked[at] ? "checked" : "not checked", true);
+            (FindForm() as AxKitForm)?.Announce(EventKind.Changed, _checked[at] ? "checked" : "not checked", true);
             e.Handled = e.SuppressKeyPress = true;
             return;
         }

@@ -181,7 +181,7 @@ public abstract partial class AxKitForm
         }
 
         var said = PasteWords(text, box.Multiline);
-        BeginInvoke(() => Announce(said, true));
+        BeginInvoke(() => Announce(EventKind.Done, said, true));
     }
 
     /// <summary>What a paste says: "Pasted"; "Pasted, 3 lines" for several into a text of several lines; "Nothing to paste as text" when the clipboard holds none (a picture, files).</summary>
@@ -205,7 +205,7 @@ public abstract partial class AxKitForm
     protected internal void Refuse(string said)
     {
         EventDoor.Raise(EventKind.Refused);
-        Announce(said, true);
+        Announce(EventKind.Refused, said, true);
     }
 
     /// <summary>A failed command's reason: one announcement, "Failed: ...", when it is one line; a notice with all of it when it is more (axGIT AG-7, axFile AF-4.5).</summary>
@@ -217,7 +217,7 @@ public abstract partial class AxKitForm
         }
         else
         {
-            Announce("Failed: " + text, true);
+            Announce(EventKind.Failed, "Failed: " + text, true);
         }
     }
 
@@ -242,7 +242,7 @@ public abstract partial class AxKitForm
             {
                 if (refused(Overlay.InputText) is { } why)
                 {
-                    Announce(why, true);
+                    Announce(EventKind.Refused, why, true);
                     return false;
                 }
 
@@ -308,7 +308,8 @@ public abstract partial class AxKitForm
                     controls.FocusFirst();
                 }
 
-                Announce(sayText ? $"{title}, form. {text}" : $"{title}, form", false);
+                // Said: the entry itself is the form's component's to raise (ComponentsTests), these are its words.
+                Announce(EventKind.Said, sayText ? $"{title}, form. {text}" : $"{title}, form", false);
             }
         });
     }
@@ -405,8 +406,18 @@ public abstract partial class AxKitForm
 
     private long _lastRaiseTick = long.MinValue / 2;
 
-    /// <summary>Speaks without moving the focus (AX-7.3): on the notice while one shows, since the window's controls are hidden then, and on <see cref="AnnounceSource"/> otherwise; before the first activation, kept for it; close on the heels of the one before, joined to it.</summary>
-    protected internal bool Announce(string text, bool interrupt)
+    /// <summary>
+    /// Words of the window that name no kind of event, raised at the door as <see cref="EventKind.Said"/> and said by
+    /// <see cref="Speak"/> (events.md section 10, 2026-11-25): every place of the apps that announces goes through the
+    /// door this way; a place that knows its kind says it with <see cref="Announce(EventKind, string, bool)"/>.
+    /// </summary>
+    protected internal bool Announce(string text, bool interrupt) => EventDoor.Say(EventKind.Said, this, text, interrupt);
+
+    /// <summary>Words of an event of the kind named, raised at the door and said by <see cref="Speak"/>; the kind's sound, if it has one, is raised by its own call as before.</summary>
+    protected internal bool Announce(EventKind kind, string text, bool interrupt) => EventDoor.Say(kind, this, text, interrupt);
+
+    /// <summary>Speaks without moving the focus (AX-7.3): on the notice while one shows, since the window's controls are hidden then, and on <see cref="AnnounceSource"/> otherwise; before the first activation, kept for it; close on the heels of the one before, joined to it. The door alone calls it, with words raised there (<see cref="EventDoor.Say(EventKind, AxKitForm, string, bool)"/>).</summary>
+    internal bool Speak(string text, bool interrupt)
     {
         // A window put away says nothing; what it would have said goes to SaidWhilePutAway, which keeps what matters.
         if (PutAway)
@@ -463,7 +474,10 @@ public abstract partial class AxKitForm
     /// next announcement within <see cref="JoinMs"/>, an interrupting one included, so that the command's own words never
     /// cut them off; said alone when nothing follows.
     /// </summary>
-    protected void AnnounceBefore(string text)
+    protected void AnnounceBefore(string text) => EventDoor.SayAhead(EventKind.AiRan, this, text);
+
+    /// <summary>The words of <see cref="AnnounceBefore"/>, raised at the door, held to be joined to what follows.</summary>
+    internal void SpeakAhead(string text)
     {
         if (PutAway)
         {
@@ -539,7 +553,7 @@ public abstract partial class AxKitForm
     private bool Raise(string text, bool interrupt)
     {
         _lastRaiseTick = Environment.TickCount64;
-        return NoticeOpen ? Overlay.Announce(text, interrupt) : Announcer.Raise(AnnounceSource, text, interrupt);
+        return NoticeOpen ? Overlay.Speak(text, interrupt) : EventDoor.Speak(AnnounceSource, text, interrupt);
     }
 
     /// <summary>Several announcements as one, the last with its own ending (<see cref="SaidTogether.Sentence"/>).</summary>

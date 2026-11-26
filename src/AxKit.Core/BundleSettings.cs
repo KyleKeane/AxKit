@@ -9,11 +9,18 @@ namespace AxKit.Core;
 /// <see cref="SettingsFile"/>. Until that day each app had its own Check for updates at start (Options, General); the
 /// first time the file is not there, the switch starts off if any app had its own turned off, so that no check the user
 /// had refused begins (<see cref="FromApps"/>). Read again at every use, since another window may have changed it.
+/// Since 2026-11-25 it holds the second switch of the bundle, Keep a log of events (<see cref="KeepEventLog"/>).
 /// Tested in <c>tests/AxKit.Tests/BundleSettingsTests</c>.
 /// </summary>
 public sealed class BundleSettings
 {
     public bool CheckForUpdates { get; set; } = true;
+
+    /// <summary>
+    /// axKit menu, Keep a log of events (docs/axKit/events.md section 9 point 5, 2026-11-25): each event's time and kind
+    /// written to <see cref="AppPaths.EventLogFile"/>, never its words (<see cref="Events.EventLogger"/>). Off by default.
+    /// </summary>
+    public bool KeepEventLog { get; set; }
 
     /// <summary>The members of the file this version does not know, kept as they were (AX-5.8).</summary>
     [System.Text.Json.Serialization.JsonExtensionData]

@@ -63,6 +63,8 @@ axKit was called Axit up to 4.0.0. If you have Axit installed, close its windows
 - In any notice's text (the keyboard shortcuts of F1, a user guide, this guide, About): h and Shift+H move by heading and 1 to 6 by level; Ctrl+F finds a text, F3 and Shift+F3 the next and the previous match.
 - Colours, for a sighted helper or low vision: in any window, axKit menu, Theme, Edit theme file opens `%APPDATA%\AxKit\theme.json` in axJSON, one line per class of object (the window, the texts, the transcripts, the lists, the console field and its band, the notices, the status bar, the menus, the buttons, the title bar), each `system` for Windows' own colour or a hex colour such as `#FFF4C2`. Save it and switch back: the window takes it, and every other window when it is next activated; Reload theme reads it at once, Theme on switches it off and on. Nothing changes for a screen reader. The same file holds `display.wordWrap`, the editors' word wrap, one value for axDown, axJSON and axPreview, which Ctrl+Shift+W in any of them writes.
 
+- A log of events, for finding where an app behaves oddly: in any window, axKit menu, Keep a log of events (off at first; "Keep a log of events, checked" when you turn it on). While it is on, each thing that reaches you (a refusal, a line arriving, a turn done, words said) is one line of `%LOCALAPPDATA%\AxKit\logs\events.log` with its time and its kind, never a word of it. Every window follows the switch from its next activation; turning it off stops the writing and leaves the file until you delete it.
+
 ## If a key does nothing
 
 In any axKit window: Help, Diagnostics, Test a key (Alt+H, D, T), or Ctrl+Shift+P and `test a key`. It says "Key test. Press any key to hear its name and what it does here. Press Escape to end."

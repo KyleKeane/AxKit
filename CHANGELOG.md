@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axKit: **a log of events, off unless you turn it on**: axKit menu, Keep a log of events. While it is on, each thing that reaches you (a refusal, a line arriving, a turn done, words said) is one line of `%LOCALAPPDATA%\AxKit\logs\events.log`, its time and its kind, never a word of it; it stays on your computer and rolls over at 1 MB. Underneath, every word a window says now goes through the same door as its sounds, with its kind; nothing you hear changed.
 - axKit: **a report's last actions hold every command you ran**, each by its name and key, a setting, a menu pick, a key such as F1 and a command chosen in the palette included, where only some commands were written; a recent file or a window chosen from a list is written by its menu and its number, "Session, Open recent file, entry 2", never by its name.
 - axMedia: **Open files and Open folder are Add files and Add folder**, since they add to the queue; their keys, Ctrl+O and Ctrl+Shift+O, are as they were.
 - axKit: **the how-to pages read as a person's steps**: "Go to the window that opened", "Go back to the first window", "Open axClip again"; a start's options in words ("added to the list", "in a new window") and the checks' own gone; the AI tools page as what you ask Claude ("Ask Claude to list the open windows"); a word and the sound of its name in one line ("You hear the Sent sound and Sent"); a part of an announcement in quotes ("You hear something with "2 of" in it"); typed text in quotes; "Press Tab seven times"; workflows of checks alone left off the pages.

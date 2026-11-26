@@ -219,6 +219,9 @@ public static class AppPaths
     public static string LogsFolder { get; } =
         Path.Combine(Home(Environment.SpecialFolder.LocalApplicationData), "AxKit", "logs");
 
+    /// <summary>The log of events (docs/axKit/events.md section 9 point 5): times and kinds alone, written only while the bundle's switch is on (<see cref="Events.EventLogger"/>).</summary>
+    public static string EventLogFile { get; } = Path.Combine(LogsFolder, "events.log");
+
     /// <summary>The user's reports as an axTask list (docs/axKit/reports.md RP-5.1): one item per report, sent or not.</summary>
     public static string ReportsFolder { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "reports");

@@ -162,6 +162,66 @@ public sealed partial class EventDoorTests
         Assert.All(cases, pair => Assert.Contains($"static void {pair.Method}() =>", sounds, StringComparison.Ordinal));
     }
 
+    /// <summary>
+    /// The words go through the door (events.md section 9 point 4, 2026-11-25): the one notification of AX-7.1 is
+    /// raised by the door alone, so that every announcement of a window, a notice or a shared control comes there with
+    /// its kind; the automation channel and the AI tools' channel only listen to what was said. <c>Announcer</c> is
+    /// internal, so the apps cannot reach it; inside the shared pieces this holds it.
+    /// </summary>
+    [Fact]
+    public void Words_are_said_through_the_door_alone()
+    {
+        var listeners = new[] { Channel, Path.Combine("src", "AxKit.Forms", "McpChannel.cs") };
+        var offenders = new List<string>();
+        foreach (var (relative, code) in Sources())
+        {
+            if (relative.Equals(Door, StringComparison.OrdinalIgnoreCase) || relative.Equals(Path.Combine("src", "AxKit.Forms", "Announcer.cs"), StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            for (var i = 0; i < code.Count; i++)
+            {
+                foreach (Match match in AnnouncerMember().Matches(code[i]))
+                {
+                    if (match.Groups[1].Value == "Raised" && listeners.Any(listener => relative.Equals(listener, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        continue;
+                    }
+
+                    offenders.Add($"{relative}:{i + 1}: {code[i].Trim()}");
+                }
+            }
+        }
+
+        Assert.True(offenders.Count == 0,
+            "Words said outside the door (docs/axKit/events.md section 10). Say them with their kind, the window's Announce(EventKind.<kind>, ...) or EventDoor.SayOn(EventKind.<kind>, control, ...): "
+            + string.Join("; ", offenders));
+        var announcer = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms", "Announcer.cs"));
+        Assert.Contains("internal static class Announcer", announcer, StringComparison.Ordinal);
+    }
+
+    /// <summary>The door's <c>Speak</c> says words raised at the door already; only the window's own speaking (its joined sentence, what waited for the activation) and the notice it speaks on call it.</summary>
+    [Fact]
+    public void Words_said_later_were_raised_at_the_door_first()
+    {
+        var allowed = new[] { Path.Combine("src", "AxKit.Forms", "AxKitForm.Notices.cs"), Path.Combine("src", "AxKit.Forms", "OverlayPanel.cs") };
+        var offenders = Sources()
+            .Where(source => !allowed.Any(file => source.Relative.Equals(file, StringComparison.OrdinalIgnoreCase)))
+            .SelectMany(source => source.Code.Select((line, i) => (source.Relative, Line: line, Number: i + 1)))
+            .Where(line => line.Line.Contains("EventDoor.Speak(", StringComparison.Ordinal))
+            .Select(line => $"{line.Relative}:{line.Number}")
+            .ToList();
+        Assert.True(offenders.Count == 0, "EventDoor.Speak called outside the window's own speaking: " + string.Join("; ", offenders));
+
+        // And the window's Announce without a kind raises its words at the door, as said.
+        var notices = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), allowed[0]));
+        Assert.Contains("protected internal bool Announce(string text, bool interrupt) => EventDoor.Say(EventKind.Said, this, text, interrupt);", notices, StringComparison.Ordinal);
+    }
+
+    [GeneratedRegex(@"\bAnnouncer\.(\w+)")]
+    private static partial Regex AnnouncerMember();
+
     /// <summary>The apps cannot play a sound themselves: <c>Sounds</c> is not public, so only AxKit.Forms can name it, and there the first test holds.</summary>
     [Fact]
     public void Sounds_is_internal_to_the_shared_window_pieces()

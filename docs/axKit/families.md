@@ -149,6 +149,7 @@ You pressed a key, typed, or chose a command, and this is how it ended. Every co
   - Heard: no sound.
   - Said: The information itself.
   - In: Every window.
+  - Note: Since 2026-11-25 every word a window says goes through the door with its kind. A place that does not name its kind yet is counted as this one, whatever it says, until it is given its own.
 - `changed`: A setting or a state of the window changed.
   - Started by: `key`, `menu`, `palette`, `ai-tool`, `script`.
   - Heard: no sound.

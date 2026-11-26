@@ -109,7 +109,7 @@ public sealed class TranscriptView : AxKitTextBox
     public bool ShowMarkers { get => _mirror.ShowMarkers; set => _mirror.ShowMarkers = value; }
 
     /// <summary>Speaks text through a UI Automation notification without moving focus (FR-7.1). Returns false when unsupported.</summary>
-    public bool Announce(string text, bool interrupt) => Announcer.Raise(this, text, interrupt);
+    public bool Announce(EventKind kind, string text, bool interrupt) => EventDoor.SayOn(kind, this, text, interrupt);
 
     /// <summary>Alt+3, or Navigate → Latest response (FR-5): focuses the view and puts the caret on the newest output marker; `No response yet` when there is none.</summary>
     public void JumpToLatestResponse()
@@ -124,7 +124,7 @@ public sealed class TranscriptView : AxKitTextBox
             }
         }
 
-        Announce($"No {_keys.Response.Name} yet", true);
+        Announce(EventKind.NothingFound, $"No {_keys.Response.Name} yet", true);
     }
 
     /// <summary>m, or Navigate → Bookmark this line: focuses the view and bookmarks the caret's line, or takes its bookmark away (FR-3.9).</summary>
@@ -133,7 +133,7 @@ public sealed class TranscriptView : AxKitTextBox
         Focus();
         if (_mirror.LineCount == 0)
         {
-            Announce("Empty", true);
+            Announce(EventKind.NothingFound, "Empty", true);
             return;
         }
 
@@ -158,7 +158,7 @@ public sealed class TranscriptView : AxKitTextBox
         var index = _mirror.Find(text, current, backward, out var column, out var wrapped);
         if (index < 0)
         {
-            Announce($"Not found: {text}", true);
+            Announce(EventKind.NothingFound, $"Not found: {text}", true);
             return;
         }
 
@@ -426,7 +426,7 @@ public sealed class TranscriptView : AxKitTextBox
             {
                 // A selection is cleared first (FR-3.11); the caret goes back to where the selection began.
                 Select(SelectionStart, 0);
-                Announce("Selection cleared", true);
+                Announce(EventKind.Changed, "Selection cleared", true);
                 return;
             }
 
@@ -500,11 +500,11 @@ public sealed class TranscriptView : AxKitTextBox
         try
         {
             Clipboard.SetText(SelectedText);
-            Announce("Copied", true);
+            Announce(EventKind.Done, "Copied", true);
         }
         catch (ExternalException)
         {
-            Announce("Could not copy. Try again", true);
+            Announce(EventKind.Failed, "Could not copy. Try again", true);
         }
     }
 
@@ -534,7 +534,7 @@ public sealed class TranscriptView : AxKitTextBox
             }
         }
 
-        Announce($"No {(backward ? "previous" : "next")} {key.Name}", true);
+        Announce(EventKind.NothingFound, $"No {(backward ? "previous" : "next")} {key.Name}", true);
     }
 
     /// <summary>Whether a quick key stops at a line: the line matches, and the rule about the line before it holds.</summary>
@@ -577,7 +577,7 @@ public sealed class TranscriptView : AxKitTextBox
             }
         }
 
-        Announce(text.Length == 0 ? $"No next {key.Name}" : text.ToString(), true);
+        Announce(text.Length == 0 ? EventKind.NothingFound : EventKind.Landed, text.Length == 0 ? $"No next {key.Name}" : text.ToString(), true);
         return true;
     }
 
@@ -605,12 +605,12 @@ public sealed class TranscriptView : AxKitTextBox
     {
         if (_mirror.LineCount == 0)
         {
-            Announce("Empty", true);
+            Announce(EventKind.NothingFound, "Empty", true);
             return;
         }
 
         var index = _mirror.LineIndexAt(SelectionStart);
-        Announce($"Line {_mirror.DisplayLineOf(index) + 1} of {_mirror.DisplayLineCount}", true);
+        Announce(EventKind.Said, $"Line {_mirror.DisplayLineOf(index) + 1} of {_mirror.DisplayLineCount}", true);
     }
 
     /// <summary>Enter, and the bar's Context item for it: hands the caret's line, as the reader sees it (joined rows as one), to the window to quote in the message.</summary>
@@ -618,7 +618,7 @@ public sealed class TranscriptView : AxKitTextBox
     {
         if (_mirror.LineCount == 0)
         {
-            Announce("Empty", true);
+            Announce(EventKind.NothingFound, "Empty", true);
             return;
         }
 
@@ -650,7 +650,7 @@ public sealed class TranscriptView : AxKitTextBox
             }
         }
 
-        Announce("Nothing to go back to", true);
+        Announce(EventKind.Edge, "Nothing to go back to", true);
     }
 
     /// <summary>Records the caret's line before a jump moves it away (FR-3.12).</summary>
@@ -687,7 +687,7 @@ public sealed class TranscriptView : AxKitTextBox
 
         OwnSelect(_mirror.StartAt(index) + _mirror.RenderedColumn(index, column), 0);
         ScrollCaretIntoView();
-        if (!Announce(prefix + SpokenText(index, whole: false), true))
+        if (!Announce(EventKind.Landed, prefix + SpokenText(index, whole: false), true))
         {
             // No UI Automation notifications: select the line so the screen reader reports the selection.
             OwnSelect(_mirror.StartAt(index), _mirror.RenderedColumn(index, _mirror.TextAt(index).Length));

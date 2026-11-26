@@ -8,8 +8,13 @@ namespace AxKit.Forms;
 /// a sound for something that happened; it raises the kind of event here, and the kind's sound comes from the one
 /// table, <see cref="EventPresenter"/>, so that the same kind sounds the same in every window. Whether the event is
 /// raised at all (a switch of the user's, a window that is not in front) is still decided where it happens, as before
-/// the door, and the words of an event are still said by the window's <c>Announce</c>: as built on 2026-11-17 the
-/// door carries the sounds alone (EV-5.1), and nothing a user hears changed with it.
+/// the door. As built on 2026-11-17 the door carried the sounds alone (EV-5.1); since 2026-11-25 (events.md section 9
+/// point 4) the words come through it too: every announcement of a window, a notice or a shared control is raised
+/// here with its kind (<see cref="Say(EventKind, AxKitForm, string, bool)"/>, <see cref="SayOn"/>) and then said as
+/// before, by the window's own speaking, so that nothing a user hears changed with either step. Every event that
+/// reaches the door, by its sound or by its words, is noted in the log of events while the user keeps one
+/// (<see cref="EventLogger"/>: its time and its kind, never its words); a kind's sound and then its words in the same
+/// turn are one event, noted once.
 ///
 /// A kind with one sound is raised by its name alone. Three kinds still have two sounds (EV-3.3): each is raised
 /// with its sound named, so that every place not yet decided reads <c>EventSound.</c> in the code and can be found;
@@ -32,6 +37,7 @@ public static class EventDoor
             Log.Error($"Events: {EventPresenter.Id(kind)} was raised by its name alone and has {sounds.Count} sounds");
         }
 
+        Note(kind);
         if (sounds.Count > 0)
         {
             Play(sounds[0]);
@@ -46,7 +52,61 @@ public static class EventDoor
             Log.Error($"Events: {EventPresenter.Id(kind)} was raised with the sound {undecided}, which the table does not give it as one of two");
         }
 
+        Note(kind);
         Play(undecided);
+    }
+
+    // ---- the words of events (EV-5.3; section 9 point 4, through the door from the first day, 2026-11-25) ----
+
+    /// <summary>
+    /// The words of an event, said by a window: the kind is noted, and the words go to the window's own speaking, which
+    /// joins them, holds them until the window is in front and drops them while it is put away, as before (AX-7.3).
+    /// No sound: a kind's sound is raised by its own call, where it was before the words came here, so that the order
+    /// and the timing of what is heard stay as they were. The window's <c>Announce</c> calls it; an
+    /// announcement that names no kind is raised as <see cref="EventKind.Said"/>.
+    /// </summary>
+    public static bool Say(EventKind kind, AxKitForm window, string words, bool interrupt)
+    {
+        Note(kind);
+        return window.Speak(words, interrupt);
+    }
+
+    /// <summary>Words of an event said ahead of what follows ("Claude ran Word wrap", MC-7.5): noted, and held by the window to be joined to the next words.</summary>
+    public static void SayAhead(EventKind kind, AxKitForm window, string words)
+    {
+        Note(kind);
+        window.SpeakAhead(words);
+    }
+
+    /// <summary>The words of an event said at once on a control, as one notification: a check box's new state, a notice's own words, the transcript's.</summary>
+    public static bool SayOn(EventKind kind, Control control, string words, bool interrupt)
+    {
+        Note(kind);
+        return Announcer.Raise(control, words, interrupt);
+    }
+
+    /// <summary>
+    /// Words already raised at the door by <see cref="Say(EventKind, AxKitForm, string, bool)"/>, said now: the window's
+    /// joined sentence, what waited for its activation. The window base and the notice alone call it (<c>EventDoorTests</c>).
+    /// </summary>
+    internal static bool Speak(Control control, string words, bool interrupt) => Announcer.Raise(control, words, interrupt);
+
+    /// <summary>The kind last noted, and in which turn: the same kind again in the same turn (its sound and its words, a burst of lines in one batch) is the same event.</summary>
+    private static EventKind _notedKind;
+
+    private static long _notedTurn = -1;
+
+    /// <summary>Notes the event in the log of events (<see cref="EventLogger"/>, which writes nothing while it is off), once for a kind in a turn.</summary>
+    private static void Note(EventKind kind)
+    {
+        if (_counting && _notedTurn == _turn && _notedKind == kind)
+        {
+            return;
+        }
+
+        _notedKind = kind;
+        _notedTurn = _turn;
+        EventLogger.Note(kind);
     }
 
     /// <summary>The program began or stopped working (<see cref="EventKind.Working"/>): the working music starts or stops.</summary>
@@ -54,6 +114,7 @@ public static class EventDoor
     {
         if (on)
         {
+            Note(EventKind.Working);
             Sounds.StartMusic();
         }
         else
@@ -63,10 +124,18 @@ public static class EventDoor
     }
 
     /// <summary>Work still runs in the background (<see cref="EventKind.BackgroundRunning"/>): one chord of the recurring sound, by chord and by the number of things running.</summary>
-    public static void BackgroundRunning(int chord, int things) => Sounds.BackgroundChord(chord, things);
+    public static void BackgroundRunning(int chord, int things)
+    {
+        Note(EventKind.BackgroundRunning);
+        Sounds.BackgroundChord(chord, things);
+    }
 
     /// <summary>The turn is over (<see cref="EventKind.TurnDone"/>) in a window that is put away and whose one switch says its end is still heard: the sound through the mute.</summary>
-    public static void TurnDoneThroughMute() => Sounds.DoneWhileMuted();
+    public static void TurnDoneThroughMute()
+    {
+        Note(EventKind.TurnDone);
+        Sounds.DoneWhileMuted();
+    }
 
     /// <summary>No sound at all while set: the process's one window is put away (<see cref="Sounds.Muted"/>).</summary>
     public static bool Muted

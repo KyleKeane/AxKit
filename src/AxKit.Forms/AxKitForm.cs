@@ -64,6 +64,8 @@ public abstract partial class AxKitForm : Form
         // AX-7.9: every notice's text moves by headings (h, 1 to 6), so a key onto one plays the heading sound.
         FollowHeadings(Overlay.BodyText);
         WireAnnouncing();
+        // The log of events, as the bundle's switch says (off unless the user turned it on); read again at activation.
+        EventLogger.FollowSettings(BundleSettings.DefaultPath);
         // The theme file now, before the window's own constructor, which may take a display setting from it (TH-6);
         // painted in OnLoad once the controls exist. A Windows app theme change repaints every class from the theme's
         // defaults (docs/axKit/theme.md TH-3).
@@ -313,7 +315,36 @@ public abstract partial class AxKitForm : Form
             CommandPalette.RefreshedOnOpening(menu, () => check.Checked = BundleSettings.Load().CheckForUpdates);
         }
 
+        // Events.md section 9 point 5 (the maintainer's decision of 2026-11-25): the log of events, the bundle's second
+        // switch, off until the user turns it on; times and kinds only, on this computer. A change: it writes a file of
+        // axKit's own folder and reaches nothing outside.
+        var eventLog = CommandPalette.Marked(new ToolStripMenuItem("Keep a log of &events", null, (_, _) => ToggleEventLog()), CommandMark.Change);
+        if (PackageIdentity.IsPackaged)
+        {
+            menu.DropDownItems.Add(new ToolStripSeparator());
+        }
+
+        menu.DropDownItems.Add(eventLog);
+        CommandPalette.RefreshedOnOpening(menu, () => eventLog.Checked = BundleSettings.Load().KeepEventLog);
         return menu;
+    }
+
+    /// <summary>axKit, Keep a log of events: the bundle's switch turned over and saved, followed by this process at once and by every other window at its next activation, its new state said.</summary>
+    private void ToggleEventLog()
+    {
+        var settings = BundleSettings.Load();
+        settings.KeepEventLog = !settings.KeepEventLog;
+        try
+        {
+            settings.Save(BundleSettings.DefaultPath);
+            EventLogger.FollowSettings(BundleSettings.DefaultPath);
+            EventLogger.On = settings.KeepEventLog;
+            Announce(EventKind.Changed, MenuText.CheckSaid("Keep a log of events", settings.KeepEventLog), true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            Failed("Keep a log of events", "The bundle's settings could not be written: " + ex.Message);
+        }
     }
 
     /// <summary>
@@ -749,6 +780,7 @@ public abstract partial class AxKitForm : Form
         base.OnActivated(e);
         SayWhatWaitedForActivation();
         PaintThemeIfChanged();
+        EventLogger.FollowSettings(BundleSettings.DefaultPath);
     }
 
     [System.Runtime.InteropServices.DllImport("user32.dll")]

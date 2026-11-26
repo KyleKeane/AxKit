@@ -1,3 +1,5 @@
+using AxKit.Core.Events;
+
 namespace AxKit.Forms;
 
 /// <summary>
@@ -12,6 +14,6 @@ public sealed class AxKitCheckBox : CheckBox
     protected override void OnClick(EventArgs e)
     {
         base.OnClick(e);
-        Announcer.Raise(this, Checked ? "checked" : "not checked", true);
+        EventDoor.SayOn(EventKind.Changed, this, Checked ? "checked" : "not checked", true);
     }
 }

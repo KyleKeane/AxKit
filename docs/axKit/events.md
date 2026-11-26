@@ -142,11 +142,12 @@ Steps 2 and 3 do not depend on each other and are the next work on sounds and on
 3. The ten sound choices on the earcon item, met in step 2: for each, one sound, two kinds, or as it is.
 4. Whether an event that has only words and no sound still goes through the door from the first day (so that the
    checks see every event), or only sounds first. **Decided on 2026-11-25: through the door from the first day**,
-   by the maintainer through the question tool.
+   by the maintainer through the question tool. Built the same day at the base (section 10).
 5. Whether axKit keeps a log of events on the user's computer (kinds and times, no text), off unless switched on:
    it is what a later item needs (axHelp learning from the questions asked), and what would show, as the shadow
    lines did for axClaude, where an app behaves oddly. **Decided on 2026-11-25: yes**, a switch under Options, off
-   until the user turns it on, nothing written while it is off, the log on the user's computer alone.
+   until the user turns it on, nothing written while it is off, the log on the user's computer alone. Built the same
+   day (section 10), in the axKit menu rather than an app's Options, since AX-9.1 puts every bundle-wide switch there.
 6. Whether each app's own sound quality, proposed in `earcons.md`, is a column of the presenter's table. **Left on
    2026-11-25 for the earcon sitting**: no column until the maintainer has heard the qualities.
 7. A kind the list lacks, found on 2026-11-17 by his own report: a turn that the program begins by itself. Claude
@@ -159,6 +160,45 @@ Steps 2 and 3 do not depend on each other and are the next work on sounds and on
    (`nvda-test-record.md`, the Owed section of the state from the event core).
 
 ## 10. As built
+
+### The words through the door, and the log of events (2026-11-25)
+
+Section 9 points 4 and 5. Nothing a user hears changed: the same words, in the same order, at the same moment, with
+the same sounds.
+
+- **Every word said goes through the door.** The window's `Announce(text, interrupt)` is
+  `EventDoor.Say(EventKind.Said, window, text, interrupt)`; a place that knows its kind says
+  `Announce(EventKind.<kind>, text, interrupt)`. The door notes the kind and hands the words to the window's own
+  speaking (`AxKitForm.Speak`: joined within 300 ms, held until the window is in front, dropped while it is put away,
+  all as before). `AnnounceBefore` ("Claude ran Word wrap") is `SayAhead(EventKind.AiRan, ...)`. A control that speaks
+  on itself at once calls `EventDoor.SayOn(kind, control, ...)`. No word path plays a sound: a kind's sound is still
+  raised by its own `Raise`, where it was, so that order and timing stay.
+- **The kinds named at the base and in the shared controls**: `Refuse` (refused), `Failed`'s one line (failed),
+  "Pasted" (done), a refused field of a notice and "Check the box first" (refused), a form's "title, form" and a
+  notice's title said again over its field (said: the entry kinds are raised by the components alone,
+  `ComponentsTests`, and these are only their words), the check box's and the form lists' new state
+  and a check item's state from the palette (changed), `TranscriptView`'s own words (nothing-found, edge, changed,
+  done, failed, landed, said). Every other announcement (about 540 places in the apps and in the shared flows) names
+  none and is raised as **said**, until its place is given its kind; no kind was added.
+- **The boundary**: `Announcer`, the one UI Automation notification, is internal and called by the door alone
+  (`EventDoorTests`: no other file names it but the two channels that listen to `Raised`); the door's internal
+  `Speak`, for words raised already and said later, is called only by `AxKitForm.Notices.cs` and `OverlayPanel.cs`.
+- **The log of events** (`AxKit.Core/Events/EventLogger`): a switch of the bundle, axKit menu, **Keep a log of
+  events**, in `bundle.json` (`BundleSettings.KeepEventLog`), off by default. While it is on, every event at the door,
+  by its sound (`Raise`, `Working` on, `BackgroundRunning`, `TurnDoneThroughMute`) or its words, is one line of
+  `%LOCALAPPDATA%\AxKit\logs\events.log`: the local time and the kind's id, never a word. One kind is noted once in
+  one turn of the window's thread, so that a refusal's sound and its words are one line and a batch of arriving lines
+  one. Nothing is noted or written while it is off. Past 1 MB the file becomes `events.old.log`, replacing the one
+  before. The lines are written on a thread of the pool; each window reads the switch as it is made and at each
+  activation when `bundle.json` changed. On this computer alone: a report does not carry it.
+
+Left, on purpose:
+
+- The kinds of the places that say **said** today, place by place, as each app is next worked on.
+- Events whose raise a switch or a place still skips (the chime of a notice with the chime off, an entry sound with
+  Entry sounds off, a notice opened at the user's command, which NVDA reads by the focus) are not at the door; the
+  switches are the presenter's later column (EV-5.2).
+- The automation channel records `say` without the kind (EV-5.5).
 
 ### Step 2, the sounds through the door (2026-11-17)
 
@@ -196,7 +236,7 @@ switch. What changed is that no place plays a sound any more; it names what happ
 Left for the later steps, on purpose:
 
 - **The words** (EV-5.3, section 9 point 4). Each window still says its words through its own `Announce`, in the
-  order it had with its sound. An event does not carry its words yet.
+  order it had with its sound. An event does not carry its words yet. (Through the door since 2026-11-25, above.)
 - **The switches** (EV-5.2). Whether an event is raised at all (the chimes' switch, the ticks' switch, the sound on
   headings, a window that is not in front) is still decided where it happens; the table has no switch column.
 - **The record of kinds for the automated checks** (EV-5.5). A script still expects a sound by its name.

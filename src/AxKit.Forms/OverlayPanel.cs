@@ -532,7 +532,7 @@ public sealed class OverlayPanel : Panel
             _input.Select();
             if (stays)
             {
-                Announce($"{_title.Text}. {_inputSpec.AccessibleName}", true);
+                EventDoor.SayOn(EventKind.Said, Source, $"{_title.Text}. {_inputSpec.AccessibleName}", true);
             }
 
             return;
@@ -550,14 +550,13 @@ public sealed class OverlayPanel : Panel
     public const Keys ReadText = Keys.Control | Keys.Q;
 
     /// <summary>The notice's text said again, whole: its explanation, and the line of its keys when it has one.</summary>
-    public void SayText() => Announce(_text.Visible ? _text.Text : _title.Text, true);
+    public void SayText() => EventDoor.SayOn(EventKind.Said, Source, _text.Visible ? _text.Text : _title.Text, true);
 
-    /// <summary>Speaks through a UI Automation notification raised on the notice, which holds the focus while it shows.</summary>
-    public bool Announce(string text, bool interrupt)
-    {
-        Control source = _inputSpec is not null ? _input : _text;
-        return Announcer.Raise(source, text, interrupt);
-    }
+    /// <summary>The control the notice speaks on: its field when it has one, its text otherwise, which holds the focus while it shows.</summary>
+    private Control Source => _inputSpec is not null ? _input : _text;
+
+    /// <summary>Speaks the window's words, raised at the door already (<see cref="AxKitForm.Announce(string, bool)"/>), through a UI Automation notification raised on the notice.</summary>
+    internal bool Speak(string text, bool interrupt) => EventDoor.Speak(Source, text, interrupt);
 
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
@@ -598,7 +597,7 @@ public sealed class OverlayPanel : Panel
         if (choice.IsDefault && _inputSpec is { Required: true } spec && _input.Text.Length == 0)
         {
             // Nothing to act on yet (Find with an empty field): say so and stay.
-            Announce(spec.EmptyMessage, true);
+            EventDoor.SayOn(EventKind.Refused, Source, spec.EmptyMessage, true);
             _input.Select();
             return;
         }
@@ -606,7 +605,7 @@ public sealed class OverlayPanel : Panel
         if ((choice.NeedsConsent || (choice.IsDefault && !choice.IsCancel)) && Shown?.Consent is not null && !_consent.Checked)
         {
             // The consent not given yet (AX-11.4): say so and stay, the focus where it was.
-            Announce("Check the box first", true);
+            EventDoor.SayOn(EventKind.Refused, Source, "Check the box first", true);
             return;
         }
 
@@ -654,7 +653,8 @@ public sealed class OverlayPanel : Panel
     /// <summary>A navigation key in the text (AX-7.2): the shared jump with the window's pairs.</summary>
     private void OnTextKeyDown(object? sender, KeyEventArgs e)
     {
-        if (TextJump.Handle(_text, Jumps, e.KeyData, Announce))
+        // What a jump says (the heading it landed on, or that there is none) is raised as said: the jump tells which.
+        if (TextJump.Handle(_text, Jumps, e.KeyData, (said, interrupt) => EventDoor.SayOn(EventKind.Said, Source, said, interrupt)))
         {
             e.Handled = e.SuppressKeyPress = true;
             return;

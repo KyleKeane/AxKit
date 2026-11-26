@@ -88,7 +88,7 @@ public sealed class FormControls : FlowLayoutPanel
     {
         Navigation = !Navigation;
         _typed = string.Empty;
-        (FindForm() as AxKitForm)?.Announce(TextModes.Toggled(Navigation), true);
+        (FindForm() as AxKitForm)?.Announce(EventKind.Changed, TextModes.Toggled(Navigation), true);
     }
 
     protected override void OnLeave(EventArgs e)

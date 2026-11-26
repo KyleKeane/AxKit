@@ -1,3 +1,5 @@
+using AxKit.Core.Events;
+
 namespace AxKit.Forms;
 
 /// <summary>
@@ -44,7 +46,7 @@ public sealed class FormRadioList : AxKitList
         Chosen = index;
         SetLines(Lines());
         SelectedIndex = index;
-        (FindForm() as AxKitForm)?.Announce("chosen", true);
+        (FindForm() as AxKitForm)?.Announce(EventKind.Changed, "chosen", true);
     }
 
     protected override void OnKeyDown(KeyEventArgs e)

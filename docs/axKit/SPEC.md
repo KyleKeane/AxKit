@@ -286,7 +286,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   the release notes. The setting is the bundle's, one switch for every app (the maintainer's answer of 2026-11-24,
   "One switch for all"): axKit menu, Check for updates at start, on by default, in `%APPDATA%\AxKit\bundle.json`
   (`AxKit.Core/BundleSettings`); until then each app had its own in Options, General, and the first time the bundle's
-  file is not there the switch starts off if any app had turned its own off. The notice has
+  file is not there the switch starts off if any app had turned its own off (the file's second switch, Keep a log of
+  events, is AX-9.1's). The notice has
   four buttons: I accept all terms, install and restart (Enter), I accept all terms, install and close, Open release page, Later
   (Escape). A development build (Debug, as `run.ps1` makes it) does not ask at startup, since its version is whatever
   the working tree said when it was last built; Check for updates still asks. Every window's Help menu ends with Check for updates (axKit <version>), always, naming the version in use
@@ -1134,7 +1135,17 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     never in a window in front the user is typing in, and an item added to axTask's lists, MC-8; turned off with the access and by Forget AI tools; a run may move
     the caret or the focus as the command's key would, the one exception to AX-7's caret rule, `mcp.md` MC-7.8, MC-D8),
     Add axKit to Claude Code, Forget AI tools, Read the log) and Theme ▸ (T; `theme.md` TH-4,
-    Options, Text, Theme until 5.7.0). A new bundle-wide setting or action joins here, never an app's Options.
+    Options, Text, Theme until 5.7.0), Open the sounds folder (S, AX-7.12), and after a separator the bundle's two
+    switches, both in `%APPDATA%\AxKit\bundle.json` (`AxKit.Core/BundleSettings`): Check for updates at start (U,
+    AX-3.1; not in the Store's copy) and **Keep a log of events** (E; `events.md` section 9 point 5, the maintainer's
+    decision of 2026-11-25 for a switch "under Options", placed here by this rule since it is the bundle's; off by
+    default). While it is on, every event raised at the door (`AxKit.Forms/EventDoor`), by its sound or by its words,
+    is a line of `%LOCALAPPDATA%\AxKit\logs\events.log`: its local time and its kind's id, "2026-11-25 14:03:05.123
+    refused", never a word of what was said or shown; one kind once in one turn of the window's thread. Nothing is
+    written while it is off; past 1 MB the file becomes `events.old.log`, replacing the one before; it stays on the
+    computer (`AxKit.Core/Events/EventLogger`). Turned in one window, it holds in the others from their next
+    activation; the item says "Keep a log of events, checked" or "not checked". A new bundle-wide setting or action
+    joins here, never an app's Options.
   - **Help** (H; `AxKitForm.CreateHelpMenu`, which the window calls with its guide and pages): Command palette… (P,
     Ctrl+Shift+P, AX-10), Keyboard shortcuts (K, F1), User guide (G), the app's resources ▸; Send a report… (S, F4),
     Your reports (Y, docs/axKit/reports.md RP-2.2) and Diagnostics ▸ (D; `CreateDiagnosticsMenu`, 2026-11-15, the
