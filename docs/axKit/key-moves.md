@@ -259,6 +259,16 @@ The rule: open a menu.
 
 Count: 0 moves, 1 keep.
 
+**The small families settled by the maintainer on 2026-11-26**, through the question tool:
+
+- Escape only goes back or closes ("esc should go back or close. please move clearing to another key and make it
+  consistent"): clearing the filter in the ten list windows and axCalc's field moves to Ctrl+Delete, in the remove
+  family, the same in every window; in those fields Windows' Ctrl+Delete, the next word deleted, gives way.
+- axMedia's Faster and Slower move to Alt+Up and Alt+Down; its Ctrl+Up and Down then go between sections, as in the
+  other item windows.
+- axFile's Alt+Up and Alt+D are removed: Backspace goes up one level, and F12 goes to the folder. No exception is left
+  in these families.
+
 ## All the families
 
 35 moves, 45 keeps, 80 keys.
