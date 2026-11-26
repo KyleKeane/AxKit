@@ -5,7 +5,7 @@ tables, `key-families.json` holds what is left, and this page is deleted.
 
 ## What this page is
 
-The key families (`key-families.json`) list 89 keys that do not fit their family's rule. Each one has a bullet here,
+The key families (`key-families.json`) list 80 keys that do not fit their family's rule. Each one has a bullet here,
 with a proposal. Nothing moves before the maintainer has read its family (his decision of 2026-11-25).
 
 The rules, from SPEC AX-8.18, one line each:
@@ -50,43 +50,34 @@ proposal is to take the Ctrl keys away. Alt+1, 2 and 3 stay as they are.
 - Ctrl+3, axProcess, Startup. Move to Alt+3, which it already has. The Ctrl key goes.
 - Ctrl+0, axTask, All tasks. Move to Alt+0, free. All tasks is a view of the window, and Alt with a number is a
   place. Zero stays its number.
-- Ctrl+1, axTask, Action key 1. Keep: rule 3 names axTask's action keys.
-- Ctrl+2, axTask, Action key 2. Keep: rule 3 names axTask's action keys.
-- Ctrl+3, axTask, Action key 3. Keep: rule 3 names axTask's action keys.
-- Ctrl+4, axTask, Action key 4. Keep: rule 3 names axTask's action keys.
-- Ctrl+5, axTask, Action key 5. Keep: rule 3 names axTask's action keys.
-- Ctrl+6, axTask, Action key 6. Keep: rule 3 names axTask's action keys.
-- Ctrl+7, axTask, Action key 7. Keep: rule 3 names axTask's action keys.
-- Ctrl+8, axTask, Action key 8. Keep: rule 3 names axTask's action keys.
-- Ctrl+9, axTask, Action key 9. Keep: rule 3 names axTask's action keys.
 
-A note: the family in `key-families.json` still says "the next heading of that level" alone. Rule 3, of
-2026-11-23, is wider, so the nine action keys fit it. Once this family is settled, the family's words follow rule 3.
+A note: axTask's nine action keys, Ctrl+1 to Ctrl+9, fit rule 3, which names them, so they are no misfits. The
+family in `key-families.json` follows rule 3's words since 2026-11-25.
 
-Count: 13 moves, 9 keeps.
+Count: 13 moves, 0 keeps.
 
 ## The function keys alone
 
 The rule: say or show. Several of these keys are Windows' own, and the proposal keeps those.
 
-- F2, axAutomate, axFile, axMCP, axPass and axTask, Rename. Keep: Windows' own key for rename.
+- F2, axAutomate, axFile, axMCP, axPass, axTask and axTemplate, Rename. Keep: Windows' own key for rename.
 - F3, every window but axClip, axHelp and axStart, Find next. Keep: Windows' own key for find next, as in Notepad.
 - F3, axGIT, Find next in the text. Keep: the same key, in the text pane.
 - F4, every window, Send a report. Keep: it shows the report's form, which rule 5 allows. It is a bundle key, and
   every F1 text names it.
-- F5, axFile, axGIT, axMCP, axPass, axProcess and axTask, Refresh. Keep: Windows' own key for refresh.
+- F5, axFile, axGIT, axMCP, axPass, axProcess, axTask and axTemplate, Refresh. Keep: Windows' own key for refresh.
 - F5, axStart, Refresh programs. Keep: Windows' own key for refresh.
 - F5, axPreview, Reload. Keep: Windows' own key for refresh, as in a web browser.
 - F5, axAutomate, Run. Move to Ctrl+R: R for run, and running acts on the workflow you are on (rule 2). Ctrl+R is
   free once the last run's report leaves it for F9 (section Ctrl with a letter). The case for keeping: F5 runs a
   program in Visual Studio.
-- F6, axAutomate, axMCP, axPass and axTask, Switch between the navigator and the detail pane. Keep: Windows' own key for the
-  next pane, as in File Explorer and a web browser.
+- F6, axAutomate, axMCP, axPass, axTask and axTemplate, Switch between the navigator and the detail pane. Keep:
+  Windows' own key for the next pane, as in File Explorer and a web browser.
 - F6, axPreview, Between the text and the details. Keep: Windows' own key for the next pane.
 - F6, axDown and axJSON, Between the text and the field under it. Keep: Windows' own key for the next pane.
 - F6, axCalc, axClaude and axTerminal, Switch between the view and the field. Keep: Windows' own key for the next pane.
 - F6, axGIT, Switch between the list and the text. Keep: Windows' own key for the next pane.
-- F6, axMedia, Back to the list. Keep: Windows' own key for the next pane.
+- F6, axMedia and axProcess, Back to the list. Keep: Windows' own key for the next pane.
 - F6, axFile, Switch between the list and the Favorites list. Keep: Windows' own key for the next pane.
 
 Collides with: the F5 move needs the move of axAutomate's Ctrl+R, in the section Ctrl with a letter.
@@ -104,8 +95,8 @@ The rule: the reverse or the wider form of the same letter with Ctrl.
 - Ctrl+Shift+F, axJSON, Format. Keep: Ctrl+F is the bundle's find, so no Ctrl key with F is free. F for format.
 - Ctrl+Shift+F, axGIT, Fetch. Keep: Ctrl+F is the bundle's find. Fetch reaches the whole repository, a wider form.
 - Ctrl+Shift+H, axGIT, Push. Move to Ctrl+P, free: P for push. Ctrl+P is Windows' print, and axGIT prints nothing.
-- Ctrl+Shift+K, axClaude and axTerminal, Bookmark this line. Move to Ctrl+K, free in both: it acts on the line you are
-  on. axCalc has the same command on the same key, and it would move with them; Ctrl+K is free there too.
+- Ctrl+Shift+K, axCalc, axClaude and axTerminal, Bookmark this line. Move to Ctrl+K, free in all three: it acts on the
+  line you are on.
 - Ctrl+Shift+L, axGIT, Pull. Move to Ctrl+L, free: the letter it has now, without Shift.
 - Ctrl+Shift+M, axClaude, Next permission mode. Move to Ctrl+P, free: P for permission. Ctrl+M there is the music.
 - Ctrl+Shift+N, axFile, New folder. Keep: File Explorer's own key for a new folder.
@@ -175,8 +166,8 @@ kept on their first letter.
 - Ctrl+M, axClaude and axTerminal, Background music on or off. Keep: a switch, M for music.
 - Ctrl+P, axTerminal, Say current folder. Move to F9, free: it says something.
 - Ctrl+P, axClip, Pause recording. Keep: a switch, P for pause.
-- Ctrl+Q, axAutomate, axClip, axMCP, axPass and axTask, Read in full. Move to F7, free: it says something. axTemplate
-  has the same command on the same key, and it would move with them.
+- Ctrl+Q, axAutomate, axClip, axMCP, axPass, axTask and axTemplate, Read in full. Move to F7, free: it says
+  something.
 - Ctrl+Q, axDown and axPreview, Block quote. Keep: a jump key that works while typing.
 - Ctrl+Q, axProcess, Summary. Move to F7, free.
 - Ctrl+Q, axTerminal, What is running. Move to F7, free.
@@ -204,7 +195,8 @@ Count: 12 moves, 17 keeps.
 
 The rule: go back or close.
 
-- Escape, axFile, Clear the filter. Keep: Escape clears a search box, as in Windows.
+- Escape, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate, Clear the filter. Keep:
+  Escape clears a search box, as in Windows.
 - Escape, axCalc, Clear the field. Keep: Escape clears a field, as in Windows.
 
 Count: 0 moves, 2 keeps.
@@ -241,4 +233,4 @@ Count: 0 moves, 1 keep.
 
 ## All the families
 
-35 moves, 54 keeps, 89 keys.
+35 moves, 45 keeps, 80 keys.

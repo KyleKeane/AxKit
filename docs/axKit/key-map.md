@@ -811,7 +811,7 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 - Ctrl+M, axClaude and axTerminal: Background music on or off. Its kind: toggle or play.
 - Ctrl+P, axTerminal: Say current folder. Its kind: say or show.
 - Ctrl+P, axClip: Pause recording. Its kind: toggle or play.
-- Ctrl+Q, axAutomate, axClip, axMCP, axPass and axTask: Read in full. Its kind: say or show.
+- Ctrl+Q, axAutomate, axClip, axMCP, axPass, axTask and axTemplate: Read in full. Its kind: say or show.
 - Ctrl+Q, axDown and axPreview: Block quote. Its kind: go to a place.
 - Ctrl+Q, axProcess: Summary. Its kind: say or show.
 - Ctrl+Q, axTerminal: What is running. Its kind: say or show.
@@ -823,9 +823,9 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 - Ctrl+T, axDown and axPreview: Table. Its kind: go to a place.
 - Ctrl+T, axMedia: Go to time. Its kind: go to a place.
 
-### Ctrl+digit: go to the next heading of that level
+### Ctrl+digit: the window's own numbered action
 
-10 keys of the inventory. 22 misfits.
+10 keys of the inventory. 13 misfits.
 
 - Ctrl+0, axTask: All tasks. Its kind: go to a place or view.
 - Ctrl+1, axClaude: Message field. Its kind: go to a place or view; the older key, kept for now beside Alt+1 (2026-11-16).
@@ -840,15 +840,6 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 - Ctrl+1, axProcess: Processes. Its kind: go to a place or view; the older key, kept for now beside Alt+1 (2026-11-16).
 - Ctrl+2, axProcess: Services. Its kind: go to a place or view; the older key, kept for now beside Alt+2 (2026-11-16).
 - Ctrl+3, axProcess: Startup. Its kind: go to a place or view; the older key, kept for now beside Alt+3 (2026-11-16).
-- Ctrl+1, axTask: Action key 1. Its kind: act on what is selected.
-- Ctrl+2, axTask: Action key 2. Its kind: act on what is selected.
-- Ctrl+3, axTask: Action key 3. Its kind: act on what is selected.
-- Ctrl+4, axTask: Action key 4. Its kind: act on what is selected.
-- Ctrl+5, axTask: Action key 5. Its kind: act on what is selected.
-- Ctrl+6, axTask: Action key 6. Its kind: act on what is selected.
-- Ctrl+7, axTask: Action key 7. Its kind: act on what is selected.
-- Ctrl+8, axTask: Action key 8. Its kind: act on what is selected.
-- Ctrl+9, axTask: Action key 9. Its kind: act on what is selected.
 
 ### Ctrl+Shift+digit: go to the previous heading of that level
 
@@ -868,7 +859,7 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 - Ctrl+Shift+F, axJSON: Format. Its kind: act on what is selected.
 - Ctrl+Shift+F, axGIT: Fetch. Its kind: acts on the repository.
 - Ctrl+Shift+H, axGIT: Push. Its kind: acts on the repository.
-- Ctrl+Shift+K, axClaude and axTerminal: Bookmark this line. Its kind: act on what is selected.
+- Ctrl+Shift+K, axCalc, axClaude and axTerminal: Bookmark this line. Its kind: act on what is selected.
 - Ctrl+Shift+L, axGIT: Pull. Its kind: acts on the repository.
 - Ctrl+Shift+M, axClaude: Next permission mode. Its kind: toggle or play; Ctrl+M there is the background music.
 - Ctrl+Shift+N, axFile: New folder. Its kind: makes a new thing; Ctrl+N there is New window.
@@ -892,20 +883,20 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 
 7 keys of the inventory. 15 misfits.
 
-- F2, axAutomate, axFile, axMCP, axPass and axTask: Rename. Its kind: act on what is selected; Windows' own key for it.
-- F3, axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask and axTerminal: Find next. Its kind: go to a place; a bundle key.
+- F2, axAutomate, axFile, axMCP, axPass, axTask and axTemplate: Rename. Its kind: act on what is selected; Windows' own key for it.
+- F3, axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask, axTemplate and axTerminal: Find next. Its kind: go to a place; a bundle key.
 - F3, axGIT: Find next in the text. Its kind: go to a place.
 - F4, every app: Send a report. Its kind: open or confirm; a bundle key.
-- F5, axFile, axGIT, axMCP, axPass, axProcess and axTask: Refresh. Its kind: reads again; Windows' own key for it.
+- F5, axFile, axGIT, axMCP, axPass, axProcess, axTask and axTemplate: Refresh. Its kind: reads again; Windows' own key for it.
 - F5, axStart: Refresh programs. Its kind: reads again.
 - F5, axPreview: Reload. Its kind: reads again.
 - F5, axAutomate: Run. Its kind: act on what is selected.
-- F6, axAutomate, axMCP, axPass and axTask: Switch between the navigator and the detail pane. Its kind: move between panes; a bundle key.
+- F6, axAutomate, axMCP, axPass, axTask and axTemplate: Switch between the navigator and the detail pane. Its kind: move between panes; a bundle key.
 - F6, axPreview: Between the text and the details. Its kind: move between panes.
 - F6, axDown and axJSON: Between the text and the field under it. Its kind: move between panes.
 - F6, axCalc, axClaude and axTerminal: Switch between the view and the field. Its kind: move between panes.
 - F6, axGIT: Switch between the list and the text. Its kind: move between panes.
-- F6, axMedia: Back to the list. Its kind: move between panes.
+- F6, axMedia and axProcess: Back to the list. Its kind: move between panes.
 - F6, axFile: Switch between the list and the Favorites list. Its kind: move between panes.
 
 ### Shift+F-key, and the Applications key: the reverse or the other form of the same F-key
@@ -928,7 +919,7 @@ Windows' own keys, not counted: Alt+Enter and Ctrl+Shift+Enter.
 
 2 keys of the inventory. 2 misfits.
 
-- Escape, axFile: Clear the filter. Its kind: remove: it clears and stays where it is.
+- Escape, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Clear the filter. Its kind: remove: it clears and stays where it is.
 - Escape, axCalc: Clear the field. Its kind: remove: it clears and stays where it is.
 
 ### Delete and Ctrl+Shift+Delete: remove

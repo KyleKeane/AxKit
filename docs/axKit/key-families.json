@@ -66,7 +66,7 @@
         { "chord": "ctrl+m", "apps": ["axClaude", "axTerminal"], "does": "Background music on or off", "kind": "toggle or play" },
         { "chord": "ctrl+p", "apps": ["axTerminal"], "does": "Say current folder", "kind": "say or show" },
         { "chord": "ctrl+p", "apps": ["axClip"], "does": "Pause recording", "kind": "toggle or play" },
-        { "chord": "ctrl+q", "apps": ["axAutomate", "axClip", "axMCP", "axPass", "axTask"], "does": "Read in full", "kind": "say or show" },
+        { "chord": "ctrl+q", "apps": ["axAutomate", "axClip", "axMCP", "axPass", "axTask", "axTemplate"], "does": "Read in full", "kind": "say or show" },
         { "chord": "ctrl+q", "apps": ["axDown", "axPreview"], "does": "Block quote", "kind": "go to a place" },
         { "chord": "ctrl+q", "apps": ["axProcess"], "does": "Summary", "kind": "say or show" },
         { "chord": "ctrl+q", "apps": ["axTerminal"], "does": "What is running", "kind": "say or show" },
@@ -84,8 +84,8 @@
       "scope": "window",
       "pattern": "Ctrl+digit",
       "match": "^ctrl\\+[0-9]$",
-      "does": "go to the next heading of that level",
-      "learn": "Ctrl and a number from 1 to 6 goes to the next heading of that level in a text or a list with headings.",
+      "does": "the window's own numbered action",
+      "learn": "Ctrl and a number is the window's own numbered action (SPEC AX-8.18 rule 3). In a text or a list with headings, Ctrl and a number from 1 to 6 goes to the next heading of that level; in axTask, Ctrl and a number from 1 to 9 runs that action key of the list.",
       "windows": [],
       "misfits": [
         { "chord": "ctrl+0", "apps": ["axTask"], "does": "All tasks", "kind": "go to a place or view" },
@@ -100,16 +100,7 @@
         { "chord": "ctrl+3", "apps": ["axGIT"], "does": "Branches", "kind": "go to a place or view; the older key, kept for now beside Alt+3 (2026-11-16)" },
         { "chord": "ctrl+1", "apps": ["axProcess"], "does": "Processes", "kind": "go to a place or view; the older key, kept for now beside Alt+1 (2026-11-16)" },
         { "chord": "ctrl+2", "apps": ["axProcess"], "does": "Services", "kind": "go to a place or view; the older key, kept for now beside Alt+2 (2026-11-16)" },
-        { "chord": "ctrl+3", "apps": ["axProcess"], "does": "Startup", "kind": "go to a place or view; the older key, kept for now beside Alt+3 (2026-11-16)" },
-        { "chord": "ctrl+1", "apps": ["axTask"], "does": "Action key 1", "kind": "act on what is selected" },
-        { "chord": "ctrl+2", "apps": ["axTask"], "does": "Action key 2", "kind": "act on what is selected" },
-        { "chord": "ctrl+3", "apps": ["axTask"], "does": "Action key 3", "kind": "act on what is selected" },
-        { "chord": "ctrl+4", "apps": ["axTask"], "does": "Action key 4", "kind": "act on what is selected" },
-        { "chord": "ctrl+5", "apps": ["axTask"], "does": "Action key 5", "kind": "act on what is selected" },
-        { "chord": "ctrl+6", "apps": ["axTask"], "does": "Action key 6", "kind": "act on what is selected" },
-        { "chord": "ctrl+7", "apps": ["axTask"], "does": "Action key 7", "kind": "act on what is selected" },
-        { "chord": "ctrl+8", "apps": ["axTask"], "does": "Action key 8", "kind": "act on what is selected" },
-        { "chord": "ctrl+9", "apps": ["axTask"], "does": "Action key 9", "kind": "act on what is selected" }
+        { "chord": "ctrl+3", "apps": ["axProcess"], "does": "Startup", "kind": "go to a place or view; the older key, kept for now beside Alt+3 (2026-11-16)" }
       ]
     },
     {
@@ -147,7 +138,7 @@
         { "chord": "ctrl+shift+f", "apps": ["axJSON"], "does": "Format", "kind": "act on what is selected" },
         { "chord": "ctrl+shift+f", "apps": ["axGIT"], "does": "Fetch", "kind": "acts on the repository" },
         { "chord": "ctrl+shift+h", "apps": ["axGIT"], "does": "Push", "kind": "acts on the repository" },
-        { "chord": "ctrl+shift+k", "apps": ["axClaude", "axTerminal"], "does": "Bookmark this line", "kind": "act on what is selected" },
+        { "chord": "ctrl+shift+k", "apps": ["axCalc", "axClaude", "axTerminal"], "does": "Bookmark this line", "kind": "act on what is selected" },
         { "chord": "ctrl+shift+l", "apps": ["axGIT"], "does": "Pull", "kind": "acts on the repository" },
         { "chord": "ctrl+shift+m", "apps": ["axClaude"], "does": "Next permission mode", "kind": "toggle or play; Ctrl+M there is the background music" },
         { "chord": "ctrl+shift+n", "apps": ["axFile"], "does": "New folder", "kind": "makes a new thing; Ctrl+N there is New window" },
@@ -166,7 +157,7 @@
       "pattern": "Ctrl+F-key",
       "match": "^ctrl\\+f[0-9]+$",
       "does": "open a standalone app",
-      "learn": "Ctrl with a function key opens a standalone axKit app from any axKit window, in the order of the Window menu: Ctrl+F1 axFile, Ctrl+F2 axDown, and on (SPEC AX-8.18 rule 6).",
+      "learn": "Ctrl with a function key opens a standalone axKit app from any axKit window, in the order of the Window menu (SPEC AX-8.18 rule 6). Which key opens which app is written on the page of the apps, apps.md, and in each window's F1 text.",
       "windows": [],
       "misfits": []
     },
@@ -189,20 +180,20 @@
       "learn": "The function keys are the same in every window: F1 help, F3 find next, F4 send a report, F6 the other pane. F2 and F5 are Windows' own rename and refresh.",
       "windows": [],
       "misfits": [
-        { "chord": "f2", "apps": ["axAutomate", "axFile", "axMCP", "axPass", "axTask"], "does": "Rename", "kind": "act on what is selected; Windows' own key for it" },
-        { "chord": "f3", "apps": ["axAutomate", "axCalc", "axClaude", "axDown", "axFile", "axGIT", "axJSON", "axMCP", "axMedia", "axPass", "axPreview", "axProcess", "axTask", "axTerminal"], "does": "Find next", "kind": "go to a place; a bundle key" },
+        { "chord": "f2", "apps": ["axAutomate", "axFile", "axMCP", "axPass", "axTask", "axTemplate"], "does": "Rename", "kind": "act on what is selected; Windows' own key for it" },
+        { "chord": "f3", "apps": ["axAutomate", "axCalc", "axClaude", "axDown", "axFile", "axGIT", "axJSON", "axMCP", "axMedia", "axPass", "axPreview", "axProcess", "axTask", "axTemplate", "axTerminal"], "does": "Find next", "kind": "go to a place; a bundle key" },
         { "chord": "f3", "apps": ["axGIT"], "does": "Find next in the text", "kind": "go to a place" },
         { "chord": "f4", "apps": "all", "does": "Send a report", "kind": "open or confirm; a bundle key" },
-        { "chord": "f5", "apps": ["axFile", "axGIT", "axMCP", "axPass", "axProcess", "axTask"], "does": "Refresh", "kind": "reads again; Windows' own key for it" },
+        { "chord": "f5", "apps": ["axFile", "axGIT", "axMCP", "axPass", "axProcess", "axTask", "axTemplate"], "does": "Refresh", "kind": "reads again; Windows' own key for it" },
         { "chord": "f5", "apps": ["axStart"], "does": "Refresh programs", "kind": "reads again" },
         { "chord": "f5", "apps": ["axPreview"], "does": "Reload", "kind": "reads again" },
         { "chord": "f5", "apps": ["axAutomate"], "does": "Run", "kind": "act on what is selected" },
-        { "chord": "f6", "apps": ["axAutomate", "axMCP", "axPass", "axTask"], "does": "Switch between the navigator and the detail pane", "kind": "move between panes; a bundle key" },
+        { "chord": "f6", "apps": ["axAutomate", "axMCP", "axPass", "axTask", "axTemplate"], "does": "Switch between the navigator and the detail pane", "kind": "move between panes; a bundle key" },
         { "chord": "f6", "apps": ["axPreview"], "does": "Between the text and the details", "kind": "move between panes" },
         { "chord": "f6", "apps": ["axDown", "axJSON"], "does": "Between the text and the field under it", "kind": "move between panes" },
         { "chord": "f6", "apps": ["axCalc", "axClaude", "axTerminal"], "does": "Switch between the view and the field", "kind": "move between panes" },
         { "chord": "f6", "apps": ["axGIT"], "does": "Switch between the list and the text", "kind": "move between panes" },
-        { "chord": "f6", "apps": ["axMedia"], "does": "Back to the list", "kind": "move between panes" },
+        { "chord": "f6", "apps": ["axMedia", "axProcess"], "does": "Back to the list", "kind": "move between panes" },
         { "chord": "f6", "apps": ["axFile"], "does": "Switch between the list and the Favorites list", "kind": "move between panes" }
       ]
     },
@@ -245,7 +236,7 @@
       "learn": "Escape goes back one step or closes what is open. It never loses work without asking. Shift+Escape is for the program under an access layer: it interrupts Claude, or sends Escape to the terminal's program.",
       "windows": [],
       "misfits": [
-        { "chord": "escape", "apps": ["axFile"], "does": "Clear the filter", "kind": "remove: it clears and stays where it is" },
+        { "chord": "escape", "apps": ["axAutomate", "axFile", "axGIT", "axMCP", "axMedia", "axPass", "axProcess", "axTask", "axTemplate"], "does": "Clear the filter", "kind": "remove: it clears and stays where it is" },
         { "chord": "escape", "apps": ["axCalc"], "does": "Clear the field", "kind": "remove: it clears and stays where it is" }
       ]
     },

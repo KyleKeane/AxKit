@@ -33,7 +33,7 @@ The same in every axKit window:
 Inside one app's window:
 
 - Ctrl+letter: act on what is selected.
-- Ctrl+digit: go to the next heading of that level.
+- Ctrl+digit: the window's own numbered action.
 - Ctrl+Shift+digit: go to the previous heading of that level.
 - Alt+digit: go to a place or view of the window.
 - Ctrl+Shift+letter: the reverse or the wider form of the same letter with Ctrl.
@@ -86,7 +86,7 @@ The keys:
 
 ### Ctrl+F-key: open a standalone app
 
-Ctrl with a function key opens a standalone axKit app from any axKit window, in the order of the Window menu: Ctrl+F1 axFile, Ctrl+F2 axDown, and on (SPEC AX-8.18 rule 6).
+Ctrl with a function key opens a standalone axKit app from any axKit window, in the order of the Window menu (SPEC AX-8.18 rule 6). Which key opens which app is written on the page of the apps, apps.md, and in each window's F1 text.
 
 The keys:
 
@@ -123,26 +123,21 @@ The function keys are the same in every window: F1 help, F3 find next, F4 send a
 The keys:
 
 - F1, every app: Keyboard shortcuts.
-- F2, axTemplate: Rename.
-- F3, axTemplate: Find next.
-- F5, axTemplate: Refresh.
-- F6, axTemplate: Switch between the navigator and the detail pane.
-- F6, axProcess: Back to the list.
 - F8, every app: Say the status.
 
 Exceptions today, which do another kind of thing:
 
-- F2, axAutomate, axFile, axMCP, axPass and axTask: Rename.
-- F3, axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask and axTerminal: Find next.
+- F2, axAutomate, axFile, axMCP, axPass, axTask and axTemplate: Rename.
+- F3, axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask, axTemplate and axTerminal: Find next.
 - F3, axGIT: Find next in the text.
 - F4, every app: Send a report.
-- F5, axFile, axGIT, axMCP, axPass, axProcess and axTask: Refresh.
+- F5, axFile, axGIT, axMCP, axPass, axProcess, axTask and axTemplate: Refresh.
 - F5, axStart: Refresh programs.
 - F5, axPreview: Reload.
 - F5, axAutomate: Run.
-- F6, axAutomate, axMCP, axPass and axTask: Switch between the navigator and the detail pane.
+- F6, axAutomate, axMCP, axPass, axTask and axTemplate: Switch between the navigator and the detail pane.
 - F6, axCalc, axClaude and axTerminal: Switch between the view and the field.
-- F6, axMedia: Back to the list.
+- F6, axMedia and axProcess: Back to the list.
 - F6, axDown and axJSON: Between the text and the field under it.
 - F6, axPreview: Between the text and the details.
 - F6, axFile: Switch between the list and the Favorites list.
@@ -196,7 +191,6 @@ Escape goes back one step or closes what is open. It never loses work without as
 
 The keys:
 
-- Escape, axAutomate, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Clear the filter.
 - Escape, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Deselect all.
 - Escape, axAutomate, axMCP, axPass, axTask and axTemplate: To the navigator.
 - Escape, axClip, axHelp, axStart and axTemplate: Hide.
@@ -207,7 +201,7 @@ The keys:
 
 Exceptions today, which do another kind of thing:
 
-- Escape, axFile: Clear the filter.
+- Escape, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Clear the filter.
 - Escape, axCalc: Clear the field.
 
 ### Delete and Ctrl+Shift+Delete: remove
@@ -356,7 +350,6 @@ The keys:
 - Ctrl+L, axPass: Lock.
 - Ctrl+M, axTask: Move to a list.
 - Ctrl+M, axTask: Move to section.
-- Ctrl+Q, axTemplate: Read in full.
 - Ctrl+W, axClaude, axDown, axFile, axGIT, axJSON, axMedia, axPreview and axTerminal: File Explorer.
 - Ctrl+W, axFile: Show the folder in File Explorer.
 
@@ -415,7 +408,7 @@ Exceptions today, which do another kind of thing:
 - Ctrl+M, axClaude and axTerminal: Background music on or off.
 - Ctrl+P, axClip: Pause recording.
 - Ctrl+P, axTerminal: Say current folder.
-- Ctrl+Q, axAutomate, axClip, axMCP, axPass and axTask: Read in full.
+- Ctrl+Q, axAutomate, axClip, axMCP, axPass, axTask and axTemplate: Read in full.
 - Ctrl+Q, axDown and axPreview: Block quote.
 - Ctrl+Q, axClaude: Claude's question again.
 - Ctrl+Q, axCalc: Say the last answer.
@@ -427,46 +420,46 @@ Exceptions today, which do another kind of thing:
 - Ctrl+T, axDown and axPreview: Table.
 - Ctrl+T, axMedia: Go to time.
 
-### Ctrl+digit: go to the next heading of that level
+### Ctrl+digit: the window's own numbered action
 
-Ctrl and a number from 1 to 6 goes to the next heading of that level in a text or a list with headings.
+Ctrl and a number is the window's own numbered action (SPEC AX-8.18 rule 3). In a text or a list with headings, Ctrl and a number from 1 to 6 goes to the next heading of that level; in axTask, Ctrl and a number from 1 to 9 runs that action key of the list.
 
 The keys:
 
 - Ctrl+1, axDown and axPreview: Heading level 1.
+- Ctrl+1, axTask: Action key 1.
 - Ctrl+1, axTask: Next heading level 1.
 - Ctrl+2, axDown and axPreview: Heading level 2.
+- Ctrl+2, axTask: Action key 2.
 - Ctrl+2, axTask: Next heading level 2.
 - Ctrl+3, axDown and axPreview: Heading level 3.
+- Ctrl+3, axTask: Action key 3.
 - Ctrl+3, axTask: Next heading level 3.
 - Ctrl+4, axDown and axPreview: Heading level 4.
-- Ctrl+5, axDown and axPreview: Heading level 5.
-- Ctrl+6, axDown and axPreview: Heading level 6.
-
-Exceptions today, which do another kind of thing:
-
-- Ctrl+0, axTask: All tasks.
-- Ctrl+1, axTask: Action key 1.
-- Ctrl+1, axGIT: Changes.
-- Ctrl+1, axTerminal: Command field.
-- Ctrl+1, axClaude: Message field.
-- Ctrl+1, axProcess: Processes.
-- Ctrl+2, axTask: Action key 2.
-- Ctrl+2, axClaude: Conversation.
-- Ctrl+2, axGIT: Log.
-- Ctrl+2, axProcess: Services.
-- Ctrl+2, axTerminal: Terminal.
-- Ctrl+3, axTask: Action key 3.
-- Ctrl+3, axGIT: Branches.
-- Ctrl+3, axTerminal: Latest output.
-- Ctrl+3, axClaude: Latest response.
-- Ctrl+3, axProcess: Startup.
 - Ctrl+4, axTask: Action key 4.
+- Ctrl+5, axDown and axPreview: Heading level 5.
 - Ctrl+5, axTask: Action key 5.
+- Ctrl+6, axDown and axPreview: Heading level 6.
 - Ctrl+6, axTask: Action key 6.
 - Ctrl+7, axTask: Action key 7.
 - Ctrl+8, axTask: Action key 8.
 - Ctrl+9, axTask: Action key 9.
+
+Exceptions today, which do another kind of thing:
+
+- Ctrl+0, axTask: All tasks.
+- Ctrl+1, axGIT: Changes.
+- Ctrl+1, axTerminal: Command field.
+- Ctrl+1, axClaude: Message field.
+- Ctrl+1, axProcess: Processes.
+- Ctrl+2, axClaude: Conversation.
+- Ctrl+2, axGIT: Log.
+- Ctrl+2, axProcess: Services.
+- Ctrl+2, axTerminal: Terminal.
+- Ctrl+3, axGIT: Branches.
+- Ctrl+3, axTerminal: Latest output.
+- Ctrl+3, axClaude: Latest response.
+- Ctrl+3, axProcess: Startup.
 
 ### Ctrl+Shift+digit: go to the previous heading of that level
 
@@ -528,7 +521,6 @@ The keys:
 - Ctrl+Shift+I, axDown and axPreview: List item.
 - Ctrl+Shift+I, axJSON: Item.
 - Ctrl+Shift+J, axJSON: Object.
-- Ctrl+Shift+K, axCalc: Bookmark this line.
 - Ctrl+Shift+K, axDown and axPreview: Link.
 - Ctrl+Shift+K, axJSON: Key.
 - Ctrl+Shift+L, axDown and axPreview: List.
@@ -554,7 +546,7 @@ Exceptions today, which do another kind of thing:
 - Ctrl+Shift+F, axGIT: Fetch.
 - Ctrl+Shift+F, axJSON: Format.
 - Ctrl+Shift+H, axGIT: Push.
-- Ctrl+Shift+K, axClaude and axTerminal: Bookmark this line.
+- Ctrl+Shift+K, axCalc, axClaude and axTerminal: Bookmark this line.
 - Ctrl+Shift+L, axGIT: Pull.
 - Ctrl+Shift+M, axClaude: Next permission mode.
 - Ctrl+Shift+N, axFile: New folder.

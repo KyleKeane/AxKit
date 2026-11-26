@@ -618,7 +618,7 @@ Each family of keys (`docs/axKit/key-groups.md`) with the kinds of event its key
   - `busy`: no sound.
   - `failed`: sound `Notice`.
   - `refused`: sound `Edge`.
-- `ctrl-digit`, Ctrl+digit: go to the next heading of that level.
+- `ctrl-digit`, Ctrl+digit: the window's own numbered action.
   - `landed`: no sound.
   - `landed-on-heading`: sound `Heading`.
   - `nothing-found`: sound `Nothing` or `Edge`.
