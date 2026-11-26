@@ -242,6 +242,23 @@ stays or both do.
 Left as exceptions, each one Windows or a common program taught: F2 rename, F3 find next, F5 refresh and reload, F6
 the next pane, Ctrl+Shift+N a new folder (File Explorer), Ctrl+Shift+R restart (a browser's heavier reload).
 
+## Consolidations agreed on 2026-11-26
+
+Proposed by the assistant from the inventory; the maintainer: "i agree with all of your recommendations, please
+implement them".
+
+1. Ctrl+N makes a new one of what the window holds: a document in the editors, a session in axClaude and axTerminal,
+   a window in axFile, axMedia and axPreview. A new window of any app comes from the Window menu; the editors'
+   Ctrl+Shift+N gives way, and the command name New window is no exception.
+2. Ctrl+Shift+Delete clears a history in every window: axCalc's and axClip's history as today, and axTerminal's
+   transcript, from Ctrl+L. Ctrl+Delete clears what you typed, Ctrl+Shift+Delete what has built up.
+3. Ctrl+W no longer opens File Explorer; Show in File Explorer stays in the Show in menu. Ctrl+W is then free in
+   every window.
+4. Enter opens or confirms; Ctrl+Enter does the most frequent action. Every window is checked against the pair, and
+   each window that differs is one question for the maintainer.
+5. One Options menu in every window, with a section for all of axKit at its end, in place of the bundle's switches in
+   the axKit menu (AX-9.1 changes).
+
 ## The small families
 
 ### Escape
