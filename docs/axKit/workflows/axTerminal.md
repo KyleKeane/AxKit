@@ -492,7 +492,12 @@ Starts with: Open axTerminal with the folder myproject.
 1. Press Ctrl+Space.
     You hear: Reading the screen.
 2. Press Ctrl+Home.
-3. Press Ctrl+Space.
+3. Press Alt+1 (Command field; Navigation menu).
+    You hear: Screen of edit. The terminal and the command field come back when edit leaves the whole screen.
+4. Press Ctrl+F (Find; Navigation menu).
+5. Type "More".
+6. Press Enter.
+7. Press Ctrl+Space.
     You hear: Keys to edit.
 
 ### Hear a menu's selected entry
@@ -508,3 +513,14 @@ Starts with: Open axTerminal with the folder myproject.
 2. Press N.
     You hear: Done.
 3. Press Alt+2 (Terminal; Navigation menu).
+
+### Get the terminal back from a program that ends on the whole screen
+
+1. Press Alt+1 (Command field; Navigation menu).
+2. Type "[Console]::Write([char]27 + '[?1049h')".
+3. Press Enter.
+    You hear: Done.
+4. Type "echo ('after' + '-screen')".
+5. Press Enter.
+    You hear: after-screen.
+6. Press Alt+2 (Terminal; Navigation menu).

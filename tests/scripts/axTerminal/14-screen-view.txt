@@ -4,7 +4,8 @@
 # to it as a terminal sends them, and the caret stands where its cursor stands; Ctrl+Space, the bundle's mode key,
 # turns to reading the screen and back; an open menu's selected entry and a dialog's button in focus are said once
 # by themselves; when edit ends the field comes back. edit comes with Windows 11 (System32\edit.exe, 1.2.1 when this
-# was written); edit waits about four seconds for the answers to its colour questions before it takes keys (AT-9.7).
+# was written); axTerminal answers its colour questions, so that it takes keys at once (AT-9.10; it waited about
+# four seconds for them until then, AT-9.7).
 mkdir myproject
 file myproject\notes.txt First line of a note.
 file home\AxKit\axTerminal.json {"fontSize": 6, "window": {"x": 0, "y": 0, "width": 1600, "height": 900, "maximized": true}}
@@ -21,8 +22,8 @@ expect said Sent
 expect focus "name":"Screen of edit"
 expect focus First line of a note.
 expect state Keys to edit
-# edit takes keys once its colour questions have gone unanswered for a few seconds.
-wait 5000
+# Its colour questions answered, edit takes keys at once: a moment for the first key alone.
+wait 500
 keys end
 type  More
 expect focus First line of a note. More
@@ -34,6 +35,17 @@ expect said ! Reading the screen
 expect state Reading the screen
 keys ctrl+home
 expect focus File
+# AT-9.10: the command field and the terminal are behind the screen: Alt+1 says so, and the focus stays.
+keys alt+1
+expect said ! Screen of edit. The terminal and the command field come back when edit leaves the whole screen
+expect focus "name":"Screen of edit"
+# Find searches the page's rows: the match selected, the caret on its row.
+keys ctrl+f
+expect state "notice":"Find"
+type More
+keys enter
+expect state "notice":null
+expect focus First line of a note. More
 keys ctrl+space
 expect said ! Keys to edit
 expect state Keys to edit
@@ -61,3 +73,20 @@ do Terminal
 # (the prompt row with the command came again as output until the fix of the same day).
 refuse text File  Edit  View  Help
 refuse text > edit notes.txt
+
+# Goal: Get the terminal back from a program that ends on the whole screen
+# A program that ends without leaving the alternate screen (here PowerShell writes the switch itself and returns, as
+# a program killed or crashed leaves it): the view opens for the switch, the shell's prompt mark gives the terminal
+# and the field back, and what the next command prints reaches the terminal (AT-9.10).
+do Command field
+type [Console]::Write([char]27 + '[?1049h')
+keys enter
+expect said Done
+expect focus "name":"Command"
+refuse state Keys to
+# The output's words are made by the command, so that only the output says them.
+type echo ('after' + '-screen')
+keys enter
+expect said after-screen
+do Terminal
+expect text after-screen

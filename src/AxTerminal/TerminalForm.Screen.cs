@@ -47,6 +47,8 @@ internal sealed partial class TerminalForm
             }
         };
         _screen.ModeKey += ToggleScreenMode;
+        // AT-9.10: a full-screen program's colour questions, answered by the model, go to the shell's input as they are.
+        _model.Answer += Write;
         Controls.Add(_screen);
     }
 
@@ -202,6 +204,49 @@ internal sealed partial class TerminalForm
 
     /// <summary>"Keys to edit" or "Reading the screen", for the status bar and the switch.</summary>
     private string ScreenModeWords => _screen.KeysToProgram ? ScreenView.KeysWords(_screenProgram) : ScreenView.ReadingWords;
+
+    // ---- the places and find while the view shows (AT-9.10) ----
+
+    /// <summary>Alt+1, Alt+2 and Alt+3 while the view shows: the field and the terminal are hidden behind it, so the focus stays and the words say why.</summary>
+    protected override string? PlacesRefused => ScreenShown ? ScreenView.PlacesWords(_screenProgram) : null;
+
+    /// <summary>Ctrl+F while the view shows: the bundle's find of a text, on the page's rows, in reading the screen.</summary>
+    protected override void FindDialog()
+    {
+        if (!ScreenShown)
+        {
+            base.FindDialog();
+        }
+        else if (FindOnScreenAllowed())
+        {
+            ShowFind(_screen);
+        }
+    }
+
+    /// <summary>F3 and Shift+F3 while the view shows: the next or the previous match on the page, selected.</summary>
+    protected override void FindNext(bool backward)
+    {
+        if (!ScreenShown)
+        {
+            base.FindNext(backward);
+        }
+        else if (FindOnScreenAllowed())
+        {
+            FindNext(_screen, backward ? -1 : 1);
+        }
+    }
+
+    /// <summary>Find moves the caret, which in keys to the program stands on the program's cursor: it waits for reading the screen, and says so (from the menu; the keys themselves go to the program).</summary>
+    private bool FindOnScreenAllowed()
+    {
+        if (!_screen.KeysToProgram)
+        {
+            return true;
+        }
+
+        Announce(ScreenView.FindWaitsWords(BundleKeys.Text(BundleKeys.ToggleMode)), true);
+        return false;
+    }
 
     // ---- the window base's hooks while the view shows ----
 

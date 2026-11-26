@@ -106,13 +106,31 @@ public abstract partial class ConsoleForm
     /// </summary>
     protected void AddPlaceItems(ToolStripMenuItem menu, string field, string view, string latest)
     {
-        Place(new Command(field, ConsoleKeys.GoToField, () => GoTo(BottomControl)) { Mark = CommandMark.Open }, ConsoleKeys.GoToFieldAlso);
-        Place(new Command(view, ConsoleKeys.GoToView, () => GoTo(Transcript)) { Mark = CommandMark.Open }, ConsoleKeys.GoToViewAlso);
-        Place(new Command(latest, ConsoleKeys.Latest, Transcript.JumpToLatestResponse) { Mark = CommandMark.Open }, ConsoleKeys.LatestAlso);
+        Place(new Command(field, ConsoleKeys.GoToField, () => GoToPlace(() => GoTo(BottomControl))) { Mark = CommandMark.Open }, ConsoleKeys.GoToFieldAlso);
+        Place(new Command(view, ConsoleKeys.GoToView, () => GoToPlace(() => GoTo(Transcript))) { Mark = CommandMark.Open }, ConsoleKeys.GoToViewAlso);
+        Place(new Command(latest, ConsoleKeys.Latest, () => GoToPlace(Transcript.JumpToLatestResponse)) { Mark = CommandMark.Open }, ConsoleKeys.LatestAlso);
         void Place(Command command, Keys also)
         {
             Add(menu, command);
             AddKey(command with { Key = also });
         }
     }
+
+    /// <summary>A place gone to, or, while <see cref="PlacesRefused"/> says why not, those words said and nothing moved.</summary>
+    private void GoToPlace(Action go)
+    {
+        if (PlacesRefused is { } why)
+        {
+            Announce(why, true);
+            return;
+        }
+
+        go();
+    }
+
+    /// <summary>
+    /// Why the places cannot be gone to now, said instead of going; null, the default, when they can. axTerminal: a
+    /// full-screen program's screen stands where the field and the view were (its SPEC.md AT-9.10).
+    /// </summary>
+    protected virtual string? PlacesRefused => null;
 }

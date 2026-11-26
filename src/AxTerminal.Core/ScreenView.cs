@@ -23,6 +23,18 @@ public static class ScreenView
     /// <summary>What NVDA calls the view: "Screen of edit".</summary>
     public static string Name(string program) => "Screen of " + program;
 
+    /// <summary>
+    /// Said on Alt+1, Alt+2 and Alt+3 (and their menu items) while the view shows (AT-9.10): the command field, the
+    /// terminal and the latest output are hidden behind the screen, so the focus stays on it and the words say where
+    /// it is and when the places come back. "Screen of edit. The terminal and the command field come back when edit
+    /// leaves the whole screen".
+    /// </summary>
+    public static string PlacesWords(string program) =>
+        $"{Name(program)}. The terminal and the command field come back when {program} leaves the whole screen";
+
+    /// <summary>Said when Find is chosen from the menu while the keys go to the program (AT-9.10): Find searches the page in reading the screen, which the mode key turns to.</summary>
+    public static string FindWaitsWords(string modeKey) => $"Find works in reading the screen: {modeKey} turns to it";
+
     /// <summary>The page as the text of the view: its rows, one line each.</summary>
     public static string Whole(IReadOnlyList<string> rows) => string.Join("\r\n", rows);
 

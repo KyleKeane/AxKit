@@ -56,13 +56,15 @@ Manual checks with NVDA running, before a release that changes axTerminal (`docs
 
 In a folder with a short `notes.txt` (the runner's script is `tests/scripts/axTerminal/14-screen-view.txt`):
 
-- `edit notes.txt`, Enter: "Sent", then the text's sound and "Screen of edit" with NVDA's words for a read-only text ("edit, read only"), and the line the cursor is on, "1 │ First line …" (NVDA names the vertical line). Nothing is said of the menu bar, the scroll bar or the status line by itself. NVDA+End: "Keys to edit". Wait five seconds, as edit waits for its colour questions.
+- `edit notes.txt`, Enter: "Sent", then the text's sound and "Screen of edit" with NVDA's words for a read-only text ("edit, read only"), and the line the cursor is on, "1 │ First line …" (NVDA names the vertical line). Nothing is said of the menu bar, the scroll bar or the status line by itself. NVDA+End: "Keys to edit". edit takes keys at once: axTerminal answers its colour questions (AT-9.10).
 - End, then type ` More`: each letter echoed by NVDA as typed; Down and Up: NVDA reads the line the cursor lands on, the program's own line, and not the one before it (the caret follows the cursor after edit redraws; whether NVDA reads too early is the point of this step).
 - Ctrl+Space: "Reading the screen", NVDA+End says it too. Ctrl+Home: the menu bar's row; Down through the screen: the rows as drawn; edit's cursor did not move (Ctrl+Space again: "Keys to edit", and Up or Down read edit's line, not where you read).
+- In reading the screen, Alt+1: "Screen of edit. The terminal and the command field come back when edit leaves the whole screen", the focus where it was. Ctrl+F, type `More`, Enter: the match selected on its row, as NVDA reads a selection; F3: the same match again ("wrapping once"); Ctrl+F with a word not there: "Not found".
 - Alt+F: the File menu opens; "New File, Ctrl+N" said once by itself, after NVDA's line. Down: the next entry said, once. Hold still: nothing more, also while edit redraws. Escape: the menu closes, nothing said. Alt+F again: "New File, Ctrl+N" again.
 - Alt alone: axTerminal's menu bar, Session; Escape: back in the screen, keys to edit. F1: axTerminal's shortcuts with the section "A full-screen program"; Escape: back in the screen.
 - Ctrl+Q: edit's dialog; its button in focus, "[Save]", said once; N: edit ends, the field comes back, "Command, edit", then "Done". Alt+2: the terminal as it was before edit, with `# Input` of `edit notes.txt` and nothing of edit's screen.
 - A notice over the screen: Ctrl+Space, F1, Escape: the screen again, "Reading the screen" still in the status bar; Ctrl+Space: "Keys to edit".
+- A program that ends on the whole screen: in the field, `[Console]::Write([char]27 + '[?1049h')`, Enter: the screen view opens for the switch and gives way at the prompt, the focus back in the field with "Done"; `echo after`, Enter: "Done. after".
 
 ## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)
 

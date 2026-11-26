@@ -142,4 +142,42 @@ public sealed class ScreenAlternateTests
         parser.Feed($"{Esc}[?47h{Esc}[4;1H{Esc}[?47l");
         Assert.Equal(3, screen.CursorRow);
     }
+
+    /// <summary>AT-9.10: a program that ended on the alternate screen is left as on ?1049l, by the model's word; on the main screen it is nothing.</summary>
+    [Fact]
+    public void Leaving_the_alternate_screen_by_hand_is_the_switch_back()
+    {
+        var screen = new Screen(20, 4, new Store()) { KeepsAlternateApart = true };
+        var parser = new VtParser(screen);
+        parser.Feed($"before{Esc}[2;3H{Esc}[?1049h{Esc}[4;1Hpage");
+        screen.LeaveAlternate();
+        Assert.False(screen.Alternate);
+        Assert.True(screen.AlternateChangedSinceFrameEnd);
+        Assert.Null(ScreenPage.Read(screen));
+        parser.Feed("x");
+        screen.PullRowText();
+        Assert.Equal("before", screen.LineAt(0)!.Text);
+        Assert.Equal("  x", screen.LineAt(1)!.Text);
+        screen.LeaveAlternate();
+        Assert.False(screen.Alternate);
+    }
+
+    /// <summary>AT-9.10: the colour questions are answered only where the screen answers them and while the alternate screen is in use.</summary>
+    [Fact]
+    public void A_colour_question_is_answered_on_the_alternate_screen_only_and_only_when_asked_for()
+    {
+        var answers = new List<string>();
+        var quiet = new Screen(20, 4, new Store()) { KeepsAlternateApart = true };
+        quiet.Answer += answers.Add;
+        new VtParser(quiet).Feed($"{Esc}[?1049h{Esc}]11;?\a");
+        Assert.Empty(answers);
+
+        var screen = new Screen(20, 4, new Store()) { KeepsAlternateApart = true, AnswersQueries = true };
+        screen.Answer += answers.Add;
+        var parser = new VtParser(screen);
+        parser.Feed($"{Esc}]11;?\a");
+        Assert.Empty(answers);
+        parser.Feed($"{Esc}[?1049h{Esc}]4;1;?\a{Esc}]10;?{Esc}\\");
+        Assert.Equal([$"{Esc}]4;1;rgb:c5c5/0f0f/1f1f\a", $"{Esc}]10;rgb:cccc/cccc/cccc\a"], answers);
+    }
 }

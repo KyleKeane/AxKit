@@ -16,7 +16,15 @@ From AxClaude.Core on their second use, axTerminal (2026-10-18; docs/axTerminal/
   alone (`SelectGraphicRendition`, in place, no allocation), kept per cell in `Row.Backgrounds`, which only the
   alternate screen's rows have, so that the conversation's path pays nothing but a null check and a reference per
   row (measured 2026-11-25 on three Claude fixtures: the same allocation per frame, eight bytes more per row made
-  by a scroll, and the time within the noise). An erase takes the background in force.
+  by a scroll, and the time within the noise). An erase takes the background in force. AT-9.10 (2026-11-25):
+  `LeaveAlternate` is the switch back as `?1049l` makes it, for a model that knows the program ended on the
+  alternate screen (axTerminal's, at the shell's own mark); with `AnswersQueries` on (axTerminal's model alone) an
+  OSC colour question on the alternate screen raises `Answer` with each of `QueryAnswers`' answers, which the window
+  writes to the program's input; never on the main screen, where a shell's line editor would take it as typed text.
+- `Vt/QueryAnswers` (AT-9.10): the answers to OSC 4 (`n;?`), OSC 10 and OSC 11 questions, a plain black background
+  and light text (Windows' console palette with its black plain black, the numbers 16 to 255 as xterm's), in
+  xterm's form ended by BEL. A device attributes or status question never reaches a window (the console answers it
+  itself), so none is answered.
 - `Vt/ScreenPage` with `MarkedRun` (AT-9.2, AT-9.4): the alternate screen read whole at one moment, null on the main
   one: the rows' texts (trailing spaces out, every character as drawn, box-drawing and blocks included since the maintainer's decision of 2026-11-25), the cursor, the marked runs (cells of one
   background between cells of one other that is not the page's own, or reverse video between cells that are not;

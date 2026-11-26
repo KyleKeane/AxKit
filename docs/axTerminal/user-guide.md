@@ -78,7 +78,9 @@ The text has two ways to be in, and Ctrl+Space, the key that switches between ed
 
 The switch is said in two words, "Reading the screen" or "Keys to edit". Nothing else is said when the program redraws, except one thing: where the program marks what is selected (an open menu's selected entry, a dialog's button that has the focus), that entry is said once, when it moves, "New File, Ctrl+N". Colours are not shown or said, and the mouse is not passed on.
 
-Windows' `edit` waits a few seconds after it starts before it takes keys, as it waits for answers to questions about colours that axTerminal does not give. If a program ends without giving its screen back, press Ctrl+Space and restart the shell (Ctrl+Shift+R).
+While the screen shows, the command field and the terminal are behind it. In reading the screen, Alt+1, Alt+2 and Alt+3 leave the focus where it is and say so: "Screen of edit. The terminal and the command field come back when edit leaves the whole screen". Find (Ctrl+F), Find next (F3) and Find previous (Shift+F3) search the screen's rows, and the match is selected; chosen from the Navigation menu while the keys go to the program, Find says "Find works in reading the screen: Ctrl+Space turns to it".
+
+A program asks the terminal for its colours as it starts (Windows' `edit` does); axTerminal answers as a terminal with a black background and light text, so the program starts at once. If a program ends without giving its screen back (it was killed, or it crashed), the terminal and the field come back when the shell's prompt does.
 
 ## The shell
 
@@ -122,7 +124,7 @@ Alt+H, Check for updates asks GitHub for a newer axKit; Update to installs it an
 
 - "PowerShell 7 was not found": Ctrl+N and choose Windows PowerShell or Command Prompt, or install PowerShell 7.
 - Nothing is spoken when a command ends: the shell gives no marks (a custom shell, or a shell started inside the shell). Ctrl+Q says what the window knows.
-- A program took the whole screen (an editor, a pager): press q and Enter, or Ctrl+Shift+C. axTerminal shows such programs row by row and is not meant for them.
+- A program took the whole screen and will not let go: Ctrl+Space turns to reading the screen, where axTerminal's menus and keys work; Actions, Interrupt sends Ctrl+C, and once the shell's prompt is back the terminal and the field come back too.
 - Options, Developer, Record raw stream writes everything the shell prints to a file, for a bug report; Help, Diagnostics, Copy diagnostics copies the state and the last log lines. The log is `%LOCALAPPDATA%\AxKit\logs\axTerminal.log`; it never holds a command or a line of output.
 
 ## About axTerminal

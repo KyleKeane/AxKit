@@ -1039,6 +1039,7 @@ Steps and keys: `docs/axKit/workflows/axTerminal.md` (in Claude's working folder
     - Read the screen and go back to the program
     - Hear a menu's selected entry
     - Leave the program and come back to the field
+    - Get the terminal back from a program that ends on the whole screen
 
 ## AI tools
 

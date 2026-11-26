@@ -782,6 +782,13 @@ owed a pass with NVDA listening, `docs/axTerminal/nvda-test-plan.md` section 5, 
    brackets.
 4. Ctrl+Space: "Reading the screen" and "Keys to edit" heard each time, and F8 saying the same; the menu bar on Alt
    alone, F1's section, and the way back to the field with "Done" after edit ends.
+5. What the first build left (AT-9.10, the same evening): in reading the screen, Alt+1 heard as "Screen of edit. The
+   terminal and the command field come back when edit leaves the whole screen" and not cut by NVDA; Ctrl+F's notice
+   and its match on the page heard as NVDA reads a selection, and the view's reading after the notice closes; edit's
+   first key taken at once now that its colour questions are answered, and edit's colours from those answers
+   (black, light text) leaving its menu's entry and its dialog's button said as before; a program that ends on the
+   whole screen (`[Console]::Write([char]27 + '[?1049h')` in PowerShell): the view opens for the switch and the
+   field comes back at the prompt with "Done"; whether that flicker of focus is heard, and how.
 
 ## Owed: what the closed items of 2026-11-25 left for the ear (the backlog cleared at the maintainer's word)
 

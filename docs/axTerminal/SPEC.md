@@ -220,7 +220,8 @@ gets its page shown in place of the transcript while it holds the screen, and no
   recent commands list (AT-3.6) takes the field's place while it shows.
 - AT-2.2 Focus: Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6 toggle between the view and the bottom control
   (bundle AX-8.2); Alt+1 the field, Alt+2 the view, Alt+3 the view at the latest output marker, from anywhere (Ctrl+1, Ctrl+2 and Ctrl+3, the keys until 2026-11-16, stay as further keys of the same commands for now, bundle AX-8.14), each
-  naming the control when it has the focus already (axClaude FR-6.5, D26). The focus starts in the field and stays
+  naming the control when it has the focus already (axClaude FR-6.5, D26); while a full-screen program's screen view
+  shows, they say why they wait instead (AT-9.10). The focus starts in the field and stays
   there after sending.
 - AT-2.3 The title is `axTerminal, access layer for your shell folder <current directory's full path> <the shell's
   name>` (the app first, the maintainer's ask of 2026-11-23, bundle AX-9.6; until then `<directory's name> - <shell>
@@ -475,8 +476,8 @@ read as `edit` still waiting for the colours' answers (to measure first, AT-9.7)
 - AT-9.7 **To measure before the build**, with a recording each, in the record-fixture skill's way: whether `edit`
   waits for the answers to its colour questions (measured 2026-11-25: keys sent in its first second were not taken;
   after four seconds without answers it typed, opened its File menu and quit with Ctrl+Q and N, exit code 0; so it
-  waits a few seconds and then goes on; axTerminal answering them with the theme's sixteen colours, as a terminal
-  does, would make it answer at once); `edit`'s menus, a dialog (Save as, Find) and its status line, opened with the keys
+  waits a few seconds and then goes on; answered, it takes keys at once: recorded the same day with the sixteen
+  answers written 600 ms after its start, its File menu opened 2 ms after Alt+F at one second, AT-9.10); `edit`'s menus, a dialog (Save as, Find) and its status line, opened with the keys
   and read off the screen model; `less` or `more` over a long file; a program that leaves the alternate screen by
   ending with Ctrl+C. Each becomes a fixture under `tests/fixtures` and a window script; the build follows them.
 - AT-9.8 **The core as built** (2026-11-25), in `AxKit.Core/Vt`, shared with axClaude. With `KeepsAlternateApart` on, which axTerminal's model turns on for every screen it makes, since its window shows the page (off by default, so that axClaude's conversation keeps what a full-screen program draws), `Screen` keeps the alternate buffer
@@ -517,9 +518,46 @@ read as `edit` still waiting for the colours' answers (to measure first, AT-9.7)
   A key sent at once after Escape is read with it by the console as one key with Alt, as a terminal's input is. Tested in `ScreenViewTests` (the keys; the rows, the caret and the edits; the program's name; the
   marked run once; the recording of `edit` walked as the window walks it: one opening, one closing, "New File,
   Ctrl+N" and "[Save]" said, each once, the text always the page's, nothing of edit in the transcript) and by the
-  window script `tests/scripts/axTerminal/14-screen-view.txt` (Windows' `edit` itself). Not done: the colour
-  questions are not answered (edit waits about four seconds before it takes keys), and a program that ends without
-  leaving the alternate screen keeps the view until the shell is restarted (both AT-9.7).
+  window script `tests/scripts/axTerminal/14-screen-view.txt` (Windows' `edit` itself). What this left (the colour
+  questions unanswered, a program ending on the alternate screen keeping the view, the places and find aimed at the
+  hidden terminal) is AT-9.10.
+- AT-9.10 **What the first build left, done** (2026-11-25).
+  - **The places and find while the view shows.** The command field, the terminal and the latest output are behind
+    the screen, which is the window's one place while a program holds it (AX-8.14 names a window's places; none of
+    the three can be reached). In reading the screen, Alt+1, Alt+2 and Alt+3 (with Ctrl+1, Ctrl+2 and Ctrl+3), and
+    their Navigation items from either way, move nothing and say where the focus is and when the places come back:
+    "Screen of edit. The terminal and the command field come back when edit leaves the whole screen" (in keys to the
+    program the keys are the program's, AT-9.3, and only the menu items say it). Find, Find next and Find previous
+    search the page's rows in reading the screen, with the bundle's find of a text (the Find notice, the match
+    selected, wrapping once, "Not found"), as in an editor; the terminal's lines are not searched while the view
+    shows (AT-9.6). Chosen from the menu in keys to the program, where the caret is the program's cursor, find moves
+    nothing and says "Find works in reading the screen: Ctrl+Space turns to it". The window base has the two hooks:
+    `ConsoleForm.PlacesRefused` and `ConversationForm.FindDialog` and `FindNext`, which `TerminalForm.Screen.cs`
+    overrides.
+  - **A program that ends on the alternate screen.** A program killed or crashed, or one that never switches back,
+    leaves the console on the alternate screen, and the shell's prompt comes back drawn there. The shell's own mark
+    (D, A or B, AT-4, the secret's check passed) while the alternate screen is in force is taken for the program's
+    end: the model leaves the alternate screen as on `ESC [?1049l` (`Screen.LeaveAlternate`: the main rows and their
+    lines as they were, the cursor where it stood), so the page is gone at that frame's end and the window closes the
+    view as on the switch back, the focus where it was; the prompt and what follows reach the transcript. axTerminal
+    sees no process of the program's own, so the mark is its end; the shell's own end closes the view as before.
+  - **The colour questions answered.** While a program holds the alternate screen, its colour questions are answered
+    at once in the console layer, `AxKit.Core/Vt/QueryAnswers` raised by `Screen` (on in axTerminal's model alone,
+    `AnswersQueries`; axClaude's Claude Code is told nothing new), and the window writes each answer to the shell's
+    input as it is: OSC 4 with a colour's number and `?` (the palette; edit asks the sixteen), OSC 10 `?` (the text)
+    and OSC 11 `?` (the background), in xterm's form `ESC ] 4 ; n ; rgb:rrrr/gggg/bbbb BEL`, the colours of a plain
+    black background and light text: Windows' console palette (Campbell) with its black plain black, the text light
+    grey (`cccc`), the background black; the numbers 16 to 255 as xterm's cube and greys. Windows' `edit` takes keys
+    at once instead of after about four seconds (AT-9.7). On the main screen no question is answered, since a shell's
+    line editor would take the answer as typed text, and no answer holds a line end. A device attributes or status
+    question (`ESC [c`, `ESC [6n`) never reaches axTerminal: the console answers those itself (none is in the
+    recording), so none is answered here.
+  - Tested in `ScreenViewTests` (the words; a hand-written stream where the prompt marks follow the page with no
+    switch back: no page, the command ended with its code, the next output in the transcript; edit's recorded
+    questions answered, sixteen answers, none on the main screen), `ScreenAlternateTests` (`LeaveAlternate`, an
+    answer only on the alternate screen and only where asked for), `QueryAnswersTests`, and in the window script 14
+    (Alt+1 and find in reading the screen; edit's first key half a second after its page; a switch written by
+    PowerShell itself, `[Console]::Write([char]27 + '[?1049h')`, giving the field back at the prompt).
 
 ## 5. Architecture
 

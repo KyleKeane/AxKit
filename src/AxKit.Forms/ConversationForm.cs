@@ -399,11 +399,11 @@ public abstract class ConversationForm : AxKitForm
 
     // ---- find (axClaude FR-3.7, axTerminal AT-4.5) ----
 
-    /// <summary>Ctrl+F: the bundle's Find notice over the view's search. Find next closes it and searches from the caret; an empty field keeps it open.</summary>
-    protected void FindDialog() => ShowFind(text => Transcript.Find(text, backward: false));
+    /// <summary>Ctrl+F: the bundle's Find notice over the view's search. Find next closes it and searches from the caret; an empty field keeps it open. axTerminal searches its screen view instead while one shows (its SPEC.md AT-9.10).</summary>
+    protected virtual void FindDialog() => ShowFind(text => Transcript.Find(text, backward: false));
 
     /// <summary>F3 and Shift+F3: the last text again from the caret; the Find notice when there is none yet.</summary>
-    protected void FindNext(bool backward)
+    protected virtual void FindNext(bool backward)
     {
         if (FindText.Length == 0)
         {

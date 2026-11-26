@@ -101,6 +101,9 @@ public sealed class TerminalModel : LineStore
     /// <summary>The prompt came back after a command: the exit code the D mark carried, or null (Command Prompt, or no code).</summary>
     public event Action<int?>? CommandFinished;
 
+    /// <summary>The answer to a full-screen program's colour question (AT-9.10), for the window to write to the shell's input as it is.</summary>
+    public event Action<string>? Answer;
+
     /// <summary>
     /// Records that the user sent a command and prints its exchange block (AT-3.2): the input marker, `## Folder` with
     /// the directory under it (<paramref name="directory"/>, the window's current directory, or the shell's own from
@@ -253,6 +256,9 @@ public sealed class TerminalModel : LineStore
         // AT-9.1: axTerminal's window shows a full-screen program's page (its screen view), so the alternate screen
         // is kept apart from the main one and never reaches the transcript.
         screen.KeepsAlternateApart = true;
+        // AT-9.10: a full-screen program's colour questions answered, so that it need not wait for them.
+        screen.AnswersQueries = true;
+        screen.Answer += text => Answer?.Invoke(text);
         screen.Mark += OnMark;
         screen.DirectoryChanged += OnDirectory;
         screen.Homed += LetRowsGo;
@@ -312,6 +318,14 @@ public sealed class TerminalModel : LineStore
         else
         {
             code = rest;
+        }
+
+        // AT-9.10: the shell's own mark while a program still holds the alternate screen: the program ended without
+        // leaving it (killed, or crashed), and the shell's prompt is back. The main screen again, as on the switch back,
+        // so that the prompt and what follows reach the transcript and the window closes the screen view.
+        if (_screen.Alternate && letter is ShellTexts.CommandDoneMark or ShellTexts.PromptStartMark or ShellTexts.PromptEndMark)
+        {
+            _screen.LeaveAlternate();
         }
 
         _directoryExpected = letter == ShellTexts.PromptStartMark;

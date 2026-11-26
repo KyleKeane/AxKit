@@ -219,6 +219,74 @@ public sealed class ScreenViewTests
         Assert.False(model.Running);
     }
 
+    /// <summary>
+    /// A program that ends on the alternate screen, without switching back (killed, or crashed; AT-9.10): the shell's
+    /// own mark brings the main screen back, so the page is gone (the window closes the view as on the switch back),
+    /// the command ends with its code, and the next prompt and what follows reach the transcript, not the page.
+    /// </summary>
+    [Fact]
+    public void A_program_that_ends_on_the_alternate_screen_gives_way_at_the_shells_mark()
+    {
+        string Prompt(string? code) =>
+            $"{Esc}]133;D{(code is null ? string.Empty : ";" + code)}{TestHelpers.Bel}{Esc}]133;A{TestHelpers.Bel}PS C:\\src> {Esc}]133;B{TestHelpers.Bel}";
+        var model = new TerminalModel(40, 6);
+        int? finished = null;
+        model.CommandFinished += code => finished = code;
+        TestHelpers.Feed(model, "Banner line\r\n" + Prompt(null));
+        model.EndFrame();
+        Assert.True(model.Send("edit notes.txt"));
+        TestHelpers.Feed(model, "edit notes.txt\r\n");
+        TestHelpers.Feed(model, $"{Esc}[?1049h{Esc}[H File  Edit{Esc}[2;1H1 │ First line{Esc}[?25h");
+        model.EndFrame();
+        Assert.NotNull(model.Page);
+
+        // No ESC[?1049l: the shell's prompt comes straight after.
+        TestHelpers.Feed(model, "\r\n" + Prompt("1") + $"{Esc}[?25h");
+        model.EndFrame();
+        Assert.Null(model.Page);
+        Assert.False(model.Running);
+        Assert.Equal(1, finished);
+        Assert.Equal("PS C:\\src>", model.Prompt);
+
+        Assert.True(model.Send("echo after"));
+        TestHelpers.Feed(model, "echo after\r\nafter\r\n" + Prompt("0") + $"{Esc}[?25h");
+        model.EndFrame();
+        Assert.Null(model.Page);
+        Assert.Contains(model.Lines, line => !line.Hidden && line.Text == "after");
+        Assert.DoesNotContain(model.Lines, line => line.Text.Contains("File  Edit", StringComparison.Ordinal));
+    }
+
+    /// <summary>
+    /// The colour questions of Windows' edit, as recorded (AT-9.7: the sixteen colours, OSC 4, in two strings), are
+    /// answered at once with a plain black background and light text (AT-9.10), one answer per colour, in xterm's form;
+    /// a question on the main screen is never answered, since the shell's line editor would take it as typed text.
+    /// </summary>
+    [Fact]
+    public void Windows_edits_colour_questions_are_answered_with_black_and_light_text()
+    {
+        var answers = new List<string>();
+        TestHelpers.Replay("fullscreen-edit1.2.1-120x30.vt", [], subscribe: m => m.Answer += answers.Add);
+        Assert.Equal(16, answers.Count);
+        Assert.Equal($"{Esc}]4;0;rgb:0000/0000/0000{TestHelpers.Bel}", answers[0]);
+        Assert.Equal($"{Esc}]4;7;rgb:cccc/cccc/cccc{TestHelpers.Bel}", answers[7]);
+        Assert.Equal($"{Esc}]4;15;rgb:f2f2/f2f2/f2f2{TestHelpers.Bel}", answers[15]);
+
+        var model = new TerminalModel(40, 6);
+        var mainAnswers = new List<string>();
+        model.Answer += mainAnswers.Add;
+        TestHelpers.Feed(model, $"{Esc}]11;?{TestHelpers.Bel}{Esc}]4;0;?{TestHelpers.Bel}");
+        Assert.Empty(mainAnswers);
+        TestHelpers.Feed(model, $"{Esc}[?1049h{Esc}]11;?{TestHelpers.Bel}");
+        Assert.Equal([$"{Esc}]11;rgb:0000/0000/0000{TestHelpers.Bel}"], mainAnswers);
+    }
+
+    [Fact]
+    public void The_places_and_find_say_why_they_wait_while_the_screen_shows()
+    {
+        Assert.Equal("Screen of edit. The terminal and the command field come back when edit leaves the whole screen", ScreenView.PlacesWords("edit"));
+        Assert.Equal("Find works in reading the screen: Ctrl+Space turns to it", ScreenView.FindWaitsWords("Ctrl+Space"));
+    }
+
     private static ScreenPage Page(params MarkedRun[] runs) => new([string.Empty], 0, 0, runs);
 
     private static string Apply(string text, IReadOnlyList<RowEdit> edits)

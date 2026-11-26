@@ -151,6 +151,24 @@ public sealed class Screen
     /// </summary>
     public bool KeepsAlternateApart { get; set; }
 
+    /// <summary>
+    /// Whether a program's colour questions are answered (AT-9.10, <see cref="QueryAnswers"/>) while it holds the
+    /// alternate screen: on in axTerminal's model, so that Windows' edit takes keys at once instead of waiting about
+    /// four seconds; off by default (axClaude), so that what Claude Code is told stays as it was. On the main screen a
+    /// question is never answered, since a shell's own line editor would take the answer as typed text.
+    /// </summary>
+    public bool AnswersQueries { get; set; }
+
+    /// <summary>The answer to a program's question, to be written to its input as it is (<see cref="AnswersQueries"/>).</summary>
+    public event Action<string>? Answer;
+
+    /// <summary>
+    /// The program that held the alternate screen ended without switching back (AT-9.10; a model knows it from the
+    /// shell's own mark): the main screen again, as on <c>ESC[?1049l</c>, its rows and their lines as they were and
+    /// the cursor where it stood. Nothing when the main screen is in use.
+    /// </summary>
+    public void LeaveAlternate() => SwitchScreen(1049, false);
+
     /// <summary>The program switched to the alternate screen or back since the last frame ended (<c>ESC[?25h</c>), so that the frame end knows the view changes.</summary>
     public bool AlternateChangedSinceFrameEnd { get; private set; }
 
@@ -505,6 +523,14 @@ public sealed class Screen
         {
             // The shell's current directory (Windows Terminal's convention); PowerShell's snippet quotes it.
             DirectoryChanged?.Invoke(payload[2..].Trim().Trim('"'));
+        }
+        else if (AnswersQueries && Alternate)
+        {
+            // AT-9.10: a full-screen program's colour questions (OSC 4, 10, 11), answered as a terminal does.
+            foreach (var answer in QueryAnswers.To(content))
+            {
+                Answer?.Invoke(answer);
+            }
         }
     }
 
