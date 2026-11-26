@@ -1,0 +1,226 @@
+# The workflow graph
+
+A proposal for the maintainer to read and settle, 2026-11-26; nothing of it is built. It answers his ask of
+2026-11-26: waypoints, any app's right place in two actions from anywhere, any goal in two actions from its
+waypoint, consent gathered into one form, the user's actions as the edges of a graph, the workflows as walks through
+it, and a system that holds every change of the code against the graph and the NVDA passes, so that the user's
+mental map stays as it was and can be taught. The bundle's rule it serves is SPEC.md G7 (three steps, four at most).
+Section 9 holds the decisions that are his; until they are made, the rest is the assistant's recommendation.
+
+## 1. Summary
+
+Every place the user can be is a node; every action the user can take there is an edge to the place it lands on. A
+few nodes are waypoints, the places a user aims for. Two bounds follow from G7, and a computer can check both:
+every waypoint is at most two actions from any node, and every goal at most two actions from its waypoint. The graph
+is written by axKit itself into one file, from the windows as they are, and every test run compares it with the
+committed one: a change to a key, a landing or the words of an edge stops the push until it is a change the
+maintainer approved. The scripts become walks through the graph, each step checked for the node it lands on; the
+NVDA passes record when each edge was last heard. The graph then teaches: the palette and AI help can say the
+shortest way from here to a goal.
+
+Much of this exists already: the command inventory (`window-commands.json`, every command with its key, menu and
+mark), the window channel (`commands data`, the focused control, the state), the traces (every input with what
+followed it, WF-5) and the workflow record (when each goal last passed, by tier, WF-6). The graph joins them.
+
+## 2. Words
+
+- **Place**: where the focus is inside one window, named by the window: axClaude's message field, its conversation,
+  its question list; axFile's file list; axDown's text. A place has a stable id, `axClaude.message`, that no title,
+  file name or text changes.
+- **Over it**: what stands over a place and takes the keys: nothing, a menu, a notice, the palette, a form.
+- **Mode**: a state of the window that changes what the keys of a place do: axClaude's screen and stream, axTerminal's
+  screen view, a list's selection, Claude busy or ready. Only a mode that changes an edge is a mode here.
+- **Node**: a place, what is over it, and the window's modes: `axClaude.message | none | ready`. The desktop with no
+  axKit window in front is one node of its own, `outside`.
+- **Edge**: one action from a node, and the node it lands on, with what the user hears there (the words, the kind of
+  event of EventKind) and the command it runs (the inventory's row), when it runs one.
+- **Action**: G7's: one key, one chord, one choice in a list, or one typed name with its Enter.
+- **Waypoint**: a node marked as one a user aims for: each app's main place with nothing over it, and the few more an
+  app names (axClaude's conversation, axFile's folder list). Every window has at least one.
+- **Goal**: a section of a script under a `Goal:` line (WF-3.1), now also the node it ends on and the action that
+  finishes it.
+- **Walk**: the nodes and edges a script passes through, step by step.
+
+## 3. Goals and non-goals
+
+Goals:
+- WG-G1 Every place the user can reach is in one file, with every action from it: nothing the user can do is
+  missing from the map, and nothing on the map is gone from the windows.
+- WG-G2 The two bounds are checked by a computer at every test run, and every goal over them is listed with its
+  shortest path.
+- WG-G3 A change to the map is never an accident: it stops the push until approved, and the approval says why.
+- WG-G4 Every edge carries when a script last walked it and when NVDA last spoke it.
+- WG-G5 The map teaches: from any node, the shortest way to any goal can be said in words.
+
+Non-goals:
+- A model of everything a window shows. The graph holds where the focus is and what the keys do, not the text.
+- Edges of the user's own content: moving through the lines of a file or the rows of a list is one place, not a node
+  per line. Home, End and the arrows stay inside their place.
+- A second source of keys. The keys stay in their tables (rule 5); the graph is written from the windows and never
+  read to make a key.
+- A crawl of commands that act outside the window (the inventory's mark `act`): those edges come only from scripts.
+
+## 4. Requirements
+
+### WG-1 Places
+
+- WG-1.1 **Each window names its places** in one table, `<App>Places` beside its key table (`AxClaudePlaces`), as
+  `AxClaudeKeys` names its keys: the id, the words a user would use ("the message field") and the control that is
+  the place. A control that takes the focus and has no place fails a test, as a key without a table does
+  (`KeyTests`); the shared window types (`ConversationForm`, `ItemForm`, the text editor shell) name their own places
+  once, so that an app on one of them gets them without a table.
+- WG-1.2 **The channel says the place.** `state` and every focus move of a trace carry the place's id beside the
+  focused control's name and role, so that a script, a trace and the AI tools all know where the focus is by the
+  same name.
+- WG-1.3 **What is over it** is the window's own: a menu, the notice (`OverlayPanel`), the palette, the control area's
+  question (`ControlArea`), each with its id. A notice names its own kind (an error, a question, a form).
+
+### WG-2 The graph file
+
+- WG-2.1 **`docs/axKit/workflow-graph.json`**, written by the inventory run (`--inventory write`), never by hand:
+  the nodes by app, and from each node its edges, each with the chord or the choice, the command's label when there
+  is one, the landing node, the kind of event and the words heard there, with `{temp}` and `{home}` for paths as the
+  traces write them (WF-5.3).
+- WG-2.2 **Where the edges come from**, in this order: the inventory's commands, each tried at every node of its
+  window where its `When` lets it act, on the hidden desktop, its landing read from the channel; the bundle keys,
+  tried the same way at one node of each window type, since they are the same everywhere (AX-8); and the scripts'
+  walks for whatever a crawl does not try (WG-3). A command marked `act` is never tried by the crawl: it can send,
+  delete or run.
+- WG-2.3 **`outside` has its edges too**: the hotkeys of axStart and every app's launch key (Ctrl+F-key,
+  Ctrl+Shift+F-key, AX-8.18), each landing on the app's first waypoint.
+- WG-2.4 **One order**, as the inventory has: the apps by name, a window's nodes by id, a node's edges by chord, so
+  that what is written is what is compared.
+- WG-2.5 **A page for people**, `docs/axKit/map.md`, written by `tools/map.ps1` from the file (this page stays the
+  specification): by app, each waypoint, how it is reached from anywhere, and what can be done from it.
+
+### WG-3 The bounds
+
+- WG-3.1 **Reaching a waypoint**: from every node, every waypoint of the bundle in two actions or fewer. From another
+  app that is the app's launch key, which brings its window up on its first waypoint, then one key to the place
+  (Alt+number, AX-8.18). Escape from anything over a place is one of the two.
+- WG-3.2 **Reaching a goal**: from its waypoint, every goal in two actions or fewer, with typing a name and Enter as
+  one (G7). So no goal is more than four actions from anywhere, and the usual goal, started from its waypoint, is
+  two.
+- WG-3.3 **What a goal's count holds**: only the actions the user takes for the goal. The steps a script takes to make
+  an example (typing a file's text, making a folder) and those that only look are not counted: a goal line marks its
+  first counted step and its last, or the counted steps are the ones after the goal reaches its waypoint. Today's
+  pages count every step and show 291 of 789 goals over four; most of the extra are the examples.
+- WG-3.4 **The check** (`tools/graph-check.ps1`, in `test.ps1`, without a window): the shortest paths over the
+  committed file, the bounds checked for every node and every goal, and every goal over them named with its count
+  and its path. Until the shortenings are made (section 6, step 6), the list is a page, `docs/axKit/over-the-bounds.md`,
+  and the check fails only on a goal that was within them and is no longer: the map may get shorter, never longer.
+- WG-3.5 **A consent form is one node and one action** (the maintainer's ask): several questions that come together
+  (axClaude's permissions at a start, AX-11.5's reminders) are one form with a check box per question, each box
+  starting at the answer most users give; Enter takes them all. A box changed from where it starts is one more
+  action. A goal that meets two consent questions one after the other is over the bounds by that, and the fix is the
+  form.
+
+### WG-4 The scripts as walks
+
+- WG-4.1 **Each input step's landing is read** from the channel after it settles (the place, what is over it, the
+  modes) and written into the trace beside the input: the walk.
+- WG-4.2 **A step whose landing is no edge of the graph fails**, with the node it came from, the action and where it
+  landed: either the window changed (the map changed, WG-5) or the graph lacks the edge (the crawl missed it, added
+  at the next write).
+- WG-4.3 **The record by edge**: beside the record of goals (WF-6), `workflow-record.json` gets for each edge the last
+  run that walked it, by tier, the desktop and NVDA. An edge no script walks is on `owed.md` as unwalked; one NVDA
+  never spoke there is owed a hearing. So the NVDA passes say, edge by edge, what the user has heard and what not.
+- WG-4.4 **The scripts keep their language.** A script's step stays `keys` or `do`; the walk is what the runner reads,
+  not something written in the script. A new step `at <place>` (an expectation: the focus is on that place) is
+  added, so that a script can say where it is by the place's name rather than the control's words.
+
+### WG-5 The map held still
+
+- WG-5.1 **The gate**: every test run writes the graph from the windows' tables and inventory as they are and compares
+  it with the committed file. A node added or gone, an edge whose chord, landing, words or kind of event changed,
+  fails the run with each difference said in words ("axDown, the text: Ctrl+R used to land on Find in the text and
+  now lands on Replace").
+- WG-5.2 **The approval**: the difference is committed with the new file, and the commit message has a line `Map
+  change: <why>` (the commit-msg hook refuses a commit that changes the file without one, as it refuses one without
+  an Item line). The line is written from the maintainer's own decision, named in the item.
+- WG-5.3 **What a change owes**: every changed edge is owed a hearing until an NVDA pass walks it (WG-4.3), and the
+  guides and F1 texts that name it change in the same commit, as a key change does today.
+- WG-5.4 **Words that only move**: a changed word of an announcement is a change like any other. The traces' rule that
+  an announcement and a focus move may change places with timing (WF-5.7) holds here too: the edge holds the words,
+  not their order against a focus move.
+
+### WG-6 Teaching
+
+- WG-6.1 **The palette says the way**: F1, then typing a goal's words, finds the goal and says its shortest path from
+  where the focus is ("Ctrl+F2, then Ctrl+N"), and Enter takes the first step or the whole path, as the maintainer
+  settles.
+- WG-6.2 **The how-to pages** (`workflows/`) give each goal its shortest path from its waypoint first, and the
+  script's example after it.
+- WG-6.3 **AI help** answers "how do I" from the file rather than from the guides' prose, with its caution (rule 11).
+
+## 5. The file's format
+
+```json
+{
+  "format": "axkit-workflow-graph 1",
+  "nodes": [
+    {"id": "axCalc.field|none", "app": "axCalc", "place": "axCalc.field", "over": "none", "modes": [],
+     "waypoint": true, "words": "the expression field",
+     "edges": [
+       {"action": "ctrl+delete", "command": "Clear the field", "to": "axCalc.field|none", "kind": "announcement",
+        "said": "Cleared."},
+       {"action": "f1", "to": "axCalc.field|palette", "kind": "palette", "said": "..."}
+     ]}
+  ],
+  "goals": [
+    {"workflow": "Calculate and reuse earlier answers", "goal": "Empty the field", "waypoint": "axCalc.field|none",
+     "actions": 1}
+  ]
+}
+```
+
+The record of edges (WG-4.3) stays in `workflow-record.json` with the goals', never in this file, so that a run
+changes one file and the graph changes only with the windows.
+
+## 6. The steps, in order
+
+1. **This specification**, read and settled by the maintainer (section 9). Nothing else before it.
+2. **The places and the graph written**: the places tables for the shared window types, then app by app; the channel
+   says the place; the inventory run writes `workflow-graph.json` and `map.md`. Nothing a user meets changes.
+3. **The bounds checked**: `graph-check.ps1` and the page of goals over the bounds, with each goal's own count
+   (WG-3.3). The item "every goal in three steps" becomes this page.
+4. **The scripts as walks**: the landing of every step read and checked; the record by edge; owed hearings by edge.
+5. **The gate**: the comparison at every run, the `Map change:` line in the hook.
+6. **The shortenings, one app per sitting**: the maintainer decides each goal over the bounds from the page, the
+   consent forms first.
+7. **Teaching**: the palette's way, the pages' shortest paths, AI help from the file.
+
+Steps 2 and 3 are a few days of work; steps 4 and 5 about as much again; step 6 runs as long as the sittings do.
+
+## 7. What stays as it is
+
+The keys' tables (rule 5), the events (rule 13), the scripts' language but for `at`, the workflow record's goals,
+the traces' rules (WF-5), the release's refusal while a window changed after its last pass. The graph adds a check;
+it takes none away.
+
+## 8. Risks
+
+- **A window's places named wrong** makes a map that is tidy and false. The test of WG-1.1 holds that every focusable
+  control has a place; whether the words are a user's is the maintainer's to hear.
+- **The crawl on the hidden desktop** takes time: about 18 windows, a few nodes each, tens of commands. It runs with
+  `--inventory write` only, never with every test run; the gate compares the tables and the committed file, and the
+  crawl writes landings.
+- **Modes multiply nodes.** Only a mode that changes an edge is one (section 2); a window with more than a few is
+  itself a sign of keys that mean too many things.
+
+## 9. Decisions for the maintainer
+
+Each with the assistant's recommendation first.
+
+1. **Where places are named**: in a table per window beside its keys (recommended), or found from the controls'
+   names alone (no table, but a renamed control is a new place).
+2. **Does the launch key count as one of the two actions to a waypoint**: yes (recommended), so that reaching any
+   app's main place is one key and its other places two.
+3. **A consent form's boxes**: each box changed from where it starts is one action, Enter one more (recommended); or
+   the form is one action whatever is changed.
+4. **The approval of a map change**: a `Map change:` line in the commit, from his decision (recommended); or a list
+   in axTask he signs, as the outside reports are.
+5. **When a goal is over the bounds today**: listed and never allowed to grow longer, shortened app by app at his
+   sittings (recommended); or the check fails at once and the work stops until all are shortened.
+6. **What the palette does with a way** (WG-6.1): says it, and Enter takes its first step (recommended); or Enter
+   walks the whole path.

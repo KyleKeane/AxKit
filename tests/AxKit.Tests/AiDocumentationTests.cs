@@ -145,6 +145,7 @@ public sealed class AiDocumentationTests
             ["docs/axKit/theme.md"] = "the specification of themes",
             ["docs/axKit/command-language.md"] = "a proposal for the commands",
             ["docs/axKit/key-moves.md"] = "proposals for the maintainer to settle, not yet the keys",
+            ["docs/axKit/workflow-graph.md"] = "a proposal for the maintainer to settle, nothing of it built",
             ["docs/axKit/events.md"] = "a proposal for the events",
             ["docs/axKit/framework.md"] = "a proposal for the window types and components, for developers",
             ["docs/axKit/earcons.md"] = "the design of the sounds; families.md says what each means",

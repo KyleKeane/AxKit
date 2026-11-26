@@ -114,6 +114,9 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 - `key-moves.md` (by hand, a dated page of 2026-11-25): a proposal for each of the 89 keys that do not fit their
   family, move or keep with the reason, family by family, for the maintainer to settle one family per sitting. It is
   deleted once every family is settled and the moves are in the key tables.
+- `workflow-graph.md` (by hand, a proposal of 2026-11-26): the workflow graph, every place a node and every action an
+  edge, the two bounds of G7 checked over it, the scripts as walks and the map held against each change; its
+  decisions are the maintainer's (section 9), and nothing of it is built before they are made.
 - `command-exceptions.json` (by hand, 2026-11-25; `command-language.md` CL-7.3): the command names several apps share
   that do not mean one thing among them, each with what differs and its reason. `CommandMeaningsTests` holds the
   inventory to it: a new difference is made one or added here on purpose, and one made one is taken off.
