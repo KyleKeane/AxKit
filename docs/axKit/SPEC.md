@@ -37,6 +37,10 @@ manager: `docs/axKit/plan.md`) and follow the same pattern without changes to th
   waits for the next. An access layer reaches the network only
   through the program it runs (AX-11.11). Any AI help in the other apps is one shared, optional service (B-15), never
   a dependency of a feature that works without it.
+- **G7 Three steps, four at most.** No goal takes more than four actions, and ideally none more than three (the
+  maintainer, 2026-11-26: "it should not take more than 4 actions at the most to accomplish a goal and in an ideal
+  world nothing will require more than three steps"). An action is one key, one chord or one choice in a list; typing
+  a name counts as one. A goal that needs more is a fault of the design, to be shortened, never a matter for the guide.
 
 Non-goals: a plugin system or loading apps from separate files (apps are compiled in); more than one window per
 process; an installer that needs administrator rights; setting Windows default programs silently (Windows does not
@@ -630,12 +634,12 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   starting at the first line or at a line with text directly after a blank line, and Ctrl+Shift+Up and
   Ctrl+Shift+Down the selection grown to there, as in Word (`EditKeys.Paragraph`; the EDIT control's own keys scroll a
   row and leave the caret where it is, as Notepad's do, which a screen reader, reading at the caret after the key,
-  reports as the same text again); Ctrl+Shift+P the command palette (AX-10); F4 a report to axKit's maintainer (docs/axKit/reports.md RP-2.1, 2026-11-07); F8 the status bar said by axKit itself, in a notice too (`BundleKeys.SayStatus`, AX-7.10, 2026-11-15); Ctrl+Space edit mode or navigation mode in an editable text of several lines (`BundleKeys.ToggleMode`, AX-8.13, 2026-11-15); Ctrl+Enter the main action of where the focus is (`BundleKeys.MainAction`, AX-8.10 rule 3, 2026-11-14); Shift+F1 a question to Claude about this window, Windows' own key for help about the thing in front (`docs/axKit/ai-help.md` AH-6, 2026-11-09), and Ctrl+Slash a further key of the same command (`BundleKeys.AskClaudeAlso`, AX-8.15, 2026-11-16); Ctrl+Period the context menu where the focus is, as Shift+F10 and the Applications key open it (`BundleKeys.ContextMenu`, AX-8.15, 2026-11-16); Alt+F4 exit; Alt and F10 the menu. Everything else is window-specific.
+  reports as the same text again); Ctrl+Shift+P the command palette (AX-10); F4 a report to axKit's maintainer (docs/axKit/reports.md RP-2.1, 2026-11-07); F9 the status bar said by axKit itself, in a notice too (`BundleKeys.SayStatus`, AX-7.10, 2026-11-15; F8 until 2026-11-26); F7 read in full what you are on, in a notice its text (`BundleKeys.ReadInFull`, AX-8.18 rule 5, 2026-11-26); Ctrl+Space edit mode or navigation mode in an editable text of several lines (`BundleKeys.ToggleMode`, AX-8.13, 2026-11-15); Ctrl+Enter the main action of where the focus is (`BundleKeys.MainAction`, AX-8.10 rule 3, 2026-11-14); Shift+F1 a question to Claude about this window, Windows' own key for help about the thing in front (`docs/axKit/ai-help.md` AH-6, 2026-11-09), and Ctrl+Slash a further key of the same command (`BundleKeys.AskClaudeAlso`, AX-8.15, 2026-11-16); Ctrl+Period the context menu where the focus is, as Shift+F10 and the Applications key open it (`BundleKeys.ContextMenu`, AX-8.15, 2026-11-16); Alt+F4 exit; Alt and F10 the menu. Everything else is window-specific.
 - AX-8.3 Window-specific keys are defined once per window, in one table (`AxClaudeKeys`, `AxDownKeys`, `AxJSONKeys`, `AxGitKeys`, `AxTerminalKeys`, `AxFileKeys`, `AxMediaKeys`, `AxPreviewKeys`, `AxStartKeys`, `AxProcessKeys`, `AxTaskKeys`, `AxPassKeys`, `AxCalcKeys`, `AxClipKeys`), as constants
   with names that say what the key does. Changing a key is a change to that one line: the menu item and the key
   handler read the table, and the F1 text's list of every key is made from the window's commands (AX-7.2a). Single-letter quick keys
   (axClaude's `h`, `i`, `o`) are in the table too. The text editor shell's keys (`AxKit.Forms/EditorKeys`: Ctrl+N new,
-  Ctrl+O open, Ctrl+Shift+S save as, Ctrl+G go to line, Ctrl+Shift+W word wrap, Ctrl+W show in File Explorer) are
+  Ctrl+O open, Ctrl+Shift+S save as, F12 go to line, F11 word wrap, Ctrl+W show in File Explorer) are
   defined once for every editor window, and each editor app's table includes them, so that one table per window
   still holds every key and the collision test sees them.
 - AX-8.4 A unit test in `tests/AxKit.Tests` fails when a window-specific key equals a bundle-wide key, and lists the
@@ -719,7 +723,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
      own and never shortened away. The text names the form's keys itself (`Notice.KeyLine` false: the line made
      from the buttons, "Enter: Send", would be untrue where Enter is a new line). Since the focus starts in the
      first field, the window says the title and the word "form" as the form opens, after NVDA has read the field,
-     and the text on demand, Ctrl+Q (AX-7.11, 2026-11-22; the whole text at opening until then); the report's
+     and the text on demand, F7 (AX-7.11, 2026-11-22, Ctrl+Q until 2026-11-26; the whole text at opening until then); the report's
      form and an action's form of an axTask list still say their text at opening, which is what will happen.
   11. **A required field left empty**: Send and Ctrl+Enter move the focus to that field, play the edge sound and
      say what is missing ("Type a few words first").
@@ -765,7 +769,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
      to it, as type-ahead in a list (`AxKit.Core/TypeAhead`, AX-8.6, over each field's first key or its caption), and
      its number goes to it where the form numbers its fields; Space still checks a check box; Enter, or Ctrl+Space
      again, goes back to typing in that field, "Edit mode" said; leaving the form ends it. In a form the mode key is the
-     form's, so a box of several lines there has no navigation mode of its own. Every form's explanation (Ctrl+Q) ends
+     form's, so a box of several lines there has no navigation mode of its own. Every form's explanation (F7) ends
      with these keys, written from the key table (`FormControls.KeysLine`).
   19. **A group of checks of one kind is one list** (the maintainer's choice of 2026-11-23, "One list, Space checks", over
      a check box each, after his question whether checks take a Tab each or the arrows; both are Windows' own, a check
@@ -836,11 +840,11 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   - **While it runs, every key press that reaches the window is said and not carried out**: no command runs, no
     character is typed, no selection or caret moves, Alt and F10 open no menu, Alt+F4 closes nothing. Each press is
     one interrupting announcement, once per press (a held key's repeats say nothing): the key as the bundle spells
-    it (`BundleKeys.Text` without the number row's full stop: "Ctrl+Shift+P", "F8", "Alt+Left"; "PageDown",
+    it (`BundleKeys.Text` without the number row's full stop: "Ctrl+Shift+P", "F9", "Alt+Left"; "PageDown",
     "CapsLock" and the bracket, quote and backslash keys by plain names), a colon, and what it does in this window
     where the focus is, the first of these that applies:
-    1. a bundle key the window base handles itself in every window (F1, Ctrl+Shift+P, F4, Shift+F1, F8, Ctrl+S, the
-       text size keys): the name of the menu item that shows the key, "F8: Say the status", "F4: Send a report",
+    1. a bundle key the window base handles itself in every window (F1, Ctrl+Shift+P, F4, Shift+F1, F9, Ctrl+S, the
+       text size keys): the name of the menu item that shows the key, "F9: Say the status", "F4: Send a report",
        "Ctrl+Plus: Text, Larger text"; and the two further keys of AX-8.15, which no menu shows, by the key each
        stands beside: "Ctrl+Slash: Ask Claude about this window, as Shift+F1", "Ctrl+Period: The Context menu, as
        Shift+F10";
@@ -922,7 +926,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     (keys type; axDown's and axJSON's Ctrl+letter jumps move), and **navigation mode**, and says the new mode as one
     interrupting announcement: "Navigation mode", "Edit mode". Where the window has a status bar it shows the mode:
     the editors add ", navigation mode" to the file's part ("notes.md, unsaved changes, navigation mode"), the console
-    windows ", field in navigation mode" to the state, so that F8 says it too. **Every text starts in edit mode**, at
+    windows ", field in navigation mode" to the state, so that F9 says it too. **Every text starts in edit mode**, at
     every start of a window and in every new notice; the mode is not remembered between runs (the plainest answer to
     the question the item left open: nothing is lost by it, and the user never finds a window that will not type).
     The mode belongs to the text: a field hidden by the control area or a notice keeps its mode until it is shown
@@ -959,7 +963,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
        with Shift select, as in edit mode; Ctrl+Up and Ctrl+Down go by paragraph in every text, axTerminal's command
        field included, whose history they are in edit mode (the history would replace the text).
     3. **Copy and the commands**: Ctrl+C, Ctrl+Insert and Ctrl+A act as ever; every other key with Ctrl or Alt goes on
-       to the window and the menus (the Ctrl jumps, F1, F8, Ctrl+M, Ctrl+Alt with a letter in a console window), and
+       to the window and the menus (the Ctrl jumps, F1, F7, F8, F9, Ctrl+M, Ctrl+Alt with a letter in a console window), and
        Escape, Tab and the function keys too.
     4. **A key that would change the text is refused with the edge sound and changes nothing**: every key that types
        a character (a letter that is no jump, a digit that is no jump, Space, a sign, the number pad), Enter (it never
@@ -993,11 +997,10 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   conversation and latest response; axTerminal's command field, terminal and latest output; axGIT's Changes, Log
   and Branches; axProcess's Processes, Services and Startup. The Alt key is the command's key: the menus, the F1
   texts and the guides show it, and a sentence that names the key names it ("Changes view first: Alt+1", made from
-  the table). **Ctrl+1, Ctrl+2 and Ctrl+3 keep working** in these four windows as further keys of the same
-  commands (each table's `...Also` constants, a second command on the same action, the inventory's `also`), shown
-  in no menu, with nothing extra said: no key was taken away. Ctrl and a number stays the heading of that level in
+  the table). Ctrl+1, Ctrl+2 and Ctrl+3 kept working beside them as further keys of the same commands until
+  2026-11-26, when they went (AX-8.18 rule 3). Ctrl and a number stays the heading of that level in
   axDown, axPreview and axTask. A menu shows the key with the number row's full stop, "Alt+1." (AX-8.5). The key
-  reaches the window as Alt+D and Alt+Up do: the window base takes the key press before Windows makes a menu
+  reaches the window as Alt with an arrow does: the window base takes the key press before Windows makes a menu
   character of it, so no menu opens and nothing beeps, in a text field as in a list (checked on the test desktop in
   axTerminal's field and terminal, axGIT and axProcess; with the real keyboard and NVDA it is owed a hearing).
 - AX-8.15 **Ctrl and a punctuation key: inside the window** (2026-11-16), the partner of the same key with Ctrl and
@@ -1077,8 +1080,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     items, filter tap, 1 shown" ("3 of 24 items, filter chap" in axFile until then). What is said is the
     list's new name and the row landed on. A heading stays while a row under it, up to the next heading,
     passes; a heading's own name is not looked at. A level whose rows all fail the filter shows the one line
-    "No names contain <text>". An empty text clears the filter, "Filter cleared", and so does **Escape** in
-    the list once nothing is selected (Escape gives up a selection first, AX-8.16). The filter lives in one
+    "No names contain <text>". An empty text clears the filter, "Filter cleared", and so does **Ctrl+Delete** in
+    the list (`ItemKeys.ClearFilter`, AX-8.18; Escape, once nothing was selected, until 2026-11-26). The filter lives in one
     level: going into a list, up a level or to another folder drops it; the same level read again keeps it.
     The selection is on shown rows only, so a row the filter hides loses its mark.
   - **Sort by ▸** holds the orders of the list, one checked; choosing one says "Sorted by <order>" and keeps
@@ -1101,12 +1104,27 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   memory from main windows interactions. we should be very intentional." So an exception stands only for a key
   Windows itself taught (copy, rename, refresh, the next pane), each with its reason in `key-families.json`.
   1. No modifier: move and read where you are. Shift with the same key: the other direction, or select as you move.
-  2. Ctrl with a letter: act on what you are on. Ctrl+Shift with the same letter: its reverse or wider form.
+  2. Ctrl with a letter: act on what you are on. Ctrl+Shift with the same letter: its reverse or wider form. In a
+     text, Ctrl with NVDA's browse-mode letter jumps while you type (h a heading, k a link, l a list, i a list item,
+     q a block quote, t a table in the editors; axJSON's k, j, l, i and e), since the letter alone types there and
+     moves only in navigation mode (the maintainer's decision of 2026-11-26).
   3. Ctrl with a number: the window's own numbered action (a heading level in the editors, an action key in
-     axTask). Ctrl+Shift with the same number: its reverse. Nothing on numbers works outside the window.
+     axTask). Ctrl+Shift with the same number: its reverse. Nothing on numbers works outside the window. A place is
+     Alt with a number, never Ctrl (rule 4): the Ctrl+1 to 3 kept beside Alt+1 to 3 in axClaude, axTerminal, axGIT
+     and axProcess went on 2026-11-26, and axTask's All tasks moved from Ctrl+0 to Alt+0.
   4. Alt with a letter: a menu. Alt with a number: a place of the window (AX-8.14). Alt with an arrow: the choices of
-     what you are on.
-  5. A function key alone: say or show. Shift with it: the reverse or another form.
+     what you are on (axJSON's values, axMedia's speed, axTerminal's recent commands on Alt+Down).
+  5. A function key alone: say or show. Shift with it: the reverse or another form. Five of them mean the same in
+     every window, in the maintainer's order of 2026-11-26 ("f7 can be the announce, f8 can be read with details,
+     and f9 can be status"): **F7** reads in full what you are on, a bundle key (`BundleKeys.ReadInFull`: in a
+     notice or a form its text, AX-7.11; in a window its own reading, which it registers as a command on the key,
+     the edge sound where it has none; Ctrl+Q until then); **F8** reads with details, a key of each window
+     (Information in axFile, axStart and axMedia, the favorite's folder, axCalc's other bases, axClaude's background
+     work, axTerminal's current folder, axAutomate's last report); **F9** says the status, a bundle key (AX-7.10;
+     F8 until then); **F11** shows the text another way (the editors' word wrap, Ctrl+Shift+W until then);
+     **F12** goes to: the go-to field (Go to line in the editors, Go to folder in axFile, Go to time in axMedia;
+     Ctrl+G, Alt+D and Ctrl+T until then). The keys Windows taught stay as listed exceptions: F2 rename, F3 find
+     next, F4 the report, F5 refresh and reload, F6 the next pane.
   6. Ctrl with a function key: open a standalone app; Ctrl+Shift with a function key: open an access layer, so that
      the key says which kind of app it opens. Each group of apps (AX-9.2) takes one block of four function keys, as
      the keyboard groups them, F1 to F4, F5 to F8, F9 to F12, the groups in the bundle's order and the apps within a
@@ -1135,6 +1153,28 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   7. Ctrl+Shift with Space or a punctuation key: the few keys that work anywhere in Windows, one per background app
      (AX-8.11). Not Ctrl+Alt, which NVDA's table keys, Windows Magnifier and the AltGr letters of many keyboards take.
 
+  Beside the seven, the keys that end, take away and switch (the maintainer's decisions of 2026-11-26: "esc should
+  go back or close. please move clearing to another key and make it consistent"): **Escape** only goes back or
+  closes; **Delete** removes what you are on; **Ctrl+Delete** clears what you typed, the same key everywhere
+  (`ItemKeys.ClearFilter`: the navigator's filter, FW-4.10a, and axCalc's field, both Escape until then; in those
+  places Windows' Ctrl+Delete, the next word deleted, gives way); **Ctrl+Space** turns between the two modes
+  (AX-8.13), and **Ctrl+Enter** does the most frequent action where you are (AX-8.10 rule 3).
+
+  Every window's F1 text begins with these rules, one short line each, for the ear (`BundleHelp.RulesSection`, the
+  maintainer's ask of 2026-11-26: "so that people learn the principles and can guess the keys"); the text is
+  written once there and every window's F1 text starts with it.
+
+  The moves of 2026-11-26 that brought the tables to the rules, besides the function keys above: Bookmark this
+  line Ctrl+K (axCalc, axClaude, axTerminal; Ctrl+Shift+K); Interrupt Ctrl+I (axClaude from Shift+Escape, axTerminal
+  from Ctrl+Shift+C; axClaude's raw Ctrl+C stays in the palette without a key); axClaude's Next permission mode
+  Ctrl+P (Ctrl+Shift+M) and Send queued messages now Ctrl+Shift+Enter (Ctrl+Shift+S); axGIT's Fetch Ctrl+R, Pull
+  Ctrl+L and Push Ctrl+P (Ctrl+Shift+F, L, H); axTask's Hide done tasks Ctrl+H (Ctrl+Shift+D); axFile's Add to
+  axMedia's queue Ctrl+Q (Ctrl+Shift+Q) and New text file Ctrl+T (Ctrl+Shift+T), its Alt+Up and Alt+D taken away
+  (Backspace goes up, F12 to a folder); axJSON's Format Ctrl+R (Ctrl+Shift+F); axAutomate's Run Ctrl+R (F5, which
+  is Refresh there now as in the other navigators); axTerminal's Recent commands Alt+Down (Ctrl+R); axMedia's
+  Faster and Slower Alt+Up and Alt+Down (Ctrl+Up and Ctrl+Down, which go between sections there now). What stays
+  an exception, each with its reason, is `key-families.json`.
+
 ### AX-9 The bundle's menus: Options, Window, axKit, Help
 
 - AX-9.1 Every window's menu bar is the app's own menus first, then four of the bundle's, in this order, the same in
@@ -1144,7 +1184,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   - **Options** (O), the app's own settings (AX-6.4), right after the app's own menus (Navigate the last of them where
     the app has one): its own submenus, then Text, General and Developer.
   - **Window** (W; `AxKit.Forms/WindowMenu`, `CreateWindowMenu`), after Options: Open windows ▸ (O),
-    Recently closed ▸ (R) and Close all windows (C); then, after a separator, Say the status (S, F8, AX-7.10), the
+    Recently closed ▸ (R) and Close all windows (C); then, after a separator, Say the status (S, F9, AX-7.10), the
     one item about this window alone.
   - **axKit** (K since 2026-11-11, A before; `AxKitForm.CreateAxKitMenu`): what is the bundle's rather than the app's, each a submenu: Apps ▸ (A) and Access layers ▸ (L), the bundle's apps
     (AX-9.2; in the Window menu until 2026-11-23, the maintainer: "you should move the apps and access layets into
@@ -1347,7 +1387,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   or caret should work when focus is on the menu"). In menu mode the keys belong to the menu (AX-6.6), except the keys
   of the whole window, which need no selection and no caret: F1, the command palette, F4, asking Claude, Ctrl+S and
   the app keys (AX-8.18 rule 6). The menu closes first and the key runs once it has, so that nothing opens over an
-  open menu (F1 did that on 2026-10-23 and left the bar unusable). F8 says the status and leaves the menu open; the
+  open menu (F1 did that on 2026-10-23 and left the bar unusable). F9 says the status and leaves the menu open; the
   text size keys worked there already. `AxKitForm.IsWindowKey`, `RunWindowKey`, `CloseMenus`. With a drop-down
   open, WinForms hands the keys to the drop-down, a window of its own, and the form never sees them (found by the
   maintainer on 2026-11-24, when the first version worked on the bar alone): a filter of the thread's messages
@@ -1803,7 +1843,8 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   is searched with the bundle's find keys (AX-8.2): Ctrl+F puts the Find notice in the notice's place, and Find next
   brings the notice back with the match selected and the focus in its text (Cancel brings it back as it was); F3 and
   Shift+F3 find the next and the previous match there, "Not found" when there is none. The F1 texts are written under
-  Markdown headings, one per group of keys, with a first line naming the text's own keys, so that the letters and the
+  Markdown headings, one per group of keys, starting with the rules of the keys ("How the keys go", AX-8.18,
+  2026-11-26) and then a line naming the text's own keys, so that the letters and the
   find walk them (asked 2026-10-23), and every text ends with the bundle's Notices section, where the app's notices
   appear and a notice's keys, the same words in every window (`BundleHelp.NoticesSection`, 2026-11-09; five texts had a
   shorter section or none).
@@ -1882,12 +1923,12 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   every window, on by default: Options, Text, Sound on headings, in every window's menu, palette and F1 text, kept in
   the theme file's display settings as `display.headingSound` (`docs/axKit/theme.md` TH-6.6); it says "Sound on
   headings on" or "Sound on headings, not checked".
-- AX-7.10 **Say the status: F8 in every window** (2026-11-15; the key is the user's choice). Every window's status
+- AX-7.10 **Say the status: F9 in every window** (2026-11-15; the key is the user's choice; F8 until 2026-11-26, AX-8.18 rule 5). Every window's status
   bar is two labels of a native status strip (`StatusLayout.Pair`), which NVDA reads with NVDA+End. NVDA finds a
   status bar by a lookup on the screen, at the bottom-left of the foreground window (the reason for
   `WindowAccessibleObject`), and that lookup can miss: the user heard "blank" in axClaude while the status bar held
   its full text, exposed to UI Automation, at 150 percent scaling in a maximized window, and a restart of NVDA did not
-  help; the cause was not found. So the status has a command of axKit's own that does not depend on it: **F8**
+  help; the cause was not found. So the status has a command of axKit's own that does not depend on it: **F9**
   (`BundleKeys.SayStatus`), and Window, Say the status, say the status bar's texts as one interrupting announcement
   of the window (`AxKitForm.SayStatus`, AX-7.3): the labels' texts in order, an empty one left out, each without its
   own final full stop and parted by one, so that they are heard as separate parts ("Claude: ready | 1 shell in the
@@ -1949,13 +1990,13 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   - **The words of a form.** The focus starts in the form's first control and never on its text. After NVDA has
     read that control, the window says the title and the one word: "Move 2 items, form". The explanation is not
     said at opening (until 2026-11-22 it was, whole, and partly a second time as the focus passed over the
-    text). It stays the notice's text at the top (AX-8.10 rule 10): **Ctrl+Q** reads it, and Shift+Tab from the
+    text). It stays the notice's text at the top (AX-8.10 rule 10): **F7** reads it, and Shift+Tab from the
     first control goes to it. Two forms say their text after the word, because it is what will happen and not
     how a form is used (`ShowForm`'s `sayText`): the report, which says what is sent and to whom
     (`docs/axKit/reports.md`), and the form of an action of an axTask list, which says what the action written
     in the list's file will do (rule 11, AX-11.12). A list, a field and a text get no word from axKit: NVDA's
     own "list" and "edit" say it, and the sound came first.
-  - **Ctrl+Q in a notice** reads the notice's whole text again, any notice's, from any of its controls
+  - **F7 in a notice** (Ctrl+Q until 2026-11-26, AX-8.18 rule 5) reads the notice's whole text again, any notice's, from any of its controls
     (`OverlayPanel.ReadText`, taken by the window base while a notice shows, before the window's commands): the
     same key that reads what you are on in the windows that have such a key. In every F1 text
     (`BundleHelp.NoticeLine`).
@@ -1963,7 +2004,7 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   - Tested: `OpeningSoundsTests` (the sounds), `ThemeTests` (the switch), `EventKindTests` and `EventDoorTests`
     (the kinds, the table and the door), `ComponentsTests` (only the components name the four kinds);
     `tests/scripts/axTask/21-what-opens.txt` hears each of the four and the switch, `18-item-form.txt` and
-    `20-selection.txt` the form's sound, its words and Ctrl+Q.
+    `20-selection.txt` the form's sound, its words and F7.
 - AX-7.12 **Your own sounds** (asked 2026-11-15, "I want the folder"; built at the maintainer's word of 2026-11-24):
   a WAV file in `%APPDATA%\AxKit\sounds` named as one of axKit's sounds (`edge.wav`, `notice.wav`, `working-music.wav`;
   the 23 names are `AxKit.Core/Audio/CustomSounds.Names`) plays in place of the built-in one, from the next start of a
