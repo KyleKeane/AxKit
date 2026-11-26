@@ -35,10 +35,10 @@ public sealed class ScreenPageTests
     }
 
     [Fact]
-    public void Rows_leave_out_trailing_spaces_and_read_box_and_block_characters_as_spaces()
+    public void Rows_leave_out_trailing_spaces_and_keep_box_and_block_characters_as_drawn()
     {
         var page = PageAfter("┌─ ab ─┐█▆\r\n│ x  │  ");
-        Assert.Equal(["   ab", "  x", string.Empty], page.Rows);
+        Assert.Equal(["┌─ ab ─┐█▆", "│ x  │", string.Empty], page.Rows);
         Assert.Equal((1, 8), (page.CursorRow, page.CursorColumn));
     }
 
@@ -127,7 +127,9 @@ public sealed class ScreenPageTests
         // The first page with the file drawn (before it, edit shows an ellipsis while it waits on its colour questions).
         var first = pages.First(p => p.Rows[1].Length > 0);
         Assert.Equal(" File  Edit  View  Help", first.Rows[0]);
-        Assert.Equal("1   First line of a note.", first.Rows[1]);
+        // The line's number, edit's vertical bar, the line; at the row's end the scroll bar, drawn with block characters.
+        Assert.StartsWith("1 │ First line of a note.    ", first.Rows[1], StringComparison.Ordinal);
+        Assert.InRange(first.Rows[1][^1], '─', '▟');
         Assert.Equal((1, 4), (first.CursorRow, first.CursorColumn));
         Assert.All(pages.TakeWhile(p => !ReferenceEquals(p, first)), p => Assert.Empty(p.Marked));
 

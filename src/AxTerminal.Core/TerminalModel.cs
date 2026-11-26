@@ -92,6 +92,9 @@ public sealed class TerminalModel : LineStore
     /// <summary>The cursor row's visible text, for the window's "a program asks" heuristic (AT-5.4); null when the row is a prompt or empty.</summary>
     public string? CursorRowText => _screen.LineAt(_screen.CursorRow) is { Hidden: false, Text.Length: > 0 } line ? line.Text : null;
 
+    /// <summary>The page of a full-screen program while it holds the alternate screen (AT-9.2), read now; null while the shell writes on the main screen.</summary>
+    public AxKit.Core.Vt.ScreenPage? Page => AxKit.Core.Vt.ScreenPage.Read(_screen);
+
     /// <summary>The first prompt of a run appeared (AT-5.1, "Ready").</summary>
     public event Action? Ready;
 
@@ -247,6 +250,9 @@ public sealed class TerminalModel : LineStore
     private void AttachScreen()
     {
         var screen = NewScreen();
+        // AT-9.1: axTerminal's window shows a full-screen program's page (its screen view), so the alternate screen
+        // is kept apart from the main one and never reaches the transcript.
+        screen.KeepsAlternateApart = true;
         screen.Mark += OnMark;
         screen.DirectoryChanged += OnDirectory;
         screen.Homed += LetRowsGo;
@@ -261,6 +267,15 @@ public sealed class TerminalModel : LineStore
     /// </summary>
     private void LetRowsGo()
     {
+        // AT-9.9: a full-screen program has just left the alternate screen, and the console paints the main screen
+        // again as it was (Windows' console: the cursor home, then every row with an erase to its end). The rows keep
+        // their lines, so that the repaint lands on the text already read and the hidden prompt rows stay hidden;
+        // until 2026-11-25 it came again as new lines of the output, the shell's banner and the prompt with it.
+        if (_screen.AlternateChangedSinceFrameEnd)
+        {
+            return;
+        }
+
         for (var r = 0; r < Rows; r++)
         {
             if (_screen.LineAt(r) is not null)

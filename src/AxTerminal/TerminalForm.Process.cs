@@ -68,11 +68,12 @@ internal sealed partial class TerminalForm
         UpdateStatus();
     }
 
-    /// <summary>The question heuristic's timer stops with the shell; the console window stops the process, the writes and the control area.</summary>
+    /// <summary>The question heuristic's timer stops with the shell, and the screen view closes (AT-9.1); the console window stops the process, the writes and the control area.</summary>
     protected override void StopProcess(bool terminateAtOnce = false)
     {
         _asks.Stop();
         base.StopProcess(terminateAtOnce);
+        CloseScreen();
     }
 
     /// <summary>

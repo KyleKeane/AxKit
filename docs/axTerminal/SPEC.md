@@ -22,8 +22,9 @@ what it printed, so that `i`, `o`, Alt+3 and the heading keys work as they do in
 stay out of the transcript and show in the status bar; and the shell's integration marks tell the window when a
 command is done and with what exit code, which is spoken with the chimes the user knows.
 
-It is not a terminal emulator with a screen: programs that take the screen over (an editor, a pager, a monitor) are
-out of scope; programs that print and ask are in. It works entirely offline (bundle G6).
+It is not a terminal emulator with a screen: a program that takes the screen over (an editor, a pager, a monitor)
+gets its page shown in place of the transcript while it holds the screen, and nothing of it enters the transcript
+(AT-9, built 2026-11-25); programs that print and ask are the transcript's. It works entirely offline (bundle G6).
 
 ## 2. Goals and non-goals
 
@@ -36,13 +37,11 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
 - **G4 Shared, not copied.** The ConPTY host, the parser, the screen model, the transcript mirror and the view move
   from axClaude into the shared projects on this, their second use (bundle AX-6.3, B-3); axTerminal adds the shell's
   own model and nothing twice.
-- **Non-goals.** Until AT-9's window is built (designed 2026-11-25, its core built, AT-9.8): the alternate screen and programs that redraw the whole screen (vim, nano, less, more, htop, a TUI
-  over ssh); colours, mouse reporting, tabs and panes; the shell's own line editing, history recall and Tab completion
-  inside the field (AT-D5, §7); running Claude Code (axClaude's job, with its screen reader mode); elevation (start an
-  elevated terminal from Windows). None of them is an error: Ctrl+Shift+C, or `q` and Enter, get out of a full
-  screen program, whose rows are shown in the conversation as rows: the screen model keeps the alternate screen
-  apart only once a window shows it (`Screen.KeepsAlternateApart`, off until AT-9's window is built), so that such a
-  program is never hidden meanwhile.
+- **Non-goals.** Colours, mouse reporting, tabs and panes; the shell's own line editing, history recall and Tab
+  completion inside the field (AT-D5, §7); running Claude Code (axClaude's job, with its screen reader mode);
+  elevation (start an elevated terminal from Windows). A program that redraws the whole screen (edit, vim, nano,
+  less, htop, a TUI over ssh) is shown as its page by the screen view (AT-9, built 2026-11-25), which reads it and
+  sends it keys; it is not a terminal emulator with colours, a mouse or a scroll back of the program's screen.
 
 ## 3. Scenarios
 
@@ -378,7 +377,7 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
   The first menu is Session, as in axClaude, since what it holds is the shell in its folder, the thing the window
   is about; Shell takes E, S being Session's.
 - AT-6.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P (the command palette, AX-10), the control keys, Ctrl+F, F3,
-  Shift+F3, Ctrl+S, Ctrl+Plus, Ctrl+Minus, Page Up, Page Down, Ctrl+Up and Ctrl+Down with Shift, Ctrl+Space (edit mode or navigation mode in the command field, and in the terminal "Read only: there is no edit mode here", AX-8.13; in navigation mode Ctrl+Up and Ctrl+Down go by paragraph in the field, not through the history, and Enter sends nothing), Alt+F4. Window-specific (`AxTerminalKeys`): Ctrl+N, Ctrl+Shift+R,
+  Shift+F3, Ctrl+S, Ctrl+Plus, Ctrl+Minus, Page Up, Page Down, Ctrl+Up and Ctrl+Down with Shift, Ctrl+Space (edit mode or navigation mode in the command field, and in the terminal "Read only: there is no edit mode here", AX-8.13; in navigation mode Ctrl+Up and Ctrl+Down go by paragraph in the field, not through the history, and Enter sends nothing; in a full-screen program's screen view, keys to the program or reading the screen, AT-9.3), Alt+F4. Window-specific (`AxTerminalKeys`): Ctrl+N, Ctrl+Shift+R,
   Ctrl+L, Ctrl+W, Alt+1, Alt+2, Alt+3 (with Ctrl+1, Ctrl+2, Ctrl+3 as their further keys), Ctrl+Shift+C, Shift+Escape, Ctrl+R, Ctrl+Q, Ctrl+P, Ctrl+M, Ctrl+Shift+K; in
   the field Enter, Shift+Enter, Escape (Ctrl+Enter there is the bundle's main action, AX-8.10: it sends as Enter does); in the view the quick keys `i`, `o`, `h`, `1` to `6`, `p`, `s`,
   `k` with Shift, `m`, `l`, Enter, Escape, Backspace, and Ctrl+Alt with `i`, `o`, `h`, `p`, `s`, `k`. axClaude's `c`,
@@ -422,7 +421,7 @@ file). The speech of output (AT-5.3) and the texts of the notices are the rest.
   Developer → Record raw stream writes the console stream to a `.vt` file in the PtyCapture format for a fixture
   (axClaude FR-13), read back only through the redacting dump (bundle rule 6).
 
-### AT-9 The screen view of a full-screen program (designed 2026-11-25; its core built, the window not, AT-9.8)
+### AT-9 The screen view of a full-screen program (designed and built 2026-11-25: the core AT-9.8, the window AT-9.9)
 
 Decided by the maintainer on 2026-11-24 through the question tool, after a tester found Windows' `edit` unintelligible
 in axTerminal (2026-11-18): while a program holds the whole screen, axTerminal shows that screen as a page NVDA
@@ -439,20 +438,26 @@ read as `edit` still waiting for the colours' answers (to measure first, AT-9.7)
   raises that it changed; the conversation's lines are the main buffer's and are not touched. The view returns when the
   program switches back (`?1049l`) or ends.
 - AT-9.2 **What is shown.** The conversation and the field give way to one read-only text, the screen: one line per
-  row, the rows' trailing spaces left out, the box-drawing and block characters (U+2500 to U+259F) shown as spaces,
-  since NVDA would name each one ("vertical line", "full block") on every line. Its name says what it is:
-  "Screen of edit, keys go to the program".
-- AT-9.3 **Two ways to be in it.** Keys go to the program (every key, as a terminal sends it, but axTerminal's own
-  way out of the view and the bundle's F1 and Alt+F4); the caret of the text stands where the program's cursor
-  stands, so that NVDA reads the program's line as the cursor moves, which the user's own keys caused. Ctrl+Space,
-  the bundle's mode key (section 7), turns to reading the screen: the keys stay in the text,
-  the arrows and NVDA's own reading keys read the page, nothing reaches the program, and the same key goes back.
-  The status bar says which way is in force; the switch is said in two words, "Reading the screen", "Keys to edit".
+  row, no wrapping, the rows' trailing spaces left out, every character as the program drew it, the box-drawing and
+  block characters (U+2500 to U+259F) included (the maintainer's decision of 2026-11-25, section 7: NVDA names them,
+  "vertical line", as it reads, and they are where the program draws its boxes and its scroll bar). Its name says
+  what it is, "Screen of edit", the program named by the first word of the command that started it ("the program"
+  for one sent without recording); the way the keys go is the status bar's and the switch's (AT-9.3), never the
+  name's, since NVDA says a focused control's new name by itself and it would speak twice.
+- AT-9.3 **Two ways to be in it.** Keys go to the program, the edit mode (every key, as a terminal sends it, but
+  Ctrl+Space and the bundle's F1 and Alt+F4); the caret of the text stands where the program's cursor stands, so
+  that NVDA reads the program's line as the cursor moves, which the user's own keys caused. Ctrl+Space, the bundle's
+  mode key (section 7), turns to reading the screen, the navigation mode: the keys stay in the text, the arrows and
+  NVDA's own reading keys read the page, the window's commands work again, nothing reaches the program, and the same
+  key goes back, the caret to the program's cursor. The status bar's left part says which way is in force; the
+  switch is said in two words, "Reading the screen", "Keys to edit".
 - AT-9.4 **What is said by itself.** Nothing on a redraw. After a key sent to the program, the line the cursor ends on
   is read by NVDA through the caret, as in a terminal; and a marked run of a row (reverse video, or a background that
   differs from the cells on both sides of it in that row: an open menu's selected entry, a dialog's button in focus)
-  is said once when the mark moves to another row or another place, "New File, Ctrl+N" read off the run, since that
-  is where a full-screen program shows its focus. Measured on `edit` (2026-11-25): its open File menu is a box of
+  is said once when the mark moves to another row or another place, "New File, Ctrl+N" read off the run (a gap of
+  two spaces or more said as a comma's pause), since that is where a full-screen program shows its focus; a page
+  with no marked run forgets the places, so that a menu opened again says its entry again. The words are the event
+  kind ProgramSaid, not interrupting, after the rows and the caret of their frame. Measured on `edit` (2026-11-25): its open File menu is a box of
   one grey background on the screen's black, and the selected entry a green one inside it, so a background other
   than the screen's own would mark the whole menu; the current line of its text has a lighter background across the
   whole row, which marks nothing by this rule (the caret stands there). The screen model gains per cell its
@@ -474,8 +479,7 @@ read as `edit` still waiting for the colours' answers (to measure first, AT-9.7)
   does, would make it answer at once); `edit`'s menus, a dialog (Save as, Find) and its status line, opened with the keys
   and read off the screen model; `less` or `more` over a long file; a program that leaves the alternate screen by
   ending with Ctrl+C. Each becomes a fixture under `tests/fixtures` and a window script; the build follows them.
-- AT-9.8 **What is built** (2026-11-25), the pure core in `AxKit.Core/Vt`, shared with axClaude, and no window part
-  (the key that turns the view on, section 7, is the maintainer's to choose). With `KeepsAlternateApart` on, which a window turns on once it shows the page (off until then, so nothing is hidden meanwhile), `Screen` keeps the alternate buffer
+- AT-9.8 **The core as built** (2026-11-25), in `AxKit.Core/Vt`, shared with axClaude. With `KeepsAlternateApart` on, which axTerminal's model turns on for every screen it makes, since its window shows the page (off by default, so that axClaude's conversation keeps what a full-screen program draws), `Screen` keeps the alternate buffer
   apart: `?1049h` saves the cursor and clears it, `?1047h` and `?47h` switch only, `l` switches back (1049 restoring
   the cursor, 1047 clearing the alternate buffer), a reset leaves it; `Alternate` says which is in use and
   `AlternateChangedSinceFrameEnd` that it changed. While it lasts, the main buffer's rows, their lines and the
@@ -490,6 +494,32 @@ read as `edit` still waiting for the colours' answers (to measure first, AT-9.7)
   one in the unsaved-changes dialog, and the main buffer as it was after Ctrl+Q and N. Not marked: the menu bar's
   File highlighted after Escape, which stands at the row's left end (a rule for a run at the end of a row waits on
   more recordings, AT-9.7). Tested in `ScreenAlternateTests` and `ScreenPageTests`.
+- AT-9.9 **The window as built** (2026-11-25). `TerminalModel` keeps the alternate screen apart and gives its `Page`.
+  At every frame's end (`TerminalForm.Screen.cs`, from the window's pass over the transcript) the window reads the
+  page while the shell runs: a page and no view opens the view (the terminal, the field and the control area hidden,
+  the view `ScreenBox` shown with the focus, keys to the program); a page and the view replaces the rows that
+  changed (`ScreenView.Edits`, the last row first, the drawing held) and puts the caret on the cursor in keys to the
+  program, on the row and column it was on in reading the screen; no page, or the shell ended or stopped, closes the
+  view: the terminal and the field come back as they were and the focus goes back to the one of the two that had it
+  before (the field, unless the terminal had it). A notice over the view hides it and gives it back. In keys to the
+  program `ScreenBox` takes every key in its own `ProcessCmdKey`, before the window's commands: Ctrl+Space turns
+  the way (`ToggleScreenMode`, said with the event kind Changed), F1 and Alt+F4 go on to the window, a key
+  `ScreenKeys` names goes to the program as xterm sends it (the arrows, Home, End, Insert, Delete, the page keys
+  and F1 to F12 with xterm's modifier parameter; Enter, Tab, Shift+Tab, Backspace, Escape; Ctrl with a letter as its
+  control character; Alt with a letter or a digit as Escape and the character), and any other key's character
+  goes as typed (Alt with a sign as Escape and the sign); the edit control's own key, character and context menu
+  messages are dropped meanwhile. Ctrl+Alt, AltGr on many keyboards, sends the character it makes. Alt alone, which a
+  terminal sends nothing for, opens axTerminal's menu bar as ever. The question heuristic (AT-5.4) is off while the
+  view shows. Windows' console paints the main screen again when the program leaves the alternate screen (the cursor
+  home, every row with an erase to its end; recorded 2026-11-25 with PowerShell running `edit`): in the frame of
+  that switch the model does not let the rows go on the cursor homed (AT-4.4's `cls` rule), so the repaint lands on
+  the lines already there, and the shell's banner and the prompt row with the command do not come again as output.
+  A key sent at once after Escape is read with it by the console as one key with Alt, as a terminal's input is. Tested in `ScreenViewTests` (the keys; the rows, the caret and the edits; the program's name; the
+  marked run once; the recording of `edit` walked as the window walks it: one opening, one closing, "New File,
+  Ctrl+N" and "[Save]" said, each once, the text always the page's, nothing of edit in the transcript) and by the
+  window script `tests/scripts/axTerminal/14-screen-view.txt` (Windows' `edit` itself). Not done: the colour
+  questions are not answered (edit waits about four seconds before it takes keys), and a program that ends without
+  leaving the alternate screen keeps the view until the shell is restarted (both AT-9.7).
 
 ## 5. Architecture
 
@@ -509,14 +539,16 @@ src/AxTerminal.Core/      class library (net10.0): ShellLauncher (find the shell
                           snippet or the PROMPT variable, the environment), TerminalModel (on LineStore: frames to lines,
                           the prompt rows from the marks, the running state and the exit code, the exchange blocks, system
                           lines, bookmarks, the join flag, the cap; the parts of SessionModel that are not Claude's, written
-                          again against the shell fixtures rather than carved out of it), CommandHistory, TerminalSettings;
+                          again against the shell fixtures rather than carved out of it), CommandHistory, TerminalSettings,
+                          ScreenKeys and ScreenView with ScreenMarks (the screen view's keys, text and words, AT-9.9);
                           references AxKit.Core
 src/AxTerminal/           class library (net10.0-windows): AxTerminalApp (Run, Usage), TerminalForm (the window, on
                           AxKit.Forms/ConsoleForm since 2026-10-23, the console window shared with axClaude, which owns
                           the view, the field, the control area, the status bar, the pty bridge, the writes, the
                           recording, the export, find, the signals and the music; in partial files by section: the
                           hooks and the key switch, the menus and the status, the field and the sending, the process,
-                          what the model reports, New session, Switch shell and the folders), AxTerminalKeys (with
+                          what the model reports, New session, Switch shell and the folders, the screen view of a
+                          full-screen program with its text ScreenBox, AT-9.9), AxTerminalKeys (with
                           Transcript, the view's keys as data), HelpText (F1 text, the embedded guide); references
                           AxTerminal.Core, AxKit.Core, AxKit.Forms
 tests/AxTerminal.Tests/   fixtures recorded with tools/PtyCapture of powershell, cmd and bash under the launcher's command
@@ -562,7 +594,8 @@ its notes record what moved.
   `LineStore`, is the smallest cut that frees `Screen` from `SessionModel`; the terminal's own model is written
   against recorded shell sessions rather than carved out of Claude's, so that neither app's behaviour depends on the
   other's.
-- **AT-D7 No pager.** A pager takes the screen over, the one thing the window does not do; `GIT_PAGER=cat` and
+- **AT-D7 No pager.** A pager takes the screen over, and its output is then a page of the screen view (AT-9) instead
+  of lines of the transcript to find, export and read again; `GIT_PAGER=cat` and
   `GH_PAGER=cat` are the settings those two programs document for switching theirs off, and the user's profile can set
   them otherwise. Other pagers are left alone (`q` and Enter leave them).
 - **AT-D8 Ctrl+Q says what the window is doing.** On demand, from anywhere, like axClaude's Ctrl+Q for a question:
@@ -598,7 +631,7 @@ its notes record what moved.
   keys to the program is the edit mode, reading the screen the navigation mode, so one key means one thing everywhere
   (Ctrl+Shift with punctuation is AX-8.18 rule 7's, keys that work anywhere in Windows); the cost, a program that
   wants Ctrl+Space never gets it. Box-drawing characters are kept as the program drew them. A marked run is said by
-  itself, once, when it moves.
+  itself, once, when it moves. Built the same day (AT-9.9).
 
 ## 8. Status
 

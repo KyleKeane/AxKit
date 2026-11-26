@@ -152,6 +152,7 @@ internal sealed partial class TerminalForm : ConsoleForm
         _model.CommandFinished += OnCommandFinished;
         _asks.Tick += (_, _) => CheckForQuestion();
         BuildMenus();
+        SetUpScreen();
         SetStatus("Starting", CurrentDirectory);
         UpdateTitle();
         ApplyTextFont();

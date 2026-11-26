@@ -1,0 +1,63 @@
+# Workflow: Use a full-screen program
+# axTerminal, SPEC.md AT-9 (the maintainer's decisions of 2026-11-25): Windows' edit, a full-screen program, run from
+# the shell. While it holds the alternate screen its page stands in place of the terminal and the field, the keys go
+# to it as a terminal sends them, and the caret stands where its cursor stands; Ctrl+Space, the bundle's mode key,
+# turns to reading the screen and back; an open menu's selected entry and a dialog's button in focus are said once
+# by themselves; when edit ends the field comes back. edit comes with Windows 11 (System32\edit.exe, 1.2.1 when this
+# was written); edit waits about four seconds for the answers to its colour questions before it takes keys (AT-9.7).
+mkdir myproject
+file myproject\notes.txt First line of a note.
+file home\AxKit\axTerminal.json {"fontSize": 6, "window": {"x": 0, "y": 0, "width": 1600, "height": 900, "maximized": true}}
+# The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+start terminal {temp}\myproject
+expect said ♪ Ready
+
+# Goal: Open a full-screen program and type into it
+# edit's page in place of the terminal: the focus in it, its name, the caret on the line the cursor is on.
+type edit notes.txt
+keys enter
+expect said Sent
+expect focus "name":"Screen of edit"
+expect focus First line of a note.
+expect state Keys to edit
+# edit takes keys once its colour questions have gone unanswered for a few seconds.
+wait 5000
+keys end
+type  More
+expect focus First line of a note. More
+
+# Goal: Read the screen and go back to the program
+# Ctrl+Space: the keys stay in the text; Up reads the menu bar's row and nothing reaches edit.
+keys ctrl+space
+expect said ! Reading the screen
+expect state Reading the screen
+keys ctrl+home
+expect focus File
+keys ctrl+space
+expect said ! Keys to edit
+expect state Keys to edit
+expect focus First line of a note. More
+
+# Goal: Hear a menu's selected entry
+# Alt+F opens edit's File menu; its selected entry is said once, read off the screen.
+keys alt+f
+expect said New File, Ctrl+N
+keys escape
+# A key that follows Escape at once is read with it as one key with Alt, as a terminal's input is: a moment between.
+wait 1000
+
+# Goal: Leave the program and come back to the field
+# Ctrl+Q with an unsaved change: edit's dialog, its button in focus said; N leaves without saving, and the field
+# comes back with the terminal as it was.
+keys ctrl+q
+expect said [Save]
+keys n
+expect focus "name":"Command"
+expect said Done
+refuse state Keys to edit
+do Terminal
+# Nothing of edit's page in the terminal, and the console's repaint of the main screen after it brings no line again
+# (the prompt row with the command came again as output until the fix of the same day).
+refuse text File  Edit  View  Help
+refuse text > edit notes.txt

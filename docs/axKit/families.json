@@ -306,11 +306,11 @@
         },
         {
           "id": "program-said",
-          "when": "The program announced something of its own: Claude's bracketed rows such as accept edits on, its detailed view on or off, the conversation cleared.",
+          "when": "The program announced something of its own: Claude's bracketed rows such as accept edits on, its detailed view on or off, the conversation cleared; a full-screen program's selected entry or button in focus, when it moved.",
           "starts": ["program"],
           "sounds": [],
-          "words": "The row, or 'Conversation cleared', 'Claude's detailed view is on'.",
-          "apps": "axClaude."
+          "words": "The row, or 'Conversation cleared', 'Claude's detailed view is on'; in axTerminal's screen view the marked entry, 'New File, Ctrl+N'.",
+          "apps": "axClaude, axTerminal."
         },
         {
           "id": "status-changed",

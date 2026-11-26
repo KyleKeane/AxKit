@@ -12,6 +12,9 @@ internal sealed partial class TerminalForm
     {
         UpdateTitle();
 
+        // AT-9: a full-screen program's page, in place of the terminal while it holds the screen (TerminalForm.Screen.cs).
+        FollowScreen();
+
         // One pass over the transcript for the tick (AT-5.2) and the spoken output (AT-5.3).
         var arrival = _arrivals.Update(_model.Lines, _model.Running, _settings.OutputSpeech == OutputSpeechMode.All);
         if (_settings.ClickOnNewLine && arrival.NewLine)
@@ -162,7 +165,7 @@ internal sealed partial class TerminalForm
     /// </summary>
     private void CheckForQuestion()
     {
-        if (!_settings.AnnounceQuestions || !ProcessRunning || !_model.Running || Environment.TickCount64 - LastOutputTick < AsksQuietMs)
+        if (!_settings.AnnounceQuestions || !ProcessRunning || !_model.Running || ScreenShown || Environment.TickCount64 - LastOutputTick < AsksQuietMs)
         {
             return;
         }

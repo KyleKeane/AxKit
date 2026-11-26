@@ -47,6 +47,13 @@ public static class HelpText
           Backspace goes back to the line you jumped from.
           Shift with the arrows selects, and a copy says "Copied".
           Escape clears the selection, or else goes to the command field.
+
+        ## A full-screen program
+          While a program such as Windows' edit takes the whole screen, its screen is shown in place of the terminal and the field, "Screen of edit", and the field comes back when it ends.
+          {BundleKeys.Text(BundleKeys.ToggleMode)} turns between keys to the program and reading the screen; the status bar says which, "Keys to edit" or "Reading the screen".
+          Keys to the program: every key goes to the program as a terminal sends it, but {BundleKeys.Text(BundleKeys.ToggleMode)}, {BundleKeys.Text(BundleKeys.Shortcuts)} and the key that closes the window; the caret stands on the program's cursor. Alt alone opens axTerminal's menus.
+          Reading the screen: the keys read the screen, and axTerminal's keys work; nothing reaches the program.
+          An open menu's selected entry, or a dialog's button in focus, is said once when it moves.
         """ + BundleHelp.NoticesSection("axTerminal", "the terminal");
 
     public static string UserGuide() => EmbeddedText.Read(Assembly.GetExecutingAssembly(), "UserGuide.md", "docs/axTerminal/user-guide.md");

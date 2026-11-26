@@ -7,8 +7,9 @@ public sealed record MarkedRun(int Row, int Start, int Length, string Text);
 
 /// <summary>
 /// The alternate screen as a page to read (docs/axTerminal/SPEC.md AT-9.2, AT-9.4), taken whole at one moment, a
-/// frame's end: one text per row, its trailing spaces left out and the box-drawing and block characters (U+2500 to
-/// U+259F) as spaces, since a screen reader would name each one; the cursor's row and column; and the marked runs.
+/// frame's end: one text per row, its trailing spaces left out and every character as the program drew it, the
+/// box-drawing and block characters too (the maintainer's decision of 2026-11-25; until then they were spaces); the
+/// cursor's row and column; and the marked runs.
 /// A run is cells of one background (reverse video counted in it) between cells of another. It is marked when the
 /// cells on both sides of it share one background and that background is not the page's own, the one most cells
 /// have: an entry selected inside an open menu, a button in focus inside a dialog, and not the menu or the dialog
@@ -93,14 +94,14 @@ public sealed record ScreenPage(IReadOnlyList<string> Rows, int CursorRow, int C
         }
     }
 
-    /// <summary>The cells from one column to another as text: a blank cell a space, the second half of a wide character nothing, a box-drawing or block character a space.</summary>
+    /// <summary>The cells from one column to another as text: a blank cell a space, the second half of a wide character nothing, every other cell as the program drew it, box-drawing and block characters included.</summary>
     private static string Text(Row row, int from, int toExclusive)
     {
         var sb = new StringBuilder(toExclusive - from);
         for (var x = from; x < toExclusive; x++)
         {
             var cell = row.Cells[x];
-            if (cell is null || (cell[0] >= '─' && cell[0] <= '▟'))
+            if (cell is null)
             {
                 sb.Append(' ');
             }

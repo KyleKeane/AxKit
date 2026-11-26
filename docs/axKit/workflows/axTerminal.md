@@ -474,3 +474,37 @@ You hear the sound Ready.
 2. Press Alt+3 (Latest output; Navigation menu).
     You hear: Output 1 heading level 1.
 3. Press Down twice.
+
+## Use a full-screen program
+
+Starts with: Open axTerminal with the folder myproject.
+
+### Open a full-screen program and type into it
+
+1. Type "edit notes.txt".
+2. Press Enter.
+    You hear: Sent.
+3. Press End.
+4. Type "More".
+
+### Read the screen and go back to the program
+
+1. Press Ctrl+Space.
+    You hear: Reading the screen.
+2. Press Ctrl+Home.
+3. Press Ctrl+Space.
+    You hear: Keys to edit.
+
+### Hear a menu's selected entry
+
+1. Press Alt+F.
+    You hear: New File, Ctrl+N.
+2. Press Escape.
+
+### Leave the program and come back to the field
+
+1. Press Ctrl+Q (What is running; Actions menu).
+    You hear: [Save].
+2. Press N.
+    You hear: Done.
+3. Press Alt+2 (Terminal; Navigation menu).

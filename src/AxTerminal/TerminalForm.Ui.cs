@@ -159,7 +159,9 @@ internal sealed partial class TerminalForm
     /// <summary>The status bar (AT-2.3): the state on the left, the shell's last prompt (or the directory before the first) on the right.</summary>
     protected override void UpdateStatus()
     {
-        var state = !ProcessRunning ? "Shell ended"
+        // AT-9.3: while a program holds the screen, which way the keys go.
+        var state = ScreenShown ? ScreenModeWords
+            : !ProcessRunning ? "Shell ended"
             : !_model.HasMarks ? string.Empty
             : _model.Running ? $"Running: {_model.RunningCommand}"
             : _model.Prompt is null ? "Starting"

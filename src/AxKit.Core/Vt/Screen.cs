@@ -144,9 +144,10 @@ public sealed class Screen
     public bool Alternate { get; private set; }
 
     /// <summary>
-    /// Whether the alternate screen is kept apart at all (AT-9.1): off until a window shows it (axTerminal's screen view,
-    /// not built yet, 2026-11-25), so that a full-screen program writes on the main rows as it always did and stays in
-    /// the conversation, garbled but there, rather than vanishing while nothing shows the page. The tests turn it on.
+    /// Whether the alternate screen is kept apart at all (AT-9.1): on where a window shows the page (axTerminal's model
+    /// turns it on for its screen view, AT-9.9), off by default (axClaude), so that a full-screen program writes on the
+    /// main rows as it always did and stays in the conversation, garbled but there, rather than vanishing where nothing
+    /// shows the page.
     /// </summary>
     public bool KeepsAlternateApart { get; set; }
 

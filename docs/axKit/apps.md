@@ -143,7 +143,7 @@ The keys here are the defaults; a user's own `app-keys.json` may give an app ano
 - Code: `src/AxTerminal` (the window), `src/AxTerminal.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxTerminal.Tests`.
 - Documents: `docs/axTerminal/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axTerminal/`, 13 scripts (their workflows are in `docs/axKit/workflows/axTerminal.md`).
+- Automated checks: `tests/scripts/axTerminal/`, 14 scripts (their workflows are in `docs/axKit/workflows/axTerminal.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axTerminal.ps1`, or `run.ps1 -App terminal`.
 
 ### axGIT

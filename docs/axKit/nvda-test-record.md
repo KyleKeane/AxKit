@@ -757,6 +757,24 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: axTerminal's screen view of a full-screen program, by ear (built 2026-11-25)
+
+Built on the maintainer's decisions of 2026-11-25 (docs/axTerminal/SPEC.md AT-9.9) and passing its unit tests and
+the window script `tests/scripts/axTerminal/14-screen-view.txt` on the runner's desktop, where nothing is spoken;
+owed a pass with NVDA listening, `docs/axTerminal/nvda-test-plan.md` section 5, with Windows' `edit`:
+
+1. The opening: the text's sound and "Screen of edit" with NVDA's words for a read-only text and the cursor's line, after "Sent", and nothing
+   of the menu bar or the scroll bar by itself; how NVDA reads the box characters ("vertical line") on each line,
+   kept as drawn by the maintainer's decision, and whether that is bearable in a line read often.
+2. Down and Up in keys to edit: NVDA reads the line edit's cursor lands on, not the one it left. The caret follows
+   the cursor at the frame's end (the cursor shown again, or 100 ms of quiet); whether NVDA's wait after a caret key
+   is long enough for that is heard only with NVDA.
+3. A menu's entry and a dialog's button: "New File, Ctrl+N" and "[Save]" heard once, after NVDA's own reading of the
+   caret's line and not cut by it, or cutting it (they are not interrupting); whether "[Save]" reads well with its
+   brackets.
+4. Ctrl+Space: "Reading the screen" and "Keys to edit" heard each time, and F8 saying the same; the menu bar on Alt
+   alone, F1's section, and the way back to the field with "Done" after edit ends.
+
 ## Owed: what the closed items of 2026-11-25 left for the ear (the backlog cleared at the maintainer's word)
 
 Each was built and passed its scripts; its item was closed so that the priorities list holds only work to finish,

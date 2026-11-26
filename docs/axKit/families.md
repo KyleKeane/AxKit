@@ -241,11 +241,11 @@ Something came in that you did not ask for at that moment: a line from the progr
   - Heard: no sound.
   - Said: The lines, joined into one announcement that does not interrupt.
   - In: axClaude (Speak replies) and axTerminal (Speak output).
-- `program-said`: The program announced something of its own: Claude's bracketed rows such as accept edits on, its detailed view on or off, the conversation cleared.
+- `program-said`: The program announced something of its own: Claude's bracketed rows such as accept edits on, its detailed view on or off, the conversation cleared; a full-screen program's selected entry or button in focus, when it moved.
   - Started by: `program`.
   - Heard: no sound.
-  - Said: The row, or 'Conversation cleared', 'Claude's detailed view is on'.
-  - In: axClaude.
+  - Said: The row, or 'Conversation cleared', 'Claude's detailed view is on'; in axTerminal's screen view the marked entry, 'New File, Ctrl+N'.
+  - In: axClaude, axTerminal.
 - `status-changed`: The status bar or the title followed the program: working, waiting for your answer, 2 messages waiting, the mode line, the shell's folder.
   - Started by: `program`, `timer`.
   - Heard: no sound.
@@ -730,7 +730,7 @@ Every kind of event that has words or a change on the screen and no sound of its
 
 - Something arrived:
   - `reply-spoken`: Lines of a reply or of a command's output became final and are spoken.
-  - `program-said`: The program announced something of its own: Claude's bracketed rows such as accept edits on, its detailed view on or off, the conversation cleared.
+  - `program-said`: The program announced something of its own: Claude's bracketed rows such as accept edits on, its detailed view on or off, the conversation cleared; a full-screen program's selected entry or button in focus, when it moved.
   - `status-changed`: The status bar or the title followed the program: working, waiting for your answer, 2 messages waiting, the mode line, the shell's folder.
   - `clipboard-entry`: Something was copied in any program while axClip keeps the history.
   - `changed-on-disk`: Another program changed the file or the folder the window shows. axKit looks when the window comes to the front.

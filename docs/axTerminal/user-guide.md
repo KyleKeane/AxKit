@@ -67,6 +67,19 @@ The terminal is an ordinary read-only text: arrows, Home and End, Page Up and Pa
 
 Options, Speech, Speak output: all lines, the default, reads the lines as they arrive, joined into one utterance for each third of a second. Speak output: none leaves only the ticks, and you read the output when you want.
 
+## A full-screen program
+
+Some programs take the whole screen: Windows' `edit`, an editor such as vim or nano, a pager such as `less`, a monitor. While one does, its screen stands in place of the terminal and the field, as one text called "Screen of edit" (the program's name), with the focus in it. Each row of the screen is a line of the text, drawn as the program drew it, its box and scroll bar characters too. When the program ends, or leaves its screen, the terminal and the field come back as they were, and the focus goes back to where it was. Nothing of the program's screen enters the terminal, its export or Find.
+
+The text has two ways to be in, and Ctrl+Space, the key that switches between editing and navigating in every axKit window, turns between them. The status bar says which one you are in.
+
+- Keys to the program (the status bar says "Keys to edit"): every key goes to the program, as a terminal sends it, except Ctrl+Space, F1 and Alt+F4. The caret stands where the program's cursor stands, so NVDA reads the line you are on as you move with the program's own keys. Alt alone still opens axTerminal's menu bar; Alt with a letter goes to the program (Alt+F opens edit's File menu).
+- Reading the screen (the status bar says "Reading the screen"): the keys stay in the text. Read it with the arrows and NVDA's reading keys; nothing reaches the program, and axTerminal's own keys work again. Ctrl+Space goes back to keys to the program, with the caret on the program's cursor.
+
+The switch is said in two words, "Reading the screen" or "Keys to edit". Nothing else is said when the program redraws, except one thing: where the program marks what is selected (an open menu's selected entry, a dialog's button that has the focus), that entry is said once, when it moves, "New File, Ctrl+N". Colours are not shown or said, and the mouse is not passed on.
+
+Windows' `edit` waits a few seconds after it starts before it takes keys, as it waits for answers to questions about colours that axTerminal does not give. If a program ends without giving its screen back, press Ctrl+Space and restart the shell (Ctrl+Shift+R).
+
 ## The shell
 
 Session, New session (Ctrl+N) opens a notice with the folder, a Choose folder button, the shells (PowerShell 7, Windows PowerShell, Command Prompt, Git Bash, or Custom with a command line of your own) and Start session. Starting ends the current shell and starts the new one in the folder; the terminal is cleared. Session, Switch shell lists the shells: choosing one starts it in the same folder and keeps the text. The title names the shell you are in, and Ctrl+Q says it while nothing runs. Open recent folder does what New session does for a folder you had before. Restart shell (Ctrl+Shift+R) starts the same shell again in its current folder and keeps the text. While a command runs, all of them ask first.

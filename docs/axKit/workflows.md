@@ -1034,6 +1034,11 @@ Steps and keys: `docs/axKit/workflows/axTerminal.md` (in Claude's working folder
 11. **Take a command another window hands over**
     - Read a handed command in the field before sending it
     - Send the handed command yourself
+12. **Use a full-screen program**
+    - Open a full-screen program and type into it
+    - Read the screen and go back to the program
+    - Hear a menu's selected entry
+    - Leave the program and come back to the field
 
 ## AI tools
 
