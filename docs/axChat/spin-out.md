@@ -112,6 +112,10 @@ alone. One code, two windows for a while, never two copies.
    opened from axChat by a key.
 6. Does axHelp's conversation (still on the screen, L29) move with the stream to axChat's Claude Code endpoint?
 
+7. Beside axChat, if the sitting has time: a review of the workflow graph (`docs/axKit/workflow-graph.md`, its
+   decisions settled 2026-11-26) with its first graph file and its list of goals over the bounds, before its steps 4
+   and 5 (the scripts checked for where they land, the gate on map changes) are built.
+
 ## 8. Files to read for the sitting
 
 `docs/axChat/SPEC.md`; `docs/axClaude/stream-mode.md` (SM-3, the seam); `docs/axClaude/stream-equivalence.md`;
