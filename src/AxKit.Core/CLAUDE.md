@@ -18,7 +18,7 @@ The notes of each piece are in `src/AxKit.Core/notes`, one file per kind (split 
 ## Tests
 
 Every piece is tested in `tests/AxKit.Tests`, one `<Piece>Tests.cs` file per piece (`VtScreenTests`,
-`VtScreenOperationTests` and `ScreenMarkTests` for the screen); the transcript pieces are tested further in
+`VtScreenOperationTests`, `ScreenMarkTests`, `ScreenAlternateTests` and `ScreenPageTests` for the screen); the transcript pieces are tested further in
 `tests/AxClaude.Tests`, where the recorded fixtures drive them. The same project holds the bundle's own checks of the
 sources: `LayoutTests` (the project references point one way, M2), `InventoryTests` (every app in every place it must
 be), `KeyTests` (no window key equals a bundle key, AX-8.4), `ListTests`, `MenuTests`, `CheckBoxTests`, `CommandMarkTests` (every `new Command` states its `Mark`, and the act commands that start a program or reach past the window stay act, docs/axKit/mcp.md MC-D7) and `ReleaseWorkflowTests` (the workflows' shape).

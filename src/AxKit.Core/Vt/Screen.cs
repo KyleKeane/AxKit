@@ -3,14 +3,35 @@ using AxKit.Core.Transcript;
 
 namespace AxKit.Core.Vt;
 
-internal sealed class Row(int columns)
+internal sealed class Row
 {
     /// <summary>Marks the second cell of a two-cell wide character.</summary>
     public const string Continuation = "\0";
 
-    public readonly string?[] Cells = new string?[columns];
+    public readonly string?[] Cells;
+
+    /// <summary>
+    /// Each cell's background as one number (<see cref="Screen"/>'s <c>Background</c> codes), on the alternate
+    /// screen's rows alone: null on the main screen's, so that the conversation's path pays nothing for it
+    /// (docs/axTerminal/SPEC.md AT-9.4).
+    /// </summary>
+    public readonly int[]? Backgrounds;
+
     public Line? Line;
     public bool Dirty;
+
+    public Row(int columns)
+    {
+        Cells = new string?[columns];
+    }
+
+    /// <summary>A row of the alternate screen, every cell of the given background.</summary>
+    public Row(int columns, int background)
+    {
+        Cells = new string?[columns];
+        Backgrounds = new int[columns];
+        Array.Fill(Backgrounds, background);
+    }
 
     public string Text()
     {
@@ -30,11 +51,16 @@ internal sealed class Row(int columns)
         return sb.ToString().TrimEnd();
     }
 
-    public void Clear(int from, int toExclusive)
+    /// <summary>Blanks the cells; on the alternate screen they take the background given, the one in force, as a terminal's erase does.</summary>
+    public void Clear(int from, int toExclusive, int background)
     {
         for (var i = Math.Max(0, from); i < Math.Min(Cells.Length, toExclusive); i++)
         {
             Cells[i] = null;
+            if (Backgrounds is not null)
+            {
+                Backgrounds[i] = background;
+            }
         }
 
         Dirty = true;
@@ -50,8 +76,23 @@ public sealed class Screen
     // One shared string per printable ASCII character: a repaint prints thousands of cells per frame.
     private static readonly string[] Ascii = Enumerable.Range(0, 128).Select(c => ((char)c).ToString()).ToArray();
 
+    // A background as one number (docs/axTerminal/SPEC.md AT-9.4): 0 the default; a colour of the 256 palette its
+    // index with PaletteBit; a colour of 24 bits its red, green and blue with RgbBit; reverse video adds ReverseBit.
+    private const int PaletteBit = 0x100;
+    private const int RgbBit = 0x1000000;
+    internal const int ReverseBit = 0x2000000;
+
     private readonly LineStore _store;
-    private readonly Row[] _rows;
+
+    /// <summary>The main screen's rows, the ones with transcript lines.</summary>
+    private readonly Row[] _main;
+
+    /// <summary>The alternate screen's rows (AT-9.1), made the first time a program switches to it; they never get a line.</summary>
+    private Row[]? _alternate;
+
+    /// <summary>The rows the program writes on: the main screen's or, while <see cref="Alternate"/>, the alternate one's.</summary>
+    private Row[] _rows;
+
     private int _cx;
     private int _cy;
     private int _savedX;
@@ -59,6 +100,14 @@ public sealed class Screen
     private int _top;
     private int _bottom;
     private bool _pendingWrap;
+
+    // The pen's background and reverse video, from SGR (ESC[...m); written into the cells of the alternate screen only.
+    private int _background;
+    private bool _reverse;
+
+    // The main screen's cursor while the alternate one is in use: what CursorRow answers, and where ?1049l returns.
+    private int _mainX;
+    private int _mainY;
 
     public Screen(int columns, int rows, LineStore store)
     {
@@ -70,18 +119,51 @@ public sealed class Screen
         Columns = columns;
         Rows = rows;
         _store = store;
-        _rows = new Row[rows];
+        _main = new Row[rows];
         for (var i = 0; i < rows; i++)
         {
-            _rows[i] = new Row(columns);
+            _main[i] = new Row(columns);
         }
 
+        _rows = _main;
         _bottom = rows - 1;
     }
 
     public int Columns { get; }
     public int Rows { get; }
-    public int CursorRow => _cy;
+
+    /// <summary>The main screen's cursor row, the row of the transcript's lines; while <see cref="Alternate"/>, where it stood when the program switched.</summary>
+    public int CursorRow => Alternate ? _mainY : _cy;
+
+    /// <summary>
+    /// The program writes on the alternate screen (<c>ESC[?1049h</c>, <c>?1047h</c>, <c>?47h</c>; docs/axTerminal/SPEC.md
+    /// AT-9.1): a full-screen program. The main screen's rows and their lines stay as they were until it switches back;
+    /// what is written meanwhile is read with <see cref="ScreenPage"/>, and never reaches the transcript (AT-9.6). The
+    /// cursor homed and the screen erased are not raised while it lasts, since they speak of the main screen.
+    /// </summary>
+    public bool Alternate { get; private set; }
+
+    /// <summary>
+    /// Whether the alternate screen is kept apart at all (AT-9.1): off until a window shows it (axTerminal's screen view,
+    /// not built yet, 2026-11-25), so that a full-screen program writes on the main rows as it always did and stays in
+    /// the conversation, garbled but there, rather than vanishing while nothing shows the page. The tests turn it on.
+    /// </summary>
+    public bool KeepsAlternateApart { get; set; }
+
+    /// <summary>The program switched to the alternate screen or back since the last frame ended (<c>ESC[?25h</c>), so that the frame end knows the view changes.</summary>
+    public bool AlternateChangedSinceFrameEnd { get; private set; }
+
+    /// <summary>The alternate screen's rows while it is in use, for <see cref="ScreenPage"/>; null otherwise.</summary>
+    internal Row[]? AlternateRows => Alternate ? _rows : null;
+
+    /// <summary>The cursor where the program writes, row and column, on whichever screen is in use.</summary>
+    internal (int Row, int Column) WritingCursor => (_cy, _cx);
+
+    /// <summary>A cell's number for the pen in force (<see cref="Row.Backgrounds"/>).</summary>
+    private int PenCell => _reverse ? _background | ReverseBit : _background;
+
+    /// <summary>A new blank row for the screen in use: on the alternate screen with its backgrounds, of the pen's background.</summary>
+    private Row NewRow() => Alternate ? new Row(Columns, _background) : new Row(Columns);
 
     /// <summary>The cursor was shown again (<c>ESC[?25h</c>): the frame is complete.</summary>
     public event Action? FrameEnd;
@@ -115,14 +197,15 @@ public sealed class Screen
     /// <summary>The whole screen was erased (<c>ESC[2J</c>, <c>ESC[3J</c>) since the last frame ended.</summary>
     public bool ClearedSinceFrameEnd { get; private set; }
 
-    public Line? LineAt(int row) => _rows[row].Line;
+    /// <summary>The line of a row of the main screen (the alternate one's rows have none).</summary>
+    public Line? LineAt(int row) => _main[row].Line;
 
     /// <summary>The row the line is on now, or -1 when it is not on the screen (scrolled off, let go, or never a row's): a model that keeps a line from an earlier frame finds its row again by identity, since the rows move as the screen scrolls (docs/axTerminal/SPEC.md AT-4.2).</summary>
     public int RowOf(Line line)
     {
         for (var r = 0; r < Rows; r++)
         {
-            if (ReferenceEquals(_rows[r].Line, line))
+            if (ReferenceEquals(_main[r].Line, line))
             {
                 return r;
             }
@@ -135,7 +218,7 @@ public sealed class Screen
     public Line EnsureLine(int row)
     {
         EnsureLines(row);
-        return _rows[row].Line!;
+        return _main[row].Line!;
     }
 
     /// <summary>
@@ -144,7 +227,7 @@ public sealed class Screen
     /// </summary>
     public void PullRowText()
     {
-        foreach (var row in _rows)
+        foreach (var row in _main)
         {
             if (row.Line is { } line && row.Dirty)
             {
@@ -187,7 +270,11 @@ public sealed class Screen
                 LineFeed();
             }
 
-            EnsureLines(_cy);
+            if (!Alternate)
+            {
+                EnsureLines(_cy);
+            }
+
             var row = _rows[_cy];
             ClearCell(row, _cx);
             row.Cells[_cx] = s;
@@ -195,6 +282,15 @@ public sealed class Screen
             {
                 ClearCell(row, _cx + 1);
                 row.Cells[_cx + 1] = Row.Continuation;
+            }
+
+            if (row.Backgrounds is { } backgrounds)
+            {
+                backgrounds[_cx] = PenCell;
+                if (width == 2)
+                {
+                    backgrounds[_cx + 1] = PenCell;
+                }
             }
 
             row.Dirty = true;
@@ -285,11 +381,24 @@ public sealed class Screen
         var values = ParseParameters(isPrivate ? parameters.AsSpan(1) : parameters.AsSpan());
         if (isPrivate)
         {
-            // Only the cursor visibility mode matters: ESC[?25h ends a frame. Every other private mode is ignored.
+            // Two private modes matter: the alternate screen (AT-9.1), and ESC[?25h, which ends a frame. Every other
+            // private mode is ignored.
+            if (parameters[0] == '?' && final is 'h' or 'l')
+            {
+                foreach (var mode in values)
+                {
+                    if (mode is 1049 or 1047 or 47 && KeepsAlternateApart)
+                    {
+                        SwitchScreen(mode, final == 'h');
+                    }
+                }
+            }
+
             if (parameters[0] == '?' && final == 'h' && values.Contains(25))
             {
                 FrameEnd?.Invoke();
                 ClearedSinceFrameEnd = false;
+                AlternateChangedSinceFrameEnd = false;
             }
 
             return;
@@ -300,6 +409,9 @@ public sealed class Screen
 
         switch (final)
         {
+            case 'm':
+                SelectGraphicRendition(parameters);
+                break;
             case 'A':
                 MoveCursor(_cx, _cy - P(0, 1));
                 break;
@@ -325,7 +437,7 @@ public sealed class Screen
             case 'H':
             case 'f':
                 MoveCursor(P(1, 1) - 1, P(0, 1) - 1);
-                if (_cx == 0 && _cy == 0)
+                if (_cx == 0 && _cy == 0 && !Alternate)
                 {
                     Homed?.Invoke();
                 }
@@ -341,7 +453,7 @@ public sealed class Screen
                 EraseLine(first);
                 break;
             case 'X':
-                _rows[_cy].Clear(_cx, _cx + P(0, 1));
+                _rows[_cy].Clear(_cx, _cx + P(0, 1), _background);
                 break;
             case '@':
                 InsertCells(P(0, 1));
@@ -466,16 +578,205 @@ public sealed class Screen
     /// <summary><c>ESC c</c> and <c>ESC[!p</c>: the screen as at the start. A model that keeps what was on screen lets the rows go first, as for an erase (<see cref="Cleared"/>; until 2026-10-23 a reset cleared the rows without the event).</summary>
     private void Reset()
     {
+        // A reset leaves the alternate screen first, as xterm's does, and drops the pen.
+        if (Alternate)
+        {
+            SwitchScreen(47, false);
+        }
+
+        _background = 0;
+        _reverse = false;
         Cleared?.Invoke();
         foreach (var row in _rows)
         {
-            row.Clear(0, Columns);
+            row.Clear(0, Columns, 0);
         }
 
         _top = 0;
         _bottom = Rows - 1;
         MoveCursor(0, 0);
         ClearedSinceFrameEnd = true;
+    }
+
+    /// <summary>
+    /// The alternate screen on or off (AT-9.1), as xterm does it: 1049 saves the main screen's cursor and clears the
+    /// alternate screen on the way in and puts the cursor back on the way out; 1047 clears the alternate screen on the
+    /// way out; 47 only switches. A switch to the screen already in use does nothing.
+    /// </summary>
+    private void SwitchScreen(int mode, bool on)
+    {
+        if (on == Alternate)
+        {
+            return;
+        }
+
+        if (on)
+        {
+            _mainX = _cx;
+            _mainY = _cy;
+            if (_alternate is null)
+            {
+                _alternate = new Row[Rows];
+                for (var i = 0; i < Rows; i++)
+                {
+                    _alternate[i] = new Row(Columns, 0);
+                }
+            }
+            else if (mode == 1049)
+            {
+                foreach (var row in _alternate)
+                {
+                    row.Clear(0, Columns, _background);
+                }
+            }
+
+            _rows = _alternate;
+            Alternate = true;
+        }
+        else
+        {
+            if (mode == 1047)
+            {
+                foreach (var row in _rows)
+                {
+                    row.Clear(0, Columns, _background);
+                }
+            }
+
+            _rows = _main;
+            Alternate = false;
+            if (mode == 1049)
+            {
+                MoveCursor(_mainX, _mainY);
+            }
+        }
+
+        AlternateChangedSinceFrameEnd = true;
+    }
+
+    /// <summary>
+    /// SGR (<c>ESC[...m</c>): only what makes a cell's background (AT-9.4), the background colour and reverse video;
+    /// every other attribute and the foreground are read past. A group with colons is one attribute with its
+    /// sub-parameters (<c>48:2::r:g:b</c>, <c>4:3</c>); <c>38</c> and <c>48</c> with semicolons take the groups after
+    /// them. Nothing is allocated: the parameters are read in place.
+    /// </summary>
+    private void SelectGraphicRendition(string parameters)
+    {
+        Span<int> group = stackalloc int[6];
+        var at = 0;
+        while (at <= parameters.Length)
+        {
+            var count = NextGroup(parameters, ref at, group);
+            var code = group[0];
+            if (code is 38 or 48)
+            {
+                int colour;
+                if (count > 1)
+                {
+                    colour = ExtendedColour(group[1..count]);
+                }
+                else
+                {
+                    var kind = NextValue(parameters, ref at);
+                    colour = kind switch
+                    {
+                        5 => PaletteBit | Math.Min(255, NextValue(parameters, ref at)),
+                        2 => Rgb(NextValue(parameters, ref at), NextValue(parameters, ref at), NextValue(parameters, ref at)),
+                        _ => 0,
+                    };
+                }
+
+                if (code == 48)
+                {
+                    _background = colour;
+                }
+
+                continue;
+            }
+
+            if (count > 1)
+            {
+                continue; // a sub-parameter form of another attribute, such as 4:3, the curly underline
+            }
+
+            switch (code)
+            {
+                case 0:
+                    _background = 0;
+                    _reverse = false;
+                    break;
+                case 7:
+                    _reverse = true;
+                    break;
+                case 27:
+                    _reverse = false;
+                    break;
+                case 49:
+                    _background = 0;
+                    break;
+                case >= 40 and <= 47:
+                    _background = PaletteBit | (code - 40);
+                    break;
+                case >= 100 and <= 107:
+                    _background = PaletteBit | (code - 100 + 8);
+                    break;
+            }
+        }
+    }
+
+    /// <summary>The colour of <c>38:...</c> or <c>48:...</c>: <c>5:n</c>, <c>2:r:g:b</c> or <c>2:space:r:g:b</c>.</summary>
+    private static int ExtendedColour(ReadOnlySpan<int> rest) => rest switch
+    {
+        [5, var index, ..] => PaletteBit | Math.Min(255, index),
+        [2, .., var r, var g, var b] => Rgb(r, g, b),
+        _ => 0,
+    };
+
+    private static int Rgb(int r, int g, int b) => RgbBit | (Math.Min(255, r) << 16) | (Math.Min(255, g) << 8) | Math.Min(255, b);
+
+    /// <summary>One group of SGR's parameters from <paramref name="at"/> to the next semicolon, its colon-separated values into <paramref name="values"/> (an empty one is 0); the count of them. Past the end, <paramref name="at"/> is beyond the text.</summary>
+    private static int NextGroup(string text, ref int at, Span<int> values)
+    {
+        var count = 0;
+        var current = 0;
+        while (at < text.Length && text[at] != ';')
+        {
+            var c = text[at++];
+            if (c == ':')
+            {
+                if (count < values.Length)
+                {
+                    values[count++] = current;
+                }
+
+                current = 0;
+            }
+            else if (c >= '0' && c <= '9')
+            {
+                current = Math.Min(65535, current * 10 + (c - '0'));
+            }
+        }
+
+        if (count < values.Length)
+        {
+            values[count++] = current;
+        }
+
+        at++; // past the semicolon, or past the end
+        return count;
+    }
+
+    /// <summary>The first value of the next group, or 0 past the end.</summary>
+    private static int NextValue(string text, ref int at)
+    {
+        if (at > text.Length)
+        {
+            return 0;
+        }
+
+        Span<int> one = stackalloc int[1];
+        NextGroup(text, ref at, one);
+        return one[0];
     }
 
     private void SetScrollRegion(int top, int bottom)
@@ -496,26 +797,37 @@ public sealed class Screen
         switch (mode)
         {
             case 0:
-                _rows[_cy].Clear(_cx, Columns);
+                _rows[_cy].Clear(_cx, Columns, _background);
                 for (var r = _cy + 1; r < Rows; r++)
                 {
-                    _rows[r].Clear(0, Columns);
+                    _rows[r].Clear(0, Columns, _background);
                 }
 
                 break;
             case 1:
                 for (var r = 0; r < _cy; r++)
                 {
-                    _rows[r].Clear(0, Columns);
+                    _rows[r].Clear(0, Columns, _background);
                 }
 
-                _rows[_cy].Clear(0, _cx + 1);
+                _rows[_cy].Clear(0, _cx + 1, _background);
                 break;
             default:
+                if (Alternate)
+                {
+                    // The alternate screen erased: nothing of the main screen's, so nothing to raise (AT-9.1).
+                    foreach (var row in _rows)
+                    {
+                        row.Clear(0, Columns, _background);
+                    }
+
+                    break;
+                }
+
                 Cleared?.Invoke();
                 foreach (var row in _rows)
                 {
-                    row.Clear(0, Columns);
+                    row.Clear(0, Columns, _background);
                 }
 
                 ClearedSinceFrameEnd = true;
@@ -532,7 +844,7 @@ public sealed class Screen
     /// </summary>
     public void DetachRows()
     {
-        foreach (var row in _rows)
+        foreach (var row in _main)
         {
             if (row.Line is { } line)
             {
@@ -541,7 +853,7 @@ public sealed class Screen
                 row.Line = null;
             }
 
-            row.Clear(0, Columns);
+            row.Clear(0, Columns, 0);
             row.Dirty = false;
         }
     }
@@ -552,13 +864,13 @@ public sealed class Screen
         switch (mode)
         {
             case 0:
-                row.Clear(_cx, Columns);
+                row.Clear(_cx, Columns, _background);
                 break;
             case 1:
-                row.Clear(0, _cx + 1);
+                row.Clear(0, _cx + 1, _background);
                 break;
             default:
-                row.Clear(0, Columns);
+                row.Clear(0, Columns, _background);
                 break;
         }
     }
@@ -570,9 +882,13 @@ public sealed class Screen
         for (var x = Columns - 1; x >= _cx + count; x--)
         {
             row.Cells[x] = row.Cells[x - count];
+            if (row.Backgrounds is { } backgrounds)
+            {
+                backgrounds[x] = backgrounds[x - count];
+            }
         }
 
-        row.Clear(_cx, _cx + count);
+        row.Clear(_cx, _cx + count, _background);
     }
 
     private void DeleteCells(int count)
@@ -582,9 +898,13 @@ public sealed class Screen
         for (var x = _cx; x < Columns - count; x++)
         {
             row.Cells[x] = row.Cells[x + count];
+            if (row.Backgrounds is { } backgrounds)
+            {
+                backgrounds[x] = backgrounds[x + count];
+            }
         }
 
-        row.Clear(Columns - count, Columns);
+        row.Clear(Columns - count, Columns, _background);
     }
 
     private void InsertLines(int count)
@@ -603,7 +923,7 @@ public sealed class Screen
                 _rows[r] = _rows[r - 1];
             }
 
-            _rows[_cy] = new Row(Columns);
+            _rows[_cy] = NewRow();
         }
 
         _cx = 0;
@@ -626,7 +946,7 @@ public sealed class Screen
                 _rows[r] = _rows[r + 1];
             }
 
-            _rows[_bottom] = new Row(Columns);
+            _rows[_bottom] = NewRow();
         }
 
         _cx = 0;
@@ -672,7 +992,7 @@ public sealed class Screen
                 _rows[r] = _rows[r + 1];
             }
 
-            _rows[_bottom] = new Row(Columns);
+            _rows[_bottom] = NewRow();
         }
     }
 
@@ -686,7 +1006,7 @@ public sealed class Screen
                 _rows[r] = _rows[r - 1];
             }
 
-            _rows[_top] = new Row(Columns);
+            _rows[_top] = NewRow();
         }
     }
 
@@ -700,17 +1020,17 @@ public sealed class Screen
         }
     }
 
-    /// <summary>Gives the row, and every row above it, a transcript line so interior blank rows keep their place.</summary>
+    /// <summary>Gives the main screen's row, and every row above it, a transcript line so interior blank rows keep their place.</summary>
     private void EnsureLines(int index)
     {
-        if (_rows[index].Line is not null)
+        if (_main[index].Line is not null)
         {
             return;
         }
 
         for (var i = 0; i <= index; i++)
         {
-            if (_rows[i].Line is not null)
+            if (_main[i].Line is not null)
             {
                 continue;
             }
@@ -718,7 +1038,7 @@ public sealed class Screen
             Line? before = null;
             for (var j = i + 1; j < Rows; j++)
             {
-                if (_rows[j].Line is { } below)
+                if (_main[j].Line is { } below)
                 {
                     before = below;
                     break;
@@ -726,9 +1046,9 @@ public sealed class Screen
             }
 
             var line = _store.CreateLine(before);
-            line.Row = _rows[i];
-            _rows[i].Line = line;
-            _rows[i].Dirty = true;
+            line.Row = _main[i];
+            _main[i].Line = line;
+            _main[i].Dirty = true;
         }
     }
 

@@ -36,11 +36,13 @@ out of scope; programs that print and ask are in. It works entirely offline (bun
 - **G4 Shared, not copied.** The ConPTY host, the parser, the screen model, the transcript mirror and the view move
   from axClaude into the shared projects on this, their second use (bundle AX-6.3, B-3); axTerminal adds the shell's
   own model and nothing twice.
-- **Non-goals.** Until AT-9 is built (designed 2026-11-25): the alternate screen and programs that redraw the whole screen (vim, nano, less, more, htop, a TUI
+- **Non-goals.** Until AT-9's window is built (designed 2026-11-25, its core built, AT-9.8): the alternate screen and programs that redraw the whole screen (vim, nano, less, more, htop, a TUI
   over ssh); colours, mouse reporting, tabs and panes; the shell's own line editing, history recall and Tab completion
   inside the field (AT-D5, §7); running Claude Code (axClaude's job, with its screen reader mode); elevation (start an
-  elevated terminal from Windows). None of them is an error: a full screen program's rows are shown as rows, and
-  Ctrl+Shift+C, or `q` and Enter, get out of it.
+  elevated terminal from Windows). None of them is an error: Ctrl+Shift+C, or `q` and Enter, get out of a full
+  screen program, whose rows are shown in the conversation as rows: the screen model keeps the alternate screen
+  apart only once a window shows it (`Screen.KeepsAlternateApart`, off until AT-9's window is built), so that such a
+  program is never hidden meanwhile.
 
 ## 3. Scenarios
 
@@ -420,7 +422,7 @@ file). The speech of output (AT-5.3) and the texts of the notices are the rest.
   Developer → Record raw stream writes the console stream to a `.vt` file in the PtyCapture format for a fixture
   (axClaude FR-13), read back only through the redacting dump (bundle rule 6).
 
-### AT-9 The screen view of a full-screen program (designed 2026-11-25; not built)
+### AT-9 The screen view of a full-screen program (designed 2026-11-25; its core built, the window not, AT-9.8)
 
 Decided by the maintainer on 2026-11-24 through the question tool, after a tester found Windows' `edit` unintelligible
 in axTerminal (2026-11-18): while a program holds the whole screen, axTerminal shows that screen as a page NVDA
@@ -454,7 +456,12 @@ read as `edit` still waiting for the colours' answers (to measure first, AT-9.7)
   one grey background on the screen's black, and the selected entry a green one inside it, so a background other
   than the screen's own would mark the whole menu; the current line of its text has a lighter background across the
   whole row, which marks nothing by this rule (the caret stands there). The screen model gains per cell its
-  background (or reverse video) as one number to compare, and no other colour.
+  background (or reverse video) as one number to compare, and no other colour. The rule as built (AT-9.8): a run is
+  cells of one number between cells of another; it is marked when the cells on both sides of it share one number
+  and that number is not the page's own (the one most cells have), so that a menu or a dialog drawn on the screen is
+  not a mark and what stands out inside it is; a run in reverse video between cells that are not is marked on the
+  page's own background too; a run at either end of its row is never marked. The literal "differs from both sides"
+  marked three runs on the menu's row of `edit` (its right border and the text behind the menu as well).
 - AT-9.5 **The rows updated** at a frame's end, as the conversation's are (AT-4), only the rows that changed, the
   caret kept on its row when the program's cursor did not move; a program that redraws without end (a clock, a
   progress bar) is said nothing about.
@@ -467,6 +474,22 @@ read as `edit` still waiting for the colours' answers (to measure first, AT-9.7)
   does, would make it answer at once); `edit`'s menus, a dialog (Save as, Find) and its status line, opened with the keys
   and read off the screen model; `less` or `more` over a long file; a program that leaves the alternate screen by
   ending with Ctrl+C. Each becomes a fixture under `tests/fixtures` and a window script; the build follows them.
+- AT-9.8 **What is built** (2026-11-25), the pure core in `AxKit.Core/Vt`, shared with axClaude, and no window part
+  (the key that turns the view on, section 7, is the maintainer's to choose). With `KeepsAlternateApart` on, which a window turns on once it shows the page (off until then, so nothing is hidden meanwhile), `Screen` keeps the alternate buffer
+  apart: `?1049h` saves the cursor and clears it, `?1047h` and `?47h` switch only, `l` switches back (1049 restoring
+  the cursor, 1047 clearing the alternate buffer), a reset leaves it; `Alternate` says which is in use and
+  `AlternateChangedSinceFrameEnd` that it changed. While it lasts, the main buffer's rows, their lines and the
+  transcript are untouched: no line is made, written, committed or removed, and the cursor homed and the screen
+  erased are not raised (they speak of the main buffer); `CursorRow`, `LineAt`, `RowOf`, `EnsureLine`,
+  `PullRowText` and `DetachRows` are the main buffer's. SGR is read for the background alone (40 to 47, 100 to 107,
+  `48;5;n`, `48;2;r;g;b` and their colon forms, 49, 7, 27, 0; a foreground's `38;...` read past), one number per
+  cell of the alternate buffer only, and an erase takes the background in force, as a terminal's does. `ScreenPage.Read`
+  gives the alternate buffer as a page: the rows' texts (AT-9.2), the cursor's row and column, and the `MarkedRun`s
+  (row, first cell, length, text) by AT-9.4's rule. On the recording of `edit` (`fullscreen-edit1.2.1-120x30.vt`):
+  the menu bar on the first row, "New File    Ctrl+N" the one marked run while the File menu is open, "[Save]" the
+  one in the unsaved-changes dialog, and the main buffer as it was after Ctrl+Q and N. Not marked: the menu bar's
+  File highlighted after Escape, which stands at the row's left end (a rule for a run at the end of a row waits on
+  more recordings, AT-9.7). Tested in `ScreenAlternateTests` and `ScreenPageTests`.
 
 ## 5. Architecture
 
