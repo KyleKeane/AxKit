@@ -88,12 +88,10 @@ NVDA says: Propose one per window.
     NVDA says: Other.
 3. Press Enter.
     You hear: Sent: 3, Other. Your words next.
-    NVDA says: Sent: 3, Other.
     NVDA says: You chose Other. Your answer.
 4. Type "tulips by the old stone wall".
 5. Press Enter.
     You hear: Sent: tulips by the old stone wall.
-    NVDA says: Sent: tulips by the old stone wall.
     NVDA says: Done.
 
 ## Read a long reply with Say all while Claude writes
@@ -125,7 +123,6 @@ You hear: Start Claude Code in this folder?
 3. Type "/help".
 4. Press Enter.
     You hear: Not with the stream source: /help.
-    NVDA says: Not with the stream source.
 5. Press Ctrl+A, Delete.
 6. Type "Write the file".
 7. Press Enter.
@@ -139,7 +136,6 @@ You hear: Start Claude Code in this folder?
 10. Type "Use notes.txt instead".
 11. Press Enter.
     You hear: Sent: Use notes.txt instead.
-    NVDA says: Sent: Use notes.txt instead.
 
 ## Come back to the right place after a Windows dialog
 
@@ -155,7 +151,7 @@ Starts with: Open axDown with the file notes.md.
 
 NVDA says: notes.md.
 1. Press Ctrl+Comma.
-    NVDA says: Command palette.
+    NVDA says: Search commands.
 2. Press Escape.
     NVDA says: notes.md.
 3. Press F1 (Command palette; Help menu).

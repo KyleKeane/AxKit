@@ -32,8 +32,10 @@ refuse focus Message to Claude
 # rules, the search row first; Down: the rule; F7 reads them all.
 type git
 keys enter
-expect said Search the rules. Search: git
-expect focus "role":"List"
+# "Question", then the focus says the list's name and the search row (the question said once, FR-7.4b, 2026-11-26).
+expect said ! Question
+expect focus "name":"Search the rules"
+expect focus "value":"Search: git"
 keys down
 expect focus 1. Bash(git status)
 keys f7
@@ -44,7 +46,7 @@ keys escape
 expect focus Search the rules, type and press Enter
 type zz
 keys enter
-expect said Search: zz
+expect focus "value":"Search: zz"
 keys down
 expect focus No rules match
 keys end

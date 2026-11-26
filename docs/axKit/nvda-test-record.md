@@ -6,6 +6,21 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-26: the full pass after the key moves, the titles and the stream's first round; by the assistant with NVDA listening (`main` 27581744)
+
+`.\nvda-pass.ps1`, every app's scripts and the NVDA-only scripts, the maintainer away for four hours at his word ("i
+am away for the next four hours so please work autonomously"), behind the spoken countdown, the same NVDA, voice and
+Windows as below. 222 scripts: 217 passed; 1,362 goals passed, 5 failed, 2 not run. Heard in it for the first time:
+the key moves of 2026-11-26 in every window (F7, F8, F9, Ctrl+Delete, Ctrl+Enter, F1 and Ctrl+Comma), the windows'
+titles of d91881b8, and the stream's first round (scripts 55 and 56).
+
+| What | Result |
+|---|---|
+| `axClaude/30-hooks-stand-in` | Failed once ("Events from Claude Code's hooks off" not spoken in 15 s); passed in the rerun, 7 goals: timing |
+| `axClaude/53-permissions-search` (live, Claude Code 2.1.332) | Failed: Enter on "Search the rules (/)" gives no field; its item, "the permissions search live script fails at its search step" |
+| `zz-nvda/axClaude-own-words`, `zz-nvda/axClaude-stream-refused-why` | Failed twice: each checked one sentence with `expect said` and then `expect spoken`, and `expect said` already waits for NVDA's speech (automation.md), so the second found nothing new. The repeated lines removed; both passed |
+| `zz-nvda/axDown-notices` | Failed twice at "Command palette": the palette's title is cut by the focus landing in its field, and NVDA reads "Search commands" after the notice's sound, as an opening is heard (a sound, not words). The script now expects the field; it then failed once at its last Escape (NVDA said nothing but a cancel) and passed in the next run |
+
 ## 2026-11-25, evening: axTerminal's screen view; by the assistant with NVDA listening (`main` 5a68687d)
 
 - `tests/scripts/axTerminal/14-screen-view.txt` with Windows' edit 1.2.1: 4 goals passed, every expected

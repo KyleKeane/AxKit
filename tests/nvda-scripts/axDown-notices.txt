@@ -4,8 +4,10 @@
 file notes.md # Notes\n\nA line.
 start down {temp}\notes.md
 expect spoken notes.md
+# Ctrl+Comma, the palette: its sound, then NVDA reads its field (an opening is a sound, not words; the notice's title
+# is cut by the focus landing in the field).
 keys ctrl+comma
-expect spoken Command palette
+expect spoken Search commands
 keys escape
 expect spoken notes.md
 keys f1

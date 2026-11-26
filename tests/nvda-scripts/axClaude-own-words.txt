@@ -49,7 +49,6 @@ said
 keys enter
 expect said Sent: 3, Other. Your words next
 refuse said Sent: 1
-expect spoken Sent: 3, Other
 refuse spoken Propose one per window
 wait 1500
 spoken
@@ -65,7 +64,6 @@ spoken
 type tulips by the old stone wall
 keys enter
 expect said Sent: tulips by the old stone wall
-expect spoken Sent: tulips by the old stone wall
 wait 2000
 file ow\go3 x
 expect focus Message to Claude

@@ -24,7 +24,6 @@ spoken
 type /help
 keys enter
 expect said Not with the stream source: /help
-expect spoken Not with the stream source
 wait 1500
 spoken
 keys ctrl+a delete
@@ -56,5 +55,4 @@ spoken
 type Use notes.txt instead
 keys enter
 expect said Sent: Use notes.txt instead
-expect spoken Sent: Use notes.txt instead
 wait 2000

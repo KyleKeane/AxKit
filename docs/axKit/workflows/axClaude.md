@@ -1954,7 +1954,7 @@ Starts with: Open axClaude with the folder rules.
 4. Press Enter.
 5. Type "git".
 6. Press Enter.
-    You hear: Search the rules. Search: git.
+    You hear: Question.
 7. Press Down.
 8. Press F7 (Claude's question again; Navigation menu).
     You hear: 1. Bash(git status).
