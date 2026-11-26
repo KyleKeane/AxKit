@@ -1110,8 +1110,24 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
      can have a heuristic on that also"); which app has which key is written only on the generated `apps.md` and in
      the F1 texts, both made from the code. The same in every axKit window, shown in Apps and Access layers, handled
      by the base before the window's own keys (`AxKit.Core/AppLaunchKeys`, `BundleKeys.LaunchKey`). Only axKit's
-     windows take them, nothing for all of Windows. The table is in code for now; a table of the user's own is a
-     later step ("changeable later").
+     windows take them, nothing for all of Windows. Those are the defaults; **the user's own table** (the
+     maintainer's decision of 2026-11-25) is `app-keys.json` in the settings folder (`AppPaths.AppKeysFile`,
+     `%APPDATA%\AxKit`, beside the theme file, since it is a setting and deleting it gives back the defaults,
+     AX-5.11), a JSON object of an app's name and its key in the words the menus show, `"axFile": "Ctrl+F11"`, or
+     `"none"`, which takes the app's key away; an app the file leaves out keeps its default, and an `about` member
+     holds the file's one sentence of explanation, since JSON has no comments. axKit, Edit app keys file (AX-9.1)
+     writes the file with every app's key as it holds when there is none, and opens it in axJSON. The file is read
+     once as a process starts, before any window exists (`BundleKeys.LoadAppKeys`; each window is its own process,
+     B-2), so a change holds in every window opened after it, and in a background app from its next start. The
+     shape of this rule stays: a standalone app takes Ctrl with a function key, an access layer Ctrl+Shift with one,
+     so that the key still says which kind of app it opens. An entry is skipped, its app keeping its default, and a
+     line of `axKit.log` says why, never a notice and never a crash, when it names no app, names an app a second
+     time, is no key that can be read, is not the shape of the rule, is a bundle key, or is the key another app ends
+     up with (AX-8.4: two apps may swap their keys in one file; an entry that takes the key of an app the file leaves
+     out is refused); a file that is no JSON object gives every default. Everything that shows the keys follows the
+     table that holds: Apps and Access layers, the F1 texts (the default blocks, then the keys the file changed) and
+     what F1 lists from the window's commands; `apps.md` and the guides give the defaults. No window's table holds a
+     Ctrl or Ctrl+Shift function key (`KeyTests`), so a key the user gives an app ends no window's command.
   7. Ctrl+Shift with Space or a punctuation key: the few keys that work anywhere in Windows, one per background app
      (AX-8.11). Not Ctrl+Alt, which NVDA's table keys, Windows Magnifier and the AltGr letters of many keyboards take.
 
@@ -1135,7 +1151,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     never in a window in front the user is typing in, and an item added to axTask's lists, MC-8; turned off with the access and by Forget AI tools; a run may move
     the caret or the focus as the command's key would, the one exception to AX-7's caret rule, `mcp.md` MC-7.8, MC-D8),
     Add axKit to Claude Code, Forget AI tools, Read the log) and Theme ▸ (T; `theme.md` TH-4,
-    Options, Text, Theme until 5.7.0), Open the sounds folder (S, AX-7.12), and after a separator the bundle's two
+    Options, Text, Theme until 5.7.0), Open the sounds folder (S, AX-7.12), Edit app keys file… (K, AX-8.18 rule 6,
+    2026-11-25), and after a separator the bundle's two
     switches, both in `%APPDATA%\AxKit\bundle.json` (`AxKit.Core/BundleSettings`): Check for updates at start (U,
     AX-3.1; not in the Store's copy) and **Keep a log of events** (E; `events.md` section 9 point 5, the maintainer's
     decision of 2026-11-25 for a switch "under Options", placed here by this rule since it is the bundle's; off by

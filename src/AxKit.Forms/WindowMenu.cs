@@ -59,7 +59,7 @@ public sealed class WindowMenu : ToolStripMenuItem
         return (apps, layers);
     }
 
-    /// <summary>An app's item under Apps or Access layers, a new window of it, with the app's key shown (AX-8.18 rule 6), which the base handles in every window.</summary>
+    /// <summary>An app's item under Apps or Access layers, a new window of it, with the app's key as it holds (AX-8.18 rule 6, <see cref="AppLaunchKeys.Current"/>, the user's file over the defaults) shown, which the base handles in every window; no key shown for an app the file took it from.</summary>
     private static ToolStripMenuItem NewWindowItem(App app)
     {
         var item = CommandPalette.Marked(new ToolStripMenuItem(AxKitWindows.AppLabel(app), null, (_, _) => Start(app.Verb, null)), OpenMark(app.Verb));

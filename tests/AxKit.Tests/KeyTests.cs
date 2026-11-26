@@ -99,6 +99,33 @@ public sealed class KeyTests
         Assert.Empty(collisions);
     }
 
+    /// <summary>
+    /// AX-8.18 rule 6: every Ctrl and Ctrl+Shift function key is the app keys', the defaults' and the ones a user's
+    /// app-keys.json may give (<c>AppLaunchKeys.Resolve</c>),
+    /// so no window's table and no bundle key of <see cref="BundleKeys.Fixed"/> holds one: the base takes an app key
+    /// before the window's own keys, and a key the user gave an app would silently end a window's command.
+    /// </summary>
+    [Fact]
+    public void No_table_holds_a_Ctrl_or_Ctrl_Shift_function_key()
+    {
+        var tables = new Dictionary<string, IReadOnlyList<(string Name, Keys Key)>>(Windows) { ["Bundle"] = BundleKeys.Fixed };
+        var taken = new List<string>();
+        foreach (var (table, keys) in tables)
+        {
+            foreach (var (name, key) in keys)
+            {
+                var code = key & Keys.KeyCode;
+                var modifiers = key & Keys.Modifiers;
+                if (code is >= Keys.F1 and <= Keys.F12 && modifiers is Keys.Control or (Keys.Control | Keys.Shift))
+                {
+                    taken.Add($"{table}: {name} is {BundleKeys.Text(key)}, kept for the app keys.");
+                }
+            }
+        }
+
+        Assert.Empty(taken);
+    }
+
     [Fact]
     public void No_table_repeats_a_key()
     {

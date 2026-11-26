@@ -159,6 +159,10 @@ public static class AppPaths
     public static string BundleSettingsFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "bundle.json");
 
+    /// <summary>The user's own app keys (AX-8.18 rule 6, 2026-11-25): an app's name and its key, or none, over the defaults (<see cref="AppLaunchKeys"/>); one file for the bundle.</summary>
+    public static string AppKeysFile { get; } =
+        Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "app-keys.json");
+
     /// <summary>The theme (docs/axKit/theme.md TH-1.1): a colour or "system" for every class of object the windows draw; one file for the bundle.</summary>
     public static string ThemeFile { get; } =
         Path.Combine(Home(Environment.SpecialFolder.ApplicationData), "AxKit", "theme.json");

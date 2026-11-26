@@ -48,7 +48,8 @@ public static class KeyChord
         ("subtract", 0x6D),
     ];
 
-    private const int F1 = 0x70;
+    /// <summary>The code of F1; F2 to F12 follow it.</summary>
+    public const int F1 = 0x70;
     private const int F12 = 0x7B;
 
     /// <summary>The code of a key's name, in any case: "enter" 0x0D, "f3" 0x72, "a" 0x41, "1" 0x31; null for a name the vocabulary does not hold.</summary>
@@ -130,8 +131,8 @@ public static class KeyChord
     public static bool IsCommandChord(string press) =>
         Parse(press) is { } parsed && (parsed.Ctrl || parsed.Alt || parsed.Code is >= F1 and <= F12);
 
-    /// <summary>A press as its key's code and its modifiers; null when a modifier is not ctrl, shift or alt, or the key has no name.</summary>
-    private static (int Code, bool Ctrl, bool Shift, bool Alt)? Parse(string press)
+    /// <summary>A press as its key's code and its modifiers, in any case; null when a modifier is not ctrl, shift or alt, or the key has no name. The app keys file reads its keys here (<c>AppLaunchKeys.Resolve</c>).</summary>
+    public static (int Code, bool Ctrl, bool Shift, bool Alt)? Parse(string press)
     {
         var parts = press.Trim().Split('+');
         var (ctrl, shift, alt) = (false, false, false);

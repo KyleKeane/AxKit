@@ -37,6 +37,7 @@ $lines.Add("axKit has $($apps.Count) apps, in the order every list of the window
 $lines.Add('points here. The shared pieces every app stands on are `src/AxKit.Core` (pure code) and `src/AxKit.Forms` (the')
 $lines.Add('window base and the shared controls), with their notes in each folder''s `CLAUDE.md`; the executable is `src/AxKit`.')
 $lines.Add('A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).')
+$lines.Add('The keys here are the defaults; a user''s own `app-keys.json` may give an app another key or none (SPEC AX-8.18 rule 6).')
 
 # The app keys (SPEC AX-8.18 rule 6, AxKit.Core/AppLaunchKeys, whose rule this is and whose test, AppLaunchKeysTests,
 # holds this page to it): each group of a kind takes one block of four function keys, Ctrl for an app, Ctrl+Shift for

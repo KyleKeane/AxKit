@@ -63,6 +63,19 @@
   the switch and keeps every other key; values not understood are `system` and listed. Colours are integers here, so
   the project stays off the desktop assemblies. Tested in `ThemeTests`, which also fails on a colour named outside
   `AxKit.Forms/ThemePainter.cs` and axMedia's video surface (TH-5.2).
+- `AppLaunchKeys` with `AppLaunchKey` and `AppKeysResolved` (AX-8.18 rule 6, 2026-11-23; the user's own table
+  2026-11-25): `Default`, each app's key by its group's block of four function keys; `Current`, the table of this
+  process, `Default` until `Load` reads `AppPaths.AppKeysFile` (`app-keys.json`, beside the theme file), which
+  `AxKit.Forms/BundleKeys.LoadAppKeys` calls once from `Program.Start`, before any window, with the bundle's other
+  keys (`BundleKeys.Fixed`) as chords. The tests never load it, so they see the defaults. `Resolve` is the rule:
+  an app's name (any case) and a key in the menus' words or `none`, an `about` member skipped; an entry is refused,
+  as a line of the log and never a notice, for a name that is no app, a second entry of an app, a key `KeyChord.Parse`
+  cannot read or a JSON value that is no text, a key not of the rule's shape (Ctrl with F1 to F12 for a standalone
+  app, Ctrl+Shift for an access layer), a bundle key, a key an entry before it took, or a default key of an app the
+  file leaves out (refused until no two apps share a key, so a refusal that keeps a default can refuse another
+  entry); the keys stand in the order of `Default`. `Template` is the file Edit app keys file writes when there is
+  none, `Changes` the keys a table moved, for `BundleHelp.AppKeysLine`. Tested in `AppLaunchKeysTests`; `KeyTests`
+  holds every window's table off the Ctrl and Ctrl+Shift function keys, so a user's key never ends a window's command.
 - `SettingsFile` (AX-5.2, AX-5.3): how every app's settings file is read and written, an unreadable one copied to
   `.bad` once, and the take-over of an old file. A value that does not read costs that value alone
   (`WithoutWhatDoesNotRead`); a file that is there and cannot be opened is tried again, then never saved over in

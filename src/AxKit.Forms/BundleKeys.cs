@@ -81,8 +81,16 @@ public static class BundleKeys
     public const Keys SelectParagraphUp = Keys.Control | Keys.Shift | Keys.Up;
     public const Keys SelectParagraphDown = Keys.Control | Keys.Shift | Keys.Down;
 
-    /// <summary>Every key above with its name, for the collision test and the F1 texts.</summary>
-    public static readonly IReadOnlyList<(string Name, Keys Key)> All =
+    /// <summary>Every key above with its name and the app keys as they hold (<see cref="AppLaunchKeys.Current"/>), for the collision test, the key test and the F1 texts.</summary>
+    public static IReadOnlyList<(string Name, Keys Key)> All =>
+    [
+        .. Fixed,
+        // AX-8.18 rule 6: Ctrl with a function key opens a standalone app, Ctrl+Shift with one an access layer.
+        .. AppLaunchKeys.Current.Select(key => ($"Open {key.App.Name}", LaunchKey(key))),
+    ];
+
+    /// <summary>Every key above with its name, the app keys left out: what an app key of the user's own may not be (AX-8.4).</summary>
+    public static readonly IReadOnlyList<(string Name, Keys Key)> Fixed =
     [
         ("Page up", PageUp),
         ("Page down", PageDown),
@@ -110,17 +118,23 @@ public static class BundleKeys
         ("Larger text (numpad)", LargerTextNumpad),
         ("Smaller text", SmallerText),
         ("Smaller text (numpad)", SmallerTextNumpad),
-        // AX-8.18 rule 6: Ctrl with a function key opens a standalone app, Ctrl+Shift with one an access layer.
-        .. AppLaunchKeys.Default.Select(key => ($"Open {key.App.Name}", LaunchKey(key))),
     ];
 
     /// <summary>An app's key (AX-8.18 rule 6) as a key of WinForms: Ctrl, Shift for an access layer, and its function key.</summary>
     public static Keys LaunchKey(AppLaunchKey key) =>
         Keys.Control | (key.Shift ? Keys.Shift : Keys.None) | (Keys)((int)Keys.F1 + key.Number - 1);
 
-    /// <summary>The app a key opens (AX-8.18 rule 6); null for a key that opens none.</summary>
+    /// <summary>The app a key opens (AX-8.18 rule 6), by the keys that hold (<see cref="AppLaunchKeys.Current"/>); null for a key that opens none.</summary>
     public static App? AppOfLaunchKey(Keys keyData) =>
-        AppLaunchKeys.Default.FirstOrDefault(key => LaunchKey(key) == keyData)?.App;
+        AppLaunchKeys.Current.FirstOrDefault(key => LaunchKey(key) == keyData)?.App;
+
+    /// <summary>
+    /// The user's app keys file (<see cref="AppPaths.AppKeysFile"/>) read into <see cref="AppLaunchKeys.Current"/>,
+    /// once, as a process starts and before any window exists (<c>src/AxKit/Program</c>); an app key of the user's may
+    /// be no key of <see cref="Fixed"/>.
+    /// </summary>
+    public static void LoadAppKeys() =>
+        AppLaunchKeys.Load(AppPaths.AppKeysFile, [.. Fixed.Select(key => (key.Name, Chord(key.Key)))]);
 
     /// <summary>
     /// The system-wide keys (AX-8.11): the background apps' hotkeys as they are at first, which Windows takes from

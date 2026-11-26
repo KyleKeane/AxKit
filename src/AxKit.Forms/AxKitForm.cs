@@ -303,6 +303,8 @@ public abstract partial class AxKitForm : Form
         menu.DropDownItems.Add(CreateThemeMenu());
         // AX-7.12: the user's own sounds, a WAV file named as a sound in place of the built-in one.
         menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Open the &sounds folder", null, (_, _) => OpenSoundsFolder()), CommandMark.Open));
+        // AX-8.18 rule 6 (the maintainer's decision of 2026-11-25): the user's own app keys, a file over the defaults.
+        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Edit app &keys file...", null, (_, _) => EditAppKeysFile()), CommandMark.Open));
         if (!PackageIdentity.IsPackaged)
         {
             // AX-3.1 (the maintainer's answer of 2026-11-24, "One switch for all"): the update check at start is the
@@ -366,6 +368,30 @@ public abstract partial class AxKitForm : Form
 
         WindowMenu.Start(Dispatch.AxFile, AppPaths.SoundsFolder);
         Announce("The sounds folder, in axFile: a WAV file named as a sound plays in its place from the next start; sound names.txt lists the names", true);
+    }
+
+    /// <summary>
+    /// axKit, Edit app keys file (AX-8.18 rule 6): the file written with every app's key as it holds now when there is
+    /// none, then axJSON on it, as Theme, Edit theme file does. A change holds in the windows opened after it.
+    /// </summary>
+    private void EditAppKeysFile()
+    {
+        var path = AppPaths.AppKeysFile;
+        try
+        {
+            if (!File.Exists(path))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+                File.WriteAllText(path, AppLaunchKeys.Template(AppLaunchKeys.Current));
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            Failed("App keys file", "The app keys file could not be written: " + ex.Message);
+            return;
+        }
+
+        WindowMenu.Start(Dispatch.AxJSON, path);
     }
 
     /// <summary>axKit, Check for updates at start: the bundle's one switch turned over and saved, its new state said.</summary>

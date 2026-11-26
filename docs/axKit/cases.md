@@ -7,8 +7,8 @@ every proof and every sentence named here to the code (`docs/axKit/SPEC.md` AX-5
 
 ## Where it stands
 
-- 63 cases, 54 with a proof, 9 without.
-- A settings file: 18.
+- 64 cases, 55 with a proof, 9 without.
+- A settings file: 19.
 - A sealed setting: 12.
 - A key: 4.
 - A remembered path: 2.
@@ -157,6 +157,14 @@ every proof and every sentence named here to the code (`docs/axKit/SPEC.md` AX-5
 - The file: `AppPaths.ThemeFile`.
 - Proved by: `AxKit.Tests/ThemeTests.A_hex_colour_is_read_system_in_any_case_and_a_bad_value_is_system_and_counted`.
 - From: TH-3.4.
+
+**C-64, every app.**
+
+- Does: An entry of the app keys file that names no app, names one a second time, is no key, is not Ctrl with a function key for a standalone app or Ctrl+Shift with one for an access layer, is a bundle key or is another app's key is skipped, and its app keeps its default key; a file that is no JSON object gives every default. Each is a line of axKit.log with its reason; nothing breaks.
+- Says: nothing in the window: the log holds the reason
+- The file: `AppPaths.AppKeysFile`.
+- Proved by: `AxKit.Tests/AppLaunchKeysTests.Each_refused_entry_is_skipped_with_its_reason_and_its_app_keeps_its_default`.
+- From: AX-8.18.
 
 ### A settings file: written by two windows
 

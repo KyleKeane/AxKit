@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axKit: **the app keys can be your own**: axKit menu, Edit app keys file opens `app-keys.json` in axJSON, written the first time with every app and its key, `"axFile": "Ctrl+F2"`; change a key, or write `"none"` to take one away. A standalone app keeps Ctrl with a function key and an access layer Ctrl+Shift with one. Windows opened after the change have the new keys, in the menus and in F1 too; an entry axKit cannot use is skipped, and `axKit.log` says why.
 - axKit: **a log of events, off unless you turn it on**: axKit menu, Keep a log of events. While it is on, each thing that reaches you (a refusal, a line arriving, a turn done, words said) is one line of `%LOCALAPPDATA%\AxKit\logs\events.log`, its time and its kind, never a word of it; it stays on your computer and rolls over at 1 MB. Underneath, every word a window says now goes through the same door as its sounds, with its kind; nothing you hear changed.
 - axKit: **a report's last actions hold every command you ran**, each by its name and key, a setting, a menu pick, a key such as F1 and a command chosen in the palette included, where only some commands were written; a recent file or a window chosen from a list is written by its menu and its number, "Session, Open recent file, entry 2", never by its name.
 - axMedia: **Open files and Open folder are Add files and Add folder**, since they add to the queue; their keys, Ctrl+O and Ctrl+Shift+O, are as they were.

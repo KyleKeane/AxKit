@@ -33,11 +33,21 @@ public static class BundleHelp
     /// <summary>F8's line, the same in every F1 text (AX-7.10, 2026-11-15).</summary>
     public const string StatusLine = "  F8: say the status, what the status bar at the bottom of the window holds, said by axKit itself; in a notice too";
 
-    /// <summary>The app keys (AX-8.18 rule 6), in every window's F1 text; the axKit menu's Apps and Access layers show each app's own.</summary>
-    public static string AppKeysLine { get; } =
-        "  Ctrl with a function key: open an axKit app, each group on its block of four keys: " + Blocks(shift: false)
-        + ". Ctrl+Shift with a function key: open an access layer: " + Blocks(shift: true)
-        + ". Alt+K, A lists the apps and Alt+K, L the access layers, each with its key";
+    /// <summary>
+    /// The app keys (AX-8.18 rule 6), in every window's F1 text; the axKit menu's Apps and Access layers show each
+    /// app's own. The blocks are the defaults; the keys the user's file changed follow them (<see cref="AppLaunchKeys.Current"/>).
+    /// </summary>
+    public static string AppKeysLine => AppKeysLineFor(AppLaunchKeys.Current);
+
+    /// <summary>The line of <see cref="AppKeysLine"/> for any table of keys, for the tests.</summary>
+    public static string AppKeysLineFor(IReadOnlyList<AppLaunchKey> keys)
+    {
+        var changes = AppLaunchKeys.Changes(keys);
+        return "  Ctrl with a function key: open an axKit app, each group on its block of four keys: " + Blocks(shift: false)
+            + ". Ctrl+Shift with a function key: open an access layer: " + Blocks(shift: true)
+            + (changes.Length == 0 ? string.Empty : ". In place of these, your own keys: " + changes)
+            + ". Alt+K, A lists the apps and Alt+K, L the access layers, each with its key; axKit, Edit app keys file gives an app a key of your own";
+    }
 
     /// <summary>"F1 to F4 getting around, axStart, axFile, ...; F5 to F8 ...": the blocks of one kind, from <see cref="AppLaunchKeys"/>.</summary>
     private static string Blocks(bool shift) => string.Join("; ", AppLaunchKeys.Default.Where(key => key.Shift == shift).GroupBy(key => key.App.Group).Select(group =>

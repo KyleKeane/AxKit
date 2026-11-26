@@ -75,6 +75,9 @@ internal static class Program
         AppPaths.TakeOverOldFolders();
         // What the user keeps, moved into Documents\axKit by the first start of a version that keeps it there (AX-5.11).
         AppPaths.TakeOverUserFolders();
+        // The user's own app keys (AX-8.18 rule 6), read once before any window exists, so that every menu, F1 text
+        // and key of this process has the same table; a refused entry is a line of axKit.log.
+        AxKit.Forms.BundleKeys.LoadAppKeys();
         ApplicationConfiguration.Initialize();
         // AX-7.7: the windows are light or dark as Windows is; a high contrast theme takes over as it always has.
         Application.SetColorMode(SystemColorMode.System);

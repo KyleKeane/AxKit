@@ -5,6 +5,7 @@ axKit has 18 apps, in the order every list of the windows shows them. A document
 points here. The shared pieces every app stands on are `src/AxKit.Core` (pure code) and `src/AxKit.Forms` (the
 window base and the shared controls), with their notes in each folder's `CLAUDE.md`; the executable is `src/AxKit`.
 A new app is made with `tools/new-app.ps1` (`docs/axKit/adding-an-app.md`).
+The keys here are the defaults; a user's own `app-keys.json` may give an app another key or none (SPEC AX-8.18 rule 6).
 
 ## Apps: getting around
 
