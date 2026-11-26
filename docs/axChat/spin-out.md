@@ -1,7 +1,7 @@
 # axChat from axClaude's stream: a reflection and a brief
 
-A proposal for the maintainer and for the design sitting with Fable, written 2026-11-26; it decides nothing and
-nothing of it is built. It answers the maintainer's question of that day: once axClaude's stream mode is complete,
+A proposal for the maintainer and for the design sitting with Fable, written 2026-11-26 after the stream's
+must-build list was finished; it decides nothing and nothing of it is built. It answers the maintainer's question of that day: once axClaude's stream mode is complete,
 spin it out as the foundation of axChat, leave axClaude a smaller app for Claude Code's screen, and make axChat the
 main app for users; "let me know if that would be a mistake if we have a significant amount of shared infrastructure
 between screen and stream mode that will not end up being ported over to axChat".
@@ -60,8 +60,10 @@ cleaner of the two hosts of Claude Code. But A changes three things the spec now
 
 ## 4. The order that avoids the mistake
 
-1. Finish the stream's must-build list in axClaude (`docs/axClaude/stream-equivalence.md` section 5). Round 1 is
-   built (2026-11-26); round 2 is the tool output, the session picker and plan approval.
+1. Finish the stream's must-build list in axClaude (`docs/axClaude/stream-equivalence.md` section 5): done on
+   2026-11-26 (27581744 and 94e87522), all nine; the maintainer's two hours of use and the NVDA passes of section
+   26 remain before the stream is the default. The new pieces were written for the move: `ToolOutput`,
+   `ConversationChoice`, the plan's question in `StreamAsking`, each pure in `AxClaude.Core` and free of the screen's.
 2. Name the neutral conversation: rename nothing yet, but write the vocabulary of events a source gives the window
    (a reply's text, a call and its result, a question with answers, a turn's end, background work, an error), which
    is `ClaudeModel`'s abstract part read as a list, and check axChat's `ChatEvent` (CH-3.4) against it.
