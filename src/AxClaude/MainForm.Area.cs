@@ -79,7 +79,15 @@ internal sealed partial class MainForm
 
     private bool UserActed() => Environment.TickCount64 - _userActedAt < UserActionMs;
 
-    private void UserActedNow() => _userActedAt = Environment.TickCount64;
+    /// <summary>
+    /// The user's act is stamped, ending <paramref name="lastsMs"/> from now: an answer typed a keystroke at a time
+    /// reaches Claude only when its last key has gone, and what Claude shows after it is the user's doing until
+    /// <see cref="UserActionMs"/> after that. Until 2026-11-26 the stamp was the moment Enter was pressed, so that an
+    /// answer of seventy characters in the user's own words, typed out over four seconds, was followed by "Question
+    /// closed" when Claude took it, and the area's hold ended while its keys were still going out (the maintainer's
+    /// window of that day).
+    /// </summary>
+    private void UserActedNow(int lastsMs = 0) => _userActedAt = Environment.TickCount64 + lastsMs;
 
     /// <summary>About when NVDA has read the reply text spoken last (<see cref="LeftoverSpeech"/>, FR-7.4b); 0 while none is counted as running.</summary>
     private long _replySpeechEnds;
@@ -259,17 +267,64 @@ internal sealed partial class MainForm
         var core = question.Core is { Length: > 0 } words ? ", " + words : string.Empty;
         var items = options.Select(option => $"{option.Key}. {option.Text}{core}" + (option.Current && !several ? " (current)" : string.Empty)).ToList();
         var start = Math.Max(0, options.ToList().FindIndex(option => startKey is null ? option.Current : option.Key == startKey));
-        IReadOnlyList<int>? ticked = several ? Enumerable.Range(0, options.Count).Where(i => options[i].Current).ToList() : null;
-        ShowInArea(signature, text, unprompted, (focus, hold) => Area.ShowList(name, items, start, ticked, focus, hold, (focused, ticks) =>
+        if (startKey is null && AnswerTheUserIsOn(options) is { } kept)
         {
-            if (several && ticks.Count == 0)
-            {
-                Announce("Tick one with Space", true);
-                return;
-            }
+            start = kept;
+        }
 
-            choose(several ? ticks.Select(i => options[i]).ToList() : [options[focused]]);
-        }, escape, typed: typed));
+        IReadOnlyList<int>? ticked = several ? Enumerable.Range(0, options.Count).Where(i => options[i].Current).ToList() : null;
+        ShowInArea(signature, text, unprompted, (focus, hold) =>
+        {
+            Area.ShowList(name, items, start, ticked, focus, hold, (focused, ticks) =>
+            {
+                if (several && ticks.Count == 0)
+                {
+                    Announce("Tick one with Space", true);
+                    return;
+                }
+
+                choose(several ? ticks.Select(i => options[i]).ToList() : [options[focused]]);
+            }, escape, typed: typed);
+            _questionList = (Area.Current!, options);
+        });
+    }
+
+    /// <summary>The list of a question the area shows, with the answers it lists; the list is no longer shown once the area holds another control.</summary>
+    private (Control List, IReadOnlyList<QuestionOption> Options)? _questionList;
+
+    /// <summary>
+    /// When a question's list is put in place of the one the area shows while the user has not answered (Claude Code
+    /// drew the question again, and the window read it as changed), the place in the new list of the answer the user
+    /// is on in the old one, the same key and the same text; null otherwise, and the new list starts where a new
+    /// question starts. The maintainer's report of 2026-11-26: he chose Other, third of four answers, and the first
+    /// answer was named and sent. Until that day every list put in place started on the first answer (or Claude's
+    /// current one), so that a question redrawn while the user moved through it took him back to the first answer
+    /// without a word with Go to them at once off, and Enter sent that one. After an answer of the user's nothing is
+    /// kept: the next question starts afresh.
+    /// </summary>
+    private int? AnswerTheUserIsOn(IReadOnlyList<QuestionOption> options)
+    {
+        if (UserActed() || _questionList is not { } shown || !ReferenceEquals(Area.Current, shown.List) || shown.List is not ListBox list)
+        {
+            return null;
+        }
+
+        var at = list.SelectedIndex;
+        if (at < 0 || at >= shown.Options.Count)
+        {
+            return null;
+        }
+
+        var on = shown.Options[at];
+        for (var i = 0; i < options.Count; i++)
+        {
+            if (options[i].Key == on.Key && options[i].Text == on.Text)
+            {
+                return i;
+            }
+        }
+
+        return null;
     }
 
     /// <summary>
@@ -570,8 +625,7 @@ internal sealed partial class MainForm
         var name = $"{screen.Title}. {row}, add at the end";
         ShowInArea(screen.Signature, text, !UserActed(), (focus, hold) => Area.ShowField(name, focus, hold, typed =>
         {
-            ScreenKeySent();
-            TypeAnswer(typed);
+            ScreenKeySent(TypeAnswer(typed));
         }, () => SendScreenKey(ClaudeCodeKeys.Escape)));
     }
 
@@ -590,8 +644,7 @@ internal sealed partial class MainForm
         {
             if (typed.Length > 0)
             {
-                ScreenKeySent();
-                TypeAnswer(typed, enter: false);
+                ScreenKeySent(TypeAnswer(typed, enter: false));
             }
             else if (ScreenActions.SearchDownKey(screen) is { } down)
             {
@@ -797,16 +850,16 @@ internal sealed partial class MainForm
         Write(key);
     }
 
-    /// <summary>The bookkeeping of a key sent from a screen, or of text typed into one of its rows: what Claude shows next is the user's doing, the area holds its keys meanwhile, and the screen shown next replaces this one even when it looks the same.</summary>
-    private void ScreenKeySent()
+    /// <summary>The bookkeeping of a key sent from a screen, or of text typed into one of its rows (<paramref name="typingMs"/>, the time its keys take to go out): what Claude shows next is the user's doing, the area holds its keys meanwhile, and the screen shown next replaces this one even when it looks the same.</summary>
+    private void ScreenKeySent(int typingMs = 0)
     {
-        UserActedNow();
+        UserActedNow(typingMs);
         if (_wait is { } wait)
         {
             _wait = wait with { Stale = true };
         }
 
-        Area.Hold(UserActionMs);
+        Area.Hold(UserActionMs + typingMs);
         // A key that changes nothing draws no frame: the timer brings the screen back all the same.
         _attention.Stop();
         _attention.Start();
@@ -847,6 +900,7 @@ internal sealed partial class MainForm
             return;
         }
 
+        var typing = 0;
         if (Streams)
         {
             // Over the stream an answer goes back through the relay (docs/axClaude/stream-mode.md SM-5.2): nothing is typed.
@@ -854,12 +908,13 @@ internal sealed partial class MainForm
         }
         else
         {
-            TypeAnswer(key, enter: _model.PendingQuestion is not { KeyOnly: true });
+            typing = TypeAnswer(key, enter: _model.PendingQuestion is not { KeyOnly: true });
         }
 
-        UserActedNow();
+        // The act lasts until the last keystroke has gone (UserActedNow), and so does the hold.
+        UserActedNow(typing);
         FlowActed(UserAction.Answered);
-        Area.Hold(UserActionMs);
+        Area.Hold(UserActionMs + typing);
         if (sound && _settings.SoundOnBell)
         {
             EventDoor.Raise(EventKind.Sent);
@@ -870,22 +925,27 @@ internal sealed partial class MainForm
     /// Types an answer: one keystroke per character (per rune, so an emoji stays whole), since Claude's answer field
     /// takes typed keys and several characters in one write are a paste, which it ignores ("12" in a long list, "1,3"
     /// for several answers). Then Enter. Without the sound and the hold of <see cref="SendAnswer"/>: an answer the app
-    /// gives on the user's behalf, which what follows announces as new.
+    /// gives on the user's behalf, which what follows announces as new. Returns about how long the keys take to go out.
     /// </summary>
-    private void TypeAnswer(string key, bool enter = true)
+    private int TypeAnswer(string key, bool enter = true)
     {
         var keys = key.EnumerateRunes().Select(rune => rune.ToString()).ToList();
+        var lasts = 0;
         for (var i = 0; i < keys.Count; i++)
         {
-            Enqueue(keys[i], i == keys.Count - 1 ? 100 : 60);
+            var pause = i == keys.Count - 1 ? 100 : 60;
+            Enqueue(keys[i], pause);
+            lasts += pause;
         }
 
         if (enter)
         {
             Enqueue(ClaudeCodeKeys.Enter, 50);
+            lasts += 50;
         }
 
         StartWrites();
+        return lasts;
     }
 
     // ---- a feedback draft Claude queued (D33) ----

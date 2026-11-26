@@ -73,6 +73,29 @@ You hear: trust.
     You hear: Sent.
 24. Press Alt+2 (Conversation; Navigation menu).
 
+## Hear Other chosen and your own words sent
+
+Starts with: Open axClaude with the folder ow.
+
+You hear: Ready.
+NVDA says: What should happen?
+NVDA says: Propose one per window.
+1. Press Down.
+    NVDA says: Nothing where nothing fits.
+2. Press Down.
+    NVDA says: Other.
+    NVDA says: What should happen now?
+    NVDA says: Other.
+3. Press Enter.
+    You hear: Sent: 3, Other. Your words next.
+    NVDA says: Sent: 3, Other.
+    NVDA says: You chose Other. Your answer.
+4. Type "tulips by the old stone wall".
+5. Press Enter.
+    You hear: Sent: tulips by the old stone wall.
+    NVDA says: Sent: tulips by the old stone wall.
+    NVDA says: Done.
+
 ## Read a long reply with Say all while Claude writes
 
 Starts with: Open axClaude with the folder read.

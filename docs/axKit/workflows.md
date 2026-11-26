@@ -305,8 +305,11 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
 49. **Search the rules of Claude Code's permissions screen**
     - Search the rules of the permissions screen
     - Leave the search
-50. **Have a short exchange with Claude**
-51. **Answer a set of two questions from Claude**
+50. **Answer Claude's question in your own words**
+    - Choose Other and hear it named
+    - Give your own words
+51. **Have a short exchange with Claude**
+52. **Answer a set of two questions from Claude**
 
 ## axClip
 
@@ -1087,15 +1090,16 @@ Steps and keys: `docs/axKit/workflows/nvda-only.md` (in Claude's working folder:
 1. **Use the window's keys from an open menu**
     - Open another app with its key from an open menu
 2. **Hear an offered command as NVDA reads it**
-3. **Read a long reply with Say all while Claude writes**
-4. **Come back to the right place after a Windows dialog**
-5. **Hear axDown's notices and palette with NVDA**
-6. **Find a name backwards with Shift and a letter**
+3. **Hear Other chosen and your own words sent**
+4. **Read a long reply with Say all while Claude writes**
+5. **Come back to the right place after a Windows dialog**
+6. **Hear axDown's notices and palette with NVDA**
+7. **Find a name backwards with Shift and a letter**
     - Go back to the name before with Shift and its letter
-7. **Put a template into a field of a form**
+8. **Put a template into a field of a form**
     - Choose a template from a form field's menu
-8. **Put a template into another window from axTemplate's launcher, with NVDA**
+9. **Put a template into another window from axTemplate's launcher, with NVDA**
     - Put a template in where the caret was
     - Put a template in around what is selected
-9. **Hear the caution of a command another program put into the command field**
+10. **Hear the caution of a command another program put into the command field**
     - Hear that another program put the command there, before the command, and again on coming back to the field

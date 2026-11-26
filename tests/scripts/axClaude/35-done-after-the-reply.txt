@@ -71,7 +71,7 @@ expect said → Permission Required: Bash command
 expect focus "role":"List","value":"1. Yes, Bash command
 refuse said Done
 refuse said ♪ Done
-keys 1 enter
+keys home enter
 expect said Sent: 1, Yes
 file dn\go6 x
 expect said Done. claude: asked

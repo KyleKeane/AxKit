@@ -765,6 +765,23 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: Other in Claude's question, the answer you are on kept, your own words (2026-11-26)
+
+The maintainer's report of 2026-11-26: he chose Other in a question of two answers and heard the first answer named,
+and Claude received it. Repaired the same day (`docs/axClaude/SPEC.md` D33, Answers): a question the window shows
+anew while the user has not answered keeps the answer he is on, and an answer typed out a keystroke at a time counts
+as his doing until its last key has gone (no "Question closed" after his own words). Passing the stand-in window
+script `tests/scripts/axClaude/54-own-words.txt` on the runner's desktop, which failed on the morning's build at the
+list put back on the first answer; owed a pass with NVDA listening of `tests/nvda-scripts/axClaude-own-words.txt`
+(stand-in, no Claude Code), with `docs/axClaude/nvda-test-plan.md` section 12 step 9:
+
+1. "Other" spoken as the arrows reach it, again after the question is drawn anew, and in "Sent: 3, Other. Your words
+   next"; the first answer never named.
+2. The field read by its name, "You chose Other. Your answer"; the words spoken as sent; no "Question closed" after them.
+3. With Claude Code itself (the live script 12, step 9): whether Claude Code 2.1.332 really draws a question anew while
+   it waits (the redraw the stand-in plays is the one window path found from Other to the first answer, not yet seen
+   in a recording), and that Claude receives the words.
+
 ## Owed: axClaude's questions said once, typing in a question's list, a permission question's core (2026-11-26)
 
 Built on the maintainer's asks of 2026-11-26 (`docs/axClaude/SPEC.md` FR-7.4b and D33, Answers) and passing the unit

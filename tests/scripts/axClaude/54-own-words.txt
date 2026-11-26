@@ -1,0 +1,53 @@
+# Workflow: Answer Claude's question in your own words
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code; no Claude Code, no network and no model.
+# axClaude, docs/axClaude/SPEC.md D33 ("Other") and docs/axClaude/nvda-test-plan.md section 12 step 9: Other chosen in a
+# question of Claude's, the field for the user's own words, the words sent. The maintainer's report of 2026-11-26: he
+# chose Other in a question of two answers (Other third, "Chat about this" fourth, as Claude Code 2.1.332 draws it under
+# "Question: <header>") and heard the first answer named, and Claude received the first answer. The stand-in
+# (tools/AxAutomate/StandIn.cs) draws the question, then, at the file go2, the row Claude Code draws after Other
+# ("Enter text for option 3 (Other), or Escape for the list:"), then the record and Claude's reply at go3. It reads no
+# key: what reaches Claude is the window's to say ("Sent: ..."). At go1b the question is drawn again with a row of its
+# text changed and the same answers, which the window reads as a question changed and shows anew: the answer the user
+# moved to must stay the one the list is on, and Enter must send it (until 2026-11-26 the new list started on the
+# first answer without a word, Go to them at once being off, and Enter sent that one: the one path of the window
+# found that turns a chosen Other into the first answer).
+# The user's own settings: Go to them at once off, Speak replies off.
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":false,"workingMusic":false,"backgroundAlert":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir ow
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.325 (stand-in)","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"waitFile":"go1"},{"frame":["claude: started","you: Ask me one question","claude: One question for you.","Question: Ctrl+Enter","> Ctrl+Enter, the most frequent action. What should happen?","1. Propose one per window (Recommended) — I propose each window's most frequent action.","2. Nothing where nothing fits — Ctrl+Enter stays empty.","3. Other","4. Chat about this","Select with numbers [1-4]. Then Enter to submit or Escape to cancel:"],"clear":true},{"waitFile":"go1b"},{"frame":["claude: started","you: Ask me one question","claude: One question for you.","Question: Ctrl+Enter","> Ctrl+Enter, the most frequent action. What should happen now?","1. Propose one per window (Recommended) — I propose each window's most frequent action.","2. Nothing where nothing fits — Ctrl+Enter stays empty.","3. Other","4. Chat about this","Select with numbers [1-4]. Then Enter to submit or Escape to cancel:"],"clear":true},{"waitFile":"go2"},{"frame":["claude: started","you: Ask me one question","claude: One question for you.","Question: Ctrl+Enter","> Ctrl+Enter, the most frequent action. What should happen?","1. Propose one per window (Recommended) — I propose each window's most frequent action.","2. Nothing where nothing fits — Ctrl+Enter stays empty.","3. Other","4. Chat about this","Enter text for option 3 (Other), or Escape for the list:"],"clear":true},{"waitFile":"go3"},{"mark":"C"},{"mark":"D"},{"bell":true},{"frame":["claude: started","you: Ask me one question","claude: One question for you.","claude: Your own words came.","auto mode on (shift+tab to cycle)","$"],"clear":true},{"idle":true}]}
+
+start claude {temp}\ow --claude {temp}\claude.cmd -- --model haiku --effort low
+expect said Ready
+wait 1000
+# Goal: Choose Other and hear it named
+# The question comes: its sound, and the list in the message field's place, on the first answer.
+file ow\go1 x
+expect said ♪ Notice
+expect focus "role":"List","value":"1. Propose one per window (Recommended)
+wait 1500
+keys down down
+expect focus "value":"3. Other"
+# The question drawn again with a row changed, the answers the same: shown anew, on Other still.
+file ow\go1b x
+expect said ♪ Notice
+wait 1500
+expect focus "value":"3. Other"
+keys enter
+expect said Sent: 3, Other. Your words next
+refuse said Sent: 1
+# Goal: Give your own words
+# Claude Code asks for the words: the field named with the question and "You chose Other. Your answer".
+file ow\go2 x
+expect focus You chose Other. Your answer
+# A long answer, as the maintainer's (some seventy characters): every keystroke goes at its pace, which takes longer
+# than the three seconds an answer counts as the user's doing. The question Claude then closes is the user's doing
+# all the same: no "Question closed".
+type every key reads the question and it should also emit a distinct earcon
+keys enter
+expect said Sent: every key reads the question and it should also emit a distinct earcon
+wait 4500
+file ow\go3 x
+expect focus Message to Claude
+refuse said Question closed

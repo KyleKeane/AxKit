@@ -862,7 +862,7 @@ The focus moves to Message to Claude.
 You hear the sound Notice.
 You hear: Question.
 The focus moves to Permission Required: Accessing workspace.
-1. Press Y, Enter.
+1. Press Enter.
     You hear: Sent: y, Yes, I trust this folder.
     The focus moves to Message to Claude.
     You hear: Ready.
@@ -899,7 +899,7 @@ The focus moves to Permission Required: Accessing workspace.
 3. Press Alt+2 (Conversation; Navigation menu).
     You hear the sound Notice.
 4. Press Ctrl+Tab twice (Switch between the view and the field).
-5. Press 1, Enter.
+5. Press Home, Enter.
     You hear: Sent: 1.
     You hear: Done.
 
@@ -912,7 +912,7 @@ The focus moves to Permission Required: Accessing workspace.
     You hear: Sent.
 5. Press Alt+2 (Conversation; Navigation menu).
     You hear the sound Notice.
-6. Press 1, Enter.
+6. Press Home, Enter.
     You hear: Sent: 1.
     You hear: Done.
 7. Choose Go to them at once, interrupting speech in the Options menu, Questions.
@@ -932,20 +932,22 @@ The focus moves to Permission Required: Accessing workspace.
 1. Type "Use the AskUserQuestion tool to ask me which flower I enjoy thinking about, with three options.".
 2. Press Enter.
     You hear the sound Notice.
-3. Press 4, Enter.
+3. Press Home, Down, Down, Down.
+4. Press Enter.
     You hear: Sent: 4, Other. Your words next.
-4. Type "tulips in the garden by the old stone wall where the morning light falls first and the bees arrive early".
-5. Press Enter.
+5. Type "tulips in the garden by the old stone wall where the morning light falls first and the bees arrive early".
+6. Press Enter.
     You hear: Sent: tulips in the garden by the old stone wall where the morning light falls first and the bees arrive early.
     You hear: Done.
-6. Press Alt+2, Ctrl+End.
-7. Press Alt+1 (Message field; Navigation menu).
-8. Type "Use the AskUserQuestion tool to ask me which flower I enjoy thinking about, with three options.".
-9. Press Enter.
+7. Press Alt+2, Ctrl+End.
+8. Press Alt+1 (Message field; Navigation menu).
+9. Type "Use the AskUserQuestion tool to ask me which flower I enjoy thinking about, with three options.".
+10. Press Enter.
     You hear the sound Notice.
-10. Press 4, Enter.
-11. Press Escape.
-12. Press 1, Enter.
+11. Press Home, Down, Down, Down.
+12. Press Enter.
+13. Press Escape.
+14. Press Home, Enter.
     You hear: Done.
 
 ### Move through Claude's questions in the conversation
@@ -1007,7 +1009,7 @@ The focus moves to Permission Required: Accessing workspace.
 2. Type "Use the AskUserQuestion tool once with two questions: my favourite colour (red, green, blue), and, with multiSelect, which fruits I like (apple, banana, cherry).".
 3. Press Enter.
     You hear the sound Notice.
-4. Press 2, Enter.
+4. Press Home, Down, Enter.
     You hear: Sent: 2, Green. Next question.
 5. Press Home, Space, Down, Down, Space, Enter.
     You hear: Sent: 1, Apple, 3, Cherry.
@@ -1021,11 +1023,11 @@ The focus moves to Permission Required: Accessing workspace.
 2. Type "Use the AskUserQuestion tool once with two questions: my favourite colour (red, green, blue), and, with multiSelect, which fruits I like (apple, banana, cherry).".
 3. Press Enter.
     You hear the sound Notice.
-4. Press 2, Enter.
+4. Press Home, Down, Enter.
     You hear: Next question.
 5. Press Home, Space, Enter.
     You hear: Review next.
-6. Press Y, Enter.
+6. Press Home, Enter.
     You hear: Done.
 7. Choose Review answers before they go to Claude in the Options menu, Questions.
 
@@ -1962,6 +1964,24 @@ Starts with: Open axClaude with the folder rules.
 1. Press Escape twice.
 2. Press Ctrl+I (Interrupt; Actions menu).
 3. Press Alt+2, Ctrl+End.
+
+## Answer Claude's question in your own words
+
+Starts with: Open axClaude with the folder ow.
+
+### Choose Other and hear it named
+
+You hear the sound Notice.
+1. Press Down twice.
+    You hear the sound Notice.
+2. Press Enter.
+    You hear: Sent: 3, Other. Your words next.
+
+### Give your own words
+
+1. Type "every key reads the question and it should also emit a distinct earcon".
+2. Press Enter.
+    You hear: Sent: every key reads the question and it should also emit a distinct earcon.
 
 ## Have a short exchange with Claude
 

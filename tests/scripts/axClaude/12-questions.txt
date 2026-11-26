@@ -24,7 +24,9 @@ expect said → Permission Required: Accessing workspace.
 refuse said ! Permission Required: Accessing workspace.
 expect focus "role":"List","value":"y. Yes, I trust this folder, Accessing workspace"
 wait 1500
-keys y enter
+# The list starts on y. A typed character reads the question again and moves nothing (D33, since 2026-11-26): the
+# answers are reached with the arrows, Home and End.
+keys enter
 expect said Sent: y, Yes, I trust this folder
 expect said → Message to Claude
 expect said Ready
@@ -103,7 +105,7 @@ wait 1500
 keys ctrl+tab
 expect focus Conversation
 keys ctrl+tab
-keys 1 enter
+keys home enter
 expect said Sent: 1
 expect said Done
 wait 2000
@@ -120,7 +122,7 @@ expect said ♪ Notice
 refuse said !
 expect focus "role":"List"
 wait 1500
-keys 1 enter
+keys home enter
 expect said Sent: 1
 expect said Done
 menu Go to them at once, interrupting speech
@@ -167,14 +169,19 @@ iffound expect said Closed
 expect focus Message to Claude
 wait 2000
 # Goal: Answer a question in your own words
-# Step 9: Other: 4, Enter: "Sent: 4, Other. Your words next", then the field "<question>. You chose Other. Your
-# answer"; tulip, Enter: "Sent: tulip"; Claude's reply names tulips. Again, Other, Escape in the field: the list back.
+# Step 9: Other, the fourth answer, by the arrows: "4. Other" on it; Enter: "Sent: 4, Other. Your words next", then
+# the field "<question>. You chose Other. Your answer"; tulip, Enter: "Sent: tulip"; Claude's reply names tulips. Again,
+# Other, Escape in the field: the list back. (Until 2026-11-26 the 4 typed here moved to Other; since then a typed
+# character reads the question again, and "4, Enter" sent the first answer, the maintainer's report of that day.)
 type Use the AskUserQuestion tool to ask me which flower I enjoy thinking about, with three options.
 keys enter
 expect said ♪ Notice
 wait 1500
-keys 4 enter
+keys home down down down
+expect focus "value":"4. Other"
+keys enter
 expect said Sent: 4, Other. Your words next
+refuse said Sent: 1
 expect focus You chose Other. Your answer
 # A long answer, a hundred characters: every character must reach Claude (SPEC.md section 12, the bug of 2026-10-02,
 # when most of such an answer was dropped; the keystrokes are paced since). The transcript's record of the answer and
@@ -191,12 +198,14 @@ type Use the AskUserQuestion tool to ask me which flower I enjoy thinking about,
 keys enter
 expect said ♪ Notice
 wait 1500
-keys 4 enter
+keys home down down down
+expect focus "value":"4. Other"
+keys enter
 expect focus You chose Other. Your answer
 keys escape
 expect focus "role":"List"
 wait 1500
-keys 1 enter
+keys home enter
 expect said Done
 wait 2000
 # Goal: Move through Claude's questions in the conversation
@@ -339,7 +348,7 @@ keys enter
 expect said ♪ Notice
 expect focus Question 1 of 2:
 wait 1500
-keys 2 enter
+keys home down enter
 expect said Sent: 2, Green. Next question
 expect focus Question 2 of 2:
 wait 1500
@@ -363,14 +372,14 @@ keys enter
 expect said ♪ Notice
 expect focus Question 1 of 2:
 wait 1500
-keys 2 enter
+keys home down enter
 expect said Next question
 wait 1500
 keys home space enter
 expect said Review next
 expect focus Review
 wait 1500
-keys y enter
+keys home enter
 expect said Done
 menu Review answers before they go to Claude
 wait 2000
