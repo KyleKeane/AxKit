@@ -408,10 +408,35 @@ public static partial class ClaudeCodeTexts
 
     /// <summary>
     /// The slash as a key of its own, the whole of a hint's keys: "/ to search" (the permissions screen, 2.1.327,
-    /// recorded 2026-11-17). It opens a search field that takes typed text; <c>ScreenReader.Keys</c> reads it and
-    /// gives no key for it, since the control area's list of a screen has no way to type into Claude Code's field.
+    /// recorded 2026-11-17). It moves Claude Code's cursor to the screen's search row, which takes typed text; since
+    /// 2026-11-25 it is offered as the item "Search the rules (/)", and the search row is a screen being searched
+    /// (<see cref="SearchRowEmpty"/>), shown as a field in the control area.
     /// </summary>
     public const string KeySlash = "/";
+
+    /// <summary>
+    /// The permissions screen's search row before anything is typed (2.1.327 to 2.1.332): "Search…", one character of
+    /// ellipsis. After "/" the cursor stands at its start and the hint row under the list reads "↓ to navigate · Esc to
+    /// go back" (the permissions-search fixture, recorded 2026-11-25 with 2.1.332).
+    /// </summary>
+    public const string SearchRowEmpty = "Search…";
+
+    /// <summary>
+    /// What the search row starts with once a text is typed: "Search: git", the rules that match under it ("1.
+    /// Bash(git status)") and the hint row "↓ to navigate · Esc to clear"; with no rule matching, "No rules match "zz""
+    /// under it and the hint row "Esc to clear" alone. The keys typed after the first are echoed onto the row as they
+    /// come, without a frame of their own.
+    /// </summary>
+    public const string SearchRowStart = "Search: ";
+
+    /// <summary>
+    /// What Escape does on the search row of an empty search: back to the screen's list, which Claude Code then asks
+    /// for as a numbered question ("Select with numbers [1-4]. Then Enter to submit or Escape to cancel:").
+    /// </summary>
+    public const string ActionGoBack = "go back";
+
+    /// <summary>What Escape does on the search row once a text is typed: the text goes and every rule is listed again.</summary>
+    public const string ActionClear = "clear";
 
     /// <summary>The names a hint row gives its keys (all inside <see cref="Hint"/> too).</summary>
     public const string KeyEsc = "Esc";

@@ -1942,6 +1942,30 @@ Starts with: Open axClaude with the folder hand --source stream. Close the windo
     You hear: Done.
 8. Press Alt+2 (Conversation; Navigation menu).
 
+## Search the rules of Claude Code's permissions screen
+
+Starts with: Open axClaude with the folder rules.
+
+### Search the rules of the permissions screen
+
+1. Type: /permissions
+2. Press Enter.
+    You hear the sound Notice.
+3. Press End, Up.
+4. Press Enter.
+5. Type: git
+6. Press Enter.
+    You hear: Search the rules. Search: git.
+7. Press Down.
+8. Press Ctrl+Q (Claude's question again; Navigation menu).
+    You hear: 1. Bash(git status).
+
+### Leave the search
+
+1. Press Escape 2 times.
+2. Press Shift+Escape.
+3. Press Alt+2, Ctrl+End.
+
 ## Have a short exchange with Claude
 
 Starts with: Open axClaude with the folder a.

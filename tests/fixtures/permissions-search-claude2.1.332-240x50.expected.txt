@@ -1,0 +1,12 @@
+[Screen Reader Mode: on via flag]
+Claude Code v2.1.332
+Haiku 5.5 with xhigh effort · Claude Ultra
+C:\Temp\axclaude-fixture-search
+you: /permissions
+Permissions dialog dismissed
+you: /exit
+Accomplishing…
+manual mode on  ·  esc to interrupt
+$
+Resume this session with:
+claude --ax-screen-reader --model haiku --resume 00000000-0000-0000-0000-000000000000

@@ -1,0 +1,64 @@
+# Workflow: Search the rules of Claude Code's permissions screen
+# Needs: Claude Code signed in, the network and a live model (Haiku): Claude Code draws the screen; nothing is asked of the model.
+# axClaude, docs/axClaude/nvda-test-plan.md section 12, step 21a: /permissions offers its search as the item "Search the
+# rules (/)"; the search row is a field in the control area, the rules that match come back as the screen's list, and
+# Escape clears the text, then goes back (docs/axClaude/claude-screens.md, the permissions-search fixture).
+# The folder's own settings allow three rules, so that a search has something to find. The update check off.
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
+# The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir rules
+file rules\.claude\settings.json {"permissions":{"defaultMode":"default","allow":["Bash(git status)","Bash(npm test)","WebSearch"]}}
+start claude {temp}\rules -- --model haiku --effort low
+expect said trust
+wait 1500
+keys enter
+expect said Ready
+wait 2000
+# Goal: Search the rules of the permissions screen
+# /permissions: the screen's list; its last items are the keys, Search the rules (/) before Close (Escape). Enter on
+# it: the field "Search the rules, type and press Enter" in the list's place.
+type /permissions
+keys enter
+expect said ♪ Notice
+expect focus "name":"Tabs: Permissions
+wait 1500
+keys end up
+expect focus Search the rules (/)
+keys enter
+expect focus Search the rules, type and press Enter
+refuse focus Message to Claude
+# git, Enter: the text goes to Claude Code's search, and the rules that match come back as a list named Search the
+# rules, the search row first; Down: the rule; Ctrl+Q reads them all.
+type git
+keys enter
+expect said Search the rules. Search: git
+expect focus "role":"List"
+keys down
+expect focus 1. Bash(git status)
+keys ctrl+q
+expect said 1. Bash(git status)
+# Check: A search that finds nothing says so
+# Escape in the list clears the text: the field again. zz, Enter: "No rules match", and the list offers Clear alone.
+keys escape
+expect focus Search the rules, type and press Enter
+type zz
+keys enter
+expect said Search: zz
+keys down
+expect focus No rules match
+keys end
+expect focus Clear (Escape)
+# Goal: Leave the search
+# Escape clears the text, then goes back: Claude Code asks for a rule by its number, which stays in the conversation
+# with the message field (a panel's list, claude-screens.md); Shift+Escape there closes the screen.
+keys escape
+expect focus Search the rules, type and press Enter
+wait 1500
+keys escape
+expect focus Message to Claude
+wait 1500
+keys shift+escape
+expect state Claude: ready
+keys alt+2 ctrl+end
+expect text Permissions dialog dismissed

@@ -1527,12 +1527,14 @@ public sealed partial class SessionModel : ClaudeModel
     {
         // Cheap tests first: this runs at every frame end. The hint row names Esc, a tab row has wide gaps, /mobile
         // leaves its hint row just above the cursor, a sent feedback report waits on "Any key to continue", and a
-        // field of a draft being edited has its hint row a few rows under the cursor (D33).
+        // field of a draft being edited has its hint row a few rows under the cursor (D33), and the permissions screen's
+        // search row is the cursor row while it is searched.
         var cy = _screen.CursorRow;
         var text = _screen.LineAt(cy)?.Text;
         if (text is null || !(text.Contains(ClaudeCodeTexts.KeyEsc, StringComparison.Ordinal) || text.Contains(ClaudeCodeTexts.WideGap, StringComparison.Ordinal)
             || text == ClaudeCodeTexts.AnyKeyToContinue
             || ScreenReader.EndsWithPressEnter(text)
+            || ScreenReader.IsSearchRow(text)
             || (cy > 0 && _screen.LineAt(cy - 1)?.Text.Contains(ClaudeCodeTexts.KeyEsc, StringComparison.Ordinal) == true)
             || EditHintUnder(cy)))
         {

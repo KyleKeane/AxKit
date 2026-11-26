@@ -11,8 +11,26 @@ public static class ScreenActions
     /// <summary>The items of the screen's list: its lines, then an item per key, "View (Enter)", "Close (Escape)".</summary>
     public static IReadOnlyList<string> Items(ClaudeScreen screen) => [.. screen.Lines, .. screen.Keys.Select(KeyItem)];
 
-    /// <summary>A key's item: its action with a capital, then its name in parentheses.</summary>
-    public static string KeyItem(ScreenKey key) => $"{char.ToUpperInvariant(key.Action[0])}{key.Action[1..]} ({key.Name})";
+    /// <summary>A key's item: its action with a capital, then its name in parentheses; the slash of the permissions screen's search is "Search the rules (/)".</summary>
+    public static string KeyItem(ScreenKey key) => key.Send == ClaudeCodeKeys.Slash
+        ? $"{SearchName} ({key.Name})"
+        : $"{char.ToUpperInvariant(key.Action[0])}{key.Action[1..]} ({key.Name})";
+
+    // ---- the permissions screen's search (2026-11-25, the permissions-search fixture) ----
+
+    /// <summary>
+    /// The window's name for a search of a screen. The permissions screen is the one screen whose hint row names "/ to
+    /// search" (2.1.327 to 2.1.332), and what it searches is its rules; another screen with a search gets its own words
+    /// when it is seen.
+    /// </summary>
+    public const string SearchName = "Search the rules";
+
+    /// <summary>The field of an empty search: typed, the text goes to Claude Code's search row a keystroke at a time.</summary>
+    public const string SearchFieldName = SearchName + ", type and press Enter";
+
+    /// <summary>The key that moves from the search row into the rules: Down, while the hint row names it (it does not when nothing matches).</summary>
+    public static ScreenKey? SearchDownKey(ClaudeScreen screen) =>
+        screen.Searching ? screen.Keys.FirstOrDefault(key => key.Send == ClaudeCodeKeys.Down) : null;
 
     /// <summary>The key that leaves the screen: Escape, or the one key of "Any key to continue".</summary>
     public static ScreenKey LeaveKey(ClaudeScreen screen) => screen.Keys.FirstOrDefault(key => key.Send == ClaudeCodeKeys.Escape) ?? screen.Keys[0];
@@ -38,6 +56,12 @@ public static class ScreenActions
             return enter;
         }
 
+        // A search's rules: Enter on one goes into them (Down), where Claude Code asks for a rule by its number.
+        if (SearchDownKey(screen) is { } down)
+        {
+            return down;
+        }
+
         var leave = LeaveKey(screen);
         return Leaves(leave) ? leave : null;
     }
@@ -54,9 +78,9 @@ public static class ScreenActions
     /// <summary>
     /// A screen that only informs (/btw's side answer, /goal, /mobile): its hint row names no Enter and it has no
     /// tabs. The window shows it as a read-only notice rather than a list; a screen with Enter (/tasks with tasks,
-    /// a review) or with tabs (/status) stays a list.
+    /// a review), with tabs (/status) or searched (/permissions after "/") stays a list.
     /// </summary>
-    public static bool IsInformation(ClaudeScreen screen) => !screen.Tabbed && !screen.Keys.Any(key => key.Send == ClaudeCodeKeys.Enter);
+    public static bool IsInformation(ClaudeScreen screen) => !screen.Tabbed && !screen.Searching && !screen.Keys.Any(key => key.Send == ClaudeCodeKeys.Enter);
 
     /// <summary>Up or Down: the notice's own arrows move in its text, and the scroll buttons send them (<see cref="Scrolls"/>).</summary>
     public static bool IsScrollKey(ScreenKey key) => key.Send is ClaudeCodeKeys.Up or ClaudeCodeKeys.Down;

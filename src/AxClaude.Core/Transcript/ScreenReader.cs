@@ -31,6 +31,16 @@ public sealed record ClaudeScreen(string Title, IReadOnlyList<string> Lines, IRe
 
     /// <summary>A text row of /feedback's review that Claude has opened for editing (D33): the hint row names "cancel edit", and typed keys go to the end of the row's text.</summary>
     public bool Editing => Keys.Any(key => key.Action == ClaudeCodeTexts.ActionCancelEdit);
+
+    /// <summary>
+    /// The permissions screen's search row with Claude Code's cursor on it, after "/" (2026-11-25, the
+    /// permissions-search fixture): typed keys go into the search. The first line is the search row, the lines under it
+    /// the rules that match or "No rules match".
+    /// </summary>
+    public bool Searching { get; init; }
+
+    /// <summary>A search with a text typed ("Search: git"): the window shows the rules that match as a list; with none typed it shows a field.</summary>
+    public bool SearchTyped => Searching && Lines.Count > 0 && Lines[0].StartsWith(ClaudeCodeTexts.SearchRowStart, StringComparison.Ordinal);
 }
 
 /// <summary>
@@ -46,6 +56,9 @@ public static class ScreenReader
 
     /// <summary>How far under the cursor the hint row of a field being edited is looked for.</summary>
     public const int EditRows = 8;
+
+    /// <summary>How far above a search row the tab row of its screen is looked for (one row between them, 2.1.332).</summary>
+    private const int SearchTabRows = 3;
 
     /// <summary>The screen waiting around the cursor row, or null when the cursor is not on a hint or tab row.</summary>
     public static ClaudeScreen? Read(IReadOnlyList<string> rows, int cursorRow)
@@ -81,6 +94,44 @@ public static class ScreenReader
             var (lines, first) = LinesAbove(rows, cursorRow - 1);
             lines.Add(cursorText);
             return new ClaudeScreen(lines[0], lines.Skip(1).ToList(), keysAbove) { FirstRow = lines.Count > 1 ? first : cursorRow };
+        }
+
+        // The permissions screen's search row with the cursor on it (2.1.332, the permissions-search fixture): "Search…"
+        // or "Search: git", the rules that match under it, then a hint row whose Escape goes back or clears. The title
+        // is the tab row's above it, so that the screen's record in the conversation stays the one it had.
+        if (IsSearchRow(cursorText))
+        {
+            for (var r = cursorRow + 1; r < rows.Count && r - cursorRow <= MaxRows; r++)
+            {
+                if (Keys(rows[r].Trim()) is not { } searchKeys)
+                {
+                    continue;
+                }
+
+                if (!searchKeys.Any(key => key.Send == ClaudeCodeKeys.Escape && key.Action is ClaudeCodeTexts.ActionGoBack or ClaudeCodeTexts.ActionClear))
+                {
+                    break;
+                }
+
+                var lines = new List<string>();
+                for (var l = cursorRow; l < r; l++)
+                {
+                    if (rows[l].Trim() is { Length: > 0 } line)
+                    {
+                        lines.Add(line);
+                    }
+                }
+
+                var tabRow = cursorRow - 1;
+                while (tabRow >= 0 && cursorRow - tabRow <= SearchTabRows && !IsTabRow(rows[tabRow].Trim()))
+                {
+                    tabRow--;
+                }
+
+                var tabbed = tabRow >= 0 && cursorRow - tabRow <= SearchTabRows;
+                var searched = tabbed ? "Tabs: " + string.Join(", ", Tabs(rows[tabRow].Trim())) : cursorText;
+                return new ClaudeScreen(searched, lines, searchKeys) { FirstRow = tabbed ? tabRow : cursorRow, Searching = true };
+            }
         }
 
         // A field of /feedback's review being edited (D33, recorded with 2.1.302): the highlight on Details, Area or
@@ -150,6 +201,13 @@ public static class ScreenReader
         return before.Length > 0 ? before : ClaudeCodeTexts.PressEnterToContinue;
     }
 
+    /// <summary>Whether a row is the permissions screen's search row, "Search…" or "Search: git": the cheap test for every frame's end, without allocating.</summary>
+    public static bool IsSearchRow(string text)
+    {
+        var row = text.AsSpan().Trim();
+        return row.SequenceEqual(ClaudeCodeTexts.SearchRowEmpty) || row.StartsWith(ClaudeCodeTexts.SearchRowStart, StringComparison.Ordinal);
+    }
+
     /// <summary>A row of tab names: three or more, two spaces or more apart.</summary>
     public static bool IsTabRow(string text) => ClaudeCodeTexts.TabRow().IsMatch(text);
 
@@ -174,14 +232,8 @@ public static class ScreenReader
 
             var action = match.Groups["action"].Value;
             var named = match.Groups["keys"].Value;
-            if (named == ClaudeCodeTexts.KeySlash)
-            {
-                // "/ to search": a part of the hint row like any other, so the row stays a hint row; no key is given
-                // for it, since what it opens takes typed text (ClaudeCodeTexts.KeySlash).
-                continue;
-            }
-
-            var names = named.Split(ClaudeCodeTexts.KeyJoin);
+            // "/ to search": the slash is the one key of its part, not what joins two (ClaudeCodeTexts.KeySlash).
+            var names = named == ClaudeCodeTexts.KeySlash ? new[] { named } : named.Split(ClaudeCodeTexts.KeyJoin);
             // "⇧←/→": the Shift of the first arrow holds for the arrows after it.
             var shift = names[0].StartsWith(ClaudeCodeTexts.KeyShift);
             foreach (var name in names)
@@ -239,6 +291,7 @@ public static class ScreenReader
         ClaudeCodeTexts.KeyEnter => ClaudeCodeKeys.Enter,
         ClaudeCodeTexts.KeySpace => " ",
         ClaudeCodeTexts.KeyTab => ClaudeCodeKeys.Tab,
+        ClaudeCodeTexts.KeySlash => ClaudeCodeKeys.Slash,
         ClaudeCodeTexts.KeyLeft => ClaudeCodeKeys.Left,
         ClaudeCodeTexts.KeyRight => ClaudeCodeKeys.Right,
         ClaudeCodeTexts.KeyUp => ClaudeCodeKeys.Up,

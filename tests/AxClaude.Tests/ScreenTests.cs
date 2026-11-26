@@ -142,17 +142,18 @@ public class ScreenTests
         Assert.True(screen.Tabbed);
         Assert.Equal(["Claude Code won't ask for these. Rules off in auto mode aren't listed.", "Search…", "1. Add a new rule…"], screen.Lines);
 
-        // The search's key is read and not offered: it opens a field that takes typed text, which the list of a
-        // screen cannot give (claude-screens.md). The other keys are the hint row's, in its order.
-        Assert.Equal([("Down", "navigate"), ("Left", "switch"), ("Right", "switch"), ("Escape", "close")], screen.Keys.Select(k => (k.Name, k.Action)));
+        // Since 2026-11-25 the search's key is offered as "Search the rules (/)", which sends the slash; the search row it
+        // moves to is a screen of its own (the permissions-search fixture, below). The keys are the hint row's, in its order.
+        Assert.Equal([("Down", "navigate"), ("Left", "switch"), ("Right", "switch"), ("/", "search"), ("Escape", "close")], screen.Keys.Select(k => (k.Name, k.Action)));
+        Assert.Equal("/", screen.Keys[3].Send);
+        Assert.Equal("Search the rules (/)", ScreenActions.KeyItem(screen.Keys[3]));
         Assert.True(ScreenActions.Closes(ScreenActions.LeaveKey(screen)));
-        Assert.Null(ScreenActions.LetterKey(screen, '/'));
 
         // The row of 2.1.326, which named no such key, reads as it did.
         Assert.Equal(["Left", "Right", "Down", "Escape"], ScreenReader.Keys("←/→ to switch · ↓ to select · Esc to cancel")!.Select(k => k.Name));
 
         // The slash alone is a key; between two keys it joins them, as ever. A row without Escape is no hint row still.
-        Assert.Equal(["Escape"], ScreenReader.Keys("/ to search · Esc to close")!.Select(k => k.Name));
+        Assert.Equal(["/", "Escape"], ScreenReader.Keys("/ to search · Esc to close")!.Select(k => k.Name));
         Assert.Equal(["Escape", "Enter", "Space"], ScreenReader.Keys("Esc/Enter/Space to close")!.Select(k => k.Name));
         Assert.Null(ScreenReader.Keys("/ to search"));
         Assert.Null(ScreenReader.Keys("Esc// to close"));
@@ -172,7 +173,7 @@ public class ScreenTests
         Assert.Null(model.PendingQuestion);
         Assert.Equal("Tabs: Permissions, Recently blocked, Allow, Ask, Deny, Auto mode, Workspace", screen.Title);
         Assert.Equal(["Claude Code won't ask for these. Rules off in auto mode aren't listed.", "Search…", "1. Add a new rule…"], screen.Lines);
-        Assert.Equal(["Down", "Left", "Right", "Escape"], screen.Keys.Select(k => k.Name));
+        Assert.Equal(["Down", "Left", "Right", "/", "Escape"], screen.Keys.Select(k => k.Name));
 
         // Right: the next tab. Claude Code draws only the rows that changed, and it is the same screen with other lines.
         Replay(model, fixture, 1626, 1626);
@@ -185,6 +186,92 @@ public class ScreenTests
         Assert.Null(model.PendingScreen);
         Assert.False(model.PromptPending);
         Assert.Contains("Permissions dialog dismissed", TestHelpers.Visible(model));
+    }
+
+    [Fact]
+    public void The_permissions_search_is_a_screen_being_searched()
+    {
+        // Recorded with Claude Code 2.1.332 (2026-11-25) in a folder whose settings allow three rules: /permissions, then
+        // "/", "g", "i" and "t" (the last two echoed onto the row without a frame), Down, Up, "z" twice, Escape three
+        // times. Until 2026-11-25 the search row read as no screen, and the message field came back over a field of
+        // Claude Code's that took the next message as its text.
+        const string fixture = "permissions-search-claude2.1.332-240x50.vt";
+        const string tabs = "Tabs: Permissions, Recently blocked, Allow, Ask, Deny, Auto mode, Workspace";
+        var model = new SessionModel(240, 50);
+
+        // The screen as it opens, the search offered as an item.
+        Replay(model, fixture, 0, 2064);
+        var screen = Assert.IsType<ClaudeScreen>(model.PendingScreen);
+        Assert.False(screen.Searching);
+        Assert.Equal(["Claude Code won't ask before using allowed tools.", "Search…", "1. Add a new rule…", "2. Bash(git status)", "3. Bash(npm test)", "4. WebSearch"], screen.Lines);
+        Assert.Contains("Search the rules (/)", ScreenActions.Items(screen));
+
+        // "/": only the hint row changes, and the cursor moves to the search row. A screen being searched, nothing typed:
+        // the window shows a field. Escape goes back, Down goes into the rules.
+        Replay(model, fixture, 2501, 2501);
+        var empty = Assert.IsType<ClaudeScreen>(model.PendingScreen);
+        Assert.True(empty.Searching);
+        Assert.False(empty.SearchTyped);
+        Assert.True(model.PromptPending);
+        Assert.Equal(tabs, empty.Title);
+        Assert.Equal(["Search…", "1. Add a new rule…", "2. Bash(git status)", "3. Bash(npm test)", "4. WebSearch"], empty.Lines);
+        Assert.Equal([("Down", "navigate"), ("Escape", "go back")], empty.Keys.Select(k => (k.Name, k.Action)));
+        Assert.False(ScreenActions.IsInformation(empty));
+        Assert.False(ScreenActions.Closes(ScreenActions.LeaveKey(empty)));
+        Assert.Equal("\x1b[B", ScreenActions.SearchDownKey(empty)!.Send);
+
+        // "git": the rules that match, read as the screen's list; Enter on a line goes into them, Escape clears.
+        Replay(model, fixture, 2562, 2669);
+        var typed = Assert.IsType<ClaudeScreen>(model.PendingScreen);
+        Assert.True(typed.SearchTyped);
+        Assert.Equal(["Search: git", "1. Bash(git status)"], typed.Lines);
+        Assert.Equal([("Down", "navigate"), ("Escape", "clear")], typed.Keys.Select(k => (k.Name, k.Action)));
+        Assert.Equal("\x1b[B", ScreenActions.EnterOnLine(typed)!.Send);
+        Assert.Equal(["Search: git", "1. Bash(git status)", "Navigate (Down)", "Clear (Escape)"], ScreenActions.Items(typed));
+
+        // Down: Claude Code asks for the rule by its number, a question and no screen.
+        Replay(model, fixture, 2670, 2670);
+        Assert.Null(model.PendingScreen);
+        Assert.True(model.PromptPending);
+
+        // "zz" (Up drew nothing, and the first key typed in the list began a new search): no rule matches, and the hint
+        // row names Escape alone, so nothing goes into the rules from here.
+        Replay(model, fixture, 2818, 2900);
+        var none = Assert.IsType<ClaudeScreen>(model.PendingScreen);
+        Assert.True(none.SearchTyped);
+        Assert.Equal(["Search: zz", "No rules match \"zz\""], none.Lines);
+        Assert.Equal([("Escape", "clear")], none.Keys.Select(k => (k.Name, k.Action)));
+        Assert.Null(ScreenActions.SearchDownKey(none));
+        Assert.Null(ScreenActions.EnterOnLine(none));
+
+        // Escape: the text cleared, every rule again, the field again.
+        Replay(model, fixture, 2974, 2974);
+        var cleared = Assert.IsType<ClaudeScreen>(model.PendingScreen);
+        Assert.True(cleared.Searching);
+        Assert.False(cleared.SearchTyped);
+        Assert.Equal("go back", cleared.Keys[^1].Action);
+
+        // Escape twice more: back to the rules, asked for by number, then the screen dismissed; nothing waits.
+        Replay(model, fixture, 3122, int.MaxValue);
+        Assert.Null(model.PendingScreen);
+        Assert.False(model.PromptPending);
+        Assert.Contains("Permissions dialog dismissed", TestHelpers.Visible(model));
+    }
+
+    [Fact]
+    public void A_search_row_without_its_hint_row_is_no_screen()
+    {
+        // The row's words alone prove nothing: a hint row whose Escape goes back or clears must stand under it.
+        Assert.Null(ScreenReader.Read(["claude: here", "Search: git", "1. Bash(git status)", "Esc to close"], 1));
+        Assert.Null(ScreenReader.Read(["claude: here", "Search: git"], 1));
+        Assert.True(ScreenReader.IsSearchRow("Search…"));
+        Assert.True(ScreenReader.IsSearchRow("Search: a b"));
+        Assert.False(ScreenReader.IsSearchRow("Search the web"));
+
+        // Without a tab row above it, the search row is the title.
+        var screen = ScreenReader.Read(["Search: x", "No rules match \"x\"", "Esc to clear"], 0)!;
+        Assert.Equal("Search: x", screen.Title);
+        Assert.Equal(0, screen.FirstRow);
     }
 
     /// <summary>Feeds the chunks of a recording from one offset through another, the frames cut as the app's quiet rule cuts them, and ends the last frame.</summary>

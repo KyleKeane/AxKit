@@ -508,7 +508,9 @@ internal sealed partial class MainForm
             return true;
         }
 
-        var text = new StringBuilder(screen.Title);
+        // A search is named with the window's words, its first line the search row ("Search: git").
+        var name = screen.Searching ? ScreenActions.SearchName : screen.Title;
+        var text = new StringBuilder(name);
         foreach (var line in screen.Lines)
         {
             text.Append(Stop(text.ToString())).Append(line);
@@ -520,14 +522,20 @@ internal sealed partial class MainForm
             return;
         }
 
+        if (screen.Searching && !screen.SearchTyped)
+        {
+            ShowSearchField(screen, text.ToString());
+            return;
+        }
+
         if (ScreenActions.IsInformation(screen))
         {
             ShowScreenNotice(screen, text.ToString());
             return;
         }
 
-        ShowInArea(screen.Signature, screen.Title, text.ToString(), !UserActed(), (focus, hold) =>
-            Area.ShowList(screen.Title, items, 0, null, focus, hold, (index, _) =>
+        ShowInArea(screen.Signature, name, text.ToString(), !UserActed(), (focus, hold) =>
+            Area.ShowList(name, items, 0, null, focus, hold, (index, _) =>
             {
                 if (index < first)
                 {
@@ -554,6 +562,35 @@ internal sealed partial class MainForm
         {
             ScreenKeySent();
             TypeAnswer(typed);
+        }, () => SendScreenKey(ClaudeCodeKeys.Escape)));
+    }
+
+    /// <summary>
+    /// The permissions screen's search row with Claude Code's cursor on it, nothing typed yet (<see cref="ClaudeScreen.Searching"/>,
+    /// the item Search the rules sends "/"): a field in the control area, "Search the rules, type and press Enter". Enter
+    /// types the text into Claude Code's search a keystroke at a time, and the rules that match come back as the
+    /// screen's list (<see cref="ClaudeScreen.SearchTyped"/>); an empty field goes into the whole list (Down, where
+    /// Claude Code asks for a rule by its number); Escape goes back. Without this field the message field came back
+    /// over Claude Code's search, which took the next message as its text.
+    /// </summary>
+    private void ShowSearchField(ClaudeScreen screen, string text)
+    {
+        var name = ScreenActions.SearchFieldName;
+        ShowInArea(screen.Signature, name, text, !UserActed(), (focus, hold) => Area.ShowField(name, focus, hold, typed =>
+        {
+            if (typed.Length > 0)
+            {
+                ScreenKeySent();
+                TypeAnswer(typed, enter: false);
+            }
+            else if (ScreenActions.SearchDownKey(screen) is { } down)
+            {
+                SendScreenKey(down.Send);
+            }
+            else
+            {
+                Announce("Type the words to search for", true);
+            }
         }, () => SendScreenKey(ClaudeCodeKeys.Escape)));
     }
 

@@ -21,6 +21,9 @@ public static class ClaudeCodeKeys
 
     public const string Tab = "\t";
 
+    /// <summary>The slash on its own: the permissions screen's search ("/ to search", 2.1.327; the permissions-search fixture).</summary>
+    public const string Slash = "/";
+
     /// <summary>Shift+Tab: the next permission mode.</summary>
     public const string ShiftTab = "\x1b[Z";
 

@@ -1,0 +1,114 @@
+[?9001h[?1004h[?25l[2J[m[H]0;claude[?25h[Screen Reader Mode: on via flag]
+[?2004h[?2031h[?1004h[>0q[?u]7501;?[?25lPermission Required: Accessing workspace:
+C:\Temp\axclaude-fixture-search
+Quick safety check: Is this a project you created or one you trust? (Like your own code, a well-known open source project, or work from your team). If not, take a moment to review what's in this folder first.
+Claude Code'll be able to read, edit, and execute files here.
+warning: This folder pre-approves 3 tool permissions in .claude/settings.json:
+  WebSearch, Bash(git status), and Bash(npm test)
+These will apply without asking. Only proceed if you trust this configuration.
+Trusting this folder loads .claude/settings.json.
+Security guide
+y. Yes, I trust this folder
+n. No, exit
+Enter y/n:
+Enter to confirm · Esc to cancel[13;12H[?25h[>4m[?2031l[?2004l[?25l[2;1H[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[2;1H[?25h
+[?2004h[?2031h[?1004h[?25l[2;1H]0;✳ Claude Code[?25hClaude Code v2.1.332
+Haiku 5.5 with xhigh effort · Claude Ultra
+C:\Temp\axclaude-fixture-search
+manual mode on
+effort: xhigh · /effort
+$[>0q[?25l[5;1H/permissions                        Manage allow and deny tool permission rules[K
+/fewer-permission-prompts           Pre-approve safe read-only commands based on your usage[K
+/update-config                      Change settings: hooks, permissions, environment variables[K
+/claude-in-chrome                   Let Claude browse and interact with pages in your Chrome
+/chrome-browser                     Read this skill before the first step that uses Claude in Chrome, the browser extension whose tools are named mcp__claude-in-chrome__* (also called Chrome, the browser extension, or the external
+                                    browser) and which acts in the person's real Chrome with their own sign-ins; before those tools are turned on there may be a single enable__mcp__claude-in-chrome tool instead. It covers loading the t…[30;1H$  /permissions[?25h[?25l[5;1Hyou: /permissions[K
+Permissions  Recently blocked   Allow   Ask   Deny   Auto mode   Workspace[K
+Claude Code won't ask before using allowed tools.[K
+Search…[K
+1. Add a new rule…[K
+2. Bash(git status)[K
+3. Bash(npm test)[K
+4. WebSearch[K
+↓ to navigate · ←/→ to switch · / to search · Esc to close[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[6;33H[?25h[?25l[13;1H↓ to navigate · Esc to go back[K[8;1H[?25h[?25lSearch: g[K
+1. Bash(git status)[K
+↓ to navigate · Esc to clear[K
+[K
+[K
+[K[8;10H[?25hit[?25l[10;1HSelect with numbers [1-1]. Then Enter to submit or Escape to cancel:[K
+←/→ to switch · / to search · Esc to close[10;70H[?25h[?25l[8;1HSearch: z[K
+No rules match "z"[K
+Esc to clear[K
+[K[8;10H[?25h[?25lSearch: zz[K
+No rules match "zz"[K
+Esc to clear[K[8;11H[?25h[?25lSearch…[K
+1. Add a new rule…[K
+2. Bash(git status)[K
+3. Bash(npm test)
+4. WebSearch
+↓ to navigate · Esc to go back[8;1H[?25h[?25l[13;1HSelect with numbers [1-4]. Then Enter to submit or Escape to cancel:[K
+←/→ to switch · / to search · Esc to close[13;70H[?25h]133;A;redraw=0]133;C]133;D[?25l[6;1HPermissions dialog dismissed[K
+manual mode on[K
+$[K
+[K
+[K
+[K
+[K
+[K
+[K[8;2H[?25h[?25l[7;1H/exit                               Exit the CLI[K
+/context                            Show what fills the context[K
+/usage-credits                      Configure usage credits or request them from your admin when you hit a limit[32;1H$  /exit[?25h]0;◐ Claude Code[?1006l[?1003l[?1002l[?1000l[>4m[?2031l[?2004l[?1016l[?25l[7;1Hyou: /exit[K
+Accomplishing…[K
+manual mode on  ·  esc to interrupt[K
+$[K
+Resume this session with:[K
+claude --ax-screen-reader --model haiku --resume 00000000-0000-0000-0000-000000000000[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[13;1H]0;[?25h]133;A;redraw=0]133;C]133;D]0;✳ Claude Code[?9001l[?1004l

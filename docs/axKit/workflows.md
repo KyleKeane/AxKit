@@ -303,8 +303,11 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
 50. **Hand a conversation from Claude Code's stream to its screen and back, with Claude Code itself**
     - Take the stream's conversation up with the screen
     - Take the conversation up over the stream again and read its earlier part
-51. **Have a short exchange with Claude**
-52. **Answer a set of two questions from Claude**
+51. **Search the rules of Claude Code's permissions screen**
+    - Search the rules of the permissions screen
+    - Leave the search
+52. **Have a short exchange with Claude**
+53. **Answer a set of two questions from Claude**
 
 ## axClip
 
