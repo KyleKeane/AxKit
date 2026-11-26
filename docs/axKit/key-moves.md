@@ -217,6 +217,22 @@ Count: 12 moves, 17 keeps.
 - The switches stay: Ctrl+M the music, axClip's Ctrl+P pause.
 - axTerminal's Recent commands moves from Ctrl+R to Alt+Down, the command field's choices (rule 4).
 
+## The exceptions reviewed again (2026-11-26)
+
+The maintainer, on the keys kept by the assistant's own reasoning rather than Windows' teaching: "let us move them to
+fit the rule if possible". Settled through the question tool:
+
+- Interrupt: Ctrl+I in axClaude and axTerminal (I for interrupt, rule 2): axTerminal sends Ctrl+C to the shell,
+  axClaude stops Claude; axClaude's raw Ctrl+C (from Ctrl+Shift+C) stays in the palette without a key, and its
+  Shift+Escape gives way. axTerminal's Ctrl+Shift+C is then free. The command name Interrupt is one key in both.
+- axJSON's Format: Ctrl+R (R for reformat), from Ctrl+Shift+F.
+- axFile's New text file: Ctrl+T (T for text), from Ctrl+Shift+T.
+- Word wrap in axDown, axJSON and axPreview: F11 (rule 5, the text shown another way), from Ctrl+Shift+W.
+
+Left as exceptions, each one Windows or a common program taught: F2 rename, F3 find next, F5 refresh and reload, F6
+the next pane, Ctrl+Shift+N a new folder (File Explorer), Ctrl+Shift+P the palette (Visual Studio Code), Ctrl+Shift+R
+restart (a browser's heavier reload).
+
 ## The small families
 
 ### Escape
