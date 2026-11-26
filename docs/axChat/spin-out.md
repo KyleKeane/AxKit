@@ -89,7 +89,16 @@ window scripts and the NVDA passes make safe.
 - **Scope.** axChat's spec is a small HTTP app; A makes it the bundle's main app. The first users' window should not
   wait on the move: the HTTP endpoint can ship before the Claude Code endpoint moves.
 
-## 6. Questions for the sitting with Fable
+## 6. The maintainer's leaning, 2026-11-26
+
+"i think calude code cli is a good first client for the axChat access layer, but if you think it is different enough
+that it warrants staying in axlaude then we can leabe it here. if it is in axclaude i still think it should be
+available in axchat as an option. that is probably the way to go". The assistant's answer the same day: shape A, with
+the Claude Code endpoint's code in the shared projects (section 4, step 3), so that axChat offers it from its first
+release and axClaude keeps its stream mode on the same code until axChat's endpoint has held, then keeps the screen
+alone. One code, two windows for a while, never two copies.
+
+## 7. Questions for the sitting with Fable
 
 1. Shape A or B (section 3)? If A, is the Claude Code endpoint axChat's from its first release, or after the HTTP
    endpoint has been used?
@@ -103,7 +112,7 @@ window scripts and the NVDA passes make safe.
    opened from axChat by a key.
 6. Does axHelp's conversation (still on the screen, L29) move with the stream to axChat's Claude Code endpoint?
 
-## 7. Files to read for the sitting
+## 8. Files to read for the sitting
 
 `docs/axChat/SPEC.md`; `docs/axClaude/stream-mode.md` (SM-3, the seam); `docs/axClaude/stream-equivalence.md`;
 `src/AxClaude.Core/Transcript/ClaudeModel.cs`; `src/AxClaude.Core/notes/stream.md`; `docs/axKit/framework.md` and
