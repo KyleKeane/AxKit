@@ -1,8 +1,8 @@
 # axPass: the KeePass format and the command-line tool, from their sources
 
-Notes for the axPass specification that is still to be written (`docs/axKit/plan.md`, axPass). Read on 2026-10-23
-from three pages; each fact below is what a page says, and what the pages leave open is listed as open, not filled in
-from memory. Check the pages again before the spec is written: the format is KeePass's, the tool KeePassXC's, and
+The record of the format and of the tool that axPass's specification (`docs/axPass/SPEC.md`) and its code cite;
+section 8 is what the tool was seen to do. Read on 2026-10-23 from three pages; each fact below is what a page says, and what the pages leave open is listed as open, not filled in
+from memory. Check the pages again before relying on a fact anew: the format is KeePass's, the tool KeePassXC's, and
 both change.
 
 - KDBX File Format Specification: https://keepass.info/help/kb/kdbx.html (describes version 4.1, no date shown)

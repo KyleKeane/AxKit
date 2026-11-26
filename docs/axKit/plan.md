@@ -330,10 +330,11 @@ library dependency (B-10: `git.exe` and the file system through the APIs already
 - **axList** (asked 2026-10-23 as AxList, with AxTask, placeholder names; the user keeps the two in view as separate
   apps, 2026-11-06): a list manager for things to remember and to arrange, with bullet, numbered and checkbox lists
   nested in plain Markdown files, one file per list; later, links between items for mind maps, curriculum planning,
-  recall in plain language and structured storage. The spec is written, `docs/axList/SPEC.md`, with its guide and test
-  plan, brought from the branch into `main` on 2026-11-06 with the bundle's current names; its section 10 holds what to
-  settle with the user before the build (what a checkbox item means beside axTask, whether the Tasks view across lists
-  stays, the first step of links). Nothing is built on `main`; the branch's draft code is the tag `archive/axlist-draft`,
+  recall in plain language and structured storage. A spec with its guide and test plan was brought from the branch into
+  `main` on 2026-11-06; its section 10 held what to settle with the user before the build (what a checkbox item means
+  beside axTask, whether the Tasks view across lists stays, the first step of links). Parked since 2026-11-13, the
+  three were deleted on 2026-11-26 and are last at commit fc3109e6 (`git show fc3109e6:docs/axList/SPEC.md`). Nothing
+  is built on `main`; the branch's draft code is the tag `archive/axlist-draft`,
   and the branch is gone. AxTask, as first asked, was the checkbox lists as a task manager with reminders, automations
   and smart lists, perhaps one app with AxList at first; it became axTask above. Other names considered: AxNotes,
   AxTodo. The rule the user set for both: plain text files on disk with a clear, documented format, so that an AI

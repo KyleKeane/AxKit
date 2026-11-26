@@ -1,6 +1,7 @@
 # axClaude: the stream as a second source, behind a switch
 
-A specification, written 2026-11-17 for the maintainer's decision of that day (`stream.md`, section 7 (a); `docs/axKit/events.md`,
+A specification, written 2026-11-17 for the maintainer's decision of that day (the stream as a second mode behind a
+switch, the screen the default and the fallback; `docs/axKit/events.md`,
 section 7, step 3): Claude Code's non-interactive stream becomes a second way for axClaude's window to learn what
 Claude does, off at first, with the screen as the default and the way back. Requirements are numbered SM-n.m. Stages
 1 to 5 of section 11 are built (section 13 says what each came to): the seam, which changes no behaviour; the
@@ -9,14 +10,15 @@ fed by the stream, with its second ways to send; and the folder's trust and the 
 window made for the stream can hold a conversation and answer what Claude asks. Since 2026-11-25 a reply's text is
 made plain (stage 7, SM-4.5), and the sessions are built (stage 6, section 13, the last part): the older conversation
 shown when a session is taken up, and the hand-over between the two sources. Since 2026-11-26 the NVDA plan has its
-section for the mode (stage 8; its pass by ear is owed), and the first two rounds of what `stream-equivalence.md`
-section 5 lists are built (section 13, the last parts): what a tool printed, the choice of an earlier conversation and
-plan approval among them. Not done yet: the maintainer's own use (stage 8; the live scripts 48, 49
+section for the mode (stage 8; its pass by ear is owed), and the nine things to build before the stream could be the
+default are built (section 13, the last parts, the two rounds of the must-build list): what a tool printed, the choice
+of an earlier conversation and plan approval among them. Not done yet: the maintainer's own use (stage 8; the live scripts 48, 49
 and 52 are there). The open ends stages 4 and 5 left are
 built since the same day (section 13, the last part), but for the folder's yes, which is remembered for no folder
 until the maintainer says so. The points of section 12 are taken as proposed until the maintainer has heard the mode.
 
-It rests on three things made the same day: the measurements (`stream.md`, twenty cases, all passing), the door
+It rests on three things made the same day: the measurements (`tools/ClaudeProbe stream`, twenty cases, all
+passing; its README, section 9), the door
 (`events.md`, section 10), and an inventory of the window, member by member, kept beside the lists until the
 window's second ways to send are built (5,900 lines in 19 files; every member sorted into window logic, bound to the
 screen, or mixed).
@@ -128,7 +130,7 @@ screen, or mixed).
   never read. A Claude Code that does not answer the request is taken to be up once the request has waited five
   seconds while the process runs (`StreamModel.FirstRequestUnanswered`, `ClaudeModel.Up`), and Ready is said then
   by the same rule, not only after the first turn (built 2026-11-25).
-- SM-4.11 **What a tool printed** (2026-11-26; `stream-equivalence.md` L21). The screen shows a call's preview rows under
+- SM-4.11 **What a tool printed** (2026-11-26). The screen shows a call's preview rows under
   its tool row: measured with Claude Code 2.1.332 (section 13), the first three lines of a command's output and then
   "… +9 lines (ctrl+o to expand)", or "(No output)". The stream gives every result whole (the fixture `tool-output`). So
   under each call that went well the conversation shows the first three lines of what came back and, when there are
@@ -175,7 +177,7 @@ the method writes keystrokes for the screen source and a line for the stream sou
   Send key submenu (Ctrl+C, Ctrl+D, Tab, the arrows), Ctrl+O's guard. Their menu items stay, so that the menus are
   the same in both modes, and say "Not with the stream source" (the words are section 12's), raised at the door as
   the kind `not-with-source` (since 2026-11-26; `said` before), which has no sound until the maintainer has chosen one.
-- SM-5.8 **A typed slash command** (2026-11-26; `stream-equivalence.md` L12). The answer to the first request lists the
+- SM-5.8 **A typed slash command** (2026-11-26). The answer to the first request lists the
   commands the run takes, the same as each start line (measured: 69 with 2.1.332, the user's own among them; the
   model keeps them, `StreamModel.Commands`, and they are never logged as a list). A typed text is read against that
   list (`StreamModel.TypedTextOf`): a text whose first word is the slash and a name (a path is a message) is a command
@@ -190,7 +192,7 @@ the method writes keystrokes for the screen source and a line for the stream sou
     goes as a message and gets a message's block;
   - before the run has listed its commands (a Claude Code that does not answer the first request), every command is
     sent, as before.
-- SM-5.9 **A typed `!` line** (2026-11-26; L17) is held the same way: the screen runs it in Claude Code's shell, the
+- SM-5.9 **A typed `!` line** (2026-11-26) is held the same way: the screen runs it in Claude Code's shell, the
   stream gives it to Claude as a message (SM-5.6). "Not sent: over the stream a ! line is no shell command. It would go
   to Claude as a message. Enter again sends it so."
 
@@ -206,7 +208,7 @@ mode each is simply absent, and the window says so where the user would look for
   too; the run's list of commands does not name it (measured 2026-11-26 with 2.1.332, never sent: it prints the
   account), so the window says it is not with the stream source (SM-5.8). `/usage` is listed and is sent.
 - SM-6.2 **`/login`** and the other commands of the terminal alone: signing in is done with the screen source. Since
-  2026-11-26 (L11): a typed `/login` is a command of the screen alone (SM-5.8); an error of Claude Code's that names
+  2026-11-26: a typed `/login` is a command of the screen alone (SM-5.8); an error of Claude Code's that names
   `/login` (an error text of the service's or a failed turn's end, `ClaudeCodeStream.AsksToSignIn`; or the lines it
   wrote as errors as it ended) opens the notice that offers the folder with the screen (SM-9.3), titled "Claude Code
   asks you to sign in", once for a run; and the window's sign-in reminder (bundle AX-11.6) is not said over the
@@ -225,6 +227,16 @@ mode each is simply absent, and the window says so where the user would look for
   request's answer names, and is read only through a redacting tool, never committed. What the window wrote is not
   in it, as the console's recording holds no keystroke.
 - SM-6.6 **The console's size, screen reader mode, the detailed view**: no meaning without a screen.
+- SM-6.7 **What is not promised** (Claude Code's documentation, read 2026-11-17 and 2026-11-26). No page promises the
+  lines' shape; the start line's `capabilities` are there "to feature-detect instead of comparing version strings",
+  and unknown values are to be ignored, so additions are expected. The requests the window writes (the first request,
+  the interrupt, the mode) and the lasting yes (`updatedPermissions`) are documented as the Agent SDK's methods alone,
+  not as lines. The documentation calls `-p` the "alternative for scripting": new features reach the interactive
+  screen first, and the terminal's own commands are not available in print mode. What was measured is narrow (the
+  smallest model, new folders, short runs). The guard is `tools\upstream.ps1 -Verify claude`, which plays the probe's
+  cases and writes `stream-shape.json` again, so that a new version's change shows as a diff; the screen source stays
+  the way back (SM-9.3), and with axHelp's conversation on it (SM-9.5) the screen and its parser stay maintained,
+  whatever the default.
 
 ## 7. Safety: the folder's trust and the questions
 
@@ -242,7 +254,7 @@ mode each is simply absent, and the window says so where the user would look for
   alone, over a named pipe with a secret of the start, the pipe open to the user alone (as the hooks' pipe is). It
   holds no logic: a question in, an answer out. When the window is gone or does not answer, its answer is No.
 - SM-7.4 **A permission question** is shown as a question with four answers, No first where a list starts: No;
-  No, and tell Claude why (since 2026-11-26, L14); Yes, once; Yes, and do not ask again for this tool in this
+  No, and tell Claude why (since 2026-11-26); Yes, once; Yes, and do not ask again for this tool in this
   session. "No, and tell Claude why" answers nothing yet: the control area's field asks for the user's words as after
   Other ("You chose No, and tell Claude why. Your answer"; Escape goes back to the list), and they go back with the
   refusal, `ClaudeCodeStream.RefusedWithWords`, as the refused call's result; measured with the probe's case
@@ -263,7 +275,7 @@ mode each is simply absent, and the window says so where the user would look for
   its answer, `LineKind.AnswerRecord`, the words `ClaudeCodeTexts`'s (`StreamAsking.AnswerRecord`).
 - SM-7.6 **What an AI asks for says so** (bundle rule 11): a permission question is Claude's request to run
   something; its first words say who asks, and running is never where the list starts.
-- SM-7.7 **Plan approval** (2026-11-26; `stream-equivalence.md` L13). In plan mode (Ctrl+P reaches it, SM-5.4) Claude
+- SM-7.7 **Plan approval** (2026-11-26). In plan mode (Ctrl+P reaches it, SM-5.4) Claude
   leaves it by calling its plan tool (`ClaudeCodeStream.PlanTool`), and Claude Code asks its permission tool first, with
   the plan in the call's input (measured, section 13). The screen asks "Ready to code?". The window asks it as a
   question of its own kind (`StreamAsking.IsPlan`): its title "Claude has a plan and asks to carry it out", its text the
@@ -305,7 +317,7 @@ mode each is simply absent, and the window says so where the user would look for
   window takes the folder's newest session, which is the screen's after the screen has used it.
 - SM-8.4 **`/clear`** begins a new session and says so with a line of its own (measured): the window empties the
   conversation as it does today and keeps the new id.
-- SM-8.5 **Choosing an earlier conversation** (2026-11-26; `stream-equivalence.md` L4). A `--resume` with no id (New
+- SM-8.5 **Choosing an earlier conversation** (2026-11-26). A `--resume` with no id (New
   session's preset "Choose a conversation to resume", or the user's own) opens Claude Code's own list of conversations,
   a screen the stream does not have. So before the start the window asks with a list of its own
   (`Streaming/ConversationChoice`), shown by its code for a question, as Choose the model is (SM-5.5): the folder's
@@ -340,7 +352,7 @@ mode each is simply absent, and the window says so where the user would look for
   that no sentence of the screen source changed. Copy diagnostics names the source on a line of its own in both:
   "Source: the screen" or "Source: the stream", the latter with the stream's numbers under it.
 - SM-9.5 **axHelp's conversation** stays on the screen source until the stream has been used for a while.
-- SM-9.6 **The copy from the Microsoft Store** (2026-11-26; L28): the stream does not start there, since it is not known
+- SM-9.6 **The copy from the Microsoft Store** (2026-11-26): the stream does not start there, since it is not known
   that Claude Code can read the relay's file under the package's folders, and without the relay nothing could be
   asked (SM-7.2). So there the setting does not choose the stream and the default stays the screen
   (`StartupOptions.Streams` with the Store's copy told); the switch in Options, Developer only says why, "The copy of
@@ -371,7 +383,36 @@ mode each is simply absent, and the window says so where the user would look for
 - SM-10.5 **By ear**: a section of the NVDA plan for stream mode, and two hours of the maintainer's own use with the
   switch on before it leaves the Developer menu. The maintainer's direction of 2026-11-25: those two hours come first;
   if the stream holds, it becomes the default and the screen's grounding in the session file
-  (`events-and-grounding.md` stage 3) is parked in `plan.md`; until then no work goes into that stage.
+  (`events-and-grounding.md` stage 3) is parked in `plan.md`; until then no work goes into that stage. What the two
+  hours should try (2026-11-26):
+  - A long reply: is the wait before speech heard? The window does not ask for a reply's pieces, so each reply line
+    comes whole; a reply of about 300 words is whole some 3.5 seconds after its first piece (measured), where the
+    screen speaks its rows as they settle. The pieces (`--include-partial-messages`) are built only if the wait is heard.
+  - A task with many tool calls: is the output under each call enough (SM-4.11)?
+  - Plan mode with Ctrl+P, until Claude asks to start: what is heard (SM-7.7)?
+  - Refuse a tool call with No, and tell Claude why: does Claude do as told (SM-7.4)?
+  - The slash commands he uses with the screen, such as `/config`, `/status`, `/resume`, `/rewind`, `/tasks`: what is
+    heard for each (SM-5.8)?
+  - A `!` line, to hear the difference (SM-5.9).
+  - A message sent while Claude works: Queued, then its block.
+  - An interrupt during a tool call, then a new message.
+  - An agent and a shell in the background: the sounds and F8.
+  - Close the window and open the folder again: the older part shown. Then the screen, and back (SM-8.2, SM-8.3).
+  - The trust question at each new window: is it tolerable, or is a yes to be remembered (SM-7.1; section 12, point 2)?
+  - Are Claude's thinking lines or the turn's summary line ("for 5s, done 2:48 PM", the d key) missed? The stream
+    shows neither: the thinking only starts Responding, and the end line holds the turn's duration.
+  - "Done" right after the reply, never early: the gain the stream was built for.
+  - The window in the background at a turn's end: the louder alert.
+
+  Worth building soon after the default, not before (proposed 2026-11-26): the turn's summary line, made from the end
+  line's duration and the clock under FR-14's switch, so that the d key works; a list of the commands the first
+  answer names with their descriptions, Enter putting one into the message field, as Choose the model is made; a
+  command Claude offers, asked still, with Copy and Open axTerminal in the folder in place of Yes, run it (SM-5.6).
+  Proposed to stay the screen's: `/config` beyond FR-14's rows (a row added when one is missed), `/usage` and `/cost`,
+  `/permissions`, stopping one background task, `/rewind`, the other screens of section 6; let go: `/btw` and `/goal`,
+  the feedback surveys, Send queued messages now, the Send key submenu, the console's own settings, a tool call's
+  input in the older conversation (EG-3.4), the spinner's word. Dynamic workflows over the stream wait on a recording
+  of how Claude Code's list of background tasks gives them.
 
 ## 11. The path in stages
 
@@ -774,14 +815,16 @@ Left, each for a reason:
 - The NVDA plan's section for stream mode and the maintainer's own use (stage 8). The section is written since
   2026-11-26.
 
-**Round 1 of the must-build list (2026-11-26).** The maintainer decided that day to build all nine items of
-`stream-equivalence.md` section 5; this round is the small ones, L28, L12, L11, L17 and L14, with the NVDA plan's
-section. Measured first, live, with Claude Code 2.1.332 and Haiku, by three new cases of `tools/ClaudeProbe stream`,
+**Round 1 of the must-build list (2026-11-26).** The maintainer decided that day to build all nine things a report of
+that day listed as needed before the stream could be the default (what the stream loses against the screen, deleted
+once built; last at commit fc3109e6, `docs/axClaude/stream-equivalence.md`); this round is the small ones, the
+Store's copy (SM-9.6), a typed command (SM-5.8), the sign-in (SM-6.2), a `!` line (SM-5.9) and the No with words
+(SM-7.4), with the NVDA plan's section. Measured first, live, with Claude Code 2.1.332 and Haiku, by three new cases of `tools/ClaudeProbe stream`,
 each in a fresh folder under `C:\Temp`, one session at a time, printing kinds, counts and Claude Code's own short
 words through the redaction only:
 
 1. `command-lists`: the answer to the first request lists 69 commands, each an object with its name, and the start
-   line's `slash_commands` the same 69. Of the commands `stream-equivalence.md` L1 to L9 and L11 name, the lists hold
+   line's `slash_commands` the same 69. Of the commands of Claude Code's own screens and of the terminal alone (SM-6.1, SM-6.2), the lists hold
    `config`, `usage`, `goal`, `mcp`, `agents` and `advisor`; not `status`, `cost`, `help`, `resume`, `permissions`,
    `tasks`, `rewind`, `btw`, `diff`, `memory`, `hooks`, `ide`, `chrome`, `theme`, `export`, `mobile`, `login` or
    `logout`. The start line's `terminal_slash_commands` names four, every one also among its commands: it is not the
@@ -805,8 +848,8 @@ scripts `55-stream-refused-why` and `56-stream-typed-commands` play the new answ
 the NVDA pass of the section, the error of a lapsed sign-in over the stream (not recorded), and the Store's copy (no
 script can run it).
 
-**Round 2 of the must-build list (2026-11-26).** The three medium items of `stream-equivalence.md` section 5: L21, L4
-and L13. Measured first, live, with Claude Code 2.1.332 and Haiku, one session at a time, in fresh folders under
+**Round 2 of the must-build list (2026-11-26).** The three medium items: what a tool printed (SM-4.11), the choice of an
+earlier conversation (SM-8.5) and plan approval (SM-7.7). Measured first, live, with Claude Code 2.1.332 and Haiku, one session at a time, in fresh folders under
 `C:\Temp`, printing kinds, counts, keys and yes or no only:
 
 1. The screen's preview of a tool's output, recorded with `tools/PtyCapture` (screen reader mode, 240 by 50, not

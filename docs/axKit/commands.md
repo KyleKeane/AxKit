@@ -317,7 +317,7 @@ made up for the occasion.
 - `tools/PtyCapture`: records Claude Code's screen stream for a fixture (`--dump` reads a recording with personal data
   replaced; never `--raw`). The `record-fixture` skill has the steps.
 - `tools/ClaudeProbe stream [--only <case>] [--shape <file>] [--keep <folder>]` measures Claude Code's
-  non-interactive stream (`docs/axClaude/stream.md`): twenty-four cases played against the installed Claude Code, each a
+  non-interactive stream (`docs/axClaude/stream-mode.md` rests on it): twenty-four cases played against the installed Claude Code, each a
   process of its own with the smallest model, no session saved (the one case that takes a session up again saves it
   and deletes its file from Claude Code's store afterwards) and no MCP server but the probe's own stand-in
   permission tool (the same program, `permission-tool`); kinds, names and times are printed, never a text, a path or

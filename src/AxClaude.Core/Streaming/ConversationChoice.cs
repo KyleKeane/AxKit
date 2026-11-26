@@ -12,7 +12,7 @@ namespace AxClaude.Core.Streaming;
 public sealed record EarlierConversation(string Session, DateTime Written, string FirstWords);
 
 /// <summary>
-/// The choice of an earlier conversation to take up (docs/axClaude/stream-mode.md SM-8.5; stream-equivalence.md L4):
+/// The choice of an earlier conversation to take up (docs/axClaude/stream-mode.md SM-8.5):
 /// Claude Code's own list of them is a screen the stream does not have, so a window asks with a list of its own of the
 /// folder's conversations, newest first, each named by when it was last written and the first words of its first
 /// message, and the choice starts Claude Code with <c>--resume</c> and the conversation's id. A session file is

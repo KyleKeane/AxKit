@@ -789,7 +789,7 @@ What it found:
 
 ## Owed: axClaude over the stream, what a tool printed, choosing a conversation, plan approval (2026-11-26)
 
-Round 2 of `docs/axClaude/stream-equivalence.md` section 5 (`docs/axClaude/stream-mode.md` SM-4.11, SM-8.5, SM-7.7).
+Round 2 of the stream's must-build list (`docs/axClaude/stream-mode.md` SM-4.11, SM-8.5, SM-7.7).
 Heard with NVDA on 2026-11-26 (94e87522): `57-stream-tool-output`, `58-stream-resume-choice` and `59-stream-plan`
 passed with every expected announcement spoken, among the 19 stream scripts (56 goals). Still owed:
 

@@ -1,4 +1,4 @@
-// probe stream: Claude Code's non-interactive stream, measured (docs/axClaude/stream.md). A fixed set of cases is
+// probe stream: Claude Code's non-interactive stream, measured (docs/axClaude/stream-mode.md). A fixed set of cases is
 // played against the installed Claude Code, each a process started with ClaudeCodeStream.Options: messages written on
 // standard input, every line of standard output read through ClaudeCodeStream.Read, and what the case expects held to
 // the lines. It prints kinds, names and times only: never a text Claude wrote, a path or an id. It is the check to run
@@ -107,7 +107,7 @@ internal static class StreamProbe
     private static readonly string[] Asking = ["--permission-mode", "default", ClaudeCodeStream.PermissionToolOption, ToolName];
 
     /// <summary>
-    /// The commands of Claude Code's own screens that docs/axClaude/stream-equivalence.md names (L1 to L9, L11): asked
+    /// The commands of Claude Code's own screens and of the terminal alone (docs/axClaude/stream-mode.md SM-6.1, SM-6.2, SM-5.8): asked
     /// about by name in the lists a run gives (the case command-lists). Declared before the cases, which read it.
     /// </summary>
     private static readonly string[] ScreenOnly =
@@ -296,7 +296,7 @@ internal static class StreamProbe
             o => [$"exit code {o.ExitCode}; turns ended: {o.Ends.Count()}, failed: {o.Ends.Count(end => end.Failed)}; lines read: {o.Lines.Count}", "Claude Code's own notes seen: " + Notes(o)],
             LimitSeconds: 60),
 
-        // ---- What docs/axClaude/stream.md, section 6, listed on 2026-11-17 as not yet measured ----
+        // ---- The cases added on 2026-11-17 for what was not yet measured ----
 
         new("long-reply", "a long reply's pieces against the clock", [ClaudeCodeStream.PartialOption], string.Empty,
             [Say("Write about 300 words on lighthouses, in plain sentences, with no list and no heading."), Close(Ended)],

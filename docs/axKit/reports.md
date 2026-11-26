@@ -398,7 +398,7 @@ What happens to a report once it is in, its harm review and the maintainer's sig
   assistant. `tools/reports-check.ps1`, which reads numbers, states and titles alone, run with every push, names each open
   report that no item of the priorities list points at, each open report whose items are done, and each closed
   report with an item that is not (root `CLAUDE.md` rule 9). An issue is relabelled, closed, answered or blocked on
-  GitHub itself (RP-6.4). The folder `docs/feature_requests` went to issues on 2026-11-07; its README points here.
+  GitHub itself (RP-6.4). The folder `docs/feature_requests` went to issues on 2026-11-07.
 - **RP-7.4 The later plan.** axGitHub: an access layer over the `gh` CLI for issues, on the shared item window, which
   may reuse what the GitHub lists had (`docs/axKit/plan.md`, Still to come; asked 2026-11-14, not built).
 
@@ -455,7 +455,7 @@ What happens to a report once it is in, its harm review and the maintainer's sig
 ## 10. Decisions
 
 - **RP-D1 GitHub's issues are the tracker for everyone** (the user, 2026-11-07), the maintainer's folder included
-  (RP-7.3). Until then GitHub waited for users (`docs/feature_requests/README.md`, 2026-11-06).
+  (RP-7.3). Until then (2026-11-06) GitHub waited for users.
 - **RP-D2 Sent by axKit's own code over GitHub's REST API, as axKit's own reporter account** (the user, 2026-11-07,
   twice: a feature for all users, as an allowed network action, not through the GitHub CLI, a second program every
   user would have to install and sign in to; then no sign-in at all, since a sign-in "will make it impossible for

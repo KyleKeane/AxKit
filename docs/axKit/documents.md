@@ -28,19 +28,14 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 - `access-layers.md`: the programs under the access layers (Claude Code, Git, KeePassXC's tool, the shells, MCP
   servers), where each one's texts, options and protocol are written, what is read from it and how, what guards it,
   and what is still outside that one place (root `CLAUDE.md`, rule 12).
-- `docs/axClaude/stream.md` (a report, 2026-11-17, whose decision was taken: the stream became a second source, `stream-mode.md`): Claude Code's non-interactive stream as a third
-  way for axClaude to learn what Claude does, beside the screen and the session file with the hooks: what the
-  documentation says, what `tools/ClaudeProbe stream` measured in twenty-four cases, the stream in the kinds of event of
-  `families.json`, what a window over it would and would not need, and the ways to go. `stream-shape.json` beside it
-  (written by the probe, never by hand) holds the keys of every kind of line seen, without a value. The code that
-  knows the stream's words is `src/AxClaude.Core/Streaming/ClaudeCodeStream.cs`; the window's stream source uses it.
-- `docs/axClaude/stream-mode.md` (SM-n.m; a specification, 2026-11-17; stages 1 to 5 built, behind the setting `claudeSource`): the stream as a second
-  source of axClaude's window behind a switch: the seam (one model with two sources, `ClaudeModel`), the stream's
-  model, host and relay, what the window sends, what the stream does not have, the folder's trust and the
-  questions, sessions, the switch, the checks, the path in eight stages, and what is the maintainer's to decide.
-- `docs/axClaude/stream-equivalence.md` (a report for the maintainer's decision, 2026-11-26): what a window over the
-  stream loses against one over the screen, what replaces each loss today or would, at what cost, the risks, and
-  what must be built before the stream could be the default.
+- `docs/axClaude/stream-mode.md` (SM-n.m; a specification, 2026-11-17; built, behind the setting `claudeSource`): Claude
+  Code's non-interactive stream as a second source of axClaude's window behind a switch: the seam (one model with two
+  sources, `ClaudeModel`), the stream's model, host and relay, what the window sends, what the stream does not have
+  and what its documentation does not promise (SM-6.7), the folder's trust and the questions, sessions, the switch,
+  the checks with what the maintainer's two hours of use should try (SM-10.5), the path in eight stages, and what is
+  the maintainer's to decide. The measurements are `tools/ClaudeProbe stream` (its README, section 9);
+  `stream-shape.json` beside the spec (written by the probe, never by hand) holds the keys of every kind of line seen,
+  without a value. The code that knows the stream's words is `src/AxClaude.Core/Streaming/ClaudeCodeStream.cs`.
 - `docs/axChat/spin-out.md` (a proposal for the maintainer and the sitting with Fable, 2026-11-26): whether axChat
   should be spun out of axClaude's stream mode, what the screen and the stream share, the two shapes axChat could
   take, the order of moving the shared pieces, the risks and the questions for the sitting.
@@ -114,9 +109,6 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 - `key-families.json` (by hand; `"status": "proposed"` until the maintainer settles it): what each kind of key is
   for (Ctrl with a letter, Ctrl with a digit, the F-keys and so on) and the keys that do not fit today. No test
   enforces the families, and no key moves because of them.
-- `key-moves.md` (by hand, a dated page of 2026-11-25): a proposal for each of the 89 keys that do not fit their
-  family, move or keep with the reason, family by family, for the maintainer to settle one family per sitting. It is
-  deleted once every family is settled and the moves are in the key tables.
 - `workflow-graph.md` (by hand, a proposal of 2026-11-26): the workflow graph, every place a node and every action an
   edge, the two bounds of G7 checked over it, the scripts as walks and the map held against each change; its
   decisions are the maintainer's (section 9), and nothing of it is built before they are made.
@@ -170,8 +162,12 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
   `inventory-2026-10-24.md`, `inventory-2026-11-09.md`, `cleanup-run.md` and `cleanup-run-report.md`,
   `security-audit-2026-10-24.md` (the code still names its findings by number, S-n), `axfile-split.md` (how axMedia
   and axPreview came out of axFile), `code-signing.md` (the Windows signing set up and retired for the Store's
-  signature), and the entries of the NVDA record before 2026-11-15. A new dated record says in its first lines what
-  ends it, and goes when that has happened.
+  signature), and the entries of the NVDA record before 2026-11-15. Gone on 2026-11-26, each last present at commit
+  fc3109e6: `docs/axClaude/stream.md` (the stream measured, its decision taken) and
+  `docs/axClaude/stream-equivalence.md` (what the stream loses, its nine items built), both now in `stream-mode.md`;
+  `key-moves.md` (every key family settled and moved); the planned axList's `docs/axList/` (parked, `plan.md`); and
+  `docs/feature_requests/README.md` (a pointer to the reports repository). A new dated record says in its first lines
+  what ends it, and goes when that has happened.
 
 ## The repository's pages
 
@@ -182,8 +178,6 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
   by hand; `tools/pages.ps1` writes it with every other generated page.
 - `PRIVACY.md`: everything axKit contacts. It changes in the same commit as any new network contact or program axKit
   starts (rule 8).
-- `docs/feature_requests/README.md`: points to the reports repository `KyleKeane/AxKit-reports`, where feature
-  requests and bugs are issues.
 - `.github/`: the workflows, the issue forms and the pull request checklist.
 - `.claude/skills/accessibility-review` (run on any change to a window before committing) and
   `.claude/skills/record-fixture` (axClaude's recordings).

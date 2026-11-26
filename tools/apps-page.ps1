@@ -80,7 +80,7 @@ foreach ($app in $apps) {
     $docs = Join-Path $root "docs\$($app.Name)"
     if (Test-Path -LiteralPath $docs) {
         # Sorted by the characters' own order, case aside, and never by a culture's rules: Windows PowerShell and
-        # PowerShell 7 order a hyphen and a full stop differently (stream-mode.md, stream.md), and the page written
+        # PowerShell 7 order a hyphen and a full stop differently (stream-mode.md and stream.md, two documents of axClaude then), and the page written
         # on a developer's computer was then stale in the build on GitHub (2026-11-17, every build of an afternoon).
         $sorted = [string[]]@(Get-ChildItem -LiteralPath $docs -Filter *.md | ForEach-Object { $_.Name })
         [Array]::Sort($sorted, [StringComparer]::OrdinalIgnoreCase)

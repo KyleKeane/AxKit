@@ -213,7 +213,7 @@ internal sealed partial class MainForm
     private bool StreamChoosesConversation => _resuming is not null;
 
     /// <summary>
-    /// The folder's earlier conversations (SM-8.5; stream-equivalence.md L4), read off the window's thread, newest
+    /// The folder's earlier conversations (SM-8.5), read off the window's thread, newest
     /// first, each named by its date and the first words of its first message, and offered as a list of the window's
     /// own in the control area, shown by the window's code for a question. A choice starts Claude Code with that
     /// conversation (<see cref="ResumeChosen"/>); Escape starts nothing. A folder with none begins a new conversation.

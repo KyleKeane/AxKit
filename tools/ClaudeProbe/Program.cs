@@ -13,7 +13,7 @@
 //   probe relay <port> <event>         (what a command hook runs) standard input posted to the listener; prints nothing
 //   probe stream [--only <case>] [--shape <file>] [--keep <folder>]
 //                                      Claude Code's non-interactive stream measured: a set of cases played against the
-//                                      installed Claude Code, kinds and times only (StreamProbe.cs, docs/axClaude/stream.md)
+//                                      installed Claude Code, kinds and times only (StreamProbe.cs, docs/axClaude/stream-mode.md)
 //   probe permission-tool              (what Claude Code starts for "probe stream") the stand-in permission tool
 //
 // See README.md in this folder.

@@ -189,7 +189,8 @@ public sealed record StreamAsk(string Tool, string Call, string About, JsonEleme
 /// Code is one process that takes a JSON line for each message and writes a JSON line for each thing that happens:
 /// no screen, no rows to tell apart, no frames. Measured against Claude Code 2.1.326 on 2026-11-17 with
 /// <c>tools/ClaudeProbe stream</c>, which plays a set of cases and is the check to run when Claude Code changes;
-/// what the documentation says and what was measured are in <c>docs/axClaude/stream.md</c>. The reader is tolerant:
+/// what the window rests on of it, and what the documentation does not promise, is <c>docs/axClaude/stream-mode.md</c>
+/// (SM-6.7). The reader is tolerant:
 /// a line that is no JSON object, a type or a block not known, a field missing all give <see cref="StreamLine.Nothing"/>
 /// or an <see cref="StreamKind.Unknown"/> part, never an exception. A window made for the stream starts and reads Claude Code through it (src/AxClaude/MainForm.Stream.cs).
 /// </summary>

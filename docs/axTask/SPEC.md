@@ -4,8 +4,8 @@ axTask is an app of the axKit bundle (`docs/axKit/SPEC.md`): tasks and lists as 
 blind developer who uses the NVDA screen reader. It is an item app: its window, keys, field types and file format are
 the shared ones of `docs/axKit/item-apps.md` (cited as IA-n.m and not repeated), and this document holds only what is
 axTask's own. Written 2026-10-24 and built the same day on the branch `axTask`, not yet heard under NVDA; it took the
-place of the first design, axList as Markdown lists with a Tasks view. axList is planned again beside it since
-2026-11-06, for lists to remember and to arrange (`docs/axList/SPEC.md`, not built); what is to do belongs here.
+place of the first design, axList as Markdown lists with a Tasks view. axList, for lists to remember and to
+arrange, is parked for later (`docs/axKit/plan.md`); what is to do belongs here.
 Requirements are numbered `TK-n.m` and decisions `TK-Dn`. In axTask's code and documents, "SPEC.md" means this file.
 
 ## 1. Summary

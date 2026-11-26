@@ -60,7 +60,7 @@ cleaner of the two hosts of Claude Code. But A changes three things the spec now
 
 ## 4. The order that avoids the mistake
 
-1. Finish the stream's must-build list in axClaude (`docs/axClaude/stream-equivalence.md` section 5): done on
+1. Finish the stream's must-build list in axClaude (`docs/axClaude/stream-mode.md` section 13, its two rounds): done on
    2026-11-26 (27581744 and 94e87522), all nine; the maintainer's two hours of use and the NVDA passes of section
    26 remain before the stream is the default. The new pieces were written for the move: `ToolOutput`,
    `ConversationChoice`, the plan's question in `StreamAsking`, each pure in `AxClaude.Core` and free of the screen's.
@@ -82,9 +82,9 @@ window scripts and the NVDA passes make safe.
 
 - **Two windows of one conversation.** A user with axChat and axClaude open on one folder could write to one session
   from both. The hand-over must close one side, as the modes do now.
-- **The stream has no promise of shape** (stream-equivalence.md section 4), and the interactive program gets the new
+- **The stream has no promise of shape** (`stream-mode.md` SM-6.7), and the interactive program gets the new
   features first. axClaude's screen mode stays maintained either way.
-- **The Store's copy** cannot run the stream today (L28). axChat's Claude Code endpoint would be absent there until
+- **The Store's copy** cannot run the stream today (SM-9.6). axChat's Claude Code endpoint would be absent there until
   measured.
 - **Scope.** axChat's spec is a small HTTP app; A makes it the bundle's main app. The first users' window should not
   wait on the move: the HTTP endpoint can ship before the Claude Code endpoint moves.
@@ -110,7 +110,7 @@ alone. One code, two windows for a while, never two copies.
    the conversation window type (framework.md)?
 5. What axClaude is named and offered as after the move: the same app with one mode, or "Claude Code's screens"
    opened from axChat by a key.
-6. Does axHelp's conversation (still on the screen, L29) move with the stream to axChat's Claude Code endpoint?
+6. Does axHelp's conversation (still on the screen, SM-9.5) move with the stream to axChat's Claude Code endpoint?
 
 7. Beside axChat, if the sitting has time: a review of the workflow graph (`docs/axKit/workflow-graph.md`, its
    decisions settled 2026-11-26) with its first graph file and its list of goals over the bounds, before its steps 4
@@ -118,6 +118,6 @@ alone. One code, two windows for a while, never two copies.
 
 ## 8. Files to read for the sitting
 
-`docs/axChat/SPEC.md`; `docs/axClaude/stream-mode.md` (SM-3, the seam); `docs/axClaude/stream-equivalence.md`;
+`docs/axChat/SPEC.md`; `docs/axClaude/stream-mode.md` (SM-3, the seam; SM-6, what the stream does not have; SM-10.5, the two hours);
 `src/AxClaude.Core/Transcript/ClaudeModel.cs`; `src/AxClaude.Core/notes/stream.md`; `docs/axKit/framework.md` and
 `components.json`; the root `CLAUDE.md`, rules 4, 8, 11 and 12.

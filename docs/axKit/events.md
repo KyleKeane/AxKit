@@ -67,7 +67,7 @@ It is not a framework. An event is a record, the door is a method call on the UI
   `Announce`, never touches a control. What the window shows (the conversation's lines, a list of answers) it builds
   from events.
 - EV-4.3 **Two adapters for one program are allowed, and are the point.** Claude Code read off its screen and Claude
-  Code read off its non-interactive stream (`docs/axClaude/stream.md`) raise the same kinds. The window does not
+  Code read off its non-interactive stream (`docs/axClaude/stream-mode.md`) raise the same kinds. The window does not
   know which one feeds it; a setting chooses, and one can stand in when the other breaks.
 - EV-4.4 **What an adapter must work out stays inside it.** The event core of axClaude (`SessionFlow`: when a turn
   is open, when Done is due, which reply lines are confirmed) is the screen adapter's own logic. The stream adapter
@@ -115,7 +115,7 @@ Each line is a test over the sources, of the kind the repository has (`LayoutTes
    outside program is touched.
 3. **axClaude's two adapters.** The screen adapter is what exists (the model, the event core), with its output
    named as events; the stream adapter is new, over `ClaudeCodeStream`. A setting chooses, off at first. This is the
-   second mode behind a switch of `stream.md`, section 7 (a), built on the schema.
+   second mode behind a switch, `docs/axClaude/stream-mode.md`, built on the schema.
 4. **The other access layers**, one at a time, when each is next worked on: the shell (axTerminal), Git, MCP
    servers, KeePassXC's tool.
 
@@ -136,7 +136,7 @@ Steps 2 and 3 do not depend on each other and are the next work on sounds and on
 1. Whether this is the direction. If so, steps 2 and 3 are planned from here. **Decided on 2026-11-17: yes**, by
    the maintainer through the question tool, in the order of section 7: the sounds through the door first, then
    axClaude's two adapters. For step 3 he chose the stream as a second mode behind a switch, off at first, the
-   screen the default and the fallback (`docs/axClaude/stream.md`, section 7 (a)).
+   screen the default and the fallback (`docs/axClaude/stream-mode.md`).
 2. The kinds' names, heard: `families.md` reads them in one sitting. A name he would not say is changed before it is
    code.
 3. The ten sound choices on the earcon item, met in step 2: for each, one sound, two kinds, or as it is.

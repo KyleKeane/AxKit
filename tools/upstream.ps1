@@ -210,7 +210,7 @@ function Invoke-Check([string]$kind, [string]$target) {
         & (Join-Path $checkRoot 'test.ps1') $target | ForEach-Object { Write-Host $_ }
         if ($LASTEXITCODE -ne 0) { $state = 'failed'; $detail.Add("the test project tests/$target.Tests failed (its failing tests are named above)") }
     } elseif ($kind -eq 'probes') {
-        # Claude Code's non-interactive stream, measured (tools\ClaudeProbe stream, docs/axClaude/stream.md): its cases
+        # Claude Code's non-interactive stream, measured (tools\ClaudeProbe stream, docs/axClaude/stream-mode.md): its cases
         # played against the installed program, and the shape of every kind of line written into the repository, so
         # that a new version shows what changed as a diff of that file.
         Write-Host "Running the probe $target against the installed program..."

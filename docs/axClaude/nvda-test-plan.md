@@ -411,7 +411,7 @@ real stream through the stand-in of `tools/AxAutomate` and need no Claude Code; 
 be spoken by NVDA too (`.\nvda-pass.ps1 axClaude` runs them). The live scripts 48, 49 and 52 need Claude Code signed
 in. What they cover, to be heard once by ear in a real conversation as well (SM-10.5), with the switch on and a new
 window on a folder of your own (written whole for stage 8 on 2026-11-26; steps 9 to 13 are the first round of
-`stream-equivalence.md` section 5, steps 14 to 16 the second):
+the must-build list, `stream-mode.md` section 13, steps 14 to 16 the second):
 
 1. The folder's question (script 40, 41): "Start Claude Code in this folder?" with its text. Enter: nothing starts,
    F9 says "Claude: stopped", and the conversation says that Claude Code was not started. Ctrl+Shift+R asks again;
@@ -497,4 +497,4 @@ window on a folder of your own (written whole for stage 8 on 2026-11-26; steps 9
 17. By ear alone, in a real conversation: that Claude Code's questions come as fast as with the screen; that a long
    command or a file's whole content can be read in the explanation with the arrow keys; that the status bar and
    the music follow a turn; and two hours of your own use before the switch leaves the Developer menu
-   (`stream-equivalence.md` section 6 lists what to try).
+   (`stream-mode.md` SM-10.5 lists what to try).

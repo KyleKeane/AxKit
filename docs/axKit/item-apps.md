@@ -5,7 +5,7 @@ axPass (passwords, `docs/axPass/SPEC.md`, with the format in `docs/axPass/kdbx-n
 item a set of typed fields. This document is the part they share, so that the two stay alike and the places they
 differ are written down in one table (section 6). Requirements are numbered `IA-n.m` and decisions `IA-Dn`; each app's
 spec cites them and does not repeat them. It took the place of the Markdown design of axList for tasks (IA-D1); axList
-itself is planned again beside axTask since 2026-11-06, for lists to remember (`docs/axList/SPEC.md`, not built).
+itself, for lists to remember, is parked for later (`docs/axKit/plan.md`, Later apps).
 
 ## 1. Summary
 
@@ -216,8 +216,8 @@ both apps in the same commit.
   dates) need a format that says each field's type; JSON says it, axJSON already edits it, and an AI system or a
   script reads it as easily. One file per item keeps the navigator the same shape as axFile's and lets axJSON open one
   item at a time (the user's choice over one file per list). The Markdown lists stay the right format for a list of
-  lines whose order and nesting carry the meaning, which is axList's own ground (`docs/axList/SPEC.md` LI-D2,
-  2026-11-06).
+  lines whose order and nesting carry the meaning, which is axList's own ground (2026-11-06; `docs/axKit/plan.md`,
+  Later apps).
 - **IA-D2 Enter opens** (the user, 2026-10-24). In axFile, Enter on a folder opens it and Enter on a file opens the
   file; here Enter on a list opens it and Enter on an item opens its fields. The worry on record: Enter does two
   things. It is the same word, open, in both places, and the announcement says which happened ("Fields of Fix the

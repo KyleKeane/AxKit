@@ -4,8 +4,8 @@ using AxClaude.Core.Streaming;
 namespace AxClaude.Tests;
 
 /// <summary>
-/// The choice of an earlier conversation over the stream (docs/axClaude/stream-mode.md SM-8.5; stream-equivalence.md
-/// L4): the folder's session files, newest first, each named by when it was last written and the first words of its
+/// The choice of an earlier conversation over the stream (docs/axClaude/stream-mode.md SM-8.5): the
+/// folder's session files, newest first, each named by when it was last written and the first words of its
 /// first message, from the hand-written session files of tests/fixtures/records; a bare --resume asks for it, and the
 /// choice becomes --resume with the conversation's id.
 /// </summary>

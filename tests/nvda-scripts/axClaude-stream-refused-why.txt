@@ -1,7 +1,7 @@
 # Workflow: Hear the stream's new answers and refusals
 # Needs: tools/AxAutomate's stand-in of Claude Code's stream (AXKIT_STANDIN); no Claude Code, no network and no model. Run only with --nvda, the user away.
-# NVDA tier (docs/axKit/automation.md, tier 3): what NVDA says for the first round of docs/axClaude/stream-equivalence.md
-# section 5 (docs/axClaude/nvda-test-plan.md section 26, steps 9 and 10; stream-mode.md SM-5.8, SM-7.4). A typed
+# NVDA tier (docs/axKit/automation.md, tier 3): what NVDA says for the first round of the stream's must-build
+# list (docs/axClaude/stream-mode.md section 13; docs/axClaude/nvda-test-plan.md section 26, steps 9 and 10; stream-mode.md SM-5.8, SM-7.4). A typed
 # command of Claude Code's screen alone says "Not with the stream source" and the command; a tool call's question has
 # "No, and tell Claude why" second, which opens a field named with the answer chosen, and the words go as they are
 # typed. The stand-in plays the recording of a refused Write call (tests/fixtures/streams/denied.jsonl). The windows'

@@ -276,7 +276,7 @@ It prints counts and fixed words, never a text of the run. `expected.txt` is not
 ## 9. The stream probe
 
 `probe stream` is a second measurement, of Claude Code's non-interactive stream and with no pseudo console
-(`StreamProbe.cs`; the findings are `docs/axClaude/stream.md`). It plays a fixed set of cases, each a process started
+(`StreamProbe.cs`; what the window rests on of its findings is `docs/axClaude/stream-mode.md`, each "measured"). It plays a fixed set of cases, each a process started
 with `ClaudeCodeStream.Options`: messages are written on standard input, every line of standard output is read
 through `ClaudeCodeStream.Read`, and what a case expects is held to the lines.
 
@@ -293,7 +293,7 @@ through `ClaudeCodeStream.Read`, and what a case expects is held to the lines.
   and its text: a custom command (`.claude/commands/<name>.md`, the recording `custom-command`) or a folder's
   settings; the folder is deleted with the run.
 - Two cases measure the commands of Claude Code's screen alone (2026-11-26, docs/axClaude/stream-mode.md SM-5.8):
-  `command-lists` says, for each command `stream-equivalence.md` names, whether the first request's answer and the
+  `command-lists` says, for each command of Claude Code's own screens and of the terminal alone (SM-6.1, SM-6.2), whether the first request's answer and the
   start line list it (only names the probe gives are asked about: the lists hold the user's own commands);
   `screen-commands` writes those the lists did not name, one after another, and says how each came back, Claude Code's
   own words through the redaction when no turn of the model's ran. Never `/status`, `/usage`, `/cost`, `/login` or
