@@ -6,6 +6,14 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-25, evening: axTerminal's screen view; by the assistant with NVDA listening (`main` 5a68687d)
+
+- `tests/scripts/axTerminal/14-screen-view.txt` with Windows' edit 1.2.1: 4 goals passed, every expected
+  announcement also spoken by NVDA: the view's name and the program's line on the switch, "Reading the screen" and
+  "Keys to edit" on Ctrl+Space, "New File, Ctrl+N" for the open menu's entry, the field back after edit ends.
+- Not settled by the pass, still owed: whether Up and Down in edit are read in time, whether the marked entry is cut
+  by NVDA's line reading, how the box characters sound (the Owed section of the screen view).
+
 ## 2026-11-25: the day's changes; by the assistant with NVDA listening (`main` e8de38c8)
 
 `.\nvda-pass.ps1 -Only` ten scripts, the maintainer away for eight hours at his word ("i will go away for eight
