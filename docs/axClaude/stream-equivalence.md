@@ -54,7 +54,7 @@ Eighteen things the screen gave that the stream does not give by itself, each wi
 - R14. "Claude goes on by itself" for a turn Claude Code began (FR-7.3b).
 - R15. A reply's text made plain, with its headings (SM-4.5).
 - R16. A failed tool call, as a `tool error:` line (section 13, stage 2).
-- R17. axKit's AI tools with `--ai-tools` (FR-9.7).
+- R17. axKit's AI tools, in every window while they are on (FR-9.7; with `--ai-tools` until 2026-11-26).
 - R18. Say the event sources and Copy diagnostics, naming the source (SM-9.4).
 
 ### 2.2 Still missing, in whole or in part
@@ -390,6 +390,10 @@ In order:
 9. The NVDA plan's section for the stream mode (stage 8, owed already). Small.
 
 The total: six small and three medium. Nothing large.
+
+All nine were built on 2026-11-26 at the maintainer's word (27581744 and 94e87522; `stream-mode.md` SM-4.11, SM-5.8,
+SM-5.9, SM-6.2, SM-7.4, SM-7.7, SM-8.5, SM-9.6), and heard with NVDA the same day. What remains before the default is
+the maintainer's two hours of use (section 6).
 
 Worth building soon after, not before: the turn's summary line (L23), the list of commands (L3), the offered command
 with Copy and axTerminal (L16).
