@@ -42,10 +42,13 @@ public sealed class ControlArea : Panel
     /// ticked ones, Escape calls <paramref name="escape"/>. The list takes the focus when <paramref name="focus"/>;
     /// <paramref name="hold"/> makes it ignore the answering keys for a moment. A plain letter goes to
     /// <paramref name="letter"/> first, when given: true takes the key (a screen's own key such as d to discard, from
-    /// anywhere in the list), false leaves it to the list's jump to the item that starts with it.
+    /// anywhere in the list), false leaves it to the list's jump to the item that starts with it. With
+    /// <paramref name="typed"/> (axClaude's question, D33, 2026-11-26) a typed character that is no digit, no space
+    /// and starts no item calls it in place of the list's jump: the list has no type-to-find then, and its answers'
+    /// own keys (a number, <c>y</c>, <c>n</c>) still jump to them.
     /// </summary>
     public void ShowList(string name, IReadOnlyList<string> items, int start, IReadOnlyList<int>? ticked, bool focus, bool hold,
-        Action<int, IReadOnlyList<int>> choose, Action escape, Func<char, bool>? letter = null)
+        Action<int, IReadOnlyList<int>> choose, Action escape, Func<char, bool>? letter = null, Action? typed = null)
     {
         // A plain list box, a checked one for several answers: NVDA reads either as a list, the answer and its place.
         var list = ticked is null ? new ListBox() : new CheckedListBox();
@@ -95,9 +98,32 @@ public sealed class ControlArea : Panel
                 ListKeys.Handle(list, e);
             }
         };
+        if (typed is not null)
+        {
+            list.KeyPress += (_, e) =>
+            {
+                if (e.Handled || char.IsControl(e.KeyChar) || char.IsWhiteSpace(e.KeyChar) || char.IsAsciiDigit(e.KeyChar) || StartsAnItem(list, e.KeyChar))
+                {
+                    return;
+                }
+
+                // Handled, the character never reaches the list box's own jump. While the area holds its keys it was
+                // meant for the message field, and does nothing.
+                e.Handled = true;
+                if (!_hold.Holding)
+                {
+                    typed();
+                }
+            };
+        }
+
         var old = Place(list, name);
         Finish(list, old, focus, hold);
     }
+
+    /// <summary>Whether an item starts with this character, case not minded: the key of an answer ("y. Yes"), which the list box's own jump goes to.</summary>
+    private static bool StartsAnItem(ListBox list, char typed) =>
+        list.Items.Cast<object>().Any(item => item.ToString() is { Length: > 0 } text && char.ToUpperInvariant(text[0]) == char.ToUpperInvariant(typed));
 
     /// <summary>A one-line field named <paramref name="name"/>: Enter calls <paramref name="enter"/> with its text, Escape <paramref name="escape"/>.</summary>
     public void ShowField(string name, bool focus, bool hold, Action<string> enter, Action escape)

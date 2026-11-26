@@ -29,8 +29,14 @@ internal sealed partial class MainForm
     /// </summary>
     private const int DoneFirstMs = 800;
 
-    /// <summary>D33: the interrupting speech of a question waits this long after the focus moved, so that NVDA's reading of the new control does not cut it off.</summary>
+    /// <summary>FR-2.11: the interrupting speech of an information screen's notice waits this long after the focus moved, so that NVDA's reading of the new control does not cut it off.</summary>
     private const int FocusSettleMs = 300;
+
+    /// <summary>
+    /// The word that interrupts what NVDA is reading just before the focus moves to a question (D33, FR-7.4b): the
+    /// focus then says the question, so that it is heard once. NVDA's reading of the focus may cut the word itself off.
+    /// </summary>
+    private const string QuestionWord = "Question";
 
     /// <summary>The moment before a question takes the focus from the conversation without the interrupting kind (D33).</summary>
     private const int QuestionFocusMs = 1000;
@@ -117,15 +123,15 @@ internal sealed partial class MainForm
     /// (when the user did not cause it, since they may be typing). Such a control also plays the notice chime, unless
     /// the window is in the background with the louder alert on, which the signal then plays in its place (FR-7.3);
     /// or it plays <paramref name="chime"/>, an offered command's, wherever the window is.
-    /// With Go to them at once, interrupting speech (the default) it takes the focus wherever it was, and the question
-    /// with the answer the focus is on is spoken as an interrupting notification 300 ms after the focus moved: it cuts
-    /// off what NVDA was reading, a reply included, and comes last (raised before the focus, or at once after it, it
-    /// was cut off); not when the user answered or dismissed it in those 300 ms. Without the option, the focus moves
-    /// at once from the bottom of the window and after a moment from the conversation, and nothing interrupts: NVDA
-    /// reads the question when the focus reaches it, after what it was reading (a focus change alone does not cut
-    /// NVDA off).
+    /// With Go to them at once, interrupting speech it takes the focus wherever it was, and the word
+    /// <see cref="QuestionWord"/> is raised as an interrupting notification just before the focus moves: it cuts off
+    /// what NVDA was reading, a reply included, and NVDA's reading of the focus then says the question, once (until
+    /// 2026-11-26 the question itself was raised 300 ms after the focus, and was heard twice). Without the option, the
+    /// focus moves at once from the bottom of the window and after a moment from the conversation, and nothing
+    /// interrupts but leftover reply speech (FR-7.4b): NVDA reads the question when the focus reaches it, after what
+    /// it was reading (a focus change alone does not cut NVDA off).
     /// </summary>
-    private void ShowInArea(string signature, string name, string text, bool unprompted, Action<bool, bool> show, Action? chime = null)
+    private void ShowInArea(string signature, string text, bool unprompted, Action<bool, bool> show, Action? chime = null)
     {
         // The next question of a set, after the user's answer, interrupts too: the focus is in the area, or in the
         // message field when the area closed between two questions, and what NVDA was still reading (the answer just
@@ -135,7 +141,7 @@ internal sealed partial class MainForm
         var interrupt = !NoticeOpen && (unprompted ? _settings.InterruptForQuestions : Area.ContainsFocus || Input.ContainsFocus);
         var focus = !NoticeOpen && (interrupt || Input.ContainsFocus || Area.ContainsFocus);
         // FR-7.4b: a question of Claude's that opens while NVDA may still be reading reply text the window spoke cuts
-        // that speech off with its own announcement, whatever Go to them at once says: the reply is in the conversation,
+        // that speech off (the word below, just before the focus), whatever Go to them at once says: the reply is in the conversation,
         // and read to its end it ran into the question (2026-11-14). The option still decides alone whether the focus
         // moves at once (interrupt and focus above are untouched). Reply text still held, not yet spoken, is dropped
         // rather than spoken after the question. Not a feedback survey, which leaves the reply's end be (R-19), and
@@ -167,6 +173,15 @@ internal sealed partial class MainForm
             }
         }
 
+        // The question is said once, by the focus that moves to it (FR-7.4b, the maintainer's rule of 2026-11-26).
+        // What NVDA is reading is cut off first, by a word that interrupts, raised just before the focus moves, so
+        // that NVDA's reading of the focus comes after it and says the question; until 2026-11-26 the question itself
+        // was raised 300 ms after the focus, and the user heard it twice, by the announcement and by the list.
+        if (!NoticeOpen && focus && (interrupt || cut))
+        {
+            Announce(QuestionWord, true);
+        }
+
         show(focus, unprompted);
         Input.Visible = false;
         Area.Visible = !NoticeOpen;
@@ -174,23 +189,7 @@ internal sealed partial class MainForm
         // Something new is under the user's fingers: the core learns of it (MainForm.Flow.cs).
         FlowQuestionShown();
         var actedBefore = _userActedAt;
-        var question = (Area.CurrentItem.Length == 0 ? name : name + Stop(name) + Area.CurrentItem).TrimEnd(' ', '.');
-        // After NVDA has taken the focus change, so that the question comes last: raised at once, it was cut off.
-        void Interrupt() => After(FocusSettleMs, () =>
-        {
-            if (AreaShows(signature) && _userActedAt == actedBefore)
-            {
-                Announce(question, true);
-            }
-        });
-
-        if (interrupt || (cut && focus))
-        {
-            // With the focus moved at once from the bottom of the window and reply speech to cut off, the question
-            // interrupts as under Go to them at once (FR-7.4b).
-            Interrupt();
-        }
-        else if (!focus && !NoticeOpen && (Transcript.ContainsFocus || !ContainsFocus))
+        if (!focus && !NoticeOpen && (Transcript.ContainsFocus || !ContainsFocus))
         {
             // From the conversation, or with the window not the active one, without the interrupting kind, or within
             // three seconds of the user's own answer: the focus goes to the question after a moment, so that it is
@@ -200,13 +199,14 @@ internal sealed partial class MainForm
             {
                 if (AreaShows(signature) && _userActedAt == actedBefore && !NoticeOpen && Area.Current is { } current && !current.ContainsFocus)
                 {
-                    current.Focus();
                     if (cut)
                     {
-                        // Reply speech to cut off (FR-7.4b): the question interrupts once the focus is there, so that
-                        // it is heard once; raised before the focus moved, NVDA read the question a second time on arrival.
-                        Interrupt();
+                        // Reply speech to cut off (FR-7.4b): the word that interrupts goes just before the focus, and
+                        // the focus says the question, once.
+                        Announce(QuestionWord, true);
                     }
+
+                    current.Focus();
                 }
             });
         }
@@ -241,19 +241,23 @@ internal sealed partial class MainForm
     }
 
     /// <summary>
-    /// A question as a list: its answers as items ("2. Green"), the current one marked and the start, or check boxes
-    /// when it takes several, ticked where Claude marks them. Enter hands <paramref name="choose"/> the chosen
-    /// answer, or the ticked ones; <paramref name="startKey"/> starts on another answer (the setting just changed).
+    /// A question as a list: its answers as items ("2. Green"), each with a permission question's core after it ("1.
+    /// No, Write permission-test.txt", <see cref="Question.Core"/>: only the label, the key sent is the answer's own),
+    /// the current one marked and the start, or check boxes when it takes several, ticked where Claude marks them.
+    /// Enter hands <paramref name="choose"/> the chosen answer, or the ticked ones; <paramref name="startKey"/> starts
+    /// on another answer (the setting just changed). <paramref name="typed"/>, when given, is what a typed character
+    /// that starts no answer does in place of the list's jump (<see cref="ControlArea.ShowList"/>).
     /// </summary>
     private void ShowQuestionList(string signature, string name, string text, Question question, string? startKey, bool unprompted,
-        Action<IReadOnlyList<QuestionOption>> choose, Action escape)
+        Action<IReadOnlyList<QuestionOption>> choose, Action escape, Action? typed = null)
     {
         var options = question.Options;
         var several = question.AllowsSeveral;
-        var items = options.Select(option => $"{option.Key}. {option.Text}" + (option.Current && !several ? " (current)" : string.Empty)).ToList();
+        var core = question.Core is { Length: > 0 } words ? ", " + words : string.Empty;
+        var items = options.Select(option => $"{option.Key}. {option.Text}{core}" + (option.Current && !several ? " (current)" : string.Empty)).ToList();
         var start = Math.Max(0, options.ToList().FindIndex(option => startKey is null ? option.Current : option.Key == startKey));
         IReadOnlyList<int>? ticked = several ? Enumerable.Range(0, options.Count).Where(i => options[i].Current).ToList() : null;
-        ShowInArea(signature, name, text, unprompted, (focus, hold) => Area.ShowList(name, items, start, ticked, focus, hold, (focused, ticks) =>
+        ShowInArea(signature, text, unprompted, (focus, hold) => Area.ShowList(name, items, start, ticked, focus, hold, (focused, ticks) =>
         {
             if (several && ticks.Count == 0)
             {
@@ -262,7 +266,7 @@ internal sealed partial class MainForm
             }
 
             choose(several ? ticks.Select(i => options[i]).ToList() : [options[focused]]);
-        }, escape));
+        }, escape, typed: typed));
     }
 
     /// <summary>
@@ -325,6 +329,8 @@ internal sealed partial class MainForm
         }
 
         _askedQuestion = question;
+        // A character typed in the list that starts no answer reads the whole question again, as F7 does (the
+        // maintainer's ask of 2026-11-26): the numbers and y and n still jump to their answers.
         ShowQuestionList(question.Signature, QuestionName(question), QuestionName(question, int.MaxValue), question, null, !UserActed(), AnswerQuestion, () =>
         {
             // A survey's Escape is its Dismiss: an Escape at Claude's prompt is no answer, and a second one rewinds.
@@ -336,7 +342,7 @@ internal sealed partial class MainForm
 
             SendEscape();
             Announce("Cancelled", false);
-        });
+        }, ReadQuestionAgain);
         return true;
     }
 
@@ -443,7 +449,7 @@ internal sealed partial class MainForm
         var chosen = LineClassifier.TextPromptAnswer(prompt) ?? "an answer that asks for your own words";
         var asked = _askedQuestion is { } question ? QuestionName(question) : null;
         var name = (asked is null ? string.Empty : asked + Stop(asked)) + $"You chose {chosen}. Your answer";
-        ShowInArea(prompt, name, name, !UserActed(), (focus, hold) => Area.ShowField(name, focus, hold, typed =>
+        ShowInArea(prompt, name, !UserActed(), (focus, hold) => Area.ShowField(name, focus, hold, typed =>
         {
             var words = typed.Trim();
             if (words.Length == 0)
@@ -534,7 +540,7 @@ internal sealed partial class MainForm
             return;
         }
 
-        ShowInArea(screen.Signature, name, text.ToString(), !UserActed(), (focus, hold) =>
+        ShowInArea(screen.Signature, text.ToString(), !UserActed(), (focus, hold) =>
             Area.ShowList(name, items, 0, null, focus, hold, (index, _) =>
             {
                 if (index < first)
@@ -558,7 +564,7 @@ internal sealed partial class MainForm
     {
         var row = screen.Highlighted?.TrimEnd(ClaudeCodeTexts.FieldNameEnd) ?? "Text";
         var name = $"{screen.Title}. {row}, add at the end";
-        ShowInArea(screen.Signature, name, text, !UserActed(), (focus, hold) => Area.ShowField(name, focus, hold, typed =>
+        ShowInArea(screen.Signature, text, !UserActed(), (focus, hold) => Area.ShowField(name, focus, hold, typed =>
         {
             ScreenKeySent();
             TypeAnswer(typed);
@@ -576,7 +582,7 @@ internal sealed partial class MainForm
     private void ShowSearchField(ClaudeScreen screen, string text)
     {
         var name = ScreenActions.SearchFieldName;
-        ShowInArea(screen.Signature, name, text, !UserActed(), (focus, hold) => Area.ShowField(name, focus, hold, typed =>
+        ShowInArea(screen.Signature, text, !UserActed(), (focus, hold) => Area.ShowField(name, focus, hold, typed =>
         {
             if (typed.Length > 0)
             {

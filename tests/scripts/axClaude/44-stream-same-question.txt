@@ -24,8 +24,10 @@ expect said Ready
 type Change the notes
 keys enter
 expect said Sent
-expect said Claude asks to use Edit: notes.txt. Asked by Claude, an AI: read the explanation before you allow it. 1. No
-expect focus 1. No
+# Said once, by the focus on the list the question names (SPEC.md FR-7.4b, 2026-11-26).
+expect said ! Question
+expect said → Claude asks to use Edit: notes.txt. Asked by Claude, an AI: read the explanation before you allow it
+expect focus 1. No, Edit notes.txt
 # A question the user did not cause holds its answering keys for a moment.
 wait 1500
 keys down
@@ -34,8 +36,9 @@ keys enter
 expect said Sent: 2, Yes, once
 
 # Goal: Hear the second call asked anew, with no first
-expect said Claude asks to use Edit: notes.txt. Asked by Claude, an AI: read the explanation before you allow it. 1. No
-expect focus 1. No
+expect said ! Question
+expect said → Claude asks to use Edit: notes.txt. Asked by Claude, an AI: read the explanation before you allow it
+expect focus 1. No, Edit notes.txt
 expect state Claude: waiting for your answer
 # The area holds its keys for three seconds after an answer, so that a second Enter does not answer what follows.
 wait 3200

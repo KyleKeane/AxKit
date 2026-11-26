@@ -35,8 +35,11 @@ expect said Ready
 # The message field still holds Hello, which was not sent.
 keys enter
 expect said Sent
-expect said Claude asks to use Write: C:\work\probe-denied.txt. Asked by Claude, an AI: read the explanation before you allow it. 1. No
-expect focus 1. No
+# Said once, by the focus on the list the question names (SPEC.md FR-7.4b, 2026-11-26); each answer ends in the call's
+# tool and target, the file by its name (D33).
+expect said ! Question
+expect said → Claude asks to use Write: C:\work\probe-denied.txt. Asked by Claude, an AI: read the explanation before you allow it
+expect focus 1. No, Write probe-denied.txt
 # A question the user did not cause holds its answering keys for a moment.
 wait 1500
 keys enter

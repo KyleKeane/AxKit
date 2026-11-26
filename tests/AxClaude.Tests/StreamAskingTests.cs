@@ -99,6 +99,22 @@ public sealed class StreamAskingTests
     }
 
     [Fact]
+    public void A_tool_calls_question_has_its_tool_and_target_as_its_core()
+    {
+        // Every answer's label carries it in the control area (SPEC.md D33): a file by its name, a command by its
+        // first words. The keys of the answers, which are what goes back, stay as they are.
+        Assert.Equal("Write always-1.txt", Asking("always").Current.Core);
+        Assert.Equal("Write always-1.txt", Asking("always", @"C:\work").Current.Core);
+        Assert.Equal("Bash ping -n 2", Asking("tool").Current.Core);
+        Assert.Equal(["1", "2", "3", "4"], Asking("tool").Current.Options.Select(option => option.Key));
+
+        // Claude's own description of a call is no target; Claude's own questions have no core.
+        var described = new StreamAsking(ClaudeCodeStream.ReadAsk(Question("Agent", "{\"description\":\"Look around\"}"))!);
+        Assert.Equal("Agent", described.Current.Core);
+        Assert.Null(Asking("two-questions").Current.Core);
+    }
+
+    [Fact]
     public void A_file_in_the_folder_Claude_works_in_is_named_from_there()
     {
         Assert.Equal(@"Claude asks to use Write: C:\work\always-1.txt", Asking("always").Current.Title);

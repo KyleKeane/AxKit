@@ -13,14 +13,16 @@ mkdir ask
 start claude {temp}\ask -- --model haiku --effort low
 # Goal: Answer the trust question from the list
 # Step 1: a folder Claude has not seen, the focus in the message field: the trill, then "Permission Required:
-# Accessing workspace. <folder>, list, y. Yes, I trust this folder, 1 of 2" (the app's part: the question and the
-# answer the focus is on, interrupting); the message field is gone; y, Enter: "Sent: y, Yes, I trust this folder",
-# the message field comes back, then "Ready".
+# Accessing workspace. <folder>, list, y. Yes, I trust this folder, 1 of 2" (the app's part: the word "Question",
+# interrupting, just before the focus, which says the question once, SPEC.md FR-7.4b since 2026-11-26; each answer
+# ends in the question's kind and folder, D33); the message field is gone; y, Enter: "Sent: y, Yes, I trust this
+# folder", the message field comes back, then "Ready".
 expect said → Message to Claude
 expect said ♪ Notice
+expect said ! Question
 expect said → Permission Required: Accessing workspace.
-expect said ! Permission Required: Accessing workspace.
-expect focus "role":"List","value":"y. Yes, I trust this folder"
+refuse said ! Permission Required: Accessing workspace.
+expect focus "role":"List","value":"y. Yes, I trust this folder, Accessing workspace"
 wait 1500
 keys y enter
 expect said Sent: y, Yes, I trust this folder

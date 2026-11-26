@@ -144,7 +144,8 @@ public static class QuestionReader
         title = ClaudeCodeTexts.CheckBox().Replace(title, string.Empty).TrimEnd(':', ' ');
         // "Select with numbers [1-4] (comma- or space-separated for several)": more than one answer may be given.
         var several = rows[promptRow].Contains(ClaudeCodeTexts.ForSeveral, StringComparison.Ordinal);
-        return new Question(title, text, options) { AllowsSeveral = several, FirstRow = first, Step = step };
+        // A permission question's tool and target, which each answer's label carries (PermissionCore, D33).
+        return new Question(title, text, options) { AllowsSeveral = several, FirstRow = first, Step = step, Core = PermissionCore.OfScreen(title, text) };
     }
 
     /// <summary>The highest answer a prompt row names ("5" in "Select with numbers [1-5]", "n" in "Enter y/n:"), or null.</summary>

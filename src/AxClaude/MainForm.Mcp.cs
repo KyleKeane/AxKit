@@ -137,7 +137,7 @@ internal sealed partial class MainForm
         Action chime = offer.Request is null
             ? () => EventDoor.Raise(EventKind.CommandOffer)
             : () => EventDoor.Raise(EventKind.AiAsksToRun);
-        ShowInArea(OfferSignature, name, text, unprompted, (focus, hold) =>
+        ShowInArea(OfferSignature, text, unprompted, (focus, hold) =>
             Area.ShowList(name, offer.Request?.Answers ?? McpOffer.Answers, start, null, focus, hold, (chosen, _) => AnswerOffer(offer, chosen),
                 () => AnswerOffer(offer, offer.Request?.No ?? McpOffer.No)), chime);
         if (unprompted)
@@ -219,7 +219,7 @@ internal sealed partial class MainForm
     private void AskConcern(Offer offer)
     {
         UserActedNow();
-        ShowInArea(OfferSignature + ", the concern", McpOffer.ConcernName, McpOffer.ConcernName, unprompted: false, (focus, hold) =>
+        ShowInArea(OfferSignature + ", the concern", McpOffer.ConcernName, unprompted: false, (focus, hold) =>
             Area.ShowField(McpOffer.ConcernName, focus, hold, typed =>
             {
                 CloseOffer();

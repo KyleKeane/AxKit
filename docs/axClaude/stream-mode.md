@@ -201,7 +201,12 @@ mode each is simply absent, and the window says so where the user would look for
 - SM-7.4 **A permission question** is shown as a question with three answers, No first where a list starts: No;
   Yes, once; Yes, and do not ask again for this tool in this session. The last is a rule of the session's alone
   (`ClaudeCodeStream.AlwaysAnswer`): it is written to no settings file and a new session asks again. The question
-  names the tool and shows what it would do (the command, the file), read from the request.
+  names the tool and shows what it would do (the command, the file), read from the request. Every answer carries
+  the tool and its target in a few words, "1. No, Write axclaude-permission-test.txt", "2. Yes, once, Bash cat
+  settings.json" (since 2026-11-26, `PermissionCore`, `Question.Core`; the tool alone when the subject is Claude's own
+  description of the call), so that moving through the answers says which question they belong to; the answer that
+  goes back is the key's, as before. The question is said once, by the list the focus moves to, and a character
+  typed there that starts no answer reads it again (SPEC.md D33, FR-7.4b; one code with the screen's).
 - SM-7.5 **Claude's own questions** (several questions, each with options, some with several answers, each with
   Other for the user's own words) are asked one after another in the control area as today, and go back in one
   answer when the last is answered. Escape answers No to the whole. The answer is written into the conversation as
@@ -510,7 +515,8 @@ was: its stand-in scripts pass unchanged, and nothing of its code runs different
   explanation before you allow it". Four answers, the list starting on the first: "No"; "Yes, once"; "Yes, and do
   not ask again for Bash in this session", a rule of the session's alone; and "Explain what Claude asks to do",
   which answers nothing: it opens a text, the caution first (`AiCaution.ToolCall`), then the tool and every member
-  of the call's input, and the question stays under it. A file in the project folder is named from there.
+  of the call's input, and the question stays under it. A file in the project folder is named from there. Since
+  2026-11-26 each answer ends in the call's core, "1. No, Bash ping -n 2" (SM-7.4).
 - Claude's own questions (SM-7.5) are asked one after another, "Question 1 of 2: …", each with its choices by number
   and Other last; a choice's description follows its name after a dash when it says more than the name. Other asks
   for the user's own words in the window's own field ("You chose Other. Your answer"), and Escape there goes back

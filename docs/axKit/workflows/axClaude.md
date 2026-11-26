@@ -860,8 +860,8 @@ Starts with: Open axClaude with the folder ask.
 
 The focus moves to Message to Claude.
 You hear the sound Notice.
+You hear: Question.
 The focus moves to Permission Required: Accessing workspace.
-You hear: Permission Required: Accessing workspace.
 1. Press Y, Enter.
     You hear: Sent: y, Yes, I trust this folder.
     The focus moves to Message to Claude.
@@ -1666,7 +1666,8 @@ You hear: Start Claude Code in this folder?
 1. Type "Run the ping".
 2. Press Enter.
     You hear: Sent.
-    You hear: Claude asks to use Bash: ping -n 2 127.0.0.1. Asked by Claude, an AI: read the explanation before you allow it. 1. No.
+    You hear: Question.
+    The focus moves to Claude asks to use Bash: ping -n 2 127.0.0.1. Asked by Claude, an AI: read the explanation before you allow it.
 
 ### Read everything Claude asks to do before answering
 
@@ -1697,7 +1698,8 @@ Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 
 1. Press Enter.
     You hear: Sent.
-    You hear: Claude asks to use Write: C:\work\probe-denied.txt. Asked by Claude, an AI: read the explanation before you allow it. 1. No.
+    You hear: Question.
+    The focus moves to Claude asks to use Write: C:\work\probe-denied.txt. Asked by Claude, an AI: read the explanation before you allow it.
 2. Press Enter.
     You hear: Sent: 1, No.
     You hear: Done. claude: No, it was not created.
@@ -1712,18 +1714,22 @@ Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 1. Type "Ask me two things".
 2. Press Enter.
     You hear: Sent.
+    You hear: Question.
+    The focus moves to Question 1 of 2: What is your favourite colour?
+3. Type "x".
     You hear: Question 1 of 2: What is your favourite colour? 1. Red.
-3. Press End.
-4. Press Enter.
+4. Type "3".
+5. Press End.
+6. Press Enter.
     You hear: Sent: 4, Other. Your words next.
     You hear: You chose Other. Your answer.
-5. Press Escape.
+7. Press Escape.
     You hear: Question 1 of 2: What is your favourite colour?
-6. Press End.
-7. Press Enter.
-    You hear: You chose Other. Your answer.
-8. Type "teal".
+8. Press End.
 9. Press Enter.
+    You hear: You chose Other. Your answer.
+10. Type "teal".
+11. Press Enter.
     You hear: Sent: teal. Next question.
 
 ### Tick several answers of the second question
@@ -1773,14 +1779,16 @@ Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 1. Type "Change the notes".
 2. Press Enter.
     You hear: Sent.
-    You hear: Claude asks to use Edit: notes.txt. Asked by Claude, an AI: read the explanation before you allow it. 1. No.
+    You hear: Question.
+    The focus moves to Claude asks to use Edit: notes.txt. Asked by Claude, an AI: read the explanation before you allow it.
 3. Press Down.
 4. Press Enter.
     You hear: Sent: 2, Yes, once.
 
 ### Hear the second call asked anew, with no first
 
-You hear: Claude asks to use Edit: notes.txt. Asked by Claude, an AI: read the explanation before you allow it. 1. No.
+You hear: Question.
+The focus moves to Claude asks to use Edit: notes.txt. Asked by Claude, an AI: read the explanation before you allow it.
 1. Press Enter.
     You hear: Sent: 1, No.
     You hear: Done. claude: one of two.
@@ -1858,7 +1866,7 @@ Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 ### Choose the model from the list Claude Code gave
 
 1. Choose Choose the model in the Actions menu.
-    You hear: Choose the model. 1. Default (recommended).
+    The focus moves to Choose the model.
 2. Press Down four times.
 3. Press Enter.
     You hear: Sent: 5, Haiku 5.5.
@@ -1868,7 +1876,7 @@ Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 
 1. Press Alt+1 (Message field; Navigation menu).
 2. Choose Choose the effort in the Actions menu.
-    You hear: Choose the effort. 1. low.
+    The focus moves to Choose the effort.
 3. Press Enter.
     You hear: Sent: 1, low.
 4. Press Alt+2 (Conversation; Navigation menu).
@@ -1977,7 +1985,7 @@ You may hear: trust.
     You hear: Ready.
 2. Type "Use your AskUserQuestion tool once, with two questions: which colour I prefer, red or blue, and which season I prefer, summer or winter.".
 3. Press Enter.
-    You hear: Question 1 of 2.
+    The focus moves to Question 1 of 2.
 4. Press Enter.
-    You hear: Question 2 of 2.
+    The focus moves to Question 2 of 2.
 5. Press Enter.

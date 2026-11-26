@@ -16,8 +16,11 @@ public sealed class ListTests
         // The lists under a field that keeps the caret (the hotkey windows' matches, the command palette's) were
         // here until 2026-11-22: they are the bundle's list too now, in its mode for that (AxKitList.Field,
         // framework FW-4.12).
-        // A question's answers: their letters are the screen's own keys (axClaude D33), not a search.
-        [Path.Combine("src", "AxKit.Forms", "ControlArea.cs")] = "letters are keys",
+        // The one exception: the control area's list (axClaude D33), whose letters are keys, never a search. On a
+        // screen they are the screen's own keys (d to discard); on Claude's question an answer's own key (a number,
+        // y, n) jumps to it and any other character typed reads the question again (the maintainer's ask of
+        // 2026-11-26), since the user who types there has lost the question, not looked for an answer.
+        [Path.Combine("src", "AxKit.Forms", "ControlArea.cs")] = "letters are keys: a screen's keys, an answer's key, or the question read again",
     };
 
     [Fact]

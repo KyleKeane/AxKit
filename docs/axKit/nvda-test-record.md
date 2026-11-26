@@ -765,6 +765,23 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: axClaude's questions said once, typing in a question's list, a permission question's core (2026-11-26)
+
+Built on the maintainer's asks of 2026-11-26 (`docs/axClaude/SPEC.md` FR-7.4b and D33, Answers) and passing the unit
+tests and the stand-in window scripts 35, 40 to 44 and 50 on the runner's desktop, where nothing is spoken; owed a
+pass with NVDA listening, `docs/axClaude/nvda-test-plan.md` section 12, steps 4, 19a and 20a, and the live scripts
+12, 48, 49 and `two-questions`, whose expectations were changed and not run:
+
+1. The question heard once: "Question" interrupts what NVDA reads, just before the focus moves to the list, and
+   NVDA's reading of the focus says the question; whether NVDA reads the word or the focus cuts it off, whether the
+   focus reading ever comes before the word and is cut off by it (the question then not heard at all; F7 or a typed
+   letter brings it back), and whether a reply still being read is cut off as before, with the screen and the stream.
+2. A letter or a sign typed in a question's list reads the whole question, interrupting, and the focus stays; a
+   number, y and n still move to their answers.
+3. A permission question's answers with the tool and target ("1. No, Write notes.txt"): whether the core makes the
+   answers too long to move through, and whether the screen's kind ("Create file", "Bash command") reads well beside
+   the stream's tool name; that the answer sent is the key alone, with Claude Code itself (a live run).
+
 ## Owed: axTerminal's screen view of a full-screen program, by ear (built 2026-11-25)
 
 Built on the maintainer's decisions of 2026-11-25 (docs/axTerminal/SPEC.md AT-9.9) and passing its unit tests and

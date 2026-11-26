@@ -19,12 +19,21 @@ expect said Ready
 type Ask me two things
 keys enter
 expect said Sent
-expect said Question 1 of 2: What is your favourite colour? 1. Red
+# Said once, by the focus on the list the question names (SPEC.md FR-7.4b, 2026-11-26).
+expect said ! Question
+expect said → Question 1 of 2: What is your favourite colour?
 expect list 2. Green
 expect list 3. Blue
 expect list 4. Other
 # A question the user did not cause holds its answering keys for a moment.
 wait 1500
+# A letter typed in the list reads the question again: type-to-find is given up there, a character that starts no
+# answer reads the whole question, as F7 does, and the focus stays (D33, 2026-11-26); a number still jumps.
+type x
+expect said ! Question 1 of 2: What is your favourite colour? 1. Red
+expect focus 1. Red
+type 3
+expect focus 3. Blue
 keys end
 expect focus 4. Other
 keys enter

@@ -19,7 +19,9 @@ expect said Ready
 
 # Goal: Choose the model from the list Claude Code gave
 menu Choose the model
-expect said Choose the model. 1. Default (recommended)
+# Said by the focus on the list, named with the question (SPEC.md FR-7.4b, 2026-11-26).
+expect said → Choose the model
+expect focus 1. Default (recommended)
 expect list 5. Haiku 5.5 — Fastest for quick answers
 keys down
 keys down
@@ -36,7 +38,8 @@ expect text Set model to `Haiku 5.5` for this session only
 # Check: Escape closes the list and sends nothing
 do Message field
 menu Choose the effort
-expect said Choose the effort. 1. low
+expect said → Choose the effort
+expect focus 1. low
 expect list 5. max
 keys escape
 expect said Cancelled
@@ -45,7 +48,8 @@ refuse text you: /effort
 # Goal: Choose the effort
 do Message field
 menu Choose the effort
-expect said Choose the effort. 1. low
+expect said → Choose the effort
+expect focus 1. low
 keys enter
 expect said Sent: 1, low
 expect state Claude: ready | manual mode on

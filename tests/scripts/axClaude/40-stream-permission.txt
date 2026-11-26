@@ -26,11 +26,16 @@ expect said Ready
 type Run the ping
 keys enter
 expect said Sent
-expect said Claude asks to use Bash: ping -n 2 127.0.0.1. Asked by Claude, an AI: read the explanation before you allow it. 1. No
+# Said once, by the focus on the list, which the question names; the word before it only cuts off what NVDA read
+# (SPEC.md FR-7.4b, 2026-11-26). Each answer carries the call's tool and target (D33).
+expect said ! Question
+expect said → Claude asks to use Bash: ping -n 2 127.0.0.1. Asked by Claude, an AI: read the explanation before you allow it
 expect state Claude: waiting for your answer
-expect list 2. Yes, once
-expect list 3. Yes, and do not ask again for Bash in this session
-expect focus 1. No
+expect list 2. Yes, once, Bash ping -n 2
+expect list 3. Yes, and do not ask again for Bash in this session, Bash ping -n 2
+expect focus 1. No, Bash ping -n 2
+# Not a second time, as an announcement after the focus (heard twice until 2026-11-26).
+refuse said Asked by Claude, an AI
 # A question the user did not cause holds its answering keys for a moment.
 wait 1500
 

@@ -61,6 +61,7 @@ public class QuestionTests
         Assert.Equal([@"C:\Temp\example", "Quick safety check: Is this a project you created or one you trust?", "Claude Code'll be able to read, edit, and execute files here.", "Security guide"], question.Text);
         Assert.Equal(["y", "n"], question.Options.Select(o => o.Key));
         Assert.Equal("No, exit", question.Options[1].Text);
+        Assert.Equal("Accessing workspace example", question.Core);
     }
 
     [Fact]
@@ -82,6 +83,7 @@ public class QuestionTests
         Assert.Equal("Colour", question.Title);
         Assert.Equal(["Which colour do you prefer?"], question.Text);
         Assert.Equal(5, question.Options.Count);
+        Assert.Null(question.Core);
     }
 
     [Fact]
@@ -134,6 +136,8 @@ public class QuestionTests
         Assert.Equal("Do you want to create permission-test.txt?", question.Text[^1]);
         Assert.Equal(["1", "2", "3"], question.Options.Select(o => o.Key));
         Assert.Equal("No", question.Options[2].Text);
+        // Its core, which every answer's label carries (D33): the kind the title names and the file, by its name.
+        Assert.Equal("Create file permission-test.txt", question.Core);
 
         // Escape declined; the question is gone.
         Assert.False(model.PromptPending);
@@ -328,6 +332,8 @@ public class QuestionTests
         Assert.Equal("Permission Required: Bash command", question.Title);
         Assert.Equal(["echo hello-permission > perm-probe.txt", "Write hello-permission to a probe file", "Do you want to proceed?"], question.Text);
         Assert.Equal(2, question.FirstRow);
+        // The command by its first words, up to where its output goes; the tip skipped is no target.
+        Assert.Equal("Bash command echo hello-permission", question.Core);
 
         // Plan approval (--permission-mode plan): a row left over from the tool call above it is not the title, and the
         // numbered steps of the plan are text, not answers.
@@ -349,6 +355,8 @@ public class QuestionTests
         Assert.Equal("Permission Required: Ready to code?", approval.Title);
         Assert.Equal(3, approval.Options.Count);
         Assert.Contains("1. Use the Write tool to create plan-test.txt with the content hi.", approval.Text);
+        // Plan approval names no tool and no target: its answers carry nothing more.
+        Assert.Null(approval.Core);
     }
 
     [Fact]

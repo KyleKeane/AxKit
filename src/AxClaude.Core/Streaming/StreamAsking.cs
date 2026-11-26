@@ -270,7 +270,12 @@ public sealed class StreamAsking
                 new QuestionOption(OnceKey, "Yes, once"),
                 new QuestionOption(AlwaysKey, $"Yes, and do not ask again for {_ask.Tool} in this session"),
                 new QuestionOption(ExplainKey, $"Explain what {Who} asks to do"),
-            ]);
+            ])
+        {
+            // The tool and its target in a few words, on every answer's label (PermissionCore, SPEC.md D33); Claude's
+            // own description of a call is no target, so then the tool alone.
+            Core = PermissionCore.Of(tool, _ask.AboutDescribes ? string.Empty : about),
+        };
     }
 
     /// <summary>One of Claude's own questions: its choices by number, each with Claude's word about it where that says more than its name, and Other last.</summary>

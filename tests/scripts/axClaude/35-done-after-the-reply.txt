@@ -64,8 +64,11 @@ type Ask me
 keys enter
 expect said Sent
 file dn\go5 x
-expect said ! Permission Required: Bash command
-expect focus "role":"List","value":"1. Yes"
+# Said once, by the focus on the list the question names, after the word that cuts off what NVDA read (SPEC.md
+# FR-7.4b, 2026-11-26); each answer ends in the question's kind and target (D33).
+expect said ! Question
+expect said → Permission Required: Bash command
+expect focus "role":"List","value":"1. Yes, Bash command
 refuse said Done
 refuse said ♪ Done
 keys 1 enter

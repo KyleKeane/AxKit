@@ -16,10 +16,11 @@ expect said Ready
 expect focus "name":"Message to Claude"
 type Use your AskUserQuestion tool once, with two questions: which colour I prefer, red or blue, and which season I prefer, summer or winter.
 keys enter
-expect said ! Question 1 of 2
+# Said by the focus on the list the question names, after the word that interrupts (SPEC.md FR-7.4b, 2026-11-26).
+expect said → Question 1 of 2
 wait 1500
 keys enter
-expect said ! Question 2 of 2
+expect said → Question 2 of 2
 said
 wait 1500
 keys enter

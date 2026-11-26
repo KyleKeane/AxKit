@@ -68,6 +68,13 @@ public sealed record Question(string Title, IReadOnlyList<string> Text, IReadOnl
     /// <summary>The key Escape stands for, an answer of its own (Dismiss on a survey); null when Escape is sent as Escape.</summary>
     public string? EscapeKey { get; init; }
 
+    /// <summary>
+    /// A permission question's core, its tool and target in a few words ("Write permission-test.txt"), which every
+    /// answer's label carries in the control area (<see cref="PermissionCore"/>, SPEC.md D33); null for any other
+    /// question. Not part of the <see cref="Signature"/>, and never sent: an answer goes as its key.
+    /// </summary>
+    public string? Core { get; init; }
+
     /// <summary>/config's list of settings, waiting on "Enter a number to change [1-44], or Escape to save and close:".</summary>
     public bool IsSettings => Title.StartsWith(ClaudeCodeTexts.EnterNumberToChange, StringComparison.Ordinal);
 
