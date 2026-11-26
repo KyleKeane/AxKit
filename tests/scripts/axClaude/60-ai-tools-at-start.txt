@@ -1,0 +1,37 @@
+# Workflow: Give Claude axKit's AI tools from the start
+# Needs: Claude Code signed in, the network and a live model (Haiku): a step that waits for Claude's words can fail when the model words it differently.
+# docs/axClaude/SPEC.md FR-9.7 (2026-11-26, the maintainer's ask: "those should be loaded so that claude knows as soon
+# as it is open what it is capable of doing for the user"): while Let AI tools read and open axKit is on, every start
+# of Claude Code in an axClaude window names axKit's tools to it (--mcp-config), with no step of the user's; the
+# setting off, a start names none. The update check off.
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
+# The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir tools
+start claude {temp}\tools -- --model haiku --effort low
+try said trust
+iffound wait 1500
+iffound keys enter
+expect said Ready
+expect focus "name":"Message to Claude"
+
+# Goal: Turn on the AI tools and have Claude know them
+# The setting on, then a restart of Claude (Ctrl+Shift+R, the notice, Enter): the new start names axKit's tools.
+# Claude is asked for the full name of the tool that lists axKit's windows; the full name (with Claude Code's prefix
+# for a server's tools) is in no word of the message, so only a Claude that has the tool can write it.
+menu Let AI tools read and open axKit
+expect state "notice":"Turn on AI tools?"
+keys enter
+expect said AI tools on
+try said Not in a test run
+keys ctrl+shift+r
+expect state "notice":"Force Claude to restart?"
+keys enter
+expect said Restarting
+expect said Ready
+type Look at the tools you have now. Reply with the exact full name of the tool whose name ends in axkit_windows, and nothing else, or with the word none if you have no such tool. Call no tool.
+keys enter
+expect said Done
+keys alt+2 ctrl+end
+expect text mcp__axkit__axkit_windows
+keys alt+1
