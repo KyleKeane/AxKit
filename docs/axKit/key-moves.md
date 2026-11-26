@@ -235,7 +235,9 @@ Ctrl+Enter does the most frequent action where you are. The command palette move
 (his choice: "is there another key we can use for the command palette? that seems like something very important and
 i want it to be easy to use frequently"): F1 opens the palette; with nothing typed, its list starts with the key
 rules and the window's keys, what F1 showed before; a command's name typed runs it. Ctrl+Shift+P gives way, so it is
-no exception.
+no exception. Ctrl+Comma opens the same palette, a second key on trial (his word: "it cannot hurt to have both f1
+with the palette and help, plus ctrl+, as a second option that launches the same thing"); after his use of both, one
+stays or both do.
 
 Left as exceptions, each one Windows or a common program taught: F2 rename, F3 find next, F5 refresh and reload, F6
 the next pane, Ctrl+Shift+N a new folder (File Explorer), Ctrl+Shift+R restart (a browser's heavier reload).
