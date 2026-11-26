@@ -1,6 +1,7 @@
 # The workflow graph
 
-A proposal for the maintainer to read and settle, 2026-11-26; nothing of it is built. It answers his ask of
+A proposal of 2026-11-26, its decisions settled by the maintainer the same day (section 9); nothing of it is built
+yet. It answers his ask of
 2026-11-26: waypoints, any app's right place in two actions from anywhere, any goal in two actions from its
 waypoint, consent gathered into one form, the user's actions as the edges of a graph, the workflows as walks through
 it, and a system that holds every change of the code against the graph and the NVDA passes, so that the user's
@@ -95,9 +96,10 @@ Non-goals:
 
 ### WG-3 The bounds
 
-- WG-3.1 **Reaching a waypoint**: from every node, every waypoint of the bundle in two actions or fewer. From another
-  app that is the app's launch key, which brings its window up on its first waypoint, then one key to the place
-  (Alt+number, AX-8.18). Escape from anything over a place is one of the two.
+- WG-3.1 **Reaching a waypoint**: from every node of a window, every waypoint of that window in two actions or fewer
+  (Alt+number, AX-8.18; Escape from anything over a place is one of the two). The key that opens an app is free (the
+  maintainer, 2026-11-26): from another app or from `outside`, the app's key brings its window up on its first
+  waypoint and is not counted, and the two actions start there.
 - WG-3.2 **Reaching a goal**: from its waypoint, every goal in two actions or fewer, with typing a name and Enter as
   one (G7). So no goal is more than four actions from anywhere, and the usual goal, started from its waypoint, is
   two.
@@ -111,9 +113,9 @@ Non-goals:
   and the check fails only on a goal that was within them and is no longer: the map may get shorter, never longer.
 - WG-3.5 **A consent form is one node and one action** (the maintainer's ask): several questions that come together
   (axClaude's permissions at a start, AX-11.5's reminders) are one form with a check box per question, each box
-  starting at the answer most users give; Enter takes them all. A box changed from where it starts is one more
-  action. A goal that meets two consent questions one after the other is over the bounds by that, and the fix is the
-  form.
+  starting at the answer most users give; Enter takes them all. The form is one action whatever is changed on it
+  (the maintainer, 2026-11-26). A goal that meets two consent questions one after the other is over the bounds by
+  that, and the fix is the form.
 
 ### WG-4 The scripts as walks
 
@@ -147,8 +149,8 @@ Non-goals:
 ### WG-6 Teaching
 
 - WG-6.1 **The palette says the way**: F1, then typing a goal's words, finds the goal and says its shortest path from
-  where the focus is ("Ctrl+F2, then Ctrl+N"), and Enter takes the first step or the whole path, as the maintainer
-  settles.
+  where the focus is ("Ctrl+F2, then Ctrl+N"); Enter walks the whole path and Shift+Enter takes its first step (the
+  maintainer, 2026-11-26).
 - WG-6.2 **The how-to pages** (`workflows/`) give each goal its shortest path from its waypoint first, and the
   script's example after it.
 - WG-6.3 **AI help** answers "how do I" from the file rather than from the guides' prose, with its caution (rule 11).
@@ -210,7 +212,19 @@ it takes none away.
 
 ## 9. Decisions for the maintainer
 
-Each with the assistant's recommendation first.
+**Settled by the maintainer on 2026-11-26**, one by one:
+
+1. Places are named in a table per window, beside its keys (WG-1.1 as written).
+2. The key that opens an app is free: it is not counted, and the two actions to a waypoint start inside the window
+   (WG-3.1 reads so from now on: from inside any window, every place of it in two actions; from outside, the app's
+   key and then the same).
+3. A consent form is one action, whatever is changed on it (WG-3.5 reads so).
+4. A map change is approved by a `Map change:` line in the commit (WG-5.2 as written).
+5. Goals over the bounds today are listed and may never grow longer, shortened app by app at his sittings (WG-3.4
+   as written).
+6. In the palette, Enter walks the whole way and Shift+Enter takes its first step (WG-6.1 reads so).
+
+The questions as they were put, each with the assistant's recommendation first:
 
 1. **Where places are named**: in a table per window beside its keys (recommended), or found from the controls'
    names alone (no table, but a renamed control is a new place).
