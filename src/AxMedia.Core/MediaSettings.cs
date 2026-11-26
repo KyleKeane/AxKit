@@ -21,7 +21,7 @@ public sealed class MediaSettings : WindowSettings
     /// <summary>What Ctrl+Left and Ctrl+Right move by.</summary>
     public int SeekSeconds { get; set; } = 15;
 
-    /// <summary>The files and folders added by command (Open files, Open folder), newest first, for Queue → Open recent (AM-3.2).</summary>
+    /// <summary>The files and folders added by command (Add files, Add folder), newest first, for Queue → Open recent (AM-3.2).</summary>
     public List<string> Recent { get; set; } = [];
 
     public static string DefaultPath => AppPaths.SettingsFile("axMedia");

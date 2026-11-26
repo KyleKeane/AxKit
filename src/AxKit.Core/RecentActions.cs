@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace AxKit.Core;
 
 /// <summary>What a window recorded: a command it ran, something it said, or a notice it showed.</summary>
@@ -9,13 +11,35 @@ public enum RecentActionKind
 }
 
 /// <summary>
-/// The last actions of one window, for a report (docs/axKit/reports.md RP-4.1): the commands run by key, menu or
-/// palette, what the window announced, and the notices it showed; twenty at most, the oldest dropped. Pure: the window
-/// adds each entry with the time, and asks for the report's lines with the time now, so that the ages read "12 s ago".
+/// The last actions of one window, for a report (docs/axKit/reports.md RP-4.1): every command run, by key, menu,
+/// palette, script or AI tool, written by its name (<see cref="CommandText"/>), what the window announced, and the
+/// notices it showed; twenty at most, the oldest dropped. Pure: the window adds each entry with the time, and asks for
+/// the report's lines with the time now, so that the ages read "12 s ago".
 /// </summary>
-public sealed class RecentActions
+public sealed partial class RecentActions
 {
     public const int Capacity = 20;
+
+    // A label numbered as AxKitWindows.Label numbers it, plain: "2. notes.md (C:\notes)", "b. Tasks"; the number kept.
+    [GeneratedRegex(@"^(\d+|[a-z])\. ")]
+    private static partial Regex EntryRegex();
+
+    /// <summary>
+    /// How a command is written (RP-4.1; the maintainer's decision of 2026-11-25, docs/axKit/command-language.md
+    /// section 8 (a) 3): its name and its key as the menu shows it, "Find, Ctrl+F", "Word wrap"; never what the user
+    /// typed. An entry of a list of the user's own things, numbered as <see cref="AxKitWindows.Label"/> numbers it (a
+    /// recent file, a window, a folder, "&amp;2. notes.md (C:\notes)"), is written by its menus and its number,
+    /// "Session, Open recent file, entry 2", since its name may name the user's file (RP-4.2a); a menu above it that
+    /// is such an entry is written the same way.
+    /// </summary>
+    public static string CommandText(string label, IReadOnlyList<string> menus, string? key)
+    {
+        var name = MenuText.Plain(label);
+        var text = Entry(name) is null ? name : string.Join(", ", menus.Select(menu => Entry(MenuText.Plain(menu)) ?? MenuText.Plain(menu)).Append(Entry(name)));
+        return string.IsNullOrWhiteSpace(key) ? text : $"{text}, {key.TrimEnd('.')}";
+
+        static string? Entry(string plain) => EntryRegex().Match(plain) is { Success: true } match ? "entry " + match.Groups[1].Value : null;
+    }
 
     private readonly object _gate = new();
     private readonly Queue<(DateTime At, RecentActionKind Kind, string Text)> _entries = new();

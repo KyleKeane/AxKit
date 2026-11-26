@@ -85,11 +85,17 @@ public abstract partial class AxKitForm
     /// entry of exactly that name under exactly those menus as the bar stands now (<see cref="CommandPalette.Find"/>),
     /// clicked as the command palette clicks it (<see cref="ClickFor"/>): a command says what it says, and a setting
     /// that is a check item has its new state said as the palette says it ("Check for updates at start, checked").
-    /// Null when the item was clicked; otherwise why not: the menus do not offer such an item now (it is gone,
+    /// Null when the item was clicked; otherwise why not: the key test runs (the gate's condition 2, held since
+    /// 2026-11-25, docs/axKit/command-language.md CL-4.8), or the menus do not offer such an item now (it is gone,
     /// disabled, or a notice holds the window).
     /// </summary>
     internal string? Choose(string label, string menus)
     {
+        if (CommandGate.Window(CommandOrigin.Choose, new CommandState { KeyTestRunning = KeyTestRunning }) == CommandRefusal.KeyTest)
+        {
+            return $"the window is in its key test: nothing is carried out until it ends, so {label} was not chosen";
+        }
+
         if (CommandPalette.Find(MainMenuStrip, label, menus) is not { } entry)
         {
             return $"no menu item {label} in {menus} now";
@@ -123,9 +129,9 @@ public abstract partial class AxKitForm
     /// with it for that origin, no more than each did before 2026-11-16: for an AI tool the words that say who ran
     /// it, ahead of the click so that they join what the command says, and the chime of a window behind (MC-7.5);
     /// for the palette and the channel a check item's new state after the click (<see cref="MenuText.CheckSaid"/>),
-    /// since no menu shows it. A command of the window's list is written into the recent actions by its item's own
-    /// click (<c>Run</c>), whoever clicks. The user's own choice in a menu is WinForms' click and does not
-    /// pass here.
+    /// since no menu shows it. The click is written into the recent actions by the menu that holds the item, before
+    /// the item's own click, whoever clicks (<see cref="CommandPalette"/>'s <c>WritePicks</c>; a command of the
+    /// window's list by <c>Run</c>). The user's own choice in a menu is WinForms' click and does not pass here.
     /// </summary>
     private void ClickFor(CommandOrigin origin, ToolStripMenuItem item, string name, string? client = null, string? text = null)
     {

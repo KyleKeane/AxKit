@@ -108,6 +108,9 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 - `key-families.json` (by hand; `"status": "proposed"` until the maintainer settles it): what each kind of key is
   for (Ctrl with a letter, Ctrl with a digit, the F-keys and so on) and the keys that do not fit today. No test
   enforces the families, and no key moves because of them.
+- `command-exceptions.json` (by hand, 2026-11-25; `command-language.md` CL-7.3): the command names several apps share
+  that do not mean one thing among them, each with what differs and its reason. `CommandMeaningsTests` holds the
+  inventory to it: a new difference is made one or added here on purpose, and one made one is taken off.
 - `tests/traces/<folder>/<script>.trace.txt` (written by the runner, never by hand): the kept traces, for each
   section a script marks `# Stable` every input and what the windows said under it; `tools/AxAutomate --traces write`
   writes a script's file, and every window run on the hidden desktop fails a stable section whose trace differs

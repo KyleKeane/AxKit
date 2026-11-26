@@ -54,8 +54,10 @@ public sealed partial class MediaForm : ItemForm
         // PlaceWith; the menu items for them here only show the keys.
         var queue = new ToolStripMenuItem("&Session");
         Add(queue, new Command("&New window", AxMediaKeys.NewWindow, NewWindow) { Mark = CommandMark.Open });
-        Add(queue, new Command("&Open files...", AxMediaKeys.OpenFiles, OpenFiles) { Mark = CommandMark.Open });
-        Add(queue, new Command("Open &folder...", AxMediaKeys.OpenFolder, OpenFolder) { Mark = CommandMark.Open });
+        // Add, since they add to the queue ("Added 3"): Open folder is axFile's, which opens the folder in its list
+        // (docs/axKit/command-exceptions.json, one name one thing, 2026-11-25; Open files and Open folder until then).
+        Add(queue, new Command("&Add files...", AxMediaKeys.OpenFiles, OpenFiles) { Mark = CommandMark.Open });
+        Add(queue, new Command("Add &folder...", AxMediaKeys.OpenFolder, OpenFolder) { Mark = CommandMark.Open });
         CommandPalette.RefreshedOnOpening(_recentItem, FillRecent);
         FillRecent();
         queue.DropDownItems.Add(_recentItem);
@@ -439,7 +441,7 @@ public sealed partial class MediaForm : ItemForm
     /// <summary>The speed shown: the player's rate once it exists (a file that refuses the rate plays at 1, AM-4.2), the setting before.</summary>
     private double Speed => _player?.Rate ?? _settings.Speed;
 
-    /// <summary>The paths appended (Open files, Open folder, a recent item): "Added n", or why nothing was; each path remembered.</summary>
+    /// <summary>The paths appended (Add files, Add folder, a recent item): "Added n", or why nothing was; each path remembered.</summary>
     private void AddPaths(IReadOnlyList<string> paths, string? noneText)
     {
         foreach (var path in paths)
@@ -463,7 +465,7 @@ public sealed partial class MediaForm : ItemForm
         });
     }
 
-    /// <summary>Queue → Open files… (Ctrl+O): the Windows file picker on the media kinds, several at once, appended in the picker's order.</summary>
+    /// <summary>Queue → Add files… (Ctrl+O): the Windows file picker on the media kinds, several at once, appended in the picker's order.</summary>
     private void OpenFiles()
     {
         var extensions = string.Join(";", MediaFiles.Extensions.Order().Select(extension => "*" + extension));
@@ -486,7 +488,7 @@ public sealed partial class MediaForm : ItemForm
         }
     }
 
-    /// <summary>Queue → Open folder… (Ctrl+Shift+O): the bundle's folder picker; the folder's media files appended in name order.</summary>
+    /// <summary>Queue → Add folder… (Ctrl+Shift+O): the bundle's folder picker; the folder's media files appended in name order.</summary>
     private void OpenFolder()
     {
         var chosen = ChooseFolder("Choose the folder whose sound and video files to add");

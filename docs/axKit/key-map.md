@@ -67,7 +67,7 @@ In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 - Ctrl+Shift+E. Window key, in axJSON alone: Error.
 - Ctrl+Shift+J. Window key, in axJSON alone: Object.
 - Ctrl+Shift+M. Window key, in axClaude alone: Next permission mode.
-- Ctrl+Shift+O. Window key, in axMedia alone: Open folder.
+- Ctrl+Shift+O. Window key, in axMedia alone: Add folder.
 - Ctrl+Shift+P. Bundle key, in every app: Command palette.
 - Ctrl+Shift+U. Window key, in axGIT alone: Unstage.
 - Ctrl+Shift+V. Window key, in axPreview alone: Read the clipboard's picture.
@@ -132,10 +132,10 @@ Window key, in axAutomate, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMed
 Window key, in axAutomate, axDown, axFile, axGIT, axHelp, axJSON, axMedia, axPass, axPreview and axStart. 8 meanings.
 
 - axDown, axJSON and axPreview: Open.
+- axMedia: Add files.
 - axAutomate: Open a folder of workflows.
 - axPass: Open database.
 - axStart: Open file location.
-- axMedia: Open files.
 - axFile: Open folder.
 - axGIT: Open repository.
 - axHelp: Open the last screenshot in axPreview.

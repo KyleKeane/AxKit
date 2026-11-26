@@ -333,7 +333,7 @@ every window" or under a heading that names the windows without it; under an app
 - Copy. Menu: Context. Key: Ctrl+C. Mark: act.
 - Cut. Menu: Context. Key: Ctrl+X. Mark: act.
 - Paste. Menu: Context. Key: Ctrl+V. Mark: act.
-- Select all. Menu: Context. Key: Ctrl+A. Mark: open.
+- Select all. Menu: Context. Key: Ctrl+A. Mark: change.
 - GitHub Flavored Markdown. Menu: Help, Markdown resources. Key: none. Mark: act.
 - Markdown basics. Menu: Help, Markdown resources. Key: none. Mark: act.
 - Find. Menu: Navigation. Key: Ctrl+F. Mark: read.
@@ -445,7 +445,7 @@ every window" or under a heading that names the windows without it; under an app
 - axClaude, access layer for Claude Code. Menu: Session, Show current folder in. Key: none. Mark: act.
 - axGIT, access layer for Git. Menu: Session, Show current folder in. Key: none. Mark: open.
 - axTerminal, access layer for your shell. Menu: Session, Show current folder in. Key: none. Mark: act.
-- File Explorer. Menu: Session, Show current folder in. Key: Ctrl+W. Mark: act.
+- File Explorer. Menu: Session, Show current folder in. Key: Ctrl+W. Mark: open.
 - Add to or remove from Favorites. Menu: none, a key alone. Key: Ctrl+D. Mark: change. Never run by AI tools.
 - Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
 - Find. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
@@ -556,7 +556,7 @@ every window" or under a heading that names the windows without it; under an app
 - Copy. Menu: Context. Key: Ctrl+C. Mark: act.
 - Cut. Menu: Context. Key: Ctrl+X. Mark: act.
 - Paste. Menu: Context. Key: Ctrl+V. Mark: act.
-- Select all. Menu: Context. Key: Ctrl+A. Mark: open.
+- Select all. Menu: Context. Key: Ctrl+A. Mark: change.
 - Claude Code settings. Menu: Help, JSON resources. Key: none. Mark: act.
 - JSON syntax. Menu: Help, JSON resources. Key: none. Mark: act.
 - Find. Menu: Navigation. Key: Ctrl+F. Mark: read.
@@ -655,10 +655,10 @@ every window" or under a heading that names the windows without it; under an app
 - Say each file as it starts. Menu: Options. Key: none. Mark: change.
 - Name. Menu: Options, Sort by. Key: none. Mark: change.
 - The order added. Menu: Options, Sort by. Key: none. Mark: change.
+- Add files. Menu: Session. Key: Ctrl+O. Mark: open.
+- Add folder. Menu: Session. Key: Ctrl+Shift+O. Mark: open.
 - Clear queue. Menu: Session. Key: none. Mark: change.
 - New window. Menu: Session. Key: Ctrl+N. Mark: open.
-- Open files. Menu: Session. Key: Ctrl+O. Mark: open.
-- Open folder. Menu: Session. Key: Ctrl+Shift+O. Mark: open.
 - axClaude, access layer for Claude Code. Menu: Session, Show current file in. Key: none. Mark: act.
 - axFile. Menu: Session, Show current file in. Key: none. Mark: open.
 - axGIT, access layer for Git. Menu: Session, Show current file in. Key: none. Mark: open.
@@ -797,7 +797,7 @@ every window" or under a heading that names the windows without it; under an app
 
 - No actions here yet. Menu: Actions. Key: none. Mark: read.
 - Copy. Menu: Context. Key: Ctrl+C. Mark: act.
-- Select all. Menu: Context. Key: Ctrl+A. Mark: open.
+- Select all. Menu: Context. Key: Ctrl+A. Mark: change.
 - GitHub Flavored Markdown. Menu: Help, Markdown resources. Key: none. Mark: act.
 - Markdown basics. Menu: Help, Markdown resources. Key: none. Mark: act.
 - Find. Menu: Navigation. Key: Ctrl+F. Mark: read.

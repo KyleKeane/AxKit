@@ -73,13 +73,13 @@ A function is a command of a window (`docs/axKit/command-language.md`): 1966 in 
 ### The families, by menu
 
 - `session`, the Session menu: What the window holds as a whole: open, new, save, refresh, restart, hide, exit, and the same place opened in another app.
-  - 114 commands in 18 apps: read 10, open 41, change 16, act 47.
+  - 114 commands in 18 apps: read 10, open 42, change 16, act 46.
 - `navigation`, the Navigation menu: Go somewhere in what the window holds: find, the next heading, link or list, go to a line, a bookmark, the next file.
   - 121 commands in 18 apps: read 91, open 29, change 1.
 - `actions`, the Actions menu: Do something with the whole of what the window holds: undo and redo, run, push and pull, a new item, interrupt.
   - 125 commands in 18 apps: read 12, open 7, change 59, act 47.
 - `context`, the Context menu: Do something with the one thing the focus is on: copy, cut, paste, rename, delete, open, information. Shift+F10 and Ctrl+Period open it.
-  - 120 commands in 18 apps: read 17, open 27, change 27, act 49.
+  - 120 commands in 18 apps: read 17, open 24, change 30, act 49.
 - `options`, the Options menu: Settings, each said with its new state: text, speech, sounds, announcements, what happens when something is done.
   - 276 commands in 18 apps: read 1, open 24, change 229, act 22.
 - `window`, the Window menu: The other windows of axKit: a new window of any app, close all windows, say the status.

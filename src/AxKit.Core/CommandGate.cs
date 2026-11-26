@@ -210,14 +210,11 @@ public static class CommandGate
                     : state.NoticeOpen ? CommandRefusal.Notice
                     : null;
             case CommandOrigin.Script:
-                // The listing names the key test where a notice's title stands, the key test first.
+            case CommandOrigin.Choose:
+                // The listing names the key test where a notice's title stands, the key test first; choose is held
+                // by the key test as every other origin since 2026-11-25 (CL-4.8, 1), asked here by AxKitForm.Choose.
                 return state.NoTestRun ? CommandRefusal.NotATestRun
                     : state.KeyTestRunning ? CommandRefusal.KeyTest
-                    : state.NoticeOpen ? CommandRefusal.Notice
-                    : null;
-            case CommandOrigin.Choose:
-                // Not held by the key test (CL-4.8, 1): only a test run can send it.
-                return state.NoTestRun ? CommandRefusal.NotATestRun
                     : state.NoticeOpen ? CommandRefusal.Notice
                     : null;
             default:

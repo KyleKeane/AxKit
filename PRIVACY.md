@@ -51,7 +51,7 @@ when you send a report:
   anything that identifies you. Copies of axKit up to 5.8.0 send their reports unencrypted into the same repository,
   which was public until 2026-11-14, and their own texts still say "public"; they ask for the block list at its old
   address in that repository, which now answers that nothing is there, so their own check finds an empty list. The encrypted report holds exactly what the report notice showed you and let you edit: your words, the kind, the
-  app and version with Windows' build and NVDA's version, the commands you last ran in the window, the kind of control the focus was in and its
+  app and version with Windows' build and NVDA's version, the commands you last ran in the window, each by its name and key and never with what you typed (a recent file or a window chosen from a list is written by its menu and its number, "Open recent file, entry 2"), the kind of control the focus was in and its
   place (never its name, an item's name or its text), the log's errors of the last day with every path and every quoted text masked, and a title.
   Nothing of this names your files, folders, lists or items. Only if you check the box "Add detail that may name your files" does the report also
   carry the window's title, the focused control's and item's names, what the window announced and the notices it showed (never in axClaude,

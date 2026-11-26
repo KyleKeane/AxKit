@@ -115,8 +115,8 @@ top of the window. It works entirely offline (bundle G6).
   <name>"; the one playing goes on to the next, or stops at the end); Ctrl+I says the file's place, "03 Chapter
   3.mp3, 3 of 12", with the position while it is the one playing ("…, playing, 12:52 of 45:30"); Ctrl+F finds by name
   (the bundle's find, AX-8.2). Queue → Clear queue empties it and stops, "Queue cleared".
-- AM-3.2 **Adding:** Queue → Open files… (Ctrl+O), the Windows file picker on the media kinds, several at once,
-  appended in the picker's order, "Added 3"; Queue → Open folder… (Ctrl+Shift+O), the Windows folder picker, the
+- AM-3.2 **Adding:** Queue → Add files… (Ctrl+O), the Windows file picker on the media kinds, several at once,
+  appended in the picker's order, "Added 3"; Queue → Add folder… (Ctrl+Shift+O), the Windows folder picker, the
   folder's media files appended in name order, hidden ones left out, "Added 12", "No sound or video files in
   <folder>" when none; Queue → Open recent ▸, the last ten files and folders added by command or handed over as
   one path (a start, a play or an add from axFile), "1. name (path)" (AX-9.5), one chosen appended again. A start
@@ -173,8 +173,9 @@ top of the window. It works entirely offline (bundle G6).
 
 ### AM-5 Menus, keys, texts
 
-- AM-5.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** New window Ctrl+N | Open files… Ctrl+O |
-  Open folder… Ctrl+Shift+O | Open recent ▸ | ─ | Clear queue | ─ | Show current file in ▸ (File Explorer Ctrl+W |
+- AM-5.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** New window Ctrl+N | Add files… Ctrl+O |
+  Add folder… Ctrl+Shift+O (Open files and Open folder until 2026-11-25: they add to the queue, and Open folder is
+  axFile's for a folder opened in its list, docs/axKit/command-exceptions.json) | Open recent ▸ | ─ | Clear queue | ─ | Show current file in ▸ (File Explorer Ctrl+W |
   axClaude | axTerminal | axGIT | axFile) | ─ | Exit Alt+F4. **Actions (A):** Play, pause or resume Ctrl+Enter | Forward 15
   seconds Ctrl+Right | Back 15 seconds Ctrl+Left | ─ | Faster Ctrl+Up | Slower Ctrl+Down | Normal
   speed | ─ | What is playing Ctrl+Q. **Navigation (N):** Next file Ctrl+Shift+Right | Previous file Ctrl+Shift+Left |
@@ -305,7 +306,7 @@ events are posted back to it (AX-7.5).
 - Keeping the queue for the next start, with a resume position per file (an audiobook resumed where it stopped; per
   file in the settings, with a cap).
 - Reordering the queue by key (Alt+Up and Alt+Down are axFile's words for up one level; a Move up / Move down pair).
-- A `.m3u` or `.pls` file as the queue, from axFile's Enter or axMedia's Open files.
+- A `.m3u` or `.pls` file as the queue, from axFile's Enter or axMedia's Add files.
 - Whether axFile should carry remote keys for the player (pause, what is playing) sent through the hand-over; decided
   against for the first build, since an answer back would need a second message (AM-D4).
 

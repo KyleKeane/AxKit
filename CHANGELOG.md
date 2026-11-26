@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- axKit: **a report's last actions hold every command you ran**, each by its name and key, a setting, a menu pick, a key such as F1 and a command chosen in the palette included, where only some commands were written; a recent file or a window chosen from a list is written by its menu and its number, "Session, Open recent file, entry 2", never by its name.
+- axMedia: **Open files and Open folder are Add files and Add folder**, since they add to the queue; their keys, Ctrl+O and Ctrl+Shift+O, are as they were.
 - axKit: **the how-to pages read as a person's steps**: "Go to the window that opened", "Go back to the first window", "Open axClip again"; a start's options in words ("added to the list", "in a new window") and the checks' own gone; the AI tools page as what you ask Claude ("Ask Claude to list the open windows"); a word and the sound of its name in one line ("You hear the Sent sound and Sent"); a part of an announcement in quotes ("You hear something with "2 of" in it"); typed text in quotes; "Press Tab seven times"; workflows of checks alone left off the pages.
 - axKit: **AI tools: commands no name or menu tells apart are refused with their menus**, "several commands named Not set, all in the menu Context, Action keys: neither the name nor the menu tells them apart", where the refusal asked for the menu, which would not have helped.
 - axFile: **Undo is one command, Actions, Undo (Ctrl+Z)**, whatever it would take back, where the menu item read "Undo rename", "Undo delete" and so on; what it undid is said after it runs, "Undone: renamed back to notes.md", as before.

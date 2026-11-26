@@ -94,7 +94,8 @@ public sealed partial class FileForm : ItemForm
         actions.DropDownItems.Add(new ToolStripSeparator());
         // AF-1.3: the way to the other windows, on the folder shown. The base makes the submenu around its File
         // Explorer item, so the item only shows the key and the key is a command of its own.
-        folder.DropDownItems.Add(CreateShowInMenu("Show current folder &in", Item("File &Explorer", ShowFolderInExplorer, AxFileKeys.ShowInExplorer, CommandMark.Act), () => TryFolder(out var shown) ? shown : null, FolderMissing));
+        // Open, as its own key and every window's File Explorer item (docs/axKit/command-exceptions.json, 2026-11-25).
+        folder.DropDownItems.Add(CreateShowInMenu("Show current folder &in", Item("File &Explorer", ShowFolderInExplorer, AxFileKeys.ShowInExplorer, CommandMark.Open), () => TryFolder(out var shown) ? shown : null, FolderMissing));
         AddKey(new Command("Show the folder in File Explorer", AxFileKeys.ShowInExplorer, ShowFolderInExplorer) { Mark = CommandMark.Open });
         folder.DropDownItems.Add(new ToolStripSeparator());
         folder.DropDownItems.Add(CreateExitItem());

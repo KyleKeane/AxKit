@@ -168,3 +168,20 @@ expect quiet 1000
 # Check: The command for a new axDown window is in the palette
 # Alt+W, New window, axDown is in the palette; the recent lists are too, played in 14-recent-from-the-palette.
 expect commands "axDown, axKit, Apps, Ctrl+F5"
+# Check: A report's last actions name every command run
+# docs/axKit/reports.md RP-4.1 (2026-11-25): a menu item that is no command of the list (Version) is written by its
+# name as it is picked, and a key of the whole window (F4) by the name of its item and the key; the plain form holds
+# the commands alone.
+menu Version
+expect state "notice":"axKit
+keys escape
+expect state "notice":null
+keys f4
+expect state "notice":"Report to axKit"
+keys tab tab tab
+expect focus "name":"What is sent with your report"
+expect text : Version"
+expect text : Send a report, F4"
+keys escape
+expect state "notice":null
+expect focus a.md

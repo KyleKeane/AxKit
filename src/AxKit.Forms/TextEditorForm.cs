@@ -323,7 +323,8 @@ public sealed partial class TextEditorForm : AxKitForm
             }) { ShortcutKeyDisplayString = "Ctrl+V" }, CommandMark.Act));
         }
 
-        items.Add(CommandPalette.Marked(new ToolStripMenuItem("Select &all", null, (_, _) => _editor.SelectAll()) { ShortcutKeyDisplayString = "Ctrl+A" }, CommandMark.Open));
+        // Change, as every list's Select all (docs/axKit/command-exceptions.json: one name, one mark, 2026-11-25).
+        items.Add(CommandPalette.Marked(new ToolStripMenuItem("Select &all", null, (_, _) => _editor.SelectAll()) { ShortcutKeyDisplayString = "Ctrl+A" }, CommandMark.Change));
     }
 
     // ---- what the window base asks for ----

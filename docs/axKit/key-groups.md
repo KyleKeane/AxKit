@@ -381,10 +381,10 @@ Windows' own keys, as in every program:
 - Ctrl+N, axPass: New entry.
 - Ctrl+N, axTemplate: New template.
 - Ctrl+O, axDown, axJSON and axPreview: Open.
+- Ctrl+O, axMedia: Add files.
 - Ctrl+O, axAutomate: Open a folder of workflows.
 - Ctrl+O, axPass: Open database.
 - Ctrl+O, axStart: Open file location.
-- Ctrl+O, axMedia: Open files.
 - Ctrl+O, axFile: Open folder.
 - Ctrl+O, axGIT: Open repository.
 - Ctrl+O, axHelp: Open the last screenshot in axPreview.
@@ -536,7 +536,7 @@ The keys:
 - Ctrl+Shift+N, axAutomate, axMCP, axPass and axTask: New list.
 - Ctrl+Shift+N, axDown and axJSON: New window.
 - Ctrl+Shift+N, axPass: New group.
-- Ctrl+Shift+O, axMedia: Open folder.
+- Ctrl+Shift+O, axMedia: Add folder.
 - Ctrl+Shift+Q, axDown and axPreview: Block quote.
 - Ctrl+Shift+S, axDown and axJSON: Save as.
 - Ctrl+Shift+S, axGIT: Stage.

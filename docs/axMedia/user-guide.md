@@ -25,7 +25,7 @@ The list is the one control, named with its count, "Queue, 12 items". Up, Down, 
 - **Delete** takes the file out of the queue, "Removed 03 Chapter 3.mp3"; the one playing goes on to the next, or stops at the end.
 - **Ctrl+I** says the file's place, "03 Chapter 3.mp3, 3 of 12", and, while it plays, "playing, 12:52 of 45:30".
 - **Ctrl+F** finds the next file whose name contains the text; F3 and Shift+F3 the next and the previous match.
-- **Ctrl+O**, Open files: the Windows file picker on sound and video files, several at once; they are added to the end of the queue, "Added 3". Nothing starts playing by itself; Enter on one does. **Ctrl+Shift+O**, Open folder: the Windows folder picker; the folder's sound and video files are added in name order, "Added 12", or "No sound or video files in Dune". Session, Open recent lists the files and folders added lately by number, "1. Dune (C:\Music\Dune)", so Alt+S, R, 1 adds the first again.
+- **Ctrl+O**, Add files: the Windows file picker on sound and video files, several at once; they are added to the end of the queue, "Added 3". Nothing starts playing by itself; Enter on one does. **Ctrl+Shift+O**, Add folder: the Windows folder picker; the folder's sound and video files are added in name order, "Added 12", or "No sound or video files in Dune". Session, Open recent lists the files and folders added lately by number, "1. Dune (C:\Music\Dune)", so Alt+S, R, 1 adds the first again.
 - Session, Clear queue empties the queue and stops the sound, "Queue cleared".
 - **Ctrl+W** shows the file playing, or the one you are on, selected in File Explorer; Session, Show current file in, axFile opens axFile on its folder with the file selected.
 - **Ctrl+N** opens a second axMedia window with an empty queue.
@@ -63,7 +63,7 @@ The volume is Windows' own: your keyboard's volume keys work from anywhere. A vi
 Each menu with its commands and their keys, as the window lists them:
 
 <!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
-- **Session**: Clear queue; Exit (Alt+F4); New window (Ctrl+N); Open files (Ctrl+O); Open folder (Ctrl+Shift+O); Show current file in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, axTerminal, access layer for your shell, File Explorer (Ctrl+W)).
+- **Session**: Add files (Ctrl+O); Add folder (Ctrl+Shift+O); Clear queue; Exit (Alt+F4); New window (Ctrl+N); Show current file in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, axTerminal, access layer for your shell, File Explorer (Ctrl+W)).
 - **Actions**: Back 15 seconds (Ctrl+Left); Deselect all (Ctrl+Shift+A); Faster (Ctrl+Up); Forward 15 seconds (Ctrl+Right); Normal speed; Play, pause or resume (Ctrl+Enter); Select all (Ctrl+A); Slower (Ctrl+Down); What is playing (Ctrl+Q).
 - **Navigation**: Go to time (Ctrl+T); Next file (Ctrl+Shift+Right); Previous file (Ctrl+Shift+Left).
 - **Context**: Queue is empty.

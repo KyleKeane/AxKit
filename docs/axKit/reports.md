@@ -123,12 +123,20 @@ part sent leaves the box unchecked, or cancels.
 - **RP-4.1 The recent actions.** The window base keeps a ring of the last twenty actions of the window: every command
   run through its command list (the menu path and key the palette shows, AX-10.2) and every announcement raised
   (`Announcer.Raised`, which already feeds the MCP channel's "said" list while a client records; the ring becomes the
-  one copy both read). Each entry has a time; the report shows the age. As built (stated on 2026-11-16): a command
-  is written there by `AxKitForm.Run`, with its label and key, so only a command of the window's command list is; a
-  menu item that is not made from one (a setting, a recent file, a window of the Window menu) is not written when
-  chosen, though what the window then says is. The title of each notice shown is written too, and a window whose
-  announcements may carry the user's content (axPass, axClip, the console windows) writes its commands and notices
-  alone (RP-4.2).
+  one copy both read). Each entry has a time; the report shows the age. **Every command run is written, by its name,
+  never with what the user typed** (the maintainer's decision of 2026-11-25, `command-language.md` section 8 (a) 3):
+  a command of the window's command list by `AxKitForm.Run`, by its key or its menu item; every other menu item (a
+  setting, a recent file, a window of the Window menu) as it is picked, by the user, the palette, a script or an AI
+  tool, from the one place every pick passes, the menu's `ItemClicked` (`CommandPalette.Marked` hooks it,
+  `AxKitForm.WritePick`), before the item's own click so that it comes ahead of what the command says; and the keys
+  of the whole window (F1, the palette, F4, Shift+F1, Ctrl+S, an app's launch key, the text size keys, F8) by the name
+  of the item that shows the key (`AxKitForm.WriteKey`). One function words them all, `RecentActions.CommandText`:
+  the name and the key as the menu shows it, "Find, Ctrl+F", "Word wrap", "Keyboard shortcuts, F1"; an entry of a
+  numbered list of the user's own things (a recent file, a window, a folder, a template of the user's) by its menus
+  and its number alone, "Session, Open recent file, entry 2", since its name may name a file (RP-4.2a). Until
+  2026-11-25 only a command of the list was written. The title of each notice shown is written too, and a window
+  whose announcements may carry the user's content (axPass, axClip, the console windows) writes its commands and
+  notices alone (RP-4.2).
 - **RP-4.2 Never the user's text.** The content of an edit field (the message to Claude, a document, a password), a
   conversation line of axClaude, a clipboard entry of axClip or a field value of axPass is never in a report. The
   focus line names the control and its place only. axPass's and axClip's windows (the MCP's never-read apps, `McpTools.NeverRead`,

@@ -69,8 +69,61 @@ public static class CommandPalette
     public static ToolStripMenuItem Marked(ToolStripMenuItem item, CommandMark mark)
     {
         Infos.GetOrCreateValue(item).Mark = mark;
+        // Every item that does something states its mark here, so the menu that holds it is where its pick is
+        // written into the window's recent actions (RP-4.1, WritePicks): the menu it is in now and any it is put in.
+        item.OwnerChanged -= WritePicksOfOwner;
+        item.OwnerChanged += WritePicksOfOwner;
+        WritePicks(item.Owner);
         return item;
     }
+
+    /// <summary>The menus whose picks are written (<see cref="WritePicks"/>), each once.</summary>
+    private static readonly ConditionalWeakTable<ToolStrip, object> Written = [];
+
+    private static void WritePicksOfOwner(object? sender, EventArgs e) => WritePicks((sender as ToolStripItem)?.Owner);
+
+    /// <summary>
+    /// The one place where a menu pick is written into its window's recent actions (docs/axKit/reports.md RP-4.1;
+    /// docs/axKit/command-language.md section 8 (a) 3, decided 2026-11-25): the menu's <c>ItemClicked</c>, which
+    /// WinForms raises for every click of an item, the user's own and every <c>PerformClick</c> of axKit's
+    /// (<c>AxKitForm.ClickFor</c>: the palette, the automation channel, an AI tool), before the item's own click, so
+    /// that the command is written ahead of what it says. A menu that only opens a submenu is no pick.
+    /// </summary>
+    private static void WritePicks(ToolStrip? menu)
+    {
+        if (menu is null || Written.TryGetValue(menu, out _))
+        {
+            return;
+        }
+
+        Written.Add(menu, new object());
+        menu.ItemClicked += (_, e) =>
+        {
+            if (e.ClickedItem is ToolStripMenuItem { HasDropDownItems: false } picked && WindowOf(menu) is { } form)
+            {
+                form.WritePick(picked);
+            }
+        };
+    }
+
+    /// <summary>The axKit window a menu belongs to: up through its owner items to the bar, or a context menu's control; null for any other.</summary>
+    private static AxKitForm? WindowOf(ToolStrip menu)
+    {
+        var strip = menu;
+        while (strip is ToolStripDropDown { OwnerItem.Owner: { } owner })
+        {
+            strip = owner;
+        }
+
+        return (strip is ContextMenuStrip { SourceControl: { } source } ? source.FindForm() : strip.FindForm()) as AxKitForm;
+    }
+
+    /// <summary>The menus over an item as their texts, the bar's first ("&amp;Session", "Open &amp;recent file").</summary>
+    internal static List<string> MenusOf(ToolStripMenuItem item) => [.. Owners(item).Select(owner => owner.Text ?? string.Empty)];
+
+    /// <summary>The key an item shows, as the menu shows it; null for none.</summary>
+    internal static string? KeyTextOf(ToolStripMenuItem item) =>
+        item.ShortcutKeyDisplayString ?? (item.ShortcutKeys != Keys.None ? BundleKeys.Text(item.ShortcutKeys) : null);
 
     /// <summary>
     /// An item's mark; act for one that was never given one, so that an AI tool asks the user before it runs anything
@@ -238,8 +291,7 @@ public static class CommandPalette
                 continue;
             }
 
-            var key = menuItem.ShortcutKeyDisplayString ?? (menuItem.ShortcutKeys != Keys.None ? BundleKeys.Text(menuItem.ShortcutKeys) : null);
-            entries.Add(new MenuEntry(menuItem, name, [.. path], key, menuItem.Checked));
+            entries.Add(new MenuEntry(menuItem, name, [.. path], KeyTextOf(menuItem), menuItem.Checked));
         }
     }
 }

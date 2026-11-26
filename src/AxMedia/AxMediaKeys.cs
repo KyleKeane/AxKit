@@ -62,8 +62,8 @@ public static class AxMediaKeys
         // The bundle's selection keys (AX-8.16), in the queue.
         .. SelectionKeys.All,
         ("Information about the file", Information),
-        ("Open files", OpenFiles),
-        ("Open folder", OpenFolder),
+        ("Add files", OpenFiles),
+        ("Add folder", OpenFolder),
         ("New window", NewWindow),
         ("Show the file in File Explorer", ShowInExplorer),
         ("Forward", Forward),

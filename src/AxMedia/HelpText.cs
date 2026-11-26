@@ -16,7 +16,7 @@ public static class HelpText
           Delete takes this file out of the queue; the one playing goes on to the next. With files selected, it takes all of them: "Removed 3 files".
           A selected file reads ", selected". Escape deselects all.
           {BundleKeys.Text(AxMediaKeys.Information)} says the file's place, "3 of 12", its position while it plays, and how many are selected.
-          Open files adds files with the Windows file picker, several at once, and Open folder adds a folder's sound and video files. Session, Open recent lists the files and folders added lately by number.
+          Add files adds files with the Windows file picker, several at once, and Add folder adds a folder's sound and video files. Session, Open recent lists the files and folders added lately by number.
           Session, Clear queue empties the queue and stops the sound.
           Session, Show current file in, axFile shows the file in its folder in axFile.
           {BundleKeys.Text(BundleKeys.Save)} has nothing to save here, and axMedia says so.

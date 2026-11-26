@@ -194,8 +194,8 @@ where a step is a command the tools may run (WF-9), and the existing scripts mov
   every row's `now` is empty and the listing gives "Key test" where a notice's title stands, so a `do` step waits
   there as it does at a notice, the converter converts no press of a key test, and a test fails on a `do` step
   between a script's `menu Test a key` and the Escape that ends it (2026-11-16, `repairs.md` R-60). The channel's
-  `choose` and `menu` themselves are not held by the key test (`AxKitForm.Choose` asks nothing about it): it is the
-  listing that keeps `do` from sending them there, and only a test run has the channel (`SPEC.md` AX-8.12).
+  `choose` refuses in the key test itself since 2026-11-25 (`AxKitForm.Choose` asks the gate); its `menu` is not held,
+  and only a test run has the channel (`SPEC.md` AX-8.12).
 - WF-2.6 **The inventory**, `docs/axKit/window-commands.json` (section 5.3): by app, the rows the windows listed,
   without what is state (`checked`, `now`). It is produced from live windows by a run of the automation on a
   desktop of its own, never by constructing a form in a test (a hotkey window's handle registers a system hotkey

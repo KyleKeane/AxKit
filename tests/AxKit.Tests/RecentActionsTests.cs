@@ -42,6 +42,28 @@ public sealed class RecentActionsTests
     }
 
     [Theory]
+    [InlineData("&Find...", "Ctrl+F", "Find, Ctrl+F")]
+    [InlineData("&Word wrap", null, "Word wrap")]
+    [InlineData("Say the &status", "F8.", "Say the status, F8")]
+    [InlineData("Save &as...", "", "Save as")]
+    public void A_command_is_written_by_its_name_and_its_key(string label, string? key, string expected)
+    {
+        Assert.Equal(expected, RecentActions.CommandText(label, ["&Session"], key));
+    }
+
+    [Fact]
+    public void An_entry_of_a_list_of_the_user_s_things_is_written_by_its_menus_and_its_number()
+    {
+        // RP-4.2a: a recent file's or a window's name may name the user's file; the report holds where it was chosen.
+        Assert.Equal("Session, Open recent file, entry 2", RecentActions.CommandText(AxKitWindows.Label(1, @"notes.md (C:\notes\notes.md)"), ["&Session", "Open &recent file"], null));
+        Assert.Equal("Window, entry b", RecentActions.CommandText(AxKitWindows.Label(10, "Tasks - axTask"), ["&Window"], null));
+        Assert.Equal("Session, Remove project folder, entry 12", RecentActions.CommandText("12. Tasks (C:\\Tasks)", ["&Session", "Remove project folder"], null));
+        // A menu above that is such an entry is not named either; a command of a fixed name is written by its name alone.
+        Assert.Equal("Open with, entry 2, entry 1", RecentActions.CommandText("&1. notes.md", ["Open &with", "&2. axDown (C:\\axDown.exe)"], null));
+        Assert.Equal("Close", RecentActions.CommandText("&Close", ["&Window", "&1. notes.md - axDown"], null));
+    }
+
+    [Theory]
     [InlineData(0, "just now")]
     [InlineData(4, "just now")]
     [InlineData(5, "5 s ago")]

@@ -221,9 +221,12 @@ public sealed partial class CommandGateTests
     }
 
     [Fact]
-    public void Choose_condition_2_the_key_test_does_not_hold_it() =>
-        // CL-4.8 (1), as the code is: the channel clicks the item in the key test too; only a test run can send it.
-        RunsWhateverTheMark(CommandOrigin.Choose, Calm with { KeyTestRunning = true });
+    public void Choose_condition_2_the_key_test_holds_it()
+    {
+        // CL-4.8 (1), decided 2026-11-25: held as every other origin; and the key test before a notice, as for do.
+        Never(CommandRefusal.KeyTest, CommandOrigin.Choose, Calm with { KeyTestRunning = true });
+        Never(CommandRefusal.KeyTest, CommandOrigin.Choose, Calm with { KeyTestRunning = true, NoticeOpen = true });
+    }
 
     [Fact]
     public void Choose_condition_5_only_in_a_test_run() =>

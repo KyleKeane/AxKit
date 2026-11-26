@@ -814,6 +814,11 @@ public abstract partial class AxKitForm : Form
     /// <summary>A key of the whole window run (<see cref="IsWindowKey"/>): true when it was one.</summary>
     private bool RunWindowKey(Keys keyData)
     {
+        if (IsWindowKey(keyData))
+        {
+            WriteKey(keyData, keyData == BundleKeys.AskClaudeAlso ? BundleKeys.AskClaude : keyData);
+        }
+
         switch (keyData)
         {
             case BundleKeys.Shortcuts:
@@ -942,15 +947,18 @@ public abstract partial class AxKitForm : Form
         {
             case BundleKeys.LargerText:
             case BundleKeys.LargerTextNumpad:
+                WriteKey(keyData, BundleKeys.LargerText);
                 ChangeTextSize(1);
                 return true;
             case BundleKeys.SmallerText:
             case BundleKeys.SmallerTextNumpad:
+                WriteKey(keyData, BundleKeys.SmallerText);
                 ChangeTextSize(-1);
                 return true;
             case BundleKeys.SayStatus when FromHandle(msg.HWnd) is not ToolStrip:
                 // AX-7.10: information and nothing else, so it works while a notice shows too, as the text size keys
                 // do (the status is still true behind the notice); an open menu keeps the key.
+                WriteKey(keyData, keyData);
                 SayStatus();
                 return true;
             case BundleKeys.ContextMenu when FromHandle(msg.HWnd) is not ToolStrip:
@@ -1104,16 +1112,68 @@ public abstract partial class AxKitForm : Form
         }
 
         // The item carries the command's mark, for the AI tools, which read the menus (docs/axKit/app-kit.md AK-2.5).
-        return Item(command.Label, () => Run(command), command.Key, command.Mark);
+        var item = Item(command.Label, () => Run(command), command.Key, command.Mark);
+        _commandItems.AddOrUpdate(item, command);
+        return item;
     }
 
     /// <summary>
-    /// The window's last actions for a report (docs/axKit/reports.md RP-4.1): every command of the window's command
-    /// list that was run (<c>Run</c>, whichever way it was asked for), what the window said, and the notices it
-    /// showed; twenty at most. A menu item that is not made from a <see cref="Command"/> (a setting, a recent file, a
-    /// window of the Window menu) is not written here when chosen; what it says is.
+    /// The window's last actions for a report (docs/axKit/reports.md RP-4.1): every command run, by its name and
+    /// never with what the user typed (<see cref="RecentActions.CommandText"/>): a command of the list by its key or
+    /// its item (<c>Run</c>), any other menu item as it is picked, by the user, the palette, a script or an AI tool
+    /// (<see cref="WritePick"/>), and the keys of the whole window (<see cref="WriteKey"/>); what the window said; and
+    /// the notices it showed; twenty at most.
     /// </summary>
     protected internal RecentActions Recent { get; } = new();
+
+    /// <summary>The menu items made from a <see cref="Command"/>: <c>Run</c> writes them, so their pick is not written twice.</summary>
+    private readonly System.Runtime.CompilerServices.ConditionalWeakTable<ToolStripItem, Command> _commandItems = [];
+
+    /// <summary>
+    /// A menu item picked, from the one place every pick passes (<see cref="CommandPalette"/>'s <c>WritePicks</c>),
+    /// written into <see cref="Recent"/> by its menus' names and its own: "Word wrap, Alt+Z", "Session, Open recent
+    /// file, entry 2". An item of a <see cref="Command"/> is written by <c>Run</c> instead.
+    /// </summary>
+    internal void WritePick(ToolStripMenuItem item)
+    {
+        if (!_commandItems.TryGetValue(item, out _))
+        {
+            Recent.Add(RecentActionKind.Command, RecentActions.CommandText(item.Text ?? string.Empty, CommandPalette.MenusOf(item), CommandPalette.KeyTextOf(item)), DateTime.UtcNow);
+        }
+    }
+
+    /// <summary>
+    /// A key of the whole window pressed (F1, the palette, F4, Ask about this window, Ctrl+S, an app's launch key, the
+    /// text size keys, F8), written into <see cref="Recent"/> by the name of the menu item that shows the key
+    /// (<paramref name="shown"/>, the key a further key stands for) and the key pressed; a launch key with no item by
+    /// the app's title.
+    /// </summary>
+    private void WriteKey(Keys pressed, Keys shown)
+    {
+        var name = ItemShowing(MainMenuStrip?.Items, shown)?.Text ?? BundleKeys.AppOfLaunchKey(pressed)?.Title;
+        if (name is not null)
+        {
+            Recent.Add(RecentActionKind.Command, RecentActions.CommandText(name, [], BundleKeys.Text(pressed)), DateTime.UtcNow);
+        }
+
+        static ToolStripMenuItem? ItemShowing(ToolStripItemCollection? items, Keys key)
+        {
+            foreach (var item in items?.OfType<ToolStripMenuItem>() ?? [])
+            {
+                if (CommandPalette.KeyOf(item) == key && !item.HasDropDownItems)
+                {
+                    return item;
+                }
+
+                if (item.HasDropDownItems && ItemShowing(item.DropDownItems, key) is { } found)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
+    }
 
     /// <summary>
     /// Whether what the window says goes into <see cref="Recent"/> (RP-4.2). Not for axPass and axClip, whose
@@ -1126,13 +1186,7 @@ public abstract partial class AxKitForm : Form
     /// <summary>Runs a command and records it: "Find, Ctrl+F", the label without its mnemonic and the key as the menu shows it.</summary>
     private void Run(Command command)
     {
-        var text = MenuText.Plain(command.Label);
-        if (command.Key != Keys.None)
-        {
-            text += ", " + BundleKeys.Text(command.Key).TrimEnd('.');
-        }
-
-        Recent.Add(RecentActionKind.Command, text, DateTime.UtcNow);
+        Recent.Add(RecentActionKind.Command, RecentActions.CommandText(command.Label, [], command.Key == Keys.None ? null : BundleKeys.Text(command.Key)), DateTime.UtcNow);
         command.Run();
     }
 

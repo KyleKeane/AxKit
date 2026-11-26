@@ -109,7 +109,7 @@ the origin.
     wait"; "the key of <label> (<key>) does not act where the focus is"); 5; 6.
 - **The channel's `choose`** (the automated checks)
   - read, open, change, act: runs, as a click on its menu item; a check item says its new state.
-  - Conditions: 1 ("no menu item <label> in <menus> now"); 5. Not held by condition 2 in code (section 4, CL-4.8).
+  - Conditions: 1 ("no menu item <label> in <menus> now"); 2 ("the window is in its key test", since 2026-11-25); 5.
 - **An AI tool, `axkit_window_run`**
   - read: runs and is said: "Claude ran Say the status", joined to the command's own words in one announcement.
   - open: runs and is said: "Claude ran Go to line".
@@ -208,9 +208,12 @@ Each origin, by function and file, down to the code that runs the command.
   `RunCommandKey`, which finds the first command with the key whose `When` holds; then `Run(Command)`, which writes
   the command into the window's recent actions; then `Command.Run`. While the key test runs,
   `KeyTestFilter.PreFilterMessage` (`AxKitForm.KeyTest.cs`) takes the key message before any of this.
-- CL-4.2 **The menu.** The menu item's click. For an item made from a `Command` (`AxKitForm.Add`): the same
-  `Run(Command)`, then `Command.Run`. For an item made where its menu is filled (`Item`, `Toggle`, `ChoiceItems`,
-  `CommandPalette.Marked`): the item's own action, directly.
+- CL-4.2 **The menu.** The menu item's click. First the menu that holds the item raises `ItemClicked`, which writes
+  the pick into the window's recent actions (`CommandPalette.WritePicks`, hooked by `CommandPalette.Marked`;
+  `AxKitForm.WritePick`), for every click, the user's and every `PerformClick`. Then, for an item made from a
+  `Command` (`AxKitForm.Add`): the same `Run(Command)`, which writes the command instead, then `Command.Run`. For an
+  item made where its menu is filled (`Item`, `Toggle`, `ChoiceItems`, `CommandPalette.Marked`): the item's own
+  action, directly.
 - CL-4.3 **The palette.** `AxKitForm.ShowCommandPalette` (`AxKitForm.Palette.cs`) reads `CommandPalette.Commands`
   (`CommandPalette.cs`; the lines of `CommandPalette.Entries`), and nothing else since 2026-11-23; `Palette.Find`
   (`src/AxKit.Core/Palette.cs`) gives the matches; Enter is `RunPaletteEntry`, which closes the notice and posts the
@@ -221,7 +224,8 @@ Each origin, by function and file, down to the code that runs the command.
   (`CommandNames.Resolve`) and decides. A key: the runner's own `keys` step, which posts the key to the window; from
   there, CL-4.1. No key: the channel's `choose`, CL-4.5. In the AI tools mode: `Run.ThroughTools`, CL-4.6.
 - CL-4.5 **The channel's `choose`.** `AutomationChannel.Choose` (`AutomationChannel.cs`), `AxKitForm.Choose`
-  (`AxKitForm.Commands.cs`), `CommandPalette.Find` by exactly the label and the menus, `PerformClick`. From there,
+  (`AxKitForm.Commands.cs`), which asks the gate whether the key test holds the window (`CommandGate.Window`, since
+  2026-11-25), `CommandPalette.Find` by exactly the label and the menus, `PerformClick`. From there,
   CL-4.2. The older `menu` step: `AutomationChannel.Menu`, the first line of `CommandPalette.Commands` that starts
   with the text, its action, `PerformClick`.
 - CL-4.6 **An AI tool.** The client starts `AxKit.exe mcp` (`McpBroker`), which reaches the window's pipe
@@ -250,30 +254,34 @@ Each origin, by function and file, down to the code that runs the command.
     "Word wrap, checked", "Word wrap, not checked". The palette says them through the window's `Announce`, the channel
     straight through `Announcer.Raise`, as each did before (`AxKitForm.SayFor`).
   - The key and the menu item of a `Command` join one step later, in `AxKitForm.Run(Command)`.
+  - **Every command run is written into the window's recent actions by its name** (2026-11-25, section 8 (a) 3;
+    `reports.md` RP-4.1), in three places that cover every origin: `Run(Command)` for a command of the list, by key
+    or item; the menu's `ItemClicked` for every other item, whoever clicks (`AxKitForm.WritePick`); and
+    `AxKitForm.WriteKey` for the keys of the whole window handled in `ProcessCmdKey`. One function words them,
+    `RecentActions.CommandText`.
   - The names of `do` and of the AI tool are resolved by one function, `CommandNames.Resolve`.
   - **One function knows the origin and the mark together**, `CommandGate.Decide` (CL-3.2, CL-4.9).
 - CL-4.8 **Where they do not join yet.**
-  1. **Only the AI tool's path asks the gate.** The other conditions of section 3 are enforced where they were: the
-     key's in `ProcessCmdKey` and the key test's filter, the menu's by the disabled bar, the palette's in
-     `ShowCommandPalette`, `do`'s by the listing, none in `Choose`. So `choose` is still not held by the key test (the
-     `do` step never sends it there, by the listing; the channel itself would run it), which the gate says as it is
-     (`Choose_condition_2_the_key_test_does_not_hold_it`). A new origin starts at the gate and its tests, and still
-     has to call it.
+  1. **Only the AI tool's path and `choose` ask the gate.** The other conditions of section 3 are enforced where they
+     were: the key's in `ProcessCmdKey` and the key test's filter, the menu's by the disabled bar, the palette's in
+     `ShowCommandPalette`, `do`'s by the listing. `choose` asks the gate for the key test since 2026-11-25
+     (`Choose_condition_2_the_key_test_holds_it`); a notice it meets as before, by the disabled bar. A new origin
+     starts at the gate and its tests, and still has to call it.
   2. **Two kinds of click**: WinForms' own, for the user's choice in a menu, and `AxKitForm.ClickFor`, for every
      click axKit makes. The menu and the AI tool do not say a check item's new state; the palette and the channel do.
      The AI tool's second checks, at the moment a posted run or the user's Yes runs (`WhyNotRunForMcp`, the busy rule,
      `ToolItem`, `McpRun.TargetRefusal`), are their own function with their own words and their own order (a notice
      or a dialog before the key test), not the gate's.
-  3. **A menu item not made from a `Command` has no run function of axKit's.** Its click is the end. So the window's
-     recent actions (for a report) hold "Find, Ctrl+F" for a command of the list, by key, menu, palette or AI tool,
-     and nothing for a setting or a recent file chosen.
+  3. **A menu item not made from a `Command` has no run function of axKit's.** Its click is the end. Its pick is
+     written into the recent actions all the same since 2026-11-25, by the menu that holds it (CL-4.7): "Word wrap",
+     "Session, Open recent file, entry 2".
   4. **The bundle keys handled in `ProcessCmdKey` itself** (F1, the palette, F4, Shift+F1, Ctrl+S, the text size
      keys, F8) do not pass `RunCommandKey`; most also have a menu item, whose click is a second way into the same
      method.
   5. **A key with no menu item** runs by its key alone (and by `do`, which presses it): no other origin reaches it.
   6. **axFile's palette entries** (the folder's files) are in the palette alone: no menu, no name, no mark.
 - CL-4.9 **Where the gate decides and where it describes** (2026-11-16).
-  - **It decides for the AI tool.** `AxKitForm.McpRunCommand` asks `CommandGate.Window` before it reads the menus
+  - **It decides for the AI tool, and for `choose`'s key test** (`AxKitForm.Choose`, 2026-11-25). `AxKitForm.McpRunCommand` asks `CommandGate.Window` before it reads the menus
     (reading them fills the lists that fill as they open, so nothing is read for a call that is refused anyway) and
     `CommandGate.Decide` once the name gave an entry and its mark. A typed data tool that changes something asks the
     same conditions of the window through `McpChangeRefusal`, after its own checks of the app and the switch. The
@@ -366,6 +374,20 @@ Each origin, by function and file, down to the code that runs the command.
   with one meaning first, then the keys whose meaning differs) and `docs/axKit/key-families.json` (by hand: what each
   kind of key is for, and the keys that do not fit). The families are `"status": "proposed"` until the maintainer
   settles them: no test holds a key to its family and no key moved.
+- CL-7.3 **One name means one thing across apps** (built 2026-11-25, section 8 (c)). Every command name that two apps
+  or more share, the canonical name in each app (CL-5.1) compared without regard to case, a key alone of a menu row's
+  label passed over, has one mark in all of them and, among those that have a chord, one chord; or it is listed in
+  `docs/axKit/command-exceptions.json` with what differs ("mark", "key", "mark and key") and its reason, written as
+  data and read by the test. Built in `src/AxAutomate.Core/CommandMeanings.cs` over the inventory (CL-1.5); held by
+  `tests/AxAutomate.Tests/CommandMeaningsTests`, which fails on a name that differs and is not listed as it differs,
+  on a listed name that no longer differs, and on an entry without its reason, so that a new difference is made one
+  or added on purpose and the list never keeps what was made one. The first run found nine names; the review the
+  same day made two one by their marks (Select all in the editors, change as every list's; axFile's File Explorer,
+  open as every window's), narrowed one by a name (axMedia's Open files and Open folder are Add files and Add folder:
+  they add to the queue, so Open folder no longer differs by key), and kept seven, each with its reason: Interrupt, New window and Paste differ by key alone, which
+  waits on the families; Open, Open folder, Rename and Undo differ in what they reach (axFile's and axClaude's start a
+  program or change the disk) or are two Windows standards under one word. **Not built: one chord, one family**
+  (that a chord's command is of the kind its family says): it waits on the families being settled (CL-7.2).
 
 ## 8. Not built, in the order to build it
 
@@ -383,8 +405,13 @@ Each origin, by function and file, down to the code that runs the command.
   3. The recent actions still hold commands of the list alone (CL-4.8, 3): writing every click there changes what a
      report holds (`reports.md` RP-4.1), which is a change a user meets, so it is a decision and not a consolidation.
      **Decided on 2026-11-25: every command is written there by its name**, a click and a menu pick included.
-  4. `choose` is still not held by the key test (CL-4.8, 1): holding it changes which origin is refused when. Only a
-     test run reaches it. **Decided on 2026-11-25: held.**
+     **Built 2026-11-25** (CL-4.7, `reports.md` RP-4.1): a pick is written by the menu that holds it, before the
+     item's own click, whoever clicks; the keys of the whole window by `WriteKey`; an entry of a numbered list of the
+     user's things by its menus and its number.
+  4. `choose` was not held by the key test (CL-4.8, 1): holding it changes which origin is refused when. Only a
+     test run reaches it. **Decided on 2026-11-25: held. Built the same day**: `AxKitForm.Choose` asks
+     `CommandGate.Window`; the channel's `menu` step stays unheld, since the scripts open a notice through it to end
+     a key test (`tests/scripts/axDown/15-key-test.txt`).
   5. The AI tool's second checks (CL-4.8, 2) keep their own function: their words and their order differ from the
      first check's, so joining them changes which sentence is said when a notice and the key test hold at once.
 - (b) **One name matcher** shared by the palette, `do`, the AI tool and later speech: `CommandNames` for the exact
@@ -406,7 +433,9 @@ Each origin, by function and file, down to the code that runs the command.
   the checks; the decisions are the maintainer's. **Decided on 2026-11-25:** the check is built, today's differences
   a list of exceptions, so that a new one is added on purpose; axFile's undo becomes one Undo that says what it undid.
   Amended by the maintainer the same day: the exceptions are then reviewed and cleaned up, each one removed where it
-  can be, so that everything stays uniform; the list keeps only what cannot be made one.
+  can be, so that everything stays uniform; the list keeps only what cannot be made one. **Built 2026-11-25** (CL-7.3):
+  the check is `CommandMeaningsTests` in `test.ps1`, the exceptions `docs/axKit/command-exceptions.json`; nine names
+  were found, two made one, seven kept with their reasons. The chord-per-family half waits on the families (CL-7.2).
 - (d) **The good paths of CL-6.4**, each its own piece: its tool, its mark, its question, its section of `mcp.md`,
   its window script. Each small to middle; the argument-taking commands are the largest, since a command gains a
   typed argument in `Command` and in every reader.
@@ -458,12 +487,13 @@ correcting the documents to the code, which decided; each line says where. Nothi
 5. **The recent actions hold commands of the list alone.** The comment on `AxKitForm.Recent` and `reports.md` RP-4.1
    spoke of every command run by key, menu or palette; a setting, a recent file or any other item not made from a
    `Command` record is not written there when chosen (CL-4.8, 3). Settled 2026-11-16: the comment and RP-4.1 say what
-   is recorded.
+   is recorded. Changed 2026-11-25 by the maintainer's decision: every command is written (section 8 (a) 3).
 6. **The key test holds every origin but the channel's `choose` and `menu`.** `user-workflows.md` WF-2.5 has the `do`
    step wait there, which it does by the listing; `AxKitForm.Choose` itself asks nothing about the key test. Only a
    test run can send it. Settled 2026-11-16 by stating it as it is: `SPEC.md` AX-8.12 and WF-2.5 say that the
    channel's two steps are not held and why no user or AI tool can reach them. That one run function should hold
-   the condition for every origin stays proposed in CL-4.8 and section 8.
+   the condition for every origin stays proposed in CL-4.8 and section 8. Changed 2026-11-25: `choose` is held
+   (section 8 (a) 4); `menu` is not.
 7. **`mcp.md` sections 3 to 6 (MC-2 to MC-5) describe the first design**: scopes per client and app, one tool per
    command, "Allow for this session", folders granted to a client, reads counted in the status bar. Settled
    2026-11-16: each of the four sections says at its head that it is the first design, not built as written, and

@@ -360,7 +360,7 @@ public static class CommandInventory
     private static string Backslashed(string text) => text.Replace('/', '\\');
 
     /// <summary>A row of keys alone whose label a menu row of the same app also has: the menu row's command (WF-2.11).</summary>
-    private static bool PassedOver(IReadOnlyList<ListedCommand> rows, ListedCommand row) =>
+    internal static bool PassedOver(IReadOnlyList<ListedCommand> rows, ListedCommand row) =>
         row.KeyOnly && rows.Any(other => !other.KeyOnly && SameText(other.Label, row.Label));
 
     /// <summary>The resolver over an app's rows with the rows of keys alone that are passed over left out; the answer's indexes count in <paramref name="rows"/>.</summary>
