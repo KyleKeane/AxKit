@@ -25,7 +25,9 @@ and Windows as below. 23 goals passed, 1 failed, 5 not run; 8 of 10 scripts pass
 
 Both failures are one cause: NVDA read the newly active window later than the hold of 2026-11-25 waits, and that
 reading cancelled the words. Its item: "what a window says as it opens is still cut off by NVDA's late reading".
-The template in a form's field, whose menu NVDA had not read in three passes, passed here.
+The template in a form's field, whose menu NVDA had not read in three passes, passed here. Later the same day, with
+the hold lengthened (8619dd26), `03b-cannot-play` and `50-stream-choices` passed with NVDA, 6 goals; and the search
+of the permissions screen (`53-permissions-search`, live, Claude Code 2.1.332) passed with NVDA, 3 goals.
 
 ## 2026-11-24, evening: the day's changes and the afternoon's failures; by the assistant with NVDA listening (`main` 5d86519e and the fix after it)
 
