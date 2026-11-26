@@ -249,6 +249,21 @@ public static partial class ClaudeCodeTexts
     public static partial Regex RemovedFromPrompt();
 
     /// <summary>
+    /// The two rows Claude Code prints under its prompt row as it ends (/exit): "Resume this session with:" over
+    /// "claude --ax-screen-reader --model haiku --resume &lt;id&gt;", with the cursor on the blank row under them. Lines
+    /// of the conversation, and the way to take the session up again; but they stand between the cursor and the live
+    /// block, which Claude Code 2.1.319 and 2.1.332 leave drawn in that last frame (the spinner, the mode line and
+    /// the prompt row; the clear and permissions-search fixtures): as rows that match nothing they closed it, and
+    /// the spinner and the mode line stood in the conversation. <see cref="SessionModel"/> reads the live block from
+    /// the row above them.
+    /// </summary>
+    public const string ResumeLabel = "Resume this session with:";
+
+    /// <summary>The command row under <see cref="ResumeLabel"/>.</summary>
+    [GeneratedRegex(@"^claude(?: .*)? --resume \S+$")]
+    public static partial Regex ResumeCommand();
+
+    /// <summary>
     /// The slash-command completion list: "/name    description" rows, a name with its other name in brackets too
     /// ("/usage (cost)    Show session cost", 2.1.332, the slash-suggestions fixtures).
     /// </summary>

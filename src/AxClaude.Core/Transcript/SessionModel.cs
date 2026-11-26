@@ -829,6 +829,8 @@ public sealed partial class SessionModel : ClaudeModel
     private Line? ApplyChrome(out string? spinner, out string? mode, out string? background, out int drafts, out bool working)
     {
         var cy = _screen.CursorRow;
+        // The row read as the cursor row: the cursor's, or the prompt row above the resume rows of the last frame.
+        var promptRow = ResumeRowsAbove(cy) ? cy - 3 : cy;
         Line? anchor = null;
         spinner = null;
         mode = null;
@@ -862,13 +864,19 @@ public sealed partial class SessionModel : ClaudeModel
             {
                 chrome = true;
             }
+            else if (r > promptRow)
+            {
+                // The blank cursor row under the resume rows is chrome; the two resume rows are the conversation's
+                // and leave the block open above them (ClaudeCodeTexts.ResumeLabel).
+                chrome = r == cy;
+            }
             else if (!blockOpen)
             {
                 // A row hidden as chrome earlier stays hidden until it is rewritten (for example the
                 // slash-command list that remains on screen after /exit).
                 chrome = line.StickyChromeText is { } sticky && sticky == line.Text;
             }
-            else if (r == cy)
+            else if (r == promptRow)
             {
                 // Claude parks the cursor on an announcement row ("[accept edits on]") for a moment, under the prompt.
                 underAnnouncement = LineClassifier.AnnouncementText(line.Text) is not null;
@@ -947,7 +955,7 @@ public sealed partial class SessionModel : ClaudeModel
                         working |= line.Text.Contains(ClaudeCodeTexts.InterruptHint, StringComparison.Ordinal);
                     }
                 }
-                else
+                else if (r <= promptRow)
                 {
                     blockOpen = false;
                 }
@@ -993,6 +1001,16 @@ public sealed partial class SessionModel : ClaudeModel
 
         return anchor;
     }
+
+    /// <summary>
+    /// Whether the cursor stands on a blank row under the two rows Claude Code prints as it ends ("Resume this
+    /// session with:" over the command), with a row above them for the prompt: the last frame of /exit.
+    /// </summary>
+    private bool ResumeRowsAbove(int cy) =>
+        cy >= 3
+        && _screen.LineAt(cy) is { Text.Length: 0 }
+        && _screen.LineAt(cy - 1) is { } command && ClaudeCodeTexts.ResumeCommand().IsMatch(command.Text)
+        && _screen.LineAt(cy - 2) is { } label && label.Text == ClaudeCodeTexts.ResumeLabel;
 
     /// <summary>
     /// Reads one interface row of the live block as a progress row of work in the background, if it is one: a
