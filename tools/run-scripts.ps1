@@ -15,8 +15,10 @@
   The runner's own lock (RunLock) still keeps two runs of the hidden desktop apart; a run waits for the one before.
   -Exe names the AxKit.exe to run (by default the scratch build, %TEMP%\axkit-scratch\program\AxKit.exe); -Live adds
   the live scripts; -Record writes the passes into docs\axKit\workflow-record.json; -Inventory passes check, write,
-  rewrite or off (off by default). -Full prints every line of the runs, not only the failures and the totals. Exit
-  code 0 when every script passed, 1 otherwise, 2 when the runner did not build. The script stays ASCII.
+  rewrite or off (off by default). -Full prints every line of the runs, not only the failures and the totals. The
+  scratch build is refused when it is older than the newest file under src (a run once recorded passes for code it
+  had not played). Exit code 0 when every script passed, 1 otherwise, 2 when the runner did not build or the build is
+  stale. The script stays ASCII.
 
 .EXAMPLE
   .\tools\run-scripts.ps1 tests\scripts\axTask\26-the-day-an-item-was-made.txt tests\scripts\axMedia
@@ -34,8 +36,21 @@ param(
 
 $ErrorActionPreference = 'Continue'
 $root = Split-Path -Parent $PSScriptRoot
+$named = [bool]$Exe
 if (-not $Exe) { $Exe = Join-Path $env:TEMP 'axkit-scratch\program\AxKit.exe' }
 if (-not (Test-Path -LiteralPath $Exe)) { Write-Host "No AxKit.exe at $Exe : build it first (dotnet build src\AxKit -c Release -o <folder>)."; exit 2 }
+# A build older than the code it would check (2026-11-26: a live run with -Record played the scratch build of the
+# morning, and the record named a commit it had not tested). The scratch build is refused; an -Exe named on purpose
+# (an older release, a replay) is only said to be older.
+$sourceFiles = @(Get-ChildItem (Join-Path $root 'src') -Recurse -File -Include *.cs, *.csproj, *.json, *.resx | Where-Object { $_.FullName -notmatch '\\(bin|obj)\\' })
+$newest = ($sourceFiles | Measure-Object -Property LastWriteTimeUtc -Maximum).Maximum
+if ($newest -and (Get-Item -LiteralPath $Exe).LastWriteTimeUtc -lt $newest) {
+    if (-not $named) {
+        Write-Host "The scratch AxKit.exe is older than the code under src: build it first (dotnet build src\AxKit -c Release -o $(Split-Path $Exe -Parent))."
+        exit 2
+    }
+    Write-Host 'Note: the AxKit.exe named is older than the code under src.'
+}
 # Every script and folder there before anything runs: a guessed name made the runner end in a stack trace.
 $absent = @($Scripts | Where-Object { -not (Test-Path -LiteralPath $_) -and -not (Test-Path -LiteralPath (Join-Path $root $_)) })
 if ($absent.Count -gt 0) {
