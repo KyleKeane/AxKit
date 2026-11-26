@@ -63,10 +63,54 @@ public static class McpClaudeCode
     }
 
     /// <summary>
-    /// What a start of Claude Code gets for axKit's AI tools (MC-6.9): the <c>--mcp-config</c> arguments when the
-    /// window asked for them and the user has the AI tools on, nothing otherwise. Pure: the caller reads the sealed
-    /// setting and writes the file.
+    /// What a start of Claude Code gets for axKit's AI tools (MC-6.9), in every axClaude window since 2026-11-26: the
+    /// <c>--mcp-config</c> arguments while the user has the AI tools on, nothing while they are off, and nothing when
+    /// the user's own Claude Code configuration already names the server (<paramref name="userNamesServer"/>, MC-6.8),
+    /// which then gives the tools itself and must not be named a second time. Pure: the caller reads the sealed
+    /// setting and the user's file, and writes the file.
     /// </summary>
-    public static IReadOnlyList<string> SessionArguments(bool asked, bool toolsOn, string configFile) =>
-        asked && toolsOn ? ConfigArguments(configFile) : [];
+    public static IReadOnlyList<string> SessionArguments(bool toolsOn, bool userNamesServer, string configFile) =>
+        toolsOn && !userNamesServer ? ConfigArguments(configFile) : [];
+
+    /// <summary>The name of Claude Code's own file of the user's, whose <c>mcpServers</c> is the user scope MC-6.8 adds to.</summary>
+    public const string UserFileName = ".claude.json";
+
+    /// <summary>
+    /// Claude Code's own file of the user's for a Claude Code started with <paramref name="configDir"/> as its
+    /// <c>CLAUDE_CONFIG_DIR</c>: <see cref="UserFileName"/> in that folder when it is a full path, else in
+    /// <paramref name="home"/> (the user profile, or a test run's own folder). Read, never written.
+    /// </summary>
+    public static string UserFile(string home, string? configDir) =>
+        configDir is { } folder && Path.IsPathFullyQualified(folder.Trim())
+            ? Path.Combine(folder.Trim(), UserFileName)
+            : Path.Combine(home, UserFileName);
+
+    private static readonly System.Text.Json.JsonDocumentOptions Lenient = new() { AllowTrailingCommas = true, CommentHandling = System.Text.Json.JsonCommentHandling.Skip };
+
+    /// <summary>
+    /// Whether the text of the user's own Claude Code file (<see cref="UserFile"/>) names a server
+    /// <see cref="ServerName"/> in its user scope, the top-level <c>mcpServers</c>, as MC-6.8's add writes it: the
+    /// user added axKit to Claude Code himself. Nothing else of the file is looked at; a missing file, a text that is
+    /// no JSON object, or no such entry is false.
+    /// </summary>
+    public static bool NamesServer(string? userFileText)
+    {
+        if (string.IsNullOrWhiteSpace(userFileText))
+        {
+            return false;
+        }
+
+        try
+        {
+            using var document = System.Text.Json.JsonDocument.Parse(userFileText, Lenient);
+            return document.RootElement.ValueKind == System.Text.Json.JsonValueKind.Object
+                && document.RootElement.TryGetProperty("mcpServers", out var servers)
+                && servers.ValueKind == System.Text.Json.JsonValueKind.Object
+                && servers.TryGetProperty(ServerName, out _);
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            return false;
+        }
+    }
 }

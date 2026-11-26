@@ -284,7 +284,10 @@ public sealed partial class FileForm : ItemForm
         WindowMenu.AddApps(layers.DropDownItems, Dispatch.Apps.Where(app => app.Opens != Opens.Nothing && app.IsAccessLayer), OpenItem);
         menu.DropDownItems.Add(layers);
         Add(menu, new Command("Pr&eview", AxFileKeys.Preview, OpenInPreview) { When = InNavigator, Mark = CommandMark.Open });
-        Add(menu, new Command("Play folder in axMe&dia", BundleKeys.MainAction, PlayFolder) { When = InNavigator, Mark = CommandMark.Open });
+        // Ctrl+Enter, the bundle's main action (AX-8.10), is a second key of Preview in the folder list (the maintainer,
+        // 2026-11-26); Play folder in axMedia, its key until then, keeps its item here without a key.
+        AddKey(new Command("Preview", BundleKeys.MainAction, OpenInPreview) { When = InNavigator, Mark = CommandMark.Open });
+        Add(menu, new Command("Play folder in axMe&dia", Keys.None, PlayFolder) { When = InNavigator, Mark = CommandMark.Open });
         Add(menu, new Command("Add to axMedia's &queue", AxFileKeys.AddToQueue, AddToQueue) { When = InNavigator, Mark = CommandMark.Open });
         menu.DropDownItems.Add(new ToolStripSeparator());
         Add(menu, new Command("Cu&t", AxFileKeys.Cut, () => CopyOrCut(cut: true)) { When = InNavigator, Mark = CommandMark.Act });

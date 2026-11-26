@@ -119,7 +119,8 @@ otherwise. Native fields mean NVDA reads them by itself, and the caret cannot le
   Help has Markdown resources.
 - AJ-4.2 Keys (AX-8): the shell's (`EditorKeys`, included in `AxJSONKeys.All`), then Ctrl+K, Ctrl+J, Ctrl+L, Ctrl+I,
   Ctrl+E with Ctrl+Shift for the previous one, Ctrl+R, and AJ-5's four, Alt with an arrow; the collision test covers them. Ctrl+J, a line feed
-  in an EDIT control, is kept from the control as axDown keeps Ctrl+H and Ctrl+I (AD-5.1).
+  in an EDIT control, is kept from the control as axDown keeps Ctrl+H and Ctrl+I (AD-5.1). Ctrl+Enter, the bundle's
+  main action (AX-8.10), saves as Ctrl+S does, as in axDown (the maintainer, 2026-11-26).
 - AJ-4.3 The F1 text (`HelpText.Shortcuts`) names the shell's keys and AJ-2.2's; the user guide `docs/axJSON/user-guide.md`
   is embedded (Help → User guide); About is the bundle's (AX-9.9).
 

@@ -23,7 +23,7 @@ public static class HelpText
           {{BundleKeys.Text(BundleKeys.ParagraphUp)}} and {{BundleKeys.Text(BundleKeys.ParagraphDown)}} go to the previous or the next paragraph, the first line after a blank line.
           Shift with any of them selects.
           Undo goes back as far as the file was opened here. {{BundleKeys.Text(EditorKeys.RedoAlso)}} redoes too.
-          Enter makes a new line, and Tab types a tab character.
+          Enter makes a new line, and Tab types a tab character. {{BundleKeys.Text(BundleKeys.MainAction)}} saves, as {{BundleKeys.Text(BundleKeys.Save)}} does.
 
         ## Format (Actions, Format)
           Bold acts on the selection, or on the word the caret is in; again, it takes the bold off. It says "Bold on" or "Bold off".

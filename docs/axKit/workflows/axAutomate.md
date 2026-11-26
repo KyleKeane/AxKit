@@ -71,7 +71,7 @@ command's in this version of axKit.
 
 ### Run a workflow that runs commands
 
-1. Press Ctrl+R (Run; Actions menu).
+1. Press Ctrl+Enter (Run; Actions menu).
 2. Press Tab.
 3. Press Space.
     You hear: Running 07-commands; Escape stops it.

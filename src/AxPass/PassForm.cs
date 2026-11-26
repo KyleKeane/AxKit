@@ -87,6 +87,9 @@ public sealed partial class PassForm : ItemForm
         _entryMenu.DropDownItems.Add(Item("&Open its fields", OpenSelected, ItemKeys.Open, CommandMark.Open));
         Add(_entryMenu, new Command("Copy &user name", AxPassKeys.CopyUserName, CopyUserName) { When = NotRenaming, Mark = CommandMark.Act });
         Add(_entryMenu, new Command("Copy &password", AxPassKeys.CopyPassword, CopyPassword) { When = NotRenaming, Mark = CommandMark.Act });
+        // Ctrl+Enter, the bundle's main action (AX-8.10), is a second key of Copy password, on an entry of an unlocked
+        // database (the maintainer, 2026-11-26); anywhere else it plays the edge sound.
+        AddKey(new Command("Copy password", BundleKeys.MainAction, CopyPassword) { When = () => NotRenaming() && _password is not null && SelectedEntry() is not null, Mark = CommandMark.Act });
         Add(_entryMenu, new Command("Open U&RL", AxPassKeys.OpenUrl, OpenEntryUrl) { When = NotRenaming, Mark = CommandMark.Act });
         _entryMenu.DropDownItems.Add(Item("Read in &full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
         _entryMenu.DropDownItems.Add(Item("Rena&me", RenameSelected, ItemKeys.Rename, CommandMark.Change));

@@ -617,8 +617,8 @@ files into their folder first, a custom command among them):
   there for the window's own command) and takes the turn's texts as Claude's replies, labelled, spoken and found
   with c, where they would have been a command's print.
 - *The answer to Claude's own questions* is on record as the screen's (SM-7.5).
-- *`--ai-tools`* gives Claude Code axKit's AI tools over the stream: their file beside the relay's under the one
-  `--mcp-config` (SPEC.md FR-9.7). Not measured live with the tools on.
+- *axKit's AI tools* over the stream: their file beside the relay's under the one `--mcp-config` (SPEC.md FR-9.7), in
+  every window since 2026-11-26 (with `--ai-tools` until then). Not measured live with the tools on.
 - *Choose the model and Choose the effort* are lists of the window's own (SM-5.5).
 - *A Claude Code that does not answer the first request* is ready five seconds after its start (SM-4.10). No version
   that does not answer it was at hand, so the rule is held by a test of the model alone.

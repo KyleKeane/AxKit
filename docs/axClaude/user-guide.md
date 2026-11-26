@@ -58,7 +58,9 @@ axClaude never opens a second window. Its questions, errors and help texts are *
 
 Alt+F4 closes axClaude and ends the Claude Code session. If Claude is still working, a notice asks first: Enter closes anyway, Escape keeps axClaude open. What is done so far is saved, and the next start carries on from it.
 
-One window is different: axHelp's conversation, the axClaude window titled axHelp. There Alt+F4 hides the window and Claude Code keeps running, so that axHelp's key brings it back at once; hidden, it says nothing and plays no sound. Its Session menu has Hide this window in Exit's place, and End Claude and close this window, which ends it as Alt+F4 ends any other axClaude window. A program that wants such a window starts axClaude with `--hide-on-close`, and with `--hidden` to start it hidden. With `--ai-tools`, as axHelp starts it, Claude in that window gets axKit's AI tools by itself while you have them turned on (axKit menu, AI tools); turned off, nothing is added.
+One window is different: axHelp's conversation, the axClaude window titled axHelp. There Alt+F4 hides the window and Claude Code keeps running, so that axHelp's key brings it back at once; hidden, it says nothing and plays no sound. Its Session menu has Hide this window in Exit's place, and End Claude and close this window, which ends it as Alt+F4 ends any other axClaude window. A program that wants such a window starts axClaude with `--hide-on-close`, and with `--hidden` to start it hidden.
+
+Claude in every axClaude window, axHelp's conversation among them, gets axKit's AI tools by itself from its start while you have them turned on (axKit menu, AI tools, Let AI tools read and open axKit); turned off, nothing is added. If you added axKit to Claude Code yourself (axKit menu, AI tools, Add axKit to Claude Code), Claude Code gives the tools from that entry and axClaude adds nothing more. The option `--ai-tools`, which until this version asked for them, is still accepted and changes nothing.
 
 ## Send a message
 

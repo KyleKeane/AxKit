@@ -98,6 +98,9 @@ public sealed partial class TextEditorForm : AxKitForm
         {
             // Ctrl+S is the base's key (SaveCommand), so Save stays an item that shows it.
             file.DropDownItems.Add(Item("&Save", () => Save(), BundleKeys.Save, CommandMark.Change));
+            // Ctrl+Enter, the bundle's main action (AX-8.10), is a second key of Save in the editors, axDown and axJSON
+            // (the maintainer, 2026-11-26); the viewer has none, so there it plays the edge sound.
+            AddKey(new Command("Save", BundleKeys.MainAction, () => Save()) { Mark = CommandMark.Change });
             Add(file, new Command("Save &as...", EditorKeys.SaveAs, () => SaveAs()) { Mark = CommandMark.Change });
             file.DropDownItems.Add(new ToolStripSeparator());
         }

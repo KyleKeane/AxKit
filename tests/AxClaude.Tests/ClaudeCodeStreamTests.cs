@@ -130,7 +130,7 @@ public class ClaudeCodeStreamTests
         Assert.Equal(["--model", "opus"], ClaudeCodeStream.StartArguments("f.json", "tool", "haiku", ["--model", "opus"]).Skip(11));
         Assert.Equal(["--continue"], ClaudeCodeStream.StartArguments("f.json", "tool", string.Empty, ["--continue"]).Skip(11));
 
-        // --ai-tools (SPEC.md FR-9.7): the file of axKit's AI tools beside the relay's, under the same option, which takes several.
+        // The AI tools (SPEC.md FR-9.7, every window while they are on): the file of axKit's AI tools beside the relay's, under the same option, which takes several.
         var withTools = ClaudeCodeStream.StartArguments("f.json", "tool", null, ["--continue"], @"C:\data\claude-mcp.json");
         Assert.Equal(["--mcp-config", "f.json", @"C:\data\claude-mcp.json", "--permission-prompt-tool", "tool", "--continue"], withTools.Skip(7));
         Assert.Equal(ClaudeCodeStream.StartArguments("f.json", "tool", null, []), ClaudeCodeStream.StartArguments("f.json", "tool", null, [], string.Empty));

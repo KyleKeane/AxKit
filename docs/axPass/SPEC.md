@@ -133,6 +133,7 @@ On top of IA-3, in `AxPassKeys`:
 | --- | --- | --- |
 | Ctrl+B | anywhere | copy the user name of the selected entry |
 | Ctrl+C | anywhere | copy the password; cleared after 30 seconds |
+| Ctrl+Enter | on an entry of an unlocked database | copy the password, as Ctrl+C: the bundle's main action (AX-8.10, 2026-11-26); elsewhere the edge sound |
 | Ctrl+U | anywhere | open the URL in the browser |
 | Alt+G | in a password's notice | Generate, the notice's button (a notice holds the window's own keys) |
 | Ctrl+L | anywhere | lock |

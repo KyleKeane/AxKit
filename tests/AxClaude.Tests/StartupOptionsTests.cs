@@ -50,13 +50,11 @@ public class StartupOptionsTests
         Assert.Contains("--hide-on-close", StartupOptions.Usage);
     }
 
-    /// <summary>FR-9.7: axKit's AI tools for the window's Claude are asked for by an option, never by default.</summary>
+    /// <summary>FR-9.7 since 2026-11-26: every window gives axKit's AI tools while they are on, so <c>--ai-tools</c> is accepted and changes nothing.</summary>
     [Fact]
-    public void The_ai_tools_are_asked_for_by_their_option_alone()
+    public void The_ai_tools_option_is_accepted_and_changes_nothing()
     {
-        Assert.False(StartupOptions.Parse([Folder]).AiTools);
-        Assert.False(StartupOptions.Parse([Folder, "--title", "axHelp", "--hide-on-close"]).AiTools);
-        Assert.True(StartupOptions.Parse([Folder, "--title", "axHelp", "--ai-tools"]).AiTools);
+        Assert.Equal(StartupOptions.Parse([Folder, "--title", "axHelp"]), StartupOptions.Parse([Folder, "--title", "axHelp", "--ai-tools"]));
         Assert.Contains("--ai-tools", StartupOptions.Usage);
     }
 
@@ -124,18 +122,19 @@ public class StartupOptionsTests
 
     /// <summary>
     /// FR-9.1, FR-9.6: after Update and restart the window comes back as the window it was. axHelp's conversation
-    /// came back without <c>--ai-tools</c> until 2026-11-22, so Claude there had lost axKit's AI tools.
+    /// came back without <c>--ai-tools</c> from 2026-11-15 to 2026-11-22; since 2026-11-26 the option changes nothing
+    /// (every window gives the AI tools, FR-9.7), so a restart does not carry it.
     /// </summary>
     [Fact]
     public void A_restart_starts_the_window_another_program_keeps_as_that_window()
     {
         var kept = StartupOptions.Parse([Folder, "--title", "axHelp", "--model", "haiku", "--hide-on-close", "--hidden", "--ai-tools", "--source", "screen", "--message", "a picture"]);
         var restart = kept.RestartArguments(kept.Folder, messageSent: true);
-        Assert.Equal(["claude", kept.Folder!, "--title", "axHelp", "--model", "haiku", "--hide-on-close", "--ai-tools", "--source", "screen", "--", "--continue"], restart);
+        Assert.Equal(["claude", kept.Folder!, "--title", "axHelp", "--model", "haiku", "--hide-on-close", "--source", "screen", "--", "--continue"], restart);
 
         // Read again as a command line, it is the same window, on view and with an empty field.
         var again = StartupOptions.Parse([.. restart.Skip(1)]);
-        Assert.Equal((kept.Folder, "axHelp", "haiku", true, true, "screen"), (again.Folder, again.Title, again.Model, again.HideOnClose, again.AiTools, again.Source));
+        Assert.Equal((kept.Folder, "axHelp", "haiku", true, "screen"), (again.Folder, again.Title, again.Model, again.HideOnClose, again.Source));
         Assert.False(again.Hidden);
         Assert.Null(again.Message);
         Assert.Equal(["--continue"], again.ClaudeArgs!);

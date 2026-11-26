@@ -411,7 +411,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   lower case is renamed to the app's case the first time it is read (`FileCase`). The bundle's own folders and the
   program file keep `AxKit`, the repository's spelling.
   Three files name this program file for Claude Code and so never roam, all in `%LOCALAPPDATA%\AxKit`:
-  `claude-mcp.json`, the AI tools for axHelp's conversation (docs/axKit/mcp.md MC-6.9), `claude-hooks.json`
+  `claude-mcp.json`, the AI tools for every axClaude window's Claude Code (docs/axKit/mcp.md MC-6.9), `claude-hooks.json`
   (2026-11-15), the hooks axClaude registers for each start of Claude Code (docs/axClaude/events-and-grounding.md
   EG-2.2), and `claude-ask.json` (2026-11-17), which names `AxKit.exe ask` as the program Claude Code asks its
   questions of when axClaude runs it over its stream (docs/axClaude/stream-mode.md SM-7.3; it holds nothing of a
@@ -799,10 +799,16 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   | axTerminal | in the command field, send without recording (AT-3.4) | in the command field, sends the command, as Enter; elsewhere the edge sound. Send without recording has no key: Actions menu and the palette |
   | axGIT | commit what is staged (AG-3.5) | the same |
   | axMCP | call the tool or fetch the prompt selected (MP-3.4) | the same |
-  | axFile | in the folder list, play the folder in axMedia (AF-5.1) | the same; outside the folder list the edge sound |
+  | axFile | in the folder list, play the folder in axMedia (AF-5.1) | in the folder list, Preview, as Shift+Enter (AF-5.3; the maintainer, 2026-11-26; Play folder in axMedia until then, in the Context menu without a key since); outside the folder list the edge sound |
   | axTemplate | not there (begun 2026-11-23) | in the browser, copies the template's text, its marks filled with nothing (TP-8.4); in the launcher, puts the template in around what is selected in the program in front, which is sent the copy key first (TP-4.2) |
-  | axDown, axJSON | a line break in the text (the edit control's own) | the edge sound; Enter makes the line break |
-  | axPreview, axMedia, axProcess, axCalc, axTask, axPass, axAutomate, axStart, axClip, axHelp | nothing of axKit's (the focused control's own, if any) | the edge sound |
+  | axDown, axJSON | a line break in the text (the edit control's own) | Save, as Ctrl+S (2026-11-26; the edge sound until then); Enter makes the line break |
+  | axTask | nothing of axKit's | Done or not done, on an item (TK-4.4) |
+  | axMedia | nothing of axKit's | play, pause or resume, from anywhere in the window (AM-4.3, AM-D7) |
+  | axPass | nothing of axKit's | Copy password, as Ctrl+C, on an entry of an unlocked database (PW-7, 2026-11-26); elsewhere the edge sound |
+  | axProcess | nothing of axKit's | End process on a process, with the question Delete asks (PR-6.2, 2026-11-26); elsewhere the edge sound |
+  | axAutomate | nothing of axKit's | Run, as Ctrl+R (AU-4.4, 2026-11-26) |
+  | axHelp | nothing of axKit's | Open the conversation, as Enter (HE-6, 2026-11-26) |
+  | axPreview, axCalc, axStart, axClip | nothing of axKit's (the focused control's own, if any) | the edge sound (axPreview by the maintainer's choice of 2026-11-26: reading needs no command) |
 - AX-8.11 **The system-wide keys are on Ctrl+Shift** (the user's decision of 2026-11-14). A system-wide key is a
   background app's hotkey: Windows takes the combination from every program while that app runs, axKit's own windows
   among them. Each is a setting of its app, and these are what they are at first:
@@ -1828,7 +1834,7 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   `claude mcp add` command line, AiToolsSetup.cs). The capability that turns virtualization off,
   `unvirtualizedResources`, is restricted to games and not used.
   Not yet confirmed by use in the Store's copy (2026-11-15): the two files that name this program for Claude Code,
-  `claude-mcp.json` (the AI tools of axHelp's conversation, docs/axHelp/SPEC.md HE-2.8) and `claude-hooks.json`
+  `claude-mcp.json` (the AI tools of every axClaude window, docs/axKit/mcp.md MC-6.9) and `claude-hooks.json`
   (axClaude's hooks, AX-5.1), are new files under AppData and so private to the package, while Claude Code runs
   outside it and may not find them at the path it is given. Until that is settled, the Store's copy passes no hooks
   to Claude Code (docs/axClaude/events-and-grounding.md EG-2.11), and axClaude works there from the screen, the

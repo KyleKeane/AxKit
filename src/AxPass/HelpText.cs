@@ -31,7 +31,7 @@ public static class HelpText
 
         ## Everywhere in axPass
           {BundleKeys.Text(AxPassKeys.CopyUserName)} copies the user name.
-          {BundleKeys.Text(AxPassKeys.CopyPassword)} copies the password, and the clipboard clears after 30 seconds.
+          {BundleKeys.Text(AxPassKeys.CopyPassword)} copies the password, and the clipboard clears after 30 seconds; so does {BundleKeys.Text(BundleKeys.MainAction)}, on an entry.
           {BundleKeys.Text(AxPassKeys.OpenUrl)} opens the URL in the browser.
           Lock forgets the master password until you type it again.
           {BundleKeys.Text(BundleKeys.Save)} has nothing to save here: every change is written to the database at once, by KeePassXC's tool.

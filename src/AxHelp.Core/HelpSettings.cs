@@ -128,16 +128,16 @@ public sealed class HelpSettings : HotkeySettings
     /// The arguments of <c>AxKit.exe claude</c> for the conversation (HE-2.1): the working folder, the title "axHelp",
     /// the model on every start of Claude Code, and the message for its field when there is one; Claude Code continues the folder's last conversation, or starts one, as axClaude does by default (FR-9.1).
     /// Always with <c>--hide-on-close</c> (HE-1.3: closing the conversation hides it, axClaude FR-9.6) and
-    /// <c>--ai-tools</c> (HE-2.8: axClaude gives Claude Code axKit's AI tools at each of its starts while the user
-    /// has them on, and nothing while they are off; axHelp itself reads no setting for it) and <c>--source screen</c>
-    /// (docs/axClaude/stream-mode.md SM-9.5: the conversation is fed by Claude Code's screen, whatever axClaude's own
-    /// setting says, until the stream has been used for a while);
+    /// <c>--source screen</c> (docs/axClaude/stream-mode.md SM-9.5: the conversation is fed by Claude Code's screen,
+    /// whatever axClaude's own setting says, until the stream has been used for a while). No option for the AI tools
+    /// since 2026-11-26 (<c>--ai-tools</c> until then, HE-2.8): every axClaude window gives Claude Code axKit's AI tools
+    /// at each of its starts while the user has them on; axHelp itself reads no setting for it.
     /// <paramref name="hidden"/> adds <c>--hidden</c>, the start in the background (HE-2.7).
     /// </summary>
     public static IReadOnlyList<string> ConversationArguments(string folder, string model, string? message, bool hidden = false)
     {
         // R-71: the model is checked here too, so that nothing but a model's name is ever on the command line.
-        var arguments = new List<string> { folder, "--title", "axHelp", "--model", ModelOrDefault(model), "--hide-on-close", "--ai-tools", "--source", "screen" };
+        var arguments = new List<string> { folder, "--title", "axHelp", "--model", ModelOrDefault(model), "--hide-on-close", "--source", "screen" };
         if (hidden)
         {
             arguments.Add("--hidden");

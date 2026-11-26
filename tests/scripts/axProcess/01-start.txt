@@ -79,7 +79,8 @@ keys escape
 expect state "notice":null
 expect focus "value":"axkitscript01,
 # Goal: End a process
-keys delete
+# Ctrl+Enter, the main action, is End process on a process, with the question Delete asks (PR-6.2, 2026-11-26).
+keys ctrl+enter
 expect state End axkitscript01 (process
 wait 1200
 keys enter

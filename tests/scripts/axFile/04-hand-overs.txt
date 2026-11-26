@@ -2,13 +2,13 @@
 # axFile, test plan section 4: sound, video and reading, the hand-overs (docs/axFile/nvda-test-plan.md 4.1 to 4.5; AF-5).
 # 4.1 is driven at the end: the window axFile starts is taken over by the runner (adopt), and a second Shift+Enter is
 # handed to the axPreview window already open (AP-1.2).
-# Manual (4.2): Ctrl+Enter in a folder of chapters starts axMedia.
+# Manual (4.2): Context, Play folder in axMedia in a folder of chapters starts axMedia.
 # Manual (4.3): Ctrl+Q on two folders with media and Shift+F10, Q on a chapter start axMedia (behind this window).
 # Manual (4.4): Shift+F10, A, M on a chapter or a folder and A, P on README.md start axMedia or axPreview.
 # Manual (4.5): Enter with axMedia or axPreview made the default program needs Windows' Default apps.
 file hand\README.md # Read me\nA text to read.
 file hand\plain.txt A plain text.
-file hand\no-media-here\only-text.txt Ctrl+Enter here says No sound or video files here.
+file hand\no-media-here\only-text.txt Play folder in axMedia here says No sound or video files here.
 mkdir hand\a-folder-for-not-a-file
 start file {temp}\hand
 expect focus "value":"a-folder-for-not-a-file, folder"
@@ -16,7 +16,7 @@ expect focus "value":"a-folder-for-not-a-file, folder"
 wait 500
 
 # Check: A folder without sound or video says so
-# 4.2 Ctrl+Enter in a folder without media: "No sound or video files here".
+# 4.2 Play folder in axMedia in a folder without media: "No sound or video files here".
 keys down
 expect focus "value":"no-media-here, folder"
 keys enter
@@ -53,12 +53,13 @@ expect state "title":"axPreview file
 expect state \README.md","notice"
 expect focus README.md
 # Goal: Read another file in the same axPreview window
-# Shift+Enter on plain.txt in axFile: the open axPreview window takes it; no second axPreview.
+# Ctrl+Enter, the main action and Preview's second key (AF-5.3, 2026-11-26), on plain.txt in axFile: the open axPreview
+# window takes it; no second axPreview.
 use 1
 keys up
 expect focus "value":"plain.txt"
 wait 500
-keys shift+enter
+keys ctrl+enter
 use 2
 expect state "title":"axPreview file 
 expect state \plain.txt","notice"

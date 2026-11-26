@@ -195,7 +195,8 @@ internal sealed partial class MainForm
         }
 
         // FR-9.7 (docs/axKit/mcp.md MC-6.9): axKit's AI tools, as with the screen, by their file beside the relay's,
-        // only in a window started with --ai-tools and while the user has them on. A line cmd.exe would refuse because
+        // in every window while the user has them on, unless the user's own Claude Code configuration names the
+        // server already (AiToolsArguments decides, as for the screen). A line cmd.exe would refuse because
         // of the file's path starts without the tools rather than not at all.
         var toolsFile = AiToolsArguments().Count > 0 ? AppPaths.McpClaudeConfigFile : null;
         var line = ClaudeLauncher.BuildCommandLine(claude, ClaudeCodeStream.StartArguments(AppPaths.ClaudeAskFile, AskRelay.ToolName, _options.Model, arguments, toolsFile));

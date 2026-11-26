@@ -20,7 +20,6 @@ public sealed record StartupOptions(
     string? Model = null,
     bool HideOnClose = false,
     bool Hidden = false,
-    bool AiTools = false,
     string? Source = null)
 {
     /// <summary>
@@ -36,8 +35,8 @@ public sealed record StartupOptions(
     /// The command line that starts this window again after Update and restart (FR-9.1): the verb alone without a
     /// folder; on <paramref name="folder"/> otherwise, with everything of this start that makes the window what
     /// it is, so that a window another program keeps (axHelp's conversation, FR-9.2, FR-9.6) comes back as that
-    /// window: its title, its model, hiding on close, the AI tools for Claude (<c>--ai-tools</c>, left out until
-    /// 2026-11-22, so that axHelp's conversation came back without them) and a source the command line named
+    /// window: its title, its model, hiding on close (the AI tools need nothing since 2026-11-26: every window gives
+    /// them while they are on, FR-9.7) and a source the command line named
     /// (SM-9.1); and on the folder's conversation when a message was sent in this window. Never
     /// <c>--hidden</c> or <c>--message</c>: the window comes back on view, with nothing put into its field.
     /// </summary>
@@ -65,11 +64,6 @@ public sealed record StartupOptions(
         if (HideOnClose)
         {
             arguments.Add("--hide-on-close");
-        }
-
-        if (AiTools)
-        {
-            arguments.Add("--ai-tools");
         }
 
         if (Source is not null)
@@ -101,8 +95,8 @@ public sealed record StartupOptions(
           --hide-on-close     Alt+F4 hides the window and Claude runs on; a start that hands it "show" or a message
                               brings it back as it was; Session, End Claude and close this window ends it (axHelp's conversation)
           --hidden            with --hide-on-close and a folder: start hidden, Claude loaded, until it is brought up
-          --ai-tools          while the user has axKit's AI tools on, Claude in this window gets them by itself
-                              (axHelp's conversation; off, nothing is added)
+          --ai-tools          accepted and changes nothing: every window gives Claude axKit's AI tools while
+                              the user has them on (until 2026-11-26, only a window started with it)
           --no-ax             start Claude without --ax-screen-reader (testing only)
           --source <name>     what feeds this window, screen or stream, in place of the setting (being built: the
                               stream is Claude Code as one process read line by line; screen is the default)
@@ -122,7 +116,6 @@ public sealed record StartupOptions(
         var noAx = false;
         var hideOnClose = false;
         var hidden = false;
-        var aiTools = false;
         string? source = null;
         int? columns = null;
         int? rows = null;
@@ -171,7 +164,7 @@ public sealed record StartupOptions(
                     hidden = true;
                     break;
                 case "--ai-tools":
-                    aiTools = true;
+                    // Accepted and changes nothing since 2026-11-26 (FR-9.7): every window gives the AI tools.
                     break;
                 case "--source":
                     source = Next(args, ref i);
@@ -217,7 +210,7 @@ public sealed record StartupOptions(
             }
         }
 
-        return new StartupOptions(folder, claude, noAx, columns, rows, record, claudeArgs, message, title, model, hideOnClose, hidden, aiTools, source);
+        return new StartupOptions(folder, claude, noAx, columns, rows, record, claudeArgs, message, title, model, hideOnClose, hidden, source);
     }
 
     private static string Next(string[] args, ref int i)

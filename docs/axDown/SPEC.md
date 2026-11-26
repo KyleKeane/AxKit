@@ -209,7 +209,8 @@ Bundle-wide (AX-8.2): F1 and Ctrl+Comma the command palette with the keys (AX-10
 controls (in axDown the editor, and the field under it while Go to line or Find shows: Ctrl+Tab and F6 go to the
 field and back, "Between the text and the field under it", 2026-11-24; in a notice they move between its text, field
 and buttons); Ctrl+F find, F3 and Shift+F3 next and previous; Ctrl+S save; Ctrl+Plus and Ctrl+Minus text size; Enter
-and Escape on a notice; Page Up and Page Down one screen in an edit control; Ctrl+Up and Ctrl+Down the previous and
+and Escape on a notice; Ctrl+Enter, the main action (AX-8.10), save as Ctrl+S (2026-11-26; the edge sound until then,
+and never a line break); Page Up and Page Down one screen in an edit control; Ctrl+Up and Ctrl+Down the previous and
 next paragraph, with Shift selecting to there (AD-2.3); Ctrl+Space edit mode or navigation mode (AD-5.3); Alt+F4 exit; Alt and F10 the menu.
 
 Window-specific: Ctrl+N new document; Ctrl+O open; Ctrl+Shift+S save as (Ctrl+Shift+N new window and Ctrl+W show the file in File Explorer until 2026-11-26, their menu items kept without a key); Ctrl+Z undo, Ctrl+Y or Ctrl+Shift+Z redo (AD-2.5); F12 go to line; F11 word wrap (Ctrl+G and Ctrl+Shift+W until 2026-11-26);

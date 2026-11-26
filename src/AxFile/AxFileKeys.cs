@@ -100,8 +100,8 @@ public static class AxFileKeys
 
     public const Keys LastItemAlso = Keys.End;
 
-    // Ctrl+Enter is the bundle's main action (BundleKeys.MainAction, AX-8.10): in the folder list, axMedia on the
-    // folder, its media files from the first (AF-5).
+    // Ctrl+Enter is the bundle's main action (BundleKeys.MainAction, AX-8.10): in the folder list, Preview, as
+    // Shift+Enter (the maintainer, 2026-11-26; Play folder in axMedia until then, which has no key now, AF-5).
 
     /// <summary>In the folder list: the entry, or the marked entries, to the end of axMedia's queue (AF-5): Q for queue (AX-8.18 rule 2; Ctrl+Shift+Q until 2026-11-26, when the reading keys left Ctrl+Q).</summary>
     public const Keys AddToQueue = Keys.Control | Keys.Q;

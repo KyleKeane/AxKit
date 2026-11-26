@@ -243,22 +243,31 @@ internal sealed partial class MainForm
     }
 
     /// <summary>
-    /// Claude Code's arguments for axKit's AI tools (FR-9.7, docs/axKit/mcp.md MC-6.9): only in a window started with
-    /// <c>--ai-tools</c> (axHelp's conversation) and only while the user has the AI tools on, read from the sealed
-    /// setting at this start; then the file that names this very program file is written when it is missing or names
-    /// another, and <c>--mcp-config</c> points Claude Code at it. Off, or the file not writable: nothing, and Claude
-    /// starts as it always did. Nothing is asked and nothing is turned on here.
+    /// Claude Code's arguments for axKit's AI tools (FR-9.7, docs/axKit/mcp.md MC-6.9): in every window, screen and
+    /// stream alike, since 2026-11-26 (until then only in a window started with <c>--ai-tools</c>, axHelp's
+    /// conversation), and only while the user has the AI tools on, read from the sealed setting at this start. When the
+    /// user's own Claude Code file already names the server <c>axkit</c> (MC-6.8, the user added axKit himself), that
+    /// entry gives the tools and nothing is added; the log says only that it was found. Otherwise the file that names
+    /// this very program file is written when it is missing or names another, and <c>--mcp-config</c> points Claude
+    /// Code at it. Off, or a file not readable or writable: nothing, and Claude starts as it always did. Nothing is
+    /// asked and nothing is turned on here.
     /// </summary>
     private IReadOnlyList<string> AiToolsArguments()
     {
-        if (!_options.AiTools || PackageIdentity.ProgramPath is not { } program)
+        if (!AxKit.Core.Mcp.McpAccess.Enabled || PackageIdentity.ProgramPath is not { } program)
         {
             return [];
         }
 
         try
         {
-            var arguments = AxKit.Core.Mcp.McpClaudeCode.SessionArguments(asked: true, AxKit.Core.Mcp.McpAccess.Enabled, AppPaths.McpClaudeConfigFile);
+            var named = UserNamesAxKitServer();
+            if (named)
+            {
+                Log.Info("Claude Code's own configuration already names axKit's server: it is not named a second time");
+            }
+
+            var arguments = AxKit.Core.Mcp.McpClaudeCode.SessionArguments(toolsOn: true, named, AppPaths.McpClaudeConfigFile);
             if (arguments.Count > 0 && AxKit.Core.Mcp.McpClaudeCode.WriteConfig(AppPaths.McpClaudeConfigFile, program))
             {
                 Log.Info("Wrote the file that gives Claude Code axKit's AI tools for this conversation");
@@ -270,6 +279,25 @@ internal sealed partial class MainForm
         {
             Log.Error("axKit's AI tools were not given to Claude Code: " + ex.Message);
             return [];
+        }
+    }
+
+    /// <summary>
+    /// Whether the user's own Claude Code file (<c>.claude.json</c> in the profile, or in <c>CLAUDE_CONFIG_DIR</c> as
+    /// Claude is started with it; a test run's own folder in a run) names the server <c>axkit</c> in its user scope
+    /// (MC-6.8). Read only, nothing of it logged; a file that cannot be read counts as naming none.
+    /// </summary>
+    private static bool UserNamesAxKitServer()
+    {
+        ClaudeLauncher.BuildEnvironment().TryGetValue(AxClaude.Core.ClaudeCodeSettings.ConfigDirVariable, out var configDir);
+        var file = AxKit.Core.Mcp.McpClaudeCode.UserFile(AutomationEnvironment.Home ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), configDir);
+        try
+        {
+            return File.Exists(file) && AxKit.Core.Mcp.McpClaudeCode.NamesServer(File.ReadAllText(file));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return false;
         }
     }
 

@@ -137,7 +137,8 @@ keys in place of its words on a line:
   `ms`, a long text for `text`), On failure (a choice: stop, continue), Report (text), Note (long text). Changing Do
   keeps the keys the new operation shares and drops the others, with Ctrl+Z to bring them back (IA-5.4).
 - AU-4.4 Keys of the window: Ctrl+R runs the workflow in hand (in the navigator's top level: every workflow of the
-  folder, one after another; F5 until 2026-11-26); Escape during a run stops it after the current step; F8 the last
+  folder, one after another; F5 until 2026-11-26), and so does Ctrl+Enter, the bundle's main action (AX-8.10,
+  2026-11-26); Escape during a run stops it after the current step; F8 the last
   run's report; Ctrl+N a new step after the one
   selected (a new workflow at the top level); Delete removes a step, Ctrl+Z brings it back; Ctrl+Shift+Up and Ctrl+Shift+Down move a
   step; Ctrl+J the file in axJSON. The rest are the item apps' (IA-3), F5 Refresh among them.

@@ -18,7 +18,7 @@ public static class HelpText
           Type the start of a row to jump to it, the same letter again to the next; Shift with a letter goes backwards.
           In a list
             Enter shows the row's details, with what can be done to it: end a process, start or stop a service, turn a startup program off or on, or remove it.
-            Delete ends the process, after a question; in Startup, it removes the startup program, after a question whose default is Cancel. With rows selected, it acts on all of them after one question: "Ended 3 processes".
+            Delete ends the process, after a question; in Startup, it removes the startup program, after a question whose default is Cancel. With rows selected, it acts on all of them after one question: "Ended 3 processes". {BundleKeys.Text(BundleKeys.MainAction)} on a process ends it the same way, after the same question.
             Only processes and startup programs are selected, never services; a selected row reads ", selected". Escape deselects all.
             Context, Turn off and Turn on, in Startup: the startup program no longer starts with Windows, or starts again; nothing is deleted.
             Up or Home on the first row, Down or End on the last, Right on a row that is no list, and Left at This computer play the edge sound, since nothing moves.

@@ -432,7 +432,8 @@ axFile plays nothing and shows no text (G3, AF-D2): it starts the app on the pat
 and the started process finds its open window and hands the paths over with the bundle's window message
 (`AxKit.Forms/AppMessage`; axMedia AM-1.2, axPreview AP-1.2). Nothing of it is on the network (G6).
 
-- AF-5.1 **Play folder in axMedia** (Ctrl+Enter in the list; Context): axMedia on the folder shown, its sound
+- AF-5.1 **Play folder in axMedia** (Context, no key; Ctrl+Enter in the list until 2026-11-26, Preview's second key
+  since, AF-5.3): axMedia on the folder shown, its sound
   and video files in name order from the first, the axMedia window in front; "No sound or video files here" when the
   list shows none (`MediaFiles.IsMedia` over the shown entries); "Choose a drive first" at This PC.
 - AF-5.2 **Add to axMedia's queue** (Ctrl+Q in the list, Ctrl+Shift+Q until 2026-11-26; Context): the entry, or the marked entries
@@ -440,7 +441,8 @@ and the started process finds its open window and hands the paths over with the 
   says "Added n to axMedia's queue", n being its own count of the media files among the entries (a folder read on a
   task, the hidden ones as the settings say); "No sound or video files to add" when the count is none. With no axMedia
   window open, one opens behind this window, without taking the focus (AM-D3), holding the queue for later.
-- AF-5.3 **Preview** (Shift+Enter in the list; Context): the file read in axPreview, the window in front; a
+- AF-5.3 **Preview** (Shift+Enter in the list, and Ctrl+Enter, the bundle's main action, since 2026-11-26, the
+  maintainer's choice; Context): the file read in axPreview, the window in front; a
   folder in a new axFile window (AF-3.2). axPreview shows every file through its renderer (axPreview AP-7): a file
   that is no text as the readable text inside it, with the Details list under it (AP-7.2, AP-7.5); it said "Not a
   text file" until 2026-10-24.
@@ -459,7 +461,7 @@ and the started process finds its open window and hands the paths over with the 
   folder list, the entry's menu (AF-4.6): Open Enter | Open with ▸ (Windows default | Choose a program… | ─ | 1. name
   (path) … or No programs of your own yet) | Open with axKit apps ▸ (the standalone apps that open a path, by group) |
   Open with axKit access layers ▸ (the access layers that open a path, by group) | Preview
-  Shift+Enter | Play folder in axMedia Ctrl+Enter | Add to axMedia's queue Ctrl+Q | ─ | Cut Ctrl+X | Copy Ctrl+C |
+  Shift+Enter | Play folder in axMedia | Add to axMedia's queue Ctrl+Q | ─ | Cut Ctrl+X | Copy Ctrl+C |
   ─ | Rename F2 | Delete Delete | ─ | Move to folder… | Compress to zip | Extract here | ─ | Copy path Ctrl+Shift+C |
   Show in File Explorer | Information F8 | Properties Alt+Enter | ─ | Windows menu… | ─ | Selection ▸
   (Select or deselect this entry Space | Select to here Shift+Space | ─ | Cut Ctrl+X | Copy Ctrl+C | Delete Delete | ─ |
@@ -487,8 +489,8 @@ and the started process finds its open window and hands the paths over with the 
   selection's keys, the two menu keys and Escape are the navigator's own commands (`ItemKeys`, `SelectionKeys`; AF-D14);
   `AxFileKeys` names them for this window. The collision test covers the table and lists the keys other windows use
   otherwise (Ctrl+N, F12, Ctrl+C, Ctrl+Shift+C). Ctrl+Enter is the bundle's main action
-  (AX-8.10, `BundleKeys.MainAction`), here Play folder in axMedia (AF-5.1) while the folder list has the focus, the edge
-  sound elsewhere.
+  (AX-8.10, `BundleKeys.MainAction`), here Preview, as Shift+Enter (AF-5.3; Play folder in axMedia, AF-5.1, until 2026-11-26),
+  while the folder list has the focus, the edge sound elsewhere.
 - AF-6.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axFile/user-guide.md` is embedded (Help → User
   guide); About is the bundle's (AX-9.9).
 

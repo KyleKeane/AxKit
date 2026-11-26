@@ -43,7 +43,8 @@ run powershell -NoProfile -Command "$b = [IO.File]::ReadAllBytes('ansi.txt'); if
 run copy /b plain.txt plain.before
 start down {temp}\plain.txt
 expect focus plain.txt
-do Save
+# Ctrl+Enter, the main action, is Save's second key in the editors (AX-8.10, 2026-11-26).
+keys ctrl+enter
 expect said ! Saved
 run fc /b plain.txt plain.before
 

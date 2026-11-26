@@ -32,7 +32,7 @@ public static class HelpText
 
         ## Everywhere in axAutomate
           The folder of workflows you open is opened again at the next start.
-          {BundleKeys.Text(AxAutomateKeys.Run)}: run the workflow you are in, on a desktop of its own, never with your keyboard; in a folder, every workflow of that folder runs, one after another. A failing step is said as it ends, "Step 3 failed: ...", and one line when each workflow ends, "02-palette passed, 6 steps" or "02-palette failed at step 3". The rows then carry the outcome, and the details what the runner saw.
+          {BundleKeys.Text(AxAutomateKeys.Run)}: run the workflow you are in, on a desktop of its own, never with your keyboard; in a folder, every workflow of that folder runs, one after another. A failing step is said as it ends, "Step 3 failed: ...", and one line when each workflow ends, "02-palette passed, 6 steps" or "02-palette failed at step 3". The rows then carry the outcome, and the details what the runner saw. {BundleKeys.Text(BundleKeys.MainAction)} runs too.
           A workflow with a run step asks first, naming its command lines, since they run on your own desktop and files. Cancel is the default; Alt+R runs it.
           A step that makes a file or a folder outside the run's own folder cannot run from here. These guard against slips only: a workflow drives axKit's windows, which reach your files, so run only workflows you wrote or trust.
           Escape during a run stops it after the step going on.

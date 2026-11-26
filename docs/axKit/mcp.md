@@ -209,10 +209,17 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   thread, with the arguments as a list: `claude mcp remove --scope user axkit` (an earlier entry, perhaps of another
   build, gone; its failure when there is none is ignored), then `claude mcp add --scope user axkit -- <AxKit.exe> mcp`.
   The result is said: "axKit is added to Claude Code: a new Claude session can use it", or Claude Code's own error
-  line. Never in a test run, which must not touch the user's Claude Code settings.
-- MC-6.9 **Given to one conversation by itself** (2026-11-15, for axHelp's conversation, `docs/axHelp/SPEC.md`
-  HE-2.8, HE-D10). An axClaude window started with `--ai-tools` (axClaude FR-9.7) gives its Claude Code this very
-  `AxKit.exe` as the server `axkit` at every start, **only while Let AI tools read and open axKit is on**: it writes
+  line. Never in a test run, which must not touch the user's Claude Code settings. The entry this writes is the
+  top-level `mcpServers` of Claude Code's own file of the user's (`.claude.json` in the profile, or in
+  `CLAUDE_CONFIG_DIR`); since 2026-11-26 every axClaude window reads that file at each start of Claude Code, read
+  only, to know whether the entry is there (`McpClaudeCode.UserFile`, `NamesServer`; MC-6.9), and logs only that it
+  was found.
+- MC-6.9 **Given to every conversation by itself** (2026-11-15 for axHelp's conversation, `docs/axHelp/SPEC.md`
+  HE-2.8, HE-D10, then by the option `--ai-tools`; every axClaude window since 2026-11-26, the option accepted and
+  changing nothing). Every axClaude window, screen and stream alike (axClaude FR-9.7), gives its Claude Code this very
+  `AxKit.exe` as the server `axkit` at every start, **only while Let AI tools read and open axKit is on**, and not
+  when the user's own Claude Code configuration names `axkit` already (MC-6.8: that entry gives the same tools, and
+  the server is never named twice). Otherwise it writes
   `%LOCALAPPDATA%\AxKit\claude-mcp.json` (`McpClaudeCode.ConfigText`: `{"mcpServers": {"axkit": {"type": "stdio",
   "command": "<this AxKit.exe>", "args": ["mcp"]}}}`; written again when it names another program file) and adds
   Claude Code's `--mcp-config <file>` to the command line (`McpClaudeCode.SessionArguments`). Off: no file, no

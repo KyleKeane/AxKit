@@ -90,7 +90,7 @@ say "Cannot run". So does one with a step whose number is not one, such as "wait
 
 - Ctrl+O: open a folder of workflows.
 - Ctrl+J: the workflow's file as text, a script in axDown, a workflow file in axJSON.
-- Ctrl+R: run the workflow, or every workflow of the folder, or the selected ones. Escape during a run: stop it.
+- Ctrl+R or Ctrl+Enter: run the workflow, or every workflow of the folder, or the selected ones. Escape during a run: stop it.
 - Space: select a workflow of a folder, or deselect it. Ctrl+A: select all. Ctrl+Shift+A, or Escape while nothing runs: deselect all.
 - F8: the report of the last run.
 - F7: read in full the workflow or step you are on.

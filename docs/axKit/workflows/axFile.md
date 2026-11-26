@@ -491,7 +491,7 @@ Starts with: Open axFile with the folder hand.
 
 1. Go back to the first window.
 2. Press Up.
-3. Press Shift+Enter.
+3. Press Ctrl+Enter (Preview; Context menu).
 4. Go to the window that opened.
 
 ### Open a folder in a new axFile window

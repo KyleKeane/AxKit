@@ -73,6 +73,8 @@ public sealed partial class AutomateForm : ItemForm
         partMenu.DropDownItems.Add(Item("&Read in full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
 
         _runItem = Add(_actionsMenu, new Command("R&un", AxAutomateKeys.Run, RunCommand) { When = NotRenaming, Mark = CommandMark.Act });
+        // Ctrl+Enter, the bundle's main action (AX-8.10), is a second key of Run (the maintainer, 2026-11-26).
+        AddKey(new Command("Run", BundleKeys.MainAction, RunCommand) { When = NotRenaming, Mark = CommandMark.Act });
         _stopItem = Add(_actionsMenu, new Command("&Stop the run", AxAutomateKeys.StopRun, StopRun) { When = () => Running, Mark = CommandMark.Act });
         Add(_actionsMenu, new Command("The last run's &report", AxAutomateKeys.Report, ShowRunReport) { When = NotRenaming, Mark = CommandMark.Read });
         // The bundle's selection (AX-8.16, AU-4.4a): Space selects a workflow of a folder, and Ctrl+R then runs the selected ones.

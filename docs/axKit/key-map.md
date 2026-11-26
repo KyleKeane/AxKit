@@ -3,7 +3,7 @@
 Written by `tools/key-map.ps1` from `docs/axKit/window-commands.json`, `src/AxKit.Forms/BundleKeys.cs` and
 `docs/axKit/key-families.json`; never edit it by hand. Every key of every window and what it does in each app.
 
-The inventory holds 1010 commands with a key in 18 apps, on 146 different keys, counting the
+The inventory holds 1011 commands with a key in 18 apps, on 146 different keys, counting the
 second keys some commands answer. 73 keys have one meaning wherever they are; 73 have several.
 23 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
 are window keys, each in its window's own table.
@@ -114,6 +114,23 @@ Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axHelp, axMCP, axMedia
 - axStart: Start.
 - axPass: Unlock.
 
+### Ctrl+Enter
+
+Bundle key, in axAutomate, axClaude, axDown, axFile, axGIT, axHelp, axJSON, axMedia, axPass, axProcess, axTask, axTemplate and axTerminal. 12 meanings.
+
+- axDown and axJSON: Save.
+- axGIT: Commit.
+- axPass: Copy password.
+- axTask: Done or not done.
+- axProcess: End process.
+- axHelp: Open the conversation.
+- axMedia: Play, pause or resume.
+- axFile: Preview.
+- axTemplate: Put in, with that program's selection.
+- axAutomate: Run.
+- axTerminal: Send the command.
+- axClaude: Send the message.
+
 ### Ctrl+N
 
 Window key, in axAutomate, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axTask, axTemplate and axTerminal. 8 meanings.
@@ -187,18 +204,6 @@ Window key, in axAutomate, axClip, axFile, axGIT, axMCP, axMedia, axPass, axProc
 - axClip: Remove.
 - axFile: Remove from Favorites.
 - axPass: To the Recycle Bin.
-
-### Ctrl+Enter
-
-Bundle key, in axClaude, axFile, axGIT, axMedia, axTask, axTemplate and axTerminal. 7 meanings.
-
-- axGIT: Commit.
-- axTask: Done or not done.
-- axFile: Play folder in axMedia.
-- axMedia: Play, pause or resume.
-- axTemplate: Put in, with that program's selection.
-- axTerminal: Send the command.
-- axClaude: Send the message.
 
 ### Escape
 

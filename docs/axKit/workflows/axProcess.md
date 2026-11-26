@@ -39,7 +39,7 @@ Starts with: Open axProcess.
 
 ### End a process
 
-1. Press Delete.
+1. Press Ctrl+Enter (End process; Context menu).
 2. Press Enter.
     You hear: Ended axkitscript01.
 

@@ -51,7 +51,7 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
       - `OnMarks` (the Selection submenu's operations, on the marks alone);
       - `SelectedEntries` and `Targets`, what an operation acts on;
     - `OpenEntry` (Enter: a folder here, a file through `OpenWithWindows`, AF-3.2);
-    - `OpenInPreview` (Shift+Enter: axPreview on a file, a new axFile window on a folder);
+    - `OpenInPreview` (Shift+Enter, and Ctrl+Enter, the bundle's main action, since 2026-11-26: axPreview on a file, a new axFile window on a folder);
     - `GoUp`, `EntryRefused` and `UpLevel` (Backspace; Right and Left, the item window's Into and Up a level, AF-D12: a folder or drive opened, up one level, the edge earcon on a file or at This PC);
     - the folder picker, the recent submenu;
     - Go to folder: its field's `KeyHook` is `OnPathKey`:
@@ -92,7 +92,7 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
     - `ShowRecentOperations` (Actions → Recent operations…: the item window's `ChooseFromList` notice over `ActionLog.Recent`, newest first, each `HistoryLine`; "No operations yet" said before the first) and `GoToOperation` (the chosen one's `Location` through `ShowInList`; a running one says "Still running");
     - `ShowInList` (the folder list on a folder with an entry selected, the focus moved there before the folder is said, the folder said only when it changed), shared with the Favorites list's Enter;
     - and the hand-overs to axMedia (AF-5):
-      - `PlayFolder` (Ctrl+Enter: axMedia on the folder);
+      - `PlayFolder` (Context, Play folder in axMedia, no key; Ctrl+Enter until 2026-11-26, Preview's second key since: axMedia on the folder);
       - and `AddToQueue` (Ctrl+Q: axMedia on the targets with `--add`, `MediaCount` on a task for "Added n to axMedia's queue").
   - `FileForm.Completion.cs`: the Go to folder field's completion, out of Browse (since 2026-10-24).
   - `FileForm.Programs.cs`: the user's own programs and Windows' own ways, out of Operations (since 2026-10-24).

@@ -15,7 +15,7 @@ public static class HelpText
 
         {screenshotKey}: a screenshot of the window in front, put into the conversation's message field with its path, which is on the clipboard too; type your question after it and press Enter.{(screenshotRegistered ? string.Empty : $" {screenshotKey} is taken by another program now: change screenshotHotkey in axHelp.json (Options, Developer, Open settings file) and start axHelp again.")}
 
-        Here: Enter opens the conversation, {BundleKeys.Text(AxHelpKeys.PictureFile)} puts a picture file of yours into it, {BundleKeys.Text(AxHelpKeys.OpenScreenshot)} opens the last screenshot in axPreview, Escape hides this window. Options, Hotkey changes {conversationKey}.
+        Here: Enter or {BundleKeys.Text(BundleKeys.MainAction)} opens the conversation,{BundleKeys.Text(AxHelpKeys.PictureFile)} puts a picture file of yours into it, {BundleKeys.Text(AxHelpKeys.OpenScreenshot)} opens the last screenshot in axPreview, Escape hides this window. Options, Hotkey changes {conversationKey}.
         """;
 
     /// <summary>The F1 text (SPEC.md HE-6): the bundle-wide keys, then axHelp's own, then the bundle's Notices section; every key with its command follows from the window's own list (AX-7.2a), so this part says only what a key does in context and the hotkeys, which no command carries.</summary>

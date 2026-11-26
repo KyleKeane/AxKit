@@ -240,10 +240,27 @@ public sealed class McpTests
         // One server and nothing else: no environment, no second entry.
         Assert.Single(json["mcpServers"]!.AsObject());
 
-        Assert.Equal(["--mcp-config", @"C:\x\claude-mcp.json"], McpClaudeCode.SessionArguments(asked: true, toolsOn: true, @"C:\x\claude-mcp.json"));
-        // Off, the consent's gate: nothing, whatever the window asked for; and never without the asking.
-        Assert.Empty(McpClaudeCode.SessionArguments(asked: true, toolsOn: false, @"C:\x\claude-mcp.json"));
-        Assert.Empty(McpClaudeCode.SessionArguments(asked: false, toolsOn: true, @"C:\x\claude-mcp.json"));
+        Assert.Equal(["--mcp-config", @"C:\x\claude-mcp.json"], McpClaudeCode.SessionArguments(toolsOn: true, userNamesServer: false, @"C:\x\claude-mcp.json"));
+        // Off, the consent's gate: nothing; and nothing when the user's own Claude Code names the server already (MC-6.8).
+        Assert.Empty(McpClaudeCode.SessionArguments(toolsOn: false, userNamesServer: false, @"C:\x\claude-mcp.json"));
+        Assert.Empty(McpClaudeCode.SessionArguments(toolsOn: true, userNamesServer: true, @"C:\x\claude-mcp.json"));
+        Assert.Empty(McpClaudeCode.SessionArguments(toolsOn: false, userNamesServer: true, @"C:\x\claude-mcp.json"));
+
+        // MC-6.8's entry, the user scope's mcpServers, is found by its name alone; another scope or name is not it.
+        Assert.True(McpClaudeCode.NamesServer("""{"mcpServers": {"axkit": {"type": "stdio", "command": "x", "args": ["mcp"]}}}"""));
+        Assert.True(McpClaudeCode.NamesServer("""{"numStartups": 3, "mcpServers": {"other": {}, "axkit": {},}}"""));
+        Assert.False(McpClaudeCode.NamesServer("""{"mcpServers": {"axit": {}, "AxKit2": {}}}"""));
+        Assert.False(McpClaudeCode.NamesServer("""{"projects": {"C:/p": {"mcpServers": {"axkit": {}}}}}"""));
+        Assert.False(McpClaudeCode.NamesServer("""{"mcpServers": ["axkit"]}"""));
+        Assert.False(McpClaudeCode.NamesServer("not json {"));
+        Assert.False(McpClaudeCode.NamesServer("[]"));
+        Assert.False(McpClaudeCode.NamesServer(null));
+        Assert.False(McpClaudeCode.NamesServer(""));
+
+        // The file is the profile's, or the one in Claude Code's CLAUDE_CONFIG_DIR when that is a full path.
+        Assert.Equal(@"C:\home\.claude.json", McpClaudeCode.UserFile(@"C:\home", null));
+        Assert.Equal(@"D:\cc\.claude.json", McpClaudeCode.UserFile(@"C:\home", @" D:\cc "));
+        Assert.Equal(@"C:\home\.claude.json", McpClaudeCode.UserFile(@"C:\home", "relative"));
 
         using var temp = new TempFolder("axkit-mcp-config");
         var file = Path.Combine(temp.Path, "AxKit", "claude-mcp.json");

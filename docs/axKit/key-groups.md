@@ -532,15 +532,20 @@ Exceptions today, which do another kind of thing:
 
 ### Enter with Ctrl, Shift or Alt: another form of open or confirm
 
-Enter with a modifier is another way of opening or saying yes. Ctrl+Enter does the most frequent action where you are: it sends the message or the command, commits, saves a form, marks a task done in axTask, or pauses and resumes in axMedia. Shift+Enter opens what you are on another way, such as a preview. Alt+Enter shows its properties and Ctrl+Shift+Enter starts a program as administrator, as everywhere in Windows; in axClaude it sends the queued messages now, another form of Ctrl+Enter.
+Enter with a modifier is another way of opening or saying yes. Ctrl+Enter does the most frequent action where you are: it sends the message or the command, commits, saves a form or a text, marks a task done in axTask, pauses and resumes in axMedia, copies the password in axPass, ends a process in axProcess after its question, runs a workflow in axAutomate, opens the conversation in axHelp, or previews in axFile. Shift+Enter opens what you are on another way, such as a preview. Alt+Enter shows its properties and Ctrl+Shift+Enter starts a program as administrator, as everywhere in Windows; in axClaude it sends the queued messages now, another form of Ctrl+Enter.
 
 The keys:
 
+- Ctrl+Enter, axDown and axJSON: Save.
 - Ctrl+Enter, axGIT: Commit.
+- Ctrl+Enter, axPass: Copy password.
 - Ctrl+Enter, axTask: Done or not done.
-- Ctrl+Enter, axFile: Play folder in axMedia.
+- Ctrl+Enter, axProcess: End process.
+- Ctrl+Enter, axHelp: Open the conversation.
 - Ctrl+Enter, axMedia: Play, pause or resume.
+- Ctrl+Enter, axFile: Preview.
 - Ctrl+Enter, axTemplate: Put in, with that program's selection.
+- Ctrl+Enter, axAutomate: Run.
 - Ctrl+Enter, axTerminal: Send the command.
 - Ctrl+Enter, axClaude: Send the message.
 - Shift+Enter, axClip: Copy without pasting.

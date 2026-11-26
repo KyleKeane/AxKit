@@ -96,6 +96,9 @@ public sealed class HelpForm : HotkeyForm
         AddHideAndQuit(first, AxHelpKeys.Hide);
         var actions = new ToolStripMenuItem();
         Add(actions, new Command("&Open the conversation", AxHelpKeys.OpenConversation, () => OpenConversation(null)) { Mark = CommandMark.Act });
+        // Ctrl+Enter, the bundle's main action (AX-8.10), is a second key of Open the conversation (the maintainer,
+        // 2026-11-26): it sends nothing until you type and press Enter there.
+        AddKey(new Command("Open the conversation", BundleKeys.MainAction, () => OpenConversation(null)) { Mark = CommandMark.Act });
         Add(actions, new Command("Put a picture &file into the conversation...", AxHelpKeys.PictureFile, ChoosePicture) { Mark = CommandMark.Act });
         Add(actions, new Command("Open the last &screenshot in axPreview", AxHelpKeys.OpenScreenshot, OpenLastScreenshot) { Mark = CommandMark.Open });
         actions.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Claude's &working folder", null, (_, _) => OpenAiWorkingFolder()), CommandMark.Open));

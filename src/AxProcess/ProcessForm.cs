@@ -86,6 +86,10 @@ public sealed class ProcessForm : ItemForm
         // Remove on a startup program; with rows selected, all of them, after one question (PR-3.3a, PR-5.6a).
         _processMenu.DropDownItems.Add(Item("&Details", OpenSelected, ItemKeys.Open, CommandMark.Read));
         _processMenu.DropDownItems.Add(Item("&End process...", () => WithRow(DeleteRow), ItemKeys.Delete, CommandMark.Act));
+        // Ctrl+Enter, the bundle's main action (AX-8.10), is a second key of End process, on a process in the list,
+        // with the question Delete asks (the maintainer, 2026-11-26); on a service, a startup program or a list, the
+        // edge sound.
+        AddKey(new Command("End process", BundleKeys.MainAction, () => WithRow(DeleteRow)) { When = () => InNavigator() && SelectedRow()?.Tag is ProcessRow, Mark = CommandMark.Act });
         Add(_processMenu, new Command("End process &tree...", Keys.None, () => EndProcess(tree: true)) { Mark = CommandMark.Act });
         Add(_processMenu, showProgram);
         Add(_processMenu, copyLine);

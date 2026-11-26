@@ -133,7 +133,7 @@ public sealed partial class FileForm
 
     // ---- the hand-overs to axMedia (AF-5): axFile starts the app on the paths and says nothing but the add's count ----
 
-    /// <summary>Item → Play folder in axMedia (Ctrl+Enter): axMedia on the folder shown, its media files from the first; "No sound or video files here" without any.</summary>
+    /// <summary>Context → Play folder in axMedia (no key; Ctrl+Enter until 2026-11-26): axMedia on the folder shown, its media files from the first; "No sound or video files here" without any.</summary>
     private void PlayFolder()
     {
         if (!TryFolder(out var folder))

@@ -57,7 +57,7 @@ Only in a test run, on a desktop of its own, never in your windows.
 
 ## 2. The functions
 
-A function is a command of a window (`docs/axKit/command-language.md`): 2004 in the inventory, of which 280 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
+A function is a command of a window (`docs/axKit/command-language.md`): 2006 in the inventory, of which 282 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
 
 ### The marks, and the events a command of each mark ends in
 
@@ -89,7 +89,7 @@ A function is a command of a window (`docs/axKit/command-language.md`): 2004 in 
 - `help`, the Help menu: The command palette with the keys (F1), the keyboard shortcuts as a text, the user guide, sending a report (F4), about, diagnostics and the key test.
   - 284 commands in 18 apps: read 162, open 18, act 104.
 - `keys-alone`: Commands that are a key with no menu item, because their meaning depends on where the focus is: Tab between panes, Enter on a row, Right into a list, F3 for find next. An AI tool never runs these.
-  - 280 rows of the inventory.
+  - 282 rows of the inventory.
 - `control-keys`: Not commands at all: the keys a control handles itself, the arrows in a list or a text and typing in a field. The inventory does not hold them; the families of keys do.
 
 ## 3. The events

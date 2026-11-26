@@ -229,6 +229,8 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
   has no use for them. Delete acts by the kind of row: End process on a process (PR-3.3), Remove on a startup
   program (PR-5.6), each on all the selected rows when there are several; on a service "A service is not ended:
   Enter shows it, with Stop where it can be stopped"; on a list of This computer "A list: Right goes into it".
+  Ctrl+Enter, the bundle's main action (AX-8.10; the maintainer, 2026-11-26), is End process on a process, with the
+  question Delete asks (PR-3.3, PR-3.3a); on a service, a startup program or a list, the edge sound.
   Ctrl+E on a service says "Show program is for a process or a startup program". (Until 2026-11-22 a command of one
   view asked for in another said which view first, "Processes view first: Alt+1".) End process, End process tree, Start, Stop, Restart, Turn off, Turn on, Remove
   and Copy line are marked act (`CommandMark.Act`): an AI tool asks the user before it runs one (`docs/axKit/mcp.md`

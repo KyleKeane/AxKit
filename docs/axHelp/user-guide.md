@@ -107,7 +107,7 @@ session, axClaude's too.
 ## axHelp's window
 
 Start menu, axKit axHelp, or the command `axHelp`, shows axHelp's own small window: one text that says what the two
-hotkeys do. Enter opens the conversation; Escape hides the window. Session, Quit axHelp ends axHelp.
+hotkeys do. Enter or Ctrl+Enter opens the conversation; Escape hides the window. Session, Quit axHelp ends axHelp.
 
 Options, Hotkey changes Ctrl+Shift+Slash. The screenshot's key is `screenshotHotkey` in the settings file
 (`%APPDATA%\AxKit\axHelp.json`, Options, Developer, Open settings file); start axHelp again after changing it.

@@ -19,6 +19,9 @@
   section 4).
 - `Mcp/McpClaudeCode` (MC-6.8): the `claude mcp add` and `remove` command lines that register this AxKit.exe for every
   folder of the user; the window runs them on the Claude Code `ClaudeCodeProgram` finds (`AxKit.Forms/AiToolsSetup.cs`).
+  Also MC-6.9's file for one start (`ConfigText`, `WriteConfig`, `SessionArguments`: while the tools are on and the user's own
+  entry is not there), and since 2026-11-26 whether that entry is there: `UserFile` (Claude Code's `.claude.json`, in the
+  home or `CLAUDE_CONFIG_DIR`) and `NamesServer` (the top-level `mcpServers` holds `axkit`; pure, never logs the text).
 - `Mcp/McpTools`: the tools, `AppTools` (MC-8, 2026-11-11: the typed data tools of one app by its verb, and whether each changes something; axTask's three), `NeverRead` (axPass, axClip), `StartsAProgram` (axClaude, axTerminal) with `AsksFirst` and `OpenMeans` (MC-6.5a, 2026-11-24: those two and axTask on a folder open only after the user's yes, asked by a window, `AxKitForm.McpAskToOpen`),
   and `OpenArguments`, the check of `axkit_open`'s app and path. `Mcp/McpAudit` (one line a call, the arguments
   hashed) and `McpRate` (ten calls a second). The pipes and the broker are `AxKit.Forms`' (`McpChannel`, `McpBroker`).

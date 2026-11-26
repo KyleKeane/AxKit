@@ -21,7 +21,8 @@ public static class HelpText
 
         ## Opening
           {K(AxFileKeys.Open)} on a file opens it in the program Windows has for it, the one you made its default (axDown, axMedia, axPreview or any other), or in the Windows dialog that picks one when there is none.
-          Preview reads a file in axPreview; on a folder, it opens a new axFile window.
+          Preview reads a file in axPreview; on a folder, it opens a new axFile window. {K(BundleKeys.MainAction)} previews too.
+          Play folder in axMedia, in the Context menu, plays the folder's sound and video files from the first.
           Add to axMedia's queue adds the entry, or the selected entries, and the focus stays here.
           The Context menu of an entry is one list in File Explorer's order, with Open with (Windows default, Choose a program, your own programs), Open with axKit apps (A), Open with axKit access layers (S) and Windows menu, the full Windows menu for the entry.
 

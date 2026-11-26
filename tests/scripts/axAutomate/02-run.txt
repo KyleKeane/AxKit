@@ -102,7 +102,8 @@ expect state "notice":null
 expect said Not run
 expect quiet 500
 # Goal: Run a workflow that runs commands
-keys ctrl+r
+# Ctrl+Enter, the main action, is Run's second key (AX-8.10, AU-4.4, 2026-11-26).
+keys ctrl+enter
 expect state "notice":"Run commands"
 keys tab
 expect focus Run

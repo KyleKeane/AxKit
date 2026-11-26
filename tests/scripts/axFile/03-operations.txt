@@ -183,7 +183,7 @@ expect focus "value":"a.txt"
 # 3.7 Manual: the entry's menu as a context menu (Shift+F10, the Applications key) and the menu bar (Alt+I, 3.7a, 3.7b's
 # Alt+S) cannot be opened from the channel; the items and their order are the menu's, checked through the palette's list.
 expect commands "Open, Context, Enter"
-expect commands "Preview, Context, Shift\u002BEnter","Play folder in axMedia, Context, Ctrl\u002BEnter","Add to axMedia\u0027s queue, Context, Ctrl\u002BQ","Cut, Context, Ctrl\u002BX","Copy, Context, Ctrl\u002BC","Rename, Context, F2","Delete, Context, Delete","Move to folder, Context","Compress to zip, Context","Extract here, Context","Copy path, Context, Ctrl\u002BShift\u002BC","Show in File Explorer, Context","Information, Context, F8","Properties, Context, Alt\u002BEnter","Windows menu, Context"
+expect commands "Preview, Context, Shift\u002BEnter","Play folder in axMedia, Context","Add to axMedia\u0027s queue, Context, Ctrl\u002BQ","Cut, Context, Ctrl\u002BX","Copy, Context, Ctrl\u002BC","Rename, Context, F2","Delete, Context, Delete","Move to folder, Context","Compress to zip, Context","Extract here, Context","Copy path, Context, Ctrl\u002BShift\u002BC","Show in File Explorer, Context","Information, Context, F8","Properties, Context, Alt\u002BEnter","Windows menu, Context"
 # Check: The selection's commands never act on the current entry alone
 # 3.7b Selection: Select all and Deselect all in Actions, the rest in Context, Selection; its operations never fall back to the current entry.
 expect commands "Select all, Actions, Ctrl\u002BA","Deselect all, Actions, Ctrl\u002BShift\u002BA"
