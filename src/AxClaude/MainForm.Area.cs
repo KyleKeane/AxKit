@@ -227,7 +227,10 @@ internal sealed partial class MainForm
     /// <summary>
     /// Ctrl+Q (D33): the question or screen the control area shows, spoken again on demand from anywhere, the title
     /// and all its lines and then the answer the focus is on, as when it opened; the focus stays. NVDA+Tab repeats a
-    /// question too, since its list is named with it, but a screen's lines are items and its name only the title.
+    /// question too, since its list is named with it, but a screen's lines are items and its name only the title. Also
+    /// every character typed in the list of Claude's question (<see cref="ControlArea.ShowList"/>'s typed). The words
+    /// go through the door as their own kind, <see cref="EventKind.QuestionReadAgain"/>, which has no sound until the
+    /// maintainer has chosen one by ear (bundle rule 13).
     /// </summary>
     private void ReadQuestionAgain()
     {
@@ -237,7 +240,7 @@ internal sealed partial class MainForm
             return;
         }
 
-        Announce((text + Stop(text) + Area.CurrentItem).TrimEnd(' ', '.'), true);
+        Announce(EventKind.QuestionReadAgain, (text + Stop(text) + Area.CurrentItem).TrimEnd(' ', '.'), true);
     }
 
     /// <summary>
@@ -245,8 +248,8 @@ internal sealed partial class MainForm
     /// No, Write permission-test.txt", <see cref="Question.Core"/>: only the label, the key sent is the answer's own),
     /// the current one marked and the start, or check boxes when it takes several, ticked where Claude marks them.
     /// Enter hands <paramref name="choose"/> the chosen answer, or the ticked ones; <paramref name="startKey"/> starts
-    /// on another answer (the setting just changed). <paramref name="typed"/>, when given, is what a typed character
-    /// that starts no answer does in place of the list's jump (<see cref="ControlArea.ShowList"/>).
+    /// on another answer (the setting just changed). <paramref name="typed"/>, when given, is what every typed
+    /// character but Space does in place of the list's jump (<see cref="ControlArea.ShowList"/>).
     /// </summary>
     private void ShowQuestionList(string signature, string name, string text, Question question, string? startKey, bool unprompted,
         Action<IReadOnlyList<QuestionOption>> choose, Action escape, Action? typed = null)
@@ -329,8 +332,9 @@ internal sealed partial class MainForm
         }
 
         _askedQuestion = question;
-        // A character typed in the list that starts no answer reads the whole question again, as F7 does (the
-        // maintainer's ask of 2026-11-26): the numbers and y and n still jump to their answers.
+        // Every character typed in the list but Space reads the whole question again, as the read-again key does, and
+        // nothing jumps to an answer by typing, its number, y or n included (the maintainer's word of 2026-11-26:
+        // "every key reads the question and it should also emit a distinct earcon").
         ShowQuestionList(question.Signature, QuestionName(question), QuestionName(question, int.MaxValue), question, null, !UserActed(), AnswerQuestion, () =>
         {
             // A survey's Escape is its Dismiss: an Escape at Claude's prompt is no answer, and a second one rewinds.

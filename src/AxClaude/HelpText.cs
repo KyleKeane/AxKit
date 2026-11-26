@@ -58,8 +58,9 @@ public static class HelpText
         ## When Claude asks something
           A list of the answers takes the message field's place; the question is read each time you arrive there.
           Tab, Shift+Tab or F6 moves between the conversation and the answers.
-          Up, Down, or an answer's number chooses. The number again goes to the next answer starting with it, Shift and the number back, and 0 to answers 1 to 9.
-          Any other letter typed reads the whole question again. A permission question's answers each end with its tool and target.
+          Up and Down choose. In Claude's question every letter, digit or sign typed reads the whole question again, and none jumps to an answer.
+          In the other lists, an answer's number chooses: the number again goes to the next answer starting with it, Shift and the number back, and 0 to answers 1 to 9.
+          A permission question's answers each end with its tool and target.
           Page Up and Page Down move ten answers, Home and End to the first or the last. Space ticks an answer when several are allowed.
           Enter answers. Escape cancels the question, or goes back a step.
           The message field comes back when Claude has your answer.

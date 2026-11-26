@@ -2,7 +2,7 @@
 
 Written by `tools/families.ps1` from `docs/axKit/families.json`; never by hand. One data structure for the four families of axKit and the links between them, asked by the maintainer on 2026-11-16 so that he and the assistant name the same things by the same short names. It describes what the code does today, read from the code that day; it changes no behaviour. Since 2026-11-17 the kinds of event and the sounds are in code too (AxKit.Core/Events: EventKind, EventSound and the table EventPresenter), held to this file both ways by EventKindTests, and every sound is played by raising its kind at the door (AxKit.Forms/EventDoor; docs/axKit/events.md, section 10). Each of the four lists has the same shape, a family with its members. The keys stay in docs/axKit/key-families.json and the commands in docs/axKit/window-commands.json; this file names them and does not copy them. Where the same kind of event sounds one way in one place and another way elsewhere, the event's note says so: those are the open choices, and a sound is added or changed only when the maintainer has chosen it by ear (docs/axKit/earcons.md).
 
-Status: proposed. In numbers: 56 kinds of event, 31 with a sound, 25 without; 24 sounds; 10 families of functions; 13 kinds of start.
+Status: proposed. In numbers: 57 kinds of event, 31 with a sound, 26 without; 24 sounds; 10 families of functions; 13 kinds of start.
 
 ## How to read it
 
@@ -150,6 +150,12 @@ You pressed a key, typed, or chose a command, and this is how it ended. Every co
   - Said: The information itself.
   - In: Every window.
   - Note: Since 2026-11-25 every word a window says goes through the door with its kind. A place that does not name its kind yet is counted as this one, whatever it says, until it is given its own.
+- `question-read-again`: The question the program asks was read again: you typed a character in its list of answers (any but Space, which ticks an answer), or pressed the key that reads it again.
+  - Started by: `typing`, `key`, `menu`, `palette`, `ai-tool`, `script`.
+  - Heard: no sound.
+  - Said: The whole question and the answer you are on. Typing never jumps to an answer in that list, not even its number, y or n.
+  - In: axClaude.
+  - Note: The maintainer's word, 2026-11-26: 'every key reads the question and it should also emit a distinct earcon'. The kind exists for that earcon; it has no sound until he has chosen one by ear (docs/axKit/earcons.md, class 4).
 - `changed`: A setting or a state of the window changed.
   - Started by: `key`, `menu`, `palette`, `ai-tool`, `script`.
   - Heard: no sound.
@@ -721,6 +727,7 @@ Every kind of event that has words or a change on the screen and no sound of its
   - `typed`: You typed a character into a field.
   - `landed`: The key or command moved you, and there is something there.
   - `said`: A command that only tells you something said it: the status, the line number, the current folder.
+  - `question-read-again`: The question the program asks was read again: you typed a character in its list of answers (any but Space, which ticks an answer), or pressed the key that reads it again.
   - `changed`: A setting or a state of the window changed.
   - `done`: The command did its work at once.
   - `asked`: The command asks before it acts: 'Delete a.txt?', 'Save changes to notes.md?', a consent before the first connection.

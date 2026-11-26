@@ -1719,6 +1719,7 @@ Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 3. Type "x".
     You hear: Question 1 of 2: What is your favourite colour? 1. Red.
 4. Type "3".
+    You hear: Question 1 of 2: What is your favourite colour? 1. Red.
 5. Press End.
 6. Press Enter.
     You hear: Sent: 4, Other. Your words next.

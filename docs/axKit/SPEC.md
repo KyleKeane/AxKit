@@ -668,8 +668,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   on Up and Down, the maintainer's report). Both are built into one control, `AxKit.Forms/AxKitList`, the list of every app (`AxKit.Core/TypeAhead` the
   search, tested): a window makes an `AxKitList` and has them, and gives it the names to search only when its items
   are not all names (`Names`). `ListTests` fails on a plain `ListBox` in an app; its one named exception is a
-  question's answers, whose letters are the screen's keys (axClaude D33), and where, on a question of Claude's, a
-  character typed that starts no answer reads the question again (2026-11-26). The lists under a field that keeps the
+  question's answers, whose letters are the screen's keys (axClaude D33), and where, on a question of Claude's,
+  every character typed but Space reads the question again and none jumps to an answer (2026-11-26). The lists under a field that keeps the
   caret (axStart's and axClip's matches and the palette's, never focused) are the same control in its mode for
   that since 2026-11-22 (`AxKitList.Field`, docs/axKit/framework.md FW-4.12): the field's keys move the selection,
   with the edge earcon at an end, and nothing typed reaches the list.

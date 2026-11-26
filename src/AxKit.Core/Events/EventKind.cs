@@ -39,6 +39,9 @@ public enum EventKind
     /// <summary>A command that only tells something said it.</summary>
     Said,
 
+    /// <summary>The question the program asks was read again: a character typed in its answers, or the read-again key.</summary>
+    QuestionReadAgain,
+
     /// <summary>A setting or a state of the window changed.</summary>
     Changed,
 

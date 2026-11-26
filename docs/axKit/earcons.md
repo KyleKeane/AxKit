@@ -127,6 +127,7 @@ The variant is the pitch, and it says who asks:
 | Claude asks | the knocks on E5; two of them is the question sound of today | two knocks exist (`Sounds.Question`); the other counts are proposed |
 | axKit asks (its own notices, questions and forms) | proposed: the same knocks lower, on C5 | proposed |
 | An error among the one-knock notices | proposed: one knock lower still and louder, on A3 | proposed; today an error has no sound of its own |
+| Claude's question read again: a character typed in its answers, or the read-again key (the kind `question-read-again`, 2026-11-26) | to be chosen by the maintainer's ear; his word: "every key reads the question and it should also emit a distinct earcon" | open: the kind exists and is raised with the question's words, with no sound yet |
 
 What this replaces: the quick trill that plays today when a notice opens by itself (`Sounds.Notice`) is retired, its
 work done by the count.

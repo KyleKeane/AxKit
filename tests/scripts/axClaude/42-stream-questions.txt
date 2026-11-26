@@ -27,13 +27,15 @@ expect list 3. Blue
 expect list 4. Other
 # A question the user did not cause holds its answering keys for a moment.
 wait 1500
-# A letter typed in the list reads the question again: type-to-find is given up there, a character that starts no
-# answer reads the whole question, as F7 does, and the focus stays (D33, 2026-11-26); a number still jumps.
+# Every key typed in the list reads the question again: a letter, a digit, an answer's own number, as F7 does, and
+# the focus stays; nothing jumps to an answer by typing (D33, the maintainer's word of 2026-11-26: "every key reads
+# the question").
 type x
 expect said ! Question 1 of 2: What is your favourite colour? 1. Red
 expect focus 1. Red
 type 3
-expect focus 3. Blue
+expect said ! Question 1 of 2: What is your favourite colour? 1. Red
+expect focus 1. Red
 keys end
 expect focus 4. Other
 keys enter

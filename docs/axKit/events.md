@@ -208,7 +208,7 @@ switch. What changed is that no place plays a sound any more; it names what happ
 - **The kinds in code** (EV-3.2): `AxKit.Core/Events/EventKind`, 52 values in the order and the six classes of
   `families.json`; a kind's id in the file is its name in small letters with hyphens (`EventPresenter.Id`). The sounds
   by name are `EventSound`, the 20 of the file. `EventKindTests` holds both lists to the file, both ways.
-- **The presenter's table** (EV-5.2): `EventPresenter.SoundsOf(kind)`: none for 25 kinds, one sound for 24, and two
+- **The presenter's table** (EV-5.2): `EventPresenter.SoundsOf(kind)`: none for 26 kinds (question-read-again among them since 2026-11-26, waiting on the maintainer's ear), one sound for 28, and two
   for the three kinds that sounded two ways before the door (EV-3.3): nothing-found (the buzz, the edge), no-command
   (the bonk, the edge), program-asks (the trill, the two notes). The test holds the table to the file, and pins
   exactly those three, so that none joins them unnoticed.

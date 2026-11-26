@@ -164,6 +164,15 @@
           "note": "Since 2026-11-25 every word a window says goes through the door with its kind. A place that does not name its kind yet is counted as this one, whatever it says, until it is given its own."
         },
         {
+          "id": "question-read-again",
+          "when": "The question the program asks was read again: you typed a character in its list of answers (any but Space, which ticks an answer), or pressed the key that reads it again.",
+          "starts": ["typing", "key", "menu", "palette", "ai-tool", "script"],
+          "sounds": [],
+          "words": "The whole question and the answer you are on. Typing never jumps to an answer in that list, not even its number, y or n.",
+          "apps": "axClaude.",
+          "note": "The maintainer's word, 2026-11-26: 'every key reads the question and it should also emit a distinct earcon'. The kind exists for that earcon; it has no sound until he has chosen one by ear (docs/axKit/earcons.md, class 4)."
+        },
+        {
           "id": "changed",
           "when": "A setting or a state of the window changed.",
           "starts": ["key", "menu", "palette", "ai-tool", "script"],
