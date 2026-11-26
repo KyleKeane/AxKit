@@ -33,10 +33,10 @@ public sealed class StreamModelTests
     }
 
     [Fact]
-    public void Twenty_one_cases_are_recorded()
+    public void Twenty_three_cases_are_recorded()
     {
         // A fixture taken away by mistake would make the theory above pass with fewer cases.
-        Assert.Equal(21, StreamReplay.Cases().Count());
+        Assert.Equal(23, StreamReplay.Cases().Count());
     }
 
     [Fact]
@@ -638,6 +638,99 @@ public sealed class StreamModelTests
         other.Take(FirstAnswer("compact"));
         Assert.False(other.Send("/compact"));
         Assert.Equal("you: /compact", Assert.Single(other.Lines).Text);
+    }
+
+    /// <summary>
+    /// What a tool printed (SM-4.11; the fixture tool-output, Claude Code 2.1.332): under its call, the first three lines
+    /// and how many more, as the screen's preview rows, plain lines; a command that printed nothing shows what Claude
+    /// Code gave back for it. The whole output is kept for the call and for each line shown of it.
+    /// </summary>
+    [Fact]
+    public void What_a_tool_printed_stands_under_its_call_and_is_kept_whole()
+    {
+        StreamReplay.Run("tool-output", out var model);
+        var lines = model.Lines.Select(line => line.Text).ToList();
+        var seq = lines.IndexOf("tool: Bash (seq 1 12)");
+        Assert.True(seq >= 0);
+        Assert.Equal(["1", "2", "3", "… +9 lines", "tool: Bash (true)", "(Bash completed with no output)", "claude: listed"], lines.Skip(seq + 1));
+        Assert.All(model.Lines.Skip(seq + 1).Take(4), line => Assert.Equal(LineKind.Plain, line.Kind));
+        Assert.All(model.Lines.Skip(seq + 1).Take(4), line => Assert.Equal(0, line.HeadingLevel));
+
+        var whole = Assert.IsType<ToolOutput>(model.OutputOf(model.Lines[seq]));
+        Assert.Equal(12, whole.Lines.Count);
+        Assert.Equal("12", whole.Lines[^1]);
+        Assert.Same(whole, model.OutputOf(model.Lines[seq + 2]));
+        Assert.Null(model.OutputOf(model.Lines[^1]));
+    }
+
+    /// <summary>What a tool printed is never spoken, as the screen's preview rows are not: a reply ends at a tool's line, and the rows under it are no reply's (SPEC.md FR-7.4).</summary>
+    [Fact]
+    public void What_a_tool_printed_is_never_spoken_and_the_reply_after_it_is()
+    {
+        var model = new StreamModel();
+        var arrivals = new Arrivals();
+        model.Send("go");
+        model.Take(ClaudeCodeStream.Read("""{"type":"system","subtype":"init","permissionMode":"default","session_id":"s"}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"user","isReplay":true,"message":{"content":"go"}}"""));
+        arrivals.Update(model.Lines, model.Working, ReplySpeechMode.All, toolCalls: true);
+
+        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"text","text":"Running it."},{"type":"tool_use","id":"c1","name":"Bash","input":{"command":"seq 1 5"}}]}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"c1","is_error":false,"content":"1\n2\n3\n4\n5"}]}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"text","text":"Five lines."}]}}"""));
+        var arrival = arrivals.Update(model.Lines, model.Working, ReplySpeechMode.All, toolCalls: true);
+
+        Assert.Equal(["claude: Running it.", "tool: Bash (seq 1 5)", "claude: Five lines."], arrival.SpokenLines.Select(line => line.Text));
+        Assert.Contains(model.Lines, line => line.Text == "… +2 lines");
+    }
+
+    /// <summary>Calls made together get their results in any order: each output goes under its own call, ahead of the next call's line.</summary>
+    [Fact]
+    public void Each_output_goes_under_its_own_call_when_calls_were_made_together()
+    {
+        var model = new StreamModel();
+        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"tool_use","id":"a","name":"Bash","input":{"command":"echo a"}},{"type":"tool_use","id":"b","name":"Bash","input":{"command":"echo b"}}]}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"b","is_error":false,"content":[{"type":"text","text":"bee"}]}]}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"a","is_error":false,"content":"ay\r\n"}]}}"""));
+
+        Assert.Equal(["tool: Bash (echo a)", "ay", "tool: Bash (echo b)", "bee"], model.Lines.Select(line => line.Text));
+    }
+
+    /// <summary>A failed call keeps its first line under it, as before, and its whole output too; a refusal's words for the model alone are neither shown nor kept.</summary>
+    [Fact]
+    public void A_failed_call_shows_its_first_line_and_keeps_the_rest()
+    {
+        var model = new StreamModel();
+        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"tool_use","id":"a","name":"Bash","input":{"command":"make"}},{"type":"tool_use","id":"b","name":"Write","input":{"file_path":"x.txt"}}]}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"a","is_error":true,"content":"Exit code 2\nmake: *** No rule\nstop"}]}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"b","is_error":true,"content":"The user refused this tool call. The user says: no"}]}}"""));
+
+        Assert.Equal(["tool error: Bash (make)", "Exit code 2", "tool error: Write (x.txt)"], model.Lines.Select(line => line.Text));
+        Assert.Equal(3, model.OutputOf(model.Lines[0])!.Lines.Count);
+        Assert.Null(model.OutputOf(model.Lines[2]));
+    }
+
+    /// <summary>The conversation's cap lets go of the oldest lines, and of what their calls printed with them; emptying the conversation empties both.</summary>
+    [Fact]
+    public void The_outputs_go_with_their_lines()
+    {
+        var model = new StreamModel { MaxLines = 20 };
+        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"tool_use","id":"a","name":"Bash","input":{"command":"echo a"}}]}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"a","is_error":false,"content":"a"}]}}"""));
+        var first = model.Lines[0];
+        Assert.NotNull(model.OutputOf(first));
+        for (var i = 0; i < 30; i++)
+        {
+            model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"text","text":"more"}]}}"""));
+        }
+
+        Assert.DoesNotContain(first, model.Lines);
+        Assert.Null(model.OutputOf(first));
+
+        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"tool_use","id":"b","name":"Bash","input":{"command":"echo b"}}]}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"b","is_error":false,"content":"b"}]}}"""));
+        var call = model.Lines.Single(line => line.Text == "tool: Bash (echo b)");
+        model.Clear();
+        Assert.Null(model.OutputOf(call));
     }
 
     /// <summary>An error of the service's that names the sign-in command asks for the sign-in once for a turn (SM-6.2); another error does not.</summary>

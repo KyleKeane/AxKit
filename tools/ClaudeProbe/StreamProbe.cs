@@ -80,7 +80,12 @@ internal static class StreamProbe
     /// Files written into the case's own folder before its process starts, each by its path under that folder and its
     /// text (a custom command, <c>.claude/commands/&lt;name&gt;.md</c>); the folder is deleted with the run.
     /// </param>
-    private sealed record Case(string Name, string What, string[] Options, string Permission, Step[] Steps, Func<Outcome, IEnumerable<string>> Problems, Func<Outcome, IEnumerable<string>>? Findings = null, int LimitSeconds = 90, bool Keeps = false, Func<Outcome, Case>? Next = null, string Relay = "", (string Path, string Text)[]? Files = null);
+    /// <param name="KeepsOutput">
+    /// For a recording: what a tool gave back is kept in the fixture also when the call went well (masked and cut as
+    /// every kept text), for a case whose commands print only what the case itself chose (docs/axClaude/stream-mode.md
+    /// SM-4.11). Every other recording keeps it only for a call that failed.
+    /// </param>
+    private sealed record Case(string Name, string What, string[] Options, string Permission, Step[] Steps, Func<Outcome, IEnumerable<string>> Problems, Func<Outcome, IEnumerable<string>>? Findings = null, int LimitSeconds = 90, bool Keeps = false, Func<Outcome, Case>? Next = null, string Relay = "", (string Path, string Text)[]? Files = null, bool KeepsOutput = false);
 
     private static Step Say(string text, Func<StreamLine, bool>? when = null, int delayMs = 0, string? what = null) =>
         new(when, delayMs, ClaudeCodeStream.UserLine(text), what ?? "a message");
@@ -125,6 +130,42 @@ internal static class StreamProbe
 
     /// <summary>The user's words the case relay-refused-why sends back with its refusal: a word the message never names, so that a reply with it shows that Claude read them.</summary>
     private const string RefusedWhy = "Do not write any file. Reply with the single word heron and nothing else.";
+
+    // ---- Plan approval (docs/axClaude/stream-mode.md SM-7.7, 2026-11-26) ----
+
+    /// <summary>The message of the plan cases: a plan of two short steps for one file in the case's folder, shown for approval with the plan tool, then carried out.</summary>
+    private const string PlanMessage = "Plan how to create a file named plan-probe.txt in the current folder that contains the word hi. Keep the plan to two short steps. When the plan is ready, present it for my approval with the ExitPlanMode tool. After approval, carry it out, then reply with exactly: carried out";
+
+    /// <summary>The user's words of the case plan-keep, with the first plan sent back: a file name the message never names, so that a second plan with it shows that Claude read them.</summary>
+    private const string KeepPlanningWhy = "Name the file plan-kept.txt instead, and present the plan again.";
+
+    /// <summary>The steps of a plan case: the mode set to plan first, as the window's mode key reaches it (SM-5.4), then the message once the request is answered.</summary>
+    private static Step[] PlanSteps(string id) =>
+    [
+        new(null, 0, ClaudeCodeStream.ModeLine(id, "plan"), "the permission mode set to plan"),
+        Say(PlanMessage, line => line.Has(StreamKind.Control), 200, "the plan's message"),
+        Close(Ended),
+    ];
+
+    /// <summary>
+    /// What a plan case found: the tools the permission tool was asked about in order, the keys of the plan tool's input,
+    /// the permission modes the stream named after the start (status notes and start lines, Claude Code's own names),
+    /// which files were made, and whether the second plan named the user's file. Names, keys and yes or no: never a text.
+    /// </summary>
+    private static IEnumerable<string> PlanFindings(Outcome outcome)
+    {
+        var log = File.Exists(outcome.ToolLog) ? File.ReadAllLines(outcome.ToolLog) : [];
+        var plans = log.Select(entry => entry.Split('\t')).Where(parts => parts[0] == ClaudeCodeStream.PlanTool).ToList();
+        yield return "the permission tool was asked, in order: " + (log.Length == 0 ? "nothing" : string.Join(", ", log.Select(entry => entry.Split('\t')[0])));
+        yield return $"the plan tool was asked {plans.Count} time(s); its input's keys: {(plans.Count == 0 ? "none" : plans[0].Length > 1 ? plans[0][1] : string.Empty)}; the question's own keys: {(plans.Count == 0 ? "none" : plans[0].Length > 2 ? plans[0][2] : string.Empty)}";
+        yield return "the second plan named plan-kept.txt: " + (plans.Count > 1 && plans[1].Length > 4 && plans[1][4].Contains("plan-kept", StringComparison.OrdinalIgnoreCase) ? "yes" : "no");
+        var modes = outcome.Lines.Where(entry => entry.Line.Mode.Length > 0 && (entry.Line.Has(StreamKind.Started) || entry.Line.Has(StreamKind.Note) || entry.Line.Has(StreamKind.Control)))
+            .Select(entry => $"{entry.Ms} ms {(entry.Line.Has(StreamKind.Started) ? "start" : entry.Line.Has(StreamKind.Control) ? "answer" : "note")} {entry.Line.Mode}");
+        yield return "modes the stream named: " + string.Join("; ", modes);
+        yield return $"files made: plan-probe.txt {(File.Exists(Path.Combine(outcome.Folder, "plan-probe.txt")) ? "yes" : "no")}, plan-kept.txt {(File.Exists(Path.Combine(outcome.Folder, "plan-kept.txt")) ? "yes" : "no")}";
+        yield return $"turns ended: {outcome.Ends.Count()}, failed: {outcome.Ends.Count(end => end.Failed)}, denials at the end: {(outcome.Ends.Any() ? outcome.Ends.Last().Denials : 0)}; the reply said carried out: {(outcome.Says("carried out") ? "yes" : "no")}";
+        yield return "results that were errors: " + outcome.Parts.Count(part => part.Kind == StreamKind.ToolResult && part.Error);
+    }
 
     /// <summary>For each command the case screen-commands wrote: how it came back, how its end counted, and Claude Code's own words when no turn of the model's ran (redacted, cut).</summary>
     private static IEnumerable<string> CommandFindings(Outcome outcome)
@@ -430,7 +471,37 @@ internal static class StreamProbe
             o => Unless(!File.Exists(Path.Combine(o.Folder, "relay-gone.txt")), "the file must not be made when the window cannot be asked")
                 .Concat(Unless(o.Parts.Any(part => part.Kind == StreamKind.ToolResult && part.Error), "the tool's result should be an error")),
             Relay: "gone"),
+
+        // ---- What a tool printed (docs/axClaude/stream-mode.md SM-4.11, 2026-11-26) ----
+
+        // How a result that went well comes: its whole text, in numbers only. A command of twelve lines and one that
+        // prints nothing.
+        new("tool-output", "what two commands printed, in their results (reported)", Asking, "allow",
+            [Say(ToolOutputMessage), Close(Ended)],
+            o => Unless(o.Parts.Count(part => part.Kind == StreamKind.ToolResult && !part.Error) >= 2, "two results that are no error should come"),
+            o => o.Parts.Where(part => part.Kind == StreamKind.ToolResult)
+                .Select((part, i) => $"result {i + 1}: {(part.Error ? "failed" : "well")}, {part.Output.Length} characters in {(part.Output.Length == 0 ? 0 : part.Output.Replace("\r\n", "\n").Split('\n').Length)} line(s)")
+                .Prepend("tools called: " + string.Join(", ", o.Parts.Where(part => part.Kind == StreamKind.ToolCall).Select(part => part.Tool)))),
+
+        // ---- Plan approval (docs/axClaude/stream-mode.md SM-7.7, 2026-11-26) ----
+
+        // A yes to the plan with each mode the screen offers after it, given in the answer itself (setMode), and a no
+        // with the user's words. The stand-in answers every other tool yes.
+        new("plan-auto", "a plan approved with auto mode (reported)", Asking, "plan-auto", PlanSteps("probe-8"),
+            o => Unless(o.Ends.Any(), "the turn should end"), PlanFindings, LimitSeconds: 150),
+
+        new("plan-edits", "a plan approved with edits accepted without asking (reported)", Asking, "plan-edits", PlanSteps("probe-9"),
+            o => Unless(o.Ends.Any(), "the turn should end"), PlanFindings, LimitSeconds: 150),
+
+        new("plan-manual", "a plan approved with manual approval (reported)", Asking, "plan-manual", PlanSteps("probe-10"),
+            o => Unless(o.Ends.Any(), "the turn should end"), PlanFindings, LimitSeconds: 150),
+
+        new("plan-keep", "a plan sent back with the user's words, then approved with manual approval (reported)", Asking, "plan-keep", PlanSteps("probe-11"),
+            o => Unless(o.Ends.Any(), "the turn should end"), PlanFindings, LimitSeconds: 180),
     ];
+
+    /// <summary>The message of the case tool-output: two commands whose output the case chose, so that a recording may keep what they printed.</summary>
+    private const string ToolOutputMessage = "Run these two commands with the Bash tool, one call each, one after the other: first seq 1 12, then true. After both have run, reply with exactly: listed";
 
     private static IEnumerable<string> EndedAtLeast(Outcome outcome, int turns) =>
         Unless(outcome.Ends.Count() >= turns, $"{turns} turn(s) should end, {outcome.Ends.Count()} did");
@@ -571,6 +642,16 @@ internal static class StreamProbe
                 Close(Ended),
             ],
             o => EndedAtLeast(o, 3), LimitSeconds: 120),
+
+        // What a tool printed (stream-mode.md SM-4.11): two commands whose output is the case's own, so that the
+        // fixture keeps what they gave back.
+        new("tool-output", "what two commands printed: twelve lines, and nothing", [], "allow",
+            [Say(ToolOutputMessage), Close(Ended)], o => EndedAtLeast(o, 1), KeepsOutput: true),
+
+        // Plan approval (stream-mode.md SM-7.7): the mode set to plan, a plan shown with the plan tool and approved
+        // with manual approval, then carried out.
+        new("plan", "a plan shown for approval, approved with manual approval, and carried out", [], "plan-manual",
+            PlanSteps("host-3"), o => EndedAtLeast(o, 1), LimitSeconds: 150),
     ];
 
     /// <summary>From the status note that says compacting to the note of the boundary.</summary>
@@ -758,7 +839,7 @@ internal static class StreamProbe
                     var record = recordFolder is null ? null : new List<(long Ms, string Kind, string Text)>();
                     var outcome = Play(claude, options, c, folder, shapes, blocks, asked, keep, record);
                     if (record is not null && !outcome.TimedOut
-                        && !StreamFixtureMaker.Write(recordFolder!, c.Name, outcome.Lines.Select(entry => entry.Line.Version).FirstOrDefault(v => v.Length > 0) ?? version, record, outcome.ToolLog, outcome.StartedUtcTicks, folder, c.Permission, outcome.ExitCode, notKept))
+                        && !StreamFixtureMaker.Write(recordFolder!, c.Name, outcome.Lines.Select(entry => entry.Line.Version).FirstOrDefault(v => v.Length > 0) ?? version, record, outcome.ToolLog, outcome.StartedUtcTicks, folder, c.Permission, outcome.ExitCode, notKept, c.KeepsOutput))
                     {
                         refused.Add(c.Name);
                     }
@@ -1229,6 +1310,9 @@ internal static class StreamProbe
         return 0;
     }
 
+    /// <summary>How many times this run of the stand-in permission tool was asked about a plan (the case plan-keep sends the first back).</summary>
+    private static int _plansAsked;
+
     private static string Answer(JsonElement call, string mode, string? log)
     {
         if (!call.TryGetProperty("params", out var parameters) || !parameters.TryGetProperty("arguments", out var arguments))
@@ -1266,6 +1350,23 @@ internal static class StreamProbe
             }
 
             return ClaudeCodeStream.QuestionAnswer(input, answers);
+        }
+
+        // A plan (SM-7.7): approved with the mode the case names, given in the answer; plan-keep sends the first plan
+        // back with the user's words and approves the next with manual approval. Every other tool of a plan case: yes.
+        if (mode.StartsWith("plan-", StringComparison.Ordinal))
+        {
+            if (tool != ClaudeCodeStream.PlanTool)
+            {
+                return ClaudeCodeStream.AllowAnswer(input);
+            }
+
+            if (mode == "plan-keep" && _plansAsked++ == 0)
+            {
+                return ClaudeCodeStream.DenyAnswer(ClaudeCodeStream.KeepPlanning(KeepPlanningWhy));
+            }
+
+            return ClaudeCodeStream.AllowWithMode(input, mode switch { "plan-auto" => "auto", "plan-edits" => "acceptEdits", _ => "default" });
         }
 
         return mode switch

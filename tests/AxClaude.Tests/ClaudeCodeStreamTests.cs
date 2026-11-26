@@ -65,7 +65,7 @@ public class ClaudeCodeStreamTests
     public void A_failed_result_gives_its_first_line_but_not_the_words_meant_for_the_model()
     {
         var failed = ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"c1","is_error":true,"content":"Exit code 1\nfatal: not a git repository"}]}}""");
-        Assert.Equal([new StreamPart(StreamKind.ToolResult, "Exit code 1", "", true) { Call = "c1" }], failed.Parts);
+        Assert.Equal([new StreamPart(StreamKind.ToolResult, "Exit code 1", "", true) { Call = "c1", Output = "Exit code 1\nfatal: not a git repository" }], failed.Parts);
 
         var blocks = ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"c2","is_error":true,"content":[{"type":"text","text":"No such file"}]}]}}""");
         Assert.Equal("No such file", Assert.Single(blocks.Parts).Text);
@@ -75,11 +75,16 @@ public class ClaudeCodeStreamTests
         Assert.Equal(string.Empty, Assert.Single(interrupted.Parts).Text);
         var refused = ClaudeCodeStream.Read("{\"type\":\"user\",\"message\":{\"content\":[{\"type\":\"tool_result\",\"tool_use_id\":\"c4\",\"is_error\":true,\"content\":\"" + ClaudeCodeStream.RefusedWords + "\"}]}}");
         Assert.Equal(string.Empty, Assert.Single(refused.Parts).Text);
+        Assert.Equal(string.Empty, Assert.Single(refused.Parts).Output);
+        Assert.Equal(string.Empty, Assert.Single(interrupted.Parts).Output);
         Assert.True(Assert.Single(refused.Parts).Error);
 
-        // A result that did not fail gives nothing of what came back.
-        var fine = ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"c5","content":"a whole file"}]}}""");
-        Assert.Equal([new StreamPart(StreamKind.ToolResult, "", "", false) { Call = "c5" }], fine.Parts);
+        // A result that did not fail gives no first line of an error, and all of what came back as its output
+        // (SM-4.11, since 2026-11-26), as a text or as the texts of its blocks.
+        var fine = ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"c5","content":"a whole file\nof two lines"}]}}""");
+        Assert.Equal([new StreamPart(StreamKind.ToolResult, "", "", false) { Call = "c5", Output = "a whole file\nof two lines" }], fine.Parts);
+        var fineBlocks = ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"c6","content":[{"type":"text","text":"one"},{"type":"image"},{"type":"text","text":"two"}]}]}}""");
+        Assert.Equal("one\ntwo", Assert.Single(fineBlocks.Parts).Output);
     }
 
     [Fact]
@@ -264,7 +269,7 @@ public class ClaudeCodeStreamTests
     public void A_tool_result_says_whether_it_failed_and_a_worker_line_says_so()
     {
         var refused = ClaudeCodeStream.Read("""{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t1","is_error":true,"content":"no"}]},"parent_tool_use_id":null}""");
-        Assert.Equal([new StreamPart(StreamKind.ToolResult, "no", "", true) { Call = "t1" }], refused.Parts);
+        Assert.Equal([new StreamPart(StreamKind.ToolResult, "no", "", true) { Call = "t1", Output = "no" }], refused.Parts);
 
         var worker = ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"text","text":"from the agent"}]},"parent_tool_use_id":"t9"}""");
         Assert.True(worker.FromWorker);

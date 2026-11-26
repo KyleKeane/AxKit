@@ -170,6 +170,14 @@ internal sealed partial class MainForm
             return;
         }
 
+        // SM-8.5: a --resume with no id opens Claude Code's own list of conversations, a screen the stream does not
+        // have. The window asks with a list of its own first, and the start goes on with the one chosen.
+        if (SessionHandover.AsksToChoose(ClaudeArgs))
+        {
+            ChooseConversation(claude, model, folder);
+            return;
+        }
+
         // SM-8.1, SM-8.2: the session is named before the start (the folder's newest in place of --continue), so that
         // the window knows which conversation Claude Code takes up; the stream writes nothing of it, so its older part
         // is read from the session's file, off this thread, and shown before the run's first line. Only into a view
@@ -196,6 +204,80 @@ internal sealed partial class MainForm
                 }
             });
         });
+    }
+
+    /// <summary>The window's own list of the folder's earlier conversations (SM-8.5), with the program it is to start; null when none is asked.</summary>
+    private (ConversationChoice Choice, string Claude)? _resuming;
+
+    /// <summary>The window waits on the user's choice of a conversation before Claude Code is started (SM-8.5): an answer is taken although nothing runs.</summary>
+    private bool StreamChoosesConversation => _resuming is not null;
+
+    /// <summary>
+    /// The folder's earlier conversations (SM-8.5; stream-equivalence.md L4), read off the window's thread, newest
+    /// first, each named by its date and the first words of its first message, and offered as a list of the window's
+    /// own in the control area, shown by the window's code for a question. A choice starts Claude Code with that
+    /// conversation (<see cref="ResumeChosen"/>); Escape starts nothing. A folder with none begins a new conversation.
+    /// A stop, a restart or a close while the files are read ends this start. Numbers only in the log.
+    /// </summary>
+    private void ChooseConversation(string claude, StreamModel model, string folder)
+    {
+        var projectFolders = SessionHandover.ProjectFolders(SessionProjectsFolders(), folder);
+        var start = ++_streamStarts;
+        Task.Run(() =>
+        {
+            var found = ConversationChoice.Find(projectFolders);
+            Post(() =>
+            {
+                if (start != _streamStarts || ProcessRunning || _windowCloses)
+                {
+                    return;
+                }
+
+                Log.Info($"Stream: {found.Count} earlier conversations of the folder offered to resume");
+                if (ConversationChoice.Of(found, DateTime.Now) is not { } choice)
+                {
+                    _model.AddSystemLine("This folder has no earlier conversation to resume, so a new one begins.");
+                    _claudeArgs = [.. SessionHandover.WithChosen(ClaudeArgs, null)];
+                    StartStream(claude);
+                    return;
+                }
+
+                _resuming = (choice, claude);
+                model.Ask(choice.Question);
+                UpdateStatus();
+            });
+        });
+    }
+
+    /// <summary>
+    /// The user chose a conversation (SM-8.5): it becomes the window's arguments, so that a restart takes the same one up,
+    /// and Claude Code is started with it; the older part is shown from its file, as for every conversation taken up
+    /// (SM-8.2).
+    /// </summary>
+    private void ResumeChosen(string claude, string session)
+    {
+        StreamConversationChoiceOver();
+        // The list goes now: the start can mark the window's wait as new before the settle that would close it.
+        CloseArea();
+        _claudeArgs = [.. SessionHandover.WithChosen(ClaudeArgs, session)];
+        Log.Info("Stream: a conversation of the folder was chosen to resume");
+        StartStream(claude);
+    }
+
+    /// <summary>Escape, or the interrupt, on the list of conversations: nothing is started, and the line says how to be asked again.</summary>
+    private void ConversationNotChosen()
+    {
+        StreamConversationChoiceOver();
+        _model.AddSystemLine($"No conversation was chosen, so Claude Code was not started. Press {BundleKeys.Text(AxClaudeKeys.RestartClaude)} to choose again, or {BundleKeys.Text(AxClaudeKeys.NewSession)} to start another way.");
+        UpdateStatus();
+    }
+
+    /// <summary>The list of conversations is over: nothing waits, and what the control area showed is closed by the settle.</summary>
+    private void StreamConversationChoiceOver()
+    {
+        _resuming = null;
+        MarkWaitOver();
+        _streamModel?.Answered();
     }
 
     /// <summary>
@@ -440,6 +522,15 @@ internal sealed partial class MainForm
     /// </summary>
     private void StreamInterrupt()
     {
+        if (_resuming is not null)
+        {
+            // The list of conversations before the start (SM-8.5): closed, and nothing started.
+            UserActedNow();
+            ConversationNotChosen();
+            Announce("Cancelled", false);
+            return;
+        }
+
         if (_stream is not { } host)
         {
             Announce(ClaudeStopped, true);
@@ -563,8 +654,14 @@ internal sealed partial class MainForm
     /// </summary>
     private void StopStream(bool terminateAtOnce)
     {
-        // A start that still reads the session's file is over too.
+        // A start that still reads the session's file is over too, and so is one that waits on the choice of a
+        // conversation (SM-8.5): its list goes.
         _streamStarts++;
+        if (_resuming is not null)
+        {
+            StreamConversationChoiceOver();
+        }
+
         if (_stream is not { } host)
         {
             return;
@@ -648,7 +745,7 @@ internal sealed partial class MainForm
 
         _asking = new StreamAsking(ask, _folder);
         _askedRequest = request;
-        Log.Info($"Stream: Claude Code asks {(ask.IsQuestion ? "a question of Claude's own" : "about a tool call")}");
+        Log.Info($"Stream: Claude Code asks {(ask.IsQuestion ? "a question of Claude's own" : _asking.IsPlan ? "for the approval of Claude's plan" : "about a tool call")}");
         model.Ask(_asking.Current);
     }
 
@@ -684,6 +781,11 @@ internal sealed partial class MainForm
             _messageSent = true;
             QueueWrites(command);
         }
+        else if (_resuming is { } resuming && resuming.Choice.SessionFor(given) is { } session)
+        {
+            // The conversation chosen (SM-8.5): Claude Code is started with it.
+            ResumeChosen(resuming.Claude, session);
+        }
     }
 
     /// <summary>Escape on what Claude Code asks (SM-5.3, SM-7.5): back to the list from the user's own words, else no to the whole. On the window's own list of a value, the list closes.</summary>
@@ -696,6 +798,10 @@ internal sealed partial class MainForm
         else if (_choosing is not null)
         {
             StreamChoiceOver();
+        }
+        else if (_resuming is not null)
+        {
+            ConversationNotChosen();
         }
     }
 

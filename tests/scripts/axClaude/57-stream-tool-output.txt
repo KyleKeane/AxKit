@@ -1,0 +1,30 @@
+# Workflow: Read what a tool printed, over Claude Code's stream
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/stream-mode.md SM-4.11 (2026-11-26): under each tool call the conversation shows the first
+# three lines of what the tool printed, and how many more, as Claude Code's screen shows its preview rows; they are
+# never spoken. The stand-in plays the recording of two commands, seq 1 12 and true (tests/fixtures/streams/tool-output.jsonl,
+# Claude Code 2.1.332): twelve lines, and nothing.
+file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"replySpeech":"all"}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+file claude.cmd @"%AXKIT_STANDIN%" standin --stream tool-output %*
+start claude {temp}\st --claude {temp}\claude.cmd --source stream
+expect said Start Claude Code in this folder?
+wait 1500
+keys tab
+keys enter
+expect said Ready
+
+# Goal: Hear the reply, and not what the tools printed
+type Run the two commands
+keys enter
+expect said Sent
+# The reply is said with Done, and nothing of the output rows before it.
+expect said Done. claude: listed
+
+# Goal: Read the first lines of what each command printed under its call
+do Conversation
+expect text tool: Bash (seq 1 12)
+expect text … +9 lines
+expect text tool: Bash (true)
+expect text (Bash completed with no output)

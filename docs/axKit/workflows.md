@@ -314,8 +314,20 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Refuse with your own words
 52. **Type a slash command or a ! line over Claude Code's stream**
     - Send a name that is no command as a message
-53. **Have a short exchange with Claude**
-54. **Answer a set of two questions from Claude**
+53. **Read what a tool printed, over Claude Code's stream**
+    - Hear the reply, and not what the tools printed
+    - Read the first lines of what each command printed under its call
+54. **Choose an earlier conversation to resume, over Claude Code's stream**
+    - Hear the folder's conversations, newest first
+    - Start nothing when no conversation is chosen
+    - Choose the conversation and go on with it
+55. **Approve Claude's plan, over Claude Code's stream**
+    - Go to plan mode
+    - Hear the plan with its caution, the no that keeps planning first
+    - Read the whole plan before answering
+    - Approve the plan and approve each edit yourself
+56. **Have a short exchange with Claude**
+57. **Answer a set of two questions from Claude**
 
 ## axClip
 

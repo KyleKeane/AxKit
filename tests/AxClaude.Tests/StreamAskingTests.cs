@@ -442,4 +442,105 @@ public sealed class StreamAskingTests
         var no = Json(asking.Escape()!);
         Assert.Equal("deny", no.GetProperty("behavior").GetString());
     }
+
+    /// <summary>
+    /// Claude's plan for approval (SM-7.7; the fixture plan, Claude Code 2.1.332): the plan is the question's text, after
+    /// the caution, which is heard with it every time (rule 11); the screen's three answers with the no that keeps
+    /// planning where the list starts, then the yes that asks before each edit, then auto mode; and one that only opens
+    /// the whole plan. No core: the title names no target.
+    /// </summary>
+    [Fact]
+    public void A_plan_is_asked_with_its_text_the_caution_first_and_keep_planning_where_the_list_starts()
+    {
+        var asking = Asking("plan");
+        var question = asking.Current;
+
+        Assert.True(asking.IsPlan);
+        Assert.Equal("Claude has a plan and asks to carry it out", question.Title);
+        Assert.Equal(AiCaution.PlanAsked("Claude"), question.Text[0]);
+        Assert.Equal("Plan: create plan-probe.txt", question.Text[1]);
+        Assert.Contains("1. Write plan-probe.txt in the current folder with the content hi.", question.Text);
+        Assert.DoesNotContain(question.Text, line => line.Trim().Length == 0 || line.StartsWith('#'));
+        Assert.Equal(["1", "2", "3", "4"], question.Options.Select(option => option.Key));
+        Assert.Equal([StreamAsking.KeepPlanningLabel, StreamAsking.PlanManualLabel, StreamAsking.PlanAutoLabel, "Read the whole plan"], question.Options.Select(option => option.Text));
+        Assert.StartsWith("No", question.Options[0].Text);
+        Assert.Null(question.Core);
+    }
+
+    /// <summary>A yes to a plan lets the call run and sets the mode the work goes on in, in the answer (measured: Claude Code's next status names it); the plan then stays in the conversation under the answer.</summary>
+    [Theory]
+    [InlineData(StreamAsking.PlanManualKey, "default", "You approved Claude's plan, and approve each edit yourself:")]
+    [InlineData(StreamAsking.PlanAutoKey, "auto", "You approved Claude's plan, with auto mode:")]
+    public void A_yes_to_a_plan_sends_its_mode_and_leaves_the_plan_on_record(string key, string mode, string record)
+    {
+        var asking = Asking("plan");
+        Assert.Empty(asking.AnswerRecord);
+        var yes = Json(asking.Answer(key)!);
+
+        Assert.Equal("allow", yes.GetProperty("behavior").GetString());
+        Assert.Contains("plan-probe.txt", yes.GetProperty("updatedInput").GetProperty("plan").GetString());
+        var update = Assert.Single(yes.GetProperty("updatedPermissions").EnumerateArray());
+        Assert.Equal("setMode", update.GetProperty("type").GetString());
+        Assert.Equal(mode, update.GetProperty("mode").GetString());
+        Assert.Equal("session", update.GetProperty("destination").GetString());
+        Assert.Equal(record, asking.AnswerRecord[0]);
+        Assert.Contains("Plan: create plan-probe.txt", asking.AnswerRecord);
+        Assert.Null(asking.ToldWhyLine);
+        // The key of a yes is no lasting yes for a tool.
+        Assert.Null(asking.StandingWords(key));
+    }
+
+    /// <summary>The no that keeps planning asks for the user's words first, as the screen's does, and sends the plan back with them; Escape from the words goes back to the list.</summary>
+    [Fact]
+    public void Keep_planning_asks_for_words_then_sends_the_plan_back_with_them()
+    {
+        var asking = Asking("plan");
+        Assert.True(asking.AsksForWords(StreamAsking.KeepPlanningKey));
+        Assert.False(asking.AsksForWords(StreamAsking.RefuseWhyKey));
+        Assert.Null(asking.Answer(StreamAsking.KeepPlanningKey));
+        Assert.Equal(ClaudeCodeTexts.TextPromptFor(1, StreamAsking.KeepPlanningLabel), asking.WordsPrompt);
+
+        Assert.Null(asking.Escape());
+        Assert.Null(asking.WordsPrompt);
+        Assert.Null(asking.Answer(StreamAsking.KeepPlanningKey));
+        Assert.Null(asking.Answer("   "));
+        var no = Json(asking.Answer("Name it plan-kept.txt")!);
+
+        Assert.Equal("deny", no.GetProperty("behavior").GetString());
+        Assert.Equal(ClaudeCodeStream.KeepPlanning("Name it plan-kept.txt"), no.GetProperty("message").GetString());
+        Assert.Equal("You sent Claude's plan back to keep planning and told Claude: Name it plan-kept.txt", asking.ToldWhyLine);
+        Assert.Empty(asking.AnswerRecord);
+        // What Claude is told comes back as the call's result: words for Claude alone, never shown again.
+        var result = ClaudeCodeStream.Read("{\"type\":\"user\",\"message\":{\"content\":[{\"type\":\"tool_result\",\"tool_use_id\":\"c\",\"is_error\":true,\"content\":" + JsonSerializer.Serialize(ClaudeCodeStream.KeepPlanning("Name it plan-kept.txt")) + "}]}}");
+        Assert.Equal(string.Empty, result.Parts[0].Text);
+        Assert.Equal(string.Empty, result.Parts[0].Output);
+    }
+
+    /// <summary>The answer that opens the whole plan answers nothing; its text begins with the plan's caution, then the plan as a reader reads it. Escape refuses.</summary>
+    [Fact]
+    public void Reading_the_whole_plan_answers_nothing_and_begins_with_the_caution()
+    {
+        var asking = Asking("plan");
+        Assert.True(asking.Explains(StreamAsking.PlanReadKey));
+        Assert.False(asking.Explains(StreamAsking.ExplainKey));
+        Assert.Null(asking.Answer(StreamAsking.PlanReadKey));
+        Assert.Equal("Claude's plan", asking.ExplainTitle);
+        Assert.StartsWith(AiCaution.Plan("Claude") + "\n\nPlan: create plan-probe.txt", asking.ExplainText);
+        Assert.Contains("2. Verify the file exists and contains hi.", asking.ExplainText);
+
+        Assert.Equal("deny", Json(asking.Escape()!).GetProperty("behavior").GetString());
+    }
+
+    /// <summary>The plan's caution says who wrote it, that it can be wrong, that nothing is checked, what approving lets happen, and whose act it is (rule 11).</summary>
+    [Fact]
+    public void The_plans_caution_says_who_wrote_it_and_whose_act_approving_is()
+    {
+        var caution = AiCaution.Plan("Claude");
+        Assert.Contains("an AI model, wrote this plan", caution);
+        Assert.Contains("It can be wrong", caution);
+        Assert.Contains("axKit has checked none of it", caution);
+        Assert.Contains("auto mode", caution);
+        Assert.Contains("your own act", caution);
+        Assert.Contains("Approving lets Claude carry it out", AiCaution.PlanAsked("Claude"));
+    }
 }

@@ -9,8 +9,9 @@ fed by the stream, with its second ways to send; and the folder's trust and the 
 window made for the stream can hold a conversation and answer what Claude asks. Since 2026-11-25 a reply's text is
 made plain (stage 7, SM-4.5), and the sessions are built (stage 6, section 13, the last part): the older conversation
 shown when a session is taken up, and the hand-over between the two sources. Since 2026-11-26 the NVDA plan has its
-section for the mode (stage 8; its pass by ear is owed), and the first round of what `stream-equivalence.md` section 5
-lists is built (section 13, the last part). Not done yet: the maintainer's own use (stage 8; the live scripts 48, 49
+section for the mode (stage 8; its pass by ear is owed), and the first two rounds of what `stream-equivalence.md`
+section 5 lists are built (section 13, the last parts): what a tool printed, the choice of an earlier conversation and
+plan approval among them. Not done yet: the maintainer's own use (stage 8; the live scripts 48, 49
 and 52 are there). The open ends stages 4 and 5 left are
 built since the same day (section 13, the last part), but for the folder's yes, which is remembered for no folder
 until the maintainer says so. The points of section 12 are taken as proposed until the maintainer has heard the mode.
@@ -127,6 +128,19 @@ screen, or mixed).
   never read. A Claude Code that does not answer the request is taken to be up once the request has waited five
   seconds while the process runs (`StreamModel.FirstRequestUnanswered`, `ClaudeModel.Up`), and Ready is said then
   by the same rule, not only after the first turn (built 2026-11-25).
+- SM-4.11 **What a tool printed** (2026-11-26; `stream-equivalence.md` L21). The screen shows a call's preview rows under
+  its tool row: measured with Claude Code 2.1.332 (section 13), the first three lines of a command's output and then
+  "… +9 lines (ctrl+o to expand)", or "(No output)". The stream gives every result whole (the fixture `tool-output`). So
+  under each call that went well the conversation shows the first three lines of what came back and, when there are
+  more, a line "… +9 lines" (the hint goes: the window does not send Ctrl+O), as plain lines, the kind the screen's
+  preview rows have, so that the keys treat them alike: a reply ends at a tool's line, so they are never spoken, and
+  p does not stop on them. What a command that printed nothing gave back is shown as Claude Code gave it ("(Bash
+  completed with no output)"). Each output goes under its own call, also when calls made together are answered in
+  another order. A call that failed keeps its first line under its `tool error:` line, as before (stage 2). The words
+  of a refusal or an interrupt meant for the model alone are neither shown nor kept. The whole output of every call is
+  kept with its lines (`StreamModel.OutputOf`, `Streaming/ToolOutput`), so that a key can read all of it, which the
+  screen cannot; none is built yet, since the screen has no such key. The older conversation of a session taken up
+  shows no output (the session file's reader never reads a result's text, EG-3.4).
 
 ## 5. What the window sends
 
@@ -249,6 +263,22 @@ mode each is simply absent, and the window says so where the user would look for
   its answer, `LineKind.AnswerRecord`, the words `ClaudeCodeTexts`'s (`StreamAsking.AnswerRecord`).
 - SM-7.6 **What an AI asks for says so** (bundle rule 11): a permission question is Claude's request to run
   something; its first words say who asks, and running is never where the list starts.
+- SM-7.7 **Plan approval** (2026-11-26; `stream-equivalence.md` L13). In plan mode (Ctrl+P reaches it, SM-5.4) Claude
+  leaves it by calling its plan tool (`ClaudeCodeStream.PlanTool`), and Claude Code asks its permission tool first, with
+  the plan in the call's input (measured, section 13). The screen asks "Ready to code?". The window asks it as a
+  question of its own kind (`StreamAsking.IsPlan`): its title "Claude has a plan and asks to carry it out", its text the
+  caution, heard every time (`AiCaution.PlanAsked`), and then the plan, its Markdown made plain (SM-4.5); four answers,
+  the screen's three with running never where the list starts: "1. No, keep planning, and tell Claude what to change",
+  which asks for the user's words in the control area's field as "No, and tell Claude why" does and sends the plan back
+  with them (`ClaudeCodeStream.KeepPlanning`; Claude stays in plan mode, plans again and asks anew, measured); "2. Yes,
+  and manually approve edits"; "3. Yes, and use auto mode"; and "4. Read the whole plan", which answers nothing and
+  opens the plan as a text, its caution first (`AiCaution.Plan`). A yes lets the call run and sets the mode the work
+  goes on in, in the answer itself (`ClaudeCodeStream.AllowWithMode`, the mode `default` or `auto`): Claude Code's next
+  status names it, and the window says the mode as for any change of it. Escape on the list is no, as for any tool call.
+  The conversation keeps, after a yes, "You approved Claude's plan, and approve each edit yourself:" (or "with auto
+  mode:") and the plan, as rows of the answer's record (`LineKind.AnswerRecord`, never spoken), and after the no that
+  keeps planning "You sent Claude's plan back to keep planning and told Claude:" with the words. No answer carries a
+  core (SPEC.md D33: the title names no target).
 
 ## 8. Sessions
 
@@ -275,6 +305,19 @@ mode each is simply absent, and the window says so where the user would look for
   window takes the folder's newest session, which is the screen's after the screen has used it.
 - SM-8.4 **`/clear`** begins a new session and says so with a line of its own (measured): the window empties the
   conversation as it does today and keeps the new id.
+- SM-8.5 **Choosing an earlier conversation** (2026-11-26; `stream-equivalence.md` L4). A `--resume` with no id (New
+  session's preset "Choose a conversation to resume", or the user's own) opens Claude Code's own list of conversations,
+  a screen the stream does not have. So before the start the window asks with a list of its own
+  (`Streaming/ConversationChoice`), shown by its code for a question, as Choose the model is (SM-5.5): the folder's
+  session files, newest first, each named by when it was last written and the first words of its first message
+  ("26 November, 14:05: Remember this word for later: kiwi."; eight words and 60 characters at most, an ellipsis when
+  cut). The files are read off the window's thread, each only to its first message within its first 256 KB; a file
+  without a message of the user's there is left out. The session file is Claude Code's internal and private record:
+  nothing of it is logged, the log has the count alone, and no more than those first words is shown. Enter starts
+  Claude Code with `--resume` and the conversation's id, which become the window's arguments (a restart takes the same
+  conversation up), and the older part is shown as for every conversation taken up (SM-8.2). Escape, or the interrupt,
+  starts nothing: the conversation says so and names Ctrl+Shift+R, which asks again. A folder with no earlier
+  conversation begins a new one and says so. While the list waits, the status bar says "starting".
 
 ## 9. The switch and the way back
 
@@ -761,3 +804,42 @@ the stream answers the first request with some of the commands 2.1.332 listed, `
 scripts `55-stream-refused-why` and `56-stream-typed-commands` play the new answer and the typed texts. What is owed:
 the NVDA pass of the section, the error of a lapsed sign-in over the stream (not recorded), and the Store's copy (no
 script can run it).
+
+**Round 2 of the must-build list (2026-11-26).** The three medium items of `stream-equivalence.md` section 5: L21, L4
+and L13. Measured first, live, with Claude Code 2.1.332 and Haiku, one session at a time, in fresh folders under
+`C:\Temp`, printing kinds, counts, keys and yes or no only:
+
+1. The screen's preview of a tool's output, recorded with `tools/PtyCapture` (screen reader mode, 240 by 50, not
+   committed) and read through its redacting dump: `seq 1 12` drew `tool: Bash (seq 1 12)`, the rows `1`, `2`, `3`,
+   `… +9 lines (ctrl+o to expand)` and `Allowed by auto mode`; `true` drew `(No output)`.
+2. The same two commands over the stream (`tools/ClaudeProbe stream`, the case `tool-output`, and the recording of the
+   same name): each result is a line of the user's with the whole output as its content, 12 lines for the first; the
+   second gives "(Bash completed with no output)". The permission tool was not asked (the user's own rules allowed
+   both). The fixture keeps the results' text, the one case that does (`KeepsOutput`: commands whose output the case
+   chose).
+3. Plan approval, by four reported cases and the recording `plan`; each sets the mode to plan with the mode request,
+   then asks for a plan of two steps for one file, shown with the plan tool, then carried out:
+   - In plan mode Claude first writes its plan to a file under Claude Code's own folder (`.claude\plans`), unasked, then
+     calls the plan tool. Its input holds `plan` (the plan in Markdown) and `planFilePath`; the permission tool is asked
+     with the tool's name, that input and the call's id, as for any call.
+   - `plan-manual`: the yes with the mode `default` given in the answer (`updatedPermissions` of the kind `setMode`):
+     a status note names `default` at once, and the Write that follows is asked about. The file is made.
+   - `plan-edits`: the same with `acceptEdits`: the status note names it, and the Write is not asked about. So the
+     answer's mode is the mode the work goes on in.
+   - `plan-auto`: the same with `auto`: the status note names `auto`, and nothing more is asked.
+   - `plan-keep`: the plan sent back, refused with the user's words ("Name the file plan-kept.txt instead, and present
+     the plan again"): the mode stayed plan, Claude called the plan tool again with a plan that named `plan-kept.txt`,
+     which was approved with `default`; `plan-kept.txt` was made and `plan-probe.txt` not, and the turn's end counted
+     one denial.
+
+The plan recording was first refused by the fixtures' maker: the plan file's name holds the session's id. The maker now
+turns an id quoted inside a kept text into a number, as it does with the fields' ids (`session-1`), and its check is
+unchanged. Built on that, each with its tests: SM-4.11 (`ToolOutput`, `StreamPart.Output`, `StreamModel.OutputOf`),
+SM-8.5 (`ConversationChoice`, `SessionHandover.AsksToChoose`, `WithChosen` and `All`), SM-7.7 (`StreamAsking.IsPlan`
+and its four answers, `ClaudeCodeStream.PlanTool`, `AllowWithMode`, `KeepPlanning`, `AiCaution.PlanAsked` and
+`Plan`). Nothing new is heard but through the kinds that exist: the plan and the list of conversations are questions
+of the control area, and the output is never spoken. The stand-in of the stream writes several session files with
+`--session a,b` (the last the newest); the stand-in scripts `57-stream-tool-output`, `58-stream-resume-choice` and
+`59-stream-plan` play the three. What is owed: the NVDA pass of steps 14 to 16 of the plan's section 26, a plan
+approved with auto mode in a real conversation (the stand-in plays the manual approval only), and the choice of an
+earlier conversation in a folder with many long sessions.

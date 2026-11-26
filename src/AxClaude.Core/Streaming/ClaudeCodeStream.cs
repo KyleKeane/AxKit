@@ -75,6 +75,13 @@ public sealed record StreamPart(StreamKind Kind, string Text, string Tool, bool 
 
     /// <summary>What a <see cref="StreamKind.ToolCall"/> is about, in the call's own words: the command, the file, the pattern, the address; empty when the input names none.</summary>
     public string About { get; init; } = string.Empty;
+
+    /// <summary>
+    /// What a <see cref="StreamKind.ToolResult"/> gave back, whole, as the model was given it: what a command printed,
+    /// a file's lines, a tool's words (docs/axClaude/stream-mode.md SM-4.11). Empty when it gave back nothing, and for
+    /// the words a refusal or an interrupt gives the model alone, which the user is not told again.
+    /// </summary>
+    public string Output { get; init; } = string.Empty;
 }
 
 /// <summary>
@@ -253,6 +260,46 @@ public static class ClaudeCodeStream
 
     /// <summary>The tool whose call is Claude's own question to the user: its input holds the questions, and the answer goes back with the same input and <c>answers</c>.</summary>
     public const string QuestionTool = "AskUserQuestion";
+
+    /// <summary>
+    /// The tool Claude calls in plan mode to leave it with a plan for the user's approval: its input holds the plan
+    /// (<see cref="PlanMember"/>), and Claude Code asks its permission tool before the call, as the screen asks
+    /// "Ready to code?" (docs/axClaude/stream-mode.md SM-7.7).
+    /// </summary>
+    public const string PlanTool = "ExitPlanMode";
+
+    /// <summary>The member of <see cref="PlanTool"/>'s input that holds the plan, as Claude wrote it in Markdown.</summary>
+    public const string PlanMember = "plan";
+
+    /// <summary>
+    /// The permission tool's answer that lets the call run and sets the session's permission mode (one of Claude
+    /// Code's own names, <see cref="StreamLine.Mode"/>): the answer to a plan, whose yes says which mode the work goes
+    /// on in, as the screen's "Yes, and use auto mode" and "Yes, manually approve edits" do. Documented for the Agent
+    /// SDK's callback as a permission update of the kind <c>setMode</c>; measured for the raw tool by the probe's
+    /// cases plan-auto and plan-manual (SM-7.7).
+    /// </summary>
+    public static string AllowWithMode(JsonElement input, string mode) => Json(writer =>
+    {
+        writer.WriteString("behavior", "allow");
+        writer.WritePropertyName("updatedInput");
+        input.WriteTo(writer);
+        writer.WriteStartArray("updatedPermissions");
+        writer.WriteStartObject();
+        writer.WriteString("type", "setMode");
+        writer.WriteString("mode", mode);
+        writer.WriteString("destination", "session");
+        writer.WriteEndObject();
+        writer.WriteEndArray();
+    });
+
+    /// <summary>
+    /// What Claude is told when the user does not approve a plan and wants to keep planning, with the user's own words
+    /// (the screen's "No, keep planning", which asks for them): Claude stays in plan mode and plans again (SM-7.7).
+    /// </summary>
+    public static string KeepPlanning(string words) => KeepPlanningWords + " The user says: " + words.Trim();
+
+    /// <summary>How <see cref="KeepPlanning"/> begins: words for the model, which a reader of the stream does not show the user again.</summary>
+    private const string KeepPlanningWords = "The user did not approve the plan and wants to keep planning.";
 
     /// <summary>The line that sends a message of the user's.</summary>
     public static string UserLine(string text) => Json(writer =>
@@ -801,13 +848,14 @@ public static class ClaudeCodeStream
         return false;
     }
 
-    /// <summary>A tool's result: whose call it answers, whether it failed, and when it did, the first line of what it gave back.</summary>
+    /// <summary>A tool's result: whose call it answers, whether it failed, the first line of what it gave back when it did, and all of what it gave back (<see cref="StreamPart.Output"/>).</summary>
     private static StreamPart Result(JsonElement block)
     {
         var failed = Flag(block, "is_error");
         var said = string.Empty;
-        if (failed && block.TryGetProperty("content", out var content))
+        if (block.TryGetProperty("content", out var content))
         {
+            // A text, or blocks of which the texts are read one under the other (an image's block has none).
             said = content.ValueKind == JsonValueKind.String
                 ? content.GetString() ?? string.Empty
                 : content.ValueKind == JsonValueKind.Array
@@ -816,13 +864,14 @@ public static class ClaudeCodeStream
         }
 
         // Words meant for the model alone, when the user refused or interrupted the call, also with the user's own words
-        // after them: the user knows, and is not told again.
-        if (said.StartsWith(NotProceeding, StringComparison.Ordinal) || said.StartsWith(RefusedWords, StringComparison.Ordinal))
+        // after them (a plan sent back for more planning among them): the user knows, and is not told again.
+        if (said.StartsWith(NotProceeding, StringComparison.Ordinal) || said.StartsWith(RefusedWords, StringComparison.Ordinal)
+            || said.StartsWith(KeepPlanningWords, StringComparison.Ordinal))
         {
             said = string.Empty;
         }
 
-        return new(StreamKind.ToolResult, FirstLine(said), string.Empty, failed) { Call = Text(block, "tool_use_id") };
+        return new(StreamKind.ToolResult, failed ? FirstLine(said) : string.Empty, string.Empty, failed) { Call = Text(block, "tool_use_id"), Output = said };
     }
 
     /// <summary>

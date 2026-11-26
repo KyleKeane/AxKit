@@ -339,7 +339,8 @@ internal sealed partial class MainForm
     protected override void UpdateStatus()
     {
         // A start that waits a moment for Claude Code's version (events-and-grounding.md EG-2.4) is a start, not a stop.
-        var state = !ProcessRunning ? (_hookVersionWait ? "starting" : "stopped")
+        // So is a start over the stream that waits on the choice of a conversation (stream-mode.md SM-8.5).
+        var state = !ProcessRunning ? (_hookVersionWait || (Streams && StreamChoosesConversation) ? "starting" : "stopped")
             : _model.TranscriptViewOpen ? "detailed view on, Ctrl+O turns it off"
             : _model.PendingScreen is { } screen && ScreenActions.IsInformation(screen) ? "showing " + ScreenActions.StatusName(screen)
             : _model.PromptPending ? "waiting for your answer"

@@ -17,7 +17,8 @@
 //       --session writes tests/fixtures/records/<record>.jsonl as the session file of the stand-in's conversation,
 //       where Claude Code keeps it, before the play: under CLAUDE_CONFIG_DIR, which must lie in the run's folder
 //       (the script's claude.cmd sets it), so that a window started there after it takes that conversation up
-//       (docs/axClaude/stream-mode.md SM-8.2; script 51).
+//       (docs/axClaude/stream-mode.md SM-8.2; script 51). Several records separated by commas are several earlier
+//       conversations, the last named the newest (SM-8.5; script 58).
 //       <case> is a file's name without its ending under tests/fixtures/streams of the run's repository: the one the
 //       runner works in, which it hands to everything it starts in AXKIT_STANDIN_REPOSITORY (--repository, or the
 //       folder above the runner that holds AxKit.sln), else the one above this program. A runner built outside the
@@ -166,7 +167,6 @@ internal static class StreamStandIn
             throw new InvalidDataException($"{SessionOption} writes a session file only into a configuration folder inside the run's own folder, named by {ConfigFolderVariable}.");
         }
 
-        var source = FixturePath(named, "records");
         var project = new StringBuilder();
         foreach (var c in Path.TrimEndingDirectorySeparator(Environment.CurrentDirectory))
         {
@@ -175,7 +175,17 @@ internal static class StreamStandIn
 
         var folder = Path.Combine(Path.GetFullPath(config), "projects", project.ToString());
         Directory.CreateDirectory(folder);
-        File.Copy(source, Path.Combine(folder, StandInSession + ".jsonl"), overwrite: true);
+        // Several records, separated by commas (docs/axClaude/stream-mode.md SM-8.5; script 58), are several earlier
+        // conversations of the folder: each its own session, the first named the stand-in's own and the oldest, each
+        // next a minute newer, so that a window lists them newest first.
+        var records = named.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var now = DateTime.UtcNow;
+        for (var i = 0; i < records.Length; i++)
+        {
+            var file = Path.Combine(folder, (i == 0 ? StandInSession : StandInSession[..^1] + (i + 1).ToString(CultureInfo.InvariantCulture)) + ".jsonl");
+            File.Copy(FixturePath(records[i], "records"), file, overwrite: true);
+            File.SetLastWriteTimeUtc(file, now.AddMinutes(i - records.Length));
+        }
     }
 
     private static int Refuse(string message)

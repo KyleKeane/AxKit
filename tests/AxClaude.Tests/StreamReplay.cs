@@ -109,7 +109,8 @@ internal static class StreamReplay
         var parts = line.Parts.Select(part => part.Kind switch
         {
             StreamKind.ToolCall => $"ToolCall {part.Tool} ({part.About})",
-            StreamKind.ToolResult => part.Error ? $"ToolResult, failed: \"{Short(part.Text)}\"" : "ToolResult",
+            StreamKind.ToolResult => (part.Error ? $"ToolResult, failed: \"{Short(part.Text)}\"" : "ToolResult")
+                + (part.Output.Length > 0 ? $", {new ToolOutput(part.Output).Lines.Count} line(s) of output" : string.Empty),
             StreamKind.Note => "Note " + part.Text + (line.Status.Length > 0 ? " " + line.Status : string.Empty),
             StreamKind.Unknown => "Unknown " + part.Text,
             StreamKind.Control => (part.Error ? "Control, refused" : "Control, done") + (line.Models.Count > 0 ? $", {line.Models.Count} models" : string.Empty),

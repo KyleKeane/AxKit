@@ -1,0 +1,33 @@
+> message: Run these two commands with the Bash tool, one call each, one after th…
+    a block for it
+    now: working, mode not known, 0 waiting
+< Started, mode default, model claude-haiku-5-5
+    now: working, mode manual mode on, 0 waiting
+< Message: Run these two commands with the Bash tool, one call each, one after th…
+< ToolCall Bash (seq 1 12)
+    the response started
+< Note rate_limit_event
+< ToolResult, 12 line(s) of output
+< ToolCall Bash (true)
+< ToolResult, 1 line(s) of output
+< Text: listed
+< Ended, well, turns 3, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> closed
+the process ended with code 0
+
+-- the conversation
+[InputMarker h1] # Input 1
+[UserMessage] Run these two commands with the Bash tool, one call each, one after the other: first seq 1 12, then true. After both have run, reply with exactly: listed
+[UserMessage] 
+[OutputMarker h1] # Output 1 Reply from Claude
+[UserMessage] 
+[Tool] tool: Bash (seq 1 12)
+[Plain] 1
+[Plain] 2
+[Plain] 3
+[Plain] … +9 lines
+[Tool] tool: Bash (true)
+[Plain] (Bash completed with no output)
+[ClaudeReply] claude: listed

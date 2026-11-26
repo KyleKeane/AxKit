@@ -1,0 +1,59 @@
+> mode
+< Control, done
+< Note status
+    now: idle, mode plan mode on, 0 waiting
+> message: Plan how to create a file named plan-probe.txt in the current folder t…
+    a block for it
+    now: working, mode plan mode on, 0 waiting
+< Started, mode plan, model claude-haiku-5-5
+< Note thinking_tokens
+< Note thinking_tokens
+< Message: Plan how to create a file named plan-probe.txt in the current folder t…
+< Thinking
+    the response started
+< ToolCall Write (C:\xxxxx\xxxx\.claude\plans\plan-how-to-create-jolly-wombat-of-session-1.md)
+< ToolResult
+< ToolCall ToolSearch (select:ExitPlanMode)
+< ToolResult
+< Note rate_limit_event
+< ToolCall ExitPlanMode ()
+? the permission tool is asked about ExitPlanMode
+    now: working, mode plan mode on, 0 waiting, asks "Permission: ExitPlanMode"
+! answered: plan-manual
+    now: working, mode plan mode on, 0 waiting
+< Note status
+    announced: manual mode on
+    now: working, mode manual mode on, 0 waiting
+< ToolResult
+< Note thinking_tokens
+< Note thinking_tokens
+< Thinking
+< ToolCall Write (C:\work\plan-probe.txt)
+? the permission tool is asked about Write
+    now: working, mode manual mode on, 0 waiting, asks "Permission: Write"
+! answered: allow
+    now: working, mode manual mode on, 0 waiting
+< ToolResult
+< ToolCall Read (C:\work\plan-probe.txt)
+< ToolResult
+< Text: carried out
+< Ended, well, turns 6, completed
+    the bell
+    now: idle, mode manual mode on, 0 waiting
+> closed
+the process ended with code 0
+
+-- the conversation
+[InputMarker h1] # Input 1
+[UserMessage] Plan how to create a file named plan-probe.txt in the current folder that contains the word hi. Keep the plan to two short steps. When the plan is ready, present it for my approval with the ExitPlanMode tool. After approval, carry it out, then reply with exactly: carried out
+[UserMessage] 
+[OutputMarker h1] # Output 1 Reply from Claude
+[UserMessage] 
+[Tool] tool: Write (C:\xxxxx\xxxx\.claude\plans\plan-how-to-create-jolly-wombat-of-session-1.md)
+[Tool] tool: ToolSearch (select:ExitPlanMode)
+[Tool] tool: ExitPlanMode
+[Question] Question: Permission: ExitPlanMode
+[Tool] tool: Write (plan-probe.txt)
+[Question] Question: Permission: Write
+[Tool] tool: Read (plan-probe.txt)
+[ClaudeReply] claude: carried out

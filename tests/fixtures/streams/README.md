@@ -24,7 +24,7 @@ The first line is the recording's own: Claude Code's version, the day, and how t
 
 ## What a file does not hold
 
-The maker is the whitelist that makes a fixture safe to commit. A field it does not name is not kept. Ids are numbers in the order they were met (`session-1`, `call-1`, `task-1`). The folder a case ran in is `C:\work`. Of a tool's result only whether it failed is kept, and its text when it did. Thinking is kept as a kind without its text. The start line keeps the version, the permission mode and the session's number: nothing of the user's commands, servers, skills or paths. A file that still held an e-mail address, an account path, the account's or the computer's name would have been refused and deleted.
+The maker is the whitelist that makes a fixture safe to commit. A field it does not name is not kept. Ids are numbers in the order they were met (`session-1`, `call-1`, `task-1`), also an id quoted inside a kept text (a plan file named after its session; `id-1` for one no field gave, since 2026-11-26). The folder a case ran in is `C:\work`. Of a tool's result only whether it failed is kept, and its text when it did, or when the case ran only commands whose output it chose itself (`tool-output`). Thinking is kept as a kind without its text. The start line keeps the version, the permission mode and the session's number: nothing of the user's commands, servers, skills or paths. A file that still held an e-mail address, an account path, the account's or the computer's name would have been refused and deleted.
 
 ## The cases
 
@@ -53,6 +53,8 @@ The window scripts use the same files: the stand-in of the stream (`tools/AxAuto
 | `failure` | A model that does not exist: the error's words, a failed end, the process gone. |
 | `custom-command` | A custom command of the folder's own (`.claude/commands/probe-greet.md`, written by the probe first), which runs the model, then a message (2.1.332). |
 | `choices` | The first request's answer with the models and their efforts, then `/model haiku`, `/effort low` and a message (2.1.332). |
+| `tool-output` | Two commands and what they printed, kept whole: `seq 1 12`, twelve lines, and `true`, nothing (2.1.332, 2026-11-26). |
+| `plan` | The mode set to plan, a plan written to Claude Code's own plans folder and shown with the plan tool, approved with manual approval (the mode `default` in the answer), the mode named after it, and the plan carried out, its Write asked about (2.1.332, 2026-11-26). |
 
 ## What the recordings showed (Claude Code 2.1.327, 2026-11-17)
 
@@ -77,3 +79,8 @@ These are what the model is built on. Each is in the files; none is taken from t
 - **A command that runs the model** (a custom command) comes back, unlike a command Claude Code runs by itself: a line of the user's marked as a replay, whose text is Claude Code's tags, `<command-message>probe-greet</command-message>` and `<command-name>/probe-greet</command-name>`, just before the turn's thinking and texts. The turn's end counts one turn (`custom-command`).
 - **The first request's answer** lists the models, each with the name Claude Code takes (`haiku`), the name it shows, its words, and the efforts it takes, low to high; one model listed none. The start line names the model in use by its full name (`choices`). The fixture keeps these and the mode and the version; since this day it also keeps the start line's model.
 - **`/model` and `/effort` with a value** are taken while the run goes on, as messages: each brings no replay of its own text, one text of the assistant's that says what was set "for this session only", and an end that counts no turn (`choices`).
+
+## What the recordings of 2026-11-26 showed (Claude Code 2.1.332)
+
+- **A tool's result** is a line of the user's whose content is everything the tool gave back, also when the call went well: the twelve lines `seq 1 12` printed, and for a command that printed nothing the words "(Bash completed with no output)" (`tool-output`). Claude Code's screen shows three of the twelve and "… +9 lines (ctrl+o to expand)", and "(No output)" for the second (measured the same day with `tools/PtyCapture`).
+- **A plan** (`plan`): after the mode request for plan mode is answered and a status note names the mode, Claude writes its plan to a file under Claude Code's own `.claude\plans` folder, unasked, then calls the plan tool with `plan` (the plan in Markdown) and `planFilePath`, and Claude Code asks its permission tool with that input. A yes whose answer gives the mode `default` (`updatedPermissions` of the kind `setMode`) is followed at once by a status note that names it, and the Write that carries the plan out is asked about, as manual mode asks.

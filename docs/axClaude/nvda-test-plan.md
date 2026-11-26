@@ -406,12 +406,12 @@ the bell, no network).
 
 Being built and off: Options, Developer, "Feed the next window from Claude Code's stream" turns it on for the next
 window. The stand-in scripts `37-stream-turn.txt` to `44-stream-same-question.txt`, `50-stream-choices.txt`,
-`51-stream-older.txt`, `55-stream-refused-why.txt` and `56-stream-typed-commands.txt` play recordings of Claude Code's
+`51-stream-older.txt`, `55-stream-refused-why.txt` to `59-stream-plan.txt` play recordings of Claude Code's
 real stream through the stand-in of `tools/AxAutomate` and need no Claude Code; with `--nvda` every expected line must
 be spoken by NVDA too (`.\nvda-pass.ps1 axClaude` runs them). The live scripts 48, 49 and 52 need Claude Code signed
 in. What they cover, to be heard once by ear in a real conversation as well (SM-10.5), with the switch on and a new
 window on a folder of your own (written whole for stage 8 on 2026-11-26; steps 9 to 13 are the first round of
-`stream-equivalence.md` section 5):
+`stream-equivalence.md` section 5, steps 14 to 16 the second):
 
 1. The folder's question (script 40, 41): "Start Claude Code in this folder?" with its text. Enter: nothing starts,
    F9 says "Claude: stopped", and the conversation says that Claude Code was not started. Ctrl+Shift+R asks again;
@@ -472,7 +472,29 @@ window on a folder of your own (written whole for stage 8 on 2026-11-26; steps 9
    Developer, "Feed the next window from Claude Code's stream" is a plain item; Enter says "The copy of axKit from the
    Microsoft Store cannot start Claude Code over its stream yet, so every axClaude window is fed from the screen",
    and a new window is fed from the screen whatever the setting says.
-14. By ear alone, in a real conversation: that Claude Code's questions come as fast as with the screen; that a long
+14. What a tool printed (script 57, SM-4.11): ask Claude to run `seq 1 12` (or `dir`) with its shell tool. With Speak
+   replies on all lines, the reply is said with "Done" and nothing of what the command printed. In the conversation,
+   t to the tool line, then Down: the first three lines of the output, then "… +9 lines" (the count of the rest);
+   a command that printed nothing has Claude Code's own line for it. p does not stop on output lines that follow the
+   tool line. Whether three lines are the right number, and whether the rest should be readable with a key.
+15. Choose a conversation to resume (script 58, SM-8.5): New session, "Choose a conversation to resume", Enter, and
+   the folder's question if this window has not asked it: a list "Choose a conversation to resume", newest first,
+   each item a date, a time and the first words of the conversation's first message; F9 says "Claude: starting".
+   Escape: "Cancelled", the conversation says that no conversation was chosen and Claude Code was not started, F9
+   "Claude: stopped"; Ctrl+Shift+R asks again. Enter on a conversation: "Sent: 1," and its name, its earlier part
+   stands in the conversation before "Ready", and Claude knows what was said there. In a folder with no earlier
+   conversation: a line says so, and a new conversation begins.
+16. Plan approval (script 59, SM-7.7): Ctrl+P twice, "plan mode on"; ask for a small plan. The question: "Claude has a
+   plan and asks to carry it out", "Written by Claude, an AI: read the whole plan before you approve it. Approving
+   lets Claude carry it out", then the plan; "1. No, keep planning, and tell Claude what to change". "4. Read the whole
+   plan" opens a text that starts with who wrote it, that it can be wrong and that axKit checked none of it, then the
+   plan; Enter closes it and the list is still there. "1": a field, your words, Enter: Claude plans again and asks
+   anew, and the conversation keeps "System: You sent Claude's plan back to keep planning and told Claude:" with your
+   words. "2. Yes, and manually approve edits": "Sent: 2,", "manual mode on", and Claude asks before its edits; "3.
+   Yes, and use auto mode": "auto mode on", and Claude goes on without asking where auto mode allows it. The
+   conversation keeps "You approved Claude's plan," and the plan. Whether the plan is too long to hear as the
+   question's name, and whether the order of the answers is right.
+17. By ear alone, in a real conversation: that Claude Code's questions come as fast as with the screen; that a long
    command or a file's whole content can be read in the explanation with the arrow keys; that the status bar and
    the music follow a turn; and two hours of your own use before the switch leaves the Developer menu
    (`stream-equivalence.md` section 6 lists what to try).

@@ -8,14 +8,15 @@ dated pass; then the script writes this page again.
 
 ## Where it stands
 
-- 36 owed in all.
-- Owed a hearing with NVDA: 20.
+- 37 owed in all.
+- Owed a hearing with NVDA: 21.
 - Owed a live check with a real outside program or situation: 7.
 - Owed a window check on the hidden desktop: 8.
 - Owed a test in code: 1.
 
 ## Owed a hearing with NVDA
 
+- The NVDA test record: axClaude over the stream, what a tool printed, choosing a conversation, plan approval (2026-11-26). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - The NVDA test record: Other in Claude's question, the answer you are on kept, your own words (2026-11-26). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - The NVDA test record: axClaude's questions said once, typing in a question's list, a permission question's core (2026-11-26). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - The NVDA test record: axTerminal's screen view of a full-screen program, by ear (built 2026-11-25). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.

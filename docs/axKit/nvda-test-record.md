@@ -780,6 +780,22 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: axClaude over the stream, what a tool printed, choosing a conversation, plan approval (2026-11-26)
+
+Round 2 of `docs/axClaude/stream-equivalence.md` section 5 (`docs/axClaude/stream-mode.md` SM-4.11, SM-8.5, SM-7.7).
+Passing the stand-in window scripts `tests/scripts/axClaude/57-stream-tool-output.txt`, `58-stream-resume-choice.txt`
+and `59-stream-plan.txt` on the runner's desktop; owed a pass with NVDA listening (`.\nvda-pass.ps1 axClaude`), with
+`docs/axClaude/nvda-test-plan.md` section 26, steps 14 to 16:
+
+1. What a tool printed is never spoken: the reply alone with "Done"; the output lines read with the arrows after t,
+   "… +9 lines" heard as such.
+2. The list "Choose a conversation to resume": each item's date, time and first words heard whole; "Cancelled" and the
+   line after Escape; the earlier part of the chosen conversation silent before "Ready".
+3. The plan's question: the caution and then the plan read as the list's name, whether a long plan is too long to hear
+   there; "Read the whole plan" read with the arrows; "manual mode on" or "auto mode on" after a yes.
+4. With Claude Code itself: a plan approved with auto mode in a real conversation (the stand-in plays the manual
+   approval only), and the list of conversations in a folder with many long sessions.
+
 ## Owed: Other in Claude's question, the answer you are on kept, your own words (2026-11-26)
 
 The maintainer's report of 2026-11-26: he chose Other in a question of two answers and heard the first answer named,

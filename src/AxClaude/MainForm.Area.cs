@@ -897,7 +897,8 @@ internal sealed partial class MainForm
     /// </summary>
     private void SendAnswer(string key, bool sound = true)
     {
-        if (!ProcessRunning)
+        // Over the stream the window's own list of conversations is answered before Claude Code runs (stream-mode.md SM-8.5).
+        if (!ProcessRunning && !(Streams && StreamChoosesConversation))
         {
             return;
         }

@@ -2025,6 +2025,79 @@ Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
     You hear: Done. claude: ok.
 4. Press Alt+2 (Conversation; Navigation menu).
 
+## Read what a tool printed, over Claude Code's stream
+
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
+
+### Hear the reply, and not what the tools printed
+
+1. Type "Run the two commands".
+2. Press Enter.
+    You hear: Sent.
+    You hear: Done. claude: listed.
+
+### Read the first lines of what each command printed under its call
+
+1. Press Alt+2 (Conversation; Navigation menu).
+
+## Choose an earlier conversation to resume, over Claude Code's stream
+
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream. Close the window.
+
+### Hear the folder's conversations, newest first
+
+1. Open axClaude with the folder st, fed by Claude Code's stream.
+    You hear: Start Claude Code in this folder?
+2. Press Tab.
+3. Press Enter.
+
+### Start nothing when no conversation is chosen
+
+1. Press Escape.
+    You hear: Cancelled.
+2. Press Alt+2 (Conversation; Navigation menu).
+
+### Choose the conversation and go on with it
+
+1. Press Ctrl+Shift+R (Force Claude to restart; Actions menu).
+2. Press Enter.
+    You hear something with "Sent: 1" in it.
+    You hear: Ready.
+3. Press Alt+2 (Conversation; Navigation menu).
+
+## Approve Claude's plan, over Claude Code's stream
+
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
+
+### Go to plan mode
+
+1. Press Ctrl+P (Next permission mode; Actions menu).
+    You hear: plan mode on.
+
+### Hear the plan with its caution, the no that keeps planning first
+
+1. Type "Plan the file".
+2. Press Enter.
+    You hear: Sent.
+    You hear: Question.
+    The focus moves to Claude has a plan and asks to carry it out. Written by Claude, an AI: read the whole plan before you approve it. Approving lets Claude carry it out.
+
+### Read the whole plan before answering
+
+1. Press End.
+2. Press Enter twice.
+
+### Approve the plan and approve each edit yourself
+
+1. Press Up twice.
+2. Press Enter.
+    You hear: Sent: 2, Yes, and manually approve edits.
+    You hear: manual mode on.
+3. Press Down twice.
+4. Press Enter.
+    You hear: Done. claude: carried out.
+5. Press Alt+2 (Conversation; Navigation menu).
+
 ## Have a short exchange with Claude
 
 Starts with: Open axClaude with the folder a.

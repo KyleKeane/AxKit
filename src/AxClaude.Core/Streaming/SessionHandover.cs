@@ -87,6 +87,72 @@ public static class SessionHandover
     }
 
     /// <summary>
+    /// Whether the arguments ask for a conversation to be chosen: a <c>--resume</c> (or <c>-r</c>) with no session's id
+    /// after it, which opens the interactive program's own list, a screen the stream does not have (SM-8.5). New
+    /// session's preset "Choose a conversation to resume" gives one.
+    /// </summary>
+    public static bool AsksToChoose(IReadOnlyList<string> arguments)
+    {
+        for (var i = 0; i < arguments.Count; i++)
+        {
+            if (arguments[i] is ClaudeCodeStream.ResumeOption or ClaudeCodeStream.ResumeShortOption
+                && (i + 1 == arguments.Count || !IsSessionId(arguments[i + 1])))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// The arguments with the conversation the user chose (SM-8.5): each bare <c>--resume</c> or <c>-r</c> followed by
+    /// the session's id, or, with no id (null: nothing to choose from), left out, so that a new conversation begins.
+    /// Every other argument stays as it is.
+    /// </summary>
+    public static IReadOnlyList<string> WithChosen(IReadOnlyList<string> arguments, string? id)
+    {
+        var result = new List<string>();
+        for (var i = 0; i < arguments.Count; i++)
+        {
+            var bare = arguments[i] is ClaudeCodeStream.ResumeOption or ClaudeCodeStream.ResumeShortOption
+                && (i + 1 == arguments.Count || !IsSessionId(arguments[i + 1]));
+            if (!bare)
+            {
+                result.Add(arguments[i]);
+            }
+            else if (IsSessionId(id) && ResumedIn(result) is null)
+            {
+                result.Add(ClaudeCodeStream.ResumeOption);
+                result.Add(id!);
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// The session files of the folder's project folders, by id, with when each was written last, newest first (the
+    /// conversations a window may take up, SM-8.5); a session found in two project folders once, by its newest file.
+    /// </summary>
+    public static IReadOnlyList<(string Id, string File, DateTime Written)> All(IEnumerable<string> projectFolders)
+    {
+        var found = new Dictionary<string, (string File, DateTime Written)>(StringComparer.OrdinalIgnoreCase);
+        foreach (var folder in projectFolders)
+        {
+            foreach (var (id, written) in Sessions(folder))
+            {
+                if (!found.TryGetValue(id, out var known) || written > known.Written)
+                {
+                    found[id] = (Path.Combine(folder, id + ClaudeCodeTranscript.SessionFileExtension), written);
+                }
+            }
+        }
+
+        return [.. found.Select(entry => (entry.Key, entry.Value.File, entry.Value.Written)).OrderByDescending(entry => entry.Item3)];
+    }
+
+    /// <summary>
     /// Claude Code's arguments for a window the stream feeds (SM-8.1): each <c>--continue</c> of the window's
     /// arguments (its default, or the user's own) becomes <c>--resume</c> with the folder's newest session, so that
     /// the window knows before the start which conversation is taken up and can show it; with no session in the

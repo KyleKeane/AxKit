@@ -316,7 +316,7 @@ public sealed class StreamModel : ClaudeModel
         var added = _lines.Count - before;
         if (added > 0)
         {
-            Trim();
+            TrimLines();
             RaiseChanged();
         }
 
@@ -466,7 +466,7 @@ public sealed class StreamModel : ClaudeModel
 
         if (changed)
         {
-            Trim();
+            TrimLines();
             RaiseChanged();
         }
     }
@@ -594,6 +594,7 @@ public sealed class StreamModel : ClaudeModel
     {
         _lines.Clear();
         _sent.Clear();
+        _outputs.Clear();
         ExchangeCount = 0;
         ResetBookmarks();
         ForgetRun();
@@ -754,23 +755,75 @@ public sealed class StreamModel : ClaudeModel
         return marks is >= 1 and <= 6 && marks < text.Length && text[marks] == ' ' ? Math.Min(marks + 1, 6) : 0;
     }
 
-    /// <summary>A tool's result: a failure turns its call's line into an error's, as Claude Code's screen redraws it, with the first line of what came back under it.</summary>
+    /// <summary>
+    /// A tool's result. A failure turns its call's line into an error's, as Claude Code's screen redraws it, with the
+    /// first line of what came back under it. A call that went well gets what it printed under its line, as the
+    /// screen's preview rows (SM-4.11, <see cref="ToolOutput"/>): the first lines and how many more, plain lines that
+    /// are never spoken, since a reply ends at a tool's line. Either way the whole output is kept for the call
+    /// (<see cref="OutputOf"/>).
+    /// </summary>
     private bool TakeResult(StreamPart part)
     {
-        if (_questions.Remove(part.Call) || !_calls.Remove(part.Call, out var call) || !part.Error)
+        if (_questions.Remove(part.Call) || !_calls.Remove(part.Call, out var call))
         {
             return false;
+        }
+
+        var output = new ToolOutput(part.Output);
+        if (output.Text.Length > 0)
+        {
+            _outputs[call] = output;
+        }
+
+        var at = _lines.LastIndexOf(call);
+        if (!part.Error)
+        {
+            // Under the call, ahead of a later call's line that came before this result (calls made together).
+            var rows = output.Shown.Select(text => Final(LineKind.Plain, text)).ToList();
+            foreach (var row in rows)
+            {
+                _outputs[row] = output;
+            }
+
+            _lines.InsertRange(at + 1, rows);
+            return rows.Count > 0;
         }
 
         call.Kind = LineKind.ToolError;
         call.Text = ClaudeCodeTexts.ToolErrorLabel + call.Text[ClaudeCodeTexts.ToolLabel.Length..];
         if (part.Text.Length > 0)
         {
-            var at = _lines.LastIndexOf(call);
             _lines.Insert(at + 1, Final(LineKind.Plain, part.Text));
         }
 
         return true;
+    }
+
+    /// <summary>What each tool call printed, whole, by its call's line and by each line shown of it; a line gone from the conversation takes its entry with it.</summary>
+    private readonly Dictionary<Line, ToolOutput> _outputs = [];
+
+    /// <summary>
+    /// The whole of what a tool call printed (SM-4.11), for its call's line or a line shown of its output: what the
+    /// conversation shows only the first lines of. Null for any other line, and for a call that printed nothing. For a
+    /// key that reads all of it; none does yet.
+    /// </summary>
+    public ToolOutput? OutputOf(Line line) => _outputs.GetValueOrDefault(line);
+
+    /// <summary>The conversation's cap (<see cref="LineStore.Trim"/>), and the outputs of the lines it let go.</summary>
+    private void TrimLines()
+    {
+        var before = _lines.Count;
+        Trim();
+        if (_lines.Count == before || _outputs.Count == 0)
+        {
+            return;
+        }
+
+        var kept = _lines.ToHashSet();
+        foreach (var gone in _outputs.Keys.Where(line => !kept.Contains(line)).ToList())
+        {
+            _outputs.Remove(gone);
+        }
     }
 
     /// <summary>Something Claude Code says about itself: the permission mode, a compaction, the conversation emptied.</summary>
@@ -798,6 +851,7 @@ public sealed class StreamModel : ClaudeModel
                 _sent.Clear();
                 _calls.Clear();
                 _questions.Clear();
+                _outputs.Clear();
                 ExchangeCount = 0;
                 ResetBookmarks();
                 QueuedMessages = 0;

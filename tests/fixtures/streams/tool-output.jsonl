@@ -1,0 +1,13 @@
+{"k":"meta","claudeCode":"2.1.332","recorded":"2026-11-26","by":"tools/ClaudeProbe stream --record","permission":"allow"}
+{"t":18,"k":"in","what":"message","text":"Run these two commands with the Bash tool, one call each, one after the other: first seq 1 12, then true. After both have run, reply with exactly: listed"}
+{"t":772,"k":"out","line":{"type":"system","subtype":"init","model":"claude-haiku-5-5","permissionMode":"default","claude_code_version":"2.1.332","session_id":"session-1"}}
+{"t":2041,"k":"out","line":{"type":"user","isReplay":true,"parent_tool_use_id":null,"message":{"content":"Run these two commands with the Bash tool, one call each, one after the other: first seq 1 12, then true. After both have run, reply with exactly: listed"}}}
+{"t":2054,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"tool_use","id":"call-1","name":"Bash","input":{"command":"seq 1 12","description":"Print numbers 1 through 12"}}]}}}
+{"t":2086,"k":"out","line":{"type":"rate_limit_event"}}
+{"t":2863,"k":"out","line":{"type":"user","parent_tool_use_id":null,"message":{"content":[{"type":"tool_result","tool_use_id":"call-1","is_error":false,"content":"1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12"}]}}}
+{"t":3981,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"tool_use","id":"call-2","name":"Bash","input":{"command":"true","description":"Run true no-op command"}}]}}}
+{"t":4066,"k":"out","line":{"type":"user","parent_tool_use_id":null,"message":{"content":[{"type":"tool_result","tool_use_id":"call-2","is_error":false,"content":"(Bash completed with no output)"}]}}}
+{"t":4870,"k":"out","line":{"type":"assistant","parent_tool_use_id":null,"message":{"content":[{"type":"text","text":"listed"}]}}}
+{"t":4880,"k":"out","line":{"stop_reason":"end_turn","terminal_reason":"completed","is_error":false,"num_turns":3,"subtype":"success","result":"listed","type":"result","queued_turn_count":0,"permission_denials":[]}}
+{"t":4881,"k":"in","what":"closed"}
+{"t":4881,"k":"exit","code":0}

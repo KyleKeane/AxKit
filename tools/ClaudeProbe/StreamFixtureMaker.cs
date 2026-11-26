@@ -53,6 +53,26 @@ internal static class StreamFixtureMaker
 
             return given;
         }
+
+        /// <summary>
+        /// An id of Claude Code's own quoted inside a kept text (a plan file named after the session, a path): the number
+        /// it was given as a field's id when it was one (<c>session-1</c>), else a number of its own (<c>id-1</c>), so that
+        /// the check finds none left and a text that names the session twice still names one.
+        /// </summary>
+        public string Quoted(string text) => QuotedId.Replace(text, match =>
+        {
+            foreach (var (key, given) in _given)
+            {
+                if (key.EndsWith("\n" + match.Value, StringComparison.OrdinalIgnoreCase))
+                {
+                    return given;
+                }
+            }
+
+            return Of("id", match.Value)!.GetValue<string>();
+        });
+
+        private static readonly System.Text.RegularExpressions.Regex QuotedId = new(@"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b");
     }
 
     /// <summary>What a case's lines are cleaned with: the folder it ran in, the masker, the ids, and the names of the keys dropped.</summary>
@@ -68,6 +88,9 @@ internal static class StreamFixtureMaker
 
         public Ids Ids { get; } = new();
 
+        /// <summary>What a tool gave back is kept also when the call went well (<see cref="Write"/>'s keepsOutput).</summary>
+        public bool KeepsOutput { get; init; }
+
         public SortedSet<string> Dropped { get; } = new(StringComparer.Ordinal);
 
         /// <summary>Ids, which are kept as numbers where they are needed or not at all: never worth a mention among the keys dropped.</summary>
@@ -80,7 +103,7 @@ internal static class StreamFixtureMaker
                 text = text.Replace(path, WorkFolder, StringComparison.OrdinalIgnoreCase);
             }
 
-            text = masker.Text(text);
+            text = Ids.Quoted(masker.Text(text));
             return text.Length > most ? text[..most] + "…" : text;
         }
 
@@ -116,11 +139,12 @@ internal static class StreamFixtureMaker
     /// permission tool's log of the case, whose fourth and fifth fields are the time and the question. True when
     /// the file was written; false, and nothing left, when the check refused it.
     /// </summary>
+    /// <param name="keepsOutput">What a tool gave back is kept also for a call that went well (a case whose commands print only what it chose, docs/axClaude/stream-mode.md SM-4.11); else only for one that failed.</param>
     public static bool Write(string fixtures, string name, string version, IReadOnlyList<(long Ms, string Kind, string Text)> records,
-        string toolLog, long startedUtcTicks, string folder, string permission, int exitCode, SortedSet<string> dropped)
+        string toolLog, long startedUtcTicks, string folder, string permission, int exitCode, SortedSet<string> dropped, bool keepsOutput = false)
     {
         var masker = new Masker(FixtureMaker.Names());
-        var cleaner = new Cleaner(folder, masker);
+        var cleaner = new Cleaner(folder, masker) { KeepsOutput = keepsOutput };
         var entries = new List<(long Ms, int Order, JsonObject Entry)>();
         var order = 0;
         int read = 0, typeAlone = 0, wrote = 0, asks = 0;
@@ -169,8 +193,12 @@ internal static class StreamFixtureMaker
                     ["call"] = cleaner.Ids.Of("call", question?["tool_use_id"]),
                     ["input"] = Input(tool, question?["input"] as JsonObject, cleaner),
                 }));
-                // The stand-in answers at once: a question of Claude's with the first option of each, anything else as the case says.
-                entries.Add((ms, order++, new JsonObject { ["t"] = ms, ["k"] = "answer", ["behavior"] = tool == "AskUserQuestion" ? "answered" : permission.Length == 0 ? "allow" : permission }));
+                // The stand-in answers at once: a question of Claude's with the first option of each, a plan as a plan
+                // case says (plan-manual) and every other tool of such a case yes, anything else as the case says.
+                var behavior = tool == "AskUserQuestion" ? "answered"
+                    : permission.StartsWith("plan-", StringComparison.Ordinal) ? (tool == "ExitPlanMode" ? permission : "allow")
+                    : permission.Length == 0 ? "allow" : permission;
+                entries.Add((ms, order++, new JsonObject { ["t"] = ms, ["k"] = "answer", ["behavior"] = behavior }));
             }
         }
 
@@ -199,7 +227,8 @@ internal static class StreamFixtureMaker
         var (emails, paths, names) = FixtureMaker.Check(written, masker.Names);
         var own = written.Contains("axkit-stream-probe", StringComparison.OrdinalIgnoreCase) ? 1 : 0;
         // An id of Claude Code's own (a session, a request) quoted inside a text the fields' whitelist keeps whole: a
-        // reply, an error, a tool's input (2026-11-21 audit). The ids of the fields themselves are already session-1.
+        // reply, an error, a tool's input (2026-11-21 audit). The ids of the fields themselves are already session-1, and
+        // since 2026-11-26 an id inside a kept text becomes a number too (Ids.Quoted): one left here is one that escaped.
         var ids = System.Text.RegularExpressions.Regex.Matches(written, @"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b").Count;
         if (emails + paths + names + own + ids > 0)
         {
@@ -338,14 +367,14 @@ internal static class StreamFixtureMaker
                                 blocks.Add(new JsonObject { ["type"] = kind, ["text"] = cleaner.Text(Json.Str(block, "text") ?? string.Empty, LongText) });
                                 break;
                             case "tool_result":
-                                // What a tool gave back is kept only when it failed: the model shows the first
-                                // line of a failure and nothing of a success, and a success can be a whole file,
-                                // a path of the user's or an id of Claude Code's own.
+                                // What a tool gave back is kept only when it failed, or for a case whose commands
+                                // print only what it chose (KeepsOutput): a success can be a whole file, a path of
+                                // the user's or an id of Claude Code's own.
                                 var result = new JsonObject { ["type"] = kind, ["tool_use_id"] = cleaner.Ids.Of("call", block["tool_use_id"]) };
                                 if (block["is_error"] is JsonValue failed && failed.TryGetValue<bool>(out var isError))
                                 {
                                     result["is_error"] = isError;
-                                    if (isError)
+                                    if (isError || cleaner.KeepsOutput)
                                     {
                                         result["content"] = cleaner.Text(ResultText(block["content"]), LongText);
                                     }

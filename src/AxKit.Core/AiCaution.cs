@@ -38,6 +38,24 @@ public static class AiCaution
         + "Allowing it is your own act, as if you had done it yourself: what it does to your files, your accounts and your computer is yours to answer for, not axKit's and not its maker's.";
 
     /// <summary>
+    /// In the name of the question about a plan an AI asks the user to approve (axClaude over Claude Code's stream,
+    /// docs/axClaude/stream-mode.md SM-7.7), heard every time the question is read: who wrote it, and that approving it
+    /// lets the AI carry it out.
+    /// </summary>
+    public static string PlanAsked(string who) => $"Written by {who}, an AI: read the whole plan before you approve it. Approving lets {who} carry it out";
+
+    /// <summary>
+    /// The first section of the whole text of a plan an AI asks the user to approve (SM-7.7): the plan is the AI's own,
+    /// nothing of it is checked, approving it lets the AI act on it, with auto mode without asking for each step, and
+    /// approving is the user's own act.
+    /// </summary>
+    public static string Plan(string who) =>
+        $"{who}, an AI model, wrote this plan, and everything in it is {who}'s own. It can be wrong, and axKit has checked none of it. "
+        + $"Approving it lets {who} carry it out: with manual approval {who} still asks before each edit, with auto mode Claude Code's own checks decide alone what runs without asking you. "
+        + "Read all of it, and the conversation that led to it, before you approve it. If you do not understand what it would do, do not approve it. "
+        + "Approving it is your own act: what it does to your files, your accounts and your computer is yours to answer for, not axKit's and not its maker's.";
+
+    /// <summary>
     /// In the name of the question about an action of a list that runs a program or hands a command to a shell's
     /// window (axTask, docs/axTask/forms-framework.md AF-7.2), heard every time the question is read. Who wrote the
     /// action is not known: the user, another program or an AI.

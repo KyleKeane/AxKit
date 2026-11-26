@@ -304,6 +304,12 @@ through `ClaudeCodeStream.Read`, and what a case expects is held to the lines.
   Claude Code is given the relay's own configuration and the pipe's name and secret in its environment, as a window
   will give them, and starts this program with the verb `ask`, which runs the same code as `AxKit.exe ask`; the probe
   plays the window's end of the pipe on a thread of its own and answers as the case says, or nobody does.
+- Five cases of 2026-11-26 (docs/axClaude/stream-mode.md SM-4.11, SM-7.7): `tool-output` says in numbers what two
+  commands' results hold; `plan-manual`, `plan-edits`, `plan-auto` and `plan-keep` set the mode to plan, ask for a plan
+  shown with the plan tool, and say which tools the permission tool was asked about, the keys of the plan's input, the
+  modes the stream named after it and which files were made. The stand-in permission tool answers a plan as the case
+  says (`ClaudeCodeStream.AllowWithMode` with `default`, `acceptEdits` or `auto`; `plan-keep` sends the first plan back
+  with `KeepPlanning` and approves the next), and every other tool of such a case yes.
 - `--record <folder>` (2026-11-17) plays another set of cases, the recordings (`Recordings` in `StreamProbe.cs`), and
   writes each as a stream fixture, `<case>.jsonl`: every line Claude Code wrote and what the host wrote between them,
   on one clock (docs/axClaude/stream-mode.md SM-10.1; `tests/fixtures/streams/README.md` says what a file holds and
@@ -317,3 +323,6 @@ through `ClaudeCodeStream.Read`, and what a case expects is held to the lines.
   fixtures are recorded with `--record tests\fixtures\streams`; read each through before it is committed. Since
   2026-11-25 the maker also keeps the start line's model and, of the first request's answer, the models with their
   names, words and efforts (`Models`), and counts the dropped keys of the start line, a user line and that answer too.
+  Since 2026-11-26 a recording whose `KeepsOutput` is set (`tool-output`: commands whose output the case chose) keeps
+  a result's text also when the call went well, and an id quoted inside a kept text becomes a number as the fields'
+  ids do (a plan file is named after its session; the recording `plan`).

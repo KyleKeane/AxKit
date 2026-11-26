@@ -1695,7 +1695,12 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   2026-11-24: the form's text starts with `AiCaution.Drafted`, its words with who drafted them, and only the user's
   Send sends); an AI tool's opening of axClaude, axTerminal or axTask on a folder (`docs/axKit/mcp.md` MC-6.5a,
   2026-11-24: the notice "Open axTask?" begins with `AiCaution.OpenAsked`, then what opening does and where; No is
-  first, the default and Escape, and only the user's Open opens). With the screen, Claude Code draws
+  first, the default and Escape, and only the user's Open opens); Claude's plan for approval in an axClaude window fed
+  by Claude Code's stream (`docs/axClaude/stream-mode.md` SM-7.7, 2026-11-26: the question's text begins with
+  `AiCaution.PlanAsked`, who wrote the plan and that approving lets Claude carry it out, heard every time, then the
+  plan; the list starts on "No, keep planning"; "Read the whole plan" opens it with `AiCaution.Plan` first: who wrote
+  it, that it can be wrong, that axKit checked none of it, what manual approval and auto mode let happen, and that
+  approving is the user's own act). With the screen, Claude Code draws
   that question itself, and the window shows it as Claude Code wrote it. axClaude's conversation itself is Claude
   Code's own output, shown as it comes, under the access layer's consent (AX-11.4). These are reminders in plain
   words, as the consent notices are (AX-11.10), not legal advice. A new feature of this kind brings its caution in

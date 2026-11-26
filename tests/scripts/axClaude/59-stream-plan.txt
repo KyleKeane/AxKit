@@ -1,0 +1,67 @@
+# Workflow: Approve Claude's plan, over Claude Code's stream
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/stream-mode.md SM-7.7 (2026-11-26): in plan mode Claude asks to leave it with its plan, and
+# Claude Code asks its permission tool, the relay, as the screen asks "Ready to code?". The window asks with the plan as
+# the question's text, after the caution (bundle rule 11), the screen's three answers with the no that keeps planning
+# where the list starts, and one that opens the whole plan; a yes sends the mode the work goes on in. The stand-in plays
+# the recording of a plan approved with manual approval and carried out (tests/fixtures/streams/plan.jsonl, Claude Code
+# 2.1.332): the mode key's request takes the run to plan mode as the recording's did.
+file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"replySpeech":"all"}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+file claude.cmd @"%AXKIT_STANDIN%" standin --stream plan %*
+start claude {temp}\st --claude {temp}\claude.cmd --source stream
+expect said Start Claude Code in this folder?
+wait 1500
+keys tab
+keys enter
+expect said Ready
+
+# Goal: Go to plan mode
+do Next permission mode
+expect said plan mode on
+
+# Goal: Hear the plan with its caution, the no that keeps planning first
+type Plan the file
+keys enter
+expect said Sent
+expect said ! Question
+expect said → Claude has a plan and asks to carry it out. Written by Claude, an AI: read the whole plan before you approve it. Approving lets Claude carry it out
+expect focus 1. No, keep planning, and tell Claude what to change
+expect list 2. Yes, and manually approve edits
+expect list 3. Yes, and use auto mode
+expect list 4. Read the whole plan
+expect state Claude: waiting for your answer
+wait 3000
+
+# Goal: Read the whole plan before answering
+keys end
+expect focus 4. Read the whole plan
+keys enter
+expect state Claude's plan
+expect state Claude, an AI model, wrote this plan, and everything in it is Claude's own. It can be wrong, and axKit has checked none of it.
+expect state Plan: create plan-probe.txt
+keys enter
+expect focus 4. Read the whole plan
+expect state Claude: waiting for your answer
+
+# Goal: Approve the plan and approve each edit yourself
+keys up
+keys up
+expect focus 2. Yes, and manually approve edits
+keys enter
+expect said Sent: 2, Yes, and manually approve edits
+expect said manual mode on
+# Claude carries the plan out and asks before its edit, as manual mode does.
+expect focus 1. No, Write plan-probe.txt
+wait 3000
+keys down
+keys down
+expect focus 3. Yes, once
+keys enter
+expect said Done. claude: carried out
+run findstr /c:"the window's answer was allow" st\stream-standin.log
+do Conversation
+expect text You approved Claude's plan, and approve each edit yourself:
+expect text Plan: create plan-probe.txt
+expect text tool: ExitPlanMode
