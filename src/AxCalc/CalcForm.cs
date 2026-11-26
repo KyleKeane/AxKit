@@ -32,7 +32,7 @@ public sealed class CalcForm : ConversationForm
     {
         _settings = settings;
         _lines = lines;
-        SetTitle("Calculator");
+        SetTitle(null);
         _calculator.Degrees = settings.Degrees;
         foreach (var (name, value) in settings.Variables)
         {

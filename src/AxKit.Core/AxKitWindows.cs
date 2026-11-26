@@ -3,8 +3,18 @@ namespace AxKit.Core;
 /// <summary>A top-level window of one of the bundle's processes: its handle and its title.</summary>
 public sealed record AxKitWindow(nint Handle, string Title)
 {
-    /// <summary>The app the title starts with ("axDown file C:\work\notes.md" is axDown's); the whole title when it is one word.</summary>
+    /// <summary>The app the title names ("notes.md, axDown, C:\work\notes.md" is axDown's); the whole title when it is one part.</summary>
     public string App => AxKitWindows.AppOf(Title);
+}
+
+/// <summary>
+/// What a window holds open, for its title (docs/axKit/SPEC.md AX-9.6): its name ("notes.md", "myproject", "Home")
+/// and its full path when it has one; a path that is its own name (a drive's root) is said once.
+/// </summary>
+public sealed record Opened(string Name, string? Path = null)
+{
+    /// <summary>A file or folder by its full path: its name (<see cref="PathName.Of"/>) and the path.</summary>
+    public static Opened At(string path) => new(PathName.Of(path), path);
 }
 
 /// <summary>
@@ -14,15 +24,39 @@ public sealed record AxKitWindow(nint Handle, string Title)
 /// </summary>
 public static class AxKitWindows
 {
+    /// <summary>The parts of a title, a comma and a space between them, which NVDA reads with a pause.</summary>
+    public const string Separator = ", ";
+
     /// <summary>
-    /// The app a window's title names first (the title starts with the app since 2026-11-23, the user's ask): the
-    /// title up to its first space or comma, since no app's name has either; an access layer's title starts with its
-    /// whole title, "axClaude, access layer for Claude Code" (AX-11.2).
+    /// A window's title (AX-9.6, the maintainer's word of 2026-11-26): what it holds open first, then the app's name
+    /// alone, then the full path, "notes.md, axDown, C:\work\notes.md", "myproject, axClaude, C:\src\myproject"; the
+    /// app's name alone for a window with nothing open; the path left out when there is none or it is the name.
+    /// </summary>
+    public static string Title(string app, Opened? opened)
+    {
+        if (opened is null || opened.Name.Length == 0)
+        {
+            return app;
+        }
+
+        var title = opened.Name + Separator + app;
+        return opened.Path is { Length: > 0 } path && path != opened.Name ? title + Separator + path : title;
+    }
+
+    /// <summary>
+    /// The app a window's title names (<see cref="Title"/>): the whole title when it is one part; otherwise the first
+    /// part after the first that is an app's name, so that a name with a comma in it ("Smith, John.docx") still finds
+    /// its app; the second part when none is.
     /// </summary>
     public static string AppOf(string title)
     {
-        var end = title.IndexOfAny([' ', ',']);
-        return end < 0 ? title : title[..end];
+        var parts = title.Split(Separator);
+        if (parts.Length == 1)
+        {
+            return title;
+        }
+
+        return parts.Skip(1).FirstOrDefault(part => Dispatch.ByName(part) is not null) ?? parts[1];
     }
 
     /// <summary>The Open windows list: the windows of the bundle's apps other than the current one, most recently used first.</summary>
@@ -34,7 +68,7 @@ public static class AxKitWindows
         windows.Where(w => string.Equals(w.App, app.Name, StringComparison.OrdinalIgnoreCase)).ToList();
 
     /// <summary>
-    /// "&amp;1. notes.md - axDown": the item's number as its mnemonic, 1 to 9 and then a to z, a full stop, which the
+    /// "&amp;1. notes.md, axDown, C:\work\notes.md": the item's number as its mnemonic, 1 to 9 and then a to z, a full stop, which the
     /// synthesizer takes as a pause before the name (AX-8.5), and the title; an ampersand in a title is doubled, as a
     /// menu needs. The same shape serves the apps' own recent lists (FR-8.5, AD-4.1).
     /// </summary>

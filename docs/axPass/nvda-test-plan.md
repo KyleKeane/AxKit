@@ -9,7 +9,7 @@ should read; a step that reads differently is a defect. The specifications are `
 
 ## 1. Unlocking (PW-4)
 
-1. Start axPass: "test - axPass window", then the notice "Unlock test" with the field "Type the master password to unlock test, protected".
+1. Start axPass: "test, axPass, <the database's full path> window", then the notice "Unlock test" with the field "Type the master password to unlock test, protected".
    Type `wrong`, Enter: "The password does not open test." and the notice again.
 2. Type `test-master-1`, Enter: "Unlocking test", then "test, 3 items, Email, group, 1 item".
 3. Ctrl+L: "Locked" and the unlock notice. Escape: "test, locked: Enter unlocks". Enter: the notice again; unlock.

@@ -25,7 +25,7 @@ public sealed partial class MediaForm : ItemForm
     private readonly System.Windows.Forms.Timer _clock = new() { Interval = 1000 };
 
     /// <summary>The title of a start on one file, until the first file plays (AM-2.3).</summary>
-    private string? _startTitle;
+    private Opened? _startTitle;
     private readonly PlayQueue _queue = new();
     private MediaPlayer? _player;
 
@@ -44,7 +44,7 @@ public sealed partial class MediaForm : ItemForm
         _settings = settings;
         _start = start;
         // A start on one file is named after it from the first moment, so that NVDA reads the file's window as it opens (AM-2.3).
-        _startTitle = start is { Verb: AppMessage.Play, Paths: [var only] } && File.Exists(only) ? Path.GetFileName(only) : null;
+        _startTitle = start is { Verb: AppMessage.Play, Paths: [var only] } && File.Exists(only) ? Opened.At(only) : null;
         SetTitle(_startTitle);
 
         // ---- menus and keys (AM-5.1, AM-5.2): one command list (docs/axKit/app-kit.md AK-2), each key from the tables ----
@@ -173,8 +173,8 @@ public sealed partial class MediaForm : ItemForm
     /// list named with its count; the title and the status bar's second part as <see cref="UpdateTitle"/> and
     /// <see cref="UpdateStatusBar"/> have them.
     /// </summary>
-    protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel() =>
-        (QueueRows(), _queue.ListName, TitleNow() ?? string.Empty, PlaceNow());
+    protected override (IReadOnlyList<ItemRow> Rows, string Name, Opened? Title, string Place) ReadLevel() =>
+        (QueueRows(), _queue.ListName, TitleNow(), PlaceNow());
 
     /// <summary>
     /// The queue's files as rows. A file queued twice is two rows, so each has a key of its own, its path and which

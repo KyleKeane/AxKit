@@ -7,7 +7,7 @@ file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","
 file tasks\Home\Broken.json { "format": "axkit-item 1", "fields": [ nope
 
 start task {temp}\tasks
-expect state "title":"axTask Lists
+expect state "title":"Lists, axTask
 
 # Goal: Hear a damaged item in its list
 # The list's name counts it, and it is the row after the items.
@@ -25,7 +25,7 @@ expect said ! Not readable as an item: Enter opens it in axJSON
 # Goal: Open a damaged item's file in axJSON
 keys enter
 adopt
-expect state "title":"axJSON file 
+expect state , axJSON, 
 expect state \Broken.json","notice"
 close
 use 1

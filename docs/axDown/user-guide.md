@@ -28,7 +28,7 @@ When another program changes the file while it is open here, for example Claude 
 
 axDown writes a file back the way it found it: the same encoding, with or without a byte order mark, and the same kind of line ending. The status bar shows what it found, for example "UTF-8 · CRLF". A new document is UTF-8 without a mark. If the file changed on disk while you had it open, saving asks before writing over it.
 
-The title is the file's name, with a star in front while there are unsaved changes: "*notes.md - axDown".
+The title is the file's name, then axDown, then the file's full path, with a star in front of the path while there are unsaved changes: "notes.md, axDown, *C:\work\notes.md". A new text is "Untitled, axDown".
 
 ## Find and go to a line
 

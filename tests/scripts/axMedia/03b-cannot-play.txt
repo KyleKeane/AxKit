@@ -19,7 +19,7 @@ start media {temp}\c
 expect said ! Cannot play a-broken.mp3: this kind of file is not supported
 expect said Playing b-good.wav
 expect list ["a-broken.mp3","b-good.wav (playing)"]
-expect state "title":"axMedia b-good.wav"
+expect state "title":"b-good.wav, axMedia, 
 # Check: Enter on the file that cannot be played says so again
 # Enter on it again: the same.
 keys home

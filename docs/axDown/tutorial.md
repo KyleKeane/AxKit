@@ -170,7 +170,8 @@ UTF-16, or the Windows code page), with or without the mark, and the same line e
 bar shows what it found. A new document is UTF-8 without a mark with CRLF. If the file changed on disk while you
 had it open, saving asks before writing over it.
 
-The title is the file's name, with a star in front while there are unsaved changes: "*tutorial.md - axDown". Make a
+The title is the file's name, then axDown, then the file's full path, with a star in front of the path while there are
+unsaved changes: "tutorial.md, axDown, *C:\...\tutorial.md". Make a
 change now and listen to the title with NVDA+T, then undo it with Ctrl+Z.
 
 ## 11. Text size, fonts and updates

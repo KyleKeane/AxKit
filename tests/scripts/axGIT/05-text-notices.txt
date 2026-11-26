@@ -114,6 +114,6 @@ expect state "notice":null
 # repository fills itself as the menu opens: its "1. repo (path)" item is manual.)
 close
 start git
-expect state "title":"axGIT, access layer for Git folder 
+expect state , axGIT, 
 expect state \repo","notice"
 expect focus Changes, 1 file

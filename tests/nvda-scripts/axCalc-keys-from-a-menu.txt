@@ -11,7 +11,7 @@ keys alt+s
 expect spoken Save history
 keys ctrl+f5
 adopt
-expect state "title":"axDown Untitled"
+expect state "title":"Untitled, axDown"
 close
 use 1
 expect focus Expression

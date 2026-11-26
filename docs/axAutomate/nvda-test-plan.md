@@ -7,7 +7,7 @@ a small folder of its own.
 
 ## 1. The folder (AU-4.1, AU-4.2, AU-6a.1)
 
-1. `axAutomate <repository>\tests\scripts`: the title "scripts - axAutomate window", then "scripts, 0 workflows, 18
+1. `axAutomate <repository>\tests\scripts`: the title "scripts, axAutomate, <repository>\tests\scripts window", then "scripts, 0 workflows, 18
    folders" and the first row, "axAutomate, folder, 1 workflow". Nothing else is spoken.
 2. Down and Up move through the folders; type "axd": "axDown, folder, ...".
 3. Help, Keyboard shortcuts: the keyboard shortcuts as a notice; Escape closes it and the navigator has the focus

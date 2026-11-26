@@ -7,7 +7,7 @@ file tasks\Shopping\Milk.json {"schema":"list.json","Title":"Milk"}
 file tasks\Shopping\Washer.json {"schema":"list.json","Title":"Washer","Done":false}
 
 start task {temp}\tasks
-expect state "title":"axTask Lists
+expect state "title":"Lists, axTask
 type s
 expect focus Shopping, list, 2 items
 keys right
@@ -41,14 +41,14 @@ expect said ! Shift+F9: no command of this window
 # Check: Nothing is carried out during the key test
 # Nothing was carried out: the same list, the same item, no notice.
 expect state "notice":null
-expect state "title":"axTask Shopping
+expect state "title":"Shopping, axTask
 expect focus "value":"Milk"
 
 # Goal: End the key test
 # Escape ends the test at once, and leaves the list as it was.
 keys escape
 expect said ! Key test ended
-expect state "title":"axTask Shopping
+expect state "title":"Shopping, axTask
 
 # Check: The keys act again after the test
 # The same keys act again.

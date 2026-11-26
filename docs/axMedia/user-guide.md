@@ -15,7 +15,7 @@ axMedia is part of axKit. Installing axKit (see the axKit guide: Help, About, ax
 
 axMedia keeps one window: a file opened from axFile, File Explorer or the console while an axMedia window is open goes into that window, replacing its queue (or added to it, for an add), rather than opening another. A second window is the axKit menu's Apps, axMedia, or Ctrl+N, or `--new` on the console.
 
-The window is named after the file playing: "03 Chapter 3.mp3 - axMedia", or "axMedia" while nothing plays. The status bar (NVDA+End) has what is playing and the time on the left, "Playing 03 Chapter 3.mp3 12:40 / 45:30", and the place and the speed on the right, "3 of 12, speed 1.25".
+The window is named after the file playing, then axMedia, then the file's full path: "03 Chapter 3.mp3, axMedia, C:\Music\Dune\03 Chapter 3.mp3", or "axMedia" while nothing plays. The status bar (NVDA+End) has what is playing and the time on the left, "Playing 03 Chapter 3.mp3 12:40 / 45:30", and the place and the speed on the right, "3 of 12, speed 1.25".
 
 ## The queue
 

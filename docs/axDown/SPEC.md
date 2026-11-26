@@ -269,7 +269,7 @@ never a separate window.
 
 ### AD-7 Announcements
 
-On opening, NVDA speaks the window ("README.md - axDown window"), then the field ("README.md edit multi line"): the
+On opening, NVDA speaks the window ("README.md, axDown, <full path> window"), then the field ("README.md edit multi line"): the
 window has the accessible role Window, as axClaude's has, so that NVDA names it; nothing of axDown's own is spoken
 then. Afterwards, spoken through one UI Automation notification on the editor (AX-7.3), and only these: "Saved" (after a save and
 after Save as); "Reloaded, <name> changed on disk" and "<name> changed on disk; Save will ask" on coming back to the window, "Reloaded" after Reload and lose mine (AD-3.6); "Not found" (find); "Line n of m" after Go to line, or "Not a line number"; "Word wrap, checked" / "Word wrap, not checked"; "Undone", "Redone", "Nothing to undo", "Nothing to redo" (AD-2.5); "Text size n"; "No file yet" (Show current file in on Untitled);
@@ -295,9 +295,11 @@ reads it with NVDA+End; nothing is spoken automatically.
 
 ### AD-10 Title
 
-`axDown file C:\work\notes.md`, `axDown file *C:\work\notes.md` with unsaved changes (the Notepad convention,
-AD-D5), `axDown Untitled`: the app first, then "file" and the full path (the maintainer's ask of 2026-11-23, bundle
-AX-9.6; until then `notes.md - axDown`).
+`notes.md, axDown, C:\work\notes.md`: the file's name, the app, the full path (the maintainer's word of 2026-11-26,
+"axdown should name the file then app then path to file", bundle AX-9.6). With unsaved changes the star stays before
+the path, where it stood since 2026-11-23: `notes.md, axDown, *C:\work\notes.md` (the Notepad convention, AD-D5); an
+untitled text is `Untitled, axDown`, `*Untitled, axDown` once changed. From 2026-11-23 to 2026-11-26 the title was
+`axDown file C:\work\notes.md`; before that `notes.md - axDown`.
 
 ### AD-11 Errors and diagnostics
 
@@ -436,7 +438,7 @@ are read and written on the UI thread (a 32 MB file is the ceiling, AD-3.7).
   window costs nothing and Alt+Tab already handles it. The dispatcher starts a new process per file.
 - **AD-D4 Files come back as they went in.** Encoding, mark and line ending are read once and written back; axDown
   never converts a file unless asked (there is no such command in version one).
-- **AD-D5 The Notepad title convention**, `*name - axDown`: short, known, read by NVDA as "star name".
+- **AD-D5 The Notepad title convention**, a star for unsaved changes: short, known, read by NVDA as "star". It stood before the name (`*name - axDown`), before the path from 2026-11-23, and stays there in the title of 2026-11-26 (`notes.md, axDown, *C:\work\notes.md`, AD-10).
 - **AD-D6 Go to line carries the position.** One key, F12, both tells the line and column (in the field's name)
   and moves; a separate "where am I" key would be one more key to learn, and the status bar is there for NVDA+End.
 - **AD-D7 Navigation letters are NVDA's browse-mode letters (2026-10-02).** The defaults are the keys NVDA

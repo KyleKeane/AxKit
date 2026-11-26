@@ -7,7 +7,7 @@ file home\AxKit\axMCP.json {"servers": [{"name": "zzbeta", "commandLine": "cmd /
 file .mcp.json {"mcpServers":{"zzproj":{"command":"cmd","args":["/c","echo"]}}}
 
 start mcpclient {temp}
-expect state "title":"axMCP, access layer for MCP servers Servers
+expect state "title":"Servers, axMCP
 expect focus Servers
 type zzproj
 expect focus zzproj, stdio, stopped

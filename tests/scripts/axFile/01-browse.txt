@@ -29,7 +29,7 @@ expect focus "name":"13 items"
 # A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
 wait 500
 expect focus empty-folder-no-items, folder
-expect state "title":"axFile folder 
+expect state , axFile, 
 expect state \nav","notice"
 expect quiet 1500
 
@@ -123,7 +123,7 @@ keys home
 keys down
 keys enter
 expect said ! level-1-enter-me, 2 items, level-2-enter-me, folder
-expect state "title":"axFile folder 
+expect state , axFile, 
 expect state \level-1-enter-me","notice"
 refuse said ! level-2-enter-me, folder
 # Goal: Go back to the folder above
@@ -175,7 +175,7 @@ keys enter
 expect said ! C:\,
 keys backspace
 expect said (C:), drive
-expect state "title":"axFile This PC"
+expect state "title":"This PC, axFile"
 expect focus (C:), drive
 do Information
 expect said GB free of
@@ -217,7 +217,7 @@ keys right
 expect said ! level-3-enter-me, 1 item, you-reached-the-bottom.txt
 keys right
 expect said ♪ Edge
-expect state "title":"axFile folder 
+expect state , axFile, 
 expect state \level-3-enter-me","notice"
 keys left
 expect said ! level-2-enter-me, 2 items, level-3-enter-me, folder
@@ -249,7 +249,7 @@ expect focus "name":"Path"
 type %SystemRoot%
 keys enter
 expect said ! Windows,
-expect state "title":"axFile folder 
+expect state , axFile, 
 expect state \Windows","notice"
 # Goal: Go to a file by its path
 # A file's path: its folder with the file selected.

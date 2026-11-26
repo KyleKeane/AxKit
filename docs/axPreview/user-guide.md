@@ -15,7 +15,7 @@ axPreview is part of axKit. Installing axKit (see the axKit guide: Help, About, 
 
 axPreview keeps one window: a file opened from axFile, File Explorer or the console while an axPreview window is open goes into that window rather than opening another; Session, Open recent lists the last ten. A second window is the axKit menu's Apps, axPreview, Ctrl+N, or `--new` on the console.
 
-The window is named after the file: "README.md - axPreview". NVDA reads the title, then "README.md, read only, edit, multi line" and the first line. The status bar (NVDA+End) has the file's name on the left and "Line 12, Column 4 · UTF-8 · CRLF" on the right.
+The window is named after the file, then axPreview, then the file's full path: "README.md, axPreview, C:\work\README.md". NVDA reads the title, then "README.md, read only, edit, multi line" and the first line. The status bar (NVDA+End) has the file's name on the left and "Line 12, Column 4 · UTF-8 · CRLF" on the right.
 
 ## Reading
 

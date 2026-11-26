@@ -250,7 +250,7 @@ public sealed partial class MediaForm
         Announce($"{word} {_queue.PlayingName}, {MediaFiles.FormatTime(_player.Position)} of {MediaFiles.FormatTime(_player.Duration)}, {MediaFiles.SpeedText(Speed).ToLowerInvariant()}", true);
     }
 
-    /// <summary>The title (AM-2.3): "<name> - axMedia" while a file plays or is paused, "axMedia" otherwise; the Window menu names the window by it.</summary>
+    /// <summary>The title (AM-2.3): "<name>, axMedia, <full path>" while a file plays or is paused, "axMedia" otherwise; the Window menu names the window by it.</summary>
     private void UpdateTitle()
     {
         // From the first file on, the title is the file playing, no longer the start's.
@@ -258,8 +258,8 @@ public sealed partial class MediaForm
         SetTitle(TitleNow());
     }
 
-    /// <summary>The title's first part now: the file playing or paused, the start's file before anything has played, nothing otherwise.</summary>
-    private string? TitleNow() => PlayerActive && _queue.PlayingName is { } name ? name : _startTitle;
+    /// <summary>What the title names now: the file playing or paused, the start's file before anything has played, nothing otherwise.</summary>
+    private Opened? TitleNow() => PlayerActive && _queue.PlayingPath is { } path ? Opened.At(path) : _startTitle;
 
     /// <summary>The status bar (AM-2.2): the state, the file and the time on the left while something plays; the place and the speed on the right.</summary>
     private void UpdateStatusBar()

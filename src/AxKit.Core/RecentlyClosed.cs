@@ -105,20 +105,9 @@ public static class RecentlyClosed
         SettingsFile.Save(file, list);
     }
 
-    /// <summary>"notes.md (C:\notes\notes.md) - axDown", "myproject (C:\src\myproject) - axClaude": the name, the full path in parentheses, the app (AX-9.5).</summary>
-    public static string Title(ClosedItem item)
-    {
-        // The app as the user meets it, an access layer with its keyword (AX-11.2).
-        var app = Dispatch.ByName(item.App)?.Title ?? item.App;
-        if (item.Path.Length == 0)
-        {
-            // An app that holds no file (axProcess): its window by its name.
-            return app;
-        }
-
-        var name = PathName.Of(item.Path);
-        return (name == item.Path ? item.Path : $"{name} ({item.Path})") + " - " + app;
-    }
+    /// <summary>"notes.md, axDown, C:\notes\notes.md", "myproject, axClaude, C:\src\myproject": as the window's own title was (AX-9.5, AX-9.6); an app that holds no file (axProcess) by its name alone.</summary>
+    public static string Title(ClosedItem item) =>
+        AxKitWindows.Title(Dispatch.ByName(item.App)?.Name ?? item.App, item.Path.Length == 0 ? null : Opened.At(item.Path));
 
     private static bool Same(ClosedItem a, ClosedItem b) =>
         string.Equals(a.App, b.App, StringComparison.OrdinalIgnoreCase) && string.Equals(a.Path, b.Path, StringComparison.OrdinalIgnoreCase);

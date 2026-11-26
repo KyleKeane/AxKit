@@ -136,7 +136,7 @@ expect focus Put it there &once
 keys enter
 expect said ! Look in the terminal is in axTerminal's command field
 adopt
-expect state "title":"axTerminal, access layer for your shell folder 
+expect state , axTerminal, 
 expect focus "name":"Command, put here by another program and not sent. axKit checked nothing of it: read it, and press Enter only if you want to run it","role":"Text","value":"findstr /c:x '
 expect focus Fix the tap.json'"
 close

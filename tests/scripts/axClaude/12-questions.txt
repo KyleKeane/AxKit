@@ -22,7 +22,7 @@ expect said ♪ Notice
 expect said ! Question
 expect said → Permission Required: Accessing workspace.
 refuse said ! Permission Required: Accessing workspace.
-expect focus "role":"List","value":"y. Yes, I trust this folder, Accessing workspace"
+expect focus "role":"List","value":"y. Yes, I trust this folder, Accessing workspace ask"
 wait 1500
 # The list starts on y. A typed character reads the question again and moves nothing (D33, since 2026-11-26): the
 # answers are reached with the arrows, Home and End.

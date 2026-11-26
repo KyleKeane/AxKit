@@ -22,7 +22,7 @@ expect commands "Show in File Explorer, Context"
 # the first entry, so that the selection is seen to follow the file).
 file here\b.txt A second file.
 start down {temp}\here\b.txt
-expect state "title":"axDown file 
+expect state , axDown, 
 expect state \b.txt","notice"
 menu axFile, Session, Show current file in
 adopt

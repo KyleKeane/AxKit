@@ -64,8 +64,8 @@ expect commands 1. Remove Test cmd, Session, Remove a shell
 # Started from Switch shell: the title and the system line name it; cmd's own output in the terminal.
 menu 1. Test cmd
 expect said Test cmd
-expect state "title":"axTerminal, access layer for your shell folder 
-expect state \myproject Test cmd","notice"
+expect state , axTerminal, 
+expect state \myproject, Test cmd","notice"
 expect commands 1. Test cmd (cmd.exe /k), Session, Switch shell, checked
 do Terminal
 expect text "System: Switched to Test cmd in
@@ -92,8 +92,8 @@ close
 # Check: The shell in use starts again in the next window
 # Remembered for the next window: the same shell starts again.
 start terminal {temp}\work\myproject
-expect state "title":"axTerminal, access layer for your shell folder 
-expect state \myproject Test cmd","notice"
+expect state , axTerminal, 
+expect state \myproject, Test cmd","notice"
 do Terminal
 expect text "System: Shell started: Test cmd, command line cmd.exe /k, in
 do Command field
@@ -102,7 +102,7 @@ do Command field
 # Removed while in use: off both lists, the machine's default shell started in its place in the same folder.
 menu 1. Remove Test cmd
 expect said Removed Test cmd
-expect state "title":"axTerminal, access layer for your shell folder 
+expect state , axTerminal, 
 refuse state Test cmd","notice"
 # With none yet, Remove a shell holds one line that says so; it does nothing, so it is no command of the list
 # (docs/axKit/app-kit.md AK-2.5: the line that says a list is empty is never an entry).

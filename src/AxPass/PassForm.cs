@@ -246,17 +246,17 @@ public sealed partial class PassForm : ItemForm
 
     // ---- the levels ----
 
-    protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel()
+    protected override (IReadOnlyList<ItemRow> Rows, string Name, Opened? Title, string Place) ReadLevel()
     {
         if (_database is null)
         {
-            return ([], $"No database open: {BundleKeys.Text(AxPassKeys.OpenDatabase)} opens one, Session, New database makes one", "No database", string.Empty);
+            return ([], $"No database open: {BundleKeys.Text(AxPassKeys.OpenDatabase)} opens one, Session, New database makes one", null, string.Empty);
         }
 
         var name = PassTree.DatabaseName(_database);
         if (_password is null || _tree is null)
         {
-            return ([], $"{name}, locked: Enter unlocks", name, _database);
+            return ([], $"{name}, locked: Enter unlocks", new Opened(name, _database), _database);
         }
 
         if (!_tree.HasGroup(_group))
@@ -280,7 +280,7 @@ public sealed partial class PassForm : ItemForm
 
         var level = _group.Length == 0 ? name : _group[(_group.LastIndexOf('/') + 1)..];
         var count = rows.Count == 0 ? $"empty: {BundleKeys.Text(ItemKeys.New)} adds an entry" : Count(rows.Count, "item");
-        return (rows, $"{level}, {count}", _group.Length == 0 ? name : $"{_group.Replace("/", ", ")}, {name}", _database);
+        return (rows, $"{level}, {count}", new Opened(_group.Length == 0 ? name : $"{_group.Replace("/", ", ")}, {name}", _database), _database);
     }
 
     /// <summary>A group's key: its path with the slash the tool gives a group, so that a group and an entry of one name differ.</summary>

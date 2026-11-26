@@ -357,7 +357,7 @@ public sealed partial class TaskForm : ItemForm
         SaveSettings();
     }
 
-    protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel()
+    protected override (IReadOnlyList<ItemRow> Rows, string Name, Opened? Title, string Place) ReadLevel()
     {
         var today = Today;
         var rows = new List<ItemRow>();
@@ -461,7 +461,11 @@ public sealed partial class TaskForm : ItemForm
             name = ReadSections(rows, today);
         }
 
-        var title = _search is not null ? "Found" : _smart?.Name ?? (AtTop ? _projectName ?? "Lists" : ListTitle());
+        // The title (AX-9.6): what is open, axTask, its folder; a search's and a smart list's gathering have no folder of their own.
+        var title = _search is not null ? new Opened("Found")
+            : _smart is { } open ? new Opened(open.Name)
+            : AtTop ? new Opened(_projectName ?? "Lists", TopFolder)
+            : new Opened(ListTitle(), _folder);
         return (rows, name, title, PlaceText);
     }
 

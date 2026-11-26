@@ -1310,10 +1310,12 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   paths are kept, in this list and in the apps' recent lists (`RecentPaths.IsWhole`: a drive or a share and what
   follows): an entry that is anything else, written into a file by hand or by another program, is neither listed nor
   handed to an app, where text such as `--secret` would be read as an option. Nothing else about windows is stored.
-- AX-9.5 A window's or a file's item is its number, a full stop and a title, "1. notes.md (C:\notes\notes.md) - axDown":
+- AX-9.5 A window's or a file's item is its number, a full stop and a title, "1. notes.md, axDown, C:\notes\notes.md":
   the number is the mnemonic (1 to 9, then a to z), so that Alt+W, O, 1 or Alt+W, R, 1 acts without an arrow key, and
-  the full stop is a pause before the name (AX-8.5). A window's title is the window's own; a closed item's is the
-  file's or folder's name, its full path in parentheses, and the app. The apps' own recent lists have the same shape,
+  the full stop is a pause before the name (AX-8.5). A window's title is the window's own; a closed item's is made by
+  the same rule as a window's (AX-9.6, since 2026-11-26): the file's or folder's name, the app, the full path
+  (`RecentlyClosed.Title`; until then the name, the full path in parentheses, " - " and the app's title), and axStart
+  lists what was closed in the same words (AS-2.5). The apps' own recent lists have the shape of before,
   "1. myproject (C:\src\myproject)" (axClaude FR-8.5, axDown AD-4.1). Enter brings a window to the
   front, restored when it was minimized. A list with nothing in it holds one item that says so and does nothing, enabled
   ("No other open windows", "No open axDown windows", "Nothing recently closed"; the apps' own lists likewise, "No
@@ -1344,14 +1346,25 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   - axTask's limit: its top folder is read on the window's thread whatever it is on (docs/axTask/SPEC.md TK-D3), so
     a top folder on a share that is away still waits.
 - AX-9.6 The windows are the visible, unowned, titled top-level windows of every process named as this one, told
-  apart by the start of their title. Since 2026-11-24 a title is the app's title first, then what the window holds
-  (the maintainer's ask of 2026-11-23: "when focus lands on a new axKit window, it should say the app name before
-  the session location"; `AxKitForm.SetTitle`): "axDown file C:\work\notes.md", "axFile folder C:\work\music",
-  "axClaude, access layer for Claude Code folder C:\work", "axTerminal, access layer for your shell folder C:\work
-  PowerShell"; a window that holds a folder says "folder" and its full path (`FolderTitle`), an editor "file" and
-  the file's full path (an unsaved change's star before the path), and a window that holds nothing has the app's
-  title alone. The app is read off the title up to its first space or comma (`AxKitWindows.AppOf`). Before, a
-  title ended with the app (" - axDown"). A window of
+  apart by the app their title names. **Every window's title is one rule** (the maintainer's word of 2026-11-26:
+  "the window of any axkit app should announce the open directory name before naming the app ... project axclaude
+  c:\path\to\project ... axdown should name the file then app then path to file"; `AxKitWindows.Title`, through
+  `AxKitForm.SetTitle` with an `Opened`): what the window holds open first (a folder's or a file's name, a list's,
+  a database's or a repository's), then the app's name alone (the access layers too, without "access layer for",
+  AX-11.2), then the full path, a comma and a space between the parts so that NVDA reads three parts with a pause:
+  "notes.md, axDown, C:\work\notes.md", "myproject, axClaude, C:\src\myproject", "music, axFile, C:\work\music",
+  "Home, axTask, C:\lists\Home". A window with nothing open has the app's name alone
+  ("axGIT" with no repository, "axFile" before its first folder, "axCalc", "axMedia" while nothing plays); an
+  editor's untitled text is a thing open, "Untitled, axDown"; a thing with no path has no third part ("This PC, axFile", "This computer,
+  axProcess", a smart list of axTask), and a path that is its own name (a drive's root) is said once ("C:\,
+  axFile"). The editors' star of unsaved changes stays where it stood: before the full path, "notes.md, axDown,
+  *C:\work\notes.md", and before the name of an untitled text, "*Untitled, axDown". axTerminal adds its shell as a
+  fourth part ("work, axTerminal, C:\work, PowerShell"); axHelp's conversation keeps its own title, "axHelp"
+  (axClaude FR-9.2), and the hotkey windows (axStart, axClip, axHelp's hotkeys) theirs, the name alone, by which a
+  second start finds them. The app is read off a title (`AxKitWindows.AppOf`) as its first part after the first that
+  is an app's name, so that a name with a comma ("Smith, John.docx") still finds its app; a title of one part is the
+  app. From 2026-11-24 to 2026-11-26 a title was the app's title first ("axFile folder C:\work\music", the
+  maintainer's ask of 2026-11-23); before that it ended with the app (" - axDown"). A window of
   none of the apps (the bundle's own message box, AX-1.4) is listed nowhere. The lists are pure code in
   `AxKit.Core/AxKitWindows` and `AxKit.Core/RecentlyClosed`, unit tested; only the listing and the switch (user32
   `EnumWindows`, `SetForegroundWindow`) and the menu itself are in `WindowMenu`.
@@ -1523,12 +1536,14 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
     results to a standalone app (axGIT's file to axDown) as the user's own opening would.
 - AX-11.2 **The keyword.** An access layer's name is never shown alone: wherever the user meets it, it reads
   "<name>, access layer for <program>" ("axClaude, access layer for Claude Code"), from one place,
-  `App.Title` (the name alone for a standalone app; the phrase "access layer" is one constant). That is: the window
-  title (wherever the app's name stands in it today), the axKit menu's Apps and Access layers,
-  the Window menu's Open windows, Show current folder in and Recently closed lists, axFile's Open with axKit apps and access layers, the command palette,
+  `App.Title` (the name alone for a standalone app; the phrase "access layer" is one constant). That is: the axKit menu's Apps and Access layers,
+  the Window menu's app submenus and Show current folder in list, axFile's Open with axKit apps and access layers, the command palette,
   About, Version, the Start menu entry's name and description, File Explorer's Open with axKit submenu, Windows' Open
   with list, the installer's lines, the first line of each access layer's user guide and F1 text, both READMEs and
-  `NOTICE.md`. The console commands (`axClaude`) and the verbs stay single words.
+  `NOTICE.md`. The console commands (`axClaude`) and the verbs stay single words. A window's title is the one
+  exception (the maintainer's word of 2026-11-26, AX-9.6): it names the app by its name alone, "myproject, axClaude,
+  C:\src\myproject", and so do the lists made of titles, the Window menu's Open windows and Recently closed and
+  axStart's recently closed matches; until then the title carried the keyword.
 - AX-11.3 **Grouped apart.** Every list of apps shows the standalone apps first, in their groups (AX-9.2), then the
   access layers, with a separator before them (in File Explorer's submenu, the separator flag of its entry), the
   AI access layers and the utilities among them last (`AppGroup.Ai`, `AppGroup.Utilities`; one Claude group from 5.6.0 to 2026-11-23); the axKit menu has them
@@ -1611,7 +1626,8 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   the maker as the main user and to anyone else using the tools, not as a vendor's legal notices. The licence and its
   section 7 terms keep their full words, since the licence needs them.
 - AX-11.9 **Tests.** The access layers are the last group and carry the keyword (`DispatchTests`); window titles are
-  read back to their app (`AxKitWindowsTests`); `Consent` records, reads, withdraws and takes a damaged file as nothing
+  made by AX-9.6's rule, what is open, the app's name alone, the path, and read back to their app, a name with a
+  comma in it included (`AxKitWindowsTests`); a closed item's title follows the same rule (`RecentlyClosedTests`); `Consent` records, reads, withdraws and takes a damaged file as nothing
   agreed (`ConsentTests`); the servers' hosts (`GitRemoteTests`); every program Install it now offers has its
   consent target with an address (`ConsentTests`).
 - AX-11.11 **How an access layer meets the network (2026-11-05).** An access layer starts its program as a child
@@ -1866,6 +1882,10 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
 - AX-7.1 Every control has an `AccessibleName`; every action works from the keyboard; menu items have mnemonics and
   shortcuts. Native Win32 controls (EDIT, menus, status bar, `ListBox`) are used because NVDA reads them reliably;
   no WPF, no web view, no owner-drawn controls.
+- AX-7.1a **The title names what is open, then the app, then the path** (the maintainer's word of 2026-11-26): every
+  window's title is "<what is open>, <app>, <full path>", "myproject, axClaude, C:\src\myproject", "notes.md, axDown,
+  C:\work\notes.md", and the app's name alone with nothing open; NVDA reads it as the focus lands on the window, the
+  place first. One rule in the window base for every app (`AxKitForm.SetTitle`); the details are AX-9.6.
 - AX-7.2 No second window of the app's own: questions, errors and help texts are notices drawn inside the window
   (`OverlayPanel`), never a `Form` or a `MessageBox` once a window exists. A notice's button may open the next notice
   (the update's progress, an error, axDown's changed-on-disk question after Save), which then stays in view. The

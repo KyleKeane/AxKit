@@ -13,7 +13,7 @@ run powershell -NoProfile -Command "Add-Type -AssemblyName System.IO.Compression
 # Goal: Read a PowerPoint presentation slide by slide
 # The first slide's heading, its text under it; Ctrl+H the next slide; the status bar names the kind.
 start preview {temp}\deck.pptx
-expect state "title":"axPreview file
+expect state , axPreview, 
 expect state \deck.pptx","notice"
 expect focus {"name":"deck.pptx","role":"Text","value":"## Slide 1"}
 expect state PowerPoint presentation

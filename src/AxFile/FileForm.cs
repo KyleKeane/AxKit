@@ -228,11 +228,11 @@ public sealed partial class FileForm : ItemForm
     /// folder's full path after the app's name ("This PC" for This PC), the status bar's second part its path. The
     /// item window then shows the rows that pass its filter and says so in the list's name. Before a folder is shown there are no rows and the list is "No folder".
     /// </summary>
-    protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel() =>
+    protected override (IReadOnlyList<ItemRow> Rows, string Name, Opened? Title, string Place) ReadLevel() =>
         _folder is null
-            ? ([], "No folder", string.Empty, string.Empty)
+            ? ([], "No folder", null, string.Empty)
             : ([.. _sorted.Select(entry => new ItemRow(entry.IsFolder, entry.Path, entry.Name, entry.Label, entry))],
-                FolderListing.ListName(_entries.Count), FolderListing.IsThisPC(_folder) ? PathName.Of(_folder) : FolderTitle(_folder), _folder);
+                FolderListing.ListName(_entries.Count), FolderListing.IsThisPC(_folder) ? new Opened(PathName.Of(_folder)) : Opened.At(_folder), _folder);
 
     /// <summary>
     /// The navigator's keys axFile has a command of its own for under another condition, or no use for: Ctrl+Z

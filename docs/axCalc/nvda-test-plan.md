@@ -4,7 +4,7 @@ Run with NVDA before a release, after `scripts to run-individual-apps\run-axCalc
 
 ## 1. Start (AC-1, AC-2)
 
-1. Start axCalc: NVDA reads "Calculator - axCalc window", then "Expression, edit". Nothing else is spoken.
+1. Start axCalc: NVDA reads "axCalc window", then "Expression, edit". Nothing else is spoken.
 2. Shift+Tab: the history, a text since 2026-11-22: NVDA says "History" and that it is a read-only text, blank when empty, else the last line. Tab: the field again. F6 and Ctrl+Tab: the same two.
 3. NVDA+End: the status bar: "No answer yet" (or "Answer …") and "Degrees, no variables".
 4. Alt+F4 closes the window without a question.

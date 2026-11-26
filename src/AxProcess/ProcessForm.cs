@@ -55,7 +55,7 @@ public sealed class ProcessForm : ItemForm
         : base(AxProcessApp.Name, settings, ProcessSettings.DefaultPath, settingsError)
     {
         _settings = settings;
-        SetTitle("This computer");
+        SetTitle(new Opened("This computer"));
 
         // ---- menus and keys (PR-6.1, PR-6.2): one command list (docs/axKit/app-kit.md AK-2), each key from the tables ----
         // The first menu holds what every level has (AX-6: the thing worked on, then Exit); each kind of row has a
@@ -192,8 +192,8 @@ public sealed class ProcessForm : ItemForm
     /// as last read. The list is named with its count, "Processes, 214", or "Processes, reading" before its first
     /// read; the title is the computer; the status bar's second part is the memory in use.
     /// </summary>
-    protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel() =>
-        (LevelRows(), LevelName(), "This computer", MemoryText());
+    protected override (IReadOnlyList<ItemRow> Rows, string Name, Opened? Title, string Place) ReadLevel() =>
+        (LevelRows(), LevelName(), new Opened("This computer"), MemoryText());
 
     private IReadOnlyList<ItemRow> LevelRows() => _level switch
     {

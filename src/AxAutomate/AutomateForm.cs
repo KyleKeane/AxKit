@@ -121,12 +121,12 @@ public sealed partial class AutomateForm : ItemForm
     /// <summary>What the window says and shows with no folder open, its key from the table.</summary>
     private static string NoFolderOpen => $"No folder open: {BundleKeys.Text(AxAutomateKeys.OpenFolder)} opens a folder of workflows";
 
-    protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel()
+    protected override (IReadOnlyList<ItemRow> Rows, string Name, Opened? Title, string Place) ReadLevel()
     {
         if (_folders.Count == 0)
         {
             var none = NoFolderOpen;
-            return ([new ItemRow(false, "none", none, none)], "Workflows, no folder open", "Workflows", "No folder");
+            return ([new ItemRow(false, "none", none, none)], "Workflows, no folder open", null, "No folder");
         }
 
         var folder = _folders[^1];
@@ -139,7 +139,7 @@ public sealed partial class AutomateForm : ItemForm
             }
 
             var problem = workflow.Problem is null ? string.Empty : ", not all understood: " + workflow.Problem;
-            return (rows, $"{workflow.Title}, {StepText.Count(workflow.StepCount, "step")}{problem}", workflow.Title, folder);
+            return (rows, $"{workflow.Title}, {StepText.Count(workflow.StepCount, "step")}{problem}", new Opened(workflow.Title, workflow.Path), folder);
         }
 
         var entries = WorkflowFolder.Read(folder);
@@ -153,7 +153,7 @@ public sealed partial class AutomateForm : ItemForm
         }
 
         var name = Path.GetFileName(Path.TrimEndingDirectorySeparator(folder)) is { Length: > 0 } own ? own : folder;
-        return (items, $"{name}, {StepText.Count(entries.Count(entry => !entry.IsFolder), "workflow")}, {StepText.Count(entries.Count(entry => entry.IsFolder), "folder")}", name, folder);
+        return (items, $"{name}, {StepText.Count(entries.Count(entry => !entry.IsFolder), "workflow")}, {StepText.Count(entries.Count(entry => entry.IsFolder), "folder")}", new Opened(name, folder), folder);
     }
 
     /// <summary>A workflow's row by its title (AU-4.2): a script's is its file's name, a workflow file's its own; after a run, its outcome.</summary>

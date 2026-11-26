@@ -5,7 +5,7 @@ namespace AxKit.Forms;
 /// everything that differs between axDown and axJSON, as data. <see cref="TextEditorForm"/> is the window of both;
 /// <see cref="EditorHost.Run"/> starts one on this record.
 /// </summary>
-/// <param name="Name">The app's name, the end of its window titles ("notes.md - axDown").</param>
+/// <param name="Name">The app's name, the middle of its window titles ("notes.md, axDown, C:\work\notes.md").</param>
 /// <param name="Verb">The verb <c>AxKit.exe</c> takes for it (<c>AxKit.Core.Dispatch</c>).</param>
 /// <param name="SettingsName">The settings file's and the log's name, "axDown" for <c>axDown.json</c> and <c>axDown.log</c>.</param>
 /// <param name="FileFilter">The Open and Save dialogs' filter.</param>

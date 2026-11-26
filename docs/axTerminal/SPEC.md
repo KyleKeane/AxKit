@@ -223,9 +223,10 @@ gets its page shown in place of the transcript while it holds the screen, and no
   naming the control when it has the focus already (axClaude FR-6.5, D26); while a full-screen program's screen view
   shows, they say why they wait instead (AT-9.10). The focus starts in the field and stays
   there after sending.
-- AT-2.3 The title is `axTerminal, access layer for your shell folder <current directory's full path> <the shell's
-  name>` (the app first, the maintainer's ask of 2026-11-23, bundle AX-9.6; until then `<directory's name> - <shell>
-  - axTerminal`), the directory being the shell's (9;9) and the start
+- AT-2.3 The title is `<directory's name>, axTerminal, <current directory's full path>, <the shell's name>`
+  (`work, axTerminal, C:\work, PowerShell`; the maintainer's word of 2026-11-26, bundle AX-9.6; `axTerminal, access
+  layer for your shell folder <full path> <shell>` from 2026-11-23, `<directory's name> - <shell> - axTerminal`
+  before), the directory being the shell's (9;9) and the start
   folder before the first mark. The status bar's left label: `Idle`, `Running: dotnet test`, `Shell ended`,
   `Starting`; the right label: the shell's last prompt, the row's text between the `A` and `B` marks
   (`PS C:\src\myproject>`), or the full directory before the first prompt. No AccessibleName, no Spring (axClaude

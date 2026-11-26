@@ -44,7 +44,7 @@ refuse said playing,
 menu Play, Context
 expect said ! Playing beta.wav
 expect list ["alpha.wav","beta.wav (playing)"]
-expect state "title":"axMedia beta.wav"
+expect state "title":"beta.wav, axMedia, 
 
 # Goal: Remove a file found in the command palette
 # Remove, found in the palette: its name, its menu and its key are said; Enter removes the selected file, which was

@@ -20,7 +20,7 @@ mkdir plain
 # Goal: Open a repository
 # 1.1 The window is named after the repository, the Changes list focused on its first item; nothing announced.
 start git {temp}\repo
-expect state "title":"axGIT, access layer for Git folder 
+expect state , axGIT, 
 expect state \repo","notice"
 expect focus Changes, 2 files
 expect focus Modified a.txt, unstaged
@@ -121,6 +121,6 @@ expect state plain is not inside a git repository
 wait 1200
 keys enter
 expect state "notice":null
-expect state "title":"axGIT, access layer for Git No repository"
+expect state "title":"axGIT"
 # 1.5 Ctrl+O opens the Windows folder picker, and Ctrl+O on a folder outside any repository with one open: manual,
 # the picker is a system dialog the channel cannot drive.

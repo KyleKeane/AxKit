@@ -54,7 +54,7 @@ public abstract partial class AxKitForm : Form
         _aiTools = new AiToolsSetup(this);
         // AX-6.6a: the window's keys from an open drop-down of its menus.
         AddMenuKeyFilter();
-        // With the role Window, NVDA speaks the window when it opens ("notes.md - axDown window") before the focused
+        // With the role Window, NVDA speaks the window when it opens ("notes.md, axDown, C:\work\notes.md window") before the focused
         // control; without it the window is a nameless pane to NVDA and the app is never named (AX-7.1).
         AccessibleRole = AccessibleRole.Window;
         MinimumSize = new Size(500, 300);
@@ -77,21 +77,18 @@ public abstract partial class AxKitForm : Form
         CommandPalette.Marked(_updateItem, CommandMark.Act).Click += (_, _) => OfferKnownUpdate();
     }
 
-    /// <summary>The app's name, which ends the title of its windows and names them in the Window menu.</summary>
+    /// <summary>The app's name, which stands in the title of its windows after what they hold and names them in the Window menu (AX-9.6).</summary>
     protected internal string AppName { get; }
 
-    /// <summary>The app's name as the user meets it (AX-11.2): "axClaude, access layer for Claude Code" for an access layer, the name alone otherwise; window titles end with it.</summary>
+    /// <summary>The app's name as the user meets it (AX-11.2): "axClaude, access layer for Claude Code" for an access layer, the name alone otherwise; a window's title has the name alone (AX-9.6).</summary>
     protected string AppTitle => Dispatch.ByName(AppName)?.Title ?? AppName;
 
     /// <summary>
-    /// The title (AX-11.2): the app's title first, then what the window holds, so that NVDA says the app before the
-    /// place as the focus lands on a new window ("axFile folder C:\work\music", the user's ask of 2026-11-23);
-    /// the app's title alone for nothing.
+    /// The title (AX-9.6, the maintainer's word of 2026-11-26): what the window holds open first, then the app's name
+    /// alone, then the full path, so that NVDA says the place before the app as the focus lands on a new window
+    /// ("music, axFile, C:\work\music"); the app's name alone for nothing open (<see cref="AxKitWindows.Title"/>).
     /// </summary>
-    protected void SetTitle(string? held) => Text = held is null ? AppTitle : $"{AppTitle} {held}";
-
-    /// <summary>What a window that holds a folder gives <see cref="SetTitle"/>: the word "folder" and the folder's full path.</summary>
-    protected static string FolderTitle(string folder) => $"folder {folder}";
+    protected void SetTitle(Opened? opened) => Text = AxKitWindows.Title(AppName, opened);
 
     /// <summary>The app's settings as the base needs them: the font, the update check and the window's place.</summary>
     protected WindowSettings Settings { get; }

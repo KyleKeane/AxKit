@@ -11,20 +11,20 @@ file plain.txt Plain text file, line 1.\nLine 2.
 # 2.6, the first half: axpreview plain.txt while a window is open: a second process hands the file over and ends
 # without a window of its own (launch waits for it to end); the open window shows it.
 start preview {temp}\README.md
-expect state "title":"axPreview file 
+expect state , axPreview, 
 expect state \README.md","notice"
 launch preview {temp}\plain.txt
-expect state "title":"axPreview file 
+expect state , axPreview, 
 expect state \plain.txt","notice"
 expect focus {"name":"plain.txt","role":"Text","value":"Plain text file, line 1."}
 
 # Goal: Open a second window
 # 2.6, the second half: axpreview --new README.md opens a second window while one is open.
 start preview --new {temp}\README.md
-expect state "title":"axPreview file 
+expect state , axPreview, 
 expect state \README.md","notice"
 expect focus README.md
 use 1
-expect state "title":"axPreview file 
+expect state , axPreview, 
 expect state \plain.txt","notice"
 expect focus plain.txt

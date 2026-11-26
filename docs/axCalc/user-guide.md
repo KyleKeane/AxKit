@@ -8,7 +8,7 @@ axCalc is part of axKit. Installing axKit (see the axKit guide: Help, About, axK
 
 ## Start
 
-The window is called "Calculator - axCalc", and the focus starts in the field named Expression. Above it is the history, a text you read line by line, as the conversation in axClaude and the terminal in axTerminal; Tab, Shift+Tab, Ctrl+Tab or F6 move between the two.
+The window is called "axCalc", and the focus starts in the field named Expression. Above it is the history, a text you read line by line, as the conversation in axClaude and the terminal in axTerminal; Tab, Shift+Tab, Ctrl+Tab or F6 move between the two.
 
 ## Answers
 

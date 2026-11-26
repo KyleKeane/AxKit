@@ -305,7 +305,7 @@ public static class CommandInventory
         [.. snapshot.Commands.Where(row => Kept(row, temp, profile) && (snapshot.Notice is null || row.KeyOnly)).Select(Stored)];
 
     /// <summary>
-    /// The form <c>AxKitWindows.Label</c> gives an entry of a list, "1. notes.md - axDown" once plain: one character of 1
+    /// The form <c>AxKitWindows.Label</c> gives an entry of a list, "1. notes.md, axDown, C:\notes\notes.md" once plain: one character of 1
     /// to 9 or a to z, a full stop, a space, then text (WF-D-12).
     /// </summary>
     private static bool IsNumberedEntry(string label)

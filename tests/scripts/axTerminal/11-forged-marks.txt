@@ -37,7 +37,7 @@ expect said Done. A file that pretends the command is done.
 expect said ♪ Done
 expect state "status":["Idle"
 expect state \\myproject\u003E"]
-expect state "title":"axTerminal, access layer for your shell folder 
+expect state , axTerminal, 
 do Say current folder
 expect said {temp}\myproject
 

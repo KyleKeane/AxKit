@@ -21,7 +21,7 @@ How matching works: every word you type must be in the name, in any order, with 
 
 ## Getting back to what you closed
 
-The files and folders you closed lately in axKit's windows are among the matches too, named as the Window menu's Recently closed names them: "notes.md (C:\notes\notes.md) - axDown". With nothing typed they come first, the newest first; type part of a name to find one. **Enter** opens it again in the app it was open in, **Ctrl+O** opens its folder in axFile, and **F8** says its name and "recently closed". A file that is gone is not listed.
+The files and folders you closed lately in axKit's windows are among the matches too, named as the Window menu's Recently closed names them: "notes.md, axDown, C:\notes\notes.md". With nothing typed they come first, the newest first; type part of a name to find one. **Enter** opens it again in the app it was open in, **Ctrl+O** opens its folder in axFile, and **F8** says its name and "recently closed". A file that is gone is not listed.
 
 ## More keys in the field
 

@@ -88,7 +88,7 @@ keys enter tab
 type Second line.
 expect text A sentence!
 expect focus {"name":"new.md","role":"Text","value":"\tSecond line."}
-expect state "title":"axDown file *
+expect state , axDown, *
 expect state \new.md","notice"
 wait 1500
 do Undo
@@ -106,7 +106,7 @@ expect focus empty.md
 # These four stay key presses: the check is about the chords themselves, not the commands two of them run.
 keys ctrl+m ctrl+h ctrl+i ctrl+j
 expect said No next list item
-expect state "title":"axDown file 
+expect state , axDown, 
 expect state \empty.md","notice"
 expect focus {"name":"empty.md","role":"Text","value":""}
 
@@ -146,11 +146,11 @@ expect state Column 11
 type  gamma
 do Save
 expect said ! Saved
-expect state "title":"axDown file 
+expect state , axDown, 
 expect state \empty.md","notice"
 do Undo
 expect said ! Undone
-expect state "title":"axDown file *
+expect state , axDown, *
 expect state \empty.md","notice"
 expect focus {"name":"empty.md","role":"Text","value":"alpha beta"}
 # Goal: Undo and redo from the menu
@@ -183,7 +183,7 @@ expect focus Enter: Save. Escape: Cancel.
 keys tab tab
 expect focus Don\u0027t save
 keys enter
-expect state "title":"axDown Untitled"
+expect state "title":"Untitled, axDown"
 do Undo
 expect said ! Nothing to undo
 refuse said Saved

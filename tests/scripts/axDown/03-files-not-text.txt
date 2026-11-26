@@ -12,5 +12,5 @@ expect state "notice":"Error"
 expect state image.png is not a text file (it holds a NUL character).
 keys escape
 expect state "notice":null
-expect state "title":"axDown Untitled"
+expect state "title":"Untitled, axDown"
 expect focus {"name":"Untitled","role":"Text","value":""}

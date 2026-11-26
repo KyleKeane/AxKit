@@ -10,7 +10,7 @@ letter), and a `long.md` with headings and lines longer than the window.
 ## 1. Install and start
 
 1. `.\publish.ps1` installs axKit. Press the Windows key, type `axd`: "axKit axDown" is offered; Enter opens an
-   empty window. NVDA reads the title "Untitled - axDown" and then "Untitled edit multi line".
+   empty window. NVDA reads the title "Untitled, axDown" and then "Untitled edit multi line".
 2. Right-click `plain.txt` in File Explorer: the "Open with axKit" submenu lists axDown, and not axJSON; Enter on
    axDown opens the file. "Open with"
    lists axDown for `.md`, `.markdown` and `.txt`.
@@ -107,8 +107,8 @@ letter), and a `long.md` with headings and lines longer than the window.
    Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key, Copy diagnostics), Check
    for updates and About (bundle AX-9.1); Help, About, axKit on GitHub: the browser opens the repository page. With a second
    axDown open, Open windows reads "1. <name> - axDown, 1 of 1" and Enter brings that window to the front; Alt+K, A, then axDown starts a new Untitled window. Alone, Open windows holds
-   "No other open windows", which NVDA reads and which does nothing. Close a window that has `plain.txt` open: in another window Alt+W, R reads "1. plain.txt
-   (<path>) - axDown" and Enter opens it in a new window; Session, Open on another file puts the one you left there too. Alt+W, C
+   "No other open windows", which NVDA reads and which does nothing. Close a window that has `plain.txt` open: in another window Alt+W, R reads "1. plain.txt,
+   axDown, <path>" and Enter opens it in a new window; Session, Open on another file puts the one you left there too. Alt+W, C
    (Close all windows) with unsaved changes in one window: that window asks "Save changes?" and the others close.
 5. Options, Check for updates at start: read as checked; Enter unchecks it. Help, Diagnostics, Copy diagnostics: "Copied diagnostics"; Options, Developer, Open settings file: a new axJSON
    window on `axDown.json`. Help, Markdown resources, Markdown basics: the browser opens commonmark.org; GitHub

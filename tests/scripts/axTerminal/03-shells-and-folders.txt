@@ -35,8 +35,8 @@ expect focus "value":"Command Prompt"}
 keys enter
 expect said New session in myproject
 expect said Ready
-expect state "title":"axTerminal, access layer for your shell folder 
-expect state Command Prompt","notice"
+expect state , axTerminal, 
+expect state , Command Prompt","notice"
 do Terminal
 expect focus "name":"Terminal"
 expect text "System: New session: Command Prompt in
@@ -81,8 +81,8 @@ do Command field
 menu Git Bash
 expect said Git Bash
 expect said Ready
-expect state "title":"axTerminal, access layer for your shell folder 
-expect state \myproject Git Bash","notice"
+expect state , axTerminal, 
+expect state \myproject, Git Bash","notice"
 # The prompt in the status bar is the user's PS1 with its rows joined (user, host, MINGW64, the path), ending in $.
 expect state "status":["Idle",
 expect state $"]}
@@ -100,8 +100,8 @@ type cd ..
 keys enter
 expect said Done
 expect said ♪ Done
-expect state "title":"axTerminal, access layer for your shell folder 
-expect state \work Git Bash","notice"
+expect state , axTerminal, 
+expect state \work, Git Bash","notice"
 type cd myproject
 keys enter
 expect said Done
@@ -109,8 +109,8 @@ expect said ♪ Done
 menu Windows PowerShell
 expect said Windows PowerShell
 expect said Ready
-expect state "title":"axTerminal, access layer for your shell folder 
-expect state \myproject Windows PowerShell","notice"
+expect state , axTerminal, 
+expect state \myproject, Windows PowerShell","notice"
 
 # Goal: Hear the current folder's full path
 # Step 3: cd .. in PowerShell: the title and the status bar name the parent folder; F8 says its full path.
@@ -118,8 +118,8 @@ type cd ..
 keys enter
 expect said Done
 expect said ♪ Done
-expect state "title":"axTerminal, access layer for your shell folder 
-expect state \work Windows PowerShell","notice"
+expect state , axTerminal, 
+expect state \work, Windows PowerShell","notice"
 expect state \\work\u003E"]
 do Say current folder
 expect said {temp}\work

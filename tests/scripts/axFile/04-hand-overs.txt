@@ -49,7 +49,7 @@ keys end
 expect focus "value":"README.md"
 keys shift+enter
 adopt
-expect state "title":"axPreview file 
+expect state , axPreview, 
 expect state \README.md","notice"
 expect focus README.md
 # Goal: Read another file in the same axPreview window
@@ -61,7 +61,7 @@ expect focus "value":"plain.txt"
 wait 500
 keys ctrl+enter
 use 2
-expect state "title":"axPreview file 
+expect state , axPreview, 
 expect state \plain.txt","notice"
 expect focus plain.txt
 # Goal: Open a folder in a new axFile window

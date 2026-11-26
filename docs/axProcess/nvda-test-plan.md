@@ -4,7 +4,7 @@ Run with NVDA before a release, after `scripts to run-individual-apps\run-axProc
 
 ## 1. Start (PR-1, PR-2)
 
-1. Start axProcess: NVDA reads "This computer - axProcess window", then the list; about a second later "Processes, N. <first item>", not interrupting. Nothing else is spoken.
+1. Start axProcess: NVDA reads "This computer, axProcess window", then the list; about a second later "Processes, N. <first item>", not interrupting. Nothing else is spoken.
 2. Down Arrow: the next item alone, "<name>, <memory>, <n>% CPU, process <id>". The list is largest memory first.
 3. NVDA+End: the status bar: "Processes, N" and "Memory N% in use".
 4. F7: "N processes. Memory x of y GB in use, z%. Processor n%".

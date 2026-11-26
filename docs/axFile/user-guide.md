@@ -14,7 +14,7 @@ axFile is part of axKit. Installing axKit (see the axKit guide: Help, About, axK
 - From axClaude: Session, Show current folder in, axFile (Alt+S, I, F). From axDown, axJSON or axPreview: Session, Show current file in, axFile (the file's folder, the file selected). From axGIT: Session, Show current repository in, axFile. From axTerminal: Session, Show current folder in, axFile. From axMedia: Session, Show current file in, axFile. Each opens a new axFile window.
 - To go back: Alt+W, O lists the open axKit windows, most recent first, so Alt+W, O, 1 is the window you came from. From axFile, Session, Show current folder in offers File Explorer, axClaude, axTerminal and axGIT on the folder you are in.
 
-The window is named after the folder: "Dune - axFile". The list is named with its count, "24 items", so that the folder is not read twice, and NVDA reads the entry you are on. The status bar (NVDA+End) has the newest file operation on the left, "Copied 3 items", followed by how many entries are selected while any are, "Copied 3 items, 2 selected", and the folder's full path on the right.
+The window is named after the folder, then axFile, then the folder's full path: "Dune, axFile, C:\Music\Dune". The list is named with its count, "24 items", so that the folder is not read twice, and NVDA reads the entry you are on. The status bar (NVDA+End) has the newest file operation on the left, "Copied 3 items", followed by how many entries are selected while any are, "Copied 3 items, 2 selected", and the folder's full path on the right.
 
 ## The folder list
 

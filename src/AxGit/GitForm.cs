@@ -64,7 +64,7 @@ public sealed partial class GitForm : ItemForm
     {
         _settings = settings;
         _startPath = path;
-        SetTitle("No repository");
+        SetTitle(null);
 
         // ---- menus and keys (AG-6.1, AG-6.2): one command list (docs/axKit/app-kit.md AK-2), each key from the tables ----
         // Repository is the thing worked on, in the standard order of a first menu (bundle AX-6): Open and the recent
@@ -183,10 +183,10 @@ public sealed partial class GitForm : ItemForm
     /// as last read from git. Without a repository there are no rows, and the list and the title say so. The
     /// title is "folder" and the repository's full path after the app's name; the status bar's second part is its path.
     /// </summary>
-    protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel() =>
+    protected override (IReadOnlyList<ItemRow> Rows, string Name, Opened? Title, string Place) ReadLevel() =>
         _root is null
-            ? ([], "No repository", "No repository", string.Empty)
-            : (LevelRows(), LevelName(_root), FolderTitle(_root), _root);
+            ? ([], "No repository", null, string.Empty)
+            : (LevelRows(), LevelName(_root), Opened.At(_root), _root);
 
     private IReadOnlyList<ItemRow> LevelRows() => _level switch
     {
@@ -424,7 +424,7 @@ public sealed partial class GitForm : ItemForm
         Selection.Clear();
         TextPane.Clear();
         TextPane.AccessibleName = "Details";
-        SetTitle(FolderTitle(root));
+        SetTitle(Opened.At(root));
         _settings.RememberRepository(root);
         SaveSettings();
         Log.Info($"Opened {root}");

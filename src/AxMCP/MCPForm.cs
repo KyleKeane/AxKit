@@ -168,7 +168,7 @@ public sealed class MCPForm : ItemForm
 
     // ---- the levels (MP-1 to MP-5) ----
 
-    protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel()
+    protected override (IReadOnlyList<ItemRow> Rows, string Name, Opened? Title, string Place) ReadLevel()
     {
         if (_server is null)
         {
@@ -211,7 +211,7 @@ public sealed class MCPForm : ItemForm
                 }
             }
 
-            return (rows, $"{_server.Name}, {StateOf(_server)}", _server.Name, StateOf(_server));
+            return (rows, $"{_server.Name}, {StateOf(_server)}", new Opened(_server.Name, _folder), StateOf(_server));
         }
 
         IReadOnlyList<ItemRow> items = _section.Key switch
@@ -221,11 +221,11 @@ public sealed class MCPForm : ItemForm
             _ => (running?.Prompts ?? []).Select(prompt => new ItemRow(false, "prompt:" + prompt.Name, prompt.Title, $"{prompt.Title}, prompt, {FirstSentence(prompt.Description)}", prompt)).ToList(),
         };
         var noun = _section.Key switch { "tools" => "tool", "resources" => "resource", _ => "prompt" };
-        return (items, $"{_section.Name}, {Count(items.Count, noun)}", $"{_section.Name} of {_server.Name}", StateOf(_server));
+        return (items, $"{_section.Name}, {Count(items.Count, noun)}", new Opened($"{_section.Name} of {_server.Name}", _folder), StateOf(_server));
     }
 
     /// <summary>The top level in sections (MP-1.1): Claude Code's servers, then Your servers; a header row over each that has any.</summary>
-    private (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ServersLevel()
+    private (IReadOnlyList<ItemRow> Rows, string Name, Opened? Title, string Place) ServersLevel()
     {
         var rows = new List<ItemRow>();
         void Section(string name, IEnumerable<McpServer> servers)
@@ -247,7 +247,7 @@ public sealed class MCPForm : ItemForm
             rows.Add(new ItemRow(false, "none", "No servers", $"No servers: {BundleKeys.Text(ItemKeys.New)} adds one of your own; claude mcp add in a terminal adds one to Claude Code"));
         }
 
-        return (rows, $"Servers, {Count(_servers.Count, "server")}", "Servers", _folder ?? string.Empty);
+        return (rows, $"Servers, {Count(_servers.Count, "server")}", new Opened("Servers", _folder), _folder ?? string.Empty);
     }
 
     /// <summary>MP-1.4: a server that is not stdio is never started, and Right or Enter on it says why and stays on the servers.</summary>

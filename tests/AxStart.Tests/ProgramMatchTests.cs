@@ -72,8 +72,8 @@ public sealed class ProgramMatchTests
     {
         IReadOnlyList<ProgramEntry> recent =
         [
-            ProgramEntry.Recent(@"notes.md (C:\notes\notes.md) - axDown", "down", @"C:\notes\notes.md"),
-            ProgramEntry.Recent(@"budget.json (C:\b\budget.json) - axJSON", "json", @"C:\b\budget.json"),
+            ProgramEntry.Recent(@"notes.md, axDown, C:\notes\notes.md", "down", @"C:\notes\notes.md"),
+            ProgramEntry.Recent(@"budget.json, axJSON, C:\b\budget.json", "json", @"C:\b\budget.json"),
         ];
         var starts = new Dictionary<string, int> { ["Calculator"] = 5 };
 
@@ -93,7 +93,7 @@ public sealed class ProgramMatchTests
         Assert.Equal(ProgramKind.Recent, entry.Kind);
         Assert.Equal("json", entry.AppVerb);
         Assert.Equal(@"C:\b\budget.json", entry.Target);
-        Assert.Equal(@"budget.json (C:\b\budget.json) - axJSON, recently closed", entry.Information);
+        Assert.Equal(@"budget.json, axJSON, C:\b\budget.json, recently closed", entry.Information);
     }
 
     [Fact]

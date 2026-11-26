@@ -40,7 +40,7 @@ top of the window. It works entirely offline (bundle G6).
 
 1. In axFile on a folder of chapters, with axMedia the default program for `.mp3` in Windows' settings, Enter on
    `03 Chapter 3.mp3`: axMedia opens with the folder's media files as the queue, the third playing, the window in
-   front: NVDA reads "03 Chapter 3.mp3 - axMedia window", then "Queue, 12 items, 03 Chapter 3.mp3 (playing), 3 of
+   front: NVDA reads "03 Chapter 3.mp3, axMedia, <full path> window", then "Queue, 12 items, 03 Chapter 3.mp3 (playing), 3 of
    12". Ctrl+Enter: "Paused at 12:40". Ctrl+Enter: "Playing". Ctrl+Left: "12:25". Alt+Up: "Speed 1.25". F7:
    "Playing 03 Chapter 3.mp3, 12:52 of 45:30, speed 1.25". Without that default, Enter opens the file in whatever
    plays it on the machine, and Context → Open with axKit apps → axMedia does the same as above.
@@ -102,7 +102,7 @@ top of the window. It works entirely offline (bundle G6).
   3.mp3 12:40 / 45:30", moving every second; on the right the place and the speed, "3 of 12, speed 1.25"; both empty
   otherwise. While files are selected the left part ends in how many, ", 3 selected" (AX-8.16; "3 selected" alone
   while nothing plays). The labels have no accessible name and no spring (AX-6.2).
-- AM-2.3 The title: "<name> - axMedia" while a file plays or is paused, "axMedia" otherwise; the Window menu names the
+- AM-2.3 The title: "<name>, axMedia, <full path>" while a file plays or is paused (and for a start on one file before it plays), "axMedia" otherwise (bundle AX-9.6, the maintainer's word of 2026-11-26; "<name> - axMedia" before); the Window menu names the
   window by it (AX-9).
 - AM-2.4 A video's picture is drawn in an area at the top of the window (not focusable; never a window of its own,
   AX-7.2), two fifths of the height while a video plays or is paused, hidden otherwise; its sound goes the same way.

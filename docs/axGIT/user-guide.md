@@ -15,7 +15,7 @@ axGIT is part of axKit. Installing axKit (see the axKit guide: Help, About, axKi
 - From the Start menu, `axKit axGIT`, or the console: `axgit C:\my\project`. Without a folder, axGIT opens the last repository you had, or asks for one with Session, Open repository (Ctrl+O).
 - To go back: Alt+W, O lists the open axKit windows, most recent first, so Alt+W, O, 1 is the window you came from. From axGIT, Session, Show current repository in, axClaude opens a new axClaude on the repository, axTerminal a shell there, axFile the folder's files, and File Explorer shows the folder.
 
-The window is named after the repository's folder: "myproject - axGIT".
+The window is named after the repository's folder, then axGIT, then the folder's full path: "myproject, axGIT, C:\src\myproject".
 
 A repository can name programs of its own that git runs, hooks for example. When the one you open does, axGIT says so in a notice, "This repository runs programs of its own", with their names, and runs git without them. Choose Trust this repository only for a repository you know, your own for example; from then on git runs them as it would in a console. Your trust is for the programs the repository named when you gave it: if it later names another, a new hook for example, axGIT sets them aside again and asks again, saying that what the repository would run has changed.
 

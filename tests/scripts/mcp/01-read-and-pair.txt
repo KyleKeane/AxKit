@@ -79,7 +79,7 @@ start pass
 use 1
 mcp call axkit_windows
 refuse mcp axPass
-expect mcp "title": "axDown file 
+expect mcp , axDown, 
 
 # Check: Opening a program's app is asked of the user first, and No opens nothing
 # MC-6.5a: axClaude starts a program, so the axKit window asks "Open axClaude?" with the AI caution, No the default;

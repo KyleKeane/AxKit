@@ -33,7 +33,7 @@ expect state The password does not open test.
 type test-master-1
 keys enter
 expect said ! test, 3 items, Email, group, 1 item
-expect state "title":"axPass, access layer for KeePassXC test
+expect state "title":"test, axPass, 
 check commands
 
 # Goal: Refresh the database
@@ -182,7 +182,7 @@ expect focus Work, group
 keys delete
 expect state Move the group
 keys enter
-expect state "title":"axPass, access layer for KeePassXC test
+expect state "title":"test, axPass, 
 
 # Goal: Move an entry to another group
 # 4.8 Ctrl+M moves an entry to another group, and back.

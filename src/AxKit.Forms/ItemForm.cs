@@ -97,8 +97,8 @@ public abstract partial class ItemForm : AxKitForm
 
     // ---- what the app fills in ----
 
-    /// <summary>The level shown: its rows, the navigator's name with its count ("Home, 4 items"), the window title's first part, and the status bar's second label (the folder or the database).</summary>
-    protected abstract (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel();
+    /// <summary>The level shown: its rows, the navigator's name with its count ("Home, 4 items"), what the window holds open for its title (its name and path, AX-9.6; null for nothing), and the status bar's second label (the folder or the database).</summary>
+    protected abstract (IReadOnlyList<ItemRow> Rows, string Name, Opened? Title, string Place) ReadLevel();
 
     /// <summary>The app's state set to the list's level, for Right and Enter on a list; nothing in an app whose rows are never lists (axMedia's queue).</summary>
     protected virtual void EnterList(ItemRow row)
@@ -1045,8 +1045,8 @@ public abstract partial class ItemForm : AxKitForm
         return lines;
     }
 
-    /// <summary>The window's title for the level; an empty one is the app's name alone (axMedia while nothing plays).</summary>
-    private void SetLevelTitle(string title) => SetTitle(title.Length == 0 ? null : title);
+    /// <summary>The window's title for the level; nothing open is the app's name alone (axMedia while nothing plays).</summary>
+    private void SetLevelTitle(Opened? title) => SetTitle(title);
 
     /// <summary>
     /// The status bar's second part alone, for a state that changes while the level stays (axTask's "Running" and

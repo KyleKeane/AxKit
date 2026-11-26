@@ -8,7 +8,7 @@ script `tests/scripts/axMCP/01-start.txt` runs sections 1 to 4 and 6 against a f
 
 ## 1. Start and the servers (MP-1)
 
-1. Start axMCP: NVDA reads the title "Servers - axMCP, access layer for MCP servers window", then the navigator
+1. Start axMCP: NVDA reads the title "Servers, axMCP window", then the navigator
    "Servers, N servers, list" and its first row, a section header ("Claude Code, section, 2 servers") or the one row
    "No servers: Ctrl+N adds one…". Nothing else is spoken.
 2. Down through the rows: each server as "name, stdio, stopped" (or "http, not started by this version"). Ctrl+Down
@@ -25,7 +25,7 @@ script `tests/scripts/axMCP/01-start.txt` runs sections 1 to 4 and 6 against a f
    (MP-2.1a); its check box, Connect refused until the box is checked, Not now: "Not connected to name". Right again,
    check the box, Connect. A server whose command line, folder or environment changed since asks again.
 2. "name, starting", then within a few seconds "name, running, Tools N, Resources N, Prompts N"; the navigator reads
-   "Tools, N" selected; the title ends "name - axMCP, access layer for MCP servers"; NVDA+End reads the state in the
+   "Tools, N" selected; the title is "name, axMCP"; NVDA+End reads the state in the
    status bar.
 3. Left: back to the top, the server's row now "name, stdio, running". Right again: the level at once, no new start.
 4. Ctrl+Shift+S: "Stopped name"; the level's one row "Stopped (exit code N): Enter starts it again"; Enter starts it

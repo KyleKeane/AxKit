@@ -139,10 +139,10 @@ Starts with: Open axDown with the file notes.md.
 
 1. Open axStart.
 2. Press Ctrl+Home (First match).
-    You hear something with "notes.md" in it.
-    You hear something with "- axDown, 1" in it.
+    You hear something with "notes.md, axDown" in it.
+    You hear something with "notes.md, 1" in it.
 3. Type "notes.md".
-    You hear: - axDown, 1 of 1.
+    You hear: notes.md, 1 of 1.
 
 ### Hear what a match closed lately is
 

@@ -15,7 +15,7 @@ file .mcp.json {"mcpServers":{"zzproj":{"command":"cmd","args":["/c","echo"]},"z
 file fake.ps1 $in = [Console]::In\n$out = [Console]::Out\nwhile ($true) {\n  $line = $in.ReadLine()\n  if ($null -eq $line) { break }\n  if ($line.Trim().Length -eq 0) { continue }\n  $m = $line | ConvertFrom-Json\n  if ($null -eq $m.id) { continue }\n  $r = $null\n  $e = 'Method not found'\n  switch ($m.method) {\n    'initialize' { $r = '{"protocolVersion":"2025-06-18","capabilities":{"tools":{},"resources":{},"prompts":{}},"serverInfo":{"name":"fake","version":"1"}}' }\n    'tools/list' { $r = '{"tools":[{"name":"echo","description":"Says the text back. Nothing else.","inputSchema":{"type":"object","properties":{"text":{"type":"string","description":"What to say"},"loud":{"type":"boolean"}},"required":["text"]}},{"name":"fail","description":"Reports an error.","inputSchema":{"type":"object","properties":{}}},{"name":"boom","description":"Breaks the server.","inputSchema":{"type":"object","properties":{}}},{"name":"snap","description":"Breaks in one line.","inputSchema":{"type":"object","properties":{}}}]}' }\n    'tools/call' {\n      if ($m.params.name -eq 'echo') { $t = [string]$m.params.arguments.text; if ($m.params.arguments.loud) { $t = $t.ToUpper() }; $r = '{"content":[{"type":"text","text":"' + $t + '"}]}' }\n      if ($m.params.name -eq 'fail') { $r = '{"content":[{"type":"text","text":"It went wrong."}],"isError":true}' }\n      if ($m.params.name -eq 'boom') { $e = 'The server broke.' + [char]92 + 'nIt says so on two lines.' }\n    }\n    'resources/list' { $r = '{"resources":[{"name":"readme","uri":"fake://readme","mimeType":"text/plain","description":"A greeting."}]}' }\n    'resources/templates/list' { $r = '{"resourceTemplates":[{"name":"page","uriTemplate":"fake://page/1","description":"A page by its number."}]}' }\n    'resources/read' { $r = '{"contents":[{"uri":"' + $m.params.uri + '","mimeType":"text/plain","text":"Text of ' + $m.params.uri + '"}]}' }\n    'prompts/list' { $r = '{"prompts":[{"name":"greet","description":"Greets someone. Politely.","arguments":[{"name":"who","description":"Who to greet","required":true}]}]}' }\n    'prompts/get' { $r = '{"description":"A greeting.","messages":[{"role":"user","content":{"type":"text","text":"Say hello to ' + $m.params.arguments.who + '"}}]}' }\n  }\n  if ($null -eq $r) { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"error":{"code":-32601,"message":"' + $e + '"}}') } else { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"result":' + $r + '}') }\n}\n
 
 start mcpclient {temp}
-expect state "title":"axMCP, access layer for MCP servers Servers
+expect state "title":"Servers, axMCP
 expect focus Servers
 
 # Check: A server of Claude Code's is not renamed or removed here
@@ -39,7 +39,7 @@ type zzremote
 expect focus zzremote, http, not started by this version
 keys right
 expect said ! http servers need a network connection of axKit's own, which this version does not make
-expect state "title":"axMCP, access layer for MCP servers Servers
+expect state "title":"Servers, axMCP
 expect focus zzremote, http, not started by this version
 keys enter
 expect said ! http servers need a network connection of axKit's own, which this version does not make

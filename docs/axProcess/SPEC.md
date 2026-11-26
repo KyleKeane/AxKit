@@ -36,7 +36,7 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
 
 ## 3. Scenarios
 
-1. Start axProcess (Start menu, `axProcess`, the Window, axKit and Help menus): "This computer - axProcess window", then "Processes, 214
+1. Start axProcess (Start menu, `axProcess`, the Window, axKit and Help menus): "This computer, axProcess window", then "Processes, 214
    list, chrome, 1.2 GB, 3% CPU, process 9120, 1 of 214": the list sorted by memory, the largest first.
 2. Down to a program that hangs, Delete: the notice "End notepad (process 4410)? Anything unsaved in it is lost." with
    End process and Cancel; Enter: "Ended notepad"; the list is read again.
@@ -82,7 +82,7 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
 - PR-2.3 F5 reads the list shown again, on a background task (AX-7.5), and says "Refreshed: <the list's name>"; at
   This computer it reads all three, so that each row has its count.
   While a read runs the status bar says "Reading…" and a second F5 says "Working…".
-- PR-2.4 The title is "This computer - axProcess". The status bar's left label is the list's name, the right one the
+- PR-2.4 The title is "This computer, axProcess" (bundle AX-9.6, the maintainer's word of 2026-11-26; "This computer - axProcess" before). The status bar's left label is the list's name, the right one the
   memory in use ("Memory 57% in use"). No AccessibleName, no Spring (`StatusLayout`).
 - PR-2.5 F7, the bundle's read in full (Ctrl+Q until 2026-11-26), says the summary: the number of processes, the memory in use of the total and its percentage, and the
   processor's use over the last read ("214 processes. Memory 9.1 of 15.9 GB in use, 57%. Processor 12%").

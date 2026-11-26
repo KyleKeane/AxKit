@@ -21,7 +21,7 @@ axKit's installer installs axTerminal with the other apps: see the axKit guide (
 - File Explorer: right-click a folder, open `Open with axKit` and choose axTerminal.
 - From axClaude: Session, Show current folder in, axTerminal. From axDown or axJSON: Session, Show current file in, axTerminal (the file's folder). From axGIT: Session, Show current repository in, axTerminal. From axFile: Session, Show current folder in, axTerminal. Each opens a new axTerminal window.
 
-The window opens with the command field focused. When the shell's first prompt appears you hear "Ready" with a short ping. The status bar shows the state on the left (Idle, or Running with the command) and the shell's prompt on the right, which is where you are. The title is the name of the current folder and the shell. F8 says the current folder, the full path.
+The window opens with the command field focused. When the shell's first prompt appears you hear "Ready" with a short ping. The status bar shows the state on the left (Idle, or Running with the command) and the shell's prompt on the right, which is where you are. The title is the name of the current folder, then axTerminal, the folder's full path and the shell: "work, axTerminal, C:\work, PowerShell". F8 says the current folder, the full path.
 
 With a screen reader running, PowerShell turns its line editor (PSReadLine) off and prints a line saying so. That is expected: axTerminal's field is the editor.
 

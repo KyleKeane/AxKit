@@ -47,7 +47,7 @@ it, so that every file shows something and the details say what it is.
 ## 3. Scenarios
 
 1. In axFile on a project, Shift+Enter on `README.md`: axPreview opens on it, the window in front: NVDA reads
-   "README.md - axPreview window", then "README.md, read only edit, multi line" and the first line. Ctrl+H: "Install,
+   "README.md, axPreview, <full path> window", then "README.md, read only edit, multi line" and the first line. Ctrl+H: "Install,
    heading level 2"; Ctrl+K: the next link; `l`: "Line 12 of 40"; Ctrl+F `update`, Enter: the match selected and its
    line read. Escape does nothing here; Alt+Tab or the Window menu goes back to axFile. Ctrl+E: axDown on the same
    file, the caret on the same line.
@@ -146,7 +146,7 @@ it, so that every file shows something and the details say what it is.
 
 ### AP-4 Announcements
 
-On opening, NVDA speaks the window ("README.md - axPreview window") and the text ("README.md read only edit multi
+On opening, NVDA speaks the window ("README.md, axPreview, <full path> window") and the text ("README.md read only edit multi
 line") and its first line; nothing of axPreview's own. Afterwards, one UI Automation notification each on the text,
 or on the notice while one shows (AX-7.3): "Line n of m" (`l`, and after Go to line; "Not a line number"), "Install,
 heading level 2" and the other elements, "No next <kind>" / "No previous <kind>", "Not found", "Reloaded",
@@ -165,7 +165,7 @@ and an error naming a file that could not be opened.
   AP-D4): `recentFiles` (ten), and the window base's font, update check and window fields; word wrap is the theme
   file's since 5.5.0 (TH-6), a `wordWrap` key left here ignored.
 - AP-5.2 The status bar: the file's name on the left; "Line n, Column m · encoding · line ending" on the right, 300 ms
-  after the last key (axDown AD-9). The title: "<name> - axPreview", "Untitled - axPreview" with no file.
+  after the last key (axDown AD-9). The title: "<name>, axPreview, <full path>", "Untitled, axPreview" with no file (bundle AX-9.6, the maintainer's word of 2026-11-26).
 - AP-5.3 The log is `%LOCALAPPDATA%\AxKit\logs\axPreview.log`: the start, the exit, the files that could not be read
   with Windows' message; no file names.
 

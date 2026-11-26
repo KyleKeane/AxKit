@@ -12,7 +12,7 @@ file flows\10-json.workflow.json {"format": "axkit-workflow 1", "title": "A work
 start automate {temp}\flows
 check commands
 expect focus axDown, folder, 1 workflow
-expect state "title":"axAutomate flows"
+expect state "title":"flows, axAutomate, 
 keys down
 expect focus A workflow file, workflow, 1 step
 

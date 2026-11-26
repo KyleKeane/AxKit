@@ -6,7 +6,7 @@
 file tasks\Notes\Idea.json {"schema":"list.json","Title":"Idea","Done":false,"Size":3,"Notes":"One line"}
 file tasks\Empty\keep.txt a folder with no item yet
 start task {temp}\tasks
-expect state "title":"axTask Lists
+expect state "title":"Lists, axTask
 expect focus Your lists, heading level 1, 2 lists
 
 # Check: An item whose list has no configuration is shown as text, and is not changed

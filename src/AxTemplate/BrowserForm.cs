@@ -148,13 +148,13 @@ public sealed class BrowserForm : ItemForm
         }
     }
 
-    protected override (IReadOnlyList<ItemRow> Rows, string Name, string Title, string Place) ReadLevel()
+    protected override (IReadOnlyList<ItemRow> Rows, string Name, Opened? Title, string Place) ReadLevel()
     {
         var rows = _files
             .Select(file => new ItemRow(false, file.Path, file.Title, file.Item is null ? file.Title + ", not a template" : file.Title, file))
             .ToList();
         var count = _files.Count(file => file.Item is not null);
-        return (rows, $"Templates, {count} {(count == 1 ? "template" : "templates")}", "Templates", _folder);
+        return (rows, $"Templates, {count} {(count == 1 ? "template" : "templates")}", new Opened("Templates", _folder), _folder);
     }
 
     protected override string? EmptyLine => _read ? $"No templates yet: {BundleKeys.Text(ItemKeys.New)} makes one" : "Reading the templates";

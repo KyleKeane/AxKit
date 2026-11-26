@@ -46,7 +46,7 @@ run cmd /c dir /b "test backups\test *.kdbx"
 # Session, Show backups in axFile: an axFile window on the folder "test backups" (a window of this run).
 do Show backups in axFile
 adopt
-expect state "title":"axFile folder 
+expect state , axFile, 
 expect state \test backups","notice"
 close
 use 1

@@ -10,7 +10,7 @@ file tasks\Work\Report.json {"format": "axkit-item 1", "fields": [{"title": "Tit
 file tasks\Garden\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
 file tasks\Garden\Dig.json {"schema":"list.json","Title":"Dig","Done":false}
 start task {temp}\tasks
-expect state "title":"axTask Lists
+expect state "title":"Lists, axTask
 expect focus Your lists, heading level 1, 3 lists
 
 # Check: A list of the earlier format says so in its row and in its details, and is left out of All tasks

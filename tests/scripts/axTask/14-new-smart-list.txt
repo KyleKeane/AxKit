@@ -17,7 +17,7 @@ type Soon
 keys enter
 expect said ! Made the smart list Soon
 adopt
-expect state "title":"axJSON file 
+expect state , axJSON, 
 expect state \Soon.filter.json","notice"
 expect text axkit-filter 1
 close

@@ -213,8 +213,9 @@ next save. `MCPSettings`, tested in `MCPSealTests`.
 
 ### MP-9 Title and status bar
 
-The title is "Servers - axMCP, access layer for MCP servers" at the top, "<server> - axMCP, access layer for MCP
-servers" on a server's level and "<Tools> of <server> - …" inside one (AX-11.2). The status bar: the level's name on
+The title is "Servers, axMCP" at the top, "<server>, axMCP" on a server's level and "<Tools> of <server>, axMCP"
+inside one, each with the folder it was started on as a third part when it has one ("Servers, axMCP, C:\work";
+bundle AX-9.6, the maintainer's word of 2026-11-26; "Servers - axMCP, access layer for MCP servers" before, AX-11.2). The status bar: the level's name on
 the left ("Tools, 8 tools"), the server's state on the right (the folder in hand at the top).
 
 ### MP-10 Errors

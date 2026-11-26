@@ -31,7 +31,7 @@ of the lines `1920*1080*4 = 8294400`, read as the conversation in axClaude and t
 
 ## 3. Scenarios
 
-1. Start axCalc (Start menu, `axCalc`, or the axKit menu's Apps): NVDA reads "Calculator - axCalc window",
+1. Start axCalc (Start menu, `axCalc`, or the axKit menu's Apps): NVDA reads "axCalc window",
    then "Expression, edit". Type `1920*1080*4`, Enter: "8294400". The history's first line is `1920*1080*4 = 8294400`.
 2. Type `*2`, Enter: "16588800": an expression that starts with an operator continues from the last answer.
 3. F8: "16588800, hex FD 2000, binary 1111 1101 0010 0000 0000 0000, octal 77220000".
@@ -63,8 +63,8 @@ of the lines `1920*1080*4 = 8294400`, read as the conversation in axClaude and t
   a line, a selection copied with Ctrl+C, and a line of the app's own ("System: …") for what the window must say
   about itself (a settings file that could not be read). The history's name no longer counts its entries; the
   question before Clear history does (AC-5.3).
-- AC-2.2 The title is "Calculator - axCalc" (the ending the Window menu reads, AX-9), with the window's role (AX-7.1):
-  NVDA says "Calculator - axCalc window".
+- AC-2.2 The title is "axCalc", the app's name alone, since nothing is open in it (bundle AX-9.6, the maintainer's word of 2026-11-26; "Calculator - axCalc" until then), with the window's role (AX-7.1):
+  NVDA says "axCalc window".
 - AC-2.3 The status bar's left label is the last answer ("Answer 8294400", "No answer yet"); the right one the angle
   unit and the number of variables ("Degrees, 1 variable"). No AccessibleName, no Spring (`StatusLayout`).
 - AC-2.4 The history has the newest entry last, as a paper roll does, and its caret is on the last line when the

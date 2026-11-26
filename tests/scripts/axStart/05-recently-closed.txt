@@ -18,10 +18,10 @@ start start
 expect focus "name":"Search programs and recently closed","role":"Text","value":""
 wait 5000
 do First match
-expect said notes.md (
-expect said - axDown, 1 of
+expect said notes.md, axDown, 
+expect said notes.md, 1 of
 type notes.md
-expect said - axDown, 1 of 1
+expect said notes.md, 1 of 1
 
 # Goal: Hear what a match closed lately is
 do Information
@@ -39,7 +39,7 @@ expect closed
 use 2
 launch start
 type notes.md
-expect said - axDown, 1 of 1
+expect said notes.md, 1 of 1
 do Start as administrator
 expect said ! Not for a recently closed item
 menu Quit axStart

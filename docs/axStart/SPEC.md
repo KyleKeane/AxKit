@@ -97,7 +97,7 @@ taskbar. It works entirely offline (bundle G6).
 - AS-2.5 **What was closed lately** (asked 2026-11-22, "from another app like axstart ... launch the list of recent
   axit files and apps so that i can quickly get back to them"; built 2026-11-25): the bundle's Recently closed
   (AX-9.5, the same list as the Window menu's, an entry whose file is gone left out) is matched with the programs,
-  each entry named as that menu names it, "notes.md (C:\notes\notes.md) - axDown". Enter opens it again in its app,
+  each entry named as that menu names it, "notes.md, axDown, C:\notes\notes.md". Enter opens it again in its app,
   a new window of this program file, as the menu does; Ctrl+O opens its folder in axFile; F8 says its name and
   "recently closed"; Ctrl+Shift+Enter says "Not for a recently closed item". The list is read with the programs, on
   every showing, off the window's thread; an opening counts no start. The field's name is "Search programs and

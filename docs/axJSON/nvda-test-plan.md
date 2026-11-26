@@ -20,8 +20,8 @@ and `broken.json`, the same with the comma after `"opus"` removed and a comma ad
 
 ## 1. Start
 
-1. Start axJSON from the Start menu: NVDA reads "Untitled - axJSON window", then "Untitled edit multi line".
-2. `axjson settings.json` in a console, and `axkit settings.json`: both open axJSON on the file, "settings.json - axJSON window".
+1. Start axJSON from the Start menu: NVDA reads "Untitled, axJSON window", then "Untitled edit multi line".
+2. `axjson settings.json` in a console, and `axkit settings.json`: both open axJSON on the file, "settings.json, axJSON, <full path> window".
 3. In File Explorer, right-click `settings.json`: the Open with axKit submenu lists axDown and axJSON, and axJSON opens
    the file; on a `.txt` file the submenu lists axDown only. Windows' own Open with lists axJSON for `.json`.
 4. The file flows are the shell's: run axDown's section 3, step 7 (a file changed by another program) on a `.json`

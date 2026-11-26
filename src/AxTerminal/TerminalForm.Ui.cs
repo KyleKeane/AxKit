@@ -144,12 +144,13 @@ internal sealed partial class TerminalForm
     }
 
     /// <summary>
-    /// The title (AT-2.3), which the Window menu lists the window by: the app first, then "folder" and the current
-    /// directory's full path, then the shell (the user's ask of 2026-11-23: the app before the place).
+    /// The title (AT-2.3), which the Window menu lists the window by: the current directory's name, the app, the
+    /// directory's full path, then the shell ("work, axTerminal, C:\work, PowerShell"; bundle AX-9.6, the
+    /// maintainer's word of 2026-11-26).
     /// </summary>
     private void UpdateTitle()
     {
-        var text = $"{AppTitle} folder {CurrentDirectory} {ShellName}";
+        var text = AxKitWindows.Title(AppName, Opened.At(CurrentDirectory)) + AxKitWindows.Separator + ShellName;
         if (Text != text)
         {
             Text = text;

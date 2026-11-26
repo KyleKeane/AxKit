@@ -15,15 +15,18 @@
   class so that its file keeps its shape.
 - `RecentlyClosed` (AX-9.4): the bundle's list of the last ten files and folders the windows held when they closed or
   swapped them, in `%APPDATA%\AxKit\recently-closed.json` through `SettingsFile`: `Remember` from a window, `Load` for
-  the menu (entries whose path still exists), `Title` as "notes.md (C:\notes\notes.md) - axDown". Since 2026-11-16
+  the menu (entries whose path still exists), `Title` as a window's title is made, "notes.md, axDown, C:\notes\notes.md" (`AxKitWindows.Title`, AX-9.6, since 2026-11-26). Since 2026-11-16
   (R-68): `Keeps`, the entries the list holds (an app's name, and a whole path or none), applied by `Read` and by
   `Remember`; and one writer at a time, `Remember` reading, adding and writing under a mutex named after the file
   (`MutexName`), given up after `WaitMilliseconds` with a line in the log and nothing written, never a hang. Never
   write the file another way.
 - `AxKitWindows` (AX-9): the window lists of the axKit menu from the windows `AxKit.Forms.WindowMenu` reads off the system
-  in Z order, which is recency: the app from a title's ending (" - axDown"), Open windows without the current window,
-  each app's windows with it, and the item labels with the number as the mnemonic and a full stop as a pause
-  ("&1. notes.md - axDown"; the apps' recent lists use the same `Label`).
+  in Z order, which is recency: `Title`, every window's title by one rule (AX-9.6, the maintainer's word of
+  2026-11-26: what is open, an `Opened` with its name and path, then the app's name alone, then the path, ", "
+  between; the app's name alone for nothing), `AppOf`, the app read back off a title (the first part after the first
+  that is an app's name), Open windows without the current window, each app's windows with it, and the item labels
+  with the number as the mnemonic and a full stop as a pause ("&1. notes.md, axDown, C:\notes\notes.md"; the apps'
+  recent lists use the same `Label`).
 - `MenuText` (AX-6.4, AX-10.2): `Plain`, a menu item's or a button's text as spoken or searched, the mnemonic marker
   and the trailing dots gone; the palette's names, the notices' key line and the Speech menu choices read it.
   `CheckSaid` (2026-11-16): what a check item says after it was chosen where no menu shows it, "Word wrap, checked",
