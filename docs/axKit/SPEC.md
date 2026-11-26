@@ -1095,7 +1095,11 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   to process all those which is why i need us to settle on simple heuristics"; settled through the question tool
   the same day). What a combination means comes from its modifier, whatever the key, so that a key never learnt
   can be guessed. Every key of a table falls under one rule; the key map (`key-map.md`, `key-families.json`) is
-  the same rules by family, and a key that fits none is a fault of the table.
+  the same rules by family, and a key that fits none is a fault of the table. The maintainer's principle, 2026-11-26:
+  "we want absolute simplicity on consistency whenever possible. the fewest rules that have the fewest possible
+  exceptions, none is ideal. but we want things to be reasonable and match user expectations when there is muscle
+  memory from main windows interactions. we should be very intentional." So an exception stands only for a key
+  Windows itself taught (copy, rename, refresh, the next pane), each with its reason in `key-families.json`.
   1. No modifier: move and read where you are. Shift with the same key: the other direction, or select as you move.
   2. Ctrl with a letter: act on what you are on. Ctrl+Shift with the same letter: its reverse or wider form.
   3. Ctrl with a number: the window's own numbered action (a heading level in the editors, an action key in

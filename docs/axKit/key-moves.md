@@ -56,6 +56,9 @@ family in `key-families.json` follows rule 3's words since 2026-11-25.
 
 Count: 13 moves, 0 keeps.
 
+**Settled by the maintainer on 2026-11-26**, through the question tool: the twelve Ctrl place keys go, Alt+1 to 3
+alone stay; axTask's All tasks moves to Alt+0.
+
 ## The function keys alone
 
 The rule: say or show. Several of these keys are Windows' own, and the proposal keeps those.
@@ -83,6 +86,9 @@ The rule: say or show. Several of these keys are Windows' own, and the proposal 
 Collides with: the F5 move needs the move of axAutomate's Ctrl+R, in the section Ctrl with a letter.
 
 Count: 1 move, 14 keeps.
+
+**Settled by the maintainer on 2026-11-26**, as proposed: the fourteen Windows keys kept as listed exceptions;
+axAutomate's Run moves to Ctrl+R once the Ctrl+letter family has moved its report key.
 
 ## Ctrl+Shift with a letter
 
@@ -121,6 +127,12 @@ Collides with:
 - Ctrl+Shift+Enter is Windows' start as administrator, which axStart has. axClaude starts no program that way.
 
 Count: 7 moves, 10 keeps.
+
+**Settled by the maintainer on 2026-11-26**, through the question tool: axTask's Hide done tasks to Ctrl+H; Bookmark
+this line to Ctrl+K in axCalc, axClaude and axTerminal; axClaude's Next permission mode to Ctrl+P and Send queued
+messages now to Ctrl+Shift+Enter; axGIT's three remote commands to Ctrl alone, his own choice ("move everything to
+ctrl only so pick another letter for f"): Push Ctrl+P, Pull Ctrl+L, Fetch Ctrl+R (R as in reload). The ten keeps
+stay. axFile's Add to axMedia's queue waits on Ctrl+Q, in the section Ctrl with a letter.
 
 ## Ctrl with a letter
 
@@ -188,6 +200,22 @@ Collides with:
 - axFile's Ctrl+Shift+Q moves to Ctrl+Q only if the reading keys leave Ctrl+Q.
 
 Count: 12 moves, 17 keeps.
+
+**Settled by the maintainer on 2026-11-26**, through the question tool, with his own order of the three saying keys
+("f7 can be the announce, f8 can be read with details, and f9 can be status"):
+
+- F7, a bundle key: read in full what you are on, taking every Ctrl+Q reading above and Ctrl+Q in every notice and
+  form. Ctrl+Q is then free for acts: axFile's Add to axMedia's queue moves there from Ctrl+Shift+Q.
+- F8, a key of each window: read with details, taking Ctrl+I Information (axFile, axStart, axMedia), the favorite's
+  folder, axCalc's other bases, axClaude's Ctrl+B, axTerminal's Ctrl+P (the current folder) and axAutomate's Ctrl+R
+  report; axAutomate's Run then takes Ctrl+R.
+- F9, a bundle key: say the status, moved from F8.
+- The editors' jump keys stay, and rule 2 gains their line: in a text, Ctrl with NVDA's browse-mode letter jumps
+  while you type.
+- Go to line (axDown, axJSON, axPreview) and Go to folder (axFile) move from Ctrl+G to F12, a function key that shows
+  the go-to field; axMedia's Go to time moves from Ctrl+T to F12 too.
+- The switches stay: Ctrl+M the music, axClip's Ctrl+P pause.
+- axTerminal's Recent commands moves from Ctrl+R to Alt+Down, the command field's choices (rule 4).
 
 ## The small families
 
