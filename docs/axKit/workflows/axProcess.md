@@ -2,12 +2,14 @@
 
 Written by `tools/workflows.ps1`; never edit it by hand. Every goal below is played by axKit's automated checks as it
 is written here: the steps are what the check presses and types, and the lines under a step are what axKit says. A
-line "You hear" gives words of what axKit says there, not always the whole sentence; after "words such as" they are
-cut short. After "Type:" comes the text to type, to the end of the line, with no full stop added. The file names and
-the words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
+line "You hear" gives what axKit says there; "something with" and words in quotes give a part of it. After "Type"
+the text to type stands in quotes: the quotes and the full stop after them are not typed. The file names and the
+words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
 command's in this version of axKit.
 
 ## Find and end a process
+
+Starts with: Open axProcess.
 
 ### Hear how much memory is in use
 
@@ -17,7 +19,7 @@ command's in this version of axKit.
 ### Refresh the list
 
 1. Press F5 (Refresh; Session menu).
-    You hear words such as: Refreshed: Processes.
+    You hear something with "Refreshed: Processes" in it.
 
 ### Sort the processes by name, processor or memory
 
@@ -31,8 +33,8 @@ command's in this version of axKit.
 ### Find a process and read its details
 
 1. Press Ctrl+F (Find in the list).
-2. Type: axkitscript01
-3. Press Enter 2 times.
+2. Type "axkitscript01".
+3. Press Enter twice.
 4. Press Escape.
 
 ### End a process
@@ -52,8 +54,8 @@ Starts with: Open axProcess.
 ### Read a service's details
 
 1. Press Ctrl+F (Find in the list).
-2. Type: (EventLog)
-3. Press Enter 2 times.
+2. Type "(EventLog)".
+3. Press Enter twice.
 4. Press Escape.
 
 ### Go back from the services to the processes
@@ -75,22 +77,22 @@ Starts with: Open axProcess.
 
 1. Press Alt+1 (Processes; Navigation menu).
 2. Press Left.
-    You hear words such as: This computer, 3 lists, Processes.
+    You hear something with "This computer, 3 lists, Processes" in it.
 3. Press Left.
     You hear the sound Edge.
 4. Press Down.
 5. Press Right.
-    You hear words such as: Services.
+    You hear something with "Services" in it.
 6. Press Backspace.
-    You hear words such as: This computer, 3 lists, Services.
+    You hear something with "This computer, 3 lists, Services" in it.
 7. Press End.
 8. Press Enter.
-    You hear words such as: Startup.
+    You hear something with "Startup" in it.
 
 ### Find a service by typing its name
 
 1. Press Alt+2 (Services; Navigation menu).
-2. Type: windows event l
+2. Type "windows event l".
 
 ## Find a process by typing its name and read a startup program's details
 
@@ -101,8 +103,8 @@ Starts with: Open axProcess.
 1. Choose Name in the Options menu, Sort by.
     You hear: Sorted by name.
 2. Press Home.
-3. Type: svc
-4. Type: s
+3. Type "svc".
+4. Type "s".
 
 ### Read a startup program's details
 
@@ -158,10 +160,10 @@ Starts with: Open axProcess.
 ### Find a process and go to the next and the previous match
 
 1. Press Ctrl+F (Find in the list).
-2. Type: axkitscript05
+2. Type "axkitscript05".
 3. Press Enter.
-4. Press F3 3 times (Find next).
-5. Press Shift+F3 3 times (Find previous).
+4. Press F3 three times (Find next).
+5. Press Shift+F3 three times (Find previous).
 
 ### End a process with the processes it started
 
@@ -176,7 +178,7 @@ Starts with: Open axProcess.
 ### Select two processes with Space and Shift+Down
 
 1. Press Ctrl+F (Find in the list).
-2. Type: axkitscript06
+2. Type "axkitscript06".
 3. Press Enter.
 4. Press Space.
     You hear: Selected.

@@ -90,9 +90,17 @@ public static class McpRun
             CommandMatch.Unknown when nearest.Count > 0 => (-1, $"The window has no command {found.Wanted}; the nearest: {string.Join("; ", nearest)}. axkit_window_commands lists them all."),
             CommandMatch.Unknown => (-1, $"The window has no command {found.Wanted}: axkit_window_commands lists them."),
             CommandMatch.UnknownInMenu => (-1, $"The window has no command {found.Wanted} in the menu {found.WantedMenu}: axkit_window_commands lists the commands with their menus."),
-            _ => (-1, $"The window has several commands named {found.Wanted}: give the menu too, one of: {string.Join("; ", found.Candidates.Select(i => commands[i].Menu.Length > 0 ? commands[i].Menu : "no menu"))}."),
+            _ when Menus(commands, found.Candidates) is [var only] =>
+                (-1, $"The window has several commands named {found.Wanted}, all {(only == NoMenu ? "with no menu" : "in the menu " + only)}: neither the name nor the menu tells them apart, and none was run."),
+            _ => (-1, $"The window has several commands named {found.Wanted}: give the menu too, one of: {string.Join("; ", Menus(commands, found.Candidates))}."),
         };
     }
+
+    /// <summary>What an ambiguous name's commands are told apart by: their menus, each once, in the list's order (docs/axKit/user-workflows.md WF-1.5).</summary>
+    private static List<string> Menus(IReadOnlyList<McpCommandName> commands, IReadOnlyList<int> candidates) =>
+        [.. candidates.Select(i => commands[i].Menu.Length > 0 ? commands[i].Menu : NoMenu).Distinct(StringComparer.OrdinalIgnoreCase)];
+
+    private const string NoMenu = "no menu";
 
     /// <summary>
     /// The names Claude Code gives itself in MCP's <c>initialize</c>, which the window says as "Claude" (MC-7.5); matched

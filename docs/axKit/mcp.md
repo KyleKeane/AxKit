@@ -252,7 +252,9 @@ menu, the palette and the automated checks in the table of `command-language.md`
   line as the palette lists it without its key, the label and its menus ("Heading, Navigate, Next"), with no `menu`:
   the command is found by the bundle's one resolver of command names (`CommandNames`, docs/axKit/user-workflows.md
   WF-1); a label always wins over a line, so every name found before is found the same, and every refusal keeps its
-  words. Since 2026-11-13 (app-kit AK-2.5, the user's rule
+  words, but one: commands that share their label and their menus too (axTask's "Not set" items) are refused with
+  their menus and the words that neither the name nor the menu tells them apart, not with "give the menu too" (the
+  maintainer's decision of 2026-11-25, WF-1.5). Since 2026-11-13 (app-kit AK-2.5, the user's rule
   of one source) both tools read the command palette's entries, every menu item the palette would offer now (its
   menus refreshed and its recent lists filled as on opening, the item and every menu over it available and enabled):
   the commands, the settings with their checked state, the recent files and windows; an item's mark is its command's,

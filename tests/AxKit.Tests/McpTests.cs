@@ -404,6 +404,22 @@ public sealed class McpTests
         Assert.Contains(reason, refusal, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Commands_no_name_tells_apart_are_refused_with_their_menus()
+    {
+        // WF-1.5, the maintainer's decision of 2026-11-25: axTask's items "Not set" share their label and their menus, so
+        // giving the menu would not help; the refusal names the menus and says so.
+        McpCommandName[] notSet = [new("Not set", "Context, Action keys"), new("Not set", "Context, Action keys"), new("Rename", "Context")];
+        const string Expected = "The window has several commands named Not set, all in the menu Context, Action keys: neither the name nor the menu tells them apart, and none was run.";
+        Assert.Equal((-1, Expected), McpRun.Find(notSet, "Not set", null));
+        Assert.Equal((-1, Expected), McpRun.Find(notSet, "Not set", "Context, Action keys"));
+
+        McpCommandName[] keysAlone = [new("Next", string.Empty), new("Next", string.Empty)];
+        Assert.Equal(
+            (-1, "The window has several commands named Next, all with no menu: neither the name nor the menu tells them apart, and none was run."),
+            McpRun.Find(keysAlone, "Next", null));
+    }
+
     [Theory]
     [InlineData("claude-code", "Claude")]
     [InlineData("Claude Code", "Claude")]

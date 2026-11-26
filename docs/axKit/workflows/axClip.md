@@ -2,9 +2,9 @@
 
 Written by `tools/workflows.ps1`; never edit it by hand. Every goal below is played by axKit's automated checks as it
 is written here: the steps are what the check presses and types, and the lines under a step are what axKit says. A
-line "You hear" gives words of what axKit says there, not always the whole sentence; after "words such as" they are
-cut short. After "Type:" comes the text to type, to the end of the line, with no full stop added. The file names and
-the words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
+line "You hear" gives what axKit says there; "something with" and words in quotes give a part of it. After "Type"
+the text to type stands in quotes: the quotes and the full stop after them are not typed. The file names and the
+words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
 command's in this version of axKit.
 
 ## Find and paste something you copied earlier
@@ -13,7 +13,7 @@ Starts with: Open axClip.
 
 ### Move through the copied items
 
-1. Type: axkitclip
+1. Type "axkitclip".
 2. Press Down.
     You hear: axkitclip beta, 2 of 3.
 3. Press Up.
@@ -51,7 +51,7 @@ Starts with: Open axClip.
 1. Press Delete.
     You hear: Removed.
 2. Press Ctrl+End (Last match).
-    You hear words such as: 2 of 2.
+    You hear something with "2 of 2" in it.
 
 ### Clear the clipboard history
 
@@ -64,7 +64,7 @@ Starts with: Open axClip.
 ### Hide the window and show it again
 
 1. Press Escape.
-2. Start axClip again.
+2. Open axClip again.
 
 ### Quit axClip
 
@@ -86,13 +86,11 @@ Starts with: Open axClip.
 1. Choose Keep history between runs in the Options menu.
 2. Choose Quit axClip in the Session menu.
 3. Open axClip.
-4. Type: axkitkeep
+4. Type "axkitkeep".
 5. Press Down.
     You hear: axkitkeep one, 2 of 3.
 6. Press Ctrl+End (Last match).
     You hear: axkitkeep two, 3 of 3.
-
-## Start with a kept history that can no longer be read
 
 ## Narrow the clipboard history with several words
 
@@ -100,14 +98,14 @@ Starts with: Open axClip.
 
 ### Type a second word to narrow the list
 
-1. Type: axkitword
+1. Type "axkitword".
 2. Press Ctrl+Home (First match).
     You hear: axkitword red pear, 1 of 3.
-3. Type: red
+3. Type "red".
 4. Press Ctrl+Home (First match).
     You hear: axkitword red pear, 1 of 2.
 5. Press Down.
     You hear: axkitword red apple, 2 of 2.
-6. Type: apple
+6. Type "apple".
 7. Press Ctrl+Home (First match).
     You hear: axkitword red apple, 1 of 1.

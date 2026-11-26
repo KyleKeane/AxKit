@@ -2,9 +2,9 @@
 
 Written by `tools/workflows.ps1`; never edit it by hand. Every goal below is played by axKit's automated checks as it
 is written here: the steps are what the check presses and types, and the lines under a step are what axKit says. A
-line "You hear" gives words of what axKit says there, not always the whole sentence; after "words such as" they are
-cut short. After "Type:" comes the text to type, to the end of the line, with no full stop added. The file names and
-the words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
+line "You hear" gives what axKit says there; "something with" and words in quotes give a part of it. After "Type"
+the text to type stands in quotes: the quotes and the full stop after them are not typed. The file names and the
+words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
 command's in this version of axKit.
 
 ## Start an MCP server and use its tools
@@ -12,7 +12,7 @@ command's in this version of axKit.
 ### Find a server by its name
 
 1. Open axMCP with the test folder.
-2. Type: fake
+2. Type "fake".
 
 ### Read a server's details
 
@@ -41,7 +41,7 @@ command's in this version of axKit.
 ### Fill in an argument and call the tool
 
 1. Press Enter.
-2. Type: hello
+2. Type "hello".
 3. Press Enter.
     You hear: text (required): hello.
 4. Press Ctrl+Enter.
@@ -51,9 +51,9 @@ command's in this version of axKit.
 ### Open a tool's answer in axJSON
 
 1. Press Ctrl+J.
-2. A new window opens: go to it.
+2. Go to the window that opened.
 3. Close the window.
-4. Go to the axMCP window.
+4. Go back to the first window.
 
 ### Read a resource
 
@@ -70,7 +70,7 @@ command's in this version of axKit.
 
 1. Press Ctrl+Shift+S.
     You hear: Stopped fake.
-2. Press Left 2 times.
+2. Press Left twice.
 
 ## Add, rename and remove a server of your own in axMCP
 
@@ -83,12 +83,12 @@ Starts with: Open axMCP with the test folder.
     You hear: Add server, form.
 2. Press Ctrl+Q (Read in full).
     You hear: A server of your own: a name for the list.
-3. Type: probe
+3. Type "probe".
 4. Press Enter.
     You hear the sound Edge.
     You hear: Type the program and its arguments.
-5. Type: cmd /c echo
-6. Press Tab 2 times.
+5. Type "cmd /c echo".
+6. Press Tab twice.
 7. Press Shift+Tab.
 8. Press Ctrl+Enter.
     You hear: Added probe.
@@ -100,7 +100,7 @@ Starts with: Open axMCP with the test folder.
 
 1. Press F2 (Rename).
 2. Press Ctrl+A.
-3. Type: probe two
+3. Type "probe two".
 4. Press Enter.
     You hear: Renamed to probe two.
 5. Press Ctrl+Z (Undo; Actions menu).
@@ -129,7 +129,7 @@ Starts with: Open axMCP with the test folder.
 
 ### Start a server
 
-1. Type: fake
+1. Type "fake".
 2. Press Right.
     You hear: Before axMCP starts fake.
 3. Press Tab.
@@ -143,17 +143,17 @@ Starts with: Open axMCP with the test folder.
 1. Press Right.
     You hear: Tools, 4 tools, echo, tool, Says the text back.
 2. Press Tab.
-3. Press Down 2 times.
+3. Press Down twice.
 4. Press Space.
     You hear: loud: done.
 5. Press Up.
 6. Press Enter.
-7. Type: hello
+7. Type "hello".
 8. Press Enter.
     You hear: text (required): hello.
 9. Press Ctrl+Enter.
     You hear: Calling echo.
-10. Press Escape 2 times.
+10. Press Escape twice.
 
 ### Read a resource from a template
 
@@ -162,7 +162,7 @@ Starts with: Open axMCP with the test folder.
 3. Press Right.
     You hear: Resources, 2 resources, readme, resource, fake://readme.
 4. Press Down.
-5. Press Enter 2 times.
+5. Press Enter twice.
     You hear: Reading page.
 6. Press Escape.
 
@@ -178,7 +178,7 @@ Starts with: Open axMCP with the test folder.
 ### Fill in a prompt and fetch it
 
 1. Press Enter.
-2. Type: Ada
+2. Type "Ada".
 3. Press Enter.
     You hear: who (required): Ada.
 4. Press Ctrl+Enter.
@@ -192,7 +192,7 @@ Starts with: Open axMCP with the test folder.
 
 ### Read the names of a server's environment variables
 
-1. Type: zzfake
+1. Type "zzfake".
 2. Press Tab.
 3. Press Escape.
 
@@ -215,7 +215,7 @@ Starts with: Open axMCP with the test folder.
 ### Fill in a number
 
 1. Press Ctrl+A.
-2. Type: 3
+2. Type "3".
 3. Press Enter.
     You hear: count (required): 3.
 
@@ -251,7 +251,7 @@ Starts with: Open axMCP with the test folder.
 ### Find a word in a result
 
 1. Press Ctrl+F (Find in the list).
-2. Type: made up
+2. Type "made up".
 3. Press Enter.
 4. Press Escape.
 
@@ -269,15 +269,15 @@ Starts with: Open axMCP with the test folder.
 ### Find a server and go to the next and the previous match
 
 1. Press Ctrl+F (Find in the list).
-2. Type: zz
+2. Type "zz".
 3. Press Enter.
-4. Press F3 2 times (Find next).
+4. Press F3 twice (Find next).
 5. Press Shift+F3 (Find previous).
 
 ### Show only the servers whose name contains a text
 
 1. Choose Filter in the Options menu.
-2. Type: zz
+2. Type "zz".
 3. Press Enter.
     You hear: filter zz, 3 shown.
 4. Press Escape.

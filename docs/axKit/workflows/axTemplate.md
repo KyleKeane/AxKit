@@ -2,9 +2,9 @@
 
 Written by `tools/workflows.ps1`; never edit it by hand. Every goal below is played by axKit's automated checks as it
 is written here: the steps are what the check presses and types, and the lines under a step are what axKit says. A
-line "You hear" gives words of what axKit says there, not always the whole sentence; after "words such as" they are
-cut short. After "Type:" comes the text to type, to the end of the line, with no full stop added. The file names and
-the words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
+line "You hear" gives what axKit says there; "something with" and words in quotes give a part of it. After "Type"
+the text to type stands in quotes: the quotes and the full stop after them are not typed. The file names and the
+words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
 command's in this version of axKit.
 
 ## Make, write, rename and delete a template in axTemplate's browser
@@ -14,7 +14,7 @@ Starts with: Open axTemplate.
 ### Make a template
 
 1. Press Ctrl+N.
-2. Type: Thanks
+2. Type "Thanks".
 3. Press Enter.
     You hear: Added Thanks.
 
@@ -22,14 +22,14 @@ Starts with: Open axTemplate.
 
 1. Press Enter.
 2. Press Tab.
-3. Type: Thank you, {clipboard}.{caret}
+3. Type "Thank you, {clipboard}.{caret}".
 4. Press Ctrl+Enter (Put in, with that program's selection; Context menu).
     You hear: Saved.
 
 ### Rename a template
 
 1. Press F2 (Rename).
-2. Type: Thank you note
+2. Type "Thank you note".
 3. Press Enter.
     You hear: Renamed Thank you note.
 
@@ -46,7 +46,7 @@ Starts with: Open axTemplate.
 1. Press Up.
 2. Press Enter.
 3. Press Ctrl+A (Select all; Actions menu).
-4. Type: Greeting
+4. Type "Greeting".
 5. Press Ctrl+Enter (Put in, with that program's selection; Context menu).
     You hear: Saved.
 6. Press Escape.
@@ -69,7 +69,7 @@ Starts with: Open axTemplate.
 
 ## Find a template in the launcher and use it
 
-Starts with: Open axTemplate with --launcher.
+Starts with: Open axTemplate's launcher.
 
 ### Move through the templates
 
@@ -84,29 +84,29 @@ Starts with: Open axTemplate with --launcher.
 
 ### Find a template by a word of its name or its text
 
-1. Type: sprint
+1. Type "sprint".
 2. Press Down.
     You hear: Greeting, 2 of 2.
 3. Press Up.
     You hear: Sprint notes, 1 of 2.
 4. Press Ctrl+A (Select all; Actions menu).
-5. Type: zzz
+5. Type "zzz".
 6. Press Down.
     You hear: No template matches zzz.
 
 ### Read a template before using it
 
 1. Press Ctrl+A (Select all; Actions menu).
-2. Type: greet
+2. Type "greet".
 3. Press Ctrl+Q (Read in full; Context menu).
 4. Press Escape.
 
 ### Copy a template without putting it in
 
 1. Press Ctrl+A (Select all; Actions menu).
-2. Type: thanks
+2. Type "thanks".
 3. Press Shift+Enter (Copy without putting in; Context menu).
-4. Start axTemplate again with --launcher.
+4. Open axTemplate's launcher again.
 5. Press Down.
     You hear: Greeting, 2 of 3.
 6. Press Up.
@@ -115,11 +115,11 @@ Starts with: Open axTemplate with --launcher.
 ### Open the browser from the launcher
 
 1. Press Ctrl+B (Open the browser; Session menu).
-2. A new window opens: go to it.
+2. Go to the window that opened.
 3. Close the window.
-4. Go to the axTemplate window.
+4. Go back to the first window.
 
 ### Quit the launcher
 
-1. Start axTemplate again with --launcher.
+1. Open axTemplate's launcher again.
 2. Choose Quit axTemplate in the Session menu.

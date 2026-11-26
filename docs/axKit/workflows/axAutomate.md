@@ -2,9 +2,9 @@
 
 Written by `tools/workflows.ps1`; never edit it by hand. Every goal below is played by axKit's automated checks as it
 is written here: the steps are what the check presses and types, and the lines under a step are what axKit says. A
-line "You hear" gives words of what axKit says there, not always the whole sentence; after "words such as" they are
-cut short. After "Type:" comes the text to type, to the end of the line, with no full stop added. The file names and
-the words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
+line "You hear" gives what axKit says there; "something with" and words in quotes give a part of it. After "Type"
+the text to type stands in quotes: the quotes and the full stop after them are not typed. The file names and the
+words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
 command's in this version of axKit.
 
 ## Browse a folder of workflows and read their steps
@@ -20,7 +20,7 @@ command's in this version of axKit.
     You hear: axDown, 1 workflow, 0 folders, 02-palette, workflow, 6 steps.
 2. Press Enter.
     You hear: 02-palette, 6 steps, 1. Start down.
-3. Press Down 4 times.
+3. Press Down four times.
 
 ### Read a step's details
 
@@ -94,7 +94,7 @@ Starts with: Open axAutomate with the folder flows.
 
 ### Find a workflow by typing the start of its name
 
-1. Type: mar
+1. Type "mar".
 
 ### Read what a workflow covers and whether it can run
 
@@ -105,11 +105,11 @@ Starts with: Open axAutomate with the folder flows.
 
 1. Press Right.
     You hear: Marks, 5 steps, 1. Start down.
-2. Press Down 4 times.
+2. Press Down four times.
 
 ### Read what a step does when it fails and what it reports
 
-1. Press Up 2 times.
+1. Press Up twice.
 2. Press Tab.
 
 ### Read the folder again after a workflow was added
@@ -125,17 +125,17 @@ Starts with: Open axAutomate with the folder flows.
 ### Open a workflow file as text in axJSON
 
 1. Press Ctrl+J (The workflow's file as text; Context menu).
-2. A new window opens: go to it.
+2. Go to the window that opened.
 3. Close the window.
-4. Go to the axAutomate window.
+4. Go back to the first window.
 
 ### Open a script as text in axDown
 
 1. Press Home.
 2. Press Ctrl+J (The workflow's file as text; Context menu).
-3. A new window opens: go to it.
+3. Go to the window that opened.
 4. Close the window.
-5. Go to the axAutomate window.
+5. Go back to the first window.
 
 ## Stop the run of a folder and see which checks need NVDA
 
@@ -174,15 +174,15 @@ Starts with: Open axAutomate with the folder flows.
 ### Find a workflow and go to the next and the previous match
 
 1. Press Ctrl+F (Find in the list).
-2. Type: ap
+2. Type "ap".
 3. Press Enter.
-4. Press F3 2 times (Find next).
+4. Press F3 twice (Find next).
 5. Press Shift+F3 (Find previous).
 
 ### Show only the workflows whose name contains a text
 
 1. Choose Filter in the Options menu.
-2. Type: ap
+2. Type "ap".
 3. Press Enter.
     You hear: filter ap, 2 shown.
 4. Press Escape.

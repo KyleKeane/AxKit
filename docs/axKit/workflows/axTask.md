@@ -2,9 +2,9 @@
 
 Written by `tools/workflows.ps1`; never edit it by hand. Every goal below is played by axKit's automated checks as it
 is written here: the steps are what the check presses and types, and the lines under a step are what axKit says. A
-line "You hear" gives words of what axKit says there, not always the whole sentence; after "words such as" they are
-cut short. After "Type:" comes the text to type, to the end of the line, with no full stop added. The file names and
-the words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
+line "You hear" gives what axKit says there; "something with" and words in quotes give a part of it. After "Type"
+the text to type stands in quotes: the quotes and the full stop after them are not typed. The file names and the
+words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
 command's in this version of axKit.
 
 ## Move through tasks and change an item's fields
@@ -18,7 +18,7 @@ Starts with: Open axTask with the folder tasks.
 2. Press Ctrl+Down (Next section; Navigation menu).
 3. Press Down.
 4. Press Ctrl+1 (Next heading level 1).
-5. Press Down 4 times.
+5. Press Down four times.
 6. Press Ctrl+1 (Next heading level 1).
     You hear the sound Edge.
 7. Press Ctrl+2 (Next heading level 2).
@@ -26,10 +26,10 @@ Starts with: Open axTask with the folder tasks.
 8. Press Ctrl+Down (Next section; Navigation menu).
     You hear the sound Edge.
 9. Press Ctrl+Up (Previous section; Navigation menu).
-10. Press Ctrl+Shift+1 2 times (Previous heading level 1).
+10. Press Ctrl+Shift+1 twice (Previous heading level 1).
 11. Press Right.
     You hear: A section: Down goes into it.
-12. Press Down 2 times.
+12. Press Down twice.
 
 ### Open a list
 
@@ -39,7 +39,7 @@ Starts with: Open axTask with the folder tasks.
 ### Hear the status bar
 
 1. Press F8 (Say the status; Window menu).
-    You hear words such as: tasks.
+    You hear something with "tasks" in it.
 2. Press Down.
 
 ### Open an item's fields
@@ -49,7 +49,7 @@ Starts with: Open axTask with the folder tasks.
 2. Press Enter.
 3. Press Escape.
 4. Press Tab.
-5. Press Down 3 times.
+5. Press Down three times.
 
 ### Move between the list and the fields
 
@@ -73,15 +73,15 @@ Starts with: Open axTask with the folder tasks.
 1. Press Tab.
 2. Press Enter.
 3. Press Ctrl+A (Select all; Actions menu).
-4. Type: friday
+4. Type "friday".
 5. Press Enter.
-    You hear words such as: Friday.
+    You hear something with "Friday" in it.
 
 ### Give a field its first value
 
 1. Press Down.
 2. Press Enter.
-3. Press Down 2 times.
+3. Press Down twice.
 4. Press Enter.
     You hear: Saved.
 
@@ -122,17 +122,17 @@ Starts with: Open axTask with the folder tasks.
 
 1. Press Escape.
 2. Press F2 (Rename; Context menu).
-3. Type: Fix the sink
+3. Type "Fix the sink".
 4. Press Enter.
     You hear: Renamed Fix the sink.
 
 ### Add an item
 
 1. Press Left.
-2. Type: s
+2. Type "s".
 3. Press Right.
 4. Press Ctrl+N (New item; Actions menu).
-5. Type: Bread
+5. Type "Bread".
 6. Press Enter.
     You hear: Added Bread.
 
@@ -162,16 +162,16 @@ Starts with: Open axTask with the folder tasks.
 
 1. Press Down.
 2. Press Tab.
-3. Press Down 2 times.
+3. Press Down twice.
 
 ### Write notes of several lines
 
 1. Press Up.
 2. Press Enter.
-3. Type: First line
+3. Type "First line".
 4. Press Enter.
     You hear: new line.
-5. Type: Second line
+5. Type "Second line".
 6. Press Tab.
 7. Press Enter.
     You hear: Notes: First line, and 1 more line.
@@ -185,7 +185,7 @@ Starts with: Open axTask with the folder tasks.
 3. Press Tab.
 4. Press End.
 5. Press Enter.
-6. Type: Washer
+6. Type "Washer".
 7. Press Enter.
     You hear: Saved.
 
@@ -208,7 +208,7 @@ Starts with: Open axTask with the folder tasks.
 ### Make a new list
 
 1. Press Ctrl+Shift+N (New list; Actions menu).
-2. Type: Garden
+2. Type "Garden".
 3. Press Enter.
     You hear: Made Garden.
 4. Press Ctrl+Z (Undo; Actions menu).
@@ -230,13 +230,13 @@ Starts with: Open axTask with the folder tasks.
 
 ### Move a list into a new section
 
-1. Type: w
+1. Type "w".
 2. Press Ctrl+M (Move to section; Context menu).
 3. Press End.
 4. Press Enter.
     You hear the sound Edge.
     You hear: Type the section's name.
-5. Type: Jobs
+5. Type "Jobs".
 6. Press Enter.
     You hear: Moved Work to Jobs.
 7. Press Up.
@@ -244,15 +244,15 @@ Starts with: Open axTask with the folder tasks.
 ### Move among the sections by their headings
 
 1. Press Ctrl+Up (Previous section; Navigation menu).
-2. Press Ctrl+Down 2 times (Next section; Navigation menu).
-3. Press Ctrl+1 2 times (Next heading level 1).
+2. Press Ctrl+Down twice (Next section; Navigation menu).
+3. Press Ctrl+1 twice (Next heading level 1).
     You hear the sound Edge.
 4. Press Ctrl+Shift+2 (Previous heading level 2).
 
 ### Make a new list in a section
 
 1. Press Ctrl+Shift+N (New list; Actions menu).
-2. Type: Clients
+2. Type "Clients".
 3. Press Enter.
     You hear: Made Clients.
 4. Press Up.
@@ -263,7 +263,7 @@ Starts with: Open axTask with the folder tasks.
 2. Press Down.
 3. Press Tab.
 4. Press Enter.
-5. Type: Jobs
+5. Type "Jobs".
 6. Press Enter.
     You hear: Section: Jobs.
 7. Press Escape.
@@ -271,7 +271,7 @@ Starts with: Open axTask with the folder tasks.
 ### Move a list back to Your lists
 
 1. Press Ctrl+Up (Previous section; Navigation menu).
-2. Type: h
+2. Type "h".
 3. Press Ctrl+M (Move to section; Context menu).
 4. Press Home.
 5. Press Enter.
@@ -330,7 +330,7 @@ Starts with: Open axTask with the folder tasks.
 
 1. Press Ctrl+1 (Next heading level 1).
 2. Press Ctrl+2 (Next heading level 2).
-3. Press Down 2 times.
+3. Press Down twice.
 4. Press Ctrl+2 (Next heading level 2).
     You hear the sound Edge.
 5. Press Ctrl+1 (Next heading level 1).
@@ -349,7 +349,7 @@ Starts with: Open axTask with the folder tasks.
     You hear: Lists, 1 list, All tasks, 2 not done.
 7. Press Ctrl+1 (Next heading level 1).
 8. Press End.
-9. Press Ctrl+Shift+1 3 times (Previous heading level 1).
+9. Press Ctrl+Shift+1 three times (Previous heading level 1).
 10. Press Ctrl+2 (Next heading level 2).
 11. Press Down.
 
@@ -377,15 +377,15 @@ Starts with: Open axTask with the folder tasks.
 ### Add a project folder by its path
 
 1. Choose Add a project folder in the Options menu.
-2. Type: nowhere
+2. Type "nowhere".
 3. Press Enter.
     You hear: No folder is there.
 4. Press Ctrl+A (Select all; Actions menu).
-5. Type: tasks
+5. Type "tasks".
 6. Press Enter.
     You hear: That is your own top folder: its lists show at the top already.
 7. Press Ctrl+A (Select all; Actions menu).
-8. Type: more
+8. Type "more".
 9. Press Enter.
     You hear: Added Projects in more, looking for lists.
 10. Press F5 (Refresh; Session menu).
@@ -394,13 +394,13 @@ Starts with: Open axTask with the folder tasks.
 ### Search every list
 
 1. Press Ctrl+Shift+F (Find in every list; Navigation menu).
-2. Type: zebra
+2. Type "zebra".
 3. Press Enter.
     You hear: Searching every list.
     You hear: Nothing found for zebra.
 4. Press Ctrl+Shift+F (Find in every list; Navigation menu).
 5. Press Ctrl+A (Select all; Actions menu).
-6. Type: TAP
+6. Type "TAP".
 7. Press Enter.
     You hear: Found TAP, 3 items, Buy a tap, in tasks / Home.
 8. Press Down.
@@ -441,16 +441,12 @@ Starts with: Open axTask with the folder tasks.
 
 ### Find the smart lists that share a first word
 
-1. Press Ctrl+Shift+2 2 times (Previous heading level 2).
-2. Press Down 2 times.
+1. Press Ctrl+Shift+2 twice (Previous heading level 2).
+2. Press Down twice.
 3. Press Ctrl+Shift+1 (Previous heading level 1).
-4. Press Down 2 times.
+4. Press Down twice.
 5. Press Ctrl+Shift+3 (Previous heading level 3).
     You hear the sound Edge.
-
-## Hear the heading sound in the item apps
-
-Starts with: Open axTask with the folder tasks.
 
 ## Close axTask and come back to the list you had
 
@@ -458,7 +454,7 @@ Starts with: Open axTask with the folder tasks.
 
 ### Come back to the list you had
 
-1. Type: s
+1. Type "s".
 2. Press Right.
     You hear: Shopping, 2 items, Milk.
 3. Press Down.
@@ -508,7 +504,7 @@ Starts with: Open axTask with the folder tasks.
 
 ### Hear a damaged item in its list
 
-1. Type: Home
+1. Type "Home".
 2. Press Right.
     You hear: Home, 1 item, 1 not readable, Fix the tap.
 3. Press Down.
@@ -516,9 +512,9 @@ Starts with: Open axTask with the folder tasks.
 ### Open a damaged item's file in axJSON
 
 1. Press Enter.
-2. A new window opens: go to it.
+2. Go to the window that opened.
 3. Close the window.
-4. Go to the axTask window.
+4. Go back to the first window.
 
 ### Hear how many items a gathering list could not read
 
@@ -528,10 +524,6 @@ Starts with: Open axTask with the folder tasks.
 3. Press Enter.
     You hear: 1 item not readable, in Home.
 
-## Change a setting of axTask when its settings file cannot be written
-
-Starts with: Open axTask with the folder tasks.
-
 ## Rename a list, and change the fields of its items
 
 Starts with: Open axTask with the folder tasks.
@@ -540,7 +532,7 @@ Starts with: Open axTask with the folder tasks.
 
 1. Press F2 (Rename; Context menu).
 2. Press Ctrl+A (Select all; Actions menu).
-3. Type: House
+3. Type "House".
 4. Press Enter.
     You hear: Renamed Home to House.
 
@@ -557,7 +549,7 @@ Starts with: Open axTask with the folder tasks.
 1. Press F5 (Refresh; Session menu).
 2. Press Right.
 3. Press Tab.
-4. Press Down 2 times.
+4. Press Down twice.
 5. Press Enter.
 6. Press Escape.
 
@@ -567,7 +559,7 @@ Starts with: Open axTask with the folder tasks.
 2. Press F5 (Refresh; Session menu).
 3. Press Tab.
 4. Press Home.
-5. Press Down 2 times.
+5. Press Down twice.
 6. Press End.
 
 ## Set a date in words, and add an item with its list's fields
@@ -577,19 +569,19 @@ Starts with: Open axTask with the folder tasks.
 ### Give a task a date and time in words
 
 1. Press Tab.
-2. Press Down 2 times.
+2. Press Down twice.
 3. Press Enter.
-4. Type: tomorrow 14:00
+4. Type "tomorrow 14:00".
 5. Press Enter.
-    You hear words such as: Due.
+    You hear something with "Due" in it.
 
 ### Add an item with its list's fields
 
 1. Press Ctrl+N (New item; Actions menu).
-2. Type: Paint the door
+2. Type "Paint the door".
 3. Press Enter.
 4. Press Tab.
-5. Press Down 3 times.
+5. Press Down three times.
 
 ## Make a smart list of your own
 
@@ -598,12 +590,12 @@ Starts with: Open axTask with the folder tasks.
 ### Make a smart list and see its file open in axJSON
 
 1. Choose New smart list in the Actions menu.
-2. Type: Soon
+2. Type "Soon".
 3. Press Enter.
     You hear: Made the smart list Soon.
-4. A new window opens: go to it.
+4. Go to the window that opened.
 5. Close the window.
-6. Go to the axTask window.
+6. Go back to the first window.
 
 ## Approve or decline a report from outside with the approval passphrase
 
@@ -613,7 +605,7 @@ Starts with: Open axTask with the folder lists.
 
 1. Choose Approve this report in the Context menu.
 2. Press Tab.
-3. Type: not the passphrase at all
+3. Type "not the passphrase at all".
 4. Press Enter.
     You hear the sound Edge.
     You hear: That is not the approval passphrase.
@@ -622,7 +614,7 @@ Starts with: Open axTask with the folder lists.
 
 1. Choose Approve this report in the Context menu.
 2. Press Tab.
-3. Type: a long test passphrase
+3. Type "a long test passphrase".
 4. Press Enter.
     You hear: Approved: axStart: said nothing on its first launch.
 
@@ -632,10 +624,10 @@ Starts with: Open axTask with the folder tasks.
 
 ### Convert a list of the earlier format
 
-1. Type: ho
+1. Type "ho".
 2. Press Right.
 3. Press Escape.
-4. Press Enter 2 times.
+4. Press Enter twice.
     You hear: Converted Home: 2 items. A copy is among the Archived lists.
 
 ### Take a conversion back
@@ -646,7 +638,7 @@ Starts with: Open axTask with the folder tasks.
 ### Convert every list of the earlier format at once
 
 1. Press Enter.
-2. Press Tab 2 times.
+2. Press Tab twice.
 3. Press Enter.
     You hear: Converted 2 lists: 3 items. A copy is among the Archived lists.
 4. Press Down.
@@ -668,7 +660,7 @@ Starts with: Open axTask with the folder tasks.
 6. Press Right.
     You hear: Notes, 1 item, Idea.
 7. Press Tab.
-8. Press Down 3 times.
+8. Press Down three times.
 9. Press Shift+Tab.
 10. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Done: Idea.
@@ -676,10 +668,10 @@ Starts with: Open axTask with the folder tasks.
 ### Add an item to a list that has no configuration yet
 
 1. Press Left.
-2. Type: em
+2. Type "em".
 3. Press Right.
 4. Press Ctrl+N (New item; Actions menu).
-5. Type: First thing
+5. Type "First thing".
 6. Press Enter.
     You hear: Added First thing.
 7. Press Tab.
@@ -700,7 +692,7 @@ Starts with: Open axTask with the folder tasks.
 2. Press Ctrl+Q (Read in full; Context menu).
     You hear: The fields of Fix the tap. Tab moves.
     You hear: 1 more field kept: Sprint.
-3. Press Tab 8 times.
+3. Press Tab eight times.
 
 ### Change several fields of an item and save them as one step
 
@@ -709,18 +701,18 @@ Starts with: Open axTask with the folder tasks.
 3. Press Space.
 4. Press Tab.
 5. Press Ctrl+A (Select all; Actions menu).
-6. Type: 2099-11-02
+6. Type "2099-11-02".
 7. Press Tab.
-8. Press Down 2 times.
+8. Press Down twice.
 9. Press Tab.
 10. Press Ctrl+A (Select all; Actions menu).
-11. Type: Hall
+11. Type "Hall".
 12. Press Tab.
-13. Type: First line
+13. Type "First line".
 14. Press Enter.
-15. Type: Second line
+15. Type "Second line".
 16. Press Tab.
-17. Type: Washer
+17. Type "Washer".
 18. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Saved.
 19. Press Ctrl+Z (Undo; Actions menu).
@@ -729,14 +721,14 @@ Starts with: Open axTask with the folder tasks.
 ### Rename an item in its form
 
 1. Press Enter.
-2. Press Tab 6 times.
-3. Type: Washer
+2. Press Tab six times.
+3. Type "Washer".
 4. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Saved.
 5. Press Down.
 6. Press Enter.
 7. Press Ctrl+A (Select all; Actions menu).
-8. Type: Washer 15 mm
+8. Type "Washer 15 mm".
 9. Press Enter.
     You hear: Saved.
 
@@ -744,10 +736,10 @@ Starts with: Open axTask with the folder tasks.
 
 1. Press Up.
 2. Press Tab.
-3. Press Down 4 times.
+3. Press Down four times.
 4. Press Enter.
 5. Press Ctrl+A (Select all; Actions menu).
-6. Type: Bathroom
+6. Type "Bathroom".
 7. Press Enter.
     You hear: Saved.
 8. Press Home.
@@ -774,28 +766,28 @@ Starts with: Open axTask with the folder tasks.
 ### Run a program on an item, and hear how it ends
 
 1. Press Ctrl+Shift+4 (Action key Shift+4).
-2. Press Tab 3 times.
+2. Press Tab three times.
 3. Press Enter.
     You hear: Running Find the kind.
-    You hear words such as: Find the kind: done. Checked.
+    You hear something with "Find the kind: done. Checked" in it.
 4. Press Ctrl+Shift+4 (Action key Shift+4).
-    You hear words such as: Find the kind: done. Checked.
+    You hear something with "Find the kind: done. Checked" in it.
 
 ### Fill in an action's form
 
 1. Choose the menu item Find what I type.
 2. Press Enter.
     You hear: Type the word to look for: this is needed.
-3. Type: the tap
+3. Type "the tap".
 4. Press Enter.
-5. Press Tab 2 times.
+5. Press Tab twice.
 6. Press Enter.
     You hear: Find what I type: done.
 
 ### Stop a running action
 
 1. Choose the menu item Wait.
-2. Press Tab 2 times.
+2. Press Tab twice.
 3. Press Enter.
     You hear: Running Wait.
 
@@ -804,12 +796,12 @@ Starts with: Open axTask with the folder tasks.
 1. Choose the menu item Look in the terminal.
 2. Press Enter.
 3. Choose the menu item Look in the terminal.
-4. Press Tab 2 times.
+4. Press Tab twice.
 5. Press Enter.
     You hear: Look in the terminal is in axTerminal's command field.
-6. A new window opens: go to it.
+6. Go to the window that opened.
 7. Close the window.
-8. Go to the axTask window.
+8. Go back to the first window.
 
 ## Select several items and act on all of them
 
@@ -819,7 +811,7 @@ Starts with: Open axTask with the folder tasks.
 
 1. Press Space.
     You hear: Selected.
-2. Press Down 2 times.
+2. Press Down twice.
 3. Press Space.
     You hear: Selected, 2 selected.
 4. Press Space.
@@ -876,7 +868,7 @@ Starts with: Open axTask with the folder tasks.
 2. Press Ctrl+2 (Action key 2).
     You hear: Later: 3 items moved to Later.
 3. Press Ctrl+Enter (Done or not done; Context menu).
-4. Press Ctrl+Z 2 times (Undo; Actions menu).
+4. Press Ctrl+Z twice (Undo; Actions menu).
     You hear: Undone: Later: 3 items moved to Later.
 
 ### Archive several items at once
@@ -911,7 +903,7 @@ Starts with: Open axTask with the folder tasks.
 2. Press End.
 3. Press Enter.
     You hear: Type the list's name.
-4. Type: Someday
+4. Type "Someday".
 5. Press Enter.
     You hear: Buy paint moved to Someday.
 6. Press Ctrl+Z (Undo; Actions menu).
@@ -964,13 +956,13 @@ Starts with: Open axTask with the folder tasks.
 ### Narrow the lists to those whose name contains a text
 
 1. Choose Filter in the Options menu.
-2. Type: shop
+2. Type "shop".
 3. Press Enter.
     You hear: filter shop, 1 shown.
 
 ### Put a list's items in the order of their names
 
-1. Type: h
+1. Type "h".
 2. Press Right.
 3. Choose Name in the Options menu, Sort by.
     You hear: Sorted by name.
@@ -984,7 +976,7 @@ Starts with: Open axTask with the folder tasks.
 
 ### Hear both ends of a list of one item
 
-1. Press Down 2 times.
+1. Press Down twice.
 2. Press Right.
 3. Press Up.
     You hear the sound Edge.
@@ -1011,7 +1003,7 @@ Starts with: Open axTask with the folder tasks.
 ### Add an item to a list from the top level
 
 1. Press Ctrl+N (New item; Actions menu).
-2. Type: Paint the door
+2. Type "Paint the door".
 3. Press Enter.
     You hear: Added Paint the door to Home.
 
@@ -1022,8 +1014,8 @@ Starts with: Open axTask with the folder work. Close the window. Open axTask wit
 ### Open a folder of lists used lately
 
 1. Press Ctrl+Shift+P (Command palette; Help menu).
-2. Type: work
-    You hear words such as: 1. work.
+2. Type "work".
+    You hear something with "1. work" in it.
     You hear: Session, Recent top folders.
 3. Press Enter.
     You hear: Folder work.
@@ -1036,7 +1028,7 @@ Starts with: Open axTask with the folder tasks.
 ### Add an item, and its Created field holds the day
 
 1. Press Ctrl+N (New item; Actions menu).
-2. Type: Paint the door
+2. Type "Paint the door".
 3. Press Enter.
     You hear: Added Paint the door.
 
@@ -1046,10 +1038,10 @@ Starts with: Open axTask with the folder tasks.
 2. Press Down.
 3. Press Right.
 4. Press Ctrl+N (New item; Actions menu).
-5. Type: Call the plumber tomorrow !high
+5. Type "Call the plumber tomorrow !high".
 6. Press Enter.
     You hear: Added Call the plumber, due.
-    You hear words such as: priority High.
+    You hear something with "priority High" in it.
 
 ## Put a list in your own order
 
@@ -1075,7 +1067,7 @@ Starts with: Open axTask with the folder tasks.
 1. Choose New items at the top of this list in the Options menu.
     You hear: New items go to the top of Home.
 2. Press Ctrl+N (New item; Actions menu).
-3. Type: Dates
+3. Type "Dates".
 4. Press Enter.
     You hear: Added Dates.
 5. Press Home.
@@ -1095,7 +1087,7 @@ Starts with: Open axTask with the folder tasks.
 5. Press Tab.
 6. Press Down.
 7. Press Tab.
-8. Type: Garage
+8. Type "Garage".
 9. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Fields set: 2 items.
 10. Press Ctrl+Z (Undo; Actions menu).

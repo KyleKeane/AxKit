@@ -2,9 +2,9 @@
 
 Written by `tools/workflows.ps1`; never edit it by hand. Every goal below is played by axKit's automated checks as it
 is written here: the steps are what the check presses and types, and the lines under a step are what axKit says. A
-line "You hear" gives words of what axKit says there, not always the whole sentence; after "words such as" they are
-cut short. After "Type:" comes the text to type, to the end of the line, with no full stop added. The file names and
-the words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
+line "You hear" gives what axKit says there; "something with" and words in quotes give a part of it. After "Type"
+the text to type stands in quotes: the quotes and the full stop after them are not typed. The file names and the
+words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
 command's in this version of axKit.
 
 ## Find and start a program
@@ -18,14 +18,14 @@ Starts with: Open axStart.
 
 ### Move through the matches
 
-1. Type: windows
+1. Type "windows".
 2. Press Down.
-    You hear words such as: 2 of.
+    You hear something with "2 of" in it.
 3. Press Up.
-    You hear words such as: 1 of.
+    You hear something with "1 of" in it.
 4. Press Up.
     You hear the sound Edge.
-    You hear words such as: 1 of.
+    You hear something with "1 of" in it.
 
 ### Jump to the first or last match, or by a page
 
@@ -33,10 +33,10 @@ Starts with: Open axStart.
 2. Press Down.
     You hear the sound Edge.
 3. Press Ctrl+Home (First match).
-    You hear words such as: 1 of.
+    You hear something with "1 of" in it.
 4. Press Page Down.
 5. Press Page Up.
-    You hear words such as: 1 of.
+    You hear something with "1 of" in it.
 
 ### Hear the selected match's kind and path
 
@@ -46,7 +46,7 @@ Starts with: Open axStart.
 ### Hide the window and show it again
 
 1. Press Escape.
-2. Start axStart again.
+2. Open axStart again.
 
 ### Quit axStart
 
@@ -58,20 +58,20 @@ Starts with: Open axStart.
 
 ### Hear the first match as you type
 
-1. Type: windows
-    You hear words such as: 1 of.
+1. Type "windows".
+    You hear something with "1 of" in it.
 
 ### Hear the new first match after deleting a letter
 
 1. Press Down.
-    You hear words such as: 2 of.
+    You hear something with "2 of" in it.
 2. Press Backspace.
-    You hear words such as: 1 of.
+    You hear something with "1 of" in it.
 
 ### Search by several words
 
 1. Press Ctrl+A.
-2. Type: win power
+2. Type "win power".
     You hear: PowerShell.
 
 ### Change the hotkey
@@ -96,13 +96,13 @@ Starts with: Open axStart.
 1. Choose Say the first match while typing in the Options menu, General.
     You hear: Say the first match while typing, not checked.
 2. Press Ctrl+A.
-3. Type: calculato
+3. Type "calculato".
 4. Press Ctrl+I (Information; Context menu).
     You hear: Calculator, Store app.
 5. Choose Say the first match while typing in the Options menu, General.
     You hear: Say the first match while typing, checked.
 6. Press Backspace.
-    You hear words such as: Calculator, 1.
+    You hear something with "Calculator, 1" in it.
 
 ### Quit axStart
 
@@ -139,18 +139,18 @@ Starts with: Open axDown with the file notes.md.
 
 1. Open axStart.
 2. Press Ctrl+Home (First match).
-    You hear words such as: notes.md.
-    You hear words such as: - axDown, 1.
-3. Type: notes.md
+    You hear something with "notes.md" in it.
+    You hear something with "- axDown, 1" in it.
+3. Type "notes.md".
     You hear: - axDown, 1 of 1.
 
 ### Hear what a match closed lately is
 
 1. Press Ctrl+I (Information; Context menu).
-    You hear words such as: recently closed.
+    You hear something with "recently closed" in it.
 
 ### Open a file closed lately again
 
 1. Press Enter.
-2. A new window opens: go to it.
+2. Go to the window that opened.
 3. Press Alt+F4.

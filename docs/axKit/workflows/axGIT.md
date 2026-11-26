@@ -2,9 +2,9 @@
 
 Written by `tools/workflows.ps1`; never edit it by hand. Every goal below is played by axKit's automated checks as it
 is written here: the steps are what the check presses and types, and the lines under a step are what axKit says. A
-line "You hear" gives words of what axKit says there, not always the whole sentence; after "words such as" they are
-cut short. After "Type:" comes the text to type, to the end of the line, with no full stop added. The file names and
-the words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
+line "You hear" gives what axKit says there; "something with" and words in quotes give a part of it. After "Type"
+the text to type stands in quotes: the quotes and the full stop after them are not typed. The file names and the
+words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
 command's in this version of axKit.
 
 ## Open a repository in axGIT
@@ -57,8 +57,6 @@ command's in this version of axKit.
 
 1. Close the window.
 
-## Open axGIT from another app
-
 ## Review and commit changes
 
 Starts with: Open axGIT with the folder repo.
@@ -99,7 +97,7 @@ Starts with: Open axGIT with the folder repo.
     You hear: Diff of a.txt, 10 lines.
 2. Press Down.
     It reads index.
-3. Press Down 4 times.
+3. Press Down four times.
     It reads hello.
 4. Press Down.
     It reads -world.
@@ -137,7 +135,7 @@ Starts with: Open axGIT with the folder repo.
 3. Press Ctrl+Enter (Commit; Actions menu).
 4. Press Enter.
     You hear: Type the commit message.
-5. Type: Test commit
+5. Type "Test commit".
 6. Press Enter.
     You hear: Committed.
 7. Press Alt+2 (Log; Navigation menu).
@@ -177,14 +175,14 @@ Starts with: Open axGIT with the folder repo.
 1. Press Alt+2 (Log; Navigation menu).
     You hear: Log, 2 commits.
 2. Press Enter.
-    You hear words such as: 8 lines.
+    You hear something with "8 lines" in it.
 3. Press Down.
     It reads Author: Test.
 4. Press Down.
     It reads Date.
-5. Press Down 2 times.
+5. Press Down twice.
     You hear: second commit.
-6. Press Down 2 times.
+6. Press Down twice.
     You hear: a.txt.
 7. Press Ctrl+Tab (Switch between the list and the text).
     The focus moves to Log, 2 commits (List).
@@ -211,7 +209,7 @@ Starts with: Open axGIT with the folder repo.
 ### Make a new branch
 
 1. Press Ctrl+N (New branch; Actions menu).
-2. Type: scratch-test
+2. Type "scratch-test".
 3. Press Enter.
     You hear: Switched to scratch-test.
 4. Press Alt+3 (Branches; Navigation menu).
@@ -244,7 +242,7 @@ Starts with: Open axGIT with the folder repo.
 1. Press Enter.
     You hear: Diff of a.txt.
 2. Press Ctrl+F.
-3. Type: marker
+3. Type "marker".
 4. Press Enter.
     The focus moves to Diff of a.txt (Text): +first paragraph marker.
 5. Press F3.
@@ -336,7 +334,7 @@ You hear: Before axGIT connects to Git.
 ### Trust a repository
 
 1. Open axGIT with the folder repo.
-2. Press Tab 2 times.
+2. Press Tab twice.
 3. Press Space.
     You hear: Trusted.
 4. Close the window.

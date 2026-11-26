@@ -2,9 +2,9 @@
 
 Written by `tools/workflows.ps1`; never edit it by hand. Every goal below is played by axKit's automated checks as it
 is written here: the steps are what the check presses and types, and the lines under a step are what axKit says. A
-line "You hear" gives words of what axKit says there, not always the whole sentence; after "words such as" they are
-cut short. After "Type:" comes the text to type, to the end of the line, with no full stop added. The file names and
-the words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
+line "You hear" gives what axKit says there; "something with" and words in quotes give a part of it. After "Type"
+the text to type stands in quotes: the quotes and the full stop after them are not typed. The file names and the
+words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
 command's in this version of axKit.
 
 ## Open a text file in axDown
@@ -31,13 +31,13 @@ Starts with: Open axDown with the file long.md.
 
 ### Read the text line by line and word by word
 
-1. Press Down 2 times.
-2. Press Ctrl+Right 2 times.
+1. Press Down twice.
+2. Press Ctrl+Right twice.
 
 ### Move by paragraph
 
 1. Press Ctrl+Home.
-2. Press Ctrl+Down 4 times.
+2. Press Ctrl+Down four times.
 
 ### Hear the line and column
 
@@ -66,11 +66,11 @@ Starts with: Open axDown with the file long.md.
 ### Type text, then undo and redo it
 
 1. Open axDown with the file new.md.
-2. Type: A sentence.
+2. Type "A sentence.".
 3. Press Backspace.
-4. Type: !
+4. Type "!".
 5. Press Enter, Tab.
-6. Type: Second line.
+6. Type "Second line.".
 7. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone.
 8. Press Ctrl+Y (Redo; Actions menu).
@@ -95,20 +95,20 @@ Starts with: Open axDown with the file image.png.
 
 1. Open axDown with the file bom.md.
 2. Press End.
-3. Type: !
+3. Type "!".
 4. Press Ctrl+S (Save; Session menu).
     You hear: Saved.
 
 ### Open a new empty window
 
 1. Press Ctrl+Shift+N (New window; Session menu).
-2. A new window opens: go to it.
+2. Go to the window that opened.
 3. Close the window.
 4. Go to the axDown window.
 
 ### Start a new document when the text has changes
 
-1. Type: Added.
+1. Type "Added.".
 2. Press Ctrl+N (New; Session menu).
 3. Press Escape.
 4. Press Ctrl+N (New; Session menu).
@@ -118,13 +118,13 @@ Starts with: Open axDown with the file image.png.
 ### Reload a file that another program changed
 
 1. Press Ctrl+S (Save; Session menu).
-2. Press Tab 2 times.
+2. Press Tab twice.
 3. Press Enter.
     You hear: Reloaded.
 
 ### Save over the changes of another program
 
-1. Type: Y
+1. Type "Y".
 2. Press Ctrl+S (Save; Session menu).
 3. Press Enter.
     You hear: Saved.
@@ -132,18 +132,18 @@ Starts with: Open axDown with the file image.png.
 ### Create a file by saving it
 
 1. Open axDown with the file created.md.
-2. Type: Created by Ctrl+S.
+2. Type "Created by Ctrl+S.".
 3. Press Ctrl+S (Save; Session menu).
     You hear: Saved.
 
 ### Close a window without saving its changes
 
-1. Go to the other axDown window.
-2. Type: More.
+1. Go to the window that opened.
+2. Type "More.".
 3. Close the window.
 4. Press Escape.
 5. Close the window.
-6. Press Tab 2 times.
+6. Press Tab twice.
 7. Press Enter.
 
 ## Find text and go to a line
@@ -153,7 +153,7 @@ Starts with: Open axDown with the file find.md.
 ### Find a word in the text
 
 1. Press Ctrl+F (Find; Navigation menu).
-2. Type: apple
+2. Type "apple".
 3. Press Enter.
 4. Press F3 (Find next; Navigation menu).
 5. Press Shift+F3 (Find previous; Navigation menu).
@@ -161,7 +161,7 @@ Starts with: Open axDown with the file find.md.
 ### Go to a line by its number
 
 1. Press Ctrl+G (Go to line; Navigation menu).
-2. Type: 5
+2. Type "5".
 3. Press Enter.
     You hear: Line 5 of 7.
 
@@ -196,13 +196,13 @@ Starts with: Open axDown with the file a.md.
     You hear: axDown, heading level 2.
 3. Press Shift+H.
     You hear: In every window of axKit, heading level 2.
-4. Press H 2 times.
+4. Press H twice.
     You hear: The text, heading level 2.
 
 ### Find a word in the keyboard shortcuts
 
 1. Press Ctrl+F (Find; Navigation menu).
-2. Type: wrap
+2. Type "wrap".
 3. Press Enter.
 4. Press F3 (Find next; Navigation menu).
 5. Press Ctrl+F (Find; Navigation menu).
@@ -238,12 +238,12 @@ Starts with: Open axDown with the file a.md.
 ### Turn the update check at start on or off
 
 1. Press Ctrl+Shift+P (Command palette; Help menu).
-2. Type: check for updates at start
+2. Type "check for updates at start".
     You hear: Check for updates at start, axKit, 1 of 1.
 3. Press Enter.
     You hear: Check for updates at start, checked.
 4. Press Ctrl+Shift+P (Command palette; Help menu).
-5. Type: check for updates at start
+5. Type "check for updates at start".
     You hear: Check for updates at start, axKit, checked, 1 of 1.
 6. Press Enter.
     You hear: Check for updates at start, not checked.
@@ -252,15 +252,15 @@ Starts with: Open axDown with the file a.md.
 
 1. Press Ctrl+Shift+P (Command palette; Help menu).
 2. Press Down.
-    You hear words such as: New window, Session, Ctrl+Shift+N, 2.
+    You hear something with "New window, Session, Ctrl+Shift+N, 2" in it.
 3. Press Down.
-    You hear words such as: Open, Session, Ctrl+O, 3.
+    You hear something with "Open, Session, Ctrl+O, 3" in it.
 4. Press Up.
-    You hear words such as: New window, Session, Ctrl+Shift+N, 2.
+    You hear something with "New window, Session, Ctrl+Shift+N, 2" in it.
 
 ### Run a command found by its name
 
-1. Type: wrap
+1. Type "wrap".
     You hear: Word wrap, Options, Text, Ctrl+Shift+W, checked, 1 of 1.
 2. Press Down.
     You hear the sound Edge.
@@ -313,9 +313,9 @@ Starts with: Open axDown with the file long.md.
 
 ### Move back to the previous heading
 
-1. Press Ctrl+Shift+H 4 times (Heading; Navigation menu, Previous).
+1. Press Ctrl+Shift+H four times (Heading; Navigation menu, Previous).
     You hear: Code, heading level 2.
-2. Press Ctrl+Shift+H 4 times (Heading; Navigation menu, Previous).
+2. Press Ctrl+Shift+H four times (Heading; Navigation menu, Previous).
     You hear: Long Markdown file for navigation, heading level 1.
 3. Press Ctrl+Shift+H (Heading; Navigation menu, Previous).
     You hear: No previous heading.
@@ -327,7 +327,7 @@ Starts with: Open axDown with the file long.md.
     You hear: Second heading, level 2, heading level 2.
 3. Press Ctrl+2 (Heading level 2; Navigation menu, Next).
     You hear: Lists, heading level 2.
-4. Press Ctrl+2 2 times (Heading level 2; Navigation menu, Next).
+4. Press Ctrl+2 twice (Heading level 2; Navigation menu, Next).
     You hear: Code, heading level 2.
 5. Press Ctrl+2 (Heading level 2; Navigation menu, Next).
     You hear: No next heading level 2.
@@ -366,7 +366,7 @@ Starts with: Open axDown with the file long.md.
 
 1. Press Ctrl+Shift+K (Link; Navigation menu, Previous).
     You hear: https://www.example.com, link.
-2. Press Right 3 times.
+2. Press Right three times.
 3. Press Ctrl+Shift+K (Link; Navigation menu, Previous).
     You hear: GitHub, link.
 
@@ -384,7 +384,7 @@ Starts with: Open axDown with the file long.md.
 6. Press Ctrl+I (List item; Navigation menu, Next).
     You hear: numbered one.
 7. Press Ctrl+Home.
-8. Press Ctrl+L 2 times (List; Navigation menu, Next).
+8. Press Ctrl+L twice (List; Navigation menu, Next).
     You hear: List with 2 items, numbered one.
 9. Press Ctrl+L (List; Navigation menu, Next).
     You hear: No next list.
@@ -418,9 +418,9 @@ Starts with: Open axDown with the file notes.md.
 ### Make a theme file and open it
 
 1. Choose Edit theme file in the axKit menu, Theme.
-2. A new window opens: go to it.
+2. Go to the window that opened.
 3. Close the window.
-4. Go to the axDown window.
+4. Go back to the first window.
 
 ### Reload the theme
 
@@ -461,13 +461,13 @@ Starts with: Open axDown with the file notes.md.
 ### Ask Claude about this window
 
 1. Press Shift+F1 (Ask about this window; axKit menu, Claude).
-2. Type: how do I turn word wrap off
+2. Type "how do I turn word wrap off".
 3. Press Enter.
 
 ### Ask more about an answer
 
 1. Press Tab.
-2. Type: and back on
+2. Type "and back on".
 3. Press Enter.
 4. Press Escape.
 
@@ -485,12 +485,12 @@ Starts with: Open axDown with the file notes.md.
 1. Press Ctrl+End.
 2. Press Enter.
     You hear: new line.
-3. Type: Second line.
+3. Type "Second line.".
 
 ### Split a line in two
 
 1. Press Home.
-2. Press Right 6 times.
+2. Press Right six times.
 3. Press Enter.
     You hear: new line.
 
@@ -517,7 +517,7 @@ Starts with: Open axDown with the file headings.md.
 
 1. Choose Sound on headings in the Options menu, Text.
     You hear: Sound on headings, not checked.
-2. Press Down 4 times.
+2. Press Down four times.
 3. Choose Sound on headings in the Options menu, Text.
     You hear: Sound on headings, checked.
 4. Press Up.
@@ -531,28 +531,28 @@ Starts with: Open axDown with the file one.md. Open axDown with the file two.md.
 ### Open a recent file from the palette
 
 1. Press Ctrl+Shift+P (Command palette; Help menu).
-2. Type: one.md
+2. Type "one.md".
     You hear: Open recent file.
 3. Press Enter.
 
 ### Find another open window from the palette
 
 1. Press Ctrl+Shift+P (Command palette; Help menu).
-2. Type: open windows
-    You hear words such as: one.md, Window, Open windows.
+2. Type "open windows".
+    You hear something with "one.md, Window, Open windows" in it.
 3. Press Escape.
 
 ### Reopen a window that was closed
 
-1. Go to the other axDown window.
+1. Go back to the first window.
 2. Close the window.
-3. Go to the other axDown window.
+3. Go to the window that opened.
 4. Press Ctrl+Shift+P (Command palette; Help menu).
-5. Type: recently closed
+5. Type "recently closed".
     You hear: 1. one.md.
     You hear: Window, Recently closed.
 6. Press Enter.
-7. A new window opens: go to it.
+7. Go to the window that opened.
 
 ## Find out whether a key arrives and what it does
 
@@ -631,7 +631,7 @@ Starts with: Open axDown with the file modes.md.
 1. Press Ctrl+Space.
     You hear: Edit mode.
 2. Press Home.
-3. Type: X
+3. Type "X".
 4. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone.
 
@@ -684,24 +684,24 @@ Starts with: Open axDown with the file doc.md.
 1. Press Shift+End.
 2. Choose Link in the Actions menu, Insert template.
     You hear: Link inserted.
-3. Type: https://example.org
+3. Type "https://example.org".
 
 ### Put in a table and type into its first cell
 
 1. Press Ctrl+End.
 2. Choose Table in the Actions menu, Insert template.
     You hear: Table inserted.
-3. Type: Name
+3. Type "Name".
 
 ### Put in a template of your own from the command palette, with the selected words carried into it
 
 1. Press Ctrl+Home, Down, Down, Shift+End.
 2. Press Ctrl+Shift+P (Command palette; Help menu).
-3. Type: meeting
+3. Type "meeting".
     You hear: Actions, Insert template.
 4. Press Enter.
     You hear: Meeting inserted.
-5. Type: of Monday
+5. Type "of Monday".
 
 ## Answer a notice and use the command palette
 
@@ -715,6 +715,6 @@ Starts with: Open axDown with the file notes.md.
 ### Find a command in the command palette
 
 1. Press Ctrl+Shift+P (Command palette; Help menu).
-2. Type: save as
+2. Type "save as".
     You hear: Save as.
 3. Press Escape.

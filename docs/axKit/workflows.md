@@ -225,89 +225,87 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Hear what a key does without doing it
     - End the key test
     - Hear what the conversation's keys do
-24. **Read back in the conversation while Claude writes on, and find every line in its place**
-25. **Read back a long message before sending it, and turn the music on with Ctrl+M**
+24. **Read back a long message before sending it, and turn the music on with Ctrl+M**
     - Move through a message by its headings, links and lists
     - Go back to editing the message
     - Turn the background music on and off
-26. **Block Claude Code's feedback requests from the Options menu, and turn it off again**
+25. **Block Claude Code's feedback requests from the Options menu, and turn it off again**
     - Block Claude Code's feedback requests
     - Turn the block on feedback requests off again
     - Choose how Claude-drafted feedback comes
-27. **Follow a workflow Claude runs in the background without hearing its live row**
+26. **Follow a workflow Claude runs in the background without hearing its live row**
     - Hear how far a workflow is
     - Show Claude Code's live progress rows in the conversation
     - Hide the live progress rows again
-28. **Hear where axClaude's events come from**
+27. **Hear where axClaude's events come from**
     - Hear where the window's events come from
     - Turn the grounding in Claude Code's session file off and on again
     - Turn Claude Code's events off and on again
-29. **Follow a turn played by the stand-in**
-30. **See Claude Code's events arrive, without Claude Code**
+28. **Follow a turn played by the stand-in**
+29. **See Claude Code's events arrive, without Claude Code**
     - Hear whether Claude Code's events reach the window
     - Turn Claude Code's events off and on again
-31. **Start Claude Code with axClaude's hooks**
+30. **Start Claude Code with axClaude's hooks**
     - Hear that Claude Code's events arrived after a turn
-32. **See the session file followed, without Claude Code**
+31. **See the session file followed, without Claude Code**
     - Hear whether Claude Code's session file is followed
     - Turn the grounding in Claude Code's session file off and on again
-33. **Start axClaude with a place of Claude Code another program wrote**
-34. **Know that Claude works, and send a message while a reply arrives**
+32. **Know that Claude works, and send a message while a reply arrives**
     - Know that Claude works while the screen shows no sign of it
     - Send a message while a reply's rows are still arriving
-35. **Hear Done before the reply, and not after an interrupt**
+33. **Hear Done before the reply, and not after an interrupt**
     - Hear Done, then the reply's words
-36. **Hear that Claude goes on by itself after background work**
+34. **Hear that Claude goes on by itself after background work**
     - Stop hearing that Claude goes on by itself
-37. **Follow a turn of Claude Code's stream**
+35. **Follow a turn of Claude Code's stream**
     - Send a message and hear the reply and Done
-38. **Change Claude Code's mode and use the window's commands over the stream**
+36. **Change Claude Code's mode and use the window's commands over the stream**
     - Go to Claude Code's next permission mode
     - Send a message in the new mode
     - Restart Claude Code
-39. **Hear that Claude Code's stream ended, and be offered the screen**
+37. **Hear that Claude Code's stream ended, and be offered the screen**
     - Learn that Claude Code ended and stay in the window
-40. **Answer what Claude asks to do, over Claude Code's stream**
+38. **Answer what Claude asks to do, over Claude Code's stream**
     - Say yes to Claude Code in this folder
     - Hear what Claude asks to do, with no first
     - Read everything Claude asks to do before answering
     - Allow it once
-41. **Say no to Claude Code in a folder, and to what Claude asks to do**
+39. **Say no to Claude Code in a folder, and to what Claude asks to do**
     - Be asked again and say yes
     - Refuse what Claude asks to do
-42. **Answer Claude's own questions over Claude Code's stream**
+40. **Answer Claude's own questions over Claude Code's stream**
     - Answer the first question in your own words
     - Tick several answers of the second question
-43. **Interrupt Claude over Claude Code's stream**
+41. **Interrupt Claude over Claude Code's stream**
     - Refuse a waiting question with the interrupt key
     - Interrupt the turn that runs
     - Go on after the interrupt
-44. **Be asked again when Claude asks the same thing twice, over Claude Code's stream**
+42. **Be asked again when Claude asks the same thing twice, over Claude Code's stream**
     - Allow the first of two calls that read the same
     - Hear the second call asked anew, with no first
-45. **Hear a reply spoken in a new install**
-46. **Let Claude run a command over its stream, with Claude Code itself**
+43. **Hear a reply spoken in a new install**
+44. **Let Claude run a command over its stream, with Claude Code itself**
     - Start Claude Code over its stream in a folder
     - Answer Claude Code's own question for a command
-47. **Refuse a command, stop a reply and answer Claude's own question over the stream, with Claude Code itself**
+45. **Refuse a command, stop a reply and answer Claude's own question over the stream, with Claude Code itself**
     - Refuse a command Claude asks to run
     - Stop a reply Claude is writing
     - Answer a question Claude asks you
-48. **Choose the model and the effort over Claude Code's stream**
+46. **Choose the model and the effort over Claude Code's stream**
     - Choose the model from the list Claude Code gave
     - Choose the effort
     - Send a message after the choices
-49. **See the earlier conversation when Claude Code's stream takes it up**
+47. **See the earlier conversation when Claude Code's stream takes it up**
     - Read the earlier conversation in a new window
     - Go on with the conversation
-50. **Hand a conversation from Claude Code's stream to its screen and back, with Claude Code itself**
+48. **Hand a conversation from Claude Code's stream to its screen and back, with Claude Code itself**
     - Take the stream's conversation up with the screen
     - Take the conversation up over the stream again and read its earlier part
-51. **Search the rules of Claude Code's permissions screen**
+49. **Search the rules of Claude Code's permissions screen**
     - Search the rules of the permissions screen
     - Leave the search
-52. **Have a short exchange with Claude**
-53. **Answer a set of two questions from Claude**
+50. **Have a short exchange with Claude**
+51. **Answer a set of two questions from Claude**
 
 ## axClip
 
@@ -325,8 +323,7 @@ Steps and keys: `docs/axKit/workflows/axClip.md` (in Claude's working folder: `w
 2. **Copy again, read a long copy and keep the history between runs**
     - Read a copy of several lines in full
     - Keep the history between runs
-3. **Start with a kept history that can no longer be read**
-4. **Narrow the clipboard history with several words**
+3. **Narrow the clipboard history with several words**
     - Type a second word to narrow the list
 
 ## axDown
@@ -505,13 +502,12 @@ Steps and keys: `docs/axKit/workflows/axFile.md` (in Claude's working folder: `w
     - Start the key test
     - Hear what a key does without doing it
     - End the key test
-10. **Start axFile with settings another program changed**
-11. **Change settings in two windows of one app**
+10. **Change settings in two windows of one app**
     - Change one setting in each of two windows
-12. **Take back a new text file**
+11. **Take back a new text file**
     - Undo a new text file
     - Make a new Markdown file and a new JSON file
-13. **Hear why a folder a program runs in cannot be renamed**
+12. **Hear why a folder a program runs in cannot be renamed**
     - Rename the folder once the program has ended
 
 ## axGIT
@@ -524,8 +520,7 @@ Steps and keys: `docs/axKit/workflows/axGIT.md` (in Claude's working folder: `wo
     - Go up to the repository and into another list
     - Switch between the lists by their keys
     - Close the window
-2. **Open axGIT from another app**
-3. **Review and commit changes**
+2. **Review and commit changes**
     - Stage and unstage a file
     - Select files with Space and stage them together
     - Read the diff of a changed file
@@ -534,12 +529,12 @@ Steps and keys: `docs/axKit/workflows/axGIT.md` (in Claude's working folder: `wo
     - Commit the staged changes
     - Discard the changes to a file
     - Discard the changes to the selected files
-4. **Read the history and switch branches**
+3. **Read the history and switch branches**
     - Read a commit of the log
     - Switch branches
     - Make a new branch
     - Fetch, pull and push
-5. **Use axGIT's text, notices and axKit menu**
+4. **Use axGIT's text, notices and axKit menu**
     - Find a word in a diff
     - Move down the details by page
     - Move by paragraph in a commit's details
@@ -547,10 +542,10 @@ Steps and keys: `docs/axKit/workflows/axGIT.md` (in Claude's working folder: `wo
     - Read the keyboard shortcuts and the user guide
     - Hear the version of axKit
     - Open the last repository again
-6. **Agree to the reminder before the first repository opens**
+5. **Agree to the reminder before the first repository opens**
     - Agree to the reminder and open the repository
     - Read what was agreed to on this computer
-7. **Open a repository that runs programs of its own**
+6. **Open a repository that runs programs of its own**
     - Open a repository with its own programs kept off
     - Trust a repository
 
@@ -739,8 +734,7 @@ Steps and keys: `docs/axKit/workflows/axPass.md` (in Claude's working folder: `w
 
 Steps and keys: `docs/axKit/workflows/axPreview.md` (in Claude's working folder: `workflows-axPreview.md`).
 
-1. **Preview a file that is almost text**
-2. **Preview a text file**
+1. **Preview a text file**
     - Open a text file in axPreview
     - Read the text line by line
     - Go to a line by its number
@@ -750,14 +744,14 @@ Steps and keys: `docs/axKit/workflows/axPreview.md` (in Claude's working folder:
     - Turn word wrap off and on
     - Read the keyboard shortcuts
     - Reload the file after a change
-3. **Preview a file from another app**
+2. **Preview a file from another app**
     - Show a file in the open window
     - Open a second window
-4. **Use axPreview's text, notices and axKit menu**
+3. **Use axPreview's text, notices and axKit menu**
     - Change the text size
     - Read the user guide
     - Close the window
-5. **Read a file's details**
+4. **Read a file's details**
     - Read a file's details
     - Find a line of the details by typing its first letters
     - Move between the text and the details
@@ -767,12 +761,12 @@ Steps and keys: `docs/axKit/workflows/axPreview.md` (in Claude's working folder:
     - Read the text of a picture on the clipboard
     - Preview a sound file
     - Read the text inside any other file
-6. **Use axPreview's Context menu**
+5. **Use axPreview's Context menu**
     - Select all the text
     - Select all the text from the command palette
-7. **Open a recent file in axPreview from the command palette**
+6. **Open a recent file in axPreview from the command palette**
     - Open a recent file from the palette
-8. **Read a PowerPoint presentation and an OpenDocument text**
+7. **Read a PowerPoint presentation and an OpenDocument text**
     - Read a PowerPoint presentation slide by slide
     - Read an OpenDocument text by its headings
 
@@ -888,50 +882,48 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Move among the tags by their symbols
     - Gather a tag's items from every list
     - Find the smart lists that share a first word
-7. **Hear the heading sound in the item apps**
-8. **Close axTask and come back to the list you had**
+7. **Close axTask and come back to the list you had**
     - Come back to the list you had
-9. **Find out whether a key arrives and what it does, in an item window**
+8. **Find out whether a key arrives and what it does, in an item window**
     - Test what a key does
     - End the key test
-10. **Find and mend a task whose file is damaged**
+9. **Find and mend a task whose file is damaged**
     - Hear a damaged item in its list
     - Open a damaged item's file in axJSON
     - Hear how many items a gathering list could not read
-11. **Change a setting of axTask when its settings file cannot be written**
-12. **Rename a list, and change the fields of its items**
+10. **Rename a list, and change the fields of its items**
     - Rename a list
     - Read which fields a list's items have
     - Take a field out of a list and keep its values
     - Put a field back and find its values again
-13. **Set a date in words, and add an item with its list's fields**
+11. **Set a date in words, and add an item with its list's fields**
     - Give a task a date and time in words
     - Add an item with its list's fields
-14. **Make a smart list of your own**
+12. **Make a smart list of your own**
     - Make a smart list and see its file open in axJSON
-15. **Approve or decline a report from outside with the approval passphrase**
+13. **Approve or decline a report from outside with the approval passphrase**
     - A wrong passphrase approves nothing
     - Approve an entry with the passphrase
-16. **Convert a list written in axTask's earlier format**
+14. **Convert a list written in axTask's earlier format**
     - Convert a list of the earlier format
     - Take a conversion back
     - Convert every list of the earlier format at once
-17. **Give a list its configuration**
+15. **Give a list its configuration**
     - Give a list its configuration
     - Add an item to a list that has no configuration yet
-18. **Change an item in its form**
+16. **Change an item in its form**
     - Open an item's form and move through its fields
     - Change several fields of an item and save them as one step
     - Rename an item in its form
     - Open the form on a field from the detail pane
-19. **Run the actions of a list**
+17. **Run the actions of a list**
     - Set fields with an action's key
     - Read what a program would do before its first run, and cancel it
     - Run a program on an item, and hear how it ends
     - Fill in an action's form
     - Stop a running action
     - Put a command into axTerminal's command field
-20. **Select several items and act on all of them**
+18. **Select several items and act on all of them**
     - Select items one by one with Space
     - Select a range as you move, with Shift and an arrow
     - Give the selection up with Escape, and select every item with Ctrl+A
@@ -941,32 +933,32 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Archive several items at once
     - Move the selected items to a list chosen in a form
     - Move an item to a new list
-21. **Hear what kind of thing opened**
+19. **Hear what kind of thing opened**
     - Hear that a text to read opened
     - Hear that a field to type in opened
     - Hear that a form opened, and its explanation only on demand
     - Turn the entry sounds off and on
-22. **Filter and sort a list of axTask**
+20. **Filter and sort a list of axTask**
     - Narrow the lists to those whose name contains a text
     - Put a list's items in the order of their names
-23. **Hear the end of a list that holds one item or none**
+21. **Hear the end of a list that holds one item or none**
     - Hear both ends of a list of one item
     - Hear that a list with no item has nowhere to go
-24. **Add an item to a list without going into it**
+22. **Add an item to a list without going into it**
     - Add an item to a list from the top level
-25. **Open a folder of lists used lately**
+23. **Open a folder of lists used lately**
     - Open a folder of lists used lately
-26. **Keep the day each item was made**
+24. **Keep the day each item was made**
     - Add an item, and its Created field holds the day
     - Give a new item its due date and priority in its title
-27. **Put a list in your own order**
+25. **Put a list in your own order**
     - Move an item down and up in its list
     - Move an item to the bottom of its list, and take it back
     - Put new items at the top of a list
-28. **Set or clear fields of several items at once**
+26. **Set or clear fields of several items at once**
     - Set fields of the selected items
     - Clear fields of the selected items
-29. **Keep a history of a list's changes and read an item's**
+27. **Keep a history of a list's changes and read an item's**
     - Turn on the history of a list
     - Read what changed in an item
 
@@ -1039,9 +1031,7 @@ Steps and keys: `docs/axKit/workflows/axTerminal.md` (in Claude's working folder
     - Copy a line into the command field
     - Run a Context command from the palette
 10. **Start a shell in a recent folder from the command palette**
-11. **Read a file that imitates the shell's marks**
-12. **Change a setting of axTerminal when its settings file cannot be written**
-13. **Take a command another window hands over**
+11. **Take a command another window hands over**
     - Read a handed command in the field before sending it
     - Send the handed command yourself
 

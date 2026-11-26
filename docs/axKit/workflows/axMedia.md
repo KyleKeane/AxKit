@@ -2,9 +2,9 @@
 
 Written by `tools/workflows.ps1`; never edit it by hand. Every goal below is played by axKit's automated checks as it
 is written here: the steps are what the check presses and types, and the lines under a step are what axKit says. A
-line "You hear" gives words of what axKit says there, not always the whole sentence; after "words such as" they are
-cut short. After "Type:" comes the text to type, to the end of the line, with no full stop added. The file names and
-the words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
+line "You hear" gives what axKit says there; "something with" and words in quotes give a part of it. After "Type"
+the text to type stands in quotes: the quotes and the full stop after them are not typed. The file names and the
+words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
 command's in this version of axKit.
 
 ## Build and move through a play queue
@@ -18,7 +18,7 @@ command's in this version of axKit.
 1. Open axMedia with the folder ch.
     You hear: Playing alpha.wav.
 2. Press Ctrl+Enter (Play, pause or resume; Actions menu).
-    You hear words such as: Paused at.
+    You hear something with "Paused at" in it.
 
 ### Move through the queue
 
@@ -28,22 +28,22 @@ command's in this version of axKit.
     It reads gamma.wav.
 3. Press Home.
     It reads alpha.wav (playing).
-4. Type: g
+4. Type "g".
     It reads gamma.wav.
 
 ### Find a file by part of its name
 
 1. Press Ctrl+F (Find in the list).
-2. Type: elt
+2. Type "elt".
 3. Press Enter.
 4. Press Ctrl+F (Find in the list).
-5. Type: ta.w
+5. Type "ta.w".
 6. Press Enter.
-7. Press F3 2 times (Find next).
+7. Press F3 twice (Find next).
 8. Press Ctrl+F (Find in the list).
-9. Type: a.wav
+9. Type "a.wav".
 10. Press Enter.
-11. Press Shift+F3 2 times (Find previous).
+11. Press Shift+F3 twice (Find previous).
 12. Press F3 (Find next).
 
 ### Play another file of the queue
@@ -80,7 +80,7 @@ command's in this version of axKit.
 
 ### Add a folder to the queue with no window open
 
-1. Open axMedia with --add the folder ch.
+1. Open axMedia with the folder ch, added to the list.
     You hear: Added 3.
 2. Press Ctrl+Q (What is playing; Actions menu).
     You hear: Nothing playing.
@@ -100,18 +100,18 @@ command's in this version of axKit.
 
 ### Play a file in the open window
 
-1. Start axMedia again with the file ch\alpha.wav.
+1. Open axMedia again with the file ch\alpha.wav.
     You hear: Playing alpha.wav.
 
 ### Add a folder to the open window's queue
 
-1. Start axMedia again with --add the folder ch.
+1. Open axMedia again with the folder ch, added to the list.
 
 ### Open a second window on a file
 
-1. Open axMedia with --new the file ch\gamma.wav.
+1. Open axMedia with the file ch\gamma.wav, in a new window.
     You hear: Playing gamma.wav.
-2. Go to the other axMedia window.
+2. Go to the window that opened.
 
 ## Play, pause and seek
 
@@ -137,7 +137,7 @@ command's in this version of axKit.
 3. Press Ctrl+Left (Back 15 seconds; Actions menu).
     You hear: 0:0.
 4. Press Ctrl+T (Go to time; Navigation menu).
-5. Type: 0:30
+5. Type "0:30".
 6. Press Enter.
     You hear: 0:30.
 7. Press Ctrl+Enter (Play, pause or resume; Actions menu).
@@ -184,7 +184,7 @@ You hear: Playing s2.wav.
 ### Hear that a file cannot be played, and the next one plays
 
 1. Open axMedia with the folder c.
-    You hear words such as: Cannot play a-broken.mp3.
+    You hear something with "Cannot play a-broken.mp3" in it.
     You hear: Playing b-good.wav.
 
 ## Use axMedia's text, notices and axKit menu
@@ -209,6 +209,8 @@ Starts with: Open axMedia with the folder ch.
 
 ## Use axMedia's Context menu
 
+Starts with: Open axMedia. Close the window. Open axMedia with the folder ch.
+
 ### Hear a file's information from the Context menu
 
 1. Choose the menu item Information, Context.
@@ -225,7 +227,7 @@ Starts with: Open axMedia with the folder ch.
 ### Remove a file found in the command palette
 
 1. Press Ctrl+Shift+P (Command palette; Help menu).
-2. Type: remove
+2. Type "remove".
     You hear: Remove, Context, Delete.
 3. Press Enter.
     You hear: Removed beta.wav.
@@ -237,8 +239,8 @@ Starts with: Open axMedia with the folder chapters.
 ### Add a recent folder to the queue from the palette
 
 1. Press Ctrl+Shift+P (Command palette; Help menu).
-2. Type: chapt
-    You hear words such as: 1. chapters.
+2. Type "chapt".
+    You hear something with "1. chapters" in it.
     You hear: Session, Open recent.
 3. Press Enter.
     You hear: Added 2.
@@ -250,7 +252,7 @@ Starts with: Open axMedia with the folder ch.
 ### Pause and resume with Ctrl+Enter
 
 1. Press Ctrl+Enter (Play, pause or resume; Actions menu).
-    You hear words such as: Paused at.
+    You hear something with "Paused at" in it.
 2. Press Ctrl+Enter (Play, pause or resume; Actions menu).
     You hear: Playing.
 
@@ -286,7 +288,7 @@ Starts with: Open axMedia with the folder ch.
 ### Narrow the queue to the files whose name contains a text
 
 1. Choose Filter in the Options menu.
-2. Type: amm
+2. Type "amm".
 3. Press Enter.
     You hear: Queue, 3 items, filter amm, 1 shown, gamma.wav.
 
@@ -298,8 +300,8 @@ Starts with: Open axMedia with the folder ch.
 
 ### Put the queue in the order of the files' names
 
-1. Open axMedia with --add the file one\zulu.wav.
-2. Start axMedia again with --add the file two\alpha.wav.
+1. Open axMedia with the file one\zulu.wav, added to the list.
+2. Open axMedia again with the file two\alpha.wav, added to the list.
 3. Choose Name in the Options menu, Sort by.
     You hear: Sorted by name.
 4. Press Home.

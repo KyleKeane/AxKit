@@ -2,9 +2,9 @@
 
 Written by `tools/workflows.ps1`; never edit it by hand. Every goal below is played by axKit's automated checks as it
 is written here: the steps are what the check presses and types, and the lines under a step are what axKit says. A
-line "You hear" gives words of what axKit says there, not always the whole sentence; after "words such as" they are
-cut short. After "Type:" comes the text to type, to the end of the line, with no full stop added. The file names and
-the words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
+line "You hear" gives what axKit says there; "something with" and words in quotes give a part of it. After "Type"
+the text to type stands in quotes: the quotes and the full stop after them are not typed. The file names and the
+words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
 command's in this version of axKit.
 
 ## Use the window's keys from an open menu
@@ -16,9 +16,9 @@ Starts with: Open axCalc.
 1. Press Alt+S.
     NVDA says: Save history.
 2. Press Ctrl+F5 (axDown; axKit menu, Apps).
-3. A new window opens: go to it.
+3. Go to the window that opened.
 4. Close the window.
-5. Go to the axCalc window.
+5. Go back to the first window.
 
 ## Hear an offered command as NVDA reads it
 
@@ -31,7 +31,7 @@ You hear: trust.
 3. Press Enter.
     You hear: AI tools on.
     You may hear: Not in a test run.
-4. Call the tool axkit_windows.
+4. Ask Claude to list the open windows.
 5. Press Tab.
 6. Press Space.
     You hear: checked.
@@ -39,7 +39,7 @@ You hear: trust.
 8. Press Enter.
     You hear: axAutomate may read axKit.
     The tool answers with app: axClaude.
-9. Call the tool axkit_offer_command.
+9. Ask Claude to offer you the command "echo heard-by-ear".
     The tool answers with offered: true.
     You hear the sound Offer.
     NVDA says: Command offer: it runs on your computer, outside axKit.
@@ -80,10 +80,10 @@ Starts with: Open axClaude with the folder read.
 You hear: trust.
 1. Press Enter.
     You hear: Ready.
-2. Type: Write a numbered list of 40 lines, each naming a different vegetable with one full sentence about it, numbered 1 to 40, nothing else.
+2. Type "Write a numbered list of 40 lines, each naming a different vegetable with one full sentence about it, numbered 1 to 40, nothing else.".
 3. Press Enter.
     You hear: Done.
-4. Type: Now a numbered list of 120 lines, each naming a different fruit with one full sentence about it, numbered 1 to 120, nothing else.
+4. Type "Now a numbered list of 120 lines, each naming a different fruit with one full sentence about it, numbered 1 to 120, nothing else.".
 5. Press Enter.
 6. Press Ctrl+2 (Conversation; Navigation menu).
 7. Press Ctrl+Home.
@@ -109,7 +109,7 @@ NVDA says: notes.md.
 2. Press Escape.
     NVDA says: notes.md.
 3. Press Ctrl+Shift+P (Command palette; Help menu).
-4. Type: save as
+4. Type "save as".
     NVDA says: Save as.
 5. Press Escape.
     NVDA says: notes.md.
@@ -121,7 +121,7 @@ Starts with: Open axFile with the folder f.
 ### Go back to the name before with Shift and its letter
 
 1. Press End.
-2. Press Shift+C 2 times.
+2. Press Shift+C twice.
 
 ## Put a template into a field of a form
 
@@ -147,33 +147,33 @@ Starts with: Open axDown with the file notes.md.
 2. Press Ctrl+C.
 3. Press End.
 4. Press Enter.
-5. Open axTemplate with --launcher.
+5. Open axTemplate's launcher.
     NVDA says: Search templates.
-6. Type: thanks
+6. Type "thanks".
 7. Press Down.
     NVDA says: Thanks, 1 of 1.
 8. Press Enter.
-9. Go to the axDown window.
-10. Type: friend
+9. Go back to the first window.
+10. Type "friend".
 
 ### Put a template in around what is selected
 
 1. Press Enter.
-2. Type: word
+2. Type "word".
 3. Press Shift+Home.
-4. Start axTemplate again with --launcher.
+4. Open axTemplate's launcher again.
 5. Go to the axTemplate window.
     NVDA says: Search templates.
-6. Type: link
+6. Type "link".
 7. Press Down.
     NVDA says: Link, 1 of 1.
 8. Press Ctrl+Enter (Put in, with that program's selection; Context menu).
-9. Go to the axDown window.
-10. Type: address
+9. Go back to the first window.
+10. Type "address".
 
 ## Hear the caution of a command another program put into the command field
 
-Starts with: Open axTerminal with the folder myproject --command Write-Output "two words".
+Starts with: Open axTerminal with the folder myproject, handed the command Write-Output "two words".
 
 ### Hear that another program put the command there, before the command, and again on coming back to the field
 

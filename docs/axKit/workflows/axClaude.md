@@ -2,9 +2,9 @@
 
 Written by `tools/workflows.ps1`; never edit it by hand. Every goal below is played by axKit's automated checks as it
 is written here: the steps are what the check presses and types, and the lines under a step are what axKit says. A
-line "You hear" gives words of what axKit says there, not always the whole sentence; after "words such as" they are
-cut short. After "Type:" comes the text to type, to the end of the line, with no full stop added. The file names and
-the words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
+line "You hear" gives what axKit says there; "something with" and words in quotes give a part of it. After "Type"
+the text to type stands in quotes: the quotes and the full stop after them are not typed. The file names and the
+words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
 command's in this version of axKit.
 
 ## Start a conversation with Claude
@@ -14,16 +14,16 @@ Starts with: Open axClaude with the folder fresh.
 ### Move between the conversation and Claude's question, then answer it
 
 You hear: trust.
-1. Press Tab 2 times.
-2. Press Shift+Tab 2 times.
+1. Press Tab twice.
+2. Press Shift+Tab twice.
 3. Press Enter.
     You hear: Ready.
 
 ### Move between the message field and the conversation
 
-1. Press Ctrl+Tab 2 times (Switch between the view and the field).
-2. Press F6 2 times (Switch between the view and the field).
-3. Press Ctrl+Shift+Tab 2 times (Switch between the view and the field).
+1. Press Ctrl+Tab twice (Switch between the view and the field).
+2. Press F6 twice (Switch between the view and the field).
+3. Press Ctrl+Shift+Tab twice (Switch between the view and the field).
 
 ### Jump straight to the conversation or the message field
 
@@ -42,12 +42,12 @@ You hear: trust.
 ### Hear the status
 
 1. Press F8 (Say the status; Window menu).
-    You hear words such as: Claude: ready.
+    You hear something with "Claude: ready" in it.
 2. Press Alt+2 (Conversation; Navigation menu).
 3. Press F8 (Say the status; Window menu).
-    You hear words such as: Claude: ready.
+    You hear something with "Claude: ready" in it.
 4. Choose Say the status in the Window menu (key: F8).
-    You hear words such as: Claude: ready.
+    You hear something with "Claude: ready" in it.
 
 ## Send Claude a message and hear the reply
 
@@ -58,36 +58,33 @@ Starts with: Open axClaude with the folder plain.
 You hear: Claude asks.
 1. Press Alt+2 (Conversation; Navigation menu).
 2. Press Ctrl+Home.
-3. Press Down 3 times.
+3. Press Down three times.
 
 ### Answer a question by typing in the message field
 
 1. Press Ctrl+Tab (Switch between the view and the field).
-2. Type: y
+2. Type "y".
 3. Press Enter.
     You hear: Sent.
     You hear: Ready.
 
 ### Send a message of two lines
 
-1. Type: What is 2+2?
+1. Type "What is 2+2?".
 2. Press Shift+Enter.
-3. Type: Answer in one line, with no tool.
+3. Type "Answer in one line, with no tool.".
 4. Press Enter.
-    You hear: Sent.
-    You hear the sound Sent.
-    You hear: Responding.
-    You hear the sound Responding.
-    You hear: Done.
-    You hear the sound Done.
+    You hear the Sent sound and Sent.
+    You hear the Responding sound and Responding.
+    You hear the Done sound and Done.
 
 ### Go to Claude's reply and read it
 
 1. Press Ctrl+Tab (Switch between the view and the field).
 2. Press Shift+O.
     You hear: Output 1 Reply from Claude heading level 1.
-3. Press Down 3 times.
-4. Press Up 7 times.
+3. Press Down three times.
+4. Press Up seven times.
 
 ### Go back to the message you sent
 
@@ -99,22 +96,22 @@ You hear: Claude asks.
 
 ### Move through a long message by page
 
-1. Type: alpha
+1. Type "alpha".
 2. Press Page Down.
 3. Press Page Up.
 4. Press Ctrl+A, Delete.
-5. Type: l1
+5. Type "l1".
 6. Press Shift+Enter.
-7. Type: l2
+7. Type "l2".
 8. Press Shift+Enter.
-9. Type: l3
+9. Type "l3".
 10. Press Shift+Enter.
-11. Type: l4
+11. Type "l4".
 12. Press Shift+Enter.
-13. Type: l5
+13. Type "l5".
 14. Press Ctrl+Home.
-15. Press Page Down 3 times.
-16. Press Page Up 3 times.
+15. Press Page Down three times.
+16. Press Page Up three times.
 17. Press End.
 18. Press Home.
 19. Press Ctrl+End.
@@ -123,16 +120,16 @@ You hear: Claude asks.
 
 ### Move through a message by paragraph
 
-1. Type: one
-2. Press Shift+Enter 2 times.
-3. Type: two
+1. Type "one".
+2. Press Shift+Enter twice.
+3. Type "two".
 4. Press Shift+Enter.
-5. Type: three
-6. Press Shift+Enter 2 times.
-7. Type: four
+5. Type "three".
+6. Press Shift+Enter twice.
+7. Type "four".
 8. Press Ctrl+Home.
-9. Press Ctrl+Down 3 times.
-10. Press Ctrl+Up 4 times.
+9. Press Ctrl+Down three times.
+10. Press Ctrl+Up four times.
 
 ### Read the keyboard shortcuts
 
@@ -153,7 +150,7 @@ Starts with: Open axClaude with the folder read.
 
 ### Read the conversation while Claude writes
 
-1. Type: Write the numbers 1 to 100, one per line, nothing else.
+1. Type "Write the numbers 1 to 100, one per line, nothing else.".
 2. Press Enter.
     You hear: Sent.
 3. Press Ctrl+Tab (Switch between the view and the field).
@@ -167,12 +164,12 @@ Starts with: Open axClaude with the folder read.
 2. Press Alt+1 (Message field; Navigation menu).
 3. Press Alt+3 (Latest response; Navigation menu).
     You hear: Output 1 Reply from Claude heading level 1.
-4. Press Down 2 times.
+4. Press Down twice.
 
 ### Quote a line of a reply in your next message
 
 1. Press Alt+1 (Message field; Navigation menu).
-2. Type: Write one paragraph of 120 words about rivers, with no line breaks.
+2. Type "Write one paragraph of 120 words about rivers, with no line breaks.".
 3. Press Enter.
     You hear: Done.
 4. Press Alt+3 (Latest response; Navigation menu).
@@ -190,8 +187,8 @@ Starts with: Open axClaude with the folder read.
 2. Press Ctrl+Home.
 3. Press O.
     You hear: Output 1.
-4. Press Down 2 times.
-5. Press Shift+Down 2 times.
+4. Press Down twice.
+5. Press Shift+Down twice.
 6. Press Escape.
     You hear: Selection cleared.
 7. Press Escape.
@@ -205,7 +202,7 @@ Starts with: Open axClaude with the folder keys.
 1. Press Alt+2 (Conversation; Navigation menu).
 2. Press Ctrl+Home.
 3. Press Backspace.
-    You hear words such as: Nothing to go back.
+    You hear something with "Nothing to go back" in it.
 4. Press H.
     You hear: Input 1 heading level 1.
 5. Press H.
@@ -270,7 +267,7 @@ Starts with: Open axClaude with the folder keys.
 7. Press Shift+I.
     You hear: Input 1 heading level 1.
 8. Press C.
-    You hear words such as: claude.
+    You hear something with "claude" in it.
 9. Press T.
     You hear: hi.
 10. Press E.
@@ -287,21 +284,21 @@ Starts with: Open axClaude with the folder keys.
 
 ### Move through a long reply by page
 
-1. Type: Write 60 numbered lines, 1. to 60., each with just its number, nothing else.
+1. Type "Write 60 numbered lines, 1. to 60., each with just its number, nothing else.".
 2. Press Enter.
     You hear: Sent.
     You hear: Done.
 3. Press Ctrl+Tab (Switch between the view and the field).
 4. Press Page Up.
-5. Press Page Down 2 times.
+5. Press Page Down twice.
 6. Press Ctrl+Home, Page Up.
 
 ### Skip over a run of lines in a reply
 
 1. Press Alt+3 (Latest response; Navigation menu).
     You hear: Output 3 Reply from Claude heading level 1.
-2. Press Ctrl+Down 2 times.
-3. Press Ctrl+Up 2 times.
+2. Press Ctrl+Down twice.
+3. Press Ctrl+Up twice.
 4. Press Ctrl+Shift+Down.
 5. Press Escape.
     You hear: Selection cleared.
@@ -312,26 +309,26 @@ Starts with: Open axClaude with the folder keys.
     You hear: Line.
 2. Press Ctrl+Home.
 3. Press L.
-    You hear words such as: Line 1.
+    You hear something with "Line 1" in it.
 4. Press Ctrl+End.
 5. Press L.
 
 ### Find text in the conversation
 
 1. Press Ctrl+F (Find; Navigation menu).
-2. Type: single word
+2. Type "single word".
 3. Press Enter.
     You hear: From the top, Use the Bash tool.
 4. Press F3 (Find next; Navigation menu).
-    You hear words such as: From the top.
+    You hear something with "From the top" in it.
 5. Press Shift+F3 (Find previous; Navigation menu).
-    You hear words such as: From the end.
+    You hear something with "From the end" in it.
 
 ### Find the next match from the message field
 
 1. Press Alt+1 (Message field; Navigation menu).
 2. Press Ctrl+F (Find; Navigation menu).
-3. Type: single word
+3. Type "single word".
 4. Press Enter.
 5. Press Alt+1 (Message field; Navigation menu).
 6. Press F3 (Find next; Navigation menu).
@@ -342,26 +339,26 @@ Starts with: Open axClaude with the folder keys.
 1. Press Ctrl+Home.
 2. Press H, H, H, P, P.
 3. Press Backspace.
-    You hear words such as: Back to.
+    You hear something with "Back to" in it.
 4. Press Backspace.
-    You hear words such as: Back to.
+    You hear something with "Back to" in it.
 5. Press Backspace.
-    You hear words such as: Back to.
+    You hear something with "Back to" in it.
 6. Press Backspace.
-    You hear words such as: Back to.
+    You hear something with "Back to" in it.
 7. Press Backspace.
-    You hear words such as: Back to.
+    You hear something with "Back to" in it.
 8. Press Page Down, Backspace.
-    You hear words such as: Back to.
+    You hear something with "Back to" in it.
 
 ### Bookmark lines and move between them
 
 1. Press Alt+3 (Latest response; Navigation menu).
-2. Press Down 3 times.
+2. Press Down three times.
 3. Press M.
     You hear: Bookmark 1 added.
 4. Press Up.
-5. Press Down 4 times.
+5. Press Down four times.
 6. Press M.
     You hear: Bookmark 2 added.
 7. Press Ctrl+Home.
@@ -389,11 +386,11 @@ Starts with: Open axClaude with the folder keys.
     You hear: Bookmark 4 added.
 21. Press Ctrl+Home.
 22. Choose Next bookmark in the Navigation menu (key: K in the conversation).
-    You hear words such as: Bookmark 3.
+    You hear something with "Bookmark 3" in it.
 23. Choose Next bookmark in the Navigation menu (key: K in the conversation).
-    You hear words such as: Bookmark 4.
+    You hear something with "Bookmark 4" in it.
 24. Choose Previous bookmark in the Navigation menu (key: Shift+K in the conversation).
-    You hear words such as: Bookmark 3.
+    You hear something with "Bookmark 3" in it.
 
 ### Hear a reply's paragraphs, headings or bookmarks without moving
 
@@ -419,7 +416,7 @@ Starts with: Open axClaude with the folder keys.
 ### Quote two lines in a message and send it
 
 1. Press Alt+1 (Message field; Navigation menu).
-2. Type: Reply with the single word ok.
+2. Type "Reply with the single word ok.".
 3. Press Alt+2, Ctrl+Home.
 4. Press I.
 5. Press Enter.
@@ -428,14 +425,14 @@ Starts with: Open axClaude with the folder keys.
 7. Press C.
 8. Press Enter.
 9. Press Ctrl+Home.
-10. Press Down 2 times.
+10. Press Down twice.
 11. Press Enter.
     You hear: Sent.
     You hear: Done.
 12. Press Alt+3 (Latest response; Navigation menu).
 13. Press Shift+I.
     You hear: Input 4 heading level 1.
-14. Press Down 8 times.
+14. Press Down eight times.
 
 ### Quote a long paragraph whole
 
@@ -445,7 +442,7 @@ Starts with: Open axClaude with the folder keys.
 ### Send the quote with your comment
 
 1. Press Alt+1 (Message field; Navigation menu).
-2. Type: Reply with the single word yes.
+2. Type "Reply with the single word yes.".
 3. Press Enter.
     You hear: Sent.
     You hear: Done.
@@ -468,28 +465,28 @@ Starts with: Open axClaude with the folder modes.
 
 ### Read a permission question in the conversation
 
-1. Type: Create a file named a.txt containing hi, with the Write tool.
+1. Type "Create a file named a.txt containing hi, with the Write tool.".
 2. Press Enter.
     You hear: Sent.
     You hear: Claude asks.
     You hear the sound Question.
 3. Press Alt+2, Ctrl+End.
-4. Press Up 7 times.
+4. Press Up seven times.
 
 ### Answer a permission question by its number
 
 1. Press Ctrl+Tab (Switch between the view and the field).
-2. Type: 1
+2. Type "1".
 3. Press Enter.
     You hear: Sent.
     You hear: Done.
 
 ### Interrupt Claude while it works
 
-1. Type: Use your Bash tool to run: ping -n 30 127.0.0.1 then reply with the single word pinged.
+1. Type "Use your Bash tool to run: ping -n 30 127.0.0.1 then reply with the single word pinged.".
 2. Press Enter.
     You hear: Claude asks.
-3. Type: 1
+3. Type "1".
 4. Press Enter.
     You hear: Sent.
 5. Press Escape.
@@ -502,12 +499,12 @@ Starts with: Open axClaude with the folder modes.
 ### Interrupt Claude from the menu or the message field
 
 1. Press Alt+1 (Message field; Navigation menu).
-2. Type: Write a story of 1500 words about a lighthouse keeper.
+2. Type "Write a story of 1500 words about a lighthouse keeper.".
 3. Press Enter.
     You hear: Sent.
     You hear: Responding.
 4. Choose Ctrl+C in the Actions menu, Send key (key: Ctrl+Shift+C).
-5. Type: Write a story of 1500 words about a lighthouse keeper.
+5. Type "Write a story of 1500 words about a lighthouse keeper.".
 6. Press Enter.
     You hear: Sent.
     You hear: Responding.
@@ -524,13 +521,13 @@ Starts with: Open axClaude with the folder queue.
 
 ### Send a message while Claude works
 
-1. Type: Use your Bash tool to run: ping -n 20 127.0.0.1 then reply with the words OK DONE.
+1. Type "Use your Bash tool to run: ping -n 20 127.0.0.1 then reply with the words OK DONE.".
 2. Press Enter.
     You hear: Sent.
     You may hear the sound Notice.
 3. If that came: Press 1, Enter.
     You hear: Sent: 1.
-4. Type: Reply with the single word second.
+4. Type "Reply with the single word second.".
 5. Press Enter.
     You hear: Queued.
     You hear the sound Sent.
@@ -545,13 +542,13 @@ Starts with: Open axClaude with the folder queue.
 ### Send a waiting message at once
 
 1. Press Alt+1 (Message field; Navigation menu).
-2. Type: Use your Bash tool to run: ping -n 20 127.0.0.1 then reply with the words OK DONE.
+2. Type "Use your Bash tool to run: ping -n 20 127.0.0.1 then reply with the words OK DONE.".
 3. Press Enter.
     You hear: Sent.
     You may hear the sound Notice.
 4. If that came: Press 1, Enter.
     You hear: Sent: 1.
-5. Type: Reply with the single word fourth.
+5. Type "Reply with the single word fourth.".
 6. Press Enter.
     You hear: Queued.
 7. Press Ctrl+Shift+S (Send queued messages now; Actions menu).
@@ -567,12 +564,12 @@ Starts with: Open axClaude with the folder proj. Close the window.
 
 ### Continue the last conversation in a folder
 
-1. Open axClaude with the folder proj.
+1. Open axClaude with the folder proj, taking up the last conversation.
     You hear: Ready.
 2. Press Alt+2, Ctrl+Home.
 3. Press I.
     You hear: Input 1 from previous session heading level 1.
-4. Press Down 5 times.
+4. Press Down five times.
 5. Press I.
     You hear: Input 2 from previous session heading level 1.
 6. Press I.
@@ -590,7 +587,7 @@ Starts with: Open axClaude with the folder proj. Close the window.
 5. Press Shift+I.
     You hear: Input 2 from previous session heading level 1.
 6. Press Alt+1 (Message field; Navigation menu).
-7. Type: Reply with the single word four.
+7. Type "Reply with the single word four.".
 8. Press Enter.
     You hear: Done.
 9. Press Alt+2, Ctrl+End.
@@ -600,16 +597,16 @@ Starts with: Open axClaude with the folder proj. Close the window.
 ### Start a new session with arguments of your own
 
 1. Press Ctrl+N (New session; Session menu).
-2. Press Down 2 times.
-3. Press Tab 3 times.
+2. Press Down twice.
+3. Press Tab three times.
 4. Press Shift+Tab.
-5. Press Up 4 times.
-6. Press Down 4 times.
+5. Press Up four times.
+6. Press Down four times.
 7. Press Tab.
 8. Press Ctrl+A, Delete.
-9. Type: --model haiku
+9. Type "--model haiku".
 10. Press Shift+Enter.
-11. Type: --continue --name demo
+11. Type "--continue --name demo".
 12. Press Enter.
     You hear: New session in proj.
     You hear: Ready.
@@ -623,10 +620,10 @@ Starts with: Open axClaude with the folder life.
 
 ### Stop Claude from the message field
 
-1. Type: /exit
+1. Type "/exit".
 2. Press Enter.
     You hear: Claude stopped.
-3. Type: hello
+3. Type "hello".
 4. Press Enter.
     You hear: Claude stopped. Ctrl+Shift+R starts it.
 5. Press Ctrl+A, Delete.
@@ -647,17 +644,17 @@ Starts with: Open axClaude with the folder life.
 
 ### Decide whether to close the window while Claude works
 
-1. Type: Use your Bash tool to run: ping -n 30 127.0.0.1 then reply with the word pinged.
+1. Type "Use your Bash tool to run: ping -n 30 127.0.0.1 then reply with the word pinged.".
 2. Press Enter.
     You may hear the sound Notice.
 3. If that came: Press 1, Enter.
 4. Press Alt+F4.
-5. Press Tab 2 times.
+5. Press Tab twice.
 6. Press Escape.
 
 ### Carry on the conversation after closing
 
-1. Open axClaude with the folder life.
+1. Open axClaude with the folder life, taking up the last conversation.
     You hear: Ready.
 2. Press Alt+2, Ctrl+Home.
 3. Press I.
@@ -683,7 +680,7 @@ Starts with: Open axClaude with the folder opts.
 ### Turn off the ticks for new lines and tool calls
 
 1. Choose Ticks for new lines and tool calls in the Options menu, Sounds.
-2. Type: Use the Bash tool to run: echo hi. Then reply with the single word again.
+2. Type "Use the Bash tool to run: echo hi. Then reply with the single word again.".
 3. Press Enter.
     You hear the sound Sent.
     You hear: Done.
@@ -692,7 +689,7 @@ Starts with: Open axClaude with the folder opts.
 ### Turn off the chimes
 
 1. Choose Chimes: ready, sent, replying, done, question in the Options menu, Sounds.
-2. Type: Reply with the single word quiet.
+2. Type "Reply with the single word quiet.".
 3. Press Enter.
     You hear the sound Click.
     You hear: Done.
@@ -702,14 +699,14 @@ Starts with: Open axClaude with the folder opts.
 
 1. Press Ctrl+M (Background music on or off).
     You hear: Background music on, nothing is running.
-2. Type: Use the Bash tool to run: echo hi. Then reply with the single word music.
+2. Type "Use the Bash tool to run: echo hi. Then reply with the single word music.".
 3. Press Enter.
     You hear the sound StartMusic.
     You hear the sound StopMusic.
     You hear the sound Done.
 4. Press Ctrl+M (Background music on or off).
     You hear: Background music off.
-5. Type: Write a story of 1500 words about a lighthouse keeper.
+5. Type "Write a story of 1500 words about a lighthouse keeper.".
 6. Press Enter.
     You hear: Sent.
 7. Press Alt+2 (Conversation; Navigation menu).
@@ -732,12 +729,12 @@ Starts with: Open axClaude with the folder opts.
 1. Choose Speak replies: all lines in the Options menu, Speech.
     You hear: Speak replies: all lines.
 2. Press Alt+1 (Message field; Navigation menu).
-3. Type: Markdown only: ## Alpha, a five-word sentence, ## Beta, three one-word bullets.
+3. Type "Markdown only: ## Alpha, a five-word sentence, ## Beta, three one-word bullets.".
 4. Press Enter.
     You hear: Done. claude: Alpha.
 5. Choose Speak replies: first lines in the Options menu, Speech.
     You hear: Speak replies: first lines.
-6. Type: Reply with two lines: the word first, then on the next line the word second.
+6. Type "Reply with two lines: the word first, then on the next line the word second.".
 7. Press Enter.
     You hear: Done. claude: first.
 
@@ -746,7 +743,7 @@ Starts with: Open axClaude with the folder opts.
 1. Choose Speak replies: none in the Options menu, Speech.
     You hear: Speak replies: none.
 2. Choose Speak each tool call in the Options menu, Speech.
-3. Type: Use the Bash tool to run: echo hi. Then reply with the single word tooled.
+3. Type "Use the Bash tool to run: echo hi. Then reply with the single word tooled.".
 4. Press Enter.
     You hear: tool: Bash.
     You hear: Done.
@@ -768,7 +765,7 @@ Starts with: Open axClaude with the folder opts.
 
 1. Press Ctrl+F (Find; Navigation menu).
 2. Press Ctrl+A.
-3. Type: palette
+3. Type "palette".
 4. Press Enter.
 5. Press F3 (Find next; Navigation menu).
 6. Press Shift+F3 (Find previous; Navigation menu).
@@ -809,25 +806,25 @@ Starts with: Open axClaude with the folder opts.
 
 1. Choose Time stamps on Input and Output lines in the Options menu, Text.
 2. Press Alt+1 (Message field; Navigation menu).
-3. Type: Reply with the single word stamped.
+3. Type "Reply with the single word stamped.".
 4. Press Enter.
     You hear: Done.
 5. Press Alt+2, Ctrl+End.
 6. Press Shift+I.
-    You hear words such as: Input 11.
+    You hear something with "Input 11" in it.
 7. Press Shift+O.
     You hear: Output 10 Reply from Claude heading level 1.
 8. Press O.
-    You hear words such as: Output 11 Reply from Claude.
+    You hear something with "Output 11 Reply from Claude" in it.
 9. Choose Time stamps on Input and Output lines in the Options menu, Text.
 
 ## Install Claude Code when it is missing
 
-Starts with: Open axClaude with the folder gone --claude C:\nowhere\claude.exe.
+Starts with: Open axClaude with the folder gone.
 
 ### Hear the ways to install Claude Code
 
-1. Press Tab 5 times.
+1. Press Tab five times.
 
 ### Close the notice that Claude Code is missing
 
@@ -871,16 +868,16 @@ You hear: Permission Required: Accessing workspace.
 
 ### Move between a question and the conversation
 
-1. Type: Use your AskUserQuestion tool once to ask me which flower I like: rose, tulip or daisy.
+1. Type "Use your AskUserQuestion tool once to ask me which flower I like: rose, tulip or daisy.".
 2. Press Enter.
     You hear the sound Notice.
-3. Press Ctrl+Tab 2 times (Switch between the view and the field).
+3. Press Ctrl+Tab twice (Switch between the view and the field).
 4. Press Tab.
 5. Press Shift+Tab.
 
 ### Hear the question again
 
-1. Press Down 2 times.
+1. Press Down twice.
 2. Press Ctrl+Q (Claude's question again; Navigation menu).
     You hear: 3. Daisy.
 3. Press Ctrl+Tab (Switch between the view and the field).
@@ -895,12 +892,12 @@ You hear: Permission Required: Accessing workspace.
 
 ### Answer a question that follows a reply
 
-1. Type: Write two sentences about gardens, then use your AskUserQuestion tool to ask me which flower I like: rose, tulip or daisy.
+1. Type "Write two sentences about gardens, then use your AskUserQuestion tool to ask me which flower I like: rose, tulip or daisy.".
 2. Press Enter.
     You hear: Sent.
 3. Press Alt+2 (Conversation; Navigation menu).
     You hear the sound Notice.
-4. Press Ctrl+Tab 2 times (Switch between the view and the field).
+4. Press Ctrl+Tab twice (Switch between the view and the field).
 5. Press 1, Enter.
     You hear: Sent: 1.
     You hear: Done.
@@ -909,7 +906,7 @@ You hear: Permission Required: Accessing workspace.
 
 1. Choose Go to them at once, interrupting speech in the Options menu, Questions.
 2. Press Alt+1 (Message field; Navigation menu).
-3. Type: Write two sentences about gardens, then use your AskUserQuestion tool to ask me which flower I like: rose, tulip or daisy.
+3. Type "Write two sentences about gardens, then use your AskUserQuestion tool to ask me which flower I like: rose, tulip or daisy.".
 4. Press Enter.
     You hear: Sent.
 5. Press Alt+2 (Conversation; Navigation menu).
@@ -921,7 +918,7 @@ You hear: Permission Required: Accessing workspace.
 
 ### Open and close Claude's list of background tasks
 
-1. Type: /tasks
+1. Type "/tasks".
 2. Press Enter.
     You may hear: Claude asks.
 3. If that came: Press Shift+Escape.
@@ -931,18 +928,18 @@ You hear: Permission Required: Accessing workspace.
 
 ### Answer a question in your own words
 
-1. Type: Use the AskUserQuestion tool to ask me which flower I enjoy thinking about, with three options.
+1. Type "Use the AskUserQuestion tool to ask me which flower I enjoy thinking about, with three options.".
 2. Press Enter.
     You hear the sound Notice.
 3. Press 4, Enter.
     You hear: Sent: 4, Other. Your words next.
-4. Type: tulips in the garden by the old stone wall where the morning light falls first and the bees arrive early
+4. Type "tulips in the garden by the old stone wall where the morning light falls first and the bees arrive early".
 5. Press Enter.
     You hear: Sent: tulips in the garden by the old stone wall where the morning light falls first and the bees arrive early.
     You hear: Done.
 6. Press Alt+2, Ctrl+End.
 7. Press Alt+1 (Message field; Navigation menu).
-8. Type: Use the AskUserQuestion tool to ask me which flower I enjoy thinking about, with three options.
+8. Type "Use the AskUserQuestion tool to ask me which flower I enjoy thinking about, with three options.".
 9. Press Enter.
     You hear the sound Notice.
 10. Press 4, Enter.
@@ -956,17 +953,17 @@ You hear: Permission Required: Accessing workspace.
 2. Press Q.
     You hear: Question: Permission Required: Accessing workspace.
 3. Press Q.
-    You hear words such as: Question.
+    You hear something with "Question" in it.
 4. Press Ctrl+End.
 5. Press Q.
     You hear: No next question.
 6. Press Shift+Q.
-    You hear words such as: Question.
+    You hear something with "Question" in it.
 
 ### Close a question without answering it
 
 1. Press Alt+1 (Message field; Navigation menu).
-2. Type: Use your AskUserQuestion tool once to ask me which flower I like: rose, tulip or daisy.
+2. Type "Use your AskUserQuestion tool once to ask me which flower I like: rose, tulip or daisy.".
 3. Press Enter.
     You hear the sound Notice.
 4. Press Shift+Escape.
@@ -975,16 +972,16 @@ You hear: Permission Required: Accessing workspace.
 
 1. Press Ctrl+Shift+M (Next permission mode; Actions menu).
     You hear: manual mode on.
-2. Type: Use your Bash tool to run: ping -n 30 127.0.0.1 then reply with the word pinged.
+2. Type "Use your Bash tool to run: ping -n 30 127.0.0.1 then reply with the word pinged.".
 3. Press Enter.
     You hear the sound Notice.
 4. Press Shift+Escape.
-5. Press Ctrl+Shift+M 3 times.
+5. Press Ctrl+Shift+M three times.
     You hear: auto mode on.
 
 ### Answer a set of two questions
 
-1. Type: Reply with one sentence about tulips, then use the AskUserQuestion tool to ask me two questions, which colour I prefer and which season.
+1. Type "Reply with one sentence about tulips, then use the AskUserQuestion tool to ask me two questions, which colour I prefer and which season.".
 2. Press Enter.
     You hear the sound Notice.
 3. Press Enter.
@@ -997,7 +994,7 @@ You hear: Permission Required: Accessing workspace.
 
 ### Open and close Claude's permissions screen
 
-1. Type: /permissions
+1. Type "/permissions".
 2. Press Enter.
     You hear the sound Notice.
 3. Press Escape.
@@ -1006,7 +1003,7 @@ You hear: Permission Required: Accessing workspace.
 ### Answer a question with several answers
 
 1. Press Alt+1 (Message field; Navigation menu).
-2. Type: Use the AskUserQuestion tool once with two questions: my favourite colour (red, green, blue), and, with multiSelect, which fruits I like (apple, banana, cherry).
+2. Type "Use the AskUserQuestion tool once with two questions: my favourite colour (red, green, blue), and, with multiSelect, which fruits I like (apple, banana, cherry).".
 3. Press Enter.
     You hear the sound Notice.
 4. Press 2, Enter.
@@ -1020,7 +1017,7 @@ You hear: Permission Required: Accessing workspace.
 ### Review answers before they go to Claude
 
 1. Choose Review answers before they go to Claude in the Options menu, Questions.
-2. Type: Use the AskUserQuestion tool once with two questions: my favourite colour (red, green, blue), and, with multiSelect, which fruits I like (apple, banana, cherry).
+2. Type "Use the AskUserQuestion tool once with two questions: my favourite colour (red, green, blue), and, with multiSelect, which fruits I like (apple, banana, cherry).".
 3. Press Enter.
     You hear the sound Notice.
 4. Press 2, Enter.
@@ -1039,10 +1036,10 @@ Starts with: Open axClaude with the folder menu.
 
 1. Open axDown with the file notes.md.
 2. Press Ctrl+End.
-3. Type: more
-4. Go to the axClaude window.
+3. Type "more".
+4. Go back to the first window.
 5. Press Alt+1 (Message field; Navigation menu).
-6. Type: Use your Bash tool to run: ping -n 30 127.0.0.1 then reply with the word pinged.
+6. Type "Use your Bash tool to run: ping -n 30 127.0.0.1 then reply with the word pinged.".
 7. Press Enter.
     You hear: Sent.
     You may hear the sound Notice.
@@ -1050,9 +1047,9 @@ Starts with: Open axClaude with the folder menu.
 9. Choose Close all windows in the Window menu.
 10. Go to the axDown window.
 11. Close the window.
-12. Press Tab 2 times.
+12. Press Tab twice.
 13. Press Enter.
-14. Go to the axClaude window.
+14. Go back to the first window.
 15. Close the window.
 16. Press Enter.
 
@@ -1062,7 +1059,7 @@ Starts with: Open axClaude with the folder side.
 
 ### Ask a side question and hear the answer
 
-1. Type: /btw what is two plus two? answer in one word
+1. Type "/btw what is two plus two? answer in one word".
 2. Press Enter.
     You hear the sound Notice.
 
@@ -1073,17 +1070,17 @@ Starts with: Open axClaude with the folder side.
 
 ### Browse earlier side answers
 
-1. Type: /btw what is three plus three? answer in one word
+1. Type "/btw what is three plus three? answer in one word".
 2. Press Enter.
     You hear the sound Notice.
-3. Press Tab 2 times.
+3. Press Tab twice.
 4. Press Enter.
 5. Press Escape.
     You hear: Closed.
 
 ### Look at Claude's goal
 
-1. Type: /goal
+1. Type "/goal".
 2. Press Enter.
     You hear the sound Notice.
 3. Press Enter.
@@ -1131,10 +1128,10 @@ Starts with: Open axClaude with the folder report.
 
 ### Type a report of several lines
 
-1. Type: The list loses my place
+1. Type "The list loses my place".
 2. Press Enter.
     You hear: new line.
-3. Type: every time
+3. Type "every time".
 
 ### Add detail that may name your files
 
@@ -1149,7 +1146,7 @@ Starts with: Open axClaude with the folder report.
 
 ### Send the report
 
-1. Press Shift+Tab 5 times.
+1. Press Shift+Tab five times.
 2. Press Ctrl+Enter (Send the message).
     You may hear: Saved.
 3. Press Escape.
@@ -1160,7 +1157,7 @@ Starts with: Open axClaude with the folder report.
 2. Press Escape.
     You hear: Cancelled.
 3. Press F4 (Send a report; Help menu).
-4. Type: Draft words
+4. Type "Draft words".
 5. Press Escape.
     You hear: Cancelled.
 
@@ -1174,13 +1171,13 @@ Starts with: Open axClaude with the folder spoken.
 2. Choose Claude's own notices, such as "accept edits on" in the Options menu, Announcements.
 3. Press Ctrl+Shift+M (Next permission mode; Actions menu).
     You hear: plan mode on.
-4. Press Ctrl+Shift+M 2 times (Next permission mode; Actions menu).
+4. Press Ctrl+Shift+M twice (Next permission mode; Actions menu).
 
 ### Turn the words Sent and Responding back on
 
 1. Choose "Sent" and "Queued" after a message in the Options menu, Announcements.
 2. Choose "Responding" when a reply starts in the Options menu, Announcements.
-3. Type: Reply with the single word two.
+3. Type "Reply with the single word two.".
 4. Press Enter.
     You hear: Sent.
     You hear: Responding.
@@ -1191,10 +1188,10 @@ Starts with: Open axClaude with the folder spoken.
 1. Choose Speak replies: all lines in the Options menu, Speech.
     You hear: Speak replies: all lines.
 2. Choose Words that keep a reply line silent in the Options menu, Speech.
-3. Type: pelican; walrus
+3. Type "pelican; walrus".
 4. Press Enter.
     You hear: 2 words keep a line silent.
-5. Type: Reply with exactly two lines and nothing else: first line the words pelican feathers, second line the words green apples.
+5. Type "Reply with exactly two lines and nothing else: first line the words pelican feathers, second line the words green apples.".
 6. Press Enter.
     You hear: Done. green apples.
 7. Press Alt+2, Ctrl+End.
@@ -1205,7 +1202,7 @@ Starts with: Open axClaude with the folder spoken.
 2. Press Ctrl+A, Delete, Enter.
     You hear: Every reply line is spoken.
 3. Press Alt+1 (Message field; Navigation menu).
-4. Type: Reply with exactly one line: the words pelican again.
+4. Type "Reply with exactly one line: the words pelican again.".
 5. Press Enter.
     You hear: Done. claude: pelican again.
 
@@ -1215,12 +1212,12 @@ Starts with: Open axClaude with the folder offer.
 
 ### Read the explanation of an offered command
 
-1. Call the tool axkit_offer_command.
+1. Ask Claude to offer you the command "echo offered-first".
     The tool answers with offered: true.
     You hear the sound Offer.
 2. Press Alt+2 (Conversation; Navigation menu).
 3. Press Alt+1 (Message field; Navigation menu).
-4. Press Enter 2 times.
+4. Press Enter twice.
 
 ### Hear the offered command again
 
@@ -1229,13 +1226,13 @@ Starts with: Open axClaude with the folder offer.
 
 ### Turn down an offered command
 
-1. Press Up 2 times.
+1. Press Up twice.
 2. Press Enter.
     You hear: Not run.
 
 ### Run an offered command
 
-1. Call the tool axkit_offer_command.
+1. Ask Claude to offer you the command "echo offered-$((40+2))".
     The tool answers with offered: true.
 2. Press Down.
 3. Press Enter.
@@ -1246,7 +1243,7 @@ Starts with: Open axClaude with the folder offer.
 
 1. Choose Let AI tools run commands in the axKit menu, AI tools.
     You hear: AI tools may run commands.
-2. Call the tool axkit_window_run.
+2. Ask Claude to run the command Check for updates at start.
     The tool answers: The window asks the user whether to run Check for updates at start.
     You hear the sound Offer.
 3. Press Down.
@@ -1259,7 +1256,7 @@ Starts with: Open axClaude with the folder waits.
 
 ### Turn down waiting offers one after another
 
-1. Press Escape 2 times.
+1. Press Escape twice.
     You hear: Not run.
 2. Press Escape.
     You hear: Not run.
@@ -1268,13 +1265,13 @@ Starts with: Open axClaude with the folder waits.
 
 ## A conversation window that starts hidden and hides on closing
 
-Starts with: Open axClaude with the folder home\Documents\axKit\Claude --title axHelp --hide-on-close --hidden.
+Starts with: Open axClaude with the folder home\Documents\axKit\Claude, titled axHelp, hiding when it is closed, hidden.
 
 ### Bring up the hidden conversation
 
 1. Open axHelp.
 2. Choose Open the conversation in the Actions menu (key: Enter).
-3. Go to the axClaude window.
+3. Go back to the first window.
     You may hear: trust.
 4. If that came: Press Enter.
     You hear: Ready.
@@ -1284,7 +1281,7 @@ Starts with: Open axClaude with the folder home\Documents\axKit\Claude --title a
 1. Close the window.
 2. Go to the axHelp window.
 3. Choose Open the conversation in the Actions menu (key: Enter).
-4. Go to the axClaude window.
+4. Go back to the first window.
 
 ### End Claude and close the window for good
 
@@ -1292,13 +1289,13 @@ Starts with: Open axClaude with the folder home\Documents\axKit\Claude --title a
 
 ## See what happened while a hidden conversation was away
 
-Starts with: Open axClaude with the folder away --title axHelp --hide-on-close. Open axHelp.
+Starts with: Open axClaude with the folder away, titled axHelp, hiding when it is closed. Open axHelp. Go back to the first window. Close the window.
 
 ### Bring up the window and hear what happened while it was away
 
 1. Go to the axHelp window.
 2. Choose Open the conversation in the Actions menu (key: Enter).
-3. Go to the axClaude window.
+3. Go back to the first window.
     You hear: Done.
     You hear the sound Offer.
 4. Press Escape.
@@ -1375,10 +1372,6 @@ Starts with: Open axClaude with the folder kt.
 8. Press L.
     You hear: Line.
 
-## Read back in the conversation while Claude writes on, and find every line in its place
-
-Starts with: Open axClaude with the folder order.
-
 ## Read back a long message before sending it, and turn the music on with Ctrl+M
 
 Starts with: Open axClaude with the folder em.
@@ -1402,7 +1395,7 @@ Starts with: Open axClaude with the folder em.
 2. Press Ctrl+Space.
     You hear: Edit mode.
 3. Press End.
-4. Type: !
+4. Type "!".
 
 ### Turn the background music on and off
 
@@ -1496,7 +1489,7 @@ Starts with: Open axClaude with the folder es.
 Starts with: Open axClaude with the folder st.
 
 You hear: Ready.
-1. Type: Say ok
+1. Type "Say ok".
 2. Press Enter.
     You hear: Sent.
     You hear: Done. claude: ok.
@@ -1513,7 +1506,7 @@ Starts with: Open axClaude with the folder a.
 
 ### Turn Claude Code's events off and on again
 
-1. Go to the other axClaude window.
+1. Go back to the first window.
 2. Choose Events from Claude Code's hooks in the Options menu, Developer.
     You hear: Events from Claude Code's hooks off, from the next start of Claude.
 3. Press Ctrl+Shift+R (Force Claude to restart; Actions menu).
@@ -1537,12 +1530,12 @@ Starts with: Open axClaude with the folder hooked.
 
 ### Hear that Claude Code's events arrived after a turn
 
-1. Type: Reply with the single word ok.
+1. Type "Reply with the single word ok.".
 2. Press Enter.
     You hear: Sent.
     You hear: Done.
 3. Choose Say the event sources in the Options menu, Developer.
-    You hear words such as: Hooks: on.
+    You hear something with "Hooks: on" in it.
 
 ## See the session file followed, without Claude Code
 
@@ -1550,7 +1543,7 @@ Starts with: Open axClaude with the folder sf.
 
 ### Hear whether Claude Code's session file is followed
 
-1. Type: Say ok
+1. Type "Say ok".
 2. Press Enter.
     You hear: Sent.
     You hear: Done.
@@ -1568,23 +1561,19 @@ Starts with: Open axClaude with the folder sf.
 4. Choose Say the event sources in the Options menu, Developer.
     You hear: Session file: not found.
 
-## Start axClaude with a place of Claude Code another program wrote
-
-Starts with: Open axClaude with the folder st. Close the window.
-
 ## Know that Claude works, and send a message while a reply arrives
 
 Starts with: Open axClaude with the folder sw.
 
 ### Know that Claude works while the screen shows no sign of it
 
-1. Type: Say ok
+1. Type "Say ok".
 2. Press Enter.
     You hear: Sent.
 
 ### Send a message while a reply's rows are still arriving
 
-1. Type: Say more
+1. Type "Say more".
 2. Press Enter.
     You hear: Queued.
 
@@ -1594,7 +1583,7 @@ Starts with: Open axClaude with the folder dn.
 
 ### Hear Done, then the reply's words
 
-1. Type: Say ok
+1. Type "Say ok".
 2. Press Enter.
     You hear: Sent.
     You hear: Done. claude: ok.
@@ -1611,12 +1600,12 @@ Starts with: Open axClaude with the folder by.
 
 ## Follow a turn of Claude Code's stream
 
-Starts with: Open axClaude with the folder st --source stream.
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 
 ### Send a message and hear the reply and Done
 
 You hear: Ready.
-1. Type: Say ok
+1. Type "Say ok".
 2. Press Enter.
     You hear: Sent.
     You hear: Done. claude: ok.
@@ -1624,7 +1613,7 @@ You hear: Ready.
 
 ## Change Claude Code's mode and use the window's commands over the stream
 
-Starts with: Open axClaude with the folder st --source stream.
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 
 ### Go to Claude Code's next permission mode
 
@@ -1634,7 +1623,7 @@ You hear: Ready.
 
 ### Send a message in the new mode
 
-1. Type: Write the file
+1. Type "Write the file".
 2. Press Enter.
     You hear: Sent.
     You hear: Done. claude: written.
@@ -1650,12 +1639,12 @@ You hear: Ready.
 
 ## Hear that Claude Code's stream ended, and be offered the screen
 
-Starts with: Open axClaude with the folder st --source stream.
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 
 ### Learn that Claude Code ended and stay in the window
 
 You hear: Ready.
-1. Type: Say ok
+1. Type "Say ok".
 2. Press Enter.
     You hear: Sent.
     You hear: Claude stopped.
@@ -1664,7 +1653,7 @@ You hear: Ready.
 
 ## Answer what Claude asks to do, over Claude Code's stream
 
-Starts with: Open axClaude with the folder st --source stream.
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 
 ### Say yes to Claude Code in this folder
 
@@ -1675,7 +1664,7 @@ You hear: Start Claude Code in this folder?
 
 ### Hear what Claude asks to do, with no first
 
-1. Type: Run the ping
+1. Type "Run the ping".
 2. Press Enter.
     You hear: Sent.
     You hear: Claude asks to use Bash: ping -n 2 127.0.0.1. Asked by Claude, an AI: read the explanation before you allow it. 1. No.
@@ -1683,11 +1672,11 @@ You hear: Start Claude Code in this folder?
 ### Read everything Claude asks to do before answering
 
 1. Press End.
-2. Press Enter 2 times.
+2. Press Enter twice.
 
 ### Allow it once
 
-1. Press Up 2 times.
+1. Press Up twice.
 2. Press Enter.
     You hear: Sent: 2, Yes, once.
     You hear: Done. claude: pinged.
@@ -1695,7 +1684,7 @@ You hear: Start Claude Code in this folder?
 
 ## Say no to Claude Code in a folder, and to what Claude asks to do
 
-Starts with: Open axClaude with the folder st --source stream.
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 
 ### Be asked again and say yes
 
@@ -1717,11 +1706,11 @@ Starts with: Open axClaude with the folder st --source stream.
 
 ## Answer Claude's own questions over Claude Code's stream
 
-Starts with: Open axClaude with the folder st --source stream.
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 
 ### Answer the first question in your own words
 
-1. Type: Ask me two things
+1. Type "Ask me two things".
 2. Press Enter.
     You hear: Sent.
     You hear: Question 1 of 2: What is your favourite colour? 1. Red.
@@ -1734,7 +1723,7 @@ Starts with: Open axClaude with the folder st --source stream.
 6. Press End.
 7. Press Enter.
     You hear: You chose Other. Your answer.
-8. Type: teal
+8. Type "teal".
 9. Press Enter.
     You hear: Sent: teal. Next question.
 
@@ -1742,7 +1731,7 @@ Starts with: Open axClaude with the folder st --source stream.
 
 You hear: Question 2 of 2: Which fruits do you like?
 1. Press Space.
-2. Press Down 2 times.
+2. Press Down twice.
 3. Press Space.
 4. Press Enter.
     You hear: Sent: 1, Apple, 3, Cherry.
@@ -1751,11 +1740,11 @@ You hear: Question 2 of 2: Which fruits do you like?
 
 ## Interrupt Claude over Claude Code's stream
 
-Starts with: Open axClaude with the folder st --source stream.
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 
 ### Refuse a waiting question with the interrupt key
 
-1. Type: Run the long ping
+1. Type "Run the long ping".
 2. Press Enter.
     You hear: Sent.
     You hear: Claude asks to use Bash: ping -n 20 127.0.0.1.
@@ -1770,7 +1759,7 @@ Starts with: Open axClaude with the folder st --source stream.
 ### Go on after the interrupt
 
 1. Press Alt+1 (Message field; Navigation menu).
-2. Type: Still there?
+2. Type "Still there?".
 3. Press Enter.
     You hear: Sent.
     You hear: Done. claude: still here.
@@ -1778,11 +1767,11 @@ Starts with: Open axClaude with the folder st --source stream.
 
 ## Be asked again when Claude asks the same thing twice, over Claude Code's stream
 
-Starts with: Open axClaude with the folder st --source stream.
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 
 ### Allow the first of two calls that read the same
 
-1. Type: Change the notes
+1. Type "Change the notes".
 2. Press Enter.
     You hear: Sent.
     You hear: Claude asks to use Edit: notes.txt. Asked by Claude, an AI: read the explanation before you allow it. 1. No.
@@ -1802,7 +1791,7 @@ You hear: Claude asks to use Edit: notes.txt. Asked by Claude, an AI: read the e
 Starts with: Open axClaude with the folder st.
 
 You hear: Ready.
-1. Type: Say ok
+1. Type "Say ok".
 2. Press Enter.
     You hear: Sent.
     You hear: Done. claude: ok.
@@ -1810,7 +1799,7 @@ You hear: Ready.
 
 ## Let Claude run a command over its stream, with Claude Code itself
 
-Starts with: Open axClaude with the folder st --source stream.
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 
 ### Start Claude Code over its stream in a folder
 
@@ -1821,7 +1810,7 @@ You hear: Start Claude Code in this folder?
 
 ### Answer Claude Code's own question for a command
 
-1. Type: Use your shell tool to run exactly this command, then tell me in one short sentence what happened: ping -n 2 127.0.0.1
+1. Type "Use your shell tool to run exactly this command, then tell me in one short sentence what happened: ping -n 2 127.0.0.1".
 2. Press Enter.
     You hear: Sent.
     You hear: Claude asks to use.
@@ -1833,11 +1822,11 @@ You hear: Start Claude Code in this folder?
 
 ## Refuse a command, stop a reply and answer Claude's own question over the stream, with Claude Code itself
 
-Starts with: Open axClaude with the folder st --source stream.
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 
 ### Refuse a command Claude asks to run
 
-1. Type: Use your shell tool to run exactly this command, then tell me in one short sentence what happened: ping -n 2 127.0.0.1
+1. Type "Use your shell tool to run exactly this command, then tell me in one short sentence what happened: ping -n 2 127.0.0.1".
 2. Press Enter.
     You hear: Sent.
     You hear: Claude asks to use.
@@ -1847,7 +1836,7 @@ Starts with: Open axClaude with the folder st --source stream.
 
 ### Stop a reply Claude is writing
 
-1. Type: Write a numbered list of eighty different kinds of fruit, one on each line, with a short sentence about each.
+1. Type "Write a numbered list of eighty different kinds of fruit, one on each line, with a short sentence about each.".
 2. Press Enter.
     You hear: Sent.
 3. Press Shift+Escape.
@@ -1855,7 +1844,7 @@ Starts with: Open axClaude with the folder st --source stream.
 
 ### Answer a question Claude asks you
 
-1. Type: Use your AskUserQuestion tool to ask me one question: which colour I prefer, with the two options Red and Blue. Then reply with only the colour I chose.
+1. Type "Use your AskUserQuestion tool to ask me one question: which colour I prefer, with the two options Red and Blue. Then reply with only the colour I chose.".
 2. Press Enter.
     You hear: Sent.
 3. Press Enter.
@@ -1865,13 +1854,13 @@ Starts with: Open axClaude with the folder st --source stream.
 
 ## Choose the model and the effort over Claude Code's stream
 
-Starts with: Open axClaude with the folder st --source stream.
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 
 ### Choose the model from the list Claude Code gave
 
 1. Choose Choose the model in the Actions menu.
     You hear: Choose the model. 1. Default (recommended).
-2. Press Down 4 times.
+2. Press Down four times.
 3. Press Enter.
     You hear: Sent: 5, Haiku 5.5.
 4. Press Alt+2 (Conversation; Navigation menu).
@@ -1888,17 +1877,17 @@ Starts with: Open axClaude with the folder st --source stream.
 ### Send a message after the choices
 
 1. Press Alt+1 (Message field; Navigation menu).
-2. Type: Say ok
+2. Type "Say ok".
 3. Press Enter.
     You hear: Done. claude: ok.
 
 ## See the earlier conversation when Claude Code's stream takes it up
 
-Starts with: Open axClaude with the folder st --source stream. Close the window.
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream. Close the window.
 
 ### Read the earlier conversation in a new window
 
-1. Open axClaude with the folder st --source stream.
+1. Open axClaude with the folder st, fed by Claude Code's stream.
     You hear: Start Claude Code in this folder?
 2. Press Tab.
 3. Press Enter.
@@ -1908,7 +1897,7 @@ Starts with: Open axClaude with the folder st --source stream. Close the window.
 ### Go on with the conversation
 
 1. Press Alt+1 (Message field; Navigation menu).
-2. Type: Say ok
+2. Type "Say ok".
 3. Press Enter.
     You hear: Sent.
     You hear: Done.
@@ -1916,11 +1905,11 @@ Starts with: Open axClaude with the folder st --source stream. Close the window.
 
 ## Hand a conversation from Claude Code's stream to its screen and back, with Claude Code itself
 
-Starts with: Open axClaude with the folder hand --source stream. Close the window.
+Starts with: Open axClaude with the folder hand, fed by Claude Code's stream, taking up the last conversation. Close the window.
 
 ### Take the stream's conversation up with the screen
 
-1. Open axClaude with the folder hand.
+1. Open axClaude with the folder hand, taking up the last conversation.
     You hear: trust.
 2. Press Enter.
     You hear: Ready.
@@ -1929,14 +1918,14 @@ Starts with: Open axClaude with the folder hand --source stream. Close the windo
 
 ### Take the conversation up over the stream again and read its earlier part
 
-1. Open axClaude with the folder hand --source stream.
+1. Open axClaude with the folder hand, fed by Claude Code's stream, taking up the last conversation.
     You hear: Start Claude Code in this folder?
 2. Press Tab.
 3. Press Enter.
     You hear: Ready.
 4. Press Alt+2 (Conversation; Navigation menu).
 5. Press Alt+1 (Message field; Navigation menu).
-6. Type: Which word did I ask you to remember? Reply with that word alone, in lower case.
+6. Type "Which word did I ask you to remember? Reply with that word alone, in lower case.".
 7. Press Enter.
     You hear: Sent.
     You hear: Done.
@@ -1948,12 +1937,12 @@ Starts with: Open axClaude with the folder rules.
 
 ### Search the rules of the permissions screen
 
-1. Type: /permissions
+1. Type "/permissions".
 2. Press Enter.
     You hear the sound Notice.
 3. Press End, Up.
 4. Press Enter.
-5. Type: git
+5. Type "git".
 6. Press Enter.
     You hear: Search the rules. Search: git.
 7. Press Down.
@@ -1962,7 +1951,7 @@ Starts with: Open axClaude with the folder rules.
 
 ### Leave the search
 
-1. Press Escape 2 times.
+1. Press Escape twice.
 2. Press Shift+Escape.
 3. Press Alt+2, Ctrl+End.
 
@@ -1973,7 +1962,7 @@ Starts with: Open axClaude with the folder a.
 You may hear: trust.
 1. If that came: Press Enter.
     You hear: Ready.
-2. Type: Reply with the single word hello.
+2. Type "Reply with the single word hello.".
 3. Press Enter.
     You hear: Done.
 4. Press Alt+2 (Conversation; Navigation menu).
@@ -1987,7 +1976,7 @@ Starts with: Open axClaude with the folder q.
 You may hear: trust.
 1. If that came: Press Enter.
     You hear: Ready.
-2. Type: Use your AskUserQuestion tool once, with two questions: which colour I prefer, red or blue, and which season I prefer, summer or winter.
+2. Type "Use your AskUserQuestion tool once, with two questions: which colour I prefer, red or blue, and which season I prefer, summer or winter.".
 3. Press Enter.
     You hear: Question 1 of 2.
 4. Press Enter.

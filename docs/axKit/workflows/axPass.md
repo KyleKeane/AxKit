@@ -2,16 +2,18 @@
 
 Written by `tools/workflows.ps1`; never edit it by hand. Every goal below is played by axKit's automated checks as it
 is written here: the steps are what the check presses and types, and the lines under a step are what axKit says. A
-line "You hear" gives words of what axKit says there, not always the whole sentence; after "words such as" they are
-cut short. After "Type:" comes the text to type, to the end of the line, with no full stop added. The file names and
-the words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
+line "You hear" gives what axKit says there; "something with" and words in quotes give a part of it. After "Type"
+the text to type stands in quotes: the quotes and the full stop after them are not typed. The file names and the
+words typed are the check's examples: use your own. Where a step names a command after its key, the key is that
 command's in this version of axKit.
 
 ## Unlock a password database and change an entry
 
+Starts with: Open axPass with the file test.kdbx.
+
 ### Unlock a password database
 
-1. Type: test-master-1
+1. Type "test-master-1".
 2. Press Enter.
     You hear: test, 3 items, Email, group, 1 item.
 
@@ -33,13 +35,13 @@ command's in this version of axKit.
 ### Read an entry's fields
 
 1. Press Enter.
-2. Press Down 3 times.
+2. Press Down three times.
 
 ### Move between the entries and the fields
 
 1. Press Ctrl+Tab (Switch between the navigator and the detail pane).
 2. Press Ctrl+Shift+Tab (Switch between the navigator and the detail pane).
-3. Press F6 2 times (Switch between the navigator and the detail pane).
+3. Press F6 twice (Switch between the navigator and the detail pane).
 
 ### Change a user name
 
@@ -47,7 +49,7 @@ command's in this version of axKit.
 2. Press Home.
 3. Press Down.
 4. Press Enter.
-5. Type: sam2
+5. Type "sam2".
 6. Press Enter.
     You hear: UserName: sam2.
 
@@ -60,14 +62,14 @@ command's in this version of axKit.
 
 1. Press Escape.
 2. Press F2 (Rename).
-3. Type: Gmail personal
+3. Type "Gmail personal".
 4. Press Enter.
     You hear: Renamed Gmail personal.
 
 ### Add an entry
 
 1. Press Ctrl+N.
-2. Type: Bank
+2. Type "Bank".
 3. Press Enter.
     You hear: Added Bank.
 
@@ -93,7 +95,7 @@ command's in this version of axKit.
 1. Press Up.
 2. Press Tab.
 3. Press Home.
-4. Press Down 2 times.
+4. Press Down twice.
 5. Press Enter.
 6. Press Alt+G.
     You hear: Generated a password of 20 characters.
@@ -104,7 +106,7 @@ command's in this version of axKit.
 
 1. Press Home.
 2. Press Right.
-3. Type: g
+3. Type "g".
 4. Press Ctrl+M.
 5. Press Down.
 6. Press Enter.
@@ -133,7 +135,7 @@ You hear: Before axPass connects to KeePassXC.
 3. Press Space.
     You hear: checked.
 4. Press Enter.
-5. Type: test-master-1
+5. Type "test-master-1".
 6. Press Enter.
     You hear: test, 1 item, Email, group, 0 items.
 7. Close the window.
@@ -145,7 +147,7 @@ Starts with: Open axPass with the file test.kdbx.
 ### Hear one field of an entry
 
 1. Press Enter.
-2. Press Down 2 times.
+2. Press Down twice.
 3. Press Ctrl+Q (Read in full).
     You hear: Password, password, hidden.
 
@@ -153,7 +155,7 @@ Starts with: Open axPass with the file test.kdbx.
 
 1. Press Escape.
 2. Press Ctrl+Q (Read in full).
-    You hear words such as: Gmail. UserName: sam. Password: hidden. URL: https://mail.example.com. Notes.
+    You hear something with "Gmail. UserName: sam. Password: hidden. URL: https://mail.example.com. Notes" in it.
 
 ### Choose when axPass locks by itself
 
@@ -169,7 +171,7 @@ Starts with: Open axPass with the file test.kdbx.
 ### Open the last database again without naming it
 
 1. Open axPass.
-2. Type: test-master-1
+2. Type "test-master-1".
 3. Press Enter.
     You hear: test, 1 item, Email, group, 1 item.
 
@@ -181,14 +183,14 @@ Starts with: Open axPass with the file test.kdbx.
 
 1. Choose Back up now in the Session menu.
     You hear: Backed up: test.
-    You hear words such as: in test backups.
+    You hear something with "in test backups" in it.
 
 ### Show the backups in axFile
 
 1. Choose Show backups in axFile in the Session menu.
-2. A new window opens: go to it.
+2. Go to the window that opened.
 3. Close the window.
-4. Go to the axPass window.
+4. Go back to the first window.
 
 ### Open a group with Enter and go back up with Backspace
 
@@ -204,10 +206,10 @@ Starts with: Open axPass with the file test.kdbx.
 1. Press Enter.
 2. Press End.
 3. Press Enter.
-4. Type: First line of the notes
+4. Type "First line of the notes".
 5. Press Enter.
     You hear: new line.
-6. Type: Second line
+6. Type "Second line".
 7. Press Tab.
 8. Press Enter.
     You hear: Notes: First line of the notes, and 1 more line.
@@ -216,7 +218,7 @@ Starts with: Open axPass with the file test.kdbx.
 
 1. Press Up.
 2. Press Enter.
-3. Type: https://example.org/login
+3. Type "https://example.org/login".
 4. Press Enter.
     You hear: URL: https://example.org/login.
 
@@ -224,9 +226,9 @@ Starts with: Open axPass with the file test.kdbx.
 
 1. Press Up.
 2. Press Enter.
-3. Type: made-up-pass-1
+3. Type "made-up-pass-1".
 4. Press Enter.
-5. Type: made-up-pass-1
+5. Type "made-up-pass-1".
 6. Press Enter.
     You hear: Password set for Gmail.
 
@@ -234,7 +236,7 @@ Starts with: Open axPass with the file test.kdbx.
 
 1. Press Home.
 2. Press Enter.
-3. Type: Gmail work
+3. Type "Gmail work".
 4. Press Enter.
     You hear: Renamed Gmail work.
 
@@ -248,13 +250,13 @@ Starts with: Open axPass with the file test.kdbx.
 1. Press Backspace.
     You hear: test, 3 items, Email, group, 1 item.
 2. Press Ctrl+Shift+N.
-3. Type: Archive
+3. Type "Archive".
 4. Press Enter.
     You hear: Made Archive.
 
 ### Move a group to the Recycle Bin
 
-1. Type: w
+1. Type "w".
 2. Press Delete.
 3. Press Alt+M.
     You hear: Moved Work to the Recycle Bin.
@@ -272,15 +274,15 @@ Starts with: Open axPass with the file test.kdbx.
 ### Find an entry and go to the next and the previous match
 
 1. Press Ctrl+F (Find in the list).
-2. Type: bank
+2. Type "bank".
 3. Press Enter.
-4. Press F3 2 times (Find next).
+4. Press F3 twice (Find next).
 5. Press Shift+F3 (Find previous).
 
 ### Show only the entries whose name contains a text
 
 1. Choose Filter in the Options menu.
-2. Type: bank
+2. Type "bank".
 3. Press Enter.
     You hear: filter bank, 2 shown.
 4. Press Escape.
@@ -295,7 +297,7 @@ Starts with: Open axPass with the file test.kdbx.
 
 ### Select entries as you move and deselect them all
 
-1. Type: bank
+1. Type "bank".
 2. Press Space.
 3. Press Shift+Down.
 4. Press Ctrl+Shift+A (Deselect all; Actions menu).

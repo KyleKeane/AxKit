@@ -11,6 +11,7 @@ file home\AxKit\axHelp.json {"hotkey": "Ctrl+Alt+Shift+F9", "screenshotHotkey": 
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 run mkdir "home\Documents\axKit\Claude"
 
+# Check: A hidden start shows no window and says nothing
 # 20.1 The hidden start: no window on view, and Claude Code's question about the new folder waits unspoken: no
 # announcement, no sound, no move of the focus.
 start claude "{temp}\home\Documents\axKit\Claude" --title axHelp --hide-on-close --hidden -- --model haiku --effort low
