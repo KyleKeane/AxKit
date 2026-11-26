@@ -382,8 +382,9 @@ Each origin, by function and file, down to the code that runs the command.
      reason.
   3. The recent actions still hold commands of the list alone (CL-4.8, 3): writing every click there changes what a
      report holds (`reports.md` RP-4.1), which is a change a user meets, so it is a decision and not a consolidation.
+     **Decided on 2026-11-25: every command is written there by its name**, a click and a menu pick included.
   4. `choose` is still not held by the key test (CL-4.8, 1): holding it changes which origin is refused when. Only a
-     test run reaches it.
+     test run reaches it. **Decided on 2026-11-25: held.**
   5. The AI tool's second checks (CL-4.8, 2) keep their own function: their words and their order differ from the
      first check's, so joining them changes which sentence is said when a notice and the key test hold at once.
 - (b) **One name matcher** shared by the palette, `do`, the AI tool and later speech: `CommandNames` for the exact
@@ -401,7 +402,10 @@ Each origin, by function and file, down to the code that runs the command.
   settled (CL-7.2); names that change with the state (axFile's Undo, which the inventory holds as Undo, Undo rename,
   Undo move, Undo delete, Undo compress, Undo new folder) settled as one command with one name. Touches
   `tools/key-map.ps1` or a test of `tests/AxAutomate.Tests`, `key-families.json`, and axFile for the names. Small for
-  the checks; the decisions are the maintainer's.
+  the checks; the decisions are the maintainer's. **Decided on 2026-11-25:** the check is built, today's differences
+  a list of exceptions, so that a new one is added on purpose; axFile's undo becomes one Undo that says what it undid.
+  Amended by the maintainer the same day: the exceptions are then reviewed and cleaned up, each one removed where it
+  can be, so that everything stays uniform; the list keeps only what cannot be made one.
 - (d) **The good paths of CL-6.4**, each its own piece: its tool, its mark, its question, its section of `mcp.md`,
   its window script. Each small to middle; the argument-taking commands are the largest, since a command gains a
   typed argument in `Command` and in every reader.

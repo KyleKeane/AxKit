@@ -444,8 +444,8 @@ read as `edit` still waiting for the colours' answers (to measure first, AT-9.7)
   "Screen of edit, keys go to the program".
 - AT-9.3 **Two ways to be in it.** Keys go to the program (every key, as a terminal sends it, but axTerminal's own
   way out of the view and the bundle's F1 and Alt+F4); the caret of the text stands where the program's cursor
-  stands, so that NVDA reads the program's line as the cursor moves, which the user's own keys caused. A key of
-  axTerminal's table (AT-6; the chord to choose, section 7) turns to reading the screen: the keys stay in the text,
+  stands, so that NVDA reads the program's line as the cursor moves, which the user's own keys caused. Ctrl+Space,
+  the bundle's mode key (section 7), turns to reading the screen: the keys stay in the text,
   the arrows and NVDA's own reading keys read the page, nothing reaches the program, and the same key goes back.
   The status bar says which way is in force; the switch is said in two words, "Reading the screen", "Keys to edit".
 - AT-9.4 **What is said by itself.** Nothing on a redraw. After a key sent to the program, the line the cursor ends on
@@ -593,10 +593,12 @@ its notes record what moved.
 - A history that persists across windows (`CommandHistory` to the settings file; AT-3.4 keeps the secrets out of it).
 - Whether a `D` mark with a non-zero code should classify the output's last lines as errors for `e`.
 - PowerShell 7 is untested here (the machine has Windows PowerShell 5.1 only); its snippet is the same.
-- The screen view (AT-9), for the maintainer: the key that turns between keys to the program and reading the screen
-  (it must reach axTerminal while every other key goes to the program, so a chord no full-screen program uses:
-  Ctrl+Shift with a punctuation key, by AX-8.18); whether box-drawing characters are spaces (proposed) or kept; whether
-  a marked row is said by itself (proposed) or only on a key.
+- The screen view (AT-9): **decided by the maintainer on 2026-11-25** through the question tool. The key that turns
+  between keys to the program and reading the screen is Ctrl+Space, the bundle's mode key (`BundleKeys.ToggleMode`):
+  keys to the program is the edit mode, reading the screen the navigation mode, so one key means one thing everywhere
+  (Ctrl+Shift with punctuation is AX-8.18 rule 7's, keys that work anywhere in Windows); the cost, a program that
+  wants Ctrl+Space never gets it. Box-drawing characters are kept as the program drew them. A marked run is said by
+  itself, once, when it moves.
 
 ## 8. Status
 

@@ -238,10 +238,13 @@ Non-goals:
 
 ## 7. Open questions (for the maintainer, and for the design sitting with Fable)
 
-1. The reply's label: `ai:` (proposed), the dialect's or the model's name, or `model:`.
+1. The reply's label: `ai:` (proposed), the dialect's or the model's name, or `model:`. **Decided on 2026-11-25:
+   `ai:`**, the same for every model and server; Information says which model answered.
 2. Conversations kept at first, or off until turned on (the bundle's rule of private defaults would say off).
+   **Decided on 2026-11-25: off until turned on.**
 3. Whether AI help (Shift+F1, axHelp) may later use axChat's connections as its service, beside Claude Code (the
-   parked idea "axHelp and AI help for another AI service", plan.md).
+   parked idea "axHelp and AI help for another AI service", plan.md). **Decided on 2026-11-25: yes, later**, a
+   choice in AI help's settings once axChat works, Claude Code the default.
 4. Pictures and files sent to a model that takes them; a model's tools (CH-D6), each a design of its own.
 5. Whether a reply is spoken a sentence at a time (proposed) or as each line ends, by ear.
 6. The sounds: a reply arriving and Done as axClaude's, or sounds of their own, by the maintainer's ear (rule 13).

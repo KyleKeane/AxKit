@@ -74,7 +74,8 @@ In the order of what they do for the decades goal. What needed no account and no
 2. **The repository under a GitHub organization with a second owner**, so that it outlives one account; the
    repository name is in `UpdateCheck.cs` and sixteen other files, and a transfer redirects (B-7). Cost: free; one
    afternoon to move; a settings key for the update repository (twenty lines) if a successor fork is ever to be
-   adopted without a rebuild. Open: the maintainer's account and decision.
+   adopted without a rebuild. Open: the maintainer's account; his decision of 2026-11-25: later, once he has a
+   second owner in mind.
 3. **The manual release path written down** in `README.md` (`publish.ps1 -NoInstall`, then `gh release create
    --draft`, upload, publish), so that a release is possible when GitHub Actions is not. Cost: five lines. Done 2026-10-23 (`README.md`, Release).
 4. **The installer off the rate-limited API**: `install.cmd` asks `api.github.com` for the latest release, which allows
@@ -119,7 +120,7 @@ In the order of what they do for the decades goal. What needed no account and no
     the nine lock files are committed and move with Dependabot's bumps).
 13. **The `archive/pre-public-history` branch out of the repository**: it is rewritten pre-public history that
     `PrivacyTests` never scans; pushed by mistake, whatever was scrubbed is public. Keep it as a bundle file outside
-    git, or delete it. Cost: a decision. Open: the maintainer's.
+    git, or delete it. Cost: a decision. Done on 2026-11-07: the maintainer deleted the branch.
 14. **A yearly full NVDA pass on the current NVDA** (section 5), recorded with its environment, so that a change in
     NVDA is found in a year rather than in a user's report. Open: due October 2027, or sooner on the current NVDA.
 

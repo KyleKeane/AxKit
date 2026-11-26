@@ -279,7 +279,9 @@ mode each is simply absent, and the window says so where the user would look for
   `tools\upstream.ps1 -Verify claude`: a turn, a permission answered each way, a question of Claude's, an
   interrupt, a resume.
 - SM-10.5 **By ear**: a section of the NVDA plan for stream mode, and two hours of the maintainer's own use with the
-  switch on before it leaves the Developer menu.
+  switch on before it leaves the Developer menu. The maintainer's direction of 2026-11-25: those two hours come first;
+  if the stream holds, it becomes the default and the screen's grounding in the session file
+  (`events-and-grounding.md` stage 3) is parked in `plan.md`; until then no work goes into that stage.
 
 ## 11. The path in stages
 

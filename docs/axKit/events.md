@@ -141,11 +141,14 @@ Steps 2 and 3 do not depend on each other and are the next work on sounds and on
    code.
 3. The ten sound choices on the earcon item, met in step 2: for each, one sound, two kinds, or as it is.
 4. Whether an event that has only words and no sound still goes through the door from the first day (so that the
-   checks see every event), or only sounds first.
+   checks see every event), or only sounds first. **Decided on 2026-11-25: through the door from the first day**,
+   by the maintainer through the question tool.
 5. Whether axKit keeps a log of events on the user's computer (kinds and times, no text), off unless switched on:
    it is what a later item needs (axHelp learning from the questions asked), and what would show, as the shadow
-   lines did for axClaude, where an app behaves oddly.
-6. Whether each app's own sound quality, proposed in `earcons.md`, is a column of the presenter's table.
+   lines did for axClaude, where an app behaves oddly. **Decided on 2026-11-25: yes**, a switch under Options, off
+   until the user turns it on, nothing written while it is off, the log on the user's computer alone.
+6. Whether each app's own sound quality, proposed in `earcons.md`, is a column of the presenter's table. **Left on
+   2026-11-25 for the earcon sitting**: no column until the maintainer has heard the qualities.
 7. A kind the list lacks, found on 2026-11-17 by his own report: a turn that the program begins by itself. Claude
    Code starts a turn when work in the background finishes, and axClaude plays the music, speaks the reply and says
    Done with no word of why, which he took for axClaude restarting. Claude Code's record names such a turn. Whether
