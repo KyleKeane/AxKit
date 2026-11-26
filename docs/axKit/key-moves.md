@@ -256,12 +256,52 @@ implement them".
    every window.
 4. Enter opens or confirms; Ctrl+Enter does the most frequent action. Every window is checked against the pair, and
    each window that differs is one question for the maintainer.
+   Settled on 2026-11-26: where Enter does the window's main thing (axClaude and axTerminal send, axCalc answers,
+   axClip pastes, axTemplate puts in, axStart starts), confirming there is that thing, and they fit as they are.
 5. One Options menu in every window, with a section for all of axKit at its end, in place of the bundle's switches in
    the axKit menu (AX-9.1 changes).
 
 Built the same day, with the palette on F1 (SPEC AX-10, AX-8.18, AX-9.1): the editors' New window keeps its menu item
 without a key, axFile's Show in File Explorer (Ctrl+Shift+W) went with Ctrl+W, and the windows where Enter or
 Ctrl+Enter does something other than the pair are the maintainer's questions, listed in the builder's report.
+
+## Ctrl+Enter, one proposal per window (2026-11-26)
+
+Proposed by the assistant, for the maintainer to settle. Each proposal is a command the window has now, named as its
+menu item. It keeps its own key; Ctrl+Enter is a second key for it. Where it does not apply, Ctrl+Enter plays the edge
+sound, as today. The windows that have Ctrl+Enter already set the kind: axTask's Done or not done, axTemplate's Copy
+its text and Put in, with that program's selection, axGIT's Commit, axMCP's Call, or fetch the prompt, axMedia's Play,
+pause or resume. Nothing below ends, deletes or sends anything without the window's own question.
+
+- axPass. Today: the edge sound. Proposed: Copy password (Ctrl+C), on an entry. Why: handing over a password is what a
+  password manager is opened for, and the clipboard keeps it private and clears it in 30 seconds.
+- axProcess. Today: the edge sound. The most frequent act is End process, which ends a program, so it stays on Delete
+  with its question. Proposed: Show program in axFile (Ctrl+E), on a process or a startup program; on a service, the
+  edge sound. Why: after the details, finding out what a process is comes next, and it changes nothing.
+- axAutomate. Today: the edge sound. Proposed: Run (Ctrl+R). Why: running a workflow is what the window is for, and a
+  workflow that runs commands still asks first.
+- axHelp. Today: the edge sound. Proposed: Open the conversation (Enter), as axTerminal's field sends on both keys.
+  Why: bringing up the conversation is the window's one act, and it sends nothing until you type and press Enter.
+- axDown. Today: the edge sound. Proposed: Save (Ctrl+S). Why: saving is the command used most in a text, and it
+  matches Ctrl+Enter keeping a long text in a form.
+- axJSON. Today: the edge sound. Proposed: Save (Ctrl+S), as in axDown. Why: the same as axDown; Format is frequent
+  too, but every change ends in a save.
+- axFile. Today: Play folder in axMedia, in the folder list. Proposed: Preview (Shift+Enter), in the folder list.
+  Why: reading a file without starting its program is the act done most after Open, and the spec names it beside
+  Enter in its first lines. On a folder it does what Shift+Enter does, the folder in a new axFile window. Play folder
+  in axMedia stays in the Context menu by that name, without a key; the palette finds it by name.
+
+No proposal, the edge sound as today:
+
+- axPreview. Reading is its whole use, and the reading keys need no command; its spec calls Edit in axDown "the one
+  time in ten", and for a file that is no text Ctrl+E starts another program.
+
+When one is built, the table of Ctrl+Enter per app in SPEC AX-8.10 and the app's spec change with it.
+
+**Settled by the maintainer on 2026-11-26**, one window at a time: axPass, Copy password; axProcess, End process
+with its question, as Delete asks it (his choice over the proposal); axAutomate, Run; axHelp, open the conversation;
+axDown and axJSON, Save; axFile, Preview, with Play folder in axMedia moved to the Context menu without a key;
+axPreview, nothing, the edge sound.
 
 ## The small families
 
