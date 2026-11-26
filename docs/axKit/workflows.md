@@ -326,8 +326,10 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Hear the plan with its caution, the no that keeps planning first
     - Read the whole plan before answering
     - Approve the plan and approve each edit yourself
-56. **Have a short exchange with Claude**
-57. **Answer a set of two questions from Claude**
+56. **Give Claude axKit's AI tools from the start**
+    - Turn on the AI tools and have Claude know them
+57. **Have a short exchange with Claude**
+58. **Answer a set of two questions from Claude**
 
 ## axClip
 

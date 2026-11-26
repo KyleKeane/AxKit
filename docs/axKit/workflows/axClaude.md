@@ -2098,6 +2098,26 @@ Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
     You hear: Done. claude: carried out.
 5. Press Alt+2 (Conversation; Navigation menu).
 
+## Give Claude axKit's AI tools from the start
+
+Starts with: Open axClaude with the folder tools.
+
+### Turn on the AI tools and have Claude know them
+
+1. Choose Let AI tools read and open axKit in the axKit menu, AI tools.
+2. Press Enter.
+    You hear: AI tools on.
+    You may hear: Not in a test run.
+3. Press Ctrl+Shift+R (Force Claude to restart; Actions menu).
+4. Press Enter.
+    You hear: Restarting.
+    You hear: Ready.
+5. Type "Look at the tools you have now. Reply with the exact full name of the tool whose name ends in axkit_windows, and nothing else, or with the word none if you have no such tool. Call no tool.".
+6. Press Enter.
+    You hear: Done.
+7. Press Alt+2, Ctrl+End.
+8. Press Alt+1 (Message field; Navigation menu).
+
 ## Have a short exchange with Claude
 
 Starts with: Open axClaude with the folder a.
