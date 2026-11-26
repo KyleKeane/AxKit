@@ -2,7 +2,7 @@
 # axClaude, docs/axClaude/nvda-test-plan.md section 22 steps 10 and 11 (SPEC.md FR-7.10, FR-3.5; 2026-11-15): Claude
 # Code's live row of a dynamic workflow, the lowest row of its screen under the spinner and the mode line, and the row
 # "Waiting for 1 dynamic workflow to finish" after the turn. Never said, and never keeping the spinner or the mode line
-# in the conversation; the status bar counts the workflow, the start and finish sounds come as for agents, Ctrl+B says
+# in the conversation; the status bar counts the workflow, the start and finish sounds come as for agents, F8 says
 # how far it is; and with Options, Background work, Show Claude Code's live progress rows in the conversation, the rows
 # stand in the conversation and are still never said. Needs no Claude Code, no network and no model: a stand-in batch
 # file draws the rows as the user's window held them on 2026-11-15 (Claude Code 2.1.325, docs/axClaude/claude-screens.md),
@@ -37,7 +37,7 @@ refuse said axkit-design-map-and-verify
 refuse said Jitterbugging
 refuse said shift+tab
 # Goal: Hear how far a workflow is
-# The row moves on: a redraw, no sound; on demand, Ctrl+B says how far the workflow is, and F8 the status bar.
+# The row moves on: a redraw, no sound; on demand, F8 says how far the workflow is, and F9 the status bar.
 file wf\go2 x
 expect state working Jitterbugging
 wait 2500
@@ -64,7 +64,7 @@ refuse text axkit-design-map-and-verify
 refuse text auto mode on
 
 # Check: When the workflow ends, its finish sound plays and nothing runs
-# The workflow ends: one finish sound, no background part in the status bar, and Ctrl+B says nothing runs.
+# The workflow ends: one finish sound, no background part in the status bar, and F8 says nothing runs.
 file wf\go4 x
 expect said ♪ BackgroundFinish
 refuse state in the background

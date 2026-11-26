@@ -14,20 +14,20 @@ expect focus "name":"Search programs and recently closed","role":"Text","value":
 menu Test a key
 expect said ! Key test. Press any key to hear its name and what it does here. Press Escape to end.
 
-keys f8
-expect said ! F8: Say the status
+keys f9
+expect said ! F9: Say the status
 keys f5
 expect said ! F5: Refresh programs
-keys ctrl+i
-expect said ! Ctrl+I: Information
+keys f8
+expect said ! F8: Information
 keys down
 expect said ! Down: Next match
 keys enter
 expect said ! Enter: Start
 keys a
 expect said ! A: types the letter
-keys f9
-expect said ! F9: no command of this window
+keys shift+f9
+expect said ! Shift+F9: no command of this window
 # Check: Nothing is carried out during the key test
 # Nothing was carried out: the field as it was, the window on view.
 expect focus "name":"Search programs and recently closed","role":"Text","value":"windows"

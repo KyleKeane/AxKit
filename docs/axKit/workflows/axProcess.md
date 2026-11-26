@@ -13,7 +13,7 @@ Starts with: Open axProcess.
 
 ### Hear how much memory is in use
 
-1. Press Ctrl+Q (Summary; Actions menu).
+1. Press F7 (Summary; Actions menu).
     You hear: GB in use.
 
 ### Refresh the list

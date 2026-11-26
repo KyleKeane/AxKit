@@ -1,6 +1,6 @@
 # Workflow: Get back to a file closed lately
 # axStart, SPEC AS-2.5: what was closed in an axKit window is among the matches, named as the Window menu names it,
-# first in an empty field; Ctrl+I says it was recently closed; Enter opens it again in its app, a new window of
+# first in an empty field; F8 says it was recently closed; Enter opens it again in its app, a new window of
 # this run. The run's own settings: no update check.
 file home\AxKit\axDown.json {"checkForUpdates": false}
 file home\AxKit\axStart.json {"hotkey": "Ctrl+Alt+Shift+F8", "checkForUpdates": false}

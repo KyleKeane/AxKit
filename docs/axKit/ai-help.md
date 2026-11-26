@@ -40,7 +40,7 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
   the rewritten paragraph; Enter replaces the selection with it, one Ctrl+Z step; Escape keeps the text as it was.
 - In axJSON, AI, Explain this file: the answer as a notice text; Ctrl+C copies it; Escape closes it.
 - In any axKit window, Shift+F1: "Ask Claude about this window"; "how do I turn word wrap off?"; the window sends its
-  name, its keyboard shortcuts, its guide and the user's last actions, and the answer names Ctrl+Shift+W; Tab, "and in
+  name, its keyboard shortcuts, its guide and the user's last actions, and the answer names F11; Tab, "and in
   axJSON?", Enter: the same session answers again.
 - From anywhere, axHelp's hotkey (Windows+Alt+H): a field "Ask Claude"; "where did I write down the DNS settings"; the
   answer names the file, found in the folders Claude may read; Down later brings the question back with its answer.

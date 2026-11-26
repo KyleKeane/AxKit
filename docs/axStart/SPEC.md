@@ -98,7 +98,7 @@ taskbar. It works entirely offline (bundle G6).
   axit files and apps so that i can quickly get back to them"; built 2026-11-25): the bundle's Recently closed
   (AX-9.5, the same list as the Window menu's, an entry whose file is gone left out) is matched with the programs,
   each entry named as that menu names it, "notes.md (C:\notes\notes.md) - axDown". Enter opens it again in its app,
-  a new window of this program file, as the menu does; Ctrl+O opens its folder in axFile; Ctrl+I says its name and
+  a new window of this program file, as the menu does; Ctrl+O opens its folder in axFile; F8 says its name and
   "recently closed"; Ctrl+Shift+Enter says "Not for a recently closed item". The list is read with the programs, on
   every showing, off the window's thread; an opening counts no start. The field's name is "Search programs and
   recently closed".
@@ -114,13 +114,13 @@ taskbar. It works entirely offline (bundle G6).
   change, one notification says the first match and the count, "Calculator, 1 of 2", or "No programs match xyz",
   or "Reading the programs" before the first read has come back (2026-10-24, the list's one line, as Down says it);
   with an empty field nothing is said. Options → General → Say the first match while typing (on) turns this off, and
-  then Ctrl+I says it on demand.
+  then F8 says it on demand.
 - AS-3.3 **The keys in the field** (AS-D2): Down and Up move the selection one match and say it, "Notepad++, 2 of 3";
   Page Down and Page Up a page of matches; Ctrl+Home and Ctrl+End the first and the last; at an end, where nothing
   moves, the edge earcon and then the match again, "OneNote, 3 of 3" (asked 2026-10-23: with the earcon alone, the
   last thing heard was NVDA's reading of the field), and with no match the earcon and the list's one line, "No
   programs match xyz". Left, Right, Home, End, Backspace, Delete, Ctrl+Backspace, Shift with the arrows, Ctrl+A, the
-  clipboard keys and the field's own undo stay the field's. Enter starts (AS-2.3); Ctrl+I says the selected match and
+  clipboard keys and the field's own undo stay the field's. Enter starts (AS-2.3); F8 (Ctrl+I until 2026-11-26) says the selected match and
   its kind and place, "Notepad++, desktop program, C:\Program Files\Notepad++\notepad++.exe" or "Calculator, Store
   app".
 - AS-3.4 **Escape** hides the window at once, whatever the field holds (the user's ask, 2026-10-22: it first cleared
@@ -165,7 +165,7 @@ taskbar. It works entirely offline (bundle G6).
 - AS-5.2 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** Refresh programs F5 | ─ | Hide Escape |
   Quit axStart. **Actions (A)** and **Navigation (N):** one item each saying there is nothing yet. **Context (C)**, the
   program the selection is on (AX-9.11): Start Enter | Start as administrator Ctrl+Shift+Enter | Open file location
-  Ctrl+O | Information Ctrl+I. **Options (O):** Hotkey… | Text ▸ (Font… |
+  Ctrl+O | Information F8. **Options (O):** Hotkey… | Text ▸ (Font… |
   Larger text | Smaller text | Windows text size) | General ▸ (Start with Windows ✓ | Say the first match while typing
   ✓) | Developer ▸ (Open settings file). **Window (W)**, **axKit (K)** (AX-9.1).
   **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Windows resources ▸ (Keyboard shortcuts in Windows). Every
@@ -174,7 +174,7 @@ taskbar. It works entirely offline (bundle G6).
   window base's answer in a window without a document, AX-8.2), Page Up and Page Down (in the field,
   AS-3.3), Alt+F4 (hides, AS-3.4). Window-specific (`AxStartKeys`): Up, Down, Ctrl+Home, Ctrl+End (in the field,
   AS-3.3), Enter,
-  Ctrl+Shift+Enter, Ctrl+O, Ctrl+I, F5, Escape. The hotkey is a setting, not in a table; the collision test covers
+  Ctrl+Shift+Enter, Ctrl+O, F8, F5, Escape. The hotkey is a setting, not in a table; the collision test covers
   the table, and Hotkey… refuses a key of the table only when it has no Ctrl, Alt or Windows key (AS-4.2).
 - AS-5.4 Announcements, one UI Automation notification each on the field, or on the notice while one shows (AX-7.3):
   "<name>, n of m", "No programs match <text>", the edge earcon, "<name>, desktop program, <path>" / "<name>, Store

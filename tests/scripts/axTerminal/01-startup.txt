@@ -51,18 +51,6 @@ expect focus Terminal
 keys alt+1
 expect focus Command
 
-# Check: The older keys of the places still work
-# Step 2b: Ctrl+1, Ctrl+2 and Ctrl+3, the places' keys until 2026-11-16, still go there, with nothing more said.
-keys ctrl+2
-expect said → Terminal
-keys ctrl+2
-expect said ! Terminal
-keys ctrl+3
-expect focus Terminal
-keys ctrl+1
-expect said → Command
-expect focus Command
-
 # Check: The status bar holds Idle and the prompt
 # Step 3: the status bar holds "Idle" and the prompt text. The state answer is raw JSON, where a backslash is
 # doubled and ">" is written \u003E, so the prompt is matched by its ends.
@@ -70,6 +58,6 @@ expect state "status":["Idle","PS
 expect state myproject\u003E"]
 
 # Goal: Hear the state, the shell and the prompt
-# Step 4: Ctrl+Q says the state, the shell and the prompt.
+# Step 4: F7 says the state, the shell and the prompt.
 do What is running
 expect said PowerShell, PS {temp}\myproject>

@@ -289,9 +289,9 @@ expect said ! Bookmark 2, 5.
 keys m
 expect said ! Bookmark 2 removed
 wait 400
-# Ctrl+Shift+K from the message field: the focus moves to the conversation and the bookmark is added.
+# Ctrl+K from the message field: the focus moves to the conversation and the bookmark is added.
 keys alt+1
-keys ctrl+shift+k
+keys ctrl+k
 expect said ! Bookmark 3 added
 wait 400
 expect focus Conversation
@@ -337,7 +337,7 @@ said
 keys ctrl+alt+l ctrl+alt+m
 expect quiet 1000
 # Check: Shifted letters at the end of the conversation keep their own jobs
-# Step 15: Ctrl+End, Shift+I: the last input; Shift+H: the last heading. Ctrl+Shift+S, Ctrl+Shift+R keep their jobs;
+# Step 15: Ctrl+End, Shift+I: the last input; Shift+H: the last heading. Ctrl+Shift+Enter, Ctrl+Shift+R keep their jobs;
 # Ctrl+Shift+O does nothing; Ctrl+Shift+P opens the command palette.
 keys ctrl+end
 keys shift+i
@@ -345,7 +345,7 @@ expect said ! Input 3 heading level 1
 keys ctrl+end
 keys shift+h
 expect said ! Output 3 Reply from Claude heading level 1
-keys ctrl+shift+s
+keys ctrl+shift+enter
 expect said Nothing queued
 keys ctrl+shift+r
 expect state "notice":"Force Claude to restart?"

@@ -51,8 +51,8 @@ gets its page shown in place of the transcript while it holds the screen, and no
 2. A command fails: the chime and "Failed, exit code 1". Alt+3, then Ctrl+End and Up for the last lines.
 3. `git push` asks for a passphrase: after a moment of quiet, the question chime and "Asks: Enter passphrase for
    key". Actions, Send without recording sends the field's text without recording it; "Sent, not recorded". The push goes on; "Done".
-4. `npm start` runs on: lines arrive with their ticks; Ctrl+Shift+C: "Interrupt sent"; the prompt returns, "Done".
-5. Ctrl+R: the window's recent commands as a list, the newest first; Enter puts `dotnet test` back in the field, Enter
+4. `npm start` runs on: lines arrive with their ticks; Ctrl+I: "Interrupt sent"; the prompt returns, "Done".
+5. Alt+Down: the window's recent commands as a list, the newest first; Enter puts `dotnet test` back in the field, Enter
    again runs it. Or `i` in the view finds `# Input 1`, `2` twice finds `## Command`, Down, and Enter on the command line copies it into the field.
 6. `cd ..`: the title and the status bar follow the shell's directory. Alt+S, I, F: axFile on that folder; Alt+S, I,
    G: axGIT on its repository.
@@ -159,7 +159,7 @@ gets its page shown in place of the transcript while it holds the screen, and no
   which opens the New session notice): choosing one ends the shell and starts the chosen one in the current
   directory, keeping the transcript, with the system line `Switched to Git Bash in C:\path` and the shell's name
   announced; while a command runs, the notice "Switch the shell?" comes first ("Enter: Switch now. Escape: Keep it
-  running."). The title names the shell (AT-2.3) and Ctrl+Q says it while idle (AT-D8), so the shell in hand is
+  running."). The title names the shell (AT-2.3) and F7 says it while idle (AT-D8), so the shell in hand is
   always one key away. Session → **Restart shell** (Ctrl+Shift+R) ends the shell and starts the same
   one again in its current directory, keeping the transcript, after the notice "Restart the shell?" while a command
   runs ("Enter: Restart now. Escape: Keep it running."); a shell that ended restarts at once. "Restarting" is
@@ -192,7 +192,7 @@ gets its page shown in place of the transcript while it holds the screen, and no
   A user's shell starts as the custom shell
   does (no snippet, no marks unless its prompt prints them, a reminder of its own, AT-1.6b), under its own
   name in the title, the system lines (`Switched to <name> in …`, `Shell started: <name>, command line <line>, in …`),
-  Ctrl+Q and the announcement of Switch shell; the name in use is remembered (`userShellName`) for the next window.
+  F7 and the announcement of Switch shell; the name in use is remembered (`userShellName`) for the next window.
 - AT-1.6b **A command line of the user's own is agreed to as that command line** (2026-11-16, `repairs.md` R-53;
   bundle AX-11.5). The reminder before the custom shell or one of the user's shells first starts is for the name
   with the command line (`ConsentTarget.CommandLineShell`, the target "<name>, command line <line>"; the notice says
@@ -219,7 +219,7 @@ gets its page shown in place of the transcript while it holds the screen, and no
   shows its name on screen, in the place of axClaude's message field (axClaude §6.1); the status bar. A notice takes the place of the view and the field (AX-6.4); the
   recent commands list (AT-3.6) takes the field's place while it shows.
 - AT-2.2 Focus: Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6 toggle between the view and the bottom control
-  (bundle AX-8.2); Alt+1 the field, Alt+2 the view, Alt+3 the view at the latest output marker, from anywhere (Ctrl+1, Ctrl+2 and Ctrl+3, the keys until 2026-11-16, stay as further keys of the same commands for now, bundle AX-8.14), each
+  (bundle AX-8.2); Alt+1 the field, Alt+2 the view, Alt+3 the view at the latest output marker, from anywhere (Ctrl+1, Ctrl+2 and Ctrl+3, the keys until 2026-11-16, stayed as further keys until 2026-11-26, bundle AX-8.14), each
   naming the control when it has the focus already (axClaude FR-6.5, D26); while a full-screen program's screen view
   shows, they say why they wait instead (AT-9.10). The focus starts in the field and stays
   there after sending.
@@ -229,7 +229,7 @@ gets its page shown in place of the transcript while it holds the screen, and no
   folder before the first mark. The status bar's left label: `Idle`, `Running: dotnet test`, `Shell ended`,
   `Starting`; the right label: the shell's last prompt, the row's text between the `A` and `B` marks
   (`PS C:\src\myproject>`), or the full directory before the first prompt. No AccessibleName, no Spring (axClaude
-  §6.2). Ctrl+Q, from anywhere, says both with the time since the command started: "Running: dotnet test, 40 seconds,
+  §6.2). F7 (Ctrl+Q until 2026-11-26), from anywhere, says both with the time since the command started: "Running: dotnet test, 40 seconds,
   PS C:\src\myproject>" or "Idle, Windows PowerShell, PS C:\src\myproject>" (AT-D8), the shell named while idle.
 
 ### AT-3 The command field and the sending
@@ -264,13 +264,13 @@ gets its page shown in place of the transcript while it holds the screen, and no
   2026-11-14, when Ctrl+Enter became the bundle's main action, AX-8.10 rule 3, and in the command field sends the
   command exactly as Enter does): the text goes as on
   Enter, with no block, no entry in the recent commands and nothing in the log; "Sent, not recorded"; while it runs,
-  the status bar and Ctrl+Q say "a command sent without recording" in the command's place (until 2026-10-23 the
+  the status bar and F7 say "a command sent without recording" in the command's place (until 2026-10-23 the
   command itself stood there). For passphrases and tokens that a program asks for (AT-D3).
-- AT-3.5 **Keys to the shell.** Ctrl+Shift+C sends Ctrl+C, the interrupt ("Interrupt sent"; Shell → Interrupt);
+- AT-3.5 **Keys to the shell.** Ctrl+I (Ctrl+Shift+C until 2026-11-26) sends Ctrl+C, the interrupt ("Interrupt sent"; Shell → Interrupt);
   Shift+Escape sends Escape ("Escape sent"); Shell → Send key ▸ Up, Down, Ctrl+D, from the menu only. Plain Escape in
-  the field sends nothing and announces "Shift+Escape sends Escape, Ctrl+Shift+C interrupts" (axClaude D20). Nothing
+  the field sends nothing and announces "Shift+Escape sends Escape, Ctrl+I interrupts" (axClaude D20). Nothing
   else typed reaches the shell before Enter.
-- AT-3.6 **Recent commands** (Ctrl+R; Shell → Recent commands…): the window's last fifty commands, the newest first,
+- AT-3.6 **Recent commands** (Alt+Down, Ctrl+R until 2026-11-26; Shell → Recent commands…): the window's last fifty commands, the newest first,
   as a list in the field's place (`ControlArea`, axClaude D33, named "Recent commands"); Enter puts the chosen one in
   the field and focuses it, Escape brings the field back; "No recent commands" when there are none. Ctrl+Up and Ctrl+Down
   in the field go through the same list (AT-3.9). The list is the window's own and is not persisted (§7).
@@ -318,7 +318,7 @@ gets its page shown in place of the transcript while it holds the screen, and no
   the way axClaude keeps a repainted conversation, and the rows start blank), so what was read stays and what the
   shell prints next goes on at the end; a program that homes the cursor to redraw the screen, or resets the terminal
   (`ESC c`), is treated the same, and prints its redraws as new lines (the alternate screen is a non-goal).
-- AT-4.5 Bookmarks (`m`, `k`, Ctrl+Shift+K; axClaude FR-3.9), `l` (the line number), Backspace (back from a jump,
+- AT-4.5 Bookmarks (`m`, `k`, Ctrl+K; axClaude FR-3.9), `l` (the line number), Backspace (back from a jump,
   axClaude FR-3.12), the reading breaks of a line being written (axClaude FR-3.10), the selection that holds output
   back (axClaude D29), Ctrl+C "Copied", Ctrl+A, find with Ctrl+F, F3 and Shift+F3: all the view's, unchanged.
 - AT-4.6 The transcript is capped at 20 000 lines (`maxTranscriptLines`), trimmed from the top (axClaude FR-3.6).
@@ -359,15 +359,15 @@ gets its page shown in place of the transcript while it holds the screen, and no
 
 - AT-6.1 Menus, in the standard order of a first menu (AX-6): **Session (S):** New session… Ctrl+N | Open recent
   folder ▸ (ten, "1. name (path)", AX-9.5) | Open recent folder in new window ▸ (the same list, a new axTerminal window on the one chosen, this one left as it is) | Switch shell ▸ (PowerShell 7 | Windows PowerShell | Command Prompt |
-  Git Bash | the user's shells, "1. name (command line)", the shells alone, AT-1.6a) | Custom shell… | Add a shell… | Remove a shell ▸ | Install PowerShell 7… | Install Git, for Git Bash… (the installers when the shell is missing; under Switch shell until 2026-11-11, a menu three deep, AX-9.1) | ─ | Restart shell Ctrl+Shift+R | Clear transcript Ctrl+L | ─ | Say current folder Ctrl+P |
+  Git Bash | the user's shells, "1. name (command line)", the shells alone, AT-1.6a) | Custom shell… | Add a shell… | Remove a shell ▸ | Install PowerShell 7… | Install Git, for Git Bash… (the installers when the shell is missing; under Switch shell until 2026-11-11, a menu three deep, AX-9.1) | ─ | Restart shell Ctrl+Shift+R | Clear transcript Ctrl+L | ─ | Say current folder F8 |
   Show current folder in ▸ (File Explorer Ctrl+W | axClaude | axGIT | axFile), on the shell's current directory | ─ |
   Export transcript… Ctrl+S | Exit Alt+F4. **Actions (A)** ("Operations" in 5.7.0; the bundle's eight since 2026-11-11, AX-9.1):
-  Interrupt Ctrl+Shift+C | Send Escape Shift+Escape | Send key ▸ (Up | Down | Ctrl+D (end of input)) | ─ | Recent
-  commands… Ctrl+R | Send without recording (no key) | ─ | What is running Ctrl+Q.
+  Interrupt Ctrl+I | Send Escape Shift+Escape | Send key ▸ (Up | Down | Ctrl+D (end of input)) | ─ | Recent
+  commands… Alt+Down | Send without recording (no key) | ─ | What is running F7.
   **Navigation (N):** axClaude's Navigation menu with the kinds the terminal has: Command field Alt+1 | Terminal
   Alt+2 | Latest output Alt+3 | ─ | Find… Ctrl+F | Find next F3 | Find previous Shift+F3 | ─ | Next bookmark |
   Previous bookmark (the other quick keys are the terminal's letters, named in the F1 text). **Context (C)** (AX-9.11): Copy
-  this line into the command field (Enter in the terminal) | Bookmark this line Ctrl+Shift+K | Copy the selection; Shift+F10,
+  this line into the command field (Enter in the terminal) | Bookmark this line Ctrl+K | Copy the selection; Shift+F10,
   the Applications key and a right click in the terminal or the field open it. **Options (O):** Sounds ▸ (Chimes ✓ | Ticks for new lines ✓ |
   Background music while a command runs Ctrl+M) | Speech ▸ (Speak output: none ○ | Speak output: all lines ○ |
   ─ | Say when a program asks ✓) | When a command is done ▸ (Flash the taskbar button ✓ | Louder alert when the window
@@ -379,11 +379,11 @@ gets its page shown in place of the transcript while it holds the screen, and no
   is about; Shell takes E, S being Session's.
 - AT-6.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P (the command palette, AX-10), the control keys, Ctrl+F, F3,
   Shift+F3, Ctrl+S, Ctrl+Plus, Ctrl+Minus, Page Up, Page Down, Ctrl+Up and Ctrl+Down with Shift, Ctrl+Space (edit mode or navigation mode in the command field, and in the terminal "Read only: there is no edit mode here", AX-8.13; in navigation mode Ctrl+Up and Ctrl+Down go by paragraph in the field, not through the history, and Enter sends nothing; in a full-screen program's screen view, keys to the program or reading the screen, AT-9.3), Alt+F4. Window-specific (`AxTerminalKeys`): Ctrl+N, Ctrl+Shift+R,
-  Ctrl+L, Ctrl+W, Alt+1, Alt+2, Alt+3 (with Ctrl+1, Ctrl+2, Ctrl+3 as their further keys), Ctrl+Shift+C, Shift+Escape, Ctrl+R, Ctrl+Q, Ctrl+P, Ctrl+M, Ctrl+Shift+K; in
+  Ctrl+L, Ctrl+W, Alt+1, Alt+2, Alt+3, Ctrl+I, Shift+Escape, Alt+Down, F8, Ctrl+M, Ctrl+K, with the bundle's F7 as What is running; in
   the field Enter, Shift+Enter, Escape (Ctrl+Enter there is the bundle's main action, AX-8.10: it sends as Enter does); in the view the quick keys `i`, `o`, `h`, `1` to `6`, `p`, `s`,
   `k` with Shift, `m`, `l`, Enter, Escape, Backspace, and Ctrl+Alt with `i`, `o`, `h`, `p`, `s`, `k`. axClaude's `c`,
   `t`, `d`, `e`, `q` and `r` have no kind here and do nothing. The collision test covers the table and lists the keys
-  axClaude uses otherwise (Ctrl+N, Ctrl+R, Ctrl+L).
+  axClaude uses otherwise (Ctrl+N, Ctrl+L).
 - AT-6.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axTerminal/user-guide.md` is embedded (Help → User
   guide); About is the bundle's (AX-9.9).
 
@@ -391,11 +391,11 @@ gets its page shown in place of the transcript while it holds the screen, and no
 
 One UI Automation notification each, on the view, or on the notice or the list while one shows (AX-7.3): "Sent",
 "Sent, not recorded", "Done", "Failed, exit code n", "Failed", "Ready", "Asks: <row>", "Interrupt sent", "Escape
-sent", "Line copied", "No recent commands", "Shift+Escape sends Escape, Ctrl+Shift+C interrupts", "The shell ended",
+sent", "Line copied", "No recent commands", "Shift+Escape sends Escape, Ctrl+I interrupts", "The shell ended",
 "The shell ended. Ctrl+Shift+R starts it again", "Restarting", "New session in <folder>", the shell's name on Switch shell, "Cleared", "Exported",
 "Copied", "Not found", "Line n of m", "Bookmark n added" and "Bookmark n removed", "Line gone", "No next input" and
 the other jump results with the kind's name, "Command", "Terminal" and the other names when the control already has
-the focus, "Running: …", "Idle, …", "Shell ended" and "No marks from this shell" on Ctrl+Q, the folder's full path on Ctrl+P, "Up sent", "Down sent"
+the focus, "Running: …", "Idle, …", "Shell ended" and "No marks from this shell" on F7, the folder's full path on F8, "Up sent", "Down sent"
 and "Ctrl+D sent" (the Send key menu), "Folder <name>" (a recent folder), "Folder missing", "Speak output: none" and
 "Speak output: all lines" (the choice made), "Background music on" and "off" (axClaude FR-7.9), "Text size n",
 "Windows text size", "Copied diagnostics", "Recording started" and "Recording stopped" (the system lines name the
@@ -524,7 +524,7 @@ read as `edit` still waiting for the colours' answers (to measure first, AT-9.7)
 - AT-9.10 **What the first build left, done** (2026-11-25).
   - **The places and find while the view shows.** The command field, the terminal and the latest output are behind
     the screen, which is the window's one place while a program holds it (AX-8.14 names a window's places; none of
-    the three can be reached). In reading the screen, Alt+1, Alt+2 and Alt+3 (with Ctrl+1, Ctrl+2 and Ctrl+3), and
+    the three can be reached). In reading the screen, Alt+1, Alt+2 and Alt+3, and
     their Navigation items from either way, move nothing and say where the focus is and when the places come back:
     "Screen of edit. The terminal and the command field come back when edit leaves the whole screen" (in keys to the
     program the keys are the program's, AT-9.3, and only the menu items say it). Find, Find next and Find previous
@@ -626,7 +626,7 @@ its notes record what moved.
 - **AT-D4 Enter on a line copies the bare line.** axClaude's quote markers exist so that Claude can tell the quoted
   line from the comment; a shell wants the command itself, to run or edit it.
 - **AT-D5 No history on the arrows.** The bundle's rule (axClaude D13: text appearing in a field on an arrow key
-  confuses the reading) holds; Ctrl+R's list and `i` in the view are the history, on demand.
+  confuses the reading) holds; the Recent commands list (Alt+Down) and `i` in the view are the history, on demand.
 - **AT-D6 Shared by moving, one piece per commit.** The ConPTY host, the parser, the screen and the mirror are
   axClaude's best-tested code, and the second use is the moment the bundle's rule names (B-3). The one seam,
   `LineStore`, is the smallest cut that frees `Screen` from `SessionModel`; the terminal's own model is written
@@ -636,7 +636,7 @@ its notes record what moved.
   of lines of the transcript to find, export and read again; `GIT_PAGER=cat` and
   `GH_PAGER=cat` are the settings those two programs document for switching theirs off, and the user's profile can set
   them otherwise. Other pagers are left alone (`q` and Enter leave them).
-- **AT-D8 Ctrl+Q says what the window is doing.** On demand, from anywhere, like axClaude's Ctrl+Q for a question:
+- **AT-D8 F7 says what the window is doing** (Ctrl+Q until 2026-11-26). On demand, from anywhere, like axClaude's F7 for a question:
   the state, the command, how long, the prompt.
 - **AT-D10 The prompt rows are kept by line, not by row number** (2026-10-23). The marks arrive mid-frame while rows
   are still being written, and the screen scrolls between an `A` and its `B` and between a send and the output: a row
@@ -649,7 +649,7 @@ its notes record what moved.
   transcript itself: the prompt rows that would say it are hidden, a `cd` between two commands leaves the output's
   place unknown when the text is read back or exported, and the status bar only has the directory of now. A `## Folder`
   heading with the path under it and a `## Command` heading over the command give the block the shape of a small
-  document, which the heading keys walk and the export keeps; Ctrl+P (Session → Say current folder) says the directory of now, the full path, on
+  document, which the heading keys walk and the export keeps; F8 (Session → Say current folder; Ctrl+P until 2026-11-26) says the directory of now, the full path, on
   demand.
 
 ## 7. Open questions

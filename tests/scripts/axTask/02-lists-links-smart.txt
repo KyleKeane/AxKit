@@ -23,7 +23,7 @@ keys down
 expect focus Fields of its items: Done, Due, Waits on
 
 # Goal: Write notes of several lines
-# 2.4 A long text of two lines: the field takes Enter as a new line; Save keeps it; Ctrl+Q reads both lines.
+# 2.4 A long text of two lines: the field takes Enter as a new line; Save keeps it; F7 reads both lines.
 keys up
 keys enter
 type First line

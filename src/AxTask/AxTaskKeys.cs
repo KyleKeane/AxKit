@@ -12,10 +12,11 @@ public static class AxTaskKeys
 {
     public const Keys OpenInAxJson = Keys.Control | Keys.J;
     public const Keys ShowInAxFile = Keys.Control | Keys.E;
-    public const Keys HideDone = Keys.Control | Keys.Shift | Keys.D;
+    /// <summary>Hide or show the done tasks: H for hide (AX-8.18 rule 2; Ctrl+Shift+D until 2026-11-26).</summary>
+    public const Keys HideDone = Keys.Control | Keys.H;
 
-    /// <summary>All tasks; Ctrl+0 since the digits 1 to 9 became the list's action keys (docs/axKit/reports.md RP-8.4, 2026-11-07).</summary>
-    public const Keys AllTasks = Keys.Control | Keys.D0;
+    /// <summary>All tasks, a place of the window: Alt+0 (AX-8.18 rule 4, 2026-11-26); Ctrl+0 from 2026-11-07, when the digits 1 to 9 became the list's action keys (docs/axKit/reports.md RP-8.4), until then.</summary>
+    public const Keys AllTasks = Keys.Alt | Keys.D0;
 
     /// <summary>Words found in every list, the user's own and every project's (TK-7b.4).</summary>
     public const Keys FindEverywhere = Keys.Control | Keys.Shift | Keys.F;

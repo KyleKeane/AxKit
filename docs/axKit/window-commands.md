@@ -20,6 +20,8 @@ every window" or under a heading that names the windows without it; under an app
 ## In every window but axClip and axPass
 
 - Check for updates at start. Menu: axKit. Key: none. Mark: act.
+- Edit app keys file. Menu: axKit. Key: none. Mark: open.
+- Keep a log of events. Menu: axKit. Key: none. Mark: change.
 - Open the sounds folder. Menu: axKit. Key: none. Mark: open.
 - axClaude, access layer for Claude Code. Menu: axKit, Access layers. Key: Ctrl+Shift+F5. Mark: act.
 - axGIT, access layer for Git. Menu: axKit, Access layers. Key: Ctrl+Shift+F2. Mark: open.
@@ -67,7 +69,7 @@ every window" or under a heading that names the windows without it; under an app
 - Sound on headings. Menu: Options, Text. Key: none. Mark: change.
 - Windows text size. Menu: Options, Text. Key: none. Mark: change.
 - Close all windows. Menu: Window. Key: none. Mark: act.
-- Say the status. Menu: Window. Key: F8. Mark: read.
+- Say the status. Menu: Window. Key: F9. Mark: read.
 
 ## In every window but axClip, axHelp, axPass and axStart
 
@@ -76,11 +78,11 @@ every window" or under a heading that names the windows without it; under an app
 ## axAutomate
 
 - Deselect all. Menu: Actions. Key: Ctrl+Shift+A. Also: Escape. Mark: change.
-- Run. Menu: Actions. Key: F5. Mark: act.
+- Run. Menu: Actions. Key: Ctrl+R. Mark: act.
 - Select all. Menu: Actions. Key: Ctrl+A. Mark: change.
-- The last run's report. Menu: Actions. Key: Ctrl+R. Mark: read.
+- The last run's report. Menu: Actions. Key: F8. Mark: read.
 - Open. Menu: Context. Key: Enter. Mark: open.
-- Read in full. Menu: Context. Key: Ctrl+Q. Mark: read.
+- Read in full. Menu: Context. Key: F7. Mark: read.
 - Select or deselect. Menu: Context. Key: Space. Mark: change.
 - Select to here. Menu: Context. Key: Shift+Space. Mark: change.
 - The workflow's file as text. Menu: Context. Key: Ctrl+J. Mark: open.
@@ -90,10 +92,10 @@ every window" or under a heading that names the windows without it; under an app
 - Name. Menu: Options, Sort by. Key: none. Mark: change.
 - The list's own order. Menu: Options, Sort by. Key: none. Mark: change.
 - Open a folder of workflows. Menu: Session. Key: Ctrl+O. Mark: open.
-- Refresh. Menu: Session. Key: none. Mark: read.
+- Refresh. Menu: Session. Key: F5. Mark: read.
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
 - Check the field. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
-- Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
+- Clear the filter. Menu: none, a key alone. Key: Ctrl+Delete. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
@@ -121,16 +123,16 @@ every window" or under a heading that names the windows without it; under an app
 ## axCalc
 
 - Answer. Menu: Actions. Key: Enter. Mark: read.
-- Answer in other bases. Menu: Actions. Key: Ctrl+I. Mark: read.
+- Answer in other bases. Menu: Actions. Key: F8. Mark: read.
 - Clear history. Menu: Actions. Key: Ctrl+Shift+Delete. Mark: act.
 - Clear variables. Menu: Actions. Key: none. Mark: change.
 - Copy answer. Menu: Actions. Key: Ctrl+Shift+C. Mark: act.
-- Say the last answer. Menu: Actions. Key: Ctrl+Q. Mark: read.
+- Say the last answer. Menu: Actions. Key: F7. Mark: read.
 - Variables. Menu: Actions. Key: none. Mark: open.
 - Binary. Menu: Actions, Copy answer in. Key: none. Mark: act.
 - Hexadecimal. Menu: Actions, Copy answer in. Key: none. Mark: act.
 - Octal. Menu: Actions, Copy answer in. Key: none. Mark: act.
-- Bookmark this line. Menu: Context. Key: Ctrl+Shift+K, or M in the history. Mark: change.
+- Bookmark this line. Menu: Context. Key: Ctrl+K, or M in the history. Mark: change.
 - Copy the selection. Menu: Context. Key: Ctrl+C in the history. Mark: act.
 - Take this line's expression into the field. Menu: Context. Key: Enter in the history. Mark: change.
 - Floating point explained. Menu: Help, Calculator resources. Key: none. Mark: act.
@@ -143,7 +145,7 @@ every window" or under a heading that names the windows without it; under an app
 - Degrees. Menu: Options, Angles. Key: none. Mark: change.
 - Radians. Menu: Options, Angles. Key: none. Mark: change.
 - Save history. Menu: Session. Key: Ctrl+S. Mark: change.
-- Clear the field. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
+- Clear the field. Menu: none, a key alone. Key: Ctrl+Delete. Mark: change. Never run by AI tools.
 - Switch between the view and the field. Menu: none, a key alone. Key: Tab. Also: Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
 
 ## axClaude
@@ -151,19 +153,19 @@ every window" or under a heading that names the windows without it; under an app
 - Choose the effort. Menu: Actions. Key: none. Mark: act.
 - Choose the model. Menu: Actions. Key: none. Mark: act.
 - Force Claude to restart. Menu: Actions. Key: Ctrl+Shift+R. Mark: act.
-- Interrupt. Menu: Actions. Key: Shift+Escape. Mark: act.
-- Next permission mode. Menu: Actions. Key: Ctrl+Shift+M. Mark: act.
+- Interrupt. Menu: Actions. Key: Ctrl+I. Mark: act.
+- Next permission mode. Menu: Actions. Key: Ctrl+P. Mark: act.
 - Send message. Menu: Actions. Key: Enter in the message field. Mark: act.
-- Send queued messages now. Menu: Actions. Key: Ctrl+Shift+S. Mark: act.
-- What runs in the background. Menu: Actions. Key: Ctrl+B. Mark: read.
-- Ctrl+C. Menu: Actions, Send key. Key: Ctrl+Shift+C. Mark: act.
+- Send queued messages now. Menu: Actions. Key: Ctrl+Shift+Enter. Mark: act.
+- What runs in the background. Menu: Actions. Key: F8. Mark: read.
+- Ctrl+C. Menu: Actions, Send key. Key: none. Mark: act.
 - Ctrl+D. Menu: Actions, Send key. Key: none. Mark: act.
 - Down. Menu: Actions, Send key. Key: none. Mark: act.
 - Shift+Down. Menu: Actions, Send key. Key: none. Mark: act.
 - Shift+Up. Menu: Actions, Send key. Key: none. Mark: act.
 - Tab. Menu: Actions, Send key. Key: none. Mark: act.
 - Up. Menu: Actions, Send key. Key: none. Mark: act.
-- Bookmark this line. Menu: Context. Key: Ctrl+Shift+K, or M in the conversation. Mark: change.
+- Bookmark this line. Menu: Context. Key: Ctrl+K, or M in the conversation. Mark: change.
 - Copy the selection. Menu: Context. Key: Ctrl+C in the conversation. Mark: act.
 - Quote this line in the message. Menu: Context. Key: Enter in the conversation. Mark: change.
 - Command line. Menu: Help, Claude Code resources. Key: none. Mark: act.
@@ -171,13 +173,13 @@ every window" or under a heading that names the windows without it; under an app
 - Install or update Claude Code. Menu: Help, Claude Code resources. Key: none. Mark: act.
 - Keys. Menu: Help, Claude Code resources. Key: none. Mark: act.
 - Slash commands. Menu: Help, Claude Code resources. Key: none. Mark: act.
-- Claude's question again. Menu: Navigation. Key: Ctrl+Q. Mark: read.
-- Conversation. Menu: Navigation. Key: Alt+2. Also: Ctrl+2. Mark: open.
+- Claude's question again. Menu: Navigation. Key: F7. Mark: read.
+- Conversation. Menu: Navigation. Key: Alt+2. Mark: open.
 - Find. Menu: Navigation. Key: Ctrl+F. Mark: read.
 - Find next. Menu: Navigation. Key: F3. Mark: read.
 - Find previous. Menu: Navigation. Key: Shift+F3. Mark: read.
-- Latest response. Menu: Navigation. Key: Alt+3. Also: Ctrl+3. Mark: open.
-- Message field. Menu: Navigation. Key: Alt+1. Also: Ctrl+1. Mark: open.
+- Latest response. Menu: Navigation. Key: Alt+3. Mark: open.
+- Message field. Menu: Navigation. Key: Alt+1. Mark: open.
 - Next bookmark. Menu: Navigation. Key: K in the conversation. Mark: open.
 - Previous bookmark. Menu: Navigation. Key: Shift+K in the conversation. Mark: open.
 - "Claude goes on by itself" when a turn starts that you did not send. Menu: Options, Announcements. Key: none. Mark: change.
@@ -242,6 +244,8 @@ every window" or under a heading that names the windows without it; under an app
 
 - Clear history. Menu: Actions. Key: Ctrl+Shift+Delete. Mark: act. Never run by AI tools.
 - Check for updates at start. Menu: axKit. Key: none. Mark: act. Never run by AI tools.
+- Edit app keys file. Menu: axKit. Key: none. Mark: open. Never run by AI tools.
+- Keep a log of events. Menu: axKit. Key: none. Mark: change. Never run by AI tools.
 - Open the sounds folder. Menu: axKit. Key: none. Mark: open. Never run by AI tools.
 - axClaude, access layer for Claude Code. Menu: axKit, Access layers. Key: Ctrl+Shift+F5. Mark: act. Never run by AI tools.
 - axGIT, access layer for Git. Menu: axKit, Access layers. Key: Ctrl+Shift+F2. Mark: open. Never run by AI tools.
@@ -268,7 +272,7 @@ every window" or under a heading that names the windows without it; under an app
 - Theme on. Menu: axKit, Theme. Key: none. Mark: change. Never run by AI tools.
 - Copy without pasting. Menu: Context. Key: Shift+Enter. Mark: act. Never run by AI tools.
 - Paste. Menu: Context. Key: Enter. Mark: act. Never run by AI tools.
-- Read in full. Menu: Context. Key: Ctrl+Q. Mark: read. Never run by AI tools.
+- Read in full. Menu: Context. Key: F7. Mark: read. Never run by AI tools.
 - Remove. Menu: Context. Key: Delete. Mark: change. Never run by AI tools.
 - Command palette. Menu: Help. Key: Ctrl+Shift+P. Mark: read. Never run by AI tools.
 - Keyboard shortcuts. Menu: Help. Key: F1. Mark: read. Never run by AI tools.
@@ -302,7 +306,7 @@ every window" or under a heading that names the windows without it; under an app
 - Hide. Menu: Session. Key: Escape. Mark: change. Never run by AI tools.
 - Quit axClip. Menu: Session. Key: none. Mark: act. Never run by AI tools.
 - Close all windows. Menu: Window. Key: none. Mark: act. Never run by AI tools.
-- Say the status. Menu: Window. Key: F8. Mark: read. Never run by AI tools.
+- Say the status. Menu: Window. Key: F9. Mark: read. Never run by AI tools.
 - First match. Menu: none, a key alone. Key: Ctrl+Home. Mark: read. Never run by AI tools.
 - Last match. Menu: none, a key alone. Key: Ctrl+End. Mark: read. Never run by AI tools.
 - Next match. Menu: none, a key alone. Key: Down. Mark: read. Never run by AI tools.
@@ -340,7 +344,7 @@ every window" or under a heading that names the windows without it; under an app
 - Find first. Menu: Navigation. Key: none. Mark: read.
 - Find next. Menu: Navigation. Key: F3. Mark: read.
 - Find previous. Menu: Navigation. Key: Shift+F3. Mark: read.
-- Go to line. Menu: Navigation. Key: Ctrl+G. Mark: read.
+- Go to line. Menu: Navigation. Key: F12. Mark: read.
 - Block quote. Menu: Navigation, Next. Key: Ctrl+Q. Mark: read.
 - Heading. Menu: Navigation, Next. Key: Ctrl+H. Mark: read.
 - Heading level 1. Menu: Navigation, Next. Key: Ctrl+1. Mark: read.
@@ -366,7 +370,7 @@ every window" or under a heading that names the windows without it; under an app
 - List item. Menu: Navigation, Previous. Key: Ctrl+Shift+I. Mark: read.
 - Table. Menu: Navigation, Previous. Key: Ctrl+Shift+T. Mark: read.
 - Templates in axTemplate. Menu: Options, General. Key: none. Mark: open.
-- Word wrap. Menu: Options, Text. Key: Ctrl+Shift+W. Mark: change.
+- Word wrap. Menu: Options, Text. Key: F11. Mark: change.
 - New. Menu: Session. Key: Ctrl+N. Mark: change.
 - New window. Menu: Session. Key: Ctrl+Shift+N. Mark: open.
 - Open. Menu: Session. Key: Ctrl+O. Mark: open.
@@ -385,19 +389,19 @@ every window" or under a heading that names the windows without it; under an app
 - New folder. Menu: Actions. Key: Ctrl+Shift+N. Mark: act.
 - New JSON file. Menu: Actions. Key: none. Mark: act.
 - New Markdown file. Menu: Actions. Key: none. Mark: act.
-- New text file. Menu: Actions. Key: Ctrl+Shift+T. Mark: act.
+- New text file. Menu: Actions. Key: Ctrl+T. Mark: act.
 - Paste. Menu: Actions. Key: Ctrl+V. Mark: act.
 - Recent operations. Menu: Actions. Key: none. Mark: read.
 - Select all. Menu: Actions. Key: Ctrl+A. Mark: change.
 - Undo. Menu: Actions. Key: Ctrl+Z. Mark: act.
-- Add to axMedia's queue. Menu: Context. Key: Ctrl+Shift+Q. Mark: open.
+- Add to axMedia's queue. Menu: Context. Key: Ctrl+Q. Mark: open.
 - Compress to zip. Menu: Context. Key: none. Mark: act.
 - Copy. Menu: Context. Key: Ctrl+C. Mark: act.
 - Copy path. Menu: Context. Key: Ctrl+Shift+C. Mark: act.
 - Cut. Menu: Context. Key: Ctrl+X. Mark: act.
 - Delete. Menu: Context. Key: Delete. Mark: act.
 - Extract here. Menu: Context. Key: none. Mark: act.
-- Information. Menu: Context. Key: Ctrl+I. Mark: read.
+- Information. Menu: Context. Key: F8. Mark: read.
 - Move to folder. Menu: Context. Key: none. Mark: act.
 - Open. Menu: Context. Key: Enter. Mark: act.
 - Play folder in axMedia. Menu: Context. Key: Ctrl+Enter. Mark: open.
@@ -418,7 +422,7 @@ every window" or under a heading that names the windows without it; under an app
 - axMedia. Menu: Context, Open with axKit apps. Key: none. Mark: open.
 - axPreview. Menu: Context, Open with axKit apps. Key: none. Mark: open.
 - axTask. Menu: Context, Open with axKit apps. Key: none. Mark: open.
-- Add to axMedia's queue. Menu: Context, Selection. Key: Ctrl+Shift+Q. Mark: act.
+- Add to axMedia's queue. Menu: Context, Selection. Key: Ctrl+Q. Mark: act.
 - Compress to zip. Menu: Context, Selection. Key: none. Mark: act.
 - Copy. Menu: Context, Selection. Key: Ctrl+C. Mark: act.
 - Copy paths. Menu: Context, Selection. Key: Ctrl+Shift+C. Mark: act.
@@ -428,9 +432,9 @@ every window" or under a heading that names the windows without it; under an app
 - Select or deselect this entry. Menu: Context, Selection. Key: Space. Mark: change.
 - Select to here. Menu: Context, Selection. Key: Shift+Space. Mark: change.
 - Keyboard shortcuts in Windows. Menu: Help, File resources. Key: none. Mark: act.
-- Go to folder. Menu: Navigation. Key: Ctrl+G. Also: Alt+D. Mark: open.
+- Go to folder. Menu: Navigation. Key: F12. Mark: open.
 - The Favorites list. Menu: Navigation. Key: none. Mark: open.
-- Up one level. Menu: Navigation. Key: Backspace. Also: Alt+Up. Mark: open.
+- Up one level. Menu: Navigation. Key: Backspace. Mark: open.
 - Add or remove this folder. Menu: Navigation, Favorites. Key: Ctrl+D. Mark: change.
 - Add a program to Open with. Menu: Options. Key: none. Mark: change.
 - Filter. Menu: Options. Key: none. Mark: change.
@@ -447,7 +451,7 @@ every window" or under a heading that names the windows without it; under an app
 - axTerminal, access layer for your shell. Menu: Session, Show current folder in. Key: none. Mark: act.
 - File Explorer. Menu: Session, Show current folder in. Key: Ctrl+W. Mark: open.
 - Add to or remove from Favorites. Menu: none, a key alone. Key: Ctrl+D. Mark: change. Never run by AI tools.
-- Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
+- Clear the filter. Menu: none, a key alone. Key: Ctrl+Delete. Mark: change. Never run by AI tools.
 - Find. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
 - Find previous. Menu: none, a key alone. Key: Shift+F3. Mark: read. Never run by AI tools.
@@ -462,7 +466,7 @@ every window" or under a heading that names the windows without it; under an app
 - Show the folder in File Explorer. Menu: none, a key alone. Key: Ctrl+W. Mark: open. Never run by AI tools.
 - Switch between the list and the Favorites list. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
 - The Context menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
-- The favorite's folder. Menu: none, a key alone. Key: Ctrl+I. Mark: read. Never run by AI tools.
+- The favorite's folder. Menu: none, a key alone. Key: F8. Mark: read. Never run by AI tools.
 - The line's menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
 - To the Favorites list. Menu: none, a key alone. Key: Tab. Also: Shift+Tab. Mark: open. Never run by AI tools.
 - To the list. Menu: none, a key alone. Key: Tab. Also: Shift+Tab, Escape. Mark: open. Never run by AI tools.
@@ -472,10 +476,10 @@ every window" or under a heading that names the windows without it; under an app
 
 - Commit. Menu: Actions. Key: Ctrl+Enter. Mark: act.
 - Deselect all. Menu: Actions. Key: Ctrl+Shift+A. Also: Escape. Mark: change.
-- Fetch. Menu: Actions. Key: Ctrl+Shift+F. Mark: act.
+- Fetch. Menu: Actions. Key: Ctrl+R. Mark: act.
 - New branch. Menu: Actions. Key: Ctrl+N. Mark: act.
-- Pull. Menu: Actions. Key: Ctrl+Shift+L. Mark: act.
-- Push. Menu: Actions. Key: Ctrl+Shift+H. Mark: act.
+- Pull. Menu: Actions. Key: Ctrl+L. Mark: act.
+- Push. Menu: Actions. Key: Ctrl+P. Mark: act.
 - Select all files. Menu: Actions. Key: Ctrl+A. Mark: change.
 - Stage. Menu: Actions. Key: Ctrl+Shift+S. Mark: act.
 - Stage all. Menu: Actions. Key: none. Mark: act.
@@ -490,9 +494,9 @@ every window" or under a heading that names the windows without it; under an app
 - Unstage. Menu: Context. Key: Ctrl+Shift+U. Mark: act.
 - git-scm.com. Menu: Help, Git resources. Key: none. Mark: act.
 - Pro Git, the book. Menu: Help, Git resources. Key: none. Mark: act.
-- Branches. Menu: Navigation. Key: Alt+3. Also: Ctrl+3. Mark: open.
-- Changes. Menu: Navigation. Key: Alt+1. Also: Ctrl+1. Mark: open.
-- Log. Menu: Navigation. Key: Alt+2. Also: Ctrl+2. Mark: open.
+- Branches. Menu: Navigation. Key: Alt+3. Mark: open.
+- Changes. Menu: Navigation. Key: Alt+1. Mark: open.
+- Log. Menu: Navigation. Key: Alt+2. Mark: open.
 - Up to the repository. Menu: Navigation. Key: Left. Mark: open.
 - Filter. Menu: Options. Key: none. Mark: change.
 - Name. Menu: Options, Sort by. Key: none. Mark: change.
@@ -503,7 +507,7 @@ every window" or under a heading that names the windows without it; under an app
 - axFile. Menu: Session, Show current repository in. Key: none. Mark: open.
 - axTerminal, access layer for your shell. Menu: Session, Show current repository in. Key: none. Mark: act.
 - File Explorer. Menu: Session, Show current repository in. Key: Ctrl+W. Mark: open.
-- Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
+- Clear the filter. Menu: none, a key alone. Key: Ctrl+Delete. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find in the text. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
@@ -548,7 +552,7 @@ every window" or under a heading that names the windows without it; under an app
 
 - Add a member. Menu: Actions. Key: Alt+Left. Mark: change.
 - Choose a value. Menu: Actions. Key: Alt+Right. Mark: change.
-- Format. Menu: Actions. Key: Ctrl+Shift+F. Mark: change.
+- Format. Menu: Actions. Key: Ctrl+R. Mark: change.
 - Next value. Menu: Actions. Key: Alt+Down. Mark: change.
 - Previous value. Menu: Actions. Key: Alt+Up. Mark: change.
 - Redo. Menu: Actions. Key: Ctrl+Y. Also: Ctrl+Shift+Z. Mark: change.
@@ -563,7 +567,7 @@ every window" or under a heading that names the windows without it; under an app
 - Find first. Menu: Navigation. Key: none. Mark: read.
 - Find next. Menu: Navigation. Key: F3. Mark: read.
 - Find previous. Menu: Navigation. Key: Shift+F3. Mark: read.
-- Go to line. Menu: Navigation. Key: Ctrl+G. Mark: read.
+- Go to line. Menu: Navigation. Key: F12. Mark: read.
 - Array. Menu: Navigation, Next. Key: Ctrl+L. Mark: read.
 - Error. Menu: Navigation, Next. Key: Ctrl+E. Mark: read.
 - Item. Menu: Navigation, Next. Key: Ctrl+I. Mark: read.
@@ -575,7 +579,7 @@ every window" or under a heading that names the windows without it; under an app
 - Key. Menu: Navigation, Previous. Key: Ctrl+Shift+K. Mark: read.
 - Object. Menu: Navigation, Previous. Key: Ctrl+Shift+J. Mark: read.
 - Templates in axTemplate. Menu: Options, General. Key: none. Mark: open.
-- Word wrap. Menu: Options, Text. Key: Ctrl+Shift+W. Mark: change.
+- Word wrap. Menu: Options, Text. Key: F11. Mark: change.
 - New. Menu: Session. Key: Ctrl+N. Mark: change.
 - New window. Menu: Session. Key: Ctrl+Shift+N. Mark: open.
 - Open. Menu: Session. Key: Ctrl+O. Mark: open.
@@ -604,7 +608,7 @@ every window" or under a heading that names the windows without it; under an app
 - Refresh. Menu: Session. Key: F5. Mark: read.
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
 - Check the field. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
-- Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
+- Clear the filter. Menu: none, a key alone. Key: Ctrl+Delete. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
@@ -615,7 +619,7 @@ every window" or under a heading that names the windows without it; under an app
 - Next section. Menu: none, a key alone. Key: Ctrl+Down. Mark: open. Never run by AI tools.
 - Open. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
 - Previous section. Menu: none, a key alone. Key: Ctrl+Up. Mark: open. Never run by AI tools.
-- Read in full. Menu: none, a key alone. Key: Ctrl+Q. Mark: read. Never run by AI tools.
+- Read in full. Menu: none, a key alone. Key: F7. Mark: read. Never run by AI tools.
 - Read the resource. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
 - Rename. Menu: none, a key alone. Key: F2. Mark: change. Never run by AI tools.
 - Select all. Menu: none, a key alone. Key: Ctrl+A. Mark: change. Never run by AI tools.
@@ -638,17 +642,17 @@ every window" or under a heading that names the windows without it; under an app
 
 - Back 15 seconds. Menu: Actions. Key: Ctrl+Left. Mark: open.
 - Deselect all. Menu: Actions. Key: Ctrl+Shift+A. Also: Escape. Mark: change.
-- Faster. Menu: Actions. Key: Ctrl+Up. Mark: change.
+- Faster. Menu: Actions. Key: Alt+Up. Mark: change.
 - Forward 15 seconds. Menu: Actions. Key: Ctrl+Right. Mark: open.
 - Normal speed. Menu: Actions. Key: none. Mark: change.
 - Play, pause or resume. Menu: Actions. Key: Ctrl+Enter. Mark: open.
 - Select all. Menu: Actions. Key: Ctrl+A. Mark: change.
-- Slower. Menu: Actions. Key: Ctrl+Down. Mark: change.
-- What is playing. Menu: Actions. Key: Ctrl+Q. Mark: read.
+- Slower. Menu: Actions. Key: Alt+Down. Mark: change.
+- What is playing. Menu: Actions. Key: F7. Mark: read.
 - Queue is empty. Menu: Context. Key: none. Mark: read.
 - Formats Windows plays, at Microsoft. Menu: Help, Media resources. Key: none. Mark: act.
 - Free codecs in the Microsoft Store. Menu: Help, Media resources. Key: none. Mark: act.
-- Go to time. Menu: Navigation. Key: Ctrl+T. Mark: open.
+- Go to time. Menu: Navigation. Key: F12. Mark: open.
 - Next file. Menu: Navigation. Key: Ctrl+Shift+Right. Mark: open.
 - Previous file. Menu: Navigation. Key: Ctrl+Shift+Left. Mark: open.
 - Filter. Menu: Options. Key: none. Mark: change.
@@ -665,13 +669,15 @@ every window" or under a heading that names the windows without it; under an app
 - axTerminal, access layer for your shell. Menu: Session, Show current file in. Key: none. Mark: act.
 - File Explorer. Menu: Session, Show current file in. Key: Ctrl+W. Mark: open.
 - Back to the list. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
-- Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
+- Clear the filter. Menu: none, a key alone. Key: Ctrl+Delete. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
 - Find previous. Menu: none, a key alone. Key: Shift+F3. Mark: read. Never run by AI tools.
 - Into the list. Menu: none, a key alone. Key: Right. Mark: open. Never run by AI tools.
+- Next section. Menu: none, a key alone. Key: Ctrl+Down. Mark: open. Never run by AI tools.
 - Open. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
+- Previous section. Menu: none, a key alone. Key: Ctrl+Up. Mark: open. Never run by AI tools.
 - Select or deselect. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
 - Select to here. Menu: none, a key alone. Key: Shift+Space. Mark: change. Never run by AI tools.
 - Select to the first file. Menu: none, a key alone. Key: Shift+Home. Mark: change. Never run by AI tools.
@@ -690,6 +696,8 @@ every window" or under a heading that names the windows without it; under an app
 - Select all entries. Menu: Actions. Key: Ctrl+A. Mark: change. Never run by AI tools.
 - Undo. Menu: Actions. Key: Ctrl+Z. Mark: change. Never run by AI tools.
 - Check for updates at start. Menu: axKit. Key: none. Mark: act. Never run by AI tools.
+- Edit app keys file. Menu: axKit. Key: none. Mark: open. Never run by AI tools.
+- Keep a log of events. Menu: axKit. Key: none. Mark: change. Never run by AI tools.
 - Open the sounds folder. Menu: axKit. Key: none. Mark: open. Never run by AI tools.
 - axClaude, access layer for Claude Code. Menu: axKit, Access layers. Key: Ctrl+Shift+F5. Mark: act. Never run by AI tools.
 - axGIT, access layer for Git. Menu: axKit, Access layers. Key: Ctrl+Shift+F2. Mark: open. Never run by AI tools.
@@ -757,11 +765,11 @@ every window" or under a heading that names the windows without it; under an app
 - Refresh. Menu: Session. Key: F5. Mark: read. Never run by AI tools.
 - Show backups in axFile. Menu: Session. Key: none. Mark: open. Never run by AI tools.
 - Close all windows. Menu: Window. Key: none. Mark: act. Never run by AI tools.
-- Say the status. Menu: Window. Key: F8. Mark: read. Never run by AI tools.
+- Say the status. Menu: Window. Key: F9. Mark: read. Never run by AI tools.
 - Ask about this window. Menu: none, a key alone. Key: Ctrl+Slash. Mark: act. Never run by AI tools.
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
 - Check the field. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
-- Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
+- Clear the filter. Menu: none, a key alone. Key: Ctrl+Delete. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Deselect all. Menu: none, a key alone. Key: Ctrl+Shift+A. Also: Escape. Mark: change. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
@@ -773,7 +781,7 @@ every window" or under a heading that names the windows without it; under an app
 - Next section. Menu: none, a key alone. Key: Ctrl+Down. Mark: open. Never run by AI tools.
 - Open. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
 - Previous section. Menu: none, a key alone. Key: Ctrl+Up. Mark: open. Never run by AI tools.
-- Read in full. Menu: none, a key alone. Key: Ctrl+Q. Mark: read. Never run by AI tools.
+- Read in full. Menu: none, a key alone. Key: F7. Mark: read. Never run by AI tools.
 - Rename. Menu: none, a key alone. Key: F2. Mark: change. Never run by AI tools.
 - Select all. Menu: none, a key alone. Key: Ctrl+A. Mark: change. Never run by AI tools.
 - Select or deselect. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
@@ -804,7 +812,7 @@ every window" or under a heading that names the windows without it; under an app
 - Find first. Menu: Navigation. Key: none. Mark: read.
 - Find next. Menu: Navigation. Key: F3. Mark: read.
 - Find previous. Menu: Navigation. Key: Shift+F3. Mark: read.
-- Go to line. Menu: Navigation. Key: Ctrl+G. Mark: read.
+- Go to line. Menu: Navigation. Key: F12. Mark: read.
 - Block quote. Menu: Navigation, Next. Key: Ctrl+Q. Mark: read.
 - Heading. Menu: Navigation, Next. Key: Ctrl+H. Mark: read.
 - Heading level 1. Menu: Navigation, Next. Key: Ctrl+1. Mark: read.
@@ -829,7 +837,7 @@ every window" or under a heading that names the windows without it; under an app
 - List. Menu: Navigation, Previous. Key: Ctrl+Shift+L. Mark: read.
 - List item. Menu: Navigation, Previous. Key: Ctrl+Shift+I. Mark: read.
 - Table. Menu: Navigation, Previous. Key: Ctrl+Shift+T. Mark: read.
-- Word wrap. Menu: Options, Text. Key: Ctrl+Shift+W. Mark: change.
+- Word wrap. Menu: Options, Text. Key: F11. Mark: change.
 - Edit in axDown. Menu: Session. Key: Ctrl+E. Mark: open.
 - New window. Menu: Session. Key: Ctrl+N. Mark: open.
 - Open. Menu: Session. Key: Ctrl+O. Mark: open.
@@ -849,7 +857,7 @@ every window" or under a heading that names the windows without it; under an app
 
 - Deselect all. Menu: Actions. Key: Ctrl+Shift+A. Also: Escape. Mark: change.
 - Select all. Menu: Actions. Key: Ctrl+A. Mark: change.
-- Summary. Menu: Actions. Key: Ctrl+Q. Mark: read.
+- Summary. Menu: Actions. Key: F7. Mark: read.
 - Copy line. Menu: Context. Key: Ctrl+C. Mark: act.
 - Details. Menu: Context. Key: Enter. Mark: read.
 - End process. Menu: Context. Key: Delete. Mark: act.
@@ -860,9 +868,9 @@ every window" or under a heading that names the windows without it; under an app
 - Show program in axFile. Menu: Context. Key: Ctrl+E. Mark: open.
 - Services. Menu: Help, Windows resources. Key: none. Mark: act.
 - Task Manager. Menu: Help, Windows resources. Key: none. Mark: act.
-- Processes. Menu: Navigation. Key: Alt+1. Also: Ctrl+1. Mark: open.
-- Services. Menu: Navigation. Key: Alt+2. Also: Ctrl+2. Mark: open.
-- Startup. Menu: Navigation. Key: Alt+3. Also: Ctrl+3. Mark: open.
+- Processes. Menu: Navigation. Key: Alt+1. Mark: open.
+- Services. Menu: Navigation. Key: Alt+2. Mark: open.
+- Startup. Menu: Navigation. Key: Alt+3. Mark: open.
 - Up to This computer. Menu: Navigation. Key: Left. Mark: open.
 - Filter. Menu: Options. Key: none. Mark: change.
 - Memory. Menu: Options, Sort by. Key: none. Mark: change.
@@ -870,7 +878,7 @@ every window" or under a heading that names the windows without it; under an app
 - Processor. Menu: Options, Sort by. Key: none. Mark: change.
 - Refresh. Menu: Session. Key: F5. Mark: read.
 - Back to the list. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
-- Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
+- Clear the filter. Menu: none, a key alone. Key: Ctrl+Delete. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
@@ -891,7 +899,7 @@ every window" or under a heading that names the windows without it; under an app
 ## axStart
 
 - No actions here yet. Menu: Actions. Key: none. Mark: read.
-- Information. Menu: Context. Key: Ctrl+I. Mark: read.
+- Information. Menu: Context. Key: F8. Mark: read.
 - Open file location. Menu: Context. Key: Ctrl+O. Mark: open.
 - Start. Menu: Context. Key: Enter. Mark: act.
 - Start as administrator. Menu: Context. Key: Ctrl+Shift+Enter. Mark: act.
@@ -937,7 +945,7 @@ every window" or under a heading that names the windows without it; under an app
 - Move up in the list. Menu: Context. Key: Ctrl+Shift+Up. Mark: change.
 - Open in axJSON. Menu: Context. Key: Ctrl+J. Mark: open.
 - Open its form. Menu: Context. Key: Enter. Mark: open.
-- Read in full. Menu: Context. Key: Ctrl+Q. Mark: read.
+- Read in full. Menu: Context. Key: F7. Mark: read.
 - Rename. Menu: Context. Key: F2. Mark: change.
 - Select or deselect. Menu: Context. Key: Space. Mark: change.
 - Select to here. Menu: Context. Key: Shift+Space. Mark: change.
@@ -948,14 +956,14 @@ every window" or under a heading that names the windows without it; under an app
 - Priority high. Menu: Context, Actions of this list. Key: Ctrl+1. Mark: act.
 - Read the last output. Menu: Context, Actions of this list. Key: none. Mark: read.
 - JSON. Menu: Help, Item resources. Key: none. Mark: act.
-- All tasks. Menu: Navigation. Key: Ctrl+0. Mark: open.
+- All tasks. Menu: Navigation. Key: Alt+0. Mark: open.
 - Find in every list. Menu: Navigation. Key: Ctrl+Shift+F. Mark: read.
 - Next section. Menu: Navigation. Key: Ctrl+Down. Mark: open.
 - Previous section. Menu: Navigation. Key: Ctrl+Up. Mark: open.
 - Add a project folder. Menu: Options. Key: none. Mark: change.
 - Approval passphrase. Menu: Options. Key: none. Mark: act. Never run by AI tools.
 - Filter. Menu: Options. Key: none. Mark: change.
-- Hide done tasks. Menu: Options. Key: Ctrl+Shift+D. Mark: change.
+- Hide done tasks. Menu: Options. Key: Ctrl+H. Mark: change.
 - Keep a history of changes in this list. Menu: Options. Key: none. Mark: change.
 - New items at the top of this list. Menu: Options. Key: none. Mark: change.
 - Name. Menu: Options, Sort by. Key: none. Mark: change.
@@ -983,7 +991,7 @@ every window" or under a heading that names the windows without it; under an app
 - Back from the search. Menu: none, a key alone. Key: Escape. Mark: open. Never run by AI tools.
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
 - Check the field. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
-- Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
+- Clear the filter. Menu: none, a key alone. Key: Ctrl+Delete. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
@@ -998,7 +1006,7 @@ every window" or under a heading that names the windows without it; under an app
 - Previous heading level 1. Menu: none, a key alone. Key: Ctrl+Shift+1. Mark: read. Never run by AI tools.
 - Previous heading level 2. Menu: none, a key alone. Key: Ctrl+Shift+2. Mark: read. Never run by AI tools.
 - Previous heading level 3. Menu: none, a key alone. Key: Ctrl+Shift+3. Mark: read. Never run by AI tools.
-- Read in full. Menu: none, a key alone. Key: Ctrl+Q. Mark: read. Never run by AI tools.
+- Read in full. Menu: none, a key alone. Key: F7. Mark: read. Never run by AI tools.
 - Rename. Menu: none, a key alone. Key: F2. Mark: change. Never run by AI tools.
 - Select or deselect. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
 - Select to here. Menu: none, a key alone. Key: Shift+Space. Mark: change. Never run by AI tools.
@@ -1026,7 +1034,7 @@ every window" or under a heading that names the windows without it; under an app
 - No templates yet: Ctrl+N makes one. Menu: Context. Key: none. Mark: read.
 - Put in. Menu: Context. Key: Enter. Mark: act.
 - Put in, with that program's selection. Menu: Context. Key: Ctrl+Enter. Mark: act.
-- Read in full. Menu: Context. Key: Ctrl+Q. Mark: read.
+- Read in full. Menu: Context. Key: F7. Mark: read.
 - The marks of a template. Menu: Help, axTemplate resources. Key: none. Mark: act.
 - Nothing to move to here yet. Menu: Navigation. Key: none. Mark: read.
 - Filter. Menu: Options. Key: none. Mark: change.
@@ -1051,7 +1059,7 @@ every window" or under a heading that names the windows without it; under an app
 - File Explorer. Menu: Session, Show the templates' folder in. Key: none. Mark: open.
 - Change the field. Menu: none, a key alone. Key: Enter. Mark: change. Never run by AI tools.
 - Check the field. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
-- Clear the filter. Menu: none, a key alone. Key: Escape. Mark: change. Never run by AI tools.
+- Clear the filter. Menu: none, a key alone. Key: Ctrl+Delete. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
 - Find next. Menu: none, a key alone. Key: F3. Mark: read. Never run by AI tools.
@@ -1065,7 +1073,7 @@ every window" or under a heading that names the windows without it; under an app
 - Page down. Menu: none, a key alone. Key: Page Down. Mark: read. Never run by AI tools.
 - Page up. Menu: none, a key alone. Key: Page Up. Mark: read. Never run by AI tools.
 - Previous match. Menu: none, a key alone. Key: Up. Mark: read. Never run by AI tools.
-- Read in full. Menu: none, a key alone. Key: Ctrl+Q. Mark: read. Never run by AI tools.
+- Read in full. Menu: none, a key alone. Key: F7. Mark: read. Never run by AI tools.
 - Rename. Menu: none, a key alone. Key: F2. Mark: change. Never run by AI tools.
 - Select or deselect. Menu: none, a key alone. Key: Space. Mark: change. Never run by AI tools.
 - Select to here. Menu: none, a key alone. Key: Shift+Space. Mark: change. Never run by AI tools.
@@ -1084,28 +1092,28 @@ every window" or under a heading that names the windows without it; under an app
 
 ## axTerminal
 
-- Interrupt. Menu: Actions. Key: Ctrl+Shift+C. Mark: act.
-- Recent commands. Menu: Actions. Key: Ctrl+R. Mark: open.
+- Interrupt. Menu: Actions. Key: Ctrl+I. Mark: act.
+- Recent commands. Menu: Actions. Key: Alt+Down. Mark: open.
 - Send Escape. Menu: Actions. Key: Shift+Escape. Mark: act.
 - Send without recording. Menu: Actions. Key: none. Mark: act.
-- What is running. Menu: Actions. Key: Ctrl+Q. Mark: read.
+- What is running. Menu: Actions. Key: F7. Mark: read.
 - Ctrl+D (end of input). Menu: Actions, Send key. Key: none. Mark: act.
 - Down. Menu: Actions, Send key. Key: none. Mark: act.
 - Up. Menu: Actions, Send key. Key: none. Mark: act.
-- Bookmark this line. Menu: Context. Key: Ctrl+Shift+K, or M in the terminal. Mark: change.
+- Bookmark this line. Menu: Context. Key: Ctrl+K, or M in the terminal. Mark: change.
 - Copy the selection. Menu: Context. Key: Ctrl+C in the terminal. Mark: act.
 - Copy this line into the command field. Menu: Context. Key: Enter in the terminal. Mark: change.
 - Bash manual. Menu: Help, Shell resources. Key: none. Mark: act.
 - PowerShell documentation. Menu: Help, Shell resources. Key: none. Mark: act.
 - Windows Terminal shell integration (the marks). Menu: Help, Shell resources. Key: none. Mark: act.
-- Command field. Menu: Navigation. Key: Alt+1. Also: Ctrl+1. Mark: open.
+- Command field. Menu: Navigation. Key: Alt+1. Mark: open.
 - Find. Menu: Navigation. Key: Ctrl+F. Mark: read.
 - Find next. Menu: Navigation. Key: F3. Mark: read.
 - Find previous. Menu: Navigation. Key: Shift+F3. Mark: read.
-- Latest output. Menu: Navigation. Key: Alt+3. Also: Ctrl+3. Mark: open.
+- Latest output. Menu: Navigation. Key: Alt+3. Mark: open.
 - Next bookmark. Menu: Navigation. Key: K in the terminal. Mark: open.
 - Previous bookmark. Menu: Navigation. Key: Shift+K in the terminal. Mark: open.
-- Terminal. Menu: Navigation. Key: Alt+2. Also: Ctrl+2. Mark: open.
+- Terminal. Menu: Navigation. Key: Alt+2. Mark: open.
 - Record raw stream for a bug report. Menu: Options, Developer. Key: none. Mark: act.
 - Background music while a command runs. Menu: Options, Sounds. Key: Ctrl+M. Mark: change.
 - Chimes: ready, sent, done, question. Menu: Options, Sounds. Key: none. Mark: change.
@@ -1124,7 +1132,7 @@ every window" or under a heading that names the windows without it; under an app
 - Export transcript. Menu: Session. Key: Ctrl+S. Mark: change.
 - New session. Menu: Session. Key: Ctrl+N. Mark: act.
 - Restart shell. Menu: Session. Key: Ctrl+Shift+R. Mark: act.
-- Say current folder. Menu: Session. Key: Ctrl+P. Mark: read.
+- Say current folder. Menu: Session. Key: F8. Mark: read.
 - axClaude, access layer for Claude Code. Menu: Session, Show current folder in. Key: none. Mark: act.
 - axFile. Menu: Session, Show current folder in. Key: none. Mark: open.
 - axGIT, access layer for Git. Menu: Session, Show current folder in. Key: none. Mark: open.

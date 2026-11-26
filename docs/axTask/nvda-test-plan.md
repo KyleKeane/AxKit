@@ -21,11 +21,11 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
    Fix the tap". Down: "Done, check, not done", "Start, date, empty", "Due, date, 30 October 2026, Friday".
 5. Escape: back to "Fix the tap, due 30 October". Tab: the fields again; Shift+Tab back. Ctrl+Tab: the fields; F6: back (the bundle's pane keys, as in every other window).
 6. Up in the navigator on the first row: the edge sound. Type `w`: Water plants; Shift+W: back.
-7. Ctrl+0 from anywhere: "All tasks, 3 items, 1 list in the earlier format is not read: Old format. Open one to convert it, …", the soonest due first, each "…, in Home".
+7. Alt+0 from anywhere: "All tasks, 3 items, 1 list in the earlier format is not read: Old format. Open one to convert it, …", the soonest due first, each "…, in Home".
 8. Tab on a list: "Details of Home", "Section, text, empty", "Notes, long text, empty", then "Fields of its items:
    Done, Start, Due, Priority". Enter on that line: the notice "Fields of its items", which says that Ctrl+J on the list
    opens its configuration in axJSON; Escape.
-9. On Shopping, Ctrl+M: the form "Move Shopping", the focus in the list "Choose the section" on Your lists, then the form's sound and "Move Shopping, form" (its explanation on Ctrl+Q, bundle AX-7.11); End, "A new section", Enter: the edge sound, "Type the section's name", the focus in the field "Type the new section's name, when you chose A new section", the form still open; type `Errands`, Enter: "Moved
+9. On Shopping, Ctrl+M: the form "Move Shopping", the focus in the list "Choose the section" on Your lists, then the form's sound and "Move Shopping, form" (its explanation on F7, bundle AX-7.11); End, "A new section", Enter: the edge sound, "Type the section's name", the focus in the field "Type the new section's name, when you chose A new section", the form still open; type `Errands`, Enter: "Moved
    Shopping to Errands"; it is under the heading "Errands, heading level 2, 1 list". Ctrl+Shift+N there, type `Garden`: "Made
    Garden", in Errands too. Tab on Garden, Enter on Section, delete the text, Enter: back in Your lists.
 10. Make a task in Home titled `Call @Sam about #garden !urgent`, Left: under Smart lists, "Tags, heading level 2, 3
@@ -51,7 +51,7 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
    again: the edge sound, it does not go round; Ctrl+Z: "Undone: Priority: Low", one step. On Done: Right: "Done:
    done"; Right again: the edge sound; Left: "Done: not done"; Left again: the edge sound. On Title or Due: Right and
    Left play the edge sound and change nothing; neither key leaves the pane (IA-5.6).
-4. Enter on Notes (a list's details), type two lines, Tab, Enter on Save: "Notes: …"; Ctrl+Q reads both lines. Enter on
+4. Enter on Notes (a list's details), type two lines, Tab, Enter on Save: "Notes: …"; F7 reads both lines. Enter on
    Notes again, type a word, Ctrl+Enter: the text is kept as with Save (IA-5.7).
 5. Hide, keep, restore (AF-11.3, AF-11.4). On Water plants, Tab, End: "1 more field kept: Sprint". Enter: the notice
    "Fields kept" with "Sprint: October" and what a kept field is; Escape. On Home, Ctrl+J: axJSON opens `list.json`.
@@ -87,11 +87,11 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
 
 - New line (bundle AX-7.8): in a long text field such as a list's Notes, Enter says "new line"; the steps are axDown's plan, step 2.5a.
 
-1. Ctrl+Shift+D: "Hide done tasks, checked"; the list's name says "1 done hidden".
+1. Ctrl+H: "Hide done tasks, checked"; the list's name says "1 done hidden".
 2. Shift+F10 in each pane: Context opens with the commands of the list, the item or the field the focus is on, and NVDA reads its first item. Ctrl+Period, then let go of both keys: the same menu, read the same way (bundle AX-8.15); in a text field of a notice, Ctrl+Period shows what Shift+F10 shows there.
 3. F1: the keys; Help, User guide: this guide. Alt+H, About, Version names axTask.
 4. Close and start again without a folder: the list you had.
-5. A damaged item (TK-4.6): put a file `Broken.json` holding `{ nope` into Home. Right on Home: "Home, 2 items, 1 not readable, ..."; the last row reads "Broken.json, not readable as an item, Enter opens it in axJSON". F2 and Delete: "Not readable as an item: Enter opens it in axJSON, Ctrl+E shows it in axFile". Enter: axJSON opens the file. Ctrl+0: "All tasks, ..., 1 not readable"; End: "1 item not readable, in Home".
+5. A damaged item (TK-4.6): put a file `Broken.json` holding `{ nope` into Home. Right on Home: "Home, 2 items, 1 not readable, ..."; the last row reads "Broken.json, not readable as an item, Enter opens it in axJSON". F2 and Delete: "Not readable as an item: Enter opens it in axJSON, Ctrl+E shows it in axFile". Enter: axJSON opens the file. Alt+0: "All tasks, ..., 1 not readable"; End: "1 item not readable, in Home".
 
 ## 5. The actions of a list (TK-7a, forms-framework.md sections 2 to 7)
 
@@ -103,7 +103,7 @@ open Home's configuration (Ctrl+J on Home) and put these into `"actions"`, then 
 `{ "name": "Miss", "does": "run", "program": "findstr", "arguments": ["/c:no such words"], "input": "{Title}" }` and
 `{ "name": "Broken", "does": "fly" }`.
 
-1. In a list, Ctrl+3: the edge sound and "No action on Ctrl+3 in this list; its actions are written in its configuration, Ctrl+J on the list". At the top level, Ctrl+1: the next heading; Ctrl+4: the edge sound and "Action keys act in a list: open one first". Ctrl+0: "All tasks".
+1. In a list, Ctrl+3: the edge sound and "No action on Ctrl+3 in this list; its actions are written in its configuration, Ctrl+J on the list". At the top level, Ctrl+1: the next heading; Ctrl+4: the edge sound and "Action keys act in a list: open one first". Alt+0: "All tasks".
 2. Back from axJSON after saving the actions: "The list's configuration changed: 4 fields, 5 actions".
 3. On a task not done, Ctrl+1: "Done: Done: done" and the row reads done. Ctrl+Z takes it back. Context, Actions of this list: "Done Ctrl+1", "Later Ctrl+2", "Find it Ctrl+Shift+4", "Miss", "Broken, not understood: it does fly, which this version does not know", then "Read the last output". Enter on Broken: the refusal sound and the same words; nothing happens.
 4. Ctrl+2 on an item: "Ctrl+2 in this list now moves to ../Shopping. Press it again to do it.", and the item stays. Ctrl+2 again: "Later: <item> moved to Shopping". Ctrl+Z, then Ctrl+2 once more: it moves at the first press.
@@ -207,7 +207,7 @@ The runner's scripts are `tests/scripts/axTask/16-convert-earlier-format.txt` an
 
 1. At the top, the row "Old format, list, earlier format: Enter converts it". Tab: its details say "This list is
    written in axTask's earlier format. Enter in the navigator asks to convert it; a copy is kept among the Archived
-   lists". Ctrl+0: All tasks' name says "1 list in the earlier format is not read: Old format. Open one to convert it".
+   lists". Alt+0: All tasks' name says "1 list in the earlier format is not read: Old format. Open one to convert it".
 2. Right on Old format: the notice "Convert Old format?", its text read once: what changes, that a copy is kept among
    the Archived lists, that Ctrl+Z takes the conversion back, and that an older copy of axKit does not read a
    converted list; the buttons Convert and Cancel (with more than one such list, also "Convert all 2 lists"). Escape:
@@ -232,7 +232,7 @@ The runner's script is `tests/scripts/axTask/18-item-form.txt`.
 
 1. Enter on Fix the tap: the form's sound, the focus in an edit box named "Type the title" holding the title, then
    "Fields of Fix the tap, form". Listen that NVDA reads the box first and the words after it, not over it, and
-   that the explanation is not read. Ctrl+Q: the explanation, the fields in the order of the list, Tab, Ctrl+Enter,
+   that the explanation is not read. F7: the explanation, the fields in the order of the list, Tab, Ctrl+Enter,
    Escape.
 2. Tab through: "Done, check box, not checked"; "Type Start: a date such as …", an edit box; "Type Due: …"; "Choose
    Priority, list" on its option or on "Not chosen"; then Save and Cancel. Each is read by NVDA as the control it is.
@@ -273,7 +273,7 @@ The runner's script is `tests/scripts/axTask/20-selection.txt`.
 8. Select one, Left, Right: nothing is selected; Ctrl+Enter: "Done: <the item>".
 9. With two selected, Enter: the form of the item you are on, not of the selected ones.
 10. Select two, Ctrl+M: "Move 2 items", the focus in the list "Choose the list" on the first other list, then the
-    form's sound and "Move 2 items, form"; Ctrl+Q reads the explanation. Enter: "2 items moved to Later". Ctrl+Z: "Undone: 2 items moved to Later".
+    form's sound and "Move 2 items, form"; F7 reads the explanation. Enter: "2 items moved to Later". Ctrl+Z: "Undone: 2 items moved to Later".
 11. On one item with nothing selected, Ctrl+M, End: "A new list". Enter without a name: the edge sound, "Type the
     list's name", the focus in the name's field. Type a name, Enter: "<item> moved to <name>"; the new list is among
     the lists with the same fields. Ctrl+Z: the item is back and the list is gone.
@@ -294,7 +294,7 @@ The runner's script is `tests/scripts/axTask/20-selection.txt`.
 The runner's script is `tests/scripts/axTask/21-what-opens.txt`. The sounds are bell notes: three quick beeps running
 up, then the kind going down.
 
-1. F1: the mark and one low long tone, then NVDA reads the text. Ctrl+Q: the text is read again from its start.
+1. F1: the mark and one low long tone, then NVDA reads the text. F7: the text is read again from its start.
    Escape.
 2. Ctrl+F: the mark and one long tone, higher than the text's, then NVDA reads the field. Escape. F2 on an item: the
    same sound, then "New name, edit". Escape.
@@ -302,7 +302,7 @@ up, then the kind going down.
    tool's argument that is a choice ("Change size"): the mark and four quick beeps going down, then NVDA reads the
    list. Escape. Its script is `tests/scripts/axMCP/03-numbers-choices-restart-agreement.txt`.
 4. Ctrl+M on an item: the mark, then beeps and tones, the longest of the four; NVDA reads "Choose the list, list" and
-   its line; then "Move Fix the tap, form" and nothing more. Ctrl+Q: the explanation. Escape.
+   its line; then "Move Fix the tap, form" and nothing more. F7: the explanation. Escape.
 5. Listen across the four that they are told apart at once, that each is over before the words matter, and that none
    is mistaken for the heading sound, the edge, a question's sound or the sound of background work starting.
 6. Options, Text, Entry sounds: "Entry sounds, not checked"; F1, Ctrl+F, Ctrl+M and Tab between the panes are in

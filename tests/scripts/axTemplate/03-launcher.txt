@@ -49,7 +49,7 @@ expect said Sprint notes has no text yet: Ctrl+B opens the browser, where it is 
 expect focus Search templates
 
 # Goal: Read a template before using it
-# TP-4.5: Ctrl+Q shows the template's own text, marks and all; Escape closes it.
+# TP-4.5: F7 shows the template's own text, marks and all; Escape closes it.
 keys ctrl+a
 type greet
 do Read in full

@@ -23,7 +23,7 @@ The launcher needs no start of yours. It runs in the background from the moment 
 - Ctrl+Enter does the same around what you had selected in that program: the selection is copied there first (the launcher presses Ctrl+C for you), stands where the template says `{selection}`, and the template takes its place. Do not use it in a terminal, where Ctrl+C ends the running command; and an editor that copies the whole line when nothing is selected gives that line.
 - Afterwards the clipboard holds what it held before, when that was text: a template does not cost you what you had copied. The template itself is kept out of clipboard histories, axClip's and Windows' own.
 - Shift+Enter only puts the text on the clipboard: the launcher hides and you are back in your program, which is the sign that it worked. Use it where pasting is another key, and in a program that runs as administrator, where Windows lets no other program press keys.
-- Ctrl+Q reads the template's text before you use it.
+- F7 reads the template's text before you use it.
 - A template of several lines: into a field of one line, it goes in on one line, its lines joined by spaces, since such a field keeps only the first line of a paste. Into a terminal, which runs each line as it is pasted, the launcher asks first: Enter puts it in on one line, where nothing runs until you press Enter; Put it in as it is lets each line run; Escape cancels. Elsewhere it goes in as it is.
 - Ctrl+B opens the browser.
 - Options, Hotkey changes the key. Session, Quit axTemplate ends the launcher; closing its window only hides it.
@@ -41,7 +41,7 @@ How the caret gets to its place: where the program shows its text to screen read
 - Ctrl+Z takes back the last change, whichever it was: a field, a rename, a new template, an archiving. It works for as long as the window is open.
 - Ctrl+Enter copies the template's text to the clipboard, with its marks filled with nothing, so that you can paste it somewhere and see what it makes.
 - Ctrl+J opens the template's file in axJSON.
-- Ctrl+Q reads every field of the template. F5 reads the templates again.
+- F7 reads every field of the template. F5 reads the templates again.
 
 ### The fields, on the right, to read
 
@@ -71,15 +71,15 @@ Each menu with its commands and their keys, as the window lists them:
 - **Session**: Exit (Alt+F4); Hide (Escape); Open the browser (Ctrl+B); Quit axTemplate; Refresh (F5); Show the templates' folder in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, axTerminal, access layer for your shell, File Explorer).
 - **Actions**: Deselect all (Ctrl+Shift+A); New template (Ctrl+N); No actions here yet; Select all (Ctrl+A); Undo (Ctrl+Z).
 - **Navigation**: Nothing to move to here yet.
-- **Context**: Copy without putting in (Shift+Enter); No templates yet: Ctrl+N makes one; Put in (Enter); Put in, with that program's selection (Ctrl+Enter); Read in full (Ctrl+Q).
+- **Context**: Copy without putting in (Shift+Enter); No templates yet: Ctrl+N makes one; Put in (Enter); Put in, with that program's selection (Ctrl+Enter); Read in full (F7).
 - **Options**: Filter; Hotkey; Developer (Open settings file); General (Say the first match while typing, Start with Windows); Sort by (Name, The list's own order); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size); Wait before the clipboard comes back (0.3 seconds, 0.6 seconds, the default, 1 second, 2 seconds, 4 seconds).
-- Keys without a menu item: Enter (Change the field); Space (Check the field); Escape (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); F3 (Find next); Shift+F3 (Find previous); Ctrl+Home (First match); Right (Into the list); Ctrl+End (Last match); Ctrl+N (New item); Down (Next match); Enter (Open); Page Down (Page down); Page Up (Page up); Up (Previous match); Ctrl+Q (Read in full); F2 (Rename); Space (Select or deselect); Shift+Space (Select to here); Shift+Home (Select to the first template); Shift+End (Select to the last template); Shift+Down (Select to the next template); Shift+Up (Select to the previous template); Ctrl+Tab (Switch between the navigator and the detail pane); Shift+F10 (The Context menu); Shift+F10 (The field's menu); Right (The next value of the field); Left (The previous value of the field); Tab (To the detail pane); Tab (To the navigator); Left (Up a level).
+- Keys without a menu item: Enter (Change the field); Space (Check the field); Ctrl+Delete (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); F3 (Find next); Shift+F3 (Find previous); Ctrl+Home (First match); Right (Into the list); Ctrl+End (Last match); Ctrl+N (New item); Down (Next match); Enter (Open); Page Down (Page down); Page Up (Page up); Up (Previous match); F7 (Read in full); F2 (Rename); Space (Select or deselect); Shift+Space (Select to here); Shift+Home (Select to the first template); Shift+End (Select to the last template); Shift+Down (Select to the next template); Shift+Up (Select to the previous template); Ctrl+Tab (Switch between the navigator and the detail pane); Shift+F10 (The Context menu); Shift+F10 (The field's menu); Right (The next value of the field); Left (The previous value of the field); Tab (To the detail pane); Tab (To the navigator); Left (Up a level).
 - **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
 <!-- end of the menus -->
 
 ## Settings
 
-In the browser, Options, Filter and Sort by arrange the list. In the launcher, Options, Hotkey sets the key that brings it up, and Options, General has Start with Windows and Say the first match while typing. In both, Options, Text sets the font and its size, and Options, General the update check.
+In the browser, Options, Filter and Sort by arrange the list; Ctrl+Delete clears the filter. In the launcher, Options, Hotkey sets the key that brings it up, and Options, General has Start with Windows and Say the first match while typing. In both, Options, Text sets the font and its size, and Options, General the update check.
 
 ## Updates
 

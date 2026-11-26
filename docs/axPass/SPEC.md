@@ -91,7 +91,7 @@ forgets the master password and shows only the notice that asks for it.
   and passes over that change, so that the next Ctrl+Z reaches the one before it (`EntryFields.Emptied`,
   `CannotEmpty`; until then the user heard the tool's own "Not changing any field for entry …", or nothing, and the
   field stayed). A need the tool cannot meet is said, not worked around (PW-D1).
-- **PW-6.2 The two extra types.** `username` reads and changes as `text`. `password` reads "hidden"; Ctrl+Q on it
+- **PW-6.2 The two extra types.** `username` reads and changes as `text`. `password` reads "hidden"; F7 (read in full) on it
   reads it as hidden too; Enter changes it in a hidden field, with Generate (Alt+G) filling it from `generate` (20
   characters, upper and lower case, digits, signs), and asks a typed one twice. Ctrl+Z does not bring an old password
   back: axPass never knew it.
@@ -149,7 +149,7 @@ On top of IA-3, in `AxPassKeys`:
   entry's own password is read only for the moment of a copy (PW-5.4); notes, URL, user name and title, when saved,
   reach the tool as command-line arguments, which the tool has no other way to take, and which another program of the
   user's or the system's process auditing can see (security audit S-16): the user guide says so.
-- **PW-D5 Filter and sort are the navigator's** (2026-11-22; bundle AX-8.17): Options → Filter… shows only the groups and entries of the level whose name contains a text, and Options → Sort by ▸ puts them by name or back in the database's own order. Both act on what the list shows and change nothing in the database; neither reads a field's value, so a password never takes part.
+- **PW-D5 Filter and sort are the navigator's** (2026-11-22; bundle AX-8.17): Options → Filter… shows only the groups and entries of the level whose name contains a text, and Options → Sort by ▸ puts them by name or back in the database's own order; Ctrl+Delete in the list clears the filter. Both act on what the list shows and change nothing in the database; neither reads a field's value, so a password never takes part.
 - **PW-D3 KeePass's standard fields only, in the first version**: the tool has no command that changes a custom
   attribute (its manual, kdbx-notes 6), and axPass never edits the file itself.
 - **PW-D4 The clipboard is axPass's, marked private** (2026-10-24, replacing "the clipboard is cleared by the tool"): a copied password is in axPass's memory for the moment of the copy only, never for the session, and is cleared by axPass (PW-5.4).

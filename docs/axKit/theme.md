@@ -14,7 +14,7 @@ windows are exactly what they are today: Windows' colours, light or dark as Wind
 it. The file is edited in axJSON (Options, Theme, Edit theme file in every window), so the user's own tools are the
 theme editor; there is no colour picker window. Nothing NVDA hears changes: a colour is drawing only. Since 5.5.0 the
 same file holds the display settings every window shares (section TH-6): the editors' word wrap, one value for axDown,
-axJSON and axPreview, written by Ctrl+Shift+W in any of them.
+axJSON and axPreview, written by F11 in any of them.
 
 Who it is for: the sighted helpers who read over a blind user's shoulder (the 2026-11-08 field tint came from one
 taking the white message field for more of the white conversation), and users with low vision who need their own
@@ -157,7 +157,7 @@ No key of its own: three menu items, reached by the menu, by the palette (AX-10)
   `Color.FromArgb`, `Color.<Name>`, `SystemColors.` and `BackColor =` or `ForeColor =` are allowed in
   `AxKit.Forms/Theme*.cs` and axMedia's video area alone (G4; the console field's tints move into the theme's defaults).
 - TH-5.3 A step in the automation scripts (axDown): Options, Theme, Edit theme file opens axJSON on `theme.json`
-  (`adopt`), Reload says "Theme reloaded"; Ctrl+Shift+W says "Word wrap, not checked" and the file then holds
+  (`adopt`), Reload says "Theme reloaded"; F11 says "Word wrap, not checked" and the file then holds
   `"wordWrap": false` (TH-6). Nothing more for NVDA: no focus or announcement changes beyond those sentences.
 
 ### TH-6 Display settings
@@ -171,7 +171,7 @@ whatever `enabled` says and under high contrast too, since none of it is a colou
   past the edge there would be unreachable; the editors alone have the long lines, a table or a line of code, that a
   user may want whole. One value for the three: it was a `wordWrap` key in each editor's own settings file until
   5.5.0, and a toggle left off in axDown's read as lines cut at the window's edge (the reports repository's issue 4).
-- TH-6.2 Options, Text, Word wrap (Ctrl+Shift+W) in an editor writes the value into the file (the template first when
+- TH-6.2 Options, Text, Word wrap (F11) in an editor writes the value into the file (the template first when
   there is none) and applies it to its own text with the caret kept (axDown AD-2.4); every other editor window takes
   it when next activated (TH-3.2), Reload theme at once, through the base's `OnThemeChanged`. Edited in axJSON like
   any other value of the file.

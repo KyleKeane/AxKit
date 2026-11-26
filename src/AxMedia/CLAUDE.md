@@ -31,9 +31,9 @@ dotnet test tests/AxMedia.Tests/AxMedia.Tests.csproj
   - the player:
     - the engine made on first use with the video area's handle, `PlayCurrent`;
     - the events (`OnStarted`, `OnEnded`, `OnFailed`, `MoveOn`, `StopPlayback`);
-    - the transport keys, the speed, Go to time, Ctrl+Q, the clock;
+    - the transport keys, the speed, Go to time, F7 (what is playing), the clock;
     - `UpdateTitle` with `TitleNow`, `UpdateStatusBar` with `StatusState` and `PlaceNow`, `FitVideo`.
-- `AxMediaKeys`: the window's keys (SPEC.md AM-5.2; bundle AX-8), the one place a key is changed; `All` feeds the collision test and the F1 text names the same keys. Faster and Slower are Ctrl+Up and Ctrl+Down since 2026-11-14 (AM-D8), the bundle's paragraph keys taken on purpose (`KeyTests`' `Overrides`); Ctrl+Shift+Period and Ctrl+Shift+Comma are system-wide keys now (bundle AX-8.11) and no window's.
+- `AxMediaKeys`: the window's keys (SPEC.md AM-5.2; bundle AX-8), the one place a key is changed; `All` feeds the collision test and the F1 text names the same keys. Faster and Slower are Alt+Up and Alt+Down since 2026-11-26 (AM-D8; Ctrl+Up and Ctrl+Down from 2026-11-14, which go between sections now, the bundle's paragraph keys taken on purpose as in every navigator, `KeyTests`' `Overrides`); Ctrl+Shift+Period and Ctrl+Shift+Comma are system-wide keys now (bundle AX-8.11) and no window's.
 - `HelpText`: the F1 text and the embedded guide; About is the bundle's.
 
 ## Rules

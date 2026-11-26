@@ -42,7 +42,7 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 ### The form
 
 - What: Several standard controls for one action, in Tab order, each named with an instruction.
-- Built into it: Tab between the controls; Ctrl+Enter or Enter does it; Escape leaves and nothing is changed. Ctrl+Q reads its explanation.
+- Built into it: Tab between the controls; Ctrl+Enter or Enter does it; Escape leaves and nothing is changed. F7 reads its explanation.
 - Its sound: three quick beeps up, then beeps and tones together (the kind of event `form-entered`, SPEC AX-7.11). It plays whenever the focus enters it from outside; moving inside it is silent. Then: After NVDA has read the first control: the title and the word 'form'.
 - Its keys, by family (`docs/axKit/key-groups.md`): ctrl-tab, enter, enter-forms, escape.
 - The code: `FormControls`, `src/AxKit.Forms/FormControls.cs`.
@@ -50,7 +50,7 @@ pieces below. Learn a piece once and it works the same wherever it appears.
 ### The notice
 
 - What: A text with its buttons over the window: a help text, a question, an error. It holds one of the pieces above when it asks for more.
-- Built into it: Enter and Escape press its buttons from anywhere in it; Ctrl+Q reads its text again.
+- Built into it: Enter and Escape press its buttons from anywhere in it; F7 reads its text again.
 - Its sound: three quick beeps up, then one low long tone (the kind of event `text-entered`, SPEC AX-7.11). It plays whenever the focus enters it from outside; moving inside it is silent. Then: NVDA reads the text.
 - Its keys, by family (`docs/axKit/key-groups.md`): enter, escape, letter.
 - The code: `OverlayPanel`, `src/AxKit.Forms/OverlayPanel.cs`.

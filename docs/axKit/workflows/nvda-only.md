@@ -62,16 +62,16 @@ You hear: trust.
     NVDA says: Command offer: about this command.
 18. Press Escape.
     NVDA says: offers a command for you to run: echo heard-by-ear.
-19. Press Ctrl+2 (Conversation; Navigation menu).
-20. Press Ctrl+1 (Message field; Navigation menu).
+19. Press Alt+2 (Conversation; Navigation menu).
+20. Press Alt+1 (Message field; Navigation menu).
     NVDA says: offers a command for you to run: echo heard-by-ear.
-21. Press Ctrl+Q (Claude's question again; Navigation menu).
+21. Press F7 (Claude's question again; Navigation menu).
     NVDA says: Its reason: A check by ear.
 22. Press Down.
     NVDA says: Yes, run it.
 23. Press Enter.
     You hear: Sent.
-24. Press Ctrl+2 (Conversation; Navigation menu).
+24. Press Alt+2 (Conversation; Navigation menu).
 
 ## Read a long reply with Say all while Claude writes
 
@@ -85,7 +85,7 @@ You hear: trust.
     You hear: Done.
 4. Type "Now a numbered list of 120 lines, each naming a different fruit with one full sentence about it, numbered 1 to 120, nothing else.".
 5. Press Enter.
-6. Press Ctrl+2 (Conversation; Navigation menu).
+6. Press Alt+2 (Conversation; Navigation menu).
 7. Press Ctrl+Home.
 8. Press NVDA+A.
     NVDA says: Input 1.

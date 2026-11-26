@@ -766,7 +766,7 @@ public sealed partial class TextEditorForm : AxKitForm
 
     // ---- word wrap (AD-2.4): the bundle's one setting, in the theme file's display settings (docs/axKit/theme.md TH-6) ----
 
-    /// <summary>Options, Text, Word wrap (Ctrl+Shift+W): written into the theme file, so that every editor window takes it when next activated.</summary>
+    /// <summary>Options, Text, Word wrap (F11): written into the theme file, so that every editor window takes it when next activated.</summary>
     private void ToggleWordWrap()
     {
         var on = !_editor.WordWrap;

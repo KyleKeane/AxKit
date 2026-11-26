@@ -19,7 +19,7 @@ wait 2000
 type Now a numbered list of 120 lines, each naming a different fruit with one full sentence about it, numbered 1 to 120, nothing else.
 keys enter
 wait 1500
-keys ctrl+2
+keys alt+2
 keys ctrl+home
 # Say all from the top while the second reply streams in for half a minute: NVDA reads down through the banner, the
 # first input and the forty lines of the first reply, and must not be cut while the view holds the new lines; its speech

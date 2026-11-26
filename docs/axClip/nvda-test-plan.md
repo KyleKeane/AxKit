@@ -15,7 +15,7 @@ Run with NVDA before a release, after `scripts to run-individual-apps\run-axClip
 1. Down, Up: each item read with its place; at the last one, Down plays the low edge sound and reads it again. Ctrl+Home, Ctrl+End: the first and the last.
 2. Type a word of one item: after a moment "<that item>, 1 of 1". Backspace the word: the list shows all items again.
 3. Copy the first line again in axDown, then Ctrl+Shift+Comma, Down: that line is first, and it is in the list once.
-4. Copy a text of three lines: its item reads "<first line>, 3 lines". Ctrl+Q: the notice "Clipboard text, 3 lines" with the whole text; Escape.
+4. Copy a text of three lines: its item reads "<first line>, 3 lines". F7: the notice "Clipboard text, 3 lines" with the whole text; Escape.
 5. Ctrl+P: "Recording paused"; copy a line in axDown; Ctrl+Shift+Comma: that line is not in the list. Ctrl+P: "Recording". NVDA+End: "N items" and "Recording".
 6. Copy a password from a password manager that marks it private (KeePassXC, Bitwarden, 1Password): it is not in the list.
 

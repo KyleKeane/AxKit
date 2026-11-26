@@ -15,7 +15,7 @@ expect focus "value":"favorite-me, folder"
 wait 500
 
 # Check: An empty Favorites list says so on every key
-# 6.1 Tab: "Favorites, No favorites yet"; Enter, Delete, Ctrl+I there say the line; Up or Down: the earcon; Escape back.
+# 6.1 Tab: "Favorites, No favorites yet"; Enter, Delete, F8 there say the line; Up or Down: the earcon; Escape back.
 keys tab
 expect focus "name":"Favorites"
 expect focus "value":"No favorites yet"
@@ -23,7 +23,7 @@ keys enter
 expect said ! No favorites yet
 keys delete
 expect said ! No favorites yet
-keys ctrl+i
+keys f8
 expect said ! No favorites yet
 keys up
 expect said ♪ Edge
@@ -69,7 +69,7 @@ keys backspace
 expect said ! act, 8 items, favorite-me-too, folder
 
 # Goal: Open a favorite from the Favorites list
-# 6.2 Enter on a favorite: the folder list on it, the focus there, the folder said; Ctrl+I: its path and place.
+# 6.2 Enter on a favorite: the folder list on it, the focus there, the folder said; F8: its path and place.
 keys tab
 keys home
 expect focus favorite-me (
@@ -78,7 +78,7 @@ expect said ! favorite-me, 1 item, readme.txt
 expect focus "value":"readme.txt"
 keys tab
 expect focus favorite-me (
-keys ctrl+i
+keys f8
 expect said favorite-me, 1 of 2
 
 # Goal: Remove a favorite from the Favorites list

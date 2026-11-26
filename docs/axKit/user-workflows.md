@@ -447,7 +447,7 @@ where a step is a command the tools may run (WF-9), and the existing scripts mov
     the pages never change it.
   - `keys`: "Press Ctrl+F." A line of one chord that carries Ctrl or Alt or is a function key, and that exactly one
     command of the app has in the inventory (as `key` or among `also`), names that command exactly as a `do` step
-    does: "Press Ctrl+G (Go to line; Navigation menu)." So one key reads one way on a page, whichever step pressed
+    does: "Press F12 (Go to line; Navigation menu)." So one key reads one way on a page, whichever step pressed
     it. The key printed is the one pressed: the row's key text when the chord is the row's key, else the chord in
     key words. This is how a script not yet moved to `do` still names its commands; it is a hint from the
     inventory, since a script's state is not known to the generator. A plain key (Enter, Backspace, a letter)
@@ -764,7 +764,7 @@ expect said Not found
 expect focus find.md
 
 # Goal: Go to a line by its number
-# 4.2: Ctrl+G, the field named with the line and column; a number, Enter: "Line n of m", the caret at that line's start.
+# 4.2: F12, the field named with the line and column; a number, Enter: "Line n of m", the caret at that line's start.
 do Go to line
 expect focus Go to line (now line 3, column 11)
 type 5
@@ -870,11 +870,11 @@ axDown's window with a file open and the focus in the text gives, among its rows
 {"label":"Undo","menu":"Actions","key":"ctrl+z","also":[],"keyText":"Ctrl+Z","mark":"change","checked":null,"keyOnly":false,"ai":true,"now":"ctrl+z"},
 {"label":"Redo","menu":"Actions","key":"ctrl+y","also":["ctrl+shift+z"],"keyText":"Ctrl+Y","mark":"change","checked":null,"keyOnly":false,"ai":true,"now":"ctrl+y"},
 {"label":"Find","menu":"Navigation","key":"ctrl+f","also":[],"keyText":"Ctrl+F","mark":"read","checked":null,"keyOnly":false,"ai":true,"now":"ctrl+f"},
-{"label":"Go to line","menu":"Navigation","key":"ctrl+g","also":[],"keyText":"Ctrl+G","mark":"read","checked":null,"keyOnly":false,"ai":true,"now":"ctrl+g"},
+{"label":"Go to line","menu":"Navigation","key":"f12","also":[],"keyText":"F12","mark":"read","checked":null,"keyOnly":false,"ai":true,"now":"f12"},
 {"label":"Heading","menu":"Navigation, Next","key":"ctrl+h","also":[],"keyText":"Ctrl+H","mark":"read","checked":null,"keyOnly":false,"ai":true,"now":"ctrl+h"},
 {"label":"Heading","menu":"Navigation, Previous","key":"ctrl+shift+h","also":[],"keyText":"Ctrl+Shift+H","mark":"read","checked":null,"keyOnly":false,"ai":true,"now":"ctrl+shift+h"},
 {"label":"Heading level 2","menu":"Navigation, Next","key":"ctrl+2","also":[],"keyText":"Ctrl+2","mark":"read","checked":null,"keyOnly":false,"ai":true,"now":"ctrl+2"},
-{"label":"Word wrap","menu":"Options, Text","key":"ctrl+shift+w","also":[],"keyText":"Ctrl+Shift+W","mark":"change","checked":true,"keyOnly":false,"ai":true,"now":"ctrl+shift+w"},
+{"label":"Word wrap","menu":"Options, Text","key":"f11","also":[],"keyText":"F11","mark":"change","checked":true,"keyOnly":false,"ai":true,"now":"f11"},
 {"label":"Keyboard shortcuts","menu":"Help","key":"f1","also":[],"keyText":"F1","mark":"read","checked":null,"keyOnly":false,"ai":true,"now":"f1"},
 {"label":"Between the text and the field under it","menu":"","key":"ctrl+tab","also":["ctrl+shift+tab","f6"],"keyText":"Ctrl+Tab","mark":"open","checked":null,"keyOnly":true,"ai":false,"now":"ctrl+tab"}
 ]}
@@ -915,10 +915,10 @@ without a byte order mark, so that a changed key is one changed line:
         {"label": "Undo", "menu": "Actions", "key": "ctrl+z", "also": [], "keyText": "Ctrl+Z", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Keyboard shortcuts", "menu": "Help", "key": "f1", "also": [], "keyText": "F1", "mark": "read", "keyOnly": false, "ai": true},
         {"label": "Find", "menu": "Navigation", "key": "ctrl+f", "also": [], "keyText": "Ctrl+F", "mark": "read", "keyOnly": false, "ai": true},
-        {"label": "Go to line", "menu": "Navigation", "key": "ctrl+g", "also": [], "keyText": "Ctrl+G", "mark": "read", "keyOnly": false, "ai": true},
+        {"label": "Go to line", "menu": "Navigation", "key": "f12", "also": [], "keyText": "F12", "mark": "read", "keyOnly": false, "ai": true},
         {"label": "Heading", "menu": "Navigation, Next", "key": "ctrl+h", "also": [], "keyText": "Ctrl+H", "mark": "read", "keyOnly": false, "ai": true},
         {"label": "Heading", "menu": "Navigation, Previous", "key": "ctrl+shift+h", "also": [], "keyText": "Ctrl+Shift+H", "mark": "read", "keyOnly": false, "ai": true},
-        {"label": "Word wrap", "menu": "Options, Text", "key": "ctrl+shift+w", "also": [], "keyText": "Ctrl+Shift+W", "mark": "change", "keyOnly": false, "ai": true},
+        {"label": "Word wrap", "menu": "Options, Text", "key": "f11", "also": [], "keyText": "F11", "mark": "change", "keyOnly": false, "ai": true},
         {"label": "Between the text and the details", "menu": "", "key": "ctrl+tab", "also": ["ctrl+shift+tab", "f6"], "keyText": "Ctrl+Tab", "mark": "open", "keyOnly": true, "ai": false}
       ]
     }
@@ -1107,7 +1107,7 @@ Starts with: Open axDown with the file find.md.
 
 ### Go to a line by its number
 
-1. Press Ctrl+G (Go to line; Navigation menu).
+1. Press F12 (Go to line; Navigation menu).
 2. Type "5".
 3. Press Enter.
     You hear: Line 5 of 7.
@@ -1535,18 +1535,18 @@ pins stays.
 
 ### 6.5 How a key reaches a how-to line
 
-1. The key table: `EditorKeys.GoToLine = Keys.Control | Keys.G` (`src/AxKit.Forms/EditorKeys.cs`), the one place
+1. The key table: `EditorKeys.GoToLine = Keys.F12` (`src/AxKit.Forms/EditorKeys.cs`), the one place
    the key is written.
 2. The command: `new Command("&Go to line...", EditorKeys.GoToLine, ShowGoToLine)` in `TextEditorForm`, added with
-   `Add`, which makes its menu item through `AxKitForm.Item`: the item shows "Ctrl+G" and, new, holds the key
+   `Add`, which makes its menu item through `AxKitForm.Item`: the item shows "F12" and, new, holds the key
    (`CommandPalette.Keyed`).
 3. The listing: `AxKitForm.CommandRows` reads the item (`CommandPalette.Entries`, `KeyOf`) and the command list, and
-   `CommandListing.Rows` gives the row `Go to line`, menus `Navigation`, key `ctrl+g`.
+   `CommandListing.Rows` gives the row `Go to line`, menus `Navigation`, key `f12`.
 4. The step: `do Go to line` asks `commands data`, `CommandNames.Resolve` finds the row, the runner presses
-   `ctrl+g` through the tier's keys. The script never names the key.
+   `f12` through the tier's keys. The script never names the key.
 5. The inventory: the same run, with `--inventory write`, puts the row into `docs/axKit/window-commands.json`; a run
    without it says the inventory is stale when the row differs.
-6. The page: `tools/workflows.ps1` runs `Reference.Pages`, which writes the step as "Press Ctrl+G (Go to line;
+6. The page: `tools/workflows.ps1` runs `Reference.Pages`, which writes the step as "Press F12 (Go to line;
    Navigation menu)." into `docs/axKit/workflows/axDown.md`.
 7. axHelp: the next build embeds the page; `AiDocumentation.Write` puts it into Claude's working folder as
    `documentation\workflows-axDown.md`; the rule file tells Claude to give the goal's steps as written.

@@ -98,14 +98,14 @@ run git -C repo branch -d scratch-test
 # Goal: Fetch, pull and push
 # 4.4 Fetch: "Working: fetch…" on the status bar while it runs, then "Fetched" and one behind; Pull; Pull again;
 # Push with a commit to push, and with nothing to push. (Reading the status bar with NVDA+End is manual.)
-keys ctrl+shift+f
+keys ctrl+r
 expect state Working: fetch
 expect said ! Fetched
 expect state 1 behind
-keys ctrl+shift+l
+keys ctrl+l
 expect said ! Pulled
 expect state up to date
-keys ctrl+shift+l
+keys ctrl+l
 expect said ! Already up to date
 # Each command ends with a refresh; "changed," is on the status bar only when no command runs.
 expect state changed,
@@ -114,17 +114,17 @@ run git -C repo commit -q -am "to push"
 keys f5
 expect said ! Refreshed
 expect state 1 ahead
-keys ctrl+shift+h
+keys ctrl+p
 expect said ! Pushed
 expect state up to date
 expect state changed,
-keys ctrl+shift+h
+keys ctrl+p
 expect said ! Pushed
 expect state changed,
 
 # Check: A pull asked while a fetch runs says Working
 # 4.5 Fetch and at once Pull: "Working…" for the second; the first finishes on its own.
-keys ctrl+shift+f ctrl+shift+l
+keys ctrl+r ctrl+l
 expect said ! Working…
 expect said ! Fetched
 refuse said Pulled
@@ -134,7 +134,7 @@ expect state changed,
 # 4.4 With the network off, Fetch: the notice "Fetch failed" with git's message. The remote pointed at a folder
 # that does not exist stands in for the network.
 run git -C repo remote set-url origin {temp}\missing.git
-keys ctrl+shift+f
+keys ctrl+r
 expect state "notice":"Fetch failed"
 expect state does not appear to be a git repository
 wait 1200

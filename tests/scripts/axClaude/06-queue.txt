@@ -68,9 +68,9 @@ keys ctrl+home down down down down down down down down down down down down down 
 refuse said · you:
 refuse said ctrl+x ctrl+s
 # Goal: Send a waiting message at once
-# Step 3: again a slow command and a second message; Ctrl+Shift+S: "Sending now", and within a few seconds "# Input 4"
-# is in the conversation while the status still says working. Ctrl+Shift+S with nothing waiting: "Nothing queued".
-# (Ctrl+Shift+S goes once the status bar shows the waiting message: pressed at once after "Queued", before Claude has
+# Step 3: again a slow command and a second message; Ctrl+Shift+Enter: "Sending now", and within a few seconds "# Input 4"
+# is in the conversation while the status still says working. Ctrl+Shift+Enter with nothing waiting: "Nothing queued".
+# (Ctrl+Shift+Enter goes once the status bar shows the waiting message: pressed at once after "Queued", before Claude has
 # drawn it, it says "Nothing queued", as FR-2.8 has it.)
 keys alt+1
 type Use your Bash tool to run: ping -n 20 127.0.0.1 then reply with the words OK DONE.
@@ -87,12 +87,12 @@ type Reply with the single word fourth.
 keys enter
 expect said Queued
 expect state 1 message waiting
-keys ctrl+shift+s
+keys ctrl+shift+enter
 expect said Sending now
 keys alt+2
 expect text # Input 4
 expect state Claude: working
 expect said Done
 expect state Claude: ready |
-keys ctrl+shift+s
+keys ctrl+shift+enter
 expect said Nothing queued

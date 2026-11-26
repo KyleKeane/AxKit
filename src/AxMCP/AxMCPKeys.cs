@@ -4,7 +4,7 @@ namespace AxMCP;
 
 /// <summary>
 /// axMCP's window-specific keys (SPEC.md MP-6; bundle AX-8): the item apps' shared keys (<see cref="ItemKeys"/>, the
-/// panes, Enter, Right, Left, Tab, F2, Delete, Ctrl+N, Ctrl+Z, Ctrl+Q, F5) and two of its own. A key is changed here
+/// panes, Enter, Right, Left, Tab, F2, Delete, Ctrl+N, Ctrl+Z, F5) and two of its own. A key is changed here
 /// and nowhere else: the menu items, the commands of <c>MCPForm</c> and the F1 text read this table. The bundle-wide keys
 /// (F1, the palette, the control keys, find, Ctrl+S, text size) are <c>AxKit.Forms.BundleKeys</c>; so is Ctrl+Enter,
 /// the main action (<c>BundleKeys.MainAction</c>, AX-8.10), which here calls the tool or fetches the prompt with the

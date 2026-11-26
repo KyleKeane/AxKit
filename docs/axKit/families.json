@@ -219,7 +219,7 @@
           "when": "The focus entered a form from outside it: several things asked for one action, Tab between them (SPEC AX-7.11). Once for the form; moving between its controls is silent.",
           "starts": ["key", "menu", "palette", "ai-tool", "script"],
           "sounds": ["FormOpen"],
-          "words": "After NVDA has read the first control: the title and the one word, 'Move 2 items, form'. The explanation is not said: Ctrl+Q reads it. Two forms say their text after the word, since it is what will happen and not how a form is used: the report, and an action of an axTask list.",
+          "words": "After NVDA has read the first control: the title and the one word, 'Move 2 items, form'. The explanation is not said: F7 reads it. Two forms say their text after the word, since it is what will happen and not how a form is used: the report, and an action of an axTask list.",
           "apps": "Every window with a form: the report (F4), axTask's item form, Move to section, Move to a list and an action's form, axMCP's Add server, axTerminal's Add a shell, the item windows' New field, axClaude's New session."
         },
         {
@@ -694,7 +694,7 @@
     { "family": "ctrl-shift-f-keys", "events": ["opened"], "note": "As Ctrl with a function key, for an access layer." },
     { "family": "enter", "events": ["opened", "landed", "sent", "asked", "edge", "refused"] },
     { "family": "enter-forms", "events": ["sent", "done", "opened", "no-command", "refused"], "note": "Ctrl+Enter where the window has no main action plays the edge." },
-    { "family": "escape", "events": ["cancelled", "landed", "said", "done"], "note": "Escape in axClaude's message field only speaks; Shift+Escape interrupts the program." },
+    { "family": "escape", "events": ["cancelled", "landed", "said", "done"], "note": "Escape in axClaude's message field only speaks; Ctrl+I interrupts the program, and Shift+Escape sends Escape to axTerminal's program." },
     { "family": "delete", "events": ["asked", "done", "refused"] },
     { "family": "ctrl-tab", "events": ["landed"] },
     { "family": "moves", "events": ["landed", "landed-on-heading", "edge"] },

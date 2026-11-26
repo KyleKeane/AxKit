@@ -65,14 +65,12 @@ public sealed partial class FileForm : ItemForm
         FillFavorites();
         navigation.DropDownItems.Add(_favoritesItem);
         // Drives (AF-3.11): the drives to go to, This PC, and the drive's own Eject and Properties; refilled when it
-        // opens, since a stick may have come or gone. A submenu here since 2026-10-22, freeing Alt+D for Go to folder.
+        // opens, since a stick may have come or gone. A submenu here since 2026-10-22.
         CommandPalette.NoEntry(_drivesMenu).DropDownOpening += (_, _) => FillDrives();
         FillDrives();
         navigation.DropDownItems.Add(_drivesMenu);
         Add(navigation, new Command("&Go to folder...", AxFileKeys.GoToFolder, GoToFolder) { Mark = CommandMark.Open });
-        AddKey(new Command("Go to folder", AxFileKeys.GoToFolderAlso, GoToFolder) { Mark = CommandMark.Open });
         Add(navigation, new Command("&Up one level", AxFileKeys.Up, GoUp) { When = InNavigator, Mark = CommandMark.Open });
-        AddKey(new Command("Up one level", AxFileKeys.UpAlso, GoUp) { Mark = CommandMark.Open });
         navigation.DropDownItems.Add(new ToolStripSeparator());
         Add(navigation, new Command("The Favorites &list", Keys.None, ShowFavorites) { Mark = CommandMark.Open });
         AddKey(new Command("Add to or remove from Favorites", AxFileKeys.Favorite, ToggleFavorite) { Mark = CommandMark.Change });
@@ -120,8 +118,7 @@ public sealed partial class FileForm : ItemForm
         select.DropDownItems.Add(Item("Select or deselect this &entry", SelectRow, SelectionKeys.Select, CommandMark.Change));
         select.DropDownItems.Add(Item("Select to &here", SelectToHere, SelectionKeys.SelectTo, CommandMark.Change));
 
-        // Escape: the marks cleared, else the filter (AF-3.7, AF-3.8); with neither, the key is left alone. Both
-        // are the item window's commands on the key.
+        // Escape: the marks cleared (AF-3.7), and Ctrl+Delete the filter (AF-3.8); both are the item window's commands.
         select.DropDownItems.Add(new ToolStripSeparator());
         // The operations on the marks alone (AF-D10): their keys are the entry's commands, on the targets, which
         // are the marks while there are any; these items only show them.
@@ -240,7 +237,7 @@ public sealed partial class FileForm : ItemForm
 
     /// <summary>
     /// The navigator's keys axFile has a command of its own for under another condition, or no use for: Ctrl+Z
-    /// (Undo in either list), Ctrl+Q (nothing to read in full), and the section keys, a folder
+    /// (Undo in either list), F7 (nothing to read in full), and the section keys, a folder
     /// having no sections. Of the rest, some are axFile's own commands in the same place, which the item window
     /// leaves to it (Enter, F2, Delete, Backspace), and the others are the item window's (the pane keys, Right
     /// and Left, the selection's, Context's, Escape).

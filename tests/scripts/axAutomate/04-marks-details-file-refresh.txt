@@ -2,12 +2,12 @@
 # axAutomate, docs/axAutomate/user-guide.md beyond 01 to 03: "The folder" (type the start of a name; Backspace comes
 # back up), "A workflow's steps" (the marks after a step's sentence: goes on if it fails, reports, otherwise 1 step;
 # a step's details), "Running workflows" (a workflow's details say Cannot run) and "Keys" (Ctrl+J, the workflow's file
-# as text; Session, Refresh; F1; Ctrl+N and F2 refused; Ctrl+R before any run); plan steps 1.2, 1.3, 3.1, 3.3 and 3.4
+# as text; Session, Refresh; F1; Ctrl+N and F2 refused; F8 before any run); plan steps 1.2, 1.3, 3.1, 3.3 and 3.4
 # (docs/axAutomate/nvda-test-plan.md; SPEC.md AU-4), run by tools/AxAutomate on a desktop of its own.
-# Not here: Ctrl+Q in a step's details, which the guide says reads every line at once (plan step 3.2); it says the
+# Not here: F7 in a step's details, which the guide says reads every line at once (plan step 3.2); it says the
 # selected line alone today, which is the report's to name and not a step to write as passing.
-# Session, Refresh has no key here: F5 runs (AU-D8). The window lists Refresh without a key, so do Refresh chooses
-# the menu item; until 2026-11-21 the listing named Refresh on F5 and do Refresh started a run of every workflow.
+# Session, Refresh is on F5 again since 2026-11-26, when Run moved to Ctrl+R (AU-D8); do Refresh runs it. From
+# 2026-11-21 until then the listing named Refresh without a key; before that do Refresh pressed F5 and started a run.
 mkdir flows
 file flows\01-script.txt # A script.\n\nstart down\nwait 100\nclose
 file flows\02-marks.workflow.json {"format": "axkit-workflow 1", "title": "Marks", "covers": "a made-up plan, section 1", "steps": [{"do": "start", "arguments": "down"}, {"do": "expect said", "text": "x", "on failure": "continue"}, {"do": "menu", "name": "Close all windows", "on failure": "continue", "report": "Not closed"}, {"do": "expect said", "text": "y", "otherwise": [{"do": "close"}]}]}
@@ -67,8 +67,8 @@ keys f2
 expect said ! This version views and runs the workflows; changing them comes later
 
 # Check: A workflow not run yet has no report
-keys ctrl+r
-expect said ! No report yet: F5 runs the workflow
+keys f8
+expect said ! No report yet: Ctrl+R runs the workflow
 expect state "notice":null
 
 # Check: Backspace comes back up to the folder
@@ -87,7 +87,7 @@ expect focus Marks, workflow, 5 steps
 # Goal: Read every key of the window
 keys f1
 expect state "notice":"Keyboard shortcuts"
-expect state F5: run the workflow you are in, on a desktop of its own
+expect state Ctrl+R: run the workflow you are in, on a desktop of its own
 keys escape
 expect state "notice":null
 expect focus Marks, workflow, 5 steps

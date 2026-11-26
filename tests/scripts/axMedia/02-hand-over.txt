@@ -4,7 +4,7 @@
 # window), and the hand-over proper: a start that hands its paths to the open window and ends without a window (the
 # runner's launch, which waits for the process to end).
 #
-# Step 1, 1a, 2, 3 and 4 (first half): axFile's Open with axKit apps, Ctrl+Enter, Ctrl+Shift+Q, with axMedia open; a
+# Step 1, 1a, 2, 3 and 4 (first half): axFile's Open with axKit apps, Ctrl+Enter, Ctrl+Q, with axMedia open; a
 # hand-over each, from another app's window (above), and the front window and NVDA's reading of it are tier 3.
 # Step 5: Windows' default program and File Explorer are the system's, outside the test desktop.
 
@@ -17,13 +17,13 @@ silence ch\gamma.wav 30000
 # Step 4 (second half, AM-1.2, AM-D3): an add with no axMedia window open opens one with the queue and nothing
 # playing, and says "Added 3" once you are in it: a new window may come to the front, and then what axFile said is lost.
 # The app shows that window without activation; the runner activates it, as the user's switching to it would (every
-# started window is, since 2026-11-01), and the queue is read through Ctrl+I, which the window takes from anywhere.
+# started window is, since 2026-11-01), and the queue is read through F8, which the window takes from anywhere.
 start media --add {temp}\ch
 expect state "title":"axMedia"
 expect said ! Added 3
-keys ctrl+q
+keys f7
 expect said ! Nothing playing
-keys ctrl+i
+keys f8
 expect said ! alpha.wav, 1 of 3
 # Goal: Start playing with the main action key
 # AM-4.3: a queue with nothing playing: Ctrl+Enter plays the file you are on, as it pauses and resumes one that plays.

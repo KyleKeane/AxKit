@@ -25,7 +25,7 @@ expect said ! Theme on, not checked
 menu Theme on
 expect said ! Theme on, checked
 # Check: Word wrap is kept in the theme file
-# TH-6: Ctrl+Shift+W writes the editors' word wrap into the same file; axJSON on it shows the value; back on for the scripts after.
+# TH-6: F11 writes the editors' word wrap into the same file; axJSON on it shows the value; back on for the scripts after.
 do Word wrap
 expect said ! Word wrap, not checked
 menu Edit theme file

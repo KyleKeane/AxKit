@@ -7,7 +7,7 @@ start file {temp}\u
 expect focus keep.txt
 
 # Goal: Undo a new text file
-# Ctrl+Shift+T makes "New file.txt" with its rename box; Escape keeps the name; Ctrl+Z removes the file.
+# Ctrl+T makes "New file.txt" with its rename box; Escape keeps the name; Ctrl+Z removes the file.
 do New text file
 expect focus "value":"New file.txt"
 keys escape

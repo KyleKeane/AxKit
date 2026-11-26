@@ -10,18 +10,18 @@ expect focus a.md
 # Check: Every menu item is in the command list with its shortcut
 # 6.1 manual: Alt opens the menu bar, whose menu mode needs the foreground. Every item with its shortcut, as the
 # palette reads them from the menus:
-expect commands "Word wrap, Options, Text, Ctrl\u002BShift\u002BW, checked"
-expect commands "Go to line, Navigation, Ctrl\u002BG"
+expect commands "Word wrap, Options, Text, F11, checked"
+expect commands "Go to line, Navigation, F12"
 expect commands "Heading level 2, Navigation, Next, Ctrl\u002B2."
 expect commands "Undo, Actions, Ctrl\u002BZ"
 expect commands "Keyboard shortcuts, Help, F1"
 
 # Goal: Open the keyboard shortcuts
-# 6.2: F1, the shortcuts notice, its first line naming the text's own keys.
+# 6.2: F1, the shortcuts notice, its first lines the rules of the keys (AX-8.18).
 keys down right right
 do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
-expect focus {"name":"Keyboard shortcuts","role":"Text","value":"In this text: h and Shift\u002BH move by heading
+expect focus {"name":"Keyboard shortcuts","role":"Text","value":"## How the keys go
 # Goal: Move through the keyboard shortcuts by heading
 # h and Ctrl+H alike: the next section's heading; Shift+H back.
 keys h
@@ -138,16 +138,16 @@ expect said ♪ Edge
 expect said ! New, Session, Ctrl+N, 1 of
 # Goal: Run a command found by its name
 type wrap
-expect said ! Word wrap, Options, Text, Ctrl+Shift+W, checked, 1 of 1
+expect said ! Word wrap, Options, Text, F11, checked, 1 of 1
 keys down
 expect said ♪ Edge
-expect said ! Word wrap, Options, Text, Ctrl+Shift+W, checked, 1 of 1
+expect said ! Word wrap, Options, Text, F11, checked, 1 of 1
 # Enter: the palette closes, the focus back in the editor at the same place, and the item's new state said.
 keys enter
 expect said Word wrap, not checked
 expect focus {"name":"a.md","role":"Text","value":"Some text here."}
 expect state Line 3, Column 2 \u00B7
-expect commands "Word wrap, Options, Text, Ctrl\u002BShift\u002BW","Say new line, Options, Text
+expect commands "Word wrap, Options, Text, F11","Say new line, Options, Text
 # Back on: the setting is the run's theme file, which the scripts after this one share (docs/axKit/theme.md TH-6).
 do Word wrap
 expect said ! Word wrap, checked

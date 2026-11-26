@@ -83,7 +83,7 @@ with Enter; a prompt is filled and fetched like a tool.
   ("Undone: removed 3 servers"). Start, Stop and Rename stay on the server you are on.
 - MP-1.4 A server whose kind is not `stdio` is listed and never started in this version; Right or Enter says "http
   servers need a network connection of axKit's own, which this version does not make" (MP-D2).
-- MP-1.6 **Filter and sort** (2026-11-22; the navigator's, bundle AX-8.17): Options → Filter… shows only the servers, tools, prompts or resources of the level whose name contains a text, a section staying while a row under it passes; Options → Sort by ▸ puts them by name or back in their own order.
+- MP-1.6 **Filter and sort** (2026-11-22; the navigator's, bundle AX-8.17): Options → Filter… shows only the servers, tools, prompts or resources of the level whose name contains a text, a section staying while a row under it passes; Options → Sort by ▸ puts them by name or back in their own order. Ctrl+Delete in the list clears the filter (Escape, once nothing was selected, until 2026-11-26).
 
 ### MP-2 Starting and stopping
 
@@ -168,7 +168,7 @@ with Enter; a prompt is filled and fetched like a tool.
 ### MP-6 Keys
 
 Bundle-wide keys (AX-8) as in every window; the item apps' keys (item-apps section 3, `ItemKeys`) for the panes,
-Enter, Right, Left, Tab, F2, Delete, Ctrl+N, Ctrl+Shift+N, Ctrl+Z, Ctrl+Q and F5 (in the detail pane Right and Left
+Enter, Right, Left, Tab, F2, Delete, Ctrl+N, Ctrl+Shift+N, Ctrl+Z, Ctrl+Delete and F5, with the bundle's F7 read in full (in the detail pane Right and Left
 step through a choice and check or uncheck a check, item-apps IA-5.6). Ctrl+Enter is the bundle's main action (AX-8.10,
 `BundleKeys.MainAction`): here it calls the tool or fetches the prompt selected (MP-3.4, MP-5.2). Window-specific, in
 `AxMCPKeys`:

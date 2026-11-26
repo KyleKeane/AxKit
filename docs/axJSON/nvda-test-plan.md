@@ -46,14 +46,14 @@ and `broken.json`, the same with the comma after `"opus"` removed and a comma ad
 
 ## 3. Format (AJ-2.3)
 
-1. In `settings.json`, put everything on one line (join the lines), then Ctrl+Shift+F: "Formatted"; Ctrl+Home and
+1. In `settings.json`, put everything on one line (join the lines), then Ctrl+R: "Formatted"; Ctrl+Home and
    Down Arrow read `{`, then `  "model": "opus",`, two spaces per level, one key per line; Ctrl+Z puts the one line back
    ("Undone"); Ctrl+Y formats it again ("Redone"). axDown's section 2, step 6 (the history) holds here too.
-2. In `broken.json`, Ctrl+Shift+F: "Formatted, repaired: 1 trailing comma, 1 missing comma"; Ctrl+E then says "No next
-   error". Type `'x'` as a value somewhere and Ctrl+Shift+F: "Formatted, repaired: 1 single-quoted string".
-3. Delete a value, leaving `"count": ,`, then Ctrl+Shift+F: "Not valid JSON: line 4, expected a value, found ','"; the
+2. In `broken.json`, Ctrl+R: "Formatted, repaired: 1 trailing comma, 1 missing comma"; Ctrl+E then says "No next
+   error". Type `'x'` as a value somewhere and Ctrl+R: "Formatted, repaired: 1 single-quoted string".
+3. Delete a value, leaving `"count": ,`, then Ctrl+R: "Not valid JSON: line 4, expected a value, found ','"; the
    text is unchanged. Actions, Format does the same as the key.
-4. Ctrl+Shift+F on an already formatted file: "Already formatted", nothing changes, and the title shows no star.
+4. Ctrl+R on an already formatted file: "Already formatted", nothing changes, and the title shows no star.
 
 ## 3a. Options: choosing in place of typing (AJ-5)
 

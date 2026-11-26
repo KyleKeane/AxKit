@@ -27,7 +27,7 @@ public enum KeyTestFocus
 
 /// <summary>
 /// One key press of the key test: the virtual key code, the modifiers held, and the key as the bundle spells it
-/// ("Ctrl+Shift+P", "F8", "Alt+Left"; <c>BundleKeys.Text</c> without the full stop of a number row key).
+/// ("Ctrl+Shift+P", "F9", "Alt+Left"; <c>BundleKeys.Text</c> without the full stop of a number row key).
 /// </summary>
 public sealed record KeyTestPress(int Code, bool Ctrl, bool Shift, bool Alt, string Text);
 
@@ -62,7 +62,7 @@ public static class KeyTest
         Home = 0x24, Left = 0x25, Up = 0x26, Right = 0x27, Down = 0x28, Delete = 0x2E, Apps = 0x5D, F4 = 0x73, F10 = 0x79;
 
     /// <summary>
-    /// "F8: Say the status": the key, then what it does. In order: a bundle key the window base handles everywhere
+    /// "F9: Say the status": the key, then what it does. In order: a bundle key the window base handles everywhere
     /// (<paramref name="bundle"/> entries that apply); the first of the window's <paramref name="commands"/> on the key
     /// that acts now, which is how a window's key takes a bundle key's place (Ctrl+Up by section in a list, by
     /// paragraph in a text); Windows' own keys for a window; <paramref name="own"/>, what the window says of a key its

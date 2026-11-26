@@ -12,7 +12,7 @@ public static class HelpText
     public static readonly string Shortcuts = BundleHelp.Section(
         "axClaude",
         [
-            "Alt+1 and Alt+2, the message field and the conversation, say where you are, also when you are there already. Ctrl+1, Ctrl+2 and Ctrl+3, the keys of the three places until now, still work.",
+            "Alt+1 and Alt+2, the message field and the conversation, say where you are, also when you are there already.",
             $"Tab, Shift+Tab or F6 moves between the message field, or Claude's question in its place, and the conversation.",
             $"{BundleKeys.Text(AxClaudeKeys.Interrupt)} interrupts Claude, or closes one of Claude's dialogs.",
             $"{BundleKeys.Text(AxClaudeKeys.SendNow)} makes Claude take up the waiting message now instead of after its current step.",
@@ -21,7 +21,7 @@ public static class HelpText
             $"{BundleKeys.Text(AxClaudeKeys.CtrlOGuard)} is switched off, and a reminder says why: Claude's detailed view redraws the conversation in screen reader mode.",
             "Ctrl+Alt and a letter of the Conversation section below reads every line of that kind from the caret to the end of the conversation in one go, without moving; Ctrl+Alt+P reads the paragraphs whole. Control stops NVDA.",
             "Background music says whether it is on or off.",
-            "What runs in the background says how many things run, each agent's type and what it does, each workflow with how far it is, and the shells. Claude Code's rows about it are never spoken, and stay out of the conversation unless you show them (Options, Background work). The status bar (F8) says the number. Three quick notes going up say that background work started, the same three going down that it ended, and while it runs a slow soft chord with a long fading tail comes again and again with a short pause between, a different chord each time, fuller with each thing running (Options, Background work).",
+            $"What runs in the background says how many things run, each agent's type and what it does, each workflow with how far it is, and the shells. Claude Code's rows about it are never spoken, and stay out of the conversation unless you show them (Options, Background work). The status bar ({BundleKeys.Text(BundleKeys.SayStatus)}) says the number. Three quick notes going up say that background work started, the same three going down that it ended, and while it runs a slow soft chord with a long fading tail comes again and again with a short pause between, a different chord each time, fuller with each thing running (Options, Background work).",
             "Claude's question again reads Claude's question or screen while it waits at the bottom, all its lines and the answer the focus is on, without moving.",
         ],
         altF4: "close axClaude (asks first while Claude is working); in axHelp's conversation it hides the window and Claude runs on, and Session, End Claude and close this window ends it",

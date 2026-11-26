@@ -38,7 +38,7 @@ Starts with: Open axTask with the folder tasks.
 
 ### Hear the status bar
 
-1. Press F8 (Say the status; Window menu).
+1. Press F9 (Say the status; Window menu).
     You hear something with "tasks" in it.
 2. Press Down.
 
@@ -145,12 +145,12 @@ Starts with: Open axTask with the folder tasks.
 
 ### Hear every field of an item
 
-1. Press Ctrl+Q (Read in full; Context menu).
+1. Press F7 (Read in full; Context menu).
     You hear: Milk. Notes: empty.
 
 ### Show all tasks, the soonest due first
 
-1. Press Ctrl+0 (All tasks; Navigation menu).
+1. Press Alt+0 (All tasks; Navigation menu).
     You hear: All tasks, 4 items, Fix the sink, due.
 2. Press Left.
 
@@ -175,7 +175,7 @@ Starts with: Open axTask with the folder tasks.
 6. Press Tab.
 7. Press Enter.
     You hear: Notes: First line, and 1 more line.
-8. Press Ctrl+Q (Read in full; Context menu).
+8. Press F7 (Read in full; Context menu).
     You hear: Notes: First line. Second line.
 
 ### Link one item to another
@@ -216,12 +216,12 @@ Starts with: Open axTask with the folder tasks.
 
 ### Hide and show done tasks
 
-1. Press Ctrl+Shift+D (Hide done tasks; Options menu).
+1. Press Ctrl+H (Hide done tasks; Options menu).
     You hear: Hide done tasks, checked.
 2. Press Left.
 3. Press Right.
     You hear: Home, 1 item, 1 done hidden.
-4. Press Ctrl+Shift+D (Hide done tasks; Options menu).
+4. Press Ctrl+H (Hide done tasks; Options menu).
     You hear: Hide done tasks, not checked.
 
 ## Group lists into sections
@@ -472,8 +472,8 @@ Starts with: Open axTask with the folder tasks.
 
 1. Choose Test a key in the Help menu, Diagnostics.
     You hear: Key test. Press any key to hear its name and what it does here. Press Escape to end.
-2. Press F8 (Say the status; Window menu).
-    You hear: F8: Say the status.
+2. Press F9 (Say the status; Window menu).
+    You hear: F9: Say the status.
 3. Press F1 (Keyboard shortcuts; Help menu).
     You hear: F1: Keyboard shortcuts.
 4. Press Ctrl+Period.
@@ -490,8 +490,8 @@ Starts with: Open axTask with the folder tasks.
     You hear: Down: moves in the list.
 10. Press W.
     You hear: W: finds the next item that starts with what you type.
-11. Press F9.
-    You hear: F9: no command of this window.
+11. Press Shift+F9.
+    You hear: Shift+F9: no command of this window.
 
 ### End the key test
 
@@ -518,7 +518,7 @@ Starts with: Open axTask with the folder tasks.
 
 ### Hear how many items a gathering list could not read
 
-1. Press Ctrl+0 (All tasks; Navigation menu).
+1. Press Alt+0 (All tasks; Navigation menu).
     You hear: All tasks, 1 item, 1 not readable, Fix the tap.
 2. Press End.
 3. Press Enter.
@@ -642,7 +642,7 @@ Starts with: Open axTask with the folder tasks.
 3. Press Enter.
     You hear: Converted 2 lists: 3 items. A copy is among the Archived lists.
 4. Press Down.
-5. Press Ctrl+0 (All tasks; Navigation menu).
+5. Press Alt+0 (All tasks; Navigation menu).
     You hear: All tasks, 3 items.
 
 ## Give a list its configuration
@@ -689,7 +689,7 @@ Starts with: Open axTask with the folder tasks.
 1. Press Enter.
     You hear the sound FormOpen.
     You hear: Fields of Fix the tap, form.
-2. Press Ctrl+Q (Read in full; Context menu).
+2. Press F7 (Read in full; Context menu).
     You hear: The fields of Fix the tap. Tab moves.
     You hear: 1 more field kept: Sprint.
 3. Press Tab eight times.
@@ -934,7 +934,7 @@ Starts with: Open axTask with the folder tasks.
 1. Press Ctrl+M.
     You hear the sound FormOpen.
     You hear: Move Fix the tap, form.
-2. Press Ctrl+Q (Read in full; Context menu).
+2. Press F7 (Read in full; Context menu).
     You hear: Now in Home. Up and Down choose the list.
 3. Press Escape.
 

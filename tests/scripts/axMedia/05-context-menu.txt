@@ -26,7 +26,7 @@ silence ch\beta.wav 30000
 start media {temp}\ch
 expect said ! Playing alpha.wav
 expect focus Queue, 2 items
-expect commands "Play, Context, Enter","Remove, Context, Delete","Information, Context, Ctrl+I"
+expect commands "Play, Context, Enter","Remove, Context, Delete","Information, Context, F8"
 refuse commands "Queue is empty, Context"
 
 # Goal: Hear a file's information from the Context menu

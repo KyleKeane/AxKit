@@ -9,8 +9,8 @@ namespace AxCalc;
 /// (F1, the palette, the control keys, find, Ctrl+S, text size) are <c>AxKit.Forms.BundleKeys</c>. The window is a
 /// conversation window since 2026-11-22 (docs/axKit/framework.md step 9): the history is its text, read with the
 /// letters every conversation window has, the same as in axClaude and axTerminal (<see cref="Transcript"/>). Enter
-/// and Escape mean what the place with the focus needs: the field answers and clears, the history takes a line's
-/// expression into the field and goes back to the field. Delete no longer removes one line of the history: the
+/// means what the place with the focus needs: the field answers, the history takes a line's
+/// expression into the field; Escape goes back to the field, and Ctrl+Delete clears the field. Delete no longer removes one line of the history: the
 /// history is a text, and Clear history empties it.
 /// </summary>
 public static class AxCalcKeys
@@ -18,12 +18,19 @@ public static class AxCalcKeys
     /// <summary>In the field, the answer (AC-6.1); in the history, the line's expression back in the field (AC-5.2).</summary>
     public const Keys Act = Keys.Return;
 
-    /// <summary>In the field, the text cleared; in the history, back to the field.</summary>
+    /// <summary>In the history, back to the field. Only that since 2026-11-26 (AX-8.18: Escape goes back or closes); it cleared the field until then.</summary>
     public const Keys Back = Keys.Escape;
 
+    /// <summary>In the field, the text cleared (AC-6.3): the bundle's one key for clearing what you typed, the navigator's Clear the filter (<see cref="ItemKeys.ClearFilter"/>, Ctrl+Delete).</summary>
+    public const Keys ClearField = ItemKeys.ClearFilter;
+
     public const Keys CopyAnswer = Keys.Control | Keys.Shift | Keys.C;
-    public const Keys OtherBases = Keys.Control | Keys.I;
-    public const Keys LastAnswer = Keys.Control | Keys.Q;
+
+    /// <summary>The answer in other bases: F8, read with details (AX-8.18 rule 5; Ctrl+I until 2026-11-26).</summary>
+    public const Keys OtherBases = Keys.F8;
+
+    /// <summary>The last answer said: the bundle's read in full, F7 (AX-8.18 rule 5; Ctrl+Q until 2026-11-26), so no row of <see cref="All"/>.</summary>
+    public const Keys LastAnswer = BundleKeys.ReadInFull;
     public const Keys ClearHistory = Keys.Control | Keys.Shift | Keys.Delete;
 
     // ---- the history's letters, a conversation window's (the same keys as axTerminal's and axClaude's views) ----
@@ -43,8 +50,8 @@ public static class AxCalcKeys
     /// <summary>In the history with a selection: copies it and says so; the control's own copy otherwise.</summary>
     public const Keys CopySelection = Keys.Control | Keys.C;
 
-    /// <summary>From anywhere in the window: a bookmark on the history's line.</summary>
-    public const Keys BookmarkLine = Keys.Control | Keys.Shift | Keys.K;
+    /// <summary>From anywhere in the window: a bookmark on the history's line (AX-8.18 rule 2; Ctrl+Shift+K until 2026-11-26).</summary>
+    public const Keys BookmarkLine = Keys.Control | Keys.K;
 
     /// <summary>Ctrl+Alt with one of the history's letters, from anywhere: every line of that kind from the caret's line to the end, spoken once.</summary>
     public const Keys ReadToEnd = Keys.Control | Keys.Alt;
@@ -53,10 +60,10 @@ public static class AxCalcKeys
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
     [
         ("Answer (in the field), or the line's expression into the field (in the history)", Act),
-        ("Clear the field, or back to the field from the history", Back),
+        ("Back to the field (in the history)", Back),
+        ("Clear the field (in the field)", ClearField),
         ("Copy the answer", CopyAnswer),
         ("The answer in other bases", OtherBases),
-        ("Say the last answer", LastAnswer),
         ("Clear the history", ClearHistory),
         ("Copy the selection", CopySelection),
         ("Answer (a line of the history)", Answer),

@@ -17,8 +17,8 @@ expect commands "Test a key, Help, Diagnostics"
 menu Test a key
 expect said ! Key test. Press any key to hear its name and what it does here. Press Escape to end.
 
-keys f8
-expect said ! F8: Say the status
+keys f9
+expect said ! F9: Say the status
 keys f1
 expect said ! F1: Keyboard shortcuts
 # The bundle's two keys on Ctrl and punctuation (AX-8.15), named by the keys they stand beside.
@@ -36,8 +36,8 @@ keys down
 expect said ! Down: moves in the list
 keys w
 expect said ! W: finds the next item that starts with what you type
-keys f9
-expect said ! F9: no command of this window
+keys shift+f9
+expect said ! Shift+F9: no command of this window
 # Check: Nothing is carried out during the key test
 # Nothing was carried out: the same list, the same item, no notice.
 expect state "notice":null

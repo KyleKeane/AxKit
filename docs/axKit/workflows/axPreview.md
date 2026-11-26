@@ -22,7 +22,7 @@ command's in this version of axKit.
 1. Press Ctrl+Home, Down.
 2. Press L.
     You hear: Line 2 of 32.
-3. Press Ctrl+G (Go to line; Navigation menu).
+3. Press F12 (Go to line; Navigation menu).
 4. Type "5".
 5. Press Enter.
     You hear: Line 5 of 32.
@@ -70,13 +70,13 @@ command's in this version of axKit.
 
 ### Turn word wrap off and on
 
-1. Press Ctrl+G (Go to line; Navigation menu).
+1. Press F12 (Go to line; Navigation menu).
 2. Type "5".
 3. Press Enter.
     You hear: Line 5 of 32.
-4. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
+4. Press F11 (Word wrap; Options menu, Text).
     You hear: Word wrap, not checked.
-5. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
+5. Press F11 (Word wrap; Options menu, Text).
     You hear: Word wrap, checked.
 
 ### Read the keyboard shortcuts

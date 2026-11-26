@@ -732,7 +732,7 @@ public abstract partial class AxKitForm : Form
         Controls.OfType<StatusStrip>().SelectMany(strip => strip.Items.Cast<ToolStripItem>()).Select(item => item.Text ?? string.Empty).ToArray();
 
     /// <summary>
-    /// Say the status (AX-7.10, <see cref="BundleKeys.SayStatus"/>, F8, and Window, Say the status): the status bar's
+    /// Say the status (AX-7.10, <see cref="BundleKeys.SayStatus"/>, F9, and Window, Say the status): the status bar's
     /// texts as one interrupting announcement of the window's own, as NVDA+End would read them, on the notice while
     /// one shows. NVDA finds a status bar by a lookup on the screen that can miss ("blank" over a full bar, the user,
     /// 2026-11-15); this never depends on it.
@@ -847,7 +847,7 @@ public abstract partial class AxKitForm : Form
     }
 
     /// <summary>
-    /// The common keys (AX-8.2): the text size keys and Say the status (F8, AX-7.10) work everywhere, a notice included; while a notice shows, its text
+    /// The common keys (AX-8.2): the text size keys and Say the status (F9, AX-7.10) work everywhere, a notice included; while a notice shows, its text
     /// takes the find keys (AX-7.2) and every other shortcut waits (not calling the base skips the menu shortcuts;
     /// Enter and Escape reach the notice's buttons through AcceptButton and CancelButton); F1 shows the shortcuts,
     /// Ctrl+Shift+P the palette, Ctrl+S saves; then the window's own keys.
@@ -913,7 +913,7 @@ public abstract partial class AxKitForm : Form
     /// of window"): WinForms hands the keys of an open drop-down to the drop-down, a window of its own whose keys never
     /// reach the form's <see cref="ProcessCmdKey"/> (which sees them only while the bar itself has them). This filter of
     /// the thread's messages sees a key before the drop-down does: a key of the whole window closes the menus and runs
-    /// once they have closed, F8 says the status with the menu still open, and every other key goes on to the menu.
+    /// once they have closed, F9 says the status with the menu still open, and every other key goes on to the menu.
     /// One filter for the process, added with the first window.
     /// </summary>
     private sealed class MenuKeyFilter : IMessageFilter
@@ -1106,7 +1106,7 @@ public abstract partial class AxKitForm : Form
         {
             // AX-6.6a (the maintainer, 2026-11-23: "any hotkey that does not need a selection or caret should work when
             // focus is on the menu"): a key of the whole window works from an open menu too. The menu closes first and
-            // the key runs once it has, so that nothing opens over a menu (the F1 fault of 2026-10-23). F8 only says.
+            // the key runs once it has, so that nothing opens over a menu (the F1 fault of 2026-10-23). F9 only says.
             if (keyData == BundleKeys.SayStatus)
             {
                 SayStatus();
@@ -1134,10 +1134,11 @@ public abstract partial class AxKitForm : Form
             return true;
         }
 
-        if (keyData == BundleKeys.MainAction)
+        if (keyData is BundleKeys.MainAction or BundleKeys.ReadInFull)
         {
             // AX-8.10 rule 3: no main action where the focus is (no command of the window took the key): the edge
-            // sound and nothing else, never a line break in a text or a control's own meaning.
+            // sound and nothing else, never a line break in a text or a control's own meaning. AX-8.18 rule 5: F7
+            // likewise, where the window has nothing of its own to read in full.
             EventDoor.Raise(EventKind.NoCommand, EventSound.Edge);
             return true;
         }
@@ -1202,7 +1203,7 @@ public abstract partial class AxKitForm : Form
 
     /// <summary>
     /// A key of the whole window pressed (F1, the palette, F4, Ask about this window, Ctrl+S, an app's launch key, the
-    /// text size keys, F8), written into <see cref="Recent"/> by the name of the menu item that shows the key
+    /// text size keys, F9), written into <see cref="Recent"/> by the name of the menu item that shows the key
     /// (<paramref name="shown"/>, the key a further key stands for) and the key pressed; a launch key with no item by
     /// the app's title.
     /// </summary>

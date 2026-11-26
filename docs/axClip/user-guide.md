@@ -17,7 +17,7 @@ axClip is part of axKit. Installing axKit (see the axKit guide: Help, About, axK
 Other keys while axClip shows:
 
 - **Shift+Enter** puts the item on the clipboard without pasting, for a program whose paste is another key.
-- **Ctrl+Q** shows the item's whole text in a notice, to read with the arrow keys. Escape closes it.
+- **F7** shows the item's whole text in a notice, to read with the arrow keys. Escape closes it.
 - **Delete** removes the item; **Ctrl+Shift+Delete** clears the whole history, after a question.
 - **Ctrl+P** pauses recording, for when you are about to copy something private; press it again to record again.
 - **Escape**, or the hotkey again, hides axClip.
@@ -38,7 +38,7 @@ Each menu with its commands and their keys, as the window lists them:
 - **Session**: Hide (Escape); Quit axClip.
 - **Actions**: Clear history (Ctrl+Shift+Delete).
 - **Navigation**: Nothing to move to here yet.
-- **Context**: Copy without pasting (Shift+Enter); Paste (Enter); Read in full (Ctrl+Q); Remove (Delete).
+- **Context**: Copy without pasting (Shift+Enter); Paste (Enter); Read in full (F7); Remove (Delete).
 - **Options**: Hotkey; Keep history between runs; Pause recording (Ctrl+P); Developer (Open settings file); General (Say the first match while typing, Start with Windows); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
 - Keys without a menu item: Ctrl+Home (First match); Ctrl+End (Last match); Down (Next match); Page Down (Page down); Page Up (Page up); Up (Previous match).
 - **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.

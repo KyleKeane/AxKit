@@ -36,7 +36,7 @@ otherwise. Native fields mean NVDA reads them by itself, and the caret cannot le
 ## 3. Scenarios
 
 1. Open `.claude/settings.json`, press Ctrl+K until "permissions, object with 2 keys" is heard, Ctrl+K again into its
-   keys, add an entry, Ctrl+Shift+F, save.
+   keys, add an entry, Ctrl+R, save.
 2. Open an `.mcp.json` with a comma missing between two members: Ctrl+E says "No next error", since the parser puts
    that comma in; Format says "Formatted, repaired: 1 missing comma"; the user saves. With a value missing, Ctrl+E lands
    on the place and says "Error, line 12: expected a value, found '}'".
@@ -79,7 +79,7 @@ otherwise. Native fields mean NVDA reads them by itself, and the caret cannot le
   In navigation mode (Ctrl+Space, bundle AX-8.13, axDown AD-5.3: the same shell) the letters alone do what Ctrl with
   them does here: k, j, l, i, e, and with Shift the previous one; nothing changes the text, and Format from the menu
   plays the edge sound and says "Navigation mode: press Ctrl+Space to edit".
-- AJ-2.3 **Format**, Edit → Format (Ctrl+Shift+F): the document written out again with two spaces per level, one member
+- AJ-2.3 **Format**, Edit → Format (Ctrl+R; Ctrl+Shift+F until 2026-11-26): the document written out again with two spaces per level, one member
   or item per line, keys and strings in double quotes with JSON's escapes, the keys in their order, the text's own line
   ending and one at the end; empty containers as `{}` and `[]`. The repairs of AJ-2.2 are made on the way and named:
   "Formatted, repaired: 1 trailing comma, 1 unquoted key" (each kind with its count). "Formatted" when nothing needed
@@ -111,14 +111,14 @@ otherwise. Native fields mean NVDA reads them by itself, and the caret cannot le
 
 ### AJ-4 Menus, keys, texts
 
-- AJ-4.1 The menus are the shell's (AD-4) with axJSON's additions: Edit → Format (Ctrl+Shift+F) after the control's
+- AJ-4.1 The menus are the shell's (AD-4) with axJSON's additions: Edit → Format (Ctrl+R) after the control's
   own items, then Choose a value… and Add a member… (AJ-5), then Insert template ▸, axTemplate's templates checked for
   axJSON or for every axKit app (the editor shell's templates, docs/axDown/SPEC.md AD-13; axJSON has none of its
   own yet), with Options, General, Templates in axTemplate; Navigate → Next and Previous with the kinds of AJ-2.2; Help → JSON resources ▸ (JSON syntax,
   `https://www.json.org/json-en.html`; Claude Code settings, `https://code.claude.com/docs/en/settings`), as axDown's
   Help has Markdown resources.
 - AJ-4.2 Keys (AX-8): the shell's (`EditorKeys`, included in `AxJSONKeys.All`), then Ctrl+K, Ctrl+J, Ctrl+L, Ctrl+I,
-  Ctrl+E with Ctrl+Shift for the previous one, Ctrl+Shift+F, and AJ-5's four, Alt with an arrow; the collision test covers them. Ctrl+J, a line feed
+  Ctrl+E with Ctrl+Shift for the previous one, Ctrl+R, and AJ-5's four, Alt with an arrow; the collision test covers them. Ctrl+J, a line feed
   in an EDIT control, is kept from the control as axDown keeps Ctrl+H and Ctrl+I (AD-5.1).
 - AJ-4.3 The F1 text (`HelpText.Shortcuts`) names the shell's keys and AJ-2.2's; the user guide `docs/axJSON/user-guide.md`
   is embedded (Help → User guide); About is the bundle's (AX-9.9).
@@ -221,7 +221,7 @@ edit control holds it, every input is accepted without an exception, and the rep
 - **AJ-D5 The letters.** A letter keeps its meaning where the concept exists in both editors: L is a list in axDown and
   an array here, I an item in both. A letter with no counterpart is the type's own: K is a key here (a link in axDown,
   NVDA's letter; JSON has no links), E the error. O is Open in every editor window, so an object is J, the letter of
-  JSON's braces. Format is Ctrl+Shift+F next to Find.
+  JSON's braces. Format is Ctrl+R, R for reformat (Ctrl+Shift+F, next to Find, until 2026-11-26).
 - **AJ-D6 A forgiving parser of the bundle's own.** `System.Text.Json` reads bytes, throws on the first fault and knows
   no repairs; the navigation needs character offsets into the editor's text, an outline of a file that is nearly
   JSON, and the formatter the list of what it put right. A scanner and a recursive parser of two hundred lines, tested,

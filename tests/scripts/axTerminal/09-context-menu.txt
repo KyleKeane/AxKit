@@ -20,7 +20,7 @@ expect said Cleared
 # Check: Context lists its three commands with their keys
 # Context as the palette reads it: the three commands, each with the key that does the same in the terminal.
 expect commands "Copy this line into the command field, Context, Enter in the terminal"
-expect commands "Bookmark this line, Context, Ctrl+Shift+K, or M in the terminal"
+expect commands "Bookmark this line, Context, Ctrl+K, or M in the terminal"
 expect commands "Copy the selection, Context, Ctrl+C in the terminal"
 
 # A line to act on: the output of a command.
@@ -61,7 +61,7 @@ keys delete
 do Command palette
 expect state "notice":"Command palette"
 type bookmark this
-expect said Bookmark this line, Context, Ctrl+Shift+K, or M in the terminal
+expect said Bookmark this line, Context, Ctrl+K, or M in the terminal
 keys enter
 expect said ! Bookmark 2 added
 expect state "notice":null

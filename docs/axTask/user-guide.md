@@ -41,7 +41,7 @@ Two panes side by side, and a status bar.
 - Enter opens: on a list it shows the list's items; on an item it opens the item's form ("The item's form", below).
   Tab moves you to the item's fields to read them.
 - Tab, Ctrl+Tab or F6 go to the detail pane. Escape, Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab or F6 come back to the navigator.
-- Ctrl+0 goes to All tasks from anywhere.
+- Alt+0 goes to All tasks from anywhere.
 - At either end of a pane, Up or Down plays the edge sound.
 
 ## Sections of your own
@@ -60,7 +60,7 @@ Two panes side by side, and a status bar.
   a checklist; Actions, Remove Done from every item makes it plain again. Neither touches an item's file: a task marked
   done stays marked while the list is plain, and shows so again when the list is a checklist again.
 - A row reads its title and, for a task, "done", "due 30 October" or "overdue since 22 October".
-- Ctrl+Shift+D hides the done tasks of a list, and shows them again.
+- Ctrl+H hides the done tasks of a list, and shows them again.
 
 ## Selecting several items
 
@@ -112,7 +112,7 @@ change axTask makes to the list's items is a line there with its time and what t
 every Ctrl+Z. Context, History on an item reads its changes, newest first: "2026-11-24 18:30, Done: from not checked
 to checked". Changes made outside axTask, in axJSON or by a sync, are not in it.
 
-Everything else stays on the one item you are on, whatever is selected: Enter and its form, F2, Ctrl+Q, Ctrl+J,
+Everything else stays on the one item you are on, whatever is selected: Enter and its form, F2, F7, Ctrl+J,
 Ctrl+E, the detail pane, and an action that opens something or runs a program.
 
 ## Changing things
@@ -152,7 +152,7 @@ The item's form:
   line, a list or a check box. A title you changed renames the item and its file, and the links to it follow.
 - Escape leaves the form and nothing is changed. A value a field does not take ("30 Febuary") is said with the focus
   in its box, and the form stays open.
-- What the item keeps that its list does not name is in the form's explanation, which Ctrl+Q reads.
+- What the item keeps that its list does not name is in the form's explanation, which F7 reads.
 
 In the detail pane, which stays for reading:
 
@@ -312,7 +312,7 @@ does one thing:
   app such as axJSON on the item's file; `run` starts a program; `terminal` puts a command into axTerminal's command
   field for you to read and send (`"does": "terminal", "command": ["gh", "issue", "view", "{Number}"]`).
 - A key is one of eighteen: Ctrl+1 to Ctrl+9 and Ctrl+Shift+1 to Ctrl+Shift+9. An action without a key is run from
-  the menu. Context, Actions of this list, names every action of the list with its key. All tasks is Ctrl+0.
+  the menu. Context, Actions of this list, names every action of the list with its key. All tasks is Alt+0.
 - A text of an action may hold names in braces, filled in from the item when the action runs: `{Title}` or any
   field's title, `{file}` for the item's file, `{name}` for its name, `{folder}` for the list's folder, `{today}` for
   the date, and `{form:...}` for what you typed in the action's form.
@@ -435,16 +435,16 @@ Each menu with its commands and their keys, as the window lists them:
 <!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
 - **Session**: Exit (Alt+F4); Refresh (F5); Top folder.
 - **Actions**: Add Done to every item; Deselect all (Ctrl+Shift+A); New item (Ctrl+N); New list (Ctrl+Shift+N); New smart list; Remove Done from every item; Select all (Ctrl+A); Stop the running action; Undo (Ctrl+Z).
-- **Navigation**: All tasks (Ctrl+0); Find in every list (Ctrl+Shift+F); Next section (Ctrl+Down); Previous section (Ctrl+Up).
-- **Context**: A heading: nothing to act on; Approve this report; Archive (Delete); Clear fields; Decline this report; Done or not done (Ctrl+Enter); Edit the list's configuration (Ctrl+J); History; Move down in the list (Ctrl+Shift+Down); Move to a list (Ctrl+M); Move to section (Ctrl+M); Move to the bottom of the list (Ctrl+Shift+End); Move to the top of the list (Ctrl+Shift+Home); Move up in the list (Ctrl+Shift+Up); Open in axJSON (Ctrl+J); Open its form (Enter); Read in full (Ctrl+Q); Rename (F2); Select or deselect (Space); Select to here (Shift+Space); Set fields; Show in axFile (Ctrl+E); Actions of this list (Later (Ctrl+2), No actions in this list, Priority high (Ctrl+1), Read the last output).
-- **Options**: Add a project folder; Approval passphrase; Filter; Hide done tasks (Ctrl+Shift+D); Keep a history of changes in this list; New items at the top of this list; Developer (Open settings file); Sort by (Name, The list's own order); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
-- Keys without a menu item: Ctrl+1 (Action key 1); Ctrl+2 (Action key 2); Ctrl+3 (Action key 3); Ctrl+4 (Action key 4); Ctrl+5 (Action key 5); Ctrl+6 (Action key 6); Ctrl+7 (Action key 7); Ctrl+8 (Action key 8); Ctrl+9 (Action key 9); Ctrl+Shift+1 (Action key Shift+1); Ctrl+Shift+2 (Action key Shift+2); Ctrl+Shift+3 (Action key Shift+3); Ctrl+Shift+4 (Action key Shift+4); Ctrl+Shift+5 (Action key Shift+5); Ctrl+Shift+6 (Action key Shift+6); Ctrl+Shift+7 (Action key Shift+7); Ctrl+Shift+8 (Action key Shift+8); Ctrl+Shift+9 (Action key Shift+9); Escape (Back from the search); Enter (Change the field); Space (Check the field); Escape (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); F3 (Find next); Shift+F3 (Find previous); Right (Into the list); Ctrl+1 (Next heading level 1); Ctrl+2 (Next heading level 2); Ctrl+3 (Next heading level 3); Enter (Open); Right (Open it where it lives); Enter (Open the file in axJSON); Ctrl+Shift+1 (Previous heading level 1); Ctrl+Shift+2 (Previous heading level 2); Ctrl+Shift+3 (Previous heading level 3); Ctrl+Q (Read in full); F2 (Rename); Space (Select or deselect); Shift+Space (Select to here); Shift+Home (Select to the first item); Shift+End (Select to the last item); Shift+Down (Select to the next item); Shift+Up (Select to the previous item); Ctrl+Tab (Switch between the navigator and the detail pane); Shift+F10 (The Context menu); Shift+F10 (The field's menu); Right (The next value of the field); Left (The previous value of the field); Tab (To the detail pane); Tab (To the navigator); Left (Up a level).
+- **Navigation**: All tasks (Alt+0); Find in every list (Ctrl+Shift+F); Next section (Ctrl+Down); Previous section (Ctrl+Up).
+- **Context**: A heading: nothing to act on; Approve this report; Archive (Delete); Clear fields; Decline this report; Done or not done (Ctrl+Enter); Edit the list's configuration (Ctrl+J); History; Move down in the list (Ctrl+Shift+Down); Move to a list (Ctrl+M); Move to section (Ctrl+M); Move to the bottom of the list (Ctrl+Shift+End); Move to the top of the list (Ctrl+Shift+Home); Move up in the list (Ctrl+Shift+Up); Open in axJSON (Ctrl+J); Open its form (Enter); Read in full (F7); Rename (F2); Select or deselect (Space); Select to here (Shift+Space); Set fields; Show in axFile (Ctrl+E); Actions of this list (Later (Ctrl+2), No actions in this list, Priority high (Ctrl+1), Read the last output).
+- **Options**: Add a project folder; Approval passphrase; Filter; Hide done tasks (Ctrl+H); Keep a history of changes in this list; New items at the top of this list; Developer (Open settings file); Sort by (Name, The list's own order); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
+- Keys without a menu item: Ctrl+1 (Action key 1); Ctrl+2 (Action key 2); Ctrl+3 (Action key 3); Ctrl+4 (Action key 4); Ctrl+5 (Action key 5); Ctrl+6 (Action key 6); Ctrl+7 (Action key 7); Ctrl+8 (Action key 8); Ctrl+9 (Action key 9); Ctrl+Shift+1 (Action key Shift+1); Ctrl+Shift+2 (Action key Shift+2); Ctrl+Shift+3 (Action key Shift+3); Ctrl+Shift+4 (Action key Shift+4); Ctrl+Shift+5 (Action key Shift+5); Ctrl+Shift+6 (Action key Shift+6); Ctrl+Shift+7 (Action key Shift+7); Ctrl+Shift+8 (Action key Shift+8); Ctrl+Shift+9 (Action key Shift+9); Escape (Back from the search); Enter (Change the field); Space (Check the field); Ctrl+Delete (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); F3 (Find next); Shift+F3 (Find previous); Right (Into the list); Ctrl+1 (Next heading level 1); Ctrl+2 (Next heading level 2); Ctrl+3 (Next heading level 3); Enter (Open); Right (Open it where it lives); Enter (Open the file in axJSON); Ctrl+Shift+1 (Previous heading level 1); Ctrl+Shift+2 (Previous heading level 2); Ctrl+Shift+3 (Previous heading level 3); F7 (Read in full); F2 (Rename); Space (Select or deselect); Shift+Space (Select to here); Shift+Home (Select to the first item); Shift+End (Select to the last item); Shift+Down (Select to the next item); Shift+Up (Select to the previous item); Ctrl+Tab (Switch between the navigator and the detail pane); Shift+F10 (The Context menu); Shift+F10 (The field's menu); Right (The next value of the field); Left (The previous value of the field); Tab (To the detail pane); Tab (To the navigator); Left (Up a level).
 - **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
 <!-- end of the menus -->
 
 ## Keys
 
-F1 lists every key. Shift+F10 or the Applications key opens Context, what acts on the selection.
+F1 lists every key, after a short section, "How the keys go", on the rules of the keys. Shift+F10 or the Applications key opens Context, what acts on the selection.
 
 ## If something goes wrong
 
@@ -461,7 +461,7 @@ F1 lists every key. Shift+F10 or the Applications key opens Context, what acts o
 
 ## Filter and sort
 
-Options, Filter (Alt+O, then F) shows only what has a text in its name: type part of a name, Enter, and the list holds only those rows and says so in its name, "Home, 4 items, filter tap, 1 shown". An empty text clears the filter, and so does Escape in the list once nothing is selected; going into another list drops it. Options, Sort by puts the list in the order of its names, or back in its own order. Both are the same in every list of axKit's navigators, and neither changes anything that is stored.
+Options, Filter (Alt+O, then F) shows only what has a text in its name: type part of a name, Enter, and the list holds only those rows and says so in its name, "Home, 4 items, filter tap, 1 shown". An empty text clears the filter, and so does Ctrl+Delete in the list; going into another list drops it. Options, Sort by puts the list in the order of its names, or back in its own order. Both are the same in every list of axKit's navigators, and neither changes anything that is stored.
 
 ## About
 

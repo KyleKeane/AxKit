@@ -44,16 +44,16 @@ type sqrt(-1)
 keys enter
 expect said ! Error: not a real number
 expect focus "value":"sqrt(-1)"
-keys escape
+keys ctrl+delete
 expect said ! Cleared
 type (2+3
 keys enter
 expect said ! Error: missing closing parenthesis
-keys escape
+keys ctrl+delete
 type foo
 keys enter
 expect said ! Error: unknown name foo
-keys escape
+keys ctrl+delete
 expect said ! Cleared
 # Check: Enter on the empty field asks for an expression
 # 2.5 Enter on the empty field.
@@ -66,7 +66,7 @@ type 7+
 keys up
 keys down
 expect focus "value":"7+"
-keys escape
+keys ctrl+delete
 
 # Goal: Switch angles between degrees and radians
 # 2.8 Degrees by default, radians from Options, Angles.
@@ -86,7 +86,7 @@ expect said Degrees
 type 2.5
 keys enter
 expect said ! 2.5
-keys ctrl+i
+keys f8
 expect said 2.5 is not a whole number
 
 # Goal: Change an entry of the history and answer it again
@@ -131,7 +131,7 @@ expect said ! 42
 close
 wait 1500
 start calc
-keys ctrl+q
+keys f7
 expect said 42
 keys shift+tab
 expect focus 6*7 = 42

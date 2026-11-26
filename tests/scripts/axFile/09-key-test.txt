@@ -16,15 +16,15 @@ expect said ! Key test. Press any key to hear its name and what it does here. Pr
 
 # Goal: Hear what a key does without doing it
 # Bundle keys.
-keys f8
-expect said ! F8: Say the status
+keys f9
+expect said ! F9: Say the status
 keys f4
 expect said ! F4: Send a report
 # Window keys of the command list, each as it acts in the folder list.
 keys f5
 expect said ! F5: Refresh
-keys ctrl+g
-expect said ! Ctrl+G: Go to folder
+keys f12
+expect said ! F12: Go to folder
 keys delete
 expect said ! Delete: Delete
 keys enter
@@ -38,8 +38,8 @@ keys down
 expect said ! Down: moves in the list
 keys b
 expect said ! B: finds the next item that starts with what you type
-keys f9
-expect said ! F9: no command of this window
+keys shift+f9
+expect said ! Shift+F9: no command of this window
 keys alt+f4
 expect said ! Alt+F4: Exit
 # Check: Nothing pressed in the key test was carried out

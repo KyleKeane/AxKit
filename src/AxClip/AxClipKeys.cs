@@ -21,7 +21,8 @@ public static class AxClipKeys
     /// <summary>The item on the clipboard, without pasting (CP-4.2).</summary>
     public const Keys CopyOnly = Keys.Shift | Keys.Return;
 
-    public const Keys ReadInFull = Keys.Control | Keys.Q;
+    /// <summary>The whole item: the bundle's read in full, F7 (AX-8.18 rule 5; Ctrl+Q until 2026-11-26), so no row of <see cref="All"/>.</summary>
+    public const Keys ReadInFull = AxKit.Forms.BundleKeys.ReadInFull;
     public const Keys Remove = Keys.Delete;
     public const Keys ClearHistory = Keys.Control | Keys.Shift | Keys.Delete;
     public const Keys PauseRecording = Keys.Control | Keys.P;
@@ -38,7 +39,6 @@ public static class AxClipKeys
         ("Last match", LastMatch),
         ("Paste", Paste),
         ("Copy without pasting", CopyOnly),
-        ("Read in full", ReadInFull),
         ("Remove the item", Remove),
         ("Clear the history", ClearHistory),
         ("Pause recording", PauseRecording),

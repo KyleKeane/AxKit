@@ -51,11 +51,11 @@ expect focus zzremote, http, not started by this version
 keys ctrl+n
 expect state "notice":"Add server"
 expect focus "name":"Type the name of the server","role":"Text","value":""
-# The form's sound, its title and the one word (bundle AX-7.11); its explanation is read on Ctrl+Q, not at opening.
+# The form's sound, its title and the one word (bundle AX-7.11); its explanation is read on F7, not at opening.
 expect said ♪ FormOpen
 expect said Add server, form
 refuse said A server of your own: a name for the list
-keys ctrl+q
+keys f7
 expect said ! A server of your own: a name for the list
 type probe
 # Enter in a one-line field presses Add: the command line is missing, so the focus goes there, the form kept.

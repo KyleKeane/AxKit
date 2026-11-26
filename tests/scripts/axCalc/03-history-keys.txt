@@ -14,8 +14,8 @@ type 255
 keys enter
 expect said ! 255
 # Goal: Hear the last answer in other bases
-# 3.1 Ctrl+I in the field: the last answer in other bases.
-keys ctrl+i
+# 3.1 F8 in the field: the last answer in other bases.
+keys f8
 expect said ! 255, hex FF, binary 1111 1111, octal 377
 type 10+1
 keys enter
@@ -43,11 +43,11 @@ keys up
 expect focus "value":"255 = 255"
 
 # Goal: Hear the answer of an entry in other bases
-# 4.2 Ctrl+I in the history: the answer of the line you are on, not the last one (AC-4.1).
-keys ctrl+i
+# 4.2 F8 in the history: the answer of the line you are on, not the last one (AC-4.1).
+keys f8
 expect said ! 255, hex FF, binary 1111 1111, octal 377
 keys down
-keys ctrl+i
+keys f8
 expect said ! 11, hex B, binary 1011, octal 13
 
 # Goal: Move from answer to answer with a letter

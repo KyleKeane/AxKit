@@ -51,7 +51,7 @@ keys pageup
 expect said axkitclip gamma, 1 of 3
 
 # Goal: Read an item's whole text
-# CP-4.3: Ctrl+Q the whole text in a notice; Escape closes it.
+# CP-4.3: F7 the whole text in a notice; Escape closes it.
 do Read in full
 expect state "notice":"Clipboard text, 1 line"
 keys escape

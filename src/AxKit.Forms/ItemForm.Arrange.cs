@@ -118,9 +118,12 @@ public abstract partial class ItemForm
         }
     }
 
-    /// <summary>Escape in the navigator with a filter on and no row selected clears the filter (AF-3.8): after the selection, before anything else.</summary>
+    /// <summary>
+    /// Ctrl+Delete in the navigator with a filter on clears the filter (FW-4.10a, AX-8.18: Ctrl+Delete clears what you
+    /// typed; Escape, once nothing was selected, until 2026-11-26). Without a filter the key is no command here.
+    /// </summary>
     private void AddArrangeKeys(Action<Command> shared) =>
-        shared(new Command("Clear the filter", ItemKeys.Back, () => ApplyFilter(string.Empty)) { When = () => InNavigator() && Selection.Count == 0 && _filter.Length > 0, Mark = CommandMark.Change });
+        shared(new Command("Clear the filter", ItemKeys.ClearFilter, () => ApplyFilter(string.Empty)) { When = () => InNavigator() && _filter.Length > 0, Mark = CommandMark.Change });
 
     /// <summary>Options → Filter…: the notice "Filter" with the field "Name contains"; an empty field clears the filter.</summary>
     private void ShowFilter() =>

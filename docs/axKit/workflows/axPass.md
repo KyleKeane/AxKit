@@ -148,13 +148,13 @@ Starts with: Open axPass with the file test.kdbx.
 
 1. Press Enter.
 2. Press Down twice.
-3. Press Ctrl+Q (Read in full).
+3. Press F7 (Read in full).
     You hear: Password, password, hidden.
 
 ### Hear every field of an entry at once
 
 1. Press Escape.
-2. Press Ctrl+Q (Read in full).
+2. Press F7 (Read in full).
     You hear: Gmail. UserName: sam. Password: hidden. URL: https://mail.example.com. Notes: empty.
 
 ### Choose when axPass locks by itself
@@ -285,7 +285,7 @@ Starts with: Open axPass with the file test.kdbx.
 2. Type "bank".
 3. Press Enter.
     You hear: filter bank, 2 shown.
-4. Press Escape.
+4. Press Ctrl+Delete (Clear the filter).
     You hear: Filter cleared.
 
 ### Put the entries in the order of their names

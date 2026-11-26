@@ -23,7 +23,7 @@ The list is the one control, named with its count, "Queue, 12 items". Up, Down, 
 
 - **Enter** plays the file you are on, "Playing 03 Chapter 3.mp3"; when it ends the next file plays, to the end of the queue: "End of queue" with the done chime. Files already played stay in the list until you clear it or remove them.
 - **Delete** takes the file out of the queue, "Removed 03 Chapter 3.mp3"; the one playing goes on to the next, or stops at the end.
-- **Ctrl+I** says the file's place, "03 Chapter 3.mp3, 3 of 12", and, while it plays, "playing, 12:52 of 45:30".
+- **F8** says the file's place, "03 Chapter 3.mp3, 3 of 12", and, while it plays, "playing, 12:52 of 45:30".
 - **Ctrl+F** finds the next file whose name contains the text; F3 and Shift+F3 the next and the previous match.
 - **Ctrl+O**, Add files: the Windows file picker on sound and video files, several at once; they are added to the end of the queue, "Added 3". Nothing starts playing by itself; Enter on one does. **Ctrl+Shift+O**, Add folder: the Windows folder picker; the folder's sound and video files are added in name order, "Added 12", or "No sound or video files in Dune". Session, Open recent lists the files and folders added lately by number, "1. Dune (C:\Music\Dune)", so Alt+S, R, 1 adds the first again.
 - Session, Clear queue empties the queue and stops the sound, "Queue cleared".
@@ -41,7 +41,7 @@ The keys are the same in every axKit window that has a selection, axFile and axT
 - **Ctrl+A** selects every file. **Ctrl+Shift+A** deselects all, and so does **Escape**: "None selected".
 - With files selected, **Delete** takes them all out of the queue, "Removed 3 files". If the file playing is one
   of them, the next file left plays. With nothing selected, Delete takes out the file you are on.
-- **Ctrl+I** says how many are selected, after the file's place.
+- **F8** says how many are selected, after the file's place.
 
 Until 5.10.0 Space paused the sound in the list. Pause is Ctrl+Enter now, from anywhere in the window.
 
@@ -50,9 +50,9 @@ Until 5.10.0 Space paused the sound in the list. Pause is Ctrl+Enter now, from a
 - **Ctrl+Enter**, from anywhere in the window, plays the file you are on when nothing is playing, "Playing 03 Chapter 3.mp3"; pauses what plays, "Paused at 12:40"; and resumes, "Playing".
 - **Ctrl+Right** and **Ctrl+Left** move 15 seconds forward or back and say the new position, "12:25".
 - **Ctrl+Shift+Right** and **Ctrl+Shift+Left** play the next or the previous file of the queue; "First file" and "End of queue" at the ends.
-- **Ctrl+Up** and **Ctrl+Down** make it faster or slower by a quarter, between a half and three times: "Speed 1.25". The voice keeps its pitch. Actions, Normal speed goes back to 1. The speed stays for the next file and the next window.
-- **Ctrl+T** goes to a time: `12:40`, `1:02:10`, or `750` for seconds.
-- **Ctrl+Q** says what is playing: "Playing 03 Chapter 3.mp3, 12:52 of 45:30, speed 1.25", or "Nothing playing".
+- **Alt+Up** and **Alt+Down** make it faster or slower by a quarter, between a half and three times: "Speed 1.25". The voice keeps its pitch. Actions, Normal speed goes back to 1. The speed stays for the next file and the next window.
+- **F12** goes to a time: `12:40`, `1:02:10`, or `750` for seconds.
+- **F7** says what is playing: "Playing 03 Chapter 3.mp3, 12:52 of 45:30, speed 1.25", or "Nothing playing".
 - Options, Say each file as it starts (on by default) is the one thing axMedia says on its own: the next file's name when the queue moves on. Turn it off to hear nothing between chapters.
 - Closing the window stops the sound; there is no Stop key, Ctrl+Enter pauses and plays.
 
@@ -64,11 +64,11 @@ Each menu with its commands and their keys, as the window lists them:
 
 <!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
 - **Session**: Add files (Ctrl+O); Add folder (Ctrl+Shift+O); Clear queue; Exit (Alt+F4); New window (Ctrl+N); Show current file in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, axTerminal, access layer for your shell, File Explorer (Ctrl+W)).
-- **Actions**: Back 15 seconds (Ctrl+Left); Deselect all (Ctrl+Shift+A); Faster (Ctrl+Up); Forward 15 seconds (Ctrl+Right); Normal speed; Play, pause or resume (Ctrl+Enter); Select all (Ctrl+A); Slower (Ctrl+Down); What is playing (Ctrl+Q).
-- **Navigation**: Go to time (Ctrl+T); Next file (Ctrl+Shift+Right); Previous file (Ctrl+Shift+Left).
+- **Actions**: Back 15 seconds (Ctrl+Left); Deselect all (Ctrl+Shift+A); Faster (Alt+Up); Forward 15 seconds (Ctrl+Right); Normal speed; Play, pause or resume (Ctrl+Enter); Select all (Ctrl+A); Slower (Alt+Down); What is playing (F7).
+- **Navigation**: Go to time (F12); Next file (Ctrl+Shift+Right); Previous file (Ctrl+Shift+Left).
 - **Context**: Queue is empty.
 - **Options**: Filter; Say each file as it starts; Developer (Open settings file); Sort by (Name, The order added); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
-- Keys without a menu item: Ctrl+Tab (Back to the list); Escape (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); F3 (Find next); Shift+F3 (Find previous); Right (Into the list); Enter (Open); Space (Select or deselect); Shift+Space (Select to here); Shift+Home (Select to the first file); Shift+End (Select to the last file); Shift+Down (Select to the next file); Shift+Up (Select to the previous file); Shift+F10 (The Context menu); Left (Up a level).
+- Keys without a menu item: Ctrl+Tab (Back to the list); Ctrl+Delete (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); F3 (Find next); Shift+F3 (Find previous); Right (Into the list); Ctrl+Down (Next section); Enter (Open); Ctrl+Up (Previous section); Space (Select or deselect); Shift+Space (Select to here); Shift+Home (Select to the first file); Shift+End (Select to the last file); Shift+Down (Select to the next file); Shift+Up (Select to the previous file); Shift+F10 (The Context menu); Left (Up a level).
 - **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
 <!-- end of the menus -->
 

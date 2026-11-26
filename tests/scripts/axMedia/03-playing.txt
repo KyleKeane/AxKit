@@ -28,7 +28,7 @@ expect said ! Playing
 wait 300
 # Check: In the Go to time field Space is a character and pauses nothing
 # Space selects in the queue and types in a field; neither pauses. Escape leaves the field as it found things.
-keys ctrl+t
+keys f12
 expect state "notice":"Go to time"
 expect focus Time
 keys space
@@ -44,7 +44,7 @@ keys ctrl+right
 expect said ! 0:1
 keys ctrl+left
 expect said ! 0:0
-keys ctrl+t
+keys f12
 type 0:30
 keys enter
 expect said ! 0:30
@@ -53,21 +53,21 @@ keys ctrl+enter
 expect said ! Playing
 
 # Goal: Change the playing speed
-# Step 3: the speed in steps of 0.25 with Ctrl+Up and Ctrl+Down (AM-D8, 2026-11-14; Ctrl+Shift+Period and
+# Step 3: the speed in steps of 0.25 with Alt+Up and Alt+Down (AM-D8, 2026-11-14; Ctrl+Shift+Period and
 # Ctrl+Shift+Comma until then), the selection left where it is, and once through the menu commands, which run the
 # same code; Normal speed back to 1. That the voice is faster at the same pitch is for the ear.
-keys ctrl+up
+keys alt+up
 expect said ! Speed 1.25
-keys ctrl+up
+keys alt+up
 expect said ! Speed 1.5
 menu Faster
 expect said ! Speed 1.75
-keys ctrl+down
+keys alt+down
 expect said ! Speed 1.5
 expect focus first.wav (playing)
 menu Slower
 expect said ! Speed 1.25
-keys ctrl+up
+keys alt+up
 expect said ! Speed 1.5
 menu Normal speed
 expect said ! Speed 1
@@ -77,13 +77,13 @@ expect said ! Speed 1.5
 expect state "1 of 3, speed 1.5"
 
 # Goal: Hear what is playing and go to the next or the previous file
-# Step 4: what is playing; the next and the previous file; "First file" at the start. (A Ctrl+Q sent at once after
+# Step 4: what is playing; the next and the previous file; "First file" at the start. (A F7 sent at once after
 # the step before was twice not taken at all; the pause is a user's pace, see the report.)
 wait 300
-keys ctrl+q
+keys f7
 expect said ! Playing first.wav, 0:3
 wait 300
-keys ctrl+q
+keys f7
 expect said of 1:00, speed 1.5
 keys ctrl+shift+right
 expect said ! Playing second.wav
@@ -100,7 +100,7 @@ expect list "first.wav (playing)","second.wav","third.wav"
 # not the selection) and the mark moved (step 5).
 keys ctrl+shift+right
 expect said ! Playing second.wav
-keys ctrl+t
+keys f12
 type 9:00
 keys enter
 expect said ! 1:00
@@ -110,10 +110,10 @@ expect list "first.wav","second.wav","third.wav (playing)"],"selected":0
 
 # Check: The end of the queue is said with the done sound
 # Step 2a: Ctrl+Right near the end says the file's length. Step 6: then "End of queue" with the done chime, the
-# title and the status bar empty, Ctrl+Q "Nothing playing". Ctrl+Shift+Right on the last file says "End of queue".
+# title and the status bar empty, F7 "Nothing playing". Ctrl+Shift+Right on the last file says "End of queue".
 keys ctrl+shift+right
 expect said ! End of queue
-keys ctrl+t
+keys f12
 type 0:50
 keys enter
 expect said ! 0:50
@@ -125,7 +125,7 @@ expect said End of queue
 expect state "title":"axMedia"
 expect state "status":["",""]
 wait 300
-keys ctrl+q
+keys f7
 expect said ! Nothing playing
 
 # Check: The speed is kept for the next window
@@ -133,7 +133,7 @@ expect said ! Nothing playing
 close
 wait 2000
 mkdir q
-# Five seconds each: the NVDA tier waits for NVDA after a start, and three-second files had moved on by Ctrl+Q.
+# Five seconds each: the NVDA tier waits for NVDA after a start, and three-second files had moved on by F7.
 silence q\s1.wav 5000
 silence q\s2.wav 5000
 silence q\s3.wav 5000
@@ -141,7 +141,7 @@ silence q\s4.wav 5000
 start media {temp}\q
 expect said ! Playing s1.wav
 wait 300
-keys ctrl+q
+keys f7
 expect said , speed 1.5
 menu Normal speed
 expect said ! Speed 1
@@ -164,7 +164,7 @@ expect said End of queue
 expect state "title":"axMedia"
 expect state "status":["",""]
 wait 300
-keys ctrl+q
+keys f7
 expect said ! Nothing playing
 close
 wait 2000
@@ -181,7 +181,7 @@ wait 2000
 # the notice closes on Go whatever the field holds.
 start media {temp}\p
 expect said ! Playing first.wav
-keys ctrl+t
+keys f12
 type abc
 keys enter
 expect said ! Not a time

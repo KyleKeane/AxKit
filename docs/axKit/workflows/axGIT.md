@@ -220,17 +220,17 @@ Starts with: Open axGIT with the folder repo.
 
 ### Fetch, pull and push
 
-1. Press Ctrl+Shift+F (Fetch; Actions menu).
+1. Press Ctrl+R (Fetch; Actions menu).
     You hear: Fetched.
-2. Press Ctrl+Shift+L (Pull; Actions menu).
+2. Press Ctrl+L (Pull; Actions menu).
     You hear: Pulled.
-3. Press Ctrl+Shift+L (Pull; Actions menu).
+3. Press Ctrl+L (Pull; Actions menu).
     You hear: Already up to date.
 4. Press F5 (Refresh; Session menu).
     You hear: Refreshed.
-5. Press Ctrl+Shift+H (Push; Actions menu).
+5. Press Ctrl+P (Push; Actions menu).
     You hear: Pushed.
-6. Press Ctrl+Shift+H (Push; Actions menu).
+6. Press Ctrl+P (Push; Actions menu).
     You hear: Pushed.
 
 ## Use axGIT's text, notices and axKit menu

@@ -36,7 +36,7 @@ Before starting: install the build (`publish.ps1`), or quit any running axStart 
 3. Bring it up, empty field: the most started programs first (Notepad and Calculator now lead).
 4. `powershell`, Ctrl+Shift+Enter: Windows' administrator prompt; Yes: an elevated PowerShell. Again, No at the prompt: nothing said, axStart gone.
 5. `calc`, Ctrl+Shift+Enter: "Cannot start as administrator".
-6. `notepad++` (or any desktop program), Ctrl+I: "<name>, desktop program, <path>". `calc`, Ctrl+I: "Calculator, Store app".
+6. `notepad++` (or any desktop program), F8: "<name>, desktop program, <path>". `calc`, F8: "Calculator, Store app".
 7. A desktop program, Ctrl+O: axFile opens on its folder with the program file selected. A Store app, Ctrl+O: "No file location for <name>".
 8. F5: "Programs refreshed, n programs".
 
@@ -53,7 +53,7 @@ Before starting: install the build (`publish.ps1`), or quit any running axStart 
 
 1. Options, General, Start with Windows is checked; sign out and in: Ctrl+Shift+Space works without starting anything.
 2. Uncheck it, sign out and in: the hotkey does nothing until axStart is started from the Start menu. Check it again.
-3. Options, General, Say the first match while typing off: typing says nothing; Ctrl+I says the match. On again.
+3. Options, General, Say the first match while typing off: typing says nothing; F8 says the match. On again.
 4. An update in place from another axKit window: afterwards Ctrl+Shift+Space still works (axStart was stopped and started again hidden).
 5. Session, Quit axStart: the hotkey does nothing until axStart is started again.
 

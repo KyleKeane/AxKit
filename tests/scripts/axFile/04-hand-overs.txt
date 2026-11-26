@@ -3,7 +3,7 @@
 # 4.1 is driven at the end: the window axFile starts is taken over by the runner (adopt), and a second Shift+Enter is
 # handed to the axPreview window already open (AP-1.2).
 # Manual (4.2): Ctrl+Enter in a folder of chapters starts axMedia.
-# Manual (4.3): Ctrl+Shift+Q on two folders with media and Shift+F10, Q on a chapter start axMedia (behind this window).
+# Manual (4.3): Ctrl+Q on two folders with media and Shift+F10, Q on a chapter start axMedia (behind this window).
 # Manual (4.4): Shift+F10, A, M on a chapter or a folder and A, P on README.md start axMedia or axPreview.
 # Manual (4.5): Enter with axMedia or axPreview made the default program needs Windows' Default apps.
 file hand\README.md # Read me\nA text to read.
@@ -27,10 +27,10 @@ keys backspace
 expect said ! hand, 4 items, no-media-here, folder
 
 # Check: A text file has no sound or video to add
-# 4.3 Ctrl+Shift+Q on a text file: "No sound or video files to add".
+# 4.3 Ctrl+Q on a text file: "No sound or video files to add".
 keys end
 expect focus "value":"README.md"
-keys ctrl+shift+q
+keys ctrl+q
 expect said ! No sound or video files to add
 # The Item menu's command does the same.
 menu Add to axMedia's queue, Context

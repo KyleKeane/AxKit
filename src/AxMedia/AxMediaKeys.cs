@@ -9,8 +9,8 @@ namespace AxMedia;
 /// since 2026-11-22 (docs/axKit/framework.md FW-4.9): Enter, Delete, the Context menu's keys and the other keys of
 /// a navigator are the item window's (<c>AxKit.Forms.ItemKeys</c>), named in <see cref="All"/> by what they do in
 /// a queue; they act in the list only, and in a notice's field they are the field's own. Everything else works
-/// from anywhere in the window. Four of the navigator's keys are axMedia's own here and not the navigator's:
-/// Ctrl+N is New window, Ctrl+Q What is playing, Ctrl+Up and Ctrl+Down the speed; and four the queue has no use
+/// from anywhere in the window. Two of the navigator's keys are axMedia's own here and not the navigator's:
+/// Ctrl+N is New window, F7 What is playing; and four the queue has no use
 /// for are no keys of the window (F2, Ctrl+Z, F5, Ctrl+Shift+N; <c>MediaForm.KeysWithoutUse</c>).
 /// </summary>
 public static class AxMediaKeys
@@ -19,8 +19,8 @@ public static class AxMediaKeys
     // window (AM-D7 as of 2026-11-22; Space in the list and Ctrl+P until then). Space and its kin select files:
     // the bundle's selection keys (AxKit.Forms/SelectionKeys, AX-8.16), which the table below includes.
 
-    /// <summary>The file's place in the queue, and its position while it plays.</summary>
-    public const Keys Information = Keys.Control | Keys.I;
+    /// <summary>The file's place in the queue, and its position while it plays: F8, read with details (AX-8.18 rule 5; Ctrl+I until 2026-11-26).</summary>
+    public const Keys Information = Keys.F8;
 
     /// <summary>The Windows file picker, several files at once, appended to the queue.</summary>
     public const Keys OpenFiles = Keys.Control | Keys.O;
@@ -38,17 +38,19 @@ public static class AxMediaKeys
     public const Keys Back = Keys.Control | Keys.Left;
     public const Keys NextFile = Keys.Control | Keys.Shift | Keys.Right;
     public const Keys PreviousFile = Keys.Control | Keys.Shift | Keys.Left;
-    public const Keys GoToTime = Keys.Control | Keys.T;
+    /// <summary>Go to time: F12, the function key that shows the go-to field (AX-8.18 rule 5; Ctrl+T until 2026-11-26).</summary>
+    public const Keys GoToTime = Keys.F12;
 
     /// <summary>
-    /// The speed (SPEC.md AM-D8, the user's choice of 2026-11-14): Ctrl+Up faster, Ctrl+Down slower, beside Ctrl+Left
-    /// and Ctrl+Right. They take the place of the bundle's paragraph keys on purpose (bundle AX-8.4): the window's one
-    /// control is a list, and in a notice's text the keys are the text's own, since the window's keys wait there.
-    /// Ctrl+Shift+Period and Ctrl+Shift+Comma, the keys until then, are the bundle's system-wide ones (AX-8.11).
+    /// The speed (SPEC.md AM-D8): Alt+Up faster, Alt+Down slower, the choices of what plays in place (AX-8.18 rule 4,
+    /// the maintainer's decision of 2026-11-26). Ctrl+Up and Ctrl+Down from 2026-11-14 until then, which go between
+    /// sections now, as in the other item windows; Ctrl+Shift+Period and Ctrl+Shift+Comma before that, the bundle's
+    /// system-wide keys now (AX-8.11).
     /// </summary>
-    public const Keys Faster = Keys.Control | Keys.Up;
-    public const Keys Slower = Keys.Control | Keys.Down;
-    public const Keys WhatIsPlaying = Keys.Control | Keys.Q;
+    public const Keys Faster = Keys.Alt | Keys.Up;
+    public const Keys Slower = Keys.Alt | Keys.Down;
+    /// <summary>What plays, where and how fast: the bundle's read in full, F7 (AX-8.18 rule 5; Ctrl+Q until 2026-11-26), so no row of <see cref="All"/>.</summary>
+    public const Keys WhatIsPlaying = BundleKeys.ReadInFull;
 
     /// <summary>Every key of the window with its name, for the collision test and the F1 text.</summary>
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
@@ -59,6 +61,9 @@ public static class AxMediaKeys
         ("No list to go into: the edge sound (in the list)", ItemKeys.Into),
         ("No level above: the edge sound (in the list)", ItemKeys.Up),
         ("No level above: the edge sound (in the list, Backspace)", ItemKeys.UpAlso),
+        ("Previous section; with none, the edge sound (in the list)", ItemKeys.PreviousSection),
+        ("Next section; with none, the edge sound (in the list)", ItemKeys.NextSection),
+        ("Clear the filter (in the list)", ItemKeys.ClearFilter),
         // The bundle's selection keys (AX-8.16), in the queue.
         .. SelectionKeys.All,
         ("Information about the file", Information),
@@ -73,7 +78,6 @@ public static class AxMediaKeys
         ("Go to time", GoToTime),
         ("Faster", Faster),
         ("Slower", Slower),
-        ("What is playing", WhatIsPlaying),
         ("Context menu (in the queue)", ItemKeys.ItemMenu),
         ("Context menu (in the queue, the Applications key)", ItemKeys.ItemMenuAlso),
     ];

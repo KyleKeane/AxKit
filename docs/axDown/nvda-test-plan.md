@@ -26,7 +26,7 @@ letter), and a `long.md` with headings and lines longer than the window.
    not leave the editor). Ctrl+Z: "Undone", the whole sentence is gone in one step; Ctrl+Y: "Redone", it is back.
 3. Page Down moves a screen and reaches the last line; Page Up the first. In a short file both do something.
 3a. In the tutorial file, Ctrl+Down moves to the first line of the next paragraph (a line with text after a blank line), one paragraph per press however many rows it wraps to, a heading with blank lines around it being a paragraph of its own; Ctrl+Up goes to the start of the current paragraph, then to the one before; from the last paragraph Ctrl+Down goes to the end of the file. Ctrl+Shift+Down: NVDA says the text selected; Ctrl+Shift+Up: unselected. The status bar's line number follows.
-4. Ctrl+Shift+W: "Word wrap, not checked"; a long line is now one line; the caret stays on the same character. Again:
+4. F11: "Word wrap, not checked"; a long line is now one line; the caret stays on the same character. Again:
    "Word wrap, checked"; the caret stays.
 5. Ctrl+M, Ctrl+H, Ctrl+I, Ctrl+J insert nothing.
 5a. New line said (AD-2.8, bundle AX-7.8; `tests/scripts/axDown/12-say-new-line.txt`). At the end of a line, type a
@@ -82,7 +82,7 @@ letter), and a `long.md` with headings and lines longer than the window.
 
 1. Ctrl+F: the notice with "Text to find"; type a word, Enter: the caret lands on the match, NVDA reads the line
    with the selection; F3 the next; Shift+F3 back; a word that is not there: "Not found".
-2. Ctrl+G: the field "Go to line (now line n, column m)" is read with the correct numbers; type a number, Enter:
+2. F12: the field "Go to line (now line n, column m)" is read with the correct numbers; type a number, Enter:
    "Line n of m" and the caret is at the start of that line; a number past the end lands on the last line; a word
    instead of a number: "Not a line number" and the caret has not moved; Escape returns to the editor where it was.
 3. NVDA+End reads the status bar: the name, "Line n, Column m", the encoding and the line ending.
@@ -103,7 +103,7 @@ letter), and a `long.md` with headings and lines longer than the window.
 3. Help, User guide shows this app's guide, and Ctrl+H, Ctrl+K, Ctrl+L and the other navigation keys move through it, spoken
    as in the editor, "No next table" when there is none; Help, About, Version names the version of axKit, the apps
    and the folders; About, Licence, Attribution and axKit guide open their notices, Escape closes each.
-4. Alt+W: the Window menu with Open windows, Recently closed, Close all windows, Say the status (F8: the status bar is said); Alt+K: the axKit menu with Claude, AI tools and Theme;
+4. Alt+W: the Window menu with Open windows, Recently closed, Close all windows, Say the status (F9: the status bar is said); Alt+K: the axKit menu with Claude, AI tools and Theme;
    Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key, Copy diagnostics), Check
    for updates and About (bundle AX-9.1); Help, About, axKit on GitHub: the browser opens the repository page. With a second
    axDown open, Open windows reads "1. <name> - axDown, 1 of 1" and Enter brings that window to the front; Alt+W, N, D starts a new Untitled window. Alone, Open windows holds
@@ -123,9 +123,9 @@ letter), and a `long.md` with headings and lines longer than the window.
    Window menu's lists are not in it; Alt+K, Apps, axDown is ("axDown, axKit, Apps").
 7. The key test (bundle AX-8.12; script `15-key-test`), with the caret in the middle of a line. Alt+H, D, T (Help,
    Diagnostics, Test a key): "Key test. Press any key to hear its name and what it does here. Press Escape to end."
-   F8: "F8: Say the status" and no status; F4: "F4: Send a report" and no form; Ctrl+G: "Ctrl+G: Go to line";
+   F9: "F9: Say the status" and no status; F4: "F4: Send a report" and no form; F12: "F12: Go to line";
    Ctrl+H: "Ctrl+H: Next, Heading"; a letter: "A: types the letter" and the text unchanged; Down: "Down: moves in the
-   text" and the caret where it was; Enter: "Enter: makes a new line" and no line; F9: "F9: no command of this
+   text" and the caret where it was; Enter: "Enter: makes a new line" and no line; Shift+F9: "Shift+F9: no command of this
    window"; Alt alone: "Alt alone: opens the menu bar", the bar closed; Ctrl alone: "Ctrl alone: no command of this
    window"; Alt+F4: "Alt+F4: Exit", the window still there. Escape: "Key test ended" at once, Escape itself not
    named. The title has no star, the caret is where it was, and the same keys act
@@ -166,7 +166,7 @@ letter), and a `long.md` with headings and lines longer than the window.
 7. Ctrl+Q: "Block quote, " and the first line; Ctrl+T: "Table with 3 rows and 2 columns" at the header line; nothing
    inside a fenced code block counts. Navigation, Next and Navigation, Previous list Link, List, List item, Block quote
    and Table with their keys.
-8. Navigation mode (bundle AX-8.13, AD-5.3): Ctrl+Space: "Navigation mode", and NVDA+End (or F8) reads ", navigation mode"
+8. Navigation mode (bundle AX-8.13, AD-5.3): Ctrl+Space: "Navigation mode", and NVDA+End (or F9) reads ", navigation mode"
    after the file's name. h, Shift+H, 2, k, l, i: the same jumps and words as Ctrl with the letter, each after a
    high glassy tick that is over before NVDA speaks (on a heading the heading sound follows it). h past the last heading:
    a low buzz and no tick, then "No next heading". A letter or a digit that is no jump, Space or a sign: a
@@ -190,7 +190,7 @@ Claude Code installed and logged in, and are the user's by ear.
    about this window" with its field.
 3. Shift+F1: the notice "Ask Claude about this window" is read, then "Your question about this window, edit". Type
    "how do I turn word wrap off" and Enter: "Asking Claude" as a notice; then "Claude says" and the answer, the focus
-   on its text so that NVDA reads it from the top; Down reads it line by line (real: the answer names Ctrl+Shift+W).
+   on its text so that NVDA reads it from the top; Down reads it line by line (real: the answer names F11).
 4. Tab: "Ask more about this answer, edit"; type "and back on?", Enter: "Asking Claude", then a new "Claude says" in
    the same conversation (real). Tab twice: the Copy button; Enter: "Copied"; the notice stays. Escape: the editor has
    the focus again, on the same line as before.

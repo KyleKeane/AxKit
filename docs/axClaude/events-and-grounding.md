@@ -322,7 +322,7 @@ Constants are named here once and used by name afterwards. All times are millise
 
 - EG-7.1 The core keeps the tasks the last Stop event listed as running: id, type (`shell`, `subagent`, or another word), description, worker type. A later Stop replaces the list. A worker's stop (SubagentStop) takes its id off the list. A worker's start (SubagentStart) is counted for the diagnostics and adds nothing to the list by itself (EG-D-12).
 - EG-7.2 The one number of SPEC.md FR-7.10 gains the list as one more place: agents are the largest of the rows shown, the waiting row's number, the mode line's own count and the listed subagents; shells are the mode line's count once a mode line has been read after the last Stop, the listed shells before that; other kinds are the larger of what the mode line counts under other words and the listed tasks of other types. Never a sum of places that count the same things.
-- EG-7.3 "What runs in the background" (Ctrl+B) names each listed task the rows do not name, by its description: `1 shell in the background. Shell: Run ping in background`.
+- EG-7.3 "What runs in the background" (F8) names each listed task the rows do not name, by its description: `1 shell in the background. Shell: Run ping in background`.
 - EG-7.4 The sounds, the words, the status bar's part and the settle of 700 ms stay as they are: the rows are still drawn every second.
 - EG-7.5 Without events the number is today's, exactly.
 

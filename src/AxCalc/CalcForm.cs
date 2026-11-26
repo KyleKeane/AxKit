@@ -89,9 +89,10 @@ public sealed class CalcForm : ConversationForm
         // The bundle's menus (AX-9.1), Window, axKit and Help, end the bar in every window.
         PlaceMenuBar(MenuBar, calculator, actions, navigation, CreateTranscriptContext("Take this line's e&xpression into the field"), options, help);
 
-        // Escape in the field clears it (AC-6.3); in the history Escape goes back to the field and Enter takes the
-        // line's expression there, both the conversation window's own (AC-5.2).
-        AddKey(new Command("Clear the field", AxCalcKeys.Back, ClearField) { When = () => Input.Focused, Mark = CommandMark.Change });
+        // Ctrl+Delete in the field clears it (AC-6.3; Escape until 2026-11-26, AX-8.18: Escape only goes back or
+        // closes); in the history Escape goes back to the field and Enter takes the line's expression there, both the
+        // conversation window's own (AC-5.2).
+        AddKey(new Command("Clear the field", AxCalcKeys.ClearField, ClearField) { When = () => Input.Focused, Mark = CommandMark.Change });
         Transcript.LineChosen += (_, _, text) => Recall(text);
 
         // ---- the history (AC-2.1): the answers kept from the last run, as lines ----

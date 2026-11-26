@@ -257,13 +257,13 @@ expect focus Milk
 keys ctrl+enter
 expect said ! Not a task
 # Goal: Hear every field of an item
-# IA-3 Ctrl+Q reads every field of the selection; an empty long text reads "empty" as every empty field does ("Notes: "
+# IA-3 F7 reads every field of the selection; an empty long text reads "empty" as every empty field does ("Notes: "
 # and nothing after it until 2026-11-14).
 do Read in full
 expect said ! Milk. Notes: empty
 
 # Goal: Show all tasks, the soonest due first
-# 1.7 Ctrl+0: All tasks (Ctrl+1 until 2026-11-07, TK-7a.1), the soonest due first, each with its list.
+# 1.7 Alt+0: All tasks (Ctrl+1 until 2026-11-07, TK-7a.1), the soonest due first, each with its list.
 do All tasks
 expect said ! All tasks, 4 items, Fix the sink, due 
 keys left

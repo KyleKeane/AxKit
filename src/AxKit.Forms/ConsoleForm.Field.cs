@@ -100,20 +100,15 @@ public abstract partial class ConsoleForm
 
     /// <summary>
     /// The places as the first items of the window's Navigation menu (AX-8.14): the field on Alt+1, the view on
-    /// Alt+2 and the latest of what the program said on Alt+3, each with its older Ctrl key as a further key of
-    /// the same command. The app gives the three labels, which name its field and its view ("&amp;Message field",
+    /// Alt+2 and the latest of what the program said on Alt+3 (their older Ctrl keys went on 2026-11-26, AX-8.18
+    /// rule 3). The app gives the three labels, which name its field and its view ("&amp;Message field",
     /// "&amp;Conversation", "&amp;Latest response").
     /// </summary>
     protected void AddPlaceItems(ToolStripMenuItem menu, string field, string view, string latest)
     {
-        Place(new Command(field, ConsoleKeys.GoToField, () => GoToPlace(() => GoTo(BottomControl))) { Mark = CommandMark.Open }, ConsoleKeys.GoToFieldAlso);
-        Place(new Command(view, ConsoleKeys.GoToView, () => GoToPlace(() => GoTo(Transcript))) { Mark = CommandMark.Open }, ConsoleKeys.GoToViewAlso);
-        Place(new Command(latest, ConsoleKeys.Latest, () => GoToPlace(Transcript.JumpToLatestResponse)) { Mark = CommandMark.Open }, ConsoleKeys.LatestAlso);
-        void Place(Command command, Keys also)
-        {
-            Add(menu, command);
-            AddKey(command with { Key = also });
-        }
+        Add(menu, new Command(field, ConsoleKeys.GoToField, () => GoToPlace(() => GoTo(BottomControl))) { Mark = CommandMark.Open });
+        Add(menu, new Command(view, ConsoleKeys.GoToView, () => GoToPlace(() => GoTo(Transcript))) { Mark = CommandMark.Open });
+        Add(menu, new Command(latest, ConsoleKeys.Latest, () => GoToPlace(Transcript.JumpToLatestResponse)) { Mark = CommandMark.Open });
     }
 
     /// <summary>A place gone to, or, while <see cref="PlacesRefused"/> says why not, those words said and nothing moved.</summary>

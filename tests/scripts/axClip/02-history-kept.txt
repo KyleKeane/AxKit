@@ -35,7 +35,7 @@ keys down
 expect said ♪ Edge
 
 # Goal: Read a copy of several lines in full
-# 2.4 A text of three lines: its first line and the count; Ctrl+Q the whole text in a notice; Escape closes it.
+# 2.4 A text of three lines: its first line and the count; F7 the whole text in a notice; Escape closes it.
 run powershell -NoProfile -ExecutionPolicy Bypass -File copy.ps1 "axkitkeep first" second third
 wait 500
 do First match

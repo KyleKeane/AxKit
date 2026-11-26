@@ -107,16 +107,6 @@ expect commands "Stage, Context, Ctrl+Shift+S"
 expect commands "Discard changes, Context, Delete"
 expect focus Changes, 2 files
 
-# Check: The older keys of the views still work
-# 1.4b Ctrl+1, Ctrl+2 and Ctrl+3, the views' keys until 2026-11-16, still switch the view, with nothing more said.
-keys ctrl+2
-expect said ! Log, 2 commits.
-keys ctrl+3
-expect said ! Branches, 2. main, current, no upstream
-keys ctrl+1
-expect said ! Changes, 2 files.
-expect focus Changes, 2 files
-
 # Goal: Close the window
 # 1.6 Alt+F4 closes the window without a question (the runner's close is Alt+F4's path; that no question came is
 # not checked: the runner has no step that expects a window to be gone).

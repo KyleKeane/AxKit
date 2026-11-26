@@ -41,14 +41,14 @@ expect said ♪ Done
 expect state Claude: ready
 
 # Check: An interrupted reply ends without Done
-# Shift+Escape while Claude works; Claude Code ends the turn with its end marks and no bell, then draws what it had
+# Ctrl+I while Claude works; Claude Code ends the turn with its end marks and no bell, then draws what it had
 # of the reply and its Interrupted row: those are said, "Done" is not, and the status bar says ready.
 type Say more
 keys enter
 expect said Sent
 file dn\go3 x
 expect state Claude: working
-keys shift+escape
+keys ctrl+i
 file dn\go4 x
 expect said Interrupted
 refuse said Done

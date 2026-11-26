@@ -49,7 +49,7 @@ keys enter
 expect said ! Renamed to todo.md
 expect focus "value":"todo.md"
 # Check: Escape in the rename box keeps the new file's name
-# Ctrl+Shift+T, Escape: the box closes on "New file.txt", which stays.
+# Ctrl+T, Escape: the box closes on "New file.txt", which stays.
 do New text file
 expect focus "name":"New name"
 keys escape
@@ -183,12 +183,12 @@ expect focus "value":"a.txt"
 # 3.7 Manual: the entry's menu as a context menu (Shift+F10, the Applications key) and the menu bar (Alt+I, 3.7a, 3.7b's
 # Alt+S) cannot be opened from the channel; the items and their order are the menu's, checked through the palette's list.
 expect commands "Open, Context, Enter"
-expect commands "Preview, Context, Shift\u002BEnter","Play folder in axMedia, Context, Ctrl\u002BEnter","Add to axMedia\u0027s queue, Context, Ctrl\u002BShift\u002BQ","Cut, Context, Ctrl\u002BX","Copy, Context, Ctrl\u002BC","Rename, Context, F2","Delete, Context, Delete","Move to folder, Context","Compress to zip, Context","Extract here, Context","Copy path, Context, Ctrl\u002BShift\u002BC","Show in File Explorer, Context, Ctrl\u002BShift\u002BW","Information, Context, Ctrl\u002BI","Properties, Context, Alt\u002BEnter","Windows menu, Context"
+expect commands "Preview, Context, Shift\u002BEnter","Play folder in axMedia, Context, Ctrl\u002BEnter","Add to axMedia\u0027s queue, Context, Ctrl\u002BQ","Cut, Context, Ctrl\u002BX","Copy, Context, Ctrl\u002BC","Rename, Context, F2","Delete, Context, Delete","Move to folder, Context","Compress to zip, Context","Extract here, Context","Copy path, Context, Ctrl\u002BShift\u002BC","Show in File Explorer, Context, Ctrl\u002BShift\u002BW","Information, Context, F8","Properties, Context, Alt\u002BEnter","Windows menu, Context"
 # Check: The selection's commands never act on the current entry alone
 # 3.7b Selection: Select all and Deselect all in Actions, the rest in Context, Selection; its operations never fall back to the current entry.
 expect commands "Select all, Actions, Ctrl\u002BA","Deselect all, Actions, Ctrl\u002BShift\u002BA"
-expect commands "Select or deselect this entry, Context, Selection, Space","Select to here, Context, Selection, Shift\u002BSpace","Cut, Context, Selection, Ctrl\u002BX","Copy, Context, Selection, Ctrl\u002BC","Delete, Context, Selection, Delete","Move to folder, Context, Selection","Compress to zip, Context, Selection","Add to axMedia\u0027s queue, Context, Selection, Ctrl\u002BShift\u002BQ","Copy paths, Context, Selection, Ctrl\u002BShift\u002BC"
-expect commands "New folder, Actions, Ctrl\u002BShift\u002BN","New text file, Actions, Ctrl\u002BShift\u002BT","New Markdown file, Actions","New JSON file, Actions","Paste, Actions, Ctrl\u002BV"
+expect commands "Select or deselect this entry, Context, Selection, Space","Select to here, Context, Selection, Shift\u002BSpace","Cut, Context, Selection, Ctrl\u002BX","Copy, Context, Selection, Ctrl\u002BC","Delete, Context, Selection, Delete","Move to folder, Context, Selection","Compress to zip, Context, Selection","Add to axMedia\u0027s queue, Context, Selection, Ctrl\u002BQ","Copy paths, Context, Selection, Ctrl\u002BShift\u002BC"
+expect commands "New folder, Actions, Ctrl\u002BShift\u002BN","New text file, Actions, Ctrl\u002BT","New Markdown file, Actions","New JSON file, Actions","Paste, Actions, Ctrl\u002BV"
 menu Cut, Context, Selection
 expect said ! None selected
 menu Select all, Actions
@@ -200,7 +200,7 @@ menu Select or deselect this entry, Context, Selection
 expect said ! Selected
 menu Deselect all, Actions
 expect said ! None selected
-# Manual (3.7b): Alt+S, C "Copied 2 items" writes the clipboard. Manual (3.8): Ctrl+I inside the open context menu.
+# Manual (3.7b): Alt+S, C "Copied 2 items" writes the clipboard. Manual (3.8): F8 inside the open context menu.
 
 # Check: A folder opened in an app that takes a file is said as not a file
 # 3.9 Open with axKit apps on a folder: "Not a file" for the apps that take a file (nothing starts).
@@ -316,7 +316,7 @@ refuse said ! Created temp
 expect list "count":8
 # Check: A new folder that has files now is not undone, and undo goes on
 # A new folder that has a file now: "Not undone: temp has files now", and the next Ctrl+Z goes on to an older
-# operation. The file is put in temp from outside: made in axFile (Enter, Ctrl+Shift+T, Escape, Backspace, as the plan
+# operation. The file is put in temp from outside: made in axFile (Enter, Ctrl+T, Escape, Backspace, as the plan
 # says) it is itself the newest operation, and Ctrl+Z takes it back first (AF-4.14, the newest that can be taken back).
 do Find
 expect focus "name":"Name contains"

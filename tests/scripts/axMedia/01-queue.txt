@@ -19,9 +19,9 @@ keys enter
 expect said ! Queue is empty
 keys delete
 expect said ! Queue is empty
-keys ctrl+i
+keys f8
 expect said ! Queue is empty
-keys ctrl+q
+keys f7
 expect said ! Nothing playing
 keys ctrl+enter
 expect said ! Queue is empty
@@ -139,11 +139,11 @@ expect state Playing beta.wav 0:0
 expect state / 0:30","2 of 4, speed 1"]
 
 # Goal: Hear the information of a file
-# Step 6: Ctrl+I on the playing file, with its position; on another, its place only.
-keys ctrl+i
+# Step 6: F8 on the playing file, with its position; on another, its place only.
+keys f8
 expect said ! beta.wav, 2 of 4, playing, 0:0
 keys down
-keys ctrl+i
+keys f8
 expect said ! delta.wav, 3 of 4
 refuse said playing,
 
@@ -164,7 +164,7 @@ expect said ! Queue cleared
 expect list ["Queue is empty"]
 expect focus Queue is empty
 expect state "title":"axMedia"
-keys ctrl+q
+keys f7
 expect said ! Nothing playing
 
 # Step 8: Ctrl+N starts a second axMedia process the runner did not start and so cannot reach or close (it would be

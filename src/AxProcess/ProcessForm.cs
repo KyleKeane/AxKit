@@ -108,17 +108,12 @@ public sealed class ProcessForm : ItemForm
 
         // Navigation: the three lists, each a jump from anywhere, and the way up (AX-9.1).
         var view = new ToolStripMenuItem();
-        // On Alt+1, 2 and 3, each with its older Ctrl key as a further key of the same command (bundle AX-8.14).
-        Place(new Command("&Processes", AxProcessKeys.ViewProcesses, () => Do(() => ShowListAsync(View.Processes))) { Mark = CommandMark.Open }, AxProcessKeys.ViewProcessesAlso);
-        Place(new Command("&Services", AxProcessKeys.ViewServices, () => Do(() => ShowListAsync(View.Services))) { Mark = CommandMark.Open }, AxProcessKeys.ViewServicesAlso);
-        Place(new Command("Start&up", AxProcessKeys.ViewStartup, () => Do(() => ShowListAsync(View.Startup))) { Mark = CommandMark.Open }, AxProcessKeys.ViewStartupAlso);
+        // On Alt+1, 2 and 3 (bundle AX-8.14; the older Ctrl keys went on 2026-11-26, AX-8.18 rule 3).
+        Add(view, new Command("&Processes", AxProcessKeys.ViewProcesses, () => Do(() => ShowListAsync(View.Processes))) { Mark = CommandMark.Open });
+        Add(view, new Command("&Services", AxProcessKeys.ViewServices, () => Do(() => ShowListAsync(View.Services))) { Mark = CommandMark.Open });
+        Add(view, new Command("Start&up", AxProcessKeys.ViewStartup, () => Do(() => ShowListAsync(View.Startup))) { Mark = CommandMark.Open });
         view.DropDownItems.Add(new ToolStripSeparator());
         view.DropDownItems.Add(Item("Up to This &computer", UpLevel, ItemKeys.Up, CommandMark.Open));
-        void Place(Command command, Keys also)
-        {
-            Add(view, command);
-            AddKey(command with { Key = also });
-        }
 
         // Options begins with Filter and Sort by, the item window's as in every navigator (PR-3.2: the orders of the
         // processes are this app's; "Sort processes by" was a menu item of its own until 2026-11-22).

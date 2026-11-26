@@ -26,8 +26,8 @@ public static class AxJSONKeys
     public const Keys NextError = Keys.Control | Keys.E;
     public const Keys PreviousError = Keys.Control | Keys.Shift | Keys.E;
 
-    /// <summary>Edit → Format (AJ-2.3).</summary>
-    public const Keys Format = Keys.Control | Keys.Shift | Keys.F;
+    /// <summary>Edit → Format (AJ-2.3): R for reformat (AX-8.18 rule 2; Ctrl+Shift+F until 2026-11-26, Ctrl+F being the bundle's find).</summary>
+    public const Keys Format = Keys.Control | Keys.R;
 
     // The options (AJ-5) are Alt with an arrow, the maintainer's rule of 2026-11-21 for the choices of what the caret
     // is on, in axKit's own arrows: Right goes into the value's list, Up and Down change the value in line as they

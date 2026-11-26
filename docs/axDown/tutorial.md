@@ -43,7 +43,7 @@ a code fence (see section 7). Ctrl+H passes over both.
 A paragraph is one or more lines of text with a blank line before and after. Markdown joins the lines of a paragraph
 when it is rendered, but axDown is a plain editor and shows the file as it is: each line of the file is one line in
 the window. With word wrap on (the default), a long line wraps at the window's edge and Down Arrow reads one screen
-line at a time; Options, Text, Word wrap (Ctrl+Shift+W) turns that off, and each line of the file is then one line in the
+line at a time; Options, Text, Word wrap (F11) turns that off, and each line of the file is then one line in the
 window however long. Your place in the text is kept either way.
 
 Emphasis is written with asterisks or underscores: *italic* with one, **bold** with two, ***both*** with three, and
@@ -111,10 +111,10 @@ A table is a row of cells separated by vertical bars, a row of dashes that sets 
 | Key | What it does | Kind |
 | :-- | :-- | :-- |
 | Ctrl+H, Ctrl+Shift+H | Next and previous heading | axDown |
-| Ctrl+G | Go to a line; the field says where you are | axDown |
+| F12 | Go to a line; the field says where you are | axDown |
 | Ctrl+F, F3, Shift+F3 | Find, next match, previous match | Bundle |
 | Ctrl+S, Ctrl+Shift+S | Save, save as | Bundle, axDown |
-| Ctrl+Shift+W | Word wrap on or off | axDown |
+| F11 | Word wrap on or off | axDown |
 | Ctrl+Plus, Ctrl+Minus | Larger and smaller text | Bundle |
 | F1 | The keyboard shortcuts | Bundle |
 
@@ -155,8 +155,8 @@ Ctrl+F opens Find inside the window: type a word, for example `tildes`, and pres
 next match after it and NVDA reads that line. F3 finds the next match and Shift+F3 the previous one without opening
 Find again. A word that is not in the file says "Not found".
 
-Ctrl+G asks for a line number. The field is named with where you are, for example "Go to line (now line 120,
-column 1)", so Ctrl+G is also how you ask where you are; type a number and press Enter, or press Escape to stay. The
+F12 asks for a line number. The field is named with where you are, for example "Go to line (now line 120,
+column 1)", so F12 is also how you ask where you are; type a number and press Enter, or press Escape to stay. The
 status bar carries the line, the column, the file's encoding and its line ending; NVDA+End reads it.
 
 ## 10. Files, saving and encodings

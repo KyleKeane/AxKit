@@ -40,7 +40,7 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
    list, chrome, 1.2 GB, 3% CPU, process 9120, 1 of 214": the list sorted by memory, the largest first.
 2. Down to a program that hangs, Delete: the notice "End notepad (process 4410)? Anything unsaved in it is lost." with
    End process and Cancel; Enter: "Ended notepad"; the list is read again.
-3. Ctrl+Q: "214 processes. Memory 9.1 of 15.9 GB in use, 57%. Processor 12%".
+3. F7: "214 processes. Memory 9.1 of 15.9 GB in use, 57%. Processor 12%".
 4. Alt+2: "Services, 280 list, Windows Update (wuauserv), running, manual, 1 of 280". Enter on a stopped one: its
    details with Start, and a "needs administrator rights" notice when Windows refuses.
 5. Alt+3: "Startup, 9 list, OneDrive, enabled, current user's Run key". Enter: the command and where it is set.
@@ -72,8 +72,7 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
   or Backspace in a list goes up, onto the list left ("This computer, 3 lists, Processes, 214"); Left at the top and
   Right on a row of a list play the edge sound. The window starts inside Processes, so that the common use costs no
   key. Alt+1 Processes, Alt+2 Services and Alt+3 Startup go straight into a list from anywhere (Navigation; Ctrl+1,
-  Ctrl+2 and Ctrl+3, the keys until 2026-11-16, stay as further keys of the same commands for now, shown in no menu,
-  with nothing extra said, bundle AX-8.14); the key says the list's name and the row you are on, "Startup, 9.
+  Ctrl+2 and Ctrl+3, the keys until 2026-11-16, stayed as further keys until 2026-11-26, bundle AX-8.14); the key says the list's name and the row you are on, "Startup, 9.
   OneDrive, enabled, …", also when that list already shows (axClaude D26). Tab and Shift+Tab, which went round the
   three views until 2026-11-22 (the user's ask of 2026-10-24), are the bundle's focus keys and come back to the
   list, as in every navigator without a second pane. A list is read the first time it is gone into and on F5; each
@@ -85,7 +84,7 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
   While a read runs the status bar says "Reading…" and a second F5 says "Working…".
 - PR-2.4 The title is "This computer - axProcess". The status bar's left label is the list's name, the right one the
   memory in use ("Memory 57% in use"). No AccessibleName, no Spring (`StatusLayout`).
-- PR-2.5 Ctrl+Q says the summary: the number of processes, the memory in use of the total and its percentage, and the
+- PR-2.5 F7, the bundle's read in full (Ctrl+Q until 2026-11-26), says the summary: the number of processes, the memory in use of the total and its percentage, and the
   processor's use over the last read ("214 processes. Memory 9.1 of 15.9 GB in use, 57%. Processor 12%").
 - PR-2.6 Up or Home on the first item and Down or End on the last play the bundle's edge earcon (`Sounds.Edge`), since the
   key moves nothing (as axFile's AF-3.6; 2026-10-24). Ctrl+C copies the selected item's line ("Copied"); Ctrl+F finds an item by its text, F3 and Shift+F3 the next
@@ -206,7 +205,7 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
 ### PR-6 Menus, keys, texts
 
 - PR-6.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** Refresh F5 | ─ | Exit Alt+F4.
-  **Actions (A):** Summary Ctrl+Q | ─ | Select all Ctrl+A | Deselect all Ctrl+Shift+A. **Navigation (N):** Processes
+  **Actions (A):** Summary F7 | ─ | Select all Ctrl+A | Deselect all Ctrl+Shift+A. **Navigation (N):** Processes
   Alt+1 | Services Alt+2 | Startup Alt+3 | ─ | Up to This computer Left.
   **Context (C)**, what acts on the row you are on, by its kind (AX-9.11): on a process, Details Enter | End
   process… Delete | End process tree… | Show program in axFile Ctrl+E | Copy line Ctrl+C | ─ | Select or deselect
@@ -221,8 +220,8 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
   Context, as Alt and C open it, so that NVDA reads its first item (the window base's `OpenBarMenu`, axFile's AF-D13;
   2026-10-24).
 - PR-6.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, Ctrl+F, F3, Shift+F3, Ctrl+S ("Nothing to save here. F5
-  refreshes, Delete ends a process"), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxProcessKeys`): Alt+1 (with Ctrl+1, Ctrl+2, Ctrl+3 as further keys of the three lists, AX-8.14),
-  Alt+2, Alt+3, F5, Ctrl+E, Ctrl+C, Ctrl+Q, and the navigator's keys (`ItemKeys`, `SelectionKeys`), named in the
+  refreshes, Delete ends a process"), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxProcessKeys`): Alt+1 (AX-8.14),
+  Alt+2, Alt+3, F5, Ctrl+E, Ctrl+C, Ctrl+Delete (clear the filter), with the bundle's F7 as the summary, and the navigator's keys (`ItemKeys`, `SelectionKeys`), named in the
   table by what they do here: Right, Left, Backspace, Enter, Delete, Space and the other selection keys, Shift+F10
   and the Applications key, with Up, Down, Home and End at the ends of the list. They act while the list has the
   focus. F2, Ctrl+Z, Ctrl+N and Ctrl+Shift+N, a navigator's rename, undo and new, are no keys of this window, which

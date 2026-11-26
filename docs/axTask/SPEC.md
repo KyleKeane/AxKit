@@ -59,7 +59,7 @@ selected ones (TK-4.4, TK-4.7).
 - **TK-3a.2 Moving by heading** in the navigator: Ctrl+Up and Ctrl+Down go to the heading of any level before or
   after the selection; Ctrl+1, Ctrl+2 and Ctrl+3 to the next heading of level 1, 2 or 3, Ctrl+Shift+1, Ctrl+Shift+2
   and Ctrl+Shift+3 to the one before, at a top level only (in a list, Ctrl+1 to Ctrl+3 are the list's action keys,
-  TK-7a.1; TK-D14, TK-D20). Ctrl+0 is All tasks (TK-D21). NVDA reads
+  TK-7a.1; TK-D14, TK-D20). Alt+0 is All tasks (Ctrl+0 until 2026-11-26; TK-D21). NVDA reads
   the heading's row as the selection moves; with no heading further, the edge sound. A typed letter finds a row by its
   name as in every list. On a heading, Right and Enter play the edge sound and say "A section: Down goes into it";
   Down goes on to its first row. In the detail pane of a heading: its row and what it holds. (In an edit control
@@ -95,7 +95,7 @@ selected ones (TK-4.4, TK-4.7).
   lists as "<name>, before conversion", and the conversion is one step for Ctrl+Z (AF-13.6).
 - **TK-4.0a The item's form** (since 2026-11-21; AF-14.1, AF-14.2, the maintainer's message 8). Enter on an item in
   the navigator opens "Fields of <item>", a form of the bundle's (AX-8.10): one standard control for each field of
-  the item as its list's configuration gives it, the Title first, the focus in the title's box, with the form's sound and "Fields of <item>, form" (bundle AX-7.11); its explanation, read on Ctrl+Q, ends
+  the item as its list's configuration gives it, the Title first, the focus in the title's box, with the form's sound and "Fields of <item>, form" (bundle AX-7.11); its explanation, read on F7, ends
   with the line of the fields the item keeps. A text and a number are a box of one line, a long text a box of
   several lines, a check a check box named by the field, a date and a date and time a box whose name says what it
   takes ("Type Due: a date such as 2026-11-30, today, tomorrow, +3 or a weekday; empty for none"), a choice a list of
@@ -232,7 +232,7 @@ selected ones (TK-4.4, TK-4.7).
     was shown before anything is written (IA-5.5). Several moves are made one after the other, each from the disk
     as the one before left it, so that an item linking to two of the moved items is written right; a failure
     takes back what was done before it and says so (`TaskForm.CommitMoves`).
-  - **What stays on the item you are on**, whatever is selected: Enter (its form), F2, Ctrl+Q, Ctrl+J, Ctrl+E,
+  - **What stays on the item you are on**, whatever is selected: Enter (its form), F2, F7, Ctrl+J, Ctrl+E,
     the detail pane and its changes, and an action of the list that opens something, runs a program or fills
     axTerminal's field: those are about one thing.
   - **For an AI tool** (bundle `mcp.md` MC-7.3): while items are selected, the target of a command it asks to run
@@ -262,7 +262,7 @@ selected ones (TK-4.4, TK-4.7).
     a list's set action (`TaskForm.SetFields`). The rules are `AxTask.Core/ManyFields`, tested in
     `ManyFieldsTests`; the window's part is `TaskForm.ManyFields.cs`; checked by
     `tests/scripts/axTask/28-set-and-clear-fields.txt`.
-- **TK-4.8 Filter and sort** (2026-11-22; the navigator's, bundle AX-8.17). Options → Filter… shows only the rows of the level whose name contains a text (lists at the top level, items in a list), a heading staying while a row under it passes; Options → Sort by ▸ Name puts the rows in the order of their names, under each heading among themselves, and The list's own order puts them back. Neither changes a file: the order of a list on disk and its smart lists are untouched.
+- **TK-4.8 Filter and sort** (2026-11-22; the navigator's, bundle AX-8.17). Options → Filter… shows only the rows of the level whose name contains a text (lists at the top level, items in a list), a heading staying while a row under it passes; Options → Sort by ▸ Name puts the rows in the order of their names, under each heading among themselves, and The list's own order puts them back; Ctrl+Delete in the navigator clears the filter. Neither changes a file: the order of a list on disk and its smart lists are untouched.
 - **TK-4.9 A list's own order** (the maintainer's ask, "editable lists like axtask should have the ability to be
   reordered", the keys settled on 2026-11-21: Ctrl with an arrow moves the cursor, Ctrl+Shift with Up or Down moves an
   item; built 2026-11-24). In a list of the user's own, on an item: Ctrl+Shift+Up and Ctrl+Shift+Down move it one
@@ -371,8 +371,8 @@ On top of IA-3:
 | Space, Shift+Space, Shift+Down, Shift+Up, Shift+Home, Shift+End, Ctrl+A, Ctrl+Shift+A, Escape | navigator | the bundle's selection keys (AX-8.16, TK-4.7) |
 | Ctrl+J | anywhere | open the item, the list's `list.json` or the smart list in axJSON |
 | Ctrl+E | anywhere | show the file or folder in axFile |
-| Ctrl+Shift+D | navigator | hide or show done tasks in this list |
-| Ctrl+0 | anywhere | to All tasks (Ctrl+1 until 2026-11-07, when the digits became the action keys, TK-7a.1) |
+| Ctrl+H | navigator | hide or show done tasks in this list (Ctrl+Shift+D until 2026-11-26) |
+| Alt+0 | anywhere | to All tasks (Ctrl+1 until 2026-11-07, when the digits became the action keys, TK-7a.1; Ctrl+0 until 2026-11-26) |
 | Ctrl+1 to Ctrl+9 | anywhere, in a list | the list's action key on the item selected (TK-7a.1) |
 | Ctrl+1, Ctrl+2, Ctrl+3 | navigator, at a top level | the next heading of level 1, 2 or 3 (TK-3a.2, TK-D14, TK-D20) |
 | Ctrl+Shift+1, Ctrl+Shift+2, Ctrl+Shift+3 | navigator, at a top level | the heading of level 1, 2 or 3 before (TK-3a.2) |
@@ -395,7 +395,7 @@ The design is `docs/axKit/reports.md` section 8 (RP-8); the rules axTask keeps:
   an app by its verb on the item's file
   (`json`, `file`; `claude` and `terminal` only in a folder on a drive of this computer, RP-8.1). A key without an action: the edge earcon and "No action
   on Ctrl+3 in this list; its actions are written in its configuration, Ctrl+J on the list"; outside a list, "Action
-  keys act in a list: open one first". All tasks moved to Ctrl+0 for them (RP-8.4).
+  keys act in a list: open one first". All tasks moved to Ctrl+0 for them (RP-8.4), and to Alt+0 on 2026-11-26.
 - **TK-7a.1a The actions of a list** (since 2026-11-21; `forms-framework.md` sections 2 to 7 are the specification,
   AF-n.m, and this is what is built of it). A list's actions are the entries of its configuration's `"actions"`, and
   nothing else: the form Actions, Action keys went, and an action is written in the file, in axJSON (Ctrl+J on the
@@ -668,7 +668,7 @@ The process is `docs/axKit/outside-reports.md` (OR-n.m); axTask's part of it:
 - **TK-D14 Ctrl+1 and Ctrl+2 go by heading at a top level** (2026-11-11): the level keys of a browse mode, on the
   digits; there the list's action keys never act (they need a list), so each place gives the keys one meaning, as
   Ctrl+Up does in a list and in a field. Ctrl+Shift+1 and Ctrl+Shift+2 go back, as Shift goes back with NVDA's
-  letters. Ctrl+0 stays All tasks; Ctrl+3 to Ctrl+9 at the top still say "Action keys act in a list".
+  letters. Alt+0 is All tasks; Ctrl+3 to Ctrl+9 at the top still say "Action keys act in a list".
 - **TK-D15 The smart lists gather every project** (the user, 2026-11-11; what TK-D8 left for later): one place for
   "#ui" across projects. The user's own items are read on each fill, as before; the projects' are read off the UI
   thread by the look for projects, the same walk the search makes, and kept until the next look, so TK-D3's "no cache"
@@ -705,9 +705,10 @@ The process is `docs/axKit/outside-reports.md` (OR-n.m); axTask's part of it:
   reached by Ctrl+3 and Ctrl+Shift+3 at a top level as Ctrl+1 and Ctrl+2 reach theirs (TK-D14), Ctrl+3 staying
   action key 3 in a list. Ctrl+Up and Ctrl+Down still go to the heading before or after, of any level. The names of
   the keys are axDown's ("Previous heading level 3"), so that the same key is the same thing in both windows.
-- **TK-D21 Ctrl+0 for a level above 1, if one ever comes** (the user, 2026-11-11): no heading above level 1 exists,
-  so Ctrl+0 stays All tasks. If a level above Your lists, Smart lists and the rest is ever added, Ctrl+0 at a top
-  level goes between those headings, as Ctrl+1 does between its own, and All tasks keeps its menu item.
+- **TK-D21 Ctrl+0 for a level above 1, if one ever comes** (the user, 2026-11-11): no heading above level 1 exists.
+  If a level above Your lists, Smart lists and the rest is ever added, Ctrl+0 at a top
+  level goes between those headings, as Ctrl+1 does between its own. All tasks is Alt+0 since 2026-11-26 (Ctrl+0
+  until then; bundle AX-8.18, a place of the window on Alt and a digit).
 
 ## 9. Open questions
 

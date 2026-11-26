@@ -91,7 +91,7 @@ it, so that every file shows something and the details say what it is.
 ### AP-2 The text
 
 - AP-2.1 One read-only, multi-line EDIT control named with the file's name (axDown AD-2.1), word wrap on by default
-  (Options → Text → Word wrap, Ctrl+Shift+W; the bundle's one setting for the editors, in the theme file,
+  (Options → Text → Word wrap, F11, Ctrl+Shift+W until 2026-11-26; the bundle's one setting for the editors, in the theme file,
   `docs/axKit/theme.md` TH-6), the caret on the first line when a file opens; the arrows,
   Home, End, Ctrl+Home, Ctrl+End, Ctrl+Left and Ctrl+Right, Shift with any of them, Ctrl+A and Ctrl+C are the
   control's own; Page Up and Page Down one screen (AX-8.2); Ctrl+Up and Ctrl+Down the previous and next paragraph,
@@ -113,7 +113,7 @@ it, so that every file shows something and the details say what it is.
   Ctrl+T table, each the next one and with Shift the previous one, through the bundle's `TextJump` over
   `MarkdownOutline`, announcing "Install, heading level 2" or "No next heading"; they work in every file (a plain
   text file has no headings, "No next heading"); Navigate → Next ▸ and Previous ▸ list them (axDown AD-D7). **`l`**
-  says the line, "Line 12 of 40"; **Ctrl+G** Go to line, the field in the question area under the text (axDown
+  says the line, "Line 12 of 40"; **F12** Go to line (Ctrl+G until 2026-11-26), the field in the question area under the text (axDown
   AD-6.4). **Ctrl+F**, **F3**, **Shift+F3** find (axDown AD-6.3). JSON files are text here; JSON's own keys come
   when axJSON's outline is shared (§9).
 - AP-2.4 **Reload** (File → Reload, F5): the file read again, the caret on the same line and column, "Reloaded"; and
@@ -129,15 +129,15 @@ it, so that every file shows something and the details say what it is.
   Edit in axJSON, by the file) | Show current file in ▸ (File Explorer Ctrl+W | axClaude | axTerminal | axGIT | axFile,
   bundle AX-9.10) | ─ | Exit Alt+F4. **Actions (A):** "No actions here yet", the viewer changing nothing. **Context (C)**,
   the selection (AX-9.11; Shift+F10, the Applications key and a right click in the text): Copy | Select all.
-  **Navigation (N):** Find… Ctrl+F | Find next F3 | Find previous Shift+F3 | Go to line… Ctrl+G | ─ |
+  **Navigation (N):** Find… Ctrl+F | Find next F3 | Find previous Shift+F3 | Go to line… F12 | ─ |
   Next ▸ | Previous ▸ (Heading, Heading level 1 to 6, Link, List, List item, Block quote, Table). **Options (O):**
-  Text ▸ (Word wrap Ctrl+Shift+W | ─ | Font… | Larger text | Smaller text | Windows text size) | General ▸ (Check for
+  Text ▸ (Word wrap F11 | ─ | Font… | Larger text | Smaller text | Windows text size) | General ▸ (Check for
   updates at start ✓) | Developer ▸ (Open settings file). **Window (W)** (before Options), **axKit (K)** (AX-9.1). **Help (H):**
   Keyboard shortcuts F1 | User guide | ─ | Markdown resources ▸ (axDown's pages). Every item has a mnemonic (AX-7.4).
 - AP-3.2 Keys (AX-8). Bundle-wide: F1, the control keys (the text, or the Go to line field while it shows), Ctrl+F,
   F3, Shift+F3, Ctrl+S ("Nothing to save here"), Ctrl+Plus, Ctrl+Minus, Page Up, Page Down, Ctrl+Up, Ctrl+Down with
-  Shift, Alt+F4. Window-specific (`AxPreviewKeys`): Ctrl+O, Ctrl+N (New window, AX-9), F5, Ctrl+Shift+V, Ctrl+E, Ctrl+W, Ctrl+G,
-  Ctrl+Shift+W, `l`, and the fourteen navigation keys of AP-2.3. Ctrl+H, Ctrl+I, Ctrl+J and Ctrl+M never reach the
+  Shift, Alt+F4. Window-specific (`AxPreviewKeys`): Ctrl+O, Ctrl+N (New window, AX-9), F5, Ctrl+Shift+V, Ctrl+E, Ctrl+W, F12,
+  F11, `l`, and the fourteen navigation keys of AP-2.3. Ctrl+H, Ctrl+I, Ctrl+J and Ctrl+M never reach the
   control as characters (axDown AD-5.1; a read-only control takes none, the guard stays for the sound of it). The
   collision test covers the table.
 - AP-3.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axPreview/user-guide.md` is embedded (Help → User

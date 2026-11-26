@@ -23,7 +23,7 @@ expect said ! Circle area inserted
 expect focus "name":"Expression","role":"Text","value":"pi*^2"
 type 3
 expect focus "name":"Expression","role":"Text","value":"pi*3^2"
-keys escape
+keys ctrl+delete
 expect said ! Cleared
 
 # Goal: Put a template in around the selected text
@@ -52,7 +52,7 @@ keys escape
 template circle area
 type 4
 expect focus "name":"Expression","role":"Text","value":"pi*4^2"
-keys escape
+keys ctrl+delete
 template Answer twice | 5
 expect focus "name":"Expression","role":"Text","value":"5*2"
 keys enter

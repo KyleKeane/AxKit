@@ -7,7 +7,7 @@ Run with NVDA before a release, after `scripts to run-individual-apps\run-axProc
 1. Start axProcess: NVDA reads "This computer - axProcess window", then the list; about a second later "Processes, N. <first item>", not interrupting. Nothing else is spoken.
 2. Down Arrow: the next item alone, "<name>, <memory>, <n>% CPU, process <id>". The list is largest memory first.
 3. NVDA+End: the status bar: "Processes, N" and "Memory N% in use".
-4. Ctrl+Q: "N processes. Memory x of y GB in use, z%. Processor n%".
+4. F7: "N processes. Memory x of y GB in use, z%. Processor n%".
 5. Wait ten seconds without a key: nothing is spoken and the item under the cursor stays the same.
 6. F5: "Refreshed: Processes, N"; the selection is on the same process.
 7. Home, then Up: the low edge sound, nothing spoken. End, then Down: the same.
@@ -34,7 +34,7 @@ Run with NVDA before a release, after `scripts to run-individual-apps\run-axProc
 1. Alt+2: "Services, N. <first service>" after a moment. Down: "<display name> (<name>), running, automatic" and the like.
 2. Enter on a running service: its details with Stop, Restart, Close. Stop: "Could not stop …: access is denied. Services need administrator rights to start and stop" (unless axProcess runs elevated).
 3. Delete on a service: "A service is not ended: Enter shows it, with Stop where it can be stopped". Ctrl+E: "Show program is for a process or a startup program". Space: "Services are not selected: nothing here acts on several of them".
-4. Alt+2 again: "Services, N. <item>"; Alt+1: back on the process you had. No menu opens and Windows makes no sound for Alt and the number; the menu bar stays closed when Alt is let go. Ctrl+1, Ctrl+2 and Ctrl+3, the keys until 2026-11-16, do the same with nothing more said.
+4. Alt+2 again: "Services, N. <item>"; Alt+1: back on the process you had. No menu opens and Windows makes no sound for Alt and the number; the menu bar stays closed when Alt is let go.
 
 ## 4. Startup (PR-5)
 

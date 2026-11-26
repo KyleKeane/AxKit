@@ -44,15 +44,6 @@ expect said ! Services,
 keys alt+1
 expect said ! Processes,
 
-# Check: The older keys of the views still work
-# 3.4a Ctrl+1, Ctrl+2 and Ctrl+3, the views' keys until 2026-11-16, still switch the view, with nothing more said.
-keys ctrl+2
-expect said ! Services,
-keys ctrl+3
-expect said ! Startup, 1.
-keys ctrl+1
-expect said ! Processes,
-
 # Goal: Show the startup programs
 # 4.1 Alt+3: the startup programs: the run's stand-in, with its one entry (until 2026-11-14 this computer's own, whatever
 # it starts).

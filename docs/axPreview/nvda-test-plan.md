@@ -8,10 +8,10 @@ Run with NVDA before a release, on a folder with `README.md` (headings, links, a
 
 1. Start axPreview on `README.md`: NVDA reads "README.md - axPreview window", then "README.md, read only, edit, multi line" and the first line. Nothing else is spoken. The menu bar (Alt): Session, Actions, Navigation, Context, Options, Window, axKit, Help; Actions holds one item, "No actions here yet".
 2. Down Arrow reads the next line; Ctrl+Right reads words; typing a letter changes nothing and says nothing; Ctrl+V does nothing. Shift+Down selects a line; Ctrl+A, Ctrl+C: the text on the clipboard.
-3. `l`: "Line 2 of 40" (your numbers). Ctrl+G: the field "Go to line (now line 2, column 1)" under the text; type `5`, Enter: "Line 5 of 40", the caret there; Ctrl+G, type `x`, Enter: "Not a line number". Typing `l` into the Go to line field puts an l in the field.
+3. `l`: "Line 2 of 40" (your numbers). F12: the field "Go to line (now line 2, column 1)" under the text; type `5`, Enter: "Line 5 of 40", the caret there; F12, type `x`, Enter: "Not a line number". Typing `l` into the Go to line field puts an l in the field.
 4. Ctrl+H: "Install, heading level 2" (the next heading); Ctrl+Shift+H back; Ctrl+2: the next level 2 heading; Ctrl+K: the next link; Ctrl+L: the next list; Ctrl+I: the next list item; Ctrl+Q: "No next block quote" when there is none; Ctrl+T: a table or "No next table". Alt+N, X: the Next submenu lists them with their keys.
 5. Ctrl+F, type `update`, Enter: the match selected and its line read; F3: the next; Shift+F3: back. Page Down, Page Up, Ctrl+Down, Ctrl+Up as in axDown.
-6. NVDA+End: "README.md", then "Line 5, Column 1 · UTF-8 · CRLF" (the file's values). Ctrl+Shift+W: "Word wrap, not checked", the caret where it was; again: "Word wrap, checked".
+6. NVDA+End: "README.md", then "Line 5, Column 1 · UTF-8 · CRLF" (the file's values). F11: "Word wrap, not checked", the caret where it was; again: "Word wrap, checked".
 7. Ctrl+S: "Nothing to save here". F1: the Keyboard shortcuts notice; Ctrl+H in it jumps to its headings; Escape.
 8. Ctrl+O: the Windows file picker on text files; pick `plain.txt`: the window shows it, the title "plain.txt - axPreview"; Ctrl+H: "No next heading". Alt+S, R: "Open recent file submenu", "1. plain.txt (…)", "2. README.md (…)"; 2: README.md is back.
 9. Ctrl+O, All files, pick the `.exe`: it opens, its text the readable text inside it under "No preview for this kind yet; the readable text inside it follows.", or "No readable text was found in <name>."; Ctrl+E is "Open in Windows' program" in the Session menu (since 2026-10-24; the notice "Not a text file" before). Pick the file over 32 MB: the notice "Too large" naming the size. Pick `app.log`: it opens, since its bytes read as text.
@@ -33,7 +33,7 @@ Run with NVDA before a release, on a folder with `README.md` (headings, links, a
 
 1. Ctrl+Plus: "Text size 13" (or the next size), the caret where it was; Ctrl+Minus back. Options, Text, Font: the font picker; Escape.
 2. Help, User guide: this guide; Ctrl+H moves through its headings; Escape.
-3. Alt+W: the Window menu with Recently closed (the file an axPreview window had when it closed), Open windows, Close all windows, Say the status (F8: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+K: the axKit menu with Claude, AI tools and Theme.
+3. Alt+W: the Window menu with Recently closed (the file an axPreview window had when it closed), Open windows, Close all windows, Say the status (F9: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+K: the axKit menu with Claude, AI tools and Theme.
 4. Help, Diagnostics, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the file with its encoding and the log's end. Alt+F4 closes without a question.
 
 ## 5. The Details list and the kinds of file (AP-6, AP-7)
@@ -42,7 +42,7 @@ Files: `README.md`, and a Word document, a zip, an MP3 and a picture of your own
 
 1. Open `README.md`: NVDA reads the text as before. Tab: "Details, list", then "File". Down: "Name: README.md", then the folder, "Size: …, … bytes", "Type: …", the dates. Down further: "Contents", the encoding, the line ending, the lines, words and characters; then "Windows' details" with whatever Windows has. Nothing is spoken but the lines.
 2. Type `wor`: the Words line. Ctrl+C: "Copied"; paste into another program: the number alone. Enter: "Enter opens the Folder line in axFile". Up to the Folder line, Enter: axFile opens on the folder, README.md selected.
-3. F6: back in the text, the caret where it was; F6 again: the list, on the same line. Shift+Tab from the list: the text. With Go to line open (Ctrl+G), Tab goes text, field, list.
+3. F6: back in the text, the caret where it was; F6 again: the list, on the same line. Shift+Tab from the list: the text. With Go to line open (F12), Tab goes text, field, list.
 4. F5 while in the list: "Reloaded"; the list stays on its line. Listen for whether NVDA reads the line again, and note it.
 5. Open the Word document: its text, headings starting with #; Ctrl+H moves by them; the status bar says "Word document"; the Details list's Contents group gives the paragraphs, headings and tables, and the Windows group its author or pages when Windows knows them. Session menu: "Open in Windows' program" (Ctrl+E) opens Word or the program Windows has.
 6. Open the zip: one line per file with its size and date; the Details list counts files and folders and the packed and unpacked sizes.

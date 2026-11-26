@@ -14,7 +14,7 @@ The window is called "Calculator - axCalc", and the focus starts in the field na
 
 - Type an expression and press **Enter**: axCalc says the answer, adds the line "expression = answer" to the end of the history, and empties the field.
 - An expression that starts with an operator continues from the last answer: after `1920*1080`, typing `*4` gives the answer times four. A leading minus is a negative number, so `-3` is minus three; to subtract from the last answer, type `ans-3`.
-- **Escape** empties the field. **Ctrl+Q** says the last answer again.
+- **Ctrl+Delete** empties the field. **F7** says the last answer again.
 - A mistake says what went wrong, "Error: missing closing parenthesis", and leaves your text in the field to mend.
 
 What you can type:
@@ -30,7 +30,7 @@ Angles are in degrees unless you choose Options, Angles, Radians.
 
 ## Other bases
 
-**Ctrl+I** says the answer in hexadecimal, binary and octal: "255, hex FF, binary 1111 1111, octal 377". The digits come in groups of four, so the reading has pauses. Session, Copy answer in, copies the answer as `0xFF`, `0b11111111` or `0o377`, ready to paste into code.
+**F8** says the answer in hexadecimal, binary and octal: "255, hex FF, binary 1111 1111, octal 377". The digits come in groups of four, so the reading has pauses. Session, Copy answer in, copies the answer as `0xFF`, `0b11111111` or `0o377`, ready to paste into code.
 
 ## The history
 
@@ -38,10 +38,10 @@ The newest line is at the bottom, so Up from the end reads back from the latest.
 
 - **Enter** puts the line's expression back in the field, to change it and press Enter again.
 - **Ctrl+Shift+C** copies the line's answer. In the field, it copies the last answer.
-- **Ctrl+I** says the line's answer in other bases.
+- **F8** says the line's answer in other bases.
 - **Escape** goes back to the field.
 - **Ctrl+F** finds text in the history from the line you are on, F3 the next match and Shift+F3 the one before.
-- The letters are the ones of axClaude's conversation: **a** goes to the next answer and Shift+A to the one before; **l** says the line's number; **m** drops a bookmark on the line, and **k** and Shift+K go from bookmark to bookmark; Backspace goes back to the line you were on before a jump.
+- The letters are the ones of axClaude's conversation: **a** goes to the next answer and Shift+A to the one before; **l** says the line's number; **m** drops a bookmark on the line, and **k** and Shift+K go from bookmark to bookmark (Ctrl+K drops one from the field too); Backspace goes back to the line you were on before a jump.
 - Shift with the arrows selects text, and Ctrl+C copies the selection.
 - One line cannot be removed alone any more: the history is a text. Clear history empties it.
 
@@ -53,11 +53,11 @@ Each menu with its commands and their keys, as the window lists them:
 
 <!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
 - **Session**: Exit (Alt+F4); Save history (Ctrl+S).
-- **Actions**: Answer (Enter); Answer in other bases (Ctrl+I); Clear history (Ctrl+Shift+Delete); Clear variables; Copy answer (Ctrl+Shift+C); Say the last answer (Ctrl+Q); Variables; Copy answer in (Binary, Hexadecimal, Octal).
+- **Actions**: Answer (Enter); Answer in other bases (F8); Clear history (Ctrl+Shift+Delete); Clear variables; Copy answer (Ctrl+Shift+C); Say the last answer (F7); Variables; Copy answer in (Binary, Hexadecimal, Octal).
 - **Navigation**: Find (Ctrl+F); Find next (F3); Find previous (Shift+F3); Next bookmark (K in the history); Previous bookmark (Shift+K in the history).
-- **Context**: Bookmark this line (Ctrl+Shift+K, or M in the history); Copy the selection (Ctrl+C in the history); Take this line's expression into the field (Enter in the history).
+- **Context**: Bookmark this line (Ctrl+K, or M in the history); Copy the selection (Ctrl+C in the history); Take this line's expression into the field (Enter in the history).
 - **Options**: Keep history between runs; Angles (Degrees, Radians); Developer (Open settings file); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
-- Keys without a menu item: Escape (Clear the field); Tab (Switch between the view and the field).
+- Keys without a menu item: Ctrl+Delete (Clear the field); Tab (Switch between the view and the field).
 - **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
 <!-- end of the menus -->
 

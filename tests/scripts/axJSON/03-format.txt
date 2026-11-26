@@ -7,10 +7,10 @@ file missing-value.json {\n  "model": "opus",\n  "permissions": { "allow": ["Bas
 file formatted.json {\n  "name": "formatted",\n  "items": [\n    1,\n    2\n  ]\n}\n
 
 # Goal: Format a file written on one line
-# 3.1: everything on one line, Ctrl+Shift+F: "Formatted"; two spaces per level, one key per line.
+# 3.1: everything on one line, Ctrl+R: "Formatted"; two spaces per level, one key per line.
 start json {temp}\one-line.json
 expect focus one-line.json
-keys ctrl+shift+f
+keys ctrl+r
 expect said ! Formatted
 keys ctrl+home
 expect focus {"name":"one-line.json","role":"Text","value":"{"}
@@ -25,25 +25,25 @@ expect state \one-line.json","notice"
 # 3.2: broken.json: "Formatted, repaired: 1 trailing comma, 1 missing comma"; then Ctrl+E says "No next error".
 start json {temp}\broken.json
 expect focus broken.json
-keys ctrl+shift+f
+keys ctrl+r
 expect said ! Formatted, repaired: 1 trailing comma, 1 missing comma
 keys ctrl+e
 expect said ! No next error
 # Goal: Repair a single-quoted value
-# A single-quoted value typed in, then Ctrl+Shift+F: "Formatted, repaired: 1 single-quoted string".
+# A single-quoted value typed in, then Ctrl+R: "Formatted, repaired: 1 single-quoted string".
 keys ctrl+home ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k ctrl+k
 expect said ! on: true
 keys end
 type , "q": 'x'
-keys ctrl+shift+f
+keys ctrl+r
 expect said ! Formatted, repaired: 1 single-quoted string
 expect text "  \u0022q\u0022: \u0022x\u0022"
 
 # Check: A file that is not valid JSON is not formatted and stays as it was
-# 3.3: a value deleted, "count": , then Ctrl+Shift+F: "Not valid JSON: line 4, expected a value, found ','"; the text unchanged.
+# 3.3: a value deleted, "count": , then Ctrl+R: "Not valid JSON: line 4, expected a value, found ','"; the text unchanged.
 start json {temp}\missing-value.json
 expect focus missing-value.json
-keys ctrl+shift+f
+keys ctrl+r
 expect said ! Not valid JSON: line 4, expected a value, found ','
 expect state "title":"axJSON file 
 expect state \missing-value.json","notice"
@@ -55,10 +55,10 @@ expect state "title":"axJSON file
 expect state \missing-value.json","notice"
 
 # Check: A formatted file is said as already formatted
-# 3.4: Ctrl+Shift+F on a formatted file: "Already formatted", nothing changes, no star in the title.
+# 3.4: Ctrl+R on a formatted file: "Already formatted", nothing changes, no star in the title.
 start json {temp}\formatted.json
 expect focus formatted.json
-keys ctrl+shift+f
+keys ctrl+r
 expect said ! Already formatted
 expect state "title":"axJSON file 
 expect state \formatted.json","notice"

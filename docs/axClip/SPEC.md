@@ -30,7 +30,7 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
 
 1. In an editor, Ctrl+C on a line; later Ctrl+Shift+Comma: "axClip window, Search the clipboard, edit"; Down: "git status
    --porcelain, 1 of 12". Enter: axClip hides, the editor is in front again, and the line is pasted.
-2. Ctrl+Shift+Comma, type `token`: after the pause, "export TOKEN=…, 1 of 2". Ctrl+Q: the whole text in a notice, to read
+2. Ctrl+Shift+Comma, type `token`: after the pause, "export TOKEN=…, 1 of 2". F7: the whole text in a notice, to read
    with the arrows.
 3. Before copying a password by hand: axClip's Options, Pause recording; the copies after it are not kept until it is
    turned on again.
@@ -106,7 +106,7 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
   maintainer's choice of 2026-11-23): NVDA speaks the window the front goes back to, and the "Copied" said until
   then as the window hid was never heard (the NVDA pass of that day). Coming back is the sign that it worked; a
   copy that failed keeps the window and says why.
-- CP-4.3 Ctrl+Q shows the item's whole text in a notice titled "Clipboard text, <n> lines", read with the arrows;
+- CP-4.3 F7 (the bundle's read in full; Ctrl+Q until 2026-11-26) shows the item's whole text in a notice titled "Clipboard text, <n> lines", read with the arrows;
   Escape closes it.
 - CP-4.4 Delete removes the selected item: "Removed". Ctrl+Shift+Delete asks "Clear the clipboard history? Its N items
   cannot be brought back." with Clear and Cancel; Clear says "Clipboard history cleared". The clipboard itself is not
@@ -117,13 +117,13 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
 
 - CP-5.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** Hide Escape | Quit axClip. **Actions (A):**
   Clear history… Ctrl+Shift+Delete. **Navigation (N):** one item saying there is nothing yet. **Context (C)**, the clip
-  the selection is on (AX-9.11): Paste Enter | Copy without pasting Shift+Enter | Read in full Ctrl+Q | Remove Delete.
+  the selection is on (AX-9.11): Paste Enter | Copy without pasting Shift+Enter | Read in full F7 | Remove Delete.
   **Options (O):** Hotkey… | Pause
   recording Ctrl+P ✓ | Keep history between runs ✓ | Text ▸ | General ▸ (Start with
   Windows ✓ | Say the first match while typing ✓) | Developer ▸. **Window (W)** (before Options), **axKit (K)** (AX-9.1). **Help (H):** Keyboard
   shortcuts F1 | User guide | ─ | Windows resources ▸ (Clipboard in Windows). Every item has a mnemonic.
-- CP-5.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, Page Up, Page Down, Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific
-  (`AxClipKeys`): Down, Up, Ctrl+Home, Ctrl+End, Enter, Shift+Enter, Ctrl+Q, Delete, Ctrl+Shift+Delete, Ctrl+P, Escape.
+- CP-5.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, F7 (read in full), Page Up, Page Down, Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific
+  (`AxClipKeys`): Down, Up, Ctrl+Home, Ctrl+End, Enter, Shift+Enter, Delete, Ctrl+Shift+Delete, Ctrl+P, Escape.
   The hotkey is a setting, not a key of the window. Delete and the arrows act on the list while the caret is in the
   field: the field's own Delete and Up and Down are not used (a search text is short; Backspace edits it).
 - CP-5.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axClip/user-guide.md` is embedded; About is the

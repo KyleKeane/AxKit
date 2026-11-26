@@ -65,7 +65,8 @@ internal sealed partial class MainForm
         // Ctrl+Down move by paragraph in every edit control of the bundle, and Shift with an arrow selects text in the
         // message field. The sequences are ClaudeCodeKeys' (rule 12).
         var sendKey = new ToolStripMenuItem("Send &key");
-        Add(sendKey, new Command("Ctrl+&C", AxClaudeKeys.SendCtrlC, () => SendKey(ClaudeCodeKeys.CtrlC)) { Mark = CommandMark.Act });
+        // Without a key since 2026-11-26 (Ctrl+Shift+C until then): Interrupt is Ctrl+I, and this stays in the palette.
+        Add(sendKey, new Command("Ctrl+&C", Keys.None, () => SendKey(ClaudeCodeKeys.CtrlC)) { Mark = CommandMark.Act });
         sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Ctrl+&D", null, (_, _) => SendKey(ClaudeCodeKeys.CtrlD)), CommandMark.Act));
         sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Tab", null, (_, _) => SendKey(ClaudeCodeKeys.Tab)), CommandMark.Act));
         sendKey.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Up", null, (_, _) => SendKey(ClaudeCodeKeys.Up)), CommandMark.Act));

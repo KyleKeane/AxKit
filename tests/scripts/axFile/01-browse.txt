@@ -127,29 +127,29 @@ expect state "title":"axFile folder
 expect state \level-1-enter-me","notice"
 refuse said ! level-2-enter-me, folder
 # Goal: Go back to the folder above
-# Backspace: the folder above, on the folder left; Alt+Up the same.
+# Backspace: the folder above, on the folder left (Alt+Up did the same until 2026-11-26).
 keys backspace
 expect said ! nav, 13 items, level-1-enter-me, folder
 expect focus level-1-enter-me, folder
 keys enter
 expect said level-1-enter-me, 2 items
-keys alt+up
+keys backspace
 expect said ! nav, 13 items, level-1-enter-me, folder
 # Check: An empty folder says it has no items
-# Enter on an empty folder: "<name>, No items in this folder"; Enter, Ctrl+I, F2 on that line say it.
+# Enter on an empty folder: "<name>, No items in this folder"; Enter, F8, F2 on that line say it.
 keys home
 keys enter
 expect said ! empty-folder-no-items, No items in this folder
 keys enter
 expect said ! No items in this folder
-keys ctrl+i
+keys f8
 expect said ! No items in this folder
 keys f2
 expect said ! No items in this folder
 keys backspace
 expect said nav, 13 items, empty-folder-no-items, folder
 # Goal: Go to a folder by its path
-# Ctrl+G to another folder says the folder, its count and the entry the same way.
+# F12 to another folder says the folder, its count and the entry the same way.
 do Go to folder
 expect state "notice":"Go to folder"
 expect focus "name":"Path"
@@ -159,9 +159,9 @@ expect said ! level-2-enter-me, 2 items, level-3-enter-me, folder
 expect focus level-3-enter-me, folder
 # Manual (1.12a): the Drives submenu (Alt+F, E) is filled as it opens (not in the palette), and Eject and Drive
 # properties are the shell's; Manual (1.12b): Ctrl+N at This PC starts a second window the runner cannot reach.
-# Check: Go to folder opens by its second key as well
-# Alt+D: the Go to folder notice, as Ctrl+G (1.12a).
-keys alt+d
+# Check: Go to folder opens by its key
+# F12: the Go to folder notice (1.12a; Ctrl+G and Alt+D until 2026-11-26).
+keys f12
 expect state "notice":"Go to folder"
 keys escape
 expect focus level-3-enter-me, folder
@@ -227,7 +227,7 @@ keys left
 expect said ! nav, 13 items, level-1-enter-me, folder
 
 # Goal: Hear the details of a folder or a file
-# 1.5 Ctrl+I on a folder and on a file.
+# 1.5 F8 on a folder and on a file.
 do Information
 expect said ! level-1-enter-me, folder, modified
 keys end
@@ -439,7 +439,7 @@ keys down
 expect focus chapter-02-notes.txt
 do Information
 expect said ! chapter-02-notes.txt, 
-keys escape
+keys ctrl+delete
 expect said ! Filter cleared
 expect list "count":9
 expect focus chapter-02-notes.txt
@@ -450,7 +450,7 @@ keys enter
 expect said ! 9 items, filter zzz, 0 shown, No names contain zzz
 keys enter
 expect said ! No names contain zzz
-keys escape
+keys ctrl+delete
 expect said ! Filter cleared
 # Goal: Sort the list by date, size or name
 # Sort by: Name checked; Date: newest first after the folders; Size: largest first; Name again.
@@ -560,8 +560,8 @@ keys up
 expect focus "value":"select-04.txt"
 keys escape
 expect quiet 1000
-# Check: Under a filter the first Escape clears the selection and keeps the filter
-# Under a filter: Escape deselects first, the filter stays; the next Escape clears it.
+# Check: Under a filter Escape clears the selection and keeps the filter
+# Under a filter: Escape deselects, the filter stays; Ctrl+Delete clears it (the next Escape did until 2026-11-26).
 do Filter
 expect focus "name":"Name contains"
 type select-0
@@ -572,7 +572,7 @@ expect said ! Selected
 keys escape
 expect said ! None selected
 expect focus "name":"14 items, filter select-0, 9 shown"
-keys escape
+keys ctrl+delete
 expect said ! Filter cleared
 # Check: A selection is dropped when another folder is shown
 # A mark is gone when another folder is shown: Space, Enter on a folder, Backspace.
@@ -630,5 +630,5 @@ expect said , 1 selected
 # Manual (1.13a): Ctrl+X "Cut <name>" writes to the system clipboard, which the test desktop shares with the user.
 keys escape
 expect said ! None selected
-keys escape
+keys ctrl+delete
 expect said ! Filter cleared

@@ -46,8 +46,8 @@ expect said Unsent message in the field
 expect said ♪ Recall
 
 # Check: The focus stays in the conversation view when the window comes back
-# 6.3 The focus in the conversation view (Ctrl+2); coming back to the window as Alt+Tab does leaves it there.
-keys ctrl+2
+# 6.3 The focus in the conversation view (Alt+2); coming back to the window as Alt+Tab does leaves it there.
+keys alt+2
 expect focus "name":"Conversation"
 use 1
 use 2

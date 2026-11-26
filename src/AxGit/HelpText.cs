@@ -15,7 +15,7 @@ public static class HelpText
           Open repository shows the Windows folder picker; any folder inside the repository will do.
           The window starts in Changes, one of three lists of the repository: Changes, Log and Branches.
           Left or Backspace goes up to the repository, where the three lists are rows. Right or Enter on one goes into it.
-          Alt+1, Alt+2 and Alt+3 go straight to Changes, Log or Branches from anywhere; pressed in the list already shown, the key says its name. Ctrl+1, Ctrl+2 and Ctrl+3, their keys until now, still work.
+          Alt+1, Alt+2 and Alt+3 go straight to Changes, Log or Branches from anywhere; pressed in the list already shown, the key says its name.
           In a list
             Enter shows the file's diff in the details in Changes, the commit's details in Log, and in Branches switches to the branch.
             Only the files of Changes are selected; a selected file reads ", selected". Escape deselects all.

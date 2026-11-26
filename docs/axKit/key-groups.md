@@ -22,8 +22,8 @@ The same in every axKit window:
 - F-keys (F1 to F12 alone): say or show.
 - Shift+F-key, and the Applications key: the reverse or the other form of the same F-key.
 - Enter: open or confirm.
-- Escape and Shift+Escape: go back or close; with Shift, stop the program under the window.
-- Delete and Ctrl+Shift+Delete: remove.
+- Escape and Shift+Escape: go back or close; with Shift, Escape sent to the program under the window.
+- Delete, Ctrl+Delete and Ctrl+Shift+Delete: remove.
 - Ctrl+Tab and Ctrl+Shift+Tab: move between panes.
 - The arrows, Page Up, Page Down, Tab, Shift+Tab and Backspace: move through what you are on.
 - Shift with an arrow, Home, End or Space: select.
@@ -118,12 +118,28 @@ The keys:
 
 ### F-keys (F1 to F12 alone): say or show
 
-The function keys are the same in every window: F1 help, F3 find next, F4 send a report, F6 the other pane. F2 and F5 are Windows' own rename and refresh.
+A function key alone says or shows, the same in every window: F7 reads in full what you are on, F8 reads it with details, F9 says the status, F11 shows the text another way, F12 opens the field to go to a line, a folder or a time. F1 is help. F2 rename, F3 find next, F4 send a report, F5 refresh and F6 the other pane are Windows' own keys, kept as Windows taught them.
 
 The keys:
 
 - F1, every app: Keyboard shortcuts.
-- F8, every app: Say the status.
+- F7, axAutomate, axClip, axMCP, axPass, axTask and axTemplate: Read in full.
+- F7, axClaude: Claude's question again.
+- F7, axCalc: Say the last answer.
+- F7, axProcess: Summary.
+- F7, axMedia: What is playing.
+- F7, axTerminal: What is running.
+- F8, axFile and axStart: Information.
+- F8, axCalc: Answer in other bases.
+- F8, axTerminal: Say current folder.
+- F8, axFile: The favorite's folder.
+- F8, axAutomate: The last run's report.
+- F8, axClaude: What runs in the background.
+- F9, every app: Say the status.
+- F11, axDown, axJSON and axPreview: Word wrap.
+- F12, axDown, axJSON and axPreview: Go to line.
+- F12, axFile: Go to folder.
+- F12, axMedia: Go to time.
 
 Exceptions today, which do another kind of thing:
 
@@ -131,10 +147,9 @@ Exceptions today, which do another kind of thing:
 - F3, axAutomate, axCalc, axClaude, axDown, axFile, axGIT, axJSON, axMCP, axMedia, axPass, axPreview, axProcess, axTask, axTemplate and axTerminal: Find next.
 - F3, axGIT: Find next in the text.
 - F4, every app: Send a report.
-- F5, axFile, axGIT, axMCP, axPass, axProcess, axTask and axTemplate: Refresh.
+- F5, axAutomate, axFile, axGIT, axMCP, axPass, axProcess, axTask and axTemplate: Refresh.
 - F5, axStart: Refresh programs.
 - F5, axPreview: Reload.
-- F5, axAutomate: Run.
 - F6, axAutomate, axMCP, axPass, axTask and axTemplate: Switch between the navigator and the detail pane.
 - F6, axCalc, axClaude and axTerminal: Switch between the view and the field.
 - F6, axMedia and axProcess: Back to the list.
@@ -185,9 +200,9 @@ The keys:
 - Enter, axStart: Start.
 - Enter, axPass: Unlock.
 
-### Escape and Shift+Escape: go back or close; with Shift, stop the program under the window
+### Escape and Shift+Escape: go back or close; with Shift, Escape sent to the program under the window
 
-Escape goes back one step or closes what is open. It never loses work without asking. Shift+Escape is for the program under an access layer: it interrupts Claude, or sends Escape to the terminal's program.
+Escape only goes back one step or closes what is open; it never clears what you typed and never loses work without asking. Shift+Escape sends Escape to the terminal's program in axTerminal.
 
 The keys:
 
@@ -196,17 +211,11 @@ The keys:
 - Escape, axClip, axHelp, axStart and axTemplate: Hide.
 - Escape, axFile and axGIT: To the list.
 - Escape, axTask: Back from the search.
-- Shift+Escape, axClaude: Interrupt.
 - Shift+Escape, axTerminal: Send Escape.
 
-Exceptions today, which do another kind of thing:
+### Delete, Ctrl+Delete and Ctrl+Shift+Delete: remove
 
-- Escape, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Clear the filter.
-- Escape, axCalc: Clear the field.
-
-### Delete and Ctrl+Shift+Delete: remove
-
-Delete removes what you are on, and what can be lost asks first or can be undone. Ctrl+Shift+Delete clears a whole history, as in a web browser.
+Delete removes what you are on, and what can be lost asks first or can be undone. Ctrl+Delete clears what you typed: a list's filter, axCalc's field. Ctrl+Shift+Delete clears a whole history, as in a web browser.
 
 The keys:
 
@@ -217,6 +226,8 @@ The keys:
 - Delete, axClip: Remove.
 - Delete, axFile: Remove from Favorites.
 - Delete, axPass: To the Recycle Bin.
+- Ctrl+Delete, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Clear the filter.
+- Ctrl+Delete, axCalc: Clear the field.
 - Ctrl+Shift+Delete, axCalc and axClip: Clear history.
 
 ### Ctrl+Tab and Ctrl+Shift+Tab: move between panes
@@ -320,9 +331,7 @@ Windows' own keys, as in every program:
 
 Alt and a letter opens the menu that starts with that letter, as in every Windows program.
 
-Exceptions today, which do another kind of thing:
-
-- Alt+D, axFile: Go to folder.
+No key of this group is in use yet.
 
 ## Inside one app's window
 
@@ -330,7 +339,7 @@ These keys belong to the window you are in. The pattern says what kind of thing 
 
 ### Ctrl+letter: act on what is selected
 
-Ctrl and a letter does something to what you are on, and the letter is the first letter of the command where it can be. The keys every Windows program has (copy, paste, save, find) are the same here.
+Ctrl and a letter does something to what you are on, and the letter is the first letter of the command where it can be: Ctrl+I interrupts, Ctrl+K bookmarks the line, Ctrl+R runs or fetches. The keys every Windows program has (copy, paste, save, find) are the same here. In a text, Ctrl with NVDA's browse-mode letter jumps while you type: Ctrl+H the next heading, Ctrl+K a link.
 
 The keys:
 
@@ -343,13 +352,24 @@ The keys:
 - Ctrl+E, axGIT: Open file in editor.
 - Ctrl+E, axTask: Show in axFile.
 - Ctrl+E, axProcess: Show program in axFile.
+- Ctrl+H, axTask: Hide done tasks.
+- Ctrl+I, axClaude and axTerminal: Interrupt.
 - Ctrl+J, axTask: Edit the list's configuration.
 - Ctrl+J, axTask: Open in axJSON.
 - Ctrl+J, axAutomate: The workflow's file as text.
+- Ctrl+K, axCalc, axClaude and axTerminal: Bookmark this line.
 - Ctrl+L, axTerminal: Clear transcript.
 - Ctrl+L, axPass: Lock.
+- Ctrl+L, axGIT: Pull.
 - Ctrl+M, axTask: Move to a list.
 - Ctrl+M, axTask: Move to section.
+- Ctrl+P, axClaude: Next permission mode.
+- Ctrl+P, axGIT: Push.
+- Ctrl+Q, axFile: Add to axMedia's queue.
+- Ctrl+R, axGIT: Fetch.
+- Ctrl+R, axJSON: Format.
+- Ctrl+R, axAutomate: Run.
+- Ctrl+T, axFile: New text file.
 - Ctrl+W, axClaude, axDown, axFile, axGIT, axJSON, axMedia, axPreview and axTerminal: File Explorer.
 - Ctrl+W, axFile: Show the folder in File Explorer.
 
@@ -390,16 +410,10 @@ Windows' own keys, as in every program:
 
 Exceptions today, which do another kind of thing:
 
-- Ctrl+B, axClaude: What runs in the background.
 - Ctrl+E, axJSON: Error.
-- Ctrl+G, axDown, axJSON and axPreview: Go to line.
-- Ctrl+G, axFile: Go to folder.
 - Ctrl+H, axDown and axPreview: Heading.
-- Ctrl+I, axFile and axStart: Information.
 - Ctrl+I, axDown and axPreview: List item.
-- Ctrl+I, axCalc: Answer in other bases.
 - Ctrl+I, axJSON: Item.
-- Ctrl+I, axFile: The favorite's folder.
 - Ctrl+J, axJSON: Object.
 - Ctrl+K, axDown and axPreview: Link.
 - Ctrl+K, axJSON: Key.
@@ -407,18 +421,8 @@ Exceptions today, which do another kind of thing:
 - Ctrl+L, axJSON: Array.
 - Ctrl+M, axClaude and axTerminal: Background music on or off.
 - Ctrl+P, axClip: Pause recording.
-- Ctrl+P, axTerminal: Say current folder.
-- Ctrl+Q, axAutomate, axClip, axMCP, axPass, axTask and axTemplate: Read in full.
 - Ctrl+Q, axDown and axPreview: Block quote.
-- Ctrl+Q, axClaude: Claude's question again.
-- Ctrl+Q, axCalc: Say the last answer.
-- Ctrl+Q, axProcess: Summary.
-- Ctrl+Q, axMedia: What is playing.
-- Ctrl+Q, axTerminal: What is running.
-- Ctrl+R, axTerminal: Recent commands.
-- Ctrl+R, axAutomate: The last run's report.
 - Ctrl+T, axDown and axPreview: Table.
-- Ctrl+T, axMedia: Go to time.
 
 ### Ctrl+digit: the window's own numbered action
 
@@ -444,22 +448,6 @@ The keys:
 - Ctrl+7, axTask: Action key 7.
 - Ctrl+8, axTask: Action key 8.
 - Ctrl+9, axTask: Action key 9.
-
-Exceptions today, which do another kind of thing:
-
-- Ctrl+0, axTask: All tasks.
-- Ctrl+1, axGIT: Changes.
-- Ctrl+1, axTerminal: Command field.
-- Ctrl+1, axClaude: Message field.
-- Ctrl+1, axProcess: Processes.
-- Ctrl+2, axClaude: Conversation.
-- Ctrl+2, axGIT: Log.
-- Ctrl+2, axProcess: Services.
-- Ctrl+2, axTerminal: Terminal.
-- Ctrl+3, axGIT: Branches.
-- Ctrl+3, axTerminal: Latest output.
-- Ctrl+3, axClaude: Latest response.
-- Ctrl+3, axProcess: Startup.
 
 ### Ctrl+Shift+digit: go to the previous heading of that level
 
@@ -488,10 +476,11 @@ The keys:
 
 ### Alt+digit: go to a place or view of the window
 
-Alt and a number goes to one of the window's main places or views: the first, the second, the third. Built on 2026-11-16 in axClaude, axTerminal, axGIT and axProcess. Ctrl+1, 2 and 3, the keys of these places until then, still work there for now.
+Alt and a number goes to one of the window's main places or views: the first, the second, the third, in axClaude, axTerminal, axGIT and axProcess; Alt+0 is All tasks in axTask. A place is never on Ctrl and a number.
 
 The keys:
 
+- Alt+0, axTask: All tasks.
 - Alt+1, axGIT: Changes.
 - Alt+1, axTerminal: Command field.
 - Alt+1, axClaude: Message field.
@@ -540,27 +529,14 @@ The keys:
 
 Exceptions today, which do another kind of thing:
 
-- Ctrl+Shift+C, axClaude: Ctrl+C.
-- Ctrl+Shift+C, axTerminal: Interrupt.
-- Ctrl+Shift+D, axTask: Hide done tasks.
-- Ctrl+Shift+F, axGIT: Fetch.
-- Ctrl+Shift+F, axJSON: Format.
-- Ctrl+Shift+H, axGIT: Push.
-- Ctrl+Shift+K, axCalc, axClaude and axTerminal: Bookmark this line.
-- Ctrl+Shift+L, axGIT: Pull.
-- Ctrl+Shift+M, axClaude: Next permission mode.
 - Ctrl+Shift+N, axFile: New folder.
 - Ctrl+Shift+P, every app: Command palette.
-- Ctrl+Shift+Q, axFile: Add to axMedia's queue.
 - Ctrl+Shift+R, axClaude: Force Claude to restart.
 - Ctrl+Shift+R, axTerminal: Restart shell.
-- Ctrl+Shift+S, axClaude: Send queued messages now.
-- Ctrl+Shift+T, axFile: New text file.
-- Ctrl+Shift+W, axDown, axJSON and axPreview: Word wrap.
 
 ### Enter with Ctrl, Shift or Alt: another form of open or confirm
 
-Enter with a modifier is another way of opening or saying yes. Ctrl+Enter does the window's main thing: it sends the message or the command, commits, saves a form, marks a task done in axTask, or pauses and resumes in axMedia. Shift+Enter opens what you are on another way, such as a preview. Alt+Enter shows its properties and Ctrl+Shift+Enter starts a program as administrator, as everywhere in Windows.
+Enter with a modifier is another way of opening or saying yes. Ctrl+Enter does the most frequent action where you are: it sends the message or the command, commits, saves a form, marks a task done in axTask, or pauses and resumes in axMedia. Shift+Enter opens what you are on another way, such as a preview. Alt+Enter shows its properties and Ctrl+Shift+Enter starts a program as administrator, as everywhere in Windows; in axClaude it sends the queued messages now, another form of Ctrl+Enter.
 
 The keys:
 
@@ -577,6 +553,7 @@ The keys:
 
 Windows' own keys, as in every program:
 
+- Ctrl+Shift+Enter, axClaude: Send queued messages now.
 - Ctrl+Shift+Enter, axStart: Start as administrator.
 - Alt+Enter, axFile: Properties.
 
@@ -586,34 +563,28 @@ Ctrl with an arrow takes a bigger step: Ctrl+Up and Ctrl+Down go to the previous
 
 The keys:
 
-- Ctrl+Down arrow, axAutomate, axGIT, axMCP, axPass, axProcess and axTask: Next section.
+- Ctrl+Down arrow, axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Next section.
 - Ctrl+End, axClip, axStart and axTemplate: Last match.
 - Ctrl+Home, axClip, axStart and axTemplate: First match.
 - Ctrl+Left arrow, axMedia: Back 15 seconds.
 - Ctrl+Right arrow, axMedia: Forward 15 seconds.
-- Ctrl+Up arrow, axAutomate, axGIT, axMCP, axPass, axProcess and axTask: Previous section.
+- Ctrl+Up arrow, axAutomate, axGIT, axMCP, axMedia, axPass, axProcess and axTask: Previous section.
 - Ctrl+Shift+Left arrow, axMedia: Previous file.
 - Ctrl+Shift+Right arrow, axMedia: Next file.
 
-Exceptions today, which do another kind of thing:
-
-- Ctrl+Down arrow, axMedia: Slower.
-- Ctrl+Up arrow, axMedia: Faster.
-
 ### Alt with an arrow: the choices of what you are on
 
-Alt with an arrow is for the choices of what you are on, in the arrows' own directions (the maintainer's rule of 2026-11-21): Alt+Right goes into the list of them, where the arrows move and Enter chooses; Alt+Down and Alt+Up change to the next and the previous one in place; Alt+Left steps out to what is around it and offers what can be added there. Ctrl with an arrow moves the cursor a bigger step, and moving an item of a list up or down is Ctrl+Shift+Up and Ctrl+Shift+Down, wherever a list has it.
+Alt with an arrow is for the choices of what you are on, in the arrows' own directions (the maintainer's rule of 2026-11-21): Alt+Right goes into the list of them, where the arrows move and Enter chooses; Alt+Down and Alt+Up change to the next and the previous one in place; Alt+Left steps out to what is around it and offers what can be added there. axMedia's speed is Alt+Up and Alt+Down, axTerminal's recent commands Alt+Down in the command field. Ctrl with an arrow moves the cursor a bigger step, and moving an item of a list up or down is Ctrl+Shift+Up and Ctrl+Shift+Down, wherever a list has it.
 
 The keys:
 
 - Alt+Down arrow, axJSON: Next value.
+- Alt+Down arrow, axTerminal: Recent commands.
+- Alt+Down arrow, axMedia: Slower.
 - Alt+Left arrow, axJSON: Add a member.
 - Alt+Right arrow, axJSON: Choose a value.
+- Alt+Up arrow, axMedia: Faster.
 - Alt+Up arrow, axJSON: Previous value.
-
-Exceptions today, which do another kind of thing:
-
-- Alt+Up arrow, axFile: Up one level.
 
 ### A letter alone: in a view you read, a quick command: go to the next thing of a kind, or say something
 

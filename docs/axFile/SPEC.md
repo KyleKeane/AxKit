@@ -54,11 +54,11 @@ folder of the file or project in hand, and sends back. It works entirely offline
    "Deleted Notes, undone, 21:04".
 4. Ctrl+Shift+C on `report.pdf`: "Copied path"; Enter on it: the PDF opens in the program Windows has for it.
 5. Ctrl+F, type `chap`, Enter: the first entry whose name holds it is selected; F3 the next.
-6. Ctrl+G, type `%USERPROFILE%\Downloads`, Enter: the list is the Downloads folder.
+6. F12, type `%USERPROFILE%\Downloads`, Enter: the list is the Downloads folder.
 7. Space on `a.txt`: "Selected"; Down, Space: "Selected, 2 selected"; Up: "a.txt, selected"; Ctrl+X: "Cut 2 items";
    Enter on `docs`, Ctrl+V: "Pasted 2 items". Later, in another folder, Actions → Recent operations, Down to "Moved
    2 items, 21:05", Enter: the list is `docs` with `a.txt` selected.
-8. Space on two folders of chapters, Ctrl+Shift+Q: "Added 24 to axMedia's queue"; the focus stays here and the sound
+8. Space on two folders of chapters, Ctrl+Q: "Added 24 to axMedia's queue"; the focus stays here and the sound
    goes on in axMedia.
 9. In `D:\Downloads`, Ctrl+D: "Added to Favorites". Later, in another folder, Tab: "Favorites, list, Downloads
    (D:\Downloads), 1 of 1"; Enter: "Downloads, 12 items, setup.exe", the focus in the folder list.
@@ -115,12 +115,12 @@ folder of the file or project in hand, and sends back. It works entirely offline
   and after it, while entries are selected, how many, as in every navigator ("Copied 3 items, 2 selected"; "2 selected"
   alone before the first operation; AX-8.16, since 2026-11-22); the right label: the folder's
   full path. No AccessibleName, no Spring (axClaude §6.2).
-- AF-2.4 **Information** (Ctrl+I; Context → Information): the selected entry on demand, "report.pdf, 1.2 MB, modified
+- AF-2.4 **Information** (F8, the bundle's read with details; Ctrl+I until 2026-11-26; Context → Information): the selected entry on demand, "report.pdf, 1.2 MB, modified
   2026-10-18 14:02" or "docs, folder, modified 2026-10-18 14:02"; the items themselves stay names (AF-D7).
 
 ### AF-3 Browsing
 
-- AF-3.1 **Enter** on a folder opens it in the list with its first entry selected. **Backspace** and Alt+Up go to the
+- AF-3.1 **Enter** on a folder opens it in the list with its first entry selected. **Backspace** goes to the
   parent with the folder just left selected; at a drive's root, to This PC with that drive selected (AF-3.10), and at
   This PC, "Top". **Right Arrow** on a folder or a drive opens it, as Enter; **Left Arrow** goes up, as Backspace
   (asked 2026-10-22: the keys of a tree on the flat list, AF-D12). Right never opens a file: on a file, or on a line
@@ -139,7 +139,7 @@ folder of the file or project in hand, and sends back. It works entirely offline
 - AF-3.3 **Open folder…** (Ctrl+O): the Windows folder picker. **Open recent folder ▸**: the last ten folders opened
   by command, "1. name (path)" (AX-9.5): the start, Open folder, Go to folder, a recent item, and the folder the
   window closed on; Enter and Backspace browse without joining the list, so that a walk through a tree does not fill
-  it. **Go to folder…** (Ctrl+G, or Alt+D, File Explorer's key for its address bar): the notice "Go to folder" with the field "Path" holding the current folder with a backslash at its end (empty at This PC), which
+  it. **Go to folder…** (F12; Ctrl+G, with Alt+D, File Explorer's key for its address bar, until 2026-11-26): the notice "Go to folder" with the field "Path" holding the current folder with a backslash at its end (empty at This PC), which
   takes a path with environment variables (`%USERPROFILE%\Downloads`) and a file's path (its folder, the file
   selected); "Not found: <path>" when there is no such place. In the field, **Down Arrow** and **Up Arrow** complete the
   path (asked 2026-10-22, AF-D12): the text up to its last backslash is a folder (with environment variables; a
@@ -189,7 +189,7 @@ folder of the file or project in hand, and sends back. It works entirely offline
   empty folder's, the not-shown line) the keys say that line. **Shift+Space** (asked 2026-10-22) marks every entry
   from the nearest marked entry to the current one, above or below, the one above when both are as near, "Selected, n
   selected"; with no other entry marked it is Space: the current entry marked, or unmarked again (decided 2026-10-23; it said "1 selected" on the one marked entry and changed nothing). **Ctrl+A** marks every entry, "n selected";
-  **Ctrl+Shift+A** unmarks them all, "None selected", and so does **Escape** in the list while any are marked (asked 2026-10-22; a filter in force is cleared by the next Escape). Ctrl+I adds ", n selected" to the entry's information while
+  **Ctrl+Shift+A** unmarks them all, "None selected", and so does **Escape** in the list while any are marked (asked 2026-10-22). F8 adds ", n selected" to the entry's information while
   any are marked (AF-2.4). Cut, Copy, Delete, Copy path, Move to folder, Compress to zip and Add to axMedia's queue
   act on the marked entries when there are any, and on the current entry alone otherwise (AF-4.3, AF-4.4, AF-4.8,
   AF-5.2; kept 2026-10-22 over File Explorer's right-click rule, AF-D10); Enter, Rename, the ways to open and the
@@ -220,7 +220,7 @@ folder of the file or project in hand, and sends back. It works entirely offline
   contains the text, any case, names the list "24 items, filter chap, 3 shown" so that the count is read with the
   list ("3 of 24 items, filter chap" until then),
   and says the name and the entry at once, "24 items, filter chap, 3 shown, Chapter 1.mp3"; an empty field clears it,
-  "Filter cleared", as does **Escape** in the list while a filter is on and no entry is marked (Escape clears the marks first, AF-3.7, and does nothing when there is neither). A filter that nothing passes shows the one item "No names contain <text>", and a command on
+  "Filter cleared", as does **Ctrl+Delete** in the list (Escape, once no entry was marked, until 2026-11-26; Escape now only clears the marks, AF-3.7). A filter that nothing passes shows the one item "No names contain <text>", and a command on
   it says the same. The filter lives in the folder: another folder drops it, a refresh keeps it. What the list shows
   is what the commands see: Select all marks the shown entries, find moves among the shown entries, and a mark on an entry the filter hides is gone (AF-3.7). Find (AF-3.6)
   jumps, the filter narrows; both are kept. Play folder (AF-5.1) hands the folder itself to axMedia, filter or not.
@@ -231,10 +231,10 @@ folder of the file or project in hand, and sends back. It works entirely offline
   joins the recent list. The favorites are a setting (`favorites`, AF-8.1, not sealed), so every window and the next
   start have them. The same folders are the **Favorites list**, the window's second pane (AF-9.1, since 2026-11-23),
   where a folder Ctrl+D adds is selected, so that Tab lands on it.
-- AF-3.10 **This PC** (asked 2026-10-21): the level above the drives. Backspace or Alt+Up at a drive's root shows it,
+- AF-3.10 **This PC** (asked 2026-10-21): the level above the drives. Backspace or Left at a drive's root shows it,
   the drive just left selected; its entries are the ready drives in letter order, "Local Disk (C:), drive" (the
   volume's label, or the kind's name, Local Disk, Removable Disk, CD Drive, Network Drive, when it has none;
-  `FolderListing.Drives`, tested), each a folder entry marked as a drive; Enter opens the drive's root; Ctrl+I says
+  `FolderListing.Drives`, tested), each a folder entry marked as a drive; Enter opens the drive's root; F8 says
   "Local Disk (C:), 120 GB free of 476 GB"; the title is "This PC" and the list is named by its count, as everywhere (AF-2.1); Backspace there, "Top". It
   is not a folder: the last folder, the recent list and the Recently closed list keep the folder before it (and Ctrl+N and the restart after an
   update start the new window on the last folder, since This PC is no path; until 2026-10-23 the new window said
@@ -244,8 +244,8 @@ folder of the file or project in hand, and sends back. It works entirely offline
   current folder in ▸ File Explorer opens File Explorer's own This PC. The other items of the entry's menu work on a
   drive as on a folder (Open with axKit apps ▸, Open with axKit access layers ▸, Show in File Explorer, Properties, Windows menu…).
 - AF-3.11 **The Drives menu** (asked 2026-10-21, for moving things to a stick and taking it out): **Navigation → Drives ▸**
-  (its own menu on Alt+D until 2026-10-22, when it became a submenu at the user's ask and Alt+D went to Go to folder,
-  AF-3.3) lists the ready drives as "1. Local Disk (C:)" (AX-9.5), each opening the drive's root and joining the
+  (its own menu on Alt+D until 2026-10-22, when it became a submenu at the user's ask and Alt+D went to Go to folder, until
+  2026-11-26, AF-3.3) lists the ready drives as "1. Local Disk (C:)" (AX-9.5), each opening the drive's root and joining the
   recent list, then **This PC** (the drives list, AF-3.10, the folder's drive selected), then **Eject this drive**
   and **Drive properties**, both for the drive in hand: the entry at This PC, or the folder's own drive. Eject is
   the shell's own: the drive's context menu is built as for Windows menu… (AF-4.7) and its item whose verb is
@@ -268,7 +268,7 @@ Every operation here is an entry of the window's history (AF-9.2) as well as its
   (the characters, `.` and `..`, a lookalike) is said and the notice stays, so that it can be put right, as every
   one-field notice of the bundle does (`AskText`; until 2026-11-09 the notice closed and the problem was announced
   after it). **New text file**
-  (Ctrl+Shift+T; asked 2026-10-21): an empty file "New file.txt" ("New file - 2.txt" when that is taken,
+  (Ctrl+T, Ctrl+Shift+T until 2026-11-26; asked 2026-10-21): an empty file "New file.txt" ("New file - 2.txt" when that is taken,
   `FileOperations.CreateFile`, tested) is made in the current folder and selected, and the rename box (AF-4.2) opens
   on it at once with the whole name selected, not the stem alone, so that the name typed with its extension
   replaces it; Enter renames it, Escape keeps "New file.txt". When the box cannot open (the file hidden by the
@@ -362,7 +362,7 @@ Every operation here is an entry of the window's history (AF-9.2) as well as its
   axFile on the folder (or the file in its folder), axClaude, axTerminal and axTask on the folder, or on the entry's
   folder for a file.
 - AF-4.10 (Ctrl+I inside the open context menu) went with the context menu on 2026-10-23 (AF-D13): the bar's Item
-  menu is a standard drop-down and does not take it; Ctrl+I in the list says the entry.
+  menu is a standard drop-down and does not take it; F8 in the list says the entry.
 - AF-4.11 **The user's own programs in Open with ▸** (asked 2026-10-21): a list of programs and scripts, kept in the
   settings (`programs`, a name and a path each, AF-8.1), shown under Windows default and Choose a program… (AF-4.7)
   as "1. name (path)" (AX-9.5), or "No programs of your own yet" while the list is empty. Options holds **Add a program to Open with…**
@@ -435,7 +435,7 @@ and the started process finds its open window and hands the paths over with the 
 - AF-5.1 **Play folder in axMedia** (Ctrl+Enter in the list; Context): axMedia on the folder shown, its sound
   and video files in name order from the first, the axMedia window in front; "No sound or video files here" when the
   list shows none (`MediaFiles.IsMedia` over the shown entries); "Choose a drive first" at This PC.
-- AF-5.2 **Add to axMedia's queue** (Ctrl+Shift+Q in the list; Context): the entry, or the marked entries
+- AF-5.2 **Add to axMedia's queue** (Ctrl+Q in the list, Ctrl+Shift+Q until 2026-11-26; Context): the entry, or the marked entries
   (AF-3.7), to the end of axMedia's queue, a folder as its media files, with `--add`; the focus stays here and axFile
   says "Added n to axMedia's queue", n being its own count of the media files among the entries (a folder read on a
   task, the hidden ones as the settings say); "No sound or video files to add" when the count is none. With no axMedia
@@ -452,18 +452,18 @@ and the started process finds its open window and hands the paths over with the 
 - AF-6.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** New window Ctrl+N | Open folder…
   Ctrl+O | Open recent folder ▸ | ─ | Refresh F5 | ─ | Show current folder in ▸ (File Explorer Ctrl+W | axClaude |
   axTerminal | axGIT) | ─ | Exit Alt+F4. **Actions (A):** Undo Ctrl+Z (AF-4.14) | Recent operations… (AF-9.3) | ─ | New folder… Ctrl+Shift+N |
-  New text file Ctrl+Shift+T | New Markdown file | New JSON file | Paste Ctrl+V | ─ | Select all Ctrl+A | Deselect all Ctrl+Shift+A. **Navigation (N):**
+  New text file Ctrl+T | New Markdown file | New JSON file | Paste Ctrl+V | ─ | Select all Ctrl+A | Deselect all Ctrl+Shift+A. **Navigation (N):**
   Favorites ▸ (1. name (path) … or No favorites yet | ─ | Add or remove this folder Ctrl+D) | Drives ▸ (1. Local Disk
-  (C:) … | ─ | This PC | ─ | Eject this drive | Drive properties; AF-3.11) | Go to folder… Ctrl+G | Up one level
+  (C:) … | ─ | This PC | ─ | Eject this drive | Drive properties; AF-3.11) | Go to folder… F12 | Up one level
   Backspace | ─ | The Favorites list (AF-9.1). **Context (C)**, by the list that last had the focus (AX-9.11): in the
   folder list, the entry's menu (AF-4.6): Open Enter | Open with ▸ (Windows default | Choose a program… | ─ | 1. name
   (path) … or No programs of your own yet) | Open with axKit apps ▸ (the standalone apps that open a path, by group) |
   Open with axKit access layers ▸ (the access layers that open a path, by group) | Preview
-  Shift+Enter | Play folder in axMedia Ctrl+Enter | Add to axMedia's queue Ctrl+Shift+Q | ─ | Cut Ctrl+X | Copy Ctrl+C |
+  Shift+Enter | Play folder in axMedia Ctrl+Enter | Add to axMedia's queue Ctrl+Q | ─ | Cut Ctrl+X | Copy Ctrl+C |
   ─ | Rename F2 | Delete Delete | ─ | Move to folder… | Compress to zip | Extract here | ─ | Copy path Ctrl+Shift+C |
-  Show in File Explorer Ctrl+Shift+W | Information Ctrl+I | Properties Alt+Enter | ─ | Windows menu… | ─ | Selection ▸
+  Show in File Explorer Ctrl+Shift+W | Information F8 | Properties Alt+Enter | ─ | Windows menu… | ─ | Selection ▸
   (Select or deselect this entry Space | Select to here Shift+Space | ─ | Cut Ctrl+X | Copy Ctrl+C | Delete Delete | ─ |
-  Move to folder… | Compress to zip | Add to axMedia's queue Ctrl+Shift+Q | Copy paths Ctrl+Shift+C; AF-3.7, the
+  Move to folder… | Compress to zip | Add to axMedia's queue Ctrl+Q | Copy paths Ctrl+Shift+C; AF-3.7, the
   operations on the marks alone); in the Favorites list, its line (AF-9.1): Open Enter | Remove from Favorites
   Delete. **Options (O):** Filter… | Sort by ▸ (Name ✓ | Date | Size) | ─ | Add a program to Open with… | Remove a program from Open with ▸ | ─
   | Text ▸ (Font… | Larger text Ctrl+Plus | Smaller text Ctrl+Minus | Windows text size) | General ▸ (Check for updates
@@ -474,18 +474,18 @@ and the started process finds its open window and hands the paths over with the 
 - AF-6.2 Keys (AX-8). Bundle-wide: F1, the control keys (Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6, between
   the folder list and the Favorites list, AF-9.1), Ctrl+F, F3, Shift+F3, Ctrl+S ("Nothing to save here"), Ctrl+Plus,
   Ctrl+Minus, Page Up and Page Down (the list's own here), Alt+F4. Window-specific (`AxFileKeys`): Enter,
-  Shift+Enter, Backspace, Alt+Up, Left, Right, F5, F2, Delete, Ctrl+N, Ctrl+O, Ctrl+G, Alt+D, Ctrl+D, Ctrl+W, Ctrl+Shift+W,
-  Ctrl+I, Ctrl+Shift+N, Ctrl+Shift+T, Ctrl+Shift+C, Escape, Shift+Up, Shift+Down, Shift+Home,
-  Shift+End, Space, Shift+Space, Ctrl+A, Ctrl+Shift+A, Ctrl+Shift+Q (AF-5), Shift+F10, the Applications key,
+  Shift+Enter, Backspace, Left, Right, F5, F2, Delete, Ctrl+N, Ctrl+O, F12, Ctrl+D, Ctrl+W, Ctrl+Shift+W,
+  F8, Ctrl+Shift+N, Ctrl+T, Ctrl+Shift+C, Escape, Ctrl+Delete (clear the filter), Shift+Up, Shift+Down, Shift+Home,
+  Shift+End, Space, Shift+Space, Ctrl+A, Ctrl+Shift+A, Ctrl+Q (AF-5), Shift+F10, the Applications key,
   Alt+Enter, Ctrl+Z (AF-4.14), Ctrl+X, Ctrl+C, Ctrl+V. Enter, Shift+Enter, Backspace, Left, Right, Space, Escape, F2, Delete,
-  Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A, Ctrl+Shift+A, Shift+Space, Ctrl+Enter, Ctrl+Shift+Q and the Shift arrows
-  act only while the folder list has the focus (in the Favorites list, Enter, Delete, Ctrl+I and Escape
+  Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A, Ctrl+Shift+A, Shift+Space, Ctrl+Enter, Ctrl+Q and the Shift arrows
+  act only while the folder list has the focus (in the Favorites list, Enter, Delete, F8 and Escape
   act on its line, AF-9.1; Ctrl+Z is Undo in either list; in a notice's field or the rename box they are the field's);
   Shift+F10 and the Applications key open the bar's Context menu from either list, on the entry or on the Favorites
   list's line (AF-D13, AX-9.11; in the second pane since 2026-11-22). The keys between the two lists, Right and Left, the
   selection's keys, the two menu keys and Escape are the navigator's own commands (`ItemKeys`, `SelectionKeys`; AF-D14);
   `AxFileKeys` names them for this window. The collision test covers the table and lists the keys other windows use
-  otherwise (Ctrl+N, Ctrl+G, Ctrl+C, Ctrl+Shift+C). Ctrl+Enter is the bundle's main action
+  otherwise (Ctrl+N, F12, Ctrl+C, Ctrl+Shift+C). Ctrl+Enter is the bundle's main action
   (AX-8.10, `BundleKeys.MainAction`), here Play folder in axMedia (AF-5.1) while the folder list has the focus, the edge
   sound elsewhere.
 - AF-6.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axFile/user-guide.md` is embedded (Help → User
@@ -504,9 +504,9 @@ AF-3.10), "Ejecting <name>" (AF-3.11), "Added <name>", "Removed <name>", "Starte
 "Pasted n items", "Pasted n items, m already pasting" (AF-4.5), "Pasting, please wait" (a paste longer than a second), "Deleting, please wait", "Moving, please wait" (the same, AF-4.5), "Added n to axMedia's queue", "No sound or
 video files here", "No sound or video files to add" (AF-5), "Undone: …", "Not undone: …", "Nothing to undo", "Undo is
 still running" (AF-4.14), "No operations yet", "Still running", "Folder not found" (Recent operations, AF-9.3),
-"No favorites yet", "<path>, n of m" (Ctrl+I in the Favorites list, AF-9.1), "Refreshed", "Not found: <path>", "Failed: <message>", "<name>, <size>,
-modified <date>" (Ctrl+I), "Not found" (find), "Nothing to save here", "Text size n", "Windows text size", "Copied
-diagnostics", "<name>, <size>, modified <date>, n selected" (Ctrl+I with marks), "Failed: In use by another program: a
+"No favorites yet", "<path>, n of m" (F8 in the Favorites list, AF-9.1), "Refreshed", "Not found: <path>", "Failed: <message>", "<name>, <size>,
+modified <date>" (F8), "Not found" (find), "Nothing to save here", "Text size n", "Windows text size", "Copied
+diagnostics", "<name>, <size>, modified <date>, n selected" (F8 with marks), "Failed: In use by another program: a
 terminal or an app runs in it, or the file is open", "Failed: Access denied: a file inside is open in another program,
 or Windows protects the place" (AF-4.5); and the guards "No folder" (nothing
 listed yet), "No items in this folder" (a command on an empty folder's one item, AF-2.2), "No names contain <text>"
@@ -551,8 +551,8 @@ operations stays, behind a command (AF-D3).
   (AF-3.1), so that NVDA's reading of the list does not cut the announcement short; the folder joins the recent list,
   as a favorite chosen from the submenu does; a favorite that is gone gives the "Folder not found" notice and its
   nearest parent (AF-3.5). **Delete** takes the favorite out of the favorites, "Removed from Favorites"; the folder
-  itself is not touched, and there is no undo (the favorites are a setting, AF-4.14). **Ctrl+I** says the
-  favorite's full path and place, "C:\Music, 2 of 3". On "No favorites yet", Enter, Delete and Ctrl+I say that line.
+  itself is not touched, and there is no undo (the favorites are a setting, AF-4.14). **F8** (Ctrl+I until 2026-11-26) says the
+  favorite's full path and place, "C:\Music, 2 of 3". On "No favorites yet", Enter, Delete and F8 say that line.
   Shift+F10 and the Applications key open Context with the line's Open and Remove from Favorites (AX-9.11). Type-ahead
   goes over the lines (AF-3.6). Ctrl+D anywhere in the window adds the folder shown and selects it here, so that Tab
   lands on it, or takes it out again; nothing is spoken for the list filling again (the command's own words are what
@@ -648,7 +648,7 @@ and AxPreview.Core since the split; `MediaFiles` and `NaturalOrder` moved to `Ax
   a number on a name already there rather than a question, §7); the zip, the move into a new folder and Undo on
   2026-10-21. File Explorer stays one key away for the rest (Ctrl+W, Ctrl+Shift+W).
 - **AF-D7 Items are names; details on demand.** "report.pdf, 1.2 MB, 2026-10-18" on every arrow key is noise for a
-  user who wants the name; Ctrl+I says the rest when asked (AX-7.3).
+  user who wants the name; F8 says the rest when asked (AX-7.3).
 - **AF-D8 Our own context menu, Windows' behind one item.** Asked 2026-10-20: the shell's context menu on every entry,
   or a menu of our own. The shell's menu is built by every installed program's shell extension, loaded into this
   process: a slow or broken one hangs or crashes the window, and its contents and order change with what is

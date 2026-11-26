@@ -51,7 +51,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
    line; Ctrl+Tab back to the list.
 3. Alt+2: "Log, 200 commits. 3a1f2c0 2026-10-18 Kyle: Release 2.11.0, 1 of 200". Enter: the commit's files and
    message in the details.
-4. Alt+3: "Branches, 2. main, current, origin/main, 1 ahead". Down, Enter on `axkit`: "Switched to axkit". Ctrl+Shift+H:
+4. Alt+3: "Branches, 2. main, current, origin/main, 1 ahead". Down, Enter on `axkit`: "Switched to axkit". Ctrl+P:
    "Pushed".
 5. In axDown on `docs/plan.md`, Alt+F, I, G: axGIT on the repository that holds the file. Alt+1 shows it among the
    changes if it changed.
@@ -119,8 +119,8 @@ opens in the editor for its type (AG-1.4, AG-D1).
   Log and Branches, each with its count once it has been read ("Changes, 3 files"). Right or Enter on one goes into
   it; Left or Backspace in a list goes up, onto the list left; Left at the repository's level and Right on a row of
   a list play the edge sound. The window starts inside Changes. Alt+1 Changes, Alt+2 Log and Alt+3 Branches go
-  straight into a list from anywhere (Navigation; Ctrl+1, Ctrl+2 and Ctrl+3, the keys until 2026-11-16, stay as
-  further keys of the same commands for now, shown in no menu, with nothing extra said, bundle AX-8.14). The key
+  straight into a list from anywhere (Navigation; Ctrl+1, Ctrl+2 and Ctrl+3, the keys until 2026-11-16, stayed as
+  further keys until 2026-11-26, bundle AX-8.14). The key
   says the list's name and the row you are on, also when that list already shows (axClaude D26); while a command
   runs it says "Working…" and the list stays (2026-10-23: the switch went through with an empty list under the new
   name; since 2026-11-22 the level changes only once the list's read is in). Each list keeps the row it was left on
@@ -139,7 +139,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
   list, Ctrl+F, F3 and Shift+F3 find in the list's lines instead ("Name contains", the bundle's list find, as every list
   window; since 2026-10-25, the user's choice; they always searched the details before). Nothing moves the
   caret but the user, except that Enter on a file or a commit puts the focus on the first line of what it loaded.
-- AG-2.5 **Filter and sort** (2026-11-22; the navigator's, bundle AX-8.17): Options → Filter… shows only the rows of the level whose name contains a text (a changed file's path, a commit's subject, a branch's name); Options → Sort by ▸ puts them by name or back in git's own order. Both act on what the list shows; no git command is run for them.
+- AG-2.5 **Filter and sort** (2026-11-22; the navigator's, bundle AX-8.17): Options → Filter… shows only the rows of the level whose name contains a text (a changed file's path, a commit's subject, a branch's name); Options → Sort by ▸ puts them by name or back in git's own order; Ctrl+Delete in the list clears the filter. Both act on what the list shows; no git command is run for them.
 
 ### AG-3 Changes
 
@@ -199,8 +199,8 @@ opens in the editor for its type (AG-1.4, AG-D1).
   failed** with its output.
 - AG-5.3 Branches → New branch… (Ctrl+N): the notice "New branch" with a field "Name" (required) and the buttons Create
   and Cancel; Create runs `git switch -c <name>` and says "Switched to <name>".
-- AG-5.4 Branches → Fetch (Ctrl+Shift+F, `git fetch --prune`), Pull (Ctrl+Shift+L, `git pull --ff-only`) and Push
-  (Ctrl+Shift+H, Ctrl+Shift+P until the command palette took it, bundle AX-10.6; `git push`; with no upstream `git push --set-upstream origin <branch>`). Each says "Fetched",
+- AG-5.4 Branches → Fetch (Ctrl+R, `git fetch --prune`), Pull (Ctrl+L, `git pull --ff-only`) and Push
+  (Ctrl+P, `git push`; Ctrl+Shift+F, Ctrl+Shift+L and Ctrl+Shift+H until 2026-11-26, the maintainer's choice of Ctrl alone, bundle AX-8.18; with no upstream `git push --set-upstream origin <branch>`). Each says "Fetched",
   "Pulled" ("Already up to date" when git says so) or "Pushed" and refreshes the status bar; a failure is the notice
   **Fetch failed** (and so on) with git's output, so that a password prompt that git could not show, a diverged
   branch or a rejected push is read in full. While one runs the status bar says "Working: <verb>…" and the menu
@@ -212,7 +212,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
   repository ▸ (ten, "1. name (path)", AX-9.5; "No recent repositories" when none) | ─ | Refresh F5 | ─ | Show current
   repository in ▸ (File Explorer Ctrl+W | axClaude | axTerminal | axFile) | ─ | Exit Alt+F4. **Actions (A):** Stage
   Ctrl+Shift+S | Unstage Ctrl+Shift+U | Stage all | Unstage all | Commit… Ctrl+Enter | ─ | New branch… Ctrl+N |
-  Fetch Ctrl+Shift+F | Pull Ctrl+Shift+L | Push Ctrl+Shift+H | ─ | Select all files Ctrl+A | Deselect all
+  Fetch Ctrl+R | Pull Ctrl+L | Push Ctrl+P | ─ | Select all files Ctrl+A | Deselect all
   Ctrl+Shift+A. **Navigation (N):** Changes Alt+1 | Log Alt+2 | Branches Alt+3 | ─ | Up to the repository Left (the
   View menu's until 2026-11-11). **Context (C)**, what acts on the row you are on, by its kind (AX-9.11; Shift+F10,
   the Applications key and a right click in the list): on a file, Show diff Enter | Stage Ctrl+Shift+S | Unstage
@@ -224,11 +224,11 @@ opens in the editor for its type (AG-1.4, AG-D1).
   guide | ─ | Git resources ▸ (git-scm.com | Pro Git book). Every item has a mnemonic (AX-7.4).
 - AG-6.2 Keys (AX-8). Bundle-wide: F1, the control keys, Ctrl+F, F3, Shift+F3, Ctrl+S (axGIT holds nothing to save:
   "Nothing to save here. Ctrl+Shift+S stages, Ctrl+Enter commits"), Ctrl+Enter (the bundle's main action, AX-8.10: here Commit, AG-3.5, a command on `BundleKeys.MainAction`), Ctrl+Plus, Ctrl+Minus, the edit keys of the details,
-  Alt+F4. Window-specific (`AxGitKeys`): Ctrl+O, F5, Ctrl+W, Alt+1, Alt+2, Alt+3 (with Ctrl+1, Ctrl+2, Ctrl+3 as their further keys, AX-8.14), Ctrl+Shift+S, Ctrl+Shift+U, Ctrl+E, Ctrl+N, Ctrl+Shift+F, Ctrl+Shift+L, Ctrl+Shift+H, and the navigator's keys
+  Alt+F4. Window-specific (`AxGitKeys`): Ctrl+O, F5, Ctrl+W, Alt+1, Alt+2, Alt+3 (AX-8.14), Ctrl+Shift+S, Ctrl+Shift+U, Ctrl+E, Ctrl+N, Ctrl+R, Ctrl+L, Ctrl+P, Ctrl+Delete (clear the filter), and the navigator's keys
   (`ItemKeys`, `SelectionKeys`), named in the table by what they do here: Right, Left, Backspace, Enter, Delete,
   Tab and Shift+Tab, Space and the other selection keys, Shift+F10 and the Applications key. The navigator's keys
   act only while the list has the focus; in the details they are the control's own, but for Tab, Shift+Tab and
-  Escape, which come back to the list. F2, Ctrl+Z, Ctrl+Shift+N and Ctrl+Q, a navigator's rename, undo, new list and
+  Escape, which come back to the list. F2, Ctrl+Z, Ctrl+Shift+N and F7, a navigator's rename, undo, new list and
   read in full, are no keys of this window, which has no use for them. The collision test covers the table. Enter
   and Delete act by the kind of row (AG-3.3, AG-3.4, AG-4.2, AG-5.2), so the rule of 2026-10-23, that a command of
   one view asked for in another said which view first ("Changes view first: Alt+1"), is gone with the views; what

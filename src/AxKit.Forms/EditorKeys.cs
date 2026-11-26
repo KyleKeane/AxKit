@@ -14,8 +14,10 @@ public static class EditorKeys
 
     public const Keys Open = Keys.Control | Keys.O;
     public const Keys SaveAs = Keys.Control | Keys.Shift | Keys.S;
-    public const Keys GoToLine = Keys.Control | Keys.G;
-    public const Keys WordWrap = Keys.Control | Keys.Shift | Keys.W;
+    /// <summary>Go to line: F12, the function key that shows the go-to field (AX-8.18 rule 5; Ctrl+G until 2026-11-26).</summary>
+    public const Keys GoToLine = Keys.F12;
+    /// <summary>Word wrap on or off: F11, the text shown another way (AX-8.18 rule 5; Ctrl+Shift+W until 2026-11-26).</summary>
+    public const Keys WordWrap = Keys.F11;
 
     /// <summary>File → Show current file in → File Explorer (AD-4.1), the key axClaude uses for its folder.</summary>
     public const Keys ShowInExplorer = Keys.Control | Keys.W;

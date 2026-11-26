@@ -57,7 +57,7 @@ Only in a test run, on a desktop of its own, never in your windows.
 
 ## 2. The functions
 
-A function is a command of a window (`docs/axKit/command-language.md`): 1966 in the inventory, of which 278 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
+A function is a command of a window (`docs/axKit/command-language.md`): 2004 in the inventory, of which 280 are a key with no menu item. The menu a command is in is its family; its mark says how far it reaches.
 
 ### The marks, and the events a command of each mark ends in
 
@@ -85,11 +85,11 @@ A function is a command of a window (`docs/axKit/command-language.md`): 1966 in 
 - `window`, the Window menu: The other windows of axKit: a new window of any app, close all windows, say the status.
   - 36 commands in 18 apps: read 18, act 18.
 - `axkit`, the axKit menu: The services of the whole bundle: the AI tools and what they may do, Claude for AI help, the theme.
-  - 612 commands in 18 apps: open 342, change 36, act 234.
+  - 648 commands in 18 apps: open 360, change 54, act 234.
 - `help`, the Help menu: The keys (F1), the user guide, the command palette, sending a report (F4), about, diagnostics and the key test.
   - 284 commands in 18 apps: read 162, open 18, act 104.
 - `keys-alone`: Commands that are a key with no menu item, because their meaning depends on where the focus is: Tab between panes, Enter on a row, Right into a list, F3 for find next. An AI tool never runs these.
-  - 278 rows of the inventory.
+  - 280 rows of the inventory.
 - `control-keys`: Not commands at all: the keys a control handles itself, the arrows in a list or a text and typing in a field. The inventory does not hold them; the families of keys do.
 
 ## 3. The events
@@ -186,7 +186,7 @@ You pressed a key, typed, or chose a command, and this is how it ended. Every co
 - `form-entered`: The focus entered a form from outside it: several things asked for one action, Tab between them (SPEC AX-7.11). Once for the form; moving between its controls is silent.
   - Started by: `key`, `menu`, `palette`, `ai-tool`, `script`.
   - Heard: sound `FormOpen`.
-  - Said: After NVDA has read the first control: the title and the one word, 'Move 2 items, form'. The explanation is not said: Ctrl+Q reads it. Two forms say their text after the word, since it is what will happen and not how a form is used: the report, and an action of an axTask list.
+  - Said: After NVDA has read the first control: the title and the one word, 'Move 2 items, form'. The explanation is not said: F7 reads it. Two forms say their text after the word, since it is what will happen and not how a form is used: the report, and an action of an axTask list.
   - In: Every window with a form: the report (F4), axTask's item form, Move to section, Move to a list and an action's form, axMCP's Add server, axTerminal's Add a shell, the item windows' New field, axClaude's New session.
 - `list-entered`: The focus entered a list from outside it: one opened, Tab or F6 came to it, a notice closed over it, the window started on it (SPEC AX-7.11). Moving inside it is silent.
   - Started by: `key`, `menu`, `palette`, `ai-tool`, `script`.
@@ -671,13 +671,13 @@ Each family of keys (`docs/axKit/key-groups.md`) with the kinds of event its key
   - `no-command`: sound `Unassigned` or `Edge`.
   - `refused`: sound `Edge`.
   - Note: Ctrl+Enter where the window has no main action plays the edge.
-- `escape`, Escape and Shift+Escape: go back or close; with Shift, stop the program under the window.
+- `escape`, Escape and Shift+Escape: go back or close; with Shift, Escape sent to the program under the window.
   - `cancelled`: no sound.
   - `landed`: no sound.
   - `said`: no sound.
   - `done`: no sound.
-  - Note: Escape in axClaude's message field only speaks; Shift+Escape interrupts the program.
-- `delete`, Delete and Ctrl+Shift+Delete: remove.
+  - Note: Escape in axClaude's message field only speaks; Ctrl+I interrupts the program, and Shift+Escape sends Escape to axTerminal's program.
+- `delete`, Delete, Ctrl+Delete and Ctrl+Shift+Delete: remove.
   - `asked`: no sound.
   - `done`: no sound.
   - `refused`: sound `Edge`.

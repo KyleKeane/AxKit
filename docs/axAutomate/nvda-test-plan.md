@@ -23,7 +23,7 @@ a small folder of its own.
 ## 3. A step's details and the refusals (AU-4.3, AU-6a.2)
 
 1. On a step, Tab: "Step N" and its lines: Does, its values, On failure, Report, the line of the file. Right and Left on a line: the edge sound, the focus still in the pane.
-2. Ctrl+Q there reads the line you are on. Escape: back to the navigator, the step selected; Ctrl+Q there reads the step and every line of its details, one after another.
+2. F7 there reads the line you are on. Escape: back to the navigator, the step selected; F7 there reads the step and every line of its details, one after another.
 3. Delete, Ctrl+N, F2: "This version views and runs the workflows; changing them comes later".
 4. Ctrl+J on a workflow: axDown opens the script.
 
@@ -37,7 +37,7 @@ a small folder of its own.
 `tests/scripts/axAutomate/02-run.txt` runs steps 1 to 4 and 6 to 7 on small folders of its own, inside the runner's own
 desktop; the window's run starts a further desktop of its own there, which works (checked 2026-11-11).
 
-1. In a folder of workflows, F5: "Running N workflows; Escape stops the run". Nothing is said while steps pass; a
+1. In a folder of workflows, Ctrl+R: "Running N workflows; Escape stops the run". Nothing is said while steps pass; a
    failing step as it ends, "Step 2 failed: Expect the focus: ... Not within 10 s; seen: ..."; one line at each
    workflow's end, "01-passes passed, 4 steps", "02-fails failed at step 2", "Later cannot run: ..."; then "Run
    finished: 3 of 6 workflows passed, 1 failed, 2 could not run". The keyboard stays in axAutomate: no window comes
@@ -46,21 +46,21 @@ desktop; the window's run starts a further desktop of its own there, which works
    at step 2. ..." with what the runner saw.
 3. Right into the failed workflow: its step reads "2. Expect the focus: ..., failed"; Tab, Down: "Last run: failed.
    ...".
-4. Inside a workflow, F5: "Running 03-waits; Escape stops it"; Escape at once: "Stopping after the current step",
-   then "03-waits stopped". On a workflow that cannot run, F5: "This workflow cannot run: ...". The Actions menu:
+4. Inside a workflow, Ctrl+R: "Running 03-waits; Escape stops it"; Escape at once: "Stopping after the current step",
+   then "03-waits stopped". On a workflow that cannot run, Ctrl+R: "This workflow cannot run: ...". The Actions menu:
    Run unavailable on it; Stop the run unavailable when nothing runs.
 4a. The selected workflows (AU-4.4a): in a folder, Space on a workflow: "Selected", the row reads ", selected"; End,
-   Space on another: "Selected, 2 selected". F5: "Running 2 selected workflows; Escape stops the run", and only those
+   Space on another: "Selected, 2 selected". Ctrl+R: "Running 2 selected workflows; Escape stops the run", and only those
    two run. Escape after the run: "None selected". Space on a folder or on a step: the edge sound.
 5. By ear (the script cannot): during a folder run of `tests\scripts\axDown`, work in another program: no axKit
    window of the run appears, takes the focus or plays a sound (a workflow's `run` step is a command on your own
    desktop, step 6); Alt+F4 on axAutomate during a run closes the window, and Task
    Manager shows the run's AxKit.exe processes gone within half a minute (checked by a scratch script 2026-11-11); no
    window of a run takes the focus from you, even one that opens a page or Explorer (none is handed the foreground).
-6. In a folder whose workflow has a `run` step (`run echo one`), go into it, F5: the notice "This workflow runs
+6. In a folder whose workflow has a `run` step (`run echo one`), go into it, Ctrl+R: the notice "This workflow runs
    commands on your computer: echo one. Run it?", and nothing about running before it; Cancel the default: Enter says
-   "Not run" alone and the row has no outcome. F5 again, Alt+R: "Running 07-commands; Escape stops it", and the run
+   "Not run" alone and the row has no outcome. Ctrl+R again, Alt+R: "Running 07-commands; Escape stops it", and the run
    ends "... passed". A step `run echo a \u003e {temp}\b.txt` is named "echo a > the run's folder\b.txt".
 7. A workflow whose `file` step names `..\x.md` or a full path: its details say "Cannot run: step N writes outside the
-   run's folder: ..."; F5 says "This workflow cannot run: ..." and nothing is written.
-8. After a run, on the failed workflow's row, Ctrl+R: the notice "Report of 02-fails", its text first "02-fails failed at step 2.", then the lines played ("ok  1: ...", "FAIL 2: ...  -> ...") and the timeline; Down reads line by line, Ctrl+F finds a word in it, Escape closes it and the focus is back on the row. Inside a passed workflow, Ctrl+R: its report, ending with the timeline. On a workflow not run yet: "No report yet: F5 runs the workflow". The Actions menu holds "The last run's report" with Ctrl+R.
+   run's folder: ..."; Ctrl+R says "This workflow cannot run: ..." and nothing is written.
+8. After a run, on the failed workflow's row, F8: the notice "Report of 02-fails", its text first "02-fails failed at step 2.", then the lines played ("ok  1: ...", "FAIL 2: ...  -> ...") and the timeline; Down reads line by line, Ctrl+F finds a word in it, Escape closes it and the focus is back on the row. Inside a passed workflow, F8: its report, ending with the timeline. On a workflow not run yet: "No report yet: Ctrl+R runs the workflow". The Actions menu holds "The last run's report" with F8, and Run with Ctrl+R.

@@ -129,7 +129,7 @@ part sent leaves the box unchecked, or cancels.
   setting, a recent file, a window of the Window menu) as it is picked, by the user, the palette, a script or an AI
   tool, from the one place every pick passes, the menu's `ItemClicked` (`CommandPalette.Marked` hooks it,
   `AxKitForm.WritePick`), before the item's own click so that it comes ahead of what the command says; and the keys
-  of the whole window (F1, the palette, F4, Shift+F1, Ctrl+S, an app's launch key, the text size keys, F8) by the name
+  of the whole window (F1, the palette, F4, Shift+F1, Ctrl+S, an app's launch key, the text size keys, F9) by the name
   of the item that shows the key (`AxKitForm.WriteKey`). One function words them all, `RecentActions.CommandText`:
   the name and the key as the menu shows it, "Find, Ctrl+F", "Word wrap", "Keyboard shortcuts, F1"; an entry of a
   numbered list of the user's own things (a recent file, a window, a folder, a template of the user's) by its menus

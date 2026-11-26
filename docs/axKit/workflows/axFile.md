@@ -37,7 +37,7 @@ command's in this version of axKit.
 
 ### Hear the status bar
 
-1. Press F8 (Say the status; Window menu).
+1. Press F9 (Say the status; Window menu).
     You hear something with "nav" in it.
 
 ### Open a folder in the list
@@ -53,25 +53,25 @@ command's in this version of axKit.
     You hear: nav, 13 items, level-1-enter-me, folder.
 2. Press Enter.
     You hear: level-1-enter-me, 2 items.
-3. Press Alt+Up (Up one level; Navigation menu).
+3. Press Backspace.
     You hear: nav, 13 items, level-1-enter-me, folder.
 
 ### Go to a folder by its path
 
-1. Press Ctrl+G (Go to folder; Navigation menu).
+1. Press F12 (Go to folder; Navigation menu).
 2. Type "nav\level-1-enter-me\level-2-enter-me".
 3. Press Enter.
     You hear: level-2-enter-me, 2 items, level-3-enter-me, folder.
 
 ### Go to the drives of This PC
 
-1. Press Ctrl+G (Go to folder; Navigation menu).
+1. Press F12 (Go to folder; Navigation menu).
 2. Type "C:\".
 3. Press Enter.
     You hear something with "C:\" in it.
 4. Press Backspace.
     You hear: (C:), drive.
-5. Press Ctrl+I (Information; Context menu).
+5. Press F8 (Information; Context menu).
     You hear something with "GB free" in it.
 6. Press Ctrl+Shift+N (New folder; Actions menu).
     You hear: Choose a drive first.
@@ -91,7 +91,7 @@ command's in this version of axKit.
 
 ### Move down and up the folder tree
 
-1. Press Ctrl+G (Go to folder; Navigation menu).
+1. Press F12 (Go to folder; Navigation menu).
 2. Type "nav".
 3. Press Enter.
     You hear: nav, 13 items.
@@ -113,10 +113,10 @@ command's in this version of axKit.
 
 ### Hear the details of a folder or a file
 
-1. Press Ctrl+I (Information; Context menu).
+1. Press F8 (Information; Context menu).
     You hear: level-1-enter-me, folder, modified.
 2. Press End.
-3. Press Ctrl+I (Information; Context menu).
+3. Press F8 (Information; Context menu).
     You hear: fig.txt, 13 bytes, modified.
 
 ### Go to a folder named by an environment variable
@@ -127,14 +127,14 @@ command's in this version of axKit.
 
 ### Go to a file by its path
 
-1. Press Ctrl+G (Go to folder; Navigation menu).
+1. Press F12 (Go to folder; Navigation menu).
 2. Type "nav\level-1-enter-me\level-1-file.txt".
 3. Press Enter.
     You hear: level-1-enter-me, 2 items, level-1-file.txt.
 
 ### Complete a path from its first letters
 
-1. Press Ctrl+G (Go to folder; Navigation menu).
+1. Press F12 (Go to folder; Navigation menu).
 2. Type "nav\lev".
 3. Press Down.
     You hear: level-1-enter-me, folder, 1 of 1.
@@ -154,7 +154,7 @@ command's in this version of axKit.
 
 ### Open a completed path
 
-1. Press Ctrl+G (Go to folder; Navigation menu).
+1. Press F12 (Go to folder; Navigation menu).
 2. Type "nav\level-1-enter-me\level-2".
 3. Press Down.
     You hear: level-2-enter-me, folder, 1 of 1.
@@ -184,7 +184,7 @@ command's in this version of axKit.
 
 ### Show hidden files and names that start with a period
 
-1. Press Ctrl+G (Go to folder; Navigation menu).
+1. Press F12 (Go to folder; Navigation menu).
 2. Type "hid".
 3. Press Enter.
     You hear: hid, 1 item, visible-file.txt.
@@ -199,7 +199,7 @@ command's in this version of axKit.
 
 ### Find a file by part of its name
 
-1. Press Ctrl+G (Go to folder; Navigation menu).
+1. Press F12 (Go to folder; Navigation menu).
 2. Type "fs".
 3. Press Enter.
     You hear: fs, 9 items, chapter-01-notes.txt.
@@ -226,9 +226,9 @@ command's in this version of axKit.
 4. Press Enter.
     You hear: 9 items, filter chap, 5 shown, chapter-01-notes.txt.
 5. Press Down.
-6. Press Ctrl+I (Information; Context menu).
+6. Press F8 (Information; Context menu).
     You hear something with "chapter-02-notes.txt" in it.
-7. Press Escape.
+7. Press Ctrl+Delete (Clear the filter).
     You hear: Filter cleared.
 8. Choose Filter in the Options menu.
 9. Type "zzz".
@@ -236,7 +236,7 @@ command's in this version of axKit.
     You hear: 9 items, filter zzz, 0 shown, No names contain zzz.
 11. Press Enter.
     You hear: No names contain zzz.
-12. Press Escape.
+12. Press Ctrl+Delete (Clear the filter).
     You hear: Filter cleared.
 
 ### Sort the list by date, size or name
@@ -255,7 +255,7 @@ command's in this version of axKit.
 
 ### Select several entries
 
-1. Press Ctrl+G (Go to folder; Navigation menu).
+1. Press F12 (Go to folder; Navigation menu).
 2. Type "sel".
 3. Press Enter.
     You hear: sel, 14 items, select-folder-a, folder.
@@ -266,7 +266,7 @@ command's in this version of axKit.
 7. Press Up.
 8. Press Down, Space.
     You hear: Selected, 2 selected.
-9. Press Ctrl+I (Information; Context menu).
+9. Press F8 (Information; Context menu).
     You hear something with "2 selected" in it.
 10. Press Space.
     You hear: Deselected, 1 selected.
@@ -290,11 +290,11 @@ command's in this version of axKit.
 
 1. Press Shift+Down three times.
 2. Press Shift+Up.
-3. Press Ctrl+I (Information; Context menu).
+3. Press F8 (Information; Context menu).
     You hear something with "3 selected" in it.
 4. Press Down.
 5. Press Shift+End.
-6. Press Ctrl+I (Information; Context menu).
+6. Press F8 (Information; Context menu).
     You hear something with "12 selected" in it.
 7. Press Ctrl+Shift+A (Deselect all; Actions menu).
     You hear: None selected.
@@ -328,7 +328,7 @@ Starts with: Open axFile with the folder ops.
 
 ### Make a new text file
 
-1. Press Ctrl+Shift+T (New text file; Actions menu).
+1. Press Ctrl+T (New text file; Actions menu).
 2. Type "todo.md".
 3. Press Enter.
     You hear: Renamed to todo.md.
@@ -579,7 +579,7 @@ Starts with: Open axFile with the folder act.
 3. Press Enter.
     You hear: favorite-me, 1 item, readme.txt.
 4. Press Tab.
-5. Press Ctrl+I.
+5. Press F8.
     You hear: favorite-me, 1 of 2.
 
 ### Remove a favorite from the Favorites list
@@ -698,7 +698,7 @@ Starts with: Open axFile with the folder ops.
 
 Starts with: Open axFile with the folder orchard.
 
-1. Press Ctrl+G (Go to folder; Navigation menu).
+1. Press F12 (Go to folder; Navigation menu).
 2. Type "cellar".
 3. Press Enter.
     You hear: cellar, 1 item, barrel.txt.
@@ -720,14 +720,14 @@ Starts with: Open axFile with the folder orchard.
 
 ### Hear what a key does without doing it
 
-1. Press F8 (Say the status; Window menu).
-    You hear: F8: Say the status.
+1. Press F9 (Say the status; Window menu).
+    You hear: F9: Say the status.
 2. Press F4 (Send a report; Help menu).
     You hear: F4: Send a report.
 3. Press F5 (Refresh; Session menu).
     You hear: F5: Refresh.
-4. Press Ctrl+G (Go to folder; Navigation menu).
-    You hear: Ctrl+G: Go to folder.
+4. Press F12 (Go to folder; Navigation menu).
+    You hear: F12: Go to folder.
 5. Press Delete.
     You hear: Delete: Delete.
 6. Press Enter.
@@ -740,8 +740,8 @@ Starts with: Open axFile with the folder orchard.
     You hear: Down: moves in the list.
 10. Press B.
     You hear: B: finds the next item that starts with what you type.
-11. Press F9.
-    You hear: F9: no command of this window.
+11. Press Shift+F9.
+    You hear: Shift+F9: no command of this window.
 12. Press Alt+F4.
     You hear: Alt+F4: Exit.
 
@@ -772,7 +772,7 @@ Starts with: Open axFile with the folder u.
 
 ### Undo a new text file
 
-1. Press Ctrl+Shift+T (New text file; Actions menu).
+1. Press Ctrl+T (New text file; Actions menu).
 2. Press Escape.
 3. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: New file.txt removed.

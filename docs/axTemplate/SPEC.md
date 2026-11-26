@@ -54,7 +54,7 @@ answer to a key.
    mail, and the template "Introduction", which holds `{selection}` where the name goes and `{caret}` where the
    first sentence starts, replaces it; the caret waits there.
 3. The hotkey, type `sprint`: no template is named so, and one holds the word in its text: "Weekly notes, 1 of 1".
-   Ctrl+Q reads the whole template in a notice before it is used.
+   F7 reads the whole template in a notice before it is used.
 4. Window menu, New window, axTemplate: the browser, "Templates, 12". Ctrl+N, a name, Enter: the new template is
    in the list. Tab to its fields, Enter on Text: write it. Space on "axDown": the template is in axDown's command
    palette from now on.
@@ -154,7 +154,7 @@ answer to a key.
   said, as in axClip (CP-4.2, the maintainer's choice of 2026-11-23: a word said as the window hides is never
   heard, and coming back is the sign). For a
   program whose paste is another key.
-- TP-4.5 Ctrl+Q shows the template's own text, marks and all, in a notice titled with its name and its lines, read
+- TP-4.5 F7, the bundle's read in full (Ctrl+Q until 2026-11-26), shows the template's own text, marks and all, in a notice titled with its name and its lines, read
   with the arrows; Escape closes it.
 - TP-4.6 Ctrl+B opens the browser (TP-8); the launcher hides. The launcher itself makes, changes and deletes
   nothing: it finds and puts in.
@@ -247,7 +247,7 @@ answer to a key.
   same format"), a window like any other: it shows in the taskbar and the Window menu, and Alt+F4 closes it.
 - TP-8.2 **One level**: the templates, "Templates, 12 templates", each row a template's name, in the order of the
   names; a file that is no template (TP-2.4) is among them by its file's name. An empty folder shows the one line
-  "No templates yet: Ctrl+N makes one". Filter and Sort by are the navigator's (bundle AX-8.17); Space selects
+  "No templates yet: Ctrl+N makes one". Filter and Sort by are the navigator's (bundle AX-8.17; Ctrl+Delete clears the filter); Space selects
   (AX-8.16); type-to-find and the edge sound are the list's.
 - TP-8.3 **The second pane is the template's fields** (the navigator's pane of fields, IA-2.3): Title, Text, and
   the checks of TP-2.2, for reading. Tab goes to it and back. Enter on a field opens the template's form in that
@@ -333,7 +333,7 @@ answer to a key.
   about behaviour the user sees differing by a measure; this is one fixed step). Open to his ear and his use.
 - **TP-D7 A template is the user's own text.** axTemplate reads no template from outside its folder, takes none
   from an AI tool, and runs nothing: it pastes. A template of several lines pasted into a shell runs them, as any
-  paste of several lines does; Ctrl+Q reads a template before it is used.
+  paste of several lines does; F7 reads a template before it is used.
 - **TP-D8 Two windows, one app.** The launcher and the browser do two jobs: one is called in the middle of other
   work and must be gone at once, the other is sat in. The bundle has both shapes, and an app with one window of
   each is new: until now every app is one window type (framework section 5). They are no second window in the
@@ -365,7 +365,7 @@ Asked one at a time through the question tool, after he had the first specificat
 
 1. The store and the finding, pure code with tests; the browser on the item window: the list, the fields, new,
    rename, delete; its scripts, an NVDA pass.
-2. The launcher on the hotkey window: finding, Enter with the paste, Shift+Enter, Ctrl+Q, Ctrl+B; the plain start
+2. The launcher on the hotkey window: finding, Enter with the paste, Shift+Enter, F7, Ctrl+B; the plain start
    that starts it; its scripts, an NVDA pass.
 3. Ctrl+Enter with the selection; the clipboard given back and the mark against histories; the caret by Left keys.
 4. The editors read the items (AD-13.4 changes from plain files to these).
@@ -376,7 +376,7 @@ Asked one at a time through the question tool, after he had the first specificat
 
 All six steps are built (2026-11-23). Step 1: the store, the finding and the settings, with their tests (the store
 is `AxKit.Core/TemplateStore` since step 4), and the browser, `BrowserForm`, which a plain start shows. Step 2: the launcher, `LauncherForm`,
-behind Ctrl+Shift+Semicolon: the finding, Enter with the paste, Shift+Enter, Ctrl+Q, Ctrl+B, and the plain start
+behind Ctrl+Shift+Semicolon: the finding, Enter with the paste, Shift+Enter, F7, Ctrl+B, and the plain start
 that starts it hidden, with the hotkey on for everyone after an installation and an update (TP-1.4). Step 3:
 Ctrl+Enter with the other program's selection, the template on the clipboard marked against histories
 (`AxKit.Forms/PrivateClipboard`) and the clipboard's text of before given back 550 ms after the paste key, when

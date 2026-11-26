@@ -34,7 +34,7 @@ of the lines `1920*1080*4 = 8294400`, read as the conversation in axClaude and t
 1. Start axCalc (Start menu, `axCalc`, or the axKit menu's Apps): NVDA reads "Calculator - axCalc window",
    then "Expression, edit". Type `1920*1080*4`, Enter: "8294400". The history's first line is `1920*1080*4 = 8294400`.
 2. Type `*2`, Enter: "16588800": an expression that starts with an operator continues from the last answer.
-3. Ctrl+I: "16588800, hex FD 2000, binary 1111 1101 0010 0000 0000 0000, octal 77220000".
+3. F8: "16588800, hex FD 2000, binary 1111 1101 0010 0000 0000 0000, octal 77220000".
 4. Type `rate = 1.25`, Enter: "rate = 1.25". Type `400 * rate`, Enter: "500".
 5. Shift+Tab to the history, Up to `1920*1080*4 = 8294400`, Ctrl+Shift+C: "Copied 8294400". Enter: the field holds
    `1920*1080*4` with the focus in it, ready to change.
@@ -101,7 +101,7 @@ of the lines `1920*1080*4 = 8294400`, read as the conversation in axClaude and t
 
 ### AC-4 The answer in other bases
 
-- AC-4.1 Ctrl+I says the last answer, or the selected entry's answer while the history has the focus, in hexadecimal,
+- AC-4.1 F8 (Ctrl+I until 2026-11-26) says the last answer, or the selected entry's answer while the history has the focus, in hexadecimal,
   binary and octal: "255, hex FF, binary 1111 1111, octal 377". The binary digits are grouped by four from the right
   and the hexadecimal by four too, so that the reading has pauses. A negative whole number is the magnitude with a
   minus ("hex -FF"); an answer that is not a whole number, or is over 2^63, says "255.5 is not a whole number" or "too
@@ -117,7 +117,7 @@ of the lines `1920*1080*4 = 8294400`, read as the conversation in axClaude and t
 - AC-5.2 In the history: Enter on a line puts its expression into the field, the caret at its end, and moves the
   focus there (the Context menu's "Take this line's expression into the field"); on a line that is no answer (a line
   of the app's own, a bookmark) it says "No answer on this line". Ctrl+Shift+C copies the answer of the line you are
-  on ("Copied 8294400"), and Ctrl+I says it in other bases; Escape goes back to the field. Delete no longer removes
+  on ("Copied 8294400"), and F8 says it in other bases; Escape goes back to the field. Delete no longer removes
   one entry (2026-11-22, the framework's decision 2): the history is a text, and Clear history empties it.
 - AC-5.3 Session, Clear history (Ctrl+Shift+Delete) asks "Clear the history? The N entries cannot be brought back."
   with Clear and Cancel; Clear empties the history, its bookmarks with it, and says "History cleared". The variables stay; Session, Clear
@@ -131,15 +131,16 @@ of the lines `1920*1080*4 = 8294400`, read as the conversation in axClaude and t
 - AC-5.7 The history's keys are a conversation window's, the same letters as in axClaude's conversation and
   axTerminal's terminal (`AxCalcKeys.Transcript`): **a** and Shift+A the next and the previous answer, **s** and
   Shift+S a line of the app's own, **m** a bookmark on the line and **k** and Shift+K from bookmark to bookmark
-  (Ctrl+Shift+K bookmarks from the field too), **l** the line's number ("Line 2 of 4"), Backspace back to the line
+  (Ctrl+K bookmarks from the field too), **l** the line's number ("Line 2 of 4"), Backspace back to the line
   before a jump, and Ctrl+Alt with a, s or k every line of that kind from the line you are on to the end. Until
   2026-11-22 the history was the bundle's list, where a typed character found an entry by its start.
 
 ### AC-6 The field
 
 - AC-6.1 Enter answers (AC-3); the answer is announced alone ("8294400"), interrupting, and the field is emptied for the
-  next expression. Escape empties a field with text in it ("Cleared") and says "Empty" on an empty one. Ctrl+Q says
-  the last answer again ("Answer 8294400"). Ctrl+Shift+C in the field copies the last answer.
+  next expression. Ctrl+Delete empties a field with text in it ("Cleared") and says "Empty" on an empty one (Escape
+  until 2026-11-26; Escape now only goes back). F7 says the last answer again ("Answer 8294400"; Ctrl+Q until
+  2026-11-26). Ctrl+Shift+C in the field copies the last answer.
 - AC-6.2 Up and Down in the field are the edit control's own: they never put a history entry into the field
   (the bundle's rule that arrow keys never pull text into a field); the way back to an expression is the history and
   Enter.
@@ -148,18 +149,19 @@ of the lines `1920*1080*4 = 8294400`, read as the conversation in axClaude and t
 
 - AC-7.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** Save history… Ctrl+S | ─ | Exit Alt+F4.
   **Actions (A):** Answer Enter | Copy answer Ctrl+Shift+C | Copy answer in ▸ (Hexadecimal | Binary | Octal) | Answer in
-  other bases Ctrl+I | Say the last answer Ctrl+Q | ─ | Variables | Clear variables… | Clear history… Ctrl+Shift+Delete.
+  other bases F8 | Say the last answer F7 | ─ | Variables | Clear variables… | Clear history… Ctrl+Shift+Delete.
   **Navigation (N):** Find… Ctrl+F | Find next F3 | Find previous Shift+F3 | ─ | Next bookmark k in the history |
   Previous bookmark Shift+K in the history. **Context (C)**, what acts on the history's line: Take this line's
-  expression into the field Enter in the history | Bookmark this line Ctrl+Shift+K | Copy the selection Ctrl+C in the
+  expression into the field Enter in the history | Bookmark this line Ctrl+K | Copy the selection Ctrl+C in the
   history. **Options (O):** Angles ▸ (Degrees ✓ |
   Radians) | Keep history between runs ✓ | Text ▸ | General ▸ | Developer ▸. **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):**
   Keyboard shortcuts F1 | User guide | ─ | Calculator resources ▸ (Floating point explained). Every item has a
   mnemonic (AX-7.4).
-- AC-7.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, the control keys, Ctrl+F, F3, Shift+F3, Ctrl+S (the history as a
+- AC-7.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, the control keys, Ctrl+F, F3, Shift+F3, F7 (the last answer),
+  Ctrl+S (the history as a
   text file), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxCalcKeys`): Enter (answer in the field, the line's
-  expression into the field in the history), Escape (clear the field, back to the field from the history),
-  Ctrl+Shift+C, Ctrl+I, Ctrl+Q, Ctrl+Shift+Delete, and the history's keys of AC-5.7 with Ctrl+C for a selection.
+  expression into the field in the history), Escape (back to the field from the history), Ctrl+Delete (clear the
+  field), Ctrl+Shift+C, F8, Ctrl+K, Ctrl+Shift+Delete, and the history's keys of AC-5.7 with Ctrl+C for a selection.
   The collision test covers the table.
 - AC-7.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axCalc/user-guide.md` is embedded (Help, User
   guide); About is the bundle's (AX-9.9).
@@ -168,7 +170,7 @@ of the lines `1920*1080*4 = 8294400`, read as the conversation in axClaude and t
 
 One UI Automation notification each (AX-7.3), on the control that has the focus or on the notice: the answer itself;
 "name = value" for an assignment; "Error: <what>"; "Type an expression"; "Cleared"; "Empty"; "Answer <value>" and "No
-answer yet" (Ctrl+Q); the bases line (AC-4.1); "Copied <value>"; "Removed"; "History cleared"; "Variables cleared";
+answer yet" (F7); the bases line (AC-4.1); "Copied <value>"; "Removed"; "History cleared"; "Variables cleared";
 "History, empty" and "No entry selected" (a history command with nothing to act on); "No variables" (Clear
 variables with none);
 "Saved <file name>"; "Degrees" and "Radians" (the Angles items); "Not found" (find); the bundle's text size and

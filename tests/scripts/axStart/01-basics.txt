@@ -43,7 +43,7 @@ keys pageup
 expect said , 1 of
 
 # Goal: Hear the selected match's kind and path
-# Ctrl+I the selected match, its kind and its path.
+# F8 the selected match, its kind and its path.
 do Information
 expect said Windows
 

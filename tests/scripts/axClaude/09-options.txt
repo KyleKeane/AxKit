@@ -162,7 +162,7 @@ menu Speak each tool call
 # level 2", h: "Message field, heading level 2", Shift+H back, 2: the next level-2 heading.
 keys f1
 expect state "notice":"Keyboard shortcuts"
-expect focus "name":"Keyboard shortcuts","role":"Text","value":"In this text: h and Shift
+expect focus "name":"Keyboard shortcuts","role":"Text","value":"## How the keys go
 keys h
 expect said ! Anywhere, heading level 2
 keys h

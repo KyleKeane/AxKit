@@ -383,7 +383,7 @@ public abstract class ConversationForm : AxKitForm
     {
         if (Input.NavigationMode)
         {
-            // AX-8.13: the field in navigation mode, said with the state wherever the status is read (F8 too).
+            // AX-8.13: the field in navigation mode, said with the state wherever the status is read (F9 too).
             state += ", field in " + TextModes.StatusPart;
         }
 

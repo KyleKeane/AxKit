@@ -21,8 +21,8 @@ keys enter
 expect said ! filter shop, 1 shown
 expect list "items":["Your lists, heading level 1, 2 lists","Shopping, list, 1 item"]
 
-# Check: Escape clears the filter
-keys escape
+# Check: Ctrl+Delete clears the filter
+keys ctrl+delete
 expect said ! Filter cleared
 expect list "Home, list, 3 items","Shopping, list, 1 item"
 

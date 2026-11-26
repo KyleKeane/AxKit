@@ -163,7 +163,7 @@ expect said ♪ Edge
 do Command field
 
 # Goal: Put a recent command back in the field
-# Step 6: Ctrl+R lists the recent commands, the newest first; Enter puts one in the field; Escape goes back.
+# Step 6: Alt+Down lists the recent commands, the newest first; Enter puts one in the field; Escape goes back.
 do Recent commands
 expect focus "name":"Recent commands"
 expect focus "value":"Write-Output seven
@@ -199,7 +199,7 @@ keys ctrl+a
 keys delete
 
 # Goal: Interrupt a long command
-# Step 8: a long command, Ctrl+Q while it runs, the interrupt; Shift+Escape.
+# Step 8: a long command, F7 while it runs, the interrupt (Ctrl+I); Shift+Escape.
 type Start-Sleep 30
 keys enter
 expect said Sent

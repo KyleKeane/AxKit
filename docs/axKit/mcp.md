@@ -507,7 +507,7 @@ which overwrote what the user had there. Now it offers the command through a too
   the chime (`Sounds.Offer`, an alarm of five short high falling swoops, which the user chose by ear, where a question has the quick high trill), and
   the words every name of an offer starts with, "Command offer" (`McpOffer.Label`): the list, the explanation's title
   and the concern's field. The list is named "Command offer: it runs on your computer, outside axKit. Claude offers a command for you to run: " and the
-  command, read each time the focus comes to it; Ctrl+Q reads it again with the reason. Its answers, in this order:
+  command, read each time the focus comes to it; F7 reads it again with the reason. Its answers, in this order:
   1. **Explain this command**, where the list starts, so that an Enter pressed by accident runs nothing: a notice,
      "Command offer: about this command", a text read by line and by heading with one button: the command, why Claude offers it,
      what each part does in Claude's words when the tool gave `details`, and what each answer does. Closing it comes

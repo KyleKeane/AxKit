@@ -11,7 +11,7 @@ public sealed class KeyTestTests
     /// <summary>The bundle's keys as the window base hands them: the ones it handles itself apply, the others do not.</summary>
     private static readonly KeyTestCommand[] Bundle =
     [
-        new("F8", "Say the status"),
+        new("F9", "Say the status"),
         new("F4", "Send a report"),
         new("Ctrl+S", "Save"),
         new("Ctrl+F", "Find", Applies: false),
@@ -28,7 +28,7 @@ public sealed class KeyTestTests
     [Fact]
     public void A_bundle_key_the_base_handles_is_named_by_its_command_wherever_the_focus_is()
     {
-        Assert.Equal("F8: Say the status", Line(Press("F8", 0x77), KeyTestFocus.Text));
+        Assert.Equal("F9: Say the status", Line(Press("F9", 0x78), KeyTestFocus.Text));
         Assert.Equal("F4: Send a report", Line(Press("F4", 0x73), KeyTestFocus.List));
         // Even over a command of the window on the same key: the base takes the key first.
         Assert.Equal("Ctrl+S: Save", Line(Press("Ctrl+S", 'S', ctrl: true), KeyTestFocus.Other, new KeyTestCommand("Ctrl+S", "Something else")));
@@ -122,7 +122,7 @@ public sealed class KeyTestTests
     [Fact]
     public void An_unknown_key_is_no_command_of_this_window()
     {
-        Assert.Equal("F9: no command of this window", Line(Press("F9", 0x78), KeyTestFocus.Text));
+        Assert.Equal("F11: no command of this window", Line(Press("F11", 0x7A), KeyTestFocus.Text));
         Assert.Equal("Ctrl+Alt+Y: no command of this window", Line(Press("Ctrl+Alt+Y", 'Y', ctrl: true, alt: true), KeyTestFocus.Text));
         Assert.Equal("Escape: no command of this window", Line(Press("Escape", 0x1B), KeyTestFocus.List));
     }

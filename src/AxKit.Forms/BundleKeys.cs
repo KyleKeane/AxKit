@@ -37,8 +37,18 @@ public static class BundleKeys
     /// <summary>
     /// Say the status (AX-7.10, the user's key of 2026-11-15): the window's status bar as one announcement of axKit's
     /// own, so that the status never depends on NVDA finding the status bar (NVDA+End said "blank" over a full bar).
+    /// F9 since 2026-11-26 (AX-8.18 rule 5, the maintainer's order: F7 read in full, F8 with details, F9 the status);
+    /// F8 until then, which is each window's read with details now.
     /// </summary>
-    public const Keys SayStatus = Keys.F8;
+    public const Keys SayStatus = Keys.F9;
+
+    /// <summary>
+    /// Read in full what you are on (AX-8.18 rule 5, AX-7.11; the maintainer's decision of 2026-11-26): in a notice or
+    /// a form its text, a form's explanation among them; in a window the window's own reading, which it registers as a
+    /// command on this key (an item's every field, axCalc's last answer, axClaude's question, axTerminal's state); the
+    /// edge sound where there is none. Ctrl+Q until then, which is free for acts now.
+    /// </summary>
+    public const Keys ReadInFull = Keys.F7;
 
     /// <summary>
     /// The main action of where you are (AX-8.10 rule 3): a form sent from any of its fields, a long text kept from inside its box, a
@@ -105,6 +115,7 @@ public static class BundleKeys
         ("Ask Claude about this window, as Shift+F1", AskClaudeAlso),
         ("The Context menu, as Shift+F10", ContextMenu),
         ("Say the status", SayStatus),
+        ("Read in full", ReadInFull),
         ("The main action", MainAction),
         ("Edit mode or navigation mode", ToggleMode),
         ("Next control", NextControl),

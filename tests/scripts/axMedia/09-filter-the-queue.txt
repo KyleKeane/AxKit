@@ -31,8 +31,8 @@ menu Information, Context
 expect said ! gamma.wav, 3 of 3
 
 # Goal: Clear the filter
-# Escape in the queue clears it, and all three files are listed again.
-keys escape
+# Ctrl+Delete in the queue clears it, and all three files are listed again.
+keys ctrl+delete
 expect said ! Filter cleared
 expect focus "name":"Queue, 3 items"
 close

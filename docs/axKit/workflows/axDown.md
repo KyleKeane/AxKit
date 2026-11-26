@@ -41,7 +41,7 @@ Starts with: Open axDown with the file long.md.
 
 ### Hear the line and column
 
-1. Press F8 (Say the status; Window menu).
+1. Press F9 (Say the status; Window menu).
     You hear: Line 9, Column 1.
 
 ### Select text a paragraph at a time
@@ -52,9 +52,9 @@ Starts with: Open axDown with the file long.md.
 ### Turn word wrap off and on
 
 1. Press Ctrl+Home, Ctrl+Down, Ctrl+Down, Right, Right, Right.
-2. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
+2. Press F11 (Word wrap; Options menu, Text).
     You hear: Word wrap, not checked.
-3. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
+3. Press F11 (Word wrap; Options menu, Text).
     You hear: Word wrap, checked.
 
 ### Move by page
@@ -160,7 +160,7 @@ Starts with: Open axDown with the file find.md.
 
 ### Go to a line by its number
 
-1. Press Ctrl+G (Go to line; Navigation menu).
+1. Press F12 (Go to line; Navigation menu).
 2. Type "5".
 3. Press Enter.
     You hear: Line 5 of 7.
@@ -261,13 +261,13 @@ Starts with: Open axDown with the file a.md.
 ### Run a command found by its name
 
 1. Type "wrap".
-    You hear: Word wrap, Options, Text, Ctrl+Shift+W, checked, 1 of 1.
+    You hear: Word wrap, Options, Text, F11, checked, 1 of 1.
 2. Press Down.
     You hear the sound Edge.
-    You hear: Word wrap, Options, Text, Ctrl+Shift+W, checked, 1 of 1.
+    You hear: Word wrap, Options, Text, F11, checked, 1 of 1.
 3. Press Enter.
     You hear: Word wrap, not checked.
-4. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
+4. Press F11 (Word wrap; Options menu, Text).
     You hear: Word wrap, checked.
 
 ## Check for updates and remove axKit
@@ -566,16 +566,16 @@ Starts with: Open axDown with the file a.md.
 
 ### Hear what a key does without doing it
 
-1. Press F8 (Say the status; Window menu).
-    You hear: F8: Say the status.
+1. Press F9 (Say the status; Window menu).
+    You hear: F9: Say the status.
 2. Press F4 (Send a report; Help menu).
     You hear: F4: Send a report.
 3. Press F1 (Keyboard shortcuts; Help menu).
     You hear: F1: Keyboard shortcuts.
 4. Press Ctrl+Shift+P (Command palette; Help menu).
     You hear: Ctrl+Shift+P: Command palette.
-5. Press Ctrl+G (Go to line; Navigation menu).
-    You hear: Ctrl+G: Go to line.
+5. Press F12 (Go to line; Navigation menu).
+    You hear: F12: Go to line.
 6. Press Ctrl+H (Heading; Navigation menu, Next).
     You hear: Ctrl+H: Next, Heading.
 7. Press A.
@@ -586,8 +586,8 @@ Starts with: Open axDown with the file a.md.
     You hear: Enter: makes a new line.
 10. Press Ctrl+Down.
     You hear: Ctrl+Down: Paragraph down.
-11. Press F9.
-    You hear: F9: no command of this window.
+11. Press Shift+F9.
+    You hear: Shift+F9: no command of this window.
 
 ### End the key test
 

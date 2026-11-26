@@ -97,7 +97,8 @@ public sealed class TextJumpsTests
         var headings = MarkdownOutline.Headings(text);
         Assert.True(headings.Count >= 3, $"{app}: {headings.Count} headings");
         Assert.Contains(headings, heading => heading.Spoken == "Notices, heading level 2");
-        Assert.StartsWith("In this text: h and Shift+H move by heading", text);
+        // The rules of the keys first (AX-8.18, 2026-11-26), then the line of the text's own keys.
+        Assert.StartsWith(AxKit.Core.BundleHelp.RulesSection + "\r\nIn this text: h and Shift+H move by heading", text);
     }
 
     [Fact]

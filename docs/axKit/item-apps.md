@@ -53,8 +53,9 @@ Window-specific keys, in one table per app (AX-8); the ones here are the same in
 | Delete | delete the item or list (IA-D4) | no command: the knock (IA-5.3) |
 | Alt+Up, Alt+Down | — | — (the move of a field went on 2026-11-21; Alt with an arrow is for the choices of what you are on, and a move of an item of a list is Ctrl+Shift+Up and Down, wherever one is built: the maintainer's rule of that day) |
 | Ctrl+Z | undo the last change | the same |
-| Ctrl+Q | read the selection in full: every field, one after another; for a row whose details are lines and no fields, the row and every line (2026-11-22) | read the field or the line in full |
+| F7 (the bundle's read in full; Ctrl+Q until 2026-11-26) | read the selection in full: every field, one after another; for a row whose details are lines and no fields, the row and every line (2026-11-22) | read the field or the line in full |
 | F5 | read the folder again | — |
+| Ctrl+Delete | clear the filter (Escape, once nothing was selected, until 2026-11-26; FW-4.10a) | — |
 | Shift+F10, the Applications key | the bar's Context menu: the list's or the item's commands (bundle AX-9.11) | Context: the field's commands |
 
 - **IA-3.0 The menus** (bundle AX-9.1, B-19, 2026-11-11): every item app's bar is Session, Actions, Navigation,
@@ -107,7 +108,7 @@ first.
 | Type | Value in the file | Read as | Set by (section 5) |
 | --- | --- | --- | --- |
 | `text` | a string, one line | the text | a text field |
-| `longtext` | a string with line breaks | the first line and the count of the others, Ctrl+Q for all | a field of several lines: Enter makes a new line, Ctrl+Enter keeps it, as Tab then Enter on Save does |
+| `longtext` | a string with line breaks | the first line and the count of the others, F7 for all | a field of several lines: Enter makes a new line, Ctrl+Enter keeps it, as Tab then Enter on Save does |
 | `number` | a JSON number | the number | a text field that takes only a number |
 | `date` | `"YYYY-MM-DD"` | "30 October 2026, Friday" | a text field: a date, `today`, `tomorrow`, `+3` (days) |
 | `datetime` | `"YYYY-MM-DDTHH:MM"` | "30 October 2026, 14:00" | the same, a time after the date |
@@ -195,7 +196,7 @@ A folder. Its configuration is `list.json` in it, never shown in the navigator:
 | Where the items are | a folder of JSON files; a list is a folder (IA-4) | one encrypted KeePass file (`.kdbx`), through KeePassXC's command-line tool; a list is a KeePass group |
 | The fields | read from the item's file through its list's configuration (IA-4) | made in memory from the entry; never written to disk |
 | Open in axJSON | yes, Ctrl+J on an item or a list | no: a password in a plain file defeats the encryption |
-| Extra field types | none | `username`, `password` (read as "password, hidden"; Ctrl+Q never reads it) |
+| Extra field types | none | `username`, `password` (read as "password, hidden"; F7 never reads it) |
 | Extra navigator entries | All tasks, the smart lists (saved filters) | none; search by title (Ctrl+F) |
 | Row summary | the Title, "done" and the Due date | the Title and the user name |
 | Space in the navigator | selects the item, the bundle's selection (AX-8.16; Ctrl+Enter marks a task done; until 2026-11-22 Space did) | the edge sound: no selection yet |

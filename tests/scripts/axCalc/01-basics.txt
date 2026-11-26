@@ -18,11 +18,11 @@ expect said ! 8294400
 expect focus "name":"Expression","role":"Text","value":""
 
 # Goal: Empty the field
-# AC-6.1: Escape empties a field with text ("Cleared") and says "Empty" on an empty one.
+# AC-6.1: Ctrl+Delete empties a field with text ("Cleared") and says "Empty" on an empty one (Escape until 2026-11-26).
 type 2+2
-keys escape
+keys ctrl+delete
 expect said ! Cleared
-keys escape
+keys ctrl+delete
 expect said ! Empty
 
 # Goal: Go on from the last answer
@@ -32,10 +32,10 @@ keys enter
 expect said ! 4147200
 
 # Goal: Hear the last answer in other bases
-# Ctrl+Q says the last answer; Ctrl+I the answer in other bases.
-keys ctrl+q
+# F7 says the last answer; F8 the answer in other bases.
+keys f7
 expect said 4147200
-keys ctrl+i
+keys f8
 expect said hex
 
 # Goal: Put an earlier expression back in the field
@@ -57,7 +57,7 @@ keys tab
 keys delete
 expect focus "name":"History","role":"Text","value":"/2 = 4147200"
 keys escape
-keys escape
+keys ctrl+delete
 expect said ! Cleared
 
 # Check: Find in the history opens and closes
@@ -90,7 +90,7 @@ type 9
 expect focus "name":"Expression","role":"Text","value":"912+340"
 keys pageup pageup
 expect said ♪ Edge
-keys escape
+keys ctrl+delete
 expect said ! Cleared
 
 # Goal: Open another app with its key

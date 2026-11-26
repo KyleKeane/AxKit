@@ -23,26 +23,23 @@ expect said ! Key test. Press any key to hear its name and what it does here. Pr
 
 # Goal: Hear what a key does without doing it
 # Bundle keys and window keys, by their commands' names.
-keys f8
-expect said ! F8: Say the status
+keys f9
+expect said ! F9: Say the status
 keys f4
 expect said ! F4: Send a report
-keys ctrl+b
-expect said ! Ctrl+B: What runs in the background
+keys f8
+expect said ! F8: What runs in the background
 keys alt+2
 expect said ! Alt+2: Conversation
-# The place's older key is still a key of the same command (bundle AX-8.14).
-keys ctrl+2
-expect said ! Ctrl+2: Conversation
-keys shift+escape
-expect said ! Shift+Escape: Interrupt
+keys ctrl+i
+expect said ! Ctrl+I: Interrupt
 # The message field's own keys: a letter is said and not typed; Enter is said and nothing is sent.
 keys a
 expect said ! A: types the letter
 keys enter
 expect said ! Enter: sends what the field holds
-keys f9
-expect said ! F9: no command of this window
+keys f11
+expect said ! F11: no command of this window
 expect state "notice":null
 expect focus "value":"hello"
 
@@ -53,7 +50,7 @@ expect said ! Key test ended
 expect focus "value":"hello"
 
 # Check: The keys act again after the key test
-# The same keys act again: F8 says the status, Alt+2 goes to the conversation.
+# The same keys act again: F9 says the status, Alt+2 goes to the conversation.
 do Say the status
 expect said ! Claude: ready
 do Conversation

@@ -37,7 +37,7 @@ Starts with: Open axClip.
 
 ### Read an item's whole text
 
-1. Press Ctrl+Q (Read in full; Context menu).
+1. Press F7 (Read in full; Context menu).
 2. Press Escape.
 
 ### Pause the recording and start it again
@@ -78,7 +78,7 @@ Starts with: Open axClip.
 
 1. Press Ctrl+Home (First match).
     You hear: axkitkeep first, 3 lines, 1 of 3.
-2. Press Ctrl+Q (Read in full; Context menu).
+2. Press F7 (Read in full; Context menu).
 3. Press Escape.
 
 ### Keep the history between runs

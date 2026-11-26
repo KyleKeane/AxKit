@@ -70,7 +70,7 @@ Each menu with its commands and their keys, as the window lists them:
 - **Navigation**: Nothing to move to here yet.
 - **Context**: A heading: nothing to act on.
 - **Options**: Filter; Developer (Open settings file); Sort by (Name, The list's own order); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
-- Keys without a menu item: Enter (Change the field); Space (Check the field); Escape (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); F3 (Find next); Shift+F3 (Find previous); Right (Into the list); Ctrl+N (New item); Ctrl+Shift+N (New list); Ctrl+Down (Next section); Enter (Open); Ctrl+Up (Previous section); Ctrl+Q (Read in full); Enter (Read the resource); F2 (Rename); Ctrl+A (Select all); Space (Select or deselect); Shift+Space (Select to here); Shift+Home (Select to the first server); Shift+End (Select to the last server); Shift+Down (Select to the next server); Shift+Up (Select to the previous server); Ctrl+Tab (Switch between the navigator and the detail pane); Shift+F10 (The Context menu); Shift+F10 (The field's menu); Right (The next value of the field); Left (The previous value of the field); Tab (To the detail pane); Tab (To the navigator); Left (Up a level).
+- Keys without a menu item: Enter (Change the field); Space (Check the field); Ctrl+Delete (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); F3 (Find next); Shift+F3 (Find previous); Right (Into the list); Ctrl+N (New item); Ctrl+Shift+N (New list); Ctrl+Down (Next section); Enter (Open); Ctrl+Up (Previous section); F7 (Read in full); Enter (Read the resource); F2 (Rename); Ctrl+A (Select all); Space (Select or deselect); Shift+Space (Select to here); Shift+Home (Select to the first server); Shift+End (Select to the last server); Shift+Down (Select to the next server); Shift+Up (Select to the previous server); Ctrl+Tab (Switch between the navigator and the detail pane); Shift+F10 (The Context menu); Shift+F10 (The field's menu); Right (The next value of the field); Left (The previous value of the field); Tab (To the detail pane); Tab (To the navigator); Left (Up a level).
 - **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
 <!-- end of the menus -->
 
@@ -103,7 +103,7 @@ again. A call that gets no answer in 60 seconds is given up and said.
 
 ## Filter and sort
 
-Options, Filter (Alt+O, then F) shows only what has a text in its name: type part of a name, Enter, and the list holds only those rows and says so in its name, "Home, 4 items, filter tap, 1 shown". An empty text clears the filter, and so does Escape in the list once nothing is selected; going into another list drops it. Options, Sort by puts the list in the order of its names, or back in its own order. Both are the same in every list of axKit's navigators, and neither changes anything that is stored.
+Options, Filter (Alt+O, then F) shows only what has a text in its name: type part of a name, Enter, and the list holds only those rows and says so in its name, "Home, 4 items, filter tap, 1 shown". An empty text clears the filter, and so does Ctrl+Delete in the list; going into another list drops it. Options, Sort by puts the list in the order of its names, or back in its own order. Both are the same in every list of axKit's navigators, and neither changes anything that is stored.
 
 ## About
 

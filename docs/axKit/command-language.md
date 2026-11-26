@@ -276,7 +276,7 @@ Each origin, by function and file, down to the code that runs the command.
      written into the recent actions all the same since 2026-11-25, by the menu that holds it (CL-4.7): "Word wrap",
      "Session, Open recent file, entry 2".
   4. **The bundle keys handled in `ProcessCmdKey` itself** (F1, the palette, F4, Shift+F1, Ctrl+S, the text size
-     keys, F8) do not pass `RunCommandKey`; most also have a menu item, whose click is a second way into the same
+     keys, F9) do not pass `RunCommandKey`; most also have a menu item, whose click is a second way into the same
      method.
   5. **A key with no menu item** runs by its key alone (and by `do`, which presses it): no other origin reaches it.
   6. **axFile's palette entries** (the folder's files) are in the palette alone: no menu, no name, no mark.
@@ -384,7 +384,7 @@ Each origin, by function and file, down to the code that runs the command.
   or added on purpose and the list never keeps what was made one. The first run found nine names; the review the
   same day made two one by their marks (Select all in the editors, change as every list's; axFile's File Explorer,
   open as every window's), narrowed one by a name (axMedia's Open files and Open folder are Add files and Add folder:
-  they add to the queue, so Open folder no longer differs by key), and kept seven, each with its reason: Interrupt, New window and Paste differ by key alone, which
+  they add to the queue, so Open folder no longer differs by key), and kept seven, each with its reason: New window and Paste differ by key alone (Interrupt did too, until it became Ctrl+I in both windows on 2026-11-26, AX-8.18), which
   waits on the families; Open, Open folder, Rename and Undo differ in what they reach (axFile's and axClaude's start a
   program or change the disk) or are two Windows standards under one word. **Not built: one chord, one family**
   (that a chord's command is of the kind its family says): it waits on the families being settled (CL-7.2).

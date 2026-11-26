@@ -1,7 +1,7 @@
 # Workflow: Hear that nothing matches and turn the spoken match off
 # axStart, docs/axStart/nvda-test-plan.md, what 01-basics and 02-typing-and-the-hotkey leave: 2.5 (nothing matches,
-# said while typing, and again after Backspace), 3.6 (Ctrl+I on a Store app), 5.3 (Say the first match while typing
-# off: typing says nothing, Ctrl+I says the match; on again) and 4.2 (Shift with a letter refused). SPEC AS-3.2, AS-4.
+# said while typing, and again after Backspace), 3.6 (F8 on a Store app), 5.3 (Say the first match while typing
+# off: typing says nothing, F8 says the match; on again) and 4.2 (Shift with a letter refused). SPEC AS-3.2, AS-4.
 # Not run: 4.5 (a key another program holds): it needs a program that really holds a system hotkey, and with NVDA
 # listening the keys are real, so the key goes to that program and never reaches the field; it stays a step of the
 # manual plan. 2.6's name with an accent (it needs such a program in the user's Start menu), starting programs, File
@@ -22,7 +22,7 @@ expect focus "value":"zzqqx"
 expect said ! No programs match zzqqx
 
 # Check: A Store app's information names its kind
-# 3.6 Ctrl+I on a Store app: its name and its kind.
+# 3.6 F8 on a Store app: its name and its kind.
 keys ctrl+a
 type calculator
 expect said ! Calculator, 1 of
@@ -30,7 +30,7 @@ do Information
 expect said ! Calculator, Store app
 
 # Goal: Turn the spoken first match off and on
-# 5.3 Say the first match while typing off: typing says nothing, Ctrl+I says the match all the same; on again.
+# 5.3 Say the first match while typing off: typing says nothing, F8 says the match all the same; on again.
 menu Say the first match while typing
 expect said ! Say the first match while typing, not checked
 keys ctrl+a

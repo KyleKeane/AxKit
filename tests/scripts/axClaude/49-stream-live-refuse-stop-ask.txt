@@ -29,13 +29,13 @@ expect said Done
 expect state Claude: ready
 
 # Goal: Stop a reply Claude is writing
-# Shift+Escape interrupts the turn: Interrupted is said and no Done follows (SM-4.6).
+# Ctrl+I interrupts the turn: Interrupted is said and no Done follows (SM-4.6).
 type Write a numbered list of eighty different kinds of fruit, one on each line, with a short sentence about each.
 keys enter
 expect said Sent
 expect state Claude: working
 wait 2000
-keys shift+escape
+keys ctrl+i
 expect said Interrupted
 expect state Claude: ready
 

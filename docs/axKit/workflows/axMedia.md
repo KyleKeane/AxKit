@@ -57,10 +57,10 @@ command's in this version of axKit.
 
 ### Hear the information of a file
 
-1. Press Ctrl+I.
+1. Press F8.
     You hear: beta.wav, 2 of 4, playing, 0:0.
 2. Press Down.
-3. Press Ctrl+I.
+3. Press F8.
     You hear: delta.wav, 3 of 4.
 
 ### Remove files and clear the queue
@@ -73,7 +73,7 @@ command's in this version of axKit.
     You hear: Playing gamma.wav.
 4. Choose Clear queue in the Session menu.
     You hear: Queue cleared.
-5. Press Ctrl+Q (What is playing; Actions menu).
+5. Press F7 (What is playing; Actions menu).
     You hear: Nothing playing.
 
 ## Add files to the queue from another app
@@ -82,9 +82,9 @@ command's in this version of axKit.
 
 1. Open axMedia with the folder ch, added to the list.
     You hear: Added 3.
-2. Press Ctrl+Q (What is playing; Actions menu).
+2. Press F7 (What is playing; Actions menu).
     You hear: Nothing playing.
-3. Press Ctrl+I.
+3. Press F8.
     You hear: alpha.wav, 1 of 3.
 
 ### Start playing with the main action key
@@ -136,7 +136,7 @@ command's in this version of axKit.
     You hear: 0:1.
 3. Press Ctrl+Left (Back 15 seconds; Actions menu).
     You hear: 0:0.
-4. Press Ctrl+T (Go to time; Navigation menu).
+4. Press F12 (Go to time; Navigation menu).
 5. Type "0:30".
 6. Press Enter.
     You hear: 0:30.
@@ -145,29 +145,29 @@ command's in this version of axKit.
 
 ### Change the playing speed
 
-1. Press Ctrl+Up (Faster; Actions menu).
+1. Press Alt+Up (Faster; Actions menu).
     You hear: Speed 1.25.
-2. Press Ctrl+Up (Faster; Actions menu).
+2. Press Alt+Up (Faster; Actions menu).
     You hear: Speed 1.5.
-3. Choose Faster in the Actions menu (key: Ctrl+Up).
+3. Choose Faster in the Actions menu (key: Alt+Up).
     You hear: Speed 1.75.
-4. Press Ctrl+Down (Slower; Actions menu).
+4. Press Alt+Down (Slower; Actions menu).
     You hear: Speed 1.5.
-5. Choose Slower in the Actions menu (key: Ctrl+Down).
+5. Choose Slower in the Actions menu (key: Alt+Down).
     You hear: Speed 1.25.
-6. Press Ctrl+Up (Faster; Actions menu).
+6. Press Alt+Up (Faster; Actions menu).
     You hear: Speed 1.5.
 7. Choose Normal speed in the Actions menu.
     You hear: Speed 1.
-8. Choose Faster in the Actions menu (key: Ctrl+Up).
-9. Choose Faster in the Actions menu (key: Ctrl+Up).
+8. Choose Faster in the Actions menu (key: Alt+Up).
+9. Choose Faster in the Actions menu (key: Alt+Up).
     You hear: Speed 1.5.
 
 ### Hear what is playing and go to the next or the previous file
 
-1. Press Ctrl+Q (What is playing; Actions menu).
+1. Press F7 (What is playing; Actions menu).
     You hear: Playing first.wav, 0:3.
-2. Press Ctrl+Q (What is playing; Actions menu).
+2. Press F7 (What is playing; Actions menu).
     You hear: of 1:00, speed 1.5.
 3. Press Ctrl+Shift+Right (Next file; Navigation menu).
     You hear: Playing second.wav.
@@ -262,7 +262,7 @@ Starts with: Open axMedia with the folder ch.
 2. Press Space.
     You hear: Selected.
 3. Press Shift+Down.
-4. Press Ctrl+I.
+4. Press F8.
     You hear: 2 selected.
 
 ### Take the selected files out of the queue
@@ -294,7 +294,7 @@ Starts with: Open axMedia with the folder ch.
 
 ### Clear the filter
 
-1. Press Escape.
+1. Press Ctrl+Delete (Clear the filter).
     You hear: Filter cleared.
 2. Close the window.
 

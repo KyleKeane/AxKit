@@ -360,7 +360,7 @@ public sealed partial class AutomateForm
 
         if (!_reports.TryGetValue(path, out var report))
         {
-            Announce(Running ? "No report yet: the run is going on" : "No report yet: F5 runs the workflow", true);
+            Announce(Running ? "No report yet: the run is going on" : "No report yet: " + BundleKeys.Text(AxAutomateKeys.Run) + " runs the workflow", true);
             return;
         }
 

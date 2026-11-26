@@ -1,6 +1,6 @@
 # Workflow: Read an entry in full and come back to the same database
 # Needs: KeePassXC installed in C:\Program Files\KeePassXC (the script makes its test database with keepassxc-cli.exe there).
-# axPass: Ctrl+Q on a field and on an entry, the password never read (docs/axPass/nvda-test-plan.md 2.3; SPEC PW-6),
+# axPass: F7 on a field and on an entry, the password never read (docs/axPass/nvda-test-plan.md 2.3; SPEC PW-6),
 # the Lock after setting said (5.3, the words only: the lock itself waits minutes on the real keyboard's idle time,
 # which a run cannot make), and a start without a file asking for the database it had last (5.4; PW-4.1).
 # The idle lock off at first, as in 01; it is chosen only while the database is locked, where it has nothing to lock.
@@ -22,19 +22,19 @@ keys right
 expect said ! Email, 1 item, Gmail
 
 # Goal: Hear one field of an entry
-# 2.3 Ctrl+Q on the Password field: its line, the password hidden.
+# 2.3 F7 on the Password field: its line, the password hidden.
 keys enter
 expect focus Title, text, Gmail
 keys down down
 expect focus Password, password, hidden
-keys ctrl+q
+keys f7
 expect said ! Password, password, hidden
 
 # Goal: Hear every field of an entry at once
-# 2.3 Escape; Ctrl+Q in the navigator: every field, the password "hidden".
+# 2.3 Escape; F7 in the navigator: every field, the password "hidden".
 keys escape
 expect focus Gmail, sam
-keys ctrl+q
+keys f7
 expect said ! Gmail. UserName: sam. Password: hidden. URL: https://mail.example.com. Notes: empty
 
 # Goal: Choose when axPass locks by itself

@@ -58,12 +58,6 @@ keys alt+1
 expect said → Message to Claude (Text)
 keys alt+1
 expect said ! Message to Claude
-# Check: The older keys of the places still work
-# Ctrl+1 and Ctrl+2, the places' keys until 2026-11-16, still go there, with nothing more said.
-keys ctrl+2
-expect said → Conversation (Text)
-keys ctrl+1
-expect said → Message to Claude (Text)
 # Check: Asking for the latest reply before the first says there is none yet
 # Alt+3 before the first reply: "No response yet", the focus in the conversation.
 keys alt+3
@@ -109,15 +103,15 @@ expect state Claude: ready |
 expect state mode on
 expect state \\fresh"
 # Goal: Hear the status
-# F8, Say the status (bundle AX-7.10): the same texts said by axKit itself, from the message field and from the
+# F9, Say the status (bundle AX-7.10): the same texts said by axKit itself, from the message field and from the
 # conversation, the focus staying; and the Window menu's item.
-keys f8
+keys f9
 expect said ! Claude: ready |
 expect focus Message to Claude
 keys alt+2
-keys f8
+keys f9
 expect said ! Claude: ready |
 expect focus Conversation
 menu Say the status
 expect said ! Claude: ready |
-expect commands Say the status, Window, F8
+expect commands Say the status, Window, F9

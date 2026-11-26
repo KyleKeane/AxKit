@@ -13,7 +13,7 @@ public static class HelpText
           Up, Down, Home and End move through the rows, and the edge sound plays at an end. Type the start of a name to jump to it; Shift with a letter goes backwards.
           A folder of workflows lists its folders, then its workflows, each with how many steps it has and, after a run, "passed", "failed at step 3" or "cannot run".
           Right or Enter on a folder or a workflow goes into it. Left or Backspace goes up a level.
-          Only the workflows of a folder are selected; a selected workflow reads ", selected". Escape, while no run is going on, deselects all. F5 then runs the selected workflows.
+          Only the workflows of a folder are selected; a selected workflow reads ", selected". Escape, while no run is going on, deselects all. {BundleKeys.Text(AxAutomateKeys.Run)} then runs the selected workflows.
           Where a level has no sections, the keys for the next and the previous section play the edge sound.
           In a workflow there is one row per step, in the order they run: "4. Expect said: Command palette".
           A step's marks come after its sentence: "may not come" or "goes on if it fails" when a failure does not stop the workflow, "reports" when it has its own failure message, "then 2 steps" when steps run only after it passed, "otherwise 1 step" when steps run only after it failed.
@@ -32,12 +32,12 @@ public static class HelpText
 
         ## Everywhere in axAutomate
           The folder of workflows you open is opened again at the next start.
-          F5: run the workflow you are in, on a desktop of its own, never with your keyboard; in a folder, every workflow of that folder runs, one after another. A failing step is said as it ends, "Step 3 failed: ...", and one line when each workflow ends, "02-palette passed, 6 steps" or "02-palette failed at step 3". The rows then carry the outcome, and the details what the runner saw.
+          {BundleKeys.Text(AxAutomateKeys.Run)}: run the workflow you are in, on a desktop of its own, never with your keyboard; in a folder, every workflow of that folder runs, one after another. A failing step is said as it ends, "Step 3 failed: ...", and one line when each workflow ends, "02-palette passed, 6 steps" or "02-palette failed at step 3". The rows then carry the outcome, and the details what the runner saw.
           A workflow with a run step asks first, naming its command lines, since they run on your own desktop and files. Cancel is the default; Alt+R runs it.
           A step that makes a file or a folder outside the run's own folder cannot run from here. These guard against slips only: a workflow drives axKit's windows, which reach your files, so run only workflows you wrote or trust.
           Escape during a run stops it after the step going on.
           The last run's report holds how the run ended, every step played with what the runner saw, and the timeline of what was said and focused, as a text with the reading keys and find. It is kept until the window closes.
-          A run reads its file again by itself; Session, Refresh reads the folder or the workflow again.
+          A run reads its file again by itself; {BundleKeys.Text(ItemKeys.Refresh)}, Session, Refresh reads the folder or the workflow again.
           This version views and runs the workflows; changing them comes later, and the keys that would change one say so.
         """ + BundleHelp.FilterAndSortSection() + BundleHelp.NoticesSection("axAutomate", "the panes");
 

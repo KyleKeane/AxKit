@@ -6,7 +6,7 @@
     { "id": "every-window", "title": "The same in every axKit window", "learn": "These keys do the same kind of thing in every window of axKit, so they are learned once." },
     { "id": "window", "title": "Inside one app's window", "learn": "These keys belong to the window you are in. The pattern says what kind of thing the key does; what exactly it does depends on the app." }
   ],
-  "note": "A draft for the maintainer to settle. The first keys moved for it on 2026-11-16: the places and views of axClaude, axTerminal, axGIT and axProcess went to Alt+1, 2 and 3 (SPEC AX-8.14), their Ctrl keys staying as further keys for now, and Ctrl+Slash and Ctrl+Period were added (AX-8.15). No test holds a key to its family. Each family is a pattern of keys and the one kind of thing such a key would do. A misfit is a command of docs/axKit/window-commands.json on a key of the pattern that does another kind of thing; 'does' is the command's label there, 'kind' is what kind of thing it is instead. 'windows' names the keys of a pattern that are Windows' own (Ctrl+C, Ctrl+S and the like), which stay as every Windows user knows them and are not counted as misfits. tools/key-map.ps1 checks that every key named here is of its family's pattern and that every command named here is in the inventory, and writes the families at the end of docs/axKit/key-map.md. 'learn' is the family as a user is told it, one or two sentences for the ear; the script writes docs/axKit/key-groups.md from it, the keys by group, which is the page a user learns the keys from. A family with 'source': 'system-wide' takes its keys from BundleKeys.SystemWide (the hotkeys, which are in no window's inventory).",
+  "note": "The families of SPEC AX-8.18's rules. The first keys moved for them on 2026-11-16: the places and views of axClaude, axTerminal, axGIT and axProcess went to Alt+1, 2 and 3 (SPEC AX-8.14), and Ctrl+Slash and Ctrl+Period were added (AX-8.15). The maintainer settled every family on 2026-11-26 and the keys moved the same day (AX-8.18): a moved key is no misfit, and each misfit left is an exception kept on purpose, its reason in its kind. No test holds a key to its family. Each family is a pattern of keys and the one kind of thing such a key would do. A misfit is a command of docs/axKit/window-commands.json on a key of the pattern that does another kind of thing; 'does' is the command's label there, 'kind' is what kind of thing it is instead. 'windows' names the keys of a pattern that are Windows' own (Ctrl+C, Ctrl+S and the like), which stay as every Windows user knows them and are not counted as misfits. tools/key-map.ps1 checks that every key named here is of its family's pattern and that every command named here is in the inventory, and writes the families at the end of docs/axKit/key-map.md. 'learn' is the family as a user is told it, one or two sentences for the ear; the script writes docs/axKit/key-groups.md from it, the keys by group, which is the page a user learns the keys from. A family with 'source': 'system-wide' takes its keys from BundleKeys.SystemWide (the hotkeys, which are in no window's inventory).",
   "families": [
     {
       "id": "system-wide",
@@ -45,38 +45,22 @@
       "pattern": "Ctrl+letter",
       "match": "^ctrl\\+[a-z]$",
       "does": "act on what is selected",
-      "learn": "Ctrl and a letter does something to what you are on, and the letter is the first letter of the command where it can be. The keys every Windows program has (copy, paste, save, find) are the same here.",
+      "learn": "Ctrl and a letter does something to what you are on, and the letter is the first letter of the command where it can be: Ctrl+I interrupts, Ctrl+K bookmarks the line, Ctrl+R runs or fetches. The keys every Windows program has (copy, paste, save, find) are the same here. In a text, Ctrl with NVDA's browse-mode letter jumps while you type: Ctrl+H the next heading, Ctrl+K a link.",
       "windows": ["ctrl+a", "ctrl+c", "ctrl+f", "ctrl+n", "ctrl+o", "ctrl+s", "ctrl+v", "ctrl+x", "ctrl+y", "ctrl+z"],
       "misfits": [
-        { "chord": "ctrl+b", "apps": ["axClaude"], "does": "What runs in the background", "kind": "say or show" },
-        { "chord": "ctrl+e", "apps": ["axJSON"], "does": "Error", "kind": "go to a place" },
-        { "chord": "ctrl+g", "apps": ["axDown", "axJSON", "axPreview"], "does": "Go to line", "kind": "go to a place" },
-        { "chord": "ctrl+g", "apps": ["axFile"], "does": "Go to folder", "kind": "go to a place" },
-        { "chord": "ctrl+h", "apps": ["axDown", "axPreview"], "does": "Heading", "kind": "go to a place" },
-        { "chord": "ctrl+i", "apps": ["axDown", "axPreview"], "does": "List item", "kind": "go to a place" },
-        { "chord": "ctrl+i", "apps": ["axJSON"], "does": "Item", "kind": "go to a place" },
-        { "chord": "ctrl+i", "apps": ["axFile", "axStart"], "does": "Information", "kind": "say or show" },
-        { "chord": "ctrl+i", "apps": ["axFile"], "does": "The favorite's folder", "kind": "say or show" },
-        { "chord": "ctrl+i", "apps": ["axCalc"], "does": "Answer in other bases", "kind": "say or show" },
-        { "chord": "ctrl+j", "apps": ["axJSON"], "does": "Object", "kind": "go to a place" },
-        { "chord": "ctrl+k", "apps": ["axDown", "axPreview"], "does": "Link", "kind": "go to a place" },
-        { "chord": "ctrl+k", "apps": ["axJSON"], "does": "Key", "kind": "go to a place" },
-        { "chord": "ctrl+l", "apps": ["axDown", "axPreview"], "does": "List", "kind": "go to a place" },
-        { "chord": "ctrl+l", "apps": ["axJSON"], "does": "Array", "kind": "go to a place" },
-        { "chord": "ctrl+m", "apps": ["axClaude", "axTerminal"], "does": "Background music on or off", "kind": "toggle or play" },
-        { "chord": "ctrl+p", "apps": ["axTerminal"], "does": "Say current folder", "kind": "say or show" },
-        { "chord": "ctrl+p", "apps": ["axClip"], "does": "Pause recording", "kind": "toggle or play" },
-        { "chord": "ctrl+q", "apps": ["axAutomate", "axClip", "axMCP", "axPass", "axTask", "axTemplate"], "does": "Read in full", "kind": "say or show" },
-        { "chord": "ctrl+q", "apps": ["axDown", "axPreview"], "does": "Block quote", "kind": "go to a place" },
-        { "chord": "ctrl+q", "apps": ["axProcess"], "does": "Summary", "kind": "say or show" },
-        { "chord": "ctrl+q", "apps": ["axTerminal"], "does": "What is running", "kind": "say or show" },
-        { "chord": "ctrl+q", "apps": ["axMedia"], "does": "What is playing", "kind": "say or show" },
-        { "chord": "ctrl+q", "apps": ["axClaude"], "does": "Claude's question again", "kind": "say or show" },
-        { "chord": "ctrl+q", "apps": ["axCalc"], "does": "Say the last answer", "kind": "say or show" },
-        { "chord": "ctrl+r", "apps": ["axTerminal"], "does": "Recent commands", "kind": "say or show" },
-        { "chord": "ctrl+r", "apps": ["axAutomate"], "does": "The last run's report", "kind": "say or show" },
-        { "chord": "ctrl+t", "apps": ["axDown", "axPreview"], "does": "Table", "kind": "go to a place" },
-        { "chord": "ctrl+t", "apps": ["axMedia"], "does": "Go to time", "kind": "go to a place" }
+        { "chord": "ctrl+e", "apps": ["axJSON"], "does": "Error", "kind": "go to a place; rule 2's line for a text: a jump key that works while you type" },
+        { "chord": "ctrl+h", "apps": ["axDown", "axPreview"], "does": "Heading", "kind": "go to a place; rule 2's line for a text: NVDA's browse-mode letter, a jump while you type" },
+        { "chord": "ctrl+i", "apps": ["axDown", "axPreview"], "does": "List item", "kind": "go to a place; rule 2's line for a text: NVDA's browse-mode letter, a jump while you type" },
+        { "chord": "ctrl+i", "apps": ["axJSON"], "does": "Item", "kind": "go to a place; rule 2's line for a text: a jump key that works while you type" },
+        { "chord": "ctrl+j", "apps": ["axJSON"], "does": "Object", "kind": "go to a place; rule 2's line for a text: a jump key that works while you type" },
+        { "chord": "ctrl+k", "apps": ["axDown", "axPreview"], "does": "Link", "kind": "go to a place; rule 2's line for a text: NVDA's browse-mode letter, a jump while you type" },
+        { "chord": "ctrl+k", "apps": ["axJSON"], "does": "Key", "kind": "go to a place; rule 2's line for a text: a jump key that works while you type" },
+        { "chord": "ctrl+l", "apps": ["axDown", "axPreview"], "does": "List", "kind": "go to a place; rule 2's line for a text: NVDA's browse-mode letter, a jump while you type" },
+        { "chord": "ctrl+l", "apps": ["axJSON"], "does": "Array", "kind": "go to a place; rule 2's line for a text: a jump key that works while you type" },
+        { "chord": "ctrl+m", "apps": ["axClaude", "axTerminal"], "does": "Background music on or off", "kind": "toggle or play; a switch of the window, taken as an act on it, M for music" },
+        { "chord": "ctrl+p", "apps": ["axClip"], "does": "Pause recording", "kind": "toggle or play; a switch of the window, taken as an act on it, P for pause" },
+        { "chord": "ctrl+q", "apps": ["axDown", "axPreview"], "does": "Block quote", "kind": "go to a place; rule 2's line for a text: NVDA's browse-mode letter, a jump while you type" },
+        { "chord": "ctrl+t", "apps": ["axDown", "axPreview"], "does": "Table", "kind": "go to a place; rule 2's line for a text: NVDA's browse-mode letter, a jump while you type" }
       ]
     },
     {
@@ -87,21 +71,7 @@
       "does": "the window's own numbered action",
       "learn": "Ctrl and a number is the window's own numbered action (SPEC AX-8.18 rule 3). In a text or a list with headings, Ctrl and a number from 1 to 6 goes to the next heading of that level; in axTask, Ctrl and a number from 1 to 9 runs that action key of the list.",
       "windows": [],
-      "misfits": [
-        { "chord": "ctrl+0", "apps": ["axTask"], "does": "All tasks", "kind": "go to a place or view" },
-        { "chord": "ctrl+1", "apps": ["axClaude"], "does": "Message field", "kind": "go to a place or view; the older key, kept for now beside Alt+1 (2026-11-16)" },
-        { "chord": "ctrl+2", "apps": ["axClaude"], "does": "Conversation", "kind": "go to a place or view; the older key, kept for now beside Alt+2 (2026-11-16)" },
-        { "chord": "ctrl+3", "apps": ["axClaude"], "does": "Latest response", "kind": "go to a place or view; the older key, kept for now beside Alt+3 (2026-11-16)" },
-        { "chord": "ctrl+1", "apps": ["axTerminal"], "does": "Command field", "kind": "go to a place or view; the older key, kept for now beside Alt+1 (2026-11-16)" },
-        { "chord": "ctrl+2", "apps": ["axTerminal"], "does": "Terminal", "kind": "go to a place or view; the older key, kept for now beside Alt+2 (2026-11-16)" },
-        { "chord": "ctrl+3", "apps": ["axTerminal"], "does": "Latest output", "kind": "go to a place or view; the older key, kept for now beside Alt+3 (2026-11-16)" },
-        { "chord": "ctrl+1", "apps": ["axGIT"], "does": "Changes", "kind": "go to a place or view; the older key, kept for now beside Alt+1 (2026-11-16)" },
-        { "chord": "ctrl+2", "apps": ["axGIT"], "does": "Log", "kind": "go to a place or view; the older key, kept for now beside Alt+2 (2026-11-16)" },
-        { "chord": "ctrl+3", "apps": ["axGIT"], "does": "Branches", "kind": "go to a place or view; the older key, kept for now beside Alt+3 (2026-11-16)" },
-        { "chord": "ctrl+1", "apps": ["axProcess"], "does": "Processes", "kind": "go to a place or view; the older key, kept for now beside Alt+1 (2026-11-16)" },
-        { "chord": "ctrl+2", "apps": ["axProcess"], "does": "Services", "kind": "go to a place or view; the older key, kept for now beside Alt+2 (2026-11-16)" },
-        { "chord": "ctrl+3", "apps": ["axProcess"], "does": "Startup", "kind": "go to a place or view; the older key, kept for now beside Alt+3 (2026-11-16)" }
-      ]
+      "misfits": []
     },
     {
       "id": "ctrl-shift-digit",
@@ -119,7 +89,7 @@
       "pattern": "Alt+digit",
       "match": "^alt\\+[0-9]$",
       "does": "go to a place or view of the window",
-      "learn": "Alt and a number goes to one of the window's main places or views: the first, the second, the third. Built on 2026-11-16 in axClaude, axTerminal, axGIT and axProcess. Ctrl+1, 2 and 3, the keys of these places until then, still work there for now.",
+      "learn": "Alt and a number goes to one of the window's main places or views: the first, the second, the third, in axClaude, axTerminal, axGIT and axProcess; Alt+0 is All tasks in axTask. A place is never on Ctrl and a number.",
       "windows": [],
       "misfits": []
     },
@@ -132,23 +102,10 @@
       "learn": "Adding Shift to Ctrl and a letter gives the reverse or the bigger form of that command. A letter or a number is always inside the window; Space or punctuation with Ctrl+Shift is always the whole of axKit.",
       "windows": [],
       "misfits": [
-        { "chord": "ctrl+shift+c", "apps": ["axTerminal"], "does": "Interrupt", "kind": "sends Ctrl+C to the program" },
-        { "chord": "ctrl+shift+c", "apps": ["axClaude"], "does": "Ctrl+C", "kind": "sends Ctrl+C to the program" },
-        { "chord": "ctrl+shift+d", "apps": ["axTask"], "does": "Hide done tasks", "kind": "toggle or play" },
-        { "chord": "ctrl+shift+f", "apps": ["axJSON"], "does": "Format", "kind": "act on what is selected" },
-        { "chord": "ctrl+shift+f", "apps": ["axGIT"], "does": "Fetch", "kind": "acts on the repository" },
-        { "chord": "ctrl+shift+h", "apps": ["axGIT"], "does": "Push", "kind": "acts on the repository" },
-        { "chord": "ctrl+shift+k", "apps": ["axCalc", "axClaude", "axTerminal"], "does": "Bookmark this line", "kind": "act on what is selected" },
-        { "chord": "ctrl+shift+l", "apps": ["axGIT"], "does": "Pull", "kind": "acts on the repository" },
-        { "chord": "ctrl+shift+m", "apps": ["axClaude"], "does": "Next permission mode", "kind": "toggle or play; Ctrl+M there is the background music" },
-        { "chord": "ctrl+shift+n", "apps": ["axFile"], "does": "New folder", "kind": "makes a new thing; Ctrl+N there is New window" },
-        { "chord": "ctrl+shift+p", "apps": "all", "does": "Command palette", "kind": "say or show; a bundle key" },
-        { "chord": "ctrl+shift+q", "apps": ["axFile"], "does": "Add to axMedia's queue", "kind": "act on what is selected" },
-        { "chord": "ctrl+shift+r", "apps": ["axTerminal"], "does": "Restart shell", "kind": "acts on the program; Ctrl+R there is Recent commands" },
-        { "chord": "ctrl+shift+r", "apps": ["axClaude"], "does": "Force Claude to restart", "kind": "acts on the program" },
-        { "chord": "ctrl+shift+s", "apps": ["axClaude"], "does": "Send queued messages now", "kind": "acts on the program; Ctrl+S there saves the conversation" },
-        { "chord": "ctrl+shift+t", "apps": ["axFile"], "does": "New text file", "kind": "makes a new thing" },
-        { "chord": "ctrl+shift+w", "apps": ["axDown", "axJSON", "axPreview"], "does": "Word wrap", "kind": "toggle or play" }
+        { "chord": "ctrl+shift+n", "apps": ["axFile"], "does": "New folder", "kind": "makes a new thing; File Explorer's own key for it, and Ctrl+N there is New window" },
+        { "chord": "ctrl+shift+p", "apps": "all", "does": "Command palette", "kind": "say or show; a bundle key, the command palette's key in Visual Studio Code" },
+        { "chord": "ctrl+shift+r", "apps": ["axTerminal"], "does": "Restart shell", "kind": "acts on the program; as in a web browser, Ctrl+Shift+R is the heavier reload" },
+        { "chord": "ctrl+shift+r", "apps": ["axClaude"], "does": "Force Claude to restart", "kind": "acts on the program; as in a web browser, Ctrl+Shift+R is the heavier reload, the same key as axTerminal's" }
       ]
     },
     {
@@ -177,24 +134,23 @@
       "pattern": "F-keys (F1 to F12 alone)",
       "match": "^f[0-9]+$",
       "does": "say or show",
-      "learn": "The function keys are the same in every window: F1 help, F3 find next, F4 send a report, F6 the other pane. F2 and F5 are Windows' own rename and refresh.",
+      "learn": "A function key alone says or shows, the same in every window: F7 reads in full what you are on, F8 reads it with details, F9 says the status, F11 shows the text another way, F12 opens the field to go to a line, a folder or a time. F1 is help. F2 rename, F3 find next, F4 send a report, F5 refresh and F6 the other pane are Windows' own keys, kept as Windows taught them.",
       "windows": [],
       "misfits": [
         { "chord": "f2", "apps": ["axAutomate", "axFile", "axMCP", "axPass", "axTask", "axTemplate"], "does": "Rename", "kind": "act on what is selected; Windows' own key for it" },
-        { "chord": "f3", "apps": ["axAutomate", "axCalc", "axClaude", "axDown", "axFile", "axGIT", "axJSON", "axMCP", "axMedia", "axPass", "axPreview", "axProcess", "axTask", "axTemplate", "axTerminal"], "does": "Find next", "kind": "go to a place; a bundle key" },
-        { "chord": "f3", "apps": ["axGIT"], "does": "Find next in the text", "kind": "go to a place" },
-        { "chord": "f4", "apps": "all", "does": "Send a report", "kind": "open or confirm; a bundle key" },
-        { "chord": "f5", "apps": ["axFile", "axGIT", "axMCP", "axPass", "axProcess", "axTask", "axTemplate"], "does": "Refresh", "kind": "reads again; Windows' own key for it" },
-        { "chord": "f5", "apps": ["axStart"], "does": "Refresh programs", "kind": "reads again" },
-        { "chord": "f5", "apps": ["axPreview"], "does": "Reload", "kind": "reads again" },
-        { "chord": "f5", "apps": ["axAutomate"], "does": "Run", "kind": "act on what is selected" },
-        { "chord": "f6", "apps": ["axAutomate", "axMCP", "axPass", "axTask", "axTemplate"], "does": "Switch between the navigator and the detail pane", "kind": "move between panes; a bundle key" },
-        { "chord": "f6", "apps": ["axPreview"], "does": "Between the text and the details", "kind": "move between panes" },
-        { "chord": "f6", "apps": ["axDown", "axJSON"], "does": "Between the text and the field under it", "kind": "move between panes" },
-        { "chord": "f6", "apps": ["axCalc", "axClaude", "axTerminal"], "does": "Switch between the view and the field", "kind": "move between panes" },
-        { "chord": "f6", "apps": ["axGIT"], "does": "Switch between the list and the text", "kind": "move between panes" },
-        { "chord": "f6", "apps": ["axMedia", "axProcess"], "does": "Back to the list", "kind": "move between panes" },
-        { "chord": "f6", "apps": ["axFile"], "does": "Switch between the list and the Favorites list", "kind": "move between panes" }
+        { "chord": "f3", "apps": ["axAutomate", "axCalc", "axClaude", "axDown", "axFile", "axGIT", "axJSON", "axMCP", "axMedia", "axPass", "axPreview", "axProcess", "axTask", "axTemplate", "axTerminal"], "does": "Find next", "kind": "go to a place; a bundle key, Windows' own key for find next, as in Notepad" },
+        { "chord": "f3", "apps": ["axGIT"], "does": "Find next in the text", "kind": "go to a place; the same key, in the text pane" },
+        { "chord": "f4", "apps": "all", "does": "Send a report", "kind": "open or confirm; a bundle key, which shows the report's form" },
+        { "chord": "f5", "apps": ["axAutomate", "axFile", "axGIT", "axMCP", "axPass", "axProcess", "axTask", "axTemplate"], "does": "Refresh", "kind": "reads again; Windows' own key for it" },
+        { "chord": "f5", "apps": ["axStart"], "does": "Refresh programs", "kind": "reads again; Windows' own key for refresh" },
+        { "chord": "f5", "apps": ["axPreview"], "does": "Reload", "kind": "reads again; Windows' own key for refresh, as in a web browser" },
+        { "chord": "f6", "apps": ["axAutomate", "axMCP", "axPass", "axTask", "axTemplate"], "does": "Switch between the navigator and the detail pane", "kind": "move between panes; a bundle key, Windows' own key for the next pane" },
+        { "chord": "f6", "apps": ["axPreview"], "does": "Between the text and the details", "kind": "move between panes; Windows' own key for the next pane" },
+        { "chord": "f6", "apps": ["axDown", "axJSON"], "does": "Between the text and the field under it", "kind": "move between panes; Windows' own key for the next pane" },
+        { "chord": "f6", "apps": ["axCalc", "axClaude", "axTerminal"], "does": "Switch between the view and the field", "kind": "move between panes; Windows' own key for the next pane" },
+        { "chord": "f6", "apps": ["axGIT"], "does": "Switch between the list and the text", "kind": "move between panes; Windows' own key for the next pane" },
+        { "chord": "f6", "apps": ["axMedia", "axProcess"], "does": "Back to the list", "kind": "move between panes; Windows' own key for the next pane" },
+        { "chord": "f6", "apps": ["axFile"], "does": "Switch between the list and the Favorites list", "kind": "move between panes; Windows' own key for the next pane" }
       ]
     },
     {
@@ -223,7 +179,7 @@
       "pattern": "Enter with Ctrl, Shift or Alt",
       "match": "^(ctrl\\+|shift\\+|alt\\+|ctrl\\+shift\\+)enter$",
       "does": "another form of open or confirm",
-      "learn": "Enter with a modifier is another way of opening or saying yes. Ctrl+Enter does the window's main thing: it sends the message or the command, commits, saves a form, marks a task done in axTask, or pauses and resumes in axMedia. Shift+Enter opens what you are on another way, such as a preview. Alt+Enter shows its properties and Ctrl+Shift+Enter starts a program as administrator, as everywhere in Windows.",
+      "learn": "Enter with a modifier is another way of opening or saying yes. Ctrl+Enter does the most frequent action where you are: it sends the message or the command, commits, saves a form, marks a task done in axTask, or pauses and resumes in axMedia. Shift+Enter opens what you are on another way, such as a preview. Alt+Enter shows its properties and Ctrl+Shift+Enter starts a program as administrator, as everywhere in Windows; in axClaude it sends the queued messages now, another form of Ctrl+Enter.",
       "windows": ["alt+enter", "ctrl+shift+enter"],
       "misfits": []
     },
@@ -232,21 +188,18 @@
       "scope": "every-window",
       "pattern": "Escape and Shift+Escape",
       "match": "^(shift\\+)?escape$",
-      "does": "go back or close; with Shift, stop the program under the window",
-      "learn": "Escape goes back one step or closes what is open. It never loses work without asking. Shift+Escape is for the program under an access layer: it interrupts Claude, or sends Escape to the terminal's program.",
+      "does": "go back or close; with Shift, Escape sent to the program under the window",
+      "learn": "Escape only goes back one step or closes what is open; it never clears what you typed and never loses work without asking. Shift+Escape sends Escape to the terminal's program in axTerminal.",
       "windows": [],
-      "misfits": [
-        { "chord": "escape", "apps": ["axAutomate", "axFile", "axGIT", "axMCP", "axMedia", "axPass", "axProcess", "axTask", "axTemplate"], "does": "Clear the filter", "kind": "remove: it clears and stays where it is" },
-        { "chord": "escape", "apps": ["axCalc"], "does": "Clear the field", "kind": "remove: it clears and stays where it is" }
-      ]
+      "misfits": []
     },
     {
       "id": "delete",
       "scope": "every-window",
-      "pattern": "Delete and Ctrl+Shift+Delete",
-      "match": "^(ctrl\\+shift\\+)?delete$",
+      "pattern": "Delete, Ctrl+Delete and Ctrl+Shift+Delete",
+      "match": "^(ctrl\\+|ctrl\\+shift\\+)?delete$",
       "does": "remove",
-      "learn": "Delete removes what you are on, and what can be lost asks first or can be undone. Ctrl+Shift+Delete clears a whole history, as in a web browser.",
+      "learn": "Delete removes what you are on, and what can be lost asks first or can be undone. Ctrl+Delete clears what you typed: a list's filter, axCalc's field. Ctrl+Shift+Delete clears a whole history, as in a web browser.",
       "windows": [],
       "misfits": []
     },
@@ -288,10 +241,7 @@
       "does": "a bigger step",
       "learn": "Ctrl with an arrow takes a bigger step: Ctrl+Up and Ctrl+Down go to the previous and the next section, Ctrl+Left and Ctrl+Right go back and forward 15 seconds in a recording. Ctrl+Home and Ctrl+End go to the first and the last. With Shift too, a bigger step still: the previous or the next file.",
       "windows": [],
-      "misfits": [
-        { "chord": "ctrl+up", "apps": ["axMedia"], "does": "Faster", "kind": "change a value: the speed of playing" },
-        { "chord": "ctrl+down", "apps": ["axMedia"], "does": "Slower", "kind": "change a value: the speed of playing" }
-      ]
+      "misfits": []
     },
     {
       "id": "alt-arrows",
@@ -299,11 +249,9 @@
       "pattern": "Alt with an arrow",
       "match": "^alt\\+(up|down|left|right)$",
       "does": "the choices of what you are on",
-      "learn": "Alt with an arrow is for the choices of what you are on, in the arrows' own directions (the maintainer's rule of 2026-11-21): Alt+Right goes into the list of them, where the arrows move and Enter chooses; Alt+Down and Alt+Up change to the next and the previous one in place; Alt+Left steps out to what is around it and offers what can be added there. Ctrl with an arrow moves the cursor a bigger step, and moving an item of a list up or down is Ctrl+Shift+Up and Ctrl+Shift+Down, wherever a list has it.",
+      "learn": "Alt with an arrow is for the choices of what you are on, in the arrows' own directions (the maintainer's rule of 2026-11-21): Alt+Right goes into the list of them, where the arrows move and Enter chooses; Alt+Down and Alt+Up change to the next and the previous one in place; Alt+Left steps out to what is around it and offers what can be added there. axMedia's speed is Alt+Up and Alt+Down, axTerminal's recent commands Alt+Down in the command field. Ctrl with an arrow moves the cursor a bigger step, and moving an item of a list up or down is Ctrl+Shift+Up and Ctrl+Shift+Down, wherever a list has it.",
       "windows": [],
-      "misfits": [
-        { "chord": "alt+up", "apps": ["axFile"], "does": "Up one level", "kind": "go to a place; File Explorer's own key for it" }
-      ]
+      "misfits": []
     },
     {
       "id": "text-size",
@@ -333,9 +281,7 @@
       "does": "open a menu",
       "learn": "Alt and a letter opens the menu that starts with that letter, as in every Windows program.",
       "windows": [],
-      "misfits": [
-        { "chord": "alt+d", "apps": ["axFile"], "does": "Go to folder", "kind": "go to a place; File Explorer's own key for its address bar" }
-      ]
+      "misfits": []
     }
   ]
 }

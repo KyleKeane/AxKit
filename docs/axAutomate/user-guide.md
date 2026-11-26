@@ -44,14 +44,14 @@ After the sentence come small marks:
 
 Tab or Enter on a step goes to its details: its number, what it does, each of its values (the keys, the text), what
 happens when it fails, what it reports, its blocks, its note, and the line of the file it comes from. Escape or Tab
-goes back. Ctrl+Q on a step or a workflow, in the list, reads it and every line of its details at once; in the
+goes back. F7 on a step or a workflow, in the list, reads it and every line of its details at once; in the
 details it reads the line you are on.
 
 ## Running workflows
 
-F5 inside a workflow runs it; F5 in a folder runs every workflow of that folder, one after another (not the folders
+Ctrl+R inside a workflow runs it; Ctrl+R in a folder runs every workflow of that folder, one after another (not the folders
 inside it). To run only some of them, select them first: Space selects the workflow you are on, Shift+Down and
-Shift+Up select as you move, Ctrl+A selects all, and F5 then runs the selected ones, "Running 2 selected workflows".
+Shift+Up select as you move, Ctrl+A selects all, and Ctrl+R then runs the selected ones, "Running 2 selected workflows".
 The selection stays after the run; Escape gives it up. The axKit windows of a run open on a desktop of their own: they never come to the front, never take your
 keyboard and play no sound, so you can go on working, in axAutomate or anywhere else. Each workflow gets fresh
 windows with settings of their own, never yours, and its steps that make files and folders make them in a folder of
@@ -78,23 +78,24 @@ that failed ends with "failed". Tab on either gives "Last run:" with what the ru
 after the step going on ("03-waits stopped"), from either pane; closing the window stops it the same way, and its run's
 windows are gone within half a minute.
 
-Ctrl+R on a workflow, or inside one, shows the report of its last run: how it ended, then every step played with what
+F8 on a workflow, or inside one, shows the report of its last run: how it ended, then every step played with what
 the runner saw ("ok  3: ..." or "FAIL 4: ...  -> ...", numbered by the line of the script's file, not by step), and the timeline of what the run's windows said and where the
 focus went. It is a text: the arrows read it, Ctrl+F finds in it and Escape closes it. The reports are kept until the
 window closes.
 
-A workflow this version cannot run says why when you press F5, for example one with "otherwise" steps; its details
+A workflow this version cannot run says why when you press Ctrl+R, for example one with "otherwise" steps; its details
 say "Cannot run". So does one with a step whose number is not one, such as "wait 2s". The checks that need NVDA listening run only in the NVDA pass, not from the window.
 
 ## Keys
 
 - Ctrl+O: open a folder of workflows.
 - Ctrl+J: the workflow's file as text, a script in axDown, a workflow file in axJSON.
-- F5: run the workflow, or every workflow of the folder, or the selected ones. Escape during a run: stop it.
+- Ctrl+R: run the workflow, or every workflow of the folder, or the selected ones. Escape during a run: stop it.
 - Space: select a workflow of a folder, or deselect it. Ctrl+A: select all. Ctrl+Shift+A, or Escape while nothing runs: deselect all.
-- Ctrl+R: the report of the last run.
-- Session, Refresh: read the folder or the workflow again, after the file changed.
-- F1: every key of the window.
+- F8: the report of the last run.
+- F7: read in full the workflow or step you are on.
+- F5, or Session, Refresh: read the folder or the workflow again, after the file changed.
+- F1: every key of the window, after a short section, "How the keys go", on the rules of the keys.
 - Ctrl+N, F2, Delete and the other keys that change items in axTask say "This version views and runs the workflows;
   changing them comes later".
 
@@ -103,12 +104,12 @@ say "Cannot run". So does one with a step whose number is not one, such as "wait
 Each menu with its commands and their keys, as the window lists them:
 
 <!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
-- **Session**: Exit (Alt+F4); Open a folder of workflows (Ctrl+O); Refresh.
-- **Actions**: Deselect all (Ctrl+Shift+A); Run (F5); Select all (Ctrl+A); The last run's report (Ctrl+R).
+- **Session**: Exit (Alt+F4); Open a folder of workflows (Ctrl+O); Refresh (F5).
+- **Actions**: Deselect all (Ctrl+Shift+A); Run (Ctrl+R); Select all (Ctrl+A); The last run's report (F8).
 - **Navigation**: Nothing to move to here yet.
-- **Context**: Open (Enter); Read in full (Ctrl+Q); Select or deselect (Space); Select to here (Shift+Space); The workflow's file as text (Ctrl+J).
+- **Context**: Open (Enter); Read in full (F7); Select or deselect (Space); Select to here (Shift+Space); The workflow's file as text (Ctrl+J).
 - **Options**: Filter; Developer (Open settings file); Sort by (Name, The list's own order); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
-- Keys without a menu item: Enter (Change the field); Space (Check the field); Escape (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); F3 (Find next); Shift+F3 (Find previous); Right (Into the list); Ctrl+N (New item); Ctrl+Shift+N (New list); Ctrl+Down (Next section); Ctrl+Up (Previous section); F2 (Rename); Shift+Home (Select to the first workflow); Shift+End (Select to the last workflow); Shift+Down (Select to the next workflow); Shift+Up (Select to the previous workflow); Ctrl+Tab (Switch between the navigator and the detail pane); Shift+F10 (The Context menu); Shift+F10 (The field's menu); Right (The next value of the field); Left (The previous value of the field); Tab (To the detail pane); Tab (To the navigator); Ctrl+Z (Undo); Left (Up a level).
+- Keys without a menu item: Enter (Change the field); Space (Check the field); Ctrl+Delete (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); F3 (Find next); Shift+F3 (Find previous); Right (Into the list); Ctrl+N (New item); Ctrl+Shift+N (New list); Ctrl+Down (Next section); Ctrl+Up (Previous section); F2 (Rename); Shift+Home (Select to the first workflow); Shift+End (Select to the last workflow); Shift+Down (Select to the next workflow); Shift+Up (Select to the previous workflow); Ctrl+Tab (Switch between the navigator and the detail pane); Shift+F10 (The Context menu); Shift+F10 (The field's menu); Right (The next value of the field); Left (The previous value of the field); Tab (To the detail pane); Tab (To the navigator); Ctrl+Z (Undo); Left (Up a level).
 - **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
 <!-- end of the menus -->
 
@@ -131,7 +132,7 @@ Help, Diagnostics, Copy diagnostics copies what helps a bug report; F4 sends a r
 
 ## Filter and sort
 
-Options, Filter (Alt+O, then F) shows only what has a text in its name: type part of a name, Enter, and the list holds only those rows and says so in its name, "Home, 4 items, filter tap, 1 shown". An empty text clears the filter, and so does Escape in the list once nothing is selected; going into another list drops it. Options, Sort by puts the list in the order of its names, or back in its own order. Both are the same in every list of axKit's navigators, and neither changes anything that is stored.
+Options, Filter (Alt+O, then F) shows only what has a text in its name: type part of a name, Enter, and the list holds only those rows and says so in its name, "Home, 4 items, filter tap, 1 shown". An empty text clears the filter, and so does Ctrl+Delete in the list; going into another list drops it. Options, Sort by puts the list in the order of its names, or back in its own order. Both are the same in every list of axKit's navigators, and neither changes anything that is stored.
 
 ## About
 

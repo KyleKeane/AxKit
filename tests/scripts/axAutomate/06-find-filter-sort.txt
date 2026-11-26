@@ -28,14 +28,14 @@ do Find previous
 expect focus 03-apricot, workflow, 2 steps
 
 # Goal: Show only the workflows whose name contains a text
-# Options, Filter, "ap": the two that hold it; Escape, with nothing selected, clears it.
+# Options, Filter, "ap": the two that hold it; Ctrl+Delete clears it (Escape until 2026-11-26).
 do Filter
 expect focus "name":"Name contains"
 type ap
 keys enter
 expect said ! filter ap, 2 shown
 expect list "items":["02-apple, workflow, 2 steps","03-apricot, workflow, 2 steps"]
-keys escape
+keys ctrl+delete
 expect said ! Filter cleared
 expect list "items":["Zebra check, workflow, 2 steps","02-apple, workflow, 2 steps","03-apricot, workflow, 2 steps"]
 

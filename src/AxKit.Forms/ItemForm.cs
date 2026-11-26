@@ -627,7 +627,7 @@ public abstract partial class ItemForm : AxKitForm
             Shared(new Command("Deselect all", SelectionKeys.Clear, SelectNoRows) { When = () => InNavigator() && Selection.Count > 0, Mark = CommandMark.Change });
         }
 
-        // Escape then gives up a filter (ItemForm.Arrange.cs).
+        // Ctrl+Delete gives up a filter (ItemForm.Arrange.cs).
         AddArrangeKeys(Shared);
 
         Shared(new Command("New item", ItemKeys.New, NewItem) { When = InNavigator, Mark = CommandMark.Change });

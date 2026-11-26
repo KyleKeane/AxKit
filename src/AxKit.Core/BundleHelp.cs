@@ -3,7 +3,7 @@ using System.Text;
 namespace AxKit.Core;
 
 /// <summary>
-/// The start of every window's F1 text (docs/axKit/app-kit.md AK-2.3, bundle AX-7.2, AX-8.2): the first line naming
+/// The start of every window's F1 text (docs/axKit/app-kit.md AK-2.3, bundle AX-7.2, AX-8.2): the rules of the keys (AX-8.18), the line naming
 /// the text's own keys, then the section of the keys every window of axKit has, with the app's own lines in it, written
 /// once here. Each app's <c>HelpText.Shortcuts</c> is this followed by its own sections.
 /// </summary>
@@ -28,10 +28,30 @@ public static class BundleHelp
     public const string KeyTestLine = "  A key that seems to do nothing: Help, Diagnostics, Test a key says each key you press and what it does here, and carries none of them out; Escape ends it. A key that is not said never reached axKit";
 
     /// <summary>The entry sounds and a form's words, the same in every F1 text (AX-7.11, 2026-11-22).</summary>
-    public const string NoticeLine = "  Whenever the focus enters a list, a text, a field or a form, a sound of its kind plays first, bell notes that run up and then go down: one long tone for a field to type in, a lower one for a text to read, four quick beeps for a list, beeps and tones for a form. Moving inside it is silent. A form says its title and the word form; Ctrl+Q reads its explanation, as it reads the text of any question or notice again. Options, Text, Entry sounds turns the sounds off for every window";
+    public const string NoticeLine = "  Whenever the focus enters a list, a text, a field or a form, a sound of its kind plays first, bell notes that run up and then go down: one long tone for a field to type in, a lower one for a text to read, four quick beeps for a list, beeps and tones for a form. Moving inside it is silent. A form says its title and the word form; F7 reads its explanation, as it reads the text of any question or notice again. Options, Text, Entry sounds turns the sounds off for every window";
 
-    /// <summary>F8's line, the same in every F1 text (AX-7.10, 2026-11-15).</summary>
-    public const string StatusLine = "  F8: say the status, what the status bar at the bottom of the window holds, said by axKit itself; in a notice too";
+    /// <summary>F9's line, the same in every F1 text (AX-7.10, 2026-11-15; F8 until 2026-11-26).</summary>
+    public const string StatusLine = "  F9: say the status, what the status bar at the bottom of the window holds, said by axKit itself; in a notice too";
+
+    /// <summary>F7's line, the same in every F1 text (AX-8.18 rule 5, AX-7.11, 2026-11-26).</summary>
+    public const string ReadLine = "  F7: read in full what you are on: an item's every field, the text of a notice or a form, a question again; where there is nothing more to read, the edge sound. F8 reads with details where the window has them";
+
+    /// <summary>
+    /// The rules of the keys (AX-8.18, the maintainer's ask of 2026-11-26: "so that people learn the principles and
+    /// can guess the keys"), the first lines of every F1 text: one short line a rule, for the ear, then the three keys
+    /// of going back, removing and clearing. Written here once; a rule changed in the spec changes here.
+    /// </summary>
+    public const string RulesSection =
+        "## How the keys go\r\n"
+        + "  A key alone moves and reads; with Shift, the other way, or select as you move.\r\n"
+        + "  Ctrl with a letter acts on what you are on; Ctrl and Shift with it, the reverse or the wider form. In a text, Ctrl with NVDA's browse-mode letter jumps while you type.\r\n"
+        + "  Ctrl with a number: the window's numbered action.\r\n"
+        + "  Alt with a letter opens a menu, Alt with a number goes to a place, Alt with an arrow gives the choices of what you are on.\r\n"
+        + "  A function key alone says or shows: F7 reads in full, F8 with details, F9 the status, F11 another view, F12 goes to; with Shift, the other form.\r\n"
+        + "  Ctrl with a function key opens an axKit app; Ctrl and Shift with one, an access layer.\r\n"
+        + "  Ctrl and Shift with Space or punctuation works anywhere in Windows.\r\n"
+        + "  Escape goes back or closes, Delete removes, Ctrl+Delete clears what you typed.\r\n"
+        + "  Ctrl+Space turns between the two modes, and Ctrl+Enter does the most frequent action where you are.\r\n";
 
     /// <summary>
     /// The app keys (AX-8.18 rule 6), in every window's F1 text; the axKit menu's Apps and Access layers show each
@@ -79,6 +99,8 @@ public static class BundleHelp
     public static string Section(string app, string[] lines, string? altF4 = null, string heading = InEveryWindow, bool navigateMenu = false)
     {
         var text = new StringBuilder();
+        // AX-8.18: the rules first, so that every key after them can be guessed from its modifier.
+        text.Append(RulesSection).Append("\r\n");
         text.Append("In this text: h and Shift+H move by heading, 1 to 6 by level");
         if (navigateMenu)
         {
@@ -101,6 +123,7 @@ public static class BundleHelp
         text.Append(MainActionLine).Append("\r\n");
         text.Append(ModeLine).Append("\r\n");
         text.Append("  Shift+F1 or Ctrl+Slash: ask Claude about this window: type your question and press Enter; the first time, a reminder asks you to turn Claude on; the answer is a notice, with a field under it to ask more\r\n");
+        text.Append(ReadLine).Append("\r\n");
         text.Append(StatusLine).Append("\r\n");
         text.Append(AppKeysLine).Append("\r\n");
         foreach (var line in lines)
@@ -140,7 +163,7 @@ public static class BundleHelp
     /// <param name="orders">The orders the list can be put in, as the menu names them: "Name, Date or Size"; null for a list with no Sort by.</param>
     public static string FilterAndSortSection(string? orders = "The list's own order or Name") =>
         "\r\n\r\n## Filter and sort\r\n"
-        + "  Options, Filter: only what has a text in its name is listed, and the list's name says so, \"24 items, filter chap, 3 shown\". An empty text clears the filter, and so does Escape in the list once nothing is selected. Going to another list drops it"
+        + "  Options, Filter: only what has a text in its name is listed, and the list's name says so, \"24 items, filter chap, 3 shown\". An empty text clears the filter, and so does Ctrl+Delete in the list. Going to another list drops it"
         + (orders is null ? string.Empty : $"\r\n  Options, Sort by: {orders}");
 
     public static string NoticesSection(string app, string inPlaceOf, bool navigateMenu = false) =>

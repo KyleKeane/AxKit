@@ -12,7 +12,7 @@ public static class HelpText
         ## axProcess
           The window starts in Processes, one of three lists of This computer: Processes, Services and Startup.
           Left or Backspace goes up to This computer, where the three lists are rows. Right or Enter on one goes into it.
-          Alt+1, Alt+2, Alt+3 go straight to Processes, Services or Startup from anywhere; pressed in the list already shown, the key says its name. Ctrl+1, Ctrl+2 and Ctrl+3, their keys until now, still work.
+          Alt+1, Alt+2, Alt+3 go straight to Processes, Services or Startup from anywhere; pressed in the list already shown, the key says its name.
           Refresh reads the list again; nothing changes by itself. At This computer, it reads all three.
           Summary says the processes, the memory in use and the processor.
           Type the start of a row to jump to it, the same letter again to the next; Shift with a letter goes backwards.

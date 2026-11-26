@@ -20,9 +20,9 @@ Starts with: Open axCalc.
 ### Empty the field
 
 1. Type "2+2".
-2. Press Escape.
+2. Press Ctrl+Delete (Clear the field).
     You hear: Cleared.
-3. Press Escape.
+3. Press Ctrl+Delete (Clear the field).
     You hear: Empty.
 
 ### Go on from the last answer
@@ -33,9 +33,9 @@ Starts with: Open axCalc.
 
 ### Hear the last answer in other bases
 
-1. Press Ctrl+Q (Say the last answer; Actions menu).
+1. Press F7 (Say the last answer; Actions menu).
     You hear: 4147200.
-2. Press Ctrl+I (Answer in other bases; Actions menu).
+2. Press F8 (Answer in other bases; Actions menu).
     You hear: hex.
 
 ### Put an earlier expression back in the field
@@ -49,7 +49,8 @@ Starts with: Open axCalc.
 2. Press Escape.
 3. Press Tab.
 4. Press Delete.
-5. Press Escape twice.
+5. Press Escape.
+6. Press Ctrl+Delete (Clear the field).
     You hear: Cleared.
 
 ### Read the keyboard shortcuts
@@ -69,7 +70,7 @@ Starts with: Open axCalc.
 7. Type "9".
 8. Press Page Up twice.
     You hear the sound Edge.
-9. Press Escape.
+9. Press Ctrl+Delete (Clear the field).
     You hear: Cleared.
 
 ### Open another app with its key
@@ -167,7 +168,7 @@ Starts with: Open axCalc.
 
 ### Hear the last answer in other bases
 
-1. Press Ctrl+I (Answer in other bases; Actions menu).
+1. Press F8 (Answer in other bases; Actions menu).
     You hear: 255, hex FF, binary 1111 1111, octal 377.
 2. Type "10+1".
 3. Press Enter.
@@ -185,10 +186,10 @@ Starts with: Open axCalc.
 
 ### Hear the answer of an entry in other bases
 
-1. Press Ctrl+I (Answer in other bases; Actions menu).
+1. Press F8 (Answer in other bases; Actions menu).
     You hear: 255, hex FF, binary 1111 1111, octal 377.
 2. Press Down.
-3. Press Ctrl+I (Answer in other bases; Actions menu).
+3. Press F8 (Answer in other bases; Actions menu).
     You hear: 11, hex B, binary 1011, octal 13.
 
 ### Move from answer to answer with a letter
@@ -279,7 +280,7 @@ Starts with: Open axCalc.
 3. Press Enter.
     You hear: Circle area inserted.
 4. Type "3".
-5. Press Escape.
+5. Press Ctrl+Delete (Clear the field).
     You hear: Cleared.
 
 ### Put a template in around the selected text
@@ -297,7 +298,7 @@ Starts with: Open axCalc.
 
 1. Put in the template circle area.
 2. Type "4".
-3. Press Escape.
+3. Press Ctrl+Delete (Clear the field).
 4. Put in the template Answer twice.
 5. Press Enter.
     You hear: 10.

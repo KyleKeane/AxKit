@@ -13,11 +13,11 @@ mkdir heard
 file heard\04-heard.txt # A check that needs NVDA listening.\n\nstart down\nexpect spoken Untitled\nclose
 
 # Goal: Stop the run of a folder partway
-# F5 at the folder's level; once the first workflow has passed and the second is going on, Escape: the second stops
+# Ctrl+R at the folder's level; once the first workflow has passed and the second is going on, Escape: the second stops
 # after its step, the third is never started, and one line says where the run stopped and what it did not reach.
 start automate {temp}\flows
 expect focus 01-quick, workflow, 2 steps
-keys f5
+keys ctrl+r
 expect said Running 3 workflows
 expect said 01-quick passed, 2 steps
 # A user's pace: the second workflow has started by now, and its two waits take six seconds.
@@ -31,7 +31,7 @@ expect list "items":["01-quick, workflow, 2 steps, passed","02-waits, workflow, 
 close
 
 # Goal: Run only the workflows you selected
-# AU-4.4a, bundle AX-8.16: Space selects the workflow you are on; F5 then runs the selected ones and no other. Here
+# AU-4.4a, bundle AX-8.16: Space selects the workflow you are on; Ctrl+R then runs the selected ones and no other. Here
 # the first and the third, in a window of their own: Space on 01-quick, End, Space on 03-later. The second is never
 # started, so its row has no outcome.
 start automate {temp}\flows
@@ -42,7 +42,7 @@ keys end
 keys space
 expect said ! Selected
 expect state , 2 selected","
-keys f5
+keys ctrl+r
 expect said Running 2 selected workflows
 expect said 01-quick passed, 2 steps
 expect said 03-later passed, 2 steps
@@ -54,7 +54,7 @@ expect list "items":["01-quick, workflow, 2 steps, passed","02-waits, workflow, 
 close
 
 # Check: A check that needs NVDA listening cannot run from the window
-# A script with a step for NVDA's speech: its details say why it cannot run, F5 in its folder and F5 inside it say
+# A script with a step for NVDA's speech: its details say why it cannot run, Ctrl+R in its folder and Ctrl+R inside it say
 # the same, and its step reads "Expect NVDA to say".
 start automate {temp}\heard
 expect focus 04-heard, workflow, 3 steps
@@ -62,11 +62,11 @@ keys tab
 expect list "Cannot run: the operation expect spoken needs NVDA listening, which only the NVDA pass has"
 keys escape
 expect focus 04-heard, workflow, 3 steps
-keys f5
+keys ctrl+r
 expect said 04-heard cannot run: the operation expect spoken needs NVDA listening, which only the NVDA pass has
 keys right
 expect said ! 04-heard, 3 steps, 1. Start down
 keys down
 expect focus 2. Expect NVDA to say: Untitled
-keys f5
+keys ctrl+r
 expect said ! This workflow cannot run: the operation expect spoken needs NVDA listening, which only the NVDA pass has

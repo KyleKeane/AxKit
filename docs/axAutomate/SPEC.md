@@ -19,7 +19,7 @@ A workflow is one JSON file, `<name>.workflow.json`, in a folder of workflows; t
 the navigator lists the folder's workflows, Right goes into one, and its steps are rows read as a sentence: "3. Press
 Ctrl+Shift+P", "4. Expect said: Command palette", "5. Choose the menu item Close all windows". Tab goes to the detail
 pane, where a step's parts are fields: what it does, its text, what happens when it fails, the message it reports.
-Later, F5 runs the workflow on a desktop of its own, so the run never takes the user's keyboard; each row then ends with
+Later, Ctrl+R runs the workflow on a desktop of its own, so the run never takes the user's keyboard; each row then ends with
 "passed", "failed: <what happened>" or "skipped", and the report opens as a notice text. Ctrl+J opens the file in
 axJSON, as in axTask.
 
@@ -136,21 +136,22 @@ keys in place of its words on a line:
 - AU-4.3 A step's fields: Do (a choice of the operations), one field per key of the operation (text, a number for
   `ms`, a long text for `text`), On failure (a choice: stop, continue), Report (text), Note (long text). Changing Do
   keeps the keys the new operation shares and drops the others, with Ctrl+Z to bring them back (IA-5.4).
-- AU-4.4 Keys of the window: F5 runs the workflow in hand (in the navigator's top level: every workflow of the
-  folder, one after another); Escape during a run stops it after the current step; Ctrl+N a new step after the one
+- AU-4.4 Keys of the window: Ctrl+R runs the workflow in hand (in the navigator's top level: every workflow of the
+  folder, one after another; F5 until 2026-11-26); Escape during a run stops it after the current step; F8 the last
+  run's report; Ctrl+N a new step after the one
   selected (a new workflow at the top level); Delete removes a step, Ctrl+Z brings it back; Ctrl+Shift+Up and Ctrl+Shift+Down move a
-  step; Ctrl+J the file in axJSON. The rest are the item apps' (IA-3).
+  step; Ctrl+J the file in axJSON. The rest are the item apps' (IA-3), F5 Refresh among them.
 - AU-4.4a **Running the selected workflows** (2026-11-22; bundle AX-8.16). Space selects a workflow of a folder's
   level, with the bundle's other selection keys; a folder and a step are not selected (the edge sound). With
-  workflows selected, F5 in that folder runs the selected ones and no other, in the list's order: "Running 2
-  selected workflows; Escape stops the run". With none selected F5 runs every workflow of the folder, as before.
-  The selection stays after the run, so that F5 runs the same ones again; Escape gives it up once no run is going
-  on (during a run Escape stops the run). Inside a workflow F5 runs that workflow, whatever is selected outside.
+  workflows selected, Ctrl+R in that folder runs the selected ones and no other, in the list's order: "Running 2
+  selected workflows; Escape stops the run". With none selected Ctrl+R runs every workflow of the folder, as before.
+  The selection stays after the run, so that Ctrl+R runs the same ones again; Escape gives it up once no run is going
+  on (during a run Escape stops the run). Inside a workflow Ctrl+R runs that workflow, whatever is selected outside.
 - AU-4.5 During a run, each step's row is said as it ends only when it fails ("Step 7 failed: expected said Command
   palette"), and once at the end: "axDown: the command palette passed, 42 steps" or "failed at step 7". The report,
-  every step with what was said and focused, opens with Ctrl+R as a notice text with the bundle's reading keys.
+  every step with what was said and focused, opens with F8 as a notice text with the bundle's reading keys.
 - AU-4.6 The window's menus follow AX-9.1 (Session, Actions, Navigation, Context, Options, Window, axKit, Help; 2026-11-11): Actions holds Run and Stop the run, Context Open, Read in full and the workflow's file as text for what the focus is on.
-- AU-4.7 **Filter and sort** (2026-11-22; the navigator's, bundle AX-8.17): Options → Filter… shows only the folders, workflows or steps of the level whose name contains a text; Options → Sort by ▸ puts them by name or back in their own order. F5 runs the selected workflows, or with none selected every workflow of the folder, filter or not (AU-4.4a).
+- AU-4.7 **Filter and sort** (2026-11-22; the navigator's, bundle AX-8.17): Options → Filter… shows only the folders, workflows or steps of the level whose name contains a text; Options → Sort by ▸ puts them by name or back in their own order; Ctrl+Delete clears the filter. Ctrl+R runs the selected workflows, or with none selected every workflow of the folder, filter or not (AU-4.4a).
 
 ## 5. The engine and the move of the tests
 
@@ -197,9 +198,9 @@ keys in place of its words on a line:
 
 ## 6b. Running from the window (2026-11-11)
 
-- AU-6b.1 F5 runs the workflow in hand, read again from its file first; at a folder's level, every workflow of that
+- AU-6b.1 Ctrl+R runs the workflow in hand, read again from its file first; at a folder's level, every workflow of that
   folder, one after another, each with fresh windows and a fresh `{temp}` under `%TEMP%\axkit-automate`. The folders
-  inside it are not run (AU-D9). Session, Refresh keeps its menu item, without a key (AU-D8). "Running 03-waits;
+  inside it are not run (AU-D9). Session, Refresh is on F5, as in the other item apps (AU-D8). "Running 03-waits;
   Escape stops it" (a folder: "Running 6 workflows; Escape stops the run") is said once the run starts: after the
   files are read, and, for a workflow with a `run` step, after the notice of AU-D11 is answered with Run; a Cancel
   says "Not run" alone (taken by the assistant on 2026-11-11, for the user to confirm: the line said before the
@@ -220,7 +221,7 @@ keys in place of its words on a line:
   15 s for the run to close its windows, then ends the processes the run started (a step that waits up to 60 s, a
   window that hangs), and ends; it never stays on without a window (checked 2026-11-11: gone within 35 s of closing
   during a 40 s wait). The run's thread never ends the process: anything a step throws fails that workflow.
-- AU-6b.5 A workflow that cannot run (AU-3.3.2, AU-D7) says why on F5, "This workflow cannot run: ...", and its
+- AU-6b.5 A workflow that cannot run (AU-3.3.2, AU-D7) says why on Ctrl+R, "This workflow cannot run: ...", and its
   details say "Cannot run: ..."; Actions, Run is unavailable on it (in the command palette too), and Stop the run
   when nothing runs. A step whose number is not one (`wait 2s`, `use first`, a `silence` without its length, a
   `wait` of a workflow file without its milliseconds) makes the workflow unrunnable with the step said, as an unknown
@@ -229,11 +230,11 @@ keys in place of its words on a line:
 - AU-6b.7 The run's windows never get the right to take the foreground: the window that runs is the user's
   foreground app, and what a run's window hands to the shell (Explorer, a browser, Open with) lands on the user's own
   desktop. The command line's NVDA tier, on the user's desktop, keeps giving it.
-- AU-6b.6 The report of AU-4.5 (built 2026-11-12): Ctrl+R, or Actions, The last run's report, on a workflow or
+- AU-6b.6 The report of AU-4.5 (built 2026-11-12): F8 (Ctrl+R until 2026-11-26), or Actions, The last run's report, on a workflow or
   inside one, shows its last run in this window as a notice titled "Report of 03-waits": how it ended, as said, then
   the runner's log as the command line writes it (each line played, numbered by its line in a script's file and in
   run order for a workflow file, "ok  3: ..." or "FAIL 4: ...  -> what the runner saw", what failed after the steps) and the timeline of what was said and focused, with the bundle's reading keys and
-  Ctrl+F (`RunSentences.Report`). A workflow that could not run reports why. Without a run: "No report yet: F5 runs
+  Ctrl+F (`RunSentences.Report`). A workflow that could not run reports why. Without a run: "No report yet: Ctrl+R runs
   the workflow" ("... the run is going on" during one). Kept with the outcomes until the window closes (AU-D10).
 - AU-6b.8 What a run from the window reaches (2026-11-11, at review): its axKit windows are on the run's own desktop
   with settings of their own, and its `file`, `mkdir` and `silence` steps write in the run's `{temp}` folder alone: a
@@ -294,15 +295,16 @@ keys in place of its words on a line:
   run's folder and `\uXXXX` a character in any value, and in a `file` step's text a backslash followed by n is a new
   line, so a text that holds one literally (`C:\notes`) cannot be written by a workflow file in this version; the
   two formats are not yet equivalent there.
-- AU-D8 F5 runs (AU-4.4), so it is not the item apps' Refresh here: Refresh stays in the Session menu without a key,
-  and a run reads its workflow's file again by itself (the assistant, 2026-11-11). Escape also stops a run, before its
-  detail pane meaning, only while one goes on. To reverse: a key of its own for Refresh in `AxAutomateKeys`.
+- AU-D8 Ctrl+R runs (AU-4.4), and F5 is the item apps' Refresh here as everywhere (the maintainer's decision,
+  2026-11-26, bundle AX-8.18); a run reads its workflow's file again by itself. From 2026-11-11 to 2026-11-26 F5 ran
+  and Refresh had no key. Escape also stops a run, before its
+  detail pane meaning, only while one goes on.
   Until 2026-11-21 the item window still added its own Refresh on F5 behind Run, where it never ran but stood in the
   window's list of commands: a script's `do Refresh`, or an AI tool asking for Refresh, pressed F5 and started a run
   of every workflow. The item window now leaves the key out where the app has given it to a command, the window's
   list names Refresh without a key, and `check commands` fails on any such row (bundle `app-kit.md` AK-2.4).
-- AU-D9 F5 at a folder's level runs that folder's own workflows, not those of the folders inside it (the assistant,
-  2026-11-11): at `tests\scripts`, whose workflows are all in folders, a stray F5 would otherwise start an hour of
+- AU-D9 Ctrl+R at a folder's level runs that folder's own workflows, not those of the folders inside it (the assistant,
+  2026-11-11): at `tests\scripts`, whose workflows are all in folders, a stray Ctrl+R would otherwise start an hour of
   checks. The command line keeps running a folder whole. To reverse: `WorkflowFolder` read recursively in
   `RunCommand`.
 - AU-D10 The outcome of a run lives in the window until it closes, not in a file: the files are the user's workflows,
@@ -315,7 +317,7 @@ keys in place of its words on a line:
   the run starts (taken by the assistant at review, 2026-11-11, for the user to confirm). The commands act on the
   user's own desktop and files, which the run's own desktop does not cover; the notice is a guard against a slip,
   not a check of a workflow from someone else, which can still act through axKit's windows (AU-6b.8);
-  the question is asked once per F5, on the run's thread after the files are read, so it names what will really run:
+  the question is asked once per run, on the run's thread after the files are read, so it names what will really run:
   each command line once, its `\uXXXX` escapes filled in as the engine fills them ("echo one > out.txt") and `{temp}`
   named as "the run's folder", which only the run knows (the assistant, 2026-11-11, for the user to confirm).
   To reverse: drop `CommandsAllowed` in `AutomateForm.Run.cs`.

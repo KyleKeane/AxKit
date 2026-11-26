@@ -30,7 +30,7 @@ expect said Not found
 expect focus find.md
 
 # Goal: Go to a line by its number
-# 4.2: Ctrl+G, the field named with the line and column; a number, Enter: "Line n of m", the caret at that line's start.
+# 4.2: F12, the field named with the line and column; a number, Enter: "Line n of m", the caret at that line's start.
 do Go to line
 expect focus Go to line (now line 3, column 11)
 type 5

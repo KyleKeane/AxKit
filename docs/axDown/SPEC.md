@@ -42,7 +42,7 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
   changed mark.
 - S4 Find: Ctrl+F, type, Enter lands on the match and NVDA reads its line; F3 for the next one; "Not found" when
   there is none.
-- S5 Go to a line: Ctrl+G; the field is named with the current line and column; type a number, Enter.
+- S5 Go to a line: F12; the field is named with the current line and column; type a number, Enter.
 - S6 Leave with unsaved changes: Alt+F4; a notice asks Save, Don't save or Cancel; Enter saves.
 - S7 The file changed on disk while open: Ctrl+S warns and asks before writing over it.
 - S8 Console: `axdown notes.md`, or `axkit notes.md`; `axdown new.md` opens an empty document that gets the name on
@@ -79,7 +79,7 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
   which NVDA, reading at the caret after the key, reported as the same text again. NVDA reads the row the caret
   lands on or the selection change; the app says nothing.
 - AD-2.4 Turning word wrap off and on keeps the caret where it was. (WinForms recreates the control's handle on that
-  change and loses the position; the form saves `SelectionStart` and restores it, then scrolls to the caret.) Ctrl+Shift+W
+  change and loses the position; the form saves `SelectionStart` and restores it, then scrolls to the caret.) F11 (Ctrl+Shift+W until 2026-11-26)
   writes the value into the theme file (TH-6.2); another editor window follows it when next activated, the caret kept
   the same way.
 - AD-2.5 **Undo and redo** (specified and built 2026-10-21 at the user's ask; the control's own one-level Ctrl+Z
@@ -173,12 +173,12 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
   submenu (AX-9.10); then Exit (Alt+F4).
 - AD-4.2 Edit: Undo (Ctrl+Z) and Redo (Ctrl+Y) over the window's own history (AD-2.5), then Cut, Copy, Paste,
   Select all (the control's own, listed for discoverability), Format ▸, the format commands of AD-12, and Insert template ▸, the templates of AD-13.
-  Navigate (as axClaude's): Find… (Ctrl+F), Find next (F3), Find previous (Shift+F3), Go to line… (Ctrl+G), then the
+  Navigate (as axClaude's): Find… (Ctrl+F), Find next (F3), Find previous (Shift+F3), Go to line… (F12), then the
   submenus Next and Previous with one item per kind of section 9, made from the key pairs of the table: the kind's
   name with NVDA's letter as the mnemonic ("Heading", "Heading level 1" to "6", "Link", "List", "List item", "Block
   quote", "Table") and the key, Ctrl+letter under Next and Ctrl+Shift+letter under Previous (AD-5, §9).
 - AD-4.3 Options, as axClaude's: every setting lives in the submenu for what it is about, none outside one. Text ▸:
-  Word wrap (checked; Ctrl+Shift+W), Font…, Larger text (Ctrl+Plus), Smaller text (Ctrl+Minus), Windows text size.
+  Word wrap (checked; F11), Font…, Larger text (Ctrl+Plus), Smaller text (Ctrl+Minus), Windows text size.
   The update check at start is the bundle's, in the axKit menu (bundle AX-3.1). Developer ▸: Open settings file (axDown.json, written first, in a new axJSON window; the window base's
   `OpenSettingsFile`, the same in every window since 2.12.0, a new axDown window before). Copy diagnostics (AD-11) is Help, Diagnostics since 2026-11-15, the bundle's (AX-9.1).
 - AD-4.4 Help: Keyboard shortcuts (F1), User guide, Markdown resources ▸ (Markdown basics, `https://commonmark.org/help/`;
@@ -210,7 +210,7 @@ and buttons); Ctrl+F find, F3 and Shift+F3 next and previous; Ctrl+S save; Ctrl+
 and Escape on a notice; Page Up and Page Down one screen in an edit control; Ctrl+Up and Ctrl+Down the previous and
 next paragraph, with Shift selecting to there (AD-2.3); Ctrl+Space edit mode or navigation mode (AD-5.3); Alt+F4 exit; Alt and F10 the menu.
 
-Window-specific: Ctrl+N new document; Ctrl+O open; Ctrl+Shift+S save as; Ctrl+W show the file in File Explorer (axClaude's key for its folder); Ctrl+Z undo, Ctrl+Y or Ctrl+Shift+Z redo (AD-2.5); Ctrl+G go to line; Ctrl+Shift+W word wrap;
+Window-specific: Ctrl+N new document; Ctrl+O open; Ctrl+Shift+S save as; Ctrl+W show the file in File Explorer (axClaude's key for its folder); Ctrl+Z undo, Ctrl+Y or Ctrl+Shift+Z redo (AD-2.5); F12 go to line; F11 word wrap (Ctrl+G and Ctrl+Shift+W until 2026-11-26);
 Ctrl+H heading, Ctrl+1 to Ctrl+6 a heading of that level, Ctrl+K link, Ctrl+L list, Ctrl+I list item, Ctrl+Q block
 quote, Ctrl+T table, each the next one, and with Shift the previous one (section 9); Ctrl+B bold, Shift+Alt+Right
 heading deeper and Shift+Alt+Left heading shallower (AD-12).
@@ -434,7 +434,7 @@ are read and written on the UI thread (a 32 MB file is the ceiling, AD-3.7).
 - **AD-D4 Files come back as they went in.** Encoding, mark and line ending are read once and written back; axDown
   never converts a file unless asked (there is no such command in version one).
 - **AD-D5 The Notepad title convention**, `*name - axDown`: short, known, read by NVDA as "star name".
-- **AD-D6 Go to line carries the position.** One key, Ctrl+G, both tells the line and column (in the field's name)
+- **AD-D6 Go to line carries the position.** One key, F12, both tells the line and column (in the field's name)
   and moves; a separate "where am I" key would be one more key to learn, and the status bar is there for NVDA+End.
 - **AD-D7 Navigation letters are NVDA's browse-mode letters (2026-10-02).** The defaults are the keys NVDA
   users already know from web pages, with Ctrl for the next item and Ctrl+Shift for the previous: H heading, 1 to 6

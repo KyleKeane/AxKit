@@ -6,12 +6,12 @@ Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video an
 
 ## 1. Start and the queue (AM-1, AM-2, AM-3)
 
-1. Start axMedia without a path: NVDA reads "axMedia window", then "Queue list, Queue is empty, 1 of 1". Nothing else is spoken. Enter, Delete, Ctrl+I on that line: "Queue is empty". Ctrl+Q: "Nothing playing". Space: "Nothing playing".
+1. Start axMedia without a path: NVDA reads "axMedia window", then "Queue list, Queue is empty, 1 of 1". Nothing else is spoken. Enter, Delete, F8 on that line: "Queue is empty". F7: "Nothing playing". Space: "Nothing playing".
 2. Ctrl+O: the Windows file picker titled "Choose sound or video files", on sound and video files; pick three chapters: "Added 3", the focus back in the list, which reads "Queue, 3 items list, <first>, 1 of 3". Nothing plays. Ctrl+Shift+O, pick the chapters folder: "Added 12" (its count), the list "Queue, 15 items". Ctrl+Shift+O on a folder without media: "No sound or video files in <name>".
 3. Alt+S, R: "Open recent submenu", "1. <folder> (<path>)", "2. <file> (<path>)"; Enter on the folder: "Added 12" again.
 4. Down Arrow: the next item, nothing else. Home, End. Type a letter: the next name starting with it. Tab, F6, Ctrl+Tab: nothing happens (one control). Ctrl+F, part of a name, Enter: that file is read; F3: the next match, or "Not found".
 5. Enter on the second file: "Playing <name>" and the sound starts; Down then Up: the item reads "<name> (playing)". NVDA+T: "<name> - axMedia". NVDA+End: "Playing <name> 0:03 / 45:30" moving, then "2 of 15, speed 1".
-6. Ctrl+I on the playing file: "<name>, 2 of 15, playing, 0:12 of 45:30"; on another: "<name>, 3 of 15".
+6. F8 on the playing file: "<name>, 2 of 15, playing, 0:12 of 45:30"; on another: "<name>, 3 of 15".
 7. Delete on another file: "Removed <name>", the list one shorter, the mark still on the playing file. Delete on the playing file: "Removed <name>" and the next plays ("Playing <next>" is heard only when Say each file is on). Session, Clear queue: "Queue cleared", the sound stops, the list reads "Queue is empty"; NVDA+T: "axMedia".
 8. Ctrl+N: a second axMedia window, empty; Alt+W, O, 1 goes back; Alt+F4 closes the second.
 9. The menus (bundle AX-9.1, AX-9.11): Alt, then Right along the bar: Session, Actions, Navigation, Context, Options, Window, axKit, Help. On a file of the queue, Shift+F10: Context opens on "Play Enter" and NVDA reads it; Escape. With the queue empty, Alt+C: one item, "Queue is empty". In the queue, Right, Left and Backspace: the edge sound, the row you are on unchanged; F2, Ctrl+Z and F5: nothing.
@@ -28,13 +28,13 @@ Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video an
 
 ## 3. Playing (AM-4)
 
-1. Enter on the first chapter: "Playing <name>". Ctrl+Enter: "Paused at 0:05", the sound stops. Ctrl+Enter: "Playing". Ctrl+T, then Space in the notice's field: a space is typed and nothing pauses; Escape.
+1. Enter on the first chapter: "Playing <name>". Ctrl+Enter: "Paused at 0:05", the sound stops. Ctrl+Enter: "Playing". F12, then Space in the notice's field: a space is typed and nothing pauses; Escape.
 2a. Ctrl+Right again and again until the file is nearly over, then once more: the time said is the file's length, not a time past it; Go to time with a time past the end: the same.
-2. Ctrl+Right: "0:20" and the sound jumps. Ctrl+Left: "0:05". Ctrl+T, type `1:00`, Enter: "1:00". Ctrl+T, type `abc`, Enter: "Not a time", the notice stays; Escape.
-3. Ctrl+Up: "Speed 1.25"; the voice is faster at the same pitch. Twice more: "Speed 1.75". Ctrl+Down: "Speed 1.5". Actions, Normal speed: "Speed 1". Set 1.5, Alt+F4, start again and play: Ctrl+Q ends in "speed 1.5".
-4. Ctrl+Q: "Playing <name>, 1:12 of 45:30, speed 1.5". Ctrl+Shift+Right: "Playing <next>". Ctrl+Shift+Left: "Playing <first>". Again: "First file".
-5. Ctrl+T near the end, Enter; wait: "Playing <next>" spoken on its own, the next file plays, the selection stays where it was and the mark moves. Options, Say each file as it starts, off; the same again: nothing is spoken.
-6. On the last file, Ctrl+T near its end; wait: "End of queue" with the done chime; NVDA+End: both labels empty; NVDA+T: "axMedia". Ctrl+Q: "Nothing playing".
+2. Ctrl+Right: "0:20" and the sound jumps. Ctrl+Left: "0:05". F12, type `1:00`, Enter: "1:00". F12, type `abc`, Enter: "Not a time", the notice stays; Escape.
+3. Alt+Up: "Speed 1.25"; the voice is faster at the same pitch. Twice more: "Speed 1.75". Alt+Down: "Speed 1.5". Actions, Normal speed: "Speed 1". Set 1.5, Alt+F4, start again and play: F7 ends in "speed 1.5". Ctrl+Up and Ctrl+Down in the queue: the edge sound, the speed unchanged.
+4. F7: "Playing <name>, 1:12 of 45:30, speed 1.5". Ctrl+Shift+Right: "Playing <next>". Ctrl+Shift+Left: "Playing <first>". Again: "First file".
+5. F12 near the end, Enter; wait: "Playing <next>" spoken on its own, the next file plays, the selection stays where it was and the mark moves. Options, Say each file as it starts, off; the same again: nothing is spoken.
+6. On the last file, F12 near its end; wait: "End of queue" with the done chime; NVDA+End: both labels empty; NVDA+T: "axMedia". F7: "Nothing playing".
 7. Enter on the video: "Playing <name>", the picture appears at the top of the window, the focus stays in the list; Ctrl+Enter pauses; Ctrl+Shift+Right or the end hides the picture.
 8. Enter on a file Windows cannot decode (an `.opus` without the Store codec): "Cannot play <name>: …" and the next plays. Ctrl+O and pick the `.txt` (All files): "Added 1"; Enter on it: "Cannot play <name>: …", the next plays.
 9. Alt+Tab to another program while a file plays, let it end: "Playing <next>" from the background, or silence with the setting off; the sound carries on. Ctrl+W: File Explorer with the playing file selected. Session, Show current file in, axFile: axFile on the folder with the file selected. Alt+F4 on axMedia: the sound stops.
@@ -43,7 +43,7 @@ Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video an
 
 1. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back. Options, Text, Windows text size: "Windows text size".
 2. F1: the Keyboard shortcuts notice; Escape. Help, User guide: this guide; Escape. Ctrl+S: "Nothing to save here".
-3. Alt+W: the Window menu with Recently closed (the file an axMedia window was playing when it closed; chosen, it plays with its folder), Open windows, Close all windows, Say the status (F8: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+A: the axKit menu with Claude, AI tools and Theme.
+3. Alt+W: the Window menu with Recently closed (the file an axMedia window was playing when it closed; chosen, it plays with its folder), Open windows, Close all windows, Say the status (F9: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+A: the axKit menu with Claude, AI tools and Theme.
 4. Help, Diagnostics, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the queue, the player's state and the log's end.
 
 ## 5. Selecting files in the queue (AM-3.5, bundle AX-8.16)
@@ -53,7 +53,7 @@ The runner's script is `tests/scripts/axMedia/07-selection.txt`.
 1. With a queue of four playing, Space on the second file: "Selected"; Up and Down again onto it: "<name>,
    selected". Listen that NVDA does not read the line a second time after the word, and that the sound goes on:
    Space does not pause.
-2. Shift+Down: the next line with ", selected" and nothing else said. Ctrl+I: "<name>, 3 of 4, 2 selected".
+2. Shift+Down: the next line with ", selected" and nothing else said. F8: "<name>, 3 of 4, 2 selected".
 3. Delete: "Removed 2 files"; the queue reads "Queue, 2 items", and the file playing still plays.
 4. Select the file playing and one more, Delete: "Removed 2 files", then the next file left plays, or "End of
    queue" when none is left.

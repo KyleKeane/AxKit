@@ -40,7 +40,7 @@ Starts with: Open axStart.
 
 ### Hear the selected match's kind and path
 
-1. Press Ctrl+I (Information; Context menu).
+1. Press F8 (Information; Context menu).
     You hear: Windows.
 
 ### Hide the window and show it again
@@ -97,7 +97,7 @@ Starts with: Open axStart.
     You hear: Say the first match while typing, not checked.
 2. Press Ctrl+A.
 3. Type "calculato".
-4. Press Ctrl+I (Information; Context menu).
+4. Press F8 (Information; Context menu).
     You hear: Calculator, Store app.
 5. Choose Say the first match while typing in the Options menu, General.
     You hear: Say the first match while typing, checked.
@@ -116,20 +116,20 @@ Starts with: Open axStart.
 
 1. Choose Test a key in the Help menu, Diagnostics.
     You hear: Key test. Press any key to hear its name and what it does here. Press Escape to end.
-2. Press F8 (Say the status; Window menu).
-    You hear: F8: Say the status.
+2. Press F9 (Say the status; Window menu).
+    You hear: F9: Say the status.
 3. Press F5 (Refresh programs; Session menu).
     You hear: F5: Refresh programs.
-4. Press Ctrl+I (Information; Context menu).
-    You hear: Ctrl+I: Information.
+4. Press F8 (Information; Context menu).
+    You hear: F8: Information.
 5. Press Down.
     You hear: Down: Next match.
 6. Press Enter.
     You hear: Enter: Start.
 7. Press A.
     You hear: A: types the letter.
-8. Press F9.
-    You hear: F9: no command of this window.
+8. Press Shift+F9.
+    You hear: Shift+F9: no command of this window.
 
 ## Get back to a file closed lately
 
@@ -146,7 +146,7 @@ Starts with: Open axDown with the file notes.md.
 
 ### Hear what a match closed lately is
 
-1. Press Ctrl+I (Information; Context menu).
+1. Press F8 (Information; Context menu).
     You hear something with "recently closed" in it.
 
 ### Open a file closed lately again

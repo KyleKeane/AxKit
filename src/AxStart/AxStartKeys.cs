@@ -21,8 +21,8 @@ public static class AxStartKeys
     /// <summary>axFile on the program file's folder, the file selected.</summary>
     public const Keys OpenFileLocation = Keys.Control | Keys.O;
 
-    /// <summary>The selected match, its kind and its path.</summary>
-    public const Keys Information = Keys.Control | Keys.I;
+    /// <summary>The selected match, its kind and its path: F8, read with details (AX-8.18 rule 5; Ctrl+I until 2026-11-26).</summary>
+    public const Keys Information = Keys.F8;
 
     /// <summary>The Applications folder read again.</summary>
     public const Keys Refresh = Keys.F5;

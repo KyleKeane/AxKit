@@ -16,20 +16,20 @@ keys enter
 expect said Ready
 wait 3000
 # Goal: Change the permission mode
-# Step 1: Ctrl+Shift+M in the message field: the focus stays, the new mode is said, the status bar shows it; again
+# Step 1: Ctrl+P in the message field: the focus stays, the new mode is said, the status bar shows it; again
 # until the mode it started with comes back (manual, accept edits, plan, auto, manual).
 expect state Claude: ready | manual mode on
-keys ctrl+shift+m
+keys ctrl+p
 expect said accept edits on
 expect focus Message to Claude
 expect state Claude: ready | accept edits on
-keys ctrl+shift+m
+keys ctrl+p
 expect said plan mode on
 expect state | plan mode on
-keys ctrl+shift+m
+keys ctrl+p
 expect said auto mode on
 expect state | auto mode on
-keys ctrl+shift+m
+keys ctrl+p
 expect said manual mode on
 expect state Claude: ready | manual mode on
 expect focus Message to Claude
@@ -75,7 +75,7 @@ keys alt+1
 # Goal: Interrupt Claude while it works
 # Step 5: something slow, then Escape in the field while Claude works (Claude Code 2.1.309 blocks "sleep 20"
 # and "sleep 30 && echo ok", asking for a waiting tool instead, so the command is a ping of 30 seconds, allowed with 1):
-# "Shift+Escape interrupts", the status still working. Ctrl+O while it works: the reminder again. Shift+Escape: the
+# "Ctrl+I interrupts", the status still working. Ctrl+O while it works: the reminder again. Ctrl+I: the
 # interruption, the status ready.
 type Use your Bash tool to run: ping -n 30 127.0.0.1 then reply with the single word pinged.
 keys enter
@@ -88,17 +88,17 @@ expect said Sent
 wait 2000
 expect state Claude: working
 keys escape
-expect said ! Shift+Escape interrupts
+expect said ! Ctrl+I interrupts
 expect state Claude: working
 keys ctrl+o
 expect said Ctrl+O is off. For tool output, start with --verbose
 expect state Claude: working
-keys shift+escape
+keys ctrl+i
 expect state Claude: ready
 keys alt+2 ctrl+end
 expect text Interrupted
 # Goal: Interrupt Claude from the menu or the message field
-# Step 6: Actions, Send key, Ctrl+C from the menu, and Ctrl+Shift+C from the field: the same as Shift+Escape. Each
+# Step 6: Actions, Send key, Ctrl+C from the menu, twice (it has no key since 2026-11-26): the same as Ctrl+I. Each
 # interrupts Claude while it writes a long story (after the interruptions above, Claude did not always call a tool
 # again; a reply is printed in its final frame, so the story is interrupted while the status says working).
 # A moment first, as a person takes to type: for 600 ms after an interrupted turn its last rows may still come, and a
@@ -122,7 +122,7 @@ keys enter
 expect said Sent
 expect state Claude: working
 expect said Responding
-keys ctrl+shift+c
+do Ctrl+C
 expect state Claude: ready
 # Goal: Send Claude a key from the menu
 # Step 6a (FR-2.4, 2026-11-15): Actions, Send key, Shift+Up and Shift+Down go to Claude from the menu; the window stays

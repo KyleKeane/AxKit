@@ -16,28 +16,26 @@ public static class AxTerminalKeys
     // The window's places are on Alt+1, 2 and 3 (bundle AX-8.14, the maintainer's decision of 2026-11-16).
     public const Keys GoToField = ConsoleKeys.GoToField;
     public const Keys GoToTerminal = ConsoleKeys.GoToView;
-    /// <summary>The same three on Ctrl, their key until 2026-11-16: further keys of the same commands, shown in no menu, with nothing extra said (AX-8.14).</summary>
-    public const Keys GoToFieldAlso = ConsoleKeys.GoToFieldAlso;
-    public const Keys GoToTerminalAlso = ConsoleKeys.GoToViewAlso;
-    public const Keys LatestOutputAlso = ConsoleKeys.LatestAlso;
     /// <summary>Navigate → Latest output: the newest output marker, from anywhere, the third place after the field and the terminal (AT-2.2).</summary>
     public const Keys LatestOutput = ConsoleKeys.Latest;
     /// <summary>Escape to the shell (AT-3.5); Ctrl+Escape is Windows' own.</summary>
     public const Keys SendEscape = Keys.Shift | Keys.Escape;
-    /// <summary>Ctrl+C to the shell, the interrupt (AT-3.5); plain Ctrl+C copies.</summary>
-    public const Keys Interrupt = Keys.Control | Keys.Shift | Keys.C;
+    /// <summary>Ctrl+C to the shell, the interrupt (AT-3.5); plain Ctrl+C copies. I for interrupt, the same key as axClaude's (AX-8.18 rule 2; Ctrl+Shift+C until 2026-11-26).</summary>
+    public const Keys Interrupt = Keys.Control | Keys.I;
     /// <summary>Ctrl+Alt with a quick key letter, from anywhere: every line of that kind from the caret's line to the end, spoken once (axClaude D36).</summary>
     public const Keys ReadToEnd = Keys.Control | Keys.Alt;
-    public const Keys BookmarkLine = Keys.Control | Keys.Shift | Keys.K;
+    /// <summary>Bookmark the line you are on, from anywhere (AX-8.18 rule 2; Ctrl+Shift+K until 2026-11-26).</summary>
+    public const Keys BookmarkLine = Keys.Control | Keys.K;
     public const Keys ShowInExplorer = Keys.Control | Keys.W;
     public const Keys NewSession = Keys.Control | Keys.N;
     public const Keys RestartShell = Keys.Control | Keys.Shift | Keys.R;
     public const Keys ClearTranscript = Keys.Control | Keys.L;
-    public const Keys RecentCommands = Keys.Control | Keys.R;
-    /// <summary>What the window is doing: the state, the command, how long, the prompt (AT-2.3, AT-D8).</summary>
-    public const Keys WhatIsRunning = Keys.Control | Keys.Q;
-    /// <summary>The current folder, the full path, on demand (AT-D9).</summary>
-    public const Keys SayFolder = Keys.Control | Keys.P;
+    /// <summary>The recent commands in the field's place (AT-3.9): the command field's choices, Alt+Down (AX-8.18 rule 4; Ctrl+R, the shells' history key, until 2026-11-26).</summary>
+    public const Keys RecentCommands = Keys.Alt | Keys.Down;
+    /// <summary>What the window is doing: the state, the command, how long, the prompt (AT-2.3, AT-D8); the bundle's read in full, F7 (AX-8.18 rule 5; Ctrl+Q until 2026-11-26), so no row of <see cref="All"/>.</summary>
+    public const Keys WhatIsRunning = BundleKeys.ReadInFull;
+    /// <summary>The current folder, the full path, on demand (AT-D9); F8, read with details (AX-8.18 rule 5; Ctrl+P until 2026-11-26).</summary>
+    public const Keys SayFolder = Keys.F8;
     /// <summary>
     /// Background music on or off, said each time (AT-5.5); M for music. Ctrl+Space until 2026-11-15, when that became
     /// the bundle's mode key (AX-8.13). A command of the window, so it is taken before the field, where Ctrl+M would be a
@@ -82,9 +80,6 @@ public static class AxTerminalKeys
         ("Go to the command field", GoToField),
         ("Go to the terminal", GoToTerminal),
         ("Latest output", LatestOutput),
-        ("Go to the command field (Ctrl+1, the older key)", GoToFieldAlso),
-        ("Go to the terminal (Ctrl+2, the older key)", GoToTerminalAlso),
-        ("Latest output (Ctrl+3, the older key)", LatestOutputAlso),
         ("Send Escape to the shell", SendEscape),
         ("Interrupt (Ctrl+C to the shell)", Interrupt),
         ("Read to the end: Ctrl+Alt with a quick key letter", ReadToEnd),
@@ -94,7 +89,6 @@ public static class AxTerminalKeys
         ("Restart shell", RestartShell),
         ("Clear transcript", ClearTranscript),
         ("Recent commands", RecentCommands),
-        ("What is running", WhatIsRunning),
         ("Say current folder", SayFolder),
         ("Background music on or off", ToggleMusic),
         ("Enter: send, or copy the line", Enter),

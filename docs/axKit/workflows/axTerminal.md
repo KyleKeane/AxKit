@@ -22,7 +22,7 @@ Starts with: Open axTerminal with the folder myproject.
 
 ### Hear the state, the shell and the prompt
 
-1. Press Ctrl+Q (What is running; Actions menu).
+1. Press F7 (What is running; Actions menu).
     You hear: PowerShell, PS myproject>.
 
 ## Run commands and read their output
@@ -99,20 +99,20 @@ Starts with: Open axTerminal with the folder myproject.
 3. Type "Start-Sleep 5".
 4. Choose Send without recording in the Actions menu.
     You hear: Sent, not recorded.
-5. Press Ctrl+Q (What is running; Actions menu).
+5. Press F7 (What is running; Actions menu).
     You hear something with "Running: a command sent without recording" in it.
     You hear the Done sound and Done.
-6. Press Ctrl+R (Recent commands; Actions menu).
+6. Press Alt+Down (Recent commands; Actions menu).
 7. Press Escape.
 
 ### Put a recent command back in the field
 
-1. Press Ctrl+R (Recent commands; Actions menu).
+1. Press Alt+Down (Recent commands; Actions menu).
 2. Press Down.
 3. Press Enter.
 4. Press Ctrl+A.
 5. Press Delete.
-6. Press Ctrl+R (Recent commands; Actions menu).
+6. Press Alt+Down (Recent commands; Actions menu).
 7. Press Escape.
 
 ### Copy a command line of the terminal into the field
@@ -134,9 +134,9 @@ Starts with: Open axTerminal with the folder myproject.
 1. Type "Start-Sleep 30".
 2. Press Enter.
     You hear: Sent.
-3. Press Ctrl+Q (What is running; Actions menu).
+3. Press F7 (What is running; Actions menu).
     You hear something with "Running: Start-Sleep 30" in it.
-4. Press Ctrl+Shift+C (Interrupt; Actions menu).
+4. Press Ctrl+I (Interrupt; Actions menu).
     You hear: Interrupt sent.
     You hear the sound Done.
 5. Press Shift+Escape.
@@ -209,7 +209,7 @@ Starts with: Open axTerminal with the folder work\myproject.
 1. Type "cd ..".
 2. Press Enter.
     You hear the Done sound and Done.
-3. Press Ctrl+P (Say current folder; Session menu).
+3. Press F8 (Say current folder; Session menu).
     You hear: work.
 4. Type "cd myproject".
 5. Press Enter.
@@ -375,7 +375,7 @@ Starts with: Open axTerminal with the folder work\myproject.
 1. Choose Add a shell in the Session menu.
     You hear the sound FormOpen.
     You hear: Add a shell, form.
-2. Press Ctrl+Q (What is running; Actions menu).
+2. Press F7 (What is running; Actions menu).
     You hear: A shell of your own: the name Switch shell and the New session notice show for it.
 3. Press Enter.
     You hear the sound Edge.
@@ -416,9 +416,9 @@ Starts with: Open axTerminal with the folder myproject.
 
 ### Bookmark a line and remove the bookmark
 
-1. Choose Bookmark this line in the Context menu (key: Ctrl+Shift+K, or M in the terminal).
+1. Choose Bookmark this line in the Context menu (key: Ctrl+K, or M in the terminal).
     You hear: Bookmark 1 added.
-2. Choose Bookmark this line in the Context menu (key: Ctrl+Shift+K, or M in the terminal).
+2. Choose Bookmark this line in the Context menu (key: Ctrl+K, or M in the terminal).
     You hear: Bookmark 1 removed.
 
 ### Copy a line into the command field
@@ -432,7 +432,7 @@ Starts with: Open axTerminal with the folder myproject.
 
 1. Press Ctrl+Shift+P (Command palette; Help menu).
 2. Type "bookmark this".
-    You hear: Bookmark this line, Context, Ctrl+Shift+K, or M in the terminal.
+    You hear: Bookmark this line, Context, Ctrl+K, or M in the terminal.
 3. Press Enter.
     You hear: Bookmark 2 added.
 4. Press Ctrl+Shift+P (Command palette; Help menu).
@@ -454,7 +454,7 @@ You hear the sound Ready.
 3. Press Enter.
     You hear: Folder orchard.
     You hear the sound Ready.
-4. Press Ctrl+P (Say current folder; Session menu).
+4. Press F8 (Say current folder; Session menu).
     You hear: work\orchard.
 
 ## Take a command another window hands over
@@ -508,7 +508,7 @@ Starts with: Open axTerminal with the folder myproject.
 
 ### Leave the program and come back to the field
 
-1. Press Ctrl+Q (What is running; Actions menu).
+1. Press Ctrl+Q.
     You hear: [Save].
 2. Press N.
     You hear: Done.

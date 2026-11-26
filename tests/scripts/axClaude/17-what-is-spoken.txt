@@ -26,15 +26,15 @@ wait 3000
 # Goal: Silence Claude's own notices
 # Claude's own notices off: the mode changes and the status bar shows it, nothing is said. Before the first message, as
 # in 05-modes: after a turn the same key was not taken in the runs of 2026-11-13.
-keys ctrl+shift+m
+keys ctrl+p
 expect state | accept edits on
 refuse said accept edits on
 menu Claude's own notices, such as "accept edits on"
-keys ctrl+shift+m
+keys ctrl+p
 expect said plan mode on
 expect state | plan mode on
-keys ctrl+shift+m
-keys ctrl+shift+m
+keys ctrl+p
+keys ctrl+p
 expect state | manual mode on
 said
 

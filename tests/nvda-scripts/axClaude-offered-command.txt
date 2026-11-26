@@ -87,19 +87,19 @@ wait 2500
 spoken
 
 # To the conversation and back: the conversation reads as usual, and the list by its name again.
-keys ctrl+2
+keys alt+2
 expect focus Conversation
 expect spoken Conversation
 wait 1500
 spoken
-keys ctrl+1
+keys alt+1
 expect focus 1. Explain this command
 expect spoken offers a command for you to run: echo heard-by-ear
 wait 2500
 spoken
 
-# Ctrl+Q reads the question again with the reason.
-keys ctrl+q
+# F7 reads the question again with the reason.
+keys f7
 expect spoken Its reason: A check by ear.
 wait 2500
 spoken
@@ -111,6 +111,6 @@ expect spoken Yes, run it
 said
 keys enter
 expect said Sent
-keys ctrl+2
+keys alt+2
 expect focus Conversation
 expect text heard-by-ear

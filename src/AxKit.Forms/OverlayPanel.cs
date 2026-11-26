@@ -521,7 +521,7 @@ public sealed class OverlayPanel : Panel
         if (Shown?.Custom is FormControls form)
         {
             // A form (AX-8.10, AX-7.11): the focus starts in its first control and never on its text, so that the
-            // explanation is not read at opening; the window says the title and "form", and Ctrl+Q reads the text.
+            // explanation is not read at opening; the window says the title and "form", and F7 reads the text.
             form.FocusFirst();
             return;
         }
@@ -543,11 +543,11 @@ public sealed class OverlayPanel : Panel
     }
 
     /// <summary>
-    /// The key that reads the notice's text on demand (AX-7.11): Ctrl+Q, which reads what you are on in the windows
-    /// that have such a key (an item in full, a question again, what is playing). The window base takes it while a
-    /// notice shows, before any command of the window.
+    /// The key that reads the notice's text on demand (AX-7.11): the bundle's read in full, F7 (Ctrl+Q until
+    /// 2026-11-26), which reads what you are on in every window (an item in full, a question again, what is playing).
+    /// The window base takes it while a notice shows, before any command of the window.
     /// </summary>
-    public const Keys ReadText = Keys.Control | Keys.Q;
+    public const Keys ReadText = BundleKeys.ReadInFull;
 
     /// <summary>The notice's text said again, whole: its explanation, and the line of its keys when it has one.</summary>
     public void SayText() => EventDoor.SayOn(EventKind.Said, Source, _text.Visible ? _text.Text : _title.Text, true);

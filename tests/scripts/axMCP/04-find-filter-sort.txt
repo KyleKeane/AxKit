@@ -29,7 +29,7 @@ do Find previous
 expect focus zzalpha, stdio, stopped
 
 # Goal: Show only the servers whose name contains a text
-# Options, Filter, "zz": the three that hold it, under their sections; probe-other is not listed. Escape clears it.
+# Options, Filter, "zz": the three that hold it, under their sections; probe-other is not listed. Ctrl+Delete clears it.
 do Filter
 expect focus "name":"Name contains"
 type zz
@@ -38,7 +38,7 @@ expect said ! filter zz, 3 shown
 expect list "zzbeta, stdio, stopped","zzalpha, stdio, stopped"
 expect list zzproj, stdio, stopped
 refuse list probe-other
-keys escape
+keys ctrl+delete
 expect said ! Filter cleared
 expect list "zzbeta, stdio, stopped","probe-other, stdio, stopped","zzalpha, stdio, stopped"
 

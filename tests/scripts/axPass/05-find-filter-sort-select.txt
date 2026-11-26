@@ -44,7 +44,7 @@ expect said ! Not found
 expect focus Bank two
 
 # Goal: Show only the entries whose name contains a text
-# Options, Filter, "bank": the list's name says the filter and how many pass; Escape clears it.
+# Options, Filter, "bank": the list's name says the filter and how many pass; Ctrl+Delete clears it.
 do Filter
 expect focus "name":"Name contains"
 type bank
@@ -52,7 +52,7 @@ keys enter
 expect said ! filter bank, 2 shown
 refuse list Alarm code
 refuse list Email, group
-keys escape
+keys ctrl+delete
 expect said ! Filter cleared
 expect list Alarm code
 

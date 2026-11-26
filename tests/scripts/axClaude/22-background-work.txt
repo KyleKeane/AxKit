@@ -1,7 +1,7 @@
 # Workflow: Hear and ask what Claude runs in the background
 # axClaude, docs/axClaude/nvda-test-plan.md section 22 (SPEC.md FR-7.10, FR-10.2; bundle AX-7.10): the number of things
 # running in the background in the status bar, the start and finish sounds, the recurring chords and their pause, the words when the
-# user turns them on, Ctrl+B and F8. Needs no Claude Code, no network and no model: a stand-in batch file draws the
+# user turns them on, F8 and F9. Needs no Claude Code, no network and no model: a stand-in batch file draws the
 # rows Claude Code draws (the mode line's count of shells, the panel's agent rows, the waiting row; heard live on
 # 2026-11-15, docs/axClaude/claude-screens.md), one frame for each file the script makes in the project folder. The
 # sounds are checked by name on the timeline; how they sound is for the ear (the plan's section 22).
@@ -13,7 +13,7 @@ mkdir bg
 file claude.cmd @echo off\nif "%~1"=="--version" goto version\nchcp 65001 >nul\nfor /f %%a in ('echo prompt $E^| cmd') do set "E=%%a"\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho auto mode on (shift+tab to cycle)\n<nul set /p "=$%E%[?25h"\n:wait1\nif exist go1 goto frame1\nping -n 2 127.0.0.1 >nul\ngoto wait1\n:frame1\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho Waiting for 2 background agents to finish\necho auto mode on  ·  1 shell  ·  ↓ to manage\necho   ◯  general-purpose Checking callers running\necho   ◯  Explore Reading the spec running\n<nul set /p "=$%E%[?25h"\n:wait2\nif exist go2 goto frame2\nping -n 2 127.0.0.1 >nul\ngoto wait2\n:frame2\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho Waiting for 2 background agents to finish\necho auto mode on  ·  1 shell  ·  ↓ to manage\necho   ◯  general-purpose Checking callers running\necho   ◯  Explore Reading the spec running\n<nul set /p "=$%E%[?25h"\n:wait3\nif exist go3 goto frame3\nping -n 2 127.0.0.1 >nul\ngoto wait3\n:frame3\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho Waiting for 1 background agent to finish\necho auto mode on  ·  1 shell  ·  ↓ to manage\necho   ◯  Explore Reading the spec running\n<nul set /p "=$%E%[?25h"\n:wait4\nif exist go4 goto frame4\nping -n 2 127.0.0.1 >nul\ngoto wait4\n:frame4\necho %E%[?25l%E%[2J%E%[Hclaude: started\necho auto mode on (shift+tab to cycle)\n<nul set /p "=$%E%[?25h"\n:idle\nping -n 2 127.0.0.1 >nul\ngoto idle\n:version\necho 0.0.0 (stand-in)
 
 # Check: Nothing runs in the background at first, and the window says so
-# Nothing runs: the status bar has no background part, Ctrl+B says so, and no sound of background work was made.
+# Nothing runs: the status bar has no background part, F8 says so, and no sound of background work was made.
 start claude {temp}\bg --claude {temp}\claude.cmd -- --model haiku --effort low
 expect said Ready
 expect state Claude: ready | auto mode on
@@ -21,7 +21,7 @@ refuse state in the background
 do What runs in the background
 expect said ! Nothing runs in the background
 refuse said ♪ BackgroundStart
-expect commands What runs in the background, Actions, Ctrl\u002BB
+expect commands What runs in the background, Actions, F8
 expect commands Play a sound when background work starts and ends, Options, Background work, checked
 expect commands Play a sound while background work runs, Options, Background work, checked
 expect commands A pause of 2 seconds between chords, Options, Background work, checked
@@ -39,7 +39,7 @@ expect said ♪ BackgroundStart
 expect state Claude: ready | 3 in the background: 1 shell, 2 agents | auto mode on
 expect quiet 1500
 refuse said general-purpose started
-# On demand: Ctrl+B, the number, then each agent's type and description; F8, the status bar.
+# On demand: F8, the number, then each agent's type and description; F9, the status bar.
 do What runs in the background
 expect said ! 3 in the background: 1 shell, 2 agents. general-purpose: Checking callers. Explore: Reading the spec
 do Say the status

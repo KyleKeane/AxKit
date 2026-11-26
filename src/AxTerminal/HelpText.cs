@@ -11,7 +11,7 @@ public static class HelpText
     public static readonly string Shortcuts = BundleHelp.Section(
         "axTerminal",
         [
-            "Alt+1 and Alt+2, the command field and the terminal, say where you are, also when you are there already. Ctrl+1, Ctrl+2 and Ctrl+3, the keys of the three places until now, still work.",
+            "Alt+1 and Alt+2, the command field and the terminal, say where you are, also when you are there already.",
             "Tab, Shift+Tab or F6 moves between the command field, or the recent commands list in its place, and the terminal.",
             "Interrupt sends Ctrl+C to the shell.",
             "Recent commands shows the recent commands of this window as a list; Enter puts one back in the field.",

@@ -285,8 +285,8 @@ public sealed partial class FileForm
 
     protected override void SortChanged() => PutInOrder();
 
-    // Escape in the list: the selection cleared, as Ctrl+Shift+A, while entries are selected (AF-3.7); otherwise
-    // the filter cleared; the key left alone when there is neither. Both are the item window's commands.
+    // Escape in the list: the selection cleared, as Ctrl+Shift+A, while entries are selected (AF-3.7); Ctrl+Delete
+    // clears the filter (AF-3.8, Escape's second meaning until 2026-11-26). Both are the item window's commands.
 
     // ---- the selection (AF-3.7): the item window's (AX-8.16, ListSelection over Marks) ----
     // The shared piece makes each item (an entry's label, with ", selected" while it is, S-42's hidden characters

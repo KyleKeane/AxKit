@@ -7,12 +7,21 @@ public sealed class BundleHelpTests
 {
     private static string[] Lines(string text) => text.Split("\r\n");
 
+    /// <summary>The lines of an F1 text after the rules of the keys (AX-8.18), which every text starts with, and the blank line after them.</summary>
+    private static string[] AfterRules(string text)
+    {
+        Assert.StartsWith(BundleHelp.RulesSection + "\r\n", text);
+        return Lines(text)[Lines(BundleHelp.RulesSection).Length..];
+    }
+
     [Fact]
     public void The_section_has_the_header_the_heading_and_the_bundle_lines_around_the_apps_own()
     {
         var lines = Lines(BundleHelp.Section("axThing", ["Tab: between the list and the field", "Ctrl+S: save the thing"]));
         Assert.Equal(
             [
+                .. Lines(BundleHelp.RulesSection.TrimEnd('\r', '\n')),
+                "",
                 "In this text: h and Shift+H move by heading, 1 to 6 by level. Ctrl+F finds, F3 and Shift+F3 the next and the previous match",
                 "",
                 "## In every window of axKit",
@@ -23,7 +32,8 @@ public sealed class BundleHelpTests
                 "  Ctrl+Enter: the main action of where you are: it sends a form from any of its fields, keeps a long text from inside its box, presses a notice's main button, and does a window's main action where it has one; anywhere else, the edge sound and nothing more",
                 BundleHelp.ModeLine,
                 "  Shift+F1 or Ctrl+Slash: ask Claude about this window: type your question and press Enter; the first time, a reminder asks you to turn Claude on; the answer is a notice, with a field under it to ask more",
-                "  F8: say the status, what the status bar at the bottom of the window holds, said by axKit itself; in a notice too",
+                BundleHelp.ReadLine,
+                "  F9: say the status, what the status bar at the bottom of the window holds, said by axKit itself; in a notice too",
                 BundleHelp.AppKeysLine,
                 "  Tab: between the list and the field",
                 "  Ctrl+S: save the thing",
@@ -57,7 +67,7 @@ public sealed class BundleHelpTests
     [Fact]
     public void The_app_names_what_Alt_F4_does_the_heading_and_the_Navigation_menu()
     {
-        var lines = Lines(BundleHelp.Section("axThing", [], altF4: "hide axThing", heading: "Anywhere", navigateMenu: true));
+        var lines = AfterRules(BundleHelp.Section("axThing", [], altF4: "hide axThing", heading: "Anywhere", navigateMenu: true));
         Assert.Equal("In this text: h and Shift+H move by heading, 1 to 6 by level; the Next and Previous keys of the Navigation menu work here too. Ctrl+F finds, F3 and Shift+F3 the next and the previous match", lines[0]);
         Assert.Equal("## Anywhere", lines[2]);
         Assert.Contains("  Alt: the menu. Alt+F4: hide axThing", lines);
@@ -77,7 +87,8 @@ public sealed class BundleHelpTests
         ];
         foreach (var text in texts)
         {
-            var all = Lines(text);
+            // The rules of the keys come first (AX-8.18), the same in every text, then a blank line.
+            var all = AfterRules(text);
             Assert.StartsWith("In this text: h and Shift+H move by heading, 1 to 6 by level", all[0]);
             // An access layer's second line says what it is (AX-11.2); the rest is the same for every app.
             var layer = Dispatch.Apps.FirstOrDefault(app => app.IsAccessLayer && all[1].StartsWith(app.Title + ": ", StringComparison.Ordinal));
@@ -91,7 +102,7 @@ public sealed class BundleHelpTests
             Assert.StartsWith("## ", lines[axkitMenu + 2]);
         }
 
-        Assert.Equal(4, texts.Count(text => Dispatch.Apps.Any(app => app.IsAccessLayer && Lines(text)[1].StartsWith(app.Title + ": ", StringComparison.Ordinal))));
+        Assert.Equal(4, texts.Count(text => Dispatch.Apps.Any(app => app.IsAccessLayer && AfterRules(text)[1].StartsWith(app.Title + ": ", StringComparison.Ordinal))));
 
         // Every text ends with the bundle's Notices section, the same words in every window (AX-7.2, 2026-11-09).
         foreach (var text in texts)

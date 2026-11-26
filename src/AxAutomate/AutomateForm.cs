@@ -55,8 +55,8 @@ public sealed partial class AutomateForm : ItemForm
 
         // ---- menus and keys: one command list (docs/axKit/app-kit.md AK-2), each key from the tables (AU-4.4) ----
         Add(_sessionMenu, new Command("&Open a folder of workflows...", AxAutomateKeys.OpenFolder, OpenFolder) { When = NotRenaming, Mark = CommandMark.Open });
-        // F5 runs here (AU-D8): Refresh is the menu's alone, and a run reads its file again first.
-        _sessionMenu.DropDownItems.Add(Item("Re&fresh", () => Refresh(announce: true), Keys.None, CommandMark.Read));
+        // F5 is the item window's Refresh again since Run moved to Ctrl+R (AU-D8, 2026-11-26); the item only shows it.
+        _sessionMenu.DropDownItems.Add(Item("Re&fresh", () => Refresh(announce: true), ItemKeys.Refresh, CommandMark.Read));
         _sessionMenu.DropDownItems.Add(new ToolStripSeparator());
         _sessionMenu.DropDownItems.Add(CreateExitItem());
 
@@ -75,7 +75,7 @@ public sealed partial class AutomateForm : ItemForm
         _runItem = Add(_actionsMenu, new Command("R&un", AxAutomateKeys.Run, RunCommand) { When = NotRenaming, Mark = CommandMark.Act });
         _stopItem = Add(_actionsMenu, new Command("&Stop the run", AxAutomateKeys.StopRun, StopRun) { When = () => Running, Mark = CommandMark.Act });
         Add(_actionsMenu, new Command("The last run's &report", AxAutomateKeys.Report, ShowRunReport) { When = NotRenaming, Mark = CommandMark.Read });
-        // The bundle's selection (AX-8.16, AU-4.4a): Space selects a workflow of a folder, and F5 then runs the selected ones.
+        // The bundle's selection (AX-8.16, AU-4.4a): Space selects a workflow of a folder, and Ctrl+R then runs the selected ones.
         _actionsMenu.DropDownItems.Add(new ToolStripSeparator());
         _actionsMenu.DropDownItems.Add(Item("Select &all", SelectAllRows, SelectionKeys.SelectAll, CommandMark.Change));
         _actionsMenu.DropDownItems.Add(Item("&Deselect all", SelectNoRows, SelectionKeys.SelectNone, CommandMark.Change));

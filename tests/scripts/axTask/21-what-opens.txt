@@ -1,7 +1,7 @@
 # Workflow: Hear what kind of thing opened
 # The bundle's AX-7.11 (the maintainer's wish of 2026-11-22), heard in axTask: whatever the user's own command opens
 # in the window plays the sound of its kind first: a text to read, a field to type in, a list to choose from, a form.
-# A form says its title and the word "form" and not its explanation, which Ctrl+Q reads, as it reads any notice's
+# A form says its title and the word "form" and not its explanation, which F7 reads, as it reads any notice's
 # text again. Options, Text, Entry sounds turns the sounds off for every window.
 file tasks\Home\list.json {"format":"axkit-list 2","details":{"Notes":""},"item fields":[{"title":"Done","type":"check","value":false}],"actions":[]}
 file "tasks\Home\Fix the tap.json" {"schema":"list.json","Title":"Fix the tap","Done":false}
@@ -13,7 +13,7 @@ keys right
 expect focus Fix the tap
 
 # Goal: Hear that a text to read opened
-# F1 opens the keyboard shortcuts: the text's sound, then NVDA reads the text. Ctrl+Q there reads the text again.
+# F1 opens the keyboard shortcuts: the text's sound, then NVDA reads the text. F7 there reads the text again.
 keys f1
 expect state "notice":"Keyboard shortcuts"
 expect said ♪ TextOpen
@@ -33,14 +33,14 @@ keys escape
 expect focus Fix the tap
 
 # Goal: Hear that a form opened, and its explanation only on demand
-# Ctrl+M on an item: the form's sound, the focus in its list, then "Move Fix the tap, form". Ctrl+Q reads the
+# Ctrl+M on an item: the form's sound, the focus in its list, then "Move Fix the tap, form". F7 reads the
 # explanation; it is not said at opening.
 keys ctrl+m
 expect state "notice":"Move Fix the tap"
 expect said ♪ FormOpen
 expect said Move Fix the tap, form
 refuse said Up and Down choose the list
-keys ctrl+q
+keys f7
 expect said ! Now in Home. Up and Down choose the list
 keys escape
 expect state "notice":null

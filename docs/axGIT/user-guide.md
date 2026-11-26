@@ -46,7 +46,7 @@ Enter on a commit shows its message and the list of files it changed, in the det
 
 ## Branches
 
-Enter on a branch switches to it. Actions, New branch (Ctrl+N) asks for a name and switches to the new branch. Fetch (Ctrl+Shift+F), Pull (Ctrl+Shift+L) and Push (Ctrl+Shift+H) talk to the remote; axGIT says "Fetched", "Pulled" or "Pushed", and when git refuses, its whole answer comes as a notice you can read. The status bar says "Working" while one of them runs; the window stays usable.
+Enter on a branch switches to it. Actions, New branch (Ctrl+N) asks for a name and switches to the new branch. Fetch (Ctrl+R), Pull (Ctrl+L) and Push (Ctrl+P) talk to the remote; axGIT says "Fetched", "Pulled" or "Pushed", and when git refuses, its whole answer comes as a notice you can read. The status bar says "Working" while one of them runs; the window stays usable.
 
 axGIT does not merge, rebase or resolve conflicts. For those, use the terminal or ask Claude in axClaude; axGIT shows you the result.
 
@@ -56,11 +56,11 @@ Each menu with its commands and their keys, as the window lists them:
 
 <!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
 - **Session**: Exit (Alt+F4); Open repository (Ctrl+O); Refresh (F5); Show current repository in (axClaude, access layer for Claude Code, axFile, axTerminal, access layer for your shell, File Explorer (Ctrl+W)).
-- **Actions**: Commit (Ctrl+Enter); Deselect all (Ctrl+Shift+A); Fetch (Ctrl+Shift+F); New branch (Ctrl+N); Pull (Ctrl+Shift+L); Push (Ctrl+Shift+H); Select all files (Ctrl+A); Stage (Ctrl+Shift+S); Stage all; Unstage (Ctrl+Shift+U); Unstage all.
+- **Actions**: Commit (Ctrl+Enter); Deselect all (Ctrl+Shift+A); Fetch (Ctrl+R); New branch (Ctrl+N); Pull (Ctrl+L); Push (Ctrl+P); Select all files (Ctrl+A); Stage (Ctrl+Shift+S); Stage all; Unstage (Ctrl+Shift+U); Unstage all.
 - **Navigation**: Branches (Alt+3); Changes (Alt+1); Log (Alt+2); Up to the repository (Left).
 - **Context**: Discard changes (Delete); Open file in editor (Ctrl+E); Select or deselect (Space); Select to here (Shift+Space); Show diff (Enter); Stage (Ctrl+Shift+S); Unstage (Ctrl+Shift+U).
 - **Options**: Filter; Developer (Open settings file); Sort by (Name, The list's own order); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
-- Keys without a menu item: Escape (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); Ctrl+F (Find in the text); F3 (Find next); F3 (Find next in the text); Shift+F3 (Find previous); Shift+F3 (Find previous in the text); Right (Into the list); Ctrl+Down (Next section); Enter (Open); Ctrl+Up (Previous section); Ctrl+A (Select all); Shift+Home (Select to the first file); Shift+End (Select to the last file); Shift+Down (Select to the next file); Shift+Up (Select to the previous file); Ctrl+Tab (Switch between the list and the text); Shift+F10 (The Context menu); Tab (To the list); Tab (To the text); Left (Up a level).
+- Keys without a menu item: Ctrl+Delete (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); Ctrl+F (Find in the text); F3 (Find next); F3 (Find next in the text); Shift+F3 (Find previous); Shift+F3 (Find previous in the text); Right (Into the list); Ctrl+Down (Next section); Enter (Open); Ctrl+Up (Previous section); Ctrl+A (Select all); Shift+Home (Select to the first file); Shift+End (Select to the last file); Shift+Down (Select to the next file); Shift+Up (Select to the previous file); Ctrl+Tab (Switch between the list and the text); Shift+F10 (The Context menu); Tab (To the list); Tab (To the text); Left (Up a level).
 - **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
 <!-- end of the menus -->
 

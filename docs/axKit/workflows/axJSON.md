@@ -124,7 +124,7 @@ Starts with: Open axJSON with the file settings.json.
 ### Format a file written on one line
 
 1. Open axJSON with the file one-line.json.
-2. Press Ctrl+Shift+F (Format; Actions menu).
+2. Press Ctrl+R (Format; Actions menu).
     You hear: Formatted.
 3. Press Ctrl+Home.
 4. Press Down.
@@ -132,7 +132,7 @@ Starts with: Open axJSON with the file settings.json.
 ### Format and repair a broken file
 
 1. Open axJSON with the file broken.json.
-2. Press Ctrl+Shift+F (Format; Actions menu).
+2. Press Ctrl+R (Format; Actions menu).
     You hear: Formatted, repaired: 1 trailing comma, 1 missing comma.
 3. Press Ctrl+E (Error; Navigation menu, Next).
     You hear: No next error.
@@ -143,7 +143,7 @@ Starts with: Open axJSON with the file settings.json.
     You hear: on: true.
 2. Press End.
 3. Type ", "q": 'x'".
-4. Press Ctrl+Shift+F (Format; Actions menu).
+4. Press Ctrl+R (Format; Actions menu).
     You hear: Formatted, repaired: 1 single-quoted string.
 
 ### Undo and redo a format
@@ -194,26 +194,26 @@ Starts with: Open axJSON with the file settings.json.
 
 ### Go to a line of a JSON file by its number
 
-1. Press Ctrl+G (Go to line; Navigation menu).
+1. Press F12 (Go to line; Navigation menu).
 2. Type "5".
 3. Press Enter.
     You hear: Line 5 of 8.
 
 ### Turn word wrap off and on in axJSON
 
-1. Press Ctrl+G (Go to line; Navigation menu).
+1. Press F12 (Go to line; Navigation menu).
 2. Type "6".
 3. Press Enter.
     You hear: Line 6 of 8.
 4. Press Right three times.
-5. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
+5. Press F11 (Word wrap; Options menu, Text).
     You hear: Word wrap, not checked.
-6. Press Ctrl+Shift+W (Word wrap; Options menu, Text).
+6. Press F11 (Word wrap; Options menu, Text).
     You hear: Word wrap, checked.
 
 ### Save a change to a JSON file
 
-1. Press Ctrl+G (Go to line; Navigation menu).
+1. Press F12 (Go to line; Navigation menu).
 2. Type "4".
 3. Press Enter.
 4. Press End, Left.

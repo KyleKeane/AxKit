@@ -108,17 +108,12 @@ public sealed partial class GitForm : ItemForm
 
         // Navigation (AX-9.1): the three lists, each a jump from anywhere, and the way up to the repository.
         var navigation = new ToolStripMenuItem();
-        // On Alt+1, 2 and 3, each with its older Ctrl key as a further key of the same command (bundle AX-8.14).
-        Place(new Command("&Changes", AxGitKeys.ViewChanges, () => Do(() => ShowListAsync(View.Changes))) { Mark = CommandMark.Open }, AxGitKeys.ViewChangesAlso);
-        Place(new Command("&Log", AxGitKeys.ViewLog, () => Do(() => ShowListAsync(View.Log))) { Mark = CommandMark.Open }, AxGitKeys.ViewLogAlso);
-        Place(new Command("&Branches", AxGitKeys.ViewBranches, () => Do(() => ShowListAsync(View.Branches))) { Mark = CommandMark.Open }, AxGitKeys.ViewBranchesAlso);
+        // On Alt+1, 2 and 3 (bundle AX-8.14; the older Ctrl keys went on 2026-11-26, AX-8.18 rule 3).
+        Add(navigation, new Command("&Changes", AxGitKeys.ViewChanges, () => Do(() => ShowListAsync(View.Changes))) { Mark = CommandMark.Open });
+        Add(navigation, new Command("&Log", AxGitKeys.ViewLog, () => Do(() => ShowListAsync(View.Log))) { Mark = CommandMark.Open });
+        Add(navigation, new Command("&Branches", AxGitKeys.ViewBranches, () => Do(() => ShowListAsync(View.Branches))) { Mark = CommandMark.Open });
         navigation.DropDownItems.Add(new ToolStripSeparator());
         navigation.DropDownItems.Add(Item("&Up to the repository", UpLevel, ItemKeys.Up, CommandMark.Open));
-        void Place(Command command, Keys also)
-        {
-            Add(navigation, command);
-            AddKey(command with { Key = also });
-        }
 
         // Context (AX-9.11): what acts on the row you are on, by its kind. Enter, Delete and the selection keys are
         // the navigator's (the item window's commands, registered after these by PlaceControls); the menu items
@@ -176,7 +171,7 @@ public sealed partial class GitForm : ItemForm
 
     /// <summary>
     /// A navigator's keys with no use here: nothing is renamed or undone, there is no second kind of new thing,
-    /// and a row has nothing to read in full beyond its line. F2, Ctrl+Z, Ctrl+Shift+N and Ctrl+Q are no commands of
+    /// and a row has nothing to read in full beyond its line. F2, Ctrl+Z, Ctrl+Shift+N and F7 are no commands of
     /// the window. Ctrl+N is New branch, axGIT's own.
     /// </summary>
     protected override IReadOnlyCollection<Keys> KeysWithoutUse => [ItemKeys.Rename, ItemKeys.Undo, ItemKeys.NewList, ItemKeys.ReadAll];

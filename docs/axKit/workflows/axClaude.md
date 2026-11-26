@@ -41,12 +41,12 @@ You hear: trust.
 
 ### Hear the status
 
-1. Press F8 (Say the status; Window menu).
+1. Press F9 (Say the status; Window menu).
     You hear something with "Claude: ready" in it.
 2. Press Alt+2 (Conversation; Navigation menu).
-3. Press F8 (Say the status; Window menu).
+3. Press F9 (Say the status; Window menu).
     You hear something with "Claude: ready" in it.
-4. Choose Say the status in the Window menu (key: F8).
+4. Choose Say the status in the Window menu (key: F9).
     You hear something with "Claude: ready" in it.
 
 ## Send Claude a message and hear the reply
@@ -380,10 +380,10 @@ Starts with: Open axClaude with the folder keys.
 16. Press M.
     You hear: Bookmark 2 removed.
 17. Press Alt+1 (Message field; Navigation menu).
-18. Press Ctrl+Shift+K, or M in the conversation (Bookmark this line; Context menu).
+18. Press Ctrl+K, or M in the conversation (Bookmark this line; Context menu).
     You hear: Bookmark 3 added.
 19. Press Down.
-20. Choose Bookmark this line in the Context menu (key: Ctrl+Shift+K, or M in the conversation).
+20. Choose Bookmark this line in the Context menu (key: Ctrl+K, or M in the conversation).
     You hear: Bookmark 4 added.
 21. Press Ctrl+Home.
 22. Choose Next bookmark in the Navigation menu (key: K in the conversation).
@@ -455,13 +455,13 @@ Starts with: Open axClaude with the folder modes.
 
 ### Change the permission mode
 
-1. Press Ctrl+Shift+M (Next permission mode; Actions menu).
+1. Press Ctrl+P (Next permission mode; Actions menu).
     You hear: accept edits on.
-2. Press Ctrl+Shift+M (Next permission mode; Actions menu).
+2. Press Ctrl+P (Next permission mode; Actions menu).
     You hear: plan mode on.
-3. Press Ctrl+Shift+M (Next permission mode; Actions menu).
+3. Press Ctrl+P (Next permission mode; Actions menu).
     You hear: auto mode on.
-4. Press Ctrl+Shift+M (Next permission mode; Actions menu).
+4. Press Ctrl+P (Next permission mode; Actions menu).
     You hear: manual mode on.
 
 ### Read a permission question in the conversation
@@ -491,10 +491,10 @@ Starts with: Open axClaude with the folder modes.
 4. Press Enter.
     You hear: Sent.
 5. Press Escape.
-    You hear: Shift+Escape interrupts.
+    You hear: Ctrl+I interrupts.
 6. Press Ctrl+O.
     You hear: Ctrl+O is off. For tool output, start with --verbose.
-7. Press Shift+Escape.
+7. Press Ctrl+I (Interrupt; Actions menu).
 8. Press Alt+2, Ctrl+End.
 
 ### Interrupt Claude from the menu or the message field
@@ -504,12 +504,12 @@ Starts with: Open axClaude with the folder modes.
 3. Press Enter.
     You hear: Sent.
     You hear: Responding.
-4. Choose Ctrl+C in the Actions menu, Send key (key: Ctrl+Shift+C).
+4. Choose Ctrl+C in the Actions menu, Send key.
 5. Type "Write a story of 1500 words about a lighthouse keeper.".
 6. Press Enter.
     You hear: Sent.
     You hear: Responding.
-7. Press Ctrl+Shift+C (Ctrl+C; Actions menu, Send key).
+7. Choose Ctrl+C in the Actions menu, Send key.
 
 ### Send Claude a key from the menu
 
@@ -552,11 +552,11 @@ Starts with: Open axClaude with the folder queue.
 5. Type "Reply with the single word fourth.".
 6. Press Enter.
     You hear: Queued.
-7. Press Ctrl+Shift+S (Send queued messages now; Actions menu).
+7. Press Ctrl+Shift+Enter (Send queued messages now; Actions menu).
     You hear: Sending now.
 8. Press Alt+2 (Conversation; Navigation menu).
     You hear: Done.
-9. Press Ctrl+Shift+S (Send queued messages now; Actions menu).
+9. Press Ctrl+Shift+Enter (Send queued messages now; Actions menu).
     You hear: Nothing queued.
 
 ## Change Claude's project folder
@@ -879,10 +879,10 @@ You hear: Permission Required: Accessing workspace.
 ### Hear the question again
 
 1. Press Down twice.
-2. Press Ctrl+Q (Claude's question again; Navigation menu).
+2. Press F7 (Claude's question again; Navigation menu).
     You hear: 3. Daisy.
 3. Press Ctrl+Tab (Switch between the view and the field).
-4. Press Ctrl+Q (Claude's question again; Navigation menu).
+4. Press F7 (Claude's question again; Navigation menu).
     You hear: 3.
 
 ### Cancel a question
@@ -922,7 +922,7 @@ You hear: Permission Required: Accessing workspace.
 1. Type "/tasks".
 2. Press Enter.
     You may hear: Claude asks.
-3. If that came: Press Shift+Escape.
+3. If that came: Press Ctrl+I (Interrupt; Actions menu).
     You may hear the sound Notice.
 4. If that came: Press Escape.
     You hear: Closed.
@@ -967,17 +967,17 @@ You hear: Permission Required: Accessing workspace.
 2. Type "Use your AskUserQuestion tool once to ask me which flower I like: rose, tulip or daisy.".
 3. Press Enter.
     You hear the sound Notice.
-4. Press Shift+Escape.
+4. Press Ctrl+I (Interrupt; Actions menu).
 
 ### Interrupt Claude from a permission question
 
-1. Press Ctrl+Shift+M (Next permission mode; Actions menu).
+1. Press Ctrl+P (Next permission mode; Actions menu).
     You hear: manual mode on.
 2. Type "Use your Bash tool to run: ping -n 30 127.0.0.1 then reply with the word pinged.".
 3. Press Enter.
     You hear the sound Notice.
-4. Press Shift+Escape.
-5. Press Ctrl+Shift+M three times.
+4. Press Ctrl+I (Interrupt; Actions menu).
+5. Press Ctrl+P three times.
     You hear: auto mode on.
 
 ### Answer a set of two questions
@@ -1168,11 +1168,11 @@ Starts with: Open axClaude with the folder spoken.
 
 ### Silence Claude's own notices
 
-1. Press Ctrl+Shift+M (Next permission mode; Actions menu).
+1. Press Ctrl+P (Next permission mode; Actions menu).
 2. Choose Claude's own notices, such as "accept edits on" in the Options menu, Announcements.
-3. Press Ctrl+Shift+M (Next permission mode; Actions menu).
+3. Press Ctrl+P (Next permission mode; Actions menu).
     You hear: plan mode on.
-4. Press Ctrl+Shift+M twice (Next permission mode; Actions menu).
+4. Press Ctrl+P twice (Next permission mode; Actions menu).
 
 ### Turn the words Sent and Responding back on
 
@@ -1222,7 +1222,7 @@ Starts with: Open axClaude with the folder offer.
 
 ### Hear the offered command again
 
-1. Press Ctrl+Q (Claude's question again; Navigation menu).
+1. Press F7 (Claude's question again; Navigation menu).
     You hear: offers a command for you to run: echo offered-first. Written by axAutomate, an AI: read the explanation before you run it. Its reason: A check of the question.
 
 ### Turn down an offered command
@@ -1309,11 +1309,11 @@ Starts with: Open axClaude with the folder bg.
 ### Ask what runs in the background
 
 You hear the sound BackgroundStart.
-1. Press Ctrl+B (What runs in the background; Actions menu).
+1. Press F8 (What runs in the background; Actions menu).
     You hear: 3 in the background: 1 shell, 2 agents. general-purpose: Checking callers. Explore: Reading the spec.
-2. Press F8 (Say the status; Window menu).
+2. Press F9 (Say the status; Window menu).
     You hear: Claude: ready | 3 in the background: 1 shell, 2 agents | auto mode on.
-3. Choose What runs in the background in the Actions menu (key: Ctrl+B).
+3. Choose What runs in the background in the Actions menu (key: F8).
     You hear: 3 in the background: 1 shell, 2 agents. general-purpose: Checking callers. Explore: Reading the spec.
     You hear the sound BackgroundChord 3.
 
@@ -1330,24 +1330,22 @@ Starts with: Open axClaude with the folder kt.
 
 ### Hear what a key does without doing it
 
-1. Press F8 (Say the status; Window menu).
-    You hear: F8: Say the status.
+1. Press F9 (Say the status; Window menu).
+    You hear: F9: Say the status.
 2. Press F4 (Send a report; Help menu).
     You hear: F4: Send a report.
-3. Press Ctrl+B (What runs in the background; Actions menu).
-    You hear: Ctrl+B: What runs in the background.
+3. Press F8 (What runs in the background; Actions menu).
+    You hear: F8: What runs in the background.
 4. Press Alt+2 (Conversation; Navigation menu).
     You hear: Alt+2: Conversation.
-5. Press Ctrl+2 (Conversation; Navigation menu).
-    You hear: Ctrl+2: Conversation.
-6. Press Shift+Escape.
-    You hear: Shift+Escape: Interrupt.
-7. Press A.
+5. Press Ctrl+I (Interrupt; Actions menu).
+    You hear: Ctrl+I: Interrupt.
+6. Press A.
     You hear: A: types the letter.
-8. Press Enter.
+7. Press Enter.
     You hear: Enter: sends what the field holds.
-9. Press F9.
-    You hear: F9: no command of this window.
+8. Press F11.
+    You hear: F11: no command of this window.
 
 ### End the key test
 
@@ -1433,9 +1431,9 @@ Starts with: Open axClaude with the folder wf.
 
 ### Hear how far a workflow is
 
-1. Press Ctrl+B (What runs in the background; Actions menu).
+1. Press F8 (What runs in the background; Actions menu).
     You hear: 1 workflow in the background. Workflow axkit-design-map-and-verify: 88 percent, 8 of 9 done, 20m18s.
-2. Press F8 (Say the status; Window menu).
+2. Press F9 (Say the status; Window menu).
     You hear: 1 workflow in the background.
 
 ### Show Claude Code's live progress rows in the conversation
@@ -1619,7 +1617,7 @@ Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 ### Go to Claude Code's next permission mode
 
 You hear: Ready.
-1. Press Ctrl+Shift+M (Next permission mode; Actions menu).
+1. Press Ctrl+P (Next permission mode; Actions menu).
     You hear: accept edits on.
 
 ### Send a message in the new mode
@@ -1749,12 +1747,12 @@ Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 2. Press Enter.
     You hear: Sent.
     You hear: Claude asks to use Bash: ping -n 20 127.0.0.1.
-3. Press Shift+Escape (Interrupt; Actions menu).
+3. Press Ctrl+I (Interrupt; Actions menu).
     You hear: Cancelled.
 
 ### Interrupt the turn that runs
 
-1. Press Shift+Escape (Interrupt; Actions menu).
+1. Press Ctrl+I (Interrupt; Actions menu).
     You hear: Interrupted.
 
 ### Go on after the interrupt
@@ -1840,7 +1838,7 @@ Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
 1. Type "Write a numbered list of eighty different kinds of fruit, one on each line, with a short sentence about each.".
 2. Press Enter.
     You hear: Sent.
-3. Press Shift+Escape.
+3. Press Ctrl+I (Interrupt; Actions menu).
     You hear: Interrupted.
 
 ### Answer a question Claude asks you
@@ -1947,13 +1945,13 @@ Starts with: Open axClaude with the folder rules.
 6. Press Enter.
     You hear: Search the rules. Search: git.
 7. Press Down.
-8. Press Ctrl+Q (Claude's question again; Navigation menu).
+8. Press F7 (Claude's question again; Navigation menu).
     You hear: 1. Bash(git status).
 
 ### Leave the search
 
 1. Press Escape twice.
-2. Press Shift+Escape.
+2. Press Ctrl+I (Interrupt; Actions menu).
 3. Press Alt+2, Ctrl+End.
 
 ## Have a short exchange with Claude

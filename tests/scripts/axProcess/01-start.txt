@@ -31,8 +31,8 @@ expect state % in use
 check commands
 
 # Goal: Hear how much memory is in use
-# 1.4 Ctrl+Q: the summary.
-keys ctrl+q
+# 1.4 F7: the summary.
+keys f7
 expect said GB in use
 
 # Check: Nothing is said while no key is pressed

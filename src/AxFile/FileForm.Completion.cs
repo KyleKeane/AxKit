@@ -101,7 +101,7 @@ public sealed partial class FileForm
     private string PathToComplete() =>
         RealFolder is not { } folder ? string.Empty : folder.EndsWith('\\') ? folder : folder + "\\";
 
-    /// <summary>Folder → Go to folder… (Ctrl+G): a typed path, environment variables allowed, a file's path selecting the file, with completion on Down and Up (AF-3.3).</summary>
+    /// <summary>Folder → Go to folder… (F12): a typed path, environment variables allowed, a file's path selecting the file, with completion on Down and Up (AF-3.3).</summary>
     private void GoToFolder()
     {
         ResetCompletion(foldersOnly: false);

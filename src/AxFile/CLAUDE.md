@@ -29,8 +29,8 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
       - each menu item with a key is `Add(menu, new Command(...))`, a key with no item `AddKey`, its `When` where it acts, the item window's `InNavigator` or `InDetail`, its `Mark` for MCP; the item window adds its own keys after these (`PlaceControls`) and leaves a key to axFile where axFile has a command for it in the same place (`KeyTakenWhere`): Enter, Backspace, F2, Delete, find, F5, Ctrl+N and Ctrl+Shift+N are axFile's own, and the pane keys (Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab, F6), Right and Left, the selection's keys, Shift+F10 and the Applications key in either list, and Escape (deselect all in the folder list, back from the Favorites list) are the item window's;
       - no `ProcessWindowKey` since 2026-10-24, the base running the list;
       - the Selection submenu's operations on the marks only show the entry's keys, the File Explorer item of Show current folder in only shows Ctrl+W, and Ctrl+D is a key of its own beside the Favorites submenu, refilled as it opens;
-      - Enter, Shift+Enter, Backspace, Space, F2, Delete, Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A, Ctrl+Shift+A, Ctrl+Enter and Ctrl+Shift+Q only while the folder list has the focus;
-      - in the Favorites list Enter, Delete, Ctrl+I and Escape act on its line; Ctrl+Z is Undo in either list (outside the rename box);
+      - Enter, Shift+Enter, Backspace, Space, F2, Delete, Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A, Ctrl+Shift+A, Ctrl+Enter and Ctrl+Q only while the folder list has the focus;
+      - in the Favorites list Enter, Delete, F8 and Escape act on its line; Ctrl+Z is Undo in either list (outside the rename box);
       - Shift+F10, the Applications key and a right click open the bar's Context menu through the item window's `OpenPaneMenu`, AF-D13, AX-9.11;
     - `Failed` (one line as an announcement, more as a notice; the base's `Do` runs every task and turns an escaped exception into a notice);
     - `UpdateStatusBar` (the newest operation's line and the folder's path, AF-2.3).
@@ -41,7 +41,7 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
       - `_entries` is the folder as read and `_sorted` the same entries in the chosen order, AF-3.8, which the level's rows are made from, one for one; the item window then shows the rows that pass its filter, so what the list holds is its `Rows`, each row's `Tag` its entry (`ShownEntries`), and an index into the list is an index into them, never into `_sorted`;
       - an empty folder gets one item (`EmptyLine`), a filter nothing passes the item window's line, and a read that left hidden or period-named entries out adds the last line "Not shown: …" (`AfterRowsLine`);
       - `CurrentEntry` (the selected row's entry) counts neither as an entry, and `SayNoEntry` reads the line the selection is on;
-    - the filter and the sort (AF-3.8) are the item window's since 2026-11-22 (`AxKit.Forms/ItemForm.Arrange.cs`, docs/axKit/framework.md FW-4.10a): Options → Filter… and Sort by, Escape for the filter after the selection, the words. axFile names its orders (`SortNames`), keeps the chosen one in its settings (`SortChoice`), gives its rows in that order (`OrdersRowsItself`) and puts them in a new one when asked (`SortChanged`); the filter has no key (Ctrl+Shift+F until then);
+    - the filter and the sort (AF-3.8) are the item window's since 2026-11-22 (`AxKit.Forms/ItemForm.Arrange.cs`, docs/axKit/framework.md FW-4.10a): Options → Filter… and Sort by, Ctrl+Delete for the filter (Escape after the selection until 2026-11-26), the words. axFile names its orders (`SortNames`), keeps the chosen one in its settings (`SortChoice`), gives its rows in that order (`OrdersRowsItself`) and puts them in a new one when asked (`SortChanged`); the filter has no key (Ctrl+Shift+F until then);
     - `TryFolder`, `NoFolderHere` and `TryEntry` (the guards: the folder a command needs, or "No folder" and "Choose a drive first" at This PC said, AF-3.10; the entry under the selection, or the line it is on said; `RealFolder`, the folder shown when it is one on disk, which Ctrl+N and the restart pass on);
     - the Drives submenu of Folder (AF-3.11; a menu of its own until 2026-10-22);
     - the selection (AF-3.7, AF-D9):
@@ -84,7 +84,7 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
     - `FillFavoritesPane` (the lines from the settings' `Favorites` through `FileSettings.FavoriteLine`, written with `AxKitList.SetLines`; a favorite just added selected, so that Tab lands on it, else the line the user was on kept); no folder is looked at on the disk to fill it (a favorite on the network would hold the UI thread);
     - Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6 between the two lists are the item window's pane keys, named with `LogName`;
     - `ShowFavorites` (Navigation → The Favorites list);
-    - the list's keys: `OpenFavorite` (Enter: `ShowInList`, the folder list on the favorite, the focus moved before the folder is said; it joins the recent folders), `RemoveSelectedFavorite` (Delete: out of the favorites, the folder untouched, saved at once), `SayFavorite` (Ctrl+I: its full path and place);
+    - the list's keys: `OpenFavorite` (Enter: `ShowInList`, the folder list on the favorite, the focus moved before the folder is said; it joins the recent folders), `RemoveSelectedFavorite` (Delete: out of the favorites, the folder untouched, saved at once), `SayFavorite` (F8: its full path and place);
     - `FillFavorites` (Navigation → Favorites ▸, the same folders as a submenu with numbers) and `ToggleFavorite` (Ctrl+D, which fills the list again).
   - `FileForm.History.cs` (AF-9.2, AF-9.3; `FileForm.Actions.cs` until 2026-11-23, when the history stopped being a list pane):
     - `_actions`, the `AxFile.Core.ActionLog`, the window's history of file operations;
@@ -93,7 +93,7 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
     - `ShowInList` (the folder list on a folder with an entry selected, the focus moved there before the folder is said, the folder said only when it changed), shared with the Favorites list's Enter;
     - and the hand-overs to axMedia (AF-5):
       - `PlayFolder` (Ctrl+Enter: axMedia on the folder);
-      - and `AddToQueue` (Ctrl+Shift+Q: axMedia on the targets with `--add`, `MediaCount` on a task for "Added n to axMedia's queue").
+      - and `AddToQueue` (Ctrl+Q: axMedia on the targets with `--add`, `MediaCount` on a task for "Added n to axMedia's queue").
   - `FileForm.Completion.cs`: the Go to folder field's completion, out of Browse (since 2026-10-24).
   - `FileForm.Programs.cs`: the user's own programs and Windows' own ways, out of Operations (since 2026-10-24).
 - `AxFileKeys`: the window's keys (SPEC.md AF-6.2; bundle AX-8), the one place a key is changed; `All` feeds the collision test and the F1 text names the same keys.

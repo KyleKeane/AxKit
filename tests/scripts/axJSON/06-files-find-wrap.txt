@@ -26,7 +26,7 @@ expect said Not found
 expect focus settings.json
 
 # Goal: Go to a line of a JSON file by its number
-# Ctrl+G, the field named with the line and column; a number, Enter: "Line n of m".
+# F12, the field named with the line and column; a number, Enter: "Line n of m".
 do Go to line
 expect focus Go to line (now line 3
 type 5

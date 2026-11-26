@@ -49,10 +49,17 @@ public static class ItemKeys
     /// <summary>Archive the item or list (IA-D4); no command in the detail pane.</summary>
     public const Keys Delete = Keys.Delete;
 
+    /// <summary>
+    /// Clear the filter (FW-4.10a; the maintainer's decision of 2026-11-26, AX-8.18): Ctrl+Delete clears what you
+    /// typed, in the remove family, so that Escape only goes back or closes; Escape cleared the filter until then. The
+    /// one key of the kind in the bundle: axCalc's field takes it from here too (<c>AxCalcKeys.ClearField</c>).
+    /// </summary>
+    public const Keys ClearFilter = Keys.Control | Keys.Delete;
+
     public const Keys Undo = Keys.Control | Keys.Z;
 
-    /// <summary>Read in full: every field of the item, or the field's whole value.</summary>
-    public const Keys ReadAll = Keys.Control | Keys.Q;
+    /// <summary>Read in full: every field of the item, or the field's whole value; the bundle's F7 (AX-8.18 rule 5; Ctrl+Q until 2026-11-26), so no row of <see cref="All"/>.</summary>
+    public const Keys ReadAll = BundleKeys.ReadInFull;
 
     public const Keys Refresh = Keys.F5;
 
@@ -78,8 +85,8 @@ public static class ItemKeys
         ("New list", NewList),
         ("Rename", Rename),
         ("Archive", Delete),
+        ("Clear the filter (in the navigator)", ClearFilter),
         ("Undo", Undo),
-        ("Read in full", ReadAll),
         ("Refresh", Refresh),
         ("Context menu", ItemMenu),
         ("Context menu (the Applications key)", ItemMenuAlso),

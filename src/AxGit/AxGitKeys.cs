@@ -12,7 +12,7 @@ namespace AxGit;
 /// they are the control's own. Space selects a file, where it staged one until then: staging has
 /// <see cref="Stage"/> and <see cref="Unstage"/>. Two of a navigator's keys are axGIT's own: F5 reads again through
 /// git, Ctrl+N is New branch; and four it has no use for are no keys of the window (F2, Ctrl+Z, Ctrl+Shift+N,
-/// Ctrl+Q; <c>GitForm.KeysWithoutUse</c>).
+/// and F7, the bundle's read in full; <c>GitForm.KeysWithoutUse</c>).
 /// </summary>
 public static class AxGitKeys
 {
@@ -26,12 +26,6 @@ public static class AxGitKeys
     public const Keys ViewLog = Keys.Alt | Keys.D2;
     public const Keys ViewBranches = Keys.Alt | Keys.D3;
 
-    /// <summary>The same three on Ctrl, their key until 2026-11-16, when they moved to Alt+1, 2 and 3 (bundle AX-8.14): further keys of the same commands, shown in no menu, with nothing extra said.</summary>
-    public const Keys ViewChangesAlso = Keys.Control | Keys.D1;
-
-    public const Keys ViewLogAlso = Keys.Control | Keys.D2;
-    public const Keys ViewBranchesAlso = Keys.Control | Keys.D3;
-
     /// <summary>
     /// Stage the selected files, or the file you are on (AG-3.2, 2026-11-22): S for stage, on Ctrl+Shift as the
     /// window's other commands on the repository are. Until then Space staged or unstaged the one file, and
@@ -44,9 +38,14 @@ public static class AxGitKeys
 
     public const Keys OpenInEditor = Keys.Control | Keys.E;
     public const Keys NewBranch = Keys.Control | Keys.N;
-    public const Keys Fetch = Keys.Control | Keys.Shift | Keys.F;
-    public const Keys Pull = Keys.Control | Keys.Shift | Keys.L;
-    public const Keys Push = Keys.Control | Keys.Shift | Keys.H;
+    /// <summary>
+    /// The three commands that reach the remote, on Ctrl alone (the maintainer's choice of 2026-11-26, AX-8.18 rule 2:
+    /// "move everything to ctrl only so pick another letter for f"): R for fetch, as in reload, since Ctrl+F is the
+    /// bundle's find; L for pull and P for push. Ctrl+Shift+F, L and H until then.
+    /// </summary>
+    public const Keys Fetch = Keys.Control | Keys.R;
+    public const Keys Pull = Keys.Control | Keys.L;
+    public const Keys Push = Keys.Control | Keys.P;
 
     /// <summary>Every key of the window with its name, for the collision test and the F1 text.</summary>
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
@@ -57,15 +56,13 @@ public static class AxGitKeys
         ("Changes", ViewChanges),
         ("Log", ViewLog),
         ("Branches", ViewBranches),
-        ("Changes (Ctrl+1, the older key)", ViewChangesAlso),
-        ("Log (Ctrl+2, the older key)", ViewLogAlso),
-        ("Branches (Ctrl+3, the older key)", ViewBranchesAlso),
         // The navigator's keys (ItemKeys), by what they do here.
         ("Into the list, at the repository (in the list)", ItemKeys.Into),
         ("Up to the repository (in the list)", ItemKeys.Up),
         ("Up to the repository (in the list, Backspace)", ItemKeys.UpAlso),
         ("The diff, the commit, or switch to the branch; into the list at the repository (in the list)", ItemKeys.Open),
         ("Discard the changes to the file, or to the selected files (in the list)", ItemKeys.Delete),
+        ("Clear the filter (in the list)", ItemKeys.ClearFilter),
         // The navigator's own names for the two: the details are axGIT's other pane.
         ("To the other pane", ItemKeys.OtherPane),
         ("To the other pane, back", ItemKeys.OtherPaneBack),

@@ -98,7 +98,7 @@ Starts with: Open axTemplate's launcher.
 
 1. Press Ctrl+A (Select all; Actions menu).
 2. Type "greet".
-3. Press Ctrl+Q (Read in full; Context menu).
+3. Press F7 (Read in full; Context menu).
 4. Press Escape.
 
 ### Copy a template without putting it in

@@ -15,7 +15,7 @@ public static class HelpText
         ## Moving around
           Arrow keys, Home, End, Page Up and Page Down move through the entries. At the first or the last entry, a key that cannot move plays one short low note.
           Type the start of a name, the letters within a second of each other, to go to the first name starting with it, as in File Explorer; the same letter again goes to the next such name, and Shift with a letter backwards. The low note plays when no name starts with it.
-          {K(AxFileKeys.Open)} or Right Arrow on a folder goes into it; Right on a file plays the low note and never opens it. {K(AxFileKeys.Up)}, Left Arrow or {K(AxFileKeys.UpAlso)} goes to the folder above, with the one you left selected; from a drive's top, to This PC with the drives. Each says the folder, its count and the entry you land on: "docs, 5 items, plan.md".
+          {K(AxFileKeys.Open)} or Right Arrow on a folder goes into it; Right on a file plays the low note and never opens it. {K(AxFileKeys.Up)} or Left Arrow goes to the folder above, with the one you left selected; from a drive's top, to This PC with the drives. Each says the folder, its count and the entry you land on: "docs, 5 items, plan.md".
           Go to folder takes a typed path, %USERPROFILE%\Downloads for instance. In its field, Down and Up complete the path from what you typed, "Documents, folder, 2 of 5", and Right at the end of a completed folder goes into it. Session, Open recent folder and Navigation, Favorites list the folders by number.
           Navigation, Drives has the drives by number, This PC, Eject this drive and Drive properties.
 

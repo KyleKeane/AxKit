@@ -54,7 +54,7 @@ script `tests/scripts/axMCP/01-start.txt` runs sections 1 to 4 and 6 against a f
 
 ## 5. Your servers (MP-1.3)
 
-1. At the top, Ctrl+N: the form "Add server", the focus in "Type the name of the server", then the form's sound and "Add server, form", its explanation on Ctrl+Q, not said
+1. At the top, Ctrl+N: the form "Add server", the focus in "Type the name of the server", then the form's sound and "Add server, form", its explanation on F7, not said
    at opening; a name, Enter: the edge sound, "Type the program and its arguments", the focus in "Type the command line that
    starts it", the form still open; a command line, Tab: "Type the folder to start it in, or leave it empty", prefilled;
    Tab: Add; Tab: Cancel; Shift+Tab twice, Ctrl+Enter: "Added name", the row selected under "Your servers".

@@ -77,7 +77,7 @@ do Command field
 
 # Check: Git Bash shows its prompt, its exit codes and its folder in the title
 # Step 2: Git Bash: the status bar shows $, the title names the folder and Git Bash; ls; a failing command; cd ..
-# follows in the title; Ctrl+Q; back to Windows PowerShell. Fails at once where Git for Windows is not installed.
+# follows in the title; F7; back to Windows PowerShell. Fails at once where Git for Windows is not installed.
 menu Git Bash
 expect said Git Bash
 expect said Ready
@@ -113,7 +113,7 @@ expect state "title":"axTerminal, access layer for your shell folder
 expect state \myproject Windows PowerShell","notice"
 
 # Goal: Hear the current folder's full path
-# Step 3: cd .. in PowerShell: the title and the status bar name the parent folder; Ctrl+P says its full path.
+# Step 3: cd .. in PowerShell: the title and the status bar name the parent folder; F8 says its full path.
 type cd ..
 keys enter
 expect said Done

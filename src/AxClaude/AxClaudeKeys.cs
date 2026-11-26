@@ -16,19 +16,18 @@ public static class AxClaudeKeys
     // The window's places are on Alt+1, 2 and 3 (bundle AX-8.14, the maintainer's decision of 2026-11-16).
     public const Keys GoToField = ConsoleKeys.GoToField;
     public const Keys GoToConversation = ConsoleKeys.GoToView;
-    /// <summary>The same three on Ctrl, their key until 2026-11-16: further keys of the same commands, shown in no menu, with nothing extra said (AX-8.14).</summary>
-    public const Keys GoToFieldAlso = ConsoleKeys.GoToFieldAlso;
-    public const Keys GoToConversationAlso = ConsoleKeys.GoToViewAlso;
-    public const Keys LatestResponseAlso = ConsoleKeys.LatestAlso;
     /// <summary>Navigate → Latest response: the newest output marker, from anywhere, the third place after the field and the conversation (FR-5, FR-6.5); Ctrl+Shift+O until 2.6.1.</summary>
     public const Keys LatestResponse = ConsoleKeys.Latest;
-    public const Keys Interrupt = Keys.Shift | Keys.Escape;
-    public const Keys SendNow = Keys.Control | Keys.Shift | Keys.S;
-    public const Keys SendCtrlC = Keys.Control | Keys.Shift | Keys.C;
-    public const Keys NextPermissionMode = Keys.Control | Keys.Shift | Keys.M;
+    /// <summary>Interrupt Claude: I for interrupt, the same key as axTerminal's (AX-8.18 rule 2; Shift+Escape until 2026-11-26).</summary>
+    public const Keys Interrupt = Keys.Control | Keys.I;
+    /// <summary>Send the queued messages now: another form of Ctrl+Enter, which sends (AX-8.18 rule 2; Ctrl+Shift+S until 2026-11-26).</summary>
+    public const Keys SendNow = Keys.Control | Keys.Shift | Keys.Return;
+    /// <summary>Claude's next permission mode: P for permission (AX-8.18 rule 2; Ctrl+Shift+M until 2026-11-26, Ctrl+M being the music).</summary>
+    public const Keys NextPermissionMode = Keys.Control | Keys.P;
     /// <summary>Ctrl+Alt with a quick key letter, from anywhere: every line of that kind from the caret's line to the end, spoken once (FR-5, D36).</summary>
     public const Keys ReadToEnd = Keys.Control | Keys.Alt;
-    public const Keys BookmarkLine = Keys.Control | Keys.Shift | Keys.K;
+    /// <summary>Bookmark the line you are on, from anywhere (AX-8.18 rule 2; Ctrl+Shift+K until 2026-11-26).</summary>
+    public const Keys BookmarkLine = Keys.Control | Keys.K;
     public const Keys ShowInExplorer = Keys.Control | Keys.W;
     public const Keys NewSession = Keys.Control | Keys.N;
     public const Keys RestartClaude = Keys.Control | Keys.Shift | Keys.R;
@@ -39,11 +38,14 @@ public static class AxClaudeKeys
     /// </summary>
     public const Keys ToggleMusic = Keys.Control | Keys.M;
 
-    /// <summary>Read Claude's question or screen again while the control area shows it, from anywhere, the focus staying (D33); Q as the conversation's question key.</summary>
-    public const Keys ReadQuestion = Keys.Control | Keys.Q;
+    /// <summary>
+    /// Read Claude's question or screen again while the control area shows it, from anywhere, the focus staying (D33):
+    /// the bundle's read in full, F7 (AX-8.18 rule 5; Ctrl+Q until 2026-11-26), so no row of <see cref="All"/>.
+    /// </summary>
+    public const Keys ReadQuestion = BundleKeys.ReadInFull;
 
-    /// <summary>What runs in the background, said on demand: the number, each agent's type and description (FR-7.10); B for background.</summary>
-    public const Keys BackgroundWork = Keys.Control | Keys.B;
+    /// <summary>What runs in the background, said on demand: the number, each agent's type and description (FR-7.10); F8, read with details (AX-8.18 rule 5; Ctrl+B until 2026-11-26).</summary>
+    public const Keys BackgroundWork = Keys.F8;
 
     /// <summary>D14: never sent to Claude; the key only says why.</summary>
     public const Keys CtrlOGuard = Keys.Control | Keys.O;
@@ -90,12 +92,8 @@ public static class AxClaudeKeys
         ("Go to the conversation", GoToConversation),
         ("Interrupt Claude", Interrupt),
         ("Send queued messages now", SendNow),
-        ("Send Ctrl+C", SendCtrlC),
         ("Next permission mode", NextPermissionMode),
         ("Latest response", LatestResponse),
-        ("Go to the message field (Ctrl+1, the older key)", GoToFieldAlso),
-        ("Go to the conversation (Ctrl+2, the older key)", GoToConversationAlso),
-        ("Latest response (Ctrl+3, the older key)", LatestResponseAlso),
         ("Read to the end: Ctrl+Alt with a quick key letter", ReadToEnd),
         ("Bookmark this line", BookmarkLine),
         ("Show the folder in File Explorer", ShowInExplorer),
@@ -121,7 +119,6 @@ public static class AxClaudeKeys
         ("Bookmark this line (m)", BookmarkToggle),
         ("Line number", LineNumber),
         ("Background music on or off", ToggleMusic),
-        ("Read Claude's question or screen again", ReadQuestion),
         ("What runs in the background", BackgroundWork),
         ("Back to the line before the jump", JumpBack),
         ("Heading level 1", HeadingLevel1),

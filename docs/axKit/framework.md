@@ -118,8 +118,8 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
 - FW-4.5 One list of rows, with levels to go into and out of; optionally a second pane that shows more of the row
   you are on. **One rule for moving**: Right goes into a row that holds a level, Left and Backspace go up. Enter
   opens the row (goes in, or does the row's own opening), Space selects, Ctrl+Enter is the app's main action,
-  Delete removes, F2 renames where rows have names, Escape gives up a selection, then a filter, then goes back
-  from the second pane. Every pane key switches panes.
+  Delete removes, F2 renames where rows have names, Escape gives up a selection, then goes back
+  from the second pane, and Ctrl+Delete clears a filter (Escape did until 2026-11-26). Every pane key switches panes.
 - Apps today: axTask, axPass, axMCP, axAutomate, axMedia, axProcess, axGIT, axFile.
 - FW-4.6 **No views.** axGIT and axProcess each show three contents in one list today, changed with Alt+1 to
   Alt+3 (and Tab in axProcess). In the navigator those are three rows of the top level that one goes into with
@@ -165,7 +165,7 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
   other folders of files with a pane of the operations made. Their difference is their data and their commands.
 - FW-4.9 **axMedia is a queue and its controls**, a navigator of one level whose rows are what will play (the
   maintainer: "maybe it just uses axfile as the content chooser and axmedia is just a queue and control area").
-  Files are chosen in axFile and handed over, as today (Ctrl+Enter plays a folder, Ctrl+Shift+Q adds); axMedia
+  Files are chosen in axFile and handed over, as today (Ctrl+Enter plays a folder, Ctrl+Q adds); axMedia
   keeps no file browsing of its own beyond Open, which is Windows' picker. Space selects rows, Delete takes the
   selected ones out, Ctrl+Enter plays and pauses, Enter plays the row.
   **Built on 2026-11-22**: `MediaForm` derives from `ItemForm` with one level and no second pane; the list, the
@@ -174,9 +174,9 @@ shared shape and says what goes (section 9), and section 8 is the work in small 
   `ItemForm`: Enter on an item as the app's own (`OpenItem`), the app's word for a row (`RowNoun`), a Context menu
   of one kind of row, and the navigator's keys an app has no use for left out (`KeysWithoutUse`: a queue has
   nothing to rename, to undo or to refresh, and no second list, so F2, Ctrl+Z, F5 and Ctrl+Shift+N are no keys
-  of axMedia, rather than keys that say "not here"). Four of the navigator's keys stay axMedia's own until the
-  key map is gone through (step 16): Ctrl+N is New window, Ctrl+Q What is playing, Ctrl+Up and Ctrl+Down the
-  speed. What changed for the user: Right, Left and Backspace in the queue play the edge sound (they moved the
+  of axMedia, rather than keys that say "not here"). Since the key map was gone through (2026-11-26) one
+  navigator key stays axMedia's own: Ctrl+N is New window; What is playing is the bundle's F7, the speed Alt+Up
+  and Alt+Down, and Ctrl+Up and Ctrl+Down go between sections as elsewhere. What changed for the user: Right, Left and Backspace in the queue play the edge sound (they moved the
   row before, as in any Windows list), the Context menu's item for an empty queue reads "Queue is empty", the
   words of the empty line, and the status bar says how many files are selected.
 - FW-4.10 **axGIT is made simple** (the maintainer has not used it and keeps nothing of its design): the three

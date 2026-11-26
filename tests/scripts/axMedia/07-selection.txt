@@ -22,7 +22,7 @@ expect said ! Playing
 wait 300
 
 # Goal: Select files with Space and with Shift and an arrow
-# Space on beta selects it; Shift+Down takes delta too and says nothing but the line reached. Ctrl+I counts them.
+# Space on beta selects it; Shift+Down takes delta too and says nothing but the line reached. F8 counts them.
 keys down
 expect focus beta.wav
 keys space
@@ -30,7 +30,7 @@ expect said ! Selected
 expect focus beta.wav, selected
 keys shift+down
 expect focus delta.wav, selected
-keys ctrl+i
+keys f8
 expect said 2 selected
 expect state , 2 selected","
 

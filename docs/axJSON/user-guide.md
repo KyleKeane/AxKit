@@ -16,7 +16,7 @@ axKit installs all its apps at once; see the axKit guide (Help, About, axKit gui
 
 The window is one text field named after the file, so NVDA reads it as any text: the arrow keys move, Ctrl+Home and Ctrl+End go to the ends, Page Up and Page Down move a screen, Ctrl+Up and Ctrl+Down move by paragraph. Nothing is spoken that you did not ask for.
 
-Long lines wrap at the window's edge, so Down Arrow reads one screen line at a time. Options, Text, Word wrap (Ctrl+Shift+W) turns that off, and each line of the file is then one line in the window. The setting is one for every editor of axKit, kept in the theme file (`%APPDATA%\AxKit\theme.json`, `display.wordWrap`); axDown and axPreview follow it the next time their window is active.
+Long lines wrap at the window's edge, so Down Arrow reads one screen line at a time. Options, Text, Word wrap (F11) turns that off, and each line of the file is then one line in the window. The setting is one for every editor of axKit, kept in the theme file (`%APPDATA%\AxKit\theme.json`, `display.wordWrap`); axDown and axPreview follow it the next time their window is active.
 
 ## Files
 
@@ -30,7 +30,7 @@ The title is the file's name, with a star in front while there are unsaved chang
 
 ## Find and go to a line
 
-Ctrl+F opens a Find field inside the window; Enter finds the next match, selects it and reads its line; F3 and Shift+F3 repeat forwards and backwards. Ctrl+G opens a Go to line field, named with where you are, "Go to line (now line 12, column 4)"; type a number and press Enter, or Escape to stay.
+Ctrl+F opens a Find field inside the window; Enter finds the next match, selects it and reads its line; F3 and Shift+F3 repeat forwards and backwards. F12 opens a Go to line field, named with where you are, "Go to line (now line 12, column 4)"; type a number and press Enter, or Escape to stay.
 
 ## Move by structure
 
@@ -62,7 +62,7 @@ Each change is one step for Ctrl+Z. Nothing is checked or refused: you can still
 
 ## Format
 
-Actions, Format (Ctrl+Shift+F) writes the file out again with two spaces per level and one key or item per line, keeping the order of the keys and the file's line endings, and says "Formatted". Small mistakes are repaired on the way and named: a comma after the last item, a missing comma between two items, single quotes, a key without quotes, and comments, so "Formatted, repaired: 1 trailing comma, 1 unquoted key". Anything else leaves the file as it is and names the line: "Not valid JSON: line 12, expected a value, found '}'". Format is one step for Undo (Ctrl+Z), and Redo (Ctrl+Y) formats again. The history reaches back to when the file was opened in this window, a run of typing being one step: "Undone", "Redone", "Nothing to undo", "Nothing to redo".
+Actions, Format (Ctrl+R) writes the file out again with two spaces per level and one key or item per line, keeping the order of the keys and the file's line endings, and says "Formatted". Small mistakes are repaired on the way and named: a comma after the last item, a missing comma between two items, single quotes, a key without quotes, and comments, so "Formatted, repaired: 1 trailing comma, 1 unquoted key". Anything else leaves the file as it is and names the line: "Not valid JSON: line 12, expected a value, found '}'". Format is one step for Undo (Ctrl+Z), and Redo (Ctrl+Y) formats again. The history reaches back to when the file was opened in this window, a run of typing being one step: "Undone", "Redone", "Nothing to undo", "Nothing to redo".
 
 ## Text size and fonts
 
@@ -74,10 +74,10 @@ Each menu with its commands and their keys, as the window lists them:
 
 <!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
 - **Session**: Exit (Alt+F4); New (Ctrl+N); New window (Ctrl+Shift+N); Open (Ctrl+O); Save (Ctrl+S); Save as (Ctrl+Shift+S); Show current file in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, axTerminal, access layer for your shell, File Explorer (Ctrl+W)).
-- **Actions**: Add a member (Alt+Left); Choose a value (Alt+Right); Format (Ctrl+Shift+F); Next value (Alt+Down); Previous value (Alt+Up); Redo (Ctrl+Y); Undo (Ctrl+Z).
-- **Navigation**: Find (Ctrl+F); Find first; Find next (F3); Find previous (Shift+F3); Go to line (Ctrl+G); Next (Array (Ctrl+L), Error (Ctrl+E), Item (Ctrl+I), Key (Ctrl+K), Object (Ctrl+J)); Previous (Array (Ctrl+Shift+L), Error (Ctrl+Shift+E), Item (Ctrl+Shift+I), Key (Ctrl+Shift+K), Object (Ctrl+Shift+J)).
+- **Actions**: Add a member (Alt+Left); Choose a value (Alt+Right); Format (Ctrl+R); Next value (Alt+Down); Previous value (Alt+Up); Redo (Ctrl+Y); Undo (Ctrl+Z).
+- **Navigation**: Find (Ctrl+F); Find first; Find next (F3); Find previous (Shift+F3); Go to line (F12); Next (Array (Ctrl+L), Error (Ctrl+E), Item (Ctrl+I), Key (Ctrl+K), Object (Ctrl+J)); Previous (Array (Ctrl+Shift+L), Error (Ctrl+Shift+E), Item (Ctrl+Shift+I), Key (Ctrl+Shift+K), Object (Ctrl+Shift+J)).
 - **Context**: Copy (Ctrl+C); Cut (Ctrl+X); Paste (Ctrl+V); Select all (Ctrl+A).
-- **Options**: Developer (Open settings file); General (Templates in axTemplate); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size, Word wrap (Ctrl+Shift+W)).
+- **Options**: Developer (Open settings file); General (Templates in axTemplate); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size, Word wrap (F11)).
 - Keys without a menu item: Ctrl+Tab (Between the text and the field under it).
 - **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
 <!-- end of the menus -->

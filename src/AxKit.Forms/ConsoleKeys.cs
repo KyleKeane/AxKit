@@ -13,11 +13,8 @@ public static class ConsoleKeys
     /// <summary>In the field: the guard, which sends nothing and says which key does.</summary>
     public const Keys Guard = Keys.Escape;
 
-    /// <summary>The places (AX-8.14): the field, the view, and the latest of what the program said, each with its older Ctrl key as a further key of the same command.</summary>
+    /// <summary>The places (AX-8.14): the field, the view, and the latest of what the program said; their older Ctrl keys went on 2026-11-26 (AX-8.18 rule 3).</summary>
     public const Keys GoToField = Keys.Alt | Keys.D1;
     public const Keys GoToView = Keys.Alt | Keys.D2;
     public const Keys Latest = Keys.Alt | Keys.D3;
-    public const Keys GoToFieldAlso = Keys.Control | Keys.D1;
-    public const Keys GoToViewAlso = Keys.Control | Keys.D2;
-    public const Keys LatestAlso = Keys.Control | Keys.D3;
 }

@@ -29,14 +29,14 @@ keys enter
 expect focus Search the rules, type and press Enter
 refuse focus Message to Claude
 # git, Enter: the text goes to Claude Code's search, and the rules that match come back as a list named Search the
-# rules, the search row first; Down: the rule; Ctrl+Q reads them all.
+# rules, the search row first; Down: the rule; F7 reads them all.
 type git
 keys enter
 expect said Search the rules. Search: git
 expect focus "role":"List"
 keys down
 expect focus 1. Bash(git status)
-keys ctrl+q
+keys f7
 expect said 1. Bash(git status)
 # Check: A search that finds nothing says so
 # Escape in the list clears the text: the field again. zz, Enter: "No rules match", and the list offers Clear alone.
@@ -51,14 +51,14 @@ keys end
 expect focus Clear (Escape)
 # Goal: Leave the search
 # Escape clears the text, then goes back: Claude Code asks for a rule by its number, which stays in the conversation
-# with the message field (a panel's list, claude-screens.md); Shift+Escape there closes the screen.
+# with the message field (a panel's list, claude-screens.md); Ctrl+I there closes the screen.
 keys escape
 expect focus Search the rules, type and press Enter
 wait 1500
 keys escape
 expect focus Message to Claude
 wait 1500
-keys shift+escape
+keys ctrl+i
 expect state Claude: ready
 keys alt+2 ctrl+end
 expect text Permissions dialog dismissed

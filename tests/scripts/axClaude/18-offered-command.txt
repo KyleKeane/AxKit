@@ -73,8 +73,8 @@ keys enter
 expect focus 1. Explain this command
 
 # Goal: Hear the offered command again
-# Ctrl+Q reads the question again with the reason.
-keys ctrl+q
+# F7 reads the question again with the reason.
+keys f7
 expect said offers a command for you to run: echo offered-first. Written by axAutomate, an AI: read the explanation before you run it. Its reason: A check of the question.
 
 # Check: Leaving the concern field returns to its answer

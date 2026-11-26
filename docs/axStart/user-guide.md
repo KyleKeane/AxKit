@@ -21,12 +21,12 @@ How matching works: every word you type must be in the name, in any order, with 
 
 ## Getting back to what you closed
 
-The files and folders you closed lately in axKit's windows are among the matches too, named as the Window menu's Recently closed names them: "notes.md (C:\notes\notes.md) - axDown". With nothing typed they come first, the newest first; type part of a name to find one. **Enter** opens it again in the app it was open in, **Ctrl+O** opens its folder in axFile, and **Ctrl+I** says its name and "recently closed". A file that is gone is not listed.
+The files and folders you closed lately in axKit's windows are among the matches too, named as the Window menu's Recently closed names them: "notes.md (C:\notes\notes.md) - axDown". With nothing typed they come first, the newest first; type part of a name to find one. **Enter** opens it again in the app it was open in, **Ctrl+O** opens its folder in axFile, and **F8** says its name and "recently closed". A file that is gone is not listed.
 
 ## More keys in the field
 
 - **Ctrl+Shift+Enter** starts the match as administrator; Windows asks first. A Store app cannot be started that way.
-- **Ctrl+I** says the match, its kind and where its program file is: "Notepad++, desktop program, C:\Program Files\Notepad++\notepad++.exe" or "Calculator, Store app".
+- **F8** says the match, its kind and where its program file is: "Notepad++, desktop program, C:\Program Files\Notepad++\notepad++.exe" or "Calculator, Store app".
 - **Ctrl+O** opens the program file's folder in axFile, with the file selected.
 - **F5** reads the list of programs again. axStart also reads it each time it comes up, so a program installed a moment ago is there.
 - **Escape** hides axStart at once and puts you back where you were, whatever you had typed; the field is empty the next time. **Alt+F4** hides it too, and so does switching to another program.
@@ -36,7 +36,7 @@ The files and folders you closed lately in axKit's windows are among the matches
 
 - **Options, Hotkey**: press the key you want to bring axStart up, with Ctrl, Alt or the Windows key in it, then Enter. "Hotkey Ctrl+Alt+K" when it is set; "Ctrl+Alt+K is taken by another program" when another program holds it, and the old key stays. If the hotkey is taken when axStart starts, axStart shows itself once with a notice saying so, so that you can choose another.
 - **Options, General, Start with Windows** (on): axStart starts in the background when you sign in.
-- **Options, General, Say the first match while typing** (on): turn it off and axStart says nothing while you type; Ctrl+I says the match on demand.
+- **Options, General, Say the first match while typing** (on): turn it off and axStart says nothing while you type; F8 says the match on demand.
 - **Options, Text**: the font and its size, as in every axKit window.
 
 ## Ending axStart
@@ -51,7 +51,7 @@ Each menu with its commands and their keys, as the window lists them:
 - **Session**: Hide (Escape); Quit axStart; Refresh programs (F5).
 - **Actions**: No actions here yet.
 - **Navigation**: Nothing to move to here yet.
-- **Context**: Information (Ctrl+I); Open file location (Ctrl+O); Start (Enter); Start as administrator (Ctrl+Shift+Enter).
+- **Context**: Information (F8); Open file location (Ctrl+O); Start (Enter); Start as administrator (Ctrl+Shift+Enter).
 - **Options**: Hotkey; Developer (Open settings file); General (Say the first match while typing, Start with Windows); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
 - Keys without a menu item: Ctrl+Home (First match); Ctrl+End (Last match); Down (Next match); Page Down (Page down); Page Up (Page up); Up (Previous match).
 - **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.

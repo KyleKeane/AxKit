@@ -7,7 +7,7 @@ namespace AxFile;
 /// items, the window's command list (<c>FileForm</c>, app-kit AK-2) and the F1 text read this table. The bundle-wide keys
 /// (F1, the control keys, find, Ctrl+S, text size) are <c>AxKit.Forms.BundleKeys</c>. Enter, Backspace, Space, F2,
 /// Delete, Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A, Ctrl+Shift+A, Shift+F10 and the Applications key act in the folder list
-/// only; in the Favorites list Enter, Delete, Ctrl+I and Escape act on its line; in a notice's field or the rename box
+/// only; in the Favorites list Enter, Delete, F8 and Escape act on its line; in a notice's field or the rename box
 /// they are the field's own.
 /// </summary>
 public static class AxFileKeys
@@ -18,10 +18,8 @@ public static class AxFileKeys
     /// <summary>In the folder list: the file read in axPreview (AF-3.2); a folder in a new axFile window, File Explorer's Shift+Enter.</summary>
     public const Keys Preview = Keys.Shift | Keys.Return;
 
-    /// <summary>In the list: the parent folder, the folder just left selected; Alt+Up the same from anywhere in the window.</summary>
+    /// <summary>In the list: the parent folder, the folder just left selected (Alt+Up did the same from anywhere until 2026-11-26).</summary>
     public const Keys Up = Keys.Back;
-
-    public const Keys UpAlso = Keys.Alt | Keys.Up;
 
     /// <summary>A new axFile window on the folder shown, File Explorer's key for it (AF-3.3).</summary>
     public const Keys NewWindow = Keys.Control | Keys.N;
@@ -31,22 +29,21 @@ public static class AxFileKeys
     /// <summary>The folder shown added to Favorites, or removed from them (AF-3.9); the browsers' bookmark key.</summary>
     public const Keys Favorite = Keys.Control | Keys.D;
 
-    /// <summary>In the folder list: the selection cleared while entries are selected, otherwise the filter; nothing while there is neither. In the Favorites list: back to the folder list.</summary>
+    /// <summary>In the folder list: the selection cleared while entries are selected (the filter is Ctrl+Delete since 2026-11-26, <see cref="ItemKeys.ClearFilter"/>). In the Favorites list: back to the folder list.</summary>
     public const Keys Clear = SelectionKeys.Clear;
     public const Keys OpenFolder = Keys.Control | Keys.O;
-    public const Keys GoToFolder = Keys.Control | Keys.G;
+    /// <summary>Go to folder: F12, the function key that shows the go-to field (AX-8.18 rule 5; Ctrl+G, with Alt+D beside it, until 2026-11-26).</summary>
+    public const Keys GoToFolder = Keys.F12;
 
-    /// <summary>Go to folder too, File Explorer's key for its address bar (AF-3.3; the Drives menu's mnemonic until 2026-10-22).</summary>
-    public const Keys GoToFolderAlso = Keys.Alt | Keys.D;
     public const Keys ShowInExplorer = Keys.Control | Keys.W;
     public const Keys ShowItemInExplorer = Keys.Control | Keys.Shift | Keys.W;
 
-    /// <summary>The entry's size and date; in the Favorites list, the favorite's full path and its place.</summary>
-    public const Keys Information = Keys.Control | Keys.I;
+    /// <summary>The entry's size and date; in the Favorites list, the favorite's full path and its place: F8, read with details (AX-8.18 rule 5; Ctrl+I until 2026-11-26).</summary>
+    public const Keys Information = Keys.F8;
     public const Keys NewFolder = Keys.Control | Keys.Shift | Keys.N;
 
-    /// <summary>An empty text file made and the rename box opened on it (AF-4.1).</summary>
-    public const Keys NewFile = Keys.Control | Keys.Shift | Keys.T;
+    /// <summary>An empty text file made and the rename box opened on it (AF-4.1): T for text (AX-8.18 rule 2; Ctrl+Shift+T until 2026-11-26).</summary>
+    public const Keys NewFile = Keys.Control | Keys.T;
 
     /// <summary>In the list: the rename in place, a box over the entry (AF-4.2).</summary>
     public const Keys Rename = Keys.F2;
@@ -106,8 +103,8 @@ public static class AxFileKeys
     // Ctrl+Enter is the bundle's main action (BundleKeys.MainAction, AX-8.10): in the folder list, axMedia on the
     // folder, its media files from the first (AF-5).
 
-    /// <summary>In the folder list: the entry, or the marked entries, to the end of axMedia's queue (AF-5).</summary>
-    public const Keys AddToQueue = Keys.Control | Keys.Shift | Keys.Q;
+    /// <summary>In the folder list: the entry, or the marked entries, to the end of axMedia's queue (AF-5): Q for queue (AX-8.18 rule 2; Ctrl+Shift+Q until 2026-11-26, when the reading keys left Ctrl+Q).</summary>
+    public const Keys AddToQueue = Keys.Control | Keys.Q;
 
     /// <summary>Every key of the window with its name, for the collision test and the F1 text.</summary>
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
@@ -115,14 +112,13 @@ public static class AxFileKeys
         ("Open (in the folder list); open the favorite (in the Favorites list)", Open),
         ("Preview in axPreview, or a folder in a new window (in the folder list)", Preview),
         ("Up one level (in the folder list)", Up),
-        ("Up one level", UpAlso),
         ("New window", NewWindow),
         ("Refresh", Refresh),
         ("Add to or remove from Favorites", Favorite),
-        ("Clear the selection, or else the filter (in the folder list); back to the folder list (in the Favorites list)", Clear),
+        ("Clear the selection (in the folder list); back to the folder list (in the Favorites list)", Clear),
+        ("Clear the filter (in the folder list)", ItemKeys.ClearFilter),
         ("Open folder", OpenFolder),
         ("Go to folder", GoToFolder),
-        ("Go to folder, File Explorer's address bar key", GoToFolderAlso),
         ("Show the folder in File Explorer", ShowInExplorer),
         ("Show the entry in File Explorer", ShowItemInExplorer),
         ("Information about the entry, or the favorite's full path", Information),

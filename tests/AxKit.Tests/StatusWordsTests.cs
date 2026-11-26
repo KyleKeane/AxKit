@@ -2,7 +2,7 @@ using AxKit.Forms;
 
 namespace AxKit.Tests;
 
-/// <summary>What Say the status says (docs/axKit/SPEC.md AX-7.10, F8): the status bar's texts as separate parts.</summary>
+/// <summary>What Say the status says (docs/axKit/SPEC.md AX-7.10, F9): the status bar's texts as separate parts.</summary>
 public sealed class StatusWordsTests
 {
     [Fact]
@@ -29,7 +29,7 @@ public sealed class StatusWordsTests
     [Fact]
     public void The_key_is_F8_and_a_bundle_key()
     {
-        Assert.Equal(Keys.F8, BundleKeys.SayStatus);
+        Assert.Equal(Keys.F9, BundleKeys.SayStatus);
         Assert.Contains(BundleKeys.All, key => key.Key == BundleKeys.SayStatus);
     }
 }

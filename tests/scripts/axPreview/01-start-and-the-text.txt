@@ -25,7 +25,7 @@ expect quiet 1000
 expect commands "New window, Session, Ctrl\u002BN"
 expect commands "Reload, Session, F5"
 expect commands "Find, Navigation, Ctrl\u002BF"
-expect commands "Word wrap, Options, Text, Ctrl\u002BShift\u002BW, checked"
+expect commands "Word wrap, Options, Text, F11, checked"
 expect commands "Keyboard shortcuts, Help, F1"
 
 # Goal: Read the text line by line
@@ -48,24 +48,24 @@ expect quiet 1000
 # 1.2 manual: Ctrl+A, Ctrl+C puts the text on the clipboard, which is the user's, shared with the test desktop.
 
 # Goal: Go to a line by its number
-# 1.3: l says the line; Ctrl+G, the field with the line and column; 5, Enter: "Line 5 of 32"; a word: "Not a line number".
+# 1.3: l says the line; F12, the field with the line and column; 5, Enter: "Line 5 of 32"; a word: "Not a line number".
 keys ctrl+home down
 keys l
 expect said ! Line 2 of 32
-keys ctrl+g
+keys f12
 expect focus Go to line (now line 2, column 1)
 type 5
 keys enter
 expect said ! Line 5 of 32
 expect focus {"name":"README.md","role":"Text","value":"## Install"}
 # Check: A word in place of a number is refused
-keys ctrl+g
+keys f12
 type x
 keys enter
 expect said ! Not a line number
 # Check: The letter l in the Go to line field is typed there
 # The l key typed into the Go to line field is an l in the field.
-keys ctrl+g
+keys f12
 expect focus Go to line (now line 5, column 1)
 keys l
 expect focus {"name":"Go to line (now line 5, column 1)","role":"Text","value":"l"}
@@ -132,15 +132,15 @@ expect state Line 3, Column 1 \u00B7
 
 # Goal: Turn word wrap off and on
 # 1.6: the status bar (NVDA+End): the name, then "Line 5, Column 1 · UTF-8 · CRLF". Word wrap off and on, the caret kept.
-keys ctrl+g
+keys f12
 type 5
 keys enter
 expect said ! Line 5 of 32
 expect state "status":["README.md","Line 5, Column 1 \u00B7 UTF-8 \u00B7 CRLF"]
-keys ctrl+shift+w
+keys f11
 expect said ! Word wrap, not checked
 expect state Line 5, Column 1 \u00B7
-keys ctrl+shift+w
+keys f11
 expect said ! Word wrap, checked
 expect state Line 5, Column 1 \u00B7
 

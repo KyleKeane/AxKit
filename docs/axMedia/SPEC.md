@@ -41,7 +41,7 @@ top of the window. It works entirely offline (bundle G6).
 1. In axFile on a folder of chapters, with axMedia the default program for `.mp3` in Windows' settings, Enter on
    `03 Chapter 3.mp3`: axMedia opens with the folder's media files as the queue, the third playing, the window in
    front: NVDA reads "03 Chapter 3.mp3 - axMedia window", then "Queue, 12 items, 03 Chapter 3.mp3 (playing), 3 of
-   12". Ctrl+Enter: "Paused at 12:40". Ctrl+Enter: "Playing". Ctrl+Left: "12:25". Ctrl+Up: "Speed 1.25". Ctrl+Q:
+   12". Ctrl+Enter: "Paused at 12:40". Ctrl+Enter: "Playing". Ctrl+Left: "12:25". Alt+Up: "Speed 1.25". F7:
    "Playing 03 Chapter 3.mp3, 12:52 of 45:30, speed 1.25". Without that default, Enter opens the file in whatever
    plays it on the machine, and Context → Open with axKit apps → axMedia does the same as above.
 2. The chapter ends: "Playing 04 Chapter 4.mp3" and the next plays; the window can be left in the background, Alt+Tab
@@ -112,7 +112,7 @@ top of the window. It works entirely offline (bundle G6).
 ### AM-3 The queue
 
 - AM-3.1 **In the list:** Enter plays the file under the selection ("Playing <name>"); Delete takes it out ("Removed
-  <name>"; the one playing goes on to the next, or stops at the end); Ctrl+I says the file's place, "03 Chapter
+  <name>"; the one playing goes on to the next, or stops at the end); F8 (Ctrl+I until 2026-11-26) says the file's place, "03 Chapter
   3.mp3, 3 of 12", with the position while it is the one playing ("…, playing, 12:52 of 45:30"); Ctrl+F finds by name
   (the bundle's find, AX-8.2). Queue → Clear queue empties it and stops, "Queue cleared".
 - AM-3.2 **Adding:** Queue → Add files… (Ctrl+O), the Windows file picker on the media kinds, several at once,
@@ -133,12 +133,12 @@ top of the window. It works entirely offline (bundle G6).
   the nearest selected file to here; **Ctrl+A** every file (Actions, Select all); **Ctrl+Shift+A**, and **Escape**
   while any is selected, none. With files selected, **Delete** takes them all out of the queue, whatever file
   you are on, "Removed 3 files"; when the file playing is among them the next file left plays, or the sound stops
-  at the end. With nothing selected Delete takes out the file you are on, as before. Enter, Ctrl+I and the ways
-  out stay on the file you are on; Ctrl+I adds ", n selected" while any are. A new queue (a play that replaces
+  at the end. With nothing selected Delete takes out the file you are on, as before. Enter, F8 and the ways
+  out stay on the file you are on; F8 adds ", n selected" while any are. A new queue (a play that replaces
   it, Clear queue) starts with none selected; files added keep what was selected. A file queued twice is two
   rows, each selected by itself. On the empty queue's line the keys say that line. The window's part is
   `MediaForm`'s `Selection`, the bundle's `ListSelection`; the script is `tests/scripts/axMedia/07-selection.txt`.
-- AM-3.6 **Filter and sort** (2026-11-22; the navigator's, bundle AX-8.17). Options → **Filter…** shows only the files whose name contains a text; a row under the filter is still its own file of the queue, so Enter plays that file and Ctrl+I says its place in the whole queue, and Escape in the queue clears the filter once nothing is selected. Options → **Sort by ▸ Name** reorders the queue itself (the maintainer's choice of that day, "Sort that reorders the queue": a list shown in another order than it plays in would mislead), in Windows' natural order; the file playing stays the one playing, at its new place, and what plays next is what follows it there; files added later take their place by name. **The order added** puts the queue back in the order the files came. The choice is kept for the window, not saved (`PlayQueue.OrderBy`, tested).
+- AM-3.6 **Filter and sort** (2026-11-22; the navigator's, bundle AX-8.17). Options → **Filter…** shows only the files whose name contains a text; a row under the filter is still its own file of the queue, so Enter plays that file and F8 says its place in the whole queue, and Ctrl+Delete in the queue clears the filter (Escape, once nothing was selected, until 2026-11-26). Options → **Sort by ▸ Name** reorders the queue itself (the maintainer's choice of that day, "Sort that reorders the queue": a list shown in another order than it plays in would mislead), in Windows' natural order; the file playing stays the one playing, at its new place, and what plays next is what follows it there; files added later take their place by name. **The order added** puts the queue back in the order the files came. The choice is kept for the window, not saved (`PlayQueue.OrderBy`, tested).
 
 ### AM-4 Playing
 
@@ -151,7 +151,7 @@ top of the window. It works entirely offline (bundle G6).
   says so at once; playing starts when the engine reports the item set; its events come back on the window's thread.
   A rate other than 1 keeps the pitch. A rate the engine refuses: "Speed n is not supported here", and the speed
   stays: the rate is kept only once the engine has accepted it, and a rate accepted for one file and refused by the
-  next falls back to 1 for that file, which the status bar and Ctrl+Q show, since they read the player's rate (until
+  next falls back to 1 for that file, which the status bar and F7 show, since they read the player's rate (until
   2026-10-23 the refused rate was kept, and the next file played at 1 under a status bar showing the old speed). An
   event of a file replaced before it was set (two plays in quick succession) is told from the new file's by the item
   it names, and left alone (2026-10-23; the old file's failure skipped the new one). A Windows without the media components (an N edition without the Media Feature Pack has no `mfplay.dll`)
@@ -161,10 +161,10 @@ top of the window. It works entirely offline (bundle G6).
   ("Paused at 12:40" / "Playing"); **Ctrl+Right** and **Ctrl+Left** move 15 seconds forward or back (`seekSeconds`),
   saying the position reached, "12:25", the file's end at most (until 2026-10-23 the position asked for, past the
   end included); **Ctrl+Shift+Right** and **Ctrl+Shift+Left** the next and the previous file ("Playing <name>"; "First
-  file" and "End of queue" at the ends); **Ctrl+Up** and **Ctrl+Down** faster and slower by 0.25
+  file" and "End of queue" at the ends); **Alt+Up** and **Alt+Down** faster and slower by 0.25
   between 0.5 and 3 ("Speed 1.25"), Play → Normal speed back to 1, the speed kept in the settings for the next file
-  and the next window; **Ctrl+T** Go to time…, the notice with the field "Time" (`12:40`, `1:02:10`, or `750` for
-  seconds), the position reached, "12:40", when done; **Ctrl+Q** What is playing: "Playing <name>, 12:52 of 45:30, speed 1.25", "Paused …"
+  and the next window; **F12** Go to time…, the notice with the field "Time" (`12:40`, `1:02:10`, or `750` for
+  seconds), the position reached, "12:40", when done; **F7** What is playing: "Playing <name>, 12:52 of 45:30, speed 1.25", "Paused …"
   or "Nothing playing". "Say each file as it starts" (`sayEachFile`, default on; Options) is the one
   unprompted announcement (G5). The volume is Windows' own (AM-D6). Stop as a command is not offered: Ctrl+Enter pauses,
   Clear queue stops.
@@ -177,10 +177,10 @@ top of the window. It works entirely offline (bundle G6).
   Add folder… Ctrl+Shift+O (Open files and Open folder until 2026-11-25: they add to the queue, and Open folder is
   axFile's for a folder opened in its list, docs/axKit/command-exceptions.json) | Open recent ▸ | ─ | Clear queue | ─ | Show current file in ▸ (File Explorer Ctrl+W |
   axClaude | axTerminal | axGIT | axFile) | ─ | Exit Alt+F4. **Actions (A):** Play, pause or resume Ctrl+Enter | Forward 15
-  seconds Ctrl+Right | Back 15 seconds Ctrl+Left | ─ | Faster Ctrl+Up | Slower Ctrl+Down | Normal
-  speed | ─ | What is playing Ctrl+Q. **Navigation (N):** Next file Ctrl+Shift+Right | Previous file Ctrl+Shift+Left |
-  Go to time… Ctrl+T. **Context (C)**, the file selected (AX-9.11; Shift+F10, the Applications key and a right click in
-  the queue): Play Enter | Remove Delete | Information Ctrl+I | ─ | Select or deselect Space | Select to here Shift+Space; one
+  seconds Ctrl+Right | Back 15 seconds Ctrl+Left | ─ | Faster Alt+Up | Slower Alt+Down | Normal
+  speed | ─ | What is playing F7. **Navigation (N):** Next file Ctrl+Shift+Right | Previous file Ctrl+Shift+Left |
+  Go to time… F12. **Context (C)**, the file selected (AX-9.11; Shift+F10, the Applications key and a right click in
+  the queue): Play Enter | Remove Delete | Information F8 | ─ | Select or deselect Space | Select to here Shift+Space; one
   item, "Queue is empty", the empty line's words, while it is empty ("Nothing in the queue" until 2026-11-22). **Options
   (O):** Say each file as it starts ✓ | Text ▸ | Developer ▸ (Open settings
   file). **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Media resources ▸ (Formats Windows plays, Microsoft's
@@ -189,10 +189,10 @@ top of the window. It works entirely offline (bundle G6).
 - AM-5.2 Keys (AX-8). Bundle-wide: F1, the control keys (one control, so they stay in the list), Ctrl+F, F3, Shift+F3,
   Ctrl+S ("Nothing to save here"), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxMediaKeys`): Enter, Delete,
   Space and the other selection keys, and Shift+F10 in the list (AM-3.5), which are the navigator's keys
-  (`ItemKeys`, `SelectionKeys`), named in the table by what they do in a queue; Ctrl+Enter, Ctrl+I, Ctrl+O, Ctrl+Shift+O, Ctrl+N (New window, AX-9), Ctrl+W, Ctrl+Right, Ctrl+Left,
-  Ctrl+Shift+Right, Ctrl+Shift+Left, Ctrl+T, Ctrl+Up, Ctrl+Down, Ctrl+Q from anywhere in the window
-  (in a notice's field they are the field's own, AX-7.2; Ctrl+Up and Ctrl+Down, faster and slower, are the bundle's
-  paragraph keys there, AM-D8). The collision test covers the table.
+  (`ItemKeys`, `SelectionKeys`), named in the table by what they do in a queue, Ctrl+Up and Ctrl+Down between sections among them (the queue has
+  none, so they play the edge sound) and Ctrl+Delete, clear the filter; Ctrl+Enter, F8, Ctrl+O, Ctrl+Shift+O, Ctrl+N (New window, AX-9), Ctrl+W, Ctrl+Right, Ctrl+Left,
+  Ctrl+Shift+Right, Ctrl+Shift+Left, F12, Alt+Up, Alt+Down from anywhere in the window, with the bundle's F7 What is
+  playing (in a notice's field they are the field's own, AX-7.2). The collision test covers the table.
 - AM-5.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axMedia/user-guide.md` is embedded (Help → User
   guide); About is the bundle's (AX-9.9).
 
@@ -204,7 +204,7 @@ One UI Automation notification each, on the list, or on the notice while one sho
 play <name>: <reason>", "Removed <name>", "Queue cleared", "Added n", "No sound or video files in <folder>" (a folder
 opened or handed over; "… in <file>" for one file that is none, "… in n paths" for several), "No sound or video files
 to add" (a recent file that is gone), "<name>, n of m", "<name>, n of m, playing, m:ss of m:ss" and "…, paused, m:ss of
-m:ss" (Ctrl+I), "Queue is empty" (a command on the empty line), "Not a time", "Not found" (find), "Nothing to save
+m:ss" (F8), "Queue is empty" (a command on the empty line), "Not a time", "Not found" (find), "Nothing to save
 here", "Text size n", "Windows text size", "Copied diagnostics". In axFile: "Added n to axMedia's queue", "No sound or
 video files to add", "No sound or video files here"
 (`docs/axFile/SPEC.md`). A new selection is NVDA's own reading.
@@ -284,12 +284,12 @@ events are posted back to it (AX-7.5).
   the main action of a player is pause and resume, from anywhere in the window. One key for it: Ctrl+P, the
   second key until then, goes. Until 2026-11-22 Space paused in the list, "what every player's pause is", and
   Ctrl+P from anywhere. While a notice shows, the keys are the notice's, as in every window (AX-6.5).
-- **AM-D8 Ctrl+Up is faster, Ctrl+Down slower** (the user's choice of 2026-11-14). Until then the speed was on
-  Ctrl+Shift+Period and Ctrl+Shift+Comma; those became the bundle's system-wide keys, axHelp's screenshot and the
-  one kept for a later help launcher (bundle AX-8.11), which never reach a window. The four arrows with Ctrl are now
-  the player: Left and Right through the file, Up and Down the speed. Ctrl+Up and Ctrl+Down are the bundle's
-  paragraph keys in a text (AX-8.2); axMedia's window has a list and no text, and while a notice shows its text
-  keeps them, so the two never meet. `KeyTests` lists the two among its `Overrides` (AX-8.4).
+- **AM-D8 Alt+Up is faster, Alt+Down slower** (the maintainer's decision of 2026-11-26, bundle AX-8.18: Alt with an
+  arrow chooses what plays in place). Ctrl+Up and Ctrl+Down were the speed from 2026-11-14 (the user's choice then)
+  until 2026-11-26, and go between sections now, as in the other item windows; before that the speed was on
+  Ctrl+Shift+Period and Ctrl+Shift+Comma, which became the bundle's system-wide keys, axHelp's screenshot and the
+  one kept for a later help launcher (bundle AX-8.11), which never reach a window. Ctrl+Left and Ctrl+Right stay
+  the player's way through the file.
 
 ## 8. Testing
 
@@ -305,7 +305,7 @@ events are posted back to it (AX-7.5).
 
 - Keeping the queue for the next start, with a resume position per file (an audiobook resumed where it stopped; per
   file in the settings, with a cap).
-- Reordering the queue by key (Alt+Up and Alt+Down are axFile's words for up one level; a Move up / Move down pair).
+- Reordering the queue by key (Alt+Up and Alt+Down are the speed; a Move up / Move down pair).
 - A `.m3u` or `.pls` file as the queue, from axFile's Enter or axMedia's Add files.
 - Whether axFile should carry remote keys for the player (pause, what is playing) sent through the hand-over; decided
   against for the first build, since an answer back would need a second message (AM-D4).

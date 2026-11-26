@@ -81,7 +81,7 @@ Starts with: Open axMCP with the test folder.
 1. Press Ctrl+N.
     You hear the sound FormOpen.
     You hear: Add server, form.
-2. Press Ctrl+Q (Read in full).
+2. Press F7 (Read in full).
     You hear: A server of your own: a name for the list.
 3. Type "probe".
 4. Press Enter.
@@ -280,7 +280,7 @@ Starts with: Open axMCP with the test folder.
 2. Type "zz".
 3. Press Enter.
     You hear: filter zz, 3 shown.
-4. Press Escape.
+4. Press Ctrl+Delete (Clear the filter).
     You hear: Filter cleared.
 
 ### Put the servers in the order of their names

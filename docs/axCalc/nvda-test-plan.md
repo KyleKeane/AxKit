@@ -15,21 +15,21 @@ Run with NVDA before a release, after `scripts to run-individual-apps\run-axCalc
 2. In the field, `*2`, Enter: "16588800". `-3`, Enter: "-3". `ans*2`, Enter: "-6".
 3. `rate = 1.25`, Enter: "rate = 1.25". `400 * rate`, Enter: "500". NVDA+End: "Degrees, 1 variable".
 4. `sqrt(-1)`, Enter: "Error: not a real number"; the field still holds `sqrt(-1)` (Shift+Home reads it). `(2+3`, Enter: "Error: missing closing parenthesis". `foo`, Enter: "Error: unknown name foo".
-5. Escape with text: "Cleared". Escape again: "Empty". Enter on the empty field: "Type an expression".
-6. Ctrl+Q: "Answer 500" (the last answer).
+5. Ctrl+Delete with text: "Cleared". Ctrl+Delete again: "Empty". Enter on the empty field: "Type an expression".
+6. F7: "Answer 500" (the last answer).
 7. Up and Down in the field: the edit control's own; the field's text does not change to a history line.
 8. `sin(30)`, Enter: "0.5". Options, Angles, Radians: "Radians"; `sin(pi/2)`, Enter: "1". Options, Angles, Degrees: "Degrees".
 
 ## 3. Other bases (AC-4)
 
-1. `255`, Enter, then Ctrl+I: "255, hex FF, binary 1111 1111, octal 377".
-2. `2.5`, Enter, Ctrl+I: "2.5 is not a whole number".
+1. `255`, Enter, then F8: "255, hex FF, binary 1111 1111, octal 377".
+2. `2.5`, Enter, F8: "2.5 is not a whole number".
 3. `255`, Enter; Session, Copy answer in, Hexadecimal: "Copied 0xFF"; paste into axDown: `0xFF`.
 
 ## 4. The history (AC-5)
 
 1. Shift+Tab to the history; Up and Down: each line read alone, nothing else.
-2. On `1920*1080*4 = 8294400`, Ctrl+Shift+C: "Copied 8294400". Ctrl+I: that line's bases.
+2. On `1920*1080*4 = 8294400`, Ctrl+Shift+C: "Copied 8294400". F8: that line's bases.
 3. Enter: the focus in the field, which holds `1920*1080*4` with the caret at its end (NVDA reads the field and its text). Change it, Enter: the new answer.
 4. In the history, Delete: nothing is removed and the line is as it was. Escape: back to the field.
 4a. The history's letters (AC-5.7): a: the next answer, read; Shift+A: the one before; l: "Line N of M"; m: "Bookmark 1 added", and Up reads the bookmark's line; k: to the bookmark; m on it: "Bookmark 1 removed"; Backspace: "Back to" and the line before the jump.
@@ -40,7 +40,7 @@ Run with NVDA before a release, after `scripts to run-individual-apps\run-axCalc
 
 ## 5. Kept between runs (AC-9)
 
-1. Make two answers, close axCalc, start it again: the history holds them; Ctrl+Q says the last.
+1. Make two answers, close axCalc, start it again: the history holds them; F7 says the last.
 2. Options, Keep history between runs (unchecked), close and start again: the history is empty.
 
 ## 6. Text, notices, the Window, axKit and Help menus (AC-7)
