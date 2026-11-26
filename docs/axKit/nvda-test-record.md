@@ -6,6 +6,13 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-26, afternoon: the stream's scripts after its second round; by the assistant with NVDA listening (`main` 94e87522)
+
+`.\nvda-pass.ps1 axClaude -Only '*-stream-*'`, the maintainer still away at his word, the same NVDA, voice and
+Windows as below: 19 scripts, 56 goals, all passed, among them the new 55 to 59 (a command of the screen alone, No
+and tell Claude why, what a tool printed, choosing an earlier conversation, plan approval) and the NVDA-only
+`axClaude-stream-refused-why`, and the live 48, 49 and 52 with Claude Code 2.1.332.
+
 ## 2026-11-26: the full pass after the key moves, the titles and the stream's first round; by the assistant with NVDA listening (`main` 27581744)
 
 `.\nvda-pass.ps1`, every app's scripts and the NVDA-only scripts, the maintainer away for four hours at his word ("i
@@ -783,17 +790,11 @@ What it found:
 ## Owed: axClaude over the stream, what a tool printed, choosing a conversation, plan approval (2026-11-26)
 
 Round 2 of `docs/axClaude/stream-equivalence.md` section 5 (`docs/axClaude/stream-mode.md` SM-4.11, SM-8.5, SM-7.7).
-Passing the stand-in window scripts `tests/scripts/axClaude/57-stream-tool-output.txt`, `58-stream-resume-choice.txt`
-and `59-stream-plan.txt` on the runner's desktop; owed a pass with NVDA listening (`.\nvda-pass.ps1 axClaude`), with
-`docs/axClaude/nvda-test-plan.md` section 26, steps 14 to 16:
+Heard with NVDA on 2026-11-26 (94e87522): `57-stream-tool-output`, `58-stream-resume-choice` and `59-stream-plan`
+passed with every expected announcement spoken, among the 19 stream scripts (56 goals). Still owed:
 
-1. What a tool printed is never spoken: the reply alone with "Done"; the output lines read with the arrows after t,
-   "… +9 lines" heard as such.
-2. The list "Choose a conversation to resume": each item's date, time and first words heard whole; "Cancelled" and the
-   line after Escape; the earlier part of the chosen conversation silent before "Ready".
-3. The plan's question: the caution and then the plan read as the list's name, whether a long plan is too long to hear
-   there; "Read the whole plan" read with the arrows; "manual mode on" or "auto mode on" after a yes.
-4. With Claude Code itself: a plan approved with auto mode in a real conversation (the stand-in plays the manual
+1. By the maintainer's ear: whether a long plan is too long to hear as the list's name.
+2. With Claude Code itself: a plan approved with auto mode in a real conversation (the stand-in plays the manual
    approval only), and the list of conversations in a folder with many long sessions.
 
 ## Owed: Other in Claude's question, the answer you are on kept, your own words (2026-11-26)
@@ -803,32 +804,22 @@ and Claude received it. Repaired the same day (`docs/axClaude/SPEC.md` D33, Answ
 anew while the user has not answered keeps the answer he is on, and an answer typed out a keystroke at a time counts
 as his doing until its last key has gone (no "Question closed" after his own words). Passing the stand-in window
 script `tests/scripts/axClaude/54-own-words.txt` on the runner's desktop, which failed on the morning's build at the
-list put back on the first answer; owed a pass with NVDA listening of `tests/nvda-scripts/axClaude-own-words.txt`
-(stand-in, no Claude Code), with `docs/axClaude/nvda-test-plan.md` section 12 step 9:
-
-1. "Other" spoken as the arrows reach it, again after the question is drawn anew, and in "Sent: 3, Other. Your words
-   next"; the first answer never named.
-2. The field read by its name, "You chose Other. Your answer"; the words spoken as sent; no "Question closed" after them.
-3. With Claude Code itself (the live script 12, step 9): whether Claude Code 2.1.332 really draws a question anew while
-   it waits (the redraw the stand-in plays is the one window path found from Other to the first answer, not yet seen
-   in a recording), and that Claude receives the words.
+list put back on the first answer. Heard with NVDA on 2026-11-26 (c0b2f2c2): `tests/nvda-scripts/axClaude-own-words.txt`
+passed, "Other" spoken at the arrows and after the redraw, "Sent: 3, Other. Your words next", the field by its name,
+the words as sent, the first answer never named; the live script 12 passed on a fresh build. Still owed: whether
+Claude Code 2.1.332 really draws a question anew while it waits (the redraw the stand-in plays is the one window path
+found from Other to the first answer, not yet seen in a recording).
 
 ## Owed: axClaude's questions said once, typing in a question's list, a permission question's core (2026-11-26)
 
 Built on the maintainer's asks of 2026-11-26 (`docs/axClaude/SPEC.md` FR-7.4b and D33, Answers) and passing the unit
-tests and the stand-in window scripts 35, 40 to 44 and 50 on the runner's desktop, where nothing is spoken; owed a
-pass with NVDA listening, `docs/axClaude/nvda-test-plan.md` section 12, steps 4, 19a and 20a, and the live scripts
-12, 48, 49 and `two-questions`, whose expectations were changed and not run:
-
-1. The question heard once: "Question" interrupts what NVDA reads, just before the focus moves to the list, and
-   NVDA's reading of the focus says the question; whether NVDA reads the word or the focus cuts it off, whether the
-   focus reading ever comes before the word and is cut off by it (the question then not heard at all; F7 or a typed
-   letter brings it back), and whether a reply still being read is cut off as before, with the screen and the stream.
-2. A letter or a sign typed in a question's list reads the whole question, interrupting, and the focus stays; a
-   number, y and n still move to their answers.
-3. A permission question's answers with the tool and target ("1. No, Write notes.txt"): whether the core makes the
-   answers too long to move through, and whether the screen's kind ("Create file", "Bash command") reads well beside
-   the stream's tool name; that the answer sent is the key alone, with Claude Code itself (a live run).
+tests and the stand-in window scripts 35, 40 to 44 and 50 on the runner's desktop. Heard with NVDA on 2026-11-26 in
+the full pass (27581744) and the stream pass (94e87522): the scripts of section 12 and of the stream passed with NVDA
+speaking "Question" and the focus's reading; the live scripts 12, 48 and 49 passed on a fresh build, the key alone
+sent. Still owed, by the maintainer's ear: whether the core makes a permission question's answers too long to move
+through, whether the screen's kind ("Create file", "Bash command") reads well beside the stream's tool name, and
+whether a reply still being read is cut off by "Question" as before. The live script `two-questions` passed the same
+day on the hidden desktop.
 
 ## Owed: axTerminal's screen view of a full-screen program, by ear (built 2026-11-25)
 
