@@ -167,7 +167,7 @@ the app follows its spec, the plan's step reads as below.
 19. Ask Claude: "Reply with one sentence about tulips, then use the AskUserQuestion tool to ask me two questions, which colour I prefer and which season": the trill and the first question, nothing before it (the sentence is in the conversation, Ctrl+Tab). Answer it: the second question cuts off whatever NVDA was saying and reads itself; neither the first question nor its answer is read again.
 19a. The record of an answered question, and a question after a reply (FR-7.4b, 2026-11-14). Options, Speech, Speak replies: all lines; Options, Questions, "Go to them at once, interrupting speech", off; the focus in the message field. Ask Claude: "Write one sentence saying you will ask me something. Then use the AskUserQuestion tool once to ask which colour I prefer: red, green or blue. After my answer, write four long sentences about that colour, then use the AskUserQuestion tool once more to ask which season I prefer." Answer the first question with 2, Enter: "Sent: 2, Green", and neither "User answered Claude's questions" nor the first question is spoken again, not at once and not seconds later with the reply; Claude's four sentences start to be read. When the second question opens while they are still read: the reading is cut off by "Question" and the second question and its current answer are read, once, by NVDA as the focus arrives on its list, never a second time after it. Ctrl+Tab, then Up Arrow from the end of the conversation: "User answered Claude's questions:" and "Which colour do you prefer? → Green" are there to read under "Question: Colour", and the four sentences after them. The same from the conversation (Alt+2 after sending): the reading goes on for about a second after the trill, then the focus is on the list, the reading stops and the question is read once. With Speak replies: none, the second half is step 4: nothing interrupts. Set both options back.
 20. Send `/model` and press Escape as soon as the trill sounds: "Cancelled", the message field comes back, and the question is not spoken after it.
-20a. Typing in a question's list, and a permission question's answers (D33, 2026-11-26). Ask Claude: "Use the AskUserQuestion tool to ask me which colour I prefer: red, green or blue." In the list, Down once, then type x: the whole question and the answer the focus is on are read again, as F7 reads them, and the focus stays on Green; type a full stop, a capital Q, 3, r and b: the same each time, and the focus stays on Green (nothing jumps to an answer by typing; the maintainer's word of 2026-11-26). Shift+3 and 0 read it again too; Page Up, Page Down, Home and End still move. In the trust question (step 1), y and n read the question again and move nothing. In `/config`'s list a letter still jumps to a setting that starts with it, unchanged. Then, with Options, Questions, "Answer from a list" on, ask Claude to create the file axclaude-permission-test.txt with the Write tool: each answer ends with the question's tool and target, "1. Yes, Create file axclaude-permission-test.txt" … "3. No, Create file axclaude-permission-test.txt" with the screen, "1. No, Write axclaude-permission-test.txt", "2. Yes, once, Write axclaude-permission-test.txt" … with the stream (`--source stream`); a Bash call shows its command's first words ("Bash command cat settings.json", "Bash cat settings.json"). Answer No: "Sent: 3, No" (or "1, No"), and nothing of the tool and target went to Claude (its reply says the write was refused).
+20a. Typing in a question's list, and a permission question's answers (D33, 2026-11-26). Ask Claude: "Use the AskUserQuestion tool to ask me which colour I prefer: red, green or blue." In the list, Down once, then type x: the whole question and the answer the focus is on are read again, as F7 reads them, and the focus stays on Green; type a full stop, a capital Q, 3, r and b: the same each time, and the focus stays on Green (nothing jumps to an answer by typing; the maintainer's word of 2026-11-26). Shift+3 and 0 read it again too; Page Up, Page Down, Home and End still move. In the trust question (step 1), y and n read the question again and move nothing. In `/config`'s list a letter still jumps to a setting that starts with it, unchanged. Then, with Options, Questions, "Answer from a list" on, ask Claude to create the file axclaude-permission-test.txt with the Write tool: each answer ends with the question's tool and target, "1. Yes, Create file axclaude-permission-test.txt" … "3. No, Create file axclaude-permission-test.txt" with the screen, "1. No, Write axclaude-permission-test.txt", "2. No, and tell Claude why, Write axclaude-permission-test.txt", "3. Yes, once, Write axclaude-permission-test.txt" … with the stream (`--source stream`); a Bash call shows its command's first words ("Bash command cat settings.json", "Bash cat settings.json"). Answer No: "Sent: 3, No" (or "1, No"), and nothing of the tool and target went to Claude (its reply says the write was refused).
 21. Send `/permissions`, whose panel stays in Claude with the message field in place. Type hello and Enter: "Not sent, Claude asks: <title>. Enter again sends"; Enter again: "Sent"; Ctrl+I closes the panel. Alt+2, Ctrl+End, then Up Arrow a few times: the Input line and "hello", as for any message.
 21a. The permissions screen's search (D33, 2026-11-25; `tests/scripts/axClaude/53-permissions-search.txt`). In a folder whose `.claude\settings.json` allows a few rules (`Bash(git status)`, `Bash(npm test)`, `WebSearch`), send `/permissions`: the list "Tabs: Permissions, ...". End, Up Arrow: "Search the rules (/)"; Enter: the field "Search the rules, type and press Enter", the message field not back. Type git, Enter: "Search the rules. Search: git", Down Arrow: "1. Bash(git status)"; F7 reads the search and the rule. Escape: the field again; zz, Enter: "Search: zz", Down Arrow: "No rules match", the last item Clear (Escape) with no Navigate before it. Escape twice: the field, then the message field, with Claude Code asking for a rule by its number; Ctrl+I closes the screen.
 22. A side answer (FR-2.11). From the message field send `/btw what is two plus two? answer in one word`: the trill, then a read-only notice in the window, NVDA reading its title "/btw what is two plus two? answer in one word" and "Four"; no list takes the message field's place. Down Arrow: "Enter or Escape: Close." NVDA+End: "Claude: showing a side answer". Tab: Close, Copy (c), Fork (f), then the text again. Escape: "Closed", the message field back, NVDA+End "Claude: ready". Send a second `/btw` question: the notice holds the newest question and its answer; Tab to Browse (Shift+Left), Enter: the text changes to the earlier answer and the focus stays on the button (NVDA says nothing of the text moving; Shift+Tab back to the text reads it). Escape closes. Send another `/btw` question and press Alt+2 at once: the trill when the answer comes, and the notice about a second later, after what NVDA was reading. Options, Questions, "Go to them at once, interrupting speech" off: the notice still opens from the message field, its title read once, without cutting off speech. Send `/goal`: the notice "Goal" with "No goal set", Close alone; Enter closes. Alt+2, Ctrl+Home, then b: "btw: what is two plus two? answer in one word", then the later side questions in order, then "No next btw"; Shift+B goes back; q never stops on a btw line (2026-11-14).
@@ -405,10 +405,13 @@ the bell, no network).
 ## 26. Claude Code without its screen: the stream (docs/axClaude/stream-mode.md, 2026-11-17)
 
 Being built and off: Options, Developer, "Feed the next window from Claude Code's stream" turns it on for the next
-window. The seven scripts `37-stream-turn.txt` to `43-stream-interrupt.txt` play recordings of Claude Code's real
-stream through the stand-in of `tools/AxAutomate` and need no Claude Code; with `--nvda` every expected line must be
-spoken by NVDA too. What they cover, to be heard once by ear in a real conversation as well (SM-10.5), with the
-switch on and a new window on a folder of your own:
+window. The stand-in scripts `37-stream-turn.txt` to `44-stream-same-question.txt`, `50-stream-choices.txt`,
+`51-stream-older.txt`, `55-stream-refused-why.txt` and `56-stream-typed-commands.txt` play recordings of Claude Code's
+real stream through the stand-in of `tools/AxAutomate` and need no Claude Code; with `--nvda` every expected line must
+be spoken by NVDA too (`.\nvda-pass.ps1 axClaude` runs them). The live scripts 48, 49 and 52 need Claude Code signed
+in. What they cover, to be heard once by ear in a real conversation as well (SM-10.5), with the switch on and a new
+window on a folder of your own (written whole for stage 8 on 2026-11-26; steps 9 to 13 are the first round of
+`stream-equivalence.md` section 5):
 
 1. The folder's question (script 40, 41): "Start Claude Code in this folder?" with its text. Enter: nothing starts,
    F9 says "Claude: stopped", and the conversation says that Claude Code was not started. Ctrl+Shift+R asks again;
@@ -419,10 +422,12 @@ switch on and a new window on a folder of your own:
 3. A tool call (script 40, 41): "Claude asks to use" with the tool and what it is about, then "Asked by Claude, an
    AI: read the explanation before you allow it", then "1. No". F9: "Claude: waiting for your answer". Down to
    "Explain what Claude asks to do", Enter: a text that starts with who asks, that it can be wrong and that axKit
-   checked none of it, then the tool and each part of the call; Enter closes it and the list is still there. "Yes,
-   once": "Sent: 2, Yes, once", and the turn goes on to "Done". "No": "Sent: 1, No", and the call's line reads "tool
-   error:". Whether the question is too long to hear every time, and whether the three answers are the right ones
-   (section 12, point 3).
+   checked none of it, then the tool and each part of the call; Enter closes it and the list is still there. Each
+   answer ends in the call's tool and target ("1. No, Bash ping -n 2"). "Yes, once": "Sent: 3, Yes, once", and the
+   turn goes on to "Done". "No": "Sent: 1, No", and the call's line reads "tool error:". "Yes, and do not ask again":
+   the conversation keeps "System: You allowed Claude to use Bash without asking for the rest of this session".
+   Two calls of one tool about one file (script 44): the second is asked anew, its list on No. Whether the question
+   is too long to hear every time, and whether the answers are the right ones (section 12, point 3).
 4. Claude's own questions (script 42): "Question 1 of 2:" and the question, the answers by number, "Other" last.
    Other: "Sent: 4, Other. Your words next", a field "You chose Other. Your answer"; Escape goes back to the list;
    words and Enter: "Sent:" with the words, "Next question". A question with several answers has check boxes:
@@ -440,6 +445,34 @@ switch on and a new window on a folder of your own:
 7. The end and the way back (script 39): when Claude Code ends by itself, "Claude stopped"; when that is within
    seconds of its start, a notice "Claude Code ended right after its start" offers "Open with the screen"; Escape
    stays. Options, Developer, Say the event sources: "Source: the stream. Claude Code runs." and the numbers.
-8. By ear alone, in a real conversation: that Claude Code's questions come as fast as with the screen; that a long
+8. The conversation from before (script 51, live 52): close the window and open the folder again with the switch on:
+   "# Input 1 from previous session", the message, "# Output 1 from previous session Reply from Claude" and the
+   replies stand before "Ready", and nothing of them is spoken. Then the same folder with the screen (switch off, new
+   window): Claude Code's own conversation shows the same exchange; and back to the stream: it goes on with it.
+9. "No, and tell Claude why" (script 55, SM-7.4): ask Claude to write a file. The list says "1. No", then Down:
+   "2. No, and tell Claude why" with the call's tool and target. Enter: "Sent: 2, No, and tell Claude why. Your words
+   next", and a field named with the question and "You chose No, and tell Claude why. Your answer". Escape: back to
+   the list, on "1. No". Down, Enter, type "Write notes.txt instead", Enter: "Sent:" with the words; Claude's reply
+   follows the words (it writes notes.txt, or asks for it), and the conversation has "System: You refused Claude's
+   use of Write and told Claude: Write notes.txt instead". Whether "Your words next" and the field's name say enough.
+10. A typed command of the screen alone (script 56, SM-5.8): type `/help`, Enter: "Not with the stream source: /help",
+   and `/help` stays in the message field; Enter again says it again and sends nothing. The same for `/resume`,
+   `/rewind`, `/tasks` and `/login`. `/compact` and `/context` are sent as before. Type `/probe-word`, Enter: "Not
+   sent: Claude Code takes no command /probe-word. It would go to Claude as a message. Enter again sends it so";
+   Enter again: "Sent", and Claude answers it as a message. A path (`/tmp/notes is empty`) is a message at once.
+   Whether the new kind of moment wants a sound (it has none: `not-with-source`, docs/axKit/earcons.md class 2).
+11. A typed ! line (script 56, SM-5.9): type `!dir`, Enter: "Not sent: over the stream a ! line is no shell command.
+   It would go to Claude as a message. Enter again sends it so", with the refused sound; Enter again: "Sent", and
+   Claude may ask to run it with its own tool, a question like step 3.
+12. A lapsed sign-in (SM-6.2; no script, and not to be caused on purpose: it needs Claude Code signed out): if
+   Claude Code's error says to run `/login`, the error line is read and a notice "Claude Code asks you to sign in"
+   offers "Open with the screen" once; Enter opens the folder with the screen, where `/login` is typed and the
+   sign-in reminder is said there, never in the stream's window.
+13. The copy from the Microsoft Store (SM-9.6; only on a computer with the Store's copy installed): Options,
+   Developer, "Feed the next window from Claude Code's stream" is a plain item; Enter says "The copy of axKit from the
+   Microsoft Store cannot start Claude Code over its stream yet, so every axClaude window is fed from the screen",
+   and a new window is fed from the screen whatever the setting says.
+14. By ear alone, in a real conversation: that Claude Code's questions come as fast as with the screen; that a long
    command or a file's whole content can be read in the explanation with the arrow keys; that the status bar and
-   the music follow a turn; and two hours of your own use before the switch leaves the Developer menu.
+   the music follow a turn; and two hours of your own use before the switch leaves the Developer menu
+   (`stream-equivalence.md` section 6 lists what to try).

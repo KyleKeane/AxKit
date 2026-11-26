@@ -8,8 +8,10 @@ stream's reader, model and host, from recordings of the real stream; the relay o
 fed by the stream, with its second ways to send; and the folder's trust and the questions in the control area. A
 window made for the stream can hold a conversation and answer what Claude asks. Since 2026-11-25 a reply's text is
 made plain (stage 7, SM-4.5), and the sessions are built (stage 6, section 13, the last part): the older conversation
-shown when a session is taken up, and the hand-over between the two sources. Not built yet: the NVDA plan's section
-and the maintainer's own use (stage 8; the live scripts 48, 49 and 52 are there). The open ends stages 4 and 5 left are
+shown when a session is taken up, and the hand-over between the two sources. Since 2026-11-26 the NVDA plan has its
+section for the mode (stage 8; its pass by ear is owed), and the first round of what `stream-equivalence.md` section 5
+lists is built (section 13, the last part). Not done yet: the maintainer's own use (stage 8; the live scripts 48, 49
+and 52 are there). The open ends stages 4 and 5 left are
 built since the same day (section 13, the last part), but for the folder's yes, which is remembered for no folder
 until the maintainer says so. The points of section 12 are taken as proposed until the maintainer has heard the mode.
 
@@ -157,7 +159,26 @@ the method writes keystrokes for the screen source and a line for the stream sou
   shell tool for it. So an offer in stream mode says that it cannot be sent this way and how to run it (section 12).
 - SM-5.7 **Not sent at all in stream mode**, each said in a few words when asked for: Send queued messages now, the
   Send key submenu (Ctrl+C, Ctrl+D, Tab, the arrows), Ctrl+O's guard. Their menu items stay, so that the menus are
-  the same in both modes, and say "Not with the stream source" (the words are section 12's).
+  the same in both modes, and say "Not with the stream source" (the words are section 12's), raised at the door as
+  the kind `not-with-source` (since 2026-11-26; `said` before), which has no sound until the maintainer has chosen one.
+- SM-5.8 **A typed slash command** (2026-11-26; `stream-equivalence.md` L12). The answer to the first request lists the
+  commands the run takes, the same as each start line (measured: 69 with 2.1.332, the user's own among them; the
+  model keeps them, `StreamModel.Commands`, and they are never logged as a list). A typed text is read against that
+  list (`StreamModel.TypedTextOf`): a text whose first word is the slash and a name (a path is a message) is a command
+  the run takes, or one of Claude Code's own (by name or alias, `SlashCommands`) that the run does not list, or a name
+  the run does not know. Measured with the probe's cases `command-lists` and `screen-commands` (section 13): a
+  command of Claude Code's screen alone is answered by Claude Code itself, "/help isn't available in this
+  environment.", with no turn of the model's; a name it does not know goes to Claude as a message. So:
+  - a command of the screen alone is **never sent**: the window says "Not with the stream source: /help", by the door
+    as `not-with-source`, and the text stays in the field;
+  - a name the run does not know is **held**, as a message is held during a question (SPEC.md FR-2.10): "Not sent:
+    Claude Code takes no command /name. It would go to Claude as a message. Enter again sends it so"; sent again, it
+    goes as a message and gets a message's block;
+  - before the run has listed its commands (a Claude Code that does not answer the first request), every command is
+    sent, as before.
+- SM-5.9 **A typed `!` line** (2026-11-26; L17) is held the same way: the screen runs it in Claude Code's shell, the
+  stream gives it to Claude as a message (SM-5.6). "Not sent: over the stream a ! line is no shell command. It would go
+  to Claude as a message. Enter again sends it so."
 
 ## 6. What the stream does not have
 
@@ -167,8 +188,16 @@ mode each is simply absent, and the window says so where the user would look for
 - SM-6.1 **Claude Code's own screens**: `/config`, `/status`, `/tasks`, `/help`, `/permissions`, the review of
   answers, the resume picker, `/btw`'s side answer, the feedback survey, drafts and their review. Not shown. What
   the user needs of them has other ways: the settings are axClaude's own menu already (SPEC.md FR-14), a
-  conversation is resumed by the window (SM-8), and `/status` and `/context` print as text.
-- SM-6.2 **`/login`** and the other commands of the terminal alone: signing in is done with the screen source.
+  conversation is resumed by the window (SM-8), and `/context` prints as text. `/status` was written here as printing
+  too; the run's list of commands does not name it (measured 2026-11-26 with 2.1.332, never sent: it prints the
+  account), so the window says it is not with the stream source (SM-5.8). `/usage` is listed and is sent.
+- SM-6.2 **`/login`** and the other commands of the terminal alone: signing in is done with the screen source. Since
+  2026-11-26 (L11): a typed `/login` is a command of the screen alone (SM-5.8); an error of Claude Code's that names
+  `/login` (an error text of the service's or a failed turn's end, `ClaudeCodeStream.AsksToSignIn`; or the lines it
+  wrote as errors as it ended) opens the notice that offers the folder with the screen (SM-9.3), titled "Claude Code
+  asks you to sign in", once for a run; and the window's sign-in reminder (bundle AX-11.6) is not said over the
+  stream, where nothing signs in. The error's words over the stream are not recorded (it would take signing out); they
+  are taken to be the screen's, which name `/login`.
 - SM-6.3 **The mode line's own words, the spinner's words, the session's name**: the status bar says working,
   ready or waiting, the mode, and the count of background work; no spinner text, no session name.
 - SM-6.4 **The count of waiting messages while a turn runs**: the window counts the messages it wrote and that have
@@ -198,11 +227,17 @@ mode each is simply absent, and the window says so where the user would look for
   configuration file axClaude writes for the start (as it writes the hooks' file today). It speaks to this window
   alone, over a named pipe with a secret of the start, the pipe open to the user alone (as the hooks' pipe is). It
   holds no logic: a question in, an answer out. When the window is gone or does not answer, its answer is No.
-- SM-7.4 **A permission question** is shown as a question with three answers, No first where a list starts: No;
-  Yes, once; Yes, and do not ask again for this tool in this session. The last is a rule of the session's alone
+- SM-7.4 **A permission question** is shown as a question with four answers, No first where a list starts: No;
+  No, and tell Claude why (since 2026-11-26, L14); Yes, once; Yes, and do not ask again for this tool in this
+  session. "No, and tell Claude why" answers nothing yet: the control area's field asks for the user's words as after
+  Other ("You chose No, and tell Claude why. Your answer"; Escape goes back to the list), and they go back with the
+  refusal, `ClaudeCodeStream.RefusedWithWords`, as the refused call's result; measured with the probe's case
+  `relay-refused-why` (section 13): Claude reads them and follows them. The conversation keeps "You refused Claude's
+  use of Write and told Claude: …" (`StreamAsking.ToldWhyLine`); the words are not shown again under the call. The
+  last is a rule of the session's alone
   (`ClaudeCodeStream.AlwaysAnswer`): it is written to no settings file and a new session asks again. The question
   names the tool and shows what it would do (the command, the file), read from the request. Every answer carries
-  the tool and its target in a few words, "1. No, Write axclaude-permission-test.txt", "2. Yes, once, Bash cat
+  the tool and its target in a few words, "1. No, Write axclaude-permission-test.txt", "3. Yes, once, Bash cat
   settings.json" (since 2026-11-26, `PermissionCore`, `Question.Core`; the tool alone when the subject is Claude's own
   description of the call), so that moving through the answers says which question they belong to; the answer that
   goes back is the key's, as before. The question is said once, by the list the focus moves to, and a character
@@ -262,6 +297,13 @@ mode each is simply absent, and the window says so where the user would look for
   that no sentence of the screen source changed. Copy diagnostics names the source on a line of its own in both:
   "Source: the screen" or "Source: the stream", the latter with the stream's numbers under it.
 - SM-9.5 **axHelp's conversation** stays on the screen source until the stream has been used for a while.
+- SM-9.6 **The copy from the Microsoft Store** (2026-11-26; L28): the stream does not start there, since it is not known
+  that Claude Code can read the relay's file under the package's folders, and without the relay nothing could be
+  asked (SM-7.2). So there the setting does not choose the stream and the default stays the screen
+  (`StartupOptions.Streams` with the Store's copy told); the switch in Options, Developer only says why, "The copy of
+  axKit from the Microsoft Store cannot start Claude Code over its stream yet, so every axClaude window is fed from the
+  screen", and changes nothing; a `--source stream` named for one start is followed, and that window's notice says the
+  same and offers the screen (SM-9.3). Moving the file where Claude Code can read it is a measurement still to make.
 
 ## 10. Checks
 
@@ -303,7 +345,8 @@ through all of them.
 6. **Sessions**: the older conversation from the file, the id kept, the hand-over between the sources. Built
    2026-11-25 (section 13).
 7. **What the stream does not have, said plainly** (section 6), and the reply's text made plain (SM-4.5).
-8. **Live scripts, the NVDA plan's section, the user guide.** Then the maintainer's two hours.
+8. **Live scripts, the NVDA plan's section, the user guide.** Then the maintainer's two hours. The NVDA plan's section
+   is written (2026-11-26); its pass by ear is owed.
 
 ### Stage 4 in steps (planned 2026-11-17)
 
@@ -355,7 +398,7 @@ off: they are the maintainer's to change by ear once the mode can be used, and e
 1. Whether this is the seam: one model with two sources, the screen's machinery left where it is. Decided
    2026-11-17: yes, and the first stage built at once.
 2. The trust question's words, and whether a yes is remembered for a folder or asked at every first start.
-3. The permission question's three answers and their words; whether "do not ask again in this session" is offered
+3. The permission question's answers and their words (four since 2026-11-26, with "No, and tell Claude why"); whether "do not ask again in this session" is offered
    at all.
 4. What a menu item says that the stream cannot do: one short sentence, the same everywhere. (Choose the model and
    Choose the effort no longer say it since 2026-11-25: the stream takes their values, and they ask with a list of
@@ -516,7 +559,8 @@ was: its stand-in scripts pass unchanged, and nothing of its code runs different
   not ask again for Bash in this session", a rule of the session's alone; and "Explain what Claude asks to do",
   which answers nothing: it opens a text, the caution first (`AiCaution.ToolCall`), then the tool and every member
   of the call's input, and the question stays under it. A file in the project folder is named from there. Since
-  2026-11-26 each answer ends in the call's core, "1. No, Bash ping -n 2" (SM-7.4).
+  2026-11-26 each answer ends in the call's core, "1. No, Bash ping -n 2" (SM-7.4), and "No, and tell Claude why" is the
+second answer, so that the list has five (SM-7.4).
 - Claude's own questions (SM-7.5) are asked one after another, "Question 1 of 2: …", each with its choices by number
   and Other last; a choice's description follows its name after a dash when it says more than the name. Other asks
   for the user's own words in the window's own field ("You chose Other. Your answer"), and Escape there goes back
@@ -684,4 +728,36 @@ Left, each for a reason:
 - A session the stream began is taken up by the screen only while it is the folder's newest: once a later session
   has been written in the folder, the screen's `--continue` takes that one, as it always did, and the interactive
   program's own list of sessions leaves the stream's out (documented). The window does not guess past the newest.
-- The NVDA plan's section for stream mode and the maintainer's own use (stage 8).
+- The NVDA plan's section for stream mode and the maintainer's own use (stage 8). The section is written since
+  2026-11-26.
+
+**Round 1 of the must-build list (2026-11-26).** The maintainer decided that day to build all nine items of
+`stream-equivalence.md` section 5; this round is the small ones, L28, L12, L11, L17 and L14, with the NVDA plan's
+section. Measured first, live, with Claude Code 2.1.332 and Haiku, by three new cases of `tools/ClaudeProbe stream`,
+each in a fresh folder under `C:\Temp`, one session at a time, printing kinds, counts and Claude Code's own short
+words through the redaction only:
+
+1. `command-lists`: the answer to the first request lists 69 commands, each an object with its name, and the start
+   line's `slash_commands` the same 69. Of the commands `stream-equivalence.md` L1 to L9 and L11 name, the lists hold
+   `config`, `usage`, `goal`, `mcp`, `agents` and `advisor`; not `status`, `cost`, `help`, `resume`, `permissions`,
+   `tasks`, `rewind`, `btw`, `diff`, `memory`, `hooks`, `ide`, `chrome`, `theme`, `export`, `mobile`, `login` or
+   `logout`. The start line's `terminal_slash_commands` names four, every one also among its commands: it is not the
+   list of the screen's commands, and nothing reads it.
+2. `screen-commands`: ten of those not listed, written over the stream one after another (never `/status`, `/cost`,
+   `/login`, `/logout`, and not `/memory`, `/ide`, `/chrome` or `/export`, which might reach an editor, a browser or the
+   clipboard if run): each is answered by Claude Code itself with one text, "/help isn't available in this
+   environment." (the command's name in each), and an end line that counts no turn; nothing comes back as a message
+   and the model does not run. A name that is no command (`/probe-no-such-command`) comes back as a message and the
+   model answers it, one turn.
+3. `relay-refused-why`: a Write call refused through axKit's relay with the words "Do not write any file. Reply with
+   the single word heron and nothing else." The file was not made, one denial was counted, and the reply was the
+   word: Claude reads the words that come with a refusal.
+
+Built on that, each with its tests: SM-5.8 (a typed command, `StreamModel.TypedTextOf` and `Commands`, the first
+answer's commands read by `ClaudeCodeStream`), SM-5.9 (a `!` line), SM-6.2 (the sign-in, `StreamModel.SignInAsked`),
+SM-7.4 ("No, and tell Claude why", `StreamAsking.RefuseWhyKey`, the keys of Yes once, Yes always and Explain moving to
+3, 4 and 5), SM-9.6 (the Store's copy), and the kind `not-with-source` of `docs/axKit/families.json`. The stand-in of
+the stream answers the first request with some of the commands 2.1.332 listed, `/help` not among them; the stand-in
+scripts `55-stream-refused-why` and `56-stream-typed-commands` play the new answer and the typed texts. What is owed:
+the NVDA pass of the section, the error of a lapsed sign-in over the stream (not recorded), and the Store's copy (no
+script can run it).

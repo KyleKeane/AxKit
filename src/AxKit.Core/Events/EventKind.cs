@@ -36,6 +36,9 @@ public enum EventKind
     /// <summary>The change asked for is not allowed here and nothing changed.</summary>
     Refused,
 
+    /// <summary>The command needs a way of reaching the program underneath that this window is not on (axClaude: the screen, in a window Claude Code's stream feeds); nothing was sent.</summary>
+    NotWithSource,
+
     /// <summary>A command that only tells something said it.</summary>
     Said,
 

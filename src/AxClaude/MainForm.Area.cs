@@ -463,7 +463,9 @@ internal sealed partial class MainForm
         // Other is no answer yet: Claude asks for the words next (ShowOwnAnswer), and the sound of sending comes once,
         // with them. Until 2026-11-21 it played here too, and one answer in the user's own words sounded like two
         // (the maintainer: "submitting my answers ... caused multiple submission noises to play").
-        var wordsFollow = chosen.Any(option => option.Text.Equals(ClaudeCodeTexts.OtherAnswer, StringComparison.OrdinalIgnoreCase));
+        // Over the stream "No, and tell Claude why" asks for words the same way (stream-mode.md SM-7.4).
+        var wordsFollow = chosen.Any(option => option.Text.Equals(ClaudeCodeTexts.OtherAnswer, StringComparison.OrdinalIgnoreCase))
+            || chosen.Count == 1 && StreamAsksWords(chosen[0].Key);
         SendAnswer(string.Join(",", chosen.Select(option => option.Key)), sound: !wordsFollow);
         // Each answer's name without Claude's explanation after the dash.
         var names = string.Join(", ", chosen.Select(option =>

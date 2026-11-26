@@ -101,6 +101,69 @@ internal static class StreamProbe
 
     private static readonly string[] Asking = ["--permission-mode", "default", ClaudeCodeStream.PermissionToolOption, ToolName];
 
+    /// <summary>
+    /// The commands of Claude Code's own screens that docs/axClaude/stream-equivalence.md names (L1 to L9, L11): asked
+    /// about by name in the lists a run gives (the case command-lists). Declared before the cases, which read it.
+    /// </summary>
+    private static readonly string[] ScreenOnly =
+    [
+        "config", "status", "usage", "cost", "help", "resume", "permissions", "tasks", "rewind", "btw", "goal", "diff",
+        "memory", "mcp", "hooks", "agents", "ide", "chrome", "theme", "advisor", "export", "mobile", "login", "logout",
+    ];
+
+    /// <summary>
+    /// What the case screen-commands writes, one after another: the commands of <see cref="ScreenOnly"/> that the case
+    /// command-lists found in neither list on 2026-11-26, but those that print the account (status, cost), sign in or
+    /// out (login, logout), or could reach outside the folder if the stream ran them (memory, ide, chrome, export: an
+    /// editor, an IDE, a browser, the clipboard); and a name that is no command at all. The listed ones (config, usage,
+    /// goal, mcp, agents, advisor) are left alone: the stream runs them, and they could change a setting of the user's.
+    /// </summary>
+    private static readonly string[] Sent =
+    [
+        "help", "resume", "permissions", "tasks", "rewind", "btw", "diff", "hooks", "theme", "mobile", "probe-no-such-command",
+    ];
+
+    /// <summary>The user's words the case relay-refused-why sends back with its refusal: a word the message never names, so that a reply with it shows that Claude read them.</summary>
+    private const string RefusedWhy = "Do not write any file. Reply with the single word heron and nothing else.";
+
+    /// <summary>For each command the case screen-commands wrote: how it came back, how its end counted, and Claude Code's own words when no turn of the model's ran (redacted, cut).</summary>
+    private static IEnumerable<string> CommandFindings(Outcome outcome)
+    {
+        var segment = new List<StreamLine>();
+        var index = 0;
+        foreach (var (_, line) in outcome.Lines)
+        {
+            segment.Add(line);
+            if (!line.Has(StreamKind.Ended))
+            {
+                continue;
+            }
+
+            var name = index < Sent.Length ? Sent[index] : "(more)";
+            index++;
+            var parts = segment.SelectMany(l => l.Parts).ToList();
+            var back = parts.Any(part => part.Kind == StreamKind.Message) ? "came back as a message"
+                : parts.Any(part => part.Kind == StreamKind.Command) ? "came back as a command that runs the model"
+                : "did not come back";
+            var tools = parts.Where(part => part.Kind == StreamKind.ToolCall).Select(part => part.Tool).Distinct().ToList();
+            var texts = parts.Where(part => part.Kind is StreamKind.Text or StreamKind.CommandOutput).ToList();
+            string said;
+            if (line.Turns == 0)
+            {
+                var words = string.Join(" | ", texts.Select(part => part.Text)).Replace("\r", string.Empty).Replace("\n", " | ");
+                words = Redaction.Redact(words);
+                said = texts.Count == 0 ? "no text" : $"its words: \"{(words.Length > 120 ? words[..120] + "..." : words)}\"";
+            }
+            else
+            {
+                said = $"the model ran: {texts.Count} text(s), tools called: {(tools.Count == 0 ? "none" : string.Join(", ", tools))}";
+            }
+
+            yield return $"/{name}: {back}; end {(line.Failed ? "failed" : "well")} ({line.Terminal}), turns {line.Turns}; {said}";
+            segment.Clear();
+        }
+    }
+
     private static readonly Case[] Cases =
     [
         new("turn", "one message, one reply, the turn's end", [], string.Empty,
@@ -295,6 +358,46 @@ internal static class StreamProbe
             o => [$"the request was {(o.Parts.Any(part => part.Kind == StreamKind.Control && part.Text == "probe-5" && !part.Error) ? "taken" : o.Parts.Any(part => part.Kind == StreamKind.Control && part.Text == "probe-5") ? "refused" : "not answered")}, {o.Lines.FirstOrDefault(entry => entry.Line.Has(StreamKind.Control)).Ms} ms after the start; lines before the first message's start line: {o.Lines.TakeWhile(entry => !entry.Line.Has(StreamKind.Started)).Count()}"],
             LimitSeconds: 60),
 
+        // ---- The commands of Claude Code's screen alone (docs/axClaude/stream-mode.md SM-5.8, 2026-11-26) ----
+
+        // Where each command of the screen's own is listed: the first request's answer (a), the start line's commands
+        // (s). Only names the probe gives are asked about: the lists hold the user's own commands too, and are never
+        // printed. Measured 2026-11-26 with 2.1.332: both list the same 69 commands; the start line's
+        // terminal_slash_commands named 4, every one of them also among its commands, so that list is not the screen's.
+        new("command-lists", "where the commands of the screen alone are listed: the first answer, the start line (reported)", [], string.Empty,
+            [
+                new(null, 0, ClaudeCodeStream.InitializeLine("probe-6"), "an initialize request"),
+                Say("Reply with exactly: ok", line => line.Has(StreamKind.Control), 200, "a message after it"),
+                Close(Ended),
+            ],
+            o => Unless(o.Says("ok"), "the message should be answered"),
+            o =>
+            {
+                var answer = o.Lines.Select(entry => entry.Line).Where(line => line.Has(StreamKind.Control)).Select(line => line.Commands).FirstOrDefault(list => list.Count > 0) ?? [];
+                var start = o.Commands;
+                return
+                [
+                    $"the first answer lists {answer.Count} commands, the start line {start.Count}; they list the same: {(answer.ToHashSet().SetEquals(start) ? "yes" : "no")}",
+                    "where each is listed (a: the first answer, s: the start line, -: nowhere): "
+                        + string.Join(", ", ScreenOnly.Select(name => $"{name} {(answer.Contains(name) ? "a" : string.Empty)}{(start.Contains(name) ? "s" : string.Empty)}{(answer.Contains(name) || start.Contains(name) ? string.Empty : "-")}")),
+                ];
+            },
+            LimitSeconds: 60),
+
+        // What Claude Code does with each command of the screen alone written over the stream, one after another, each
+        // after the end of the one before. Never /status, /usage, /cost (they print the account) or /login and /logout.
+        // What a command printed is shown only when no turn of the model's ran (Claude Code's own words), and then
+        // through the redaction, cut at 120 characters; a reply of the model's is counted, never shown.
+        new("screen-commands", "each command of the screen alone written as a message (reported)", [ClaudeCodeStream.ReplayOption], string.Empty,
+            [
+                new(null, 0, ClaudeCodeStream.InitializeLine("probe-7"), "an initialize request"),
+                .. Sent.Select((command, i) => Say("/" + command, i == 0 ? line => line.Has(StreamKind.Control) : Ended, 200, "the slash command /" + command)),
+                Close(Ended),
+            ],
+            o => Unless(o.Ends.Count() == Sent.Length, $"{Sent.Length} ends should come, one for each command; {o.Ends.Count()} came"),
+            o => CommandFindings(o),
+            LimitSeconds: 400),
+
         // ---- axKit's own relay (docs/axClaude/stream-mode.md SM-7.3), with the probe as the window's end of its pipe ----
 
         new("relay", "a question through axKit's own relay, answered yes by a stand-in of the window", ["--permission-mode", "default", ClaudeCodeStream.PermissionToolOption, AskRelay.ToolName], string.Empty,
@@ -310,6 +413,17 @@ internal static class StreamProbe
                 .Concat(Unless(!File.Exists(Path.Combine(o.Folder, "relay-refused.txt")), "the file must not be made after the window's no"))
                 .Concat(Unless(o.Ends.Any() && o.Ends.Last().Denials == 1, "one denial should be counted at the turn's end")),
             Relay: "deny"),
+
+        // The answer "No, and tell Claude why" (docs/axClaude/stream-mode.md SM-7.4, 2026-11-26): the user's words go
+        // back with the refusal. Whether Claude reads them is what this case measures: the words ask for a word the
+        // message never names.
+        new("relay-refused-why", "refused by the stand-in of the window, with the user's words why", ["--permission-mode", "default", ClaudeCodeStream.PermissionToolOption, AskRelay.ToolName], string.Empty,
+            [Say("Use the Write tool to create a file named relay-why.txt in the current folder with the content hi."), Close(Ended)],
+            o => Unless(o.Asked.Contains("Write"), "the window's stand-in should be asked about Write through the relay")
+                .Concat(Unless(!File.Exists(Path.Combine(o.Folder, "relay-why.txt")), "the file must not be made after the window's no"))
+                .Concat(Unless(o.Says("heron"), "Claude should follow the words that came with the refusal")),
+            o => [$"the reply named the word only the refusal's words asked for: {(o.Says("heron") ? "yes" : "no")}; the permission tool was asked {o.Asked.Count} time(s); denials at the end: {(o.Ends.Any() ? o.Ends.Last().Denials : 0)}"],
+            Relay: "deny-why"),
 
         new("relay-gone", "the relay with no window to ask: its answer is no", ["--permission-mode", "default", ClaudeCodeStream.PermissionToolOption, AskRelay.ToolName], string.Empty,
             [Say("Use the Write tool to create a file named relay-gone.txt in the current folder with the content hi. Then say in one short sentence whether it was created."), Close(Ended)],
@@ -956,7 +1070,8 @@ internal static class StreamProbe
                         asked.Add(root.TryGetProperty("tool_name", out var named) ? named.GetString() ?? string.Empty : string.Empty);
                     }
 
-                    var answer = answerWith == "deny" || !root.TryGetProperty("input", out var input)
+                    var answer = answerWith == "deny-why" ? ClaudeCodeStream.DenyAnswer(ClaudeCodeStream.RefusedWithWords(RefusedWhy))
+                        : answerWith == "deny" || !root.TryGetProperty("input", out var input)
                         ? ClaudeCodeStream.DenyAnswer(ClaudeCodeStream.RefusedWords)
                         : ClaudeCodeStream.AllowAnswer(input);
                     AxClaude.Core.Hooks.HookFrame.Write(server, secret, Encoding.UTF8.GetBytes(answer));

@@ -442,7 +442,8 @@ when the hook says `async`. It needs no Claude Code, no network and no model, an
   moves the play on: the script types a message, and the turn follows. The window's own text is put where Claude
   Code's line sends the message back, and the name the window gave a request where the recording answers it. A
   request the recording does not have, the first request of every start among them, is answered as Claude Code
-  answers it. Where the recording's Claude Code asked its permission tool, the stand-in starts the one server of
+  answers it; the first request's answer lists some of the slash commands Claude Code 2.1.332 listed (since
+  2026-11-26, docs/axClaude/stream-mode.md SM-5.8), `/help` not among them. Where the recording's Claude Code asked its permission tool, the stand-in starts the one server of
   the `--mcp-config` file the window named, which is `AxKit.exe ask` of the run's own build, and asks it, as Claude
   Code does; so the question reaches the window's own pipe, and the script answers it in the control area. The
   lines that follow in the recording are those of the recorded answer, so a script answers as the recording did

@@ -292,7 +292,15 @@ through `ClaudeCodeStream.Read`, and what a case expects is held to the lines.
   `Files` (2026-11-25) are written into its own folder before its process starts, each by its path under the folder
   and its text: a custom command (`.claude/commands/<name>.md`, the recording `custom-command`) or a folder's
   settings; the folder is deleted with the run.
-- Three cases are of axKit's own relay (`relay`, `relay-refused`, `relay-gone`; `AskRelay`, the verb `AxKit.exe ask`).
+- Two cases measure the commands of Claude Code's screen alone (2026-11-26, docs/axClaude/stream-mode.md SM-5.8):
+  `command-lists` says, for each command `stream-equivalence.md` names, whether the first request's answer and the
+  start line list it (only names the probe gives are asked about: the lists hold the user's own commands);
+  `screen-commands` writes those the lists did not name, one after another, and says how each came back, Claude Code's
+  own words through the redaction when no turn of the model's ran. Never `/status`, `/usage`, `/cost`, `/login` or
+  `/logout`, and not a command that could reach an editor, a browser or the clipboard if the stream ran it.
+- Four cases are of axKit's own relay (`relay`, `relay-refused`, `relay-refused-why`, `relay-gone`; `AskRelay`, the verb
+  `AxKit.exe ask`); `relay-refused-why` refuses with the user's words (`ClaudeCodeStream.RefusedWithWords`) and checks
+  that Claude follows them.
   Claude Code is given the relay's own configuration and the pipe's name and secret in its environment, as a window
   will give them, and starts this program with the verb `ask`, which runs the same code as `AxKit.exe ask`; the probe
   plays the window's end of the pipe on a thread of its own and answers as the case says, or nobody does.

@@ -584,4 +584,82 @@ public sealed class StreamModelTests
         Assert.True(model.Send("a message all the same", evenWhilePrompting: true));
         Assert.False(model.Send("   "));
     }
+
+    /// <summary>The answer to the first request, listing the commands the run takes (SM-5.8; measured 2026-11-26).</summary>
+    private static StreamLine FirstAnswer(params string[] commands) =>
+        ClaudeCodeStream.Read("{\"type\":\"control_response\",\"response\":{\"subtype\":\"success\",\"request_id\":\"r-1\",\"response\":{\"current_permission_mode\":\"default\",\"commands\":["
+            + string.Join(",", commands.Select(name => "{\"name\":\"" + name + "\"}")) + "]}}}");
+
+    /// <summary>
+    /// A typed text, by the commands the run named (SM-5.8, SM-5.9; measured 2026-11-26 with the probe's cases
+    /// command-lists and screen-commands): a command of Claude Code's own the run does not list is one of its screen
+    /// alone, which the run would answer "isn't available in this environment"; a name it does not know at all goes
+    /// to Claude as a message; a path is a message; a ! line is a shell line. Before the run has named its commands,
+    /// every command counts as taken, as before.
+    /// </summary>
+    [Fact]
+    public void A_typed_text_is_told_by_the_commands_the_run_named()
+    {
+        var model = new StreamModel();
+        Assert.Equal(TypedText.Command, model.TypedTextOf("/help"));
+
+        model.Take(FirstAnswer("compact", "clear", "model", "context", "config"));
+        Assert.Equal(["compact", "clear", "model", "context", "config"], model.Commands);
+        Assert.Equal(TypedText.Command, model.TypedTextOf("/compact"));
+        Assert.Equal(TypedText.Command, model.TypedTextOf("/model haiku"));
+        Assert.Equal(TypedText.Command, model.TypedTextOf("/MODEL haiku"));
+        // An alias of a listed command is taken by its name: /settings is /config.
+        Assert.Equal(TypedText.Command, model.TypedTextOf("/settings"));
+        Assert.Equal(TypedText.ScreenCommand, model.TypedTextOf("/help"));
+        Assert.Equal(TypedText.ScreenCommand, model.TypedTextOf("  /rewind now"));
+        Assert.Equal(TypedText.ScreenCommand, model.TypedTextOf("/login"));
+        Assert.Equal(TypedText.UnknownCommand, model.TypedTextOf("/probe-no-such-command"));
+        Assert.Equal(TypedText.Message, model.TypedTextOf("/tmp/notes.txt is empty"));
+        Assert.Equal(TypedText.Message, model.TypedTextOf("/"));
+        Assert.Equal(TypedText.Message, model.TypedTextOf("Run /help for me"));
+        Assert.Equal(TypedText.ShellLine, model.TypedTextOf("!git status"));
+        Assert.Equal("/rewind", StreamModel.CommandWord("  /rewind now"));
+
+        // A new run forgets them.
+        model.ResetScreen();
+        Assert.Empty(model.Commands);
+    }
+
+    /// <summary>A name the run does not take, sent all the same, goes to Claude as a message (measured): it gets a message's block, and a command the run takes gets its echo.</summary>
+    [Fact]
+    public void A_name_the_run_does_not_take_is_sent_as_a_message()
+    {
+        var model = new StreamModel();
+        model.Take(FirstAnswer("compact"));
+        Assert.True(model.Send("/probe-no-such-command"));
+        Assert.Equal(LineKind.InputMarker, model.Lines[0].Kind);
+
+        var other = new StreamModel();
+        other.Take(FirstAnswer("compact"));
+        Assert.False(other.Send("/compact"));
+        Assert.Equal("you: /compact", Assert.Single(other.Lines).Text);
+    }
+
+    /// <summary>An error of the service's that names the sign-in command asks for the sign-in once for a turn (SM-6.2); another error does not.</summary>
+    [Fact]
+    public void An_error_that_asks_for_the_sign_in_is_raised_once_for_a_turn()
+    {
+        var model = new StreamModel();
+        var asked = 0;
+        model.SignInAsked += () => asked++;
+        model.Take(ClaudeCodeStream.Read("""{"type":"system","subtype":"init","claude_code_version":"2.1.332","permissionMode":"default","session_id":"s"}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","is_api_error_message":true,"error":"authentication_failed","message":{"content":[{"type":"text","text":"Invalid API key · Please run /login"}]}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"result","subtype":"success","is_error":true,"num_turns":1,"terminal_reason":"api_error","result":"Invalid API key · Please run /login"}"""));
+        Assert.Equal(1, asked);
+        Assert.Contains(model.Lines, line => line.Kind == LineKind.Error);
+
+        // A failed end alone names it too; an error that names no sign-in raises nothing.
+        model.Take(ClaudeCodeStream.Read("""{"type":"system","subtype":"init","claude_code_version":"2.1.332","permissionMode":"default","session_id":"s"}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"result","subtype":"success","is_error":true,"num_turns":1,"terminal_reason":"api_error","result":"Not logged in · Please run /login"}"""));
+        Assert.Equal(2, asked);
+        model.Take(ClaudeCodeStream.Read("""{"type":"system","subtype":"init","claude_code_version":"2.1.332","permissionMode":"default","session_id":"s"}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","is_api_error_message":true,"error":"model_not_found","message":{"content":[{"type":"text","text":"Run --model to pick a different model."}]}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"result","subtype":"success","is_error":true,"num_turns":1,"terminal_reason":"api_error","result":"Run --model to pick a different model."}"""));
+        Assert.Equal(2, asked);
+    }
 }

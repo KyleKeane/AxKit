@@ -100,6 +100,13 @@ internal sealed partial class MainForm
             return;
         }
 
+        if (Streams && text.Length > 0 && !_model.PromptPending && StreamHolds(text))
+        {
+            // Over the stream a typed text that would not do there what the user expects (a command of the screen alone,
+            // a ! line) is said first, and stays in the field (stream-mode.md SM-5.8, SM-5.9).
+            return;
+        }
+
         _keptMessage = null;
         Input.Clear();
         if (text.Length == 0)
@@ -156,8 +163,9 @@ internal sealed partial class MainForm
             ResendEnterWhileHeld(text, attempt: 1);
         }
 
-        // Bundle AX-11.6: signing in goes to Anthropic through Claude Code, said once in the window's own words.
-        var signIn = !answer && _lastCommand?.Name == ClaudeCodeTexts.LoginCommandName ? SignInReminder : null;
+        // Bundle AX-11.6: signing in goes to Anthropic through Claude Code, said once in the window's own words. Not over
+        // the stream, which cannot sign in (stream-mode.md SM-6.2): there it would not be true.
+        var signIn = !Streams && !answer && _lastCommand?.Name == ClaudeCodeTexts.LoginCommandName ? SignInReminder : null;
         if (signIn is not null)
         {
             _model.AddSystemLine(signIn);

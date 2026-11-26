@@ -78,6 +78,21 @@ public class StartupOptionsTests
         Assert.Contains("--source", StartupOptions.Usage);
     }
 
+    /// <summary>
+    /// SM-9.6: in the copy from the Microsoft Store the setting does not choose the stream, which cannot start there
+    /// yet, so the default stays the screen; a --source named for one start is still followed, and that window says why.
+    /// </summary>
+    [Fact]
+    public void In_the_Store_copy_the_default_stays_the_screen()
+    {
+        var stream = new AppSettings { ClaudeSource = AppSettings.SourceStream };
+
+        Assert.False(StartupOptions.Parse([Folder]).Streams(stream, storeCopy: true));
+        Assert.True(StartupOptions.Parse([Folder]).Streams(stream, storeCopy: false));
+        Assert.True(StartupOptions.Parse([Folder, "--source", "stream"]).Streams(new AppSettings(), storeCopy: true));
+        Assert.False(StartupOptions.Parse([Folder, "--source", "screen"]).Streams(stream, storeCopy: true));
+    }
+
     [Fact]
     public void Windows_own_folders_and_the_apps_own_are_never_a_project()
     {

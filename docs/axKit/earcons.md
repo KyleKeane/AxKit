@@ -62,6 +62,7 @@ is the variant.
 | A navigation letter that found nothing of its kind | a low buzz, 150 Hz with its third and fifth harmonics, 110 ms, in place of the tick | exists (`Sounds.Nothing`), chosen by ear 2026-11-16 |
 | A plain key in navigation mode with no command | a wooden bonk, 70 ms, falling from 420 towards 260 Hz with a wood block's overtone | exists (`Sounds.Unassigned`), chosen by ear 2026-11-16 |
 | A value changed by Right or Left in a list of fields | proposed: a rise of one step for the next value, a fall of one step for the previous | proposed, with the forms paradigm |
+| A command the window's source cannot take: a slash command of Claude Code's screen alone typed over the stream, a key of the screen's, the stream's switch in the Store's copy (the kind `not-with-source`, 2026-11-26) | to be chosen by the maintainer's ear | open: the kind exists and is raised with its words ("Not with the stream source: /help"), with no sound yet |
 
 ### 2a. Openings: a way of working starts (built 2026-11-22)
 

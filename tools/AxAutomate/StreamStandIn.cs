@@ -439,7 +439,14 @@ internal static class StreamStandIn
         _ => "unknown",
     };
 
-    /// <summary>The stand-in's own answer to a request the recording does not have here, as Claude Code 2.1.327 answers it: the first request with the mode and the version, a change of the mode with success and the note that names the new mode, any other with success.</summary>
+    /// <summary>
+    /// The slash commands the stand-in's own answer to the first request lists: some of those Claude Code 2.1.332
+    /// listed (the probe's case command-lists, 2026-11-26), none of a user's own. A command of Claude Code's screen
+    /// alone (/help) is not among them, as it was not there (docs/axClaude/stream-mode.md SM-5.8).
+    /// </summary>
+    private static readonly string[] Commands = ["compact", "clear", "model", "effort", "context", "config", "usage", "goal", "mcp", "agents", "advisor"];
+
+    /// <summary>The stand-in's own answer to a request the recording does not have here, as Claude Code 2.1.327 answers it: the first request with the mode, the version and (as 2.1.332 does) the commands, a change of the mode with success and the note that names the new mode, any other with success.</summary>
     private static void AnswerItself(string kind, JsonElement line, Stream output, string version, Log log)
     {
         if (StringOf(line, "request_id") is not { } id)
@@ -451,7 +458,13 @@ internal static class StreamStandIn
         var response = new JsonObject { ["subtype"] = "success", ["request_id"] = id };
         if (kind == "initialize")
         {
-            response["response"] = new JsonObject { ["current_permission_mode"] = "default", ["claude_code_version"] = version };
+            var commands = new JsonArray();
+            foreach (var name in Commands)
+            {
+                commands.Add(new JsonObject { ["name"] = name, ["description"] = string.Empty });
+            }
+
+            response["response"] = new JsonObject { ["current_permission_mode"] = "default", ["claude_code_version"] = version, ["commands"] = commands };
         }
 
         Write(output, new JsonObject { ["type"] = "control_response", ["response"] = response }.ToJsonString());

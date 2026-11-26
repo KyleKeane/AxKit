@@ -30,10 +30,10 @@ expect state Claude: waiting for your answer
 expect focus 1. No
 # A question the user did not cause holds its answering keys for a moment.
 wait 1500
-keys down
-expect focus 2. Yes, once
+keys down down
+expect focus 3. Yes, once
 keys enter
-expect said Sent: 2, Yes, once
+expect said Sent: 3, Yes, once
 expect said Done
 expect state Claude: ready
 do Conversation

@@ -1,0 +1,49 @@
+# Workflow: Type a slash command or a ! line over Claude Code's stream
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/stream-mode.md SM-5.8 and SM-5.9 (2026-11-26): the first request's answer lists the commands
+# the run takes. A command of Claude Code's screen alone that is not on the list is never sent: the window says "Not
+# with the stream source" and the command, and the text stays in the field. A name the run does not know as a command,
+# and a ! line, which the screen runs in its shell, are held as a message is held during a question: the window says
+# that they would go to Claude as a message, and Enter again sends them so. The stand-in answers the first request with
+# some of the commands Claude Code 2.1.332 listed, /help not among them, and plays a turn
+# (tests/fixtures/streams/turn.jsonl), whose message is the one the window sends.
+file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"replySpeech":"all"}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+file claude.cmd @"%AXKIT_STANDIN%" standin --stream turn %*
+start claude {temp}\st --claude {temp}\claude.cmd --source stream
+expect said Start Claude Code in this folder?
+wait 1500
+keys tab
+keys enter
+expect said Ready
+
+# Check: A command of the screen alone is said and never sent
+type /help
+keys enter
+expect said Not with the stream source: /help
+# Still in the field: Enter again says the same, and nothing is sent.
+keys enter
+expect said Not with the stream source: /help
+expect state Claude: ready
+keys ctrl+a delete
+
+# Check: A ! line is held, with what it would do
+type !dir
+keys enter
+expect said Not sent: over the stream a ! line is no shell command. It would go to Claude as a message. Enter again sends it so
+expect state Claude: ready
+keys ctrl+a delete
+
+# Goal: Send a name that is no command as a message
+type /probe-no-such-command
+keys enter
+expect said Not sent: Claude Code takes no command /probe-no-such-command. It would go to Claude as a message. Enter again sends it so
+keys enter
+expect said Sent
+expect said Done. claude: ok
+do Conversation
+expect text # Input 1
+expect text /probe-no-such-command
+expect text claude: ok
+refuse text you: /help

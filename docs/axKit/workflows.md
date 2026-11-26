@@ -308,8 +308,14 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
 50. **Answer Claude's question in your own words**
     - Choose Other and hear it named
     - Give your own words
-51. **Have a short exchange with Claude**
-52. **Answer a set of two questions from Claude**
+51. **Refuse what Claude asks to do and tell Claude why, over Claude Code's stream**
+    - Hear both refusals before any yes
+    - Choose to tell Claude why, then go back to the list
+    - Refuse with your own words
+52. **Type a slash command or a ! line over Claude Code's stream**
+    - Send a name that is no command as a message
+53. **Have a short exchange with Claude**
+54. **Answer a set of two questions from Claude**
 
 ## axClip
 
@@ -1092,14 +1098,15 @@ Steps and keys: `docs/axKit/workflows/nvda-only.md` (in Claude's working folder:
 2. **Hear an offered command as NVDA reads it**
 3. **Hear Other chosen and your own words sent**
 4. **Read a long reply with Say all while Claude writes**
-5. **Come back to the right place after a Windows dialog**
-6. **Hear axDown's notices and palette with NVDA**
-7. **Find a name backwards with Shift and a letter**
+5. **Hear the stream's new answers and refusals**
+6. **Come back to the right place after a Windows dialog**
+7. **Hear axDown's notices and palette with NVDA**
+8. **Find a name backwards with Shift and a letter**
     - Go back to the name before with Shift and its letter
-8. **Put a template into a field of a form**
+9. **Put a template into a field of a form**
     - Choose a template from a form field's menu
-9. **Put a template into another window from axTemplate's launcher, with NVDA**
+10. **Put a template into another window from axTemplate's launcher, with NVDA**
     - Put a template in where the caret was
     - Put a template in around what is selected
-10. **Hear the caution of a command another program put into the command field**
+11. **Hear the caution of a command another program put into the command field**
     - Hear that another program put the command there, before the command, and again on coming back to the field

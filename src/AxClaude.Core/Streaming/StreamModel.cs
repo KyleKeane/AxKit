@@ -4,6 +4,25 @@ using AxKit.Core.Transcript;
 
 namespace AxClaude.Core.Streaming;
 
+/// <summary>What a typed text is to the run, by the slash commands the run named (<see cref="StreamModel.TypedTextOf"/>, docs/axClaude/stream-mode.md SM-5.8, SM-5.9).</summary>
+public enum TypedText
+{
+    /// <summary>A message: a text that starts with no slash and no shell mark, or a path such as /tmp/notes.</summary>
+    Message,
+
+    /// <summary>A line that starts with the shell mark (<c>!</c>): the screen runs it in its shell; the stream gives it to Claude as a message (measured 2026-11-25, SM-5.6).</summary>
+    ShellLine,
+
+    /// <summary>A command the run takes, or any command while the run has named none yet: sent as a command.</summary>
+    Command,
+
+    /// <summary>A command of Claude Code's own that the run does not take: one of its screen alone. Never sent; the run would answer that it "isn't available in this environment" (measured 2026-11-26).</summary>
+    ScreenCommand,
+
+    /// <summary>A name the run does not know as a command: sent anyway, it goes to Claude as a message (measured 2026-11-26).</summary>
+    UnknownCommand,
+}
+
 /// <summary>
 /// The conversation and the facts of a session as Claude Code's non-interactive stream gives them
 /// (docs/axClaude/stream-mode.md SM-4): the second model on <see cref="ClaudeModel"/>, beside the screen's
@@ -108,6 +127,74 @@ public sealed class StreamModel : ClaudeModel
 
     /// <summary>The models the run can be given, as the answer to the first request listed them (SM-5.5); empty until it came.</summary>
     public IReadOnlyList<StreamModelChoice> Models { get; private set; } = [];
+
+    /// <summary>
+    /// The slash commands the run takes, by name without the slash, as the answer to the first request listed them and
+    /// each start line names them again (SM-5.8); empty until then. The user's own commands and skills are among them:
+    /// never logged as a list.
+    /// </summary>
+    public IReadOnlyList<string> Commands { get; private set; } = [];
+
+    /// <summary>
+    /// What a typed text is to the run (SM-5.8, SM-5.9): a message, a shell line, a command it takes, a command of
+    /// Claude Code's screen alone (known by name to <see cref="SlashCommands"/> and not on the run's list), or a name the
+    /// run does not know. A text is a command when it starts with the slash and its first word is a name (letters,
+    /// digits, '-', '_', ':', '.'), so that a path is a message. While the run has named no command, every command
+    /// counts as taken, as before.
+    /// </summary>
+    public TypedText TypedTextOf(string text)
+    {
+        var trimmed = text.TrimStart();
+        if (trimmed.Length > 0 && trimmed[0] == ClaudeCodeTexts.PromptBang)
+        {
+            return TypedText.ShellLine;
+        }
+
+        if (trimmed.Length < 2 || trimmed[0] != ClaudeCodeTexts.CommandStart)
+        {
+            return TypedText.Message;
+        }
+
+        var end = trimmed.IndexOfAny([' ', '\t', '\r', '\n']);
+        var name = end < 0 ? trimmed[1..] : trimmed[1..end];
+        if (name.Length == 0 || !name.All(c => char.IsLetterOrDigit(c) || c is '-' or '_' or ':' or '.'))
+        {
+            return TypedText.Message;
+        }
+
+        if (Commands.Count == 0 || Commands.Contains(name, StringComparer.OrdinalIgnoreCase))
+        {
+            return TypedText.Command;
+        }
+
+        // A name Claude Code's own table knows, by its name or an alias (/settings for /config): taken when the run
+        // lists it by any of them, else a command of the screen alone.
+        if (SlashCommands.Find(trimmed) is { } known)
+        {
+            return known.Aliases.Prepend(known.Name).Any(alias => Commands.Contains(alias, StringComparer.OrdinalIgnoreCase))
+                ? TypedText.Command
+                : TypedText.ScreenCommand;
+        }
+
+        return TypedText.UnknownCommand;
+    }
+
+    /// <summary>The command of a typed text as it was typed, its slash and its name ("/help"), for the words that say it was not sent.</summary>
+    public static string CommandWord(string text)
+    {
+        var trimmed = text.Trim();
+        var end = trimmed.IndexOfAny([' ', '\t', '\r', '\n']);
+        return end < 0 ? trimmed : trimmed[..end];
+    }
+
+    /// <summary>
+    /// Claude Code's error asks the user to sign in (SM-6.2; an error text of the service's, or a failed turn's end, that
+    /// names its sign-in command): signing in is done with the screen. Raised once for a turn.
+    /// </summary>
+    public event Action? SignInAsked;
+
+    /// <summary>The turn that runs has raised <see cref="SignInAsked"/>.</summary>
+    private bool _signInAsked;
 
     /// <summary>The first request waited its limit unanswered while the process ran: Claude Code is up without a mode named.</summary>
     private bool _upUnnamed;
@@ -291,6 +378,7 @@ public sealed class StreamModel : ClaudeModel
                     Session = line.Session;
                     Version = Version.Length > 0 ? Version : line.Version;
                     ModelInUse = line.Model.Length > 0 ? line.Model : ModelInUse;
+                    Commands = line.Commands.Count > 0 ? line.Commands : Commands;
                     changed |= SetMode(line.Mode, announce: false);
                     if (!_turn)
                     {
@@ -358,11 +446,19 @@ public sealed class StreamModel : ClaudeModel
                     // any message: the first mode known is no change, and is not said.
                     Version = Version.Length > 0 ? Version : line.Version;
                     Models = line.Models.Count > 0 ? line.Models : Models;
+                    Commands = line.Commands.Count > 0 ? line.Commands : Commands;
                     changed |= SetMode(line.Mode, announce: false);
                     break;
 
                 case StreamKind.Ended:
                     changed = true;
+                    if (line.Failed)
+                    {
+                        // A failed turn's end holds the error's words again: an error that came as no text of its own
+                        // still asks for the sign-in.
+                        AskSignInWhenNamed(part.Text);
+                    }
+
                     TakeEnd(line);
                     break;
             }
@@ -390,7 +486,9 @@ public sealed class StreamModel : ClaudeModel
             return false;
         }
 
-        if (trimmed.StartsWith(ClaudeCodeTexts.CommandStart))
+        // A command the run takes gets its echo; a name it does not take goes to Claude as a message (measured
+        // 2026-11-26), so it gets a message's block (SM-5.8).
+        if (TypedTextOf(trimmed) is TypedText.Command or TypedText.ScreenCommand)
         {
             _commands++;
             _lines.Add(Final(LineKind.UserEcho, $"{ClaudeCodeTexts.YouLabel} {trimmed}"));
@@ -542,6 +640,8 @@ public sealed class StreamModel : ClaudeModel
         Session = string.Empty;
         ModelInUse = string.Empty;
         Models = [];
+        Commands = [];
+        _signInAsked = false;
         _upUnnamed = false;
     }
 
@@ -594,6 +694,7 @@ public sealed class StreamModel : ClaudeModel
             // An error is the turn's answer: the response has started with it, as the screen's error row starts one.
             Respond();
             Add(LineKind.Error, ClaudeCodeTexts.ErrorLabel, lines);
+            AskSignInWhenNamed(part.Text);
             return;
         }
 
@@ -709,9 +810,22 @@ public sealed class StreamModel : ClaudeModel
         }
     }
 
+    /// <summary>An error's words that ask for the sign-in raise <see cref="SignInAsked"/>, once for a turn.</summary>
+    private void AskSignInWhenNamed(string error)
+    {
+        if (_signInAsked || !ClaudeCodeStream.AsksToSignIn(error))
+        {
+            return;
+        }
+
+        _signInAsked = true;
+        SignInAsked?.Invoke();
+    }
+
     /// <summary>The end line of a turn, or of a slash command that Claude Code ran by itself.</summary>
     private void TakeEnd(StreamLine line)
     {
+        _signInAsked = false;
         var command = _commands > 0 && (line.Turns == 0 || _commandTurn);
         if (command)
         {

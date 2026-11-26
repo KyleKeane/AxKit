@@ -1680,7 +1680,7 @@ You hear: Start Claude Code in this folder?
 
 1. Press Up twice.
 2. Press Enter.
-    You hear: Sent: 2, Yes, once.
+    You hear: Sent: 3, Yes, once.
     You hear: Done. claude: pinged.
 3. Press Alt+2 (Conversation; Navigation menu).
 
@@ -1784,9 +1784,9 @@ Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
     You hear: Sent.
     You hear: Question.
     The focus moves to Claude asks to use Edit: notes.txt. Asked by Claude, an AI: read the explanation before you allow it.
-3. Press Down.
+3. Press Down twice.
 4. Press Enter.
-    You hear: Sent: 2, Yes, once.
+    You hear: Sent: 3, Yes, once.
 
 ### Hear the second call asked anew, with no first
 
@@ -1824,9 +1824,9 @@ You hear: Start Claude Code in this folder?
 2. Press Enter.
     You hear: Sent.
     You hear: Claude asks to use.
-3. Press Down.
+3. Press Down twice.
 4. Press Enter.
-    You hear: Sent: 2, Yes, once.
+    You hear: Sent: 3, Yes, once.
     You hear: Done.
 5. Press Alt+2 (Conversation; Navigation menu).
 
@@ -1982,6 +1982,48 @@ You hear the sound Notice.
 1. Type "every key reads the question and it should also emit a distinct earcon".
 2. Press Enter.
     You hear: Sent: every key reads the question and it should also emit a distinct earcon.
+
+## Refuse what Claude asks to do and tell Claude why, over Claude Code's stream
+
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
+
+### Hear both refusals before any yes
+
+1. Type "Write the file".
+2. Press Enter.
+    You hear: Sent.
+    You hear: Question.
+
+### Choose to tell Claude why, then go back to the list
+
+1. Press Down.
+2. Press Enter.
+    You hear: Sent: 2, No, and tell Claude why. Your words next.
+3. Press Escape.
+
+### Refuse with your own words
+
+1. Press Down.
+2. Press Enter.
+3. Type "Use notes.txt instead".
+4. Press Enter.
+    You hear: Sent: Use notes.txt instead.
+    You hear: Done. claude: No, it was not created.
+5. Press Alt+2 (Conversation; Navigation menu).
+
+## Type a slash command or a ! line over Claude Code's stream
+
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
+
+### Send a name that is no command as a message
+
+1. Type "/probe-no-such-command".
+2. Press Enter.
+    You hear: Not sent: Claude Code takes no command /probe-no-such-command. It would go to Claude as a message. Enter again sends it so.
+3. Press Enter.
+    You hear: Sent.
+    You hear: Done. claude: ok.
+4. Press Alt+2 (Conversation; Navigation menu).
 
 ## Have a short exchange with Claude
 

@@ -30,10 +30,10 @@ expect said → Claude asks to use Edit: notes.txt. Asked by Claude, an AI: read
 expect focus 1. No, Edit notes.txt
 # A question the user did not cause holds its answering keys for a moment.
 wait 1500
-keys down
-expect focus 2. Yes, once
+keys down down
+expect focus 3. Yes, once
 keys enter
-expect said Sent: 2, Yes, once
+expect said Sent: 3, Yes, once
 
 # Goal: Hear the second call asked anew, with no first
 expect said ! Question

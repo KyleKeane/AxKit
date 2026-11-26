@@ -123,9 +123,13 @@ internal sealed partial class MainForm : ConsoleForm
     {
     }
 
-    /// <summary>The model of the source this start names (SM-9.1): the stream's when the command line or the setting says so, else the screen's, sized as the hidden console.</summary>
+    /// <summary>
+    /// The model of the source this start names (SM-9.1): the stream's when the command line or the setting says so,
+    /// else the screen's, sized as the hidden console. In the Store's copy the setting does not choose the stream
+    /// (SM-9.6): the stream cannot start there yet.
+    /// </summary>
     private static ClaudeModel NewModel(StartupOptions options, AppSettings settings) =>
-        options.Streams(settings) ? new StreamModel() : new SessionModel(options.Columns ?? settings.PtyColumns, options.Rows ?? settings.PtyRows);
+        options.Streams(settings, PackageIdentity.IsPackaged) ? new StreamModel() : new SessionModel(options.Columns ?? settings.PtyColumns, options.Rows ?? settings.PtyRows);
 
     /// <summary>The model is made first so that the base and this class both hold it: the base as a LineStore, this class as Claude's, and the source's own code as that source's own.</summary>
     private MainForm(StartupOptions options, AppSettings settings, string? settingsError, ClaudeModel model)

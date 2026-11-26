@@ -2,7 +2,7 @@
 
 Written by `tools/families.ps1` from `docs/axKit/families.json`; never by hand. One data structure for the four families of axKit and the links between them, asked by the maintainer on 2026-11-16 so that he and the assistant name the same things by the same short names. It describes what the code does today, read from the code that day; it changes no behaviour. Since 2026-11-17 the kinds of event and the sounds are in code too (AxKit.Core/Events: EventKind, EventSound and the table EventPresenter), held to this file both ways by EventKindTests, and every sound is played by raising its kind at the door (AxKit.Forms/EventDoor; docs/axKit/events.md, section 10). Each of the four lists has the same shape, a family with its members. The keys stay in docs/axKit/key-families.json and the commands in docs/axKit/window-commands.json; this file names them and does not copy them. Where the same kind of event sounds one way in one place and another way elsewhere, the event's note says so: those are the open choices, and a sound is added or changed only when the maintainer has chosen it by ear (docs/axKit/earcons.md).
 
-Status: proposed. In numbers: 57 kinds of event, 31 with a sound, 26 without; 24 sounds; 10 families of functions; 13 kinds of start.
+Status: proposed. In numbers: 58 kinds of event, 31 with a sound, 27 without; 24 sounds; 10 families of functions; 13 kinds of start.
 
 ## How to read it
 
@@ -144,6 +144,12 @@ You pressed a key, typed, or chose a command, and this is how it ended. Every co
   - Said: None for a key in navigation mode. From a menu, the palette or an AI tool the reason: 'Navigation mode: press Ctrl+Space to edit'. 'Not a task', 'Select an item first', 'Type the field's title'.
   - In: Every window.
   - Note: Some refusals have words and no sound: 'Read only: there is no edit mode here', axPass's 'Locked: Enter unlocks', axAutomate's 'This version views and runs the workflows'.
+- `not-with-source`: The command needs a way of reaching the program underneath that this window is not on, and nothing was sent: in a window Claude Code's stream feeds, a slash command of Claude Code's screen alone typed as a message, or a menu item of the screen's keys; in the copy from the Microsoft Store, the switch to the stream.
+  - Started by: `typing`, `key`, `menu`, `palette`, `ai-tool`, `script`.
+  - Heard: no sound.
+  - Said: 'Not with the stream source', and for a typed command the command: 'Not with the stream source: /help'. The switch in the Store's copy says why the stream cannot start there.
+  - In: axClaude.
+  - Note: 2026-11-26 (docs/axClaude/stream-mode.md SM-5.7, SM-5.8, SM-9.6). Raised as 'said' until then. It has no sound until the maintainer has chosen one by ear (docs/axKit/earcons.md, class 2).
 - `said`: A command that only tells you something said it: the status, the line number, the current folder.
   - Started by: `key`, `menu`, `palette`, `ai-tool`, `script`.
   - Heard: no sound.
@@ -726,6 +732,7 @@ Every kind of event that has words or a change on the screen and no sound of its
 - What came of your own command:
   - `typed`: You typed a character into a field.
   - `landed`: The key or command moved you, and there is something there.
+  - `not-with-source`: The command needs a way of reaching the program underneath that this window is not on, and nothing was sent: in a window Claude Code's stream feeds, a slash command of Claude Code's screen alone typed as a message, or a menu item of the screen's keys; in the copy from the Microsoft Store, the switch to the stream.
   - `said`: A command that only tells you something said it: the status, the line number, the current folder.
   - `question-read-again`: The question the program asks was read again: you typed a character in its list of answers (any but Space, which ticks an answer), or pressed the key that reads it again.
   - `changed`: A setting or a state of the window changed.

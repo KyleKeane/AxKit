@@ -114,6 +114,33 @@ You hear: trust.
     NVDA says: Input 1.
 9. Press Ctrl+End.
 
+## Hear the stream's new answers and refusals
+
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
+
+You hear: Start Claude Code in this folder?
+1. Press Tab.
+2. Press Enter.
+    You hear: Ready.
+3. Type "/help".
+4. Press Enter.
+    You hear: Not with the stream source: /help.
+    NVDA says: Not with the stream source.
+5. Press Ctrl+A, Delete.
+6. Type "Write the file".
+7. Press Enter.
+    NVDA says: Claude asks to use Write.
+    NVDA says: No.
+8. Press Down.
+    NVDA says: No, and tell Claude why.
+9. Press Enter.
+    You hear: Sent: 2, No, and tell Claude why. Your words next.
+    NVDA says: You chose No, and tell Claude why. Your answer.
+10. Type "Use notes.txt instead".
+11. Press Enter.
+    You hear: Sent: Use notes.txt instead.
+    NVDA says: Sent: Use notes.txt instead.
+
 ## Come back to the right place after a Windows dialog
 
 Starts with: Open axDown with the file notes.md.

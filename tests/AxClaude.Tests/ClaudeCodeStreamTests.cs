@@ -236,8 +236,9 @@ public class ClaudeCodeStreamTests
         Assert.Equal([new StreamPart(StreamKind.Control, "h0", "", false)], answer.Parts);
         Assert.Equal("auto", answer.Mode);
         Assert.Equal("2.1.327", answer.Version);
-        // The account and the user's commands are in the line and in nothing the reader gives.
-        Assert.Empty(answer.Commands);
+        // The account is in the line and in nothing the reader gives. The commands' names are given since 2026-11-26
+        // (SM-5.8), as the start line's always were, and never logged as a list.
+        Assert.Equal(["mine"], answer.Commands);
         Assert.Equal(string.Empty, answer.Session);
 
         // The answer to an interrupt names none of it.
@@ -407,6 +408,45 @@ public class ClaudeCodeStreamTests
         Assert.True(bare.Has(StreamKind.Started));
         Assert.Equal(string.Empty, bare.Session);
         Assert.Empty(bare.Commands);
+    }
+
+    /// <summary>
+    /// The answer to the first request lists the same commands as the start line, each an object with its name
+    /// (measured 2026-11-26, the probe's case command-lists: 69 in both), so a window knows them before any message
+    /// (SM-5.8). A name is kept without a slash; an entry without a name is passed over.
+    /// </summary>
+    [Fact]
+    public void The_first_answer_lists_the_commands_the_run_takes()
+    {
+        var line = ClaudeCodeStream.Read("""{"type":"control_response","response":{"subtype":"success","request_id":"r-1","response":{"current_permission_mode":"default","commands":[{"name":"compact","description":"Shorten"},{"name":"/clear"},{"description":"no name"},"text",{"name":7}]}}}""");
+        Assert.Equal(["compact", "clear"], line.Commands);
+
+        var none = ClaudeCodeStream.Read("""{"type":"control_response","response":{"subtype":"success","request_id":"r-2","response":{"commands":"none"}}}""");
+        Assert.Empty(none.Commands);
+    }
+
+    /// <summary>An error's words that name Claude Code's sign-in command ask for the sign-in (SM-6.2); others do not.</summary>
+    [Fact]
+    public void An_error_that_names_the_sign_in_command_asks_for_the_sign_in()
+    {
+        Assert.True(ClaudeCodeStream.AsksToSignIn("Invalid API key · Please run /login"));
+        Assert.False(ClaudeCodeStream.AsksToSignIn("There's an issue with the selected model. Run --model to pick a different model."));
+        Assert.False(ClaudeCodeStream.AsksToSignIn(string.Empty));
+    }
+
+    /// <summary>
+    /// A refusal with the user's words (SM-7.4) comes back as the call's failed result; like a bare refusal, those words
+    /// are for the model, and the reader shows nothing of them under the call: the window keeps its own line of them.
+    /// </summary>
+    [Fact]
+    public void A_refusal_with_words_is_not_shown_again_as_the_result()
+    {
+        var words = ClaudeCodeStream.RefusedWithWords("  Use the other folder ");
+        Assert.Equal("The user refused this tool call. The user says: Use the other folder", words);
+        var line = ClaudeCodeStream.Read("{\"type\":\"user\",\"message\":{\"content\":[{\"type\":\"tool_result\",\"tool_use_id\":\"c-1\",\"is_error\":true,\"content\":" + JsonSerializer.Serialize(words) + "}]}}");
+        var result = Assert.Single(line.Parts);
+        Assert.True(result.Error);
+        Assert.Equal(string.Empty, result.Text);
     }
 
     /// <summary>

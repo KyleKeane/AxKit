@@ -106,7 +106,11 @@ public sealed record StreamLine(IReadOnlyList<StreamPart> Parts, bool FromWorker
     /// <summary>The session's id, on a <see cref="StreamKind.Started"/> line: what a later run is given to take the conversation up again. An id: never shown, said or logged.</summary>
     public string Session { get; init; } = string.Empty;
 
-    /// <summary>The slash commands this run takes as a message, by name without the slash, on a <see cref="StreamKind.Started"/> line; the user's own commands and skills are among them, so the names are never logged as a list.</summary>
+    /// <summary>
+    /// The slash commands this run takes as a message, by name without the slash, on a <see cref="StreamKind.Started"/>
+    /// line and on the answer to the first request (<see cref="ClaudeCodeStream.InitializeLine"/>), which lists them
+    /// before any message; the user's own commands and skills are among them, so the names are never logged as a list.
+    /// </summary>
     public IReadOnlyList<string> Commands { get; init; } = [];
 
     /// <summary>The model in use by its full name, on a <see cref="StreamKind.Started"/> line (<c>claude-haiku-5-5</c>); empty when not named.</summary>
@@ -484,7 +488,7 @@ public static class ClaudeCodeStream
                         Version = Text(root, "claude_code_version"),
                         Mode = Text(root, "permissionMode"),
                         Session = Text(root, "session_id"),
-                        Commands = Texts(root, "slash_commands"),
+                        Commands = Names(Texts(root, "slash_commands")),
                         Model = Text(root, "model"),
                     };
                 case "system" when subtype == "status":
@@ -524,6 +528,7 @@ public static class ClaudeCodeStream
                         Mode = Text(told, "current_permission_mode"),
                         Version = Text(told, "claude_code_version"),
                         Models = ModelsOf(told),
+                        Commands = CommandsOf(told),
                     };
                 case "stream_event":
                     var piece = root.TryGetProperty("event", out var happened) && happened.TryGetProperty("delta", out var delta) ? Text(delta, "text") : string.Empty;
@@ -710,6 +715,30 @@ public static class ClaudeCodeStream
         return models;
     }
 
+    /// <summary>The names of the slash commands the first request's answer lists, each an object with its name; without the slash.</summary>
+    private static IReadOnlyList<string> CommandsOf(JsonElement told)
+    {
+        if (told.ValueKind != JsonValueKind.Object || !told.TryGetProperty("commands", out var list) || list.ValueKind != JsonValueKind.Array)
+        {
+            return [];
+        }
+
+        var names = new List<string>();
+        foreach (var command in list.EnumerateArray())
+        {
+            if (command.ValueKind == JsonValueKind.Object && Text(command, "name") is { Length: > 0 } name)
+            {
+                names.Add(name);
+            }
+        }
+
+        return Names(names);
+    }
+
+    /// <summary>Command names without a slash in front, empty ones left out.</summary>
+    private static IReadOnlyList<string> Names(IEnumerable<string> names) =>
+        [.. names.Select(name => name.TrimStart('/')).Where(name => name.Length > 0)];
+
     /// <summary>
     /// The members of a tool's input that say what a call is about, in the order they are looked for: a command
     /// before its description, a file before a pattern's folder. The first that is there with a text is taken.
@@ -786,8 +815,9 @@ public static class ClaudeCodeStream
                     : string.Empty;
         }
 
-        // Words meant for the model alone, when the user refused or interrupted the call: the user knows, and is not told again.
-        if (said.StartsWith(NotProceeding, StringComparison.Ordinal) || said == RefusedWords)
+        // Words meant for the model alone, when the user refused or interrupted the call, also with the user's own words
+        // after them: the user knows, and is not told again.
+        if (said.StartsWith(NotProceeding, StringComparison.Ordinal) || said.StartsWith(RefusedWords, StringComparison.Ordinal))
         {
             said = string.Empty;
         }
@@ -795,8 +825,23 @@ public static class ClaudeCodeStream
         return new(StreamKind.ToolResult, FirstLine(said), string.Empty, failed) { Call = Text(block, "tool_use_id") };
     }
 
+    /// <summary>
+    /// Whether an error's words ask the user to sign in: they name Claude Code's sign-in command, as its errors for a
+    /// lapsed or missing sign-in do ("Please run /login"; not recorded over the stream, since signing out would be
+    /// needed to record it: the words are the screen's, docs/axClaude/stream-mode.md SM-6.2).
+    /// </summary>
+    public static bool AsksToSignIn(string error) =>
+        error.Contains(Transcript.ClaudeCodeTexts.CommandStart + Transcript.ClaudeCodeTexts.LoginCommandName, StringComparison.Ordinal);
+
     /// <summary>What a host's permission tool tells Claude when the user refuses a call (<see cref="DenyAnswer"/>): words for the model, which a reader of the stream does not show the user again.</summary>
     public const string RefusedWords = "The user refused this tool call.";
+
+    /// <summary>
+    /// What Claude is told when the user refuses a call and says why (docs/axClaude/stream-mode.md SM-7.4, the answer
+    /// "No, and tell Claude why"): <see cref="RefusedWords"/>, then the user's own words, which come back to Claude as
+    /// the refused call's result (measured 2026-11-26 by the probe's case relay-refused-why: Claude reads them).
+    /// </summary>
+    public static string RefusedWithWords(string words) => RefusedWords + " The user says: " + words.Trim();
 
     /// <summary>How Claude Code's own result of a call the user interrupted or refused begins (the fixture interrupt); the rest tells the model to stop and wait.</summary>
     private const string NotProceeding = "The user doesn't want to proceed with this tool use.";

@@ -7,6 +7,7 @@ using AxClaude.Core.Pty;
 using AxClaude.Core.Record;
 using AxClaude.Core.Streaming;
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Forms;
 
 namespace AxClaude;
@@ -107,6 +108,29 @@ internal sealed partial class MainForm
                 Announce(SelfStartedWords, false);
             }
         };
+
+        // SM-6.2: Claude Code's error asks for its sign-in, which only its screen can do.
+        model.SignInAsked += OfferScreenForSignIn;
+    }
+
+    /// <summary>The notice that offers the screen for the sign-in has been shown for this run of Claude Code: once is enough.</summary>
+    private bool _streamSignInOffered;
+
+    /// <summary>
+    /// Claude Code's error names its sign-in command (SM-6.2): the sign-in has lapsed or never was. Signing in is done
+    /// with the screen, so the notice that offers the folder with the screen (SM-9.3) says so; once for a run.
+    /// </summary>
+    private void OfferScreenForSignIn()
+    {
+        if (_streamSignInOffered)
+        {
+            return;
+        }
+
+        _streamSignInOffered = true;
+        Log.Info("Stream: Claude Code's error asks for its sign-in; the screen is offered");
+        OfferScreen("Claude Code asks you to sign in",
+            "Claude Code's error says to sign in with /login. Signing in is done with Claude Code's screen: over the stream it cannot be done. Open the folder with the screen and type /login there.");
     }
 
     /// <summary>
@@ -128,7 +152,7 @@ internal sealed partial class MainForm
         // nothing could be asked (SM-7.2): no start.
         if (PackageIdentity.IsPackaged)
         {
-            StreamNotStarted("Claude Code was not started over its stream: the copy of axKit from the Microsoft Store cannot do that yet.");
+            StreamNotStarted("Claude Code was not started over its stream. " + NoStreamInStoreWords + ".");
             return;
         }
 
@@ -250,6 +274,7 @@ internal sealed partial class MainForm
         _streamLines = 0;
         _streamUnknown = 0;
         _streamAsked = 0;
+        _streamSignInOffered = false;
         if (toolsFile is not null)
         {
             Log.Info("Stream: axKit's AI tools are given to Claude Code");
@@ -364,7 +389,47 @@ internal sealed partial class MainForm
     /// <summary>What a command says that has no meaning without Claude Code's screen (SM-5.7): one short sentence, the same everywhere.</summary>
     private const string NotWithStreamWords = "Not with the stream source";
 
-    private void SayNotWithStream() => Announce(NotWithStreamWords, true);
+    private void SayNotWithStream() => Announce(EventKind.NotWithSource, NotWithStreamWords, true);
+
+    /// <summary>
+    /// A slash command of Claude Code's screen alone, typed as a message over the stream (SM-5.8): not sent, and said
+    /// with the command, "Not with the stream source: /help". The text stays in the field.
+    /// </summary>
+    private void SayNotWithStream(string command) => Announce(EventKind.NotWithSource, $"{NotWithStreamWords}: {command}", true);
+
+    /// <summary>
+    /// A typed text that would not do over the stream what it does with the screen, said before anything is sent; true
+    /// when it was said, and the text stays in the field (SM-5.8, SM-5.9). A command of the screen alone is never sent.
+    /// A <c>!</c> line, and a name the run takes as no command, are held as a message is held during a question
+    /// (SPEC.md FR-2.10): the same text sent again goes, to Claude as a message, which is what the stream makes of both.
+    /// </summary>
+    private bool StreamHolds(string text)
+    {
+        if (_streamModel is not { } model)
+        {
+            return false;
+        }
+
+        switch (model.TypedTextOf(text))
+        {
+            case TypedText.ScreenCommand:
+                SayNotWithStream(StreamModel.CommandWord(text));
+                return true;
+
+            case TypedText.ShellLine when text != _keptMessage:
+                _keptMessage = text;
+                Refuse("Not sent: over the stream a ! line is no shell command. It would go to Claude as a message. Enter again sends it so");
+                return true;
+
+            case TypedText.UnknownCommand when text != _keptMessage:
+                _keptMessage = text;
+                Refuse($"Not sent: Claude Code takes no command {StreamModel.CommandWord(text)}. It would go to Claude as a message. Enter again sends it so");
+                return true;
+
+            default:
+                return false;
+        }
+    }
 
     /// <summary>A message or a slash command (SM-5.1, SM-5.5): one line, written whole; its block is the model's, made by the caller's <c>Send</c>.</summary>
     private void StreamMessage(string text) => _stream?.Write(ClaudeCodeStream.UserLine(text));
@@ -605,9 +670,10 @@ internal sealed partial class MainForm
             }
 
             StreamAnswered(asking, answer);
-            if (standing is not null)
+            // A yes that stops the asking, or a no with the user's words why (SM-7.4), stays on record.
+            if ((standing ?? (answer is not null ? asking.ToldWhyLine : null)) is { } line)
             {
-                _model.AddSystemLine(standing);
+                _model.AddSystemLine(line);
             }
         }
         else if (_choosing is { } choosing && choosing.CommandFor(given) is { } command)
@@ -708,6 +774,9 @@ internal sealed partial class MainForm
         }
     }
 
+    /// <summary>Whether the answer of this key asks for the user's words next ("No, and tell Claude why", SM-7.4): nothing goes to Claude Code until they are typed. False in a window the screen feeds.</summary>
+    private bool StreamAsksWords(string key) => _asking is { } asking && asking.AsksForWords(key);
+
     /// <summary>
     /// The answer of a tool call's question that only explains (SM-7.4, SM-7.6): everything Claude asks to do, the
     /// caution first, as a text with one button; the question stays under it and nothing is answered. False for any
@@ -747,7 +816,12 @@ internal sealed partial class MainForm
         }
 
         OnProcessExited(code);
-        if (early)
+        if (said.Any(ClaudeCodeStream.AsksToSignIn))
+        {
+            // What it wrote on its way out asks for the sign-in: that notice says more than the early end's (SM-6.2).
+            OfferScreenForSignIn();
+        }
+        else if (early && !_streamSignInOffered)
         {
             OfferScreen("Claude Code ended right after its start", $"Claude Code ended right after it was started over its stream (exit code {code}). The conversation shows what it wrote.");
         }
@@ -805,6 +879,19 @@ internal sealed partial class MainForm
         WindowMenu.StartWith(AppVerb, arguments);
         Close();
     }
+
+    /// <summary>The words of the switch of the source (SM-9.1), the same whether it can be switched or only says why not.</summary>
+    private const string StreamSwitchText = "Feed the next window from Claude Code's &stream";
+
+    /// <summary>
+    /// Why the stream does not start in the copy of axKit from the Microsoft Store (SM-9.6), said by the switch and
+    /// by a window started there with <c>--source stream</c>: it is not known that Claude Code can read the relay's
+    /// file under the package's folders, and without the relay nothing could be asked (SM-7.2).
+    /// </summary>
+    private const string NoStreamInStoreWords = "The copy of axKit from the Microsoft Store cannot start Claude Code over its stream yet, so every axClaude window is fed from the screen";
+
+    /// <summary>The switch of the source in the Store's copy (SM-9.6): it says why, and changes nothing.</summary>
+    private void SayNoStreamInStore() => Announce(EventKind.NotWithSource, NoStreamInStoreWords, true);
 
     /// <summary>
     /// Options, Developer, Feed the next window from Claude Code's stream (SM-9.1): the setting, for the next

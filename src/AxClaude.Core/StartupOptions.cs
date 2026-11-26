@@ -24,9 +24,13 @@ public sealed record StartupOptions(
 {
     /// <summary>
     /// Whether this start's window is fed by Claude Code's stream (docs/axClaude/stream-mode.md SM-9.1): by
-    /// <c>--source</c> when it was given, else by the setting. The screen whenever neither names the stream.
+    /// <c>--source</c> when it was given, else by the setting. The screen whenever neither names the stream. In the
+    /// copy of axKit from the Microsoft Store (<paramref name="storeCopy"/>) the setting is not followed and the
+    /// default stays the screen (SM-9.6): the stream cannot start there yet. A <c>--source stream</c> named for one
+    /// start is still followed, and that window says why its stream does not start.
     /// </summary>
-    public bool Streams(AppSettings settings) => AppSettings.IsStream(Source ?? settings.ClaudeSource);
+    public bool Streams(AppSettings settings, bool storeCopy = false) =>
+        Source is not null ? AppSettings.IsStream(Source) : !storeCopy && AppSettings.IsStream(settings.ClaudeSource);
 
     /// <summary>The window starts hidden (FR-9.6): only together with <see cref="HideOnClose"/> and a folder, since a hidden window that asks for a folder, or that nothing can bring back, serves nobody.</summary>
     public bool StartsHidden => Hidden && HideOnClose && Folder is not null;

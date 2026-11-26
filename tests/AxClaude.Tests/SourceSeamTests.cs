@@ -90,7 +90,8 @@ public sealed class SourceSeamTests
         var makes = CodeLines().Where(line => line.Code.Contains("new SessionModel(", StringComparison.Ordinal) || line.Code.Contains("new StreamModel(", StringComparison.Ordinal)).ToList();
         var made = Assert.Single(makes);
         Assert.Equal(Maker, made.File);
-        Assert.Contains("options.Streams(settings) ? new StreamModel() : new SessionModel(", made.Code);
+        // The Store's copy is told, since there the setting does not choose the stream (SM-9.6).
+        Assert.Contains("options.Streams(settings, PackageIdentity.IsPackaged) ? new StreamModel() : new SessionModel(", made.Code);
     }
 
     [Fact]

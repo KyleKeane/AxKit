@@ -88,7 +88,7 @@ public sealed class StreamAskingTests
         Assert.Equal("Claude asks to use Bash: ping -n 2 127.0.0.1", question.Title);
         Assert.Equal([AiCaution.Asked("Claude")], question.Text);
         Assert.Equal(
-            ["1. No", "2. Yes, once", "3. Yes, and do not ask again for Bash in this session", "4. Explain what Claude asks to do"],
+            ["1. No", "2. No, and tell Claude why", "3. Yes, once", "4. Yes, and do not ask again for Bash in this session", "5. Explain what Claude asks to do"],
             question.Options.Select(option => $"{option.Key}. {option.Text}"));
 
         // Running is never where a list starts: no is first, and no answer is marked as the current one.
@@ -106,7 +106,7 @@ public sealed class StreamAskingTests
         Assert.Equal("Write always-1.txt", Asking("always").Current.Core);
         Assert.Equal("Write always-1.txt", Asking("always", @"C:\work").Current.Core);
         Assert.Equal("Bash ping -n 2", Asking("tool").Current.Core);
-        Assert.Equal(["1", "2", "3", "4"], Asking("tool").Current.Options.Select(option => option.Key));
+        Assert.Equal(["1", "2", "3", "4", "5"], Asking("tool").Current.Options.Select(option => option.Key));
 
         // Claude's own description of a call is no target; Claude's own questions have no core.
         var described = new StreamAsking(ClaudeCodeStream.ReadAsk(Question("Agent", "{\"description\":\"Look around\"}"))!);
@@ -237,12 +237,45 @@ public sealed class StreamAskingTests
         }
     }
 
+    /// <summary>
+    /// "No, and tell Claude why" (SM-7.4, 2026-11-26): no answer yet, the window asks for the words as after Other, with
+    /// the row the screen shows for them; the words go back with the refusal, which Claude reads (measured by the
+    /// probe's case relay-refused-why), and leave a line in the conversation. Escape from the words goes back to the list.
+    /// </summary>
+    [Fact]
+    public void A_no_with_words_asks_for_them_then_refuses_with_them()
+    {
+        var asking = Asking("tool");
+        Assert.True(asking.AsksForWords(StreamAsking.RefuseWhyKey));
+        Assert.False(asking.AsksForWords(StreamAsking.RefuseKey));
+        Assert.Null(asking.Answer(StreamAsking.RefuseWhyKey));
+        Assert.Equal(ClaudeCodeTexts.TextPromptFor(2, "No, and tell Claude why"), asking.WordsPrompt);
+        Assert.Null(asking.ToldWhyLine);
+
+        // Nothing typed is no answer; Escape goes back to the list, and the list's answers still work.
+        Assert.Null(asking.Answer("  "));
+        Assert.Null(asking.Escape());
+        Assert.Null(asking.WordsPrompt);
+        Assert.Null(asking.Answer(StreamAsking.RefuseWhyKey));
+
+        var no = Json(asking.Answer(" Use the other folder ")!);
+        Assert.Equal("deny", no.GetProperty("behavior").GetString());
+        Assert.Equal(ClaudeCodeStream.RefusedWithWords("Use the other folder"), no.GetProperty("message").GetString());
+        Assert.StartsWith(ClaudeCodeStream.RefusedWords, no.GetProperty("message").GetString(), StringComparison.Ordinal);
+        Assert.Null(asking.WordsPrompt);
+        Assert.Equal("You refused Claude's use of Bash and told Claude: Use the other folder", asking.ToldWhyLine);
+        Assert.Null(asking.StandingWords(StreamAsking.RefuseWhyKey));
+
+        // A question of Claude's own has no such answer: its second choice is a choice.
+        Assert.False(Asking("two-questions").AsksForWords("2"));
+    }
+
     [Fact]
     public void The_explaining_answer_answers_nothing_and_its_text_begins_with_the_caution()
     {
         var asking = Asking("tool");
         Assert.True(asking.Explains(StreamAsking.ExplainKey));
-        Assert.True(asking.Explains(" 4 "));
+        Assert.True(asking.Explains(" 5 "));
         Assert.False(asking.Explains(StreamAsking.OnceKey));
         Assert.Null(asking.Answer(StreamAsking.ExplainKey));
         Assert.Null(asking.Answer("9"));

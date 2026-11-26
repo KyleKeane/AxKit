@@ -18,11 +18,24 @@ namespace AxClaude.Core.Streaming;
 /// </summary>
 public sealed class StreamAsking
 {
-    /// <summary>The keys of a tool call's question, in the list's order: no is first, where a list starts.</summary>
+    /// <summary>
+    /// The keys of a tool call's question, in the list's order: no is first, where a list starts, and the no with the
+    /// user's words why follows it (since 2026-11-26, SM-7.4), so that both refusals stand before any yes.
+    /// </summary>
     public const string RefuseKey = "1";
-    public const string OnceKey = "2";
-    public const string AlwaysKey = "3";
-    public const string ExplainKey = "4";
+    public const string RefuseWhyKey = "2";
+    public const string OnceKey = "3";
+    public const string AlwaysKey = "4";
+    public const string ExplainKey = "5";
+
+    /// <summary>The answer that refuses with the user's own words, which go back to Claude with the refusal (SM-7.4; measured 2026-11-26: Claude reads them).</summary>
+    public const string RefuseWhyLabel = "No, and tell " + Who + " why";
+
+    /// <summary>The user's words after <see cref="RefuseWhyLabel"/>, kept from the answer that sent them for the line that stays in the conversation; null before.</summary>
+    public string? ToldWhy { get; private set; }
+
+    /// <summary>The line that stays in the conversation once the refusal went with the user's words, so that what Claude was told can be found again; null before and for every other answer.</summary>
+    public string? ToldWhyLine => ToldWhy is null ? null : $"You refused {Who}'s use of {Shown(_ask.Tool)} and told {Who}: {Shown(ToldWhy)}";
 
     /// <summary>Who asks, as the caution names it.</summary>
     public const string Who = "Claude";
@@ -63,6 +76,9 @@ public sealed class StreamAsking
     /// that the window names the answer as it does with the screen; null otherwise.
     /// </summary>
     public string? WordsPrompt { get; private set; }
+
+    /// <summary>Whether this key of a tool call's question asks for the user's words next (<see cref="RefuseWhyLabel"/>): nothing is answered until they are given.</summary>
+    public bool AsksForWords(string key) => !_ask.IsQuestion && key.Trim() == RefuseWhyKey;
 
     /// <summary>Whether these keys only open the explanation of a tool call: nothing is answered by them.</summary>
     public bool Explains(string keys) => !_ask.IsQuestion && keys.Trim() == ExplainKey;
@@ -120,13 +136,35 @@ public sealed class StreamAsking
     {
         if (!_ask.IsQuestion)
         {
-            return given.Trim() switch
+            if (WordsPrompt is not null)
             {
-                RefuseKey => Refusal(),
-                OnceKey => ClaudeCodeStream.AllowAnswer(_ask.Input),
-                AlwaysKey => ClaudeCodeStream.AlwaysAnswer(_ask.Input, _ask.Tool),
-                _ => null,
-            };
+                // The words after "No, and tell Claude why": the refusal goes with them.
+                var why = given.Trim();
+                if (why.Length == 0)
+                {
+                    return null;
+                }
+
+                WordsPrompt = null;
+                ToldWhy = why;
+                return ClaudeCodeStream.DenyAnswer(ClaudeCodeStream.RefusedWithWords(why));
+            }
+
+            switch (given.Trim())
+            {
+                case RefuseWhyKey:
+                    // The words are asked for next, in the window's field, as for Other on Claude's own question.
+                    WordsPrompt = ClaudeCodeTexts.TextPromptFor(int.Parse(RefuseWhyKey, CultureInfo.InvariantCulture), RefuseWhyLabel);
+                    return null;
+                case RefuseKey:
+                    return Refusal();
+                case OnceKey:
+                    return ClaudeCodeStream.AllowAnswer(_ask.Input);
+                case AlwaysKey:
+                    return ClaudeCodeStream.AlwaysAnswer(_ask.Input, _ask.Tool);
+                default:
+                    return null;
+            }
         }
 
         var asked = _ask.Questions[_at];
@@ -267,6 +305,7 @@ public sealed class StreamAsking
             [AiCaution.Asked(Who)],
             [
                 new QuestionOption(RefuseKey, "No"),
+                new QuestionOption(RefuseWhyKey, RefuseWhyLabel),
                 new QuestionOption(OnceKey, "Yes, once"),
                 new QuestionOption(AlwaysKey, $"Yes, and do not ask again for {_ask.Tool} in this session"),
                 new QuestionOption(ExplainKey, $"Explain what {Who} asks to do"),

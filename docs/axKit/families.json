@@ -155,6 +155,15 @@
           "note": "Some refusals have words and no sound: 'Read only: there is no edit mode here', axPass's 'Locked: Enter unlocks', axAutomate's 'This version views and runs the workflows'."
         },
         {
+          "id": "not-with-source",
+          "when": "The command needs a way of reaching the program underneath that this window is not on, and nothing was sent: in a window Claude Code's stream feeds, a slash command of Claude Code's screen alone typed as a message, or a menu item of the screen's keys; in the copy from the Microsoft Store, the switch to the stream.",
+          "starts": ["typing", "key", "menu", "palette", "ai-tool", "script"],
+          "sounds": [],
+          "words": "'Not with the stream source', and for a typed command the command: 'Not with the stream source: /help'. The switch in the Store's copy says why the stream cannot start there.",
+          "apps": "axClaude.",
+          "note": "2026-11-26 (docs/axClaude/stream-mode.md SM-5.7, SM-5.8, SM-9.6). Raised as 'said' until then. It has no sound until the maintainer has chosen one by ear (docs/axKit/earcons.md, class 2)."
+        },
+        {
           "id": "said",
           "when": "A command that only tells you something said it: the status, the line number, the current folder.",
           "starts": ["key", "menu", "palette", "ai-tool", "script"],

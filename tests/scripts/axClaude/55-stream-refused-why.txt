@@ -1,0 +1,55 @@
+# Workflow: Refuse what Claude asks to do and tell Claude why, over Claude Code's stream
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/stream-mode.md SM-7.4 (2026-11-26): the second answer of a tool call's question, "No, and
+# tell Claude why", asks for the user's own words in the control area's field, as Other does on Claude's own question;
+# Escape there goes back to the list. The words go back with the refusal through the relay (the probe's case
+# relay-refused-why measured that Claude reads them), and a line of the conversation keeps what Claude was told. The
+# stand-in plays the recording of a Write call that was refused (tests/fixtures/streams/denied.jsonl): its Claude Code
+# says what it said then, whatever the words.
+file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"replySpeech":"all"}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+file claude.cmd @"%AXKIT_STANDIN%" standin --stream denied %*
+start claude {temp}\st --claude {temp}\claude.cmd --source stream
+expect said Start Claude Code in this folder?
+wait 1500
+keys tab
+keys enter
+expect said Ready
+
+# Goal: Hear both refusals before any yes
+type Write the file
+keys enter
+expect said Sent
+expect said ! Question
+expect focus 1. No, Write probe-denied.txt
+expect list 2. No, and tell Claude why, Write probe-denied.txt
+expect list 3. Yes, once, Write probe-denied.txt
+# The area holds its keys for a moment after a question appears, and for three seconds after the user's own act.
+wait 3000
+
+# Goal: Choose to tell Claude why, then go back to the list
+keys down
+expect focus 2. No, and tell Claude why
+keys enter
+expect said Sent: 2, No, and tell Claude why. Your words next
+expect focus You chose No, and tell Claude why. Your answer
+# Back to the question, asked anew, its list on No where a list starts.
+keys escape
+expect focus 1. No, Write probe-denied.txt
+expect state Claude: waiting for your answer
+
+# Goal: Refuse with your own words
+wait 3000
+keys down
+expect focus 2. No, and tell Claude why
+keys enter
+expect focus You chose No, and tell Claude why. Your answer
+type Use notes.txt instead
+keys enter
+expect said Sent: Use notes.txt instead
+expect said Done. claude: No, it was not created
+run findstr /c:"the window's answer was deny" st\stream-standin.log
+do Conversation
+expect text System: You refused Claude's use of Write and told Claude: Use notes.txt instead
+expect text tool error: Write (C:\work\probe-denied.txt)
