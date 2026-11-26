@@ -745,7 +745,7 @@ These are keys of `BundleKeys` that work inside a text or a control and are no c
 - Ctrl+Comma: `BundleKeys.CommandPaletteAlso`.
 - Ctrl+Space: `BundleKeys.ToggleMode`.
 
-## Key families, proposed
+## Key families, settled
 
 From `docs/axKit/key-families.json`. A family is a pattern of keys and the one kind of thing such a key would do;
 a misfit is a command on a key of the pattern that does another kind of thing today. The families are a draft

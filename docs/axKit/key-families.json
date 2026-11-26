@@ -1,6 +1,6 @@
 {
   "format": "axkit-key-families 1",
-  "status": "proposed",
+  "status": "settled",
   "scopes": [
     { "id": "anywhere", "title": "From anywhere in Windows", "learn": "These keys work in any program, with no axKit window open: they bring an axKit app up. Each is a setting of its app and can be changed there." },
     { "id": "every-window", "title": "The same in every axKit window", "learn": "These keys do the same kind of thing in every window of axKit, so they are learned once." },

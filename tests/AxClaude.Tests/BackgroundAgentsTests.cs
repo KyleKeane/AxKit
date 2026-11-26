@@ -34,10 +34,12 @@ public class BackgroundAgentsTests
         Assert.Null(LineClassifier.AgentOf("◯ running"));
         Assert.Null(LineClassifier.AgentOf("claude: two agents are running"));
 
-        Assert.Equal(2, LineClassifier.BackgroundWaitCount("Waiting for 2 background agents to finish"));
-        Assert.Equal(1, LineClassifier.BackgroundWaitCount("  Waiting for 1 background agent to finish"));
-        Assert.Equal(0, LineClassifier.BackgroundWaitCount("Waiting for 2 background agents to finish."));
-        Assert.Equal(0, LineClassifier.BackgroundWaitCount(Ready));
+        Assert.Equal(BackgroundKind.Agent, LineClassifier.BackgroundWaitOf("Waiting for 2 background agents to finish", out var count));
+        Assert.Equal(2, count);
+        Assert.Equal(BackgroundKind.Agent, LineClassifier.BackgroundWaitOf("  Waiting for 1 background agent to finish", out count));
+        Assert.Equal(1, count);
+        Assert.Equal(BackgroundKind.None, LineClassifier.BackgroundWaitOf("Waiting for 2 background agents to finish.", out _));
+        Assert.Equal(BackgroundKind.None, LineClassifier.BackgroundWaitOf(Ready, out _));
     }
 
     [Fact]

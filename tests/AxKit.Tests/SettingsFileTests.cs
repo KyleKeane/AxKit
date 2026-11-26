@@ -17,7 +17,7 @@ public sealed class SampleSettings
     public List<string> Items { get; set; } = [];
 }
 
-/// <summary>The shared read-and-write pattern of a settings file (docs/axKit/SPEC.md AX-5.3) and the take-over of an old file (AX-5.2).</summary>
+/// <summary>The shared read-and-write pattern of a settings file (docs/axKit/SPEC.md AX-5.3).</summary>
 public sealed class SettingsFileTests
 {
     private static string TempFolder() => Path.Combine(Path.GetTempPath(), "axkit-tests", Guid.NewGuid().ToString("N"));
@@ -132,27 +132,6 @@ public sealed class SettingsFileTests
         File.SetLastWriteTimeUtc(path, DateTime.UtcNow.AddMinutes(2));
         SettingsFile.Load<SampleSettings>(path, out error);
         Assert.Equal(SettingsFile.NotReadHeading, SettingsFile.Heading(error!));
-    }
-
-    [Fact]
-    public void Old_file_is_copied_once_and_never_over_a_new_one()
-    {
-        using var temp = new TempFolder("axkit-tests");
-        var folder = temp.Path;
-        var oldPath = Path.Combine(folder, "old", "settings.json");
-        var path = Path.Combine(folder, "new", "app.json");
-        Directory.CreateDirectory(Path.GetDirectoryName(oldPath)!);
-        SettingsFile.TakeOverOldFile(oldPath, path);
-        Assert.False(File.Exists(path));
-
-        File.WriteAllText(oldPath, "{ \"size\": 7 }");
-        SettingsFile.TakeOverOldFile(oldPath, path);
-        Assert.Equal(7, SettingsFile.Load<SampleSettings>(path, out _).Size);
-        Assert.True(File.Exists(oldPath));
-
-        File.WriteAllText(path, "{ \"size\": 9 }");
-        SettingsFile.TakeOverOldFile(oldPath, path);
-        Assert.Equal(9, SettingsFile.Load<SampleSettings>(path, out _).Size);
     }
 
     /// <summary>Another window's save, as the file's text: its settings are written to another file and the text put in this one's place, so that this process's view of the file stays the first window's.</summary>

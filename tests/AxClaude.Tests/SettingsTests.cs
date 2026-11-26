@@ -25,7 +25,6 @@ public class SettingsTests
             Assert.Equal(14, loaded.FontSize);
             Assert.Equal(ReplySpeechMode.FirstLines, loaded.ReplySpeech);
             Assert.Contains("\"replySpeech\": \"firstLines\"", File.ReadAllText(path));
-            Assert.DoesNotContain("speakReplies", File.ReadAllText(path));
             Assert.True(loaded.SpeakToolCalls);
             Assert.Equal(200, loaded.PtyColumns);
             Assert.True(loaded.MarkerTimeStamps);
@@ -77,12 +76,6 @@ public class SettingsTests
             Assert.Null(sanitized.Window);
             // A file that says nothing of the replies gets the default, every line since 2026-11-21.
             Assert.Equal(ReplySpeechMode.All, sanitized.ReplySpeech);
-
-            // The 1.1 key: speaking replies meant every line.
-            File.WriteAllText(path, """{ "speakReplies": true }""");
-            var upgraded = AppSettings.Load(path, out error);
-            Assert.Null(error);
-            Assert.Equal(ReplySpeechMode.All, upgraded.ReplySpeech);
         }
         finally
         {

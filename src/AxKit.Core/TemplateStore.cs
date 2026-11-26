@@ -267,9 +267,6 @@ public static class TemplateStore
         return list;
     }
 
-    /// <summary>A new template's file text: the name, an empty text and no check, read through the folder's configuration.</summary>
-    public static string NewItemText(string title, ListConfig config) => FlatItem.New(title, config).ToText();
-
     /// <summary>
     /// Why a name cannot be a template's (TP-8.4): empty, or one a template of the folder has already, case
     /// ignored; null when it can. <paramref name="own"/> is the name of the template being renamed, which it may keep.

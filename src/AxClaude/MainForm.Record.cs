@@ -575,21 +575,12 @@ internal sealed partial class MainForm
     /// <summary>The core was told that there is a record, and not since that there is none.</summary>
     private bool _recordFollowed;
 
-    /// <summary>
-    /// The session's file of the conversation the window shows, as the reader last followed it: kept when the reader
-    /// stopped itself and when Claude ended, since the file is still that conversation's record (its export, EG-8.6);
-    /// null from a start of Claude until a file is followed, after the conversation started afresh, and while the
-    /// user's switch is off. In memory only, never in a log: a path of the account.
-    /// </summary>
-    private string? _recordFile;
-
     /// <summary>Claude was started: a reader for this run when the switch is on. Its first act, on its own thread, is the note of the project folders' files and their lengths (EG-3.2).</summary>
     partial void RecordProcessStarted()
     {
         _recordHost?.Stop();
         _recordHost = null;
         _recordPath = null;
-        _recordFile = null;
         _recordFollowed = false;
         if (_settings.GroundInSessionFile)
         {
@@ -617,7 +608,6 @@ internal sealed partial class MainForm
     partial void RecordForget()
     {
         _recordPath = null;
-        _recordFile = null;
         _recordHost?.Forget();
     }
 
@@ -668,10 +658,9 @@ internal sealed partial class MainForm
         }
     }
 
-    /// <summary>The reader follows a file, or no longer: the file as the reader has it now (none while the switch is off), and the core's input, once for each change.</summary>
+    /// <summary>The reader follows a file, or no longer: the core's input, once for each change.</summary>
     private void RecordFileFound(bool found)
     {
-        _recordFile = _recordHost?.FilePath;
         if (found == _recordFollowed)
         {
             return;

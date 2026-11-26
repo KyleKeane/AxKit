@@ -231,7 +231,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   with values, the sign-in values `Axit axStart` and `Axit axClip`, and its Apps entry; and axClaude 1.x (any version):
   its folder, Start entry, `axClaude.cmd`, registry keys and Apps entry. The installer says what it found, and stops an
   `Axit.exe` running in the background as it stops `AxKit.exe`. Axit's settings and logs move on the first start
-  (AX-5.4); the axClaude settings file is left where it is, and the app copies it on its first start (AX-5.2). An
+  (AX-5.4); the axClaude 1.x settings file is left where it is (AX-5.2). An
   installed Axit up to 4.0.0 cannot take the update to axKit itself: its updater accepts a release's files only under
   the old repository address, which GitHub rewrites to the new one once the repository is renamed (B-16), so its update
   notice shows these release notes and its download fails with "no Windows zip attached"; the way over is
@@ -416,8 +416,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   EG-2.2), and `claude-ask.json` (2026-11-17), which names `AxKit.exe ask` as the program Claude Code asks its
   questions of when axClaude runs it over its stream (docs/axClaude/stream-mode.md SM-7.3; it holds nothing of a
   window's pipe); each is written before a start when it is missing or names another program file.
-- AX-5.2 On its first start under axKit, axClaude copies `%APPDATA%\AxClaude\settings.json` to `axClaude.json` when the
-  new file does not exist; the old file is left alone.
+- AX-5.2 (Withdrawn on 2026-11-26.) Until then axClaude copied axClaude 1.x's `%APPDATA%\AxClaude\settings.json` to
+  `axClaude.json` on its first start under axKit; no install of 1.x is left to take over.
 - AX-5.3 The load-and-save pattern of a settings file (JSON, a missing or unreadable file falls back to the defaults
   and the error is reported once) is one piece of shared code, `AxKit.Core/SettingsFile`; each app's settings class is
   its own plain record of properties. A file that is not valid JSON (a typo after Options → Developer → Open settings file) is
@@ -1877,7 +1877,7 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   built on 2026-11-09, never switched on, and removed on 2026-11-13 at the maintainer's decision, since Partner
   Center opens that API to no Individual account (`store-setup.md` section 2). Certification runs at Microsoft's
   afterwards and the Store updates every installed copy by itself. `winget install 9PK01L2K5000 -s msstore`
-  (`StoreListing.WingetCommand`) installs the Store's copy. The zip of AX-2 and AX-3 stays, for developers and for a
+  installs the Store's copy. The zip of AX-2 and AX-3 stays, for developers and for a
   computer without the Store.
 
 ### AX-7 Accessibility rules every app follows

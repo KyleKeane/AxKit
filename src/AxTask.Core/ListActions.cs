@@ -55,13 +55,10 @@ public sealed record ConfiguredAction(string Name, string Does, JsonNode Source)
     /// <summary>A <c>terminal</c> action's command, the program first.</summary>
     public IReadOnlyList<string> Command { get; init; } = [];
 
-    /// <summary>Whether the action starts a program or hands a command to a shell's window: asked about before its first run (AF-7.2).</summary>
-    public bool StartsProgram => Does is ListActions.RunKind or ListActions.TerminalKind;
-
     /// <summary>
     /// Whether the action is said first and done at its second run, until the user has accepted it (SPEC.md TK-7a.3;
     /// bundle repairs R-72): one that moves the item or opens something. A set is one undo step in the list and is
-    /// never asked about; one that starts a program has its own question (<see cref="StartsProgram"/>).
+    /// never asked about; one that runs a program or hands a command to a shell's window has its own question (AF-7.2).
     /// </summary>
     public bool AsksFirst => Does is ListActions.MoveKind or ListActions.OpenKind;
 

@@ -21,6 +21,9 @@ public sealed class TemplateTests : IDisposable
 
     private static Template T(string title, string text = "", params string[] showsIn) => new(title, text, showsIn, title + ".json");
 
+    /// <summary>A new template's file text, as the browser makes it: the name, an empty text and no check.</summary>
+    private static string NewItemText(string title, ListConfig config) => FlatItem.New(title, config).ToText();
+
     // ---- the folder (TP-2) ----
 
     [Fact]
@@ -63,7 +66,7 @@ public sealed class TemplateTests : IDisposable
     public void A_template_is_an_item_with_its_text_and_its_checks()
     {
         var config = ListConfig.Parse(TemplateStore.ConfigurationToWrite(null, ["axDown", "axJSON"])!);
-        var item = FlatItem.Parse(TemplateStore.NewItemText("Introduction", config))
+        var item = FlatItem.Parse(NewItemText("Introduction", config))
             .With(TemplateStore.TextField, System.Text.Json.Nodes.JsonValue.Create("Dear {clipboard},\n{caret}"), config)
             .With("axDown", TemplateStore.Checked(true), config);
 
@@ -83,8 +86,8 @@ public sealed class TemplateTests : IDisposable
         Directory.CreateDirectory(_folder);
         var config = ListConfig.Parse(TemplateStore.ConfigurationToWrite(null, ["axDown"])!);
         File.WriteAllText(TemplateStore.ConfigurationPath(_folder), config.ToText());
-        File.WriteAllText(Path.Combine(_folder, "b.json"), TemplateStore.NewItemText("Thanks", config));
-        File.WriteAllText(Path.Combine(_folder, "a.json"), TemplateStore.NewItemText("introduction", config));
+        File.WriteAllText(Path.Combine(_folder, "b.json"), NewItemText("Thanks", config));
+        File.WriteAllText(Path.Combine(_folder, "a.json"), NewItemText("introduction", config));
         File.WriteAllText(Path.Combine(_folder, "broken.json"), "[1, 2]");
         File.WriteAllText(Path.Combine(_folder, "notes.txt"), "not looked at");
 
@@ -123,7 +126,7 @@ public sealed class TemplateTests : IDisposable
         Assert.Equal(["Text", .. TemplateStore.AppsWithField], first.Config.ItemFields.Select(field => field.Title));
 
         var written = File.GetLastWriteTimeUtc(TemplateStore.ConfigurationPath(folder));
-        File.WriteAllText(Path.Combine(folder, "Thanks.json"), TemplateStore.NewItemText("Thanks", first.Config));
+        File.WriteAllText(Path.Combine(folder, "Thanks.json"), NewItemText("Thanks", first.Config));
         var second = TemplateStore.Open(folder);
         Assert.Equal(["Thanks"], second.Files.Select(file => file.Title));
         Assert.Equal(written, File.GetLastWriteTimeUtc(TemplateStore.ConfigurationPath(folder)));
@@ -133,8 +136,8 @@ public sealed class TemplateTests : IDisposable
     public void The_files_after_a_change_and_after_its_undo_without_reading_the_disk()
     {
         var config = TemplateStore.Configuration(null);
-        var thanks = TemplateStore.NewItemText("Thanks", config);
-        var intro = TemplateStore.NewItemText("Introduction", config);
+        var thanks = NewItemText("Thanks", config);
+        var intro = NewItemText("Introduction", config);
         IReadOnlyList<TemplateFile> none = [];
 
         // Made, then renamed with its file, then deleted; each undone again.

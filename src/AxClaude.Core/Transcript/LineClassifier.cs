@@ -75,9 +75,6 @@ public static partial class LineClassifier
             int.Parse(m.Groups["total"].ValueSpan), m.Groups["elapsed"].Value);
     }
 
-    /// <summary>The number in "Waiting for 2 background agents to finish"; zero for any other row, a waiting row of another kind too.</summary>
-    public static int BackgroundWaitCount(string text) => BackgroundWaitOf(text, out var count) == BackgroundKind.Agent ? count : 0;
-
     /// <summary>
     /// What a waiting row waits for: <see cref="BackgroundKind.Agent"/> for "Waiting for 2 background agents to
     /// finish", <see cref="BackgroundKind.Workflow"/> for "Waiting for 1 dynamic workflow to finish",

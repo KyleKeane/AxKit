@@ -83,8 +83,8 @@ public sealed class ActionKeysTests
         var settings = TaskSettings.Load(path, out _);
         Assert.False(settings.AcceptsActionKey(path, home, 2, move));
 
-        Assert.True(settings.AcceptActionKey(path, home, 2, move));
-        Assert.False(settings.AcceptActionKey(path, home, 2, move));
+        // An acceptance of a Ctrl+digit key as it was kept before 2026-11-21.
+        settings.AcceptedActionKeys.Add(TaskSettings.ActionKeyMark(path, home, 2, move));
         settings.Save(path);
         var back = TaskSettings.Load(path, out _);
         Assert.True(back.AcceptsActionKey(path, home.ToUpperInvariant() + Path.DirectorySeparatorChar, 2, move));
@@ -144,13 +144,13 @@ public sealed class ActionKeysTests
         var path = Path.Combine(temp.Path, "axTask.json");
         var settings = TaskSettings.Load(path, out _);
         var first = new ListAction("First", Move: "../Later");
-        settings.AcceptActionKey(path, temp.Path, 1, first);
+        settings.AcceptedActionKeys.Add(TaskSettings.ActionKeyMark(path, temp.Path, 1, first));
         settings.AcceptedActionKeys.AddRange(Enumerable.Range(0, TaskSettings.MaxAcceptedActionKeys - 1).Select(i => "mark " + i));
         Assert.True(settings.AcceptsActionKey(path, temp.Path, 1, first));
-        settings.AcceptActionKey(path, temp.Path, 2, first);
+        Assert.True(settings.AcceptAction(path, "the newest action"));
         Assert.Equal(TaskSettings.MaxAcceptedActionKeys, settings.AcceptedActionKeys.Count);
         Assert.False(settings.AcceptsActionKey(path, temp.Path, 1, first));
-        Assert.True(settings.AcceptsActionKey(path, temp.Path, 2, first));
+        Assert.True(settings.AcceptsAction(path, "the newest action"));
     }
 
     // ---- the program a run action names (forms-framework.md AF-3.2, AF-4.3) ----

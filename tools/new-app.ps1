@@ -22,14 +22,14 @@
   references (a glob), the Window menu and the other lists of the windows.
 
 .EXAMPLE
-  .\tools\new-app.ps1 axList list Tools Files -Description 'axList, lists of plain lines'
+  .\tools\new-app.ps1 axSample sample Tools Files -Description 'axSample, an example of a new app'
   .\tools\new-app.ps1 axOCR ocr Documents Files -Description 'axOCR, the text of a picture' -IconLetters Ao -IconRgb 60,90,40
 #>
 [CmdletBinding()]
 param(
-    # The app's name as shown and spoken, "ax" and a capital: axList.
+    # The app's name as shown and spoken, "ax" and a capital: axSample.
     [Parameter(Mandatory = $true, Position = 0)] [string]$Name,
-    # What AxKit.exe takes: list.
+    # What AxKit.exe takes: sample.
     [Parameter(Mandatory = $true, Position = 1)] [string]$Verb,
     # Its group in the Window menu and its block of four function keys (AX-9.2, AX-8.18 rule 6): GettingAround, Documents,
     # Tools (apps); Programs, Ai or Utilities for an access layer, an app that works through a
@@ -58,8 +58,8 @@ $root = (Resolve-Path (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Pat
 $existing = @(Get-AxKitApps $root)
 
 # ---- the names ----
-if ($Name -cnotmatch '^ax[A-Z][A-Za-z0-9]*$') { throw "The name is 'ax' and a capital, as axList: $Name" }
-if ($Verb -cnotmatch '^[a-z][a-z0-9]*$') { throw "The verb is lower-case letters and digits, as list: $Verb" }
+if ($Name -cnotmatch '^ax[A-Z][A-Za-z0-9]*$') { throw "The name is 'ax' and a capital, as axSample: $Name" }
+if ($Verb -cnotmatch '^[a-z][a-z0-9]*$') { throw "The verb is lower-case letters and digits, as sample: $Verb" }
 if (-not $Project) { $Project = 'Ax' + $Name.Substring(2) }
 if ($Project -cnotmatch '^Ax[A-Z][A-Za-z0-9]*$' -or $Project -like 'AxKit*') { throw "The project name is 'Ax' and a capital, not AxKit: $Project" }
 $short = $Project.Substring(2)

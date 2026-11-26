@@ -39,7 +39,7 @@ public abstract partial class AxKitForm : Form
     /// <summary>Why the settings file could not be read, reported once the window shows; null when it was read.</summary>
     private readonly string? _settingsError;
 
-    /// <param name="settingsError">What the settings loader reported for a file it could not read; the defaults are in use then (AX-5.2).</param>
+    /// <param name="settingsError">What the settings loader reported for a file it could not read; the defaults are in use then (AX-5.3).</param>
     protected AxKitForm(string appName, WindowSettings settings, string settingsPath, string? settingsError = null)
     {
         AppName = appName;

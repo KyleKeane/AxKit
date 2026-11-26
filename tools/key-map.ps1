@@ -9,14 +9,15 @@ The page is written from three sources and never by hand:
     docs\axKit\window-commands.json   the inventory of every window's commands, each with its key ("key") and the
                                       other keys it answers ("also"); written by a run with --inventory write
     src\AxKit.Forms\BundleKeys.cs     the bundle-wide keys (SPEC AX-8.2): every "public const Keys <Name> = ...;"
-    docs\axKit\key-families.json      the proposed families of keys and the commands that do not fit them
+    docs\axKit\key-families.json      the families of keys and the commands kept on purpose that do not fit them
 
 A chord has one meaning when every command on it, in every app, carries the same label, the case of letters aside;
 otherwise its meaning differs, and its spread is the number of its labels. The page lists the chords with one meaning
 in a fixed order (plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others), then the chords whose meaning differs, most
 spread first, then the bundle keys the inventory has no command for, then the families.
 
-The families are a draft (their file's "status"): this script moves no key and no test holds a key to its family.
+The families are settled (their file's "status", the maintainer's of 2026-11-26): this script moves no key and no test
+holds a key to its family.
 Every run, with or without -Check, holds the families' file to the inventory: a key named there is of its family's
 pattern ("match", a regular expression over the chord) and every command named there (chord, app, label) is in the
 inventory, so that a renamed command or a moved key shows as a line to correct and not as a page that is no longer

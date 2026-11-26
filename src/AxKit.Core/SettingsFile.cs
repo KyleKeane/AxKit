@@ -410,24 +410,4 @@ public static class SettingsFile
 
     /// <summary>How long a save waits for another window's save of the same file to end, before it saves anyway.</summary>
     public const int MutexWaitMilliseconds = 2000;
-
-    /// <summary>
-    /// The first start under a new file name takes over the file of an earlier version (AX-5.2): copied, not moved,
-    /// so that the earlier version still finds its own. Nothing happens when the new file exists or the old one does not.
-    /// </summary>
-    public static void TakeOverOldFile(string oldPath, string path)
-    {
-        if (File.Exists(path) || !File.Exists(oldPath))
-        {
-            return;
-        }
-
-        var directory = Path.GetDirectoryName(path);
-        if (!string.IsNullOrEmpty(directory))
-        {
-            Directory.CreateDirectory(directory);
-        }
-
-        File.Copy(oldPath, path);
-    }
 }

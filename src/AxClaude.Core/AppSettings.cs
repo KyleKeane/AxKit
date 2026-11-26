@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using AxClaude.Core.Transcript;
 using AxKit.Core;
 
@@ -6,8 +5,7 @@ namespace AxClaude.Core;
 
 /// <summary>
 /// Everything the app remembers between runs. Stored as JSON in <c>%APPDATA%\AxKit\axClaude.json</c> (see SPEC.md
-/// Appendix C) through the bundle's <see cref="SettingsFile"/>; the first start under axKit copies axClaude 1.x's
-/// <c>%APPDATA%\AxClaude\settings.json</c> there (<see cref="TakeOverOldFile"/>). A missing or unreadable file falls
+/// Appendix C) through the bundle's <see cref="SettingsFile"/>. A missing or unreadable file falls
 /// back to the defaults. The console fields (the size, the recent folders, the sounds, the signals, the transcript
 /// options) are <see cref="ConsoleSettings"/>', shared with axTerminal; the font, the update check and the window's
 /// place are <see cref="WindowSettings"/>' (bundle AX-6.5).
@@ -34,10 +32,6 @@ public sealed class AppSettings : ConsoleSettings
 
     /// <summary>How much of a reply is spoken as it arrives (FR-7.4): none, the first line of each message, or all.</summary>
     public ReplySpeechMode ReplySpeech { get; set; } = ReplySpeechMode.All;
-
-    /// <summary>The 1.1 key, true meaning every line: read from an old file, turned into <see cref="ReplySpeech"/> and no longer written.</summary>
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public bool SpeakReplies { get; set; }
 
     /// <summary>Speak the <c>tool:</c> row of each tool call as it arrives, whatever <see cref="ReplySpeech"/> says (FR-7.4).</summary>
     public bool SpeakToolCalls { get; set; }
@@ -204,13 +198,6 @@ public sealed class AppSettings : ConsoleSettings
 
     public static string DefaultPath => AppPaths.SettingsFile("axClaude");
 
-    /// <summary>Where axClaude 1.x kept the file, before the axKit bundle.</summary>
-    public static string OldPath =>
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "axClaude", "settings.json");
-
-    /// <summary>Copies the 1.x file to <see cref="DefaultPath"/> when there is one and no new file yet (docs/axKit/SPEC.md AX-5.2).</summary>
-    public static void TakeOverOldFile() => SettingsFile.TakeOverOldFile(OldPath, DefaultPath);
-
     /// <summary>Loads the file, or returns defaults. <paramref name="error"/> describes an unreadable file.</summary>
     public static AppSettings Load(string path, out string? error)
     {
@@ -260,12 +247,6 @@ public sealed class AppSettings : ConsoleSettings
         // A setting this app itself retired is not one a newer version wrote: it goes with the next save and is not
         // kept with the members this version does not know (bundle AX-5.8).
         OtherMembers?.Remove("backgroundPulseSeconds");
-        if (SpeakReplies && ReplySpeech == ReplySpeechMode.None)
-        {
-            ReplySpeech = ReplySpeechMode.All;
-        }
-
-        SpeakReplies = false;
         BackgroundChordPauseSeconds = BackgroundChords.SanitizePauseSeconds(BackgroundChordPauseSeconds);
         SilentWords = SpeechFilter.Words(SpeechFilter.Text(SilentWords ?? []));
         EventCore = string.Equals(EventCore?.Trim(), EventCoreShadow, StringComparison.OrdinalIgnoreCase) ? EventCoreShadow : EventCoreOn;

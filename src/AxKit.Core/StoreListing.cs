@@ -15,7 +15,4 @@ public static class StoreListing
 
     /// <summary>The listing on the web, for a document or a browser.</summary>
     public const string WebUrl = "https://apps.microsoft.com/detail/" + ProductId;
-
-    /// <summary>The command that installs axKit from the Store source of Windows Package Manager.</summary>
-    public const string WingetCommand = "winget install " + ProductId + " -s msstore";
 }

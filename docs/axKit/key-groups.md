@@ -5,7 +5,7 @@ Written by `tools/key-map.ps1` from `docs/axKit/key-families.json`, `docs/axKit/
 pattern of keys does, so that a key can be guessed before it is looked up. The same keys by key, with every app,
 are in `key-map.md`.
 
-The groups are proposed: an exception is a command that sits on a key of a group and does another kind of thing today.
+The groups are settled: an exception is a command that sits on a key of a group and does another kind of thing today.
 
 ## The groups in short
 

@@ -14,13 +14,11 @@ internal sealed class ProcessTree
     private readonly object _gate = new();
     private readonly Dictionary<int, (DateTime Start, string Name)> _known = new();
     private readonly Jsonl _log;
-    private readonly int _root;
     private readonly Thread _thread;
     private volatile bool _stop;
 
     public ProcessTree(int rootPid, Jsonl log)
     {
-        _root = rootPid;
         _log = log;
         DateTime start;
         try

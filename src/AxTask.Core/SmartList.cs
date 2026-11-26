@@ -78,9 +78,6 @@ public sealed class SmartList
     /// <summary>The lists by due date, the Date lists heading's, in order (TK-5.4).</summary>
     public static IReadOnlyList<SmartList> DateLists { get; } = [Overdue, DueToday, DueInSevenDays, NoDueDate];
 
-    /// <summary>Every list built in with a name of its own: All tasks and the lists by due date (TK-5.1, TK-5.4).</summary>
-    public static IReadOnlyList<SmartList> BuiltIns { get; } = [AllTasks, .. DateLists];
-
     /// <summary>TK-5.5: the tasks not done whose words hold a smart tag, "@Sam", "#store" or "$budget".</summary>
     public static SmartList Tagged(string token) => new(token, null, NotDone(), any: false, SoonestFirst, null,
         (item, _) => Tags.Has(Tags.TextOf(item), token),

@@ -491,7 +491,7 @@ public class AxKitList : ListBox
         if (fresh && e.KeyChar == ' ')
         {
             // A space continues a name ("windows event") but never starts a search: it is a window's key (axGIT's stage,
-            // axList's check) that may still arrive as a character.
+            // a list's mark) that may still arrive as a character.
             return;
         }
 

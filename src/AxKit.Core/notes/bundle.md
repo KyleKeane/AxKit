@@ -76,8 +76,8 @@
   entry); the keys stand in the order of `Default`. `Template` is the file Edit app keys file writes when there is
   none, `Changes` the keys a table moved, for `BundleHelp.AppKeysLine`. Tested in `AppLaunchKeysTests`; `KeyTests`
   holds every window's table off the Ctrl and Ctrl+Shift function keys, so a user's key never ends a window's command.
-- `SettingsFile` (AX-5.2, AX-5.3): how every app's settings file is read and written, an unreadable one copied to
-  `.bad` once, and the take-over of an old file. A value that does not read costs that value alone
+- `SettingsFile` (AX-5.3): how every app's settings file is read and written, and an unreadable one copied to
+  `.bad` once. A value that does not read costs that value alone
   (`WithoutWhatDoesNotRead`); a file that is there and cannot be opened is tried again, then never saved over in
   that process (`NotRead`, R-51). `Heading` is the sentence a window says before a load's error text: that the file
   was read except for the settings named (`PartlyReadHeading`), or that it could not be read and the defaults are

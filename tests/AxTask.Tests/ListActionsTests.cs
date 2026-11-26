@@ -51,7 +51,6 @@ public sealed class ListActionsTests
         Assert.Equal("{form:Answer}", action.Input);
         Assert.Null(action.Folder);
         Assert.Equal(60, action.Seconds);
-        Assert.True(action.StartsProgram);
         Assert.False(action.HasHiddenField);
         var field = Assert.Single(action.Fields);
         Assert.Equal(("Answer", FieldTypes.LongText, true, false), (field.Title, field.Type, field.Required, field.Hidden));
@@ -77,8 +76,6 @@ public sealed class ListActionsTests
         Assert.Equal("moves to ../Later", actions[1].Described);
         Assert.Equal("opens Issue", actions[2].Described);
         Assert.Equal("puts a command of 4 parts into axTerminal's command field, for you to send: gh, issue, view, {Number}; in the folder ..\\code", actions[3].Described);
-        Assert.False(actions[0].StartsProgram);
-        Assert.True(actions[3].StartsProgram);
         Assert.Empty(ListActions.Read(null));
         Assert.Empty(ListActions.Read(ListConfig.New([])));
     }
@@ -134,7 +131,6 @@ public sealed class ListActionsTests
         Assert.True(actions[2].AsksFirst);
         // A program has its own question, with everything that would run (AF-7.2).
         Assert.False(actions[3].AsksFirst);
-        Assert.True(actions[3].StartsProgram);
     }
 
     [Theory]

@@ -171,8 +171,6 @@ public sealed class ThemeTests
         Assert.False(Theme.ParseColor("#FFF", out _));
         Assert.False(Theme.ParseColor("#FFFFFFFF", out _));
         Assert.False(Theme.ParseColor("rgb(1,2,3)", out _));
-        Assert.Equal("#1A2B3C", Theme.ColorText(0x1A2B3C));
-        Assert.Equal("#000007", Theme.ColorText(7));
     }
 
     [Fact]

@@ -43,10 +43,11 @@ public sealed class SmartListTests : IDisposable
     [Fact]
     public void Built_ins_are_told_apart_by_name()
     {
-        Assert.Equal(["All tasks", "Overdue", "Due today", "Due in the next 7 days", "No due date"], SmartList.BuiltIns.Select(list => list.Name));
-        Assert.All(SmartList.BuiltIns, list => Assert.True(list.BuiltIn));
-        Assert.Equal(SmartList.BuiltIns.Count, SmartList.BuiltIns.Select(list => list.Key).Distinct().Count());
-        Assert.All(SmartList.BuiltIns, list => Assert.NotNull(list.Described));
+        SmartList[] builtIns = [SmartList.AllTasks, .. SmartList.DateLists];
+        Assert.Equal(["All tasks", "Overdue", "Due today", "Due in the next 7 days", "No due date"], builtIns.Select(list => list.Name));
+        Assert.All(builtIns, list => Assert.True(list.BuiltIn));
+        Assert.Equal(builtIns.Length, builtIns.Select(list => list.Key).Distinct().Count());
+        Assert.All(builtIns, list => Assert.NotNull(list.Described));
     }
 
     [Fact]

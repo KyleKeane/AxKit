@@ -36,10 +36,6 @@ public sealed class EditHistory
     private bool _runOpen;
     private int _size;
 
-    public bool CanUndo => _undo.Count > 0;
-
-    public bool CanRedo => _redo.Count > 0;
-
     /// <summary>The characters of deltas held, on both sides: what <see cref="Limit"/> bounds.</summary>
     public int Size => _size;
 

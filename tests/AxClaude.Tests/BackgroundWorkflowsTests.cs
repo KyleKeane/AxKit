@@ -57,9 +57,8 @@ public class BackgroundWorkflowsTests
         Assert.Equal(BackgroundKind.Other, LineClassifier.BackgroundWaitOf("Waiting for 3 background shells to finish", out var other));
         Assert.Equal(3, other);
 
-        // The agents' count is the agents' alone.
-        Assert.Equal(0, LineClassifier.BackgroundWaitCount(Waiting));
-        Assert.Equal(1, LineClassifier.BackgroundWaitCount("Waiting for 1 background agent to finish"));
+        Assert.Equal(BackgroundKind.Agent, LineClassifier.BackgroundWaitOf("Waiting for 1 background agent to finish", out agents));
+        Assert.Equal(1, agents);
 
         // A reply's own sentence is not the row.
         Assert.Equal(BackgroundKind.None, LineClassifier.BackgroundWaitOf(Waiting + ".", out var none));

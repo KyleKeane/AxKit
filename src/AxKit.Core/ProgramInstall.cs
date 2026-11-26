@@ -49,9 +49,6 @@ public sealed record ProgramInstall(string Name, string? WingetId, string? Power
         return File.Exists(apps) ? apps : null;
     }
 
-    /// <summary>Whether this program can be installed from here: its own installer, or winget being there.</summary>
-    public bool CanInstall => PowerShellCommand is not null || (WingetId is not null && Winget() is not null);
-
     /// <summary>The process that installs it, without a window; null when it cannot be installed from here.</summary>
     public ProcessStartInfo? StartInfo()
     {

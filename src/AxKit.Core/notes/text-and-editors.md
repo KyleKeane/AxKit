@@ -83,7 +83,7 @@
   `Unsent`; `EnsureList` converts a list an earlier version made, a copy kept beside it, so that a report waiting
   in it is still sent, and replaces the Notes of a list made when reports were public, `ListNotesBefore`, by
   `ListNotes`); `ReportBody`: `Markdown`, the plain report with the reporter line
-  last, and `ParseReporterLine`; `Plain` (the title and the kind, then `Markdown`), which is what is sealed;
+  last; `Plain` (the title and the kind, then `Markdown`), which is what is sealed;
   `IssueTitle` (the kind and the version, never the user's words) and `Sealed`, the issue's body, the envelope alone
   in a `json` code fence. Tested in `ReportsTests`. `ReportSeal` with `ReportEnvelope` and `ReportSealException`
   (RP-6.1a, 2026-11-14): a report encrypted on the user's computer for the maintainer's key, since the reporter token

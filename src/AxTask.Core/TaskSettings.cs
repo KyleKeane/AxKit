@@ -89,10 +89,6 @@ public sealed class TaskSettings : WindowSettings
     public bool AcceptsActionKey(string settingsPath, string listFolder, int digit, ListAction action) =>
         ActionKeyMark(settingsPath, listFolder, digit, action) is { Length: > 0 } mark && AcceptedActionKeys.Contains(mark);
 
-    /// <summary>The key's action in that list is accepted from now on; false when nothing changed (it was already, or there is no seal).</summary>
-    public bool AcceptActionKey(string settingsPath, string listFolder, int digit, ListAction action) =>
-        Accept(ActionKeyMark(settingsPath, listFolder, digit, action));
-
     /// <summary>
     /// Whether an action of a list was accepted (docs/axTask/forms-framework.md AF-7.2): <paramref name="markText"/>
     /// is <see cref="ListActions.MarkText"/>, the list's folder and the whole action as the file holds it, so that any

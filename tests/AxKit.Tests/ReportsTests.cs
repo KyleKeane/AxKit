@@ -150,7 +150,6 @@ public sealed class ReportsTests
         Assert.Contains("### Last actions\n\n```text\n12 s ago: Find, Ctrl+F\n11 s ago, said: 3 matches\n```\n", body);
         Assert.Contains("<details>\n<summary>Log lines</summary>\n\n```text\n14:29:58 Find: 3 matches for notes\n```\n\n</details>\n", body);
         Assert.EndsWith("\nSent from axKit 5.1.0 with F4; reporter 6f1c2d3e-4a5b-4c6d-8e7f-901234567890\n", body);
-        Assert.Equal(("5.1.0", Reporter), ReportBody.ParseReporterLine(body));
     }
 
     [Theory]
@@ -204,7 +203,6 @@ public sealed class ReportsTests
         Assert.Equal(ReportBody.Plain(report, "5.9.0", Reporter), plain);
         Assert.StartsWith("Title: The list loses my place\nKind: Bug\n\nThe list loses my place.\nAfter Ctrl+F", plain);
         Assert.EndsWith(ReportBody.Markdown(report, "5.9.0", Reporter), plain);
-        Assert.Equal(("5.9.0", Reporter), ReportBody.ParseReporterLine(plain));
     }
 
     [Fact]
@@ -354,6 +352,5 @@ public sealed class ReportsTests
         Assert.DoesNotContain("Log lines", body);
         Assert.DoesNotContain("Where the focus was", body);
         Assert.Contains("said: ''' three backticks", body);
-        Assert.Null(ReportBody.ParseReporterLine("A report typed in the browser.\n\nNo last line of ours."));
     }
 }

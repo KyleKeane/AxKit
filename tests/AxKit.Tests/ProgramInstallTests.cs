@@ -67,7 +67,6 @@ public class ProgramInstallTests
         Assert.Equal(SystemPrograms.PowerShell, info.FileName);
         Assert.Equal(["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", "irm https://claude.ai/install.ps1 | iex"], info.ArgumentList);
         Assert.True(info.CreateNoWindow);
-        Assert.True(ProgramInstall.ClaudeCode.CanInstall);
     }
 
     [Fact]

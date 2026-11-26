@@ -139,15 +139,14 @@ public class EditHistoryTests
         var step = history.Undo()!;
         text = step.Undo(text);
         Assert.Equal("one", text);
-        Assert.True(history.CanRedo);
         step = history.Redo()!;
         text = step.Redo(text);
         Assert.Equal("one two", text);
-        Assert.False(history.CanRedo);
+        Assert.Null(history.Redo());
 
         history.Undo();
         history.Record("one", "one 2", 5, NotTyped);
-        Assert.False(history.CanRedo);
+        Assert.Null(history.Redo());
         Assert.Equal(new EditStep(3, string.Empty, " 2"), history.Undo());
         Assert.Equal(new EditStep(0, string.Empty, "one"), history.Undo());
         Assert.Null(history.Undo());
@@ -207,8 +206,7 @@ public class EditHistoryTests
         history.Record(string.Empty, "a", 1, NotTyped);
         history.Undo();
         history.Clear();
-        Assert.False(history.CanUndo);
-        Assert.False(history.CanRedo);
+        Assert.Null(history.Undo());
         Assert.Null(history.Redo());
     }
 }

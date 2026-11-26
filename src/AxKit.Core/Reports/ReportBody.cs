@@ -1,5 +1,4 @@
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace AxKit.Core.Reports;
 
@@ -11,7 +10,7 @@ namespace AxKit.Core.Reports;
 /// plain report sealed for the maintainer's key and the reporter id, the version and the kind beside it, which the
 /// reports repository's workflow reads.
 /// </summary>
-public static partial class ReportBody
+public static class ReportBody
 {
     /// <summary>The issue's title: the kind and the version, never the user's words. "Bug report, axKit 5.9.0".</summary>
     public static string IssueTitle(ReportKind kind, string version) =>
@@ -69,21 +68,6 @@ public static partial class ReportBody
     /// <summary>"Sent from axKit 5.1.0 with F4; reporter 6f1c…": the body's last line.</summary>
     private static string ReporterLine(string version, Guid reporterId) => $"Sent from axKit {version.Trim()} with F4; reporter {reporterId:D}";
 
-    /// <summary>
-    /// The version and the reporter id of a plain report's last line, or null for a text that has none: the plain
-    /// report inside a sealed one, and the body of an issue sent by 5.8.0 or earlier, which was the plain report. A
-    /// sealed issue's body has no such line: its envelope holds both (<see cref="ReportSeal.Read"/>).
-    /// </summary>
-    public static (string Version, Guid ReporterId)? ParseReporterLine(string body)
-    {
-        var last = body.ReplaceLineEndings("\n").Split('\n').Select(l => l.Trim()).LastOrDefault(l => l.Length > 0) ?? string.Empty;
-        var match = ReporterLineRegex().Match(last);
-        return match.Success && Guid.TryParseExact(match.Groups[2].Value, "D", out var id) ? (match.Groups[1].Value, id) : null;
-    }
-
     /// <summary>One line of a code block or a bullet: a backtick fence inside it would end the block early.</summary>
     private static string Line(string text) => text.ReplaceLineEndings(" ").Replace("```", "'''", StringComparison.Ordinal).Trim();
-
-    [GeneratedRegex(@"^Sent from axKit (\S+) with F4; reporter ([0-9a-fA-F-]{36})$")]
-    private static partial Regex ReporterLineRegex();
 }

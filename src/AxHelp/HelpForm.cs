@@ -23,7 +23,6 @@ public sealed class HelpForm : HotkeyForm
     private readonly HelpSettings _settings;
     private readonly MenuStrip _menu = new();
     private readonly StatusStrip _status = new();
-    private readonly ToolStripStatusLabel _stateLabel;
     private readonly AxKitTextBox _text = new()
     {
         Multiline = true,
@@ -134,7 +133,7 @@ public sealed class HelpForm : HotkeyForm
         PlaceMenuBar(_menu, first, actions, new ToolStripMenuItem(), new ToolStripMenuItem(), options, help);
         MainMenuStrip = _menu;
 
-        (_stateLabel, _) = StatusLayout.Pair(_status);
+        StatusLayout.Pair(_status);
         Controls.AddRange([Overlay, _text, _status, _menu]);
         ApplyTextFont();
         FillText();

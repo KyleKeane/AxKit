@@ -266,9 +266,6 @@ public sealed class Theme
         return false;
     }
 
-    /// <summary>An RGB value as the file writes it, <c>#1A2B3C</c>.</summary>
-    public static string ColorText(int rgb) => "#" + (rgb & 0xFFFFFF).ToString("X6", CultureInfo.InvariantCulture);
-
     private static string ToText(JsonObject root) => root.ToJsonString(Indented).ReplaceLineEndings("\r\n") + "\r\n";
 
     private static string? TextOf(JsonNode? node) => node is JsonValue value && value.TryGetValue<string>(out var text) ? text : null;
