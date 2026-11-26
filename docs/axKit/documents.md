@@ -38,6 +38,9 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
   source of axClaude's window behind a switch: the seam (one model with two sources, `ClaudeModel`), the stream's
   model, host and relay, what the window sends, what the stream does not have, the folder's trust and the
   questions, sessions, the switch, the checks, the path in eight stages, and what is the maintainer's to decide.
+- `docs/axClaude/stream-equivalence.md` (a report for the maintainer's decision, 2026-11-26): what a window over the
+  stream loses against one over the screen, what replaces each loss today or would, at what cost, the risks, and
+  what must be built before the stream could be the default.
 - `docs/axClaude/events-and-grounding.md` (EG-n.m, EG-D-n): how axClaude learns what happens in a Claude Code session
   and how the conversation is tied to Claude Code's own record; it amends `docs/axClaude/SPEC.md` (FR-15). Where each
   piece is written: the marks of a turn, EG-1; Claude Code's events and the settings file with the hooks, EG-2 and
