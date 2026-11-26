@@ -221,7 +221,10 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   when the user's own Claude Code configuration names `axkit` already (MC-6.8: that entry gives the same tools, and
   the server is never named twice). Otherwise it writes
   `%LOCALAPPDATA%\AxKit\claude-mcp.json` (`McpClaudeCode.ConfigText`: `{"mcpServers": {"axkit": {"type": "stdio",
-  "command": "<this AxKit.exe>", "args": ["mcp"]}}}`; written again when it names another program file) and adds
+  "command": "<this AxKit.exe>", "args": ["mcp"], "alwaysLoad": true}}}`; written again when it names another program
+  file; `alwaysLoad`, since 2026-11-26, makes Claude Code wait for the server before its first request, five seconds at
+  most, and load its tools up front, since a message sent in the first seconds once went out before the tools were
+  there) and adds
   Claude Code's `--mcp-config <file>` to the command line (`McpClaudeCode.SessionArguments`). Off: no file, no
   argument. The consent is unchanged and is the gate: nothing here turns the access on, pairs a client or allows
   commands to run; the broker Claude Code then starts is the same `AxKit.exe mcp` as MC-1.1's, refused, paired,

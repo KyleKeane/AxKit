@@ -17,7 +17,7 @@
   (2026-11-17) is Claude Code's variable against background updates: never set by an app, set by the two tools that
   start Claude Code for a check so that one run meets one version (`UpstreamTests`; docs/axKit/automation.md
   section 4).
-- `Mcp/McpClaudeCode` (MC-6.8): the `claude mcp add` and `remove` command lines that register this AxKit.exe for every
+- `Mcp/McpClaudeCode` (MC-6.8; the `--mcp-config` file's server has `alwaysLoad` since 2026-11-26, MC-6.9): the `claude mcp add` and `remove` command lines that register this AxKit.exe for every
   folder of the user; the window runs them on the Claude Code `ClaudeCodeProgram` finds (`AxKit.Forms/AiToolsSetup.cs`).
   Also MC-6.9's file for one start (`ConfigText`, `WriteConfig`, `SessionArguments`: while the tools are on and the user's own
   entry is not there), and since 2026-11-26 whether that entry is there: `UserFile` (Claude Code's `.claude.json`, in the

@@ -29,6 +29,11 @@ expect state "notice":"Force Claude to restart?"
 keys enter
 expect said Restarting
 expect said Ready
+# Claude Code connects its servers in the background. In a test run a message typed at once after Ready still went out
+# before axKit's tools were there in two runs of four, with the file's alwaysLoad (2026-11-26, Claude answered
+# "none"); outside a test run, typed as the prompt appeared, four of four had them. The pause holds the feature; the
+# test run's race is the item's.
+wait 3000
 type Look at the tools you have now. Reply with the exact full name of the tool whose name ends in axkit_windows, and nothing else, or with the word none if you have no such tool. Call no tool.
 keys enter
 expect said Done

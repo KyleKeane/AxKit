@@ -26,7 +26,10 @@ public static class McpClaudeCode
     /// The file Claude Code's <c>--mcp-config</c> reads (docs/axKit/mcp.md MC-6.9): one server, <see cref="ServerName"/>,
     /// this AxKit.exe with the argument <c>mcp</c>, over standard input and output. The same name as the entry
     /// <see cref="AddArguments"/> makes, so that Claude Code holds one axKit server, never two, and the tools' names
-    /// are the same either way.
+    /// are the same either way. <c>alwaysLoad</c> (2026-11-26): Claude Code connects its servers in the background, and a
+    /// message sent in the first seconds went out before axKit's tools were there (Claude answered that it had none,
+    /// live script 60); with it Claude Code waits for this server before the first request, five seconds at most, and
+    /// loads its tools up front, so that Claude knows them from its first message.
     /// </summary>
     public static string ConfigText(string axkitExe) =>
         new System.Text.Json.Nodes.JsonObject
@@ -38,6 +41,7 @@ public static class McpClaudeCode
                     ["type"] = "stdio",
                     ["command"] = axkitExe,
                     ["args"] = new System.Text.Json.Nodes.JsonArray("mcp"),
+                    ["alwaysLoad"] = true,
                 },
             },
         }.ToJsonString(new System.Text.Json.JsonSerializerOptions { WriteIndented = true, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping });

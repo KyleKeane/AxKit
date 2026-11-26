@@ -237,6 +237,8 @@ public sealed class McpTests
         Assert.Equal("stdio", (string?)server["type"]);
         Assert.Equal(@"D:\Ax Kit\AxKit.exe", (string?)server["command"]);
         Assert.Equal(["mcp"], server["args"]!.AsArray().Select(argument => (string?)argument));
+        // Loaded before the first request, so that a first message already has the tools (live script 60).
+        Assert.True((bool?)server["alwaysLoad"]);
         // One server and nothing else: no environment, no second entry.
         Assert.Single(json["mcpServers"]!.AsObject());
 
