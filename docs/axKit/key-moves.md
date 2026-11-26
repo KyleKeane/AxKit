@@ -229,9 +229,16 @@ fit the rule if possible". Settled through the question tool:
 - axFile's New text file: Ctrl+T (T for text), from Ctrl+Shift+T.
 - Word wrap in axDown, axJSON and axPreview: F11 (rule 5, the text shown another way), from Ctrl+Shift+W.
 
+The keys that mean the same in every window, beside Escape, Delete and Ctrl+Delete, by the maintainer's word the same
+day: Ctrl+Space turns between the two modes (edit and navigation; keys to the program and reading the screen), and
+Ctrl+Enter does the most frequent action where you are. The command palette moves to F1, palette and help in one
+(his choice: "is there another key we can use for the command palette? that seems like something very important and
+i want it to be easy to use frequently"): F1 opens the palette; with nothing typed, its list starts with the key
+rules and the window's keys, what F1 showed before; a command's name typed runs it. Ctrl+Shift+P gives way, so it is
+no exception.
+
 Left as exceptions, each one Windows or a common program taught: F2 rename, F3 find next, F5 refresh and reload, F6
-the next pane, Ctrl+Shift+N a new folder (File Explorer), Ctrl+Shift+P the palette (Visual Studio Code), Ctrl+Shift+R
-restart (a browser's heavier reload).
+the next pane, Ctrl+Shift+N a new folder (File Explorer), Ctrl+Shift+R restart (a browser's heavier reload).
 
 ## The small families
 
