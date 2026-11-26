@@ -32,12 +32,10 @@ public sealed class ActionLogTests
         Assert.True(copy.CanUndo);
         Assert.Equal((Folder, "a.txt"), copy.Location);
         Assert.Same(copy, log.Newest());
-        Assert.Equal("Un&do paste", log.MenuText);
 
         var rename = log.Add("Renamed notes.md to todo.md", Rename("notes.md", "todo.md"));
         Assert.Equal((Folder, "todo.md"), rename.Location);
         Assert.Same(rename, log.Newest());
-        Assert.Equal("Un&do rename", log.MenuText);
         Assert.Same(rename, log.Latest);
     }
 
@@ -69,7 +67,6 @@ public sealed class ActionLogTests
         Assert.Equal(ActionState.Failed, zip.State);
         Assert.False(zip.CanUndo);
         Assert.Null(log.Newest());
-        Assert.Equal("Un&do", log.MenuText);
         // A progress report after the end changes nothing.
         log.Progress(zip, "Compressing, 50 of 120 files");
         Assert.Equal("Failed: The file is in use", zip.Line);
@@ -79,7 +76,7 @@ public sealed class ActionLogTests
     public void Undo_takes_the_operations_back_newest_first_one_per_press()
     {
         // Ctrl+Z (AF-4.14): each press takes the newest operation that can still be taken back; a failed one, a running
-        // one and one already undone are passed over, and the menu item is named after the next.
+        // one and one already undone are passed over.
         var log = Log(DateTime.Now);
         var made = log.Add("Created temp", new Operation(OperationKind.NewFolder, [], [In("temp")]));
         var rename = log.Add("Renamed temp to notes", Rename("temp", "notes"));
@@ -88,22 +85,18 @@ public sealed class ActionLogTests
         var running = log.Begin("Deleting 4 items", Folder);
 
         Assert.Same(rename, log.Newest());
-        Assert.Equal("Un&do rename", log.MenuText);
         log.Undone(rename);
         Assert.Equal("Renamed temp to notes, undone", rename.Line);
         Assert.False(rename.CanUndo);
 
         Assert.Same(made, log.Newest());
-        Assert.Equal("Un&do new folder", log.MenuText);
         log.Undone(made);
 
         Assert.Null(log.Newest());
-        Assert.Equal("Un&do", log.MenuText);
 
         // The running delete ends: it is the next to take back.
         log.End(running, "Deleted 4 items", new Operation(OperationKind.Delete, [In("a"), In("b"), In("c"), In("d")], []));
         Assert.Same(running, log.Newest());
-        Assert.Equal("Un&do delete", log.MenuText);
     }
 
     [Fact]

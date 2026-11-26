@@ -22,19 +22,6 @@ public enum OperationKind
 /// </summary>
 public sealed record Operation(OperationKind Kind, IReadOnlyList<string> Before, IReadOnlyList<string> After, string? MadeFolder = null)
 {
-    /// <summary>The operation's name in the menu item, "Undo rename".</summary>
-    public string Label => Kind switch
-    {
-        OperationKind.Rename => "rename",
-        OperationKind.NewFolder => "new folder",
-        OperationKind.NewFile => "new text file",
-        OperationKind.Move => "move",
-        OperationKind.Copy => "paste",
-        OperationKind.Compress => "compress",
-        OperationKind.Extract => "extract",
-        _ => "delete",
-    };
-
     /// <summary>Whether the undo puts entries back where they were (<see cref="Before"/>), rather than removing what the operation made (<see cref="After"/>).</summary>
     private bool PutsBack => Kind is OperationKind.Rename or OperationKind.Move or OperationKind.Delete;
 

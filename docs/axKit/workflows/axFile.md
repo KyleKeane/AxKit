@@ -421,7 +421,7 @@ Starts with: Open axFile with the folder ops.
 5. Type: renamed
 6. Press Enter.
     You hear: Renamed to renamed.txt.
-7. Press Ctrl+Z (Undo rename; Actions menu).
+7. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: renamed back to rename-then-undo.txt.
 
 ### Undo a new folder
@@ -430,7 +430,7 @@ Starts with: Open axFile with the folder ops.
 2. Type: temp
 3. Press Enter.
     You hear: Created temp.
-4. Press Ctrl+Z (Undo new folder; Actions menu).
+4. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: temp removed.
 
 ### Undo a move to a folder
@@ -443,7 +443,7 @@ Starts with: Open axFile with the folder ops.
 6. Type: bundle
 7. Press Enter.
     You hear: Moved 2 items into bundle.
-8. Press Ctrl+Z (Undo move; Actions menu).
+8. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: moved back.
 
 ### Undo a compress
@@ -451,7 +451,7 @@ Starts with: Open axFile with the folder ops.
 1. Press Home.
 2. Choose the menu item Compress to zip, Context.
     You hear: Compressed to compress-then-undo.zip.
-3. Press Ctrl+Z (Undo compress; Actions menu).
+3. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: compress-then-undo.zip sent to the Recycle Bin.
 
 ### Undo a delete
@@ -462,7 +462,7 @@ Starts with: Open axFile with the folder ops.
 4. Press Delete.
 5. Press Enter.
     You hear: Deleted delete-then-undo.txt.
-6. Press Ctrl+Z (Undo delete; Actions menu).
+6. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: delete-then-undo.txt restored.
 
 ### Undo the delete of several entries
@@ -474,7 +474,7 @@ Starts with: Open axFile with the folder ops.
 5. Press Delete.
 6. Press Enter.
     You hear: Deleted 2 items.
-7. Press Ctrl+Z (Undo delete; Actions menu).
+7. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: 2 items restored.
 
 ## Play or read a file from axFile
@@ -616,7 +616,7 @@ Starts with: Open axFile with the folder act.
 ### Undo the newest operation from either list
 
 1. Press Tab.
-2. Press Ctrl+Z.
+2. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: renamed back to temp.
 3. Press Escape.
 4. Choose Recent operations in the Actions menu.
@@ -642,7 +642,7 @@ Starts with: Open axFile with the folder act.
 
 ### Undo the newest operation from the folder list
 
-1. Press Ctrl+Z (Undo delete; Actions menu).
+1. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: 2 items restored.
 
 ### Select entries without an operation
@@ -691,7 +691,7 @@ Starts with: Open axFile with the folder ops.
 
 ### Undo the move
 
-1. Press Ctrl+Z (Undo move; Actions menu).
+1. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: moved back.
 
 ## Open a recent folder in axFile from the command palette
@@ -778,7 +778,7 @@ Starts with: Open axFile with the folder u.
 
 1. Press Ctrl+Shift+T (New text file; Actions menu).
 2. Press Escape.
-3. Press Ctrl+Z.
+3. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: New file.txt removed.
 
 ### Make a new Markdown file and a new JSON file
@@ -787,9 +787,9 @@ Starts with: Open axFile with the folder u.
 2. Press Escape.
 3. Choose New JSON file in the Actions menu.
 4. Press Escape.
-5. Press Ctrl+Z.
+5. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: New file.json removed.
-6. Press Ctrl+Z.
+6. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: New file.md removed.
 
 ## Hear why a folder a program runs in cannot be renamed

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- axFile: **Undo is one command, Actions, Undo (Ctrl+Z)**, whatever it would take back, where the menu item read "Undo rename", "Undo delete" and so on; what it undid is said after it runs, "Undone: renamed back to notes.md", as before.
 - axClaude: **the rules of `/permissions` can be searched**: the screen offers "Search the rules (/)", which gives a field; what you type and Enter go to Claude Code's search, and the rules that match, or "No rules match", come back as the screen's list, Escape clearing the search. The key was read and not offered, and with Claude Code's cursor on its search the message field came back and took your next message as the search's text.
 - axKit: **F1 says what the key list cannot**: in every window, the keyboard shortcuts no longer repeat a key with its command's name, which the list of every key at the end gives; what is left is what a key does where you are, what is said and the words to expect. A new line under F1's names the app's how-to page, the steps of each task with their keys, which Ask about this window answers from, and the user guide in the Help menu.
 - axTask: **a new item's due date and priority can be typed in its title**: "Buy milk tomorrow !high" adds "Buy milk", due tomorrow, priority High, and says so. A date can be 2026-12-01, today, tomorrow, +3 or a weekday; the priority word can be the start of one of the list's choices.

@@ -126,7 +126,7 @@ public sealed partial class FileForm
 
     // ---- undo (AF-4.14) ----
 
-    /// <summary>Actions → Undo <operation> (Ctrl+Z, AF-4.14), wherever the focus is but in the rename box: the newest operation of the window's history that can be taken back, one per press; "Nothing to undo" when none can.</summary>
+    /// <summary>Actions → Undo (Ctrl+Z, AF-4.14), wherever the focus is but in the rename box: the newest operation of the window's history that can be taken back, one per press; "Nothing to undo" when none can.</summary>
     protected override void Undo()
     {
         if (_actions.Newest() is not { } entry)

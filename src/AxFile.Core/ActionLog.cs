@@ -172,9 +172,6 @@ public sealed class ActionLog
         entry.Reason = reason;
     }
 
-    /// <summary>The Actions menu's item, named after what Undo would take back: "Un&amp;do rename", or "Un&amp;do" with nothing to undo.</summary>
-    public string MenuText => Newest() is { Operation: { } operation } ? $"Un&do {operation.Label}" : "Un&do";
-
     /// <summary>The entry added; beyond the limit the oldest entries fall off.</summary>
     private void Append(ActionEntry entry)
     {

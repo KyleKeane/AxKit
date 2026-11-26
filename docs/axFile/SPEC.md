@@ -402,8 +402,9 @@ Every operation here is an entry of the window's history (AF-9.2) as well as its
   of New folder); a path to a folder that does not exist elsewhere is "Not found: <text>"; a folder moved into itself
   or its own subfolder is "Cannot move a folder into itself". The move is the shell's (AF-4.8, undo allowed, names
   chosen first); "Moved <name> into <folder>" or "Moved n items into <folder>", the folder selected when it is here.
-- AF-4.14 **Undo** (asked 2026-10-21). **Ctrl+Z** (Actions → Undo <operation>, named after what it would undo, "Undo
-  rename") takes back the newest file operation of the window's history that can be taken back (AF-9.2; never a
+- AF-4.14 **Undo** (asked 2026-10-21). **Ctrl+Z** (Actions → Undo, one name whatever it would take back; it was named
+  after what it would undo, "Undo rename", until the maintainer's decision of 2026-11-25: one Undo that says what it
+  undid, so that one name means one thing across apps, docs/axKit/command-language.md section 8 (c)) takes back the newest file operation of the window's history that can be taken back (AF-9.2; never a
   change of the marks, decided 2026-10-22, so that Ctrl+Z after a paste does not unmark an entry instead), one per
   press, from either list (since 2026-11-23, AF-D3), and selects the entry it touched: Rename, renamed back; New folder and New text file, deleted while still empty ("Not undone:
   notes has files now" otherwise); a paste that moved and Move to folder, moved back where they were, the new
@@ -450,7 +451,7 @@ and the started process finds its open window and hands the paths over with the 
 
 - AF-6.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** New window Ctrl+N | Open folder…
   Ctrl+O | Open recent folder ▸ | ─ | Refresh F5 | ─ | Show current folder in ▸ (File Explorer Ctrl+W | axClaude |
-  axTerminal | axGIT) | ─ | Exit Alt+F4. **Actions (A):** Undo <operation> Ctrl+Z (AF-4.14) | Recent operations… (AF-9.3) | ─ | New folder… Ctrl+Shift+N |
+  axTerminal | axGIT) | ─ | Exit Alt+F4. **Actions (A):** Undo Ctrl+Z (AF-4.14) | Recent operations… (AF-9.3) | ─ | New folder… Ctrl+Shift+N |
   New text file Ctrl+Shift+T | New Markdown file | New JSON file | Paste Ctrl+V | ─ | Select all Ctrl+A | Deselect all Ctrl+Shift+A. **Navigation (N):**
   Favorites ▸ (1. name (path) … or No favorites yet | ─ | Add or remove this folder Ctrl+D) | Drives ▸ (1. Local Disk
   (C:) … | ─ | This PC | ─ | Eject this drive | Drive properties; AF-3.11) | Go to folder… Ctrl+G | Up one level

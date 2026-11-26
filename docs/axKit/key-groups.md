@@ -394,11 +394,6 @@ Windows' own keys, as in every program:
 - Ctrl+X, axFile: Cut.
 - Ctrl+Y, axDown and axJSON: Redo.
 - Ctrl+Z, axAutomate, axDown, axFile, axJSON, axMCP, axPass, axTask and axTemplate: Undo.
-- Ctrl+Z, axFile: Undo compress.
-- Ctrl+Z, axFile: Undo delete.
-- Ctrl+Z, axFile: Undo move.
-- Ctrl+Z, axFile: Undo new folder.
-- Ctrl+Z, axFile: Undo rename.
 
 Exceptions today, which do another kind of thing:
 

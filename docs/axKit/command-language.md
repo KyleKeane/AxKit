@@ -399,8 +399,9 @@ Each origin, by function and file, down to the code that runs the command.
   some two hundred workflows, never an origin the user or an AI meets.
 - (c) **Checks over the inventory**, in `test.ps1`, without a window: one name means one thing across apps or is a
   listed exception (Undo is change in the editors and act in axFile); one chord, one family, once the families are
-  settled (CL-7.2); names that change with the state (axFile's Undo, which the inventory holds as Undo, Undo rename,
-  Undo move, Undo delete, Undo compress, Undo new folder) settled as one command with one name. Touches
+  settled (CL-7.2); names that change with the state (axFile's Undo, which the inventory held as Undo, Undo rename,
+  Undo move, Undo delete, Undo compress, Undo new folder) settled as one command with one name (built 2026-11-25:
+  axFile's Actions, Undo, one name, and what it undid said after it, AF-4.14). Touches
   `tools/key-map.ps1` or a test of `tests/AxAutomate.Tests`, `key-families.json`, and axFile for the names. Small for
   the checks; the decisions are the maintainer's. **Decided on 2026-11-25:** the check is built, today's differences
   a list of exceptions, so that a new one is added on purpose; axFile's undo becomes one Undo that says what it undid.

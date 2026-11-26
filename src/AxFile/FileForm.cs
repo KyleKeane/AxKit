@@ -28,7 +28,6 @@ public sealed partial class FileForm : ItemForm
     private readonly ToolStripMenuItem _recentItem = new("Open &recent folder");
     private readonly ToolStripMenuItem _favoritesItem = new("Fa&vorites");
     private readonly ToolStripMenuItem _drivesMenu = new("Driv&es");
-    private readonly ToolStripMenuItem _undoItem;
 
     /// <summary>The folder list: the item window's navigator.</summary>
     private AxKitList _list => Navigator;
@@ -80,11 +79,10 @@ public sealed partial class FileForm : ItemForm
 
         // Actions (AX-9.1): what axFile does in the folder shown, the same wherever the focus is.
         var actions = new ToolStripMenuItem();
-        // AF-4.14: named after what it would undo each time the menu opens, "Undo rename"; the palette refreshes it the same way (AX-10.2).
+        // AF-4.14: one Undo, the same name whatever it would take back; what it undid is said after it runs ("Undone: ...").
         // Ctrl+Z in the rename box is the box's own undo of the typing (AF-6.2); everywhere else, in either list, the
         // newest operation.
-        _undoItem = Add(actions, new Command(_actions.MenuText, AxFileKeys.Undo, Undo) { When = () => !_list.Renaming, Mark = CommandMark.Act });
-        CommandPalette.RefreshedOnOpening(actions, () => _undoItem.Text = _actions.MenuText);
+        Add(actions, new Command("Un&do", AxFileKeys.Undo, Undo) { When = () => !_list.Renaming, Mark = CommandMark.Act });
         // AF-9.3: the window's operations, newest first, to read again and go to where one left things.
         Add(actions, new Command("Recent &operations...", Keys.None, ShowRecentOperations) { Mark = CommandMark.Read });
         actions.DropDownItems.Add(new ToolStripSeparator());

@@ -158,7 +158,7 @@ keys escape
 # Check: A folder that has files now is not undone, and Recent operations says so
 # 6.8 A file put in temp from outside: "Not undone: temp has files now"; then nothing is left to undo.
 file act\temp\made-outside.txt A file in temp.
-do Undo new folder
+do Undo
 expect said ! Not undone: temp has files now
 do Recent operations
 keys down
@@ -248,7 +248,7 @@ expect list "count":5
 keys escape
 # Goal: Undo the newest operation from the folder list
 # Ctrl+Z in the folder list: the newest undoable operation, here the delete of two.
-do Undo delete
+do Undo
 expect said ! Undone: 2 items restored
 
 # Check: The keyboard shortcuts from the Favorites list return to it
@@ -294,7 +294,7 @@ expect state "status":["Created quiet, 3 selected",
 expect list "items":["favorite-me, folder, selected","favorite-me-too, folder, selected","quiet, folder, selected"
 # Check: Undo never undoes the selection
 # Ctrl+Z undoes an operation; the entries that stay are still selected.
-do Undo new folder
+do Undo
 expect said ! Undone: quiet removed
 expect list "favorite-me, folder, selected","favorite-me-too, folder, selected"
 expect state "status":["Created quiet, undone, 2 selected",

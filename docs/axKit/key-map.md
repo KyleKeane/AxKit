@@ -3,8 +3,8 @@
 Written by `tools/key-map.ps1` from `docs/axKit/window-commands.json`, `src/AxKit.Forms/BundleKeys.cs` and
 `docs/axKit/key-families.json`; never edit it by hand. Every key of every window and what it does in each app.
 
-The inventory holds 1042 commands with a key in 18 apps, on 148 different keys, counting the
-second keys some commands answer. 72 keys have one meaning wherever they are; 76 have several.
+The inventory holds 1037 commands with a key in 18 apps, on 148 different keys, counting the
+second keys some commands answer. 73 keys have one meaning wherever they are; 75 have several.
 23 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
 are window keys, each in its window's own table.
 
@@ -51,6 +51,7 @@ In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 - Ctrl+V. Window key, in axFile alone: Paste.
 - Ctrl+X. Window key, in axFile alone: Cut.
 - Ctrl+Y. Window key, in axDown and axJSON: Redo.
+- Ctrl+Z. Window key, in axAutomate, axDown, axFile, axJSON, axMCP, axPass, axTask and axTemplate: Undo.
 - Ctrl+End. Window key, in axClip, axStart and axTemplate: Last match.
 - Ctrl+Home. Window key, in axClip, axStart and axTemplate: First match.
 - Ctrl+Left arrow. Window key, in axMedia alone: Back 15 seconds.
@@ -324,17 +325,6 @@ Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axT
 - axMCP: Select to the previous server.
 - axTemplate: Select to the previous template.
 - axAutomate: Select to the previous workflow.
-
-### Ctrl+Z
-
-Window key, in axAutomate, axDown, axFile, axJSON, axMCP, axPass, axTask and axTemplate. 6 meanings.
-
-- axAutomate, axDown, axFile, axJSON, axMCP, axPass, axTask and axTemplate: Undo.
-- axFile: Undo compress.
-- axFile: Undo delete.
-- axFile: Undo move.
-- axFile: Undo new folder.
-- axFile: Undo rename.
 
 ### Ctrl+I
 
