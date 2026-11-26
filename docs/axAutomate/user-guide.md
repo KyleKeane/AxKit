@@ -1,6 +1,6 @@
 # axAutomate user guide
 
-axAutomate shows workflows: lists of steps that drive axKit's windows, such as "press Ctrl+Shift+P, then expect
+axAutomate shows workflows: lists of steps that drive axKit's windows, such as "press F1, then expect
 Command palette to be said". Its first workflows are the automated checks of every axKit app, so that you can read
 what each check does, step by step. It is part of axKit, a bundle of apps for people who use a screen reader; it was
 built for and with NVDA. This version views the workflows and runs them; changing them comes later.
@@ -28,7 +28,7 @@ of a name to jump to it.
 
 Inside a workflow, each row is one step, numbered, in the order it runs, as a sentence:
 
-- "3. Press Ctrl+Shift+P"
+- "3. Press F1"
 - "4. Expect said: Command palette"
 - "5. Expect said: trust, may not come, then 2 steps"
 - "5.1 then: Wait 1.5 seconds"
@@ -95,7 +95,9 @@ say "Cannot run". So does one with a step whose number is not one, such as "wait
 - F8: the report of the last run.
 - F7: read in full the workflow or step you are on.
 - F5, or Session, Refresh: read the folder or the workflow again, after the file changed.
-- F1: every key of the window, after a short section, "How the keys go", on the rules of the keys.
+- F1, or Ctrl+Comma: the command palette. With nothing typed it lists a short section, "How the keys go", on the
+  rules of the keys, then every key and command of the window; type part of a command's name to find it, and Enter
+  runs it. Help, Keyboard shortcuts shows the same keys as a text.
 - Ctrl+N, F2, Delete and the other keys that change items in axTask say "This version views and runs the workflows;
   changing them comes later".
 
@@ -108,9 +110,9 @@ Each menu with its commands and their keys, as the window lists them:
 - **Actions**: Deselect all (Ctrl+Shift+A); Run (Ctrl+R); Select all (Ctrl+A); The last run's report (F8).
 - **Navigation**: Nothing to move to here yet.
 - **Context**: Open (Enter); Read in full (F7); Select or deselect (Space); Select to here (Shift+Space); The workflow's file as text (Ctrl+J).
-- **Options**: Filter; Developer (Open settings file); Sort by (Name, The list's own order); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
+- **Options**: Check for updates at start; Edit app keys file; Filter; Keep a log of events; Open the sounds folder; Developer (Open settings file); Sort by (Name, The list's own order); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size); Theme (Edit theme file, Reload theme, Theme on).
 - Keys without a menu item: Enter (Change the field); Space (Check the field); Ctrl+Delete (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); F3 (Find next); Shift+F3 (Find previous); Right (Into the list); Ctrl+N (New item); Ctrl+Shift+N (New list); Ctrl+Down (Next section); Ctrl+Up (Previous section); F2 (Rename); Shift+Home (Select to the first workflow); Shift+End (Select to the last workflow); Shift+Down (Select to the next workflow); Shift+Up (Select to the previous workflow); Ctrl+Tab (Switch between the navigator and the detail pane); Shift+F10 (The Context menu); Shift+F10 (The field's menu); Right (The next value of the field); Left (The previous value of the field); Tab (To the detail pane); Tab (To the navigator); Ctrl+Z (Undo); Left (Up a level).
-- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1, the command palette, lists every key and command. Options ends with the settings of all of axKit.
 <!-- end of the menus -->
 
 ## The files
@@ -120,7 +122,7 @@ read as a workflow. The format is in `docs/axAutomate/SPEC.md` section 3.
 
 ## Settings
 
-Options, Text sets the font and its size; the axKit menu, Check for updates at start, the update check.
+Options, Text sets the font and its size; Options, Check for updates at start, the update check.
 
 ## Updates
 

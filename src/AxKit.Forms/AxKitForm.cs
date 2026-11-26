@@ -241,6 +241,9 @@ public abstract partial class AxKitForm : Form
         SayWhenEmpty(actions, "No actions here yet");
         SayWhenEmpty(navigation, "Nothing to move to here yet");
         SayWhenEmpty(context, "Nothing for the focus here yet");
+        // AX-9.1 (the consolidations of 2026-11-26): one Options menu, the app's settings and then, after a separator,
+        // the settings of all of axKit, the same in every window.
+        AddBundleOptions(options);
         var window = CreateWindowMenu();
         window.Text = BarMenus[5];
         help.Text = BarMenus[7];
@@ -286,9 +289,10 @@ public abstract partial class AxKitForm : Form
 
     /// <summary>
     /// The axKit menu (AX-9.1; the user's order of 2026-11-10: Navigate, Options, Window, axKit, Help): what is the
-    /// bundle's rather than the app's, each a submenu: Claude (AI help, <c>AxKitForm.Ai.cs</c>), AI tools (MC-6.1,
-    /// <c>AxKitForm.Mcp.cs</c>) and Theme (the theme file, TH-4, <c>AxKitForm.Theme.cs</c>). A new bundle-wide setting or
-    /// action joins here, never an app's Options.
+    /// bundle's rather than the app's and no setting: the apps and the access layers, then the two services, each a
+    /// submenu with its switch and its commands: Claude (AI help, <c>AxKitForm.Ai.cs</c>) and AI tools (MC-6.1,
+    /// <c>AxKitForm.Mcp.cs</c>). The bundle's settings are the end of Options since 2026-11-26
+    /// (<see cref="AddBundleOptions"/>).
     /// </summary>
     private ToolStripMenuItem CreateAxKitMenu()
     {
@@ -300,11 +304,24 @@ public abstract partial class AxKitForm : Form
         menu.DropDownItems.Add(new ToolStripSeparator());
         menu.DropDownItems.Add(CreateClaudeMenu());
         menu.DropDownItems.Add(CreateMcpMenu());
-        menu.DropDownItems.Add(CreateThemeMenu());
+        return menu;
+    }
+
+    /// <summary>
+    /// The end of every window's Options (AX-9.1, the consolidations of 2026-11-26; the axKit menu's until then): a
+    /// separator, then the settings of all of axKit, the same in every window: Theme (the theme file, TH-4,
+    /// <c>AxKitForm.Theme.cs</c>), Open the sounds folder (AX-7.12), Edit app keys file (AX-8.18 rule 6), Check for
+    /// updates at start (AX-3.1) and Keep a log of events. A new bundle-wide setting joins here, never an app's own
+    /// part of Options.
+    /// </summary>
+    private void AddBundleOptions(ToolStripMenuItem options)
+    {
+        options.DropDownItems.Add(new ToolStripSeparator());
+        options.DropDownItems.Add(CreateThemeMenu());
         // AX-7.12: the user's own sounds, a WAV file named as a sound in place of the built-in one.
-        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Open the &sounds folder", null, (_, _) => OpenSoundsFolder()), CommandMark.Open));
+        options.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Open the s&ounds folder", null, (_, _) => OpenSoundsFolder()), CommandMark.Open));
         // AX-8.18 rule 6 (the maintainer's decision of 2026-11-25): the user's own app keys, a file over the defaults.
-        menu.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Edit app &keys file...", null, (_, _) => EditAppKeysFile()), CommandMark.Open));
+        options.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Edit app &keys file...", null, (_, _) => EditAppKeysFile()), CommandMark.Open));
         if (!PackageIdentity.IsPackaged)
         {
             // AX-3.1 (the maintainer's answer of 2026-11-24, "One switch for all"): the update check at start is the
@@ -312,26 +329,19 @@ public abstract partial class AxKitForm : Form
             // The Store's copy makes no check at start (AX-13.3), so it has no switch. Act for the AI tools: on, it is a
             // network contact at every start (docs/axKit/repairs.json R-04).
             var check = CommandPalette.Marked(new ToolStripMenuItem("Check for &updates at start", null, (_, _) => ToggleBundleUpdateCheck()), CommandMark.Act);
-            menu.DropDownItems.Add(new ToolStripSeparator());
-            menu.DropDownItems.Add(check);
-            CommandPalette.RefreshedOnOpening(menu, () => check.Checked = BundleSettings.Load().CheckForUpdates);
+            options.DropDownItems.Add(check);
+            CommandPalette.RefreshedOnOpening(options, () => check.Checked = BundleSettings.Load().CheckForUpdates);
         }
 
-        // Events.md section 9 point 5 (the maintainer's decision of 2026-11-25): the log of events, the bundle's second
-        // switch, off until the user turns it on; times and kinds only, on this computer. A change: it writes a file of
-        // axKit's own folder and reaches nothing outside.
+        // Events.md section 9 point 5 (the maintainer's decision of 2026-11-25): the log of events, off until the user
+        // turns it on; times and kinds only, on this computer. A change: it writes a file of axKit's own folder and
+        // reaches nothing outside.
         var eventLog = CommandPalette.Marked(new ToolStripMenuItem("Keep a log of &events", null, (_, _) => ToggleEventLog()), CommandMark.Change);
-        if (PackageIdentity.IsPackaged)
-        {
-            menu.DropDownItems.Add(new ToolStripSeparator());
-        }
-
-        menu.DropDownItems.Add(eventLog);
-        CommandPalette.RefreshedOnOpening(menu, () => eventLog.Checked = BundleSettings.Load().KeepEventLog);
-        return menu;
+        options.DropDownItems.Add(eventLog);
+        CommandPalette.RefreshedOnOpening(options, () => eventLog.Checked = BundleSettings.Load().KeepEventLog);
     }
 
-    /// <summary>axKit, Keep a log of events: the bundle's switch turned over and saved, followed by this process at once and by every other window at its next activation, its new state said.</summary>
+    /// <summary>Options, Keep a log of events: the bundle's switch turned over and saved, followed by this process at once and by every other window at its next activation, its new state said.</summary>
     private void ToggleEventLog()
     {
         var settings = BundleSettings.Load();
@@ -350,7 +360,7 @@ public abstract partial class AxKitForm : Form
     }
 
     /// <summary>
-    /// axKit, Open the sounds folder (AX-7.12): the folder made when it is missing, with the file that lists the names a
+    /// Options, Open the sounds folder (AX-7.12): the folder made when it is missing, with the file that lists the names a
     /// sound file may have written again, and shown in axFile.
     /// </summary>
     private void OpenSoundsFolder()
@@ -371,7 +381,7 @@ public abstract partial class AxKitForm : Form
     }
 
     /// <summary>
-    /// axKit, Edit app keys file (AX-8.18 rule 6): the file written with every app's key as it holds now when there is
+    /// Options, Edit app keys file (AX-8.18 rule 6): the file written with every app's key as it holds now when there is
     /// none, then axJSON on it, as Theme, Edit theme file does. A change holds in the windows opened after it.
     /// </summary>
     private void EditAppKeysFile()
@@ -394,7 +404,7 @@ public abstract partial class AxKitForm : Form
         WindowMenu.Start(Dispatch.AxJSON, path);
     }
 
-    /// <summary>axKit, Check for updates at start: the bundle's one switch turned over and saved, its new state said.</summary>
+    /// <summary>Options, Check for updates at start: the bundle's one switch turned over and saved, its new state said.</summary>
     private void ToggleBundleUpdateCheck()
     {
         var settings = BundleSettings.Load();
@@ -546,8 +556,8 @@ public abstract partial class AxKitForm : Form
     }
 
     /// <summary>
-    /// Help (AX-9.1; 5.7.0, 2026-11-10: the user's help in one menu): Command palette… (Ctrl+Shift+P, AX-10),
-    /// Keyboard shortcuts (F1, the base's key), User guide, the app's pages in the browser; Send a report… (F4), Your
+    /// Help (AX-9.1; 5.7.0, 2026-11-10: the user's help in one menu): Command palette… (F1 and Ctrl+Comma, AX-10),
+    /// Keyboard shortcuts (the F1 text as a text, no key since 2026-11-26), User guide, the app's pages in the browser; Send a report… (F4), Your
     /// reports (docs/axKit/reports.md RP-2.2) and Diagnostics (<see cref="CreateDiagnosticsMenu"/>); the window's Check for updates and Update to items (AX-3.1) and About,
     /// the bundle's sections (AX-9.9, <see cref="BundleAbout"/>), each shown as a notice of this window.
     /// </summary>
@@ -557,7 +567,9 @@ public abstract partial class AxKitForm : Form
         _userGuide = userGuide;
         var help = new ToolStripMenuItem("&Help");
         help.DropDownItems.Add(Item("Command &palette...", ShowCommandPalette, BundleKeys.CommandPalette, CommandMark.Read));
-        help.DropDownItems.Add(Item("&Keyboard shortcuts", ShowShortcuts, BundleKeys.Shortcuts, CommandMark.Read));
+        // The F1 text as a text of its own, with its heading keys and find (AX-7.2a): F1 is the palette since
+        // 2026-11-26, whose list with nothing typed gives the same lines.
+        help.DropDownItems.Add(Item("&Keyboard shortcuts", ShowShortcuts, Keys.None, CommandMark.Read));
         help.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("User &guide", null, (_, _) => ShowNotice(Notice.Plain("User guide", userGuide()))), CommandMark.Read));
         var resources = new ToolStripMenuItem(resourcesLabel);
         foreach (var (label, url) in pages)
@@ -849,20 +861,21 @@ public abstract partial class AxKitForm : Form
     /// <summary>
     /// The common keys (AX-8.2): the text size keys and Say the status (F9, AX-7.10) work everywhere, a notice included; while a notice shows, its text
     /// takes the find keys (AX-7.2) and every other shortcut waits (not calling the base skips the menu shortcuts;
-    /// Enter and Escape reach the notice's buttons through AcceptButton and CancelButton); F1 shows the shortcuts,
-    /// Ctrl+Shift+P the palette, Ctrl+S saves; then the window's own keys.
+    /// Enter and Escape reach the notice's buttons through AcceptButton and CancelButton); F1 and Ctrl+Comma the
+    /// palette, Ctrl+S saves; then the window's own keys.
     /// </summary>
     /// <summary>
-    /// The keys of the whole window, which need no selection and no caret (AX-6.6a): F1, the palette, F4, asking
-    /// Claude, Ctrl+S and the app keys. They work from the window and from an open menu.
+    /// The keys of the whole window, which need no selection and no caret (AX-6.6a): the palette (F1 and Ctrl+Comma),
+    /// F4, asking Claude, Ctrl+S and the app keys. They work from the window and from an open menu.
     /// </summary>
     private static bool IsWindowKey(Keys keyData) =>
-        keyData is BundleKeys.Shortcuts or BundleKeys.CommandPalette or BundleKeys.Report or BundleKeys.AskClaude or BundleKeys.AskClaudeAlso or BundleKeys.Save
+        keyData is BundleKeys.CommandPalette or BundleKeys.CommandPaletteAlso or BundleKeys.Report or BundleKeys.AskClaude or BundleKeys.AskClaudeAlso or BundleKeys.Save
         || BundleKeys.AppOfLaunchKey(keyData) is not null;
 
     /// <summary>
-    /// F1 (AX-7.2a): the app's own text, then every key of the window made from its command list as it stands
-    /// (<see cref="KeyReference"/>), so that no key the window has is missing from what F1 reads.
+    /// Help, Keyboard shortcuts (AX-7.2a): the app's own text, then every key of the window made from its command list
+    /// as it stands (<see cref="KeyReference"/>), so that no key the window has is missing from what it reads. F1 showed
+    /// it until 2026-11-26; F1 is the palette now, which gives the same lines with nothing typed.
     /// </summary>
     private void ShowShortcuts() => ShowNotice(Notice.Plain("Keyboard shortcuts", ShortcutsText()));
 
@@ -874,15 +887,13 @@ public abstract partial class AxKitForm : Form
     {
         if (IsWindowKey(keyData))
         {
-            WriteKey(keyData, keyData == BundleKeys.AskClaudeAlso ? BundleKeys.AskClaude : keyData);
+            WriteKey(keyData, keyData == BundleKeys.AskClaudeAlso ? BundleKeys.AskClaude : keyData == BundleKeys.CommandPaletteAlso ? BundleKeys.CommandPalette : keyData);
         }
 
         switch (keyData)
         {
-            case BundleKeys.Shortcuts:
-                ShowShortcuts();
-                return true;
             case BundleKeys.CommandPalette:
+            case BundleKeys.CommandPaletteAlso:
                 ShowCommandPalette();
                 return true;
             case BundleKeys.Report:

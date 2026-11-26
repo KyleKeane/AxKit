@@ -19,9 +19,9 @@ menu Windows text size
 expect said ! Windows text size
 
 # Goal: Read the keyboard shortcuts and the user guide
-# Step 2: F1, the Keyboard shortcuts notice; Escape gives the focus back to the list. Help, User guide the same.
+# Step 2: Help, Keyboard shortcuts (F1 until 2026-11-26), the notice; Escape gives the focus back to the list. Help, User guide the same.
 # Ctrl+S: "Nothing to save here".
-keys f1
+do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 # (a text with "+" cannot be matched in a state answer: the runner matches the escaped JSON, see the report)
 expect state faster or slower by a quarter, the voice
@@ -44,7 +44,7 @@ expect said ! Nothing to save here
 expect commands axMedia, axKit, Apps
 expect commands Close all windows, Window
 expect commands Version, Help, About
-expect commands Check for updates at start, axKit
+expect commands Check for updates at start, Options
 
 # Step 4: Copy diagnostics writes to the clipboard, which is the user's (the test desktop shares the window
 # station's clipboard), so it is not run here; left to the NVDA pass.

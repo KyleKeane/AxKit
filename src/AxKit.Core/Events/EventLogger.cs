@@ -3,7 +3,7 @@ namespace AxKit.Core.Events;
 /// <summary>
 /// The log of events on the user's computer (docs/axKit/events.md section 9 point 5, the maintainer's decision of
 /// 2026-11-25): one line for each event raised at the door, its time and its kind, and never a word of what was said
-/// or shown. Off until the user turns it on (axKit menu, Keep a log of events; <see cref="BundleSettings.KeepEventLog"/>),
+/// or shown. Off until the user turns it on (Options, Keep a log of events; <see cref="BundleSettings.KeepEventLog"/>),
 /// and nothing is written or kept while it is off. The file is <see cref="AppPaths.EventLogFile"/>, on this computer
 /// alone; past <see cref="RollOverBytes"/> it becomes <c>events.old.log</c>, replacing the one before, as the
 /// diagnostic logs do (<see cref="Log"/>), so that the two files never hold more than about two megabytes.

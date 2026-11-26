@@ -10,10 +10,15 @@ namespace AxKit.Forms;
 /// </summary>
 public static class BundleKeys
 {
-    public const Keys Shortcuts = Keys.F1;
+    /// <summary>
+    /// The command palette, palette and help in one (AX-10; the maintainer's decision of 2026-11-26): with nothing
+    /// typed, the rules of the keys and the window's keys as the F1 text gives them, then every command; typed text
+    /// finds a command by name. F1 since 2026-11-26; the keyboard shortcuts' text until then, and Ctrl+Shift+P the palette.
+    /// </summary>
+    public const Keys CommandPalette = Keys.F1;
 
-    /// <summary>The command palette (AX-10): every command of the window's menus by name.</summary>
-    public const Keys CommandPalette = Keys.Control | Keys.Shift | Keys.P;
+    /// <summary>The same palette on a second key, on trial (the maintainer, 2026-11-26: after his use of both, one stays or both do).</summary>
+    public const Keys CommandPaletteAlso = Keys.Control | Keys.Oemcomma;
 
     /// <summary>A report to axKit's maintainer, a bug, an idea or feedback (docs/axKit/reports.md RP-2.1).</summary>
     public const Keys Report = Keys.F4;
@@ -108,8 +113,8 @@ public static class BundleKeys
         ("Paragraph down; in a form, the next field", ParagraphDown),
         ("Select to the paragraph above", SelectParagraphUp),
         ("Select to the paragraph below", SelectParagraphDown),
-        ("Keyboard shortcuts", Shortcuts),
-        ("Command palette", CommandPalette),
+        ("Command palette, with the keys", CommandPalette),
+        ("Command palette, as F1", CommandPaletteAlso),
         ("Report", Report),
         ("Ask Claude about this window", AskClaude),
         ("Ask Claude about this window, as Shift+F1", AskClaudeAlso),

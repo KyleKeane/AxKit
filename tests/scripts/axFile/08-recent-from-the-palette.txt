@@ -2,7 +2,7 @@
 # axFile, plan step 1.8 (docs/axFile/nvda-test-plan.md; SPEC.md AF-3.3, Session, Open recent folder): the folders
 # opened by command, "1. name (path)", the newest first; choosing one shows it. The submenu needs menu mode, which
 # only the foreground window enters; since 2026-11-13 the command palette reads every Open recent list
-# (docs/axKit/SPEC.md AX-10.2), so the entry is one search away: Ctrl+Shift+P, part of the name, Enter.
+# (docs/axKit/SPEC.md AX-10.2), so the entry is one search away: F1, part of the name, Enter.
 mkdir orchard\inner
 file orchard\apple.txt The apple file.
 file cellar\barrel.txt The barrel file.

@@ -526,11 +526,11 @@ Starts with: Open axFile with the folder pal.
 
 ### Run a command from the command palette
 
-1. Press Ctrl+Shift+P (Command palette; Help menu).
+1. Press F1 (Command palette; Help menu).
 2. Type "oth".
     You hear: No commands match oth.
 3. Press Escape.
-4. Press Ctrl+Shift+P (Command palette; Help menu).
+4. Press F1 (Command palette; Help menu).
 5. Type "refresh".
     You hear: Refresh, Session, F5, 1 of 1.
 6. Press Enter.
@@ -702,7 +702,7 @@ Starts with: Open axFile with the folder orchard.
 2. Type "cellar".
 3. Press Enter.
     You hear: cellar, 1 item, barrel.txt.
-4. Press Ctrl+Shift+P (Command palette; Help menu).
+4. Press F1 (Command palette; Help menu).
 5. Type "orch".
     You hear something with "2. orchard" in it.
     You hear: Session, Open recent folder.

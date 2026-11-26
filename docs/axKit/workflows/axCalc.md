@@ -24,6 +24,11 @@ Starts with: Open axCalc.
     You hear: Cleared.
 3. Press Ctrl+Delete (Clear the field).
     You hear: Empty.
+4. Type "3".
+5. Press Escape.
+    You hear the sound Edge.
+6. Press Ctrl+Delete (Clear the field).
+    You hear: Cleared.
 
 ### Go on from the last answer
 
@@ -55,8 +60,19 @@ Starts with: Open axCalc.
 
 ### Read the keyboard shortcuts
 
-1. Press F1 (Keyboard shortcuts; Help menu).
+1. Choose Keyboard shortcuts in the Help menu.
 2. Press Escape.
+
+### Read the keys in the command palette
+
+1. Press F1 (Command palette; Help menu).
+2. Press Down.
+    You hear: A key alone moves and reads.
+3. Press Enter.
+    You hear: A key alone moves and reads.
+4. Press Escape.
+5. Press Ctrl+Comma.
+6. Press Escape.
 
 ### Get to the end and the start of the field with the page keys
 
@@ -220,7 +236,7 @@ Starts with: Open axCalc.
 
 ### Hear the bases from the command palette
 
-1. Press Ctrl+Shift+P (Command palette; Help menu).
+1. Press F1 (Command palette; Help menu).
 2. Type "bases".
 3. Press Enter.
     You hear: 30, hex 1E, binary 1 1110, octal 36.
@@ -273,7 +289,7 @@ Starts with: Open axCalc.
 
 ### Put a template into the field and type at its caret
 
-1. Press Ctrl+Shift+P (Command palette; Help menu).
+1. Press F1 (Command palette; Help menu).
 2. Type "circle".
     You hear: Circle area.
     You hear: Actions, Insert template.
@@ -287,7 +303,7 @@ Starts with: Open axCalc.
 
 1. Type "21".
 2. Press Shift+Home.
-3. Press Ctrl+Shift+P (Command palette; Help menu).
+3. Press F1 (Command palette; Help menu).
 4. Type "answer twice".
 5. Press Enter.
     You hear: Answer twice inserted.

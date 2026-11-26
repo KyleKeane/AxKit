@@ -183,7 +183,7 @@ the same sounds.
 - **The boundary**: `Announcer`, the one UI Automation notification, is internal and called by the door alone
   (`EventDoorTests`: no other file names it but the two channels that listen to `Raised`); the door's internal
   `Speak`, for words raised already and said later, is called only by `AxKitForm.Notices.cs` and `OverlayPanel.cs`.
-- **The log of events** (`AxKit.Core/Events/EventLogger`): a switch of the bundle, axKit menu, **Keep a log of
+- **The log of events** (`AxKit.Core/Events/EventLogger`): a switch of the bundle, Options, **Keep a log of
   events**, in `bundle.json` (`BundleSettings.KeepEventLog`), off by default. While it is on, every event at the door,
   by its sound (`Raise`, `Working` on, `BackgroundRunning`, `TurnDoneThroughMute`) or its words, is one line of
   `%LOCALAPPDATA%\AxKit\logs\events.log`: the local time and the kind's id, never a word. One kind is noted once in

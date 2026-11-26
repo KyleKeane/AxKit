@@ -26,7 +26,7 @@ expect commands "New window, Session, Ctrl\u002BN"
 expect commands "Reload, Session, F5"
 expect commands "Find, Navigation, Ctrl\u002BF"
 expect commands "Word wrap, Options, Text, F11, checked"
-expect commands "Keyboard shortcuts, Help, F1"
+expect commands "Command palette, Help, F1"
 
 # Goal: Read the text line by line
 # 1.2: Down reads the next line; typing a letter changes nothing and says nothing; Ctrl+V does nothing.
@@ -145,11 +145,11 @@ expect said ! Word wrap, checked
 expect state Line 5, Column 1 \u00B7
 
 # Check: Save has nothing to save here
-# 1.7: Ctrl+S: "Nothing to save here". F1, the Keyboard shortcuts notice; Ctrl+H in it jumps to its headings; Escape.
+# 1.7: Ctrl+S: "Nothing to save here". Help, Keyboard shortcuts (F1 until 2026-11-26), the notice; Ctrl+H in it jumps to its headings; Escape.
 keys ctrl+s
 expect said ! Nothing to save here
 # Goal: Read the keyboard shortcuts
-keys f1
+do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 keys ctrl+h
 expect said heading level 2
@@ -217,8 +217,8 @@ expect state "notice":null
 expect focus Untitled
 keys ctrl+e
 expect said ! No file yet
-# 1.12: Ctrl+E and Ctrl+W on an empty window: "No file yet".
-keys ctrl+w
+# 1.12: Ctrl+E and Show current file in, File Explorer (Ctrl+W until 2026-11-26) on an empty window: "No file yet".
+menu File Explorer
 expect said ! No file yet
 keys f5
 expect said ! No file yet

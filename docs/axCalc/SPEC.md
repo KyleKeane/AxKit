@@ -139,7 +139,8 @@ of the lines `1920*1080*4 = 8294400`, read as the conversation in axClaude and t
 
 - AC-6.1 Enter answers (AC-3); the answer is announced alone ("8294400"), interrupting, and the field is emptied for the
   next expression. Ctrl+Delete empties a field with text in it ("Cleared") and says "Empty" on an empty one (Escape
-  until 2026-11-26; Escape now only goes back). F7 says the last answer again ("Answer 8294400"; Ctrl+Q until
+  until 2026-11-26; Escape now only goes back). Escape in the field has nothing to go back to: the edge sound, and the
+  field keeps its text (silent from the move of 2026-11-26 until the fix of the same day: never silence). F7 says the last answer again ("Answer 8294400"; Ctrl+Q until
   2026-11-26). Ctrl+Shift+C in the field copies the last answer.
 - AC-6.2 Up and Down in the field are the edit control's own: they never put a history entry into the field
   (the bundle's rule that arrow keys never pull text into a field); the way back to an expression is the history and
@@ -155,12 +156,13 @@ of the lines `1920*1080*4 = 8294400`, read as the conversation in axClaude and t
   expression into the field Enter in the history | Bookmark this line Ctrl+K | Copy the selection Ctrl+C in the
   history. **Options (O):** Angles ▸ (Degrees ✓ |
   Radians) | Keep history between runs ✓ | Text ▸ | General ▸ | Developer ▸. **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):**
-  Keyboard shortcuts F1 | User guide | ─ | Calculator resources ▸ (Floating point explained). Every item has a
-  mnemonic (AX-7.4).
-- AC-7.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, the control keys, Ctrl+F, F3, Shift+F3, F7 (the last answer),
+  Command palette… F1 | Keyboard shortcuts | User guide | ─ | Calculator resources ▸ (Floating point explained). Every
+  item has a mnemonic (AX-7.4).
+- AC-7.2 Keys (AX-8). Bundle-wide: F1 and Ctrl+Comma, the command palette with the keys (Ctrl+Shift+P until
+  2026-11-26), the control keys, Ctrl+F, F3, Shift+F3, F7 (the last answer),
   Ctrl+S (the history as a
   text file), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxCalcKeys`): Enter (answer in the field, the line's
-  expression into the field in the history), Escape (back to the field from the history), Ctrl+Delete (clear the
+  expression into the field in the history), Escape (back to the field from the history; in the field the edge sound), Ctrl+Delete (clear the
   field), Ctrl+Shift+C, F8, Ctrl+K, Ctrl+Shift+Delete, and the history's keys of AC-5.7 with Ctrl+C for a selection.
   The collision test covers the table.
 - AC-7.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axCalc/user-guide.md` is embedded (Help, User

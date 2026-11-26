@@ -120,9 +120,9 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
   the selection is on (AX-9.11): Paste Enter | Copy without pasting Shift+Enter | Read in full F7 | Remove Delete.
   **Options (O):** Hotkey… | Pause
   recording Ctrl+P ✓ | Keep history between runs ✓ | Text ▸ | General ▸ (Start with
-  Windows ✓ | Say the first match while typing ✓) | Developer ▸. **Window (W)** (before Options), **axKit (K)** (AX-9.1). **Help (H):** Keyboard
-  shortcuts F1 | User guide | ─ | Windows resources ▸ (Clipboard in Windows). Every item has a mnemonic.
-- CP-5.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, F7 (read in full), Page Up, Page Down, Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific
+  Windows ✓ | Say the first match while typing ✓) | Developer ▸. **Window (W)** (before Options), **axKit (K)** (AX-9.1). **Help (H):** Command
+  palette… F1 | Keyboard shortcuts | User guide | ─ | Windows resources ▸ (Clipboard in Windows). Every item has a mnemonic.
+- CP-5.2 Keys (AX-8). Bundle-wide: F1 and Ctrl+Comma, the command palette with the keys (Ctrl+Shift+P until 2026-11-26), F7 (read in full), Page Up, Page Down, Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific
   (`AxClipKeys`): Down, Up, Ctrl+Home, Ctrl+End, Enter, Shift+Enter, Delete, Ctrl+Shift+Delete, Ctrl+P, Escape.
   The hotkey is a setting, not a key of the window. Delete and the arrows act on the list while the caret is in the
   field: the field's own Delete and Up and Down are not used (a search text is short; Backspace edits it).

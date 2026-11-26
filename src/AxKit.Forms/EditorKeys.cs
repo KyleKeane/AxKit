@@ -7,10 +7,12 @@ namespace AxKit.Forms;
 /// </summary>
 public static class EditorKeys
 {
+    /// <summary>
+    /// Ctrl+N makes a new one of what the window holds (the consolidations of 2026-11-26): a document in the editors, a
+    /// new window in the viewer, where New has no meaning. Session, New window stays in the editors without a key;
+    /// Ctrl+Shift+N was its key until then.
+    /// </summary>
     public const Keys NewDocument = Keys.Control | Keys.N;
-
-    /// <summary>File → New window (AD-4.1, 2026-11-09, reports issue 2): an empty document in a new window of the app, this one left as it is; the viewer has it on Ctrl+N, where New has no meaning.</summary>
-    public const Keys NewWindow = Keys.Control | Keys.Shift | Keys.N;
 
     public const Keys Open = Keys.Control | Keys.O;
     public const Keys SaveAs = Keys.Control | Keys.Shift | Keys.S;
@@ -18,9 +20,6 @@ public static class EditorKeys
     public const Keys GoToLine = Keys.F12;
     /// <summary>Word wrap on or off: F11, the text shown another way (AX-8.18 rule 5; Ctrl+Shift+W until 2026-11-26).</summary>
     public const Keys WordWrap = Keys.F11;
-
-    /// <summary>File → Show current file in → File Explorer (AD-4.1), the key axClaude uses for its folder.</summary>
-    public const Keys ShowInExplorer = Keys.Control | Keys.W;
 
     /// <summary>Edit → Undo and Redo over the window's own history (AD-2.5); Ctrl+Shift+Z is Redo as well, as in most editors.</summary>
     public const Keys Undo = Keys.Control | Keys.Z;
@@ -31,10 +30,8 @@ public static class EditorKeys
     public static readonly IReadOnlyList<(string Name, Keys Key)> All =
     [
         ("New document", NewDocument),
-        ("New window", NewWindow),
         ("Open", Open),
         ("Save as", SaveAs),
-        ("Show the file in File Explorer", ShowInExplorer),
         ("Undo", Undo),
         ("Redo", Redo),
         ("Redo (also)", RedoAlso),
@@ -71,7 +68,6 @@ public static class EditorKeys
         ("Reload", Reload),
         ("Read the clipboard's picture", ClipboardPicture),
         ("Edit in the editor", Edit),
-        ("Show the file in File Explorer", ShowInExplorer),
         ("Go to line", GoToLine),
         ("Word wrap", WordWrap),
         ("Line number", LineNumber),

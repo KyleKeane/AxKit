@@ -9,7 +9,7 @@ need a real reply and a real screen and are the user's by ear.
 
 1. Start menu, axKit axHelp: NVDA says "axHelp hotkeys window", then "axHelp, edit, read only" and the first line
    "axHelp: your conversation with Claude, from any program." Down reads the hotkeys as set.
-2. F1: the keyboard shortcuts, with the two hotkeys and Enter, Ctrl+D, Ctrl+O; Escape. Escape again: the window hides.
+2. Help, Keyboard shortcuts: the keyboard shortcuts, with the two hotkeys and Enter, Ctrl+D, Ctrl+O; Escape. Escape again: the window hides.
 3. Alt: the menu bar, axHelp, Options, Window, Claude, Help; Options, Conversation model: Fast (Haiku) checked.
 
 ## 2. The conversation (HE-2.1, HE-2.3, HE-2.4)

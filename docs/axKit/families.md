@@ -19,7 +19,7 @@ What you do yourself, in the window that has the focus or from anywhere in Windo
 - `key`: A key of the window. A key of one of the families of keys (docs/axKit/key-groups.md). It runs the command that holds it, or it is the control's own key, as the arrows are.
 - `typing`: Typing. Characters typed into a field. Typing is no command: NVDA echoes it and axKit says nothing, except in a text's navigation mode, where a letter is a command or is refused.
 - `menu`: A menu item. A command chosen from the menu bar or the Context menu.
-- `palette`: The command palette. Ctrl+Shift+P, words typed, a line chosen with Enter. It runs what the menu item runs, and says a check item's new state since no menu shows it.
+- `palette`: The command palette. F1 (or Ctrl+Comma), with nothing typed the keys and every command, words typed to find one, a line chosen with Enter. It runs what the menu item runs, and says a check item's new state since no menu shows it.
 - `hotkey`: A key from anywhere in Windows. Ctrl+Shift with Space or a punctuation key, in any program: it brings up axStart, axClip or axHelp.
 
 ### The program under an access layer
@@ -81,12 +81,12 @@ A function is a command of a window (`docs/axKit/command-language.md`): 2004 in 
 - `context`, the Context menu: Do something with the one thing the focus is on: copy, cut, paste, rename, delete, open, information. Shift+F10 and Ctrl+Period open it.
   - 120 commands in 18 apps: read 17, open 24, change 30, act 49.
 - `options`, the Options menu: Settings, each said with its new state: text, speech, sounds, announcements, what happens when something is done.
-  - 276 commands in 18 apps: read 1, open 24, change 229, act 22.
+  - 402 commands in 18 apps: read 1, open 78, change 283, act 40.
 - `window`, the Window menu: The other windows of axKit: a new window of any app, close all windows, say the status.
   - 36 commands in 18 apps: read 18, act 18.
 - `axkit`, the axKit menu: The services of the whole bundle: the AI tools and what they may do, Claude for AI help, the theme.
-  - 648 commands in 18 apps: open 360, change 54, act 234.
-- `help`, the Help menu: The keys (F1), the user guide, the command palette, sending a report (F4), about, diagnostics and the key test.
+  - 522 commands in 18 apps: open 306, act 216.
+- `help`, the Help menu: The command palette with the keys (F1), the keyboard shortcuts as a text, the user guide, sending a report (F4), about, diagnostics and the key test.
   - 284 commands in 18 apps: read 162, open 18, act 104.
 - `keys-alone`: Commands that are a key with no menu item, because their meaning depends on where the focus is: Tab between panes, Enter on a row, Right into a list, F3 for find next. An AI tool never runs these.
   - 280 rows of the inventory.
@@ -456,7 +456,7 @@ Very short, right after your key and over before NVDA speaks. Each says how the 
   - Chosen: Asked 2026-10-22; made louder and given its upper note on 2026-10-23 after it was lost under speech. Not chosen from candidates.
   - Switch: None: it always plays.
   - The sound of: `nothing-found`, `edge`, `no-command`, `refused`.
-  - Played from 21 files: AxFile/FileForm.Browse.cs, AxFile/FileForm.Completion.cs, AxKit.Forms/AxKitForm.cs, AxKit.Forms/AxKitForm.Modes.cs, AxKit.Forms/AxKitForm.Notices.cs, AxKit.Forms/AxKitList.cs, AxKit.Forms/AxKitTextBox.cs, AxKit.Forms/EditKeys.cs, AxKit.Forms/FormControls.cs, AxKit.Forms/ItemForm.cs, AxKit.Forms/ItemForm.Fields.cs, AxKit.Forms/ListSelection.cs, AxKit.Forms/OverlayPanel.cs, AxKit.Forms/TextEditorForm.cs, AxKit.Forms/TranscriptView.cs, AxTask/TaskForm.Actions.cs, AxTask/TaskForm.Commands.cs, AxTask/TaskForm.cs, AxTask/TaskForm.Order.cs, AxTask/TaskForm.Projects.cs, AxTerminal/TerminalForm.Input.cs.
+  - Played from 22 files: AxCalc/CalcForm.cs, AxFile/FileForm.Browse.cs, AxFile/FileForm.Completion.cs, AxKit.Forms/AxKitForm.cs, AxKit.Forms/AxKitForm.Modes.cs, AxKit.Forms/AxKitForm.Notices.cs, AxKit.Forms/AxKitList.cs, AxKit.Forms/AxKitTextBox.cs, AxKit.Forms/EditKeys.cs, AxKit.Forms/FormControls.cs, AxKit.Forms/ItemForm.cs, AxKit.Forms/ItemForm.Fields.cs, AxKit.Forms/ListSelection.cs, AxKit.Forms/OverlayPanel.cs, AxKit.Forms/TextEditorForm.cs, AxKit.Forms/TranscriptView.cs, AxTask/TaskForm.Actions.cs, AxTask/TaskForm.Commands.cs, AxTask/TaskForm.cs, AxTask/TaskForm.Order.cs, AxTask/TaskForm.Projects.cs, AxTerminal/TerminalForm.Input.cs.
 - `Heading`: G4 leaping an octave to G5, 85 ms.
   - Chosen: Asked 2026-11-11. Not chosen from candidates.
   - Switch: Options, Text, Sound on headings, in every window.
@@ -644,7 +644,7 @@ Each family of keys (`docs/axKit/key-groups.md`) with the kinds of event its key
   - `landed`: no sound.
   - `nothing-found`: sound `Nothing` or `Edge`.
   - `done`: no sound.
-  - Note: F1 and F4 open, F3 lands or says Not found, F5 refreshes, F6 lands in the other pane, F8 says the status.
+  - Note: F1 and F4 open, F3 lands or says Not found, F5 refreshes, F6 lands in the other pane, F9 says the status.
 - `shift-f-keys`, Shift+F-key, and the Applications key: the reverse or the other form of the same F-key.
   - `opened`: no sound.
   - `landed`: no sound.

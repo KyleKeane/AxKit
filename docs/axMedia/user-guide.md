@@ -27,7 +27,7 @@ The list is the one control, named with its count, "Queue, 12 items". Up, Down, 
 - **Ctrl+F** finds the next file whose name contains the text; F3 and Shift+F3 the next and the previous match.
 - **Ctrl+O**, Add files: the Windows file picker on sound and video files, several at once; they are added to the end of the queue, "Added 3". Nothing starts playing by itself; Enter on one does. **Ctrl+Shift+O**, Add folder: the Windows folder picker; the folder's sound and video files are added in name order, "Added 12", or "No sound or video files in Dune". Session, Open recent lists the files and folders added lately by number, "1. Dune (C:\Music\Dune)", so Alt+S, R, 1 adds the first again.
 - Session, Clear queue empties the queue and stops the sound, "Queue cleared".
-- **Ctrl+W** shows the file playing, or the one you are on, selected in File Explorer; Session, Show current file in, axFile opens axFile on its folder with the file selected.
+- **Session, Show current file in, File Explorer** shows the file playing, or the one you are on, selected in File Explorer; Session, Show current file in, axFile opens axFile on its folder with the file selected.
 - **Ctrl+N** opens a second axMedia window with an empty queue.
 
 ## Selecting several files
@@ -63,13 +63,13 @@ The volume is Windows' own: your keyboard's volume keys work from anywhere. A vi
 Each menu with its commands and their keys, as the window lists them:
 
 <!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
-- **Session**: Add files (Ctrl+O); Add folder (Ctrl+Shift+O); Clear queue; Exit (Alt+F4); New window (Ctrl+N); Show current file in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, axTerminal, access layer for your shell, File Explorer (Ctrl+W)).
+- **Session**: Add files (Ctrl+O); Add folder (Ctrl+Shift+O); Clear queue; Exit (Alt+F4); New window (Ctrl+N); Show current file in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, axTerminal, access layer for your shell, File Explorer).
 - **Actions**: Back 15 seconds (Ctrl+Left); Deselect all (Ctrl+Shift+A); Faster (Alt+Up); Forward 15 seconds (Ctrl+Right); Normal speed; Play, pause or resume (Ctrl+Enter); Select all (Ctrl+A); Slower (Alt+Down); What is playing (F7).
 - **Navigation**: Go to time (F12); Next file (Ctrl+Shift+Right); Previous file (Ctrl+Shift+Left).
 - **Context**: Queue is empty.
-- **Options**: Filter; Say each file as it starts; Developer (Open settings file); Sort by (Name, The order added); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
+- **Options**: Check for updates at start; Edit app keys file; Filter; Keep a log of events; Open the sounds folder; Say each file as it starts; Developer (Open settings file); Sort by (Name, The order added); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size); Theme (Edit theme file, Reload theme, Theme on).
 - Keys without a menu item: Ctrl+Tab (Back to the list); Ctrl+Delete (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); F3 (Find next); Shift+F3 (Find previous); Right (Into the list); Ctrl+Down (Next section); Enter (Open); Ctrl+Up (Previous section); Space (Select or deselect); Shift+Space (Select to here); Shift+Home (Select to the first file); Shift+End (Select to the last file); Shift+Down (Select to the next file); Shift+Up (Select to the previous file); Shift+F10 (The Context menu); Left (Up a level).
-- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1, the command palette, lists every key and command. Options ends with the settings of all of axKit.
 <!-- end of the menus -->
 
 ## Settings

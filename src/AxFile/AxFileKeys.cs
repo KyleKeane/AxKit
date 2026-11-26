@@ -35,8 +35,8 @@ public static class AxFileKeys
     /// <summary>Go to folder: F12, the function key that shows the go-to field (AX-8.18 rule 5; Ctrl+G, with Alt+D beside it, until 2026-11-26).</summary>
     public const Keys GoToFolder = Keys.F12;
 
-    public const Keys ShowInExplorer = Keys.Control | Keys.W;
-    public const Keys ShowItemInExplorer = Keys.Control | Keys.Shift | Keys.W;
+    // Ctrl+W and Ctrl+Shift+W, the folder and the entry in File Explorer until 2026-11-26, are free: Show current folder
+    // in and the Context menu keep the two items without a key (the consolidations of that day).
 
     /// <summary>The entry's size and date; in the Favorites list, the favorite's full path and its place: F8, read with details (AX-8.18 rule 5; Ctrl+I until 2026-11-26).</summary>
     public const Keys Information = Keys.F8;
@@ -119,8 +119,6 @@ public static class AxFileKeys
         ("Clear the filter (in the folder list)", ItemKeys.ClearFilter),
         ("Open folder", OpenFolder),
         ("Go to folder", GoToFolder),
-        ("Show the folder in File Explorer", ShowInExplorer),
-        ("Show the entry in File Explorer", ShowItemInExplorer),
         ("Information about the entry, or the favorite's full path", Information),
         ("New folder", NewFolder),
         ("New text file", NewFile),

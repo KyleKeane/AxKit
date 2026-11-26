@@ -84,9 +84,9 @@ folder of the file or project in hand, and sends back. It works entirely offline
   File → Show current file in ▸ **axFile** (the file's folder, the file selected), axGIT's Repository → Show current
   repository in ▸ **axFile**, axTerminal's Session → Show current folder in ▸ **axFile** and axMedia's Queue → Show
   current file in ▸ **axFile** each start a new axFile window (`WindowMenu.Start`, found again in the axKit menu, AX-9.3).
-  From axFile, Session → Show current folder in ▸ **File Explorer** (Ctrl+W), **axClaude**, **axTerminal**, **axGIT** (bundle AX-9.10;
+  From axFile, Session → Show current folder in ▸ **File Explorer** (no key; Ctrl+W until 2026-11-26), **axClaude**, **axTerminal**, **axGIT** (bundle AX-9.10;
   "Folder missing" when the folder shown is gone);
-  Context → **Show in File Explorer** (Ctrl+Shift+W) opens File Explorer with the selected entry selected ("Folder
+  Context → **Show in File Explorer** (no key; Ctrl+Shift+W until 2026-11-26) opens File Explorer with the selected entry selected ("Folder
   missing" or "File missing" when the entry is gone); Context → **Preview** (Shift+Enter) and the axMedia items
   are AF-5.
 
@@ -450,7 +450,7 @@ and the started process finds its open window and hands the paths over with the 
 ### AF-6 Menus, keys, texts
 
 - AF-6.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** New window Ctrl+N | Open folder…
-  Ctrl+O | Open recent folder ▸ | ─ | Refresh F5 | ─ | Show current folder in ▸ (File Explorer Ctrl+W | axClaude |
+  Ctrl+O | Open recent folder ▸ | ─ | Refresh F5 | ─ | Show current folder in ▸ (File Explorer | axClaude |
   axTerminal | axGIT) | ─ | Exit Alt+F4. **Actions (A):** Undo Ctrl+Z (AF-4.14) | Recent operations… (AF-9.3) | ─ | New folder… Ctrl+Shift+N |
   New text file Ctrl+T | New Markdown file | New JSON file | Paste Ctrl+V | ─ | Select all Ctrl+A | Deselect all Ctrl+Shift+A. **Navigation (N):**
   Favorites ▸ (1. name (path) … or No favorites yet | ─ | Add or remove this folder Ctrl+D) | Drives ▸ (1. Local Disk
@@ -461,20 +461,21 @@ and the started process finds its open window and hands the paths over with the 
   Open with axKit access layers ▸ (the access layers that open a path, by group) | Preview
   Shift+Enter | Play folder in axMedia Ctrl+Enter | Add to axMedia's queue Ctrl+Q | ─ | Cut Ctrl+X | Copy Ctrl+C |
   ─ | Rename F2 | Delete Delete | ─ | Move to folder… | Compress to zip | Extract here | ─ | Copy path Ctrl+Shift+C |
-  Show in File Explorer Ctrl+Shift+W | Information F8 | Properties Alt+Enter | ─ | Windows menu… | ─ | Selection ▸
+  Show in File Explorer | Information F8 | Properties Alt+Enter | ─ | Windows menu… | ─ | Selection ▸
   (Select or deselect this entry Space | Select to here Shift+Space | ─ | Cut Ctrl+X | Copy Ctrl+C | Delete Delete | ─ |
   Move to folder… | Compress to zip | Add to axMedia's queue Ctrl+Q | Copy paths Ctrl+Shift+C; AF-3.7, the
   operations on the marks alone); in the Favorites list, its line (AF-9.1): Open Enter | Remove from Favorites
   Delete. **Options (O):** Filter… | Sort by ▸ (Name ✓ | Date | Size) | ─ | Add a program to Open with… | Remove a program from Open with ▸ | ─
-  | Text ▸ (Font… | Larger text Ctrl+Plus | Smaller text Ctrl+Minus | Windows text size) | General ▸ (Check for updates
-  at start ✓ | Show hidden files and folders | Show files and folders starting with a period) | Developer ▸ (Open
-  settings file). **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Keyboard shortcuts F1 | User
-  guide | ─ | File resources ▸ (Keyboard shortcuts in Windows, the Microsoft page, in the browser). Every item has a
+  | Text ▸ (Font… | Larger text Ctrl+Plus | Smaller text Ctrl+Minus | Windows text size) | General ▸ (Show hidden files and folders | Show files and folders starting with a period) | Developer ▸ (Open
+  settings file) | ─ | the settings of all of axKit (AX-9.1, 2026-11-26: Theme ▸ | Open the sounds folder | Edit app
+  keys file… | Check for updates at start ✓ | Keep a log of events). **Window (W)**, **axKit (K)** (AX-9.1). **Help
+  (H):** Command palette… F1 | Keyboard shortcuts | User guide | ─ | File resources ▸ (Keyboard shortcuts in Windows, the Microsoft page, in the browser). Every item has a
   mnemonic (AX-7.4).
-- AF-6.2 Keys (AX-8). Bundle-wide: F1, the control keys (Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6, between
+- AF-6.2 Keys (AX-8). Bundle-wide: F1 and Ctrl+Comma, the command palette with the keys (Ctrl+Shift+P until
+  2026-11-26), the control keys (Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6, between
   the folder list and the Favorites list, AF-9.1), Ctrl+F, F3, Shift+F3, Ctrl+S ("Nothing to save here"), Ctrl+Plus,
   Ctrl+Minus, Page Up and Page Down (the list's own here), Alt+F4. Window-specific (`AxFileKeys`): Enter,
-  Shift+Enter, Backspace, Left, Right, F5, F2, Delete, Ctrl+N, Ctrl+O, F12, Ctrl+D, Ctrl+W, Ctrl+Shift+W,
+  Shift+Enter, Backspace, Left, Right, F5, F2, Delete, Ctrl+N, Ctrl+O, F12, Ctrl+D (Ctrl+W and Ctrl+Shift+W until 2026-11-26),
   F8, Ctrl+Shift+N, Ctrl+T, Ctrl+Shift+C, Escape, Ctrl+Delete (clear the filter), Shift+Up, Shift+Down, Shift+Home,
   Shift+End, Space, Shift+Space, Ctrl+A, Ctrl+Shift+A, Ctrl+Q (AF-5), Shift+F10, the Applications key,
   Alt+Enter, Ctrl+Z (AF-4.14), Ctrl+X, Ctrl+C, Ctrl+V. Enter, Shift+Enter, Backspace, Left, Right, Space, Escape, F2, Delete,
@@ -646,7 +647,8 @@ and AxPreview.Core since the split; `MediaFiles` and `NaturalOrder` moved to `Ax
   paste came at the user's ask on 2026-10-20, as files on the clipboard in File Explorer's own formats (`CF_HDROP`
   and the preferred drop effect) so that the two exchange them, with the shell doing the copy or the move (a dash and
   a number on a name already there rather than a question, §7); the zip, the move into a new folder and Undo on
-  2026-10-21. File Explorer stays one key away for the rest (Ctrl+W, Ctrl+Shift+W).
+  2026-10-21. File Explorer stays one menu item away for the rest (Show current folder in, File Explorer, and
+  Context, Show in File Explorer; Ctrl+W and Ctrl+Shift+W until 2026-11-26).
 - **AF-D7 Items are names; details on demand.** "report.pdf, 1.2 MB, 2026-10-18" on every arrow key is noise for a
   user who wants the name; F8 says the rest when asked (AX-7.3).
 - **AF-D8 Our own context menu, Windows' behind one item.** Asked 2026-10-20: the shell's context menu on every entry,

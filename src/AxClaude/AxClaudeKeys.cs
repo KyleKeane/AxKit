@@ -28,7 +28,7 @@ public static class AxClaudeKeys
     public const Keys ReadToEnd = Keys.Control | Keys.Alt;
     /// <summary>Bookmark the line you are on, from anywhere (AX-8.18 rule 2; Ctrl+Shift+K until 2026-11-26).</summary>
     public const Keys BookmarkLine = Keys.Control | Keys.K;
-    public const Keys ShowInExplorer = Keys.Control | Keys.W;
+    /// <summary>A new session (Ctrl+N makes a new one of what the window holds, 2026-11-26). Ctrl+W, File Explorer until that day, is free: Show current folder in, File Explorer has no key.</summary>
     public const Keys NewSession = Keys.Control | Keys.N;
     public const Keys RestartClaude = Keys.Control | Keys.Shift | Keys.R;
     /// <summary>
@@ -96,7 +96,6 @@ public static class AxClaudeKeys
         ("Latest response", LatestResponse),
         ("Read to the end: Ctrl+Alt with a quick key letter", ReadToEnd),
         ("Bookmark this line", BookmarkLine),
-        ("Show the folder in File Explorer", ShowInExplorer),
         ("New session", NewSession),
         ("Force Claude to restart", RestartClaude),
         ("Ctrl+O guard", CtrlOGuard),

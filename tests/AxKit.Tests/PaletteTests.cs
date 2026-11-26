@@ -51,4 +51,16 @@ public sealed class PaletteTests
         Assert.Equal("Save as, File, Ctrl+Shift+S, 2 of 5", Palette.Spoken(Entries[1], 1, 5));
         Assert.Equal("No commands match xyz", Palette.NoMatch(" xyz "));
     }
+
+    /// <summary>With nothing typed (AX-10.2, 2026-11-26): the F1 text's lines, read, then the commands, which run, then the keys alone.</summary>
+    [Fact]
+    public void With_nothing_typed_the_list_is_the_help_then_the_commands_then_the_keys_alone()
+    {
+        var lines = Palette.WithNothingTyped("## How the keys go\n  A key alone moves.\n\n## In every window\n  F1: the palette\n", Entries, ["Keys with no menu item", "  F6: Next pane"]);
+        Assert.Equal(
+            ["How the keys go", "A key alone moves.", "In every window", "F1: the palette", Palette.CommandsLine, .. Entries.Select(entry => entry.Text), "Keys with no menu item", "F6: Next pane"],
+            lines.Select(line => line.Text));
+        Assert.Equal(Entries.Count, lines.Count(line => line.IsCommand));
+        Assert.All(lines.Take(5), line => Assert.False(line.IsCommand));
+    }
 }

@@ -70,7 +70,7 @@ Starts with: Open axProcess.
 
 ### Read the keyboard shortcuts
 
-1. Press F1 (Keyboard shortcuts; Help menu).
+1. Choose Keyboard shortcuts in the Help menu.
 2. Press Escape.
 
 ### Go up to This computer and into another list

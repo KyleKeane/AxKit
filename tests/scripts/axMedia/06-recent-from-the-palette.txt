@@ -2,7 +2,7 @@
 # axMedia, plan step 1.3 (docs/axMedia/nvda-test-plan.md; SPEC.md AM-3, Session, Open recent): the folders and files
 # added by command, "1. name (path)"; choosing a folder adds its files, "Added n". Alt+S, R is menu mode, which only
 # the foreground window enters; since 2026-11-13 the command palette reads every Open recent list (docs/axKit/SPEC.md
-# AX-10.2), so the entry is one search away: Ctrl+Shift+P, part of the name, Enter.
+# AX-10.2), so the entry is one search away: F1, part of the name, Enter.
 # Every sound is the runner's silence; nothing reaches the speakers.
 
 # The run's own settings (AXKIT_HOME): no update check at start, which goes to the network.
@@ -20,7 +20,7 @@ expect list ["Queue is empty"]
 
 # Goal: Add a recent folder to the queue from the palette
 # The palette: part of the folder's name, the entry said with its menu; Enter adds the folder's files, nothing plays.
-keys ctrl+shift+p
+keys f1
 expect state "notice":"Command palette"
 type chapt
 expect said 1. chapters (

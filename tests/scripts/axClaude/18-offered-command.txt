@@ -125,7 +125,7 @@ wait 3500
 mcp call axkit_window_run {"window":"{window}","command":"Check for updates at start"}
 expect mcp The window asks the user whether to run Check for updates at start
 expect said ♪ Offer
-expect focus Command offer: it acts outside this window. axAutomate asks to run this window's command Check for updates at start (axKit)
+expect focus Command offer: it acts outside this window. axAutomate asks to run this window's command Check for updates at start (Options)
 expect focus 1. Explain this command
 expect state "notice":null
 wait 1500

@@ -85,7 +85,7 @@ expect list "03-new, workflow, 2 steps"
 expect focus Marks, workflow, 5 steps
 
 # Goal: Read every key of the window
-keys f1
+do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 expect state Ctrl+R: run the workflow you are in, on a desktop of its own
 keys escape

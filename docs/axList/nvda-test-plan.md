@@ -58,6 +58,6 @@ its section 10.
 ## 4. Text, notices, the Window, axKit and Help menus (LI-6)
 
 1. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back.
-2. F1: the Keyboard shortcuts notice; Escape. Help, User guide: this guide; Escape.
+2. Help, Keyboard shortcuts: the notice; Escape. Help, User guide: this guide; Escape.
 3. Alt+H, About, Version names axList among the apps.
 4. Close axList and start it without a folder: it opens on the list you had, in the folder you had.

@@ -91,10 +91,9 @@ public sealed partial class FileForm : ItemForm
         Add(actions, new Command("&Paste", AxFileKeys.Paste, Paste) { When = InNavigator, Mark = CommandMark.Act });
         actions.DropDownItems.Add(new ToolStripSeparator());
         // AF-1.3: the way to the other windows, on the folder shown. The base makes the submenu around its File
-        // Explorer item, so the item only shows the key and the key is a command of its own.
-        // Open, as its own key and every window's File Explorer item (docs/axKit/command-exceptions.json, 2026-11-25).
-        folder.DropDownItems.Add(CreateShowInMenu("Show current folder &in", Item("File &Explorer", ShowFolderInExplorer, AxFileKeys.ShowInExplorer, CommandMark.Open), () => TryFolder(out var shown) ? shown : null, FolderMissing));
-        AddKey(new Command("Show the folder in File Explorer", AxFileKeys.ShowInExplorer, ShowFolderInExplorer) { Mark = CommandMark.Open });
+        // Explorer item, open as every window's File Explorer item (docs/axKit/command-exceptions.json, 2026-11-25);
+        // no key since 2026-11-26, when Ctrl+W left File Explorer in every window.
+        folder.DropDownItems.Add(CreateShowInMenu("Show current folder &in", Item("File &Explorer", ShowFolderInExplorer, Keys.None, CommandMark.Open), () => TryFolder(out var shown) ? shown : null, FolderMissing));
         folder.DropDownItems.Add(new ToolStripSeparator());
         folder.DropDownItems.Add(CreateExitItem());
 
@@ -300,7 +299,7 @@ public sealed partial class FileForm : ItemForm
         Add(menu, new Command("E&xtract here", Keys.None, Extract) { Mark = CommandMark.Act });
         menu.DropDownItems.Add(new ToolStripSeparator());
         Add(menu, new Command("Copy pat&h", AxFileKeys.CopyPath, CopyPath) { Mark = CommandMark.Act });
-        Add(menu, new Command("Show in File Exp&lorer", AxFileKeys.ShowItemInExplorer, ShowItemInExplorer) { Mark = CommandMark.Open });
+        Add(menu, new Command("Show in File Exp&lorer", Keys.None, ShowItemInExplorer) { Mark = CommandMark.Open });
         // Ctrl+I in the Favorites list says the favorite's line again (AF-9.1).
         Add(menu, new Command("&Information", AxFileKeys.Information, SayInformation) { When = () => !_pane.Focused, Mark = CommandMark.Read });
         AddKey(new Command("The favorite's folder", AxFileKeys.Information, SayFavorite) { When = InDetail, Mark = CommandMark.Read });

@@ -49,7 +49,7 @@ expect state "title":"axMedia beta.wav"
 # Goal: Remove a file found in the command palette
 # Remove, found in the palette: its name, its menu and its key are said; Enter removes the selected file, which was
 # playing, and the queue's last file gone, nothing plays.
-keys ctrl+shift+p
+keys f1
 expect state "notice":"Command palette"
 type remove
 expect said Remove, Context, Delete

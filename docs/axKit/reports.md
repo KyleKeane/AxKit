@@ -42,7 +42,7 @@ TK and IA material and moves into those specs when built.
 ## 2. The key and the menu
 
 - **RP-2.1 F4.** Checked 2026-11-07: no window's key table uses F4 (Alt+F4 is Windows'). Ctrl+P, which the user also
-  asked about, is three windows' own (axClip's pause, axMedia's pause, axTerminal's say-folder), and Ctrl+Shift+P is
+  asked about, is three windows' own (axClip's pause, axMedia's pause, axTerminal's say-folder), and Ctrl+Shift+P was
   the palette; so F4, bundle-wide. `BundleKeys.Report = Keys.F4`, named "Report" in the keys table; `KeyTests` keeps the
   windows off it.
 - **RP-2.2 The Help menu** (AX-9.1; the axKit menu until 5.7.0) gets, after the command palette and the guide: "&Send a report…" with F4 shown (S: R is

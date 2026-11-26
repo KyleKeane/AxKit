@@ -245,7 +245,7 @@ public sealed class AppLaunchKeysTests
     public void The_F1_line_names_the_keys_the_file_changed()
     {
         Assert.DoesNotContain("your own keys:", BundleHelp.AppKeysLine);
-        Assert.Contains("axKit, Edit app keys file", BundleHelp.AppKeysLine);
+        Assert.Contains("Options, Edit app keys file", BundleHelp.AppKeysLine);
         var line = BundleHelp.AppKeysLineFor(AppLaunchKeys.Resolve("""{ "axFile": "Ctrl+F11", "axProcess": "none" }""", Bundle).Keys);
         Assert.Contains(". In place of these, your own keys: axFile Ctrl+F11, axProcess no key. Alt+K, A", line);
     }

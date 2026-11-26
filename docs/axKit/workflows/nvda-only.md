@@ -104,11 +104,11 @@ NVDA says: notes.md.
 Starts with: Open axDown with the file notes.md.
 
 NVDA says: notes.md.
-1. Press F1 (Keyboard shortcuts; Help menu).
-    NVDA says: Keyboard shortcuts.
+1. Press Ctrl+Comma.
+    NVDA says: Command palette.
 2. Press Escape.
     NVDA says: notes.md.
-3. Press Ctrl+Shift+P (Command palette; Help menu).
+3. Press F1 (Command palette; Help menu).
 4. Type "save as".
     NVDA says: Save as.
 5. Press Escape.

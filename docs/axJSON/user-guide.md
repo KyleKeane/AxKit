@@ -20,7 +20,7 @@ Long lines wrap at the window's edge, so Down Arrow reads one screen line at a t
 
 ## Files
 
-Ctrl+S saves and axJSON says "Saved". A new document asks for a name first, with the Windows file dialog; Ctrl+Shift+S, Save as, asks every time. Ctrl+O opens another file in this window and Ctrl+N starts an empty one; both ask first if you have unsaved changes; Ctrl+Shift+N starts an empty document in a new axJSON window and leaves this one as it is, as does closing the window: a notice says "Save changes to settings.json?" with Save, Don't save and Cancel; Enter saves, Escape cancels. Session, Open recent file lists the last ten files you opened or saved; Session, Show current file in, File Explorer (Ctrl+W) opens File Explorer with the file selected.
+Ctrl+S saves and axJSON says "Saved". A new document asks for a name first, with the Windows file dialog; Ctrl+Shift+S, Save as, asks every time. Ctrl+O opens another file in this window and Ctrl+N starts an empty one; both ask first if you have unsaved changes; Session, New window starts an empty document in a new axJSON window and leaves this one as it is. Closing the window asks too: a notice says "Save changes to settings.json?" with Save, Don't save and Cancel; Enter saves, Escape cancels. Session, Open recent file lists the last ten files you opened or saved; Session, Show current file in, File Explorer opens File Explorer with the file selected.
 
 When another program changes the file while it is open here, for example Claude editing it while you are in axClaude, axJSON notices when you come back to its window: with nothing unsaved it reloads the file, keeps your line, and says "Reloaded, settings.json changed on disk"; with unsaved changes it says "settings.json changed on disk; Save will ask", and Ctrl+S then offers Write over, Reload and lose mine, or Cancel.
 
@@ -73,13 +73,13 @@ Ctrl+Plus and Ctrl+Minus make the text larger and smaller, and axJSON says the n
 Each menu with its commands and their keys, as the window lists them:
 
 <!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
-- **Session**: Exit (Alt+F4); New (Ctrl+N); New window (Ctrl+Shift+N); Open (Ctrl+O); Save (Ctrl+S); Save as (Ctrl+Shift+S); Show current file in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, axTerminal, access layer for your shell, File Explorer (Ctrl+W)).
+- **Session**: Exit (Alt+F4); New (Ctrl+N); New window; Open (Ctrl+O); Save (Ctrl+S); Save as (Ctrl+Shift+S); Show current file in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, axTerminal, access layer for your shell, File Explorer).
 - **Actions**: Add a member (Alt+Left); Choose a value (Alt+Right); Format (Ctrl+R); Next value (Alt+Down); Previous value (Alt+Up); Redo (Ctrl+Y); Undo (Ctrl+Z).
 - **Navigation**: Find (Ctrl+F); Find first; Find next (F3); Find previous (Shift+F3); Go to line (F12); Next (Array (Ctrl+L), Error (Ctrl+E), Item (Ctrl+I), Key (Ctrl+K), Object (Ctrl+J)); Previous (Array (Ctrl+Shift+L), Error (Ctrl+Shift+E), Item (Ctrl+Shift+I), Key (Ctrl+Shift+K), Object (Ctrl+Shift+J)).
 - **Context**: Copy (Ctrl+C); Cut (Ctrl+X); Paste (Ctrl+V); Select all (Ctrl+A).
-- **Options**: Developer (Open settings file); General (Templates in axTemplate); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size, Word wrap (F11)).
+- **Options**: Check for updates at start; Edit app keys file; Keep a log of events; Open the sounds folder; Developer (Open settings file); General (Templates in axTemplate); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size, Word wrap (F11)); Theme (Edit theme file, Reload theme, Theme on).
 - Keys without a menu item: Ctrl+Tab (Between the text and the field under it).
-- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1, the command palette, lists every key and command. Options ends with the settings of all of axKit.
 <!-- end of the menus -->
 
 ## Settings

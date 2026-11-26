@@ -3,7 +3,7 @@
 # recent lists the last ten, "1. README.md (C:\notes\README.md)"): the files shown lately, the newest first; choosing
 # one shows it in this window. The submenu needs menu mode, which only the foreground window enters; since 2026-11-13
 # the command palette reads every Open recent list (docs/axKit/SPEC.md AX-10.2), so the entry is one search away:
-# Ctrl+Shift+P, part of the name, Enter.
+# F1, part of the name, Enter.
 # The run's own settings: no update check, whose network call logs an ERROR when GitHub cannot be reached.
 file orchard.md # Orchard\n\nThe apple file.
 file cellar.txt The barrel file, line 1.\nLine 2.

@@ -174,7 +174,7 @@ Starts with: Open axJSON with the file settings.json.
 
 ### Select all the text from the command palette
 
-1. Press Ctrl+Shift+P (Command palette; Help menu).
+1. Press F1 (Command palette; Help menu).
 2. Type "select all, context".
     You hear: Select all, Context, Ctrl+A.
 3. Press Enter.

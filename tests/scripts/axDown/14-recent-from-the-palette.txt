@@ -1,7 +1,7 @@
 # Workflow: Open a recent file or window from the command palette
 # The recent lists in the command palette (docs/axKit/SPEC.md AX-10.2, the user's ask of 2026-11-13): Session, Open
 # recent file, and the Window menu's Open windows and Recently closed are filled before the palette reads them, so
-# that each entry is one search away, Ctrl+Shift+P, a few letters, Enter. Shown in axDown; every app's Open recent and
+# that each entry is one search away, F1, a few letters, Enter. Shown in axDown; every app's Open recent and
 # every Window menu are the same pieces.
 file one.md # One\n\nThe first file.
 file two.md # Two\n\nThe second file.

@@ -80,7 +80,7 @@ public sealed partial class GitForm : ItemForm
         repository.DropDownItems.Add(new ToolStripSeparator());
         // Show current repository in ▸ File Explorer, axClaude, axTerminal, axFile: the way back to where the user came
         // from (AG-1.4). The base makes the submenu around its first item, so File Explorer is a key of the list and that item.
-        var explorer = new Command("File &Explorer", AxGitKeys.ShowInExplorer, ShowInExplorer) { Mark = CommandMark.Open };
+        var explorer = new Command("File &Explorer", Keys.None, ShowInExplorer) { Mark = CommandMark.Open };
         repository.DropDownItems.Add(CreateShowInMenu("Show current repository &in", Add(explorer), RepositoryOrSay, FolderMissing));
         repository.DropDownItems.Add(new ToolStripSeparator());
         repository.DropDownItems.Add(CreateExitItem());
@@ -510,7 +510,7 @@ public sealed partial class GitForm : ItemForm
     private void FillRecent() =>
         RecentMenu.FillFolders(_recentItem, _settings.RecentRepositories, "&No recent repositories", CommandMark.Open, target => Do(() => StartAsync(target)));
 
-    /// <summary>Repository → Show current repository in → File Explorer (Ctrl+W): the folder opened in File Explorer, one of the system's own windows.</summary>
+    /// <summary>Repository → Show current repository in → File Explorer (no key; Ctrl+W until 2026-11-26): the folder opened in File Explorer, one of the system's own windows.</summary>
     private void ShowInExplorer()
     {
         if (_root is null)

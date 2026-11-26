@@ -158,15 +158,16 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
 
 ### AD-4 Commands and menus
 
-- AD-4.1 File, shaped as axClaude's Session menu: New (Ctrl+N), New window (Ctrl+Shift+N: an empty document in a new
+- AD-4.1 File, shaped as axClaude's Session menu: New (Ctrl+N), New window (an empty document in a new
   window of the app, this window left as it is, the viewer's Session menu's shape, AP-3.2; asked 2026-11-05 as the reports
-  repository's issue 2, built 2026-11-09), Open… (Ctrl+O), Open recent file ▸ (the last ten
+  repository's issue 2, built 2026-11-09; no key since 2026-11-26, when Ctrl+N became the key that makes a new one of
+  what the window holds, bundle AX-8.18, and Ctrl+Shift+N gave way), Open… (Ctrl+O), Open recent file ▸ (the last ten
   files opened or saved under a name, newest first, those that still exist, kept in the settings, each as its number, a
   full stop, the file's name and its full path, "1. notes.md (C:\notes\notes.md)", the Window menu's shape, AX-9.5; choosing one opens it
   in this window after the unsaved-changes question; "No recent files", an item that does nothing, when there are
   none, AX-9.5); then Save (Ctrl+S), Save as… (Ctrl+Shift+S), where every Windows program has them (the standard
   order of a File menu, shared with axClaude's Session menu, whose Save slot is empty, 2.11.0); then Show current file in ▸
-  File Explorer (Ctrl+W; the file selected in File Explorer, one of the system's own windows; "No file yet" on
+  File Explorer (no key; Ctrl+W until 2026-11-26; the file selected in File Explorer, one of the system's own windows; "No file yet" on
   Untitled, "File missing" when the file is gone, bundle AX-9.10), axClaude (Claude in the file's folder), axTerminal (a shell in the file's folder,
   docs/axTerminal/SPEC.md AT-1.5), axGIT (a new axGIT window on the repository that holds the file, docs/axGIT/SPEC.md
   AG-1.4) and axFile (the file's folder listed with the file selected, docs/axFile/SPEC.md AF-1.3), the bundle's one
@@ -179,9 +180,10 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
   quote", "Table") and the key, Ctrl+letter under Next and Ctrl+Shift+letter under Previous (AD-5, §9).
 - AD-4.3 Options, as axClaude's: every setting lives in the submenu for what it is about, none outside one. Text ▸:
   Word wrap (checked; F11), Font…, Larger text (Ctrl+Plus), Smaller text (Ctrl+Minus), Windows text size.
-  The update check at start is the bundle's, in the axKit menu (bundle AX-3.1). Developer ▸: Open settings file (axDown.json, written first, in a new axJSON window; the window base's
+  The update check at start is the bundle's, at the end of Options with the other settings of all of axKit (bundle
+  AX-3.1, AX-9.1; the axKit menu's until 2026-11-26). Developer ▸: Open settings file (axDown.json, written first, in a new axJSON window; the window base's
   `OpenSettingsFile`, the same in every window since 2.12.0, a new axDown window before). Copy diagnostics (AD-11) is Help, Diagnostics since 2026-11-15, the bundle's (AX-9.1).
-- AD-4.4 Help: Keyboard shortcuts (F1), User guide, Markdown resources ▸ (Markdown basics, `https://commonmark.org/help/`;
+- AD-4.4 Help: Command palette (F1), Keyboard shortcuts (no key; F1 until 2026-11-26), User guide, Markdown resources ▸ (Markdown basics, `https://commonmark.org/help/`;
   GitHub Flavored Markdown, `https://github.github.com/gfm/`; in the browser), as axClaude's Help has Claude Code
   resources; the app's own items only.
 - AD-4.5 axKit: the bundle's menu (AX-9), between Options and Help, 
@@ -203,14 +205,14 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
 Every key is bundle-wide (the same in every window of axKit, `AxKit.Forms/BundleKeys`) or window-specific
 (`axDown/AxDownKeys`) (AX-8). The table is the spec of `AxDownKeys`; the F1 text reads from it.
 
-Bundle-wide (AX-8.2): F1 shortcuts; Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6 move between the window's
+Bundle-wide (AX-8.2): F1 and Ctrl+Comma the command palette with the keys (AX-10; Ctrl+Shift+P until 2026-11-26); Tab, Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6 move between the window's
 controls (in axDown the editor, and the field under it while Go to line or Find shows: Ctrl+Tab and F6 go to the
 field and back, "Between the text and the field under it", 2026-11-24; in a notice they move between its text, field
 and buttons); Ctrl+F find, F3 and Shift+F3 next and previous; Ctrl+S save; Ctrl+Plus and Ctrl+Minus text size; Enter
 and Escape on a notice; Page Up and Page Down one screen in an edit control; Ctrl+Up and Ctrl+Down the previous and
 next paragraph, with Shift selecting to there (AD-2.3); Ctrl+Space edit mode or navigation mode (AD-5.3); Alt+F4 exit; Alt and F10 the menu.
 
-Window-specific: Ctrl+N new document; Ctrl+O open; Ctrl+Shift+S save as; Ctrl+W show the file in File Explorer (axClaude's key for its folder); Ctrl+Z undo, Ctrl+Y or Ctrl+Shift+Z redo (AD-2.5); F12 go to line; F11 word wrap (Ctrl+G and Ctrl+Shift+W until 2026-11-26);
+Window-specific: Ctrl+N new document; Ctrl+O open; Ctrl+Shift+S save as (Ctrl+Shift+N new window and Ctrl+W show the file in File Explorer until 2026-11-26, their menu items kept without a key); Ctrl+Z undo, Ctrl+Y or Ctrl+Shift+Z redo (AD-2.5); F12 go to line; F11 word wrap (Ctrl+G and Ctrl+Shift+W until 2026-11-26);
 Ctrl+H heading, Ctrl+1 to Ctrl+6 a heading of that level, Ctrl+K link, Ctrl+L list, Ctrl+I list item, Ctrl+Q block
 quote, Ctrl+T table, each the next one, and with Shift the previous one (section 9); Ctrl+B bold, Shift+Alt+Right
 heading deeper and Shift+Alt+Left heading shallower (AD-12).
@@ -352,7 +354,7 @@ link, a table, a code block, and files of his own.
 
 - AD-13.1 **Where.** Actions, Insert template: a submenu, after Format. Its items are the app's own templates, then
   the user's, made again each time the menu opens. Every item is a command, so the command palette lists them all:
-  Ctrl+Shift+P and "template" shows every one, and a template's name finds it (his word: "this is probably the
+  F1 (Ctrl+Shift+P until 2026-11-26) and "template" shows every one, and a template's name finds it (his word: "this is probably the
   command palette with typing template"). No key of its own, and no text expander.
 - AD-13.2 **What a template is.** Plain text, put in at the caret in the place of the selection, as one undo step
   (AD-2.5). Three marks, and nothing else to learn (`AxKit.Core/TextTemplate`):

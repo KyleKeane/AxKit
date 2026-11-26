@@ -24,6 +24,13 @@ keys ctrl+delete
 expect said ! Cleared
 keys ctrl+delete
 expect said ! Empty
+# Escape in the field has nothing to go back to: the edge sound, never silence, and the field keeps its text.
+type 3
+keys escape
+expect said ♪ Edge
+expect focus "name":"Expression","role":"Text","value":"3"
+keys ctrl+delete
+expect said ! Cleared
 
 # Goal: Go on from the last answer
 # An expression starting with an operator continues from the last answer (AC-3).
@@ -68,10 +75,28 @@ keys escape
 expect state "notice":null
 
 # Goal: Read the keyboard shortcuts
-# F1: the shortcuts end with the Notices section every window of axKit has (2026-11-09); Escape closes the text.
-keys f1
+# Help, Keyboard shortcuts (F1 until 2026-11-26): the shortcuts end with the Notices section every window of axKit has (2026-11-09); Escape closes the text.
+do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 expect text Notices
+keys escape
+expect state "notice":null
+
+# Goal: Read the keys in the command palette
+# F1, palette and help in one (bundle AX-10.2, 2026-11-26): with nothing typed, the rules of the keys first, then the
+# window's keys and every command; Enter on a line of the text says it again and the palette stays; Escape closes.
+keys f1
+expect state "notice":"Command palette"
+keys down
+expect said A key alone moves and reads
+keys enter
+expect said A key alone moves and reads
+expect state "notice":"Command palette"
+keys escape
+expect state "notice":null
+# Ctrl+Comma opens the same palette, a second key on trial.
+keys ctrl+comma
+expect state "notice":"Command palette"
 keys escape
 expect state "notice":null
 

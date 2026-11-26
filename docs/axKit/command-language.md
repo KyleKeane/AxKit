@@ -58,7 +58,7 @@ tools mode).
 - CL-2.1 **The origins, as built.** Three are the user's own hands, two are the automated checks', one is an AI's:
   1. **The key**: the user presses the command's key in the window.
   2. **The menu**: the user chooses the menu item.
-  3. **The command palette** (Ctrl+Shift+P, `SPEC.md` AX-10): the user types words, picks a line, presses Enter.
+  3. **The command palette** (F1 and Ctrl+Comma since 2026-11-26, Ctrl+Shift+P before, `SPEC.md` AX-10): the user types words, picks a line, presses Enter.
   4. **A window script's `do` step** (`user-workflows.md` WF-4): the runner names a command; the window says which
      key runs it now; the runner presses that key, or chooses the menu item of a command that has no key.
   5. **The automation channel's `choose`** (and its older `menu`): the runner names a menu item and the window

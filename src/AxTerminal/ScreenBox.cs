@@ -50,7 +50,7 @@ internal sealed class ScreenBox : AxKitTextBox
             return true;
         }
 
-        if (!KeysToProgram || keyData is BundleKeys.Shortcuts or (Keys.Alt | Keys.F4))
+        if (!KeysToProgram || keyData is BundleKeys.CommandPalette or (Keys.Alt | Keys.F4))
         {
             return base.ProcessCmdKey(ref msg, keyData);
         }

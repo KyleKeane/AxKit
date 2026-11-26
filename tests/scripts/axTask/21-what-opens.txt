@@ -13,8 +13,8 @@ keys right
 expect focus Fix the tap
 
 # Goal: Hear that a text to read opened
-# F1 opens the keyboard shortcuts: the text's sound, then NVDA reads the text. F7 there reads the text again.
-keys f1
+# Help, Keyboard shortcuts (F1 until 2026-11-26, the command palette now) opens the text: the text's sound, then NVDA reads the text. F7 there reads the text again.
+do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 expect said ♪ TextOpen
 keys escape
@@ -46,16 +46,16 @@ keys escape
 expect state "notice":null
 
 # Goal: Turn the entry sounds off and on
-# Options, Text, Entry sounds: off, and F1 opens without the sound; on again.
+# Options, Text, Entry sounds: off, and Keyboard shortcuts opens without the sound; on again.
 menu Entry sounds
 expect said ! Entry sounds, not checked
-keys f1
+do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 refuse said ♪ TextOpen
 keys escape
 menu Entry sounds
 expect said ! Entry sounds, checked
-keys f1
+do Keyboard shortcuts
 expect said ♪ TextOpen
 keys escape
 expect state "notice":null

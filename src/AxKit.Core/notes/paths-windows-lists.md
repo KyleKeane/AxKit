@@ -33,7 +33,7 @@
   the last arrives as given, so a command's words after "Claude ran ..." end as they do by its key (MC-7.5).
 - `Palette` and `PaletteEntry` (AX-10): the command palette's lines: `Text` (a command's name with its menu path and
   key), `Find` (the matches for a typed text through `TextMatch`), `Spoken` ("Save as, File, Ctrl+Shift+S, 1 of 3")
-  and `NoMatch`.
+  and `NoMatch`; `WithNothingTyped` (2026-11-26): the list with nothing typed, the F1 text's lines (read, `IsCommand` false), `CommandsLine`, the commands and the keys alone.
 - `KeyChord` (docs/axKit/user-workflows.md WF-2.2, 2026-11-15): the one chord vocabulary, the names a key press is
   written with, each with its virtual key code: a letter or a digit by itself, enter, escape (also esc), tab, space,
   backspace, delete, insert, the arrows, home, end, pageup, pagedown, plus, minus, period, comma, apps, f1 to f12,

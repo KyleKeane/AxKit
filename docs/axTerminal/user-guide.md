@@ -92,20 +92,20 @@ The shell's prompt is not shown in the terminal: it is in the status bar, and th
 
 `exit` ends the shell: a system line says so, and Ctrl+Shift+R starts it again. Closing the window ends the shell and whatever runs in it, after a question while a command runs.
 
-Clear transcript (Ctrl+L) empties the window; the shell's own `cls` clears only its screen.
+Clear transcript (Ctrl+Shift+Delete, the key that clears a history in every axKit window) empties the window; the shell's own `cls` clears only its screen.
 
 ## Menus
 
 Each menu with its commands and their keys, as the window lists them:
 
 <!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
-- **Session**: Add a shell; Clear transcript (Ctrl+L); Custom shell; Exit (Alt+F4); Export transcript (Ctrl+S); New session (Ctrl+N); Restart shell (Ctrl+Shift+R); Say current folder (F8); Show current folder in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, File Explorer (Ctrl+W)).
+- **Session**: Add a shell; Clear transcript (Ctrl+Shift+Delete); Custom shell; Exit (Alt+F4); Export transcript (Ctrl+S); New session (Ctrl+N); Restart shell (Ctrl+Shift+R); Say current folder (F8); Show current folder in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, File Explorer).
 - **Actions**: Interrupt (Ctrl+I); Recent commands (Alt+Down); Send Escape (Shift+Escape); Send without recording; What is running (F7); Send key (Ctrl+D (end of input), Down, Up).
 - **Navigation**: Command field (Alt+1); Find (Ctrl+F); Find next (F3); Find previous (Shift+F3); Latest output (Alt+3); Next bookmark (K in the terminal); Previous bookmark (Shift+K in the terminal); Terminal (Alt+2).
 - **Context**: Bookmark this line (Ctrl+K, or M in the terminal); Copy the selection (Ctrl+C in the terminal); Copy this line into the command field (Enter in the terminal).
-- **Options**: Developer (Open settings file, Record raw stream for a bug report); Sounds (Background music while a command runs (Ctrl+M), Chimes: ready, sent, done, question, Ticks for new lines); Speech (Say when a program asks, Speak output: all lines, Speak output: none); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Markers in the text, Say new line, Smaller text (Ctrl+Minus), Sound on headings, Time stamps on Input and Output lines, Windows text size); When a command is done (Announce "Done", Flash the taskbar button, Louder alert when the window is in the background).
+- **Options**: Check for updates at start; Edit app keys file; Keep a log of events; Open the sounds folder; Developer (Open settings file, Record raw stream for a bug report); Sounds (Background music while a command runs (Ctrl+M), Chimes: ready, sent, done, question, Ticks for new lines); Speech (Say when a program asks, Speak output: all lines, Speak output: none); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Markers in the text, Say new line, Smaller text (Ctrl+Minus), Sound on headings, Time stamps on Input and Output lines, Windows text size); Theme (Edit theme file, Reload theme, Theme on); When a command is done (Announce "Done", Flash the taskbar button, Louder alert when the window is in the background).
 - Keys without a menu item: Ctrl+M (Background music on or off); Ctrl+Enter (Send the command); Tab (Switch between the view and the field).
-- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1, the command palette, lists every key and command. Options ends with the settings of all of axKit.
 <!-- end of the menus -->
 
 ## Settings
@@ -118,7 +118,7 @@ Before a custom shell or a shell of your own first starts, axTerminal asks once 
 
 ## Updates
 
-Alt+H, Check for updates asks GitHub for a newer axKit; Update to installs it and starts axTerminal again with a new shell in the same folder. axKit menu, Check for updates at start turns the check at start off, for every app.
+Alt+H, Check for updates asks GitHub for a newer axKit; Update to installs it and starts axTerminal again with a new shell in the same folder. Options, Check for updates at start turns the check at start off, for every app.
 
 ## If something goes wrong
 

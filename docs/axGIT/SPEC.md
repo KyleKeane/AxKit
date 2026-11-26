@@ -76,7 +76,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
 - AG-1.4 **To and from the other windows.** axClaude's Session → Show current folder in ▸ **axGIT** starts axGIT on
   the project folder (axClaude FR-8.2); axDown's and axJSON's File → Show current file in ▸ **axGIT** on the file
   (axDown AD-4.1). Each is a new window, a new process (`WindowMenu.Start`), found again in the Window menu's Open windows
-  (AX-9.3). From axGIT, Repository → Show current repository in ▸ **File Explorer** (Ctrl+W; "Folder missing" when the repository's folder is gone, bundle AX-9.10), ▸ **axClaude**
+  (AX-9.3). From axGIT, Repository → Show current repository in ▸ **File Explorer** (no key; Ctrl+W until 2026-11-26; "Folder missing" when the repository's folder is gone, bundle AX-9.10), ▸ **axClaude**
   (a new axClaude on the repository's folder), ▸ **axTerminal** (a shell there, docs/axTerminal/SPEC.md AT-1.5) and
   ▸ **axFile** (the folder listed, docs/axFile/SPEC.md AF-1.3), and Changes → **Open file in editor** (Ctrl+E) opens
   the selected file in axJSON for `.json` and axDown otherwise.
@@ -210,7 +210,7 @@ opens in the editor for its type (AG-1.4, AG-D1).
 
 - AG-6.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** Open repository… Ctrl+O | Open recent
   repository ▸ (ten, "1. name (path)", AX-9.5; "No recent repositories" when none) | ─ | Refresh F5 | ─ | Show current
-  repository in ▸ (File Explorer Ctrl+W | axClaude | axTerminal | axFile) | ─ | Exit Alt+F4. **Actions (A):** Stage
+  repository in ▸ (File Explorer | axClaude | axTerminal | axFile) | ─ | Exit Alt+F4. **Actions (A):** Stage
   Ctrl+Shift+S | Unstage Ctrl+Shift+U | Stage all | Unstage all | Commit… Ctrl+Enter | ─ | New branch… Ctrl+N |
   Fetch Ctrl+R | Pull Ctrl+L | Push Ctrl+P | ─ | Select all files Ctrl+A | Deselect all
   Ctrl+Shift+A. **Navigation (N):** Changes Alt+1 | Log Alt+2 | Branches Alt+3 | ─ | Up to the repository Left (the
@@ -219,12 +219,13 @@ opens in the editor for its type (AG-1.4, AG-D1).
   Ctrl+Shift+U | Open file in editor Ctrl+E | Discard changes… Delete | ─ | Select or deselect Space | Select to
   here Shift+Space; on a commit, Show the commit Enter; on a branch, Switch to branch Enter; on a list of the
   repository's level, Open Enter; "Nothing selected" on an empty list. **Options (O):** Text ▸ (Font… | Larger text Ctrl+Plus | Smaller text Ctrl+Minus |
-  Windows text size) | Developer ▸ (Open settings file).
-  **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User
+  Windows text size) | Developer ▸ (Open settings file) | ─ | the settings of all of axKit (AX-9.1, 2026-11-26).
+  **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Command palette… F1 | Keyboard shortcuts | User
   guide | ─ | Git resources ▸ (git-scm.com | Pro Git book). Every item has a mnemonic (AX-7.4).
-- AG-6.2 Keys (AX-8). Bundle-wide: F1, the control keys, Ctrl+F, F3, Shift+F3, Ctrl+S (axGIT holds nothing to save:
+- AG-6.2 Keys (AX-8). Bundle-wide: F1 and Ctrl+Comma, the command palette with the keys (Ctrl+Shift+P until
+  2026-11-26), the control keys, Ctrl+F, F3, Shift+F3, Ctrl+S (axGIT holds nothing to save:
   "Nothing to save here. Ctrl+Shift+S stages, Ctrl+Enter commits"), Ctrl+Enter (the bundle's main action, AX-8.10: here Commit, AG-3.5, a command on `BundleKeys.MainAction`), Ctrl+Plus, Ctrl+Minus, the edit keys of the details,
-  Alt+F4. Window-specific (`AxGitKeys`): Ctrl+O, F5, Ctrl+W, Alt+1, Alt+2, Alt+3 (AX-8.14), Ctrl+Shift+S, Ctrl+Shift+U, Ctrl+E, Ctrl+N, Ctrl+R, Ctrl+L, Ctrl+P, Ctrl+Delete (clear the filter), and the navigator's keys
+  Alt+F4. Window-specific (`AxGitKeys`): Ctrl+O, F5 (Ctrl+W, File Explorer, until 2026-11-26), Alt+1, Alt+2, Alt+3 (AX-8.14), Ctrl+Shift+S, Ctrl+Shift+U, Ctrl+E, Ctrl+N, Ctrl+R, Ctrl+L, Ctrl+P, Ctrl+Delete (clear the filter), and the navigator's keys
   (`ItemKeys`, `SelectionKeys`), named in the table by what they do here: Right, Left, Backspace, Enter, Delete,
   Tab and Shift+Tab, Space and the other selection keys, Shift+F10 and the Applications key. The navigator's keys
   act only while the list has the focus; in the details they are the control's own, but for Tab, Shift+Tab and

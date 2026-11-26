@@ -36,7 +36,7 @@ Manual checks with NVDA running, before a release that changes axTerminal (`docs
 
 - Ctrl+N: the notice "New session", its text, "Folder: …", Choose folder button, the Shell group with the radio buttons and Custom, Start session and Cancel. Choose Command Prompt, Enter: "New session in …"; the window empties; "Ready"; the title ends "- Command Prompt - axTerminal"; `echo hello`, Enter: "Done" (no code). Alt+S, W: the Switch shell submenu, Command Prompt checked; choose Windows PowerShell: "Windows PowerShell", a system line, "Ready", the transcript kept.
 - Alt+S, W, G: "Git Bash", the status bar shows the prompt, ending in `$` (Git Bash's prompt is its whole PS1, "user@host MINGW64 /path $"), the title names the folder and Git Bash, nothing of the prompt in the terminal. `ls`, Enter: the listing, then "Done". `(exit 3)`, Enter: "Failed, exit code 3". `cd ..`, Enter: the title follows. F7: "Idle, Git Bash, $". Alt+S, W: back to the shell you had.
-- `cd ..`, Enter: the title and the status bar name the parent folder. F8: its full path. Ctrl+W: File Explorer opens on it. Alt+S, I, C: axClaude opens on it; Alt+W, O, 1: back.
+- `cd ..`, Enter: the title and the status bar name the parent folder. F8: its full path. Alt+S, I, File Explorer (no key; Ctrl+W until 2026-11-26): File Explorer opens on it. Alt+S, I, C: axClaude opens on it; Alt+W, O, 1: back.
 - Ctrl+Shift+R while idle: "Restarting", a system line, "Ready", the transcript kept. While `Start-Sleep 30` runs: the notice "Restart the shell?"; Escape keeps it; again, Enter: restarts.
 - Session, Open recent folder: the folders as "1. name (path)"; Enter on one: a new session there.
 - `exit`, Enter: "The shell ended"; the system line; Enter in the field: "The shell ended. Ctrl+Shift+R starts it again"; Ctrl+Shift+R: "Ready".
@@ -44,10 +44,11 @@ Manual checks with NVDA running, before a release that changes axTerminal (`docs
 
 ## 4. Text, notices, the Window, axKit and Help menus (AT-4, AT-6)
 
-- `cls`, Enter: "Done"; the lines before stay; `echo after`, Enter: "after" at the end. Ctrl+L: "Cleared"; the terminal is empty; the next command's lines come as the first.
+- `cls`, Enter: "Done"; the lines before stay; `echo after`, Enter: "after" at the end. Ctrl+Shift+Delete (Ctrl+L until 2026-11-26): "Cleared"; the terminal is empty; the next command's lines come as the first.
 - m on a line: "Bookmark 1 added"; k from the top: "Bookmark 1, …". Ctrl+F, text, Enter: the line; F3: the next; "Not found" otherwise.
 - Ctrl+S: the file picker with a name `axterminal-<date>.md` in the current folder; save: "Exported"; the file holds the Input and Output lines as Markdown headings.
-- F1: the shortcuts as a notice; h moves by its headings; Escape closes it. Help, User guide likewise.
+- Help, Keyboard shortcuts: the shortcuts as a notice; h moves by its headings; Escape closes it. Help, User guide
+  likewise. F1: the command palette, Down reads the rules of the keys; Escape.
 - Alt+F4 while `Start-Sleep 30` runs: the notice "A command is still running"; Escape keeps it; Alt+F4, Enter: closes.
 - After I accept all terms, install and restart (Help, Check for updates) while a command runs: the notice says the updated axTerminal starts again; Escape (Keep running): "Update installed. It starts with the next axTerminal", the command keeps running; the window closed later does not restart by itself.
 - Alt+W: the Window menu as in every window; Access layers lists axTerminal; Open windows lists the other axKit windows.
@@ -61,7 +62,7 @@ In a folder with a short `notes.txt` (the runner's script is `tests/scripts/axTe
 - Ctrl+Space: "Reading the screen", NVDA+End says it too. Ctrl+Home: the menu bar's row; Down through the screen: the rows as drawn; edit's cursor did not move (Ctrl+Space again: "Keys to edit", and Up or Down read edit's line, not where you read).
 - In reading the screen, Alt+1: "Screen of edit. The terminal and the command field come back when edit leaves the whole screen", the focus where it was. Ctrl+F, type `More`, Enter: the match selected on its row, as NVDA reads a selection; F3: the same match again ("wrapping once"); Ctrl+F with a word not there: "Not found".
 - Alt+F: the File menu opens; "New File, Ctrl+N" said once by itself, after NVDA's line. Down: the next entry said, once. Hold still: nothing more, also while edit redraws. Escape: the menu closes, nothing said. Alt+F again: "New File, Ctrl+N" again.
-- Alt alone: axTerminal's menu bar, Session; Escape: back in the screen, keys to edit. F1: axTerminal's shortcuts with the section "A full-screen program"; Escape: back in the screen.
+- Alt alone: axTerminal's menu bar, Session; Escape: back in the screen, keys to edit. F1: the command palette, axTerminal's keys with the section "A full-screen program" among its lines; Escape: back in the screen.
 - Ctrl+Q: edit's dialog; its button in focus, "[Save]", said once; N: edit ends, the field comes back, "Command, edit", then "Done". Alt+2: the terminal as it was before edit, with `# Input` of `edit notes.txt` and nothing of edit's screen.
 - A notice over the screen: Ctrl+Space, F1, Escape: the screen again, "Reading the screen" still in the status bar; Ctrl+Space: "Keys to edit".
 - A program that ends on the whole screen: in the field, `[Console]::Write([char]27 + '[?1049h')`, Enter: the screen view opens for the switch and gives way at the prompt, the focus back in the field with "Done"; `echo after`, Enter: "Done. after".

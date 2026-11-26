@@ -187,7 +187,7 @@ public sealed partial class TextEditorForm
             }
         }));
 
-    /// <summary>File → Show current file in → File Explorer, Ctrl+W (AD-4.1): the file selected in File Explorer, one of the system's own windows (AX-7.2).</summary>
+    /// <summary>File → Show current file in → File Explorer (AD-4.1; Ctrl+W until 2026-11-26): the file selected in File Explorer, one of the system's own windows (AX-7.2).</summary>
     private void ShowInExplorer()
     {
         if (_path is null)

@@ -27,7 +27,7 @@ expect focus {"name":"README.md","role":"Text","value":"Run the installer."}
 # Goal: Select all the text from the command palette
 # The same command from the palette: its name, its menu and its key are said; Enter runs it and the focus is back in
 # the text. Left lets go of the selection at its start.
-keys ctrl+shift+p
+keys f1
 expect state "notice":"Command palette"
 type select all, context
 expect said Select all, Context, Ctrl+A

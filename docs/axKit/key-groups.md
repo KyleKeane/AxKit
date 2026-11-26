@@ -65,7 +65,7 @@ These keys do the same kind of thing in every window of axKit, so they are learn
 
 ### Ctrl+punctuation: the in-window partner of the same key with Ctrl+Shift
 
-Ctrl and a punctuation key stays inside the window you are in, where the same key with Ctrl and Shift works from anywhere. Ctrl+Slash asks Claude about this window, as Shift+F1 does; with Shift added it brings up axHelp's conversation from any program. Ctrl+Period opens the Context menu, as Shift+F10 does; its partner with Shift is kept for later.
+Ctrl and a punctuation key stays inside the window you are in, where the same key with Ctrl and Shift works from anywhere. Ctrl+Slash asks Claude about this window, as Shift+F1 does; with Shift added it brings up axHelp's conversation from any program. Ctrl+Period opens the Context menu, as Shift+F10 does; its partner with Shift is kept for later. Ctrl+Comma opens the command palette, as F1 does, a second key on trial; with Shift added it brings up axClip's search from anywhere.
 
 The keys:
 
@@ -118,11 +118,11 @@ The keys:
 
 ### F-keys (F1 to F12 alone): say or show
 
-A function key alone says or shows, the same in every window: F7 reads in full what you are on, F8 reads it with details, F9 says the status, F11 shows the text another way, F12 opens the field to go to a line, a folder or a time. F1 is help. F2 rename, F3 find next, F4 send a report, F5 refresh and F6 the other pane are Windows' own keys, kept as Windows taught them.
+A function key alone says or shows, the same in every window: F7 reads in full what you are on, F8 reads it with details, F9 says the status, F11 shows the text another way, F12 opens the field to go to a line, a folder or a time. F1 opens the command palette, palette and help in one: with nothing typed, the rules of the keys and the window's keys. F2 rename, F3 find next, F4 send a report, F5 refresh and F6 the other pane are Windows' own keys, kept as Windows taught them.
 
 The keys:
 
-- F1, every app: Keyboard shortcuts.
+- F1, every app: Command palette.
 - F7, axAutomate, axClip, axMCP, axPass, axTask and axTemplate: Read in full.
 - F7, axClaude: Claude's question again.
 - F7, axCalc: Say the last answer.
@@ -211,11 +211,12 @@ The keys:
 - Escape, axClip, axHelp, axStart and axTemplate: Hide.
 - Escape, axFile and axGIT: To the list.
 - Escape, axTask: Back from the search.
+- Escape, axCalc: Back: in the field, nothing to go back to.
 - Shift+Escape, axTerminal: Send Escape.
 
 ### Delete, Ctrl+Delete and Ctrl+Shift+Delete: remove
 
-Delete removes what you are on, and what can be lost asks first or can be undone. Ctrl+Delete clears what you typed: a list's filter, axCalc's field. Ctrl+Shift+Delete clears a whole history, as in a web browser.
+Delete removes what you are on, and what can be lost asks first or can be undone. Ctrl+Delete clears what you typed: a list's filter, axCalc's field. Ctrl+Shift+Delete clears a whole history, as in a web browser: axCalc's and axClip's history, axTerminal's transcript.
 
 The keys:
 
@@ -229,6 +230,7 @@ The keys:
 - Ctrl+Delete, axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Clear the filter.
 - Ctrl+Delete, axCalc: Clear the field.
 - Ctrl+Shift+Delete, axCalc and axClip: Clear history.
+- Ctrl+Shift+Delete, axTerminal: Clear transcript.
 
 ### Ctrl+Tab and Ctrl+Shift+Tab: move between panes
 
@@ -339,7 +341,7 @@ These keys belong to the window you are in. The pattern says what kind of thing 
 
 ### Ctrl+letter: act on what is selected
 
-Ctrl and a letter does something to what you are on, and the letter is the first letter of the command where it can be: Ctrl+I interrupts, Ctrl+K bookmarks the line, Ctrl+R runs or fetches. The keys every Windows program has (copy, paste, save, find) are the same here. In a text, Ctrl with NVDA's browse-mode letter jumps while you type: Ctrl+H the next heading, Ctrl+K a link.
+Ctrl and a letter does something to what you are on, and the letter is the first letter of the command where it can be: Ctrl+I interrupts, Ctrl+K bookmarks the line, Ctrl+R runs or fetches. The keys every Windows program has (copy, paste, save, find) are the same here, and Ctrl+N makes a new one of what the window holds: a document in the editors, a session in axClaude and axTerminal, a window in axFile, axMedia and axPreview. In a text, Ctrl with NVDA's browse-mode letter jumps while you type: Ctrl+H the next heading, Ctrl+K a link.
 
 The keys:
 
@@ -358,7 +360,6 @@ The keys:
 - Ctrl+J, axTask: Open in axJSON.
 - Ctrl+J, axAutomate: The workflow's file as text.
 - Ctrl+K, axCalc, axClaude and axTerminal: Bookmark this line.
-- Ctrl+L, axTerminal: Clear transcript.
 - Ctrl+L, axPass: Lock.
 - Ctrl+L, axGIT: Pull.
 - Ctrl+M, axTask: Move to a list.
@@ -370,8 +371,6 @@ The keys:
 - Ctrl+R, axJSON: Format.
 - Ctrl+R, axAutomate: Run.
 - Ctrl+T, axFile: New text file.
-- Ctrl+W, axClaude, axDown, axFile, axGIT, axJSON, axMedia, axPreview and axTerminal: File Explorer.
-- Ctrl+W, axFile: Show the folder in File Explorer.
 
 Windows' own keys, as in every program:
 
@@ -515,7 +514,6 @@ The keys:
 - Ctrl+Shift+L, axDown and axPreview: List.
 - Ctrl+Shift+L, axJSON: Array.
 - Ctrl+Shift+N, axAutomate, axMCP, axPass and axTask: New list.
-- Ctrl+Shift+N, axDown and axJSON: New window.
 - Ctrl+Shift+N, axPass: New group.
 - Ctrl+Shift+O, axMedia: Add folder.
 - Ctrl+Shift+Q, axDown and axPreview: Block quote.
@@ -524,13 +522,11 @@ The keys:
 - Ctrl+Shift+T, axDown and axPreview: Table.
 - Ctrl+Shift+U, axGIT: Unstage.
 - Ctrl+Shift+V, axPreview: Read the clipboard's picture.
-- Ctrl+Shift+W, axFile: Show in File Explorer.
 - Ctrl+Shift+Z, axDown and axJSON: Redo.
 
 Exceptions today, which do another kind of thing:
 
 - Ctrl+Shift+N, axFile: New folder.
-- Ctrl+Shift+P, every app: Command palette.
 - Ctrl+Shift+R, axClaude: Force Claude to restart.
 - Ctrl+Shift+R, axTerminal: Restart shell.
 

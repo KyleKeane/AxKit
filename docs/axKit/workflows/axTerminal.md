@@ -251,7 +251,7 @@ Starts with: Open axTerminal with the folder myproject.
 
 ### Clear the window
 
-1. Press Ctrl+L (Clear transcript; Session menu).
+1. Press Ctrl+Shift+Delete (Clear transcript; Session menu).
     You hear: Cleared.
 2. Press Alt+1 (Command field; Navigation menu).
 3. Type "echo first".
@@ -282,7 +282,7 @@ Starts with: Open axTerminal with the folder myproject.
 
 ### Read the keyboard shortcuts
 
-1. Press F1 (Keyboard shortcuts; Help menu).
+1. Choose Keyboard shortcuts in the Help menu.
 2. Press H.
     You hear: heading level 2.
 3. Press Escape.
@@ -430,12 +430,12 @@ Starts with: Open axTerminal with the folder myproject.
 
 ### Run a Context command from the palette
 
-1. Press Ctrl+Shift+P (Command palette; Help menu).
+1. Press F1 (Command palette; Help menu).
 2. Type "bookmark this".
     You hear: Bookmark this line, Context, Ctrl+K, or M in the terminal.
 3. Press Enter.
     You hear: Bookmark 2 added.
-4. Press Ctrl+Shift+P (Command palette; Help menu).
+4. Press F1 (Command palette; Help menu).
 5. Type "copy this line".
     You hear: Copy this line into the command field, Context, Enter in the terminal.
 6. Press Enter.
@@ -447,7 +447,7 @@ Starts with: Open axTerminal with the folder work\orchard. Close the window. Ope
 
 You hear the sound Ready.
 You hear the sound Ready.
-1. Press Ctrl+Shift+P (Command palette; Help menu).
+1. Press F1 (Command palette; Help menu).
 2. Type "orch".
     You hear something with "2. orchard" in it.
     You hear: Session, Open recent folder.

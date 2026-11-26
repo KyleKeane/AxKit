@@ -56,6 +56,6 @@ Steps 4 to 9 change what starts with Windows. By ear, run them on an entry of yo
 
 1. Ctrl+S: "Nothing to save here. F5 refreshes, Delete ends a process".
 2. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back.
-3. F1: the Keyboard shortcuts notice; Escape. Help, User guide: this guide; Escape.
+3. Help, Keyboard shortcuts: the notice; Escape. Help, User guide: this guide; Escape.
 4. Alt+H, About, Version names axProcess among the apps.
-5. Ctrl+Shift+P, type `summary`, Enter: the summary is said.
+5. F1, type `summary`, Enter: the summary is said. F1 with nothing typed: Down reads the rules of the keys; Escape.

@@ -16,6 +16,7 @@ Run with NVDA before a release, after `scripts to run-individual-apps\run-axCalc
 3. `rate = 1.25`, Enter: "rate = 1.25". `400 * rate`, Enter: "500". NVDA+End: "Degrees, 1 variable".
 4. `sqrt(-1)`, Enter: "Error: not a real number"; the field still holds `sqrt(-1)` (Shift+Home reads it). `(2+3`, Enter: "Error: missing closing parenthesis". `foo`, Enter: "Error: unknown name foo".
 5. Ctrl+Delete with text: "Cleared". Ctrl+Delete again: "Empty". Enter on the empty field: "Type an expression".
+   Type `3`, Escape: the edge sound, and the field still holds `3`; Ctrl+Delete.
 6. F7: "Answer 500" (the last answer).
 7. Up and Down in the field: the edit control's own; the field's text does not change to a history line.
 8. `sin(30)`, Enter: "0.5". Options, Angles, Radians: "Radians"; `sin(pi/2)`, Enter: "1". Options, Angles, Degrees: "Degrees".
@@ -46,9 +47,10 @@ Run with NVDA before a release, after `scripts to run-individual-apps\run-axCalc
 ## 6. Text, notices, the Window, axKit and Help menus (AC-7)
 
 1. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back.
-2. F1: the Keyboard shortcuts notice; h moves by heading; Escape closes it. Help, User guide: this guide; Escape.
-3. Alt+W: the Window menu; Apps lists axCalc, with its key. Alt+H, About, Version names axCalc among the apps.
-4. Ctrl+Shift+P, type `bases`, Enter: the bases of the last answer are said.
+2. Help, Keyboard shortcuts: the notice; h moves by heading; Escape closes it. Help, User guide: this guide; Escape.
+3. Alt+K: the axKit menu; Apps lists axCalc, with its key. Alt+H, About, Version names axCalc among the apps.
+4. F1, type `bases`, Enter: the bases of the last answer are said. F1 with nothing typed: Down reads the rules of the
+   keys line by line, Enter on one says it again and the palette stays; Escape. Ctrl+Comma opens the same palette.
 
 ## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)
 

@@ -1,5 +1,6 @@
 using AxCalc.Core;
 using AxKit.Core;
+using AxKit.Core.Events;
 using AxKit.Forms;
 
 namespace AxCalc;
@@ -93,6 +94,9 @@ public sealed class CalcForm : ConversationForm
         // closes); in the history Escape goes back to the field and Enter takes the line's expression there, both the
         // conversation window's own (AC-5.2).
         AddKey(new Command("Clear the field", AxCalcKeys.ClearField, ClearField) { When = () => Input.Focused, Mark = CommandMark.Change });
+        // Escape in the field: nothing to go back to, so the edge sound, never silence (AX-8.18: Escape goes back or
+        // closes; the maintainer's "minimal messages, never silence"; silent from 2026-11-26 until the fix of that day).
+        AddKey(new Command("Back: in the field, nothing to go back to", AxCalcKeys.Back, () => EventDoor.Raise(EventKind.Edge)) { When = () => Input.Focused, Mark = CommandMark.Read });
         Transcript.LineChosen += (_, _, text) => Recall(text);
 
         // ---- the history (AC-2.1): the answers kept from the last run, as lines ----

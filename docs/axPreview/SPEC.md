@@ -83,7 +83,7 @@ it, so that every file shows something and the details say what it is.
   nothing; the starting process ends once the message is taken.
 - AP-1.4 Ways out: File → Edit in axDown / Edit in axJSON (Ctrl+E; the editor by the file's kind, `.json` to axJSON,
   anything else to axDown, a new editor window on the file with the caret put on the viewer's line through the
-  editor's own Go to line argument, §9 until the editors take one), Show current file in ▸ File Explorer (Ctrl+W),
+  editor's own Go to line argument, §9 until the editors take one), Show current file in ▸ File Explorer (no key; Ctrl+W until 2026-11-26),
   axFile (the file selected in its folder), axGIT (the repository that holds it), axTerminal (its folder); "File
   missing" when the file is gone (bundle AX-9.10). The axKit
   menu (AX-9).
@@ -126,17 +126,18 @@ it, so that every file shows something and the details say what it is.
 
 - AP-3.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** New window Ctrl+N | Open… Ctrl+O | Open
   recent ▸ | ─ | Reload F5 | Read the clipboard's picture Ctrl+Shift+V (AP-7.2 item 4) | ─ | Edit in axDown Ctrl+E (or
-  Edit in axJSON, by the file) | Show current file in ▸ (File Explorer Ctrl+W | axClaude | axTerminal | axGIT | axFile,
+  Edit in axJSON, by the file) | Show current file in ▸ (File Explorer | axClaude | axTerminal | axGIT | axFile,
   bundle AX-9.10) | ─ | Exit Alt+F4. **Actions (A):** "No actions here yet", the viewer changing nothing. **Context (C)**,
   the selection (AX-9.11; Shift+F10, the Applications key and a right click in the text): Copy | Select all.
   **Navigation (N):** Find… Ctrl+F | Find next F3 | Find previous Shift+F3 | Go to line… F12 | ─ |
   Next ▸ | Previous ▸ (Heading, Heading level 1 to 6, Link, List, List item, Block quote, Table). **Options (O):**
-  Text ▸ (Word wrap F11 | ─ | Font… | Larger text | Smaller text | Windows text size) | General ▸ (Check for
-  updates at start ✓) | Developer ▸ (Open settings file). **Window (W)** (before Options), **axKit (K)** (AX-9.1). **Help (H):**
-  Keyboard shortcuts F1 | User guide | ─ | Markdown resources ▸ (axDown's pages). Every item has a mnemonic (AX-7.4).
-- AP-3.2 Keys (AX-8). Bundle-wide: F1, the control keys (the text, or the Go to line field while it shows), Ctrl+F,
+  Text ▸ (Word wrap F11 | ─ | Font… | Larger text | Smaller text | Windows text size) | Developer ▸ (Open settings file) | ─ | the settings of all of axKit, Check for updates at
+  start ✓ among them (AX-9.1, 2026-11-26). **Window (W)** (before Options), **axKit (K)** (AX-9.1). **Help (H):**
+  Command palette… F1 | Keyboard shortcuts | User guide | ─ | Markdown resources ▸ (axDown's pages). Every item has a mnemonic (AX-7.4).
+- AP-3.2 Keys (AX-8). Bundle-wide: F1 and Ctrl+Comma, the command palette with the keys (Ctrl+Shift+P until
+  2026-11-26), the control keys (the text, or the Go to line field while it shows), Ctrl+F,
   F3, Shift+F3, Ctrl+S ("Nothing to save here"), Ctrl+Plus, Ctrl+Minus, Page Up, Page Down, Ctrl+Up, Ctrl+Down with
-  Shift, Alt+F4. Window-specific (`AxPreviewKeys`): Ctrl+O, Ctrl+N (New window, AX-9), F5, Ctrl+Shift+V, Ctrl+E, Ctrl+W, F12,
+  Shift, Alt+F4. Window-specific (`AxPreviewKeys`): Ctrl+O, Ctrl+N (New window, AX-9), F5, Ctrl+Shift+V, Ctrl+E (Ctrl+W until 2026-11-26), F12,
   F11, `l`, and the fourteen navigation keys of AP-2.3. Ctrl+H, Ctrl+I, Ctrl+J and Ctrl+M never reach the
   control as characters (axDown AD-5.1; a read-only control takes none, the guard stays for the sound of it). The
   collision test covers the table.
@@ -153,7 +154,7 @@ heading level 2" and the other elements, "No next <kind>" / "No previous <kind>"
 "No text found in the picture" / "Text not read: <why>" (a picture, when Windows' reader answers, AP-7.2 item 4), "No
 picture on the clipboard. Alt+PrintScreen copies the window in front; PrintScreen the whole screen" and "The clipboard
 is busy; try again" (Ctrl+Shift+V), "No file yet" (Ctrl+E,
-Ctrl+W, F5 and the ways out on Untitled), "Text size n", "Windows text size", "Copied diagnostics"; in the Details
+F5 and the ways out on Untitled, File Explorer among them), "Text size n", "Windows text size", "Copied diagnostics"; in the Details
 list (AP-6.3) "Copied", "The clipboard is busy; try again" and "Enter opens the Folder line in axFile". The notices:
 "Too large" ("Not a text file" until 2026-10-24, AP-7.5), Keyboard shortcuts, User guide, About, the update notice,
 and an error naming a file that could not be opened.

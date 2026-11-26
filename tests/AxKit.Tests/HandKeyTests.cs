@@ -33,9 +33,9 @@ public sealed partial class HandKeyTests
         ["src/AxJSON/HelpText.cs"] = 4,
         ["src/AxKit.Core/Ai/AiPrompts.cs"] = 1,
         ["src/AxKit.Core/Ai/AiToolsRule.cs"] = 1,
-        // Three more on 2026-11-26: the rules of the keys (AX-8.18) name Ctrl+Delete, Ctrl+Space and Ctrl+Enter, and
+        // One more on 2026-11-26 (Alt+O in the bundle's menus line, AX-9.1, the Options menu with the bundle's settings). Three more the same day: the rules of the keys (AX-8.18) name Ctrl+Delete, Ctrl+Space and Ctrl+Enter, and
         // AxKit.Core cannot read the tables of AxKit.Forms; the rules' patterns are written in words (Ctrl and Shift).
-        ["src/AxKit.Core/BundleHelp.cs"] = 29,
+        ["src/AxKit.Core/BundleHelp.cs"] = 30,
         ["src/AxKit.Core/ListOptions.cs"] = 2,
         ["src/AxKit.Core/Mcp/McpOffer.cs"] = 2,
         ["src/AxKit.Core/Mcp/McpTools.cs"] = 1,

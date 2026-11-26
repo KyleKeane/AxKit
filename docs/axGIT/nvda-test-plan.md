@@ -19,10 +19,10 @@ Run with NVDA before a release, on a repository with a remote (the axKit reposit
 
 ## 2. From and to the other windows (AG-1.4)
 
-1. In axClaude on the repository, Alt+S, I: "Show current folder in submenu", Down: "File Explorer Ctrl+W", Down: "axTerminal", Down: "axGIT"; Enter: a new axGIT window on the repository, focused.
+1. In axClaude on the repository, Alt+S, I: "Show current folder in submenu", Down: "File Explorer" (no key since 2026-11-26), Down: "axTerminal", Down: "axGIT"; Enter: a new axGIT window on the repository, focused.
 2. Alt+W, O: the open windows, the axClaude window first; Enter goes back to it. Alt+W, O again, the axGIT window first now.
 3. In axDown on a file of the repository, Alt+S, I, G: axGIT on the repository that holds the file.
-4. In axGIT, Alt+S, I: "File Explorer Ctrl+W" and "axClaude"; Enter on axClaude: a new axClaude on the repository.
+4. In axGIT, Alt+S, I: "File Explorer" and "axClaude"; Enter on axClaude: a new axClaude on the repository.
 5. In the Changes list on a `.md` file, Ctrl+E: axDown opens it; on a `.json` file, axJSON.
 
 ## 3. Changes (AG-3)
@@ -49,7 +49,8 @@ Run with NVDA before a release, on a repository with a remote (the axKit reposit
 
 1. In the details after a diff, Ctrl+F: the Find notice; type a word from the diff, Enter: the match selected in the details and read; F3: the next, and after the last match the first again; a word with no match: "Not found". Ctrl+Home, Page Down: a screen down; Ctrl+Down: the next paragraph.
 2. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back. Options, Text, Windows text size: "Windows text size".
-3. F1: the Keyboard shortcuts notice; Escape closes it. Help, User guide: this guide; Escape.
-4. Alt+W: the Window menu with Open windows, Recently closed, Close all windows, Say the status (F9: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+A: the axKit menu with Claude, AI tools and Theme. About, Version: "axKit <version>" and axGIT named among the apps.
+3. Help, Keyboard shortcuts: the notice; Escape closes it. F1: the command palette, Down reads the rules of the keys;
+   Escape. Help, User guide: this guide; Escape.
+4. Alt+W: the Window menu with Open windows, Recently closed, Close all windows, Say the status (F9: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+K: the axKit menu with Apps, Access layers, Claude and AI tools; Alt+O: Options, ending after a separator with Theme, Open the sounds folder, Edit app keys file, Check for updates at start and Keep a log of events. About, Version: "axKit <version>" and axGIT named among the apps.
 5. Help, Diagnostics, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the repository and the log's end.
 6. Close the window and start axGIT without a folder: it opens on the same repository (the last one); Session, Open recent repository lists it as "1. <name> (<path>)".

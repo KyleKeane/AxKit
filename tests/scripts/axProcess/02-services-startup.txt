@@ -52,8 +52,8 @@ expect said ! Startup, 1. Morning, enabled, your Startup folder
 expect focus Startup, 1
 
 # Goal: Read the keyboard shortcuts
-# 5.3 F1: the shortcuts; Escape.
-keys f1
+# 5.3 Help, Keyboard shortcuts (F1 until 2026-11-26): the shortcuts; Escape.
+do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 expect state Alt+1, Alt+2, Alt+3
 keys escape

@@ -80,7 +80,9 @@ public sealed partial class TextEditorForm : AxKitForm
         else
         {
             Add(file, new Command("&New", EditorKeys.NewDocument, NewDocument) { Mark = CommandMark.Change });
-            Add(file, new Command("New &window", EditorKeys.NewWindow, NewWindow) { Mark = CommandMark.Open });
+            // No key since 2026-11-26 (the consolidations of that day): Ctrl+N makes a new one of what the window
+            // holds, a document here; Ctrl+Shift+N was New window until then.
+            Add(file, new Command("New &window", Keys.None, NewWindow) { Mark = CommandMark.Open });
         }
 
         Add(file, new Command("&Open...", EditorKeys.Open, OpenFile) { Mark = CommandMark.Open });
@@ -102,7 +104,8 @@ public sealed partial class TextEditorForm : AxKitForm
 
         // Show current file in ▸ File Explorer and the other apps' windows on the file or its folder (AD-4.1).
         // axClaude and axTerminal on the file's folder, axGIT on the repository that holds it, axFile with the file selected.
-        var explorer = new Command("File &Explorer", EditorKeys.ShowInExplorer, ShowInExplorer) { Mark = CommandMark.Open };
+        // No key since 2026-11-26: Ctrl+W opens File Explorer in no window (the consolidations of that day).
+        var explorer = new Command("File &Explorer", Keys.None, ShowInExplorer) { Mark = CommandMark.Open };
         file.DropDownItems.Add(CreateShowInMenu("Show current file &in", Add(explorer), FileOrSay, FileMissing));
         file.DropDownItems.Add(new ToolStripSeparator());
         file.DropDownItems.Add(CreateExitItem());
@@ -780,7 +783,7 @@ public sealed partial class TextEditorForm : AxKitForm
         Announce(MenuText.CheckSaid("Word wrap", on), true);
     }
 
-    /// <summary>TH-6.2: the theme file changed under another window's Ctrl+Shift+W or in axJSON; the text follows it, the caret kept.</summary>
+    /// <summary>TH-6.2: the theme file changed under another window's word wrap (F11) or in axJSON; the text follows it, the caret kept.</summary>
     protected override void OnThemeChanged()
     {
         if (_editor.WordWrap != WordWrapPreference)

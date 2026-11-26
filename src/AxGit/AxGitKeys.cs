@@ -18,7 +18,6 @@ public static class AxGitKeys
 {
     public const Keys OpenRepository = Keys.Control | Keys.O;
     public const Keys Refresh = Keys.F5;
-    public const Keys ShowInExplorer = Keys.Control | Keys.W;
 
     /// <summary>The three lists (AG-2.2), each a jump from anywhere in the window; the key names the list when it already shows (axClaude D26).</summary>
     public const Keys ViewChanges = Keys.Alt | Keys.D1;
@@ -52,7 +51,6 @@ public static class AxGitKeys
     [
         ("Open repository", OpenRepository),
         ("Refresh", Refresh),
-        ("Show the repository in File Explorer", ShowInExplorer),
         ("Changes", ViewChanges),
         ("Log", ViewLog),
         ("Branches", ViewBranches),

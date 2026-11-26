@@ -12,13 +12,13 @@ Run with NVDA before a release, on a folder with `README.md` (headings, links, a
 4. Ctrl+H: "Install, heading level 2" (the next heading); Ctrl+Shift+H back; Ctrl+2: the next level 2 heading; Ctrl+K: the next link; Ctrl+L: the next list; Ctrl+I: the next list item; Ctrl+Q: "No next block quote" when there is none; Ctrl+T: a table or "No next table". Alt+N, X: the Next submenu lists them with their keys.
 5. Ctrl+F, type `update`, Enter: the match selected and its line read; F3: the next; Shift+F3: back. Page Down, Page Up, Ctrl+Down, Ctrl+Up as in axDown.
 6. NVDA+End: "README.md", then "Line 5, Column 1 · UTF-8 · CRLF" (the file's values). F11: "Word wrap, not checked", the caret where it was; again: "Word wrap, checked".
-7. Ctrl+S: "Nothing to save here". F1: the Keyboard shortcuts notice; Ctrl+H in it jumps to its headings; Escape.
+7. Ctrl+S: "Nothing to save here". Help, Keyboard shortcuts: the notice; Ctrl+H in it jumps to its headings; Escape.
 8. Ctrl+O: the Windows file picker on text files; pick `plain.txt`: the window shows it, the title "plain.txt - axPreview"; Ctrl+H: "No next heading". Alt+S, R: "Open recent file submenu", "1. plain.txt (…)", "2. README.md (…)"; 2: README.md is back.
 9. Ctrl+O, All files, pick the `.exe`: it opens, its text the readable text inside it under "No preview for this kind yet; the readable text inside it follows.", or "No readable text was found in <name>."; Ctrl+E is "Open in Windows' program" in the Session menu (since 2026-10-24; the notice "Not a text file" before). Pick the file over 32 MB: the notice "Too large" naming the size. Pick `app.log`: it opens, since its bytes read as text.
 9a. Console: `axpreview gone.txt` (a file that does not exist): the notice "File not found" naming it, the window empty, "Untitled - axPreview"; Enter closes it; Ctrl+E: "No file yet". Ctrl+O on a file whose first eight kilobytes are text with a NUL further in (make one): the error notice, and README.md is still shown.
 10. Edit `README.md` in another program while axPreview is in the background, then Alt+Tab back: "Reloaded, README.md changed on disk", the caret on the same line. F5: "Reloaded".
-11. Ctrl+E on README.md: a new axDown window on it, the focus there; Alt+F4 closes it. On the `.json` file, Alt+S: the item reads "Edit in axJSON Ctrl+E"; Ctrl+E: axJSON. Ctrl+W: File Explorer with the file selected. Alt+S, I: File Explorer Ctrl+W, axGIT, axTerminal, axFile; Enter on axFile: axFile on the folder with the file selected.
-12. Ctrl+N: a second axPreview window, "Untitled - axPreview", empty; Ctrl+E and Ctrl+W there: "No file yet"; Alt+F4.
+11. Ctrl+E on README.md: a new axDown window on it, the focus there; Alt+F4 closes it. On the `.json` file, Alt+S: the item reads "Edit in axJSON Ctrl+E"; Ctrl+E: axJSON. Alt+S, I: File Explorer (no key; Ctrl+W until 2026-11-26), axGIT, axTerminal, axFile; Enter on axFile: axFile on the folder with the file selected. Alt+S, I, File Explorer: File Explorer with the file selected.
+12. Ctrl+N: a second axPreview window, "Untitled - axPreview", empty; Ctrl+E and Alt+S, I, File Explorer there: "No file yet"; Alt+F4.
 
 ## 2. The hand-over (AP-1.2, AP-1.3)
 
@@ -33,7 +33,7 @@ Run with NVDA before a release, on a folder with `README.md` (headings, links, a
 
 1. Ctrl+Plus: "Text size 13" (or the next size), the caret where it was; Ctrl+Minus back. Options, Text, Font: the font picker; Escape.
 2. Help, User guide: this guide; Ctrl+H moves through its headings; Escape.
-3. Alt+W: the Window menu with Recently closed (the file an axPreview window had when it closed), Open windows, Close all windows, Say the status (F9: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+K: the axKit menu with Claude, AI tools and Theme.
+3. Alt+W: the Window menu with Recently closed (the file an axPreview window had when it closed), Open windows, Close all windows, Say the status (F9: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+K: the axKit menu with Apps, Access layers, Claude and AI tools; Alt+O: Options, ending after a separator with Theme, Open the sounds folder, Edit app keys file, Check for updates at start and Keep a log of events.
 4. Help, Diagnostics, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the file with its encoding and the log's end. Alt+F4 closes without a question.
 
 ## 5. The Details list and the kinds of file (AP-6, AP-7)

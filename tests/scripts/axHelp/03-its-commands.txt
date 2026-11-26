@@ -1,0 +1,16 @@
+# Workflow: List the commands of axHelp's window
+# axHelp's own window without its conversation: nothing of Claude Code starts (HE-2.7), so this script needs neither
+# Claude Code nor the network, and its command list is the inventory's rows for axHelp in a run without --live
+# (docs/axKit/automation.md; 01-start and 02-hide-and-show start the conversation). Written 2026-11-26, when the
+# palette moved to F1 and the bundle's settings to the end of Options.
+file home\AxKit\axHelp.json {"hotkey": "Ctrl+Alt+Shift+F9", "screenshotHotkey": "Ctrl+Alt+Shift+F11", "model": "haiku"}
+
+start help
+# Check: The window's command list holds every key of its own
+check commands
+expect focus "name":"axHelp","role":"Text"
+expect commands "Command palette, Help, F1"
+
+# Check: Quit ends axHelp
+menu Quit axHelp
+expect closed

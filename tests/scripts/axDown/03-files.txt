@@ -48,7 +48,7 @@ expect said ! Saved
 run fc /b plain.txt plain.before
 
 # Goal: Open a new empty window
-# 3.4a: Ctrl+Shift+N: a new axDown window on Untitled, empty; this one is unchanged (AD-4.1, 2026-11-09).
+# 3.4a: Session, New window (no key since 2026-11-26, Ctrl+Shift+N before): a new axDown window on Untitled, empty; this one is unchanged (AD-4.1, 2026-11-09).
 do New window
 adopt
 expect state "title":"axDown Untitled"
@@ -133,8 +133,8 @@ run findstr /c:"Created by Ctrl+S." created.md
 # 3.10: Open recent file from the palette is played in 14-recent-from-the-palette; the real menu needs the foreground (manual).
 
 # Check: Showing the file of an untitled document says there is no file yet
-# 3.11: Show current file in, File Explorer (Ctrl+W) on Untitled: "No file yet".
-# 3.11 manual: with a file, Ctrl+W opens a File Explorer window, which would open on the user's desktop.
+# 3.11: Show current file in, File Explorer (no key; Ctrl+W until 2026-11-26) on Untitled: "No file yet".
+# 3.11 manual: with a file, File Explorer opens a File Explorer window, which would open on the user's desktop.
 start down
 expect focus Untitled
 do File Explorer

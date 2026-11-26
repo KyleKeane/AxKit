@@ -25,7 +25,7 @@
       "pattern": "Ctrl+punctuation",
       "match": "^ctrl\\+(slash|comma|semicolon|period)$",
       "does": "the in-window partner of the same key with Ctrl+Shift",
-      "learn": "Ctrl and a punctuation key stays inside the window you are in, where the same key with Ctrl and Shift works from anywhere. Ctrl+Slash asks Claude about this window, as Shift+F1 does; with Shift added it brings up axHelp's conversation from any program. Ctrl+Period opens the Context menu, as Shift+F10 does; its partner with Shift is kept for later.",
+      "learn": "Ctrl and a punctuation key stays inside the window you are in, where the same key with Ctrl and Shift works from anywhere. Ctrl+Slash asks Claude about this window, as Shift+F1 does; with Shift added it brings up axHelp's conversation from any program. Ctrl+Period opens the Context menu, as Shift+F10 does; its partner with Shift is kept for later. Ctrl+Comma opens the command palette, as F1 does, a second key on trial; with Shift added it brings up axClip's search from anywhere.",
       "windows": [],
       "misfits": []
     },
@@ -45,7 +45,7 @@
       "pattern": "Ctrl+letter",
       "match": "^ctrl\\+[a-z]$",
       "does": "act on what is selected",
-      "learn": "Ctrl and a letter does something to what you are on, and the letter is the first letter of the command where it can be: Ctrl+I interrupts, Ctrl+K bookmarks the line, Ctrl+R runs or fetches. The keys every Windows program has (copy, paste, save, find) are the same here. In a text, Ctrl with NVDA's browse-mode letter jumps while you type: Ctrl+H the next heading, Ctrl+K a link.",
+      "learn": "Ctrl and a letter does something to what you are on, and the letter is the first letter of the command where it can be: Ctrl+I interrupts, Ctrl+K bookmarks the line, Ctrl+R runs or fetches. The keys every Windows program has (copy, paste, save, find) are the same here, and Ctrl+N makes a new one of what the window holds: a document in the editors, a session in axClaude and axTerminal, a window in axFile, axMedia and axPreview. In a text, Ctrl with NVDA's browse-mode letter jumps while you type: Ctrl+H the next heading, Ctrl+K a link.",
       "windows": ["ctrl+a", "ctrl+c", "ctrl+f", "ctrl+n", "ctrl+o", "ctrl+s", "ctrl+v", "ctrl+x", "ctrl+y", "ctrl+z"],
       "misfits": [
         { "chord": "ctrl+e", "apps": ["axJSON"], "does": "Error", "kind": "go to a place; rule 2's line for a text: a jump key that works while you type" },
@@ -103,7 +103,6 @@
       "windows": [],
       "misfits": [
         { "chord": "ctrl+shift+n", "apps": ["axFile"], "does": "New folder", "kind": "makes a new thing; File Explorer's own key for it, and Ctrl+N there is New window" },
-        { "chord": "ctrl+shift+p", "apps": "all", "does": "Command palette", "kind": "say or show; a bundle key, the command palette's key in Visual Studio Code" },
         { "chord": "ctrl+shift+r", "apps": ["axTerminal"], "does": "Restart shell", "kind": "acts on the program; as in a web browser, Ctrl+Shift+R is the heavier reload" },
         { "chord": "ctrl+shift+r", "apps": ["axClaude"], "does": "Force Claude to restart", "kind": "acts on the program; as in a web browser, Ctrl+Shift+R is the heavier reload, the same key as axTerminal's" }
       ]
@@ -134,7 +133,7 @@
       "pattern": "F-keys (F1 to F12 alone)",
       "match": "^f[0-9]+$",
       "does": "say or show",
-      "learn": "A function key alone says or shows, the same in every window: F7 reads in full what you are on, F8 reads it with details, F9 says the status, F11 shows the text another way, F12 opens the field to go to a line, a folder or a time. F1 is help. F2 rename, F3 find next, F4 send a report, F5 refresh and F6 the other pane are Windows' own keys, kept as Windows taught them.",
+      "learn": "A function key alone says or shows, the same in every window: F7 reads in full what you are on, F8 reads it with details, F9 says the status, F11 shows the text another way, F12 opens the field to go to a line, a folder or a time. F1 opens the command palette, palette and help in one: with nothing typed, the rules of the keys and the window's keys. F2 rename, F3 find next, F4 send a report, F5 refresh and F6 the other pane are Windows' own keys, kept as Windows taught them.",
       "windows": [],
       "misfits": [
         { "chord": "f2", "apps": ["axAutomate", "axFile", "axMCP", "axPass", "axTask", "axTemplate"], "does": "Rename", "kind": "act on what is selected; Windows' own key for it" },
@@ -199,7 +198,7 @@
       "pattern": "Delete, Ctrl+Delete and Ctrl+Shift+Delete",
       "match": "^(ctrl\\+|ctrl\\+shift\\+)?delete$",
       "does": "remove",
-      "learn": "Delete removes what you are on, and what can be lost asks first or can be undone. Ctrl+Delete clears what you typed: a list's filter, axCalc's field. Ctrl+Shift+Delete clears a whole history, as in a web browser.",
+      "learn": "Delete removes what you are on, and what can be lost asks first or can be undone. Ctrl+Delete clears what you typed: a list's filter, axCalc's field. Ctrl+Shift+Delete clears a whole history, as in a web browser: axCalc's and axClip's history, axTerminal's transcript.",
       "windows": [],
       "misfits": []
     },

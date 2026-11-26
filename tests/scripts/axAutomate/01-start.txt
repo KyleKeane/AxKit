@@ -4,7 +4,7 @@
 # its own (docs/axKit/automation.md).
 mkdir flows
 mkdir flows\axDown
-file flows\axDown\02-palette.txt # axDown: the palette.\n\nstart down\nkeys ctrl+shift+p\n\n# 2.2 The trust question may come.\ntry said trust\niffound wait 1500\niffound keys enter\nclose
+file flows\axDown\02-palette.txt # axDown: the palette.\n\nstart down\nkeys f1\n\n# 2.2 The trust question may come.\ntry said trust\niffound wait 1500\niffound keys enter\nclose
 file flows\10-json.workflow.json {"format": "axkit-workflow 1", "title": "A workflow file", "steps": [{"do": "menu", "name": "Close all windows", "report": "Not closed"}]}
 
 # Goal: Open a folder of workflows
@@ -23,7 +23,7 @@ expect said axDown, 1 workflow, 0 folders, 02-palette, workflow, 6 steps
 keys enter
 expect said 02-palette, 6 steps, 1. Start down
 keys down
-expect focus 2. Press Ctrl+Shift+P
+expect focus 2. Press F1
 keys down
 expect focus Note: 2.2 The trust question may come.
 keys down

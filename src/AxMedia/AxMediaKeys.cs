@@ -31,9 +31,6 @@ public static class AxMediaKeys
     /// <summary>A new axMedia window (AX-9).</summary>
     public const Keys NewWindow = Keys.Control | Keys.N;
 
-    /// <summary>The file playing, or the one under the selection, selected in File Explorer.</summary>
-    public const Keys ShowInExplorer = Keys.Control | Keys.W;
-
     public const Keys Forward = Keys.Control | Keys.Right;
     public const Keys Back = Keys.Control | Keys.Left;
     public const Keys NextFile = Keys.Control | Keys.Shift | Keys.Right;
@@ -70,7 +67,6 @@ public static class AxMediaKeys
         ("Add files", OpenFiles),
         ("Add folder", OpenFolder),
         ("New window", NewWindow),
-        ("Show the file in File Explorer", ShowInExplorer),
         ("Forward", Forward),
         ("Back", Back),
         ("Next file", NextFile),

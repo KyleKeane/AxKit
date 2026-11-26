@@ -82,7 +82,7 @@ top of the window. It works entirely offline (bundle G6).
   one shared piece, `AxKit.Forms/AppMessage`, which axPreview uses the same way. Nothing listens on the network (G6).
   Hand-overs that arrive while one is being applied wait in a queue and apply in the order they came (one queue
   drained in turn since 2026-10-23; a chain of tasks before).
-- AM-1.4 Ways out: Show current file in ▸ File Explorer (Ctrl+W: the playing file, or the file under the selection,
+- AM-1.4 Ways out: Show current file in ▸ File Explorer (no key, Ctrl+W until 2026-11-26: the playing file, or the file under the selection,
   selected in File Explorer; "File missing" when it is gone, bundle AX-9.10), axClaude and axTerminal (in its folder), axGIT (the repository that holds it) and axFile
   (the same file selected in its folder, a new axFile window; `docs/axFile/SPEC.md` AF-1.1), the bundle's one submenu
   (AX-9.10). The axKit menu (AX-9).
@@ -175,7 +175,7 @@ top of the window. It works entirely offline (bundle G6).
 
 - AM-5.1 Menus (AX-9.1, the bundle's eight since 2026-11-11): **Session (S):** New window Ctrl+N | Add files… Ctrl+O |
   Add folder… Ctrl+Shift+O (Open files and Open folder until 2026-11-25: they add to the queue, and Open folder is
-  axFile's for a folder opened in its list, docs/axKit/command-exceptions.json) | Open recent ▸ | ─ | Clear queue | ─ | Show current file in ▸ (File Explorer Ctrl+W |
+  axFile's for a folder opened in its list, docs/axKit/command-exceptions.json) | Open recent ▸ | ─ | Clear queue | ─ | Show current file in ▸ (File Explorer |
   axClaude | axTerminal | axGIT | axFile) | ─ | Exit Alt+F4. **Actions (A):** Play, pause or resume Ctrl+Enter | Forward 15
   seconds Ctrl+Right | Back 15 seconds Ctrl+Left | ─ | Faster Alt+Up | Slower Alt+Down | Normal
   speed | ─ | What is playing F7. **Navigation (N):** Next file Ctrl+Shift+Right | Previous file Ctrl+Shift+Left |
@@ -183,14 +183,15 @@ top of the window. It works entirely offline (bundle G6).
   the queue): Play Enter | Remove Delete | Information F8 | ─ | Select or deselect Space | Select to here Shift+Space; one
   item, "Queue is empty", the empty line's words, while it is empty ("Nothing in the queue" until 2026-11-22). **Options
   (O):** Say each file as it starts ✓ | Text ▸ | Developer ▸ (Open settings
-  file). **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Media resources ▸ (Formats Windows plays, Microsoft's
+  file) | ─ | the settings of all of axKit (AX-9.1, 2026-11-26). **Window (W)**, **axKit (K)** (AX-9.1). **Help (H):** Command palette… F1 | Keyboard shortcuts | User guide | ─ | Media resources ▸ (Formats Windows plays, Microsoft's
   page on Media Foundation; Free codecs in the Microsoft Store, a Store search for media extensions; each in the
   browser). Every item has a mnemonic (AX-7.4).
-- AM-5.2 Keys (AX-8). Bundle-wide: F1, the control keys (one control, so they stay in the list), Ctrl+F, F3, Shift+F3,
+- AM-5.2 Keys (AX-8). Bundle-wide: F1 and Ctrl+Comma, the command palette with the keys (Ctrl+Shift+P until
+  2026-11-26), the control keys (one control, so they stay in the list), Ctrl+F, F3, Shift+F3,
   Ctrl+S ("Nothing to save here"), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxMediaKeys`): Enter, Delete,
   Space and the other selection keys, and Shift+F10 in the list (AM-3.5), which are the navigator's keys
   (`ItemKeys`, `SelectionKeys`), named in the table by what they do in a queue, Ctrl+Up and Ctrl+Down between sections among them (the queue has
-  none, so they play the edge sound) and Ctrl+Delete, clear the filter; Ctrl+Enter, F8, Ctrl+O, Ctrl+Shift+O, Ctrl+N (New window, AX-9), Ctrl+W, Ctrl+Right, Ctrl+Left,
+  none, so they play the edge sound) and Ctrl+Delete, clear the filter; Ctrl+Enter, F8, Ctrl+O, Ctrl+Shift+O, Ctrl+N (New window, AX-9; Ctrl+W, File Explorer, until 2026-11-26), Ctrl+Right, Ctrl+Left,
   Ctrl+Shift+Right, Ctrl+Shift+Left, F12, Alt+Up, Alt+Down from anywhere in the window, with the bundle's F7 What is
   playing (in a notice's field they are the field's own, AX-7.2). The collision test covers the table.
 - AM-5.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axMedia/user-guide.md` is embedded (Help → User

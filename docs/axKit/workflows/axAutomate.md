@@ -119,7 +119,7 @@ Starts with: Open axAutomate with the folder flows.
 
 ### Read every key of the window
 
-1. Press F1 (Keyboard shortcuts; Help menu).
+1. Choose Keyboard shortcuts in the Help menu.
 2. Press Escape.
 
 ### Open a workflow file as text in axJSON

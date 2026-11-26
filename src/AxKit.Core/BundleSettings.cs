@@ -4,7 +4,7 @@ namespace AxKit.Core;
 
 /// <summary>
 /// The settings of the whole bundle (docs/axKit/SPEC.md AX-3.1; the maintainer's answer of 2026-11-24, "One switch for
-/// all"): whether the windows ask GitHub for a newer version at start, one switch in the axKit menu that every app
+/// all"): whether the windows ask GitHub for a newer version at start, one switch at the end of Options (the axKit menu until 2026-11-26) that every app
 /// follows, since every app is the same program file and one version. <c>%APPDATA%\AxKit\bundle.json</c> through
 /// <see cref="SettingsFile"/>. Until that day each app had its own Check for updates at start (Options, General); the
 /// first time the file is not there, the switch starts off if any app had its own turned off, so that no check the user

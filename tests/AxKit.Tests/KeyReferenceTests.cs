@@ -31,5 +31,15 @@ public sealed class KeyReferenceTests
     public void A_window_with_no_key_alone_has_no_such_heading()
     {
         Assert.DoesNotContain(KeyReference.KeysAlone, KeyReference.Section([Row("Open", "File", "Ctrl+O")]), StringComparison.Ordinal);
+        Assert.Empty(KeyReference.AloneLines([Row("Open", "File", "Ctrl+O")]));
+    }
+
+    /// <summary>The palette's last lines with nothing typed (AX-10.2): the keys alone, their heading without its marks.</summary>
+    [Fact]
+    public void The_keys_alone_are_the_palettes_last_lines()
+    {
+        Assert.Equal(
+            ["Keys with no menu item", "  F6: Next pane"],
+            KeyReference.AloneLines([Row("Open", "File", "Ctrl+O"), Row("Next pane", string.Empty, "F6", keyOnly: true)]));
     }
 }

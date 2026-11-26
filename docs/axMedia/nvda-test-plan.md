@@ -37,13 +37,13 @@ Run with NVDA before a release, on a folder of MP3 chapters with an MP4 video an
 6. On the last file, F12 near its end; wait: "End of queue" with the done chime; NVDA+End: both labels empty; NVDA+T: "axMedia". F7: "Nothing playing".
 7. Enter on the video: "Playing <name>", the picture appears at the top of the window, the focus stays in the list; Ctrl+Enter pauses; Ctrl+Shift+Right or the end hides the picture.
 8. Enter on a file Windows cannot decode (an `.opus` without the Store codec): "Cannot play <name>: …" and the next plays. Ctrl+O and pick the `.txt` (All files): "Added 1"; Enter on it: "Cannot play <name>: …", the next plays.
-9. Alt+Tab to another program while a file plays, let it end: "Playing <next>" from the background, or silence with the setting off; the sound carries on. Ctrl+W: File Explorer with the playing file selected. Session, Show current file in, axFile: axFile on the folder with the file selected. Alt+F4 on axMedia: the sound stops.
+9. Alt+Tab to another program while a file plays, let it end: "Playing <next>" from the background, or silence with the setting off; the sound carries on. Session, Show current file in, File Explorer (no key; Ctrl+W until 2026-11-26): File Explorer with the playing file selected. Session, Show current file in, axFile: axFile on the folder with the file selected. Alt+F4 on axMedia: the sound stops.
 
 ## 4. Text, notices, the Window, axKit and Help menus (AM-5)
 
 1. Ctrl+Plus: "Text size 13" (or the next size); Ctrl+Minus back. Options, Text, Windows text size: "Windows text size".
-2. F1: the Keyboard shortcuts notice; Escape. Help, User guide: this guide; Escape. Ctrl+S: "Nothing to save here".
-3. Alt+W: the Window menu with Recently closed (the file an axMedia window was playing when it closed; chosen, it plays with its folder), Open windows, Close all windows, Say the status (F9: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+A: the axKit menu with Claude, AI tools and Theme.
+2. Help, Keyboard shortcuts: the notice; Escape. F1: the command palette, Down reads the rules of the keys; Escape. Help, User guide: this guide; Escape. Ctrl+S: "Nothing to save here".
+3. Alt+W: the Window menu with Recently closed (the file an axMedia window was playing when it closed; chosen, it plays with its folder), Open windows, Close all windows, Say the status (F9: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+K: the axKit menu with Apps, Access layers, Claude and AI tools; Alt+O: Options, ending after a separator with Theme, Open the sounds folder, Edit app keys file, Check for updates at start and Keep a log of events.
 4. Help, Diagnostics, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the queue, the player's state and the log's end.
 
 ## 5. Selecting files in the queue (AM-3.5, bundle AX-8.16)

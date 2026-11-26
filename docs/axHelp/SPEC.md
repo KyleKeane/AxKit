@@ -267,7 +267,7 @@ The bundle's eight menus (AX-9.1, 2026-11-11): Session (S): Hide (Escape), Quit 
 conversation (Enter), Put a picture file into the conversation… (Ctrl+D), Open the last screenshot in axPreview
 (Ctrl+O), Claude's working folder. Navigation and Context hold one item each that says they have nothing yet. Options:
 Hotkey…, Conversation model ▸, Keep the conversation ready in the background (HE-2.7), Text ▸, General ▸ (Start with Windows), Developer ▸. Then the bundle's Window, axKit and Help
-(AX-9.1). Bundle-wide keys (AX-8.2): F1, Ctrl+Shift+P, F4, Shift+F1, the text size keys, Alt and Alt+F4. The F1 text
+(AX-9.1). Bundle-wide keys (AX-8.2): F1 and Ctrl+Comma, the command palette with the keys (Ctrl+Shift+P until 2026-11-26), F4, Shift+F1, the text size keys, Alt and Alt+F4. The F1 text
 names them all (`HelpText.Shortcuts`).
 
 ## 5. Architecture

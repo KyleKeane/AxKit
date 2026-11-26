@@ -66,7 +66,7 @@ internal sealed partial class TerminalForm
         session.DropDownItems.Add(new ToolStripSeparator());
         Add(session, new Command("Say current fol&der", AxTerminalKeys.SayFolder, SayFolder) { Mark = CommandMark.Read });
         // AT-1.5: the way to the other windows, on the shell's current directory.
-        var explorer = new Command("File &Explorer", AxTerminalKeys.ShowInExplorer, ShowInExplorer) { Mark = CommandMark.Open };
+        var explorer = new Command("File &Explorer", Keys.None, ShowInExplorer) { Mark = CommandMark.Open };
         session.DropDownItems.Add(CreateShowInMenu("Show current folder &in", Add(explorer), () => CurrentDirectory, FolderMissing));
         session.DropDownItems.Add(new ToolStripSeparator());
         session.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Export transcript...", null, (_, _) => ExportTranscript()) { ShortcutKeyDisplayString = BundleKeys.Text(BundleKeys.Save) }, CommandMark.Change));

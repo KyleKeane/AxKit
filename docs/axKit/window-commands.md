@@ -19,10 +19,6 @@ every window" or under a heading that names the windows without it; under an app
 
 ## In every window but axClip and axPass
 
-- Check for updates at start. Menu: axKit. Key: none. Mark: act.
-- Edit app keys file. Menu: axKit. Key: none. Mark: open.
-- Keep a log of events. Menu: axKit. Key: none. Mark: change.
-- Open the sounds folder. Menu: axKit. Key: none. Mark: open.
 - axClaude, access layer for Claude Code. Menu: axKit, Access layers. Key: Ctrl+Shift+F5. Mark: act.
 - axGIT, access layer for Git. Menu: axKit, Access layers. Key: Ctrl+Shift+F2. Mark: open.
 - axHelp, access layer for Claude Code. Menu: axKit, Access layers. Key: Ctrl+Shift+F9. Mark: open.
@@ -43,11 +39,8 @@ every window" or under a heading that names the windows without it; under an app
 - axTemplate. Menu: axKit, Apps. Key: Ctrl+F4. Mark: open.
 - Ask about this window. Menu: axKit, Claude. Key: Shift+F1. Also: Ctrl+Slash. Mark: act.
 - Claude's working folder. Menu: axKit, Claude. Key: none. Mark: open.
-- Edit theme file. Menu: axKit, Theme. Key: none. Mark: open.
-- Reload theme. Menu: axKit, Theme. Key: none. Mark: change.
-- Theme on. Menu: axKit, Theme. Key: none. Mark: change.
-- Command palette. Menu: Help. Key: Ctrl+Shift+P. Mark: read.
-- Keyboard shortcuts. Menu: Help. Key: F1. Mark: read.
+- Command palette. Menu: Help. Key: F1. Mark: read.
+- Keyboard shortcuts. Menu: Help. Key: none. Mark: read.
 - Send a report. Menu: Help. Key: F4. Mark: open.
 - User guide. Menu: Help. Key: none. Mark: read.
 - Your reports. Menu: Help. Key: none. Mark: act.
@@ -60,6 +53,10 @@ every window" or under a heading that names the windows without it; under an app
 - Version. Menu: Help, About. Key: none. Mark: read.
 - Copy diagnostics. Menu: Help, Diagnostics. Key: none. Mark: act.
 - Test a key. Menu: Help, Diagnostics. Key: none. Mark: act.
+- Check for updates at start. Menu: Options. Key: none. Mark: act.
+- Edit app keys file. Menu: Options. Key: none. Mark: open.
+- Keep a log of events. Menu: Options. Key: none. Mark: change.
+- Open the sounds folder. Menu: Options. Key: none. Mark: open.
 - Open settings file. Menu: Options, Developer. Key: none. Mark: open.
 - Entry sounds. Menu: Options, Text. Key: none. Mark: change.
 - Font. Menu: Options, Text. Key: none. Mark: change.
@@ -68,6 +65,9 @@ every window" or under a heading that names the windows without it; under an app
 - Smaller text. Menu: Options, Text. Key: Ctrl+Minus. Mark: change.
 - Sound on headings. Menu: Options, Text. Key: none. Mark: change.
 - Windows text size. Menu: Options, Text. Key: none. Mark: change.
+- Edit theme file. Menu: Options, Theme. Key: none. Mark: open.
+- Reload theme. Menu: Options, Theme. Key: none. Mark: change.
+- Theme on. Menu: Options, Theme. Key: none. Mark: change.
 - Close all windows. Menu: Window. Key: none. Mark: act.
 - Say the status. Menu: Window. Key: F9. Mark: read.
 
@@ -145,6 +145,7 @@ every window" or under a heading that names the windows without it; under an app
 - Degrees. Menu: Options, Angles. Key: none. Mark: change.
 - Radians. Menu: Options, Angles. Key: none. Mark: change.
 - Save history. Menu: Session. Key: Ctrl+S. Mark: change.
+- Back: in the field, nothing to go back to. Menu: none, a key alone. Key: Escape. Mark: read. Never run by AI tools.
 - Clear the field. Menu: none, a key alone. Key: Ctrl+Delete. Mark: change. Never run by AI tools.
 - Switch between the view and the field. Menu: none, a key alone. Key: Tab. Also: Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
 
@@ -235,7 +236,7 @@ every window" or under a heading that names the windows without it; under an app
 - axFile. Menu: Session, Show current folder in. Key: none. Mark: open.
 - axGIT, access layer for Git. Menu: Session, Show current folder in. Key: none. Mark: open.
 - axTerminal, access layer for your shell. Menu: Session, Show current folder in. Key: none. Mark: act.
-- File Explorer. Menu: Session, Show current folder in. Key: Ctrl+W. Mark: open.
+- File Explorer. Menu: Session, Show current folder in. Key: none. Mark: open.
 - Background music on or off. Menu: none, a key alone. Key: Ctrl+M. Mark: change. Never run by AI tools.
 - Send the message. Menu: none, a key alone. Key: Ctrl+Enter. Mark: act. Never run by AI tools.
 - Switch between the view and the field. Menu: none, a key alone. Key: Tab. Also: Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
@@ -243,10 +244,6 @@ every window" or under a heading that names the windows without it; under an app
 ## axClip
 
 - Clear history. Menu: Actions. Key: Ctrl+Shift+Delete. Mark: act. Never run by AI tools.
-- Check for updates at start. Menu: axKit. Key: none. Mark: act. Never run by AI tools.
-- Edit app keys file. Menu: axKit. Key: none. Mark: open. Never run by AI tools.
-- Keep a log of events. Menu: axKit. Key: none. Mark: change. Never run by AI tools.
-- Open the sounds folder. Menu: axKit. Key: none. Mark: open. Never run by AI tools.
 - axClaude, access layer for Claude Code. Menu: axKit, Access layers. Key: Ctrl+Shift+F5. Mark: act. Never run by AI tools.
 - axGIT, access layer for Git. Menu: axKit, Access layers. Key: Ctrl+Shift+F2. Mark: open. Never run by AI tools.
 - axHelp, access layer for Claude Code. Menu: axKit, Access layers. Key: Ctrl+Shift+F9. Mark: open. Never run by AI tools.
@@ -267,15 +264,12 @@ every window" or under a heading that names the windows without it; under an app
 - axTemplate. Menu: axKit, Apps. Key: Ctrl+F4. Mark: open. Never run by AI tools.
 - Ask about this window. Menu: axKit, Claude. Key: Shift+F1. Also: Ctrl+Slash. Mark: act. Never run by AI tools.
 - Claude's working folder. Menu: axKit, Claude. Key: none. Mark: open. Never run by AI tools.
-- Edit theme file. Menu: axKit, Theme. Key: none. Mark: open. Never run by AI tools.
-- Reload theme. Menu: axKit, Theme. Key: none. Mark: change. Never run by AI tools.
-- Theme on. Menu: axKit, Theme. Key: none. Mark: change. Never run by AI tools.
 - Copy without pasting. Menu: Context. Key: Shift+Enter. Mark: act. Never run by AI tools.
 - Paste. Menu: Context. Key: Enter. Mark: act. Never run by AI tools.
 - Read in full. Menu: Context. Key: F7. Mark: read. Never run by AI tools.
 - Remove. Menu: Context. Key: Delete. Mark: change. Never run by AI tools.
-- Command palette. Menu: Help. Key: Ctrl+Shift+P. Mark: read. Never run by AI tools.
-- Keyboard shortcuts. Menu: Help. Key: F1. Mark: read. Never run by AI tools.
+- Command palette. Menu: Help. Key: F1. Mark: read. Never run by AI tools.
+- Keyboard shortcuts. Menu: Help. Key: none. Mark: read. Never run by AI tools.
 - Send a report. Menu: Help. Key: F4. Mark: open. Never run by AI tools.
 - User guide. Menu: Help. Key: none. Mark: read. Never run by AI tools.
 - Your reports. Menu: Help. Key: none. Mark: act. Never run by AI tools.
@@ -290,8 +284,12 @@ every window" or under a heading that names the windows without it; under an app
 - Test a key. Menu: Help, Diagnostics. Key: none. Mark: act. Never run by AI tools.
 - Clipboard in Windows. Menu: Help, Windows resources. Key: none. Mark: act. Never run by AI tools.
 - Nothing to move to here yet. Menu: Navigation. Key: none. Mark: read. Never run by AI tools.
+- Check for updates at start. Menu: Options. Key: none. Mark: act. Never run by AI tools.
+- Edit app keys file. Menu: Options. Key: none. Mark: open. Never run by AI tools.
 - Hotkey. Menu: Options. Key: none. Mark: open. Never run by AI tools.
+- Keep a log of events. Menu: Options. Key: none. Mark: change. Never run by AI tools.
 - Keep history between runs. Menu: Options. Key: none. Mark: change. Never run by AI tools.
+- Open the sounds folder. Menu: Options. Key: none. Mark: open. Never run by AI tools.
 - Pause recording. Menu: Options. Key: Ctrl+P. Mark: change. Never run by AI tools.
 - Open settings file. Menu: Options, Developer. Key: none. Mark: open. Never run by AI tools.
 - Say the first match while typing. Menu: Options, General. Key: none. Mark: change. Never run by AI tools.
@@ -303,6 +301,9 @@ every window" or under a heading that names the windows without it; under an app
 - Smaller text. Menu: Options, Text. Key: Ctrl+Minus. Mark: change. Never run by AI tools.
 - Sound on headings. Menu: Options, Text. Key: none. Mark: change. Never run by AI tools.
 - Windows text size. Menu: Options, Text. Key: none. Mark: change. Never run by AI tools.
+- Edit theme file. Menu: Options, Theme. Key: none. Mark: open. Never run by AI tools.
+- Reload theme. Menu: Options, Theme. Key: none. Mark: change. Never run by AI tools.
+- Theme on. Menu: Options, Theme. Key: none. Mark: change. Never run by AI tools.
 - Hide. Menu: Session. Key: Escape. Mark: change. Never run by AI tools.
 - Quit axClip. Menu: Session. Key: none. Mark: act. Never run by AI tools.
 - Close all windows. Menu: Window. Key: none. Mark: act. Never run by AI tools.
@@ -372,7 +373,7 @@ every window" or under a heading that names the windows without it; under an app
 - Templates in axTemplate. Menu: Options, General. Key: none. Mark: open.
 - Word wrap. Menu: Options, Text. Key: F11. Mark: change.
 - New. Menu: Session. Key: Ctrl+N. Mark: change.
-- New window. Menu: Session. Key: Ctrl+Shift+N. Mark: open.
+- New window. Menu: Session. Key: none. Mark: open.
 - Open. Menu: Session. Key: Ctrl+O. Mark: open.
 - Save. Menu: Session. Key: Ctrl+S. Mark: change.
 - Save as. Menu: Session. Key: Ctrl+Shift+S. Mark: change.
@@ -380,7 +381,7 @@ every window" or under a heading that names the windows without it; under an app
 - axFile. Menu: Session, Show current file in. Key: none. Mark: open.
 - axGIT, access layer for Git. Menu: Session, Show current file in. Key: none. Mark: open.
 - axTerminal, access layer for your shell. Menu: Session, Show current file in. Key: none. Mark: act.
-- File Explorer. Menu: Session, Show current file in. Key: Ctrl+W. Mark: open.
+- File Explorer. Menu: Session, Show current file in. Key: none. Mark: open.
 - Between the text and the field under it. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
 
 ## axFile
@@ -408,7 +409,7 @@ every window" or under a heading that names the windows without it; under an app
 - Preview. Menu: Context. Key: Shift+Enter. Mark: open.
 - Properties. Menu: Context. Key: Alt+Enter. Mark: act.
 - Rename. Menu: Context. Key: F2. Mark: act.
-- Show in File Explorer. Menu: Context. Key: Ctrl+Shift+W. Mark: open.
+- Show in File Explorer. Menu: Context. Key: none. Mark: open.
 - Windows menu. Menu: Context. Key: none. Mark: act.
 - axClaude, access layer for Claude Code. Menu: Context, Open with axKit access layers. Key: none. Mark: act.
 - axGIT, access layer for Git. Menu: Context, Open with axKit access layers. Key: none. Mark: open.
@@ -449,7 +450,7 @@ every window" or under a heading that names the windows without it; under an app
 - axClaude, access layer for Claude Code. Menu: Session, Show current folder in. Key: none. Mark: act.
 - axGIT, access layer for Git. Menu: Session, Show current folder in. Key: none. Mark: open.
 - axTerminal, access layer for your shell. Menu: Session, Show current folder in. Key: none. Mark: act.
-- File Explorer. Menu: Session, Show current folder in. Key: Ctrl+W. Mark: open.
+- File Explorer. Menu: Session, Show current folder in. Key: none. Mark: open.
 - Add to or remove from Favorites. Menu: none, a key alone. Key: Ctrl+D. Mark: change. Never run by AI tools.
 - Clear the filter. Menu: none, a key alone. Key: Ctrl+Delete. Mark: change. Never run by AI tools.
 - Find. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
@@ -463,7 +464,6 @@ every window" or under a heading that names the windows without it; under an app
 - Select to the last entry. Menu: none, a key alone. Key: Shift+End. Mark: change. Never run by AI tools.
 - Select to the next entry. Menu: none, a key alone. Key: Shift+Down. Mark: change. Never run by AI tools.
 - Select to the previous entry. Menu: none, a key alone. Key: Shift+Up. Mark: change. Never run by AI tools.
-- Show the folder in File Explorer. Menu: none, a key alone. Key: Ctrl+W. Mark: open. Never run by AI tools.
 - Switch between the list and the Favorites list. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
 - The Context menu. Menu: none, a key alone. Key: Shift+F10. Also: Ctrl+Period, Apps. Mark: open. Never run by AI tools.
 - The favorite's folder. Menu: none, a key alone. Key: F8. Mark: read. Never run by AI tools.
@@ -506,7 +506,7 @@ every window" or under a heading that names the windows without it; under an app
 - axClaude, access layer for Claude Code. Menu: Session, Show current repository in. Key: none. Mark: act.
 - axFile. Menu: Session, Show current repository in. Key: none. Mark: open.
 - axTerminal, access layer for your shell. Menu: Session, Show current repository in. Key: none. Mark: act.
-- File Explorer. Menu: Session, Show current repository in. Key: Ctrl+W. Mark: open.
+- File Explorer. Menu: Session, Show current repository in. Key: none. Mark: open.
 - Clear the filter. Menu: none, a key alone. Key: Ctrl+Delete. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
 - Find in the list. Menu: none, a key alone. Key: Ctrl+F. Mark: read. Never run by AI tools.
@@ -581,7 +581,7 @@ every window" or under a heading that names the windows without it; under an app
 - Templates in axTemplate. Menu: Options, General. Key: none. Mark: open.
 - Word wrap. Menu: Options, Text. Key: F11. Mark: change.
 - New. Menu: Session. Key: Ctrl+N. Mark: change.
-- New window. Menu: Session. Key: Ctrl+Shift+N. Mark: open.
+- New window. Menu: Session. Key: none. Mark: open.
 - Open. Menu: Session. Key: Ctrl+O. Mark: open.
 - Save. Menu: Session. Key: Ctrl+S. Mark: change.
 - Save as. Menu: Session. Key: Ctrl+Shift+S. Mark: change.
@@ -589,7 +589,7 @@ every window" or under a heading that names the windows without it; under an app
 - axFile. Menu: Session, Show current file in. Key: none. Mark: open.
 - axGIT, access layer for Git. Menu: Session, Show current file in. Key: none. Mark: open.
 - axTerminal, access layer for your shell. Menu: Session, Show current file in. Key: none. Mark: act.
-- File Explorer. Menu: Session, Show current file in. Key: Ctrl+W. Mark: open.
+- File Explorer. Menu: Session, Show current file in. Key: none. Mark: open.
 - Between the text and the field under it. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
 
 ## axMCP
@@ -667,7 +667,7 @@ every window" or under a heading that names the windows without it; under an app
 - axFile. Menu: Session, Show current file in. Key: none. Mark: open.
 - axGIT, access layer for Git. Menu: Session, Show current file in. Key: none. Mark: open.
 - axTerminal, access layer for your shell. Menu: Session, Show current file in. Key: none. Mark: act.
-- File Explorer. Menu: Session, Show current file in. Key: Ctrl+W. Mark: open.
+- File Explorer. Menu: Session, Show current file in. Key: none. Mark: open.
 - Back to the list. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
 - Clear the filter. Menu: none, a key alone. Key: Ctrl+Delete. Mark: change. Never run by AI tools.
 - Delete. Menu: none, a key alone. Key: Delete. Mark: act. Never run by AI tools.
@@ -695,10 +695,6 @@ every window" or under a heading that names the windows without it; under an app
 - New group. Menu: Actions. Key: Ctrl+Shift+N. Mark: change. Never run by AI tools.
 - Select all entries. Menu: Actions. Key: Ctrl+A. Mark: change. Never run by AI tools.
 - Undo. Menu: Actions. Key: Ctrl+Z. Mark: change. Never run by AI tools.
-- Check for updates at start. Menu: axKit. Key: none. Mark: act. Never run by AI tools.
-- Edit app keys file. Menu: axKit. Key: none. Mark: open. Never run by AI tools.
-- Keep a log of events. Menu: axKit. Key: none. Mark: change. Never run by AI tools.
-- Open the sounds folder. Menu: axKit. Key: none. Mark: open. Never run by AI tools.
 - axClaude, access layer for Claude Code. Menu: axKit, Access layers. Key: Ctrl+Shift+F5. Mark: act. Never run by AI tools.
 - axGIT, access layer for Git. Menu: axKit, Access layers. Key: Ctrl+Shift+F2. Mark: open. Never run by AI tools.
 - axHelp, access layer for Claude Code. Menu: axKit, Access layers. Key: Ctrl+Shift+F9. Mark: open. Never run by AI tools.
@@ -719,13 +715,10 @@ every window" or under a heading that names the windows without it; under an app
 - axTemplate. Menu: axKit, Apps. Key: Ctrl+F4. Mark: open. Never run by AI tools.
 - Ask about this window. Menu: axKit, Claude. Key: Shift+F1. Also: Ctrl+Slash. Mark: act. Never run by AI tools.
 - Claude's working folder. Menu: axKit, Claude. Key: none. Mark: open. Never run by AI tools.
-- Edit theme file. Menu: axKit, Theme. Key: none. Mark: open. Never run by AI tools.
-- Reload theme. Menu: axKit, Theme. Key: none. Mark: change. Never run by AI tools.
-- Theme on. Menu: axKit, Theme. Key: none. Mark: change. Never run by AI tools.
 - Open. Menu: Context. Key: Enter. Mark: open. Never run by AI tools.
 - To the Recycle Bin. Menu: Context. Key: Delete. Mark: act. Never run by AI tools.
-- Command palette. Menu: Help. Key: Ctrl+Shift+P. Mark: read. Never run by AI tools.
-- Keyboard shortcuts. Menu: Help. Key: F1. Mark: read. Never run by AI tools.
+- Command palette. Menu: Help. Key: F1. Mark: read. Never run by AI tools.
+- Keyboard shortcuts. Menu: Help. Key: none. Mark: read. Never run by AI tools.
 - Send a report. Menu: Help. Key: F4. Mark: open. Never run by AI tools.
 - User guide. Menu: Help. Key: none. Mark: read. Never run by AI tools.
 - Your reports. Menu: Help. Key: none. Mark: act. Never run by AI tools.
@@ -741,8 +734,12 @@ every window" or under a heading that names the windows without it; under an app
 - KeePassXC. Menu: Help, KeePass resources. Key: none. Mark: act. Never run by AI tools.
 - The KDBX format. Menu: Help, KeePass resources. Key: none. Mark: act. Never run by AI tools.
 - Nothing to move to here yet. Menu: Navigation. Key: none. Mark: read. Never run by AI tools.
+- Check for updates at start. Menu: Options. Key: none. Mark: act. Never run by AI tools.
+- Edit app keys file. Menu: Options. Key: none. Mark: open. Never run by AI tools.
 - Filter. Menu: Options. Key: none. Mark: change. Never run by AI tools.
+- Keep a log of events. Menu: Options. Key: none. Mark: change. Never run by AI tools.
 - KeePassXC's tool. Menu: Options. Key: none. Mark: act. Never run by AI tools.
+- Open the sounds folder. Menu: Options. Key: none. Mark: open. Never run by AI tools.
 - Open settings file. Menu: Options, Developer. Key: none. Mark: open. Never run by AI tools.
 - 10 minutes. Menu: Options, Lock after. Key: none. Mark: change. Never run by AI tools.
 - 30 minutes. Menu: Options, Lock after. Key: none. Mark: change. Never run by AI tools.
@@ -758,6 +755,9 @@ every window" or under a heading that names the windows without it; under an app
 - Smaller text. Menu: Options, Text. Key: Ctrl+Minus. Mark: change. Never run by AI tools.
 - Sound on headings. Menu: Options, Text. Key: none. Mark: change. Never run by AI tools.
 - Windows text size. Menu: Options, Text. Key: none. Mark: change. Never run by AI tools.
+- Edit theme file. Menu: Options, Theme. Key: none. Mark: open. Never run by AI tools.
+- Reload theme. Menu: Options, Theme. Key: none. Mark: change. Never run by AI tools.
+- Theme on. Menu: Options, Theme. Key: none. Mark: change. Never run by AI tools.
 - Back up now. Menu: Session. Key: none. Mark: act. Never run by AI tools.
 - Exit. Menu: Session. Key: Alt+F4. Mark: act. Never run by AI tools.
 - New database. Menu: Session. Key: none. Mark: act. Never run by AI tools.
@@ -847,7 +847,7 @@ every window" or under a heading that names the windows without it; under an app
 - axFile. Menu: Session, Show current file in. Key: none. Mark: open.
 - axGIT, access layer for Git. Menu: Session, Show current file in. Key: none. Mark: open.
 - axTerminal, access layer for your shell. Menu: Session, Show current file in. Key: none. Mark: act.
-- File Explorer. Menu: Session, Show current file in. Key: Ctrl+W. Mark: open.
+- File Explorer. Menu: Session, Show current file in. Key: none. Mark: open.
 - Between the text and the details. Menu: none, a key alone. Key: Ctrl+Tab. Also: Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.
 - Copy the detail's value. Menu: none, a key alone. Key: Ctrl+C. Mark: read. Never run by AI tools.
 - Open the detail. Menu: none, a key alone. Key: Enter. Mark: open. Never run by AI tools.
@@ -1127,7 +1127,7 @@ every window" or under a heading that names the windows without it; under an app
 - Flash the taskbar button. Menu: Options, When a command is done. Key: none. Mark: change.
 - Louder alert when the window is in the background. Menu: Options, When a command is done. Key: none. Mark: change.
 - Add a shell. Menu: Session. Key: none. Mark: act.
-- Clear transcript. Menu: Session. Key: Ctrl+L. Mark: change.
+- Clear transcript. Menu: Session. Key: Ctrl+Shift+Delete. Mark: change.
 - Custom shell. Menu: Session. Key: none. Mark: act.
 - Export transcript. Menu: Session. Key: Ctrl+S. Mark: change.
 - New session. Menu: Session. Key: Ctrl+N. Mark: act.
@@ -1136,7 +1136,7 @@ every window" or under a heading that names the windows without it; under an app
 - axClaude, access layer for Claude Code. Menu: Session, Show current folder in. Key: none. Mark: act.
 - axFile. Menu: Session, Show current folder in. Key: none. Mark: open.
 - axGIT, access layer for Git. Menu: Session, Show current folder in. Key: none. Mark: open.
-- File Explorer. Menu: Session, Show current folder in. Key: Ctrl+W. Mark: open.
+- File Explorer. Menu: Session, Show current folder in. Key: none. Mark: open.
 - Background music on or off. Menu: none, a key alone. Key: Ctrl+M. Mark: change. Never run by AI tools.
 - Send the command. Menu: none, a key alone. Key: Ctrl+Enter. Mark: act. Never run by AI tools.
 - Switch between the view and the field. Menu: none, a key alone. Key: Tab. Also: Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab, F6. Mark: open. Never run by AI tools.

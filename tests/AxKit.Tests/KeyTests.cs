@@ -254,7 +254,7 @@ public sealed class KeyTests
     [Fact]
     public void Every_F1_text_names_the_keys_every_window_has()
     {
-        Keys[] everywhere = [BundleKeys.Shortcuts, BundleKeys.CommandPalette, BundleKeys.Report, BundleKeys.AskClaude, BundleKeys.AskClaudeAlso, BundleKeys.ContextMenu, BundleKeys.SayStatus, BundleKeys.ReadInFull, BundleKeys.MainAction, BundleKeys.ToggleMode, BundleKeys.Find, BundleKeys.FindNext, BundleKeys.FindPrevious, BundleKeys.LargerText, BundleKeys.SmallerText];
+        Keys[] everywhere = [BundleKeys.CommandPalette, BundleKeys.CommandPaletteAlso, BundleKeys.Report, BundleKeys.AskClaude, BundleKeys.AskClaudeAlso, BundleKeys.ContextMenu, BundleKeys.SayStatus, BundleKeys.ReadInFull, BundleKeys.MainAction, BundleKeys.ToggleMode, BundleKeys.Find, BundleKeys.FindNext, BundleKeys.FindPrevious, BundleKeys.LargerText, BundleKeys.SmallerText];
         var missing = new List<string>();
         foreach (var (window, text) in F1Texts)
         {
@@ -282,7 +282,7 @@ public sealed class KeyTests
         string[] known =
         [
             // The key moves of 2026-11-26 (AX-8.18): F8 read with details and F12 go to, each a window's own; Ctrl+Delete
-            // clears the filter or axCalc's field; Ctrl+G, Ctrl+Shift+F, H, Q, T and W and Shift+Escape (only axTerminal's Send Escape now) left the list with them.
+            // clears the filter or axCalc's field; Ctrl+G, Ctrl+Shift+F, H, Q, T and W and Shift+Escape (only axTerminal's Send Escape now) left the list with them, and Ctrl+W with the consolidations of the same day.
             "Alt+1", "Alt+2", "Alt+3", "Alt+Down", "Alt+Up", "Ctrl+Delete", "Ctrl+Down", "Ctrl+H", "Ctrl+Shift+Enter", "F8", "F12", "Ctrl+J", "Ctrl+M", "Ctrl+Shift+N", "Ctrl+Up", "F2", "Left", "Right",
             // Tab and Shift+Tab left this list on 2026-11-22: they went round axProcess's three views until it became a navigator.
             "Apps", "Backspace", "Ctrl+1", "Ctrl+B", "Ctrl+2", "Ctrl+3", "Ctrl+4", "Ctrl+5", "Ctrl+6", "Ctrl+C", "Ctrl+D", "Ctrl+E", "Ctrl+I", "Ctrl+K", "Ctrl+L",
@@ -291,7 +291,7 @@ public sealed class KeyTests
             // Ctrl+Shift+A left this list on 2026-11-22: it staged all in axGIT, and is Deselect all in every window now.
             "Ctrl+N", "Ctrl+O", "Ctrl+P", "Ctrl+Q", "Ctrl+R", "Ctrl+Shift+C", "Ctrl+Shift+I",
             "Ctrl+Shift+K", "Ctrl+Shift+L", "Ctrl+Shift+R", "Ctrl+Shift+S", "Ctrl+T",
-            "Ctrl+W", "Ctrl+Z", "Delete", "Down", "Enter", "Escape", "F5", "O", "Shift+Enter", "Shift+F10", "Space", "Up",
+            "Ctrl+Z", "Delete", "Down", "Enter", "Escape", "F5", "O", "Shift+Enter", "Shift+F10", "Space", "Up",
         ];
         var differing = Windows.SelectMany(w => w.Value.Select(k => (Window: w.Key, k.Name, k.Key)))
             .GroupBy(k => k.Key)

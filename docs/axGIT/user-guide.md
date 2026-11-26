@@ -13,7 +13,7 @@ axGIT is part of axKit. Installing axKit (see the axKit guide: Help, About, axKi
 - From axClaude: Session, Show current folder in, axGIT (Alt+S, I, G). axGIT opens on the repository that holds the project folder.
 - From axDown or axJSON: Session, Show current file in, axGIT (Alt+S, I, G). axGIT opens on the repository that holds the file.
 - From the Start menu, `axKit axGIT`, or the console: `axgit C:\my\project`. Without a folder, axGIT opens the last repository you had, or asks for one with Session, Open repository (Ctrl+O).
-- To go back: Alt+W, O lists the open axKit windows, most recent first, so Alt+W, O, 1 is the window you came from. From axGIT, Session, Show current repository in, axClaude opens a new axClaude on the repository, axTerminal a shell there, axFile the folder's files, and File Explorer (Ctrl+W) shows the folder.
+- To go back: Alt+W, O lists the open axKit windows, most recent first, so Alt+W, O, 1 is the window you came from. From axGIT, Session, Show current repository in, axClaude opens a new axClaude on the repository, axTerminal a shell there, axFile the folder's files, and File Explorer shows the folder.
 
 The window is named after the repository's folder: "myproject - axGIT".
 
@@ -55,13 +55,13 @@ axGIT does not merge, rebase or resolve conflicts. For those, use the terminal o
 Each menu with its commands and their keys, as the window lists them:
 
 <!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
-- **Session**: Exit (Alt+F4); Open repository (Ctrl+O); Refresh (F5); Show current repository in (axClaude, access layer for Claude Code, axFile, axTerminal, access layer for your shell, File Explorer (Ctrl+W)).
+- **Session**: Exit (Alt+F4); Open repository (Ctrl+O); Refresh (F5); Show current repository in (axClaude, access layer for Claude Code, axFile, axTerminal, access layer for your shell, File Explorer).
 - **Actions**: Commit (Ctrl+Enter); Deselect all (Ctrl+Shift+A); Fetch (Ctrl+R); New branch (Ctrl+N); Pull (Ctrl+L); Push (Ctrl+P); Select all files (Ctrl+A); Stage (Ctrl+Shift+S); Stage all; Unstage (Ctrl+Shift+U); Unstage all.
 - **Navigation**: Branches (Alt+3); Changes (Alt+1); Log (Alt+2); Up to the repository (Left).
 - **Context**: Discard changes (Delete); Open file in editor (Ctrl+E); Select or deselect (Space); Select to here (Shift+Space); Show diff (Enter); Stage (Ctrl+Shift+S); Unstage (Ctrl+Shift+U).
-- **Options**: Filter; Developer (Open settings file); Sort by (Name, The list's own order); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
+- **Options**: Check for updates at start; Edit app keys file; Filter; Keep a log of events; Open the sounds folder; Developer (Open settings file); Sort by (Name, The list's own order); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size); Theme (Edit theme file, Reload theme, Theme on).
 - Keys without a menu item: Ctrl+Delete (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); Ctrl+F (Find in the text); F3 (Find next); F3 (Find next in the text); Shift+F3 (Find previous); Shift+F3 (Find previous in the text); Right (Into the list); Ctrl+Down (Next section); Enter (Open); Ctrl+Up (Previous section); Ctrl+A (Select all); Shift+Home (Select to the first file); Shift+End (Select to the last file); Shift+Down (Select to the next file); Shift+Up (Select to the previous file); Ctrl+Tab (Switch between the list and the text); Shift+F10 (The Context menu); Tab (To the list); Tab (To the text); Left (Up a level).
-- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1, the command palette, lists every key and command. Options ends with the settings of all of axKit.
 <!-- end of the menus -->
 
 ## Settings

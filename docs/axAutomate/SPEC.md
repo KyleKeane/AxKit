@@ -17,7 +17,7 @@ documents, "SPEC.md" means this file.
 A workflow is one JSON file, `<name>.workflow.json`, in a folder of workflows; the checks of axDown are
 `tests/workflows/axDown/02-palette.workflow.json` and so on. The window is the item apps' (`docs/axKit/item-apps.md`):
 the navigator lists the folder's workflows, Right goes into one, and its steps are rows read as a sentence: "3. Press
-Ctrl+Shift+P", "4. Expect said: Command palette", "5. Choose the menu item Close all windows". Tab goes to the detail
+F1", "4. Expect said: Command palette", "5. Choose the menu item Close all windows". Tab goes to the detail
 pane, where a step's parts are fields: what it does, its text, what happens when it fails, the message it reports.
 Later, Ctrl+R runs the workflow on a desktop of its own, so the run never takes the user's keyboard; each row then ends with
 "passed", "failed: <what happened>" or "skipped", and the report opens as a notice text. Ctrl+J opens the file in
@@ -90,7 +90,7 @@ keys in place of its words on a line:
 | --- | --- | --- |
 | `start` | `app`, `path` (optional), `arguments` (optional) | Start axDown on notes.md |
 | `launch`, `adopt`, `use` | `app`, `path`; none; `window` | Launch ..., Adopt the new window, Use window 2 |
-| `keys` | `keys` | Press Ctrl+Shift+P |
+| `keys` | `keys` | Press F1 |
 | `type` | `text` | Type hello |
 | `menu` | `name` | Choose the menu item Close all windows |
 | `do` | `command` | Do the command Find |

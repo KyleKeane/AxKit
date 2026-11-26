@@ -7,7 +7,7 @@ start down {temp}\notes.md
 expect focus notes.md
 # Check: Reloading with no theme file says how to make one
 menu Reload theme
-expect said ! No theme file: axKit menu, Theme, Edit theme file makes one
+expect said ! No theme file: Options, Theme, Edit theme file makes one
 # Goal: Make a theme file and open it
 menu Edit theme file
 adopt

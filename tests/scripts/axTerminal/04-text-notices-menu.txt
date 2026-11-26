@@ -10,7 +10,7 @@ start terminal {temp}\myproject
 expect said ♪ Ready
 
 # Check: Clearing the shell's screen keeps the lines before
-# Step 1: cls clears only the shell's screen: the lines before stay, the next output comes at the end. Ctrl+L empties
+# Step 1: cls clears only the shell's screen: the lines before stay, the next output comes at the end. Ctrl+Shift+Delete (Clear transcript, Ctrl+L until 2026-11-26) empties
 # the window, and the next command's block is the first.
 type echo before
 keys enter

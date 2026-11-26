@@ -116,7 +116,7 @@ A table is a row of cells separated by vertical bars, a row of dashes that sets 
 | Ctrl+S, Ctrl+Shift+S | Save, save as | Bundle, axDown |
 | F11 | Word wrap on or off | axDown |
 | Ctrl+Plus, Ctrl+Minus | Larger and smaller text | Bundle |
-| F1 | The keyboard shortcuts | Bundle |
+| F1 | The command palette, with the keys | Bundle |
 
 NVDA reads a table row as one line of text here, bars and all; Ctrl+T moves between tables. The Kind column says where each key is defined: bundle-wide keys are the same in every window of axKit,
 axDown's own keys are axDown's alone.

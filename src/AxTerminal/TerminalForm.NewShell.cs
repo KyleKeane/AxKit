@@ -273,7 +273,7 @@ internal sealed partial class TerminalForm
     protected override void StartInFolder(string folder) =>
         Relaunch($"New session: {ShellName} in {folder}", clearTranscript: true);
 
-    /// <summary>Session → Show current folder in → File Explorer (Ctrl+W): the shell's current directory, one of the system's own windows; "Folder missing" is the base's (AX-9.10).</summary>
+    /// <summary>Session → Show current folder in → File Explorer (no key; Ctrl+W until 2026-11-26): the shell's current directory, one of the system's own windows; "Folder missing" is the base's (AX-9.10).</summary>
     private void ShowInExplorer() => OpenInExplorer(CurrentDirectory);
 
 }

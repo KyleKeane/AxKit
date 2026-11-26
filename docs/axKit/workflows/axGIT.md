@@ -283,7 +283,7 @@ The focus moves to Diff of a.txt (Text): +first paragraph marker.
 
 ### Read the keyboard shortcuts and the user guide
 
-1. Press F1 (Keyboard shortcuts; Help menu).
+1. Choose Keyboard shortcuts in the Help menu.
 2. Press Escape.
 3. Choose User guide in the Help menu.
 4. Press Escape.

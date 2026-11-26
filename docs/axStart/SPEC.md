@@ -168,9 +168,10 @@ taskbar. It works entirely offline (bundle G6).
   Ctrl+O | Information F8. **Options (O):** Hotkey… | Text ▸ (Font… |
   Larger text | Smaller text | Windows text size) | General ▸ (Start with Windows ✓ | Say the first match while typing
   ✓) | Developer ▸ (Open settings file). **Window (W)**, **axKit (K)** (AX-9.1).
-  **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Windows resources ▸ (Keyboard shortcuts in Windows). Every
+  **Help (H):** Command palette… F1 | Keyboard shortcuts | User guide | ─ | Windows resources ▸ (Keyboard shortcuts in Windows). Every
   item has a mnemonic (AX-7.4).
-- AS-5.3 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, Ctrl+Plus, Ctrl+Minus, Ctrl+S ("Nothing to save here", the
+- AS-5.3 Keys (AX-8). Bundle-wide: F1 and Ctrl+Comma, the command palette with the keys (Ctrl+Shift+P until
+  2026-11-26), Ctrl+Plus, Ctrl+Minus, Ctrl+S ("Nothing to save here", the
   window base's answer in a window without a document, AX-8.2), Page Up and Page Down (in the field,
   AS-3.3), Alt+F4 (hides, AS-3.4). Window-specific (`AxStartKeys`): Up, Down, Ctrl+Home, Ctrl+End (in the field,
   AS-3.3), Enter,

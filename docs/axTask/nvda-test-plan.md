@@ -89,7 +89,8 @@ $11a. Heading sound (bundle AX-7.9; `tests/scripts/axTask/07-heading-sound.txt`)
 
 1. Ctrl+H: "Hide done tasks, checked"; the list's name says "1 done hidden".
 2. Shift+F10 in each pane: Context opens with the commands of the list, the item or the field the focus is on, and NVDA reads its first item. Ctrl+Period, then let go of both keys: the same menu, read the same way (bundle AX-8.15); in a text field of a notice, Ctrl+Period shows what Shift+F10 shows there.
-3. F1: the keys; Help, User guide: this guide. Alt+H, About, Version names axTask.
+3. F1: the command palette, with nothing typed the rules of the keys and the keys; Escape. Help, Keyboard shortcuts:
+   the keys as a text; Help, User guide: this guide. Alt+H, About, Version names axTask.
 4. Close and start again without a folder: the list you had.
 5. A damaged item (TK-4.6): put a file `Broken.json` holding `{ nope` into Home. Right on Home: "Home, 2 items, 1 not readable, ..."; the last row reads "Broken.json, not readable as an item, Enter opens it in axJSON". F2 and Delete: "Not readable as an item: Enter opens it in axJSON, Ctrl+E shows it in axFile". Enter: axJSON opens the file. Alt+0: "All tasks, ..., 1 not readable"; End: "1 item not readable, in Home".
 
@@ -294,7 +295,7 @@ The runner's script is `tests/scripts/axTask/20-selection.txt`.
 The runner's script is `tests/scripts/axTask/21-what-opens.txt`. The sounds are bell notes: three quick beeps running
 up, then the kind going down.
 
-1. F1: the mark and one low long tone, then NVDA reads the text. F7: the text is read again from its start.
+1. Help, Keyboard shortcuts: the mark and one low long tone, then NVDA reads the text. F7: the text is read again from its start.
    Escape.
 2. Ctrl+F: the mark and one long tone, higher than the text's, then NVDA reads the field. Escape. F2 on an item: the
    same sound, then "New name, edit". Escape.
@@ -305,7 +306,7 @@ up, then the kind going down.
    its line; then "Move Fix the tap, form" and nothing more. F7: the explanation. Escape.
 5. Listen across the four that they are told apart at once, that each is over before the words matter, and that none
    is mistaken for the heading sound, the edge, a question's sound or the sound of background work starting.
-6. Options, Text, Entry sounds: "Entry sounds, not checked"; F1, Ctrl+F, Ctrl+M and Tab between the panes are in
+6. Options, Text, Entry sounds: "Entry sounds, not checked"; Keyboard shortcuts, Ctrl+F, Ctrl+M and Tab between the panes are in
    silence, the form still saying its title and "form". Again: "on".
 7. A notice that opens by itself (an update offer, an error at start) still plays the notice sound and not one of
    these.

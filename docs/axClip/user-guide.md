@@ -39,9 +39,9 @@ Each menu with its commands and their keys, as the window lists them:
 - **Actions**: Clear history (Ctrl+Shift+Delete).
 - **Navigation**: Nothing to move to here yet.
 - **Context**: Copy without pasting (Shift+Enter); Paste (Enter); Read in full (F7); Remove (Delete).
-- **Options**: Hotkey; Keep history between runs; Pause recording (Ctrl+P); Developer (Open settings file); General (Say the first match while typing, Start with Windows); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
+- **Options**: Check for updates at start; Edit app keys file; Hotkey; Keep a log of events; Keep history between runs; Open the sounds folder; Pause recording (Ctrl+P); Developer (Open settings file); General (Say the first match while typing, Start with Windows); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size); Theme (Edit theme file, Reload theme, Theme on).
 - Keys without a menu item: Ctrl+Home (First match); Ctrl+End (Last match); Down (Next match); Page Down (Page down); Page Up (Page up); Up (Previous match).
-- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1, the command palette, lists every key and command. Options ends with the settings of all of axKit.
 <!-- end of the menus -->
 
 ## The hotkey

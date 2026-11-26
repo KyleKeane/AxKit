@@ -101,7 +101,7 @@ Starts with: Open axDown with the file image.png.
 
 ### Open a new empty window
 
-1. Press Ctrl+Shift+N (New window; Session menu).
+1. Choose New window in the Session menu.
 2. Go to the window that opened.
 3. Close the window.
 4. Go to the axDown window.
@@ -186,7 +186,7 @@ Starts with: Open axDown with the file a.md.
 ### Open the keyboard shortcuts
 
 1. Press Down, Right, Right.
-2. Press F1 (Keyboard shortcuts; Help menu).
+2. Choose Keyboard shortcuts in the Help menu.
 
 ### Move through the keyboard shortcuts by heading
 
@@ -237,37 +237,36 @@ Starts with: Open axDown with the file a.md.
 
 ### Turn the update check at start on or off
 
-1. Press Ctrl+Shift+P (Command palette; Help menu).
+1. Press F1 (Command palette; Help menu).
 2. Type "check for updates at start".
-    You hear: Check for updates at start, axKit, 1 of 1.
+    You hear: Check for updates at start, Options, 1 of 1.
 3. Press Enter.
     You hear: Check for updates at start, checked.
-4. Press Ctrl+Shift+P (Command palette; Help menu).
+4. Press F1 (Command palette; Help menu).
 5. Type "check for updates at start".
-    You hear: Check for updates at start, axKit, checked, 1 of 1.
+    You hear: Check for updates at start, Options, checked, 1 of 1.
 6. Press Enter.
     You hear: Check for updates at start, not checked.
 
 ### Move through the commands of the palette
 
-1. Press Ctrl+Shift+P (Command palette; Help menu).
+1. Press F1 (Command palette; Help menu).
 2. Press Down.
-    You hear something with "New window, Session, Ctrl+Shift+N, 2" in it.
-3. Press Down.
-    You hear something with "Open, Session, Ctrl+O, 3" in it.
-4. Press Up.
-    You hear something with "New window, Session, Ctrl+Shift+N, 2" in it.
+    You hear something with "A key alone moves and reads; with Shift, the other way, or select as you move., 2" in it.
+3. Press Up.
+    You hear something with "How the keys go, 1" in it.
 
 ### Run a command found by its name
 
-1. Type "wrap".
+1. Press Ctrl+A.
+2. Type "wrap".
     You hear: Word wrap, Options, Text, F11, checked, 1 of 1.
-2. Press Down.
+3. Press Down.
     You hear the sound Edge.
     You hear: Word wrap, Options, Text, F11, checked, 1 of 1.
-3. Press Enter.
+4. Press Enter.
     You hear: Word wrap, not checked.
-4. Press F11 (Word wrap; Options menu, Text).
+5. Press F11 (Word wrap; Options menu, Text).
     You hear: Word wrap, checked.
 
 ## Check for updates and remove axKit
@@ -408,7 +407,7 @@ Starts with: Open axDown with the file long.md.
 
 Starts with: Open axDown with the file sub\notes.md.
 
-1. Press Ctrl+W (File Explorer; Session menu, Show current file in).
+1. Choose File Explorer in the Session menu, Show current file in.
     You hear: File missing.
 
 ## Change the colours with the theme file
@@ -417,21 +416,21 @@ Starts with: Open axDown with the file notes.md.
 
 ### Make a theme file and open it
 
-1. Choose Edit theme file in the axKit menu, Theme.
+1. Choose Edit theme file in the Options menu, Theme.
 2. Go to the window that opened.
 3. Close the window.
 4. Go back to the first window.
 
 ### Reload the theme
 
-1. Choose Reload theme in the axKit menu, Theme.
+1. Choose Reload theme in the Options menu, Theme.
     You hear: Theme reloaded.
 
 ### Turn the theme off and on
 
-1. Choose Theme on in the axKit menu, Theme.
+1. Choose Theme on in the Options menu, Theme.
     You hear: Theme on, not checked.
-2. Choose Theme on in the axKit menu, Theme.
+2. Choose Theme on in the Options menu, Theme.
     You hear: Theme on, checked.
 
 ## Ask Claude about the window you are in
@@ -530,14 +529,14 @@ Starts with: Open axDown with the file one.md. Open axDown with the file two.md.
 
 ### Open a recent file from the palette
 
-1. Press Ctrl+Shift+P (Command palette; Help menu).
+1. Press F1 (Command palette; Help menu).
 2. Type "one.md".
     You hear: Open recent file.
 3. Press Enter.
 
 ### Find another open window from the palette
 
-1. Press Ctrl+Shift+P (Command palette; Help menu).
+1. Press F1 (Command palette; Help menu).
 2. Type "open windows".
     You hear something with "one.md, Window, Open windows" in it.
 3. Press Escape.
@@ -547,7 +546,7 @@ Starts with: Open axDown with the file one.md. Open axDown with the file two.md.
 1. Go back to the first window.
 2. Close the window.
 3. Go to the window that opened.
-4. Press Ctrl+Shift+P (Command palette; Help menu).
+4. Press F1 (Command palette; Help menu).
 5. Type "recently closed".
     You hear: 1. one.md.
     You hear: Window, Recently closed.
@@ -570,10 +569,10 @@ Starts with: Open axDown with the file a.md.
     You hear: F9: Say the status.
 2. Press F4 (Send a report; Help menu).
     You hear: F4: Send a report.
-3. Press F1 (Keyboard shortcuts; Help menu).
-    You hear: F1: Keyboard shortcuts.
-4. Press Ctrl+Shift+P (Command palette; Help menu).
-    You hear: Ctrl+Shift+P: Command palette.
+3. Press F1 (Command palette; Help menu).
+    You hear: F1: Command palette.
+4. Press Ctrl+Comma.
+    You hear: Ctrl+Comma: Command palette, as F1.
 5. Press F12 (Go to line; Navigation menu).
     You hear: F12: Go to line.
 6. Press Ctrl+H (Heading; Navigation menu, Next).
@@ -696,7 +695,7 @@ Starts with: Open axDown with the file doc.md.
 ### Put in a template of your own from the command palette, with the selected words carried into it
 
 1. Press Ctrl+Home, Down, Down, Shift+End.
-2. Press Ctrl+Shift+P (Command palette; Help menu).
+2. Press F1 (Command palette; Help menu).
 3. Type "meeting".
     You hear: Actions, Insert template.
 4. Press Enter.
@@ -709,12 +708,12 @@ Starts with: Open axDown with the file notes.md.
 
 ### Read the keyboard shortcuts
 
-1. Press F1 (Keyboard shortcuts; Help menu).
+1. Choose Keyboard shortcuts in the Help menu.
 2. Press Escape.
 
 ### Find a command in the command palette
 
-1. Press Ctrl+Shift+P (Command palette; Help menu).
+1. Press F1 (Command palette; Help menu).
 2. Type "save as".
     You hear: Save as.
 3. Press Escape.

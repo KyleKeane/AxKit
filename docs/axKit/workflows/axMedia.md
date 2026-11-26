@@ -202,7 +202,7 @@ Starts with: Open axMedia with the folder ch.
 
 ### Read the keyboard shortcuts and the user guide
 
-1. Press F1 (Keyboard shortcuts; Help menu).
+1. Choose Keyboard shortcuts in the Help menu.
 2. Press Escape.
 3. Choose User guide in the Help menu.
 4. Press Escape.
@@ -226,7 +226,7 @@ Starts with: Open axMedia. Close the window. Open axMedia with the folder ch.
 
 ### Remove a file found in the command palette
 
-1. Press Ctrl+Shift+P (Command palette; Help menu).
+1. Press F1 (Command palette; Help menu).
 2. Type "remove".
     You hear: Remove, Context, Delete.
 3. Press Enter.
@@ -238,7 +238,7 @@ Starts with: Open axMedia with the folder chapters.
 
 ### Add a recent folder to the queue from the palette
 
-1. Press Ctrl+Shift+P (Command palette; Help menu).
+1. Press F1 (Command palette; Help menu).
 2. Type "chapt".
     You hear something with "1. chapters" in it.
     You hear: Session, Open recent.

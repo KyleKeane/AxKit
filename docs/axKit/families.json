@@ -12,7 +12,7 @@
         { "id": "key", "title": "A key of the window", "what": "A key of one of the families of keys (docs/axKit/key-groups.md). It runs the command that holds it, or it is the control's own key, as the arrows are." },
         { "id": "typing", "title": "Typing", "what": "Characters typed into a field. Typing is no command: NVDA echoes it and axKit says nothing, except in a text's navigation mode, where a letter is a command or is refused." },
         { "id": "menu", "title": "A menu item", "what": "A command chosen from the menu bar or the Context menu." },
-        { "id": "palette", "title": "The command palette", "what": "Ctrl+Shift+P, words typed, a line chosen with Enter. It runs what the menu item runs, and says a check item's new state since no menu shows it." },
+        { "id": "palette", "title": "The command palette", "what": "F1 (or Ctrl+Comma), with nothing typed the keys and every command, words typed to find one, a line chosen with Enter. It runs what the menu item runs, and says a check item's new state since no menu shows it." },
         { "id": "hotkey", "title": "A key from anywhere in Windows", "what": "Ctrl+Shift with Space or a punctuation key, in any program: it brings up axStart, axClip or axHelp." }
       ]
     },
@@ -74,7 +74,7 @@
     { "id": "options", "menu": "Options", "learn": "Settings, each said with its new state: text, speech, sounds, announcements, what happens when something is done." },
     { "id": "window", "menu": "Window", "learn": "The other windows of axKit: a new window of any app, close all windows, say the status." },
     { "id": "axkit", "menu": "axKit", "learn": "The services of the whole bundle: the AI tools and what they may do, Claude for AI help, the theme." },
-    { "id": "help", "menu": "Help", "learn": "The keys (F1), the user guide, the command palette, sending a report (F4), about, diagnostics and the key test." },
+    { "id": "help", "menu": "Help", "learn": "The command palette with the keys (F1), the keyboard shortcuts as a text, the user guide, sending a report (F4), about, diagnostics and the key test." },
     { "id": "keys-alone", "learn": "Commands that are a key with no menu item, because their meaning depends on where the focus is: Tab between panes, Enter on a row, Right into a list, F3 for find next. An AI tool never runs these." },
     { "id": "control-keys", "learn": "Not commands at all: the keys a control handles itself, the arrows in a list or a text and typing in a field. The inventory does not hold them; the families of keys do." }
   ],
@@ -688,7 +688,7 @@
     { "family": "ctrl-shift-digit", "events": ["landed", "landed-on-heading", "nothing-found"] },
     { "family": "alt-digit", "events": ["landed"] },
     { "family": "ctrl-shift-letter", "events": ["done", "changed", "opened", "asked", "busy", "failed"] },
-    { "family": "f-keys", "events": ["said", "opened", "landed", "nothing-found", "done"], "note": "F1 and F4 open, F3 lands or says Not found, F5 refreshes, F6 lands in the other pane, F8 says the status." },
+    { "family": "f-keys", "events": ["said", "opened", "landed", "nothing-found", "done"], "note": "F1 and F4 open, F3 lands or says Not found, F5 refreshes, F6 lands in the other pane, F9 says the status." },
     { "family": "shift-f-keys", "events": ["opened", "landed", "nothing-found", "busy", "late-notice"] },
     { "family": "ctrl-f-keys", "events": ["opened"], "note": "The app's new window opens with its own sound; the window the key was pressed in says nothing." },
     { "family": "ctrl-shift-f-keys", "events": ["opened"], "note": "As Ctrl with a function key, for an access layer." },

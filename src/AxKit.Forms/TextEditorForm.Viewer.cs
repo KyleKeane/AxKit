@@ -118,7 +118,7 @@ public sealed partial class TextEditorForm
         WindowMenu.Activate(Handle);
     }
 
-    /// <summary>File → New window (the viewer's Ctrl+N, AP-3.2; the editors' Ctrl+Shift+N, AD-4.1): another window of the app, empty, through the bundle's starter (AX-9); <c>--new</c> keeps it from handing over to this one.</summary>
+    /// <summary>File → New window (the viewer's Ctrl+N, AP-3.2; the editors' Session, New window without a key since 2026-11-26, AD-4.1): another window of the app, empty, through the bundle's starter (AX-9); <c>--new</c> keeps it from handing over to this one.</summary>
     private void NewWindow()
     {
         IReadOnlyList<string> arguments = _app.ReadOnly ? ["--new"] : [];

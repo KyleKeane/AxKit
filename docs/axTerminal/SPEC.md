@@ -311,7 +311,8 @@ gets its page shown in place of the transcript while it holds the screen, and no
 - AT-4.3 **System lines** (`System: …`, found with `s`): the shell started (`Shell started: PowerShell 7 in C:\path`;
   for the custom shell and the user's own, with the command line: `Shell started: Dev cmd, command line cmd.exe /k, in C:\path`, AT-1.6b),
   ended, restarted, a new shell, the update's steps (the window base, AX-6.5), a recording started or stopped.
-- AT-4.4 **Clear transcript** (Ctrl+L; Session → Clear transcript): empties the window, the recent commands
+- AT-4.4 **Clear transcript** (Ctrl+Shift+Delete, the key that clears a history in every window, bundle AX-8.18;
+  Ctrl+L until 2026-11-26; Session → Clear transcript): empties the window, the recent commands
   staying; the count of the blocks starts again; "Cleared". The lines off the screen go; the lines still on the
   screen are hidden until the shell writes over their rows, since the shell goes on drawing on that screen. The
   shell's own `cls` or `clear` clears only its screen: the window lets the rows go first (the lines keep their text,
@@ -359,8 +360,8 @@ gets its page shown in place of the transcript while it holds the screen, and no
 
 - AT-6.1 Menus, in the standard order of a first menu (AX-6): **Session (S):** New session… Ctrl+N | Open recent
   folder ▸ (ten, "1. name (path)", AX-9.5) | Open recent folder in new window ▸ (the same list, a new axTerminal window on the one chosen, this one left as it is) | Switch shell ▸ (PowerShell 7 | Windows PowerShell | Command Prompt |
-  Git Bash | the user's shells, "1. name (command line)", the shells alone, AT-1.6a) | Custom shell… | Add a shell… | Remove a shell ▸ | Install PowerShell 7… | Install Git, for Git Bash… (the installers when the shell is missing; under Switch shell until 2026-11-11, a menu three deep, AX-9.1) | ─ | Restart shell Ctrl+Shift+R | Clear transcript Ctrl+L | ─ | Say current folder F8 |
-  Show current folder in ▸ (File Explorer Ctrl+W | axClaude | axGIT | axFile), on the shell's current directory | ─ |
+  Git Bash | the user's shells, "1. name (command line)", the shells alone, AT-1.6a) | Custom shell… | Add a shell… | Remove a shell ▸ | Install PowerShell 7… | Install Git, for Git Bash… (the installers when the shell is missing; under Switch shell until 2026-11-11, a menu three deep, AX-9.1) | ─ | Restart shell Ctrl+Shift+R | Clear transcript Ctrl+Shift+Delete | ─ | Say current folder F8 |
+  Show current folder in ▸ (File Explorer | axClaude | axGIT | axFile), on the shell's current directory | ─ |
   Export transcript… Ctrl+S | Exit Alt+F4. **Actions (A)** ("Operations" in 5.7.0; the bundle's eight since 2026-11-11, AX-9.1):
   Interrupt Ctrl+I | Send Escape Shift+Escape | Send key ▸ (Up | Down | Ctrl+D (end of input)) | ─ | Recent
   commands… Alt+Down | Send without recording (no key) | ─ | What is running F7.
@@ -372,18 +373,20 @@ gets its page shown in place of the transcript while it holds the screen, and no
   Background music while a command runs Ctrl+M) | Speech ▸ (Speak output: none ○ | Speak output: all lines ○ |
   ─ | Say when a program asks ✓) | When a command is done ▸ (Flash the taskbar button ✓ | Louder alert when the window
   is in the background) | Text ▸ (Time stamps | Markers in the text ✓ | ─ | Font… | Larger text | Smaller text | Windows text size)
-  | Developer ▸ (Open settings file | Record raw stream). **Window (W)** (before Options), **axKit (K)**
-  (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User guide | ─ | Shell resources ▸ (PowerShell documentation |
+  | Developer ▸ (Open settings file | Record raw stream) | ─ | the settings of all of axKit (AX-9.1, 2026-11-26).
+  **Window (W)** (before Options), **axKit (K)**
+  (AX-9.1). **Help (H):** Command palette… F1 | Keyboard shortcuts | User guide | ─ | Shell resources ▸ (PowerShell documentation |
   Windows Terminal shell integration | Bash manual). Every item has a mnemonic (AX-7.4).
   The first menu is Session, as in axClaude, since what it holds is the shell in its folder, the thing the window
   is about; Shell takes E, S being Session's.
-- AT-6.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P (the command palette, AX-10), the control keys, Ctrl+F, F3,
+- AT-6.2 Keys (AX-8). Bundle-wide: F1 and Ctrl+Comma (the command palette with the keys, AX-10; Ctrl+Shift+P until
+  2026-11-26), the control keys, Ctrl+F, F3,
   Shift+F3, Ctrl+S, Ctrl+Plus, Ctrl+Minus, Page Up, Page Down, Ctrl+Up and Ctrl+Down with Shift, Ctrl+Space (edit mode or navigation mode in the command field, and in the terminal "Read only: there is no edit mode here", AX-8.13; in navigation mode Ctrl+Up and Ctrl+Down go by paragraph in the field, not through the history, and Enter sends nothing; in a full-screen program's screen view, keys to the program or reading the screen, AT-9.3), Alt+F4. Window-specific (`AxTerminalKeys`): Ctrl+N, Ctrl+Shift+R,
-  Ctrl+L, Ctrl+W, Alt+1, Alt+2, Alt+3, Ctrl+I, Shift+Escape, Alt+Down, F8, Ctrl+M, Ctrl+K, with the bundle's F7 as What is running; in
+  Ctrl+Shift+Delete (Ctrl+L and Ctrl+W until 2026-11-26), Alt+1, Alt+2, Alt+3, Ctrl+I, Shift+Escape, Alt+Down, F8, Ctrl+M, Ctrl+K, with the bundle's F7 as What is running; in
   the field Enter, Shift+Enter, Escape (Ctrl+Enter there is the bundle's main action, AX-8.10: it sends as Enter does); in the view the quick keys `i`, `o`, `h`, `1` to `6`, `p`, `s`,
   `k` with Shift, `m`, `l`, Enter, Escape, Backspace, and Ctrl+Alt with `i`, `o`, `h`, `p`, `s`, `k`. axClaude's `c`,
   `t`, `d`, `e`, `q` and `r` have no kind here and do nothing. The collision test covers the table and lists the keys
-  axClaude uses otherwise (Ctrl+N, Ctrl+L).
+  axClaude uses otherwise (Ctrl+N).
 - AT-6.3 The F1 text (`HelpText.Shortcuts`) names them all; `docs/axTerminal/user-guide.md` is embedded (Help → User
   guide); About is the bundle's (AX-9.9).
 

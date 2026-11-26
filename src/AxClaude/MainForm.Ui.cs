@@ -25,7 +25,7 @@ internal sealed partial class MainForm
         // The standard order of a File menu (bundle AX-6): the editors have Save and Save as here; axClaude has none.
         session.DropDownItems.Add(new ToolStripSeparator());
         // FR-8.2: Show current folder in ▸ File Explorer and the other apps' windows on the project folder.
-        var explorer = new Command("File &Explorer", AxClaudeKeys.ShowInExplorer, ShowInExplorer) { Mark = CommandMark.Open };
+        var explorer = new Command("File &Explorer", Keys.None, ShowInExplorer) { Mark = CommandMark.Open };
         session.DropDownItems.Add(CreateShowInMenu("Show current folder &in", Add(explorer), FolderOrSay, FolderMissing));
         session.DropDownItems.Add(new ToolStripSeparator());
         // Not a save: the conversation is Claude's own record, and this writes a text copy of it. At the bottom, where

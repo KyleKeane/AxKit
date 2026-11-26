@@ -117,12 +117,12 @@ the restart by the app itself (2.3.0).
   Left for later (its section 8): axDown's and axJSON's AI items with Offer a change (AH-3.2), a path in an answer
   opened with Enter (AH-3.3).
 - **A command palette in every window** (the user's ask, 2026-10-21; specified 2026-10-22 as bundle SPEC AX-10,
-  Ctrl+Shift+P at the user's choice, built on the branch `palette`; built and released, in every window): one key opens a field with a list under it;
+  Ctrl+Shift+P at the user's choice, built on the branch `palette`; built and released, in every window; on F1 since 2026-11-26, palette and help in one): one key opens a field with a list under it;
   typing narrows the list to the window's menu commands by name, each with its key named as a reminder, and in axFile
   to the folder's entries as well; Enter runs the command or opens the entry. It is the window base's, fed by each
   window's menus, with axStart's matching shared; next to the AI service above, the second thing every app gets for
   free.
-- **Themes** (asked 2026-11-09, specified the same night in `theme.md`; built, `AxKit.Forms/AxKitForm.Theme.cs`, the axKit menu's Theme): one JSON file,
+- **Themes** (asked 2026-11-09, specified the same night in `theme.md`; built, `AxKit.Forms/AxKitForm.Theme.cs`, Options, Theme since 2026-11-26, the axKit menu's before): one JSON file,
   `%APPDATA%\AxKit\theme.json`, with a colour or `system` for every class of object the windows draw (the window,
   the texts, the transcripts, the lists, the console field and its band, the notices, the status bar, the menus, the
   buttons, the title bar), edited in axJSON from Options, Theme in every window, applied by the window base and read

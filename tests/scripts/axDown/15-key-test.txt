@@ -25,9 +25,9 @@ expect said ! F9: Say the status
 keys f4
 expect said ! F4: Send a report
 keys f1
-expect said ! F1: Keyboard shortcuts
-keys ctrl+shift+p
-expect said ! Ctrl+Shift+P: Command palette
+expect said ! F1: Command palette
+keys ctrl+comma
+expect said ! Ctrl+Comma: Command palette, as F1
 expect state "notice":null
 # Window keys, from the window's command list.
 keys f12

@@ -215,11 +215,12 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
   line Ctrl+C; "Nothing selected" on an empty list. So a process command is never at hand among the services and the
   reverse (the user's ask, 2026-10-24; until 2026-11-11 three menus of which only the view's was enabled).
   **Options (O):** Filter… | Sort by ▸ (Memory ✓ | Processor | Name; the navigator's menu, bundle AX-8.17, with the orders of the processes; "Sort processes by" until 2026-11-22) | Text ▸ | General ▸ | Developer ▸. **Window (W)**,
-  **axKit (K)** (AX-9.1). **Help (H):** Keyboard shortcuts F1 | User guide | ─ | Windows resources ▸ (Task Manager |
+  **axKit (K)** (AX-9.1). **Help (H):** Command palette… F1 | Keyboard shortcuts | User guide | ─ | Windows resources ▸ (Task Manager |
   Services). Every item has a mnemonic (AX-7.4). Shift+F10, the Applications key and a right click in the list open
   Context, as Alt and C open it, so that NVDA reads its first item (the window base's `OpenBarMenu`, axFile's AF-D13;
   2026-10-24).
-- PR-6.2 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, Ctrl+F, F3, Shift+F3, Ctrl+S ("Nothing to save here. F5
+- PR-6.2 Keys (AX-8). Bundle-wide: F1 and Ctrl+Comma, the command palette with the keys (Ctrl+Shift+P until
+  2026-11-26), Ctrl+F, F3, Shift+F3, Ctrl+S ("Nothing to save here. F5
   refreshes, Delete ends a process"), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxProcessKeys`): Alt+1 (AX-8.14),
   Alt+2, Alt+3, F5, Ctrl+E, Ctrl+C, Ctrl+Delete (clear the filter), with the bundle's F7 as the summary, and the navigator's keys (`ItemKeys`, `SelectionKeys`), named in the
   table by what they do here: Right, Left, Backspace, Enter, Delete, Space and the other selection keys, Shift+F10

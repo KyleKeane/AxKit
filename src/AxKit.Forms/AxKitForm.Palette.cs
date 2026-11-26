@@ -10,13 +10,18 @@ public abstract partial class AxKitForm
     private IReadOnlyList<PaletteEntry> _paletteAll = [];
     private IReadOnlyList<PaletteEntry> _paletteShown = [];
 
+    /// <summary>The list with nothing typed: the F1 text's lines, then every command, then the keys with no menu item (AX-10.2).</summary>
+    private IReadOnlyList<PaletteEntry> _paletteHelp = [];
+
     /// <summary>The pause after typing in the palette before its first match is said (AX-10.4, axStart's 300 ms).</summary>
     private readonly System.Windows.Forms.Timer _paletteSpeak = new() { Interval = 300 };
 
     /// <summary>
-    /// The palette as a notice: one field, the matches under it, Enter runs the selected one with the focus back
-    /// where it was, Escape closes (AX-10.1, AX-10.4). The entries are read from the menu bar now, before the notice
-    /// disables it, so that what the palette offers is what the menus offer at this moment.
+    /// The palette as a notice, palette and help in one (F1 and Ctrl+Comma since 2026-11-26): one field, the list
+    /// under it, Enter runs the selected command with the focus back where it was, Escape closes (AX-10.1, AX-10.4).
+    /// With nothing typed the list is the F1 text's lines, the key rules first, then every command (AX-10.2). The
+    /// entries are read from the menu bar now, before the notice disables it, so that what the palette offers is what
+    /// the menus offer at this moment.
     /// </summary>
     protected void ShowCommandPalette()
     {
@@ -25,9 +30,11 @@ public abstract partial class AxKitForm
             return;
         }
 
-        // Commands only (AX-10.5, the maintainer's decision of 2026-11-23): no window adds entries of its own.
+        // Commands only (AX-10.5, the maintainer's decision of 2026-11-23): no window adds entries of its own; the
+        // lines of the keys' help are the bundle's, the same in every window.
         _paletteAll = [.. MenuLines(CommandOrigin.Palette)];
-        _paletteShown = _paletteAll;
+        _paletteHelp = Palette.WithNothingTyped(Shortcuts.ReplaceLineEndings("\n"), _paletteAll, KeyReference.AloneLines(CommandRows().Commands));
+        _paletteShown = _paletteHelp;
         ShowNotice(new Notice("Command palette", string.Empty,
         [
             new OverlayChoice("&Run", RunPaletteEntry, IsDefault: true, StaysOpen: true),
@@ -52,9 +59,10 @@ public abstract partial class AxKitForm
 
     private void FillPalette()
     {
-        _paletteShown = Palette.Find(_paletteAll, Overlay.InputText);
+        var typed = Overlay.InputText.Trim().Length > 0;
+        _paletteShown = typed ? Palette.Find(_paletteAll, Overlay.InputText) : _paletteHelp;
         var lines = _paletteShown.Count > 0 ? _paletteShown.Select(entry => entry.Text).ToList() : [Palette.NoMatch(Overlay.InputText)];
-        Overlay.SetMatches(lines, $"Commands, {_paletteShown.Count}");
+        Overlay.SetMatches(lines, $"{(typed ? "Commands" : "Keys and commands")}, {_paletteShown.Count}");
     }
 
     /// <summary>The first match and the count after the typing paused, or that nothing matches (AX-10.4).</summary>
@@ -108,6 +116,13 @@ public abstract partial class AxKitForm
         }
 
         var entry = _paletteShown[index];
+        if (!entry.IsCommand)
+        {
+            // A line of the keys' help runs nothing: it is said again and the palette stays (AX-10.4).
+            Announce(entry.Text, true);
+            return;
+        }
+
         CloseNotice(null);
         BeginInvoke(entry.Run);
     }

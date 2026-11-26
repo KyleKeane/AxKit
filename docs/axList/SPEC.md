@@ -169,10 +169,10 @@ headings: an item wants a space after its marker, a heading a space after its # 
   the view shown is enabled, the other two not, so that an item's command is never at hand among the lists (axProcess's
   way, 2026-10-24); Shift+F10, the Applications key and a right click in the list open it (the window base's
   `OpenBarMenu`). **View (V):** Lists Ctrl+1 | Items Ctrl+2 | Tasks Ctrl+3 | ─ | Hide done tasks Ctrl+Shift+D ✓.
-  **Options (O):** Text ▸ | General ▸ | Developer ▸. **Window (W)** (before Options), **axKit (K)** (AX-9.1). **Help (H):** Command palette… Ctrl+Shift+P | Keyboard shortcuts F1 | User
+  **Options (O):** Text ▸ | General ▸ | Developer ▸. **Window (W)** (before Options), **axKit (K)** (AX-9.1). **Help (H):** Command palette… F1 | Keyboard shortcuts | User
   guide | ─ | List resources ▸ (Markdown task lists). Every item has a mnemonic (AX-7.4). New list and New item are one
   key, Ctrl+N, by the view (the Lists view makes a list).
-- LI-6.5 Keys (AX-8). Bundle-wide: F1, Ctrl+Shift+P, Ctrl+F, F3, Shift+F3, Ctrl+S ("Nothing to save here: every
+- LI-6.5 Keys (AX-8). Bundle-wide: F1 and Ctrl+Comma, the command palette with the keys, Ctrl+F, F3, Shift+F3, Ctrl+S ("Nothing to save here: every
   change is written at once"), Ctrl+Plus, Ctrl+Minus, Alt+F4. Window-specific (`AxListKeys`): Ctrl+1, Ctrl+2, Ctrl+3,
   Enter, Space, Ctrl+N, Delete, Alt+Up, Alt+Down, Alt+Right, Alt+Left, Ctrl+T, Ctrl+Shift+D, Ctrl+Z, Ctrl+C, Ctrl+E,
   F5, Escape and Backspace, Tab and Shift+Tab, Shift+F10 and the Applications key. Alt+Up is axFile's Up a folder too,

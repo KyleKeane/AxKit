@@ -288,7 +288,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
 - AX-3.1 One version for the bundle, `<Version>` in `src/AxKit/AxKit.csproj`. A newer GitHub release is offered as
   axClaude does (`docs/axClaude/SPEC.md` FR-1.10, D25): asked once at startup when the setting is on, a notice with
   the release notes. The setting is the bundle's, one switch for every app (the maintainer's answer of 2026-11-24,
-  "One switch for all"): axKit menu, Check for updates at start, on by default, in `%APPDATA%\AxKit\bundle.json`
+  "One switch for all"): Options, Check for updates at start (the axKit menu's until 2026-11-26), on by default, in `%APPDATA%\AxKit\bundle.json`
   (`AxKit.Core/BundleSettings`); until then each app had its own in Options, General, and the first time the bundle's
   file is not there the switch starts off if any app had turned its own off (the file's second switch, Keep a log of
   events, is AX-9.1's). The notice has
@@ -593,7 +593,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   `CreateGeneralMenu`, `CreateDeveloperMenu`, `CreateHelpMenu`, each with the window's own items in their place;
   `Toggle` for a checked setting; `CreateExitItem` for the last item of the first menu), the
   window's pipe for the AI tools (`McpChannel`, MC-6.2), the window role for NVDA
-  (AX-7.1) and the common part of the key switch (the text size keys everywhere, F1, the palette, Ctrl+S). A
+  (AX-7.1) and the common part of the key switch (the text size keys everywhere, the palette on F1 and Ctrl+Comma, Ctrl+S). A
   window adds its controls (the `Overlay` first) and fills in the hooks: the F1 text, what to hide for a notice and
   what to show after, the control the focus falls back to after one (`FocusTarget`), whether the chime follows a
   setting, what gets the font, how the new version starts it again (`RestartArguments`, by default the app's verb and `PathInHand`; `UpdateRestartText`), what
@@ -621,7 +621,9 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   **window-specific**, meaning something in one window only. Each app's keyboard table in its spec marks every key
   with its kind.
 - AX-8.2 Bundle-wide keys are defined once, in `AxKit.Forms/BundleKeys`, a plain static class of constants, and every
-  window uses those constants. The list: F1 the keyboard shortcuts; Tab,
+  window uses those constants. The list: F1 the command palette with the keys, palette and help in one, and
+  Ctrl+Comma the same, a second key on trial (AX-10; F1 the keyboard shortcuts and Ctrl+Shift+P the palette until
+  2026-11-26); Tab,
   Shift+Tab, Ctrl+Tab, Ctrl+Shift+Tab and F6 move between the window's controls (and between a notice's text, field
   and buttons); Ctrl+F find, F3 and Shift+F3 next and previous, in a notice's text as well (AX-7.2); Ctrl+S save (what the window holds: the editors' file; axClaude and axTerminal, which have no
   document of their own, export their transcript to a text file with it, from the bottom of their first menu, so that
@@ -634,12 +636,13 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   starting at the first line or at a line with text directly after a blank line, and Ctrl+Shift+Up and
   Ctrl+Shift+Down the selection grown to there, as in Word (`EditKeys.Paragraph`; the EDIT control's own keys scroll a
   row and leave the caret where it is, as Notepad's do, which a screen reader, reading at the caret after the key,
-  reports as the same text again); Ctrl+Shift+P the command palette (AX-10); F4 a report to axKit's maintainer (docs/axKit/reports.md RP-2.1, 2026-11-07); F9 the status bar said by axKit itself, in a notice too (`BundleKeys.SayStatus`, AX-7.10, 2026-11-15; F8 until 2026-11-26); F7 read in full what you are on, in a notice its text (`BundleKeys.ReadInFull`, AX-8.18 rule 5, 2026-11-26); Ctrl+Space edit mode or navigation mode in an editable text of several lines (`BundleKeys.ToggleMode`, AX-8.13, 2026-11-15); Ctrl+Enter the main action of where the focus is (`BundleKeys.MainAction`, AX-8.10 rule 3, 2026-11-14); Shift+F1 a question to Claude about this window, Windows' own key for help about the thing in front (`docs/axKit/ai-help.md` AH-6, 2026-11-09), and Ctrl+Slash a further key of the same command (`BundleKeys.AskClaudeAlso`, AX-8.15, 2026-11-16); Ctrl+Period the context menu where the focus is, as Shift+F10 and the Applications key open it (`BundleKeys.ContextMenu`, AX-8.15, 2026-11-16); Alt+F4 exit; Alt and F10 the menu. Everything else is window-specific.
+  reports as the same text again); F4 a report to axKit's maintainer (docs/axKit/reports.md RP-2.1, 2026-11-07); F9 the status bar said by axKit itself, in a notice too (`BundleKeys.SayStatus`, AX-7.10, 2026-11-15; F8 until 2026-11-26); F7 read in full what you are on, in a notice its text (`BundleKeys.ReadInFull`, AX-8.18 rule 5, 2026-11-26); Ctrl+Space edit mode or navigation mode in an editable text of several lines (`BundleKeys.ToggleMode`, AX-8.13, 2026-11-15); Ctrl+Enter the main action of where the focus is (`BundleKeys.MainAction`, AX-8.10 rule 3, 2026-11-14); Shift+F1 a question to Claude about this window, Windows' own key for help about the thing in front (`docs/axKit/ai-help.md` AH-6, 2026-11-09), and Ctrl+Slash a further key of the same command (`BundleKeys.AskClaudeAlso`, AX-8.15, 2026-11-16); Ctrl+Period the context menu where the focus is, as Shift+F10 and the Applications key open it (`BundleKeys.ContextMenu`, AX-8.15, 2026-11-16); Alt+F4 exit; Alt and F10 the menu. Everything else is window-specific.
 - AX-8.3 Window-specific keys are defined once per window, in one table (`AxClaudeKeys`, `AxDownKeys`, `AxJSONKeys`, `AxGitKeys`, `AxTerminalKeys`, `AxFileKeys`, `AxMediaKeys`, `AxPreviewKeys`, `AxStartKeys`, `AxProcessKeys`, `AxTaskKeys`, `AxPassKeys`, `AxCalcKeys`, `AxClipKeys`), as constants
   with names that say what the key does. Changing a key is a change to that one line: the menu item and the key
   handler read the table, and the F1 text's list of every key is made from the window's commands (AX-7.2a). Single-letter quick keys
   (axClaude's `h`, `i`, `o`) are in the table too. The text editor shell's keys (`AxKit.Forms/EditorKeys`: Ctrl+N new,
-  Ctrl+O open, Ctrl+Shift+S save as, F12 go to line, F11 word wrap, Ctrl+W show in File Explorer) are
+  Ctrl+O open, Ctrl+Shift+S save as, F12 go to line, F11 word wrap; Ctrl+Shift+N new window and Ctrl+W show in File
+  Explorer until 2026-11-26, which keep their menu items without a key) are
   defined once for every editor window, and each editor app's table includes them, so that one table per window
   still holds every key and the collision test sees them.
 - AX-8.4 A unit test in `tests/AxKit.Tests` fails when a window-specific key equals a bundle-wide key, and lists the
@@ -840,10 +843,10 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   - **While it runs, every key press that reaches the window is said and not carried out**: no command runs, no
     character is typed, no selection or caret moves, Alt and F10 open no menu, Alt+F4 closes nothing. Each press is
     one interrupting announcement, once per press (a held key's repeats say nothing): the key as the bundle spells
-    it (`BundleKeys.Text` without the number row's full stop: "Ctrl+Shift+P", "F9", "Alt+Left"; "PageDown",
+    it (`BundleKeys.Text` without the number row's full stop: "Ctrl+Comma", "F9", "Alt+Left"; "PageDown",
     "CapsLock" and the bracket, quote and backslash keys by plain names), a colon, and what it does in this window
     where the focus is, the first of these that applies:
-    1. a bundle key the window base handles itself in every window (F1, Ctrl+Shift+P, F4, Shift+F1, F9, Ctrl+S, the
+    1. a bundle key the window base handles itself in every window (F1, Ctrl+Comma, F4, Shift+F1, F9, Ctrl+S, the
        text size keys): the name of the menu item that shows the key, "F9: Say the status", "F4: Send a report",
        "Ctrl+Plus: Text, Larger text"; and the two further keys of AX-8.15, which no menu shows, by the key each
        stands beside: "Ctrl+Slash: Ask Claude about this window, as Shift+F1", "Ctrl+Period: The Context menu, as
@@ -1116,7 +1119,8 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
      what you are on (axJSON's values, axMedia's speed, axTerminal's recent commands on Alt+Down).
   5. A function key alone: say or show. Shift with it: the reverse or another form. Five of them mean the same in
      every window, in the maintainer's order of 2026-11-26 ("f7 can be the announce, f8 can be read with details,
-     and f9 can be status"): **F7** reads in full what you are on, a bundle key (`BundleKeys.ReadInFull`: in a
+     and f9 can be status"), with F1 before them: **F1** shows the command palette with the keys, palette and help
+     in one (AX-10; Ctrl+Comma the same, a second key on trial; Ctrl+Shift+P until then); **F7** reads in full what you are on, a bundle key (`BundleKeys.ReadInFull`: in a
      notice or a form its text, AX-7.11; in a window its own reading, which it registers as a command on the key,
      the edge sound where it has none; Ctrl+Q until then); **F8** reads with details, a key of each window
      (Information in axFile, axStart and axMedia, the favorite's folder, axCalc's other bases, axClaude's background
@@ -1137,7 +1141,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
      `%APPDATA%\AxKit`, beside the theme file, since it is a setting and deleting it gives back the defaults,
      AX-5.11), a JSON object of an app's name and its key in the words the menus show, `"axFile": "Ctrl+F11"`, or
      `"none"`, which takes the app's key away; an app the file leaves out keeps its default, and an `about` member
-     holds the file's one sentence of explanation, since JSON has no comments. axKit, Edit app keys file (AX-9.1)
+     holds the file's one sentence of explanation, since JSON has no comments. Options, Edit app keys file (AX-9.1)
      writes the file with every app's key as it holds when there is none, and opens it in axJSON. The file is read
      once as a process starts, before any window exists (`BundleKeys.LoadAppKeys`; each window is its own process,
      B-2), so a change holds in every window opened after it, and in a background app from its next start. The
@@ -1175,18 +1179,40 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   Faster and Slower Alt+Up and Alt+Down (Ctrl+Up and Ctrl+Down, which go between sections there now). What stays
   an exception, each with its reason, is `key-families.json`.
 
+  The consolidations of the same day (the maintainer: "i agree with all of your recommendations, please implement
+  them"): **Ctrl+N** makes a new one of what the window holds, a document in the editors, a session in axClaude and
+  axTerminal, a window in axFile, axMedia and axPreview (the editors' Ctrl+Shift+N New window gave way; Session,
+  New window stays there without a key, and axKit, Apps opens a new window of any app); **Ctrl+Shift+Delete** clears
+  a history, axCalc's and axClip's as before and axTerminal's transcript (Ctrl+L until then); **Ctrl+W** opens File
+  Explorer in no window (Show current folder in, File Explorer stays without a key, and axFile's Context menu keeps
+  Show in File Explorer, Ctrl+Shift+W until then), so Ctrl+W and Ctrl+Shift+W are free in every window; **Enter**
+  opens or confirms and **Ctrl+Enter** does the most frequent action, each window that differs a question for the
+  maintainer; one **Options** menu holds the window's settings and, at its end, those of all of axKit (AX-9.1).
+
 ### AX-9 The bundle's menus: Options, Window, axKit, Help
 
 - AX-9.1 Every window's menu bar is the app's own menus first, then four of the bundle's, in this order, the same in
   every window and each built once in the window base, so that no app has a copy (5.7.0, 2026-11-10, the user:
   "organize things ... into clear categories of user intent", "make sure these menus are inherited by all axKit
   apps", then "navigate then windows then options then axkit then help", and the same evening Options before Window: "the options are more about the app itself and the window starts to bridge into the axkit stuff"):
-  - **Options** (O), the app's own settings (AX-6.4), right after the app's own menus (Navigate the last of them where
-    the app has one): its own submenus, then Text, General and Developer.
+  - **Options** (O), the settings (AX-6.4), right after the app's own menus (Navigate the last of them where the app
+    has one): the app's own submenus, then Text, General and Developer; then, after a separator, **the settings of
+    all of axKit**, the same in every window and added by the base (`AxKitForm.AddBundleOptions`; the consolidations
+    of 2026-11-26, the maintainer's "one Options menu in every window", in the axKit menu until then): Theme ▸ (H;
+    `theme.md` TH-4), Open the sounds folder (O, AX-7.12), Edit app keys file… (K, AX-8.18 rule 6), and the bundle's
+    two switches, both in `%APPDATA%\AxKit\bundle.json` (`AxKit.Core/BundleSettings`): Check for updates at start (U,
+    AX-3.1; not in the Store's copy) and **Keep a log of events** (E; `events.md` section 9 point 5, the maintainer's
+    decision of 2026-11-25 for a switch "under Options"; off by default). While it is on, every event raised at the
+    door (`AxKit.Forms/EventDoor`), by its sound or by its words, is a line of `%LOCALAPPDATA%\AxKit\logs\events.log`:
+    its local time and its kind's id, "2026-11-25 14:03:05.123 refused", never a word of what was said or shown; one
+    kind once in one turn of the window's thread. Nothing is written while it is off; past 1 MB the file becomes
+    `events.old.log`, replacing the one before; it stays on the computer (`AxKit.Core/Events/EventLogger`). Turned
+    in one window, it holds in the others from their next activation; the item says "Keep a log of events,
+    checked" or "not checked". A new bundle-wide setting joins this section, never an app's own part of Options.
   - **Window** (W; `AxKit.Forms/WindowMenu`, `CreateWindowMenu`), after Options: Open windows ▸ (O),
     Recently closed ▸ (R) and Close all windows (C); then, after a separator, Say the status (S, F9, AX-7.10), the
     one item about this window alone.
-  - **axKit** (K since 2026-11-11, A before; `AxKitForm.CreateAxKitMenu`): what is the bundle's rather than the app's, each a submenu: Apps ▸ (A) and Access layers ▸ (L), the bundle's apps
+  - **axKit** (K since 2026-11-11, A before; `AxKitForm.CreateAxKitMenu`): what is the bundle's rather than the app's and is no setting, each a submenu: Apps ▸ (A) and Access layers ▸ (L), the bundle's apps
     (AX-9.2; in the Window menu until 2026-11-23, the maintainer: "you should move the apps and access layets into
     the axkit menu rather than the window menu"), then after a separator Claude ▸ (C;
     `CreateClaudeMenu`, `ai-help.md` AH-1.1: Use Claude in axKit, the switch; Ask about this window…, Shift+F1; Folders
@@ -1194,21 +1220,14 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     2026-11-11, `axkit_window_run`, a window's command run by its name, said in the window, an act one asked first,
     never in a window in front the user is typing in, and an item added to axTask's lists, MC-8; turned off with the access and by Forget AI tools; a run may move
     the caret or the focus as the command's key would, the one exception to AX-7's caret rule, `mcp.md` MC-7.8, MC-D8),
-    Add axKit to Claude Code, Forget AI tools, Read the log) and Theme ▸ (T; `theme.md` TH-4,
-    Options, Text, Theme until 5.7.0), Open the sounds folder (S, AX-7.12), Edit app keys file… (K, AX-8.18 rule 6,
-    2026-11-25), and after a separator the bundle's two
-    switches, both in `%APPDATA%\AxKit\bundle.json` (`AxKit.Core/BundleSettings`): Check for updates at start (U,
-    AX-3.1; not in the Store's copy) and **Keep a log of events** (E; `events.md` section 9 point 5, the maintainer's
-    decision of 2026-11-25 for a switch "under Options", placed here by this rule since it is the bundle's; off by
-    default). While it is on, every event raised at the door (`AxKit.Forms/EventDoor`), by its sound or by its words,
-    is a line of `%LOCALAPPDATA%\AxKit\logs\events.log`: its local time and its kind's id, "2026-11-25 14:03:05.123
-    refused", never a word of what was said or shown; one kind once in one turn of the window's thread. Nothing is
-    written while it is off; past 1 MB the file becomes `events.old.log`, replacing the one before; it stays on the
-    computer (`AxKit.Core/Events/EventLogger`). Turned in one window, it holds in the others from their next
-    activation; the item says "Keep a log of events, checked" or "not checked". A new bundle-wide setting or action
-    joins here, never an app's Options.
+    Add axKit to Claude Code, Forget AI tools, Read the log). The two services keep their switches with their
+    commands, one subject each. What stood here until 2026-11-26 and is a setting moved to the end of Options: Theme
+    ▸ (Options, Text, Theme until 5.7.0), Open the sounds folder, Edit app keys file…, Check for updates at start and
+    Keep a log of events. A new bundle-wide action that is no setting joins here; a setting joins Options' section
+    for all of axKit; neither ever joins an app's own menus.
   - **Help** (H; `AxKitForm.CreateHelpMenu`, which the window calls with its guide and pages): Command palette… (P,
-    Ctrl+Shift+P, AX-10), Keyboard shortcuts (K, F1), User guide (G), the app's resources ▸; Send a report… (S, F4),
+    F1, AX-10; Ctrl+Shift+P until 2026-11-26), Keyboard shortcuts (K, the F1 text as a text of its own, with its
+    heading keys and find; F1 until 2026-11-26, no key since), User guide (G), the app's resources ▸; Send a report… (S, F4),
     Your reports (Y, docs/axKit/reports.md RP-2.2) and Diagnostics ▸ (D; `CreateDiagnosticsMenu`, 2026-11-15, the
     user's submenu: what finds out why something does not work, the same two items in every window: Test a key, T,
     AX-8.12, and Copy diagnostics, C, which was Options, Developer, Copy diagnostics until then; Developer keeps Open
@@ -1350,7 +1369,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   the zip's guide, embedded by `AxKit.Core`: install, start, update, remove; its headings take the window's heading
   keys, AX-7.2), and **axKit on GitHub** (H; the repository page, `UpdateCheck.RepositoryPage`, in the browser).
 - AX-9.10 **Show current folder in ▸** (2026-10-24, one builder, `AxKitForm.CreateShowInMenu`): the window's File
-  Explorer item (Ctrl+W), then the apps that work in a folder (`App.ShowIn`: axFile, then the access layers axClaude, axTerminal, axGIT, in
+  Explorer item (no key; Ctrl+W until 2026-11-26, the consolidations of that day), then the apps that work in a folder (`App.ShowIn`: axFile, then the access layers axClaude, axTerminal, axGIT, in
   that order) but the window's own, each a new window on the file or folder in hand: axClaude and axTerminal on a
   file's folder, axGIT on the repository that holds it, axFile on the folder or with the file selected
   (`Dispatch.PathFor`). The windows that hold a folder or a file have it: axClaude and axTerminal ("Show current folder
@@ -1385,7 +1404,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
 - AX-6.6a **The window's own keys work from an open menu** (the maintainer, 2026-11-23: "ctrl+function and
   ctrl+shift+function keys do not work when focus is on a menu in axkit ... any hotkey that does not need a selection
   or caret should work when focus is on the menu"). In menu mode the keys belong to the menu (AX-6.6), except the keys
-  of the whole window, which need no selection and no caret: F1, the command palette, F4, asking Claude, Ctrl+S and
+  of the whole window, which need no selection and no caret: the command palette (F1 and Ctrl+Comma), F4, asking Claude, Ctrl+S and
   the app keys (AX-8.18 rule 6). The menu closes first and the key runs once it has, so that nothing opens over an
   open menu (F1 did that on 2026-10-23 and left the bar unusable). F9 says the status and leaves the menu open; the
   text size keys worked there already. `AxKitForm.IsWindowKey`, `RunWindowKey`, `CloseMenus`. With a drop-down
@@ -1398,13 +1417,22 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
 ### AX-10 The command palette
 
 The user's ask of 2026-10-21, specified 2026-10-22: one key in every window finds any of the window's commands by
-name, so that a command is reached without knowing its menu or its key, and its key is learnt on the way.
+name, so that a command is reached without knowing its menu or its key, and its key is learnt on the way. Since
+2026-11-26 it is the keys' help as well, palette and help in one (the maintainer: "is there another key we can use
+for the command palette? that seems like something very important and i want it to be easy to use frequently").
 
-- AX-10.1 **Ctrl+Shift+P** (`BundleKeys.CommandPalette`, AX-8.2) in any window opens the palette as a notice of the
-  window (AX-6.4, AX-7.2), titled "Command palette": one field named "Search commands" with the caret in it, and
-  under it a list of the matches named "Commands, n" that never takes the focus, axStart's shape (docs/axStart/SPEC.md
-  AS-3.1, AS-D2). Help → Command palette… (the first item of Help, AX-9.1) opens it too, so that it is found
-  from the menus. While another notice shows, or in menu mode (AX-6.6), the key does nothing.
+- AX-10.1 **F1** (`BundleKeys.CommandPalette`, AX-8.2) in any window opens the palette as a notice of the window
+  (AX-6.4, AX-7.2), titled "Command palette": one field named "Search commands" with the caret in it, and under it a
+  list that never takes the focus, axStart's shape (docs/axStart/SPEC.md AS-3.1, AS-D2), named "Keys and commands,
+  n" while the field is empty and "Commands, n" once something is typed. **Ctrl+Comma** (`CommandPaletteAlso`)
+  opens the same, a second key on trial (his word: "it cannot hurt to have both f1 with the palette and help, plus
+  ctrl+, as a second option that launches the same thing"; after his use of both, one stays or both do).
+  Ctrl+Shift+P, the palette's key until then, gave way; F1 showed the keyboard shortcuts' text until then, which is
+  Help → Keyboard shortcuts now, without a key (AX-7.2a), and stays the text that Ask about this window and AI
+  help's documentation read. Help → Command palette… (the first item of Help, AX-9.1) opens the palette too, so
+  that it is found from the menus. While another notice shows the key does nothing; from an open menu it closes the
+  menu first (AX-6.6a). In axTerminal's screen view with the keys going to the program, F1 still reaches the
+  window, Ctrl+Comma goes to the program.
 - AX-10.2 **The entries** are the window's menu bar as it stands when the palette opens, the Window, axKit and Help menus
   included: every enabled item that does something when chosen, in menu order. An entry reads its name, then its menu
   path, then its key when it has one, then "checked" for a checked item: "Save as, File, Ctrl+Shift+S", "Larger text,
@@ -1420,10 +1448,17 @@ name, so that a command is reached without knowing its menu or its key, and its 
   is marked where its refreshing is attached (`CommandPalette.RefreshedOnOpening`), and the palette runs the
   refresh before reading (until 2026-10-23 such an item read as it last stood). The palette reads
   the menus and keeps no list of its own: a command added to a menu is in the palette.
+  **With nothing typed** (2026-11-26) the list is first the window's F1 text, each line that holds a word a line of
+  the list, its indent and a heading's marks taken off: the rules of the keys (`BundleHelp.RulesSection`) first, then
+  the bundle's section and the app's own; then the line "Every command of this window, by menu: Enter runs the one
+  you are on" and every entry above, in menu order, in place of the text's generated "Every key of this window";
+  then the keys with no menu item as that section gives them (`KeyReference.AloneLines`). A line of the text runs
+  nothing (`PaletteEntry.IsCommand`); the entries run their commands (`Palette.WithNothingTyped`, tested).
 - AX-10.3 **Matching** is axStart's (AS-2.2), moved to `AxKit.Core` on this second use: the typed text, trimmed, case
   and accents ignored, against the entry's whole line; an entry matches when its line holds every typed word (`text
   larger` finds "Larger text, Options, Text"). The order: a line that starts with the first word, then a line with a
-  word that starts with it, then any other match; within each, menu order. An empty field lists every entry.
+  word that starts with it, then any other match; within each, menu order; only the entries are matched, never the
+  lines of the text. An empty field lists the text and every entry (AX-10.2).
 - AX-10.4 **The keys in the field** are axStart's (AS-3.2, AS-3.3): typing refills the list and selects the first
   match, and 300 ms after the last change one notification says it and the count, "Save as, File, Ctrl+Shift+S, 1 of
   3", or "No commands match xyz"; Down and Up, Page Down and Page Up, Ctrl+Home and Ctrl+End move the selection and
@@ -1433,17 +1468,19 @@ name, so that a command is reached without knowing its menu or its key, and its 
   match …"; the field's editing keys stay its own. **Enter** closes the palette, gives the
   focus back to the control that had it, and then runs the selected entry as a click on its menu item would, so that
   the command acts where the user was; a checked setting run this way says its new state, "Word wrap, not checked",
-  since no menu shows it. Enter with nothing matching says "No commands match …" and the palette stays. **Escape**
+  since no menu shows it. Enter on a line of the text says the line again and the palette stays. Enter with nothing
+  matching says "No commands match …" and the palette stays. **Escape**
   closes the palette with the focus back and nothing run.
 - AX-10.5 **Commands only.** The palette holds the window's commands and nothing else, in every app (the maintainer's
   decision of 2026-11-23). Until then a window could add entries of its own after the commands, and axFile added the
   folder's entries, "notes.md, file", "docs, folder". Asked whether every navigator should offer its rows there, he
   answered "Remove it from axFile too": a row is found with the navigator's filter (AX-8.17) or by typing its first
   letters (AX-8.6), and the palette stays the one list of what a window can do. What a window offers by name
-  through the palette it offers as a command, in a menu: the templates of an editor are such commands.
+  through the palette it offers as a command, in a menu: the templates of an editor are such commands. The lines of
+  the F1 text with nothing typed (AX-10.2) are the bundle's help, the same in every window, and no window's entries.
 - AX-10.6 The palette is the window base's (`AxKitForm`, AX-6.5) with the matching in `AxKit.Core` (unit tested); no app
-  writes code for it. Every window's F1 text names Ctrl+Shift+P. axGIT's Push, which held
-  Ctrl+Shift+P, moved to Ctrl+Shift+H (docs/axGIT/SPEC.md AG-5.4).
+  writes code for it. Every window's F1 text names F1 and Ctrl+Comma (`BundleHelp.PaletteLine`). axGIT's Push, which
+  held Ctrl+Shift+P, moved to Ctrl+Shift+H (docs/axGIT/SPEC.md AG-5.4), and to Ctrl+P on 2026-11-26.
 
 ### AX-11 Access layers and consent
 
@@ -1731,7 +1768,7 @@ The design is `docs/axKit/reports.md` (RP-n, 2026-11-07); this section fixes wha
   command line carries none, the command's name before the entry's, nothing for the first entry, so that the dispatch
   holds whether or not Windows passes the parameters (AX-1.8; tested in `DispatchTests`).
 - AX-13.3 **No updater.** The Store installs, updates and uninstalls the package. The Store's copy makes no update check
-  at start, has no Check for updates at start setting (Options, General), downloads nothing and never shows Update to.
+  at start, has no Check for updates at start setting (Options), downloads nothing and never shows Update to.
   Check for updates (Help menu) still asks GitHub for the latest release, so that About, Version and the notice can say
   where this copy stands; the notice says that the Microsoft Store installs updates by itself, usually within a day of
   a release, and offers Open axKit in the Microsoft Store (`ms-windows-store://pdp/?productid=9PK01L2K5000`, where
@@ -1849,8 +1886,9 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   appear and a notice's keys, the same words in every window (`BundleHelp.NoticesSection`, 2026-11-09; five texts had a
   shorter section or none).
 - AX-7.2a Every key of the window is in its F1 text by construction (the maintainer, 2026-11-23: one source of truth
-  for the keys, nothing kept by hand): after the app's own text comes "## Every key of this window", made as F1 opens
-  from the window's command list as it stands (`AxKit.Core/KeyReference`, from `AxKitForm.CommandRows`): a heading per
+  for the keys, nothing kept by hand): after the app's own text comes "## Every key of this window", made as the text
+  opens (Help, Keyboard shortcuts; F1 until 2026-11-26, which is the command palette now, whose list with nothing
+  typed is the same text's lines with the commands in place of this section, AX-10.2) from the window's command list as it stands (`AxKit.Core/KeyReference`, from `AxKitForm.CommandRows`): a heading per
   top menu ("### File menu") with a line per command that has a key ("Ctrl+O: Open", a submenu after the label:
   "Ctrl+H: Heading (Next)"), then "### Keys with no menu item". Ask about this window hands Claude the same whole
   text. The app's own part says only what the generated list cannot (the maintainer, 2026-11-16, "Generate the
@@ -2009,7 +2047,7 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   a WAV file in `%APPDATA%\AxKit\sounds` named as one of axKit's sounds (`edge.wav`, `notice.wav`, `working-music.wav`;
   the 23 names are `AxKit.Core/Audio/CustomSounds.Names`) plays in place of the built-in one, from the next start of a
   window, since every sound is made once as the first one plays; taking the file away brings the built-in one back.
-  axKit menu, Open the sounds folder makes the folder when it is missing, writes `sound names.txt` there with every
+  Options, Open the sounds folder makes the folder when it is missing, writes `sound names.txt` there with every
   name and what it is, and shows the folder in axFile. A file of any common shape is taken (PCM of 8, 16, 24 or 32
   bits, or 32-bit float, mono or stereo, any rate) and made into the one shape the sound devices play, 16-bit mono at
   the bundle's rate; a file that is not one, or longer than 60 seconds, is passed over, the built-in sound plays, and

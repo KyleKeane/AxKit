@@ -110,7 +110,7 @@ expect said ! Text size
 
 # Goal: Hear the bases from the command palette
 # 6.4 The palette: "bases" says the bases of the last answer.
-keys ctrl+shift+p
+keys f1
 expect state "notice":"Command palette"
 type bases
 keys enter

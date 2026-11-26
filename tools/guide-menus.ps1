@@ -60,7 +60,7 @@ function Get-MenuLines($commands) {
 
     $keys = @($commands | Where-Object { $_.keyOnly -and $_.keyText } | ForEach-Object { "$($_.keyText) ($($_.label))" })
     if ($keys.Count -gt 0) { $lines.Add("- Keys without a menu item: $($keys -join '; ').") }
-    $lines.Add('- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.')
+    $lines.Add('- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1, the command palette, lists every key and command. Options ends with the settings of all of axKit.')
     return $lines
 }
 

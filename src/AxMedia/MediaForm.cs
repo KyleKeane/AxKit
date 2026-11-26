@@ -66,7 +66,7 @@ public sealed partial class MediaForm : ItemForm
         queue.DropDownItems.Add(new ToolStripSeparator());
         // AM-1.4: the ways out, on the file playing or the one under the selection; the File Explorer item is the
         // first of the submenu the base makes, so its command is made here and its key added to the list.
-        var explorer = new Command("File &Explorer", AxMediaKeys.ShowInExplorer, ShowInExplorer) { Mark = CommandMark.Open };
+        var explorer = new Command("File &Explorer", Keys.None, ShowInExplorer) { Mark = CommandMark.Open };
         queue.DropDownItems.Add(CreateShowInMenu("&Show current file in", Add(explorer), CurrentFile, FileMissing));
         queue.DropDownItems.Add(new ToolStripSeparator());
         queue.DropDownItems.Add(CreateExitItem());
@@ -524,7 +524,7 @@ public sealed partial class MediaForm : ItemForm
         return null;
     }
 
-    /// <summary>Queue → Show current file in → File Explorer (Ctrl+W): the file selected in File Explorer, one of the system's own windows.</summary>
+    /// <summary>Queue → Show current file in → File Explorer (no key; Ctrl+W until 2026-11-26): the file selected in File Explorer, one of the system's own windows.</summary>
     private void ShowInExplorer()
     {
         if (CurrentFile() is { } file)

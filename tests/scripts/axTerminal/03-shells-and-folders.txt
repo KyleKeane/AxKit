@@ -123,7 +123,7 @@ expect state \work Windows PowerShell","notice"
 expect state \\work\u003E"]
 do Say current folder
 expect said {temp}\work
-# Ctrl+W (File Explorer) and Alt+S, I, C (axClaude on the folder) stay manual: both start a program of their own
+# Show current folder in, File Explorer (Ctrl+W until 2026-11-26) and Alt+S, I, C (axClaude on the folder) stay manual: both start a program of their own
 # outside the test desktop's control, and the Alt keys need menu mode.
 type cd myproject
 keys enter

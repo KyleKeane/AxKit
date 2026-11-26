@@ -230,7 +230,7 @@ answer to a key.
 ### TP-7 Menus, keys, texts, settings, log
 
 - TP-7.1 Each window's menu bar is the bundle's (AX-9.1). The keys are one table (`AxTemplateKeys`) beside the
-  bundle's, the launcher's and the browser's in it; F1 gives the keys of the window it is pressed in; the user
+  bundle's, the launcher's and the browser's in it; F1, the command palette, gives the keys of the window it is pressed in; the user
   guide is `docs/axTemplate/user-guide.md`.
 - TP-7.2 Settings (`%APPDATA%\AxKit\axTemplate.json`): the hotkey, Start with Windows, Say the first match while
   typing (the hotkey windows' three), the names of the templates used last, and the browser's window place.

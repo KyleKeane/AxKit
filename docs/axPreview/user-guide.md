@@ -27,7 +27,7 @@ The text is the one control. Arrow keys, Home, End, Ctrl+Home, Ctrl+End, Ctrl+Le
 - **Ctrl+H** and **Ctrl+Shift+H** go to the next and the previous Markdown heading, spoken as "Install, heading level 2"; **Ctrl+1** to **Ctrl+6** to the next heading of that level only, Ctrl+Shift with the number back. **Ctrl+K** links, **Ctrl+L** lists, **Ctrl+I** list items, **Ctrl+Q** block quotes, **Ctrl+T** tables, each with Shift for the previous one; "No next heading" when there is none. They work in a plain text file too, where there are none, and in every notice text. Navigation, Next and Previous list them.
 - **F5** reads the file again, the caret kept on its line, "Reloaded". Coming back to the window after another program changed the file does the same by itself: "Reloaded, README.md changed on disk".
 - **Ctrl+E** opens the file in axDown, or in axJSON for a `.json` file, a new editor window; Session, Edit in axDown is the same item, named after the file's kind.
-- **Ctrl+W** shows the file in File Explorer; Session, Show current file in also offers axClaude and axTerminal (in its folder), axGIT (the repository that holds it) and axFile (the file selected in its folder).
+- **Session, Show current file in, File Explorer** shows the file in File Explorer; the same submenu also offers axClaude and axTerminal (in its folder), axGIT (the repository that holds it) and axFile (the file selected in its folder).
 - **Ctrl+O** opens another file with the Windows file picker; Session, Open recent lists the last ten, "1. README.md (C:\notes\README.md)".
 - **F11** turns word wrap off and on (Options, Text); the caret stays where it was. The setting is one for every editor of axKit, kept in the theme file.
 - **Ctrl+S** says "Nothing to save here": nothing is ever changed, so nothing is ever lost.
@@ -43,13 +43,13 @@ Under the text is the Details list: Tab or F6 moves there and back. It has every
 Each menu with its commands and their keys, as the window lists them:
 
 <!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
-- **Session**: Edit in axDown (Ctrl+E); Exit (Alt+F4); New window (Ctrl+N); Open (Ctrl+O); Read the clipboard's picture (Ctrl+Shift+V); Reload (F5); Show current file in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, axTerminal, access layer for your shell, File Explorer (Ctrl+W)).
+- **Session**: Edit in axDown (Ctrl+E); Exit (Alt+F4); New window (Ctrl+N); Open (Ctrl+O); Read the clipboard's picture (Ctrl+Shift+V); Reload (F5); Show current file in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, axTerminal, access layer for your shell, File Explorer).
 - **Actions**: No actions here yet.
 - **Navigation**: Find (Ctrl+F); Find first; Find next (F3); Find previous (Shift+F3); Go to line (F12); Next (Block quote (Ctrl+Q), Heading (Ctrl+H), Heading level 1 (Ctrl+1), Heading level 2 (Ctrl+2), Heading level 3 (Ctrl+3), Heading level 4 (Ctrl+4), Heading level 5 (Ctrl+5), Heading level 6 (Ctrl+6), Link (Ctrl+K), List (Ctrl+L), List item (Ctrl+I), Table (Ctrl+T)); Previous (Block quote (Ctrl+Shift+Q), Heading (Ctrl+Shift+H), Heading level 1 (Ctrl+Shift+1), Heading level 2 (Ctrl+Shift+2), Heading level 3 (Ctrl+Shift+3), Heading level 4 (Ctrl+Shift+4), Heading level 5 (Ctrl+Shift+5), Heading level 6 (Ctrl+Shift+6), Link (Ctrl+Shift+K), List (Ctrl+Shift+L), List item (Ctrl+Shift+I), Table (Ctrl+Shift+T)).
 - **Context**: Copy (Ctrl+C); Select all (Ctrl+A).
-- **Options**: Developer (Open settings file); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size, Word wrap (F11)).
+- **Options**: Check for updates at start; Edit app keys file; Keep a log of events; Open the sounds folder; Developer (Open settings file); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size, Word wrap (F11)); Theme (Edit theme file, Reload theme, Theme on).
 - Keys without a menu item: Ctrl+Tab (Between the text and the details); Ctrl+C (Copy the detail's value); Enter (Open the detail); L (Say the line).
-- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1, the command palette, lists every key and command. Options ends with the settings of all of axKit.
 <!-- end of the menus -->
 
 ## Settings

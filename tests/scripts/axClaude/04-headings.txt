@@ -338,7 +338,7 @@ keys ctrl+alt+l ctrl+alt+m
 expect quiet 1000
 # Check: Shifted letters at the end of the conversation keep their own jobs
 # Step 15: Ctrl+End, Shift+I: the last input; Shift+H: the last heading. Ctrl+Shift+Enter, Ctrl+Shift+R keep their jobs;
-# Ctrl+Shift+O does nothing; Ctrl+Shift+P opens the command palette.
+# Ctrl+Shift+O does nothing; F1 opens the command palette (Ctrl+Shift+P until 2026-11-26).
 keys ctrl+end
 keys shift+i
 expect said ! Input 3 heading level 1
@@ -354,7 +354,7 @@ expect state "notice":null
 said
 keys ctrl+shift+o
 expect quiet 1000
-keys ctrl+shift+p
+keys f1
 expect state "notice":"Command palette"
 keys escape
 expect state "notice":null

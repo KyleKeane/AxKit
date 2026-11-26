@@ -16,10 +16,10 @@ close
 use 1
 expect focus Expression
 
-# Check: F1 from an open menu shows the keys
+# Check: F1 from an open menu opens the command palette with the keys
 keys alt+s
 expect spoken Save history
 keys f1
-expect state "notice":"Keyboard shortcuts"
+expect state "notice":"Command palette"
 keys escape
 expect focus Expression

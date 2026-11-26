@@ -40,7 +40,7 @@ letter), and a `long.md` with headings and lines longer than the window.
    Ctrl+Home onto a first-line heading and the heading jumps (Navigation, Next, Heading): the sound first. A `#` line in a
    fenced code block: no sound. A long heading wrapped over two rows sounds once. Options, Text, Sound on headings:
    "Sound on headings, not checked", and Down onto a heading is silent; again: "Sound on headings, checked". In axPreview the same on
-   a Markdown file, and in any notice's text (F1) h and Down onto a heading line. By ear: is the sound over before NVDA
+   a Markdown file, and in any notice's text (Help, Keyboard shortcuts) h and Down onto a heading line. By ear: is the sound over before NVDA
    starts, and does it carry over speech at your rate?
 6. Undo and redo (AD-2.5). Type a word, wait two seconds, type another: Ctrl+Z removes the second word only, Ctrl+Z
    again the first, a third Ctrl+Z says "Nothing to undo"; Ctrl+Y twice puts both back, a third says "Nothing to
@@ -55,7 +55,7 @@ letter), and a `long.md` with headings and lines longer than the window.
 1. Open `bom.md`, change a letter, Ctrl+S: "Saved". A hex view shows the mark kept and LF endings only.
 2. Open `wide.txt`, edit, save: still UTF-16 LE with its mark. `ansi.txt`: the accented letter survives a save.
 3. Open `plain.txt`, Ctrl+S without a change: "Saved", the file unchanged byte for byte.
-4a. Ctrl+Shift+N: a second axDown window opens on Untitled, empty, and takes the focus; this window is unchanged. Close the new one.
+4a. Session, New window (no key; Ctrl+Shift+N until 2026-11-26): a second axDown window opens on Untitled, empty, and takes the focus; this window is unchanged. Close the new one.
 4. Ctrl+N with unsaved changes: the notice "Save changes to plain.txt?" with Save, Don't save, Cancel; Escape
    cancels and the text is still there; Enter saves and the document is empty, "Untitled".
 5. Ctrl+S on Untitled opens the Windows Save dialog; cancelling returns to the editor with the focus where it was.
@@ -75,7 +75,7 @@ letter), and a `long.md` with headings and lines longer than the window.
     (<path>)", newest first;
     choosing one opens it, after the unsaved-changes question when there are changes; before any file, "No recent files",
     which NVDA reads and which does nothing on Enter.
-11. Session, Show current file in, File Explorer (Ctrl+W): a File Explorer window opens with the file selected and NVDA
+11. Session, Show current file in, File Explorer (no key; Ctrl+W until 2026-11-26): a File Explorer window opens with the file selected and NVDA
     reads its title; Alt+F4 closes it and the focus is back in axDown. On Untitled: "No file yet".
 
 ## 4. Find and go to line
@@ -95,7 +95,7 @@ letter), and a `long.md` with headings and lines longer than the window.
 ## 6. Menus and help
 
 1. Alt opens the menu; every item is read with its shortcut; Escape closes without changing the text.
-2. F1 opens the shortcuts notice, its first line naming the text's own keys; Page Down and Page Up move a screen of
+2. Help, Keyboard shortcuts opens the shortcuts notice, its first line naming the text's own keys; Page Down and Page Up move a screen of
    its text, Ctrl+Down and Ctrl+Up a paragraph; h and Ctrl+H alike: "In every window of axKit, heading level 2" (the first section),
    Shift+H back; Ctrl+F, type `wrap`, Enter: the shortcuts text is back with "wrap" selected and NVDA reads the
    line, F3: the next line with it, Ctrl+F then Escape: the text is back where it was; Escape closes the notice and
@@ -103,23 +103,25 @@ letter), and a `long.md` with headings and lines longer than the window.
 3. Help, User guide shows this app's guide, and Ctrl+H, Ctrl+K, Ctrl+L and the other navigation keys move through it, spoken
    as in the editor, "No next table" when there is none; Help, About, Version names the version of axKit, the apps
    and the folders; About, Licence, Attribution and axKit guide open their notices, Escape closes each.
-4. Alt+W: the Window menu with Open windows, Recently closed, Close all windows, Say the status (F9: the status bar is said); Alt+K: the axKit menu with Claude, AI tools and Theme;
+4. Alt+W: the Window menu with Open windows, Recently closed, Close all windows, Say the status (F9: the status bar is said); Alt+K: the axKit menu with Apps, Access layers, Claude and AI tools; Alt+O: Options, ending after a separator with Theme, Open the sounds folder, Edit app keys file, Check for updates at start and Keep a log of events;
    Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key, Copy diagnostics), Check
    for updates and About (bundle AX-9.1); Help, About, axKit on GitHub: the browser opens the repository page. With a second
-   axDown open, Open windows reads "1. <name> - axDown, 1 of 1" and Enter brings that window to the front; Alt+W, N, D starts a new Untitled window. Alone, Open windows holds
+   axDown open, Open windows reads "1. <name> - axDown, 1 of 1" and Enter brings that window to the front; Alt+K, A, then axDown starts a new Untitled window. Alone, Open windows holds
    "No other open windows", which NVDA reads and which does nothing. Close a window that has `plain.txt` open: in another window Alt+W, R reads "1. plain.txt
    (<path>) - axDown" and Enter opens it in a new window; Session, Open on another file puts the one you left there too. Alt+W, C
    (Close all windows) with unsaved changes in one window: that window asks "Save changes?" and the others close.
-5. axKit menu, Check for updates at start: read as checked; Enter unchecks it. Help, Diagnostics, Copy diagnostics: "Copied diagnostics"; Options, Developer, Open settings file: a new axJSON
+5. Options, Check for updates at start: read as checked; Enter unchecks it. Help, Diagnostics, Copy diagnostics: "Copied diagnostics"; Options, Developer, Open settings file: a new axJSON
    window on `axDown.json`. Help, Markdown resources, Markdown basics: the browser opens commonmark.org; GitHub
    Flavored Markdown opens its page.
-6. The command palette (bundle AX-10), with the caret in the middle of a line. Ctrl+Shift+P: "Command palette",
-   the field "Search commands"; Down: "Undo, Actions, Ctrl+Z, 2 of …" or the like, each Down the next command with its
-   menu and key, Up back; Ctrl+Home at the first match plays the low note and says the first match again. Type `wrap`: after a
+6. The command palette (bundle AX-10), with the caret in the middle of a line. F1: "Command palette",
+   the field "Search commands"; with nothing typed, Down: "A key alone moves and reads…, 2 of …", the rules of the
+   keys, then the window's keys line by line, then "Every command of this window, by menu" and each command with its
+   menu and key; Enter on a line of the rules says it again and the palette stays; Up back; Ctrl+Home at the first
+   line plays the low note and says it again. Escape, Ctrl+Comma: the same palette. Type `wrap`: after a
    moment "Word wrap, …, 1 of 1"; Down: the low note, then "Word wrap, …, 1 of 1" again; Enter: the palette closes, NVDA is back in the editor at the same place, and
-   "Word wrap, checked" (or "not checked") is said; Options shows the item changed. Ctrl+Shift+P, type `xyz`:
+   "Word wrap, checked" (or "not checked") is said; Options shows the item changed. F1, type `xyz`:
    "No commands match xyz"; Enter says it again and the palette stays; Escape: back in the editor, nothing run.
-   Ctrl+Shift+P, `save as`, Enter: the Save as picker opens. Alt+H, P (Help, Command palette, the menu's first item) opens it too. Recent files and the
+   F1, `save as`, Enter: the Save as picker opens. Alt+H, P (Help, Command palette, the menu's first item) opens it too. Recent files and the
    Window menu's lists are not in it; Alt+K, Apps, axDown is ("axDown, axKit, Apps").
 7. The key test (bundle AX-8.12; script `15-key-test`), with the caret in the middle of a line. Alt+H, D, T (Help,
    Diagnostics, Test a key): "Key test. Press any key to hear its name and what it does here. Press Escape to end."
@@ -230,8 +232,8 @@ On a copy of `manual_tests/axDown/_main.md`, or any Markdown file.
    `# Meeting {caret}` and a second line `Present: {selection}`, and check axDown. Back in axDown, select a name,
    Alt+A, T: the menu ends with "1. Meeting"; Enter: "Meeting inserted", the caret after "# Meeting ", the name
    after "Present: ". A template checked for axJSON alone is not in axDown's menu.
-5. Ctrl+Shift+P, `insert template`: the first match "Link, Actions, Insert template, 1 of 4"; Down reads the others.
-   Ctrl+Shift+P, `meeting`, Enter: "Meeting inserted".
+5. F1, `insert template`: the first match "Link, Actions, Insert template, 1 of 4"; Down reads the others.
+   F1, `meeting`, Enter: "Meeting inserted".
 6. Ctrl+Z after any of them: "Undone", the whole template gone in one step.
 7. Ctrl+Space, then Alt+A, T, L: the edge sound and "Navigation mode: press Ctrl+Space to edit".
 8. With no file in the folder, the menu's last item reads "No templates of your own yet" and does nothing.

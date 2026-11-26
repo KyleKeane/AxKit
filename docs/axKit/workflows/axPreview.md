@@ -81,7 +81,7 @@ command's in this version of axKit.
 
 ### Read the keyboard shortcuts
 
-1. Press F1 (Keyboard shortcuts; Help menu).
+1. Choose Keyboard shortcuts in the Help menu.
 2. Press Ctrl+H (Heading; Navigation menu, Next).
     You hear: heading level 2.
 3. Press Escape.
@@ -193,7 +193,7 @@ Starts with: Open axPreview with the file README.md.
 
 ### Select all the text from the command palette
 
-1. Press Ctrl+Shift+P (Command palette; Help menu).
+1. Press F1 (Command palette; Help menu).
 2. Type "select all, context".
     You hear: Select all, Context, Ctrl+A.
 3. Press Enter.
@@ -205,7 +205,7 @@ Starts with: Open axPreview with the file orchard.md. Open axPreview again with 
 
 ### Open a recent file from the palette
 
-1. Press Ctrl+Shift+P (Command palette; Help menu).
+1. Press F1 (Command palette; Help menu).
 2. Type "orch".
     You hear something with "2. orchard.md" in it.
     You hear: Session, Open recent.

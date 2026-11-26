@@ -68,9 +68,9 @@ script `tests/scripts/axMCP/01-start.txt` runs sections 1 to 4 and 6 against a f
 1. With a server running, Alt+F4: the window closes without a question, and the server's process is gone (axProcess,
    or Task Manager).
 
-## 7. F1 and notices
+## 7. The keys and notices
 
-1. F1: "Keyboard shortcuts", the text's first line; h through the headings: In every window of axKit, The navigator,
+1. Help, Keyboard shortcuts: "Keyboard shortcuts", the text's first line; h through the headings: In every window of axKit, The navigator,
    The detail pane, Everywhere in axMCP, Notices. Escape back where the focus was.
 2. Every notice of this plan: Tab reaches its buttons, Escape closes it, the focus goes back to the control that
    had it.

@@ -3,9 +3,9 @@
 Written by `tools/key-map.ps1` from `docs/axKit/window-commands.json`, `src/AxKit.Forms/BundleKeys.cs` and
 `docs/axKit/key-families.json`; never edit it by hand. Every key of every window and what it does in each app.
 
-The inventory holds 1039 commands with a key in 18 apps, on 149 different keys, counting the
-second keys some commands answer. 76 keys have one meaning wherever they are; 73 have several.
-24 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
+The inventory holds 1010 commands with a key in 18 apps, on 146 different keys, counting the
+second keys some commands answer. 73 keys have one meaning wherever they are; 73 have several.
+23 of them are bundle keys, the ones of `BundleKeys`, which are the same in every window; the others
 are window keys, each in its window's own table.
 
 A key has one meaning when every command on it carries the same name in every app. The inventory lists the
@@ -20,7 +20,7 @@ In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 - Page Down. Bundle key, in axClip, axStart and axTemplate: Page down.
 - Page Up. Bundle key, in axClip, axStart and axTemplate: Page up.
 - Up arrow. Window key, in axClip, axStart and axTemplate: Previous match.
-- F1. Bundle key, in every app: Keyboard shortcuts.
+- F1. Bundle key, in every app: Command palette.
 - Ctrl+F1. Window key, in every app: axStart.
 - Ctrl+Shift+F1. Window key, in every app: axTerminal, access layer for your shell.
 - Shift+F1. Bundle key, in every app: Ask about this window.
@@ -69,14 +69,11 @@ In this order: plain keys, F-keys, Ctrl, Ctrl+Shift, Alt, others.
 - Ctrl+Shift+H. Window key, in axDown and axPreview: Heading.
 - Ctrl+Shift+J. Window key, in axJSON alone: Object.
 - Ctrl+Shift+O. Window key, in axMedia alone: Add folder.
-- Ctrl+Shift+P. Bundle key, in every app: Command palette.
 - Ctrl+Shift+Q. Window key, in axDown and axPreview: Block quote.
 - Ctrl+Shift+T. Window key, in axDown and axPreview: Table.
 - Ctrl+Shift+U. Window key, in axGIT alone: Unstage.
 - Ctrl+Shift+V. Window key, in axPreview alone: Read the clipboard's picture.
-- Ctrl+Shift+W. Window key, in axFile alone: Show in File Explorer.
 - Ctrl+Shift+Z. Window key, in axDown and axJSON: Redo.
-- Ctrl+Shift+Delete. Window key, in axCalc and axClip: Clear history.
 - Ctrl+Shift+Down arrow. Bundle key, in axTask alone: Move down in the list.
 - Ctrl+Shift+End. Window key, in axTask alone: Move to the bottom of the list.
 - Ctrl+Shift+Home. Window key, in axTask alone: Move to the top of the list.
@@ -203,6 +200,17 @@ Bundle key, in axClaude, axFile, axGIT, axMedia, axTask, axTemplate and axTermin
 - axTerminal: Send the command.
 - axClaude: Send the message.
 
+### Escape
+
+Window key, in axAutomate, axCalc, axClip, axFile, axGIT, axHelp, axMCP, axMedia, axPass, axProcess, axStart, axTask and axTemplate. 6 meanings.
+
+- axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Deselect all.
+- axAutomate, axMCP, axPass, axTask and axTemplate: To the navigator.
+- axClip, axHelp, axStart and axTemplate: Hide.
+- axFile and axGIT: To the list.
+- axTask: Back from the search.
+- axCalc: Back: in the field, nothing to go back to.
+
 ### F7
 
 Bundle key, in axAutomate, axCalc, axClaude, axClip, axMCP, axMedia, axPass, axProcess, axTask, axTemplate and axTerminal. 6 meanings.
@@ -291,26 +299,6 @@ Window key, in axAutomate, axCalc, axClaude, axFile, axStart and axTerminal. 6 m
 - axAutomate: The last run's report.
 - axClaude: What runs in the background.
 
-### Escape
-
-Window key, in axAutomate, axClip, axFile, axGIT, axHelp, axMCP, axMedia, axPass, axProcess, axStart, axTask and axTemplate. 5 meanings.
-
-- axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Deselect all.
-- axAutomate, axMCP, axPass, axTask and axTemplate: To the navigator.
-- axClip, axHelp, axStart and axTemplate: Hide.
-- axFile and axGIT: To the list.
-- axTask: Back from the search.
-
-### Ctrl+L
-
-Window key, in axDown, axGIT, axJSON, axPass, axPreview and axTerminal. 5 meanings.
-
-- axDown and axPreview: List.
-- axJSON: Array.
-- axTerminal: Clear transcript.
-- axPass: Lock.
-- axGIT: Pull.
-
 ### Ctrl+E
 
 Window key, in axGIT, axJSON, axPreview, axProcess and axTask. 5 meanings.
@@ -339,14 +327,14 @@ Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axT
 - axGIT: Select all files.
 - axMCP: Select all of your servers.
 
-### Ctrl+Shift+N
+### Ctrl+L
 
-Window key, in axAutomate, axDown, axFile, axJSON, axMCP, axPass and axTask. 4 meanings.
+Window key, in axDown, axGIT, axJSON, axPass and axPreview. 4 meanings.
 
-- axAutomate, axMCP, axPass and axTask: New list.
-- axDown and axJSON: New window.
-- axFile: New folder.
-- axPass: New group.
+- axDown and axPreview: List.
+- axJSON: Array.
+- axPass: Lock.
+- axGIT: Pull.
 
 ### Alt+1
 
@@ -463,6 +451,14 @@ Window key, in axClaude, axDown, axJSON, axPreview and axTerminal. 3 meanings.
 - axClaude and axTerminal: Interrupt.
 - axDown and axPreview: List item.
 - axJSON: Item.
+
+### Ctrl+Shift+N
+
+Window key, in axAutomate, axFile, axMCP, axPass and axTask. 3 meanings.
+
+- axAutomate, axMCP, axPass and axTask: New list.
+- axFile: New folder.
+- axPass: New group.
 
 ### Ctrl+1
 
@@ -604,13 +600,6 @@ Window key, in axAutomate, axFile, axGIT, axMCP, axMedia, axPass, axProcess, axT
 - axAutomate, axGIT, axMCP, axMedia, axPass, axProcess, axTask and axTemplate: Up a level.
 - axFile: Up one level.
 
-### Ctrl+W
-
-Window key, in axClaude, axDown, axFile, axGIT, axJSON, axMedia, axPreview and axTerminal. 2 meanings.
-
-- axClaude, axDown, axFile, axGIT, axJSON, axMedia, axPreview and axTerminal: File Explorer.
-- axFile: Show the folder in File Explorer.
-
 ### Ctrl+4
 
 Window key, in axDown, axPreview and axTask. 2 meanings.
@@ -709,6 +698,13 @@ Window key, in axDown, axGIT and axJSON. 2 meanings.
 - axDown and axJSON: Save as.
 - axGIT: Stage.
 
+### Ctrl+Shift+Delete
+
+Window key, in axCalc, axClip and axTerminal. 2 meanings.
+
+- axCalc and axClip: Clear history.
+- axTerminal: Clear transcript.
+
 ### Ctrl+B
 
 Window key, in axDown and axTemplate. 2 meanings.
@@ -741,6 +737,7 @@ Window key, in axJSON and axMedia. 2 meanings.
 
 These are keys of `BundleKeys` that work inside a text or a control and are no command of a window's list.
 
+- Ctrl+Comma: `BundleKeys.CommandPaletteAlso`.
 - Ctrl+Space: `BundleKeys.ToggleMode`.
 
 ## Key families, proposed
@@ -763,7 +760,7 @@ for the maintainer to settle: the first keys moved for them on 2026-11-16 (the p
 
 ### Ctrl+letter: act on what is selected
 
-24 keys of the inventory. 13 misfits.
+23 keys of the inventory. 13 misfits.
 
 Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, Ctrl+V, Ctrl+X, Ctrl+Y and Ctrl+Z.
 
@@ -795,10 +792,9 @@ Windows' own keys, not counted: Ctrl+A, Ctrl+C, Ctrl+F, Ctrl+N, Ctrl+O, Ctrl+S, 
 
 ### Ctrl+Shift+letter: the reverse or the wider form of the same letter with Ctrl
 
-20 keys of the inventory. 4 misfits.
+18 keys of the inventory. 3 misfits.
 
 - Ctrl+Shift+N, axFile: New folder. Its kind: makes a new thing; File Explorer's own key for it, and Ctrl+N there is New window.
-- Ctrl+Shift+P, every app: Command palette. Its kind: say or show; a bundle key, the command palette's key in Visual Studio Code.
 - Ctrl+Shift+R, axTerminal: Restart shell. Its kind: acts on the program; as in a web browser, Ctrl+Shift+R is the heavier reload.
 - Ctrl+Shift+R, axClaude: Force Claude to restart. Its kind: acts on the program; as in a web browser, Ctrl+Shift+R is the heavier reload, the same key as axTerminal's.
 

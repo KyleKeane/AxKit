@@ -158,9 +158,9 @@ refuse said tooled
 expect said Done
 menu Speak each tool call
 # Goal: Read the keyboard shortcuts
-# Step 5: F1, the shortcuts in the window's place: the text's first line names its own keys; h: "Anywhere, heading
+# Step 5: Help, Keyboard shortcuts (F1 until 2026-11-26), the shortcuts in the window's place: the text's first line names its own keys; h: "Anywhere, heading
 # level 2", h: "Message field, heading level 2", Shift+H back, 2: the next level-2 heading.
-keys f1
+do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 expect focus "name":"Keyboard shortcuts","role":"Text","value":"## How the keys go
 keys h
@@ -204,7 +204,7 @@ keys shift+2
 expect said ! Claude Code itself, heading level 2
 # Check: The shortcuts' Close button and Escape lead back to the message field
 # Tab: the Close button; Tab again: the text. NVDA+End reading the status bar is NVDA's (manual). Escape closes it and
-# the focus is back in the message field, where F1 was pressed.
+# the focus is back in the message field, where Keyboard shortcuts was run.
 keys tab
 expect focus Close
 keys tab
@@ -213,11 +213,11 @@ keys escape
 expect state "notice":null
 expect focus Message to Claude
 # Check: Closing the shortcuts returns to the same line of the conversation
-# F1 from the conversation, then close: the focus is back on the same line. The second line is the recording's system
+# Keyboard shortcuts from the conversation, then close: the focus is back on the same line. The second line is the recording's system
 # line (--record above); until Claude Code 2.1.3xx it was Claude's "[Screen Reader Mode" banner, no longer printed there.
 keys alt+2 ctrl+home down
 expect focus "value":"System: Recording to 
-keys f1
+do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 keys escape
 expect focus "value":"System: Recording to 

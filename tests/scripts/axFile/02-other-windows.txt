@@ -6,7 +6,7 @@
 # 2.2 from axDown is driven at the end (the runner takes over the axFile window axDown starts); from axJSON and
 # axPreview it is the same shared item of the editor shell.
 # Manual (2.3): the same from axGIT, axTerminal and axMedia.
-# Manual (2.4): Enter on axTerminal starts a shell; Ctrl+W and Ctrl+Shift+W start File Explorer.
+# Manual (2.4): Enter on axTerminal starts a shell; Show current folder in, File Explorer and the Context menu's Show in File Explorer start File Explorer (no keys since 2026-11-26).
 # What can be checked from inside: the Folder menu's Show current folder in submenu holds its four items (2.4).
 file here\a.txt A file to stand on.
 start file {temp}\here
@@ -14,8 +14,8 @@ expect focus "value":"a.txt"
 # A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
 wait 500
 # Check: The menu to show the current folder in another app holds its items
-expect commands "File Explorer, Session, Show current folder in, Ctrl\u002BW","axTerminal, access layer for your shell, Session, Show current folder in","axGIT, access layer for Git, Session, Show current folder in","axClaude, access layer for Claude Code, Session, Show current folder in"
-expect commands "Show in File Explorer, Context, Ctrl\u002BShift\u002BW"
+expect commands "File Explorer, Session, Show current folder in","axTerminal, access layer for your shell, Session, Show current folder in","axGIT, access layer for Git, Session, Show current folder in","axClaude, access layer for Claude Code, Session, Show current folder in"
+expect commands "Show in File Explorer, Context"
 
 # Goal: Show the file of an axDown window in axFile
 # 2.2 axDown on b.txt: Session, Show current file in, axFile: a new axFile window on the folder, b.txt selected (not

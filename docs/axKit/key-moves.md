@@ -259,6 +259,10 @@ implement them".
 5. One Options menu in every window, with a section for all of axKit at its end, in place of the bundle's switches in
    the axKit menu (AX-9.1 changes).
 
+Built the same day, with the palette on F1 (SPEC AX-10, AX-8.18, AX-9.1): the editors' New window keeps its menu item
+without a key, axFile's Show in File Explorer (Ctrl+Shift+W) went with Ctrl+W, and the windows where Enter or
+Ctrl+Enter does something other than the pair are the maintainer's questions, listed in the builder's report.
+
 ## The small families
 
 ### Escape

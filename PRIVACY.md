@@ -20,7 +20,7 @@ when you send a report:
   `Accept: application/vnd.github+json`. It carries the version you have and, as every web request does, your network
   address; nothing else. GitHub's privacy statement applies to it:
   <https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement>. Turn it off in any window,
-  for every app at once: axKit menu, Check for updates at start. You can still check by hand (Help, Check for updates). A copy
+  for every app at once: Options, Check for updates at start. You can still check by hand (Help, Check for updates). A copy
   installed from the Microsoft Store makes no check at start and has no such setting; Check for updates by hand makes
   the same one request, and its notice opens axKit's page in the Store app, which is Microsoft's and runs under
   Microsoft's privacy statement, <https://privacy.microsoft.com/privacystatement>, as the Store's own updating of the
@@ -203,7 +203,7 @@ turning the access off ends access at the next call and turns Let AI tools run c
   the report form saved, so that only those are ever sent; a report's file name holds its title.
 - **Logs**: `%LOCALAPPDATA%\AxKit\logs`. They hold starts, errors and what an update did; never what you type, copy,
   read or say to Claude. Each rolls over at 1 MB.
-- **The log of events**, off unless you turn it on (axKit menu, Keep a log of events): `%LOCALAPPDATA%\AxKit\logs\events.log`,
+- **The log of events**, off unless you turn it on (Options, Keep a log of events): `%LOCALAPPDATA%\AxKit\logs\events.log`,
   one line for each thing that reached you (a refusal, a line arriving, a turn done), its time and its kind, never a
   word of what was said, typed, shown or read, and no file name. Nothing is written while it is off, and turning it off
   leaves what was written until you delete the file. It rolls over at 1 MB into `events.old.log`, which replaces the one

@@ -133,7 +133,7 @@ You hear: Claude asks.
 
 ### Read the keyboard shortcuts
 
-1. Press F1 (Keyboard shortcuts; Help menu).
+1. Choose Keyboard shortcuts in the Help menu.
 2. Press H.
     You hear: Anywhere, heading level 2.
 3. Press H.
@@ -752,7 +752,7 @@ Starts with: Open axClaude with the folder opts.
 
 ### Read the keyboard shortcuts
 
-1. Press F1 (Keyboard shortcuts; Help menu).
+1. Choose Keyboard shortcuts in the Help menu.
 2. Press H.
     You hear: Anywhere, heading level 2.
 3. Press H.
@@ -845,7 +845,7 @@ Starts with: Open axClaude with the folder upd.
 
 ### Turn off the update check at start
 
-1. Choose Check for updates at start in the axKit menu.
+1. Choose Check for updates at start in the Options menu.
 2. Close the window.
 3. Open axClaude with the folder upd.
     You hear: Ready.

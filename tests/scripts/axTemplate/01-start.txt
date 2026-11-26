@@ -10,8 +10,8 @@ check commands
 expect state "title":"axTemplate Templates
 expect focus No templates yet: Ctrl+N makes one
 
-# Check: The keys are read with F1
-keys f1
+# Check: The keys are read with Help, Keyboard shortcuts (F1 until 2026-11-26)
+do Keyboard shortcuts
 expect state Keyboard shortcuts
 keys escape
 expect focus No templates yet: Ctrl+N makes one

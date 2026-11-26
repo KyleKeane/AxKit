@@ -94,7 +94,7 @@ where a step is a command the tools may run (WF-9), and the existing scripts mov
   trailing dots), and where the label is not unique in its window, the label followed by its menus as the palette
   lists it: `Word wrap`; `Heading, Navigation, Next`.
 - **Chord**: a key press as data, in the script language's own words: `ctrl+shift+w`, `f3`, `ctrl+1`.
-- **Key text**: a key as a menu shows it: `Ctrl+Shift+W`, `Enter in the message field`.
+- **Key text**: a key as a menu shows it: `Ctrl+Shift+S`, `Enter in the message field`.
 - **Step**: one line of a script. An **input step** is one the user would do at the keyboard: `do`, `keys`, `type`,
   `menu`, the steps that open, choose and close windows (`start`, `launch`, `adopt`, `use`, `close`) and `mcp call`
   (`ScriptReader.IsInput`).

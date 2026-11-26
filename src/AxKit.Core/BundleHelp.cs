@@ -13,7 +13,10 @@ public static class BundleHelp
     public const string InEveryWindow = "In every window of axKit";
 
     /// <summary>The bundle's menus in one line, the same in every F1 text (AX-9.1: Window, axKit, Help; <c>KeyTests</c> checks it whole).</summary>
-    public const string BundleMenusLine = "Alt+W: the Window menu: the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows, Say the status. Alt+K: the axKit menu: Apps and Access layers, a new window of any app with its key; Claude (Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder), the AI tools and the theme. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Diagnostics (Test a key, Copy diagnostics), Check for updates, and About";
+    public const string BundleMenusLine = "Alt+W: the Window menu: the open axKit windows, most recent first (Alt+W, O, 1 is the one you were in last), the files and folders closed lately, Close all windows, Say the status. Alt+K: the axKit menu: Apps and Access layers, a new window of any app with its key; Claude (Use Claude in axKit, Ask about this window, the folders Claude may read, Claude's working folder) and the AI tools. Alt+O: Options: the window's settings, and at its end the settings of all of axKit: the theme, the sounds folder, the app keys file, the update check at start, the log of events. Alt+H: Help: the command palette, this list, the user guide, Send a report, Your reports, Diagnostics (Test a key, Copy diagnostics), Check for updates, and About";
+
+    /// <summary>F1's line, the same in every F1 text (AX-10, the maintainer's decision of 2026-11-26: palette and help in one; Ctrl+Comma a second key on trial).</summary>
+    public const string PaletteLine = "  F1 or Ctrl+Comma: the command palette: with nothing typed, this list and then every command of the window, Down and Up through them; type part of a command's name to find it; Enter runs the command you are on, Escape closes. Help, Keyboard shortcuts shows this list as a text";
 
     /// <summary>F4's line, the same in every F1 text: the report is a form of standard controls (AX-8.10, reports.md RP-3).</summary>
     public const string ReportLine = "  F4: report a bug, an idea or feedback to axKit's maintainer: type your words, Enter makes a new line; Tab goes on to the kind, a box for more detail and what is sent with your report; Ctrl+Enter or the Send button sends; Escape cancels and keeps nothing. The report is encrypted on your computer, and only the maintainer can read it";
@@ -66,7 +69,7 @@ public static class BundleHelp
         return "  Ctrl with a function key: open an axKit app, each group on its block of four keys: " + Blocks(shift: false)
             + ". Ctrl+Shift with a function key: open an access layer: " + Blocks(shift: true)
             + (changes.Length == 0 ? string.Empty : ". In place of these, your own keys: " + changes)
-            + ". Alt+K, A lists the apps and Alt+K, L the access layers, each with its key; axKit, Edit app keys file gives an app a key of your own";
+            + ". Alt+K, A lists the apps and Alt+K, L the access layers, each with its key; Options, Edit app keys file gives an app a key of your own";
     }
 
     /// <summary>"F1 to F4 getting around, axStart, axFile, ...; F5 to F8 ...": the blocks of one kind, from <see cref="AppLaunchKeys"/>.</summary>
@@ -87,7 +90,7 @@ public static class BundleHelp
 
     /// <summary>
     /// The first line and the bundle's section, ending in a blank line so that the app's own sections follow. In the
-    /// section: F1, where the how-to and the guide are (<see cref="HowToLine"/>), the command palette, the app's own
+    /// section: F1, the command palette with this list (<see cref="PaletteLine"/>), where the how-to and the guide are (<see cref="HowToLine"/>), the command palette, the app's own
     /// <paramref name="lines"/> in their order (what the generated key list cannot say), the text size, the menu with
     /// Alt+F4, the bundle's menus. Lines are CRLF, as the notice's edit control shows them.
     /// </summary>
@@ -116,9 +119,8 @@ public static class BundleHelp
 
         text.Append("\r\n");
         text.Append("## ").Append(heading).Append("\r\n");
-        text.Append("  F1: this list\r\n");
+        text.Append(PaletteLine).Append("\r\n");
         text.Append(HowToLine(app)).Append("\r\n");
-        text.Append("  Ctrl+Shift+P: the command palette: type part of a command's name, Down and Up through the matches, Enter runs it\r\n");
         text.Append(ReportLine).Append("\r\n");
         text.Append(MainActionLine).Append("\r\n");
         text.Append(ModeLine).Append("\r\n");

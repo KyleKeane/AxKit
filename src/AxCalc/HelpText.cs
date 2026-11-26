@@ -11,7 +11,7 @@ public static class HelpText
     public static readonly string Shortcuts = BundleHelp.Section("axCalc", []) + $"""
         ## axCalc
           The window has the history, a text with one line for each answer, the newest last, and the expression field under it. The history reads as the conversation in axClaude and the terminal in axTerminal.
-          In the expression field, Enter says the answer; the line joins the history and the field empties. {BundleKeys.Text(AxCalcKeys.ClearField)} empties the field.
+          In the expression field, Enter says the answer; the line joins the history and the field empties. {BundleKeys.Text(AxCalcKeys.ClearField)} empties the field; Escape there has nothing to go back to and plays the edge sound.
           In the history
             Up and Down read one line at a time. a and Shift+A go to the next or the previous answer, s and Shift+S to the next or the previous line of axCalc's own, and l says the line number.
             Escape goes back to the field.

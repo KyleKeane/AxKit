@@ -217,7 +217,7 @@ public abstract partial class AxKitForm
     private static readonly Keys[] HandledByTheBase =
     [
         BundleKeys.LargerText, BundleKeys.LargerTextNumpad, BundleKeys.SmallerText, BundleKeys.SmallerTextNumpad, BundleKeys.SayStatus,
-        BundleKeys.Shortcuts, BundleKeys.CommandPalette, BundleKeys.Report, BundleKeys.AskClaude, BundleKeys.Save,
+        BundleKeys.CommandPalette, BundleKeys.CommandPaletteAlso, BundleKeys.Report, BundleKeys.AskClaude, BundleKeys.Save,
         BundleKeys.ToggleMode, BundleKeys.AskClaudeAlso, BundleKeys.ContextMenu,
     ];
 

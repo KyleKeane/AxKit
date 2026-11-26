@@ -474,8 +474,8 @@ Starts with: Open axTask with the folder tasks.
     You hear: Key test. Press any key to hear its name and what it does here. Press Escape to end.
 2. Press F9 (Say the status; Window menu).
     You hear: F9: Say the status.
-3. Press F1 (Keyboard shortcuts; Help menu).
-    You hear: F1: Keyboard shortcuts.
+3. Press F1 (Command palette; Help menu).
+    You hear: F1: Command palette.
 4. Press Ctrl+Period.
     You hear: Ctrl+Period: The Context menu, as Shift+F10.
 5. Press Ctrl+Slash (Ask about this window; axKit menu, Claude).
@@ -916,7 +916,7 @@ Starts with: Open axTask with the folder tasks.
 
 ### Hear that a text to read opened
 
-1. Press F1 (Keyboard shortcuts; Help menu).
+1. Choose Keyboard shortcuts in the Help menu.
     You hear the sound TextOpen.
 2. Press Escape.
 
@@ -942,11 +942,11 @@ Starts with: Open axTask with the folder tasks.
 
 1. Choose Entry sounds in the Options menu, Text.
     You hear: Entry sounds, not checked.
-2. Press F1 (Keyboard shortcuts; Help menu).
+2. Choose Keyboard shortcuts in the Help menu.
 3. Press Escape.
 4. Choose Entry sounds in the Options menu, Text.
     You hear: Entry sounds, checked.
-5. Press F1 (Keyboard shortcuts; Help menu).
+5. Choose Keyboard shortcuts in the Help menu.
     You hear the sound TextOpen.
 6. Press Escape.
 
@@ -1014,7 +1014,7 @@ Starts with: Open axTask with the folder work. Close the window. Open axTask wit
 
 ### Open a folder of lists used lately
 
-1. Press Ctrl+Shift+P (Command palette; Help menu).
+1. Press F1 (Command palette; Help menu).
 2. Type "work".
     You hear something with "1. work" in it.
     You hear: Session, Recent top folders.

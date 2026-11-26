@@ -676,7 +676,7 @@ public sealed partial class FileForm
 
     // ---- the ways out (AF-1.3, AF-3.2, AF-4.9) ----
 
-    /// <summary>Folder → Show current folder in → File Explorer (Ctrl+W): the folder opened in File Explorer, one of the system's own windows; This PC as File Explorer's own This PC.</summary>
+    /// <summary>Folder → Show current folder in → File Explorer (no key; Ctrl+W until 2026-11-26): the folder opened in File Explorer, one of the system's own windows; This PC as File Explorer's own This PC.</summary>
     private void ShowFolderInExplorer()
     {
         if (_folder is null)
@@ -704,7 +704,7 @@ public sealed partial class FileForm
         OpenInExplorer(_folder);
     }
 
-    /// <summary>Item → Show in File Explorer (Ctrl+Shift+W): File Explorer on the folder with the entry selected, a folder entry too; an entry gone meanwhile is said (AX-9.10).</summary>
+    /// <summary>Item → Show in File Explorer (no key; Ctrl+Shift+W until 2026-11-26): File Explorer on the folder with the entry selected, a folder entry too; an entry gone meanwhile is said (AX-9.10).</summary>
     private void ShowItemInExplorer()
     {
         if (!TryEntry(out var entry))

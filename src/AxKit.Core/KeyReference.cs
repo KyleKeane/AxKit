@@ -58,6 +58,18 @@ public static class KeyReference
         return text.ToString();
     }
 
+    /// <summary>
+    /// The keys with no menu item as the section gives them, under <see cref="KeysAlone"/> without its marks: the
+    /// command palette's last lines with nothing typed (docs/axKit/SPEC.md AX-10.2), after the commands of the menus,
+    /// which it lists itself. Empty when every key has a menu item.
+    /// </summary>
+    public static List<string> AloneLines(IReadOnlyList<ListedCommand> rows)
+    {
+        var section = Section(rows).Split('\n');
+        var start = Array.IndexOf(section, KeysAlone);
+        return start < 0 ? [] : [KeysAlone.TrimStart('#', ' '), .. section[(start + 1)..].Where(line => line.Length > 0)];
+    }
+
     /// <summary>The top menu of a row's menus: "Navigation" of "Navigation, Next".</summary>
     private static string TopMenu(string menus)
     {

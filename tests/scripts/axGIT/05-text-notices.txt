@@ -75,8 +75,8 @@ menu Windows text size
 expect said ! Windows text size
 
 # Goal: Read the keyboard shortcuts and the user guide
-# 5.3 F1: the Keyboard shortcuts notice; Escape closes it. Help, User guide; Escape.
-keys f1
+# 5.3 Help, Keyboard shortcuts (F1 until 2026-11-26): the notice; Escape closes it. Help, User guide; Escape.
+do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 # The runner matches the raw JSON, where + is \u002B: a line of the text without one.
 expect state any folder inside the repository will do

@@ -26,10 +26,12 @@ public static class AxTerminalKeys
     public const Keys ReadToEnd = Keys.Control | Keys.Alt;
     /// <summary>Bookmark the line you are on, from anywhere (AX-8.18 rule 2; Ctrl+Shift+K until 2026-11-26).</summary>
     public const Keys BookmarkLine = Keys.Control | Keys.K;
-    public const Keys ShowInExplorer = Keys.Control | Keys.W;
+    /// <summary>A new session (Ctrl+N makes a new one of what the window holds, 2026-11-26). Ctrl+W, File Explorer until that day, is free.</summary>
     public const Keys NewSession = Keys.Control | Keys.N;
     public const Keys RestartShell = Keys.Control | Keys.Shift | Keys.R;
-    public const Keys ClearTranscript = Keys.Control | Keys.L;
+
+    /// <summary>Clear transcript: Ctrl+Shift+Delete clears a history in every window (2026-11-26, as axCalc's and axClip's); Ctrl+L until then.</summary>
+    public const Keys ClearTranscript = Keys.Control | Keys.Shift | Keys.Delete;
     /// <summary>The recent commands in the field's place (AT-3.9): the command field's choices, Alt+Down (AX-8.18 rule 4; Ctrl+R, the shells' history key, until 2026-11-26).</summary>
     public const Keys RecentCommands = Keys.Alt | Keys.Down;
     /// <summary>What the window is doing: the state, the command, how long, the prompt (AT-2.3, AT-D8); the bundle's read in full, F7 (AX-8.18 rule 5; Ctrl+Q until 2026-11-26), so no row of <see cref="All"/>.</summary>
@@ -84,10 +86,10 @@ public static class AxTerminalKeys
         ("Interrupt (Ctrl+C to the shell)", Interrupt),
         ("Read to the end: Ctrl+Alt with a quick key letter", ReadToEnd),
         ("Bookmark this line", BookmarkLine),
-        ("Show the folder in File Explorer", ShowInExplorer),
         ("New session", NewSession),
         ("Restart shell", RestartShell),
-        ("Clear transcript", ClearTranscript),
+        // The same name as axCalc's and axClip's (Ctrl+Shift+Delete clears a history in every window, 2026-11-26).
+        ("Clear the history", ClearTranscript),
         ("Recent commands", RecentCommands),
         ("Say current folder", SayFolder),
         ("Background music on or off", ToggleMusic),

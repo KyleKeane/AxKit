@@ -7,7 +7,8 @@ The steps change your own templates' folder: use a template made for the test, a
 ## 1. Start (TP-1.1, TP-8.1, TP-8.2)
 
 1. Start axTemplate: NVDA reads the title "Templates - axTemplate window", then "Templates, N templates, list" and the first template's name; with no template, the line "No templates yet: Ctrl+N makes one". Nothing else is spoken.
-2. F1: the keyboard shortcuts as a notice; Escape closes it and the list has the focus again.
+2. Help, Keyboard shortcuts: the keyboard shortcuts as a notice; Escape closes it and the list has the focus again.
+   F1: the command palette, Down reads the rules of the keys; Escape.
 3. Alt+F4 closes the window without a question.
 
 ## 2. A new template (TP-8.4)
@@ -64,7 +65,7 @@ The steps change your own templates' folder: use a template made for the test, a
 
 1. Ctrl+B in the launcher: it hides and the browser opens, "Templates - axTemplate window".
 2. Options, Hotkey in the launcher: the notice that takes the next key; press Ctrl+Alt+Shift+T, Enter: "Hotkey Ctrl+Alt+Shift+T", and the new key shows the launcher. Set it back to Ctrl+Shift+Semicolon.
-3. F1 in the launcher: its own keys, Ctrl+B among them; Escape.
+3. F1 in the launcher: the command palette with its own keys, Ctrl+B among them; Escape.
 4. Session, Quit axTemplate: the launcher ends, and the hotkey does nothing until axTemplate is started again.
 
 By ear, and the maintainer's: how the launcher comes up over other programs, whether the paste lands every time, and the key Ctrl+Shift+Semicolon under the fingers.

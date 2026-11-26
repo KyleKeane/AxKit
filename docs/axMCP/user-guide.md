@@ -69,9 +69,9 @@ Each menu with its commands and their keys, as the window lists them:
 - **Actions**: Add server (Ctrl+N); Deselect all (Ctrl+Shift+A); Select all of your servers (Ctrl+A); Undo (Ctrl+Z).
 - **Navigation**: Nothing to move to here yet.
 - **Context**: A heading: nothing to act on.
-- **Options**: Filter; Developer (Open settings file); Sort by (Name, The list's own order); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size).
+- **Options**: Check for updates at start; Edit app keys file; Filter; Keep a log of events; Open the sounds folder; Developer (Open settings file); Sort by (Name, The list's own order); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size); Theme (Edit theme file, Reload theme, Theme on).
 - Keys without a menu item: Enter (Change the field); Space (Check the field); Ctrl+Delete (Clear the filter); Delete (Delete); Ctrl+F (Find in the list); F3 (Find next); Shift+F3 (Find previous); Right (Into the list); Ctrl+N (New item); Ctrl+Shift+N (New list); Ctrl+Down (Next section); Enter (Open); Ctrl+Up (Previous section); F7 (Read in full); Enter (Read the resource); F2 (Rename); Ctrl+A (Select all); Space (Select or deselect); Shift+Space (Select to here); Shift+Home (Select to the first server); Shift+End (Select to the last server); Shift+Down (Select to the next server); Shift+Up (Select to the previous server); Ctrl+Tab (Switch between the navigator and the detail pane); Shift+F10 (The Context menu); Shift+F10 (The field's menu); Right (The next value of the field); Left (The previous value of the field); Tab (To the detail pane); Tab (To the navigator); Left (Up a level).
-- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1, the command palette, lists every key and command. Options ends with the settings of all of axKit.
 <!-- end of the menus -->
 
 ## Settings

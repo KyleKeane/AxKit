@@ -2,7 +2,7 @@
 # axTerminal, section 3 of docs/axTerminal/nvda-test-plan.md, "Session, Open recent folder: the folders as
 # 1. name (path); Enter on one: a new session there" (SPEC.md AT-6, "Folder <name>"). The submenu needs menu mode,
 # which only the foreground window enters; since 2026-11-13 the command palette reads every Open recent list
-# (docs/axKit/SPEC.md AX-10.2), so the entry is one search away: Ctrl+Shift+P, part of the name, Enter.
+# (docs/axKit/SPEC.md AX-10.2), so the entry is one search away: F1, part of the name, Enter.
 mkdir work\orchard
 mkdir work\cellar
 # The run's own settings: no update check, which would go to the network and log an ERROR when it fails.

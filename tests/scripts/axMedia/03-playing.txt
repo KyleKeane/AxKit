@@ -172,7 +172,7 @@ wait 2000
 # Step 7: a video is not made here (the runner makes silent sound only, and a picture is for the eye); NVDA pass.
 # Step 8: a file Windows cannot decode is in 03b-cannot-play.txt, since its "Cannot play" is logged as an ERROR,
 # which fails the run by the runner's own check.
-# Step 9: Alt+Tab to another program and the background announcement need the foreground (tier 3); Ctrl+W opens
+# Step 9: Alt+Tab to another program and the background announcement need the foreground (tier 3); Show current file in, File Explorer opens
 # File Explorer, a system window outside the test desktop; Show current file in, axFile starts a window the runner
 # cannot reach or close; that Alt+F4 stops the sound is for the ear. All left to the NVDA pass.
 

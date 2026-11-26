@@ -20,10 +20,10 @@ run git -C repo add .
 run git -C repo -c user.name=Test -c user.email=none commit -q -m first
 
 # Check: Show current repository in lists its four places
-# 2.4 axGIT's Repository, Show current repository in: File Explorer (Ctrl+W), axClaude, axTerminal, axFile.
+# 2.4 axGIT's Repository, Show current repository in: File Explorer (no key; Ctrl+W until 2026-11-26), axClaude, axTerminal, axFile.
 start git {temp}\repo
 expect focus Changes, no changes
-expect commands "File Explorer, Session, Show current repository in, Ctrl
+expect commands "File Explorer, Session, Show current repository in"
 expect commands "axClaude, access layer for Claude Code, Session, Show current repository in"
 expect commands "axTerminal, access layer for your shell, Session, Show current repository in"
 expect commands "axFile, Session, Show current repository in"

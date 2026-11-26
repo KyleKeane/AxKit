@@ -22,7 +22,7 @@ Long lines wrap at the window's edge, so Down Arrow reads one screen line at a t
 
 ## Files
 
-Ctrl+S saves and axDown says "Saved". A new document asks for a name first, with the Windows file dialog; Ctrl+Shift+S, Save as, asks every time. Ctrl+O opens another file in this window and Ctrl+N starts an empty one; both ask first if you have unsaved changes; Ctrl+Shift+N starts an empty document in a new axDown window and leaves this one as it is, as does closing the window: a notice says "Save changes to notes.md?" with Save, Don't save and Cancel; Enter saves, Escape cancels. Session, Open recent file lists the last ten files you opened or saved; Session, Show current file in, File Explorer (Ctrl+W) opens File Explorer with the file selected.
+Ctrl+S saves and axDown says "Saved". A new document asks for a name first, with the Windows file dialog; Ctrl+Shift+S, Save as, asks every time. Ctrl+O opens another file in this window and Ctrl+N starts an empty one; both ask first if you have unsaved changes; Session, New window starts an empty document in a new axDown window and leaves this one as it is. Closing the window asks too: a notice says "Save changes to notes.md?" with Save, Don't save and Cancel; Enter saves, Escape cancels. Session, Open recent file lists the last ten files you opened or saved; Session, Show current file in, File Explorer opens File Explorer with the file selected.
 
 When another program changes the file while it is open here, for example Claude editing it while you are in axClaude, axDown notices when you come back to its window: with nothing unsaved it reloads the file, keeps your line, and says "Reloaded, notes.md changed on disk"; with unsaved changes it says "notes.md changed on disk; Save will ask", and Ctrl+S then offers Write over, Reload and lose mine, or Cancel.
 
@@ -63,7 +63,7 @@ Actions, Insert template (Alt+A, T) puts a ready-made piece of text in at the ca
 
 In a template of your own, three marks have a meaning, and everything else is put in as you wrote it: `{caret}` is where the caret lands (after the text when you leave it out), `{selection}` is the text you had selected when you chose the template, and `{clipboard}` is the text on the clipboard at that moment.
 
-Every template is a command, so the command palette finds it: Ctrl+Shift+P, type "insert template" to hear them all, or the template's name. axDown says "Link inserted", and one Ctrl+Z takes a template back. In navigation mode nothing is put in.
+Every template is a command, so the command palette finds it: F1, type "insert template" to hear them all, or the template's name. axDown says "Link inserted", and one Ctrl+Z takes a template back. In navigation mode nothing is put in.
 
 ## Text size and fonts
 
@@ -74,13 +74,13 @@ Ctrl+Plus and Ctrl+Minus make the text larger and smaller, and axDown says the n
 Each menu with its commands and their keys, as the window lists them:
 
 <!-- menus: written by tools/guide-menus.ps1 from docs/axKit/window-commands.json; never edit by hand -->
-- **Session**: Exit (Alt+F4); New (Ctrl+N); New window (Ctrl+Shift+N); Open (Ctrl+O); Save (Ctrl+S); Save as (Ctrl+Shift+S); Show current file in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, axTerminal, access layer for your shell, File Explorer (Ctrl+W)).
+- **Session**: Exit (Alt+F4); New (Ctrl+N); New window; Open (Ctrl+O); Save (Ctrl+S); Save as (Ctrl+Shift+S); Show current file in (axClaude, access layer for Claude Code, axFile, axGIT, access layer for Git, axTerminal, access layer for your shell, File Explorer).
 - **Actions**: Redo (Ctrl+Y); Undo (Ctrl+Z); Format (Block quote, Bold (Ctrl+B), Code, Heading 1, Heading 2, Heading 3, Heading 4, Heading 5, Heading 6, Heading deeper (Shift+Alt+Right), Heading shallower (Shift+Alt+Left), Italic, List item); Insert template (Code block, Link, Table).
 - **Navigation**: Find (Ctrl+F); Find first; Find next (F3); Find previous (Shift+F3); Go to line (F12); Next (Block quote (Ctrl+Q), Heading (Ctrl+H), Heading level 1 (Ctrl+1), Heading level 2 (Ctrl+2), Heading level 3 (Ctrl+3), Heading level 4 (Ctrl+4), Heading level 5 (Ctrl+5), Heading level 6 (Ctrl+6), Link (Ctrl+K), List (Ctrl+L), List item (Ctrl+I), Table (Ctrl+T)); Previous (Block quote (Ctrl+Shift+Q), Heading (Ctrl+Shift+H), Heading level 1 (Ctrl+Shift+1), Heading level 2 (Ctrl+Shift+2), Heading level 3 (Ctrl+Shift+3), Heading level 4 (Ctrl+Shift+4), Heading level 5 (Ctrl+Shift+5), Heading level 6 (Ctrl+Shift+6), Link (Ctrl+Shift+K), List (Ctrl+Shift+L), List item (Ctrl+Shift+I), Table (Ctrl+Shift+T)).
 - **Context**: Copy (Ctrl+C); Cut (Ctrl+X); Paste (Ctrl+V); Select all (Ctrl+A).
-- **Options**: Developer (Open settings file); General (Templates in axTemplate); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size, Word wrap (F11)).
+- **Options**: Check for updates at start; Edit app keys file; Keep a log of events; Open the sounds folder; Developer (Open settings file); General (Templates in axTemplate); Text (Entry sounds, Font, Larger text (Ctrl+Plus), Say new line, Smaller text (Ctrl+Minus), Sound on headings, Windows text size, Word wrap (F11)); Theme (Edit theme file, Reload theme, Theme on).
 - Keys without a menu item: Ctrl+Tab (Between the text and the field under it).
-- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1 lists every key.
+- **Window**, **axKit** and **Help**: the menus of the bundle, the same in every axKit window; the axKit guide describes them, and F1, the command palette, lists every key and command. Options ends with the settings of all of axKit.
 <!-- end of the menus -->
 
 ## Settings

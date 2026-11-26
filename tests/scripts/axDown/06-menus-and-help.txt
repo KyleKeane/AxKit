@@ -14,7 +14,7 @@ expect commands "Word wrap, Options, Text, F11, checked"
 expect commands "Go to line, Navigation, F12"
 expect commands "Heading level 2, Navigation, Next, Ctrl\u002B2."
 expect commands "Undo, Actions, Ctrl\u002BZ"
-expect commands "Keyboard shortcuts, Help, F1"
+expect commands "Command palette, Help, F1"
 
 # Goal: Open the keyboard shortcuts
 # 6.2: F1, the shortcuts notice, its first lines the rules of the keys (AX-8.18).
@@ -101,18 +101,18 @@ expect focus a.md
 # desktop (manual).
 
 # Goal: Turn the update check at start on or off
-# 6.5: axKit, Check for updates at start, one switch for every app (bundle AX-3.1), a checked item that says its new state.
+# 6.5: Options, Check for updates at start (the axKit menu until 2026-11-26), one switch for every app (bundle AX-3.1), a checked item that says its new state.
 # Through the palette, which says the new state; the runner's menu step runs the item without saying it.
 do Command palette
 expect focus Search commands
 type check for updates at start
-expect said Check for updates at start, axKit, 1 of 1
+expect said Check for updates at start, Options, 1 of 1
 keys enter
 expect said Check for updates at start, checked
 do Command palette
 expect focus Search commands
 type check for updates at start
-expect said Check for updates at start, axKit, checked, 1 of 1
+expect said Check for updates at start, Options, checked, 1 of 1
 keys enter
 expect said Check for updates at start, not checked
 expect focus a.md
@@ -120,23 +120,28 @@ expect focus a.md
 # not reach; the Markdown resources open the browser.
 
 # Goal: Move through the commands of the palette
-# 6.6: the command palette, with the caret in the middle of a line.
+# 6.6: the command palette, with the caret in the middle of a line. With nothing typed it begins with the rules of
+# the keys (bundle AX-10.2, 2026-11-26: palette and help in one); typed words find the commands.
 do Command palette
 expect state "notice":"Command palette"
 expect focus Search commands
 keys down
-expect said ! New window, Session, Ctrl+Shift+N, 2 of
+expect said ! A key alone moves and reads; with Shift, the other way, or select as you move., 2 of
+keys up
+expect said ! How the keys go, 1 of
+# Check: The first line plays the edge sound when moved past
+# Ctrl+Home at the first line: the low note and the first line again.
+keys up ctrl+home
+expect said ♪ Edge
+expect said ! How the keys go, 1 of
+type session
+expect said New, Session, Ctrl+N, 1 of
+keys down
+expect said ! New window, Session, 2 of
 keys down
 expect said ! Open, Session, Ctrl+O, 3 of
-keys up
-expect said ! New window, Session, Ctrl+Shift+N, 2 of
-# Check: The first command plays the edge sound when moved past
-# Ctrl+Home at the first match: the low note and the first match again.
-keys up ctrl+home
-expect said ! New, Session, Ctrl+N, 1 of
-expect said ♪ Edge
-expect said ! New, Session, Ctrl+N, 1 of
 # Goal: Run a command found by its name
+keys ctrl+a
 type wrap
 expect said ! Word wrap, Options, Text, F11, checked, 1 of 1
 keys down

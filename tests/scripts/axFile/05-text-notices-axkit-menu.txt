@@ -55,7 +55,7 @@ keys enter
 expect said ! Refreshed
 expect focus "value":"docs, folder"
 # Check: Escape from the palette returns to the Favorites list
-# From the Favorites list, Ctrl+Shift+P, Escape: back on the same line of the Favorites list.
+# From the Favorites list, F1, Escape: back on the same line of the Favorites list.
 keys tab
 expect focus "name":"Favorites"
 do Command palette

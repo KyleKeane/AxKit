@@ -170,9 +170,9 @@ expect quiet 1000
 keys ctrl+a delete
 expect focus "name":"Message to Claude","role":"Text","value":""
 # Goal: Read the keyboard shortcuts
-# Step 8: F1, the shortcuts in a notice; Page Down and Page Up move a screen; Ctrl+Down and Ctrl+Up go by section
+# Step 8: Help, Keyboard shortcuts (F1 until 2026-11-26), the shortcuts in a notice; Page Down and Page Up move a screen; Ctrl+Down and Ctrl+Up go by section
 # heading; Escape closes the notice and the focus is back in the field.
-keys f1
+do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 expect focus Keyboard shortcuts
 # Ctrl+Down, Ctrl+Up, Page Down and Page Up in the notice's text say nothing of the app's own and are read by NVDA at
