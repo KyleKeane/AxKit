@@ -227,7 +227,7 @@ expect said ! favorite-me, 1 item, readme.txt
 do Recent operations
 expect focus "value":"Deleted 2 items,
 keys enter
-expect said ! act,
+expect said ! act, 8 items, favorite-me, folder
 expect focus "name":"8 items"
 # Check: A rename refused before it ran adds no operation
 # A rename refused before it ran (a name taken): Recent operations still has the delete first.
@@ -304,7 +304,7 @@ keys enter
 expect said ! favorite-me, 1 item
 expect state "status":["Created quiet, undone",
 keys backspace
-expect said ! act,
+expect said ! act, 10 items, favorite-me, folder
 
 # Goal: Select every entry from the marked one to here
 # 6.11 Shift+Space: Space on the second entry, Down three times, Shift+Space: entries two to five.

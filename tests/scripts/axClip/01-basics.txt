@@ -71,7 +71,7 @@ expect state Recording
 keys delete
 expect said ! Removed
 do Last match
-expect said , 2 of 2
+expect said axkitclip alpha, 2 of 2
 
 # Goal: Clear the clipboard history
 # Ctrl+Shift+Delete asks first; Clear empties the history.

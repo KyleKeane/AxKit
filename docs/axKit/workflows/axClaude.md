@@ -247,6 +247,7 @@ Starts with: Open axClaude with the folder keys.
 2. Press P.
     You hear: Output 1 Reply from Claude.
 3. Press Shift+P.
+    You hear: [Screen Reader Mode: on via flag].
 4. Press Ctrl+End.
 5. Press P.
     You hear: No next paragraph.
@@ -267,7 +268,7 @@ Starts with: Open axClaude with the folder keys.
 7. Press Shift+I.
     You hear: Input 1 heading level 1.
 8. Press C.
-    You hear something with "claude" in it.
+    You hear: claude: Alpha heading level 2.
 9. Press T.
     You hear: hi.
 10. Press E.
@@ -320,9 +321,9 @@ Starts with: Open axClaude with the folder keys.
 3. Press Enter.
     You hear: From the top, Use the Bash tool.
 4. Press F3 (Find next; Navigation menu).
-    You hear something with "From the top" in it.
+    You hear: From the top, Use the Bash tool to run: echo hi. Then reply with the single word finished.
 5. Press Shift+F3 (Find previous; Navigation menu).
-    You hear something with "From the end" in it.
+    You hear: From the end, Use the Bash tool to run: echo hi. Then reply with the single word finished.
 
 ### Find the next match from the message field
 
@@ -341,15 +342,15 @@ Starts with: Open axClaude with the folder keys.
 3. Press Backspace.
     You hear something with "Back to" in it.
 4. Press Backspace.
-    You hear something with "Back to" in it.
+    You hear: Back to claude: Alpha heading level 2.
 5. Press Backspace.
-    You hear something with "Back to" in it.
+    You hear: Back to Output 1 Reply from Claude heading level 1.
 6. Press Backspace.
-    You hear something with "Back to" in it.
+    You hear: Back to Input 1 heading level 1.
 7. Press Backspace.
-    You hear something with "Back to" in it.
+    You hear: Back to [Screen Reader Mode: on via flag].
 8. Press Page Down, Backspace.
-    You hear something with "Back to" in it.
+    You hear: Back to [Screen Reader Mode: on via flag].
 
 ### Bookmark lines and move between them
 
@@ -386,11 +387,11 @@ Starts with: Open axClaude with the folder keys.
     You hear: Bookmark 4 added.
 21. Press Ctrl+Home.
 22. Choose Next bookmark in the Navigation menu (key: K in the conversation).
-    You hear something with "Bookmark 3" in it.
+    You hear: Bookmark 3, 5.
 23. Choose Next bookmark in the Navigation menu (key: K in the conversation).
-    You hear something with "Bookmark 4" in it.
+    You hear: Bookmark 4, 6.
 24. Choose Previous bookmark in the Navigation menu (key: Shift+K in the conversation).
-    You hear something with "Bookmark 3" in it.
+    You hear: Bookmark 3, 5.
 
 ### Hear a reply's paragraphs, headings or bookmarks without moving
 

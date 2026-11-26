@@ -79,7 +79,7 @@ keys ctrl+home
 keys p
 expect said ! Output 1 Reply from Claude
 keys shift+p
-expect said ! [Screen Reader Mode
+expect said ! [Screen Reader Mode: on via flag]
 keys ctrl+end
 keys p
 expect said ! No next paragraph
@@ -114,7 +114,7 @@ expect said ! Input 2 heading level 1
 keys shift+i
 expect said ! Input 1 heading level 1
 keys c
-expect said ! claude:
+expect said ! claude: Alpha heading level 2
 keys t
 expect said hi
 keys e
@@ -173,7 +173,7 @@ expect said ! Selection cleared
 keys alt+2
 keys ctrl+down
 keys backspace
-expect said Back to
+expect said Back to [Screen Reader Mode: on via flag]
 # Goal: Hear the line number
 # Step 8: l, "Line N of M"; Ctrl+Home: "Line 1 of M"; Ctrl+End: the last number equals the total.
 keys l
@@ -198,9 +198,9 @@ expect focus Conversation
 expect state "notice":null
 # F3: the only match again, with "From the top" after the wrap; Shift+F3 with "From the end".
 keys f3
-expect said ! From the top,
+expect said ! From the top, Use the Bash tool to run: echo hi. Then reply with the single word finished.
 keys shift+f3
-expect said ! From the end,
+expect said ! From the end, Use the Bash tool to run: echo hi. Then reply with the single word finished.
 # Check: Text that is not there is said as not found
 # Ctrl+F again: the field holds the word, selected; zzqqx: "Not found: zzqqx", the caret stays.
 keys ctrl+f
@@ -238,18 +238,18 @@ said
 keys backspace
 expect said ! Back to
 keys backspace
-expect said ! Back to
+expect said ! Back to claude: Alpha heading level 2
 keys backspace
-expect said ! Back to
+expect said ! Back to Output 1 Reply from Claude heading level 1
 keys backspace
-expect said ! Back to
+expect said ! Back to Input 1 heading level 1
 keys backspace
-expect said ! Back to [Screen Reader Mode
+expect said ! Back to [Screen Reader Mode: on via flag]
 # (The history holds the earlier jumps of this script too, so "Nothing to go back to" is checked in step 2, before
 # the first jump.)
 # Page Down, Backspace: back to the line before the page.
 keys pagedown backspace
-expect said ! Back to [Screen Reader Mode
+expect said ! Back to [Screen Reader Mode: on via flag]
 # Goal: Bookmark lines and move between them
 # Step 13: m on a reply line: "Bookmark 1 added", the caret stays; Up reads the bookmark line, Down the line again.
 # (A wait after each bookmark: the view applies its edits 250 ms after the last key, FR-3.3, which a person's
@@ -302,11 +302,11 @@ expect said ! Bookmark 4 added
 wait 400
 keys ctrl+home
 menu Next bookmark
-expect said ! Bookmark 3,
+expect said ! Bookmark 3, 5.
 menu Next bookmark
-expect said ! Bookmark 4,
+expect said ! Bookmark 4, 6.
 menu Previous bookmark
-expect said ! Bookmark 3,
+expect said ! Bookmark 3, 5.
 # Ctrl+S saving the bookmark lines goes through the Save dialog (manual).
 # Goal: Hear a reply's paragraphs, headings or bookmarks without moving
 # Step 14: Alt+3 on the first reply... the newest reply here is the numbered one; Ctrl+Alt+P reads its paragraphs

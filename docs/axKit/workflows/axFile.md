@@ -347,7 +347,7 @@ Starts with: Open axFile with the folder ops.
 7. Press Enter.
     You hear: bundle, 2 items, New file.txt.
 8. Press Backspace.
-    You hear something with "ops" in it.
+    You hear: ops, 9 items, bundle, folder.
 
 ### Rename a folder
 
@@ -410,7 +410,7 @@ Starts with: Open axFile with the folder ops.
 7. Press Backspace.
     You hear: docs - 2, 1 item, docs, folder.
 8. Press Backspace.
-    You hear something with "ops" in it.
+    You hear: ops, 12 items, docs - 2, folder.
 
 ### Undo a rename
 

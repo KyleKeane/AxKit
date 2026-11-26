@@ -184,7 +184,7 @@ You hear: Playing s2.wav.
 ### Hear that a file cannot be played, and the next one plays
 
 1. Open axMedia with the folder c.
-    You hear something with "Cannot play a-broken.mp3" in it.
+    You hear: Cannot play a-broken.mp3: this kind of file is not supported.
     You hear: Playing b-good.wav.
 
 ## Use axMedia's text, notices and axKit menu

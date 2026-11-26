@@ -35,7 +35,7 @@ expect said ! Password, password, hidden
 keys escape
 expect focus Gmail, sam
 keys ctrl+q
-expect said ! Gmail. UserName: sam. Password: hidden. URL: https://mail.example.com. Notes:
+expect said ! Gmail. UserName: sam. Password: hidden. URL: https://mail.example.com. Notes: empty
 
 # Goal: Choose when axPass locks by itself
 # 1.3, 5.3 Locked, the Lock after setting says what it does.

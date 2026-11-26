@@ -42,7 +42,7 @@ expect said ! 42
 # The menu's name finds the two for axCalc and for every app, not the one for axDown.
 do Command palette
 type insert template
-expect said , 1 of 2
+expect said ! 1. Answer twice, Actions, Insert template, 1 of 2
 refuse said Meeting notes
 keys escape
 

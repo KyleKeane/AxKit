@@ -51,7 +51,7 @@ Starts with: Open axClip.
 1. Press Delete.
     You hear: Removed.
 2. Press Ctrl+End (Last match).
-    You hear something with "2 of 2" in it.
+    You hear: axkitclip alpha, 2 of 2.
 
 ### Clear the clipboard history
 

@@ -118,7 +118,7 @@ run cmd /c if exist "tasks\Later\Water plants.json" (exit 0) else (exit 1)
 expect state Home, 2 items
 # Nothing is selected now: Ctrl+Enter is the one task's again.
 keys ctrl+enter
-expect said ! Done:
+expect said ! Done: Oil the hinge
 do Undo
 do Undo
 expect said ! Undone: Later: 3 items moved to Later

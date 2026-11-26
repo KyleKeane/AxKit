@@ -155,7 +155,7 @@ Starts with: Open axPass with the file test.kdbx.
 
 1. Press Escape.
 2. Press Ctrl+Q (Read in full).
-    You hear something with "Gmail. UserName: sam. Password: hidden. URL: https://mail.example.com. Notes" in it.
+    You hear: Gmail. UserName: sam. Password: hidden. URL: https://mail.example.com. Notes: empty.
 
 ### Choose when axPass locks by itself
 

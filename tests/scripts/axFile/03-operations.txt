@@ -77,7 +77,7 @@ keys enter
 expect said ! bundle, 2 items, New file.txt
 expect list "todo.md"
 keys backspace
-expect said ! ops,
+expect said ! ops, 9 items, bundle, folder
 
 # Goal: Rename a folder
 # 3.2 F2 on a folder: the whole name in the box; renames as often as wanted.
@@ -258,7 +258,7 @@ expect said ! docs, 2 items, notes.txt
 keys backspace
 expect said ! docs - 2, 1 item, docs, folder
 keys backspace
-expect said ! ops,
+expect said ! ops, 12 items, docs - 2, folder
 # Check: A file that is not a zip is refused
 do Find
 expect focus "name":"Name contains"

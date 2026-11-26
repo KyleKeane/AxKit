@@ -868,6 +868,7 @@ Starts with: Open axTask with the folder tasks.
 2. Press Ctrl+2 (Action key 2).
     You hear: Later: 3 items moved to Later.
 3. Press Ctrl+Enter (Done or not done; Context menu).
+    You hear: Done: Oil the hinge.
 4. Press Ctrl+Z twice (Undo; Actions menu).
     You hear: Undone: Later: 3 items moved to Later.
 

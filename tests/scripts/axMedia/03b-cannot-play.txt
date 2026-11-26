@@ -16,7 +16,7 @@ silence c\b-good.wav 30000
 # The start on the folder plays its first file, which Windows cannot decode: said with the reason, and the next file
 # plays, marked in the list and named in the title.
 start media {temp}\c
-expect said ! Cannot play a-broken.mp3:
+expect said ! Cannot play a-broken.mp3: this kind of file is not supported
 expect said Playing b-good.wav
 expect list ["a-broken.mp3","b-good.wav (playing)"]
 expect state "title":"axMedia b-good.wav"
@@ -24,5 +24,5 @@ expect state "title":"axMedia b-good.wav"
 # Enter on it again: the same.
 keys home
 keys enter
-expect said ! Cannot play a-broken.mp3:
+expect said ! Cannot play a-broken.mp3: this kind of file is not supported
 expect said Playing b-good.wav
