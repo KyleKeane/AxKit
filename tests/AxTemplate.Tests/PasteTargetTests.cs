@@ -6,6 +6,26 @@ namespace AxTemplate.Tests;
 /// <summary>SPEC.md TP-4.8: a template of several lines into a field of one line, or into a terminal.</summary>
 public sealed class PasteTargetTests
 {
+    /// <summary>TP-4.3 (review, 2026-11-27): a password copied as private was put back as plain text, into Windows' clipboard history and axClip, past its owner's clearing.</summary>
+    [Fact]
+    public void The_clipboard_gets_back_a_plain_text_and_never_a_private_copy()
+    {
+        Assert.True(PasteTarget.GivesBack("what was copied", beforeWasPrivate: false, stillTheTemplate: true));
+        Assert.False(PasteTarget.GivesBack("a password", beforeWasPrivate: true, stillTheTemplate: true));
+        // Nothing that was copied since the template went on the clipboard is lost, and no empty text is put there.
+        Assert.False(PasteTarget.GivesBack("what was copied", beforeWasPrivate: false, stillTheTemplate: false));
+        Assert.False(PasteTarget.GivesBack(string.Empty, beforeWasPrivate: false, stillTheTemplate: true));
+
+        // The launcher asks the rule with the marks it read as it came up, and its F1 text promises no more than it.
+        var root = SourceTexts.RepositoryRoot();
+        var launcher = File.ReadAllText(Path.Combine(root, "src", "AxTemplate", "LauncherForm.cs"));
+        Assert.Contains("PrivateClipboard.HoldsPrivateCopy(Handle)", launcher, StringComparison.Ordinal);
+        Assert.Contains("PasteTarget.GivesBack(before, beforeWasPrivate, PrivateClipboard.Sequence == sequence)", launcher, StringComparison.Ordinal);
+        var help = File.ReadAllText(Path.Combine(root, "src", "AxTemplate", "HelpText.cs"));
+        Assert.Contains("a password copied as private are not put back", help, StringComparison.Ordinal);
+        Assert.DoesNotContain("what you had copied is on the clipboard again afterwards", help, StringComparison.Ordinal);
+    }
+
     [Theory]
     [InlineData("Notepad", "Edit", 0x0004, LineBreaks.Kept)]
     [InlineData("#32770", "Edit", 0x0080, LineBreaks.OneLine)]

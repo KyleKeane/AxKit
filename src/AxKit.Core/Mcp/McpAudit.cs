@@ -31,8 +31,9 @@ public static class McpAudit
     /// The result as the line holds it (docs/axKit/repairs.json R-06). A command run is named, so that the user can
     /// read what an AI tool ran: "done: ran Word wrap", the name cut before a recent file's path ("1. notes.md"). A
     /// refusal's first line goes through <see cref="Redaction"/>, since it may quote a path the client gave.
+    /// <paramref name="text"/> is the tool's answer; for <c>axkit_window_run</c> the window's own (<see cref="RunResult"/>).
     /// </summary>
-    public static string Result(string tool, string? command, bool failed, string text)
+    public static string Result(string tool, bool failed, string text)
     {
         var first = text.Split('\n')[0].Trim();
         if (failed)
@@ -40,7 +41,37 @@ public static class McpAudit
             return "refused or failed: " + Redaction.Redact(first);
         }
 
-        return tool == McpTools.Run && !string.IsNullOrWhiteSpace(command) ? "done: ran " + NameOnly(command) : "done";
+        return tool == McpTools.Run ? RunResult(text) : "done";
+    }
+
+    /// <summary>
+    /// What became of an <c>axkit_window_run</c>, from the window's answer (MC-7.1) and with the label the window
+    /// matched, never the client's own argument: "done: ran Word wrap" only for a command the window ran; "asked the
+    /// user: Delete" for an act command, which runs only if the user says so in the window; "not run: Find" when a
+    /// notice, a dialog, the switch or a disabled item stopped it in between; "not known" when the window had not
+    /// taken it up or closed. Until 2026-11-27 every run without an error was written "done: ran", with the name the
+    /// client gave.
+    /// </summary>
+    public static string RunResult(string answer)
+    {
+        try
+        {
+            if (System.Text.Json.Nodes.JsonNode.Parse(answer) is System.Text.Json.Nodes.JsonObject window
+                && (McpProtocol.Text(window["command"]) ?? McpProtocol.Text(window["ran"])) is { } label
+                && NameOnly(label) is { Length: > 0 } name)
+            {
+                return window["ran"] is not null ? "done: ran " + name
+                    : window["asked"] is not null ? "asked the user: " + name
+                    : window["notRun"] is not null ? "not run: " + name
+                    : "not known";
+            }
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            // An answer that is no JSON says nothing of what ran.
+        }
+
+        return "not known";
     }
 
     /// <summary>A command's name without the path a recent file's entry carries in brackets: "1. notes.md (C:\…\notes.md)" is "1. notes.md".</summary>

@@ -158,7 +158,12 @@ part sent leaves the box unchecked, or cancels.
   error's message that names something without quotes and without a path; what is sent stays readable in the form before Send, in its one box (RP-3).
   Copies released before this (5.8.0 and earlier) send the fuller form.
 - **RP-4.3 Redaction.** Every prefilled field goes through `Redaction` (AxKit.Core, S-20) before it is shown: the
-  account's paths read `<user>`, an e-mail address `<email>`. The user reads what will be sent.
+  account's paths read `<user>`, an e-mail address `<email>`. The user reads what will be sent. The profile folder
+  is replaced whole, by the folder's own path, before the pattern for paths under Users and before the plain
+  form's paths are masked (2026-11-27; `Redaction.WithoutProfile`): those end a name at a space, so of a profile
+  folder of two words only the first was replaced and the second stayed, with the rest of the path in the plain
+  form. The folder's name is also one of the names replaced wherever it stands, beside the account's, the
+  computer's and the domain's.
 - **RP-4.4 Private and sealed** (until 2026-11-14: Public). A report is encrypted on the user's computer before it
   is sent (RP-6.1a). It is stored as an issue in a private repository on GitHub that only axKit's maintainer can
   open, posted by axKit's reporter account with the install's reporter id and nothing that names the user, and only

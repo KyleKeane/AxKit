@@ -187,7 +187,9 @@ and does nothing. No API key, no network code of axKit's own, no database: Claud
   the reminder first, then the field, AH-1.3).
 - AH-6.2 **What the window sends** (`WindowContext`): the app's title (AX-11.2), the window's title, the focused
   control's name and place as the reports describe it (RP-4.2: never its text), the last actions of the window (the
-  reports' list, redacted as a report is), the F1 text and the app's user guide (the one Help, User guide shows), so
+  reports' list), these three redacted as a report's fuller form is (`WindowContext.Redacted` over `Redaction`: the
+  account's name and folder, the computer's name, an e-mail address; the title too since 2026-11-27, which holds
+  the full path of what is open since 2026-11-26 and went as it was), the F1 text and the app's user guide (the one Help, User guide shows), so
   that Claude answers from the app's own documents. Never the text of a document, a conversation or a field, and
   never a file of the user's unless the user allowed its folder (AH-2.3).
 - AH-6.3 **Follow-ups**: the field under the answer asks again in the same Claude Code session (`--resume` with the

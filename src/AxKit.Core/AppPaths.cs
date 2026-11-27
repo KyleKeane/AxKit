@@ -19,12 +19,24 @@ public static class AppPaths
     /// the user's Documents (docs/axKit/SPEC.md AX-5.11; the maintainer's decision of 2026-11-23). Settings, logs and
     /// what axKit keeps for itself stay under AppData; nothing here is needed for axKit to run, so deleting any of
     /// it breaks nothing. And AppData is the package's private folder in the Store's copy, which Windows removes
-    /// with an uninstall: Documents is not. In a test run it is a Documents folder of the run's own home.
+    /// with an uninstall: Documents is not. In a test run it is a Documents folder of the run's own home. Windows is
+    /// asked for the Documents folder without a look at the disk (a folder that is redirected and away for the moment
+    /// is still the user's), and <see cref="DocumentsFolderFor"/> says what counts when it names none.
     /// </summary>
     public static string UserFolder { get; } =
         AutomationEnvironment.Home is { } home
             ? Path.Combine(home, "Documents", "axKit")
-            : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "axKit");
+            : Path.Combine(DocumentsFolderFor(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.DoNotVerify),
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile, Environment.SpecialFolderOption.DoNotVerify)), "axKit");
+
+    /// <summary>
+    /// The Documents folder as Windows names it, or <c>Documents</c> in the profile folder when it names none
+    /// (review, 2026-11-27: the empty answer made <see cref="UserFolder"/> a path relative to whatever folder the
+    /// process was started in). Pure.
+    /// </summary>
+    public static string DocumentsFolderFor(string documents, string profile) =>
+        documents.Length > 0 ? documents : Path.Combine(profile, "Documents");
 
     /// <summary>The folder of the bundle's templates (docs/axTemplate/SPEC.md TP-2.1): a list of the item format, every item one template; <c>Templates</c> in <see cref="UserFolder"/>.</summary>
     public static string TemplatesRoot => Path.Combine(UserFolder, "Templates");
@@ -41,8 +53,9 @@ public static class AppPaths
     /// <summary>
     /// The first start of a version that keeps the user's content in <see cref="UserFolder"/> (AX-5.11; the
     /// maintainer's choice of 2026-11-23, "Move both on update"): what the earlier defaults held moves in, by
-    /// <see cref="TakeOverFolder"/>, entry by entry, so that a start that could not move everything (OneDrive or an
-    /// older axTask holding a file) finishes the next time, and the folder not yet moved stays in use meanwhile.
+    /// <see cref="TakeOverFolder"/>, the whole folder in one step, so that a start that could not move it (OneDrive
+    /// or an older axTask holding a file) leaves it whole and in use, and moves it the next time. Nothing when the
+    /// folder is no full path (Windows named no Documents folder and no profile).
     /// <c>Documents\Tasks</c> into <c>Tasks</c>, only when it holds axTask's lists (<see cref="IsTaskFolder"/>: the
     /// name is a common one) and axTask's settings do not name it as a folder the user chose; <c>Documents\axKit
     /// Claude</c> into <c>Claude</c>, unless AI help's settings name it. Claude Code finds its conversations by the
@@ -51,7 +64,7 @@ public static class AppPaths
     /// </summary>
     public static void TakeOverUserFolders()
     {
-        if (AutomationEnvironment.Home is not null)
+        if (AutomationEnvironment.Home is not null || !Path.IsPathFullyQualified(UserFolder))
         {
             return;
         }
@@ -288,21 +301,35 @@ public static class AppPaths
     }
 
     /// <summary>
-    /// Moves what <paramref name="oldFolder"/> holds into <paramref name="folder"/>: a file the new folder lacks is
-    /// moved, a file it has stays, a subfolder is taken over the same way, and the old folder goes once it is empty;
-    /// nothing when it does not exist. Entry by entry, so that a start that could not move everything (a file the old
-    /// program still held) finishes the next time.
+    /// Moves what <paramref name="oldFolder"/> holds into <paramref name="folder"/>; nothing when the old folder does
+    /// not exist, or when either is no full path (a path relative to the folder the process was started in is never
+    /// moved; review, 2026-11-27). When the new folder is not there, the old one becomes it in one step, whole or not
+    /// at all: until 2026-11-27 the new folder was made first and filled entry by entry, so that a move stopped half
+    /// way (a file in use) left the user's lists in two folders, the new one already the one in use. When the new
+    /// folder is there, entry by entry: a file it lacks is moved, a file it has stays, a subfolder is taken over the
+    /// same way, and the old folder goes once it is empty. A start that could not move everything finishes the next
+    /// time.
     /// </summary>
     public static void TakeOverFolder(string oldFolder, string folder)
     {
-        if (!Directory.Exists(oldFolder))
+        if (!Path.IsPathFullyQualified(oldFolder) || !Path.IsPathFullyQualified(folder) || !Directory.Exists(oldFolder))
         {
             return;
         }
 
         try
         {
-            Directory.CreateDirectory(folder);
+            if (!Directory.Exists(folder))
+            {
+                if (Path.GetDirectoryName(folder) is { Length: > 0 } parent)
+                {
+                    Directory.CreateDirectory(parent);
+                }
+
+                Directory.Move(oldFolder, folder);
+                return;
+            }
+
             foreach (var entry in Directory.GetFileSystemEntries(oldFolder))
             {
                 var destination = Path.Combine(folder, Path.GetFileName(entry));

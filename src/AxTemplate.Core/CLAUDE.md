@@ -13,6 +13,7 @@ Everything of axTemplate that needs no window. Unit tested in `tests/AxTemplate.
 - The store of templates is `AxKit.Core`'s since 2026-11-23, on its second use, the editors' Insert template (TP-5, step 4): `TemplateStore` with `Template`, `TemplateFile`, `TemplateList`, `TemplateFolder`, described in `src/AxKit.Core/notes/text-and-editors.md`. Its tests stay here, in `tests/AxTemplate.Tests`.
 - `TemplateMatch` (TP-3.2, TP-3.3): the finding by words in the name or the text, names first; the order of an empty field, the ones used last first; what is said of a match and of none.
 - `TemplateSettings` (TP-7.2): one settings file for both windows, on `AxKit.Core/HotkeySettings`: the hotkey (Ctrl+Shift+Semicolon at first), the hotkey windows' settings, the names used last, the browser's place.
+- `PasteTarget` with `LineBreaks` (TP-4.8): what the window in front does with a paste's line breaks, from its class names and style, and the question before several lines go into a terminal; and `GivesBack` (TP-4.3, 2026-11-27): whether the clipboard's text of before is put back after the paste, never a text that was copied as private. Tested in `PasteTargetTests`.
 - The marks of a template's text are not here: `AxKit.Core/TextTemplate`, which the editors use too.
 
 ## Gotchas

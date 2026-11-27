@@ -109,4 +109,57 @@ public sealed class AppPathsTests
         AppPaths.TakeOverFolder(old, current);
         Assert.False(Directory.Exists(old));
     }
+
+    /// <summary>AX-5.11 (review, 2026-11-27): a move that cannot finish leaves the old folder whole and in use, never the lists in two folders.</summary>
+    [Fact]
+    public void A_folder_with_a_file_in_use_stays_whole_until_it_can_move()
+    {
+        using var temp = new TempFolder("axkit-tests");
+        var old = Path.Combine(temp.Path, "Tasks");
+        var current = Path.Combine(temp.Path, "axKit", "Tasks");
+        temp.File(@"Tasks\Home\list.json", "{}");
+        temp.File(@"Tasks\Home\buy milk.md", "one");
+        var held = temp.File(@"Tasks\Work\list.json", "{}");
+
+        using (new FileStream(held, FileMode.Open, FileAccess.Read, FileShare.Read))
+        {
+            AppPaths.TakeOverFolder(old, current);
+            Assert.False(Directory.Exists(current));
+            Assert.True(File.Exists(Path.Combine(old, "Home", "list.json")));
+            Assert.True(File.Exists(Path.Combine(old, "Home", "buy milk.md")));
+            // The old folder is the one in use meanwhile.
+            Assert.Equal(old, AppPaths.TasksFolderFor(Path.Combine(temp.Path, "axKit"), old, Directory.Exists));
+        }
+
+        AppPaths.TakeOverFolder(old, current);
+        Assert.False(Directory.Exists(old));
+        Assert.Equal("one", File.ReadAllText(Path.Combine(current, "Home", "buy milk.md")));
+        Assert.True(File.Exists(Path.Combine(current, "Work", "list.json")));
+        Assert.Equal(current, AppPaths.TasksFolderFor(Path.Combine(temp.Path, "axKit"), old, Directory.Exists));
+    }
+
+    /// <summary>AX-5.11 (review, 2026-11-27): without a Documents folder the user's folder is under the profile, and a path that is not whole is never moved.</summary>
+    [Fact]
+    public void Without_a_Documents_folder_the_profiles_is_used_and_a_relative_folder_is_never_moved()
+    {
+        Assert.Equal(@"D:\Docs", AppPaths.DocumentsFolderFor(@"D:\Docs", @"C:\Profiles\sam"));
+        Assert.Equal(@"C:\Profiles\sam\Documents", AppPaths.DocumentsFolderFor(string.Empty, @"C:\Profiles\sam"));
+        Assert.True(Path.IsPathFullyQualified(AppPaths.UserFolder));
+
+        using var temp = new TempFolder("axkit-tests");
+        var old = Path.Combine(temp.Path, "Tasks");
+        temp.File(@"Tasks\list.json", "{}");
+        var relative = Path.GetRelativePath(Environment.CurrentDirectory, old);
+        if (Path.IsPathFullyQualified(relative))
+        {
+            // The temporary folder is on another drive than the tests run on: no relative path leads there.
+            return;
+        }
+
+        Assert.True(Directory.Exists(relative));
+        AppPaths.TakeOverFolder(relative, Path.Combine(temp.Path, "axKit", "Tasks"));
+        AppPaths.TakeOverFolder(old, Path.GetRelativePath(Environment.CurrentDirectory, Path.Combine(temp.Path, "axKit", "Tasks")));
+        Assert.True(File.Exists(Path.Combine(old, "list.json")));
+        Assert.False(Directory.Exists(Path.Combine(temp.Path, "axKit")));
+    }
 }

@@ -42,6 +42,16 @@ public class ReportPrivacyTests
     }
 
     [Fact]
+    public void A_path_under_a_profile_folder_of_two_words_is_masked_whole()
+    {
+        // A path ends at a space, so the rest of the folder's name and of the path stayed in the line until
+        // 2026-11-27. Built from parts: PrivacyTests fails on a whole account path anywhere in the repository.
+        var profile = "C:\\" + "Users\\Jane Doe";
+        Assert.Equal("Opened <path>, 3 lines", ReportPrivacy.Mask($"Opened {profile}\\AppData\\Roaming\\AxKit\\notes.md, 3 lines", NoNames, profile));
+        Assert.Equal("Opened <path>", ReportPrivacy.Mask("Opened c:/" + "users/jane doe/Documents/plan.md", NoNames, profile));
+    }
+
+    [Fact]
     public void The_plain_app_line_has_no_window_title()
     {
         var plain = ReportPrivacy.AppLine("axFile", "5.8.0", "Windows 11 build 26200", "NVDA 2025.3");

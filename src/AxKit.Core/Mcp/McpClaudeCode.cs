@@ -51,7 +51,9 @@ public static class McpClaudeCode
 
     /// <summary>
     /// The file written for <paramref name="axkitExe"/> when it is missing or names another program file (another
-    /// build, a copy that moved); true when it was written. Throws as <see cref="File.WriteAllText(string, string)"/> does.
+    /// build, a copy that moved); true when it was written. Written whole or not at all (<see cref="SafeFile"/>,
+    /// since 2026-11-27): Claude Code is started with this file, and half of it must never be what it reads. Throws
+    /// as <see cref="SafeFile.WriteAllText(string, string)"/> does.
     /// </summary>
     public static bool WriteConfig(string configFile, string axkitExe)
     {
@@ -62,7 +64,7 @@ public static class McpClaudeCode
         }
 
         Directory.CreateDirectory(Path.GetDirectoryName(configFile)!);
-        File.WriteAllText(configFile, text);
+        SafeFile.WriteAllText(configFile, text);
         return true;
     }
 

@@ -252,7 +252,7 @@ internal sealed class AiToolsSetup
         }
 
         var target = ConsentTarget.AiTool(name);
-        var text = $"{name} asks to use axKit. It runs as {program}.\n\n"
+        var text = McpAccess.PairingAsks(name, program) + "\n\n"
             + "It can read what the axKit windows show (their text, lists and status) and open apps. It runs a window's commands and adds items to your axTask lists only while AI tools, Let AI tools run commands is on, each said as it happens, and it never reads axPass or axClip.\n\n"
             + $"A reminder: axKit is only an access layer here. {target.Work}\n\n"
             + "To allow it, check the box, then Allow. The axKit menu's AI tools, Forget AI tools, takes this back, and turns Let AI tools run commands off.";

@@ -25,4 +25,35 @@ public sealed class BundleSettingsTests
         new BundleSettings { CheckForUpdates = true }.Save(path);
         Assert.True(BundleSettings.Load(path, () => ["{\"checkForUpdates\": false}"]).CheckForUpdates);
     }
+
+    [Fact]
+    public void A_file_that_does_not_read_gives_no_update_check_for_that_run()
+    {
+        // Review, 2026-11-27: the default is on, so a damaged or held file brought back a check the user had turned off.
+        using var temp = new TempFolder("bundle-settings-tests");
+        var path = Path.Combine(temp.Path, "bundle.json");
+        new BundleSettings { CheckForUpdates = false }.Save(path);
+        using (new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None))
+        {
+            Assert.False(BundleSettings.Load(path, () => []).CheckForUpdates);
+        }
+
+        var damaged = Path.Combine(temp.Path, "damaged", "bundle.json");
+        Directory.CreateDirectory(Path.GetDirectoryName(damaged)!);
+        File.WriteAllText(damaged, "{ not json");
+        Assert.False(BundleSettings.Load(damaged, () => []).CheckForUpdates);
+
+        // One value that does not read: the rest is the file's, and the check stays off.
+        var partly = Path.Combine(temp.Path, "partly", "bundle.json");
+        Directory.CreateDirectory(Path.GetDirectoryName(partly)!);
+        File.WriteAllText(partly, "{ \"checkForUpdates\": \"no\", \"keepEventLog\": true }");
+        var read = BundleSettings.Load(partly, () => []);
+        Assert.False(read.CheckForUpdates);
+        Assert.True(read.KeepEventLog);
+
+        // A file that reads is what it says.
+        var whole = Path.Combine(temp.Path, "whole", "bundle.json");
+        new BundleSettings { CheckForUpdates = true }.Save(whole);
+        Assert.True(BundleSettings.Load(whole, () => []).CheckForUpdates);
+    }
 }

@@ -167,4 +167,21 @@ public sealed class AiTests
 
         Assert.Equal("say more", AiPrompts.FollowUp(" say more "));
     }
+
+    [Fact]
+    public void What_a_window_sends_about_itself_names_no_account_in_its_title()
+    {
+        // AH-6.2 (review, 2026-11-27): the title holds the full path of what is open since 2026-11-26, and went to
+        // Claude unredacted. The paths are built from parts: PrivacyTests fails on a whole account path anywhere.
+        var profile = "C:\\" + "Users\\Jane Doe";
+        var context = WindowContext.Redacted("axDown", profile + "\\Documents\\notes.md - axDown", $"Text, in {profile}\\Documents", "F1: this list", "# guide",
+            [$"3 s ago: Opened {profile}\\Documents\\notes.md"], [], profile);
+        Assert.Equal("C:\\Users\\<user>\\Documents\\notes.md - axDown", context.Title);
+        Assert.Equal("Text, in C:\\Users\\<user>\\Documents", context.Focus);
+        Assert.Equal(["3 s ago: Opened C:\\Users\\<user>\\Documents\\notes.md"], context.Recent);
+        Assert.Equal("F1: this list", context.Shortcuts);
+        var prompt = AiPrompts.AboutWindow(context, "what is this?");
+        Assert.DoesNotContain("Jane", prompt, StringComparison.Ordinal);
+        Assert.DoesNotContain("Doe\\", prompt, StringComparison.Ordinal);
+    }
 }

@@ -59,7 +59,9 @@ taskbar. It works entirely offline (bundle G6).
   user's Run key (`HKCU\Software\Microsoft\Windows\CurrentVersion\Run`), `"<installed AxKit.exe>" start --hidden`,
   written or removed when the setting flips and checked at each start; only the installed program writes it, naming
   itself, so a development build never puts itself, or an older installed copy that does not know `start`, into the
-  sign-in. The installer stops axStart before an install or a removal
+  sign-in. A window of a test run never touches the Run key, neither to write the value nor to remove it
+  (`SignInStart.Applies`, 2026-11-27: the run's settings are its own, the Run key is the user's, and a run's window
+  with the setting off had removed the user's own value). The installer stops axStart before an install or a removal
   and starts it hidden after an install or an update unless the setting is off (AX-2.3); the removal deletes the
   value.
 - AS-1.4 **Quit axStart** (axStart menu) ends the process and frees the hotkey until the next sign-in or start. Alt+F4

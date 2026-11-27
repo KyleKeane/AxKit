@@ -28,12 +28,23 @@ public sealed class BundleSettings
 
     public static string DefaultPath => AppPaths.BundleSettingsFile;
 
-    /// <summary>The settings from the file; without the file, from what the apps' own files said (<see cref="FromApps"/>).</summary>
+    /// <summary>
+    /// The settings from the file; without the file, from what the apps' own files said (<see cref="FromApps"/>). A
+    /// file that is there and does not read whole (held by another program, damaged, one value not understood) gives
+    /// no update check for that run: the default is on, and a network contact the user turned off must not come back
+    /// through a damaged file (bundle rule 8; review, 2026-11-27).
+    /// </summary>
     public static BundleSettings Load(string path, Func<IEnumerable<string?>> appFiles)
     {
         if (File.Exists(path))
         {
-            return SettingsFile.Load<BundleSettings>(path, out _);
+            var settings = SettingsFile.Load<BundleSettings>(path, out var error);
+            if (error is not null)
+            {
+                settings.CheckForUpdates = false;
+            }
+
+            return settings;
         }
 
         return new BundleSettings { CheckForUpdates = FromApps(appFiles()) };

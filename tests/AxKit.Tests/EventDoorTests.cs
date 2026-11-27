@@ -222,6 +222,30 @@ public sealed partial class EventDoorTests
     [GeneratedRegex(@"\bAnnouncer\.(\w+)")]
     private static partial Regex AnnouncerMember();
 
+    /// <summary>
+    /// AX-7.3c, one way to refuse everywhere (review, 2026-11-27: a notice's empty field, its unchecked consent box
+    /// and a refused text said their words without the sound): wherever words are said as a refusal, the refused sound
+    /// is raised on the line before; the window's <c>Refuse</c> is that pair, and what calls it needs nothing more.
+    /// </summary>
+    [Fact]
+    public void Words_of_a_refusal_never_come_without_the_refused_sound()
+    {
+        var offenders = new List<string>();
+        foreach (var (relative, code) in Sources())
+        {
+            for (var i = 0; i < code.Count; i++)
+            {
+                if (code[i].Contains("(EventKind.Refused,", StringComparison.Ordinal)
+                    && (i == 0 || !code[i - 1].Contains("EventDoor.Raise(EventKind.Refused);", StringComparison.Ordinal)))
+                {
+                    offenders.Add($"{relative}:{i + 1}");
+                }
+            }
+        }
+
+        Assert.True(offenders.Count == 0, "Refused words without EventDoor.Raise(EventKind.Refused) on the line before: " + string.Join("; ", offenders));
+    }
+
     /// <summary>The apps cannot play a sound themselves: <c>Sounds</c> is not public, so only AxKit.Forms can name it, and there the first test holds.</summary>
     [Fact]
     public void Sounds_is_internal_to_the_shared_window_pieces()

@@ -42,22 +42,31 @@ public static class EventLogger
     /// </summary>
     public static void FollowSettings(string path)
     {
-        try
+        // The window's thread (a window made or activated) and the pool's (Flush) both come here.
+        lock (SettingsGate)
         {
-            var stamp = File.Exists(path) ? File.GetLastWriteTimeUtc(path) : DateTime.MinValue;
-            if (stamp == _settingsStamp)
+            try
             {
-                return;
-            }
+                var stamp = File.Exists(path) ? File.GetLastWriteTimeUtc(path) : DateTime.MinValue;
+                if (stamp == _settingsStamp)
+                {
+                    return;
+                }
 
-            _settingsStamp = stamp;
-            _on = stamp != DateTime.MinValue && SettingsFile.Load<BundleSettings>(path, out _).KeepEventLog;
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-        {
-            // The settings could not be read this time: the switch stays as it was.
+                _settingsStamp = stamp;
+                _on = stamp != DateTime.MinValue && SettingsFile.Load<BundleSettings>(path, out _).KeepEventLog;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                // The settings could not be read this time: the switch stays as it was.
+            }
         }
     }
+
+    private static readonly object SettingsGate = new();
+
+    /// <summary>The bundle's settings file the switch is read from before a write (<see cref="Flush"/>): the user's, or a test's own.</summary>
+    public static string SettingsPath { get; set; } = BundleSettings.DefaultPath;
 
     /// <summary>The line of one event: its local time and its kind's id, "2026-11-25 14:03:05.123 refused". Nothing else.</summary>
     public static string Line(EventKind kind, DateTime time) => $"{time:yyyy-MM-dd HH:mm:ss.fff} {EventPresenter.Id(kind)}";
@@ -85,7 +94,12 @@ public static class EventLogger
         ThreadPool.QueueUserWorkItem(_ => Flush());
     }
 
-    /// <summary>Writes what waits, now, on the caller's thread: the pool's work, and a test's.</summary>
+    /// <summary>
+    /// Writes what waits, now, on the caller's thread: the pool's work, and a test's. The switch is read from the
+    /// bundle's file first (<see cref="FollowSettings"/>, which reads the file only when it changed), and what waits
+    /// is dropped when the log is off: a window that is open and not activated, or one that runs in the background,
+    /// went on writing after the user turned the log off in another window, until 2026-11-27.
+    /// </summary>
     public static void Flush()
     {
         string[] lines;
@@ -98,6 +112,12 @@ public static class EventLogger
 
         if (lines.Length > 0)
         {
+            FollowSettings(SettingsPath);
+            if (!_on)
+            {
+                return;
+            }
+
             // One writer at a time in this process: a line noted while these are written starts the next writer.
             lock (WriteGate)
             {

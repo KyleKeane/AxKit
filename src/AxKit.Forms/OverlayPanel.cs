@@ -596,7 +596,9 @@ public sealed class OverlayPanel : Panel
     {
         if (choice.IsDefault && _inputSpec is { Required: true } spec && _input.Text.Length == 0)
         {
-            // Nothing to act on yet (Find with an empty field): say so and stay.
+            // Nothing to act on yet (Find with an empty field): say so and stay. Refused as everywhere (AX-7.3c): the
+            // sound, then the words.
+            EventDoor.Raise(EventKind.Refused);
             EventDoor.SayOn(EventKind.Refused, Source, spec.EmptyMessage, true);
             _input.Select();
             return;
@@ -604,7 +606,8 @@ public sealed class OverlayPanel : Panel
 
         if ((choice.NeedsConsent || (choice.IsDefault && !choice.IsCancel)) && Shown?.Consent is not null && !_consent.Checked)
         {
-            // The consent not given yet (AX-11.4): say so and stay, the focus where it was.
+            // The consent not given yet (AX-11.4): say so and stay, the focus where it was; refused as everywhere (AX-7.3c).
+            EventDoor.Raise(EventKind.Refused);
             EventDoor.SayOn(EventKind.Refused, Source, "Check the box first", true);
             return;
         }

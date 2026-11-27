@@ -126,6 +126,11 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   access on or pairing takes code that runs as the user, not a written file (the review of 2026-10-24). The window
   says so when the AI tools submenu opens (2026-11-16, `repairs.md` R-56): "The AI tools' setting was changed outside
   axKit, or its key is gone: AI tools are off, and every AI tool must be allowed again."; the log holds it once.
+  A change that was not written is never said as made (2026-11-27): when the file could not be opened at the read
+  just before (another program held it, `repairs.md` R-51), the write is passed over and the window shows "The AI
+  tools' setting was not changed: the setting's file could not be opened a moment ago, so it is left as it was. Try
+  again." in place of "AI tools off", the forgetting or the run switch's words (`McpAccess.Write`). What another
+  window wrote meanwhile is kept only from a file whose seal checks, and what is written then is sealed anew.
 - MC-6.2 **The windows' pipes**: every window serves its own pipe, `\\.\pipe\AxKit-mcp-<user SID>-<random>`, for the
   current user alone and refused over the network (the access list of S-11). The broker finds them by listing the
   pipes with that prefix, so no file names them. A window of axPass or axClip serves none (MC-4.1, MC-4.2): those apps
@@ -136,7 +141,11 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   it by MC-6.3 and logged every knock). A window's id is the pipe's random part either way. A window put away by
   its own close and running on (axClaude's `--hide-on-close`, axHelp's conversation while hidden; `AxKitForm.PutAway`,
   2026-11-15) answers every request, the broker's `hello` included, with "This window is hidden", so `axkit_windows`
-  leaves it out and nothing reads or runs anything in it until its user brings it back.
+  leaves it out and nothing reads or runs anything in it until its user brings it back. So does every window that
+  is not shown (2026-11-27; `McpChannel.HiddenWindow`, "This window is hidden until its user brings it up. Nothing
+  was read or done."): a hotkey window running in the background (axStart, axHelp, axTemplate's launcher) is no open
+  window to the AI tools, so that the pairing notice (MC-6.4), the question of MC-6.5a and a drafted report
+  (MC-9.11) never open where nobody sees or hears them. A window that is minimized is shown, and answers.
 - MC-6.3 **Both ends prove who they are**: the window answers only a client whose process runs this very program file
   (`GetNamedPipeClientProcessId`, its image path, as the hand-over checks, S-13), and the broker talks only to a pipe
   whose server process runs it (`GetNamedPipeServerProcessId`): a broker reads only the windows of its own
@@ -159,13 +168,19 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   text that axKit is only the access layer and the check box "I understand that axKit is only an access layer for
   <name>, and I take full responsibility for knowing and following the terms of <name>", which Allow needs (Deny stays
   the default), the consent kept in consent.json and withdrawn by Forget AI tools; the window flashing on the taskbar when it
-  is not in front. The broker waits up to two minutes for the answer; Deny, or no answer, refuses the call. With no
-  axKit window open, the call is refused with "Open any axKit window to allow <name>"; a window that shows a notice
+  is not in front. The broker waits up to two minutes for the answer; Deny, or a notice left unanswered, refuses the
+  call. With no axKit window open (a window that is hidden is not one, MC-6.2), the call is refused with "Open any
+  axKit window to allow <name>." (`McpAccess.NoWindowToAllowIn`); a window that shows a notice
   already shows no pairing (a notice replaces the one shown, which the user may be answering) and the call is refused
   with "ask again once it is answered". An unanswered notice is closed when the call stops waiting, and its Allow then
-  pairs nothing; after a Deny the same broker asks no more for a minute. A program that runs whatever script it is
+  pairs nothing; after a Deny the same broker asks no more for a minute. Only an answer of the user's is a Deny
+  (`McpAccess.PairingOf`, 2026-11-27): when the window gave none (its thread was busy, it was hidden or gone, the
+  pipe ended), the call is refused with "The axKit window did not answer; ask again." and nothing is held, where
+  until then it counted as the user's Deny, with the minute and "The user did not allow". A program that runs
+  whatever script it is
   given (cmd, PowerShell, Windows Script Host, Python, mshta, rundll32, Explorer: `McpAccess.RefusedHosts`) is never
-  paired. The name is the client's own word, its hidden characters made visible (`DisplayText`). What a window
+  paired. The name is the client's own word, its hidden characters made visible (`DisplayText`), and so is the
+  program's path in the notice (`McpAccess.PairingAsks`, 2026-11-27). What a window
   announces is kept for `axkit_window_said` only from the first call that proved the key, never from before.
   The limits, said plainly: a pairing trusts every process of that program file (every script `node` runs, when the
   client is a `node` program), and a program of the same user can start `AxKit.exe mcp` itself, even with a forged
@@ -184,7 +199,10 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   mark, and since 2026-11-11 the menus that hold it; MC-7 runs one) and `axkit_window_said` (what the window announced since the last call, the
   last 50). `axkit_open` (`open`): an app by its verb, on a path or none (axClaude and axTerminal, which start a program as they open, an act, MC-3.1, and axTask on a path, which makes the path its top folder, MC-D12, only after the user's yes, MC-6.5a); the path fully qualified, on this computer
   (`LocalPaths`), through no link (a junction or a symbolic link, which may lead to a share; asked part by part
-  before anything follows it), existing, and of a kind the app opens (`Dispatch.PathFor`); started as
+  before anything follows it), existing, and of a kind the app opens (`Dispatch.PathFor`). The path is first read as
+  Windows reads it (`Path.GetFullPath`, 2026-11-27): forward slashes become backslashes and `.` and `..` are worked
+  out, so that every check, every refusal and the argument the app is started with are of one spelling; until then
+  a path written with forward slashes was one part to the link check, which passed it. Started as
   `AxKit.exe <verb> <path>` with the arguments as a list, through ShellExecute on the program file itself, never through
   a command interpreter (ShellExecute hands the new window none of the broker's handles).
 - MC-6.5a **Asked first** (the maintainer's choice of 2026-11-24, "Yes, asked each time", after Claude, refused axTask
@@ -194,13 +212,20 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   axKit window, and that window checks them again and asks (`AxKitForm.McpAskToOpen`): the notice "Open axTask?" whose
   text starts with the AI caution (`AiCaution.OpenAsked`), then "Claude asks to open axTask on <folder>. This makes it
   the folder axTask works in: ..." (`McpTools.OpenMeans`; for axClaude, Claude Code starting there, for axTerminal a
-  shell), the buttons No, first, the default and Escape, and Open, which starts the app as the Window menu does. No
+  shell; the folder with its hidden and reordering characters made visible, `McpTools.OpenWhere`, 2026-11-27), the
+  buttons No, first, the default and Escape, and Open, which starts the app as the Window menu does. No
   says "axTask not opened". The client's answer is at once: "The user is asked in this <app> window whether to open
   axTask; it opens only if they choose Open." Refused as a drafted report is (MC-7.8: a notice or a Windows dialog open,
   the key test, the user typing); not held to the run switch, since nothing happens before the user's own Open.
 - MC-6.6 **Limits and the log**: at most 10 calls a second; every call in `%LOCALAPPDATA%\AxKit\mcp-audit.log`, one
   line: the time, the client's name and program, the tool, the first 16 hex digits of the SHA-256 of its arguments,
-  and the result (done, refused and why, failed). The arguments themselves are not written.
+  and the result (done, refused and why, failed). The arguments themselves are not written. A line of
+  `axkit_window_run` says what became of the command, named by the label the window matched and never by the
+  client's own argument (`McpAudit.RunResult`, 2026-11-27): "done: ran Word wrap" only for a command the window
+  ran; "asked the user: Delete" for an act command, which runs only on the user's Yes in the window (MC-7.3; what
+  the window then says tells what the user answered); "not run: Find" when a notice, a dialog, the
+  switch or a disabled item stopped it in between; "not known" when the window had not taken it up or closed.
+  Until then every run without an error was written "done: ran" with the name the client gave.
 - MC-6.8 **Added to Claude Code**: Claude Code found where axClaude finds it (`AxKit.Core/ClaudeCodeProgram`, one
   search for both since 2026-11-09, axClaude FR-1.2: `claude.exe` or `claude.cmd` in every PATH folder, then its
   installer's `%USERPROFILE%\.local\bin\claude.exe`, then npm's `%APPDATA%\npm\claude.cmd`; a `.cmd` runs through
@@ -273,7 +298,8 @@ menu, the palette and the automated checks in the table of `command-language.md`
   are never listed (AK-2.6, exception 3). Until then only the window's command list was searched, and a key with no
   menu item was listed and refused; such a key is no longer listed. It runs on the window's thread as its menu item would (`PerformClick`), posted so that the
   answer never waits on a command that shows a Windows dialog; the answer, after the window has been quiet for 0.7 s
-  or at most 2.5 s, gives what ran (`ran`, only for a command the window took up and ran; `notRun` with the reason when
+  or at most 2.5 s, gives the label the window matched (`command`, since 2026-11-27, whatever came of it: the log
+  names the command by it, MC-6.6), what ran (`ran`, only for a command the window took up and ran; `notRun` with the reason when
   a notice, a dialog, the switch or a disabled item stopped it in between; `unknown` when the window had not taken it up
   yet), what the window said meanwhile (as `axkit_window_said` reads it), the notice it
   now shows the user with its text, or that a Windows dialog waits for the user. The window's pipe answers it as
@@ -291,7 +317,7 @@ menu, the palette and the automated checks in the table of `command-language.md`
   a command of a window's list, so that no AI tool can run it, nor Let AI tools read and open axKit, nor Forget.
 - MC-7.3 **What it never does**: it never answers a question for the user. While the window shows a notice (a
   question, an error, the palette, a pairing) or a Windows dialog, every run is refused ("The window shows the user a
-  notice, <title>: commands run once the user has answered it, and AI tools never answer it"), and while the window's key test runs (bundle AX-8.12, 2026-11-15: the user is trying keys and nothing is carried out, "The window is in its key test: ... Commands run once the user has ended it"; Test a key itself is act, so it is asked of the user); a command that asks
+  notice, <title>: commands run once the user has answered it, and AI tools never answer it"), and so while the list of an act command's question (below) waits for the user's answer, over the window or in its place at the bottom, which the gate takes for a notice (`AxKitForm.McpGateState`, 2026-11-27: until then further runs went on in the window under the question; "The window asks the user about a command an AI tool asked to run: commands run once the user has answered it, and AI tools never answer it", `McpRun.RequestWaits`; axClaude's own line of offers, MC-9.4, is its own and is not held to this), and while the window's key test runs (bundle AX-8.12, 2026-11-15: the user is trying keys and nothing is carried out, "The window is in its key test: ... Commands run once the user has ended it"; Test a key itself is act, so it is asked of the user); a command that asks
   (delete, discard, close with changes, New folder's name) shows its question as for the user and the answer says the
   window asks it. A command marked **act** (app-kit's mark, MC-3.1: it deletes, moves, sends, starts or ends
   something outside the window) is asked of the user first, in the window, **through the interface of an offered
@@ -364,7 +390,12 @@ menu, the palette and the automated checks in the table of `command-language.md`
   own, since no run starts while one is open. A password field is never filled ("The command asks for a password,
   which AI tools never type"); a command that opened no field ran, and the answer's `text` says the text was not used.
   The user hears "Claude ran Find with the text budget" (`McpRun.Said`), and an act command's question names the
-  text, its explanation under a heading of its own (`McpRun.AskName`, `ExplainText`). Which commands take a text is
+  text, its explanation under a heading of its own (`McpRun.AskName`, `ExplainText`). The explanation shows the
+  text whole, every character that would be typed, its hidden characters made visible (`McpRun.WholeText`,
+  2026-11-27, bundle AX-11.12: until then the first 200 characters of up to 1000, the end unseen); the list's name,
+  the title and the words of a run show its first 200 characters and then ", and more" (`McpRun.ShownText`), and
+  the question's own text, which is all the user reads where the question is a notice, gives a text longer than
+  that whole in a paragraph of its own ("The whole text it is run with:"). Which commands take a text is
   never written by hand: it is whatever field the command opens.
 - MC-7.10 **A form's fields** (the maintainer, 2026-11-23: "each form should have nicely defined elements that can be
   accessed using mcp"): while a window shows a form (AX-8.10), `axkit_window_state` lists its fields under `form`,

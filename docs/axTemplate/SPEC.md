@@ -145,7 +145,15 @@ answer to a key.
   a terminal, where Ctrl+C ends the running command: the choice is the user's, each time (TP-D4).
 - TP-4.3 **The clipboard afterwards.** The template's text is put on the clipboard marked as not for a clipboard
   history, the mark password managers use, so that axClip and Windows' own history do not keep it. When the
-  clipboard held plain text before, that text is put back once the paste is done (TP-D6). Where the caret's mark
+  clipboard held plain text before, that text is put back once the paste is done (TP-D6). A text that was copied
+  as private is not put back (2026-11-27): when the launcher comes up it notes whether the clipboard carries the
+  marks of a private copy (`PrivateClipboard.HoldsPrivateCopy`: `ExcludeClipboardContentFromMonitorProcessing`,
+  `Clipboard Viewer Ignore`, or `CanIncludeInClipboardHistory` or `CanUploadToCloudClipboard` with the value 0; a
+  clipboard that cannot be read for them counts as private), and such a text, a password copied in axPass or
+  another password manager, stays what `{clipboard}` stands for and is never written to the clipboard again
+  (`PasteTarget.GivesBack`); the template's text stays there, marked as it was put. Until then it was put back as
+  plain text, into Windows' clipboard history, the cloud clipboard and axClip, where axPass's clearing after 30
+  seconds (PW-5.4) no longer found it. The user copies it again where it came from. Where the caret's mark
   cannot be found, "done" is a wait after the paste key that the user chooses: the launcher's Options, Wait
   before the clipboard comes back, 0.3, 0.6 (the default), 1, 2 or 4 seconds, saved as `giveBackMs` (the
   maintainer's answer of 2026-11-24, "a setting for it"); a choice is said, "The clipboard comes back 2 seconds
@@ -326,7 +334,11 @@ answer to a key.
 - **TP-D6 The clipboard is given back.** A template put in should not cost the user what they had copied, and
   should not fill a clipboard history with templates. What is given back is the text the clipboard held when the
   launcher came up, so the copy that Ctrl+Enter makes in the other program is undone with it; a clipboard that
-  held a picture or files then is not given back (the launcher takes only its text). The other program is asked
+  held a picture or files then is not given back (the launcher takes only its text), and neither is a text that
+  was copied as private (TP-4.3; decided by the assistant on 2026-11-27, for the maintainer to confirm: put back
+  with its marks it would stay on the clipboard past the time its owner said it would be cleared, which axPass
+  says aloud with every copy, and the other way, put back as plain text, was the flaw; so a password costs the
+  user a second copy, and nothing of it outlives its owner's word). The other program is asked
   to paste and cannot say when it has, so the text goes back after a wait, 0.6 seconds after the paste key unless
   the user chose another (TP-4.3): a program slower than that pastes the old text, and the guide names Shift+Enter for such a one. The
   wait is the same every time, not a guess at the program (the maintainer's rule of no hidden thresholds is

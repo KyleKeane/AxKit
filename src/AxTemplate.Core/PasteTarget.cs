@@ -51,4 +51,15 @@ public static class PasteTarget
 
     /// <summary>The number of lines of a text, counted by its breaks.</summary>
     public static int LinesOf(string text) => text.ReplaceLineEndings("\n").Trim('\n').Split('\n').Length;
+
+    /// <summary>
+    /// TP-4.3, TP-D6: whether the text the clipboard held when the launcher came up is put back after the paste.
+    /// Only a text; only while the clipboard still holds the template the launcher put there, so that nothing copied
+    /// since is lost; and never a text that was copied as private (a password from axPass or another password
+    /// manager, <paramref name="beforeWasPrivate"/>): put back as plain text it would reach Windows' clipboard
+    /// history, the cloud clipboard and axClip, and its owner's timed clearing would no longer find it (review,
+    /// 2026-11-27). Such a text is not put back at all; the user copies it again where it came from.
+    /// </summary>
+    public static bool GivesBack(string before, bool beforeWasPrivate, bool stillTheTemplate) =>
+        before.Length > 0 && !beforeWasPrivate && stillTheTemplate;
 }

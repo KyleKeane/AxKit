@@ -192,7 +192,9 @@ public sealed class ClipForm : HotkeyForm
     /// <summary>
     /// A change of the clipboard: its text kept when the policy says so (CP-3.1), the list made again; a clipboard
     /// another program holds open read again a little later (CP-3.3). Nothing is said: a copy is the user's own act
-    /// in another program.
+    /// in another program. The marks and the text are read in three steps, so the clipboard's sequence number is
+    /// taken before and after: when it changed, another copy landed in between (a password's, read with the marks of
+    /// the copy before it, until 2026-11-27), and the whole is read again as a held clipboard is.
     /// </summary>
     private void ReadClipboard(int attempt)
     {
@@ -201,6 +203,7 @@ public sealed class ClipForm : HotkeyForm
         int? historyValue;
         try
         {
+            var sequence = PrivateClipboard.Sequence;
             if (!Clipboard.ContainsText())
             {
                 // A program may empty the clipboard and fill it in two steps: no text yet is read again as a held
@@ -214,8 +217,13 @@ public sealed class ClipForm : HotkeyForm
             }
 
             excluded = ClipPolicy.ExcludingFormats.Any(format => IsClipboardFormatAvailable(RegisterClipboardFormat(format)));
-            historyValue = HistoryValue();
+            // A value that is there and cannot be read comes back as 0, which keeps the copy out (CP-3.1).
+            historyValue = PrivateClipboard.FlagValue(ClipPolicy.HistoryFormat, Handle);
             text = Clipboard.GetText();
+            if (PrivateClipboard.Sequence != sequence)
+            {
+                throw new ExternalException("The clipboard changed while it was read");
+            }
         }
         catch (ExternalException)
         {
@@ -243,48 +251,6 @@ public sealed class ClipForm : HotkeyForm
         var keep = Selected?.Text;
         _history.Add(text!, DateTime.Now);
         Fill(keep);
-    }
-
-    /// <summary>
-    /// The value of <c>CanIncludeInClipboardHistory</c> when the copy carries it, a number in its first four bytes (0
-    /// keeps the copy out); null without it. Read through the clipboard API, since WinForms' GetData is obsolete in
-    /// .NET 10; a clipboard held open by another program throws, as Clipboard's own reads do, for the retry.
-    /// </summary>
-    private int? HistoryValue()
-    {
-        var format = RegisterClipboardFormat(ClipPolicy.HistoryFormat);
-        if (!IsClipboardFormatAvailable(format))
-        {
-            return null;
-        }
-
-        if (!OpenClipboard(Handle))
-        {
-            throw new ExternalException("The clipboard is open in another program");
-        }
-
-        try
-        {
-            var data = GetClipboardData(format);
-            var pointer = data == 0 ? 0 : GlobalLock(data);
-            if (pointer == 0)
-            {
-                return null;
-            }
-
-            try
-            {
-                return Marshal.ReadInt32(pointer);
-            }
-            finally
-            {
-                GlobalUnlock(data);
-            }
-        }
-        finally
-        {
-            CloseClipboard();
-        }
     }
 
     private void TogglePause()
@@ -455,22 +421,4 @@ public sealed class ClipForm : HotkeyForm
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool IsClipboardFormatAvailable(uint format);
-
-    [DllImport("user32.dll", SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool OpenClipboard(nint owner);
-
-    [DllImport("user32.dll", SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool CloseClipboard();
-
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern nint GetClipboardData(uint format);
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern nint GlobalLock(nint memory);
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool GlobalUnlock(nint memory);
 }

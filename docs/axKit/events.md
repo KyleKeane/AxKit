@@ -190,7 +190,10 @@ the same sounds.
   one turn of the window's thread, so that a refusal's sound and its words are one line and a batch of arriving lines
   one. Nothing is noted or written while it is off. Past 1 MB the file becomes `events.old.log`, replacing the one
   before. The lines are written on a thread of the pool; each window reads the switch as it is made and at each
-  activation when `bundle.json` changed. On this computer alone: a report does not carry it.
+  activation when `bundle.json` changed, and again on that thread before every write, which drops what waits when
+  the switch is off (`EventLogger.Flush`, 2026-11-27: until then a window that was open and not activated, or an app
+  running in the background, went on writing after the log was turned off in another window). On this computer
+  alone: a report does not carry it.
 
 Left, on purpose:
 

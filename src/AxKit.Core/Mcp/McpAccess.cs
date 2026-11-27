@@ -6,6 +6,15 @@ namespace AxKit.Core.Mcp;
 /// <summary>A client the user allowed (docs/axKit/mcp.md MC-6.4): known by its program file; its name as it gave it, for display.</summary>
 public sealed record McpClient(string Program, string Name, string Paired);
 
+/// <summary>What a window answered the pairing request with (<see cref="McpAccess.PairingOf"/>, MC-6.4).</summary>
+public enum PairingAnswer
+{
+    Allowed,
+    Busy,
+    Denied,
+    NoAnswer,
+}
+
 /// <summary>The shape of <see cref="AppPaths.McpFile"/>: off until the user turns it on, and the paired clients.</summary>
 public sealed class McpSettings
 {
@@ -52,6 +61,56 @@ public static class McpAccess
     /// <summary>Whether a program may be paired at all.</summary>
     public static bool MayPair(string program) =>
         !RefusedHosts.Contains(Path.GetFileName(program), StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// The pairing notice's first paragraph (MC-6.4): who asks and which program file it is, the path with its hidden
+    /// and reordering characters made visible (<see cref="DisplayText"/>; review, 2026-11-27), since the program is
+    /// what the user allows. The name comes made visible already (<see cref="McpProtocol.ClientName"/>).
+    /// </summary>
+    public static string PairingAsks(string name, string program) => $"{name} asks to use axKit. It runs as {DisplayText.Visible(program)}.";
+
+    /// <summary>What a client not yet paired is told when no axKit window is open to ask the user in (MC-6.4).</summary>
+    public static string NoWindowToAllowIn(string client) => $"Open any axKit window to allow {client}.";
+
+    /// <summary>What a client is told when the window asked about the pairing gave no answer of the user's (MC-6.4): it may ask again at once.</summary>
+    public const string WindowDidNotAnswer = "The axKit window did not answer; ask again.";
+
+    /// <summary>
+    /// What a window's answer to the pairing request means (MC-6.4). Only an answer that says <c>allowed</c> is the
+    /// user's: true allows, false is the user's Deny or a notice left unanswered, and <c>busy</c> beside it is a
+    /// window that shows another notice. No answer at all, an answer that does not read, and an answer of another
+    /// shape (the window's thread was busy, the window is hidden or failed) are <see cref="PairingAnswer.NoAnswer"/>:
+    /// until 2026-11-27 they counted as the user's Deny, with its hold of a minute and "The user did not allow".
+    /// </summary>
+    public static PairingAnswer PairingOf(string? answer)
+    {
+        if (string.IsNullOrWhiteSpace(answer))
+        {
+            return PairingAnswer.NoAnswer;
+        }
+
+        try
+        {
+            if (System.Text.Json.Nodes.JsonNode.Parse(answer) is not System.Text.Json.Nodes.JsonObject said
+                || said["allowed"] is not System.Text.Json.Nodes.JsonValue allowed || !allowed.TryGetValue<bool>(out var yes))
+            {
+                return PairingAnswer.NoAnswer;
+            }
+
+            if (yes)
+            {
+                return PairingAnswer.Allowed;
+            }
+
+            return said["busy"] is System.Text.Json.Nodes.JsonValue busy && busy.TryGetValue<bool>(out var shows) && shows
+                ? PairingAnswer.Busy
+                : PairingAnswer.Denied;
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            return PairingAnswer.NoAnswer;
+        }
+    }
 
     /// <summary>The setting as written by axKit: off with no clients when there is no key or the seal does not check.</summary>
     public static McpSettings Load()
@@ -170,18 +229,38 @@ public static class McpAccess
         Save(Forgotten(Load()));
     }
 
-    /// <summary>The file written with its seal; without a key (the access never turned on) it is written off and empty.</summary>
-    private static void Save(McpSettings settings)
+    /// <summary>The setting's file written with its seal (<see cref="Write"/>), under this user's key.</summary>
+    private static void Save(McpSettings settings) => Write(AppPaths.McpFile, settings, ReadKey());
+
+    /// <summary>What <see cref="Write"/> throws with when the file was passed over: the callers put "was not changed" before it.</summary>
+    public const string NotWritten = "the setting's file could not be opened a moment ago, so it is left as it was. Try again.";
+
+    /// <summary>
+    /// A setting's file written with its seal; without a key (the access never turned on) it is written off and
+    /// empty. Throws <see cref="IOException"/> when nothing was written, because the file was there and could not be
+    /// opened at the load just before (repairs.md R-51): "AI tools off", Forget AI tools and the run switch are never
+    /// said of a file that still says otherwise (review, 2026-11-27). What another window wrote meanwhile is taken
+    /// only from a file whose seal checks, and what is then written is sealed anew, as <c>AiSettings.Save</c> does
+    /// (R-62): a merge was written under the seal of this window's values until then, and read as changed outside.
+    /// </summary>
+    public static void Write(string file, McpSettings settings, byte[]? key)
     {
-        if (ReadKey() is not { } key)
+        if (key is null)
         {
             settings = new McpSettings();
-            SettingsFile.Save(AppPaths.McpFile, settings);
-            return;
+        }
+        else
+        {
+            settings.Seal = SealOf(key, settings);
         }
 
-        settings.Seal = SealOf(key, settings);
-        SettingsFile.Save(AppPaths.McpFile, settings);
+        var written = SettingsFile.Save(file, settings,
+            there => key is not null && Checks(key, there),
+            merged => merged.Seal = key is null ? string.Empty : SealOf(key, merged));
+        if (!written)
+        {
+            throw new IOException(NotWritten);
+        }
     }
 
     /// <summary>

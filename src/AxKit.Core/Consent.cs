@@ -187,14 +187,17 @@ public static class Consent
 
     public static bool Given(string file, string app, string target) => Read(file).Any(item => Same(item, app, target));
 
-    /// <summary>Keeps the agreement, replacing an earlier one for the same app and program. A file that cannot be written is logged: the user is then asked again next time (the window keeps the agreement for the session).</summary>
-    public static void Record(string file, string app, string target, string version, DateTime when)
+    /// <summary>Keeps the agreement, replacing an earlier one for the same app and program; whether it was written. A file that cannot be written is logged: the user is then asked again next time (the window keeps the agreement for the session).</summary>
+    public static bool Record(string file, string app, string target, string version, DateTime when)
     {
         var items = Read(file).Where(item => !Same(item, app, target)).Append(new ConsentRecord(app, target, version, when));
-        if (Write(file, items))
+        if (!Write(file, items))
         {
-            Log.Info($"Consent recorded: {app}, {target}, axKit {version}");
+            return false;
         }
+
+        Log.Info($"Consent recorded: {app}, {target}, axKit {version}");
+        return true;
     }
 
     public static void Withdraw(string file, string app, string target)
@@ -233,9 +236,13 @@ public static class Consent
             if (SettingsFile.Save(file, list))
             {
                 SettingsSeal.Remember(file);
+                return true;
             }
 
-            return true;
+            // The file was there and could not be opened just before (R-51): nothing was written, and nothing is
+            // logged as recorded or withdrawn (until 2026-11-27 this answered true).
+            Log.Error("The consent file was not written: it could not be opened when it was read");
+            return false;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {

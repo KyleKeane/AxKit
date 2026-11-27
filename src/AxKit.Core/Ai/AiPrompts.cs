@@ -7,7 +7,21 @@ namespace AxKit.Core.Ai;
 /// title, the focused control's name and place, the F1 text, the user guide and the last actions; never the text of a
 /// document, which stays the user's.
 /// </summary>
-public sealed record WindowContext(string App, string Title, string Focus, string Shortcuts, string? Guide, IReadOnlyList<string> Recent);
+public sealed record WindowContext(string App, string Title, string Focus, string Shortcuts, string? Guide, IReadOnlyList<string> Recent)
+{
+    /// <summary>
+    /// The context as a window gathers it, with what is the user's redacted as a report's fuller form is
+    /// (<see cref="Redaction"/>): the title, which since 2026-11-26 holds the full path of what is open and went to
+    /// Claude as it was until 2026-11-27, the focus and the last actions. The F1 text and the guide are axKit's own.
+    /// <paramref name="names"/> and <paramref name="profile"/> are the account's by default (a test gives its own).
+    /// </summary>
+    public static WindowContext Redacted(string app, string title, string focus, string shortcuts, string? guide, IEnumerable<string> recent, IEnumerable<string>? names = null, string? profile = null)
+    {
+        var known = names?.ToList();
+        return new(app, Redaction.Redact(title, known, profile), Redaction.Redact(focus, known, profile), shortcuts, guide,
+            recent.Select(line => Redaction.Redact(line, known, profile)).ToList());
+    }
+}
 
 /// <summary>
 /// The prompts (docs/axKit/ai-help.md AH-4): one text each, in plain English, the user's own words last and unchanged

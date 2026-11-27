@@ -129,6 +129,9 @@ internal sealed class McpChannel
         }
     }
 
+    /// <summary>What a window that is not shown answers every request with, the broker's <c>hello</c> included (MC-6.2).</summary>
+    internal const string HiddenWindow = "This window is hidden until its user brings it up. Nothing was read or done.";
+
     /// <summary>One connection: who it is, the setting, the challenge, one request, one answer.</summary>
     private void Answer(NamedPipeServerStream pipe)
     {
@@ -192,6 +195,15 @@ internal sealed class McpChannel
             // A window put away (hidden by its close, running on) is not an open window to the AI tools: the broker's
             // hello gets this too, so axkit_windows leaves it out (docs/axKit/mcp.md MC-6.2).
             writer.WriteLine(JsonSerializer.Serialize(new { error = "This window is hidden: its user put it away and brings it back. Nothing was read or done." }, Plain));
+            return;
+        }
+
+        if (!_form.Visible)
+        {
+            // A window that is not shown (a hotkey window running in the background: axStart, axHelp, axTemplate's
+            // launcher) is no open window to the AI tools either (MC-6.2; review, 2026-11-27): the pairing notice, the
+            // "Open axTask?" question or a drafted report opened in it would wait where nobody sees or hears them.
+            writer.WriteLine(JsonSerializer.Serialize(new { error = HiddenWindow }, Plain));
             return;
         }
 
@@ -388,12 +400,14 @@ internal sealed class McpChannel
 
             if (_form.IsDisposed)
             {
-                return JsonSerializer.Serialize(new { said, closed = "The window closed; whether the command ran is not known." }, RunAnswer);
+                return JsonSerializer.Serialize(new { command = label, said, closed = "The window closed; whether the command ran is not known." }, RunAnswer);
             }
 
             var (notice, noticeText, dialog, ran, notRun, textNote) = OnWindow(() => _form.McpAfterRun(ticket));
             return JsonSerializer.Serialize(new
             {
+                // The label the window matched, whatever came of it: the AI tools' log names the command by it (MC-6.6).
+                command = label,
                 // "ran" only for a run the window took up and ran (MC-7.1): never for one that a notice or the switch stopped.
                 ran = !asked && ran == true ? label : null,
                 // MC-7.9: what became of the text, when it was not typed into the field the command asked for.

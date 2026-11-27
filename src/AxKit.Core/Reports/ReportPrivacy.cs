@@ -29,8 +29,9 @@ public static partial class ReportPrivacy
 
     // A drive path, a network path, a path under the home sign, or a Unix-like path of two parts or more, up to a
     // character no file name holds or the line's end; spaces inside a name go with it only between quotes, which
-    // QuotedRegex masks whole first.
-    [GeneratedRegex(@"(?i)(?:[A-Z]:[\\/]|\\\\|~[\\/]|(?<![\w.<>])/(?=[\w.~-]+/))[^\s""'<>|*?,;]*")]
+    // QuotedRegex masks whole first. The profile folder's name, which may hold a space, is <user> by then
+    // (Redaction.WithoutProfile), and the path goes on through that placeholder.
+    [GeneratedRegex(@"(?i)(?:[A-Z]:[\\/]|\\\\|~[\\/]|(?<![\w.<>])/(?=[\w.~-]+/))(?:<user>|[^\s""'<>|*?,;])*")]
     private static partial Regex PathRegex();
 
     // Text between double quotes, or between single quotes that are not apostrophes inside a word.
@@ -43,13 +44,18 @@ public static partial class ReportPrivacy
 
     /// <summary>
     /// A line with what <see cref="Redaction"/> replaces and, beyond it, every quoted text as <c>&lt;text&gt;</c> and
-    /// every path as <c>&lt;path&gt;</c>: an exception's message names the file it failed on in one of the two.
+    /// every path as <c>&lt;path&gt;</c>: an exception's message names the file it failed on in one of the two. The
+    /// profile folder (<paramref name="profile"/>, this account's by default) is replaced before the paths, since a
+    /// path ends at a space and the folder's name may hold one: the rest of the name and of the path stayed in the
+    /// line until 2026-11-27.
     /// </summary>
-    public static string Mask(string line, IEnumerable<string>? names = null)
+    public static string Mask(string line, IEnumerable<string>? names = null, string? profile = null)
     {
+        profile ??= Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         line = QuotedRegex().Replace(line, "<text>");
+        line = Redaction.WithoutProfile(line, profile);
         line = PathRegex().Replace(line, "<path>");
-        return Redaction.Redact(line, names);
+        return Redaction.Redact(line, names, profile);
     }
 
     /// <summary>The plain form's app line: without the window's title, which names the folder or the file in hand.</summary>

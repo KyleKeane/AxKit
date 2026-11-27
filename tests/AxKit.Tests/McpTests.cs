@@ -118,6 +118,99 @@ public sealed class McpTests
     }
 
     [Fact]
+    public void Open_reads_the_path_as_Windows_does_before_it_checks_it()
+    {
+        // Review, 2026-11-27: with forward slashes the link check saw the whole path as one part, and passed it.
+        var folder = Path.GetTempPath();
+        var file = Path.Combine(folder, "notes.md");
+        var asked = new List<string>();
+        bool Link(string path)
+        {
+            asked.Add(path);
+            return path.EndsWith("linked", StringComparison.Ordinal);
+        }
+
+        var (arguments, refusal) = McpTools.OpenArguments("down", file.Replace('\\', '/'), _ => false, p => p == file, Link);
+        Assert.Null(refusal);
+        Assert.Equal(["down", file], arguments!);
+        Assert.Equal([file], asked);
+
+        // ".." is worked out before the link is asked about, and a share stays a share with forward slashes.
+        Assert.Contains("through a link", McpTools.OpenArguments("down", @"C:\work\..\linked", _ => true, _ => false, Link).Refusal, StringComparison.Ordinal);
+        Assert.Equal(@"C:\linked", asked[^1]);
+        Assert.Contains("full path", McpTools.OpenArguments("down", "//server/share/notes.md", _ => false, _ => true, Link).Refusal, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void A_junction_on_the_way_is_found_with_either_separator()
+    {
+        // The real check on a real link: a junction, which needs no privilege (a symbolic link does).
+        using var temp = new TempFolder("axkit-tests");
+        var target = Path.Combine(temp.Path, "target");
+        Directory.CreateDirectory(Path.Combine(target, "inner"));
+        File.WriteAllText(Path.Combine(target, "inner", "notes.md"), "x");
+        var link = Path.Combine(temp.Path, "link");
+        if (McpTools.PassesLink(Path.Combine(target, "inner", "notes.md")) || !MakeJunction(link, target))
+        {
+            // The temporary folder is itself behind a link, or this computer makes no junction: nothing to check.
+            return;
+        }
+
+        try
+        {
+            var through = Path.Combine(link, "inner", "notes.md");
+            Assert.True(File.Exists(through));
+            Assert.True(McpTools.PassesLink(through));
+            Assert.True(McpTools.PassesLink(through.Replace('\\', '/')));
+            Assert.True(McpTools.PassesLink(link));
+            Assert.False(McpTools.PassesLink(Path.Combine(target, "inner", "notes.md").Replace('\\', '/')));
+
+            foreach (var path in new[] { through, through.Replace('\\', '/'), Path.Combine(target, "..", "link", "inner", "notes.md") })
+            {
+                var (arguments, refusal) = McpTools.OpenArguments("down", path, Directory.Exists, File.Exists, McpTools.PassesLink);
+                Assert.Null(arguments);
+                Assert.Contains("through a link", refusal, StringComparison.Ordinal);
+            }
+        }
+        finally
+        {
+            // The junction itself, never what it leads to.
+            Directory.Delete(link);
+        }
+    }
+
+    /// <summary>A junction made with cmd's mklink /J; false when it could not be made.</summary>
+    private static bool MakeJunction(string link, string target)
+    {
+        try
+        {
+            var start = new System.Diagnostics.ProcessStartInfo(Path.Combine(Environment.SystemDirectory, "cmd.exe"))
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+            };
+            start.ArgumentList.Add("/c");
+            start.ArgumentList.Add("mklink");
+            start.ArgumentList.Add("/J");
+            start.ArgumentList.Add(link);
+            start.ArgumentList.Add(target);
+            using var process = System.Diagnostics.Process.Start(start);
+            if (process is null || !process.WaitForExit(10_000))
+            {
+                return false;
+            }
+
+            return process.ExitCode == 0 && Directory.Exists(link);
+        }
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or IOException or InvalidOperationException)
+        {
+            return false;
+        }
+    }
+
+    [Fact]
     public void The_proof_checks_only_under_the_same_key_and_challenge()
     {
         var key = new byte[32];
@@ -153,15 +246,32 @@ public sealed class McpTests
     [Fact]
     public void The_log_names_a_command_that_ran_without_a_recent_file_s_path_and_keeps_an_account_path_out_of_a_refusal()
     {
-        // docs/axKit/repairs.json R-06.
-        Assert.Equal("done: ran Word wrap", McpAudit.Result(McpTools.Run, "Word wrap", failed: false, "ran"));
-        Assert.Equal("done: ran 1. notes.md", McpAudit.Result(McpTools.Run, @"1. notes.md (C:\Work\notes.md)", failed: false, "ran"));
-        Assert.Equal("done", McpAudit.Result(McpTools.Open, null, failed: false, "opened"));
+        // docs/axKit/repairs.json R-06. The name is the label in the window's answer, never the client's argument.
+        Assert.Equal("done: ran Word wrap", McpAudit.Result(McpTools.Run, failed: false, """{"command":"Word wrap","ran":"Word wrap","said":["Claude ran Word wrap"]}"""));
+        Assert.Equal("done: ran 1. notes.md", McpAudit.Result(McpTools.Run, failed: false, "{\n  \"command\": \"1. notes.md (C:\\\\Work\\\\notes.md)\",\n  \"ran\": \"1. notes.md (C:\\\\Work\\\\notes.md)\"\n}"));
+        Assert.Equal("done", McpAudit.Result(McpTools.Open, failed: false, "opened"));
         var profile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-        var refused = McpAudit.Result(McpTools.Open, null, failed: true, $"There is no file or folder at {profile}\\secret plans.md\nsecond line");
+        var refused = McpAudit.Result(McpTools.Open, failed: true, $"There is no file or folder at {profile}\\secret plans.md\nsecond line");
         Assert.StartsWith("refused or failed: There is no file or folder at ", refused, StringComparison.Ordinal);
         Assert.DoesNotContain(profile, refused, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("second line", refused, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void The_log_says_ran_only_of_a_command_the_window_ran()
+    {
+        // Review, 2026-11-27: every run without an error was written "done: ran", also one only asked of the user,
+        // one the user answered No to later, and one that did not run or was not known.
+        Assert.Equal("asked the user: Delete", McpAudit.RunResult("""{"command":"Delete","asked":"The window asks the user whether to run Delete; the user answers there, and axkit_window_said tells what came of it.","said":[]}"""));
+        Assert.Equal("not run: Find", McpAudit.RunResult("""{"command":"Find","notRun":"Find did not run: the user was working in the window.","said":[]}"""));
+        Assert.Equal("not known", McpAudit.RunResult("""{"command":"Find","unknown":"Whether Find ran is not known yet: axkit_window_said tells.","said":[]}"""));
+        Assert.Equal("not known", McpAudit.RunResult("""{"command":"Find","said":[],"closed":"The window closed; whether the command ran is not known."}"""));
+        Assert.Equal("not known", McpAudit.RunResult("""{"closed":"The window closed; whether the command ran is not known."}"""));
+        Assert.Equal("not known", McpAudit.RunResult("ran"));
+        Assert.Equal("not known", McpAudit.RunResult("[\"ran\"]"));
+        // The label is the window's: an answer of before, without the command, names what ran by its "ran".
+        Assert.Equal("done: ran Word wrap", McpAudit.RunResult("""{"ran":"Word wrap"}"""));
+        Assert.Equal("asked the user: Delete", McpAudit.Result(McpTools.Run, failed: false, """{"command":"Delete","asked":"asked"}"""));
     }
 
     /// <summary>docs/axKit/repairs.json R-29: a client names itself, and a name with a tab and a line break must not seal as one client and read back as two.</summary>
@@ -202,6 +312,68 @@ public sealed class McpTests
         off.Seal = McpAccess.SealOf(key, off);
         off.Enabled = true;
         Assert.False(McpAccess.Checks(key, off));
+    }
+
+    [Fact]
+    public void Only_an_answer_of_the_users_is_a_Deny()
+    {
+        // MC-6.4 (review, 2026-11-27): a window that was busy, hidden or gone counted as the user's Deny, with its
+        // hold of a minute and "The user did not allow".
+        Assert.Equal(PairingAnswer.Allowed, McpAccess.PairingOf("""{"allowed":true}"""));
+        Assert.Equal(PairingAnswer.Denied, McpAccess.PairingOf("""{"allowed":false}"""));
+        Assert.Equal(PairingAnswer.Busy, McpAccess.PairingOf("""{"allowed":false,"busy":true}"""));
+        Assert.Equal(PairingAnswer.NoAnswer, McpAccess.PairingOf(null));
+        Assert.Equal(PairingAnswer.NoAnswer, McpAccess.PairingOf(string.Empty));
+        Assert.Equal(PairingAnswer.NoAnswer, McpAccess.PairingOf("""{"error":"The window is busy and did not answer in time; nothing was done. Ask again in a moment."}"""));
+        Assert.Equal(PairingAnswer.NoAnswer, McpAccess.PairingOf("""{"error":"This window is hidden until its user brings it up. Nothing was read or done."}"""));
+        Assert.Equal(PairingAnswer.NoAnswer, McpAccess.PairingOf("not json"));
+        Assert.Equal(PairingAnswer.NoAnswer, McpAccess.PairingOf("""{"allowed":"true"}"""));
+        Assert.Equal("The axKit window did not answer; ask again.", McpAccess.WindowDidNotAnswer);
+        Assert.Equal("Open any axKit window to allow Claude Code.", McpAccess.NoWindowToAllowIn("Claude Code"));
+
+        // The broker holds a client back for a minute only after a Deny.
+        var broker = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms", "McpBroker.cs"));
+        var noAnswer = broker.IndexOf("case PairingAnswer.NoAnswer:", StringComparison.Ordinal);
+        var hold = broker.IndexOf("_deniedUntil = Environment.TickCount64 + 60_000;", StringComparison.Ordinal);
+        Assert.True(noAnswer >= 0 && hold > noAnswer && broker.IndexOf("return McpAccess.WindowDidNotAnswer;", noAnswer, StringComparison.Ordinal) < hold);
+    }
+
+    [Fact]
+    public void A_path_shown_for_the_users_yes_shows_its_hidden_characters()
+    {
+        // Review, 2026-11-27: the pairing notice's program and the folder of "Open axTask on ..." were shown as given.
+        Assert.Equal("Claude Code asks to use axKit. It runs as C:\\Tools\\claude‹U+202E›gpj.exe.", McpAccess.PairingAsks("Claude Code", "C:\\Tools\\claude\u202Egpj.exe"));
+        Assert.Equal(" on D:\\work\\lists‹U+200B›", McpTools.OpenWhere("D:\\work\\lists\u200B"));
+        Assert.Equal(" on D:\\work\\lists", McpTools.OpenWhere(@"D:\work\lists"));
+        Assert.Equal(string.Empty, McpTools.OpenWhere(null));
+        var root = SourceTexts.RepositoryRoot();
+        Assert.Contains("McpAccess.PairingAsks(name, program)", File.ReadAllText(Path.Combine(root, "src", "AxKit.Forms", "AiToolsSetup.cs")), StringComparison.Ordinal);
+        Assert.Contains("var where = McpTools.OpenWhere(path);", File.ReadAllText(Path.Combine(root, "src", "AxKit.Forms", "AxKitForm.Mcp.cs")), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void A_window_nobody_sees_and_a_question_that_waits_stand_in_an_AI_tools_way()
+    {
+        // Read off the sources, as the window pieces are (no test makes a window).
+        var root = SourceTexts.RepositoryRoot();
+
+        // MC-6.2 (review, 2026-11-27): a hotkey window running in the background is no open window to the AI tools,
+        // so the pairing notice, "Open axTask?" and a drafted report never open where nobody sees them. The refusal
+        // comes before any request is carried out, the broker's hello included.
+        var channel = File.ReadAllText(Path.Combine(root, "src", "AxKit.Forms", "McpChannel.cs"));
+        var hidden = channel.IndexOf("if (!_form.Visible)", StringComparison.Ordinal);
+        var carriedOut = channel.IndexOf("answer = verb switch", StringComparison.Ordinal);
+        Assert.True(hidden >= 0 && hidden < carriedOut);
+        Assert.Contains("new { error = HiddenWindow }", channel[hidden..carriedOut], StringComparison.Ordinal);
+        Assert.Contains("internal const string HiddenWindow = \"This window is hidden", channel, StringComparison.Ordinal);
+
+        // MC-7.3 (review, 2026-11-27): the list of an AI's request that waits for the user's answer is a notice to
+        // the gate, so that no further run goes on under it; its refusal has its own words, since it has no title.
+        var window = File.ReadAllText(Path.Combine(root, "src", "AxKit.Forms", "AxKitForm.Mcp.cs"));
+        Assert.Contains("NoticeOpen = NoticeOpen || OfferedRequestShown,", window, StringComparison.Ordinal);
+        Assert.Contains("? McpRun.RequestWaits :", window, StringComparison.Ordinal);
+        Assert.StartsWith("The window asks the user about a command an AI tool asked to run", McpRun.RequestWaits, StringComparison.Ordinal);
+        Assert.Equal(CommandRefusal.Notice, CommandGate.Window(CommandOrigin.AiTool, new CommandState { NoticeOpen = true }));
     }
 
     [Theory]
@@ -339,6 +511,70 @@ public sealed class McpTests
     }
 
     [Fact]
+    public void The_setting_is_never_said_written_when_its_file_was_passed_over()
+    {
+        // Review, 2026-11-27: "AI tools off" was said although nothing was written, when another program held the
+        // file at the load just before (R-51). The write now throws, and the callers show the failure.
+        using var temp = new TempFolder("axkit-tests");
+        var file = Path.Combine(temp.Path, "mcp.json");
+        var key = System.Security.Cryptography.RandomNumberGenerator.GetBytes(32);
+        McpAccess.Write(file, new McpSettings { Enabled = true, RunCommands = true }, key);
+        var before = File.ReadAllBytes(file);
+        using (new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None))
+        {
+            SettingsFile.Load<McpSettings>(file, out var error);
+            Assert.NotNull(error);
+        }
+
+        var thrown = Assert.Throws<IOException>(() => McpAccess.Write(file, new McpSettings(), key));
+        Assert.Equal(McpAccess.NotWritten, thrown.Message);
+        Assert.Equal(before, File.ReadAllBytes(file));
+
+        // Read once it is free, the setting is written again.
+        var loaded = SettingsFile.Load<McpSettings>(file, out _);
+        McpAccess.Write(file, McpAccess.Switched(loaded, false), key);
+        var off = SettingsFile.Load<McpSettings>(file, out _);
+        Assert.True(McpAccess.Checks(key, off));
+        Assert.False(off.Enabled);
+        Assert.False(off.RunCommands);
+    }
+
+    [Fact]
+    public void What_another_window_wrote_is_kept_under_a_seal_that_checks_and_only_from_a_sealed_file()
+    {
+        // R-62 for the sealed setting, as AiSettings.Save does it: until 2026-11-27 the merge was written under the
+        // seal of this window's own values, and the file then read as changed outside axKit.
+        using var temp = new TempFolder("axkit-tests");
+        var file = Path.Combine(temp.Path, "mcp.json");
+        var key = System.Security.Cryptography.RandomNumberGenerator.GetBytes(32);
+        var client = new McpClient(@"C:\Tools\claude.exe", "Claude Code", "2026-11-01 10:00");
+        McpAccess.Write(file, new McpSettings { Enabled = true, Clients = [client] }, key);
+
+        // This window loads; another window forgets the AI tools; this window turns the run switch on.
+        var mine = SettingsFile.Load<McpSettings>(file, out _);
+        var theirs = new McpSettings { Enabled = true };
+        theirs.Seal = McpAccess.SealOf(key, theirs);
+        File.WriteAllText(file, System.Text.Json.JsonSerializer.Serialize(theirs, SettingsFile.JsonOptions));
+        mine.RunCommands = true;
+        McpAccess.Write(file, mine, key);
+
+        var written = SettingsFile.Load<McpSettings>(file, out _);
+        Assert.True(McpAccess.Checks(key, written));
+        Assert.Empty(written.Clients);
+        Assert.True(written.RunCommands);
+
+        // A file whose seal does not check gives nothing: a client written by hand never joins this window's.
+        var forged = new McpSettings { Enabled = true, RunCommands = true, Clients = [new McpClient(@"C:\Tools\other.exe", "Other", "2026-11-02 10:00")], Seal = "forged" };
+        File.WriteAllText(file, System.Text.Json.JsonSerializer.Serialize(forged, SettingsFile.JsonOptions));
+        written.Enabled = false;
+        McpAccess.Write(file, written, key);
+        var after = SettingsFile.Load<McpSettings>(file, out _);
+        Assert.True(McpAccess.Checks(key, after));
+        Assert.Empty(after.Clients);
+        Assert.False(after.Enabled);
+    }
+
+    [Fact]
     public void Commands_run_only_while_the_access_and_the_switch_are_both_on()
     {
         Assert.False(McpAccess.RunsCommandsIn(new McpSettings()));
@@ -459,6 +695,33 @@ public sealed class McpTests
         Assert.Equal("Command offer: Claude asks to run New folder", McpRun.AskTitle("Claude Code", "&New folder..."));
         Assert.Equal(40, McpRun.Speaker(new string('x', 80)).Length);
         Assert.Contains("U+202E", McpRun.Speaker("a‮b"), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void A_long_text_of_a_run_is_shown_whole_before_the_user_allows_it()
+    {
+        // Review, 2026-11-27 (bundle rule 11: every detail readable first): the question showed the first 200
+        // characters of a text of up to 1000 that would be typed, the end unseen.
+        var text = new string('a', 300) + " then rm ‮ the end";
+        Assert.Null(McpRun.TextRefusal(text));
+        var whole = new string('a', 300) + " then rm ‹U+202E› the end";
+        Assert.Equal(whole, McpRun.WholeText(text));
+
+        var explanation = McpRun.ExplainText("Claude Code", "&Commit...", "Repository", "notes.md", text);
+        Assert.Contains("# The text it is run with\n\n" + whole + "\n\n", explanation, StringComparison.Ordinal);
+
+        // The list's name, the title and the words of a run stay short, and say that more follows.
+        var cut = new string('a', McpRun.TargetShownLength) + McpRun.MoreFollows;
+        Assert.Equal(", and more", McpRun.MoreFollows);
+        Assert.Equal(cut, McpRun.ShownText(text));
+        Assert.Contains("with the text " + cut + " (Repository)", McpRun.AskName("Claude Code", "&Commit...", "Repository", "notes.md", text), StringComparison.Ordinal);
+        Assert.EndsWith("with the text " + cut, McpRun.AskTitle("Claude Code", "&Commit...", text), StringComparison.Ordinal);
+        Assert.EndsWith("with the text " + cut, McpRun.Said("Claude Code", "&Commit...", text), StringComparison.Ordinal);
+
+        // The question's own text, which is all a notice shows, holds the whole text too; a short one is not said twice.
+        Assert.Contains("The whole text it is run with:\n\n" + whole + "\n\n", McpRun.AskText("Claude Code", "&Commit...", "Repository", "notes.md", text), StringComparison.Ordinal);
+        Assert.DoesNotContain("The whole text", McpRun.AskText("Claude Code", "&Commit...", "Repository", "notes.md", "fix"), StringComparison.Ordinal);
+        Assert.Equal("fix", McpRun.ShownText("fix"));
     }
 
     [Fact]

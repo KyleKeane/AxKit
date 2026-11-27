@@ -39,6 +39,13 @@ public static class McpTools
     public static bool AsksFirst(string verb, string? path) =>
         StartsAProgram.Contains(verb) || (verb == Dispatch.AxTask && !string.IsNullOrWhiteSpace(path));
 
+    /// <summary>
+    /// Where the app would open, for the question and its answer (MC-6.5a): " on C:\work\lists", empty for no path.
+    /// The path is a client's word, shown with its hidden and reordering characters made visible
+    /// (<see cref="DisplayText"/>; review, 2026-11-27), so that the folder the user allows is the folder they read.
+    /// </summary>
+    public static string OpenWhere(string? path) => path is null ? string.Empty : $" on {DisplayText.Visible(path)}";
+
     /// <summary>What opening the app does, for the question (MC-6.5a): the words after "This".</summary>
     public static string OpenMeans(string verb) => verb switch
     {
@@ -93,13 +100,15 @@ public static class McpTools
 
     /// <summary>
     /// Whether a part of the path, from its root down, is a link (a reparse point): each part's attributes are read
-    /// without following it, and a part that does not exist ends the walk, since nothing below it is reached.
+    /// without following it, and a part that does not exist ends the walk, since nothing below it is reached. The
+    /// parts are split at both separators: a path written with forward slashes was one part until 2026-11-27, whose
+    /// attributes are those of what the links lead to, so the check passed it.
     /// </summary>
     public static bool PassesLink(string path)
     {
         var root = Path.GetPathRoot(path) ?? string.Empty;
         var current = root;
-        foreach (var part in path[root.Length..].Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
+        foreach (var part in path[root.Length..].Split([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar], StringSplitOptions.RemoveEmptyEntries))
         {
             current = Path.Combine(current, part);
             try
@@ -202,9 +211,28 @@ public static class McpTools
         // MC-D12 (2026-11-11): axTask started on a folder makes that folder its top folder and saves it, and the
         // typed tools reach the top folder's lists. So it opens on a folder only after the user's yes (AsksFirst),
         // never at a client's word alone.
-        if (!Path.IsPathFullyQualified(path) || path.StartsWith(@"\\", StringComparison.Ordinal))
+        //
+        // The path as Windows reads it, before anything is asked of it (review, 2026-11-27): forward slashes become
+        // backslashes and "." and ".." are worked out, so that the checks below, the refusals and the argument the
+        // app is started with are all of one spelling. A share written //server/share is a share here too.
+        const string notFull = "The path must be a full path on this computer, such as C:\\work\\notes.md.";
+        if (!Path.IsPathFullyQualified(path))
         {
-            return (null, "The path must be a full path on this computer, such as C:\\work\\notes.md.");
+            return (null, notFull);
+        }
+
+        try
+        {
+            path = Path.GetFullPath(path);
+        }
+        catch (Exception ex) when (ex is ArgumentException or NotSupportedException or PathTooLongException)
+        {
+            return (null, notFull);
+        }
+
+        if (path.StartsWith(@"\\", StringComparison.Ordinal))
+        {
+            return (null, notFull);
         }
 
         if (!LocalPaths.IsLocal(path))

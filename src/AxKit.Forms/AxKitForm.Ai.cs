@@ -56,10 +56,9 @@ public abstract partial class AxKitForm
     /// <summary>Shift+F1 and axKit, AI help, Ask about this window (AH-6): one field for the question, then the answer.</summary>
     protected void AskAboutThisWindow() => _ai.AskAboutThisWindow();
 
-    /// <summary>What this window knows about itself (AH-6.2), redacted as a report is (RP-4.2): never the text of a document.</summary>
+    /// <summary>What this window knows about itself (AH-6.2), redacted as a report is (RP-4.2), the window's title too (<see cref="WindowContext.Redacted"/>): never the text of a document.</summary>
     internal WindowContext ContextOfThisWindow() =>
-        new(AppTitle, Text, Redaction.Redact(FocusDescription()), ShortcutsText(), _userGuide?.Invoke(),
-            Recent.Lines(DateTime.UtcNow).Select(line => Redaction.Redact(line)).ToList());
+        WindowContext.Redacted(AppTitle, Text, FocusDescription(), ShortcutsText(), _userGuide?.Invoke(), Recent.Lines(DateTime.UtcNow));
 
     /// <summary>
     /// One question to Claude (AH-2, AH-3.4): the waiting notice with Cancel, Claude Code run off the UI thread in the

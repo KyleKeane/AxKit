@@ -69,4 +69,17 @@ public sealed class SafeFileTests : IDisposable
 
         Assert.Equal("new", File.ReadAllText(path));
     }
+
+    [Theory]
+    [InlineData("src/AxKit.Core/Mcp/McpClaudeCode.cs")]
+    [InlineData("src/AxKit.Core/ClaudeCodeProgram.cs")]
+    public void The_files_Claude_Code_is_started_with_are_never_written_in_place(string source)
+    {
+        // Review, 2026-11-27: the AI tools' configuration and the settings of a question without hooks were written
+        // with File.WriteAllText, while every file beside them goes through SafeFile.
+        var code = File.ReadAllLines(Path.Combine(SourceTexts.RepositoryRoot(), source.Replace('/', Path.DirectorySeparatorChar)))
+            .Where(line => !line.TrimStart().StartsWith("//", StringComparison.Ordinal));
+        Assert.DoesNotContain(code, line => System.Text.RegularExpressions.Regex.IsMatch(line, @"(?<!Safe)File\.(WriteAllText|WriteAllBytes|AppendAllText)\("));
+        Assert.Contains(code, line => line.Contains("SafeFile.WriteAllText(", StringComparison.Ordinal));
+    }
 }

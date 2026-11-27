@@ -291,7 +291,10 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   "One switch for all"): Options, Check for updates at start (the axKit menu's until 2026-11-26), on by default, in `%APPDATA%\AxKit\bundle.json`
   (`AxKit.Core/BundleSettings`); until then each app had its own in Options, General, and the first time the bundle's
   file is not there the switch starts off if any app had turned its own off (the file's second switch, Keep a log of
-  events, is AX-9.1's). The notice has
+  events, is AX-9.1's). A file that is there and does not read whole (held by another program, damaged, one value
+  not understood) gives no check at start for that run (`BundleSettings.Load`, 2026-11-27): the default is on, and a
+  network contact the user turned off never comes back through a damaged file (AX-11.11); the menu item then shows
+  unchecked, and Check for updates by hand still asks. The notice has
   four buttons: I accept all terms, install and restart (Enter), I accept all terms, install and close, Open release page, Later
   (Escape). A development build (Debug, as `run.ps1` makes it) does not ask at startup, since its version is whatever
   the working tree said when it was last built; Check for updates still asks. Every window's Help menu ends with Check for updates (axKit <version>), always, naming the version in use
@@ -538,9 +541,16 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   - The update moves them in (the maintainer's choice of 2026-11-23, "Move both on update";
     `AppPaths.TakeOverUserFolders`, at the start of every process before anything reads a setting, never in a test
     run): `Documents\Tasks` into `Tasks` when it holds axTask's lists and axTask's settings do not name it as a
-    folder the user chose; `Documents\axKit Claude` into `Claude` unless AI help's settings name it. Entry by entry,
-    so that a move held up by a file in use finishes at a later start, the old folder in use meanwhile (the rule
+    folder the user chose; `Documents\axKit Claude` into `Claude` unless AI help's settings name it. The whole
+    folder in one step when the new one is not there yet (`AppPaths.TakeOverFolder`, 2026-11-27: until then the new
+    folder was made first and filled entry by entry, so that a move held up half way by a file in use left the
+    lists in two folders, the new one already the one in use), and entry by entry only into a folder that exists;
+    a move held up by a file in use is made at a later start, the old folder whole and in use meanwhile (the rule
     above). Claude Code finds its conversations by the folder's path, so axHelp starts a new one after the move.
+  - Where Windows names no Documents folder, the folder is `Documents\axKit` in the profile folder
+    (`AppPaths.DocumentsFolderFor`; Windows is asked without a look at the disk, so that a redirected folder that
+    is away for the moment is still the one), and a folder that is no full path is never moved: until 2026-11-27
+    the empty answer made a path relative to whatever folder the process was started in.
   - The test of which place: nothing under `Documents\axKit` is needed for axKit to run, and deleting any of it
     breaks nothing (a list's `list.json` is written again); and the content is the user's, not axKit's.
   - Why it matters most in the Store's copy: AppData is the package's private folder there (AX-5.5, AX-13.5),
@@ -1679,7 +1689,7 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   on or a notice's default; and the AI's own words about its command are labelled as the AI's. Where it stands today:
   a command Claude offers (`docs/axKit/mcp.md` MC-9: the question's name and "Read this first" in the explanation);
   an AI tool's run of a window's command (MC-7.3: asked through the same list as an offered command, named "Asked by
-  Claude, an AI: read the explanation before you allow it", its explanation starting with "Read this first"); AI help's answers ("Claude says" ends with who wrote it and that it can be wrong; `docs/axKit/ai-help.md`
+  Claude, an AI: read the explanation before you allow it", its explanation starting with "Read this first" and showing the text the command is run with whole, MC-7.9, since 2026-11-27); AI help's answers ("Claude says" ends with who wrote it and that it can be wrong; `docs/axKit/ai-help.md`
   AH-3.1); the pairing of an AI tool (AX-11.4's reminder and check box); a tool call Claude asks leave for in an
   axClaude window fed by Claude Code's stream (`docs/axClaude/stream-mode.md` SM-7.4, SM-7.6, 2026-11-17: the question
   names who asks and for what, "Asked by Claude, an AI: read the explanation before you allow it" is its text, heard
@@ -1951,7 +1961,9 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   password (`AxKitForm.SayPasteAfter`). A read-only text pastes nothing and says nothing.
 - AX-7.3c One way to refuse, to fail and to say a switch (the maintainer's choice of 2026-11-25, "same everywhere"; repairs
   R-95): a command that cannot act now (nothing selected, nothing to undo, nothing to paste, not in this list) plays
-  the refused sound and says why, interrupting, through the window base's `Refuse`; an error notice is of the failure
+  the refused sound and says why, interrupting, through the window base's `Refuse`, inside a notice too (a required
+  field left empty, the consent box not checked, a text the notice's own check refuses, since 2026-11-27; `EventDoorTests`
+  fails on words of a refusal without the sound); an error notice is of the failure
   kind in every window (`ShowError`, `Fail`); a switch toggled says its menu item's name with "checked" or "not
   checked" (`MenuText.CheckSaid`), Word wrap, Hide done tasks and the theme's switches included, which said "on" and
   "off" or words of their own until then. An answer that is empty ("No variables", "No changes") is no refusal.

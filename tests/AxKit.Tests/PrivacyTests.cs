@@ -77,6 +77,29 @@ public partial class PrivacyTests
         Assert.Contains(Environment.UserDomainName, Redaction.DefaultNames());
     }
 
+    [Fact]
+    public void Redact_takes_a_profile_folder_of_two_words_whole()
+    {
+        // The pattern for paths under Users ends the folder's name at a space, so " Doe" stayed in the text until
+        // 2026-11-27. The paths are built from parts, for the scan below.
+        var profile = "C:\\" + "Users\\Jane Doe";
+        Assert.Equal("C:\\Users\\<user>\\AppData\\Roaming\\AxKit\\axkit.log", Redaction.Redact(profile + "\\AppData\\Roaming\\AxKit\\axkit.log", [], profile));
+        // As JSON writes it, with forward slashes, in another case, and as Git Bash and WSL spell the drive.
+        Assert.Equal("\"C:\\\\Users\\\\<user>\\\\x\"", Redaction.Redact("\"C:\\\\" + "Users\\\\Jane Doe\\\\x\"", [], profile));
+        Assert.Equal("c:/users/<user>/x", Redaction.Redact("c:/" + "users/jane doe/x", [], profile));
+        Assert.Equal("cd /c/Users/<user>/x", Redaction.Redact("cd /c/" + "Users/Jane Doe/x", [], profile));
+        Assert.Equal("ls /mnt/c/Users/<user>", Redaction.Redact("ls /mnt/c/" + "Users/Jane Doe", [], profile));
+        // Another folder that begins with the same words is not the profile; its first word goes, as before.
+        Assert.Equal("C:\\Users\\<user> Doering\\x", Redaction.Redact("C:\\" + "Users\\Jane Doering\\x", [], profile));
+        // Without names given, the folder's name is one of them, wherever it stands; and a path of a spelling the
+        // profile does not have (another drive) loses the whole name through it.
+        Assert.Contains("Jane Doe", Redaction.DefaultNames(profile));
+        Assert.Equal("Hello <name>, D:\\Users\\<user>\\x", Redaction.Redact("Hello Jane Doe, D:\\" + "Users\\Jane Doe\\x", null, profile));
+        // A profile that is no full path changes nothing.
+        Assert.Equal("a Jane Doe b", Redaction.WithoutProfile("a Jane Doe b", "Jane Doe"));
+        Assert.Equal("a b", Redaction.WithoutProfile("a b", string.Empty));
+    }
+
     /// <summary>
     /// No file in the repository holds an e-mail address or a path into a Windows account: recordings of /status carry
     /// the account's address, and paths name the account. The licence line names the author and is the one exception.

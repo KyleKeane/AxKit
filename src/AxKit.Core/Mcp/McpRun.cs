@@ -49,6 +49,13 @@ public static class McpRun
         $"The window shows the user a notice, {title}: commands run once the user has answered it, and AI tools never answer it.";
 
     /// <summary>
+    /// What the tool answers while the window shows the list of an AI's request, the question an act command asks
+    /// first (MC-7.3): to the gate that list is a notice, over the window or in the window's place at the bottom, and
+    /// it has no title to name.
+    /// </summary>
+    public const string RequestWaits = "The window asks the user about a command an AI tool asked to run: commands run once the user has answered it, and AI tools never answer it.";
+
+    /// <summary>
     /// The words of a refusal the gate gave the AI tool's path (<see cref="CommandGate"/>,
     /// docs/axKit/command-language.md section 3): one sentence per reason, each written once, here or where this
     /// points. Only the reasons that path can get: a name's refusals are <see cref="Find"/>'s, and the first switch is
@@ -173,9 +180,34 @@ public static class McpRun
     /// <summary>MC-7.10: what the window says as an AI tool puts the focus on a field: "Claude moved to Due".</summary>
     public static string MovedTo(string client, string field) => $"{Speaker(client)} moved to {ShownTarget(field)}";
 
-    /// <summary>A command's label as the user hears it, with the text it is run with when there is one (MC-7.9): "Find with the text budget".</summary>
+    /// <summary>
+    /// A command's label as the user hears it, with the text it is run with when there is one (MC-7.9): "Find with
+    /// the text budget". A long text is cut here (<see cref="ShownText"/>) and says that more follows; the explanation
+    /// and the question's own text show it whole (<see cref="WholeText"/>).
+    /// </summary>
     public static string Named(string label, string? text) =>
-        text is null ? Plain(label) : $"{Plain(label)} with the text {ShownTarget(text)}";
+        text is null ? Plain(label) : $"{Plain(label)} with the text {ShownText(text)}";
+
+    /// <summary>
+    /// What a text an AI tool gave ends with where a name, a title or the words of a run show only its beginning
+    /// (MC-7.9), as the stream's question says it of a long command. The question's explanation and text show the
+    /// rest; a run that asks nothing (a command that only reads or changes the window) has typed it into the field.
+    /// </summary>
+    public const string MoreFollows = ", and more";
+
+    /// <summary>
+    /// MC-7.9: the text of a run as a list's name or a title shows it: on one line, its hidden characters made visible,
+    /// at most <see cref="TargetShownLength"/> characters and then <see cref="MoreFollows"/>, never cut without a word
+    /// (review, 2026-11-27: up to 1000 characters are typed, and three dots after 200 were all that said so).
+    /// </summary>
+    public static string ShownText(string text)
+    {
+        var line = WholeText(text);
+        return line.Length > TargetShownLength ? line[..TargetShownLength].TrimEnd() + MoreFollows : line;
+    }
+
+    /// <summary>MC-7.9: the text of a run whole, on one line, its hidden characters made visible (<see cref="DisplayText"/>): what the explanation and the question's text show, so that every character that would be typed can be read first (bundle AX-11.12).</summary>
+    public static string WholeText(string text) => DisplayText.Visible(text.ReplaceLineEndings(" ").Trim());
 
     /// <summary>The title of the question an act command asks first (MC-7.3): "Claude asks to run Delete".</summary>
     public static string AskTitle(string client, string label, string? text = null) => $"{McpOffer.Label}: {Speaker(client)} asks to run {Named(label, text)}";
@@ -218,7 +250,7 @@ public static class McpRun
             + $"axKit does not know why {who} asks: the conversation with it may say. If you do not know what the command will do here, do not allow it. Allowing it is your own act.\n\n"
             + "# How far it reaches\n\nIt acts outside this window: it may delete, move, send, open or start a program, or end something, exactly as when you run it yourself. It is this window's own menu command and does only what that menu item does; it is not a shell command.\n\n"
             + $"# The command\n\n{Plain(label)}{(menu.Length > 0 ? $", in the menu {menu}" : string.Empty)}.\n\n"
-            + (text is null ? string.Empty : $"# The text it is run with\n\n{ShownTarget(text)}\n\nIt is typed into the field the command asks for, and the field's main button pressed, as you would.\n\n")
+            + (text is null ? string.Empty : $"# The text it is run with\n\n{WholeText(text)}\n\nIt is typed into the field the command asks for, and the field's main button pressed, as you would.\n\n")
             + $"# What it would act on\n\n{(shown.Length > 0 ? shown : "Nothing in particular: the window names no selection.")}\n\n"
             + "# What your answers do\n\n"
             + "Yes, run it runs the command once, now, and not at all if what is selected has changed meanwhile.\n\n"
@@ -249,13 +281,16 @@ public static class McpRun
     /// <summary>
     /// The text of the question an act command asks first (MC-7.3): who asks, the command with its menus, what it would act
     /// on (<paramref name="target"/>, the window's selection as <c>McpTarget</c> describes it; left out when empty), what
-    /// an act may do, and that a changed selection stops it.
+    /// an act may do, and that a changed selection stops it. A text too long for the first sentence is given whole in
+    /// a paragraph of its own (MC-7.9): where the question is a notice, this text is all the user reads before a Yes.
     /// </summary>
     public static string AskText(string client, string label, string menu, string target, string? text = null)
     {
         var place = menu.Length > 0 ? $" ({menu})" : string.Empty;
         var on = target.Trim().Length > 0 ? $" on {ShownTarget(target)}" : string.Empty;
+        var whole = text is not null && WholeText(text).Length > TargetShownLength ? $"The whole text it is run with:\n\n{WholeText(text)}\n\n" : string.Empty;
         return $"{Speaker(client)} asks to run {Named(label, text)}{place}{on} in this window. It acts outside the window: it may delete, move, send, open or start a program, or end something, as when you run it yourself. {AiCaution.Request}\n\n"
+            + whole
             + "Yes, run it runs it once, now, and not at all if what is selected has changed meanwhile. No, do not run it, does not.";
     }
 

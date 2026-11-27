@@ -27,10 +27,13 @@ public sealed class EventLoggerTests
     {
         using var temp = new TempFolder("event-log-tests");
         var path = Path.Combine(temp.Path, "events.log");
-        var before = (EventLogger.On, EventLogger.FilePath);
+        var settings = Path.Combine(temp.Path, "bundle.json");
+        new BundleSettings { KeepEventLog = true }.Save(settings);
+        var before = (EventLogger.On, EventLogger.FilePath, EventLogger.SettingsPath);
         try
         {
             EventLogger.FilePath = path;
+            EventLogger.SettingsPath = settings;
             EventLogger.On = false;
             EventLogger.Note(EventKind.Refused);
             EventLogger.Flush();
@@ -49,6 +52,41 @@ public sealed class EventLoggerTests
         {
             EventLogger.On = before.On;
             EventLogger.FilePath = before.FilePath;
+            EventLogger.SettingsPath = before.SettingsPath;
+        }
+    }
+
+    [Fact]
+    public void What_waits_is_dropped_once_the_switch_was_turned_off_in_another_window()
+    {
+        // Review, 2026-11-27: a window that was open and not activated went on writing after the log was turned off
+        // elsewhere. The write now reads the switch first.
+        using var temp = new TempFolder("event-log-tests");
+        var path = Path.Combine(temp.Path, "events.log");
+        var settings = Path.Combine(temp.Path, "bundle.json");
+        var before = (EventLogger.On, EventLogger.FilePath, EventLogger.SettingsPath);
+        try
+        {
+            EventLogger.FilePath = path;
+            EventLogger.SettingsPath = settings;
+            new BundleSettings { KeepEventLog = true }.Save(settings);
+            EventLogger.FollowSettings(settings);
+            Assert.True(EventLogger.On);
+
+            // Another window turns the log off: the file says so, and this process has not looked yet.
+            new BundleSettings { KeepEventLog = false }.Save(settings);
+            File.SetLastWriteTimeUtc(settings, File.GetLastWriteTimeUtc(settings).AddMinutes(1));
+            EventLogger.Note(EventKind.Refused);
+            EventLogger.Flush();
+
+            Assert.False(EventLogger.On);
+            Assert.False(File.Exists(path));
+        }
+        finally
+        {
+            EventLogger.On = before.On;
+            EventLogger.FilePath = before.FilePath;
+            EventLogger.SettingsPath = before.SettingsPath;
         }
     }
 

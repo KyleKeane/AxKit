@@ -18,10 +18,17 @@ public static class SignInStart
     /// <summary>The value's name for an app: "AxKit axStart".</summary>
     private static string ValueName(string appName) => "AxKit " + appName;
 
-    /// <summary>The value as the setting says: written when on and AxKit is installed, removed when off; nothing in the Store's copy.</summary>
+    /// <summary>
+    /// Whether this process touches the Run key at all: never the Store's copy, whose package starts it, and never a
+    /// window of a test run, whose settings are its own while the Run key is the user's (review, 2026-11-27: a run's
+    /// window with the setting off took the user's own "AxKit axStart" value away).
+    /// </summary>
+    public static bool Applies(bool packaged, bool testRun) => !packaged && !testRun;
+
+    /// <summary>The value as the setting says: written when on and AxKit is installed, removed when off; nothing in the Store's copy or in a test run (<see cref="Applies"/>).</summary>
     public static void Apply(string appName, string verb, bool on)
     {
-        if (PackageIdentity.IsPackaged)
+        if (!Applies(PackageIdentity.IsPackaged, AutomationEnvironment.Requested))
         {
             return;
         }

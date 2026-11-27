@@ -20,7 +20,9 @@ when you send a report:
   `Accept: application/vnd.github+json`. It carries the version you have and, as every web request does, your network
   address; nothing else. GitHub's privacy statement applies to it:
   <https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement>. Turn it off in any window,
-  for every app at once: Options, Check for updates at start. You can still check by hand (Help, Check for updates). A copy
+  for every app at once: Options, Check for updates at start. You can still check by hand (Help, Check for updates). When
+  the file that holds this setting (`%APPDATA%\AxKit\bundle.json`) is there and cannot be read whole, no window checks
+  at start: a damaged file never turns back on a check you turned off. A copy
   installed from the Microsoft Store makes no check at start and has no such setting; Check for updates by hand makes
   the same one request, and its notice opens axKit's page in the Store app, which is Microsoft's and runs under
   Microsoft's privacy statement, <https://privacy.microsoft.com/privacystatement>, as the Store's own updating of the
@@ -138,7 +140,9 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   the service there and reads a `CLAUDE.md` you write there), and reads its answer from its standard output. What goes
   to Claude Code and, through it, to Anthropic under your account and Anthropic's terms:
   your question; for Shift+F1 in an axKit window, that window's name and title, the name and place of the control you
-  are in, your last actions there, the window's keyboard shortcuts and its user guide, never the text of what you are
+  are in and your last actions there (the title, which names the file or folder that is open with its path, the place
+  and the actions with your account's name and folder, your computer's name and any e-mail address replaced, as Copy
+  diagnostics replaces them), the window's keyboard shortcuts and its user guide, never the text of what you are
   working on; and the files Claude reads in its working folder (axKit's own guides are there, public texts) and in the
   folders you listed under Folders Claude may read, none by default. Such a question starts Claude Code with the
   servers a folder's `.mcp.json` names left out and with its hooks turned off for that run (`--strict-mcp-config`, and
@@ -205,8 +209,9 @@ turning the access off ends access at the next call and turns Let AI tools run c
   read or say to Claude. Each rolls over at 1 MB.
 - **The log of events**, off unless you turn it on (Options, Keep a log of events): `%LOCALAPPDATA%\AxKit\logs\events.log`,
   one line for each thing that reached you (a refusal, a line arriving, a turn done), its time and its kind, never a
-  word of what was said, typed, shown or read, and no file name. Nothing is written while it is off, and turning it off
-  leaves what was written until you delete the file. It rolls over at 1 MB into `events.old.log`, which replaces the one
+  word of what was said, typed, shown or read, and no file name. Nothing is written while it is off: every window, an
+  app running in the background too, reads the switch again before it writes, so turning it off in one window stops
+  them all. Turning it off leaves what was written until you delete the file. It rolls over at 1 MB into `events.old.log`, which replaces the one
   before. It stays on your computer; nothing sends it anywhere, and a report does not carry it.
 - **The hooks' file**: `%LOCALAPPDATA%\AxKit\claude-hooks.json`, which axClaude writes before it starts Claude Code.
   It names this axKit as the program Claude Code starts for an event of that session (axClaude, above) and holds

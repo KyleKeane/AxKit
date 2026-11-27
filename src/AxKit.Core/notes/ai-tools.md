@@ -2,7 +2,7 @@
 
 - `Mcp/McpAccess` with `McpSettings` and `McpClient`: the bundle's one setting in `%APPDATA%\AxKit\mcp.json` (off
   until the user turns it on, the paired clients by their program file), read again at every connection; the key in
-  `%LOCALAPPDATA%\AxKit\mcp.key` through `UserSecret`, `NewChallenge`, `Proof` and `Proves` (HMAC-SHA256). The HMAC, the comparison and the key file's reading are `SettingsSeal`'s since 2026-11-16 (`notes/safety.md`); the file, the key and the seal's value are as they were.
+  `%LOCALAPPDATA%\AxKit\mcp.key` through `UserSecret`, `NewChallenge`, `Proof` and `Proves` (HMAC-SHA256). The HMAC, the comparison and the key file's reading are `SettingsSeal`'s since 2026-11-16 (`notes/safety.md`); the file, the key and the seal's value are as they were. Since 2026-11-27: `Write` (what `SetEnabled`, `SetRunCommands`, `ForgetAll` and `Pair` save through) throws `IOException` with `NotWritten` when the save passed the file over, so that no window says a change that was not written, and gives the save the file's check and the re-seal as `AiSettings.Save` does; `PairingOf` with `PairingAnswer` reads a window's answer to the pairing request (only an answer that says `allowed` is the user's; none at all is `NoAnswer`, with `WindowDidNotAnswer` and no hold); `NoWindowToAllowIn` and `PairingAsks` are the words, the program's path through `DisplayText`.
 - `Mcp/McpPipeName` (MC-6.2, 2026-11-12): a window's pipe name after the user's prefix, the random digits, after
   "run", the run's mark and a dash in a test run (`AppPaths.RunMark`, which `OneAtATime` uses too); `SameKind`, the
   broker's filter, so that a run's broker never knocks on the user's windows. Tested in `McpPipeNameTests`.
@@ -23,8 +23,11 @@
   entry is not there), and since 2026-11-26 whether that entry is there: `UserFile` (Claude Code's `.claude.json`, in the
   home or `CLAUDE_CONFIG_DIR`) and `NamesServer` (the top-level `mcpServers` holds `axkit`; pure, never logs the text).
 - `Mcp/McpTools`: the tools, `AppTools` (MC-8, 2026-11-11: the typed data tools of one app by its verb, and whether each changes something; axTask's three), `NeverRead` (axPass, axClip), `StartsAProgram` (axClaude, axTerminal) with `AsksFirst` and `OpenMeans` (MC-6.5a, 2026-11-24: those two and axTask on a folder open only after the user's yes, asked by a window, `AxKitForm.McpAskToOpen`),
-  and `OpenArguments`, the check of `axkit_open`'s app and path. `Mcp/McpAudit` (one line a call, the arguments
-  hashed) and `McpRate` (ten calls a second). The pipes and the broker are `AxKit.Forms`' (`McpChannel`, `McpBroker`).
+  and `OpenArguments`, the check of `axkit_open`'s app and path (the path through `Path.GetFullPath` first, since
+  2026-11-27, and `PassesLink` split at both separators: with forward slashes the link check saw one part and passed
+  it; `OpenWhere` shows the path with its hidden characters visible). `Mcp/McpAudit` (one line a call, the arguments
+  hashed; `Result` and, for a run, `RunResult`, which reads the window's answer: "done: ran" with the label the window
+  matched only when it ran, else "asked the user", "not run" or "not known") and `McpRate` (ten calls a second). The pipes and the broker are `AxKit.Forms`' (`McpChannel`, `McpBroker`).
 - `Mcp/McpOffer` (MC-9, 2026-11-13): the pure rules of `axkit_offer_command`, a command an AI tool offers the user to run themselves in axClaude: `Refusal` (none, a control character or line break, too long), `Answers` (Explain first, then Yes, No and Copy), `AskName`, `AskText`, `ExplainText` with `Details`, `Line` (the `!` line), `MaxWaiting`. Tested in `McpOfferTests`.
 - `CommandNames` with `CommandName`, `CommandMatch` and `CommandResolution` (docs/axKit/user-workflows.md WF-1,
   2026-11-15): the one resolver of a command's canonical name, its label plain and, where two share it, the label with
@@ -45,5 +48,8 @@
   takes the switch with it) and `Forgotten` (Forget: the clients and the switch) are the pure halves of `SetEnabled`
   and `ForgetAll` (MC-D9). A run's text (MC-7.9, 2026-11-23): `TextRefusal` (one line, at most `TextLimit`
   characters), `Named` (the label with "with the text ..." for `Said`, `AskTitle`, `AskName`, `AskText`,
-  `ExplainText`), and the answer's words `TextNotAsked` and `TextHidden`.
-- `ClaudeCodeProgram`, the options of a run that obeys nothing of its folder (ai-help.md AH-2.6, 2026-11-16): `StrictMcpConfigOption`, `SettingsOption` (axClaude's `ClaudeCodeHooks.SettingsOption` is this one), `NoHooksSettings` (`{"disableAllHooks":true}`) and `WriteNoHooksSettings`, which writes the file when it holds anything else. Always a file, never the JSON on the command line: `claude.cmd` is refused an argument with a double quote. A new option of Claude Code's that AxKit.Core passes goes here.
+  `ExplainText`), and the answer's words `TextNotAsked` and `TextHidden`. Since 2026-11-27 the text is shown whole
+  where the user decides (`WholeText` in `ExplainText`, and in `AskText` when it is longer than a name shows), and
+  `ShownText` cuts it for a name, a title and `Said` with `MoreFollows` (", and more"), never with dots alone;
+  `RequestWaits` is the refusal while the list of an AI's request waits for its answer (MC-7.3).
+- `ClaudeCodeProgram`, the options of a run that obeys nothing of its folder (ai-help.md AH-2.6, 2026-11-16): `StrictMcpConfigOption`, `SettingsOption` (axClaude's `ClaudeCodeHooks.SettingsOption` is this one), `NoHooksSettings` (`{"disableAllHooks":true}`) and `WriteNoHooksSettings`, which writes the file when it holds anything else (through `SafeFile`, as `McpClaudeCode.WriteConfig` does, since 2026-11-27: whole or not at all). Always a file, never the JSON on the command line: `claude.cmd` is refused an argument with a double quote. A new option of Claude Code's that AxKit.Core passes goes here.

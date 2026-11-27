@@ -85,6 +85,39 @@ public sealed class ClipHistoryTests
     public void A_copy_over_a_million_characters_is_not_kept() =>
         Assert.False(ClipPolicy.Keeps(new string('x', ClipPolicy.MaxLength + 1), false, null, false));
 
+    /// <summary>
+    /// CP-3.1 (review, 2026-11-27): the window reads a copy's marks and its text in three steps, so a password copied
+    /// in between was read with the marks of the copy before it. Read off the source, since the clipboard is the
+    /// user's while the tests run: the sequence number is taken first and compared after the text is read, and a
+    /// difference is read again as a held clipboard is.
+    /// </summary>
+    [Fact]
+    public void The_marks_and_the_text_are_read_as_one_copy()
+    {
+        var source = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxClip", "ClipForm.cs"));
+        var read = source[source.IndexOf("private void ReadClipboard(int attempt)", StringComparison.Ordinal)..];
+        var taken = read.IndexOf("var sequence = PrivateClipboard.Sequence;", StringComparison.Ordinal);
+        var marks = read.IndexOf("excluded = ", StringComparison.Ordinal);
+        var history = read.IndexOf("historyValue = PrivateClipboard.FlagValue(ClipPolicy.HistoryFormat, Handle);", StringComparison.Ordinal);
+        var text = read.IndexOf("text = Clipboard.GetText();", StringComparison.Ordinal);
+        var compared = read.IndexOf("if (PrivateClipboard.Sequence != sequence)", StringComparison.Ordinal);
+        var kept = read.IndexOf("ClipPolicy.Keeps(", StringComparison.Ordinal);
+        Assert.True(taken >= 0 && taken < marks && marks < history && history < text && text < compared && compared < kept,
+            "ReadClipboard takes the sequence number, reads the marks, the history value and the text, and compares the number before it keeps anything");
+        // The marks a private copy is given are the marks this policy keeps a copy out for, by the same names; and a
+        // history value that is there and cannot be read is 0, which keeps the copy out.
+        var marker = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms", "PrivateClipboard.cs"));
+        foreach (var format in ClipPolicy.ExcludingFormats.Append(ClipPolicy.HistoryFormat))
+        {
+            Assert.Contains($"\"{format}\"", marker, StringComparison.Ordinal);
+        }
+
+        var unreadable = marker.IndexOf("if (pointer == 0)", StringComparison.Ordinal);
+        Assert.True(unreadable >= 0 && marker.IndexOf("return 0;", unreadable, StringComparison.Ordinal) - unreadable < 60,
+            "PrivateClipboard.FlagValue answers 0 for a value it cannot read");
+        Assert.False(ClipPolicy.Keeps("text", excluded: false, historyValue: 0, paused: false));
+    }
+
     [Fact]
     public void The_settings_keep_the_history_only_while_asked()
     {

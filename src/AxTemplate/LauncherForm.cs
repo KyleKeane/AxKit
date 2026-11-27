@@ -41,6 +41,9 @@ public sealed class LauncherForm : HotkeyForm
     /// <summary>The clipboard's text at the moment the launcher came up (TP-2.3): what <c>{clipboard}</c> stands for.</summary>
     private string _clipboard = string.Empty;
 
+    /// <summary>Whether that text was copied as private (a password manager's marks, <see cref="PrivateClipboard.HoldsPrivateCopy"/>): such a text is never put back after a paste (TP-4.3).</summary>
+    private bool _clipboardPrivate;
+
     /// <summary>The latest read of the folder: an earlier one that ends later is dropped.</summary>
     private int _reads;
 
@@ -132,7 +135,12 @@ public sealed class LauncherForm : HotkeyForm
             SearchField.Clear();
         }
 
+        // The marks first, then the text, and the sequence number around both: a copy that landed in between
+        // counts as private, the safe answer when the marks may be another copy's.
+        var sequence = PrivateClipboard.Sequence;
+        var marked = PrivateClipboard.HoldsPrivateCopy(Handle);
         _clipboard = ClipboardText();
+        _clipboardPrivate = marked || PrivateClipboard.Sequence != sequence;
         Fill();
         _ = ReadFolderAsync();
         var width = Math.Max(MinimumSize.Width, area.Width / 3);
@@ -306,6 +314,7 @@ public sealed class LauncherForm : HotkeyForm
         }
 
         var before = _clipboard;
+        var beforeWasPrivate = _clipboardPrivate;
         if (!takeSelection && TextTemplate.Expand(text, string.Empty, before).Text.Length == 0)
         {
             Announce(MakesNothing, true);
@@ -404,7 +413,7 @@ public sealed class LauncherForm : HotkeyForm
             await Task.Delay(_settings.GiveBackMs);
         }
 
-        GiveBack(before, sequence);
+        GiveBack(before, beforeWasPrivate, sequence);
     });
 
     /// <summary>
@@ -424,11 +433,20 @@ public sealed class LauncherForm : HotkeyForm
         return PrivateClipboard.Sequence == sequence ? string.Empty : ClipboardText();
     }
 
-    /// <summary>TP-4.3: the text the clipboard held when the launcher came up, put back when it was plain text and nothing else was copied since the template went on it.</summary>
-    private static void GiveBack(string before, uint sequence)
+    /// <summary>
+    /// TP-4.3: the text the clipboard held when the launcher came up, put back when it was plain text, not copied as
+    /// private, and nothing else was copied since the template went on it (<see cref="PasteTarget.GivesBack"/>). A
+    /// private copy (a password) is not put back: the template stays on the clipboard, marked as it was put there.
+    /// </summary>
+    private static void GiveBack(string before, bool beforeWasPrivate, uint sequence)
     {
-        if (before.Length == 0 || PrivateClipboard.Sequence != sequence)
+        if (!PasteTarget.GivesBack(before, beforeWasPrivate, PrivateClipboard.Sequence == sequence))
         {
+            if (beforeWasPrivate && before.Length > 0)
+            {
+                Log.Info("The clipboard's text of before was a private copy: not put back");
+            }
+
             return;
         }
 

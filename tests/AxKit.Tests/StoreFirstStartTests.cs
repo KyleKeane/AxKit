@@ -89,6 +89,20 @@ public class StoreFirstStartTests
     }
 
     [Fact]
+    public void The_run_key_is_the_users_and_never_a_test_runs_or_the_Store_copys()
+    {
+        // Review, 2026-11-27: a test run's window with the setting off deleted the user's own value.
+        Assert.True(SignInStart.Applies(packaged: false, testRun: false));
+        Assert.False(SignInStart.Applies(packaged: false, testRun: true));
+        Assert.False(SignInStart.Applies(packaged: true, testRun: false));
+        // And Apply asks it with the run's own answer, before it opens the key.
+        var source = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Core", "SignInStart.cs"));
+        var apply = source[source.IndexOf("public static void Apply(", StringComparison.Ordinal)..];
+        var asked = apply.IndexOf("if (!Applies(PackageIdentity.IsPackaged, AutomationEnvironment.Requested))", StringComparison.Ordinal);
+        Assert.InRange(asked, 0, apply.IndexOf("Registry.CurrentUser", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void The_marker_is_kept_with_the_local_files_which_a_package_removes_with_itself()
     {
         Assert.EndsWith(Path.Combine("AxKit", "store-first-start.done"), StoreFirstStart.MarkerFile);

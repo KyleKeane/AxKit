@@ -207,20 +207,23 @@ public abstract partial class AxKitForm
     /// The facts of this window the gate asks for an AI tool (<see cref="CommandGate.Window"/>), read once, on the
     /// window's thread: the app, the switch as the pipe's thread read it, the key test, a notice, a Windows dialog,
     /// and whether the user is working in the window in front. The first switch is not asked here: the pipe answers
-    /// no request while it is off or the client is not paired (<see cref="McpChannel"/>).
+    /// no request while it is off or the client is not paired (<see cref="McpChannel"/>). The list of an AI's request
+    /// that waits for the user's answer (<see cref="OfferedRequestShown"/>) is a notice to the gate (MC-7.3; review,
+    /// 2026-11-27): until then further runs went on in the window under the question.
     /// </summary>
     private CommandState McpGateState(bool allowed) => new()
     {
         AppServesNoAiTool = McpRun.AppRefusal(AppVerb) is not null,
         RunCommandsOff = !allowed,
         KeyTestRunning = KeyTestRunning,
-        NoticeOpen = NoticeOpen,
+        NoticeOpen = NoticeOpen || OfferedRequestShown,
         DialogShowing = DialogShowing,
         UserBusy = McpRun.IsUserBusy(GetForegroundWindow() == Handle, UserIdleMs()),
     };
 
-    /// <summary>The words of a refusal the gate gave an AI tool in this window (<see cref="McpRun.Refusal"/>), a notice named by its title.</summary>
-    private string McpRefusal(CommandRefusal why) => McpRun.Refusal(why, AppVerb, Overlay.Shown?.Title);
+    /// <summary>The words of a refusal the gate gave an AI tool in this window (<see cref="McpRun.Refusal"/>), a notice named by its title, the list of an AI's request by its own sentence.</summary>
+    private string McpRefusal(CommandRefusal why) =>
+        why == CommandRefusal.Notice && !NoticeOpen && OfferedRequestShown ? McpRun.RequestWaits : McpRun.Refusal(why, AppVerb, Overlay.Shown?.Title);
 
     /// <summary>
     /// MC-8: a typed data tool of this window's app (<see cref="McpTools.AppTools"/>), on the window's thread: the
@@ -511,6 +514,18 @@ public abstract partial class AxKitForm
     /// <summary>Whether an AI's request covers the window now: its sections stay hidden when a notice over it closes (the explanation).</summary>
     private bool RequestOverWindow => _overWindow is { Current: not null };
 
+    /// <summary>The area the list of an AI's request was last shown in (<see cref="ShowOfferedRequestIn"/>), and that list; both null once it is answered.</summary>
+    private ControlArea? _requestArea;
+
+    private Control? _requestList;
+
+    /// <summary>
+    /// Whether the list of an AI's request waits for the user's answer now, over the window or in a window's own
+    /// place at the bottom: its area still shows that very list. The gate takes it for a notice
+    /// (<see cref="McpGateState"/>), so that no AI tool's run, change or further question happens under it.
+    /// </summary>
+    private bool OfferedRequestShown => _requestList is not null && ReferenceEquals(_requestArea?.Current, _requestList);
+
     /// <summary>
     /// The request as a list in <paramref name="area"/>, starting on Explain, with the offer's chime and a moment in
     /// which the answering keys do nothing. Explain opens the text as a notice with one button and comes back to the
@@ -537,6 +552,8 @@ public abstract partial class AxKitForm
                 return;
             }
 
+            _requestArea = null;
+            _requestList = null;
             area.Clear();
             closed();
             request.Answer(answer);
@@ -544,6 +561,8 @@ public abstract partial class AxKitForm
 
         Recent.Add(RecentActionKind.Notice, request.Name, DateTime.UtcNow);
         area.ShowList(request.Name, request.Answers, request.Explain, null, focus: true, hold: true, (chosen, _) => Answer(chosen), () => Answer(request.No));
+        _requestArea = area;
+        _requestList = area.Current;
         shown();
         return true;
     }
@@ -634,7 +653,7 @@ public abstract partial class AxKitForm
         var app = Dispatch.Of(checkedArguments[0]);
         var path = checkedArguments.Length > 1 ? checkedArguments[1] : null;
         var who = McpRun.Speaker(client);
-        var where = path is null ? string.Empty : $" on {path}";
+        var where = McpTools.OpenWhere(path);
         var text = $"{AiCaution.OpenAsked(who)}\n\n{who} asks to open {app.Name}{where}. This {McpTools.OpenMeans(app.Verb)}";
         ShowNotice(new Notice($"Open {app.Name}?", text,
         [

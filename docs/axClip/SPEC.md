@@ -74,12 +74,17 @@ Enter pastes the item into the program that was in front. Nothing is spoken but 
 - CP-3.1 Each change of the clipboard (`AddClipboardFormatListener`) that holds text adds that text as the newest item,
   unless recording is paused, the text is empty or only spaces, it is over one million characters, or the copy carries
   one of the formats a program sets to keep it out of clipboard history: `ExcludeClipboardContentFromMonitorProcessing`,
-  `Clipboard Viewer Ignore`, or `CanIncludeInClipboardHistory` with the value 0 (CP-D2).
+  `Clipboard Viewer Ignore`, or `CanIncludeInClipboardHistory` with the value 0 (CP-D2); a value that is there and
+  cannot be read counts as 0, so that the copy is left out (2026-11-27; until then it counted as no value, and the
+  copy was kept).
 - CP-3.2 A text that is in the history already moves to the top instead of being added again. At most 200 items; the
   oldest goes.
 - CP-3.3 A clipboard another program holds open, or one with no text on it yet (a program that empties it and fills it
   in two steps; one of three quick copies was missed once, 2026-11-01), is read again after 100 ms, up to three times;
-  a copy that cannot be read then is left out and logged ("The clipboard could not be read").
+  a copy that cannot be read then is left out and logged ("The clipboard could not be read"). So is a read during
+  which the clipboard changed (2026-11-27): the marks and the text are read in three steps, and the clipboard's
+  sequence number is taken before and after them, so that a password copied in between is never read with the
+  marks of the copy before it.
 - CP-3.4 Options, Keep history between runs (off at first): on, the history is written to `axClip.json` when the window
   hides and when the process ends, and read at the next start; off, the file holds none, and turning it off empties the
   file's history at once.

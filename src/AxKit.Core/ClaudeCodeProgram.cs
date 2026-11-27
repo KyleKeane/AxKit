@@ -81,7 +81,8 @@ public static class ClaudeCodeProgram
     /// The file of <see cref="NoHooksSettings"/> for <see cref="SettingsOption"/>, written when it is missing or holds
     /// anything else, so that a file changed by another program never reaches Claude Code. A file and not the text
     /// on the command line: npm's <c>claude.cmd</c> runs through cmd.exe, where no argument may hold a double quote
-    /// (<see cref="SystemPrograms.CmdNeverSafe"/>). Throws as <see cref="File.WriteAllText(string, string)"/> does.
+    /// (<see cref="SystemPrograms.CmdNeverSafe"/>). Written whole or not at all (<see cref="SafeFile"/>, since
+    /// 2026-11-27). Throws as <see cref="SafeFile.WriteAllText(string, string)"/> does.
     /// </summary>
     public static void WriteNoHooksSettings(string file)
     {
@@ -91,7 +92,7 @@ public static class ClaudeCodeProgram
         }
 
         Directory.CreateDirectory(Path.GetDirectoryName(file)!);
-        File.WriteAllText(file, NoHooksSettings);
+        SafeFile.WriteAllText(file, NoHooksSettings);
     }
 
     /// <summary>The first of <see cref="Candidates"/> that exists; null when Claude Code is not installed.</summary>

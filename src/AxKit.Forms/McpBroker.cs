@@ -49,7 +49,7 @@ public static class McpBroker
                 result = new McpResult("axKit could not do it: " + ex.Message, true);
             }
 
-            McpAudit.Write(name, program ?? "unknown program", tool, arguments.ToJsonString(), McpAudit.Result(tool, McpProtocol.Text(arguments["command"]), result.IsError, result.Text));
+            McpAudit.Write(name, program ?? "unknown program", tool, arguments.ToJsonString(), McpAudit.Result(tool, result.IsError, result.Text));
             return result;
         });
 
@@ -266,24 +266,26 @@ public static class McpBroker
     {
         if (Windows(key).FirstOrDefault() is not { } newest)
         {
-            return $"Open any axKit window, so that the user can allow {client} there.";
+            // A window that is hidden (put away, or a hotkey window in the background) is not among them (MC-6.2).
+            return McpAccess.NoWindowToAllowIn(client);
         }
 
         var request = "pair " + JsonSerializer.Serialize(new { name = client, program });
-        var answer = Exchange(key, newest.Pipe, request, (int)McpChannel.PairingWait.TotalMilliseconds + 5000);
-        if (answer is not null && answer.Contains("\"busy\":true", StringComparison.Ordinal))
+        switch (McpAccess.PairingOf(Exchange(key, newest.Pipe, request, (int)McpChannel.PairingWait.TotalMilliseconds + 5000)))
         {
-            return $"The axKit window is showing the user something else; ask again once it is answered.";
+            case PairingAnswer.Allowed:
+                return null;
+            case PairingAnswer.Busy:
+                return "The axKit window is showing the user something else; ask again once it is answered.";
+            case PairingAnswer.NoAnswer:
+                // The window was busy, hidden or gone, or its answer did not come: the user was not asked, so this
+                // is no Deny and holds nothing (review, 2026-11-27).
+                return McpAccess.WindowDidNotAnswer;
+            default:
+                // A Deny holds for a minute: a client that asks again at once does not wear the user down.
+                _deniedUntil = Environment.TickCount64 + 60_000;
+                return $"The user did not allow {client} to use axKit.";
         }
-
-        if (answer is not null && answer.Contains("\"allowed\":true", StringComparison.Ordinal))
-        {
-            return null;
-        }
-
-        // A Deny holds for a minute: a client that asks again at once does not wear the user down.
-        _deniedUntil = Environment.TickCount64 + 60_000;
-        return $"The user did not allow {client} to use axKit.";
     }
 
     /// <summary>A window's answer to one request, as the tool's text.</summary>

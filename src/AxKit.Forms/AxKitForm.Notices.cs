@@ -242,7 +242,8 @@ public abstract partial class AxKitForm
             {
                 if (refused(Overlay.InputText) is { } why)
                 {
-                    Announce(EventKind.Refused, why, true);
+                    // The one way every window refuses (AX-7.3c): the sound with the words, inside a notice too.
+                    Refuse(why);
                     return false;
                 }
 

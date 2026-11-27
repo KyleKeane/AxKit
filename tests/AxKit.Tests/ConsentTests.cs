@@ -29,6 +29,26 @@ public sealed class ConsentTests
     }
 
     [Fact]
+    public void An_agreement_is_not_said_recorded_when_the_file_was_passed_over()
+    {
+        // Review, 2026-11-27: the write answered true whatever the save said, so "Consent recorded" was logged of a
+        // file another program held at the load just before, which the save passes over (R-51).
+        var file = TempFile();
+        Assert.True(Consent.Record(file, "axGIT", "Git", "4.0.0", new DateTime(2026, 10, 31)));
+        var before = File.ReadAllBytes(file);
+        using (new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None))
+        {
+            Assert.False(Consent.Record(file, "axTerminal", "PowerShell", "4.0.0", new DateTime(2026, 11, 2)));
+        }
+
+        Assert.Equal(before, File.ReadAllBytes(file));
+        Assert.True(Consent.Record(file, "axTerminal", "PowerShell", "4.0.0", new DateTime(2026, 11, 2)));
+        Assert.True(Consent.Given(file, "axTerminal", "PowerShell"));
+        Assert.True(Consent.Given(file, "axGIT", "Git"));
+        Directory.Delete(Path.GetDirectoryName(file)!, recursive: true);
+    }
+
+    [Fact]
     public void Every_agreement_of_one_app_is_withdrawn_in_one_write()
     {
         // Forget AI tools (docs/axKit/mcp.md): every paired tool's agreement goes, the other apps' stay, the file written once.

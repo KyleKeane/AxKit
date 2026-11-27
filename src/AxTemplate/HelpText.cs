@@ -40,7 +40,7 @@ public static class HelpText
         ## The launcher
           Ctrl+Shift+Semicolon, or the hotkey you chose, shows the launcher from any program; pressed again, it hides the launcher.
           Typing lists only the templates that hold every word typed, in their name or in their text; names come first.
-          Enter puts the template into the program you were in; the caret is left at {caret}, and what you had copied is on the clipboard again afterwards.
+          Enter puts the template into the program you were in; the caret is left at {caret}, and the text you had copied is on the clipboard again afterwards; a picture, files, or a password copied as private are not put back.
           Ctrl+Enter does the same around what is selected in that program, which is copied there first; not in a terminal, where Ctrl+C ends the running command.
           Open the browser shows the window where templates are made and changed.
         """ + BundleHelp.NoticesSection("axTemplate", "the list");
