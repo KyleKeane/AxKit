@@ -245,7 +245,8 @@ internal static class Program
 
             File.WriteAllText(file, BackupFormat + "\n" + Convert.ToBase64String([.. salt, .. nonce, .. tag, .. cipher], Base64FormattingOptions.InsertLineBreaks).ReplaceLineEndings("\n") + "\n");
             Console.WriteLine($"Wrote the backup: {Path.GetFullPath(file)}");
-            Console.WriteLine("It opens with the passphrase alone, on any computer (ReportKey import). Keep it and the passphrase in your password manager, and delete this file once it is there.");
+            // The maintainer's decision of 2026-11-15: the backups lie in the private repository, not in a password manager.
+            Console.WriteLine("It opens with the passphrase alone, on any computer (ReportKey import). It is kept beside its passphrase in the private repository KyleKeane/AxKit-keys, cloned as ..\\axkit-keys: write it there, or move it there, then commit and push that repository (docs/axKit/reports-setup.md section 5).");
             return 0;
         }
         finally

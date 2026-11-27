@@ -32,9 +32,11 @@ if ($Check -and $Write) {
 }
 
 $runnerProject = Join-Path $root 'tools\AxAutomate\AxAutomate.Runner.csproj'
-# The runner's folder is the one tools\workflows.ps1 builds into, by the checkout's name, so that the second build of
-# a run of tools\pages.ps1 finds it current (workflows.ps1 says why the runner is not run in place).
-$runnerFolder = Join-Path ([IO.Path]::GetTempPath()) ('axkit-reference-runner-' + (Split-Path -Leaf $root))
+# The runner's folder is named as tools\workflows.ps1 names its own, by the checkout and this process
+# (tools\run-folder.ps1; workflows.ps1 says why the runner is not run in place): two sessions in one checkout do not
+# share it. It is removed at the end.
+. (Join-Path $root 'tools\run-folder.ps1')
+$runnerFolder = Get-RunFolder $root 'axkit-reference-runner'
 $runnerArguments = @('--bounds', '--repository', $root)
 if ($Check) { $runnerArguments += '--check' }
 if ($Write) { $runnerArguments += '--write' }
@@ -53,6 +55,7 @@ try {
     }
 } finally {
     dotnet build-server shutdown | Out-Null
+    Remove-Item -LiteralPath $runnerFolder -Recurse -Force -ErrorAction SilentlyContinue
 }
 
 exit $exitCode

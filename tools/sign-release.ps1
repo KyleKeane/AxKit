@@ -4,9 +4,12 @@
 
 .DESCRIPTION
   release.ps1 calls it after pushing the tag; it can be run alone for a draft already on GitHub. It
-    1. waits for the tag's release workflow to finish (it leaves the release as a draft with the zip and install.cmd),
+    0. checks that the release key on this computer is the one the apps hold: its public half equals the constant in
+       src/AxKit.Core/Updates/ReleaseSigning.cs,
+    1. waits for the tag's release workflow to finish, asked every 20 seconds, 40 minutes at most (it leaves the
+       release as a draft with the zip and install.cmd),
     2. downloads the draft's zip into a fresh folder and checks the build provenance GitHub attested for it (that this
-       repository's release workflow built it),
+       repository's release workflow, .github/workflows/release.yml, built it),
     3. signs the zip's SHA-256 with the release key (tools/release-key.ps1), which is on this machine,
        checks the signature against the public half the apps hold, and uploads "<zip>.sig" to the draft,
     4. publishes the release. Only then do the apps see it, and they install it only when the signature checks.
@@ -39,6 +42,9 @@ $repo = 'KyleKeane/AxKit'
 # space and no double quote in it: Windows PowerShell 5.1 hands a filter with a quoted space to gh as two arguments
 # (the 5.8.0 release, 2026-11-14; release.ps1 has the same function, and ReleaseScriptTests reads both scripts).
 function Get-GitHubAnswer([string[]]$words) {
+    # A line gh writes as an error must not end the script under Stop when its output is redirected (Windows
+    # PowerShell 5.1); the exit code is read. The setting is this function's own.
+    $ErrorActionPreference = 'Continue'
     $script:asked = 'gh ' + ($words -join ' ')
     $lines = @(gh @words)
     $script:askedExit = $LASTEXITCODE
@@ -50,11 +56,20 @@ function Find-ReleaseRun([string]$ofTag) {
     return Get-GitHubAnswer @('run', 'list', '--repo', $repo, '--workflow', 'release.yml', '--branch', $ofTag, '--limit', '1', '--json', 'databaseId', '--jq', '.[0].databaseId')
 }
 
-# Follows a run to its end; the exit code says whether it succeeded. A run that has ended answers at once.
+# Follows a run to its end: its status asked every 20 seconds, 40 minutes at most, as release.ps1 waits for the build
+# of main (gh run watch, used until 2026-11-27, has no limit of its own, and a run that hangs on GitHub held the
+# signing for ever). The run's conclusion stays in $script:runConclusion: 'success', another conclusion of GitHub's,
+# or nothing when the run had not ended in time. A run that has ended answers at once.
 function Watch-Run([string]$ofRun) {
-    $script:asked = "gh run watch $ofRun --repo $repo --exit-status"
-    gh run watch $ofRun --repo $repo --exit-status
-    $script:askedExit = $LASTEXITCODE
+    $script:runConclusion = $null
+    for ($try = 0; $try -lt 120; $try++) {
+        $status = Get-GitHubAnswer @('run', 'view', $ofRun, '--repo', $repo, '--json', 'status', '--jq', '.status')
+        if ($status -eq 'completed') {
+            $script:runConclusion = Get-GitHubAnswer @('run', 'view', $ofRun, '--repo', $repo, '--json', 'conclusion', '--jq', '.conclusion')
+            return
+        }
+        Start-Sleep -Seconds 20
+    }
 }
 
 # 'true' for a draft, 'false' for a published release, nothing when the tag has no release.
@@ -97,7 +112,7 @@ if ($Rehearse) {
             Write-Answer "the release workflow's run for $rehearsedTag" $id ($id -match '^\d+$')
             if ($id -match '^\d+$') {
                 Watch-Run $id
-                Write-Answer "the end of run $id (gh's own lines are above)" 'it succeeded' $true
+                Write-Answer "the conclusion of run $id" "$script:runConclusion" ($script:runConclusion -eq 'success')
             }
             $draft = Get-ReleaseIsDraft $rehearsedTag
             Write-Answer "whether $rehearsedTag is a draft" $draft ($draft -eq 'true' -or $draft -eq 'false')
@@ -118,6 +133,15 @@ if ($Rehearse) {
 if ($Version -notmatch '^\d+\.\d+\.\d+$') { throw "The version must be three numbers, like 1.0.1 (got '$Version')." }
 $tag = "v$Version"
 
+# The key on this computer is the one the apps hold: its public half is the constant the updater checks every zip
+# against (src\AxKit.Core\Updates\ReleaseSigning.cs; install.cmd holds the same, and a test keeps the two equal).
+# The check after the signing below is made against the public half of this computer's key, so until 2026-11-27 a
+# key that was not the apps' signed a release that no installed copy would take. Asked first, before any waiting.
+$held = [regex]::Match([IO.File]::ReadAllText((Join-Path $root 'src\AxKit.Core\Updates\ReleaseSigning.cs')), 'public const string PublicKey = "([^"]+)"').Groups[1].Value
+if (-not $held) { throw 'The public half of the release key was not found in src\AxKit.Core\Updates\ReleaseSigning.cs (public const string PublicKey = "..."); nothing was signed.' }
+$mine = "$(& (Join-Path $PSScriptRoot 'release-key.ps1') public)".Trim()
+if ($mine -cne $held) { throw 'The release key on this computer is not the one the apps hold: its public half (tools\release-key.ps1 public) differs from PublicKey in src\AxKit.Core\Updates\ReleaseSigning.cs. A zip signed with it would be refused by every installed copy; nothing was signed or published.' }
+
 Write-Host "Waiting for the release workflow of $tag..."
 $run = $null
 for ($try = 0; -not $run -and $try -lt 24; $try++) {
@@ -126,7 +150,8 @@ for ($try = 0; -not $run -and $try -lt 24; $try++) {
 }
 if (-not $run) { throw "No release workflow for $tag appeared within two minutes." }
 Watch-Run $run
-if ($LASTEXITCODE -ne 0) { throw "The release workflow of $tag failed; nothing was signed or published." }
+if (-not $script:runConclusion) { throw "The release workflow of $tag (run $run) had not ended after 40 minutes; nothing was signed or published. Look at it with: gh run view $run --repo $repo. Once it has succeeded: .\tools\sign-release.ps1 $Version" }
+if ($script:runConclusion -ne 'success') { throw "The release workflow of $tag ended as '$script:runConclusion' (gh run view $run --repo $repo); nothing was signed or published." }
 
 $draft = Get-ReleaseIsDraft $tag
 if (-not $draft) { throw "No release for $tag was found on GitHub: look at the draft's tag name there (gh release list)." }
@@ -137,15 +162,20 @@ if (((Get-ReleaseFiles $tag) -split "`n") -notcontains $name) { throw "The draft
 
 $folder = Join-Path $env:TEMP ("axkit-sign-" + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $folder | Out-Null
+# From here on gh is run, and a line it writes as an error must not end the script under Stop when its output is
+# redirected (Windows PowerShell 5.1): every exit code below is read, and a failure is thrown in words.
+$ErrorActionPreference = 'Continue'
 try {
     gh release download $tag --repo $repo --pattern $name --dir $folder
     if ($LASTEXITCODE -ne 0) { throw "The draft's $name could not be downloaded." }
     $zip = Join-Path $folder $name
 
-    gh attestation verify $zip --repo $repo | Out-Host
+    # The provenance names the workflow, not the repository alone: any workflow of the repository can attest a file.
+    gh attestation verify $zip --repo $repo --signer-workflow "$repo/.github/workflows/release.yml" | Out-Host
     if ($LASTEXITCODE -ne 0) { throw "GitHub has no provenance from this repository's release workflow for $name; nothing was signed." }
 
     & (Join-Path $PSScriptRoot 'release-key.ps1') sign $zip | Out-Host
+    if (-not (Test-Path -LiteralPath "$zip.sig")) { throw 'The zip could not be signed with the release key; nothing was published.' }
     & (Join-Path $PSScriptRoot 'release-key.ps1') verify $zip | Out-Host
     if ($LASTEXITCODE -ne 0) { throw 'The signature just made does not check against the public half; nothing was published.' }
 

@@ -271,11 +271,13 @@ the loose registration, and the CLI with its runtime. `docs/axKit/plan.md` point
 
 ### Phase 3: Packaging infrastructure (me, one session, branch `store`)
 
-1. `tools/make-manifest.ps1`: `apps.json` in, `AppxManifest.xml` out, with the identity values as parameters and the
-   version from the csproj. A test compares the manifest's Applications with `Dispatch.Apps`.
+1. `tools/make-manifest.ps1`: `apps.json` in, `AppxManifest.xml` out, with the identity values as parameters (their
+   defaults are the Store's for axKit) and the version given as `-Version`, which `publish.ps1 -Msix` reads from the
+   program it built. A test compares the manifest's Applications with `Dispatch.Apps`.
 2. `tools/make-icon.ps1 -Png`: the package assets per app.
-3. `publish.ps1 -Msix`: the folder publish, the manifest, the assets, `makeappx pack`, into `publish\AxKit.msix`.
-4. The development loop: `Add-AppxPackage -Register publish\win-x64-msix\AppxManifest.xml` registers the loose
+3. `publish.ps1 -Msix`: the folder publish into `publish\msix\package`, the manifest, the assets, `makeappx pack`,
+   into `publish\AxKit-<version>.msix`.
+4. The development loop: `Add-AppxPackage -Register publish\msix\package\AppxManifest.xml` registers the loose
    folder as the package without a signature (Developer Mode on). The first packaging test runs every item of section
    7 and records the answers there.
 5. `appcert.exe` (the Windows App Certification Kit, deprecated but still running) on the package, once, for the

@@ -56,13 +56,18 @@ points here. Each app's own commands are in its `CLAUDE.md`.
   (`tools/AxAutomate/StandIn.cs` has the scenario's keys; `automation.md` section 2, "The stand-in of Claude Code").
   `tools/QaRun` runs Claude sessions without windows, always with `--model haiku`.
 - `tools/window-passes.ps1 [-Check]` says which apps' window code has a commit newer than the app's last recorded
-  pass on the desktop tier or with NVDA listening (`workflow-record.json`). `release.ps1` and its rehearsal run it with `-Check` and refuse
+  pass on the desktop tier or with NVDA listening (`workflow-record.json`), and, where an app's newest pass is
+  current, which goals of its scripts are behind all the same: a goal whose last result on either tier is not
+  "passed", a goal with no pass since the window's newest change, a script with no goal in the record. Each such
+  goal is said in the app's line, script by script; the goals of a live script (its `# Needs:` line names Claude Code
+  signed in, the network or GitHub) are said apart, after "Live, run with -Live", since a plain run never plays
+  them: they are run with `tools/run-scripts.ps1 <scripts> -Live -Record`. `release.ps1` and its rehearsal run it with `-Check` and refuse
   while it names an app; `test.ps1` does not run it, since during ordinary work the windows are ahead of their
   record. It reads and asks git; it writes nothing. `-Run` does what its lines ask for: AxKit built once into a
   scratch folder, then the scripts folder of each app it names run on the hidden desktop with `--record`, one line per
   app (passed, or the failing scripts), last what is still named; `-Run -Only <app>, ...` runs the named apps, changed
-  or not. A script whose `# Needs:` line names Claude Code signed in, the network or GitHub is never run by it: such
-  an app is run script by script without them and its line says how many were left out. It refuses while `src` or
+  or not. A live script is never run by it: such an app is run script by script without them and its line says how
+  many were left out, and an app named for its live scripts alone is not run at all. It refuses while `src` or
   `tests` hold a change not committed, since a pass recorded over such work counts as changed again with the commit.
   The record it changes stays in the working tree, to be committed. Exit codes: 0 passed, 1 a script failed, 2
   refused or the build failed. `tools/window-run.ps1` holds the functions it shares with the next.
@@ -79,9 +84,14 @@ points here. Each app's own commands are in its `CLAUDE.md`.
   when the installed capture add-on differs from `tools/nvda-capture`. `-Skip <app>, ...` leaves apps out and
   `-NoBuild` runs the last build again. `-Only <pattern>, ...` plays only the scripts whose name, or folder and
   name, match (`-Only '*-stream-*', 'axMedia\03-playing.txt'`): what a pass failed is heard again after its repair
-  without the whole pass. `-Inventory write` gives the runner's `--inventory` mode: how the command inventory gets
-  the rows of an app whose scripts are all live (`.\nvda-pass.ps1 axHelp -Only '01-start.txt' -Inventory write`,
-  then `tools\workflows.ps1`).
+  without the whole pass. `-Inventory check` or `off` gives the runner's `--inventory` mode; `-Inventory write` and
+  `rewrite` are refused with words, since they also crawl the workflow graph, which must never run on the user's own
+  desktop: the inventory is written on the hidden desktop, live scripts included
+  (`tools\run-scripts.ps1 tests\scripts\axHelp -Live -Inventory write`, then `tools\workflows.ps1`). The spoken
+  warning and the countdown are `tools/spoken-countdown.ps1`, which `tools/store-screenshots.ps1` shares; the runner
+  itself (`tools/AxAutomate --nvda`, typed by hand) has no countdown and takes the keyboard at once, so it is started
+  through this script. The build servers end with its two builds, and the owed page is written after the pass
+  without its trouble changing the pass's exit code.
 - `tools/upstream.ps1` is the upstream watch (`automation.md`, "When an outside program changes"): for each outside
   program (Claude Code, Git, KeePassXC's tool, the shells) the installed version beside the one the checks last passed
   with, from `upstream.json`, and "changed" where they differ; exit code 1 when one did. Quick, no build: run it at
@@ -108,9 +118,12 @@ points here. Each app's own commands are in its `CLAUDE.md`.
 
 ## The generated pages
 
-Each is written by its script from its sources and checked by `test.ps1`, the push check and `build.yml` with
-`-Check`. Never edit a page by hand: `tools/pages.ps1` writes every one of them in one run (each page's own script
-writes it alone), and the pages it wrote are committed.
+Each is written by its script from its sources and checked with `-Check`. The checks have one list,
+`tools/pages.ps1 -Check`, and `test.ps1`, the push check and `build.yml` all run that one command (until 2026-11-27
+`build.yml` ran each check as a step of its own, and lacked the two the list had gained, the map and the bounds of
+the workflow graph). Never edit a page by hand: `tools/pages.ps1` writes every one of them in one run (each page's
+own script writes it alone, and each ends with an exit code of its own, so that one that fails is the one named),
+and the pages it wrote are committed.
 
 - `tools/outside-calls.ps1` writes `outside-calls.md`: everything axKit reaches outside its process, from the
   `Outside call, <kind>, <what is reached>:` comment that every network request, program start and pipe in `src`
@@ -157,26 +170,35 @@ writes it alone), and the pages it wrote are committed.
   hearing with NVDA, a live check with a real outside program or situation, a window check on the hidden desktop, a
   test in code), from the rows of `cases.json` that carry `owed`, the `owed` entries of `repairs.json` and the Owed
   sections of `nvda-test-record.md`. An entry leaves when its source changes; then the script is run.
-- Each of these scripts takes `-Check`, which writes nothing and fails when its page is stale; `test.ps1` and the
-  Build workflow run it.
+- Each of these scripts takes `-Check`, which writes nothing and fails when its page is stale; `test.ps1`, the push
+  check and the Build workflow run them all through `tools/pages.ps1 -Check`.
 
 ## Publish, install, release
 
-- `publish.ps1` makes the self-contained exe, the installer and the guide in `publish\`, zips them and installs for
-  this user (`-NoInstall`; `-NoZip` and `-ZipOnly` are the release workflow's two halves).
+- `publish.ps1` makes the self-contained exe, the installer and the guide in `publish\`, zips them and, run without
+  a switch, installs: it replaces the axKit installed for this Windows account and stops and starts again its
+  background apps. `-NoInstall` only builds, which is what the development computer uses, where no installed copy is
+  kept; `-NoZip` and `-ZipOnly` are the release workflow's two halves.
 - `publish.ps1 -Msix` makes the MSIX package for the Microsoft Store in `publish\AxKit-<version>.msix` (SPEC AX-13,
   `store-distribution.md`): a folder publish, `tools/make-manifest.ps1` for its manifest from the apps listing,
   `tools/make-icon.ps1 -Png` for its images, makeappx from Windows Kits or from `tools/get-sdk-tools.ps1`, which
   fetches the Windows SDK's packaging tools into `tools/sdk` once. A local test registers
   `publish\msix\package\AppxManifest.xml` with `Add-AppxPackage -Register`, Developer Mode on.
-- `install.ps1` and `install.cmd`: the per-user install (`-Uninstall`).
+- `install.ps1` and `install.cmd`: the per-user install (`-Uninstall`). Before it changes anything it stops the
+  background apps that run from the installed folder (or from an earlier name's), and those alone: a copy that runs
+  from another folder, a build from the source, is left alone and named.
 - `release.ps1 <version>`, after a `## <version>` section in `CHANGELOG.md`: its checks (below), the pages, the
   tests, the version, the commit, the tag, the push; then it waits for the draft GitHub Actions builds, signs its zip
   with the release key and publishes it (`tools/sign-release.ps1`), and that release is what the apps update from.
-  Only at the maintainer's word.
+  Only at the maintainer's word. It refuses while the newest build of `origin/main` on GitHub is not a success: that
+  build compiles the whole solution, `src/AxKit` and the tools among it, which no check on the development computer
+  does. When a push inside it is refused (the pre-push hook runs the tests) or fails, the commit and the tag are in
+  the clone and nothing is on GitHub: it says so and prints the two ways on as commands to type (push `main`, wait
+  for its build, push the tag, `tools\sign-release.ps1 <version>`; or delete the tag, `git reset --soft HEAD~1` and
+  put the project file back), and a second run of the same version says them again.
 - `release.ps1 -Rehearse [<version>] [-WithTests]`, before a release: the rehearsal. It makes the real run's checks
   (the branch, behind origin, the hooks setting, the release key's file, uncommitted files, the changelog section,
-  the windows' recorded passes and the version; of the given version, or of the newest released section) and asks
+  the windows' recorded passes, the version and the newest build of `origin/main`; of the given version, or of the newest released section) and asks
   GitHub every question the real run and
   `tools/sign-release.ps1` ask, through the same functions and so with the same command lines, about what is already
   there: the build of main's newest commit and the newest published release. It commits, tags, pushes, signs and
@@ -186,17 +208,25 @@ writes it alone), and the pages it wrote are committed.
   The parts of the script that talk to git and GitHub otherwise run only in a real release (two faults met 5.8.0
   there); `ReleaseScriptTests` reads both scripts for the shape that keeps the rehearsal harmless.
 - `tools/sign-release.ps1 <version>`: signs a release's draft with the release key and publishes it; `release.ps1`
-  calls it last, and it is run alone when a release stopped there (`-Rehearse` asks its questions only).
+  calls it last, and it is run alone when a release stopped there (`-Rehearse` asks its questions only). Before
+  anything else it refuses a key that is not the apps': the public half of this computer's key must equal the
+  constant in `AxKit.Core/Updates/ReleaseSigning` (`install.cmd` holds the same; `ReleaseKeyTests`). It waits for the
+  release workflow by asking every 20 seconds, 40 minutes at most, and takes the zip only with GitHub's provenance
+  from the workflow `release.yml` itself, not from any workflow of the repository.
 - `tools/store-submit.ps1 <version> -WhatsNew <file> [-Submit]`, after a published release and only at the
-  maintainer's word: the release's `AxKit-<version>.msix` from GitHub into a new submission in Partner Center through
+  maintainer's word: the release's `AxKit-<version>.msix` from GitHub, its provenance checked as the zip's is, into a
+  new submission in Partner Center through
   `tools/EdgeDrive` (store-setup.md sections 5 and 6): Start update, the package dropped and saved, "What's new" written
   from the file and read back; `-Submit` also sends it for certification, without it the draft is left ready. It stops
-  with what it saw at any step that does not hold, and at a sign-in page, which is the maintainer's. `-Rehearse` reads
+  with what it saw at any step that does not hold, and at a sign-in page, which is the maintainer's. It drives only
+  the Edge it starts, on the release profile: when the debugging port 9222 already answers, the Edge of an earlier
+  run on that profile is used again and said, and any other program stops the script, named. `-Rehearse` reads
   only: the package on GitHub and the overview's state.
 - `tools/release-key.ps1 <command>`: the release key (SPEC AX-3.4), kept in `%LOCALAPPDATA%\AxKit-release\release-key.bin`
   for the Windows account. `public` prints its public half, which must equal `AxKit.Core/Updates/ReleaseSigning`'s;
   `sign <zip>` and `verify <zip>` are `tools/sign-release.ps1`'s steps; `new` made the key once and refuses while one
-  exists. `export <file>` writes a backup under a passphrase read from standard input, refusing an existing file;
+  exists. `export <file>` writes a backup under a passphrase that is piped in (never an argument, never printed),
+  refusing an existing file;
   `import <file>` puts the key back from one on a computer that has none, never replacing a key. The backup lives in
   the private repository `KyleKeane/AxKit-keys`, cloned as `..\axkit-keys` (`development-environment.md` section 2):
   `Get-Content ..\axkit-keys\release-key.passphrase.txt | .\tools\release-key.ps1 import ..\axkit-keys\release-key.backup`,
@@ -209,7 +239,9 @@ writes it alone), and the pages it wrote are committed.
 
 ## The Store
 
-- `tools/store-screenshots.ps1` takes the listing's screenshots, with the user away.
+- `tools/store-screenshots.ps1` takes the listing's screenshots, with the user away: its windows open in front, so
+  Windows' voice says so and counts from ten to one first, and a key or a mouse move during the countdown stops it
+  (`tools/spoken-countdown.ps1`, the countdown of `nvda-pass.ps1`).
 - `tools/EdgeDrive` drives a Microsoft Edge window over the DevTools protocol, one command per run, for Partner
   Center's website (`store-setup.md` sections 5 and 6); `tools/store-submit.ps1`, above, does a release's
   submission with it. Microsoft's API route was built, never switched on, and removed on 2026-11-13, since the
@@ -254,12 +286,21 @@ made up for the occasion.
   with it in a clean copy of the last commit, builds it and runs its tests and the bundle's checks of every app's
   places, so that the script cannot fall behind the framework unseen; run it after a change to either, and before a
   release.
-- `tools/push-check.ps1`: what the pre-push hook runs before anything leaves the computer: first the page checks,
+- `tools/push-check.ps1`: what the pre-push hook runs before anything leaves the computer: first, where the
+  priorities list is beside the repository, that every commit of the push that is no merge names its item (rule 9,
+  with the commit hook's passes; the hook itself runs only where it is installed); then the page checks,
   `tools/upstream.ps1 -Check` and `tools/script-lint.ps1`, every one, so that all the stale pages are named at once and
   in seconds; then `tests/AxKit.Tests` always and the test projects of the apps the pushed commits changed (every
-  project when shared code changed); a failure refuses the push.
+  project when shared code changed); a failure refuses the push. With a change not committed, or a file never added
+  under `src`, `tests`, `tools` or `docs` (it names them), the checks run on a clean copy of HEAD, where such a file
+  is missing as it will be on GitHub.
 - `tools/pages.ps1`: every generated page written again in one run, the same scripts the checks run; run it before a
-  commit that changed a script, a command, a key or a document.
+  commit that changed a script, a command, a key or a document. With `-Check` it is the one list of the quick checks,
+  for `test.ps1`, the push check and `build.yml`.
+- `tools/run-folder.ps1` (dot-sourced): a run's own folder under the temporary folder, named by the checkout and the
+  process, for the scripts that build or copy into one (`workflows.ps1`, `graph-check.ps1`, `push-check.ps1`,
+  `check-new-app.ps1`, `upstream.ps1`), so that two sessions in one checkout never meet in it; each removes its
+  folder at its end. `tools/run-scripts.ps1` keeps its runner between runs on purpose and names it otherwise.
 - `tools/make-icon.ps1`: the apps' icons from `Dispatch.Apps`. `tools/make-test-pictures.ps1`: the three test
   pictures of axHelp's screenshots in `tests/fixtures/pictures`, run only to change them.
 - `tools/session-start.ps1`: the start of a working session in one run, its checks in order, each by the script that
@@ -284,6 +325,10 @@ made up for the occasion.
   Started field gets today's date), `Item done: <words>` (its Done is checked too) or `Item: none, <the reason>`. A
   message without such a line, or with words that name no item or several, is refused. Git runs it for every commit
   through the hook `tools/hooks/commit-msg`; where the lists are not beside the repository, every commit passes.
+  What passes without a line: git's own revert and fixup messages, the release script's "Release 1.2.3", and "Merge
+  ..." only while git has a merge to commit (the hook asks for `MERGE_HEAD`). Its guard on the pinned approval key
+  asks the index the commit is made from, which the hook hands on, so that `git commit -a` and `git commit --
+  <path>` are seen as a staged change is.
   `-Check` says what it would mark and writes nothing; `-Lists <folder>` names another list.
 - `tools/item.ps1`: an item of the priorities list written, noted and finished, in place of a script made up for the
   occasion. `new -Title -App -Priority -Where -Notes` writes a new item with the list's own fields, its file named

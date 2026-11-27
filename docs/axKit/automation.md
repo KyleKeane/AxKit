@@ -510,6 +510,15 @@ capture log, the capture switched on for the run and its log deleted after it). 
 dotnet run --project tools\AxAutomate -c Release -- tests\nvda-scripts --build --nvda --report nvda-report.md
 ```
 
+Typed so, the runner takes the keyboard at once: it speaks its warning as it starts, with no countdown before it and
+no look at whether someone is at the computer. So a pass is started through `nvda-pass.ps1` (below), which has both;
+the line above is the runner's own form, for knowing what that script runs.
+
+Who warns before taking the user's desktop (2026-11-27): the spoken sentence, the countdown from ten and the stop at
+a key or a mouse move are one script, `tools/spoken-countdown.ps1`, which the two scripts that take the foreground
+or the keyboard dot-source: `nvda-pass.ps1`, and `tools/store-screenshots.ps1`, whose windows open in front for the
+Store's screenshots and which until then said nothing first. A new script of that kind takes the same countdown.
+
 ### From a Claude session (2026-10-31)
 
 The assistant runs this tier itself to hear a change as NVDA speaks it, in the same session as the change:
@@ -568,10 +577,13 @@ the order of speech, a state NVDA reads from the control) goes into `tests/nvda-
 A part of the pass again (2026-11-18): `-Only <pattern>, ...` plays only the scripts whose name, or folder and name,
 match (`.\nvda-pass.ps1 -Only '*-stream-*', 'axMedia\03-playing.txt'`), so that what a whole pass failed is heard
 again after its repair in minutes, and each run enters its goals in the workflow record as the whole pass does. And
-`-Inventory write` hands the runner's `--inventory` mode on: the scripts of an app that are all live (axHelp's) list
-its commands on no hidden desktop, so its rows of the command inventory are written by a pass
-(`.\nvda-pass.ps1 axHelp -Only '01-start.txt' -Inventory write`, then `tools\workflows.ps1`) whenever a pass names
-one of them as stale; the pass prints the rows it names.
+`-Inventory check` or `off` hands the runner's `--inventory` mode on. `-Inventory write` and `rewrite` are refused
+with words (2026-11-27): under them the runner also writes the workflow graph, crawling every place of each app's
+window, and with NVDA listening that crawl would run on the user's own desktop with the keyboard taken. From
+2026-11-18 a pass with `-Inventory write` was how the rows of an app whose scripts are all live (axHelp's) were
+written; since `tools\run-scripts.ps1 -Live` plays the live scripts on the hidden desktop, they are written there
+(`.\tools\run-scripts.ps1 tests\scripts\axHelp -Live -Inventory write`, then `tools\workflows.ps1`) whenever a pass
+names one of them as stale; the pass prints the rows it names.
 
 Two things the first full pass taught (2026-10-31): a key is sent only while a window of the run is in front (the
 runner brings the current one back, and fails the step rather than type into the user's own window, which the
@@ -679,8 +691,13 @@ in daily work. The upstream watch lets the assistant notice first. It has no sid
   failing step may be the new version's. To tell a new version's change from one's own: the first rows of a script's
   conversation name the version it ran; the older program files stay in the versions folder beside Claude Code's
   data, and the same recording script played with the old one and the new one shows what the new one draws.
-- **`-Check`**, in `test.ps1` and `build.yml`: only that the record is well formed (every field, every named check
-  exists). It never asks an installed version: CI's computer has other versions.
+- **`-Check`**, in `test.ps1` and `build.yml` (both through `tools/pages.ps1 -Check`): only that the record is well
+  formed (every field, every named check exists). It never asks an installed version: CI's computer has other
+  versions.
+- **Where `-Verify` writes** (2026-11-27): with changes not committed in the working tree the checks run in a clean
+  copy of the last commit, removed afterwards; the record and the probe's shape file,
+  `docs/axClaude/stream-shape.json`, are written into this checkout, never into the copy, where the shape file went
+  with the copy until then.
 - **Claude Code's hooks** (2026-11-15, `docs/axClaude/events-and-grounding.md` EG-2.4, EG-11.5):
   `tests/scripts/axClaude/31-hooks-live.txt` is the check of the hooks' start for a new Claude Code, run by `-Verify`
   with the other scripts of that folder. It starts the installed Claude Code with axKit's own settings file and one
@@ -701,6 +718,11 @@ about once a month; their check is axTerminal's, run once for all the shells.
   rehearsal refuse while an app's window code (`src/<App>`, `src/<App>.Core`, `src/AxKit.Forms`, `src/AxKit.Core`) has
   a commit newer than the app's last recorded pass on the desktop tier or with NVDA listening, and name the apps
   (`tools/window-passes.ps1 -Check`, whose header says how it decides; run it without `-Check` at any time to see
-  what a release would say). `test.ps1` does not run it: during ordinary work the windows are ahead of their record.
+  what a release would say). An app whose newest pass is current is named all the same while a goal of its scripts
+  is behind: its last result on either tier is not "passed", or it has no pass since the window's newest change;
+  each such goal is said, a live script's apart ("Live, run with -Live"), since `-Run` never plays those.
+  `test.ps1` does not run it: during ordinary work the windows are ahead of their record.
 - `nvda-pass.ps1` does not start when a key or the mouse is used during its spoken countdown from ten, nor with
-  a capture add-on that differs from `tools/nvda-capture`.
+  a capture add-on that differs from `tools/nvda-capture`, nor with `-Inventory write` or `rewrite`. Every script that
+  takes the foreground or the keyboard of the user's desktop speaks that countdown first
+  (`tools/spoken-countdown.ps1`): `nvda-pass.ps1` and `tools/store-screenshots.ps1`.

@@ -100,3 +100,5 @@ if ($Check) {
 }
 
 Write-Host "Wrote the Menus section of $written guide(s)."
+# An exit code of its own: without it the caller reads the code of whatever ran before (tools\pages.ps1).
+exit 0

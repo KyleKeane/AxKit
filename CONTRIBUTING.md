@@ -19,9 +19,9 @@ axKit is built for people who use a screen reader, and every change is judged by
 
 ## Before you open a pull request
 
-1. `.\test.ps1`: every test project, in Release, then the checks of the generated pages and of the scripts. The Build workflow runs the same tests and checks, and builds the Store package as well.
+1. `.\test.ps1`: first the quick checks (`tools/pages.ps1 -Check`: the generated pages, the menu paths the documents name, the scripts), then every test project, in Release, in one run. The Build workflow runs the same checks, builds and tests the whole solution, the program and the tools among it, and builds the Store package as well.
 2. The steps of `docs/<app>/nvda-test-plan.md` that the change touches, with NVDA running, on the files `.\manual_tests\prepare.ps1` makes. Write the pass into `docs/axKit/nvda-test-record.md`, or list the steps in the pull request as not yet run.
-3. A line in `CHANGELOG.md` under the coming version, starting with the app: `axFile: …`, `axKit: …` for the bundle.
+3. A bullet in `CHANGELOG.md` under `## Unreleased`, starting with its app or apps, `- axFile: `, `- axDown, axJSON: `, `- axKit: ` for the bundle, or with `- For developers: ` (`ChangelogTests` holds every bullet to the form the release reads).
 4. The F1 text (`HelpText`), the user guide and the test plan saying the same as the specification.
 
 Small commits with imperative subject lines; `main` is always releasable, and larger work runs on a branch until its NVDA checks pass.

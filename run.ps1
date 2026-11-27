@@ -67,8 +67,8 @@ if (-not $chosen) {
 $App = $chosen.Verb
 
 if ($Test) {
-    # test.ps1: every test project one by one, in Release, as the workflows run them (the solution would build into
-    # the bin\Debug a running axKit holds open).
+    # test.ps1: the quick checks, then every test project in one run over a solution filter of the test projects, in
+    # Release (the whole solution would build src\AxKit into the bin\Debug a running axKit holds open).
     & (Join-Path $root 'test.ps1')
     exit $LASTEXITCODE
 }
@@ -112,7 +112,14 @@ if (-not $NoBuild) {
         Where-Object { $_.ExecutablePath -eq $exe -and $_.CommandLine -match '\s--hide-on-close(\s|$)' })
     foreach ($process in $hidden) {
         Write-Host "Ending axHelp's conversation (process $($process.ProcessId)), which runs on hidden and holds the build folder."
+        # taskkill's refusal (a process that ended meanwhile) is a line on the error stream, which Windows PowerShell
+        # 5.1 turns into a terminating error under Stop once it is redirected: Continue for the one call. Its exit
+        # code is said; what still holds the folder is asked and named below.
+        $ErrorActionPreference = 'Continue'
         & taskkill.exe /PID $process.ProcessId /T /F 2>&1 | Out-Null
+        $killed = $LASTEXITCODE
+        $ErrorActionPreference = 'Stop'
+        if ($killed -ne 0) { Write-Host "  taskkill ended with exit code $killed for process $($process.ProcessId)." }
         Wait-Process -Id $process.ProcessId -Timeout 10 -ErrorAction SilentlyContinue
     }
 

@@ -16,9 +16,12 @@
       for a kind in Settings, Default apps,
     - axStart, the program launcher, axClip, the clipboard history, axHelp and the launcher of axTemplate, your
       templates behind Ctrl+Shift+Semicolon, running in the background from sign-in (a value
-      under the user's Run key that each writes itself): they are stopped before an install or a removal, and started
-      again, hidden, after an install,
-    - the console commands axClaude, axDown, axJSON, axGIT, axTerminal, axFile, axMedia, axPreview, axStart, axProcess, axTask, axPass, axCalc, axClip, axMCP, axHelp and axKit, each in the app's own case since 5.6.0, so that a screen reader says the name as it is (a folder
+      under the user's Run key that each writes itself): the copies that run from the installed folder are stopped
+      before an install or a removal, and started again, hidden, after an install; a copy that runs from another
+      folder (a build from the source) is left alone and named,
+    - a console command for every app of that list, by the app's name (axClaude, axDown, axFile and so on; the list
+      is the program's, never written here by hand), and axKit, each in the app's own case since 5.6.0, so that a
+      screen reader says the name as it is (axKit alone takes a folder or a file and picks the app: a folder
       opens axClaude, a file axDown, a .json file axJSON, a sound or video file axMedia): one-line shims in
       %USERPROFILE%\.local\bin, put on the user's PATH when it is not there yet (Claude Code's installer uses the same
       folder; a removal leaves the PATH, since the folder may hold other programs' commands).
@@ -277,15 +280,21 @@ $background = @(
     @{ Verb = 'describe'; Name = 'axDescribe'; Settings = 'axDescribe.json'; What = 'the former screen description'; Started = ''; Former = $true }
 )
 function Stop-Background {
+    # Only the copies this installation replaces: the ones that run from the installed folder, or from an earlier
+    # name's folder (an Axit.exe from sign-in holds its folder and its hotkey). Until 2026-11-27 every AxKit.exe with a
+    # background verb was ended, whatever folder it ran from: a copy built from the source, or one unpacked elsewhere,
+    # went with it. Such a copy is left alone and named, since it keeps its hotkey from the one started below.
+    $replaced = @($target) + @($earlier | ForEach-Object { $_.Target })
     foreach ($app in $background) {
-        # Under the old name too: an Axit.exe from sign-in holds its folder and its hotkey.
         $words = if ($app.Words) { $app.Words } else { $app.Verb }
-        $running = @(Get-CimInstance Win32_Process -Filter "Name = 'AxKit.exe' OR Name = 'Axit.exe'" -ErrorAction SilentlyContinue |
+        $found = @(Get-CimInstance Win32_Process -Filter "Name = 'AxKit.exe' OR Name = 'Axit.exe'" -ErrorAction SilentlyContinue |
             Where-Object { $_.CommandLine -match ('^"?[^"]*\\(AxKit|Axit)[^"\\]*\.exe"?\s+' + $words + '(\s|$)') })
+        $running = @($found | Where-Object { $_.ExecutablePath -and ($replaced -contains (Split-Path -Parent $_.ExecutablePath)) })
         foreach ($process in $running) {
             try { Stop-Process -Id $process.ProcessId -Force -ErrorAction Stop; Wait-Process -Id $process.ProcessId -Timeout 10 -ErrorAction SilentlyContinue } catch { }
         }
         if ($running) { Say "Stopped $($app.Name), $($app.What), for the installation" }
+        if ($found.Count -gt $running.Count -and -not $app.Former) { Say "A copy of $($app.Name) from another folder is running and was left alone: it keeps its hotkey until it is closed." }
     }
 }
 

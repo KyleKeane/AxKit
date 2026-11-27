@@ -10,10 +10,12 @@
   R-100); one app's tests run alone. Never through the whole solution: it would build src\AxKit into that bin\Debug. Release is what the workflows build, and only Release treats warnings as errors
   (Directory.Build.props), so a test that passes in Debug can still stop a release; 3.3.0 was lost that way.
   release.ps1 and run.ps1 -Test call this script. Exit code 0 when every project passed, otherwise the first failure's.
-  A run of every project ends with the checks build.yml also makes: the generated pages (outside calls, workflows,
-  repairs, apps, cases, the key map, the four families, what is owed, the components), the outside programs' record (tools\upstream.ps1 -Check) and the scripts' rules
-  (tools\script-lint.ps1). CI does two things this script does not: it builds and tests the whole solution in one go,
-  and it builds the Store package (publish.ps1 -Msix).
+  A run of every project starts with the quick checks, before anything is built: tools\pages.ps1 -Check, the one
+  list of them, which build.yml and the push check run as well (every generated page, the menu paths the documents
+  name, the outside programs' record, the scripts' rules; the list is that script's and is not repeated here). With
+  one app named they are left out. CI does two things this script does not: it builds and tests the whole solution
+  in one go, src\AxKit and the tools among it, which nothing here compiles (release.ps1 therefore refuses while the
+  newest build of origin/main on GitHub is not a success), and it builds the Store package (publish.ps1 -Msix).
 
   Before anything is built, the script refuses a clone whose git hooks are not installed, on the computer that has
   the management lists beside the repository: see the comment at the check.

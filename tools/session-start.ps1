@@ -134,8 +134,9 @@ if ($hasOrigin) {
         Write-Host 'build: gh is not on this computer: GitHub''s build of origin/main is not asked.'
     } else {
         $tip = "$(& git -C $root rev-parse origin/main 2>$null)".Trim()
-        # Outside call, program, gh: asks GitHub how the build of origin/main's newest commit ended.
-        $answered = "$(& gh run list --workflow build.yml --commit $tip --limit 1 --json status,conclusion 2>$null)".Trim()
+        # Outside call, program, gh: asks GitHub how the build of origin/main's newest commit ended. The repository is
+        # named, as release.ps1 and tools\sign-release.ps1 name it: without --repo gh asks the folder it is run from.
+        $answered = "$(& gh run list --repo KyleKeane/AxKit --workflow build.yml --commit $tip --limit 1 --json status,conclusion,databaseId 2>$null)".Trim()
         $built = $null
         if ($LASTEXITCODE -eq 0 -and $answered) {
             try { $built = @($answered | ConvertFrom-Json)[0] } catch { $built = $null }
@@ -147,7 +148,7 @@ if ($hasOrigin) {
         } elseif ("$($built.conclusion)" -eq 'success') {
             Write-Host 'build: GitHub''s build of origin/main passed: ok'
         } else {
-            Write-Asked "build: GitHub's build of origin/main ended with $($built.conclusion): read it with gh run view --log-failed and repair it before anything else is pushed" @()
+            Write-Asked "build: GitHub's build of origin/main ended with $($built.conclusion): read it with gh run view $($built.databaseId) --repo KyleKeane/AxKit --log-failed and repair it before anything else is pushed" @()
         }
     }
 }
@@ -178,6 +179,10 @@ if ($named -eq 0) {
 }
 
 # ---- 3. the reports against the priorities list ----
+# The two phrases looked for below, "the priorities list is not where it was looked for" and "GitHub could not be
+# asked", are tools\reports-check.ps1's own words for its exit code 2, to the letter (until 2026-11-27 the first was
+# looked for as "is not at", which that script had stopped saying, and a clone without the lists was told that the
+# check "did not run to its end"). A change to them there is made here too.
 
 $reports = Invoke-Check 'reports-check.ps1' @()
 $text = $reports.Lines -join ' '
@@ -194,7 +199,7 @@ if ($reports.Code -eq 0) {
     if ($open -gt 0) { $parts += "$(Get-Plural $open 'closed report' 'closed reports') whose item or entry is not finished: finish it" }
     if ($parts.Count -eq 0) { $parts += 'tools\reports-check.ps1 names a disagreement: act on each line' }
     Write-Asked "reports: $($parts -join '; ')" $reports.Lines
-} elseif ($text -match 'priorities list is not at') {
+} elseif ($text -match 'the priorities list is not where it was looked for') {
     Write-Host 'reports: the priorities list is not beside this repository: not checked.'
 } elseif ($text -match 'GitHub could not be asked') {
     Write-Host 'reports: GitHub could not be asked (gh missing, signed out, or no network): not checked.'

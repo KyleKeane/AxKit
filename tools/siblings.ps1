@@ -15,6 +15,9 @@
 # the checkout's hooks, and those are the hooks that run there, so that passes too. test.ps1 and release.ps1 both ask
 # it; until 2026-11-24 each had a copy, and release.ps1's refused a worktree (docs/axKit/repairs.json R-84).
 function Test-HooksInstalled([string]$Root) {
+    # A line git writes as an error must not end the caller's script under Stop (Windows PowerShell 5.1, with the
+    # output redirected): the setting is this function's own, and an empty answer is the check.
+    $ErrorActionPreference = 'Continue'
     $hooks = "$(git -C $Root config --get core.hooksPath)".Trim()
     if (-not $hooks) { return $false }
     $folder = if ([IO.Path]::IsPathRooted($hooks)) { $hooks } else { Join-Path $Root $hooks }
@@ -28,6 +31,10 @@ function Test-HooksInstalled([string]$Root) {
 }
 
 function Get-BesideFolder([string]$Name) {
+    # The error stream is redirected below, and under the caller's Stop Windows PowerShell 5.1 would turn git's
+    # first line on it ("not a git repository", in a folder without one) into a terminating error: the setting is
+    # this function's own, and an empty answer is the check.
+    $ErrorActionPreference = 'Continue'
     $common = (& git -C $PSScriptRoot rev-parse --path-format=absolute --git-common-dir 2>$null | Select-Object -First 1)
     $checkout = if ($common) { Split-Path $common -Parent } else { Split-Path $PSScriptRoot -Parent }
     return (Join-Path (Split-Path $checkout -Parent) $Name)

@@ -22,9 +22,15 @@
   Get-Content ..\axkit-keys\release-key.passphrase.txt | .\tools\release-key.ps1 import ..\axkit-keys\release-key.backup
 
   export and import (2026-11-15, the maintainer's decision): a backup of the private half, encrypted with a passphrase
-  read from standard input (PBKDF2-SHA256, AES-256-CBC, HMAC-SHA256), for the private repository KyleKeane/AxKit-keys,
-  where it is kept beside its passphrase, so that a second computer can release. This puts the key behind the GitHub
-  sign-in, which S-27 had kept it from; the maintainer chose it knowingly. import never replaces a key that exists.
+  (PBKDF2-SHA256, AES-256-CBC, HMAC-SHA256), for the private repository KyleKeane/AxKit-keys, where it is kept beside
+  its passphrase, so that a second computer can release. This puts the key behind the GitHub sign-in, which S-27 had
+  kept it from; the maintainer chose it knowingly. import never replaces a key that exists.
+
+  The passphrase is piped in, as the two lines above do: its first line that is not empty, twelve characters at
+  least. It is never given as an argument (the script refuses -Passphrase typed out: a command line is kept in the
+  history and shown in the list of processes), and it is never printed. Started with powershell -File and a
+  redirected standard input, the script reads it from there. Until 2026-11-27 it read standard input alone, which a
+  pipe inside PowerShell never reaches, so the lines above failed as written.
 #>
 [CmdletBinding()]
 param(
@@ -33,10 +39,20 @@ param(
     [string]$Command,
 
     [Parameter(Position = 1)]
-    [string]$File
+    [string]$File,
+
+    # The passphrase of export and import, from the pipeline alone; without it a pipe into the script is refused by
+    # PowerShell before the script runs. Its value is taken from $input below, the first line, not from here.
+    [Parameter(ValueFromPipeline = $true)]
+    [string]$Passphrase
 )
 
 $ErrorActionPreference = 'Stop'
+# What was piped in, read here: $input is the script's own only outside its functions.
+$pipedLines = @($input)
+if ($PSBoundParameters.ContainsKey('Passphrase') -and -not $MyInvocation.ExpectingInput) {
+    throw 'The passphrase is piped in, never given as an argument: Get-Content <the passphrase file> | .\tools\release-key.ps1 <export or import> <the backup file>'
+}
 Add-Type -AssemblyName System.Security
 Add-Type -AssemblyName System.Core
 $keyFolder = Join-Path $env:LOCALAPPDATA 'AxKit-release'
@@ -75,22 +91,33 @@ function Get-BackupKeys([string]$passphrase, [byte[]]$salt) {
     try { return , $derive.GetBytes(64) } finally { $derive.Dispose() }
 }
 
+# The passphrase: the first piped line that is not empty, or, with nothing piped, a line of standard input. Never
+# printed, and never part of an error's words.
 function Read-Passphrase {
-    $line = [Console]::In.ReadLine()
-    if (-not $line -or $line.Trim().Length -lt 12) { throw 'Give the passphrase on standard input, twelve characters at least.' }
+    $line = @($pipedLines | Where-Object { "$_".Trim() } | Select-Object -First 1)
+    if ($line.Count -gt 0) { $line = "$($line[0])" } else { $line = [Console]::In.ReadLine() }
+    if (-not $line -or $line.Trim().Length -lt 12) { throw 'Pipe the passphrase in, twelve characters at least: Get-Content <the passphrase file> | .\tools\release-key.ps1 <export or import> <the backup file>' }
     return $line.Trim()
+}
+
+# One full path for a file named on the command line, against PowerShell's location, whether the file exists or not:
+# Test-Path reads a relative name against that location and .NET's File against the process's own folder, which a
+# Set-Location does not move, so export looked for the backup in one folder and wrote it into another.
+function Get-FullPath([string]$path) {
+    return $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($path)
 }
 
 switch ($Command) {
     'export' {
         if (-not $File) { throw 'Name the backup file to write.' }
-        if (Test-Path -LiteralPath $File) { throw "$File exists already; a backup never replaces a file." }
-        $passphrase = Read-Passphrase
+        $backup = Get-FullPath $File
+        if (Test-Path -LiteralPath $backup) { throw "$backup exists already; a backup never replaces a file." }
+        $secret = Read-Passphrase
         $blob = [Security.Cryptography.ProtectedData]::Unprotect([IO.File]::ReadAllBytes($keyFile), $entropy, 'CurrentUser')
         $rng = [Security.Cryptography.RandomNumberGenerator]::Create()
         $salt = New-Object byte[] 16; $rng.GetBytes($salt)
         $iv = New-Object byte[] 16; $rng.GetBytes($iv)
-        $keys = Get-BackupKeys $passphrase $salt
+        $keys = Get-BackupKeys $secret $salt
         $aes = [Security.Cryptography.Aes]::Create()
         $aes.Key = $keys[0..31]; $aes.IV = $iv
         $cipher = $aes.CreateEncryptor().TransformFinalBlock($blob, 0, $blob.Length)
@@ -98,17 +125,17 @@ switch ($Command) {
         $hmac = New-Object Security.Cryptography.HMACSHA256(,[byte[]]$keys[32..63])
         $body = $backupMagic + $salt + $iv + $cipher
         $mac = $hmac.ComputeHash([byte[]]$body)
-        [IO.File]::WriteAllBytes($File, [byte[]]($backupMagic + $salt + $iv + $mac + $cipher))
-        Write-Host "Wrote the release key's backup: $File"
+        [IO.File]::WriteAllBytes($backup, [byte[]]($backupMagic + $salt + $iv + $mac + $cipher))
+        Write-Host "Wrote the release key's backup: $backup"
     }
     'import' {
         if (-not $File) { throw 'Name the backup file to read.' }
         if (Test-Path -LiteralPath $keyFile) { throw "A release key already exists at $keyFile; import never replaces it." }
-        $passphrase = Read-Passphrase
+        $secret = Read-Passphrase
         $all = [IO.File]::ReadAllBytes((Resolve-Path -LiteralPath $File).Path)
         if ([Text.Encoding]::ASCII.GetString($all, 0, 8) -ne 'AXKITRK1') { throw "$File is not a release key backup." }
         $salt = $all[8..23]; $iv = $all[24..39]; $mac = $all[40..71]; $cipher = $all[72..($all.Length - 1)]
-        $keys = Get-BackupKeys $passphrase ([byte[]]$salt)
+        $keys = Get-BackupKeys $secret ([byte[]]$salt)
         $hmac = New-Object Security.Cryptography.HMACSHA256(,[byte[]]$keys[32..63])
         $expected = $hmac.ComputeHash([byte[]]($backupMagic + $salt + $iv + $cipher))
         if ([Convert]::ToBase64String($expected) -ne [Convert]::ToBase64String([byte[]]$mac)) { throw 'The passphrase is wrong or the backup was changed; nothing was written.' }

@@ -15,8 +15,18 @@ the app's own folders (src\<App>, src\<App>.Core) and the two every window stand
 src\AxKit.Core). An app is named when
 
   - its window code has a commit after its last recorded pass,
-  - it has no recorded pass on either tier at all, or
-  - the commit of its pass is not in this repository.
+  - it has no recorded pass on either tier at all,
+  - the commit of its pass is not in this repository, or
+  - its newest pass is current and a goal of one of its scripts is behind: the goal's last result on the desktop tier
+    or with NVDA is not "passed", or neither tier holds a pass of it with no commit of the window code after it; or
+    a script of it has no goal in the record. Each such goal is said in the app's line, script by script (a script
+    whose goals are all behind for one reason is said once, with their number). Until 2026-11-27 one goal passed at
+    the newest commit made the whole app current, whatever its other goals' last results were.
+
+The goals of a live script (one whose "# Needs:" line names Claude Code signed in, the network or GitHub,
+tools\window-run.ps1) are said apart in the line, after "Live, run with -Live": a plain run never plays them, so they
+are no failure of it, and they are run with tools\run-scripts.ps1 <scripts> -Live -Record. The app stays named until
+they are.
 
 A pass recorded over work not yet committed carries a + after its commit (WF-6.3). The record cannot say what that
 work was, so the commit that later holds it counts as a change after the pass: the scripts are run with --record once
@@ -48,17 +58,22 @@ param([switch]$Check, [switch]$Run, [string[]]$Only)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path | Split-Path -Parent
 . (Join-Path $root 'tools\apps.ps1')
+. (Join-Path $root 'tools\ordinal.ps1')
 . (Join-Path $root 'tools\window-run.ps1')
 
-# The apps whose window code changed after their last recorded pass: for each its Name and the Line that says why.
+# The apps a release waits on: for each its Name, the Line that says why, and Plain, whether a plain run (-Run) has
+# something of it to mend (not so when only goals of live scripts are behind).
 function Get-ChangedWindows {
     $record = [IO.File]::ReadAllText((Join-Path $root 'docs\axKit\workflow-record.json')) | ConvertFrom-Json
 
-    # The commits at which each app's goals passed on the desktop tier, by the app's folder under tests/scripts.
+    # The goals of each app's scripts, and the commits at which they passed, by the app's folder under tests/scripts.
+    $goals = @{}
     $passes = @{}
     foreach ($goal in $record.goals) {
         if ($goal.script -notmatch '^tests/scripts/([^/]+)/') { continue }
         $folder = $Matches[1].ToLowerInvariant()
+        if (-not $goals.ContainsKey($folder)) { $goals[$folder] = New-Object System.Collections.ArrayList }
+        [void]$goals[$folder].Add($goal)
         # A pass with NVDA listening plays the same script on the real desktop and counts as well: it is the only
         # tier at which a script that talks to the real Claude Code is run (axHelp's two).
         foreach ($tier in @($goal.tiers.desktop, $goal.tiers.nvda)) {
@@ -71,7 +86,7 @@ function Get-ChangedWindows {
     foreach ($app in @(Get-AxKitApps $root)) {
         $folder = $app.Name.ToLowerInvariant()
         if (-not $passes.ContainsKey($folder)) {
-            [pscustomobject]@{ Name = $app.Name; Line = "$($app.Name) has no recorded pass of its window checks: run its scripts with --record." }
+            [pscustomobject]@{ Name = $app.Name; Plain = $true; Line = "$($app.Name) has no recorded pass of its window checks: run its scripts with --record." }
             continue
         }
 
@@ -87,17 +102,77 @@ function Get-ChangedWindows {
             if ($fewest -lt 0 -or $after -lt $fewest) { $fewest = $after; $newest = $commit }
         }
         if (-not $newest) {
-            [pscustomobject]@{ Name = $app.Name; Line = "$($app.Name)'s recorded pass is at a commit this repository does not have ($(@($passes[$folder].Keys) -join ', ')): run its scripts with --record." }
+            [pscustomobject]@{ Name = $app.Name; Plain = $true; Line = "$($app.Name)'s recorded pass is at a commit this repository does not have ($(@($passes[$folder].Keys) -join ', ')): run its scripts with --record." }
             continue
         }
 
         $folders = @("src/$($app.Project)", "src/$($app.Project).Core", 'src/AxKit.Forms', 'src/AxKit.Core') |
             Where-Object { Test-Path -LiteralPath (Join-Path $root $_) }
         $changes = @(git -C $root log --format=%h "$($newest.TrimEnd('+'))..HEAD" -- $folders)
-        if ($changes.Count -eq 0) { continue }
+        if ($changes.Count -gt 0) {
+            $over = if ($newest.EndsWith('+')) { ', which was recorded over work not yet committed' } else { '' }
+            [pscustomobject]@{ Name = $app.Name; Plain = $true; Line = "$($app.Name)'s window changed after its last recorded pass ($newest$over; $($changes.Count) commit(s) since, the newest $($changes[0])): run its scripts with --record." }
+            continue
+        }
 
-        $over = if ($newest.EndsWith('+')) { ', which was recorded over work not yet committed' } else { '' }
-        [pscustomobject]@{ Name = $app.Name; Line = "$($app.Name)'s window changed after its last recorded pass ($newest$over; $($changes.Count) commit(s) since, the newest $($changes[0])): run its scripts with --record." }
+        # The app's newest pass is current. That says nothing of its other goals (until 2026-11-27 one goal passed at
+        # the newest commit made the whole app current, a failing goal beside it included): each goal of each script
+        # still there is asked on its own. A goal is behind when its last result on the desktop tier or with NVDA is
+        # not "passed", or when neither tier holds a pass with no commit of the window code after it.
+        $scripts = Get-WindowScripts $root $app.Name
+        $live = @($scripts.Live | ForEach-Object { $_.Name })
+        $there = @($scripts.Run | ForEach-Object { $_.Name }) + $live
+        $current = @{}
+        foreach ($commit in $passes[$folder].Keys) {
+            $sha = $commit.TrimEnd('+')
+            git -C $root rev-parse --verify --quiet "$sha^{commit}" | Out-Null
+            if ($LASTEXITCODE -ne 0) { continue }
+            $current[$commit] = (@(git -C $root log --format=%h "$sha..HEAD" -- $folders).Count -eq 0)
+        }
+
+        $stale = 'no pass since the window''s newest change'
+        $behind = @{}     # a script's name: the goals of it that are behind, each with why
+        $recorded = @{}   # a script's name: how many goals of it the record holds
+        foreach ($goal in $goals[$folder]) {
+            $file = [IO.Path]::GetFileName($goal.script)
+            if ($there -notcontains $file) { continue }
+            $recorded[$file] = 1 + [int]$recorded[$file]
+            $why = @()
+            $passed = $false
+            foreach ($tierName in @('desktop', 'nvda')) {
+                $tier = $goal.tiers.$tierName
+                if (-not $tier) { continue }
+                $where = if ($tierName -eq 'nvda') { 'with NVDA' } else { 'on the desktop tier' }
+                if ($tier.last -and $tier.last.result -ne 'passed') { $why += "$($tier.last.result) $where" }
+                if ($tier.passed -and $tier.passed.commit -and $current[$tier.passed.commit]) { $passed = $true }
+            }
+            if ($why.Count -eq 0 -and -not $passed) { $why += $stale }
+            if ($why.Count -eq 0) { continue }
+            if (-not $behind.ContainsKey($file)) { $behind[$file] = @() }
+            $behind[$file] += [pscustomobject]@{ Goal = $goal.goal; Why = ($why -join ', ') }
+        }
+        # A script the record does not know was never run with --record.
+        foreach ($file in $there) {
+            if (-not $recorded.ContainsKey($file)) { $behind[$file] = @([pscustomobject]@{ Goal = ''; Why = 'no goal of it is recorded' }) }
+        }
+        if ($behind.Count -eq 0) { continue }
+
+        # Each such goal is said, script by script; a script whose goals are all behind for the same reason is said
+        # once with their number. The live scripts' goals are said apart: a plain run never plays them.
+        $plain = @()
+        $apart = @()
+        foreach ($file in @(Sort-Ordinal @($behind.Keys))) {
+            $ofScript = @($behind[$file])
+            $reasons = @($ofScript | ForEach-Object { $_.Why } | Select-Object -Unique)
+            $said = if ($ofScript[0].Goal -eq '') { "${file}: $($ofScript[0].Why)" }
+                elseif ($ofScript.Count -gt 1 -and $ofScript.Count -eq $recorded[$file] -and $reasons.Count -eq 1) { "${file}: every goal of it, $($ofScript.Count) ($($reasons[0]))" }
+                else { "${file}: " + (@($ofScript | ForEach-Object { "`"$($_.Goal)`" ($($_.Why))" }) -join ', ') }
+            if ($live -contains $file) { $apart += $said } else { $plain += $said }
+        }
+        $line = "$($app.Name) has goals without a current pass"
+        if ($plain.Count -gt 0) { $line += ": $($plain -join '; '): run its scripts with --record." } else { $line += ' in its live scripts alone.' }
+        if ($apart.Count -gt 0) { $line += " Live, run with -Live (tools\run-scripts.ps1 tests\scripts\$($app.Name) -Live -Record): $($apart -join '; ')." }
+        [pscustomobject]@{ Name = $app.Name; Plain = ($plain.Count -gt 0); Line = $line }
     }
 }
 
@@ -105,7 +180,8 @@ $apps = @(Get-AxKitApps $root)
 $named = @(Get-ChangedWindows)
 
 if ($Run) {
-    $names = @($named | ForEach-Object { $_.Name })
+    # An app named for its live scripts alone has nothing a run here plays: its line was said, and it stays named.
+    $names = @($named | Where-Object { $_.Plain } | ForEach-Object { $_.Name })
     if ($Only) {
         $names = @()
         foreach ($one in $Only) {
@@ -118,7 +194,9 @@ if ($Run) {
         }
     }
     if ($names.Count -eq 0) {
-        Write-Host 'No window changed after its last recorded pass: nothing to run.'
+        $named | ForEach-Object { Write-Host $_.Line }
+        if ($named.Count -gt 0) { Write-Host 'Only goals of live scripts are behind: nothing a run here plays. They are run with tools\run-scripts.ps1 <scripts> -Live -Record.' }
+        else { Write-Host 'No window changed after its last recorded pass: nothing to run.' }
         exit 0
     }
 
@@ -149,14 +227,17 @@ if ($Run) {
 
     $named = @(Get-ChangedWindows)
     if ($named.Count -eq 0) { Write-Host 'Still changed since the last recorded pass: none.' }
-    else { Write-Host "Still changed since the last recorded pass: $(@($named | ForEach-Object { $_.Name }) -join ', ')." }
+    else {
+        $named | ForEach-Object { Write-Host $_.Line }
+        Write-Host "Still changed since the last recorded pass, or with a goal behind: $(@($named | ForEach-Object { $_.Name }) -join ', ')."
+    }
     Write-Host 'The passes are in docs/axKit/workflow-record.json, in the working tree: commit it.'
     if ($failures -gt 0) { exit 1 }
     exit 0
 }
 
 $named | ForEach-Object { Write-Host $_.Line }
-if ($named.Count -gt 0) { Write-Host 'To run them all with --record: tools\window-passes.ps1 -Run. One app''s: dotnet run --project tools\AxAutomate -c Release -- tests\scripts\<app> --build --record' }
-Write-Host "Window checks against docs/axKit/workflow-record.json: $($apps.Count - $named.Count) app(s) current, $($named.Count) changed since the last recorded pass."
+if ($named.Count -gt 0) { Write-Host 'To run them all with --record: tools\window-passes.ps1 -Run. One app''s: dotnet run --project tools\AxAutomate -c Release -- tests\scripts\<app> --build --record. The live scripts, never run by either: tools\run-scripts.ps1 <scripts> -Live -Record' }
+Write-Host "Window checks against docs/axKit/workflow-record.json: $($apps.Count - $named.Count) app(s) current, $($named.Count) changed since the last recorded pass or with a goal behind."
 if ($Check -and $named.Count -gt 0) { exit 1 }
 exit 0

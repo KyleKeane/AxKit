@@ -2,7 +2,9 @@
 .SYNOPSIS
   Takes the Store listing's screenshots (docs/axKit/store-listing.md, docs/axKit/SPEC.md AX-13.6): each app's window
   maximised on the files of manual_tests, the whole screen saved as a PNG into publish\store. Run only with the user
-  away from the keyboard: the windows open in front and take the focus.
+  away from the keyboard: the windows open in front and take the focus. Before the first one opens, Windows' voice
+  says so and counts from ten to one; a key or a mouse move during the countdown stops the script (exit code 2), as
+  nvda-pass.ps1 stops (tools\spoken-countdown.ps1), and the voice says when the shots are over.
 
 .DESCRIPTION
   Starts the Release program of the package folder (publish\msix\package\AxKit.exe, built by publish.ps1 -Msix) once per
@@ -88,6 +90,14 @@ function Wait-Window([int[]]$before) {
     return $null
 }
 
+# The windows open in front and take the focus, each for some seconds, so the user must have stepped away and must
+# hear that it is coming: Windows' voice says so and counts from ten to one, and a key or a mouse move during the
+# countdown stops the script before a window opens (tools\spoken-countdown.ps1, nvda-pass.ps1's own countdown; until
+# 2026-11-27 this script took the foreground with nothing said and no look at whether someone was there).
+. (Join-Path $root 'tools\spoken-countdown.ps1')
+Write-Spoken 'Screenshots for the Store being prepared.'
+Stop-WhenSomeoneIsThere -Coming 'Screenshots: windows will open in front. Press any key to stop them.' -Stopped 'Stopped. No screenshots.' -Nothing 'No screenshots.' -Again 'The windows open in front and take the focus: ask the user to step away, then start it again.'
+
 foreach ($shot in $shots) {
     $before = @(Get-Process AxKit -ErrorAction SilentlyContinue | ForEach-Object { $_.Id })
     $arguments = if ($shot.Argument) { "$($shot.Verb) `"$($shot.Argument)`"" } else { $shot.Verb }
@@ -118,4 +128,5 @@ foreach ($shot in $shots) {
     Start-Sleep -Seconds 1
 }
 Remove-Item $demo -Recurse -Force -ErrorAction SilentlyContinue
+Write-Spoken 'Screenshots finished. The keyboard is yours.' -Whole
 Write-Host "Screenshots in $Out; the captions are in docs/axKit/store-listing.md."

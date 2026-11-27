@@ -365,3 +365,5 @@ if ($Check) {
 
 [IO.File]::WriteAllText($documentPath, $text, (New-Object System.Text.UTF8Encoding($false)))
 Write-Host "Wrote docs/axKit/families.md: $summary"
+# An exit code of its own: without it the caller reads the code of whatever ran before (tools\pages.ps1, tools\workflows.ps1).
+exit 0

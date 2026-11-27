@@ -6,7 +6,10 @@
 .DESCRIPTION
   Before running it, add a "## <version>" section to CHANGELOG.md: its text becomes the release notes and
   is what the update notice in the app shows. Everything else must be committed. The script then
-    1. fetches origin and stops if origin/main has commits that main here does not (skipped with -NoPush),
+    1. fetches origin and stops if origin/main has commits that main here does not, or if the newest build of
+       origin/main on GitHub did not end in success (both skipped with -NoPush; the build is asked only with gh
+       installed): that build compiles the whole solution, the program and the tools among it, which no check on
+       this computer does,
     2. checks the "## <version>" section: it is not empty, and every bullet starts with its app or apps ("- axFile: ",
        "- axDown, axJSON: ") or with "- For developers: "; and checks that no app's window code changed after its last
        recorded pass of the automated window checks (tools/window-passes.ps1 -Check, which names the apps),
@@ -14,9 +17,13 @@
        stops here, docs/axKit/SPEC.md B-17) and runs every test project in Release, as the workflows do (test.ps1),
     4. sets <Version> in src/AxKit/AxKit.csproj,
     5. commits CHANGELOG.md, the project file and docs/axKit/outside-calls.md as "Release <version>" and tags v<version>,
-    6. pushes main, waits for its build to pass on GitHub (gh run watch), then pushes the tag: a tag never goes up on
-       a commit whose build failed there; each push also syncs the reports clone and the management lists beside the
-       repository through the pre-push hook (tools/sync-repos.ps1), which step 1 checks is installed,
+    6. pushes main, waits for its build to pass on GitHub (asked with gh every 20 seconds, 40 minutes at most), then
+       pushes the tag: a tag never goes up on a commit whose build failed there; each push first runs the pre-push
+       hook, which step 1 checks is installed: the outside check, the tests and checks of what is pushed
+       (tools/push-check.ps1), then the sync of the reports clone and the management lists beside the repository
+       (tools/sync-repos.ps1). A push the hook or GitHub refuses leaves the commit and the tag in this clone: the
+       script then says where the release stands and the two ways on, as commands to type, and a second run says
+       them again,
     7. waits for the tag's release workflow, which leaves a draft release, then signs its zip with the release key
        on this machine and publishes it (tools/sign-release.ps1; docs/axKit/SPEC.md AX-3.4). The apps install only a
        signed zip, so a release is never published without this step.
@@ -52,6 +59,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
+$repo = 'KyleKeane/AxKit'
 $project = Join-Path $root 'src\AxKit\AxKit.csproj'
 $changelog = Join-Path $root 'CHANGELOG.md'
 
@@ -69,6 +77,9 @@ function Get-BranchProblem {
 
 # Nothing is released over work someone else has pushed: main here must contain everything origin/main has.
 function Get-BehindProblem {
+    # git's refusal is a line on the error stream, which must not end the script under Stop when its output is
+    # redirected (Windows PowerShell 5.1); the exit codes are read. The setting is this function's own.
+    $ErrorActionPreference = 'Continue'
     git -C $root fetch -q origin
     if ($LASTEXITCODE -ne 0) { return "Could not fetch origin. Nothing was changed." }
     git -C $root merge-base --is-ancestor origin/main main
@@ -143,7 +154,9 @@ function Get-ChangelogProblem([string]$ofVersion) {
 
 # The project file's text with the version set, or nothing when the file has no <Version> element.
 function Get-ProjectWithVersion([string]$ofVersion) {
-    $xml = Get-Content $project -Raw
+    # As UTF-8, whatever the session's code page: Get-Content of Windows PowerShell 5.1 reads a file without a byte
+    # order mark as ANSI, and the text is written back whole.
+    $xml = [IO.File]::ReadAllText($project)
     $updated = $xml -replace '<Version>[^<]*</Version>', "<Version>$ofVersion</Version>"
     if ($updated -eq $xml -and $xml -notmatch "<Version>$([regex]::Escape($ofVersion))</Version>") { return $null }
     return $updated
@@ -156,6 +169,9 @@ function Get-ProjectWithVersion([string]$ofVersion) {
 # gh as two arguments from Windows PowerShell 5.1, and gh refused it at every try of the 5.8.0 release, which waited
 # without end (2026-11-14). ReleaseScriptTests holds the scripts to it.
 function Get-GitHubAnswer([string[]]$words) {
+    # A line gh writes as an error must not end the script under Stop when its output is redirected (Windows
+    # PowerShell 5.1); the exit code is read. The setting is this function's own.
+    $ErrorActionPreference = 'Continue'
     $script:asked = 'gh ' + ($words -join ' ')
     $lines = @(gh @words)
     $script:askedExit = $LASTEXITCODE
@@ -164,16 +180,49 @@ function Get-GitHubAnswer([string[]]$words) {
 
 # The run of build.yml for a commit: its number, or nothing (or 'null') while GitHub has none yet.
 function Find-BuildRun([string]$ofCommit) {
-    return Get-GitHubAnswer @('run', 'list', '--workflow', 'build.yml', '--commit', $ofCommit, '--limit', '1', '--json', 'databaseId', '--jq', '.[0].databaseId')
+    return Get-GitHubAnswer @('run', 'list', '--repo', $repo, '--workflow', 'build.yml', '--commit', $ofCommit, '--limit', '1', '--json', 'databaseId', '--jq', '.[0].databaseId')
 }
 
 # Two plain questions, the status and then the conclusion, where one filter joining them was the fault of 5.8.0.
+# Each names the repository, as tools/sign-release.ps1 does: without --repo gh asks the folder it is run from.
 function Get-RunStatus([string]$ofRun) {
-    return Get-GitHubAnswer @('run', 'view', $ofRun, '--json', 'status', '--jq', '.status')
+    return Get-GitHubAnswer @('run', 'view', $ofRun, '--repo', $repo, '--json', 'status', '--jq', '.status')
 }
 
 function Get-RunConclusion([string]$ofRun) {
-    return Get-GitHubAnswer @('run', 'view', $ofRun, '--json', 'conclusion', '--jq', '.conclusion')
+    return Get-GitHubAnswer @('run', 'view', $ofRun, '--repo', $repo, '--json', 'conclusion', '--jq', '.conclusion')
+}
+
+# Nothing is released over a main whose build fails on GitHub: the newest build of origin/main's commit ended in
+# success. That build is the one place where the whole solution is compiled, src\AxKit and the tools among it
+# (test.ps1 builds the test projects and what they reference, never the program itself); until 2026-11-27 only the
+# rehearsal asked, and only said. Asked after the fetch of Get-BehindProblem, with gh installed.
+function Get-PushedBuildProblem {
+    $pushed = "$(git -C $root rev-parse origin/main)".Trim()
+    $id = Find-BuildRun $pushed
+    if ($script:askedExit -ne 0) { return "GitHub could not be asked for the build of origin/main ($script:asked gave exit code $script:askedExit). Nothing was changed." }
+    if ($id -notmatch '^\d+$') { return "GitHub has no build of origin/main's commit $pushed. Look at https://github.com/$repo/actions, then run this again. Nothing was changed." }
+    $status = Get-RunStatus $id
+    if ($status -ne 'completed') { return "The build of origin/main's commit (run $id) has not ended: its status is '$status'. Run this again when it has. Nothing was changed." }
+    $conclusion = Get-RunConclusion $id
+    if ($conclusion -ne 'success') { return "The newest build of origin/main (run $id) ended as '$conclusion', not as success. Mend main first; what failed is in the run's log on https://github.com/$repo/actions/runs/$id. Nothing was changed." }
+}
+
+# What to type when a release stopped between its commit and its pushes. Until 2026-11-27 a push of main that the
+# pre-push hook refused (it runs the tests) ended the script with git's exit code and no words, the commit and the
+# tag left in the clone, and a second run stopped at "The tag already exists. Pick the next version."
+function Write-StoppedRelease([string]$ofVersion, [string]$ofCommit) {
+    Write-Host "Where the release stands: the commit `"Release $ofVersion`" and the tag v$ofVersion are made in this clone. Neither is known to be on GitHub, and nothing is published."
+    Write-Host 'To go on with this release as it is, when what stopped it needs no new commit (the lines above say what it was), type these one by one. The second waits for the build of main, and goes on only when it passed: give GitHub a few seconds after the push before it.'
+    Write-Host '  git push origin main'
+    Write-Host "  gh run watch (gh run list --repo $repo --workflow build.yml --commit $ofCommit --limit 1 --json databaseId --jq '.[0].databaseId') --repo $repo --exit-status"
+    Write-Host "  git push origin v$ofVersion"
+    Write-Host "  .\tools\sign-release.ps1 $ofVersion"
+    Write-Host "Or, when something must be mended in a commit first: take the release back with these three, mend it, and run .\release.ps1 $ofVersion again. Type them only while `"Release $ofVersion`" is the newest commit and is not on GitHub (git log -1 --oneline; git status says whether main is ahead of origin/main):"
+    Write-Host "  git tag -d v$ofVersion"
+    Write-Host '  git reset --soft HEAD~1'
+    Write-Host '  git checkout HEAD -- src/AxKit/AxKit.csproj'
+    Write-Host 'That leaves CHANGELOG.md and docs/axKit/outside-calls.md as the release had them, staged, which the next run accepts; the project file has its earlier version again.'
 }
 
 # ---- The rehearsal: the checks and the questions above, and nothing else. It always ends in an exit, above the
@@ -272,6 +321,8 @@ if ($Rehearse) {
                     Write-Host "  The run has not ended, so the conclusion was not asked, as in the real run's wait."
                 }
             }
+            # What the real run refuses before it commits: a newest build of origin/main that is not a success.
+            Write-Check 'the newest build of origin/main ended in success' (Get-PushedBuildProblem)
 
             # What tools/sign-release.ps1 asks, about the newest published release.
             & (Join-Path $root 'tools\sign-release.ps1') -Rehearse
@@ -315,6 +366,7 @@ Stop-OnProblem (Get-ReleaseKeyProblem)
 if (-not $NoPush) {
     Stop-OnProblem (Get-BehindProblem)
     Stop-OnProblem (Get-HooksProblem)
+    if (Get-Command gh -ErrorAction SilentlyContinue) { Stop-OnProblem (Get-PushedBuildProblem) }
 }
 
 $dirty = @(Get-UncommittedFiles)
@@ -324,7 +376,18 @@ if ($dirty.Count -gt 0) {
     exit 1
 }
 
-Stop-OnProblem (Get-TagProblem $tag)
+$tagProblem = Get-TagProblem $tag
+if ($tagProblem) {
+    Write-Host $tagProblem
+    # The tag of an earlier run of this release that stopped at a push: the newest commit is its "Release <version>".
+    # Then the next version is not the answer, and the ways on are said again.
+    $newest = "$(git -C $root rev-parse HEAD)".Trim()
+    if ("$(git -C $root log -1 --format=%s)".Trim() -eq "Release $Version" -and "$(git -C $root rev-parse "$tag^{commit}")".Trim() -eq $newest) {
+        Write-Host "That is this release's own tag: an earlier run of .\release.ps1 $Version made the commit and the tag and stopped before the end."
+        Write-StoppedRelease $Version $newest
+    }
+    exit 1
+}
 Stop-OnProblem (Get-ChangelogProblem $Version)
 Stop-OnProblem (Get-WindowPassProblem)
 
@@ -349,15 +412,41 @@ if (-not $updated) {
     Write-Host "No <Version> element was found in $project."
     exit 1
 }
-# Not Set-Content -Encoding utf8: in Windows PowerShell 5.1 that writes a byte order mark.
-[IO.File]::WriteAllText($project, $updated, (New-Object System.Text.UTF8Encoding($false)))
+# Not Set-Content -Encoding utf8: in Windows PowerShell 5.1 that writes a byte order mark. The file is written as it
+# was encoded: UTF-8, with a byte order mark only when it had one.
+$projectBytes = [IO.File]::ReadAllBytes($project)
+$hadMark = $projectBytes.Length -ge 3 -and $projectBytes[0] -eq 0xEF -and $projectBytes[1] -eq 0xBB -and $projectBytes[2] -eq 0xBF
+[IO.File]::WriteAllText($project, $updated, (New-Object System.Text.UTF8Encoding($hadMark)))
+
+# From here on git and gh are run, and what they write as an error (git's "LF will be replaced by CRLF", a hook's
+# lines, a refusal) must not end the script: under Stop, Windows PowerShell 5.1 turns the first such line into a
+# terminating error whenever the script's output is redirected, with the files staged and nothing said (the commit
+# tool stopped so, 2026-11-27). Every exit code below is read instead. The line-end warning is also switched off for
+# every git call of this process and of the hooks it starts, through git's own variables: the command lines stay as
+# ReleaseScriptTests reads them.
+$ErrorActionPreference = 'Continue'
+$env:GIT_CONFIG_COUNT = '1'
+$env:GIT_CONFIG_KEY_0 = 'core.safecrlf'
+$env:GIT_CONFIG_VALUE_0 = 'false'
 
 git -C $root add -- CHANGELOG.md src/AxKit/AxKit.csproj docs/axKit/outside-calls.md
-git -C $root commit -q -m "Release $Version"
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+$code = $LASTEXITCODE
+if ($code -eq 0) {
+    git -C $root commit -q -m "Release $Version"
+    $code = $LASTEXITCODE
+}
+if ($code -ne 0) {
+    Write-Host "The commit `"Release $Version`" was not made (git's exit code $code; its lines or a hook's are above). Nothing was tagged or pushed. The project file holds the new version; to take that back: git checkout HEAD -- src/AxKit/AxKit.csproj"
+    exit $code
+}
 git -C $root tag -a $tag -m "axKit $Version"
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+if ($LASTEXITCODE -ne 0) {
+    $code = $LASTEXITCODE
+    Write-Host "The commit `"Release $Version`" is made, and the tag $tag could not be (git's exit code $code). Nothing was pushed. To take the commit back: git reset --soft HEAD~1, then git checkout HEAD -- src/AxKit/AxKit.csproj"
+    exit $code
+}
 Write-Host "Committed and tagged $tag."
+$sha = "$(git -C $root rev-parse HEAD)".Trim()
 
 if ($NoPush) {
     Write-Host "Not pushed. When ready: git push origin main; git push origin $tag"
@@ -370,10 +459,14 @@ if ($NoPush) {
 # -q: git's progress goes to stderr, which Windows PowerShell turns into an error under Stop when the script's output is
 # redirected (the 3.5.0 release stopped there after a successful push); a failure still sets the exit code.
 git -C $root push -q origin main
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+if ($LASTEXITCODE -ne 0) {
+    $code = $LASTEXITCODE
+    Write-Host "The push of main did not go through (git's exit code $code): the pre-push hook refused it (a test or a check, named above), or GitHub did."
+    Write-StoppedRelease $Version $sha
+    exit $code
+}
 if (Get-Command gh -ErrorAction SilentlyContinue) {
     Write-Host "Pushed main. Waiting for its build before pushing the tag..."
-    $sha = (git -C $root rev-parse HEAD).Trim()
     $run = $null
     for ($try = 0; -not $run -and $try -lt 24; $try++) {
         Start-Sleep -Seconds 5
@@ -381,7 +474,7 @@ if (Get-Command gh -ErrorAction SilentlyContinue) {
         if ($id -and $id -ne 'null') { $run = $id }
     }
     if (-not $run) {
-        Write-Host "No build of main's $sha appeared on GitHub within two minutes. The tag was not pushed; once the build has passed: git push origin $tag"
+        Write-Host "No build of main's $sha appeared on GitHub within two minutes. The tag was not pushed; once the build has passed: git push origin $tag, then .\tools\sign-release.ps1 $Version"
         exit 1
     }
     # Asked every 20 seconds, 40 minutes at most (docs/axKit/repairs.json R-38): gh run watch has no limit of its own,
@@ -393,7 +486,7 @@ if (Get-Command gh -ErrorAction SilentlyContinue) {
         if ($status -eq 'completed') { $conclusion = Get-RunConclusion $run }
     }
     if (-not $conclusion) {
-        Write-Host "The build of main (run $run) had not ended after 40 minutes. The tag $tag was not pushed; look at it with: gh run view $run. Once it has passed: git push origin $tag"
+        Write-Host "The build of main (run $run) had not ended after 40 minutes. The tag $tag was not pushed; look at it with: gh run view $run --repo $repo. Once it has passed: git push origin $tag, then .\tools\sign-release.ps1 $Version"
         exit 1
     }
     if ($conclusion -ne 'success') {
@@ -405,7 +498,11 @@ if (Get-Command gh -ErrorAction SilentlyContinue) {
 }
 
 git -C $root push -q origin $tag
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+if ($LASTEXITCODE -ne 0) {
+    $code = $LASTEXITCODE
+    Write-Host "main is on GitHub and its build passed, and the push of the tag $tag did not go through (git's exit code $code). Nothing is published. When it can go: git push origin $tag, then .\tools\sign-release.ps1 $Version"
+    exit $code
+}
 Write-Host "Pushed the tag. GitHub Actions is building the draft release: https://github.com/KyleKeane/AxKit/actions"
 # AX-13.6: the release's package reaches the Microsoft Store by an upload in Partner Center, by hand.
 Write-Host "Once published, the release's AxKit-<version>.msix goes to the Microsoft Store with tools\store-submit.ps1 <version> -WhatsNew <file> [-Submit] (docs/axKit/store-setup.md section 5)."

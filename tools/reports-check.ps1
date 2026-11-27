@@ -35,6 +35,8 @@ if (-not $Lists) {
 }
 if (-not (Test-Path $Lists)) {
     # Never the path itself: it holds the account's folder (root CLAUDE.md rule 6), and this runs with every push.
+    # tools\session-start.ps1 knows this line by the words "the priorities list is not where it was looked for", and
+    # the one below by "GitHub could not be asked": a change to either is made there too.
     Write-Host "Reports: the priorities list is not where it was looked for (axkit-management\priorities beside this repository, or -Lists); nothing checked."
     exit 2
 }

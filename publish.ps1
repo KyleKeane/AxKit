@@ -9,6 +9,11 @@
   script then runs install.ps1 from publish\win-x64 on this machine (Start menu entries, File Explorer entries and
   the console commands; see install.ps1 -? for details and -Uninstall).
 
+  So a run without any switch installs: it replaces the axKit installed for this Windows account with the build just
+  made, and stops and starts again the background apps that run from the installed folder. That is the default on
+  purpose, for the one command that makes a copy to use. Where no installed axKit is wanted (the development
+  computer, a build made only to look at or to send), give -NoInstall.
+
   The release workflow calls it twice: -NoInstall -NoZip builds the folder, then -ZipOnly zips the folder as it is.
   Neither installs anything. Nothing signs AxKit.exe for Windows between the two: that step was retired on 2026-11-09
   (the code signing record of 2026-11, in the git history), the signed copy of axKit is the Microsoft Store's, and the zip is signed with the

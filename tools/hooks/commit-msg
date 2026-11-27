@@ -5,6 +5,15 @@
 # is refused. Where the lists are not beside the repository (another clone, the build service) every commit passes.
 # Installed with the other hook: git config core.hooksPath tools/hooks. Kept with LF line endings (.gitattributes).
 root=$(git rev-parse --show-toplevel)
-# The script reads and writes files only; git's variables are dropped all the same, as in pre-push.
+# Two things the script needs of this commit are asked here, while git's own variables still name it. Whether a merge
+# is being committed (git has its MERGE_HEAD): only then is a subject that starts "Merge " git's own and passes
+# without an item; the words alone can be typed by anyone. And the index the commit is made from: for "git commit -a"
+# and "git commit -- <path>" git makes a temporary one and names it in GIT_INDEX_FILE, and the script's guard on the
+# pinned approval key asks that one what is staged (asked of .git/index, it saw nothing of such a commit).
+if git rev-parse -q --verify MERGE_HEAD >/dev/null 2>&1; then AXKIT_MERGING=1; else AXKIT_MERGING=0; fi
+AXKIT_COMMIT_INDEX="$GIT_INDEX_FILE"
+export AXKIT_MERGING AXKIT_COMMIT_INDEX
+# The script reads and writes files only, but for those questions about the index; git's variables are dropped all
+# the same, as in pre-push, and the script sets the index for its own questions alone.
 unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_COMMON_DIR GIT_PREFIX
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$root/tools/item-of-commit.ps1" "$1" </dev/null

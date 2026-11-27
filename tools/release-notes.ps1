@@ -18,7 +18,9 @@ $ErrorActionPreference = 'Stop'
 # $PSScriptRoot is empty while parameter defaults are evaluated in Windows PowerShell 5.1, so the default is set here.
 if (-not $Path) { $Path = Join-Path $PSScriptRoot '..\CHANGELOG.md' }
 
-$lines = @(Get-Content $Path)
+# As UTF-8: Windows PowerShell 5.1 reads a file without a byte order mark as ANSI, and a letter beyond ASCII in the
+# section would reach the release notes and the app's update notice as two wrong ones.
+$lines = @(Get-Content -LiteralPath $Path -Encoding UTF8)
 $start = -1
 for ($i = 0; $i -lt $lines.Count; $i++) {
     if ($lines[$i] -match ('^## ' + [regex]::Escape($Version) + '(\s|$)')) {

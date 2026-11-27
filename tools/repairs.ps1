@@ -150,3 +150,5 @@ if ($Check) {
 
 [IO.File]::WriteAllText($documentPath, $text, (New-Object System.Text.UTF8Encoding($false)))
 Write-Host "Wrote docs/axKit/repairs.md: $(@($data.items).Count) findings, $(@($data.items | Where-Object { $_.status -eq 'open' }).Count) open."
+# An exit code of its own: without it the caller reads the code of whatever ran before (tools\pages.ps1, tools\repair.ps1).
+exit 0

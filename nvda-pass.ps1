@@ -14,8 +14,10 @@
   speaks before it takes anything (the user's ask of 2026-11-21, after he touched the keyboard not knowing a pass
   was about to start): Windows' voice says at the script's start that a pass is being prepared, and right before
   the runner takes the keyboard it says one short sentence and counts from ten to one aloud; a key or a mouse move after the countdown's
-  sentence began stops the pass for good (exit code 2), said in the same voice. -WarningOnly plays the warning and
-  the countdown alone, and starts nothing. Windows' voice then repeats the warning through the run, with the number
+  sentence began stops the pass for good (exit code 2), said in the same voice (tools\spoken-countdown.ps1, shared
+  with tools\store-screenshots.ps1). -WarningOnly plays the warning and the countdown alone, and starts nothing.
+  -Inventory write and -Inventory rewrite are refused (exit code 2): they would crawl the workflow graph on the
+  user's own desktop; the inventory is written on the hidden desktop (tools\run-scripts.ps1 -Live -Inventory write). Windows' voice then repeats the warning through the run, with the number
   of the test that runs, how many remain and about how long they take, and says
   when it is over. The report is %TEMP%\axkit-nvda\report.md; the result
   lines are printed without the account's paths. Exit code 0 when every script passed.
@@ -26,7 +28,7 @@
   .\nvda-pass.ps1 -NoBuild axDown # the last build again
   .\nvda-pass.ps1 -Skip axClaude  # every app but axClaude
   .\nvda-pass.ps1 -Only '*-stream-*', 'axMedia\03-playing.txt'   # only these scripts, heard again after a repair
-  .\nvda-pass.ps1 axHelp -Only '01-start.txt' -Inventory write   # an app only live scripts list: its commands written
+  .\nvda-pass.ps1 axCalc -Inventory off                          # without the comparison with the command inventory
 #>
 [CmdletBinding()]
 param(
@@ -41,9 +43,11 @@ param(
     # ('*-stream-*') or by its folder and name ('axMedia\03-playing.txt'), the NVDA-only scripts as zz-nvda\<name>:
     # for hearing again what a pass failed, after the repair, without the two hours of the whole pass (2026-11-18).
     [string[]]$Only = @(),
-    # The runner's --inventory mode for this pass; without it the runner's own default, check. 'write' is how the
-    # command inventory gets the rows of an app whose scripts are all live (axHelp), which no run on the hidden
-    # desktop lists: only the scripts with a "check commands" or "do" step play then (2026-11-18).
+    # The runner's --inventory mode for this pass: check or off; without it the runner's own default, check. write
+    # and rewrite are refused with words (below): they also crawl the workflow graph, which must never run on the
+    # user's own desktop. From 2026-11-18 to 2026-11-27 'write' was how the command inventory got the rows of an app
+    # whose scripts are all live (axHelp); since tools\run-scripts.ps1 -Live plays those on the hidden desktop, the
+    # inventory is written there.
     [ValidateSet('', 'check', 'write', 'rewrite', 'off')]
     [string]$Inventory = '',
     # The spoken warning and the countdown alone, for hearing them: nothing is built and no pass starts.
@@ -56,74 +60,32 @@ $work = Join-Path $env:TEMP 'axkit-nvda'
 $exe = Join-Path $work 'axkit\AxKit.exe'
 $runner = Join-Path $work 'runner\AxAutomate.exe'
 
+# -Inventory write and rewrite also write the workflow graph: the runner then crawls every place of each app's window
+# (tools\AxAutomate, GraphRun), and under --nvda that crawl would run on the user's own desktop, with the keyboard
+# taken for as long as it lasts. Refused here with words until the runner itself leaves the crawl out of this tier
+# (its own change, in C#); the inventory is written on the hidden desktop, where the live scripts play as well.
+if ($Inventory -eq 'write' -or $Inventory -eq 'rewrite') {
+    Write-Host "Not started: -Inventory $Inventory also crawls the workflow graph, every place of each app's window, and with NVDA listening that crawl would run on your own desktop with the keyboard taken. Write the inventory on the hidden desktop instead, live scripts included: .\tools\run-scripts.ps1 <scripts or folders> -Live -Inventory $Inventory, then .\tools\workflows.ps1"
+    exit 2
+}
+
 # The run takes the keyboard and the mouse, so the user must have stepped away (docs/axKit/automation.md section 3),
-# and must hear that it is coming before it takes anything (the user's ask, 2026-11-21: he touched the keyboard not
-# knowing a pass was about to start; until then the script waited in silence for 20 seconds without input, and the
-# first spoken word came from the runner, with the keyboard already taken). So Windows' own voice speaks from the
-# script's start, and right before the runner takes the keyboard it counts from ten to one aloud. A key or a mouse
-# move after the countdown's sentence began means someone is at the computer: the pass stops for good and says so.
-# Windows keeps the time of the last input of the session (GetLastInputInfo); the runner's own keys come later and
-# are not asked about. The voice is SAPI's, as the runner's is: NVDA never speaks it, and no window takes the focus.
-Add-Type -Namespace AxKitNvdaPass -Name LastInput -MemberDefinition @'
-[StructLayout(LayoutKind.Sequential)]
-public struct LASTINPUTINFO { public uint cbSize; public uint dwTime; }
-[DllImport("user32.dll")]
-public static extern bool GetLastInputInfo(ref LASTINPUTINFO info);
-public static long MillisecondsAgo() {
-    LASTINPUTINFO info = new LASTINPUTINFO();
-    info.cbSize = (uint)Marshal.SizeOf(typeof(LASTINPUTINFO));
-    if (!GetLastInputInfo(ref info)) { return -1; }
-    return (long)unchecked((uint)Environment.TickCount - info.dwTime);
-}
-'@
-$spoken = $null
-try { $spoken = New-Object -ComObject SAPI.SpVoice } catch { $spoken = $null }
+# and must hear that it is coming before it takes anything: Windows' own voice speaks from the script's start, and
+# right before the runner takes the keyboard it says one sentence and counts from ten to one aloud; a key or a mouse
+# move after that sentence began stops the pass for good. The voice, the countdown and why they are as they are:
+# tools\spoken-countdown.ps1, which tools\store-screenshots.ps1 shares. The runner's own keys come later and are not
+# asked about.
+. (Join-Path $root 'tools\spoken-countdown.ps1')
 
-# One sentence in Windows' voice, also written as a line. -Whole waits until it has been spoken to its end; without
-# it the script goes on while the voice speaks. A new sentence takes the place of one still being spoken. A computer
-# without the voice gets a tone, so that something is heard.
-function Write-Spoken([string]$Sentence, [switch]$Whole) {
-    Write-Host "(Windows' voice: $Sentence)"
-    if ($null -eq $spoken) {
-        [Console]::Beep(880, 400)
-        return
-    }
-    # SAPI's flags: 1 speaks without waiting, 2 ends what is still being spoken.
-    $flags = 3
-    if ($Whole) { $flags = 2 }
-    try { [void]$spoken.Speak($Sentence, $flags) } catch { [Console]::Beep(880, 400) }
-}
-
-# The spoken countdown right before the runner takes the keyboard: one sentence, then ten seconds counted aloud;
-# any key or mouse input since the sentence began stops the pass for good.
-function Stop-WhenSomeoneIsThere {
-    if ([AxKitNvdaPass.LastInput]::MillisecondsAgo() -lt 0) {
-        Write-Spoken 'No test pass.' -Whole
-        Write-Host 'Not started: Windows did not say when the last key or mouse input was, so nobody is known to have stepped away.'
-        exit 2
-    }
-    # One short sentence, then every second from ten to one (the user's words on hearing the first form, 2026-11-21:
-    # "shorter sentence and just count down from ten").
-    $began = [Diagnostics.Stopwatch]::StartNew()
-    Write-Spoken 'NVDA test pass. Press any key to stop it.' -Whole
-    for ($left = 10; $left -ge 0; $left--) {
-        $ago = [AxKitNvdaPass.LastInput]::MillisecondsAgo()
-        if ($ago -ge 0 -and $ago -lt $began.ElapsedMilliseconds) {
-            Write-Spoken 'Stopped. No test pass.' -Whole
-            Write-Host 'Not started: a key or the mouse was used during the spoken countdown, so someone is at the computer. The run takes the keyboard: ask the user to step away, then start it again (-NoBuild runs the build that is there).'
-            exit 2
-        }
-        if ($left -gt 0) {
-            Write-Spoken "$left"
-            Start-Sleep -Seconds 1
-        }
-    }
+# The countdown of this script, in its own words.
+function Stop-WhenSomeoneIsThereForThePass {
+    Stop-WhenSomeoneIsThere -Coming 'NVDA test pass. Press any key to stop it.' -Stopped 'Stopped. No test pass.' -Nothing 'No test pass.' -Again 'The run takes the keyboard: ask the user to step away, then start it again (-NoBuild runs the build that is there).'
 }
 
 if ($WarningOnly) {
     Write-Spoken 'Only the warning: nothing starts.' -Whole
     Write-Spoken 'NVDA test pass being prepared.' -Whole
-    Stop-WhenSomeoneIsThere
+    Stop-WhenSomeoneIsThereForThePass
     Write-Spoken 'Here the pass would start.' -Whole
     exit 0
 }
@@ -150,10 +112,23 @@ Write-Spoken 'NVDA test pass being prepared.'
 
 if (-not $NoBuild) {
     Write-Host 'Building axKit and the runner into the scratch folder...'
-    dotnet build (Join-Path $root 'src\AxKit\AxKit.csproj') -c Release -o (Join-Path $work 'axkit') --nologo -v q | Out-Null
-    if ($LASTEXITCODE -ne 0) { Write-Spoken 'No test pass.' -Whole; Write-Host 'axKit did not build.'; exit $LASTEXITCODE }
-    dotnet build (Join-Path $root 'tools\AxAutomate\AxAutomate.Runner.csproj') -c Release -o (Join-Path $work 'runner') --nologo -v q | Out-Null
-    if ($LASTEXITCODE -ne 0) { Write-Spoken 'No test pass.' -Whole; Write-Host 'The runner did not build.'; exit $LASTEXITCODE }
+    # Two builds, the program and then the runner, each into its own folder; the build servers (the compiler's, any
+    # MSBuild node) end with them whichever way they ended, instead of idling on several hundred megabytes through a
+    # pass of two hours (the development computer has 7 GB; never done here until 2026-11-27).
+    $built = 0
+    $what = 'axKit'
+    try {
+        dotnet build (Join-Path $root 'src\AxKit\AxKit.csproj') -c Release -o (Join-Path $work 'axkit') --nologo -v q | Out-Null
+        $built = $LASTEXITCODE
+        if ($built -eq 0) {
+            $what = 'The runner'
+            dotnet build (Join-Path $root 'tools\AxAutomate\AxAutomate.Runner.csproj') -c Release -o (Join-Path $work 'runner') --nologo -v q | Out-Null
+            $built = $LASTEXITCODE
+        }
+    } finally {
+        dotnet build-server shutdown | Out-Null
+    }
+    if ($built -ne 0) { Write-Spoken 'No test pass.' -Whole; Write-Host "$what did not build."; exit $built }
 }
 
 # The scripts of the pass in one folder, each app's in its own subfolder, in the runner's order.
@@ -204,7 +179,7 @@ if ($Only.Count -gt 0) {
 $report = Join-Path $work 'report.md'
 $more = @()
 if ($Inventory -ne '') { $more = @('--inventory', $Inventory) }
-Stop-WhenSomeoneIsThere
+Stop-WhenSomeoneIsThereForThePass
 # The runner's error output is not redirected: under $ErrorActionPreference = 'Stop', Windows PowerShell 5.1 would turn
 # its first line into a terminating error and end this script before the summary (the root CLAUDE.md's 2>&1 gotcha).
 # --live: the pass means every script it gathered, the live ones among them (a run of a folder leaves those out by
@@ -219,6 +194,13 @@ Stop-WhenSomeoneIsThere
 $code = $LASTEXITCODE
 Write-Host 'Report: %TEMP%\axkit-nvda\report.md'
 # The pass has written what it heard into the workflow record: the owed page is written again from it, so a hearing
-# that names its script (tools\owed.ps1) leaves the page with the pass and not by anyone reading the report.
-& (Join-Path $root 'tools\owed.ps1')
+# that names its script (tools\owed.ps1) leaves the page with the pass and not by anyone reading the report. The
+# pass's exit code stands whatever becomes of the page: an error there is said, and never takes the code's place
+# (until 2026-11-27 it ended the script with its own).
+try {
+    & (Join-Path $root 'tools\owed.ps1')
+    if ($LASTEXITCODE -ne 0) { Write-Host 'The owed page was not written (tools\owed.ps1, its lines above): run it by itself. The result of the pass stands.' }
+} catch {
+    Write-Host "The owed page was not written: tools\owed.ps1 stopped ($($_.Exception.Message)). Run it by itself. The result of the pass stands."
+}
 exit $code

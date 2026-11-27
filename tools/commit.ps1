@@ -26,7 +26,10 @@ param(
     [string]$ItemDone = '',
     [string]$ItemNone = '',
     [string[]]$Paths = @(),
-    [switch]$All
+    [switch]$All,
+    # The model named in the attribution line: the one the session runs on (it was written into the script as one
+    # model's name until 2026-11-27, and a session on another model signed with it).
+    [string]$By = 'Claude Fable 5.2'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -41,28 +44,35 @@ $itemLine = if ($Item) { "Item: $Item" } elseif ($ItemDone) { "Item done: $ItemD
 $text = $Subject.Trim() + "`n"
 if ($Body.Trim()) { $text += "`n" + ($Body.Trim() -replace "`r`n", "`n") + "`n" }
 # The attribution's address in two pieces, so that the privacy check (PrivacyTests) passes over a non-personal one.
-$text += "`n$itemLine`n`nCo-Authored-By: Claude Opus 5.5 <noreply" + '@' + "anthropic.com>`n"
+$text += "`n$itemLine`n`nCo-Authored-By: $By <noreply" + '@' + "anthropic.com>`n"
 
 $file = Join-Path ([IO.Path]::GetTempPath()) ("axkit-commit-" + [Guid]::NewGuid().ToString('N') + '.txt')
 [IO.File]::WriteAllText($file, $text, (New-Object Text.UTF8Encoding($false)))
+# From here on git is run, and a line it writes as an error must not end the script: under Stop, Windows PowerShell
+# 5.1 turns the first such line into a terminating error whenever the script's output is redirected, and git's "LF
+# will be replaced by CRLF" warning stopped this script so, with the files staged and nothing committed (2026-11-27).
+# Every exit code below is read instead, and the warning is switched off for the two calls that give it
+# (core.safecrlf): a line-end warning is nothing a commit can act on.
+$ErrorActionPreference = 'Continue'
 try {
     if ($All) {
-        & git -C $root add -A
+        & git -C $root -c core.safecrlf=false add -A
     } else {
-        & git -C $root add -- $Paths
+        & git -C $root -c core.safecrlf=false add -- $Paths
     }
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    if ($LASTEXITCODE -ne 0) { Write-Host "Nothing committed: git add ended with exit code $LASTEXITCODE."; exit $LASTEXITCODE }
     & git -C $root diff --cached --quiet
     if ($LASTEXITCODE -eq 0) { Write-Host 'Nothing staged: nothing to commit.'; exit 2 }
     # Only the paths named go in, whatever else is staged (a refused commit once left a file staged, and the next
     # commit took it along, 2026-11-25).
     if ($All) {
-        & git -C $root commit -q -F $file
+        & git -C $root -c core.safecrlf=false commit -q -F $file
     } else {
-        & git -C $root commit -q -F $file -- $Paths
+        & git -C $root -c core.safecrlf=false commit -q -F $file -- $Paths
     }
     $code = $LASTEXITCODE
     if ($code -eq 0) { & git -C $root log -1 --format='%h %s' }
+    else { Write-Host "Nothing committed: git commit ended with exit code $code (the commit-msg hook's lines are above when it refused). What was staged stays staged." }
     exit $code
 } finally {
     Remove-Item -LiteralPath $file -ErrorAction SilentlyContinue

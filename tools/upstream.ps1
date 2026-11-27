@@ -214,14 +214,17 @@ function Invoke-Check([string]$kind, [string]$target) {
         # played against the installed program, and the shape of every kind of line written into the repository, so
         # that a new version shows what changed as a diff of that file.
         Write-Host "Running the probe $target against the installed program..."
-        $probeFolder = Join-Path ([IO.Path]::GetTempPath()) ('axkit-probe-' + (Split-Path -Leaf $root))
+        $probeFolder = Get-RunFolder $root 'axkit-probe'
         $failedCases = New-Object System.Collections.Generic.List[string]
         $code = 2
         try {
             & dotnet build (Join-Path $checkRoot 'tools\ClaudeProbe\ClaudeProbe.csproj') -c Release -v q -nologo -o $probeFolder | Out-Null
             if ($LASTEXITCODE -eq 0) {
                 $current = ''
-                & (Join-Path $probeFolder 'ClaudeProbe.exe') $target --shape (Join-Path $checkRoot 'docs\axClaude\stream-shape.json') | ForEach-Object {
+                # The shape is written into this checkout, never into the clean copy the checks may run in ($checkRoot):
+                # the copy is removed at the end, and until 2026-11-27 the file written there went with it whenever the
+                # working tree had changes, so that a new version's shape was measured and then lost.
+                & (Join-Path $probeFolder 'ClaudeProbe.exe') $target --shape (Join-Path $root 'docs\axClaude\stream-shape.json') | ForEach-Object {
                     Write-Host $_
                     if ($_ -match '^== ([^:]+):') { $current = $Matches[1] }
                     elseif ($_ -match '^\s+FAILED: (.+)$') { $failedCases.Add("${current}: $($Matches[1])") }
@@ -230,6 +233,7 @@ function Invoke-Check([string]$kind, [string]$target) {
             }
         } finally {
             dotnet build-server shutdown | Out-Null
+            Remove-Item -LiteralPath $probeFolder -Recurse -Force -ErrorAction SilentlyContinue
         }
         if ($code -eq 1) {
             $state = 'failed'
@@ -340,11 +344,14 @@ $ErrorActionPreference = 'Continue'
 # A working tree with changes not committed (another session's work in the same checkout) is not what a check of an
 # outside program should meet: on 2026-11-24 a window title changed by another session failed four live scripts of
 # Claude Code that passed on the last commit. The checks then run in a clean copy of the last commit, a worktree in
-# the temporary folder, removed after; only the file here is written.
+# the temporary folder, removed after; only the files here are written (the record, and the probe's shape file).
+# The copy is this run's own, named by the checkout and this process (tools\run-folder.ps1), so that two sessions in
+# one checkout do not take each other's away; what a stopped run left is removed first, and git forgets it.
+. (Join-Path $root 'tools\run-folder.ps1')
 $worktree = $null
 if ($File -eq '' -and @(& git -C $root status --porcelain --untracked-files=no).Count -gt 0) {
-    $worktree = Join-Path ([IO.Path]::GetTempPath()) ('axkit-upstream-' + (Split-Path -Leaf $root))
-    if (Test-Path -LiteralPath $worktree) { & git -C $root worktree remove --force $worktree 2>&1 | Out-Null }
+    $worktree = Get-RunFolder $root 'axkit-upstream'
+    & git -C $root worktree prune 2>&1 | Out-Null
     & git -C $root worktree add --detach $worktree HEAD 2>&1 | Out-Null
     if ($LASTEXITCODE -eq 0) {
         $checkRoot = $worktree

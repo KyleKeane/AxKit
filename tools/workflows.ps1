@@ -27,8 +27,12 @@ $runnerProject = Join-Path $root 'tools\AxAutomate\AxAutomate.Runner.csproj'
 # The runner is built into a folder of its own and started from there. Built and run in place (dotnet run), it could
 # not be built while a window run started the same way was alive in this checkout: that run's AxAutomate.exe holds
 # tools\AxAutomate\bin, and the build failed with MSB3027 after ten tries (found 2026-11-15, when several runs shared
-# a night). The folder is under the temporary folder, by the checkout's name, so two checkouts do not share it.
-$runnerFolder = Join-Path ([IO.Path]::GetTempPath()) ('axkit-reference-runner-' + (Split-Path -Leaf $root))
+# a night). The folder is under the temporary folder, by the checkout's name and this process (tools\run-folder.ps1),
+# so that neither two checkouts nor two sessions in one checkout share it; tools\graph-check.ps1 names its own the
+# same way. It is removed at the end; the compiler's own files stay in the project's obj folder, so the next build
+# only copies.
+. (Join-Path $root 'tools\run-folder.ps1')
+$runnerFolder = Get-RunFolder $root 'axkit-reference-runner'
 $runnerArguments = @('--reference', '--repository', $root)
 if ($Check) { $runnerArguments += '--check' }
 
@@ -47,6 +51,7 @@ try {
 } finally {
     # The build servers end with the run instead of idling on several hundred megabytes (Directory.Build.rsp).
     dotnet build-server shutdown | Out-Null
+    Remove-Item -LiteralPath $runnerFolder -Recurse -Force -ErrorAction SilentlyContinue
 }
 
 # The key map is written from the same inventory, so it is written with these pages: whoever runs this script after

@@ -21,8 +21,15 @@
 
   A commit without such a line, a line that names no item or more than one, and "none" without a reason are refused,
   with what to write. Where the lists are not beside the repository (another person's clone, the build service), the
-  script says nothing and allows every commit: the lists are the maintainer's own. Merge commits, the commits git
-  writes itself (a revert, a fixup) and the release script's own commit ("Release 1.2.3") are allowed as they are.
+  script says nothing and allows every commit: the lists are the maintainer's own. A merge's commit ("Merge ...",
+  only while git has a merge to commit: the hook asks for MERGE_HEAD and says so in the variable AXKIT_MERGING), the
+  commits git writes itself (a revert, a fixup) and the release script's own commit ("Release 1.2.3") are allowed as
+  they are. The hook runs only where it is installed and only for a commit made there: tools\push-check.ps1 asks
+  every commit of a push that is no merge for its item line once more, with the same passes.
+
+  The guard on the pinned approval key (below) asks git what the commit stages. The hook hands the commit's own
+  index on in the variable AXKIT_COMMIT_INDEX (git's GIT_INDEX_FILE, a temporary index for "git commit -a" and "git
+  commit -- <path>"), and the questions are asked of it.
 
 .EXAMPLE
   .\tools\item-of-commit.ps1 .git\COMMIT_EDITMSG
@@ -58,8 +65,13 @@ if (-not $subject) {
 }
 
 # What git writes itself is allowed as it is, and the release script's own commit, "Release 1.2.3", which is the
-# whole bundle's and no one item's.
-if ($subject -match '^(Merge |Revert "|fixup! |squash! |amend! )' -or $subject -match '^Release \d+\.\d+\.\d+$') {
+# whole bundle's and no one item's. A subject that starts "Merge " is git's own only while a merge is being committed:
+# the hook asks git for MERGE_HEAD and says so in AXKIT_MERGING (until 2026-11-27 the words alone passed, typed by
+# anyone). Without the hook (a test, a run by hand) nothing says so, and such a message needs its item line.
+# tools\push-check.ps1 asks the same of every commit of a push that is no merge, with the same passes: a change
+# to them here is made there too.
+$merging = $env:AXKIT_MERGING -eq '1'
+if ($subject -match '^(Revert "|fixup! |squash! |amend! )' -or $subject -match '^Release \d+\.\d+\.\d+$' -or ($merging -and $subject -match '^Merge ')) {
     exit 0
 }
 
@@ -102,15 +114,33 @@ $pinnedKey = Get-PinnedApprovalKey $repositoryRoot
 $outsideEntries = @(Get-OutsideEntries (Join-Path (Split-Path $Lists -Parent) 'outside-reports') $pinnedKey)
 
 $pinnedPath = 'docs/axKit/approval-key.pub'
-$keyStaged = "$(& git -C $repositoryRoot diff --cached --name-only -- $pinnedPath 2>$null)".Trim()
+
+# A question to git about what this commit stages. git gives a commit's hook the index the commit is made from in
+# GIT_INDEX_FILE: for "git commit -a" and "git commit -- <path>" a temporary one, not .git/index. The hook drops
+# git's variables and hands that one on as AXKIT_COMMIT_INDEX, and it is set here for the one call (until 2026-11-27
+# the questions were asked of .git/index, and a key replaced by such a commit passed unseen). Run without the hook,
+# the variable is not set and .git/index is asked, as before. What git writes as an error must not end the hook
+# under Stop (Windows PowerShell 5.1): the setting is this function's own, and an empty answer is the check.
+function Get-StagedAnswer([string[]]$words) {
+    $ErrorActionPreference = 'Continue'
+    $before = $env:GIT_INDEX_FILE
+    if ($env:AXKIT_COMMIT_INDEX) { $env:GIT_INDEX_FILE = $env:AXKIT_COMMIT_INDEX }
+    try {
+        return @(& git -C $repositoryRoot @words 2>$null)
+    } finally {
+        $env:GIT_INDEX_FILE = $before
+    }
+}
+
+$keyStaged = "$(Get-StagedAnswer @('diff', '--cached', '--name-only', '--', $pinnedPath))".Trim()
 if ($keyStaged) {
     # Asked with ls-tree and ls-files first, which print nothing for a missing path: git show writes an error for one
     # (the first pin has no key in HEAD), and Windows PowerShell made that error stop the hook (2026-11-21).
     $inHead = "$(& git -C $repositoryRoot ls-tree --name-only HEAD -- $pinnedPath)".Trim()
     $oldKey = if ($inHead) { Read-PinnedApprovalKeyText ((& git -C $repositoryRoot show "HEAD:$pinnedPath") -join "`n") } else { $null }
     if ($null -ne $oldKey) {
-        $inIndex = "$(& git -C $repositoryRoot ls-files -- $pinnedPath)".Trim()
-        $newKey = if ($inIndex) { Read-PinnedApprovalKeyText ((& git -C $repositoryRoot show ":$pinnedPath") -join "`n") } else { $null }
+        $inIndex = "$(Get-StagedAnswer @('ls-files', '--', $pinnedPath))".Trim()
+        $newKey = if ($inIndex) { Read-PinnedApprovalKeyText ((Get-StagedAnswer @('show', ":$pinnedPath")) -join "`n") } else { $null }
         $signed = @($lines | Where-Object { $_ -match '^\s*Approval key changed:\s*(\S+)\s*$' } | ForEach-Object { $Matches[1] })
         $ok = $null -ne $newKey -and $signed.Count -eq 1 -and (Test-ApprovalSignature (Get-ApprovalChangeText $newKey.Fingerprint) $signed[0] $oldKey)
         if (-not $ok) {

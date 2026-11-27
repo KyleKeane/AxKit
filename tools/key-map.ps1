@@ -439,3 +439,5 @@ if ($Check) {
 [IO.File]::WriteAllText($documentPath, $text, (New-Object System.Text.UTF8Encoding($false)))
 [IO.File]::WriteAllText($groupsPath, $groupsText, (New-Object System.Text.UTF8Encoding($false)))
 Write-Host "Wrote docs/axKit/key-map.md and key-groups.md: $summary"
+# An exit code of its own: without it the caller reads the code of whatever ran before (tools\pages.ps1, tools\workflows.ps1).
+exit 0

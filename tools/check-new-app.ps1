@@ -27,8 +27,13 @@ param()
 
 $ErrorActionPreference = 'Continue'
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
-$copy = Join-Path ([IO.Path]::GetTempPath()) ('axkit-newapp-' + (Split-Path -Leaf $root))
-$output = Join-Path ([IO.Path]::GetTempPath()) ('axkit-newapp-build-' + (Split-Path -Leaf $root))
+# The copy and the build's folder are this run's own, named by the checkout and this process (tools\run-folder.ps1),
+# so that two sessions in one checkout do not take each other's away; both are removed at the end. What a run that
+# was stopped left behind is removed by the function, and git then forgets the worktree that was there.
+. (Join-Path $root 'tools\run-folder.ps1')
+$copy = Get-RunFolder $root 'axkit-newapp'
+$output = Get-RunFolder $root 'axkit-newapp-build'
+& git -C $root worktree prune 2>&1 | Out-Null
 $failed = $null
 
 function Invoke-Step([string]$what, [scriptblock]$step) {
@@ -42,7 +47,6 @@ function Invoke-Step([string]$what, [scriptblock]$step) {
 }
 
 try {
-    if (Test-Path -LiteralPath $copy) { & git -C $root worktree remove --force $copy 2>&1 | Out-Null }
     # Outside call, program, git: a worktree of this repository's last commit, in the temporary folder.
     & git -C $root worktree add --detach $copy HEAD 2>&1 | Out-Null
     if ($LASTEXITCODE -ne 0) { throw 'No clean copy of the last commit could be made (git worktree add).' }

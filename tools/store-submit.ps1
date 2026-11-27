@@ -8,9 +8,13 @@
 
 .DESCRIPTION
   Run after release.ps1 has published <version>, and only at the maintainer's word, as the release itself.
-    1. The release's package is downloaded with gh into an empty folder of its own.
+    1. The release's package is downloaded with gh into an empty folder of its own, and the provenance GitHub
+       attested for it is checked (gh attestation verify: this repository's release workflow built it), as
+       tools\sign-release.ps1 checks the zip's.
     2. EdgeDrive is built into a folder of its own, and Edge is started on its own profile with the switches of
-       section 6 unless its debugging port already answers.
+       section 6. When the debugging port 9222 already answers, the script asks Windows which program listens
+       there: the Edge of an earlier run on that profile is used again and said; any other program stops the
+       script, named, with nothing loaded into it.
     3. The product's overview is loaded and "Store presence" waited for (reloaded once). A sign-in page stops the
        script: the maintainer signs in in that Edge window, with his own second factor, and runs it again.
     4. "Start update" when no update is in draft, then "In draft" waited for; submission-pages.js gives the
@@ -61,32 +65,61 @@ function Stop-Submission([string]$why) {
 # 1. The package, from the release's page.
 $work = Join-Path ([IO.Path]::GetTempPath()) ("store-submit-" + $Version + "-" + [DateTime]::Now.ToString('HHmmss'))
 New-Item -ItemType Directory -Path $work | Out-Null
+# gh and dotnet write what goes wrong on the error stream, which must not end the script under Stop when its output
+# is redirected (Windows PowerShell 5.1): Continue for these calls, each exit code read and a failure thrown in words.
+$ErrorActionPreference = 'Continue'
 # Outside call, a program: gh, the release's assets on GitHub.
 & gh release download "v$Version" --repo KyleKeane/AxKit --pattern "AxKit-$Version.msix" --dir $work
 if ($LASTEXITCODE -ne 0) { throw "The release v$Version has no AxKit-$Version.msix on GitHub, or gh could not reach it." }
 $package = Join-Path $work "AxKit-$Version.msix"
-Write-Host "Package: AxKit-$Version.msix, $([Math]::Round((Get-Item $package).Length / 1MB, 1)) MB"
+# The package is the one this repository's release workflow built, as tools\sign-release.ps1 asks of the zip before it
+# signs it: the workflow attests both (release.yml), and until 2026-11-27 the package went to the Store unasked.
+# Outside call, a program: gh, the provenance GitHub attested for the package.
+& gh attestation verify $package --repo KyleKeane/AxKit --signer-workflow KyleKeane/AxKit/.github/workflows/release.yml | Out-Host
+if ($LASTEXITCODE -ne 0) { throw "GitHub has no provenance from this repository's release workflow for AxKit-$Version.msix; nothing was uploaded to the Store." }
+Write-Host "Package: AxKit-$Version.msix, $([Math]::Round((Get-Item $package).Length / 1MB, 1)) MB, built by this repository's release workflow."
 
 # 2. EdgeDrive, and Edge with its port.
 $drive = Join-Path $work 'edgedrive'
 & dotnet build (Join-Path $PSScriptRoot 'EdgeDrive') -c Release -o $drive --nologo -v quiet | Out-Null
-if ($LASTEXITCODE -ne 0) { throw 'EdgeDrive did not build.' }
+$built = $LASTEXITCODE
 & dotnet build-server shutdown | Out-Null
+$ErrorActionPreference = 'Stop'
+if ($built -ne 0) { throw 'EdgeDrive did not build.' }
 $edgeDrive = Join-Path $drive 'EdgeDrive.exe'
 
 function Invoke-Drive {
+    # EdgeDrive says what it did not find on the error stream, which is redirected here: under Stop, Windows
+    # PowerShell 5.1 would end the script at the first such line, in the middle of a submission. The setting is this
+    # function's own; the exit code is the answer.
+    $ErrorActionPreference = 'Continue'
     $out = & $edgeDrive @args 2>&1 | Out-String
     return @{ Ok = ($LASTEXITCODE -eq 0); Text = $out.Trim() }
 }
 
+$profileDir = Join-Path $env:LOCALAPPDATA 'AxKit-release\edge-profile'
 $portOpen = $true
 try { Invoke-WebRequest -UseBasicParsing -Uri 'http://localhost:9222/json/version' -TimeoutSec 3 | Out-Null } catch { $portOpen = $false }
-if (-not $portOpen) {
+if ($portOpen) {
+    # The port answers already. Only the Edge this script starts is driven: Microsoft Edge on the release profile,
+    # left open by an earlier run (after a sign-in, or a stop). Any other program with a debugging port there is
+    # someone's own browser, and until 2026-11-27 the script loaded Partner Center into one of its pages and pressed
+    # in it. Which program it is, is asked of Windows: the process that listens on the port, and its command line.
+    $listening = @(Get-NetTCPConnection -LocalPort 9222 -State Listen -ErrorAction SilentlyContinue | ForEach-Object { $_.OwningProcess } | Select-Object -Unique)
+    $listener = if ($listening.Count -gt 0) { Get-CimInstance Win32_Process -Filter "ProcessId = $($listening[0])" } else { $null }
+    $own = $listener -and $listener.Name -eq 'msedge.exe' -and "$($listener.CommandLine)".Replace('"', '').IndexOf("--user-data-dir=$profileDir", [StringComparison]::OrdinalIgnoreCase) -ge 0
+    if (-not $own) {
+        $found = if ($listener) { "$($listener.Name), process $($listener.ProcessId)" } else { 'a program Windows did not name' }
+        Write-Host "Stopped: the debugging port 9222 is answered by $found, which is not the Edge this script starts (Microsoft Edge on the profile %LOCALAPPDATA%\AxKit-release\edge-profile). Nothing was loaded into it and nothing was pressed. Close that program, then run this again."
+        exit 1
+    }
+    Write-Host "Edge: the window an earlier run of this script left open on the release profile is used again (process $($listener.ProcessId))."
+} else {
     $edge = @("${env:ProgramFiles(x86)}\Microsoft\Edge\Application\msedge.exe", "$env:ProgramFiles\Microsoft\Edge\Application\msedge.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
     if (-not $edge) { throw 'Microsoft Edge was not found.' }
-    $profileDir = Join-Path $env:LOCALAPPDATA 'AxKit-release\edge-profile'
     # Outside call, a program: Microsoft Edge on its own profile, Partner Center, at the maintainer's word.
     Start-Process $edge -ArgumentList "--user-data-dir=`"$profileDir`"", '--remote-debugging-port=9222', '--disable-features=CalculateNativeWinOcclusion,IntensiveWakeUpThrottling', '--disable-background-timer-throttling', '--disable-renderer-backgrounding', '--disable-backgrounding-occluded-windows', $overview
+    Write-Host 'Edge: started on the release profile, with its debugging port 9222.'
     Start-Sleep -Seconds 5
 }
 

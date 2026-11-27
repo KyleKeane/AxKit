@@ -21,51 +21,35 @@ jobs:
       - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           global-json-file: global.json
-      - name: Outside calls are listed
-        # Every network request, program start and pipe in src carries its explanation, and docs/axKit/outside-calls.md
-        # is what the sources give (docs/axKit/SPEC.md B-17).
-        run: ./tools/outside-calls.ps1 -Check
-      - name: Workflows are listed
-        # Every automated script has its workflow label, and docs/axKit/workflows.md is what the scripts give (AU-5.2a).
-        run: ./tools/workflows.ps1 -Check
-      - name: Repairs are listed
-        # The repair list's fields hold, and docs/axKit/repairs.md is what docs/axKit/repairs.json gives.
-        run: ./tools/repairs.ps1 -Check
-      - name: Apps are listed
-        # docs/axKit/apps.md is what Dispatch.Apps and the folders give: the one list of the apps (repairs R-44).
-        run: ./tools/apps-page.ps1 -Check
-      - name: The guides' menus are written
-        # Each guide's Menus section is what the command inventory gives (tools/guide-menus.ps1; the maintainer, 2026-11-23).
-        run: ./tools/guide-menus.ps1 -Check
-      - name: The documents name real menus
-        # Every menu path a document names is one the windows have (tools/doc-menus.ps1; the maintainer, 2026-11-23).
-        run: ./tools/doc-menus.ps1 -Check
-      - name: Cases are listed
-        # docs/axKit/cases.md is what docs/axKit/cases.json gives: how each unexpected situation is handled (AX-5.10).
-        run: ./tools/cases.ps1 -Check
-      - name: Keys are mapped
-        # docs/axKit/key-map.md is what the command inventory, BundleKeys and the proposed key families give.
-        run: ./tools/key-map.ps1 -Check
-      - name: The four families hold
-        # docs/axKit/families.md is what docs/axKit/families.json gives, and that file names every sound of Sounds.cs,
-        # every file that plays one, every menu of the inventory and every family of keys.
-        run: ./tools/families.ps1 -Check
-      - name: What is owed is listed
-        # docs/axKit/owed.md is what the cases, the repairs and the NVDA test record's Owed sections give: everything
-        # tested in code and not yet heard or tried for real.
-        run: ./tools/owed.ps1 -Check
-      - name: The components are listed
-        # docs/axKit/components.md is what docs/axKit/components.json gives: the canonical pieces of a window, the
-        # types of window, and which app is which (docs/axKit/framework.md FW-7.3).
-        run: ./tools/components.ps1 -Check
-      - name: The outside programs' record is well formed
-        # docs/axKit/upstream.json has its fields and names checks that exist; the installed versions are never
-        # compared here, this computer has its own (docs/axKit/automation.md, When an outside program changes).
-        run: ./tools/upstream.ps1 -Check
-      - name: The scripts hold their rules
-        # Every .ps1 is ASCII, parses, and assigns no local named like one of its parameters (tools/script-lint.ps1
-        # says why each rule is there).
-        run: ./tools/script-lint.ps1 -Check
+      - name: The quick checks
+        # The one list of the quick checks, the same that test.ps1 and the push check run on the development computer
+        # (tools/pages.ps1 -Check; docs/axKit/repairs.json R-81): every failure is named in one run, and a check that
+        # joins the list is run here without an edit. Until 2026-11-27 each check was a step of its own, and the two
+        # the list had gained since, the map and the bounds of the workflow graph, were not run here at all.
+        # What it runs, each writing nothing; every one runs on this runner (two build the runner of the automated
+        # checks, tools/AxAutomate, which plays nothing here and opens no window):
+        #   ./tools/outside-calls.ps1 -Check  every network request, program start and pipe in src has its explanation,
+        #                                     and docs/axKit/outside-calls.md is what the sources give (SPEC.md B-17)
+        #   ./tools/workflows.ps1 -Check      every script has its workflow label, and the workflow pages are what the
+        #                                     scripts and the command inventory give (AU-5.2a)
+        #   ./tools/repairs.ps1 -Check        the repair list's fields hold, and repairs.md is what repairs.json gives
+        #   ./tools/apps-page.ps1 -Check      apps.md is what Dispatch.Apps and the folders give (repairs R-44)
+        #   ./tools/cases.ps1 -Check          cases.md is what cases.json gives (AX-5.10)
+        #   ./tools/key-map.ps1 -Check        key-map.md is what the inventory, BundleKeys and the key families give
+        #   ./tools/families.ps1 -Check       families.md is what families.json gives, and that file names every
+        #                                     sound, every file that plays one, every menu and every family of keys
+        #   ./tools/owed.ps1 -Check           owed.md is what the cases, the repairs and the NVDA record's Owed give
+        #   ./tools/components.ps1 -Check     components.md is what components.json gives (framework.md FW-7.3)
+        #   ./tools/map.ps1 -Check            map.md is what workflow-graph.json gives
+        #   ./tools/graph-check.ps1 -Check    the bounds of the workflow graph: over-the-bounds.md and goal-counts.json
+        #                                     are what the scripts give, and no goal is longer than its baseline
+        #   ./tools/guide-menus.ps1 -Check    each guide's Menus section is what the command inventory gives
+        #   ./tools/doc-menus.ps1 -Check      every menu path a document names is one the windows have
+        #   ./tools/upstream.ps1 -Check       upstream.json is well formed; the installed versions are never compared
+        #                                     here, this computer has its own (automation.md)
+        #   ./tools/script-lint.ps1 -Check    every .ps1 is ASCII, parses, has no local named like a parameter, and
+        #                                     no culture's sort in a page script
+        run: ./tools/pages.ps1 -Check
       - name: Build and test
         # ContinuousIntegrationBuild: deterministic paths; the test packages restore exactly as their lock files say (S-34).
         run: dotnet test AxKit.sln --configuration Release --nologo -p:ContinuousIntegrationBuild=true
