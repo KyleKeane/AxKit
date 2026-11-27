@@ -1,0 +1,40 @@
+[?9001h[?1004h[?25l[2J[m[H]0;claude[?25h[Screen Reader Mode: on via flag]
+[?2004h[?2031h[?1004h[>0q[?u]7501;?[?25lPermission Required: Accessing workspace:
+C:\Temp\axkit-two-897bc0
+Quick safety check: Is this a project you created or one you trust? (Like your own code, a well-known open source project, or work from your team). If not, take a moment to review what's in this folder first.
+Claude Code'll be able to read, edit, and execute files here.
+Security guide
+y. Yes, I trust this folder
+n. No, exit
+Enter y/n:
+Enter to confirm · Esc to cancel[9;12H[?25h[>4m[?2031l[?2004l[?25l[2;1H[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[2;1H[?25h
+[?2004h[?2031h[?1004h[?25l[2;1H]0;✳ Claude Code[?25hClaude Code v2.1.332
+Haiku 5.5 with low effort · Claude Ultra
+C:\Temp\axkit-two-897bc0
+manual mode on
+effort: low · /effort
+$[>0q  Reply with exactly two lines and nothing else: first line the words pelican feathers, second line the words green apples.]133;A;redraw=0]0;◐ Claude Code[?25l[5;1Hyou: Reply with exactly two lines and nothing else: first line the words pelican feathers, second line the words green apples.[K
+Tinkering…[K
+manual mode on  ·  esc to interrupt[K
+effort: low · /effort
+$[?25h]0;◐ Pelican feathers and green apples]133;C]133;D[?25l[6;1Hclaude: pelican feathers[K
+green apples[K
+Churned for 1s · done 6:58 PM[K
+manual mode on[K
+effort: low · /effort
+$]0;✳ Pelican feathers and green apples[?25h]0;◐ Pelican feathers and green apples[?25l[9;1Hyou: /exit[K
+Warping…[K
+manual mode on  ·  esc to interrupt[K
+effort: low · /effort
+$[?25h[?1006l[?1003l[?1002l[?1000l[>4m[?2031l[?2004l[?1016l
+Resume this session with:
+claude --ax-screen-reader --model haiku --effort low --permission-mode default --resume 00000000-0000-0000-0000-000000000000
+]0;]133;A;redraw=0]133;C]133;D]0;✳ Pelican feathers and green apples[?9001l[?1004l

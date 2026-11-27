@@ -96,6 +96,18 @@ The agent rows end in the word `running` and name no time and no token count, un
 
 The panel is read as well as hidden, for a window that tells the user about it without speech (the window's signals are SPEC.md FR-7.10, since 2026-11-15: the number in the status bar, a start and a finish sound, a recurring sound, Ctrl+B; their rules are `BackgroundWork`, which adds the shells the mode line counts, `1 shell`, to the agents and takes the largest of the rows, the waiting row's number and a mode line's own count of agents, `1 shell, 2 agents`, a form assumed and not yet seen with agents). Each agent row, in either form, gives the agent's type, its first word, and its description, the words after it without the mark, the word `running` or the time and the tokens (`LineClassifier.AgentOf`, from the named groups of `AgentRow` and `IdleAgentRow`); the waiting row gives its number and what it waits for (`LineClassifier.BackgroundWaitOf`). `SessionModel.BackgroundAgents` is the list the latest frame with a mode line shows, top to bottom, empty when the panel is gone, and `SessionModel.BackgroundAgentsAwaited` the waiting row's number, zero without the row; both are kept while a screen such as `/tasks` covers the mode line, as the background count is. `AgentPanel.Changes(before, after)` says which agents were newly shown and which are no longer shown, compared by type and description, so a redraw, another order or a new time is no change. Assumed until a recording says otherwise: a type is one word (a custom agent's name with a space would give its first word as the type and the rest in the description).
 
+## A usage limit's row (Claude Code 2.1.332)
+
+Recorded on 2026-11-26 (the fixture `usage-limit-claude2.1.332-240x50.vt`), the evening the live scripts 17 and 06 failed with it. Once the account has used much of a limit, Claude Code draws a row under the mode line in the place of the effort row, while a turn runs and after it, though not in every turn of a session:
+
+```
+manual mode on  ·  esc to interrupt
+You've used 76% of your weekly limit · resets 11pm (<time zone>)
+$
+```
+
+It is Claude Code's own remark and an interface row (`ClaudeCodeTexts.UsageLimitRow`, SPEC.md §4.4 item 25); unknown, it closed the block of interface rows, the mode line stood in the conversation, and the next reply's first row landed in front of its exchange's output marker, unspoken. A recording masks the reset's hour and the time zone (`Redaction.MaskRecording`). Not seen yet: the row's other kinds of limit and the words at 100%.
+
 ## A command left running when the turn ends (Claude Code 2.1.330)
 
 Recorded on 2026-11-21 (the timeline fixture `background-shells-330`), for the maintainer's report of 2026-11-18 that nothing told him a background command still ran, by which he nearly closed the window on a release. The rows, while Claude works and after the turn:

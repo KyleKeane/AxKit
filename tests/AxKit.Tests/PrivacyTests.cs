@@ -38,6 +38,20 @@ public partial class PrivacyTests
     }
 
     [Fact]
+    public void MaskRecording_masks_when_a_usage_limit_resets_byte_for_byte()
+    {
+        // Claude Code 2.1.332's row under the mode line names the reset's hour and the account's time zone (2026-11-26).
+        var recording = System.Text.Encoding.UTF8.GetBytes(
+            "\x1b[9;1HYou've used 76% of your weekly limit · resets 11pm (Europe/Lisbon)\x1b[K\r\n$");
+        var masked = Redaction.MaskRecording(recording);
+
+        Assert.Equal(recording.Length, masked.Length);
+        Assert.Equal(
+            "\x1b[9;1HYou've used 76% of your weekly limit · resets xxxxxxxxxxxxxxxxxxxx\x1b[K\r\n$",
+            System.Text.Encoding.UTF8.GetString(masked));
+    }
+
+    [Fact]
     public void Redact_leaves_short_names_and_placeholders_alone()
     {
         Assert.Equal("C:\\Users\\<user>\\x, an Al fact", Redaction.Redact("C:\\Users\\<user>\\x, an Al fact", ["Al"]));

@@ -249,6 +249,19 @@ public static partial class ClaudeCodeTexts
     public static partial Regex RemovedFromPrompt();
 
     /// <summary>
+    /// A row under the mode line, in the place of the effort row, once the account has used much of a usage limit:
+    /// "You've used 76% of your weekly limit · resets 11pm (America/Los_Angeles)" (Claude Code 2.1.332, 2026-11-26,
+    /// from the turn after the limit was crossed on; the fixture usage-limit-claude2.1.332, its reset time and zone
+    /// replaced). The program's own remark and no line of the conversation. Unknown, it closed the block of interface
+    /// rows under it: the mode line above it stood in the conversation at the idle prompt, the next message's block
+    /// was placed under it, and the next frame wrote the reply's first row there, in front of the block's output
+    /// marker, so that the reply was not spoken and no "Responding" was said (scripts 17 and 06 of that evening).
+    /// The kind of limit and the reset are read as any words.
+    /// </summary>
+    [GeneratedRegex(@"^You've used \d+% of your [a-z][a-z ]* limit(?: · .+)?$")]
+    public static partial Regex UsageLimitRow();
+
+    /// <summary>
     /// The two rows Claude Code prints under its prompt row as it ends (/exit): "Resume this session with:" over
     /// "claude --ax-screen-reader --model haiku --resume &lt;id&gt;", with the cursor on the blank row under them. Lines
     /// of the conversation, and the way to take the session up again; but they stand between the cursor and the live

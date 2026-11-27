@@ -1,0 +1,20 @@
+[Screen Reader Mode: on via flag]
+Claude Code v2.1.332
+Haiku 5.5 with low effort · Claude Ultra
+C:\Temp\axkit-usage-e0b696
+you: Reply with the single word one.
+claude: one
+Baked for 1s · done 7:19 PM
+you: Reply with the single word two.
+claude: two
+Cogitated for 0s · done 7:19 PM
+you: Reply with the single word three.
+claude: three
+Worked for 0s · done 7:19 PM
+you: Reply with exactly two lines and nothing else: first line the words pelican feathers, second line the words green apples.
+claude: pelican feathers
+green apples
+Cooked for 0s · done 7:19 PM
+you: /exit
+Resume this session with:
+claude --ax-screen-reader --model haiku --effort low --permission-mode default --resume 00000000-0000-0000-0000-000000000000

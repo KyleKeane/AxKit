@@ -1,0 +1,15 @@
+mark
+wait 10000 Yes, I trust this folder
+iffound sleep 1500
+iffound send y\r
+mark
+wait 15000 /effort
+sleep 1500
+send Reply with exactly two lines and nothing else: first line the words pelican feathers, second line the words green apples.
+sleep 200
+send \r
+mark
+wait 90000 \x07
+quiet 1500 20000
+send /exit\r
+exit 15000

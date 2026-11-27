@@ -19,7 +19,7 @@ public static partial class LineClassifier
         || ClaudeCodeTexts.NotepadHint().IsMatch(text) || ClaudeCodeTexts.EffortHint().IsMatch(text) || ClaudeCodeTexts.BackgroundHint().IsMatch(text)
         || ClaudeCodeTexts.QueuedHint().IsMatch(text) || ClaudeCodeTexts.AnnouncementRow().IsMatch(text)
         || ClaudeCodeTexts.BranchRow().IsMatch(text) || ClaudeCodeTexts.FeedbackCardHint().IsMatch(text) || ClaudeCodeTexts.ToolTimer().IsMatch(text)
-        || ClaudeCodeTexts.RemovedFromPrompt().IsMatch(text)
+        || ClaudeCodeTexts.RemovedFromPrompt().IsMatch(text) || ClaudeCodeTexts.UsageLimitRow().IsMatch(text)
         || IsProgressRow(text);
 
     /// <summary>

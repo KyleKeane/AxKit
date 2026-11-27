@@ -53,17 +53,26 @@ public static partial class Redaction
     [GeneratedRegex(@"(?<=Claude )(Max|Pro|Team|Enterprise)\b")]
     private static partial Regex TierRegex();
 
+    // When a usage limit resets, after Claude Code's row "You've used 76% of your weekly limit · resets 11pm
+    // (America/Los_Angeles)" (2026-11-26): the hour and the account's time zone, up to the next control character. Read
+    // as Latin-1, as MaskRecording reads the bytes, so the middle dot is its two bytes of UTF-8.
+    [GeneratedRegex(@"(?<=You've used \d{1,3}% of your [a-z ]{1,40} limit Â· resets )[^\x00-\x1F\x7F]+")]
+    private static partial Regex UsageResetRegex();
+
     /// <summary>
-    /// A recording's bytes with every session id and the subscription tier masked, each by as many bytes as it had
-    /// (zeros for an id's digits, x for the tier's letters), so that every cursor position of the recording stays
-    /// right (the item "the recordings under tests/fixtures hold Claude Code session ids and the subscription tier",
-    /// 2026-11-25). The bytes are read one character each (Latin-1), so nothing else of them changes.
+    /// A recording's bytes with every session id, the subscription tier and the time a usage limit resets masked, each
+    /// by as many bytes as it had (zeros for an id's digits, x for the tier's letters and for the reset's hour and time
+    /// zone), so that every cursor position of the recording stays right (the item "the recordings under
+    /// tests/fixtures hold Claude Code session ids and the subscription tier", 2026-11-25; the reset, which names the
+    /// account's time zone, since 2026-11-26). The bytes are read one character each (Latin-1), so nothing else of
+    /// them changes.
     /// </summary>
     public static byte[] MaskRecording(byte[] recording)
     {
         var text = System.Text.Encoding.Latin1.GetString(recording);
         text = IdRegex().Replace(text, match => Regex.Replace(match.Value, "[0-9a-fA-F]", "0"));
         text = TierRegex().Replace(text, match => new string('x', match.Length));
+        text = UsageResetRegex().Replace(text, match => new string('x', match.Length));
         return System.Text.Encoding.Latin1.GetBytes(text);
     }
 

@@ -21,6 +21,23 @@ internal sealed partial class MainForm
         // word is the frame before's, and a reply's row drawn with the first working frame was spoken while Claude
         // worked (script 27). Reply speech is the window's own until it goes through the core's gate (WP-A18).
         var arrival = _arrivals.Update(_model.Lines, _model.Working, _readyAnnounced ? _settings.ReplySpeech : ReplySpeechMode.None, _readyAnnounced && _settings.SpeakToolCalls);
+        // Claude draws a question's rows before its prompt row, so reply speech waits a moment (_speechHold) and goes
+        // only when Claude has not turned out to be waiting; once it has, everything that waits is dropped below: a
+        // question stops all other speech and reads itself (D33, the user's rule of 2026-10-23). For a few hours that
+        // day the lines before the question were spoken, and in a set of questions they were Claude's record of the
+        // question just answered and its answer, read before the next question.
+        // The frame's lines are held before the core hears of the frame (FR-7.2a): the core can decide Done on this
+        // very frame, when the turn's end was confirmed before its last rows were drawn (the stop event comes before
+        // the end mark), and Done speaks what is held right after its word. Held after the core, they missed that Done
+        // and went alone a moment later (found 2026-11-26 replaying Haiku's reply of a second, drawn in the frame
+        // after the bell, with the stop event first; the fixture silent-words-claude2.1.332, DoneWithReplyTests).
+        if (arrival.Speech is not null)
+        {
+            _heldLines.AddRange(arrival.SpokenLines);
+            _speechHold.Stop();
+            _speechHold.Start();
+        }
+
         // The same pass is the core's input (MainForm.Flow.cs). Of what follows here the core decides whether Claude
         // works (ClaudeWorks) and when Done is said (OnFrameSettled says where the settle still says it); the speech
         // it computes beside this code, which still acts.
@@ -38,18 +55,7 @@ internal sealed partial class MainForm
             }
         }
 
-        // Claude draws a question's rows before its prompt row, so reply speech waits a moment (_speechHold) and goes
-        // only when Claude has not turned out to be waiting; once it has, everything that waits is dropped: a question
-        // stops all other speech and reads itself (D33, the user's rule of 2026-10-23). For a few hours that day the
-        // lines before the question were spoken, and in a set of questions they were Claude's record of the question
-        // just answered and its answer, read before the next question.
-        if (arrival.Speech is not null)
-        {
-            _heldLines.AddRange(arrival.SpokenLines);
-            _speechHold.Stop();
-            _speechHold.Start();
-        }
-
+        // A question shown drops what is held (D33, above).
         if (QuestionShown && _heldLines.Count > 0)
         {
             _speechHold.Stop();
