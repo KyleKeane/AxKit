@@ -32,6 +32,7 @@ expect state "notice":"Find"
 type axkitscript05
 keys enter
 expect focus "value":"axkitscript05a,
+# Check: Find next and Find previous go round the ends of the list
 do Find next
 expect focus "value":"axkitscript05b,
 do Find next

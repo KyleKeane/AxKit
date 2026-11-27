@@ -67,6 +67,7 @@ expect said Test cmd
 expect state , axTerminal, 
 expect state \myproject, Test cmd","notice"
 expect commands 1. Test cmd (cmd.exe /k), Session, Switch shell, checked
+# Check: The terminal names the shell, and its own output reaches the terminal
 do Terminal
 expect text "System: Switched to Test cmd in
 do Command field

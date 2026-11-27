@@ -22,6 +22,7 @@ expect commands "1. cellar (
 expect commands "2. orchard (
 expect commands Session, Open recent folder in new window
 
+# Goal: Start a session in a recent folder from the command palette
 # The palette: part of the folder's name, the entry of Open recent folder said first; Enter starts a new session
 # there: "Folder orchard", then "Ready"; the title and the status bar's prompt name the folder, and it is the newest
 # of the recent folders now.
@@ -39,5 +40,6 @@ expect state \\work\\orchard>"]
 expect focus "name":"Command"
 expect commands "1. orchard (
 expect commands "2. cellar (
+# Check: The session runs in the recent folder
 do Say current folder
 expect said {temp}\work\orchard

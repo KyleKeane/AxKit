@@ -31,6 +31,7 @@ keys down
 expect focus All tasks, 3 not done
 do Next heading level 1
 expect focus Date lists, heading level 1, 4 date lists
+# Check: The date lists are read under their heading
 keys down
 expect focus Overdue, 0
 keys down
@@ -39,6 +40,7 @@ keys down
 expect focus Due in the next 7 days, 0
 keys down
 expect focus No due date, 2
+# Check: Past the last section the heading keys sound the edge, and going back reaches Your lists
 do Next heading level 1
 expect said ♪ Edge
 do Next heading level 2
@@ -105,6 +107,7 @@ keys tab
 expect focus Due, date, 30 October 2099, Friday
 keys shift+tab
 expect focus Fix the tap, due 30 October 2099
+# Check: The bundle's pane keys move between the panes as Tab does
 # The bundle's pane keys do the same from either pane (AX-8.2).
 do Switch between the navigator and the detail pane
 expect focus Due, date, 30 October 2099, Friday

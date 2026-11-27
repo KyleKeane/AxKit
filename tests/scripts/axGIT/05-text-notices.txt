@@ -25,6 +25,7 @@ type marker
 keys enter
 expect state "notice":null
 expect said → Diff of a.txt (Text): +first paragraph marker
+# Check: Find next goes to the next match and after the last back to the first
 keys f3
 expect said · +second paragraph marker
 # The bundle's find wraps once (AxKitForm.FindNext), so F3 after the last match goes back to the first; "Not found"
@@ -60,6 +61,7 @@ keys ctrl+down
 expect said ·     first
 keys ctrl+down
 expect said ·  a.txt
+# Check: Ctrl+Tab and Alt+1 go back to the Changes list
 keys ctrl+tab
 keys alt+1
 expect said ! Changes, 1 file.
@@ -69,6 +71,7 @@ expect said ! Changes, 1 file.
 # commands they stand for), then Windows text size.
 menu Larger text
 expect said ! Text size
+# Check: Smaller text and Windows text size set the size back
 menu Smaller text
 expect said ! Text size
 menu Windows text size

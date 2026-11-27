@@ -33,32 +33,41 @@ command's in this version of axKit.
     You hear: Install, heading level 2.
 2. Press Ctrl+Shift+H (Heading; Navigation menu, Previous).
     You hear: Readme for the preview tests, heading level 1.
-3. Press Ctrl+2 twice.
+
+### Move by the headings of one level
+
+1. Press Ctrl+2 twice.
     You hear: Links, heading level 2.
-4. Press Ctrl+Home, Ctrl+K.
+
+### Move from link to link
+
+1. Press Ctrl+Home, Ctrl+K.
     You hear: axKit on GitHub, link.
-5. Press Ctrl+K (Link; Navigation menu, Next).
+2. Press Ctrl+K (Link; Navigation menu, Next).
     You hear: https://www.example.com, link.
-6. Press Ctrl+L (List; Navigation menu, Next).
+
+### Move to a list and through its items
+
+1. Press Ctrl+L (List; Navigation menu, Next).
     You hear: List with 3 items, first item of the list.
-7. Press Ctrl+I (List item; Navigation menu, Next).
+2. Press Ctrl+I (List item; Navigation menu, Next).
     You hear: second item of the list.
-8. Press Ctrl+Q (Block quote; Navigation menu, Next).
+
+### Move to a block quote
+
+1. Press Ctrl+Q (Block quote; Navigation menu, Next).
     You hear: Block quote, A block quote, for Ctrl+Q.
-9. Press Ctrl+Q (Block quote; Navigation menu, Next).
-    You hear: No next block quote.
-10. Press Ctrl+T (Table; Navigation menu, Next).
+
+### Move to a table
+
+1. Press Ctrl+T (Table; Navigation menu, Next).
     You hear: Table with 3 rows and 2 columns.
-11. Press Ctrl+T (Table; Navigation menu, Next).
-    You hear: No next table.
 
 ### Find a word in the text
 
 1. Press Ctrl+Home, Ctrl+F.
 2. Type "update".
 3. Press Enter.
-4. Press F3 twice (Find next; Navigation menu).
-5. Press Shift+F3 (Find previous; Navigation menu).
 
 ### Move by page and by paragraph
 
@@ -76,8 +85,6 @@ command's in this version of axKit.
     You hear: Line 5 of 32.
 4. Press F11 (Word wrap; Options menu, Text).
     You hear: Word wrap, not checked.
-5. Press F11 (Word wrap; Options menu, Text).
-    You hear: Word wrap, checked.
 
 ### Read the keyboard shortcuts
 
@@ -120,9 +127,6 @@ Starts with: Open axPreview with the file README.md.
 1. Choose User guide in the Help menu.
 2. Press Ctrl+H (Heading; Navigation menu, Next).
     You hear: heading level 2.
-3. Press Ctrl+H (Heading; Navigation menu, Next).
-    You hear: heading level 2.
-4. Press Escape.
 
 ### Close the window
 

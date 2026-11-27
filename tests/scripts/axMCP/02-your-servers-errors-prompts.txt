@@ -74,6 +74,7 @@ keys ctrl+enter
 expect said ! Added probe
 expect focus probe, stdio, stopped
 expect state "notice":null
+# Check: The added server's details are under Your servers with the command line typed
 keys tab
 expect focus Source: Your servers
 keys down
@@ -103,6 +104,7 @@ type probe two
 keys enter
 expect said ! Renamed to probe two
 expect focus probe two, stdio, stopped
+# Goal: Undo the rename
 keys ctrl+z
 expect said ! Undone: renamed probe to probe two
 expect focus probe, stdio, stopped
@@ -147,6 +149,7 @@ keys enter
 expect said ! Removed 2 servers
 refuse list probe, stdio
 refuse list fake, stdio
+# Goal: Bring the removed servers back
 keys ctrl+z
 expect said ! Undone: removed 2 servers
 expect list fake, stdio, stopped
@@ -200,6 +203,7 @@ expect said ! Calling echo
 expect state "notice":"Result of echo","noticeText":"HELLO"
 keys escape
 expect state "notice":null
+# Check: Escape goes back from the arguments to the tool
 keys escape
 expect focus echo, tool
 
@@ -290,6 +294,7 @@ expect text user: Say hello to Ada
 keys escape
 expect state "notice":null
 expect focus who (required), text, Ada
+# Check: The window closes from a prompt's arguments
 close
 
 # Check: Servers another program wrote into the settings file are not used

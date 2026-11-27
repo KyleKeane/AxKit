@@ -48,6 +48,7 @@ expect said Session file: stopped, json.
 # The switch off: no record, said as off. On again: a new reader, which knows no file until a message is sent.
 menu Ground the conversation in Claude Code's session file
 expect said ! Grounding in Claude Code's session file off
+# Check: The event sources say the session file is off, and not found once it is on again
 menu Say the event sources
 expect said Session file: off.
 menu Ground the conversation in Claude Code's session file

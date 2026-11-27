@@ -24,6 +24,7 @@ expect focus {"name":"notes.md","role":"Text","value":" line."}
 # The setting: off, then Enter puts the line break in silently; on again for the scripts after.
 menu Say new line
 expect said ! Say new line, not checked
+# Check: While it is off a line break goes in silently, and it is turned on again
 keys end enter
 refuse said new line
 menu Say new line

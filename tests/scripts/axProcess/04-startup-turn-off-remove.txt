@@ -108,6 +108,7 @@ expect focus Check Morning, enabled, your Startup folder
 menu Turn off
 expect said ! Check Morning turned off: it no longer starts with Windows
 expect focus Check Morning, disabled, your Startup folder
+# Goal: Turn the shortcut on again from its details
 keys enter
 expect state "notice":"Check Morning"
 expect state Set in your Startup folder

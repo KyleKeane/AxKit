@@ -45,6 +45,7 @@ keys escape
 expect focus test, locked: Enter unlocks
 menu 5 minutes
 expect said ! axPass locks after 5 minutes without a key
+# Check: Never leaves the lock to Ctrl+L alone
 menu Never
 expect said ! axPass locks only on Ctrl+L
 close

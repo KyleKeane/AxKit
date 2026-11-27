@@ -41,7 +41,6 @@ Starts with: Open axPass with the file test.kdbx.
 
 1. Press Ctrl+Tab (Switch between the navigator and the detail pane).
 2. Press Ctrl+Shift+Tab (Switch between the navigator and the detail pane).
-3. Press F6 twice (Switch between the navigator and the detail pane).
 
 ### Change a user name
 
@@ -86,9 +85,12 @@ Starts with: Open axPass with the file test.kdbx.
     You hear: 2 selected.
 2. Press Delete.
     You hear: Moved 2 entries to the Recycle Bin; Ctrl+Z brings them back.
-3. Press Ctrl+Z (Undo; Actions menu).
+
+### Bring the entries back from the Recycle Bin
+
+1. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Moved 2 entries to the Recycle Bin.
-4. Press End.
+2. Press End.
 
 ### Set a generated password
 
@@ -111,9 +113,6 @@ Starts with: Open axPass with the file test.kdbx.
 5. Press Down.
 6. Press Enter.
     You hear: Moved Gmail personal to Work.
-7. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: Moved Gmail personal to Work.
-8. Press Left.
 
 ### Lock the database
 
@@ -164,9 +163,6 @@ Starts with: Open axPass with the file test.kdbx.
 2. Press Escape.
 3. Choose 5 minutes in the Options menu, Lock after.
     You hear: axPass locks after 5 minutes without a key.
-4. Choose Never in the Options menu, Lock after.
-    You hear: axPass locks only on Ctrl+L.
-5. Close the window.
 
 ### Open the last database again without naming it
 
@@ -276,8 +272,11 @@ Starts with: Open axPass with the file test.kdbx.
 1. Press Ctrl+F (Find in the list).
 2. Type "bank".
 3. Press Enter.
-4. Press F3 twice (Find next).
-5. Press Shift+F3 (Find previous).
+4. Press F3 (Find next).
+
+### Go back to the previous match
+
+1. Press Shift+F3 (Find previous).
 
 ### Show only the entries whose name contains a text
 
@@ -285,15 +284,11 @@ Starts with: Open axPass with the file test.kdbx.
 2. Type "bank".
 3. Press Enter.
     You hear: filter bank, 2 shown.
-4. Press Ctrl+Delete (Clear the filter).
-    You hear: Filter cleared.
 
 ### Put the entries in the order of their names
 
 1. Choose Name in the Options menu, Sort by.
     You hear: Sorted by name.
-2. Choose The list's own order in the Options menu, Sort by.
-    You hear: Sorted by the list's own order.
 
 ### Select entries as you move and deselect them all
 

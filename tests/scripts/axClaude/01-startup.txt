@@ -22,6 +22,7 @@ keys tab
 expect focus Conversation
 keys tab
 expect focus "role":"List"
+# Check: Shift+Tab moves between the conversation and the question the other way
 keys shift+tab
 expect focus Conversation
 keys shift+tab
@@ -35,6 +36,7 @@ keys ctrl+tab
 expect focus Conversation
 keys ctrl+tab
 expect focus Message to Claude
+# Check: F6 and Ctrl+Shift+Tab move between the field and the conversation too
 # Step 4: F6 twice, then Ctrl+Shift+Tab twice.
 keys f6
 expect focus Conversation
@@ -51,6 +53,7 @@ said
 keys alt+2
 expect said → Conversation (Text)
 expect quiet 1000
+# Check: Pressed again, each key says the name of the place the focus is in
 keys alt+2
 expect said ! Conversation
 refuse said ·
@@ -108,6 +111,7 @@ expect state \\fresh"
 keys f9
 expect said ! Claude: ready |
 expect focus Message to Claude
+# Check: The status is said from the conversation and from the Window menu too
 keys alt+2
 keys f9
 expect said ! Claude: ready |

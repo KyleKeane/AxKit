@@ -21,9 +21,11 @@ expect said ! 8294400
 type *2
 keys enter
 expect said ! 16588800
+# Check: A leading minus starts a new number
 type -3
 keys enter
 expect said ! -3
+# Goal: Use the last answer by its name
 type ans*2
 keys enter
 expect said ! -6
@@ -78,6 +80,7 @@ expect said Radians
 type sin(pi/2)
 keys enter
 expect said ! 1
+# Check: Degrees comes back from the same menu
 menu Degrees
 expect said Degrees
 
@@ -118,6 +121,7 @@ menu Variables
 expect state "notice":"Variables"
 expect state rate = 1.25
 keys escape
+# Goal: Clear the variables
 menu Clear variables
 keys enter
 expect said Variables cleared
@@ -157,6 +161,7 @@ type 1+1
 keys enter
 expect said ! 2
 menu Keep history between runs
+# Check: The next start has no history
 close
 wait 1500
 start calc

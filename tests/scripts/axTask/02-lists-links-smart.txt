@@ -35,6 +35,7 @@ keys tab
 keys enter
 expect said ! Notes: First line, and 1 more line
 run findstr /l /c:"First line\nSecond line" "tasks\Home\list.json"
+# Check: Read in full says both lines of the notes
 do Read in full
 expect said ! Notes: First line. Second line
 
@@ -80,15 +81,18 @@ keys left
 expect focus Shopping, list
 menu Remove Done from every item
 expect said ! Shopping is a plain list: Done is hidden, and kept in the items that have it
+# Check: Undo takes the switch back, and a list plain already says so
 do Undo
 expect said ! Undone: Shopping is a plain list
 menu Remove Done from every item
 expect said ! Shopping is a plain list
 menu Remove Done from every item
 expect said ! Shopping is a plain list already
+# Goal: Make a plain list a checklist again
 menu Add Done to every item
 expect said ! Shopping is a checklist: every item has Done
 run findstr /l /c:"\"title\": \"Done\"" tasks\Shopping\list.json
+# Check: A list that is a checklist already says so
 menu Add Done to every item
 expect said ! Shopping is a checklist already
 

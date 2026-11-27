@@ -48,11 +48,13 @@ command's in this version of axKit.
 
 1. Press Down.
 2. Press Tab.
-3. Press Escape, Right.
+
+### Read why a step of the run failed
+
+1. Press Escape, Right.
     You hear: 02-fails, 3 steps, 1. Start down.
-4. Press Down.
-5. Press Tab, Down.
-6. Press Escape.
+2. Press Down.
+3. Press Tab, Down.
 
 ### Read the report of a workflow's last run
 
@@ -67,7 +69,6 @@ command's in this version of axKit.
 3. Press Escape.
     You hear: Stopping after the current step.
     You hear: 03-waits stopped.
-4. Press Left.
 
 ### Run a workflow that runs commands
 
@@ -176,8 +177,11 @@ Starts with: Open axAutomate with the folder flows.
 1. Press Ctrl+F (Find in the list).
 2. Type "ap".
 3. Press Enter.
-4. Press F3 twice (Find next).
-5. Press Shift+F3 (Find previous).
+4. Press F3 (Find next).
+
+### Go back to the previous match
+
+1. Press Shift+F3 (Find previous).
 
 ### Show only the workflows whose name contains a text
 
@@ -185,12 +189,8 @@ Starts with: Open axAutomate with the folder flows.
 2. Type "ap".
 3. Press Enter.
     You hear: filter ap, 2 shown.
-4. Press Ctrl+Delete (Clear the filter).
-    You hear: Filter cleared.
 
 ### Put the workflows in the order of their names
 
 1. Choose Name in the Options menu, Sort by.
     You hear: Sorted by name.
-2. Choose The list's own order in the Options menu, Sort by.
-    You hear: Sorted by the list's own order.

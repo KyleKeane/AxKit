@@ -26,6 +26,7 @@ menu Check for updates (axKit
 expect state "notice":"Check for updates"
 keys escape
 expect focus a.md
+# Check: Version names the latest release after the check
 menu Version
 expect state Latest release on GitHub: axKit
 expect state Releases: https://github.com/KyleKeane/AxKit/releases

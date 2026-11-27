@@ -23,6 +23,7 @@ do Next heading level 3
 expect focus @ at sign, heading level 3, 1 smart list
 keys down
 expect focus @Sam, 1
+# Check: The next symbol is the next heading of level 3
 do Next heading level 3
 expect focus # number sign, heading level 3, 1 smart list
 keys down
@@ -36,6 +37,7 @@ keys down
 expect focus Fix #garden, in tasks / Home
 keys left
 expect said ! Lists, 1 list, #garden, 2
+# Check: The last symbol's tag follows, and past it the edge sounds
 do Next heading level 3
 expect focus $ dollar sign, heading level 3, 1 smart list
 keys down
@@ -53,6 +55,7 @@ keys down
 expect focus App one, smart list, 3
 keys down
 expect focus App two, smart list, 3
+# Check: The smart lists go on above, and past the first heading of level 3 the edge sounds
 do Previous heading level 1
 expect focus Smart lists, heading level 1, 4 smart lists
 keys down

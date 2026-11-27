@@ -85,6 +85,7 @@ expect focus "name":"Favorites"
 expect focus No favorites yet
 keys shift+tab
 expect focus coconut.txt
+# Check: F6 and Ctrl+Tab go to the Favorites list too, and Escape comes back
 keys f6
 expect focus "name":"Favorites"
 keys escape
@@ -177,6 +178,7 @@ keys backspace
 expect said (C:), drive
 expect state "title":"This PC, axFile"
 expect focus (C:), drive
+# Check: This PC tells a drive's free space, refuses a new folder and says Top at Backspace
 do Information
 expect said GB free of
 do New folder
@@ -276,6 +278,7 @@ type {temp}\nav\lev
 keys down
 expect said ! level-1-enter-me, folder, 1 of 1
 expect focus level-1-enter-me\\"
+# Check: Right goes into a completed folder, the first completion sounds the edge, and letters typed after complete again
 # Right at the end of a completed folder: its first entry.
 keys right
 expect said ! level-2-enter-me, folder, 1 of 2
@@ -325,6 +328,7 @@ keys down
 expect said level-2-enter-me, folder, 1 of 1
 keys enter
 expect said ! level-2-enter-me, 2 items, level-3-enter-me, folder
+# Check: Backspace goes back up from the completed path one folder a press
 keys backspace
 expect said ! level-1-enter-me, 2 items, level-2-enter-me, folder
 keys backspace
@@ -334,12 +338,15 @@ expect said ! nav, 13 items, level-1-enter-me, folder
 # 1.8 Manual: Ctrl+O is the Windows folder picker, the Open recent folder submenu is filled as it opens (not in the palette), Ctrl+N starts a second window the runner cannot reach. Favorites: Ctrl+D adds and removes, and the Favorites list follows (section 6 has the list's own steps).
 keys ctrl+d
 expect said ! Added to Favorites
+# Check: The added folder is in the Favorites list
 keys tab
 expect focus "name":"Favorites"
 expect focus nav (
 keys shift+tab
+# Goal: Remove the folder from the favorites
 keys ctrl+d
 expect said ! Removed from Favorites
+# Check: The Favorites list is empty again
 keys tab
 expect focus No favorites yet
 keys shift+tab
@@ -377,6 +384,7 @@ expect list Not shown: 1 hidden"
 menu Show hidden files and folders
 expect list hidden-file.txt
 expect list "count":3
+# Check: Both options turn off again
 menu Show hidden files and folders
 menu Show files and folders starting with a period
 expect list "count":2
@@ -407,6 +415,7 @@ expect focus "name":"Name contains"
 type find
 keys enter
 expect focus find-me-somewhere-down-the-list.txt
+# Goal: Go to the next and the previous match
 keys home
 do Find
 expect focus "name":"Name contains"
@@ -415,8 +424,10 @@ keys enter
 expect focus chapter-02-notes.txt
 do Find next
 expect focus chapter-03-notes.txt
+# Goal: Go back to the previous match
 do Find previous
 expect focus chapter-02-notes.txt
+# Check: A part that no name holds is said as not found
 do Find
 expect focus "name":"Name contains"
 type zzz
@@ -435,14 +446,17 @@ type chap
 keys enter
 expect said ! 9 items, filter chap, 5 shown, chapter-01-notes.txt
 expect list "count":5
+# Check: Under a filter the list moves and tells an entry's information as before
 keys down
 expect focus chapter-02-notes.txt
 do Information
 expect said ! chapter-02-notes.txt, 
+# Goal: Clear the filter
 keys ctrl+delete
 expect said ! Filter cleared
 expect list "count":9
 expect focus chapter-02-notes.txt
+# Check: A word no name contains is said, and the empty list says so
 do Filter
 expect focus "name":"Name contains"
 type zzz
@@ -461,6 +475,7 @@ keys home
 expect focus sort-newest-and-largest.bin
 keys down
 expect focus sort-middle-age-and-size.bin
+# Check: Size puts the largest first, and Name puts the list back in order
 menu Size, Options, Sort by
 expect said ! Sorted by size
 keys home
@@ -536,15 +551,18 @@ keys up
 expect focus "value":"select-01.txt, selected"
 keys down space
 expect said ! Selected, 2 selected
+# Check: The information counts the selected entries, and Space again deselects
 do Information
 # The information with the count: "select-02.txt, 8 bytes, modified <date time>, 2 selected".
 expect said , 2 selected
 keys space
 expect said ! Deselected, 1 selected
+# Goal: Select all the entries
 do Select all
 expect said ! 14 selected
 keys down
 expect focus "value":"select-03.txt, selected"
+# Check: Deselect all leaves nothing selected
 do Deselect all
 expect said ! None selected
 keys down
@@ -558,6 +576,7 @@ expect said ! None selected
 expect focus "value":"select-05.txt"
 keys up
 expect focus "value":"select-04.txt"
+# Check: Escape with nothing selected says nothing
 keys escape
 expect quiet 1000
 # Check: Under a filter Escape clears the selection and keeps the filter
@@ -599,9 +618,11 @@ expect quiet 500
 keys shift+up
 expect focus "value":"select-03.txt, selected"
 expect list "select-04.txt",
+# Check: The information counts the run
 do Information
 # "select-03.txt, 8 bytes, modified <date time>, 3 selected".
 expect said , 3 selected
+# Goal: Select every entry from here to the last
 # Down without Shift, then Shift+End: every entry from there to the last, the earlier three kept.
 keys down
 keys shift+end

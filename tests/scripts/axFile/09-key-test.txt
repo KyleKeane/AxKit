@@ -18,6 +18,7 @@ expect said ! Key test. Press any key to hear its name and what it does here. Pr
 # Bundle keys.
 keys f9
 expect said ! F9: Say the status
+# Check: Every kind of key is said with what it does, and a key with no command says so
 keys f4
 expect said ! F4: Send a report
 # Window keys of the command list, each as it acts in the folder list.

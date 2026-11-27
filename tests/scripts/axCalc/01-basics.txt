@@ -22,8 +22,10 @@ expect focus "name":"Expression","role":"Text","value":""
 type 2+2
 keys ctrl+delete
 expect said ! Cleared
+# Check: Ctrl+Delete on an empty field says Empty
 keys ctrl+delete
 expect said ! Empty
+# Check: Escape in the field sounds the edge and keeps the text
 # Escape in the field has nothing to go back to: the edge sound, never silence, and the field keeps its text.
 type 3
 keys escape
@@ -60,6 +62,7 @@ keys tab
 expect focus "name":"History"
 keys escape
 expect focus "name":"Expression","role":"Text","value":"/2"
+# Check: Delete in the history removes nothing
 keys tab
 keys delete
 expect focus "name":"History","role":"Text","value":"/2 = 4147200"
@@ -94,6 +97,7 @@ expect said A key alone moves and reads
 expect state "notice":"Command palette"
 keys escape
 expect state "notice":null
+# Check: Ctrl+Comma opens the same palette
 # Ctrl+Comma opens the same palette, a second key on trial.
 keys ctrl+comma
 expect state "notice":"Command palette"
@@ -108,11 +112,14 @@ keys home
 keys pagedown
 type 0
 expect focus "name":"Expression","role":"Text","value":"12+340"
+# Check: Page Down at the end of the field sounds the edge
 keys pagedown
 expect said ♪ Edge
+# Goal: Get to the start of the field
 keys pageup
 type 9
 expect focus "name":"Expression","role":"Text","value":"912+340"
+# Check: Page Up at the start of the field sounds the edge
 keys pageup pageup
 expect said ♪ Edge
 keys ctrl+delete

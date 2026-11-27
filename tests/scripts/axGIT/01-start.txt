@@ -40,6 +40,7 @@ keys tab
 expect said → Details (Text)
 keys shift+tab
 expect said → Changes, 2 files (List): Untracked new.txt
+# Check: F6 and Ctrl+Tab switch between the list and the details as Tab does
 keys f6
 expect said → Details (Text)
 keys ctrl+tab
@@ -81,6 +82,7 @@ expect said Test: second
 expect focus Log, 2 commits
 keys alt+3
 expect said ! Branches, 2. main, current, no upstream
+# Check: Alt+1 comes back on the row the list had
 keys alt+1
 expect said ! Changes, 2 files. Untracked new.txt
 expect focus Untracked new.txt

@@ -35,6 +35,7 @@ expect said Undone: Moved to the bottom: Apples, 3 of 3
 # Goal: Put new items at the top of a list
 menu New items at the top of this list
 expect said New items go to the top of Home
+# Check: A new item then goes to the top
 keys ctrl+n
 type Dates
 keys enter

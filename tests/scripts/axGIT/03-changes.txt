@@ -25,16 +25,19 @@ keys ctrl+shift+s
 expect said ! Staged a.txt
 expect focus Modified a.txt, staged
 expect state 1 staged
+# Check: Staging a file twice says it is already staged
 keys ctrl+shift+s
 expect said ! a.txt is already staged
 keys down
 expect said · Untracked new.txt
 keys up
 expect said · Modified a.txt, staged
+# Goal: Unstage a file
 keys ctrl+shift+u
 expect said ! Unstaged a.txt
 expect focus Modified a.txt, unstaged
 expect state 0 staged
+# Check: Unstaging a file twice says it is not staged
 keys ctrl+shift+u
 expect said ! a.txt is not staged
 
@@ -51,6 +54,7 @@ keys ctrl+shift+s
 expect said ! Staged 2 files
 expect list "Modified a.txt, staged, selected","Added new.txt, staged, selected"
 expect state 2 staged
+# Check: Staging again says nothing is left, Unstage acts on the same two, and Escape gives the selection up
 keys ctrl+shift+s
 expect said ! Nothing to stage among the 2 selected files
 keys ctrl+shift+u
@@ -131,6 +135,7 @@ expect said ! Committed
 expect state "notice":null
 expect focus Changes, 1 file
 expect list "Untracked new.txt"
+# Check: The log shows the new commit
 keys alt+2
 expect said ! Log, 2 commits.
 expect focus Test: Test commit

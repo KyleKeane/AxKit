@@ -67,6 +67,7 @@ expect said ! Bookmark 2 added
 expect state "notice":null
 expect focus "name":"Terminal"
 expect focus "value":"hello"}
+# Check: Copy this line runs from the palette as well
 wait 400
 do Command palette
 expect state "notice":"Command palette"

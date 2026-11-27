@@ -62,6 +62,7 @@ expect said · other
 keys enter
 expect said ! Switched to other
 expect state "status":["other
+# Check: The Changes list follows the branch, and the first branch switches back
 keys alt+1
 expect said ! Changes, no changes
 keys alt+3
@@ -85,6 +86,7 @@ expect said ! Switched to scratch-test
 expect state "notice":null
 # The refresh after the switch runs on; a view key meanwhile says "Working…" (AG-2.2), so the script waits for it.
 expect state "status":["scratch-test
+# Check: The new branch is the current one in Branches, and Enter on main switches back
 keys alt+3
 expect said ! Branches, 3.
 expect list scratch-test, current
@@ -105,10 +107,12 @@ expect state 1 behind
 keys ctrl+l
 expect said ! Pulled
 expect state up to date
+# Check: A second pull says it is already up to date
 keys ctrl+l
 expect said ! Already up to date
 # Each command ends with a refresh; "changed," is on the status bar only when no command runs.
 expect state changed,
+# Goal: Push a commit
 file repo\a.txt hello\nagain\nand again
 run git -C repo commit -q -am "to push"
 keys f5
@@ -118,6 +122,7 @@ keys ctrl+p
 expect said ! Pushed
 expect state up to date
 expect state changed,
+# Check: Push with nothing to send says Pushed
 keys ctrl+p
 expect said ! Pushed
 expect state changed,

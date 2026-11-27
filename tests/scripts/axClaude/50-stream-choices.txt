@@ -31,6 +31,7 @@ expect focus 5. Haiku 5.5
 keys enter
 expect said Sent: 5, Haiku 5.5
 expect state Claude: ready | manual mode on
+# Check: The conversation records the model chosen
 do Conversation
 expect text you: /model haiku
 expect text Set model to `Haiku 5.5` for this session only
@@ -53,6 +54,7 @@ expect focus 1. low
 keys enter
 expect said Sent: 1, low
 expect state Claude: ready | manual mode on
+# Check: The conversation records the effort chosen
 do Conversation
 expect text you: /effort low
 expect text Set effort level to low

@@ -14,6 +14,7 @@ expect said Show hidden files and folders
 use 2
 do Show files and folders starting with a period
 expect said Show files and folders starting with a period
+# Check: Each window saves its setting as it closes
 close
 use 1
 close

@@ -73,6 +73,7 @@ keys ctrl+tab
 expect focus "name":"Fields of Gmail"
 keys ctrl+shift+tab
 expect focus Gmail, sam
+# Check: F6 moves between the entries and the fields too
 keys f6
 expect focus "name":"Fields of Gmail"
 keys f6
@@ -141,6 +142,7 @@ keys delete
 expect said ! Moved 2 entries to the Recycle Bin; Ctrl+Z brings them back
 refuse list Bank
 refuse list Gmail personal
+# Goal: Bring the entries back from the Recycle Bin
 keys ctrl+z
 expect said ! Undone: Moved 2 entries to the Recycle Bin
 expect list Gmail personal
@@ -197,6 +199,7 @@ keys down
 expect focus Work
 keys enter
 expect said ! Moved Gmail personal to Work
+# Check: Ctrl+Z moves the entry back to its group
 keys ctrl+z
 expect said ! Undone: Moved Gmail personal to Work
 expect focus Gmail personal

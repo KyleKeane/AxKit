@@ -23,8 +23,10 @@ keys enter
 expect focus zzbeta, stdio, stopped
 do Find next
 expect focus zzalpha, stdio, stopped
+# Check: Find next goes round the end of the list
 do Find next
 expect focus zzproj, stdio, stopped
+# Goal: Go back to the previous match
 do Find previous
 expect focus zzalpha, stdio, stopped
 
@@ -38,6 +40,7 @@ expect said ! filter zz, 3 shown
 expect list "zzbeta, stdio, stopped","zzalpha, stdio, stopped"
 expect list zzproj, stdio, stopped
 refuse list probe-other
+# Check: Ctrl+Delete clears the filter
 keys ctrl+delete
 expect said ! Filter cleared
 expect list "zzbeta, stdio, stopped","probe-other, stdio, stopped","zzalpha, stdio, stopped"
@@ -47,6 +50,7 @@ expect list "zzbeta, stdio, stopped","probe-other, stdio, stopped","zzalpha, std
 menu Name, Options, Sort by
 expect said ! Sorted by name
 expect list "probe-other, stdio, stopped","zzalpha, stdio, stopped","zzbeta, stdio, stopped"
+# Check: The list's own order comes back from the same menu
 menu The list's own order, Options, Sort by
 expect said ! Sorted by the list's own order
 expect list "zzbeta, stdio, stopped","probe-other, stdio, stopped","zzalpha, stdio, stopped"

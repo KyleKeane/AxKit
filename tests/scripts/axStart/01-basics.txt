@@ -33,8 +33,10 @@ expect said , 1 of
 # Ctrl+End the last match (Down there is the edge), Ctrl+Home the first; Page Down and Page Up by a page.
 do Last match
 expect said of
+# Check: Down at the last match sounds the edge
 keys down
 expect said ♪ Edge
+# Goal: Jump to the first match, then by a page
 do First match
 expect said , 1 of
 keys pagedown

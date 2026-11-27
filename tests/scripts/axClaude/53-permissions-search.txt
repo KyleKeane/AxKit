@@ -38,6 +38,7 @@ expect focus "name":"Search the rules"
 expect focus "value":"Search: git"
 keys down
 expect focus 1. Bash(git status)
+# Check: F7 reads every rule found
 keys f7
 expect said 1. Bash(git status)
 # Check: A search that finds nothing says so
@@ -62,5 +63,6 @@ expect focus Message to Claude
 wait 1500
 keys ctrl+i
 expect state Claude: ready
+# Check: The conversation says the permissions screen was dismissed
 keys alt+2 ctrl+end
 expect text Permissions dialog dismissed

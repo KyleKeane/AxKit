@@ -97,6 +97,7 @@ expect focus "value":"alpha"
 keys pageup
 expect focus "value":"alpha"
 keys ctrl+a delete
+# Check: On five lines the page keys stop at the last and the first line, and the line keys stay on their line
 # Five short lines: Page Down from the first reaches the fourth, the fifth, the fifth again; Page Up the third, the
 # first, the first again. End and Home stay on the line; Ctrl+End after the fifth, Ctrl+Home before the first.
 type l1
@@ -152,6 +153,7 @@ keys ctrl+down
 expect focus "value":"two"
 keys ctrl+down
 expect focus "value":"four"
+# Check: The paragraph keys stay on the last paragraph and on the first, and go back the way they came
 keys ctrl+down
 expect focus "value":"four"
 keys ctrl+up
@@ -181,6 +183,7 @@ expect focus Keyboard shortcuts
 # letters, which announce, show the same sections in order:
 keys h
 expect said ! Anywhere, heading level 2
+# Check: The heading letters go through the shortcuts' sections in order and back
 keys h
 expect said ! Message field, heading level 2
 keys h

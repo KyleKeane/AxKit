@@ -11,6 +11,7 @@ expect focus long.md
 # 8.1: Ctrl+H to each heading, its line spoken; the one in the fenced code block skipped (8.2); at the last, "No next heading".
 do Heading, Navigation, Next
 expect said ! Second heading, level 2, heading level 2
+# Check: Each heading is reached in turn, the fenced line skipped, and past the last No next heading is said
 do Heading, Navigation, Next
 expect said ! Third heading, level 3, heading level 3
 do Heading, Navigation, Next
@@ -31,6 +32,7 @@ expect state Line 50, Column 1 \u00B7
 # Goal: Move back to the previous heading
 # Ctrl+Shift+H back, the fenced line skipped again; at the first, "No previous heading".
 do Heading, Navigation, Previous
+# Check: Going back skips the fenced line again, and before the first No previous heading is said
 do Heading, Navigation, Previous
 do Heading, Navigation, Previous
 do Heading, Navigation, Previous
@@ -54,6 +56,7 @@ expect quiet 1000
 keys ctrl+home
 do Heading level 2, Navigation, Next
 expect said ! Second heading, level 2, heading level 2
+# Check: A level skips the other levels both ways, and says when it has no heading left
 do Heading level 2, Navigation, Next
 expect said ! Lists, heading level 2
 do Heading level 2, Navigation, Next
@@ -78,6 +81,7 @@ expect commands "Heading level 6, Navigation, Previous, Ctrl\u002BShift\u002B6."
 keys ctrl+home
 menu Heading level 3, Navigation, Next
 expect said ! Third heading, level 3, heading level 3
+# Check: The other heading items of the menu do what their keys do
 menu Heading level 1, Navigation, Previous
 expect said ! Long Markdown file for navigation, heading level 1
 menu Heading, Navigation, Next
@@ -92,6 +96,7 @@ keys ctrl+home
 do Link, Navigation, Next
 expect said ! GitHub, link
 expect state Line 14, Column 8 \u00B7
+# Check: A bare and an angle address are links, an image and the fenced block are not, and past the last No next link is said
 do Link, Navigation, Next
 expect said ! https://www.example.com, link
 do Link, Navigation, Next
@@ -114,6 +119,7 @@ do List, Navigation, Next
 expect said ! List with 3 items, one
 do List item, Navigation, Next
 expect said ! two
+# Check: Nested items count, and a numbered list after a bulleted one is a second list
 do List item, Navigation, Next
 expect said ! two, nested
 do List item, Navigation, Next
@@ -134,12 +140,15 @@ expect said ! List with 3 items, one
 keys ctrl+home
 do Block quote, Navigation, Next
 expect said ! Block quote, A block quote, line one.
+# Check: Past the last block quote No next block quote is said
 do Block quote, Navigation, Next
 expect said ! No next block quote
+# Goal: Move to a table
 keys ctrl+home
 do Table, Navigation, Next
 expect said ! Table with 3 rows and 2 columns
 expect state Line 32, Column 1 \u00B7
+# Check: Past the last table No next table is said
 do Table, Navigation, Next
 expect said ! No next table
 # Check: The previous table is one on a line before the caret

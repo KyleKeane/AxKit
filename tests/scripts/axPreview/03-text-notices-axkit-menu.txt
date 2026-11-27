@@ -27,6 +27,7 @@ menu User guide
 expect state "notice":"User guide","noticeText":"# axPreview user guide
 keys ctrl+h
 expect said heading level 2
+# Check: Each Ctrl+H goes on to the next heading of the guide
 keys ctrl+h
 expect said heading level 2
 keys escape

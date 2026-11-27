@@ -14,6 +14,7 @@ type apple
 keys enter
 expect focus {"name":"find.md","role":"Text","value":"The first apple is on line 3."}
 expect state Line 3, Column 11 \u00B7
+# Goal: Go to the next and the previous match
 # F3 the next match; Shift+F3 back.
 do Find next
 expect focus The second apple is on line 5.

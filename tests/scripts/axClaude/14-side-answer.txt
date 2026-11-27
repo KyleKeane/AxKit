@@ -90,6 +90,7 @@ expect state Claude: ready
 keys alt+2 ctrl+home
 keys b
 expect said ! btw: what is two plus two? answer in one word
+# Check: The next record in turn is said, past the last there is none, and the previous key goes back
 keys b
 expect said ! btw: what is three plus three? answer in one word
 keys b

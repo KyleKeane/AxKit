@@ -48,6 +48,7 @@ expect said ! Refreshed: Processes,
 # 2.1 Sort by name, by processor, back to memory, each said.
 menu Name
 expect said ! Sorted by name
+# Check: Each order is said, and memory, the first, comes back
 menu Processor
 expect said ! Sorted by processor
 menu Memory

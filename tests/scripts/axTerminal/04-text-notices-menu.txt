@@ -33,6 +33,7 @@ expect text "# Output 3","","after"]
 do Clear transcript
 expect said Cleared
 expect text "lines":[]
+# Check: The next command's block is numbered 1 again
 do Command field
 type echo first
 keys enter
@@ -68,6 +69,7 @@ keys enter
 expect said ! echo first
 expect focus "name":"Terminal"
 expect focus "value":"echo first"}
+# Check: Find next goes to the next match
 do Find next
 expect said ! first
 # Check: Text that is not there is said as not found

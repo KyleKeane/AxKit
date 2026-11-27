@@ -33,6 +33,7 @@ refuse commands "Queue is empty, Context"
 # Information on the playing file, with its position; on the other, its place only.
 menu Information, Context
 expect said ! alpha.wav, 1 of 2, playing, 0:0
+# Check: A file that is not playing has its place only
 keys down
 expect focus beta.wav
 menu Information, Context

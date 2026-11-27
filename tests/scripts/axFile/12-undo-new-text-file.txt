@@ -23,10 +23,12 @@ run cmd /c if exist "u\New file.txt" (exit 1) else (exit 0)
 do New Markdown file
 expect focus "value":"New file.md"
 keys escape
+# Goal: Make a new JSON file
 do New JSON file
 expect focus "value":"New file.json"
 keys escape
 expect list "count":3
+# Check: Undo removes each new file, the newest first
 keys ctrl+z
 expect said ! Undone: New file.json removed
 keys ctrl+z

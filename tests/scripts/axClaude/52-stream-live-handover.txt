@@ -47,6 +47,7 @@ expect said Ready
 do Conversation
 expect text # Input 1 from previous session
 expect text you: Remember this word for later: kiwi. Reply with the single word noted.
+# Check: Claude knows the earlier part of the conversation
 do Message field
 type Which word did I ask you to remember? Reply with that word alone, in lower case.
 keys enter

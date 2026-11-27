@@ -24,6 +24,7 @@ expect said ! Sorted by name
 keys home
 type svc
 expect focus "value":"svchost,
+# Check: A letter after a pause goes to the next name starting with it
 wait 1100
 type s
 expect focus "value":"svchost,

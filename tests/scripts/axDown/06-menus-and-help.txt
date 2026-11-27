@@ -26,6 +26,7 @@ expect focus {"name":"Keyboard shortcuts","role":"Text","value":"## How the keys
 # h and Ctrl+H alike: the next section's heading; Shift+H back.
 keys h
 expect said ! In every window of axKit, heading level 2
+# Check: Ctrl+H moves by heading as H does, and Shift+H goes back
 keys ctrl+h
 expect said ! axDown, heading level 2
 keys shift+h
@@ -46,6 +47,7 @@ expect focus Keyboard shortcuts
 # 6.2 not checked here: the line with "wrap" selected; the focus answer's value is a wrapped row off in a wrapped text (see the report).
 keys f3
 expect focus Keyboard shortcuts
+# Check: Escape in the find field brings the shortcuts back
 keys ctrl+f
 expect focus Text to find
 keys escape
@@ -64,6 +66,7 @@ menu User guide
 expect state "notice":"User guide","noticeText":"# axDown user guide
 keys ctrl+h
 expect said heading level 2
+# Check: A table the guide does not have is said as none
 keys ctrl+t
 expect said ! No next table
 keys escape
@@ -86,10 +89,12 @@ menu Licence
 expect state "notice":"Licence"
 keys escape
 expect state "notice":null
+# Goal: Read the attribution
 menu Attribution
 expect state "notice":"Attribution"
 keys escape
 expect state "notice":null
+# Goal: Read the axKit guide
 menu axKit guide
 expect state "notice":"axKit guide"
 keys escape
@@ -109,6 +114,7 @@ type check for updates at start
 expect said Check for updates at start, Options, 1 of 1
 keys enter
 expect said Check for updates at start, checked
+# Check: The palette names the switch as checked and turns it off again
 do Command palette
 expect focus Search commands
 type check for updates at start
@@ -153,6 +159,7 @@ expect said Word wrap, not checked
 expect focus {"name":"a.md","role":"Text","value":"Some text here."}
 expect state Line 3, Column 2 \u00B7
 expect commands "Word wrap, Options, Text, F11","Say new line, Options, Text
+# Check: Word wrap is turned back on for the scripts after
 # Back on: the setting is the run's theme file, which the scripts after this one share (docs/axKit/theme.md TH-6).
 do Word wrap
 expect said ! Word wrap, checked

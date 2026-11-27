@@ -28,10 +28,13 @@ expect focus Terminal
 expect text "System: Shell started:
 expect text PSReadLine
 # That no prompt row ("PS C:\...>") is in the text cannot be checked: the runner has no "refuse text".
+# Check: The terminal's key pressed in the terminal says it is already there
 do Terminal
 expect said ! Terminal
+# Goal: Go back to the command field
 do Command field
 expect said → Command
+# Check: The command field's key pressed in the field says it is already there
 do Command field
 expect said ! Command
 

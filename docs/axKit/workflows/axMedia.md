@@ -36,15 +36,6 @@ command's in this version of axKit.
 1. Press Ctrl+F (Find in the list).
 2. Type "elt".
 3. Press Enter.
-4. Press Ctrl+F (Find in the list).
-5. Type "ta.w".
-6. Press Enter.
-7. Press F3 twice (Find next).
-8. Press Ctrl+F (Find in the list).
-9. Type "a.wav".
-10. Press Enter.
-11. Press Shift+F3 twice (Find previous).
-12. Press F3 (Find next).
 
 ### Play another file of the queue
 
@@ -67,14 +58,11 @@ command's in this version of axKit.
 
 1. Press Delete.
     You hear: Removed delta.wav.
-2. Press Up.
-3. Press Delete.
-    You hear: Removed beta.wav.
-    You hear: Playing gamma.wav.
-4. Choose Clear queue in the Session menu.
+
+### Clear the queue
+
+1. Choose Clear queue in the Session menu.
     You hear: Queue cleared.
-5. Press F7 (What is playing; Actions menu).
-    You hear: Nothing playing.
 
 ## Add files to the queue from another app
 
@@ -123,10 +111,6 @@ command's in this version of axKit.
     You hear: Paused at 0:0.
 3. Press Ctrl+Enter (Play, pause or resume; Actions menu).
     You hear: Playing.
-4. Press Ctrl+Enter (Play, pause or resume; Actions menu).
-    You hear: Paused at 0:0.
-5. Press Ctrl+Enter (Play, pause or resume; Actions menu).
-    You hear: Playing.
 
 ### Move forward, back and to a time
 
@@ -136,32 +120,23 @@ command's in this version of axKit.
     You hear: 0:1.
 3. Press Ctrl+Left (Back 15 seconds; Actions menu).
     You hear: 0:0.
-4. Press F12 (Go to time; Navigation menu).
-5. Type "0:30".
-6. Press Enter.
+
+### Go to a time in the file
+
+1. Press F12 (Go to time; Navigation menu).
+2. Type "0:30".
+3. Press Enter.
     You hear: 0:30.
-7. Press Ctrl+Enter (Play, pause or resume; Actions menu).
-    You hear: Playing.
 
 ### Change the playing speed
 
 1. Press Alt+Up (Faster; Actions menu).
     You hear: Speed 1.25.
-2. Press Alt+Up (Faster; Actions menu).
-    You hear: Speed 1.5.
-3. Choose Faster in the Actions menu (key: Alt+Up).
-    You hear: Speed 1.75.
-4. Press Alt+Down (Slower; Actions menu).
-    You hear: Speed 1.5.
-5. Choose Slower in the Actions menu (key: Alt+Down).
-    You hear: Speed 1.25.
-6. Press Alt+Up (Faster; Actions menu).
-    You hear: Speed 1.5.
-7. Choose Normal speed in the Actions menu.
+
+### Go back to the normal speed
+
+1. Choose Normal speed in the Actions menu.
     You hear: Speed 1.
-8. Choose Faster in the Actions menu (key: Alt+Up).
-9. Choose Faster in the Actions menu (key: Alt+Up).
-    You hear: Speed 1.5.
 
 ### Hear what is playing and go to the next or the previous file
 
@@ -195,17 +170,16 @@ Starts with: Open axMedia with the folder ch.
 
 1. Choose Larger text in the Options menu, Text (key: Ctrl+Plus).
     You hear: Text size.
-2. Choose Smaller text in the Options menu, Text (key: Ctrl+Minus).
-    You hear: Text size.
-3. Choose Windows text size in the Options menu, Text.
-    You hear: Windows text size.
 
 ### Read the keyboard shortcuts and the user guide
 
 1. Choose Keyboard shortcuts in the Help menu.
 2. Press Escape.
-3. Choose User guide in the Help menu.
-4. Press Escape.
+
+### Read the user guide
+
+1. Choose User guide in the Help menu.
+2. Press Escape.
 
 ## Use axMedia's Context menu
 
@@ -215,9 +189,6 @@ Starts with: Open axMedia. Close the window. Open axMedia with the folder ch.
 
 1. Choose the menu item Information, Context.
     You hear: alpha.wav, 1 of 2, playing, 0:0.
-2. Press Down.
-3. Choose the menu item Information, Context.
-    You hear: beta.wav, 2 of 2.
 
 ### Play the selected file from the Context menu
 
@@ -262,8 +233,6 @@ Starts with: Open axMedia with the folder ch.
 2. Press Space.
     You hear: Selected.
 3. Press Shift+Down.
-4. Press F8.
-    You hear: 2 selected.
 
 ### Take the selected files out of the queue
 
@@ -275,10 +244,6 @@ Starts with: Open axMedia with the folder ch.
 1. Press Ctrl+A (Select all; Actions menu).
     You hear: 2 selected.
 2. Press Escape.
-    You hear: None selected.
-3. Press Shift+Space.
-    You hear: Selected.
-4. Press Ctrl+Shift+A (Deselect all; Actions menu).
     You hear: None selected.
 
 ## Filter and sort axMedia's queue
@@ -304,9 +269,3 @@ Starts with: Open axMedia with the folder ch.
 2. Open axMedia again with the file two\alpha.wav, added to the list.
 3. Choose Name in the Options menu, Sort by.
     You hear: Sorted by name.
-4. Press Home.
-5. Press Enter.
-    You hear: Playing alpha.wav.
-6. Choose The order added in the Options menu, Sort by.
-    You hear: Sorted by the order added.
-7. Close the window.

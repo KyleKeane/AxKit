@@ -13,6 +13,7 @@ expect focus settings.json
 keys ctrl+k
 expect said ! model: opus
 expect state Line 2, Column 3 \u00B7
+# Check: Each press goes on to the next key with its value or its container
 keys ctrl+k
 expect said ! permissions, object with 2 keys
 keys ctrl+k
@@ -32,6 +33,7 @@ expect state Line 5, Column 3 \u00B7
 # Ctrl+Shift+K back the same way; at the top "No previous key".
 keys ctrl+shift+k
 expect said ! count: 3
+# Check: Each press goes back one key, to the first
 keys ctrl+shift+k
 expect said ! deny, empty array
 keys ctrl+shift+k
@@ -48,6 +50,7 @@ expect said ! No previous key
 # 2.2: Ctrl+J, the object of permissions, then none; Ctrl+Shift+J back to the whole file, the caret on its first brace.
 keys ctrl+home ctrl+j
 expect said ! permissions, object with 2 keys
+# Check: After the last object No next object is said, and the whole file is one step back
 keys ctrl+j
 expect said ! No next object
 keys ctrl+shift+j
@@ -61,10 +64,12 @@ keys ctrl+home ctrl+l
 expect said ! allow, array with 2 items
 keys ctrl+l
 expect said ! deny, empty array
+# Goal: Move from item to item of an array
 keys ctrl+home ctrl+i
 expect said ! Item 1 of 2, Bash
 keys ctrl+i
 expect said ! Item 2 of 2, Read
+# Check: After the last item No next item is said
 keys ctrl+i
 expect said ! No next item
 
@@ -93,6 +98,7 @@ expect commands "Error, Navigation, Previous, Ctrl\u002BShift\u002BE"
 keys ctrl+home
 menu Key, Navigation, Next
 expect said ! model: opus
+# Check: Each item of Next and Previous does what its key does
 menu Object, Navigation, Next
 expect said ! permissions, object with 2 keys
 menu Array, Navigation, Next

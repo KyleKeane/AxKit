@@ -13,6 +13,7 @@ expect said ! Paused at
 # channel has no key name for plus and minus); Windows text size.
 menu Larger text
 expect said ! Text size
+# Check: Smaller text and Windows text size change the size back
 menu Smaller text
 expect said ! Text size
 menu Windows text size
@@ -28,6 +29,7 @@ expect state faster or slower by a quarter, the voice
 keys escape
 expect focus alpha.wav (playing)
 expect state "notice":null
+# Goal: Read the user guide
 menu User guide
 expect state "notice":"User guide"
 keys escape

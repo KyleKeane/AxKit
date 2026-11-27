@@ -25,6 +25,7 @@ expect state newest
 expect state axKit
 keys escape
 expect state "notice":null
+# Check: About, Version names this version as the latest release
 menu Version
 expect state "noticeText":"axKit
 expect state (this version)
@@ -34,6 +35,7 @@ keys escape
 # Steps 3 to 6 install an older build and update it in place: they change the installed axKit, left manual. Options,
 # General, "Check for updates at start" off, then a start: nothing said, About, Version says "not checked yet":
 menu Check for updates at start
+# Check: The next start checks nothing
 close
 wait 2000
 start claude {temp}\upd -- --model haiku --effort low

@@ -49,7 +49,6 @@ Starts with: Open axTemplate.
 4. Type "Greeting".
 5. Press Ctrl+Enter (Put in, with that program's selection; Context menu).
     You hear: Saved.
-6. Press Escape.
 
 ## Delete several templates, and meet a file that is no template, in axTemplate's browser
 
@@ -64,7 +63,10 @@ Starts with: Open axTemplate.
 5. Press Delete.
 6. Press Enter.
     You hear: Archived 2 templates.
-7. Press Ctrl+Z (Undo; Actions menu).
+
+### Bring the archived templates back
+
+1. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: Archived 2 templates.
 
 ## Find a template in the launcher and use it
@@ -89,10 +91,6 @@ Starts with: Open axTemplate's launcher.
     You hear: Greeting, 2 of 2.
 3. Press Up.
     You hear: Sprint notes, 1 of 2.
-4. Press Ctrl+A (Select all; Actions menu).
-5. Type "zzz".
-6. Press Down.
-    You hear: No template matches zzz.
 
 ### Read a template before using it
 
@@ -106,11 +104,6 @@ Starts with: Open axTemplate's launcher.
 1. Press Ctrl+A (Select all; Actions menu).
 2. Type "thanks".
 3. Press Shift+Enter (Copy without putting in; Context menu).
-4. Open axTemplate's launcher again.
-5. Press Down.
-    You hear: Greeting, 2 of 3.
-6. Press Up.
-    You hear: Thanks, 1 of 3.
 
 ### Open the browser from the launcher
 

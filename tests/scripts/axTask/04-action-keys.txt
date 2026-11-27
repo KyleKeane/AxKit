@@ -34,6 +34,7 @@ expect said No action on Ctrl+3 in this list; its actions are written in its con
 do Action key 1
 expect said Done: Done: done
 expect focus Fix the tap, done
+# Check: Undo takes the action key's change back
 do Undo
 expect said Undone: Done: Done: done
 expect focus Fix the tap

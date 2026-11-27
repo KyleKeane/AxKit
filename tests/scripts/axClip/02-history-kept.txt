@@ -61,6 +61,7 @@ expect said axkitkeep one, 2 of 3
 # Goal: Keep the history between runs
 # 4.2 Keep history between runs on, Quit, a new start: the items are there.
 menu Keep history between runs
+# Check: After a quit and a new start the items are there
 menu Quit axClip
 expect closed
 start clip

@@ -79,22 +79,29 @@ keys ctrl+home ctrl+h
 expect said ! Install, heading level 2
 keys ctrl+shift+h
 expect said ! Readme for the preview tests, heading level 1
+# Goal: Move by the headings of one level
 keys ctrl+2 ctrl+2
 expect said ! Links, heading level 2
+# Goal: Move from link to link
 keys ctrl+home ctrl+k
 expect said ! axKit on GitHub, link
 keys ctrl+k
 expect said ! https://www.example.com, link
+# Goal: Move to a list and through its items
 keys ctrl+l
 expect said ! List with 3 items, first item of the list
 keys ctrl+i
 expect said ! second item of the list
+# Goal: Move to a block quote
 keys ctrl+q
 expect said ! Block quote, A block quote, for Ctrl+Q.
+# Check: After the last block quote No next block quote is said
 keys ctrl+q
 expect said ! No next block quote
+# Goal: Move to a table
 keys ctrl+t
 expect said ! Table with 3 rows and 2 columns
+# Check: After the last table No next table is said
 keys ctrl+t
 expect said ! No next table
 # Check: The Navigation menu lists the moves with their keys
@@ -111,6 +118,7 @@ type update
 keys enter
 expect focus README.md
 expect state Line 7, Column 54 \u00B7
+# Check: F3 and Shift+F3 go to the next and the previous match
 keys f3
 expect state Line 7, Column 84 \u00B7
 keys f3
@@ -140,6 +148,7 @@ expect state "status":["README.md","Line 5, Column 1 \u00B7 UTF-8 \u00B7 CRLF"]
 keys f11
 expect said ! Word wrap, not checked
 expect state Line 5, Column 1 \u00B7
+# Check: Word wrap comes back on with the caret kept
 keys f11
 expect said ! Word wrap, checked
 expect state Line 5, Column 1 \u00B7

@@ -38,6 +38,7 @@ expect said ♪ Heading
 # The setting: off, then no sound; on again for the scripts after.
 menu Sound on headings
 expect said ! Sound on headings, not checked
+# Check: While it is off a heading plays no sound, and it plays again once on
 keys down down down down
 expect focus ## Second heading
 refuse said ♪ Heading

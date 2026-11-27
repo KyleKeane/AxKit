@@ -66,6 +66,7 @@ do Command field
 keys ctrl+space
 expect said ! Edit mode
 refuse state navigation mode
+# Check: Typing types again in edit mode
 keys end
 type !
 expect focus {"name":"Command","role":"Text","value":"echo two --x!"}

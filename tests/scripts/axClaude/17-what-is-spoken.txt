@@ -33,6 +33,7 @@ menu Claude's own notices, such as "accept edits on"
 keys ctrl+p
 expect said plan mode on
 expect state | plan mode on
+# Check: Two more presses of the mode key bring the first mode back
 keys ctrl+p
 keys ctrl+p
 expect state | manual mode on
@@ -70,6 +71,7 @@ type pelican; walrus
 keys enter
 expect said 2 words keep a line silent
 expect focus Message to Claude
+# Check: A reply line with a silent word is shown and not spoken
 # A reply of two lines: the one holding a silent word is shown, not spoken; the other is spoken.
 type Reply with exactly two lines and nothing else: first line the words pelican feathers, second line the words green apples.
 # Under NVDA the typed message is itself among what was said: put aside before the reply is listened to.
@@ -87,6 +89,7 @@ menu Words that keep a reply line silent
 expect focus Words that keep a reply line silent
 keys ctrl+a delete enter
 expect said Every reply line is spoken
+# Check: Every reply line is spoken again
 # The notice gives the focus back to the conversation, where it was; Alt+1 to the message field.
 keys alt+1
 type Reply with exactly one line: the words pelican again.

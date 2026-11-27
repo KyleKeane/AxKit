@@ -30,10 +30,6 @@ command's in this version of axKit.
 
 1. Press Tab.
 2. Press Shift+Tab.
-3. Press F6 (Switch between the list and the Favorites list).
-4. Press Escape.
-5. Press Ctrl+Tab (Switch between the list and the Favorites list).
-6. Press Escape.
 
 ### Hear the status bar
 
@@ -71,12 +67,6 @@ command's in this version of axKit.
     You hear something with "C:\" in it.
 4. Press Backspace.
     You hear: (C:), drive.
-5. Press F8 (Information; Context menu).
-    You hear something with "GB free" in it.
-6. Press Ctrl+Shift+N (New folder; Actions menu).
-    You hear: Choose a drive first.
-7. Press Backspace.
-    You hear: Top.
 
 ### Open a drive
 
@@ -138,19 +128,6 @@ command's in this version of axKit.
 2. Type "nav\lev".
 3. Press Down.
     You hear: level-1-enter-me, folder, 1 of 1.
-4. Press Right.
-    You hear: level-2-enter-me, folder, 1 of 2.
-5. Press Down.
-    You hear: level-1-file.txt, 2 of 2.
-6. Press Up.
-    You hear: level-2-enter-me, folder, 1 of 2.
-7. Press Up.
-    You hear the sound Edge.
-    You hear: level-2-enter-me, folder, 1 of 2.
-8. Type "level-2-f".
-9. Press Down.
-    You hear: level-2-file.txt, 1 of 1.
-10. Press Escape.
 
 ### Open a completed path
 
@@ -160,21 +137,16 @@ command's in this version of axKit.
     You hear: level-2-enter-me, folder, 1 of 1.
 4. Press Enter.
     You hear: level-2-enter-me, 2 items, level-3-enter-me, folder.
-5. Press Backspace.
-    You hear: level-1-enter-me, 2 items, level-2-enter-me, folder.
-6. Press Backspace.
-    You hear: nav, 13 items, level-1-enter-me, folder.
 
 ### Add a folder to the favorites and remove it
 
 1. Press Ctrl+D.
     You hear: Added to Favorites.
-2. Press Tab.
-3. Press Shift+Tab.
-4. Press Ctrl+D.
+
+### Remove the folder from the favorites
+
+1. Press Ctrl+D.
     You hear: Removed from Favorites.
-5. Press Tab.
-6. Press Shift+Tab.
 
 ### Refresh the folder after a change from outside
 
@@ -194,8 +166,6 @@ command's in this version of axKit.
 6. Press Up.
 7. Choose Show files and folders starting with a period in the Options menu, General.
 8. Choose Show hidden files and folders in the Options menu, General.
-9. Choose Show hidden files and folders in the Options menu, General.
-10. Choose Show files and folders starting with a period in the Options menu, General.
 
 ### Find a file by part of its name
 
@@ -206,17 +176,18 @@ command's in this version of axKit.
 4. Press Ctrl+F (Find).
 5. Type "find".
 6. Press Enter.
-7. Press Home.
-8. Press Ctrl+F (Find).
-9. Type "notes".
-10. Press Enter.
-11. Press F3 (Find next).
-12. Press Shift+F3 (Find previous).
-13. Press Ctrl+F (Find).
-14. Type "zzz".
-15. Press Enter.
-    You hear: Not found.
-16. Press Escape.
+
+### Go to the next and the previous match
+
+1. Press Home.
+2. Press Ctrl+F (Find).
+3. Type "notes".
+4. Press Enter.
+5. Press F3 (Find next).
+
+### Go back to the previous match
+
+1. Press Shift+F3 (Find previous).
 
 ### Show only the entries whose names contain a word
 
@@ -225,18 +196,10 @@ command's in this version of axKit.
 3. Type "chap".
 4. Press Enter.
     You hear: 9 items, filter chap, 5 shown, chapter-01-notes.txt.
-5. Press Down.
-6. Press F8 (Information; Context menu).
-    You hear something with "chapter-02-notes.txt" in it.
-7. Press Ctrl+Delete (Clear the filter).
-    You hear: Filter cleared.
-8. Choose Filter in the Options menu.
-9. Type "zzz".
-10. Press Enter.
-    You hear: 9 items, filter zzz, 0 shown, No names contain zzz.
-11. Press Enter.
-    You hear: No names contain zzz.
-12. Press Ctrl+Delete (Clear the filter).
+
+### Clear the filter
+
+1. Press Ctrl+Delete (Clear the filter).
     You hear: Filter cleared.
 
 ### Sort the list by date, size or name
@@ -245,13 +208,6 @@ command's in this version of axKit.
     You hear: Sorted by date.
 2. Press Home.
 3. Press Down.
-4. Choose Size in the Options menu, Sort by.
-    You hear: Sorted by size.
-5. Press Home.
-6. Press Down.
-7. Choose Name in the Options menu, Sort by.
-    You hear: Sorted by name.
-8. Press Home.
 
 ### Select several entries
 
@@ -266,16 +222,12 @@ command's in this version of axKit.
 7. Press Up.
 8. Press Down, Space.
     You hear: Selected, 2 selected.
-9. Press F8 (Information; Context menu).
-    You hear something with "2 selected" in it.
-10. Press Space.
-    You hear: Deselected, 1 selected.
-11. Press Ctrl+A (Select all; Actions menu).
+
+### Select all the entries
+
+1. Press Ctrl+A (Select all; Actions menu).
     You hear: 14 selected.
-12. Press Down.
-13. Press Ctrl+Shift+A (Deselect all; Actions menu).
-    You hear: None selected.
-14. Press Down.
+2. Press Down.
 
 ### Clear the selection
 
@@ -284,19 +236,19 @@ command's in this version of axKit.
 2. Press Escape.
     You hear: None selected.
 3. Press Up.
-4. Press Escape.
 
 ### Select a run of entries in a row
 
 1. Press Shift+Down three times.
 2. Press Shift+Up.
+
+### Select every entry from here to the last
+
+1. Press Down.
+2. Press Shift+End.
 3. Press F8 (Information; Context menu).
-    You hear something with "3 selected" in it.
-4. Press Down.
-5. Press Shift+End.
-6. Press F8 (Information; Context menu).
     You hear something with "12 selected" in it.
-7. Press Ctrl+Shift+A (Deselect all; Actions menu).
+4. Press Ctrl+Shift+A (Deselect all; Actions menu).
     You hear: None selected.
 
 ## Open a folder in axFile from another app
@@ -344,10 +296,6 @@ Starts with: Open axFile with the folder ops.
 5. Type "bundle".
 6. Press Enter.
     You hear: Moved 2 items into bundle.
-7. Press Enter.
-    You hear: bundle, 2 items, New file.txt.
-8. Press Backspace.
-    You hear: ops, 9 items, bundle, folder.
 
 ### Rename a folder
 
@@ -356,14 +304,6 @@ Starts with: Open axFile with the folder ops.
 3. Press F2 (Rename; Context menu).
 4. Type "Notes".
 5. Press Enter.
-    You hear: Renamed to Notes.
-6. Press F2 (Rename; Context menu).
-7. Type "Notes2".
-8. Press Enter.
-    You hear: Renamed to Notes2.
-9. Press F2 (Rename; Context menu).
-10. Type "Notes".
-11. Press Enter.
     You hear: Renamed to Notes.
 
 ### Delete a folder to the Recycle Bin
@@ -381,11 +321,6 @@ Starts with: Open axFile with the folder ops.
 1. Press Down.
 2. Choose the menu item Compress to zip, Context.
     You hear: Compressed to docs.zip.
-3. Press Ctrl+F (Find).
-4. Type "docs".
-5. Press Enter.
-6. Choose the menu item Compress to zip, Context.
-    You hear: Compressed to docs - 2.zip.
 
 ### Compress selected files into one zip file
 
@@ -403,14 +338,6 @@ Starts with: Open axFile with the folder ops.
 3. Press Enter.
 4. Choose Extract here in the Context menu.
     You hear: Extracted to docs - 2.
-5. Press Enter.
-    You hear: docs - 2, 1 item, docs, folder.
-6. Press Enter.
-    You hear: docs, 2 items, notes.txt.
-7. Press Backspace.
-    You hear: docs - 2, 1 item, docs, folder.
-8. Press Backspace.
-    You hear: ops, 12 items, docs - 2, folder.
 
 ### Undo a rename
 
@@ -509,10 +436,6 @@ Starts with: Open axFile with the folder pal.
 
 1. Choose Larger text in the Options menu, Text (key: Ctrl+Plus).
     You hear: Text size.
-2. Choose Smaller text in the Options menu, Text (key: Ctrl+Minus).
-    You hear: Text size.
-3. Choose Windows text size in the Options menu, Text.
-    You hear: Windows text size.
 
 ### Read the user guide
 
@@ -549,10 +472,6 @@ Starts with: Open axFile with the folder act.
 
 1. Choose The Favorites list in the Navigation menu.
 2. Press Shift+Tab.
-3. Press F6 (Switch between the list and the Favorites list).
-4. Press Shift+Tab.
-5. Press Ctrl+Tab (Switch between the list and the Favorites list).
-6. Press Shift+Tab.
 
 ### Add a folder to the Favorites list
 
@@ -560,17 +479,6 @@ Starts with: Open axFile with the folder act.
     You hear: favorite-me, 1 item, readme.txt.
 2. Press Ctrl+D.
     You hear: Added to Favorites.
-3. Press Backspace.
-    You hear: act, 8 items, favorite-me, folder.
-4. Press Down.
-5. Press Enter.
-    You hear: favorite-me-too, 1 item, readme.txt.
-6. Press Ctrl+D.
-    You hear: Added to Favorites.
-7. Press Tab.
-8. Press Escape.
-9. Press Backspace.
-    You hear: act, 8 items, favorite-me-too, folder.
 
 ### Open a favorite from the Favorites list
 
@@ -578,9 +486,6 @@ Starts with: Open axFile with the folder act.
 2. Press Home.
 3. Press Enter.
     You hear: favorite-me, 1 item, readme.txt.
-4. Press Tab.
-5. Press F8.
-    You hear: favorite-me, 1 of 2.
 
 ### Remove a favorite from the Favorites list
 
@@ -619,8 +524,6 @@ Starts with: Open axFile with the folder act.
 2. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: renamed back to temp.
 3. Press Escape.
-4. Choose Recent operations in the Actions menu.
-5. Press Escape.
 
 ### Go to an operation done in another folder
 
@@ -637,8 +540,6 @@ Starts with: Open axFile with the folder act.
 8. Choose Recent operations in the Actions menu.
 9. Press Enter.
     You hear: subfolder-for-inner, 2 items, inner, folder.
-10. Press Backspace.
-    You hear: act, 9 items, subfolder-for-inner, folder.
 
 ### Undo the newest operation from the folder list
 
@@ -654,8 +555,6 @@ Starts with: Open axFile with the folder act.
     You hear: Selected.
 5. Choose Recent operations in the Actions menu.
 6. Press Escape.
-7. Press Space.
-    You hear: Deselected.
 
 ### Select every entry from the marked one to here
 
@@ -666,12 +565,6 @@ Starts with: Open axFile with the folder act.
 4. Press Down three times.
 5. Press Shift+Space.
     You hear: Selected, 4 selected.
-6. Press Ctrl+Shift+A (Deselect all; Actions menu).
-    You hear: None selected.
-7. Press Shift+Space.
-    You hear: Selected.
-8. Press Shift+Space.
-    You hear: Deselected.
 
 ## Move files to a folder you type
 
@@ -698,15 +591,13 @@ Starts with: Open axFile with the folder ops.
 
 Starts with: Open axFile with the folder orchard.
 
-1. Press F12 (Go to folder; Navigation menu).
-2. Type "cellar".
-3. Press Enter.
-    You hear: cellar, 1 item, barrel.txt.
-4. Press F1 (Command palette; Help menu).
-5. Type "orch".
+### Open a recent folder from the command palette
+
+1. Press F1 (Command palette; Help menu).
+2. Type "orch".
     You hear something with "2. orchard" in it.
     You hear: Session, Open recent folder.
-6. Press Enter.
+3. Press Enter.
     You hear: orchard, 2 items, inner, folder.
 
 ## Find out whether a key arrives and what it does, in a list
@@ -722,28 +613,6 @@ Starts with: Open axFile with the folder orchard.
 
 1. Press F9 (Say the status; Window menu).
     You hear: F9: Say the status.
-2. Press F4 (Send a report; Help menu).
-    You hear: F4: Send a report.
-3. Press F5 (Refresh; Session menu).
-    You hear: F5: Refresh.
-4. Press F12 (Go to folder; Navigation menu).
-    You hear: F12: Go to folder.
-5. Press Delete.
-    You hear: Delete: Delete.
-6. Press Enter.
-    You hear: Enter: Open.
-7. Press Backspace.
-    You hear: Backspace: Up one level.
-8. Press Ctrl+F (Find).
-    You hear: Ctrl+F: Find.
-9. Press Down.
-    You hear: Down: moves in the list.
-10. Press B.
-    You hear: B: finds the next item that starts with what you type.
-11. Press Shift+F9.
-    You hear: Shift+F9: no command of this window.
-12. Press Alt+F4.
-    You hear: Alt+F4: Exit.
 
 ### End the key test
 
@@ -762,9 +631,6 @@ Starts with: Open axFile with the folder one. Open axFile with the folder two.
 3. Go to the window that opened.
 4. Choose Show files and folders starting with a period in the Options menu, General.
     You hear: Show files and folders starting with a period.
-5. Close the window.
-6. Go back to the first window.
-7. Close the window.
 
 ## Take back a new text file
 
@@ -781,12 +647,11 @@ Starts with: Open axFile with the folder u.
 
 1. Choose New Markdown file in the Actions menu.
 2. Press Escape.
-3. Choose New JSON file in the Actions menu.
-4. Press Escape.
-5. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: New file.json removed.
-6. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: New file.md removed.
+
+### Make a new JSON file
+
+1. Choose New JSON file in the Actions menu.
+2. Press Escape.
 
 ## Hear why a folder a program runs in cannot be renamed
 

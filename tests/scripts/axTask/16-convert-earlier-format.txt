@@ -95,6 +95,7 @@ keys tab
 expect focus all 2 lists"
 keys enter
 expect said ! Converted 2 lists: 3 items. A copy is among the Archived lists
+# Check: Each list converted is there with its copy, and All tasks gathers them
 keys down
 expect focus Work, list, 1 item
 run findstr /l /c:"axkit-list 2" tasks\Work\list.json

@@ -37,6 +37,7 @@ expect said New session in myproject
 expect said Ready
 expect state , axTerminal, 
 expect state , Command Prompt","notice"
+# Check: The terminal names the new session, and a command runs in it
 do Terminal
 expect focus "name":"Terminal"
 expect text "System: New session: Command Prompt in
@@ -70,6 +71,7 @@ expect commands Command Prompt, Session, Switch shell, checked
 menu Windows PowerShell
 expect said Windows PowerShell
 expect said Ready
+# Check: The terminal says the shell was switched
 do Terminal
 expect text "System: Switched to Windows PowerShell in
 expect text "echo hello"
@@ -135,11 +137,13 @@ expect said ♪ Done
 do Restart shell
 expect said Restarting
 expect said Ready
+# Check: The transcript is kept across the restart
 do Terminal
 # The view's text answer holds the last 60 lines: the transcript kept is checked by the last command before.
 expect text "cd myproject"
 expect text "System: Restarting the shell","System: Shell started:
 do Command field
+# Goal: Restart the shell while a command runs
 type ping -n 30 127.0.0.1
 keys enter
 expect said Sent

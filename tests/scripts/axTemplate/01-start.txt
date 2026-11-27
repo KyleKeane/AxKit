@@ -157,5 +157,6 @@ keys ctrl+a
 type Greeting
 keys ctrl+enter
 expect said Saved
+# Check: Escape goes back to the renamed template in the list
 keys escape
 expect focus Greeting

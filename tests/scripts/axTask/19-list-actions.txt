@@ -57,6 +57,7 @@ keys enter
 expect said ! Running Find the kind
 expect said ! Find the kind: done. Checked:
 run findstr /l /c:"\"Checked\": \"20" "tasks\Home\Fix the tap.json"
+# Check: The next run is not asked about
 said
 do Action key Shift+4
 expect said ! Find the kind: done. Checked:
@@ -139,6 +140,7 @@ adopt
 expect state , axTerminal, 
 expect focus "name":"Command, put here by another program and not sent. axKit checked nothing of it: read it, and press Enter only if you want to run it","role":"Text","value":"findstr /c:x '
 expect focus Fix the tap.json'"
+# Check: Closing axTerminal goes back to the item
 close
 use 1
 expect focus Fix the tap

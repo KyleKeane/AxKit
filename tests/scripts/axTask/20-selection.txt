@@ -43,6 +43,7 @@ expect focus Fix the tap
 keys space
 expect said ! Selected, 2 selected
 expect state Home, 5 items, 2 selected
+# Check: Space again deselects the item, and once more selects it
 keys space
 expect said ! Deselected, 1 selected
 keys space
@@ -87,6 +88,7 @@ expect said ! Done: 2 tasks. 1 was done already.
 run findstr /l /c:"\"Done\": true" "tasks\Home\Buy paint.json"
 run findstr /l /c:"\"Done\": true" "tasks\Home\Call the plumber.json"
 expect focus Water plants, done, selected
+# Check: Again, with all of them done, they are marked not done, and each is one step for Undo
 keys ctrl+enter
 expect said ! Not done: 3 tasks
 run findstr /l /c:"\"Done\": false" "tasks\Home\Water plants.json"
@@ -116,6 +118,7 @@ expect said ! Later: 3 items moved to Later
 run cmd /c if exist "tasks\Later\Buy paint.json" (exit 0) else (exit 1)
 run cmd /c if exist "tasks\Later\Water plants.json" (exit 0) else (exit 1)
 expect state Home, 2 items
+# Check: With nothing selected Ctrl+Enter is the one task's again, and Undo brings the moved items back
 # Nothing is selected now: Ctrl+Enter is the one task's again.
 keys ctrl+enter
 expect said ! Done: Oil the hinge
@@ -136,6 +139,7 @@ keys delete
 expect said ! Archived 2 items
 expect focus Fix the tap
 run cmd /c if exist "tasks\Archive\Buy paint.json" (exit 0) else (exit 1)
+# Check: Undo brings the archived items back
 do Undo
 expect said ! Undone: Archived 2 items
 run cmd /c if exist "tasks\Home\Call the plumber.json" (exit 0) else (exit 1)
@@ -169,6 +173,7 @@ keys enter
 expect said ! 2 items moved to Later
 run cmd /c if exist "tasks\Later\Call the plumber.json" (exit 0) else (exit 1)
 expect state Home, 3 items
+# Check: Undo brings the items moved in the form back
 do Undo
 expect said ! Undone: 2 items moved to Later
 run cmd /c if exist "tasks\Home\Call the plumber.json" (exit 0) else (exit 1)
@@ -189,6 +194,7 @@ keys enter
 expect said ! Buy paint moved to Someday
 run cmd /c if exist "tasks\Someday\Buy paint.json" (exit 0) else (exit 1)
 run findstr /l /c:"Priority" tasks\Someday\list.json
+# Check: Undo brings the item back and takes the new list away
 do Undo
 expect said ! Undone: Buy paint moved to Someday
 run cmd /c if exist tasks\Someday (exit 1) else (exit 0)

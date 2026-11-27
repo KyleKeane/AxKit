@@ -30,12 +30,13 @@ Starts with: Open axStart.
 ### Jump to the first or last match, or by a page
 
 1. Press Ctrl+End (Last match).
-2. Press Down.
-    You hear the sound Edge.
-3. Press Ctrl+Home (First match).
+
+### Jump to the first match, then by a page
+
+1. Press Ctrl+Home (First match).
     You hear something with "1 of" in it.
-4. Press Page Down.
-5. Press Page Up.
+2. Press Page Down.
+3. Press Page Up.
     You hear something with "1 of" in it.
 
 ### Hear the selected match's kind and path
@@ -95,14 +96,6 @@ Starts with: Open axStart.
 
 1. Choose Say the first match while typing in the Options menu, General.
     You hear: Say the first match while typing, not checked.
-2. Press Ctrl+A.
-3. Type "calculato".
-4. Press F8 (Information; Context menu).
-    You hear: Calculator, Store app.
-5. Choose Say the first match while typing in the Options menu, General.
-    You hear: Say the first match while typing, checked.
-6. Press Backspace.
-    You hear something with "Calculator, 1" in it.
 
 ### Quit axStart
 
@@ -118,18 +111,6 @@ Starts with: Open axStart.
     You hear: Key test. Press any key to hear its name and what it does here. Press Escape to end.
 2. Press F9 (Say the status; Window menu).
     You hear: F9: Say the status.
-3. Press F5 (Refresh programs; Session menu).
-    You hear: F5: Refresh programs.
-4. Press F8 (Information; Context menu).
-    You hear: F8: Information.
-5. Press Down.
-    You hear: Down: Next match.
-6. Press Enter.
-    You hear: Enter: Start.
-7. Press A.
-    You hear: A: types the letter.
-8. Press Shift+F9.
-    You hear: Shift+F9: no command of this window.
 
 ## Get back to a file closed lately
 

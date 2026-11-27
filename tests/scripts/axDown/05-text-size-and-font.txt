@@ -12,6 +12,7 @@ expect focus size.md
 # 5.1: larger: "Text size n"; smaller back; the focus stays in the text.
 menu Larger text
 expect said ! Text size 10
+# Check: Smaller text takes the size back down and the focus stays in the text
 menu Smaller text
 expect said ! Text size 9
 menu Larger text

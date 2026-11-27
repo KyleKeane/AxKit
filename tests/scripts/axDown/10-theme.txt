@@ -22,6 +22,7 @@ expect said ! Theme reloaded
 # Goal: Turn the theme off and on
 menu Theme on
 expect said ! Theme on, not checked
+# Check: Theme on turns the theme back on
 menu Theme on
 expect said ! Theme on, checked
 # Check: Word wrap is kept in the theme file

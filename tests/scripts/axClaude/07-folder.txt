@@ -39,6 +39,7 @@ wait 2000
 start claude {temp}\proj -- --model haiku --continue
 expect said Ready
 refuse said Responding
+# Check: The replay has its blocks from the previous session
 keys alt+2 ctrl+home
 keys i
 expect said ! Input 1 from previous session heading level 1
@@ -77,6 +78,7 @@ keys enter
 expect said Restarting
 expect said Ready
 refuse said Responding
+# Check: Nothing new stands under the system line, and the next message is Input 2
 keys alt+2 ctrl+end
 text
 keys shift+i
@@ -112,6 +114,7 @@ keys tab
 expect focus "role":"RadioButton","value":"Custom"
 keys tab
 expect focus "name":"Custom arguments","role":"Text","value":"--model haiku --continue"
+# Check: Up and Down move through the ways to start, and Tab comes back to the arguments
 keys shift+tab
 expect focus "role":"RadioButton","value":"Custom"
 keys up
@@ -127,6 +130,7 @@ expect focus "role":"RadioButton","value":"Custom"
 keys tab
 expect focus Custom arguments
 keys ctrl+a delete
+# Goal: Type the arguments and start the session
 # The arguments, on two lines (Shift+Enter), the model first, as every run keeps Claude on Haiku; Enter starts:
 # "New session in proj", the conversation emptied, the system line first, "starting" until "Ready", and the replay of
 # the last conversation under it with its "from previous session" blocks.
@@ -138,6 +142,7 @@ keys enter
 expect said New session in proj
 expect state "notice":null
 expect said Ready
+# Check: The new session's first line names the arguments, and the replay follows
 keys alt+2 ctrl+home
 expect focus "value":"System: New session in
 expect focus with --model haiku --continue --name demo

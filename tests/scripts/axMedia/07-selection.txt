@@ -30,6 +30,7 @@ expect said ! Selected
 expect focus beta.wav, selected
 keys shift+down
 expect focus delta.wav, selected
+# Check: The selected files are counted
 keys f8
 expect said 2 selected
 expect state , 2 selected","
@@ -56,6 +57,7 @@ keys ctrl+a
 expect said ! 2 selected
 keys escape
 expect said ! None selected
+# Check: Shift+Space selects and Ctrl+Shift+A gives the selection up too
 keys shift+space
 expect said ! Selected
 keys ctrl+shift+a

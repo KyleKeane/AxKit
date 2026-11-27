@@ -27,6 +27,7 @@ expect list 3. Blue
 expect list 4. Other
 # A question the user did not cause holds its answering keys for a moment.
 wait 1500
+# Check: Every key typed in the list reads the question again
 # Every key typed in the list reads the question again: a letter, a digit, an answer's own number, as F7 does, and
 # the focus stays; nothing jumps to an answer by typing (D33, the maintainer's word of 2026-11-26: "every key reads
 # the question").
@@ -36,6 +37,7 @@ expect focus 1. Red
 type 3
 expect said ! Question 1 of 2: What is your favourite colour? 1. Red
 expect focus 1. Red
+# Goal: Choose Other and type your own answer
 keys end
 expect focus 4. Other
 keys enter
@@ -62,6 +64,7 @@ keys space
 keys enter
 expect said Sent: 1, Apple, 3, Cherry
 expect said Done. claude: thanks
+# Check: Claude Code gets the answers as one, and they are on record in the conversation
 # Claude Code got the answers as one: the stand-in's log holds that the window allowed the call.
 run findstr /c:"the window's answer was allow" st\stream-standin.log
 do Conversation

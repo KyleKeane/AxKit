@@ -25,6 +25,7 @@ expect said ! Key test. Press any key to hear its name and what it does here. Pr
 # Bundle keys and window keys, by their commands' names.
 keys f9
 expect said ! F9: Say the status
+# Check: Every kind of key is named by its command, a letter and Enter too, and a key without a command says so
 keys f4
 expect said ! F4: Send a report
 keys f8
@@ -62,6 +63,7 @@ menu Test a key
 expect said ! Key test. Press any key
 keys h
 expect said ! H: moves to the next heading
+# Check: The conversation's other quick keys are named, a key without a command says so, and the keys act after the test
 keys shift+h
 expect said ! Shift+H: moves to the previous heading
 keys ctrl+alt+h

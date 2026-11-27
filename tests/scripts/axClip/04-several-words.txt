@@ -26,6 +26,7 @@ expect said axkitword red pear, 1 of 3
 type  red
 do First match
 expect said axkitword red pear, 1 of 2
+# Check: The list keeps only the items that hold every word typed
 keys down
 expect said axkitword red apple, 2 of 2
 # A third word leaves one.

@@ -25,10 +25,6 @@ Starts with: Open axProcess.
 
 1. Choose Name in the Options menu, Sort by.
     You hear: Sorted by name.
-2. Choose Processor in the Options menu, Sort by.
-    You hear: Sorted by processor.
-3. Choose Memory in the Options menu, Sort by.
-    You hear: Sorted by memory.
 
 ### Find a process and read its details
 
@@ -83,11 +79,6 @@ Starts with: Open axProcess.
 4. Press Down.
 5. Press Right.
     You hear something with "Services" in it.
-6. Press Backspace.
-    You hear something with "This computer, 3 lists, Services" in it.
-7. Press End.
-8. Press Enter.
-    You hear something with "Startup" in it.
 
 ### Find a service by typing its name
 
@@ -104,7 +95,6 @@ Starts with: Open axProcess.
     You hear: Sorted by name.
 2. Press Home.
 3. Type "svc".
-4. Type "s".
 
 ### Read a startup program's details
 
@@ -143,8 +133,11 @@ Starts with: Open axProcess.
 1. Press Down.
 2. Choose the menu item Turn off.
     You hear: Check Morning turned off: it no longer starts with Windows.
-3. Press Enter.
-4. Press Alt+N.
+
+### Turn the shortcut on again from its details
+
+1. Press Enter.
+2. Press Alt+N.
     You hear: Check Morning turned on: it starts with Windows again.
 
 ### Remove a shortcut from the Startup folder
@@ -162,8 +155,6 @@ Starts with: Open axProcess.
 1. Press Ctrl+F (Find in the list).
 2. Type "axkitscript05".
 3. Press Enter.
-4. Press F3 three times (Find next).
-5. Press Shift+F3 three times (Find previous).
 
 ### End a process with the processes it started
 

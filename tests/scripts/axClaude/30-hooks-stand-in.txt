@@ -99,6 +99,7 @@ keys enter
 expect said Restarting
 expect said Ready
 wait 1500
+# Check: The hooks are off after the restart, and on again they are received
 menu Say the event sources
 expect said Hooks: off.
 # On again, and Claude started again: a new pipe and a new secret for this start, and its start event arrives.

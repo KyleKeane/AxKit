@@ -17,6 +17,7 @@ expect said ! 255
 # 3.1 F8 in the field: the last answer in other bases.
 keys f8
 expect said ! 255, hex FF, binary 1111 1111, octal 377
+# Check: Each answer is said alone as it comes
 type 10+1
 keys enter
 expect said ! 11
@@ -70,8 +71,10 @@ expect state "notice":null
 expect focus "value":"10*3 = 30"
 keys f3
 expect focus "value":"10+1 = 11"
+# Check: Find next goes round the end of the history
 keys f3
 expect focus "value":"10*3 = 30"
+# Goal: Go back to the previous match
 keys shift+f3
 expect focus "value":"10+1 = 11"
 # Check: A text no line holds is said as not found

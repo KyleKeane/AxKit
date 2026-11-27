@@ -46,6 +46,7 @@ menu Claude-drafted feedback: quiet
 expect said ! Claude-drafted feedback: quiet, counted without a card, applies at once
 expect commands Claude-drafted feedback: quiet, counted without a card, Options, Claude Code settings, checked
 run findstr /c:"feedbackDrafts\": \"quiet\"" home\.claude\settings.json
+# Check: The default removes the setting again
 menu Claude-drafted feedback: a card for each
 expect said ! Claude-drafted feedback: a card for each, Claude Code
 run findstr feedbackDrafts home\.claude\settings.json & if errorlevel 1 (exit 0) else (exit 1)

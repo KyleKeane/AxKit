@@ -14,6 +14,7 @@ wait 500
 # plus or minus), so the menu commands are run; the keys are the same items' shortcuts.
 menu Larger text
 expect said ! Text size
+# Check: Smaller text and Windows text size set the size back
 menu Smaller text
 expect said ! Text size
 menu Windows text size

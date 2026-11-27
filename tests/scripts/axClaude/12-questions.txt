@@ -46,6 +46,7 @@ expect focus Conversation
 keys ctrl+tab
 expect focus "role":"List"
 expect focus flower
+# Check: Tab and Shift+Tab move between the question and the conversation too
 keys tab
 expect focus Conversation
 keys shift+tab
@@ -59,6 +60,7 @@ said
 keys f7
 expect said 3. Daisy
 expect focus "role":"List","value":"3.
+# Check: From the conversation the question is said the same, the caret staying
 keys ctrl+tab
 expect focus Conversation
 keys f7
@@ -125,6 +127,7 @@ wait 1500
 keys home enter
 expect said Sent: 1
 expect said Done
+# Check: Questions interrupt again when the option is on again
 menu Go to them at once, interrupting speech
 wait 2000
 # Step 4a, a question arriving while the Session menu is open, needs a real menu opened with Alt (the foreground):
@@ -190,8 +193,10 @@ type tulips in the garden by the old stone wall where the morning light falls fi
 keys enter
 expect said Sent: tulips in the garden by the old stone wall where the morning light falls first and the bees arrive early
 expect said Done
+# Check: The whole of a long answer reaches Claude
 keys alt+2 ctrl+end
 expect text bees arrive early
+# Check: Escape in the field for your own words goes back to the question's list
 keys alt+1
 wait 2000
 type Use the AskUserQuestion tool to ask me which flower I enjoy thinking about, with three options.
@@ -213,6 +218,7 @@ wait 2000
 keys alt+2 ctrl+home
 keys q
 expect said ! Question: Permission Required: Accessing workspace
+# Check: The next question in turn is said, past the last there is none, and the previous key goes back
 keys q
 expect said ! Question:
 keys ctrl+end
@@ -244,6 +250,7 @@ wait 1500
 keys ctrl+i
 expect state Claude: ready
 expect focus Message to Claude
+# Check: Three more presses of the mode key bring auto mode back
 keys ctrl+p ctrl+p ctrl+p
 expect said auto mode on
 wait 2000
@@ -356,6 +363,7 @@ keys home space down down space enter
 expect said Sent: 1, Apple, 3, Cherry
 refuse said Review
 expect said Done
+# Check: Claude's reply names every answer, and the message field is back
 keys alt+2 ctrl+end
 expect text green
 expect text apple
@@ -381,6 +389,7 @@ expect focus Review
 wait 1500
 keys home enter
 expect said Done
+# Check: The review goes off again from the same menu
 menu Review answers before they go to Claude
 wait 2000
 # Check: The records of a set of questions read in order

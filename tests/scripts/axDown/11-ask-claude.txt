@@ -42,6 +42,7 @@ expect focus notes.md
 # AH-1.1: the switch, in the axKit menu, Claude: off, then on again at once since the agreement is recorded.
 menu Use Claude in axKit
 expect said ! Claude off
+# Check: Claude comes on again at once once the agreement is recorded
 menu Use Claude in axKit
 expect said ! Claude on
 

@@ -43,6 +43,7 @@ run findstr /l /c:"\"Done\": true" "tasks\Home\Fix the tap.json"
 run findstr /l /c:"\"Done\": false" "tasks\Home\Buy paint.json"
 # The item not selected is untouched, its file as it was written.
 run findstr /l /c:"\"Room\":\"Hall\"" "tasks\Home\Oil the hinge.json"
+# Check: Undo takes the fields set back from both items
 do Undo
 expect said ! Undone: Fields set: 2 items
 run findstr /l /c:"\"Room\":\"Kitchen\"" "tasks\Home\Fix the tap.json"
@@ -67,6 +68,7 @@ keys ctrl+enter
 expect said ! Fields cleared: 2 items
 run findstr /l /c:"\"Room\": \"\"" "tasks\Home\Buy paint.json"
 run findstr /l /c:"\"Priority\": \"Low\"" "tasks\Home\Buy paint.json"
+# Check: Undo brings the emptied fields back
 do Undo
 expect said ! Undone: Fields cleared: 2 items
 run findstr /l /c:"\"Room\":\"Shed\"" "tasks\Home\Buy paint.json"

@@ -155,8 +155,11 @@ Starts with: Open axDown with the file find.md.
 1. Press Ctrl+F (Find; Navigation menu).
 2. Type "apple".
 3. Press Enter.
-4. Press F3 (Find next; Navigation menu).
-5. Press Shift+F3 (Find previous; Navigation menu).
+
+### Go to the next and the previous match
+
+1. Press F3 (Find next; Navigation menu).
+2. Press Shift+F3 (Find previous; Navigation menu).
 
 ### Go to a line by its number
 
@@ -173,11 +176,6 @@ Starts with: Open axDown with the file size.md.
 
 1. Choose Larger text in the Options menu, Text (key: Ctrl+Plus).
     You hear: Text size 10.
-2. Choose Smaller text in the Options menu, Text (key: Ctrl+Minus).
-    You hear: Text size 9.
-3. Choose Larger text in the Options menu, Text (key: Ctrl+Plus).
-    You hear: Text size 10.
-4. Close the window.
 
 ## Find a command in the menus, the palette and the help
 
@@ -192,12 +190,6 @@ Starts with: Open axDown with the file a.md.
 
 1. Press H.
     You hear: In every window of axKit, heading level 2.
-2. Press Ctrl+H (Heading; Navigation menu, Next).
-    You hear: axDown, heading level 2.
-3. Press Shift+H.
-    You hear: In every window of axKit, heading level 2.
-4. Press H twice.
-    You hear: The text, heading level 2.
 
 ### Find a word in the keyboard shortcuts
 
@@ -205,8 +197,6 @@ Starts with: Open axDown with the file a.md.
 2. Type "wrap".
 3. Press Enter.
 4. Press F3 (Find next; Navigation menu).
-5. Press Ctrl+F (Find; Navigation menu).
-6. Press Escape.
 
 ### Close the keyboard shortcuts and go back to the text
 
@@ -217,9 +207,6 @@ Starts with: Open axDown with the file a.md.
 1. Choose User guide in the Help menu.
 2. Press Ctrl+H (Heading; Navigation menu, Next).
     You hear: heading level 2.
-3. Press Ctrl+T (Table; Navigation menu, Next).
-    You hear: No next table.
-4. Press Escape.
 
 ### Hear the version of axKit
 
@@ -230,10 +217,16 @@ Starts with: Open axDown with the file a.md.
 
 1. Choose Licence in the Help menu, About.
 2. Press Escape.
-3. Choose Attribution in the Help menu, About.
-4. Press Escape.
-5. Choose axKit guide in the Help menu, About.
-6. Press Escape.
+
+### Read the attribution
+
+1. Choose Attribution in the Help menu, About.
+2. Press Escape.
+
+### Read the axKit guide
+
+1. Choose axKit guide in the Help menu, About.
+2. Press Escape.
 
 ### Turn the update check at start on or off
 
@@ -242,11 +235,6 @@ Starts with: Open axDown with the file a.md.
     You hear: Check for updates at start, Options, 1 of 1.
 3. Press Enter.
     You hear: Check for updates at start, checked.
-4. Press F1 (Command palette; Help menu).
-5. Type "check for updates at start".
-    You hear: Check for updates at start, Options, checked, 1 of 1.
-6. Press Enter.
-    You hear: Check for updates at start, not checked.
 
 ### Move through the commands of the palette
 
@@ -266,8 +254,6 @@ Starts with: Open axDown with the file a.md.
     You hear: Word wrap, Options, Text, F11, checked, 1 of 1.
 4. Press Enter.
     You hear: Word wrap, not checked.
-5. Press F11 (Word wrap; Options menu, Text).
-    You hear: Word wrap, checked.
 
 ## Check for updates and remove axKit
 
@@ -282,8 +268,6 @@ Starts with: Open axDown with the file a.md.
 
 1. Choose the menu item Check for updates.
 2. Press Escape.
-3. Choose Version in the Help menu, About.
-4. Press Escape.
 
 ## Move through a Markdown file by headings, lists and links
 
@@ -293,73 +277,28 @@ Starts with: Open axDown with the file long.md.
 
 1. Press Ctrl+H (Heading; Navigation menu, Next).
     You hear: Second heading, level 2, heading level 2.
-2. Press Ctrl+H (Heading; Navigation menu, Next).
-    You hear: Third heading, level 3, heading level 3.
-3. Press Ctrl+H (Heading; Navigation menu, Next).
-    You hear: Lists, heading level 2.
-4. Press Ctrl+H (Heading; Navigation menu, Next).
-    You hear: Quote and table, heading level 2.
-5. Press Ctrl+H (Heading; Navigation menu, Next).
-    You hear: Code, heading level 2.
-6. Press Ctrl+H (Heading; Navigation menu, Next).
-    You hear: Fourth level heading, heading level 4.
-7. Press Ctrl+H (Heading; Navigation menu, Next).
-    You hear: Fifth level heading, heading level 5.
-8. Press Ctrl+H (Heading; Navigation menu, Next).
-    You hear: Sixth level heading, heading level 6.
-9. Press Ctrl+H (Heading; Navigation menu, Next).
-    You hear: No next heading.
 
 ### Move back to the previous heading
 
-1. Press Ctrl+Shift+H four times (Heading; Navigation menu, Previous).
-    You hear: Code, heading level 2.
-2. Press Ctrl+Shift+H four times (Heading; Navigation menu, Previous).
-    You hear: Long Markdown file for navigation, heading level 1.
-3. Press Ctrl+Shift+H (Heading; Navigation menu, Previous).
-    You hear: No previous heading.
+1. Press Ctrl+Shift+H (Heading; Navigation menu, Previous).
 
 ### Move to a heading of one level
 
 1. Press Ctrl+Home.
 2. Press Ctrl+2 (Heading level 2; Navigation menu, Next).
     You hear: Second heading, level 2, heading level 2.
-3. Press Ctrl+2 (Heading level 2; Navigation menu, Next).
-    You hear: Lists, heading level 2.
-4. Press Ctrl+2 twice (Heading level 2; Navigation menu, Next).
-    You hear: Code, heading level 2.
-5. Press Ctrl+2 (Heading level 2; Navigation menu, Next).
-    You hear: No next heading level 2.
-6. Press Ctrl+Shift+2 (Heading level 2; Navigation menu, Previous).
-    You hear: Quote and table, heading level 2.
-7. Press Ctrl+4 (Heading level 4; Navigation menu, Next).
-    You hear: Fourth level heading, heading level 4.
-8. Press Ctrl+Shift+4 (Heading level 4; Navigation menu, Previous).
-    You hear: No previous heading level 4.
 
 ### Move by heading from the menu
 
 1. Press Ctrl+Home.
 2. Choose Heading level 3 in the Navigation menu, Next (key: Ctrl+3).
     You hear: Third heading, level 3, heading level 3.
-3. Choose Heading level 1 in the Navigation menu, Previous (key: Ctrl+Shift+1).
-    You hear: Long Markdown file for navigation, heading level 1.
-4. Choose Heading in the Navigation menu, Next (key: Ctrl+H).
-    You hear: Second heading, level 2, heading level 2.
-5. Choose Heading in the Navigation menu, Previous (key: Ctrl+Shift+H).
-    You hear: Long Markdown file for navigation, heading level 1.
 
 ### Move to the next link
 
 1. Press Ctrl+Home.
 2. Press Ctrl+K (Link; Navigation menu, Next).
     You hear: GitHub, link.
-3. Press Ctrl+K (Link; Navigation menu, Next).
-    You hear: https://www.example.com, link.
-4. Press Ctrl+K (Link; Navigation menu, Next).
-    You hear: https://example.org, link.
-5. Press Ctrl+K (Link; Navigation menu, Next).
-    You hear: No next link.
 
 ### Move back to the previous link
 
@@ -376,32 +315,18 @@ Starts with: Open axDown with the file long.md.
     You hear: List with 3 items, one.
 3. Press Ctrl+I (List item; Navigation menu, Next).
     You hear: two.
-4. Press Ctrl+I (List item; Navigation menu, Next).
-    You hear: two, nested.
-5. Press Ctrl+I (List item; Navigation menu, Next).
-    You hear: three.
-6. Press Ctrl+I (List item; Navigation menu, Next).
-    You hear: numbered one.
-7. Press Ctrl+Home.
-8. Press Ctrl+L twice (List; Navigation menu, Next).
-    You hear: List with 2 items, numbered one.
-9. Press Ctrl+L (List; Navigation menu, Next).
-    You hear: No next list.
-10. Press Ctrl+Shift+L (List; Navigation menu, Previous).
-    You hear: List with 3 items, one.
 
 ### Move to a block quote or a table
 
 1. Press Ctrl+Home.
 2. Press Ctrl+Q (Block quote; Navigation menu, Next).
     You hear: Block quote, A block quote, line one.
-3. Press Ctrl+Q (Block quote; Navigation menu, Next).
-    You hear: No next block quote.
-4. Press Ctrl+Home.
-5. Press Ctrl+T (Table; Navigation menu, Next).
+
+### Move to a table
+
+1. Press Ctrl+Home.
+2. Press Ctrl+T (Table; Navigation menu, Next).
     You hear: Table with 3 rows and 2 columns.
-6. Press Ctrl+T (Table; Navigation menu, Next).
-    You hear: No next table.
 
 ## Show the current file in another app
 
@@ -430,8 +355,6 @@ Starts with: Open axDown with the file notes.md.
 
 1. Choose Theme on in the Options menu, Theme.
     You hear: Theme on, not checked.
-2. Choose Theme on in the Options menu, Theme.
-    You hear: Theme on, checked.
 
 ## Ask Claude about the window you are in
 
@@ -454,8 +377,6 @@ Starts with: Open axDown with the file notes.md.
 
 1. Choose Use Claude in axKit in the axKit menu, Claude.
     You hear: Claude off.
-2. Choose Use Claude in axKit in the axKit menu, Claude.
-    You hear: Claude on.
 
 ### Ask Claude about this window
 
@@ -497,11 +418,6 @@ Starts with: Open axDown with the file notes.md.
 
 1. Choose Say new line in the Options menu, Text.
     You hear: Say new line, not checked.
-2. Press End, Enter.
-3. Choose Say new line in the Options menu, Text.
-    You hear: Say new line, checked.
-4. Press Enter.
-    You hear: new line.
 
 ## Hear the heading sound as you move
 
@@ -516,12 +432,6 @@ Starts with: Open axDown with the file headings.md.
 
 1. Choose Sound on headings in the Options menu, Text.
     You hear: Sound on headings, not checked.
-2. Press Down four times.
-3. Choose Sound on headings in the Options menu, Text.
-    You hear: Sound on headings, checked.
-4. Press Up.
-5. Press Down.
-    You hear the sound Heading.
 
 ## Open a recent file or window from the command palette
 
@@ -567,26 +477,6 @@ Starts with: Open axDown with the file a.md.
 
 1. Press F9 (Say the status; Window menu).
     You hear: F9: Say the status.
-2. Press F4 (Send a report; Help menu).
-    You hear: F4: Send a report.
-3. Press F1 (Command palette; Help menu).
-    You hear: F1: Command palette.
-4. Press Ctrl+Comma.
-    You hear: Ctrl+Comma: Command palette, as F1.
-5. Press F12 (Go to line; Navigation menu).
-    You hear: F12: Go to line.
-6. Press Ctrl+H (Heading; Navigation menu, Next).
-    You hear: Ctrl+H: Next, Heading.
-7. Press A.
-    You hear: A: types the letter.
-8. Press Down.
-    You hear: Down: moves in the text.
-9. Press Enter.
-    You hear: Enter: makes a new line.
-10. Press Ctrl+Down.
-    You hear: Ctrl+Down: Paragraph down.
-11. Press Shift+F9.
-    You hear: Shift+F9: no command of this window.
 
 ### End the key test
 
@@ -607,23 +497,6 @@ Starts with: Open axDown with the file modes.md.
 1. Press H.
     You hear the sound NavKey.
     You hear: Links, heading level 2.
-2. Press H.
-    You hear: List, heading level 2.
-3. Press H.
-    You hear the sound Nothing.
-    You hear: No next heading.
-4. Press Shift+H.
-    You hear: Links, heading level 2.
-5. Press Ctrl+Home, 2.
-    You hear: Links, heading level 2.
-6. Press K.
-    You hear: GitHub, link.
-7. Press L.
-    You hear: List with 2 items, one.
-8. Press I.
-    You hear: two.
-9. Press Shift+I.
-    You hear: one.
 
 ### Go back to edit mode and type
 
@@ -631,8 +504,6 @@ Starts with: Open axDown with the file modes.md.
     You hear: Edit mode.
 2. Press Home.
 3. Type "X".
-4. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone.
 
 ## Give a line, a word and several lines their Markdown format, and take it away again
 
@@ -644,12 +515,11 @@ Starts with: Open axDown with the file format.md.
     You hear: Heading 1.
 2. Press Shift+Alt+Right (Heading deeper; Actions menu, Format).
     You hear: Heading 2.
-3. Press Shift+Alt+Left (Heading shallower; Actions menu, Format).
-    You hear: Heading 1.
-4. Choose Heading 4 in the Actions menu, Format.
+
+### Set a heading's level from the menu
+
+1. Choose Heading 4 in the Actions menu, Format.
     You hear: Heading 4.
-5. Choose Heading 4 in the Actions menu, Format.
-    You hear: No heading.
 
 ### Make the word at the caret bold and take it off again
 

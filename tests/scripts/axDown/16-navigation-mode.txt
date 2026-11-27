@@ -19,6 +19,7 @@ expect state modes.md, navigation mode
 keys h
 expect said ♪ NavKey
 expect said ! Links, heading level 2
+# Check: Each letter moves by its kind, and a letter with nothing to go to buzzes
 keys h
 expect said ! List, heading level 2
 # Nothing of that kind to go to: the buzz in place of the tick, then the words as ever.
@@ -100,5 +101,6 @@ keys home
 type X
 expect focus {"name":"modes.md","role":"Text","value":"X- one"}
 expect state , axDown, *
+# Check: Undo takes the typed letter back
 do Undo
 expect said ! Undone

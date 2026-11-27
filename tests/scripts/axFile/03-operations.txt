@@ -73,6 +73,7 @@ type bundle
 keys enter
 expect said ! Moved 2 items into bundle
 expect focus "value":"bundle, folder"
+# Check: The new folder holds the moved files
 keys enter
 expect said ! bundle, 2 items, New file.txt
 expect list "todo.md"
@@ -91,6 +92,7 @@ type Notes
 keys enter
 expect said ! Renamed to Notes
 expect focus "value":"Notes, folder"
+# Check: A folder renames again as often as wanted
 do Rename
 expect focus "name":"New name"
 type Notes2
@@ -221,6 +223,7 @@ expect focus "value":"docs, folder"
 menu Compress to zip, Context
 expect said ! Compressed to docs.zip
 expect focus "value":"docs.zip"
+# Check: A second zip of the same folder takes the next free name
 do Find
 expect focus "name":"Name contains"
 type docs
@@ -251,6 +254,7 @@ expect focus "value":"docs.zip"
 menu Extract here, Context
 expect said ! Extracted to docs - 2
 expect focus "value":"docs - 2, folder"
+# Check: The extracted folder holds the zip's folder, and Backspace goes back up
 keys enter
 expect said ! docs - 2, 1 item, docs, folder
 keys enter

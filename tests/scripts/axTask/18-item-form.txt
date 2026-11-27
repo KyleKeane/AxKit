@@ -28,6 +28,7 @@ expect said 1 more field kept: Sprint
 keys tab
 expect focus "name":"Done"
 expect focus CheckButton
+# Check: Tab goes through one control for each field by its kind, then Save and Cancel
 keys tab
 expect focus "name":"Type Due: a date such as 2026-11-30, today, tomorrow, +3 or a weekday; empty for none"
 expect focus "value":"2099-10-30"
@@ -83,6 +84,7 @@ run findstr /l /c:"\"Priority\": \"Normal\"" "tasks\Home\Fix the tap.json"
 run findstr /l /c:"First line\nSecond line" "tasks\Home\Fix the tap.json"
 run findstr /l /c:"\"Waits on\": \"Washer.json\"" "tasks\Home\Fix the tap.json"
 run findstr /l /c:"\"Sprint\": \"October\"" "tasks\Home\Fix the tap.json"
+# Check: Undo takes the whole save back in one step
 do Undo
 expect said ! Undone: Saved
 expect focus Fix the tap, due 30 October 2099
@@ -150,6 +152,7 @@ keys enter
 expect said ! Saved
 # The focus is back where the form was opened from, on the field, with its new value.
 expect focus Room, text, Bathroom
+# Check: Space on Done in the detail pane still changes it at once
 keys home
 keys down
 expect focus Done, check, not done

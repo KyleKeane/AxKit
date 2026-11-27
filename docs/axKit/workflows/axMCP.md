@@ -92,9 +92,6 @@ Starts with: Open axMCP with the test folder.
 7. Press Shift+Tab.
 8. Press Ctrl+Enter.
     You hear: Added probe.
-9. Press Tab.
-10. Press Down.
-11. Press Escape.
 
 ### Rename a server and undo the rename
 
@@ -103,7 +100,10 @@ Starts with: Open axMCP with the test folder.
 3. Type "probe two".
 4. Press Enter.
     You hear: Renamed to probe two.
-5. Press Ctrl+Z (Undo; Actions menu).
+
+### Undo the rename
+
+1. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: renamed probe to probe two.
 
 ### Remove a server
@@ -124,7 +124,10 @@ Starts with: Open axMCP with the test folder.
 2. Press Delete.
 3. Press Enter.
     You hear: Removed 2 servers.
-4. Press Ctrl+Z (Undo; Actions menu).
+
+### Bring the removed servers back
+
+1. Press Ctrl+Z (Undo; Actions menu).
     You hear: Undone: removed 2 servers.
 
 ### Start a server
@@ -153,7 +156,7 @@ Starts with: Open axMCP with the test folder.
     You hear: text (required): hello.
 9. Press Ctrl+Enter.
     You hear: Calling echo.
-10. Press Escape twice.
+10. Press Escape.
 
 ### Read a resource from a template
 
@@ -184,7 +187,6 @@ Starts with: Open axMCP with the test folder.
 4. Press Ctrl+Enter.
     You hear: Fetching greet.
 5. Press Escape.
-6. Close the window.
 
 ## Fill in a number and a choice, and start a server again
 
@@ -271,8 +273,11 @@ Starts with: Open axMCP with the test folder.
 1. Press Ctrl+F (Find in the list).
 2. Type "zz".
 3. Press Enter.
-4. Press F3 twice (Find next).
-5. Press Shift+F3 (Find previous).
+4. Press F3 (Find next).
+
+### Go back to the previous match
+
+1. Press Shift+F3 (Find previous).
 
 ### Show only the servers whose name contains a text
 
@@ -280,12 +285,8 @@ Starts with: Open axMCP with the test folder.
 2. Type "zz".
 3. Press Enter.
     You hear: filter zz, 3 shown.
-4. Press Ctrl+Delete (Clear the filter).
-    You hear: Filter cleared.
 
 ### Put the servers in the order of their names
 
 1. Choose Name in the Options menu, Sort by.
     You hear: Sorted by name.
-2. Choose The list's own order in the Options menu, Sort by.
-    You hear: Sorted by the list's own order.

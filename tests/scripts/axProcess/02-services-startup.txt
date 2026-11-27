@@ -72,6 +72,7 @@ keys down
 expect focus Services,
 keys right
 expect said ! Services,
+# Check: Backspace goes up as Left does, and Enter goes in as Right does
 keys backspace
 expect said ! This computer, 3 lists, Services,
 keys end

@@ -42,6 +42,7 @@ said
 keys alt+3
 expect said ! Output 1 Reply from Claude heading level 1
 expect focus "value":"# Output 1 Reply from Claude"
+# Check: From the message field the key goes to the same line again, and Down reads the reply
 keys alt+1
 expect focus Message to Claude
 keys alt+3
@@ -65,6 +66,7 @@ expect said Output 2
 # c, the next Claude reply line, rather than two Downs: a reply of one wrapped paragraph has one line, and the second
 # Down landed on the empty line after it (seen with Haiku, 2026-11-01).
 keys c
+# Check: A reply of one long paragraph has one line number and is quoted as one line
 keys l
 expect said ! Line
 keys enter
@@ -86,6 +88,7 @@ keys down down
 keys shift+down shift+down
 keys escape
 expect said ! Selection cleared
+# Check: Escape again goes back to the message field
 keys escape
 expect focus Message to Claude
 # Check: A selection made while Claude writes leaves the conversation usable

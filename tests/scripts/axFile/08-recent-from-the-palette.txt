@@ -25,6 +25,7 @@ expect state \cellar","notice"
 expect commands "1. cellar (
 expect commands "2. orchard (
 
+# Goal: Open a recent folder from the command palette
 # The palette: part of the folder's name, the entry said with its menu; Enter shows the folder, said as every change
 # of folder is, and it is the newest of the recent folders now.
 do Command palette

@@ -47,6 +47,7 @@ expect said ! Events. Marks: 3. Hooks: not passed, version. Session file: not fo
 menu Ground the conversation in Claude Code's session file
 expect said ! Grounding in Claude Code's session file off
 refuse commands Ground the conversation in Claude Code's session file, Options, Developer, checked
+# Check: The event sources name the session file as off, and as not found once it is on again
 menu Say the event sources
 expect said ! Events. Marks: 3. Hooks: not passed, version. Session file: off. Core: in charge of state and Done.
 menu Ground the conversation in Claude Code's session file
@@ -60,6 +61,7 @@ expect said ! Events. Marks: 3. Hooks: not passed, version. Session file: not fo
 menu Events from Claude Code's hooks
 expect said ! Events from Claude Code's hooks off, from the next start of Claude
 refuse commands Events from Claude Code's hooks, Options, Developer, checked
+# Check: The hooks are off from the next start of Claude, and on again from the same menu
 menu Say the event sources
 expect said ! Events. Marks: 3. Hooks: not passed, version. Session file: not found. Core: in charge of state and Done.
 # Claude started again (the stand-in waits for its first file again): the numbers begin afresh, and the hooks are off.

@@ -32,6 +32,7 @@ keys enter
 expect said Queued
 expect said ♪ Sent
 expect state 1 message waiting
+# Check: The conversation holds only the first message, and the field is left empty
 keys ctrl+tab ctrl+end
 keys shift+i
 expect said ! Input 1 heading level 1
@@ -89,6 +90,7 @@ expect said Queued
 expect state 1 message waiting
 keys ctrl+shift+enter
 expect said Sending now
+# Check: The waiting message goes while Claude works, and nothing is left queued after it
 keys alt+2
 expect text # Input 4
 expect state Claude: working

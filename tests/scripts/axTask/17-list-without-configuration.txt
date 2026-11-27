@@ -44,6 +44,7 @@ do Edit the list's configuration
 expect said ! Written the configuration of Notes
 run findstr /l /c:"axkit-list 2" tasks\Notes\list.json
 run findstr /l /c:"\"actions\": []" tasks\Notes\list.json
+# Check: The item is read through the new configuration and can be marked done
 keys right
 expect said ! Notes, 1 item, Idea
 keys tab
@@ -71,6 +72,7 @@ keys enter
 expect said ! Added First thing
 run findstr /l /c:"\"title\": \"Due\"" tasks\Empty\list.json
 run findstr /l /c:"\"schema\": \"list.json\"" "tasks\Empty\First thing.json"
+# Check: The new list's fields are the item's, and Undo takes the item and the configuration back
 keys tab
 keys end
 expect focus Due, date, empty

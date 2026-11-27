@@ -55,6 +55,7 @@ keys enter
 expect said Archived 2 templates
 expect state Templates, 1 template
 expect focus broken, not a template
+# Goal: Bring the archived templates back
 keys ctrl+z
 expect said Undone: Archived 2 templates
 expect state Templates, 3 templates

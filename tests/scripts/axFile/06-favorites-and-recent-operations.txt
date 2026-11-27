@@ -37,6 +37,7 @@ menu The Favorites list, Navigation
 expect focus "name":"Favorites"
 keys shift+tab
 expect focus "name":"8 items"
+# Check: F6 and Ctrl+Tab go to the Favorites list as Tab does
 keys f6
 expect focus "name":"Favorites"
 keys shift+tab
@@ -52,6 +53,7 @@ expect said ! favorite-me, 1 item, readme.txt
 keys ctrl+d
 expect said ! Added to Favorites
 expect focus "value":"readme.txt"
+# Check: A second folder is added, and Tab lands on it in the Favorites list
 keys backspace
 expect said ! act, 8 items, favorite-me, folder
 keys down
@@ -76,6 +78,7 @@ expect focus favorite-me (
 keys enter
 expect said ! favorite-me, 1 item, readme.txt
 expect focus "value":"readme.txt"
+# Check: Information in the Favorites list says the favorite's place
 keys tab
 expect focus favorite-me (
 keys f8
@@ -152,6 +155,7 @@ expect said ! Undone: renamed back to temp
 expect focus "name":"Favorites"
 keys escape
 expect focus "value":"temp, folder"
+# Check: Recent operations reads the operation as undone
 do Recent operations
 expect focus "value":"Renamed temp to notes, undone,
 keys escape
@@ -190,6 +194,7 @@ keys enter
 # Manual (6.6): that the focus moves before the announcement, so that NVDA does not cut it short, is NVDA's (tier 3).
 expect said ! subfolder-for-inner, 2 items, inner, folder
 expect focus "value":"inner, folder"
+# Check: Backspace goes back to the folder the operation was looked at from
 keys backspace
 expect said ! act, 9 items, subfolder-for-inner, folder
 
@@ -283,6 +288,7 @@ expect said ! Selected
 do Recent operations
 expect focus "value":"Created quiet,
 keys escape
+# Check: Space again deselects the entry
 keys space
 expect said ! Deselected
 # Check: A run of selections writes no operation, and the status bar counts the selected
@@ -316,6 +322,7 @@ keys down down down
 keys shift+space
 expect said ! Selected, 4 selected
 expect list "favorite-me, folder","favorite-me-too, folder, selected","subfolder-for-inner, folder, selected","temp, folder, selected","act.zip, selected","delete-two-1.txt"
+# Check: Without a mark Shift+Space selects and deselects the one entry
 do Deselect all
 expect said ! None selected
 keys shift+space

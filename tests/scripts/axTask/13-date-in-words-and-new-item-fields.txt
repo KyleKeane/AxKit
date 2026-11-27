@@ -42,6 +42,7 @@ type Paint the door
 keys enter
 expect state "notice":null
 expect focus Paint the door
+# Check: The new item has the list's fields in the list's order
 keys tab
 expect focus Title, text, Paint the door
 keys down

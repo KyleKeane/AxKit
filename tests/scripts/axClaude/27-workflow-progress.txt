@@ -84,6 +84,7 @@ expect said ♪ BackgroundStart
 refuse said ♪ Click
 refuse said axkit-design-map-and-verify
 refuse said Waiting for
+# Check: The rows stand at the conversation's end and are never said
 do Conversation
 keys ctrl+end
 expect text Waiting for 1 dynamic workflow to finish

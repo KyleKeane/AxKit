@@ -36,38 +36,16 @@ Starts with: Open axJSON with the file settings.json.
 
 1. Press Ctrl+K (Key; Navigation menu, Next).
     You hear: model: opus.
-2. Press Ctrl+K (Key; Navigation menu, Next).
-    You hear: permissions, object with 2 keys.
-3. Press Ctrl+K (Key; Navigation menu, Next).
-    You hear: allow, array with 2 items.
-4. Press Ctrl+K (Key; Navigation menu, Next).
-    You hear: deny, empty array.
-5. Press Ctrl+K (Key; Navigation menu, Next).
-    You hear: count: 3.
-6. Press Ctrl+K (Key; Navigation menu, Next).
-    You hear: on: true.
 
 ### Move back from key to key
 
 1. Press Ctrl+Shift+K (Key; Navigation menu, Previous).
     You hear: count: 3.
-2. Press Ctrl+Shift+K (Key; Navigation menu, Previous).
-    You hear: deny, empty array.
-3. Press Ctrl+Shift+K (Key; Navigation menu, Previous).
-    You hear: allow, array with 2 items.
-4. Press Ctrl+Shift+K (Key; Navigation menu, Previous).
-    You hear: permissions, object with 2 keys.
-5. Press Ctrl+Shift+K (Key; Navigation menu, Previous).
-    You hear: model: opus.
 
 ### Move to the next object and back to the whole file
 
 1. Press Ctrl+Home, Ctrl+J.
     You hear: permissions, object with 2 keys.
-2. Press Ctrl+J (Object; Navigation menu, Next).
-    You hear: No next object.
-3. Press Ctrl+Shift+J (Object; Navigation menu, Previous).
-    You hear: object with 4 keys.
 
 ### Move through arrays and their items
 
@@ -75,38 +53,19 @@ Starts with: Open axJSON with the file settings.json.
     You hear: allow, array with 2 items.
 2. Press Ctrl+L (Array; Navigation menu, Next).
     You hear: deny, empty array.
-3. Press Ctrl+Home, Ctrl+I.
+
+### Move from item to item of an array
+
+1. Press Ctrl+Home, Ctrl+I.
     You hear: Item 1 of 2, Bash.
-4. Press Ctrl+I (Item; Navigation menu, Next).
+2. Press Ctrl+I (Item; Navigation menu, Next).
     You hear: Item 2 of 2, Read.
-5. Press Ctrl+I (Item; Navigation menu, Next).
-    You hear: No next item.
 
 ### Move by the structure from the Navigation menu
 
 1. Press Ctrl+Home.
 2. Choose Key in the Navigation menu, Next (key: Ctrl+K).
     You hear: model: opus.
-3. Choose Object in the Navigation menu, Next (key: Ctrl+J).
-    You hear: permissions, object with 2 keys.
-4. Choose Array in the Navigation menu, Next (key: Ctrl+L).
-    You hear: allow, array with 2 items.
-5. Choose Item in the Navigation menu, Next (key: Ctrl+I).
-    You hear: Item 1 of 2, Bash.
-6. Choose Item in the Navigation menu, Previous (key: Ctrl+Shift+I).
-    You hear: No previous item.
-7. Choose Array in the Navigation menu, Previous (key: Ctrl+Shift+L).
-    You hear: allow, array with 2 items.
-8. Choose Object in the Navigation menu, Previous (key: Ctrl+Shift+J).
-    You hear: permissions, object with 2 keys.
-9. Choose Object in the Navigation menu, Previous (key: Ctrl+Shift+J).
-    You hear: object with 4 keys.
-10. Choose Key in the Navigation menu, Previous (key: Ctrl+Shift+K).
-    You hear: No previous key.
-11. Choose Error in the Navigation menu, Next (key: Ctrl+E).
-    You hear: No next error.
-12. Choose Error in the Navigation menu, Previous (key: Ctrl+Shift+E).
-    You hear: No previous error.
 
 ### Go to the next and the previous error
 
@@ -189,8 +148,6 @@ Starts with: Open axJSON with the file settings.json.
 1. Press Ctrl+F (Find; Navigation menu).
 2. Type "apple".
 3. Press Enter.
-4. Press F3 (Find next; Navigation menu).
-5. Press Shift+F3 (Find previous; Navigation menu).
 
 ### Go to a line of a JSON file by its number
 
@@ -208,8 +165,6 @@ Starts with: Open axJSON with the file settings.json.
 4. Press Right three times.
 5. Press F11 (Word wrap; Options menu, Text).
     You hear: Word wrap, not checked.
-6. Press F11 (Word wrap; Options menu, Text).
-    You hear: Word wrap, checked.
 
 ### Save a change to a JSON file
 
@@ -267,9 +222,12 @@ Starts with: Open axJSON with the file lists\Home\list.json.
 2. Press Alt+Left (Add a member; Actions menu).
 3. Press Enter.
     You hear: Added key: The key that runs it; without one it runs from the menu.
-4. Press Alt+Right (Choose a value; Actions menu).
-5. Press End.
-6. Press Enter.
+
+### Choose the new key's value
+
+1. Press Alt+Right (Choose a value; Actions menu).
+2. Press End.
+3. Press Enter.
     You hear: key: Ctrl+Shift+9.
 
 ### Choose an item's value through its link to the list's configuration

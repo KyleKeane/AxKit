@@ -26,13 +26,14 @@ Starts with: Open axClip.
 
 1. Press Ctrl+End (Last match).
     You hear: axkitclip alpha, 3 of 3.
-2. Press Down.
-    You hear the sound Edge.
-3. Press Ctrl+Home (First match).
+
+### Jump to the newest item, then by a page
+
+1. Press Ctrl+Home (First match).
     You hear: axkitclip gamma, 1 of 3.
-4. Press Page Down.
+2. Press Page Down.
     You hear: axkitclip alpha, 3 of 3.
-5. Press Page Up.
+3. Press Page Up.
     You hear: axkitclip gamma, 1 of 3.
 
 ### Read an item's whole text
@@ -84,13 +85,6 @@ Starts with: Open axClip.
 ### Keep the history between runs
 
 1. Choose Keep history between runs in the Options menu.
-2. Choose Quit axClip in the Session menu.
-3. Open axClip.
-4. Type "axkitkeep".
-5. Press Down.
-    You hear: axkitkeep one, 2 of 3.
-6. Press Ctrl+End (Last match).
-    You hear: axkitkeep two, 3 of 3.
 
 ## Narrow the clipboard history with several words
 
@@ -104,8 +98,3 @@ Starts with: Open axClip.
 3. Type "red".
 4. Press Ctrl+Home (First match).
     You hear: axkitword red pear, 1 of 2.
-5. Press Down.
-    You hear: axkitword red apple, 2 of 2.
-6. Type "apple".
-7. Press Ctrl+Home (First match).
-    You hear: axkitword red apple, 1 of 1.

@@ -16,11 +16,14 @@ expect focus {"name":"format.md","role":"Text","value":"# Title"}
 keys alt+shift+right
 expect said ! Heading 2
 expect focus {"name":"format.md","role":"Text","value":"## Title"}
+# Check: Shift+Alt+Left takes one number sign off
 keys alt+shift+left
 expect said ! Heading 1
+# Goal: Set a heading's level from the menu
 do Heading 4, Actions, Format
 expect said ! Heading 4
 expect focus {"name":"format.md","role":"Text","value":"#### Title"}
+# Check: The same level chosen again takes the heading away
 do Heading 4, Actions, Format
 expect said ! No heading
 expect focus {"name":"format.md","role":"Text","value":"Title"}

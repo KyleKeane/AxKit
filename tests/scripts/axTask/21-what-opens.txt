@@ -26,6 +26,7 @@ keys ctrl+f
 expect said ♪ FieldOpen
 keys escape
 expect state "notice":null
+# Check: The rename box in place plays the same sound
 keys f2
 expect focus "name":"New name"
 expect said ♪ FieldOpen
@@ -49,6 +50,7 @@ expect state "notice":null
 # Options, Text, Entry sounds: off, and Keyboard shortcuts opens without the sound; on again.
 menu Entry sounds
 expect said ! Entry sounds, not checked
+# Check: Keyboard shortcuts opens without its sound while they are off, and with it once they are on again
 do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 refuse said ♪ TextOpen

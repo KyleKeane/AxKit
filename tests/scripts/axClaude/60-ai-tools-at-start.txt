@@ -29,6 +29,7 @@ expect state "notice":"Force Claude to restart?"
 keys enter
 expect said Restarting
 expect said Ready
+# Check: After the restart Claude names axKit's tool
 # Claude Code connects its servers in the background. In a test run a message typed at once after Ready still went out
 # before axKit's tools were there in two runs of four, with the file's alwaysLoad (2026-11-26, Claude answered
 # "none"); outside a test run, typed as the prompt appeared, four of four had them. The pause holds the feature; the

@@ -24,6 +24,7 @@ close
 start task
 expect state "title":"Shopping, axTask
 expect focus "name":"Shopping, 2 items","role":"List","value":"Milk"
+# Check: Left from the list opened again goes up to the lists
 keys left
 expect said ! Lists, 2 lists, Shopping, list, 2 items
 close

@@ -20,6 +20,7 @@ wait 300
 keys ctrl+enter
 expect said ! Playing
 wait 300
+# Check: Pause and resume work a second time
 keys ctrl+enter
 expect said ! Paused at 0:0
 wait 300
@@ -44,11 +45,13 @@ keys ctrl+right
 expect said ! 0:1
 keys ctrl+left
 expect said ! 0:0
+# Goal: Go to a time in the file
 keys f12
 type 0:30
 keys enter
 expect said ! 0:30
 expect focus first.wav (playing)
+# Check: Playing goes on from the time reached
 keys ctrl+enter
 expect said ! Playing
 
@@ -58,6 +61,7 @@ expect said ! Playing
 # same code; Normal speed back to 1. That the voice is faster at the same pitch is for the ear.
 keys alt+up
 expect said ! Speed 1.25
+# Check: Each press and the menu commands change the speed by a quarter
 keys alt+up
 expect said ! Speed 1.5
 menu Faster
@@ -69,8 +73,10 @@ menu Slower
 expect said ! Speed 1.25
 keys alt+up
 expect said ! Speed 1.5
+# Goal: Go back to the normal speed
 menu Normal speed
 expect said ! Speed 1
+# Check: The status bar holds the speed
 menu Faster
 menu Faster
 expect said ! Speed 1.5

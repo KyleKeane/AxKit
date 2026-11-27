@@ -41,14 +41,15 @@ keys down
 expect focus 02-fails, workflow, 3 steps, failed at step 2
 keys tab
 expect list Last run: failed at step 2. Not within 10 s
+# Goal: Read why a step of the run failed
 keys escape right
 expect said 02-fails, 3 steps, 1. Start down
 keys down
 expect focus 2. Expect the focus: Nothing like this, failed
 keys tab down
 expect focus Last run: failed. Not within 10 s
-keys escape
 # Check: Read in full on a step says the step and every line of its details
+keys escape
 # Ctrl+Q in the navigator says the row and what the detail pane holds of it, as it reads every field of an item.
 said
 do Read in full
@@ -75,6 +76,7 @@ wait 1000
 keys escape
 expect said Stopping after the current step
 expect said 03-waits stopped
+# Check: The workflow's row says the run stopped
 keys left
 expect focus 03-waits, workflow, 4 steps, stopped
 

@@ -22,6 +22,7 @@ expect said ! Key test. Press any key to hear its name and what it does here. Pr
 # Bundle keys: said by their command's name, and not carried out (no status said, no notice opened).
 keys f9
 expect said ! F9: Say the status
+# Check: The bundle's keys are said by their command's name and not carried out
 keys f4
 expect said ! F4: Send a report
 keys f1
@@ -29,12 +30,14 @@ expect said ! F1: Command palette
 keys ctrl+comma
 expect said ! Ctrl+Comma: Command palette, as F1
 expect state "notice":null
+# Check: The window's keys are said by their command's name
 # Window keys, from the window's command list.
 keys f12
 expect said ! F12: Go to line
 keys ctrl+h
 expect said ! Ctrl+H: Next, Heading
 expect state "notice":null
+# Check: The text's own keys and a key nothing has are said by what they do
 # The text's own keys: a letter, an arrow, Enter, a paragraph key; a key nothing has.
 keys a
 expect said ! A: types the letter

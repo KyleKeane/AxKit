@@ -94,6 +94,7 @@ expect focus Name contains
 type elt
 keys enter
 expect focus delta.wav
+# Check: A second find, F3 and Shift+F3 go to the next and the previous match
 keys ctrl+f
 expect focus Name contains
 type ta.w
@@ -154,16 +155,19 @@ keys delete
 expect said ! Removed delta.wav
 expect list "name":"Queue, 3 items"
 expect list beta.wav (playing)
+# Check: Removing the playing file plays the next
 keys up
 keys delete
 expect said ! Removed beta.wav
 expect said Playing gamma.wav
 expect list ["alpha.wav","gamma.wav (playing)"]
+# Goal: Clear the queue
 menu Clear queue
 expect said ! Queue cleared
 expect list ["Queue is empty"]
 expect focus Queue is empty
 expect state "title":"axMedia"
+# Check: After the queue is cleared nothing is playing
 keys f7
 expect said ! Nothing playing
 

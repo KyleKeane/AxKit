@@ -36,6 +36,7 @@ keys backspace
 expect said ! Nothing to go back to
 keys h
 expect said ! Input 1 heading level 1
+# Check: Every heading in turn is said with its level, and the previous heading key goes back
 keys h
 expect said ! Output 1 Reply from Claude heading level 1
 keys h
@@ -46,9 +47,11 @@ keys h
 expect said ! Input 2 heading level 1
 keys shift+h
 expect said ! Beta heading level 2
+# Goal: Move through the markers alone
 keys ctrl+home
 keys 1
 expect said ! Input 1 heading level 1
+# Check: The markers come in order, the reply's own headings passed over
 keys 1
 expect said ! Output 1 Reply from Claude heading level 1
 keys 1
@@ -60,6 +63,7 @@ keys 2
 expect said Alpha heading level 2
 keys 2
 expect said ! Beta heading level 2
+# Check: A level with no heading says there is none
 keys 3
 expect said ! No next heading level 3
 # Goal: Hide the markers in the text
@@ -70,6 +74,7 @@ keys ctrl+home
 keys h
 expect said ! Input 1 heading level 1
 expect focus "value":"Input 1"
+# Check: The markers come back when the option is on again
 menu Markers in the text
 expect focus "value":"# Input 1"
 # Goal: Move through the conversation by paragraph
@@ -80,6 +85,7 @@ keys p
 expect said ! Output 1 Reply from Claude
 keys shift+p
 expect said ! [Screen Reader Mode: on via flag]
+# Check: Past the last paragraph there is no next one
 keys ctrl+end
 keys p
 expect said ! No next paragraph
@@ -107,16 +113,20 @@ keys r
 expect said ! Output 2 Reply from Claude heading level 1
 keys shift+r
 expect said ! Output 1 Reply from Claude heading level 1
+# Check: Before the first response there is no previous one
 keys shift+o
 expect said ! No previous response
+# Goal: Jump between your messages
 keys i
 expect said ! Input 2 heading level 1
 keys shift+i
 expect said ! Input 1 heading level 1
+# Goal: Jump to Claude's lines and to the tool lines
 keys c
 expect said ! claude: Alpha heading level 2
 keys t
 expect said hi
+# Check: An error, a done line and a system line are each found or said as missing
 keys e
 expect said ! No next error
 keys d
@@ -178,6 +188,7 @@ expect said Back to [Screen Reader Mode: on via flag]
 # Step 8: l, "Line N of M"; Ctrl+Home: "Line 1 of M"; Ctrl+End: the last number equals the total.
 keys l
 expect said ! Line
+# Check: The line number is 1 at the top and the total at the end
 keys ctrl+home
 keys l
 expect said ! Line 1 of
@@ -196,6 +207,7 @@ keys enter
 expect said ! From the top, Use the Bash tool
 expect focus Conversation
 expect state "notice":null
+# Check: Find next and Find previous go round to the only match
 # F3: the only match again, with "From the top" after the wrap; Shift+F3 with "From the end".
 keys f3
 expect said ! From the top, Use the Bash tool to run: echo hi. Then reply with the single word finished.
@@ -237,6 +249,7 @@ keys h h h p p
 said
 keys backspace
 expect said ! Back to
+# Check: Each Backspace goes one jump further back, and a page counts as a jump
 keys backspace
 expect said ! Back to claude: Alpha heading level 2
 keys backspace
@@ -260,6 +273,7 @@ keys m
 expect said ! Bookmark 1 added
 wait 400
 expect focus "value":"2."
+# Check: The bookmark line stands above the line, and a second bookmark is added the same way
 keys up
 expect focus "value":"Bookmark 1"
 keys down
@@ -268,20 +282,24 @@ keys down down down
 keys m
 expect said ! Bookmark 2 added
 wait 400
+# Goal: Move between the bookmarks
 keys ctrl+home
 keys k
 expect said ! Bookmark 1, 2.
 keys k
 expect said ! Bookmark 2, 5.
+# Check: After the last bookmark there is no next one, and the previous key goes back
 keys k
 expect said ! No next bookmark
 keys shift+k
 expect said ! Bookmark 1, 2.
+# Goal: Remove a bookmark
 keys down
 expect focus "value":"2."
 keys m
 expect said ! Bookmark 1 removed
 wait 400
+# Check: The bookmark line goes, and a second bookmark is removed the same way
 keys up
 expect focus "value":"claude: 1."
 keys k
@@ -289,12 +307,14 @@ expect said ! Bookmark 2, 5.
 keys m
 expect said ! Bookmark 2 removed
 wait 400
+# Goal: Bookmark a line from the message field
 # Ctrl+K from the message field: the focus moves to the conversation and the bookmark is added.
 keys alt+1
 keys ctrl+k
 expect said ! Bookmark 3 added
 wait 400
 expect focus Conversation
+# Check: The Navigation menu's items add a bookmark and move between them as the keys do
 # The Navigation menu's items do the same as m, k and Shift+K.
 keys down
 menu Bookmark this line
@@ -318,6 +338,7 @@ keys alt+3
 keys ctrl+alt+p
 expect said claude: 1.
 expect focus "value":"# Output 3 Reply from Claude"
+# Check: The headings, Claude's lines and the bookmarks are read the same way, and a kind with none after the caret says so
 keys ctrl+home o
 keys ctrl+alt+h
 expect said Beta heading level 2
@@ -384,6 +405,7 @@ keys enter
 expect said Sent
 expect said Done
 wait 1000
+# Check: The message shows in full in the conversation, each quote a block of its own
 keys alt+3
 keys shift+i
 expect said ! Input 4 heading level 1

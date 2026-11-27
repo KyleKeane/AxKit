@@ -50,6 +50,7 @@ expect said ♪ Sent
 expect said Done
 refuse said ♪ Click
 refuse said ♪ Tool
+# Check: The ticks come back when the option is on again
 menu Ticks for new lines and tool calls
 said
 # Goal: Turn off the chimes
@@ -61,6 +62,7 @@ expect said ♪ Click
 expect said Done
 refuse said ♪ Sent
 refuse said ♪ Done
+# Check: The chimes come back when the option is on again
 menu Chimes
 said
 # Goal: Play background music while Claude works
@@ -75,6 +77,7 @@ expect said ♪ StopMusic
 expect said ♪ Done
 keys ctrl+m
 expect said Background music off
+# Check: The music key works from the conversation during a turn
 # Ctrl+M from the conversation during a turn: the music starts with "Background music on"; again: it stops.
 type Write a story of 1500 words about a lighthouse keeper.
 keys enter
@@ -124,6 +127,7 @@ keys alt+1
 type Markdown only: ## Alpha, a five-word sentence, ## Beta, three one-word bullets.
 keys enter
 expect said Done. claude: Alpha
+# Goal: Have only the first line of each reply spoken
 # First lines: only the first line of each of Claude's messages.
 menu Speak replies: first lines
 expect said Speak replies: first lines
@@ -156,6 +160,7 @@ keys enter
 expect said tool: Bash
 refuse said tooled
 expect said Done
+# Check: Speaking each tool call goes off again from the same menu
 menu Speak each tool call
 # Goal: Read the keyboard shortcuts
 # Step 5: Help, Keyboard shortcuts (F1 until 2026-11-26), the shortcuts in the window's place: the text's first line names its own keys; h: "Anywhere, heading
@@ -165,6 +170,7 @@ expect state "notice":"Keyboard shortcuts"
 expect focus "name":"Keyboard shortcuts","role":"Text","value":"## How the keys go
 keys h
 expect said ! Anywhere, heading level 2
+# Check: The heading keys go on, go back and move by level in the shortcuts
 keys h
 expect said ! Message field, heading level 2
 keys shift+h
@@ -183,6 +189,7 @@ expect state "notice":"Keyboard shortcuts"
 # (The match is selected and NVDA reads it at the caret; the app says nothing, and the channel's caret line is wrong
 # in this wrapped text, so only the focus is checked here.)
 expect focus "name":"Keyboard shortcuts"
+# Check: Find next and Find previous stay in the shortcuts, and Find closed brings them back
 keys f3
 expect focus "name":"Keyboard shortcuts"
 keys shift+f3
@@ -228,6 +235,7 @@ expect state "notice":"User guide"
 expect focus axClaude user guide
 keys h
 expect said heading level 2
+# Check: The heading keys go back in the guide, and at its end there is no next heading
 keys shift+h
 expect said heading level
 keys ctrl+end h
@@ -244,16 +252,20 @@ expect state axStart
 expect state Latest release on GitHub
 keys escape
 expect state "notice":null
+# Goal: Read the licence
 menu Licence
 expect state "notice":"Licence"
 keys escape
+# Goal: Read the attribution
 menu Attribution
 expect state "notice":"Attribution"
 keys escape
+# Goal: Read the axKit guide
 menu axKit guide
 expect focus "value":"# axKit
 keys h
 expect said Install, heading level 2
+# Check: The heading keys go through the axKit guide's sections in order
 keys h
 expect said Start
 keys h
@@ -272,6 +284,7 @@ keys alt+1
 type Reply with the single word stamped.
 keys enter
 expect said Done
+# Check: The next markers carry the time and the earlier ones do not, and the option goes off again
 keys alt+2 ctrl+end
 keys shift+i
 expect said Input 11 (

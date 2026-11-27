@@ -16,6 +16,7 @@ expect said ! Key test. Press any key to hear its name and what it does here. Pr
 
 keys f9
 expect said ! F9: Say the status
+# Check: Each key pressed says its name and what it does here
 keys f5
 expect said ! F5: Refresh programs
 keys f8

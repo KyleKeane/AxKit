@@ -21,10 +21,6 @@ command's in this version of axKit.
     The focus moves to Details (Text).
 3. Press Shift+Tab.
     The focus moves to Changes, 2 files (List): Untracked new.txt.
-4. Press F6 (Switch between the list and the text).
-    The focus moves to Details (Text).
-5. Press Ctrl+Tab (Switch between the list and the text).
-    The focus moves to Changes, 2 files (List): Untracked new.txt.
 
 ### Go up to the repository and into another list
 
@@ -50,8 +46,6 @@ command's in this version of axKit.
     You hear: Test: second.
 3. Press Alt+3 (Branches; Navigation menu).
     You hear: Branches, 2. main, current, no upstream.
-4. Press Alt+1 (Changes; Navigation menu).
-    You hear: Changes, 2 files. Untracked new.txt.
 
 ### Close the window
 
@@ -65,16 +59,11 @@ Starts with: Open axGIT with the folder repo.
 
 1. Press Ctrl+Shift+S.
     You hear: Staged a.txt.
-2. Press Ctrl+Shift+S.
-    You hear: a.txt is already staged.
-3. Press Down.
-    It reads Untracked new.txt.
-4. Press Up.
-    It reads Modified a.txt, staged.
-5. Press Ctrl+Shift+U.
+
+### Unstage a file
+
+1. Press Ctrl+Shift+U.
     You hear: Unstaged a.txt.
-6. Press Ctrl+Shift+U.
-    You hear: a.txt is not staged.
 
 ### Select files with Space and stage them together
 
@@ -83,13 +72,6 @@ Starts with: Open axGIT with the folder repo.
 2. Press Shift+Down.
 3. Press Ctrl+Shift+S.
     You hear: Staged 2 files.
-4. Press Ctrl+Shift+S.
-    You hear: Nothing to stage among the 2 selected files.
-5. Press Ctrl+Shift+U.
-    You hear: Unstaged 2 files.
-6. Press Escape.
-    You hear: None selected.
-7. Press Home.
 
 ### Read the diff of a changed file
 
@@ -138,10 +120,6 @@ Starts with: Open axGIT with the folder repo.
 5. Type "Test commit".
 6. Press Enter.
     You hear: Committed.
-7. Press Alt+2 (Log; Navigation menu).
-    You hear: Log, 2 commits.
-8. Press Alt+1 (Changes; Navigation menu).
-    You hear: Changes, 1 file.
 
 ### Discard the changes to a file
 
@@ -197,14 +175,6 @@ Starts with: Open axGIT with the folder repo.
     It reads other.
 4. Press Enter.
     You hear: Switched to other.
-5. Press Alt+1 (Changes; Navigation menu).
-    You hear: Changes, no changes.
-6. Press Alt+3 (Branches; Navigation menu).
-    You hear: Branches, 2.
-7. Press Up.
-    It reads main.
-8. Press Enter.
-    You hear: Switched to main.
 
 ### Make a new branch
 
@@ -212,11 +182,6 @@ Starts with: Open axGIT with the folder repo.
 2. Type "scratch-test".
 3. Press Enter.
     You hear: Switched to scratch-test.
-4. Press Alt+3 (Branches; Navigation menu).
-    You hear: Branches, 3.
-5. Press Home.
-6. Press Enter.
-    You hear: Switched to main.
 
 ### Fetch, pull and push
 
@@ -224,13 +189,12 @@ Starts with: Open axGIT with the folder repo.
     You hear: Fetched.
 2. Press Ctrl+L (Pull; Actions menu).
     You hear: Pulled.
-3. Press Ctrl+L (Pull; Actions menu).
-    You hear: Already up to date.
-4. Press F5 (Refresh; Session menu).
+
+### Push a commit
+
+1. Press F5 (Refresh; Session menu).
     You hear: Refreshed.
-5. Press Ctrl+P (Push; Actions menu).
-    You hear: Pushed.
-6. Press Ctrl+P (Push; Actions menu).
+2. Press Ctrl+P (Push; Actions menu).
     You hear: Pushed.
 
 ## Use axGIT's text, notices and axKit menu
@@ -245,10 +209,6 @@ Starts with: Open axGIT with the folder repo.
 3. Type "marker".
 4. Press Enter.
     The focus moves to Diff of a.txt (Text): +first paragraph marker.
-5. Press F3.
-    It reads +second paragraph marker.
-6. Press F3.
-    It reads +first paragraph marker.
 
 ### Move down the details by page
 
@@ -268,18 +228,11 @@ The focus moves to Diff of a.txt (Text): +first paragraph marker.
     It reads first.
 5. Press Ctrl+Down (Next section).
     It reads a.txt.
-6. Press Ctrl+Tab (Switch between the list and the text).
-7. Press Alt+1 (Changes; Navigation menu).
-    You hear: Changes, 1 file.
 
 ### Change the text size
 
 1. Choose Larger text in the Options menu, Text (key: Ctrl+Plus).
     You hear: Text size.
-2. Choose Smaller text in the Options menu, Text (key: Ctrl+Minus).
-    You hear: Text size.
-3. Choose Windows text size in the Options menu, Text.
-    You hear: Windows text size.
 
 ### Read the keyboard shortcuts and the user guide
 

@@ -71,6 +71,7 @@ keys alt+left
 expect focus {"name":"Add a member to an action of the list","role":"List","value":"key: The key that runs it; without one it runs from the menu"}
 keys enter
 expect said ! Added key: The key that runs it; without one it runs from the menu
+# Goal: Choose the new key's value
 do Choose a value
 expect focus {"name":"key: The key that runs it; without one it runs from the menu","role":"List","value":"Ctrl+1"}
 keys end

@@ -33,6 +33,7 @@ expect said ! Calculator, Store app
 # 5.3 Say the first match while typing off: typing says nothing, F8 says the match all the same; on again.
 menu Say the first match while typing
 expect said ! Say the first match while typing, not checked
+# Check: While it is off typing says nothing and Information says the match, and it turns on again
 keys ctrl+a
 type calculato
 expect focus "value":"calculato"

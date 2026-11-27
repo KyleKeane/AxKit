@@ -22,8 +22,10 @@ keys enter
 expect focus 02-apple, workflow, 2 steps
 do Find next
 expect focus 03-apricot, workflow, 2 steps
+# Check: Find next goes round the end of the list
 do Find next
 expect focus 02-apple, workflow, 2 steps
+# Goal: Go back to the previous match
 do Find previous
 expect focus 03-apricot, workflow, 2 steps
 
@@ -35,6 +37,7 @@ type ap
 keys enter
 expect said ! filter ap, 2 shown
 expect list "items":["02-apple, workflow, 2 steps","03-apricot, workflow, 2 steps"]
+# Check: Ctrl+Delete clears the filter
 keys ctrl+delete
 expect said ! Filter cleared
 expect list "items":["Zebra check, workflow, 2 steps","02-apple, workflow, 2 steps","03-apricot, workflow, 2 steps"]
@@ -44,6 +47,7 @@ expect list "items":["Zebra check, workflow, 2 steps","02-apple, workflow, 2 ste
 menu Name, Options, Sort by
 expect said ! Sorted by name
 expect list "items":["02-apple, workflow, 2 steps","03-apricot, workflow, 2 steps","Zebra check, workflow, 2 steps"]
+# Check: The list's own order comes back from the same menu
 menu The list's own order, Options, Sort by
 expect said ! Sorted by the list's own order
 expect list "items":["Zebra check, workflow, 2 steps","02-apple, workflow, 2 steps","03-apricot, workflow, 2 steps"]

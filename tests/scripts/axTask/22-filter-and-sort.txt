@@ -34,6 +34,7 @@ keys right
 menu Name, Options, Sort by
 expect said ! Sorted by name
 expect list "items":["Apples
+# Check: The list's own order comes back from the same menu
 menu The list's own order, Options, Sort by
 expect said ! Sorted by the list's own order
 close

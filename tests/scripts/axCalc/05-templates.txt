@@ -23,6 +23,7 @@ expect said ! Circle area inserted
 expect focus "name":"Expression","role":"Text","value":"pi*^2"
 type 3
 expect focus "name":"Expression","role":"Text","value":"pi*3^2"
+# Check: Ctrl+Delete clears the template from the field
 keys ctrl+delete
 expect said ! Cleared
 
@@ -35,6 +36,7 @@ type answer twice
 keys enter
 expect said ! Answer twice inserted
 expect focus "name":"Expression","role":"Text","value":"21*2"
+# Check: The expression with the template in it answers
 keys enter
 expect said ! 42
 
@@ -52,6 +54,7 @@ keys escape
 template circle area
 type 4
 expect focus "name":"Expression","role":"Text","value":"pi*4^2"
+# Check: A step fills a template's mark with the text it gives
 keys ctrl+delete
 template Answer twice | 5
 expect focus "name":"Expression","role":"Text","value":"5*2"

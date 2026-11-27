@@ -28,6 +28,7 @@ keys down
 expect focus tasks in alpha, project, 1 list
 keys down
 expect focus tasks in beta, project, 1 list
+# Check: Past the last project heading the edge sounds, and level 1 goes on to Smart lists
 do Next heading level 2
 expect said ♪ Edge
 do Next heading level 1
@@ -46,6 +47,7 @@ keys ctrl+enter
 expect said ! Done: Fix the tap
 run findstr /l /c:"true" "projects\alpha\tasks\Home\Fix the tap.json"
 expect focus Buy a tap, in Home
+# Check: Undo takes the mark back in the project's own file
 do Undo
 expect said ! Undone: Done: Fix the tap
 run findstr /l /c:"false" "projects\alpha\tasks\Home\Fix the tap.json"
@@ -86,6 +88,7 @@ expect said ! Home, 1 item, Fix the tap
 keys ctrl+enter
 expect said ! Done: Fix the tap
 run findstr /l /c:"true" "projects\alpha\tasks\Home\Fix the tap.json"
+# Check: Undo takes the mark back, and Left climbs out of the project to the edge
 do Undo
 expect said ! Undone: Done: Fix the tap
 keys left
@@ -111,6 +114,7 @@ type {temp}\more
 keys enter
 expect said ! Added Projects in more, looking for lists
 expect focus Projects in more, heading level 2, 1 project
+# Check: Refresh keeps the new project folder and its project
 do Refresh
 expect focus Projects in more, heading level 2, 1 project
 keys down
@@ -171,6 +175,7 @@ run powershell -NoProfile -Command "if (-not ((Get-Content 'home\AxKit\axTask.js
 # Goal: Remove a project folder
 menu 1. projects
 expect said ! Removed projects. Lists, 1 list
+# Check: A second project folder is removed the same way
 menu 1. more
 expect said ! Removed more
 

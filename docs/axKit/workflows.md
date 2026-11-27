@@ -18,6 +18,7 @@ Steps and keys: `docs/axKit/workflows/axAutomate.md` (in Claude's working folder
 2. **Run a workflow and hear how it went**
     - Run every workflow of a folder
     - Read how a workflow's last run went
+    - Read why a step of the run failed
     - Read the report of a workflow's last run
     - Run one workflow and stop it partway
     - Run a workflow that runs commands
@@ -39,6 +40,7 @@ Steps and keys: `docs/axKit/workflows/axAutomate.md` (in Claude's working folder
     - Run only the workflows you selected
 6. **Find, filter and sort the workflows of a folder**
     - Find a workflow and go to the next and the previous match
+    - Go back to the previous match
     - Show only the workflows whose name contains a text
     - Put the workflows in the order of their names
 
@@ -56,14 +58,17 @@ Steps and keys: `docs/axKit/workflows/axCalc.md` (in Claude's working folder: `w
     - Read the keyboard shortcuts
     - Read the keys in the command palette
     - Get to the end and the start of the field with the page keys
+    - Get to the start of the field
     - Open another app with its key
 2. **Use variables, earlier answers and the history in axCalc**
     - Go on from the last answer and use ans
+    - Use the last answer by its name
     - Set a variable and use it
     - Switch angles between degrees and radians
     - Change an entry of the history and answer it again
     - Find an entry in the history
     - See the variables and clear them
+    - Clear the variables
     - Clear the history
     - Stop keeping the history between runs
 3. **Move through axCalc's history and find in it**
@@ -72,6 +77,7 @@ Steps and keys: `docs/axKit/workflows/axCalc.md` (in Claude's working folder: `w
     - Hear the answer of an entry in other bases
     - Move from answer to answer with a letter
     - Find the next and the previous match in the history
+    - Go back to the previous match
     - Go back to the field from the history
     - Change the text size
     - Hear the bases from the command palette
@@ -112,10 +118,13 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Select lines of a reply and clear the selection
 4. **Move through a reply by headings and quick keys**
     - Move through the conversation by headings
+    - Move through the markers alone
     - Move by heading level
     - Hide the markers in the text
     - Move through the conversation by paragraph
     - Jump between replies, messages, tools, errors and system lines
+    - Jump between your messages
+    - Jump to Claude's lines and to the tool lines
     - Go back to the message field from the conversation
     - Move through a long reply by page
     - Skip over a run of lines in a reply
@@ -124,6 +133,9 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Find the next match from the message field
     - Go back to where you were before a jump
     - Bookmark lines and move between them
+    - Move between the bookmarks
+    - Remove a bookmark
+    - Bookmark a line from the message field
     - Hear a reply's paragraphs, headings or bookmarks without moving
     - Quote two lines in a message and send it
     - Quote a long paragraph whole
@@ -142,6 +154,7 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Continue the last conversation in a folder
     - Restart Claude
     - Start a new session with arguments of your own
+    - Type the arguments and start the session
 8. **Restart, stop and close a conversation**
     - Stop Claude from the message field
     - Start a stopped Claude again
@@ -156,11 +169,15 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Play background music while Claude works
     - Stop recording the raw stream
     - Have Claude's replies spoken
+    - Have only the first line of each reply spoken
     - Hear each tool call as it starts
     - Read the keyboard shortcuts
     - Find a word in the keyboard shortcuts
     - Read the user guide
     - Read the version, the licence and the axKit guide
+    - Read the licence
+    - Read the attribution
+    - Read the axKit guide
     - Show the time on Input and Output lines
 10. **Install Claude Code when it is missing**
     - Hear the ways to install Claude Code
@@ -276,6 +293,7 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Refuse what Claude asks to do
 40. **Answer Claude's own questions over Claude Code's stream**
     - Answer the first question in your own words
+    - Choose Other and type your own answer
     - Tick several answers of the second question
 41. **Interrupt Claude over Claude Code's stream**
     - Refuse a waiting question with the interrupt key
@@ -338,6 +356,7 @@ Steps and keys: `docs/axKit/workflows/axClip.md` (in Claude's working folder: `w
 1. **Find and paste something you copied earlier**
     - Move through the copied items
     - Jump to the newest or oldest item, or by a page
+    - Jump to the newest item, then by a page
     - Read an item's whole text
     - Pause the recording and start it again
     - Remove an item
@@ -379,6 +398,7 @@ Steps and keys: `docs/axKit/workflows/axDown.md` (in Claude's working folder: `w
     - Close a window without saving its changes
 5. **Find text and go to a line**
     - Find a word in the text
+    - Go to the next and the previous match
     - Go to a line by its number
 6. **Change the text size and the font**
     - Change the text size
@@ -390,6 +410,8 @@ Steps and keys: `docs/axKit/workflows/axDown.md` (in Claude's working folder: `w
     - Read the user guide
     - Hear the version of axKit
     - Read the licence, the attribution and the axKit guide
+    - Read the attribution
+    - Read the axKit guide
     - Turn the update check at start on or off
     - Move through the commands of the palette
     - Run a command found by its name
@@ -405,6 +427,7 @@ Steps and keys: `docs/axKit/workflows/axDown.md` (in Claude's working folder: `w
     - Move back to the previous link
     - Move by list and by list item
     - Move to a block quote or a table
+    - Move to a table
 10. **Show the current file in another app**
 11. **Change the colours with the theme file**
     - Make a theme file and open it
@@ -437,6 +460,7 @@ Steps and keys: `docs/axKit/workflows/axDown.md` (in Claude's working folder: `w
     - Go back to edit mode and type
 18. **Give a line, a word and several lines their Markdown format, and take it away again**
     - Make a line a heading and change its level
+    - Set a heading's level from the menu
     - Make the word at the caret bold and take it off again
     - Make the selected words italic
     - Make several lines list items and undo it in one step
@@ -470,14 +494,20 @@ Steps and keys: `docs/axKit/workflows/axFile.md` (in Claude's working folder: `w
     - Complete a path from its first letters
     - Open a completed path
     - Add a folder to the favorites and remove it
+    - Remove the folder from the favorites
     - Refresh the folder after a change from outside
     - Show hidden files and names that start with a period
     - Find a file by part of its name
+    - Go to the next and the previous match
+    - Go back to the previous match
     - Show only the entries whose names contain a word
+    - Clear the filter
     - Sort the list by date, size or name
     - Select several entries
+    - Select all the entries
     - Clear the selection
     - Select a run of entries in a row
+    - Select every entry from here to the last
 2. **Open a folder in axFile from another app**
     - Show the file of an axDown window in axFile
 3. **Copy, move, rename and delete files**
@@ -522,6 +552,7 @@ Steps and keys: `docs/axKit/workflows/axFile.md` (in Claude's working folder: `w
     - Move a file into a folder by typing its name
     - Undo the move
 8. **Open a recent folder in axFile from the command palette**
+    - Open a recent folder from the command palette
 9. **Find out whether a key arrives and what it does, in a list**
     - Start the key test
     - Hear what a key does without doing it
@@ -531,6 +562,7 @@ Steps and keys: `docs/axKit/workflows/axFile.md` (in Claude's working folder: `w
 11. **Take back a new text file**
     - Undo a new text file
     - Make a new Markdown file and a new JSON file
+    - Make a new JSON file
 12. **Hear why a folder a program runs in cannot be renamed**
     - Rename the folder once the program has ended
 
@@ -546,6 +578,7 @@ Steps and keys: `docs/axKit/workflows/axGIT.md` (in Claude's working folder: `wo
     - Close the window
 2. **Review and commit changes**
     - Stage and unstage a file
+    - Unstage a file
     - Select files with Space and stage them together
     - Read the diff of a changed file
     - Read an untracked file
@@ -558,6 +591,7 @@ Steps and keys: `docs/axKit/workflows/axGIT.md` (in Claude's working folder: `wo
     - Switch branches
     - Make a new branch
     - Fetch, pull and push
+    - Push a commit
 4. **Use axGIT's text, notices and axKit menu**
     - Find a word in a diff
     - Move down the details by page
@@ -600,6 +634,7 @@ Steps and keys: `docs/axKit/workflows/axJSON.md` (in Claude's working folder: `w
     - Move back from key to key
     - Move to the next object and back to the whole file
     - Move through arrays and their items
+    - Move from item to item of an array
     - Move by the structure from the Navigation menu
     - Go to the next and the previous error
 3. **Format a JSON file**
@@ -623,6 +658,7 @@ Steps and keys: `docs/axKit/workflows/axJSON.md` (in Claude's working folder: `w
     - Change a value in line to the next and the previous
     - Add a member an object can have
     - Add a key to an action and choose it
+    - Choose the new key's value
     - Choose an item's value through its link to the list's configuration
 
 ## axMCP
@@ -641,9 +677,11 @@ Steps and keys: `docs/axKit/workflows/axMCP.md` (in Claude's working folder: `wo
 2. **Add, rename and remove a server of your own in axMCP**
     - Add a server of your own
     - Rename a server and undo the rename
+    - Undo the rename
     - Remove a server
     - Undo the removal of a server
     - Remove several of your servers at once and bring them back
+    - Bring the removed servers back
     - Start a server
     - Tick a yes-or-no argument and call the tool
     - Read a resource from a template
@@ -661,6 +699,7 @@ Steps and keys: `docs/axKit/workflows/axMCP.md` (in Claude's working folder: `wo
     - Start a server again after it stopped
 4. **Find, filter and sort the servers in axMCP**
     - Find a server and go to the next and the previous match
+    - Go back to the previous match
     - Show only the servers whose name contains a text
     - Put the servers in the order of their names
 
@@ -676,6 +715,7 @@ Steps and keys: `docs/axKit/workflows/axMedia.md` (in Claude's working folder: `
     - Play another file of the queue
     - Hear the information of a file
     - Remove files and clear the queue
+    - Clear the queue
 2. **Add files to the queue from another app**
     - Add a folder to the queue with no window open
     - Start playing with the main action key
@@ -686,7 +726,9 @@ Steps and keys: `docs/axKit/workflows/axMedia.md` (in Claude's working folder: `
 3. **Play, pause and seek**
     - Play, pause and resume
     - Move forward, back and to a time
+    - Go to a time in the file
     - Change the playing speed
+    - Go back to the normal speed
     - Hear what is playing and go to the next or the previous file
     - Stop saying each file as it starts
 4. **Hear why a file cannot be played**
@@ -694,6 +736,7 @@ Steps and keys: `docs/axKit/workflows/axMedia.md` (in Claude's working folder: `
 5. **Use axMedia's text, notices and axKit menu**
     - Change the text size
     - Read the keyboard shortcuts and the user guide
+    - Read the user guide
 6. **Use axMedia's Context menu**
     - Hear a file's information from the Context menu
     - Play the selected file from the Context menu
@@ -726,6 +769,7 @@ Steps and keys: `docs/axKit/workflows/axPass.md` (in Claude's working folder: `w
     - Add an entry
     - Move an entry to the Recycle Bin and undo it
     - Move several entries to the Recycle Bin at once and undo it
+    - Bring the entries back from the Recycle Bin
     - Set a generated password
     - Move an entry to another group
     - Lock the database
@@ -750,6 +794,7 @@ Steps and keys: `docs/axKit/workflows/axPass.md` (in Claude's working folder: `w
     - Delete an entry for good from the Recycle Bin
 5. **Find, filter, sort and select entries of a password database**
     - Find an entry and go to the next and the previous match
+    - Go back to the previous match
     - Show only the entries whose name contains a text
     - Put the entries in the order of their names
     - Select entries as you move and deselect them all
@@ -763,6 +808,11 @@ Steps and keys: `docs/axKit/workflows/axPreview.md` (in Claude's working folder:
     - Read the text line by line
     - Go to a line by its number
     - Move by headings, links, lists, quotes and tables
+    - Move by the headings of one level
+    - Move from link to link
+    - Move to a list and through its items
+    - Move to a block quote
+    - Move to a table
     - Find a word in the text
     - Move by page and by paragraph
     - Turn word wrap off and on
@@ -821,6 +871,7 @@ Steps and keys: `docs/axKit/workflows/axProcess.md` (in Claude's working folder:
     - Turn a startup program on again
     - Remove a startup program
     - Turn a Startup folder shortcut off and on again from its details
+    - Turn the shortcut on again from its details
     - Remove a shortcut from the Startup folder
 5. **End a process with the processes it started**
     - Find a process and go to the next and the previous match
@@ -838,6 +889,7 @@ Steps and keys: `docs/axKit/workflows/axStart.md` (in Claude's working folder: `
     - Refresh the list of programs
     - Move through the matches
     - Jump to the first or last match, or by a page
+    - Jump to the first match, then by a page
     - Hear the selected match's kind and path
     - Hide the window and show it again
     - Quit axStart
@@ -882,6 +934,7 @@ Steps and keys: `docs/axKit/workflows/axTask.md` (in Claude's working folder: `w
     - Write notes of several lines
     - Link one item to another
     - Make a checklist a plain list and back
+    - Make a plain list a checklist again
     - Make a new list
     - Hide and show done tasks
 3. **Group lists into sections**
@@ -998,6 +1051,7 @@ Steps and keys: `docs/axKit/workflows/axTemplate.md` (in Claude's working folder
     - Rename a template from its Title field
 2. **Delete several templates, and meet a file that is no template, in axTemplate's browser**
     - Archive several templates at once
+    - Bring the archived templates back
 3. **Find a template in the launcher and use it**
     - Move through the templates
     - Find a template by a word of its name or its text
@@ -1012,10 +1066,12 @@ Steps and keys: `docs/axKit/workflows/axTerminal.md` (in Claude's working folder
 
 1. **Start a terminal**
     - Move between the command field and the terminal
+    - Go back to the command field
     - Hear the state, the shell and the prompt
 2. **Run commands and read their output**
     - Run a command and read its output by headings
     - Turn the heading marks in the text off and on
+    - Turn the heading marks back on
     - Answer a program that asks
     - Send a command of several lines
     - Send a command without recording it
@@ -1031,6 +1087,7 @@ Steps and keys: `docs/axKit/workflows/axTerminal.md` (in Claude's working folder
     - Switch to another shell
     - Hear the current folder's full path
     - Restart the shell
+    - Restart the shell while a command runs
     - Start the shell again after it ended
 5. **Use axTerminal's text, notices and axKit menu**
     - Clear the window
@@ -1055,12 +1112,14 @@ Steps and keys: `docs/axKit/workflows/axTerminal.md` (in Claude's working folder
     - Copy a line into the command field
     - Run a Context command from the palette
 10. **Start a shell in a recent folder from the command palette**
+    - Start a session in a recent folder from the command palette
 11. **Take a command another window hands over**
     - Read a handed command in the field before sending it
     - Send the handed command yourself
 12. **Use a full-screen program**
     - Open a full-screen program and type into it
     - Read the screen and go back to the program
+    - Find text on the screen
     - Hear a menu's selected entry
     - Leave the program and come back to the field
     - Get the terminal back from a program that ends on the whole screen

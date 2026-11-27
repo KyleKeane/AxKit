@@ -62,6 +62,7 @@ keys escape
 expect said Not run
 expect focus axAutomate offers a command for you to run: echo second
 wait 1500
+# Check: Each later offer is asked after the one before and turned down the same way
 keys escape
 expect said Not run
 expect focus axAutomate offers a command for you to run: echo third

@@ -15,10 +15,11 @@ Starts with: Open axTerminal with the folder myproject.
 
 1. Press Alt+2 (Terminal; Navigation menu).
     The focus moves to Terminal.
-2. Press Alt+2 (Terminal; Navigation menu).
-3. Press Alt+1 (Command field; Navigation menu).
+
+### Go back to the command field
+
+1. Press Alt+1 (Command field; Navigation menu).
     The focus moves to Command.
-4. Press Alt+1 (Command field; Navigation menu).
 
 ### Hear the state, the shell and the prompt
 
@@ -38,28 +39,14 @@ Starts with: Open axTerminal with the folder myproject.
 3. Press Alt+3 (Latest output; Navigation menu).
     You hear: Output 1 heading level 1.
 4. Press Down twice.
-5. Press Shift+I.
-    You hear: Input 1 heading level 1.
-6. Press Down four times.
-7. Press Shift+I.
-    You hear: Input 1 heading level 1.
-8. Press 2.
-    You hear: Folder heading level 2.
-9. Press 2.
-    You hear: Command heading level 2.
 
 ### Turn the heading marks in the text off and on
 
 1. Choose Markers in the text in the Options menu, Text.
-2. Press Shift+I.
-    You hear: Input 1 heading level 1.
-3. Press Down.
-4. Press Up.
-5. Press H.
-    You hear: heading level.
-6. Choose Markers in the text in the Options menu, Text.
-7. Press Shift+I.
-8. Press Alt+1 (Command field; Navigation menu).
+
+### Turn the heading marks back on
+
+1. Choose Markers in the text in the Options menu, Text.
 
 ### Answer a program that asks
 
@@ -96,24 +83,12 @@ Starts with: Open axTerminal with the folder myproject.
 2. Choose Send without recording in the Actions menu.
     You hear: Sent, not recorded.
     You hear the Done sound and Done.
-3. Type "Start-Sleep 5".
-4. Choose Send without recording in the Actions menu.
-    You hear: Sent, not recorded.
-5. Press F7 (What is running; Actions menu).
-    You hear something with "Running: a command sent without recording" in it.
-    You hear the Done sound and Done.
-6. Press Alt+Down (Recent commands; Actions menu).
-7. Press Escape.
 
 ### Put a recent command back in the field
 
 1. Press Alt+Down (Recent commands; Actions menu).
 2. Press Down.
 3. Press Enter.
-4. Press Ctrl+A.
-5. Press Delete.
-6. Press Alt+Down (Recent commands; Actions menu).
-7. Press Escape.
 
 ### Copy a command line of the terminal into the field
 
@@ -174,9 +149,6 @@ Starts with: Open axTerminal with the folder myproject.
 3. Press Enter.
     You hear the sound Done.
     You hear: again.
-4. Type "cmd /c exit 3".
-5. Press Enter.
-    You hear: Failed, exit code 3.
 
 ## Switch shells and folders
 
@@ -190,19 +162,12 @@ Starts with: Open axTerminal with the folder work\myproject.
 4. Press Enter.
     You hear: New session in myproject.
     You hear: Ready.
-5. Press Alt+2 (Terminal; Navigation menu).
-6. Press Alt+1 (Command field; Navigation menu).
-7. Type "echo hello".
-8. Press Enter.
-    You hear the Done sound and Done.
 
 ### Switch to another shell
 
 1. Choose the menu item Windows PowerShell.
     You hear: Windows PowerShell.
     You hear: Ready.
-2. Press Alt+2 (Terminal; Navigation menu).
-3. Press Alt+1 (Command field; Navigation menu).
 
 ### Hear the current folder's full path
 
@@ -220,15 +185,16 @@ Starts with: Open axTerminal with the folder work\myproject.
 1. Press Ctrl+Shift+R (Restart shell; Session menu).
     You hear: Restarting.
     You hear: Ready.
-2. Press Alt+2 (Terminal; Navigation menu).
-3. Press Alt+1 (Command field; Navigation menu).
-4. Type "ping -n 30 127.0.0.1".
-5. Press Enter.
+
+### Restart the shell while a command runs
+
+1. Type "ping -n 30 127.0.0.1".
+2. Press Enter.
     You hear: Sent.
-6. Press Ctrl+Shift+R (Restart shell; Session menu).
-7. Press Escape.
-8. Press Ctrl+Shift+R (Restart shell; Session menu).
-9. Press Enter.
+3. Press Ctrl+Shift+R (Restart shell; Session menu).
+4. Press Escape.
+5. Press Ctrl+Shift+R (Restart shell; Session menu).
+6. Press Enter.
     You hear: Restarting.
     You hear: Ready.
 
@@ -253,11 +219,6 @@ Starts with: Open axTerminal with the folder myproject.
 
 1. Press Ctrl+Shift+Delete (Clear transcript; Session menu).
     You hear: Cleared.
-2. Press Alt+1 (Command field; Navigation menu).
-3. Type "echo first".
-4. Press Enter.
-    You hear the Done sound and Done.
-5. Press Alt+2 (Terminal; Navigation menu).
 
 ### Set a bookmark and go back to it
 
@@ -277,8 +238,6 @@ Starts with: Open axTerminal with the folder myproject.
 3. Type "first".
 4. Press Enter.
     You hear: echo first.
-5. Press F3 (Find next; Navigation menu).
-    You hear: first.
 
 ### Read the keyboard shortcuts
 
@@ -343,8 +302,6 @@ Starts with: Open axTerminal with the folder myproject.
 1. Press Alt+1 (Command field; Navigation menu).
 2. Press Ctrl+Space.
     You hear: Edit mode.
-3. Press End.
-4. Type "!".
 
 ## Agree to the reminder before a shell first starts
 
@@ -397,12 +354,6 @@ Starts with: Open axTerminal with the folder work\myproject.
 
 1. Choose the menu item 1. Test cmd.
     You hear: Test cmd.
-2. Press Alt+2 (Terminal; Navigation menu).
-3. Press Alt+1 (Command field; Navigation menu).
-4. Type "echo hello-user-shell".
-5. Press Enter.
-6. Press Alt+2 (Terminal; Navigation menu).
-7. Press Alt+1 (Command field; Navigation menu).
 
 ### Remove a shell of your own
 
@@ -435,18 +386,13 @@ Starts with: Open axTerminal with the folder myproject.
     You hear: Bookmark this line, Context, Ctrl+K, or M in the terminal.
 3. Press Enter.
     You hear: Bookmark 2 added.
-4. Press F1 (Command palette; Help menu).
-5. Type "copy this line".
-    You hear: Copy this line into the command field, Context, Enter in the terminal.
-6. Press Enter.
-    You hear: Line copied.
 
 ## Start a shell in a recent folder from the command palette
 
 Starts with: Open axTerminal with the folder work\orchard. Close the window. Open axTerminal with the folder work\cellar.
 
-You hear the sound Ready.
-You hear the sound Ready.
+### Start a session in a recent folder from the command palette
+
 1. Press F1 (Command palette; Help menu).
 2. Type "orch".
     You hear something with "2. orchard" in it.
@@ -454,8 +400,6 @@ You hear the sound Ready.
 3. Press Enter.
     You hear: Folder orchard.
     You hear the sound Ready.
-4. Press F8 (Say current folder; Session menu).
-    You hear: work\orchard.
 
 ## Take a command another window hands over
 
@@ -492,12 +436,13 @@ Starts with: Open axTerminal with the folder myproject.
 1. Press Ctrl+Space.
     You hear: Reading the screen.
 2. Press Ctrl+Home.
-3. Press Alt+1 (Command field; Navigation menu).
-    You hear: Screen of edit. The terminal and the command field come back when edit leaves the whole screen.
-4. Press Ctrl+F (Find; Navigation menu).
-5. Type "More".
-6. Press Enter.
-7. Press Ctrl+Space.
+
+### Find text on the screen
+
+1. Press Ctrl+F (Find; Navigation menu).
+2. Type "More".
+3. Press Enter.
+4. Press Ctrl+Space.
     You hear: Keys to edit.
 
 ### Hear a menu's selected entry
@@ -520,7 +465,3 @@ Starts with: Open axTerminal with the folder myproject.
 2. Type "[Console]::Write([char]27 + '[?1049h')".
 3. Press Enter.
     You hear: Done.
-4. Type "echo ('after' + '-screen')".
-5. Press Enter.
-    You hear: after-screen.
-6. Press Alt+2 (Terminal; Navigation menu).

@@ -22,13 +22,6 @@ Starts with: Open axCalc.
 1. Type "2+2".
 2. Press Ctrl+Delete (Clear the field).
     You hear: Cleared.
-3. Press Ctrl+Delete (Clear the field).
-    You hear: Empty.
-4. Type "3".
-5. Press Escape.
-    You hear the sound Edge.
-6. Press Ctrl+Delete (Clear the field).
-    You hear: Cleared.
 
 ### Go on from the last answer
 
@@ -52,11 +45,6 @@ Starts with: Open axCalc.
 
 1. Press Tab.
 2. Press Escape.
-3. Press Tab.
-4. Press Delete.
-5. Press Escape.
-6. Press Ctrl+Delete (Clear the field).
-    You hear: Cleared.
 
 ### Read the keyboard shortcuts
 
@@ -71,8 +59,6 @@ Starts with: Open axCalc.
 3. Press Enter.
     You hear: A key alone moves and reads.
 4. Press Escape.
-5. Press Ctrl+Comma.
-6. Press Escape.
 
 ### Get to the end and the start of the field with the page keys
 
@@ -80,14 +66,11 @@ Starts with: Open axCalc.
 2. Press Home.
 3. Press Page Down.
 4. Type "0".
-5. Press Page Down.
-    You hear the sound Edge.
-6. Press Page Up.
-7. Type "9".
-8. Press Page Up twice.
-    You hear the sound Edge.
-9. Press Ctrl+Delete (Clear the field).
-    You hear: Cleared.
+
+### Get to the start of the field
+
+1. Press Page Up.
+2. Type "9".
 
 ### Open another app with its key
 
@@ -108,11 +91,11 @@ Starts with: Open axCalc.
 3. Type "*2".
 4. Press Enter.
     You hear: 16588800.
-5. Type "-3".
-6. Press Enter.
-    You hear: -3.
-7. Type "ans*2".
-8. Press Enter.
+
+### Use the last answer by its name
+
+1. Type "ans*2".
+2. Press Enter.
     You hear: -6.
 
 ### Set a variable and use it
@@ -133,7 +116,6 @@ Starts with: Open axCalc.
 4. Type "sin(pi/2)".
 5. Press Enter.
     You hear: 1.
-6. Choose Degrees in the Options menu, Angles.
 
 ### Change an entry of the history and answer it again
 
@@ -155,8 +137,11 @@ Starts with: Open axCalc.
 
 1. Choose Variables in the Actions menu.
 2. Press Escape.
-3. Choose Clear variables in the Actions menu.
-4. Press Enter.
+
+### Clear the variables
+
+1. Choose Clear variables in the Actions menu.
+2. Press Enter.
     You hear: Variables cleared.
 
 ### Clear the history
@@ -174,9 +159,6 @@ Starts with: Open axCalc.
 3. Press Enter.
     You hear: 2.
 4. Choose Keep history between runs in the Options menu.
-5. Close the window.
-6. Open axCalc.
-7. Press Shift+Tab.
 
 ## Move through axCalc's history and find in it
 
@@ -186,14 +168,6 @@ Starts with: Open axCalc.
 
 1. Press F8 (Answer in other bases; Actions menu).
     You hear: 255, hex FF, binary 1111 1111, octal 377.
-2. Type "10+1".
-3. Press Enter.
-    You hear: 11.
-4. Type "2.5*2".
-5. Press Enter.
-6. Type "10*3".
-7. Press Enter.
-    You hear: 30.
 
 ### Move through the history one line at a time
 
@@ -220,8 +194,11 @@ Starts with: Open axCalc.
 1. Press Ctrl+F (Find; Navigation menu).
 2. Type "10".
 3. Press Enter.
-4. Press F3 twice (Find next; Navigation menu).
-5. Press Shift+F3 (Find previous; Navigation menu).
+4. Press F3 (Find next; Navigation menu).
+
+### Go back to the previous match
+
+1. Press Shift+F3 (Find previous; Navigation menu).
 
 ### Go back to the field from the history
 
@@ -296,8 +273,6 @@ Starts with: Open axCalc.
 3. Press Enter.
     You hear: Circle area inserted.
 4. Type "3".
-5. Press Ctrl+Delete (Clear the field).
-    You hear: Cleared.
 
 ### Put a template in around the selected text
 
@@ -307,14 +282,8 @@ Starts with: Open axCalc.
 4. Type "answer twice".
 5. Press Enter.
     You hear: Answer twice inserted.
-6. Press Enter.
-    You hear: 42.
 
 ### Type a template into the field with a workflow step
 
 1. Put in the template circle area.
 2. Type "4".
-3. Press Ctrl+Delete (Clear the field).
-4. Put in the template Answer twice.
-5. Press Enter.
-    You hear: 10.

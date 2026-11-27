@@ -18,18 +18,6 @@ Starts with: Open axTask with the folder tasks.
 2. Press Ctrl+Down (Next section; Navigation menu).
 3. Press Down.
 4. Press Ctrl+1 (Next heading level 1).
-5. Press Down four times.
-6. Press Ctrl+1 (Next heading level 1).
-    You hear the sound Edge.
-7. Press Ctrl+2 (Next heading level 2).
-    You hear the sound Edge.
-8. Press Ctrl+Down (Next section; Navigation menu).
-    You hear the sound Edge.
-9. Press Ctrl+Up (Previous section; Navigation menu).
-10. Press Ctrl+Shift+1 twice (Previous heading level 1).
-11. Press Right.
-    You hear: A section: Down goes into it.
-12. Press Down twice.
 
 ### Open a list
 
@@ -56,10 +44,6 @@ Starts with: Open axTask with the folder tasks.
 1. Press Escape.
 2. Press Tab.
 3. Press Shift+Tab.
-4. Press Ctrl+Tab (Switch between the navigator and the detail pane).
-5. Press F6 (Switch between the navigator and the detail pane).
-6. Press Ctrl+Shift+Tab (Switch between the navigator and the detail pane).
-7. Press Escape.
 
 ### Mark a task done or not done
 
@@ -175,8 +159,6 @@ Starts with: Open axTask with the folder tasks.
 6. Press Tab.
 7. Press Enter.
     You hear: Notes: First line, and 1 more line.
-8. Press F7 (Read in full; Context menu).
-    You hear: Notes: First line. Second line.
 
 ### Link one item to another
 
@@ -194,16 +176,11 @@ Starts with: Open axTask with the folder tasks.
 1. Press Left.
 2. Choose Remove Done from every item in the Actions menu.
     You hear: Shopping is a plain list: Done is hidden, and kept in the items that have it.
-3. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: Shopping is a plain list.
-4. Choose Remove Done from every item in the Actions menu.
-    You hear: Shopping is a plain list.
-5. Choose Remove Done from every item in the Actions menu.
-    You hear: Shopping is a plain list already.
-6. Choose Add Done to every item in the Actions menu.
+
+### Make a plain list a checklist again
+
+1. Choose Add Done to every item in the Actions menu.
     You hear: Shopping is a checklist: every item has Done.
-7. Choose Add Done to every item in the Actions menu.
-    You hear: Shopping is a checklist already.
 
 ### Make a new list
 
@@ -239,15 +216,12 @@ Starts with: Open axTask with the folder tasks.
 5. Type "Jobs".
 6. Press Enter.
     You hear: Moved Work to Jobs.
-7. Press Up.
 
 ### Move among the sections by their headings
 
 1. Press Ctrl+Up (Previous section; Navigation menu).
 2. Press Ctrl+Down twice (Next section; Navigation menu).
-3. Press Ctrl+1 twice (Next heading level 1).
-    You hear the sound Edge.
-4. Press Ctrl+Shift+2 (Previous heading level 2).
+3. Press Ctrl+1 (Next heading level 1).
 
 ### Make a new list in a section
 
@@ -282,10 +256,6 @@ Starts with: Open axTask with the folder tasks.
 1. Press Left.
 2. Press Delete.
     You hear: Archived Work.
-3. Press End.
-4. Press Up.
-5. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: Archived Work.
 
 ## Act on items with action keys
 
@@ -302,8 +272,6 @@ Starts with: Open axTask with the folder tasks.
     You hear: No action on Ctrl+3 in this list; its actions are written in its configuration, Ctrl+J on the list.
 6. Press Ctrl+1 (Action key 1).
     You hear: Done: Done: done.
-7. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: Done: Done: done.
 
 ### Move an item to another list with an action key
 
@@ -331,9 +299,6 @@ Starts with: Open axTask with the folder tasks.
 1. Press Ctrl+1 (Next heading level 1).
 2. Press Ctrl+2 (Next heading level 2).
 3. Press Down twice.
-4. Press Ctrl+2 (Next heading level 2).
-    You hear the sound Edge.
-5. Press Ctrl+1 (Next heading level 1).
 
 ### Mark a project's task done from All tasks
 
@@ -343,15 +308,6 @@ Starts with: Open axTask with the folder tasks.
 3. Press Down.
 4. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Done: Fix the tap.
-5. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: Done: Fix the tap.
-6. Press Left.
-    You hear: Lists, 1 list, All tasks, 2 not done.
-7. Press Ctrl+1 (Next heading level 1).
-8. Press End.
-9. Press Ctrl+Shift+1 three times (Previous heading level 1).
-10. Press Ctrl+2 (Next heading level 2).
-11. Press Down.
 
 ### Open a project and mark a task done in it
 
@@ -365,14 +321,6 @@ Starts with: Open axTask with the folder tasks.
     You hear: Home, 1 item, Fix the tap.
 7. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Done: Fix the tap.
-8. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: Done: Fix the tap.
-9. Press Left.
-    You hear: tasks in alpha, 1 list, Home, list, 1 item.
-10. Press Left.
-    You hear: Lists, 1 list, tasks in alpha, project, 1 list.
-11. Press Left.
-    You hear the sound Edge.
 
 ### Add a project folder by its path
 
@@ -388,8 +336,6 @@ Starts with: Open axTask with the folder tasks.
 8. Type "more".
 9. Press Enter.
     You hear: Added Projects in more, looking for lists.
-10. Press F5 (Refresh; Session menu).
-11. Press Down.
 
 ### Search every list
 
@@ -413,8 +359,6 @@ Starts with: Open axTask with the folder tasks.
 
 1. Choose the menu item 1. projects.
     You hear: Removed projects. Lists, 1 list.
-2. Choose the menu item 1. more.
-    You hear: Removed more.
 
 ## Group smart lists and find items by tag
 
@@ -424,8 +368,6 @@ Starts with: Open axTask with the folder tasks.
 
 1. Press Ctrl+3 (Next heading level 3).
 2. Press Down.
-3. Press Ctrl+3 (Next heading level 3).
-4. Press Down.
 
 ### Gather a tag's items from every list
 
@@ -434,19 +376,11 @@ Starts with: Open axTask with the folder tasks.
 2. Press Down.
 3. Press Left.
     You hear: Lists, 1 list, #garden, 2.
-4. Press Ctrl+3 (Next heading level 3).
-5. Press Down.
-6. Press Ctrl+3 (Next heading level 3).
-    You hear the sound Edge.
 
 ### Find the smart lists that share a first word
 
 1. Press Ctrl+Shift+2 twice (Previous heading level 2).
 2. Press Down twice.
-3. Press Ctrl+Shift+1 (Previous heading level 1).
-4. Press Down twice.
-5. Press Ctrl+Shift+3 (Previous heading level 3).
-    You hear the sound Edge.
 
 ## Close axTask and come back to the list you had
 
@@ -460,9 +394,6 @@ Starts with: Open axTask with the folder tasks.
 3. Press Down.
 4. Close the window.
 5. Open axTask.
-6. Press Left.
-    You hear: Lists, 2 lists, Shopping, list, 2 items.
-7. Close the window.
 
 ## Find out whether a key arrives and what it does, in an item window
 
@@ -474,24 +405,6 @@ Starts with: Open axTask with the folder tasks.
     You hear: Key test. Press any key to hear its name and what it does here. Press Escape to end.
 2. Press F9 (Say the status; Window menu).
     You hear: F9: Say the status.
-3. Press F1 (Command palette; Help menu).
-    You hear: F1: Command palette.
-4. Press Ctrl+Period.
-    You hear: Ctrl+Period: The Context menu, as Shift+F10.
-5. Press Ctrl+Slash (Ask about this window; axKit menu, Claude).
-    You hear: Ctrl+Slash: Ask Claude about this window, as Shift+F1.
-6. Press Ctrl+N (New item; Actions menu).
-    You hear: Ctrl+N: New item.
-7. Press Ctrl+Up (Previous section; Navigation menu).
-    You hear: Ctrl+Up: Previous section.
-8. Press Left.
-    You hear: Left: Up a level.
-9. Press Down.
-    You hear: Down: moves in the list.
-10. Press W.
-    You hear: W: finds the next item that starts with what you type.
-11. Press Shift+F9.
-    You hear: Shift+F9: no command of this window.
 
 ### End the key test
 
@@ -580,8 +493,6 @@ Starts with: Open axTask with the folder tasks.
 1. Press Ctrl+N (New item; Actions menu).
 2. Type "Paint the door".
 3. Press Enter.
-4. Press Tab.
-5. Press Down three times.
 
 ## Make a smart list of your own
 
@@ -641,9 +552,6 @@ Starts with: Open axTask with the folder tasks.
 2. Press Tab twice.
 3. Press Enter.
     You hear: Converted 2 lists: 3 items. A copy is among the Archived lists.
-4. Press Down.
-5. Press Alt+0 (All tasks; Navigation menu).
-    You hear: All tasks, 3 items.
 
 ## Give a list its configuration
 
@@ -657,13 +565,6 @@ Starts with: Open axTask with the folder tasks.
 4. Press Shift+Tab.
 5. Press Ctrl+J (Edit the list's configuration; Context menu).
     You hear: Written the configuration of Notes.
-6. Press Right.
-    You hear: Notes, 1 item, Idea.
-7. Press Tab.
-8. Press Down three times.
-9. Press Shift+Tab.
-10. Press Ctrl+Enter (Done or not done; Context menu).
-    You hear: Done: Idea.
 
 ### Add an item to a list that has no configuration yet
 
@@ -674,11 +575,6 @@ Starts with: Open axTask with the folder tasks.
 5. Type "First thing".
 6. Press Enter.
     You hear: Added First thing.
-7. Press Tab.
-8. Press End.
-9. Press Shift+Tab.
-10. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: Added First thing.
 
 ## Change an item in its form
 
@@ -692,7 +588,7 @@ Starts with: Open axTask with the folder tasks.
 2. Press F7 (Read in full; Context menu).
     You hear: The fields of Fix the tap. Tab moves.
     You hear: 1 more field kept: Sprint.
-3. Press Tab eight times.
+3. Press Tab.
 
 ### Change several fields of an item and save them as one step
 
@@ -715,8 +611,6 @@ Starts with: Open axTask with the folder tasks.
 17. Type "Washer".
 18. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Saved.
-19. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: Saved.
 
 ### Rename an item in its form
 
@@ -742,10 +636,6 @@ Starts with: Open axTask with the folder tasks.
 6. Type "Bathroom".
 7. Press Enter.
     You hear: Saved.
-8. Press Home.
-9. Press Down.
-10. Press Space.
-    You hear: Done: done.
 
 ## Run the actions of a list
 
@@ -769,8 +659,6 @@ Starts with: Open axTask with the folder tasks.
 2. Press Tab three times.
 3. Press Enter.
     You hear: Running Find the kind.
-    You hear something with "Find the kind: done. Checked" in it.
-4. Press Ctrl+Shift+4 (Action key Shift+4).
     You hear something with "Find the kind: done. Checked" in it.
 
 ### Fill in an action's form
@@ -800,8 +688,6 @@ Starts with: Open axTask with the folder tasks.
 5. Press Enter.
     You hear: Look in the terminal is in axTerminal's command field.
 6. Go to the window that opened.
-7. Close the window.
-8. Go back to the first window.
 
 ## Select several items and act on all of them
 
@@ -813,10 +699,6 @@ Starts with: Open axTask with the folder tasks.
     You hear: Selected.
 2. Press Down twice.
 3. Press Space.
-    You hear: Selected, 2 selected.
-4. Press Space.
-    You hear: Deselected, 1 selected.
-5. Press Space.
     You hear: Selected, 2 selected.
 
 ### Select a range as you move, with Shift and an arrow
@@ -847,12 +729,6 @@ Starts with: Open axTask with the folder tasks.
     You hear: Selected, 3 selected.
 7. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Done: 2 tasks. 1 was done already.
-8. Press Ctrl+Enter (Done or not done; Context menu).
-    You hear: Not done: 3 tasks.
-9. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: Not done: 3 tasks.
-10. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: Done: 2 tasks. 1 was done already.
 
 ### Set a field of every selected item with an action of the list
 
@@ -867,10 +743,6 @@ Starts with: Open axTask with the folder tasks.
     You hear: Ctrl+2 in this list now moves to ../Later. Press it again to do it.
 2. Press Ctrl+2 (Action key 2).
     You hear: Later: 3 items moved to Later.
-3. Press Ctrl+Enter (Done or not done; Context menu).
-    You hear: Done: Oil the hinge.
-4. Press Ctrl+Z twice (Undo; Actions menu).
-    You hear: Undone: Later: 3 items moved to Later.
 
 ### Archive several items at once
 
@@ -881,8 +753,6 @@ Starts with: Open axTask with the folder tasks.
     You hear: Selected, 2 selected.
 5. Press Delete.
     You hear: Archived 2 items.
-6. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: Archived 2 items.
 
 ### Move the selected items to a list chosen in a form
 
@@ -895,8 +765,6 @@ Starts with: Open axTask with the folder tasks.
     You hear: Move 2 items, form.
 5. Press Enter.
     You hear: 2 items moved to Later.
-6. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: 2 items moved to Later.
 
 ### Move an item to a new list
 
@@ -907,8 +775,6 @@ Starts with: Open axTask with the folder tasks.
 4. Type "Someday".
 5. Press Enter.
     You hear: Buy paint moved to Someday.
-6. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: Buy paint moved to Someday.
 
 ## Hear what kind of thing opened
 
@@ -925,9 +791,6 @@ Starts with: Open axTask with the folder tasks.
 1. Press Ctrl+F (Find in the list).
     You hear the sound FieldOpen.
 2. Press Escape.
-3. Press F2 (Rename; Context menu).
-    You hear the sound FieldOpen.
-4. Press Escape.
 
 ### Hear that a form opened, and its explanation only on demand
 
@@ -942,13 +805,6 @@ Starts with: Open axTask with the folder tasks.
 
 1. Choose Entry sounds in the Options menu, Text.
     You hear: Entry sounds, not checked.
-2. Choose Keyboard shortcuts in the Help menu.
-3. Press Escape.
-4. Choose Entry sounds in the Options menu, Text.
-    You hear: Entry sounds, checked.
-5. Choose Keyboard shortcuts in the Help menu.
-    You hear the sound TextOpen.
-6. Press Escape.
 
 ## Filter and sort a list of axTask
 
@@ -967,9 +823,6 @@ Starts with: Open axTask with the folder tasks.
 2. Press Right.
 3. Choose Name in the Options menu, Sort by.
     You hear: Sorted by name.
-4. Choose The list's own order in the Options menu, Sort by.
-    You hear: Sorted by the list's own order.
-5. Close the window.
 
 ## Hear the end of a list that holds one item or none
 
@@ -1067,11 +920,6 @@ Starts with: Open axTask with the folder tasks.
 
 1. Choose New items at the top of this list in the Options menu.
     You hear: New items go to the top of Home.
-2. Press Ctrl+N (New item; Actions menu).
-3. Type "Dates".
-4. Press Enter.
-    You hear: Added Dates.
-5. Press Home.
 
 ## Set or clear fields of several items at once
 
@@ -1091,8 +939,6 @@ Starts with: Open axTask with the folder tasks.
 8. Type "Garage".
 9. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Fields set: 2 items.
-10. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: Fields set: 2 items.
 
 ### Clear fields of the selected items
 
@@ -1104,8 +950,6 @@ Starts with: Open axTask with the folder tasks.
 4. Press Space.
 5. Press Ctrl+Enter (Done or not done; Context menu).
     You hear: Fields cleared: 2 items.
-6. Press Ctrl+Z (Undo; Actions menu).
-    You hear: Undone: Fields cleared: 2 items.
 
 ## Keep a history of a list's changes and read an item's
 

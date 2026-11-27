@@ -32,8 +32,10 @@ keys enter
 expect focus Bank one
 do Find next
 expect focus Bank two
+# Check: Find next goes round the end of the list
 do Find next
 expect focus Bank one
+# Goal: Go back to the previous match
 do Find previous
 expect focus Bank two
 # Check: A text no name holds is not found
@@ -52,6 +54,7 @@ keys enter
 expect said ! filter bank, 2 shown
 refuse list Alarm code
 refuse list Email, group
+# Check: Ctrl+Delete clears the filter
 keys ctrl+delete
 expect said ! Filter cleared
 expect list Alarm code
@@ -62,6 +65,7 @@ expect list Alarm code
 menu Name, Options, Sort by
 expect said ! Sorted by name
 expect list "items":["Email, group, 0 items","Alarm code","Bank one","Bank two"]
+# Check: The list's own order comes back from the same menu
 menu The list's own order, Options, Sort by
 expect said ! Sorted by the list's own order
 expect list "items":["Email, group, 0 items","Bank one","Bank two","Alarm code"]

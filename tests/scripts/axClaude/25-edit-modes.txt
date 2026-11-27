@@ -34,6 +34,7 @@ keys k
 expect said ! https://example.com, link
 keys i
 expect said ! one
+# Check: The letters go on to the next list item and back to the heading
 keys i
 expect said ! two
 keys shift+h
@@ -61,6 +62,7 @@ do Message field
 keys ctrl+space
 expect said ! Edit mode
 refuse state navigation mode
+# Check: Typing types again
 keys end
 type !
 expect focus {"name":"Message to Claude","role":"Text","value":"# Plan!"}

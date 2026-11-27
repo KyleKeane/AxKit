@@ -8,8 +8,8 @@ dated pass; then the script writes this page again.
 
 ## Where it stands
 
-- 37 owed in all.
-- Owed a hearing with NVDA: 21.
+- 40 owed in all.
+- Owed a hearing with NVDA: 24.
 - Owed a live check with a real outside program or situation: 7.
 - Owed a window check on the hidden desktop: 8.
 - Owed a test in code: 1.
@@ -31,10 +31,13 @@ dated pass; then the script writes this page again.
 - The NVDA test record: the reports, what the scripts leave (2026-11-08, `docs/axKit/reports.md`). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - The NVDA test record: axClaude, `/clear` empties the window (2026-11-07, `docs/axClaude/SPEC.md` FR-8.8). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - The NVDA test record: access layers and consent (the branch `licence`, 2026-10-29, `docs/axKit/SPEC.md` AX-11). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
+- R-53: axTerminal's refusal of shells in a settings file whose seal does not check (leaves when `tests/scripts/axTerminal/08-user-shells.txt` has passed with NVDA).
+- R-53: axMCP's refusal of servers in a settings file whose seal does not check (leaves when `tests/scripts/axMCP/02-your-servers-errors-prompts.txt` has passed with NVDA).
 - R-54: the notice about a changed file in Claude's working folder.
 - R-56: the sentence of the AI tools submenu when the setting was changed outside axKit or its key is gone.
 - R-57: the end of the sentence after a report is sent, which says how many waiting reports were not sent.
 - R-61: axMCP's notice that reads a server's whole command line before it is agreed to.
+- R-72: the first press of an action key of a list that moves or opens, in axTask (leaves when `tests/scripts/axTask/04-action-keys.txt` has passed with NVDA).
 - R-95: the refused sound in the apps that refused in silence until 2026-11-25, and the switches' checked and not checked.
 - R-101: axFile's Windows menu opens with its first item read, now tracked through NativeMenu.Track.
 
@@ -67,9 +70,7 @@ dated pass; then the script writes this page again.
 
 No longer owed: the script each names passed with NVDA listening (`docs/axKit/workflow-record.json`).
 
-- R-53: axTerminal's refusal of shells in a settings file whose seal does not check. Heard: `tests/scripts/axTerminal/08-user-shells.txt` passed with NVDA at 27581744.
 - R-53: axGIT's refusal of trusted repositories in a settings file whose seal does not check. Heard: `tests/scripts/axGIT/07-own-programs.txt` passed with NVDA at 27581744.
-- R-53: axMCP's refusal of servers in a settings file whose seal does not check. Heard: `tests/scripts/axMCP/02-your-servers-errors-prompts.txt` passed with NVDA at 27581744.
 - R-53: axFile's refusal of programs of Open with in a settings file whose seal does not check. Heard: `tests/scripts/axFile/10-settings-changed-outside.txt` passed with NVDA at 27581744.
 - R-53: axClaude's refusal of claudePath in a settings file whose seal does not check. Heard: `tests/scripts/axClaude/33-settings-changed-outside.txt` passed with NVDA at 27581744.
 - R-63: the notice of an item window when the settings cannot be saved. Heard: `tests/scripts/axTask/11-settings-not-saved.txt` passed with NVDA at 27581744.
@@ -77,5 +78,4 @@ No longer owed: the script each names passed with NVDA listening (`docs/axKit/wo
 - R-64: the sentence that a remembered path is on the network and was not opened. Heard: `tests/scripts/axFile/10-settings-changed-outside.txt` passed with NVDA at 27581744.
 - R-66: a damaged item named in its list in axTask. Heard: `tests/scripts/axTask/10-damaged-item.txt` passed with NVDA at 27581744.
 - R-69: the sentence of axClip at its first showing when the kept history could not be read. Heard: `tests/scripts/axClip/03-history-not-read.txt` passed with NVDA at 27581744.
-- R-72: the first press of an action key of a list that moves or opens, in axTask. Heard: `tests/scripts/axTask/04-action-keys.txt` passed with NVDA at 27581744.
 - R-74: the details of a started server in axMCP with their error lines. Heard: `tests/scripts/axMCP/01-start.txt` passed with NVDA at 27581744.

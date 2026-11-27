@@ -269,7 +269,9 @@ changes one file and the graph changes only with the windows.
 4. **The scripts as walks**: the landing of every step read and checked; the record by edge; owed hearings by edge.
 5. **The gate**: the comparison at every run, the `Map change:` line in the hook.
 6. **The shortenings, one app per sitting**: the maintainer decides each goal over the bounds from the page, the
-   consent forms first.
+   consent forms first. **Prepared 2026-11-26**: the scripts re-marked first, the steps that only test under check
+   lines (`user-workflows.md` WF-3.1a, WF-3.11), which left 862 goals, 87 over four actions and 77 at four;
+   `shortenings.md` holds a proposal for each of them, the working page of the sittings.
 7. **Teaching**: the palette's way, the pages' shortest paths, AI help from the file.
 
 Steps 2 and 3 are a few days of work; steps 4 and 5 about as much again; step 6 runs as long as the sittings do.

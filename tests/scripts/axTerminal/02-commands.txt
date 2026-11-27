@@ -30,6 +30,7 @@ expect text "# Output 1","","hello"
 keys down
 keys down
 expect focus "value":"hello"}
+# Check: Shift+I and 2 move by the input headings and the headings of level two
 keys shift+i
 expect said Input 1 heading level 1
 expect focus "value":"# Input 1"}
@@ -50,6 +51,7 @@ expect said Command heading level 2
 # Goal: Turn the heading marks in the text off and on
 # Options, Text, Markers in the text off: the lines read without the hashes; h still says the level.
 menu Markers in the text
+# Check: Without the marks the lines read without the hashes, and H still says the level
 keys shift+i
 expect said Input 1 heading level 1
 expect focus "value":"Input 1"}
@@ -58,7 +60,9 @@ expect focus "value":"Folder"}
 keys up
 keys h
 expect said heading level
+# Goal: Turn the heading marks back on
 menu Markers in the text
+# Check: The marks are back on the lines
 keys shift+i
 expect focus "value":"# Input 1"}
 do Command field
@@ -132,6 +136,7 @@ menu Send without recording
 expect said Sent, not recorded
 expect said Done
 expect said ♪ Done
+# Check: A command sent without recording runs unnamed and is left out of Recent commands
 type Start-Sleep 5
 menu Send without recording
 expect said Sent, not recorded
@@ -172,6 +177,7 @@ keys down
 keys enter
 expect focus "name":"Command"
 expect text "if ($true) {",
+# Check: Escape from Recent commands goes back to the field
 keys ctrl+a
 keys delete
 do Recent commands

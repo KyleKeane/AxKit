@@ -18,6 +18,7 @@ keys space
 expect said ! checked
 # Enter connects: Claude starts and asks whether to trust the folder.
 keys enter
+# Check: Claude starts and asks whether to trust the folder
 expect said trust
 wait 1500
 keys enter

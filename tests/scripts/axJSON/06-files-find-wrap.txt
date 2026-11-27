@@ -14,6 +14,7 @@ expect focus Text to find
 type apple
 keys enter
 expect focus apple one
+# Check: Find next and Find previous move between the matches
 do Find next
 expect focus apple two
 do Find previous
@@ -44,6 +45,7 @@ keys right right right
 do Word wrap
 expect said ! Word wrap, not checked
 expect state Line 6, Column 4 ·
+# Check: Word wrap comes back on with the caret on the same character
 do Word wrap
 expect said ! Word wrap, checked
 expect state Line 6, Column 4 ·

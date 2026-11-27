@@ -19,6 +19,7 @@ expect said ! Key test. Press any key to hear its name and what it does here. Pr
 
 keys f9
 expect said ! F9: Say the status
+# Check: The bundle's keys, the window's keys and a key nothing has are each said by what they do
 keys f1
 expect said ! F1: Command palette
 # The bundle's two keys on Ctrl and punctuation (AX-8.15), named by the keys they stand beside.

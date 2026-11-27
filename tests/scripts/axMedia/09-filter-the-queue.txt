@@ -52,6 +52,7 @@ expect list ["zulu.wav","alpha.wav"]
 menu Name, Options, Sort by
 expect said ! Sorted by name
 expect list ["alpha.wav","zulu.wav"]
+# Check: The first row plays the file first by name, and the order added puts the queue back
 keys home
 keys enter
 expect said ! Playing alpha.wav

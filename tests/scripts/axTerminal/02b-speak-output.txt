@@ -37,6 +37,7 @@ keys enter
 expect said ♪ Done
 expect said again
 refuse said Done. again
+# Check: A failing command still says so with its exit code
 type cmd /c exit 3
 keys enter
 expect said Failed, exit code 3
