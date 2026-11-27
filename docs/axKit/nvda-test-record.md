@@ -796,6 +796,34 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: the apps' data paths after the review of 2026-11-27 (axFile, the editors, axTask, axTemplate)
+
+The review of the apps' data paths before the release: what is deleted, written over or lost without a word. Each
+repair has its test in code; played on the hidden desktop, without NVDA, on 2026-11-27: the new checks of
+`tests/scripts/axDown/03-files` (a file made by another program since the path was opened; "Save as UTF-8?"),
+`axFile/03-operations` (a zip changed since is not removed by Undo), `axFile/07-move-to-folder` ("Already in this
+folder"), `axTask/05-projects` (a project folder's detail line), `axTask/17-list-without-configuration` (an item
+titled "list", a title that starts with a full stop) and `axTemplate/02-several-and-not-a-template` (a file that is
+no text). Still owed:
+
+1. With NVDA listening (`.\nvda-pass.ps1 axDown`, `axFile`, `axTask`, `axTemplate`): those checks, and that the
+   two new questions read whole: "Save as UTF-8?" with the character and its line, and "Delete notes for good?".
+2. On a drive without a Recycle Bin, which no script has (a USB stick; a mapped network drive; a share): Delete
+   asks "Delete <name> for good? This drive has no Recycle Bin: …" with Cancel first, says "Deleted <name> for
+   good", and Ctrl+Z then says "Nothing to undo" or takes the operation before; a paste there and Ctrl+Z asks
+   "Delete <name> for good?" before removing the copy. With a mapped drive whose server is away: axFile starts at
+   once, Navigation, Drives opens at once and lists it as "Network Drive (Z:)".
+3. With the folder of lists on a share or a mapped drive (Documents kept on a server): axTask's items read through
+   their list's configuration and can be changed.
+4. axTemplate's launcher, which pastes into another window (`tests/nvda-scripts/axTemplate-put-in.txt`, the NVDA
+   pass): a template with `{caret}` put into a text that holds the words `{caret}` already leaves those words
+   alone; a one-line template whose `{selection}` holds several lines goes into a terminal on one line; an emoji
+   after the caret's place in a terminal leaves the caret where the mark was.
+5. axTask's actions for an AI tool: a move or an open action run twice through `axkit_window_run` acts at the
+   second run and is asked about again at the user's own next press (nothing accepted).
+6. An editor's offered list (axJSON's offers, AJ-5) when the text changed under it says "The text changed: nothing
+   put in": no script changes the text while the list is open.
+
 ## Owed: axClaude after the review of 2026-11-27, a question never answered unheard
 
 The review of axClaude's two sources before the release (`docs/axClaude/SPEC.md` D33, "A question answered, and the

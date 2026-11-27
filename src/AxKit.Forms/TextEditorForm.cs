@@ -58,7 +58,19 @@ public sealed partial class TextEditorForm : AxKitForm
 
     private TextDocument _document = TextDocument.Empty();
     private string? _path;
+
+    /// <summary>
+    /// The write time of the file as this window read or wrote it; null when what is on disk under the path is not
+    /// what the window holds: the path named no file when it was opened (AD-3.7), or a reload failed (AD-3.6). A file
+    /// there then is one another program made or changed, and Save asks before writing over it (AD-3.6).
+    /// </summary>
     private DateTime? _lastWriteTime;
+
+    /// <summary>The write time of the file a reload could not read (AD-3.6): coming back to the window does not try that same file again.</summary>
+    private DateTime? _reloadFailed;
+
+    /// <summary>What is said when something chosen from an offered list (AJ-5) is not put in, because the text is no longer the one the list was made for.</summary>
+    private const string OfferOutOfDate = "The text changed: nothing put in";
 
     /// <summary>The write time already said as "changed on disk" while there were unsaved changes, so that it is said once (AD-3.6).</summary>
     private DateTime? _changeNoticed;
@@ -571,7 +583,8 @@ public sealed partial class TextEditorForm : AxKitForm
     /// An app's list at the caret (AJ-5): the offer is asked for the text, the caret and the file; with no list its
     /// sentence is said and nothing else happens. The list takes the place of the Go to line field and the focus;
     /// Enter writes the chosen line's change, Escape leaves, and either way the focus is back in the text. The
-    /// caret moves only by the user's own choice (AX-7).
+    /// caret moves only by the user's own choice (AX-7). A choice made after the text changed under the list is not
+    /// put in, and that is said (<see cref="OfferOutOfDate"/>).
     /// </summary>
     private void RunOffer(EditorOffer offer)
     {
@@ -599,7 +612,9 @@ public sealed partial class TextEditorForm : AxKitForm
             return;
         }
 
-        // The text the offer was made for: a change made meanwhile (nothing can, the list has the focus) would refuse the edit.
+        // The text the offer was made for: a change made meanwhile (a reload on coming back to the window, an AI
+        // tool's command) refuses the edit, whose places are the old text's, and says so (until 2026-11-27 the list
+        // closed without a word).
         var offeredFor = _editor.Text;
         _area.ShowList(offered.Name, lines, offered.Selected, ticked: null, focus: true, hold: false,
             choose: (chosen, _) =>
@@ -609,6 +624,10 @@ public sealed partial class TextEditorForm : AxKitForm
                 if (_editor.Text == offeredFor)
                 {
                     ApplyEdit(choose(chosen));
+                }
+                else
+                {
+                    Refuse(OfferOutOfDate);
                 }
             },
             escape: () =>

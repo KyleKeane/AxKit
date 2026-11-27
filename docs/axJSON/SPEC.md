@@ -166,9 +166,10 @@ not know has nothing to offer. JSON Schema stays a non-goal (G3).
   that kind of object can have and does not have yet, each line the name and what it is ("key: The key that runs
   it; without one it runs from the menu"), the list named for the object ("Add a member to an action of the list").
   Enter adds the member as the object's last, with its first value: on a line of its own, indented as the member
-  before it; in an object written on one line, on that line; an empty object opens over three lines. A trailing
-  comma in the text is not doubled; where a comment stands before the closing brace, nothing is written and it
-  says so. One undo step; the caret is on the new value, so that Choose a value can follow at once; it says "Added
+  before it; in an object written on one line, on that line; an empty object opens over three lines, with the
+  text's own line endings (Windows' where the text has no line break at all; bare line feeds until 2026-11-27). A
+  trailing comma in the text is not doubled; where a comment stands before the closing brace, nothing is written and
+  it says so, in an object that holds a comment alone as well (until 2026-11-27 that comment was lost). One undo step; the caret is on the new value, so that Choose a value can follow at once; it says "Added
   key: …". An object that has everything: "An action of the list has every member it can have".
 - AJ-5.4 **An item's options come through its link.** A document whose root has `"schema"` with a plain file name
   (an item of a list, `"schema": "list.json"`) gets its table from the file of that name beside it, when that is a
@@ -181,7 +182,10 @@ not know has nothing to offer. JSON Schema stays a non-goal (G3).
   and the one edit a line makes, and `Step`, the one edit of a value in line), over the tree's nodes, which know
   their end (`JsonNode.End`); the shell shows it (`EditorOffer`, `Offered` and `TextEdit` of
   `AxKit.Forms/EditorApp`, `TextEditorForm.RunOffer` and `ApplyEdit`: a list, or one change made at once, or a
-  sentence with the edge sound), and axJSON gives the four as data, with `ReadLinked` for AJ-5.4. Not in navigation mode, as every change. Tested
+  sentence with the edge sound), and axJSON gives the four as data, with `ReadLinked` for AJ-5.4. Not in navigation mode, as every change. A
+  choice made after the text changed under the open list (a reload on coming back to the window, a command run
+  for an AI tool) is not put in, since its place is the old text's, and that is said with the refused sound: "The
+  text changed: nothing put in" (2026-11-27; the list closed without a word until then). Tested
   in `JsonOffersTests`; the window in `tests/scripts/axJSON/07-options.txt`.
 - AJ-5.6 **Left open** (AF-12.5, the maintainer's to settle): a date's `today` and `+3`, and a form view of the
   whole file (AJ-3) built from the same table.

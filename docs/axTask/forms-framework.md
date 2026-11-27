@@ -337,7 +337,10 @@ There is no form of axTask's own for making an action: the configuration is the 
   the list is shown as one without a configuration (every value of an item as text, no actions; AF-13.4), its row
   says "its configuration does not read", the level and the detail pane say "The list's configuration does not
   read: it is not JSON at line 12. Ctrl+J opens it", and axTask writes nothing in that list until the file reads
-  again: no item changed, none added, no detail set. A member of the wrong kind (actions that are no list, an item
+  again: no item changed, none added, no detail set. A name written twice in one object, anywhere in the file, is
+  such a file too: "does not read: it names a member twice" (2026-11-27; an item's file with a name twice is a
+  damaged item, SPEC.md TK-4.6; both are read through `AxKit.Core/JsonText`, since .NET's own reader lets such a
+  file through and fails later, where nothing caught it, so that the list did not fill at all). A member of the wrong kind (actions that are no list, an item
   field without a title, two fields of one title, a field named Title or schema, a type this version does not know,
   which is read as text) is passed over with its own sentence in the list's details and in the line said on coming
   back from axJSON, and the rest of the file counts.
@@ -411,7 +414,13 @@ task to keep right, and it is: the same fact written in a thousand files cannot 
 - **AF-13.2 The link.** `"schema"` is always there: the path, relative to the item's file, of the configuration it
   is read through. For an item of a list that is `list.json`, its folder's own. It is the one name a field cannot
   have. An item moved to another list keeps the same words and is therefore read through its new list's
-  configuration; what that one does not name is kept, and comes back if the item returns (AF-11.3).
+  configuration; what that one does not name is kept, and comes back if the item returns (AF-11.3). A file in the
+  item's own folder is read wherever that folder is, a share or a mapped network drive included, since the folder
+  was read to get the item; a link that leaves the folder (`../Shared/list.json`) is followed only on a drive of
+  this computer, the rule for links between items (S-5), and never when it is a whole path
+  (`ItemFolder.ConfigurationFile`, tested; until 2026-11-27 the own folder's file went by that rule too, and every
+  item of a folder of lists kept on a server, Documents redirected to a share, was shown as text that nothing
+  could change).
 - **AF-13.3 Everything of a field but its value is the configuration's**: its type, its options, the value a new
   item starts with, its place in the order. A change there holds for every item at once, and no item's file is
   touched by it.
@@ -430,7 +439,9 @@ task to keep right, and it is: the same fact written in a thousand files cannot 
   the folder of lists, the question has a third answer, "Convert all N lists" (added while building: ten lists should
   not be ten questions). Convert copies the folder's files into the Archive as `<name>, before conversion` (the
   Archive and not beside the list, where the copy would itself be a list of the earlier format among the user's
-  own), then writes the configuration and every item anew, as one step that Ctrl+Z takes back:
+  own; with several lists, every list is planned before the first copy is made, and a conversion that cannot be
+  prepared or written leaves no copy behind, `ListConversion.Prepare`, 2026-11-27), then writes the configuration and every item anew, as one step that Ctrl+Z takes back
+  (whole or not at all: a file that cannot be written takes the ones written before it back, `Changes.Apply`):
   the fields of `"new item"` and of the items themselves become `"item fields"` (the configuration's own first; a
   field only some items hold is added after them, so that nothing is hidden by the conversion), every item becomes
   its values, the list's `"fields"` become `"details"`, and `"keys"` become actions. A list not converted is not

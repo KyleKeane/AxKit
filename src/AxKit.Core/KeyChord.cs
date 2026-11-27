@@ -16,7 +16,8 @@ public static class KeyChord
     /// <summary>
     /// Every name but the letters, the digits and f1 to f12, with its code; a code's first name is the one written
     /// (<see cref="Name"/>). The names and codes are the ones the channel's and the NVDA tier's own tables held until
-    /// 2026-11-15, and four more that the key tables use: slash, semicolon, and the numeric keypad's add and subtract.
+    /// 2026-11-15, and five more that the key tables use: slash, semicolon, apostrophe, and the numeric keypad's add
+    /// and subtract.
     /// </summary>
     private static readonly (string Name, int Code)[] Named =
     [

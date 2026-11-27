@@ -84,6 +84,13 @@ public static class TemplateStore
             return null;
         }
 
+        // A configuration with something passed over (AF-11.7) is the user's to mend first: writing it again would
+        // drop the entries that were passed over, which no one asked for (until 2026-11-27 it did, at every start).
+        if (config.Problems.Count > 0)
+        {
+            return null;
+        }
+
         var missing = wanted.Where(field => config.IndexOf(field.Title) < 0).ToList();
         var retired = config.IndexOf(EveryAppField) >= 0;
         return missing.Count == 0 && !retired
@@ -157,9 +164,11 @@ public static class TemplateStore
                 text = TextDocument.Read(path).Text;
                 item = FlatItem.Parse(text);
             }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException)
             {
-                // Listed as no template: the text when it was read, no item.
+                // Listed as no template (TP-2.4): the text when it was read, no item. InvalidOperationException is
+                // TextDocument.Read's word for a file that is no text or too large; until 2026-11-27 it was not
+                // caught here, and one such file in the folder took every template away without a word.
             }
 
             files.Add(new TemplateFile(path, text, item));
@@ -203,7 +212,18 @@ public static class TemplateStore
     {
         Directory.CreateDirectory(folder);
         var path = ConfigurationPath(folder);
-        var existing = Changes.ReadOrNull(path);
+        string? existing;
+        try
+        {
+            existing = Changes.ReadOrNull(path);
+        }
+        catch (InvalidOperationException)
+        {
+            // A configuration that is no text (TextDocument.Read's word for it) is one that does not read: left as
+            // it is on disk, nothing written over it, and the templates read through the fields for no app.
+            return new TemplateList(Configuration(null), Files(folder));
+        }
+
         if (ConfigurationToWrite(existing, AppsWithField) is { } text)
         {
             Changes.Apply([FileChange.Write(path, existing, text)]);
@@ -286,12 +306,14 @@ public static class TemplateStore
 
     /// <summary>
     /// How many Left keys set the caret after a paste in another program (TP-2.3, TP-D5): one for every character
-    /// of the text after the caret's place, a line ending counting as one.
+    /// of the text after the caret's place as a person counts them, a line ending counting as one, and so do an
+    /// emoji of two units, a letter with the accent written after it and signs joined into one (a text element;
+    /// until 2026-11-27 the units were counted, and the caret went one place too far for each emoji in the tail).
     /// </summary>
     public static int LeftKeys(TemplateText made)
     {
         var tail = made.Text[Math.Clamp(made.Caret, 0, made.Text.Length)..];
-        return tail.ReplaceLineEndings("\n").Length;
+        return new System.Globalization.StringInfo(tail.ReplaceLineEndings("\n")).LengthInTextElements;
     }
 
     /// <summary>

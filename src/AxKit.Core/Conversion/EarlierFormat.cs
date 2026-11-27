@@ -34,8 +34,6 @@ public static class EarlierFormat
     public const string ListFormat = "axkit-list 1";
     public const string ItemFormat = "axkit-item 1";
 
-    private static readonly JsonDocumentOptions Lenient = new() { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip };
-
     /// <summary>Whether a list's file is of the earlier shape.</summary>
     public static bool IsEarlierList(string text) => ListConfig.FormatOf(text) == ListFormat;
 
@@ -315,7 +313,8 @@ public static class EarlierFormat
     {
         try
         {
-            return JsonNode.Parse(text, documentOptions: Lenient) as JsonObject;
+            // A file that names a member twice is no item of the earlier shape either (JsonText): it is left as it is.
+            return JsonText.Parse(text, lenient: true) as JsonObject;
         }
         catch (JsonException)
         {

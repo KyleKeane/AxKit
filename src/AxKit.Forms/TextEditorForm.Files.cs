@@ -73,8 +73,11 @@ public sealed partial class TextEditorForm
             Fail($"{path} could not be {(reloading ? "reloaded" : "opened")}: {ex.Message}");
             if (reloading)
             {
-                // The text stays (AD-3.6); the file is not compared again until it is read or saved.
+                // The text stays (AD-3.6). What is on disk is not what the window holds: Save asks before writing over
+                // it (until 2026-11-27 it wrote over it without a word), and coming back to the window does not try
+                // this same file again.
                 _lastWriteTime = null;
+                _reloadFailed = WriteTimeOrNull(path);
                 return null;
             }
 
@@ -118,6 +121,7 @@ public sealed partial class TextEditorForm
         _path = path;
         _document = document;
         _lastWriteTime = writeTime;
+        _reloadFailed = null;
         _changeNoticed = null;
         _loading = true;
         _editor.Text = _document.Text;
@@ -236,7 +240,7 @@ public sealed partial class TextEditorForm
         if (ChangedOnDisk())
         {
             ShowNotice(new Notice("The file changed on disk",
-                $"{DocumentName} was changed by another program since you opened it. Write over it, or reload it and lose your changes?",
+                $"{DocumentName} was {(_lastWriteTime is null && _reloadFailed is null ? "made" : "changed")} by another program since you opened it. Write over it, or reload it and lose your changes?",
                 [
                     new OverlayChoice("&Write over", () => WriteFile(_path, then), IsDefault: true),
                     new OverlayChoice("&Reload and lose mine", () => Reload("Reloaded")),
@@ -255,13 +259,9 @@ public sealed partial class TextEditorForm
     /// </summary>
     private void CheckDisk()
     {
-        if (_path is null || _lastWriteTime is not { } opened || !File.Exists(_path))
-        {
-            return;
-        }
-
-        var now = File.GetLastWriteTimeUtc(_path);
-        if (now == opened)
+        // A file that was not there when its path was opened and is there now was made by another program: it is
+        // one changed on disk like any other (until 2026-11-27 it was not looked at, and Save wrote over it).
+        if (_path is null || WriteTimeOrNull(_path) is not { } now || now == _lastWriteTime || now == _reloadFailed)
         {
             return;
         }
@@ -318,19 +318,43 @@ public sealed partial class TextEditorForm
 
         // The document is renamed once the write has succeeded (AD-3.5): until 2026-10-23 the new path was taken
         // first, so a failed write left the window under the old name with the new path.
-        if (WriteFile(dialog.FileName, then))
-        {
-            _settings.RememberFile(dialog.FileName);
-            SaveSettings();
-        }
+        WriteFile(dialog.FileName, then, remember: true);
     }
 
-    /// <summary>The text written to <paramref name="path"/>, which becomes the document's; false, with the error as a notice and nothing changed, when it cannot be written.</summary>
-    private bool WriteFile(string path, Action? then)
+    /// <summary>
+    /// The text written to <paramref name="path"/>, which becomes the document's (and, with
+    /// <paramref name="remember"/>, joins the recent files); false, with the error as a notice and nothing changed,
+    /// when it cannot be written. A file read in a Windows code page that cannot hold a character of the text now
+    /// is not written in it (AD-3.3a): the character would become a question mark without a word, as it did until
+    /// 2026-11-27. The window asks once, Save as UTF-8 or Cancel, and writes nothing until the answer; after Save as
+    /// UTF-8 the document is UTF-8, and the status bar says so.
+    /// </summary>
+    private bool WriteFile(string path, Action? then, bool remember = false, bool asUtf8 = false)
     {
+        var text = _editor.Text;
+        var document = _document;
+        if (!document.Holds(text))
+        {
+            if (!asUtf8)
+            {
+                var first = document.FirstNotHeld(text);
+                ShowNotice(new Notice("Save as UTF-8?",
+                    $"{DocumentName} is written in {document.EncodingName}, which cannot hold every character of the text now"
+                    + (first is { } found ? $": the first is {found.Character} in line {found.Line}" : string.Empty)
+                    + ". Saved in it, each such character would become a question mark. Save as UTF-8 holds them all; Cancel writes nothing.",
+                    [
+                        new OverlayChoice("&Save as UTF-8", () => WriteFile(path, then, remember, asUtf8: true), IsDefault: true),
+                        new OverlayChoice("&Cancel", IsCancel: true),
+                    ]));
+                return false;
+            }
+
+            document = document.AsUtf8();
+        }
+
         try
         {
-            _document.Write(path, _editor.Text);
+            document.Write(path, text);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
@@ -338,8 +362,16 @@ public sealed partial class TextEditorForm
             return false;
         }
 
+        if (remember)
+        {
+            _settings.RememberFile(path);
+            SaveSettings();
+        }
+
+        _document = document;
         _path = path;
         _lastWriteTime = File.GetLastWriteTimeUtc(path);
+        _reloadFailed = null;
         _changeNoticed = null;
         _changed = false;
         UpdateTitle();
@@ -350,8 +382,25 @@ public sealed partial class TextEditorForm
         return true;
     }
 
-    private bool ChangedOnDisk() =>
-        _path is not null && _lastWriteTime is { } opened && File.Exists(_path) && File.GetLastWriteTimeUtc(_path) != opened;
+    /// <summary>
+    /// Whether the file on disk is another than the one this window read or wrote (AD-3.6): its write time moved, or
+    /// the window never read it, because the path named no file when it was opened or a reload failed, and a file
+    /// is there now.
+    /// </summary>
+    private bool ChangedOnDisk() => _path is not null && WriteTimeOrNull(_path) is { } now && now != _lastWriteTime;
+
+    /// <summary>The file's write time; null when no file is there or it cannot be asked.</summary>
+    private static DateTime? WriteTimeOrNull(string path)
+    {
+        try
+        {
+            return File.Exists(path) ? File.GetLastWriteTimeUtc(path) : null;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return null;
+        }
+    }
 
     /// <summary>AD-6.1: runs <paramref name="then"/> at once without changes, otherwise after Save or Don't save; Cancel runs <paramref name="cancelled"/>.</summary>
     private void AskToSave(Action then, Action? cancelled = null)

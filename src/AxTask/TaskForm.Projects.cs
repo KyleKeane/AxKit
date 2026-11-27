@@ -464,6 +464,6 @@ public sealed partial class TaskForm
         [
             new ItemDetailLine(row.Label),
             new ItemDetailLine("The project folder: " + ((ProjectSectionTag)row.Tag!).Root),
-            new ItemDetailLine("Every folder holding a list, four folders down; Options, Add a project folder adds and removes project folders. {BundleKeys.Text(AxTaskKeys.FindEverywhere)} finds words in every list"),
+            new ItemDetailLine($"Every folder holding a list, four folders down; Options, Add a project folder adds and removes project folders. {BundleKeys.Text(AxTaskKeys.FindEverywhere)} finds words in every list"),
         ]);
 }

@@ -110,6 +110,30 @@ public sealed class MarkdownEditTests
         Assert.Equal((after, said, false), Run(before, MarkdownEdit.Code));
     }
 
+    /// <summary>
+    /// The caret inside the marks that open or close a word acts on that word. Until 2026-11-27 the marks on both
+    /// sides of the caret were taken for a pair around nothing and deleted: "**word**" with the caret after the
+    /// first asterisk became "word**".
+    /// </summary>
+    [Theory]
+    [InlineData("*|*word**", "***|word***", "Italic on")]
+    [InlineData("**word*|*", "***word|***", "Italic on")]
+    [InlineData("a *|**word*** b", "a **|word** b", "Italic off")]
+    [InlineData("a *|* b", "a | b", "Italic off")]
+    public void Italic_with_the_caret_inside_a_words_marks_acts_on_the_word(string before, string after, string said)
+    {
+        Assert.Equal((after, said, false), Run(before, MarkdownEdit.Italic));
+    }
+
+    [Theory]
+    [InlineData("`|`dotnet``", "|dotnet", "Code off")]
+    [InlineData("run `dotnet|` now", "run dotnet| now", "Code off")]
+    [InlineData("run `|` now", "run | now", "Code off")]
+    public void Code_with_the_caret_inside_a_words_marks_acts_on_the_word(string before, string after, string said)
+    {
+        Assert.Equal((after, said, false), Run(before, MarkdownEdit.Code));
+    }
+
     // ---- list items and block quotes ----
 
     [Theory]

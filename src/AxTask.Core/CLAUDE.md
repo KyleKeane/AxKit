@@ -119,3 +119,5 @@ The window is `src/AxTask`, with its own `CLAUDE.md`.
 - `TextDocument.Read` gives CRLF text whatever the file holds, and `ToText` writes CRLF, so the text kept for the
   freshness check compares equal after a round trip.
 - `NaturalOrder` is `StrCmpLogicalW`: the tests run on Windows only, as the whole bundle does.
+
+- The review of 2026-11-27: `ItemFolder.ConfigurationFile` is the file an item's `"schema"` names: its own folder's file wherever the folder is (a share too), a link out of the folder only on this computer (`Resolve` keeps the rule for links between items). `ItemFolder.Read` skips `history.jsonl` as it skips `list.json`. `ItemHistory.Lines` names a moved item by its Title (a write of the same step, or the `titleAt` reader the window passes). `OutsideReports.WriteKey` writes a new approval key whole or not at all (the change's line removed and the public half put back when a write fails). The readers of JSON here go through `AxKit.Core/JsonText`.

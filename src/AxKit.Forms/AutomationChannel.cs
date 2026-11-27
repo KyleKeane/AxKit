@@ -284,6 +284,9 @@ internal sealed class AutomationChannel : IMessageFilter
     [DllImport("user32.dll")]
     private static extern nint GetAncestor(nint window, uint flags);
 
+    [DllImport("user32.dll")]
+    private static extern bool PostMessageW(nint window, int message, nint wParam, nint lParam);
+
     /// <summary>
     /// The modifiers of a posted key, set in the thread's keyboard state just as its key down is handled, and cleared
     /// as its key up is: set when it was posted, a state the system's own keyboard reset in between (an activation)
@@ -299,13 +302,18 @@ internal sealed class AutomationChannel : IMessageFilter
         return false;
     }
 
-    /// <summary>Characters into the focused control, as typed.</summary>
+    /// <summary>
+    /// Characters into the focused control, as typed: each as its UTF-16 unit, posted with the wide form of the call,
+    /// so that a script's <c>→</c> arrives as the arrow it names. Through the bundle's <c>PostMessage</c>, which
+    /// is the narrow form, a character past 255 lost its high byte and arrived as another (found 2026-11-27, by the
+    /// check of AD-3.3a, which needs a character a code page cannot hold).
+    /// </summary>
     private object Type(string text)
     {
         var target = GetFocus();
         foreach (var c in text)
         {
-            PostMessage(target, WM_CHAR, c, 1);
+            PostMessageW(target, WM_CHAR, c, 1);
         }
 
         Application.DoEvents();

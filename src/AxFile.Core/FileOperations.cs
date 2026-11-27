@@ -142,10 +142,29 @@ public static class FileOperations
         return target;
     }
 
-    /// <summary>Sends files and folders to the Recycle Bin (AF-4.3), so that they can come back, in one operation. Null when it succeeded, the reason otherwise.</summary>
+    /// <summary>
+    /// Sends files and folders to the Recycle Bin (AF-4.3), so that they can come back, in one operation. Null when it
+    /// succeeded, the reason otherwise. On a drive that has no Recycle Bin (<see cref="RecycleBin.Has"/>) the shell
+    /// deletes them for good and says nothing of it: the caller asks first, in those words.
+    /// </summary>
     public static Task<string?> DeleteToRecycleBinAsync(IReadOnlyList<string> paths) =>
         RunShellOperationAsync(FO_DELETE, paths, null, "The deletion");
 
+    /// <summary>
+    /// What the question before a delete says of where the entries go (AF-4.3): to the Recycle Bin, or, on a drive
+    /// that has none, that they are deleted for good and cannot be brought back.
+    /// </summary>
+    public static string DeleteText(bool toBin, bool several, bool anyFolder) => (toBin, several, anyFolder) switch
+    {
+        (true, true, true) => "They go to the Recycle Bin, the folders with everything in them.",
+        (true, true, false) => "They go to the Recycle Bin.",
+        (true, false, true) => "It goes to the Recycle Bin with everything in it.",
+        (true, false, false) => "It goes to the Recycle Bin.",
+        (false, true, true) => "This drive has no Recycle Bin: they are deleted for good, the folders with everything in them, and cannot be brought back.",
+        (false, true, false) => "This drive has no Recycle Bin: they are deleted for good and cannot be brought back.",
+        (false, false, true) => "This drive has no Recycle Bin: it is deleted for good with everything in it and cannot be brought back.",
+        (false, false, false) => "This drive has no Recycle Bin: it is deleted for good and cannot be brought back.",
+    };
 
     /// <summary>
     /// Where each source lands when copied or moved into <paramref name="folder"/> (AF-4.8): under its own name, or
@@ -176,6 +195,19 @@ public static class FileOperations
     }
 
     /// <summary>
+    /// Whether every source is in <paramref name="folder"/> already (AF-4.13): a move into the folder the entries
+    /// are in changes nothing but their names ("name - 2"), so the window refuses it, "Already in this folder".
+    /// Both sides as whole paths, case and a backslash at the end not minded.
+    /// </summary>
+    public static bool AlreadyIn(IReadOnlyList<string> sources, string folder)
+    {
+        var into = Path.TrimEndingDirectorySeparator(Path.GetFullPath(folder));
+        return sources.Count > 0 && sources.All(source =>
+            Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(Path.GetFullPath(source))) is { } parent
+            && string.Equals(Path.TrimEndingDirectorySeparator(parent), into, StringComparison.OrdinalIgnoreCase));
+    }
+
+    /// <summary>
     /// Copies, or moves, files and folders to <paramref name="destinations"/>, one per source, from
     /// <see cref="Destinations"/> (AF-4.8), the shell's way, so that the move or copy can be undone from File
     /// Explorer. Null when it succeeded, the reason otherwise.
@@ -183,7 +215,6 @@ public static class FileOperations
     public static Task<string?> CopyOrMoveAsync(IReadOnlyList<string> sources, IReadOnlyList<string> destinations, bool move) =>
         RunShellOperationAsync(move ? FO_MOVE : FO_COPY, sources, destinations, move ? "The move" : "The copy");
 
-    /// <summary>One line for the user from what the file system threw.</summary>
     /// <summary>
     /// Why an operation cannot be taken back now (AF-4.14), or null when it can: an entry it made or moved is gone or
     /// renamed since ("Not undone: <name> has changed"), a new folder or file has been filled meanwhile, or the place
@@ -191,9 +222,18 @@ public static class FileOperations
     /// </summary>
     public static string? CheckUndo(Operation operation)
     {
-        foreach (var path in operation.After)
+        for (var i = 0; i < operation.After.Count; i++)
         {
+            var path = operation.After[i];
             if (!Exists(path))
+            {
+                return $"Not undone: {Path.GetFileName(path)} has changed";
+            }
+
+            // What the undo would remove (a copy, a zip, an extracted folder) is removed only as the operation left
+            // it: its size and write time are compared, a folder's all the way down. Until 2026-11-27 only its
+            // being there was checked, and a copy edited since went to the Recycle Bin with the edit.
+            if (operation.UndoRemoves && operation.Made is { } made && i < made.Count && EntryStamp.Of(path) != made[i])
             {
                 return $"Not undone: {Path.GetFileName(path)} has changed";
             }
@@ -288,6 +328,7 @@ public static class FileOperations
     private const int LockViolation = unchecked((int)0x80070021);
     private const int AccessDeniedCode = unchecked((int)0x80070005);
 
+    /// <summary>One line for the user from what the file system threw.</summary>
     public static string Message(Exception exception) => exception switch
     {
         UnauthorizedAccessException => "Access denied",

@@ -109,6 +109,45 @@ public sealed record TextDocument(string Text, Encoding Encoding, bool ByteOrder
         return all;
     }
 
+    /// <summary>
+    /// Whether this document's encoding can hold every character of <paramref name="text"/> (AD-3.3a): always for
+    /// UTF-8 and UTF-16; for a Windows code page, when the text comes back the same from its bytes. A character the
+    /// page lacks is otherwise written as a question mark, or as a letter that looks like it, without a word.
+    /// </summary>
+    public bool Holds(string text) =>
+        Encoding.CodePage is 65001 or 1200 or 1201 || Encoding.GetString(Encoding.GetBytes(text)) == text;
+
+    /// <summary>
+    /// The first character of <paramref name="text"/> this document's encoding cannot hold, with the line it is in
+    /// (from 1), for the question before a save (AD-3.3a); null when it holds them all.
+    /// </summary>
+    public (string Character, int Line)? FirstNotHeld(string text)
+    {
+        if (Holds(text))
+        {
+            return null;
+        }
+
+        var line = 1;
+        foreach (var rune in text.EnumerateRunes())
+        {
+            var one = rune.ToString();
+            if (one == "\n")
+            {
+                line++;
+            }
+            else if (Encoding.GetString(Encoding.GetBytes(one)) != one)
+            {
+                return (one, line);
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>The same document as UTF-8 without a mark, its line ending kept: what a text is saved as when the file's own encoding cannot hold it (AD-3.3a).</summary>
+    public TextDocument AsUtf8() => this with { Encoding = Utf8, ByteOrderMark = false };
+
     /// <summary>For the status bar (AD-3.2): "UTF-8", "UTF-8 with BOM", "UTF-16 LE", "UTF-16 BE", "Windows-1252".</summary>
     public string EncodingName => Encoding.CodePage switch
     {

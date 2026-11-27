@@ -58,24 +58,49 @@ public sealed class StepHistory(int cap)
 }
 
 /// <summary>
-/// The changes on disk and their undo (IA-5.4, IA-5.5). A step is applied part by part; undone in reverse, and only
-/// when every part is still as the step left it, so that an edit made since in axJSON or by a sync is never lost.
+/// The changes on disk and their undo (IA-5.4, IA-5.5). A step is applied part by part, whole or not at all; undone
+/// in reverse, and only when every part is still as the step left it, so that an edit made since in axJSON or by a
+/// sync is never lost.
 /// </summary>
 public static class Changes
 {
-    /// <summary>Applies the parts in order: writes (folders made as needed) and moves.</summary>
+    /// <summary>
+    /// Applies the parts in order: writes (folders made as needed) and moves. Whole or not at all: when a part
+    /// fails, the parts applied before it are taken back, last first, and the failure is thrown on, so that a
+    /// caller that keeps a step for Ctrl+Z only after this returns never leaves half a step on disk with no way
+    /// back (until 2026-11-27 the parts before the failure stayed). When taking back fails too, the exception's
+    /// message says both.
+    /// </summary>
     public static void Apply(IReadOnlyList<FileChange> parts)
     {
-        foreach (var part in parts)
+        var applied = 0;
+        try
         {
-            if (part.IsMove)
+            for (; applied < parts.Count; applied++)
             {
-                MovePath(part.Path, part.To!);
+                var part = parts[applied];
+                if (part.IsMove)
+                {
+                    MovePath(part.Path, part.To!);
+                }
+                else
+                {
+                    WriteOrRemove(part.Path, part.After);
+                }
             }
-            else
+        }
+        catch (Exception ex) when (applied > 0 && ex is IOException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            try
             {
-                WriteOrRemove(part.Path, part.After);
+                UndoParts(parts, applied);
             }
+            catch (Exception back) when (back is IOException or UnauthorizedAccessException or InvalidOperationException)
+            {
+                throw new IOException($"{ex.Message} What was done before it could not all be taken back: {back.Message}", ex);
+            }
+
+            throw;
         }
     }
 
@@ -117,7 +142,10 @@ public static class Changes
                 return $"{System.IO.Path.GetFileNameWithoutExtension(move.To)} is not there any more";
             }
 
-            if (File.Exists(move.Path) || Directory.Exists(move.Path))
+            // A move that changed capitals only (a list renamed from "home" to "Home") is one place under two
+            // spellings: what is found under the old one is the thing moved, not something new in its place.
+            // Until 2026-11-27 such a rename could never be undone.
+            if (!move.Path.Equals(move.To, StringComparison.OrdinalIgnoreCase) && (File.Exists(move.Path) || Directory.Exists(move.Path)))
             {
                 return $"There is a {System.IO.Path.GetFileNameWithoutExtension(move.Path)} again where it was";
             }
@@ -127,11 +155,14 @@ public static class Changes
     }
 
     /// <summary>Undoes the step, last part first; <see cref="CheckUndo"/> first.</summary>
-    public static void Undo(Step step)
+    public static void Undo(Step step) => UndoParts(step.Parts, step.Parts.Count);
+
+    /// <summary>The first <paramref name="count"/> parts undone, last first.</summary>
+    private static void UndoParts(IReadOnlyList<FileChange> parts, int count)
     {
-        for (var i = step.Parts.Count - 1; i >= 0; i--)
+        for (var i = count - 1; i >= 0; i--)
         {
-            var part = step.Parts[i];
+            var part = parts[i];
             if (part.IsMove)
             {
                 MovePath(part.To!, part.Path);
@@ -166,7 +197,10 @@ public static class Changes
 
         Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path)!);
         var document = File.Exists(path) ? TextDocument.Read(path) : TextDocument.Empty();
-        document.Write(path, text);
+        // A file found in a Windows code page (written by another program) that cannot hold a character of the new
+        // text is written as UTF-8 from now on: in its own encoding the character would become a question mark
+        // without a word (AD-3.3a; until 2026-11-27 it did).
+        (document.Holds(text) ? document : document.AsUtf8()).Write(path, text);
     }
 
     private static void MovePath(string from, string to)

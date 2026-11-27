@@ -1,14 +1,6 @@
 namespace AxKit.Core;
 
 /// <summary>
-/// The programs the apps start, found so that a file planted where axKit was started can never stand in for them
-/// (the security audit of 2026-10-24 S-1). Windows starts a bare name ("git", "cmd.exe") from the current folder
-/// before System32 and the PATH, and an app started from Explorer or a console keeps the folder it was started in: a
-/// downloaded repository, a folder of downloads. So Windows' own programs are named by their full path, and any other
-/// is looked for on the PATH by axKit itself, in folders that are full paths only (a relative entry, "." included,
-/// means the current folder). Every app starts its programs through here or by a full path it found itself.
-/// </summary>
-/// <summary>
 /// How a program is started (<see cref="SystemPrograms.LineFor"/>): the file Windows runs (the program, or cmd.exe
 /// for a batch file) and its arguments as one text; or, when <see cref="Refusal"/> is not null, the sentence that
 /// says why it must not be started, the other two empty.
@@ -19,6 +11,14 @@ public sealed record ProgramLine(string FileName, string Arguments, string? Refu
     public string CommandLine => Arguments.Length > 0 ? $"\"{FileName}\" {Arguments}" : $"\"{FileName}\"";
 }
 
+/// <summary>
+/// The programs the apps start, found so that a file planted where axKit was started can never stand in for them
+/// (the security audit of 2026-10-24 S-1). Windows starts a bare name ("git", "cmd.exe") from the current folder
+/// before System32 and the PATH, and an app started from Explorer or a console keeps the folder it was started in: a
+/// downloaded repository, a folder of downloads. So Windows' own programs are named by their full path, and any other
+/// is looked for on the PATH by axKit itself, in folders that are full paths only (a relative entry, "." included,
+/// means the current folder). Every app starts its programs through here or by a full path it found itself.
+/// </summary>
 public static class SystemPrograms
 {
     /// <summary>The Windows folder, <c>C:\Windows</c>.</summary>

@@ -245,7 +245,11 @@ folder of the file or project in hand, and sends back. It works entirely offline
   drive as on a folder (Open with axKit apps ▸, Open with axKit access layers ▸, Show in File Explorer, Properties, Windows menu…).
 - AF-3.11 **The Drives menu** (asked 2026-10-21, for moving things to a stick and taking it out): **Navigation → Drives ▸**
   (its own menu on Alt+D until 2026-10-22, when it became a submenu at the user's ask and Alt+D went to Go to folder, until
-  2026-11-26, AF-3.3) lists the ready drives as "1. Local Disk (C:)" (AX-9.5), each opening the drive's root and joining the
+  2026-11-26, AF-3.3) lists the ready drives as "1. Local Disk (C:)" (AX-9.5; a mapped network drive by its letter
+  alone, "Network Drive (Z:)", and whether it is ready or not: the menu is filled on the window's own thread as it
+  opens, and asking a network drive for its label can take the network's time limit when the server is away, which
+  froze the window as it started and whenever Drives opened, until 2026-11-27; This PC's list and Go to folder's
+  completion are read on a task and still ask, `FolderListing.Drives(askNetworkDrives)`), each opening the drive's root and joining the
   recent list, then **This PC** (the drives list, AF-3.10, the folder's drive selected), then **Eject this drive**
   and **Drive properties**, both for the drive in hand: the entry at This PC, or the folder's own drive. Eject is
   the shell's own: the drive's context menu is built as for Windows menu… (AF-4.7) and its item whose verb is
@@ -295,7 +299,16 @@ Every operation here is an entry of the window's history (AF-9.2) as well as its
   <name>", the selection moves to the next entry. With entries marked (AF-3.7): "Delete n items? They go to the
   Recycle Bin." ("…, the folders with everything in them." when one is a folder), one shell operation for them all,
   "Deleted n items", and the first entry after the current one that stays is selected, else the last one before it.
-  A permanent delete is not offered (§7).
+  A permanent delete is not offered (§7). **A drive without a Recycle Bin** (2026-11-27): a USB stick, a card, a
+  mapped network drive and a share have none, and a drive's bin can be turned off in Windows; there the shell's
+  delete "with undo allowed" deletes for good and says nothing of it, while the notice promised the Recycle Bin
+  and Ctrl+Z answered "Not in the Recycle Bin any more". Before the question axFile asks Windows, off the UI thread
+  (`RecycleBin.Has`: the drive's kind first, which touches no network, a share and a network or removable drive
+  having none; then `SHQueryRecycleBinW` on a local drive's root and the drive's `NukeOnDelete` value; when Windows
+  cannot say, the answer is no). Without a bin the notice is "Delete <name> for good? This drive has no Recycle
+  Bin: it is deleted for good and cannot be brought back." (with the same additions for a folder and for several
+  entries), Cancel is its default, Delete has to be chosen; the line is "Deleted <name> for good", and no step is
+  kept for Ctrl+Z. The words are `FileOperations.DeleteText`, tested.
 - AF-4.4 **Copy path** (Ctrl+Shift+C): the full path to the clipboard, "Copied path"; with entries marked, each path
   on a line, "Copied n paths". Not an operation on disk: no entry in the history.
 - AF-4.5 A failure (a name taken, a file in use, access denied) is one announcement, "Failed: <Windows' message>",
@@ -400,7 +413,10 @@ Every operation here is an entry of the window's history (AF-9.2) as well as its
   completed folder. Move: a folder that exists (a name here, a relative or a full path) takes the selected entries, or
   the current one (AF-3.7); any other name is a new folder made here first (the name rules and "Reads the same as …"
   of New folder); a path to a folder that does not exist elsewhere is "Not found: <text>"; a folder moved into itself
-  or its own subfolder is "Cannot move a folder into itself". The move is the shell's (AF-4.8, undo allowed, names
+  or its own subfolder is "Cannot move a folder into itself"; the folder the entries are in already, typed as "."
+  or by its path, is "Already in this folder" (`FileOperations.AlreadyIn`, tested; until 2026-11-27 each entry was
+  renamed to "name - 2"), the notice staying open for another text. A drive typed alone ("D:") is its root, and a
+  new folder's name is taken in a drive's root too. The move is the shell's (AF-4.8, undo allowed, names
   chosen first); "Moved <name> into <folder>" or "Moved n items into <folder>", the folder selected when it is here.
 - AF-4.14 **Undo** (asked 2026-10-21). **Ctrl+Z** (Actions → Undo, one name whatever it would take back; it was named
   after what it would undo, "Undo rename", until the maintainer's decision of 2026-11-25: one Undo that says what it
@@ -420,7 +436,16 @@ Every operation here is an entry of the window's history (AF-9.2) as well as its
   only the case is not "already here"), the line saying so and dropped from what Undo takes next, as is a delete
   whose entries are "Not in the Recycle Bin any more" (emptied meanwhile); a failure of the undo itself is "Failed:
   <reason>" (AF-4.5) and the line stays to try again (a zip open in another program, closed and Ctrl+Z again); a second Ctrl+Z while one runs says "Undo is still running"; in the rename box Ctrl+Z is the
-  box's own (AF-6.2). Eject, Open, the hand-overs, Favorites and the settings are not operations and have no undo;
+  box's own (AF-6.2). Three things hold since 2026-11-27. **The newest** is the operation that ended last, the one
+  last heard of: a long copy that began before a rename and ended after it is taken first (`ActionLog.Newest`; the
+  order they began in decided until then). **What Undo removes is removed only as the operation left it**: a paste's
+  copy, a zip and an extracted folder keep their size and write time from the moment they were made, a folder's all
+  the way down (`EntryStamp`, `Operation.Stamped`), and one changed since is "Not undone: <name> has changed"
+  (only its being there was checked until then, and a copy edited since went to the Recycle Bin with the edit).
+  **On a drive without a Recycle Bin** (AF-4.3) an undo that removes what an operation made would delete it for
+  good: it asks first, "Delete <what> for good? Undo removes what this operation made, and this drive has no
+  Recycle Bin: …", Cancel the default, and then says "Undone: <what> deleted for good"; a delete there kept no
+  step, so Ctrl+Z takes the operation before it. Eject, Open, the hand-overs, Favorites and the settings are not operations and have no undo;
   there is no redo. The last twenty operations of this window can be undone, gone with the window. The lines and the
   operations are `ActionLog`, `Operation` and `FileOperations.CheckUndo` and `UndoAsync` in `AxFile.Core`, tested
   over a temporary folder; the Recycle Bin's records are `RecycleBin`, tested on synthetic records; the Restore itself
@@ -498,7 +523,8 @@ and the started process finds its open window and hands the paths over with the 
 
 One UI Automation notification each, on the list that has the focus, or on the notice while one shows (AX-7.3):
 "<folder>, <N items>, <entry>" (a change of folder, AF-3.1), "<N of M items, filter text>, <entry>" (AF-3.8), "Created
-<name>", "Moved <what> into <name>" (AF-4.13), "Renamed to <name>", "Deleted <name>", "Deleted n items",
+<name>", "Moved <what> into <name>" (AF-4.13), "Renamed to <name>", "Deleted <name>", "Deleted n items", "Deleted <what> for good" (AF-4.3), "Already in this folder" (AF-4.13),
+"Undone: <what> deleted for good" (AF-4.14),
 "Copied path", "Copied n paths", "Cut <name>", "Copied <name>", "Cut n items", "Copied n items", "Selected",
 "Deselected", "Selected, n selected", "Deselected, n selected", "n selected", "None selected" (AF-3.7), "Sorted by
 <order>", "Filter cleared" (AF-3.8), "Added to Favorites", "Removed from Favorites" (AF-3.9), "Top" (This PC,

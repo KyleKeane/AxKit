@@ -71,7 +71,9 @@ public abstract partial class ItemForm
 
         if (!FieldTypes.Known(field.Type))
         {
-            Announce($"A field of type {field.Type}: change it in axJSON, Ctrl+J", true);
+            // No key is named: this window is every item app's, and Ctrl+J is another command in axMCP (until
+            // 2026-11-27 the sentence ended in ", Ctrl+J").
+            Announce($"A field of type {field.Type}: change it in axJSON", true);
             return;
         }
 
@@ -110,7 +112,7 @@ public abstract partial class ItemForm
     {
         if (field.Options.Count == 0)
         {
-            Announce("This choice has no options: add them in axJSON, Ctrl+J", true);
+            Announce("This choice has no options: add them in axJSON", true);
             return;
         }
 

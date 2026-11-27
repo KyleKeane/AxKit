@@ -37,3 +37,10 @@ dotnet test tests/AxFile.Tests/AxFile.Tests.csproj
 - `SHFileOperationW` wants its path list ended by a second null; the marshaller adds one, the code adds the other.
 - `Directory.Move` and `File.Move` rename a name whose case alone changes; `Rename` skips the existence check for that case.
 - An `ActionEntry` that fell off the front of the log is still the object the window holds for a running operation; the log's `Progress`, `End` and `Fail` change it without looking it up, so nothing breaks when fifty quick operations outrun a slow one.
+
+- The review of 2026-11-27:
+  - `RecycleBin.Has(path)`: whether a delete there goes to a Recycle Bin (the drive's kind, then `SHQueryRecycleBinW` on a local root and the drive's `NukeOnDelete`); off the UI thread. `FileOperations.DeleteText` is the question's words with and without a bin.
+  - `EntryStamp` and `Operation.Stamped`, `Made`, `ToBin`, `UndoRemoves`, `UndoQuestion`: an operation whose undo removes what it made keeps each result's size and write time (a folder's all the way down) and whether its drive has a bin; `CheckUndo` refuses one changed since, and `DoneText` says "deleted for good" without a bin.
+  - `FileOperations.AlreadyIn`: a move into the folder the entries are in already.
+  - `ActionLog.Newest` is the operation that ended last (`ActionEntry.Ended`), not the one that began last.
+  - `FolderListing.Drives(askNetworkDrives)` with `DriveEntry`: a network drive is asked for its label only by a caller on a task; the Drives menu and the drive in hand list it by its letter alone.

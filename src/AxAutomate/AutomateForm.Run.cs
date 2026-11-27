@@ -5,7 +5,7 @@ using AxKit.Forms;
 namespace AxAutomate;
 
 /// <summary>
-/// The runs of axAutomate's window (SPEC.md AU-4.4, AU-4.5, AU-5.3): F5 runs the workflow in hand, or at a folder's
+/// The runs of axAutomate's window (SPEC.md AU-4.4, AU-4.5, AU-5.3): Run (Ctrl+R) runs the workflow in hand, or at a folder's
 /// level every workflow of that folder one after another, through the engine of <c>AxAutomate.Core</c>
 /// (<see cref="ScriptRunner"/>), on a thread of its own and on a desktop of the run's own, so that the run never takes
 /// the user's keyboard; the run's windows are this very program file, started with the run's secret and folder alone
@@ -40,7 +40,7 @@ public sealed partial class AutomateForm
     private sealed record RunJob(Workflow Workflow, IReadOnlyList<StepRow> Rows, IReadOnlyList<ScriptLine> Lines, string? Refusal);
 
     /// <summary>
-    /// F5 (AU-4.4): the workflow in hand, read again from its file first, or every workflow of the folder in hand. What
+    /// Run, Ctrl+R (AU-4.4): the workflow in hand, read again from its file first, or every workflow of the folder in hand. What
     /// is checked here is what the window holds already; the files are read on the run's thread.
     /// </summary>
     private void RunCommand()
@@ -105,7 +105,7 @@ public sealed partial class AutomateForm
         return new RunJob(workflow, StepText.Rows(workflow), lines, refusal);
     }
 
-    /// <summary>Whether F5 has something to run here, from what the window holds (no file read): the workflow in hand can run, or the level has a workflow.</summary>
+    /// <summary>Whether Run (Ctrl+R) has something to run here, from what the window holds (no file read): the workflow in hand can run, or the level has a workflow.</summary>
     private bool CanRun() => _workflow is { } open ? ScriptLines.CannotRun(open, nvda: false, confined: true) is null : _folders.Count > 0 && _levelWorkflows > 0;
 
     /// <summary>

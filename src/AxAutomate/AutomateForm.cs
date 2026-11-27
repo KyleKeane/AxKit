@@ -28,7 +28,7 @@ public sealed partial class AutomateForm : ItemForm
 
     private IReadOnlyList<StepRow> _steps = [];
 
-    /// <summary>How many workflows the folder level shown holds, counted as its rows were filled, so that F5 and the menu need no second read.</summary>
+    /// <summary>How many workflows the folder level shown holds, counted as its rows were filled, so that Run (Ctrl+R) and the menu need no second read.</summary>
     private int _levelWorkflows;
 
     /// <summary>Run and Stop the run in the Actions menu, made available as the menu opens (<see cref="UpdateRunItems"/>).</summary>
@@ -166,7 +166,7 @@ public sealed partial class AutomateForm : ItemForm
 
     // ---- the selection (bundle AX-8.16; SPEC.md AU-4.4a, framework step 10, 2026-11-22) ----
 
-    /// <summary>Space selects workflows of a folder: F5 then runs the selected ones, where it runs every workflow of the folder with none selected.</summary>
+    /// <summary>Space selects workflows of a folder: Run (Ctrl+R) then runs the selected ones, where it runs every workflow of the folder with none selected.</summary>
     protected override bool HasSelection => true;
 
     /// <summary>A workflow of a folder's level can be selected; a folder, a step and the lines that stand for nothing cannot.</summary>

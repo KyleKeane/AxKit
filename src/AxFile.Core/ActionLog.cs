@@ -41,6 +41,9 @@ public sealed class ActionEntry
 
     public DateTime Time { get; internal set; }
 
+    /// <summary>The place of the entry among the operations that ended, counted by the log: a later end has a larger number. Zero while it runs.</summary>
+    internal long Ended { get; set; }
+
     /// <summary>Why the undo was refused (<see cref="ActionState.NotUndone"/>), "notes.md has changed".</summary>
     public string? Reason { get; internal set; }
 
@@ -78,6 +81,7 @@ public sealed class ActionLog
 
     private readonly List<ActionEntry> _entries = [];
     private readonly Func<DateTime> _clock;
+    private long _ended;
 
     public ActionLog()
         : this(() => DateTime.Now)
@@ -127,6 +131,7 @@ public sealed class ActionLog
         entry.Text = text;
         entry.State = ActionState.Done;
         entry.Time = _clock();
+        entry.Ended = ++_ended;
         if (operation is not null)
         {
             entry.Operation = operation;
@@ -153,14 +158,20 @@ public sealed class ActionLog
             State = ActionState.Done,
             Operation = operation,
             Select = operation.Result,
+            Ended = ++_ended,
         };
         Append(entry);
         TrimUndoable();
         return entry;
     }
 
-    /// <summary>The newest operation Undo can take back (Ctrl+Z, AF-4.14); null when none can.</summary>
-    public ActionEntry? Newest() => _entries.LastOrDefault(entry => entry.CanUndo);
+    /// <summary>
+    /// The newest operation Undo can take back (Ctrl+Z, AF-4.14); null when none can. Newest by when it ended, which
+    /// is when the user heard of it: a long copy that began before a rename and ended after it is the one Ctrl+Z
+    /// takes first (until 2026-11-27 the entries' order decided, which is the order they began in, and Ctrl+Z after
+    /// "Copied 3 items" took the rename back).
+    /// </summary>
+    public ActionEntry? Newest() => _entries.Where(entry => entry.CanUndo).MaxBy(entry => entry.Ended);
 
     /// <summary>The entry taken back: it reads "…, undone" and cannot be undone again, so that the next Ctrl+Z takes the one before.</summary>
     public void Undone(ActionEntry entry) => entry.State = ActionState.Undone;
@@ -185,14 +196,11 @@ public sealed class ActionLog
     /// <summary>Beyond twenty undoable operations the oldest keeps its text and loses its operation (AF-4.14's limit).</summary>
     private void TrimUndoable()
     {
-        var undoable = _entries.Count(entry => entry.CanUndo);
-        for (var i = 0; i < _entries.Count && undoable > UndoLimit; i++)
+        // The oldest by when they ended, as Newest takes the newest by it.
+        var undoable = _entries.Where(entry => entry.CanUndo).OrderBy(entry => entry.Ended).ToList();
+        foreach (var entry in undoable.Take(Math.Max(0, undoable.Count - UndoLimit)))
         {
-            if (_entries[i].CanUndo)
-            {
-                _entries[i].Operation = null;
-                undoable--;
-            }
+            entry.Operation = null;
         }
     }
 }

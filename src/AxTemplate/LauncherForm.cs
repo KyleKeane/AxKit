@@ -89,7 +89,7 @@ public sealed class LauncherForm : HotkeyForm
         Controls.AddRange([Overlay, Matches, SearchField, _status, _menu]);
         ApplyTextFont();
         Fill();
-        _ = ReadFolderAsync();
+        Do(() => ReadFolderAsync());
     }
 
     // ---- what the window bases ask for ----
@@ -142,7 +142,7 @@ public sealed class LauncherForm : HotkeyForm
         _clipboard = ClipboardText();
         _clipboardPrivate = marked || PrivateClipboard.Sequence != sequence;
         Fill();
-        _ = ReadFolderAsync();
+        Do(() => ReadFolderAsync());
         var width = Math.Max(MinimumSize.Width, area.Width / 3);
         var height = Math.Max(MinimumSize.Height, Height - ClientSize.Height + _menu.Height + SearchField.Height + Matches.ItemHeight * 12 + _status.Height + 4);
         Bounds = new Rectangle(area.Left + (area.Width - width) / 2, area.Top + (area.Height - height) / 2, width, height);
@@ -172,7 +172,7 @@ public sealed class LauncherForm : HotkeyForm
                 return TemplateStore.Read(path);
             });
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException or InvalidDataException)
         {
             // TP-7.3: that it failed, never a name.
             Log.Error("The templates' folder could not be read: " + ex.GetType().Name);
@@ -283,15 +283,6 @@ public sealed class LauncherForm : HotkeyForm
     }
 
     /// <summary>
-    /// Enter (TP-4.1) and Ctrl+Enter (TP-4.2): the window hides and gives the front back; once the program it came
-    /// from is in front again, Ctrl+Enter first sends it the copy key and takes what it copies as the template's
-    /// selection; then the filled text goes on the clipboard, marked as not for a clipboard history (TP-4.3), the
-    /// paste key is sent, the caret is moved back to its mark by Left keys (TP-2.3), and the clipboard's text of
-    /// before is given back. When another window is in front by then, no key is sent and the text waits on the
-    /// clipboard. A template of several lines (TP-4.8) goes into a field of one line made one line, and into a
-    /// terminal only after a question, <paramref name="breaks"/> then the answer.
-    /// </summary>
-    /// <summary>
     /// TP-4.8: a template of several lines for a terminal, which runs each line as it is pasted: asked in the launcher
     /// before it hides, one line the first answer, as it is the second, nothing the cancel.
     /// </summary>
@@ -306,6 +297,15 @@ public sealed class LauncherForm : HotkeyForm
         ]));
     }
 
+    /// <summary>
+    /// Enter (TP-4.1) and Ctrl+Enter (TP-4.2): the window hides and gives the front back; once the program it came
+    /// from is in front again, Ctrl+Enter first sends it the copy key and takes what it copies as the template's
+    /// selection; then the filled text goes on the clipboard, marked as not for a clipboard history (TP-4.3), the
+    /// paste key is sent, the caret is moved back to its mark by Left keys (TP-2.3), and the clipboard's text of
+    /// before is given back. When another window is in front by then, no key is sent and the text waits on the
+    /// clipboard. A template of several lines (TP-4.8) goes into a field of one line made one line, and into a
+    /// terminal only after a question, <paramref name="breaks"/> then the answer.
+    /// </summary>
     private void PutIn(bool takeSelection, LineBreaks? breaks = null) => Do(async () =>
     {
         if (await TextAsync() is not { } text)
@@ -336,8 +336,9 @@ public sealed class LauncherForm : HotkeyForm
         await Task.Delay(PasteDelayMs);
         if (target == 0 || GetForegroundWindow() != target)
         {
-            // TP-4.1: nothing typed into a window the user did not come from; the text waits on the clipboard.
-            LeaveOnClipboard(TextTemplate.Expand(text, string.Empty, before).Text);
+            // TP-4.1: nothing typed into a window the user did not come from; the text waits on the clipboard, as a
+            // private copy when it holds the text of one (TP-4.3).
+            LeaveOnClipboard(TextTemplate.Expand(text, string.Empty, before).Text, PasteTarget.CopiedAsPrivate(text, beforeWasPrivate));
             Log.Info("The paste was left undone: another window is in front");
             return;
         }
@@ -354,9 +355,10 @@ public sealed class LauncherForm : HotkeyForm
             : text.Contains(TextTemplate.SelectionMark, StringComparison.Ordinal) ? await Task.Run(FocusedText.SelectedText) ?? string.Empty
             : string.Empty;
         var made = TextTemplate.Expand(text, selection, before);
-        if (lineBreaks == LineBreaks.OneLine && TextTemplate.HasLines(made))
+        if (PasteTarget.MadeOneLine(breaks, lineBreaks, TextTemplate.HasLines(made)))
         {
-            // TP-4.8: a field of one line keeps only a paste's first line.
+            // TP-4.8: a field of one line keeps only a paste's first line; and a terminal runs each line, so lines
+            // that came with the selection, after the question could be asked, go in on one line, nothing run.
             made = TextTemplate.OneLine(made);
             Log.Info("The template was put in on one line");
         }
@@ -370,6 +372,9 @@ public sealed class LauncherForm : HotkeyForm
         // TP-D10: where the field gives its text, the mark is pasted and found; elsewhere the Left keys place the caret.
         var marked = TemplateStore.WithCaretMark(made);
         var findMark = marked is not null && await Task.Run(FocusedText.Readable);
+        // The marks the text holds before the caret already, counted before the paste: only one more is the pasted one.
+        var marksBefore = findMark ? await Task.Run(() => FocusedText.MarksBeforeCaret(TextTemplate.CaretMark)) : null;
+        findMark = marksBefore is not null;
         uint sequence;
         try
         {
@@ -387,7 +392,7 @@ public sealed class LauncherForm : HotkeyForm
         {
             // The mark's coming tells that the paste is in, however slow the program: then it is selected and
             // deleted, and the clipboard can go back at once.
-            var found = await Task.Run(() => FocusedText.SelectMarkBeforeCaret(TextTemplate.CaretMark, MarkMs));
+            var found = await Task.Run(() => FocusedText.SelectMarkBeforeCaret(TextTemplate.CaretMark, marksBefore ?? 0, MarkMs));
             if (found && GetForegroundWindow() == target)
             {
                 KeySender.SendDelete();
@@ -453,8 +458,13 @@ public sealed class LauncherForm : HotkeyForm
         LeaveOnClipboard(before);
     }
 
-    /// <summary>A text put on the clipboard from the hidden window: a clipboard another program holds is logged, since there is no window to say it in.</summary>
-    private static void LeaveOnClipboard(string text)
+    /// <summary>
+    /// A text put on the clipboard from the hidden window: a clipboard another program holds is logged, since there
+    /// is no window to say it in. With <paramref name="asPrivate"/> it is put there as a private copy, marked as not
+    /// for a clipboard history (TP-4.3): a template filled from a private copy carries that text (until 2026-11-27
+    /// it was left as plain text, a password inside it open to the clipboard histories).
+    /// </summary>
+    private static void LeaveOnClipboard(string text, bool asPrivate = false)
     {
         if (text.Length == 0)
         {
@@ -463,7 +473,14 @@ public sealed class LauncherForm : HotkeyForm
 
         try
         {
-            Clipboard.SetText(text);
+            if (asPrivate)
+            {
+                PrivateClipboard.Copy(text);
+            }
+            else
+            {
+                Clipboard.SetText(text);
+            }
         }
         catch (Exception ex) when (ex is ExternalException or InvalidOperationException)
         {
@@ -483,6 +500,12 @@ public sealed class LauncherForm : HotkeyForm
         if (made.Text.Length == 0)
         {
             Announce(MakesNothing, true);
+        }
+        // A text filled from a private copy (a password) stays a private copy (TP-4.3).
+        else if (PasteTarget.CopiedAsPrivate(text, _clipboardPrivate))
+        {
+            LeaveOnClipboard(made.Text, asPrivate: true);
+            HideWindow();
         }
         // No word of it (the maintainer's choice of 2026-11-23, with axClip's): NVDA speaks the window the hide gives the
         // front back to, and never heard a "Copied" said as the window hid. Coming back is the sign.

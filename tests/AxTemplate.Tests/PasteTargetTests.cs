@@ -58,6 +58,42 @@ public sealed class PasteTargetTests
         Assert.Equal(3, end.Caret);
     }
 
+    /// <summary>
+    /// TP-4.8: lines that came with the selection, after the question could be asked, never reach a terminal as
+    /// lines: without an answer the text goes in on one line. With an answer, the answer; a field of one line always.
+    /// </summary>
+    [Theory]
+    [InlineData(null, LineBreaks.EachLineRuns, true, true)]
+    [InlineData(LineBreaks.Kept, LineBreaks.EachLineRuns, true, false)]
+    [InlineData(LineBreaks.OneLine, LineBreaks.EachLineRuns, true, true)]
+    [InlineData(null, LineBreaks.OneLine, true, true)]
+    [InlineData(null, LineBreaks.Kept, true, false)]
+    [InlineData(null, LineBreaks.EachLineRuns, false, false)]
+    [InlineData(null, LineBreaks.OneLine, false, false)]
+    public void Lines_reach_a_terminal_only_by_the_users_answer(LineBreaks? answer, LineBreaks target, bool hasLines, bool oneLine)
+    {
+        Assert.Equal(oneLine, PasteTarget.MadeOneLine(answer, target, hasLines));
+    }
+
+    /// <summary>TP-4.3: a text filled from a private copy is put on the clipboard as a private copy; any other as plain text.</summary>
+    [Fact]
+    public void A_template_filled_from_a_private_copy_is_copied_as_private()
+    {
+        Assert.True(PasteTarget.CopiedAsPrivate("Password: {clipboard}", clipboardWasPrivate: true));
+        Assert.False(PasteTarget.CopiedAsPrivate("Password: {clipboard}", clipboardWasPrivate: false));
+        Assert.False(PasteTarget.CopiedAsPrivate("Kind regards", clipboardWasPrivate: true));
+    }
+
+    /// <summary>TP-D10: the caret's mark is taken for the pasted one only when more marks stand before the caret than before the paste.</summary>
+    [Fact]
+    public void The_marks_of_a_text_are_counted()
+    {
+        Assert.Equal(0, PasteTarget.MarksIn("no mark here", TextTemplate.CaretMark));
+        Assert.Equal(2, PasteTarget.MarksIn("Dear {caret}, see {caret}", TextTemplate.CaretMark));
+        Assert.Equal(1, PasteTarget.MarksIn("{caret}", TextTemplate.CaretMark));
+        Assert.Equal(0, PasteTarget.MarksIn("{caret}", string.Empty));
+    }
+
     [Fact]
     public void The_question_counts_the_lines()
     {

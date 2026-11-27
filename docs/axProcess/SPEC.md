@@ -132,7 +132,9 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
 - PR-5.1 The list holds what starts at sign-in from the five usual places: the Run key of the current user, the Run
   key of the computer and its 32-bit twin, the user's Startup folder and the Startup folder of all users. Each is
   "<name>, <enabled or disabled>, <place>"; the place is "current user's Run key", "computer's Run key", "computer's
-  Run key (32-bit)", "your Startup folder", "all users' Startup folder". Sorted by name.
+  Run key (32-bit)", "your Startup folder", "all users' Startup folder". Sorted by name. A file of a Startup folder
+  is named without its extension and is a row of its own by its whole file name: `sync.lnk` and `sync.bat` of one
+  folder are two rows (until 2026-11-27 the list took them for one when it kept the selection).
 - PR-5.2 Disabled is what Task Manager's Startup tab set: the entry's value under the matching `StartupApproved` key
   has an odd first byte. Without such a value the entry is enabled.
 - PR-5.3 Enter, or Context → Details, shows a notice titled with the name: the command, the place, enabled or

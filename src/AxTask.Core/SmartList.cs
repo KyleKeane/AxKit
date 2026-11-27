@@ -128,7 +128,7 @@ public sealed class SmartList
         var name = System.IO.Path.GetFileName(path)[..^ItemFolder.FilterExtension.Length];
         try
         {
-            if (JsonNode.Parse(AxKit.Core.TextDocument.Read(path).Text, documentOptions: new JsonDocumentOptions { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip }) is not JsonObject root
+            if (AxKit.Core.JsonText.Parse(AxKit.Core.TextDocument.Read(path).Text, lenient: true) is not JsonObject root
                 || root["conditions"] is not JsonArray conditions)
             {
                 return Broken(name, path, "no list of conditions");

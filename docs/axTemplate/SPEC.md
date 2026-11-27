@@ -91,7 +91,11 @@ answer to a key.
   copy does not take it; first built under AppData, never released there), a list in the item format: its `list.json` (`axkit-list 2`)
   names the fields, and every other `.json` file in it is one template, an item that names `list.json` as its
   configuration. axTemplate writes `list.json` when it is not there and adds a field to it that a newer version
-  brings; it never takes one away.
+  brings; it never takes one away. It writes the file again only when the file reads whole: a configuration with
+  something passed over (forms-framework AF-11.7: an entry that is no field, a field named twice) or that is no
+  text at all is left as it is, since writing it again would drop what was passed over; and a field written by hand
+  without a `"value"` keeps what else its object holds when a field is added (2026-11-27; until then the first
+  start after such an edit rewrote the file without it).
 - TP-2.2 **A template's fields**: `Title`, its name and its file's name; `Text` (a long text), what is put in;
   then one check for each place it also shows inside axKit (TP-5), one for each app
   whose window has a field or a text that Insert template puts a template into (TP-5.2), by the app's name (his
@@ -111,12 +115,21 @@ answer to a key.
   - `{caret}`: the caret is put in its place after the paste (TP-D10). Where the field gives its text to UI
     Automation, the channel a screen reader reads by (Word, Notepad, a browser's field), the text is pasted with
     the mark `{caret}` left in, the mark nearest before the caret is searched for until the paste has put it
-    there, selected, and deleted with the Delete key, which leaves the caret where it was. Elsewhere (a terminal,
+    there, selected, and deleted with the Delete key, which leaves the caret where it was. A mark is the pasted
+    one only when more marks stand before the caret than did before the paste key was sent (counted then,
+    `FocusedText.MarksBeforeCaret`): a `{caret}` the document held already, a template's own text open in an
+    editor, is never selected and deleted in its place (2026-11-27; it was, where the paste came late or not at
+    all). Elsewhere (a terminal,
     a program that gives no text), the caret is moved back by one Left key for every character that follows the
-    mark, a line ending counting as one (TP-D5). Before any key is sent, the launcher waits until Ctrl, Shift, Alt
+    mark, a line ending counting as one, and so do an emoji, a letter with its accent after it and signs joined
+    into one (a text element; counted in UTF-16 units until 2026-11-27, one Left too many for each emoji) (TP-D5). Before any key is sent, the launcher waits until Ctrl, Shift, Alt
     and the Windows keys are up, 1.5 seconds at most.
 - TP-2.4 A file that is not an item, or cannot be read, is no template: the browser lists it with "not a
-  template" after its name and the launcher leaves it out.
+  template" after its name and the launcher leaves it out. That holds for a file that is no text too (it holds a
+  NUL character, a picture renamed to `.json`) and for one over 32 MB: until 2026-11-27 such a file's reading
+  threw what none of the folder's readers caught, and every template was gone from the browser, the launcher and
+  the editors' Insert template without a word. The folder's reads now run through the window's own `Do`, so that
+  a failure nobody foresaw is said, and `ReadFailureTests` holds the sources to both.
 - TP-2.5 The folder is read off the UI thread, as each window comes up and on F5; the launcher reads a template's
   file again when it is used, so that a change made in the browser a moment ago is in.
 
@@ -153,7 +166,11 @@ answer to a key.
   another password manager, stays what `{clipboard}` stands for and is never written to the clipboard again
   (`PasteTarget.GivesBack`); the template's text stays there, marked as it was put. Until then it was put back as
   plain text, into Windows' clipboard history, the cloud clipboard and axClip, where axPass's clearing after 30
-  seconds (PW-5.4) no longer found it. The user copies it again where it came from. Where the caret's mark
+  seconds (PW-5.4) no longer found it. The user copies it again where it came from. The same holds for the filled
+  text where it is left on the clipboard for the user's own paste (Shift+Enter, TP-4.4, and the text that waits
+  there when another window came in front, TP-4.1): a template that took a private copy in with `{clipboard}`
+  is put there as a private copy too (`PasteTarget.CopiedAsPrivate`; as plain text until 2026-11-27, the password
+  inside it open to the clipboard histories). Where the caret's mark
   cannot be found, "done" is a wait after the paste key that the user chooses: the launcher's Options, Wait
   before the clipboard comes back, 0.3, 0.6 (the default), 1, 2 or 4 seconds, saved as `giveBackMs` (the
   maintainer's answer of 2026-11-24, "a setting for it"); a choice is said, "The clipboard comes back 2 seconds
@@ -180,6 +197,11 @@ answer to a key.
   - A console (Windows' console host, Windows Terminal) runs each line as it is pasted. Before a template of several
     lines goes into one, the launcher asks, still in front: "Deploy has 3 lines, and a terminal runs each line as it
     is pasted. Put it in how?", with Put it in on one line (Enter), Put it in as it is, each line runs, and Cancel.
+    The question is asked on the template as it reads before the selection is taken, since the selection is taken
+    after the launcher hid. A text that gets its lines only from `{selection}` therefore meets no question: it
+    goes in on one line, the question's own first answer, and nothing runs (`PasteTarget.MadeOneLine`, tested;
+    2026-11-27, until then it went in as it was and each line ran). Lines reach a terminal only by the answer
+    "as it is".
   - Anything else keeps the template as it is: a text of several lines, and a control that says nothing of itself
     (a browser's field, which takes the breaks out of a field of one line by itself).
   - Inside axKit (TP-5) the field says it itself: Insert template into a field of one line puts it in on one line

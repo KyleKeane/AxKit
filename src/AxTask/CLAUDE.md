@@ -60,3 +60,4 @@ The bundle rules are in the root `CLAUDE.md`.
   `ItemForm`'s commands with a `When` of the pane focused, and taking them keeps the list box from its own move and its
   ding. `ItemForm` registers the shared keys after the app's (`PlaceControls`), so that an app's key comes first; a
   command of axTask that acts anywhere has `When = NotRenaming`, so that the rename box keeps its keys.
+- The review of 2026-11-27: `AcceptedOrAsked` takes `forAiTool` and never saves an acceptance for an AI tool's run, nor for the user's one press after it (`_askedActionForAiTool`). `ConvertLists` prepares through `ListConversion.Prepare` and removes the copies when the step fails. `MakeApprovalKey` writes through `OutsideReports.WriteKey`. `Commit` relies on `Changes.Apply` taking a failed step back whole.

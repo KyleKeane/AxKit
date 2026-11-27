@@ -25,6 +25,12 @@ public sealed class AxKitWindowsTests
     [InlineData("axDown, axFile, C:\\src\\axDown", "axFile")]
     [InlineData("work, axTerminal, C:\\work, PowerShell", "axTerminal")]
     [InlineData("This PC, axFile", "axFile")]
+    // What is open holds an app's name as a part of its own: the app is the last one named before the path.
+    [InlineData("ideas, axTask, axFile, C:\\stuff\\ideas, axTask", "axFile")]
+    [InlineData("ideas, axTask.md, axDown, *C:\\stuff\\ideas, axTask.md", "axDown")]
+    [InlineData("for axDown, axTask, axDown, \\\\server\\share\\for axDown, axTask", "axDown")]
+    [InlineData("ideas, axTask, axDown", "axDown")]
+    [InlineData("C:\\, axFile", "axFile")]
     public void The_app_is_the_part_after_what_is_open(string title, string app) => Assert.Equal(app, AxKitWindows.AppOf(title));
 
     [Theory]

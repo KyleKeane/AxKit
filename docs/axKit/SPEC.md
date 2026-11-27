@@ -2094,8 +2094,9 @@ These are the rules of `docs/axClaude/SPEC.md` that are not about Claude; app sp
   Options, Open the sounds folder makes the folder when it is missing, writes `sound names.txt` there with every
   name and what it is, and shows the folder in axFile. A file of any common shape is taken (PCM of 8, 16, 24 or 32
   bits, or 32-bit float, mono or stereo, any rate) and made into the one shape the sound devices play, 16-bit mono at
-  the bundle's rate; a file that is not one, or longer than 60 seconds, is passed over, the built-in sound plays, and
-  the log says why. Which kind of event plays which sound is unchanged (rule 13, `EventPresenter`); only the sound's
+  the bundle's rate; a file that is not one, or longer than 60 seconds, or over 64 MB (refused by its length
+  before any of it is read, 2026-11-27: a minute of the largest shape taken is 46 MB), is passed over, the built-in
+  sound plays, and the log says why. Which kind of event plays which sound is unchanged (rule 13, `EventPresenter`); only the sound's
   samples are the user's. The background chords, made by count, have no file. Tested in `CustomSoundsTests`.
 
 ## 5. Architecture

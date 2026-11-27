@@ -158,7 +158,11 @@ the list's `list.json`, written for a new list by `tools\outside-report.ps1`.
   the new key with the old (a wrong current passphrase changes nothing), and writes that line into
   `approval-key-change.txt` beside the key, from where `tools\pin-approval-key.ps1` puts it into the commit's message
   and then deletes the file. One change at a time: while that file lies there the last change is not pinned, and axTask
-  refuses the next one, which would be signed by a key the repository never pinned. The notice of a change says the
+  refuses the next one, which would be signed by a key the repository never pinned. A change is written whole or not
+  at all (`OutsideReports.WriteKey`, tested; 2026-11-27): the line, the public half, then the key itself by a move,
+  and when one of those writes fails the line is taken away again and the public half put back, so that a change
+  that did not happen never stands as one waiting to be pinned (until then the line stayed, and every later change
+  was refused). The notice of a change says the
   fingerprint of the key in use. The first key is pinned by a commit the hook allows because none existed. A forgotten
   passphrase cannot be got back: the maintainer then removes the pinned key by a commit of his own, made with the hook
   skipped by his own hand (`git commit --no-verify`), and sets up a new one; the assistant never skips a hook.

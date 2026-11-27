@@ -33,42 +33,66 @@ public static class FolderListing
 
     public static bool IsThisPC(string? folder) => string.Equals(folder, ThisPC, StringComparison.Ordinal);
 
-    /// <summary>The ready drives as the entries of This PC (AF-3.10), in letter order: "Local Disk (C:)", the volume's label or the kind's name, each a folder entry marked as a drive.</summary>
-    public static IReadOnlyList<Entry> Drives()
+    /// <summary>
+    /// The ready drives as the entries of This PC (AF-3.10), in letter order: "Local Disk (C:)", the volume's label or
+    /// the kind's name, each a folder entry marked as a drive. A mapped network drive is asked whether it is ready
+    /// and for its label only with <paramref name="askNetworkDrives"/>, which a caller on a task passes: the
+    /// question can take the network's time limit when the server is away. Without it such a drive is listed by its
+    /// letter alone, "Network Drive (Z:)", ready or not, so that what runs on the window's own thread (the Drives
+    /// menu as it opens, the drive in hand) never waits (until 2026-11-27 every caller asked, and an unreachable
+    /// mapped drive froze the window as it started and whenever Drives opened). A drive's kind is asked of Windows
+    /// alone and touches no network.
+    /// </summary>
+    public static IReadOnlyList<Entry> Drives(bool askNetworkDrives)
     {
         var drives = new List<Entry>();
         foreach (var drive in DriveInfo.GetDrives())
         {
-            string label;
-            try
+            if (DriveEntry(drive.Name, drive.DriveType, askNetworkDrives, () => drive.IsReady ? drive.VolumeLabel : null) is { } entry)
             {
-                if (!drive.IsReady)
-                {
-                    continue;
-                }
-
-                label = drive.VolumeLabel;
+                drives.Add(entry);
             }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-            {
-                continue;
-            }
-
-            if (label.Length == 0)
-            {
-                label = drive.DriveType switch
-                {
-                    DriveType.Removable => "Removable Disk",
-                    DriveType.CDRom => "CD Drive",
-                    DriveType.Network => "Network Drive",
-                    _ => "Local Disk",
-                };
-            }
-
-            drives.Add(new Entry($"{label} ({drive.Name.TrimEnd('\\')})", drive.Name, IsFolder: true, Size: 0, Modified: DateTime.MinValue, IsDrive: true));
         }
 
         return drives;
+    }
+
+    /// <summary>
+    /// One drive as an entry of This PC, or null for one that is not ready. <paramref name="label"/> asks the drive
+    /// (null when it is not ready); it is not called for a network drive unless <paramref name="askNetworkDrives"/>.
+    /// </summary>
+    public static Entry? DriveEntry(string root, DriveType kind, bool askNetworkDrives, Func<string?> label)
+    {
+        var given = string.Empty;
+        if (kind != DriveType.Network || askNetworkDrives)
+        {
+            try
+            {
+                if (label() is not { } asked)
+                {
+                    return null;
+                }
+
+                given = asked;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                return null;
+            }
+        }
+
+        if (given.Length == 0)
+        {
+            given = kind switch
+            {
+                DriveType.Removable => "Removable Disk",
+                DriveType.CDRom => "CD Drive",
+                DriveType.Network => "Network Drive",
+                _ => "Local Disk",
+            };
+        }
+
+        return new Entry($"{given} ({root.TrimEnd('\\')})", root, IsFolder: true, Size: 0, Modified: DateTime.MinValue, IsDrive: true);
     }
 
     /// <summary>

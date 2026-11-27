@@ -49,7 +49,7 @@ public static class PathCompletion
     {
         if (folder is null)
         {
-            return FolderListing.Drives()
+            return FolderListing.Drives(askNetworkDrives: true)
                 .Where(drive => drive.Path.StartsWith(start, StringComparison.OrdinalIgnoreCase))
                 .Select(drive => new Completion(drive.Path, drive.Label))
                 .ToList();

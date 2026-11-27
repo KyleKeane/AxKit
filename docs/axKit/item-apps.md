@@ -110,7 +110,7 @@ first.
 | `text` | a string, one line | the text | a text field |
 | `longtext` | a string with line breaks | the first line and the count of the others, F7 for all | a field of several lines: Enter makes a new line, Ctrl+Enter keeps it, as Tab then Enter on Save does |
 | `number` | a JSON number | the number | a text field that takes only a number |
-| `date` | `"YYYY-MM-DD"` | "30 October 2026, Friday" | a text field: a date, `today`, `tomorrow`, `+3` (days) |
+| `date` | `"YYYY-MM-DD"` | "30 October 2026, Friday" | a text field: a date, `today`, `tomorrow`, `+3` (days), a weekday (the next such day, never today), or a day and a month without a year, `5 January` (the next such day, today included, never one that has passed; 29 February is the next year that has one) |
 | `datetime` | `"YYYY-MM-DDTHH:MM"` | "30 October 2026, 14:00" | the same, a time after the date |
 | `check` | `true` or `false` | "done" or "not done" | Space or Enter toggles it, Right checks and Left unchecks; no field |
 | `choice` | one of `options` | the option | a list of the options, the current one selected; Right and Left step through them without the list |
@@ -155,7 +155,12 @@ A folder. Its configuration is `list.json` in it, never shown in the navigator:
   `.json`: `Fix the tap.json`. Two items with one title are `Fix the tap.json` and `Fix the tap - 2.json`, axFile's
   rule. A Title that is a Windows device name (`con`, `nul`, `com1` and the like, whatever follows a dot) gets an
   underscore in front, `_con.json`, since Windows would send the file to the device (security audit S-55,
-  2026-11-09). Changing the Title renames the file, and the links to it are changed with it (IA-D3). The rule is
+  2026-11-09). So does a Title that starts with a full stop, `_.NET upgrade.json` (a file whose name starts with one
+  is not shown, IA-4.6, and such an item was written and never seen again), and the Title "list", `_list.json` (the
+  one name an item's file cannot have is its list's configuration's: a new item of that title in a list without a
+  `list.json` yet was written over the configuration made in the same step); both since 2026-11-27. The Title
+  itself is untouched in the file. A name is at most 120 characters, and never cut inside a character of two units
+  (an emoji). Changing the Title renames the file, and the links to it are changed with it (IA-D3). The rule is
   `AxKit.Core/ItemFiles` (`FileStem`, `FreePath`) since the bundle's reports list used it too (2026-11-07,
   docs/axKit/reports.md RP-5.1).
 - **IA-4.6** A file that is not JSON, or not an item, is not shown; the status bar counts them ("2 files not shown").
@@ -175,7 +180,15 @@ A folder. Its configuration is `list.json` in it, never shown in the navigator:
   app's own words). The commands New field, Rename the field and Remove the field are gone from the item window
   with the code behind them; in axTask the way to the fields is Context, Edit the list's configuration, and Ctrl+J
   on the list. Until 2026-11-21 axTask added, renamed, removed and moved a field in one item's file.
-- **IA-5.4** Every change is one announcement ("Due: 30 October 2026, Friday") and one step for Ctrl+Z.
+- **IA-5.4** Every change is one announcement ("Due: 30 October 2026, Friday") and one step for Ctrl+Z. A step of
+  several parts (a rename with the links that follow it, a new list's configuration with its first item, a
+  conversion) is written whole or not at all: when one part cannot be written, the parts before it are taken back
+  and the failure is said, so that nothing is left on disk that Ctrl+Z does not know of (`Changes.Apply`,
+  2026-11-27; the parts before the failure stayed until then). A rename that changes capitals only is undone like
+  any other (it never could be: the folder under its new spelling was taken for another "again where it was").
+  A file found in a Windows code page (written by another program) that cannot hold a character of the new text
+  is written as UTF-8 from then on, never with a question mark in the character's place (docs/axDown/SPEC.md
+  AD-3.3a).
 - **IA-5.5** Before every write the file is read again; if it changed since it was shown (axJSON, a script, a sync),
   the change is refused with "The item changed on disk; it has been read again" (axList's LI-D5).
 - **IA-5.6** Right and Left change the field in focus (bundle AX-8.10 rule 4; the user's decision, 2026-11-14). On a

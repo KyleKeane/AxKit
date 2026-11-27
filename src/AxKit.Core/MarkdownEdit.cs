@@ -137,6 +137,21 @@ public static class MarkdownEdit
         var to = Math.Clamp(start + Math.Max(0, length), from, text.Length);
         if (to == from)
         {
+            // The caret inside the marks that open or close a word is at that word: past the marks to it, when a
+            // word is on one side of them only. Until 2026-11-27 the marks on both sides of the caret were taken for
+            // a pair around nothing, and Italic with the caret after the first asterisk of "**word**" deleted both.
+            if ((from == 0 || !IsWord(text[from - 1])) && (from == text.Length || !IsWord(text[from])))
+            {
+                var after = from + RunAfter(text, from, mark);
+                var before = from - RunBefore(text, from, mark);
+                var wordAfter = after > from && after < text.Length && IsWord(text[after]);
+                var wordBefore = before < from && before > 0 && IsWord(text[before - 1]);
+                if (wordAfter != wordBefore)
+                {
+                    from = to = wordAfter ? after : before;
+                }
+            }
+
             while (from > 0 && IsWord(text[from - 1]))
             {
                 from--;

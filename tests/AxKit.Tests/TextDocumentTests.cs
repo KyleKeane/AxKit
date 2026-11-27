@@ -168,4 +168,34 @@ public sealed class TextDocumentTests
         File.WriteAllBytes(path, Encoding.UTF8.GetBytes("plain text\r\n"));
         Assert.Equal("plain text\r\n", TextDocument.Read(path).Text);
     }
+
+    /// <summary>
+    /// AD-3.3a: a file read in a Windows code page knows whether it can hold a text, and which character it cannot,
+    /// so that a save never turns one into a question mark without a word; as UTF-8 it holds them all and keeps
+    /// its line ending.
+    /// </summary>
+    [Fact]
+    public void A_code_page_knows_what_it_cannot_hold_and_utf8_holds_it_all()
+    {
+        // 0xE9 alone is not UTF-8: read in the machine's ANSI page, whichever it is.
+        var page = TextDocument.FromBytes([(byte)'c', (byte)'a', (byte)'f', 0xE9, (byte)'\n', (byte)'x']);
+        Assert.NotEqual(65001, page.Encoding.CodePage);
+        Assert.True(page.Holds(page.Text));
+        Assert.Null(page.FirstNotHeld(page.Text));
+
+        var text = page.Text + "\r\nthird \U0001F600 line";
+        Assert.False(page.Holds(text));
+        Assert.Equal(("\U0001F600", 3), page.FirstNotHeld(text));
+        // Written in the page all the same, the character is lost: this is what the question prevents.
+        Assert.DoesNotContain("\U0001F600", TextDocument.FromBytes(page.ToBytes(text)).Text);
+
+        var utf8 = page.AsUtf8();
+        Assert.Equal("UTF-8", utf8.EncodingName);
+        Assert.Equal("\n", utf8.LineEnding);
+        Assert.True(utf8.Holds(text));
+        Assert.Equal(text, TextDocument.FromBytes(utf8.ToBytes(text)).Text);
+
+        Assert.True(TextDocument.Empty().Holds(text));
+        Assert.True(TextDocument.FromBytes([0xFF, 0xFE, (byte)'a', 0]).Holds(text));
+    }
 }

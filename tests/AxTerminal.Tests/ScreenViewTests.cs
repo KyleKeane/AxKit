@@ -220,6 +220,37 @@ public sealed class ScreenViewTests
     }
 
     /// <summary>
+    /// A reset (<c>ESC c</c>) from a full-screen program leaves the alternate screen and clears the rows of the main
+    /// one (AT-4.4): the lines those rows had keep their text. Until 2026-11-27 the reset told the model after the
+    /// switch, the model took it for the console's repaint (AT-9.9) and kept the rows on their lines, and the erase
+    /// blanked what had been read. In one frame with the switch or in a later one.
+    /// </summary>
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void A_reset_on_the_alternate_screen_blanks_no_line_already_read(bool frameEndsBetween)
+    {
+        var model = new TerminalModel(40, 6);
+        TestHelpers.Feed(model, "Banner line\r\nsecond line\r\n");
+        model.EndFrame();
+        TestHelpers.Feed(model, $"{Esc}[?1049h{Esc}[HFile  Edit" + (frameEndsBetween ? $"{Esc}[?25h" : string.Empty));
+        if (frameEndsBetween)
+        {
+            model.EndFrame();
+        }
+
+        TestHelpers.Feed(model, $"{Esc}c");
+        model.EndFrame();
+        TestHelpers.Feed(model, "after\r\n");
+        model.EndFrame();
+
+        var lines = model.Lines.Where(line => !line.Hidden).Select(line => line.Text).ToList();
+        Assert.Contains("Banner line", lines);
+        Assert.Contains("second line", lines);
+        Assert.Contains("after", lines);
+    }
+
+    /// <summary>
     /// A program that ends on the alternate screen, without switching back (killed, or crashed; AT-9.10): the shell's
     /// own mark brings the main screen back, so the page is gone (the window closes the view as on the switch back),
     /// the command ends with its code, and the next prompt and what follows reach the transcript, not the page.

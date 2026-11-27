@@ -863,12 +863,6 @@ public abstract partial class AxKitForm : Form
     }
 
     /// <summary>
-    /// The common keys (AX-8.2): the text size keys and Say the status (F9, AX-7.10) work everywhere, a notice included; while a notice shows, its text
-    /// takes the find keys (AX-7.2) and every other shortcut waits (not calling the base skips the menu shortcuts;
-    /// Enter and Escape reach the notice's buttons through AcceptButton and CancelButton); F1 and Ctrl+Comma the
-    /// palette, Ctrl+S saves; then the window's own keys.
-    /// </summary>
-    /// <summary>
     /// The keys of the whole window, which need no selection and no caret (AX-6.6a): the palette (F1 and Ctrl+Comma),
     /// F4, asking Claude, Ctrl+S and the app keys. They work from the window and from an open menu.
     /// </summary>
@@ -1014,6 +1008,12 @@ public abstract partial class AxKitForm : Form
         }
     }
 
+    /// <summary>
+    /// The common keys (AX-8.2): the text size keys and Say the status (F9, AX-7.10) work everywhere, a notice included; while a notice shows, its text
+    /// takes the find keys (AX-7.2) and every other shortcut waits (not calling the base skips the menu shortcuts;
+    /// Enter and Escape reach the notice's buttons through AcceptButton and CancelButton); F1 and Ctrl+Comma the
+    /// palette, Ctrl+S saves; then the window's own keys.
+    /// </summary>
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
         switch (keyData)

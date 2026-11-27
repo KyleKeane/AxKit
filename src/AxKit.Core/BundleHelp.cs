@@ -149,14 +149,6 @@ public static class BundleHelp
     }
 
     /// <summary>
-    /// The Notices section every F1 text ends with (AX-7.2; the same words in every window since 2026-11-09, when five
-    /// texts had a shorter one or none): where the app's notices appear, and a notice's keys. It starts with the blank
-    /// line that parts it from the app's last section and ends without a line break, as the texts do.
-    /// </summary>
-    /// <param name="app">The app's name.</param>
-    /// <param name="inPlaceOf">What a notice covers: "the conversation", "the text", "the lists".</param>
-    /// <param name="navigateMenu">Whether the Navigation menu's keys work in a notice's text too (the editors with that menu).</param>
-    /// <summary>
     /// The Filter and sort section of every navigator's F1 text (docs/axKit/framework.md FW-4.10a, 2026-11-22): the
     /// same words in each, since the two are the item window's, the same in each. It starts with the blank line
     /// that parts it from the section before and ends without a line break, as <see cref="NoticesSection"/> does,
@@ -168,6 +160,14 @@ public static class BundleHelp
         + "  Options, Filter: only what has a text in its name is listed, and the list's name says so, \"24 items, filter chap, 3 shown\". An empty text clears the filter, and so does Ctrl+Delete in the list. Going to another list drops it"
         + (orders is null ? string.Empty : $"\r\n  Options, Sort by: {orders}");
 
+    /// <summary>
+    /// The Notices section every F1 text ends with (AX-7.2; the same words in every window since 2026-11-09, when five
+    /// texts had a shorter one or none): where the app's notices appear, and a notice's keys. It starts with the blank
+    /// line that parts it from the app's last section and ends without a line break, as the texts do.
+    /// </summary>
+    /// <param name="app">The app's name.</param>
+    /// <param name="inPlaceOf">What a notice covers: "the conversation", "the text", "the lists".</param>
+    /// <param name="navigateMenu">Whether the Navigation menu's keys work in a notice's text too (the editors with that menu).</param>
     public static string NoticesSection(string app, string inPlaceOf, bool navigateMenu = false) =>
         "\r\n\r\n## Notices\r\n"
         + $"  {app}'s questions, errors and help texts appear inside the window, in place of {inPlaceOf}.\r\n"

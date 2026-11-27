@@ -21,17 +21,27 @@ public static class ListConversion
     /// <summary>
     /// Whether the folder is a list of the earlier shape: its <c>list.json</c> is, or one of its item files is (a
     /// list without a file of its own, or one that an earlier version of axKit wrote an item into). A folder that
-    /// cannot be read is none.
+    /// cannot be read is none, and a file that cannot be read is no file of the earlier shape: the others still
+    /// count (until 2026-11-27 one unreadable file hid the whole list's shape).
     /// </summary>
     public static bool IsEarlier(string folder)
     {
         try
         {
-            return Directory.Exists(folder) && JsonFiles(folder).Any(path =>
-            {
-                var text = TextDocument.Read(path).Text;
-                return IsListFile(path) ? EarlierFormat.IsEarlierList(text) : EarlierFormat.IsEarlierItem(text);
-            });
+            return Directory.Exists(folder) && JsonFiles(folder).Any(IsEarlierFile);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return false;
+        }
+    }
+
+    private static bool IsEarlierFile(string path)
+    {
+        try
+        {
+            var text = TextDocument.Read(path).Text;
+            return IsListFile(path) ? EarlierFormat.IsEarlierList(text) : EarlierFormat.IsEarlierItem(text);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
         {
@@ -82,12 +92,70 @@ public static class ListConversion
         }
 
         Directory.CreateDirectory(copy);
-        foreach (var file in Directory.EnumerateFiles(folder))
+        try
         {
-            File.Copy(file, Path.Combine(copy, Path.GetFileName(file)));
+            foreach (var file in Directory.EnumerateFiles(folder))
+            {
+                File.Copy(file, Path.Combine(copy, Path.GetFileName(file)));
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // Half a copy is no copy: it is taken away again, and the failure thrown on.
+            RemoveCopies([copy]);
+            throw;
         }
 
         return copy;
+    }
+
+    /// <summary>
+    /// Several folders made ready for their conversion, whole or not at all: every folder is planned before the
+    /// first copy is made, and a copy that cannot be made takes the copies before it away again, so that a
+    /// conversion that fails here has changed nothing, as its message says (until 2026-11-27 each folder's copy was
+    /// made before the next folder was planned, and a failure left the copies in the Archive). The folders with
+    /// nothing to convert are left out. <paramref name="archiveOf"/> gives the folder a list's copy goes into; it
+    /// is made when it is not there.
+    /// </summary>
+    public static (IReadOnlyList<(string Folder, ConvertedFolder Plan)> Plans, IReadOnlyList<string> Copies) Prepare(IReadOnlyList<string> folders, Func<string, string> archiveOf)
+    {
+        var plans = folders.Select(folder => (Folder: folder, Plan: Plan(folder))).Where(planned => planned.Plan.Files.Count > 0).ToList();
+        var copies = new List<string>();
+        try
+        {
+            foreach (var (folder, _) in plans)
+            {
+                var archive = archiveOf(folder);
+                Directory.CreateDirectory(archive);
+                copies.Add(KeepCopy(folder, archive));
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            RemoveCopies(copies);
+            throw;
+        }
+
+        return (plans, copies);
+    }
+
+    /// <summary>The copies of a conversion that did not happen taken away again; one that cannot be removed stays.</summary>
+    public static void RemoveCopies(IReadOnlyList<string> copies)
+    {
+        foreach (var copy in copies)
+        {
+            try
+            {
+                if (Directory.Exists(copy))
+                {
+                    Directory.Delete(copy, recursive: true);
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                // It stays among the Archived lists, a copy more than needed.
+            }
+        }
     }
 
     /// <summary>The plan written: each file whole, through a file beside it and a move, so that a failure leaves a file as it was.</summary>

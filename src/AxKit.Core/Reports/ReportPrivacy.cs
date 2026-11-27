@@ -3,6 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace AxKit.Core.Reports;
 
+/// <summary>What the window adds to a report, in one of its two forms: the app line, where the focus was, the last actions, the log lines.</summary>
+public sealed record ReportContext(string App, string Where, IReadOnlyList<string> Actions, IReadOnlyList<string> Log);
+
 /// <summary>
 /// What a report carries of the window when the user only types and presses Enter (docs/axKit/reports.md RP-4.2a;
 /// the user's question of 2026-11-14, after his own first reports from a second computer showed a file's name and a
@@ -14,9 +17,6 @@ namespace AxKit.Core.Reports;
 /// the names, the spoken lines and the log's last lines as they are, is the user's own choice in the form, said to be
 /// able to name their files; it goes through <see cref="Redaction"/> as before. Pure; the window gathers the pieces.
 /// </summary>
-/// <summary>What the window adds to a report, in one of its two forms: the app line, where the focus was, the last actions, the log lines.</summary>
-public sealed record ReportContext(string App, string Where, IReadOnlyList<string> Actions, IReadOnlyList<string> Log);
-
 public static partial class ReportPrivacy
 {
     /// <summary>How many log lines a report holds at most.</summary>

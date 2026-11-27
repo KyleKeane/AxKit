@@ -143,7 +143,64 @@ public sealed class FolderTests : IDisposable
     [InlineData("com1", "_com1")]
     [InlineData("nul.txt", "_nul.txt")]
     [InlineData("console", "console")]
+    [InlineData(".gitignore rules", "_.gitignore rules")]
+    // The one name an item's file never has: its list's configuration's.
+    [InlineData("list", "_list")]
+    [InlineData("List", "_List")]
+    [InlineData("list of things", "list of things")]
+    [InlineData("...", "Untitled")]
     public void FileNamesComeFromTheTitle(string title, string stem) => Assert.Equal(stem, ItemFiles.FileStem(title));
+
+    /// <summary>A file whose name starts with a full stop is not shown (IA-4.6): a Title that starts with one got such a file, and the item was gone from its list.</summary>
+    [Fact]
+    public void An_item_whose_title_starts_with_a_full_stop_is_still_shown()
+    {
+        var home = Path.Combine(_top.Path, "Home");
+        File.WriteAllText(Path.Combine(home, ItemFiles.FileStem(".NET upgrade") + ".json"), """{ "schema": "list.json", "Title": ".NET upgrade" }""");
+        Assert.Contains(".NET upgrade", ItemFolder.Read(home).Items.Select(ItemFolder.NameOf));
+    }
+
+    /// <summary>
+    /// AF-13.2: an item's own folder's <c>list.json</c> is its configuration wherever the folder is, a share or a
+    /// mapped drive included (the folder was read to get the item); a link that leaves the folder is followed only
+    /// on this computer. Paths alone: nothing is asked of a network here.
+    /// </summary>
+    [Fact]
+    public void An_items_own_folders_configuration_is_read_on_a_share_too_and_a_link_that_leaves_it_is_not()
+    {
+        const string item = @"\\server\share\Tasks\Home\Fix the tap.json";
+        Assert.Equal(@"\\server\share\Tasks\Home\list.json", ItemFolder.ConfigurationFile(item, "list.json"));
+        Assert.Equal(@"\\server\share\Tasks\Home\list.json", ItemFolder.ConfigurationFile(item, "./list.json"));
+        Assert.Null(ItemFolder.ConfigurationFile(item, "../Shared/list.json"));
+        Assert.Null(ItemFolder.ConfigurationFile(item, "//other/share/list.json"));
+        Assert.Null(ItemFolder.ConfigurationFile(item, @"C:\elsewhere\list.json"));
+        Assert.Null(ItemFolder.ConfigurationFile(item, string.Empty));
+
+        // On this computer a link to another folder's file is followed, as before.
+        var local = Path.Combine(_top.Path, "Home", "Fix the tap.json");
+        Assert.Equal(Path.Combine(_top.Path, "Course plan", "list.json"), ItemFolder.ConfigurationFile(local, "../Course plan/list.json"));
+        // A link between items keeps its rule: never off this computer, the own folder included.
+        Assert.Null(ItemFolder.Resolve(item, "Other.json"));
+    }
+
+    /// <summary>TK-4.11: a list's history file is the list's own, like its configuration: no item, and not counted as a file not shown.</summary>
+    [Fact]
+    public void A_lists_history_file_is_not_counted_as_a_file_not_shown()
+    {
+        var home = Path.Combine(_top.Path, "Home");
+        var before = ItemFolder.Read(home).NotShown;
+        File.WriteAllText(Path.Combine(home, ItemHistory.FileName), "{}\n");
+        Assert.Equal(before, ItemFolder.Read(home).NotShown);
+    }
+
+    /// <summary>A name cut at its longest never ends in half of a character of two units (an emoji), which Windows refuses to write.</summary>
+    [Fact]
+    public void A_long_title_is_never_cut_inside_a_character_of_two_units()
+    {
+        var stem = ItemFiles.FileStem(new string('a', 119) + "\U0001F600 and more");
+        Assert.Equal(new string('a', 119), stem);
+        Assert.Equal(120, ItemFiles.FileStem(new string('a', 118) + "\U0001F600 and more").Length);
+    }
 
     [Fact]
     public void ATakenNameGetsANumber()
@@ -185,6 +242,76 @@ public sealed class FolderTests : IDisposable
         Changes.Apply(step.Parts);
         File.WriteAllText(moved, """{ "schema": "list.json", "Title": "Changed elsewhere" }""");
         Assert.Equal("Fix the sink changed on disk", Changes.CheckUndo(step));
+    }
+
+    /// <summary>IA-5.4: a step is whole or not at all. A part that fails takes the parts before it back, so that nothing is left on disk that Ctrl+Z does not know of.</summary>
+    [Fact]
+    public void AStepThatFailsMidwayLeavesNothingOfItself()
+    {
+        var path = Path.Combine(_top.Path, "Home", "Fix the tap.json");
+        var before = File.ReadAllText(path).ReplaceLineEndings("\r\n");
+        var after = TestLists.TextOf(path, document => document.WithTitle("Fix the sink"));
+        var made = Path.Combine(_top.Path, "Garden", "list.json");
+        var parts = new List<FileChange>
+        {
+            FileChange.WriteInNewFolder(made, ListConfig.New([]).ToText()),
+            FileChange.Write(path, before, after),
+            FileChange.Move(path, Path.Combine(_top.Path, "Home", "Fix the sink.json")),
+            // Nothing is there to move: the step fails at its last part.
+            FileChange.Move(Path.Combine(_top.Path, "Home", "Not there.json"), Path.Combine(_top.Path, "Home", "Elsewhere.json")),
+        };
+
+        Assert.ThrowsAny<IOException>(() => Changes.Apply(parts));
+
+        Assert.Equal(before, File.ReadAllText(path).ReplaceLineEndings("\r\n"));
+        Assert.False(File.Exists(Path.Combine(_top.Path, "Home", "Fix the sink.json")));
+        Assert.False(Directory.Exists(Path.Combine(_top.Path, "Garden")));
+    }
+
+    /// <summary>A list renamed in its capitals only is one folder under two spellings: the rename is undone like any other.</summary>
+    [Fact]
+    public void ARenameThatChangesCapitalsOnlyIsUndone()
+    {
+        var from = Path.Combine(_top.Path, "Home");
+        var to = Path.Combine(_top.Path, "HOME");
+        var step = new Step([FileChange.Move(from, to)], "Renamed Home to HOME");
+        Changes.Apply(step.Parts);
+        Assert.Contains("HOME", Directory.GetDirectories(_top.Path).Select(Path.GetFileName));
+        Assert.Null(Changes.CheckUndo(step));
+        Changes.Undo(step);
+        Assert.Contains("Home", Directory.GetDirectories(_top.Path).Select(Path.GetFileName));
+
+        var file = Path.Combine(from, "Fix the tap.json");
+        var renamed = new Step([FileChange.Move(file, Path.Combine(from, "fix the tap.json"))], "Renamed");
+        Changes.Apply(renamed.Parts);
+        Assert.Null(Changes.CheckUndo(renamed));
+        Changes.Undo(renamed);
+        Assert.Contains("Fix the tap.json", Directory.GetFiles(from).Select(Path.GetFileName));
+    }
+
+    /// <summary>
+    /// AD-3.3a: an item's file another program wrote in a Windows code page is written as UTF-8 once a value holds a
+    /// character that page lacks, never with a question mark in the character's place.
+    /// </summary>
+    [Fact]
+    public void AFileInAWindowsCodePageIsWrittenAsUtf8WhenItCannotHoldTheText()
+    {
+        var path = Path.Combine(_top.Path, "Home", "Old.json");
+        // "Café" with its é as the single byte of the Windows code pages: not UTF-8, so read in the system's page.
+        File.WriteAllBytes(path, [.. "{ \"schema\": \"list.json\", \"Title\": \"Caf"u8, 0xE9, .. "\" }"u8]);
+        var before = TextDocument.Read(path);
+        Assert.NotEqual(65001, before.Encoding.CodePage);
+
+        // What the page holds is written in the page still.
+        var same = before.Text.Replace("list.json", "list.json ");
+        Changes.Apply([FileChange.Write(path, before.Text, same)]);
+        Assert.Equal(before.Encoding.CodePage, TextDocument.Read(path).Encoding.CodePage);
+
+        var with = same.Replace("Caf", "\U0001F600 中 Caf");
+        Changes.Apply([FileChange.Write(path, same, with)]);
+        var read = TextDocument.Read(path);
+        Assert.Equal(65001, read.Encoding.CodePage);
+        Assert.Equal(with, read.Text);
     }
 
     [Fact]

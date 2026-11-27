@@ -162,6 +162,30 @@ public sealed class ScreenAlternateTests
         Assert.False(screen.Alternate);
     }
 
+    /// <summary>
+    /// AT-9.10: a program that ended on the alternate screen takes what it set with it: its scroll region, its
+    /// background and its reverse video. Until 2026-11-27 they stayed, so that the shell's output scrolled inside
+    /// the dead program's region and the next page was drawn in its colours.
+    /// </summary>
+    [Fact]
+    public void Leaving_the_alternate_screen_by_hand_lets_go_of_what_the_program_set()
+    {
+        var screen = new Screen(20, 4, new Store()) { KeepsAlternateApart = true };
+        var parser = new VtParser(screen);
+        parser.Feed($"before{Esc}[?1049h{Esc}[2;3r{Esc}[41m{Esc}[7m");
+        screen.LeaveAlternate();
+
+        // The whole screen scrolls again: a line feed on the last row moves the first row off.
+        parser.Feed($"{Esc}[4;1H\nlast");
+        screen.PullRowText();
+        Assert.NotEqual("before", screen.LineAt(0)?.Text);
+        Assert.Equal("last", screen.LineAt(3)!.Text);
+
+        // The next program's page is drawn on the default background: nothing of it is marked.
+        parser.Feed($"{Esc}[?47h{Esc}[Hab");
+        Assert.Empty(ScreenPage.Read(screen)!.Marked);
+    }
+
     /// <summary>AT-9.10: the colour questions are answered only where the screen answers them and while the alternate screen is in use.</summary>
     [Fact]
     public void A_colour_question_is_answered_on_the_alternate_screen_only_and_only_when_asked_for()

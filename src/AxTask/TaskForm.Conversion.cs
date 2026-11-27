@@ -49,26 +49,23 @@ public sealed partial class TaskForm
             choices));
     }
 
-    /// <summary>The lists converted, each after its copy is made, all as one step; what the conversion has to say is shown after.</summary>
+    /// <summary>
+    /// The lists converted, all as one step, after every list is planned and every copy is made
+    /// (<see cref="ListConversion.Prepare"/>): nothing of a list is written before its copy is there, and a
+    /// conversion that fails leaves no copy behind. What the conversion has to say is shown after.
+    /// </summary>
     private void ConvertLists(IReadOnlyList<string> folders, string select)
     {
         var parts = new List<FileChange>();
         var notes = new List<string>();
         var items = 0;
+        IReadOnlyList<string> copies;
         try
         {
-            foreach (var folder in folders)
+            (var plans, copies) = ListConversion.Prepare(folders,
+                folder => ItemFolder.ArchiveFolder(Path.GetDirectoryName(folder) is { } above && !ItemFolder.IsArchive(TopFolder, folder) ? above : TopFolder));
+            foreach (var (folder, plan) in plans)
             {
-                var plan = ListConversion.Plan(folder);
-                if (plan.Files.Count == 0)
-                {
-                    continue;
-                }
-
-                // The copy first: nothing of a list is written before its copy is there.
-                var archive = ItemFolder.ArchiveFolder(Path.GetDirectoryName(folder) is { } above && !ItemFolder.IsArchive(TopFolder, folder) ? above : TopFolder);
-                Directory.CreateDirectory(archive);
-                ListConversion.KeepCopy(folder, archive);
                 parts.AddRange(plan.Files.Select(file => FileChange.Write(file.Path, file.Before, file.After)));
                 items += plan.Files.Count(file => !Path.GetFileName(file.Path).Equals(ItemDocument.ListFile, StringComparison.OrdinalIgnoreCase));
                 notes.AddRange(plan.Notes.Select(note => folders.Count > 1 ? $"{Path.GetFileName(folder)}: {note}" : note));
@@ -91,6 +88,8 @@ public sealed partial class TaskForm
         var said = $"Converted {what}: {Count(items, "item")}. A copy is among the Archived lists" + (notes.Count > 0 ? $". {Count(notes.Count, "thing")} to know" : string.Empty);
         if (!Commit(new Step(parts, said), select))
         {
+            // The step was taken back whole (Changes.Apply): the copies made for it are not left behind either.
+            ListConversion.RemoveCopies(copies);
             return;
         }
 

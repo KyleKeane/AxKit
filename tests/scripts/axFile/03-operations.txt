@@ -588,3 +588,21 @@ expect focus "value":"r1.txt"
 wait 500
 do Undo
 expect said ! Nothing to undo
+
+# Check: A zip changed since it was made is not removed by Undo
+# AF-4.14 (2026-11-27): what Undo would remove is removed only as the operation left it. A zip another program wrote
+# into after the compress stays, "Not undone: ... has changed"; until then only its being there was checked.
+close
+file undochanged\pack\inside.txt Compress the folder, change the zip, then Ctrl+Z.
+start file {temp}\undochanged
+expect focus "value":"pack, folder"
+wait 500
+menu Compress to zip, Context
+expect said ! Compressed to pack.zip
+wait 1100
+run echo Written since.>> undochanged\pack.zip
+do Undo
+expect said ! Not undone: pack.zip has changed
+run cmd /c if exist undochanged\pack.zip (exit 0) else (exit 1)
+do Undo
+expect said ! Nothing to undo

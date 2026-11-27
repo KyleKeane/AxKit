@@ -112,10 +112,33 @@ public sealed class FolderListingTests : IDisposable
         Assert.Equal("docs, folder, modified 2026-10-18 14:02", FolderListing.Information(new Entry("docs", "x", true, 0, when)));
     }
 
+    /// <summary>
+    /// AF-3.11: what runs on the window's own thread never asks a network drive anything (the question can take the
+    /// network's time limit): such a drive is listed by its letter alone. A caller on a task asks, and leaves out one
+    /// that is not ready, as every other kind of drive.
+    /// </summary>
+    [Fact]
+    public void A_network_drive_is_listed_by_its_letter_alone_unless_the_caller_may_wait()
+    {
+        var unasked = FolderListing.DriveEntry(@"Z:\", DriveType.Network, askNetworkDrives: false, () => throw new InvalidOperationException("The drive was asked"));
+        Assert.Equal("Network Drive (Z:)", unasked!.Name);
+        Assert.Equal(@"Z:\", unasked.Path);
+        Assert.True(unasked.IsDrive);
+
+        Assert.Equal("data (Z:)", FolderListing.DriveEntry(@"Z:\", DriveType.Network, askNetworkDrives: true, () => "data")!.Name);
+        Assert.Null(FolderListing.DriveEntry(@"Z:\", DriveType.Network, askNetworkDrives: true, () => null));
+        Assert.Null(FolderListing.DriveEntry(@"Z:\", DriveType.Network, askNetworkDrives: true, () => throw new IOException("The network path was not found")));
+
+        // A drive of this computer is asked either way: it answers at once.
+        Assert.Equal("Stick (E:)", FolderListing.DriveEntry(@"E:\", DriveType.Removable, askNetworkDrives: false, () => "Stick")!.Name);
+        Assert.Equal("Local Disk (C:)", FolderListing.DriveEntry(@"C:\", DriveType.Fixed, askNetworkDrives: false, () => string.Empty)!.Name);
+        Assert.Null(FolderListing.DriveEntry(@"E:\", DriveType.Removable, askNetworkDrives: false, () => null));
+    }
+
     [Fact]
     public void This_PC_lists_the_ready_drives_as_drive_entries_with_their_free_space()
     {
-        var drives = FolderListing.Drives();
+        var drives = FolderListing.Drives(askNetworkDrives: true);
         var systemRoot = Path.GetPathRoot(Environment.SystemDirectory)!;
         var system = Assert.Single(drives, d => string.Equals(d.Path, systemRoot, StringComparison.OrdinalIgnoreCase));
         Assert.True(system.IsDrive);

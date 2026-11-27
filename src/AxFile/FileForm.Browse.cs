@@ -137,7 +137,7 @@ public sealed partial class FileForm
         try
         {
             // AF-3.10: This PC is the drives, read the same way.
-            listing = await Task.Run(() => FolderListing.IsThisPC(folder) ? new Listing(FolderListing.Drives(), 0, 0) : FolderListing.Read(folder, _settings.ShowHidden, _settings.ShowDotFiles));
+            listing = await Task.Run(() => FolderListing.IsThisPC(folder) ? new Listing(FolderListing.Drives(askNetworkDrives: true), 0, 0) : FolderListing.Read(folder, _settings.ShowHidden, _settings.ShowDotFiles));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
         {
@@ -341,7 +341,7 @@ public sealed partial class FileForm
     {
         var items = _drivesMenu.DropDownItems;
         items.Clear();
-        var drives = FolderListing.Drives();
+        var drives = FolderListing.Drives(askNetworkDrives: false);
         for (var i = 0; i < drives.Count; i++)
         {
             var drive = drives[i];
@@ -369,7 +369,7 @@ public sealed partial class FileForm
         }
 
         var root = Path.GetPathRoot(_folder);
-        return FolderListing.Drives().FirstOrDefault(drive => string.Equals(drive.Path, root, StringComparison.OrdinalIgnoreCase));
+        return FolderListing.Drives(askNetworkDrives: false).FirstOrDefault(drive => string.Equals(drive.Path, root, StringComparison.OrdinalIgnoreCase));
     }
 
     /// <summary>Drives → Eject this drive: the shell's own Eject for a stick or a disc, "Ejecting <name>", and This PC when the folder was on it; "Failed: …" when the drive has no Eject or Windows refuses.</summary>

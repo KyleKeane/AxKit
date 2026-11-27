@@ -19,8 +19,12 @@ public sealed record StartupEntry(string Name, string Command, StartupPlace Plac
     /// <summary>"OneDrive, enabled, current user's Run key".</summary>
     public string Label => $"{Name}, {(Enabled ? "enabled" : "disabled")}, {PlaceText(Place)}";
 
-    /// <summary>The key a view keeps the selection by: the name and the place.</summary>
-    public string Key => $"{Place}:{Name}";
+    /// <summary>
+    /// The key a view keeps the selection by: the place, and the value's name for a Run key or the file's name with
+    /// its extension for a Startup folder. Until 2026-11-27 a file's key was its name without the extension, so that
+    /// <c>sync.lnk</c> and <c>sync.bat</c> of one folder were one row to the view.
+    /// </summary>
+    public string Key => $"{Place}:{(StartupPlaces.IsFolder(Place) ? Path.GetFileName(Command) : Name)}";
 
     /// <summary>The lines of the details notice (PR-5.3).</summary>
     public IReadOnlyList<string> Details =>

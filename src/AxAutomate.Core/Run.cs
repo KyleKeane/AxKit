@@ -400,16 +400,6 @@ public sealed class Run(string exe, string temp, bool hosted = false)
     public IReadOnlyList<WindowCommands> Snapshots => [.. _snapshots];
 
     /// <summary>
-    /// The step <c>do &lt;name&gt;</c> (docs/axKit/user-workflows.md WF-4): the current window is asked for its
-    /// commands as data at this moment, the name is resolved among them (<see cref="DoStep.Decide"/>), and the command
-    /// is run the way a user runs it. Its key that acts now is pressed exactly as a <c>keys</c> step presses it on
-    /// this tier (the channel's keys on the run's desktop; <c>SendInput</c> with NVDA, only while a window of the run
-    /// is in front), with that step's wait. A command with no key as data runs by its menu item, the channel's
-    /// <c>choose</c>, found by exactly its label and its menus. A passed step's detail says which: "key ctrl+f",
-    /// "menu item". Everything else fails the step with nothing pressed: no listing, a notice, a name that finds no
-    /// one command, and a key that does not act where the focus is, with the focused control named.
-    /// </summary>
-    /// <summary>
     /// The step <c>template</c> (docs/axTemplate/SPEC.md TP-6): the template of the run's home found by its name
     /// (<see cref="TemplateStep"/>), its lines typed where the window's focus is as <c>type</c> steps with Enter
     /// between them, then the Left keys that put the caret back at its mark. A name no template has fails the step
@@ -439,6 +429,16 @@ public sealed class Run(string exe, string temp, bool hosted = false)
         return typing.LeftKeys > 0 ? Step("keys " + string.Join(" ", Enumerable.Repeat("left", typing.LeftKeys))) : (true, null);
     }
 
+    /// <summary>
+    /// The step <c>do &lt;name&gt;</c> (docs/axKit/user-workflows.md WF-4): the current window is asked for its
+    /// commands as data at this moment, the name is resolved among them (<see cref="DoStep.Decide"/>), and the command
+    /// is run the way a user runs it. Its key that acts now is pressed exactly as a <c>keys</c> step presses it on
+    /// this tier (the channel's keys on the run's desktop; <c>SendInput</c> with NVDA, only while a window of the run
+    /// is in front), with that step's wait. A command with no key as data runs by its menu item, the channel's
+    /// <c>choose</c>, found by exactly its label and its menus. A passed step's detail says which: "key ctrl+f",
+    /// "menu item". Everything else fails the step with nothing pressed: no listing, a notice, a name that finds no
+    /// one command, and a key that does not act where the focus is, with the focused control named.
+    /// </summary>
     private (bool, string?) Do(string name)
     {
         var window = Current;

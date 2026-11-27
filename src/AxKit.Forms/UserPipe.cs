@@ -34,7 +34,6 @@ public static class UserPipe
     public static uint? ClientOf(NamedPipeServerStream pipe) =>
         GetNamedPipeClientProcessId(pipe.SafePipeHandle.DangerousGetHandle(), out var id) ? id : null;
 
-    /// <summary>The process that serves a pipe this process connected to; null when Windows cannot say.</summary>
     /// <summary>
     /// A line of the other end's, at most 64 KB (security audit S-56; from the MCP channel on its second use, the
     /// automation channel): no request of either pipe is longer, and a longer one is not read into memory, whoever
@@ -61,6 +60,7 @@ public static class UserPipe
         return line.Length > 0 ? line.ToString() : null;
     }
 
+    /// <summary>The process that serves a pipe this process connected to; null when Windows cannot say.</summary>
     public static uint? ServerOf(NamedPipeClientStream pipe) => AxKit.Core.ThisProgram.ServerOf(pipe);
 
     [DllImport("kernel32.dll", SetLastError = true)]

@@ -74,7 +74,8 @@ of the lines `1920*1080*4 = 8294400`, read as the conversation in axClaude and t
 
 - AC-3.1 Numbers: decimal with an optional fraction and exponent (`2.5`, `.5`, `6.02e23`), underscores between digits
   as separators (`1_000_000`), and `0x` hexadecimal, `0b` binary, `0o` octal integers, in either case. Everything is a
-  double-precision number.
+  double-precision number. A dot needs a digit on one side of it: `1.` is 1, and a dot alone is the error "unexpected
+  ." whatever follows it (`.e5` too; until 2026-11-27 that one ended the evaluation with an exception no one caught).
 - AC-3.2 Operators, from the loosest: `+` and `-`; `*`, `/` (also `×` and `÷`), `%` and the word `mod` (the remainder,
   with the sign of the left side); a leading `-` or `+` (negation); `^` or `**` (power, right to left: `2^3^2` is 512;
   `-2^2` is -4); `!` after a value (the factorial of a whole number from 0 to 170). Parentheses group.

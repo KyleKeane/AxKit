@@ -28,8 +28,27 @@ public class FieldTypesTests
         Assert.Equal(stored, FieldTypes.TextOf(parsed.Value));
     }
 
+    /// <summary>IA-4.2a: a day and a month without a year is the next such day, today included; never a day that has passed.</summary>
+    [Theory]
+    [InlineData("2026-12-28", "5 January", "2027-01-05")]
+    [InlineData("2026-12-28", "January 5", "2027-01-05")]
+    [InlineData("2026-12-28", "28 December", "2026-12-28")]
+    [InlineData("2026-12-28", "27 December", "2027-12-27")]
+    [InlineData("2026-12-28", "31 Dec", "2026-12-31")]
+    [InlineData("2026-10-24", "29 February", "2028-02-29")]
+    [InlineData("2028-02-29", "29 February", "2028-02-29")]
+    [InlineData("2028-03-01", "February 29", "2032-02-29")]
+    public void A_day_and_month_without_a_year_is_the_next_such_day(string today, string typed, string stored)
+    {
+        var parsed = FieldTypes.Parse(FieldTypes.Date, typed, [], DateOnly.ParseExact(today, "yyyy-MM-dd"));
+        Assert.Null(parsed.Refused);
+        Assert.Equal(stored, FieldTypes.TextOf(parsed.Value));
+    }
+
     [Theory]
     [InlineData("30 Febuary")]
+    [InlineData("30 February")]
+    [InlineData("31 April")]
     [InlineData("2026-02-30")]
     [InlineData("soon")]
     public void RefusesWhatIsNotADate(string typed) =>

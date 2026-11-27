@@ -542,8 +542,14 @@ read as `edit` still waiting for the colours' answers (to measure first, AT-9.7)
     leaves the console on the alternate screen, and the shell's prompt comes back drawn there. The shell's own mark
     (D, A or B, AT-4, the secret's check passed) while the alternate screen is in force is taken for the program's
     end: the model leaves the alternate screen as on `ESC [?1049l` (`Screen.LeaveAlternate`: the main rows and their
-    lines as they were, the cursor where it stood), so the page is gone at that frame's end and the window closes the
-    view as on the switch back, the focus where it was; the prompt and what follows reach the transcript. axTerminal
+    lines as they were, the cursor where it stood, and what the program set let go: its scroll region, its
+    background and its reverse video, which until 2026-11-27 stayed, so that the shell's output scrolled inside the
+    dead program's region), so the page is gone at that frame's end and the window closes the
+    view as on the switch back, the focus where it was; the prompt and what follows reach the transcript. A reset
+    (`ESC c`) from a full-screen program leaves the alternate screen too and clears the main screen's rows: the
+    model hears of the erase before the switch and as an erase of its own, so the rows let go of their lines first
+    and nothing already read is blanked (2026-11-27; the reset told the model after the switch until then, the model
+    took it for the console's repaint, AT-9.9, and the lines the rows had were emptied). axTerminal
     sees no process of the program's own, so the mark is its end; the shell's own end closes the view as before.
   - **The colour questions answered.** While a program holds the alternate screen, its colour questions are answered
     at once in the console layer, `AxKit.Core/Vt/QueryAnswers` raised by `Screen` (on in axTerminal's model alone,

@@ -80,3 +80,22 @@ keys shift+tab
 do Undo
 expect said ! Undone: Added First thing
 run cmd /c if not exist tasks\Empty\list.json (exit 0) else (exit 1)
+
+# Check: An item with the title list does not take the configuration's file
+# IA-4.5 (2026-11-27): in a list without a list.json yet, the configuration is written in the same step as the item;
+# an item titled "list" was written over it. Its file is _list.json, its Title is "list", and the list reads.
+do New item
+type list
+keys enter
+expect said ! Added list
+run findstr /l /c:"axkit-list 2" tasks\Empty\list.json
+run findstr /l /c:"\"Title\": \"list\"" tasks\Empty\_list.json
+expect focus list
+# Check: An item whose title starts with a full stop is still shown
+# IA-4.5 (2026-11-27): a file whose name starts with a full stop is not shown, so such an item was written and gone.
+do New item
+type .NET upgrade
+keys enter
+expect said ! Added .NET upgrade
+expect focus .NET upgrade
+run findstr /l /c:"\"Title\": \".NET upgrade\"" "tasks\Empty\_.NET upgrade.json"

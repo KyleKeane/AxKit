@@ -28,6 +28,15 @@ keys down
 expect focus tasks in alpha, project, 1 list
 keys down
 expect focus tasks in beta, project, 1 list
+# Check: A project folder's details name the search by its key, not by the code that makes it
+# 2026-11-27: the line had lost its dollar sign and read "{BundleKeys.Text(AxTaskKeys.FindEverywhere)} finds words".
+do Previous heading level 2
+expect focus Projects in projects, heading level 2, 2 projects
+keys tab
+keys end
+expect focus Ctrl+Shift+F finds words in every list
+keys shift+tab
+expect focus Projects in projects, heading level 2, 2 projects
 # Check: Past the last project heading the edge sounds, and level 1 goes on to Smart lists
 do Next heading level 2
 expect said ♪ Edge

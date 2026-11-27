@@ -207,11 +207,43 @@ public sealed class EarlierFormatTests
             Assert.False(ListConversion.IsEarlier(folder));
             File.WriteAllText(Path.Combine(folder, "Old.json"), Milk);
             Assert.True(ListConversion.IsEarlier(folder));
+
+            // A file that cannot be read as text (a NUL character) is no item of the earlier format, and hides none
+            // that is: until 2026-11-27 one such file made the whole list read as not earlier.
+            File.WriteAllBytes(Path.Combine(folder, "A broken file.json"), [(byte)'{', 0, (byte)'}']);
+            Assert.True(ListConversion.IsEarlier(folder));
         }
         finally
         {
             Directory.Delete(above, recursive: true);
         }
+    }
+
+    /// <summary>AF-13.6: several lists are planned, every one, before the first copy is made: a list that cannot be planned leaves no copy of another in the Archive.</summary>
+    [Fact]
+    public void A_conversion_of_several_lists_that_cannot_be_prepared_leaves_no_copy()
+    {
+        using var above = new AxKit.TestShared.TempFolder("conversion-prepare");
+        var good = Path.Combine(above.Path, "Home");
+        var bad = Path.Combine(above.Path, "Work");
+        var archive = Path.Combine(above.Path, "Archive");
+        Directory.CreateDirectory(good);
+        Directory.CreateDirectory(bad);
+        File.WriteAllText(Path.Combine(good, "list.json"), List);
+        File.WriteAllText(Path.Combine(good, "Fix the tap.json"), Tap);
+        File.WriteAllText(Path.Combine(bad, "list.json"), List);
+        // No text: the plan of this list cannot be made.
+        File.WriteAllBytes(Path.Combine(bad, "Broken.json"), [(byte)'{', 0, (byte)'}']);
+
+        Assert.Throws<InvalidOperationException>(() => ListConversion.Prepare([good, bad], _ => archive));
+        Assert.False(Directory.Exists(archive) && Directory.EnumerateFileSystemEntries(archive).Any());
+
+        File.Delete(Path.Combine(bad, "Broken.json"));
+        var (plans, copies) = ListConversion.Prepare([good, bad], _ => archive);
+        Assert.Equal([good, bad], plans.Select(plan => plan.Folder));
+        Assert.Equal(["Home, before conversion", "Work, before conversion"], copies.Select(Path.GetFileName));
+        ListConversion.RemoveCopies(copies);
+        Assert.Empty(Directory.EnumerateFileSystemEntries(archive));
     }
 
     [Fact]

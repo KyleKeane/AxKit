@@ -18,14 +18,14 @@ public abstract partial class AxKitForm
     /// <summary>The question that waits for its answer; made in the constructor (AxKitForm.cs).</summary>
     private readonly AiHelpFlow _ai;
 
+    /// <summary>The question's menu item, whose name the window's list of commands gives Ctrl+Slash under too (<see cref="CommandRows"/>).</summary>
+    private const string AskAboutThisWindowLabel = "&Ask about this window...";
+
     /// <summary>
     /// axKit, Claude ▸ (AH-1.1; AX-9.1: a submenu of the axKit menu, beside the AI tools), in groups: the switch, read
     /// as the menu opens since another window may have changed it; the question, Ask about this window; what Claude may
     /// read, the folders and Claude's working folder.
     /// </summary>
-    /// <summary>The question's menu item, whose name the window's list of commands gives Ctrl+Slash under too (<see cref="CommandRows"/>).</summary>
-    private const string AskAboutThisWindowLabel = "&Ask about this window...";
-
     internal ToolStripMenuItem CreateClaudeMenu()
     {
         var menu = new ToolStripMenuItem("&Claude");

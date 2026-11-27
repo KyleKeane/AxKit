@@ -41,7 +41,6 @@ public sealed partial class HandKeyTests
         ["src/AxKit.Core/Mcp/McpTools.cs"] = 1,
         ["src/AxKit.Forms/AxKitForm.cs"] = 1,
         ["src/AxKit.Forms/ConversationForm.cs"] = 1,
-        ["src/AxKit.Forms/ItemForm.Fields.cs"] = 2,
         ["src/AxKit.Forms/TextEditorForm.Viewer.cs"] = 1,
         ["src/AxKit.Forms/TextEditorForm.cs"] = 4,
         ["src/AxMCP.Core/MCPSettings.cs"] = 1,

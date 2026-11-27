@@ -10,8 +10,8 @@ namespace AxKit.Core;
 ///
 /// The object is kept whole, so that what this version does not know is written back as it was read (IA-4). Every
 /// change returns a new configuration. A member of the wrong kind is passed over and named in <see cref="Problems"/>;
-/// the rest of the file counts (AF-11.7). The shape before it (<c>axkit-list 1</c>) is read by axTask's converter
-/// alone (<c>AxTask.Core/Conversion/EarlierFormat</c>), which turns it into this one.
+/// the rest of the file counts (AF-11.7). The shape before it (<c>axkit-list 1</c>) is read by the converter alone
+/// (<c>Conversion/EarlierFormat</c> beside this file), which turns it into this one.
 /// </summary>
 public sealed class ListConfig
 {
@@ -58,7 +58,7 @@ public sealed class ListConfig
     {
         try
         {
-            return JsonNode.Parse(text, documentOptions: Lenient) is JsonObject root && root[FormatKey] is JsonValue value && value.TryGetValue<string>(out var format) ? format : null;
+            return JsonText.Parse(text, lenient: true) is JsonObject root && root[FormatKey] is JsonValue value && value.TryGetValue<string>(out var format) ? format : null;
         }
         catch (JsonException)
         {
@@ -68,19 +68,19 @@ public sealed class ListConfig
 
     /// <summary>
     /// The configuration in a file's text. An <see cref="InvalidDataException"/> when the text is not JSON (its
-    /// message names the line, AF-11.7), not an object, or not of this format; a member of the wrong kind is no
-    /// exception but a <see cref="Problems">problem</see>.
+    /// message names the line, AF-11.7), names a member twice (<see cref="JsonText"/>), is not an object, or not of
+    /// this format; a member of the wrong kind is no exception but a <see cref="Problems">problem</see>.
     /// </summary>
     public static ListConfig Parse(string text)
     {
         JsonNode? node;
         try
         {
-            node = JsonNode.Parse(text, documentOptions: Lenient);
+            node = JsonText.Parse(text, lenient: true);
         }
         catch (JsonException ex)
         {
-            throw new InvalidDataException(ex.LineNumber is { } line ? $"it is not JSON at line {line + 1}" : "it is not JSON", ex);
+            throw new InvalidDataException(JsonText.Why(text, ex, lenient: true), ex);
         }
 
         if (node is not JsonObject root)
@@ -144,16 +144,20 @@ public sealed class ListConfig
     {
         var root = (JsonObject)_root.DeepClone();
         var array = FieldsArray(itemFields);
-        // A field that stays as it was keeps its own object, with whatever else the file wrote in it (IA-4).
+        // A field that stays as it was keeps its own object, with whatever else the file wrote in it (IA-4). "As it
+        // was" is as it was read: an object written by hand without a "value" or a "type" is the field it was read
+        // as (until 2026-11-27 it was compared with the object a new field gets, and lost what else it held).
         if (_root[ItemFieldsKey] is JsonArray written)
         {
+            var read = ReadItemFields(written, []);
             for (var i = 0; i < itemFields.Count; i++)
             {
                 var same = written.OfType<JsonObject>().FirstOrDefault(entry =>
                     FieldTypes.TextOf(entry["title"]).Trim() == itemFields[i].Title
-                    && FieldTypes.TextOf(entry["type"]).Trim() == itemFields[i].Type
-                    && JsonNode.DeepEquals(entry["value"], array[i]!["value"])
-                    && JsonNode.DeepEquals(entry["options"], array[i]!["options"]));
+                    && read.FirstOrDefault(field => field.Title == itemFields[i].Title) is { } was
+                    && was.Type == itemFields[i].Type
+                    && JsonNode.DeepEquals(was.Value, itemFields[i].Value)
+                    && was.Options.SequenceEqual(itemFields[i].Options));
                 if (same is not null)
                 {
                     array[i] = same.DeepClone();
@@ -194,9 +198,6 @@ public sealed class ListConfig
 
         return -1;
     }
-
-    /// <summary>A file a person edits may hold a comma too many and a comment: both are read past, as the earlier shape's reader did.</summary>
-    private static readonly JsonDocumentOptions Lenient = new() { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip };
 
     /// <summary>
     /// The item fields read, each a title and a type, with the value a new item starts with and a choice's options.

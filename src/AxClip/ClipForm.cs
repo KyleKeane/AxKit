@@ -344,7 +344,7 @@ public sealed class ClipForm : HotkeyForm
         }
     }
 
-    /// <summary>Ctrl+Q (CP-4.3): the whole text in a notice.</summary>
+    /// <summary>Read in full, F7 (CP-4.3; Ctrl+Q until 2026-11-26): the whole text in a notice.</summary>
     private void ReadInFull()
     {
         if (Selected is not { } entry)

@@ -99,6 +99,16 @@ public sealed class CustomSoundsTests
         Assert.Single(problems);
         File.WriteAllBytes(Path.Combine(temp.Path, "edge.wav"), Wav(1, 1, WaveTone.SampleRate, 16, 0.1));
         Assert.NotSame(made, CustomSounds.Or(temp.Path, "edge", made, problems.Add));
+
+        // A file over the largest size taken is refused by its length, before any of it is read.
+        problems.Clear();
+        using (var large = new FileStream(Path.Combine(temp.Path, "done.wav"), FileMode.Create))
+        {
+            large.SetLength(CustomSounds.MaxBytes + 1);
+        }
+
+        Assert.Same(made, CustomSounds.Or(temp.Path, "done", made, problems.Add));
+        Assert.Contains("MB", Assert.Single(problems), StringComparison.Ordinal);
     }
 
     [Fact]

@@ -587,7 +587,7 @@ found and what became of each finding: change the JSON in the same commit as the
 
 - Where: src/AxKit.Core/Vt/Screen.cs
 - Principle: P4
-- Fix: A cell takes at most eight combining characters.
+- Fix: A cell holds at most 16 characters: its base character and the combining ones on it.
 - Checked by: tests/AxKit.Tests/VtScreenTests
 - Commit: af0fac3
 

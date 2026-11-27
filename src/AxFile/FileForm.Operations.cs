@@ -145,7 +145,7 @@ public sealed partial class FileForm
     /// Restore on the Recycle Bin's item; the other kinds are the file operations' inverses. An undo that fails (a zip
     /// open elsewhere) leaves the line as it was, to try again.
     /// </summary>
-    private void UndoAction(ActionEntry entry)
+    private void UndoAction(ActionEntry entry, bool confirmed = false)
     {
         if (_undoing)
         {
@@ -156,6 +156,15 @@ public sealed partial class FileForm
         if (entry.Operation is not { } operation)
         {
             Refuse("Nothing to undo");
+            return;
+        }
+
+        // An undo that removes what the operation made, on a drive without a Recycle Bin, deletes it for good: it
+        // says so and asks first, Cancel the default (AF-4.14; until 2026-11-27 it deleted and said "sent to the
+        // Recycle Bin").
+        if (!confirmed && operation.UndoQuestion is { } question)
+        {
+            ShowNotice(Notice.Ask(question.Title, question.Text, "&Delete", () => UndoAction(entry, confirmed: true), cancelIsDefault: true));
             return;
         }
 
@@ -305,10 +314,22 @@ public sealed partial class FileForm
                     return;
                 }
 
-                var target = Path.IsPathRooted(typed) ? typed : Path.Combine(folder, typed);
+                // The path made whole, so that "." and ".." and a folder typed with them are the folders they name.
+                // A drive typed alone ("D:") is its root, never the folder Windows last used on it.
+                var whole = typed.Length == 2 && typed[1] == ':' ? typed + "\\" : Path.IsPathRooted(typed) ? typed : Path.Combine(folder, typed);
+                var target = Path.TrimEndingDirectorySeparator(Path.GetFullPath(whole));
+                if (FileOperations.AlreadyIn(sources, target))
+                {
+                    // Every entry is in that folder already: a move there would rename each to "name - 2" (it did,
+                    // for "." and for the folder shown typed as a path, until 2026-11-27).
+                    Refuse("Already in this folder");
+                    return;
+                }
+
                 var exists = Directory.Exists(target);
-                var here = string.Equals(Path.GetDirectoryName(target), folder.TrimEnd('\\'), StringComparison.OrdinalIgnoreCase);
-                var name = Path.GetFileName(target);
+                // In a drive's root too: the folder shown ends in a backslash there, and a new folder's name was "Not found".
+                var here = string.Equals(Path.TrimEndingDirectorySeparator(Path.GetDirectoryName(target) ?? string.Empty), Path.TrimEndingDirectorySeparator(folder), StringComparison.OrdinalIgnoreCase);
+                var name = Path.GetFileName(target) is { Length: > 0 } leaf ? leaf : target;
                 if (sources.Any(source => string.Equals(source, target, StringComparison.OrdinalIgnoreCase)
                     || target.StartsWith(source.TrimEnd('\\') + "\\", StringComparison.OrdinalIgnoreCase)))
                 {
@@ -423,14 +444,19 @@ public sealed partial class FileForm
         var next = NameAfter(targets);
         var one = targets.Count == 1 ? targets[0] : null;
         var what = one?.Name ?? $"{targets.Count} items";
-        var text = one is null
-            ? targets.Any(target => target.IsFolder) ? "They go to the Recycle Bin, the folders with everything in them." : "They go to the Recycle Bin."
-            : one.IsFolder ? "It goes to the Recycle Bin with everything in it." : "It goes to the Recycle Bin.";
         var paths = targets.Select(target => target.Path).ToList();
-        ShowNotice(Notice.Ask($"Delete {what}?", text, "&Delete", () => RunOperation(folder, $"Deleting {what}", "Deleting", "Delete failed", paths, async _ =>
-            await FileOperations.DeleteToRecycleBinAsync(paths) is { } reason
-                ? Outcome.Failure(reason)
-                : new Outcome($"Deleted {what}", new Operation(OperationKind.Delete, paths, []), next))));
+        Do(async () =>
+        {
+            // Whether the drive has a Recycle Bin is asked first, off the UI thread: on a USB stick, a mapped drive
+            // or a share the shell deletes for good, so the question says that, Cancel is its default, and nothing
+            // is kept for Ctrl+Z (until 2026-11-27 it promised the Recycle Bin everywhere).
+            var toBin = await Task.Run(() => RecycleBin.Has(folder));
+            var text = FileOperations.DeleteText(toBin, one is null, targets.Any(target => target.IsFolder));
+            ShowNotice(Notice.Ask(toBin ? $"Delete {what}?" : $"Delete {what} for good?", text, "&Delete", () => RunOperation(folder, $"Deleting {what}", "Deleting", "Delete failed", paths, async _ =>
+                await FileOperations.DeleteToRecycleBinAsync(paths) is { } reason
+                    ? Outcome.Failure(reason)
+                    : new Outcome(toBin ? $"Deleted {what}" : $"Deleted {what} for good", toBin ? new Operation(OperationKind.Delete, paths, []) : null, next)), cancelIsDefault: !toBin));
+        });
     }
 
     /// <summary>The name to select once <paramref name="gone"/> are deleted: the first entry after the current one that stays, else the last one before it; null when none stays.</summary>
@@ -600,7 +626,9 @@ public sealed partial class FileForm
                     }
                 }
 
-                return new Outcome((move ? "Moved " : "Copied ") + what, new Operation(move ? OperationKind.Move : OperationKind.Copy, paths, destinations), first, said);
+                // A copy's undo removes the copies: each is kept as it is now, to refuse one changed since (AF-4.14).
+                var operation = new Operation(move ? OperationKind.Move : OperationKind.Copy, paths, destinations);
+                return new Outcome((move ? "Moved " : "Copied ") + what, move ? operation : await Task.Run(operation.Stamped), first, said);
             });
         });
     }
@@ -671,7 +699,8 @@ public sealed partial class FileForm
                 }
             }));
             var name = Path.GetFileName(result);
-            return new Outcome($"{done} {name}", new Operation(kind, [], [result]), name);
+            // The undo removes the result: it is kept as it is now, to refuse one changed since (AF-4.14).
+            return new Outcome($"{done} {name}", await Task.Run(new Operation(kind, [], [result]).Stamped), name);
         });
 
     // ---- the ways out (AF-1.3, AF-3.2, AF-4.9) ----

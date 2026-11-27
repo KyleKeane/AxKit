@@ -49,6 +49,47 @@ public static class PasteTarget
     public static string ConsoleQuestion(string title, int lines) =>
         $"{title} has {lines} lines, and a terminal runs each line as it is pasted";
 
+    /// <summary>
+    /// TP-4.8: whether the filled text is made one line before it is pasted. Into a field of one line, always. Into
+    /// a terminal, which runs each line, when no answer was given to the question: the question is asked on the
+    /// template as it reads before the selection is taken, so a text that has lines here without an answer got
+    /// them from the selection, after the window hid, where nothing can be asked; it then goes in the question's
+    /// safe way, on one line, nothing run (until 2026-11-27 it went in as it was, each line run).
+    /// <paramref name="answer"/> is what the user chose, null when nothing was asked; <paramref name="target"/> what
+    /// the window in front does with line breaks.
+    /// </summary>
+    public static bool MadeOneLine(LineBreaks? answer, LineBreaks target, bool hasLines) =>
+        hasLines && (answer ?? target) switch
+        {
+            LineBreaks.OneLine => true,
+            LineBreaks.EachLineRuns => answer is null,
+            _ => false,
+        };
+
+    /// <summary>
+    /// TP-4.3: whether a filled text is put on the clipboard as a private copy, marked as not for a clipboard history:
+    /// when the clipboard the launcher met was private (a password from axPass) and the template takes its text in
+    /// with <c>{clipboard}</c>, so that the password does not leave the launcher unmarked inside the template.
+    /// </summary>
+    public static bool CopiedAsPrivate(string template, bool clipboardWasPrivate) =>
+        clipboardWasPrivate && template.Contains(AxKit.Core.TextTemplate.ClipboardMark, StringComparison.Ordinal);
+
+    /// <summary>
+    /// How many times a mark stands in a text (TP-D10): the caret's mark is counted before the caret before the
+    /// paste, and a mark found after it is the pasted one only when there are more than that, so that a
+    /// <c>{caret}</c> the document held already is never taken for it and deleted.
+    /// </summary>
+    public static int MarksIn(string text, string mark)
+    {
+        var count = 0;
+        for (var at = text.IndexOf(mark, StringComparison.Ordinal); at >= 0 && mark.Length > 0; at = text.IndexOf(mark, at + mark.Length, StringComparison.Ordinal))
+        {
+            count++;
+        }
+
+        return count;
+    }
+
     /// <summary>The number of lines of a text, counted by its breaks.</summary>
     public static int LinesOf(string text) => text.ReplaceLineEndings("\n").Trim('\n').Split('\n').Length;
 

@@ -21,3 +21,4 @@ Everything of axTemplate that needs no window. Unit tested in `tests/AxTemplate.
 - An item names its configuration under the key `schema` (`FlatItem.SchemaKey`), and a file without it is no item, so no template.
 - A new app with a field to write in is added to `AppsWithField`, in the bundle's order of apps (a test holds the order); every folder gains its check the next time it is opened.
 - A configuration that does not read is left as it is on disk, and the templates are read through the fields for no app, so the Title and the Text still show.
+- `PasteTarget.MadeOneLine`, `CopiedAsPrivate` and `MarksIn` (2026-11-27): whether the filled text is made one line (a terminal without an answer included), whether it is copied as private, and how many caret marks a text holds. Tested in `PasteTargetTests`.

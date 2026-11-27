@@ -53,6 +53,101 @@ public sealed class UndoTests : IDisposable
         Assert.Equal("Not undone: notes.md is already here", FileOperations.CheckUndo(operation));
     }
 
+    /// <summary>
+    /// AF-4.14: the undo of a paste that copied, of a compress and of an extract removes what the operation made
+    /// only as the operation left it: "Not undone: name has changed" for a copy edited since, and for a folder with
+    /// a file changed, added or removed anywhere inside it.
+    /// </summary>
+    [Fact]
+    public void A_copy_or_an_extracted_folder_changed_since_is_not_removed_by_undo()
+    {
+        var copy = In("notes - 2.md");
+        File.Copy(In("notes.md"), copy);
+        var pasted = new Operation(OperationKind.Copy, [In("notes.md")], [copy]).Stamped();
+        Assert.Null(FileOperations.CheckUndo(pasted));
+        File.AppendAllText(copy, "\nA line written since the paste.");
+        Assert.Equal("Not undone: notes - 2.md has changed", FileOperations.CheckUndo(pasted));
+
+        // The same size, written again later: changed all the same.
+        var same = In("same.md");
+        File.WriteAllText(same, "12345");
+        var again = new Operation(OperationKind.Copy, [In("notes.md")], [same]).Stamped();
+        File.WriteAllText(same, "54321");
+        File.SetLastWriteTimeUtc(same, DateTime.UtcNow.AddMinutes(1));
+        Assert.Equal("Not undone: same.md has changed", FileOperations.CheckUndo(again));
+
+        var extracted = In("archive");
+        Directory.CreateDirectory(Path.Combine(extracted, "inner"));
+        File.WriteAllText(Path.Combine(extracted, "inner", "a.txt"), "a");
+        File.WriteAllText(Path.Combine(extracted, "b.txt"), "b");
+        var extract = new Operation(OperationKind.Extract, [], [extracted]).Stamped();
+        Assert.Null(FileOperations.CheckUndo(extract));
+        File.WriteAllText(Path.Combine(extracted, "inner", "new.txt"), string.Empty);
+        Assert.Equal("Not undone: archive has changed", FileOperations.CheckUndo(extract));
+        File.Delete(Path.Combine(extracted, "inner", "new.txt"));
+        Assert.Null(FileOperations.CheckUndo(extract));
+        File.WriteAllText(Path.Combine(extracted, "inner", "a.txt"), "changed");
+        Assert.Equal("Not undone: archive has changed", FileOperations.CheckUndo(extract));
+
+        // A move is put back whatever its entries hold: nothing of theirs is removed.
+        Assert.Null(new Operation(OperationKind.Move, [In("x")], [copy]).Stamped().UndoQuestion);
+    }
+
+    /// <summary>
+    /// AF-4.3, AF-4.14: on a drive without a Recycle Bin the delete's question says "for good", and an undo that
+    /// removes what an operation made asks first and says what it did; with a bin, the words of before.
+    /// </summary>
+    [Fact]
+    public void Without_a_recycle_bin_the_words_say_deleted_for_good_and_the_undo_asks()
+    {
+        Assert.False(RecycleBin.Has(@"\\server\share\folder\notes.md"));
+        Assert.False(RecycleBin.Has(string.Empty));
+        // A drive of this computer answers without throwing, whatever it answers.
+        _ = RecycleBin.Has(_folder.Path);
+
+        Assert.Equal("It goes to the Recycle Bin.", FileOperations.DeleteText(toBin: true, several: false, anyFolder: false));
+        Assert.Equal("They go to the Recycle Bin, the folders with everything in them.", FileOperations.DeleteText(toBin: true, several: true, anyFolder: true));
+        foreach (var several in new[] { false, true })
+        {
+            foreach (var anyFolder in new[] { false, true })
+            {
+                var text = FileOperations.DeleteText(toBin: false, several, anyFolder);
+                Assert.StartsWith("This drive has no Recycle Bin: ", text);
+                Assert.Contains("deleted for good", text);
+                Assert.EndsWith("cannot be brought back.", text);
+                Assert.DoesNotContain("go to the Recycle Bin", text);
+            }
+        }
+
+        var copy = new Operation(OperationKind.Copy, [@"C:\elsewhere\a.txt"], [In("a.txt")]);
+        Assert.True(copy.ToBin);
+        Assert.Null(copy.UndoQuestion);
+        Assert.Equal("Undone: a.txt sent to the Recycle Bin", copy.DoneText);
+
+        var noBin = copy with { ToBin = false };
+        Assert.Equal("Undone: a.txt deleted for good", noBin.DoneText);
+        Assert.Equal("Delete a.txt for good?", noBin.UndoQuestion!.Value.Title);
+        Assert.Contains("no Recycle Bin", noBin.UndoQuestion!.Value.Text);
+        Assert.Contains("cannot be brought back", noBin.UndoQuestion!.Value.Text);
+        // A rename back deletes nothing, bin or not.
+        Assert.Null((new Operation(OperationKind.Rename, [In("a")], [In("b")]) with { ToBin = false }).UndoQuestion);
+    }
+
+    /// <summary>AF-4.13: a move into the folder the entries are in already is refused, however that folder is typed.</summary>
+    [Fact]
+    public void A_move_into_the_folder_the_entries_are_in_is_known()
+    {
+        var sources = new[] { In("notes.md"), In("docs") };
+        Assert.True(FileOperations.AlreadyIn(sources, _folder.Path));
+        Assert.True(FileOperations.AlreadyIn(sources, _folder.Path + "\\"));
+        Assert.True(FileOperations.AlreadyIn(sources, Path.Combine(_folder.Path, ".")));
+        Assert.True(FileOperations.AlreadyIn(sources, Path.Combine(_folder.Path, "docs", "..")));
+        Assert.True(FileOperations.AlreadyIn(sources, _folder.Path.ToUpperInvariant()));
+        Assert.False(FileOperations.AlreadyIn(sources, In("docs")));
+        Assert.False(FileOperations.AlreadyIn([In("notes.md"), Path.Combine(In("docs"), "x.txt")], _folder.Path));
+        Assert.False(FileOperations.AlreadyIn([], _folder.Path));
+    }
+
     [Fact]
     public async Task A_new_folder_or_file_is_removed_while_still_empty()
     {

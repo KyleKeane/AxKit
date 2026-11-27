@@ -216,7 +216,9 @@ public static class JsonOffers
     /// </summary>
     private static JsonEdit Added(string text, JsonNode holder, OptionMember member)
     {
-        var newline = text.Contains("\r\n", StringComparison.Ordinal) ? "\r\n" : "\n";
+        // The text's own line ending; Windows' for a text with no line break at all, since the edit control holds
+        // those (until 2026-11-27 such a text got bare line feeds).
+        var newline = text.Contains('\n') && !text.Contains("\r\n", StringComparison.Ordinal) ? "\n" : "\r\n";
         var close = holder.End - 1;
         var name = JsonScanner.Quote(member.Name);
         var written = $"{name}: {member.First}";
@@ -225,8 +227,18 @@ public static class JsonOffers
         JsonEdit Edit(int from, int length, string inserted) =>
             new(from, length, inserted, from + inserted.IndexOf(written, StringComparison.Ordinal) + name.Length + 2, Said(member));
 
+        // Where a comment stands before the closing brace nothing is guessed about it, and nothing is written.
+        JsonEdit Refused(int at) =>
+            new(at, 0, string.Empty, at, $"{member.Name} was not added: a comment stands before the object's closing brace. Add it by hand");
+
         if (holder.Children.Count == 0)
         {
+            if (text[(holder.Start + 1)..close].Trim().Length > 0)
+            {
+                // An empty object that holds a comment: until 2026-11-27 it was written afresh, without the comment.
+                return Refused(holder.Start + 1);
+            }
+
             var indent = IndentOf(text, holder.Start);
             return Edit(holder.Start, holder.End - holder.Start, "{" + newline + indent + "  " + written + newline + indent + "}");
         }
@@ -236,8 +248,7 @@ public static class JsonOffers
         var between = text[last.End..close];
         if (between.Trim() is not ("" or ","))
         {
-            // A comment stands there: nothing is guessed about it.
-            return new JsonEdit(last.End, 0, string.Empty, last.End, $"{member.Name} was not added: a comment stands before the object's closing brace. Add it by hand");
+            return Refused(last.End);
         }
 
         if (!text[holder.Start..holder.End].Contains('\n'))

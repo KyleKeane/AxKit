@@ -288,7 +288,11 @@ selected ones (TK-4.4, TK-4.7).
   (axJSON, a sync) is not in it. Context, Item, History reads the item's lines, newest first, followed back through
   its renames, in a notice: "History of Fix the tap, 2 changes", each line "2026-11-24 18:30, Done: from not checked
   to checked". Turned off, nothing more is written and the file stays. The shape is kept plain for the long-term item
-  of ids and history (`AxTask.Core/ItemHistory`).
+  of ids and history (`AxTask.Core/ItemHistory`). Two corrections of 2026-11-27: `history.jsonl` is the list's own
+  file, like `list.json`, and is not counted among the files not shown (a list that kept a history said "1 file not
+  shown"); and a move's lines name the item by its Title, as every other line does and as the reading finds them,
+  not by its file's name, which differs for a Title with a character a file name cannot hold and for an item kept
+  as "name - 2.json".
 
 ## 5. All tasks and the smart lists
 
@@ -454,7 +458,10 @@ The design is `docs/axKit/reports.md` section 8 (RP-8); the rules axTask keeps:
   does nothing and says what the key now does: "Ctrl+2 in this list now moves to ../Later. Press it again to do
   it." (for an action chosen in the menu, its name and "Choose it again"; the words are `ConfiguredAction.Described`); the same action run
   again, still the same in the file, does it and accepts it, so that it is not asked about again. Another key, or
-  the same key after the file changed, starts over. The acceptances are kept in axTask's settings as
+  the same key after the file changed, starts over. An acceptance is the user's own two presses: an action run for
+  an AI tool (TK-8) is said at its first run and done at its second like any other, and is never accepted by that,
+  nor by the user's one press after an AI tool's (2026-11-27; until then two runs by an AI tool accepted a move or
+  an open for good, unlike a `run` or a `terminal` action, which always ask for an AI tool). The acceptances are kept in axTask's settings as
   `acceptedActionKeys`, the newest 500: each is the bundle's seal (AX-5.6, `SettingsSeal.Of`) over the list's
   folder and the whole action as the file holds it (`ListActions.MarkText`; for a Ctrl+digit key accepted before
   2026-11-21 the list's folder, the digit and the action as the earlier file held it, `ActionKeys.MarkText`, which

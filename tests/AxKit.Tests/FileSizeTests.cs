@@ -11,6 +11,13 @@ public class FileSizeTests
     [InlineData(12 * 1024, "12 KB")]
     [InlineData(1258291, "1.2 MB")]
     [InlineData(3758096384, "3.5 GB")]
+    // The unit is chosen after the rounding: never "1024 KB" or "1024 MB".
+    [InlineData(1024, "1 KB")]
+    [InlineData(1024 * 1024 - 1, "1 MB")]
+    [InlineData(1024 * 1024, "1 MB")]
+    [InlineData(1024L * 1024 * 1024 - 1, "1 GB")]
+    [InlineData(1024L * 1024 * 1024, "1 GB")]
+    [InlineData(1023 * 1024, "1023 KB")]
     public void Sizes_read_as_people_say_them(long bytes, string expected)
     {
         Assert.Equal(expected, FileSize.Text(bytes));

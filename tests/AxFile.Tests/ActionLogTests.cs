@@ -157,6 +157,21 @@ public sealed class ActionLogTests
         Assert.Null(log.Entries[^21].Operation);
     }
 
+    /// <summary>AF-4.14: Ctrl+Z takes the operation that ended last, the one last heard of: a copy that began before a rename and ended after it goes first.</summary>
+    [Fact]
+    public void Undo_takes_the_operation_that_ended_last_not_the_one_that_began_last()
+    {
+        var log = Log(new DateTime(2026, 10, 22, 21, 4, 0));
+        var copy = log.Begin("Copying 3 items", Folder);
+        var rename = log.Add("Renamed a.txt to b.txt", Rename("a.txt", "b.txt"));
+        Assert.Same(rename, log.Newest());
+
+        log.End(copy, "Copied 3 items", new Operation(OperationKind.Copy, [@"C:\elsewhere\a"], [In("a")]));
+        Assert.Same(copy, log.Newest());
+        log.Undone(copy);
+        Assert.Same(rename, log.Newest());
+    }
+
     [Fact]
     public void A_running_entry_that_fell_off_the_log_still_ends()
     {

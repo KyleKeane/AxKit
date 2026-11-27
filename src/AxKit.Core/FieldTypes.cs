@@ -245,10 +245,24 @@ public static class FieldTypes
             return date;
         }
 
-        // "30 October" without a year: this year's.
-        return DateOnly.TryParseExact(typed.Trim(), ["d MMMM", "d MMM", "MMMM d"], English, DateTimeStyles.AllowWhiteSpaces, out var noYear)
-            ? new DateOnly(today.Year, noYear.Month, noYear.Day)
-            : null;
+        // "30 October" without a year (IA-4.2): the next such day, today included, never one that has passed; until
+        // 2026-11-27 it was this year's, so that "5 January" typed in December was last January and read overdue.
+        // Read with a leap year after it, so that 29 February is a day whatever year the clock has; it is then the
+        // next year that has one (at most eight on).
+        if (!DateOnly.TryParseExact(typed.Trim() + " 2000", ["d MMMM yyyy", "d MMM yyyy", "MMMM d yyyy"], English, DateTimeStyles.AllowWhiteSpaces, out var noYear))
+        {
+            return null;
+        }
+
+        for (var year = today.Year; year <= Math.Min(today.Year + 8, DateOnly.MaxValue.Year); year++)
+        {
+            if (noYear.Day <= System.DateTime.DaysInMonth(year, noYear.Month) && new DateOnly(year, noYear.Month, noYear.Day) is var day && day >= today)
+            {
+                return day;
+            }
+        }
+
+        return null;
     }
 
     /// <summary>A typed date and time: a date as <see cref="ParseDate"/> takes it, then a time (14:00, 9:30); a date alone is midnight.</summary>

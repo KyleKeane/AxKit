@@ -40,7 +40,7 @@ public sealed class BrowserForm : ItemForm
         // The shared keys (ItemKeys) are ItemForm's commands, registered after these by PlaceControls; the items here
         // for them only show them. F5 is this window's own: the folder is read again off the UI thread (TP-8.5).
         var session = new ToolStripMenuItem("&Session");
-        Add(session, new Command("&Refresh", ItemKeys.Refresh, () => _ = ReadFolderAsync(SelectedKey(), announce: true)) { When = NotRenaming, Mark = CommandMark.Read });
+        Add(session, new Command("&Refresh", ItemKeys.Refresh, () => Do(() => ReadFolderAsync(SelectedKey(), announce: true))) { When = NotRenaming, Mark = CommandMark.Read });
         session.DropDownItems.Add(CreateShowInMenu("Show the templates' folder &in",
             Item("File &Explorer", () => OpenInExplorer(_folder), Keys.None, CommandMark.Open), () => _folder, FolderMissing));
         session.DropDownItems.Add(new ToolStripSeparator());
@@ -79,7 +79,7 @@ public sealed class BrowserForm : ItemForm
         PlaceMenuBar(_menu, session, actions, new ToolStripMenuItem(), CreateContextMenu(_listMenu, _templateMenu, _fieldMenu), options, help);
         PlaceControls(_menu);
         Fill(select: null);
-        _ = ReadFolderAsync(select: null, announce: false);
+        Do(() => ReadFolderAsync(select: null, announce: false));
     }
 
     // ---- what the window base asks for ----
@@ -96,7 +96,7 @@ public sealed class BrowserForm : ItemForm
         base.OnActivated(e);
         if (_read && Working is null && !NoticeOpen && NotRenaming())
         {
-            _ = ReadFolderAsync(SelectedKey(), announce: false, onlyWhenChanged: true);
+            Do(() => ReadFolderAsync(SelectedKey(), announce: false, onlyWhenChanged: true));
         }
     }
 
@@ -115,8 +115,10 @@ public sealed class BrowserForm : ItemForm
             var folder = _folder;
             list = await Task.Run(() => TemplateStore.Open(folder));
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException or InvalidDataException)
         {
+            // Everything a read of a file throws (TextDocument.Read's InvalidOperationException for one that is no
+            // text among it): the window says it and shows what it has, never an empty list without a word.
             if (EndRead(read))
             {
                 _read = true;
@@ -357,7 +359,7 @@ public sealed class BrowserForm : ItemForm
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
         {
             Failed("A change could not be undone", ex, $"{step.Said} could not be undone: {ex.Message}");
-            _ = ReadFolderAsync(SelectedKey(), announce: false);
+            Do(() => ReadFolderAsync(SelectedKey(), announce: false));
             return;
         }
 
@@ -366,7 +368,7 @@ public sealed class BrowserForm : ItemForm
         {
             // Back from the Archive (TP-D9): the folder read again, the template selected where it is again.
             Announce("Undone: " + step.Said, true);
-            _ = ReadFolderAsync(step.Parts[0].Path, announce: false);
+            Do(() => ReadFolderAsync(step.Parts[0].Path, announce: false));
             return;
         }
 
@@ -491,7 +493,7 @@ public sealed class BrowserForm : ItemForm
         }
 
         Announce("The template changed on disk; it is read again", true);
-        _ = ReadFolderAsync(SelectedKey(), announce: false);
+        Do(() => ReadFolderAsync(SelectedKey(), announce: false));
         return false;
     }
 
@@ -516,7 +518,7 @@ public sealed class BrowserForm : ItemForm
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
         {
             Failed("A change could not be written", ex, $"{step.Said} could not be done: {ex.Message}");
-            _ = ReadFolderAsync(SelectedKey(), announce: false);
+            Do(() => ReadFolderAsync(SelectedKey(), announce: false));
             return false;
         }
 

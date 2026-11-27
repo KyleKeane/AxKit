@@ -280,6 +280,27 @@ public sealed class StartupChangeTests : IDisposable
         Assert.Null(ApprovedValue(StartupPlace.UserFolder, "Morning.lnk"));
     }
 
+    /// <summary>
+    /// Two files of one Startup folder with one name and different extensions are two rows: until 2026-11-27 both
+    /// had the key of the name without its extension, and the view could not tell which of them was selected.
+    /// </summary>
+    [Fact]
+    public void Two_files_of_one_name_and_different_extensions_have_keys_of_their_own()
+    {
+        Directory.CreateDirectory(Places.UserFolder);
+        File.WriteAllText(Path.Combine(Places.UserFolder, "sync.lnk"), "a stand-in for a shortcut");
+        File.WriteAllText(Path.Combine(Places.UserFolder, "sync.bat"), "rem a stand-in for a script");
+        SeedValue(StartupPlace.UserRunKey, "sync", "C:\\Tools\\sync.exe");
+
+        var entries = StartupList.Read(Places);
+        Assert.Equal(3, entries.Count);
+        Assert.Equal(3, entries.Select(entry => entry.Key).Distinct(StringComparer.OrdinalIgnoreCase).Count());
+        Assert.Equal(["UserFolder:sync.bat", "UserFolder:sync.lnk", "UserRunKey:sync"], entries.Select(entry => entry.Key).Order(StringComparer.Ordinal));
+
+        // A key of the Run key is the value's name as before, and the names heard are as before.
+        Assert.All(entries, entry => Assert.Equal("sync", entry.Name));
+    }
+
     [Fact]
     public void A_file_outside_the_Startup_folder_is_never_deleted()
     {

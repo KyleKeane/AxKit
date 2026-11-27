@@ -137,6 +137,28 @@ public sealed class CalculatorTests
     public void Errors_say_what_went_wrong(string expression, string expected) =>
         Assert.Equal(expected, Answer(expression));
 
+    /// <summary>
+    /// A number that is not finished is the calculator's own error or a value, never an exception out of it: until
+    /// 2026-11-27 ".e5" (a dot with no digit, then an exponent) reached the number parser of .NET, whose
+    /// FormatException nothing caught.
+    /// </summary>
+    [Theory]
+    [InlineData(".e5", "Error: unexpected .")]
+    [InlineData(".E-5", "Error: unexpected .")]
+    [InlineData("._e5", "Error: unexpected .")]
+    [InlineData("2 + .e5", "Error: unexpected .")]
+    [InlineData(".", "Error: unexpected .")]
+    [InlineData(".e", "Error: unexpected .")]
+    [InlineData("1e", "Error: unexpected e")]
+    [InlineData("1e+", "Error: unexpected e")]
+    [InlineData(".5e", "Error: unexpected e")]
+    [InlineData("1.", "1")]
+    [InlineData("1.e2", "100")]
+    [InlineData(".5e1", "5")]
+    [InlineData("1_0e1_0", "100000000000")]
+    public void A_number_left_unfinished_is_an_error_or_a_value_never_an_exception(string expression, string expected) =>
+        Assert.Equal(expected, Answer(expression));
+
     [Fact]
     public void An_error_keeps_the_last_answer()
     {

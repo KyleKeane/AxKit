@@ -117,6 +117,66 @@ public sealed class TemplateTests : IDisposable
         Assert.Equal(TemplateStore.AppsWithField.OrderBy(apps.IndexOf), TemplateStore.AppsWithField);
     }
 
+    /// <summary>
+    /// TP-2.4: a <c>.json</c> file that is no text (it holds a NUL character, or is too large to read) is one file
+    /// that is no template. Until 2026-11-27 its reading threw what no reader of the folder caught, and every
+    /// template was gone from the browser, the launcher and the editors' menus without a word.
+    /// </summary>
+    [Fact]
+    public void A_file_that_is_no_text_is_no_template_and_takes_no_other_away()
+    {
+        var folder = Path.Combine(_folder, "templates");
+        var config = TemplateStore.Open(folder).Config;
+        File.WriteAllText(Path.Combine(folder, "Thanks.json"), NewItemText("Thanks", config));
+        File.WriteAllBytes(Path.Combine(folder, "picture.json"), [(byte)'{', 0, (byte)'}']);
+
+        var read = TemplateStore.Read(folder);
+        Assert.Equal(["Thanks"], read.Templates.Select(template => template.Title));
+        Assert.Equal(["picture"], read.NotTemplates);
+
+        var opened = TemplateStore.Open(folder);
+        Assert.Equal(["picture", "Thanks"], opened.Files.Select(file => file.Title));
+        Assert.Null(opened.Files[0].Item);
+    }
+
+    /// <summary>TP-2.1: a configuration that is no text is one that does not read: opening the folder leaves it as it is and still lists the templates.</summary>
+    [Fact]
+    public void A_configuration_that_is_no_text_is_left_alone_and_the_templates_still_listed()
+    {
+        var folder = Path.Combine(_folder, "templates");
+        var config = TemplateStore.Open(folder).Config;
+        File.WriteAllText(Path.Combine(folder, "Thanks.json"), NewItemText("Thanks", config));
+        byte[] noText = [(byte)'{', 0, (byte)'}'];
+        File.WriteAllBytes(TemplateStore.ConfigurationPath(folder), noText);
+
+        var opened = TemplateStore.Open(folder);
+        Assert.Equal(["Thanks"], opened.Files.Select(file => file.Title));
+        Assert.Equal(noText, File.ReadAllBytes(TemplateStore.ConfigurationPath(folder)));
+    }
+
+    /// <summary>
+    /// TP-2.1: a configuration with something passed over (AF-11.7) is not written again by itself, which would drop
+    /// what was passed over; and a field written by hand without a "value" keeps what else its object holds when a
+    /// newer version's field is added.
+    /// </summary>
+    [Fact]
+    public void A_configuration_is_written_again_only_whole_and_keeps_what_a_hand_wrote()
+    {
+        const string withProblem = """
+            { "format": "axkit-list 2", "item fields": [ { "title": "Text", "type": "longtext" }, "a note left in the list", { "title": "Text" } ] }
+            """;
+        Assert.NotEmpty(ListConfig.Parse(withProblem).Problems);
+        Assert.Null(TemplateStore.ConfigurationToWrite(withProblem, ["axDown"]));
+
+        const string byHand = """
+            { "format": "axkit-list 2", "item fields": [ { "title": "Text", "type": "longtext", "hint": "what is pasted" } ] }
+            """;
+        var grown = TemplateStore.ConfigurationToWrite(byHand, ["axDown"]);
+        Assert.NotNull(grown);
+        Assert.Contains("\"hint\": \"what is pasted\"", grown, StringComparison.Ordinal);
+        Assert.Equal(["Text", "axDown"], ListConfig.Parse(grown).ItemFields.Select(field => field.Title));
+    }
+
     [Fact]
     public void Opening_the_folder_makes_it_and_its_configuration_once()
     {
@@ -212,6 +272,10 @@ public sealed class TemplateTests : IDisposable
     [InlineData("[{selection}]({caret})", 1)]
     [InlineData("no caret mark", 0)]
     [InlineData("{caret}two\r\nlines", 9)]
+    // One Left passes a whole character as a person counts them: an emoji of two units, a letter with its accent after it, a family joined of several.
+    [InlineData("{caret}a\U0001F600b", 3)]
+    [InlineData("{caret}é!", 2)]
+    [InlineData("{caret}\U0001F468‍\U0001F469‍\U0001F467", 1)]
     public void The_left_keys_are_the_characters_after_the_caret_with_a_line_ending_as_one(string template, int keys)
     {
         Assert.Equal(keys, TemplateStore.LeftKeys(TextTemplate.Expand(template, string.Empty, string.Empty)));

@@ -7,9 +7,22 @@ file home\Documents\axKit\Templates\Alpha.json {"schema": "list.json", "Title": 
 file home\Documents\axKit\Templates\Beta.json {"schema": "list.json", "Title": "Beta", "Text": "Second", "axDown": true, "Sprint": "kept"}
 file home\Documents\axKit\Templates\Gamma.json {"schema": "list.json", "Title": "Gamma", "Text": "Third"}
 file home\Documents\axKit\Templates\broken.json [1, 2]
+# A file that is no text at all (it holds a NUL character), as a picture renamed to .json is.
+run powershell -NoProfile -Command "[IO.File]::WriteAllBytes('home\Documents\axKit\Templates\picture.json', [byte[]](123, 0, 125))"
 
 start template
 expect state Templates, 3 templates
+expect focus Alpha
+
+# Check: A file that is no text is listed as no template, and takes no template away
+# TP-2.4 (2026-11-27): until then one such file left the browser with no template at all, and no word of why.
+type picture
+expect focus picture, not a template
+keys tab
+keys down
+expect focus The file could not be read
+keys escape
+keys home
 expect focus Alpha
 
 # Check: A file that is no item is listed as no template

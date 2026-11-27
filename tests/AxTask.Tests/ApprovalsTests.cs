@@ -234,6 +234,40 @@ public sealed class ApprovalsTests
         Assert.False(Approvals.Verify(change, signature, newKey));
     }
 
+    /// <summary>
+    /// OR-6.3: a change of the key that fails on its way leaves nothing of itself: no line of a change that never
+    /// happened (which would refuse every later change as "not pinned yet"), the public half and the key as before.
+    /// </summary>
+    [Fact]
+    public void A_change_of_key_that_fails_midway_leaves_the_old_key_and_no_line_of_the_change()
+    {
+        using var temp = new TempFolder("approval-key-tests");
+        var keyFile = Path.Combine(temp.Path, OutsideReports.KeyFileName);
+        var pinned = Path.Combine(temp.Path, OutsideReports.PinnedFileName);
+        var changeFile = Path.Combine(temp.Path, OutsideReports.ChangeFileName);
+        var (oldFile, oldKey) = Approvals.MakeKey(Passphrase, TestRounds);
+        OutsideReports.WriteKey(keyFile, oldFile, oldKey, change: null);
+        Assert.Equal(oldFile, File.ReadAllText(keyFile));
+        Assert.Equal(Approvals.PinnedText(oldKey), File.ReadAllText(pinned));
+        Assert.False(File.Exists(changeFile));
+
+        var (newFile, newKey) = Approvals.MakeKey("another long passphrase", TestRounds);
+        var signature = Approvals.Sign(Approvals.ChangeText(newKey), oldFile, Passphrase);
+        // The new key's file cannot be written: a folder has its name.
+        Directory.CreateDirectory(keyFile + ".new");
+        Assert.ThrowsAny<Exception>(() => OutsideReports.WriteKey(keyFile, newFile, newKey, signature));
+        Assert.False(File.Exists(changeFile));
+        Assert.Equal(Approvals.PinnedText(oldKey), File.ReadAllText(pinned));
+        Assert.Equal(oldFile, File.ReadAllText(keyFile));
+
+        // With the way free, the change is written whole.
+        Directory.Delete(keyFile + ".new");
+        OutsideReports.WriteKey(keyFile, newFile, newKey, signature);
+        Assert.Equal($"Approval key changed: {signature}\r\n", File.ReadAllText(changeFile));
+        Assert.Equal(Approvals.PinnedText(newKey), File.ReadAllText(pinned));
+        Assert.Equal(newFile, File.ReadAllText(keyFile));
+    }
+
     [Fact]
     public void A_file_that_is_no_key_file_is_said_and_not_thrown_through()
     {

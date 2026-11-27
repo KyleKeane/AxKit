@@ -49,6 +49,13 @@ public abstract partial class AxKitForm
     }
 
     /// <summary>
+    /// Whether the forms' fields get their menu of templates (TP-5.5): switched off on 2026-11-24 after three NVDA passes
+    /// heard no menu open, on again the same evening with the menu shown as Windows' own (NativeMenu), to be heard in the
+    /// next pass (tests/nvda-scripts/axTask-template-in-a-form.txt); set false again if that pass hears nothing.
+    /// </summary>
+    private static readonly bool FormTemplatesOn = true;
+
+    /// <summary>
     /// A form's text fields, in an app whose templates have a check (<see cref="TemplateStore.AppsWithField"/>; TP-5.5,
     /// the maintainer's answer of 2026-11-24, "Insert template in forms too"): Shift+F10, the Applications key or a right
     /// click on one lists the templates checked for this app, numbered, and one chosen is put in at the field's caret as
@@ -56,13 +63,6 @@ public abstract partial class AxKitForm
     /// own context menu holds them in place of Windows' edit menu, whose commands are keys. A field that is only read or
     /// holds a password has none. The folder is read again, off the UI thread, as the form opens.
     /// </summary>
-    /// <summary>
-    /// Whether the forms' fields get their menu of templates (TP-5.5): switched off on 2026-11-24 after three NVDA passes
-    /// heard no menu open, on again the same evening with the menu shown as Windows' own (NativeMenu), to be heard in the
-    /// next pass (tests/nvda-scripts/axTask-template-in-a-form.txt); set false again if that pass hears nothing.
-    /// </summary>
-    private static readonly bool FormTemplatesOn = true;
-
     private void OfferTemplatesInForm(FormControls controls)
     {
         if (!TemplateStore.AppsWithField.Contains(AppName, StringComparer.Ordinal))
@@ -132,8 +132,10 @@ public abstract partial class AxKitForm
         {
             templates = await Task.Run(() => TemplateStore.Read(AppPaths.TemplatesRoot).Templates.Where(template => template.ShowsInApp(app)).ToList());
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException or InvalidDataException)
         {
+            // Every kind a read of a file throws is caught here: one that escaped would reach the window's own
+            // handler, whose log line holds the exception's message, and that message names the file (TP-7.3).
             // TP-7.3: that it failed, never a name.
             Log.Error("The templates' folder could not be read: " + ex.GetType().Name);
             return;

@@ -42,6 +42,13 @@ public static class CustomSounds
     /// <summary>The longest file taken: a sound, not a recording; the working music loops a file this long at most.</summary>
     public const int MaxSeconds = 60;
 
+    /// <summary>
+    /// The largest file read, 64 MB: a minute of stereo sound in 32 bits at 96,000 samples a second is 46 MB, so a
+    /// larger file is a recording, and it is refused by its length before any of it is read (until 2026-11-27 the
+    /// whole file was read into memory first, a film renamed to <c>edge.wav</c> included, at every window's start).
+    /// </summary>
+    public const long MaxBytes = 64L * 1024 * 1024;
+
     /// <summary>The folder's own file that lists the names, written when the folder is made.</summary>
     public const string NamesFile = "sound names.txt";
 
@@ -62,6 +69,12 @@ public static class CustomSounds
         {
             if (!File.Exists(path))
             {
+                return made;
+            }
+
+            if (new FileInfo(path).Length > MaxBytes)
+            {
+                problem($"The sound file {name}.wav is not used: it is over {MaxBytes / (1024 * 1024)} MB");
                 return made;
             }
 

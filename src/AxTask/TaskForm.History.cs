@@ -29,7 +29,8 @@ public sealed partial class TaskForm
             return on;
         }
 
-        foreach (var group in ItemHistory.Lines(parts, DateTime.Now, Keeps).GroupBy(line => line.Folder, StringComparer.OrdinalIgnoreCase))
+        // A moved item is named by its Title, read from the file where it is now, as every other line names it.
+        foreach (var group in ItemHistory.Lines(parts, DateTime.Now, Keeps, path => ItemFolder.ReadItem(path)?.Document.Title).GroupBy(line => line.Folder, StringComparer.OrdinalIgnoreCase))
         {
             try
             {

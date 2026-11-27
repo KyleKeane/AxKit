@@ -41,3 +41,5 @@ From AxClaude.Core on their second use, axTerminal (2026-10-18; docs/axTerminal/
   numbers, the find search, the reading breaks; `ShowMarkers` off shows heading lines as `Line.BareText`, without the
   `#`, the export unchanged.
 - `Transcript/Utterance`: how spoken lines join into one notification.
+
+- The review of 2026-11-27: `Screen.LeaveAlternate` also lets go of the dead program's scroll region, background and reverse video. A reset (ESC c) raises `Cleared` before it leaves the alternate screen, with `AlternateChangedSinceFrameEnd` held false for the event, so that a model that keeps the rows on their lines after a switch (axTerminal's `LetRowsGo`) still lets them go and the erase blanks no line already read.

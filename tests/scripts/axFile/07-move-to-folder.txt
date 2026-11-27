@@ -43,4 +43,10 @@ keys ctrl+a
 type C:\nope\x
 keys enter
 expect said Not found: C:\nope\x
+# The folder the entry is in already, typed as a dot (2026-11-27: it renamed the entry to "docs - 2" until then).
+keys ctrl+a
+type .
+keys enter
+expect said Already in this folder
 keys escape
+expect list "count":3

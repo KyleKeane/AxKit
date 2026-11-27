@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using AxKit.Core;
+using AxTemplate.Core;
 
 namespace AxTemplate;
 
@@ -53,10 +54,34 @@ public static class FocusedText
     }
 
     /// <summary>
-    /// The mark nearest before the caret selected, once the paste has put it there: tried every 50 ms for
-    /// <paramref name="maxMs"/>, so that a program that pastes slowly is waited for. False when it never came.
+    /// How many times the mark stands before the caret now, asked before the paste key is sent (TP-D10): a document
+    /// may hold <c>{caret}</c> already (a template's own text, open in an editor), and
+    /// <see cref="SelectMarkBeforeCaret"/> takes a mark for the pasted one only when there are more than this.
+    /// Null when the field gives no text.
     /// </summary>
-    public static bool SelectMarkBeforeCaret(string mark, int maxMs)
+    public static int? MarksBeforeCaret(string mark)
+    {
+        try
+        {
+            return Pattern() is { } text && text.GetSelection() is { Length: > 0 } selection
+                ? PasteTarget.MarksIn(BeforeCaret(text, selection).GetText(-1) ?? string.Empty, mark)
+                : null;
+        }
+        catch (COMException ex)
+        {
+            Log.Info("The caret's mark could not be counted: " + ex.GetType().Name);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// The mark nearest before the caret selected, once the paste has put it there: tried every 50 ms for
+    /// <paramref name="maxMs"/>, so that a program that pastes slowly is waited for. A mark counts as the pasted one
+    /// only when more of them stand before the caret than <paramref name="marksBefore"/>, the count taken before
+    /// the paste: until 2026-11-27 the nearest mark was taken whatever it was, and where the paste came late or
+    /// not at all, a <c>{caret}</c> the document held already was selected and deleted. False when it never came.
+    /// </summary>
+    public static bool SelectMarkBeforeCaret(string mark, int marksBefore, int maxMs)
     {
         for (var waited = 0; waited <= maxMs; waited += 50)
         {
@@ -64,9 +89,8 @@ public static class FocusedText
             {
                 if (Pattern() is { } text && text.GetSelection() is { Length: > 0 } selection)
                 {
-                    var before = text.DocumentRange.Clone();
-                    before.MoveEndpointByRange(EndpointEnd, selection.GetElement(0), EndpointStart);
-                    if (before.FindText(mark, true, false) is { } found)
+                    var before = BeforeCaret(text, selection);
+                    if (before.FindText(mark, true, false) is { } found && PasteTarget.MarksIn(before.GetText(-1) ?? string.Empty, mark) > marksBefore)
                     {
                         found.Select();
                         return true;
@@ -83,6 +107,14 @@ public static class FocusedText
         }
 
         return false;
+    }
+
+    /// <summary>The field's text from its start to the caret (the start of the selection).</summary>
+    private static IUIAutomationTextRange BeforeCaret(IUIAutomationTextPattern text, IUIAutomationTextRangeArray selection)
+    {
+        var before = text.DocumentRange.Clone();
+        before.MoveEndpointByRange(EndpointEnd, selection.GetElement(0), EndpointStart);
+        return before;
     }
 
     private static IUIAutomationTextPattern? Pattern()

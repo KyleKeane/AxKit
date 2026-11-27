@@ -32,6 +32,64 @@ public static class OutsideReports
     public static string KeyFileOf(string listFolder) => Path.Combine(Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(listFolder)) ?? listFolder, KeyFileName);
 
     /// <summary>
+    /// A new approval key written beside the list (OR-6.3): for a change of passphrase the line the old key signed,
+    /// then the public half, then the key itself, last and by a move, so that the key file is the old one whole or
+    /// the new one whole and the old key is not lost before its signature of the change is on disk. Whole or not at
+    /// all: when a write fails, the change's line is taken away again and the public half put back as it was, and
+    /// the failure thrown on. Until 2026-11-27 a failure after the first write left the line, and with it every
+    /// later change refused as "not pinned yet" for a change that never happened. Nothing of a key is logged or said.
+    /// </summary>
+    public static void WriteKey(string keyFile, string file, ApprovalPublicKey publicKey, string? change)
+    {
+        var folder = Path.GetDirectoryName(keyFile)!;
+        var changeFile = Path.Combine(folder, ChangeFileName);
+        var pinnedFile = Path.Combine(folder, PinnedFileName);
+        var written = keyFile + ".new";
+        var pinnedBefore = File.Exists(pinnedFile) ? File.ReadAllText(pinnedFile) : null;
+        try
+        {
+            if (change is not null)
+            {
+                File.WriteAllText(changeFile, $"Approval key changed: {change}\r\n");
+            }
+
+            File.WriteAllText(pinnedFile, Approvals.PinnedText(publicKey));
+            File.WriteAllText(written, file);
+            File.Move(written, keyFile, overwrite: true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            try
+            {
+                if (change is not null)
+                {
+                    File.Delete(changeFile);
+                }
+
+                if (pinnedBefore is null)
+                {
+                    File.Delete(pinnedFile);
+                }
+                else
+                {
+                    File.WriteAllText(pinnedFile, pinnedBefore);
+                }
+
+                if (File.Exists(written))
+                {
+                    File.Delete(written);
+                }
+            }
+            catch (Exception back) when (back is IOException or UnauthorizedAccessException)
+            {
+                // What could not be put back stays; the first failure is the one said.
+            }
+
+            throw;
+        }
+    }
+
+    /// <summary>
     /// A value's text by its name; empty when the entry has none. Read from the entry's file itself, never from the
     /// item as the list's configuration shows it: what an approval signs must not depend on which fields a
     /// configuration names (docs/axTask/forms-framework.md AF-11.3, where a value not named is kept and not shown).

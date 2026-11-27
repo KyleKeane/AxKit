@@ -165,9 +165,24 @@ public sealed class Screen
     /// <summary>
     /// The program that held the alternate screen ended without switching back (AT-9.10; a model knows it from the
     /// shell's own mark): the main screen again, as on <c>ESC[?1049l</c>, its rows and their lines as they were and
-    /// the cursor where it stood. Nothing when the main screen is in use.
+    /// the cursor where it stood, and what the program set let go: its scroll region, its background and its reverse
+    /// video (until 2026-11-27 they stayed, and the shell's output scrolled inside the dead program's region).
+    /// Nothing when the main screen is in use.
     /// </summary>
-    public void LeaveAlternate() => SwitchScreen(1049, false);
+    public void LeaveAlternate()
+    {
+        if (!Alternate)
+        {
+            return;
+        }
+
+        SwitchScreen(1049, false);
+        _top = 0;
+        _bottom = Rows - 1;
+        _background = 0;
+        _reverse = false;
+        _pendingWrap = false;
+    }
 
     /// <summary>The program switched to the alternate screen or back since the last frame ended (<c>ESC[?25h</c>), so that the frame end knows the view changes.</summary>
     public bool AlternateChangedSinceFrameEnd { get; private set; }
@@ -605,7 +620,15 @@ public sealed class Screen
     /// <summary><c>ESC c</c> and <c>ESC[!p</c>: the screen as at the start. A model that keeps what was on screen lets the rows go first, as for an erase (<see cref="Cleared"/>; until 2026-10-23 a reset cleared the rows without the event).</summary>
     private void Reset()
     {
-        // A reset leaves the alternate screen first, as xterm's does, and drops the pen.
+        // The model hears of the erase first, and as an erase of its own: a model that keeps the rows on their lines
+        // after a switch of screen in the same frame (the console's repaint, AT-9.9) must still let them go here,
+        // or the clearing below blanks the lines already read. Until 2026-11-27 the event came after the switch.
+        var switched = AlternateChangedSinceFrameEnd;
+        AlternateChangedSinceFrameEnd = false;
+        Cleared?.Invoke();
+        AlternateChangedSinceFrameEnd = switched;
+
+        // A reset leaves the alternate screen, as xterm's does, and drops the pen.
         if (Alternate)
         {
             SwitchScreen(47, false);
@@ -613,7 +636,6 @@ public sealed class Screen
 
         _background = 0;
         _reverse = false;
-        Cleared?.Invoke();
         foreach (var row in _rows)
         {
             row.Clear(0, Columns, 0);

@@ -226,7 +226,7 @@ public static class Approvals
     {
         try
         {
-            if (JsonNode.Parse(keyFile) is not JsonObject json || (string?)json["format"] != KeyFormat)
+            if (AxKit.Core.JsonText.Parse(keyFile) is not JsonObject json || (string?)json["format"] != KeyFormat)
             {
                 throw new ApprovalException("The approval key file is not one of this format.");
             }

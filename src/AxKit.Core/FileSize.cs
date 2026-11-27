@@ -10,13 +10,20 @@ public static class FileSize
     public static string Text(long bytes)
     {
         const double kilo = 1024;
-        return bytes switch
+        if (bytes < 1024)
         {
-            1 => "1 byte",
-            < 1024 => $"{bytes} bytes",
-            < 1024 * 1024 => $"{Math.Round(bytes / kilo)} KB",
-            < 1024 * 1024 * 1024 => $"{bytes / (kilo * kilo):0.#} MB",
-            _ => $"{bytes / (kilo * kilo * kilo):0.#} GB",
-        };
+            return bytes == 1 ? "1 byte" : $"{bytes} bytes";
+        }
+
+        // The unit is chosen by the number as it will be said, after its rounding: one byte under a megabyte is
+        // "1 MB", never "1024 KB" (which it was until 2026-11-27, and "1024 MB" one under a gigabyte).
+        if (Math.Round(bytes / kilo) < 1024)
+        {
+            return $"{Math.Round(bytes / kilo)} KB";
+        }
+
+        return Math.Round(bytes / (kilo * kilo), 1) < 1024
+            ? $"{bytes / (kilo * kilo):0.#} MB"
+            : $"{bytes / (kilo * kilo * kilo):0.#} GB";
     }
 }

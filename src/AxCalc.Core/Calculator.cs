@@ -329,6 +329,13 @@ public sealed partial class Calculator
                 ReadDigits();
             }
 
+            // A dot with no digit on either side is no number, whatever follows it. Asked here, before the exponent:
+            // until 2026-11-27 it was asked after, so ".e5" went on to double.Parse, whose FormatException nothing caught.
+            if (text[begin.._position].Replace("_", string.Empty) == ".")
+            {
+                throw new CalcException("unexpected .");
+            }
+
             if (_position < text.Length && text[_position] is 'e' or 'E')
             {
                 // An exponent only when a digit follows (with its sign): "2e3" is 2000, "2e" is 2 times e, which is an error.
@@ -345,13 +352,7 @@ public sealed partial class Calculator
                 }
             }
 
-            var digits = text[begin.._position].Replace("_", string.Empty);
-            if (digits == ".")
-            {
-                throw new CalcException("unexpected .");
-            }
-
-            return double.Parse(digits, NumberStyles.Float, CultureInfo.InvariantCulture);
+            return double.Parse(text[begin.._position].Replace("_", string.Empty), NumberStyles.Float, CultureInfo.InvariantCulture);
         }
 
         private void ReadDigits()

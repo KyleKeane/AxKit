@@ -61,6 +61,29 @@ public class ItemHistoryTests
         ], lines);
     }
 
+    /// <summary>A move's lines name the item by its Title, as every other line does and as <see cref="ItemHistory.Of"/> finds them: never by the file's name, which differs for a Title with a character a file name cannot hold or one kept under a numbered name.</summary>
+    [Fact]
+    public void A_moved_item_is_named_by_its_title_not_by_its_file()
+    {
+        var parts = new[] { FileChange.Move(Path.Combine(Home, "a b c.json"), Path.Combine(Work, "a b c - 2.json")) };
+
+        var lines = ItemHistory.Lines(parts, Now, _ => true, path => path.EndsWith("a b c - 2.json", StringComparison.Ordinal) ? "a/b: c?" : null);
+        Assert.All(lines, line => Assert.Contains("\"item\":\"a/b: c?\"", line.Line.Replace("\\u003F", "?", StringComparison.Ordinal)));
+        var text = string.Join("\n", lines.Select(line => line.Line));
+        Assert.Equal(2, ItemHistory.Of(text, "a/b: c?").Count);
+
+        // A write of the same step knows the Title too, and nothing read from the disk is needed then.
+        var written = new[]
+        {
+            FileChange.Write(Path.Combine(Home, "a b c.json"), Item("a/b: c?", false), Item("a/b: c?", true)),
+            FileChange.Move(Path.Combine(Home, "a b c.json"), Path.Combine(Work, "a b c.json")),
+        };
+        Assert.Equal(3, ItemHistory.Of(string.Join("\n", ItemHistory.Lines(written, Now, _ => true).Select(line => line.Line)), "a/b: c?").Count);
+
+        // With no one to ask, the file's name, as before.
+        Assert.Contains("\"item\":\"a b c - 2\"", ItemHistory.Lines(parts, Now, _ => true)[0].Line);
+    }
+
     [Fact]
     public void An_undo_is_recorded_as_the_change_it_makes()
     {

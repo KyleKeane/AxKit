@@ -300,4 +300,46 @@ public sealed class ListConfigTests
         var changed = config.WithItemFields([config.ItemFields[0] with { Type = FieldTypes.Text, Value = JsonValue.Create(string.Empty) }]);
         Assert.DoesNotContain("\"note\"", changed.ToText(), StringComparison.Ordinal);
     }
+
+    /// <summary>A field written by hand without a "value" or a "type" is the same field when the fields are set again: what else its object holds stays (IA-4).</summary>
+    [Fact]
+    public void A_field_written_without_a_value_keeps_its_object_when_the_fields_are_set_again()
+    {
+        var config = ListConfig.Parse("""
+            {
+              "format": "axkit-list 2",
+              "item fields": [
+                { "title": "Text", "type": "longtext", "hint": "what is pasted" },
+                { "title": "Kind", "hint": "no type either" },
+                { "title": "Size", "type": "choice", "options": ["Small", "Large"], "hint": "a choice" }
+              ]
+            }
+            """);
+
+        var with = config.WithItemFields([.. config.ItemFields, new ItemField("New", FieldTypes.Check, JsonValue.Create(false), [])]).ToText();
+
+        Assert.Contains("\"hint\": \"what is pasted\"", with, StringComparison.Ordinal);
+        Assert.Contains("\"hint\": \"no type either\"", with, StringComparison.Ordinal);
+        Assert.Contains("\"hint\": \"a choice\"", with, StringComparison.Ordinal);
+        Assert.Equal(["Text", "Kind", "Size", "New"], ListConfig.Parse(with).ItemFields.Select(field => field.Title));
+    }
+
+    /// <summary>
+    /// A name written twice in one object (AF-11.7, TK-4.6): the file does not read, and says so in the words its
+    /// callers show, at once and never later as another kind of failure. Until 2026-11-27 it depended on which
+    /// member was asked for first.
+    /// </summary>
+    [Fact]
+    public void A_member_named_twice_does_not_read_and_says_so()
+    {
+        var item = Assert.Throws<InvalidDataException>(() => FlatItem.Parse("""{ "schema": "list.json", "Title": "One", "Title": "Two" }"""));
+        Assert.Equal("it names a member twice", item.Message);
+        // Inside a value too: the whole file is read once, so nothing of it fails when it is asked for later.
+        Assert.Throws<InvalidDataException>(() => FlatItem.Parse("""{ "schema": "list.json", "Title": "One", "More": { "a": 1, "a": 2 } }"""));
+
+        var list = Assert.Throws<InvalidDataException>(() => ListConfig.Parse("""{ "format": "axkit-list 2", "details": {}, "details": {} }"""));
+        Assert.Equal("it names a member twice", list.Message);
+        Assert.Throws<InvalidDataException>(() => ListConfig.Parse("""{ "format": "axkit-list 2", "item fields": [ { "title": "Done", "title": "Due" } ] }"""));
+        Assert.Null(ListConfig.FormatOf("""{ "format": "axkit-list 2", "format": "axkit-list 1" }"""));
+    }
 }

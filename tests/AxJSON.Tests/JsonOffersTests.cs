@@ -181,6 +181,39 @@ public sealed class JsonOffersTests
         Assert.StartsWith("details was not added: a comment stands before the object's closing brace", edit.Said);
     }
 
+    /// <summary>
+    /// Until 2026-11-27 an empty object was written afresh from brace to brace, and a comment that was all it held
+    /// went with it; a member that has members before it was refused there all along.
+    /// </summary>
+    [Theory]
+    [InlineData("{\n  \"format\": \"axkit-list 2\",\n  \"details\": { /* mine */ }\n}")]
+    [InlineData("{\n  \"format\": \"axkit-list 2\",\n  \"details\": {\n    // mine\n  }\n}")]
+    public void An_empty_object_that_holds_a_comment_keeps_it(string text)
+    {
+        var edit = JsonOffers.Members(text, text.IndexOf("\"details\": {", StringComparison.Ordinal) + 12, NoFile).Offer!.Choose(0);
+        Assert.Equal(text, Apply(text, edit));
+        Assert.StartsWith("Notes was not added: a comment stands before the object's closing brace", edit.Said);
+        Assert.InRange(edit.Caret, 0, text.Length);
+    }
+
+    /// <summary>
+    /// The edit control holds Windows' line endings: a text with no line break at all gets those, where until
+    /// 2026-11-27 it got bare line feeds; a text that has line feeds alone (a string of a test) keeps them.
+    /// </summary>
+    [Fact]
+    public void A_text_with_no_line_break_gets_Windows_line_endings()
+    {
+        const string oneLine = "{ \"format\": \"axkit-list 2\", \"details\": {} }";
+        var edit = JsonOffers.Members(oneLine, oneLine.IndexOf("{}", StringComparison.Ordinal) + 1, NoFile).Offer!.Choose(0);
+        var changed = Apply(oneLine, edit);
+        Assert.Equal("{ \"format\": \"axkit-list 2\", \"details\": {\r\n  \"Notes\": \"\"\r\n} }", changed);
+        Assert.Equal("\"\"", changed.Substring(edit.Caret, 2));
+
+        const string windows = "{\r\n  \"format\": \"axkit-list 2\",\r\n  \"details\": {}\r\n}";
+        var opened = Apply(windows, JsonOffers.Members(windows, windows.IndexOf("{}", StringComparison.Ordinal) + 1, NoFile).Offer!.Choose(0));
+        Assert.Equal("{\r\n  \"format\": \"axkit-list 2\",\r\n  \"details\": {\r\n    \"Notes\": \"\"\r\n  }\r\n}", opened);
+    }
+
     [Fact]
     public void An_item_gets_its_options_through_its_link_to_the_lists_configuration()
     {

@@ -295,15 +295,15 @@ public static class Updater
         }
     }
 
-    /// <summary>
-    /// A download is complete when it has install.ps1 and a program file. The program file is not named: the
-    /// installer knows what to install, and 1.7.0 relied on this to update into axKit (docs/axKit/SPEC.md B-6).
-    /// </summary>
     /// <summary>Whether the zip's SHA-256 is the one GitHub recorded ("sha256:&lt;hex&gt;"); true when GitHub gave none, the signature being the check that counts.</summary>
     public static bool MatchesDigest(byte[] sha256, string? digest) =>
         digest is null || !digest.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase)
         || string.Equals(Convert.ToHexString(sha256), digest["sha256:".Length..], StringComparison.OrdinalIgnoreCase);
 
+    /// <summary>
+    /// A download is complete when it has install.ps1 and a program file. The program file is not named: the
+    /// installer knows what to install, and 1.7.0 relied on this to update into axKit (docs/axKit/SPEC.md B-6).
+    /// </summary>
     private static bool IsComplete(string folder) =>
         File.Exists(Path.Combine(folder, "install.ps1")) && Directory.Exists(folder) && Directory.GetFiles(folder, "*.exe").Length > 0;
 }

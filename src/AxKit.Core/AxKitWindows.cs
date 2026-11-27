@@ -44,9 +44,12 @@ public static class AxKitWindows
     }
 
     /// <summary>
-    /// The app a window's title names (<see cref="Title"/>): the whole title when it is one part; otherwise the first
-    /// part after the first that is an app's name, so that a name with a comma in it ("Smith, John.docx") still finds
-    /// its app; the second part when none is.
+    /// The app a window's title names (<see cref="Title"/>): the whole title when it is one part; otherwise the last
+    /// part that is an app's name and stands before the path (the first part after the second that is a whole path,
+    /// a mark of unsaved changes before it left out), or the last such part of all in a title without a path. So a
+    /// name with a comma in it ("Smith, John.docx") still finds its app, and so does one that holds an app's name
+    /// as a part of its own (a folder "ideas, axTask" open in axFile, which was named axTask until 2026-11-27). The
+    /// second part when no part is an app's name.
     /// </summary>
     public static string AppOf(string title)
     {
@@ -56,7 +59,10 @@ public static class AxKitWindows
             return title;
         }
 
-        return parts.Skip(1).FirstOrDefault(part => Dispatch.ByName(part) is not null) ?? parts[1];
+        // The path comes after the name and the app: never one of the first two parts ("C:\, axFile" is a name).
+        var path = Array.FindIndex(parts, 2, part => Path.IsPathFullyQualified(part.TrimStart('*')));
+        var before = path < 0 ? parts.Length : path;
+        return parts.Take(before).Skip(1).LastOrDefault(part => Dispatch.ByName(part) is not null) ?? parts[1];
     }
 
     /// <summary>The Open windows list: the windows of the bundle's apps other than the current one, most recently used first.</summary>

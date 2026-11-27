@@ -146,7 +146,6 @@ public class AxKitList : ListBox
         };
     }
 
-    /// <summary>Any move of the selection but the search's own (an arrow, a command, the list filled anew) starts a new search, as in File Explorer: a letter typed just after it never continues the letters before (found by axAutomate, 2026-10-24: "s", then keys, then "b" within the second searched "sb").</summary>
     /// <summary>
     /// The focus arrived in the list from outside it (AX-7.11, framework FW-3.8): the list says so itself, through
     /// the window it is in, which holds the user's switch and plays the sound once. Every list of every window is
@@ -229,6 +228,7 @@ public class AxKitList : ListBox
         return target;
     }
 
+    /// <summary>Any move of the selection but the search's own (an arrow, a command, the list filled anew) starts a new search, as in File Explorer: a letter typed just after it never continues the letters before (found by axAutomate, 2026-10-24: "s", then keys, then "b" within the second searched "sb").</summary>
     protected override void OnSelectedIndexChanged(EventArgs e)
     {
         if (!_jumping)

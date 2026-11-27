@@ -26,7 +26,9 @@ Ctrl+S saves and axDown says "Saved"; Ctrl+Enter saves too. A new document asks 
 
 When another program changes the file while it is open here, for example Claude editing it while you are in axClaude, axDown notices when you come back to its window: with nothing unsaved it reloads the file, keeps your line, and says "Reloaded, notes.md changed on disk"; with unsaved changes it says "notes.md changed on disk; Save will ask", and Ctrl+S then offers Write over, Reload and lose mine, or Cancel.
 
-axDown writes a file back the way it found it: the same encoding, with or without a byte order mark, and the same kind of line ending. The status bar shows what it found, for example "UTF-8 · CRLF". A new document is UTF-8 without a mark. If the file changed on disk while you had it open, saving asks before writing over it.
+axDown writes a file back the way it found it: the same encoding, with or without a byte order mark, and the same kind of line ending. The status bar shows what it found, for example "UTF-8 · CRLF". A new document is UTF-8 without a mark. If the file changed on disk while you had it open, saving asks before writing over it; the same when you opened a name that was no file yet and another program has made that file since.
+
+An older file may be written in a Windows code page, which holds a few hundred characters and no more; the status bar then says, for example, "Windows-1252". When you save such a file with a character in it that its code page cannot hold (an arrow, an emoji, a letter of another script), axDown writes nothing and asks "Save as UTF-8?", naming the first such character and its line: Enter saves the file as UTF-8, which holds every character, and the status bar says "UTF-8" from then on; Escape writes nothing, and you can take the character out and save again.
 
 The title is the file's name, then axDown, then the file's full path, with a star in front of the path while there are unsaved changes: "notes.md, axDown, *C:\work\notes.md". A new text is "Untitled, axDown".
 

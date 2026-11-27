@@ -218,19 +218,9 @@ public sealed partial class TaskForm
                 change = await Task.Run(() => Approvals.Sign(Approvals.ChangeText(publicKey), oldKeyText, oldPassphrase ?? string.Empty));
             }
 
-            // The change's line and the public half first, the key itself last and by a move: whatever fails on the
-            // way, the key file is the old one whole or the new one whole, never half, and the old key is not lost
-            // before its signature of the change is on disk.
-            var folder = Path.GetDirectoryName(keyFile)!;
-            if (change is not null)
-            {
-                await File.WriteAllTextAsync(Path.Combine(folder, OutsideReports.ChangeFileName), $"Approval key changed: {change}\r\n");
-            }
-
-            await File.WriteAllTextAsync(Path.Combine(folder, OutsideReports.PinnedFileName), Approvals.PinnedText(publicKey));
-            var written = keyFile + ".new";
-            await File.WriteAllTextAsync(written, file);
-            File.Move(written, keyFile, overwrite: true);
+            // The change's line and the public half first, the key itself last and by a move, and nothing of it left
+            // when a write fails (OutsideReports.WriteKey).
+            await Task.Run(() => OutsideReports.WriteKey(keyFile, file, publicKey, change));
 
             Announce($"Approval passphrase set. The key's fingerprint is {SpokenFingerprint(publicKey)}", true);
         }

@@ -43,6 +43,9 @@ public sealed partial class TaskForm
     /// <summary>The action the window last asked about by saying what it does (a move or an open, TK-7a.3), as its mark; null when none waits for its second press.</summary>
     private string? _askedAction;
 
+    /// <summary>Whether that first run was made for an AI tool: the run after it then acts once and accepts nothing.</summary>
+    private bool _askedActionForAiTool;
+
     /// <summary>The status bar's second part (AF-7.6): the top folder, with "Running" and the action's name before it while a program of an action runs.</summary>
     private string PlaceText => _running is { } running ? $"Running {running}. {TopFolder}" : TopFolder;
 
@@ -283,14 +286,14 @@ public sealed partial class TaskForm
                 SetFields(sets, action.Name);
                 return;
             case ListActions.MoveKind:
-                if (!action.AsksFirst || AcceptedOrAsked(action, folder, how, pressed))
+                if (!action.AsksFirst || AcceptedOrAsked(action, folder, how, pressed, forAiTool))
                 {
                     MoveItems(items, folder, action.To, action.Name);
                 }
 
                 return;
             case ListActions.OpenKind:
-                if (!action.AsksFirst || AcceptedOrAsked(action, folder, how, pressed))
+                if (!action.AsksFirst || AcceptedOrAsked(action, folder, how, pressed, forAiTool))
                 {
                     OpenTarget(item, action.Open);
                 }
@@ -311,9 +314,13 @@ public sealed partial class TaskForm
     /// nothing; the same action run again, still the same in the file, accepts it, for good where the settings can
     /// be saved, and acts. A configuration that came from elsewhere or was rewritten so never moves an item or opens
     /// a program or an address at the first press. An acceptance of the action keys there were before 2026-11-21
-    /// stands (the key's digit and the action as it was then, <see cref="ActionKeys.MarkText"/>).
+    /// stands (the key's digit and the action as it was then, <see cref="ActionKeys.MarkText"/>). An acceptance is
+    /// the user's own two presses: a run made for an AI tool (<paramref name="forAiTool"/>) is said and done the same
+    /// way, the first saying and the second acting, but it never accepts the action for good, and neither does the
+    /// user's one press after an AI tool's (until 2026-11-27 an AI tool that ran a move or an open twice had
+    /// accepted it for every later press, unlike a run or a terminal action).
     /// </summary>
-    private bool AcceptedOrAsked(ConfiguredAction action, string folder, string how, bool pressed)
+    private bool AcceptedOrAsked(ConfiguredAction action, string folder, string how, bool pressed, bool forAiTool)
     {
         var mark = ListActions.MarkText(folder, action);
         var before = action.Does == ListActions.MoveKind ? new ListAction(action.Name, Move: action.To) : new ListAction(action.Name, Open: action.Open);
@@ -325,7 +332,7 @@ public sealed partial class TaskForm
         if (_askedAction == mark)
         {
             _askedAction = null;
-            if (_settings.AcceptAction(SettingsPath, mark))
+            if (!forAiTool && !_askedActionForAiTool && _settings.AcceptAction(SettingsPath, mark))
             {
                 SaveSettings();
             }
@@ -334,6 +341,7 @@ public sealed partial class TaskForm
         }
 
         _askedAction = mark;
+        _askedActionForAiTool = forAiTool;
         Announce($"{how} in this list now {action.Described}. {(pressed ? "Press it again" : "Choose it again")} to do it.", true);
         return false;
     }

@@ -40,7 +40,7 @@
 - `KeyChord` (docs/axKit/user-workflows.md WF-2.2, 2026-11-15): the one chord vocabulary, the names a key press is
   written with, each with its virtual key code: a letter or a digit by itself, enter, escape (also esc), tab, space,
   backspace, delete, insert, the arrows, home, end, pageup, pagedown, plus, minus, period, comma, apps, f1 to f12,
-  slash, semicolon, and add and subtract for the numeric keypad's plus and minus. `Code` (a name's code, in any case,
+  slash, semicolon, apostrophe, and add and subtract for the numeric keypad's plus and minus. `Code` (a name's code, in any case,
   null for none), `Name` (a code's first name), `Text` (a chord, the modifiers in the order ctrl, shift, alt and the
   key, in lower case: "ctrl+shift+w"; empty for a code without a name), `Normal` (a press put in that order, as given
   when a part is unknown) and `IsCommandChord` (it carries ctrl or alt, or its key is a function key). The automation
@@ -82,3 +82,5 @@
   (`Compose`) and stripped (`Strip`) from tables of their own, because the executable runs with invariant
   globalization, where `string.Normalize` returns its input; `TextMatch.Fold` and axFile's lookalike names use it. The
   test projects run in invariant mode too (`tests/Directory.Build.props`), which is what found both.
+
+- The review of 2026-11-27: `AxKitWindows.AppOf` takes the last part that is an app's name before the path (the first part after the second that is a whole path), so a folder "ideas, axTask" open in axFile is axFile's; `FileSize.Text` chooses the unit after rounding, never "1024 KB".

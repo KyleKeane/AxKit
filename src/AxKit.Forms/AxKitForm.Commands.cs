@@ -8,6 +8,9 @@ public abstract partial class AxKitForm
 {
     // ---- the window's commands as data (docs/axKit/user-workflows.md WF-2.3), for the automation channel ----
 
+    /// <summary>What the listing gives in a notice's place while the key test runs.</summary>
+    private const string KeyTestTitle = "Key test";
+
     /// <summary>
     /// The window's commands as data, for the automation channel's <c>commands data</c> (docs/axKit/user-workflows.md
     /// WF-2.3, section 5.2): the menu bar's entries as the palette and the AI tools read them
@@ -23,9 +26,6 @@ public abstract partial class AxKitForm
     /// its <see cref="Command.When"/> says. While the key test runs (AX-8.12) no chord acts either: every row's
     /// <c>now</c> is empty and the listing names the key test where a notice's title stands.
     /// </summary>
-    /// <summary>What the listing gives in a notice's place while the key test runs.</summary>
-    private const string KeyTestTitle = "Key test";
-
     internal WindowCommands CommandRows()
     {
         var verb = AppVerb;

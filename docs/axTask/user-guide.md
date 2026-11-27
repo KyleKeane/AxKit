@@ -143,7 +143,9 @@ The item's form:
   - a text is a box of one line; a long text a box of several lines, where Enter makes a new line;
   - a check is a check box, which Space checks and unchecks;
   - a date is a box that takes 2026-10-30, 30 October 2026, today, tomorrow, +3 for three days on, or a weekday such
-    as friday; a date and time takes a date, a space and a time: tomorrow 14:00;
+    as friday; a day and a month without a year, 5 January, is the next such day, today included, so it is never a
+    day that has passed: typed in December, 5 January is next year's; a date and time takes a date, a space and a
+    time: tomorrow 14:00;
   - a choice is a list of its options: Up and Down move, and nothing is chosen until you leave the list. While the
     field holds none of them the list starts on "Not chosen";
   - a link is a box that takes the title of the item it points to, in any list.

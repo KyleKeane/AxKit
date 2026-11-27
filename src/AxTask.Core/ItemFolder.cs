@@ -117,7 +117,10 @@ public static class ItemFolder
         var configs = new Dictionary<string, ListRead>(StringComparer.OrdinalIgnoreCase) { [Path.Combine(folder, ItemDocument.ListFile)] = own };
         foreach (var file in new DirectoryInfo(folder).EnumerateFiles())
         {
-            if (Hidden(file) || file.Name.Equals(ItemDocument.ListFile, StringComparison.OrdinalIgnoreCase))
+            // The list's own two files are no items and are not counted as files not shown: its configuration and,
+            // when it keeps one, its history (TK-4.11; counted until 2026-11-27, "1 file not shown").
+            if (Hidden(file) || file.Name.Equals(ItemDocument.ListFile, StringComparison.OrdinalIgnoreCase)
+                || file.Name.Equals(ItemHistory.FileName, StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
@@ -226,8 +229,7 @@ public static class ItemFolder
         {
             var text = TextDocument.Read(path).Text;
             var flat = FlatItem.Parse(text);
-            // The link is a path from the item's own folder, and never leads off this computer (S-5's rule).
-            if (Resolve(path, flat.Schema.Trim()) is not { } configPath)
+            if (ConfigurationFile(path, flat.Schema.Trim()) is not { } configPath)
             {
                 return new ItemFile(path, flat, null, text, $"Its configuration, {flat.Schema.Trim()}, is not a file beside it");
             }
@@ -245,6 +247,27 @@ public static class ItemFolder
         {
             return null;
         }
+    }
+
+    /// <summary>
+    /// The file an item's <c>"schema"</c> names (AF-13.2), a path from the item's own folder; null for one that is not
+    /// read. A file in the item's own folder (<c>list.json</c>) is read wherever the folder is: the folder was just
+    /// read to get the item, so nothing new is reached. A link that leaves the folder follows the rule for links
+    /// between items (<see cref="Resolve"/>, S-5): never off this computer. Until 2026-11-27 the own folder's file
+    /// went by that rule too, and every item of a folder of lists on a share or a mapped drive (Documents kept on a
+    /// server) was shown as plain text that nothing could change.
+    /// </summary>
+    public static string? ConfigurationFile(string item, string schema)
+    {
+        var relative = schema.Replace('/', Path.DirectorySeparatorChar);
+        if (relative.Length == 0 || Path.IsPathRooted(relative) || relative.Contains(':'))
+        {
+            return null;
+        }
+
+        var folder = Path.GetDirectoryName(item)!;
+        var target = Path.GetFullPath(Path.Combine(folder, relative));
+        return string.Equals(Path.GetDirectoryName(target), Path.GetFullPath(folder), StringComparison.OrdinalIgnoreCase) || LocalPaths.IsLocal(target) ? target : null;
     }
 
     /// <summary>A list's configuration from its <c>list.json</c>; null when there is none or it does not read (AF-11.7).</summary>

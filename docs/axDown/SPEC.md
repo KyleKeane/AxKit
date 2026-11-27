@@ -122,6 +122,16 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
   ("UTF-8", "UTF-8 with BOM", "UTF-16 LE", "Windows-1252").
 - AD-3.3 Writing: the text goes back in the remembered encoding, with the mark when there was one. A new document is
   UTF-8 without a mark.
+- AD-3.3a A character the file's encoding cannot hold (2026-11-27). A file read in a Windows code page (AD-3.1)
+  holds only that page's characters; one typed or pasted from outside it (an arrow, an emoji, a letter of another
+  script) was written as a question mark, or as a letter that looks like it, without a word. Before a save the
+  text is checked against the encoding (`TextDocument.Holds`: it comes back the same from its bytes; UTF-8 and
+  UTF-16 hold everything). When it does not fit, nothing is written and a notice asks, "Save as UTF-8?": it names
+  the encoding, the first character that does not fit and its line, and what would happen; **Save as UTF-8**
+  (Enter) writes the file as UTF-8 without a mark, its line ending kept, and the status bar says "UTF-8" from then
+  on; **Cancel** (Escape) writes nothing. Asked once per save; after Save as UTF-8 the document is UTF-8. The item
+  apps' files (axTask, axTemplate, the reports list) are written by axKit, not typed into: a file of theirs found
+  in a code page that cannot hold the new text is written as UTF-8 without a question (`Changes`, tested).
 - AD-3.4 Line endings: the file's first line ending (`\r\n`, `\n` or `\r`) is remembered and used for every line on
   save; a file with none keeps `\r\n`. The status bar shows it ("CRLF", "LF"). A lone LF or CR in the text (pasted
   from a Unix clipboard) goes out as the file's ending too (`TextDocument.ToBytes`, tested; until 2026-10-23 a CRLF
@@ -137,11 +147,17 @@ UTF-8, UTF-16 and the system code page; files that are not text; files over 32 M
   changes and a changed file, the editor reloads it, keeps the caret on its line and column (on a line that got shorter, at its end, never
   between a CR and its LF: `TextLines`, tested, 2026-10-23), and says "Reloaded,
   <name> changed on disk"; a reload that cannot read the file (another program still holds it) is the error notice
-  with the text kept, and the file is not compared again until the next read or save (until 2026-10-23 the editor
+  with the text kept; that same file is not tried again on coming back to the window, and Save then asks as for
+  any changed file, since what is on disk is not what the window holds (until 2026-11-27 Save wrote over it
+  without a word; until 2026-10-23 the editor
   was emptied and "Reloaded" said over the error); with unsaved changes it says once, until the file changes again,
   "<name> changed on disk; Save will ask". Save with a changed file asks through a notice ("<name> was changed by another program since you
   opened it. Write over it, or reload it and lose your changes?") with Write over (Enter), Reload and lose mine, and
-  Cancel (Escape); Reload drops the unsaved text and reloads with the caret kept, saying "Reloaded". No merging,
+  Cancel (Escape); Reload drops the unsaved text and reloads with the caret kept, saying "Reloaded". A file that was
+  not there when its path was opened (AD-3.7: an empty document of that name, which the first save creates) and
+  that another program has made since is a changed file too: reloaded on coming back with nothing unsaved, and
+  asked about at the save, "<name> was made by another program since you opened it. …" (2026-11-27; until then it
+  was not compared at all, and Ctrl+S, or Ctrl+Enter since 2026-11-26, wrote over it). No merging,
   which is git's work, and no deleted-file case (a file that is gone is simply not compared). Asked for on
   2026-10-18 with axClaude editing files open in axDown; the same in axJSON, the same shell.
 - AD-3.7 A file over 32 MB is refused with a notice, since the EDIT control stops being usable long before that, and

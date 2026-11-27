@@ -16,7 +16,6 @@ public sealed class FlatItem
     public const string SchemaKey = "schema";
 
     private static readonly JsonSerializerOptions Indented = new() { WriteIndented = true, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
-    private static readonly JsonDocumentOptions Lenient = new() { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip };
 
     private readonly JsonObject _root;
 
@@ -48,17 +47,17 @@ public sealed class FlatItem
     public static bool IsItem(JsonNode? node) =>
         node is JsonObject root && root[SchemaKey] is JsonValue value && value.TryGetValue<string>(out var schema) && schema.Trim().Length > 0;
 
-    /// <summary>The item in a file's text; an <see cref="InvalidDataException"/> when it is not JSON, not an object, or names no configuration.</summary>
+    /// <summary>The item in a file's text; an <see cref="InvalidDataException"/> when it is not JSON, names a member twice (<see cref="JsonText"/>), is not an object, or names no configuration.</summary>
     public static FlatItem Parse(string text)
     {
         JsonNode? node;
         try
         {
-            node = JsonNode.Parse(text, documentOptions: Lenient);
+            node = JsonText.Parse(text, lenient: true);
         }
         catch (JsonException ex)
         {
-            throw new InvalidDataException(ex.LineNumber is { } line ? $"it is not JSON at line {line + 1}" : "it is not JSON", ex);
+            throw new InvalidDataException(JsonText.Why(text, ex, lenient: true), ex);
         }
 
         if (node is not JsonObject root)

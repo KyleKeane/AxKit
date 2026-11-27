@@ -11,14 +11,14 @@ public static class MenuText
     public static string Plain(string text) =>
         text.Replace("&&", "\0").Replace("&", string.Empty).Replace("\0", "&").TrimEnd('.', '…').Trim();
 
+    /// <summary>A number with its noun, spoken: "1 item", "3 items" (the one plural rule, written in four places until 2026-11-24).</summary>
+    public static string Count(int count, string noun) => $"{count} {(count == 1 ? noun : noun + "s")}";
+
     /// <summary>
     /// What a check item says after it was chosen where no menu shows its new state (AX-10.2,
     /// docs/axKit/command-language.md CL-4.7): "Word wrap, checked", "Word wrap, not checked". The one place for the
     /// words: the command palette and the automation channel's choose both say it through the window base's
     /// <c>ClickFor</c>.
     /// </summary>
-    /// <summary>A number with its noun, spoken: "1 item", "3 items" (the one plural rule, written in four places until 2026-11-24).</summary>
-    public static string Count(int count, string noun) => $"{count} {(count == 1 ? noun : noun + "s")}";
-
     public static string CheckSaid(string name, bool isChecked) => $"{name}, {(isChecked ? "checked" : "not checked")}";
 }

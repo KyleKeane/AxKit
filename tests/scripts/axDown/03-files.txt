@@ -131,6 +131,42 @@ do Save
 expect said ! Saved
 run findstr /c:"Created by Ctrl+S." created.md
 
+# Check: Saving a name that another program made a file of since asks first
+# AD-3.6 (2026-11-27): the path named no file when it was opened, and another program has made that file since: Save
+# asks as for any file changed on disk, and Escape keeps both. Until then Ctrl+S wrote over the other program's file.
+start down {temp}\made-since.md
+expect focus made-since.md
+type Mine.
+run echo Theirs.> made-since.md
+do Save
+expect state "notice":"The file changed on disk"
+expect state was made by another program since you opened it.
+keys escape
+expect state "notice":null
+run findstr /c:"Theirs." made-since.md
+
+# Check: A character the file's code page cannot hold asks before the save
+# AD-3.3a (2026-11-27): an arrow typed into the Windows-1252 file. Save asks and names it; Escape writes nothing; Enter
+# saves as UTF-8, the accented letter and the arrow both whole, and the status bar says UTF-8. Until then the arrow
+# was written as a question mark without a word.
+start down {temp}\ansi.txt
+expect focus ansi.txt
+expect state Windows-1252
+keys ctrl+end
+type →
+do Save
+expect state "notice":"Save as UTF-8?"
+expect state cannot hold every character of the text now: the first is → in line 2
+keys escape
+expect state "notice":null
+run powershell -NoProfile -Command "$b = [IO.File]::ReadAllBytes('ansi.txt'); if ($b -contains 0xE9 -and $b -notcontains 0xE2 -and $b -notcontains 0x3F) { exit 0 } else { exit 1 }"
+do Save
+expect state "notice":"Save as UTF-8?"
+keys enter
+expect said ! Saved
+expect state UTF-8 · CRLF
+run powershell -NoProfile -Command "$t = [Text.Encoding]::UTF8.GetString([IO.File]::ReadAllBytes('ansi.txt')); if ($t.Contains('caf' + [char]0xE9) -and $t.Contains([string][char]0x2192)) { exit 0 } else { exit 1 }"
+
 # 3.10: Open recent file from the palette is played in 14-recent-from-the-palette; the real menu needs the foreground (manual).
 
 # Check: Showing the file of an untitled document says there is no file yet

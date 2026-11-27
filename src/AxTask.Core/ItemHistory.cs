@@ -42,9 +42,13 @@ public static class ItemHistory
     /// says keep a history (it is asked with a list's folder). Only items count: a file of a list's folder that ends in
     /// ".json" and is not list.json. A write gives a line for each field whose value changed, or "made" when the file
     /// was made and "removed" when it went; a move between two lists gives "moved to" in the one and "moved from" in
-    /// the other, a move inside one list nothing (a rename's line is its Title's).
+    /// the other, a move inside one list nothing (a rename's line is its Title's). Every line names the item by its
+    /// Title, which is what <see cref="Of"/> finds an item's lines by: for a move, the Title a write of the same step
+    /// gives the file, or the one <paramref name="titleAt"/> reads at the path the file has now, and the file's name
+    /// only when neither knows (until 2026-11-27 always the file's name, so that the moves of an item titled
+    /// "a/b: c?" or kept as "Report - 2.json" were never found again).
     /// </summary>
-    public static List<(string Folder, string Line)> Lines(IReadOnlyList<FileChange> parts, DateTime now, Func<string, bool> keeps)
+    public static List<(string Folder, string Line)> Lines(IReadOnlyList<FileChange> parts, DateTime now, Func<string, bool> keeps, Func<string, string?>? titleAt = null)
     {
         var time = now.ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
         var lines = new List<(string, string)>();
@@ -64,7 +68,14 @@ public static class ItemHistory
                     continue;
                 }
 
-                var title = Path.GetFileNameWithoutExtension(part.To!);
+                var written = parts.LastOrDefault(other => !other.IsMove && other.After is not null
+                    && (other.Path.Equals(part.Path, StringComparison.OrdinalIgnoreCase) || other.Path.Equals(part.To, StringComparison.OrdinalIgnoreCase)));
+                var title = TitleOf(Fields(written?.After)) ?? titleAt?.Invoke(part.To!) ?? string.Empty;
+                if (title.Trim().Length == 0)
+                {
+                    title = Path.GetFileNameWithoutExtension(part.To!);
+                }
+
                 if (keeps(from))
                 {
                     lines.Add((from, Line(time, title, null, null, null, MovedTo, Path.GetFileName(to))));
@@ -175,7 +186,7 @@ public static class ItemHistory
 
         try
         {
-            return JsonNode.Parse(text) as JsonObject;
+            return JsonText.Parse(text) as JsonObject;
         }
         catch (JsonException)
         {
@@ -211,7 +222,7 @@ public static class ItemHistory
     {
         try
         {
-            if (JsonNode.Parse(line.Trim()) is not JsonObject o || o["time"] is not JsonValue time || o["item"] is not JsonValue item)
+            if (JsonText.Parse(line.Trim()) is not JsonObject o || o["time"] is not JsonValue time || o["item"] is not JsonValue item)
             {
                 return null;
             }

@@ -19,5 +19,5 @@ Everything of axCalc that needs no window. Unit tested in `tests/AxCalc.Tests`. 
 ## Gotchas
 
 - A trigonometric result is rounded at the 15th decimal place, so that sin(30°) is 0.5 and sin(180°) is 0 rather than 1.2E-16 (`Trig`); tan of an odd multiple of 90° is the error "not a real number".
-- `2e3` is a number (2000) but `2e` is 2 followed by the unexpected name e: an exponent is read only when a digit follows the e and its sign.
+- `2e3` is a number (2000) but `2e` is 2 followed by the unexpected name e: an exponent is read only when a digit follows the e and its sign. A dot with no digit on either side is "unexpected ." whatever follows (`.e5` too, which until 2026-11-27 was .NET's format exception, caught by no one); `1.` and `1.e2` are numbers.
 - The executable runs with invariant globalization; every number is parsed and formatted with `CultureInfo.InvariantCulture` anyway, so that a decimal comma never appears.
