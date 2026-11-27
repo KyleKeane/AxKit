@@ -442,6 +442,14 @@ Each origin, by function and file, down to the code that runs the command.
 - (e) **Speech**: an origin that hears a name and offers the matches as the palette does (CL-5.6 rules 1 and 2), and
   for a loose sentence hands the words to an AI, which asks through the AI tool's path (rule 3). It waits on (a) and
   (b). Large, and not started; what recognises the speech is not chosen.
+- (f) **A way walked and a macro run** (2026-11-27, the review before the release): two planned things run a
+  window's commands for the user in the window he is in, the palette walking a way through the workflow graph
+  (`workflow-graph.md` WG-6.1) and a macro of axAutomate's launcher (`docs/axAutomate/SPEC.md` AU-D4, its item). Each
+  is an origin of `CommandGate`, written into the table of section 3 with its tests before it is built: a read or a
+  change runs and is said as it runs; an act asks first, as it does for an AI tool; a notice it meets ends it. A
+  macro's steps are edges of the workflow graph, so the graph checks a macro before it runs: the place it expects to
+  be on, and the command that exists there. Neither is a second way to run a command: both end in the one click of
+  section 4.
 
 ## 9. Decisions
 

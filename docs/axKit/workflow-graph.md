@@ -206,7 +206,9 @@ Non-goals:
 
 - WG-6.1 **The palette says the way**: F1, then typing a goal's words, finds the goal and says its shortest path from
   where the focus is ("Ctrl+F2, then Ctrl+N"); Enter walks the whole path and Shift+Enter takes its first step (the
-  maintainer, 2026-11-26).
+  maintainer, 2026-11-26). A way walked for the user is a command run by something other than his hands: it passes
+  the command gate as an origin of its own, with its row of the table written first (`command-language.md` section 8
+  (f)), as a macro of axAutomate's launcher will; an act on the way asks first.
 - WG-6.2 **The how-to pages** (`workflows/`) give each goal its shortest path from its waypoint first, and the
   script's example after it.
 - WG-6.3 **AI help** answers "how do I" from the file rather than from the guides' prose, with its caution (rule 11).

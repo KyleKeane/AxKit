@@ -63,9 +63,14 @@ It is not a framework. An event is a record, the door is a method call on the UI
   already so for the texts (`ClaudeCodeTexts`, `ClaudeCodeKeys`, `ClaudeCodeHooks`, `ClaudeCodeTranscript`,
   `ClaudeCodeStream`), held by `ClaudeCodeTextsTests` and `ClaudeCodePlacesTests`. The same shape for the shell
   (`ShellTexts`), Git, KeePassXC's tool and MCP.
-- EV-4.2 **An adapter's output is events and nothing else.** It never plays a sound, never calls the window's
-  `Announce`, never touches a control. What the window shows (the conversation's lines, a list of answers) it builds
-  from events.
+- EV-4.2 **An adapter's output is a model and nothing else.** It never plays a sound, never calls the window's
+  `Announce`, never touches a control. As built (2026-11-17, stream-mode.md SM-3; said here on 2026-11-27, where this
+  line read "events and nothing else"): the adapter fills a model the window reads, the conversation's lines and a
+  few facts (working or not, what is asked, what waits, the work in the background), `ClaudeModel` for both of Claude
+  Code's sources; the window reads the model alone and raises what happens as kinds of event at the door. The kinds
+  are what reaches the user; the model is what a source gives a window; a program's own words stay in its adapter.
+  A third program of the kind (axChat's HTTP protocols, `docs/axChat/SPEC.md` CH-3.4) fills the same model
+  (`docs/axChat/spin-out.md` section 8).
 - EV-4.3 **Two adapters for one program are allowed, and are the point.** Claude Code read off its screen and Claude
   Code read off its non-interactive stream (`docs/axClaude/stream-mode.md`) raise the same kinds. The window does not
   know which one feeds it; a setting chooses, and one can stand in when the other breaks.

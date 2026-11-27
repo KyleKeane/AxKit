@@ -71,8 +71,8 @@ cleaner of the two hosts of Claude Code. But A changes three things the spec now
    conversation window's parts to `AxKit.Forms` (`ConversationForm` grows into it), Claude Code's shared places to
    `AxKit.ClaudeCode`. axClaude runs on the moved pieces after each commit, and its scripts and NVDA passes hold it
    still.
-4. Build axChat on them: the HTTP endpoint first (its spec's stages 1 and 2), then the Claude Code endpoint, moved
-   from axClaude with its scripts.
+4. Build axChat on them: the Claude Code endpoint first, moved from axClaude with its scripts (section 7, answer 1),
+   then the HTTP endpoint (its spec's stages 1 and 2).
 5. Then axClaude loses its stream mode, keeps the screen and the hand-over key, and its menus shrink.
 
 Steps 2 and 3 are the cost of doing it right: several days of moving code without changing behaviour, which the
@@ -86,8 +86,9 @@ window scripts and the NVDA passes make safe.
   features first. axClaude's screen mode stays maintained either way.
 - **The Store's copy** cannot run the stream today (SM-9.6). axChat's Claude Code endpoint would be absent there until
   measured.
-- **Scope.** axChat's spec is a small HTTP app; A makes it the bundle's main app. The first users' window should not
-  wait on the move: the HTTP endpoint can ship before the Claude Code endpoint moves.
+- **Scope.** axChat's spec is a small HTTP app; A makes it the bundle's main app. Its specification (CH-1 to CH-9)
+  is written for the HTTP endpoint alone and gains a section for the Claude Code endpoint before the build starts:
+  what of axClaude's FR and SM requirements axChat takes as they are.
 
 ## 6. The maintainer's leaning, 2026-11-26
 
@@ -98,25 +99,83 @@ the Claude Code endpoint's code in the shared projects (section 4, step 3), so t
 release and axClaude keeps its stream mode on the same code until axChat's endpoint has held, then keeps the screen
 alone. One code, two windows for a while, never two copies.
 
-## 7. Questions for the sitting with Fable
+## 7. The questions, with Fable's answers (2026-11-27)
 
-1. Shape A or B (section 3)? If A, is the Claude Code endpoint axChat's from its first release, or after the HTTP
-   endpoint has been used?
-2. Is the vocabulary of events (section 4, step 2) one list for an agent and a plain model, with the agent's extras
-   (permissions, background work, sessions) as optional parts, or two lists?
-3. Where Claude Code's shared places live: a project of their own (`AxKit.ClaudeCode`, recommended) or in
-   `AxKit.Core`?
-4. Which window: `ConversationForm` grown into axClaude's whole window, or axClaude's `MainForm` moved down and made
-   the conversation window type (framework.md)?
-5. What axClaude is named and offered as after the move: the same app with one mode, or "Claude Code's screens"
-   opened from axChat by a key.
-6. Does axHelp's conversation (still on the screen, SM-9.5) move with the stream to axChat's Claude Code endpoint?
+Written after the release review of that day, in which the stream's code was read whole by a reviewer of its own.
+Each answer is a recommendation; what is the maintainer's to settle says so.
 
-7. Beside axChat, if the sitting has time: a review of the workflow graph (`docs/axKit/workflow-graph.md`, its
-   decisions settled 2026-11-26) with its first graph file and its list of goals over the bounds, before its steps 4
-   and 5 (the scripts checked for where they land, the gate on map changes) are built.
+1. **Shape A or B? If A, which endpoint first?** Shape A, and the Claude Code endpoint first. The stream's code
+   exists, is recorded in 23 fixtures and was heard with NVDA; no HTTP protocol is written. The shortest way to a
+   working axChat is to give the conversation it already has a window of its own, and to add the HTTP endpoint
+   (openai-chat against a real llama.cpp server, CH-3.1) on the same contract next. That is also the maintainer's
+   leaning of section 6.
+2. **One vocabulary or two?** One contract, and it is not a list of events: it is the model the window reads
+   (section 8). An agent's extras are optional members that answer nothing for a plain model, exactly as
+   `ClaudeModel` already does for what only a screen has. `ChatEvent` of CH-3.4 stays, as the name of what an HTTP
+   protocol hands its model, never something the window sees.
+3. **Where Claude Code's shared places live.** A pure project of their own, `AxKit.ClaudeCode`: the stream, the
+   relay, the session file's reader, the texts, the launcher. `AxKit.Core` stays free of any one program's words
+   (rule 12), and a second agent later gets a project of the same shape.
+4. **Which window.** Neither as put. `ConversationForm` stays the shape (axCalc and the console stand on it). What
+   axClaude's `MainForm` does for any source, the questions in the control area, the reply's speech, Done, the
+   status bar's state, moves down into one shared class between `ConversationForm` and the apps, and both axChat
+   and axClaude derive from it. `ConsoleForm` stays the program in a pseudo console, for axClaude's screen and
+   axTerminal.
+5. **What axClaude is afterwards.** The same app and name, with one job: Claude Code's own screen, for the commands
+   that only it has, opened from axChat on the same conversation by one key, and handing it back by the same key
+   (the hand-over by session id exists, SM-8.3).
+6. **axHelp's conversation.** It moves to the Claude Code endpoint once axChat has been the maintainer's daily
+   window for a while; until then it stays where it is. It is one argument of a start, not a design.
+7. **The workflow graph.** Reviewed with the code: sound in its counting and its bounds; three faults of the crawl
+   are in the review's fixes (it would have crawled axClaude and axHelp in a whole run, and the real desktop under
+   the NVDA tier; it pressed a copy command and one that starts a program). Before step 6.1 of it is built (the
+   palette walking a way), read section 9 below: a way walked for the user is a command run by something other
+   than his hands, and has one place to pass through.
 
-## 8. Files to read for the sitting
+## 8. The one contract, and what must change before the move
+
+Three vocabularies stand in the documents for one thing: the kinds of event at the door (`events.md`, what reaches
+the user), the model a conversation window reads (`ClaudeModel`, stream-mode.md SM-3), and axChat's `ChatEvent`
+(CH-3.4). They are three layers, and the documents now say so the same way (`events.md` EV-4.2 as amended
+2026-11-27):
+
+- **A source's adapter reads its program** (a screen, a stream of lines, an HTTP stream) by that program's one
+  place (rule 12), and fills **a model**: the conversation's lines, and a few facts (working or not, what is asked,
+  what waits, the background's work).
+- **The window reads the model and nothing else**, and raises what happens **as kinds of event at the door** (rule
+  13). An adapter never raises one and never speaks.
+
+So the neutral conversation of section 4, step 2, is this: `ClaudeModel`'s abstract part, under a name that is no
+program's (`ConversationModel`), in `AxKit.Core`, with `ClaudeModel` deriving from it for what only Claude Code has
+(the permission mode, the agents and workflows, the screens). Four things must change in axClaude first, each
+without a change a user meets, each held by the scripts and fixtures that exist:
+
+1. **A question is answered by itself, not by a number.** Today every list's Enter hands a key ("3") to one
+   function, which gives it to whatever asks at that moment; the review found two ways this approves a question
+   that was never heard. A request becomes an object the list is shown for and answered through, and an answer can
+   reach no other request. The review's repair does the first half; the move finishes it.
+2. **The stream's questions stop travelling through the screen's forms.** `StreamAsking` builds the screen's prompt
+   row for the user's own words, and the window parses it back; the request carries "asks for words" itself.
+3. **The shared plumbing leaves screen-named places**: the pipe's frame (`Hooks/HookFrame`), the timed pipe read
+   (in `MainForm.Hooks.cs`), the launcher's environment (`Pty/ClaudeLauncher`), the session file's reader
+   (`Record`).
+4. **The window's end of the questions' pipe gets tests** (`AskChannel`, in the window's file today, with no test of
+   a wrong secret, the time limit or a stop during a wait), and moves first.
+
+The order of section 4 holds, with these four as its step 2 and the review's fixes before them.
+
+## 9. One place for everything that runs a command for the user
+
+Three planned things do the same act, a command of a window run by something other than the user's hands: the AI
+tools' run (built, mcp.md MC-7), axAutomate's launcher of macros (planned, `docs/axAutomate/SPEC.md` AU-D4), and
+the palette walking a way through the workflow graph (planned, `workflow-graph.md` WG-6.1). The command language
+already has the one place they must pass, `CommandGate.Decide(origin, mark, state)`, with a table of who may run
+what (`command-language.md` section 3). So: a macro and a walked way are each an origin of that gate, with their row
+of the table (a read or a change runs and is said; an act asks first, as it does for an AI tool), written before
+either is built; a macro's steps are edges of the graph, so the graph is also what checks a macro before it runs
+(the place it expects to be on, the command that exists there). The three documents point here.
+
+## 10. Files to read for the sitting
 
 `docs/axChat/SPEC.md`; `docs/axClaude/stream-mode.md` (SM-3, the seam; SM-6, what the stream does not have; SM-10.5, the two hours);
 `src/AxClaude.Core/Transcript/ClaudeModel.cs`; `src/AxClaude.Core/notes/stream.md`; `docs/axKit/framework.md` and

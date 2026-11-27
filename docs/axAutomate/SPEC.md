@@ -274,7 +274,13 @@ keys in place of its words on a line:
   `expect said` and `keys`; the window reads them as sentences.
 - AU-D4 Only axKit's windows, on the run's own desktop, in the first version: the channel is the only way in that is
   safe and leaves the user's keyboard alone. Driving other programs, or the user's own windows, is a new kind of
-  access, to be specified with its own safeguards if it is asked for.
+  access, to be specified with its own safeguards if it is asked for. Asked for on 2026-11-24 (the launcher that
+  runs a workflow as a macro in the window the user was in; its item on the priorities list holds his words and the
+  map of the wiring). What its specification builds on, settled on 2026-11-27: inside axKit's windows a macro runs
+  commands through the command gate as an origin of its own (`docs/axKit/command-language.md` section 8 (f)), its
+  steps are edges of the workflow graph, which checks them before a run (`docs/axKit/workflow-graph.md`); in another
+  program's window it has only what Windows gives of any program, and each step states the check that tells it went
+  wrong.
 
 - AU-D5 A block's steps are rows right after the step that holds them, numbered under it (5.1, 5.2) and named by
   their block, not a level to go into: the arrows go through a workflow in the order it can run, and the marks on

@@ -202,6 +202,12 @@ Non-goals:
 
 ## 5. Architecture
 
+Written on 2026-11-25 for a chat app over HTTP alone. Since 2026-11-26 the direction is wider: axChat is the
+conversation window for every source, Claude Code over its stream first (`spin-out.md`, with the answers of
+2026-11-27 in its section 7 and the one contract in its section 8). What follows holds for the HTTP endpoint; where
+it says `ChatForm` on `ConversationForm` and events posted to the window, read it with that contract: a protocol
+hands its `ChatEvent`s to a model of the shared kind, and the window reads the model.
+
 - `src/AxChat.Core` (pure, unit tested): `ChatDialect` and `Dialects` (the presets and the user's files read,
   CH-3.2, CH-3.3), the protocols (`OpenAiChat`, `AnthropicMessages`, `OllamaChat`: a request from a `Conversation`,
   a stream line read into `ChatEvent`s, a model list, an error), `StreamLines` (Server-Sent Events and one object a
