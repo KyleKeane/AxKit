@@ -63,6 +63,13 @@ public static partial class Redaction
     }
 
     /// <summary>
+    /// The text with every session id replaced by <c>&lt;id&gt;</c> and nothing else changed: for a log line that
+    /// names a program's command line, which can hold one (<c>claude --resume &lt;id&gt;</c>). An id is never logged
+    /// (until 2026-11-27 the line that says a program was started wrote it out).
+    /// </summary>
+    public static string WithoutIds(string text) => IdRegex().Replace(text, "<id>");
+
+    /// <summary>
     /// The text with the profile folder's own name replaced by <c>&lt;user&gt;</c> wherever the folder's path stands
     /// in it: with single or doubled backslashes or forward slashes, the drive also as Git Bash and WSL spell it,
     /// without regard to case. The name is taken whole, spaces and all, which the pattern for paths under Users cannot
@@ -91,7 +98,8 @@ public static partial class Redaction
     // When a usage limit resets, after Claude Code's row "You've used 76% of your weekly limit · resets 11pm
     // (America/Los_Angeles)" (2026-11-26): the hour and the account's time zone, up to the next control character. Read
     // as Latin-1, as MaskRecording reads the bytes, so the middle dot is its two bytes of UTF-8.
-    [GeneratedRegex(@"(?<=You've used \d{1,3}% of your [a-z ]{1,40} limit Â· resets )[^\x00-\x1F\x7F]+")]
+    // The kind of limit is any words up to the dot ("weekly", "5-hour", "Opus"), as the classifier's pattern reads it.
+    [GeneratedRegex(@"(?<=You've used \d{1,3}% of your [^\x00-\x1F\x7F\xC2]{1,60} limit Â· resets )[^\x00-\x1F\x7F]+")]
     private static partial Regex UsageResetRegex();
 
     /// <summary>

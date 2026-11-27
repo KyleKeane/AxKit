@@ -73,7 +73,7 @@ public static class QuestionReader
             }
 
             var answer = wrapped.Count == 0 ? match.Groups[3].Value : match.Groups[3].Value + " " + string.Join(" ", wrapped);
-            options.Add(new QuestionOption(key, answer, match.Groups[2].Success));
+            options.Add(new QuestionOption(key, answer, match.Groups[2].Success) { AsksForWords = AsksForWords(answer) });
             wrapped.Clear();
             top = row;
         }
@@ -147,6 +147,14 @@ public static class QuestionReader
         // A permission question's tool and target, which each answer's label carries (PermissionCore, D33).
         return new Question(title, text, options) { AllowsSeveral = several, FirstRow = first, Step = step, Core = PermissionCore.OfScreen(title, text) };
     }
+
+    /// <summary>
+    /// Whether Claude Code asks for the user's own words after this answer, on its "Enter text for option N" row: Other
+    /// (the other-answer fixture), and plan approval's "No, keep planning — shift+tab to approve with this feedback".
+    /// </summary>
+    public static bool AsksForWords(string answer) =>
+        answer.Equals(ClaudeCodeTexts.OtherAnswer, StringComparison.OrdinalIgnoreCase)
+        || answer.StartsWith(ClaudeCodeTexts.KeepPlanningAnswer, StringComparison.Ordinal);
 
     /// <summary>The highest answer a prompt row names ("5" in "Select with numbers [1-5]", "n" in "Enter y/n:"), or null.</summary>
     private static string? LastKey(string promptRow) =>

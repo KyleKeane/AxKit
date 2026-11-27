@@ -308,6 +308,82 @@ public class QuestionTests
     }
 
     [Fact]
+    public void The_row_for_the_users_own_words_is_the_same_wait_while_they_are_typed()
+    {
+        // Claude Code draws the typed words after the prompt on its row. The window knows what it waits on by this
+        // text: with the words in it, every key of a typed answer was a new thing to show (until 2026-11-27).
+        var model = new SessionModel(240, 50);
+        var prompts = new List<string>();
+        var rows = new List<string>();
+        model.Changed += () =>
+        {
+            if (model.TextPrompt is { } prompt)
+            {
+                if (!prompts.Contains(prompt))
+                {
+                    prompts.Add(prompt);
+                }
+
+                // The row itself, as the screen has it, with what was typed so far.
+                rows.Add(model.Lines.Last(line => line.Text.StartsWith("Enter text for", StringComparison.Ordinal)).Text);
+            }
+        };
+        Replay(model, "other-answer-claude2.1.281-240x50.vt");
+        Assert.Equal(["Enter text for option 4 (Other), or Escape for the list:"], prompts);
+        // The recording does hold the typed words on that row: the test would pass for nothing otherwise.
+        Assert.Contains(rows, row => row.EndsWith("tulip", StringComparison.Ordinal));
+
+        Assert.Equal("Enter text for option 4 (Other), or Escape for the list:", LineClassifier.TextPromptOf("Enter text for option 4 (Other), or Escape for the list: see (a): b"));
+        Assert.Equal("Enter text for option 3 (No, keep planning — shift+tab to approve with this feedback), or Escape for the list:",
+            LineClassifier.TextPromptOf("Enter text for option 3 (No, keep planning — shift+tab to approve with this feedback), or Escape for the list: smaller steps"));
+        Assert.Equal("Enter text for the name: x", LineClassifier.TextPromptOf("Enter text for the name: x"));
+    }
+
+    [Fact]
+    public void An_answer_that_asks_for_the_users_words_says_so()
+    {
+        // Other, and plan approval's "No, keep planning": Claude Code asks for the words next, on its "Enter text for
+        // option N" row. The window goes by this alone to say "Your words next" and to keep the sound of sending for
+        // the words (until 2026-11-27 it knew Other only, and "No, keep planning" sounded like a sent answer).
+        string[] plan =
+        [
+            "Permission Required: Ready to code?",
+            "Claude has written up a plan and is ready to execute. Would you like to proceed?",
+            "1. Yes, and use auto mode",
+            "2. Yes, manually approve edits",
+            "3. No, keep planning — shift+tab to approve with this feedback",
+            "Select with numbers [1-3]. Then Enter to submit or Escape to cancel:",
+        ];
+        Assert.Equal(["3"], QuestionReader.Read(plan, 5)!.Options.Where(option => option.AsksForWords).Select(option => option.Key));
+
+        string[] own = ["Question: Colour", "> Which colour?", "1. Red", "2. Other colours — more of them", "3. Other", "4. Chat about this", "Select with numbers [1-4]. Then Enter to submit or Escape to cancel:"];
+        Assert.Equal(["3"], QuestionReader.Read(own, 6)!.Options.Where(option => option.AsksForWords).Select(option => option.Key));
+    }
+
+    [Fact]
+    public void Two_questions_with_one_title_and_the_same_answers_differ_by_what_they_say()
+    {
+        // Two files to create in one reply: Claude Code asks both under one title with the same answers, so they are
+        // one question by the signature. The window tells the second from the answered first by the whole of it.
+        static string[] Create(string file) =>
+        [
+            "Permission Required: Create file",
+            file,
+            $"Do you want to create {file}?",
+            "1. Yes",
+            "2. Yes, allow all edits during this session",
+            "3. No",
+            "Select with numbers [1-3]. Then Enter to submit or Escape to cancel:",
+        ];
+        var first = QuestionReader.Read(Create("alpha.txt"), 6)!;
+        var second = QuestionReader.Read(Create("beta.txt"), 6)!;
+        Assert.Equal(first.Signature, second.Signature);
+        Assert.NotEqual(first.Content, second.Content);
+        Assert.Equal(first.Content, QuestionReader.Read(Create("alpha.txt"), 6)!.Content);
+        Assert.Equal("Create file beta.txt", second.Core);
+    }
+
+    [Fact]
     public void A_permission_question_starts_at_its_permission_row()
     {
         // Claude Code 2.1.281, --permission-mode default: the tip inside it is skipped, the tool rows above it are not
@@ -332,8 +408,8 @@ public class QuestionTests
         Assert.Equal("Permission Required: Bash command", question.Title);
         Assert.Equal(["echo hello-permission > perm-probe.txt", "Write hello-permission to a probe file", "Do you want to proceed?"], question.Text);
         Assert.Equal(2, question.FirstRow);
-        // The command by its first words, up to where its output goes; the tip skipped is no target.
-        Assert.Equal("Bash command echo hello-permission", question.Core);
+        // The command by its first words, up to where its output goes, with the mark that more follows; the tip skipped is no target.
+        Assert.Equal("Bash command echo hello-permission, and more", question.Core);
 
         // Plan approval (--permission-mode plan): a row left over from the tool call above it is not the title, and the
         // numbered steps of the plan are text, not answers.

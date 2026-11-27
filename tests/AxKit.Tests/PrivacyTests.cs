@@ -39,6 +39,34 @@ public partial class PrivacyTests
         Assert.Equal("Haiku 5.5 · Claude xxxxx", System.Text.Encoding.UTF8.GetString(Redaction.MaskRecording(System.Text.Encoding.UTF8.GetBytes("Haiku 5.5 · Claude Ultra"))));
     }
 
+    /// <summary>
+    /// A command line for the log (2026-11-27): the session's id it names is masked and nothing else changes, in both
+    /// forms of the option. Until then the line "Started claude ... --resume &lt;id&gt;" went into the log as it was.
+    /// </summary>
+    [Fact]
+    public void WithoutIds_masks_a_session_id_on_a_command_line_and_nothing_else()
+    {
+        const string id = "e585e125-b63e-4a5e-af77-b2eb1f6ddaa2";
+        Assert.Equal(@"claude.exe --ax-screen-reader --resume <id> --model haiku", Redaction.WithoutIds($"claude.exe --ax-screen-reader --resume {id} --model haiku"));
+        Assert.Equal("claude -p --resume=<id>", Redaction.WithoutIds($"claude -p --resume={id}"));
+        Assert.Equal(@"C:\Tools\claude.exe --continue", Redaction.WithoutIds(@"C:\Tools\claude.exe --continue"));
+    }
+
+    /// <summary>The lines of the log that say a program was started name its command line with the ids masked: the console window's, and axClaude's for Claude Code's stream.</summary>
+    [Fact]
+    public void A_program_started_is_logged_with_its_command_line_masked()
+    {
+        var root = SourceTexts.RepositoryRoot();
+        foreach (var file in new[] { @"src\AxKit.Forms\ConsoleForm.Process.cs", @"src\AxClaude\MainForm.Stream.cs" })
+        {
+            var started = File.ReadLines(Path.Combine(root, file)).Where(line => line.Contains("Log.Info($\"Started ", StringComparison.Ordinal)).ToList();
+            Assert.Single(started);
+            Assert.Contains("Redaction.WithoutIds(", started[0], StringComparison.Ordinal);
+            Assert.DoesNotContain("{options.CommandLine}", started[0], StringComparison.Ordinal);
+            Assert.DoesNotContain("{line.CommandLine}", started[0], StringComparison.Ordinal);
+        }
+    }
+
     [Fact]
     public void MaskRecording_masks_when_a_usage_limit_resets_byte_for_byte()
     {
@@ -51,6 +79,11 @@ public partial class PrivacyTests
         Assert.Equal(
             "\x1b[9;1HYou've used 76% of your weekly limit · resets xxxxxxxxxxxxxxxxxxxx\x1b[K\r\n$",
             System.Text.Encoding.UTF8.GetString(masked));
+        // A kind of limit with a digit or a capital is masked the same way (the classifier reads any words there).
+        Assert.Equal(
+            "You've used 90% of your 5-hour limit · resets xxxxxxxxxxxxxxxxxxx",
+            System.Text.Encoding.UTF8.GetString(Redaction.MaskRecording(System.Text.Encoding.UTF8.GetBytes(
+                "You've used 90% of your 5-hour limit · resets 3am (Europe/Lisbon)"))));
     }
 
     [Fact]

@@ -338,6 +338,31 @@ public sealed class McpTests
         Assert.True(noAnswer >= 0 && hold > noAnswer && broker.IndexOf("return McpAccess.WindowDidNotAnswer;", noAnswer, StringComparison.Ordinal) < hold);
     }
 
+    /// <summary>
+    /// axkit_open hands the start of an app to an open axKit window before the broker starts it itself (MC-6.5,
+    /// 2026-11-27): the broker is a child of the AI tool, and over axClaude's stream everything under Claude Code is
+    /// ended together, so that an axDown the broker had started went with a restart of Claude, its unsaved text lost.
+    /// The window starts only what needs no question: an app that is asked first is refused there. Read in the
+    /// source, since nothing but a run under Claude Code's own process tree shows it.
+    /// </summary>
+    [Fact]
+    public void An_app_an_AI_tool_opens_is_started_by_a_window_where_one_is_open()
+    {
+        var root = SourceTexts.RepositoryRoot();
+        var broker = File.ReadAllText(Path.Combine(root, "src", "AxKit.Forms", "McpBroker.cs"));
+        var handed = broker.IndexOf("\"start \" + JsonSerializer.Serialize(new { arguments })", StringComparison.Ordinal);
+        var own = broker.IndexOf("using var process = Process.Start(start);", StringComparison.Ordinal);
+        Assert.True(handed >= 0 && own > handed, "the window is asked before the broker starts the app itself");
+
+        Assert.Contains("\"start\" => StartApp(argument),", File.ReadAllText(Path.Combine(root, "src", "AxKit.Forms", "McpChannel.cs")), StringComparison.Ordinal);
+        var window = File.ReadAllText(Path.Combine(root, "src", "AxKit.Forms", "AxKitForm.Mcp.cs"));
+        var start = window.IndexOf("internal object McpStartApp(", StringComparison.Ordinal);
+        Assert.True(start >= 0);
+        var body = window[start..window.IndexOf("return new { opened = true };", start, StringComparison.Ordinal)];
+        Assert.Contains("McpTools.OpenArguments(", body, StringComparison.Ordinal);
+        Assert.True(body.IndexOf("McpTools.AsksFirst(", StringComparison.Ordinal) < body.IndexOf("WindowMenu.StartKept(", StringComparison.Ordinal), "an app asked first is refused before anything starts");
+    }
+
     [Fact]
     public void A_path_shown_for_the_users_yes_shows_its_hidden_characters()
     {

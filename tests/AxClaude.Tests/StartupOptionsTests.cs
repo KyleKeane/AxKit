@@ -162,4 +162,18 @@ public class StartupOptionsTests
         Assert.Equal(["claude", plain.Folder!], plain.RestartArguments(plain.Folder, messageSent: false));
         Assert.Equal(["claude"], plain.RestartArguments(null, messageSent: true));
     }
+
+    /// <summary>
+    /// The way back from Claude Code's stream to its screen (stream-mode.md SM-9.3) starts the window again as the
+    /// window it is, for the other source: its title, its model and hiding on close come along (until 2026-11-27 the
+    /// folder alone did, and axHelp's conversation came back as a plain window with another model). The window's own
+    /// arguments for Claude Code follow it, which is the caller's to add.
+    /// </summary>
+    [Fact]
+    public void The_same_window_for_the_other_source_keeps_what_makes_it_that_window()
+    {
+        var stream = StartupOptions.Parse([Folder, "--title", "axHelp", "--model", "haiku", "--hide-on-close", "--source", "stream"]);
+        var screen = (stream with { Source = AppSettings.SourceScreen }).RestartArguments(stream.Folder, messageSent: false);
+        Assert.Equal(["claude", stream.Folder!, "--title", "axHelp", "--model", "haiku", "--hide-on-close", "--source", "screen"], screen);
+    }
 }

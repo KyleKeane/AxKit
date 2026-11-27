@@ -225,6 +225,14 @@ public static partial class LineClassifier
     public static string? TextPromptAnswer(string text) =>
         ClaudeCodeTexts.TextPrompt().Match(text) is { Success: true } m ? m.Groups[1].Value : null;
 
+    /// <summary>
+    /// The row for the user's own words up to its own end, without what is typed after it ("Enter text for option 4
+    /// (Other), or Escape for the list: my own wor" is "Enter text for option 4 (Other), or Escape for the list:"); a
+    /// row of another form as it is.
+    /// </summary>
+    public static string TextPromptOf(string row) =>
+        ClaudeCodeTexts.TextPromptRow().Match(row) is { Success: true } m ? m.Value : row;
+
     /// <summary>The first row of the record Claude Code prints in an answered question's place, "●  User answered Claude's questions:".</summary>
     public static bool IsAnsweredLabel(string text) => ClaudeCodeTexts.AnsweredLabel().IsMatch(text);
 

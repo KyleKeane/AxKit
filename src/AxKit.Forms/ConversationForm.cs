@@ -358,7 +358,7 @@ public abstract class ConversationForm : AxKitForm
         Area.Clear();
     }
 
-    /// <summary>m, Ctrl+Shift+K or Navigate → Bookmark this line (axClaude FR-3.9): the model adds or removes the bookmark line and the result is spoken.</summary>
+    /// <summary>m, the window's own key for it (<see cref="TranscriptKeys.BookmarkLine"/>, Ctrl+K in axClaude) or Navigate → Bookmark this line (axClaude FR-3.9): the model adds or removes the bookmark line and the result is spoken.</summary>
     private void ToggleBookmark(Line line)
     {
         if (Model.ToggleBookmark(line) is not ({ } bookmark, var added))

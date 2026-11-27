@@ -72,6 +72,35 @@ public class SessionHandoverTests
         Assert.Null(SessionHandover.ResumedIn([ClaudeCodeStream.ContinueOption]));
     }
 
+    /// <summary>The forms of Claude Code's own options that were not read until 2026-11-27: <c>-c</c> for <c>--continue</c>, <c>--resume=&lt;id&gt;</c> as one argument, and a search term after <c>--resume</c>.</summary>
+    [Fact]
+    public void The_short_continue_the_one_argument_resume_and_a_search_term_are_read()
+    {
+        // -c continues, for both sources.
+        Assert.True(SessionHandover.Continues(["--model", "haiku", "-c"]));
+        Assert.True(SessionHandover.Continues([ClaudeCodeStream.ContinueOption]));
+        Assert.False(SessionHandover.Continues(["--model", "haiku"]));
+        Assert.Equal(["--model", "haiku", ClaudeCodeStream.ResumeOption, One], SessionHandover.ForStream(["--model", "haiku", "-c"], One));
+        Assert.Equal([ClaudeCodeStream.ResumeOption, One], SessionHandover.ForScreen(["-c"], One, One));
+        Assert.Equal(["-c"], SessionHandover.ForScreen(["-c"], One, Two));
+
+        // --resume=<id> names a session: nothing is to be chosen, and --continue beside it names none again.
+        Assert.Equal(One, SessionHandover.ResumedIn(["--resume=" + One]));
+        Assert.False(SessionHandover.AsksToChoose(["--resume=" + One]));
+        Assert.Equal(["--resume=" + One], SessionHandover.ForStream(["--resume=" + One, "-c"], Two));
+        Assert.Equal(["--resume=" + One, "--model", "haiku"], SessionHandover.WithChosen(["--resume=" + One, "--model", "haiku"], Two));
+
+        // A word after --resume that is no id and no option is Claude Code's search term for its own list: a
+        // conversation is to be chosen, and the term goes with the option when one was (it stayed, a stray argument).
+        Assert.True(SessionHandover.AsksToChoose([ClaudeCodeStream.ResumeOption, "lighthouse"]));
+        Assert.Equal([ClaudeCodeStream.ResumeOption, One, "--model", "haiku"], SessionHandover.WithChosen([ClaudeCodeStream.ResumeOption, "lighthouse", "--model", "haiku"], One));
+        Assert.Equal(["--model", "haiku"], SessionHandover.WithChosen(["--model", "haiku", ClaudeCodeStream.ResumeShortOption, "lighthouse"], null));
+        Assert.True(SessionHandover.AsksToChoose(["--resume=lighthouse"]));
+        Assert.Equal([ClaudeCodeStream.ResumeOption, One], SessionHandover.WithChosen(["--resume=lighthouse"], One));
+        // An option after a bare --resume is no search term and stays.
+        Assert.Equal([ClaudeCodeStream.ResumeOption, One, "--model", "haiku"], SessionHandover.WithChosen([ClaudeCodeStream.ResumeOption, "--model", "haiku"], One));
+    }
+
     [Fact]
     public void The_newest_is_the_session_file_written_last_directly_in_a_project_folder()
     {

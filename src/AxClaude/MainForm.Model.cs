@@ -66,6 +66,13 @@ internal sealed partial class MainForm
         // shown in the control area, and the message field put back when it went away, since Claude redraws a
         // question in passing.
         var waiting = WaitSignature;
+        if (_wait is { Answered: true, Stale: false } answered && AnsweredWaitOver(answered, waiting))
+        {
+            // The question the user answered has left the screen, or another stands under its title: whatever waits
+            // from here on is shown and said afresh, also when it reads as the one answered (MarkWaitAnswered).
+            _wait = answered with { Stale = true };
+        }
+
         if (waiting is null)
         {
             if (_wait is { Shown: false })
@@ -95,9 +102,10 @@ internal sealed partial class MainForm
                 _attention.Stop();
                 _attention.Start();
             }
-            else if ((waiting != _wait.Signature || ScreenNoticeOutdated) && !_attention.Enabled)
+            else if ((waiting != _wait.Signature || _wait.Stale || ScreenNoticeOutdated) && !_attention.Enabled)
             {
-                // Also an information screen's new lines (FR-2.11), which the settle puts into its notice.
+                // Also an information screen's new lines (FR-2.11), which the settle puts into its notice, and what
+                // waits after a wait that is over, which the settle shows afresh though it reads the same.
                 _attention.Start();
             }
         }
@@ -179,6 +187,16 @@ internal sealed partial class MainForm
     private void OnFrameSettled()
     {
         var waiting = WaitSignature;
+        // Not while the user's answer or text is still being typed out to Claude Code, nor, for an answered question
+        // that is over and yet stands as it stood, before Claude Code has had a settle's time to take the last key
+        // (AnsweredWait.SettleWaits, with the reasons): the settle comes again. The stamp of the user's act is the
+        // moment its last key will have gone (UserActedNow).
+        if (AnsweredWait.SettleWaits(Environment.TickCount64, _userActedAt, SettleMs, _wait is { Answered: true, Stale: true } answered && answered.Signature == waiting))
+        {
+            _attention.Start();
+            return;
+        }
+
         if (waiting is not null)
         {
             if (_wait is null || _wait.Stale || _wait.Signature != waiting || ScreenNoticeOutdated)

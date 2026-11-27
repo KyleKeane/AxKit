@@ -45,6 +45,7 @@ the process ended with code 0
 [ClaudeReply] claude: noted
 [UserEcho] you: /compact
 [System] System: Conversation compacted
+[Plain] Compacted
 [InputMarker h1] # Input 2
 [UserMessage] Which word did I ask you to remember? Reply with that word alone.
 [UserMessage] 

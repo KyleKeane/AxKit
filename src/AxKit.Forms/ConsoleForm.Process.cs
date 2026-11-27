@@ -66,7 +66,8 @@ public abstract partial class ConsoleForm
             return false;
         }
 
-        Log.Info($"Started {options.CommandLine} (pid {host.ProcessId}) in {options.WorkingDirectory}, console {options.Columns}x{options.Rows}");
+        // A session's id on the line (claude --resume <id>) is never logged: the line goes in with it masked.
+        Log.Info($"Started {Redaction.WithoutIds(options.CommandLine)} (pid {host.ProcessId}) in {options.WorkingDirectory}, console {options.Columns}x{options.Rows}");
         _host = host;
         LastOutputTick = Environment.TickCount64;
         return true;

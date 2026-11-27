@@ -1763,6 +1763,69 @@ Starts with: Open axClaude with the folder tools.
     You hear: Restarting.
     You hear: Ready.
 
+## Be asked again when Claude asks the same thing twice, with Claude Code's screen
+
+Starts with: Open axClaude with the folder sq.
+
+### Allow the first of two files that are asked alike
+
+You hear the sound Notice.
+You hear: Question.
+The focus moves to Permission Required: Create file. alpha.txt.
+1. Press Enter.
+    You hear: Sent: 1, Yes.
+
+### Hear the second file asked anew, with its own name on the answers
+
+You hear: Question.
+The focus moves to Permission Required: Create file. beta.txt.
+1. Press Enter.
+    You hear: Sent: 1, Yes.
+
+### Send a plan back and be asked for your words
+
+1. Press End.
+2. Press Enter.
+    You hear: Sent: 3, No, keep planning. Your words next.
+3. Type "Smaller steps".
+4. Press Enter.
+    You hear the sound Sent.
+    You hear: Sent: Smaller steps.
+
+## Have an answer go only to the question it was given to, over Claude Code's stream
+
+Starts with: Open axClaude with the folder st, fed by Claude Code's stream.
+
+### Refuse a first call
+
+1. Type "Change the notes".
+2. Press Enter.
+    You hear: Sent.
+    You hear: Question.
+3. Press Enter.
+    You hear: Sent: 1, No.
+    You hear: Done. claude: left as it was.
+
+## Have an AI tool's request wait for your answer, and go when Claude stops
+
+Starts with: Open axClaude with the folder rq.
+
+### Be asked before an AI tool runs a command that acts
+
+1. Ask Claude to run the command Next permission mode.
+    The tool answers: The window asks the user whether to run Next permission mode.
+
+## Interrupt a message right after sending it, and have it not sent again
+
+Starts with: Open axClaude with the folder im.
+
+### Interrupt a message right after sending it
+
+1. Type "second words".
+2. Press Enter.
+    You hear: Sent.
+3. Press Ctrl+I (Interrupt; Actions menu).
+
 ## Have a short exchange with Claude
 
 Starts with: Open axClaude with the folder a.

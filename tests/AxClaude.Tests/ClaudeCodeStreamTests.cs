@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using AxClaude.Core.Streaming;
 
@@ -508,5 +509,70 @@ public class ClaudeCodeStreamTests
         Assert.Equal("r9", document.RootElement.GetProperty("request_id").GetString());
         Assert.Equal("set_permission_mode", document.RootElement.GetProperty("request").GetProperty("subtype").GetString());
         Assert.Equal("acceptEdits", document.RootElement.GetProperty("request").GetProperty("mode").GetString());
+    }
+
+    /// <summary>
+    /// The answer that allows a call hands the call's input back, and must not grow on the way: written with the
+    /// encoder's own defaults, every character outside ASCII and every quote mark, angle bracket, ampersand and plus
+    /// sign became six characters, a large call's answer passed the frame's limit, and the user's yes came back as
+    /// "the window could not be reached" (found by the review of 2026-11-27).
+    /// </summary>
+    [Fact]
+    public void An_answer_that_hands_the_input_back_is_no_longer_than_the_input_needs()
+    {
+        // A question that just fits the frame: a file's content of words outside ASCII, with marks a page would escape.
+        var content = string.Concat(Enumerable.Repeat("naïve café <b>&</b> 'x' + ü ", 20_000));
+        var question = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new { tool_name = "Write", tool_use_id = "t1", input = new { file_path = "a.txt", content } },
+            new JsonSerializerOptions { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping }));
+        Assert.True(question.Length < AxClaude.Core.Hooks.HookFrame.MaxBody);
+
+        var ask = ClaudeCodeStream.ReadAsk(question)!;
+        foreach (var answer in new[] { ClaudeCodeStream.AllowAnswer(ask.Input), ClaudeCodeStream.AlwaysAnswer(ask.Input, ask.Tool) })
+        {
+            Assert.True(Encoding.UTF8.GetByteCount(answer) < AxClaude.Core.Hooks.HookFrame.MaxBody, $"{Encoding.UTF8.GetByteCount(answer)} bytes for a question of {question.Length}");
+            Assert.Contains("naïve café <b>&</b> 'x' + ü", answer, StringComparison.Ordinal);
+            Assert.True(AskRelay.IsAnswer(answer));
+            using var read = JsonDocument.Parse(answer);
+            Assert.Equal(content, read.RootElement.GetProperty("updatedInput").GetProperty("content").GetString());
+        }
+
+        // A line is still one line: a line break in a text is written as its escape.
+        Assert.DoesNotContain('\n', ClaudeCodeStream.UserLine("one\ntwo"));
+    }
+
+    /// <summary>
+    /// One depth for a question and its answer, wherever they are read or written (<see cref="ClaudeCodeStream.AskDepth"/>):
+    /// until 2026-11-27 the relay read Claude Code's request to 1024 levels and the window read the question to the
+    /// parser's own 64, so that a call nested deeper than that was refused in the window with the user never asked.
+    /// </summary>
+    [Fact]
+    public void A_call_nested_deeper_than_the_parsers_own_limit_is_read_and_answered()
+    {
+        const int levels = 200;
+        var nested = string.Concat(Enumerable.Repeat("{\"a\":", levels)) + "1" + new string('}', levels);
+        var question = Encoding.UTF8.GetBytes("{\"tool_name\":\"mcp__notes__save\",\"tool_use_id\":\"t1\",\"input\":{\"title\":\"x\",\"tree\":" + nested + "}}");
+
+        var ask = ClaudeCodeStream.ReadAsk(question);
+        Assert.NotNull(ask);
+        var allow = ClaudeCodeStream.AllowAnswer(ask.Input);
+        Assert.True(AskRelay.IsAnswer(allow));
+        Assert.Contains(nested, allow, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Words meant for the model alone are hidden only on a result that failed, which a refusal's and an interrupt's
+    /// is: a call that went well and printed a text beginning with the same words is shown as any other (until
+    /// 2026-11-27 the first words alone decided, and such a file's content was not shown).
+    /// </summary>
+    [Fact]
+    public void A_result_that_went_well_is_shown_whatever_its_first_words()
+    {
+        var printed = ClaudeCodeStream.Read("{\"type\":\"user\",\"message\":{\"content\":[{\"type\":\"tool_result\",\"tool_use_id\":\"c5\",\"is_error\":false,\"content\":\"" + ClaudeCodeStream.RefusedWords + " So says the note.\"}]}}");
+        var part = Assert.Single(printed.Parts);
+        Assert.False(part.Error);
+        Assert.Equal(ClaudeCodeStream.RefusedWords + " So says the note.", part.Output);
+
+        var refused = ClaudeCodeStream.Read("{\"type\":\"user\",\"message\":{\"content\":[{\"type\":\"tool_result\",\"tool_use_id\":\"c6\",\"is_error\":true,\"content\":\"" + ClaudeCodeStream.RefusedWords + "\"}]}}");
+        Assert.Equal(string.Empty, Assert.Single(refused.Parts).Output);
     }
 }

@@ -346,7 +346,8 @@ internal sealed partial class MainForm
             return;
         }
 
-        Log.Info($"Started {line.CommandLine} (pid {host.ProcessId}) in {folder}, over its stream");
+        // The session's id on the line (--resume <id>) is never logged: the line goes in with it masked.
+        Log.Info($"Started {Redaction.WithoutIds(line.CommandLine)} (pid {host.ProcessId}) in {folder}, over its stream");
         _launchedFolder = folder;
         KeepFilesOutOfGit();
         model.WorksIn(folder);
@@ -384,7 +385,8 @@ internal sealed partial class MainForm
 
         return;
 
-        // On the reader's thread: the line as it came into the recording when one runs (SM-6.5), then read down.
+        // On the reader's thread: the line as it came into the recording when one runs (SM-6.5), then read down. A
+        // recording that cannot be written stops and says so (Record), and the line is read all the same.
         void Received(string text)
         {
             if (Recording)
@@ -622,12 +624,21 @@ internal sealed partial class MainForm
             return;
         }
 
-        var saved = File.Exists(SettingsPath) ? SettingsFile.Load<AppSettings>(SettingsPath, out _).StreamSessions : null;
-        if (_settings.KeepStreamSession(folder, session, saved))
+        // The settings file is read off the window's thread (bundle rule 3; on it until 2026-11-27), and the session is
+        // kept here once it is read, unless the run has named another meanwhile, which is kept by its own read.
+        var path = SettingsPath;
+        Task.Run(() =>
         {
-            Log.Info("Stream: the session of the run is kept for its folder");
-            SaveSettings();
-        }
+            var saved = File.Exists(path) ? SettingsFile.Load<AppSettings>(path, out _).StreamSessions : null;
+            Post(() =>
+            {
+                if (session == _streamSessionKept && _settings.KeepStreamSession(folder, session, saved))
+                {
+                    Log.Info("Stream: the session of the run is kept for its folder");
+                    SaveSettings();
+                }
+            });
+        });
     }
 
     /// <summary>
@@ -716,7 +727,8 @@ internal sealed partial class MainForm
     /// A question of Claude Code's came over the relay's pipe (SM-7.3), on the window's thread: read down in Claude
     /// Code's one place, made a question as the window asks one (SM-7.4, SM-7.5), and handed to the model, from
     /// where the control area shows it by the window's own code (SM-4.7). One at a time: another waits its turn.
-    /// A question that cannot be read is answered no. Nothing of a question is logged.
+    /// A question that cannot be read is answered no, in words that say the user was not asked, and a line of the
+    /// conversation says so; the window's own list of a value, if one shows, stays as it is. Nothing of a question is logged.
     /// </summary>
     private void StreamAsked(AskRequest request)
     {
@@ -732,17 +744,21 @@ internal sealed partial class MainForm
             return;
         }
 
-        // What Claude Code asks goes before the window's own list of a value, which closes unanswered: an answer to
-        // the one must never be taken for the other.
-        _choosing = null;
         _streamAsked++;
         if (ClaudeCodeStream.ReadAsk(request.Question) is not { } ask)
         {
+            // Not the words of a refusal: the user refused nothing (until 2026-11-27 Claude was told "The user
+            // refused this tool call").
             Log.Info("Stream: a question of Claude Code's could not be read and was answered no");
-            request.Answer(StreamAsking.Refusal());
+            request.Answer(ClaudeCodeStream.DenyAnswer(AskRelay.NotReadWords));
+            _model.AddSystemLine("Claude Code asked for something axClaude could not read, so it was not allowed. You were not asked.");
             return;
         }
 
+        // What Claude Code asks goes before the window's own list of a value, which closes unanswered: an answer to
+        // the one must never be taken for the other (the list's own answers are bound to what it was shown for,
+        // StillAsked). Only once the question is read: one that is not read leaves the list as it was.
+        _choosing = null;
         _asking = new StreamAsking(ask, _folder);
         _askedRequest = request;
         Log.Info($"Stream: Claude Code asks {(ask.IsQuestion ? "a question of Claude's own" : _asking.IsPlan ? "for the approval of Claude's plan" : "about a tool call")}");
@@ -874,14 +890,13 @@ internal sealed partial class MainForm
         // the answer just given, and nothing was said (found by the review of 2026-11-17).
         MarkWaitOver();
         model.Answered();
-        if (_askedWaiting.Count > 0)
+        // The next that waits is asked; one that cannot be read, or came on a pipe since stopped, asks nothing, and
+        // the one after it has its turn (until 2026-11-27 it then waited for the next answer, which never came).
+        while (_asking is null && _askedWaiting.Count > 0)
         {
             StreamAsked(_askedWaiting.Dequeue());
         }
     }
-
-    /// <summary>Whether the answer of this key asks for the user's words next ("No, and tell Claude why", SM-7.4): nothing goes to Claude Code until they are typed. False in a window the screen feeds.</summary>
-    private bool StreamAsksWords(string key) => _asking is { } asking && asking.AsksForWords(key);
 
     /// <summary>
     /// The answer of a tool call's question that only explains (SM-7.4, SM-7.6): everything Claude asks to do, the
@@ -967,7 +982,13 @@ internal sealed partial class MainForm
     private void OfferScreen(string title, string message) =>
         ShowNotice(Notice.Ask(title, message + "\n" + ScreenOfferWords, "&Open with the screen", ReopenWithScreen, "&Stay in this window") with { Unprompted = true });
 
-    /// <summary>axClaude started again on this folder for the screen, with the user's own arguments for Claude Code, and this window closed.</summary>
+    /// <summary>
+    /// axClaude started again on this folder for the screen, as the window it is (its title, its model, hiding on
+    /// close: <see cref="StartupOptions.RestartArguments"/>, since 2026-11-27; until then with the folder alone, so
+    /// that axHelp's conversation came back as a plain window with another model), with the user's own arguments for
+    /// Claude Code, and this window closed, for good also when it hides on closing: two windows of one title would
+    /// both be the conversation its keeper looks for.
+    /// </summary>
     private void ReopenWithScreen()
     {
         if (_folder is not { } folder)
@@ -975,15 +996,16 @@ internal sealed partial class MainForm
             return;
         }
 
-        List<string> arguments = [folder, "--source", AppSettings.SourceScreen];
+        var restart = (_options with { Source = AppSettings.SourceScreen }).RestartArguments(folder, messageSent: false);
+        List<string> arguments = [.. restart.Skip(1)];
         if (_claudeArgs is { } own)
         {
             arguments.Add("--");
             arguments.AddRange(own);
         }
 
-        WindowMenu.StartWith(AppVerb, arguments);
-        Close();
+        WindowMenu.StartWith(restart[0], arguments);
+        EndForGood();
     }
 
     /// <summary>The words of the switch of the source (SM-9.1), the same whether it can be switched or only says why not.</summary>
@@ -1178,9 +1200,22 @@ internal sealed class AskChannel
         }
     }
 
-    /// <summary>One connection: the question's frame read within its time, the secret checked first, the question posted to the window, and the answer written when it comes.</summary>
+    /// <summary>
+    /// One connection: the other end must be this same program file (the relay, <c>AxKit.exe ask</c>; since 2026-11-27),
+    /// then the question's frame read within its time, the secret checked first, the question posted to the window,
+    /// and the answer written when it comes. The pipe's name and secret are in the environment of everything Claude
+    /// Code starts, so that a command it runs could connect and put a question of its own to the user: such a program
+    /// is dropped here before anything of it is read. (It can still start the relay itself with that environment,
+    /// docs/axClaude/stream-mode.md SM-7.3.)
+    /// </summary>
     private void Take(NamedPipeServerStream pipe)
     {
+        if (UserPipe.ClientOf(pipe) is not { } client || !ThisProgram.Runs(client))
+        {
+            Log.Info("Stream: the questions' pipe dropped a connection (not this program)");
+            return;
+        }
+
         byte[]? question;
         using (var limit = CancellationTokenSource.CreateLinkedTokenSource(_cancel.Token))
         {

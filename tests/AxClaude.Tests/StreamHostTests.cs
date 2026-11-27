@@ -58,6 +58,36 @@ public sealed class StreamHostTests
         Assert.True(host.ProcessId > 0);
     }
 
+    /// <summary>
+    /// What the caller does with a line is not the pipe's: when it fails (a recording that cannot be written), that
+    /// line is lost to the caller and the reading goes on to the end. Until 2026-11-27 an IOException from there was
+    /// taken for the pipe's end: no later line was read while the program ran on.
+    /// </summary>
+    [Fact]
+    public void A_line_the_caller_fails_on_does_not_end_the_reading()
+    {
+        var taken = new BlockingCollection<string>();
+        var end = new Ending();
+        using var host = StreamHost.Start(Cmd("echo one& echo two& echo three& exit 3"), line =>
+        {
+            if (line == "one")
+            {
+                throw new IOException("the disk is full");
+            }
+
+            if (line == "two")
+            {
+                throw new InvalidOperationException("anything else");
+            }
+
+            taken.Add(line);
+        }, end.Report);
+
+        Assert.True(end.Wait(Limit), "the end was not reported");
+        Assert.Equal(3, end.Code);
+        Assert.Equal(["three"], taken.ToArray());
+    }
+
     [Fact]
     public void Lines_written_reach_the_program_in_order_and_closing_the_input_ends_it()
     {

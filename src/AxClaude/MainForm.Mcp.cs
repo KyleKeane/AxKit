@@ -73,8 +73,9 @@ internal sealed partial class MainForm
 
         if (Streams)
         {
-            // stream-mode.md SM-5.6: whether Claude Code's stream runs a ! line is not measured, so nothing is offered
-            // that could not be sent; the tool is told, and can tell the user what to run and where.
+            // stream-mode.md SM-5.6 (measured 2026-11-25): over the stream a ! line runs nothing and goes to the model as
+            // a message, so nothing is offered that could not be sent; the tool is told, and can tell the user what to
+            // run and where.
             return new { error = "This axClaude window runs Claude Code over its stream, where a command cannot be sent for the user to run. Tell the user the command and that they can run it themselves, for example in axTerminal." };
         }
 
@@ -140,6 +141,10 @@ internal sealed partial class MainForm
         ShowInArea(OfferSignature, text, unprompted, (focus, hold) =>
             Area.ShowList(name, offer.Request?.Answers ?? McpOffer.Answers, start, null, focus, hold, (chosen, _) => AnswerOffer(offer, chosen),
                 () => AnswerOffer(offer, offer.Request?.No ?? McpOffer.No)), chime);
+        // The gate takes the list for a notice, as it takes every window's list of an AI's request (docs/axKit/mcp.md
+        // MC-7.3): no AI tool's run goes on in the window under it. Until 2026-11-27 this window's own list was not
+        // reported, and runs went on.
+        OfferedRequestShownIn(Area);
         if (unprompted)
         {
             // An offer has no signal of Claude's: the taskbar button flashes for it when the window is behind.
@@ -236,6 +241,8 @@ internal sealed partial class MainForm
                 QueueWrites(line);
                 Announce("Not run. Claude Code's feedback opens with your concern", true);
             }, () => AskOffer(offer, McpOffer.Concern, unprompted: false)));
+        // The offer's question still waits, in this field: the gate holds as under its list.
+        OfferedRequestShownIn(Area);
     }
 
     /// <summary>The offer's question leaves the control area and the message field comes back.</summary>
@@ -247,6 +254,28 @@ internal sealed partial class MainForm
         if (_wait is { } wait && wait.Signature.StartsWith(OfferSignature, StringComparison.Ordinal))
         {
             _wait = null;
+        }
+    }
+
+    /// <summary>
+    /// The run of Claude Code has ended (a stop, a restart, New session, another folder: every end passes
+    /// <see cref="StopProcess"/>): the offer shown and those that wait go with it, and one line says so when there were
+    /// any. Until 2026-11-27 they stayed: the offer shown, its list closed with the area, kept every later offer from
+    /// being asked, and one that waited was asked in the next run and sent as a ! line in the folder of that run.
+    /// Nothing waits on them: the tool was answered when it offered.
+    /// </summary>
+    private void ForgetOffers()
+    {
+        var dropped = _offers.Count + (_offerShown is null ? 0 : 1);
+        _offers.Clear();
+        _offerShown = null;
+        _offerSettle++;
+        if (dropped > 0)
+        {
+            Log.Info($"{dropped} offered commands or requests of an AI tool were dropped unanswered: the run of Claude Code ended");
+            _model.AddSystemLine(dropped == 1
+                ? "A command an AI tool offered was not answered when Claude stopped, and is dropped. Nothing of it ran."
+                : $"{dropped} commands an AI tool offered were not answered when Claude stopped, and are dropped. Nothing of them ran.");
         }
     }
 

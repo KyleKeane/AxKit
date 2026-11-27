@@ -15,25 +15,33 @@ namespace AxClaude.Core.Streaming;
 /// </summary>
 public static partial class ClaudeCodeMarkdown
 {
+    /// <summary>
+    /// The longest one match of a pattern here may take, in milliseconds. The patterns run on the window's thread on
+    /// whatever a reply holds, and the one for bold takes time that grows with the square of a line's length on a
+    /// long line of marks that never close (found by the review of 2026-11-27: seconds for a line of some hundred
+    /// thousand characters, the window standing still meanwhile). A line that takes longer is left as it came.
+    /// </summary>
+    private const int MatchLimitMs = 200;
+
     // A code span: the text between single backticks, never touched by the other marks.
-    [GeneratedRegex(@"`([^`\n]+)`")]
+    [GeneratedRegex(@"`([^`\n]+)`", RegexOptions.None, MatchLimitMs)]
     private static partial Regex CodeSpan();
 
-    [GeneratedRegex(@"\*\*(?=\S)(.+?)(?<=\S)\*\*|__(?=\S)(.+?)(?<=\S)__")]
+    [GeneratedRegex(@"\*\*(?=\S)(.+?)(?<=\S)\*\*|__(?=\S)(.+?)(?<=\S)__", RegexOptions.None, MatchLimitMs)]
     private static partial Regex Bold();
 
     // Italics by one star or one underscore, not inside a word, so that snake_case and 2*3*4 stay.
-    [GeneratedRegex(@"(?<![\w*])\*(?=\S)([^*\n]+?)(?<=\S)\*(?![\w*])|(?<![\w_])_(?=\S)([^_\n]+?)(?<=\S)_(?![\w_])")]
+    [GeneratedRegex(@"(?<![\w*])\*(?=\S)([^*\n]+?)(?<=\S)\*(?![\w*])|(?<![\w_])_(?=\S)([^_\n]+?)(?<=\S)_(?![\w_])", RegexOptions.None, MatchLimitMs)]
     private static partial Regex Italic();
 
     // A link or an image: [text](address), ![text](address).
-    [GeneratedRegex(@"!?\[([^\]\n]*)\]\(([^)\s]+)\)")]
+    [GeneratedRegex(@"!?\[([^\]\n]*)\]\(([^)\s]+)\)", RegexOptions.None, MatchLimitMs)]
     private static partial Regex Link();
 
-    [GeneratedRegex(@"^\s*(```|~~~)")]
+    [GeneratedRegex(@"^\s*(```|~~~)", RegexOptions.None, MatchLimitMs)]
     private static partial Regex Fence();
 
-    [GeneratedRegex(@"^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?\s*$")]
+    [GeneratedRegex(@"^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?\s*$", RegexOptions.None, MatchLimitMs)]
     private static partial Regex TableRule();
 
     /// <summary>The source's lines as the screen reads them.</summary>
@@ -45,46 +53,69 @@ public static partial class ClaudeCodeMarkdown
         for (var i = 0; i < source.Count; i++)
         {
             var line = source[i];
-            if (Fence().IsMatch(line))
+            try
             {
-                inCode = !inCode;
-                continue;
-            }
-
-            if (inCode)
-            {
-                lines.Add(line);
-                continue;
-            }
-
-            // A table: its header row, known by the rule under it, names the cells of every row after it.
-            if (header is null && IsTableRow(line) && i + 1 < source.Count && TableRule().IsMatch(source[i + 1]))
-            {
-                header = Cells(line);
-                i++;
-                continue;
-            }
-
-            if (header is not null)
-            {
-                if (IsTableRow(line))
+                if (Fence().IsMatch(line))
                 {
-                    lines.Add(TableRow(header, Cells(line)));
+                    inCode = !inCode;
                     continue;
                 }
 
-                header = null;
-            }
+                if (inCode)
+                {
+                    lines.Add(line);
+                    continue;
+                }
 
-            var text = line.TrimStart().StartsWith('>') ? line.TrimStart()[1..].TrimStart() : line;
-            lines.Add(Inline(text));
+                // A table: its header row, known by the rule under it, names the cells of every row after it.
+                if (header is null && IsTableRow(line) && i + 1 < source.Count && TableRule().IsMatch(source[i + 1]))
+                {
+                    header = Cells(line);
+                    i++;
+                    continue;
+                }
+
+                if (header is not null)
+                {
+                    if (IsTableRow(line))
+                    {
+                        lines.Add(TableRow(header, Cells(line)));
+                        continue;
+                    }
+
+                    header = null;
+                }
+
+                var text = line.TrimStart().StartsWith('>') ? line.TrimStart()[1..].TrimStart() : line;
+                lines.Add(Inline(text));
+            }
+            catch (RegexMatchTimeoutException)
+            {
+                // A line a pattern could not get through in its time (MatchLimitMs): as it came.
+                lines.Add(line);
+            }
         }
 
         return [.. lines];
     }
 
-    /// <summary>The marks inside a line taken away: code spans, bold, italics and links; the text of a code span is left as written.</summary>
+    /// <summary>
+    /// The marks inside a line taken away: code spans, bold, italics and links; the text of a code span is left as
+    /// written. A line a pattern cannot get through in its time (<see cref="MatchLimitMs"/>) is given back as it came.
+    /// </summary>
     public static string Inline(string text)
+    {
+        try
+        {
+            return WithoutMarks(text);
+        }
+        catch (RegexMatchTimeoutException)
+        {
+            return text;
+        }
+    }
+
+    private static string WithoutMarks(string text)
     {
         var parts = CodeSpan().Split(text);
         // Split with a group gives the text between spans at even places and each span's text at odd ones.

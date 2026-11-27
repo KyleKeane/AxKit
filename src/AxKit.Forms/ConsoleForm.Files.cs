@@ -85,9 +85,22 @@ public abstract partial class ConsoleForm
 
     /// <summary>
     /// What a window fed otherwise than by the pseudo console records, as it came, on the thread that read it: the
-    /// same file, index and folder as the console's bytes. Nothing while no recording runs.
+    /// same file, index and folder as the console's bytes. Nothing while no recording runs. A write that fails (a
+    /// full disk, a locked file) never leaves here, as the console's own read loop never lets it out: the recording
+    /// stops and the window says so. Until 2026-11-27 it went to the caller's thread, where it ended the reading of
+    /// the program's output without a word.
     /// </summary>
-    protected void Record(ReadOnlySpan<byte> data) => _recorder?.Write(data);
+    protected void Record(ReadOnlySpan<byte> data)
+    {
+        try
+        {
+            _recorder?.Write(data);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            Post(() => RecordingFailed(ex.Message));
+        }
+    }
 
     /// <summary>%LOCALAPPDATA%\AxKit\recordings, made when first asked for.</summary>
     private static string RecordingsFolder()

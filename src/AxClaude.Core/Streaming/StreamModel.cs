@@ -316,7 +316,7 @@ public sealed class StreamModel : ClaudeModel
         var added = _lines.Count - before;
         if (added > 0)
         {
-            TrimLines();
+            Trim();
             RaiseChanged();
         }
 
@@ -406,6 +406,18 @@ public sealed class StreamModel : ClaudeModel
                     changed |= TakeCommand(part.Text);
                     break;
 
+                case StreamKind.CommandOutput when !line.FromWorker && _commands > 0 && part.Text.Length > 0:
+                    // What a slash command printed, come back as a line of its own (/compact's "Compacted", the
+                    // fixture compact): plain rows under the command's echo, as the screen shows them and as a
+                    // command's print that comes as a text is shown. Read and dropped until 2026-11-27.
+                    foreach (var printed in part.Text.Replace("\r\n", "\n").Split('\n'))
+                    {
+                        _lines.Add(Final(LineKind.Plain, printed.TrimEnd()));
+                    }
+
+                    changed = true;
+                    break;
+
                 case StreamKind.Text when !line.FromWorker:
                     changed = true;
                     TakeText(part);
@@ -466,7 +478,7 @@ public sealed class StreamModel : ClaudeModel
 
         if (changed)
         {
-            TrimLines();
+            Trim();
             RaiseChanged();
         }
     }
@@ -518,9 +530,24 @@ public sealed class StreamModel : ClaudeModel
     /// <summary>Claude waits for the user's own words, after Other was chosen on one of its questions (<see cref="AskWords"/>): the one thing of a screen's this model also has.</summary>
     public override bool AwaitsText => TextPrompt is not null;
 
+    /// <summary>
+    /// The number of what waits now: the next number with every <see cref="Ask"/> and <see cref="AskWords"/>, so that
+    /// a request, each step of it and each list of the window's own has its own, also when two read the same (two calls
+    /// of one tool about one file). The window shows a control for a number and takes its answer only while that
+    /// number still waits (<see cref="StillAsks"/>): the next request is here at once, while the control of the one
+    /// before it stays in the window for a moment (the review of 2026-11-27).
+    /// </summary>
+    public override int Asked => _asked;
+
+    private int _asked;
+
+    /// <summary>Whether what was asked under this number still waits: nothing else was asked since, and it was not answered or taken back.</summary>
+    public override bool StillAsks(int asked) => PromptPending && asked == _asked;
+
     /// <summary>The relay passed on a question: Claude waits on it until <see cref="Answered"/>.</summary>
     public void Ask(Question question)
     {
+        _asked++;
         PendingQuestion = question;
         TextPrompt = null;
         PromptPending = true;
@@ -534,6 +561,7 @@ public sealed class StreamModel : ClaudeModel
     /// </summary>
     public void AskWords(string prompt)
     {
+        _asked++;
         PendingQuestion = null;
         TextPrompt = prompt;
         PromptPending = true;
@@ -594,7 +622,6 @@ public sealed class StreamModel : ClaudeModel
     {
         _lines.Clear();
         _sent.Clear();
-        _outputs.Clear();
         ExchangeCount = 0;
         ResetBookmarks();
         ForgetRun();
@@ -646,11 +673,17 @@ public sealed class StreamModel : ClaudeModel
         _upUnnamed = false;
     }
 
-    /// <summary>A message came back: its block goes in now unless it went in when it was sent, and it is no longer awaited.</summary>
+    /// <summary>
+    /// A message came back: its block goes in now unless it went in when it was sent, and it is no longer awaited.
+    /// It is found by its text; when Claude Code gives it back with another text than the window wrote (not seen in a
+    /// recording, and not promised either way), it is the oldest message still awaited, since messages come back in
+    /// the order they were written. Until 2026-11-27 such a message stood twice in the conversation and stayed
+    /// awaited, and Claude working, for good.
+    /// </summary>
     private bool TakeMessage(string text)
     {
         _taken = true;
-        var sent = _sent.FirstOrDefault(candidate => candidate.Text == text.Trim());
+        var sent = _sent.FirstOrDefault(candidate => candidate.Text == text.Trim()) ?? _sent.FirstOrDefault();
         if (sent is null)
         {
             // A message this model was never told of: on record all the same, with its block.
@@ -679,6 +712,10 @@ public sealed class StreamModel : ClaudeModel
         _taken = true;
         if (_commands > 0)
         {
+            // The turn that runs is this command's, whatever was awaited when it began: a message written after the
+            // command and before its start line left the turn's end no command's (the start line saw a message
+            // waiting), and the command awaited, and Claude working, for good (the review of 2026-11-27).
+            _commandTurn = true;
             return false;
         }
 
@@ -759,8 +796,9 @@ public sealed class StreamModel : ClaudeModel
     /// A tool's result. A failure turns its call's line into an error's, as Claude Code's screen redraws it, with the
     /// first line of what came back under it. A call that went well gets what it printed under its line, as the
     /// screen's preview rows (SM-4.11, <see cref="ToolOutput"/>): the first lines and how many more, plain lines that
-    /// are never spoken, since a reply ends at a tool's line. Either way the whole output is kept for the call
-    /// (<see cref="OutputOf"/>).
+    /// are never spoken, since a reply ends at a tool's line. The whole output is not kept (since 2026-11-27; until
+    /// then every call's was, twice, for a key that does not exist): the lines shown and the count of the rest are
+    /// all the conversation has of it. A result whose call's line the conversation's cap has let go changes nothing.
     /// </summary>
     private bool TakeResult(StreamPart part)
     {
@@ -769,22 +807,17 @@ public sealed class StreamModel : ClaudeModel
             return false;
         }
 
-        var output = new ToolOutput(part.Output);
-        if (output.Text.Length > 0)
+        var at = _lines.LastIndexOf(call);
+        if (at < 0)
         {
-            _outputs[call] = output;
+            // The call's line is gone with the oldest lines: its rows have no place, and never the top of the conversation.
+            return false;
         }
 
-        var at = _lines.LastIndexOf(call);
         if (!part.Error)
         {
             // Under the call, ahead of a later call's line that came before this result (calls made together).
-            var rows = output.Shown.Select(text => Final(LineKind.Plain, text)).ToList();
-            foreach (var row in rows)
-            {
-                _outputs[row] = output;
-            }
-
+            var rows = new ToolOutput(part.Output).Shown.Select(text => Final(LineKind.Plain, text)).ToList();
             _lines.InsertRange(at + 1, rows);
             return rows.Count > 0;
         }
@@ -797,33 +830,6 @@ public sealed class StreamModel : ClaudeModel
         }
 
         return true;
-    }
-
-    /// <summary>What each tool call printed, whole, by its call's line and by each line shown of it; a line gone from the conversation takes its entry with it.</summary>
-    private readonly Dictionary<Line, ToolOutput> _outputs = [];
-
-    /// <summary>
-    /// The whole of what a tool call printed (SM-4.11), for its call's line or a line shown of its output: what the
-    /// conversation shows only the first lines of. Null for any other line, and for a call that printed nothing. For a
-    /// key that reads all of it; none does yet.
-    /// </summary>
-    public ToolOutput? OutputOf(Line line) => _outputs.GetValueOrDefault(line);
-
-    /// <summary>The conversation's cap (<see cref="LineStore.Trim"/>), and the outputs of the lines it let go.</summary>
-    private void TrimLines()
-    {
-        var before = _lines.Count;
-        Trim();
-        if (_lines.Count == before || _outputs.Count == 0)
-        {
-            return;
-        }
-
-        var kept = _lines.ToHashSet();
-        foreach (var gone in _outputs.Keys.Where(line => !kept.Contains(line)).ToList())
-        {
-            _outputs.Remove(gone);
-        }
     }
 
     /// <summary>Something Claude Code says about itself: the permission mode, a compaction, the conversation emptied.</summary>
@@ -851,7 +857,6 @@ public sealed class StreamModel : ClaudeModel
                 _sent.Clear();
                 _calls.Clear();
                 _questions.Clear();
-                _outputs.Clear();
                 ExchangeCount = 0;
                 ResetBookmarks();
                 QueuedMessages = 0;

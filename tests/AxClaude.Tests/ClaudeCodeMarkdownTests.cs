@@ -91,4 +91,22 @@ public class ClaudeCodeMarkdownTests
         Assert.Equal(["Step: Run it. Result: Done!", "Text after."],
             ClaudeCodeMarkdown.Plain(["| Step | Result |", "|:---|---:|", "| Run it. | **Done!** |", "Text after."]));
     }
+
+    /// <summary>
+    /// A long line of bold marks that never close took time growing with the square of its length, on the window's
+    /// thread (found by the review of 2026-11-27: this line took far longer than the test allows). A pattern that does
+    /// not get through a line in its time leaves the line as it came, and the lines around it are still made plain.
+    /// </summary>
+    [Fact]
+    public void A_line_no_pattern_gets_through_in_time_is_left_as_it_came()
+    {
+        var hostile = string.Concat(Enumerable.Repeat("**a ", 60_000));
+        var clock = System.Diagnostics.Stopwatch.StartNew();
+        var plain = ClaudeCodeMarkdown.Plain(["**before**", hostile, "**after**"]);
+        clock.Stop();
+
+        Assert.Equal(["before", hostile, "after"], plain);
+        Assert.Equal(hostile, ClaudeCodeMarkdown.Inline(hostile));
+        Assert.True(clock.Elapsed < TimeSpan.FromSeconds(5), $"took {clock.Elapsed.TotalSeconds:0.0} s");
+    }
 }

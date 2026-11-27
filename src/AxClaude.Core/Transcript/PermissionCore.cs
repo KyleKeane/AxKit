@@ -49,19 +49,28 @@ public static class PermissionCore
         return shortened.Length == 0 ? tool.Trim() : $"{tool.Trim()} {shortened}";
     }
 
+    /// <summary>After a target of which words were left out: the label never reads as the whole of what is asked.</summary>
+    public const string MoreMark = ", and more";
+
     /// <summary>
     /// What a call acts on, in a few words: its first line; its first words up to a shell's operator, three at most;
     /// each word that is a path by its last part (a file by its name, a folder by its own name), an address by its
-    /// host; and no more than <see cref="MaxTarget"/> characters, cut at a word.
+    /// host; and no more than <see cref="MaxTarget"/> characters, cut at a word. Where anything was left out (words
+    /// past the third, what follows an operator, further lines, what the cut took), <see cref="MoreMark"/> stands
+    /// after it (since 2026-11-27): until then "git status &amp;&amp; rm -rf build" was "git status" on every answer,
+    /// with no mark that a yes runs more.
     /// </summary>
     public static string Short(string target)
     {
-        var line = target.Replace("\r\n", "\n").Split('\n').Select(part => part.Trim()).FirstOrDefault(part => part.Length > 0) ?? string.Empty;
+        var lines = target.Replace("\r\n", "\n").Split('\n').Select(part => part.Trim()).Where(part => part.Length > 0).ToList();
+        var line = lines.Count > 0 ? lines[0] : string.Empty;
+        var left = lines.Count > 1;
         var words = new List<string>();
         foreach (var word in line.Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries))
         {
             if (words.Count == MaxWords || Operators.Contains(word))
             {
+                left = true;
                 break;
             }
 
@@ -74,13 +83,19 @@ public static class PermissionCore
             var next = shortened.Length == 0 ? word : shortened + " " + word;
             if (next.Length > MaxTarget)
             {
-                return shortened.Length == 0 ? word[..MaxTarget] : shortened;
+                left = true;
+                if (shortened.Length == 0)
+                {
+                    shortened = word[..MaxTarget];
+                }
+
+                break;
             }
 
             shortened = next;
         }
 
-        return shortened;
+        return left && shortened.Length > 0 ? shortened + MoreMark : shortened;
     }
 
     /// <summary>A path by its last part ("C:\Temp\example" is "example", "src/a.cs" is "a.cs"), an address by its host; any other word as it is.</summary>

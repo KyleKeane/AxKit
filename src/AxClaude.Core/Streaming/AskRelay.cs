@@ -42,6 +42,9 @@ public static class AskRelay
     /// <summary>What Claude is told when the window could not be asked: no call runs for want of an answer.</summary>
     public const string NoWindowWords = "The window that asks the user could not be reached, so this was not allowed.";
 
+    /// <summary>What Claude is told when the window could not read what Claude Code asked: the user was never asked, so the answer does not say that the user refused.</summary>
+    public const string NotReadWords = "axKit could not read this request, so the user was not asked and it was not allowed.";
+
     /// <summary>What Claude is told when a call is larger than the window is ever asked about: it is not allowed, and Claude can make it smaller.</summary>
     public const string TooLargeWords = "This call is too large to be shown to the user whole, so it was not allowed. Do it in smaller parts.";
 
@@ -83,8 +86,9 @@ public static class AskRelay
             try
             {
                 // Deeper than the parser's own 64 levels: a call's input may nest further, and a request that is not
-                // read gets no answer at all, on which Claude Code would wait (the 2026-11-21 audit).
-                document = JsonDocument.Parse(line, new JsonDocumentOptions { MaxDepth = 1024 });
+                // read gets no answer at all, on which Claude Code would wait (the 2026-11-21 audit). The one depth of
+                // every place that reads a question or its answer.
+                document = JsonDocument.Parse(line, new JsonDocumentOptions { MaxDepth = ClaudeCodeStream.AskDepth });
             }
             catch (JsonException)
             {
@@ -168,7 +172,7 @@ public static class AskRelay
     {
         try
         {
-            using var document = JsonDocument.Parse(text);
+            using var document = JsonDocument.Parse(text, new JsonDocumentOptions { MaxDepth = ClaudeCodeStream.AskDepth });
             return document.RootElement.ValueKind == JsonValueKind.Object
                 && document.RootElement.TryGetProperty("behavior", out var behavior)
                 && behavior.ValueKind == JsonValueKind.String

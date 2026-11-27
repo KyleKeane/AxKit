@@ -114,8 +114,10 @@ public sealed class StreamHost : IDisposable
         // non-interactive stream); Claude Code talks to Anthropic under the user's account. Only a window made for
         // the stream starts it (the setting claudeSource, which is the screen at first).
         var process = Process.Start(start) ?? throw new InvalidOperationException("The program was not started.");
-        // Into the job at once: what the program starts from here on is in it too. (A child it started in its first
-        // moments, before this line, would not be: Claude Code starts none that early.)
+        // Into the job at once: what the program starts from here on is in it too. A child it started in its first
+        // moments, before this line, is not: claude.exe starts none that early, but npm's claude.cmd is cmd.exe,
+        // which starts node at once, and that node can be outside the job. Kill still ends it, by the process tree;
+        // only an axKit that dies without a word leaves such a node running.
         var job = AxKit.Core.ChildJob.TryCreate();
         job?.Add(process);
         var host = new StreamHost(process, job, lineReceived, exited) { ProcessId = process.Id };
@@ -198,6 +200,9 @@ public sealed class StreamHost : IDisposable
 
     private Thread? _errors;
 
+    /// <summary>The caller's handler of a line has thrown at least once (<see cref="ReadOutput"/>): logged the first time only.</summary>
+    private int _handlerFailed;
+
     private void Run()
     {
         _errors = new Thread(ReadErrors) { IsBackground = true, Name = "axClaude stream errors" };
@@ -245,16 +250,39 @@ public sealed class StreamHost : IDisposable
     /// <summary>Every line of the output, in order, until the output ends; then the program's end, once.</summary>
     private void ReadOutput()
     {
-        try
+        while (true)
         {
-            while (_process.StandardOutput.ReadLine() is { } line)
+            string? line;
+            try
+            {
+                line = _process.StandardOutput.ReadLine();
+            }
+            catch (Exception ex) when (ex is IOException or ObjectDisposedException)
+            {
+                // The pipe broke with the program: its end follows.
+                break;
+            }
+
+            if (line is null)
+            {
+                break;
+            }
+
+            try
             {
                 _lineReceived(line);
             }
-        }
-        catch (Exception ex) when (ex is IOException or ObjectDisposedException)
-        {
-            // The pipe broke with the program: its end follows.
+            catch (Exception ex)
+            {
+                // What the caller does with a line is not the pipe's: its failure loses that line to the caller and
+                // nothing else, and the reading goes on. Until 2026-11-27 an exception from there (a recording that
+                // could not be written) was taken for the pipe's end, the reading stopped while the program ran on,
+                // and nothing said so. The type alone is logged, once: the message could quote the line.
+                if (Interlocked.Exchange(ref _handlerFailed, 1) == 0)
+                {
+                    AxKit.Core.Log.Error($"Stream: what takes the program's lines failed on one ({ex.GetType().Name}); the reading goes on");
+                }
+            }
         }
 
         var code = -1;

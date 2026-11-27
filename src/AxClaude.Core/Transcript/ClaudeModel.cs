@@ -43,6 +43,20 @@ public abstract class ClaudeModel : LineStore
     /// <summary>A screen of Claude Code's own that waits for keys named on its hint row; null without one.</summary>
     public virtual ClaudeScreen? PendingScreen { get; protected set; }
 
+    /// <summary>
+    /// The number of what waits now, where the model itself is told each thing that is asked (the stream's model:
+    /// every request, each step of it, the user's own words and each list of the window's own gets the next number),
+    /// so that two requests are told apart even when they read the same. A screen shows what it waits on and is typed
+    /// its answer: always 0.
+    /// </summary>
+    public virtual int Asked => 0;
+
+    /// <summary>
+    /// Whether what waited when the number was <paramref name="asked"/> still waits, so that a control the window
+    /// showed for it may still answer it. Always with a screen, where an answer is keys typed to what the screen shows.
+    /// </summary>
+    public virtual bool StillAsks(int asked) => true;
+
     /// <summary>Whether Claude Code's prompt row still holds this text, sent a moment ago; never without a screen.</summary>
     public virtual bool PromptHolds(string text) => false;
 

@@ -1,0 +1,79 @@
+# Workflow: Have an answer go only to the question it was given to, over Claude Code's stream
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code (axAutomate's window does not); no Claude Code, no network and no model.
+# axClaude, docs/axClaude/stream-mode.md SM-7.4 ("An answer belongs to the question it was given to", 2026-11-27, found
+# by the review of that day; bundle rule 11). Over the stream the next request is the window's at once, while the
+# control area shows the list before it until the screen has settled, 400 ms later. Every list's Enter handed a key
+# to whatever was asked then: Enter on the third model of Choose the model was "Yes, once" for a tool call that had
+# just come, with nothing of the call heard. Each list and field of the area now answers what it was shown for and
+# nothing else, and says "Not sent: Claude asks something, and its question opens in a moment".
+# The recording is written by hand for this order of events: a first call, asked and refused (which also starts the
+# relay, so that the second question comes at once); then, on the window's request for the next permission mode,
+# Claude Code begins a turn by itself and asks about a second call, while the window shows its own list of models.
+# The Enter must fall in the 400 ms between that question's arrival and its list: the script cannot see the arrival,
+# so it waits 200 ms after the request. What must hold whenever the Enter falls: the second call is never allowed
+# (the stand-in's log), and it is asked with its caution and answered by the user. In the moment meant, the window
+# also says the sentence above.
+file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"replySpeech":"all"}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir st
+file bound.jsonl {"k":"meta","claudeCode":"2.1.332"}\n{"t":0,"k":"in","what":"initialize","id":"host-0"}\n{"t":10,"k":"out","line":{"type":"control_response","response":{"subtype":"success","request_id":"host-0","response":{"claude_code_version":"2.1.332","current_permission_mode":"default","models":[{"value":"default","displayName":"Default (recommended)","description":"For everyday tasks","supportsEffort":true,"supportedEffortLevels":["low","high"]},{"value":"sonnet","displayName":"Sonnet 5.5","description":"Most efficient","supportsEffort":true,"supportedEffortLevels":["low","high"]},{"value":"haiku","displayName":"Haiku 5.5","description":"Fastest","supportsEffort":true,"supportedEffortLevels":["low","high"]}]}}}}\n{"t":20,"k":"in","what":"message","text":"go"}\n{"t":30,"k":"out","line":{"type":"system","subtype":"init","permissionMode":"default","session_id":"session-1"}}\n{"t":40,"k":"out","line":{"type":"user","isReplay":true,"message":{"content":"go"}}}\n{"t":50,"k":"out","line":{"type":"assistant","message":{"content":[{"type":"tool_use","id":"call-1","name":"Edit","input":{"file_path":"notes.txt"}}]}}}\n{"t":60,"k":"ask","tool":"Edit","call":"call-1","input":{"file_path":"notes.txt"}}\n{"t":60,"k":"answer","behavior":"deny"}\n{"t":70,"k":"out","line":{"type":"assistant","message":{"content":[{"type":"text","text":"left as it was"}]}}}\n{"t":80,"k":"out","line":{"type":"result","subtype":"success","is_error":false,"num_turns":1}}\n{"t":90,"k":"in","what":"mode","id":"host-1"}\n{"t":100,"k":"out","line":{"type":"control_response","response":{"subtype":"success","request_id":"host-1"}}}\n{"t":110,"k":"out","line":{"type":"system","subtype":"status","permissionMode":"acceptEdits"}}\n{"t":120,"k":"out","line":{"type":"system","subtype":"init","permissionMode":"acceptEdits","session_id":"session-1"}}\n{"t":130,"k":"out","line":{"type":"assistant","message":{"content":[{"type":"tool_use","id":"call-2","name":"Bash","input":{"command":"del notes.txt"}}]}}}\n{"t":140,"k":"ask","tool":"Bash","call":"call-2","input":{"command":"del notes.txt"}}\n{"t":140,"k":"answer","behavior":"deny"}\n{"t":150,"k":"out","line":{"type":"assistant","message":{"content":[{"type":"text","text":"not deleted"}]}}}\n{"t":160,"k":"out","line":{"type":"result","subtype":"success","is_error":false,"num_turns":1}}\n{"t":170,"k":"in","what":"message","text":"again"}\n{"t":180,"k":"out","line":{"type":"system","subtype":"init","permissionMode":"acceptEdits","session_id":"session-1"}}\n{"t":190,"k":"out","line":{"type":"user","isReplay":true,"message":{"content":"again"}}}\n{"t":200,"k":"ask","tool":"","call":"call-3","input":{}}\n{"t":200,"k":"answer","behavior":"deny"}\n{"t":210,"k":"out","line":{"type":"assistant","message":{"content":[{"type":"text","text":"nothing more"}]}}}\n{"t":220,"k":"out","line":{"type":"result","subtype":"success","is_error":false,"num_turns":1}}\n{"t":230,"k":"in","what":"closed"}\n{"t":230,"k":"exit","code":0}
+file claude.cmd @"%AXKIT_STANDIN%" standin --stream "%~dp0bound.jsonl" %*
+start claude {temp}\st --claude {temp}\claude.cmd --source stream
+# The folder's question comes first (stream-mode.md SM-7.1): Enter is no, so the yes is its own button.
+expect said Start Claude Code in this folder?
+wait 1500
+keys tab
+keys enter
+expect said Ready
+
+# Goal: Refuse a first call
+type Change the notes
+keys enter
+expect said Sent
+expect said ! Question
+expect focus 1. No, Edit notes.txt
+wait 1500
+keys enter
+expect said Sent: 1, No
+expect said Done. claude: left as it was
+run findstr /c:"the window's answer was deny" st\stream-standin.log
+
+# Check: An Enter in a list of models, just as Claude asks about a call, answers nothing
+menu Choose the model
+expect said → Choose the model
+expect focus 1. Default (recommended)
+keys down down
+expect focus 3. Haiku 5.5
+# The next permission mode: at this request the stand-in begins a turn by itself and asks about a second call.
+do Next permission mode
+wait 200
+keys enter
+# In the moment between the question's arrival and its list, the list of models answers nothing.
+try said Not sent: Claude asks something, and its question opens in a moment
+
+# Check: The call is asked with its caution and is the user's to answer
+expect focus 1. No, Bash del notes.txt
+expect focus Claude asks to use Bash: del notes.txt. Asked by Claude, an AI: read the explanation before you allow it
+expect state Claude: waiting for your answer
+# A question the user did not cause holds its answering keys for a moment.
+wait 3200
+keys enter
+expect said Sent: 1, No
+
+# Check: A question the window cannot read is refused in words of its own, and the conversation says so
+# The stand-in asks with no tool named, which no window can put to the user: Claude Code is told that the user was
+# not asked (not that the user refused), and one line of the conversation says what happened.
+expect focus Message to Claude
+type Go on
+keys enter
+expect said Sent
+do Conversation
+expect text Claude Code asked for something axClaude could not read, so it was not allowed. You were not asked.
+do Message field
+
+# Check: Claude Code was never told yes
+run findstr /c:"the window's answer was allow" st\stream-standin.log & if errorlevel 1 (exit 0) else (exit 1)
+
+# Check: The window counts the three questions
+menu Say the event sources
+expect said Questions asked: 3.

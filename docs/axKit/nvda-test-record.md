@@ -796,6 +796,22 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: axClaude after the review of 2026-11-27, a question never answered unheard
+
+The review of axClaude's two sources before the release (`docs/axClaude/SPEC.md` D33, "A question answered, and the
+next that reads the same"; `docs/axClaude/stream-mode.md` SM-7.3, SM-7.4). Played on the hidden desktop, without
+NVDA, on 2026-11-27: the stand-in scripts `61-screen-same-question`, `62-stream-answer-bound`, `63-ai-request-waits`
+and `64-interrupted-message-stays`, each of which fails on the code before the repair. Still owed:
+
+1. With NVDA listening (`.\nvda-pass.ps1 axClaude`): those four scripts, and that the second of two questions that
+   read the same is heard as "Question" and then the question with the second file, nothing of the first left.
+2. With Claude Code itself: two files written in one reply in `--permission-mode default`, to see that Claude Code
+   draws the second question as the stand-in does (a frame between the two, or the second file's lines in place of
+   the first's); the live scripts were not run after the repair, among them `53-permissions-search` (a search typed
+   out is no longer shown again half typed), `12-questions`, `05-modes`, `08-lifecycle`, `18` and `19` (offers), `52`.
+3. By the maintainer's ear: whether ", and more" after a command's first words is the right length on every answer,
+   and whether "Not sent: Claude asks something, and its question opens in a moment" is clear when it comes from a list.
+
 ## Owed: axClaude over the stream, what a tool printed, choosing a conversation, plan approval (2026-11-26)
 
 Round 2 of the stream's must-build list (`docs/axClaude/stream-mode.md` SM-4.11, SM-8.5, SM-7.7).

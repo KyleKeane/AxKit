@@ -105,7 +105,8 @@ public sealed class StreamAskingTests
         // first words. The keys of the answers, which are what goes back, stay as they are.
         Assert.Equal("Write always-1.txt", Asking("always").Current.Core);
         Assert.Equal("Write always-1.txt", Asking("always", @"C:\work").Current.Core);
-        Assert.Equal("Bash ping -n 2", Asking("tool").Current.Core);
+        // The command has a fourth word, the address: the label says that more follows (2026-11-27).
+        Assert.Equal("Bash ping -n 2, and more", Asking("tool").Current.Core);
         Assert.Equal(["1", "2", "3", "4", "5"], Asking("tool").Current.Options.Select(option => option.Key));
 
         // Claude's own description of a call is no target; Claude's own questions have no core.
@@ -246,8 +247,8 @@ public sealed class StreamAskingTests
     public void A_no_with_words_asks_for_them_then_refuses_with_them()
     {
         var asking = Asking("tool");
-        Assert.True(asking.AsksForWords(StreamAsking.RefuseWhyKey));
-        Assert.False(asking.AsksForWords(StreamAsking.RefuseKey));
+        // The answer itself says that words follow, which is what the window goes by (QuestionOption.AsksForWords).
+        Assert.Equal([StreamAsking.RefuseWhyKey], asking.Current.Options.Where(option => option.AsksForWords).Select(option => option.Key));
         Assert.Null(asking.Answer(StreamAsking.RefuseWhyKey));
         Assert.Equal(ClaudeCodeTexts.TextPromptFor(2, "No, and tell Claude why"), asking.WordsPrompt);
         Assert.Null(asking.ToldWhyLine);
@@ -266,8 +267,39 @@ public sealed class StreamAskingTests
         Assert.Equal("You refused Claude's use of Bash and told Claude: Use the other folder", asking.ToldWhyLine);
         Assert.Null(asking.StandingWords(StreamAsking.RefuseWhyKey));
 
-        // A question of Claude's own has no such answer: its second choice is a choice.
-        Assert.False(Asking("two-questions").AsksForWords("2"));
+        // A question of Claude's own has no such answer: its second choice is a choice, and Other alone asks for words.
+        var own = Asking("two-questions").Current;
+        Assert.False(own.OptionFor("2")!.AsksForWords);
+        Assert.Equal([ClaudeCodeTexts.OtherAnswer], own.Options.Where(option => option.AsksForWords).Select(option => option.Text));
+    }
+
+    /// <summary>
+    /// The words after "No, and tell Claude why" are words, whatever they are: words that are exactly the key of the
+    /// lasting yes refuse the call, and leave no line that says the tool was allowed (until 2026-11-27 they did).
+    /// </summary>
+    [Fact]
+    public void Words_that_are_the_key_of_the_lasting_yes_are_still_a_refusal()
+    {
+        var asking = Asking("tool");
+        Assert.Null(asking.Answer(StreamAsking.RefuseWhyKey));
+        Assert.NotNull(asking.WordsPrompt);
+
+        Assert.Null(asking.StandingWords(StreamAsking.AlwaysKey));
+        var no = Json(asking.Answer(StreamAsking.AlwaysKey)!);
+        Assert.Equal("deny", no.GetProperty("behavior").GetString());
+        Assert.Equal("You refused Claude's use of Bash and told Claude: 4", asking.ToldWhyLine);
+    }
+
+    /// <summary>A tool's name is shown with its hidden characters written out in every answer too, as in the title (until 2026-11-27 the answer that stops the asking held the name as it came).</summary>
+    [Fact]
+    public void The_lasting_yes_names_the_tool_as_the_title_does()
+    {
+        var ask = ClaudeCodeStream.ReadAsk("""{"tool_name":"mcp__notes‮__save","input":{"title":"x"},"tool_use_id":"t"}"""u8)!;
+        var question = new StreamAsking(ask).Current;
+        var lasting = question.OptionFor(StreamAsking.AlwaysKey)!.Text;
+        Assert.DoesNotContain('‮', lasting);
+        Assert.DoesNotContain('‮', question.Title);
+        Assert.Contains("mcp__notes", lasting);
     }
 
     [Fact]
@@ -495,8 +527,7 @@ public sealed class StreamAskingTests
     public void Keep_planning_asks_for_words_then_sends_the_plan_back_with_them()
     {
         var asking = Asking("plan");
-        Assert.True(asking.AsksForWords(StreamAsking.KeepPlanningKey));
-        Assert.False(asking.AsksForWords(StreamAsking.RefuseWhyKey));
+        Assert.Equal([StreamAsking.KeepPlanningKey], asking.Current.Options.Where(option => option.AsksForWords).Select(option => option.Key));
         Assert.Null(asking.Answer(StreamAsking.KeepPlanningKey));
         Assert.Equal(ClaudeCodeTexts.TextPromptFor(1, StreamAsking.KeepPlanningLabel), asking.WordsPrompt);
 

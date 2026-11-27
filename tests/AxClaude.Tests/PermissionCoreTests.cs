@@ -16,14 +16,29 @@ public sealed class PermissionCoreTests
     [InlineData(@"C:\Temp\example\", "example")]
     [InlineData("cat settings.json", "cat settings.json")]
     [InlineData(@"cat C:\work\settings.json", "cat settings.json")]
-    [InlineData("echo hello-permission > perm-probe.txt", "echo hello-permission")]
-    [InlineData("git log --oneline | head -5", "git log --oneline")]
-    [InlineData("ping -n 2 127.0.0.1", "ping -n 2")]
-    [InlineData("dotnet build && dotnet test", "dotnet build")]
+    [InlineData("git status", "git status")]
+    [InlineData("seq 1 12", "seq 1 12")]
     [InlineData("https://example.com/docs/page", "example.com")]
-    [InlineData("\n  first line\nsecond line", "first line")]
     [InlineData("", "")]
     public void A_target_is_shortened_to_a_few_words(string target, string expected)
+    {
+        Assert.Equal(expected, PermissionCore.Short(target));
+    }
+
+    /// <summary>
+    /// Where words were left out, the label says so (2026-11-27): what follows a shell's operator, the words past the
+    /// third, further lines. Until then "git status &amp;&amp; rm -rf build" was "git status" on every answer, as if a
+    /// yes ran that alone.
+    /// </summary>
+    [Theory]
+    [InlineData("git status && rm -rf build", "git status, and more")]
+    [InlineData("echo hello-permission > perm-probe.txt", "echo hello-permission, and more")]
+    [InlineData("git log --oneline | head -5", "git log --oneline, and more")]
+    [InlineData("ping -n 2 127.0.0.1", "ping -n 2, and more")]
+    [InlineData("dotnet build && dotnet test", "dotnet build, and more")]
+    [InlineData("\n  first line\nsecond line", "first line, and more")]
+    [InlineData("make\n\n", "make")]
+    public void A_target_of_which_words_were_left_out_says_and_more(string target, string expected)
     {
         Assert.Equal(expected, PermissionCore.Short(target));
     }
@@ -31,9 +46,9 @@ public sealed class PermissionCoreTests
     [Fact]
     public void A_long_word_is_cut_and_the_words_stop_before_the_limit()
     {
-        Assert.Equal(PermissionCore.MaxTarget, PermissionCore.Short(new string('a', 100)).Length);
+        Assert.Equal(new string('a', PermissionCore.MaxTarget) + PermissionCore.MoreMark, PermissionCore.Short(new string('a', 100)));
         var words = PermissionCore.Short("aaaaaaaaaaaaaaaaaaaa bbbbbbbbbbbbbbbbbbbb cccc");
-        Assert.Equal("aaaaaaaaaaaaaaaaaaaa", words);
+        Assert.Equal("aaaaaaaaaaaaaaaaaaaa" + PermissionCore.MoreMark, words);
     }
 
     [Fact]

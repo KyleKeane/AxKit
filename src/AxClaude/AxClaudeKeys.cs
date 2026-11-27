@@ -131,7 +131,7 @@ public static class AxClaudeKeys
     /// <summary>k and Shift+K: the bookmarks dropped with m (FR-3.9); the Navigate menu reaches them too.</summary>
     private static readonly QuickKey BookmarkKey = new(Bookmark, "bookmark", l => l.Kind == LineKind.Bookmark);
 
-    /// <summary>o and Shift+O: the output markers; Ctrl+3 goes to the newest one (FR-5).</summary>
+    /// <summary>o and Shift+O: the output markers; <see cref="LatestResponse"/> (Alt+3) goes to the newest one (FR-5).</summary>
     private static readonly QuickKey ResponseKey = new(Response, "response", l => l.Kind == LineKind.OutputMarker);
 
     /// <summary>

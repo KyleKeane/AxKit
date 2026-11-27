@@ -1,0 +1,77 @@
+# Workflow: Have an AI tool's request wait for your answer, and go when Claude stops
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code; no Claude Code, no network and no model.
+# axClaude, docs/axKit/mcp.md MC-7.3 and docs/axClaude/SPEC.md FR-2.12 (2026-11-27, found by the review of that day).
+# An AI tool's request to run a command of this window that acts (Next permission mode) is asked in axClaude's own
+# line of offers, as a list in the control area. Two things were wrong with it. While the list waited for the user's
+# answer, further runs of AI tools went on in the window under it: axClaude's own list was not reported to the gate,
+# as every other window's is. And a request or an offered command left unanswered when Claude stopped stayed: the
+# one shown, its list closed with Claude, kept every later one from ever being asked. The stand-in draws an idle
+# Claude Code and reads no key; the runner is the AI tool.
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir rq
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.332 (stand-in)","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"idle":true}]}
+start claude {temp}\rq --claude {temp}\claude.cmd -- --model haiku --effort low
+expect said Ready
+expect focus "name":"Message to Claude"
+
+# The access and the run switch on, the runner paired, as in mcp\05-run-asks-in-a-list.
+menu Let AI tools read and open axKit
+expect state "notice":"Turn on AI tools?"
+keys enter
+expect said AI tools on
+try said Not in a test run
+menu Let AI tools run commands
+expect said AI tools may run commands
+mcp start
+mcp call axkit_windows
+expect state "notice":"axAutomate asks to use axKit"
+wait 1500
+keys tab
+expect focus I understand
+keys space
+expect said ! checked
+keys tab
+expect focus &Allow
+keys enter
+expect said axAutomate may read axKit
+expect mcp "app": "axClaude"
+
+# Goal: Be asked before an AI tool runs a command that acts
+# Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
+wait 3500
+mcp call axkit_window_run {"window":"{window}","command":"Next permission mode"}
+expect mcp The window asks the user whether to run Next permission mode
+expect focus Command offer: it acts outside this window. axAutomate asks to run this window's command Next permission mode
+expect focus 1. Explain this command
+expect state "notice":null
+
+# Check: No other command of an AI tool runs while the request waits
+# A command that only reads runs at once in a window that asks nothing; under the request's list it is refused, in
+# the words every window has for it.
+wait 3500
+mcp call axkit_window_run {"window":"{window}","command":"Say the event sources"}
+expect mcp error: The window asks the user about a command an AI tool asked to run: commands run once the user has answered it, and AI tools never answer it.
+expect focus 1. Explain this command
+
+# Check: A request left unanswered goes when Claude is restarted, and the next one is asked
+keys ctrl+shift+r
+expect state "notice":"Force Claude to restart?"
+keys enter
+expect said Restarting
+expect said Ready
+do Conversation
+expect text A command an AI tool offered was not answered when Claude stopped, and is dropped. Nothing of it ran.
+do Message field
+expect focus "name":"Message to Claude"
+wait 3500
+mcp call axkit_window_run {"window":"{window}","command":"Next permission mode"}
+expect mcp The window asks the user whether to run Next permission mode
+expect focus Command offer: it acts outside this window. axAutomate asks to run this window's command Next permission mode
+expect focus 1. Explain this command
+# Escape is No: nothing runs.
+wait 1500
+keys escape
+expect said Next permission mode not run
+expect focus "name":"Message to Claude"

@@ -190,7 +190,7 @@ public abstract partial class ItemForm
     }
 
     /// <summary>
-    /// Ctrl+Q: in the navigator, the row and everything the detail pane shows of it, one after another: every field
+    /// Read in full (<see cref="ItemKeys.ReadAll"/>): in the navigator, the row and everything the detail pane shows of it, one after another: every field
     /// of an item, or, for a row whose details are lines and no fields (axAutomate's workflows and steps, a list in
     /// axTask), every line (since 2026-11-22; until then such a row was read alone, where axAutomate's guide and
     /// F1 text said every line). In the detail pane, the whole value of the field or the line you are on.

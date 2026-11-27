@@ -164,7 +164,7 @@ internal sealed partial class MainForm
         }
     }
 
-    /// <summary>Actions, What runs in the background (Ctrl+B): the number, each agent's type and description, each workflow's progress, on demand.</summary>
+    /// <summary>Actions, What runs in the background (<see cref="AxClaudeKeys.BackgroundWork"/>, F8): the number, each agent's type and description, each workflow's progress, on demand.</summary>
     private void SayBackgroundWork() =>
         Announce(BackgroundWork.Said(BackgroundNow, ProcessRunning ? _model.BackgroundAgents : [], ProcessRunning ? _model.BackgroundWorkflows : []), true);
 

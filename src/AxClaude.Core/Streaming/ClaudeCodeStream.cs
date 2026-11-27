@@ -30,7 +30,7 @@ public enum StreamKind
     /// <summary>The answer to a control request of the host's (an interrupt).</summary>
     Control,
 
-    /// <summary>A piece of a message as it is written, only with partial messages asked for.</summary>
+    /// <summary>A piece of a message as it is written, only with partial messages asked for. The window never asks for them: read by <c>tools/ClaudeProbe</c> alone, which measures them.</summary>
     Delta,
 
     /// <summary>Something Claude Code says about itself: a status, a task started, a limit. Known and not spoken.</summary>
@@ -101,7 +101,9 @@ public sealed record StreamTask(string Id, string Kind, string Description, stri
 /// One line of the stream read down to what axClaude needs. <see cref="FromWorker"/>: the line belongs to work Claude
 /// handed to a subagent. For an <see cref="StreamKind.Ended"/> line: <see cref="Failed"/>, <see cref="Terminal"/>
 /// (Claude Code's word for how the turn ended), <see cref="Denials"/> (tool calls refused in the turn) and
-/// <see cref="Queued"/> (messages still waiting). For a <see cref="StreamKind.Started"/> line: Claude Code's
+/// <see cref="Queued"/> (messages still waiting); these two are read by <c>tools/ClaudeProbe</c> alone, the model
+/// goes by neither (the end line's count of waiting messages is wrong for a message written while a reply was being
+/// written). For a <see cref="StreamKind.Started"/> line: Claude Code's
 /// <see cref="Version"/>, the permission <see cref="Mode"/> in force, the <see cref="Session"/> and the
 /// <see cref="Commands"/> the run takes.
 /// </summary>
@@ -199,7 +201,7 @@ public static class ClaudeCodeStream
     /// <summary>The options of a process that takes messages on standard input and writes the stream; <c>--verbose</c> is required with it (the run ends at once without).</summary>
     public static readonly IReadOnlyList<string> Options = ["-p", "--input-format", "stream-json", "--output-format", "stream-json", "--verbose"];
 
-    /// <summary>With it, a message is also written piece by piece (<see cref="StreamKind.Delta"/>) before its whole line.</summary>
+    /// <summary>With it, a message is also written piece by piece (<see cref="StreamKind.Delta"/>) before its whole line. The window does not start Claude Code with it: <c>tools/ClaudeProbe</c> alone does, to measure the pieces.</summary>
     public const string PartialOption = "--include-partial-messages";
 
     /// <summary>With it, each message the host writes comes back on the output as a line of the user's, as an acknowledgement that it was taken.</summary>
@@ -225,6 +227,9 @@ public static class ClaudeCodeStream
 
     /// <summary>The option that takes up the folder's last session: in the stream the newest of any source's, in the interactive program the newest it began itself (measured 2026-11-25, docs/axClaude/stream-mode.md section 13).</summary>
     public const string ContinueOption = "--continue";
+
+    /// <summary>The short form of <see cref="ContinueOption"/>.</summary>
+    public const string ContinueShortOption = "-c";
 
     /// <summary>The option that names the model of a run, followed by the model's name.</summary>
     public const string ModelOption = "--model";
@@ -419,6 +424,15 @@ public static class ClaudeCodeStream
     private static readonly JsonElement NoInput = JsonDocument.Parse("{}").RootElement.Clone();
 
     /// <summary>
+    /// How deep a question and its answer may nest, the one depth of every place that reads or writes them: the
+    /// relay's read of Claude Code's request (<see cref="AskRelay"/>), the window's read of the question
+    /// (<see cref="ReadAsk"/>), the answer written with the call's input in it, and the relay's check of that answer.
+    /// Until 2026-11-27 the relay read to 1024 levels and the window to the parser's own 64, so that a call nested
+    /// deeper than that reached the window and was refused there unasked.
+    /// </summary>
+    public const int AskDepth = 1024;
+
+    /// <summary>
     /// What Claude Code asked its permission tool, read down (docs/axClaude/stream-mode.md SM-7.3; measured: the
     /// question brings the tool's name, its input and the call's id): for a window to ask the user. Null for what
     /// is no such question: no JSON object, or no tool named. The input is kept as it came, since an answer that
@@ -428,7 +442,7 @@ public static class ClaudeCodeStream
     {
         try
         {
-            var reader = new Utf8JsonReader(question);
+            var reader = new Utf8JsonReader(question, new JsonReaderOptions { MaxDepth = AskDepth });
             using var document = JsonDocument.ParseValue(ref reader);
             var root = document.RootElement;
             if (Text(root, "tool_name") is not { Length: > 0 } tool)
@@ -560,8 +574,8 @@ public static class ClaudeCodeStream
                         Failed = Flag(root, "is_error"),
                         Terminal = Text(root, "terminal_reason"),
                         Denials = root.TryGetProperty("permission_denials", out var denials) && denials.ValueKind == JsonValueKind.Array ? denials.GetArrayLength() : 0,
-                        Queued = root.TryGetProperty("queued_turn_count", out var queued) && queued.TryGetInt32(out var count) ? count : 0,
-                        Turns = root.TryGetProperty("num_turns", out var turns) && turns.TryGetInt32(out var turnCount) ? turnCount : 0,
+                        Queued = Count(root, "queued_turn_count"),
+                        Turns = Count(root, "num_turns"),
                     };
                 case "control_response":
                     var failed = !(root.TryGetProperty("response", out var response) && Text(response, "subtype") == "success");
@@ -865,9 +879,11 @@ public static class ClaudeCodeStream
         }
 
         // Words meant for the model alone, when the user refused or interrupted the call, also with the user's own words
-        // after them (a plan sent back for more planning among them): the user knows, and is not told again.
-        if (said.StartsWith(NotProceeding, StringComparison.Ordinal) || said.StartsWith(RefusedWords, StringComparison.Ordinal)
-            || said.StartsWith(KeepPlanningWords, StringComparison.Ordinal))
+        // after them (a plan sent back for more planning among them): the user knows, and is not told again. Only on
+        // a result that failed, as each of these is (the fixtures denied and interrupt): a call that went well and
+        // printed a text that begins with the same words is shown like any other (until 2026-11-27 it was hidden).
+        if (failed && (said.StartsWith(NotProceeding, StringComparison.Ordinal) || said.StartsWith(RefusedWords, StringComparison.Ordinal)
+            || said.StartsWith(KeepPlanningWords, StringComparison.Ordinal)))
         {
             said = string.Empty;
         }
@@ -967,6 +983,14 @@ public static class ClaudeCodeStream
     private static bool Flag(JsonElement element, string name) =>
         element.ValueKind == JsonValueKind.Object && element.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.True;
 
+    /// <summary>
+    /// A count, or 0 for a key that is missing or holds no whole number. The value's kind is asked first: the reader's
+    /// own TryGetInt32 throws on a null or a text, and until 2026-11-27 a turn's end line with a count of null was so
+    /// passed over whole, and the turn never ended.
+    /// </summary>
+    private static int Count(JsonElement element, string name) =>
+        element.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.Number && value.TryGetInt32(out var count) ? count : 0;
+
     /// <summary>The texts of a list of texts; empty for a key that is missing or holds something else.</summary>
     private static IReadOnlyList<string> Texts(JsonElement element, string name)
     {
@@ -990,10 +1014,17 @@ public static class ClaudeCodeStream
     private static List<string> Keys(JsonElement element) =>
         [.. element.EnumerateObject().Select(property => property.Name).Order(StringComparer.Ordinal)];
 
+    /// <summary>
+    /// One JSON object as a line. Written with the encoder that escapes only what JSON itself asks for: the default one
+    /// writes every character outside ASCII, and a quote mark, an angle bracket, an ampersand and a plus sign, as six
+    /// characters each, so that the answer that hands a large call's input back grew past the frame's limit and the
+    /// user's yes came back as "the window could not be reached" (found by the review of 2026-11-27). A line here goes
+    /// to Claude Code's input or over a pipe between axKit's own processes, never into a page.
+    /// </summary>
     private static string Json(Action<Utf8JsonWriter> write)
     {
         using var buffer = new MemoryStream();
-        using (var writer = new Utf8JsonWriter(buffer))
+        using (var writer = new Utf8JsonWriter(buffer, new JsonWriterOptions { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping, MaxDepth = AskDepth }))
         {
             writer.WriteStartObject();
             write(writer);

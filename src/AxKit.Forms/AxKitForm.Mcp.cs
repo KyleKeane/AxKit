@@ -471,7 +471,7 @@ public abstract partial class AxKitForm
 
     /// <summary>
     /// What an AI asks the user to let happen, as a window shows it (MC-7.3, MC-9.4): the list's name, read with every
-    /// arrival; the text Ctrl+Q reads where a window has that key; the explanation the first answer opens; the answers,
+    /// arrival; the text the read in full key (<see cref="BundleKeys.ReadInFull"/>) reads where a window reads it; the explanation the first answer opens; the answers,
     /// with which one explains and which one is No (Escape); and what a chosen answer other than Explain does, called
     /// once, after the list has gone.
     /// </summary>
@@ -527,6 +527,19 @@ public abstract partial class AxKitForm
     private bool OfferedRequestShown => _requestList is not null && ReferenceEquals(_requestArea?.Current, _requestList);
 
     /// <summary>
+    /// The control <paramref name="area"/> shows now is the question of something an AI asked for, waiting for the
+    /// user's answer: <see cref="ShowOfferedRequestIn"/> says so for its list, and a window that shows such a question
+    /// by its own code says so here (axClaude's line of offers, which asks an AI's request and an offered command in
+    /// its control area; 2026-11-27: until then that window's questions did not count for the gate). It counts until
+    /// the area shows another control or none.
+    /// </summary>
+    protected void OfferedRequestShownIn(ControlArea area)
+    {
+        _requestArea = area;
+        _requestList = area.Current;
+    }
+
+    /// <summary>
     /// The request as a list in <paramref name="area"/>, starting on Explain, with the offer's chime and a moment in
     /// which the answering keys do nothing. Explain opens the text as a notice with one button and comes back to the
     /// list (the notice rule); any other answer, or Escape for No, empties the area, calls <paramref name="closed"/>
@@ -561,8 +574,7 @@ public abstract partial class AxKitForm
 
         Recent.Add(RecentActionKind.Notice, request.Name, DateTime.UtcNow);
         area.ShowList(request.Name, request.Answers, request.Explain, null, focus: true, hold: true, (chosen, _) => Answer(chosen), () => Answer(request.No));
-        _requestArea = area;
-        _requestList = area.Current;
+        OfferedRequestShownIn(area);
         shown();
         return true;
     }
@@ -663,6 +675,36 @@ public abstract partial class AxKitForm
         ChimeForMcp();
         FlashIfBehind();
         return new { asked = $"The user is asked in this {AppName} window whether to open {app.Name}{where}; it opens only if they choose Open." };
+    }
+
+    /// <summary>
+    /// <c>axkit_open</c> of an app that needs no question (docs/axKit/mcp.md MC-6.5), on the window's thread: the
+    /// arguments checked again here, and the app started as the Window menu starts one, by this window's process and
+    /// not by the broker, whose process is a child of the AI tool and ends with it where that tool's processes are
+    /// ended together (Claude Code over axClaude's stream). An app that is asked first is never started here: that is
+    /// <see cref="McpAskToOpen"/>'s alone. Nothing of the window changes, so the gate is not asked, as it was not
+    /// while the broker started the app.
+    /// </summary>
+    internal object McpStartApp(IReadOnlyList<string> arguments)
+    {
+        var (checkedArguments, refusal) = McpTools.OpenArguments(arguments.Count > 0 ? arguments[0] : null, arguments.Count > 1 ? arguments[1] : null, Directory.Exists, File.Exists, McpTools.PassesLink);
+        if (checkedArguments is null)
+        {
+            return new { error = refusal };
+        }
+
+        if (McpTools.AsksFirst(checkedArguments[0], checkedArguments.Length > 1 ? checkedArguments[1] : null))
+        {
+            return new { error = "This app opens only after the user's yes: it is asked for, never started so." };
+        }
+
+        using var started = WindowMenu.StartKept(checkedArguments[0], [.. checkedArguments.Skip(1)]);
+        if (started is null)
+        {
+            return new { error = "The app did not start." };
+        }
+
+        return new { opened = true };
     }
 
     /// <summary>The form the notice shown is (AX-8.10), or null.</summary>

@@ -53,12 +53,18 @@ internal sealed partial class MainForm
     /// <summary>
     /// What the window did about what Claude waits on (D33): the signature of the question, screen or text prompt;
     /// whether the control area shows it (false: "Claude asks" was announced, or the app answered it itself); the
-    /// text Ctrl+Q speaks while it is shown; and <see cref="Stale"/> once a key of the user's went to a screen, so
-    /// that the screen shown next replaces it even when it looks the same (a moved selection, another tab).
+    /// text the read again key speaks while it is shown; and <see cref="Stale"/> once a key of the user's went to a
+    /// screen, so that the screen shown next replaces it even when it looks the same (a moved selection, another tab).
+    /// <see cref="Answered"/> once the user's answer or key went to Claude Code's question (<see cref="MarkWaitAnswered"/>).
+    /// <see cref="Asked"/> is the model's number of what waited when it was shown (<see cref="ClaudeModel.Asked"/>).
     /// </summary>
     private sealed record Wait(string Signature, bool Shown, string? Text)
     {
         public bool Stale { get; init; }
+
+        public bool Answered { get; init; }
+
+        public int Asked { get; init; }
     }
 
     /// <summary>Where the app is in bringing up a feedback draft Claude queued (D33): about to send /feedback, waiting for Claude's list of drafts to answer it with the draft, or reviewing, until the list Claude shows after the review is closed for the user.</summary>
@@ -99,7 +105,7 @@ internal sealed partial class MainForm
     /// </summary>
     private bool QuestionShown => AnswersInArea && _model.PromptPending && _model.PendingQuestion is not { KeyOnly: true };
 
-    /// <summary>What Claude waits on now, as a signature: the question, the screen, or the row for the user's own words; null when it waits on nothing.</summary>
+    /// <summary>What Claude waits on now, as a signature: the question, the screen, or the row for the user's own words (the model gives it without what is typed on it); null when it waits on nothing.</summary>
     private string? WaitSignature => _model.PendingQuestion?.Signature ?? _model.PendingScreen?.Signature ?? _model.TextPrompt;
 
     /// <summary>Whether the control area still shows the wait with this signature.</summary>
@@ -116,6 +122,52 @@ internal sealed partial class MainForm
         {
             _wait = wait with { Stale = true };
         }
+    }
+
+    /// <summary>
+    /// The user's answer, Escape or key went to the question Claude Code's screen shows (the review of 2026-11-27).
+    /// With a screen a question ends when Claude Code draws something else in its place, and what it draws next can
+    /// read as the question just answered: two files to create in one reply are asked under one title with the same
+    /// answers. Until that day the first list then stayed, with the first file's name on its answers, nothing was
+    /// said, and Enter approved the second file unheard. From here on the wait is over (<see cref="Stale"/>) as soon
+    /// as a frame shows anything else in its place, nothing included, or the same title and answers around other
+    /// lines (<see cref="AnsweredWaitOver"/>, asked every frame), and the settle then shows and says what waits
+    /// afresh. Not over at once, as over the stream: the question stays drawn until Claude Code has taken the keys,
+    /// and shown again meanwhile it would be asked twice.
+    /// </summary>
+    private void MarkWaitAnswered()
+    {
+        if (_wait is { } wait)
+        {
+            _wait = wait with { Answered = true };
+        }
+    }
+
+    /// <summary>Whether what Claude Code's screen shows now is no longer the question the user answered (<see cref="AnsweredWait.Over"/>): the question asked last is the one answered when the wait has its signature.</summary>
+    private bool AnsweredWaitOver(Wait answered, string? waiting) =>
+        AnsweredWait.Over(answered.Signature, waiting, _askedQuestion is { } asked && asked.Signature == answered.Signature ? asked.Content : null, _model.PendingQuestion?.Content);
+
+    /// <summary>Said when an answer is held back because the question it was given to is not the one that waits now.</summary>
+    private const string QuestionOpensWords = "Not sent: Claude asks something, and its question opens in a moment";
+
+    /// <summary>
+    /// Whether what a control of the area was shown for still waits (<see cref="ClaudeModel.StillAsks"/>); when not,
+    /// nothing is sent and the window says so. Every list and field of the area asks this before it hands its answer
+    /// on, with the number it was shown for, so that an answer never reaches another question than the one the user
+    /// read (bundle rule 11; the review of 2026-11-27). Over the stream the next request is the model's at once while
+    /// the area shows the list before it until the settle: Enter on the third model of Choose the model was "Yes,
+    /// once" for the tool call that had just come. With a screen the keys are typed to what the screen shows, and this
+    /// is always true.
+    /// </summary>
+    private bool StillAsked(int asked)
+    {
+        if (_model.StillAsks(asked))
+        {
+            return true;
+        }
+
+        Refuse(_model.PromptPending ? QuestionOpensWords : "Not sent: this is no longer asked");
+        return false;
     }
 
     /// <summary>
@@ -193,7 +245,7 @@ internal sealed partial class MainForm
         show(focus, unprompted);
         Input.Visible = false;
         Area.Visible = !NoticeOpen;
-        _wait = new Wait(signature, Shown: true, text);
+        _wait = new Wait(signature, Shown: true, text) { Asked = _model.Asked };
         // Something new is under the user's fingers: the core learns of it (MainForm.Flow.cs).
         FlowQuestionShown();
         var actedBefore = _userActedAt;
@@ -233,7 +285,7 @@ internal sealed partial class MainForm
     }
 
     /// <summary>
-    /// Ctrl+Q (D33): the question or screen the control area shows, spoken again on demand from anywhere, the title
+    /// The read again key (<see cref="AxClaudeKeys.ReadQuestion"/>, D33): the question or screen the control area shows, spoken again on demand from anywhere, the title
     /// and all its lines and then the answer the focus is on, as when it opened; the focus stays. NVDA+Tab repeats a
     /// question too, since its list is named with it, but a screen's lines are items and its name only the title. Also
     /// every character typed in the list of Claude's question (<see cref="ControlArea.ShowList"/>'s typed). The words
@@ -267,16 +319,23 @@ internal sealed partial class MainForm
         var core = question.Core is { Length: > 0 } words ? ", " + words : string.Empty;
         var items = options.Select(option => $"{option.Key}. {option.Text}{core}" + (option.Current && !several ? " (current)" : string.Empty)).ToList();
         var start = Math.Max(0, options.ToList().FindIndex(option => startKey is null ? option.Current : option.Key == startKey));
-        if (startKey is null && AnswerTheUserIsOn(options) is { } kept)
+        if (startKey is null && AnswerTheUserIsOn(options, question.Core) is { } kept)
         {
             start = kept;
         }
 
         IReadOnlyList<int>? ticked = several ? Enumerable.Range(0, options.Count).Where(i => options[i].Current).ToList() : null;
+        // The list answers what waits now and nothing that waits later (StillAsked).
+        var asked = _model.Asked;
         ShowInArea(signature, text, unprompted, (focus, hold) =>
         {
             Area.ShowList(name, items, start, ticked, focus, hold, (focused, ticks) =>
             {
+                if (!StillAsked(asked))
+                {
+                    return;
+                }
+
                 if (several && ticks.Count == 0)
                 {
                     Announce("Tick one with Space", true);
@@ -284,13 +343,19 @@ internal sealed partial class MainForm
                 }
 
                 choose(several ? ticks.Select(i => options[i]).ToList() : [options[focused]]);
-            }, escape, typed: typed);
-            _questionList = (Area.Current!, options);
+            }, () =>
+            {
+                if (StillAsked(asked))
+                {
+                    escape();
+                }
+            }, typed: typed);
+            _questionList = (Area.Current!, options, question.Core);
         });
     }
 
-    /// <summary>The list of a question the area shows, with the answers it lists; the list is no longer shown once the area holds another control.</summary>
-    private (Control List, IReadOnlyList<QuestionOption> Options)? _questionList;
+    /// <summary>The list of a question the area shows, with the answers it lists and the question's core; the list is no longer shown once the area holds another control.</summary>
+    private (Control List, IReadOnlyList<QuestionOption> Options, string? Core)? _questionList;
 
     /// <summary>
     /// When a question's list is put in place of the one the area shows while the user has not answered (Claude Code
@@ -300,11 +365,13 @@ internal sealed partial class MainForm
     /// answer was named and sent. Until that day every list put in place started on the first answer (or Claude's
     /// current one), so that a question redrawn while the user moved through it took him back to the first answer
     /// without a word with Go to them at once off, and Enter sent that one. After an answer of the user's nothing is
-    /// kept: the next question starts afresh.
+    /// kept: the next question starts afresh. Nor for a question with another core (<see cref="Question.Core"/>, since
+    /// 2026-11-27): the same answers about another file or command are another question's, and its list starts where
+    /// a new question starts.
     /// </summary>
-    private int? AnswerTheUserIsOn(IReadOnlyList<QuestionOption> options)
+    private int? AnswerTheUserIsOn(IReadOnlyList<QuestionOption> options, string? core)
     {
-        if (UserActed() || _questionList is not { } shown || !ReferenceEquals(Area.Current, shown.List) || shown.List is not ListBox list)
+        if (UserActed() || _questionList is not { } shown || !ReferenceEquals(Area.Current, shown.List) || shown.List is not ListBox list || shown.Core != core)
         {
             return null;
         }
@@ -331,7 +398,7 @@ internal sealed partial class MainForm
     /// What the list of a question is called, read each time the focus comes to it: the title (with its place among
     /// several) and the question's lines while they stay short, so that the review of several answers says the
     /// answers and "Ready to submit your answers?", and a long plan is not read out whole. With no
-    /// <paramref name="limit"/>, the whole question, which Ctrl+Q speaks (<see cref="ReadQuestionAgain"/>).
+    /// <paramref name="limit"/>, the whole question, which the read again key speaks (<see cref="ReadQuestionAgain"/>).
     /// </summary>
     private static string QuestionName(Question question, int limit = 1000)
     {
@@ -463,9 +530,9 @@ internal sealed partial class MainForm
         // Other is no answer yet: Claude asks for the words next (ShowOwnAnswer), and the sound of sending comes once,
         // with them. Until 2026-11-21 it played here too, and one answer in the user's own words sounded like two
         // (the maintainer: "submitting my answers ... caused multiple submission noises to play").
-        // Over the stream "No, and tell Claude why" asks for words the same way (stream-mode.md SM-7.4).
-        var wordsFollow = chosen.Any(option => option.Text.Equals(ClaudeCodeTexts.OtherAnswer, StringComparison.OrdinalIgnoreCase))
-            || chosen.Count == 1 && StreamAsksWords(chosen[0].Key);
+        // So does every answer that asks for words (QuestionOption.AsksForWords, since 2026-11-27): plan approval's
+        // "No, keep planning" with the screen, and over the stream "No, and tell Claude why" (stream-mode.md SM-7.4).
+        var wordsFollow = chosen.Any(option => option.AsksForWords);
         SendAnswer(string.Join(",", chosen.Select(option => option.Key)), sound: !wordsFollow);
         // Each answer's name without Claude's explanation after the dash.
         var names = string.Join(", ", chosen.Select(option =>
@@ -510,8 +577,15 @@ internal sealed partial class MainForm
         var chosen = LineClassifier.TextPromptAnswer(prompt) ?? "an answer that asks for your own words";
         var asked = _askedQuestion is { } question ? QuestionName(question) : null;
         var name = (asked is null ? string.Empty : asked + Stop(asked)) + $"You chose {chosen}. Your answer";
+        // The field answers what waits now and nothing that waits later (StillAsked).
+        var shownFor = _model.Asked;
         ShowInArea(prompt, name, !UserActed(), (focus, hold) => Area.ShowField(name, focus, hold, typed =>
         {
+            if (!StillAsked(shownFor))
+            {
+                return;
+            }
+
             var words = typed.Trim();
             if (words.Length == 0)
             {
@@ -521,7 +595,13 @@ internal sealed partial class MainForm
 
             SendAnswer(words);
             Announce("Sent: " + words + NextStep(), false);
-        }, SendEscape));
+        }, () =>
+        {
+            if (StillAsked(shownFor))
+            {
+                SendEscape();
+            }
+        }));
     }
 
     /// <summary>
@@ -618,7 +698,7 @@ internal sealed partial class MainForm
     /// A text row of a draft's review that Claude has opened for editing (D33, <see cref="ClaudeScreen.Editing"/>):
     /// a field in the control area named with the row. Enter sends what was typed to the end of Claude's text, a
     /// keystroke at a time, then Enter, which keeps it and moves the highlight on; an empty field only moves on;
-    /// Escape cancels the edit. Ctrl+Q reads the review with the row's text as it stands. Nothing is deleted from
+    /// Escape cancels the edit. The read again key reads the review with the row's text as it stands. Nothing is deleted from
     /// here: a draft is reworded by discarding it and asking Claude again.
     /// </summary>
     private void ShowEditedRow(ClaudeScreen screen, string text)
@@ -852,7 +932,13 @@ internal sealed partial class MainForm
         Write(key);
     }
 
-    /// <summary>The bookkeeping of a key sent from a screen, or of text typed into one of its rows (<paramref name="typingMs"/>, the time its keys take to go out): what Claude shows next is the user's doing, the area holds its keys meanwhile, and the screen shown next replaces this one even when it looks the same.</summary>
+    /// <summary>
+    /// The bookkeeping of a key sent from a screen, or of text typed into one of its rows (<paramref name="typingMs"/>,
+    /// the time its keys take to go out): what Claude shows next is the user's doing, the area holds its keys
+    /// meanwhile, and the screen shown next replaces this one even when it looks the same. The settle that brings the
+    /// screen back comes once the last key has gone (<see cref="AnsweredWait.SettleWaits"/>, since 2026-11-27): until
+    /// then it came 400 ms after Enter, in the middle of a text longer than a few characters, and showed the row half typed.
+    /// </summary>
     private void ScreenKeySent(int typingMs = 0)
     {
         UserActedNow(typingMs);
@@ -884,6 +970,7 @@ internal sealed partial class MainForm
             return;
         }
 
+        MarkWaitAnswered();
         Write(ClaudeCodeKeys.Escape);
         FlowActed(UserAction.Escaped);
     }
@@ -912,6 +999,8 @@ internal sealed partial class MainForm
         else
         {
             typing = TypeAnswer(key, enter: _model.PendingQuestion is not { KeyOnly: true });
+            // What Claude Code draws next may read as the question just answered: it is shown and said afresh.
+            MarkWaitAnswered();
         }
 
         // The act lasts until the last keystroke has gone (UserActedNow), and so does the hold.

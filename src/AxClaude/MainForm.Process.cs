@@ -23,13 +23,18 @@ internal sealed partial class MainForm
     /// </summary>
     private IReadOnlyList<string> ScreenClaudeArgs()
     {
-        if (!ClaudeArgs.Contains(ClaudeCodeStream.ContinueOption) || _folder is null || _settings.StreamSessionOf(_folder) is not { } kept)
+        if (!SessionHandover.Continues(ClaudeArgs) || _folder is null || _settings.StreamSessionOf(_folder) is not { } kept)
         {
             return ClaudeArgs;
         }
 
+        // The folder's session files are listed here, on the window's thread, at a start that continues in a folder a
+        // stream window kept a session for; the user's own Claude Code file is read at every start (AiToolsArguments).
+        // Both belong off this thread (bundle rule 3) and are left here on purpose: moving them makes every start go on
+        // after a read, as the start that waits for Claude Code's version does, and that reordering of the start is
+        // its own piece of work, left open by the review of 2026-11-27.
         var arguments = SessionHandover.ForScreen(ClaudeArgs, kept, SessionHandover.Newest(SessionHandover.ProjectFolders(SessionProjectsFolders(), _folder)));
-        if (!arguments.Contains(ClaudeCodeStream.ContinueOption))
+        if (!SessionHandover.Continues(arguments))
         {
             Log.Info("Claude Code takes up the session a window of its stream last ran in this folder");
         }
@@ -232,6 +237,13 @@ internal sealed partial class MainForm
         ForgetBackground();
         // Nothing of the old Claude's is handled: its question, if any, is gone with it.
         _wait = null;
+        // Nor is anything of the old run still owed or still the user's doing (since 2026-11-27): a bell of the old
+        // run that no settle took said Done in the new one, reply lines of the new run waited for a Done the old run
+        // owed, and what the new Claude first asked counted as caused by an answer given to the old one.
+        _bellPending = false;
+        _bellNoMarks = false;
+        _doneAwaitedSince = 0;
+        _userActedAt = 0;
         // A question of the new Claude belongs to no slash command of the old one (QuestionRouter).
         _lastCommand = null;
         // Its drafts are counted afresh when it is ready: none of them is a draft of a turn of this run.
@@ -420,6 +432,8 @@ internal sealed partial class MainForm
         // whether Claude runs. Nothing in a window the screen feeds.
         StopStream(terminateAtOnce);
         base.StopProcess(terminateAtOnce);
+        // What an AI tool offered in this run goes with it (MainForm.Mcp.cs).
+        ForgetOffers();
         HookStopChannel();
         if (ran)
         {
@@ -451,7 +465,7 @@ internal sealed partial class MainForm
         _model.AddSystemLine(systemLine);
         // The same folder with --continue replays the conversation the window already shows: hidden until Claude is
         // ready (FR-4.8). A cleared window shows the replay with its blocks, as at startup.
-        _model.HideReplay = !clearConversation && _folder is not null && string.Equals(_folder, _launchedFolder, StringComparison.OrdinalIgnoreCase) && ClaudeArgs.Contains("--continue");
+        _model.HideReplay = !clearConversation && _folder is not null && string.Equals(_folder, _launchedFolder, StringComparison.OrdinalIgnoreCase) && SessionHandover.Continues(ClaudeArgs);
         if (_folder is not null)
         {
             StartClaude();

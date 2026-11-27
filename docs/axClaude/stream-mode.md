@@ -67,12 +67,17 @@ screen, or mixed).
     run in the same window), and from the bundle's `LineStore` the lines, `AddSystemLine` and the end of a frame;
   - what happens: `ResponseStarted`, `Announcement`, and from `LineStore` the change of the lines and the bell.
 - SM-3.4 **What only a drawn screen has**, which a model without a screen answers with nothing (null, false, zero,
-  no effect), and what the window sets of it is not kept: `PendingScreen`, `TextPrompt` and `AwaitsText`,
+  no effect), and what the window sets of it is not kept: `PendingScreen`,
   `PromptHolds`, `FeedbackDrafts`, `DraftTitle`, `DetectScreens`, `Spinner`, `SessionName`, `StartName`,
   `TranscriptViewOpen`, `BackgroundAgentsAwaited`, `BackgroundWorkflowsAwaited`, `BackgroundUnknown`,
   `ShowProgressRows`, `HideReplay` with `ShowHiddenLines` and `MarkReplayedExchanges`, and
   `SaidNoConversationToContinue`. So the window's code for those things is never entered while the stream feeds
-  it, and is not copied, branched or removed.
+  it, and is not copied, branched or removed. `TextPrompt` and `AwaitsText` were on this list as planned; since
+  stage 5 the stream's model fills both, for the user's own words after Other and after "No, and tell Claude why"
+  (SM-7.4, SM-7.5), so that the window's own field asks for them. The other way round, what only the stream's model
+  has and the screen's answers with nothing: `Asked` and `StillAsks`, the number of what waits now, by which a
+  control of the window answers what it was shown for and nothing else (SM-7.4; a screen is typed its answer, and
+  every control shown for it may answer).
 - SM-3.5 **The console window base** (`ConsoleForm`, shared with axTerminal) keeps its pseudo console as it is. Two
   members stop assuming it: `ProcessRunning` is virtual, and the music asks `ProcessRunning` instead of the
   pseudo console's host. axTerminal fills in nothing new and behaves as it did.
@@ -108,10 +113,13 @@ screen, or mixed).
   taken from the source, where they are certain. Built 2026-11-25: `Streaming/ClaudeCodeMarkdown`, its rules read off
   the fixture `long-reply` (bold, italics and code spans lose their marks; a fence goes and its code stays as written;
   a table row is "Column: cell." for each cell; a link whose text is its address is the address, another is "text
-  (address)"; a quote loses its mark; lists stay), tested in `ClaudeCodeMarkdownTests`.
+  (address)"; a quote loses its mark; lists stay), tested in `ClaudeCodeMarkdownTests`. Its patterns run on the
+  window's thread, each with a limit of 200 ms for one match, and a line a pattern does not get through in that time
+  is left as it came (2026-11-27: the pattern for bold took time growing with the square of a line's length on a
+  long line of marks that never close).
 - SM-4.6 **The turn**: working from the message taken to the turn's end line; the end is raised as the model's
   `Bell`, so that the window says Done by its existing rule, after the reply's lines, which are in the model before
-  the end line arrives. An interrupted turn says no Done: it says Interrupted. A turn that failed says Done as any turn does, after its error line, as with the screen (amended 2026-11-17: said nothing, it left the user without a word).
+  the end line arrives. An interrupted turn says no Done: it says Interrupted. A turn that failed says Done as any turn does, after its error line, as with the screen (amended 2026-11-17: said nothing, it left the user without a word). Two things that left Claude working for good until 2026-11-27: an end line whose count of turns or of waiting messages is no number (a null) was passed over whole, where it is now an end with a count of 0; and a message Claude Code gives back with another text than the window wrote (it takes characters that are not seen out of a prompt) was found by its text alone, where it is now the oldest message still awaited.
 - SM-4.7 **What Claude waits on**: a question from the relay (SM-7) is the model's `PendingQuestion`, a `Question`
   as the control area shows one today: its title, its text, its options, whether several may be chosen. The area
   shows it by its existing code.
@@ -139,9 +147,14 @@ screen, or mixed).
   p does not stop on them. What a command that printed nothing gave back is shown as Claude Code gave it ("(Bash
   completed with no output)"). Each output goes under its own call, also when calls made together are answered in
   another order. A call that failed keeps its first line under its `tool error:` line, as before (stage 2). The words
-  of a refusal or an interrupt meant for the model alone are neither shown nor kept. The whole output of every call is
-  kept with its lines (`StreamModel.OutputOf`, `Streaming/ToolOutput`), so that a key can read all of it, which the
-  screen cannot; none is built yet, since the screen has no such key. The older conversation of a session taken up
+  of a refusal or an interrupt meant for the model alone are not shown, and only on a result that failed, which each
+  of them is: a call that went well and printed a text beginning with the same words is shown as any other
+  (2026-11-27; until then the first words alone decided). The whole output is not kept (2026-11-27): the lines shown
+  and the count of the rest are all the conversation has of it (`Streaming/ToolOutput`, made for a result and let go).
+  Until that day every call's whole output was kept, by its call's line and by each line shown, for a key that reads
+  all of it, which was never built since the screen has none; such a key would need the model to keep each call's
+  text by its line again, under the conversation's cap. A result whose call's line the cap has let go adds nothing
+  (until 2026-11-27 its rows went in at the top of the conversation). The older conversation of a session taken up
   shows no output (the session file's reader never reads a result's text, EG-3.4).
 
 ## 5. What the window sends
@@ -169,7 +182,11 @@ the method writes keystrokes for the screen source and a line for the stream sou
   counts no turn. Before the first request is answered there is nothing to list, and the item says so. A question
   of Claude Code's that comes meanwhile goes first, and the list closes unanswered. A skill or a custom command runs
   the model: its own line comes back as Claude Code's tags, which are read down to the command and never shown, and
-  its texts are Claude's replies (the fixture `custom-command`).
+  its texts are Claude's replies (the fixture `custom-command`). The turn in which that line comes back is the
+  command's, also when a message was written before its start line (2026-11-27: until then such a turn's end left
+  the command awaited, and Claude working, for good). What a command prints in a line of its own, in the user's
+  place inside Claude Code's tag (`/compact`: "Compacted", the fixture `compact`), stands as plain rows under the
+  command's echo, as a print that comes as a text does (2026-11-27; read and dropped until then).
 - SM-5.6 **A command Claude offers** (the `!` line of an offered command): measured 2026-11-25 with Claude Code
   2.1.332: a `!` line sent over the stream is no shell command; the model gets it as a message, and may call its own
   shell tool for it. So an offer in stream mode says that it cannot be sent this way and how to run it (section 12).
@@ -225,7 +242,10 @@ mode each is simply absent, and the window says so where the user would look for
   same index of each line's time beside it; `--record` does the same from the start. It is the raw stream, as the
   console's recording is: it holds the user's words, Claude's, the folder's paths and the account the first
   request's answer names, and is read only through a redacting tool, never committed. What the window wrote is not
-  in it, as the console's recording holds no keystroke.
+  in it, as the console's recording holds no keystroke. A recording that cannot be written (a full disk, a locked
+  file) stops and says so, "Recording stopped, the file could not be written", and the stream goes on being read
+  (2026-11-27: until then the failed write ended the reading of Claude Code's output without a word, while Claude
+  Code ran on; `ConsoleForm.Record`, and `StreamHost` no longer takes a failure of what handles a line for the pipe's).
 - SM-6.6 **The console's size, screen reader mode, the detailed view**: no meaning without a screen.
 - SM-6.7 **What is not promised** (Claude Code's documentation, read 2026-11-17 and 2026-11-26). No page promises the
   lines' shape; the start line's `capabilities` are there "to feature-detect instead of comparing version strings",
@@ -253,19 +273,45 @@ mode each is simply absent, and the window says so where the user would look for
   configuration file axClaude writes for the start (as it writes the hooks' file today). It speaks to this window
   alone, over a named pipe with a secret of the start, the pipe open to the user alone (as the hooks' pipe is). It
   holds no logic: a question in, an answer out. When the window is gone or does not answer, its answer is No.
-- SM-7.4 **A permission question** is shown as a question with four answers, No first where a list starts: No;
+  Each end asks who the other is: the relay writes its secret only to a pipe this same program file serves
+  (`ThisProgram.Serves`, the 2026-11-21 audit), and the window takes a question only from a connection of this same
+  program file (`UserPipe.ClientOf` with `ThisProgram.Runs`, 2026-11-27), dropped before anything of it is read. The
+  pipe's name and secret are in the environment of everything Claude Code starts, so until then a command Claude ran
+  could connect by itself and put a forged question to the user; its answer went to the forger, never to Claude
+  Code. What cannot be closed while the secret is in the environment: such a command can start `AxKit.exe ask`
+  itself, with that environment, and write it a question, which the relay passes on as any other; the user is then
+  asked something Claude Code never asked, and the answer still reaches only the command that asked. A question and
+  its answer are read and written to one depth everywhere (`ClaudeCodeStream.AskDepth`, 1024 levels; until 2026-11-27
+  the relay read to 1024 and the window to the parser's own 64, so that a call nested deeper was refused unasked),
+  and the answer that hands a call's input back is written without the escapes a page would need, so that it is no
+  longer than the question (until then a large call's answer could pass the frame's limit, and the user's yes came
+  back as "the window could not be reached"). A question the window cannot read is answered no in words of its own,
+  "axKit could not read this request, so the user was not asked and it was not allowed" (`AskRelay.NotReadWords`),
+  with a line in the conversation; until 2026-11-27 Claude was told that the user refused.
+- SM-7.4 **A permission question** is shown as a question with five answers, No first where a list starts: No;
   No, and tell Claude why (since 2026-11-26); Yes, once; Yes, and do not ask again for this tool in this
-  session. "No, and tell Claude why" answers nothing yet: the control area's field asks for the user's words as after
+  session; and Explain what Claude asks to do, which answers nothing (SM-7.6). **An answer belongs to the question it
+  was given to** (2026-11-27, found by the review of that day; bundle rule 11): the next request is the model's at
+  once, while the control area shows the list before it until the settle, 400 ms later, and every list's Enter
+  handed its key to whatever was asked then, so that Enter on the third model of Choose the model was "Yes, once"
+  for a tool call that had just come. Each thing asked has a number of the model's (`StreamModel.Asked`: a request,
+  each step of it, the user's own words, each list of the window's own), each list and field of the area is bound to
+  the number it was shown for, and its Enter and Escape do nothing but say "Not sent: Claude asks something, and its
+  question opens in a moment" once that number no longer waits (`StreamModel.StillAsks`, `MainForm.StillAsked`); a
+  typed answer is held the same way (`tests/scripts/axClaude/62-stream-answer-bound.txt`). "No, and tell Claude why" answers nothing yet: the control area's field asks for the user's words as after
   Other ("You chose No, and tell Claude why. Your answer"; Escape goes back to the list), and they go back with the
   refusal, `ClaudeCodeStream.RefusedWithWords`, as the refused call's result; measured with the probe's case
   `relay-refused-why` (section 13): Claude reads them and follows them. The conversation keeps "You refused Claude's
-  use of Write and told Claude: …" (`StreamAsking.ToldWhyLine`); the words are not shown again under the call. The
-  last is a rule of the session's alone
+  use of Write and told Claude: …" (`StreamAsking.ToldWhyLine`); the words are not shown again under the call, and
+  words that happen to be the key of an answer are words (until 2026-11-27 the words "4" refused the call and left
+  the line that says the tool was allowed). The
+  lasting yes is a rule of the session's alone
   (`ClaudeCodeStream.AlwaysAnswer`): it is written to no settings file and a new session asks again. The question
   names the tool and shows what it would do (the command, the file), read from the request. Every answer carries
   the tool and its target in a few words, "1. No, Write axclaude-permission-test.txt", "3. Yes, once, Bash cat
   settings.json" (since 2026-11-26, `PermissionCore`, `Question.Core`; the tool alone when the subject is Claude's own
-  description of the call), so that moving through the answers says which question they belong to; the answer that
+  description of the call; ", and more" after a target of which words were left out, "1. No, Bash ping -n 2, and
+  more", since 2026-11-27), so that moving through the answers says which question they belong to; the answer that
   goes back is the key's, as before. The question is said once, by the list the focus moves to, and a character
   typed there that starts no answer reads it again (SPEC.md D33, FR-7.4b; one code with the screen's).
 - SM-7.5 **Claude's own questions** (several questions, each with options, some with several answers, each with
@@ -298,7 +344,9 @@ mode each is simply absent, and the window says so where the user would look for
   a folder without one starts a new conversation and says nothing (measured), so the window's retry for the screen
   is not needed. As built, the stream's window names the session itself: every `--continue` of its arguments
   becomes `--resume` with the folder's newest session file, which is what the stream's own `--continue` takes up
-  (measured), so that the window knows before the start which conversation it is.
+  (measured), so that the window knows before the start which conversation it is. Its short form `-c` is read as
+  `--continue`, and a session named as one argument, `--resume=<id>`, as a session named (2026-11-27;
+  `SessionHandover.Continues`, `ResumedIn`).
 - SM-8.2 **The older conversation**: a session taken up again writes nothing of what was said before (measured).
   The window fills its view from the session's file, read by the reader it has (`ClaudeCodeTranscript`), as markers
   and lines of the same kinds, before the first new line. A file it cannot read leaves the view empty with one
@@ -329,7 +377,10 @@ mode each is simply absent, and the window says so where the user would look for
   Claude Code with `--resume` and the conversation's id, which become the window's arguments (a restart takes the same
   conversation up), and the older part is shown as for every conversation taken up (SM-8.2). Escape, or the interrupt,
   starts nothing: the conversation says so and names Ctrl+Shift+R, which asks again. A folder with no earlier
-  conversation begins a new one and says so. While the list waits, the status bar says "starting".
+  conversation begins a new one and says so. While the list waits, the status bar says "starting". A `--resume`
+  followed by a word that is neither a session's id nor an option is Claude Code's search for its own list: the
+  window asks with its list all the same, and the word goes with the option when a conversation is chosen
+  (2026-11-27; until then it stayed, a stray argument after the chosen id).
 
 ## 9. The switch and the way back
 
@@ -345,7 +396,10 @@ mode each is simply absent, and the window says so where the user would look for
   SM-8.3).
 - SM-9.3 **The way back is the switch.** A stream source that fails to start, or whose process ends in the first
   seconds, says so in a notice that offers to open the folder again with the screen source: axClaude started again
-  on the same folder for the screen, and this window closed.
+  on the same folder for the screen, and this window closed. The new window is the window this one is, for the other
+  source: its title, its model and hiding on close come along (`StartupOptions.RestartArguments`, 2026-11-27; until
+  then the folder alone did, and axHelp's conversation came back as a plain window with another model), and this
+  window closes for good also when it hides on closing, so that one window of its title is left.
 - SM-9.4 **Say the event sources** names the source in force. As built: in a window the stream feeds it says
   "Source: the stream. Claude Code runs. Lines read: 12. Of a kind not known: 1. Questions asked: 2." (or "is
   stopped"); in a window the screen feeds it says what it always said, which names the screen's own sources, so
@@ -643,7 +697,8 @@ was: its stand-in scripts pass unchanged, and nothing of its code runs different
   not ask again for Bash in this session", a rule of the session's alone; and "Explain what Claude asks to do",
   which answers nothing: it opens a text, the caution first (`AiCaution.ToolCall`), then the tool and every member
   of the call's input, and the question stays under it. A file in the project folder is named from there. Since
-  2026-11-26 each answer ends in the call's core, "1. No, Bash ping -n 2" (SM-7.4), and "No, and tell Claude why" is the
+  2026-11-26 each answer ends in the call's core, "1. No, Bash ping -n 2, and more" (SM-7.4; the mark that words
+  were left out since 2026-11-27), and "No, and tell Claude why" is the
 second answer, so that the list has five (SM-7.4).
 - Claude's own questions (SM-7.5) are asked one after another, "Question 1 of 2: …", each with its choices by number
   and Other last; a choice's description follows its name after a dash when it says more than the name. Other asks
@@ -877,7 +932,7 @@ earlier conversation (SM-8.5) and plan approval (SM-7.7). Measured first, live, 
 
 The plan recording was first refused by the fixtures' maker: the plan file's name holds the session's id. The maker now
 turns an id quoted inside a kept text into a number, as it does with the fields' ids (`session-1`), and its check is
-unchanged. Built on that, each with its tests: SM-4.11 (`ToolOutput`, `StreamPart.Output`, `StreamModel.OutputOf`),
+unchanged. Built on that, each with its tests: SM-4.11 (`ToolOutput`, `StreamPart.Output`, and the model's keeping of every call's whole output, taken out again on 2026-11-27),
 SM-8.5 (`ConversationChoice`, `SessionHandover.AsksToChoose`, `WithChosen` and `All`), SM-7.7 (`StreamAsking.IsPlan`
 and its four answers, `ClaudeCodeStream.PlanTool`, `AllowWithMode`, `KeepPlanning`, `AiCaution.PlanAsked` and
 `Plan`). Nothing new is heard but through the kinds that exist: the plan and the list of conversations are questions

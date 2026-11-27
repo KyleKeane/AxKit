@@ -64,7 +64,11 @@ public sealed partial class SessionModel : ClaudeModel
     /// <summary>Claude waits for the user's own words for an answer (after "Other"), on its "Enter text for …" row.</summary>
     public override bool AwaitsText => TextPrompt is not null;
 
-    /// <summary>The "Enter text for option 4 (Other), or Escape for the list:" row Claude waits on; null when it waits on none.</summary>
+    /// <summary>
+    /// The "Enter text for option 4 (Other), or Escape for the list:" row Claude waits on, up to its own end
+    /// (<see cref="LineClassifier.TextPromptOf"/>): what the user types is drawn after it on the same row, and with
+    /// it the window took every key of a typed answer for a new thing to show (until 2026-11-27); null when it waits on none.
+    /// </summary>
     public override string? TextPrompt { get; protected set; }
 
     /// <summary>
@@ -203,6 +207,16 @@ public sealed partial class SessionModel : ClaudeModel
 
     /// <summary>The lines of the progress rows of the frame being read, which <see cref="Classify"/> gives <see cref="LineKind.Progress"/>.</summary>
     private readonly List<Line> _progressLines = [];
+
+    /// <summary>The lines made or written since the last frame's end; emptied when a frame has been read (<see cref="ApplyChrome"/>).</summary>
+    private readonly HashSet<Line> _rewritten = [];
+
+    /// <summary>
+    /// The rows at or above the cursor that stood in the conversation at the last frame's end, visible, and were not
+    /// written since: lines the user may have read, which are never taken for a slash-command list drawn under them
+    /// (<see cref="HideCompletionRows"/>). Of the frame being read.
+    /// </summary>
+    private readonly HashSet<Line> _stood = [];
 
     public override string? SessionName { get; protected set; }
 
@@ -368,7 +382,7 @@ public sealed partial class SessionModel : ClaudeModel
         var promptRow = PromptRowAtCursor();
         PromptPending = promptRow >= 0;
         PendingQuestion = PromptPending ? QuestionReader.Read(ScreenRows(), promptRow) : null;
-        TextPrompt = PromptPending && _screen.LineAt(promptRow) is { } prompt && LineClassifier.IsTextPrompt(prompt.Text) ? prompt.Text : null;
+        TextPrompt = PromptPending && _screen.LineAt(promptRow) is { } prompt && LineClassifier.IsTextPrompt(prompt.Text) ? LineClassifier.TextPromptOf(prompt.Text) : null;
         if (!PromptPending && DetectScreens && !working && SurveyAboveCursor())
         {
             // A feedback survey above Claude's own prompt waits as a question too, answered by its key alone.
@@ -718,6 +732,7 @@ public sealed partial class SessionModel : ClaudeModel
         var line = base.CreateLine(before);
         line.ReplayHidden = HideReplay;
         line.RepaintHidden = _repainting;
+        _rewritten.Add(line);
         return line;
     }
 
@@ -751,6 +766,7 @@ public sealed partial class SessionModel : ClaudeModel
         // The row now shows something else: whatever the echo handling decided about it no longer applies, and a
         // row that held hidden replay text now holds live text once the replay is over.
         base.TextChanged(line, text);
+        _rewritten.Add(line);
         line.EchoHidden = false;
         line.EchoHandled = false;
         line.ReplayHidden &= HideReplay;
@@ -851,6 +867,7 @@ public sealed partial class SessionModel : ClaudeModel
         _unknownRows = 0;
         _unknownAwaited = 0;
         _progressLines.Clear();
+        _stood.Clear();
         for (var r = Rows - 1; r >= 0; r--)
         {
             var line = _screen.LineAt(r);
@@ -974,6 +991,12 @@ public sealed partial class SessionModel : ClaudeModel
                 _progressLines.Add(line);
             }
 
+            // Asked before the row's hiding is set anew: what it was at the last frame's end.
+            if (r <= cy && !line.Hidden && !_rewritten.Contains(line))
+            {
+                _stood.Add(line);
+            }
+
             line.ChromeHidden = chrome && !(progress && ShowProgressRows);
         }
 
@@ -990,6 +1013,7 @@ public sealed partial class SessionModel : ClaudeModel
 
         TranscriptViewOpen = transcriptView;
         HideCompletionRows(cy);
+        _rewritten.Clear();
 
         if (announcements is not null)
         {
@@ -1148,13 +1172,18 @@ public sealed partial class SessionModel : ClaudeModel
         // /exit Claude prints its last lines under them. The draft row is hidden wherever it is, and list rows only as
         // the run directly above a draft row or ending at the cursor row: an aligned listing in a reply looks like a
         // list too (FR-3.5). Continuation rows only count directly under a list row; the Notepad hint goes wherever it is.
+        // A row that stood in the conversation at the last frame's end and was not written since (_stood) is never the
+        // list's, whatever it looks like: the list is drawn now, on rows that were interface rows or empty. Until
+        // 2026-11-27 the last rows of a reply shaped like list rows ("/api/users      GET  lists users") were one
+        // run with the list of the next slash command drawn under them, since blank rows continue a run, and were
+        // hidden with it, for good.
         var runStart = -1;
         for (var r = 0; r <= cy; r++)
         {
             var line = _screen.LineAt(r);
             // Blank rows continue a run, never start one: since 2.1.326 Claude Code draws the draft row near the bottom
             // and leaves the rows between the list and it empty (the slash-suggestions fixtures, 2026-11-24).
-            if (line is not null && (LineClassifier.IsCompletionRow(line.Text) || (runStart >= 0 && (line.Text.Length == 0 || LineClassifier.IsCompletionContinuation(line.Text)))))
+            if (line is not null && !_stood.Contains(line) && (LineClassifier.IsCompletionRow(line.Text) || (runStart >= 0 && (line.Text.Length == 0 || LineClassifier.IsCompletionContinuation(line.Text)))))
             {
                 if (runStart < 0)
                 {

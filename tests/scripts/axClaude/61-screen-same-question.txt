@@ -1,0 +1,85 @@
+# Workflow: Be asked again when Claude asks the same thing twice, with Claude Code's screen
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code; no Claude Code, no network and no model.
+# axClaude, docs/axClaude/SPEC.md D33 ("A question answered, and the next that reads the same", 2026-11-27, found by the
+# review of that day): the screen's twin of 44-stream-same-question. Claude writes two files in one reply, and Claude
+# Code asks about each under one title, "Permission Required: Create file", with the same three answers; only the
+# lines between name the file. The window knew a question by its title and answers, so after the first yes the first
+# list stayed, "Create file alpha.txt" on its answers, nothing was said, and Enter approved beta.txt unheard. The
+# second question must be said again and its list made again, with the second file on its answers.
+# The stand-in (tools/AxAutomate/StandIn.cs) draws each question at a file of the script's (go1, go2, ...) and reads no
+# key: what reaches Claude is the window's to say ("Sent: ..."). After the two files it draws a third question of the
+# same title, then, with no answer given, a question of another title with the same answers ("Edit file"): its list
+# must start where a new question starts, not on the answer the user was on in the other question (D33, the answer
+# the user is on, which holds only for the same question drawn again). Last, plan approval: "No, keep planning" asks
+# for the user's words as Other does, so it says "Your words next" and the sound of sending waits for the words.
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir sq
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.332 (stand-in)","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"waitFile":"go1"},{"frame":["claude: started","you: Make two files","claude: Two files.","tool: Write (alpha.txt)","Permission Required: Create file","alpha.txt","Do you want to create alpha.txt?","1. Yes","2. Yes, allow all edits during this session","3. No","Select with numbers [1-3]. Then Enter to submit or Escape to cancel:"],"clear":true},{"waitFile":"go2"},{"frame":["claude: started","you: Make two files","claude: Two files.","tool: Write (alpha.txt)","tool: Write (beta.txt)","Permission Required: Create file","beta.txt","Do you want to create beta.txt?","1. Yes","2. Yes, allow all edits during this session","3. No","Select with numbers [1-3]. Then Enter to submit or Escape to cancel:"],"clear":true},{"waitFile":"go3"},{"frame":["claude: started","you: Make two files","claude: Two files.","tool: Write (alpha.txt)","tool: Write (beta.txt)","tool: Write (gamma.txt)","Permission Required: Create file","gamma.txt","Do you want to create gamma.txt?","1. Yes","2. Yes, allow all edits during this session","3. No","Select with numbers [1-3]. Then Enter to submit or Escape to cancel:"],"clear":true},{"waitFile":"go4"},{"frame":["claude: started","you: Make two files","claude: Two files.","tool: Write (alpha.txt)","tool: Write (beta.txt)","tool: Edit (gamma.txt)","Permission Required: Edit file","gamma.txt","Do you want to make this edit to gamma.txt?","1. Yes","2. Yes, allow all edits during this session","3. No","Select with numbers [1-3]. Then Enter to submit or Escape to cancel:"],"clear":true},{"waitFile":"go5"},{"frame":["claude: started","you: Make two files","claude: Two files.","tool: Updated plan","Permission Required: Ready to code?","Here is Claude's plan:","Claude has written up a plan and is ready to execute. Would you like to proceed?","1. Yes, and use auto mode","2. Yes, manually approve edits","3. No, keep planning — shift+tab to approve with this feedback","Select with numbers [1-3]. Then Enter to submit or Escape to cancel:"],"clear":true},{"waitFile":"go6"},{"frame":["claude: started","you: Make two files","claude: Two files.","tool: Updated plan","Permission Required: Ready to code?","Here is Claude's plan:","Claude has written up a plan and is ready to execute. Would you like to proceed?","1. Yes, and use auto mode","2. Yes, manually approve edits","3. No, keep planning — shift+tab to approve with this feedback","Enter text for option 3 (No, keep planning), or Escape for the list:"],"clear":true},{"waitFile":"go7"},{"frame":["claude: started","you: Make two files","claude: Two files.","claude: Planning again.","auto mode on (shift+tab to cycle)","$"],"clear":true},{"idle":true}]}
+
+start claude {temp}\sq --claude {temp}\claude.cmd -- --model haiku --effort low
+expect said Ready
+wait 1000
+
+# Goal: Allow the first of two files that are asked alike
+file sq\go1 x
+expect said ♪ Notice
+expect said ! Question
+expect said → Permission Required: Create file. alpha.txt
+expect focus 1. Yes, Create file alpha.txt
+# A question the user did not cause holds its answering keys for a moment.
+wait 1500
+keys enter
+expect said Sent: 1, Yes
+
+# Goal: Hear the second file asked anew, with its own name on the answers
+file sq\go2 x
+# Said once, by the focus on the list the question names (SPEC.md FR-7.4b), after the word that interrupts.
+expect said ! Question
+expect said → Permission Required: Create file. beta.txt
+expect focus 1. Yes, Create file beta.txt
+expect state Claude: waiting for your answer
+keys enter
+expect said Sent: 1, Yes
+
+# Check: A question of another title starts where a new question starts
+# The third file's question, again of the same title: asked anew as the second was. The user moves to No and does
+# not answer; more than three seconds later nothing here is the user's doing.
+file sq\go3 x
+expect said ! Question
+expect focus 1. Yes, Create file gamma.txt
+keys down down
+expect focus 3. No, Create file gamma.txt
+wait 3500
+# Claude Code asks something else in its place, with the same three answers: its list starts on its first answer.
+file sq\go4 x
+expect said ♪ Notice
+expect focus 1. Yes, Edit file gamma.txt
+wait 1500
+keys end
+expect focus 3. No, Edit file gamma.txt
+keys enter
+expect said Sent: 3, No
+
+# Goal: Send a plan back and be asked for your words
+# Plan approval's "No, keep planning" asks for the user's own words next, on Claude Code's row for them, as Other
+# does: "Your words next", and the sound of sending comes once, with the words.
+file sq\go5 x
+expect focus 1. Yes, and use auto mode
+# More than a second after the answer before it, so that its sound of sending is not taken for this answer's.
+wait 1500
+keys end
+expect focus 3. No, keep planning
+keys enter
+expect said Sent: 3, No, keep planning. Your words next
+refuse said ♪ Sent
+file sq\go6 x
+expect focus You chose No, keep planning. Your answer
+type Smaller steps
+keys enter
+expect said ♪ Sent
+expect said Sent: Smaller steps
+file sq\go7 x
+expect focus Message to Claude
+refuse said Question closed

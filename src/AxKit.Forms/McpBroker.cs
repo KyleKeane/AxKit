@@ -429,6 +429,12 @@ public static class McpBroker
     /// MC-6.5: an app on a path or none, as its own process; the arguments as a list, never through a shell. An app that
     /// starts a program, and axTask on a folder, are asked of the user first (MC-6.5a): in the window that started
     /// this session's Claude Code (axClaude, axHelp), or the newest axKit window; that window opens the app on a yes.
+    /// Every other app is started by that same window too, where one is open (since 2026-11-27): the broker is a
+    /// child of the AI tool, and what it starts belongs to that tool's processes. Over axClaude's stream Claude Code
+    /// and everything under it are ended together when Claude Code is restarted or its window closes
+    /// (<c>AxKit.Core.ChildJob</c>, which lets nothing leave), and an axDown opened here went with them, its unsaved
+    /// text lost. A window's process is the user's own. With no window open, or one that could not do it, the broker
+    /// starts the app itself, as before.
     /// </summary>
     private static McpResult Open(byte[] key, string? verb, string? path, string client)
     {
@@ -438,16 +444,22 @@ public static class McpBroker
             return new McpResult(refusal!, true);
         }
 
+        var windows = Windows(key);
+        var ancestors = Ancestors();
+        var window = windows.FirstOrDefault(open => ancestors.Contains(open.ProcessId)) ?? windows.FirstOrDefault();
         if (McpTools.AsksFirst(arguments[0], arguments.Length > 1 ? arguments[1] : null))
         {
-            var windows = Windows(key);
-            var ancestors = Ancestors();
-            if ((windows.FirstOrDefault(window => ancestors.Contains(window.ProcessId)) ?? windows.FirstOrDefault()) is not { } asker)
+            if (window is null)
             {
                 return new McpResult("Open any axKit window first: the user is asked there before this app opens.", true);
             }
 
-            return Ask(key, asker.Pipe, "open " + JsonSerializer.Serialize(new { arguments, client }));
+            return Ask(key, window.Pipe, "open " + JsonSerializer.Serialize(new { arguments, client }));
+        }
+
+        if (window is not null && !Ask(key, window.Pipe, "start " + JsonSerializer.Serialize(new { arguments })).IsError)
+        {
+            return new McpResult($"Opened {string.Join(" ", arguments)}.");
         }
 
         // Through the shell, which hands the new process none of this one's handles: a window holding the client's

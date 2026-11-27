@@ -247,6 +247,31 @@ public class SessionModelTests
     }
 
     [Fact]
+    public void A_replys_rows_shaped_like_list_rows_stay_when_the_next_commands_list_is_drawn_under_them()
+    {
+        // A reply that ends in rows of the list's shape, then a slash command typed: Claude Code draws its list from
+        // the mode line's row down, leaves the rows under it empty and draws the draft row near the bottom, as in the
+        // permissions fixture (2.1.327: the list at row 5, the draft at row 30). Blank rows continue a run, so the
+        // reply's rows and the list were one run, hidden together and for good (found by the review of 2026-11-27).
+        // A row that stood in the conversation at the last frame's end is never the list's.
+        var model = new SessionModel(120, 30);
+        string[] reply = ["claude: The routes:", "/api/users      GET  lists users", "/api/users/:id  GET  one user"];
+        Feed(model, $"{Esc}[?25lclaude: The routes:\r\n/api/users      GET  lists users\r\n/api/users/:id  GET  one user\r\nauto mode on (shift+tab to cycle)\r\neffort: high · /effort\r\n${Esc}[?25h");
+        Assert.Equal(reply, Visible(model));
+
+        var list = $"{Esc}[4;1H/permissions                        Manage allow and deny tool permission rules{Esc}[K\r\n/fewer-permission-prompts           Pre-approve safe read-only commands based on your usage{Esc}[K\r\n/update-config                      Change settings: hooks, permissions, environment variables{Esc}[K";
+        Feed(model, $"{Esc}[?25l{list}{Esc}[28;1H$  /permissions{Esc}[?25h");
+        Assert.Equal(reply, Visible(model));
+
+        // The list drawn again as another letter is typed (its rows were hidden, and are still the list's), and after
+        // Enter the echo in its place: the reply's rows stand through all of it.
+        Feed(model, $"{Esc}[?25l{list}{Esc}[28;1H$  /permissionsx{Esc}[K{Esc}[?25h");
+        Assert.Equal(reply, Visible(model));
+        Feed(model, $"{Esc}[?25l{Esc}[4;1Hyou: /permissions{Esc}[K\r\n{Esc}[K\r\n{Esc}[K\r\nauto mode on (shift+tab to cycle){Esc}[K\r\n${Esc}[K{Esc}[28;1H{Esc}[K{Esc}[8;1H{Esc}[?25h");
+        Assert.Equal([.. reply, "you: /permissions"], Visible(model));
+    }
+
+    [Fact]
     public void Rows_written_over_the_chrome_and_scrolled_away_inside_a_frame_are_content()
     {
         var model = new SessionModel(80, 6);

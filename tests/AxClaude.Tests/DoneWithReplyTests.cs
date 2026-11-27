@@ -18,6 +18,10 @@ namespace AxClaude.Tests;
 /// "Done. green apples"; what that script met live the same evening was the usage row, UsageLimitRowTests).
 /// The replay feeds the model, Arrivals and the core in the window's order (MainForm.Model.cs, OnTranscriptChanged):
 /// the frame's lines held, then the frame to the core, whose Done speaks what is held after its word.
+/// The two replay tests copy the window's hold and its Done by hand (the held lines, the order of holding and
+/// handing over, the word in front of them): the window's own code is not run by them. A change to
+/// OnTranscriptChanged, SpeakHeld or FlowDone is made in this replay too, or the tests go on passing for the old
+/// order; the test that reads the window's source holds the one order they were written for.
 /// </summary>
 public class DoneWithReplyTests
 {

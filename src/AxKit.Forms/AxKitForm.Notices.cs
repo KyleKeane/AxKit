@@ -258,7 +258,7 @@ public abstract partial class AxKitForm
     /// one thing for one action is asked this way, once, never as one question after another. The focus starts in
     /// the first control, ready to type, with the form's sound (AX-7.11), and after NVDA has read that control the
     /// window says the title and the one word "form": "Move 2 items, form". The explanation is not said at opening
-    /// (the maintainer's wish of 2026-11-22, "just the essential info when the cursor moves"): Ctrl+Q reads it, and
+    /// (the maintainer's wish of 2026-11-22, "just the essential info when the cursor moves"): the read in full key (<see cref="BundleKeys.ReadInFull"/>) reads it, and
     /// Shift+Tab from the first control goes to it. <paramref name="sayText"/> is for the two forms whose text is
     /// not how a form is used but what will happen, which must be heard: what a report sends and to whom, and what
     /// an action written in a file will do (bundle rule 11); there the text is said after the word. Enter

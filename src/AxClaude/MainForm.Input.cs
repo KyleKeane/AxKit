@@ -90,13 +90,14 @@ internal sealed partial class MainForm
             return;
         }
 
-        if (Streams && text.Length > 0 && _model.PromptPending && _wait is not { Shown: true })
+        if (Streams && text.Length > 0 && _model.PromptPending && (_wait is not { Shown: true } shown || !_model.StillAsks(shown.Asked)))
         {
             // Over the stream an answer is axKit's own to hold back until the question has been shown and heard
             // (stream-mode.md SM-7.4; the 2026-11-21 audit): a "2" typed for something Claude wrote, in the moment
             // before a tool call's question settles into the area, would allow that call with nothing of it heard.
+            // Also while the area still shows what waited before (the review of 2026-11-27, StillAsked).
             // The text stays in the field.
-            Refuse("Not sent: Claude asks something, and its question opens in a moment");
+            Refuse(QuestionOpensWords);
             return;
         }
 
@@ -252,13 +253,15 @@ internal sealed partial class MainForm
     /// FR-2.1: Claude drops an Enter in its first seconds after the prompt shows, even a second after the text, and
     /// the message stays typed and unsent on its prompt row (found by tools/QaRun on 2026-10-23: four sessions of five).
     /// While the row still holds the text and Claude neither works nor asks, Enter goes again, three times at most,
-    /// silently, with a log line.
+    /// silently, with a log line. Not after an interrupt (since 2026-11-27): Claude Code 2.1.331 puts an interrupted
+    /// message back on its prompt row (FR-2.3a), which reads here as an Enter that was dropped, and a message
+    /// interrupted within the first second and a half was sent again.
     /// </summary>
     private void ResendEnterWhileHeld(string text, int attempt)
     {
         After(EnterCheckMs, () =>
         {
-            if (!ProcessRunning || ClaudeWorks || _model.PromptPending || !_model.PromptHolds(text))
+            if (!ProcessRunning || ClaudeWorks || _model.PromptPending || _interruptedSinceSend || !_model.PromptHolds(text))
             {
                 return;
             }
@@ -274,7 +277,7 @@ internal sealed partial class MainForm
     }
 
     /// <summary>
-    /// Claude → Send queued messages now (Ctrl+Shift+S): Claude's Ctrl+X Ctrl+S, which makes it take up a
+    /// Claude → Send queued messages now (<see cref="AxClaudeKeys.SendNow"/>): Claude's Ctrl+X Ctrl+S, which makes it take up a
     /// message it holds without finishing the current step first (FR-2.8). The chord goes as two writes.
     /// </summary>
     private void SendNow()
@@ -319,6 +322,8 @@ internal sealed partial class MainForm
         }
 
         ClearWrites();
+        // A question the screen shows ends with this key as with an answer (MarkWaitAnswered).
+        MarkWaitAnswered();
         Write(ClaudeCodeKeys.Escape);
         _interruptedSinceSend = true;
         FlowActed(UserAction.Escaped);
@@ -338,6 +343,8 @@ internal sealed partial class MainForm
             return;
         }
 
+        // On plan approval Claude Code takes this key as an answer: what it shows next is asked afresh (MarkWaitAnswered).
+        MarkWaitAnswered();
         Write(ClaudeCodeKeys.ShiftTab);
     }
 
@@ -358,6 +365,8 @@ internal sealed partial class MainForm
             return;
         }
 
+        // A key of Claude Code's own can answer the question its screen shows (MarkWaitAnswered).
+        MarkWaitAnswered();
         Write(key);
         _interruptedSinceSend |= key == ClaudeCodeKeys.CtrlC;
     }

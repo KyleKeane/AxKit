@@ -256,9 +256,11 @@ public static partial class ClaudeCodeTexts
     /// rows under it: the mode line above it stood in the conversation at the idle prompt, the next message's block
     /// was placed under it, and the next frame wrote the reply's first row there, in front of the block's output
     /// marker, so that the reply was not spoken and no "Responding" was said (scripts 17 and 06 of that evening).
-    /// The kind of limit and the reset are read as any words.
+    /// The kind of limit and the reset are read as any words: the kind as anything up to the row's separator, since a
+    /// kind with a digit or a capital ("5-hour limit", "Opus limit") must not close the block again (2026-11-27;
+    /// until then only small letters and spaces).
     /// </summary>
-    [GeneratedRegex(@"^You've used \d+% of your [a-z][a-z ]* limit(?: · .+)?$")]
+    [GeneratedRegex(@"^You've used \d+% of your [^·]+ limit(?: · .+)?$")]
     public static partial Regex UsageLimitRow();
 
     /// <summary>
@@ -383,6 +385,16 @@ public static partial class ClaudeCodeTexts
 
     /// <summary>The answer after which Claude asks for the user's own words.</summary>
     public const string OtherAnswer = "Other";
+
+    /// <summary>The start of plan approval's answer that sends the plan back, "No, keep planning — shift+tab to approve with this feedback": Claude Code asks for the user's own words after it, as after Other.</summary>
+    public const string KeepPlanningAnswer = "No, keep planning";
+
+    /// <summary>
+    /// The row for the user's own words up to its own end, "Enter text for option 4 (Other), or Escape for the list:":
+    /// what the user types is drawn after it on the same row.
+    /// </summary>
+    [GeneratedRegex(@"^Enter text for option \d+ \(.+?\)(?:, or Escape for the list)?:")]
+    public static partial Regex TextPromptRow();
 
     /// <summary>What stands between an answer's name and Claude's explanation of it.</summary>
     public const string AnswerDash = " — ";

@@ -7,6 +7,13 @@ namespace AxClaude.Core.Transcript;
 public sealed record QuestionOption(string Key, string Text, bool Current = false)
 {
     /// <summary>
+    /// The answer is not the answer yet: Claude asks for the user's own words next (Other; plan approval's "No, keep
+    /// planning"; over the stream "No, and tell Claude why"). Said by whoever reads the question, so that the window
+    /// asks nobody else: it says "Your words next" and keeps the sound of sending for the words.
+    /// </summary>
+    public bool AsksForWords { get; init; }
+
+    /// <summary>
     /// The name and value of a /config row ("Show tips: true", "Thinking mode: true (Thinking can't be turned off …)"),
     /// or null when the text has no <c>: </c>.
     /// </summary>
@@ -80,6 +87,14 @@ public sealed record Question(string Title, IReadOnlyList<string> Text, IReadOnl
 
     /// <summary>What tells one question from the next: the title and the answers. The same question redrawn keeps it.</summary>
     public string Signature => Title + "\n" + string.Join("\n", Options.Select(option => option.Key + ". " + option.Text));
+
+    /// <summary>
+    /// Everything the question says: the signature and the lines between the title and the answers. What tells the
+    /// question the user answered from the one Claude Code's screen asks right after it under the same title with the
+    /// same answers (two files to create in one reply: only the lines name the file). A question drawn again with
+    /// another line is still the same question by its <see cref="Signature"/>; once it was answered it is the next one.
+    /// </summary>
+    public string Content => Signature + "\n\n" + string.Join("\n", Text);
 
     /// <summary>Typed text that answers the question: one of its keys, or, when several answers are allowed, keys separated by spaces or commas.</summary>
     public bool Accepts(string text)

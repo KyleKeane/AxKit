@@ -203,8 +203,16 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   Windows reads it (`Path.GetFullPath`, 2026-11-27): forward slashes become backslashes and `.` and `..` are worked
   out, so that every check, every refusal and the argument the app is started with are of one spelling; until then
   a path written with forward slashes was one part to the link check, which passed it. Started as
-  `AxKit.exe <verb> <path>` with the arguments as a list, through ShellExecute on the program file itself, never through
-  a command interpreter (ShellExecute hands the new window none of the broker's handles).
+  `AxKit.exe <verb> <path>` with the arguments as a list, never through a command interpreter. An open axKit window
+  starts it where there is one (2026-11-27; the window that started this session's Claude Code first, else the
+  newest, as for the question of MC-6.5a: the broker's request `start`, `AxKitForm.McpStartApp`, which checks the
+  arguments again and refuses an app that is asked first), so that the new window belongs to the user's desktop and
+  not to the AI tool's processes: the broker is a child of the AI tool, and over axClaude's stream everything under
+  Claude Code is ended together when Claude Code is restarted or its window closes (`ChildJob`, which lets nothing
+  leave it), so that an axDown the broker had started went with them, its unsaved text lost. With no window open, or
+  one that could not do it, the broker starts the app itself, through ShellExecute on the program file (which hands
+  the new window none of the broker's handles); what remains: with axClaude's window put away and no other axKit
+  window open, an app opened over the stream is still one of Claude Code's processes and ends with it.
 - MC-6.5a **Asked first** (the maintainer's choice of 2026-11-24, "Yes, asked each time", after Claude, refused axTask
   on the management folder, wrote list files directly). axClaude and axTerminal on a folder or none, and axTask on a
   folder (`McpTools.AsksFirst`), are not started by the broker. It sends the checked arguments to the window whose
@@ -317,7 +325,7 @@ menu, the palette and the automated checks in the table of `command-language.md`
   a command of a window's list, so that no AI tool can run it, nor Let AI tools read and open axKit, nor Forget.
 - MC-7.3 **What it never does**: it never answers a question for the user. While the window shows a notice (a
   question, an error, the palette, a pairing) or a Windows dialog, every run is refused ("The window shows the user a
-  notice, <title>: commands run once the user has answered it, and AI tools never answer it"), and so while the list of an act command's question (below) waits for the user's answer, over the window or in its place at the bottom, which the gate takes for a notice (`AxKitForm.McpGateState`, 2026-11-27: until then further runs went on in the window under the question; "The window asks the user about a command an AI tool asked to run: commands run once the user has answered it, and AI tools never answer it", `McpRun.RequestWaits`; axClaude's own line of offers, MC-9.4, is its own and is not held to this), and while the window's key test runs (bundle AX-8.12, 2026-11-15: the user is trying keys and nothing is carried out, "The window is in its key test: ... Commands run once the user has ended it"; Test a key itself is act, so it is asked of the user); a command that asks
+  notice, <title>: commands run once the user has answered it, and AI tools never answer it"), and so while the list of an act command's question (below) waits for the user's answer, over the window or in its place at the bottom, which the gate takes for a notice (`AxKitForm.McpGateState`, 2026-11-27: until then further runs went on in the window under the question; "The window asks the user about a command an AI tool asked to run: commands run once the user has answered it, and AI tools never answer it", `McpRun.RequestWaits`; axClaude's own line of offers, MC-9.4, which shows such a request and an offered command in its control area by its own code, reports its list and its field for a concern the same way, `AxKitForm.OfferedRequestShownIn`, since the review of that day), and while the window's key test runs (bundle AX-8.12, 2026-11-15: the user is trying keys and nothing is carried out, "The window is in its key test: ... Commands run once the user has ended it"; Test a key itself is act, so it is asked of the user); a command that asks
   (delete, discard, close with changes, New folder's name) shows its question as for the user and the answer says the
   window asks it. A command marked **act** (app-kit's mark, MC-3.1: it deletes, moves, sends, starts or ends
   something outside the window) is asked of the user first, in the window, **through the interface of an offered

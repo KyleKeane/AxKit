@@ -5,8 +5,9 @@ namespace AxClaude.Core.Streaming;
 /// first lines, and how many more there are, as Claude Code's screen shows a call's preview rows. Measured with Claude
 /// Code 2.1.332 on 2026-11-26: a command that printed twelve lines shows three, then "… +9 lines (ctrl+o to
 /// expand)"; here the count stays and the hint goes, since the window does not send Ctrl+O. The stream gives the whole
-/// output (the fixture tool-output), and it is kept whole (<see cref="Text"/>), so that a key that reads all of it can be
-/// made on it; none is yet. Pure: no word of any program's, and no window.
+/// output (the fixture tool-output); the model makes one of these for a result, takes <see cref="Shown"/> and lets it
+/// go, so the whole is not kept (since 2026-11-27): a key that reads all of an output would need the model to keep
+/// each call's text by its line again, under the conversation's cap. Pure: no word of any program's, and no window.
 /// </summary>
 public sealed class ToolOutput
 {

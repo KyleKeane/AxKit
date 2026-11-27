@@ -195,7 +195,7 @@ public sealed class WindowMenu : ToolStripMenuItem
         try
         {
             // Outside call, program, axKit: starts another window of axKit from the axKit menu (Apps, Access layers), the Window menu (Show
-            // current folder in, axFile's Open with axKit apps and access layers): this very program file with the app's verb and path; axHelp starts its conversation, an axClaude window, the same way, hidden as axHelp itself starts in the background only when the user turned on its setting Keep the conversation ready in the background, off at first (docs/axHelp/SPEC.md HE-2.7).
+            // current folder in, axFile's Open with axKit apps and access layers): this very program file with the app's verb and path; axHelp starts its conversation, an axClaude window, the same way, hidden as axHelp itself starts in the background only when the user turned on its setting Keep the conversation ready in the background, off at first (docs/axHelp/SPEC.md HE-2.7); and an open window starts the app an AI tool opens with axkit_open (docs/axKit/mcp.md MC-6.5).
             return Process.Start(info);
         }
         catch (System.ComponentModel.Win32Exception ex)

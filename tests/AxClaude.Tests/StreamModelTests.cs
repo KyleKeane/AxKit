@@ -375,6 +375,142 @@ public sealed class StreamModelTests
     }
 
     [Fact]
+    public void A_turns_end_with_a_count_that_is_no_number_still_ends_the_turn()
+    {
+        // The reader's own TryGetInt32 throws on a null or a text: until 2026-11-27 such an end line was passed over
+        // whole, and Claude stayed working for good. The count is 0; the end is an end.
+        foreach (var end in new[]
+        {
+            """{"type":"result","subtype":"success","is_error":false,"queued_turn_count":null,"num_turns":null}""",
+            """{"type":"result","subtype":"success","is_error":false,"num_turns":"three"}""",
+        })
+        {
+            var read = ClaudeCodeStream.Read(end);
+            Assert.True(read.Has(StreamKind.Ended));
+            Assert.Equal(0, read.Turns);
+            Assert.Equal(0, read.Queued);
+
+            var model = new StreamModel();
+            Assert.True(model.Send("hello"));
+            model.Take(ClaudeCodeStream.Read("""{"type":"system","subtype":"init","permissionMode":"default","session_id":"s"}"""));
+            model.Take(ClaudeCodeStream.Read("""{"type":"user","isReplay":true,"message":{"content":"hello"}}"""));
+            model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"text","text":"hi"}]}}"""));
+            Assert.True(model.Working);
+            model.Take(read);
+            Assert.False(model.Working);
+        }
+    }
+
+    [Fact]
+    public void A_message_written_after_a_command_that_runs_the_model_leaves_Claude_idle_when_both_have_ended()
+    {
+        // A skill, then a message before the skill's start line came: that start line sees a message waiting, so the
+        // turn was no command's by its start, its end left the command awaited, and Claude worked for good (the review
+        // of 2026-11-27). The command's own line, come back in the turn, makes the turn the command's.
+        var model = new StreamModel();
+        Assert.False(model.Send("/review"));
+        Assert.True(model.Send("and then say hello"));
+        model.Take(ClaudeCodeStream.Read("""{"type":"system","subtype":"init","permissionMode":"default","session_id":"s"}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"user","isReplay":true,"message":{"content":"<command-message>review</command-message>\n<command-name>/review</command-name>"}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"text","text":"Looks fine"}]}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"result","subtype":"success","is_error":false,"num_turns":2}"""));
+        // The message has not come back: its turn follows.
+        Assert.True(model.Working);
+
+        model.Take(ClaudeCodeStream.Read("""{"type":"system","subtype":"init","permissionMode":"default","session_id":"s"}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"user","isReplay":true,"message":{"content":"and then say hello"}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"text","text":"hello"}]}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"result","subtype":"success","is_error":false,"num_turns":1}"""));
+        Assert.False(model.Working);
+        Assert.Equal(0, model.QueuedMessages);
+    }
+
+    [Fact]
+    public void A_message_that_comes_back_with_another_text_is_the_oldest_one_awaited()
+    {
+        // Claude Code may give a message back changed (it takes characters that are not seen out of a prompt). Found by
+        // its text alone, such a message stood twice in the conversation and stayed awaited, Claude working for good.
+        var model = new StreamModel();
+        Assert.True(model.Send("first​ message"));
+        model.Take(ClaudeCodeStream.Read("""{"type":"system","subtype":"init","permissionMode":"default","session_id":"s"}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"user","isReplay":true,"message":{"content":"first message"}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"text","text":"ok"}]}}"""));
+        model.Take(ClaudeCodeStream.Read("""{"type":"result","subtype":"success","is_error":false,"num_turns":1}"""));
+
+        Assert.False(model.Working);
+        Assert.Single(model.Lines, line => line.Kind == LineKind.InputMarker);
+        Assert.Equal("claude: ok", model.Lines[^1].Text);
+    }
+
+    [Fact]
+    public void What_a_slash_command_printed_in_a_line_of_its_own_stands_under_its_echo()
+    {
+        // The fixture compact: /compact's own output comes back in the user's place, in Claude Code's tag. Read and
+        // dropped until 2026-11-27; a plain row under the command's echo, as a command's print that comes as a text.
+        StreamReplay.Run("compact", out var model);
+        var lines = model.Lines.Select(line => line.Text).ToList();
+        var echo = lines.IndexOf("you: /compact");
+        Assert.True(echo >= 0);
+        var printed = lines.IndexOf("Compacted");
+        Assert.True(printed > echo);
+        Assert.Equal(LineKind.Plain, model.Lines[printed].Kind);
+
+        // Outside a command of the window's it is nothing of the conversation's.
+        var idle = new StreamModel();
+        idle.Take(ClaudeCodeStream.Read("""{"type":"user","isReplay":true,"message":{"content":"<local-command-stdout>stray</local-command-stdout>"}}"""));
+        Assert.DoesNotContain(idle.Lines, line => line.Text == "stray");
+    }
+
+    [Fact]
+    public void Each_thing_asked_has_its_own_number_and_only_the_one_asked_now_still_waits()
+    {
+        // What a control of the window was shown for must still wait when its answer comes (the review of
+        // 2026-11-27): the next request is the model's at once, while the list of the one before stays in the window
+        // for a moment, and two requests can read the same.
+        var model = new StreamModel();
+        var question = new Question("Claude asks to use Edit: notes.txt", [], [new QuestionOption("1", "No"), new QuestionOption("3", "Yes, once")]);
+        Assert.False(model.StillAsks(model.Asked));
+
+        model.Ask(question);
+        var first = model.Asked;
+        Assert.True(model.StillAsks(first));
+
+        // Answered: nothing waits, and the number no longer answers anything.
+        model.Answered();
+        Assert.False(model.StillAsks(first));
+
+        // The same question asked again is another request.
+        model.Ask(question);
+        var second = model.Asked;
+        Assert.NotEqual(first, second);
+        Assert.False(model.StillAsks(first));
+        Assert.True(model.StillAsks(second));
+
+        // The user's own words, and the way back to the list, are each their own.
+        model.AskWords("Enter text for option 2 (Other), or Escape for the list:");
+        var words = model.Asked;
+        Assert.False(model.StillAsks(second));
+        Assert.True(model.StillAsks(words));
+        model.Ask(question);
+        Assert.False(model.StillAsks(words));
+
+        // Another request in place of a list of the window's own, with no answer between.
+        var list = model.Asked;
+        model.Ask(new Question("Choose the model", [], [new QuestionOption("1", "Default"), new QuestionOption("3", "Haiku")]));
+        Assert.False(model.StillAsks(list));
+
+        // A new run forgets what waited.
+        var last = model.Asked;
+        model.ResetScreen();
+        Assert.False(model.StillAsks(last));
+
+        // A screen's model numbers nothing, and a control shown for it always answers: its keys are typed to the screen.
+        var screen = new SessionModel(80, 10);
+        Assert.Equal(0, screen.Asked);
+        Assert.True(screen.StillAsks(0));
+    }
+
+    [Fact]
     public void A_reply_written_in_Markdown_keeps_its_headings_as_headings()
     {
         StreamReplay.Run("headings", out var model);
@@ -643,10 +779,10 @@ public sealed class StreamModelTests
     /// <summary>
     /// What a tool printed (SM-4.11; the fixture tool-output, Claude Code 2.1.332): under its call, the first three lines
     /// and how many more, as the screen's preview rows, plain lines; a command that printed nothing shows what Claude
-    /// Code gave back for it. The whole output is kept for the call and for each line shown of it.
+    /// Code gave back for it. The whole output is not kept (since 2026-11-27): the lines shown and the count are all.
     /// </summary>
     [Fact]
-    public void What_a_tool_printed_stands_under_its_call_and_is_kept_whole()
+    public void What_a_tool_printed_stands_under_its_call_with_the_count_of_the_rest()
     {
         StreamReplay.Run("tool-output", out var model);
         var lines = model.Lines.Select(line => line.Text).ToList();
@@ -655,12 +791,8 @@ public sealed class StreamModelTests
         Assert.Equal(["1", "2", "3", "… +9 lines", "tool: Bash (true)", "(Bash completed with no output)", "claude: listed"], lines.Skip(seq + 1));
         Assert.All(model.Lines.Skip(seq + 1).Take(4), line => Assert.Equal(LineKind.Plain, line.Kind));
         Assert.All(model.Lines.Skip(seq + 1).Take(4), line => Assert.Equal(0, line.HeadingLevel));
-
-        var whole = Assert.IsType<ToolOutput>(model.OutputOf(model.Lines[seq]));
-        Assert.Equal(12, whole.Lines.Count);
-        Assert.Equal("12", whole.Lines[^1]);
-        Assert.Same(whole, model.OutputOf(model.Lines[seq + 2]));
-        Assert.Null(model.OutputOf(model.Lines[^1]));
+        // Nothing of the nine lines not shown is in the conversation.
+        Assert.DoesNotContain("12", lines);
     }
 
     /// <summary>What a tool printed is never spoken, as the screen's preview rows are not: a reply ends at a tool's line, and the rows under it are no reply's (SPEC.md FR-7.4).</summary>
@@ -695,9 +827,9 @@ public sealed class StreamModelTests
         Assert.Equal(["tool: Bash (echo a)", "ay", "tool: Bash (echo b)", "bee"], model.Lines.Select(line => line.Text));
     }
 
-    /// <summary>A failed call keeps its first line under it, as before, and its whole output too; a refusal's words for the model alone are neither shown nor kept.</summary>
+    /// <summary>A failed call keeps its first line under it, as before; a refusal's words for the model alone are not shown.</summary>
     [Fact]
-    public void A_failed_call_shows_its_first_line_and_keeps_the_rest()
+    public void A_failed_call_shows_its_first_line_and_a_refusals_words_are_not_shown()
     {
         var model = new StreamModel();
         model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"tool_use","id":"a","name":"Bash","input":{"command":"make"}},{"type":"tool_use","id":"b","name":"Write","input":{"file_path":"x.txt"}}]}}"""));
@@ -705,32 +837,29 @@ public sealed class StreamModelTests
         model.Take(ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"b","is_error":true,"content":"The user refused this tool call. The user says: no"}]}}"""));
 
         Assert.Equal(["tool error: Bash (make)", "Exit code 2", "tool error: Write (x.txt)"], model.Lines.Select(line => line.Text));
-        Assert.Equal(3, model.OutputOf(model.Lines[0])!.Lines.Count);
-        Assert.Null(model.OutputOf(model.Lines[2]));
     }
 
-    /// <summary>The conversation's cap lets go of the oldest lines, and of what their calls printed with them; emptying the conversation empties both.</summary>
-    [Fact]
-    public void The_outputs_go_with_their_lines()
+    /// <summary>
+    /// A result whose call's line the conversation's cap has let go changes nothing: until 2026-11-27 its rows went in
+    /// at the top of the conversation (a line not found is place -1, and the rows went in after it).
+    /// </summary>
+    [Theory]
+    [InlineData("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"a","is_error":false,"content":"late output"}]}}""")]
+    [InlineData("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"a","is_error":true,"content":"late failure"}]}}""")]
+    public void A_result_whose_calls_line_has_left_the_conversation_adds_nothing(string result)
     {
         var model = new StreamModel { MaxLines = 20 };
-        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"tool_use","id":"a","name":"Bash","input":{"command":"echo a"}}]}}"""));
-        model.Take(ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"a","is_error":false,"content":"a"}]}}"""));
-        var first = model.Lines[0];
-        Assert.NotNull(model.OutputOf(first));
+        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"tool_use","id":"a","name":"Bash","input":{"command":"sleep 60"}}]}}"""));
+        var call = model.Lines[0];
         for (var i = 0; i < 30; i++)
         {
             model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"text","text":"more"}]}}"""));
         }
 
-        Assert.DoesNotContain(first, model.Lines);
-        Assert.Null(model.OutputOf(first));
-
-        model.Take(ClaudeCodeStream.Read("""{"type":"assistant","message":{"content":[{"type":"tool_use","id":"b","name":"Bash","input":{"command":"echo b"}}]}}"""));
-        model.Take(ClaudeCodeStream.Read("""{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"b","is_error":false,"content":"b"}]}}"""));
-        var call = model.Lines.Single(line => line.Text == "tool: Bash (echo b)");
-        model.Clear();
-        Assert.Null(model.OutputOf(call));
+        Assert.DoesNotContain(call, model.Lines);
+        var before = model.Lines.Select(line => line.Text).ToList();
+        model.Take(ClaudeCodeStream.Read(result));
+        Assert.Equal(before, model.Lines.Select(line => line.Text));
     }
 
     /// <summary>An error of the service's that names the sign-in command asks for the sign-in once for a turn (SM-6.2); another error does not.</summary>

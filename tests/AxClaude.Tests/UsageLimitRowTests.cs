@@ -62,6 +62,10 @@ public class UsageLimitRowTests
     [InlineData("You've used 76% of your weekly limit · resets 11pm (Europe/Lisbon)")]
     [InlineData("You've used 90% of your session limit · resets 3:30pm")]
     [InlineData("You've used 80% of your weekly limit")]
+    // A kind of limit with a digit or a capital in it (2026-11-27): any words up to the row's separator.
+    [InlineData("You've used 91% of your 5-hour limit · resets 4pm (Europe/Lisbon)")]
+    [InlineData("You've used 88% of your Opus limit · resets Monday 9am")]
+    [InlineData("You've used 88% of your Opus weekly limit")]
     public void The_usage_row_is_chrome(string row) => Assert.True(LineClassifier.IsChrome(row));
 
     [Theory]

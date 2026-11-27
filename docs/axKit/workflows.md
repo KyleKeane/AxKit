@@ -346,8 +346,18 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Approve the plan and approve each edit yourself
 56. **Give Claude axKit's AI tools from the start**
     - Turn on the AI tools and have Claude know them
-57. **Have a short exchange with Claude**
-58. **Answer a set of two questions from Claude**
+57. **Be asked again when Claude asks the same thing twice, with Claude Code's screen**
+    - Allow the first of two files that are asked alike
+    - Hear the second file asked anew, with its own name on the answers
+    - Send a plan back and be asked for your words
+58. **Have an answer go only to the question it was given to, over Claude Code's stream**
+    - Refuse a first call
+59. **Have an AI tool's request wait for your answer, and go when Claude stops**
+    - Be asked before an AI tool runs a command that acts
+60. **Interrupt a message right after sending it, and have it not sent again**
+    - Interrupt a message right after sending it
+61. **Have a short exchange with Claude**
+62. **Answer a set of two questions from Claude**
 
 ## axClip
 

@@ -111,9 +111,6 @@ public sealed class StreamAsking
         Current = ask.IsQuestion ? Own(0) : IsPlan ? Plan() : Permission();
     }
 
-    /// <summary>The tool Claude Code asked about, for the log: a tool's name, never what it was asked to do.</summary>
-    public string Tool => _ask.Tool;
-
     /// <summary>The question the window shows now.</summary>
     public Question Current { get; private set; }
 
@@ -122,9 +119,6 @@ public sealed class StreamAsking
     /// that the window names the answer as it does with the screen; null otherwise.
     /// </summary>
     public string? WordsPrompt { get; private set; }
-
-    /// <summary>Whether this key of a tool call's question asks for the user's words next (<see cref="RefuseWhyLabel"/>, or a plan's <see cref="KeepPlanningLabel"/>): nothing is answered until they are given.</summary>
-    public bool AsksForWords(string key) => !_ask.IsQuestion && key.Trim() == (IsPlan ? KeepPlanningKey : RefuseWhyKey);
 
     /// <summary>Whether these keys only open the explanation of a tool call, or a plan's whole text: nothing is answered by them.</summary>
     public bool Explains(string keys) => !_ask.IsQuestion && keys.Trim() == (IsPlan ? PlanReadKey : ExplainKey);
@@ -276,9 +270,11 @@ public sealed class StreamAsking
     /// The line that stays in the conversation when the user chose the answer that stops the asking for a tool
     /// (<see cref="AlwaysKey"/>), or null for every other answer: from then on Claude uses the whole tool unasked, and
     /// until 2026-11-21 nothing in the window said afterwards that such a word had been given (the audit of that day).
+    /// Not while the user's own words are awaited: words that are exactly that key are words, the refusal goes with
+    /// them, and until 2026-11-27 the line then said the tool was allowed.
     /// </summary>
     public string? StandingWords(string given) =>
-        !_ask.IsQuestion && !IsPlan && given.Trim() == AlwaysKey
+        !_ask.IsQuestion && !IsPlan && WordsPrompt is null && given.Trim() == AlwaysKey
             ? $"You allowed {Who} to use {Shown(_ask.Tool)} without asking for the rest of this session. A new start of Claude Code asks again."
             : null;
 
@@ -324,7 +320,7 @@ public sealed class StreamAsking
     private Question Plan() =>
         new($"{Who} has a plan and asks to carry it out", [AiCaution.PlanAsked(Who), .. PlanLines().Where(line => line.Trim().Length > 0)],
         [
-            new QuestionOption(KeepPlanningKey, KeepPlanningLabel),
+            new QuestionOption(KeepPlanningKey, KeepPlanningLabel) { AsksForWords = true },
             new QuestionOption(PlanManualKey, PlanManualLabel),
             new QuestionOption(PlanAutoKey, PlanAutoLabel),
             new QuestionOption(PlanReadKey, "Read the whole plan"),
@@ -417,9 +413,9 @@ public sealed class StreamAsking
             [AiCaution.Asked(Who)],
             [
                 new QuestionOption(RefuseKey, "No"),
-                new QuestionOption(RefuseWhyKey, RefuseWhyLabel),
+                new QuestionOption(RefuseWhyKey, RefuseWhyLabel) { AsksForWords = true },
                 new QuestionOption(OnceKey, "Yes, once"),
-                new QuestionOption(AlwaysKey, $"Yes, and do not ask again for {_ask.Tool} in this session"),
+                new QuestionOption(AlwaysKey, $"Yes, and do not ask again for {tool} in this session"),
                 new QuestionOption(ExplainKey, $"Explain what {Who} asks to do"),
             ])
         {
@@ -441,7 +437,7 @@ public sealed class StreamAsking
             options.Add(new QuestionOption(Key(i + 1), Shown(says ? choice.Label + ClaudeCodeTexts.AnswerDash + choice.Description : choice.Label)));
         }
 
-        options.Add(new QuestionOption(Key(asked.Choices.Count + 1), ClaudeCodeTexts.OtherAnswer));
+        options.Add(new QuestionOption(Key(asked.Choices.Count + 1), ClaudeCodeTexts.OtherAnswer) { AsksForWords = true });
         return new Question(Shown(asked.Text), [], options)
         {
             AllowsSeveral = asked.Several,

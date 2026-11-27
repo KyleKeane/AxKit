@@ -72,14 +72,31 @@ public static class SessionHandover
         return null;
     }
 
-    /// <summary>The id a command line takes a session up by (<c>--resume &lt;id&gt;</c>, <c>-r &lt;id&gt;</c>), or null: also for a bare <c>--resume</c>, which opens the interactive program's own list.</summary>
+    /// <summary><c>--resume=</c>, the start of the one-argument form of <see cref="ClaudeCodeStream.ResumeOption"/> (<c>--resume=&lt;id&gt;</c>).</summary>
+    private const string ResumeEquals = ClaudeCodeStream.ResumeOption + "=";
+
+    /// <summary>Whether the arguments take up the folder's last conversation: <c>--continue</c>, or its short form <c>-c</c> (read since 2026-11-27).</summary>
+    public static bool Continues(IReadOnlyList<string> arguments) => arguments.Any(IsContinue);
+
+    private static bool IsContinue(string argument) => argument is ClaudeCodeStream.ContinueOption or ClaudeCodeStream.ContinueShortOption;
+
+    /// <summary>
+    /// The id a command line takes a session up by (<c>--resume &lt;id&gt;</c>, <c>-r &lt;id&gt;</c>, or as one
+    /// argument <c>--resume=&lt;id&gt;</c>, read since 2026-11-27), or null: also for a <c>--resume</c> that names no
+    /// session, which opens the interactive program's own list.
+    /// </summary>
     public static string? ResumedIn(IReadOnlyList<string> arguments)
     {
-        for (var i = 0; i + 1 < arguments.Count; i++)
+        for (var i = 0; i < arguments.Count; i++)
         {
-            if (arguments[i] is ClaudeCodeStream.ResumeOption or ClaudeCodeStream.ResumeShortOption && IsSessionId(arguments[i + 1]))
+            if (arguments[i] is ClaudeCodeStream.ResumeOption or ClaudeCodeStream.ResumeShortOption && i + 1 < arguments.Count && IsSessionId(arguments[i + 1]))
             {
                 return arguments[i + 1];
+            }
+
+            if (arguments[i].StartsWith(ResumeEquals, StringComparison.Ordinal) && IsSessionId(arguments[i][ResumeEquals.Length..]))
+            {
+                return arguments[i][ResumeEquals.Length..];
             }
         }
 
@@ -87,16 +104,43 @@ public static class SessionHandover
     }
 
     /// <summary>
-    /// Whether the arguments ask for a conversation to be chosen: a <c>--resume</c> (or <c>-r</c>) with no session's id
-    /// after it, which opens the interactive program's own list, a screen the stream does not have (SM-8.5). New
-    /// session's preset "Choose a conversation to resume" gives one.
+    /// How many arguments a resume that names no session takes at this place, 0 where there is none: 1 for
+    /// <c>--resume</c> or <c>-r</c> alone and for <c>--resume=</c> with a word that is no session's id, 2 when the
+    /// option is followed by a word that is neither an id nor another option, which is Claude Code's search term for
+    /// its own list of conversations.
+    /// </summary>
+    private static int ResumeWithoutSession(IReadOnlyList<string> arguments, int at)
+    {
+        var argument = arguments[at];
+        if (argument.StartsWith(ResumeEquals, StringComparison.Ordinal))
+        {
+            return IsSessionId(argument[ResumeEquals.Length..]) ? 0 : 1;
+        }
+
+        if (argument is not (ClaudeCodeStream.ResumeOption or ClaudeCodeStream.ResumeShortOption))
+        {
+            return 0;
+        }
+
+        if (at + 1 == arguments.Count)
+        {
+            return 1;
+        }
+
+        var next = arguments[at + 1];
+        return IsSessionId(next) ? 0 : next.StartsWith('-') ? 1 : 2;
+    }
+
+    /// <summary>
+    /// Whether the arguments ask for a conversation to be chosen: a <c>--resume</c> (or <c>-r</c>) that names no
+    /// session (<see cref="ResumeWithoutSession"/>), which opens the interactive program's own list, a screen the
+    /// stream does not have (SM-8.5). New session's preset "Choose a conversation to resume" gives one.
     /// </summary>
     public static bool AsksToChoose(IReadOnlyList<string> arguments)
     {
         for (var i = 0; i < arguments.Count; i++)
         {
-            if (arguments[i] is ClaudeCodeStream.ResumeOption or ClaudeCodeStream.ResumeShortOption
-                && (i + 1 == arguments.Count || !IsSessionId(arguments[i + 1])))
+            if (ResumeWithoutSession(arguments, i) > 0)
             {
                 return true;
             }
@@ -106,26 +150,30 @@ public static class SessionHandover
     }
 
     /// <summary>
-    /// The arguments with the conversation the user chose (SM-8.5): each bare <c>--resume</c> or <c>-r</c> followed by
-    /// the session's id, or, with no id (null: nothing to choose from), left out, so that a new conversation begins.
-    /// Every other argument stays as it is.
+    /// The arguments with the conversation the user chose (SM-8.5): each resume that names no session, with the search
+    /// term after it when it has one (until 2026-11-27 the term stayed, a stray argument after the chosen id), becomes
+    /// <c>--resume</c> with the session's id, or, with no id (null: nothing to choose from), is left out, so that a
+    /// new conversation begins. Every other argument stays as it is.
     /// </summary>
     public static IReadOnlyList<string> WithChosen(IReadOnlyList<string> arguments, string? id)
     {
         var result = new List<string>();
         for (var i = 0; i < arguments.Count; i++)
         {
-            var bare = arguments[i] is ClaudeCodeStream.ResumeOption or ClaudeCodeStream.ResumeShortOption
-                && (i + 1 == arguments.Count || !IsSessionId(arguments[i + 1]));
-            if (!bare)
+            var taken = ResumeWithoutSession(arguments, i);
+            if (taken == 0)
             {
                 result.Add(arguments[i]);
+                continue;
             }
-            else if (IsSessionId(id) && ResumedIn(result) is null)
+
+            if (IsSessionId(id) && ResumedIn(result) is null)
             {
                 result.Add(ClaudeCodeStream.ResumeOption);
                 result.Add(id!);
             }
+
+            i += taken - 1;
         }
 
         return result;
@@ -157,11 +205,11 @@ public static class SessionHandover
     /// arguments (its default, or the user's own) becomes <c>--resume</c> with the folder's newest session, so that
     /// the window knows before the start which conversation is taken up and can show it; with no session in the
     /// folder it goes, and a new conversation begins, as the stream's own <c>--continue</c> begins one. Every other
-    /// argument stays as it is.
+    /// argument stays as it is. The short form <c>-c</c> is read as <c>--continue</c>.
     /// </summary>
     public static IReadOnlyList<string> ForStream(IReadOnlyList<string> arguments, string? newest)
     {
-        if (!arguments.Contains(ClaudeCodeStream.ContinueOption))
+        if (!Continues(arguments))
         {
             return arguments;
         }
@@ -169,7 +217,7 @@ public static class SessionHandover
         var result = new List<string>();
         foreach (var argument in arguments)
         {
-            if (argument != ClaudeCodeStream.ContinueOption)
+            if (!IsContinue(argument))
             {
                 result.Add(argument);
             }
@@ -193,7 +241,7 @@ public static class SessionHandover
     /// </summary>
     public static IReadOnlyList<string> ForScreen(IReadOnlyList<string> arguments, string? kept, string? newest)
     {
-        if (!arguments.Contains(ClaudeCodeStream.ContinueOption) || ResumedIn(arguments) is not null
+        if (!Continues(arguments) || ResumedIn(arguments) is not null
             || !IsSessionId(kept) || !string.Equals(kept, newest, StringComparison.OrdinalIgnoreCase))
         {
             return arguments;
@@ -202,7 +250,7 @@ public static class SessionHandover
         var result = new List<string>();
         foreach (var argument in arguments)
         {
-            if (argument != ClaudeCodeStream.ContinueOption)
+            if (!IsContinue(argument))
             {
                 result.Add(argument);
             }

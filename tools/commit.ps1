@@ -29,7 +29,10 @@ param(
     [switch]$All,
     # The model named in the attribution line: the one the session runs on (it was written into the script as one
     # model's name until 2026-11-27, and a session on another model signed with it).
-    [string]$By = 'Claude Fable 5.2'
+    [string]$By = 'Claude Fable 5.2',
+    # The session's address, written as a line of its own after the attribution when the session has one to name
+    # (a session the maintainer follows from elsewhere); never kept in this file.
+    [string]$Session = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -45,6 +48,7 @@ $text = $Subject.Trim() + "`n"
 if ($Body.Trim()) { $text += "`n" + ($Body.Trim() -replace "`r`n", "`n") + "`n" }
 # The attribution's address in two pieces, so that the privacy check (PrivacyTests) passes over a non-personal one.
 $text += "`n$itemLine`n`nCo-Authored-By: $By <noreply" + '@' + "anthropic.com>`n"
+if ($Session.Trim()) { $text += "Claude-Session: $($Session.Trim())`n" }
 
 $file = Join-Path ([IO.Path]::GetTempPath()) ("axkit-commit-" + [Guid]::NewGuid().ToString('N') + '.txt')
 [IO.File]::WriteAllText($file, $text, (New-Object Text.UTF8Encoding($false)))

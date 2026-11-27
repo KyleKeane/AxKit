@@ -94,7 +94,7 @@ public static class McpOffer
     public static string AskName(string client, string command) =>
         $"{Start(ReachComputer)}. {McpRun.Speaker(client)} offers a command for you to run: {command.Trim()}. {AiCaution.Short(McpRun.Speaker(client))}";
 
-    /// <summary>What Ctrl+Q reads: the name and the reason.</summary>
+    /// <summary>What the read in full key (F7, the bundle's) reads: the name and the reason.</summary>
     public static string AskText(string client, string command, string? reason)
     {
         var why = Reason(reason);
