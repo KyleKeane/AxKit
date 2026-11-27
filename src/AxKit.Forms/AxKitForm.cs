@@ -198,7 +198,7 @@ public abstract partial class AxKitForm : Form
 
     /// <summary>The settings file could not be read and the defaults are in use, or some of its values were not understood and the rest is in use (AX-5.3; <c>SettingsFile.Heading</c> says which): a notice at the first showing, unless the window says it another way (the console windows write a system line).</summary>
     protected virtual void SettingsNotRead(string error) =>
-        ShowNotice(Notice.Plain("Settings", SettingsSeal.IsRefusal(error) ? error : $"{SettingsFile.Heading(error)}\n{error}") with { Unprompted = true });
+        ShowNotice(Notice.Plain("Settings", SettingsSeal.IsRefusal(error) ? error : $"{SettingsFile.Heading(error)}\n{error}").ByItself());
 
     // ---- the menus every window has (AX-6.5, AX-9) ----
 
@@ -820,6 +820,13 @@ public abstract partial class AxKitForm : Form
     {
         _altCarriedOverUntil = (GetAsyncKeyState(VK_MENU) & 0x8000) != 0 ? Environment.TickCount64 + AltCarriedOverMs : 0;
         base.OnActivated(e);
+        if (NoticeOpen)
+        {
+            // AX-6.4: the window is the active one again with a notice in it, which NVDA reads now: one that arrived
+            // by itself holds its keys for a moment from here, as when it was shown (KeyHold, rule 3).
+            Overlay.FocusCameBack();
+        }
+
         SayWhatWaitedForActivation();
         PaintThemeIfChanged();
         EventLogger.FollowSettings(BundleSettings.DefaultPath);
@@ -1492,7 +1499,7 @@ public abstract partial class AxKitForm : Form
 
     /// <summary>The settings file could not be written (AX-5.9): a notice, unless the window says it another way (the console windows write a system line).</summary>
     protected virtual void SettingsNotSaved(string sentence) =>
-        ShowNotice(Notice.Plain("Settings", sentence) with { Unprompted = true });
+        ShowNotice(Notice.Plain("Settings", sentence).ByItself());
 
     // ---- the ways out to the system (AX-7.2: the only separate windows) ----
 

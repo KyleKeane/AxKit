@@ -339,13 +339,14 @@ public abstract partial class AxKitForm
         IReadOnlyList<(ControlArea Area, Control? Shown)> before = ShownInAreas();
         ClickFor(CommandOrigin.AiTool, item, label, client, text);
         // A list or a field the click put into a control area was opened for an AI tool, not by a key of the user's:
-        // it holds its answering keys as everything does that arrives by itself (KeyHold, the one rule), though the
-        // command's own code says hold: false, as it may for the user's key (Go to line, the recent commands).
+        // it holds its answering keys as everything does that arrives by itself (KeyHold, the one rule), from now and
+        // again from when the focus comes to it, though the command's own code says hold: false, as it may for the
+        // user's key (Go to line, the recent commands).
         foreach (var (area, shown) in before)
         {
             if (area.Current is not null && area.Current != shown)
             {
-                area.Hold(KeyHold.DefaultMs);
+                area.HoldAsArrived();
             }
         }
 
@@ -474,9 +475,8 @@ public abstract partial class AxKitForm
             new OverlayChoice(McpRun.NoButton, No, IsDefault: true, IsCancel: true),
         ])
         {
-            Unprompted = true,
             Silent = true,
-        });
+        }.ByItself());
         FlashIfBehind();
     }
 
@@ -682,7 +682,7 @@ public abstract partial class AxKitForm
         [
             new OverlayChoice("&No", () => Announce($"{app.Name} not opened", true), IsDefault: true, IsCancel: true),
             new OverlayChoice("&Open", () => WindowMenu.StartWith(app.Verb, [.. checkedArguments.Skip(1)])),
-        ]) { Unprompted = true });
+        ]).ByItself());
         ChimeForMcp();
         FlashIfBehind();
         return new { asked = $"The user is asked in this {AppName} window whether to open {app.Name}{where}; it opens only if they choose Open." };

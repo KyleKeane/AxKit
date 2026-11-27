@@ -203,10 +203,7 @@ public sealed partial class PassForm : ItemForm
                 })),
                 new OverlayChoice("&Open keepassxc.org", () => OpenUrl(ProgramInstall.KeePassXC.Page), StaysOpen: true),
                 OverlayChoice.Close,
-            ])
-            {
-                Unprompted = true,
-            });
+            ]).ByItself());
         }
         else if (_database is not null)
         {

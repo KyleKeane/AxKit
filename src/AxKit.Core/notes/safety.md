@@ -5,11 +5,13 @@
 - `AutomationEnvironment` (S-11): a test run's secret and folder, read once in `Main` and taken out of the environment; only a new axKit window of the run gets them (`PassTo`).
 - `ProcessRun` and `ProcessResult` (2026-10-25; from axGIT's `GitRunner`, Claude Code's version check and axPass's `KeePassCli` on their third use, inventory item 3): a program run without a window to its end under a time limit, input lines then closed, both outputs read under the limit, the whole tree ended on a timeout, `Finished` telling whether the program itself had ended (git's case of a child holding the pipes). Since 2026-11-27 each output is read piece by piece into a text that is kept, so that a run past its limit still says what it printed (a read to the end, cancelled, gave nothing, and git read an empty output with exit code 0 as an empty status), with half a second after the limit for what is already in the pipes; `ProcessResult.Stopped` is the run ended before it had finished, whose output is a part and no result, and the compiler holds every caller to asking it (the review's second pass of 2026-11-27; a test that read the sources for the word held nothing): `Output` is null of a stopped run, so it is read only after `Stopped` was asked, and what was printed whatever became of the run is `Printed`, taken only in the files `ProcessRunTests` lists with their reasons (git's runner, whose own result carries the stop on, and axTask's action output, shown as what it is). Tested in `ProcessRunTests`; the callers' own tests cover their cases.
 - `DisplayText` (S-42, 2026-10-25): text from outside shown as a list line, its bidi and zero-width characters made
-  visible; `AxKit.Forms/AxKitList.Fill` applies it to every list it fills. The one table of the characters that are
-  neither seen nor heard (`Hidden`, by code point, written as numbers; `Hides` asks it): since 2026-11-27 also the soft
-  hyphen, the Mongolian vowel separator, the line and paragraph separators, the invisible operators (2061 to 2064),
-  the fillers (115F, 1160, 3164, FFA0) and the tag characters (E0000 to E007F, read as pairs), each a row of
-  `DisplayTextTests`. `VisibleLine` keeps a tab, for a question's name and answers: `AxKit.Forms/ControlArea` applies
+  visible; `AxKit.Forms/AxKitList.Fill` applies it to every list it fills. The one place that says which
+  characters are neither seen nor heard (`Hidden`; `Hides` asks it): by Unicode's own classes since the third review of
+  2026-11-27, in place of a list that each review found short: the general categories Format, Control, Surrogate,
+  PrivateUse and OtherNotAssigned, the line and paragraph separators, and the default ignorable code points of
+  another category (`DefaultIgnorable`, from the Unicode Character Database). One exception keeps an emoji whole: FE0F
+  right after a symbol, and 200D between two symbols. `VisibleCommand` also writes out a space that is not the plain
+  one, for a command offered to run and a permission question's label. Each rule has its rows in `DisplayTextTests`. `VisibleLine` keeps a tab, for a question's name and answers: `AxKit.Forms/ControlArea` applies
   it to every question it shows, `McpOffer.Shown` to an offered command. A new place that puts a program's or an AI's
   text in front of the user to decide on goes through here.
 - `Signatures` (S-19): whether a program file carries a valid Authenticode signature (`WinVerifyTrust`, the file alone,

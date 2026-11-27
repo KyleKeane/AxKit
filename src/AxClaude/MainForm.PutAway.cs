@@ -295,7 +295,7 @@ internal sealed partial class MainForm
             {
                 _ending = true;
                 CloseConfirmed();
-            }, "&Keep it open", null, cancelIsDefault: true) with { Unprompted = true });
+            }, "&Keep it open", null, cancelIsDefault: true).ByItself());
     }
 
     [DllImport("user32.dll")]

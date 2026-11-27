@@ -405,7 +405,7 @@ public sealed partial class GitForm : ItemForm
                 SetNoRepository();
             }
 
-            ShowNotice(Notice.Plain("Not a git repository", $"{target} is not inside a git repository. Session, Open repository ({BundleKeys.Text(AxGitKeys.OpenRepository)}) takes another folder.") with { Unprompted = true });
+            ShowNotice(Notice.Plain("Not a git repository", $"{target} is not inside a git repository. Session, Open repository ({BundleKeys.Text(AxGitKeys.OpenRepository)}) takes another folder.").ByItself());
             return;
         }
 
@@ -466,7 +466,7 @@ public sealed partial class GitForm : ItemForm
             }
 
             Log.Info("A repository was not opened: what it would run could not be read");
-            ShowNotice(Notice.Plain("Repository not opened", $"What {root} would run could not be read, so axGIT runs nothing in it. Git said: {problem}") with { Unprompted = true });
+            ShowNotice(Notice.Plain("Repository not opened", $"What {root} would run could not be read, so axGIT runs nothing in it. Git said: {problem}").ByItself());
             return;
         }
 
@@ -545,7 +545,7 @@ public sealed partial class GitForm : ItemForm
             SetTitle(null);
             UpdateStatusBar();
             Log.Info("The repository was closed: what it would run could no longer be read");
-            ShowNotice(Notice.Plain("Repository closed", $"What {root} would run could no longer be read, so axGIT runs nothing more in it and has closed it. Git said: {problem}") with { Unprompted = true });
+            ShowNotice(Notice.Plain("Repository closed", $"What {root} would run could no longer be read, so axGIT runs nothing more in it and has closed it. Git said: {problem}").ByItself());
             return false;
         }
 
@@ -614,7 +614,7 @@ public sealed partial class GitForm : ItemForm
         [
             new OverlayChoice("Keep them &off", IsDefault: true, IsCancel: true),
             new OverlayChoice("&Trust this repository", () => TrustRepository(root, risks)),
-        ]) { Unprompted = true });
+        ]).ByItself());
     }
 
     private void TrustRepository(string root, IReadOnlyList<string> risks)

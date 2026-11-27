@@ -69,5 +69,7 @@ do Message field
 # The list of the choice stands in the field's place until the window's settle has closed it: the field first.
 expect focus "name":"Message to Claude"
 type Say ok
+# The window itself put the focus into the field as the list closed: its Enter waits a second (bundle AX-6.4, 2026-11-27).
+wait 1100
 keys enter
 expect said Done. claude: ok

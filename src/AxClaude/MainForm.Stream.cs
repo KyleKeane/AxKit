@@ -721,7 +721,7 @@ internal sealed partial class MainForm
                 _model.AddSystemLine($"Claude Code was not started in this folder. Press {BundleKeys.Text(AxClaudeKeys.RestartClaude)} to be asked again.");
                 UpdateStatus();
             },
-            cancelIsDefault: true) with { Unprompted = true });
+            cancelIsDefault: true).ByItself());
 
     /// <summary>
     /// A question of Claude Code's came over the relay's pipe (SM-7.3), on the window's thread: read down in Claude
@@ -980,7 +980,7 @@ internal sealed partial class MainForm
 
     /// <summary>The way back is the switch (SM-9.3): a notice that says what went wrong and offers the same folder with the screen. Enter opens it, Escape stays.</summary>
     private void OfferScreen(string title, string message) =>
-        ShowNotice(Notice.Ask(title, message + "\n" + ScreenOfferWords, "&Open with the screen", ReopenWithScreen, "&Stay in this window") with { Unprompted = true });
+        ShowNotice(Notice.Ask(title, message + "\n" + ScreenOfferWords, "&Open with the screen", ReopenWithScreen, "&Stay in this window").ByItself());
 
     /// <summary>
     /// axClaude started again on this folder for the screen, as the window it is (its title, its model, hiding on

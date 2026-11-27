@@ -178,7 +178,7 @@ The keys here are the defaults; a user's own `app-keys.json` may give an app ano
 - Code: `src/AxClaude` (the window), `src/AxClaude.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxClaude.Tests`.
 - Documents: `docs/axClaude/` (`claude-screens.md`, `events-and-grounding.md`, `nvda-test-plan.md`, `SPEC.md`, `stream-mode.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axClaude/`, 65 scripts (their workflows are in `docs/axKit/workflows/axClaude.md`).
+- Automated checks: `tests/scripts/axClaude/`, 69 scripts (their workflows are in `docs/axKit/workflows/axClaude.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axClaude.ps1`, or `run.ps1 -App claude`.
 
 ## Access layers: utilities

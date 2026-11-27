@@ -98,7 +98,7 @@ public sealed partial class TextEditorForm
     {
         UpdateTitle();
         UpdateStatus();
-        ShowNotice(notice with { Unprompted = true });
+        ShowNotice(notice.ByItself());
     }
 
     /// <summary>The document into the editor under its path: the recent list and Recently closed, the history, the title and the status (AD-3, AD-4.1, AX-9.4).</summary>

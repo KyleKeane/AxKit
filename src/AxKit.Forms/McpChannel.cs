@@ -489,11 +489,13 @@ internal sealed class McpChannel
         {
             if (Interlocked.CompareExchange(ref state, 2, 0) == 0)
             {
+                Log.Info("An AI tool's request to open an app was given up: the window's thread did not take it up in time, and the window will not start the app");
                 return JsonSerializer.Serialize(new { error = "The window is busy and did not answer in time; it did not open the app and will not." }, Plain);
             }
 
             if (!call.AsyncWaitHandle.WaitOne(WindowWait))
             {
+                Log.Info("An AI tool's request to open an app was taken up by the window and has not ended in time: whether the app started is not known");
                 return JsonSerializer.Serialize(new { error = McpTools.OpenNotKnown, notKnown = true }, Plain);
             }
         }

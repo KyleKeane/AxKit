@@ -44,6 +44,8 @@ expect text not found
 # Ctrl+Shift+R shows the notice again.
 do Force Claude to restart
 expect state "notice":"Claude Code was not found"
+# A notice that comes by itself holds Escape for its first second, as it holds Enter (bundle AX-6.4, 2026-11-27).
+wait 1500
 keys escape
 expect state "notice":null
 # Steps 2 and 3, publish.ps1, the installer, the Start menu, Explorer's "Open with axKit" and the uninstaller change

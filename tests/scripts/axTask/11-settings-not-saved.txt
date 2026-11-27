@@ -18,6 +18,8 @@ do Hide done tasks
 expect state "notice":"Settings"
 expect state Settings could not be saved:
 expect state What you change lasts until this window closes.
+# A notice that comes by itself holds Escape for its first second, as it holds Enter (bundle AX-6.4, 2026-11-27).
+wait 1500
 keys escape
 expect state "notice":null
 # Said once in a run: the next change says nothing more of it.

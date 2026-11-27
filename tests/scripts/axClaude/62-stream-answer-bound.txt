@@ -71,6 +71,8 @@ expect said Sent: 1, No
 # not asked (not that the user refused), and one line of the conversation says what happened.
 expect focus Message to Claude
 type Go on
+# The window itself put the focus back into the field as the question closed: its Enter waits a second (bundle AX-6.4, 2026-11-27).
+wait 1100
 keys enter
 expect said Sent
 do Conversation

@@ -69,7 +69,7 @@ public sealed partial class GitForm
         }
     }
 
-    /// <summary>git is not on the PATH (AG-1.5): a notice each time a command is asked for, with the chime the first time, and every command stays disabled.</summary>
+    /// <summary>git is not on the PATH (AG-1.5): a notice each time a command is asked for, with the chime the first time, and every command stays disabled. It holds its keys for a moment each time (docs/axKit/SPEC.md AX-6.4): it comes in place of what the user asked for.</summary>
     private void GitMissing()
     {
         var first = !_gitMissing;
@@ -90,8 +90,8 @@ public sealed partial class GitForm
             OverlayChoice.Close,
         ])
         {
-            Unprompted = first,
-        });
+            Silent = !first,
+        }.ByItself());
     }
 
     /// <summary>A failed command: one announcement when git said one line, a notice with everything it said otherwise (AG-7, the base's rule).</summary>

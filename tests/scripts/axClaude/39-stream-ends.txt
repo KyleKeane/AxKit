@@ -23,6 +23,8 @@ expect said Sent
 expect said Claude stopped
 expect state Claude Code ended right after its start
 expect state You can open this folder with the screen instead
+# A notice that comes by itself holds Escape for its first second, as it holds Enter (bundle AX-6.4, 2026-11-27).
+wait 1500
 keys escape
 expect state Claude: stopped
 do Conversation

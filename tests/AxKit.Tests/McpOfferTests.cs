@@ -36,6 +36,22 @@ public sealed class McpOfferTests
     }
 
     /// <summary>
+    /// The third review of 2026-11-27: a space that is not the plain one (a no-break space, an em space) reads as a
+    /// space and may be part of a word to a shell. In the command as the question and the explanation show it, it is
+    /// written as its code; the line sent is the command as it was offered.
+    /// </summary>
+    [Fact]
+    public void A_space_of_an_offered_command_that_is_not_the_plain_one_is_written_out_where_it_is_shown()
+    {
+        var command = "rm" + char.ConvertFromUtf32(0x00A0) + "-rf" + char.ConvertFromUtf32(0x2003) + "build";
+        const string shown = "rm‹U+00A0›-rf‹U+2003›build";
+        Assert.Equal(shown, McpOffer.Shown(command));
+        Assert.Contains($"offers a command for you to run: {shown}. ", McpOffer.AskName("claude-code", command));
+        Assert.Equal("! " + command, McpOffer.Line(command));
+        Assert.Equal("git status", McpOffer.Shown(" git status "));
+    }
+
+    /// <summary>
     /// The second review of 2026-11-27: only control characters were kept out of an offered command. A direction
     /// override, a zero-width or a tag character stood in the question unseen and unheard, in a command the user
     /// judges by what they hear. They are written out as their codes wherever the command is shown; what is sent on

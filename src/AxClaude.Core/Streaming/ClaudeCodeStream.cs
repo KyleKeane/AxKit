@@ -182,6 +182,13 @@ public sealed record StreamAsk(string Tool, string Call, string About, JsonEleme
     /// window says it as Claude's words, never as the action itself (root rule 11; the 2026-11-21 audit).
     /// </summary>
     public bool AboutDescribes { get; init; }
+
+    /// <summary>
+    /// <see cref="About"/> is a path, the file or folder the call acts on (the input's <c>file_path</c>,
+    /// <c>notebook_path</c> or <c>path</c>), and no command: a label names it by its file's name, whole
+    /// (<c>PermissionCore</c>).
+    /// </summary>
+    public bool AboutIsPath { get; init; }
 }
 
 /// <summary>
@@ -457,6 +464,7 @@ public static class ClaudeCodeStream
             {
                 AboutCut = whole.Trim() != about || HoldsMore(tool, input, key),
                 AboutDescribes = key is "description" or "title",
+                AboutIsPath = key is "file_path" or "notebook_path" or "path",
             };
         }
         catch (Exception ex) when (ex is JsonException or InvalidOperationException)

@@ -241,7 +241,14 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   ran; "asked the user: Delete" for an act command, which runs only on the user's Yes in the window (MC-7.3; what
   the window then says tells what the user answered); "not run: Find" when a notice, a dialog, the
   switch or a disabled item stopped it in between; "not known" when the window had not taken it up or closed.
-  Until then every run without an error was written "done: ran" with the name the client gave.
+  Until then every run without an error was written "done: ran" with the name the client gave. A line of
+  `axkit_open` says the same of an app (`McpAudit.Result`, the third review of 2026-11-27): "asked the user" for
+  an app that is asked first (MC-6.5a), where nothing opens before the user's Open, and which until then read
+  "done"; "not known" when the window that was asked to start the app did not say how it ended, which until then
+  read "refused or failed" though the app may have opened; "done" only for an app that was started. The window's
+  own log says each time it gives a start up (the request never taken up by its thread; taken up and not ended in
+  time), and the broker counts a request as sent to a window only once its line has gone to the pipe. A client
+  that asks again at once after "not known" can still start the app a second time: the priorities list has it.
 - MC-6.8 **Added to Claude Code**: Claude Code found where axClaude finds it (`AxKit.Core/ClaudeCodeProgram`, one
   search for both since 2026-11-09, axClaude FR-1.2: `claude.exe` or `claude.cmd` in every PATH folder, then its
   installer's `%USERPROFILE%\.local\bin\claude.exe`, then npm's `%APPDATA%\npm\claude.cmd`; a `.cmd` runs through
@@ -406,7 +413,10 @@ menu, the palette and the automated checks in the table of `command-language.md`
   own, since no run starts while one is open. A list or a field that a command run for an AI tool put into a
   window's control area holds its answering keys for a moment, as everything does that the user did not open with a
   key of their own (bundle AX-6.4; `AxKitForm.RunForMcp`, 2026-11-27), though the command's own code starts no hold
-  for the user's key: a stray Enter of the user's does not answer a list an AI tool just opened. A password field is never filled ("The command asks for a password,
+  for the user's key: a stray Enter of the user's does not answer a list an AI tool just opened. It counts as
+  arrived by itself in every way (`ControlArea.HoldAsArrived`, the third review of that day): the moment starts
+  again when the focus comes to it, and the field that gets the focus back when it closes holds its Enter for a
+  moment too. The text a run carries is entered by the run itself and passes no hold (`ControlArea.Fill`). A password field is never filled ("The command asks for a password,
   which AI tools never type"); a command that opened no field ran, and the answer's `text` says the text was not used.
   The user hears "Claude ran Find with the text budget" (`McpRun.Said`), and an act command's question names the
   text, its explanation under a heading of its own (`McpRun.AskName`, `ExplainText`). The explanation shows the

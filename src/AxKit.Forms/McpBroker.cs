@@ -419,9 +419,11 @@ public static class McpBroker
                 return null;
             }
 
-            // From here on the window may act on the request, whatever becomes of its answer.
-            sent = true;
+            // Once the line has gone the window may act on the request, whatever becomes of its answer; a write
+            // that failed sent no whole line, and the window acts on none (until the third review of 2026-11-27
+            // the flag went up before the write, and a pipe that broke there read as "may be starting").
             writer.WriteLine(request);
+            sent = true;
             var answer = reader.ReadLineAsync();
             return answer.Wait(timeoutMs) ? answer.Result : null;
         }

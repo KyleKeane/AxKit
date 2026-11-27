@@ -283,10 +283,9 @@ internal sealed class AiToolsSetup
             new OverlayChoice("&Deny", () => answer.TrySetResult(false), IsDefault: true, IsCancel: true),
         ])
         {
-            Unprompted = true,
             Kind = EventKind.Pairing,
             Consent = AxKitForm.ConsentBox("axKit", name),
-        });
+        }.ByItself());
         // The window closing refuses; the handler goes with the answer, so that requests do not pile handlers up.
         FormClosedEventHandler refuse = (_, _) => answer.TrySetResult(false);
         _form.FormClosed += refuse;

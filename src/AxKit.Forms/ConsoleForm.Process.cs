@@ -13,7 +13,7 @@ public abstract partial class ConsoleForm
     /// <summary>The exit is reported after this long, so that output still in the pipe arrives first.</summary>
     private readonly System.Windows.Forms.Timer _exitSettle = new() { Interval = 300 };
 
-    private readonly Queue<(string Text, int DelayAfter)> _writes = new();
+    private readonly Queue<(string Text, int DelayAfter, Func<bool>? Still)> _writes = new();
 
     /// <summary>The one timer between two paced writes: a restart stops it, so that no second pump runs on (two ran after a restart until 2026-10-23).</summary>
     private readonly System.Windows.Forms.Timer _pump = new();
@@ -207,8 +207,15 @@ public abstract partial class ConsoleForm
     /// <summary>Text straight to the program, now.</summary>
     protected void Write(string text) => _host?.Write(text);
 
-    /// <summary>A write for the queue, with the pause that follows it before the next; <see cref="StartWrites"/> sends them.</summary>
-    protected void Enqueue(string text, int delayAfter) => _writes.Enqueue((text, delayAfter));
+    /// <summary>
+    /// A write for the queue, with the pause that follows it before the next; <see cref="StartWrites"/> sends them.
+    /// <paramref name="still"/>, when given, is asked right before this write goes to the program, which can be
+    /// seconds after it was queued: false when what the write was for is over (axClaude: a question was drawn under
+    /// a message's Enter; the question an answer was typed for was replaced). The write is then dropped with
+    /// everything queued behind it, and the one who asked says so. Until the third review of 2026-11-27 a write was
+    /// judged when it was queued and never again.
+    /// </summary>
+    protected void Enqueue(string text, int delayAfter, Func<bool>? still = null) => _writes.Enqueue((text, delayAfter, still));
 
     /// <summary>Starts the write pump when it is idle; a pump already running takes what was queued after it.</summary>
     protected void StartWrites()
@@ -230,8 +237,16 @@ public abstract partial class ConsoleForm
             return;
         }
 
+        var (text, delay, still) = _writes.Dequeue();
+        if (still is not null && !still())
+        {
+            // What this write was for is over: it and what waits behind it go unwritten.
+            _writes.Clear();
+            _writing = false;
+            return;
+        }
+
         _writing = true;
-        var (text, delay) = _writes.Dequeue();
         Write(text);
         _pump.Interval = delay;
         _pump.Start();

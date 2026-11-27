@@ -32,13 +32,27 @@ public static class McpAudit
     /// read what an AI tool ran: "done: ran Word wrap", the name cut before a recent file's path ("1. notes.md"). A
     /// refusal's first line goes through <see cref="Redaction"/>, since it may quote a path the client gave.
     /// <paramref name="text"/> is the tool's answer; for <c>axkit_window_run</c> the window's own (<see cref="RunResult"/>).
+    /// An <c>axkit_open</c> has two results of its own since the third review of 2026-11-27: "not known" when the
+    /// window that was asked to start the app did not say how it ended (<see cref="McpTools.OpenNotKnown"/>), which
+    /// until then read "refused or failed" though the app may have opened; and "asked the user" for an app that is
+    /// asked first, which read "done" though nothing opens before the user's yes.
     /// </summary>
     public static string Result(string tool, bool failed, string text)
     {
         var first = text.Split('\n')[0].Trim();
+        if (tool == McpTools.Open && failed && first == McpTools.OpenNotKnown)
+        {
+            return "not known";
+        }
+
         if (failed)
         {
             return "refused or failed: " + Redaction.Redact(first);
+        }
+
+        if (tool == McpTools.Open && McpTools.OpenWasAsked(text))
+        {
+            return "asked the user";
         }
 
         return tool == McpTools.Run ? RunResult(text) : "done";

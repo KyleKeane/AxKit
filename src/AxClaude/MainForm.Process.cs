@@ -359,10 +359,7 @@ internal sealed partial class MainForm
             new OverlayChoice("&Open install instructions", () => OpenUrl(ClaudeLauncher.InstallUrl), StaysOpen: true),
             new OverlayChoice("&Locate claude.exe...", LocateClaude, StaysOpen: true),
             OverlayChoice.Close,
-        ])
-        {
-            Unprompted = true,
-        });
+        ]).ByItself());
     }
 
     /// <summary>The standard file picker; a choice closes the notice, is saved as claudePath and started at once. Cancel keeps the notice.</summary>

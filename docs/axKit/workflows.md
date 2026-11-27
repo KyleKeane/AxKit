@@ -358,9 +358,19 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Interrupt a message right after sending it
 61. **Have a typed answer wait until Claude's question was said, with Claude Code's screen**
     - Answer in your own words from the message field
-    - Send the same answer once the question was said
-62. **Have a short exchange with Claude**
-63. **Answer a set of two questions from Claude**
+    - Answer the file's question once it was said
+62. **Be asked while reading the conversation, with the settings of a new install**
+    - Allow the file once its question was heard
+63. **Find a question waiting when a notice closes, with the settings of a new install**
+    - Read the keyboard shortcuts
+    - Allow the file once its question was heard
+64. **Keep a message that Claude's question cut off as it was being typed**
+    - Answer the question and find the message in the field again
+65. **Be asked again when the command changes under the same question**
+    - Hear a command's question and move to No
+    - Refuse the command that was asked last
+66. **Have a short exchange with Claude**
+67. **Answer a set of two questions from Claude**
 
 ## axClip
 

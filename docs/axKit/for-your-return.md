@@ -64,6 +64,16 @@ Each is one line to undo unless it says otherwise.
   Enter approved the next file unheard). The builder first made each list wait three seconds after your last
   answer; I turned that back, as `/config` would have felt dead. A key kept held down never answers, in any
   window. `AxKit.Core/KeyHold` has no way to end a hold early, and a test holds that.
+- **The second counts again whenever the focus arrives on a question or notice that came by itself**: when the
+  window moves it there, when a notice closes over it, when you come back from another program or a menu, and
+  when you press F6 into it yourself. Escape, Shift+Enter, Shift+Escape, a button's letter and a click wait too.
+  After a question closes, the message field's Enter waits its second as well.
+- **Ctrl+P is refused while Claude asks anything**, so a plan is approved from its list only; the Send key
+  commands likewise. Interrupt is the exception: its Escape is a no, never a yes.
+- **A message or a long answer still being typed to Claude Code when a question appears is stopped**, and the
+  message comes back into the field with "Not sent".
+- **", and more" stands exactly when the label does not show the whole command**; a command shown whole has none,
+  even with `|` or `>` in it, and a file is named whole.
 - **A key the hold swallows makes the edge sound** (the kind "refused", which had that sound already). Yours to
   hear: one line in `ControlArea` and `OverlayPanel` (`AnswerKeys.HeldBack`) takes it out.
 - **An answer typed into the message field before its question was said is not sent.** "Not sent: Claude asks

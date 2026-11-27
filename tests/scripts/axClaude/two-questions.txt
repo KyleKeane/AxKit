@@ -15,6 +15,9 @@ expect said Ready
 # The field by its whole name: the trust question's list is still in the area for a moment after Ready (message.txt).
 expect focus "name":"Message to Claude"
 type Use your AskUserQuestion tool once, with two questions: which colour I prefer, red or blue, and which season I prefer, summer or winter.
+# The window itself put the focus into the field as the trust question closed: its Enter waits a second (bundle
+# AX-6.4, 2026-11-27; by reading alone).
+wait 1100
 keys enter
 # Said by the focus on the list the question names, after the word that interrupts (SPEC.md FR-7.4b, 2026-11-26).
 expect said → Question 1 of 2

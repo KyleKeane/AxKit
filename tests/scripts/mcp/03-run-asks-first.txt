@@ -58,6 +58,8 @@ expect focus 1. Explain this command
 # follows, which the user answers).
 keys down
 expect focus 2. Yes, run it
+# The list's second counts again from when the focus came back to it from the explanation (bundle AX-6.4, 2026-11-27).
+wait 1100
 keys enter
 expect said axAutomate ran New folder
 expect focus Name

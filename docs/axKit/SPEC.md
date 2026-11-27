@@ -591,13 +591,18 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   the chime; a question in the message field's place is a list or a field named with the question, Enter answers,
   Escape cancels. An app that needs to ask uses these and does not draw its own dialog.
   - **A question that arrives by itself holds its answering keys** (the rule is written once, in
-    `AxKit.Core/KeyHold`, and tested with a clock: `KeyHoldTests`, `ControlAreaHoldTests`). A question or a notice
+    `AxKit.Core/KeyHold`, and tested with a clock and with the key messages Windows sends: `KeyHoldTests`,
+    `ControlAreaHoldTests`, `ControlAreaKeyMessageTests`, `OverlayPanelHoldTests`). A question or a notice
     the user did not open with a command of their own has not been heard when it appears, and a key that reaches it
     then was meant for what stood there before: a message being typed, or the question just answered, whose Enter
     was pressed twice. So for a moment after it is shown (one second) its answering
-    keys do nothing: in a list of the question area Enter, Escape, Space and every typed letter and digit; in a field
-    there Enter and Escape, what is typed going into the field; in a notice Enter and Space. Three things hold, and
-    no caller can turn them off:
+    keys do nothing: in a list of the question area Enter, Escape, Space and everything typed (a letter, a digit, a
+    punctuation mark, with Shift or without); in a field there Enter and Escape, what is typed going into the field;
+    in a notice Enter and Escape (each also with Shift, which a window takes for the same press), Ctrl+Enter, Space
+    on a button or a check box, a button's letter with Alt, and a letter the notice gives a meaning. Escape is held
+    like Enter because it answers too: it presses the notice's cancel button, and for some notices cancelling acts.
+    The keys that only move (the arrows, Page Up and Down, Home, End, Tab) are never held. Five things hold, and no
+    caller can turn them off:
     1. *Whatever came before.* A question that follows the user's own answer arrives by itself too: that the user
        acted a moment ago says nothing about the new question. Whether the user acted lately may decide whether a
        chime plays, never whether the keys are held. (Until 2026-11-27 axClaude passed "the user caused this" for
@@ -615,27 +620,74 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
        `hold: false`: a control the user opened with a command of their own a moment ago, whose first keys are meant
        for it (Go to line, an editor's offer, axTerminal's recent commands). `ControlAreaHoldTests` lists those
        callers and fails on any other, and on a hold that is worked out instead of written. One opened by a command
-       run for an AI tool is held all the same (`AxKitForm.RunForMcp`).
+       run for an AI tool is held all the same (`AxKitForm.RunForMcp`, `ControlArea.HoldAsArrived`). A notice is
+       held when it is made with `Notice.ByItself()`, which is the only way: whether a notice holds cannot be handed
+       a value worked out, so everything a program, a job or a timer shows is written `.ByItself()`, whatever the
+       user did before it, and what may be worked out is only its chime (`Notice.Silent`). (Until the third review
+       of 2026-11-27 it was a switch, and three places worked it out: axClaude's information screen from whether
+       the user had acted in the last three seconds, the update notice from whether the user had asked for the
+       check, axGIT's missing git from whether it was the first time. A screen of Claude Code's that followed the
+       user's own key had no hold, and Enter was the update notice's install.)
+    4. *The hold counts again from when the focus arrives.* The moment is there so that the question is heard before
+       a key answers it, and NVDA says a question when the focus reaches it, not when it is drawn. What arrived by
+       itself therefore starts its second when it is shown and again each time the focus comes to it, whoever moved
+       the focus: the window's own timer (axClaude puts the focus on a question a second after showing it when the
+       user was in the conversation, which was the very moment the hold ended: an Enter typed in the conversation
+       then approved a file unheard, found by the third review of 2026-11-27 and played by
+       `tests/scripts/axClaude/66-question-while-reading.txt`), a notice that closes and hands the focus to the
+       question under it (script 67), the window becoming the active one again, a menu that closes, and the user's
+       own focus key. The last is accepted: after F6 or Tab into a question that arrived by itself, its answering
+       keys wait the second once more; the arrows move at once. A notice does the same when the focus comes back
+       into it or its window becomes the active one. A control the user opened themselves (`hold: false`) starts no
+       hold when the focus arrives either. And the field of a conversation window holds its Enter for the same
+       second when the window itself puts the focus back into it because a question that arrived by itself has
+       closed (`ConversationForm.CloseArea`, an AI's request answered): an Enter meant for the question's list would
+       otherwise send whatever the field holds, in axTerminal a command. After a list the user opened (axTerminal's
+       recent commands, whose Enter puts a command into the field for the next Enter to run) the field holds nothing.
+    5. *The hold is asked where an answer is taken, not only where a key is read.* In the question area every
+       callback that takes an answer (the list's choice, its Escape, a letter of the list's own, a typed character,
+       a field's Enter and Escape) passes one gate after its key was read (`ControlArea.Takes`), and in a notice the
+       one method that runs a button (`OverlayPanel.Choose`), whatever pressed it: a key, a click, a letter with
+       Alt, the window's own press of the default button, UI Automation's Invoke. Held, the gate raises the refusal
+       and nothing happens. So a key path that the reading of the keys does not know is harmless: until the third
+       review of 2026-11-27 Shift+Enter and Shift+Escape answered a notice inside its hold, since only the plain
+       keys were looked for and a window presses its buttons for either. The conversation window's field asks its
+       hold the same way where Enter and Ctrl+Enter send (`ConversationForm.FieldTakesEnter`).
     Two rules stand beside the hold, for the question area and the notices alike (`AxKit.Forms/AnswerKeys`):
-    - **A repeat never answers.** Enter, Escape or Space that arrives as the repeat of a key held down (Windows
-      marks such a key-down message: the key was down already) answers nothing, held or not, and makes no sound: a
-      repeat is not a press. Without this a key held down longer than any hold answered whatever came in the
-      meantime, the next question on the answer its list starts on. In the question area that is Enter and Escape
-      in a list or a field and Space in a list; in a notice Escape, Enter (but in a box where Enter makes a new
-      line) and Space on a button or a check box. The arrows repeat, and so does everything typed into a field.
+    - **A repeat never answers.** A key that answers and arrives as the repeat of a key held down (Windows marks
+      such a key message: the key was down already) answers nothing, held or not, and makes no sound: a repeat is
+      not a press. Without this a key held down longer than any hold answered whatever came in the meantime, the
+      next question on the answer its list starts on. In a list of the question area that is Enter, Escape, Space
+      and every letter and digit, a screen's own letter among them (d to discard sent its key again and again); in
+      a field there Enter and Escape; in a notice every key named above. In the field of a conversation window a
+      repeat of Enter or Ctrl+Enter never sends, in axClaude, axTerminal and axCalc alike, so that an Enter held a
+      moment too long does not answer what the program asks next. The arrows repeat, and so does everything typed
+      into a field.
     - **A held key is heard.** A fresh press of an answering key that a hold takes raises the kind of event
       `Refused` at the door (bundle rule 13: the kind and its sound are the ones there were; no words, which would
       cut off NVDA's reading of the question), at each press, with no limit. A key that did nothing is never
-      silence. Whether the sound stays is the maintainer's to hear.
+      silence: whatever a held list takes is heard, Shift with a letter and a punctuation mark included (they were
+      swallowed without a sound in the list of Claude's question until the third review of 2026-11-27). Whether
+      the sound stays is the maintainer's to hear.
     This matters more than it did: every question of axKit is to become a list that starts on its confirming answer
     (the maintainer's decision of 2026-11-27, "Enter is always go forward, Escape is go back", no exception for an
     AI's request). These rules are then the one thing between a doubled, held or typed-ahead Enter and a yes the
     user never heard, so a change to them is a change to that protection, and a new way for a question to appear
-    goes through the question area or a notice and nowhere else. A notice the window opens for the user's own
-    command is still its caller's to mark (`Notice.Unprompted`).
+    goes through the question area or a notice and nowhere else: a question built on them has rules 4 and 5
+    without writing them. A notice the window opens for the user's own command, and which is that command's first
+    result, is shown as it is and holds nothing.
   - **Nothing unseen in what is asked.** The name and the answers of every question in the question area are shown
-    with each character that is neither seen nor heard written out as its code (`AxKit.Core/DisplayText`, the one
-    table of them, `DisplayTextTests`), by the area itself, so that it holds for every window.
+    with each character that is neither seen nor heard written out as its code (`AxKit.Core/DisplayText`,
+    `DisplayTextTests`), by the area itself, so that it holds for every window. Which characters these are is said
+    by Unicode's own classes, not by a list that each review found short (the third review of 2026-11-27): every
+    code point whose general category is Format, Control, Surrogate (half a pair, alone), PrivateUse or
+    OtherNotAssigned, the line and paragraph separators, and the default ignorable code points that have another
+    category (the fillers, the variation selectors, the combining grapheme joiner; the Unicode Character Database,
+    DerivedCoreProperties.txt). One exception keeps an emoji an emoji: U+FE0F passes right after a symbol, and
+    U+200D passes between two symbols, the first of which may carry its U+FE0F; anywhere else both are written out.
+    In a command offered to run and in the label of a permission question, a space that is not the plain one (a
+    no-break space, an em space) is written as its code as well (`DisplayText.VisibleCommand`), since it reads as a
+    space and a shell may take it for part of a word.
 - AX-6.5 **The window base.** Every window of an app derives from `AxKit.Forms/AxKitForm`, which holds what the
   windows share and no app copies: the notice flow (`ShowNotice`, `CloseNotice`, `Fail`, `ShowError`; Alt, F10 and
   the window's shortcuts swallowed while a notice shows), `Announce`, the text font with its size keys and the

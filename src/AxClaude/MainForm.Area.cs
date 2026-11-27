@@ -161,14 +161,18 @@ internal sealed partial class MainForm
     /// on, with the number it was shown for, so that an answer never reaches another question than the one the user
     /// read (bundle rule 11; the review of 2026-11-27). Over the stream the next request is the model's at once while
     /// the area shows the list before it until the settle: Enter on the third model of Choose the model was "Yes,
-    /// once" for the tool call that had just come. With a screen the keys are typed to what the screen shows, and this
-    /// is always true.
+    /// once" for the tool call that had just come. With a screen the question is known by its signature
+    /// (<paramref name="signature"/>, what the control was shown for): the control answers only while that very
+    /// thing waits and has been put to the user.
     /// </summary>
-    private bool StillAsked(int asked)
+    private bool StillAsked(int asked, string signature)
     {
         // With the screen, too, since the second review of 2026-11-27: not while what waits has not been put to the
-        // user (WaitsUnheard), which is the case from the frame that replaced the question shown until the settle.
-        if (_model.StillAsks(asked) && (Streams || !WaitsUnheard))
+        // user, which is the case from the frame that replaced the question shown until the settle. And only while
+        // what waits is what the control was shown for (the third review of that day, AnsweredWait.StillWaits):
+        // until then a list still answered when nothing waited any more, since "nothing waits" is not "unheard",
+        // and its answer was typed to Claude Code's prompt as a message.
+        if (_model.StillAsks(asked) && (Streams || AnsweredWait.StillWaits(signature, WaitSignature, _wait?.Signature, _wait?.Stale ?? false)))
         {
             return true;
         }
@@ -198,7 +202,7 @@ internal sealed partial class MainForm
     /// </summary>
     private bool ScreenStillShown(string signature)
     {
-        if (WaitSignature == signature && !WaitsUnheard)
+        if (AnsweredWait.StillWaits(signature, WaitSignature, _wait?.Signature, _wait?.Stale ?? false))
         {
             return true;
         }
@@ -408,7 +412,7 @@ internal sealed partial class MainForm
         var asked = _model.Asked;
         ShowInArea(signature, text, unprompted, focus =>
         {
-            AreaList(name, items, start, ticked, focus, () => StillAsked(asked), (focused, ticks) =>
+            AreaList(name, items, start, ticked, focus, () => StillAsked(asked, signature), (focused, ticks) =>
             {
                 if (several && ticks.Count == 0)
                 {
@@ -594,12 +598,12 @@ internal sealed partial class MainForm
         // Every character typed in the list but Space reads the whole question again, as the read-again key does, and
         // nothing jumps to an answer by typing, its number, y or n included (the maintainer's word of 2026-11-26:
         // "every key reads the question and it should also emit a distinct earcon").
-        ShowQuestionList(question.Signature, QuestionName(question), QuestionName(question, int.MaxValue), question, null, !UserActed(), AnswerQuestion, () =>
+        ShowQuestionList(question.Signature, QuestionName(question), QuestionName(question, int.MaxValue), question, null, !UserActed(), chosen => AnswerQuestion(chosen, question.KeyOnly), () =>
         {
             // A survey's Escape is its Dismiss: an Escape at Claude's prompt is no answer, and a second one rewinds.
             if (question.EscapeKey is { } key && question.OptionFor(key) is { } leave)
             {
-                AnswerQuestion([leave]);
+                AnswerQuestion([leave], question.KeyOnly);
                 return;
             }
 
@@ -654,8 +658,13 @@ internal sealed partial class MainForm
         }, () => ShowSettings(settings, back: true));
     }
 
-    /// <summary>Sends the chosen answer's key, or the ticked keys joined with commas, and says what comes next.</summary>
-    private void AnswerQuestion(IReadOnlyList<QuestionOption> chosen)
+    /// <summary>
+    /// Sends the chosen answer's key, or the ticked keys joined with commas, and says what comes next.
+    /// <paramref name="keyOnly"/> for the question the list was shown for when it is answered by its key alone (a
+    /// feedback survey, <see cref="Question.KeyOnly"/>): said by the list, which knows its question, and never read
+    /// off the screen at the moment of the answer.
+    /// </summary>
+    private void AnswerQuestion(IReadOnlyList<QuestionOption> chosen, bool keyOnly)
     {
         // Over the stream, the answer of a tool call's question that only explains opens its text; the question
         // stays and nothing is sent (docs/axClaude/stream-mode.md SM-7.4).
@@ -670,7 +679,7 @@ internal sealed partial class MainForm
         // So does every answer that asks for words (QuestionOption.AsksForWords, since 2026-11-27): plan approval's
         // "No, keep planning" with the screen, and over the stream "No, and tell Claude why" (stream-mode.md SM-7.4).
         var wordsFollow = chosen.Any(option => option.AsksForWords);
-        SendAnswer(string.Join(",", chosen.Select(option => option.Key)), sound: !wordsFollow);
+        SendAnswer(string.Join(",", chosen.Select(option => option.Key)), sound: !wordsFollow, keyOnly: keyOnly);
         // Each answer's name without Claude's explanation after the dash.
         var names = string.Join(", ", chosen.Select(option =>
         {
@@ -716,7 +725,7 @@ internal sealed partial class MainForm
         var name = (asked is null ? string.Empty : asked + Stop(asked)) + $"You chose {chosen}. Your answer";
         // The field answers what waits now and nothing that waits later (StillAsked).
         var shownFor = _model.Asked;
-        ShowInArea(prompt, name, !UserActed(), focus => AreaField(name, focus, () => StillAsked(shownFor), typed =>
+        ShowInArea(prompt, name, !UserActed(), focus => AreaField(name, focus, () => StillAsked(shownFor, prompt), typed =>
         {
             var words = typed.Trim();
             if (words.Length == 0)
@@ -878,7 +887,18 @@ internal sealed partial class MainForm
 
     private IReadOnlyList<string> ScreenNoticeLines(ClaudeScreen screen) => ScreenActions.Merge(_screenLines, screen.Lines);
 
-    private string ScreenNoticeText(ClaudeScreen screen) => string.Join("\n", ScreenNoticeLines(screen));
+    private string ScreenNoticeText(ClaudeScreen screen) => ShownLines(ScreenNoticeLines(screen));
+
+    /// <summary>
+    /// Rows of Claude Code's screen as the notice shows them: each with every character that is neither seen nor
+    /// heard written out as its code (<see cref="AxKit.Core.DisplayText"/>), as the control area shows a question's.
+    /// A screen that only informs is a program's text all the same (a side answer is the model's), and its notice
+    /// showed it as it came until the third review of 2026-11-27.
+    /// </summary>
+    private static string ShownLines(IEnumerable<string> lines) => string.Join("\n", lines.Select(AxKit.Core.DisplayText.VisibleLine));
+
+    /// <summary>The screen's title as its notice shows it (<see cref="ShownLines"/>).</summary>
+    private static string ShownTitle(ClaudeScreen screen) => AxKit.Core.DisplayText.VisibleLine(screen.Title);
 
     /// <summary>
     /// The notice showing is this information screen's: the same title. Not the whole signature, since the keys change
@@ -886,7 +906,7 @@ internal sealed partial class MainForm
     /// with, and only its text follows the screen.
     /// </summary>
     private bool ScreenNoticeShows(ClaudeScreen? screen) =>
-        ScreenNoticeOpen && screen is not null && ScreenActions.IsInformation(screen) && screen.Title == _screenNotice!.Title;
+        ScreenNoticeOpen && screen is not null && ScreenActions.IsInformation(screen) && ShownTitle(screen) == _screenNotice!.Title;
 
     /// <summary>
     /// A screen of Claude's that only informs (/btw's side answer, /goal; FR-2.11, <see cref="ScreenActions.IsInformation"/>):
@@ -899,10 +919,12 @@ internal sealed partial class MainForm
     private void ShowScreenNotice(ClaudeScreen screen, string summary)
     {
         var signature = screen.Signature;
+        // What the read again key speaks: nothing in it unseen or unheard, as the notice shows the rows (ShownLines).
+        summary = AxKit.Core.DisplayText.VisibleLine(summary);
         if (ScreenNoticeShows(screen))
         {
             var lines = ScreenNoticeLines(screen);
-            var text = string.Join("\n", lines);
+            var text = ShownLines(lines);
             if (text != _screenNotice!.Text)
             {
                 _screenLines = lines;
@@ -932,7 +954,7 @@ internal sealed partial class MainForm
 
         if (!NoticeOpen && (interrupt || bottom))
         {
-            OpenScreenNotice(screen, summary, interrupt, unprompted);
+            OpenScreenNotice(screen, summary, interrupt);
             return;
         }
 
@@ -951,7 +973,7 @@ internal sealed partial class MainForm
                 return;
             }
 
-            OpenScreenNotice(now, summary, interrupt: false, unprompted);
+            OpenScreenNotice(now, summary, interrupt: false);
         }
 
         After(QuestionFocusMs, TryOpen);
@@ -979,14 +1001,20 @@ internal sealed partial class MainForm
         return false;
     }
 
-    /// <summary>Opens the information screen's notice: Close, a button per other key, the scroll buttons when the screen may hold more than the console shows.</summary>
-    private void OpenScreenNotice(ClaudeScreen screen, string summary, bool interrupt, bool unprompted)
+    /// <summary>
+    /// Opens the information screen's notice: Close, a button per other key, the scroll buttons when the screen may
+    /// hold more than the console shows. The notice always arrives by itself (<see cref="Notice.ByItself"/>): it
+    /// holds its keys for a moment whatever the user did before it. Until the third review of 2026-11-27 a screen
+    /// that followed the user's own key within three seconds had no hold, and the Enter of the key before, pressed
+    /// twice, closed it unheard or sent its Escape. Whether a chime plays is decided apart, by the caller.
+    /// </summary>
+    private void OpenScreenNotice(ClaudeScreen screen, string summary, bool interrupt)
     {
         var signature = screen.Signature;
         var leave = ScreenActions.LeaveKey(screen);
         var choices = new List<OverlayChoice>
         {
-            new(ScreenActions.LeaveButton(leave), () =>
+            new(AxKit.Core.DisplayText.VisibleLine(ScreenActions.LeaveButton(leave)), () =>
             {
                 // Asked before the notice is let go: the key goes to this screen alone (ScreenStillInforms).
                 var still = ScreenStillInforms(screen.Title);
@@ -1034,7 +1062,7 @@ internal sealed partial class MainForm
             }
         }
 
-        choices.AddRange(keys.Select(key => new OverlayChoice(ScreenActions.KeyItem(key), () => SendNoticeKey(key), StaysOpen: true)));
+        choices.AddRange(keys.Select(key => new OverlayChoice(AxKit.Core.DisplayText.VisibleLine(ScreenActions.KeyItem(key)), () => SendNoticeKey(key), StaysOpen: true)));
         if (ScreenActions.Scrolls(screen))
         {
             choices.Add(new OverlayChoice("Scroll &down", () => Scroll(ClaudeCodeKeys.Down), StaysOpen: true));
@@ -1042,9 +1070,8 @@ internal sealed partial class MainForm
         }
 
         _screenLines = screen.Lines;
-        var notice = new Notice(screen.Title, ScreenActions.NoticeText(screen), choices)
+        var notice = new Notice(ShownTitle(screen), ShownLines(screen.Lines), choices)
         {
-            Unprompted = unprompted,
             // The chime is the area's rule, not the notice's (FR-2.11).
             Silent = true,
             // The hint row's letters typed in the text, as the buttons (c to copy, f to fork; FR-2.11).
@@ -1058,7 +1085,7 @@ internal sealed partial class MainForm
                 SendNoticeKey(key);
                 return true;
             },
-        };
+        }.ByItself();
         ShowNotice(notice);
 
         _screenNotice = Overlay.Shown;
@@ -1068,7 +1095,7 @@ internal sealed partial class MainForm
         if (interrupt)
         {
             // As a question's: after NVDA has taken the focus, so that it comes last and cuts off what was read.
-            var spoken = (screen.Lines.Count == 0 ? screen.Title : screen.Title + Stop(screen.Title) + screen.Lines[0]).TrimEnd(' ', '.');
+            var spoken = AxKit.Core.DisplayText.VisibleLine(screen.Lines.Count == 0 ? screen.Title : screen.Title + Stop(screen.Title) + screen.Lines[0]).TrimEnd(' ', '.');
             var shown = _screenNotice;
             var actedBefore = _userActedAt;
             After(FocusSettleMs, () =>
@@ -1148,9 +1175,12 @@ internal sealed partial class MainForm
     /// answered by its key alone (a feedback survey, <see cref="Question.KeyOnly"/>), where Claude takes the key after
     /// a pause and an Enter would go to its prompt. The control area holds its keys meanwhile, so that a second Enter
     /// does not send it again. <paramref name="sound"/> false for a choice that is not the answer yet (Other, whose
-    /// words follow): the sound of sending plays once for one answer.
+    /// words follow): the sound of sending plays once for one answer. <paramref name="keyOnly"/> says whether the
+    /// question answered takes its key alone, when the caller knows the question (a list of the area: until the
+    /// third review of 2026-11-27 it was read off the screen here, where the question may be gone); null for an
+    /// answer typed into the message field, which goes to what the screen shows now.
     /// </summary>
-    private void SendAnswer(string key, bool sound = true)
+    private void SendAnswer(string key, bool sound = true, bool? keyOnly = null)
     {
         // Over the stream the window's own list of conversations is answered before Claude Code runs (stream-mode.md SM-8.5).
         if (!ProcessRunning && !(Streams && StreamChoosesConversation))
@@ -1166,7 +1196,7 @@ internal sealed partial class MainForm
         }
         else
         {
-            typing = TypeAnswer(key, enter: _model.PendingQuestion is not { KeyOnly: true });
+            typing = TypeAnswer(key, enter: !(keyOnly ?? _model.PendingQuestion is { KeyOnly: true }));
             // What Claude Code draws next may read as the question just answered: it is shown and said afresh.
             MarkWaitAnswered();
         }
@@ -1186,26 +1216,75 @@ internal sealed partial class MainForm
     /// takes typed keys and several characters in one write are a paste, which it ignores ("12" in a long list, "1,3"
     /// for several answers). Then Enter. Without the sound and the hold of <see cref="SendAnswer"/>: an answer the app
     /// gives on the user's behalf, which what follows announces as new. Returns about how long the keys take to go out.
+    /// Every key is bound to what Claude Code waits on now (<see cref="AnswerStill"/>): a key whose turn comes when
+    /// something else waits there is not written, nor any key after it.
     /// </summary>
     private int TypeAnswer(string key, bool enter = true)
     {
         var keys = key.EnumerateRunes().Select(rune => rune.ToString()).ToList();
+        var still = AnswerStill();
         var lasts = 0;
         for (var i = 0; i < keys.Count; i++)
         {
             var pause = i == keys.Count - 1 ? 100 : 60;
-            Enqueue(keys[i], pause);
+            Enqueue(keys[i], pause, still);
             lasts += pause;
         }
 
         if (enter)
         {
-            Enqueue(ClaudeCodeKeys.Enter, 50);
+            Enqueue(ClaudeCodeKeys.Enter, 50, still);
             lasts += 50;
         }
 
         StartWrites();
         return lasts;
+    }
+
+    // ---- what is queued to be typed is asked about again when its turn comes (D33, the third review of 2026-11-27) ----
+
+    /// <summary>
+    /// What Claude Code waits on now, for a typed answer bound to it: a question by all it shows
+    /// (<see cref="Question.Content"/>), a screen by its title alone, since its rows and its keys change with what is
+    /// typed into it, and the row for the user's own words by its prompt; null when it waits on nothing the window
+    /// can read.
+    /// </summary>
+    private string? WaitIdentity() =>
+        _model.PendingQuestion is { } question ? "question\n" + question.Content
+        : _model.PendingScreen is { } screen ? "screen\n" + screen.Title
+        : _model.TextPrompt is { } prompt ? "words\n" + prompt
+        : null;
+
+    /// <summary>
+    /// What every key of a typed answer asks right before it is written (<see cref="ConsoleForm.Enqueue"/>): whether
+    /// Claude Code still waits on what the answer was typed for (<see cref="QueuedWrite.AnswerOver"/>). An answer in
+    /// the user's own words goes out a key at a time over seconds; until that day each key was written whatever the
+    /// screen showed by then, so the rest of a long answer, and its Enter, went into a question that had replaced
+    /// the one it was for. When it is over, the key and those behind it are dropped, the user's act ends here (as
+    /// after an interrupt) and the window says that it was not sent.
+    /// </summary>
+    private Func<bool> AnswerStill()
+    {
+        var typedFor = WaitIdentity();
+        long goneAt = 0;
+        return () =>
+        {
+            var waiting = WaitIdentity();
+            var now = Environment.TickCount64;
+            goneAt = waiting is not null ? 0 : goneAt == 0 ? now : goneAt;
+            if (!QueuedWrite.AnswerOver(typedFor, waiting, goneAt == 0 ? 0 : now - goneAt, SettleMs))
+            {
+                return true;
+            }
+
+            AxKit.Core.Log.Info("The rest of a typed answer was not written: what it was typed for no longer waits");
+            // The keys still waiting are dropped: the act ends now, not when its last key would have gone.
+            UserActedNow();
+            Refuse(waiting is not null ? QuestionOpensWords : NoLongerAskedWords);
+            _attention.Stop();
+            _attention.Start();
+            return false;
+        };
     }
 
     // ---- a feedback draft Claude queued (D33) ----

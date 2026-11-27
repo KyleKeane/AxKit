@@ -249,6 +249,8 @@ expect said ! Calling boom
 expect state "notice":"boom failed"
 expect text The server broke.
 expect text It says so on two lines.
+# A notice that comes by itself holds Escape for its first second, as it holds Enter (bundle AX-6.4, 2026-11-27).
+wait 1500
 keys escape
 expect state "notice":null
 expect focus boom, tool
@@ -258,6 +260,8 @@ keys ctrl+enter
 expect said ! Calling snap
 expect state "notice":"snap failed"
 expect text Method not found
+# As above: Escape waits out the first second of a notice that comes by itself.
+wait 1500
 keys escape
 expect state "notice":null
 expect focus snap, tool

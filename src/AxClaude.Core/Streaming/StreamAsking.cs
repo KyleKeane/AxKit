@@ -423,7 +423,7 @@ public sealed class StreamAsking
             // line alone (ClaudeCodeStream.Subject), so the mark that more follows comes from the question, which
             // knows (AboutCut): until the second review of 2026-11-27 "git status" over "git push --force origin main"
             // was "Bash git status" on every answer, a yes to both lines.
-            Core = PermissionCore.Of(tool, _ask.AboutDescribes ? string.Empty : about, more: _ask.AboutCut),
+            Core = PermissionCore.Of(tool, _ask.AboutDescribes ? string.Empty : about, more: _ask.AboutCut, path: _ask.AboutIsPath),
         };
     }
 

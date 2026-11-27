@@ -9,9 +9,10 @@ namespace AxKit.Forms;
 /// move to the conversation, as from the message field (MainForm). A line over the control shows the name on screen.
 ///
 /// The keys that answer (docs/axKit/SPEC.md AX-6.4; <see cref="AxKit.Core.KeyHold"/>, where the hold's rule is
-/// written once). In a list these are Enter, Escape, Space and every typed letter and digit; in a field Enter and
-/// Escape, since what is typed there only stands in the field until Enter. Three things hold for them, whoever
-/// shows the control:
+/// written once). In a list these are Enter, Escape, Space and everything typed (a letter, a digit, a punctuation
+/// mark, with Shift or without); in a field Enter and Escape, since what is typed there only stands in the field
+/// until Enter. The keys that only move (the arrows, Page Up and Down, Home, End) are never held. Five things hold
+/// for the keys that answer, whoever shows the control:
 /// 1. One hold for each control, new with the control. For a moment after a control appears (a second) its
 ///    answering keys do nothing: they were meant for the message field or for the question before. After its own
 ///    answer goes, the window lengthens that same control's hold (<see cref="Hold"/>; three seconds in axClaude), so
@@ -23,20 +24,33 @@ namespace AxKit.Forms;
 ///    and <c>ControlAreaHoldTests</c> lists the callers that may. A window that shows a question for a program
 ///    (axClaude) never passes anything but <c>hold: true</c>: that the user answered a moment ago does not make the
 ///    next question heard.
-/// 2. A repeat never answers. Enter, Escape, and Space in a list, that arrive as a key's repeat (the key was down
-///    already) do nothing, held or not, and without a sound: a repeat is not a press, and a key held down longer
-///    than any hold would otherwise answer the question that came meanwhile. The arrows repeat, and so does what is
-///    typed.
-/// 3. A held key is heard. A fresh press of an answering key that the hold takes raises
+/// 2. The hold counts again from when the focus arrives (<see cref="FocusArrived"/>). A control shown with
+///    <c>hold: true</c> starts its moment when it is shown and again each time it gets the focus, whoever moved it:
+///    the window's own timer, a notice that closes over it, the window becoming the active one, a menu that closes,
+///    the user's own focus key. NVDA says the question when the focus reaches it, and until then a key was meant for
+///    the place the focus was in. A control shown with <c>hold: false</c> starts no hold then either.
+/// 3. A repeat never answers. A key that answers and arrives as a key's repeat (the key was down already) does
+///    nothing, held or not, and without a sound: a repeat is not a press, and a key held down longer than any hold
+///    would otherwise answer the question that came meanwhile. In a list that is every key named above, a screen's
+///    own letter and a digit among them; in a field Enter and Escape. The arrows repeat, and so does what is typed
+///    into a field.
+/// 4. A held key is heard. A fresh press of an answering key that the hold takes raises
 ///    <see cref="AxKit.Core.Events.EventKind.Refused"/> at the door, each time, so that a key that did nothing is
-///    never silence.
+///    never silence: whatever a held list takes, Shift with a letter and a punctuation mark included.
+/// 5. The hold is asked where the answer is taken (<see cref="Takes"/>). Each callback of the caller's (the choice,
+///    Escape, a letter of the list's own, a typed character, a field's Enter) passes that one gate after the key was
+///    read: held, it is heard and nothing happens. The reading of the keys keeps rule 3; the gate makes a key path
+///    that was missed there harmless.
 /// </summary>
 public sealed class ControlArea : Panel
 {
     private readonly Label _name = new();
 
-    /// <summary>The hold of the control shown: its own moment from when it was shown, and what <see cref="Hold"/> started since. New with every control, so that nothing is inherited.</summary>
+    /// <summary>The hold of the control shown: its own moment from when it was shown and from when the focus came to it, and what <see cref="Hold"/> started since. New with every control, so that nothing is inherited.</summary>
     private AxKit.Core.KeyHold _hold = new();
+
+    /// <summary>Whether the control shown arrived by itself: shown with <c>hold: true</c>, or opened by a command run for an AI tool (<see cref="HoldAsArrived"/>). Its moment then starts again each time the focus comes to it.</summary>
+    private bool _arrived;
 
     /// <summary>The clock of the hold, in milliseconds: the system's, or a test's own.</summary>
     private readonly Func<long> _clock;
@@ -75,6 +89,14 @@ public sealed class ControlArea : Panel
     /// <summary>What the focus lands on: the list's selected item, or nothing for the field.</summary>
     public string CurrentItem => Current is ListBox { SelectedItem: string item } ? item : string.Empty;
 
+    /// <summary>
+    /// Whether the control shown arrived by itself (the class's summary, 2): false for one the user opened with a
+    /// command of their own, and while the area shows none. The window asks it as the control closes: the field that
+    /// gets the focus back from a question that arrived by itself holds its Enter for a moment
+    /// (<see cref="ConversationForm.CloseArea"/>), and from a list the user opened it does not.
+    /// </summary>
+    public bool Arrived => Current is not null && _arrived;
+
     /// <summary>The height of the message field, which the area never goes below.</summary>
     [System.ComponentModel.DefaultValue(60)]
     public int MinimumHeight { get; set; } = 60;
@@ -84,14 +106,15 @@ public sealed class ControlArea : Panel
     /// it has check boxes, those items ticked. Enter calls <paramref name="choose"/> with the focused item and the
     /// ticked ones, Escape calls <paramref name="escape"/>. The list takes the focus when <paramref name="focus"/>.
     /// <paramref name="hold"/> is true for everything but a list the user opened with a command of their own a moment
-    /// ago (the class's summary): the list then ignores the answering keys for a moment. A plain letter goes to
-    /// <paramref name="letter"/> first, when given: true takes the key (a screen's own key such as d to discard, from
-    /// anywhere in the list), false leaves it to the list's jump to the item that starts with it. With
-    /// <paramref name="typed"/> (axClaude's question, D33, 2026-11-26) every typed character but Space (a letter, a
-    /// digit, a punctuation mark) calls it in place of the list's jump: nothing jumps to an item by typing then, not
-    /// even an answer's own key (a number, <c>y</c>, <c>n</c>; the maintainer's word of 2026-11-26, "every key reads
-    /// the question"), and the digits of <see cref="ListKeys"/> are off; Page Up, Page Down, Home, End and the arrows
-    /// stay. Space stays the list's own: it ticks an answer of a list that takes several (AX-8.16).
+    /// ago (the class's summary): the list then ignores the answering keys for a moment after it is shown and after
+    /// the focus comes to it. A plain letter goes to <paramref name="letter"/> first, when given: true takes the key
+    /// (a screen's own key such as d to discard, from anywhere in the list), false leaves it to the list's jump to the
+    /// item that starts with it. With <paramref name="typed"/> (axClaude's question, D33, 2026-11-26) every typed
+    /// character but Space (a letter, a digit, a punctuation mark) calls it in place of the list's jump: nothing
+    /// jumps to an item by typing then, not even an answer's own key (a number, <c>y</c>, <c>n</c>; the maintainer's
+    /// word of 2026-11-26, "every key reads the question"), and the digits of <see cref="ListKeys"/> are off; Page Up,
+    /// Page Down, Home, End and the arrows stay. Space stays the list's own: it ticks an answer of a list that takes
+    /// several (AX-8.16).
     /// </summary>
     public void ShowList(string name, IReadOnlyList<string> items, int start, IReadOnlyList<int>? ticked, bool focus, bool hold,
         Action<int, IReadOnlyList<int>> choose, Action escape, Func<char, bool>? letter = null, Action? typed = null)
@@ -130,18 +153,22 @@ public sealed class ControlArea : Panel
             var answering = Answering(e);
             if (answering && e.KeyCode == Keys.Enter)
             {
-                if (list.SelectedIndex >= 0)
+                if (list.SelectedIndex >= 0 && Takes(list))
                 {
                     choose(list.SelectedIndex, list is CheckedListBox checkedList ? checkedList.CheckedIndices.Cast<int>().ToList() : []);
                 }
             }
             else if (answering && e.KeyCode == Keys.Escape)
             {
-                escape();
+                if (Takes(list))
+                {
+                    escape();
+                }
             }
             else if (!e.Handled && letter is not null && e.Modifiers == Keys.None && e.KeyCode is >= Keys.A and <= Keys.Z
-                && letter((char)('a' + (e.KeyCode - Keys.A))))
+                && (!Takes(list) || letter((char)('a' + (e.KeyCode - Keys.A)))))
             {
+                // The screen's own letter, or one the gate held back: either way it is not the list's to jump with.
                 e.Handled = e.SuppressKeyPress = true;
             }
             else if (!e.Handled && (typed is null || e.KeyCode is not (>= Keys.D0 and <= Keys.D9)))
@@ -151,24 +178,42 @@ public sealed class ControlArea : Panel
                 ListKeys.Handle(list, e);
             }
         };
-        if (typed is not null)
+        list.KeyPress += (_, e) =>
         {
-            list.KeyPress += (_, e) =>
+            // The note of the character's own message, taken once.
+            var repeat = _repeat;
+            _repeat = false;
+            if (e.Handled || char.IsControl(e.KeyChar) || char.IsWhiteSpace(e.KeyChar))
             {
-                if (e.Handled || char.IsControl(e.KeyChar) || char.IsWhiteSpace(e.KeyChar))
+                return;
+            }
+
+            if (Holding)
+            {
+                // A character whose key the key's own event did not take (a punctuation mark): held like every typed
+                // key, and heard like them. It was meant for the message field, and never reaches the list's jump.
+                e.Handled = true;
+                if (!repeat)
                 {
-                    return;
+                    _heldKeyHeard();
                 }
 
-                // Handled, the character never reaches the list box's own jump. While the area holds its keys it was
-                // meant for the message field, and does nothing.
-                e.Handled = true;
-                if (!Holding)
-                {
-                    typed();
-                }
-            };
-        }
+                return;
+            }
+
+            if (typed is null)
+            {
+                // The list box's own jump to the item that starts with it.
+                return;
+            }
+
+            // Handled, the character never reaches the list box's own jump. A repeat reads nothing again.
+            e.Handled = true;
+            if (!repeat && Takes(list))
+            {
+                typed();
+            }
+        };
 
         var old = Place(list, name);
         Finish(list, old, focus, hold);
@@ -190,11 +235,17 @@ public sealed class ControlArea : Panel
             var answering = Answering(e);
             if (answering && e.KeyCode == Keys.Enter)
             {
-                enter(field.Text);
+                if (Takes(field))
+                {
+                    enter(field.Text);
+                }
             }
             else if (answering && e.KeyCode == Keys.Escape)
             {
-                escape();
+                if (Takes(field))
+                {
+                    escape();
+                }
             }
         };
         Finish(field, Place(field, name), focus, hold);
@@ -207,7 +258,8 @@ public sealed class ControlArea : Panel
     /// <summary>
     /// The field shown, typed into and entered as the user's Enter would (docs/axKit/mcp.md MC-7.9: the text an AI tool's
     /// run of a command carries, for the field that command opened, never one that was there before); false when the
-    /// area shows no field.
+    /// area shows no field. No key of the user's and no answer of theirs: it passes no hold (the run holds the field
+    /// it opened against the user's keys, <see cref="HoldAsArrived"/>, and fills it in the same breath).
     /// </summary>
     public bool Fill(string text)
     {
@@ -227,6 +279,7 @@ public sealed class ControlArea : Panel
         Current?.Dispose();
         Current = null;
         _fieldEnter = null;
+        _arrived = false;
         Visible = false;
     }
 
@@ -236,13 +289,58 @@ public sealed class ControlArea : Panel
     /// </summary>
     public void Hold(int milliseconds) => _hold.Start(_clock(), milliseconds);
 
+    /// <summary>
+    /// The control shown counts as one that arrived by itself, though its caller showed it with <c>hold: false</c>:
+    /// a command run for an AI tool opened it, not a key of the user's (<see cref="AxKitForm"/>'s run for the AI
+    /// tools). Its answering keys do nothing for a moment from now, and again from when the focus comes to it.
+    /// </summary>
+    public void HoldAsArrived()
+    {
+        _arrived = true;
+        _hold.Start(_clock());
+    }
+
     /// <summary>Whether the answering keys of the control shown are held now.</summary>
     public bool Holding => _hold.Holding(_clock());
 
     /// <summary>
+    /// The focus came to <paramref name="control"/>: when it is the control shown and it arrived by itself, its
+    /// moment starts again (the class's summary, 2). The control's own GotFocus, which Windows raises for every way
+    /// the focus arrives: a move inside the window, and the window becoming the active one with the control in it.
+    /// </summary>
+    private void FocusArrived(Control control)
+    {
+        if (_arrived && ReferenceEquals(Current, control))
+        {
+            _hold.Start(_clock());
+        }
+    }
+
+    /// <summary>
+    /// The one gate every answer of the area passes, after its key was read (the class's summary, 5): whether
+    /// <paramref name="control"/> may hand its answer on. Not while its hold runs, which is heard; and never once it
+    /// is no longer the control shown.
+    /// </summary>
+    private bool Takes(Control control)
+    {
+        if (!ReferenceEquals(Current, control))
+        {
+            return false;
+        }
+
+        if (!Holding)
+        {
+            return true;
+        }
+
+        _heldKeyHeard();
+        return false;
+    }
+
+    /// <summary>
     /// The shown control's own class hands every key message here before the key's event is raised: whether it is a
     /// repeat of a key that was down already (<see cref="AnswerKeys.IsRepeat"/>). The event takes the note once
-    /// (<see cref="Answering"/>), so that a key event raised any other way counts as a press.
+    /// (<see cref="Answering"/>, a list's typed character), so that a key event raised any other way counts as a press.
     /// </summary>
     private void NoteKey(in Message message) => _repeat = AnswerKeys.IsRepeat(message);
 
@@ -292,11 +390,12 @@ public sealed class ControlArea : Panel
 
     /// <summary>
     /// Enter and Escape are the control's own (and are kept from the edit control or the list) unless the control's
-    /// hold takes them: then they do nothing, and in a list neither do Space and the typed letters and digits, which
-    /// tick an answer, jump to one or are a screen's own key. In a field what is typed goes into the field, held or
-    /// not: it answers nothing before Enter, and the words typed right after "Your words next" must not lose their
-    /// start. A repeat of Enter, of Escape, or of Space in a list never acts, held or not, and says nothing; a fresh
-    /// press the hold takes is heard (the class's summary, 2 and 3). True when the key may act.
+    /// hold takes them: then they do nothing, and in a list neither do Space and the typed letters and digits, with
+    /// Shift or without, which tick an answer, jump to one or are a screen's own key. In a field what is typed goes
+    /// into the field, held or not: it answers nothing before Enter, and the words typed right after "Your words
+    /// next" must not lose their start. A repeat of any of these keys never acts, held or not, and says nothing (but
+    /// in a field, where a repeated character is text); a fresh press the hold takes is heard (the class's summary, 3
+    /// and 4). True when the key is Enter or Escape and may act.
     /// </summary>
     private bool Answering(KeyEventArgs e)
     {
@@ -306,8 +405,8 @@ public sealed class ControlArea : Panel
         var inList = Current is ListBox;
         var answering = e.KeyCode is Keys.Enter or Keys.Escape && e.Modifiers == Keys.None;
         var typed = inList && (e.KeyCode == Keys.Space
-            || (e.Modifiers == Keys.None && e.KeyCode is >= Keys.A and <= Keys.Z or >= Keys.D0 and <= Keys.D9 or >= Keys.NumPad0 and <= Keys.NumPad9));
-        if (repeat && (answering || (inList && e.KeyCode == Keys.Space)))
+            || ((e.Modifiers & (Keys.Control | Keys.Alt)) == Keys.None && e.KeyCode is >= Keys.A and <= Keys.Z or >= Keys.D0 and <= Keys.D9 or >= Keys.NumPad0 and <= Keys.NumPad9));
+        if (repeat && (answering || typed))
         {
             // A repeat is not a press: a key held down never answers, however long.
             e.Handled = e.SuppressKeyPress = true;
@@ -317,11 +416,7 @@ public sealed class ControlArea : Panel
         if (Holding && (answering || typed))
         {
             e.Handled = e.SuppressKeyPress = true;
-            if (!repeat)
-            {
-                _heldKeyHeard();
-            }
-
+            _heldKeyHeard();
             return false;
         }
 
@@ -340,6 +435,7 @@ public sealed class ControlArea : Panel
         // plain keys (KeyData, not KeyCode): with a modifier they belong to the window, which skips ProcessCmdKey for
         // an input key (a window's key with Escape or Enter in it, such as axClaude's Ctrl+Shift+Enter, must stay a command from anywhere).
         control.PreviewKeyDown += (_, e) => e.IsInputKey |= e.KeyData is Keys.Enter or Keys.Escape;
+        control.GotFocus += (_, _) => FocusArrived(control);
         var old = Current;
         _name.Text = name;
         Visible = true;
@@ -353,14 +449,16 @@ public sealed class ControlArea : Panel
     /// <summary>
     /// The new control takes the focus before the old one goes, so the focus never passes through the conversation on
     /// the way. The control gets a hold of its own: with <paramref name="hold"/> its answering keys do nothing for
-    /// the hold's moment from now, without, it starts with none. (Until 2026-11-27 the area had one hold, which a
-    /// control shown without one cleared; axClaude showed the question after an answer so, and a doubled Enter
-    /// answered it unheard: the class's summary.)
+    /// the hold's moment from now, and again from when the focus comes to it (<see cref="FocusArrived"/>); without,
+    /// it starts with none and the focus starts none. (Until 2026-11-27 the area had one hold, which a control shown
+    /// without one cleared; axClaude showed the question after an answer so, and a doubled Enter answered it unheard:
+    /// the class's summary.)
     /// </summary>
     private void Finish(Control control, Control? old, bool focus, bool hold)
     {
         _hold = new AxKit.Core.KeyHold();
         _repeat = false;
+        _arrived = hold;
         if (hold)
         {
             _hold.Start(_clock());

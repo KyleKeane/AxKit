@@ -103,7 +103,7 @@ public sealed partial class FileForm
             }
             else
             {
-                ShowNotice(Notice.Plain("Folder not found", $"{path} does not exist.") with { Unprompted = true });
+                ShowNotice(Notice.Plain("Folder not found", $"{path} does not exist.").ByItself());
             }
         }
 
@@ -148,7 +148,7 @@ public sealed partial class FileForm
 
             if (!Directory.Exists(folder))
             {
-                ShowNotice(Notice.Plain("Folder not found", $"{folder} does not exist any more.") with { Unprompted = true });
+                ShowNotice(Notice.Plain("Folder not found", $"{folder} does not exist any more.").ByItself());
                 if (NearestExisting(folder) is { } parent)
                 {
                     await ShowFolderAsync(parent, null, remember);

@@ -11,7 +11,7 @@ namespace AxClaude.Tests;
 /// each of them guards is tested where it can be: the pure rules in <c>AnsweredWaitTests</c>, <c>StreamModelTests</c>
 /// and the bundle's <c>KeyHoldTests</c> and <c>ControlAreaHoldTests</c>, the window on the stand-in by the scripts.
 /// </summary>
-public sealed class WindowLastResortTests
+public sealed partial class WindowLastResortTests
 {
     /// <summary>The body of a method of one of the window's files, from its first line to the line that closes it.</summary>
     private static string Body(string file, string firstLine)
@@ -110,8 +110,10 @@ public sealed class WindowLastResortTests
     [InlineData("MainForm.Input.cs", "private void SendInput()", "FieldWaitsForQuestion(")]
     [InlineData("MainForm.Input.cs", "private bool FieldWaitsForQuestion(bool typed)", "WaitsUnheard")]
     [InlineData("MainForm.Input.cs", "private void NextPermissionMode()", "WaitsUnheard")]
-    [InlineData("MainForm.Area.cs", "private bool StillAsked(int asked)", "WaitsUnheard")]
-    [InlineData("MainForm.Area.cs", "private bool ScreenStillShown(string signature)", "WaitsUnheard")]
+    [InlineData("MainForm.Input.cs", "private void NextPermissionMode()", "if (_model.PromptPending)")]
+    [InlineData("MainForm.Input.cs", "private bool KeyMayGoToClaude()", "WaitsUnheard")]
+    [InlineData("MainForm.Area.cs", "private bool StillAsked(int asked, string signature)", "AnsweredWait.StillWaits(signature, WaitSignature, _wait?.Signature, _wait?.Stale ?? false)")]
+    [InlineData("MainForm.Area.cs", "private bool ScreenStillShown(string signature)", "AnsweredWait.StillWaits(signature, WaitSignature, _wait?.Signature, _wait?.Stale ?? false)")]
     public void A_key_for_Claude_Codes_screen_asks_whether_what_waits_was_put_to_the_user(string file, string method, string check)
     {
         Assert.Contains(check, Body(file, method), StringComparison.Ordinal);
@@ -131,11 +133,84 @@ public sealed class WindowLastResortTests
         Assert.True(dropped >= 0 && stamped > dropped, "Interrupt stamps the user's act as ending now, after the queued keys were dropped");
         Assert.Contains("Area.Hold(UserActionMs);", interrupt, StringComparison.Ordinal);
 
-        var queue = Body("MainForm.Input.cs", "private void QueueWrites(string text)");
-        var cleared = queue.IndexOf("ClearRestoredMessage();", StringComparison.Ordinal);
+        var queue = Body("MainForm.Input.cs", "private void QueueWrites(string text, bool fromField = false)");
+        var cleared = queue.IndexOf("ClearRestoredMessage(still);", StringComparison.Ordinal);
         var typed = queue.IndexOf("Enqueue(", StringComparison.Ordinal);
         Assert.True(cleared >= 0 && typed > cleared, "QueueWrites empties a restored message before it types the next one");
-        var elsewhere = WindowFiles().Where(file => file.Text.Split("ClearRestoredMessage();").Length - 1 > (file.Name == "MainForm.Input.cs" ? 1 : 0)).Select(file => file.Name);
+        var elsewhere = WindowFiles().Where(file => file.Text.Split("ClearRestoredMessage(still);").Length - 1 > (file.Name == "MainForm.Input.cs" ? 1 : 0)).Select(file => file.Name);
         Assert.Empty(elsewhere);
+    }
+
+    /// <summary>
+    /// Every place of the window that writes to Claude Code's console, by its method, with how many writes it makes
+    /// and what stands between a key of the user's and a question that has not been heard, or is held (SPEC.md D33,
+    /// "No key goes to a question but through its list"; the third review of 2026-11-27, which found the mode key
+    /// answering a question inside its hold). A write is a call of <c>Write</c>, <c>Enqueue</c>,
+    /// <c>QueueWrites</c> or <c>TypeAnswer</c>. The last column is a text the method's body must hold: the check it
+    /// asks first, or the bound it gives its writes. A write in a method that is not listed here fails the test
+    /// below: it is then added with its check, or with the reason it needs none.
+    /// </summary>
+    public static TheoryData<string, string, int, string> ConsoleWrites() => new()
+    {
+        // The message field's Enter: not while what waits was not put to the user; with the list on, the field is hidden while Claude asks.
+        { "MainForm.Input.cs", "private void SendInput()", 2, "if (FieldWaitsForQuestion(text.Length > 0))" },
+        // A message's writes, each bound: over when Claude Code has begun to ask since it was queued.
+        { "MainForm.Input.cs", "private void QueueWrites(string text, bool fromField = false)", 3, "var still = MessageStill(text, fromField);" },
+        { "MainForm.Input.cs", "private void ClearRestoredMessage(Func<bool> still)", 2, "Enqueue(ClaudeCodeKeys.CtrlU, 30, still);" },
+        // The Enter sent again for one Claude Code dropped: only while it neither works nor asks.
+        { "MainForm.Input.cs", "private void ResendEnterWhileHeld(string text, int attempt)", 1, "_model.PromptPending" },
+        { "MainForm.Input.cs", "private void SendNow()", 2, "if (!KeyMayGoToClaude())" },
+        // The stop key: the one command that sends a key whatever Claude Code asks; its Escape is a no, never a yes.
+        { "MainForm.Input.cs", "private void Interrupt()", 1, "Write(ClaudeCodeKeys.Escape);" },
+        { "MainForm.Input.cs", "private void NextPermissionMode()", 1, "if (_model.PromptPending)" },
+        { "MainForm.Input.cs", "private void SendKey(string key)", 1, "if (!KeyMayGoToClaude())" },
+        // The area's own: every list and field is held and bound (AreaList, AreaField; the test above), and what it sends is typed bound to what waits.
+        { "MainForm.Area.cs", "private bool ShowClaudeQuestion(Question question)", 1, "TypeAnswer(dismiss, enter: false);" },
+        { "MainForm.Area.cs", "private void ShowEditedRow(ClaudeScreen screen, string text)", 1, "() => ScreenStillShown(shownFor)" },
+        { "MainForm.Area.cs", "private void ShowSearchField(ClaudeScreen screen, string text)", 1, "() => ScreenStillShown(shownFor)" },
+        { "MainForm.Area.cs", "private void SendScreenKey(string key)", 1, "ScreenKeySent();" },
+        { "MainForm.Area.cs", "private void SendEscape()", 1, "MarkWaitAnswered();" },
+        { "MainForm.Area.cs", "private void SendAnswer(string key, bool sound = true, bool? keyOnly = null)", 1, "typing = TypeAnswer(" },
+        { "MainForm.Area.cs", "private int TypeAnswer(string key, bool enter = true)", 2, "var still = AnswerStill();" },
+        // The app's own /feedback for a draft, and its answers to the list of drafts: only while Claude is idle, or to the list it reads.
+        { "MainForm.Area.cs", "private void OpenFeedbackDrafts()", 1, "if (!ClaudeIdle" },
+        { "MainForm.Area.cs", "private bool AnswerDraftsList(Question question)", 2, "question.Title != FeedbackDraftWatch.ListTitle" },
+        { "MainForm.ClaudeCodeSettings.cs", "private void SendClaudeCodeCommand(ClaudeCodeSetting setting)", 1, "if (!ClaudeIdle)" },
+        // An offered command's line and a concern's line: their callers send only while Claude is idle (AnswerOffer, AskConcern).
+        { "MainForm.Mcp.cs", "private void AskConcern(Offer offer)", 1, "if (!ClaudeIdle)" },
+        { "MainForm.Mcp.cs", "private void SendOffered(string command)", 1, "QueueWrites(line);" },
+        // Over the stream a chosen value goes as its slash command; nothing is typed there (QueueWrites writes one line).
+        { "MainForm.Stream.cs", "private void StreamAnswer(string given)", 1, "StreamChoiceOver();" },
+        // The detailed view's guard: the key goes only to close the view when it is open, which shows no question's rows.
+        { "MainForm.cs", "protected override bool ProcessConsoleKey(Keys keyData)", 1, "if (_model.TranscriptViewOpen)" },
+    };
+
+    [System.Text.RegularExpressions.GeneratedRegex(@"(?<![\w.])(?:Write|Enqueue|QueueWrites|TypeAnswer)\(")]
+    private static partial System.Text.RegularExpressions.Regex ConsoleWrite();
+
+    /// <summary>The lines of a text that write to the console: a call of one of the four, outside a comment and outside the four's own definitions.</summary>
+    private static int WritesIn(string text) => text.Split('\n').Select(line => line.Trim())
+        .Count(line => !line.StartsWith("//", StringComparison.Ordinal) && !line.StartsWith("private ", StringComparison.Ordinal) && !line.StartsWith("public ", StringComparison.Ordinal)
+            && ConsoleWrite().IsMatch(line));
+
+    [Theory]
+    [MemberData(nameof(ConsoleWrites))]
+    public void A_method_that_writes_to_the_console_asks_or_binds_first(string file, string method, int writes, string check)
+    {
+        var body = Body(file, method);
+        Assert.Contains(check, body, StringComparison.Ordinal);
+        Assert.Equal(writes, WritesIn(body));
+    }
+
+    /// <summary>No write to the console stands outside the methods of the table: each file's count is the sum of its methods'.</summary>
+    [Fact]
+    public void Every_write_to_the_console_is_in_a_method_of_the_table()
+    {
+        var listed = ConsoleWrites().GroupBy(row => (string)row[0]).ToDictionary(group => group.Key, group => group.Sum(row => (int)row[2]));
+        foreach (var (name, text) in WindowFiles())
+        {
+            var writes = WritesIn(text);
+            Assert.True(writes == listed.GetValueOrDefault(name), $"{name} writes to the console in {writes} places, and the table of ConsoleWrites lists {listed.GetValueOrDefault(name)}: a new write is listed with the check it asks first.");
+        }
     }
 }

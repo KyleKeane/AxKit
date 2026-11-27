@@ -297,6 +297,44 @@ public sealed class McpTests
         Assert.DoesNotContain("second line", refused, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// The third review of 2026-11-27 (L9): an <c>axkit_open</c> whose outcome is not known was written "refused or
+    /// failed", though the app may have opened; and one that only asked the user was written "done", though nothing
+    /// opens before the user's yes.
+    /// </summary>
+    [Fact]
+    public void The_log_says_of_an_open_what_became_of_it()
+    {
+        Assert.Equal("not known", McpAudit.Result(McpTools.Open, failed: true, McpTools.OpenNotKnown));
+        Assert.Equal("asked the user", McpAudit.Result(McpTools.Open, failed: false, "{\n  \"asked\": \"The user is asked in this axDown window whether to open axTask; it opens only if they choose Open.\"\n}"));
+        Assert.True(McpTools.OpenWasAsked("{\"asked\":\"The user is asked\"}"));
+        Assert.False(McpTools.OpenWasAsked("Opened down notes.md."));
+        Assert.False(McpTools.OpenWasAsked("{\"opened\":true}"));
+        Assert.Equal("done", McpAudit.Result(McpTools.Open, failed: false, "Opened down notes.md."));
+        Assert.StartsWith("refused or failed: ", McpAudit.Result(McpTools.Open, failed: true, "The app did not start."), StringComparison.Ordinal);
+        // The words of another tool that happen to be these are that tool's failure.
+        Assert.StartsWith("refused or failed: ", McpAudit.Result(McpTools.Run, failed: true, McpTools.OpenNotKnown), StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// And around the open, read off the sources where nothing pure decides: each time the window gives a start up
+    /// its log says so, and the broker counts a request as sent only once its line has gone to the window's pipe.
+    /// </summary>
+    [Fact]
+    public void A_start_given_up_is_logged_and_a_request_counts_as_sent_after_its_write()
+    {
+        var root = SourceTexts.RepositoryRoot();
+        var channel = File.ReadAllText(Path.Combine(root, "src", "AxKit.Forms", "McpChannel.cs")).ReplaceLineEndings("\n");
+        var start = channel[channel.IndexOf("private string StartApp(string argument)", StringComparison.Ordinal)..];
+        start = start[..start.IndexOf("\n    }\n", StringComparison.Ordinal)];
+        Assert.Equal(2, start.Split("Log.Info(").Length - 1);
+        Assert.Equal(2, start.Split("return JsonSerializer.Serialize(new { error = ").Length - 1);
+
+        var broker = File.ReadAllText(Path.Combine(root, "src", "AxKit.Forms", "McpBroker.cs")).ReplaceLineEndings("\n");
+        Assert.Contains("writer.WriteLine(request);\n            sent = true;", broker, StringComparison.Ordinal);
+        Assert.Equal(1, broker.Split("sent = true;").Length - 1);
+    }
+
     [Fact]
     public void The_log_says_ran_only_of_a_command_the_window_ran()
     {

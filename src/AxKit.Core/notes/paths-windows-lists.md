@@ -55,6 +55,8 @@
   thing between a doubled Enter and a yes the user never heard once every question starts on its confirming answer.
   The question area's and the notices' use of it is `AxKit.Forms`' (`notes/console.md`, "The hold"): one hold for each
   control of the area, nothing inherited, with the two rules beside it (a repeat never answers, a held key is heard).
+  Its summary's rules 3 and 4 came with the third review of 2026-11-27: the hold counts again from when the focus
+  arrives, and it is asked where an answer is taken, not only where a key is read.
 - `CommandListing` (WF-2.3 to WF-2.5, section 5.2; 2026-11-15): a window's commands as data. `Rows` makes them from
   the menu bar's entries (`MenuCommand`) and every command of the window's list that has a key (`KeyCommand`, with
   whether its key acts now and whether it is a key with no menu item): the menu rows in menu order, then the keys with

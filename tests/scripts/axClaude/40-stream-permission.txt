@@ -59,6 +59,8 @@ expect state Claude: waiting for your answer
 keys up
 keys up
 expect focus 3. Yes, once
+# The list's second counts again from when the focus came back to it from the explanation (bundle AX-6.4, 2026-11-27).
+wait 1100
 keys enter
 expect said Sent: 3, Yes, once
 expect said Done. claude: pinged

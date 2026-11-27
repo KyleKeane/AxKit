@@ -88,6 +88,8 @@ mcp call axkit_open {"app":"claude"}
 expect mcp The user is asked in this axDown window whether to open axClaude
 expect state "notice":"Open axClaude?"
 expect state an AI model, asks for this
+# A notice that comes by itself holds Escape for its first second, as it holds Enter (bundle AX-6.4, 2026-11-27).
+wait 1500
 keys escape
 expect said ! axClaude not opened
 

@@ -46,6 +46,17 @@ public static class AnsweredWait
         waiting is not null && (handled is null || over || handled != waiting);
 
     /// <summary>
+    /// Whether what a control of the window was shown for (<paramref name="shownFor"/>, a signature) is what Claude
+    /// Code waits on now, and has been put to the user (<see cref="Unheard"/> with the same three arguments): only
+    /// then does a list's Enter, its Escape, a key of its own or a field's text go to Claude Code. False also when
+    /// nothing waits any more (the third review of 2026-11-27): "nothing waits" is not "unheard", so until that day
+    /// the list of a question Claude Code had taken back still answered, and its answer was typed to the prompt as
+    /// a message.
+    /// </summary>
+    public static bool StillWaits(string shownFor, string? waiting, string? handled, bool over) =>
+        waiting == shownFor && !Unheard(waiting, handled, over);
+
+    /// <summary>
     /// Whether the user's key no longer counts as an answer to the question it was pressed at: the question still
     /// stands as it stood (<paramref name="over"/> false) <paramref name="countsMs"/> after the key's last keystroke
     /// went (<paramref name="lastKeyAt"/>), so Claude Code did not take it as one (a key that answers nothing there,
@@ -59,12 +70,16 @@ public static class AnsweredWait
 
     /// <summary>
     /// Whether a question shown and not answered was replaced by another under the same title with the same answers
-    /// (<paramref name="waiting"/> equals <paramref name="shown"/>, both signatures): the two name another tool or
-    /// target (<see cref="Question.Core"/>). The window then shows and says the new one afresh; until 2026-11-27 only
-    /// an answered question was compared, so a file question Claude Code took back and replaced by the next file's
-    /// kept its list, with the first file's name on its answers. By the core and not by every line: a question drawn
-    /// again with another line (a tip, a longer diff) is the same question still, and is not asked twice.
+    /// (<paramref name="waiting"/> equals <paramref name="shown"/>, both signatures): the two show something else
+    /// between the title and the answers (<see cref="Question.Content"/>, all the rows the reader gives; a tip Claude
+    /// Code puts inside a question is no such row, <see cref="QuestionReader"/> passes it over). The window then
+    /// shows and says the new one afresh; until 2026-11-27 only an answered question was compared, so a file
+    /// question Claude Code took back and replaced by the next file's kept its list, with the first file's name on
+    /// its answers. By every row since the third review of that day: for a few hours the two were compared by the
+    /// three words of the label (<see cref="Question.Core"/>), and "git push origin main" replaced by "git push
+    /// origin main --force" was one question, its list left standing over the other command. That one question
+    /// standing does not change these rows by itself is held by <c>StandingQuestionTests</c>, over every recording.
     /// </summary>
-    public static bool Replaced(string shown, string? waiting, string? shownCore, string? waitingCore) =>
-        waiting == shown && shownCore != waitingCore;
+    public static bool Replaced(string shown, string? waiting, string? shownContent, string? waitingContent) =>
+        waiting == shown && shownContent != waitingContent;
 }

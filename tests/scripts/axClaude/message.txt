@@ -15,6 +15,9 @@ expect said Ready
 # match let the typing go into it (2026-11-09, the hidden desktop's run).
 expect focus "name":"Message to Claude"
 type Reply with the single word hello.
+# The window itself put the focus into the field as the trust question closed: its Enter waits a second (bundle
+# AX-6.4, 2026-11-27; by reading alone).
+wait 1100
 keys enter
 expect said Done
 keys alt+2

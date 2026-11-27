@@ -76,11 +76,12 @@ internal sealed partial class MainForm
             _wait = answered with { Stale = true };
         }
         else if (_wait is { Shown: true, Answered: false, Stale: false } shown && _askedQuestion is { } asked && asked.Signature == shown.Signature
-            && AnsweredWait.Replaced(shown.Signature, _model.PendingQuestion?.Signature, asked.Core, _model.PendingQuestion?.Core))
+            && AnsweredWait.Replaced(shown.Signature, _model.PendingQuestion?.Signature, asked.Content, _model.PendingQuestion?.Content))
         {
             // A question the user has not answered, and under its title, with its answers, Claude Code now asks
-            // about another file or command (AnsweredWait.Replaced): the list shown names the one before on every
-            // answer. It is over, and the settle shows and says the new one afresh.
+            // about another file or command (AnsweredWait.Replaced, by every row between the title and the
+            // answers): the list shown is the one before's. It is over, and the settle shows and says the new one
+            // afresh.
             _wait = shown with { Stale = true };
         }
 

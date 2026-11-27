@@ -796,6 +796,50 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: the hold from when the focus arrives, and what the third review of 2026-11-27 found in axClaude and the question area
+
+The third review of that day (`docs/axKit/SPEC.md` AX-6.4, rules 4 and 5, "The hold counts again from when the focus
+arrives" and "The hold is asked where an answer is taken"; `docs/axClaude/SPEC.md` D33, "What the third review of
+2026-11-27 closed"). Played on the hidden desktop, without NVDA, on 2026-11-27: the new
+`66-question-while-reading`, `67-question-under-a-notice`, `68-message-kept-when-claude-asks` and
+`69-command-changed-under-a-question` and the changed
+`61-screen-same-question` and `65-typed-answer-waits-for-the-question`, whose new checks fail on a build of the
+commit before, and the scripts of axClaude, the AI tools, axMCP, axTerminal, axDown, axTask, axFile and axGIT that
+need no live program. Still owed:
+
+1. With NVDA listening (`.\nvda-pass.ps1 axClaude`): those scripts, and what is heard when Enter is pressed as NVDA
+   starts on a question that was reached from the conversation: the short sound of the key that was held back, the
+   question read to its end, and "Sent" only for the next press.
+2. With Claude Code itself, none of it run after this change (the builder runs no live script):
+   - every live script that presses Enter on a question it reached from the conversation or after a notice closed, or
+     in the message field right after a question closed: each waits a second more now;
+   - that the Enter of a typed message or slash command is never dropped: each queued write now asks whether Claude
+     Code has begun to ask something since the message was queued, read off the screen; if typing a command ever
+     draws something the window reads as a question or a screen before its Enter goes, the command is not sent and
+     "Not sent: Claude asks something, and its question opens in a moment" is said. The recordings show none;
+   - that a question standing in a real session never changes the rows between its title and its answers by itself:
+     it is told from the one that replaced it by those rows now, and would be asked again (`StandingQuestionTests`
+     holds it over every recording);
+   - a long answer in the user's own words typed to Claude Code's row for them: that no frame while it is typed
+     reads as another question or as none for 400 ms, which would stop the typing with "Not sent".
+3. By the maintainer's ear and hands:
+   - whether the second after arriving on a question by his own Ctrl+Tab or F6 is felt (accepted by the coordinating
+     session: the arrows move at once, the answering keys wait and are heard);
+   - the message field's second after a question has closed: whether an Enter typed quickly after an answer is held
+     back too often, and whether the sound says enough;
+   - axTerminal and axCalc: holding Enter down in the field sends once (a prompt that wants several Enters takes a
+     press for each);
+   - Ctrl+P at a question: "Answer Claude first; the permission mode stays as it is while it asks"; the same start
+     for Actions, Send key and Send queued messages now;
+   - ", and more" no longer stands after a command the label shows whole, and a file in a folder with a space in
+     its name is named whole;
+   - an emoji in an answer stays an emoji, and a no-break space in a command's label reads as its code;
+   - a key held down in a notice, Shift+Enter, Shift+Escape and a button's letter with Alt in a notice's first
+     second: by hand, since no script holds a key or presses a notice's key with Shift (played on the panel itself
+     with the messages Windows sends, `OverlayPanelHoldTests`);
+   - coming back to the window from another program while a notice or a question that arrived by itself waits: its
+     keys wait a second from the return (no script leaves the window).
+
 ## Owed: the hold on a question's keys, and what the second review of 2026-11-27 found in axClaude
 
 The second review of axClaude's repair of that day (`docs/axKit/SPEC.md` AX-6.4, "A question that arrives by itself

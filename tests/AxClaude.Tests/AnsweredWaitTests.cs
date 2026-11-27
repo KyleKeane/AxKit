@@ -115,13 +115,99 @@ public sealed class AnsweredWaitTests
         var first = Create("alpha.txt");
         var second = Create("beta.txt");
         Assert.Equal(first.Signature, second.Signature);
-        Assert.True(AnsweredWait.Replaced(first.Signature, second.Signature, first.Core, second.Core));
-        // The same question drawn again, also with another line between: the same question still.
-        Assert.False(AnsweredWait.Replaced(first.Signature, first.Signature, first.Core, Create("alpha.txt").Core));
+        Assert.True(AnsweredWait.Replaced(first.Signature, second.Signature, first.Content, second.Content));
+        // The same question drawn again: the same question still.
+        Assert.False(AnsweredWait.Replaced(first.Signature, first.Signature, first.Content, Create("alpha.txt").Content));
         // Another title or other answers: that is seen by the signature, at the settle, as ever.
-        Assert.False(AnsweredWait.Replaced(first.Signature, "Claude's settings", first.Core, null));
-        Assert.False(AnsweredWait.Replaced(first.Signature, null, first.Core, null));
-        // Two questions that are no permission questions have no core, and are told apart by their signatures alone.
-        Assert.False(AnsweredWait.Replaced("Colour\n1. Red", "Colour\n1. Red", null, null));
+        Assert.False(AnsweredWait.Replaced(first.Signature, "Claude's settings", first.Content, null));
+        Assert.False(AnsweredWait.Replaced(first.Signature, null, first.Content, null));
+    }
+
+    private static Question Command(params string[] rows) => QuestionReader.Read(
+    [
+        "Permission Required: Bash command",
+        .. rows,
+        "Do you want to proceed?",
+        "1. Yes",
+        "2. No",
+        "Select with numbers [1-2]. Then Enter to submit or Escape to cancel:",
+    ], rows.Length + 4)!;
+
+    /// <summary>
+    /// The third review of 2026-11-27: the two were compared by the three words of the label alone, so a command
+    /// replaced by the same command with one word more was one question, and its list stayed over the other command.
+    /// Everything the question shows between its title and its answers is compared now. A tip Claude Code puts
+    /// inside a question is no such row (the reader passes it over), so it does not make the question another.
+    /// </summary>
+    [Fact]
+    public void A_command_replaced_by_one_that_differs_past_its_third_word_is_another_question()
+    {
+        var push = Command("git push origin main");
+        var force = Command("git push origin main --force");
+        Assert.Equal(push.Signature, force.Signature);
+        Assert.Equal(push.Core, force.Core);
+        Assert.True(AnsweredWait.Replaced(push.Signature, force.Signature, push.Content, force.Content));
+        // A second line under the same first line, too.
+        Assert.True(AnsweredWait.Replaced(push.Signature, push.Signature, push.Content, Command("git push origin main", "rm -rf build").Content));
+        var tipped = Command("Tip: auto mode handles these prompts for you", "git push origin main");
+        Assert.False(AnsweredWait.Replaced(push.Signature, tipped.Signature, push.Content, tipped.Content));
+    }
+
+    /// <summary>
+    /// The third review of 2026-11-27 (M3): a list or a field answers only while what it was shown for is what waits,
+    /// and has been put to the user. "Nothing waits" is not "unheard": until that day the list of a question Claude
+    /// Code had taken back still answered, and its key and Enter were typed to the prompt as a message.
+    /// </summary>
+    [Fact]
+    public void A_control_answers_only_while_what_it_was_shown_for_still_waits()
+    {
+        var first = Create("alpha.txt");
+        Assert.True(AnsweredWait.StillWaits(first.Signature, first.Signature, first.Signature, over: false));
+        // Claude Code took the question back and waits on nothing: the list still stands for 400 ms, and answers nothing.
+        Assert.False(AnsweredWait.StillWaits(first.Signature, waiting: null, first.Signature, over: false));
+        // Something else waits, heard or not.
+        Assert.False(AnsweredWait.StillWaits(first.Signature, "Status\nescape", first.Signature, over: false));
+        Assert.False(AnsweredWait.StillWaits(first.Signature, "Status\nescape", "Status\nescape", over: false));
+        // The same title and answers, and what was shown is over: the question that stands was not said yet.
+        Assert.False(AnsweredWait.StillWaits(first.Signature, first.Signature, first.Signature, over: true));
+        Assert.False(AnsweredWait.StillWaits(first.Signature, first.Signature, handled: null, over: false));
+    }
+
+    /// <summary>
+    /// The third review of 2026-11-27 (M4): what is queued to be typed is asked about again when its turn comes. A
+    /// message's Enter goes a tenth of a second after its text; a permission question drawn in between took it.
+    /// </summary>
+    [Fact]
+    public void A_queued_message_is_over_when_Claude_has_begun_to_ask_since_it_was_queued()
+    {
+        Assert.False(QueuedWrite.MessageOver(askedWhenQueued: false, asksNow: false));
+        Assert.True(QueuedWrite.MessageOver(askedWhenQueued: false, asksNow: true));
+        // Sent into a question on purpose (the kept message sent again, "Enter again sends"): it goes.
+        Assert.False(QueuedWrite.MessageOver(askedWhenQueued: true, asksNow: true));
+        Assert.False(QueuedWrite.MessageOver(askedWhenQueued: true, asksNow: false));
+    }
+
+    /// <summary>
+    /// And an answer in the user's own words goes out a key at a time over seconds: the rest of it is over when
+    /// something else waits than it was typed for, at once, and when nothing waits for as long as a settle; not for
+    /// the frame in which Claude Code clears a question's rows to draw them again.
+    /// </summary>
+    [Fact]
+    public void A_typed_answer_is_over_when_something_else_waits_or_nothing_does_for_a_settle()
+    {
+        const int settle = 400;
+        var first = "question\n" + Create("alpha.txt").Content;
+        var second = "question\n" + Create("beta.txt").Content;
+        Assert.False(QueuedWrite.AnswerOver(first, first, goneForMs: 0, settle));
+        // The next file's question under the same title, with the same answers: over, and no key more is written.
+        Assert.True(QueuedWrite.AnswerOver(first, second, goneForMs: 0, settle));
+        Assert.True(QueuedWrite.AnswerOver("words\nEnter text for option 4 (Other), or Escape for the list:", first, goneForMs: 0, settle));
+        // Nothing waits: a redraw in passing for a frame or two, the question gone after a settle's time.
+        Assert.False(QueuedWrite.AnswerOver(first, waiting: null, goneForMs: 0, settle));
+        Assert.False(QueuedWrite.AnswerOver(first, waiting: null, goneForMs: 399, settle));
+        Assert.True(QueuedWrite.AnswerOver(first, waiting: null, goneForMs: 400, settle));
+        // Typed when nothing the window could read waited: bound to nothing, and written whatever comes.
+        Assert.False(QueuedWrite.AnswerOver(typedFor: null, first, goneForMs: 0, settle));
+        Assert.False(QueuedWrite.AnswerOver(typedFor: null, waiting: null, goneForMs: 9_000, settle));
     }
 }

@@ -17,6 +17,11 @@ namespace AxKit.Tests;
 /// that ran. Enter on "1. Yes" for the first of two files, pressed twice, approved the second before NVDA had said
 /// more than "Question". Every question of axKit is to start on its confirming answer (the maintainer's decision of
 /// that day), which leaves these rules as the one protection; hence the two halves here.
+///
+/// The tests here press a key by raising the key's own event on the control. The same rules with the key messages
+/// Windows sends, a repeat told by the message's bit and the focus arriving by its message, are
+/// <see cref="ControlAreaKeyMessageTests"/>; a notice's are <see cref="OverlayPanelHoldTests"/> (until the third review
+/// of 2026-11-27 the notice's rules were held by a search of its source alone).
 /// </summary>
 public sealed partial class ControlAreaHoldTests
 {
@@ -151,7 +156,7 @@ public sealed partial class ControlAreaHoldTests
         Assert.Equal(0, _heard);
 
         // A command run for an AI tool opened it: the window holds it after all (AxKitForm.RunForMcp), and that holds.
-        area.Hold(KeyHold.DefaultMs);
+        area.HoldAsArrived();
         Press(area, Keys.Enter);
         Assert.Equal(1, chosen);
         _now += KeyHold.DefaultMs;
@@ -264,7 +269,7 @@ public sealed partial class ControlAreaHoldTests
     }
 
     [Fact]
-    public void A_repeat_of_Space_ticks_nothing_in_a_list_and_other_keys_repeat_as_they_did()
+    public void A_repeat_of_Space_or_a_letter_does_nothing_in_a_list_and_the_arrows_repeat_as_they_did()
     {
         using var area = Area();
         var letters = 0;
@@ -276,9 +281,12 @@ public sealed partial class ControlAreaHoldTests
             });
         // Space held down would tick and untick the answer over and over.
         Assert.True(Repeat(area, Keys.Space).Handled);
-        // An arrow held down moves on, and a letter of the list's own repeats as it did: neither is the area's to stop.
+        // An arrow held down moves on: it is not the area's to stop. A letter of the list's own is a key that
+        // answers (a screen's d to discard), and its repeat does nothing; the press does.
         Assert.False(Repeat(area, Keys.Down).Handled);
-        Repeat(area, Keys.D);
+        Assert.True(Repeat(area, Keys.D).Handled);
+        Assert.Equal(0, letters);
+        Press(area, Keys.D);
         Assert.Equal(1, letters);
 
         var entered = 0;
@@ -380,21 +388,12 @@ public sealed partial class ControlAreaHoldTests
         Assert.Equal(3, source.Split("area.NoteKey(m);").Length - 1);
     }
 
-    /// <summary>The notices keep the same two rules beside their hold (OverlayPanel, read off its source: it has no window in a test).</summary>
+    /// <summary>What makes a held key heard in a window is the kind Refused, raised at the door (bundle rule 13): the one line the tests' own counter stands in for.</summary>
     [Fact]
-    public void A_notice_takes_no_repeat_of_an_answering_key_and_makes_a_held_press_heard()
+    public void A_held_key_is_heard_as_the_kind_Refused()
     {
-        var text = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms", "OverlayPanel.cs"));
-        var keys = text.IndexOf("protected override bool ProcessCmdKey(ref Message msg, Keys keyData)", StringComparison.Ordinal);
-        Assert.True(keys >= 0, "OverlayPanel.ProcessCmdKey is gone: where are a notice's answering keys held now?");
-        var repeat = text.IndexOf("if (repeat && Answers(msg, keyData))", keys, StringComparison.Ordinal);
-        var held = text.IndexOf("if (Holding && keyData is Keys.Enter or Keys.Space)", keys, StringComparison.Ordinal);
-        var heard = text.IndexOf("AnswerKeys.HeldBack();", held, StringComparison.Ordinal);
-        Assert.True(repeat > keys && held > repeat && heard > held && heard - held < 200, "a repeat is refused first, then a held press, which is heard");
-
         var shared = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms", "AnswerKeys.cs"));
-        Assert.Contains("EventDoor.Raise(EventKind.Refused)", shared, StringComparison.Ordinal);
-        Assert.Contains("1L << 30", shared, StringComparison.Ordinal);
+        Assert.Contains("public static void HeldBack() => EventDoor.Raise(EventKind.Refused);", shared, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -491,7 +490,42 @@ public sealed partial class ControlAreaHoldTests
         var run = text.IndexOf("private void RunForMcp(", StringComparison.Ordinal);
         Assert.True(run >= 0, "RunForMcp is gone: where is a control that an AI tool's run opened held now?");
         var click = text.IndexOf("ClickFor(CommandOrigin.AiTool", run, StringComparison.Ordinal);
-        var hold = text.IndexOf("area.Hold(KeyHold.DefaultMs);", run, StringComparison.Ordinal);
+        var hold = text.IndexOf("area.HoldAsArrived();", run, StringComparison.Ordinal);
         Assert.True(click > run && hold > click && hold - click < 900, "After the click for an AI tool, RunForMcp holds the keys of every control area whose control the click changed.");
+    }
+
+    /// <summary>
+    /// The field of a conversation window (axClaude's message field, axTerminal's command field), read off the source,
+    /// since the window has no life in a test; the hold itself is played on the stand-in by
+    /// tests/scripts/axClaude/66-question-while-reading.txt, and a repeat is a key no script can press. A repeat of
+    /// Enter or Ctrl+Enter is taken before any command or handler; the field's hold is asked where the key is read
+    /// and where the field sends; and the hold starts in the one place the window gives the field the focus back
+    /// from a control that arrived by itself, never after one the user opened.
+    /// </summary>
+    [Fact]
+    public void A_conversation_windows_field_sends_for_no_repeat_and_waits_when_a_question_gave_it_the_focus()
+    {
+        var folder = Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms");
+        var window = File.ReadAllText(Path.Combine(folder, "ConversationForm.cs")).ReplaceLineEndings("\n");
+        var keys = window[window.IndexOf("protected override bool ProcessCmdKey(ref Message msg, Keys keyData)", StringComparison.Ordinal)..];
+        keys = keys[..keys.IndexOf("return base.ProcessCmdKey(ref msg, keyData);", StringComparison.Ordinal)];
+        Assert.Contains("if (keyData is Keys.Enter or BundleKeys.MainAction && Input.Focused && !NoticeOpen)", keys, StringComparison.Ordinal);
+        var repeat = keys.IndexOf("if (AnswerKeys.IsRepeat(msg))\n            {\n                return true;", StringComparison.Ordinal);
+        var held = keys.IndexOf("if (!FieldTakesEnter())\n            {\n                return true;", StringComparison.Ordinal);
+        Assert.True(repeat > 0 && held > repeat, "a repeat is dropped first, then a press inside the field's hold, which is heard");
+
+        var close = window[window.IndexOf("protected virtual void CloseArea()", StringComparison.Ordinal)..];
+        close = close[..close.IndexOf("Area.Clear();", StringComparison.Ordinal)];
+        Assert.Contains("var arrived = Area.Arrived;", close, StringComparison.Ordinal);
+        Assert.Contains("if (focus && arrived)\n        {\n            FocusFieldByItself();", close, StringComparison.Ordinal);
+        // The hold starts nowhere else but there and where an AI's request gives the focus back.
+        Assert.Equal(1, window.Split("_fieldHold.Start(").Length - 1);
+        Assert.Equal(2, window.Split("FocusFieldByItself();").Length - 1);
+
+        var field = File.ReadAllText(Path.Combine(folder, "ConsoleForm.Field.cs")).ReplaceLineEndings("\n");
+        Assert.Contains("BundleKeys.MainAction, SendFieldUnlessHeld)", field, StringComparison.Ordinal);
+        Assert.Contains("e.Handled = e.SuppressKeyPress = true;\n                SendFieldUnlessHeld();", field, StringComparison.Ordinal);
+        // SendField is called by the one method that asks the hold first.
+        Assert.Equal(1, field.Split("            SendField();").Length - 1);
     }
 }

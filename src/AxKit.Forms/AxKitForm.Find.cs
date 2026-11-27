@@ -120,7 +120,9 @@ public abstract partial class AxKitForm
     /// <summary>
     /// Ctrl+F in a notice: the Find notice takes its place, and Find next or Cancel show it again, Find next with the
     /// match selected and the focus in the text (the same find as the window's, on the notice's text). The notice
-    /// comes back as the same record, with its chime not played a second time.
+    /// comes back as the same record, with its chime not played a second time (Notice.Silent); one that arrived by
+    /// itself still holds its keys for a moment as it comes back, so that the Enter of the Find, pressed twice, does
+    /// not answer it.
     /// </summary>
     private void ShowFindInNotice()
     {
@@ -129,7 +131,7 @@ public abstract partial class AxKitForm
             return;
         }
 
-        var back = notice with { Unprompted = false };
+        var back = notice with { Silent = true };
         var caret = Overlay.Body.SelectionStart;
         void ShowAgain()
         {

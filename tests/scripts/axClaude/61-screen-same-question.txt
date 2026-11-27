@@ -67,12 +67,24 @@ expect focus 1. Yes, Create file gamma.txt
 keys down down
 expect focus 3. No, Create file gamma.txt
 
-# Check: A key that answered nothing does not make the standing question be asked again
-# SPEC.md D33 (the second review of 2026-11-27). Claude Code's own mode key answers nothing at a file's question, and
-# the question stands. The window had marked it answered for good, so a single blank frame later, as Claude Code
+# Check: The mode key is not sent while Claude asks
+# SPEC.md D33 (the third review of 2026-11-27). On a file's question Claude Code takes its own mode key as "allow
+# all edits", and on plan approval as a yes; until that day the window sent it to a question that stood, also
+# inside the list's own second. While Claude asks, the key is refused with words and nothing goes to Claude Code:
+# an answer comes from the list.
+do Next permission mode
+expect said Answer Claude first; the permission mode stays as it is while it asks
+expect focus 3. No, Create file gamma.txt
+
+# Check: An answer that Claude Code did not take does not make the standing question be asked again
+# SPEC.md D33 (the second review of 2026-11-27). The stand-in reads no key, so the answer is not taken and the
+# question stands. The window had marked it answered for good, so a single blank frame later, as Claude Code
 # draws in passing, read as "the answered question has left": the same question came again with its chime, its list
 # back on the first answer. A key stops counting as an answer when the question still stands three seconds after it.
-do Next permission mode
+# The list has held its keys for its first second by now.
+wait 1500
+keys enter
+expect said Sent: 3, No
 wait 3500
 file sq\go3a x
 refuse said Question

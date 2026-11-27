@@ -178,8 +178,67 @@ public abstract class ConversationForm : AxKitForm
         ShowOfferedRequestIn(Area, request, () => Input.Visible = false, () =>
         {
             Input.Visible = !NoticeOpen;
-            Input.Focus();
+            // The request arrived by itself: the Enter that answered it, pressed twice, must not send the field.
+            FocusFieldByItself();
         });
+
+    // ---- the field's own hold (docs/axKit/SPEC.md AX-6.4; AxKit.Core/KeyHold, rule 3) ----
+
+    /// <summary>
+    /// The hold on the field's Enter: started when the window itself puts the focus back into the field because a
+    /// question that arrived by itself has closed (<see cref="FocusFieldByItself"/>). The user was in the question's
+    /// list a moment ago and may have an Enter on its way to it; in the field it would send whatever stands there,
+    /// a message half typed or nothing at all, which a program under the window takes as its own Enter. Never
+    /// started by the user's own move to the field, nor after a list the user opened (axTerminal's recent commands,
+    /// whose Enter puts a command into the field for the next Enter to run).
+    /// </summary>
+    private readonly KeyHold _fieldHold = new();
+
+    /// <summary>The focus put into the field by the window, in place of a control that arrived by itself: Enter there waits a moment (<see cref="_fieldHold"/>).</summary>
+    private void FocusFieldByItself()
+    {
+        _fieldHold.Start(Environment.TickCount64);
+        Input.Focus();
+    }
+
+    /// <summary>
+    /// Whether Enter in the field may send now, asked where the field's Enter is taken (<see cref="KeyHold"/>, rule
+    /// 4: the console window's Enter and Ctrl+Enter): not while the field's hold runs, and then the press is heard.
+    /// </summary>
+    protected bool FieldTakesEnter()
+    {
+        if (!_fieldHold.Holding(Environment.TickCount64))
+        {
+            return true;
+        }
+
+        AnswerKeys.HeldBack();
+        return false;
+    }
+
+    /// <summary>
+    /// Enter in the field, plain or with Ctrl, read before any command or handler of the window: a repeat of it (the
+    /// key was down already) never sends, in any conversation window, so that an Enter held down a moment too long
+    /// does not send again into whatever the program asks next; and a press within the field's hold is heard and
+    /// sends nothing (<see cref="_fieldHold"/>). Shift+Enter is the field's own new line and repeats as text does.
+    /// </summary>
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+        if (keyData is Keys.Enter or BundleKeys.MainAction && Input.Focused && !NoticeOpen)
+        {
+            if (AnswerKeys.IsRepeat(msg))
+            {
+                return true;
+            }
+
+            if (!FieldTakesEnter())
+            {
+                return true;
+            }
+        }
+
+        return base.ProcessCmdKey(ref msg, keyData);
+    }
 
     /// <summary>The bottom of the window, whichever control is there when the notice closes and the one that had the focus is gone (an answered question's list).</summary>
     protected override Control FocusTarget => BottomControl;
@@ -340,7 +399,11 @@ public abstract class ConversationForm : AxKitForm
         control.Focus();
     }
 
-    /// <summary>The field comes back in the control area's place, with the focus when the area had it.</summary>
+    /// <summary>
+    /// The field comes back in the control area's place, with the focus when the area had it. When what closes
+    /// arrived by itself (a question a program asked, <see cref="ControlArea.Arrived"/>), the field's Enter then waits
+    /// a moment (<see cref="FocusFieldByItself"/>); after a list the user opened it does not.
+    /// </summary>
     protected virtual void CloseArea()
     {
         if (Area.Current is null)
@@ -349,8 +412,13 @@ public abstract class ConversationForm : AxKitForm
         }
 
         var focus = Area.ContainsFocus;
+        var arrived = Area.Arrived;
         Input.Visible = !NoticeOpen;
-        if (focus)
+        if (focus && arrived)
+        {
+            FocusFieldByItself();
+        }
+        else if (focus)
         {
             Input.Focus();
         }

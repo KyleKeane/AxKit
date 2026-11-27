@@ -19,7 +19,7 @@ public abstract partial class AxKitForm
     private bool _chaining;
 
     /// <summary>An error notice (the crash handler's report, <see cref="Fail"/>'s, an app's own error): shown inside the window like every other notice, and of the failure kind, so that an error sounds the same in every window (docs/axKit/repairs.json R-95, 2026-11-25).</summary>
-    public void ShowError(string title, string message) => ShowNotice(Notice.Plain(title, message) with { Unprompted = true, Kind = EventKind.Failed });
+    public void ShowError(string title, string message) => ShowNotice(Notice.Plain(title, message).ByItself() with { Kind = EventKind.Failed });
 
     /// <summary>
     /// The one place a notice is shown; callers pass only its content. It adds the chime of a notice the user did
@@ -213,7 +213,7 @@ public abstract partial class AxKitForm
     {
         if (text.Contains('\n'))
         {
-            ShowNotice(Notice.Plain(title, text) with { Unprompted = true, Kind = EventKind.Failed });
+            ShowNotice(Notice.Plain(title, text).ByItself() with { Kind = EventKind.Failed });
         }
         else
         {

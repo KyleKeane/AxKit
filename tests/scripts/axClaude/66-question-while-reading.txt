@@ -1,0 +1,66 @@
+# Workflow: Be asked while reading the conversation, with the settings of a new install
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code; no Claude Code, no network and no model.
+# axClaude, docs/axClaude/SPEC.md D33 and docs/axKit/SPEC.md AX-6.4 ("The hold counts again from when the focus
+# arrives", 2026-11-27, found by the third review of that day). This is the path a new install takes: no settings
+# file, so Go to them at once is off. A question that arrives while the focus is in the conversation is shown in the
+# control area, and the window moves the focus onto its list a second later, so that NVDA reads it after what it was
+# reading. The list held its answering keys for a second from when it was shown, which ended at the very moment the
+# focus arrived: an Enter pressed in the conversation at that moment (Enter there takes a line into the message)
+# reached the list, which starts on "1. Yes", and approved the file before a word of the question was said. Scripts
+# 61, 62 and 64 run with Go to them at once on and 65 with Answer from a list off, so none of them played it.
+# The stand-in (tools/AxAutomate/StandIn.cs) draws each frame at a file of the script's and reads no key: what
+# reaches Claude is the window's to say ("Sent: ...").
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir wr
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.332 (stand-in)","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"waitFile":"go1"},{"frame":["claude: started","you: Make a file","claude: One file.","tool: Write (alpha.txt)","Permission Required: Create file","alpha.txt","Do you want to create alpha.txt?","1. Yes","2. Yes, allow all edits during this session","3. No","Select with numbers [1-3]. Then Enter to submit or Escape to cancel:"],"clear":true},{"waitFile":"go2"},{"frame":["claude: started","you: Make a file","claude: One file.","tool: Write (alpha.txt)","claude: Done.","auto mode on (shift+tab to cycle)","$"],"clear":true},{"idle":true}]}
+
+start claude {temp}\wr --claude {temp}\claude.cmd -- --model haiku --effort low
+expect said Ready
+wait 1000
+do Conversation
+expect focus Conversation
+
+# Check: An Enter pressed as the focus reaches the question answers nothing
+# The question arrives; the focus is in the conversation, so the window puts it on the list after a second. The key
+# is pressed as soon as the focus is there: the list's second counts again from that moment, the press is heard as
+# a refusal and nothing is sent.
+file wr\go1 x
+expect focus 1. Yes, Create file alpha.txt
+keys enter
+expect said ♪ Edge
+refuse said Sent:
+expect focus 1. Yes, Create file alpha.txt
+expect state Claude: waiting for your answer
+
+# Check: The user's own move back into the list starts the second again
+# Accepted, and said in the specification: the focus arriving is what starts the second, whoever moved it. From
+# the conversation and back with the window's own focus key, the first Enter is held once more.
+wait 1100
+keys f6
+expect focus Conversation
+keys f6
+expect focus 1. Yes, Create file alpha.txt
+keys enter
+expect said ♪ Edge
+refuse said Sent:
+
+# Goal: Allow the file once its question was heard
+wait 1100
+keys enter
+expect said Sent: 1, Yes
+
+# Check: The message field does not send for a second after the question gave the focus back to it
+# Claude Code takes the answer and shows its prompt again: the list goes and the window itself puts the focus into
+# the message field. An Enter meant for the list would send whatever the field holds, or a bare Enter to Claude
+# Code's prompt. For a second it sends nothing and is heard; then it sends.
+file wr\go2 x
+expect focus Message to Claude
+type Thank you
+keys enter
+expect said ♪ Edge
+refuse said Sent
+expect focus Thank you
+wait 1100
+keys enter
+expect said Sent

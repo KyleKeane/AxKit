@@ -47,7 +47,21 @@ public abstract partial class ConsoleForm
         Input.KeyDown += OnFieldKeyDown;
         Transcript.LineChosen += TakeLine;
         // Ctrl+Enter, the bundle's main action (AX-8.10 rule 3): in the field it sends, exactly as Enter does.
-        AddKey(new Command(SendFieldName, BundleKeys.MainAction, SendField) { When = () => Input.Focused, Mark = CommandMark.Act });
+        // Both pass the field's hold where the Enter is taken (FieldTakesEnter; docs/axKit/SPEC.md AX-6.4).
+        AddKey(new Command(SendFieldName, BundleKeys.MainAction, SendFieldUnlessHeld) { When = () => Input.Focused, Mark = CommandMark.Act });
+    }
+
+    /// <summary>
+    /// The field sent, unless the field holds its Enter for a moment because the window itself has just put the
+    /// focus back into it from a question that arrived by itself (<see cref="ConversationForm.FieldTakesEnter"/>):
+    /// the press is then heard and nothing is sent.
+    /// </summary>
+    private void SendFieldUnlessHeld()
+    {
+        if (FieldTakesEnter())
+        {
+            SendField();
+        }
     }
 
     private void OnFieldKeyDown(object? sender, KeyEventArgs e)
@@ -63,7 +77,7 @@ public abstract partial class ConsoleForm
             case ConsoleKeys.Send:
                 // Enter sends; Shift+Enter is the field's own new line.
                 e.Handled = e.SuppressKeyPress = true;
-                SendField();
+                SendFieldUnlessHeld();
                 break;
             case ConsoleKeys.Guard:
                 e.SuppressKeyPress = true;

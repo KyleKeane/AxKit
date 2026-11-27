@@ -147,7 +147,7 @@
         },
         {
           "id": "refused",
-          "when": "The change you asked for is not allowed here and nothing changed: navigation mode, a read-only text, a locked database, a form with a field still empty. Also a key that answers (Enter, Escape, Space, a typed answer) pressed in the first second of a question or a notice that came by itself, or while your answer is still on its way: the key was held back and answered nothing (SPEC AX-6.4).",
+          "when": "The change you asked for is not allowed here and nothing changed: navigation mode, a read-only text, a locked database, a form with a field still empty. Also a key that answers pressed in the first second of a question or a notice that came by itself, in the first second after you arrived on it, or while your answer is still on its way: the key was held back and answered nothing (SPEC AX-6.4). In a question's list that is Enter, Escape, Space and everything typed; in a notice Enter and Escape, with Shift or without, Ctrl+Enter, Space on a button, a button's letter with Alt and a click on a button. And Enter in the field of a conversation window in the second after the window put you back into it from a question that has closed.",
           "starts": ["key", "typing", "menu", "palette", "ai-tool", "script"],
           "sounds": ["Edge"],
           "words": "None for a key in navigation mode, and none for a key a question or a notice held back, so that NVDA's reading of the question is not cut off. From a menu, the palette or an AI tool the reason: 'Navigation mode: press Ctrl+Space to edit'. 'Not a task', 'Select an item first', 'Type the field's title'.",
@@ -492,7 +492,7 @@
           "when": "A notice opened that no command of yours asked for: an update was found at start, the settings could not be read or saved or were changed outside axKit, a hotkey is taken, a program is missing, the folder is gone, a repository wants to be trusted, the window met an unexpected error.",
           "starts": ["job", "timer", "system", "program", "other-window"],
           "sounds": ["Notice"],
-          "words": "The notice's own text, and Enter is held for a second so that a key already on its way answers nothing.",
+          "words": "The notice's own text. Enter, Escape and the other keys that answer it are held for a second after it shows, and again for a second after you come back to it, so that a key already on its way answers nothing.",
           "apps": "Every window.",
           "note": "The sound can be switched off only in axClaude and axTerminal (with their chimes). In those two windows the settings notes are a line of the conversation and make no sound."
         },

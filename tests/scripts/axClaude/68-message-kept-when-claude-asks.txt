@@ -1,0 +1,97 @@
+# Workflow: Keep a message that Claude's question cut off as it was being typed
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code; no Claude Code, no network and no model.
+# axClaude, docs/axClaude/SPEC.md D33 ("What is queued is asked about again when it is written", 2026-11-27, found by
+# the third review of that day). The window types a message to Claude Code's screen through a paced queue: each line,
+# a line break of its own between two, and Enter a tenth of a second after the last. Each write was judged when it
+# was queued and never again, so when Claude Code drew a permission question while the message was still going out,
+# the rest of the message and its Enter went to the question, and Enter is its yes. Each write now asks, right
+# before it goes, whether Claude Code has begun to ask something since the message was queued: when it has, the
+# writes still waiting are dropped, the window says "Not sent", the conversation gets a line that says so, and the
+# message is back in the message field.
+# A message of many lines is what makes the moment wide enough to play: its lines go out for a second and a half.
+# The stand-in (tools/AxAutomate/StandIn.cs) draws each frame at a file of the script's and reads no key.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir mq
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.332 (stand-in)","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"waitFile":"go1"},{"frame":["claude: started","you: Make a file","claude: One file.","tool: Write (alpha.txt)","Permission Required: Create file","alpha.txt","Do you want to create alpha.txt?","1. Yes","2. Yes, allow all edits during this session","3. No","Select with numbers [1-3]. Then Enter to submit or Escape to cancel:"],"clear":true},{"waitFile":"go2"},{"frame":["claude: started","you: Make a file","claude: One file.","tool: Write (alpha.txt)","claude: Done.","auto mode on (shift+tab to cycle)","$"],"clear":true},{"idle":true}]}
+
+start claude {temp}\mq --claude {temp}\claude.cmd -- --model haiku --effort low
+expect said Ready
+wait 1000
+
+# The setup: a message of twenty-five lines in the message field, typed a line at a time.
+type line 1
+keys shift+enter
+type line 2
+keys shift+enter
+type line 3
+keys shift+enter
+type line 4
+keys shift+enter
+type line 5
+keys shift+enter
+type line 6
+keys shift+enter
+type line 7
+keys shift+enter
+type line 8
+keys shift+enter
+type line 9
+keys shift+enter
+type line 10
+keys shift+enter
+type line 11
+keys shift+enter
+type line 12
+keys shift+enter
+type line 13
+keys shift+enter
+type line 14
+keys shift+enter
+type line 15
+keys shift+enter
+type line 16
+keys shift+enter
+type line 17
+keys shift+enter
+type line 18
+keys shift+enter
+type line 19
+keys shift+enter
+type line 20
+keys shift+enter
+type line 21
+keys shift+enter
+type line 22
+keys shift+enter
+type line 23
+keys shift+enter
+type line 24
+keys shift+enter
+type keep this line
+expect focus keep this line
+
+# Check: The rest of a message, and its Enter, do not go to a question drawn while it is typed
+# Enter sends: the lines go out one by one. Claude Code asks about a file meanwhile. The lines still waiting and
+# the message's Enter are dropped, and the window says so; the log has the line of it, without a word of the message.
+keys enter
+expect said Sent
+file mq\go1 x
+expect said Not sent: Claude asks something, and its question opens in a moment
+run findstr /s /c:"The rest of a message was not written" home\AxKit\*.log
+# The question was not answered by the message's Enter: it is asked, and waits.
+expect focus 1. Yes, Create file alpha.txt
+refuse said Sent:
+expect state Claude: waiting for your answer
+
+# Goal: Answer the question and find the message in the field again
+wait 1100
+keys enter
+expect said Sent: 1, Yes
+file mq\go2 x
+expect focus "name":"Message to Claude"
+expect focus keep this line
+
+# Check: The conversation says that the message was not sent
+do Conversation
+expect text Not sent: Claude asked something while your message was being typed to it. The message is back in the message field.

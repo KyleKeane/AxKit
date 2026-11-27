@@ -211,6 +211,9 @@ expect said Ready
 type What is 2+2?
 keys shift+enter
 type Answer in one line, with no tool.
+# The window itself put the focus into the field as the trust question closed: its Enter waits a second (bundle
+# AX-6.4, 2026-11-27; by reading alone).
+wait 1100
 keys enter
 expect said Done
 keys alt+3

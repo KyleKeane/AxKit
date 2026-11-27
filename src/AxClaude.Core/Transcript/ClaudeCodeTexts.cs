@@ -295,11 +295,19 @@ public static partial class ClaudeCodeTexts
     public const string PermissionRequired = "Permission Required:";
 
     /// <summary>
-    /// How the kind in a permission question's title ends when it asks about a command a shell runs ("Permission
-    /// Required: Bash command", Claude Code 2.1.281, the test of the permission row in <c>QuestionTests</c>): its
-    /// rows may hold further lines of the command (<see cref="PermissionCore.OfScreen"/>).
+    /// How the kind in a permission question's title ends when it asks about one file or folder, which its first row
+    /// names by its path ("Permission Required: Create file", "Edit file", "Accessing workspace", Claude Code
+    /// 2.1.281 and 2.1.332, the permission rows in <c>QuestionTests</c>). Every other kind is read as a command,
+    /// "Bash command" among them (<see cref="PermissionCore.OfScreen"/>).
     /// </summary>
-    public const string CommandKindEnd = "command";
+    public static readonly string[] PathKindEnds = ["file", "workspace"];
+
+    /// <summary>
+    /// How the last row of a permission question begins, Claude Code's own question under what it asks about ("Do
+    /// you want to proceed?", "Do you want to create notes.txt?", Claude Code 2.1.281): it ends in a question
+    /// mark, and is no line of the command (<see cref="PermissionCore.OfScreen"/>).
+    /// </summary>
+    public const string ClosingQuestionStart = "Do you want to";
 
     public const string EnterSelection = "Enter selection";
 

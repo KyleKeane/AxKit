@@ -244,7 +244,11 @@ gets its page shown in place of the transcript while it holds the screen, and no
 
 ### AT-3 The command field and the sending
 
-- AT-3.1 **Enter** sends the field's text and clears it: each line as one write, a single `\r` as a separate write
+- AT-3.1 **Enter** sends the field's text and clears it, once for each press: a repeat of Enter or Ctrl+Enter from a
+  key held down sends nothing, so that an Enter held a moment too long does not answer what the command asks next
+  (bundle AX-6.4, the conversation window's field, 2026-11-27); and for a second after the window itself has put the
+  focus back into the field from a question that arrived by itself (an AI tool's request), Enter sends nothing and
+  is heard as a refusal. After the recent commands list, which the user opened, Enter runs at once. Each line goes as one write, a single `\r` as a separate write
   after it, paced as axClaude's writes are (axClaude FR-2.2, FR-2.5), 60 ms after each line and 120 ms after each
   `\r`, so that the shell reads a multi-line command line by line as it would from the keyboard, PowerShell's `>>` continuation taking
   the rest; for PowerShell a command of several lines gets one more Enter at the end, since with a screen reader

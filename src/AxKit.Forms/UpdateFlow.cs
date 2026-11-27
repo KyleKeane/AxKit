@@ -113,7 +113,7 @@ internal sealed class UpdateFlow
         if (newer && (manual || !_form.NoticeOpen))
         {
             // At startup the notice opens by itself: Enter updates, Escape keeps this version.
-            ShowUpdateNotice(release!, unprompted: !manual);
+            ShowUpdateNotice(release!, chime: !manual);
         }
         else if (newer)
         {
@@ -200,8 +200,13 @@ internal sealed class UpdateFlow
         InstallUpdate(release, restart);
     }
 
-    /// <summary>The release notes with I accept all terms, install and restart (or close), Open release page and Later; <paramref name="unprompted"/> when the check at startup found it.</summary>
-    private void ShowUpdateNotice(ReleaseInfo release, bool unprompted = false)
+    /// <summary>
+    /// The release notes with I accept all terms, install and restart (or close), Open release page and Later. The
+    /// notice always arrives by itself, after the answer of a request came, and holds its keys for a moment: Enter is
+    /// its install. <paramref name="chime"/> when the check at startup found it; after the user's own check it comes
+    /// without the chime.
+    /// </summary>
+    private void ShowUpdateNotice(ReleaseInfo release, bool chime = false)
     {
         var version = release.Version.ToString(3);
         var size = release.ZipSize > 0 ? $" The download is {release.ZipSize / (1024.0 * 1024.0):0} MB." : string.Empty;
@@ -221,8 +226,8 @@ internal sealed class UpdateFlow
             new OverlayChoice("&Later", IsCancel: true),
         ])
         {
-            Unprompted = unprompted,
-        });
+            Silent = !chime,
+        }.ByItself());
     }
 
     /// <summary>

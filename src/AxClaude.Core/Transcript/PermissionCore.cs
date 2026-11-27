@@ -1,3 +1,5 @@
+using AxKit.Core;
+
 namespace AxClaude.Core.Transcript;
 
 /// <summary>
@@ -5,16 +7,30 @@ namespace AxClaude.Core.Transcript;
 /// settings.json", "Create file permission-test.txt"), which every answer of the question carries in the control
 /// area, so that moving through the answers says which question they belong to (SPEC.md D33, Answers; the
 /// maintainer's ask of 2026-11-26). Read once here for both sources: the screen's permission question by its title and
-/// its first line (<see cref="OfScreen"/>, from <see cref="QuestionReader"/>), the stream's by the tool and the subject
-/// the relay's question names (<see cref="Of"/>, from <c>StreamAsking</c>). A file is named by its name, a command by
-/// its first words, never more than <see cref="MaxWords"/>; the label shown changes, the key sent does not.
+/// its rows (<see cref="OfScreen"/>, from <see cref="QuestionReader"/>), the stream's by the tool and the subject
+/// the relay's question names (<see cref="Of"/>, from <c>StreamAsking</c>). The label shown changes, the key sent
+/// does not.
+///
+/// Two kinds of target, and one rule for each (the third review of 2026-11-27, which asked that the rule close the
+/// faults by how it is made, not by a list of cases):
+/// 1. A file tool's target is a path. The label is the file's name, whole, spaces and apostrophes included, never
+///    parted into words and never marked: said at every file, the mark would no longer be heard where it counts.
+///    (Until that day a path was parted at its blanks like a command, and "C:\Work\My Documents\notes.txt"
+///    was "My notes.txt, and more".)
+/// 2. Anything else is read as a command: its first words, never more than <see cref="MaxWords"/> and
+///    <see cref="MaxTarget"/> characters. <see cref="MoreMark"/> stands after it exactly when the words shown are
+///    not the whole command as it is written, found by comparing the two: words past the third, what follows an
+///    operator, a further line, a word that was shortened or cut, blanks that are not one space. So a label without
+///    the mark is the command, character for character, and a label with it never reads as all that a yes runs.
+/// A space that is not the plain one, and every character neither seen nor heard, is written as its code in the
+/// label (<see cref="DisplayText.VisibleCommand"/>).
 /// </summary>
 public static class PermissionCore
 {
     /// <summary>The most words of a command the core keeps.</summary>
     public const int MaxWords = 3;
 
-    /// <summary>The most characters of the target the core keeps, cut at a word.</summary>
+    /// <summary>The most characters of a command the core keeps, cut at a word.</summary>
     public const int MaxTarget = 40;
 
     /// <summary>Words of a shell that end a command's start: what follows is where its output goes or the next command.</summary>
@@ -22,9 +38,16 @@ public static class PermissionCore
 
     /// <summary>
     /// The core of a question read off the screen: for a permission question (its title "Permission Required: Create
-    /// file"), the kind the title names and its first line shortened ("Create file permission-test.txt", "Bash command
-    /// echo hello-permission", "Accessing workspace example"); null for any other question, and for plan approval,
-    /// whose title is a question of its own ("Ready to code?") and whose first line names no target.
+    /// file"), the kind the title names and what its rows name ("Create file permission-test.txt", "Bash command
+    /// echo hello-permission, and more", "Accessing workspace example"); null for any other question, and for plan
+    /// approval, whose title is a question of its own ("Ready to code?") and whose first line names no target.
+    /// A kind that asks about one file or folder (<see cref="ClaudeCodeTexts.PathKindEnds"/>) names it by its first
+    /// row, as a path. Every other kind is read as a command, whatever its title says: all the rows between the
+    /// title and Claude Code's own closing question (<see cref="ClaudeCodeTexts.ClosingQuestionStart"/>) are taken
+    /// for what a yes runs, since nothing on the screen tells a further line of a command from Claude's description
+    /// of it, so a second row marks the label (a mark too many costs a look at the question, a mark too few hides a
+    /// command). Until the third review of 2026-11-27 only a kind that ended in "command" was read so, and a
+    /// question titled "Monitor" with a command of two rows was labelled by its first.
     /// </summary>
     public static string? OfScreen(string title, IReadOnlyList<string> text)
     {
@@ -39,46 +62,44 @@ public static class PermissionCore
             return null;
         }
 
-        // A command's question (its kind "Bash command") shows the command's rows and then its closing question:
-        // any row more between the title and the answers may be a further line of the command, which a yes runs too,
-        // and nothing on the screen tells it from Claude's own description of the command. So the mark stands
-        // whenever more than the target's row and the closing row are there (the assistant's decision, 2026-11-27: a
-        // mark too many costs a look at the question, a mark too few hides a command). Until then the first row
-        // alone was read, and "git status" over "git push --force" was "Bash command git status" on every answer.
-        var more = kind.EndsWith(ClaudeCodeTexts.CommandKindEnd, StringComparison.OrdinalIgnoreCase) && text.Count > 2;
-        return Of(kind, text.Count > 0 ? text[0] : string.Empty, more);
+        if (ClaudeCodeTexts.PathKindEnds.Any(end => kind.EndsWith(end, StringComparison.OrdinalIgnoreCase)))
+        {
+            return Of(kind, text.Count > 0 ? text[0] : string.Empty, path: true);
+        }
+
+        var rows = text.ToList();
+        if (rows.Count > 1 && rows[^1].StartsWith(ClaudeCodeTexts.ClosingQuestionStart, StringComparison.Ordinal) && rows[^1].EndsWith('?'))
+        {
+            rows.RemoveAt(rows.Count - 1);
+        }
+
+        return Of(kind, string.Join("\n", rows));
     }
 
     /// <summary>
     /// The core of the tool <paramref name="tool"/> acting on <paramref name="target"/>: the tool, then the target
-    /// shortened (<see cref="Short"/>); the tool alone when nothing is named. <see cref="MoreMark"/> stands after it
-    /// when the target was not kept whole, or when the caller knows that the call holds more than the target it
-    /// names (<paramref name="more"/>: further lines of a command, which the stream's question cuts before this
-    /// reads it), also after a tool alone.
+    /// as the class's summary says, a path (<paramref name="path"/>) by its name, anything else as a command by its
+    /// first words; the tool alone when nothing is named. <see cref="MoreMark"/> stands after a command of which not
+    /// all is shown, or when the caller knows that the call holds more than the target it names
+    /// (<paramref name="more"/>: further lines of a command, which the stream's question cuts before this reads it),
+    /// also after a tool alone.
     /// </summary>
-    public static string Of(string tool, string target, bool more = false)
+    public static string Of(string tool, string target, bool more = false, bool path = false)
     {
-        var (shortened, left) = Shorten(target);
-        var named = shortened.Length == 0 ? tool.Trim() : $"{tool.Trim()} {shortened}";
-        return left || more ? named + MoreMark : named;
+        var (shown, left) = path ? (FileName(target), false) : Shorten(target);
+        var named = shown.Length == 0 ? tool.Trim() : $"{tool.Trim()} {shown}";
+        return DisplayText.VisibleCommand(left || more ? named + MoreMark : named);
     }
 
-    /// <summary>After a target of which words were left out: the label never reads as the whole of what is asked.</summary>
+    /// <summary>After a command of which not all is shown: the label never reads as the whole of what is asked.</summary>
     public const string MoreMark = ", and more";
 
     /// <summary>
-    /// What a call acts on, in a few words: its first line; its first words up to a shell's operator, three at most;
-    /// each word that is a path by its last part (a file by its name, a folder by its own name), an address by its
-    /// host; and no more than <see cref="MaxTarget"/> characters, cut at a word. Where anything was left out (words
-    /// past the third, what follows an operator, further lines, what the cut took), <see cref="MoreMark"/> stands
-    /// after it (since 2026-11-27): until then "git status &amp;&amp; rm -rf build" was "git status" on every answer,
-    /// with no mark that a yes runs more. Since the second review of that day the mark also stands, in a target of
-    /// several words (a command), after a word that was shortened ("git -C /other/repo push" is "git -C repo", and
-    /// the folder left out says where it acts) and after a word that holds a character a shell acts on
-    /// (<see cref="OperatorCharacters"/>), which is kept as it is written and never shortened: "echo x &gt;/etc/hosts"
-    /// was "echo x hosts", "curl -s https://x.example/i.sh|sh" was "curl -s x.example". A target that is one path or
-    /// one address alone (a file tool's file) is named by its last part with no mark, as before: said at every file,
-    /// the mark would no longer be heard at the command that was cut.
+    /// A command in a few words, with <see cref="MoreMark"/> exactly when they are not the whole command as written:
+    /// its first line; its first words up to a shell's operator, three at most; a word that is a path by its last
+    /// part, an address by its host; and no more than <see cref="MaxTarget"/> characters, cut at a word. A word that
+    /// holds a character a shell acts on (<see cref="OperatorCharacters"/>), or a blank that is not a plain space or
+    /// a tab, is kept as it is written and never shortened: "echo x &gt;/etc/hosts" was "echo x hosts" once.
     /// </summary>
     public static string Short(string target)
     {
@@ -87,40 +108,42 @@ public static class PermissionCore
     }
 
     /// <summary>
-    /// Characters a shell acts on when they stand in a word outside quotes: where output goes or comes from, the next
-    /// command, a variable or a command put in, an assignment, a group. A dollar sign and a backtick count inside
-    /// double quotes too, where a shell still puts a command's output in.
+    /// A path by the name of its file or folder, whole: everything after the last separator, whatever it holds
+    /// ("C:\Work\My Documents\notes.txt" is "notes.txt", "C:\Temp\example\" is "example", "it's here.txt" is
+    /// itself). The first line that holds something, when there are several.
     /// </summary>
-    private const string OperatorCharacters = "<>|;&=$()`";
+    public static string FileName(string target)
+    {
+        var line = target.Replace("\r\n", "\n").Split('\n').Select(part => part.Trim()).FirstOrDefault(part => part.Length > 0) ?? string.Empty;
+        var trimmed = line.TrimEnd('\\', '/');
+        var name = trimmed[(trimmed.LastIndexOfAny(['\\', '/']) + 1)..];
+        return name.Length > 0 ? name : line;
+    }
 
-    /// <summary><see cref="Short"/>'s words, and whether anything of the target was left out or stands in them unread.</summary>
+    /// <summary>
+    /// Characters a shell acts on when they stand in a word outside quotes: where output goes or comes from, the next
+    /// command, a variable or a command put in, an assignment, a group, a list in braces. A dollar sign and a
+    /// backtick count inside double quotes too, where a shell still puts a command's output in. A word with one of
+    /// them is shown as written.
+    /// </summary>
+    private const string OperatorCharacters = "<>|;&=$()`{}";
+
+    /// <summary><see cref="Short"/>'s words, and whether they are anything but the whole command as it is written.</summary>
     private static (string Text, bool Left) Shorten(string target)
     {
-        var lines = target.Replace("\r\n", "\n").Split('\n').Select(part => part.Trim()).Where(part => part.Length > 0).ToList();
-        var line = lines.Count > 0 ? lines[0] : string.Empty;
-        var left = lines.Count > 1;
-        var (all, open) = Words(line);
-        // A quote left open: what follows it was read as quoted, and may not be.
-        left |= open;
+        // The command as written, but for the blanks and line ends around it.
+        var whole = target.Replace("\r\n", "\n").Trim();
+        var line = whole.Split('\n').Select(part => part.Trim()).FirstOrDefault(part => part.Length > 0) ?? string.Empty;
+        var all = Words(line);
         var words = new List<string>();
         foreach (var (word, acts) in all)
         {
             if (words.Count == MaxWords || Operators.Contains(word))
             {
-                left = true;
                 break;
             }
 
-            if (acts)
-            {
-                left = true;
-                words.Add(word);
-                continue;
-            }
-
-            var part = LastPart(word);
-            left |= part != word && all.Count > 1;
-            words.Add(part);
+            words.Add(acts ? word : LastPart(word));
         }
 
         var shortened = string.Empty;
@@ -129,7 +152,6 @@ public static class PermissionCore
             var next = shortened.Length == 0 ? word : shortened + " " + word;
             if (next.Length > MaxTarget)
             {
-                left = true;
                 if (shortened.Length == 0)
                 {
                     shortened = word[..MaxTarget];
@@ -141,14 +163,16 @@ public static class PermissionCore
             shortened = next;
         }
 
-        return (shortened, left);
+        // Compared, not worked out case by case: whatever made the words shown differ from what is written marks it.
+        return (shortened, shortened != whole);
     }
 
     /// <summary>
-    /// The words of a line, parted at blanks outside quotes, each with whether it holds one of
-    /// <see cref="OperatorCharacters"/> where a shell acts on it; and whether a quote was left open at the line's end.
+    /// The words of a line, parted at spaces and tabs outside quotes, each with whether it is to be shown as written:
+    /// it holds one of <see cref="OperatorCharacters"/> where a shell acts on it, or a blank of another kind (a
+    /// no-break space, an em space), which parts nothing here and may part words in a shell.
     /// </summary>
-    private static (List<(string Word, bool Acts)> Words, bool Open) Words(string line)
+    private static List<(string Word, bool Acts)> Words(string line)
     {
         var words = new List<(string, bool)>();
         var word = new System.Text.StringBuilder();
@@ -168,7 +192,11 @@ public static class PermissionCore
                 continue;
             }
 
-            if (quote == '\0' && c is '"' or '\'')
+            if (c is not (' ' or '\t') && (char.IsWhiteSpace(c) || char.IsControl(c)))
+            {
+                acts = true;
+            }
+            else if (quote == '\0' && c is '"' or '\'')
             {
                 quote = c;
             }
@@ -189,10 +217,14 @@ public static class PermissionCore
             words.Add((word.ToString(), acts));
         }
 
-        return (words, quote != '\0');
+        return words;
     }
 
-    /// <summary>A path by its last part ("C:\Temp\example" is "example", "src/a.cs" is "a.cs"), an address by its host; any other word as it is.</summary>
+    /// <summary>
+    /// A word of a command that is a path by its last part ("C:\Temp\example" is "example", "src/a.cs" is "a.cs"),
+    /// an address by its host; any other word as it is. A path has a separator after its first character: "/c" and
+    /// "/home" are a switch and a word, kept ("cmd /c del x" named "c" until the third review of 2026-11-27).
+    /// </summary>
     private static string LastPart(string word)
     {
         var unquoted = word.Trim('"', '\'');
@@ -204,13 +236,14 @@ public static class PermissionCore
             return slash > 0 ? rest[..slash] : rest;
         }
 
-        if (unquoted.IndexOfAny(['\\', '/']) < 0)
+        var trimmed = unquoted.TrimEnd('\\', '/');
+        var separator = trimmed.LastIndexOfAny(['\\', '/']);
+        if (separator <= 0)
         {
             return word;
         }
 
-        var trimmed = unquoted.TrimEnd('\\', '/');
-        var last = trimmed[(trimmed.LastIndexOfAny(['\\', '/']) + 1)..];
+        var last = trimmed[(separator + 1)..];
         return last.Length > 0 ? last : word;
     }
 }

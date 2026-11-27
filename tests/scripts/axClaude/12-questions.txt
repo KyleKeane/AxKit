@@ -107,7 +107,10 @@ wait 1500
 keys ctrl+tab
 expect focus Conversation
 keys ctrl+tab
-keys home enter
+keys home
+# The list's second counts again from when the focus came back to it (bundle AX-6.4, 2026-11-27; by reading alone).
+wait 1100
+keys enter
 expect said Sent: 1
 expect said Done
 wait 2000

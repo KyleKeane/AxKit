@@ -1,0 +1,42 @@
+# Workflow: Be asked again when the command changes under the same question
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code; no Claude Code, no network and no model.
+# axClaude, docs/axClaude/SPEC.md D33 ("A question the user has not answered that Claude Code replaces by one under the
+# same title with the same answers", 2026-11-27, found by the third review of that day). Claude Code takes a
+# question back and asks another in its place, under the same title, with the same answers. The window told the two
+# apart by the three words of the label, "git push origin", so "git push origin main" replaced by "git push origin
+# main --force" was one question: the list stayed, nothing was said, and Enter on "1. Yes" allowed a command of
+# which no word had been heard. The two are now compared by every row between the title and the answers.
+# The stand-in (tools/AxAutomate/StandIn.cs) draws each frame at a file of the script's and reads no key.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir cq
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.332 (stand-in)","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"waitFile":"go1"},{"frame":["claude: started","you: Push it","claude: Pushing.","tool: Bash (git push origin main)","Permission Required: Bash command","git push origin main","Do you want to proceed?","1. Yes","2. No","Select with numbers [1-2]. Then Enter to submit or Escape to cancel:"],"clear":true},{"waitFile":"go2"},{"frame":["claude: started","you: Push it","claude: Pushing.","tool: Bash (git push origin main --force)","Permission Required: Bash command","git push origin main --force","Do you want to proceed?","1. Yes","2. No","Select with numbers [1-2]. Then Enter to submit or Escape to cancel:"],"clear":true},{"idle":true}]}
+
+start claude {temp}\cq --claude {temp}\claude.cmd -- --model haiku --effort low
+expect said Ready
+wait 1000
+
+# Goal: Hear a command's question and move to No
+# The label names the command's first three words and says that there is more: the fourth word is not in it.
+file cq\go1 x
+expect focus Permission Required: Bash command. git push origin main. Do you want to proceed?
+expect focus 1. Yes, Bash command git push origin, and more
+wait 1100
+keys down
+expect focus 2. No, Bash command git push origin, and more
+said
+
+# Check: The same command with a word more, under the same title, is asked anew
+# Nothing was answered. Claude Code asks about the other command: the label is the same on every answer, and the
+# question is another one. It is said again, with its chime, and its list is named with the new command. The list
+# stays on the answer the user was on, No, since the answers and their label are the same (D33, the answer the user
+# is on): never back on Yes by itself.
+file cq\go2 x
+expect said ♪ Notice
+expect focus Permission Required: Bash command. git push origin main --force. Do you want to proceed?
+expect focus 2. No, Bash command git push origin, and more
+
+# Goal: Refuse the command that was asked last
+wait 1100
+keys enter
+expect said Sent: 2, No

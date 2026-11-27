@@ -39,7 +39,42 @@ internal sealed partial class MainForm
     }
 
     /// <summary>The field is hidden behind Claude's question: the quote would land unseen and the comment in the list.</summary>
-    protected override string? LineRefusedWhileAreaOpen => "Answer Claude first; the message field is hidden while it asks";
+    protected override string? LineRefusedWhileAreaOpen => AnswerFirstWords + "; the message field is hidden while it asks";
+
+    /// <summary>How every refusal starts that tells the user to answer what Claude asks before anything else goes to Claude Code.</summary>
+    private const string AnswerFirstWords = "Answer Claude first";
+
+    /// <summary>Said when the mode key is held back because Claude asks something: on some questions Claude Code takes that key as a yes.</summary>
+    private const string ModeKeyWaitsWords = AnswerFirstWords + "; the permission mode stays as it is while it asks";
+
+    /// <summary>Said when a key of Claude Code's own (Actions, Send key; Send queued messages now) is held back because the control area shows what Claude asks.</summary>
+    private const string KeyWaitsWords = AnswerFirstWords + "; no key of Claude Code's own is sent while its question is in the list";
+
+    /// <summary>
+    /// Whether a key of Claude Code's own may go to its screen now, asked by every command that sends one (the items
+    /// of Send key, Send queued messages now): not while what Claude Code waits on has not been put to the user
+    /// (<see cref="WaitsUnheard"/>), and not while the control area shows it, since an answer then comes from the
+    /// list, which holds its keys for a moment and binds them to the question it shows (bundle rule 11; the third
+    /// review of 2026-11-27: until then such a key went to a question inside its hold). With Answer from a list off,
+    /// or for a list a slash command leaves to the message field, "Claude asks" was said and the keys are how Claude
+    /// Code's own list is worked: they go. When not, the window says why.
+    /// </summary>
+    private bool KeyMayGoToClaude()
+    {
+        if (WaitsUnheard)
+        {
+            Refuse(QuestionOpensWords);
+            return false;
+        }
+
+        if (_model.PromptPending && _wait is { Shown: true })
+        {
+            Refuse(KeyWaitsWords);
+            return false;
+        }
+
+        return true;
+    }
 
     /// <summary>
     /// Text that answers what Claude waits on: any text on an "Enter text for" row; else one of the question's keys,
@@ -169,7 +204,7 @@ internal sealed partial class MainForm
         var queued = ClaudeInTurn;
         _model.Send(text, evenWhilePrompting: true);
         _messageSent = true;
-        QueueWrites(text);
+        QueueWrites(text, fromField: true);
         if (!queued)
         {
             ResendEnterWhileHeld(text, attempt: 1);
@@ -206,8 +241,13 @@ internal sealed partial class MainForm
     /// send did that, so an offered command's line, a menu's command or the app's own /feedback was typed after the
     /// restored message and both went as one, and the flag of the interrupt stayed up, which kept
     /// <see cref="ResendEnterWhileHeld"/> from ever sending a dropped Enter of theirs again.
+    /// Every write of the message asks again, right before it goes, whether Claude Code has begun to ask something
+    /// since the message was queued (<see cref="MessageStill"/>): its Enter goes a tenth of a second after its text,
+    /// and a permission question drawn in between took that Enter as its answer until the third review of
+    /// 2026-11-27. <paramref name="fromField"/> for the message field's own message, which is put back into the
+    /// field when it was not sent.
     /// </summary>
-    private void QueueWrites(string text)
+    private void QueueWrites(string text, bool fromField = false)
     {
         if (Streams)
         {
@@ -215,21 +255,58 @@ internal sealed partial class MainForm
             return;
         }
 
-        ClearRestoredMessage();
+        var still = MessageStill(text, fromField);
+        ClearRestoredMessage(still);
         _lastMessage = text;
         var lines = text.Split('\n');
         for (var i = 0; i < lines.Length; i++)
         {
-            Enqueue(lines[i], i == lines.Length - 1 ? 100 : 30);
+            Enqueue(lines[i], i == lines.Length - 1 ? 100 : 30, still);
             if (i < lines.Length - 1)
             {
-                Enqueue(ClaudeCodeKeys.NewLine, 30);
+                Enqueue(ClaudeCodeKeys.NewLine, 30, still);
             }
         }
 
-        Enqueue(ClaudeCodeKeys.Enter, 50);
+        Enqueue(ClaudeCodeKeys.Enter, 50, still);
         StartWrites();
         FlowSent(text);
+    }
+
+    /// <summary>
+    /// What every write of a queued message asks right before it is written (<see cref="ConsoleForm.Enqueue"/>):
+    /// whether the message still goes where it was meant to (<see cref="QueuedWrite.MessageOver"/>). When Claude Code
+    /// has begun to ask something meanwhile, the write and those behind it are dropped: nothing more is typed, no
+    /// Enter answers the question, and the window says that it was not sent, with a line in the conversation. The
+    /// message field's own message goes back into the field when the field is empty. What was typed so far stays on
+    /// Claude Code's prompt row; the next message empties the row first when it still holds this one
+    /// (<see cref="ClearRestoredMessage"/>, by the same flag as after an interrupt).
+    /// </summary>
+    private Func<bool> MessageStill(string text, bool fromField)
+    {
+        var asked = _model.PromptPending;
+        return () =>
+        {
+            if (!QueuedWrite.MessageOver(asked, _model.PromptPending))
+            {
+                return true;
+            }
+
+            Log.Info("The rest of a message was not written: Claude Code began to ask something while it was typed");
+            _interruptedSinceSend = true;
+            var restored = fromField && Input.TextLength == 0;
+            if (restored)
+            {
+                Input.Text = text.Replace("\n", "\r\n");
+                Input.Select(Input.TextLength, 0);
+            }
+
+            _model.AddSystemLine(restored
+                ? "Not sent: Claude asked something while your message was being typed to it. The message is back in the message field."
+                : "Not sent: Claude asked something while the line above was being typed to it.");
+            Refuse(QuestionOpensWords);
+            return false;
+        };
     }
 
     /// <summary>
@@ -239,7 +316,7 @@ internal sealed partial class MainForm
     /// Backspace between them. Only then: a message the row holds for another reason (an Enter Claude dropped) stays.
     /// Nothing is said; the window behaves as before that version. The stream has no prompt row.
     /// </summary>
-    private void ClearRestoredMessage()
+    private void ClearRestoredMessage(Func<bool> still)
     {
         var interrupted = _interruptedSinceSend;
         _interruptedSinceSend = false;
@@ -253,10 +330,10 @@ internal sealed partial class MainForm
         {
             if (i > 0)
             {
-                Enqueue(ClaudeCodeKeys.Backspace, 30);
+                Enqueue(ClaudeCodeKeys.Backspace, 30, still);
             }
 
-            Enqueue(ClaudeCodeKeys.CtrlU, 30);
+            Enqueue(ClaudeCodeKeys.CtrlU, 30, still);
         }
 
         Log.Info($"Claude's prompt held the interrupted message again ({lines} lines): emptied before the next one");
@@ -313,6 +390,12 @@ internal sealed partial class MainForm
             return;
         }
 
+        // The chord would go to what Claude Code asks, not to its prompt (KeyMayGoToClaude).
+        if (!KeyMayGoToClaude())
+        {
+            return;
+        }
+
         Enqueue(ClaudeCodeKeys.CtrlX, 30);
         Enqueue(ClaudeCodeKeys.CtrlS, 30);
         StartWrites();
@@ -325,6 +408,9 @@ internal sealed partial class MainForm
     /// <summary>
     /// Escape to Claude (FR-2.3), and what is still queued to type goes: an answer typed out a key at a time must not
     /// land after it. Over the stream, the request that ends the running turn (stream-mode.md SM-5.3).
+    /// The one command that sends Claude Code a key whatever it asks (<see cref="KeyMayGoToClaude"/> is not asked):
+    /// it is the key that stops Claude, it must work at every moment, and its Escape is a no to whatever Claude Code
+    /// asks, never a yes; at a question not yet heard it takes the question back, which the window then says.
     /// </summary>
     private void Interrupt()
     {
@@ -367,16 +453,23 @@ internal sealed partial class MainForm
             return;
         }
 
-        // On plan approval Claude Code takes this key as an answer ("shift+tab to approve with this feedback"): never
-        // to a question that has not been put to the user yet (WaitsUnheard, as the message field's Enter).
+        // On plan approval Claude Code takes this key as an answer ("shift+tab to approve with this feedback"), and
+        // at a file's question as "allow all edits": never to a question that has not been put to the user yet
+        // (WaitsUnheard, as the message field's Enter), and never while Claude asks at all (the third review of
+        // 2026-11-27: until then it went to a question inside its hold, a yes before a word of it was said). An
+        // answer comes from the list, or with the list off from the message field.
         if (WaitsUnheard)
         {
             Refuse(QuestionOpensWords);
             return;
         }
 
-        // What it shows next is asked afresh (MarkWaitAnswered).
-        MarkWaitAnswered();
+        if (_model.PromptPending)
+        {
+            Refuse(ModeKeyWaitsWords);
+            return;
+        }
+
         Write(ClaudeCodeKeys.ShiftTab);
     }
 
@@ -397,7 +490,13 @@ internal sealed partial class MainForm
             return;
         }
 
-        // A key of Claude Code's own can answer the question its screen shows (MarkWaitAnswered).
+        // Not to what Claude asks while the list shows it, or before it was put to the user (KeyMayGoToClaude).
+        if (!KeyMayGoToClaude())
+        {
+            return;
+        }
+
+        // With the list off, a key of Claude Code's own can answer the question its screen shows (MarkWaitAnswered).
         MarkWaitAnswered();
         Write(key);
         _interruptedSinceSend |= key == ClaudeCodeKeys.CtrlC;

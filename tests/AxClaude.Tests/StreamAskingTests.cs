@@ -147,6 +147,25 @@ public sealed class StreamAskingTests
         Assert.False(ClaudeCodeStream.ReadAsk(Question("Bash", "{\"command\":\"  dir  \"}"))!.AboutCut);
     }
 
+    /// <summary>
+    /// The third review of 2026-11-27: a file tool's target is a path, and every answer's label names the file
+    /// whole. Parted at its blanks like a command, a file in a folder with a space in its name was labelled with the
+    /// end of the folder's name and marked.
+    /// </summary>
+    [Fact]
+    public void A_file_tools_label_names_the_file_whole_and_a_commands_its_first_words()
+    {
+        var write = ClaudeCodeStream.ReadAsk(Question("Write", "{\"file_path\":\"C:\\\\Work\\\\My Documents\\\\meeting notes.txt\",\"content\":\"x\"}"))!;
+        Assert.True(write.AboutIsPath);
+        Assert.Equal("Write meeting notes.txt", new StreamAsking(write).Current.Core);
+        Assert.True(ClaudeCodeStream.ReadAsk(Question("NotebookEdit", "{\"notebook_path\":\"a b.ipynb\"}"))!.AboutIsPath);
+
+        var bash = ClaudeCodeStream.ReadAsk(Question("Bash", "{\"command\":\"type C:\\\\Work\\\\notes.txt\"}"))!;
+        Assert.False(bash.AboutIsPath);
+        Assert.Equal("Bash type notes.txt" + PermissionCore.MoreMark, new StreamAsking(bash).Current.Core);
+        Assert.False(ClaudeCodeStream.ReadAsk(Question("Grep", "{\"pattern\":\"TODO\",\"path\":\"src\"}"))!.AboutIsPath);
+    }
+
     [Fact]
     public void A_command_that_begins_with_a_line_break_is_still_named_and_says_that_more_follows()
     {

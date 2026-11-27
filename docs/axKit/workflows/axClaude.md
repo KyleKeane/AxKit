@@ -685,7 +685,8 @@ The focus moves to Permission Required: Accessing workspace.
 3. Press Alt+2 (Conversation; Navigation menu).
     You hear the sound Notice.
 4. Press Ctrl+Tab twice (Switch between the view and the field).
-5. Press Home, Enter.
+5. Press Home.
+6. Press Enter.
     You hear: Sent: 1.
     You hear: Done.
 
@@ -1835,11 +1836,55 @@ You hear: Claude asks.
 2. Press Enter.
     You hear the sound Sent.
 
-### Send the same answer once the question was said
+### Answer the file's question once it was said
 
-You hear: Claude asks.
-1. Press Enter.
+1. Type "1".
+2. Press Enter.
     You hear the sound Sent.
+
+## Be asked while reading the conversation, with the settings of a new install
+
+Starts with: Open axClaude with the folder wr.
+
+### Allow the file once its question was heard
+
+1. Press Enter.
+    You hear: Sent: 1, Yes.
+
+## Find a question waiting when a notice closes, with the settings of a new install
+
+Starts with: Open axClaude with the folder nq.
+
+### Read the keyboard shortcuts
+
+1. Choose Keyboard shortcuts in the Help menu.
+
+### Allow the file once its question was heard
+
+1. Press Enter.
+    You hear: Sent: 1, Yes.
+
+## Keep a message that Claude's question cut off as it was being typed
+
+Starts with: Open axClaude with the folder mq.
+
+### Answer the question and find the message in the field again
+
+1. Press Enter.
+    You hear: Sent: 1, Yes.
+
+## Be asked again when the command changes under the same question
+
+Starts with: Open axClaude with the folder cq.
+
+### Hear a command's question and move to No
+
+1. Press Down.
+
+### Refuse the command that was asked last
+
+1. Press Enter.
+    You hear: Sent: 2, No.
 
 ## Have a short exchange with Claude
 

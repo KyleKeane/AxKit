@@ -37,10 +37,12 @@ public static class McpOffer
     /// The command as the question and the explanation show it: every character of it that is neither seen nor heard
     /// (a direction override, a zero-width or tag character; <see cref="DisplayText"/>) written out as its code, so
     /// that what the user judges is what runs. <see cref="Refusal"/> keeps the control characters out; these others
-    /// passed unseen until the second review of 2026-11-27. The line that is sent (<see cref="Line"/>) and the copy
-    /// for the clipboard are the command as it was offered.
+    /// passed unseen until the second review of 2026-11-27. A space that is not the plain one is written out as
+    /// well (<see cref="DisplayText.VisibleCommand"/>, the third review of that day): it reads as a space, and a
+    /// shell may take it for part of a word. The line that is sent (<see cref="Line"/>) and the copy for the
+    /// clipboard are the command as it was offered.
     /// </summary>
-    public static string Shown(string command) => DisplayText.Visible(command.Trim());
+    public static string Shown(string command) => DisplayText.VisibleCommand(command.Trim());
 
     /// <summary>The reason as the question shows it: one line, at most 300 characters, empty when none was given.</summary>
     public static string Reason(string? reason)

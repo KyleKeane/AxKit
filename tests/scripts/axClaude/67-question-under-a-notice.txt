@@ -1,0 +1,60 @@
+# Workflow: Find a question waiting when a notice closes, with the settings of a new install
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code; no Claude Code, no network and no model.
+# axClaude, docs/axClaude/SPEC.md D33 and docs/axKit/SPEC.md AX-6.4 ("The hold counts again from when the focus
+# arrives", 2026-11-27, found by the third review of that day). A question that arrives while a notice is open (a
+# help text the user is reading) is put into the control area under the notice, where nothing of it is heard. When
+# the notice closes, the window hands the focus to the question's list. Its second of held keys ran from when it was
+# shown, under the notice, and was long over: the Enter that closed the notice, pressed twice, landed on the list,
+# which starts on "1. Yes", and approved the file before a word of the question was said. The list's second now
+# counts again from when the focus reaches it.
+# The second half is a screen of Claude Code's that only informs, which follows the user's own answer: its notice
+# was shown as "the user's doing" and held no keys, so the same doubled Enter closed it unheard. A notice a program
+# shows always holds now (Notice.ByItself); whether a chime plays is decided apart.
+# The stand-in (tools/AxAutomate/StandIn.cs) draws each frame at a file of the script's and reads no key.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir nq
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.332 (stand-in)","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"waitFile":"go1"},{"frame":["claude: started","you: Make a file","claude: One file.","tool: Write (alpha.txt)","Permission Required: Create file","alpha.txt","Do you want to create alpha.txt?","1. Yes","2. Yes, allow all edits during this session","3. No","Select with numbers [1-3]. Then Enter to submit or Escape to cancel:"],"clear":true},{"waitFile":"go2"},{"frame":["claude: started","you: /goal","Goal","No goal set","/goal <condition> to set one","Esc to dismiss"],"clear":true},{"waitFile":"go3"},{"frame":["claude: started","you: /goal","auto mode on (shift+tab to cycle)","$"],"clear":true},{"idle":true}]}
+
+start claude {temp}\nq --claude {temp}\claude.cmd -- --model haiku --effort low
+expect said Ready
+wait 1000
+
+# Goal: Read the keyboard shortcuts
+do Keyboard shortcuts
+expect state "notice":"Keyboard shortcuts"
+
+# Check: The Enter that closes the notice, pressed twice, does not answer the question under it
+# The question arrives under the notice and waits there for two and a half seconds, far longer than its own first
+# second. The first Enter closes the notice; the second reaches the list as the focus does: heard, and nothing sent.
+file nq\go1 x
+wait 2500
+expect state "notice":"Keyboard shortcuts"
+keys enter
+keys enter
+expect said ♪ Edge
+refuse said Sent:
+expect state "notice":null
+expect focus 1. Yes, Create file alpha.txt
+expect state Claude: waiting for your answer
+
+# Goal: Allow the file once its question was heard
+wait 1100
+keys enter
+expect said Sent: 1, Yes
+
+# Check: A screen of Claude Code's that follows the user's own answer holds its keys as well
+# Within three seconds of the answer Claude Code shows a screen that only informs. Its notice opens at once, the
+# focus being at the bottom of the window, and Enter is its Close: pressed in its first second it is heard and the
+# notice stays; a second later it closes.
+file nq\go2 x
+expect state "notice":"Goal"
+keys enter
+expect said ♪ Edge
+refuse said Closed
+expect state "notice":"Goal"
+wait 1100
+keys enter
+expect said Closed
+file nq\go3 x
+expect state "notice":null

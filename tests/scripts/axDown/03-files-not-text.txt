@@ -10,6 +10,8 @@ run powershell -NoProfile -Command "[IO.File]::WriteAllBytes('image.png', [byte[
 start down {temp}\image.png
 expect state "notice":"Error"
 expect state image.png is not a text file (it holds a NUL character).
+# A notice that comes by itself holds Escape for its first second, as it holds Enter (bundle AX-6.4, 2026-11-27).
+wait 1500
 keys escape
 expect state "notice":null
 expect state "title":"Untitled, axDown"

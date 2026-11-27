@@ -82,6 +82,9 @@ expect said offers a command for you to run: echo offered-first. Written by axAu
 # (Enter would open Claude Code's own feedback, which a check must not send: left to the manual plan.)
 keys end
 expect focus 5. No, and report a concern about it
+# The list's second counts again from when the focus came back to it from the explanation (bundle AX-6.4,
+# 2026-11-27; by reading alone).
+wait 1100
 keys enter
 expect focus Command offer. Type what concerns you about this command
 # The field, and the list that comes back after it, each hold Enter and Escape for a second (bundle AX-6.4).

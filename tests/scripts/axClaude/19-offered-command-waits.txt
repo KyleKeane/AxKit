@@ -84,6 +84,9 @@ expect focus "name":"Message to Claude"
 said
 # A reply long enough to still be on its way when the offer arrives (a short one ended within half a second).
 type Write 400 words about rivers, in plain paragraphs.
+# The window itself put the focus back into the field as the last offer closed: its Enter waits a second (bundle
+# AX-6.4, 2026-11-27; by reading alone).
+wait 1100
 keys enter
 mcp call axkit_offer_command {"window":"{window}","command":"echo after-the-turn"}
 expect mcp "offered": true

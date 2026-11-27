@@ -7,11 +7,17 @@
 # question of which nothing had been said, and a bare Enter went to whatever the screen showed. The window now says
 # "Not sent: Claude asks something, and its question opens in a moment" and keeps the text; once the question was
 # said ("Claude asks", since this script runs with Answer from a list off), the same Enter sends it.
-# The stand-in (tools/AxAutomate/StandIn.cs) draws each question at a file of the script's and reads no key. The
-# long answer is what makes the moment wide enough to play: its keys go out for six seconds, one at a time, and the
-# settle waits for them. The second half is the interrupt during such an answer: its keys are dropped, so the user's
-# act ends there, and the next question is said at once; until that day the settle went on waiting for keys that
-# were never sent.
+# The stand-in (tools/AxAutomate/StandIn.cs) draws each question at a file of the script's and reads no key. Until
+# the third review of that day a long answer made that moment six seconds wide, since its keys go out one at a time
+# and the settle waited for them, and this script typed its "1" into it. That review found the other half of the
+# same moment: the rest of the long answer, and its Enter, went on into the question that had replaced the one it
+# was typed for. Each queued key now asks, right before it is written, whether Claude Code still waits on what the
+# answer was for (D33, "What is queued is asked about again when it is written"); when not, the keys still waiting
+# are dropped, the window says "Not sent", and the user's act ends there, so the new question is said at once.
+# What is left of the first rule's moment is the settle's 400 ms, too short for a script to press into: the pure
+# rule is held by AnsweredWaitTests (Unheard, StillWaits) and the window's use of it by WindowLastResortTests. The
+# last part is the interrupt during such an answer: its keys are dropped, so the user's act ends there, and the
+# next question is said at once; until that day the settle went on waiting for keys that were never sent.
 file home\AxKit\axClaude.json {"replySpeech":"none","questionNotices":false,"workingMusic":false,"backgroundAlert":false}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir ta
@@ -31,17 +37,19 @@ type Please split the work into smaller steps and show me each one first, with t
 keys enter
 expect said ♪ Sent
 
-# Check: A 1 typed while the next question has not been said is not sent
-# The answer's keys go out for six seconds. Claude Code asks about a file meanwhile; nothing of it was said yet.
+# Check: The rest of a long answer is not typed into the question that replaced the one it was for
+# The answer's keys go out for six seconds. Claude Code asks about a file meanwhile: the keys still waiting, and
+# the answer's Enter, are dropped, and the window says so. The log has the line of it, without a word of the answer.
 file ta\go2 x
-wait 1000
-type 1
-keys enter
 expect said Not sent: Claude asks something, and its question opens in a moment
+run findstr /s /c:"The rest of a typed answer was not written" home\AxKit\*.log
+
+# Check: The question that came is said at once, not when the answer's last key would have gone
+expect said Claude asks
 refuse said ♪ Sent
 
-# Goal: Send the same answer once the question was said
-expect said Claude asks
+# Goal: Answer the file's question once it was said
+type 1
 keys enter
 expect said ♪ Sent
 

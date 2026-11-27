@@ -479,7 +479,10 @@ when the hook says `async`. It needs no Claude Code, no network and no model, an
   what the window answered (`run findstr /c:"the window's answer was allow" <folder>\stream-standin.log`). Every
   such script first answers the folder's question (`expect said Start Claude Code in this folder?`, `wait 1500`,
   `keys tab`, `keys enter`), and waits 1500 ms before it answers a question the user did not cause, as a notice's
-  keys are held that long. `tests/scripts/axClaude/37` to `43` are the scripts.
+  keys are held that long. `tests/scripts/axClaude/37` to `43` are the scripts. Since 2026-11-27 the same second
+  runs each time the focus reaches such a question or notice (bundle AX-6.4, rule 4): a script waits a second
+  before a key that answers after the focus came to a question's list from the conversation, after a notice over
+  it closed, and in the message field after a question closed and gave the focus back.
 
 ## 3. NVDA in the loop
 

@@ -285,7 +285,7 @@ public abstract class HotkeyForm : AxKitForm
             BeginInvoke(() =>
             {
                 ShowWindowInFront();
-                ShowNotice(Notice.Plain("Hotkey", $"The hotkey {CurrentHotkey} is taken by another program. Options, Hotkey, to choose another.") with { Unprompted = true });
+                ShowNotice(Notice.Plain("Hotkey", $"The hotkey {CurrentHotkey} is taken by another program. Options, Hotkey, to choose another.").ByItself());
             });
         }
         else if (!_hidden)

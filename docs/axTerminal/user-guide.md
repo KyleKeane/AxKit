@@ -38,7 +38,7 @@ Type the command in the field and press Enter. You hear "Sent" with a low note. 
 
 - Shift+Enter starts a new line in the field. A command of several lines goes to the shell line by line; for PowerShell one more Enter follows, which its console host wants to end a block.
 - An empty field sends a plain Enter.
-- Ctrl+Enter sends the command too, exactly as Enter does: it is the main action in every axKit window.
+- Ctrl+Enter sends the command too, exactly as Enter does: it is the main action in every axKit window. Each press sends once: holding Enter down does not send again, so a key held a moment too long never answers what the command asks next.
 - Send without recording, in the Actions menu (Alt+A, then W) and in the command palette, sends the text without recording it: no Input and Output lines, not in the recent commands, not in the log. Use it for a passphrase or a token a program asks for. It has no key of its own.
 - Alt+Down lists the recent commands of this window, newest first; Enter puts one back in the field, Escape goes back to the field. Ctrl+Up brings back the previous command and Ctrl+Down the next one, each with two quick rising notes; past the newest, Ctrl+Down gives back what you had typed, or the last command you changed and left. The plain arrows only move the caret.
 - Enter on a line of the terminal copies that line into the field, to run it again or change it.
