@@ -19,7 +19,14 @@ Updated 2026-11-28, early morning.
   Each set is its own fix batch. The second look at the access layers found four ways a repository's own program
   could still run in axGIT, and six ways a fetch or push could reach a server other than the one asked about;
   all fixed (the next decisions below). The second look at axClaude's corrections found that the one-second hold
-  ended just as the window moved the focus onto a question; that fix batch is next.
+  ended just as the window moved the focus onto a question; that fix batch is running. A second look at the
+  axGIT fixes then found two more ways a repository's program could run (at opening, in a partial clone; on a
+  push to a folder), so the next axGIT batch works by rules that need no list: a repository not trusted is
+  never connected, git never fetches by itself, a folder remote is checked before a push.
+- **Fable and Opus**: on 2026-11-28 you said Fable's credits were nearly spent. Every remaining fix batch has
+  its written brief with the decisions in it, and the state, the order and the process are in
+  `C:\Temp\axkit-tools\HANDOFF.md`, so that Opus can run them; the design work on branches (the graph's
+  steps, axChat, the launcher) waits for Fable.
 - **Then**: questions as lists; the shortenings with their keys; 6.0.0 prepared and not published; then, on branches,
   the workflow graph's remaining steps, axChat, axAutomate's macro launcher.
 
