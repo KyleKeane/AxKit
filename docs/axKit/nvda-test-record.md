@@ -796,6 +796,44 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: the hold on a question's keys, and what the second review of 2026-11-27 found in axClaude
+
+The second review of axClaude's repair of that day (`docs/axKit/SPEC.md` AX-6.4, "A question that arrives by itself
+holds its answering keys"; `docs/axClaude/SPEC.md` D33, "Every control the area shows holds its answering keys for a
+moment" and "nothing typed answers a question not yet put to the user"). Played on the hidden desktop, without NVDA,
+on 2026-11-27: every axClaude script that runs on the stand-in of Claude Code, among them the changed
+`61-screen-same-question`, `62-stream-answer-bound` and `64-interrupted-message-stays` and the new
+`65-typed-answer-waits-for-the-question`, whose new checks fail on the code before. Still owed:
+
+1. With NVDA listening (`.\nvda-pass.ps1 axClaude`): those scripts, and what is heard when Enter is pressed twice at
+   the first of two questions: "Sent: 1, Yes" once, then "Question", the short sound of the Enter that was held
+   back, and the second question, and nothing sent for it until Enter is pressed again a moment later.
+2. With Claude Code itself, none of it run after this change (the builder runs no live script): `12-questions`
+   (Escape from the words for Other and back), `18-offered-command` (the concern's field and back) and
+   `53-permissions-search` (each step of the search), which got a wait of a second by reading alone where a script
+   pressed Enter or Escape at once on a list or a field that had just come after its own key; and every other live
+   script, which the hold may meet in the same way, or where it answers a notice it opened within a second of a
+   notice that came by itself (a notice still takes over what is left of the hold before it;
+   `tests/scripts/axMCP/02-your-servers-errors-prompts.txt` met that and got a wait).
+3. By the maintainer's ear and hands:
+   - **the sound of a held key**: a fresh Enter, Escape, Space or typed answer that a question's list or field, or a
+     notice that came by itself, holds back now makes the sound of a refusal (`EventKind.Refused`, the edge sound,
+     no words), at each press; the kind and its sound are the ones there were, but this moment was given them
+     without his ear: whether it stays, and whether it is one sound too many while NVDA reads the question;
+   - a key held down: Enter kept down at the first of two questions answers the first and nothing after it, however
+     long it stays down, and makes no sound; by hand, since no script can hold a key (the rule is tested on the
+     control, `ControlAreaHoldTests`; a notice's part of it, `OverlayPanel.ProcessCmdKey`, is read off the source
+     alone and was never played);
+   - whether a second after a list appears is felt in Claude Code's own screens (`/config`, `/permissions`), where
+     until this change the next list took Enter at once; the arrows move at once;
+   - whether ", and more" on nearly every command's question of the screen (any row beside the command's and the
+     closing question's sets it, and Claude Code prints its description there) still tells anything;
+   - whether "Not sent: Claude asks something, and its question opens in a moment" is clear when it comes from the
+     message field, and whether it is cut off by the question's own "Question" 400 ms later.
+4. With a second window and an AI tool: `axkit_open` of an app while the window that is asked is busy for more than
+   ten seconds (a long read): the app opens once, or the tool is told that it is not known; no script reaches a busy
+   window.
+
 ## Owed: the access layers after the review of 2026-11-27 (axGIT, axPass, axProcess, axMCP, axTerminal)
 
 The review of the access layers before the release: what a program under an access layer is told and what is taken

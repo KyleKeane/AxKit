@@ -190,6 +190,8 @@ expect focus You chose Other. Your answer
 # when most of such an answer was dropped; the keystrokes are paced since). The transcript's record of the answer and
 # the reply hold its last words.
 type tulips in the garden by the old stone wall where the morning light falls first and the bees arrive early
+# The field holds Enter and Escape for its first second (bundle AX-6.4); what was typed is in it already.
+wait 1100
 keys enter
 expect said Sent: tulips in the garden by the old stone wall where the morning light falls first and the bees arrive early
 expect said Done
@@ -207,6 +209,8 @@ keys home down down down
 expect focus "value":"4. Other"
 keys enter
 expect focus You chose Other. Your answer
+# The field holds Enter and Escape for its first second, as every control of the area does (bundle AX-6.4).
+wait 1100
 keys escape
 expect focus "role":"List"
 wait 1500

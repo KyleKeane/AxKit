@@ -32,4 +32,39 @@ public static class AnsweredWait
     /// </summary>
     public static bool SettleWaits(long now, long lastKeyAt, int settleMs, bool answeredStandsAsItStood) =>
         now < lastKeyAt || (answeredStandsAsItStood && now - lastKeyAt < settleMs);
+
+    /// <summary>
+    /// Whether what Claude Code waits on now has not been put to the user yet (the second review of 2026-11-27):
+    /// something waits (<paramref name="waiting"/>, a signature) and the window has shown or announced nothing for it
+    /// (<paramref name="handled"/>, the signature of what it handled last, null for nothing), or what it handled is
+    /// over (<paramref name="over"/>) and the settle has yet to show what stands in its place. While this is true no
+    /// key of the user's goes to Claude Code as an answer: not a list's Enter, not a screen's key, not a "1" or a bare
+    /// Enter from the message field. The moment is the settle's 400 ms and, after a typed answer, as long as its keys
+    /// go out. False when nothing waits.
+    /// </summary>
+    public static bool Unheard(string? waiting, string? handled, bool over) =>
+        waiting is not null && (handled is null || over || handled != waiting);
+
+    /// <summary>
+    /// Whether the user's key no longer counts as an answer to the question it was pressed at: the question still
+    /// stands as it stood (<paramref name="over"/> false) <paramref name="countsMs"/> after the key's last keystroke
+    /// went (<paramref name="lastKeyAt"/>), so Claude Code did not take it as one (a key that answers nothing there,
+    /// Claude Code's own mode key at a file question). The wait is then unanswered again. Until 2026-11-27 it stayed
+    /// answered for good, and a single blank frame minutes later, as Claude Code draws in passing, read as "the
+    /// answered question has left": the standing question was asked again, chime and all, its list back on its first
+    /// answer.
+    /// </summary>
+    public static bool AnswerLapsed(long now, long lastKeyAt, int countsMs, bool over) =>
+        !over && now - lastKeyAt >= countsMs;
+
+    /// <summary>
+    /// Whether a question shown and not answered was replaced by another under the same title with the same answers
+    /// (<paramref name="waiting"/> equals <paramref name="shown"/>, both signatures): the two name another tool or
+    /// target (<see cref="Question.Core"/>). The window then shows and says the new one afresh; until 2026-11-27 only
+    /// an answered question was compared, so a file question Claude Code took back and replaced by the next file's
+    /// kept its list, with the first file's name on its answers. By the core and not by every line: a question drawn
+    /// again with another line (a tip, a longer diff) is the same question still, and is not asked twice.
+    /// </summary>
+    public static bool Replaced(string shown, string? waiting, string? shownCore, string? waitingCore) =>
+        waiting == shown && shownCore != waitingCore;
 }

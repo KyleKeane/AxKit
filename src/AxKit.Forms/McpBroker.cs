@@ -371,8 +371,12 @@ public static class McpBroker
     /// One request to one window (MC-6.3): connect, check that the window runs this very program file, answer its
     /// challenge with the key, send the request, read the one answer. Null when any of it fails.
     /// </summary>
-    private static string? Exchange(byte[] key, string pipeName, string request, int timeoutMs)
+    private static string? Exchange(byte[] key, string pipeName, string request, int timeoutMs) => Exchange(key, pipeName, request, timeoutMs, out _);
+
+    /// <summary>As above; <paramref name="sent"/> says whether the request was written to the window's pipe, for a caller that must know whether the window may be acting on it though no answer came.</summary>
+    private static string? Exchange(byte[] key, string pipeName, string request, int timeoutMs, out bool sent)
     {
+        sent = false;
         try
         {
             // Identification only: the window may learn who connected, never act as this user.
@@ -415,6 +419,8 @@ public static class McpBroker
                 return null;
             }
 
+            // From here on the window may act on the request, whatever becomes of its answer.
+            sent = true;
             writer.WriteLine(request);
             var answer = reader.ReadLineAsync();
             return answer.Wait(timeoutMs) ? answer.Result : null;
@@ -433,8 +439,14 @@ public static class McpBroker
     /// child of the AI tool, and what it starts belongs to that tool's processes. Over axClaude's stream Claude Code
     /// and everything under it are ended together when Claude Code is restarted or its window closes
     /// (<c>AxKit.Core.ChildJob</c>, which lets nothing leave), and an axDown opened here went with them, its unsaved
-    /// text lost. A window's process is the user's own. With no window open, or one that could not do it, the broker
-    /// starts the app itself, as before.
+    /// text lost. A window's process is the user's own. With no window open, or one that says it did not start the
+    /// app and will not, the broker starts the app itself, as before. Where the window may be starting it
+    /// (<see cref="McpTools.StartOutcomeOf"/>: it took the request up and has not finished, or no answer came to a
+    /// request that went), nobody starts it again and the client is told that it is not known
+    /// (<see cref="McpTools.OpenNotKnown"/>); and the broker waits for that answer longer than the window may take
+    /// over it (<see cref="RunAnswerMs"/> against the window's twenty seconds). Until the second review of 2026-11-27
+    /// both waited ten seconds and every answer that was no yes counted as a refusal, so a window that was busy for
+    /// ten seconds and the broker each started the app.
     /// </summary>
     private static McpResult Open(byte[] key, string? verb, string? path, string client)
     {
@@ -457,9 +469,19 @@ public static class McpBroker
             return Ask(key, window.Pipe, "open " + JsonSerializer.Serialize(new { arguments, client }));
         }
 
-        if (window is not null && !Ask(key, window.Pipe, "start " + JsonSerializer.Serialize(new { arguments })).IsError)
+        if (window is not null)
         {
-            return new McpResult($"Opened {string.Join(" ", arguments)}.");
+            var answer = Exchange(key, window.Pipe, "start " + JsonSerializer.Serialize(new { arguments }), RunAnswerMs, out var sent);
+            switch (McpTools.StartOutcomeOf(answer, sent))
+            {
+                case McpTools.StartOutcome.Opened:
+                    return new McpResult($"Opened {string.Join(" ", arguments)}.");
+                case McpTools.StartOutcome.NotKnown:
+                    return new McpResult(McpTools.OpenNotKnown, true);
+                default:
+                    // The window did not start it and will not: the broker does, below.
+                    break;
+            }
         }
 
         // Through the shell, which hands the new process none of this one's handles: a window holding the client's

@@ -210,8 +210,16 @@ Step 3 of section 8, with the choices it needed; what is not here waits for the 
   not to the AI tool's processes: the broker is a child of the AI tool, and over axClaude's stream everything under
   Claude Code is ended together when Claude Code is restarted or its window closes (`ChildJob`, which lets nothing
   leave it), so that an axDown the broker had started went with them, its unsaved text lost. With no window open, or
-  one that could not do it, the broker starts the app itself, through ShellExecute on the program file (which hands
-  the new window none of the broker's handles); what remains: with axClaude's window put away and no other axKit
+  one that says it did not start the app and will not, the broker starts the app itself, through ShellExecute on the
+  program file (which hands the new window none of the broker's handles). The app is started once (the second
+  review of 2026-11-27): the window answers one of three things, that it started the app, that it did not and will
+  not (a refusal, or the request given up before its thread took it), or that it took the request up and has not
+  finished (`notKnown`); the broker waits for that answer longer than the window may take over it (25 s against 20)
+  and starts the app itself only on the second (`McpTools.StartOutcomeOf`). Where the window may be starting it, or
+  no answer came to a request that went, nobody starts it again, and the client is told "whether the app opened is
+  not known: look at axkit_windows before you ask again". Until then both sides waited ten seconds and every answer
+  that was no yes counted as a refusal, so a window that was busy for ten seconds and the broker each started the
+  app. What remains: with axClaude's window put away and no other axKit
   window open, an app opened over the stream is still one of Claude Code's processes and ends with it.
 - MC-6.5a **Asked first** (the maintainer's choice of 2026-11-24, "Yes, asked each time", after Claude, refused axTask
   on the management folder, wrote list files directly). axClaude and axTerminal on a folder or none, and axTask on a
@@ -395,7 +403,10 @@ menu, the palette and the automated checks in the table of `command-language.md`
   it then opens, a notice's field or a field in the window's control area, gets the text and its main button or Enter
   is pressed, as the user would (`AxKitForm.FillForMcp`). Only a field the run's own click opened is filled: a field
   that was already asking the user something (axClaude's question) never is, and a notice is always the command's
-  own, since no run starts while one is open. A password field is never filled ("The command asks for a password,
+  own, since no run starts while one is open. A list or a field that a command run for an AI tool put into a
+  window's control area holds its answering keys for a moment, as everything does that the user did not open with a
+  key of their own (bundle AX-6.4; `AxKitForm.RunForMcp`, 2026-11-27), though the command's own code starts no hold
+  for the user's key: a stray Enter of the user's does not answer a list an AI tool just opened. A password field is never filled ("The command asks for a password,
   which AI tools never type"); a command that opened no field ran, and the answer's `text` says the text was not used.
   The user hears "Claude ran Find with the text budget" (`McpRun.Said`), and an act command's question names the
   text, its explanation under a heading of its own (`McpRun.AskName`, `ExplainText`). The explanation shows the
@@ -545,7 +556,13 @@ which overwrote what the user had there. Now it offers the command through a too
   and folder.
 - MC-9.3 **What is refused** (`McpOffer.Refusal`, by the broker and again by the window): no command; a line break or
   any control character, which could hide part of the command from the listener or press a key in Claude Code; more
-  than 1000 characters; Claude Code not running in the window; three offers already waiting in that window.
+  than 1000 characters; Claude Code not running in the window; three offers already waiting in that window. What is
+  not refused and is shown instead (`McpOffer.Shown`, the second review of 2026-11-27): a character that is neither
+  seen nor heard and is no control character (a direction override, a zero-width or tag character, a soft hyphen;
+  `DisplayText`'s table) is written out as its code, "‹U+202E›", wherever the command is shown, in the question's
+  name and in the explanation, so that what the user judges is what runs; the AI tool's reason and breakdown
+  likewise. The line that is sent and the copy for the clipboard are the command as it was offered. Until then
+  such a character stood in the question unseen.
 - MC-9.4 **The question** is a list in the control area, in the message field's place, as Claude's own questions are
   (the user's decision of 2026-11-13, after hearing the first version, a notice that covered the window): the
   conversation stays there to read for context (Tab, Alt+2), and the question is told from a notice by where it is.

@@ -590,6 +590,52 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
   window asks the same way: a notice has a title, a text, named buttons that Enter and Escape reach, the key line and
   the chime; a question in the message field's place is a list or a field named with the question, Enter answers,
   Escape cancels. An app that needs to ask uses these and does not draw its own dialog.
+  - **A question that arrives by itself holds its answering keys** (the rule is written once, in
+    `AxKit.Core/KeyHold`, and tested with a clock: `KeyHoldTests`, `ControlAreaHoldTests`). A question or a notice
+    the user did not open with a command of their own has not been heard when it appears, and a key that reaches it
+    then was meant for what stood there before: a message being typed, or the question just answered, whose Enter
+    was pressed twice. So for a moment after it is shown (one second) its answering
+    keys do nothing: in a list of the question area Enter, Escape, Space and every typed letter and digit; in a field
+    there Enter and Escape, what is typed going into the field; in a notice Enter and Space. Three things hold, and
+    no caller can turn them off:
+    1. *Whatever came before.* A question that follows the user's own answer arrives by itself too: that the user
+       acted a moment ago says nothing about the new question. Whether the user acted lately may decide whether a
+       chime plays, never whether the keys are held. (Until 2026-11-27 axClaude passed "the user caused this" for
+       the question after an answer, the area cleared its hold for it, and Enter pressed twice at "1. Yes" for the
+       first of two files approved the second before NVDA had said more than "Question".)
+    2. *One hold for each control of the question area, never shortened.* A control's hold is its own, new with the
+       control: a second from when it appears, and, for the control that was answered, as long as the window says
+       after the answer went (three seconds in axClaude, so that a second Enter does not send it twice). There is
+       no call that ends a hold early. The control shown next has a hold of its own and takes over nothing of the
+       one before: its own second is what protects it. (For an hour on 2026-11-27 the next control inherited what
+       was left of the answer's three seconds; every list that followed the user's own key, each step of a screen
+       included, then took Enter three seconds late and in silence, which bought nothing.) A notice shown while
+       another notice's hold runs still takes over what is left of that second.
+    3. *Every control the question area shows holds*, with one exception that its caller must write out as
+       `hold: false`: a control the user opened with a command of their own a moment ago, whose first keys are meant
+       for it (Go to line, an editor's offer, axTerminal's recent commands). `ControlAreaHoldTests` lists those
+       callers and fails on any other, and on a hold that is worked out instead of written. One opened by a command
+       run for an AI tool is held all the same (`AxKitForm.RunForMcp`).
+    Two rules stand beside the hold, for the question area and the notices alike (`AxKit.Forms/AnswerKeys`):
+    - **A repeat never answers.** Enter, Escape or Space that arrives as the repeat of a key held down (Windows
+      marks such a key-down message: the key was down already) answers nothing, held or not, and makes no sound: a
+      repeat is not a press. Without this a key held down longer than any hold answered whatever came in the
+      meantime, the next question on the answer its list starts on. In the question area that is Enter and Escape
+      in a list or a field and Space in a list; in a notice Escape, Enter (but in a box where Enter makes a new
+      line) and Space on a button or a check box. The arrows repeat, and so does everything typed into a field.
+    - **A held key is heard.** A fresh press of an answering key that a hold takes raises the kind of event
+      `Refused` at the door (bundle rule 13: the kind and its sound are the ones there were; no words, which would
+      cut off NVDA's reading of the question), at each press, with no limit. A key that did nothing is never
+      silence. Whether the sound stays is the maintainer's to hear.
+    This matters more than it did: every question of axKit is to become a list that starts on its confirming answer
+    (the maintainer's decision of 2026-11-27, "Enter is always go forward, Escape is go back", no exception for an
+    AI's request). These rules are then the one thing between a doubled, held or typed-ahead Enter and a yes the
+    user never heard, so a change to them is a change to that protection, and a new way for a question to appear
+    goes through the question area or a notice and nowhere else. A notice the window opens for the user's own
+    command is still its caller's to mark (`Notice.Unprompted`).
+  - **Nothing unseen in what is asked.** The name and the answers of every question in the question area are shown
+    with each character that is neither seen nor heard written out as its code (`AxKit.Core/DisplayText`, the one
+    table of them, `DisplayTextTests`), by the area itself, so that it holds for every window.
 - AX-6.5 **The window base.** Every window of an app derives from `AxKit.Forms/AxKitForm`, which holds what the
   windows share and no app copies: the notice flow (`ShowNotice`, `CloseNotice`, `Fail`, `ShowError`; Alt, F10 and
   the window's shortcuts swallowed while a notice shows), `Announce`, the text font with its size keys and the

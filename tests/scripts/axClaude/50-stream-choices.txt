@@ -28,6 +28,9 @@ keys down
 keys down
 keys down
 expect focus 5. Haiku 5.5
+# The list holds its answering keys for a second after it is shown, as every control of the area does, whatever
+# opened it (docs/axKit/SPEC.md AX-6.4); the arrows moved at once.
+wait 1100
 keys enter
 expect said Sent: 5, Haiku 5.5
 expect state Claude: ready | manual mode on
@@ -42,6 +45,7 @@ menu Choose the effort
 expect said → Choose the effort
 expect focus 1. low
 expect list 5. max
+wait 1100
 keys escape
 expect said Cancelled
 refuse text you: /effort
@@ -51,6 +55,7 @@ do Message field
 menu Choose the effort
 expect said → Choose the effort
 expect focus 1. low
+wait 1100
 keys enter
 expect said Sent: 1, low
 expect state Claude: ready | manual mode on
@@ -61,6 +66,8 @@ expect text Set effort level to low
 
 # Goal: Send a message after the choices
 do Message field
+# The list of the choice stands in the field's place until the window's settle has closed it: the field first.
+expect focus "name":"Message to Claude"
 type Say ok
 keys enter
 expect said Done. claude: ok

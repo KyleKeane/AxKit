@@ -43,13 +43,17 @@ expect focus 4. Other
 keys enter
 expect said Sent: 4, Other. Your words next
 expect said You chose Other. Your answer
-# Escape goes back to the question's list, and nothing is refused.
+# Escape goes back to the question's list, and nothing is refused. Every control of the area, a field or a list,
+# holds its answering keys for a second after it is shown, whatever came before (docs/axKit/SPEC.md AX-6.4).
+wait 1100
 keys escape
 expect said Question 1 of 2: What is your favourite colour?
 keys end
+wait 1100
 keys enter
 expect said You chose Other. Your answer
 type teal
+wait 1100
 keys enter
 expect said Sent: teal. Next question
 
@@ -57,6 +61,7 @@ expect said Sent: teal. Next question
 expect said Question 2 of 2: Which fruits do you like?
 expect list Apple
 expect list Cherry
+wait 1100
 keys space
 keys down
 keys down

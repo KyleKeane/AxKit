@@ -35,6 +35,29 @@ public sealed class McpOfferTests
         Assert.Equal("! git branch -d automate", McpOffer.Line("  git branch -d automate "));
     }
 
+    /// <summary>
+    /// The second review of 2026-11-27: only control characters were kept out of an offered command. A direction
+    /// override, a zero-width or a tag character stood in the question unseen and unheard, in a command the user
+    /// judges by what they hear. They are written out as their codes wherever the command is shown; what is sent on
+    /// Yes is the command as it was offered, which is what the question now says.
+    /// </summary>
+    [Fact]
+    public void A_character_of_an_offered_command_that_is_neither_seen_nor_heard_is_written_out_where_it_is_shown()
+    {
+        var command = "del notes" + char.ConvertFromUtf32(0x202E) + "txt.exe" + char.ConvertFromUtf32(0x200B) + char.ConvertFromUtf32(0xE0041);
+        Assert.Null(McpOffer.Refusal(command));
+        const string shown = "del notes‹U+202E›txt.exe‹U+200B›‹U+E0041›";
+        Assert.Equal(shown, McpOffer.Shown(" " + command + " "));
+        Assert.Contains($"offers a command for you to run: {shown}. ", McpOffer.AskName("claude-code", command));
+        Assert.Contains($"# The command\n\n{shown}\n\n", McpOffer.ExplainText("claude-code", command, null, null));
+        Assert.Equal("! " + command, McpOffer.Line(command));
+
+        // The AI tool's reason and its breakdown, its own words, likewise.
+        var words = "safe" + char.ConvertFromUtf32(0x2066) + " really";
+        Assert.EndsWith("Its reason: safe‹U+2066› really", McpOffer.AskText("claude-code", "x", words));
+        Assert.Contains("safe‹U+2066› really", McpOffer.ExplainText("claude-code", "x", words, "one\n" + words));
+    }
+
     [Fact]
     public void The_question_is_named_with_the_command_and_read_again_with_the_reason_on_one_line()
     {

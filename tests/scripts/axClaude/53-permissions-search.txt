@@ -43,9 +43,13 @@ keys f7
 expect said 1. Bash(git status)
 # Check: A search that finds nothing says so
 # Escape in the list clears the text: the field again. zz, Enter: "No rules match", and the list offers Clear alone.
+# The list, and the field after it, each hold Escape and Enter for a second after they appear (bundle AX-6.4: every
+# control of the area holds its answering keys for a moment, whatever came before).
+wait 1100
 keys escape
 expect focus Search the rules, type and press Enter
 type zz
+wait 1100
 keys enter
 expect focus "value":"Search: zz"
 keys down
@@ -55,6 +59,7 @@ expect focus Clear (Escape)
 # Goal: Leave the search
 # Escape clears the text, then goes back: Claude Code asks for a rule by its number, which stays in the conversation
 # with the message field (a panel's list, claude-screens.md); Ctrl+I there closes the screen.
+wait 1100
 keys escape
 expect focus Search the rules, type and press Enter
 wait 1500

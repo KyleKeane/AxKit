@@ -336,8 +336,19 @@ public abstract partial class AxKitForm
     /// </summary>
     private void RunForMcp(string client, string label, ToolStripMenuItem item, string? text = null, Action<string?>? noted = null)
     {
-        IReadOnlyList<(ControlArea Area, Control? Shown)> before = text is null ? [] : ShownInAreas();
+        IReadOnlyList<(ControlArea Area, Control? Shown)> before = ShownInAreas();
         ClickFor(CommandOrigin.AiTool, item, label, client, text);
+        // A list or a field the click put into a control area was opened for an AI tool, not by a key of the user's:
+        // it holds its answering keys as everything does that arrives by itself (KeyHold, the one rule), though the
+        // command's own code says hold: false, as it may for the user's key (Go to line, the recent commands).
+        foreach (var (area, shown) in before)
+        {
+            if (area.Current is not null && area.Current != shown)
+            {
+                area.Hold(KeyHold.DefaultMs);
+            }
+        }
+
         if (text is not null)
         {
             FillForMcp(text, before, noted ?? (_ => { }));

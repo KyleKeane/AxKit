@@ -48,6 +48,13 @@
   (`AxKit.Forms/BundleKeys.Chord`); the names and codes are the ones the channel's and the NVDA tier's own tables
   held, pinned by `KeyChordTests`. A new name is added to the table `Named` with its code, and `KeyTests` fails when
   a key table holds a key without one.
+- `KeyHold` (docs/axKit/SPEC.md AX-6.4; from `AxKit.Forms` on 2026-11-27, so that it is tested with a clock): the hold on
+  the answering keys of a question or a notice that arrived by itself, and the one place its rule is written. `Start`
+  (the clock's now, and how long; one second, `DefaultMs`, unless said) only ever moves the end later, `Holding` asks;
+  there is no way to end a hold early, and `KeyHoldTests` fails on a new public member, since this hold is the one
+  thing between a doubled Enter and a yes the user never heard once every question starts on its confirming answer.
+  The question area's and the notices' use of it is `AxKit.Forms`' (`notes/console.md`, "The hold"): one hold for each
+  control of the area, nothing inherited, with the two rules beside it (a repeat never answers, a held key is heard).
 - `CommandListing` (WF-2.3 to WF-2.5, section 5.2; 2026-11-15): a window's commands as data. `Rows` makes them from
   the menu bar's entries (`MenuCommand`) and every command of the window's list that has a key (`KeyCommand`, with
   whether its key acts now and whether it is a key with no menu item): the menu rows in menu order, then the keys with

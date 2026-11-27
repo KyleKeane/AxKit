@@ -9,10 +9,14 @@
 # The recording is written by hand for this order of events: a first call, asked and refused (which also starts the
 # relay, so that the second question comes at once); then, on the window's request for the next permission mode,
 # Claude Code begins a turn by itself and asks about a second call, while the window shows its own list of models.
-# The Enter must fall in the 400 ms between that question's arrival and its list: the script cannot see the arrival,
-# so it waits 200 ms after the request. What must hold whenever the Enter falls: the second call is never allowed
-# (the stand-in's log), and it is asked with its caution and answered by the user. In the moment meant, the window
-# also says the sentence above.
+# What this script plays, and what it cannot (the second review of 2026-11-27). The Enter that the rule is about
+# falls in the 400 ms between the question's arrival and its list, a moment no script can see or hit: until that day
+# the script pressed Enter 200 ms after the request and took the sentence above as optional, so that it decided
+# nothing. The rule itself is tested where it is decided, with no clock in it: the model counts what it asks and
+# says whether a number still waits (StreamModelTests), and no list or field reaches the window's control area but
+# through the one method that asks that first (WindowLastResortTests). Played here, and certain whenever it is
+# played: the call that comes takes the list's place, is asked with its caution, takes no answering key in its first
+# moment (docs/axKit/SPEC.md AX-6.4), is the user's to answer, and is never allowed by anything else (the stand-in's log).
 file home\AxKit\axClaude.json {"interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false,"replySpeech":"all"}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir st
@@ -38,7 +42,7 @@ expect said Sent: 1, No
 expect said Done. claude: left as it was
 run findstr /c:"the window's answer was deny" st\stream-standin.log
 
-# Check: An Enter in a list of models, just as Claude asks about a call, answers nothing
+# Check: A call that comes while a list of models shows takes the list's place
 menu Choose the model
 expect said → Choose the model
 expect focus 1. Default (recommended)
@@ -46,17 +50,19 @@ keys down down
 expect focus 3. Haiku 5.5
 # The next permission mode: at this request the stand-in begins a turn by itself and asks about a second call.
 do Next permission mode
-wait 200
-keys enter
-# In the moment between the question's arrival and its list, the list of models answers nothing.
-try said Not sent: Claude asks something, and its question opens in a moment
 
-# Check: The call is asked with its caution and is the user's to answer
+# Check: The call is asked with its caution, and an Enter in its first moment answers nothing
 expect focus 1. No, Bash del notes.txt
 expect focus Claude asks to use Bash: del notes.txt. Asked by Claude, an AI: read the explanation before you allow it
+# The Enter meant for the list of models, a moment late: the question that took its place holds its answering keys,
+# and the press it took is heard, the sound of a refusal.
+keys enter
+expect said ♪ Edge
+refuse said Sent:
 expect state Claude: waiting for your answer
-# A question the user did not cause holds its answering keys for a moment.
-wait 3200
+
+# Check: The call is the user's to answer
+wait 1500
 keys enter
 expect said Sent: 1, No
 

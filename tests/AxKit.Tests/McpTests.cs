@@ -99,6 +99,46 @@ public sealed class McpTests
         Assert.Contains("can be wrong", AiCaution.OpenAsked("Claude"), StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// axkit_open through a window (MC-6.5; the second review of 2026-11-27): the broker starts the app itself only
+    /// when the window did not and will not. Until then every answer that was no yes counted as a refusal, and a
+    /// window that was busy for ten seconds started the app a moment after the broker had.
+    /// </summary>
+    [Fact]
+    public void The_broker_starts_an_app_itself_only_when_the_window_surely_did_not()
+    {
+        Assert.Equal(McpTools.StartOutcome.Opened, McpTools.StartOutcomeOf("{\"opened\":true}", sent: true));
+        // A refusal, or a request given up before the window's thread took it: the window will never start it.
+        Assert.Equal(McpTools.StartOutcome.NotStarted, McpTools.StartOutcomeOf("{\"error\":\"The window is busy and did not answer in time; it did not open the app and will not.\"}", sent: true));
+        Assert.Equal(McpTools.StartOutcome.NotStarted, McpTools.StartOutcomeOf("{\"error\":\"The app did not start.\"}", sent: true));
+        // The pipe could not be reached, or the window refused before any request was written to it.
+        Assert.Equal(McpTools.StartOutcome.NotStarted, McpTools.StartOutcomeOf(null, sent: false));
+        Assert.Equal(McpTools.StartOutcome.NotStarted, McpTools.StartOutcomeOf("{\"error\":\"This window is hidden\"}", sent: false));
+
+        // The window took the request up and is still at it: it says so, and nobody starts the app again.
+        Assert.Equal(McpTools.StartOutcome.NotKnown, McpTools.StartOutcomeOf(System.Text.Json.JsonSerializer.Serialize(new { error = McpTools.OpenNotKnown, notKnown = true }), sent: true));
+        // The request went and no answer came in the broker's time, or one that cannot be read: the app may be starting.
+        Assert.Equal(McpTools.StartOutcome.NotKnown, McpTools.StartOutcomeOf(null, sent: true));
+        Assert.Equal(McpTools.StartOutcome.NotKnown, McpTools.StartOutcomeOf("not json", sent: true));
+        Assert.Equal(McpTools.StartOutcome.NotKnown, McpTools.StartOutcomeOf("[]", sent: true));
+        Assert.Equal(McpTools.StartOutcome.NotKnown, McpTools.StartOutcomeOf("{\"opened\":false}", sent: true));
+        Assert.Contains("axkit_windows", McpTools.OpenNotKnown, StringComparison.Ordinal);
+    }
+
+    /// <summary>The waits behind it, read off the sources: the broker waits for the start's answer longer than the window may take over it.</summary>
+    [Fact]
+    public void The_broker_waits_longer_for_a_start_than_the_window_may_take()
+    {
+        var root = SourceTexts.RepositoryRoot();
+        var broker = File.ReadAllText(Path.Combine(root, "src", "AxKit.Forms", "McpBroker.cs"));
+        var channel = File.ReadAllText(Path.Combine(root, "src", "AxKit.Forms", "McpChannel.cs"));
+        Assert.Contains("private const int RunAnswerMs = 25_000;", broker, StringComparison.Ordinal);
+        Assert.Contains("\"start \" + JsonSerializer.Serialize(new { arguments }), RunAnswerMs, out var sent)", broker, StringComparison.Ordinal);
+        // The window gives a request ten seconds to be taken up and ten more to finish: twenty in all.
+        Assert.Contains("private static readonly TimeSpan WindowWait = TimeSpan.FromSeconds(10);", channel, StringComparison.Ordinal);
+        Assert.Contains("return JsonSerializer.Serialize(new { error = McpTools.OpenNotKnown, notKnown = true }, Plain);", channel, StringComparison.Ordinal);
+    }
+
     [Theory]
     [InlineData("nosuch", null, "No app")]
     [InlineData("down", "notes.md", "full path")]

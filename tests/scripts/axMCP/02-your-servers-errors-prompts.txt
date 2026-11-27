@@ -275,6 +275,9 @@ expect focus page, resource template, fake://page/1
 keys enter
 expect state "notice":"Read a resource","noticeText":"The address, with the template's variables filled in."
 expect focus "name":"Address","role":"Text","value":"fake://page/1"
+# The notice "snap failed" came by itself less than a second ago and held Enter for its moment; a hold that runs is
+# never shortened, so this notice inherits what is left of it (docs/axKit/SPEC.md AX-6.4). A script is that quick.
+wait 1100
 keys enter
 expect said ! Reading page
 expect state "notice":"page","noticeText":"Text of fake://page/1"

@@ -468,12 +468,37 @@ internal sealed class McpChannel
         return JsonSerializer.Serialize(OnWindow(() => _form.McpAskToOpen(arguments, client)), Plain);
     }
 
-    /// <summary>MC-6.5: <c>axkit_open</c> of an app that is not asked first, started by this window for the broker (<see cref="AxKitForm.McpStartApp"/>).</summary>
+    /// <summary>
+    /// MC-6.5: <c>axkit_open</c> of an app that is not asked first, started by this window for the broker
+    /// (<see cref="AxKitForm.McpStartApp"/>). The answer always says which of three things holds
+    /// (<see cref="McpTools.StartOutcomeOf"/>), since the broker starts the app itself when this window did not: the
+    /// app was started; it was not and will not be (an error: a refusal, or the request given up before the window's
+    /// thread took it, as <see cref="OnWindow"/> gives one up); or the window took it up and is still at it
+    /// (<c>notKnown</c>), where nobody starts it again. Until the second review of 2026-11-27 the last two were one
+    /// answer, "nothing was done", and the broker's own wait was as long as this one's: a window busy for ten seconds
+    /// started the app a moment after the broker had started it too.
+    /// </summary>
     private string StartApp(string argument)
     {
         var request = System.Text.Json.Nodes.JsonNode.Parse(argument);
         var arguments = (request?["arguments"] as System.Text.Json.Nodes.JsonArray)?.Select(McpProtocol.Text).OfType<string>().ToList() ?? [];
-        return JsonSerializer.Serialize(OnWindow(() => _form.McpStartApp(arguments)), Plain);
+        // 0: waiting for the window's thread; 1: taken up there; 2: given up here, never to be carried out.
+        var state = 0;
+        var call = _form.BeginInvoke(new Func<object?>(() => Interlocked.CompareExchange(ref state, 1, 0) == 0 ? _form.McpStartApp(arguments) : null));
+        if (!call.AsyncWaitHandle.WaitOne(WindowWait))
+        {
+            if (Interlocked.CompareExchange(ref state, 2, 0) == 0)
+            {
+                return JsonSerializer.Serialize(new { error = "The window is busy and did not answer in time; it did not open the app and will not." }, Plain);
+            }
+
+            if (!call.AsyncWaitHandle.WaitOne(WindowWait))
+            {
+                return JsonSerializer.Serialize(new { error = McpTools.OpenNotKnown, notKnown = true }, Plain);
+            }
+        }
+
+        return JsonSerializer.Serialize(_form.EndInvoke(call), Plain);
     }
 
     /// <summary>How long an app request may take in all: under the broker's 25 s wait, so that the client hears this answer.</summary>

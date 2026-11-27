@@ -147,12 +147,12 @@
         },
         {
           "id": "refused",
-          "when": "The change you asked for is not allowed here and nothing changed: navigation mode, a read-only text, a locked database, a form with a field still empty.",
+          "when": "The change you asked for is not allowed here and nothing changed: navigation mode, a read-only text, a locked database, a form with a field still empty. Also a key that answers (Enter, Escape, Space, a typed answer) pressed in the first second of a question or a notice that came by itself, or while your answer is still on its way: the key was held back and answered nothing (SPEC AX-6.4).",
           "starts": ["key", "typing", "menu", "palette", "ai-tool", "script"],
           "sounds": ["Edge"],
-          "words": "None for a key in navigation mode. From a menu, the palette or an AI tool the reason: 'Navigation mode: press Ctrl+Space to edit'. 'Not a task', 'Select an item first', 'Type the field's title'.",
+          "words": "None for a key in navigation mode, and none for a key a question or a notice held back, so that NVDA's reading of the question is not cut off. From a menu, the palette or an AI tool the reason: 'Navigation mode: press Ctrl+Space to edit'. 'Not a task', 'Select an item first', 'Type the field's title'.",
           "apps": "Every window.",
-          "note": "Some refusals have words and no sound: 'Read only: there is no edit mode here', axPass's 'Locked: Enter unlocks', axAutomate's 'This version views and runs the workflows'."
+          "note": "Some refusals have words and no sound: 'Read only: there is no edit mode here', axPass's 'Locked: Enter unlocks', axAutomate's 'This version views and runs the workflows'. A held key sounds at each press; the repeats of a key held down sound nothing and answer nothing. Whether the sound of a held key stays is the maintainer's to hear (2026-11-27)."
         },
         {
           "id": "not-with-source",

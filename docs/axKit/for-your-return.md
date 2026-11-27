@@ -47,7 +47,21 @@ Each is one line to undo unless it says otherwise.
 - **axClaude over the stream no longer keeps a tool's whole output** in memory, only the three lines shown and the
   count; a key to read all of it would need it kept again (stream-mode.md SM-4.11).
 - **A permission answer's label ends ", and more"** when the command is longer than the label ("1. Yes, Bash command
-  git status, and more").
+  git status, and more"). A lone file path never gets it; on the screen nearly every Bash question does, since
+  Claude Code prints its description as a further row.
+- **Every question holds its own keys for one second.** A question, list or field in the message field's place
+  takes no Enter, Escape or Space for a second after it appears, also when it follows your own answer (a doubled
+  Enter approved the next file unheard). The builder first made each list wait three seconds after your last
+  answer; I turned that back, as `/config` would have felt dead. A key kept held down never answers, in any
+  window. `AxKit.Core/KeyHold` has no way to end a hold early, and a test holds that.
+- **A key the hold swallows makes the edge sound** (the kind "refused", which had that sound already). Yours to
+  hear: one line in `ControlArea` and `OverlayPanel` (`AnswerKeys.HeldBack`) takes it out.
+- **An answer typed into the message field before its question was said is not sent.** "Not sent: Claude asks
+  something, and its question opens in a moment"; the text stays, and Enter sends it once the question was said.
+- **After your own Ctrl+I, "Question closed" is not said**, and a question within three seconds of it comes
+  without the chime.
+- **An offered command with characters that cannot be seen is shown with their codes, not refused**: emoji use
+  such characters too.
 - **A day and month typed without a year is the next such day**, today included; 29 February is the next leap year's.
 - **A save that would turn a character into a question mark asks "Save as UTF-8?"**, and Enter saves as UTF-8.
   The other way would be to refuse the save; this one keeps your text whole and says in the status bar what it did.
@@ -79,6 +93,7 @@ Each is one line to undo unless it says otherwise.
 Kept in `docs/axKit/nvda-test-record.md` and `docs/axKit/owed.md`; here only what is new since you left.
 
 - The kinds without a sound yet: question-read-again, not-with-source.
+- The edge sound on a key pressed within a question's first second (new; see the decision above).
 - (More as the passes run.)
 
 ## What to try first

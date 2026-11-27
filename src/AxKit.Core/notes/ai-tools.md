@@ -25,10 +25,13 @@
 - `Mcp/McpTools`: the tools, `AppTools` (MC-8, 2026-11-11: the typed data tools of one app by its verb, and whether each changes something; axTask's three), `NeverRead` (axPass, axClip), `StartsAProgram` (axClaude, axTerminal) with `AsksFirst` and `OpenMeans` (MC-6.5a, 2026-11-24: those two and axTask on a folder open only after the user's yes, asked by a window, `AxKitForm.McpAskToOpen`),
   and `OpenArguments`, the check of `axkit_open`'s app and path (the path through `Path.GetFullPath` first, since
   2026-11-27, and `PassesLink` split at both separators: with forward slashes the link check saw one part and passed
-  it; `OpenWhere` shows the path with its hidden characters visible). `Mcp/McpAudit` (one line a call, the arguments
+  it; `OpenWhere` shows the path with its hidden characters visible), and `StartOutcomeOf` with `StartOutcome` and
+  `OpenNotKnown` (2026-11-27: what a window's answer to the broker's request to start an app says, opened, not started
+  or not known; the broker starts the app itself only on not started, since a window that had taken the request up
+  started the app a moment after the broker had). `Mcp/McpAudit` (one line a call, the arguments
   hashed; `Result` and, for a run, `RunResult`, which reads the window's answer: "done: ran" with the label the window
   matched only when it ran, else "asked the user", "not run" or "not known") and `McpRate` (ten calls a second). The pipes and the broker are `AxKit.Forms`' (`McpChannel`, `McpBroker`).
-- `Mcp/McpOffer` (MC-9, 2026-11-13): the pure rules of `axkit_offer_command`, a command an AI tool offers the user to run themselves in axClaude: `Refusal` (none, a control character or line break, too long), `Answers` (Explain first, then Yes, No and Copy), `AskName`, `AskText`, `ExplainText` with `Details`, `Line` (the `!` line), `MaxWaiting`. Tested in `McpOfferTests`.
+- `Mcp/McpOffer` (MC-9, 2026-11-13): the pure rules of `axkit_offer_command`, a command an AI tool offers the user to run themselves in axClaude: `Refusal` (none, a control character or line break, too long), `Answers` (Explain first, then Yes, No and Copy), `AskName`, `AskText`, `ExplainText` with `Details`, `Line` (the `!` line), `MaxWaiting`, and `Shown` (2026-11-27: the command as the question and the explanation show it, every character that is neither seen nor heard written out by `DisplayText`; the reason and the breakdown likewise; the line sent and the copy are the command as offered). Tested in `McpOfferTests`.
 - `CommandNames` with `CommandName`, `CommandMatch` and `CommandResolution` (docs/axKit/user-workflows.md WF-1,
   2026-11-15): the one resolver of a command's canonical name, its label plain and, where two share it, the label with
   its menus as the palette lists it without its key ("Heading, Navigation, Next"). `Resolve` compares whole plain

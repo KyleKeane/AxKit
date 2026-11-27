@@ -298,7 +298,14 @@ mode each is simply absent, and the window says so where the user would look for
   each step of it, the user's own words, each list of the window's own), each list and field of the area is bound to
   the number it was shown for, and its Enter and Escape do nothing but say "Not sent: Claude asks something, and its
   question opens in a moment" once that number no longer waits (`StreamModel.StillAsks`, `MainForm.StillAsked`); a
-  typed answer is held the same way (`tests/scripts/axClaude/62-stream-answer-bound.txt`). "No, and tell Claude why" answers nothing yet: the control area's field asks for the user's words as after
+  typed answer is held the same way. Where this is tested (the second review of 2026-11-27): the moment is the
+  400 ms between a question's arrival and its list, which no script can see or hit, so the rule is tested where it
+  is decided, without a clock: the model's numbers in `StreamModelTests`, and in `WindowLastResortTests` that no list
+  or field reaches the control area but through the one method that asks first (`MainForm.AreaList`, `AreaField`).
+  `tests/scripts/axClaude/62-stream-answer-bound.txt` plays what is certain whenever it is played: the call that
+  comes while a list of models shows takes the list's place, is asked with its caution, takes no Enter in its first
+  moment (bundle AX-6.4: every control of the area holds its answering keys for a moment after it is shown, whatever
+  came before), and is never allowed by anything but the user. "No, and tell Claude why" answers nothing yet: the control area's field asks for the user's words as after
   Other ("You chose No, and tell Claude why. Your answer"; Escape goes back to the list), and they go back with the
   refusal, `ClaudeCodeStream.RefusedWithWords`, as the refused call's result; measured with the probe's case
   `relay-refused-why` (section 13): Claude reads them and follows them. The conversation keeps "You refused Claude's

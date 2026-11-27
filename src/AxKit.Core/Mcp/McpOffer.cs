@@ -33,6 +33,15 @@ public static class McpOffer
             : null;
     }
 
+    /// <summary>
+    /// The command as the question and the explanation show it: every character of it that is neither seen nor heard
+    /// (a direction override, a zero-width or tag character; <see cref="DisplayText"/>) written out as its code, so
+    /// that what the user judges is what runs. <see cref="Refusal"/> keeps the control characters out; these others
+    /// passed unseen until the second review of 2026-11-27. The line that is sent (<see cref="Line"/>) and the copy
+    /// for the clipboard are the command as it was offered.
+    /// </summary>
+    public static string Shown(string command) => DisplayText.Visible(command.Trim());
+
     /// <summary>The reason as the question shows it: one line, at most 300 characters, empty when none was given.</summary>
     public static string Reason(string? reason)
     {
@@ -92,12 +101,12 @@ public static class McpOffer
 
     /// <summary>The list's name, read each time the focus comes to it: the label and the reach, who offers, the command whole, and that an AI wrote it (<see cref="AiCaution"/>).</summary>
     public static string AskName(string client, string command) =>
-        $"{Start(ReachComputer)}. {McpRun.Speaker(client)} offers a command for you to run: {command.Trim()}. {AiCaution.Short(McpRun.Speaker(client))}";
+        $"{Start(ReachComputer)}. {McpRun.Speaker(client)} offers a command for you to run: {Shown(command)}. {AiCaution.Short(McpRun.Speaker(client))}";
 
     /// <summary>What the read in full key (F7, the bundle's) reads: the name and the reason.</summary>
     public static string AskText(string client, string command, string? reason)
     {
-        var why = Reason(reason);
+        var why = DisplayText.Visible(Reason(reason));
         return AskName(client, command) + (why.Length > 0 ? $". Its reason: {why}" : string.Empty);
     }
 
@@ -117,11 +126,12 @@ public static class McpOffer
     public static string ExplainText(string client, string command, string? reason, string? details)
     {
         var who = McpRun.Speaker(client);
-        var why = Reason(reason);
-        var parts = Details(details);
+        // The AI tool's own words, with nothing in them unseen (DisplayText), a breakdown's lines kept.
+        var why = DisplayText.Visible(Reason(reason));
+        var parts = string.Join("\n", Details(details).Split('\n').Select(DisplayText.Visible));
         return $"# Read this first\n\n{AiCaution.Command(who)}\n\n"
             + "# How far it reaches\n\nIt runs on your computer, outside axKit and outside any window. It is a shell command: it can read, change and delete what your account can, start programs and use the network. axKit sets no limit on it.\n\n"
-            + $"# The command\n\n{command.Trim()}\n\n"
+            + $"# The command\n\n{Shown(command)}\n\n"
             + $"# Why {who} offers it\n\n{(why.Length > 0 ? why : "No reason was given.")}\n\n"
             + (parts.Length > 0 ? $"# What each part does, in {who}'s words\n\n{parts}\n\n" : string.Empty)
             + "# What your answers do\n\n"

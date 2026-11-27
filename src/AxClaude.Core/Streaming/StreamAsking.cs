@@ -169,8 +169,7 @@ public sealed class StreamAsking
     /// ends its text at a character of code 0, so that without this the explanation could stop before the part that
     /// matters, while a yes ran all of it (the 2026-11-21 audit).
     /// </summary>
-    private static string Shown(string line) =>
-        line.Contains('\t', StringComparison.Ordinal) ? string.Join('\t', line.Split('\t').Select(DisplayText.Visible)) : DisplayText.Visible(line);
+    private static string Shown(string line) => DisplayText.VisibleLine(line);
 
     /// <summary>
     /// Takes what the user chose: the key of an answer ("2"), several keys where several may be chosen ("1,3"), or,
@@ -420,8 +419,11 @@ public sealed class StreamAsking
             ])
         {
             // The tool and its target in a few words, on every answer's label (PermissionCore, SPEC.md D33); Claude's
-            // own description of a call is no target, so then the tool alone.
-            Core = PermissionCore.Of(tool, _ask.AboutDescribes ? string.Empty : about),
+            // own description of a call is no target, so then the tool alone. What the title names is the call's first
+            // line alone (ClaudeCodeStream.Subject), so the mark that more follows comes from the question, which
+            // knows (AboutCut): until the second review of 2026-11-27 "git status" over "git push --force origin main"
+            // was "Bash git status" on every answer, a yes to both lines.
+            Core = PermissionCore.Of(tool, _ask.AboutDescribes ? string.Empty : about, more: _ask.AboutCut),
         };
     }
 

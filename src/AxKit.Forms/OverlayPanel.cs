@@ -127,8 +127,15 @@ public sealed record Notice(string Title, string Text, IReadOnlyList<OverlayChoi
 /// </summary>
 public sealed class OverlayPanel : Panel
 {
-    /// <summary>A notice the user did not open ignores the keys that answer (Enter, Space) for a moment: it can open while the user is typing a message, and the next keys were meant for the message field.</summary>
+    /// <summary>
+    /// A notice the user did not open ignores the keys that answer (Enter, Space) for a moment: it can open while the
+    /// user is typing a message, and the next keys were meant for the message field. A hold that runs is never
+    /// shortened (<see cref="KeyHold"/>, the one rule): a notice shown while one runs inherits what is left of it.
+    /// </summary>
     private readonly KeyHold _hold = new();
+
+    /// <summary>Whether the answering keys are held now.</summary>
+    private bool Holding => _hold.Holding(Environment.TickCount64);
 
     private readonly Label _title = new();
     private readonly AxKitTextBox _text = new();
@@ -340,12 +347,13 @@ public sealed class OverlayPanel : Panel
     /// Ctrl+Enter while the notice shows (AX-8.10): the notice's default button, from whichever control has the
     /// focus: a form's Send from any of its fields, a long text saved from inside its box, where plain Enter makes a
     /// new line; the edge sound when the notice has no default button. Nothing while the answering keys of an
-    /// unprompted notice are held.
+    /// unprompted notice are held, but the sound of a key that was held back.
     /// </summary>
     public void PressMain()
     {
-        if (_hold.Holding)
+        if (Holding)
         {
+            AnswerKeys.HeldBack();
             return;
         }
 
@@ -382,11 +390,7 @@ public sealed class OverlayPanel : Panel
         var input = notice.Input;
         if (notice.Unprompted)
         {
-            _hold.Start();
-        }
-        else
-        {
-            _hold.Clear();
+            _hold.Start(Environment.TickCount64);
         }
 
         _title.Text = title;
@@ -560,14 +564,41 @@ public sealed class OverlayPanel : Panel
 
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
-        // Keys typed for the message field just before a notice the user did not open must not answer it.
-        if (_hold.Holding && keyData is Keys.Enter or Keys.Space)
+        // A repeat is not a press (docs/axKit/SPEC.md AX-6.4): Enter, Escape or Space still down from the key that
+        // answered or opened something never answers the notice that stands here now, held or not, and says nothing.
+        var repeat = AnswerKeys.IsRepeat(msg);
+        if (repeat && Answers(msg, keyData))
         {
+            return true;
+        }
+
+        // Keys typed for the message field just before a notice the user did not open must not answer it. A fresh
+        // press that is taken so is heard.
+        if (Holding && keyData is Keys.Enter or Keys.Space)
+        {
+            if (!repeat)
+            {
+                AnswerKeys.HeldBack();
+            }
+
             return true;
         }
 
         return base.ProcessCmdKey(ref msg, keyData);
     }
+
+    /// <summary>
+    /// Whether a key answers the notice from where the focus is: Escape, which leaves it; Enter, which presses its
+    /// default button, but in a box where Enter makes a new line; Space on a button or a check box, which it presses.
+    /// Anywhere else Space is typed text or a list's own key, and repeats as it always did.
+    /// </summary>
+    private static bool Answers(in Message msg, Keys keyData) => keyData switch
+    {
+        Keys.Escape => true,
+        Keys.Enter => Control.FromChildHandle(msg.HWnd) is not TextBox { Multiline: true, AcceptsReturn: true },
+        Keys.Space => Control.FromChildHandle(msg.HWnd) is ButtonBase,
+        _ => false,
+    };
 
     /// <summary>The window's control shown under the text in place of the one before, which the window keeps (it reads the choice from it); none for a plain notice.</summary>
     private void ShowCustom(Control? custom)
@@ -665,7 +696,7 @@ public sealed class OverlayPanel : Panel
 
         // A letter the notice gives a meaning (Notice.Letter), never one typed into the notice by accident.
         if (e.Modifiers == Keys.None && e.KeyCode is >= Keys.A and <= Keys.Z && Shown?.Letter is { } letter
-            && !_hold.Holding && letter((char)('a' + (e.KeyCode - Keys.A))))
+            && !Holding && letter((char)('a' + (e.KeyCode - Keys.A))))
         {
             e.Handled = e.SuppressKeyPress = true;
         }

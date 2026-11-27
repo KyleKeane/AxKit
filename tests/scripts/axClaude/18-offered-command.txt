@@ -84,6 +84,8 @@ keys end
 expect focus 5. No, and report a concern about it
 keys enter
 expect focus Command offer. Type what concerns you about this command
+# The field, and the list that comes back after it, each hold Enter and Escape for a second (bundle AX-6.4).
+wait 1100
 keys escape
 expect focus 5. No, and report a concern about it
 
@@ -91,6 +93,7 @@ expect focus 5. No, and report a concern about it
 # No, do not run it sends nothing.
 keys up up
 expect focus 3. No, do not run it
+wait 1100
 keys enter
 expect said Not run
 expect focus "name":"Message to Claude"

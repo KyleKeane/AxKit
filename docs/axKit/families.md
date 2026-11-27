@@ -138,12 +138,12 @@ You pressed a key, typed, or chose a command, and this is how it ended. Every co
   - Said: None, or the reason: 'No action on Ctrl+4 in this list'.
   - In: Navigation mode of a text; the item windows; every window for Ctrl+Enter.
   - Note: Unassigned (the wooden bonk) only for a plain key that would type in navigation mode. Edge for Ctrl+Enter where the window has no main action, for Ctrl+Space where there is no text with modes, for Space on a row that cannot be checked, and for an action key with no action. A key no window knows gets nothing from axKit.
-- `refused`: The change you asked for is not allowed here and nothing changed: navigation mode, a read-only text, a locked database, a form with a field still empty.
+- `refused`: The change you asked for is not allowed here and nothing changed: navigation mode, a read-only text, a locked database, a form with a field still empty. Also a key that answers (Enter, Escape, Space, a typed answer) pressed in the first second of a question or a notice that came by itself, or while your answer is still on its way: the key was held back and answered nothing (SPEC AX-6.4).
   - Started by: `key`, `typing`, `menu`, `palette`, `ai-tool`, `script`.
   - Heard: sound `Edge`.
-  - Said: None for a key in navigation mode. From a menu, the palette or an AI tool the reason: 'Navigation mode: press Ctrl+Space to edit'. 'Not a task', 'Select an item first', 'Type the field's title'.
+  - Said: None for a key in navigation mode, and none for a key a question or a notice held back, so that NVDA's reading of the question is not cut off. From a menu, the palette or an AI tool the reason: 'Navigation mode: press Ctrl+Space to edit'. 'Not a task', 'Select an item first', 'Type the field's title'.
   - In: Every window.
-  - Note: Some refusals have words and no sound: 'Read only: there is no edit mode here', axPass's 'Locked: Enter unlocks', axAutomate's 'This version views and runs the workflows'.
+  - Note: Some refusals have words and no sound: 'Read only: there is no edit mode here', axPass's 'Locked: Enter unlocks', axAutomate's 'This version views and runs the workflows'. A held key sounds at each press; the repeats of a key held down sound nothing and answer nothing. Whether the sound of a held key stays is the maintainer's to hear (2026-11-27).
 - `not-with-source`: The command needs a way of reaching the program underneath that this window is not on, and nothing was sent: in a window Claude Code's stream feeds, a slash command of Claude Code's screen alone typed as a message, or a menu item of the screen's keys; in the copy from the Microsoft Store, the switch to the stream.
   - Started by: `typing`, `key`, `menu`, `palette`, `ai-tool`, `script`.
   - Heard: no sound.
@@ -468,7 +468,7 @@ Very short, right after your key and over before NVDA speaks. Each says how the 
   - Chosen: Asked 2026-10-22; made louder and given its upper note on 2026-10-23 after it was lost under speech. Not chosen from candidates.
   - Switch: None: it always plays.
   - The sound of: `nothing-found`, `edge`, `no-command`, `refused`.
-  - Played from 22 files: AxCalc/CalcForm.cs, AxFile/FileForm.Browse.cs, AxFile/FileForm.Completion.cs, AxKit.Forms/AxKitForm.cs, AxKit.Forms/AxKitForm.Modes.cs, AxKit.Forms/AxKitForm.Notices.cs, AxKit.Forms/AxKitList.cs, AxKit.Forms/AxKitTextBox.cs, AxKit.Forms/EditKeys.cs, AxKit.Forms/FormControls.cs, AxKit.Forms/ItemForm.cs, AxKit.Forms/ItemForm.Fields.cs, AxKit.Forms/ListSelection.cs, AxKit.Forms/OverlayPanel.cs, AxKit.Forms/TextEditorForm.cs, AxKit.Forms/TranscriptView.cs, AxTask/TaskForm.Actions.cs, AxTask/TaskForm.Commands.cs, AxTask/TaskForm.cs, AxTask/TaskForm.Order.cs, AxTask/TaskForm.Projects.cs, AxTerminal/TerminalForm.Input.cs.
+  - Played from 23 files: AxCalc/CalcForm.cs, AxFile/FileForm.Browse.cs, AxFile/FileForm.Completion.cs, AxKit.Forms/AnswerKeys.cs, AxKit.Forms/AxKitForm.cs, AxKit.Forms/AxKitForm.Modes.cs, AxKit.Forms/AxKitForm.Notices.cs, AxKit.Forms/AxKitList.cs, AxKit.Forms/AxKitTextBox.cs, AxKit.Forms/EditKeys.cs, AxKit.Forms/FormControls.cs, AxKit.Forms/ItemForm.cs, AxKit.Forms/ItemForm.Fields.cs, AxKit.Forms/ListSelection.cs, AxKit.Forms/OverlayPanel.cs, AxKit.Forms/TextEditorForm.cs, AxKit.Forms/TranscriptView.cs, AxTask/TaskForm.Actions.cs, AxTask/TaskForm.Commands.cs, AxTask/TaskForm.cs, AxTask/TaskForm.Order.cs, AxTask/TaskForm.Projects.cs, AxTerminal/TerminalForm.Input.cs.
 - `Heading`: G4 leaping an octave to G5, 85 ms.
   - Chosen: Asked 2026-11-11. Not chosen from candidates.
   - Switch: Options, Text, Sound on headings, in every window.

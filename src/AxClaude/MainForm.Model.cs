@@ -66,11 +66,22 @@ internal sealed partial class MainForm
         // shown in the control area, and the message field put back when it went away, since Claude redraws a
         // question in passing.
         var waiting = WaitSignature;
+        // A key that Claude Code did not take as an answer no longer counts as one once the question has stood as
+        // it stood for three seconds after it (LapseAnswer): a blank frame later is then a redraw in passing.
+        LapseAnswer();
         if (_wait is { Answered: true, Stale: false } answered && AnsweredWaitOver(answered, waiting))
         {
             // The question the user answered has left the screen, or another stands under its title: whatever waits
             // from here on is shown and said afresh, also when it reads as the one answered (MarkWaitAnswered).
             _wait = answered with { Stale = true };
+        }
+        else if (_wait is { Shown: true, Answered: false, Stale: false } shown && _askedQuestion is { } asked && asked.Signature == shown.Signature
+            && AnsweredWait.Replaced(shown.Signature, _model.PendingQuestion?.Signature, asked.Core, _model.PendingQuestion?.Core))
+        {
+            // A question the user has not answered, and under its title, with its answers, Claude Code now asks
+            // about another file or command (AnsweredWait.Replaced): the list shown names the one before on every
+            // answer. It is over, and the settle shows and says the new one afresh.
+            _wait = shown with { Stale = true };
         }
 
         if (waiting is null)
@@ -187,6 +198,7 @@ internal sealed partial class MainForm
     private void OnFrameSettled()
     {
         var waiting = WaitSignature;
+        LapseAnswer();
         // Not while the user's answer or text is still being typed out to Claude Code, nor, for an answered question
         // that is over and yet stands as it stood, before Claude Code has had a settle's time to take the last key
         // (AnsweredWait.SettleWaits, with the reasons): the settle comes again. The stamp of the user's act is the

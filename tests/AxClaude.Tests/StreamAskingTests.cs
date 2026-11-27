@@ -133,6 +133,8 @@ public sealed class StreamAskingTests
         Assert.Equal("git status", two.About);
         Assert.Equal("Claude asks to use Bash: git status, and more, which the explanation shows", new StreamAsking(two).Current.Title);
         Assert.Contains("git push --force origin main", new StreamAsking(two).ExplainText);
+        // So does every answer's label (the second review of 2026-11-27: it read "Bash git status", a yes to both lines).
+        Assert.Equal("Bash git status" + PermissionCore.MoreMark, new StreamAsking(two).Current.Core);
 
         var longOne = ClaudeCodeStream.ReadAsk(Question("Bash", "{\"command\":\"" + new string('a', 250) + "\"}"))!;
         Assert.True(longOne.AboutCut);

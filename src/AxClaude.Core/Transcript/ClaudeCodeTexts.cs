@@ -294,6 +294,13 @@ public static partial class ClaudeCodeTexts
     /// <summary>A permission or trust question's title row, which the trust dialog puts on a prompt row itself.</summary>
     public const string PermissionRequired = "Permission Required:";
 
+    /// <summary>
+    /// How the kind in a permission question's title ends when it asks about a command a shell runs ("Permission
+    /// Required: Bash command", Claude Code 2.1.281, the test of the permission row in <c>QuestionTests</c>): its
+    /// rows may hold further lines of the command (<see cref="PermissionCore.OfScreen"/>).
+    /// </summary>
+    public const string CommandKindEnd = "command";
+
     public const string EnterSelection = "Enter selection";
 
     public const string EnterYesNo = "Enter y/n";

@@ -70,6 +70,23 @@ internal sealed partial class MainForm
         return true;
     }
 
+    /// <summary>
+    /// Whether the message field's Enter is held back because what Claude waits on has not been put to the user yet
+    /// (bundle rule 11: nothing the user did not hear is answered by a key). Over the stream an answer is axKit's own
+    /// to hold back until the question has been shown and heard (stream-mode.md SM-7.4; the 2026-11-21 audit): a "2"
+    /// typed for something Claude wrote, in the moment before a tool call's question settles into the area, would
+    /// allow that call with nothing of it heard; also while the area still shows what waited before (the review of
+    /// 2026-11-27, <see cref="StillAsked"/>). With the screen the same moment is the settle's 400 ms, and longer
+    /// while typed keys go out: a "1" typed then was sent as the answer to a question not yet said, and a bare Enter
+    /// went to whatever the screen showed (<see cref="WaitsUnheard"/>, since 2026-11-27, second review). With
+    /// Answer from a list off, the question counts as put to the user once "Claude asks" was said, and typed
+    /// answers go as before.
+    /// </summary>
+    private bool FieldWaitsForQuestion(bool typed) =>
+        Streams
+            ? typed && _model.PromptPending && (_wait is not { Shown: true } shown || !_model.StillAsks(shown.Asked))
+            : WaitsUnheard;
+
     private void SendInput()
     {
         // The text stays in the field: nothing was sent, and it is wanted again after a restart, or in a moment.
@@ -79,6 +96,13 @@ internal sealed partial class MainForm
         }
 
         var text = Input.Text.Replace("\r\n", "\n").Trim();
+        if (FieldWaitsForQuestion(text.Length > 0))
+        {
+            // What Claude waits on has not been put to the user yet: nothing typed here goes to it. The text stays.
+            Refuse(QuestionOpensWords);
+            return;
+        }
+
         if (AnswersInArea && text.Length > 0 && _model.PromptPending && !IsAnswer(text) && text != _keptMessage)
         {
             // D33: text sent into a question is lost (Claude answers "Please answer y or n." and drops it) or taken
@@ -87,17 +111,6 @@ internal sealed partial class MainForm
             var about = _model.PendingQuestion is { } waiting ? $": {waiting.Title}"
                 : _model.PendingScreen is { } screen ? $": {screen.Title}" : string.Empty;
             Refuse($"Not sent, Claude asks{about}. Enter again sends");
-            return;
-        }
-
-        if (Streams && text.Length > 0 && _model.PromptPending && (_wait is not { Shown: true } shown || !_model.StillAsks(shown.Asked)))
-        {
-            // Over the stream an answer is axKit's own to hold back until the question has been shown and heard
-            // (stream-mode.md SM-7.4; the 2026-11-21 audit): a "2" typed for something Claude wrote, in the moment
-            // before a tool call's question settles into the area, would allow that call with nothing of it heard.
-            // Also while the area still shows what waited before (the review of 2026-11-27, StillAsked).
-            // The text stays in the field.
-            Refuse(QuestionOpensWords);
             return;
         }
 
@@ -154,8 +167,6 @@ internal sealed partial class MainForm
         // "Queued" also for a turn that has ended and is not yet over (events-and-grounding.md EG-6.4): its reply's rows
         // may still be arriving, and the model holds the message's block back until Claude takes the message up.
         var queued = ClaudeInTurn;
-        ClearRestoredMessage();
-        _lastMessage = text;
         _model.Send(text, evenWhilePrompting: true);
         _messageSent = true;
         QueueWrites(text);
@@ -190,6 +201,11 @@ internal sealed partial class MainForm
     /// write, Claude's Ctrl+J. Every message and command passes here (the field's, an offered command's line, a
     /// command of the menus, the app's own /feedback), so here the core learns that one was sent (MainForm.Flow.cs).
     /// Over the stream a message is one line, written whole (stream-mode.md SM-5.1): nothing is typed or paced.
+    /// Here, too, a message an interrupt put back on Claude Code's prompt row is emptied first, and the text becomes
+    /// the last message (<see cref="ClearRestoredMessage"/>, FR-2.3a): until 2026-11-27 only the message field's own
+    /// send did that, so an offered command's line, a menu's command or the app's own /feedback was typed after the
+    /// restored message and both went as one, and the flag of the interrupt stayed up, which kept
+    /// <see cref="ResendEnterWhileHeld"/> from ever sending a dropped Enter of theirs again.
     /// </summary>
     private void QueueWrites(string text)
     {
@@ -199,6 +215,8 @@ internal sealed partial class MainForm
             return;
         }
 
+        ClearRestoredMessage();
+        _lastMessage = text;
         var lines = text.Split('\n');
         for (var i = 0; i < lines.Length; i++)
         {
@@ -322,6 +340,12 @@ internal sealed partial class MainForm
         }
 
         ClearWrites();
+        // The keys of an answer still being typed out were just dropped: the user's act ends now, not when its last
+        // key would have gone (UserActedNow(typing) in SendAnswer). Until 2026-11-27 the settle went on waiting for
+        // those keys (AnsweredWait.SettleWaits), and after an interrupted answer of seventy characters nothing Claude
+        // Code showed was acted on for four seconds. The area holds its keys as after any key of the user's.
+        UserActedNow();
+        Area.Hold(UserActionMs);
         // A question the screen shows ends with this key as with an answer (MarkWaitAnswered).
         MarkWaitAnswered();
         Write(ClaudeCodeKeys.Escape);
@@ -343,7 +367,15 @@ internal sealed partial class MainForm
             return;
         }
 
-        // On plan approval Claude Code takes this key as an answer: what it shows next is asked afresh (MarkWaitAnswered).
+        // On plan approval Claude Code takes this key as an answer ("shift+tab to approve with this feedback"): never
+        // to a question that has not been put to the user yet (WaitsUnheard, as the message field's Enter).
+        if (WaitsUnheard)
+        {
+            Refuse(QuestionOpensWords);
+            return;
+        }
+
+        // What it shows next is asked afresh (MarkWaitAnswered).
         MarkWaitAnswered();
         Write(ClaudeCodeKeys.ShiftTab);
     }

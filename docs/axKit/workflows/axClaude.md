@@ -1775,10 +1775,8 @@ The focus moves to Permission Required: Create file. alpha.txt.
 1. Press Enter.
     You hear: Sent: 1, Yes.
 
-### Hear the second file asked anew, with its own name on the answers
+### Allow the second file once its question was heard
 
-You hear: Question.
-The focus moves to Permission Required: Create file. beta.txt.
 1. Press Enter.
     You hear: Sent: 1, Yes.
 
@@ -1825,6 +1823,23 @@ Starts with: Open axClaude with the folder im.
 2. Press Enter.
     You hear: Sent.
 3. Press Ctrl+I (Interrupt; Actions menu).
+
+## Have a typed answer wait until Claude's question was said, with Claude Code's screen
+
+Starts with: Open axClaude with the folder ta.
+
+### Answer in your own words from the message field
+
+You hear: Claude asks.
+1. Type "Please split the work into smaller steps and show me each one first, with the tests for it, before you go on".
+2. Press Enter.
+    You hear the sound Sent.
+
+### Send the same answer once the question was said
+
+You hear: Claude asks.
+1. Press Enter.
+    You hear the sound Sent.
 
 ## Have a short exchange with Claude
 

@@ -138,8 +138,10 @@ internal sealed partial class MainForm
         Action chime = offer.Request is null
             ? () => EventDoor.Raise(EventKind.CommandOffer)
             : () => EventDoor.Raise(EventKind.AiAsksToRun);
-        ShowInArea(OfferSignature, text, unprompted, (focus, hold) =>
-            Area.ShowList(name, offer.Request?.Answers ?? McpOffer.Answers, start, null, focus, hold, (chosen, _) => AnswerOffer(offer, chosen),
+        // Held for a moment also when it comes back from the field of a concern, as every control the area shows is,
+        // and bound to this offer (AreaList): an answer goes to the offer the list was shown for, while it is shown.
+        ShowInArea(OfferSignature, text, unprompted, focus =>
+            AreaList(name, offer.Request?.Answers ?? McpOffer.Answers, start, null, focus, () => OfferStillShown(offer), (chosen, _) => AnswerOffer(offer, chosen),
                 () => AnswerOffer(offer, offer.Request?.No ?? McpOffer.No)), chime);
         // The gate takes the list for a notice, as it takes every window's list of an AI's request (docs/axKit/mcp.md
         // MC-7.3): no AI tool's run goes on in the window under it. Until 2026-11-27 this window's own list was not
@@ -150,6 +152,18 @@ internal sealed partial class MainForm
             // An offer has no signal of Claude's: the taskbar button flashes for it when the window is behind.
             FlashIfBehind();
         }
+    }
+
+    /// <summary>Whether <paramref name="offer"/> is still the one the control area asks about; when not (the run ended, Claude's own question took its place), nothing of it is answered and the window says so.</summary>
+    private bool OfferStillShown(Offer offer)
+    {
+        if (ReferenceEquals(_offerShown, offer))
+        {
+            return true;
+        }
+
+        Refuse(NoLongerAskedWords);
+        return false;
     }
 
     private void AnswerOffer(Offer offer, int answer)
@@ -224,8 +238,8 @@ internal sealed partial class MainForm
     private void AskConcern(Offer offer)
     {
         UserActedNow();
-        ShowInArea(OfferSignature + ", the concern", McpOffer.ConcernName, unprompted: false, (focus, hold) =>
-            Area.ShowField(McpOffer.ConcernName, focus, hold, typed =>
+        ShowInArea(OfferSignature + ", the concern", McpOffer.ConcernName, unprompted: false, focus =>
+            AreaField(McpOffer.ConcernName, focus, () => OfferStillShown(offer), typed =>
             {
                 CloseOffer();
                 if (!ClaudeIdle)
@@ -292,7 +306,12 @@ internal sealed partial class MainForm
         }
     }
 
-    /// <summary>The command sent as the user's own ! line would go: its block in the conversation, the text and Enter as separate writes.</summary>
+    /// <summary>
+    /// The command sent as the user's own ! line would go: its block in the conversation, the text and Enter as
+    /// separate writes. A message an interrupt put back on Claude Code's prompt row is emptied first, and the flag of
+    /// the interrupt taken down, where every message passes (<see cref="QueueWrites"/>, since 2026-11-27): until then
+    /// the line was typed after the restored message, and its Enter, when Claude Code dropped it, was never sent again.
+    /// </summary>
     private void SendOffered(string command)
     {
         var line = McpOffer.Line(command);

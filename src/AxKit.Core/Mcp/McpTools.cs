@@ -46,6 +46,65 @@ public static class McpTools
     /// </summary>
     public static string OpenWhere(string? path) => path is null ? string.Empty : $" on {DisplayText.Visible(path)}";
 
+    /// <summary>What became of an app a window was asked to start for <c>axkit_open</c> (<see cref="StartOutcomeOf"/>).</summary>
+    public enum StartOutcome
+    {
+        /// <summary>The window started it.</summary>
+        Opened,
+
+        /// <summary>The window did not start it and will not: the broker may start it itself.</summary>
+        NotStarted,
+
+        /// <summary>The window took the request up, or may have, and whether the app started is not known: nobody starts it again.</summary>
+        NotKnown,
+    }
+
+    /// <summary>What the client is told when it is not known whether the app opened: how to find out, before asking again.</summary>
+    public const string OpenNotKnown = "The window that was asked to open the app did not finish in time, and whether the app opened is not known: look at axkit_windows before you ask again.";
+
+    /// <summary>
+    /// What a window's answer to the broker's request to start an app says (MC-6.5; the second review of 2026-11-27).
+    /// <paramref name="answer"/> is the line the window wrote, null when none came in the broker's time;
+    /// <paramref name="sent"/> is whether the request reached the window's pipe at all. The broker starts the app
+    /// itself only on <see cref="StartOutcome.NotStarted"/>: the request never went, or the window says it did not
+    /// start the app (it refused, or gave the request up before its thread took it). Where the window took the
+    /// request up and has not said how it ended (<c>notKnown</c>), where no answer came to a request that went, or
+    /// where the answer cannot be read, the app may be starting: until that day the broker took every such case for
+    /// a refusal and started the app as well, and a window that was busy for ten seconds opened it twice.
+    /// </summary>
+    public static StartOutcome StartOutcomeOf(string? answer, bool sent)
+    {
+        if (answer is null)
+        {
+            return sent ? StartOutcome.NotKnown : StartOutcome.NotStarted;
+        }
+
+        try
+        {
+            // Through JsonText: an answer that names a member twice is no answer, and so not known.
+            if (JsonText.Parse(answer) is not JsonObject said)
+            {
+                return StartOutcome.NotKnown;
+            }
+
+            if (said["opened"] is JsonValue opened && opened.TryGetValue<bool>(out var yes) && yes)
+            {
+                return StartOutcome.Opened;
+            }
+
+            if (said["notKnown"] is JsonValue unknown && unknown.TryGetValue<bool>(out var not) && not)
+            {
+                return StartOutcome.NotKnown;
+            }
+
+            return said["error"] is not null ? StartOutcome.NotStarted : StartOutcome.NotKnown;
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            return StartOutcome.NotKnown;
+        }
+    }
+
     /// <summary>What opening the app does, for the question (MC-6.5a): the words after "This".</summary>
     public static string OpenMeans(string verb) => verb switch
     {

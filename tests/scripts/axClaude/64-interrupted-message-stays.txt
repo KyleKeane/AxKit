@@ -36,3 +36,15 @@ keys ctrl+i
 file im\go3 x
 wait 3000
 run findstr /c:"Enter sent again" home\AxKit\logs\axClaude.log | find /c /v "" | findstr /x 3
+
+# Check: A command of the menus sent after the interrupt empties the prompt row first
+# FR-2.3a (the second review of 2026-11-27). The interrupted message stands on Claude Code's prompt row again. Only the
+# message field's own send emptied the row first; a command of the menus, an offered command's line and the window's
+# own /feedback were typed after the restored message, and both went as one. Every message empties the row now, in
+# the one place they all pass (the window's log says so, in a line that holds no text of the user's).
+menu Choose the model
+expect said Sent
+run findstr /c:"emptied before the next one" home\AxKit\logs\axClaude.log
+# Its own Enter is watched for again as any message's is, and nothing here was dropped: the count stays.
+wait 2500
+run findstr /c:"Enter sent again" home\AxKit\logs\axClaude.log | find /c /v "" | findstr /x 3

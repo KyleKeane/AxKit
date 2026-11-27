@@ -45,6 +45,8 @@ expect focus You chose Other. Your answer
 # than the three seconds an answer counts as the user's doing. The question Claude then closes is the user's doing
 # all the same: no "Question closed".
 type every key reads the question and it should also emit a distinct earcon
+# The field holds Enter and Escape for its first second (docs/axKit/SPEC.md AX-6.4); the words are in it already.
+wait 1100
 keys enter
 expect said Sent: every key reads the question and it should also emit a distinct earcon
 wait 4500

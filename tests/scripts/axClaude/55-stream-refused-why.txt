@@ -34,7 +34,9 @@ expect focus 2. No, and tell Claude why
 keys enter
 expect said Sent: 2, No, and tell Claude why. Your words next
 expect focus You chose No, and tell Claude why. Your answer
-# Back to the question, asked anew, its list on No where a list starts.
+# Back to the question, asked anew, its list on No where a list starts. The field holds Enter and Escape for its
+# first second, as every control of the area does (docs/axKit/SPEC.md AX-6.4).
+wait 1100
 keys escape
 expect focus 1. No, Write probe-denied.txt
 expect state Claude: waiting for your answer
@@ -46,6 +48,7 @@ expect focus 2. No, and tell Claude why
 keys enter
 expect focus You chose No, and tell Claude why. Your answer
 type Use notes.txt instead
+wait 1100
 keys enter
 expect said Sent: Use notes.txt instead
 expect said Done. claude: No, it was not created

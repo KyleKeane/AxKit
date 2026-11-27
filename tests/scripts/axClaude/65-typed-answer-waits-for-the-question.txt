@@ -1,0 +1,61 @@
+# Workflow: Have a typed answer wait until Claude's question was said, with Claude Code's screen
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code; no Claude Code, no network and no model.
+# axClaude, docs/axClaude/SPEC.md D33 ("Nothing typed answers a question not yet put to the user", 2026-11-27, found by
+# the second review of that day; bundle rule 11). With Claude Code's screen a question is acted on once the screen
+# has settled, 400 ms after it came, and while the keys of a typed answer still go out the settle waits for them.
+# In that time the message field still stands: a "1" typed there and sent went to Claude Code as the answer to a
+# question of which nothing had been said, and a bare Enter went to whatever the screen showed. The window now says
+# "Not sent: Claude asks something, and its question opens in a moment" and keeps the text; once the question was
+# said ("Claude asks", since this script runs with Answer from a list off), the same Enter sends it.
+# The stand-in (tools/AxAutomate/StandIn.cs) draws each question at a file of the script's and reads no key. The
+# long answer is what makes the moment wide enough to play: its keys go out for six seconds, one at a time, and the
+# settle waits for them. The second half is the interrupt during such an answer: its keys are dropped, so the user's
+# act ends there, and the next question is said at once; until that day the settle went on waiting for keys that
+# were never sent.
+file home\AxKit\axClaude.json {"replySpeech":"none","questionNotices":false,"workingMusic":false,"backgroundAlert":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir ta
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.332 (stand-in)","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"waitFile":"go1"},{"frame":["claude: started","you: Plan it","claude: A plan.","tool: Updated plan","Permission Required: Ready to code?","Here is Claude's plan:","Claude has written up a plan and is ready to execute. Would you like to proceed?","1. Yes, and use auto mode","2. Yes, manually approve edits","3. No, keep planning — shift+tab to approve with this feedback","Enter text for option 3 (No, keep planning), or Escape for the list:"],"clear":true},{"waitFile":"go2"},{"frame":["claude: started","you: Plan it","claude: A plan.","tool: Write (beta.txt)","Permission Required: Create file","beta.txt","Do you want to create beta.txt?","1. Yes","2. Yes, allow all edits during this session","3. No","Select with numbers [1-3]. Then Enter to submit or Escape to cancel:"],"clear":true},{"waitFile":"go3"},{"frame":["claude: started","you: Plan it","claude: A plan.","tool: Updated plan","Permission Required: Ready to code?","Here is Claude's plan:","Claude has written up a plan and is ready to execute. Would you like to proceed?","1. Yes, and use auto mode","2. Yes, manually approve edits","3. No, keep planning — shift+tab to approve with this feedback","Enter text for option 3 (No, keep planning), or Escape for the list:"],"clear":true},{"waitFile":"go4"},{"frame":["claude: started","you: Plan it","claude: A plan.","tool: Write (gamma.txt)","Permission Required: Create file","gamma.txt","Do you want to create gamma.txt?","1. Yes","2. Yes, allow all edits during this session","3. No","Select with numbers [1-3]. Then Enter to submit or Escape to cancel:"],"clear":true},{"idle":true}]}
+
+start claude {temp}\ta --claude {temp}\claude.cmd -- --model haiku --effort low
+expect said Ready
+wait 1000
+
+# Goal: Answer in your own words from the message field
+# Claude Code asks for the user's words on its row for them; with Answer from a list off the window says "Claude asks"
+# and the words are typed in the message field.
+file ta\go1 x
+expect said Claude asks
+type Please split the work into smaller steps and show me each one first, with the tests for it, before you go on
+keys enter
+expect said ♪ Sent
+
+# Check: A 1 typed while the next question has not been said is not sent
+# The answer's keys go out for six seconds. Claude Code asks about a file meanwhile; nothing of it was said yet.
+file ta\go2 x
+wait 1000
+type 1
+keys enter
+expect said Not sent: Claude asks something, and its question opens in a moment
+refuse said ♪ Sent
+
+# Goal: Send the same answer once the question was said
+expect said Claude asks
+keys enter
+expect said ♪ Sent
+
+# Check: After an interrupt during a long answer the next question is said at once
+# The words again, and the interrupt right after their Enter: the keys still waiting are dropped. Claude Code asks
+# about another file; a second and a half later it has been said, and a typed answer goes.
+file ta\go3 x
+expect said Claude asks
+type Please split the work into smaller steps and show me each one first, with the tests for it, before you go on
+keys enter
+expect said ♪ Sent
+keys ctrl+i
+file ta\go4 x
+wait 1500
+type 1
+keys enter
+expect said ♪ Sent

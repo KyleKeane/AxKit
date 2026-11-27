@@ -64,6 +64,9 @@ internal sealed partial class MainForm
 
         public bool Answered { get; init; }
 
+        /// <summary>When the key that made it <see cref="Answered"/> was pressed (<see cref="Environment.TickCount64"/>): a key of Claude Code's own stamps no act of the user's.</summary>
+        public long AnsweredAt { get; init; }
+
         public int Asked { get; init; }
     }
 
@@ -133,13 +136,15 @@ internal sealed partial class MainForm
     /// as a frame shows anything else in its place, nothing included, or the same title and answers around other
     /// lines (<see cref="AnsweredWaitOver"/>, asked every frame), and the settle then shows and says what waits
     /// afresh. Not over at once, as over the stream: the question stays drawn until Claude Code has taken the keys,
-    /// and shown again meanwhile it would be asked twice.
+    /// and shown again meanwhile it would be asked twice. A key Claude Code did not take as an answer stops counting
+    /// as one after three seconds (<see cref="LapseAnswer"/>).
     /// </summary>
     private void MarkWaitAnswered()
     {
         if (_wait is { } wait)
         {
-            _wait = wait with { Answered = true };
+            _wait = wait with { Answered = true, AnsweredAt = Environment.TickCount64 };
+            After(UserActionMs + 50, LapseAnswerWhenDue);
         }
     }
 
@@ -161,13 +166,81 @@ internal sealed partial class MainForm
     /// </summary>
     private bool StillAsked(int asked)
     {
-        if (_model.StillAsks(asked))
+        // With the screen, too, since the second review of 2026-11-27: not while what waits has not been put to the
+        // user (WaitsUnheard), which is the case from the frame that replaced the question shown until the settle.
+        if (_model.StillAsks(asked) && (Streams || !WaitsUnheard))
         {
             return true;
         }
 
-        Refuse(_model.PromptPending ? QuestionOpensWords : "Not sent: this is no longer asked");
+        Refuse(_model.PromptPending ? QuestionOpensWords : NoLongerAskedWords);
         return false;
+    }
+
+    /// <summary>Said when a key is held back because what its control was shown for no longer waits, and nothing else does.</summary>
+    private const string NoLongerAskedWords = "Not sent: this is no longer asked";
+
+    /// <summary>
+    /// Whether what Claude Code's screen waits on now has not been put to the user yet (<see cref="AnsweredWait.Unheard"/>):
+    /// the window has shown or announced nothing for it, or what it showed is over. No key of the user's then goes to
+    /// Claude Code as an answer (bundle rule 11): asked by every list and field of the area (<see cref="StillAsked"/>,
+    /// <see cref="ScreenStillShown"/>), by the message field's Enter and by the mode key. Always false over the
+    /// stream, whose questions are bound by their number (<see cref="StillAsked"/>).
+    /// </summary>
+    private bool WaitsUnheard => !Streams && AnsweredWait.Unheard(WaitSignature, _wait?.Signature, _wait?.Stale ?? false);
+
+    /// <summary>
+    /// Whether the screen of Claude Code's a control was shown for (<paramref name="signature"/>) is still the one
+    /// that waits; when not, nothing is sent and the window says so. Every key a screen's list or field sends asks
+    /// this first, as an answer asks <see cref="StillAsked"/> (the second review of 2026-11-27): until then Enter,
+    /// Escape or a letter of the screen went to whatever Claude Code's screen showed at that moment, a question that
+    /// had replaced the screen within the settle's 400 ms included.
+    /// </summary>
+    private bool ScreenStillShown(string signature)
+    {
+        if (WaitSignature == signature && !WaitsUnheard)
+        {
+            return true;
+        }
+
+        Refuse(WaitSignature is not null ? QuestionOpensWords : NoLongerAskedWords);
+        return false;
+    }
+
+    /// <summary>
+    /// The user's key no longer counts as an answer to a question that still stands as it stood three seconds after
+    /// it (<see cref="AnsweredWait.AnswerLapsed"/>): the wait is unanswered again. Asked before each frame is judged,
+    /// at each settle, and once by a timer of its own when the three seconds are over (<see cref="LapseAnswerWhenDue"/>),
+    /// since a question that stands still draws no frame.
+    /// </summary>
+    private void LapseAnswer()
+    {
+        if (_wait is { Answered: true, Stale: false } answered
+            && AnsweredWait.AnswerLapsed(Environment.TickCount64, AnswerKeyAt(answered), UserActionMs, AnsweredWaitOver(answered, WaitSignature)))
+        {
+            _wait = answered with { Answered = false };
+        }
+    }
+
+    /// <summary>When the last keystroke of the user's answer to this wait went, or will have gone: the stamp of the user's act, which lies ahead while an answer is typed out, or the key's own moment when it stamped none.</summary>
+    private long AnswerKeyAt(Wait answered) => Math.Max(_userActedAt, answered.AnsweredAt);
+
+    /// <summary>The timer of <see cref="LapseAnswer"/>: it comes again while the answer's keys still go out (the stamp of the user's act lies ahead), and ends with the wait.</summary>
+    private void LapseAnswerWhenDue()
+    {
+        if (_wait is not { Answered: true, Stale: false } answered)
+        {
+            return;
+        }
+
+        var due = AnswerKeyAt(answered) + UserActionMs - Environment.TickCount64;
+        if (due > 0)
+        {
+            After((int)Math.Min(due, 60_000) + 50, LapseAnswerWhenDue);
+            return;
+        }
+
+        LapseAnswer();
     }
 
     /// <summary>
@@ -179,8 +252,10 @@ internal sealed partial class MainForm
 
     /// <summary>
     /// Shows what Claude waits on in the control area, in place of the message field (D33). <paramref name="show"/>
-    /// puts the control there, given whether it takes the focus and whether it holds its answering keys for a moment
-    /// (when the user did not cause it, since they may be typing). Such a control also plays the notice chime, unless
+    /// puts the control there, given whether it takes the focus; the control always holds its answering keys for a
+    /// moment (<see cref="AxKit.Core.KeyHold"/>, the one rule; until 2026-11-27 only when the user did not cause it,
+    /// and the second of two questions took a doubled Enter unheard). A control the user did not cause
+    /// (<paramref name="unprompted"/>) also plays the notice chime, unless
     /// the window is in the background with the louder alert on, which the signal then plays in its place (FR-7.3);
     /// or it plays <paramref name="chime"/>, an offered command's, wherever the window is.
     /// With Go to them at once, interrupting speech it takes the focus wherever it was, and the word
@@ -191,7 +266,7 @@ internal sealed partial class MainForm
     /// interrupts but leftover reply speech (FR-7.4b): NVDA reads the question when the focus reaches it, after what
     /// it was reading (a focus change alone does not cut NVDA off).
     /// </summary>
-    private void ShowInArea(string signature, string text, bool unprompted, Action<bool, bool> show, Action? chime = null)
+    private void ShowInArea(string signature, string text, bool unprompted, Action<bool> show, Action? chime = null)
     {
         // The next question of a set, after the user's answer, interrupts too: the focus is in the area, or in the
         // message field when the area closed between two questions, and what NVDA was still reading (the answer just
@@ -242,10 +317,14 @@ internal sealed partial class MainForm
             Announce(QuestionWord, true);
         }
 
-        show(focus, unprompted);
+        // Whatever is shown here holds its answering keys for a moment, the user's doing or not (KeyHold, the one
+        // rule): unprompted decides the chime and the focus above, never the hold.
+        show(focus);
         Input.Visible = false;
         Area.Visible = !NoticeOpen;
-        _wait = new Wait(signature, Shown: true, text) { Asked = _model.Asked };
+        // What the read again key speaks, as the area shows it: nothing in it unseen or unheard (DisplayText; the
+        // area's control does the same for its name and its answers).
+        _wait = new Wait(signature, Shown: true, AxKit.Core.DisplayText.VisibleLine(text)) { Asked = _model.Asked };
         // Something new is under the user's fingers: the core learns of it (MainForm.Flow.cs).
         FlowQuestionShown();
         var actedBefore = _userActedAt;
@@ -327,15 +406,10 @@ internal sealed partial class MainForm
         IReadOnlyList<int>? ticked = several ? Enumerable.Range(0, options.Count).Where(i => options[i].Current).ToList() : null;
         // The list answers what waits now and nothing that waits later (StillAsked).
         var asked = _model.Asked;
-        ShowInArea(signature, text, unprompted, (focus, hold) =>
+        ShowInArea(signature, text, unprompted, focus =>
         {
-            Area.ShowList(name, items, start, ticked, focus, hold, (focused, ticks) =>
+            AreaList(name, items, start, ticked, focus, () => StillAsked(asked), (focused, ticks) =>
             {
-                if (!StillAsked(asked))
-                {
-                    return;
-                }
-
                 if (several && ticks.Count == 0)
                 {
                     Announce("Tick one with Space", true);
@@ -343,15 +417,78 @@ internal sealed partial class MainForm
                 }
 
                 choose(several ? ticks.Select(i => options[i]).ToList() : [options[focused]]);
-            }, () =>
+            }, escape, typed: typed);
+            _questionList = (Area.Current!, options, question.Core);
+        });
+    }
+
+    /// <summary>
+    /// The one way a list reaches the control area in this window, and <see cref="AreaField"/> a field
+    /// (<c>WindowLastResortTests</c> holds that no other line of axClaude calls the area's own). Two things are so
+    /// for every one of them, and cannot be left out by a caller. It is held: its answering keys do nothing for a
+    /// moment after it is shown, whatever came before (<see cref="AxKit.Core.KeyHold"/>). And it is bound: Enter,
+    /// Escape and a key of its own act only while <paramref name="still"/> says that what it was shown for is what
+    /// waits now, and that the window has put it to the user; the caller must say how that is known
+    /// (<see cref="StillAsked"/> for a question, by its number; <see cref="ScreenStillShown"/> for a screen of Claude
+    /// Code's; the offer still shown for an offered command), and when it is not so, <paramref name="still"/> says
+    /// why nothing was sent. A letter the list gives a meaning comes as <paramref name="letter"/>: the action for it,
+    /// or null for a letter that is the list's own to jump with. Until the second review of 2026-11-27 each list
+    /// wrote its own check, and the screens' lists, the fields of a screen's row and the offers had none.
+    /// </summary>
+    private void AreaList(string name, IReadOnlyList<string> items, int start, IReadOnlyList<int>? ticked, bool focus, Func<bool> still,
+        Action<int, IReadOnlyList<int>> choose, Action escape, Func<char, Action?>? letter = null, Action? typed = null)
+    {
+        Area.ShowList(name, items, start, ticked, focus, hold: true,
+            (index, ticks) =>
             {
-                if (StillAsked(asked))
+                if (still())
+                {
+                    choose(index, ticks);
+                }
+            },
+            () =>
+            {
+                if (still())
                 {
                     escape();
                 }
-            }, typed: typed);
-            _questionList = (Area.Current!, options, question.Core);
-        });
+            },
+            letter is null ? null : key =>
+            {
+                if (letter(key) is not { } act)
+                {
+                    return false;
+                }
+
+                // The letter is the list's own either way: it never falls through to the list's jump.
+                if (still())
+                {
+                    act();
+                }
+
+                return true;
+            },
+            typed);
+    }
+
+    /// <summary>A field in the control area, held and bound as a list is (<see cref="AreaList"/>).</summary>
+    private void AreaField(string name, bool focus, Func<bool> still, Action<string> enter, Action escape)
+    {
+        Area.ShowField(name, focus, hold: true,
+            typed =>
+            {
+                if (still())
+                {
+                    enter(typed);
+                }
+            },
+            () =>
+            {
+                if (still())
+                {
+                    escape();
+                }
+            });
     }
 
     /// <summary>The list of a question the area shows, with the answers it lists and the question's core; the list is no longer shown once the area holds another control.</summary>
@@ -579,13 +716,8 @@ internal sealed partial class MainForm
         var name = (asked is null ? string.Empty : asked + Stop(asked)) + $"You chose {chosen}. Your answer";
         // The field answers what waits now and nothing that waits later (StillAsked).
         var shownFor = _model.Asked;
-        ShowInArea(prompt, name, !UserActed(), (focus, hold) => Area.ShowField(name, focus, hold, typed =>
+        ShowInArea(prompt, name, !UserActed(), focus => AreaField(name, focus, () => StillAsked(shownFor), typed =>
         {
-            if (!StillAsked(shownFor))
-            {
-                return;
-            }
-
             var words = typed.Trim();
             if (words.Length == 0)
             {
@@ -595,13 +727,7 @@ internal sealed partial class MainForm
 
             SendAnswer(words);
             Announce("Sent: " + words + NextStep(), false);
-        }, () =>
-        {
-            if (StillAsked(shownFor))
-            {
-                SendEscape();
-            }
-        }));
+        }, SendEscape));
     }
 
     /// <summary>
@@ -618,6 +744,8 @@ internal sealed partial class MainForm
         var items = ScreenActions.Items(screen);
         var first = screen.Lines.Count;
         var leave = ScreenActions.LeaveKey(screen);
+        // Every key the list sends goes to this screen and to nothing that has taken its place (AreaList, ScreenStillShown).
+        var shownFor = screen.Signature;
         void Leave()
         {
             SendScreenKey(leave.Send);
@@ -644,16 +772,8 @@ internal sealed partial class MainForm
             }
         }
 
-        bool Letter(char letter)
-        {
-            if (ScreenActions.LetterKey(screen, letter) is not { } key)
-            {
-                return false;
-            }
-
-            SendScreenKey(key.Send);
-            return true;
-        }
+        // A letter the hint row names is the screen's own key; any other is the list's, to jump with.
+        Action? Letter(char letter) => ScreenActions.LetterKey(screen, letter) is { } key ? () => SendScreenKey(key.Send) : null;
 
         // A search is named with the window's words, its first line the search row ("Search: git").
         var name = screen.Searching ? ScreenActions.SearchName : screen.Title;
@@ -681,8 +801,8 @@ internal sealed partial class MainForm
             return;
         }
 
-        ShowInArea(screen.Signature, text.ToString(), !UserActed(), (focus, hold) =>
-            Area.ShowList(name, items, 0, null, focus, hold, (index, _) =>
+        ShowInArea(screen.Signature, text.ToString(), !UserActed(), focus =>
+            AreaList(name, items, 0, null, focus, () => ScreenStillShown(shownFor), (index, _) =>
             {
                 if (index < first)
                 {
@@ -705,10 +825,10 @@ internal sealed partial class MainForm
     {
         var row = screen.Highlighted?.TrimEnd(ClaudeCodeTexts.FieldNameEnd) ?? "Text";
         var name = $"{screen.Title}. {row}, add at the end";
-        ShowInArea(screen.Signature, text, !UserActed(), (focus, hold) => Area.ShowField(name, focus, hold, typed =>
-        {
-            ScreenKeySent(TypeAnswer(typed));
-        }, () => SendScreenKey(ClaudeCodeKeys.Escape)));
+        var shownFor = screen.Signature;
+        // The text is typed into this row and into nothing that has taken the screen's place (AreaField, ScreenStillShown).
+        ShowInArea(screen.Signature, text, !UserActed(), focus => AreaField(name, focus, () => ScreenStillShown(shownFor),
+            typed => ScreenKeySent(TypeAnswer(typed)), () => SendScreenKey(ClaudeCodeKeys.Escape)));
     }
 
     /// <summary>
@@ -722,7 +842,9 @@ internal sealed partial class MainForm
     private void ShowSearchField(ClaudeScreen screen, string text)
     {
         var name = ScreenActions.SearchFieldName;
-        ShowInArea(screen.Signature, text, !UserActed(), (focus, hold) => Area.ShowField(name, focus, hold, typed =>
+        var shownFor = screen.Signature;
+        // The words are typed into this search and into nothing that has taken its place (AreaField, ScreenStillShown).
+        ShowInArea(screen.Signature, text, !UserActed(), focus => AreaField(name, focus, () => ScreenStillShown(shownFor), typed =>
         {
             if (typed.Length > 0)
             {
@@ -835,6 +957,28 @@ internal sealed partial class MainForm
         After(QuestionFocusMs, TryOpen);
     }
 
+    /// <summary>
+    /// Whether Claude Code's screen still shows the information screen a notice was opened for, by its title (the
+    /// notice keeps the buttons it opened with while the screen's keys change, <see cref="ScreenNoticeShows"/>). A
+    /// button of the notice sends its key only then (the second review of 2026-11-27): until that day Close, Copy or
+    /// a scroll went to whatever the screen showed at that moment, within the settle's 400 ms a question that had
+    /// taken the screen's place, or Claude Code's prompt.
+    /// </summary>
+    private bool ScreenStillInforms(string title) =>
+        _model.PendingScreen is { } now && ScreenActions.IsInformation(now) && now.Title == title;
+
+    /// <summary><see cref="ScreenStillInforms"/>, and when not, the window says that nothing was sent.</summary>
+    private bool ScreenStillInformsOrSays(string title)
+    {
+        if (ScreenStillInforms(title))
+        {
+            return true;
+        }
+
+        Refuse(WaitSignature is not null ? QuestionOpensWords : NoLongerAskedWords);
+        return false;
+    }
+
     /// <summary>Opens the information screen's notice: Close, a button per other key, the scroll buttons when the screen may hold more than the console shows.</summary>
     private void OpenScreenNotice(ClaudeScreen screen, string summary, bool interrupt, bool unprompted)
     {
@@ -844,7 +988,18 @@ internal sealed partial class MainForm
         {
             new(ScreenActions.LeaveButton(leave), () =>
             {
+                // Asked before the notice is let go: the key goes to this screen alone (ScreenStillInforms).
+                var still = ScreenStillInforms(screen.Title);
                 _screenNotice = null;
+                if (!still)
+                {
+                    // Claude Code's screen shows something else by now, or nothing: the notice closes, as the
+                    // settle would close it in a moment, and no Enter or Escape goes to what stands there (a
+                    // question not yet said; Claude Code's prompt, where Escape interrupts). The record of the
+                    // wait is left to the settle.
+                    return;
+                }
+
                 if (_wait is { } wait)
                 {
                     _wait = wait with { Shown = false, Text = null };
@@ -862,15 +1017,28 @@ internal sealed partial class MainForm
         var keys = ScreenActions.NoticeKeys(screen);
         void SendNoticeKey(ScreenKey key)
         {
+            if (!ScreenStillInformsOrSays(screen.Title))
+            {
+                return;
+            }
+
             _screenLines = [];
             SendScreenKey(key.Send);
+        }
+
+        void Scroll(string key)
+        {
+            if (ScreenStillInformsOrSays(screen.Title))
+            {
+                SendScreenKey(key);
+            }
         }
 
         choices.AddRange(keys.Select(key => new OverlayChoice(ScreenActions.KeyItem(key), () => SendNoticeKey(key), StaysOpen: true)));
         if (ScreenActions.Scrolls(screen))
         {
-            choices.Add(new OverlayChoice("Scroll &down", () => SendScreenKey(ClaudeCodeKeys.Down), StaysOpen: true));
-            choices.Add(new OverlayChoice("Scroll &up", () => SendScreenKey(ClaudeCodeKeys.Up), StaysOpen: true));
+            choices.Add(new OverlayChoice("Scroll &down", () => Scroll(ClaudeCodeKeys.Down), StaysOpen: true));
+            choices.Add(new OverlayChoice("Scroll &up", () => Scroll(ClaudeCodeKeys.Up), StaysOpen: true));
         }
 
         _screenLines = screen.Lines;
