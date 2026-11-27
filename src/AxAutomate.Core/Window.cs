@@ -438,7 +438,9 @@ public sealed class Window : IDisposable
         foreach (var record in document.RootElement.EnumerateArray())
         {
             var item = record.GetProperty("item");
-            _all.Add(new Event(record.GetProperty("t").GetInt64(), item.GetProperty("kind").GetString()!, item.GetProperty("text").GetString() ?? string.Empty, item.GetProperty("interrupt").GetBoolean()));
+            // A focus move's place (WG-1.2), from a window that gives one.
+            var at = item.TryGetProperty("at", out var place) && place.ValueKind == JsonValueKind.String ? place.GetString() : null;
+            _all.Add(new Event(record.GetProperty("t").GetInt64(), item.GetProperty("kind").GetString()!, item.GetProperty("text").GetString() ?? string.Empty, item.GetProperty("interrupt").GetBoolean(), at));
         }
     }
 

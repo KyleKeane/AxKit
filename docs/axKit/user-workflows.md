@@ -950,6 +950,8 @@ the event, as the report's timeline writes it (Event.Spoken):
   <text>          an announcement             ! <text>     one that interrupts
   ♪ <name>        a sound by its name          → <name> (<role>): <value>     the focus moved to a control
   · <value>       the focused control's value changed
+  a focus move ends in "  @ <place>|<over>" when the window gave its place (docs/axKit/workflow-graph.md WG-1.2):
+                  → Text to find (Text):  @ axDown.text|choice
 ```
 
 A kept file holds the sections of the script's `# Stable` goals and checks, in the script's order, and never the

@@ -137,12 +137,14 @@ public static class Traces
     /// windows (5.4): two spaces, the window's number and ": " only when the run has several, and the event as the
     /// report's timeline writes it (<see cref="Event.Spoken"/>), with no time. A line break in its text is written
     /// "\n" and trailing spaces are left out, so that an event is one line of a file and an editor that trims lines
-    /// changes nothing.
+    /// changes nothing. A focus move the window gave its place for ends in "  @ " and the place with what is over it
+    /// (docs/axKit/workflow-graph.md WG-1.2): "→ Text to find (Text):  @ axDown.text|question".
     /// </summary>
     public static string EventLine(int window, int windows, Event e)
     {
         var number = windows > 1 ? window + ": " : string.Empty;
-        return "  " + (number + e.Spoken.ReplaceLineEndings("\\n")).TrimEnd();
+        var place = e.Kind == "focus" && e.At is { Length: > 0 } at ? "  @ " + at : string.Empty;
+        return "  " + (number + e.Spoken.ReplaceLineEndings("\\n")).TrimEnd() + place;
     }
 
     /// <summary>

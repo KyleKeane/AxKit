@@ -35,7 +35,7 @@ public abstract partial class AxKitForm
         _paletteAll = [.. MenuLines(CommandOrigin.Palette)];
         _paletteHelp = Palette.WithNothingTyped(Shortcuts.ReplaceLineEndings("\n"), _paletteAll, KeyReference.AloneLines(CommandRows().Commands));
         _paletteShown = _paletteHelp;
-        ShowNotice(new Notice("Command palette", string.Empty,
+        ShowNotice(new Notice(PaletteTitle, string.Empty,
         [
             new OverlayChoice("&Run", RunPaletteEntry, IsDefault: true, StaysOpen: true),
             new OverlayChoice("&Close", IsCancel: true),

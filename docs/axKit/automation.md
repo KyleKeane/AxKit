@@ -191,7 +191,18 @@ including while the user works, because nothing takes the foreground.
   - `said`: what the window announced since the last `said`, each notification with its kind (interrupting or not),
     in order; the announcements are recorded where they are raised (`AxKitForm.Announce`).
   - `state`: the title, the status bar's texts, whether a notice shows and its title, the control area's name, and
-    `visible`, false for a window hidden by its own close (axClaude FR-9.6), which `activate` leaves hidden.
+    `visible`, false for a window hidden by its own close (axClaude FR-9.6), which `activate` leaves hidden; and
+    (2026-11-26, `workflow-graph.md` WG-1.2, WG-1.3) `place`, the id of the place the focus is in (`axCalc.field`,
+    from the window's places table; the place it was last in while something is over it), and `over`, what stands
+    over it: `none`, `menu`, `dialog` (a Windows dialog), `palette`, `form`, `error`, `question` and `notice` (a
+    notice by its kind), or `choice` (the focus in the choice that stands in a place, `ControlArea`). Every focus move
+    of the timeline carries the same as `at`, `axCalc.field|none`, which a trace writes after the move.
+  - `places`, `goto <place>`, `events`, `press <keys>` and `dismiss` (2026-11-26, for the workflow graph's crawl,
+    `workflow-graph.md` WG-2.2): the window's places with their words, whether each is a waypoint and on view, the
+    controls on view that take the focus and have no place, and the bundle's keys a crawl tries; the focus put on a
+    place by its id; the ids of the kinds of event (`EventKind`) raised since the last ask; keys posted as `keys`
+    posts them, the answer not waiting for what they open (a Windows dialog holds the thread in a loop of its own,
+    which still answers the channel); a Windows dialog closed as its Cancel closes it. No script uses them.
   - `menu <name>`: runs a menu command by the name the command palette knows it by.
   - `commands`: the menus' commands as the command palette lists them, each a line with its menus, its key and
     "checked" (what `expect commands` reads).
@@ -293,6 +304,20 @@ The option `--inventory` of the runner says what a run does with it:
   gave a snapshot of it passed, and one of those snapshots was taken with no notice showing. It is how a command that
   left a window leaves the file; run it over a whole folder of `tests/scripts` or over all of it.
 - `off`: nothing. For a run against a build that is not the repository's, and for `tools\upstream.ps1 -Verify`.
+
+Under `write` and `rewrite` the run also writes the workflow graph, `docs/axKit/workflow-graph.json`
+(`workflow-graph.md` WG-2, `tools/AxAutomate/GraphRun.cs`, `AxAutomate.Core/GraphCrawl.cs`; 2026-11-26): after the
+first script of an app that passed and has a `check commands` after the app's `start`, the window is started afresh
+on the hidden desktop as that script starts it, in a folder of its own, and crawled: each place on view is reached,
+and at each every key a command of the window would run there now is pressed, and every key of the bundle's no
+command lists, each landing read from `state` with the first kind of event and the words said; Escape is pressed once
+where an action landed on something over a place. Never pressed: a command marked act or a key one holds, an app's
+own key, New window, the Context menu's keys (Windows' own popup menu holds the thread on the hidden desktop). A
+status bar that changed since the place was first reached (a mode left on, a line moved to) brings a fresh start
+before the next key. The crawled apps replace theirs in the file, the others are kept; `tools\map.ps1` then writes
+`docs/axKit/map.md`. An app whose scripts may keep no trace (the windows that read the computer or the user's session,
+a script that needs an outside program) is never crawled, nor axFile and axTemplate, whose keys reach outside the
+window; the run says so once for each.
   A runner built outside the repository (`nvda-pass.ps1` builds it into `%TEMP%`) finds none and checks nothing.
 
 When a run says the inventory is stale: if you changed a menu, a key or a label, run the same scripts with

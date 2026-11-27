@@ -132,6 +132,9 @@ writes it alone), and the pages it wrote are committed.
 - `tools/apps.ps1` is the reader of `Dispatch.Apps` the other scripts share.
 - `tools/components.ps1` writes `components.md` from `components.json`: the window types, their components and
   which app is on which.
+- `tools/map.ps1` writes `map.md` from `workflow-graph.json` (`workflow-graph.md` WG-2.5): by app each waypoint and
+  place, how it is reached and what can be done there. Run it after an inventory run with `--inventory write` has
+  written the graph; `-Check` says whether the page is current.
 - `tools/cases.ps1` writes `cases.md` from `cases.json`, the table of how each unexpected situation is handled (SPEC
   AX-5.10). A change to how a situation is handled changes its row, then the script is run; the fields are described
   at the top of the script.

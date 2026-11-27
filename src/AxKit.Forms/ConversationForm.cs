@@ -123,6 +123,9 @@ public abstract class ConversationForm : AxKitForm
     /// <summary>What takes the field's place: Claude's question, the recent commands.</summary>
     protected ControlArea Area { get; } = new();
 
+    /// <summary>The type's places (<see cref="ConversationPlaces"/>, docs/axKit/workflow-graph.md WG-1.1): the text and the field; the choice in the field's place is what is over it.</summary>
+    protected internal override IReadOnlyList<(Place Place, Control Control)> Places => [(ConversationPlaces.Text, Transcript), (ConversationPlaces.Field, Input)];
+
     /// <summary>The menu bar; the window adds its menus.</summary>
     protected MenuStrip MenuBar { get; } = new();
 

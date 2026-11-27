@@ -32,3 +32,4 @@ Part of the notes of `src/AxKit.Forms` (the index is `src/AxKit.Forms/CLAUDE.md`
     - `SwitchPane` takes Ctrl+Tab, Ctrl+Shift+Tab and F6 between the text and the list; in an editor, without the list, between the text and the field under it while one shows, named so (2026-11-24, the small faults' (12));
     - Ctrl+E goes by the page;
     - Session → Open with is filled from `Dispatch.Apps` as it opens (docs/axPreview/SPEC.md AP-6, AP-7).
+- `EditorPlaces` (docs/axKit/workflow-graph.md WG-1.1, 2026-11-26): the editor's places, `text` (a waypoint) and `details` (the read-only variant's list), given by `TextEditorForm.Places`; Go to line and the options of a place, in the `ControlArea` under the text, are what is over it (`choice`).

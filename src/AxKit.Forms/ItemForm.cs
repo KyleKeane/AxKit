@@ -713,6 +713,18 @@ public abstract partial class ItemForm : AxKitForm
     /// </summary>
     protected virtual SecondPane Pane => SecondPane.Fields;
 
+    /// <summary>
+    /// The type's places (<see cref="ItemPlaces"/>, docs/axKit/workflow-graph.md WG-1.1): the list, and the second pane
+    /// as the place of its kind; a window of no second pane has the list alone.
+    /// </summary>
+    protected internal override IReadOnlyList<(Place Place, Control Control)> Places => Pane switch
+    {
+        SecondPane.Fields => [(ItemPlaces.List, Navigator), (ItemPlaces.Fields, DetailPane)],
+        SecondPane.Text => [(ItemPlaces.List, Navigator), (ItemPlaces.Details, TextPane)],
+        SecondPane.Log => [(ItemPlaces.List, Navigator), (ItemPlaces.Log, DetailPane)],
+        _ => [(ItemPlaces.List, Navigator)],
+    };
+
     /// <summary>Whether the second pane is the fields of the row you are on.</summary>
     private bool HasDetailPane => Pane == SecondPane.Fields;
 

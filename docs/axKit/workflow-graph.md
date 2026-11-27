@@ -1,7 +1,7 @@
 # The workflow graph
 
-A proposal of 2026-11-26, its decisions settled by the maintainer the same day (section 9); nothing of it is built
-yet. It answers his ask of
+A proposal of 2026-11-26, its decisions settled by the maintainer the same day (section 9); its step 2, the places
+and the graph written, is built (2026-11-26, section 6; what building it decided is section 10). It answers his ask of
 2026-11-26: waypoints, any app's right place in two actions from anywhere, any goal in two actions from its
 waypoint, consent gathered into one form, the user's actions as the edges of a graph, the workflows as walks through
 it, and a system that holds every change of the code against the graph and the NVDA passes, so that the user's
@@ -73,8 +73,21 @@ Non-goals:
 - WG-1.2 **The channel says the place.** `state` and every focus move of a trace carry the place's id beside the
   focused control's name and role, so that a script, a trace and the AI tools all know where the focus is by the
   same name.
+  Built 2026-11-26: `AxKit.Forms/Place` (an id, the words, whether a waypoint) and one table per kind of window,
+  `ConversationPlaces` (`text`, `field`), `EditorPlaces` (`text`, `details`), `ItemPlaces` (`list`, and the second
+  pane by its kind: `fields`, `details`, `log`) and `HotkeyPlaces` (`field`); the kind's class gives each place its
+  control (`AxKitForm.Places`), and a place's id is the app's name and the table's id, `axCalc.field`. One app has a
+  table of its own, `AxHelpPlaces` (`text`, the text axHelp's window shows in place of the field). `PlacesTests`, beside
+  `KeyTests`: every kind of `components.json` has its table and gives it, every app is on a kind with places, an app
+  whose folder holds a control of its own that takes the focus has its table (from the sources), and the graph file
+  lists no control on view that takes the focus and has no place (from the windows, through the crawl, WG-2.2).
 - WG-1.3 **What is over it** is the window's own: a menu, the notice (`OverlayPanel`), the palette, the control area's
   question (`ControlArea`), each with its id. A notice names its own kind (an error, a question, a form).
+  Built 2026-11-26 (`AxKitForm.OverId`): `none`, `menu`, `dialog` (a Windows dialog, while `DialogShowing`),
+  `palette`, `form`, `error`, `question` (a notice with a field, a list or more than one button), `notice`, and
+  `choice` (the focus inside a `ControlArea`, which stands in a place: axClaude's question, Go to line). While
+  something is over the places, the place is the one the focus was last in. The channel's `state` carries `place` and
+  `over`, and every focus move of a trace ends in `  @ <place>|<over>` (`user-workflows.md` section 5.4).
 
 ### WG-2 The graph file
 
@@ -87,6 +100,16 @@ Non-goals:
   tried the same way at one node of each window type, since they are the same everywhere (AX-8); and the scripts'
   walks for whatever a crawl does not try (WG-3). A command marked `act` is never tried by the crawl: it can send,
   delete or run.
+  Built 2026-11-26 (`AxAutomate.Core/GraphCrawl`, `tools/AxAutomate/GraphRun.cs`; `automation.md`, "The command
+  inventory"): under `--inventory write` and `rewrite`, after the first script of an app that passed and has a
+  `check commands` after its `start`, the window is started afresh as that script starts it and crawled. Every place
+  on view is reached (the channel's `goto`); at each, every chord a row of `commands data` would run now and every
+  bundle key no row lists (the window names them in its `places`: the bundle table's keys but the moves inside a
+  place, and Escape, Tab, Shift+Tab) is pressed once, in the order of the chords, and its landing read. Escape is
+  pressed once on whatever an action landed on over a place: that node's edge. Never pressed: a chord an `act` row
+  holds, an app's own key (they are `outside`'s), New window, and the Context menu's keys. Between two keys the window
+  is brought back: Escape, `goto`, and a fresh start when those do not do it, when the window hid or ended (an edge
+  to `outside`), or when its status bar differs from the place's first (a mode left on by the key before).
 - WG-2.3 **`outside` has its edges too**: the hotkeys of axStart and every app's launch key (Ctrl+F-key,
   Ctrl+Shift+F-key, AX-8.18), each landing on the app's first waypoint.
 - WG-2.4 **One order**, as the inventory has: the apps by name, a window's nodes by id, a node's edges by chord, so
@@ -160,13 +183,20 @@ Non-goals:
 ```json
 {
   "format": "axkit-workflow-graph 1",
+  "about": "The workflow graph (docs/axKit/workflow-graph.md): ... never by hand; ...",
+  "apps": [
+    {"app": "axCalc", "type": "conversation", "start": "axCalc.field|none"}
+  ],
+  "unplaced": [],
   "nodes": [
-    {"id": "axCalc.field|none", "app": "axCalc", "place": "axCalc.field", "over": "none", "modes": [],
-     "waypoint": true, "words": "the expression field",
+    {"id": "outside", "app": "", "place": "", "over": "none", "modes": [], "waypoint": false, "words": "the desktop, no axKit window in front",
      "edges": [
-       {"action": "ctrl+delete", "command": "Clear the field", "to": "axCalc.field|none", "kind": "announcement",
-        "said": "Cleared."},
-       {"action": "f1", "to": "axCalc.field|palette", "kind": "palette", "said": "..."}
+       {"action": "ctrl+f10", "command": "Open axCalc", "to": "axCalc.field|none", "kind": "", "said": "", "free": true}
+     ]},
+    {"id": "axCalc.field|none", "app": "axCalc", "place": "axCalc.field", "over": "none", "modes": [], "waypoint": true, "words": "the field",
+     "edges": [
+       {"action": "ctrl+delete", "command": "Clear the field", "to": "axCalc.field|none", "kind": "said", "said": "Empty"},
+       {"action": "f1", "command": "Command palette", "to": "axCalc.field|palette", "kind": "field-entered", "said": ""}
      ]}
   ],
   "goals": [
@@ -176,6 +206,13 @@ Non-goals:
 }
 ```
 
+As built (2026-11-26): `apps` names the apps the file covers, each with its kind of window and the node it opens on;
+`unplaced` the controls on view that take the focus and have no place ("axHelp: Name (Role)"), which `PlacesTests`
+fails on; `kind` is the id of the first kind of event (`EventKind`, as `families.json` writes it) the action raised,
+empty for none; `said` the window's announcements, joined, cut at 200 characters; `free` marks `outside`'s edges, the
+apps' own keys, which no bound counts; an edge of no command has no `command`. The goals are written empty until
+step 3. One edge a line, the nodes and edges in the order of WG-2.4, `outside` first.
+
 The record of edges (WG-4.3) stays in `workflow-record.json` with the goals', never in this file, so that a run
 changes one file and the graph changes only with the windows.
 
@@ -184,6 +221,12 @@ changes one file and the graph changes only with the windows.
 1. **This specification**, read and settled by the maintainer (section 9). Nothing else before it.
 2. **The places and the graph written**: the places tables for the shared window types, then app by app; the channel
    says the place; the inventory run writes `workflow-graph.json` and `map.md`. Nothing a user meets changes.
+   **Built 2026-11-26** (WG-1.1, WG-1.3, WG-2.2, section 5): the tables, the channel's place, the crawl, the file and
+   `tools/map.ps1` (in `tools/pages.ps1` and its `-Check`). What the file covers is its own `apps`: the first write
+   crawled every app the crawl may write, axAutomate, axCalc, axDown, axJSON, axMCP, axPreview and axTask (59 nodes,
+   489 edges with `outside`'s). Left: the eleven apps the crawl must not write (section 10, point 5) get their nodes
+   from the scripts' walks of step 4, and with them the hotkey window, none of whose apps may be crawled; and the
+   modes of section 10, point 9.
 3. **The bounds checked**: `graph-check.ps1` and the page of goals over the bounds, with each goal's own count
    (WG-3.3). The item "every goal in three steps" becomes this page.
 4. **The scripts as walks**: the landing of every step read and checked; the record by edge; owed hearings by edge.
@@ -238,3 +281,40 @@ The questions as they were put, each with the assistant's recommendation first:
    sittings (recommended); or the check fails at once and the work stops until all are shortened.
 6. **What the palette does with a way** (WG-6.1): says it, and Enter takes its first step (recommended); or Enter
    walks the whole path.
+
+## 10. Decided while building step 2 (2026-11-26)
+
+The assistant's, each for the maintainer to turn back:
+
+1. **A place's id is the app's name and the table's id** (`axCalc.field`): the kinds of window name their places once,
+   in their own words ("the field", "the conversation"); an app gives other words only with a table of its own, which
+   none needed. The words a user would use for one app's field ("the expression field") are left for a later table.
+2. **The choice in a place is over it, not a place** (`choice`), as WG-1.3 lists it: axClaude's question and Go to
+   line stand where the field or the text is. The second pane of the navigator is three places, one per kind
+   (`fields`, `details`, `log`), since their keys differ.
+3. **The bundle's keys are tried at every place of every window**, not at one node of each kind (WG-2.2): it costs a
+   few seconds a place, and the map then holds every edge where it is pressed, with no second table of what a kind
+   shares. They come from the window's own `places` answer, so the crawl holds no list of keys of its own.
+4. **What the crawl never presses**: besides `act`, an app's own key (`outside`'s edges, free), New window (a second
+   process), and the Context menu's keys: Windows' own popup menu held axStart's thread for 30 seconds on the hidden
+   desktop, where menu mode never comes (`automation.md`, "What stays manual"). Their edges are for the walks of step 4.
+5. **Which apps the crawl writes**: the graph is axKit's own words, as a kept trace is (`user-workflows.md` WF-5.6), so
+   an app whose scripts may keep no trace is never crawled (`Traces.MayKeep`: axClip, axStart, axProcess, axTerminal,
+   axGIT, axMedia, and the apps whose scripts need an outside program, axClaude, axHelp, axPass); nor axFile (Enter
+   opens a file in the computer's own program, Left at the top lists the drives) or axTemplate (Enter types into the
+   program in front). The first crawl of axStart put the count of the computer's programs into the words.
+6. **A window brought back by a fresh start** when its status bar differs from what the place first showed: Ctrl+Space
+   left axCalc's field in navigation mode, and every key after it was tried in that mode. The status bar is the only
+   thing every window shows of its state; a key that changes nothing there is taken to change nothing that matters.
+7. **The words are cut at 200 characters** and the kind is the first kind raised: the edge says what one hears first;
+   the file is for the map and the check, not a record of everything said.
+8. **The menu items without a key** are not tried: they are reached through the palette (F1, the name and Enter, two
+   actions), whose node is on the map with its way back; the walks of step 4 add the rest.
+9. **Modes**: none yet, as the windows report none in their state. The ones that change an edge, for a later step:
+   the edit and navigation mode of a text (AX-8.13: the letters type or jump), axClaude's screen and stream and Claude
+   busy or ready, axTerminal's screen view, the navigator's selection (Escape gives up a selection before it goes
+   back) and its filter (Ctrl+Delete), and the level of a navigator where a key acts only at the top (Left).
+10. **A Windows dialog is a node**, `dialog` over the place: the crawl presses its keys through the channel's `press`,
+    which does not wait for what a key opens (Open, Save as and the font picker hold the window's thread in a loop of
+    their own, and a `keys` request waited 30 seconds for each in the first crawl of axDown), and closes the dialog
+    with `dismiss`, as its Cancel does; the edge back is written as the user's Escape.

@@ -194,6 +194,9 @@ public abstract class HotkeyForm : AxKitForm
     /// <summary>The matches under the field, never focused (AS-D2): the bundle's list with <see cref="AxKitList.Field"/> set; the app names it in <see cref="ShowMatches"/>.</summary>
     protected AxKitList Matches { get; } = new();
 
+    /// <summary>The type's one place (<see cref="HotkeyPlaces"/>, docs/axKit/workflow-graph.md WG-1.1): the field; the matches never take the focus.</summary>
+    protected internal override IReadOnlyList<(Place Place, Control Control)> Places => [(HotkeyPlaces.Field, SearchField)];
+
     /// <summary>The list made from <paramref name="labels"/>, or the one line <paramref name="nothing"/> when there are none, named <paramref name="name"/>, the selection on <paramref name="index"/>.</summary>
     protected void ShowMatches(IReadOnlyList<string> labels, string nothing, string name, int index) =>
         Matches.FillMatches(labels, nothing, name, index);

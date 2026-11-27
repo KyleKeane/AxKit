@@ -16,7 +16,11 @@ namespace AxKit.Forms;
 /// <c>type</c>, <c>focus</c>, <c>text</c>, <c>list</c>, <c>said</c>, <c>state</c>, <c>menu</c>, <c>close</c>,
 /// <c>activate</c>, <c>problems</c> (the command list's, AK-2.4), <c>commands</c> (the palette's lines),
 /// <c>commands data</c> (the window's commands as data, each with its key as a chord and the chord that would run it
-/// now, docs/axKit/user-workflows.md WF-2.3) and <c>choose</c> (one menu item by exactly its label and its menus).
+/// now, docs/axKit/user-workflows.md WF-2.3), <c>choose</c> (one menu item by exactly its label and its menus), and for
+/// the workflow graph's crawl (docs/axKit/workflow-graph.md) <c>places</c> (the window's places and the focusable
+/// controls of no place), <c>goto</c> (the focus put on a place by its id), <c>events</c> (the kinds of event raised
+/// since the last ask), <c>press</c> (keys as <c>keys</c> posts them, the answer not waiting for what they open) and
+/// <c>dismiss</c> (a Windows dialog closed as its Cancel closes it). <c>state</c> and every focus move of the timeline carry the place and what is over it.
 /// Keys are posted to the focused control through the window's own message queue with the modifiers set in the
 /// thread's keyboard state, so that <c>ProcessCmdKey</c> and the controls see them as typed; nothing reaches another
 /// program. A key's name is one of <see cref="KeyChord"/>'s, the vocabulary the listing writes its chords in.
@@ -48,6 +52,9 @@ internal sealed class AutomationChannel : IMessageFilter
     /// selected item), which is what NVDA reads on its own; each with the milliseconds since the channel opened.
     /// </summary>
     private readonly List<object> _said = [];
+
+    /// <summary>The ids of the kinds of event raised since the last <c>events</c> (docs/axKit/workflow-graph.md WG-2.1), oldest first.</summary>
+    private readonly List<string> _events = [];
     private readonly object _gate = new();
     private readonly System.Diagnostics.Stopwatch _clock = System.Diagnostics.Stopwatch.StartNew();
     private readonly System.Windows.Forms.Timer _focusWatch = new() { Interval = 50 };
@@ -60,6 +67,14 @@ internal sealed class AutomationChannel : IMessageFilter
         _formForList = form;
         Announcer.Raised += (text, interrupt) => Record(new { kind = "say", text, interrupt });
         Sounds.Played += name => Record(new { kind = "sound", text = name, interrupt = false });
+        // The kinds of event raised, apart from the timeline, which the scripts' expectations read: the crawl's `events`.
+        EventDoor.Noted += kind =>
+        {
+            lock (_gate)
+            {
+                _events.Add(AxKit.Core.Events.EventPresenter.Id(kind));
+            }
+        };
         Application.AddMessageFilter(this);
         _focusWatch.Tick += (_, _) => WatchFocus();
         _focusWatch.Start();
@@ -86,7 +101,8 @@ internal sealed class AutomationChannel : IMessageFilter
         {
             _focused = handle;
             _value = value;
-            Record(new { kind = "focus", text = $"{control?.AccessibleName} ({control?.AccessibilityObject.Role}): {value}", interrupt = false });
+            // With the place it moved to and what is over it (docs/axKit/workflow-graph.md WG-1.2), which a trace writes.
+            Record(new { kind = "focus", text = $"{control?.AccessibleName} ({control?.AccessibilityObject.Role}): {value}", interrupt = false, at = $"{_form.PlaceNow()}|{_form.OverId()}" });
         }
         else if (value != _value)
         {
@@ -204,13 +220,22 @@ internal sealed class AutomationChannel : IMessageFilter
             "choose" => Choose(argument),
             "close" => Close(),
             "activate" => Activate(),
+            // The workflow graph's crawl (docs/axKit/workflow-graph.md WG-1, WG-2): the window's places, the focus put on
+            // one, and the kinds of event raised since the last ask.
+            "places" => _form.PlacesListing(),
+            "goto" => _form.GoToPlace(argument.Trim()) is { } refused ? (object)new { error = refused } : new { ok = true },
+            "events" => Events(),
+            // A key pressed without waiting for what it opens: a Windows dialog holds the thread in its own loop, which
+            // still answers the channel, so the crawl reads "dialog" and closes it; `keys` would wait for it to close.
+            "press" => Keys(argument, pump: false),
+            "dismiss" => Dismiss(),
             _ => new { error = $"unknown command {verb}" },
         };
         return JsonSerializer.Serialize(result, Plain);
     }
 
-    /// <summary>Key presses, separated by spaces: "ctrl+shift+p", "escape", "down down enter".</summary>
-    private object Keys(string text)
+    /// <summary>Key presses, separated by spaces: "ctrl+shift+p", "escape", "down down enter"; each handled before the answer unless <paramref name="pump"/> is false (the crawl's <c>press</c>).</summary>
+    private object Keys(string text, bool pump = true)
     {
         foreach (var press in text.Split(' ', StringSplitOptions.RemoveEmptyEntries))
         {
@@ -226,11 +251,38 @@ internal sealed class AutomationChannel : IMessageFilter
             _modifiers.Enqueue(modifiers);
             PostMessage(target, alt ? WM_SYSKEYDOWN : WM_KEYDOWN, (nint)key, marked);
             PostMessage(target, alt ? WM_SYSKEYUP : WM_KEYUP, (nint)key, marked | unchecked((nint)0xC0000000));
-            Application.DoEvents();
+            if (pump)
+            {
+                Application.DoEvents();
+            }
         }
 
         return new { ok = true };
     }
+
+    /// <summary>
+    /// The Windows dialog the window shows closed, as its Cancel closes it (the crawl's <c>dismiss</c>, after a key
+    /// opened one): the window that holds the thread's focus, when it is none of the app's own forms, is sent WM_CLOSE.
+    /// The thread's own focus, so that no other program's window is ever reached (<c>WindowReachTests</c>).
+    /// </summary>
+    private object Dismiss()
+    {
+        var dialog = GetAncestor(GetFocus(), GA_ROOT);
+        if (dialog == 0 || Control.FromHandle(dialog) is not null)
+        {
+            return new { error = "no Windows dialog has the focus" };
+        }
+
+        PostMessage(dialog, WM_CLOSE, 0, 0);
+        return new { ok = true };
+    }
+
+    private const int WM_CLOSE = 0x0010;
+
+    private const uint GA_ROOT = 2;
+
+    [DllImport("user32.dll")]
+    private static extern nint GetAncestor(nint window, uint flags);
 
     /// <summary>
     /// The modifiers of a posted key, set in the thread's keyboard state just as its key down is handled, and cleared
@@ -313,6 +365,16 @@ internal sealed class AutomationChannel : IMessageFilter
             var said = _said.ToArray();
             _said.Clear();
             return said;
+        }
+    }
+
+    private object Events()
+    {
+        lock (_gate)
+        {
+            var events = _events.ToArray();
+            _events.Clear();
+            return new { events };
         }
     }
 

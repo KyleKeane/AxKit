@@ -30,7 +30,7 @@ $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 # The page scripts, each of which writes its page, or with -Check says whether it is current. workflows.ps1 writes the
 # key map and the families page as well; their own scripts are kept in the list, since each also checks alone.
-$pages = 'outside-calls', 'workflows', 'repairs', 'apps-page', 'cases', 'key-map', 'families', 'owed', 'components', 'guide-menus'
+$pages = 'outside-calls', 'workflows', 'repairs', 'apps-page', 'cases', 'key-map', 'families', 'owed', 'components', 'map', 'guide-menus'
 
 if (-not $Check) {
     $failed = $false

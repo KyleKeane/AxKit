@@ -26,6 +26,13 @@ public sealed partial class TextEditorForm : AxKitForm
     private readonly ToolStripStatusLabel _fileLabel;
     private readonly ToolStripStatusLabel _positionLabel;
     private readonly ControlArea _area = new();
+
+    /// <summary>
+    /// The type's places (<see cref="EditorPlaces"/>, docs/axKit/workflow-graph.md WG-1.1): the text, and the details
+    /// list of a text shown read-only; Go to line and the options of a place, in the choice under the text, are over it.
+    /// </summary>
+    protected internal override IReadOnlyList<(Place Place, Control Control)> Places =>
+        _details is null ? [(EditorPlaces.Text, _editor)] : [(EditorPlaces.Text, _editor), (EditorPlaces.Details, _details)];
     private readonly ToolStripMenuItem _wordWrapItem;
     private readonly System.Windows.Forms.Timer _statusTimer = new() { Interval = 300 };
 

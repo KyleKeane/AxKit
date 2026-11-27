@@ -720,7 +720,10 @@ public abstract partial class AxKitForm : Form
         StartUpWork();
     }
 
-    /// <summary>What the automation channel reports for <c>state</c> (docs/axKit/automation.md): the title, the notice, the status bar's texts.</summary>
+    /// <summary>
+    /// What the automation channel reports for <c>state</c> (docs/axKit/automation.md): the title, the notice, the status
+    /// bar's texts, and the place the focus is in with what is over it (docs/axKit/workflow-graph.md WG-1.2, WG-1.3).
+    /// </summary>
     internal object AutomationState() => new
     {
         title = Text,
@@ -729,6 +732,10 @@ public abstract partial class AxKitForm : Form
         process = Environment.ProcessId,
         // Whether the window is on view: false for a window put away by its close (axClaude FR-9.6).
         visible = Visible,
+        // Between the fields no script expects side by side ("title","notice" and the status's end, "]}"), so that every
+        // expectation reads as it did.
+        place = PlaceNow(),
+        over = OverId(),
         status = StatusTexts(),
     };
 

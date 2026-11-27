@@ -34,6 +34,9 @@ public sealed class HelpForm : HotkeyForm
 
     private readonly string? _picture;
 
+    /// <summary>The kind's place, and the text of the window's own table (<see cref="AxHelpPlaces"/>, docs/axKit/workflow-graph.md WG-1.1).</summary>
+    protected override IReadOnlyList<(Place Place, Control Control)> Places => [.. base.Places, (AxHelpPlaces.Text, _text)];
+
     /// <summary>axHelp started with --hidden, as at sign-in (HE-2.7): the one start that may start the conversation hidden too.</summary>
     private readonly bool _startedHidden;
 

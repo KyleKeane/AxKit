@@ -570,6 +570,33 @@ public sealed class Run(string exe, string temp, bool hosted = false)
 
     private Window Current => _current ?? throw new InvalidOperationException("no window started yet");
 
+    // ---- for the workflow graph's crawl (GraphCrawl, docs/axKit/workflow-graph.md WG-2.2), which no script reaches ----
+
+    /// <summary>One request to the current window's channel, its answer as it came ("places", "events", "goto &lt;id&gt;").</summary>
+    public string Ask(string request) => Current.Send(request);
+
+    /// <summary>Every event of the current window's timeline no expectation has taken, now taken.</summary>
+    public List<Event> TakeEvents() => Current.TakeAll();
+
+    /// <summary>Whether the current window's process has ended.</summary>
+    public bool CurrentEnded => _current is null || _current.EndedByItself;
+
+    /// <summary>
+    /// The current window closed and, when it does not close within its time, ended, and left out of the run's end: so
+    /// that a window of an app of one window at a time (axStart, axMedia) can be started afresh.
+    /// </summary>
+    public void EndCurrent()
+    {
+        if (_current is not { } window)
+        {
+            return;
+        }
+
+        _windows.Remove(window);
+        _current = null;
+        window.Dispose();
+    }
+
     private (bool, string?) Expect(string rest, int timeoutMs)
     {
         var space = rest.IndexOf(' ');

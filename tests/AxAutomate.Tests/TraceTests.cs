@@ -103,6 +103,9 @@ public sealed class TraceTests
         // A focus on a field with no value ends in a space on the timeline; the trace leaves it out, so that an editor that trims lines changes nothing.
         Assert.Equal("  → Text to find (Text):", Traces.EventLine(1, 1, new Event(5, "focus", "Text to find (Text): ", false)));
 
+        // A focus move with its place and what is over it (docs/axKit/workflow-graph.md WG-1.2), after the trimmed text.
+        Assert.Equal("  → Text to find (Text):  @ axDown.text|question", Traces.EventLine(1, 1, new Event(5, "focus", "Text to find (Text): ", false, "axDown.text|question")));
+
         // An event is one line of the file: its line breaks are written \n.
         Assert.Equal("  First line\\nSecond line\\nThird", Traces.EventLine(1, 1, new Event(5, "say", "First line\r\nSecond line\nThird", false)));
     }

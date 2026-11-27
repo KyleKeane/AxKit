@@ -91,6 +91,12 @@ public static class EventDoor
     /// </summary>
     internal static bool Speak(Control control, string words, bool interrupt) => Announcer.Raise(control, words, interrupt);
 
+    /// <summary>
+    /// Each kind raised at the door, as it is raised: the automation channel alone listens, in a test run, so that the
+    /// inventory run's crawl knows the kind of event an action led to (docs/axKit/workflow-graph.md WG-2.1).
+    /// </summary>
+    internal static event Action<EventKind>? Noted;
+
     /// <summary>The kind last noted, and in which turn: the same kind again in the same turn (its sound and its words, a burst of lines in one batch) is the same event.</summary>
     private static EventKind _notedKind;
 
@@ -99,6 +105,8 @@ public static class EventDoor
     /// <summary>Notes the event in the log of events (<see cref="EventLogger"/>, which writes nothing while it is off), once for a kind in a turn.</summary>
     private static void Note(EventKind kind)
     {
+        // Every kind raised, before the log's own once-a-turn rule: the automation channel's events, for the graph's edges.
+        Noted?.Invoke(kind);
         if (_counting && _notedTurn == _turn && _notedKind == kind)
         {
             return;

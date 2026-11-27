@@ -34,6 +34,12 @@
 //                rewrite  as write, and an app every script of which passed, one snapshot of it without a notice,
 //                         keeps only the rows this run saw: how a command that left a window leaves the file
 //                off      nothing (a build that is not the repository's; tools\upstream.ps1 -Verify)
+//                Under write and rewrite the run also writes the workflow graph, docs/axKit/workflow-graph.json
+//                (docs/axKit/workflow-graph.md WG-2, GraphRun): after the first script of an app that passed and has a
+//                "check commands" after the app's start, the window is started afresh as that script starts it and
+//                crawled on the hidden desktop (every place, every command that acts there and is not marked act, the
+//                bundle's keys, each landing read from the channel); the crawled apps replace theirs in the file, the
+//                others are kept. Then tools\map.ps1 writes docs/axKit/map.md from it.
 //   --traces     the kept traces (docs/axKit/user-workflows.md WF-5, TraceRun): a trace is, for each section of a
 //                script, each input step as a line ("do Find = ctrl+f", "type apple") and under it what the windows
 //                said, without times, the run's folder written {temp}. A trace is kept in the repository only for a
@@ -294,6 +300,10 @@ internal static class Program
 
         scripts = InventoryRun.Playing(scripts, Console.WriteLine);
 
+        // The workflow graph (GraphRun, docs/axKit/workflow-graph.md WG-2): under write or rewrite each app's window is
+        // crawled after its first script that lists its commands, and the file written at the end.
+        GraphRun.Start(options.Inventory, options.Repository, root, exe);
+
         // The traces (TraceRun, WF-5.4 to WF-5.8): off on the NVDA tier and without a repository (Options.cs).
         TraceRun.Start(options.Traces, options.Repository, options.TraceReport);
 
@@ -404,6 +414,7 @@ internal static class Program
                 }
 
                 InventoryRun.After(result);
+                GraphRun.After(script, result, Console.WriteLine);
                 RecordRun.After(script, result);
                 goalResults.AddRange(goals);
                 anySections |= goals.Any(goal => goal.Goal.Named);
@@ -495,6 +506,12 @@ internal static class Program
         // WF-2.9, WF-2.10: the command inventory's lines after the summary, its file written under write or rewrite.
         var inventory = InventoryRun.End(Run.Stopped is not null);
         foreach (var line in inventory.Lines)
+        {
+            summary += "\n" + line;
+        }
+
+        // WG-2: the workflow graph's lines, its file written under write or rewrite.
+        foreach (var line in GraphRun.End(Run.Stopped is not null))
         {
             summary += "\n" + line;
         }
