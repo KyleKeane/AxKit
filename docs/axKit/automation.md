@@ -315,7 +315,8 @@ where an action landed on something over a place. Never pressed: a command marke
 own key, New window, the Context menu's keys (Windows' own popup menu holds the thread on the hidden desktop). A
 status bar that changed since the place was first reached (a mode left on, a line moved to) brings a fresh start
 before the next key. The crawled apps replace theirs in the file, the others are kept; `tools\map.ps1` then writes
-`docs/axKit/map.md`. An app whose scripts may keep no trace (the windows that read the computer or the user's session,
+`docs/axKit/map.md`, and `tools\graph-check.ps1` the bounds over it (`docs/axKit/over-the-bounds.md`, WG-3.4). An
+app whose scripts may keep no trace (the windows that read the computer or the user's session,
 a script that needs an outside program) is never crawled, nor axFile and axTemplate, whose keys reach outside the
 window; the run says so once for each.
   A runner built outside the repository (`nvda-pass.ps1` builds it into `%TEMP%`) finds none and checks nothing.

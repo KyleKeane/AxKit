@@ -135,6 +135,11 @@ writes it alone), and the pages it wrote are committed.
 - `tools/map.ps1` writes `map.md` from `workflow-graph.json` (`workflow-graph.md` WG-2.5): by app each waypoint and
   place, how it is reached and what can be done there. Run it after an inventory run with `--inventory write` has
   written the graph; `-Check` says whether the page is current.
+- `tools/graph-check.ps1` writes `over-the-bounds.md` and the baseline `goal-counts.json` (`workflow-graph.md` WG-3.3,
+  WG-3.4) through `AxAutomate --bounds`: every goal of `tests/scripts` counted, the waypoint bound over
+  `workflow-graph.json`. Without a switch a goal that grew keeps its old count in the baseline; `-Check` fails on a
+  stale page or baseline and names every goal longer than the baseline holds; `-Write` takes those in, only at the
+  maintainer's word. `tools/pages.ps1` runs it, and `test.ps1` its check.
 - `tools/cases.ps1` writes `cases.md` from `cases.json`, the table of how each unexpected situation is handled (SPEC
   AX-5.10). A change to how a situation is handled changes its row, then the script is run; the fields are described
   at the top of the script.

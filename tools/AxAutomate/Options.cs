@@ -230,6 +230,28 @@ internal sealed record RunOptions(string Target, string? Exe, bool Build, string
             : (repository, checkPages, string.Empty);
     }
 
+    /// <summary>The first word of the bounds' form: the page of the goals over the bounds and the goals' counts written, or checked (BoundsRun, docs/axKit/workflow-graph.md WG-3.4).</summary>
+    public const string BoundsOption = "--bounds";
+
+    /// <summary>
+    /// The bounds' form read: <c>AxAutomate --bounds [--check | --write] [--repository &lt;folder&gt;]</c>, read as the
+    /// reference's form is (<see cref="ReadReference"/>), with <c>--write</c> besides: the counts that grew taken into
+    /// the baseline. <c>--check</c> and <c>--write</c> together are refused.
+    /// </summary>
+    public static (string? Repository, bool Check, bool Write, string Refusal) ReadBounds(IReadOnlyList<string> args)
+    {
+        var write = args.Skip(1).Contains("--write");
+        var (repository, check, refused) = ReadReference([.. args.Where((arg, index) => index == 0 || arg != "--write")]);
+        if (repository is null)
+        {
+            return (null, false, false, refused.Replace(ReferenceOption, BoundsOption, StringComparison.Ordinal).Replace("--check and", "--check, --write and", StringComparison.Ordinal));
+        }
+
+        return check && write
+            ? (null, false, false, $"{BoundsOption} takes --check or --write, not both.")
+            : (repository, check, write, string.Empty);
+    }
+
     /// <summary>
     /// The folder above the program that holds <c>AxKit.sln</c>, or null when none does (6.4): a runner built into
     /// <c>%TEMP%</c>, as <c>nvda-pass.ps1</c> builds it, never reads or writes the files of whatever folder it was

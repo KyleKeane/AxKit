@@ -26,7 +26,8 @@ public sealed record GraphApp(string App, string Type, string Start);
 /// <summary>
 /// The graph file (WG-2, the page's section 5): the apps it covers, the controls a crawl found on view that take the
 /// focus and are no place (each "app: name (role)"; the places test fails while one is listed, WG-1.1), the nodes, and
-/// the goals, which step 3 of the page fills.
+/// the goals, written empty: the goals' counts are docs/axKit/goal-counts.json (GoalCounts, WG-3.3), and a goal
+/// gets its node here with the walks of step 4.
 /// </summary>
 public sealed record WorkflowGraphFile(IReadOnlyList<GraphApp> Apps, IReadOnlyList<string> Unplaced, IReadOnlyList<GraphNode> Nodes);
 
@@ -101,7 +102,7 @@ public static class WorkflowGraph
     /// <summary>
     /// The file in the one order (WG-2.4): the apps by name, the unplaced controls in order, the node <c>outside</c>
     /// first and then the nodes by app and by id, a node's edges by chord; one edge a line, two spaces of indentation,
-    /// line feeds, ending with one. The goals are step 3's and are written empty until then.
+    /// line feeds, ending with one. The goals are written empty (the counts are GoalCounts', WG-3.4).
     /// </summary>
     public static string Write(WorkflowGraphFile graph)
     {

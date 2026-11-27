@@ -1507,8 +1507,8 @@ nothing, and exits with 1 naming the first page that differs or is missing or is
 byte order mark; `--check` compares with line ends aside.
 
 Each feature's code is a file of its own beside `Program.cs` (`RunLock.cs`, `Options.cs`, `InventoryRun.cs`,
-`TraceRun.cs`, `RecordRun.cs`, `ReferenceRun.cs`, `ConvertRun.cs`), static classes that `Main` calls after each
-script and at the run's end, so that `Main` stays a list of calls.
+`TraceRun.cs`, `RecordRun.cs`, `ReferenceRun.cs`, `ConvertRun.cs`; `GraphRun.cs` and `BoundsRun.cs` for the workflow
+graph), static classes that `Main` calls after each script and at the run's end, so that `Main` stays a list of calls.
 
 `RunLock.cs` (WP-B0): one window run at a time on a computer (WF-D-29). `public static Mutex? Take(TimeSpan limit,
 Action<string> say)` waits for the named system mutex `AxKit.AxAutomate.WindowRun`. When it does not get it at once

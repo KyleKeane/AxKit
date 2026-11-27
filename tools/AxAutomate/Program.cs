@@ -8,7 +8,8 @@
 //              [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record]
 //              [--convert] [--ai-tools] [--live]
 //   AxAutomate --reference [--check] [--repository <folder>]
-//   --build      builds src\AxKit in Release into the run's own folder first (the running app's bin is never touched)
+//   AxAutomate --bounds [--check | --write] [--repository <folder>]
+//   --build     builds src\AxKit in Release into the run's own folder first (the running app's bin is never touched)
 //   --exe        the AxKit.exe to drive; there is no default: a run names its program or builds it
 //   --report     writes every script's steps and its whole timeline, with times, to a Markdown file; with --traces
 //                check or write given by name, also every script's trace under its steps, section by section, the
@@ -65,7 +66,13 @@
 //                docs/axKit/workflows no group makes any more is deleted. tools\workflows.ps1 runs it.
 //     --check    writes and deletes nothing, compares line ends aside: exit 0 when every page is current, 1 naming each
 //                page that is not (missing, different, left over). A script without its label: exit 1, named.
-//   --record     the workflow record (RecordRun, WF-6): after the last script every section the run played is entered
+//   --bounds     plays nothing either: the bounds (docs/axKit/workflow-graph.md WG-3, BoundsRun): every goal of
+//                tests\scripts counted (WG-3.3) and the waypoint bound over docs/axKit/workflow-graph.json, written
+//                into docs/axKit/over-the-bounds.md and the baseline docs/axKit/goal-counts.json; a count that grew,
+//                and a new goal over four, keep out of the baseline. tools\graph-check.ps1 runs it.
+//     --write    takes those counts into the baseline too (the maintainer's word, WG-3.4).
+//     --check    writes nothing: exit 0 when the page and the baseline are current and no goal grew, 1 naming each.
+//   --record    the workflow record (RecordRun, WF-6): after the last script every section the run played is entered
 //                into the repository's docs/axKit/workflow-record.json for the run's tier (desktop, nvda under
 //                --nvda, ai-tools under --ai-tools) with its result, the version, the commit and the date; one line
 //                says how many.
@@ -222,6 +229,20 @@ internal static class Program
             }
 
             return ReferenceRun.Run(repository, checkPages, Console.WriteLine);
+        }
+
+        // The bounds (BoundsRun.cs, docs/axKit/workflow-graph.md WG-3.4): the goals' counts and the waypoint bound,
+        // from the scripts and the graph file; plays nothing either.
+        if (args[0] == RunOptions.BoundsOption)
+        {
+            var (repository, check, write, refused) = RunOptions.ReadBounds(args);
+            if (repository is null)
+            {
+                Console.Error.WriteLine($"{refused} {Usage}");
+                return CannotStart;
+            }
+
+            return BoundsRun.Run(repository, check, write, Console.WriteLine);
         }
 
         // Every option read once (Options.cs, docs/axKit/user-workflows.md section 6.4).
@@ -551,7 +572,7 @@ internal static class Program
         return Run.Stopped is not null ? CannotStart : failed.Count > 0 ? ScriptsFailed : inventory.Stale ? InventoryStale : 0;
     }
 
-    private const string Usage = "Usage: AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda] [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record] [--convert] [--ai-tools] [--live], or AxAutomate --reference [--check] [--repository <folder>]. See docs/axKit/automation.md.";
+    private const string Usage = "Usage: AxAutomate <script or folder> (--exe <AxKit.exe> | --build) [--report <file.md>] [--keep] [--nvda] [--repository <folder>] [--inventory check|write|rewrite|off] [--traces check|write|off] [--record] [--convert] [--ai-tools] [--live], AxAutomate --reference [--check] [--repository <folder>], or AxAutomate --bounds [--check | --write] [--repository <folder>]. See docs/axKit/automation.md.";
 
     /// <summary>
     /// The exit codes (docs/axKit/user-workflows.md WF-11.5): 0 every script passed and nothing is stale, 1 a script

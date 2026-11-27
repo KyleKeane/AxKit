@@ -851,9 +851,10 @@ public static class Reference
     /// <summary>
     /// Keys as a keyboard names them (WF-7.3): "ctrl+shift+p pagedown" is "Ctrl+Shift+P, Page Down", "nvda+a" is
     /// "NVDA+A". Each key's name with a capital, and the few that are two words or an abbreviation by name. A row's
-    /// own key text, which is what its menu shows, never passes through here.
+    /// own key text, which is what its menu shows, never passes through here. The goals' counts word their steps with
+    /// it too (<see cref="GoalCounts"/>).
     /// </summary>
-    private static string Keys(string keys) =>
+    internal static string Keys(string keys) =>
         string.Join(", ", keys.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(chord => string.Join("+", chord.Split('+').Select(KeyWord))));
 
     private static string KeyWord(string key) => key.ToLowerInvariant() switch

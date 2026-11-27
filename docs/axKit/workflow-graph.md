@@ -1,7 +1,8 @@
 # The workflow graph
 
 A proposal of 2026-11-26, its decisions settled by the maintainer the same day (section 9); its step 2, the places
-and the graph written, is built (2026-11-26, section 6; what building it decided is section 10). It answers his ask of
+and the graph written, is built (2026-11-26, section 6; what building it decided is section 10), and so is its step 3,
+the bounds checked (2026-11-26, WG-3.3, WG-3.4; section 11). It answers his ask of
 2026-11-26: waypoints, any app's right place in two actions from anywhere, any goal in two actions from its
 waypoint, consent gathered into one form, the user's actions as the edges of a graph, the workflows as walks through
 it, and a system that holds every change of the code against the graph and the NVDA passes, so that the user's
@@ -128,12 +129,44 @@ Non-goals:
   two.
 - WG-3.3 **What a goal's count holds**: only the actions the user takes for the goal. The steps a script takes to make
   an example (typing a file's text, making a folder) and those that only look are not counted: a goal line marks its
-  first counted step and its last, or the counted steps are the ones after the goal reaches its waypoint. Today's
-  pages count every step and show 291 of 789 goals over four; most of the extra are the examples.
+  first counted step and its last, or the counted steps are the ones after the goal reaches its waypoint.
+  Built 2026-11-26 (`AxAutomate.Core/GoalCounts`), with a rule in place of marks, from the script's own steps:
+  - **What is counted**: every `# Goal:` section of every script of `tests/scripts` (a script without a goal line is
+    one goal, WF-3.3); never a `# Check:` section, the setup or `tests/nvda-scripts`.
+  - **One action each**: a press of a `keys` step (`keys ctrl+s f2` is two), a `type`, a `close` (Alt+F4), a
+    `template`; a `do` or a `menu` when its command has a key in the command inventory (a chord, or a key text such
+    as "K in the conversation"), and two when it has none: the palette, F1 and then the name typed with its Enter
+    (section 10, point 8). A `do` whose name the inventory lacks is one, the key the step presses.
+  - **Free**: `start` and `launch` (the app's own key, WG-3.1), `adopt` and `use` (a window coming up, or the app's
+    key back to it), `mcp call` (Claude's action, not the user's).
+  - **Not counted**: the steps that prepare or look (`file`, `mkdir`, `run`, `wait`, `silence`, `expect`, `refuse`,
+    `try`, `check`, `allow`, the reads), and a step after `iffound`, which answers what may come and is no part of
+    the way.
+  - **Joined into one**: a typed text and the Enter right after it (a typed name with its Enter, G7); a run of moves
+    inside a place, one after another (the arrows, Home, End, Page Up and Page Down, with Ctrl or Shift or neither,
+    not Alt), with the Enter right after it: the choice in a list, or the place in a text.
+  - **The example**: a goal whose first action is a `type`, and in which a command comes after the typing (a `do`, a
+    `menu`, or a chord with Ctrl, Alt or a function key), types the example's text first: those first steps, the
+    typing and the typing keys between (Enter, Tab, Space, Backspace, Delete, a letter or a digit), are not counted,
+    and the page names them after the goal's steps ("Not counted, the example: ..."). Typing with no command after it
+    is the goal itself (axCalc's `type 2+2`, `keys enter` is one action). The rule does not see an example typed in the
+    middle of a goal (axClaude's five lines typed to move through by page): those are counted, and the page shows
+    them in the goal's steps.
 - WG-3.4 **The check** (`tools/graph-check.ps1`, in `test.ps1`, without a window): the shortest paths over the
   committed file, the bounds checked for every node and every goal, and every goal over them named with its count
   and its path. Until the shortenings are made (section 6, step 6), the list is a page, `docs/axKit/over-the-bounds.md`,
   and the check fails only on a goal that was within them and is no longer: the map may get shorter, never longer.
+  Built 2026-11-26: `AxAutomate --bounds` (`tools/AxAutomate/BoundsRun.cs`, the counts of WG-3.3 and
+  `AxAutomate.Core/GraphBounds`, a breadth-first search over the window's own nodes, an edge one action; an edge that
+  leaves the window is not followed) writes the page (by app: the goals over four with their count and their steps,
+  the most first, those at four, the nodes over the waypoint bound; the totals at the top) and the baseline
+  `docs/axKit/goal-counts.json` (each goal's workflow, title, script and count). `tools/graph-check.ps1` runs it and
+  `tools/pages.ps1` runs the script with the other pages, `-Check` with theirs. Written without a switch, the baseline
+  keeps a count that grew at the count it had, and leaves out a new goal over four; `-Check` fails while the page or
+  the baseline is not what a write gives, and names each goal longer than the baseline holds: one within four that is
+  over now, one whose count grew, a new one over four. `-Write` takes them in, at the maintainer's word, and the
+  commit shows the change. A goal is known by its workflow's label and its title, as the workflow record knows it, so
+  a renamed goal over four is a new one.
 - WG-3.5 **A consent form is one node and one action** (the maintainer's ask): several questions that come together
   (axClaude's permissions at a start, AX-11.5's reminders) are one form with a check box per question, each box
   starting at the answer most users give; Enter takes them all. The form is one action whatever is changed on it
@@ -210,8 +243,9 @@ As built (2026-11-26): `apps` names the apps the file covers, each with its kind
 `unplaced` the controls on view that take the focus and have no place ("axHelp: Name (Role)"), which `PlacesTests`
 fails on; `kind` is the id of the first kind of event (`EventKind`, as `families.json` writes it) the action raised,
 empty for none; `said` the window's announcements, joined, cut at 200 characters; `free` marks `outside`'s edges, the
-apps' own keys, which no bound counts; an edge of no command has no `command`. The goals are written empty until
-step 3. One edge a line, the nodes and edges in the order of WG-2.4, `outside` first.
+apps' own keys, which no bound counts; an edge of no command has no `command`. The goals are written empty: their
+counts are `docs/axKit/goal-counts.json` (WG-3.4), which changes with the scripts, and a goal gets its waypoint here
+with the walks of step 4. One edge a line, the nodes and edges in the order of WG-2.4, `outside` first.
 
 The record of edges (WG-4.3) stays in `workflow-record.json` with the goals', never in this file, so that a run
 changes one file and the graph changes only with the windows.
@@ -229,6 +263,9 @@ changes one file and the graph changes only with the windows.
    modes of section 10, point 9.
 3. **The bounds checked**: `graph-check.ps1` and the page of goals over the bounds, with each goal's own count
    (WG-3.3). The item "every goal in three steps" becomes this page.
+   **Built 2026-11-26** (WG-3.3, WG-3.4, section 11): the first write counted 805 goals of `tests/scripts`, 242 over
+   four actions and 116 at four, and found no node of the seven apps on the map more than two actions from a
+   waypoint. The apps not on the map have their goals counted and no waypoint checked until step 4.
 4. **The scripts as walks**: the landing of every step read and checked; the record by edge; owed hearings by edge.
 5. **The gate**: the comparison at every run, the `Map change:` line in the hook.
 6. **The shortenings, one app per sitting**: the maintainer decides each goal over the bounds from the page, the
@@ -318,3 +355,20 @@ The assistant's, each for the maintainer to turn back:
     which does not wait for what a key opens (Open, Save as and the font picker hold the window's thread in a loop of
     their own, and a `keys` request waited 30 seconds for each in the first crawl of axDown), and closes the dialog
     with `dismiss`, as its Cancel does; the edge back is written as the user's Escape.
+
+## 11. Decided while building step 3 (2026-11-26)
+
+The assistant's, each for the maintainer to turn back:
+
+1. **A rule in place of marks** (WG-3.3): the spec let a goal line mark its first and last counted step; a rule read
+   off the steps needs no change to 800 goals and says the same thing for each, so the example is told apart by
+   where it stands (typing first, a command after it), and what the rule misses is on the page to see.
+2. **A command without a key is two actions**, the palette's way (F1, then the name typed with its Enter), as section
+   10, point 8 counts it; with a key, one, whatever way the script chooses it.
+3. **A run of moves is one action**, as the non-goals of section 3 keep moving inside a place off the map: the lines
+   of a text and the rows of a list are where the user already is, and G7's "one choice in a list" is that run with
+   its Enter.
+4. **A new goal over four is held as a grown one is**: the map may get shorter, never longer (decision 5), and a goal
+   written today over the bounds is a longer way; `-Write` takes it in at the maintainer's word.
+5. **The waypoint bound stays inside the window**: an edge to another app or to `outside` is not followed, since the
+   app's free key back would make every place one action from anywhere.
