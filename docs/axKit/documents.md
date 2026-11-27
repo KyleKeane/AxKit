@@ -124,6 +124,9 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 - `shortenings.md` (by hand, 2026-11-26, a working page): for the goals still over four actions or at four after the
   scripts were re-marked, one app a section, each goal's count and steps and the assistant's proposal to bring it to
   three or four, for the maintainer's sittings; deleted once each app's sitting has decided.
+- `for-your-return.md` (by hand, from 2026-11-27, a working page): the record of the three days the assistant worked
+  alone at the maintainer's word: where things stand, what he decided before leaving, what the assistant decided for
+  him to turn back, what is owed his ear and what only he can do; deleted once it has been gone through together.
 - `goal-counts.json` (written by `tools/graph-check.ps1`, never by hand; WG-3.3, WG-3.4): the baseline, each goal's
   workflow, title, script and count of actions. The check holds the scripts to it: a goal may get shorter, never
   longer; `tools/graph-check.ps1 -Write` takes a longer one in, at the maintainer's word. `GoalCountsTests` holds the

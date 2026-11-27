@@ -148,6 +148,7 @@ public sealed class AiDocumentationTests
             ["docs/axKit/map.md"] = "the map of the windows written from the graph, for some apps yet; AI help answers from the graph at its step 7 (workflow-graph.md WG-6.3)",
             ["docs/axKit/over-the-bounds.md"] = "the goals over the bounds of G7, the maintainer's list for the shortenings (workflow-graph.md WG-3.4)",
             ["docs/axKit/shortenings.md"] = "proposals for the maintainer to settle, app by app",
+            ["docs/axKit/for-your-return.md"] = "the assistant's record for the maintainer's return, a working page",
             ["docs/axKit/events.md"] = "a proposal for the events",
             ["docs/axKit/framework.md"] = "a proposal for the window types and components, for developers",
             ["docs/axKit/earcons.md"] = "the design of the sounds; families.md says what each means",
