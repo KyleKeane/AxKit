@@ -50,7 +50,7 @@ public static partial class Redaction
     }
 
     // The subscription tier Claude Code's header line names after the model ("· Claude Max").
-    [GeneratedRegex(@"(?<=Claude )(Max|Pro|Team|Enterprise)\b")]
+    [GeneratedRegex(@"(?<=Claude )(Max|Pro|Team|Enterprise|Ultra)\b")]
     private static partial Regex TierRegex();
 
     // When a usage limit resets, after Claude Code's row "You've used 76% of your weekly limit · resets 11pm

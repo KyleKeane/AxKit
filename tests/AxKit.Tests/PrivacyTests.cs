@@ -35,6 +35,8 @@ public partial class PrivacyTests
         Assert.Equal(
             "\x1b[3;5Hclaude --resume 00000000-0000-0000-0000-000000000000 · Opus 5.5 · Claude xxx\x1b[0m",
             System.Text.Encoding.UTF8.GetString(masked));
+        // The tier of 2.1.3xx's header (2026-11-26), masked as the others.
+        Assert.Equal("Haiku 5.5 · Claude xxxxx", System.Text.Encoding.UTF8.GetString(Redaction.MaskRecording(System.Text.Encoding.UTF8.GetBytes("Haiku 5.5 · Claude Ultra"))));
     }
 
     [Fact]

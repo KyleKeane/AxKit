@@ -72,7 +72,7 @@ No longer owed: the script each names passed with NVDA listening (`docs/axKit/wo
 
 - R-53: axGIT's refusal of trusted repositories in a settings file whose seal does not check. Heard: `tests/scripts/axGIT/07-own-programs.txt` passed with NVDA at 27581744.
 - R-53: axFile's refusal of programs of Open with in a settings file whose seal does not check. Heard: `tests/scripts/axFile/10-settings-changed-outside.txt` passed with NVDA at 27581744.
-- R-53: axClaude's refusal of claudePath in a settings file whose seal does not check. Heard: `tests/scripts/axClaude/33-settings-changed-outside.txt` passed with NVDA at 27581744.
+- R-53: axClaude's refusal of claudePath in a settings file whose seal does not check. Heard: `tests/scripts/axClaude/33-settings-changed-outside.txt` passed with NVDA at b0a52d43+.
 - R-63: the notice of an item window when the settings cannot be saved. Heard: `tests/scripts/axTask/11-settings-not-saved.txt` passed with NVDA at 27581744.
 - R-63: the system line of a console window when the settings cannot be saved. Heard: `tests/scripts/axTerminal/12-settings-not-saved.txt` passed with NVDA at 27581744.
 - R-64: the sentence that a remembered path is on the network and was not opened. Heard: `tests/scripts/axFile/10-settings-changed-outside.txt` passed with NVDA at 27581744.
