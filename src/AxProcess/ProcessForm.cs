@@ -251,25 +251,27 @@ public sealed class ProcessForm : ItemForm
 
     /// <summary>
     /// Delete, the navigator's key, by the kind of row (PR-6.2): a process is ended, a startup program removed,
-    /// each after a question, and with rows selected all of them after one question; a service is not ended, and
-    /// a list of the top level is no thing to end.
+    /// each after a question; a service is not ended, and a list of the top level is no thing to end. What it acts
+    /// on is the item window's answer (<see cref="ItemForm.RowsInHand"/>, bundle AX-8.16): the selected rows
+    /// whenever any is selected, one alone too and wherever the row you are on is, all of them after one question;
+    /// the row you are on when none is. (Until 2026-11-27 one selected row was passed over for the row you are on.)
     /// </summary>
     protected override void DeleteRow(ItemRow row)
     {
-        var selected = SelectedRows();
-        switch (row.Tag)
+        var rows = RowsInHand();
+        switch (rows.Count == 0 ? null : rows[0].Tag)
         {
-            case ProcessRow when selected.Count > 1:
-                EndProcesses([.. selected.Select(one => one.Tag).OfType<ProcessRow>()]);
+            case ProcessRow one when rows.Count == 1:
+                EndProcess(one, tree: false);
                 return;
             case ProcessRow:
-                EndProcess(tree: false);
+                EndProcesses([.. rows.Select(each => each.Tag).OfType<ProcessRow>()]);
                 return;
-            case StartupEntry when selected.Count > 1:
-                RemoveStartups([.. selected.Select(one => one.Tag).OfType<StartupEntry>()]);
+            case StartupEntry one when rows.Count == 1:
+                ChangeStartup(one, StartupAction.Remove);
                 return;
             case StartupEntry:
-                ChangeSelectedStartup(StartupAction.Remove);
+                RemoveStartups([.. rows.Select(each => each.Tag).OfType<StartupEntry>()]);
                 return;
             case ServiceRow:
                 Announce("A service is not ended: Enter shows it, with Stop where it can be stopped", true);
@@ -493,7 +495,7 @@ public sealed class ProcessForm : ItemForm
                 ShowNotice(new Notice(row.Name, string.Join("\n", lines),
                 [
                     new OverlayChoice("&End process...", () => EndProcess(row, tree: false)),
-                    new OverlayChoice("Show program in ax&File", ShowProgram),
+                    new OverlayChoice("Show program in ax&File", () => ShowProgramOf(row)),
                     new OverlayChoice("&Close", IsDefault: true, IsCancel: true),
                 ]));
                 return;
@@ -507,7 +509,7 @@ public sealed class ProcessForm : ItemForm
                         ? new OverlayChoice("Turn &off", () => ChangeStartup(entry, StartupAction.TurnOff))
                         : new OverlayChoice("Turn o&n", () => ChangeStartup(entry, StartupAction.TurnOn)),
                     new OverlayChoice("&Remove...", () => ChangeStartup(entry, StartupAction.Remove)),
-                    new OverlayChoice("Show program in ax&File", ShowProgram),
+                    new OverlayChoice("Show program in ax&File", () => ShowProgramOf(entry)),
                     new OverlayChoice("&Close", IsDefault: true, IsCancel: true),
                 ]));
                 return;
@@ -535,6 +537,13 @@ public sealed class ProcessForm : ItemForm
         if (row.Id == Environment.ProcessId)
         {
             Announce("That is this window: close it with Alt+F4", true);
+            return;
+        }
+
+        // PR-3.3: a tree that holds this window is not ended, and that is said in place of the question.
+        if (tree && ProcessEnd.StartedBy(Environment.ProcessId, row.Id, SystemInfo.ParentOf))
+        {
+            Announce(ProcessEnd.HoldsThisWindow(row.Name), true);
             return;
         }
 
@@ -583,7 +592,23 @@ public sealed class ProcessForm : ItemForm
                 return (false, $"{row.Name} has already ended");
             }
 
-            process.Kill(entireProcessTree: tree);
+            try
+            {
+                process.Kill(entireProcessTree: tree);
+            }
+            catch (InvalidOperationException) when (tree)
+            {
+                // Windows' end of a tree refuses one that holds the process asking (it came to hold it since the
+                // question): nothing was ended. Until 2026-11-27 this read "has already ended".
+                return (false, ProcessEnd.HoldsThisWindow(row.Name));
+            }
+            catch (AggregateException ex)
+            {
+                // Some of the tree could not be ended (a process of another user's, a protected one).
+                Log.Info($"Ended {row.Name} ({row.Id}) with its tree, but for {ex.InnerExceptions.Count}");
+                return (false, ProcessEnd.NotAllEnded(row.Name, [.. ex.InnerExceptions.Select(inner => inner.Message)]));
+            }
+
             process.WaitForExit(5000);
             Log.Info($"Ended {row.Name} ({row.Id}){(tree ? " with its tree" : string.Empty)}");
             return (true, $"Ended {row.Name}");
@@ -606,12 +631,19 @@ public sealed class ProcessForm : ItemForm
         }
     }
 
-    /// <summary>Ctrl+E (PR-3.5, PR-5.3): the program file in axFile, selected in its folder.</summary>
-    private void ShowProgram()
+    /// <summary>Ctrl+E (PR-3.5, PR-5.3): the program file of the row you are on in axFile, selected in its folder.</summary>
+    private void ShowProgram() => ShowProgramOf(SelectedRow()?.Tag);
+
+    /// <summary>
+    /// The program file of a process or a startup program in axFile. A details notice gives the row its details
+    /// are of (until 2026-11-27 its button asked for the row under the arrow keys again, which a refresh or a key
+    /// pressed while the details were read could have moved).
+    /// </summary>
+    private void ShowProgramOf(object? of)
     {
         string? path;
         string name;
-        switch (SelectedRow()?.Tag)
+        switch (of)
         {
             case ProcessRow row:
                 path = SystemInfo.ProgramPath(row.Id);

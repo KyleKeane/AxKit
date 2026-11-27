@@ -289,7 +289,7 @@ public sealed class BrowserForm : ItemForm
     /// </summary>
     protected override void DeleteRow(ItemRow row)
     {
-        var rows = SelectedRows() is { Count: > 0 } selected ? selected : [row];
+        var rows = RowsInHand();
         var files = rows.Select(one => one.Tag).OfType<TemplateFile>().ToList();
         if (files.FirstOrDefault(file => file.Text is null) is { } unread)
         {

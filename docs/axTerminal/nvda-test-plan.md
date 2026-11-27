@@ -66,6 +66,8 @@ In a folder with a short `notes.txt` (the runner's script is `tests/scripts/axTe
 - Ctrl+Q: edit's dialog; its button in focus, "[Save]", said once; N: edit ends, the field comes back, "Command, edit", then "Done". Alt+2: the terminal as it was before edit, with `# Input` of `edit notes.txt` and nothing of edit's screen.
 - A notice over the screen: Ctrl+Space, F1, Escape: the screen again, "Reading the screen" still in the status bar; Ctrl+Space: "Keys to edit".
 - A program that ends on the whole screen: in the field, `[Console]::Write([char]27 + '[?1049h')`, Enter: the screen view opens for the switch and gives way at the prompt, the focus back in the field with "Done"; `echo after`, Enter: "Done. after".
+- In reading the screen (2026-11-27): Alt+Down, Recent commands, and Actions, Send without recording, each say "Screen of edit. The terminal and the command field come back when edit leaves the whole screen" and the focus stays in the screen. Shift+Right a few times on a row of a program that redraws by itself: the selection is still there after the redraw, and NVDA reads what Shift+Right adds.
+- A handed command and another shell (`tests/scripts/axTerminal/15-handed-command-other-shell.txt`, 2026-11-27): started with `--command findstr /c:x "C:\work\Fix it.json"`, the field holds the line in single quotes; Session, Switch shell, Command Prompt: "Written again for Command Prompt. A command is in the command field, not sent. …", and the field, still under its warning, holds the line in double quotes.
 
 ## The menu bar and Context (bundle AX-9.1, AX-9.11, 2026-11-11)
 

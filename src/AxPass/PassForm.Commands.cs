@@ -11,8 +11,19 @@ namespace AxPass;
 /// </summary>
 public sealed partial class PassForm
 {
-    /// <summary>One run of the tool: the command, its options, the paths after the database.</summary>
-    private sealed record Call(string Command, string[] Options, string[] Rest);
+    /// <summary>
+    /// One run of the tool that takes a change back: the command, its options, the paths after the database.
+    /// <see cref="Sole"/>: the first path is an entry in the Recycle Bin, reached by its name, and the run is made
+    /// only while a listing read just before shows one entry of that path and no more (PW-6.4: the tool takes the
+    /// first of two, the older one). <see cref="Purge"/>: the run removes what the step made, and where that lands
+    /// in the Recycle Bin as the one of its name it is deleted there too, so that undoing a new entry leaves none.
+    /// </summary>
+    private sealed record Call(string Command, string[] Options, string[] Rest)
+    {
+        public bool Sole { get; init; }
+
+        public bool Purge { get; init; }
+    }
 
     /// <summary>
     /// A change Ctrl+Z can take back: its words, the runs that undo it, and the row to select after; or, with
@@ -115,7 +126,7 @@ public sealed partial class PassForm
     /// back. A group cannot (only KeePassXC brings a group back, so it goes one at a time, after its question), and
     /// nothing in the Recycle Bin can (there Delete is for good, one at a time, after its question).
     /// </summary>
-    protected override bool CanSelectRow(ItemRow row) => row.Tag is PassNode { IsGroup: false } node && !PassTree.InRecycleBin(node.Path);
+    protected override bool CanSelectRow(ItemRow row) => row.Tag is PassNode { IsGroup: false } node && !PassBin.Holds(Bin, node.Path);
 
     protected override string RowNoun => "entry";
 
@@ -126,112 +137,132 @@ public sealed partial class PassForm
     protected override string LevelIdentity() => $"{_database}\n{_group}\n{(_password is null ? "locked" : "unlocked")}";
 
     /// <summary>
-    /// Delete with several entries selected (PW-6.4a): each moved to the Recycle Bin by the tool, one run an entry,
-    /// in the list's order; one sentence, "Moved 3 entries to the Recycle Bin; Ctrl+Z brings them back", and one
-    /// step for Ctrl+Z with the way back of each. Two selected entries of one name are refused before anything is
-    /// moved, since in the Recycle Bin their names are all the way back has to tell them apart. A run the tool
-    /// refuses stops the rest, and what was moved until then is said and can be undone.
+    /// The removal itself, of one entry or group or of several entries (PW-6.4, PW-6.4a; the review of 2026-11-27):
+    /// one run of the tool for each, in the list's order, a run the tool refuses stopping the rest; then the
+    /// database is listed again, and what became of each is read from the two listings (<see cref="PassBin.Outcome"/>),
+    /// never taken from what was expected: moved, and to which group, or deleted for good. What is said is that
+    /// (<see cref="PassBin.Said"/>), and Ctrl+Z gets the way back of the entries that are the one of their name in
+    /// the Recycle Bin, and of no other. The group an entry arrived in is the Recycle Bin from then on.
+    /// <paramref name="inBin"/>: what is removed was in the Recycle Bin, so that for good is what was asked for.
     /// </summary>
-    private void RecycleEntries(IReadOnlyList<PassNode> entries)
+    private async Task RemoveAsync(IReadOnlyList<PassNode> nodes, bool inBin)
     {
-        if (entries.GroupBy(entry => entry.Name, StringComparer.OrdinalIgnoreCase).FirstOrDefault(same => same.Count() > 1) is { } twice)
+        if (_tree is not { } before)
         {
-            Announce($"Two of the selected entries are called {twice.Key}: move those to the Recycle Bin one at a time, so that {BundleKeys.Text(ItemKeys.Undo)} can tell them apart", true);
             return;
         }
 
-        Do(async () =>
+        var select = KeyAfter([.. nodes.Select(node => node.IsGroup ? GroupKey(node.Path) : node.Path)]);
+        var removed = new List<PassNode>();
+        foreach (var node in nodes)
         {
-            var select = KeyAfter([.. entries.Select(entry => entry.Path)]);
-            var moved = new List<PassNode>();
-            foreach (var entry in entries)
+            if (await Cli(node.IsGroup ? KeePassCliTexts.RemoveGroup : KeePassCliTexts.Remove, null, [node.Path]) is null)
             {
-                if (await Cli(KeePassCliTexts.Remove, null, [entry.Path]) is null)
-                {
-                    break;
-                }
-
-                _entries.Remove(entry.Path);
-                moved.Add(entry);
+                break;
             }
 
-            if (moved.Count == 0)
-            {
-                return;
-            }
+            _entries.Remove(node.Path);
+            removed.Add(node);
+        }
 
-            var count = moved.Count == 1 ? "1 entry" : $"{moved.Count} entries";
-            Remember(new Step($"Moved {count} to the Recycle Bin",
-                [.. moved.Select(entry => new Call(KeePassCliTexts.Move, [], [PassTree.Join(PassTree.RecycleBin, entry.Name), entry.Group.Length == 0 ? KeePassCliTexts.Root : entry.Group]))],
-                moved[0].Path));
-            Selection.Clear();
-            await ReloadAsync(select);
-            Announce(moved.Count == entries.Count
-                ? $"Moved {count} to the Recycle Bin; {BundleKeys.Text(ItemKeys.Undo)} brings them back"
-                : $"Moved {moved.Count} of {entries.Count} entries to the Recycle Bin; {BundleKeys.Text(ItemKeys.Undo)} brings them back", true);
-        });
+        if (removed.Count == 0 || await Cli(KeePassCliTexts.List, KeePassCliTexts.ListOptions) is not { } listed)
+        {
+            return;
+        }
+
+        var after = PassTree.Parse(listed.Output);
+        var done = PassBin.Outcome(before, after, removed);
+        _binSeen = done.FirstOrDefault(one => one.To is not null)?.To ?? _binSeen;
+        var entries = done.Where(one => one.To is not null && !one.Node.IsGroup).ToList();
+        var back = entries.Where(one => one.Sole).ToList();
+        if (back.Count > 0)
+        {
+            Remember(new Step(PassBin.StepSaid(back),
+                [.. back.Select(one => new Call(KeePassCliTexts.Move, [], [PassTree.Join(one.To!, one.Node.Name), one.Node.Group.Length == 0 ? KeePassCliTexts.Root : one.Node.Group]) { Sole = true })],
+                back[0].Node.Path));
+        }
+        else if (entries.Count > 0)
+        {
+            // Moved, and not to be moved back by its name: Ctrl+Z says why, once, and passes over it.
+            Remember(new Step(PassBin.StepSaid(entries), [], null, PassBin.NotSole(entries[0].Node.Name)));
+        }
+
+        Selection.Clear();
+        _tree = after;
+        Fill(select);
+        Announce(PassBin.Said(done, nodes.Count, inBin, BundleKeys.Text(ItemKeys.Undo)), true);
     }
 
     /// <summary>
-    /// Delete (PW-6.4): an entry to the Recycle Bin, back with Ctrl+Z; a group after a question, since only KeePassXC
-    /// brings a group back; in the Recycle Bin, for good after a question. With several entries selected, all of
-    /// them (<see cref="RecycleEntries"/>).
+    /// Delete (PW-6.4, PW-6.4a). What it acts on is the item window's answer (<see cref="ItemForm.RowsInHand"/>,
+    /// bundle AX-8.16): the selected entries whenever any is selected, one alone too and wherever the row you are on
+    /// is; the row you are on when none is. (Until 2026-11-27 one selected entry was passed over for the row you are
+    /// on.) What it does is as far as axPass knows (<see cref="PassBin.Fate"/>): an entry to the Recycle Bin at once,
+    /// back with Ctrl+Z; a group after a question, since only KeePassXC brings a group back; in the Recycle Bin,
+    /// for good after a question; and where the tool's output does not say which of these it will be, after a
+    /// question that says so, Cancel its default. Two selected entries of one name are refused before anything is
+    /// moved, since in the Recycle Bin their names are all the way back has to tell them apart.
     /// </summary>
     protected override void DeleteRow(ItemRow row)
     {
-        if (row.Tag is not PassNode node || _tree is null)
+        if (_tree is not { } tree)
         {
             return;
         }
 
-        var selected = SelectedRows().Select(one => one.Tag).OfType<PassNode>().ToList();
-        if (selected.Count > 1)
+        var nodes = RowsInHand().Select(one => one.Tag).OfType<PassNode>().ToList();
+        if (nodes.Count == 0)
         {
-            RecycleEntries(selected);
             return;
         }
 
-        var forGood = PassTree.InRecycleBin(node.Path) && node.Path != PassTree.RecycleBin;
-        if (node.Path == PassTree.RecycleBin)
+        var bin = Bin;
+        if (nodes.Count > 1)
+        {
+            if (nodes.GroupBy(entry => entry.Name, StringComparer.OrdinalIgnoreCase).FirstOrDefault(same => same.Count() > 1) is { } twice)
+            {
+                Announce($"Two of the selected entries are called {twice.Key}: move those to the Recycle Bin one at a time, so that {BundleKeys.Text(ItemKeys.Undo)} can tell them apart", true);
+                return;
+            }
+
+            if (nodes.Any(entry => PassBin.Fate(_binOn, bin, entry) == DeleteFate.NotKnown))
+            {
+                var (title, text) = PassBin.Question(_binOn, nodes);
+                ShowNotice(Notice.Ask(title, text, "&Delete", () => Do(() => RemoveAsync(nodes, inBin: false)), cancelIsDefault: true));
+                return;
+            }
+
+            Do(() => RemoveAsync(nodes, inBin: false));
+            return;
+        }
+
+        var node = nodes[0];
+        if (node.Path == bin)
         {
             Announce("The Recycle Bin stays; KeePassXC empties it", true);
             return;
         }
 
-        var command = node.IsGroup ? KeePassCliTexts.RemoveGroup : KeePassCliTexts.Remove;
-        if (!node.IsGroup && !forGood)
+        switch (PassBin.Fate(_binOn, bin, node))
         {
-            Do(async () =>
-            {
-                var select = NeighbourKey();
-                if (await Cli(command, null, [node.Path]) is null)
-                {
-                    return;
-                }
-
-                _entries.Remove(node.Path);
-                Remember(new Step($"Moved {node.Name} to the Recycle Bin", [new Call(KeePassCliTexts.Move, [], [PassTree.Join(PassTree.RecycleBin, node.Name), node.Group.Length == 0 ? KeePassCliTexts.Root : node.Group])], node.Path));
-                await ReloadAsync(select);
-                Announce($"Moved {node.Name} to the Recycle Bin; {BundleKeys.Text(ItemKeys.Undo)} brings it back", true);
-            });
-            return;
-        }
-
-        var question = forGood
-            ? $"Delete {node.Name} for good? It is in the Recycle Bin, and nothing brings it back."
-            : $"Move the group {node.Name} and its {Count(_tree.CountIn(node.Path), "item")} to the Recycle Bin? {BundleKeys.Text(ItemKeys.Undo)} cannot bring a group back: KeePassXC's own window can.";
-        ShowNotice(Notice.Ask(forGood ? "Delete for good" : "Move the group", question, forGood ? "&Delete" : "&Move", () => Do(async () =>
-        {
-            var select = NeighbourKey();
-            if (await Cli(command, null, [node.Path]) is null)
-            {
+            case DeleteFate.Recycled when !node.IsGroup:
+                Do(() => RemoveAsync(nodes, inBin: false));
                 return;
-            }
-
-            _entries.Remove(node.Path);
-            await ReloadAsync(select);
-            Announce(forGood ? $"Deleted {node.Name}" : $"Moved {node.Name} to the Recycle Bin", true);
-        }), cancelIsDefault: true));
+            case DeleteFate.Recycled:
+                ShowNotice(Notice.Ask("Move the group",
+                    $"Move the group {node.Name} and its {Count(tree.CountIn(node.Path), "item")} to the Recycle Bin? {BundleKeys.Text(ItemKeys.Undo)} cannot bring a group back: KeePassXC's own window can.",
+                    "&Move", () => Do(() => RemoveAsync(nodes, inBin: false)), cancelIsDefault: true));
+                return;
+            case DeleteFate.ForGood:
+                ShowNotice(Notice.Ask("Delete for good",
+                    $"Delete {node.Name} for good? It is in the Recycle Bin, and nothing brings it back.",
+                    "&Delete", () => Do(() => RemoveAsync(nodes, inBin: true)), cancelIsDefault: true));
+                return;
+            default:
+                var (unknownTitle, unknownText) = PassBin.Question(_binOn, nodes, node.IsGroup && tree.CountIn(node.Path) > 0 ? Count(tree.CountIn(node.Path), "item") : string.Empty);
+                ShowNotice(Notice.Ask(unknownTitle, unknownText, "&Delete", () => Do(() => RemoveAsync(nodes, inBin: false)), cancelIsDefault: true));
+                return;
+        }
     }
 
     /// <summary>
@@ -246,7 +277,8 @@ public sealed partial class PassForm
         }
 
         const string TopName = "The top of the database";
-        var groups = _tree.Nodes.Where(node => node.IsGroup && !PassTree.InRecycleBin(node.Path) && node.Path != entry.Group).Select(node => node.Path).ToList();
+        var bin = Bin;
+        var groups = _tree.Nodes.Where(node => node.IsGroup && !PassBin.Holds(bin, node.Path) && node.Path != entry.Group).Select(node => node.Path).ToList();
         List<string> choices = entry.Group.Length == 0 ? groups : [TopName, .. groups];
         if (choices.Count == 0)
         {
@@ -303,7 +335,10 @@ public sealed partial class PassForm
                 return;
             }
 
-            Remember(new Step("Added " + title.Trim(), [new Call(KeePassCliTexts.Remove, [], [path]), new Call(KeePassCliTexts.Remove, [], [PassTree.Join(PassTree.RecycleBin, title.Trim())])], null));
+            // Undone, the entry is removed, and where that leaves it in the Recycle Bin as the one of its name, deleted
+            // there too (Call.Purge). Until 2026-11-27 the second run named "Recycle Bin/<title>", which, with an older
+            // entry of that title in the bin, deleted the older one for good.
+            Remember(new Step("Added " + title.Trim(), [new Call(KeePassCliTexts.Remove, [], [path]) { Purge = true }], null));
             await ReloadAsync(path);
             Announce($"Added {title.Trim()}; Tab, then Enter on Password sets its password", true);
         }), typed => PassTree.RefusedName(typed) ?? (_tree?.HasEntry(PassTree.Join(group, typed.Trim())) == true ? $"There is an entry called {typed.Trim()} here already" : null));
@@ -327,7 +362,7 @@ public sealed partial class PassForm
                 return;
             }
 
-            Remember(new Step("Made " + name.Trim(), [new Call(KeePassCliTexts.RemoveGroup, [], [path]), new Call(KeePassCliTexts.RemoveGroup, [], [PassTree.Join(PassTree.RecycleBin, name.Trim())])], null));
+            Remember(new Step("Made " + name.Trim(), [new Call(KeePassCliTexts.RemoveGroup, [], [path]) { Purge = true }], null));
             await ReloadAsync(GroupKey(path));
             Announce("Made " + name.Trim(), true);
         }), typed => PassTree.RefusedName(typed) ?? (_tree?.HasGroup(PassTree.Join(group, typed.Trim())) == true ? $"There is a group called {typed.Trim()} here already" : null));
@@ -356,9 +391,29 @@ public sealed partial class PassForm
 
         Do(async () =>
         {
+            // PW-6.4: a run that reaches into the Recycle Bin by a name is made only for the one entry of that name
+            // there, by a listing read now, since another may have joined it since the step was kept.
+            if (step.Undo.Any(call => call.Sole))
+            {
+                if (await Cli(KeePassCliTexts.List, KeePassCliTexts.ListOptions) is not { } listed)
+                {
+                    return;
+                }
+
+                _tree = PassTree.Parse(listed.Output);
+            }
+
             var begun = false;
+            var left = new List<string>();
             foreach (var call in step.Undo)
             {
+                if (call.Sole && _tree?.Count(call.Rest[0], isGroup: false) != 1)
+                {
+                    left.Add(PassTree.NodeOf(call.Rest[0], isGroup: false).Name);
+                    continue;
+                }
+
+                var before = _tree;
                 if (await Cli(call.Command, call.Options, call.Rest) is null)
                 {
                     await ReloadAsync(SelectedKey());
@@ -370,9 +425,21 @@ public sealed partial class PassForm
                     begun = true;
                     _undo.Remove(step);
                 }
+
+                if (call.Purge && before is not null)
+                {
+                    await PurgeAsync(before, call);
+                }
             }
 
             _undo.Remove(step);
+            if (!begun)
+            {
+                // Nothing could be told apart: said once and passed over, as a change the tool cannot take back.
+                Fill(SelectedKey());
+                Refuse($"Not undone: {step.Said}. {PassBin.NotSole(left[0])}");
+                return;
+            }
 
             _entries.Clear();
             if (step.Select is { } path && !path.EndsWith(KeePassCliTexts.PathSeparator) && await Cli(KeePassCliTexts.Show, null, [path]) is { } shown)
@@ -382,8 +449,31 @@ public sealed partial class PassForm
             }
 
             await ReloadAsync(step.Select ?? SelectedKey());
-            Announce("Undone: " + step.Said, true);
+            Announce(left.Count == 0 ? "Undone: " + step.Said : $"Undone: {step.Said}, but for {string.Join(", ", left)}. {PassBin.NotSole(left[0])}", true);
         });
+    }
+
+    /// <summary>
+    /// After a run that removed what a step made (<see cref="Call.Purge"/>): the database listed again, and where
+    /// the thing now lies in the Recycle Bin as the one of its name, it is deleted there too. With the Recycle Bin
+    /// off the removal was for good already; where another of its name lies in the bin it stays there, since the
+    /// tool could not be told which of the two to delete.
+    /// </summary>
+    private async Task PurgeAsync(PassTree before, Call call)
+    {
+        if (await Cli(KeePassCliTexts.List, KeePassCliTexts.ListOptions) is not { } listed)
+        {
+            return;
+        }
+
+        var after = PassTree.Parse(listed.Output);
+        _tree = after;
+        var node = PassTree.NodeOf(call.Rest[0], call.Command == KeePassCliTexts.RemoveGroup);
+        if (PassBin.Outcome(before, after, [node]) is [{ To: { } to, Sole: true }])
+        {
+            _binSeen = to;
+            await Cli(call.Command, null, [PassTree.Join(to, node.Name)]);
+        }
     }
 
     private void Remember(Step step)
@@ -417,7 +507,8 @@ public sealed partial class PassForm
         }
 
         var generated = false;
-        ShowNotice(new Notice("New password for " + entry.Name, $"Type it, or Generate makes one of 20 characters. {BundleKeys.Text(ItemKeys.Undo)} does not bring the old one back.",
+        Notice? asked = null;
+        asked = new Notice("New password for " + entry.Name, $"Type it, or Generate makes one of 20 characters. {BundleKeys.Text(ItemKeys.Undo)} does not bring the old one back.",
         [
             new OverlayChoice("&Set", () =>
             {
@@ -457,7 +548,16 @@ public sealed partial class PassForm
                     return;
                 }
 
+                var unlock = _unlock;
                 var result = await Task.Run(() => KeePassCli.Run(cli, KeePassCliTexts.GenerateArguments, []));
+                // The password goes into the field it was asked for and no other (PW-4.3; the review of
+                // 2026-11-27): after a lock the field shown is the master password's, and after Escape and another
+                // command it may be one that shows what it holds.
+                if (unlock != _unlock || !NoticeOpen || !ReferenceEquals(Overlay.Shown, asked))
+                {
+                    return;
+                }
+
                 if (result.Succeeded)
                 {
                     Overlay.SetInputText(result.Output.Trim());
@@ -473,7 +573,8 @@ public sealed partial class PassForm
         ])
         {
             Input = new OverlayInput("New password:", $"Type a new password for {entry.Name}", string.Empty, "Type a password, or Generate", Hidden: true),
-        });
+        };
+        ShowNotice(asked);
         return true;
     }
 
@@ -636,8 +737,12 @@ public sealed partial class PassForm
 
     private void OpenDatabase(string path)
     {
+        _unlock++;
         _password = null;
         _tree = null;
+        _binOn = false;
+        _binSeen = null;
+        ClearCopiedPassword();
         _entries.Clear();
         _undo.Clear();
         _backedUp = false;

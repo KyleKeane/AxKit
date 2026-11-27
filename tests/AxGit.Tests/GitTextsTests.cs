@@ -85,8 +85,9 @@ public sealed partial class GitTextsTests
         Assert.Equal(["add", "-A"], GitTexts.StageAllArguments);
         Assert.Equal(["restore", "--staged", "."], GitTexts.UnstageAllArguments);
         Assert.Equal(["commit", "-m", "Fix the thing"], GitTexts.CommitArguments("Fix the thing"));
-        Assert.Equal(["fetch", "--prune"], GitTexts.FetchArguments);
-        Assert.Equal(["pull", "--ff-only"], GitTexts.PullArguments);
+        // Never into the submodules, whose remotes are servers the consent did not name (2026-11-27).
+        Assert.Equal(["fetch", "--prune", "--no-recurse-submodules"], GitTexts.FetchArguments);
+        Assert.Equal(["pull", "--ff-only", "--no-recurse-submodules"], GitTexts.PullArguments);
     }
 
     /// <summary>
@@ -107,10 +108,23 @@ public sealed partial class GitTextsTests
     [Fact]
     public void A_push_ties_a_branch_without_an_upstream_to_origin()
     {
-        Assert.Equal(["push"], GitTexts.PushArguments("origin/main", "main"));
-        Assert.Equal(["push", "--set-upstream", "origin", "topic"], GitTexts.PushArguments(null, "topic"));
+        Assert.Equal(["push", "--no-recurse-submodules"], GitTexts.PushArguments("origin/main", "main"));
+        Assert.Equal(["push", "--no-recurse-submodules", "--set-upstream", "origin", "topic"], GitTexts.PushArguments(null, "topic"));
         // A detached HEAD: plain, and git refuses in its own words.
-        Assert.Equal(["push"], GitTexts.PushArguments(null, null));
+        Assert.Equal(["push", "--no-recurse-submodules"], GitTexts.PushArguments(null, null));
+    }
+
+    /// <summary>The remote the consent before a push is asked for is the one the push reaches (AX-11.5, 2026-11-27).</summary>
+    [Fact]
+    public void The_remote_of_a_push_is_origin_where_the_push_names_it_and_gits_own_choice_otherwise()
+    {
+        // A branch without an upstream is pushed to origin by name, whatever else is set.
+        Assert.Equal("origin", GitTexts.PushRemote(null, "topic", "\tbackup\n"));
+        // With an upstream the push is plain, and git chooses: the branch's pushRemote or remote.pushDefault first.
+        Assert.Equal("backup", GitTexts.PushRemote("origin/main", "main", "origin\tbackup\n"));
+        Assert.Equal("origin", GitTexts.PushRemote("origin/main", "main", "origin\torigin\n"));
+        // A detached HEAD: no branch was asked about.
+        Assert.Equal("origin", GitTexts.PushRemote(null, null, null));
     }
 
     [Fact]
@@ -123,11 +137,12 @@ public sealed partial class GitTextsTests
     }
 
     [Fact]
-    public void The_hooks_folder_is_read_from_gits_one_line()
+    public void The_hooks_folder_and_the_submodules_folder_are_read_from_gits_two_lines()
     {
-        Assert.Equal(@"C:\repo\.git\hooks", GitTrust.HooksFolder(".git/hooks\n", @"C:\repo"));
-        Assert.Equal(@"D:\shared\hooks", GitTrust.HooksFolder("D:/shared/hooks\r\n", @"C:\repo"));
-        Assert.Null(GitTrust.HooksFolder(" \n", @"C:\repo"));
+        Assert.Equal((@"C:\repo\.git\hooks", @"C:\repo\.git\modules"), GitTrust.Folders(".git/hooks\n.git/modules\n", @"C:\repo"));
+        Assert.Equal((@"D:\shared\hooks", @"C:\repo\.git\modules"), GitTrust.Folders("D:/shared/hooks\r\n.git/modules\r\n", @"C:\repo"));
+        Assert.Equal((null, null), GitTrust.Folders(" \n", @"C:\repo"));
+        Assert.Equal((@"C:\repo\.git\hooks", null), GitTrust.Folders(".git/hooks\n", @"C:\repo"));
     }
 
     [Fact]

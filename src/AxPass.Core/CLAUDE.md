@@ -15,7 +15,7 @@ section 8. The window is `src/AxPass`, with its own `CLAUDE.md`. The item format
 
 - `KeePassCliTexts` (root `CLAUDE.md` rule 12, 2026-11-14; `docs/axKit/access-layers.md`): the one table of the tool's
   words, as constants: the commands (`List`, `Show`, `Edit`, `Add`, `Remove`, `RemoveGroup`, `MakeGroup`, `Move`,
-  `Generate`, `CreateDatabase`), the options (`Quiet`, `ListOptions`, `TitleOption` and the other `edit` options,
+  `Generate`, `CreateDatabase`, `Info`), the options (`Quiet`, `ListOptions`, `TitleOption` and the other `edit` options,
   `PasswordPromptOption`, `ShowValueOptions`, `GenerateArguments`), the marks of its paths (`PathSeparator`, `Root`,
   `EmptyMark`, `RecycleBin`) and the names `show` prints. Every class here and the window name a command or an option
   by its constant; `KeePassCliTextsTests` fails when one is written as a string anywhere else, or when something
@@ -26,8 +26,18 @@ section 8. The window is `src/AxPass`, with its own `CLAUDE.md`. The item format
   `On` (the command, `-q`, the options, the database, the paths); `CliResult.Why` (the tool's own words for a
   failure) and `SaidNothing` (a failure without words, which with `-q` is a wrong master password).
 - `PassTree` and `PassNode`: `ls -R -f` read into groups and entries (`Parse`), a group's `Level` (groups first, the
-  Recycle Bin last at the top), `CountIn`, `HasGroup`, `HasEntry`, `InRecycleBin`, `Join`, `RefusedName` (a slash),
-  `DatabaseName`.
+  group given as the Recycle Bin last at the top), `CountIn`, `HasGroup`, `HasEntry`, `Count` (how many lines the
+  listing had for a path: two entries of one name in a group are one node and two lines), `NodeOf`, `Join`,
+  `RefusedName` (a slash), `DatabaseName`.
+- `PassBin`, `DeleteFate` and `Removed` (PW-6.4b, 2026-11-27): what axPass knows of the Recycle Bin from the tool's
+  own output and no more, since the tool never says which group it is: `IsOn` (`db-info`'s line,
+  `KeePassCliTexts.RecycleBinOn`, with the command `Info`), `Known` (the group a deleted entry was seen to arrive
+  in, else the tool's own name's top group when the bin is on), `Holds`, `Fate` (to the bin, for good, or not known,
+  for which the delete asks first, `Question`), `MovedTo` and `Outcome` (what became of what was removed, from the
+  listing before and after: the group that gained it, and whether it is the one of its name there, which is what
+  lets `mv` reach it), `Said` (the sentence after a delete), `StepSaid` and `NotSole` (Ctrl+Z's words). Never take
+  a group for the bin by its name alone, and never move or delete in the bin by a name two entries have.
+  `KeePassCli.Result` turns a run into a `CliResult`: ended at its limit, it failed.
 - `EntryFields` (PW-6): `show` read into an `ItemDocument` of KeePass's fields (the password's value never read, its
   type `password`), other attributes after them; `EditOptions` (the `edit` options that make one document into
   another); `Emptied` and `CannotEmpty` (the fields a change would empty, which the tool's `edit` cannot do: it takes

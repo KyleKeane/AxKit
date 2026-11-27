@@ -42,11 +42,19 @@ public static partial class GitTexts
     /// <summary>Commit what is staged with the message given, which is one argument, never a file or an editor.</summary>
     public static IReadOnlyList<string> CommitArguments(string message) => ["commit", "-m", message];
 
+    // Fetch, pull and push never go into submodules (the review of 2026-11-27, bundle AX-11.5 and rule 8): a
+    // submodule has remotes of its own, on servers the consent did not name, and git would reach them by itself
+    // (a fetch "on demand", a pull or push where the repository's settings say to recurse). axGIT's commands reach
+    // the one remote the consent was asked for; a submodule is fetched and pushed in a terminal.
+
+    /// <summary>What keeps a fetch, a pull and a push out of the submodules, whatever the repository's settings say.</summary>
+    private const string NoSubmodules = "--no-recurse-submodules";
+
     /// <summary>Fetch from the branch's remote, and forget the remote branches that are gone there.</summary>
-    public static readonly IReadOnlyList<string> FetchArguments = ["fetch", "--prune"];
+    public static readonly IReadOnlyList<string> FetchArguments = ["fetch", "--prune", NoSubmodules];
 
     /// <summary>Pull only when the branch can be moved forward: never a merge commit or a rebase made by axGIT.</summary>
-    public static readonly IReadOnlyList<string> PullArguments = ["pull", "--ff-only"];
+    public static readonly IReadOnlyList<string> PullArguments = ["pull", "--ff-only", NoSubmodules];
 
     /// <summary>The remote a branch without an upstream is pushed to, and tied to.</summary>
     public const string DefaultRemote = "origin";
@@ -56,7 +64,15 @@ public static partial class GitTexts
     /// a branch without one is pushed to <see cref="DefaultRemote"/> and tied to it.
     /// </summary>
     public static IReadOnlyList<string> PushArguments(string? upstream, string? branch) =>
-        upstream is null && branch is not null ? ["push", "--set-upstream", DefaultRemote, branch] : ["push"];
+        upstream is null && branch is not null ? ["push", NoSubmodules, "--set-upstream", DefaultRemote, branch] : ["push", NoSubmodules];
+
+    /// <summary>
+    /// The remote <see cref="PushArguments"/> reaches, for the consent before it (<see cref="GitRemote"/>):
+    /// <see cref="DefaultRemote"/> where the push names it, otherwise the one git itself would choose, read from its
+    /// answer to <see cref="GitRemote.RemotesArguments"/>.
+    /// </summary>
+    public static string PushRemote(string? upstream, string? branch, string? remotes) =>
+        upstream is null && branch is not null ? DefaultRemote : GitRemote.Remote(remotes, push: true);
 
     // ---- What is read from a command's output outside the parsers ----
 

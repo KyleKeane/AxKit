@@ -25,8 +25,6 @@ public sealed partial class GitForm : ItemForm
         Branches,
     }
 
-    private const int UntrackedLimit = 200 * 1024;
-
     /// <summary>The repository's own programs set to nothing while it is not trusted (AG-1.6); empty for a trusted one.</summary>
     private IReadOnlyList<string> _overrides = [];
 
@@ -99,9 +97,9 @@ public sealed partial class GitForm : ItemForm
         Git(Add(actions, new Command("&Commit...", BundleKeys.MainAction, Commit) { Mark = CommandMark.Act }));
         actions.DropDownItems.Add(new ToolStripSeparator());
         Git(Add(actions, new Command("New &branch...", AxGitKeys.NewBranch, NewBranch) { Mark = CommandMark.Act }));
-        Git(Add(actions, new Command("&Fetch", AxGitKeys.Fetch, () => Do(() => ToServerAsync(FetchAsync))) { Mark = CommandMark.Act }));
-        Git(Add(actions, new Command("&Pull", AxGitKeys.Pull, () => Do(() => ToServerAsync(PullAsync))) { Mark = CommandMark.Act }));
-        Git(Add(actions, new Command("Pus&h", AxGitKeys.Push, () => Do(() => ToServerAsync(PushAsync))) { Mark = CommandMark.Act }));
+        Git(Add(actions, new Command("&Fetch", AxGitKeys.Fetch, () => Do(() => ToServerAsync(push: false, FetchAsync))) { Mark = CommandMark.Act }));
+        Git(Add(actions, new Command("&Pull", AxGitKeys.Pull, () => Do(() => ToServerAsync(push: false, PullAsync))) { Mark = CommandMark.Act }));
+        Git(Add(actions, new Command("Pus&h", AxGitKeys.Push, () => Do(() => ToServerAsync(push: true, PushAsync))) { Mark = CommandMark.Act }));
         actions.DropDownItems.Add(new ToolStripSeparator());
         actions.DropDownItems.Add(Item("Select all &files", SelectAllRows, SelectionKeys.SelectAll, CommandMark.Change));
         actions.DropDownItems.Add(Item("&Deselect all", SelectNoRows, SelectionKeys.SelectNone, CommandMark.Change));
@@ -411,8 +409,65 @@ public sealed partial class GitForm : ItemForm
         await OpenRepositoryAsync(root);
     }
 
+    /// <summary>
+    /// AG-1.6 (security audit S-2; the review of 2026-11-27): what the repository's own settings and hooks, and those
+    /// of the repositories inside it, would run is read before the repository becomes the window's, as one piece of
+    /// work, so that no command runs in it meanwhile (until then the repository was the window's first, and a key
+    /// pressed while the read ran started git in it with nothing set aside). When that cannot be read the
+    /// repository is not opened: nothing is known of it, and a repository is never taken as running nothing.
+    /// </summary>
     private async Task OpenRepositoryAsync(string root)
     {
+        if (!BeginWork("Working: opening…"))
+        {
+            return;
+        }
+
+        SetGitItems(false);
+        UpdateStatusBar();
+        TrustScan? scan = null;
+        try
+        {
+            scan = await GitTrustScan.ReadAsync(root);
+        }
+        catch (GitNotFoundException)
+        {
+            // Said below, once the work is over.
+        }
+        finally
+        {
+            EndWork();
+            if (!IsDisposed)
+            {
+                SetGitItems(true);
+                UpdateStatusBar();
+            }
+        }
+
+        if (IsDisposed)
+        {
+            return;
+        }
+
+        if (scan is null)
+        {
+            GitMissing();
+            return;
+        }
+
+        if (scan.Problem is { } problem)
+        {
+            if (_root is null)
+            {
+                SetNoRepository();
+            }
+
+            Log.Info("A repository was not opened: what it would run could not be read");
+            ShowNotice(Notice.Plain("Repository not opened", $"What {root} would run could not be read, so axGIT runs nothing in it. Git said: {problem}") with { Unprompted = true });
+            return;
+        }
+
+        var trusted = TakeTrust(root, scan.Risks);
         _root = root;
         Array.Clear(_loaded);
         Array.Clear(_kept);
@@ -428,55 +483,54 @@ public sealed partial class GitForm : ItemForm
         _settings.RememberRepository(root);
         SaveSettings();
         Log.Info($"Opened {root}");
-        await CheckTrustAsync(root);
+        if (!trusted)
+        {
+            AskTrust(root, scan.Risks);
+        }
+
         await RefreshAsync(announce: false);
     }
 
     /// <summary>
-    /// AG-1.6 (security audit S-2): what in the repository's own configuration and hooks runs a program, read before
-    /// any other command; unless the user trusts the repository, every command sets each of them to nothing, and a
-    /// notice says what is set aside, with the way to trust it.
+    /// AG-1.6: whether the repository runs as it is, which sets what every command of the window sets aside: nothing
+    /// for a repository that names no program or that the user trusts for exactly these, each of them otherwise
+    /// (<see cref="GitTrust.Overrides"/>).
     /// </summary>
-    private async Task CheckTrustAsync(string root)
+    private bool TakeTrust(string root, IReadOnlyList<string> risks)
     {
         _overrides = [];
-        try
+        if (risks.Count == 0)
         {
-            var config = await GitRunner.RunAsync(root, GitTrust.ConfigArguments, GitRunner.Short);
-            var hooks = await GitRunner.RunAsync(root, GitTrust.HooksArguments, GitRunner.Short);
-            var hooksFolder = hooks.Ok ? GitTrust.HooksFolder(hooks.Output, root) : null;
-            var risks = GitTrust.Risks(config.Ok ? config.Output : string.Empty, hooksFolder);
-            if (risks.Count == 0 || IsDisposed)
+            return true;
+        }
+
+        if (_settings.Trusts(root, risks))
+        {
+            // A trust from before the marks (2026-11-16) is bound to what the repository runs now.
+            if (_settings.Trust(root, risks))
             {
-                return;
+                SaveSettings();
             }
 
-            if (_settings.Trusts(root, risks))
-            {
-                // A trust from before the marks (2026-11-16) is bound to what the repository runs now.
-                if (_settings.Trust(root, risks))
-                {
-                    SaveSettings();
-                }
-
-                return;
-            }
-
-            // AG-1.6: a trust is for what the repository ran when it was given; anything else is asked about again.
-            var changed = _settings.WasTrusted(root) ? "What this repository would run has changed since you trusted it, so it is not trusted now. " : string.Empty;
-            _overrides = GitTrust.Overrides(risks);
-            Log.Info($"Untrusted repository: {risks.Count} programs of its own set aside");
-            ShowNotice(new Notice("This repository runs programs of its own",
-                $"{changed}Its settings or hooks name programs git would run: {string.Join(", ", risks)}. axGIT runs git without them. Trust the repository only if you know where it comes from: then git runs them as it would in a console.",
-            [
-                new OverlayChoice("Keep them &off", IsDefault: true, IsCancel: true),
-                new OverlayChoice("&Trust this repository", () => TrustRepository(root, risks)),
-            ]) { Unprompted = true });
+            return true;
         }
-        catch (GitNotFoundException)
-        {
-            // git missing is said by the first command that needs it.
-        }
+
+        _overrides = GitTrust.Overrides(risks);
+        Log.Info($"Untrusted repository: {risks.Count} programs of its own set aside");
+        return false;
+    }
+
+    /// <summary>AG-1.6: the notice that says what is set aside, with the way to trust the repository.</summary>
+    private void AskTrust(string root, IReadOnlyList<string> risks)
+    {
+        // A trust is for what the repository ran when it was given; anything else is asked about again.
+        var changed = _settings.WasTrusted(root) ? "What this repository would run has changed since you trusted it, so it is not trusted now. " : string.Empty;
+        ShowNotice(new Notice("This repository runs programs of its own",
+            $"{changed}Its settings or hooks name programs git would run: {string.Join(", ", risks)}. axGIT runs git without them. Trust the repository only if you know where it comes from: then git runs them as it would in a console.",
+        [
+            new OverlayChoice("Keep them &off", IsDefault: true, IsCancel: true),
+            new OverlayChoice("&Trust this repository", () => TrustRepository(root, risks)),
+        ]) { Unprompted = true });
     }
 
     private void TrustRepository(string root, IReadOnlyList<string> risks)

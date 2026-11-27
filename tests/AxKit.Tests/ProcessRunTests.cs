@@ -62,4 +62,82 @@ public class ProcessRunTests
         Assert.Equal(-1, result.ExitCode);
         Assert.True(watch.Elapsed < TimeSpan.FromSeconds(15));
     }
+
+    [Fact]
+    public async Task A_program_past_its_time_keeps_what_it_printed_until_then()
+    {
+        // Review of 2026-11-27: a read cancelled at the limit threw its part away, so a run that timed out had
+        // printed nothing, whatever it printed.
+        var start = new ProcessStartInfo(SystemPrograms.Cmd);
+        start.ArgumentList.Add("/d");
+        start.ArgumentList.Add("/c");
+        start.ArgumentList.Add("echo so far& echo oops 1>&2& ping -n 30 127.0.0.1 >nul");
+        var result = await ProcessRun.RunAsync(start, [], TimeSpan.FromSeconds(2));
+        Assert.True(result.TimedOut);
+        Assert.False(result.Finished);
+        Assert.Equal("so far", result.Output.Trim());
+        Assert.Equal("oops", result.Error.Trim());
+    }
+
+    [Fact]
+    public async Task A_program_that_ended_while_another_holds_its_output_gives_all_it_printed()
+    {
+        // The program ends at once with code 4; the ping it started inherits the output pipe and keeps it open.
+        var start = new ProcessStartInfo(SystemPrograms.Cmd);
+        start.ArgumentList.Add("/d");
+        start.ArgumentList.Add("/c");
+        start.ArgumentList.Add("echo early& start /b ping -n 20 127.0.0.1 >nul& exit 4");
+        var watch = Stopwatch.StartNew();
+        var result = await ProcessRun.RunAsync(start, [], TimeSpan.FromSeconds(2));
+        Assert.True(result.TimedOut);
+        Assert.True(result.Finished);
+        Assert.Equal(4, result.ExitCode);
+        Assert.Equal("early", result.Output.Trim());
+        Assert.True(watch.Elapsed < TimeSpan.FromSeconds(15));
+        Assert.False(result.Stopped);
+    }
+
+    [Fact]
+    public void A_run_ended_at_its_limit_is_stopped_and_one_that_finished_is_not()
+    {
+        Assert.True(new ProcessResult(-1, "part", string.Empty, TimedOut: true, Finished: false).Stopped);
+        Assert.False(new ProcessResult(0, "all", string.Empty, TimedOut: true, Finished: true).Stopped);
+        Assert.False(new ProcessResult(0, "all", string.Empty, TimedOut: false, Finished: true).Stopped);
+    }
+
+    /// <summary>
+    /// A run ended at its time limit gives exit code -1 and a part of the output, which no caller may read as a
+    /// result (review of 2026-11-27: git's runner read an empty output with exit code 0 as an empty status). Read
+    /// off the sources, as <see cref="SecondWindowTests"/> reads them: every file under <c>src</c> and <c>tools</c>
+    /// that runs a program through <see cref="ProcessRun"/> asks the result whether it was stopped, or whether its
+    /// time ran out, in that file.
+    /// </summary>
+    [Fact]
+    public void Every_caller_asks_whether_the_run_was_stopped()
+    {
+        var root = SourceTexts.RepositoryRoot();
+        var separator = Path.DirectorySeparatorChar;
+        var offenders = new List<string>();
+        foreach (var folder in new[] { "src", "tools" })
+        {
+            foreach (var file in Directory.GetFiles(Path.Combine(root, folder), "*.cs", SearchOption.AllDirectories))
+            {
+                var relative = Path.GetRelativePath(root, file);
+                if (relative.Contains($"{separator}obj{separator}", StringComparison.Ordinal) || relative.Contains($"{separator}bin{separator}", StringComparison.Ordinal)
+                    || relative == Path.Combine("src", "AxKit.Core", "ProcessRun.cs"))
+                {
+                    continue;
+                }
+
+                var text = File.ReadAllText(file);
+                if ((text.Contains("ProcessRun.RunAsync(", StringComparison.Ordinal) || text.Contains("ProcessRun.Run(", StringComparison.Ordinal))
+                    && !text.Contains(".Stopped", StringComparison.Ordinal) && !text.Contains(".TimedOut", StringComparison.Ordinal))
+                {
+                    offenders.Add(relative);
+                }
+            }
+        }
+
+        Assert.True(offenders.Count == 0, "A program run through ProcessRun whose result is read without asking Stopped (or TimedOut): a run ended at its limit would be taken for a result: " + string.Join(", ", offenders));
+    }
 }

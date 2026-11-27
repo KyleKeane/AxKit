@@ -102,8 +102,16 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
   process tree (Context → End process tree) ends its child processes too, with the question "End <name> and the
   processes it started?". A process that is already gone says "<name> has already ended"; one Windows refuses says
   "Could not end <name>: access is denied. It may need administrator rights". axProcess's own process is refused:
-  "That is this window: close it with Alt+F4".
-- PR-3.3a **Several processes** (2026-11-22, AX-8.16). With two or more processes selected, Delete asks once, "End 3
+  "That is this window: close it with Alt+F4". End process tree on a process that started this window, itself or
+  through the processes between, is refused in the question's place, since ending that tree would end the window
+  that asks: "<name> started this window, so ending it with the processes it started would end axProcess too. End
+  process ends <name> alone" (the review of 2026-11-27; `ProcessEnd`; Windows' own end of a tree refuses it too,
+  which read "<name> has already ended" until then). When Windows could not end every process of a tree: "Not
+  every process <name> started could be ended: 2 could not, <Windows' first reason>" (an error nobody caught
+  until then).
+- PR-3.3a **Several processes** (2026-11-22, AX-8.16). With processes selected, Delete acts on the selected ones,
+  wherever the row you are on is (until 2026-11-27 one selected process was passed over for the row you are on):
+  one selected is asked about as in PR-3.3; with two or more Delete asks once, "End 3
   processes?", with "Anything unsaved in them is lost." and each by its name and process ID; End processes ends each
   on a background task and says one sentence, "Ended 3 processes", or "Ended 2 of 3 processes." with the sentence of
   each that could not be ended; the selection is given up and the list read again. With this window among the
@@ -112,6 +120,8 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
 - PR-3.4 Enter, or Context → Details, shows a notice titled with the process's name: the process ID, the memory, the
   processor use, the program file, the start time and the number of threads, each on its own line, those Windows lets
   the user read; with the buttons End process, Show program in axFile and Close (the default and the cancel button).
+  Both buttons act on the process the details are of, also when the row under the arrow keys has changed since
+  (Show program asked for that row again until 2026-11-27); the same holds for a startup program's details (PR-5.3).
 - PR-3.5 Ctrl+E, or Context → Show program in axFile, opens axFile on the program file's folder with the file selected
   (`WindowMenu.Start`); "Windows does not say where <name>'s program is" when it cannot be read.
 
@@ -134,7 +144,10 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
   "<name>, <enabled or disabled>, <place>"; the place is "current user's Run key", "computer's Run key", "computer's
   Run key (32-bit)", "your Startup folder", "all users' Startup folder". Sorted by name. A file of a Startup folder
   is named without its extension and is a row of its own by its whole file name: `sync.lnk` and `sync.bat` of one
-  folder are two rows (until 2026-11-27 the list took them for one when it kept the selection).
+  folder are two rows (until 2026-11-27 the list took them for one when it kept the selection), and two files of
+  one folder that share a name are each named with the extension, "sync.lnk, enabled, your Startup folder" and
+  "sync.bat, enabled, your Startup folder", so that the rows, the question before a removal and its sentence tell
+  them apart (`StartupList.FolderNames`; both read "sync" until then).
 - PR-5.2 Disabled is what Task Manager's Startup tab set: the entry's value under the matching `StartupApproved` key
   has an odd first byte. Without such a value the entry is enabled.
 - PR-5.3 Enter, or Context → Details, shows a notice titled with the name: the command, the place, enabled or
@@ -169,7 +182,9 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
   of the same name made later is not off from its first day. The file is deleted, not sent to the Recycle Bin: the
   bundle's one Recycle Bin operation is axFile's own (`AxFile.Core`), which another app may not reference (bundle
   5.3); when it moves to the shared code, Remove uses it and the question's line changes.
-- PR-5.6a **Several startup programs** (2026-11-22, AX-8.16). With two or more selected, Delete asks once, "Remove 3
+- PR-5.6a **Several startup programs** (2026-11-22, AX-8.16). With startup programs selected, Delete acts on the
+  selected ones, wherever the row you are on is (until 2026-11-27 one selected entry was passed over for the row
+  you are on): one selected is asked about as in PR-5.6; with two or more selected, Delete asks once, "Remove 3
   startup programs from the programs that start with Windows?", with what is deleted ("Each entry is deleted for
   good from its Run key or its Startup folder, not sent to the Recycle Bin. The programs themselves stay on the
   computer.") and their names; an entry that cannot be removed here (the whole computer's, without administrator

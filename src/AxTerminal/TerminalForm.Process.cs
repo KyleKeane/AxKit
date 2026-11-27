@@ -115,6 +115,8 @@ internal sealed partial class TerminalForm
         }
 
         _model.AddSystemLine(systemLine);
+        // AT-1.5a: a handed line still in the field as it came is made again for the shell that starts now.
+        RequoteHandedCommand();
         StartShell();
     }
 }

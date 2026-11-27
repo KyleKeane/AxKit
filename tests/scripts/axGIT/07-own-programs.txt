@@ -66,6 +66,29 @@ keys enter
 expect state "notice":null
 close
 
+# Check: A program named in the work tree's own settings file or in a repository inside is found too
+# AG-1.6 (the review of 2026-11-27): git also reads the work tree's own settings file (extensions.worktreeConfig)
+# and, running itself inside a submodule, that repository's settings; until then only the repository's own file was
+# asked about. Here an ssh command in the work tree's file, and a repository inside, vendor, that names a pager:
+# both are named, the second with the repository it is in. The names are never run: every git command of this
+# window sets them to nothing, and nothing here reaches a server.
+run git -C repo config extensions.worktreeConfig true
+run git -C repo config --worktree core.sshCommand never-run
+run git init -q -b main repo\vendor
+file repo\vendor\b.txt inside
+run git -C repo\vendor add .
+run git -C repo\vendor -c user.name=Test -c user.email=none commit -q -m inside
+run git -C repo\vendor config core.pager never-run
+run git -C repo -c advice.addEmbeddedRepo=false add vendor
+start git {temp}\repo
+expect state "notice":"This repository runs programs of its own"
+expect state name programs git would run: core.sshcommand, hook post-checkout, hook pre-commit, submodule vendor: core.pager. axGIT runs git without them.
+wait 1200
+keys enter
+expect state "notice":null
+expect focus Changes,
+close
+
 # Check: Repositories another program trusted in the settings file are not used
 # AG-8.1a and the bundle's repair R-53: the window sealed the file as it saved the trust; a file written over it
 # without the seal trusts nothing, and the window says so in its Settings notice. Opened without a repository, so

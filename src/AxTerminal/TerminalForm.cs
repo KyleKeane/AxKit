@@ -98,6 +98,7 @@ internal sealed partial class TerminalForm : ConsoleForm
         {
             Input.Text = line;
             Input.Select(Input.TextLength, 0);
+            _handed = handed;
             _handedLine = line;
             Input.AccessibleName = HandedCommand.FieldName;
             // Changed by the user, replaced by a recalled command, sent or deleted, the text is the user's own and
@@ -107,6 +108,7 @@ internal sealed partial class TerminalForm : ConsoleForm
                 if (Input.TextLength == 0)
                 {
                     _handedLine = null;
+                    _handed = null;
                 }
 
                 var name = _handedLine is not null && Input.Text == _handedLine ? HandedCommand.FieldName : CommandFieldName;
@@ -130,6 +132,43 @@ internal sealed partial class TerminalForm : ConsoleForm
 
     /// <summary>The handed line while it stands in the field as it came (AT-1.5a); null when none was handed, and once the field was emptied.</summary>
     private string? _handedLine;
+
+    /// <summary>The handed command's parts, kept with <see cref="_handedLine"/> so that the line can be made again for another shell.</summary>
+    private IReadOnlyList<string>? _handed;
+
+    /// <summary>
+    /// AT-1.5a (the review of 2026-11-27), at every start of a shell after the first: the handed line, while it
+    /// still stands in the field as it came, is made again for the shell that starts now, or taken out when that
+    /// shell has no quoting rule (<see cref="HandedCommand.ForNewShell"/>). Said, and kept as a system line: the
+    /// text of the field changed under the user. Still nothing is sent.
+    /// </summary>
+    private void RequoteHandedCommand()
+    {
+        if (_handed is not { } handed || HandedCommand.ForNewShell(Input.Text, _handedLine, _shell, handed) is not { } made)
+        {
+            return;
+        }
+
+        string said;
+        if (made.Line is { } line)
+        {
+            // The line first, so that the field's name stays the caution as its text changes.
+            _handedLine = line;
+            Input.Text = line;
+            Input.Select(Input.TextLength, 0);
+            said = HandedCommand.SaidAgain(ShellName);
+        }
+        else
+        {
+            // Emptied, the field is the plain command field again (its TextChanged above).
+            Input.Clear();
+            said = HandedCommand.Said(made.Refused);
+        }
+
+        _model.AddSystemLine(said);
+        Announce(said, false);
+        Log.Info(made.Line is null ? "A handed command was taken out of the field: the new shell has no quoting rule" : "A handed command was written again for the new shell");
+    }
 
     /// <summary>What to say once the window shows of a handed command that could not be put into the field (AT-1.5a); null otherwise, and once said.</summary>
     private string? _handedSaid;

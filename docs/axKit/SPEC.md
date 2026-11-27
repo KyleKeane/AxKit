@@ -1061,7 +1061,12 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     words.
   - **What the commands act on.** A command that can act on several things acts on the selected rows when there
     are any, and on the current row alone otherwise; a command that is about one thing (Enter, F2, the ways to
-    open) stays on the current row. Each window's specification names which of its commands are which.
+    open) stays on the current row. Each window's specification names which of its commands are which. "When
+    there are any" is one selected row too, wherever the current row is: in a navigator this is decided in one
+    place, the item window's `RowsInHand`, and a window has no other way to the selected rows (the review of
+    2026-11-27: axPass, axProcess and axMCP each took the selected rows only when there were two or more, so that
+    Delete with one row selected and the arrow keys moved on acted on the row under the arrow keys;
+    `RowsInHandTests`).
   - **How long it lasts.** The selection lives in one level (a folder, a list): showing another drops it; the same
     level read again keeps the rows still there. The marks are on rows the list shows, so that the count said and
     the rows acted on are one set.
@@ -1073,7 +1078,7 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     `SelectionKeys`, and asks it what is selected. No window keeps marks, their keys or their words of its own.
   - **The windows on it**: axFile's folder list (AF-3.7), which also records each change as a line of its Actions
     list; and the item window's navigator (`ItemForm`: `HasSelection`, `CanSelectRow`, `NothingToSelect`,
-    `SelectedRows`), switched on by axTask, whose items it selects (docs/axTask/SPEC.md TK-4.7; its status bar says
+    `RowsInHand`), switched on by axTask, whose items it selects (docs/axTask/SPEC.md TK-4.7; its status bar says
     how many are selected, and the target an AI tool's command is asked about names the selection too). An item
     app says it has a selection only once its commands act on one, so that nothing is ever selected that a
     command then passes by, and it says which rows: since 2026-11-22 (framework step 10) axPass selects entries

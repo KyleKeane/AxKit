@@ -553,7 +553,7 @@ public sealed partial class MediaForm : ItemForm
             // AM-3.5: with files selected, Delete takes them all out, whatever row you are on: "Removed 3 files".
             // From the last to the first, so that each index still names its file; the one playing goes on to the
             // next file left, or stops at the end.
-            var rows = SelectedRows().Select(row => (int)row.Tag!).OrderByDescending(row => row).ToList();
+            var rows = RowsInHand().Select(row => (int)row.Tag!).OrderByDescending(row => row).ToList();
             var playingGoes = PlayerActive && rows.Contains(_queue.Playing);
             foreach (var row in rows)
             {

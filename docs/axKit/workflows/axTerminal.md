@@ -465,3 +465,14 @@ Starts with: Open axTerminal with the folder myproject.
 2. Type "[Console]::Write([char]27 + '[?1049h')".
 3. Press Enter.
     You hear: Done.
+
+## Switch the shell with a handed command still in the field
+
+Starts with: Open axTerminal with the folder myproject, handed the command findstr /c:x "C:\work\Fix it.json".
+
+### Switch the shell and find the handed command written for it
+
+1. Choose the menu item Command Prompt.
+    You hear: Written again for Command Prompt. A command is in the command field, not sent.
+    You hear the sound Ready.
+2. Press Alt+1 (Command field; Navigation menu).

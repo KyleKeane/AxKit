@@ -24,9 +24,36 @@ public sealed class GitRemoteTests
     [InlineData("", null)]
     public void The_host_is_read_from_the_address(string url, string? host) => Assert.Equal(host, GitRemote.Host(url));
 
+    /// <summary>
+    /// The remote is git's own answer (2026-11-27): the upstream's for a fetch, and for a push the branch's
+    /// pushRemote or remote.pushDefault where one is set, which git gives in the second place; origin where it
+    /// gives nothing.
+    /// </summary>
     [Theory]
-    [InlineData("origin/main", "origin")]
-    [InlineData("upstream/feature/x", "upstream")]
-    [InlineData(null, "origin")]
-    public void The_remote_is_the_upstreams_or_origin(string? upstream, string remote) => Assert.Equal(remote, GitRemote.NameOf(upstream));
+    [InlineData("origin\torigin\n", false, "origin")]
+    [InlineData("origin\tbackup\n", false, "origin")]
+    [InlineData("origin\tbackup\n", true, "backup")]
+    [InlineData("upstream\t\n", true, "upstream")]
+    [InlineData("\tbackup\r\n", true, "backup")]
+    [InlineData("\tbackup\n", false, "origin")]
+    [InlineData("\t\n", true, "origin")]
+    [InlineData("", false, "origin")]
+    [InlineData(null, true, "origin")]
+    public void The_remote_is_the_one_git_names_or_origin(string? output, bool push, string remote) => Assert.Equal(remote, GitRemote.Remote(output, push));
+
+    [Fact]
+    public void The_addresses_asked_for_are_the_fetch_address_or_every_push_address()
+    {
+        Assert.Equal(["remote", "get-url", "origin"], GitRemote.UrlArguments("origin", push: false));
+        Assert.Equal(["remote", "get-url", "--push", "--all", "backup"], GitRemote.UrlArguments("backup", push: true));
+        Assert.Equal(["for-each-ref", "--format=%(upstream:remotename)%09%(push:remotename)", "refs/heads/topic/one"], GitRemote.RemotesArguments("topic/one"));
+    }
+
+    [Fact]
+    public void Every_address_a_push_goes_to_gives_its_host_once()
+    {
+        var output = "https://github.com/a/b.git\ngit" + At + "mirror.example.org:a/b.git\r\nhttps://GitHub.com/a/other.git\n" + @"C:\backups\b.git" + "\n";
+        Assert.Equal(["github.com", "mirror.example.org"], GitRemote.Hosts(output));
+        Assert.Empty(GitRemote.Hosts(string.Empty));
+    }
 }

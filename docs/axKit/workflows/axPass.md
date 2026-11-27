@@ -297,3 +297,18 @@ Starts with: Open axPass with the file test.kdbx.
 3. Press Shift+Down.
 4. Press Ctrl+Shift+A (Deselect all; Actions menu).
     You hear: None selected.
+
+## Delete entries where the Recycle Bin is not yet known, and undo only what can be told apart
+
+Starts with: Open axPass with the file test.kdbx.
+
+### Delete an entry and hear where it went
+
+1. Press Delete.
+2. Press Alt+D.
+    You hear: Moved Gmail to the Recycle Bin; Ctrl+Z brings it back.
+
+### Bring a deleted entry back
+
+1. Press Ctrl+Z (Undo; Actions menu).
+    You hear: Undone: Moved Gmail to the Recycle Bin.

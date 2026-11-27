@@ -54,6 +54,42 @@ public sealed class HandedCommandTests
         Assert.Equal(("findstr /c:x \"C:\\lists\\Fix the tap.json\"", null), HandedCommand.Line(ShellKind.CommandPrompt, ["findstr", "/c:x", @"C:\lists\Fix the tap.json"]));
     }
 
+    /// <summary>
+    /// AT-1.5a (2026-11-27): the shell switched while the handed line still stands in the field as it came, the
+    /// line is made again by the new shell's rule; a line the user has changed is the user's own and stays.
+    /// </summary>
+    [Fact]
+    public void A_line_still_in_the_field_as_it_came_is_made_again_for_another_shell()
+    {
+        string[] command = ["findstr", "/c:x", @"C:\lists\Fix the tap.json"];
+        var powershell = HandedCommand.Line(ShellKind.PowerShell7, command).Line!;
+        var cmd = HandedCommand.Line(ShellKind.CommandPrompt, command).Line!;
+        Assert.Equal(@"findstr /c:x 'C:\lists\Fix the tap.json'", powershell);
+        Assert.NotEqual(powershell, cmd);
+
+        // To cmd.exe: its own quoting, never PowerShell's single quotes, which cmd.exe would hand on as characters.
+        Assert.Equal((cmd, null), HandedCommand.ForNewShell(powershell, powershell, ShellKind.CommandPrompt, command));
+        // The same rule: nothing to do.
+        Assert.Null(HandedCommand.ForNewShell(powershell, powershell, ShellKind.WindowsPowerShell, command));
+        // A shell without a rule: no line, and why; the window empties the field.
+        var none = HandedCommand.ForNewShell(powershell, powershell, ShellKind.GitBash, command);
+        Assert.NotNull(none);
+        Assert.Null(none.Value.Line);
+        Assert.StartsWith("axKit has no quoting rule for ", none.Value.Refused);
+        // A part cmd.exe cannot make plain: no line, as at the start.
+        string[] odd = ["echo", "50% & more"];
+        var quoted = HandedCommand.Line(ShellKind.PowerShell7, odd).Line!;
+        Assert.Null(HandedCommand.ForNewShell(quoted, quoted, ShellKind.CommandPrompt, odd)!.Value.Line);
+
+        // Changed by the user, or no handed line at all: left alone.
+        Assert.Null(HandedCommand.ForNewShell(powershell + " /i", powershell, ShellKind.CommandPrompt, command));
+        Assert.Null(HandedCommand.ForNewShell("dir", null, ShellKind.CommandPrompt, command));
+
+        var said = HandedCommand.SaidAgain("Command Prompt");
+        Assert.StartsWith("Written again for Command Prompt. ", said, StringComparison.Ordinal);
+        Assert.EndsWith(HandedCommand.Said(null), said, StringComparison.Ordinal);
+    }
+
     [Theory]
     [InlineData(ShellKind.GitBash)]
     [InlineData(ShellKind.Custom)]

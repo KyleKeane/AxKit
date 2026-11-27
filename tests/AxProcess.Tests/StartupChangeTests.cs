@@ -297,8 +297,51 @@ public sealed class StartupChangeTests : IDisposable
         Assert.Equal(3, entries.Select(entry => entry.Key).Distinct(StringComparer.OrdinalIgnoreCase).Count());
         Assert.Equal(["UserFolder:sync.bat", "UserFolder:sync.lnk", "UserRunKey:sync"], entries.Select(entry => entry.Key).Order(StringComparer.Ordinal));
 
-        // A key of the Run key is the value's name as before, and the names heard are as before.
-        Assert.All(entries, entry => Assert.Equal("sync", entry.Name));
+        // The two files read with their extensions, since they share a name in one folder, so that the rows can be
+        // told apart by ear (until 2026-11-27 all three read "sync"); the Run key's value is its name as before.
+        Assert.Equal(
+            ["sync, enabled, current user's Run key", "sync.bat, enabled, your Startup folder", "sync.lnk, enabled, your Startup folder"],
+            entries.Select(entry => entry.Label).Order(StringComparer.Ordinal));
+        // What is removed and what is switched are still the file and its own switch.
+        var script = entries.Single(entry => entry.Name == "sync.bat");
+        Assert.Equal("sync.bat", StartupChange.ApprovedName(script));
+        Assert.Equal(StartupOutcome.Done, StartupList.Apply(Places, script, StartupAction.Remove).Outcome);
+        Assert.False(File.Exists(Path.Combine(Places.UserFolder, "sync.bat")));
+        Assert.True(File.Exists(Path.Combine(Places.UserFolder, "sync.lnk")));
+        // Alone again, the other file reads by its name without the extension.
+        Assert.Contains(StartupList.Read(Places), entry => entry.Label == "sync, enabled, your Startup folder");
+    }
+
+    [Fact]
+    public void A_folders_files_are_named_without_the_extension_unless_two_share_the_name()
+    {
+        Assert.Equal(
+            ["Backup", "sync.lnk", "SYNC.bat", "notes.v2"],
+            StartupList.FolderNames([@"C:\s\Backup.lnk", @"C:\s\sync.lnk", @"C:\s\SYNC.bat", @"C:\s\notes.v2.cmd"]));
+        Assert.Empty(StartupList.FolderNames([]));
+    }
+
+    /// <summary>End process tree on a process that started this window is refused with its own words (PR-3.3, 2026-11-27).</summary>
+    [Fact]
+    public void A_tree_that_holds_the_asking_process_is_known_by_walking_the_parents()
+    {
+        // 40 started 30, which started 20, which started 10; 50 is nobody's.
+        var parents = new Dictionary<int, int> { [10] = 20, [20] = 30, [30] = 40 };
+        int? Parent(int id) => parents.TryGetValue(id, out var parent) ? parent : null;
+        Assert.True(ProcessEnd.StartedBy(10, 20, Parent));
+        Assert.True(ProcessEnd.StartedBy(10, 40, Parent));
+        Assert.False(ProcessEnd.StartedBy(10, 50, Parent));
+        Assert.False(ProcessEnd.StartedBy(30, 10, Parent));
+        // A process is not started by itself.
+        Assert.False(ProcessEnd.StartedBy(10, 10, Parent));
+        // Ids Windows gave out again can run in a circle: the walk ends.
+        var circle = new Dictionary<int, int> { [1] = 2, [2] = 3, [3] = 1 };
+        Assert.False(ProcessEnd.StartedBy(1, 9, id => circle[id]));
+        Assert.True(ProcessEnd.StartedBy(1, 3, id => circle[id]));
+
+        Assert.Equal("explorer started this window, so ending it with the processes it started would end axProcess too. End process ends explorer alone", ProcessEnd.HoldsThisWindow("explorer"));
+        Assert.Equal("Not every process setup started could be ended: 2 could not, Access is denied", ProcessEnd.NotAllEnded("setup", ["Access is denied.", "Access is denied."]));
+        Assert.Equal("Not every process setup started could be ended", ProcessEnd.NotAllEnded("setup", []));
     }
 
     [Fact]

@@ -59,3 +59,12 @@ Steps 4 to 9 change what starts with Windows. By ear, run them on an entry of yo
 3. Help, Keyboard shortcuts: the notice; Escape. Help, User guide: this guide; Escape.
 4. Alt+H, About, Version names axProcess among the apps.
 5. F1, type `summary`, Enter: the summary is said. F1 with nothing typed: Down reads the rules of the keys; Escape.
+
+## 6. The review of 2026-11-27 (PR-3.3, PR-3.3a, PR-5.1)
+
+The runner's script for 1 is `tests/scripts/axProcess/06-select-several.txt`, on processes it started itself.
+
+1. Space on a process you started yourself (a second Notepad), Down to another row, Delete: the question names the selected process, not the row you are on; Escape.
+2. axProcess started from axTerminal: on the terminal's shell in Processes, Context, End process tree: "<name> started this window, so ending it with the processes it started would end axProcess too. End process ends <name> alone", and no question.
+3. Enter on a process, then in the details Show program in axFile: axFile opens on that process's program.
+4. Two files of one name in your Startup folder, `sync.lnk` and `sync.bat`: Alt+3 lists "sync.bat, enabled, your Startup folder" and "sync.lnk, enabled, your Startup folder"; with one of them removed the other reads "sync" again.

@@ -1,20 +1,50 @@
 namespace AxGit.Core;
 
 /// <summary>
-/// The server a fetch, pull or push reaches (bundle AX-11.5): each server is its own consent, asked before the first
-/// command that reaches it. Pure: the remote's name from the upstream, and the host from the remote's address.
+/// The servers a fetch, pull or push reaches (bundle AX-11.5): each server is its own consent, asked before the first
+/// command that reaches it. Pure: the commands that ask git which remote it would use and where that remote's
+/// addresses lead, and the readers of its answers.
+///
+/// git is asked, never guessed for (the review of 2026-11-27; until then the consent was for the address a fetch
+/// uses, of the remote the upstream names, while a push may go elsewhere): the remote a push uses is the branch's
+/// <c>pushRemote</c>, else <c>remote.pushDefault</c>, else the upstream's, else origin; its addresses are every
+/// <c>pushurl</c> the remote has, else its <c>url</c>, each as git rewrites it (<c>url.&lt;base&gt;.pushInsteadOf</c>,
+/// <c>insteadOf</c>), and a push goes to all of them. A fetch or pull uses the upstream's remote, else origin, and
+/// its first <c>url</c>, rewritten. None of these commands reaches a server or runs a program the repository names.
 /// </summary>
 public static class GitRemote
 {
-    /// <summary>The remote a plain fetch, pull or push uses: the upstream's ("origin/main" is origin's), else origin.</summary>
-    public static string NameOf(string? upstream)
+    /// <summary>The remote git uses when none is named and none is set: origin.</summary>
+    private const string Default = "origin";
+
+    /// <summary>The remotes git would fetch a branch from and push it to, as one line, the two names with a tab between; a name is empty where nothing is set.</summary>
+    public static IReadOnlyList<string> RemotesArguments(string branch) =>
+        ["for-each-ref", "--format=%(upstream:remotename)%09%(push:remotename)", "refs/heads/" + branch];
+
+    /// <summary>
+    /// The remote a plain fetch or pull uses (<paramref name="push"/> false) or a plain push uses, from git's answer
+    /// to <see cref="RemotesArguments"/>: the name it gives, origin where it gives none (no branch, a branch with
+    /// nothing set, or an answer that could not be had).
+    /// </summary>
+    public static string Remote(string? output, bool push)
     {
-        var slash = upstream?.IndexOf('/') ?? -1;
-        return slash > 0 ? upstream![..slash] : "origin";
+        var names = (output ?? string.Empty).Split('\n')[0].TrimEnd('\r').Split('\t');
+        var name = push
+            ? (names.Length > 1 && names[1].Trim().Length > 0 ? names[1] : names[0])
+            : names[0];
+        return name.Trim() is { Length: > 0 } set ? set : Default;
     }
 
-    /// <summary>git remote get-url: the remote's address, which runs nothing.</summary>
-    public static IReadOnlyList<string> UrlArguments(string remote) => ["remote", "get-url", remote];
+    /// <summary>
+    /// git remote get-url: the remote's addresses as git would use them, rewritten, which runs nothing: the one a
+    /// fetch uses, or every one a push goes to, one per line.
+    /// </summary>
+    public static IReadOnlyList<string> UrlArguments(string remote, bool push) =>
+        push ? ["remote", "get-url", "--push", "--all", remote] : ["remote", "get-url", remote];
+
+    /// <summary>The hosts of the addresses git printed, one per line, each once, in git's order; an address on this computer or a share is none.</summary>
+    public static IReadOnlyList<string> Hosts(string output) =>
+        [.. output.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Select(Host).OfType<string>().Distinct(StringComparer.OrdinalIgnoreCase)];
 
     /// <summary>
     /// The host of a remote's address, lower case: "github.com" from https://github.com/a/b.git, from an ssh:// address

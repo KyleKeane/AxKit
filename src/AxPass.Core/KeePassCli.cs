@@ -109,11 +109,18 @@ public static class KeePassCli
         // Outside call, program, KeePassXC: runs the user's installed keepassxc-cli.exe for one command on the
         // database, the master password on its standard input, and reads what it prints; the tool has no network
         // feature.
-        var result = ProcessRun.Run(info, input, TimeSpan.FromMilliseconds(TimeoutMs));
-        return result.TimedOut
+        return Result(ProcessRun.Run(info, input, TimeSpan.FromMilliseconds(TimeoutMs)));
+    }
+
+    /// <summary>
+    /// A run as the tool's result (pure, tested): ended at the time limit before it had finished, it failed, with
+    /// nothing of what it printed until then (a part of a list is no list); a run the tool finished by itself is its
+    /// own exit code and output, whatever held its output open after.
+    /// </summary>
+    public static CliResult Result(ProcessResult result) =>
+        result.Stopped
             ? new CliResult(-1, string.Empty, $"KeePassXC's tool took over {TimeoutMs / 1000} seconds and was ended")
             : new CliResult(result.ExitCode, result.Output, result.Error);
-    }
 
     /// <summary>The arguments of a command on a database: the command, -q (so that the password prompt goes nowhere), the options, the database, the rest.</summary>
     public static IReadOnlyList<string> On(string command, string database, IEnumerable<string>? options = null, params string[] rest) =>

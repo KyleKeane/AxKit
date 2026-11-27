@@ -57,8 +57,13 @@ At the top level, Ctrl+N adds a server in one form: type its name, Tab, type the
 terminal would, Tab, and a folder to start it in (empty for the folder axMCP was started on, or your profile folder);
 Enter or Ctrl+Enter adds it. What is missing is said, with the focus in its field. F2 renames one of yours, Delete removes
 one after a question, Ctrl+Z takes the last of these back. Space selects one of your servers (Ctrl+A all of yours,
-Escape none); Delete then removes all the selected after one question, and one Ctrl+Z brings them all back. Claude Code's own servers are changed in Claude Code, with
+Escape none); Delete then removes the selected ones, one alone too and wherever the row you are on is, after one question, and one Ctrl+Z brings them all back. Claude Code's own servers are changed in Claude Code, with
 `claude mcp add` and `claude mcp remove`; axMCP only reads its files.
+
+The program of a command line is found this way: a full path (`C:\Tools\server.exe`) is taken as it is; a bare name
+(`npx`, `node`) is looked for in the folders of your PATH; and a path that is not full (`.\server.exe`,
+`tools\server.cmd`) is taken from the folder the server starts in, which for a server of a project's `.mcp.json` is
+the project's folder. The notice before a server's first start reads the full path that was found.
 
 ## Menus
 

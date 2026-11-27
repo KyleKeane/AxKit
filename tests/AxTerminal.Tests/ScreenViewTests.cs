@@ -80,6 +80,28 @@ public sealed class ScreenViewTests
         Assert.Equal((1, 0), ScreenView.Position(rows, 4));
     }
 
+    /// <summary>
+    /// AT-9.5 (2026-11-27): a selection made in reading the screen is still there after the program redraws: both
+    /// its ends stay on their rows and columns, in the direction the user made it.
+    /// </summary>
+    [Fact]
+    public void A_selection_keeps_both_its_ends_over_a_change_of_the_rows()
+    {
+        string[] shown = ["12:00:01", "alpha beta", "gamma"];
+        string[] next = ["12:00:02 busy", "alpha beta", "gamma"];
+        // "beta" selected forwards: from row 1, column 6 to row 1, column 10; the first row grew by five.
+        var anchor = ScreenView.Index(shown, 1, 6);
+        var caret = ScreenView.Index(shown, 1, 10);
+        Assert.Equal((anchor + 5, caret + 5), ScreenView.Kept(shown, next, anchor, caret));
+        // Backwards, the caret before the anchor: still backwards.
+        Assert.Equal((caret + 5, anchor + 5), ScreenView.Kept(shown, next, caret, anchor));
+        // Nothing selected: the caret alone, on its row and column.
+        Assert.Equal((anchor + 5, anchor + 5), ScreenView.Kept(shown, next, anchor, anchor));
+        // An end past its row's new end stands at that end; one on a row that is gone, on the last row.
+        string[] shorter = ["12:00:03", "alpha"];
+        Assert.Equal((ScreenView.Index(shorter, 1, 5), ScreenView.Index(shorter, 1, 3)), ScreenView.Kept(shown, shorter, anchor, ScreenView.Index(shown, 2, 3)));
+    }
+
     [Fact]
     public void Only_the_rows_that_changed_are_edits_the_last_first()
     {

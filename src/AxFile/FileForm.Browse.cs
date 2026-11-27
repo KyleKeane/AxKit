@@ -315,7 +315,7 @@ public sealed partial class FileForm
     // that line (SayNoEntry).
 
     /// <summary>The selected entries among those shown, in the list's order; none when nothing is selected.</summary>
-    private List<Entry> SelectedEntries() => [.. SelectedRows().Select(row => (Entry)row.Tag!)];
+    private List<Entry> SelectedEntries() => Selection.Count == 0 ? [] : [.. RowsInHand().Select(row => (Entry)row.Tag!)];
 
     /// <summary>What an operation acts on (AF-3.7): the selected entries, or the current entry alone when none is selected; empty, and said, when there is no entry.</summary>
     private List<Entry> Targets()

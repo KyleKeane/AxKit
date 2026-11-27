@@ -66,6 +66,11 @@ internal sealed partial class TerminalForm
     /// </summary>
     private void SendInput(bool record)
     {
+        if (FieldBehindScreen())
+        {
+            return;
+        }
+
         if (!ProcessRunning)
         {
             Announce($"The shell ended. {BundleKeys.Text(AxTerminalKeys.RestartShell)} starts it again", true);
@@ -161,6 +166,11 @@ internal sealed partial class TerminalForm
     /// </summary>
     private void ShowRecentCommands()
     {
+        if (FieldBehindScreen())
+        {
+            return;
+        }
+
         if (_history.Items.Count == 0)
         {
             Announce("No recent commands", true);

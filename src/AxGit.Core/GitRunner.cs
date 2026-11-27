@@ -5,10 +5,17 @@ using AxKit.Core;
 
 namespace AxGit.Core;
 
-/// <summary>What one git command gave back: the exit code, what it printed and what it complained.</summary>
-public sealed record GitResult(int ExitCode, string Output, string Error)
+/// <summary>
+/// What one git command gave back: the exit code, what it printed and what it complained. <see cref="TimedOut"/>:
+/// git was stopped at the time limit, so the exit code is -1, the output is what it had printed until then, a part,
+/// and the run is never <see cref="Ok"/>. <see cref="OutputHeldOpen"/>: git itself finished, with its own exit code
+/// and all of its output, and only a program it started (a signing agent, a hook's daemon) kept the output open
+/// until the limit; the complaint says so after git's own.
+/// </summary>
+public sealed record GitResult(int ExitCode, string Output, string Error, bool TimedOut = false, bool OutputHeldOpen = false)
 {
-    public bool Ok => ExitCode == 0;
+    /// <summary>git ran to its own end and gave exit code 0; never true for a run stopped at the time limit.</summary>
+    public bool Ok => ExitCode == 0 && !TimedOut;
 
     /// <summary>The first line of the complaint, or of the output when git complained in none; "git failed" when there is nothing.</summary>
     public string FirstLine
@@ -120,15 +127,28 @@ public static class GitRunner
             throw new GitNotFoundException("git was not found on this computer.", ex);
         }
 
+        return Result(result, timeout);
+    }
+
+    /// <summary>
+    /// A run as git's result (review of 2026-11-27; pure, tested). Stopped at the time limit: no success whatever it
+    /// printed, exit code -1, the reason after git's own complaint. Finished with its output held open by a program
+    /// it started: git's own exit code and output, which are whole, and the reason after its complaint. Until then
+    /// the reason replaced git's complaint, and the output of both cases was empty, so that a status read this way
+    /// was an empty status with exit code 0.
+    /// </summary>
+    public static GitResult Result(ProcessResult result, TimeSpan timeout)
+    {
         if (!result.TimedOut)
         {
             return new GitResult(result.ExitCode, result.Output, result.Error);
         }
 
-        var reason = result.Finished
-            ? "git finished, but a program it started kept its output open; the output read so far is what there is."
-            : $"git did not finish within {timeout.TotalSeconds:0} seconds and was stopped.";
-        return new GitResult(result.ExitCode, result.Output, reason);
+        var reason = result.Stopped
+            ? $"git did not finish within {timeout.TotalSeconds:0} seconds and was stopped."
+            : "git finished, but a program it started kept its output open until the time limit.";
+        var error = result.Error.Trim().Length == 0 ? reason : result.Error.TrimEnd() + "\n" + reason;
+        return new GitResult(result.Stopped ? -1 : result.ExitCode, result.Output, error, TimedOut: result.Stopped, OutputHeldOpen: !result.Stopped);
     }
 
     /// <summary>

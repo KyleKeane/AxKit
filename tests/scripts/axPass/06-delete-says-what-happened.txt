@@ -1,0 +1,101 @@
+# Workflow: Delete entries where the Recycle Bin is not yet known, and undo only what can be told apart
+# Needs: KeePassXC installed in C:\Program Files\KeePassXC (the script makes its test database with keepassxc-cli.exe there).
+# axPass, docs/axPass/user-guide.md "Changing entries" (SPEC PW-6.4, PW-6.4a; bundle AX-8.16; the review of
+# 2026-11-27). KeePassXC's tool says whether a database has a Recycle Bin and never which group it is, so axPass
+# says only what the tool's output shows: in a new database, which has no group for the bin yet, Delete on an entry
+# inside a group asks first; after every delete the sentence is what the listing shows; a selected entry is what
+# Delete acts on, wherever the row you are on is; and Ctrl+Z moves an entry back from the Recycle Bin only while it
+# is the one entry of its name there. The database is made here by KeePassXC's own tool, the master password a test value.
+# The idle lock off: it counts real input only, which the runner's keys are not.
+file home\AxKit\axPass.json {"lockMinutes": 0}
+# The access layers' reminder agreed to already (AX-11.5); 02-consent has it.
+file home\AxKit\consent.json {"items":[{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+file twice.txt test-master-1\ntest-master-1\n
+file once.txt test-master-1\n
+run "C:\Program Files\KeePassXC\keepassxc-cli.exe" db-create -q -p test.kdbx < twice.txt
+# The entry at the top first: the tool refuses to add one at the top while a group holds one of its name.
+run "C:\Program Files\KeePassXC\keepassxc-cli.exe" add -q -u outer test.kdbx "Bank one" < once.txt
+run "C:\Program Files\KeePassXC\keepassxc-cli.exe" add -q test.kdbx "Bank two" < once.txt
+run "C:\Program Files\KeePassXC\keepassxc-cli.exe" mkdir -q test.kdbx Email < once.txt
+run "C:\Program Files\KeePassXC\keepassxc-cli.exe" add -q -u sam test.kdbx Email/Gmail < once.txt
+run "C:\Program Files\KeePassXC\keepassxc-cli.exe" add -q -u inner test.kdbx "Email/Bank one" < once.txt
+
+start pass {temp}\test.kdbx
+expect focus Type the master password to unlock test
+type test-master-1
+keys enter
+expect said ! test, 3 items, Email, group, 2 items
+# A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
+wait 500
+
+# Check: Delete in a group asks first while the Recycle Bin is not known, and Enter keeps the entry
+# A new database has no group for the bin yet, and the tool does not say which group it will be: the question says
+# so, Cancel its default.
+keys enter
+expect said ! Email, 2 items, Gmail
+keys delete
+expect state "notice":"Delete Gmail?"
+expect state This database has a Recycle Bin, but KeePassXC
+expect state If Gmail is in it already, it is deleted for good, and nothing brings it back.
+# A notice holds its answering keys for a moment after it appears (KeyHold).
+wait 1200
+keys enter
+expect state "notice":null
+expect list Gmail
+
+# Goal: Delete an entry and hear where it went
+# Delete again, Alt+D: the listing read after it shows the entry in the Recycle Bin, and that is what is said.
+keys delete
+expect state "notice":"Delete Gmail?"
+wait 1200
+keys alt+d
+expect said ! Moved Gmail to the Recycle Bin; Ctrl+Z brings it back
+refuse list Gmail
+
+# Check: Delete with one entry selected moves that one, wherever the row you are on is
+# AX-8.16: at the top, Bank one selected, the row moved on to Bank two: Delete moves Bank one. The Recycle Bin is
+# known now, so nothing is asked.
+keys backspace
+expect said ! test, 4 items, Email, group, 1 item
+wait 1100
+type bank one
+expect focus Bank one
+keys space
+expect focus Bank one, outer, selected
+keys down
+expect focus Bank two
+keys delete
+expect said ! Moved Bank one to the Recycle Bin; Ctrl+Z brings it back
+expect list Bank two
+refuse list Bank one
+
+# Check: An entry moved beside another of its name says that Ctrl+Z cannot bring it back
+# The Recycle Bin holds a Bank one already; the one of the group Email arrives beside it, and the tool reaches an
+# entry by its name alone.
+wait 1100
+type email
+expect focus Email, group, 1 item
+keys enter
+expect said ! Email, 1 item, Bank one
+keys delete
+expect said ! Moved Bank one to the Recycle Bin. Ctrl+Z cannot bring it back: another entry there is called Bank one
+
+# Check: Ctrl+Z moves nothing back by a name two entries have
+# The newest change says why it is not undone, once; so does the one before it, the other Bank one, which was the
+# one of its name when it was moved and is not any more; the one before that, Gmail, comes back.
+keys ctrl+z
+expect said ! Not undone: Moved Bank one to the Recycle Bin. The Recycle Bin holds more than one entry called Bank one
+keys ctrl+z
+expect said ! Not undone: Moved Bank one to the Recycle Bin. The Recycle Bin holds more than one entry called Bank one
+# Goal: Bring a deleted entry back
+keys ctrl+z
+expect said ! Undone: Moved Gmail to the Recycle Bin
+expect list Gmail
+# Check: Nothing of that name came back by itself
+# The top of the database has no Bank one again, and the Recycle Bin is still there with what it holds (the two
+# entries of one name are one row there: the tool lists them under one path).
+keys backspace
+refuse list Bank one
+wait 1100
+type recycle
+expect focus Recycle Bin, group

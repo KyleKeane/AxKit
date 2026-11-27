@@ -26,6 +26,29 @@ expect said Processes,
 menu Name
 expect said ! Sorted by name
 
+# Check: Delete with one process selected asks about that one, wherever the row you are on is
+# Bundle AX-8.16 (the review of 2026-11-27): what a command acts on is the selected rows whenever any is selected,
+# one alone too. The first copy selected, the row moved on to the second: the question names the first. Escape ends
+# nothing. (Until then the question named the row under the arrow keys.)
+do Find in the list
+expect state "notice":"Find"
+type axkitscript06
+keys enter
+expect focus "value":"axkitscript06a,
+keys space
+expect said ! Selected
+keys down
+expect focus "value":"axkitscript06b,
+keys delete
+expect state "notice":"End axkitscript06a (process
+# A notice holds its answering keys for a moment after it appears (KeyHold).
+wait 1200
+keys escape
+expect state "notice":null
+expect list axkitscript06a,
+do Deselect all
+expect said ! None selected
+
 # Goal: Select two processes with Space and Shift+Down
 # Find the first copy, Space selects it, Shift+Down takes the second; the status bar counts them.
 do Find in the list

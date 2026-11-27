@@ -1,22 +1,32 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Text;
 
 namespace AxKit.Core;
 
 /// <summary>
 /// What a program run to its end gave (<see cref="ProcessRun"/>): its exit code, what it printed on each stream, and
 /// whether the time ran out. <see cref="Finished"/> tells, after a timeout, whether the program itself had ended and
-/// only a program it started still held its output open (a credential helper, a hook's daemon).
+/// only a program it started still held its output open (a credential helper, a hook's daemon): then the exit code
+/// is the program's and the output is all it printed. After a timeout that ended the program (<see cref="Finished"/>
+/// false) the exit code is -1 and the output is what it had printed until then, a part: never a result to read as
+/// the whole. <see cref="Stopped"/> is that case, and every caller asks it before it reads the output
+/// (<c>ProcessRunTests.Every_caller_asks_whether_the_run_was_stopped</c>).
 /// </summary>
-public sealed record ProcessResult(int ExitCode, string Output, string Error, bool TimedOut, bool Finished);
+public sealed record ProcessResult(int ExitCode, string Output, string Error, bool TimedOut, bool Finished)
+{
+    /// <summary>The program was ended at the time limit before it had finished: its output is a part, its exit code none, and nothing of it is a result.</summary>
+    public bool Stopped => TimedOut && !Finished;
+}
 
 /// <summary>
 /// A program run without a window to its end, under a time limit (inventory item 3, 2026-10-25: git's runner, Claude
 /// Code's version and KeePassXC's tool each wrote it): standard input given as lines, each ended by a line feed, then
 /// closed; both outputs read to their end, under the limit as well as the wait, so that a full pipe never holds the
-/// program and a pipe a child keeps open never hangs the caller; on a timeout the whole process tree is ended. The
-/// caller sets the program, its arguments as a list, its environment and its encodings on the start info; this sets
-/// the redirections. A program that cannot be started throws as <see cref="Process.Start()"/> does.
+/// program and a pipe a child keeps open never hangs the caller; on a timeout the whole process tree is ended, and
+/// what was printed until then is kept. The caller sets the program, its arguments as a list, its environment and its
+/// encodings on the start info; this sets the redirections. A program that cannot be started throws as
+/// <see cref="Process.Start()"/> does.
 /// </summary>
 public static class ProcessRun
 {
@@ -42,8 +52,12 @@ public static class ProcessRun
         using var limit = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
         limit.CancelAfter(timeout);
         // The reads start before the input is written: a program that answers as it reads could fill a pipe first.
-        var output = process.StandardOutput.ReadToEndAsync(limit.Token);
-        var error = process.StandardError.ReadToEndAsync(limit.Token);
+        // Each keeps what it has read as it reads, so that a run that is ended still says what it printed.
+        using var readsEnd = new CancellationTokenSource();
+        var output = new StringBuilder();
+        var error = new StringBuilder();
+        var reads = Task.WhenAll(ReadAsync(process.StandardOutput, output, readsEnd.Token), ReadAsync(process.StandardError, error, readsEnd.Token));
+        bool finished;
         try
         {
             try
@@ -63,40 +77,71 @@ public static class ProcessRun
             }
 
             await process.WaitForExitAsync(limit.Token).ConfigureAwait(false);
-            return new ProcessResult(process.ExitCode, await output.ConfigureAwait(false), await error.ConfigureAwait(false), TimedOut: false, Finished: true);
+            // The program has ended, and its outputs end with it, unless a program it started holds one open: the
+            // reads are waited for under the limit too.
+            await reads.WaitAsync(limit.Token).ConfigureAwait(false);
+            return new ProcessResult(process.ExitCode, Text(output), Text(error), TimedOut: false, Finished: true);
         }
         catch (OperationCanceledException)
         {
             // Whether the program itself had finished, taken before the kill, which ends it either way.
-            var finished = process.HasExited;
-            try
-            {
-                process.Kill(entireProcessTree: true);
-            }
-            catch (Exception kill) when (kill is InvalidOperationException or Win32Exception)
-            {
-                // Gone already.
-            }
-
-            cancellation.ThrowIfCancellationRequested();
-            return new ProcessResult(finished ? process.ExitCode : -1, await SoFar(output).ConfigureAwait(false), await SoFar(error).ConfigureAwait(false), TimedOut: true, Finished: finished);
+            finished = process.HasExited;
         }
+
+        try
+        {
+            process.Kill(entireProcessTree: true);
+        }
+        catch (Exception kill) when (kill is InvalidOperationException or Win32Exception)
+        {
+            // Gone already.
+        }
+
+        cancellation.ThrowIfCancellationRequested();
+        // What the program printed before it ended, or before it was ended, is in the pipes: the reads get a moment to
+        // take it, however close to the limit it was printed, and are then ended with what they have.
+        await Task.WhenAny(reads, Task.Delay(Drain, CancellationToken.None)).ConfigureAwait(false);
+        readsEnd.Cancel();
+        return new ProcessResult(finished ? process.ExitCode : -1, Text(output), Text(error), TimedOut: true, Finished: finished);
     }
 
     /// <summary>The same, waited for on the calling thread, for code that runs on a thread of its own already (axPass's tool, under <c>Task.Run</c>).</summary>
     public static ProcessResult Run(ProcessStartInfo start, IReadOnlyList<string> input, TimeSpan timeout) =>
         RunAsync(start, input, timeout).GetAwaiter().GetResult();
 
-    /// <summary>What a read gave, or nothing when it was cancelled: a cancelled read throws rather than return a part.</summary>
-    private static async Task<string> SoFar(Task<string> read)
+    /// <summary>How long the reads go on after the time ran out, for what is already in the pipes.</summary>
+    private static readonly TimeSpan Drain = TimeSpan.FromMilliseconds(500);
+
+    /// <summary>
+    /// One output read to its end into <paramref name="text"/>, piece by piece, so that what was read is there
+    /// whenever the run is ended (until 2026-11-27 one read to the end, which, cancelled, gave nothing: a run that
+    /// timed out had printed nothing, and a caller took an empty output with exit code 0 for a result). It ends
+    /// without a word when it is cancelled, when the pipe breaks and when the process is let go.
+    /// </summary>
+    private static async Task ReadAsync(StreamReader reader, StringBuilder text, CancellationToken end)
     {
+        var buffer = new char[4096];
         try
         {
-            return await read.ConfigureAwait(false);
+            while (await reader.ReadAsync(buffer.AsMemory(), end).ConfigureAwait(false) is var count and > 0)
+            {
+                lock (text)
+                {
+                    text.Append(buffer, 0, count);
+                }
+            }
         }
-        catch (OperationCanceledException)
+        catch (Exception ex) when (ex is OperationCanceledException or IOException or ObjectDisposedException)
         {
-            return string.Empty;
+            // Ended, or nothing more can be read: what was read stays.
+        }
+    }
+
+    private static string Text(StringBuilder text)
+    {
+        lock (text)
+        {
+            return text.ToString();
         }
     }
 }

@@ -97,7 +97,9 @@ public static class AiRequest
         var start = StartInfo(line, workingFolder);
         // Outside call, program, Claude Code: claude -p in its working folder with the folders the user allowed, with read-only tools, without the folder's servers and hooks, the prompt on its standard input (docs/axKit/ai-help.md AH-2.1); Claude Code talks to Anthropic under the user's account.
         var result = await ProcessRun.RunAsync(start, [prompt], Timeout, cancellation).ConfigureAwait(false);
-        return result.TimedOut
+        // Ended at the limit, what it printed until then is a part and no answer; an answer Claude Code finished while
+        // a program it started held its output open is the answer.
+        return result.Stopped
             ? new AiAnswer("No answer in two minutes: Claude Code was ended. Ask again, or a shorter question.", true, null)
             : AiAnswer.Parse(result.Output, result.Error, result.ExitCode);
     }

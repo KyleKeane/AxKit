@@ -54,3 +54,12 @@ Run with NVDA before a release, on a repository with a remote (the axKit reposit
 4. Alt+W: the Window menu with Open windows, Recently closed, Close all windows, Say the status (F9: the status bar is said); Alt+H: Help with Command palette, Keyboard shortcuts, User guide, the resources, Send a report, Your reports, Diagnostics (Test a key and Copy diagnostics), Check for updates and About; Alt+K: the axKit menu with Apps, Access layers, Claude and AI tools; Alt+O: Options, ending after a separator with Theme, Open the sounds folder, Edit app keys file, Check for updates at start and Keep a log of events. About, Version: "axKit <version>" and axGIT named among the apps.
 5. Help, Diagnostics, Copy diagnostics: "Copied diagnostics"; paste somewhere: the versions, the repository and the log's end.
 6. Close the window and start axGIT without a folder: it opens on the same repository (the last one); Session, Open recent repository lists it as "1. <name> (<path>)".
+
+## 6. The review of 2026-11-27 (AG-1.6a, AG-5.4a)
+
+The runner's script for 1 is `tests/scripts/axGIT/07-own-programs.txt`.
+
+1. A repository with `git config --worktree core.sshCommand x` (after `git config extensions.worktreeConfig true`) and a repository inside it with a hook: the notice "This repository runs programs of its own" names "core.sshcommand" and "submodule <path>: hook <name>"; Enter keeps them off.
+2. While a large repository opens, F5 at once: "Working…", and the Changes list comes after the notice or by itself; nothing ran in between.
+3. Enter on an untracked file of several megabytes: the details come at once, "Untracked file, the first N lines", and end with "(cut after 200 KB)".
+4. With a remote whose push address is on another server (`git remote set-url --push origin <address>`): Push asks "Before axGIT connects to <that server>", not the fetch address's.

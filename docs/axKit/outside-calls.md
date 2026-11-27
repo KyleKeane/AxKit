@@ -106,7 +106,7 @@ Calls (2):
 - **shared by every app**, `src/AxKit.Core/ProcessRun.cs`, in `ProcessRun.RunAsync`, by `new Process`: the one place a program is started without a window and run to its end with both outputs read; which program and why is said at each call of Run and RunAsync, in its own comment.
   Code: `using var process = new Process { StartInfo = start };`
 - **axPass**, `src/AxPass.Core/KeePassCli.cs`, in `KeePassCli.Run`, by `ProcessRun.Run`: runs the user's installed keepassxc-cli.exe for one command on the database, the master password on its standard input, and reads what it prints; the tool has no network feature.
-  Code: `var result = ProcessRun.Run(info, input, TimeSpan.FromMilliseconds(TimeoutMs));`
+  Code: `return Result(ProcessRun.Run(info, input, TimeSpan.FromMilliseconds(TimeoutMs)));`
 
 #### MCP servers
 

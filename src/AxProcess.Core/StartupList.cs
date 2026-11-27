@@ -303,6 +303,21 @@ public static class StartupList
         }
     }
 
+    /// <summary>
+    /// The names a Startup folder's files are listed by (PR-5.1), one for each file in the order given: the file's
+    /// name without its extension, and with it for every file whose name another file of the folder has too
+    /// (<c>sync.lnk</c> and <c>sync.bat</c>), so that no two rows of one folder read alike. Until 2026-11-27 both
+    /// read "sync", and the row acted on could not be told from its twin by ear. Pure.
+    /// </summary>
+    public static IReadOnlyList<string> FolderNames(IReadOnlyList<string> files)
+    {
+        var shared = files.GroupBy(file => Path.GetFileNameWithoutExtension(file), StringComparer.OrdinalIgnoreCase)
+            .Where(same => same.Count() > 1)
+            .Select(same => same.Key)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        return [.. files.Select(file => shared.Contains(Path.GetFileNameWithoutExtension(file)) ? Path.GetFileName(file) : Path.GetFileNameWithoutExtension(file))];
+    }
+
     private static void ReadFolder(List<StartupEntry> entries, StartupPlaces places, StartupPlace place)
     {
         var folder = places.FolderOf(place);
@@ -315,15 +330,11 @@ public static class StartupList
         {
             var (approvedHive, approvedPath) = places.ApprovedKeyOf(place);
             using var approved = approvedHive.OpenSubKey(approvedPath);
-            foreach (var file in Directory.GetFiles(folder))
+            var files = Directory.GetFiles(folder).Where(file => !Path.GetFileName(file).Equals("desktop.ini", StringComparison.OrdinalIgnoreCase)).ToList();
+            var names = FolderNames(files);
+            for (var i = 0; i < files.Count; i++)
             {
-                var fileName = Path.GetFileName(file);
-                if (fileName.Equals("desktop.ini", StringComparison.OrdinalIgnoreCase))
-                {
-                    continue;
-                }
-
-                entries.Add(new StartupEntry(Path.GetFileNameWithoutExtension(file), file, place, IsEnabled(approved?.GetValue(fileName) as byte[])));
+                entries.Add(new StartupEntry(names[i], files[i], place, IsEnabled(approved?.GetValue(Path.GetFileName(files[i])) as byte[])));
             }
         }
         catch (Exception ex) when (ex is System.Security.SecurityException or UnauthorizedAccessException or IOException)

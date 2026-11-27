@@ -47,6 +47,22 @@ public sealed partial class PassForm : ItemForm
     /// <summary>Whether this unlock's backup is made (PW-4.5): the first change after unlocking copies the file first.</summary>
     private bool _backedUp;
 
+    /// <summary>
+    /// Counts the unlocks, the locks and the databases opened: what the tool answers is taken only while this is
+    /// what it was when the tool was asked (<c>Cli</c>, <c>ReadEntry</c>, the password's Generate), so that nothing
+    /// of a database reaches the window, a field or the clipboard after the lock (PW-4.3).
+    /// </summary>
+    private int _unlock;
+
+    /// <summary>Whether KeePassXC's tool said, at this unlock or the last refresh, that the database has a Recycle Bin (PW-6.4, <see cref="PassBin.IsOn"/>).</summary>
+    private bool _binOn;
+
+    /// <summary>The group a deleted entry was seen to arrive in since the database was unlocked: the Recycle Bin, whatever its name; null until one was seen.</summary>
+    private string? _binSeen;
+
+    /// <summary>The group axPass takes for the Recycle Bin (<see cref="PassBin.Known"/>); null while it is not known, and while locked.</summary>
+    private string? Bin => _tree is null ? null : PassBin.Known(_binOn, _tree, _binSeen);
+
     public PassForm(string? path, PassSettings settings, string? settingsError)
         : base(AxPassApp.Name, settings, PassSettings.DefaultPath, settingsError)
     {
@@ -89,7 +105,9 @@ public sealed partial class PassForm : ItemForm
         Add(_entryMenu, new Command("Copy &password", AxPassKeys.CopyPassword, CopyPassword) { When = NotRenaming, Mark = CommandMark.Act });
         // Ctrl+Enter, the bundle's main action (AX-8.10), is a second key of Copy password, on an entry of an unlocked
         // database (the maintainer, 2026-11-26); anywhere else it plays the edge sound.
-        AddKey(new Command("Copy password", BundleKeys.MainAction, CopyPassword) { When = () => NotRenaming() && _password is not null && SelectedEntry() is not null, Mark = CommandMark.Act });
+        // The condition only looks (the review of 2026-11-27): it is asked whenever the keys are listed, for F1, the
+        // palette and the key test, and until then it asked SelectedEntry, which says "Select an entry first" aloud.
+        AddKey(new Command("Copy password", BundleKeys.MainAction, CopyPassword) { When = () => NotRenaming() && _password is not null && SelectedRow() is { Tag: PassNode { IsGroup: false } }, Mark = CommandMark.Act });
         Add(_entryMenu, new Command("Open U&RL", AxPassKeys.OpenUrl, OpenEntryUrl) { When = NotRenaming, Mark = CommandMark.Act });
         _entryMenu.DropDownItems.Add(Item("Read in &full", ReadAll, ItemKeys.ReadAll, CommandMark.Read));
         _entryMenu.DropDownItems.Add(Item("Rena&me", RenameSelected, ItemKeys.Rename, CommandMark.Change));
@@ -183,6 +201,7 @@ public sealed partial class PassForm : ItemForm
 
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
+        _unlock++;
         _password = null;
         _lockTimer.Stop();
         ClearCopiedPassword();
@@ -265,7 +284,7 @@ public sealed partial class PassForm : ItemForm
         }
 
         var rows = new List<ItemRow>();
-        foreach (var node in _tree.Level(_group))
+        foreach (var node in _tree.Level(_group, Bin))
         {
             if (node.IsGroup)
             {
@@ -313,7 +332,7 @@ public sealed partial class PassForm : ItemForm
                 return new ItemDetail("Details of " + group.Name, row.Key, null,
                 [
                     new ItemDetailLine($"A group of {Count(_tree?.CountIn(group.Path) ?? 0, "item")}"),
-                    new ItemDetailLine(PassTree.InRecycleBin(group.Path) ? "In the Recycle Bin: Delete removes for good" : "A group is renamed in KeePassXC's own window"),
+                    new ItemDetailLine(PassBin.Holds(Bin, group.Path) ? "In the Recycle Bin: Delete removes for good" : "A group is renamed in KeePassXC's own window"),
                 ]);
             case { Tag: PassNode entry }:
                 if (_entries.TryGetValue(entry.Path, out var fields))
@@ -338,8 +357,9 @@ public sealed partial class PassForm : ItemForm
 
         try
         {
+            var unlock = _unlock;
             var result = await Task.Run(() => KeePassCli.Run(cli, KeePassCli.On(KeePassCliTexts.Show, database, null, path), [password]));
-            if (_password is null || _database != database)
+            if (unlock != _unlock)
             {
                 return;
             }
@@ -423,9 +443,15 @@ public sealed partial class PassForm : ItemForm
             return;
         }
 
+        // PW-6.4: whether the database has a Recycle Bin, in the tool's own words; a tool that does not say so in the
+        // words known leaves it not known, and a delete then asks first.
+        var info = await Task.Run(() => KeePassCli.Run(cli, KeePassCli.On(KeePassCliTexts.Info, database), [password]));
+        _unlock++;
         _database = database;
         _password = password;
         _backedUp = false;
+        _binOn = info.Succeeded && PassBin.IsOn(info.Output);
+        _binSeen = null;
         _tree = PassTree.Parse(result.Output);
         _group = string.Empty;
         _entries.Clear();
@@ -449,8 +475,11 @@ public sealed partial class PassForm : ItemForm
             return;
         }
 
+        _unlock++;
         _password = null;
         _tree = null;
+        _binOn = false;
+        _binSeen = null;
         _entries.Clear();
         _undo.Clear();
         ClearCopiedPassword();
@@ -481,6 +510,13 @@ public sealed partial class PassForm : ItemForm
     private async Task RefreshDatabaseAsync()
     {
         var before = _tree;
+        // Whether the database has a Recycle Bin is asked again too (PW-6.4): KeePassXC's own window may have changed it.
+        if (await Cli(KeePassCliTexts.Info, null) is not { } info)
+        {
+            return;
+        }
+
+        _binOn = PassBin.IsOn(info.Output);
         await ReloadAsync();
         if (!ReferenceEquals(before, _tree))
         {
@@ -539,7 +575,17 @@ public sealed partial class PassForm : ItemForm
                 }
             }
 
+            var unlock = _unlock;
             var result = await Task.Run(() => KeePassCli.Run(cli, KeePassCli.On(command, database, options, rest ?? []), [password, .. input ?? []]));
+            // PW-4.3 (the review of 2026-11-27): an answer that comes after the window locked, or after another
+            // database was opened or this one unlocked again, is dropped here, for every command: until then a
+            // password asked for just before the lock was put on the clipboard after it, where the lock's own
+            // clearing had already passed.
+            if (unlock != _unlock)
+            {
+                return null;
+            }
+
             if (!result.Succeeded)
             {
                 Announce(result.Why, true);

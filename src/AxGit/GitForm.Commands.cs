@@ -95,10 +95,12 @@ public sealed partial class GitForm
         if (file.Kind == ChangeKind.Untracked)
         {
             var path = Path.Combine(_root, file.Path.Replace('/', Path.DirectorySeparatorChar));
+            // Its first 200 KB, and no more of it read (AxGit.Core/UntrackedFile).
             string text;
+            bool cut;
             try
             {
-                text = await File.ReadAllTextAsync(path);
+                (text, cut) = await UntrackedFile.ReadAsync(path);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
@@ -106,13 +108,7 @@ public sealed partial class GitForm
                 return;
             }
 
-            if (text.Length > UntrackedLimit)
-            {
-                text = text[..UntrackedLimit] + "\n(cut after 200 KB)";
-            }
-
-            var lines = text.Length == 0 ? 0 : text.Split('\n').Length;
-            ShowText($"Diff of {file.Path}", $"Untracked file, {lines} lines\n{text}", focus: true);
+            ShowText($"Diff of {file.Path}", UntrackedFile.Details(text, cut), focus: true);
             return;
         }
 
@@ -239,7 +235,7 @@ public sealed partial class GitForm
         if (RefusedWhileWorking())
         {
             // A stage or its refresh still runs: the count below is the one before it (found by tools/AxAutomate,
-            // 2026-10-23: the stage key then Ctrl+Enter said "Nothing staged").
+            // 2026-10-23: the stage key then Ctrl+Enter said "Nothing staged").
             return;
         }
 

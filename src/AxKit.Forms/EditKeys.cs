@@ -148,6 +148,22 @@ public static class EditKeys
     }
 
     /// <summary>
+    /// The selection's two ends as the user made them: where it began (the anchor) and where the caret is; the same
+    /// place twice when nothing is selected. For a window that changes a text under a selection and puts it back
+    /// (axTerminal's screen view at each frame, with <see cref="Select"/>).
+    /// </summary>
+    public static (int Anchor, int Caret) SelectionEnds(TextBoxBase box)
+    {
+        var start = box.SelectionStart;
+        var end = start + box.SelectionLength;
+        return start == end || CaretAtEnd(box, start) ? (start, end) : (end, start);
+    }
+
+    /// <summary>Selects from the anchor to the caret, the caret at the second place whichever of the two is lower, so that Shift with an arrow goes on from where the user was.</summary>
+    public static void Select(TextBoxBase box, int anchor, int caret) =>
+        SendMessage(box.Handle, EM_SETSEL, (IntPtr)anchor, (IntPtr)caret);
+
+    /// <summary>
     /// Whether the caret is at the end of the selection rather than at its start. The control keeps the anchor to
     /// itself, but it draws the caret at the active end: a caret that is not where the selection's first character
     /// is drawn is at the end.

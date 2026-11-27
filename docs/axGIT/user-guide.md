@@ -1,6 +1,6 @@
 # axGIT user guide
 
-**axGIT, access layer for Git.** axGIT only shows what Git does and passes your commands to it; Git, which you install, does the work, and a fetch, pull or push reaches the server your repository's remote names, under its terms. Before axGIT first runs Git, and before the first fetch, pull or push to each server, it shows a short reminder with a check box: you confirm that axGIT is only an access layer and that following those terms is up to you. Help, About, Licence has these reminders and what you agreed to.
+**axGIT, access layer for Git.** axGIT only shows what Git does and passes your commands to it; Git, which you install, does the work, and a fetch, pull or push reaches the server your repository's remote names, under its terms. Before axGIT first runs Git, and before the first fetch, pull or push to each server, it shows a short reminder with a check box (the servers are the ones Git itself says it would use: for a push, every address the push goes to, which may be another remote or another address than a fetch uses; axGIT's fetch, pull and push do not go into submodules, whose servers these reminders do not name): you confirm that axGIT is only an access layer and that following those terms is up to you. Help, About, Licence has these reminders and what you agreed to.
 
 axGIT is a git manager for one repository, made for screen reader users. One window shows one repository: a list of its changed files, its log or its branches, a text with the details of what you pick, and a status bar with the branch. Everything it does, it does with the git program you already have, so its messages are git's own.
 
@@ -17,7 +17,7 @@ axGIT is part of axKit. Installing axKit (see the axKit guide: Help, About, axKi
 
 The window is named after the repository's folder, then axGIT, then the folder's full path: "myproject, axGIT, C:\src\myproject".
 
-A repository can name programs of its own that git runs, hooks for example. When the one you open does, axGIT says so in a notice, "This repository runs programs of its own", with their names, and runs git without them. Choose Trust this repository only for a repository you know, your own for example; from then on git runs them as it would in a console. Your trust is for the programs the repository named when you gave it: if it later names another, a new hook for example, axGIT sets them aside again and asks again, saying that what the repository would run has changed.
+A repository can name programs of its own that git runs, hooks for example. When the one you open does, axGIT says so in a notice, "This repository runs programs of its own", with their names, and runs git without them. Choose Trust this repository only for a repository you know, your own for example; from then on git runs them as it would in a console. Your trust is for the programs the repository named when you gave it: if it later names another, a new hook for example, axGIT sets them aside again and asks again, saying that what the repository would run has changed. A repository inside the one you open, a submodule, is looked at the same way, and what it would run is named with it: "submodule libs/zip: hook post-checkout". When Git cannot say what a repository would run, axGIT does not open it and says so: "Repository not opened".
 
 ## The three lists
 

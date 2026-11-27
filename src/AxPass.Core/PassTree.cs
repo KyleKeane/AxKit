@@ -16,9 +16,13 @@ public sealed class PassTree
 
     private readonly List<PassNode> _nodes;
 
-    private PassTree(List<PassNode> nodes)
+    /// <summary>How many lines the listing had for each group and entry: two entries of one name in one group are one node and two lines.</summary>
+    private readonly Dictionary<string, int> _lines;
+
+    private PassTree(List<PassNode> nodes, Dictionary<string, int> lines)
     {
         _nodes = nodes;
+        _lines = lines;
     }
 
     public IReadOnlyList<PassNode> Nodes => _nodes;
@@ -26,7 +30,7 @@ public sealed class PassTree
     public static PassTree Parse(string listing)
     {
         var nodes = new List<PassNode>();
-        var seen = new HashSet<string>(StringComparer.Ordinal);
+        var lines = new Dictionary<string, int>(StringComparer.Ordinal);
         foreach (var raw in listing.ReplaceLineEndings("\n").Split('\n'))
         {
             var line = raw.TrimEnd();
@@ -42,23 +46,36 @@ public sealed class PassTree
                 continue;
             }
 
-            if (!seen.Add((isGroup ? "g:" : "e:") + path))
+            var key = Key(path, isGroup);
+            lines[key] = lines.GetValueOrDefault(key) + 1;
+            if (lines[key] > 1)
             {
                 continue;
             }
 
-            var slash = path.LastIndexOf('/');
-            nodes.Add(new PassNode(path, slash < 0 ? string.Empty : path[..slash], slash < 0 ? path : path[(slash + 1)..], isGroup));
+            nodes.Add(NodeOf(path, isGroup));
         }
 
-        return new PassTree(nodes);
+        return new PassTree(nodes, lines);
     }
 
-    /// <summary>A group's level: its groups, the Recycle Bin last at the top, then its entries, each in the database's order.</summary>
-    public IReadOnlyList<PassNode> Level(string group)
+    /// <summary>The group or entry a full path names: "Email/Gmail" is Gmail in the group Email.</summary>
+    public static PassNode NodeOf(string path, bool isGroup)
+    {
+        var slash = path.LastIndexOf('/');
+        return new PassNode(path, slash < 0 ? string.Empty : path[..slash], slash < 0 ? path : path[(slash + 1)..], isGroup);
+    }
+
+    private static string Key(string path, bool isGroup) => (isGroup ? "g:" : "e:") + path;
+
+    /// <summary>
+    /// A group's level: its groups, then its entries, each in the database's order; at the top the group
+    /// <paramref name="bin"/>, the Recycle Bin when axPass knows it (<see cref="PassBin"/>), comes last of the groups.
+    /// </summary>
+    public IReadOnlyList<PassNode> Level(string group, string? bin = null)
     {
         var inside = _nodes.Where(node => node.Group == group).ToList();
-        var groups = inside.Where(node => node.IsGroup).OrderBy(node => group.Length == 0 && node.Name == RecycleBin ? 1 : 0).ToList();
+        var groups = inside.Where(node => node.IsGroup).OrderBy(node => node.Path == bin ? 1 : 0).ToList();
         return [.. groups, .. inside.Where(node => !node.IsGroup)];
     }
 
@@ -69,8 +86,11 @@ public sealed class PassTree
 
     public bool HasEntry(string path) => _nodes.Any(node => !node.IsGroup && node.Path == path);
 
-    /// <summary>Whether a path is the Recycle Bin or in it.</summary>
-    public static bool InRecycleBin(string path) => path == RecycleBin || path.StartsWith(RecycleBin + "/", StringComparison.Ordinal);
+    /// <summary>
+    /// How many entries, or groups, the database has under one path: more than one where two of one name lie in one
+    /// group, which the tool lists as two lines of the same path and reaches only one of by that path.
+    /// </summary>
+    public int Count(string path, bool isGroup) => _lines.GetValueOrDefault(Key(path, isGroup));
 
     /// <summary>"Email/Gmail" from a group and a name; the name alone at the top.</summary>
     public static string Join(string group, string name) => group.Length == 0 ? name : group + "/" + name;

@@ -1,0 +1,40 @@
+# Workflow: Switch the shell with a handed command still in the field
+# axTerminal, SPEC.md AT-1.5a (the review of 2026-11-27): a command another window handed over is written into the
+# field by the rule of the shell the window starts. Each shell quotes by its own rule, so when the shell is switched
+# while the line still stands in the field as it came, the line is written again for the new shell, under the same
+# caution, and still not sent. Until then it stayed as it was made for the first shell, and the new shell read the
+# old shell's quotes as part of the text. The shell at the start is the default one of a fresh settings file,
+# Windows PowerShell or PowerShell 7, whose quoting rule is the same.
+mkdir myproject
+file home\AxKit\axTerminal.json {"fontSize": 6, "window": {"x": 0, "y": 0, "width": 1600, "height": 900, "maximized": true}}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+start terminal {temp}\myproject --command findstr /c:x "C:\work\Fix it.json"
+expect said ♪ Ready
+# PowerShell's rule: single quotes round the part with a space.
+expect focus {"name":"Command, put here by another program and not sent. axKit checked nothing of it: read it, and press Enter only if you want to run it","role":"Text","value":"findstr /c:x 'C:\\work\\Fix it.json'"}
+
+# Goal: Switch the shell and find the handed command written for it
+# Session, Switch shell, Command Prompt: the same parts by cmd.exe's rule, double quotes; the field's name is still
+# the caution, and the change is said.
+menu Command Prompt
+expect said Written again for Command Prompt. A command is in the command field, not sent.
+expect said ♪ Ready
+do Command field
+expect focus {"name":"Command, put here by another program and not sent. axKit checked nothing of it: read it, and press Enter only if you want to run it","role":"Text","value":"findstr /c:x \"C:\\work\\Fix it.json\""}
+# Check: The handed command written again is kept as a system line and is still not sent
+do Terminal
+expect text System: Written again for Command Prompt. A command is in the command field, not sent.
+do Latest output
+expect said No output yet
+
+# Check: A handed command the user changed stays as it is when the shell is switched
+# One character typed makes the line the user's own: back in PowerShell the text is what the user left, under the
+# field's plain name.
+do Command field
+type x
+expect focus {"name":"Command","role":"Text","value":"findstr /c:x \"C:\\work\\Fix it.json\"x"}
+menu Windows PowerShell
+expect said ♪ Ready
+refuse said Written again for Windows PowerShell
+do Command field
+expect focus {"name":"Command","role":"Text","value":"findstr /c:x \"C:\\work\\Fix it.json\"x"}

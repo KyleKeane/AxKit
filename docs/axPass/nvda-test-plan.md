@@ -60,3 +60,13 @@ should read; a step that reads differently is a defect. The specifications are `
    the keys as a text; Help, User guide: the guide. Alt+H, About, Version names axPass.
 3. Options, Lock after, 5 minutes: "axPass locks after 5 minutes without a key"; wait five minutes away: locked.
 4. Close and start again: the unlock notice for the same database.
+
+## 6. The review of 2026-11-27 (PW-6.4b, PW-6.4a, PW-4.3)
+
+The runner's script is `tests/scripts/axPass/06-delete-says-what-happened.txt`, on a database made new.
+
+1. In a new database, Delete on an entry inside a group: the notice "Delete <name>?", "This database has a Recycle Bin, but KeePassXC's tool does not say which group it is. …", Cancel the default; Enter keeps the entry. Delete, Alt+D: "Moved <name> to the Recycle Bin; Ctrl+Z brings it back". From then on Delete on an entry asks nothing.
+2. Space on an entry, Down to another, Delete: the selected entry is moved, the one you are on stays.
+3. Delete on an entry whose name an entry in the Recycle Bin has already: "Moved <name> to the Recycle Bin. Ctrl+Z cannot bring it back: another entry there is called <name>, and only KeePassXC's own window tells them apart". Ctrl+Z: "Not undone: Moved <name> to the Recycle Bin. The Recycle Bin holds more than one entry called <name>, …", and the next Ctrl+Z reaches the change before it.
+4. Ctrl+C on an entry and Ctrl+L at once: "Locked"; paste somewhere: nothing of the password. Enter on Password, Alt+G and Ctrl+L at once: the unlock notice's field is empty.
+5. F1 on a group or a locked window: the palette opens and nothing is said of selecting an entry.

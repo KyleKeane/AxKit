@@ -10,11 +10,67 @@ public sealed class StdioServerTests : IDisposable
 
     public void Dispose() => _temp.Dispose();
 
+    /// <summary>
+    /// MP-2.1b (2026-11-27): a path that is not full names a file of the folder the server starts in, never of the
+    /// folder axKit's own program runs in, which is where Windows would look for it.
+    /// </summary>
     [Fact]
-    public void A_path_is_taken_as_it_is()
+    public void A_full_path_is_taken_as_it_is_and_another_path_from_the_folder_the_server_starts_in()
     {
-        Assert.Equal(@"C:\Tools\server.exe", StdioServer.Resolve(@"C:\Tools\server.exe", null));
-        Assert.Equal(@".\server.exe", StdioServer.Resolve(@".\server.exe", null));
+        Assert.Equal(@"C:\Tools\server.exe", StdioServer.Resolve(@"C:\Tools\server.exe", null, @"D:\project"));
+        Assert.Equal(@"D:\project\server.exe", StdioServer.Resolve(@".\server.exe", null, @"D:\project"));
+        Assert.Equal(@"D:\project\tools\server.cmd", StdioServer.Resolve(@"tools\server.cmd", null, @"D:\project\"));
+        Assert.Equal(@"D:\project\tools\server.cmd", StdioServer.Resolve("tools/server.cmd", null, @"D:\project"));
+        Assert.Equal(@"D:\server.exe", StdioServer.Resolve(@"..\server.exe", null, @"D:\project"));
+        Assert.Equal(@"\\server\share\mcp.exe", StdioServer.Resolve(@"\\server\share\mcp.exe", null, @"D:\project"));
+    }
+
+    /// <summary>The same through a real start: the program found is the folder's own, and it runs.</summary>
+    [Fact]
+    public void A_server_named_by_a_path_that_is_not_full_starts_from_its_own_folder()
+    {
+        var folder = Path.GetDirectoryName(_temp.File(Path.Combine("project", "tools", "said.cmd"), "@echo off\r\necho from-the-folder 1>&2\r\n"))!;
+        var project = Path.GetDirectoryName(folder)!;
+        var server = new McpServer("fake", ServerKind.Stdio, @"tools\said.cmd", [], new Dictionary<string, string>(), null, "test", project, Own: true);
+        using var running = StdioServer.Start(server, project, _ => { });
+        for (var tries = 0; tries < 100 && running.ErrorLines.Count == 0; tries++)
+        {
+            Thread.Sleep(50);
+        }
+
+        Assert.Contains("from-the-folder", string.Join("\n", running.ErrorLines.Last(10)));
+    }
+
+    /// <summary>
+    /// MP-2.3 (2026-11-27): Stop closes the input and returns at once; the two seconds a server has to end by itself,
+    /// and its end with what it started, run off the caller's thread, which is the window's.
+    /// </summary>
+    [Fact]
+    public async Task Stop_returns_at_once_and_a_server_that_ignores_its_closed_input_is_ended_after_the_two_seconds()
+    {
+        // ping reads no input and goes on for a minute: closing its input ends nothing.
+        var ping = Path.Combine(Environment.SystemDirectory, "ping.exe");
+        var server = new McpServer("stays", ServerKind.Stdio, ping, ["-n", "60", "127.0.0.1"], new Dictionary<string, string>(), null, "test", _temp.Path, Own: true);
+        var exited = new TaskCompletionSource<(int Code, bool Stopping)>();
+        var running = StdioServer.Start(server, _temp.Path, _ => { });
+        running.Exited += (code, stopping) => exited.TrySetResult((code, stopping));
+        Assert.True(running.Ending.IsCompleted);
+
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        running.Stop();
+        Assert.True(watch.Elapsed < TimeSpan.FromSeconds(1), $"Stop took {watch.ElapsedMilliseconds} ms on the caller's thread");
+        Assert.False(running.HasExited);
+        // Asked again, it is the one end.
+        var ending = running.Ending;
+        running.Stop();
+        Assert.Same(ending, running.Ending);
+
+        await running.Ending.WaitAsync(TimeSpan.FromSeconds(20));
+        Assert.True(watch.Elapsed >= StdioServer.Grace - TimeSpan.FromMilliseconds(200), "The server was not given its two seconds");
+        var end = await exited.Task.WaitAsync(TimeSpan.FromSeconds(20));
+        Assert.True(end.Stopping);
+        Assert.True(running.HasExited);
+        running.Dispose();
     }
 
     [Fact]
@@ -24,15 +80,17 @@ public sealed class StdioServerTests : IDisposable
         var second = Path.GetDirectoryName(_temp.File(Path.Combine("two", "node.exe"), "x"))!;
         _temp.File(Path.Combine("two", "npx.bat"), "@echo off");
         var path = $"relative;{first};{second}";
-        Assert.Equal(Path.Combine(second, "node.exe"), StdioServer.Resolve("node", path));
-        Assert.Equal(Path.Combine(first, "npx.cmd"), StdioServer.Resolve("npx", path));
-        Assert.Equal(Path.Combine(second, "npx.bat"), StdioServer.Resolve("npx.bat", path));
+        // The folder the server starts in is never looked in for a bare name, not even when it holds one.
+        var folder = Path.GetDirectoryName(_temp.File(Path.Combine("start", "node.exe"), "x"))!;
+        Assert.Equal(Path.Combine(second, "node.exe"), StdioServer.Resolve("node", path, folder));
+        Assert.Equal(Path.Combine(first, "npx.cmd"), StdioServer.Resolve("npx", path, folder));
+        Assert.Equal(Path.Combine(second, "npx.bat"), StdioServer.Resolve("npx.bat", path, folder));
     }
 
     [Fact]
     public void A_name_no_folder_of_the_PATH_holds_is_refused_by_name_with_where_to_read()
     {
-        var problem = Assert.Throws<FileNotFoundException>(() => StdioServer.Resolve("nothing-like-this", _temp.Path));
+        var problem = Assert.Throws<FileNotFoundException>(() => StdioServer.Resolve("nothing-like-this", _temp.Path, _temp.Path));
         Assert.Contains("nothing-like-this", problem.Message);
         Assert.Contains("docs/axMCP/user-guide.md", problem.Message);
     }

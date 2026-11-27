@@ -66,6 +66,29 @@ public static class HandedCommand
     };
 
     /// <summary>
+    /// What becomes of the handed line when the window's shell changes (AT-1.5a; the review of 2026-11-27): each
+    /// shell quotes by its own rule, so a line made for one read wrongly in another (cmd.exe takes PowerShell's
+    /// single quotes as characters of the argument), and until then the line stayed as it was made at the start.
+    /// While the field still holds the line as it came (<paramref name="handedLine"/>), it is made again for the
+    /// new shell: the new line, or why there is none (a shell without a rule), and then the field is emptied.
+    /// Null when there is nothing to do: no handed line stands there, the user has changed it, which makes the
+    /// text the user's own, or the new shell's line is the same.
+    /// </summary>
+    public static (string? Line, string? Refused)? ForNewShell(string field, string? handedLine, ShellKind kind, IReadOnlyList<string> command)
+    {
+        if (handedLine is null || field != handedLine)
+        {
+            return null;
+        }
+
+        var made = Line(kind, command);
+        return made.Line == handedLine ? null : made;
+    }
+
+    /// <summary>The system line, also spoken, after the handed line was made again for another shell: that, then the caution of <see cref="Said"/> whole.</summary>
+    public static string SaidAgain(string shell) => $"Written again for {shell}. {Said(null)}";
+
+    /// <summary>
     /// The command field's name while the handed line stands in it as it came (AT-1.5a, 2026-11-22): the caution
     /// as the field's own name, in the place of "Command". NVDA reads a field's name before its text whenever
     /// the focus arrives in it, so the warning comes before the command, every time, and no reading of the opening

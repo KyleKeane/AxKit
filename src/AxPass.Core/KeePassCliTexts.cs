@@ -57,6 +57,9 @@ public static class KeePassCliTexts
     /// <summary>Makes a new database.</summary>
     public const string CreateDatabase = "db-create";
 
+    /// <summary>Prints what the database is: its cipher, its dates, its counts, and whether it has a Recycle Bin (<see cref="RecycleBinOn"/>).</summary>
+    public const string Info = "db-info";
+
     // ---- Options ----
 
     /// <summary>On every command on a database: the password prompt goes nowhere, so that nothing of it is read as output.</summary>
@@ -100,8 +103,22 @@ public static class KeePassCliTexts
     /// <summary>What <see cref="List"/> prints in place of an entry inside an empty group ("Email/[empty]").</summary>
     public const string EmptyMark = "[empty]";
 
-    /// <summary>The group KeePassXC moves deleted entries and groups to, by the name the tool lists it with.</summary>
+    /// <summary>
+    /// The name the tool gives the group it makes for deleted entries and groups, at the top of the database, with
+    /// the first <see cref="Remove"/>. A name and no more: the database marks its Recycle Bin by the group's own
+    /// identity, which the tool prints nowhere, so a database made by a KeePassXC in another language has its bin
+    /// under another name, and a group of this name need not be the bin (the review of 2026-11-27). What axPass
+    /// takes for the bin, and when, is <see cref="PassBin"/>.
+    /// </summary>
     public const string RecycleBin = "Recycle Bin";
+
+    /// <summary>
+    /// The line of <see cref="Info"/> that says the database has a Recycle Bin, whole, as KeePassXC 2.8.0 prints it;
+    /// a database without one prints another line. Read as a line of output, like the names <see cref="Show"/>
+    /// prints, and only for one answer: when the line is not there, axPass does not know that a deleted entry can
+    /// come back, and asks first. So a tool that words it otherwise makes axPass ask more, never less.
+    /// </summary>
+    public const string RecycleBinOn = "Recycle bin is enabled.";
 
     // ---- The names Show prints in front of an entry's attributes ----
 

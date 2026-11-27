@@ -82,7 +82,8 @@ public sealed partial class AutomateForm
             }
 
             folder = _folders[^1];
-            only = [.. SelectedRows().Select(row => row.Key)];
+            // The selected workflows when any is selected, every workflow of the folder otherwise (AU-4.4a).
+            only = Selection.Count > 0 ? [.. RowsInHand().Select(row => row.Key)] : [];
             said = only.Count > 0
                 ? $"Running {StepText.Count(only.Count, "selected workflow")}; Escape stops the run"
                 : $"Running {StepText.Count(_levelWorkflows, "workflow")}; Escape stops the run";

@@ -52,11 +52,7 @@ public sealed partial class TaskForm
     /// What a command that can act on several items acts on (AX-8.16, TK-4.7): the selected items, in the list's
     /// order, or the current item alone when none is selected; empty when there is neither.
     /// </summary>
-    private List<ItemFile> Targets()
-    {
-        var selected = SelectedRows().Select(ItemOf).OfType<ItemFile>().ToList();
-        return selected.Count > 0 ? selected : ItemOf(SelectedRow()) is { } item ? [item] : [];
-    }
+    private List<ItemFile> Targets() => [.. RowsInHand().Select(ItemOf).OfType<ItemFile>()];
 
     // ---- the navigator's commands ----
 
@@ -522,7 +518,7 @@ public sealed partial class TaskForm
     private void ArchiveSelected()
     {
         var items = Targets();
-        if (SelectedRows().Any(row => row.Tag is FoundItem))
+        if (RowsInHand().Any(row => row.Tag is FoundItem))
         {
             Refuse("Open an item where it lives first: Enter. The search archives nothing");
             return;

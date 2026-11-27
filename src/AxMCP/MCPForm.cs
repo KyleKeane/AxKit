@@ -450,16 +450,22 @@ public sealed class MCPForm : ItemForm
         }));
     }
 
+    /// <summary>
+    /// Delete (MP-1.5, MP-1.5a): what it acts on is the item window's answer (<see cref="ItemForm.RowsInHand"/>,
+    /// bundle AX-8.16): the selected servers whenever any is selected, one alone too and wherever the row you are
+    /// on is; the row you are on when none is. (Until 2026-11-27 one selected server was passed over for the row
+    /// you are on.)
+    /// </summary>
     protected override void DeleteRow(ItemRow row)
     {
-        var selected = SelectedRows().Select(one => one.Tag).OfType<McpServer>().Where(server => server.Own).ToList();
-        if (selected.Count > 1)
+        var rows = RowsInHand();
+        if (rows.Count > 1)
         {
-            RemoveServers(selected);
+            RemoveServers([.. rows.Select(one => one.Tag).OfType<McpServer>().Where(server => server.Own)]);
             return;
         }
 
-        switch (row.Tag)
+        switch (rows.Count == 0 ? null : rows[0].Tag)
         {
             case McpServer { Own: true } server when OwnOf(server) is { } own:
                 ShowNotice(Notice.Ask($"Remove {server.Name}?", "The server leaves axMCP's list; nothing is uninstalled.", "&Remove", () =>
@@ -569,10 +575,12 @@ public sealed class MCPForm : ItemForm
 
         // R-61 (SPEC.md MP-2.1a): the agreement is for the whole of what would run, so the program and the folder
         // are found first; a definition that differs from the one agreed to is asked about again.
+        // MP-2.1b: a command that is a path and not a full one is taken from the folder the server starts in.
+        var folder = StdioServer.FolderOf(server.Folder ?? _folder);
         string program;
         try
         {
-            program = StdioServer.Resolve(server.Command, Environment.GetEnvironmentVariable("PATH"));
+            program = StdioServer.Resolve(server.Command, Environment.GetEnvironmentVariable("PATH"), folder);
         }
         catch (FileNotFoundException ex)
         {
@@ -580,7 +588,7 @@ public sealed class MCPForm : ItemForm
             return;
         }
 
-        var target = ServerConsent.For(server, program, StdioServer.FolderOf(server.Folder ?? _folder));
+        var target = ServerConsent.For(server, program, folder);
         if (HasConsent(target, $"Before axMCP starts {server.Name}", "&Connect", () => StartServer(server), () => Refuse($"Not connected to {server.Name}")))
         {
             StartServer(server);
@@ -709,12 +717,6 @@ public sealed class MCPForm : ItemForm
             return;
         }
 
-        if (_calling)
-        {
-            Announce("A call is running; it is given 60 seconds", true);
-            return;
-        }
-
         var row = SelectedRow();
         switch (row?.Tag)
         {
@@ -750,8 +752,7 @@ public sealed class MCPForm : ItemForm
             return;
         }
 
-        Announce($"Calling {tool.Title}", true);
-        Request(() => running.Server.Client.CallToolAsync(tool.Name, arguments, Token()), tool.Title, result =>
+        Request($"Calling {tool.Title}", limit => running.Server.Client.CallToolAsync(tool.Name, arguments, limit), tool.Title, result =>
         {
             _lastResult = result;
             ShowNotice(Notice.Plain("Result of " + tool.Title, ResultText.OfCall(result)));
@@ -767,8 +768,7 @@ public sealed class MCPForm : ItemForm
             return;
         }
 
-        Announce($"Fetching {prompt.Title}", true);
-        Request(() => running.Server.Client.GetPromptAsync(prompt.Name, ArgumentFields.ToPromptArguments(document), Token()), prompt.Title, result =>
+        Request($"Fetching {prompt.Title}", limit => running.Server.Client.GetPromptAsync(prompt.Name, ArgumentFields.ToPromptArguments(document), limit), prompt.Title, result =>
         {
             _lastResult = result;
             ShowNotice(Notice.Plain(prompt.Title, ResultText.OfPrompt(result)));
@@ -795,32 +795,38 @@ public sealed class MCPForm : ItemForm
 
     private void ReadResource(Running running, string name, string uri)
     {
-        Announce($"Reading {name}", true);
-        Request(() => running.Server.Client.ReadResourceAsync(uri, Token()), name, result =>
+        Request($"Reading {name}", limit => running.Server.Client.ReadResourceAsync(uri, limit), name, result =>
         {
             _lastResult = result;
             ShowNotice(Notice.Plain(name, ResultText.OfResource(result)));
         });
     }
 
-    private CancellationTokenSource? _wait;
-
-    private CancellationToken Token()
+    /// <summary>
+    /// One request to the server on the window's thread (AX-7.5): <paramref name="starting"/> said, the answer
+    /// shown, an error said as a notice, the wait given up after 60 s (MP-2.4). One at a time, and that is decided
+    /// here for every kind of request (the review of 2026-11-27: a tool's call asked whether one was running and a
+    /// resource's read did not, so that Enter on a resource during a call started a second request, whose time
+    /// limit took the first one's away: the first then waited without an end, and whichever ended first let a third
+    /// begin). Each request has a time limit of its own, let go when it ends.
+    /// </summary>
+    private void Request(string starting, Func<CancellationToken, Task<JsonObject>> request, string what, Action<JsonObject> shown)
     {
-        _wait?.Dispose();
-        _wait = new CancellationTokenSource(Wait);
-        return _wait.Token;
-    }
+        if (_calling)
+        {
+            Announce("A call is running; it is given 60 seconds", true);
+            return;
+        }
 
-    /// <summary>One request to the server on the window's thread (AX-7.5): the answer shown, an error said as a notice, the wait given up after 60 s (MP-2.4).</summary>
-    private void Request(Func<Task<JsonObject>> request, string what, Action<JsonObject> shown)
-    {
         _calling = true;
+        var server = _server?.Name ?? "the server";
+        Announce(starting, true);
         Do(async () =>
         {
+            using var limit = new CancellationTokenSource(Wait);
             try
             {
-                shown(await request());
+                shown(await request(limit.Token));
             }
             catch (McpError ex)
             {
@@ -828,7 +834,7 @@ public sealed class MCPForm : ItemForm
             }
             catch (OperationCanceledException)
             {
-                Announce($"No answer from {_server?.Name ?? "the server"} in 60 s", true);
+                Announce($"No answer from {server} in 60 s", true);
             }
             finally
             {

@@ -16,8 +16,8 @@ public sealed partial class KeePassCliTextsTests
     /// <summary>The tool's commands and marks, which no other file may hold as a whole string.</summary>
     private static readonly string[] Words =
     [
-        "ls", "show", "edit", "add", "rm", "rmdir", "mkdir", "mv", "generate", "db-create",
-        "[empty]", "Recycle Bin", "Uuid", "UserName",
+        "ls", "show", "edit", "add", "rm", "rmdir", "mkdir", "mv", "generate", "db-create", "db-info",
+        "[empty]", "Recycle Bin", "Recycle bin is enabled.", "Uuid", "UserName",
     ];
 
     /// <summary>An option as the tool takes one: one or two dashes, then a letter.</summary>
@@ -70,6 +70,8 @@ public sealed partial class KeePassCliTextsTests
         Assert.Equal(["edit", "-q", "-p", "mine.kdbx", "Email/Gmail"], KeePassCli.On(KeePassCliTexts.Edit, "mine.kdbx", [KeePassCliTexts.PasswordPromptOption], "Email/Gmail"));
         Assert.Equal(["db-create", "-q", "-p", "new.kdbx"], KeePassCli.On(KeePassCliTexts.CreateDatabase, "new.kdbx", [KeePassCliTexts.PasswordPromptOption]));
         Assert.Equal(["mv", "-q", "mine.kdbx", "Recycle Bin/Gmail", "/"], KeePassCli.On(KeePassCliTexts.Move, "mine.kdbx", null, PassTree.Join(PassTree.RecycleBin, "Gmail"), KeePassCliTexts.Root));
+        Assert.Equal(["db-info", "-q", "mine.kdbx"], KeePassCli.On(KeePassCliTexts.Info, "mine.kdbx"));
+        Assert.Equal("Recycle bin is enabled.", KeePassCliTexts.RecycleBinOn);
         Assert.Equal(["generate", "-L", "20", "-l", "-U", "-n", "-s"], KeePassCliTexts.GenerateArguments);
         Assert.Equal(["add", "rm", "rmdir", "mkdir"], new[] { KeePassCliTexts.Add, KeePassCliTexts.Remove, KeePassCliTexts.RemoveGroup, KeePassCliTexts.MakeGroup });
         Assert.Equal(["Title", "UserName", "Password", "URL", "Notes"], new[] { EntryFields.Title, EntryFields.UserName, EntryFields.Password, EntryFields.Url, EntryFields.Notes });

@@ -52,7 +52,12 @@ forgets the master password and shows only the notice that asks for it.
 - **PW-4.2** The master password is asked in a notice whose field hides what is typed (the shared `OverlayInput`
   gains a hidden form for it). A wrong password says "The password does not open mine" and asks again.
 - **PW-4.3** Lock (Ctrl+L, after ten minutes without a key, a setting, and at once when Windows locks, the user switches or disconnects, or the computer sleeps, security audit S-18): the panes are cleared, the password
-  dropped, the unlock notice shown. Closing the window locks it.
+  dropped, the unlock notice shown. Closing the window locks it. Nothing of the database reaches the window, a
+  field or the clipboard after the lock (the review of 2026-11-27): a run of the tool that ends after the window
+  locked, after another database was opened or after this one was unlocked again is dropped where every run comes
+  back (`Cli`, the entry's read, the password's Generate), each by the count of unlocks it started under. Until
+  then a password asked for with Ctrl+C just before the lock was put on the clipboard after it, where the lock's
+  own clearing had already passed, and a generated password could land in the unlock notice's field.
 - **PW-4.4** axPass never keeps a copy of the database or of any entry on disk but the backups of PW-4.5, which are
   the encrypted file itself.
 - **PW-4.5 Backups** (asked 2026-10-24): before the first change after each unlock, the `.kdbx` file is copied as it
@@ -101,12 +106,44 @@ forgets the master password and shows only the notice that asks for it.
   on first use); Ctrl+Z moves an entry back with `mv`; a group cannot come back that way (the tool moves entries only), so
   Delete on a group asks first and says that KeePassXC's own window brings it back. In the Recycle Bin, Delete removes
   for good after a question, since the tool asks none. A title cannot hold a slash (the tool's paths have no escape).
+- **PW-6.4b What axPass knows of the Recycle Bin, and says no more than** (the review of 2026-11-27; `PassBin`).
+  The database marks its Recycle Bin by the group's own identity, and KeePassXC's tool prints that nowhere:
+  `db-info` says whether the database has one ("Recycle bin is enabled."), `ls` lists groups by name, and `rm`
+  moves an entry to the bin or, with the bin off or for an entry in it, deletes it for good, without a word under
+  `-q`. Until this review axPass took the top group named "Recycle Bin" for the bin, so that in a database with
+  the bin off, or with its bin under another name (made by a KeePassXC in another language), Delete removed an
+  entry for good under "Moved … to the Recycle Bin; Ctrl+Z brings it back". Now:
+  - *The bin is known* when `db-info`, read at each unlock and each F5, has the tool's line for it and the top
+    group of the tool's own name for the bin ("Recycle Bin") is there; or when axPass has seen a deleted entry
+    arrive in a group since the unlock, whatever that group is called. A tool that words its line otherwise makes
+    axPass know less and ask more, never the other way.
+  - *A delete whose end is not known asks first*, Cancel the default: "Delete <name>?" with "This database has a
+    Recycle Bin, but KeePassXC's tool does not say which group it is. If <name> is in it already, it is deleted
+    for good, and nothing brings it back." or, where the tool did not say the database has one, "KeePassXC's tool
+    does not say that this database has a Recycle Bin. It may be deleted for good, and nothing brings it back
+    then." Not known is: the bin's group not known, for anything but an entry at the top of a database that has a
+    bin (the top is never inside the bin). So in a new database, which has no group for the bin until the first
+    delete, the first delete of an entry inside a group asks once; from then on the group it arrived in is the bin.
+  - *After every delete the database is listed again*, and what is said is what the two listings show: "Moved
+    <name> to the Recycle Bin; Ctrl+Z brings it back" (", the group <group>" after "the Recycle Bin" when the
+    group has another name), or "Deleted <name> for good: it went to no Recycle Bin".
+  - *Ctrl+Z moves an entry back only while it is the one entry of its name in the bin.* The tool reaches an entry
+    by its path alone and, of two of one name, takes the first, the older one (tried, 2.8.0); so an entry that
+    arrives beside another of its name says "Moved <name> to the Recycle Bin. Ctrl+Z cannot bring it back:
+    another entry there is called <name>, and only KeePassXC's own window tells them apart", and before a move
+    back the database is listed again: with more than one entry of the name there, or none, Ctrl+Z says "Not
+    undone: Moved <name> to the Recycle Bin. The Recycle Bin holds more than one entry called <name>, or none,
+    and KeePassXC's tool reaches an entry by its name alone: KeePassXC's own window moves it back", once, and
+    passes over that change. The undo of a new entry or group removes it and, where that leaves it in the bin as
+    the one of its name, deletes it there (until then it deleted "Recycle Bin/<name>" by name, which with an
+    older entry of that name there was the older one).
 - **PW-6.4a Several entries** (2026-11-22; bundle AX-8.16). Space selects an entry outside the Recycle Bin, with
   the bundle's other selection keys; the status bar counts them. A group is not selected (only KeePassXC brings a
   group back, so a group goes one at a time, after its question), nor is anything in the Recycle Bin (there Delete
-  is for good, one at a time, after its question): on those Space is the edge sound. With two or more entries
-  selected, Delete moves each to the Recycle Bin, one run of the tool an entry, in the list's order, with no
-  question, as for one entry, since Ctrl+Z brings them back: "Moved 3 entries to the Recycle Bin; Ctrl+Z brings
+  is for good, one at a time, after its question): on those Space is the edge sound. With entries selected, one
+  alone too and wherever the row you are on is (bundle AX-8.16; until 2026-11-27 one selected entry was passed
+  over for the row you are on), Delete moves each to the Recycle Bin, one run of the tool an entry, in the list's order, with no
+  question where the bin is known (PW-6.4b; one question for all of them where it is not), as for one entry, since Ctrl+Z brings them back: "Moved 3 entries to the Recycle Bin; Ctrl+Z brings
   them back". One Ctrl+Z moves all of them back ("Undone: Moved 3 entries to the Recycle Bin"). Two selected
   entries of one name are refused before anything is moved ("Two of the selected entries are called <name>: move
   those to the Recycle Bin one at a time, so that Ctrl+Z can tell them apart"), since in the Recycle Bin the name

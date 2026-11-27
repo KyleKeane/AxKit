@@ -808,6 +808,9 @@ Steps and keys: `docs/axKit/workflows/axPass.md` (in Claude's working folder: `w
     - Show only the entries whose name contains a text
     - Put the entries in the order of their names
     - Select entries as you move and deselect them all
+6. **Delete entries where the Recycle Bin is not yet known, and undo only what can be told apart**
+    - Delete an entry and hear where it went
+    - Bring a deleted entry back
 
 ## axPreview
 
@@ -1133,6 +1136,8 @@ Steps and keys: `docs/axKit/workflows/axTerminal.md` (in Claude's working folder
     - Hear a menu's selected entry
     - Leave the program and come back to the field
     - Get the terminal back from a program that ends on the whole screen
+13. **Switch the shell with a handed command still in the field**
+    - Switch the shell and find the handed command written for it
 
 ## AI tools
 

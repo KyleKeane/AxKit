@@ -67,6 +67,13 @@ script `tests/scripts/axMCP/01-start.txt` runs sections 1 to 4 and 6 against a f
 
 1. With a server running, Alt+F4: the window closes without a question, and the server's process is gone (axProcess,
    or Task Manager).
+2. Ctrl+Shift+S on a running server: "Stopped <name>" at once, and the arrow keys move in the list during the two
+   seconds the server is given (2026-11-27: the window waited for it until then).
+3. Space on one of Your servers, Up or Down to another row, Delete: "Remove <the selected one>?"; Escape
+   (`tests/scripts/axMCP/02-your-servers-errors-prompts.txt`).
+4. While a tool's call runs on a slow server, Enter on a resource: "A call is running; it is given 60 seconds".
+5. A server of your own whose command line is `.\server.cmd`, with a folder: the notice before its start reads the
+   full path of the file in that folder (MP-2.1b).
 
 ## 7. The keys and notices
 

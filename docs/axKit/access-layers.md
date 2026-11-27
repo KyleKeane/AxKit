@@ -101,7 +101,8 @@ What every layer shares:
   run the window against the real git on throwaway repositories.
 - Before 2026-11-14 the window held six argument lists (`add -A`, `restore --staged .`, `commit -m`, `fetch --prune`,
   `pull --ff-only`, `push --set-upstream origin`), the search for "Already up to date", the pattern of the commit
-  line, and the reading of the hooks folder line. All moved to `GitTexts` and `GitTrust.HooksFolder`.
+  line, and the reading of the hooks folder line. All moved to `GitTexts` and `GitTrust` (the hooks folder's line is
+  read by `GitTrust.Folders` since 2026-11-27).
 - Still outside: nothing that is git's. The window passes a short word of its own with each command ("fetch",
   "status") for the status bar and the log; those are axKit's words. The recorded outputs are written inside the
   tests, not as files under `tests/fixtures`; a new git version is pinned by the check scripts, which run the

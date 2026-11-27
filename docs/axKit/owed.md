@@ -8,14 +8,15 @@ dated pass; then the script writes this page again.
 
 ## Where it stands
 
-- 42 owed in all.
-- Owed a hearing with NVDA: 26.
+- 44 owed in all.
+- Owed a hearing with NVDA: 28.
 - Owed a live check with a real outside program or situation: 7.
 - Owed a window check on the hidden desktop: 8.
 - Owed a test in code: 1.
 
 ## Owed a hearing with NVDA
 
+- The NVDA test record: the access layers after the review of 2026-11-27 (axGIT, axPass, axProcess, axMCP, axTerminal). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - The NVDA test record: the apps' data paths after the review of 2026-11-27 (axFile, the editors, axTask, axTemplate). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - The NVDA test record: axClaude after the review of 2026-11-27, a question never answered unheard. The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - The NVDA test record: axClaude over the stream, what a tool printed, choosing a conversation, plan approval (2026-11-26). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
@@ -34,6 +35,7 @@ dated pass; then the script writes this page again.
 - The NVDA test record: axClaude, `/clear` empties the window (2026-11-07, `docs/axClaude/SPEC.md` FR-8.8). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - The NVDA test record: access layers and consent (the branch `licence`, 2026-10-29, `docs/axKit/SPEC.md` AX-11). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - R-53: axTerminal's refusal of shells in a settings file whose seal does not check (leaves when `tests/scripts/axTerminal/08-user-shells.txt` has passed with NVDA).
+- R-53: axGIT's refusal of trusted repositories in a settings file whose seal does not check (leaves when `tests/scripts/axGIT/07-own-programs.txt` has passed with NVDA).
 - R-53: axMCP's refusal of servers in a settings file whose seal does not check (leaves when `tests/scripts/axMCP/02-your-servers-errors-prompts.txt` has passed with NVDA).
 - R-54: the notice about a changed file in Claude's working folder.
 - R-56: the sentence of the AI tools submenu when the setting was changed outside axKit or its key is gone.
@@ -72,7 +74,6 @@ dated pass; then the script writes this page again.
 
 No longer owed: the script each names passed with NVDA listening (`docs/axKit/workflow-record.json`).
 
-- R-53: axGIT's refusal of trusted repositories in a settings file whose seal does not check. Heard: `tests/scripts/axGIT/07-own-programs.txt` passed with NVDA at 27581744.
 - R-53: axFile's refusal of programs of Open with in a settings file whose seal does not check. Heard: `tests/scripts/axFile/10-settings-changed-outside.txt` passed with NVDA at 27581744.
 - R-53: axClaude's refusal of claudePath in a settings file whose seal does not check. Heard: `tests/scripts/axClaude/33-settings-changed-outside.txt` passed with NVDA at b0a52d43+.
 - R-63: the notice of an item window when the settings cannot be saved. Heard: `tests/scripts/axTask/11-settings-not-saved.txt` passed with NVDA at 27581744.

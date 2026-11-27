@@ -177,4 +177,24 @@ per command, `-q` on every command that opens the database:
   it clears itself; that it held the password meanwhile is still to be heard (the probe cleared the user's clipboard,
   so it was not tried again).
 
+Tried again on 2026-11-27 (2.8.0), for the review's question of what the tool says of the Recycle Bin (SPEC PW-6.4b):
+
+- **Which group is the bin is printed nowhere.** `db-info` has the one line "Recycle bin is enabled." (a new
+  database has it before any group for the bin exists) and nothing of the group; `ls` lists the bin as a group like
+  any other, by its name; `db-edit` has no option for the bin. `export` would print the whole database in clear
+  text, passwords too, and is not used for it.
+- **`rm` under `-q` prints nothing either way.** Without `-q` it says "Successfully recycled entry …" or
+  "Successfully deleted entry …" on standard output, after the prompt; axPass runs every command with `-q` and reads
+  what happened from `ls` before and after instead.
+- **Two entries of one name in the bin are two lines of one path**, "Recycle Bin/Gmail" twice, and the path reaches
+  the first, the one deleted earlier: `show "Recycle Bin/Gmail"` printed the older entry. So `mv` by that path moves
+  the older one.
+- **An entry cannot be reached by its Uuid**: `show <database> {uuid}`, with and without braces and hyphens, says
+  "Could not find entry with path …".
+- **A name without a slash is looked for in every group**: with "Email/Bank one" and no "Bank one" at the top,
+  `show "Bank one"` printed the entry of the group, and `add "Bank one"` was refused, "Could not create entry with
+  path Bank one." axPass names an entry at the top by its bare title; with one of that title at the top the tool
+  takes that one first. What follows for axPass is open (an entry at the top can only be added while no group
+  holds one of its title).
+
 Still not tried: custom attributes in `show`, Argon2's time.

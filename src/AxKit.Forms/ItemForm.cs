@@ -365,8 +365,22 @@ public abstract partial class ItemForm : AxKitForm
     /// <summary>Ctrl+Shift+A, and Escape while rows are selected: "None selected".</summary>
     protected void SelectNoRows() => Selection.None();
 
-    /// <summary>The rows selected, in the navigator's order; none when nothing is selected.</summary>
-    protected IReadOnlyList<ItemRow> SelectedRows() => Selection.Count == 0 ? [] : [.. _rows.Where(row => Selection.Contains(row.Key))];
+    /// <summary>The rows selected, in the navigator's order; none when nothing is selected. The base's own: an app asks <see cref="RowsInHand"/>.</summary>
+    private IReadOnlyList<ItemRow> SelectedRows() => Selection.Count == 0 ? [] : [.. _rows.Where(row => Selection.Contains(row.Key))];
+
+    /// <summary>
+    /// The rows a command acts on (AX-8.16, "What the commands act on"): the selected rows whenever any is selected,
+    /// one or many and wherever the row you are on is, in the navigator's order; the row you are on alone when
+    /// nothing is selected; none when there is neither. The one place this is decided (the review of 2026-11-27:
+    /// three windows each asked for the selected rows and took them only when there were two or more, so that
+    /// Delete with one row selected and the arrow keys moved on acted on the row under the arrow keys). An app has
+    /// no other way to the selected rows, and <c>RowsInHandTests</c> holds that; a command that is about one thing
+    /// (Enter, F2, the ways to open) asks <see cref="SelectedRow"/>, the row you are on.
+    /// </summary>
+    protected IReadOnlyList<ItemRow> RowsInHand() =>
+        SelectedRows() is { Count: > 0 } selected ? selected
+        : SelectedRow() is { } row ? [row]
+        : [];
 
     /// <summary>
     /// The row to select when rows leave the level (the selected ones archived, moved or hidden as done): the

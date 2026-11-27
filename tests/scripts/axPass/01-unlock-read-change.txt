@@ -125,6 +125,20 @@ type Bank
 keys enter
 expect said ! Added Bank
 expect focus Bank
+# Check: The first delete inside a group of a new database asks first
+# PW-6.4b: the database is new and has no group for the bin yet, and KeePassXC's tool does not say which group it
+# will be, so this first delete inside a group asks (06 has the question's words); Alt+D, the Delete button,
+# deletes, and Ctrl+Z brings the entry back. From then on the group the entry arrived in is the Recycle Bin, and
+# an entry outside it is moved without a question, once in a database's life.
+keys delete
+expect state "notice":"Delete Bank?"
+# A notice holds its answering keys for a moment after it appears (KeyHold).
+wait 1200
+keys alt+d
+expect said ! Moved Bank to the Recycle Bin
+keys ctrl+z
+expect said ! Undone: Moved Bank to the Recycle Bin
+expect focus Bank
 # Goal: Move an entry to the Recycle Bin and undo it
 keys delete
 expect said ! Moved Bank to the Recycle Bin

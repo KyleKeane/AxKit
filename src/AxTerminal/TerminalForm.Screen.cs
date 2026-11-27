@@ -111,15 +111,20 @@ internal sealed partial class TerminalForm
     /// <summary>AT-9.5: only the rows that changed are replaced, with the drawing held; the caret follows the program's cursor in keys to the program and stays on its row and column in reading the screen.</summary>
     private void ShowPage(ScreenPage page)
     {
-        var edits = ScreenView.Edits(_screenRows!, page.Rows);
-        var before = ScreenView.Position(_screenRows!, _screen.SelectionStart);
+        var shown = _screenRows!;
+        var edits = ScreenView.Edits(shown, page.Rows);
         var cursorMoved = _screenCursor != (page.CursorRow, page.CursorColumn);
         _screenCursor = (page.CursorRow, page.CursorColumn);
-        if (edits.Count == 0 && !cursorMoved)
+        // In reading the screen the caret is the user's: a frame that changed no row changes nothing shown.
+        if (edits.Count == 0 && (!cursorMoved || !_screen.KeysToProgram))
         {
             return;
         }
 
+        // The user's selection in reading the screen, both ends, taken before the rows change under it (the review
+        // of 2026-11-27: every frame put the caret back with nothing selected, so that a selection made with Shift
+        // was gone at the next tick of a clock or a spinner on the page).
+        var selection = _screen.KeysToProgram ? default : EditKeys.SelectionEnds(_screen);
         _screen.SuspendDrawing(() =>
         {
             foreach (var edit in edits)
@@ -135,7 +140,8 @@ internal sealed partial class TerminalForm
             }
             else
             {
-                _screen.Select(ScreenView.Index(page.Rows, before.Row, before.Column), 0);
+                var (anchor, caret) = ScreenView.Kept(shown, page.Rows, selection.Anchor, selection.Caret);
+                EditKeys.Select(_screen, anchor, caret);
             }
         });
     }
@@ -209,6 +215,24 @@ internal sealed partial class TerminalForm
 
     /// <summary>Alt+1, Alt+2 and Alt+3 while the view shows: the field and the terminal are hidden behind it, so the focus stays and the words say why.</summary>
     protected override string? PlacesRefused => ScreenShown ? ScreenView.PlacesWords(_screenProgram) : null;
+
+    /// <summary>
+    /// A command that needs the command field, asked for while the view shows (from the menu or the palette, or by
+    /// its key in reading the screen): the field is hidden behind the screen, so the words of the places say so
+    /// and the command does nothing (AT-9.10; the review of 2026-11-27). Until then Recent commands opened its
+    /// list behind the screen and then moved the focus to the hidden field, from where no key led back, and Send
+    /// without recording sent the field's text, last typed for the shell, to the program as keys.
+    /// </summary>
+    private bool FieldBehindScreen()
+    {
+        if (!ScreenShown)
+        {
+            return false;
+        }
+
+        Announce(ScreenView.PlacesWords(_screenProgram), true);
+        return true;
+    }
 
     /// <summary>Ctrl+F while the view shows: the bundle's find of a text, on the page's rows, in reading the screen.</summary>
     protected override void FindDialog()

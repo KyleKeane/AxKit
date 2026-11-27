@@ -9,7 +9,7 @@ AX-9 (the Window, axKit and Help menus), are cited by number and not repeated. I
 
 ## 1. Summary
 
-An **access layer** for Git (bundle AX-11, 2026-10-29): titled "axGIT, access layer for Git"; before Git first runs, the consent notice (AX-11.4); before the first fetch, pull or push to each server (the host of the remote's address, `AxGit.Core/GitRemote`), the consent for that server, and the first time a window reaches a server after it, the sign-in line (AX-11.6).
+An **access layer** for Git (bundle AX-11, 2026-10-29): titled "axGIT, access layer for Git"; before Git first runs, the consent notice (AX-11.4); before the first fetch, pull or push to each server (the host of every address git would use for that command, AG-5.4a, `AxGit.Core/GitRemote`), the consent for that server, and the first time a window reaches a server after it, the sign-in line (AX-11.6).
 
 A developer who works in axClaude and axDown wants to know the state of the repository under them and to act on it
 without a terminal: which files changed, what changed in one of them, stage some, commit with a message, look at the
@@ -91,13 +91,22 @@ opens in the editor for its type (AG-1.4, AG-D1).
   run with `-C <repository>`, `-c core.quotepath=false`, `-c color.ui=never`, `-c core.fsmonitor=false`,
   `-c protocol.ext.allow=never` (security audit S-1, S-2), diffs and `show` with `--no-ext-diff --no-textconv`,
   `GIT_TERMINAL_PROMPT=0` and UTF-8 output; one command at a time, on a background task, never on the UI thread
-  (AX-7.5), with a timeout (60 seconds, 10 minutes for fetch, pull and push). When `git` is not found, the notice
+  (AX-7.5), with a timeout (60 seconds, 10 minutes for fetch, pull and push). A command stopped at its timeout
+  failed, whatever it had printed until then (the review of 2026-11-27: until then what it had printed was thrown
+  away, and a run that git had finished, with a program it started still holding its output open, was a success
+  with no output, so that a status read that way showed no changes): the notice has git's own complaint, then "git
+  did not finish within 60 seconds and was stopped." A command git finished while a program it started (a signing
+  agent, a hook's daemon) held its output open until the timeout is git's own result, with its exit code and what
+  it printed; a list (the status, the log, the branches) is not read from such a run, since the other program may
+  have written into the same output, and the failure says "git finished, but a program it started kept its output
+  open until the time limit." When `git` is not found, the notice
   **Git was not found** says where to get it (git-scm.com) and the window stays with every command disabled.
 - AG-1.6 **A repository's own programs** (2026-10-24, security audit S-2). A repository that arrives with its `.git`
   folder (an archive, a USB stick, a share) can name programs git runs: a file monitor (`git status`), diff and filter
   drivers, hooks (commit, switch), an ssh command (fetch, push), a credential helper. On opening, before any other
-  command, axGIT reads the names of the repository's configuration (`git config --local --includes --name-only
-  --list`, which runs nothing) and its hooks folder (`git rev-parse --git-path hooks`); each that runs a program
+  command, axGIT reads the names of the repository's configuration (`git config --show-scope --includes --name-only
+  --list`, which runs nothing; the names of every scope but the computer's, the user's and the command line's) and
+  its hooks folder (`git rev-parse --git-path hooks --git-path modules`); each that runs a program
   (`GitTrust`) is set to nothing on every command (`-c <name>=`, the hooks folder `NUL`), and the notice **This
   repository runs programs of its own** names them, with **Keep them off** (Enter, Escape) and **Trust this
   repository**, which keeps the repository in the settings (`trusted`, AG-8.1a) and lets git run them as in a
@@ -107,6 +116,36 @@ opens in the editor for its type (AG-1.4, AG-D1).
   program) is not trusted: its programs are set aside again and the notice comes back, starting "What this
   repository would run has changed since you trusted it, so it is not trusted now."; Trust this repository then
   trusts what it runs now. The mark is of the names: a hook's file changed under the same name is not seen.
+- AG-1.6a **What the read covers, and when it runs** (the review of 2026-11-27; `GitTrust`, `GitTrustScan`).
+  - *Every file git reads for the repository*: its own, what that includes (`include.path`, `includeIf`), and the
+    work tree's own file where the repository has one (`extensions.worktreeConfig`, `config.worktree`). `--local`,
+    asked until then, left the work tree's file out, so that an ssh command or a filter set there ran.
+  - *The names*: the core programs (`core.fsmonitor`, `hooksPath`, `sshCommand`, `pager`, `editor`, `askPass`,
+    `gitProxy`, `alternateRefsCommand`); `diff.external`; a diff, merge or filter driver's and a tool's command
+    (`diff.<name>.command` and `textconv`, `merge.<name>.driver`, `filter.<name>.clean`, `smudge` and `process`,
+    `difftool` and `mergetool` `.cmd` and `.path`); `pager.<command>`; `credential.helper` and
+    `credential.<url>.helper`; `gpg.program`, `gpg.<format>.program` and `gpg.ssh.defaultKeyCommand`;
+    `sequence.editor`; `trailer.<name>.command` and `cmd`; `hook.<name>.command`; `remote.<name>.uploadpack`,
+    `receivepack`, `proxy` and `vcs`; `uploadpack.*` and `receivepack.*`. Not named, since no command axGIT runs
+    reaches them: an alias (run only when called by name), `submodule.<name>.update` with a command (run by `git
+    submodule update` alone; axGIT's fetch, pull and push do not go into submodules, AG-5.4a), and the programs of
+    `git send-email`, `git help`, `git gui` and `git add -p`. A name whose middle part differs only in capitals
+    (`diff.PDF.textconv`, `diff.pdf.textconv`) is two names, and both are set aside.
+  - *The repositories inside* (submodules). git runs itself inside a submodule on a plain `git status` and obeys
+    that repository's own settings there (tried with git 2.53: the submodule's file monitor ran). So each is read
+    the same way: every entry of the index that is another repository and has its work tree here (`git ls-files
+    --stage -z`, mode 160000; also one inside another, and one with no `.gitmodules` to say so), and every
+    repository git keeps under `.git/modules`, with or without a work tree. What one would run is named with it,
+    "submodule libs/zip: core.sshcommand", "submodule libs/zip: hook post-checkout", is part of the trust's mark,
+    and is set to nothing with the rest: the settings axGIT gives on the command line reach git's runs inside a
+    submodule. A submodule whose settings git itself cannot list (its work tree named and gone) is named
+    "submodule <path>: settings that could not be read", and the hooks are set aside.
+  - *When*: the read is one piece of work, before the repository becomes the window's, so no command runs in it
+    meanwhile ("Working…"); until then the repository was the window's first, and a key pressed while the read ran
+    started git in it with nothing set aside. A read that fails (git's error, a timeout) opens nothing: the notice
+    **Repository not opened** says "What <path> would run could not be read, so axGIT runs nothing in it. Git
+    said: …", and a repository already open stays. A repository is never taken as running nothing because it
+    could not be asked.
 
 ### AG-2 The window
 
@@ -162,7 +201,8 @@ opens in the editor for its type (AG-1.4, AG-D1).
   Deselect all, and Ctrl+Shift+U is Unstage): Ctrl+A, then Ctrl+Shift+S, does the same with keys.
 - AG-3.3 Enter on an item shows its diff in the details ("Diff of <path>"): `git diff --cached` for a staged file,
   `git diff` for an unstaged one, `git diff HEAD` for one that is both, the file's own text for an untracked one
-  (first 200 KB, "Untracked file, N lines" as the first line), `git diff` for a conflict. The focus goes to the first
+  (first 200 KB, and no more of the file is read, since 2026-11-27; "Untracked file, N lines" as the first line,
+  or "Untracked file, the first N lines" with "(cut after 200 KB)" as the last when the file goes on), `git diff` for a conflict. The focus goes to the first
   line of the details; "No changes" is announced and the focus stays when the diff is empty.
 - AG-3.4 Changes → Discard changes… (Delete) on a tracked file asks "Discard the changes to <path>? They cannot be
   brought back." with Discard and Cancel; Discard runs `git restore --staged --worktree -- <path>` and says
@@ -205,6 +245,22 @@ opens in the editor for its type (AG-1.4, AG-D1).
   **Fetch failed** (and so on) with git's output, so that a password prompt that git could not show, a diverged
   branch or a rejected push is read in full. While one runs the status bar says "Working: <verb>…" and the menu
   items that run git are disabled; nothing else is blocked.
+- AG-5.4a **Which servers the consent is asked for** (the review of 2026-11-27; bundle AX-11.5 and rule 8). git is
+  asked, never guessed for, by two commands that reach no server and run nothing the repository names. The remote:
+  `git for-each-ref --format=%(upstream:remotename)%09%(push:remotename) refs/heads/<branch>`, which gives the
+  remote a fetch or pull of the branch uses and the one a push uses (the branch's `pushRemote`, else
+  `remote.pushDefault`, else the upstream's); origin where git gives none, and for the push of a branch without an
+  upstream, which names origin itself. The addresses: `git remote get-url <remote>` for a fetch or pull, the one
+  address a fetch uses, and `git remote get-url --push --all <remote>` for a push, every address a push goes to
+  (each `pushurl` the remote has, else its `url`), each as git rewrites it (`url.<base>.insteadOf`,
+  `pushInsteadOf`). The consent is asked for the host of each, one after the other; an address on this computer or
+  a share asks nothing. Until then the consent was for the fetch address of the upstream's remote whatever the
+  command, so that a push to another remote, another push address or a rewritten one reached a server nobody was
+  asked about. Fetch, Pull and Push are run with `--no-recurse-submodules`: a submodule has remotes of its own, on
+  servers this consent does not name, and git would reach them by itself (a fetch on demand, a pull or push where
+  the repository's settings say to recurse); a submodule is fetched and pushed in a terminal.
+  Not covered: a repository cloned without all of its objects (a partial clone) fetches a missing one from its
+  remote when a diff or a commit needs it, which no consent is asked for before (open since this review).
 
 ### AG-6 Menus, keys, texts
 

@@ -6,14 +6,17 @@ through together; what must last is in the specifications, the priorities list a
 
 ## Where things stand
 
-Updated 2026-11-27, late evening.
+Updated 2026-11-28, early morning.
 
 - **Blocked on you: nothing.**
 - **The release review** (item "the release review of 2026-11-27"): ten reviewers read everything since 5.10.0, about
   150 findings, no certain blocker. Fixed, tested, committed and pushed so far: privacy and the AI tools channel (18),
   the tools and the release path (23), the changelog rewritten to the end state, both of axClaude's sources (33),
-  the apps' data paths (33). Running: the access layers (18). To come: the window base and the automation engine,
-  the seal's counter.
+  the apps' data paths (33), the access layers (18).
+- **A second look at each fix batch**: a fresh reader checks every batch's commit for faults the fixes brought.
+  It found 11 in the apps' batch (one a data-loss path in a list conversion on a full disk), 13 small ones in
+  the privacy batch, and 8 in axClaude's (one grave: a doubled Enter could approve the next question unheard).
+  Each set is its own fix batch, running now, before the window base, the automation engine and the seal's counter.
 - **Then**: questions as lists; the shortenings with their keys; 6.0.0 prepared and not published; then, on branches,
   the workflow graph's remaining steps, axChat, axAutomate's macro launcher.
 
@@ -55,6 +58,16 @@ Each is one line to undo unless it says otherwise.
 - **A network drive with a Recycle Bin of its own (a redirected folder) is treated as having none**: the question
   says "for good" although Windows would have kept it. Windows gives no sure answer for such a drive.
 - **A sound file of your own over 64 MB is not read.**
+- **axPass asks before the first delete in a new database.** KeePassXC's tool does not say which group its
+  Recycle Bin will be until the bin exists, so axPass cannot promise that the entry is kept. It asks once in a
+  database's life. To turn back: `PassBin.Fate` treats "on, group not known" as recycled.
+- **axGIT's fetch, pull and push no longer go into submodules** (`--no-recurse-submodules`): the reminder before
+  a server is contacted could not name the submodules' servers. With `submodule.recurse` set, Pull no longer
+  updates them.
+- **axGIT does not open a repository whose check for programs of its own fails**, where it opened it as running
+  none; and a key pressed while a repository opens says "Working".
+- **axMCP's servers end with the window at once** (a Windows job), where they had two seconds; and a command
+  written as a relative path is the file in the folder the server starts in.
 - **A hand-written mistake in the Templates `list.json` stops axKit from rewriting that file** until it is mended,
   so that nothing you wrote is lost; the window says what does not read.
 - **axChat's first endpoint is Claude Code's stream**, the HTTP endpoint second; the reasons and the rest of my

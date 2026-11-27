@@ -165,6 +165,20 @@ expect focus Share, kim
 keys ctrl+u
 expect said ! Not opened: Share's URL is not a web address
 
+# Check: The first delete inside a group of a new database asks first
+# PW-6.4b: the database is new and has no group for the bin yet, and KeePassXC's tool does not say which group it
+# will be, so this first delete inside a group asks (06 has the question's words); Alt+D, the Delete button,
+# deletes, and Ctrl+Z brings the entry back. From then on axPass knows the Recycle Bin and asks nothing.
+keys delete
+expect state "notice":"Delete Share?"
+# A notice holds its answering keys for a moment after it appears (KeyHold).
+wait 1200
+keys alt+d
+expect said ! Moved Share to the Recycle Bin
+keys ctrl+z
+expect said ! Undone: Moved Share to the Recycle Bin
+expect focus Share
+
 # Goal: Move an entry to the Recycle Bin
 # Delete on the entry: it goes to the Recycle Bin group, where the last sections find it.
 keys delete

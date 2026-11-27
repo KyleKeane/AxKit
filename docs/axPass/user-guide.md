@@ -72,10 +72,19 @@ in a password field rather than in the notes.
 - Ctrl+N makes a new entry here, Ctrl+Shift+N a new group. F2 renames an entry in place: type the new title over the old and press Enter, or Escape. A title cannot hold a slash.
 - Delete moves an entry to the Recycle Bin group; Ctrl+Z brings it back. A group moves there after a question, and
   only KeePassXC's own window brings a group back. In the Recycle Bin, Delete removes for good after a question.
+- What axPass says after Delete is what it then finds in the database: "Moved Gmail to the Recycle Bin; Ctrl+Z
+  brings it back", or, in a database whose Recycle Bin is turned off, "Deleted Gmail for good: it went to no
+  Recycle Bin". KeePassXC's tool says whether a database has a Recycle Bin and never which group it is, so where
+  axPass cannot know what Delete will do it asks first, "Delete Gmail?", saying why, with Cancel the default. In a
+  new database that is the first delete of an entry inside a group; after it axPass knows the group.
+- Ctrl+Z brings an entry back from the Recycle Bin only while it is the one entry of its name there: the tool finds
+  an entry by its name alone and would move the older one. When a second entry of a name arrives there, axPass
+  says that Ctrl+Z cannot bring it back; KeePassXC's own window moves it back.
 - Space selects the entry you are on, and deselects it again; a selected entry reads ", selected", and the status bar
   counts them. Shift+Down and Shift+Up select as you move, Ctrl+A selects every entry of the group, Ctrl+Shift+A or
-  Escape deselects all. Delete then moves all the selected entries to the Recycle Bin, "Moved 3 entries to the
-  Recycle Bin", and one Ctrl+Z brings them all back. Groups, and what is in the Recycle Bin, are not selected.
+  Escape deselects all. Delete then moves all the selected entries to the Recycle Bin, one alone too and wherever
+  the row you are on is, "Moved 3 entries to the Recycle Bin", and one Ctrl+Z brings them all back. Groups, and
+  what is in the Recycle Bin, are not selected.
 - Fields other than KeePass's own ones are shown and are changed in KeePassXC's own window. A group is renamed there
   too.
 

@@ -796,6 +796,49 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: the access layers after the review of 2026-11-27 (axGIT, axPass, axProcess, axMCP, axTerminal)
+
+The review of the access layers before the release: what a program under an access layer is told and what is taken
+from it. Each repair has its test in code. Played on the hidden desktop, without NVDA, on 2026-11-27: the new
+checks of `tests/scripts/axGIT/07-own-programs` (a program in the work tree's own settings file, and one in a
+repository inside), `axPass/06-delete-says-what-happened` (the question while the Recycle Bin is not known, one
+selected entry, an entry beside another of its name, Ctrl+Z that moves nothing back by a name two have) with the
+first deletes of `01` and `04`, `axProcess/06-select-several` and `axMCP/02-your-servers-errors-prompts` (Delete
+with one row selected and the arrow keys moved on), `axTerminal/14-screen-view` (Recent commands, Send without
+recording and Copy this line while a program holds the screen) and `axTerminal/15-handed-command-other-shell` (a
+handed command written again when the shell is switched). Still owed:
+
+1. With NVDA listening (`.\nvda-pass.ps1 axGIT axPass axProcess axMCP axTerminal`): those checks, and above all the
+   new question of axPass, "Delete <name>?", with its text, and the sentence "Written again for Command Prompt. A
+   command is in the command field, not sent. …" after a switch of the shell, which follows the shell's own
+   announcement.
+2. By the maintainer's ear: whether axPass's question while the Recycle Bin is not known, and the sentence for an
+   entry that arrives beside another of its name ("… Ctrl+Z cannot bring it back: another entry there is called
+   …"), are the right length to listen to; and whether the first delete in a new database should ask at all (it
+   asks once in a database's life, since the tool does not say which group the bin will be).
+3. With KeePassXC itself, in its own window: a database whose Recycle Bin is turned off (Delete asks, then says
+   "Deleted <name> for good: it went to no Recycle Bin"), and one made by a KeePassXC in another language, whose
+   bin has another name (the first delete asks; then "Moved <name> to the Recycle Bin, the group <its name>").
+   KeePassXC's tool can make neither, so no script reaches them.
+4. axPass and the clipboard, which the hidden desktop shares with the user and so does not check: Ctrl+C on an
+   entry and Ctrl+L at once after it leave nothing on the clipboard; Generate pressed and the window locked at
+   once leaves the unlock field empty.
+5. With git and a real server: a push to a remote whose push address is on another server than its fetch address
+   asks for that server (the tests ask git itself, with addresses that reach nothing); a fetch and a pull in a
+   repository with a submodule do not reach the submodule's server; a commit signed through an agent that keeps
+   git's output open ends as "Committed" at the timeout, and a status read that way is said as a failure.
+6. axMCP with a real server (`npx` of a server that ignores its closed input, or one that is slow to answer): Stop
+   says "Stopped" at once and the window takes keys during the two seconds; closing the window leaves no process
+   of the server behind (Task Manager, or axProcess); Enter on a resource while a tool's call runs says "A call is
+   running; it is given 60 seconds" (the scripts' stand-in answers at once, so no script reaches it); a server of a
+   project's `.mcp.json` whose command is `.\server.cmd` starts the file of the project's folder.
+7. axProcess, by hand, since a script never selects anything it did not start: Context, End process tree on the
+   program that started axProcess (the terminal it was started from) says "<name> started this window, …" and
+   ends nothing; two files of one name in the Startup folder (`sync.lnk`, `sync.bat`) read with their extensions.
+8. axTerminal, in reading the screen of a program that redraws by itself (a clock, `top` in a shell that has it):
+   a selection made with Shift and the arrow keys is still there after the redraw, and Shift with an arrow goes on
+   from its end.
+
 ## Owed: the apps' data paths after the review of 2026-11-27 (axFile, the editors, axTask, axTemplate)
 
 The review of the apps' data paths before the release: what is deleted, written over or lost without a word. Each

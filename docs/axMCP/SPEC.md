@@ -77,7 +77,9 @@ with Enter; a prompt is filled and fetched like a tool.
   are added at the top level"; Ctrl+Shift+N says that Ctrl+N adds one.
 - MP-1.5a **Several of Your servers** (2026-11-22; bundle AX-8.16). Space selects one of Your servers, with the
   bundle's other selection keys; a server of Claude Code's, a heading and what a server offers are not selected
-  (the edge sound), since Delete removes Your servers alone. With two or more selected, Delete asks once, "Remove 3
+  (the edge sound), since Delete removes Your servers alone. With servers selected, Delete acts on the selected
+  ones, wherever the row you are on is (until 2026-11-27 one selected server was passed over for the row you are
+  on): one selected is asked about as a server alone is, "Remove <name>?"; with two or more selected, Delete asks once, "Remove 3
   servers?", with "The servers leave axMCP's list; nothing is uninstalled." and their names; Remove stops each
   that runs and takes it off the list: "Removed 3 servers". One Ctrl+Z puts all of them back where they stood
   ("Undone: removed 3 servers"). Start, Stop and Rename stay on the server you are on.
@@ -110,15 +112,33 @@ with Enter; a prompt is filled and fetched like a tool.
   when the program, an argument, an environment variable or the folder changes". A variable's value is never in the
   consent record, the notice or a log; only the mark stands for it. The limit: the mark is of the definition, not of
   what the program's file or its script holds.
+- MP-2.1b **Which program a command names** (`StdioServer.Resolve`; the review of 2026-11-27). A full path
+  (`C:\Tools\server.exe`, `\\server\share\mcp.exe`) is taken as it is. A bare name (`npx`, `node`) is found in the
+  PATH's full folders, with `.exe`, `.cmd` or `.bat` when it has no extension, never in the current folder
+  (repairs R-25). A path that is not full (`.\server.exe`, `tools\server.cmd`, `..\bin\mcp.exe`) is taken from
+  the folder the server starts in (MP-2.1: its own folder, or the folder in hand, or the user's profile): for a
+  server of a project's `.mcp.json` that is the project's folder, where that file lies and where Claude Code
+  starts it, so that the same definition names the same program in both. Until then such a path was handed to
+  Windows as it was, which reads it from axKit's own current folder, the folder of its program: the program
+  started was not the one the definition names, or none was found. The consent (MP-2.1a) reads the full path
+  found, so an agreement given for a path that was not full is asked for again.
 - MP-2.2 The server's level shows one row per capability it declared: "Tools, 8", "Resources, 2" (the templates
   counted in), "Prompts, 0"; Right into one. Left goes back up and leaves the server running.
 - MP-2.3 **Stop**: Ctrl+Shift+S on a running server (the level's, or the one selected at the top), or closing the
   window, which stops every server: the standard input is closed, then after two seconds the process is ended with its
   children. "Stopped <name>". A server that ends by itself is announced, "axkit stopped (exit code 1)", its row reads
-  stopped with the code, and Enter on its level starts it again.
+  stopped with the code, and Enter on its level starts it again. The window never waits for it (AX-7.5; the review
+  of 2026-11-27: Stop held the window for the two seconds, and a removal or a close with several servers for two
+  seconds each): the input is closed at once, the row reads stopped and "Stopped <name>" is said, and the two
+  seconds and the end run on a task of the server's own (`StdioServer.Stop`, `Ending`). Each server and what it
+  starts are in a Windows job of their own from the start (`AxKit.Core/ChildJob`), so that when the window
+  closes, or axKit ends in any other way, Windows ends whatever of them is still there: a server that ignores
+  its closed input no longer stays behind, and has until axMCP's process is gone rather than two seconds.
 - MP-2.4 Every request waits at most 60 s; after that the call is abandoned with "No answer from axkit in 60 s", a
-  `notifications/cancelled` is sent, and the server is left running. One call at a time: a second Ctrl+Enter meanwhile
-  says that a call is running.
+  `notifications/cancelled` is sent, and the server is left running. One call at a time, whatever the request (a
+  tool's call, a prompt, a resource's read): a second one meanwhile says "A call is running; it is given 60
+  seconds" and starts nothing. (Until 2026-11-27 a resource's read was not asked, so that Enter on a resource
+  during a call started a second request, whose time limit took the first one's away.)
 - MP-2.5 The UI thread never waits on the server (AX-7.5): the client reads on its own thread, every answer completes
   a task the window awaits on its own thread (the base's `Do`), and no key is blocked meanwhile.
 

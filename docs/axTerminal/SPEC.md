@@ -141,7 +141,14 @@ gets its page shown in place of the transcript while it holds the screen, and no
   back to the line as it came, it has its caution again. The transcript holds, as a system line to read again, "A
   command is in the command field, not sent. Another program put it there, and axKit checked nothing of it: read
   it, and press Enter only if you want to run it"; where no line could be made, "A command was handed to this
-  window and is not in the command field:" and why, said once the window shows, and the field is empty. The
+  window and is not in the command field:" and why, said once the window shows, and the field is empty. **When
+  the shell changes** (Switch shell, New session; the review of 2026-11-27) while the line still stands in the
+  field as it came, it is made again by the new shell's rule (`HandedCommand.ForNewShell`): the field holds the
+  new line under the same caution, and "Written again for <shell>. A command is in the command field, not sent.
+  …" is said and kept as a system line; for a shell without a rule the field is emptied, with "A command was
+  handed to this window and is not in the command field:" and why. A line the user has changed is the user's own
+  and stays. Until then the line stayed as it was made for the first shell, so that cmd.exe was given
+  PowerShell's single quotes as characters of an argument. The
   start line of the log holds the number of parts, never the parts (`CommandLineText.ForLog`), since they may hold
   an item's values. axTask's `terminal` actions are what hands a command over. Tested in `HandedCommandTests`,
   `CommandLineTextTests`, `tests/scripts/axTerminal/13-handed-command.txt` and, for what NVDA speaks,
@@ -474,7 +481,11 @@ read as `edit` still waiting for the colours' answers (to measure first, AT-9.7)
   marked three runs on the menu's row of `edit` (its right border and the text behind the menu as well).
 - AT-9.5 **The rows updated** at a frame's end, as the conversation's are (AT-4), only the rows that changed, the
   caret kept on its row when the program's cursor did not move; a program that redraws without end (a clock, a
-  progress bar) is said nothing about.
+  progress bar) is said nothing about. In reading the screen the caret is the user's, and so is a selection made
+  there with Shift: both its ends stay on their rows and columns over a change of the rows, in the direction it
+  was made (`ScreenView.Kept`, `EditKeys.SelectionEnds`; the review of 2026-11-27: every frame put the caret back
+  with nothing selected, so that a selection was gone at the next tick of a clock on the page), and a frame that
+  changes no row changes nothing shown.
 - AT-9.6 **What is not done.** Mouse reporting is ignored (no mouse events are sent); the program's colours are not
   shown or said; the alternate screen's rows never enter the conversation, its export or its find.
 - AT-9.7 **To measure before the build**, with a recording each, in the record-fixture skill's way: whether `edit`
@@ -537,7 +548,12 @@ read as `edit` still waiting for the colours' answers (to measure first, AT-9.7)
     shows (AT-9.6). Chosen from the menu in keys to the program, where the caret is the program's cursor, find moves
     nothing and says "Find works in reading the screen: Ctrl+Space turns to it". The window base has the two hooks:
     `ConsoleForm.PlacesRefused` and `ConversationForm.FindDialog` and `FindNext`, which `TerminalForm.Screen.cs`
-    overrides.
+    overrides. The commands that need the command field say the places' sentence too and do nothing while the
+    view shows (the review of 2026-11-27): Recent commands (which until then opened its list behind the screen and
+    left the focus on the hidden field, from where no key led back), Send without recording and Send the command
+    (which sent the field's text, last typed for the shell, to the program as keys), and the Context menu's Copy
+    this line into the command field (`TerminalForm.FieldBehindScreen`, and `PlacesRefused` in the console
+    window's `TakeLine`).
   - **A program that ends on the alternate screen.** A program killed or crashed, or one that never switches back,
     leaves the console on the alternate screen, and the shell's prompt comes back drawn there. The shell's own mark
     (D, A or B, AT-4, the secret's check passed) while the alternate screen is in force is taken for the program's

@@ -7,6 +7,7 @@ namespace AxGit.Tests;
 /// exit code, the timeout that stops a command, and a program git started that keeps the output open after git has
 /// finished (the case of 2026-10-23, when a signing agent held the window at "Working").
 /// </summary>
+[Collection(GitProgram.Collection)]
 public sealed class GitRunnerProcessTests : IDisposable
 {
     private readonly TempFolder _dir = new("axgit-tests");
@@ -59,5 +60,21 @@ public sealed class GitRunnerProcessTests : IDisposable
         var result = await GitRunner.RunAsync(null, ["commit"], TimeSpan.FromSeconds(2));
         Assert.Equal(0, result.ExitCode);
         Assert.Contains("kept its output open", result.Error);
+        // What git itself printed is kept (review of 2026-11-27): until then the output of such a run was empty, so
+        // that a status read this way was an empty status, "nothing changed", with exit code 0. The ping writes into
+        // the same output after it, which is why a list is never read from such a run (the window's LoadAsync).
+        Assert.StartsWith("early", result.Output);
+        Assert.True(result.Ok);
+        Assert.True(result.OutputHeldOpen);
+    }
+
+    [Fact]
+    public async Task A_command_stopped_at_the_timeout_keeps_what_it_printed_and_is_no_success()
+    {
+        Fake("echo so far\r\nping -n 30 127.0.0.1 >nul");
+        var result = await GitRunner.RunAsync(null, ["status"], TimeSpan.FromSeconds(2));
+        Assert.False(result.Ok);
+        Assert.True(result.TimedOut);
+        Assert.Equal("so far", result.Output.Trim());
     }
 }

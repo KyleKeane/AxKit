@@ -87,7 +87,8 @@ public static class PictureText
     /// <summary>What the script's run means: the text lines (none for a picture without text), or why there are none.</summary>
     public static (IReadOnlyList<string>? Lines, string? Problem) Read(ProcessResult result)
     {
-        if (result.TimedOut)
+        // Ended at the limit: what was printed until then is a part of the text, and is not shown as the text.
+        if (result.Stopped)
         {
             return (null, $"Windows' reader gave no answer in {Timeout.TotalSeconds:0} seconds");
         }

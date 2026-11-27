@@ -76,10 +76,18 @@ public abstract partial class ConsoleForm
     /// <summary>
     /// Enter on a line of the view, and the Context menu's item for it: the line goes into the field as the app
     /// shapes it (<see cref="WithLine"/>), and the focus goes there with the caret at the end. The view's caret
-    /// stays where it is, so that the key to the view comes back to the same line.
+    /// stays where it is, so that the key to the view comes back to the same line. While the places cannot be gone
+    /// to (<see cref="PlacesRefused"/>: axTerminal's screen view stands over the field), the words say so and
+    /// nothing is put anywhere: from the Context menu the item is still reached then (the review of 2026-11-27).
     /// </summary>
     private void TakeLine(int number, int count, string text)
     {
+        if (PlacesRefused is { } why)
+        {
+            Announce(why, true);
+            return;
+        }
+
         if (Area.Current is not null)
         {
             if (LineRefusedWhileAreaOpen is { } refused)

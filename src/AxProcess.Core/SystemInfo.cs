@@ -43,6 +43,9 @@ public static class SystemInfo
     /// <summary>The program file of a running process, which works for most processes a user cannot open fully; null when Windows refuses or it has ended.</summary>
     public static string? ProgramPath(int processId) => processId < 0 ? null : ThisProgram.ImageOf((uint)processId);
 
+    /// <summary>The process that started a running one, by the id Windows kept for it (<see cref="ThisProgram.ParentOf"/>); null when Windows refuses or it has ended. For <see cref="ProcessEnd.StartedBy"/>.</summary>
+    public static int? ParentOf(int processId) => processId < 0 ? null : ThisProgram.ParentOf((uint)processId) is { } parent ? (int)parent : null;
+
     /// <summary>The lines of a process's details notice (PR-3.4): what Windows lets the user read, each on its own line.</summary>
     public static IReadOnlyList<string> Details(ProcessRow row)
     {

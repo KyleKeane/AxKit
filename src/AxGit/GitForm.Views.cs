@@ -57,7 +57,9 @@ public sealed partial class GitForm
             return false;
         }
 
-        if (!result.Ok)
+        // A list is read from git's own output alone: a run whose output another program held open may hold that
+        // program's lines after git's, and is said as a failure, the list kept as it was (review of 2026-11-27).
+        if (!result.Ok || result.OutputHeldOpen)
         {
             Failed(title, result);
             return false;
@@ -104,7 +106,7 @@ public sealed partial class GitForm
 
         if (RefusedWhileWorking())
         {
-            // The list's first read would be refused.
+            // The list's first read would be refused.
             return;
         }
 
@@ -142,9 +144,7 @@ public sealed partial class GitForm
             return null;
         }
 
-        IReadOnlyList<ChangedFile> files = SelectedRows() is { Count: > 0 } rows
-            ? [.. rows.Select(row => row.Tag).OfType<ChangedFile>()]
-            : CurrentFile() is { } file ? [file] : [];
+        IReadOnlyList<ChangedFile> files = [.. RowsInHand().Select(row => row.Tag).OfType<ChangedFile>()];
         if (files.Count == 0)
         {
             Refuse("No file selected");

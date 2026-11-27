@@ -49,7 +49,8 @@ public static class ClaudeLauncher
             // Outside call, program, Claude Code: runs the user's Claude Code once with --version, without a window, so
             // that axClaude knows which Claude Code it found and that it runs.
             var result = await ProcessRun.RunAsync(start, [], timeout).ConfigureAwait(false);
-            if (result.TimedOut)
+            // Ended at the limit before it had finished: what it printed until then is no version.
+            if (result.Stopped)
             {
                 return null;
             }

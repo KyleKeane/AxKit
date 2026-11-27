@@ -40,6 +40,20 @@ expect focus File
 keys alt+1
 expect said ! Screen of edit. The terminal and the command field come back when edit leaves the whole screen
 expect focus "name":"Screen of edit"
+# Check: Recent commands says the field is behind the screen and the focus stays
+# The review of 2026-11-27: the commands that need the command field say the same while the screen shows, and do
+# nothing. Until then Recent commands opened its list behind the screen and left the focus on the hidden field.
+do Recent commands
+expect said ! Screen of edit. The terminal and the command field come back when edit leaves the whole screen
+expect focus "name":"Screen of edit"
+# Check: Send without recording sends nothing to the program that holds the screen
+menu Send without recording
+expect said ! Screen of edit. The terminal and the command field come back when edit leaves the whole screen
+expect focus "name":"Screen of edit"
+# Check: Copy this line into the command field puts nothing behind the screen
+menu Copy this line into the command field, Context
+expect said ! Screen of edit. The terminal and the command field come back when edit leaves the whole screen
+expect focus "name":"Screen of edit"
 # Goal: Find text on the screen
 # Find searches the page's rows: the match selected, the caret on its row.
 keys ctrl+f

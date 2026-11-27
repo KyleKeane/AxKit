@@ -69,6 +69,18 @@ public static class ScreenView
     }
 
     /// <summary>
+    /// The selection of reading the screen carried over a change of the rows (AT-9.5): each of its two ends, where
+    /// it began and where the caret is, stays on its row and column of the page, a column past its row's new end
+    /// at that end. Both the same place is the caret alone, nothing selected.
+    /// </summary>
+    public static (int Anchor, int Caret) Kept(IReadOnlyList<string> shown, IReadOnlyList<string> next, int anchor, int caret)
+    {
+        var from = Position(shown, anchor);
+        var to = Position(shown, caret);
+        return (Index(next, from.Row, from.Column), Index(next, to.Row, to.Column));
+    }
+
+    /// <summary>
     /// The rows of <paramref name="next"/> that differ from those <paramref name="shown"/>, as edits of the text shown,
     /// the last row first, so that each edit's start is still right when the ones before it are made. A page of
     /// another height is one edit of the whole text.

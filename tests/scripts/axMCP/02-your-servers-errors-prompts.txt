@@ -156,6 +156,25 @@ expect list fake, stdio, stopped
 expect list probe, stdio, stopped
 refuse list , selected
 
+# Check: Delete with one server selected asks about that one, wherever the row you are on is
+# Bundle AX-8.16 (the review of 2026-11-27): what a command acts on is the selected rows whenever any is selected,
+# one alone too. probe selected, the row moved up to fake: the question names probe. Escape removes nothing.
+wait 1100
+type probe
+expect focus probe, stdio, stopped
+keys space
+expect said ! Selected
+keys up
+expect focus fake, stdio, stopped
+keys delete
+expect state "notice":"Remove probe?"
+wait 1200
+keys escape
+expect state "notice":null
+expect list probe, stdio, stopped
+do Deselect all
+expect said ! None selected
+
 # Goal: Start a server
 # The fake started (01-start, 2.2), with its four tools, the resource and its template, and the prompt.
 wait 1100
