@@ -6,6 +6,15 @@ What was checked with NVDA, against which version, and with what result. When ea
 
 Add a section under this one, above the earlier passes, so that the newest comes first: the date, the version, the commit tested, who ran it and how the result was given, and the environment: the NVDA version, the synthesizer and the Windows build (so that a regression is dated to an NVDA release rather than to some time). Under it, one table per app with a line per section of its plan: the steps run and the result, Passed, Failed (with what was heard) or Not run. A step that fails gets a line of its own with what NVDA said and what it should have said, and the bug's fix names the step. When a plan gains or loses steps, the next pass lists them as the plan has them then.
 
+## 2026-11-26, evening: axClaude after the usage-limit row and Done with its reply; by the assistant with NVDA listening (`main` b0a52d43)
+
+`.\nvda-pass.ps1 axClaude`, the maintainer away for eight hours at his word ("ok i am away for eight hours, please
+work autonomously"), the same NVDA, voice and Windows as below: 64 scripts, 63 passed; 398 goals passed, 1 failed,
+1 not run. Heard: Done with the reply line it ends (FR-7.2a), the live scripts 17 and 06 after the fix of Claude
+Code's usage-limit row, the AI tools at a start (60), the stream's scripts again. Failed: `30-hooks-stand-in` line 94,
+"Events from Claude Code's hooks off, from the next start of Claude" announced and not spoken, as in the full pass
+and unlike its rerun: two runs of three; its item, "the words after the hooks switch in the menu are cut off".
+
 ## 2026-11-26, afternoon: the stream's scripts after its second round; by the assistant with NVDA listening (`main` 94e87522)
 
 `.\nvda-pass.ps1 axClaude -Only '*-stream-*'`, the maintainer still away at his word, the same NVDA, voice and
