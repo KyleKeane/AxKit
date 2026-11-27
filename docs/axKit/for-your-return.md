@@ -6,14 +6,14 @@ through together; what must last is in the specifications, the priorities list a
 
 ## Where things stand
 
-Updated 2026-11-27, evening.
+Updated 2026-11-27, late evening.
 
 - **Blocked on you: nothing.**
 - **The release review** (item "the release review of 2026-11-27"): ten reviewers read everything since 5.10.0, about
   150 findings, no certain blocker. Fixed, tested, committed and pushed so far: privacy and the AI tools channel (18),
-  the tools and the release path (23), the changelog rewritten to the end state, both of axClaude's sources (33).
-  Running: the apps' data paths (33). To come: the access layers, the window base and the automation engine, the
-  seal's counter.
+  the tools and the release path (23), the changelog rewritten to the end state, both of axClaude's sources (33),
+  the apps' data paths (33). Running: the access layers (18). To come: the window base and the automation engine,
+  the seal's counter.
 - **Then**: questions as lists; the shortenings with their keys; 6.0.0 prepared and not published; then, on branches,
   the workflow graph's remaining steps, axChat, axAutomate's macro launcher.
 
@@ -45,7 +45,18 @@ Each is one line to undo unless it says otherwise.
   count; a key to read all of it would need it kept again (stream-mode.md SM-4.11).
 - **A permission answer's label ends ", and more"** when the command is longer than the label ("1. Yes, Bash command
   git status, and more").
-- **A day and month typed without a year is the next such day**, today included (in the batch running now).
+- **A day and month typed without a year is the next such day**, today included; 29 February is the next leap year's.
+- **A save that would turn a character into a question mark asks "Save as UTF-8?"**, and Enter saves as UTF-8.
+  The other way would be to refuse the save; this one keeps your text whole and says in the status bar what it did.
+- **An item titled "list", or with a title that starts with a full stop, gets a file name with an underscore
+  before it** (`_list.json`, `_.NET upgrade.json`). The title you read is unchanged.
+- **Undo in axFile refuses when what it would remove has changed** since the operation made it, by size and time.
+  It also refuses a copied folder into which Windows itself wrote a file (`desktop.ini`) afterwards.
+- **A network drive with a Recycle Bin of its own (a redirected folder) is treated as having none**: the question
+  says "for good" although Windows would have kept it. Windows gives no sure answer for such a drive.
+- **A sound file of your own over 64 MB is not read.**
+- **A hand-written mistake in the Templates `list.json` stops axKit from rewriting that file** until it is mended,
+  so that nothing you wrote is lost; the window says what does not read.
 - **axChat's first endpoint is Claude Code's stream**, the HTTP endpoint second; the reasons and the rest of my
   answers to the brief's questions are in `docs/axChat/spin-out.md` section 7.
 - **The stream stays behind its switch in axClaude.** Making it the default waits for your own two hours with it.
