@@ -1,8 +1,7 @@
 # axClip — Specification
 
 axClip is an app of the axKit bundle (`docs/axKit/SPEC.md`): a clipboard history behind a hotkey, for a blind developer
-who uses the NVDA screen reader. Built 2026-10-23 on the branch `axClip` (the long run of that day,
-`docs/axKit/plan.md`), not yet heard under NVDA. It runs as axStart does, a background process with one hidden window,
+who uses the NVDA screen reader. Built 2026-10-23 on the branch `axClip`, not yet heard under NVDA. It runs as axStart does, a background process with one hidden window,
 and that window is the bundle's `HotkeyForm`, which came out of axStart for it. The document is kept in step with the
 code. Requirements are numbered `CP-n.m` and decisions `CP-Dn`; the bundle's rules, AX-7, AX-8 and AX-9, are cited
 by number and not repeated; axStart's specification (`docs/axStart/SPEC.md`, AS-n.m) is cited for what the two share.

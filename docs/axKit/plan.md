@@ -1,58 +1,52 @@
-# How axClaude became axKit, and what is still to come
+# The plan: what is still to come
 
-The record of the transition of 2026-10-02, kept short: the shape that was chosen, the decisions, what was built,
-and the list that remains. The specifications describe the result (`docs/axKit/SPEC.md`, `docs/axClaude/SPEC.md`,
-`docs/axDown/SPEC.md`); the commit history holds the steps.
+What has been asked for or suggested and is not built, and the order of the work in hand. What was built is
+described by the specifications (`docs/axKit/SPEC.md`, `docs/ax<Name>/SPEC.md`) and held in `CHANGELOG.md` and the
+commit history. Until 2026-11-27 this page was "How axClaude became axKit, and what is still to come"; its record
+of the transition of 2026-10-02 and of each app's first plan is last at commit 4d50ef2b
+(`git show 4d50ef2b:docs/axKit/plan.md`). Work in hand has its items in the priorities list (root `CLAUDE.md`,
+rule 9); an idea on this page comes back by a new item that points here.
 
-## The shape
+## The direction
 
-One executable, `AxKit.exe`, with a verb per app (`claude`, `down`); a path alone picks the app. Each app is a
-WinForms class library with one entry point, with its pure code in a `.Core` project and its documents in
-`docs/<app>/`. Shared code lives in `AxKit.Core` (pure) and `AxKit.Forms` (WinForms) and moves there on its second
-use, unchanged. One installer, one updater, one version, one changelog, one release workflow. A new app follows
-`docs/axKit/adding-an-app.md`.
+- **The core mechanics first** (the maintainer, after 5.9.1, 2026-11-15): stable through his own use; his reports
+  and the problems he meets first, faults in what exists before anything new, new features only where they remove
+  friction he met. New apps and large features wait.
+- **Held in code, for decades** (the maintainer, 2026-11-27): what is finished is locked in by a test, a check or a
+  generated page, never by a practice. Every window is held to account by the workflow graph
+  (`workflow-graph.md`) and the automated window checks (`automation.md`), so that a drift shows itself.
+- **No goal over four actions, three where it can be** (bundle SPEC G7; `over-the-bounds.md` lists the goals that
+  are over, and the list never grows).
 
-## Decisions taken
+## The order of the work in hand
 
-1. The GitHub repository was renamed `KyleKeane/Axit` with 2.0.0, and `KyleKeane/AxKit` with 5.0.0, when the bundle
-   became axKit (2026-11-05, bundle SPEC B-16); the old addresses redirect.
-2. `axkit` with no argument starts axClaude on the current folder.
-3. axClaude 1.7.0 was released first as a bridge: its updater accepts a download whose program file is not
-   `AxClaude.exe`, so installed copies could update into axKit.
-4. axDown registers under Open with for `.md`, `.markdown` and `.txt` and appears on every file's right-click menu;
-   Windows decides defaults.
-5. axDown's navigation keys are NVDA's browse-mode letters with Ctrl (next) and Ctrl+Shift (previous), headings
-   first (axDown SPEC AD-D7).
-6. The program file is `AxKit.exe`; the Start menu entries are `axKit axClaude` and `axKit axDown`.
-7. Keys live in tables, bundle-wide (`BundleKeys`) and per window (`AxClaudeKeys`, `AxDownKeys`), with a collision
-   test (bundle SPEC AX-8); the notices and the question area are shared, not copied (AX-6.4).
-8. Plain code only (B-10), zero third-party dependencies, and the working app never broken: the transition ran on
-   a branch, one step per commit, every commit building and passing the tests, merged after NVDA checks.
-9. After 5.9.1 (2026-11-15) the direction is the core mechanics, stable through the maintainer's own use: his
-   reports and the problems he meets first, faults in what exists before anything new, small and frequent
-   releases, new features only where they remove friction he met. New apps and large features wait (the section
-   "Parked on 2026-11-25" below).
+The maintainer's order of 2026-11-27, each on a branch once 6.0.0 is prepared:
 
-## What was built, in order (all on 2026-10-02)
+1. **6.0.0**: prepared and released at his word.
+2. **The workflow graph's remaining steps** (`workflow-graph.md`, section 6): the scripts as walks (step 4), the
+   map held still with the `Map change:` line (step 5), and teaching from the map (step 7). The shortenings of
+   step 6 are `shortenings.md`.
+3. **axChat** (`docs/axChat/SPEC.md`; `docs/axChat/spin-out.md`, sections 7 to 10): one contract for a
+   conversation's source in the shared projects, the app on Claude Code's stream as its first endpoint, then the
+   HTTP endpoint.
+4. **axAutomate's macro launcher** (`docs/axAutomate/SPEC.md` AU-D4; `command-language.md`, section 8 (f)): a
+   specification first; a macro is one more origin of the command gate.
+5. **What is left of the event schema and the command language** (`events.md`, section 7; `command-language.md`,
+   section 8).
 
-The bundle spec and the document split; the 1.7.0 bridge; `AxKit.exe` with axClaude inside and the tested dispatcher;
-the shared pure code in `AxKit.Core`; the installer, publish and release scripts for the bundle; the axDown
-specification; `AxDown.Core`; the axDown window and the shared window pieces in `AxKit.Forms`; axDown's installer
-entries and icon; the user's NVDA checks and the 2.0.0 release; axClaude's key table (2.1.0); heading navigation in
-axDown (2.1.0); the adding-an-app checklist. After 2.1.0: axDown's window spoken on opening (2.1.1), the update notice
-with its four buttons and the progress bar (2.2.0), the in-place install with one bar for download and install and
-the restart by the app itself (2.3.0).
+Waiting on the maintainer and on nothing else: the stream as axClaude's default source (after his own two hours
+with it, `docs/axClaude/stream-mode.md`), and a sound for each new kind of event (root rule 13).
 
 ## Still to come
 
-- **axChat, a chat app over REST chat APIs** (asked 2026-11-25, high priority; the name his the same day; specified
-  in `docs/axChat/SPEC.md`, nothing built): a conversation like axClaude's over an HTTP chat API (llama.cpp's server, any
-  OpenAI-compatible server, Anthropic, Ollama), the user picking a named API dialect, giving its address and key,
-  and pressing Go, one step; dialects as data files mapping each API's requests and streamed events onto axKit's
-  own events, with presets and the user's own; the conversation window axClaude has. A specialized chat app rather
-  than a general REST tool, for the streaming, the history the client resends, a reply's parts and the model list.
-  To settle first: a third network contact of axKit's own code (rule 8) and the AI caution on every reply (rule 11).
-  The analysis is in the item "axChat (name to settle)" of the priorities list.
+- **axChat, a chat app over REST chat APIs** (asked 2026-11-25, high priority; specified in `docs/axChat/SPEC.md`,
+  nothing built): a conversation like axClaude's over an HTTP chat API (llama.cpp's server, any OpenAI-compatible
+  server, Anthropic, Ollama), the user picking a named API dialect, giving its address and key, and pressing Go,
+  one step; dialects as data files mapping each API's requests and streamed events onto axKit's own events, with
+  presets and the user's own. Decided since (2026-11-26 and 27, `spin-out.md`): Claude Code's stream, which
+  axClaude has behind a switch, is its first endpoint and stays an option there; the window is the conversation
+  window axClaude has, on one shared class. To settle in its build: a third network contact of axKit's own code
+  (rule 8) and the AI caution on every reply (rule 11).
 
 - **Guided learning, step by step** (the user's direction, 2026-11-16; recorded as a direction, not to be built
   yet): new users are coming, and on some days a person wants a thing done for them, on others they have the
@@ -67,67 +61,18 @@ the restart by the app itself (2.3.0).
   axClaude and axHelp in the command inventory), the goal titles heard and settled by the user, and a specification
   of its own with its cautions. Its heuristics for learners are the bundle's rules already: a key has one meaning in
   every window (rule 5, AX-8), every action says a short message, nothing happens that the user did not ask for.
-- **The Microsoft Store, MSIX and winget** (asked 2026-11-08, the day the Partner Center account was opened; planned in `store-distribution.md`; built on branch `store` the same day, SPEC AX-13; built, and live in the Store since 2026-11-10 as the 5.2.1 package, Store ID 9PK01L2K5000): axKit as one MSIX package the Store signs, installs and updates, one Application per app, the Store page in place of the updater in that copy, `winget install` from the Store source as the command-line path, the zip kept for developers; the account work and every release's upload by hand in Partner Center (the route through the Store's API was built, never switched on, and removed on 2026-11-13); the decisions still open are its section 4.
-- Reports (asked 2026-11-07, specified in `docs/axKit/reports.md`; built, released in 5.1.0): F4 in every window opens a report with
-  the last actions and the focus filled in, three kinds (feedback, bug, feature request), saved as an axTask item
-  first and sent to GitHub as an issue of a reports repository over its REST API through axKit's own reporter account,
-  nothing to sign in to, a reporter id per install and a blocklist against abuse, unsent ones going with the next
-  (since 2026-11-14 the repository is private and each report is encrypted on the user's computer for the maintainer's key);
-  "Your reports" in the axKit menu; in axTask, GitHub lists of the repository's issues (removed 2026-11-14, when axTask became local only) and Ctrl+1 to Ctrl+9 as the
-  user's own actions on a list's items (set fields, move, open), All tasks moving to Ctrl+0. Built the same day on the
-  branch `reports` (CHANGELOG 5.1.0); the reports repository `KyleKeane/AxKit-reports` exists with the maintainer's
-  former `docs/feature_requests` items as its first issues; the reporter account, its token and the release secret
-  (`docs/axKit/reports-setup.md`) and the NVDA passes are what is left before the merge.
-- axClaude's open items are in `docs/axClaude/SPEC.md` §12 To do, the one list for them.
-- The text editor window is shared since axJSON (2026-10-18: `AxKit.Forms/TextEditorForm` with `EditorApp`,
-  `EditorKeys`, `EditorHost`; axDown and axJSON are records over it). The window base `AxKit.Forms/AxKitForm` (AX-6.5)
-  holds the notice flow, the fonts, the window's place, find and the update flow since the same day; the editor
-  shell, axGIT's window and axClaude's `MainForm` all derive from it; the recent lists (`RecentMenu`), the Options
-  and Help menus and the File Explorer opener followed the same day. Left: `ControlArea`'s use in axClaude only; the
-  "Show current … in" submenus stay in each window, three lines each. axClaude's window is partial files, one per
-  section, since the same day.
-- axJSON, an editor for JSON files (`docs/axJSON/SPEC.md`): raw mode built 2026-10-18 as the editor shell plus JSON's
-  navigation keys and Format (AJ-D4, B-14: the shell shared, one app per file type, one file per window, the axKit menu
-  for the open windows). Still to come: structured mode, a form of real input fields from templates (AJ-3), and the
-  caret's path in the status bar (AJ-2.4). The user's direction (2026-10-24): structured mode follows the item apps'
-  field management and editing (axTask and axPass, `docs/axKit/item-apps.md`: a navigator, a pane of typed fields,
-  Enter to change one), and gets a focused pass of its own later, since making it general for any JSON adds
-  complexity to the interface and the interactions; not started before that pass.
-- axPreview as the general viewer (the user's direction, 2026-10-24; done): a program for every file type under
-  Windows' Open with (AX-2.3), showing any file in two panes, the content and the details, each kind through its
-  renderer (`docs/axPreview/SPEC.md` AP-6, AP-7); specified, built and checked with NVDA the same day on the branch
-  `preview`, released in 3.7.2, "Not a text file" gone. The Open with table of axKit's own, file type to app, was
-  decided against the same day (AP-D10, the user asking for the level that avoids feature creep): defaults stay
-  Windows', set with its Open with dialog's Always or in Settings, Default apps, and axPreview has Ctrl+E's one way
-  on and Session, Open with (AP-7.3), the axKit apps for the file, Windows' program and Windows' own list.
-- axDown and axJSON, a file changed outside the editor (asked and built 2026-10-18, AD-3.6): compared when the window
-  becomes active again; reloaded with the caret kept when nothing is unsaved, said once otherwise, and Save offers
-  Reload and lose mine. No watcher thread, no merging. A watcher for live reload while the window stays active is
-  the second step, only if the activation check turns out not enough.
-
-- **AI help as one shared, optional service; local first** (the user's direction, 2026-10-18; bundle G6, B-15).
-  AI-based editing and feedback tools are not axDown's own: they are one service every app can call from inside its
-  window to get things done there, written once and optional, so that each app has its full utility without it and
-  offline. The bundle was to have a shared database as well, which the service and the apps share. Specified
-  2026-11-09 in `ai-help.md` (AH-n.m) and built the same evening once the user had read it: Claude Code in its print
-  mode with read-only tools over the folders the user allows, never the API (AH-D1); no database, since Claude Code
-  reads the files itself (AH-D2); the service answers and a window applies a change as its own undo step (AH-D3); one
-  question, one answer, with follow-ups in the same session and no transcript (AH-D4); off by default behind one
-  switch in the axKit menu (AH-D5). Built: Shift+F1 in every window (AH-6), axHelp and axDescribe (its section 7), merged in 5.7.0 into axHelp, two hotkeys into one conversation in axClaude (`docs/axHelp/SPEC.md`).
-  Left for later (its section 8): axDown's and axJSON's AI items with Offer a change (AH-3.2), a path in an answer
-  opened with Enter (AH-3.3).
-- **A command palette in every window** (the user's ask, 2026-10-21; specified 2026-10-22 as bundle SPEC AX-10,
-  Ctrl+Shift+P at the user's choice, built on the branch `palette`; built and released, in every window; on F1 since 2026-11-26, palette and help in one): one key opens a field with a list under it;
-  typing narrows the list to the window's menu commands by name, each with its key named as a reminder, and in axFile
-  to the folder's entries as well; Enter runs the command or opens the entry. It is the window base's, fed by each
-  window's menus, with axStart's matching shared; next to the AI service above, the second thing every app gets for
-  free.
-- **Themes** (asked 2026-11-09, specified the same night in `theme.md`; built, `AxKit.Forms/AxKitForm.Theme.cs`, Options, Theme since 2026-11-26, the axKit menu's before): one JSON file,
-  `%APPDATA%\AxKit\theme.json`, with a colour or `system` for every class of object the windows draw (the window,
-  the texts, the transcripts, the lists, the console field and its band, the notices, the status bar, the menus, the
-  buttons, the title bar), edited in axJSON from Options, Theme in every window, applied by the window base and read
-  again when it changes; without the file nothing changes (AX-7.7). For the sighted helpers and users with low vision;
-  the blind user loses nothing.
+- **What is left of things that are built.** axClaude's open items are in `docs/axClaude/SPEC.md`, section 12, the
+  one list for them. axJSON: structured mode, a form of real input fields from templates (AJ-3), and the caret's
+  path in the status bar (AJ-2.4); by the user's direction (2026-10-24) structured mode follows the item apps'
+  field editing (`item-apps.md`) and gets a focused pass of its own, not started before it. AI help
+  (`ai-help.md`, section 8): axDown's and axJSON's AI items with Offer a change (AH-3.2), and a path in an answer
+  opened with Enter (AH-3.3). The editors: a watcher for live reload while the window stays active, only if the
+  check at activation (AD-3.6) turns out not enough. Path completion (2026-10-23): asked as a shared resource for
+  every path field of the bundle; it moves from `AxFile.Core.PathCompletion` to the shared projects with the first
+  other app that has a path field, untangled from `FolderListing` then. The screen's picture in axHelp
+  (`docs/axHelp/SPEC.md` HE-3): on that foundation, a parser that segments the screen into objects and actions on
+  them (move the mouse to an object, click it), an agent the user steers by speech and keys; his thought is that
+  these may be add-ons run from the launcher, each a script with a clear interface, rather than apps.
 - **A gutter for the transcript views** (the user's idea, 2026-10-19, agreed as a later bundle feature): two narrow
   columns to the left of a transcript, the line number and the jump letter of the line's kind (`i`, `o`, `h2`), for
   sighted helpers, drawn next to the view and never spoken, since in an edit control what is in the text is what NVDA
@@ -135,16 +80,10 @@ the restart by the app itself (2.3.0).
   every arrow. What is spoken stays on demand: `l` for the line number, the jump keys with their announcements, and
   Options → Text → Markers in the text (axClaude FR-4.6a, built 2026-10-19) for the `#` markers. The spoken-but-
   invisible variant would need a rich edit control and is not planned.
-- **User-defined shells and programs, one shape** (2026-10-21). axFile's Open with a custom program ▸ (axFile
-  AF-4.11) is the user's own list of programs and scripts: a list in the app's settings with a name and a path each,
-  Add through the Windows file picker and a notice for the name, Remove from a submenu, the entries handed to the
-  program as its arguments. axTerminal's user-defined shells take the same shape in its own settings: a
-  name and a command line each, next to the one custom command line it had already (built 2026-11-11, axTerminal
-  AT-1.6a: Session, Switch shell, Add a shell and Remove a shell, listed in Switch shell and the New session notice).
 - **Custom keys to scripts** (the user's thought, 2026-10-21, kept for later rather than built): a key the user binds
   to one of their own programs or scripts, so that one shortcut runs it on the entry or the folder in hand, with the
-  key table and the collision test knowing the binding. The custom programs list above is what such keys would point
-  at; what is open is where a user's bindings live (the settings file, a submenu) and how they show in F1.
+  key table and the collision test knowing the binding. The custom programs list (axFile AF-4.11) is what such
+  keys would point at; what is open is where a user's bindings live (the settings file, a submenu) and how they show in F1.
 
 - **The years ahead.** `longevity.md` is the plan for keeping the repository a stable resource for decades: what
   already holds, what was adopted on 2026-10-23, the proposals with their cost, what breaks when, and the calendar
@@ -196,18 +135,13 @@ Features of the apps that exist:
   2026-10-24).
 - **axKit's own folder and file picker** (asked 2026-10-23), in place of the Windows pickers, with axFile's list and
   keys. Asked again on 2026-11-22 and back in the priorities list: its entry under "Still to come" says how.
-- **A gutter for the transcript views** and **custom keys to scripts**: described above in this section.
+- **A gutter for the transcript views** and **custom keys to scripts**: described under "Still to come".
 
-New apps: **axTemplate** (the maintainer's idea of 2026-11-23: his templates behind a system-wide hotkey, found by
-name or by their text in a launcher like axClip's and put in wherever the caret was, in any program; a browser
-like axTask's to keep them in order; the same templates in the axKit apps' command palettes; a step of axAutomate
-that puts one in. Built and in the bundle since 2026-11-23, `docs/axTemplate/SPEC.md`; what this entry kept of it is history: a template is a JSON item of
-the item format, with a check for each axKit app it shows in; left of it, the placeholders and a form behind a template, paused at his word of 2026-11-23. The
-editors' Insert template menu of the same day, `docs/axDown/SPEC.md` AD-13, is its scaffolding),
-**axList** (lists to remember as Markdown files; a draft is on the tag `archive/axlist-draft`), **axSQL** (a
-SQLite browser), **axHTTP** (a REST client), **axMail** (mail over IMAP and SMTP, the largest build), **AxVault**
+New apps: **axList** (lists to remember as Markdown files; a draft is on the tag `archive/axlist-draft`), **axSQL**
+(a SQLite browser), **axHTTP** (a REST client), **axMail** (mail over IMAP and SMTP, the largest build), **AxVault**
 (Cryptomator vaults; AxCryptomator below), and, on record only, **AxWeb**, **AxCalendar** and **AxSettings**. Each is
-described under "Later apps".
+described under "Later apps". Of axTemplate, built on 2026-11-23, the placeholders and a form behind a template are
+left, paused at his word the same day (below, under 2026-11-25).
 
 ## Parked on 2026-11-25: far future, not to build yet
 
@@ -258,62 +192,13 @@ priorities list, found by the title in the line. An idea comes back by a new ite
   parked at his word on 2026-11-25): a field holding a file beside the item, opened in the axKit app for its kind or
   played in place with Enter. Item: "Item window: a file field".
 
-## Later apps (recorded 2026-10-18)
+## Later apps
 
-Each would be one more app of the bundle, a window per thing worked on, added the way `adding-an-app.md` says, with no
-library dependency (B-10: `git.exe` and the file system through the APIs already used, as Claude is `claude.exe`).
+Each would be one more app of the bundle, a window per thing worked on, added the way `adding-an-app.md` says, with
+no library dependency (B-10), local first (B-15), on plain files in clear formats that an AI system or a script can
+read and change as easily as the app does. The order the user set for any of them: the specification, then the
+infrastructure, then the build.
 
-- **axGIT**: built the same day (`docs/axGIT/SPEC.md`), released in 2.12.0 and passed under NVDA on 2026-10-22; the
-  notes below were its plan. A git manager for a repository. One window per repository, named after it, opened from the other windows'
-  "Show current folder in ▸" and "Show current file in ▸" submenus (the slot the specs already keep for an axKit app
-  next to File Explorer) and from the axKit menu, so that it stays tied to the folder or file the user came from and is
-  found again in Open windows (AX-9) rather than lost. Inside the window the bundle's own pieces: lists (status as
-  the changed files, log, branches), read-only text with the jump keys (a diff, a commit), one field (the commit
-  message), notices for questions. A streamlined set to start with: status, diff of a file, stage and unstage,
-  commit, log, branch and switch, fetch, pull and push; conflicts and stashes shown and left to the terminal or to
-  Claude at first. Everything through `git` commands with their text parsed, nothing reimplemented. In the same
-  window as axClaude or the editors it would be a Git menu three times over and a second set of lists in a window
-  built around one thing; and in axClaude much of it can already be asked of Claude, so axGIT's worth is the quick,
-  deterministic read of a repository's state without a turn.
-- **axTerminal** (asked 2026-10-18; specified and built the same day, `docs/axTerminal/SPEC.md`, released in 3.0.0
-  and passed under NVDA on 2026-10-22): axClaude's window around a
-  shell. PowerShell (or Windows PowerShell, or cmd) in a ConPTY; every row a line of the transcript; a command typed
-  in the field gets axClaude's exchange block; the shell's prompt rows hidden and shown in the status bar; the shell's
-  integration marks (OSC 133, the Windows Terminal convention, injected by the app for the session) say when a command
-  is done and with what code, spoken with the chimes. Not a terminal emulator: programs that take the screen over are
-  out of scope. It is also the infrastructure step the user asked for first: the ConPTY host, the parser, the screen,
-  the mirror and the view move from axClaude into the shared projects on this second use, one piece per commit, with
-  one seam (`LineStore`) between the screen and Claude's session model.
-- **axFile** (the plan's file manager, named 2026-10-18; specified the same day, `docs/axFile/SPEC.md`): a list of
-  one folder's entries, folders first, Enter the one verb (a folder into the list, a text or Markdown file into axDown,
-  JSON into axJSON, a media file played, anything else to Windows' program), Backspace up, the four operations (new
-  folder, rename, delete to the Recycle Bin, copy the path) and File Explorer for the rest. **axMedia**, asked the
-  same day as "a simple file browser that plays everything in a folder", was this window's player, not an app
-  (AF-D2), until 2026-10-22, when the user split it out as an app of its own with one queue, together with
-  **axPreview**, a read-only viewer for one file, so that axFile is file operations and management only; the
-  specifications are `docs/axMedia/SPEC.md` and `docs/axPreview/SPEC.md`, the inventory of the split
-  the split's inventory of 2026-10-22, in the git history, and axFile's pane becomes its list of operations (`docs/axFile/SPEC.md` AF-D3; the Favorites list since 2026-11-23); all three
-  built the same day on the branch `split`, released in 3.3.1 and passed under NVDA the same day. As first built, the player was:
-  Enter on a sound or video file plays it and the folder's media files follow in order; pause, seek, next, previous,
-  speed, go to time, what is playing on F7; Windows' own decoders through one P/Invoke seam (MCI or MFPlay, chosen
-  by the first build), the keyboard's own volume keys. The worry on record stands: the scope stays small; copy and
-  paste wait for the ask.
-- **axStart** (asked, specified and built 2026-10-22, `docs/axStart/SPEC.md`; released in 3.4.0 before its NVDA pass,
-  which is still owed): a program launcher behind a global hotkey, the one app of the bundle with no document: a
-  hidden process from sign-in whose hotkey brings up one search field over the Start menu's programs, Down and Up
-  through the matches with the caret kept in the field, Enter to start.
-- **axPass** (asked 2026-10-18 as AxKeePassium, after the KeePass app on the phone; renamed axPass by the user on
-  2026-10-23, which keeps clear of anyone's product name; specified 2026-10-24 in `docs/axPass/SPEC.md`, built once the tool runs here; the format and the command-line tool, read from
-  their sources, are in `docs/axPass/kdbx-notes.md`; since 2026-10-24 an item app with axTask's window and fields,
-  `docs/axKit/item-apps.md`, whose section 6 says where the two differ): a KeePass client for one database (`.kdbx`) per window: the
-  entries as a list, by group and by search, Enter for an entry's fields as read-only text with the password withheld,
-  keys that copy the user name and the password to the clipboard with a timed clear, add and edit through notices, a
-  generator, lock. The engine, by the bundle's precedent (AG-D2, B-10): KeePassXC's `keepassxc-cli` as a process per
-  command (`ls`, `show`, `clip`, `add`, `edit`, `rm`, `mv`, `generate`, `db-create`), the master password handed to it on
-  standard input and held only in the window's memory until lock; the format, Argon2 and the rest stay KeePassXC's and
-  are never reimplemented. To verify before the spec: that the Windows build reads the password from a pipe (its
-  manual does not say; see the notes), its output formats. Local first (B-15): the database is a file, synced by whatever syncs the user's
-  files.
 - **AxCryptomator** (asked 2026-10-18; no spec yet; Cryptomator is a product name too, AxVault the alternative): a
   window to unlock and lock Cryptomator vaults, since the desktop app's JavaFX window reads poorly with NVDA: a list
   of known vaults, unlock with the password asked in a notice, the unlocked vault as a drive or folder with "Open in
@@ -323,10 +208,6 @@ library dependency (B-10: `git.exe` and the file system through the APIs already
   rest) is never reimplemented. To verify before the spec: the current release's Windows support and mount options,
   and how it lives beside a running desktop app. Local first (B-15): the vault's cloud copy is the user's sync client's
   business.
-- **axTask** (redesigned 2026-10-24 at the user's direction, built and merged the same day after its NVDA pass: `docs/axTask/SPEC.md`, with the
-  shape it shares with axPass in `docs/axKit/item-apps.md`): lists as folders and each item a JSON file of typed fields
-  (title, type, value), a navigator like axFile's and a detail pane, All tasks and smart lists. It took the place of
-  the first design below, built as axList (Markdown lists) on the branch `axList` on 2026-10-23 and 24.
 - **axList** (asked 2026-10-23 as AxList, with AxTask, placeholder names; the user keeps the two in view as separate
   apps, 2026-11-06): a list manager for things to remember and to arrange, with bullet, numbered and checkbox lists
   nested in plain Markdown files, one file per list; later, links between items for mind maps, curriculum planning,
@@ -336,58 +217,20 @@ library dependency (B-10: `git.exe` and the file system through the APIs already
   three were deleted on 2026-11-26 and are last at commit fc3109e6 (`git show fc3109e6:docs/axList/SPEC.md`). Nothing
   is built on `main`; the branch's draft code is the tag `archive/axlist-draft`,
   and the branch is gone. AxTask, as first asked, was the checkbox lists as a task manager with reminders, automations
-  and smart lists, perhaps one app with AxList at first; it became axTask above. Other names considered: AxNotes,
+  and smart lists, perhaps one app with AxList at first; it became axTask. Other names considered: AxNotes,
   AxTodo. The rule the user set for both: plain text files on disk with a clear, documented format, so that an AI
   system or a script can read and change them as easily as the app does; no database the user cannot open in axDown
   (axTask's JSON files meet it one way, axList's Markdown another).
-- **An anywhere, anytime helper** (asked 2026-10-23, high priority for the user; placeholder name AxAsk): built
-  2026-11-09 as **axHelp** (`docs/axHelp/SPEC.md`, `ai-help.md` section 7): one key from anywhere opens a field,
-  Claude Code answers in its print mode over the folders the user allows, no index (AH-D2: Claude Code reads and
-  searches the folders itself).
-- **Screen capture and description** (asked 2026-10-23; placeholder AxSee): built 2026-11-09 as **axDescribe**, merged
-  in 5.7.0 into axHelp (`docs/axHelp/SPEC.md` HE-3): a key takes a picture of the window in front and puts it into
-  axHelp's conversation, where Claude Code describes it and answers about it. Still to come on that foundation: a parser that segments the screen into objects, and
-  actions on them (move the mouse to an object, click it), an agent the user steers by speech and keys. The user's
-  thought: these may be add-ons run from the launcher (AxRun, the user's word for axStart running scripts as well as
-  programs) rather than apps, one simple place where all of them are on hand, each a script with a clear interface.
-- **Automated quality checks** (asked 2026-10-23): runs that drive the apps the way a user does and check the
-  result, so that a robustness question (several axClaude sessions at once, a model change, a message each) is a
-  command rather than a manual pass. The first is `tools/QaRun`, which runs Claude sessions through the app's own
-  console pieces without windows; driving real windows waited for a way that never takes the foreground, which `tools/AxAutomate` is since 2026-10-23 (windows on a desktop of their own, `automation.md`).
-- **Other everyday utilities, on record only** (2026-10-23): **AxWeb**, a simple browser for reading the web as a
-  transcript of headings, links and text (the hard part is the engine: WebView2 is a web view, which B-10 rules out,
-  so a reader over fetched HTML is the likely shape); **AxMail**, a mail reader and writer over IMAP and SMTP;
-  **AxCalendar**, dates and reminders (shared with AxTask's reminders); **AxCalc**, a calculator as a field with a
-  history; **AxClip**, a clipboard history; **AxSettings**, a plain list of the Windows settings a user changes most.
-  Each would keep the same rule: local first (B-15), plain files, clear formats an AI can work with.
-- **Apps suggested on 2026-10-23, recorded at the user's ask** (no specs; ranked by daily use and fit with the
-  bundle's rules). The two picked to start with, if any: axClip, then axCalc or axHTTP as a small app that follows
-  `adding-an-app.md`.
-  1. **axClip** (above; built 2026-10-23 on the branch `axClip`, `docs/axClip/SPEC.md`, on `HotkeyForm` moved out of
-     axStart; brought up to main and merged 2026-10-24; its NVDA pass owed, and axStart's again for the move), in detail: axStart's hotkey and search list over what was copied; typing filters, Enter
-     pastes, a key reads an item in full. The Windows clipboard history (Windows+V) reads poorly with NVDA.
-  2. **axOCR**, text from a screenshot, an image file or the window in front, through Windows' offline OCR engine
-     (`Windows.Media.Ocr`), the text opened in axPreview: images, scanned PDFs, dialogs that read badly, screenshots
-     people send. Built 2026-11-09 as axPreview's picture renderer and its Read the clipboard's picture command
-     (`docs/axPreview/SPEC.md` AP-7.2 item 4, AP-D11), not as an app: Windows PowerShell, which every Windows ships,
-     loads the engine itself, so no SDK target was needed; Alt+PrintScreen and the clipboard command give the window in
-     front. The local counterpart of AxSee above, which describes a screen through the AI service.
-  3. **axHTTP**, a REST client: requests with a history, the reply as a transcript, a JSON body opened in axJSON.
-     Postman and the like are web views. .NET's own HTTP client; the second app with network use after axClaude, only
-     on the user's command.
-  4. **axSQL**, a SQLite browser: the tables, a query field, the result as a list read row by row with a key for the
-     whole row. Windows ships SQLite (`winsqlite3.dll`), so no library; the shared database planned above could use it.
-  5. **axProcess** (built 2026-10-23 on the branch `axProcess`, `docs/axProcess/SPEC.md`, merged 2026-10-24 after its NVDA pass), processes, services and startup items (named so, since AxTask is the to-do manager): a filtered
-     list with memory and CPU, keys to end, restart and show the program file in axFile. Task Manager's lists read
-     only in part. Windows APIs only.
-  6. **axCalc** (above; built 2026-10-23 on the branch `axCalc`, `docs/axCalc/SPEC.md`, merged 2026-10-24; NVDA pass owed), in detail: a field for an expression, each answer a line of a transcript to arrow through
-     and copy, hex, binary and units for development. The smallest of these.
-  7. **axMail** (above): the largest daily need and the largest build (IMAP, SMTP, OAuth sign-in for Gmail and
-     Outlook), so it waits until the small apps have proved their patterns.
-  Not planned: a full browser (a web view, B-10; AxWeb above is a reader) and a PDF reader (Windows has no built-in
-  way to pull text from a PDF; axOCR covers scanned pages).
-- **The bundle's list in the branches' apps** (AX-8.6, 2026-10-24): axCalc's history became `AxKit.Forms/AxKitList` at its merge (AC-5.7); axList's draft used the bundle's list since 2026-10-24, and its spec asks for it (LI-2.1).
-- The order the user set: the spec, then the infrastructure, then the build; axTerminal first, since its
-  infrastructure is the moves; axFile next; the two engines verified before their specs are written.
-
-- Path completion (2026-10-23): axFile's Go to folder and Move to folder share one completion (`AxFile.Core.PathCompletion` and the field's key hook in `FileForm.Browse`). The user asked for it as a shared resource for every path field of the bundle; it moves to `AxKit.Core` and `AxKit.Forms` with the first other app that has a path field (M3), untangled from `FolderListing` then.
+- **axHTTP**, a REST client: requests with a history, the reply as a transcript, a JSON body opened in axJSON.
+  Postman and the like are web views. .NET's own HTTP client; network use only on the user's command. axChat
+  (above) is the specialized app for chat APIs and comes first.
+- **axSQL**, a SQLite browser: the tables, a query field, the result as a list read row by row with a key for the
+  whole row. Windows ships SQLite (`winsqlite3.dll`), so no library.
+- **axMail**, a mail reader and writer: the largest daily need and the largest build (IMAP, SMTP, OAuth sign-in for
+  Gmail and Outlook), so it waits until the small apps have proved their patterns.
+- **On record only** (2026-10-23): **AxWeb**, a simple browser for reading the web as a transcript of headings,
+  links and text (the hard part is the engine: WebView2 is a web view, which B-10 rules out, so a reader over
+  fetched HTML is the likely shape); **AxCalendar**, dates and reminders (shared with axTask's due dates);
+  **AxSettings**, a plain list of the Windows settings a user changes most.
+- **Not planned**: a full browser (a web view, B-10; AxWeb is a reader) and a PDF reader (Windows has no built-in
+  way to pull text from a PDF; axPreview's picture renderer reads scanned pages through Windows' own OCR).

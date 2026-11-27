@@ -172,7 +172,7 @@ Where each thing is written. The apps and their folders are in `apps.md`; this p
 
 ## Plans and history
 
-- `plan.md`: how the repository became the bundle, and the apps asked for and not built yet.
+- `plan.md`: the direction, the order of the work in hand, and what has been asked for and is not built yet.
 - The priorities list of the private management repository (`..\axkit-management\priorities`) is the one place for
   open work (root `CLAUDE.md`, rule 9).
 - Dated records. A finished review, inventory, audit, plan or report is deleted once its results are in the code, a

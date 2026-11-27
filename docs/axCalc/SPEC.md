@@ -1,8 +1,7 @@
 # axCalc — Specification
 
 axCalc is an app of the axKit bundle (`docs/axKit/SPEC.md`): a calculator as one field and a history, for a blind
-developer who uses the NVDA screen reader. Built 2026-10-23 on the branch `axCalc` (the long run of that day,
-`docs/axKit/plan.md`), not yet heard under NVDA. The document is kept in step with the code (a behaviour change
+developer who uses the NVDA screen reader. Built 2026-10-23 on the branch `axCalc`, not yet heard under NVDA. The document is kept in step with the code (a behaviour change
 updates it in the same commit). Requirements are numbered `AC-n.m` and decisions `AC-Dn`; the bundle's rules, AX-7
 (accessibility), AX-8 (keys) and AX-9 (the Window, axKit and Help menus), are cited by number and not repeated. In axCalc's code and
 documents, "SPEC.md" means this file.
