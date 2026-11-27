@@ -20,6 +20,32 @@ public static class ShellQuote
     /// </summary>
     private static readonly char[] SingleQuotes = ['\'', '\u2018', '\u2019', '\u201A', '\u201B'];
 
+    /// <summary>
+    /// The aliases Windows PowerShell 5.1 sets up by itself (<c>Get-Alias</c> with no profile, 2026-11-27), a
+    /// superset of PowerShell 7's: a program of one of these names, written bare, is the alias. A profile's own
+    /// aliases are not known; the line is read before it is sent.
+    /// </summary>
+    private static readonly string[] PowerShellAliases =
+    [
+        "%", "?", "ac", "asnp", "cat", "cd", "CFS", "chdir", "clc", "clear", "clhy", "cli", "clp", "cls", "clv", "cnsn", "compare", "copy", "cp",
+        "cpi", "cpp", "curl", "cvpa", "dbp", "del", "diff", "dir", "dnsn", "ebp", "echo", "epal", "epcsv", "epsn", "erase", "etsn", "exsn", "fc",
+        "fhx", "fl", "foreach", "ft", "fw", "gal", "gbp", "gc", "gci", "gcm", "gcs", "gdr", "ghy", "gi", "gjb", "gl", "gm", "gmo", "gp", "gps",
+        "gpv", "group", "gsn", "gsnp", "gsv", "gu", "gv", "gwmi", "h", "history", "icm", "iex", "ihy", "ii", "ipal", "ipcsv", "ipmo", "ipsn",
+        "irm", "ise", "iwmi", "iwr", "kill", "lp", "ls", "man", "md", "measure", "mi", "mount", "move", "mp", "mv", "nal", "ndr", "ni", "nmo",
+        "npssc", "nsn", "nv", "ogv", "oh", "popd", "ps", "pushd", "pwd", "r", "rbp", "rcjb", "rcsn", "rd", "rdr", "ren", "ri", "rjb", "rm",
+        "rmdir", "rmo", "rni", "rnp", "rp", "rsn", "rsnp", "rujb", "rv", "rvpa", "rwmi", "sajb", "sal", "saps", "sasv", "sbp", "sc", "select",
+        "set", "shcm", "si", "sl", "sleep", "sls", "sort", "sp", "spjb", "spps", "spsv", "start", "sujb", "sv", "swmi", "tee", "trcm", "type",
+        "wget", "where", "wjb", "write",
+    ];
+
+    /// <summary>PowerShell's own words, which as the first word of a line are no command at all (<c>exit</c> ends the shell).</summary>
+    private static readonly string[] PowerShellKeywords =
+    [
+        "begin", "break", "catch", "class", "clean", "configuration", "continue", "data", "define", "do", "dynamicparam", "else", "elseif", "end",
+        "enum", "exit", "filter", "finally", "for", "foreach", "from", "function", "hidden", "if", "in", "inlinescript", "parallel", "param",
+        "process", "return", "sequence", "static", "switch", "throw", "trap", "try", "until", "using", "var", "while", "workflow",
+    ];
+
     /// <summary>The characters cmd.exe acts on even inside double quotes, or that end them: an element with one is refused.</summary>
     private static readonly char[] CmdRefused = ['%', '!', '"', '^', '&', '|', '<', '>'];
 
@@ -67,10 +93,24 @@ public static class ShellQuote
     /// </summary>
     private static (string? Line, string? Refused) PowerShell(IReadOnlyList<string> elements)
     {
+        // A bare name PowerShell reads as its own before any program (the review's third pass of 2026-11-27, L2;
+        // tried by a real run: "sc query" ran Set-Content, and "& 'sc'" did too, the call operator looks for an alias
+        // first; "exit" ends the shell): refused, with the program's own name to write.
+        var program = elements[0].Trim();
+        if (program.IndexOfAny(['\\', '/', '.']) < 0 && (PowerShellAliases.Contains(program, StringComparer.OrdinalIgnoreCase) || PowerShellKeywords.Contains(program, StringComparer.OrdinalIgnoreCase)))
+        {
+            return (null, $"{program} is also a command or a word of PowerShell's own, which it would run in place of a program: write the program's file name, as {program}.exe");
+        }
+
         var parts = new List<string>();
         for (var i = 0; i < elements.Count; i++)
         {
             var element = elements[i];
+            if (element == "--%")
+            {
+                return (null, "a part of the command is --%, after which PowerShell hands the rest of the line on as it stands, so that no quoting holds");
+            }
+
             if (element.Contains('"'))
             {
                 return (null, "a part of the command holds a double quote, which PowerShell hands to a program whole in some versions and not in others");

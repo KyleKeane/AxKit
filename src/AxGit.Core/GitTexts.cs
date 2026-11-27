@@ -57,22 +57,58 @@ public static partial class GitTexts
     /// <summary>What keeps a fetch to the one remote named, whatever <c>fetch.all</c> says.</summary>
     private const string OneRemote = "--no-all";
 
+    // The remote's own programs are named on the command line, also in a trusted repository (the review's third
+    // pass of 2026-11-27, D2): git takes the first remote.name.uploadpack it reads, the repository's, so an empty
+    // one set after it set nothing aside, and the command line comes before every setting. For a server these are
+    // the names its shell runs, git's own; for a folder or a share, git's own programs on this computer.
+
+    /// <summary>The upload program a fetch or pull runs on the other side: git's own.</summary>
+    private const string UploadPack = "--upload-pack=git-upload-pack";
+
+    /// <summary>The receive program a push runs on the other side: git's own.</summary>
+    private const string ReceivePack = "--receive-pack=git-receive-pack";
+
     /// <summary>Fetch from the remote named, and forget the remote branches that are gone there.</summary>
-    public static IReadOnlyList<string> FetchArguments(string remote) => ["fetch", "--prune", NoSubmodules, OneRemote, "--", remote];
+    public static IReadOnlyList<string> FetchArguments(string remote) => ["fetch", "--prune", NoSubmodules, OneRemote, UploadPack, "--", remote];
 
     /// <summary>Pull from the remote named, only when the branch can be moved forward: never a merge commit or a rebase made by axGIT.</summary>
-    public static IReadOnlyList<string> PullArguments(string remote) => ["pull", "--ff-only", NoSubmodules, OneRemote, "--", remote];
+    public static IReadOnlyList<string> PullArguments(string remote) => ["pull", "--ff-only", NoSubmodules, OneRemote, UploadPack, "--", remote];
 
     /// <summary>The remote a branch without an upstream is pushed to, and tied to.</summary>
     public const string DefaultRemote = GitRemote.Default;
 
     /// <summary>
-    /// Push the branch: to <paramref name="remote"/> when it has an upstream, the branches git itself chooses
-    /// (<c>push.default</c>); a branch without one is pushed to <see cref="DefaultRemote"/> and tied to it. There
-    /// is no push without a branch: <see cref="GitReach"/> says so before one is asked for.
+    /// Push the branch, and only it, to the branch of the same name (the review's third pass, D6): the place is
+    /// given whole, <c>refs/heads/name:refs/heads/name</c>, whatever <c>push.default</c> says, and a branch
+    /// named <c>+main</c> is that branch (as "+main" alone it was read as a forced push of main, M4). To
+    /// <paramref name="remote"/> when the branch has an upstream (a branch that follows one of another name is
+    /// refused before, by <see cref="GitReach"/>); a branch without one is pushed to <see cref="DefaultRemote"/>
+    /// and tied to it. There is no push without a branch: <see cref="GitReach"/> says so before one is asked for.
     /// </summary>
     public static IReadOnlyList<string> PushArguments(string remote, string? upstream, string branch) =>
-        upstream is null ? ["push", NoSubmodules, "--set-upstream", "--", DefaultRemote, branch] : ["push", NoSubmodules, "--", remote];
+        upstream is null
+            ? ["push", NoSubmodules, ReceivePack, "--set-upstream", "--", DefaultRemote, BranchPlace(branch)]
+            : ["push", NoSubmodules, ReceivePack, "--", remote, BranchPlace(branch)];
+
+    /// <summary>A branch pushed to the branch of its own name, each side the full name of the reference.</summary>
+    public static string BranchPlace(string branch) => $"refs/heads/{branch}:refs/heads/{branch}";
+
+    /// <summary>
+    /// Why a push of <paramref name="branch"/> does not start when the branch follows a branch of another name
+    /// (<c>branch.name.merge</c>, read from <paramref name="settings"/>); null when it follows one of its own name
+    /// or none. git's own default refuses there too; axGIT pushes a branch to its own name alone.
+    /// </summary>
+    public static string? FollowsAnotherName(IReadOnlyList<ListedSetting> settings, string branch)
+    {
+        var merge = settings.LastOrDefault(setting => setting.Name.Equals($"branch.{branch}.merge", StringComparison.Ordinal))?.Value.Trim();
+        if (merge is null or { Length: 0 } || merge == $"refs/heads/{branch}")
+        {
+            return null;
+        }
+
+        var name = merge.StartsWith("refs/heads/", StringComparison.Ordinal) ? merge["refs/heads/".Length..] : merge;
+        return $"This branch follows a branch of another name, {name}, and axGIT pushes a branch to the branch of its own name. Push it in a terminal.";
+    }
 
     /// <summary>
     /// The remote <see cref="PushArguments"/> reaches, for the consent before it (<see cref="GitReach"/>):

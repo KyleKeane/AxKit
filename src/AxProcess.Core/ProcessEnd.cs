@@ -20,6 +20,13 @@ public static class ProcessEnd
     /// the walk asks <paramref name="startedOf"/> for both times, and the walk ends at a parent that started after
     /// its child: that is another process under an old id. Where a time cannot be asked (null) the id counts, the
     /// careful way: End process tree is refused, and End process still ends the one process.
+    ///
+    /// The times are Windows' start times, read on the wall clock (the review's third pass of 2026-11-27, L9), and
+    /// the clock can be set back between two starts: then a real parent reads as younger than its child. When in
+    /// doubt the careful refusal stands: a parent counts as another process under an old id only when it started
+    /// more than <see cref="ClockDoubt"/> after its child. The limit: a clock set back by more than that between
+    /// the starts of a real ancestor and its child still makes the ancestor a stranger, and End process tree is
+    /// then not refused for it.
     /// </summary>
     public static bool StartedBy(int process, int ancestor, Func<int, int?> parentOf, Func<int, DateTime?> startedOf)
     {
@@ -27,7 +34,7 @@ public static class ProcessEnd
         var child = process;
         for (var at = parentOf(process); at is { } id && seen.Add(id); at = parentOf(id))
         {
-            if (startedOf(id) is { } parentStarted && startedOf(child) is { } childStarted && parentStarted > childStarted)
+            if (startedOf(id) is { } parentStarted && startedOf(child) is { } childStarted && parentStarted - childStarted > ClockDoubt)
             {
                 return false;
             }
@@ -42,6 +49,9 @@ public static class ProcessEnd
 
         return false;
     }
+
+    /// <summary>How much younger than its child a parent may read and still count as its parent: the wall clock's small steps (a time server's correction) are in doubt, and doubt keeps the refusal.</summary>
+    public static readonly TimeSpan ClockDoubt = TimeSpan.FromSeconds(5);
 
     /// <summary>End process tree on a process that started this window: said in place of the question, since ending that tree would end the window that asks.</summary>
     public static string HoldsThisWindow(string name) =>

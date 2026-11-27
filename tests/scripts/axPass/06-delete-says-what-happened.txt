@@ -5,7 +5,8 @@
 # says only what the tool's output shows: in a new database, which has no group for the bin yet, Delete on an entry
 # inside a group asks first; after every delete the sentence is what the listing shows; a selected entry is what
 # Delete acts on, wherever the row you are on is; and Ctrl+Z moves an entry back from the Recycle Bin only while it
-# is the one entry of its name there. The database is made here by KeePassXC's own tool, the master password a test value.
+# is the one entry of its name there; and a lock forgets the undo steps (the review's third pass). The database is
+# made here by KeePassXC's own tool, the master password a test value.
 # The idle lock off: it counts real input only, which the runner's keys are not.
 file home\AxKit\axPass.json {"lockMinutes": 0}
 # The access layers' reminder agreed to already (AX-11.5); 02-consent has it.
@@ -126,3 +127,22 @@ expect list Gmail
 # F5 asks the tool about the Recycle Bin and then for the list; the list is read whatever the first answer is.
 keys f5
 expect said ! Refreshed: Email, 1 item
+
+# Check: A lock forgets the undo steps of the unlock before it
+# PW-4.3 (the review's third pass, M6): everything the window holds of a database is forgotten in one place, by the
+# lock, by opening another database and by an unlock that is made. A delete Ctrl+Z could take back before the lock
+# is nothing to undo after it and the new unlock (a new database made from an unlocked window kept the other's).
+keys delete
+expect state "notice":"Delete Gmail?"
+wait 1200
+keys alt+d
+expect said ! Moved Gmail to the Recycle Bin; Ctrl+Z brings it back
+keys ctrl+l
+expect said ! Locked
+expect state Unlock test
+type test-master-1
+keys enter
+expect said ! test, 3 items
+wait 500
+keys ctrl+z
+expect said Nothing to undo

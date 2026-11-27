@@ -6,7 +6,8 @@ namespace AxGit;
 
 /// <summary>
 /// Bundle AX-11.5: Git's consent before the first repository opens, and each server's before the first fetch, pull or
-/// push that reaches it (the host of every address git would use; a remote on this computer or a share asks nothing).
+/// push that reaches it (the host of every address git would use, and the computer a share lies on; a remote on this
+/// computer asks nothing).
 /// </summary>
 public sealed partial class GitForm
 {
@@ -24,9 +25,23 @@ public sealed partial class GitForm
     /// </summary>
     private async Task ToServerAsync(bool push, string what, Func<string, Task> command)
     {
-        if (_root is null)
+        if (_root is not { } root || _session is not { } session)
         {
             Refuse("No repository");
+            return;
+        }
+
+        // D1 (the review's third pass of 2026-11-27): a repository that is not trusted is never connected.
+        if (session.NotConnected(what) is { } notConnected)
+        {
+            Log.Info($"{what} not started: the repository is not trusted");
+            var risks = session.Scan.Risks;
+            ShowNotice(new Notice($"{what} not started",
+                $"{notConnected} Fetch, Pull and Push start once you trust it: Show its settings names them, with Trust this repository. Nothing was sent and nothing was fetched.",
+            [
+                new OverlayChoice("&Show its settings", () => AskTrust(root, risks), IsDefault: true),
+                new OverlayChoice("&Close", IsCancel: true),
+            ]));
             return;
         }
 
@@ -61,10 +76,62 @@ public sealed partial class GitForm
             {
                 Announce(reach.Proxies.Contains(host)
                     ? $"Connecting through the proxy {host}, which this repository's settings name"
-                    : $"Connecting to {host}; if Git asks you to sign in, the account is between you and {host}", false);
+                    : $"Connecting to {reach.Place(host)}; if Git asks you to sign in, the account is between you and {host}", false);
             }
         }
 
+        if (push && await PushProblemAsync(root, session, reach) is { } stopped)
+        {
+            Log.Info("Push not started: the place it goes runs programs of its own");
+            ShowNotice(Notice.Plain("Push not started", $"{stopped} Nothing was sent."));
+            return;
+        }
+
         await command(reach.Remote);
+    }
+
+    /// <summary>
+    /// What stops a push after its servers are agreed to: Git LFS's pre-push hook, which sends to a server of its
+    /// own (D7, <see cref="GitSession.LfsPushRefused"/>), and a remote that is a folder or a share whose repository
+    /// has programs or settings of its own (D3, <see cref="GitReach.FolderProblemAsync"/>), read as one piece of
+    /// work; null when nothing does, and when another command runs (said by the work's refusal).
+    /// </summary>
+    private async Task<string?> PushProblemAsync(string root, GitSession session, Reach reach)
+    {
+        // The hook's own text, read off the window's thread: the repository may lie on a share (rule 3).
+        if (await Task.Run(session.LfsPushRefused) is { } lfs)
+        {
+            return lfs;
+        }
+
+        if (reach.Folders is not { Count: > 0 } folders)
+        {
+            return null;
+        }
+
+        if (!BeginWork("Working: reading the remote's repository…"))
+        {
+            return "Another command is still running.";
+        }
+
+        SetGitItems(false);
+        UpdateStatusBar();
+        try
+        {
+            return await GitReach.FolderProblemAsync(session.RunInAsync, root, folders);
+        }
+        catch (GitNotFoundException)
+        {
+            return "git was not found.";
+        }
+        finally
+        {
+            EndWork();
+            if (!IsDisposed)
+            {
+                SetGitItems(true);
+                UpdateStatusBar();
+            }
+        }
     }
 }

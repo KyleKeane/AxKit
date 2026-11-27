@@ -18,7 +18,10 @@ points here. Each app's own commands are in its `CLAUDE.md`.
 - `test.ps1 [<App>]` first runs every quick check at once, `tools/pages.ps1 -Check` (the generated pages, the menu
   paths the documents name, the record of the outside programs, the scripts; not with an app named), then every test
   project in one `dotnet test` over a solution filter of the test projects, written for the run, or one app's
-  project, in Release; no test project references `src/AxKit`, so a running axKit's `bin` is never touched. It is what `release.ps1` and `run.ps1 -Test`
+  project, in Release; no test project references `src/AxKit`, so a running axKit's `bin` is never touched. After
+  the run it counts the tests' own folders in the temporary folder (the table `$testFolderPrefixes`; every
+  `TempFolder` starts with `axkit-test-`) and fails when there are more than before: a test that leaves its folder
+  shows at once (2026-11-27, L7). It is what `release.ps1` and `run.ps1 -Test`
   call. Run it before a commit. The workflows `build.yml` and `release.yml` run `dotnet test AxKit.sln`, the solution,
   in Release, and `build.yml` also builds the Store package (`publish.ps1 -Msix`); `test.ps1` does neither.
   Never `dotnet test AxKit.sln` while axKit runs: it builds into the running program's `bin`. Debug alone misses

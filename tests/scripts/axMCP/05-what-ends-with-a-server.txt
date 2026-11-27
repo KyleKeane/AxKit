@@ -5,6 +5,8 @@
 # 01-start with one line more: as it starts, it starts a second PowerShell, which waits for the file go.txt and then
 # writes left.txt; it gives up by itself after thirty seconds. The script stops the server, gives it its two
 # seconds, writes go.txt, and looks for left.txt: it is there only when the second program outlived the server.
+# Then (the review's third pass, L8) the server is started again, stopped and removed, and what it started goes
+# with the removal.
 file home\AxKit\axMCP.json {"servers": [{"name": "leaver", "commandLine": "powershell -NoProfile -ExecutionPolicy Bypass -File leaver.ps1"}]}
 file leaver.ps1 Start-Process powershell -WindowStyle Hidden -ArgumentList '-NoProfile', '-Command', 'for ($i = 0; $i -lt 120 -and -not (Test-Path go.txt); $i++) { Start-Sleep -Milliseconds 250 }; if (Test-Path go.txt) { Set-Content left.txt alive }'\n[Console]::Error.WriteLine('axkitfake warns of nothing')\n$in = [Console]::In\n$out = [Console]::Out\nwhile ($true) {\n  $line = $in.ReadLine()\n  if ($null -eq $line) { break }\n  if ($line.Trim().Length -eq 0) { continue }\n  $m = $line | ConvertFrom-Json\n  if ($null -eq $m.id) { continue }\n  $r = $null\n  switch ($m.method) {\n    'initialize' { $r = '{"protocolVersion":"2025-06-18","capabilities":{"tools":{},"resources":{},"prompts":{}},"serverInfo":{"name":"fake","version":"1"}}' }\n    'tools/list' { $r = '{"tools":[{"name":"echo","description":"Says the text back. Nothing else.","inputSchema":{"type":"object","properties":{"text":{"type":"string","description":"What to say"},"loud":{"type":"boolean"}},"required":["text"]}}]}' }\n    'tools/call' { $t = [string]$m.params.arguments.text; if ($m.params.arguments.loud) { $t = $t.ToUpper() }; $r = '{"content":[{"type":"text","text":"' + $t + '"}]}' }\n    'resources/list' { $r = '{"resources":[{"name":"readme","uri":"fake://readme","mimeType":"text/plain","description":"A greeting."}]}' }\n    'resources/templates/list' { $r = '{"resourceTemplates":[]}' }\n    'resources/read' { $r = '{"contents":[{"uri":"fake://readme","mimeType":"text/plain","text":"Hello from the fake server."}]}' }\n    'prompts/list' { $r = '{"prompts":[]}' }\n  }\n  if ($null -eq $r) { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"error":{"code":-32601,"message":"Method not found"}}') } else { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"result":' + $r + '}') }\n}\n
 
@@ -30,4 +32,27 @@ wait 3000
 file go.txt go
 wait 3000
 run cmd /c if exist left.txt (exit 0) else (exit 1)
+
+# Check: A server let go for good takes what it had started with it
+# MP-2.3 (the review's third pass, L8): what a server that ended by itself started stays while its row stays; when the
+# server is removed (or started again, or the window closes) its job is ended with what is still in it. Until then
+# that stayed until axMCP's process ended. The server is started again, stopped (its new program stays), removed:
+# go.txt is written after the removal, and left.txt must not come.
+run cmd /c del go.txt left.txt
+keys enter
+expect said ! leaver, running, Tools 1, Resources 1, Prompts 0
+keys ctrl+shift+s
+expect said ! Stopped leaver
+wait 3000
+keys left
+expect focus leaver, stdio
+keys delete
+expect state "notice":"Remove leaver?"
+wait 1200
+keys alt+r
+expect said ! Removed leaver
+wait 3000
+file go.txt go
+wait 3000
+run cmd /c if exist left.txt (exit 1) else (exit 0)
 close

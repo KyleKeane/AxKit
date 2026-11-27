@@ -144,7 +144,10 @@ so that a person and the assistant can both write an action by hand and know wha
   holds a character cmd.exe would act on (`%`, `!`, `"`, `^`, `&`, `|`, `<`, `>`), as Claude Code's command line is
   (repair R-24). For a shell without a rule the action says so and does nothing. For both PowerShells three kinds
   of element are refused too, with the reason (2026-11-27, found by running the line through powershell.exe): one
-  that holds a double quote, an empty one, and one with a space in it and a backslash at its end. The single
+  that holds a double quote, an empty one, and one with a space in it and a backslash at its end; and (the
+  review's third pass, L2, by a real run) a program written bare that is one of PowerShell's own aliases or words
+  (`sc` is Set-Content there, even after the call operator; the reason says to write `sc.exe`), and the element
+  `--%`, after which PowerShell hands the rest of the line on unquoted. The single
   quotes are how PowerShell reads the line; Windows PowerShell 5.1 then hands such an element to the program in
   pieces, joined with the next, or not at all, while PowerShell 7.3 hands it on whole, so no one line is right
   for both.

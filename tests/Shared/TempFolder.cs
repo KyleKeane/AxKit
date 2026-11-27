@@ -1,14 +1,19 @@
 namespace AxKit.TestShared;
 
 /// <summary>
-/// A fresh folder under the temporary path for one test or one test class ("&lt;prefix&gt;-&lt;guid&gt;"), made at once and
-/// deleted with everything in it on Dispose. Compiled into every test project through tests/Directory.Build.props.
+/// A fresh folder under the temporary path for one test or one test class ("axkit-test-&lt;prefix&gt;-&lt;guid&gt;"), made at
+/// once and deleted with everything in it on Dispose. Compiled into every test project through
+/// tests/Directory.Build.props. Every such folder starts with <see cref="Mark"/>, which is in test.ps1's table of
+/// the tests' own folders, counted before and after a run (the review's third pass of 2026-11-27, L7).
 /// </summary>
 internal sealed class TempFolder : IDisposable
 {
+    /// <summary>What the name of every test's temporary folder starts with.</summary>
+    public const string Mark = "axkit-test-";
+
     public TempFolder(string prefix)
     {
-        Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), prefix + "-" + Guid.NewGuid().ToString("N"));
+        Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Mark + prefix + "-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(Path);
     }
 
@@ -31,30 +36,32 @@ internal sealed class TempFolder : IDisposable
         return path;
     }
 
+    /// <summary>
+    /// The folder deleted with everything in it. A read-only file stops a delete, and git writes every object so:
+    /// the mark is taken off every file. A program a test started can hold the folder for a moment after it ended
+    /// (the review's third pass of 2026-11-27, L7: 1,027 folders of axkit-approval-scripts and 3 of axmcp-stdio
+    /// were left in the temporary folder, each over a git repository or a server's working folder), so the delete
+    /// is tried again for up to two seconds. What is still left then shows in test.ps1's count of the tests' own
+    /// folders, which must not grow over a run.
+    /// </summary>
     public void Dispose()
     {
-        try
+        for (var tries = 0; tries < 20 && Directory.Exists(Path); tries++)
         {
             try
             {
-                Directory.Delete(Path, recursive: true);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                // A read-only file stops the delete, and git writes every object so: the tests that ran git
-                // left their folders behind (28 of one test class's were found, review of 2026-11-27). The
-                // mark is taken off every file, and the folder deleted again.
                 foreach (var file in Directory.EnumerateFiles(Path, "*", SearchOption.AllDirectories))
                 {
                     System.IO.File.SetAttributes(file, FileAttributes.Normal);
                 }
 
                 Directory.Delete(Path, recursive: true);
+                return;
             }
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-        {
-            // A program a test started can hold the folder for a moment; Windows cleans the temporary folder.
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                Thread.Sleep(100);
+            }
         }
     }
 

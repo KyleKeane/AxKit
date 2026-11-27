@@ -25,8 +25,8 @@ public sealed partial class GitForm : ItemForm
         Branches,
     }
 
-    /// <summary>What git is run with while the repository is not trusted (AG-1.6, <see cref="GitTrust.Overrides"/>); empty for a trusted one.</summary>
-    private IReadOnlyList<GitSetting> _overrides = [];
+    /// <summary>The repository open and what git is run with in it (AG-1.6, <see cref="GitSession"/>): every run goes through it; null with no repository.</summary>
+    private GitSession? _session;
 
     /// <summary>The mark of the risks the user was last asked about and kept off (AG-1.6b): the same risks are asked about once, other ones again. Null while the repository is trusted.</summary>
     private string? _asked;
@@ -381,6 +381,20 @@ public sealed partial class GitForm : ItemForm
             return;
         }
 
+        // D9: before the first git run in the folder, the repository's own files are read for a path on another
+        // computer, which git would read through at its first command.
+        if (await Task.Run(() => GitTrust.PointsElsewhere(target)) is { } away)
+        {
+            if (_root is null)
+            {
+                SetNoRepository();
+            }
+
+            Log.Info("A repository was not opened: it points at files on another computer");
+            ShowNotice(Notice.Plain("Not opened", NotOpenedElsewhere(away)).ByItself());
+            return;
+        }
+
         string? root;
         try
         {
@@ -428,10 +442,11 @@ public sealed partial class GitForm : ItemForm
 
         SetGitItems(false);
         UpdateStatusBar();
+        var session = new GitSession(root, risks => TrustsNow(root, risks));
         TrustScan? scan = null;
         try
         {
-            scan = await GitTrustScan.ReadAsync(root);
+            scan = await session.CheckAsync();
         }
         catch (GitNotFoundException)
         {
@@ -458,21 +473,23 @@ public sealed partial class GitForm : ItemForm
             return;
         }
 
-        if (scan.Problem is { } problem)
+        if (!scan.Known)
         {
             if (_root is null)
             {
                 SetNoRepository();
             }
 
-            Log.Info("A repository was not opened: what it would run could not be read");
-            ShowNotice(Notice.Plain("Repository not opened", $"What {root} would run could not be read, so axGIT runs nothing in it. Git said: {problem}").ByItself());
+            Log.Info("A repository was not opened: what it would run is not known");
+            ShowNotice(Notice.Plain(scan.Elsewhere is null ? "Repository not opened" : "Not opened",
+                scan.Elsewhere is { } away ? NotOpenedElsewhere(away) : $"What {root} would run could not be read, so axGIT runs nothing in it. Git said: {scan.Problem}").ByItself());
             return;
         }
 
         // What git is run with from here on, before the repository is the window's.
         _asked = null;
-        var trusted = TakeTrust(root, scan);
+        _session = session;
+        var trusted = session.Trusted;
         _root = root;
         Array.Clear(_loaded);
         Array.Clear(_kept);
@@ -504,16 +521,17 @@ public sealed partial class GitForm : ItemForm
     /// </summary>
     private async Task<bool> CheckAgainAsync(string root)
     {
-        if (!BeginWork("Working: checking…"))
+        if (_session is not { } session || !BeginWork("Working: checking…"))
         {
             return false;
         }
 
         SetGitItems(false);
-        TrustScan? scan = null;
+        var checkedNow = false;
         try
         {
-            scan = await GitTrustScan.ReadAsync(root);
+            await session.CheckAsync();
+            checkedNow = true;
         }
         catch (GitNotFoundException)
         {
@@ -533,70 +551,85 @@ public sealed partial class GitForm : ItemForm
             return false;
         }
 
-        if (scan is null)
+        if (!checkedNow)
         {
             GitMissing();
             return false;
         }
 
-        if (scan.Problem is { } problem)
+        return AfterCheck(root, session);
+    }
+
+    /// <summary>
+    /// What the window does with a check just made (AG-1.6b; after F5, and after every command that changes the
+    /// repository, D8): when what the repository would run is no longer known it is closed, said in a notice;
+    /// otherwise the notice asks again when the risks are other ones than the user trusted or kept off. False when
+    /// the repository was closed, and when <paramref name="failed"/>, a failed command's sentence, went into that
+    /// notice (the caller says nothing more then).
+    /// </summary>
+    private bool AfterCheck(string root, GitSession session, string? failed = null)
+    {
+        if (IsDisposed || _root != root || !ReferenceEquals(_session, session))
+        {
+            return false;
+        }
+
+        if (!session.Scan.Known)
         {
             SetNoRepository();
             SetTitle(null);
             UpdateStatusBar();
-            Log.Info("The repository was closed: what it would run could no longer be read");
-            ShowNotice(Notice.Plain("Repository closed", $"What {root} would run could no longer be read, so axGIT runs nothing more in it and has closed it. Git said: {problem}").ByItself());
+            Log.Info("The repository was closed: what it would run is no longer known");
+            ShowNotice(Notice.Plain("Repository closed", session.Scan.Elsewhere is { } away
+                ? $"{NotOpenedElsewhere(away)} axGIT runs nothing more in it and has closed it."
+                : $"What {root} would run could no longer be read, so axGIT runs nothing more in it and has closed it. Git said: {session.Scan.Problem}").ByItself());
             return false;
         }
 
-        AskOnce(root, scan, TakeTrust(root, scan));
+        return !AskOnce(root, session.Scan, session.Trusted, failed) || failed is null;
+    }
+
+    /// <summary>D9's sentence: the repository's own files point git at another computer.</summary>
+    private static string NotOpenedElsewhere(string host) =>
+        $"This repository points at files on another computer, {host}: its .git file, an include of its settings or its object store lies there, and git would read them at its first command. Open it on that computer, or copy it here.";
+
+    /// <summary>
+    /// AG-1.6: whether the user trusts the repository with exactly these risks (the session asks at each check). A
+    /// trust from before the marks (2026-11-16) is bound to what the repository runs now, and saved.
+    /// </summary>
+    private bool TrustsNow(string root, IReadOnlyList<string> risks)
+    {
+        if (!_settings.Trusts(root, risks))
+        {
+            return false;
+        }
+
+        if (_settings.Trust(root, risks))
+        {
+            SaveSettings();
+        }
+
         return true;
     }
 
-    /// <summary>
-    /// AG-1.6: whether the repository runs as it is, which sets what every command of the window is run with:
-    /// nothing of axGIT's own for a repository that holds no risk or that the user trusts for exactly these,
-    /// <see cref="GitTrust.Overrides"/> otherwise.
-    /// </summary>
-    private bool TakeTrust(string root, TrustScan scan)
-    {
-        if (scan.Risks.Count == 0)
-        {
-            _overrides = [];
-            return true;
-        }
-
-        if (_settings.Trusts(root, scan.Risks))
-        {
-            // A trust from before the marks (2026-11-16) is bound to what the repository runs now.
-            if (_settings.Trust(root, scan.Risks))
-            {
-                SaveSettings();
-            }
-
-            _overrides = [];
-            return true;
-        }
-
-        _overrides = GitTrust.Overrides(scan.Risks, scan.Filters);
-        return false;
-    }
-
     /// <summary>The notice for a repository that is not trusted, once for the same risks: asked again only when they are other ones than the user last kept off.</summary>
-    private void AskOnce(string root, TrustScan scan, bool trusted)
+    private bool AskOnce(string root, TrustScan scan, bool trusted, string? failed = null)
     {
         var mark = trusted ? null : GitTrust.Mark(scan.Risks);
         if (mark is not null && mark != _asked)
         {
             Log.Info($"Untrusted repository: {scan.Risks.Count} risks, {GitTrust.Programs(scan.Risks).Count} of them programs, set aside");
-            AskTrust(root, scan.Risks);
+            AskTrust(root, scan.Risks, failed);
+            _asked = mark;
+            return true;
         }
 
         _asked = mark;
+        return false;
     }
 
-    /// <summary>AG-1.6: the notice that says what is set aside, with the way to trust the repository.</summary>
-    private void AskTrust(string root, IReadOnlyList<string> risks)
+    /// <summary>AG-1.6: the notice that says what is set aside, with the way to trust the repository; <paramref name="failed"/> a failed command's sentence, said first in it, since a second notice would take this one's place.</summary>
+    private void AskTrust(string root, IReadOnlyList<string> risks, string? failed = null)
     {
         // A trust is for what axGIT found when it was given; anything else is asked about again. The sentence
         // does not say the repository changed: after an update of axGIT the check may be the thing that did.
@@ -610,7 +643,7 @@ public sealed partial class GitForm : ItemForm
         var other = notKnown.Count == 0 ? string.Empty
             : $"{(programs.Count == 0 ? "It has" : "It also has")} settings axGIT does not know to be harmless: {string.Join(", ", notKnown)}. While it is not trusted git's filters are off, so a file that goes through one, as with Git LFS, can show as changed: do not stage such a file. ";
         ShowNotice(new Notice(programs.Count == 0 ? "This repository has settings axGIT does not know" : "This repository runs programs of its own",
-            $"{changed}{runs}{other}Trust the repository only if you know where it comes from: then git runs all of it as it would in a console. Until then no hook and no credential helper runs, so a server that asks for a sign-in refuses.",
+            $"{(failed is null ? string.Empty : failed + "\n\n")}{changed}{runs}{other}Trust the repository only if you know where it comes from: then git runs all of it as it would in a console. Until then no hook and no credential helper runs, and Fetch, Pull and Push do not start: reading, staging, committing and switching go on.",
         [
             new OverlayChoice("Keep them &off", IsDefault: true, IsCancel: true),
             new OverlayChoice("&Trust this repository", () => TrustRepository(root, risks)),
@@ -621,7 +654,11 @@ public sealed partial class GitForm : ItemForm
     {
         _settings.Trust(root, risks);
         SaveSettings();
-        _overrides = [];
+        if (_root == root)
+        {
+            _session?.TrustNow(risks);
+        }
+
         _asked = null;
         Announce("Trusted", true);
     }
@@ -629,6 +666,7 @@ public sealed partial class GitForm : ItemForm
     private void SetNoRepository()
     {
         _root = null;
+        _session = null;
         _repo = RepositoryStatus.Empty;
         _level = View.Changes;
         Array.Clear(_loaded);

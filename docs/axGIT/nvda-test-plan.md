@@ -72,4 +72,16 @@ The runner's script for 1 to 4 is `tests/scripts/axGIT/08-settings-and-servers.t
 2. In a trusted repository, add a hook file in a console while the window is open, then F5: the notice comes again, starting "What axGIT finds in this repository differs from what you trusted", before "Refreshed" is said. F5 once more: no notice a second time for the same hook.
 3. With `git config branch.<branch>.pushRemote https://example.invalid/x.git`: Ctrl+P shows the notice "Push not started", which says Git could not say where the remote leads, and ends "Nothing was sent and nothing was fetched."; Enter closes it.
 4. With HEAD on no branch (`git checkout --detach`): Ctrl+P: "Push not started", "HEAD is on no branch (detached), and axGIT pushes a branch."
-5. By ear, with a real remote: Ctrl+R the first time says "Connecting to <server>; if Git asks you to sign in…" and then "Fetched"; in a repository that is not trusted and on a private server, the fetch fails with git's own words about the sign-in, since no credential helper runs.
+5. By ear, with a real remote: Ctrl+R the first time says "Connecting to <server>; if Git asks you to sign in…" and then "Fetched"; in a repository that is not trusted the fetch does not start (section 8).
+
+## 8. The review's third pass of 2026-11-27 (AG-1.6a to AG-1.6c, AG-5.4, AG-5.4a, AG-5.4c)
+
+The runner's script for 1 to 4 is `tests/scripts/axGIT/08-settings-and-servers.txt`.
+
+1. In a repository that is not trusted (a setting axGIT does not know, kept off), Ctrl+R: the notice "Fetch not started" says "Fetch not started: this repository has settings you have not trusted." and that Fetch, Pull and Push start once you trust it; Enter (Show its settings) brings the trust notice back, Tab Tab Space trusts it: "Trusted". Ctrl+L and Ctrl+P say the same before the trust.
+2. A remote whose address is `c:nul` (`git remote add origin c:nul`): Ctrl+R shows "Fetch not started", "The remote origin has an address axGIT does not read: c:nul.", and which forms it reads.
+3. A remote that is a bare repository with a hook of its own (`git init --bare ../mirror.git`, a file in its `hooks` folder named `pre-receive`, the remote set to `../mirror.git`): Ctrl+P shows "Push not started", "The repository this remote names, ../mirror.git, has programs or settings of its own: hook pre-receive."; nothing arrives there. A bare repository as `git init --bare` makes one takes the push.
+4. A branch that follows a branch of another name (`git config branch.main.merge refs/heads/other` with an upstream): Ctrl+P shows "Push not started", "This branch follows a branch of another name, other".
+5. By ear, with git and Git LFS: a repository with LFS files, trusted, after Enter on another branch: the LFS files are pointer files (Enter on one in Changes after a change shows the three lines of the pointer), and nothing is fetched; Ctrl+P in a repository where `git lfs install` ran: "Push not started: this repository's pre-push hook is Git LFS's".
+6. By ear: a folder whose `.git` file names a repository on a share (`gitdir: //server/share/x.git`): opening it shows the notice "Not opened", naming the server; nothing waits on the network.
+7. By ear, with a real remote on a port of its own (an ssh address with the port 2222 after its host): the first Ctrl+R says "Connecting to host, port 2222; …".

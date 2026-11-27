@@ -352,6 +352,14 @@ public sealed class StartupChangeTests : IDisposable
         Assert.True(ProcessEnd.StartedBy(10, 40, Parent, _ => null));
         Assert.True(ProcessEnd.StartedBy(10, 40, Parent, id => id == 30 ? null : Started(id)));
 
+        // L9 (the review's third pass): the start times are on the wall clock, which can be set back a little
+        // between two starts. A parent that reads younger than its child by a few seconds is still its parent:
+        // in doubt the refusal stands. More than the doubt, and it is another process under an old id.
+        DateTime? Corrected(int id) => id == 30 ? Started(20) + TimeSpan.FromSeconds(3) : Started(id);
+        Assert.True(ProcessEnd.StartedBy(10, 40, Parent, Corrected));
+        DateTime? FarOff(int id) => id == 30 ? Started(20) + ProcessEnd.ClockDoubt + TimeSpan.FromSeconds(1) : Started(id);
+        Assert.False(ProcessEnd.StartedBy(10, 40, Parent, FarOff));
+
         Assert.Equal("explorer started this window, so ending it with the processes it started would end axProcess too. End process ends explorer alone", ProcessEnd.HoldsThisWindow("explorer"));
         Assert.Equal("Not every process setup started could be ended: 2 could not, Access is denied", ProcessEnd.NotAllEnded("setup", ["Access is denied.", "Access is denied."]));
         Assert.Equal("Not every process setup started could be ended", ProcessEnd.NotAllEnded("setup", []));

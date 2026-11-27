@@ -429,7 +429,7 @@ public sealed class MCPForm : ItemForm
                 .Select(pair => (pair.Server, Own: pair.Own!, At: _settings.Servers.IndexOf(pair.Own!))).OrderBy(pair => pair.At).ToList();
             foreach (var (server, own, _) in removed)
             {
-                StopIfRunning(server);
+                LetGo(server);
                 _settings.Servers.Remove(own);
             }
 
@@ -470,7 +470,7 @@ public sealed class MCPForm : ItemForm
             case McpServer { Own: true } server when OwnOf(server) is { } own:
                 ShowNotice(Notice.Ask($"Remove {server.Name}?", "The server leaves axMCP's list; nothing is uninstalled.", "&Remove", () =>
                 {
-                    StopIfRunning(server);
+                    LetGo(server);
                     var at = _settings.Servers.IndexOf(own);
                     _settings.Servers.Remove(own);
                     SaveSettings();
@@ -597,6 +597,8 @@ public sealed class MCPForm : ItemForm
 
     private void StartServer(McpServer server)
     {
+        // Started again: the last run is let go for good first, with what it had started (MP-2.3, L8).
+        LetGo(server);
         Running running;
         try
         {
@@ -685,6 +687,19 @@ public sealed class MCPForm : ItemForm
 
         FillLevel();
         Announce($"Stopped {server.Name}", true);
+    }
+
+    /// <summary>
+    /// A server's run let go for good (MP-2.3; the review's third pass of 2026-11-27, L8): stopped when it runs, and
+    /// whatever it started ended with its job, when the server is removed or started again. Ctrl+Shift+S alone
+    /// stops and keeps the row, and what a server that ended by itself started stays until then.
+    /// </summary>
+    private void LetGo(McpServer server)
+    {
+        if (_running.Remove(server.Key, out var running))
+        {
+            running.Server.Dispose();
+        }
     }
 
     private bool StopIfRunning(McpServer server)

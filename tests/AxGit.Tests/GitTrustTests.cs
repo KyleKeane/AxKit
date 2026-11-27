@@ -152,7 +152,7 @@ public sealed class GitTrustTests
     private static GitSetting Empty(string name) => new(name, string.Empty);
 
     /// <summary>No hooks and no credential helper, for every repository that is not trusted, last in the list (an empty helper empties git's list of them).</summary>
-    private static readonly GitSetting[] Careful = [new("credential.helper", string.Empty), new("core.hooksPath", "NUL")];
+    private static readonly GitSetting[] Careful = [new("credential.helper", string.Empty), new("core.hooksPath", Path.GetFullPath(GitTrust.NoHooksFolder))];
 
     [Fact]
     public void An_untrusted_repository_runs_git_with_each_program_set_to_nothing_and_without_hooks_or_credential_helpers()
@@ -423,5 +423,111 @@ public sealed class GitTrustTests
     {
         Assert.Equal("A233B165D8D6FC569F9D9A8C10FF20BEB2AE4D2D562C7ADA13685A0BED426A94", GitTrust.Mark(["core.hookspath", "hook pre-push"]));
         Assert.Equal(GitTrust.Mark(["core.hookspath", "hook pre-push"]), GitTrust.Mark(GitTrust.Risks("local\tcore.hookspath\nlocal\tcore.bare\nlocal\tbranch.main.remote\n", null).Append("hook pre-push").ToList()));
+    }
+
+    // ---- The review's third pass of 2026-11-27 ----
+
+    /// <summary>
+    /// Every kind of program name carries names of its kind written out, each a program name by the rule and by its
+    /// own kind's pattern, so that the test that sets each to a program (GitSessionTests) reaches every kind.
+    /// </summary>
+    [Fact]
+    public void Every_kind_of_program_name_has_names_written_out_that_are_of_it()
+    {
+        Assert.NotEmpty(GitTrust.ProgramNamesTable);
+        foreach (var kind in GitTrust.ProgramNamesTable)
+        {
+            Assert.NotEmpty(kind.Examples);
+            var own = new System.Text.RegularExpressions.Regex("^(" + kind.Pattern + ")$", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            foreach (var name in kind.Examples)
+            {
+                Assert.True(own.IsMatch(name), $"{name} is not of the kind {kind.Pattern}");
+                Assert.True(GitTrust.RunsAProgram(name), name);
+                Assert.False(GitTrust.IsInert(name), name);
+            }
+        }
+
+        // Every driver section with every variable that names a program.
+        Assert.Contains("mergetool.x.cmd", GitTrust.ProgramNamesTable.SelectMany(kind => kind.Examples));
+    }
+
+    /// <summary>L4: the hooks folder of an untrusted repository is a full path of axKit's own, and is emptied before it is given.</summary>
+    [Fact]
+    public void The_hooks_folder_of_an_untrusted_repository_is_a_full_path_and_empty()
+    {
+        var folder = GitTrust.EmptyHooksFolder();
+        Assert.True(Path.IsPathFullyQualified(folder), folder);
+        File.WriteAllText(Path.Combine(folder, "pre-commit"), "#!/bin/sh\n");
+        Directory.CreateDirectory(Path.Combine(folder, "inside"));
+        Assert.Equal(folder, GitTrust.EmptyHooksFolder());
+        Assert.Empty(Directory.EnumerateFileSystemEntries(folder));
+        Assert.Equal(new GitSetting("core.hooksPath", folder), GitTrust.Careful[1]);
+    }
+
+    /// <summary>
+    /// D5, M3: where the value decides the harm, the value is read. A fetch line is harmless only when it writes
+    /// under refs/remotes/; a submodule's work tree only on this computer. The user's own and the computer's files
+    /// are not the repository's.
+    /// </summary>
+    [Fact]
+    public void A_fetch_that_writes_outside_refs_remotes_and_a_work_tree_on_another_computer_are_risks()
+    {
+        Assert.Equal(["config", "--show-scope", "--includes", "--null", "--get-regexp", @"^(remote\..+\.fetch|core\.worktree)$"], GitTrust.ValueArguments);
+        var output = "local\0remote.origin.fetch\n+refs/heads/*:refs/remotes/origin/*\0"
+            + "local\0remote.origin.fetch\n^refs/heads/secret\0"
+            + "local\0remote.origin.fetch\nrefs/tags/v1\0"
+            + "local\0remote.mirror.fetch\n+refs/heads/*:refs/heads/*\0"
+            + "local\0remote.Odd.fetch\nrefs/heads/a:refs/remotes/../heads/a\0"
+            + "global\0remote.mine.fetch\n+refs/heads/*:refs/heads/*\0"
+            + "local\0core.worktree\n../../../libs/zip\0"
+            + "local\0core.worktree\n//server.invalid/share/zip\0";
+        Assert.Equal(
+            ["remote.mirror.fetch writes outside refs/remotes", "remote.Odd.fetch writes outside refs/remotes", "core.worktree lies on another computer"],
+            GitTrust.ValueRisks(output));
+        Assert.Empty(GitTrust.ValueRisks(string.Empty));
+    }
+
+    [Theory]
+    [InlineData(@"\\server\share\x", "server")]
+    [InlineData("//Server.Invalid/share", "server.invalid")]
+    [InlineData(@"\\?\UNC\host\share", "host")]
+    [InlineData(@"\\?\C:\repo", null)]
+    [InlineData(@"C:\repo", null)]
+    [InlineData("../x", null)]
+    [InlineData("/c/repo", null)]
+    public void A_share_names_its_computer_and_a_path_here_none(string path, string? host) => Assert.Equal(host, GitTrust.OtherComputer(path));
+
+    /// <summary>
+    /// D9: the guard before the first git run reads, in C#, a work tree's .git file, the includes of the settings
+    /// (also of a file included) and the alternate object stores, and names the other computer any of them points
+    /// at. The share is never touched: these hosts do not exist.
+    /// </summary>
+    [Fact]
+    public void A_repository_whose_own_files_point_at_another_computer_is_known_before_git_runs()
+    {
+        using var temp = new TempFolder("axgit-elsewhere");
+        var plain = Directory.CreateDirectory(Path.Combine(temp.Path, "plain", ".git", "objects")).Parent!.Parent!.FullName;
+        File.WriteAllText(Path.Combine(plain, ".git", "HEAD"), "ref: refs/heads/main\n");
+        File.WriteAllText(Path.Combine(plain, ".git", "config"), "[core]\n\tbare = false\n[include]\n\tpath = local.cfg\n");
+        File.WriteAllText(Path.Combine(plain, ".git", "local.cfg"), "[user]\n\tname = x\n");
+        Directory.CreateDirectory(Path.Combine(plain, "src"));
+        Assert.Null(GitTrust.PointsElsewhere(Path.Combine(plain, "src")));
+
+        // An include of a file included.
+        File.WriteAllText(Path.Combine(plain, ".git", "local.cfg"), "[includeIf \"onbranch:main\"]\n\tpath = \"//included.invalid/share/x.cfg\"\n");
+        Assert.Equal("included.invalid", GitTrust.PointsElsewhere(Path.Combine(plain, "src")));
+        File.WriteAllText(Path.Combine(plain, ".git", "local.cfg"), "[user]\n\tname = x\n");
+
+        // An alternate object store.
+        Directory.CreateDirectory(Path.Combine(plain, ".git", "objects", "info"));
+        File.WriteAllText(Path.Combine(plain, ".git", "objects", "info", "alternates"), "# a note\n\\\\objects.invalid\\share\\objects\n");
+        Assert.Equal("objects.invalid", GitTrust.PointsElsewhere(plain));
+        File.Delete(Path.Combine(plain, ".git", "objects", "info", "alternates"));
+
+        // A work tree whose .git file names a repository on a share.
+        var tree = Directory.CreateDirectory(Path.Combine(temp.Path, "tree")).FullName;
+        File.WriteAllText(Path.Combine(tree, ".git"), "gitdir: //gitdir.invalid/share/real.git\n");
+        Assert.Equal("gitdir.invalid", GitTrust.PointsElsewhere(tree));
+        Assert.Null(GitTrust.PointsElsewhere(plain));
     }
 }

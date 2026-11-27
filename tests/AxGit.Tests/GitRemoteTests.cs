@@ -16,30 +16,36 @@ public sealed class GitRemoteTests
     [InlineData("server:repos/b", "server")]
     [InlineData("ssh://git" + At + "[2001:db8::1]:2222/repo.git", "[2001:db8::1]")]
     [InlineData("https://[::1]/repo.git", "[::1]")]
-    [InlineData("git" + At + "[::1]:repo.git", "[::1]")]
     [InlineData(@"C:\repos\b", null)]
     [InlineData("/c/repos/b", null)]
     [InlineData("file:///C:/repos/b", null)]
-    [InlineData(@"\\server\share\b", null)]
+    [InlineData(@"\\server\share\b", "server")]
     [InlineData("", null)]
     public void The_host_is_read_from_the_address(string url, string? host) => Assert.Equal(host, GitRemote.Host(url));
 
     /// <summary>
-    /// The hard addresses (the review's second pass of 2026-11-27): the host is the one git reaches, or the
-    /// address is not read and nothing is sent to it. The first row is the one that was read wrongly: the host
-    /// ended at a slash or a question mark and not at a number sign, so the part after the at sign was taken.
+    /// The hard addresses (the review's second and third passes of 2026-11-27, D4): an address is read only in one
+    /// of the strict forms, and everything else is not read, so that nothing is sent to it. Each row is the kind
+    /// and the host; the rows of the third pass are the addresses where a host was named and git reached another,
+    /// or a folder was named and git ran ssh (tried with git 2.53 and an ssh that printed its arguments).
     /// </summary>
     [Theory]
-    [InlineData("https://evil.example#" + At + "github.com/x.git", AddressKind.Server, "evil.example")]
-    [InlineData("https://evil.example?" + At + "github.com/x.git", AddressKind.Server, "evil.example")]
+    // A host ends at the first slash, and nothing but a host stands before it.
+    [InlineData("https://evil.example#" + At + "github.com/x.git", AddressKind.NotRead, null)]
+    [InlineData("https://evil.example?" + At + "github.com/x.git", AddressKind.NotRead, null)]
     [InlineData("https://evil.example/" + At + "github.com/x.git", AddressKind.Server, "evil.example")]
     [InlineData("https://user:secret" + At + "host.example:8443/x", AddressKind.Server, "host.example")]
     [InlineData("HTTPS://Host.Example/x", AddressKind.Server, "host.example")]
-    [InlineData("https://host.example", AddressKind.Server, "host.example")]
-    [InlineData("https://host.example:/x", AddressKind.Server, "host.example")]
+    [InlineData("https://host.example", AddressKind.NotRead, null)]
+    [InlineData("https://host.example:/x", AddressKind.NotRead, null)]
+    [InlineData("https://host.example:0/x", AddressKind.NotRead, null)]
+    [InlineData("https://host.example:65536/x", AddressKind.NotRead, null)]
     [InlineData("https://[::1]:8080/x", AddressKind.Server, "[::1]")]
     [InlineData("git://host.example/x.git", AddressKind.Server, "host.example")]
-    [InlineData("ssh+git://git" + At + "host.example/x", AddressKind.Server, "host.example")]
+    [InlineData("git://user" + At + "host.example/x.git", AddressKind.NotRead, null)]
+    [InlineData("ssh://git:secret" + At + "host.example/x", AddressKind.NotRead, null)]
+    [InlineData("ssh+git://git" + At + "host.example/x", AddressKind.NotRead, null)]
+    [InlineData("ftp://host.example/x", AddressKind.NotRead, null)]
     [InlineData("host.example:8080:x", AddressKind.Server, "host.example")]
     [InlineData("ab:c", AddressKind.Server, "ab")]
     // Two at signs: programs disagree on which one ends the user.
@@ -51,23 +57,76 @@ public sealed class GitRemoteTests
     [InlineData("https://[::1/x", AddressKind.NotRead, null)]
     [InlineData("https:///x", AddressKind.NotRead, null)]
     [InlineData("https://host.example\n.evil.example/x", AddressKind.NotRead, null)]
+    [InlineData("https://host_name.example/x", AddressKind.NotRead, null)]
     // A transport that starts a program: ext runs any command, every other name the program git-remote-name.
     [InlineData("ext::sh -c touch% x", AddressKind.NotRead, null)]
     [InlineData("fd::17", AddressKind.NotRead, null)]
     [InlineData("foo://host.example/x", AddressKind.NotRead, null)]
-    // A host like an option of ssh, and the bracketed host with a port, which only some readers take.
+    // A host like an option of ssh, and a bracketed host outside a form with a scheme.
     [InlineData("-oProxyCommand=calc:x", AddressKind.NotRead, null)]
     [InlineData("ssh://-oProxyCommand=calc/x", AddressKind.NotRead, null)]
     [InlineData("[example.org:22]:a/b", AddressKind.NotRead, null)]
+    [InlineData("git" + At + "[::1]:repo.git", AddressKind.NotRead, null)]
+    [InlineData("[127.0.0.1]:x" + At + "[evil.invalid]:repo.git", AddressKind.NotRead, null)]
     [InlineData("  ", AddressKind.NotRead, null)]
-    // Paths, by git's own rule: no colon, a slash before the first colon, or a drive letter.
-    [InlineData("user" + At + "host.example", AddressKind.Local, null)]
-    [InlineData("a:b", AddressKind.Local, null)]
-    [InlineData("dir/with:colon", AddressKind.Local, null)]
-    [InlineData("file://server/share/b.git", AddressKind.Local, null)]
+    // A drive letter and no valid Windows path after it: git ran ssh to the host c or d.
+    [InlineData("c:nul", AddressKind.NotRead, null)]
+    [InlineData("c:a:b", AddressKind.NotRead, null)]
+    [InlineData("c:repo.", AddressKind.NotRead, null)]
+    [InlineData("d:x<y", AddressKind.NotRead, null)]
+    [InlineData("h:path", AddressKind.NotRead, null)]
+    [InlineData("user" + At + "h:path", AddressKind.NotRead, null)]
+    [InlineData(@"C:\repos\nul\b", AddressKind.NotRead, null)]
+    [InlineData(@"C:\repos\b.", AddressKind.NotRead, null)]
+    [InlineData(@"C:\repos\a|b", AddressKind.NotRead, null)]
+    // A host in letters outside ASCII: its punycode form alone.
+    [InlineData("https://b\u00fccher.example/x", AddressKind.NotRead, null)]
+    [InlineData("https://xn--bcher-kva.example/x", AddressKind.Server, "xn--bcher-kva.example")]
+    [InlineData("git" + At + "b\u00fccher.example:x", AddressKind.NotRead, null)]
+    // Paths on this computer.
+    [InlineData("c:/ok/path", AddressKind.Local, null)]
+    [InlineData(@"C:\repos\b.git", AddressKind.Local, null)]
     [InlineData("../other", AddressKind.Local, null)]
-    public void A_hard_address_gives_the_host_git_reaches_or_is_not_read(string address, AddressKind kind, string? host) =>
-        Assert.Equal(new Address(kind, host), GitRemote.Read(address));
+    [InlineData(@".\vendor\mirror", AddressKind.Local, null)]
+    [InlineData("./vendor/mirror", AddressKind.Local, null)]
+    [InlineData(".", AddressKind.Local, null)]
+    [InlineData("..", AddressKind.Local, null)]
+    [InlineData("/c/repos/b", AddressKind.Local, null)]
+    [InlineData("file:///C:/repos/b", AddressKind.Local, null)]
+    [InlineData("file:///nowhere", AddressKind.NotRead, null)]
+    // What git takes for a path but is in no form here: not read.
+    [InlineData("user" + At + "host.example", AddressKind.NotRead, null)]
+    [InlineData("a:b", AddressKind.NotRead, null)]
+    [InlineData("dir/with:colon", AddressKind.NotRead, null)]
+    [InlineData("vendor/mirror", AddressKind.NotRead, null)]
+    // Shares: the computer they lie on is a server (M1).
+    [InlineData("file://server/share/b.git", AddressKind.Server, "server")]
+    [InlineData("file://localhost/c$/x", AddressKind.Server, "localhost")]
+    [InlineData("//Host.Example/share/x", AddressKind.Server, "host.example")]
+    [InlineData(@"\\host\share\x", AddressKind.Server, "host")]
+    [InlineData(@"\\host", AddressKind.NotRead, null)]
+    [InlineData("//-host/share", AddressKind.NotRead, null)]
+    public void A_hard_address_gives_the_host_git_reaches_or_is_not_read(string address, AddressKind kind, string? host)
+    {
+        var read = GitRemote.Read(address);
+        Assert.Equal((kind, host), (read.Kind, read.Host));
+    }
+
+    /// <summary>The port an address gives is kept, for the reminder; a folder or a share keeps the path git reaches it by, which a push reads first (AG-5.4c).</summary>
+    [Fact]
+    public void A_port_is_kept_for_the_reminder_and_a_folder_for_the_push()
+    {
+        Assert.Equal(2222, GitRemote.Read("ssh://git" + At + "host.example:2222/x").Port);
+        Assert.Equal(8443, GitRemote.Read("https://[::1]:8443/x").Port);
+        Assert.Null(GitRemote.Read("git" + At + "host.example:x").Port);
+        Assert.Equal("host.example, port 2222", GitRemote.Place("host.example", 2222));
+        Assert.Equal("host.example", GitRemote.Place("host.example", null));
+        Assert.Equal("./vendor/mirror", GitRemote.Read("./vendor/mirror").Folder);
+        Assert.Equal("C:/repos/b", GitRemote.Read("file:///C:/repos/b").Folder);
+        Assert.Equal("//server/share/b.git", GitRemote.Read("file://server/share/b.git").Folder);
+        Assert.Equal(@"\\host\share\x", GitRemote.Read(@"\\host\share\x").Folder);
+        Assert.Null(GitRemote.Read("https://host.example/x").Folder);
+    }
 
     [Fact]
     public void The_settings_are_read_with_their_kind_of_file_and_the_last_of_a_name_is_in_force()
@@ -142,9 +201,9 @@ public sealed class GitRemoteTests
     public void A_proxy_is_named_when_the_repositorys_own_settings_set_it()
     {
         Assert.Equal(["config", "--show-scope", "--get-urlmatch", "http.proxy", "https://a.example/x"], GitRemote.ProxyArguments("https://a.example/x"));
-        Assert.Equal(new Address(AddressKind.Server, "proxy.example"), GitRemote.RepositoryProxy([], "origin", "local\thttp://user:secret" + At + "Proxy.Example:8080\n"));
-        Assert.Equal(new Address(AddressKind.Server, "proxy.example"), GitRemote.RepositoryProxy([], "origin", "worktree\tproxy.example:3128\n"));
-        Assert.Equal(new Address(AddressKind.Server, "proxy.example"), GitRemote.RepositoryProxy([], "origin", "local\tsocks5h://proxy.example\n"));
+        Assert.Equal("proxy.example", GitRemote.RepositoryProxy([], "origin", "local\thttp://user:secret" + At + "Proxy.Example:8080\n")!.Host);
+        Assert.Equal("proxy.example", GitRemote.RepositoryProxy([], "origin", "worktree\tproxy.example:3128\n")!.Host);
+        Assert.Equal("proxy.example", GitRemote.RepositoryProxy([], "origin", "local\tsocks5h://proxy.example\n")!.Host);
         Assert.Null(GitRemote.RepositoryProxy([], "origin", "global\thttp://mine.example:8080\n"));
         Assert.Null(GitRemote.RepositoryProxy([], "origin", "command\t\n"));
         Assert.Null(GitRemote.RepositoryProxy([], "origin", null));
@@ -174,6 +233,10 @@ public sealed class GitRemoteTests
         // What is no address with a scheme stays: a mail address in a commit, the scp form (which holds no password).
         Assert.Equal("Author: A <a" + At + "b.example>", GitRemote.WithoutSignIn("Author: A <a" + At + "b.example>"));
         Assert.Equal("https://host.example/path with " + At + " in it", GitRemote.WithoutSignIn("https://host.example/path with " + At + " in it"));
+        // L11: a sign-in with a tab in it, in an address shown as not read, and a proxy written without its kind.
+        Assert.DoesNotContain("secret", GitRemote.WithoutSignIn("address: https://us\ter:secret" + At + "host.example/x"));
+        Assert.Equal("proxy host.example:8080 refused", GitRemote.WithoutSignIn("proxy user:secret" + At + "host.example:8080 refused"));
+        Assert.Equal("'host.example:3128'", GitRemote.WithoutSignIn("'user:secret" + At + "host.example:3128'"));
 
         var result = new GitResult(2, "fatal: also https://user:secret" + At + "out.example/x\n", said + "\nsecond line");
         Assert.DoesNotContain("secret", result.Error);

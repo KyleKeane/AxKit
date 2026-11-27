@@ -29,6 +29,8 @@ section 8. The window is `src/AxPass`, with its own `CLAUDE.md`. The item format
   group given as the Recycle Bin last at the top), `CountIn`, `HasGroup`, `HasEntry`, `Count` (how many lines the
   listing had for a path: two entries of one name in a group are one node and two lines), `NodeOf`, `Join`,
   `RefusedName` (a slash), `DatabaseName`.
+- `PassLocks` (PW-4.3, the third pass of 2026-11-27, L1): `DroppedByLock`, whether an unlock whose answer was dropped says the window was locked: a lock came since it was asked, and no later unlock was asked.
+- `PassBin.SeenBin` and `Fate` (the third pass, M7): a group is the bin only when it alone gained what was removed; with the tool not saying the bin is on, nothing is known, whatever was seen.
 - `PassBin`, `DeleteFate` and `Removed` (PW-6.4b, 2026-11-27): what axPass knows of the Recycle Bin from the tool's
   own output and no more, since the tool never says which group it is: `IsOn` (`db-info`'s line,
   `KeePassCliTexts.RecycleBinOn`, with the command `Info`), `Known` (the group a deleted entry was seen to arrive

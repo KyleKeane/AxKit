@@ -136,7 +136,33 @@ public static class GitRunner
         environment[OverrideCount] = at.ToString(System.Globalization.CultureInfo.InvariantCulture);
     }
 
-    public static async Task<GitResult> RunAsync(string? repository, IReadOnlyList<string> arguments, TimeSpan timeout, CancellationToken cancellation = default, IReadOnlyList<GitSetting>? overrides = null)
+    /// <summary>
+    /// What every run of git gets in its environment, whatever the repository and whether it is trusted. No
+    /// prompts a terminal would show, English messages, no pager. And nothing reached that the user was not asked
+    /// about (the review's third pass of 2026-11-27, rule 8): <c>GIT_NO_LAZY_FETCH</c>, so that git never fetches
+    /// a missing object of a partial clone by itself (on a status, a diff or a show it ran the remote's upload
+    /// program and reached the remote, before the trust notice was answered: a missing object is git's error,
+    /// said as it is; git before 2.44 does not know the variable); <c>GIT_LFS_SKIP_SMUDGE</c>, so that Git LFS
+    /// fetches no file on a switch or pull (it posted to the host a tracked <c>.lfsconfig</c> named, in a
+    /// repository that held no risk), the files staying pointer files; and <c>GIT_LFS_SKIP_PUSH</c>, so that its
+    /// hook sends nothing on a push (it sent to that host too; axGIT refuses such a push before it starts, AG-5.4).
+    /// </summary>
+    public static readonly IReadOnlyList<(string Name, string Value)> FixedEnvironment =
+    [
+        ("GIT_TERMINAL_PROMPT", "0"),
+        ("LC_ALL", "C.UTF-8"),
+        ("GIT_PAGER", "cat"),
+        ("GIT_NO_LAZY_FETCH", "1"),
+        ("GIT_LFS_SKIP_SMUDGE", "1"),
+        ("GIT_LFS_SKIP_PUSH", "1"),
+    ];
+
+    /// <summary>
+    /// One git command. <paramref name="overrides"/>: what is set aside for a repository that is not trusted.
+    /// <paramref name="environment"/>: variables of the caller's for this run alone, put in after the
+    /// process's own and before <see cref="FixedEnvironment"/> (the tests' settings files; never process-wide).
+    /// </summary>
+    public static async Task<GitResult> RunAsync(string? repository, IReadOnlyList<string> arguments, TimeSpan timeout, CancellationToken cancellation = default, IReadOnlyList<GitSetting>? overrides = null, IReadOnlyDictionary<string, string>? environment = null)
     {
         var info = new ProcessStartInfo(Program)
         {
@@ -148,10 +174,16 @@ public static class GitRunner
             info.ArgumentList.Add(argument);
         }
 
-        // No prompts a terminal would show, English messages, no pager.
-        info.Environment["GIT_TERMINAL_PROMPT"] = "0";
-        info.Environment["LC_ALL"] = "C.UTF-8";
-        info.Environment["GIT_PAGER"] = "cat";
+        foreach (var (name, value) in environment ?? new Dictionary<string, string>())
+        {
+            info.Environment[name] = value;
+        }
+
+        foreach (var (name, value) in FixedEnvironment)
+        {
+            info.Environment[name] = value;
+        }
+
         SetOverrides(info.Environment, overrides ?? []);
 
         // The run is the bundle's (AxKit.Core/ProcessRun, since 2026-10-25): the reads under the timeout as well as the
@@ -162,8 +194,9 @@ public static class GitRunner
         try
         {
             // Outside call, program, Git: runs the user's installed git on the repository for one command and reads
-            // what it prints, one process per command, its terminal prompts off; fetch, pull and push reach the
-            // repository's remotes, every other command works on disk (AX-11.11).
+            // what it prints, one process per command, its terminal prompts off; fetch, pull and push alone reach
+            // the repository's remotes, every other command works on disk: git fetches no missing object by itself
+            // and Git LFS neither fetches nor sends a file (FixedEnvironment; AX-11.11).
             result = await ProcessRun.RunAsync(info, [], timeout, cancellation);
         }
         catch (Win32Exception ex)

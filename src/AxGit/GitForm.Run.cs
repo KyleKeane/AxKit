@@ -15,9 +15,31 @@ public sealed partial class GitForm
     /// the result comes back for the caller to announce. Null when nothing ran: no repository, git missing, or a
     /// command still running ("Working…").
     /// </summary>
-    private async Task<GitResult?> RunGitAsync(IReadOnlyList<string> arguments, TimeSpan timeout, string verb)
+    private Task<GitResult?> RunGitAsync(IReadOnlyList<string> arguments, TimeSpan timeout, string verb) =>
+        RunGitAsync(arguments, timeout, verb, changes: false);
+
+    /// <summary>
+    /// A command that changes the repository (stage, unstage, discard, commit, switch, a new branch, fetch, pull,
+    /// push): run through the session's one way for it, which checks what the repository would run again after
+    /// the command, whether it succeeded or failed (AG-1.6b, D8), and then what that check found is acted on: the
+    /// repository closed when it is no longer known, the notice when the risks are other ones. Null when nothing
+    /// ran, or when the check closed the repository.
+    /// </summary>
+    private async Task<GitResult?> ChangeGitAsync(IReadOnlyList<string> arguments, TimeSpan timeout, string verb)
     {
-        if (_root is null)
+        var (root, session) = (_root, _session);
+        var result = await RunGitAsync(arguments, timeout, verb, changes: true);
+        if (root is null || session is null || result is null)
+        {
+            return null;
+        }
+
+        return AfterCheck(root, session, result.Ok ? null : $"{char.ToUpperInvariant(verb[0])}{verb[1..]} failed. Git said: {result.FirstLine}") ? result : null;
+    }
+
+    private async Task<GitResult?> RunGitAsync(IReadOnlyList<string> arguments, TimeSpan timeout, string verb, bool changes)
+    {
+        if (_root is null || _session is not { } session)
         {
             Refuse("No repository");
             return null;
@@ -40,7 +62,7 @@ public sealed partial class GitForm
         var watch = Stopwatch.StartNew();
         try
         {
-            var result = await GitRunner.RunAsync(_root, arguments, timeout, overrides: _overrides);
+            var result = changes ? await session.ChangeAsync(arguments, timeout) : await session.RunAsync(arguments, timeout);
             // The subcommand alone (AG-8.2): the arguments hold the commit message and the paths.
             Log.Info($"git {arguments[0]}: exit {result.ExitCode} in {watch.ElapsedMilliseconds} ms{(result.Ok ? string.Empty : ", " + result.FirstLine)}");
             return result;

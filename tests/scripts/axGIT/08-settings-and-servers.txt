@@ -3,9 +3,11 @@
 # axGIT: the review's second pass of 2026-11-27 (docs/axGIT/nvda-test-plan.md section 7; SPEC AG-1.6b, AG-1.6c,
 # AG-5.4a). Only a setting axGIT knows to be harmless is passed over: any other is named in the notice, here one that
 # is no program. The check is made again at every refresh, so a hook that appears while the window is open is
-# asked about then, and the same risks are asked about once. A push without a branch, and a fetch from a remote
-# git does not know (an address in place of a name), are not started, and a notice says why. Nothing here reaches
-# a server: the one address is of the reserved name "invalid", and no command is run with it.
+# asked about then, and the same risks are asked about once. A repository that is not trusted is never connected
+# (the review's third pass, D1), and is trusted from that notice. A push without a branch, a fetch from a remote git
+# does not know (an address in place of a name), a fetch from an address in no form axGIT reads (D4), and a push
+# into a folder whose repository has a hook of its own (D3) are not started, and a notice says why. Nothing here
+# reaches a server: the one address is of the reserved name "invalid", and no command is run with it.
 file home\AxKit\axGIT.json {"checkForUpdates": false}
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
@@ -47,6 +49,24 @@ wait 1200
 keys enter
 expect state "notice":null
 
+# Check: A repository that is not trusted is never connected
+# AG-1.6c (the review's third pass, D1): while a risk is kept off, Fetch, Pull and Push do not start; the notice says
+# why and shows the settings again, with the way to trust the repository, which is taken here.
+keys ctrl+r
+expect state "notice":"Fetch not started"
+expect state Fetch not started: this repository has settings you have not trusted.
+wait 1200
+keys enter
+expect state "notice":"This repository runs programs of its own"
+wait 1200
+keys tab
+expect focus Keep them &off
+keys tab
+expect focus &Trust this repository
+keys space
+expect said Trusted
+expect state "notice":null
+
 # Check: A push while HEAD is on no branch is not started
 # 7.4 AG-5.4a: git, run without a remote, pushed where its settings said; axGIT pushes a branch, to the remote it asked about.
 run git -C repo checkout -q --detach
@@ -73,6 +93,34 @@ expect state Nothing was sent and nothing was fetched.
 wait 1200
 keys enter
 expect state "notice":null
+
+# Check: An address in no form axGIT reads starts nothing
+# AG-5.4a (the review's third pass, D4): c:nul looked like a folder, and git ran ssh to the host c with it.
+run git -C repo config branch.main.remote origin
+run git -C repo remote add origin c:nul
+keys f5
+expect state main · no upstream
+keys ctrl+r
+expect state "notice":"Fetch not started"
+expect state The remote origin has an address axGIT does not read: c:nul.
+wait 1200
+keys enter
+expect state "notice":null
+
+# Check: A push into a folder whose repository has hooks of its own is not started
+# AG-5.4c (D3): git's transport for a folder runs the other repository's receive hooks and clears what axGIT gives;
+# the repository there is read first, and nothing is pushed.
+run git init -q --bare mirror.git
+file mirror.git\hooks\pre-receive #!/bin/sh\nexit 0
+run git -C repo remote set-url origin ../mirror.git
+keys ctrl+p
+expect state "notice":"Push not started"
+expect state The repository this remote names, ../mirror.git, has programs or settings of its own: hook pre-receive.
+wait 1200
+keys enter
+expect state "notice":null
+# Nothing arrived there.
+run git -C mirror.git rev-parse --verify --quiet refs/heads/main && exit 1 || exit 0
 close
 
 # Check: An everyday repository opens without the notice

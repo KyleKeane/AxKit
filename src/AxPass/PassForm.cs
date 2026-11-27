@@ -55,6 +55,12 @@ public sealed partial class PassForm : ItemForm
     /// </summary>
     private int _unlock;
 
+    /// <summary>The unlocks asked for, counted, so that a dropped answer knows whether a later one was asked (L1).</summary>
+    private int _unlocksAsked;
+
+    /// <summary>The locks, Ctrl+L and Windows' own whatever the window's state, counted, so that a dropped answer says "the window was locked" only when it was (L1).</summary>
+    private int _locks;
+
     /// <summary>
     /// The one way this window waits for work off its thread (KeePassXC's tool, a backup's copy): the answer, or
     /// null when the window was locked, unlocked again, pointed at another database or closed while the work ran,
@@ -255,6 +261,7 @@ public sealed partial class PassForm : ItemForm
             // Counted whatever the window's state: an unlock the tool is still answering must not open the
             // database after Windows locked (while it ran there was no password yet, and nothing was done).
             _unlock++;
+            _locks++;
             if (_password is not null)
             {
                 Log.Info($"Locked: {reason}");
@@ -458,10 +465,12 @@ public sealed partial class PassForm : ItemForm
         }
 
         _unlock++;
+        var asked = ++_unlocksAsked;
+        var locks = _locks;
         Announce("Unlocking " + PassTree.DatabaseName(database), true);
         if (await Tool(() => KeePassCli.Run(cli, KeePassCli.On(KeePassCliTexts.List, database, KeePassCliTexts.ListOptions), [password])) is not { } result)
         {
-            NotUnlocked(database);
+            NotUnlocked(database, asked, locks);
             return;
         }
 
@@ -475,19 +484,18 @@ public sealed partial class PassForm : ItemForm
         // words known leaves it not known, and a delete then asks first.
         if (await Tool(() => KeePassCli.Run(cli, KeePassCli.On(KeePassCliTexts.Info, database), [password])) is not { } info)
         {
-            NotUnlocked(database);
+            NotUnlocked(database, asked, locks);
             return;
         }
 
         _unlock++;
+        // Nothing of the database open before, or of this one before its lock, is carried in (M6: a new database
+        // made from an unlocked window kept the other one's undo steps).
+        ForgetDatabase();
         _database = database;
         _password = password;
-        _backedUp = false;
         _binOn = info.Succeeded && PassBin.IsOn(info.Output);
-        _binSeen = null;
         _tree = PassTree.Parse(result.Output);
-        _group = string.Empty;
-        _entries.Clear();
         _settings.LastDatabase = database;
         SaveSettings();
         Fill(select: null);
@@ -496,13 +504,16 @@ public sealed partial class PassForm : ItemForm
     }
 
     /// <summary>
-    /// An unlock whose answer was dropped (<see cref="Tool"/>): when this database is still the window's and locked,
-    /// with no notice showing, which is Windows having locked meanwhile, the unlock notice comes back and says so,
-    /// for the user to find on return. After another database was chosen, or Ctrl+L, a notice shows already.
+    /// An unlock whose answer was dropped (<see cref="Tool"/>): when the window was really locked since it was asked
+    /// (<paramref name="locks"/>, Windows' lock or Ctrl+L), no later unlock was asked (<paramref name="asked"/>),
+    /// and this database is still the window's and locked with no notice showing, the unlock notice comes back and
+    /// says so, for the user to find on return. Until the review's third pass (L1) a second Unlock while the tool
+    /// was slow dropped the first answer and said "the window was locked", though it was not, and the notice
+    /// stayed over the database the second one opened.
     /// </summary>
-    private void NotUnlocked(string database)
+    private void NotUnlocked(string database, int asked, int locks)
     {
-        if (!IsDisposed && _password is null && _database == database && !NoticeOpen)
+        if (!IsDisposed && PassLocks.DroppedByLock(asked, _unlocksAsked, locks, _locks) && _password is null && _database == database && !NoticeOpen)
         {
             ShowUnlock("Not unlocked: the window was locked while KeePassXC's tool was answering. Type the master password again.");
         }
@@ -511,6 +522,7 @@ public sealed partial class PassForm : ItemForm
     /// <summary>Ctrl+L (PW-4.3): the password and everything read dropped, the unlock notice shown.</summary>
     private void Lock()
     {
+        _locks++;
         if (_password is null)
         {
             // Locked already; an unlock still being answered is dropped, since Lock was asked for after it.
@@ -524,16 +536,43 @@ public sealed partial class PassForm : ItemForm
         }
 
         _unlock++;
-        _password = null;
-        _tree = null;
-        _binOn = false;
-        _binSeen = null;
-        _entries.Clear();
-        _undo.Clear();
-        ClearCopiedPassword();
+        ForgetDatabase();
         Fill(select: null);
         Announce("Locked", true);
         ShowUnlock(null);
+    }
+
+    /// <summary>
+    /// Everything the window holds of the database open forgotten (the review's third pass of 2026-11-27, M6):
+    /// the state of <see cref="ForgetDatabaseState"/>, the selection and a copied password. Called by
+    /// <see cref="Lock"/>, by <c>OpenDatabase</c> and by an unlock that is made, so that nothing of one database,
+    /// or of one unlock, reaches the next; until then each of the three reset its own list by hand, and the unlock
+    /// of a new database made from an unlocked window kept the other database's undo steps.
+    /// </summary>
+    private void ForgetDatabase()
+    {
+        ForgetDatabaseState();
+        Selection.Clear();
+        ClearCopiedPassword();
+    }
+
+    /// <summary>
+    /// The fields that belong to a database, each set back to what it is with none open: the password, the tree,
+    /// the group shown, the backup of this unlock, the Recycle Bin known and seen, the entries read and being
+    /// read, the undo steps. <c>PassWindowTests</c> holds the list of these fields against the class, so that a
+    /// new field is placed here or among the window's own.
+    /// </summary>
+    private void ForgetDatabaseState()
+    {
+        _password = null;
+        _tree = null;
+        _group = string.Empty;
+        _backedUp = false;
+        _binOn = false;
+        _binSeen = null;
+        _entries.Clear();
+        _reading.Clear();
+        _undo.Clear();
     }
 
     /// <summary>PW-4.3: locked after the minutes without a key or a mouse move anywhere in Windows.</summary>
@@ -567,6 +606,12 @@ public sealed partial class PassForm : ItemForm
         }
 
         _binOn = info.Succeeded && PassBin.IsOn(info.Output);
+        if (!_binOn)
+        {
+            // M7: a bin seen before counts no more once the tool does not say the bin is on.
+            _binSeen = null;
+        }
+
         await ReloadAsync();
         if (!ReferenceEquals(before, _tree))
         {

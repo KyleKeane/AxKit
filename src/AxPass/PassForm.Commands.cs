@@ -147,11 +147,19 @@ public sealed partial class PassForm
     /// </summary>
     private async Task RemoveAsync(IReadOnlyList<PassNode> nodes, bool inBin)
     {
-        if (_tree is not { } before)
+        if (_tree is null)
         {
             return;
         }
 
+        // The listing to compare with is read right before the first removal (M7): the tree last read may be older
+        // than a change KeePassXC's own window or a sync made since, which would then read as the removal's.
+        if (await Cli(KeePassCliTexts.List, KeePassCliTexts.ListOptions) is not { } fresh)
+        {
+            return;
+        }
+
+        var before = PassTree.Parse(fresh.Output);
         var select = KeyAfter([.. nodes.Select(node => node.IsGroup ? GroupKey(node.Path) : node.Path)]);
         var removed = new List<PassNode>();
         foreach (var node in nodes)
@@ -172,7 +180,7 @@ public sealed partial class PassForm
 
         var after = PassTree.Parse(listed.Output);
         var done = PassBin.Outcome(before, after, removed);
-        _binSeen = done.FirstOrDefault(one => one.To is not null)?.To ?? _binSeen;
+        _binSeen = PassBin.SeenBin(before, after, removed) ?? _binSeen;
         var entries = done.Where(one => one.To is not null && !one.Node.IsGroup).ToList();
         var back = entries.Where(one => one.Sole).ToList();
         if (back.Count > 0)
@@ -736,16 +744,8 @@ public sealed partial class PassForm
     private void OpenDatabase(string path)
     {
         _unlock++;
-        _password = null;
-        _tree = null;
-        _binOn = false;
-        _binSeen = null;
-        ClearCopiedPassword();
-        _entries.Clear();
-        _undo.Clear();
-        _backedUp = false;
+        ForgetDatabase();
         _database = path;
-        _group = string.Empty;
         Fill(select: null);
         ShowUnlock(null);
     }

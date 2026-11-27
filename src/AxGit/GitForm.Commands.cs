@@ -32,7 +32,7 @@ public sealed partial class GitForm
         for (var at = 0; at < paths.Count; at += GitTexts.PathsPerCall)
         {
             var some = paths.Skip(at).Take(GitTexts.PathsPerCall);
-            var result = await RunGitAsync(stage ? GitTexts.StageArguments(some) : GitTexts.UnstageArguments(some), GitRunner.Short, stage ? "stage" : "unstage");
+            var result = await ChangeGitAsync(stage ? GitTexts.StageArguments(some) : GitTexts.UnstageArguments(some), GitRunner.Short, stage ? "stage" : "unstage");
             if (result is null)
             {
                 return;
@@ -41,14 +41,14 @@ public sealed partial class GitForm
             if (!result.Ok)
             {
                 Failed(stage ? "Stage failed" : "Unstage failed", result);
-                await RefreshAsync(announce: false);
+                await RefreshAsync(announce: false, checkedNow: true);
                 return;
             }
         }
 
         var verb = stage ? "Staged" : "Unstaged";
         Announce(able.Count == 1 ? $"{verb} {able[0].Path}" : $"{verb} {able.Count} files", true);
-        await RefreshAsync(announce: false);
+        await RefreshAsync(announce: false, checkedNow: true);
     }
 
     /// <summary>Why Stage or Unstage did nothing: a conflict, a file already staged or not staged, or none among the selected.</summary>
@@ -67,7 +67,7 @@ public sealed partial class GitForm
 
     private async Task StageAllAsync(bool stage)
     {
-        var result = await RunGitAsync(stage ? GitTexts.StageAllArguments : GitTexts.UnstageAllArguments, GitRunner.Short, stage ? "stage all" : "unstage all");
+        var result = await ChangeGitAsync(stage ? GitTexts.StageAllArguments : GitTexts.UnstageAllArguments, GitRunner.Short, stage ? "stage all" : "unstage all");
         if (result is null)
         {
             return;
@@ -80,7 +80,7 @@ public sealed partial class GitForm
         }
 
         Announce(stage ? "Staged all" : "Unstaged all", true);
-        await RefreshAsync(announce: false);
+        await RefreshAsync(announce: false, checkedNow: true);
     }
 
     /// <summary>Enter on a file (AG-3.3): its diff in the details, with the focus on the first line; an untracked file shows itself.</summary>
@@ -159,7 +159,7 @@ public sealed partial class GitForm
 
         ShowNotice(Notice.Ask($"Discard the changes to {file.Path}?", "They cannot be brought back.", "&Discard", () => Do(async () =>
         {
-            var result = await RunGitAsync(file.DiscardArguments, GitRunner.Short, "discard");
+            var result = await ChangeGitAsync(file.DiscardArguments, GitRunner.Short, "discard");
             if (result is null)
             {
                 return;
@@ -172,7 +172,7 @@ public sealed partial class GitForm
             }
 
             Announce($"Discarded {file.Path}", true);
-            await RefreshAsync(announce: false);
+            await RefreshAsync(announce: false, checkedNow: true);
         })));
     }
 
@@ -203,7 +203,7 @@ public sealed partial class GitForm
             var paths = tracked.Select(file => file.Path).ToList();
             for (var at = 0; at < paths.Count; at += GitTexts.PathsPerCall)
             {
-                var result = await RunGitAsync(GitTexts.DiscardArguments(paths.Skip(at).Take(GitTexts.PathsPerCall)), GitRunner.Short, "discard");
+                var result = await ChangeGitAsync(GitTexts.DiscardArguments(paths.Skip(at).Take(GitTexts.PathsPerCall)), GitRunner.Short, "discard");
                 if (result is null)
                 {
                     return;
@@ -212,14 +212,14 @@ public sealed partial class GitForm
                 if (!result.Ok)
                 {
                     Failed("Discard failed", result);
-                    await RefreshAsync(announce: false);
+                    await RefreshAsync(announce: false, checkedNow: true);
                     return;
                 }
             }
 
             Announce(tracked.Count == 1 ? $"Discarded {tracked[0].Path}" : $"Discarded {tracked.Count} files", true);
             Selection.Clear();
-            await RefreshAsync(announce: false);
+            await RefreshAsync(announce: false, checkedNow: true);
         }), cancelIsDefault: true));
     }
 
@@ -251,7 +251,7 @@ public sealed partial class GitForm
             var message = typed.Trim();
             Do(async () =>
             {
-                var result = await RunGitAsync(GitTexts.CommitArguments(message), GitRunner.Short, "commit");
+                var result = await ChangeGitAsync(GitTexts.CommitArguments(message), GitRunner.Short, "commit");
                 if (result is null)
                 {
                     return;
@@ -265,7 +265,7 @@ public sealed partial class GitForm
 
                 Announce(GitTexts.CommittedHash(result.Output) is { } hash ? $"Committed {hash}" : "Committed", true);
                 Stale(View.Log, View.Branches);
-                await RefreshAsync(announce: false);
+                await RefreshAsync(announce: false, checkedNow: true);
             });
         }, emptyMessage: "Type the commit message", cancel: "C&ancel");
     }
@@ -311,7 +311,7 @@ public sealed partial class GitForm
             return;
         }
 
-        var result = await RunGitAsync(branch.SwitchArguments, GitRunner.Short, "switch");
+        var result = await ChangeGitAsync(branch.SwitchArguments, GitRunner.Short, "switch");
         if (result is null)
         {
             return;
@@ -325,7 +325,7 @@ public sealed partial class GitForm
 
         Announce($"Switched to {branch.Name}", true);
         Stale(View.Log, View.Branches);
-        await RefreshAsync(announce: false);
+        await RefreshAsync(announce: false, checkedNow: true);
     }
 
     /// <summary>Branches → New branch… (Ctrl+N, AG-5.3): the name in a notice, then git switch -c.</summary>
@@ -342,7 +342,7 @@ public sealed partial class GitForm
             var name = typed.Trim();
             Do(async () =>
             {
-                var result = await RunGitAsync(GitBranches.CreateArguments(name), GitRunner.Short, "new branch");
+                var result = await ChangeGitAsync(GitBranches.CreateArguments(name), GitRunner.Short, "new branch");
                 if (result is null)
                 {
                     return;
@@ -356,14 +356,14 @@ public sealed partial class GitForm
 
                 Announce($"Switched to {name}", true);
                 Stale(View.Log, View.Branches);
-                await RefreshAsync(announce: false);
+                await RefreshAsync(announce: false, checkedNow: true);
             });
         }, emptyMessage: "Type the branch name");
     }
 
     private async Task FetchAsync(string remote)
     {
-        var result = await RunGitAsync(GitTexts.FetchArguments(remote), GitRunner.Long, "fetch");
+        var result = await ChangeGitAsync(GitTexts.FetchArguments(remote), GitRunner.Long, "fetch");
         if (result is null)
         {
             return;
@@ -377,12 +377,12 @@ public sealed partial class GitForm
 
         Announce("Fetched", true);
         Stale(View.Branches);
-        await RefreshAsync(announce: false);
+        await RefreshAsync(announce: false, checkedNow: true);
     }
 
     private async Task PullAsync(string remote)
     {
-        var result = await RunGitAsync(GitTexts.PullArguments(remote), GitRunner.Long, "pull");
+        var result = await ChangeGitAsync(GitTexts.PullArguments(remote), GitRunner.Long, "pull");
         if (result is null)
         {
             return;
@@ -396,7 +396,7 @@ public sealed partial class GitForm
 
         Announce(GitTexts.SaysUpToDate(result.Output) ? "Already up to date" : "Pulled", true);
         Stale(View.Log, View.Branches);
-        await RefreshAsync(announce: false);
+        await RefreshAsync(announce: false, checkedNow: true);
     }
 
     private async Task PushAsync(string remote)
@@ -407,7 +407,7 @@ public sealed partial class GitForm
             return;
         }
 
-        var result = await RunGitAsync(GitTexts.PushArguments(remote, _repo.Upstream, branch), GitRunner.Long, "push");
+        var result = await ChangeGitAsync(GitTexts.PushArguments(remote, _repo.Upstream, branch), GitRunner.Long, "push");
         if (result is null)
         {
             return;
@@ -421,6 +421,6 @@ public sealed partial class GitForm
 
         Announce("Pushed", true);
         Stale(View.Branches);
-        await RefreshAsync(announce: false);
+        await RefreshAsync(announce: false, checkedNow: true);
     }
 }

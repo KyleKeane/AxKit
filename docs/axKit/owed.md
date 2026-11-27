@@ -8,14 +8,15 @@ dated pass; then the script writes this page again.
 
 ## Where it stands
 
-- 47 owed in all.
-- Owed a hearing with NVDA: 31.
+- 48 owed in all.
+- Owed a hearing with NVDA: 32.
 - Owed a live check with a real outside program or situation: 7.
 - Owed a window check on the hidden desktop: 8.
 - Owed a test in code: 1.
 
 ## Owed a hearing with NVDA
 
+- The NVDA test record: the access layers after the review's third pass of 2026-11-27 (axGIT, axPass, axMCP, axTerminal). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - The NVDA test record: the hold from when the focus arrives, and what the third review of 2026-11-27 found in axClaude and the question area. The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - The NVDA test record: the hold on a question's keys, and what the second review of 2026-11-27 found in axClaude. The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.
 - The NVDA test record: the access layers after the review's second pass of 2026-11-27 (axGIT, axPass, axMCP). The steps are in `docs/axKit/nvda-test-record.md`, under the heading "Owed:" with these words.

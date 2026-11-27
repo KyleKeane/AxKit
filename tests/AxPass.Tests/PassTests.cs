@@ -89,6 +89,9 @@ public class PassTests
         Assert.Equal(DeleteFate.NotKnown, PassBin.Fate(true, null, email));
         // Not known to be on: nothing is known.
         Assert.Equal(DeleteFate.NotKnown, PassBin.Fate(false, null, top));
+        // M7 (the review's third pass): a bin seen once counts no more when the tool no longer says it is on.
+        Assert.Equal(DeleteFate.NotKnown, PassBin.Fate(false, "Recycle Bin", gmail));
+        Assert.Equal(DeleteFate.NotKnown, PassBin.Fate(false, "Recycle Bin", old));
 
         var (title, text) = PassBin.Question(true, [gmail]);
         Assert.Equal("Delete Gmail?", title);
@@ -125,6 +128,36 @@ public class PassTests
         var nested = PassTree.Parse("A/\r\nA/A/\r\nA/A/[empty]\r\n");
         var after = PassTree.Parse("Recycle Bin/\r\nRecycle Bin/A/\r\nRecycle Bin/A/A/\r\nRecycle Bin/A/A/[empty]\r\n");
         Assert.Equal("Recycle Bin", PassBin.MovedTo(nested, after, nested.Nodes.First()));
+    }
+
+    /// <summary>
+    /// M7: a group is taken for the Recycle Bin only when it is the one group that gained what was removed. Here
+    /// another group of the entry's name gained one at the same time (KeePassXC's own window, a sync), and until
+    /// then the first group that gained the name was taken.
+    /// </summary>
+    [Fact]
+    public void A_group_is_the_bin_only_when_it_alone_gained_what_was_removed()
+    {
+        var before = PassTree.Parse("Email/\r\nEmail/Gmail\r\nArchive/\r\nRecycle Bin/\r\nRecycle Bin/Old\r\n");
+        var gmail = before.Nodes.Single(node => node.Name == "Gmail");
+        var moved = PassTree.Parse("Email/\r\nArchive/\r\nRecycle Bin/\r\nRecycle Bin/Old\r\nRecycle Bin/Gmail\r\n");
+        Assert.Equal("Recycle Bin", PassBin.SeenBin(before, moved, [gmail]));
+        var two = PassTree.Parse("Email/\r\nArchive/\r\nArchive/Gmail\r\nRecycle Bin/\r\nRecycle Bin/Old\r\nRecycle Bin/Gmail\r\n");
+        Assert.Null(PassBin.SeenBin(before, two, [gmail]));
+        var gone = PassTree.Parse("Email/\r\nArchive/\r\nRecycle Bin/\r\nRecycle Bin/Old\r\n");
+        Assert.Null(PassBin.SeenBin(before, gone, [gmail]));
+    }
+
+    /// <summary>L1: a dropped unlock says the window was locked only when a lock came since it was asked and no later unlock was asked.</summary>
+    [Fact]
+    public void A_dropped_unlock_says_it_was_locked_only_when_it_was()
+    {
+        // A second Unlock pressed while the tool was slow: no lock, a later unlock asked.
+        Assert.False(PassLocks.DroppedByLock(askedThen: 1, askedNow: 2, locksThen: 0, locksNow: 0));
+        // Windows locked while the tool answered, nothing asked since.
+        Assert.True(PassLocks.DroppedByLock(askedThen: 1, askedNow: 1, locksThen: 0, locksNow: 1));
+        // Locked, and unlocked again since: the later unlock speaks for itself.
+        Assert.False(PassLocks.DroppedByLock(askedThen: 1, askedNow: 2, locksThen: 0, locksNow: 1));
     }
 
     [Fact]

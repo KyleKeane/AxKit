@@ -111,6 +111,21 @@ Each is one line to undo unless it says otherwise.
   address (as `gh pr checkout` of a fork's pull request writes it), with a group of remotes, and for a push
   without a branch, nothing runs and the notice says "Fetch not started" with the reason. Item written for the
   address case.
+- **A repository you have not trusted is never connected.** While any setting of its own is kept off, Fetch,
+  Pull and Push do not start ("Fetch not started", with Show its settings), even for one harmless-looking setting.
+  Overriding a setting kept failing (a name whose first value wins; a folder push that clears the environment).
+- **Git LFS never reaches its server through axGIT**: LFS files stay pointer files after a switch or pull (run
+  `git lfs pull` in a terminal), and a push in a repository whose pre-push hook is Git LFS's is refused, since
+  that hook posts to the host `.lfsconfig` names. To turn back: a reminder for the LFS host in place of the refusal.
+- **A push into a folder or into the repository itself is refused when that repository has programs of its own**,
+  also when you trusted yours. Fetch and pull from a folder run nothing of the folder's and stay allowed.
+- **A branch that follows a branch of another name is not pushed**, and a push names exactly `refs/heads/<branch>`.
+- **Addresses are read by a strict form**; anything else is "not read" and nothing runs. A sign-in before the host
+  (an Azure DevOps address, a token) is accepted in https addresses. A share counts as another computer, `localhost`
+  too; a mapped network drive counts as this computer. A repository pointing at files on another computer is not
+  opened.
+- **A program name in a handed PowerShell command that is one of Windows PowerShell 5.1's aliases or keywords is
+  refused** ("write sc.exe"): `sc` ran Set-Content in a real run.
 - **A command handed to a PowerShell window is refused when a part holds a double quote, is empty, or has a
   space and ends in a backslash**: Windows PowerShell 5.1 would split or join it, shown by a real run.
 - **What a server that ended by itself had started lives until the axMCP window closes.**

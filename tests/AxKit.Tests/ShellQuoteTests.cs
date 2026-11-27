@@ -30,7 +30,6 @@ public sealed class ShellQuoteTests
     [InlineData("a | b & c", "'a | b & c'")]
     [InlineData("$(whoami)", "'$(whoami)'")]
     [InlineData("`n", "'`n'")]
-    [InlineData("--%", "'--%'")]
     [InlineData("-a.b", "'-a.b'")]
     [InlineData("-D:value", "'-D:value'")]
     [InlineData("@args", "'@args'")]
@@ -53,6 +52,36 @@ public sealed class ShellQuoteTests
     {
         Assert.Equal(@"& 'C:\Program Files\Git\cmd\git.exe' status", PowerShell(@"C:\Program Files\Git\cmd\git.exe", "status"));
         Assert.Equal("& '-odd' x", PowerShell("-odd", "x"));
+    }
+
+    /// <summary>
+    /// L2 (the review's third pass of 2026-11-27, tried by a real run): "sc query" ran Set-Content, and so did
+    /// "&amp; 'sc'", since the call operator looks for an alias first; "exit" ends the shell; after --% PowerShell
+    /// hands the rest of the line on as it stands. Each is refused with what to write; a program's file name, a
+    /// path and a cmdlet's own name stand.
+    /// </summary>
+    [Fact]
+    public void A_program_PowerShell_would_read_as_its_own_and_the_stop_parsing_mark_are_refused()
+    {
+        foreach (var shell in new[] { SystemPrograms.PowerShell, Pwsh })
+        {
+            foreach (var program in new[] { "sc", "curl", "where", "SORT", "exit", "Return" })
+            {
+                var (line, refused) = ShellQuote.CommandLine(shell, [program, "query"]);
+                Assert.Null(line);
+                Assert.Contains($"write the program's file name, as {program}.exe", refused, StringComparison.Ordinal);
+            }
+
+            var (stopLine, stopRefused) = ShellQuote.CommandLine(shell, ["gh", "--%", "x"]);
+            Assert.Null(stopLine);
+            Assert.Contains("--%", stopRefused, StringComparison.Ordinal);
+        }
+
+        Assert.Equal("sc.exe query", PowerShell("sc.exe", "query"));
+        Assert.Equal(@"C:\Windows\System32\where.exe git", PowerShell(@"C:\Windows\System32\where.exe", "git"));
+        Assert.Equal("Write-Output 'two words'", PowerShell("Write-Output", "two words"));
+        // The Command Prompt has no such names: sc there is the program.
+        Assert.Equal("sc query", ShellQuote.CommandLine(SystemPrograms.Cmd, ["sc", "query"]).Line);
     }
 
     [Fact]

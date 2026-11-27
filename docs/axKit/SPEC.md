@@ -1684,8 +1684,8 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
     agreed to as that command line (`ConsentTarget.CommandLineShell`, docs/axTerminal/SPEC.md AT-1.6b, since
     2026-11-16): the agreement for one command line is not one for another, and the question names the line.
   - axGIT, Git: on first opening a repository; and each server on its own (github.com, a company's server), before
-    the first fetch, pull or push that reaches it, by the host of the remote's address, since that is a new service
-    with its own terms.
+    the first fetch, pull or push that reaches it, by the host of the remote's address (a share's by the computer it lies
+    on), since that is a new service with its own terms.
   - Where the program is found (2026-11-16, `repairs.md` R-70). The agreements for Git and for PowerShell 7 name the
     program, not its path, and neither the question nor axTerminal's "Shell started" line says a path. So
     `git.exe` and `pwsh.exe` are looked for first in their install folders, which only an administrator can write
@@ -1747,9 +1747,10 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   process of the window (Claude Code and the shells in a ConPTY pseudo console, git and `keepassxc-cli.exe` as
   processes with their standard streams on pipes) and talks to it over that pseudo console or those pipes, on the
   computer, never over the network. The program's network use is its own, as from a terminal: Claude Code talks to
-  Anthropic's service and checks for its own updates; git reaches a remote on fetch, pull and push alone (AX-11.5 asks
-  the server's consent first; its credential helper may ask for a sign-in in its own window, AX-11.6); a shell's
-  commands reach what they reach; KeePassXC's tool has no network feature. axKit does not see, record or change that
+  Anthropic's service and checks for its own updates; git reaches a remote on fetch, pull and push alone, in a trusted
+  repository or one that names no program of its own, never by itself for a missing object, and Git LFS through it
+  never (docs/axGIT/SPEC.md AG-5.4; AX-11.5 asks the server's consent first; its credential helper may ask for a
+  sign-in in its own window, AX-11.6); a shell's commands reach what they reach; KeePassXC's tool has no network feature. axKit does not see, record or change that
   traffic; it reads what the program prints and passes on what the user types. axKit's own code makes network requests
   in two places (AX-12; three from 2026-11-07 to 2026-11-14, while axTask had GitHub lists, docs/axKit/reports.md
   RP-7), over HTTPS to GitHub: the updater (AX-3), the update check and the download the

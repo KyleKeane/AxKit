@@ -129,7 +129,10 @@ gets its page shown in place of the transcript while it holds the screen, and no
   shell's rule so that it stays one part (`HandedCommand.Line` over the bundle's `ShellQuote`: PowerShell, single
   quotes with a single quote doubled, and three kinds of part refused that Windows PowerShell 5.1 does not hand
   to a program whole whatever the quotes, found by a real run on 2026-11-27: a part with a double quote, an empty
-  one, one with a space and a backslash at its end; Command Prompt, a part with a character cmd.exe acts on refused; Git Bash, a
+  one, one with a space and a backslash at its end; and since the review's third pass two more, by a real run: a
+  program written bare that is one of PowerShell's own aliases or words, which PowerShell runs in place of the
+  program even after the call operator ("sc query" ran Set-Content; "write the program's file name, as sc.exe"),
+  and a part `--%`, after which PowerShell hands the rest on unquoted; Command Prompt, a part with a character cmd.exe acts on refused; Git Bash, a
   custom shell and a shell of the user's own have no rule; a line break in a part refused for every shell), puts
   the line into the command field with the caret after it, and sends nothing: Enter is the user's. **The caution
   is the field's own name** while the line stands in it as it came (2026-11-22, `HandedCommand.FieldName`):

@@ -2,21 +2,26 @@ using System.Text.RegularExpressions;
 
 namespace AxGit.Core;
 
-/// <summary>Where an address leads: a folder of this computer or a share, a server, or nothing axGIT can read.</summary>
+/// <summary>Where an address leads: a folder of this computer, a server (a share among them), or nothing axGIT can read.</summary>
 public enum AddressKind
 {
-    /// <summary>A path on this computer or a share, or a <c>file://</c> address: no service of anyone else's.</summary>
+    /// <summary>A path on this computer, or a <c>file:///</c> address with a drive: no service of anyone else's.</summary>
     Local,
 
-    /// <summary>A server, whose host is known.</summary>
+    /// <summary>A server, whose host is known: a host of a transport, or the computer a share lies on.</summary>
     Server,
 
-    /// <summary>An address whose server cannot be read with certainty, or that starts a program: nothing may be sent to it.</summary>
+    /// <summary>An address that is not in one of the forms axGIT reads (<see cref="GitRemote.Read"/>): nothing may be sent to it.</summary>
     NotRead,
 }
 
-/// <summary>An address as <see cref="GitRemote.Read"/> reads it; <paramref name="Host"/>, in lower case, for a server.</summary>
-public sealed record Address(AddressKind Kind, string? Host);
+/// <summary>
+/// An address as <see cref="GitRemote.Read"/> reads it: <paramref name="Host"/>, in lower case, for a server;
+/// <paramref name="Port"/> when the address gives one; <paramref name="Folder"/> when git reaches the address as a
+/// folder, with its own transport for a repository on disk (a path on this computer, or a share): there git runs
+/// the other repository's own programs on a push, so it is read before one (AG-5.4c).
+/// </summary>
+public sealed record Address(AddressKind Kind, string? Host, int? Port = null, string? Folder = null);
 
 /// <summary>One setting as git lists it with <see cref="GitRemote.SettingsArguments"/>: the file's kind it comes from, its name, its value.</summary>
 public sealed record ListedSetting(string Scope, string Name, string Value);
@@ -130,32 +135,40 @@ public static partial class GitRemote
     /// <summary>The host of an address that leads to a server, lower case; null for every other address.</summary>
     public static string? Host(string url) => Read(url).Host;
 
-    /// <summary>The transports whose address holds the server's name and that git itself or its own curl program speaks.</summary>
-    private static readonly string[] ServerSchemes = ["http", "https", "ftp", "ftps", "git", "ssh", "git+ssh", "ssh+git"];
+    /// <summary>The transports whose address axGIT reads, each with whether a user may stand before the host and whether a password may stand after that user.</summary>
+    private static readonly (string Scheme, bool User, bool Password)[] ServerSchemes =
+        [("https", true, true), ("http", true, true), ("ssh", true, false), ("git", false, false)];
 
     /// <summary>The kinds of proxy git's curl speaks to, as an address's first part.</summary>
     private static readonly string[] ProxySchemes = ["http", "https", "socks4", "socks4a", "socks5", "socks5h"];
 
     private static readonly Address NotRead = new(AddressKind.NotRead, null);
-    private static readonly Address Local = new(AddressKind.Local, null);
 
     /// <summary>
-    /// Where a remote's address leads, by the rules git itself reads one with (its transport.c and connect.c), and
-    /// strict where programs disagree (the review's second pass: the host was ended at a slash or a question
-    /// mark and not at a number sign, so "https://evil.example#" in front of an at sign and "github.com" read as
-    /// github.com, while git reached evil.example):
+    /// Where a remote's address leads (AG-5.4a; the review's third pass of 2026-11-27, D4). The rule is turned
+    /// around, as the settings' was: an address is read only in one of the forms below, and every other text is
+    /// <see cref="AddressKind.NotRead"/>, to which nothing is sent. Until then the reader followed git's own rules
+    /// and was lenient where they are, and each lenience was a way to name one host and reach another
+    /// (<c>[127.0.0.1]:x@[evil.invalid]:repo.git</c> read as 127.0.0.1 while git ran ssh to evil.invalid;
+    /// <c>c:nul</c>, <c>c:a:b</c>, <c>c:repo.</c> and <c>d:x&lt;y</c> read as folders while git, which takes them
+    /// for no valid Windows path, ran ssh to the host c or d). The forms:
     /// <list type="bullet">
-    /// <item><c>name::rest</c> starts the program git-remote-name (<c>ext::</c> runs any command): not read.</item>
-    /// <item><c>scheme://</c>: <c>file</c> is a folder; http, https, ftp, ftps, git, ssh and the two spellings
-    /// of git over ssh hold a server, whose host ends at the first slash, question mark or number sign; every
-    /// other scheme would start a program of its name: not read.</item>
-    /// <item>No scheme: a path when there is no colon, a slash before the first colon, or a drive letter with
-    /// its colon; otherwise the scp form, the host before the first colon after a bracketed part.</item>
-    /// <item>The part with the host may hold one at sign, the user before it, never two; no percent sign (git
-    /// decodes one for ssh, curl does not) and no backslash; the host itself letters, digits, dots, hyphens and
-    /// underscores, not starting with a hyphen, or an IPv6 literal in brackets, kept whole; a port digits
-    /// alone. Anything else is not read, and nothing is sent to an address that is not read.</item>
+    /// <item><c>https://host[:port]/path</c> and <c>http://</c>, a user, and a password after a colon, allowed
+    /// before the host; <c>ssh://[user@]host[:port]/path</c>; <c>git://host[:port]/path</c>. The scheme in any
+    /// case; the path starts with a slash.</item>
+    /// <item>The scp form <c>[user@]host:path</c>, with no slash before the colon, a host of more than one letter
+    /// (one letter and a colon is a drive) and a path after it.</item>
+    /// <item>A path on this computer: a drive, its colon and a slash or backslash, then a valid Windows path;
+    /// <c>.</c>, <c>..</c>, and a path starting with <c>./</c>, <c>../</c> (or with backslashes); an absolute path
+    /// starting with one slash; <c>file:///</c> and a drive.</item>
+    /// <item>A share, <c>//host/share/...</c>, <c>\\host\share\...</c> or <c>file://host/share/...</c>: a server,
+    /// the computer the share lies on, asked about like any other (M1; until then a share counted as this
+    /// computer).</item>
     /// </list>
+    /// A user and a host are ASCII letters, digits, dots and hyphens (a user an underscore too, a password the
+    /// characters that need no escape in an address), never starting with a hyphen or a dot: a host written in
+    /// letters outside ASCII is read only in its punycode form (<c>xn--</c>), which is what reaches the network
+    /// anyway. An IPv6 host stands in brackets, in a form with a scheme only. A port is 1 to 65535.
     /// </summary>
     public static Address Read(string address)
     {
@@ -165,56 +178,195 @@ public static partial class GitRemote
             return NotRead;
         }
 
-        var scheme = 0;
-        while (scheme < url.Length && (char.IsAsciiLetterOrDigit(url[scheme]) || (scheme > 0 && url[scheme] is '+' or '.' or '-')))
+        if (url is "." or "..")
         {
-            scheme++;
+            return new Address(AddressKind.Local, null, Folder: url);
         }
 
-        if (scheme > 0 && url.AsSpan(scheme).StartsWith("::"))
+        // name::rest starts the program git-remote-name (ext:: runs any command): never read.
+        var transport = url.IndexOf("::", StringComparison.Ordinal);
+        if (transport > 0 && url[..transport].All(letter => char.IsAsciiLetterOrDigit(letter) || letter is '+' or '.' or '-'))
         {
             return NotRead;
         }
 
-        if (scheme > 0 && url.AsSpan(scheme).StartsWith("://"))
+        // A share, with slashes, backslashes, or file:// and a host.
+        if (url.Length > 2 && IsSeparator(url[0]) && IsSeparator(url[1]))
         {
-            var name = url[..scheme].ToLowerInvariant();
-            if (name == "file")
+            return Share(url[2..], url);
+        }
+
+        var schemeEnd = url.IndexOf("://", StringComparison.Ordinal);
+        if (schemeEnd > 0)
+        {
+            var scheme = url[..schemeEnd].ToLowerInvariant();
+            var rest = url[(schemeEnd + 3)..];
+            if (scheme == "file")
             {
-                return Local;
+                // file:///C:/path is a folder here; file://host/share/path is a share, which git reaches as //host/share/path.
+                return rest.StartsWith('/')
+                    ? (IsDrivePath(rest[1..]) ? new Address(AddressKind.Local, null, Folder: rest[1..]) : NotRead)
+                    : Share(rest, "//" + rest);
             }
 
-            var rest = url[(scheme + 3)..];
-            var end = rest.IndexOfAny(['/', '?', '#']);
-            return ServerSchemes.Contains(name) ? Authority(end < 0 ? rest : rest[..end], withPort: true) : NotRead;
+            return ServerSchemes.FirstOrDefault(known => known.Scheme == scheme) is { Scheme: not null } form
+                ? WithScheme(rest, form.User, form.Password)
+                : NotRead;
         }
 
-        // git's own rule for an address without a scheme (connect.c, url_is_local_not_ssh).
-        var colon = url.IndexOf(':');
-        var slash = url.IndexOf('/');
-        if (colon < 0 || (slash >= 0 && slash < colon) || (char.IsAsciiLetter(url[0]) && url[1] == ':'))
+        if (IsDrivePath(url) || IsRelativePath(url) || IsAbsolutePath(url))
         {
-            return Local;
+            return new Address(AddressKind.Local, null, Folder: url);
         }
 
-        // The scp form: the host, with a user before an at sign perhaps, then a colon and the path; an IPv6
-        // literal in brackets has colons of its own.
-        var open = url.StartsWith('[') ? 0 : url.IndexOf("@[", StringComparison.Ordinal) is >= 0 and var found ? found + 1 : -1;
-        var close = open < 0 ? -1 : url.IndexOf(']', open);
-        var separator = url.IndexOf(':', close < 0 ? 0 : close);
-        return separator > 0 ? Authority(url[..separator], withPort: false) : NotRead;
+        return Scp(url);
     }
 
-    /// <summary>The server of the part of an address that holds the user and the host, and after a scheme a port.</summary>
-    private static Address Authority(string text, bool withPort)
+    private static bool IsSeparator(char letter) => letter is '/' or '\\';
+
+    /// <summary>The part of a form with a scheme after "://": the authority up to the first slash, which must be there, then the path.</summary>
+    private static Address WithScheme(string rest, bool user, bool password)
     {
-        if (text.Contains('%') || text.Contains('\\') || text.Any(char.IsWhiteSpace))
+        var slash = rest.IndexOf('/');
+        if (slash <= 0)
         {
             return NotRead;
         }
 
+        var authority = rest[..slash];
+        var at = authority.IndexOf('@');
+        if (at >= 0)
+        {
+            if (!user || !IsSignIn(authority[..at], password))
+            {
+                return NotRead;
+            }
+
+            authority = authority[(at + 1)..];
+        }
+
+        if (authority.StartsWith('['))
+        {
+            var close = authority.IndexOf(']');
+            if (close < 3 || !authority[1..close].All(letter => char.IsAsciiHexDigit(letter) || letter is ':' or '.') || !authority[1..close].Contains(':'))
+            {
+                return NotRead;
+            }
+
+            return PortOf(authority[(close + 1)..]) is var (fits, port) && fits
+                ? new Address(AddressKind.Server, authority[..(close + 1)].ToLowerInvariant(), port)
+                : NotRead;
+        }
+
+        var colon = authority.IndexOf(':');
+        var host = colon < 0 ? authority : authority[..colon];
+        var (portFits, number) = colon < 0 ? (true, null) : PortOf(authority[colon..]);
+        return portFits && IsHost(host) ? new Address(AddressKind.Server, host.ToLowerInvariant(), number) : NotRead;
+    }
+
+    /// <summary>The scp form, <c>[user@]host:path</c>: a host of two letters or more, no slash before its colon, a path after it.</summary>
+    private static Address Scp(string url)
+    {
+        var colon = url.IndexOf(':');
+        if (colon <= 0 || colon == url.Length - 1 || url[..colon].IndexOfAny(['/', '\\', '[', ']']) >= 0)
+        {
+            return NotRead;
+        }
+
+        var authority = url[..colon];
+        var at = authority.IndexOf('@');
+        if (at >= 0 && !IsSignIn(authority[..at], password: false))
+        {
+            return NotRead;
+        }
+
+        var host = authority[(at + 1)..];
+        return host.Length > 1 && IsHost(host) ? new Address(AddressKind.Server, host.ToLowerInvariant()) : NotRead;
+    }
+
+    /// <summary>A share after its two separators: the host up to the next separator, and a share's name after it.</summary>
+    private static Address Share(string rest, string folder)
+    {
+        var end = rest.IndexOfAny(['/', '\\']);
+        if (end <= 0 || end == rest.Length - 1 || !IsHost(rest[..end]) || !IsWindowsPath(rest[(end + 1)..]))
+        {
+            return NotRead;
+        }
+
+        return new Address(AddressKind.Server, rest[..end].ToLowerInvariant(), Folder: folder);
+    }
+
+    /// <summary>A host: ASCII letters, digits, dots and hyphens, not starting with a hyphen or a dot.</summary>
+    private static bool IsHost(string host) =>
+        host.Length > 0 && host[0] is not ('-' or '.') && host.All(letter => char.IsAsciiLetterOrDigit(letter) || letter is '.' or '-');
+
+    /// <summary>A user before an at sign, and after an http address's user a colon and a password of the characters an address needs no escape for.</summary>
+    private static bool IsSignIn(string text, bool password)
+    {
+        var colon = text.IndexOf(':');
+        var user = colon < 0 ? text : text[..colon];
+        if (user.Length == 0 || user[0] is '-' or '.' || !user.All(letter => char.IsAsciiLetterOrDigit(letter) || letter is '.' or '-' or '_'))
+        {
+            return false;
+        }
+
+        return colon < 0 || (password && text[(colon + 1)..].All(letter => char.IsAsciiLetterOrDigit(letter) || letter is '.' or '-' or '_' or '~'));
+    }
+
+    /// <summary>What follows a host in a form with a scheme: nothing, or a colon and a port of 1 to 65535.</summary>
+    private static (bool Fits, int? Port) PortOf(string rest)
+    {
+        if (rest.Length == 0)
+        {
+            return (true, null);
+        }
+
+        return rest[0] == ':' && rest.Length is > 1 and <= 6 && rest[1..].All(char.IsAsciiDigit) && int.Parse(rest[1..], System.Globalization.CultureInfo.InvariantCulture) is >= 1 and <= 65535 and var port
+            ? (true, port)
+            : (false, null);
+    }
+
+    /// <summary>A drive, its colon and a separator, then a valid Windows path (git takes anything else after a drive letter for the scp form).</summary>
+    private static bool IsDrivePath(string url) =>
+        url.Length >= 3 && char.IsAsciiLetter(url[0]) && url[1] == ':' && IsSeparator(url[2]) && IsWindowsPath(url[3..]);
+
+    /// <summary>A path that starts with ./ or ../, with either separator, then a valid Windows path.</summary>
+    private static bool IsRelativePath(string url) =>
+        (url.StartsWith("./", StringComparison.Ordinal) || url.StartsWith(".\\", StringComparison.Ordinal) || url.StartsWith("../", StringComparison.Ordinal) || url.StartsWith("..\\", StringComparison.Ordinal))
+        && IsWindowsPath(url);
+
+    /// <summary>A path from the root of the current drive: one separator, then a valid Windows path.</summary>
+    private static bool IsAbsolutePath(string url) =>
+        url.Length > 1 && IsSeparator(url[0]) && !IsSeparator(url[1]) && IsWindowsPath(url[1..]);
+
+    /// <summary>The characters Windows allows in no file name.</summary>
+    private static readonly char[] NotInNames = ['<', '>', ':', '"', '|', '?', '*'];
+
+    /// <summary>The names Windows gives to devices, which are no file in any folder: with or without an extension.</summary>
+    private static readonly string[] DeviceNames =
+        ["CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"];
+
+    /// <summary>
+    /// A path Windows can hold, as git for Windows checks one (is_valid_win32_path): no name with a character
+    /// Windows refuses, none ending in a dot or a space (but . and ..), none that is a device's name.
+    /// </summary>
+    private static bool IsWindowsPath(string path) =>
+        path.Split('/', '\\').All(name =>
+            name is "" or "." or ".."
+            || (name.IndexOfAny(NotInNames) < 0 && !name.EndsWith('.') && !name.EndsWith(' ')
+                && !DeviceNames.Contains(name.Split('.')[0].TrimEnd(), StringComparer.OrdinalIgnoreCase)));
+
+    /// <summary>
+    /// The reminder's words for a server (AX-11.6): its host, and the port when the address gives one, so that
+    /// "host, port 2222" is said where that is what git reaches.
+    /// </summary>
+    public static string Place(string host, int? port) => port is { } number ? $"{host}, port {number}" : host;
+
+    /// <summary>The server of the part of a proxy's address that holds the user and the host, and a port.</summary>
+    private static Address Authority(string text)
+    {
         var at = text.LastIndexOf('@');
-        if (at != text.IndexOf('@'))
+        if (at != text.IndexOf('@') || (at >= 0 && !IsSignIn(text[..at], password: true)))
         {
             return NotRead;
         }
@@ -223,33 +375,16 @@ public static partial class GitRemote
         if (host.StartsWith('['))
         {
             var close = host.IndexOf(']');
-            if (close < 2 || !PortOrNothing(host[(close + 1)..], withPort) || !host[1..close].All(letter => char.IsAsciiHexDigit(letter) || letter is ':' or '.'))
-            {
-                return NotRead;
-            }
-
-            return new Address(AddressKind.Server, host[..(close + 1)].ToLowerInvariant());
+            return close >= 3 && host[1..close].All(letter => char.IsAsciiHexDigit(letter) || letter is ':' or '.') && PortOf(host[(close + 1)..]).Fits
+                ? new Address(AddressKind.Server, host[..(close + 1)].ToLowerInvariant(), PortOf(host[(close + 1)..]).Port)
+                : NotRead;
         }
 
         var colon = host.IndexOf(':');
-        if (colon >= 0)
-        {
-            if (!PortOrNothing(host[colon..], withPort))
-            {
-                return NotRead;
-            }
-
-            host = host[..colon];
-        }
-
-        return host.Length > 0 && host[0] != '-' && host.All(letter => char.IsLetterOrDigit(letter) || letter is '.' or '-' or '_')
-            ? new Address(AddressKind.Server, host.ToLowerInvariant())
-            : NotRead;
+        var name = colon < 0 ? host : host[..colon];
+        var (fits, port) = colon < 0 ? (true, null) : PortOf(host[colon..]);
+        return fits && IsHost(name) ? new Address(AddressKind.Server, name.ToLowerInvariant(), port) : NotRead;
     }
-
-    /// <summary>What follows a host: nothing, or, where a port may stand, a colon and digits (or the colon alone).</summary>
-    private static bool PortOrNothing(string rest, bool withPort) =>
-        rest.Length == 0 || (withPort && rest[0] == ':' && rest[1..].All(char.IsAsciiDigit));
 
     // ---- A proxy the settings name (AG-5.4b) ----
 
@@ -288,8 +423,8 @@ public static partial class GitRemote
             return NotRead;
         }
 
-        var end = rest.IndexOfAny(['/', '?', '#']);
-        return Authority(end < 0 ? rest : rest[..end], withPort: true);
+        var end = rest.IndexOf('/');
+        return Authority(end < 0 ? rest : rest[..end]);
     }
 
     // ---- What git says, without a sign-in ----
@@ -297,11 +432,18 @@ public static partial class GitRemote
     /// <summary>
     /// A text of git's without the user and the password of any address in it ("https://host/a.git" from an
     /// address with a user, a colon, a password and an at sign before the host): every line of git's that goes
-    /// to the log or to the user passes here (<see cref="GitResult"/>).
+    /// to the log or to the user passes here (<see cref="GitResult"/>). Also a sign-in with a tab or another
+    /// control character in it, which an address shown as not read can hold, and a proxy written without its
+    /// kind in front, <c>user:secret@host:port</c> (the review's third pass, L11).
     /// </summary>
-    public static string WithoutSignIn(string text) => text.Contains('@') ? SignIn().Replace(text, string.Empty) : text;
+    public static string WithoutSignIn(string text) =>
+        text.Contains('@') ? BareSignIn().Replace(SignIn().Replace(text, string.Empty), string.Empty) : text;
 
-    /// <summary>What stands between "scheme://" and the host: everything up to the last at sign before a slash or a space.</summary>
-    [GeneratedRegex(@"(?<=\b[a-z][a-z0-9+.\-]*://)[^/\s]*@", RegexOptions.IgnoreCase)]
+    /// <summary>What stands between "scheme://" and the host: everything up to the last at sign before a slash, a space or a line's end.</summary>
+    [GeneratedRegex(@"(?<=\b[a-z][a-z0-9+.\-]*://)[^/\r\n ]*@", RegexOptions.IgnoreCase)]
     private static partial Regex SignIn();
+
+    /// <summary>A user, a colon, a password and an at sign at the start of a word: a proxy's sign-in written without "scheme://".</summary>
+    [GeneratedRegex(@"(?<=^|[\s'""=(<\[,])[A-Za-z0-9._~!$&*+;%-]+:[^\s/@'""]*@")]
+    private static partial Regex BareSignIn();
 }

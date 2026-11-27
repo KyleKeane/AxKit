@@ -66,6 +66,15 @@ forgets the master password and shows only the notice that asks for it.
   counted as it is asked for; and Windows' lock counts whatever the window's state. An unlock whose answer was
   dropped by a lock shows the unlock notice again, with "Not unlocked: the window was locked while KeePassXC's
   tool was answering. Type the master password again." `PassWindowTests` holds that no wait goes around the one way.
+  The review's third pass of the same day: that sentence comes only when the window really locked since the
+  unlock was asked (Ctrl+L or Windows' own lock, counted apart) and no later unlock was asked (`PassLocks`, L1);
+  until then the password entered twice while the tool was slow dropped the first answer, said the window had been
+  locked though it had not, and left that notice over the database the second unlock opened. And everything the
+  window holds of a database is forgotten in one place (`ForgetDatabase`: the password, the tree, the group shown,
+  this unlock's backup, the Recycle Bin known and seen, the entries read and being read, the undo steps, the
+  selection, a copied password), by Lock, by opening another database and by an unlock that is made (M6: a new
+  database made from an unlocked window kept the other database's undo steps, so Ctrl+Z ran them on the new one).
+  `PassWindowTests` holds the list of those fields against the window's class, so that a new field is placed.
 - **PW-4.4** axPass never keeps a copy of the database or of any entry on disk but the backups of PW-4.5, which are
   the encrypted file itself.
 - **PW-4.5 Backups** (asked 2026-10-24): before the first change after each unlock, the `.kdbx` file is copied as it
@@ -129,7 +138,12 @@ forgets the master password and shows only the notice that asks for it.
     is the bin. Whether the database has a bin at all is `db-info`'s line, read at each unlock and each F5; an F5
     whose `db-info` fails goes on to read the list, with the bin not known to be on, as an unlock does (F5
     stopped there until the second pass). A tool that words its line otherwise makes axPass know less and ask
-    more, never the other way.
+    more, never the other way. The review's third pass (M7): a group is taken for the bin only when it is the
+    one group that gained what was removed (`PassBin.SeenBin`; a group of the same name gaining an entry at the
+    same time elsewhere, through KeePassXC's own window or a sync, made the wrong group the bin), compared with a
+    listing read right before the first removal, not the tree as last read; and once the tool no longer says the
+    bin is on, the bin seen counts no more and every delete asks (`Fate` passed over the tool's word once a bin
+    was known, so an entry went for good under "Moved to the Recycle Bin" after KeePassXC had turned the bin off).
   - *A delete whose end is not known asks first*, Cancel the default: "Delete <name>?" with "This database has a
     Recycle Bin, but KeePassXC's tool does not say which group it is. If <name> is in it already, it is deleted
     for good, and nothing brings it back." or, where the tool did not say the database has one, "KeePassXC's tool

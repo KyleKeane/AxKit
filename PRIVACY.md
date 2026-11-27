@@ -120,9 +120,13 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   the folder, since Claude Code itself does not ask then.
 - **axGIT, access layer for Git** runs git, your own installed program, one process per command, with its prompts
   turned off (`GIT_TERMINAL_PROMPT=0`). Three commands reach a remote (GitHub, or wherever your repository's remotes
-  point): fetch, pull and push, each only when you choose it and, the first time axKit reaches that server, after your
-  consent; git's credential helper may then ask you to sign in, in its own window, and that account is between you and
-  the server. Every other command reads or changes the repository on disk.
+  point, a computer that holds a share among them): fetch, pull and push, each only when you choose it, only in a
+  repository you trust or that names no program or setting of its own, and, the first time axKit reaches that server,
+  after your consent; git's credential helper may then ask you to sign in, in its own window, and that account is
+  between you and the server. Every other command reads or changes the repository on disk: git is run so that it
+  fetches no missing object of a partial clone by itself (`GIT_NO_LAZY_FETCH`), and Git LFS neither fetches nor sends a
+  file through axGIT (`GIT_LFS_SKIP_SMUDGE`, `GIT_LFS_SKIP_PUSH`; its files stay pointer files, and `git lfs pull` and a
+  push in a terminal fetch and send them).
 - **axTerminal, access layer for your shell** runs your own shell (PowerShell, Command Prompt, Git Bash or PowerShell 7)
   in a pseudo console. What the commands you type do, on your computer and on any network they reach, is up to them.
 - **axPass, access layer for KeePassXC** runs `keepassxc-cli.exe`, KeePassXC's command-line tool, on your database

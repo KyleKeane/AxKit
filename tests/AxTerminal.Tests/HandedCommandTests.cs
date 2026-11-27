@@ -77,7 +77,7 @@ public sealed class HandedCommandTests
         Assert.Null(none.Value.Line);
         Assert.StartsWith("axKit has no quoting rule for ", none.Value.Refused);
         // A part cmd.exe cannot make plain: no line, as at the start.
-        string[] odd = ["echo", "50% & more"];
+        string[] odd = ["findstr", "50% & more"];
         var quoted = HandedCommand.Line(ShellKind.PowerShell7, odd).Line!;
         Assert.Null(HandedCommand.ForNewShell(quoted, quoted, ShellKind.CommandPrompt, odd)!.Value.Line);
 

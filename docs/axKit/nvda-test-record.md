@@ -796,6 +796,38 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: the access layers after the review's third pass of 2026-11-27 (axGIT, axPass, axMCP, axTerminal)
+
+What a read-only review found in the repairs of the second pass, repaired the same day: axGIT connects no
+repository that is not trusted, fetches nothing by itself and lets Git LFS reach no server, reads an address only in
+a strict form, reads a remote that is a folder before a push into it, pushes a branch by its full name, and checks
+again after every command that changes the repository, failed or not; axPass forgets a database in one place and
+takes a group for the Recycle Bin only when it alone gained what was removed; axMCP ends what a server started when
+the server is removed or started again; axTerminal refuses a handed command whose program PowerShell would read as
+its own. Each has its test in code, the class-closing test of axGIT among them (every program name, every command,
+untrusted: nothing runs). Played on the hidden desktop, without NVDA, on 2026-11-27:
+`tests/scripts/axGIT/08-settings-and-servers` (new: a repository that is not trusted is never connected and is
+trusted from that notice, an address in no form axGIT reads, a push into a folder whose repository has a hook),
+`axPass/06-delete-says-what-happened` (new at its end: a lock forgets the undo steps) and
+`axMCP/05-what-ends-with-a-server` (new: a server removed takes what it had started with it). Still owed:
+
+1. With NVDA listening (`.\nvda-pass.ps1 axGIT axPass axMCP`): those checks; above all the notice "Fetch not
+   started" with Show its settings, and that the trust notice it brings back is read whole.
+2. By the maintainer's ear and judgement: whether refusing Fetch, Pull and Push in a repository that is not trusted
+   (D1) is right for him, or too strict for a repository with one harmless setting of his own; whether refusing a
+   push in a repository set up for Git LFS (D7) should rather send the files after asking about the LFS server; a
+   failed command whose sentence now stands first in the trust notice (axGIT test plan section 8).
+3. With git and real servers: a repository of his own with Git LFS (a switch leaves pointer files; `git lfs pull` in
+   a terminal fetches them; Ctrl+P is refused); an https remote with a user in its address (`user@host`), which is
+   read; an address of his own with a token in it, which is read when the token is letters, digits, dot, hyphen,
+   underscore or tilde alone; a remote on a port of its own, said in the reminder.
+4. axGIT on a folder whose `.git` file or include lies on a share: "Not opened", at once, with no wait on the
+   network.
+5. axPass, which no script can time or reach: Session, New database from an unlocked window, then Ctrl+Z: "Nothing
+   to undo"; Unlock pressed twice while KeePassXC's tool is slow: no "Not unlocked" notice, and the database opens.
+6. axTerminal with a command handed over whose program is `sc`, `curl` or `where`: no line, and the reason says to
+   write `sc.exe`.
+
 ## Owed: the hold from when the focus arrives, and what the third review of 2026-11-27 found in axClaude and the question area
 
 The third review of that day (`docs/axKit/SPEC.md` AX-6.4, rules 4 and 5, "The hold counts again from when the focus

@@ -205,20 +205,26 @@ public sealed class StdioServer : IDisposable
     }
 
     /// <summary>
-    /// The server stopped and let go, without a wait: the process is released once the end is done, and the job
-    /// with it when the server had to be ended. The job of a server that ended by itself stays open, with what
-    /// that server started still in it, until this program ends: Windows closes it then, which ends what is left
-    /// (closing it here would end it now). Should this program end before the two seconds are over (the window
-    /// closing), Windows ends the server with the job in the same way.
+    /// The server let go for good, without a wait: when it is removed from the list, started again, or the window
+    /// closes (MP-2.3; the review's third pass of 2026-11-27, L8). Stopped first, as <see cref="Stop"/> does; once
+    /// that end is done, whatever the server started that is still in its job is ended with the job, and the
+    /// process and the job are released. Until then the job of a server that had ended by itself stayed open, with
+    /// what it had started, until axMCP's process ended, also after the server was removed or started again. What
+    /// a server that ended by itself started stays only while its row is still there, stopped: until Enter starts
+    /// it again, it is removed, or the window closes.
     /// </summary>
     public void Dispose()
     {
         Stop();
         Ending.ContinueWith(_ =>
         {
-            _process.Dispose();
-            if (_ended)
+            try
             {
+                _job?.Terminate();
+            }
+            finally
+            {
+                _process.Dispose();
                 _job?.Dispose();
             }
         }, TaskScheduler.Default);

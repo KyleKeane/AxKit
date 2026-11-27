@@ -110,7 +110,10 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
   process's id, and an id alone is not enough: the process that started one may have ended and its id gone to a
   process started later, on which End process tree was then refused wrongly. So a process counts as the one that
   started another only when it was running first (the review's second pass, by the two start times; where
-  Windows gives no time the id counts, and the tree is not ended). When Windows could not end every process of a tree: "Not
+  Windows gives no time the id counts, and the tree is not ended). The start times are on the wall clock, which
+  can be set back between two starts (the review's third pass, L9): a parent that reads younger than its child by
+  five seconds or less still counts as its parent, and the refusal stands; the limit is a clock set back by more
+  than that between the two starts, which still makes a real ancestor read as a stranger. When Windows could not end every process of a tree: "Not
   every process <name> started could be ended: 2 could not, <Windows' first reason>" (an error nobody caught
   until then).
 - PR-3.3a **Several processes** (2026-11-22, AX-8.16). With processes selected, Delete acts on the selected ones,

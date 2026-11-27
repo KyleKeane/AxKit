@@ -5,8 +5,16 @@ namespace AxGit.Core;
 /// those of the repositories inside it named with them), the filters git knows there
 /// (<see cref="GitTrust.Filters"/>, for <see cref="GitTrust.Overrides"/>), or, in <paramref name="Problem"/>, why
 /// that could not be read. With a problem nothing is known, and no command may run in the repository.
+/// <paramref name="Elsewhere"/>: the computer, other than the one the repository lies on, that its own files, or
+/// those of a repository inside it, point git at (<see cref="GitTrust.PointsElsewhere"/>, D9); then nothing more
+/// was read, and nothing may run either. <paramref name="Hooks"/>: the hooks folder git names for the repository
+/// opened, as a full path.
 /// </summary>
-public sealed record TrustScan(IReadOnlyList<string> Risks, IReadOnlyList<string> Filters, string? Problem);
+public sealed record TrustScan(IReadOnlyList<string> Risks, IReadOnlyList<string> Filters, string? Problem, string? Elsewhere = null, string? Hooks = null)
+{
+    /// <summary>Whether what the repository would run is known: no problem, and nothing on another computer.</summary>
+    public bool Known => Problem is null && Elsewhere is null;
+}
 
 /// <summary>
 /// The reads that say what a repository would run (SPEC.md AG-1.6), before any other command runs in it and again
@@ -35,22 +43,44 @@ public static class GitTrustScan
     /// <summary>How many of the scan's git runs go at once.</summary>
     public const int AtOnce = 4;
 
-    /// <summary>The scan, on a task of its own from its first step: the caller's thread waits for nothing of it.</summary>
-    public static Task<TrustScan> ReadAsync(string root, CancellationToken cancellation = default) =>
-        Task.Run(() => ReadOnTaskAsync(root, cancellation), cancellation);
+    /// <summary>
+    /// The scan, on a task of its own from its first step: the caller's thread waits for nothing of it.
+    /// <paramref name="environment"/>: variables for git's runs, given to each run (the tests' own settings files).
+    /// </summary>
+    public static Task<TrustScan> ReadAsync(string root, CancellationToken cancellation = default, IReadOnlyDictionary<string, string>? environment = null) =>
+        Task.Run(() => ReadOnTaskAsync(root, cancellation, environment), cancellation);
 
-    private static async Task<TrustScan> ReadOnTaskAsync(string root, CancellationToken cancellation)
+    /// <summary>
+    /// The question for the hooks folder runs with nothing given (git would name the folder given); every other
+    /// run of the scan gets the empty hooks folder of an untrusted repository (L4), though none of the four
+    /// commands runs a hook.
+    /// </summary>
+    private static bool AsksForHooks(IReadOnlyList<string> arguments) => ReferenceEquals(arguments, GitTrust.FoldersArguments);
+
+    private static async Task<TrustScan> ReadOnTaskAsync(string root, CancellationToken cancellation, IReadOnlyDictionary<string, string>? environment)
     {
+        // D9: nothing is asked of git while the repository's own files point it at another computer.
+        if (GitTrust.PointsElsewhere(root) is { } away)
+        {
+            return new TrustScan([], [], null, away);
+        }
+
         var first = await RunAsync(
-            [(root, GitTrust.ConfigArguments), (root, GitTrust.FoldersArguments), (root, GitTrust.LinksArguments), (root, GitTrust.OthersArguments)],
-            cancellation);
-        if (first.FirstOrDefault(result => !result.Ok) is { } failed)
+            [(root, GitTrust.ConfigArguments), (root, GitTrust.FoldersArguments), (root, GitTrust.LinksArguments), (root, GitTrust.OthersArguments), (root, GitTrust.ValueArguments)],
+            cancellation, environment);
+        if (first.Take(4).FirstOrDefault(result => !result.Ok) is { } failed)
         {
             return new TrustScan([], [], failed.FirstLine);
         }
 
+        if (ValuesOf(first[4]) is not { } values)
+        {
+            return new TrustScan([], [], first[4].FirstLine);
+        }
+
         var (hooks, modules) = GitTrust.Folders(first[1].Output, root);
         var risks = new List<string>(GitTrust.Risks(first[0].Output, hooks));
+        risks.AddRange(GitTrust.ValueRisks(values).Where(risk => !risk.StartsWith("core.worktree ", StringComparison.Ordinal)));
         var filters = new List<string>(GitTrust.Filters(first[0].Output));
 
         // The repositories inside, each by its own folder, once.
@@ -102,7 +132,12 @@ public static class GitTrustScan
                 break;
             }
 
-            var reads = await RunAsync([.. fresh.SelectMany(tree => new[] { (tree.Path, GitTrust.LinksArguments), (tree.Path, GitTrust.OthersArguments) })], cancellation);
+            if (fresh.Select(tree => GitTrust.PointsElsewhere(tree.Path)).FirstOrDefault(host => host is not null) is { } elsewhere)
+            {
+                return new TrustScan([], [], null, elsewhere);
+            }
+
+            var reads = await RunAsync([.. fresh.SelectMany(tree => new[] { (tree.Path, GitTrust.LinksArguments), (tree.Path, GitTrust.OthersArguments) })], cancellation, environment);
             for (var at = 0; at < fresh.Count; at++)
             {
                 var (links, others) = (reads[2 * at], reads[(2 * at) + 1]);
@@ -117,19 +152,36 @@ public static class GitTrustScan
             }
         }
 
-        var owns = await RunAsync([.. inside.Select(one => (one.Folder, GitTrust.ConfigArguments))], cancellation);
+        if (inside.Select(one => GitTrust.PointsElsewhere(one.Folder)).FirstOrDefault(host => host is not null) is { } away2)
+        {
+            return new TrustScan([], [], null, away2);
+        }
+
+        // Each repository inside: its settings, the hooks folder git names for it (L3: a linked work tree's hooks
+        // are in its common folder, and core.hooksPath names another), and the values that decide.
+        var owns = await RunAsync([.. inside.SelectMany(one => new[] { (one.Folder, GitTrust.ConfigArguments), (one.Folder, GitTrust.FoldersArguments), (one.Folder, GitTrust.ValueArguments) })], cancellation, environment);
         for (var at = 0; at < inside.Count; at++)
         {
             var (name, folder) = inside[at];
-            risks.AddRange(GitTrust.Inside(name, owns[at].Ok ? GitTrust.Risks(owns[at].Output, Path.Combine(folder, "hooks"), inside: true) : [GitTrust.NotRead]));
-            if (owns[at].Ok)
+            var (config, folders, valueRun) = (owns[3 * at], owns[(3 * at) + 1], owns[(3 * at) + 2]);
+            if (!config.Ok || !folders.Ok || ValuesOf(valueRun) is not { } insideValues)
             {
-                filters.AddRange(GitTrust.Filters(owns[at].Output));
+                risks.AddRange(GitTrust.Inside(name, [GitTrust.NotRead]));
+                continue;
             }
+
+            risks.AddRange(GitTrust.Inside(name, [.. GitTrust.Risks(config.Output, GitTrust.Folders(folders.Output, folder).Hooks, inside: true), .. GitTrust.ValueRisks(insideValues)]));
+            filters.AddRange(GitTrust.Filters(config.Output));
         }
 
-        return new TrustScan([.. risks.Distinct(StringComparer.Ordinal)], [.. filters.Distinct(StringComparer.Ordinal)], null);
+        return new TrustScan([.. risks.Distinct(StringComparer.Ordinal)], [.. filters.Distinct(StringComparer.Ordinal)], null, Hooks: hooks);
     }
+
+    /// <summary>The output of <see cref="GitTrust.ValueArguments"/>: what git printed, empty for exit code 1 with nothing printed (none of the names set), null when git failed otherwise.</summary>
+    private static string? ValuesOf(GitResult result) =>
+        result.Ok ? result.Output
+        : result is { ExitCode: 1, TimedOut: false } && result.Output.Length == 0 && result.Error.Trim().Length == 0 ? string.Empty
+        : null;
 
     /// <summary>
     /// The folders inside a work tree that may be a repository of their own: the index's entries that are one
@@ -142,12 +194,15 @@ public static class GitTrustScan
             name.Length == 0 ? inside : name + "/" + inside))];
 
     /// <summary>The git runs given, <see cref="AtOnce"/> at a time, their results in the order asked.</summary>
-    private static async Task<IReadOnlyList<GitResult>> RunAsync(IReadOnlyList<(string Folder, IReadOnlyList<string> Arguments)> runs, CancellationToken cancellation)
+    private static async Task<IReadOnlyList<GitResult>> RunAsync(IReadOnlyList<(string Folder, IReadOnlyList<string> Arguments)> runs, CancellationToken cancellation, IReadOnlyDictionary<string, string>? environment)
     {
         var results = new List<GitResult>(runs.Count);
         foreach (var some in runs.Chunk(AtOnce))
         {
-            results.AddRange(await Task.WhenAll(some.Select(run => GitRunner.RunAsync(run.Folder, run.Arguments, GitRunner.Short, cancellation))));
+            results.AddRange(await Task.WhenAll(some.Select(run => GitRunner.RunAsync(
+                run.Folder, run.Arguments, GitRunner.Short, cancellation,
+                AsksForHooks(run.Arguments) ? null : [new GitSetting("core.hooksPath", GitTrust.EmptyHooksFolder())],
+                environment))));
         }
 
         return results;

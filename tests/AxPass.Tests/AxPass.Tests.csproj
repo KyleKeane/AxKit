@@ -1,7 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- The window project too, for PassWindowTests' look at the window's fields (the review's third pass of 2026-11-27,
+       M6): a field that belongs to a database is forgotten in one place, held against the class by reflection. -->
+  <PropertyGroup>
+    <TargetFramework>$(AxKitDotNet)-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\AxPass.Core\AxPass.Core.csproj" />
+    <ProjectReference Include="..\..\src\AxPass\AxPass.csproj" />
   </ItemGroup>
 
 </Project>

@@ -63,15 +63,41 @@ public static class PassBin
         bin is not null && (path == bin || path.StartsWith(bin + KeePassCliTexts.PathSeparator, StringComparison.Ordinal));
 
     /// <summary>
-    /// What a delete would do. With the bin known: for good inside it, to the bin outside it. With the bin not
-    /// known: an entry at the top of a database that has a bin goes to it (the top is never inside the bin);
-    /// anything else is not known, since it may lie in the bin already, the bin may be off, or, for a top group, it
-    /// may be the bin itself.
+    /// What a delete would do. With the bin off, or not said to be on: not known, whatever was seen before (M7:
+    /// a bin seen once counted after KeePassXC's own window had turned it off, and the entry went for good under
+    /// "Moved to the Recycle Bin"). With the bin known: for good inside it, to the bin outside it. With the bin
+    /// not known: an entry at the top goes to it (the top is never inside the bin); anything else is not known,
+    /// since it may lie in the bin already or, for a top group, may be the bin itself.
     /// </summary>
     public static DeleteFate Fate(bool on, string? bin, PassNode node) =>
-        bin is not null ? (Holds(bin, node.Path) ? DeleteFate.ForGood : DeleteFate.Recycled)
-        : on && !node.IsGroup && node.Group.Length == 0 ? DeleteFate.Recycled
+        !on ? DeleteFate.NotKnown
+        : bin is not null ? (Holds(bin, node.Path) ? DeleteFate.ForGood : DeleteFate.Recycled)
+        : !node.IsGroup && node.Group.Length == 0 ? DeleteFate.Recycled
         : DeleteFate.NotKnown;
+
+    /// <summary>
+    /// The group a removal shows to be the Recycle Bin: the one group that gained what was removed, and only when
+    /// exactly one did (the review's third pass, M7: until then the first group that gained a name was taken, and
+    /// a group of the same name gaining an entry elsewhere at the same time, KeePassXC's own window or a sync, made
+    /// the wrong group the bin). Null when none gained (a delete for good) or more than one did.
+    /// </summary>
+    public static string? SeenBin(PassTree before, PassTree after, IEnumerable<PassNode> removed)
+    {
+        var gained = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var node in removed)
+        {
+            foreach (var group in after.Nodes.Where(one => one.IsGroup && one.Path != node.Group))
+            {
+                var path = PassTree.Join(group.Path, node.Name);
+                if (after.Count(path, node.IsGroup) > before.Count(path, node.IsGroup))
+                {
+                    gained.Add(group.Path);
+                }
+            }
+        }
+
+        return gained.Count == 1 ? gained.First() : null;
+    }
 
     /// <summary>
     /// Where a removed entry or group lies now: the group that has one more of its name than before the removal

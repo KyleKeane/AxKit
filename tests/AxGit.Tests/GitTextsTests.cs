@@ -87,8 +87,9 @@ public sealed partial class GitTextsTests
         Assert.Equal(["commit", "-m", "Fix the thing"], GitTexts.CommitArguments("Fix the thing"));
         // Never into the submodules, whose remotes are servers the consent did not name (2026-11-27). The remote
         // the consent was read for is on the command line, after "--", and fetch.all is not obeyed (AG-5.4a).
-        Assert.Equal(["fetch", "--prune", "--no-recurse-submodules", "--no-all", "--", "origin"], GitTexts.FetchArguments("origin"));
-        Assert.Equal(["pull", "--ff-only", "--no-recurse-submodules", "--no-all", "--", "-x"], GitTexts.PullArguments("-x"));
+        // The upload program is git's own on the command line, which comes before a remote's setting (D2).
+        Assert.Equal(["fetch", "--prune", "--no-recurse-submodules", "--no-all", "--upload-pack=git-upload-pack", "--", "origin"], GitTexts.FetchArguments("origin"));
+        Assert.Equal(["pull", "--ff-only", "--no-recurse-submodules", "--no-all", "--upload-pack=git-upload-pack", "--", "-x"], GitTexts.PullArguments("-x"));
     }
 
     /// <summary>
@@ -110,8 +111,21 @@ public sealed partial class GitTextsTests
     public void A_push_ties_a_branch_without_an_upstream_to_origin()
     {
         // The remote is always on the command line (AG-5.4a): git chooses none itself.
-        Assert.Equal(["push", "--no-recurse-submodules", "--", "backup"], GitTexts.PushArguments("backup", "origin/main", "main"));
-        Assert.Equal(["push", "--no-recurse-submodules", "--set-upstream", "--", "origin", "topic"], GitTexts.PushArguments("origin", null, "topic"));
+        // The branch is named on both sides, whatever push.default says (D6), and the receive program is git's own (D2).
+        Assert.Equal(["push", "--no-recurse-submodules", "--receive-pack=git-receive-pack", "--", "backup", "refs/heads/main:refs/heads/main"], GitTexts.PushArguments("backup", "origin/main", "main"));
+        Assert.Equal(["push", "--no-recurse-submodules", "--receive-pack=git-receive-pack", "--set-upstream", "--", "origin", "refs/heads/topic:refs/heads/topic"], GitTexts.PushArguments("origin", null, "topic"));
+        // A branch named +main is that branch, never a forced push of main (M4).
+        Assert.Equal("refs/heads/+main:refs/heads/+main", GitTexts.PushArguments("origin", "origin/+main", "+main")[^1]);
+    }
+
+    /// <summary>D6: a branch that follows a branch of another name is not pushed; one that follows its own name, or none, is.</summary>
+    [Fact]
+    public void A_branch_that_follows_a_branch_of_another_name_is_not_pushed()
+    {
+        var settings = GitRemote.Settings("local\0branch.main.merge\nrefs/heads/other\0local\0branch.topic.merge\nrefs/heads/topic\0");
+        Assert.Contains("other", GitTexts.FollowsAnotherName(settings, "main"));
+        Assert.Null(GitTexts.FollowsAnotherName(settings, "topic"));
+        Assert.Null(GitTexts.FollowsAnotherName(settings, "free"));
     }
 
     /// <summary>The remote the consent before a push is asked for is the one the push reaches (AX-11.5, 2026-11-27).</summary>
