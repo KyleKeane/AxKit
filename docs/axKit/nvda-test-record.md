@@ -834,6 +834,49 @@ on 2026-11-27: every axClaude script that runs on the stand-in of Claude Code, a
    ten seconds (a long read): the app opens once, or the tool is told that it is not known; no script reaches a busy
    window.
 
+## Owed: the access layers after the review's second pass of 2026-11-27 (axGIT, axPass, axMCP)
+
+What a read-only review found in the repairs of the section below, repaired the same day: axGIT passes over only
+the settings it knows to be harmless and makes its check again after every command, and its fetch, pull and push
+name their remote; axPass waits for KeePassXC's tool in one way and knows the Recycle Bin by what it saw alone;
+axMCP ends only a server that did not end by itself with what it started. Each repair has its test in code, the
+experiments of the review among them as tests against git itself. Played on the hidden desktop, without NVDA, on
+2026-11-27: `tests/scripts/axGIT/08-settings-and-servers` (new: a setting axGIT does not know, the same setting
+asked about once, a hook that appears while the window is open, a push without a branch and a fetch from an
+address in place of a remote not started, an everyday clone without the notice) with `07-own-programs` (the
+sentence of a trust that no longer holds), `axPass/06-delete-says-what-happened` (new at its end: after a lock and
+a new unlock Delete in a group asks again) and `axMCP/05-what-ends-with-a-server` (new: a program a server
+started outlives a server that ended by itself). Still owed:
+
+1. With NVDA listening (`.\nvda-pass.ps1 axGIT axPass axMCP`): those checks; above all the notice "This repository
+   has settings axGIT does not know" with its text, which is long, the notices "Fetch not started" and "Push not
+   started", and that the trust notice which comes at an F5 is read whole (the "Refreshed" after it is left out
+   for that).
+2. By the maintainer's ear and judgement: whether the trust notice is too long to listen to now (it says what is
+   off meanwhile: hooks, credential helpers, and with a setting that is not known the filters); whether the first
+   Delete in a group after every unlock of axPass should ask (it does: axPass no longer takes the group called
+   Recycle Bin for the bin by its name); how axGIT feels with the check made again after every command (four
+   more git runs, at once, before the lists are read, and more in a repository with repositories inside;
+   "Working: checking…" on the status bar).
+3. With git and a real server: in a repository that is not trusted, a fetch from a server that needs a sign-in
+   fails in git's own words, since no credential helper runs, and works once the repository is trusted; a fetch
+   and a push in an ordinary repository of the maintainer's own go to the same server as before (the remote is on
+   the command line now); a repository that uses Git LFS and is not trusted, with a setting axGIT does not know,
+   shows its LFS files as changed, as the notice says; a repository of his own with a setting outside the table
+   is asked about once (which setting it was is worth a line to the assistant: it may belong in the table).
+4. axGIT with a proxy the repository itself names (`git config http.proxy …` in a trusted repository): the
+   reminder asks about the proxy's server, and the line is "Connecting through the proxy …".
+5. axPass, which no script can time: the master password of one database typed, then Ctrl+O and another database
+   chosen while "Unlocking" is still being answered: the second database's unlock notice stays, and the first
+   database is not opened; Windows+L pressed right after Enter on the master password: on return the database is
+   locked, with "Not unlocked: the window was locked while KeePassXC's tool was answering" in the unlock notice.
+6. axMCP with a real server that opens a browser for a sign-in (or any server that starts a program and ends when
+   told): Stop leaves the browser open; closing the axMCP window ends what the server left.
+7. axTerminal with a command handed over that holds a double quote, or a folder's path with a space and a
+   backslash at its end: no line is put into the field, and the reason is said; with PowerShell 7 installed, the
+   test `PowerShell_7_hands_each_element_of_the_line_to_the_program_whole` runs (it is skipped, and said so, on a
+   computer without pwsh.exe, as on the development computer).
+
 ## Owed: the access layers after the review of 2026-11-27 (axGIT, axPass, axProcess, axMCP, axTerminal)
 
 The review of the access layers before the release: what a program under an access layer is told and what is taken

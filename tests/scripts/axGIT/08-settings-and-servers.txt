@@ -1,0 +1,84 @@
+# Workflow: Open a repository with settings axGIT does not know, and start no fetch or push git cannot name a server for
+# Needs: Git installed.
+# axGIT: the review's second pass of 2026-11-27 (docs/axGIT/nvda-test-plan.md section 7; SPEC AG-1.6b, AG-1.6c,
+# AG-5.4a). Only a setting axGIT knows to be harmless is passed over: any other is named in the notice, here one that
+# is no program. The check is made again at every refresh, so a hook that appears while the window is open is
+# asked about then, and the same risks are asked about once. A push without a branch, and a fetch from a remote
+# git does not know (an address in place of a name), are not started, and a notice says why. Nothing here reaches
+# a server: the one address is of the reserved name "invalid", and no command is run with it.
+file home\AxKit\axGIT.json {"checkForUpdates": false}
+# The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+run git init -q -b main repo
+file repo\a.txt hello
+run git -C repo add .
+run git -C repo -c user.name=Test -c user.email=none commit -q -m first
+# A clone made before anything odd is set: an everyday repository, for the last check.
+run git clone -q {temp}\repo clone
+# A setting that runs no program and is in no table of the harmless ones.
+run git -C repo config http.sslVerify false
+
+# Goal: Open a repository with a setting axGIT does not know, kept off
+# 7.1 The notice has its own title, names the setting and says what is off meanwhile; Enter keeps it off.
+start git {temp}\repo
+expect state "notice":"This repository has settings axGIT does not know"
+expect state It has settings axGIT does not know to be harmless: http.sslverify. While it is not trusted git
+expect state Until then no hook and no credential helper runs
+expect text Enter or Escape: Keep them off.
+# The notice holds the answering keys for a second after it appears (KeyHold).
+wait 1200
+keys enter
+expect state "notice":null
+expect focus Changes, no changes
+
+# Check: The same setting is asked about once, also when the check is made again
+# AG-1.6b: F5 makes the check again; what it finds is what the user kept off, so no notice comes.
+keys f5
+expect said ! Refreshed: Changes, no changes
+expect state "notice":null
+
+# Check: A hook that appears while the window is open is asked about at the next refresh
+# AG-1.6b: the check was one look as the repository opened; now the hook is found before the lists are read.
+file repo\.git\hooks\pre-commit #!/bin/sh\nexit 0
+keys f5
+expect state "notice":"This repository runs programs of its own"
+expect state Its settings or hooks name programs git would run: hook pre-commit. axGIT runs git without them. It also has settings axGIT does not know to be harmless: http.sslverify.
+wait 1200
+keys enter
+expect state "notice":null
+
+# Check: A push while HEAD is on no branch is not started
+# 7.4 AG-5.4a: git, run without a remote, pushed where its settings said; axGIT pushes a branch, to the remote it asked about.
+run git -C repo checkout -q --detach
+keys f5
+# The status bar shows the refresh is in: an older "Refreshed" would be matched by the words alone.
+expect state detached
+keys ctrl+p
+expect state "notice":"Push not started"
+expect state HEAD is on no branch (detached), and axGIT pushes a branch. Switch to a branch first. Nothing was sent and nothing was fetched.
+wait 1200
+keys enter
+expect state "notice":null
+run git -C repo checkout -q main
+
+# Check: A fetch from a remote git does not know is not started
+# 7.3 AG-5.4a: an address in place of a remote's name. Nobody could be asked, and the fetch ran all the same.
+run git -C repo config branch.main.remote https://example.invalid/x.git
+keys f5
+expect state main · no upstream
+keys ctrl+r
+expect state "notice":"Fetch not started"
+expect state Git could not say where the remote https://example.invalid/x.git leads.
+expect state Nothing was sent and nothing was fetched.
+wait 1200
+keys enter
+expect state "notice":null
+close
+
+# Check: An everyday repository opens without the notice
+# AG-1.6c: what git clone wrote (the remote, the branch it follows) is known to be harmless.
+start git {temp}\clone
+expect focus Changes, no changes
+expect state "notice":null
+refuse said This repository
+close

@@ -142,7 +142,12 @@ so that a person and the assistant can both write an action by hand and know wha
   axTerminal window runs, each element quoted by that shell's rule, in one tested function per shell
   (`AxKit.Core/ShellQuote`): PowerShell, single quotes with a single quote doubled; cmd.exe, refused when an element
   holds a character cmd.exe would act on (`%`, `!`, `"`, `^`, `&`, `|`, `<`, `>`), as Claude Code's command line is
-  (repair R-24). For a shell without a rule the action says so and does nothing.
+  (repair R-24). For a shell without a rule the action says so and does nothing. For both PowerShells three kinds
+  of element are refused too, with the reason (2026-11-27, found by running the line through powershell.exe): one
+  that holds a double quote, an empty one, and one with a space in it and a backslash at its end. The single
+  quotes are how PowerShell reads the line; Windows PowerShell 5.1 then hands such an element to the program in
+  pieces, joined with the next, or not at all, while PowerShell 7.3 hands it on whole, so no one line is right
+  for both.
 
 ## 5. Forms
 

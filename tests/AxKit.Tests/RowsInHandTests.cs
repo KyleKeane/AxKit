@@ -14,8 +14,31 @@ namespace AxKit.Tests;
 public sealed partial class RowsInHandTests
 {
     /// <summary>The selected rows, asked for outside the item window: its own method, or the marks' rows taken by hand.</summary>
-    [GeneratedRegex(@"\bSelectedRows\s*\(|\bSelection\s*\.\s*(Contains|Keys)\b[^;]*\.\s*(Where|Select)\b")]
+    [GeneratedRegex(@"\bSelectedRows\s*\(|\bSelection\s*\.\s*(Contains|Keys)\b[^;]*\.\s*(Where|Select)\b|\bWhere\s*\([^;]*\bSelection\s*\.\s*Contains\b|" + TwoOrMore)]
     private static partial Regex AnotherWay();
+
+    /// <summary>
+    /// The original fault's own shape (the review's second pass of 2026-11-27: the pattern above did not hold
+    /// it): the selection taken only when two or more rows are selected, which is a count of the selected rows
+    /// compared with a number other than none, written as a comparison or as a pattern. Whether any row is
+    /// selected (a comparison with 0) is the one question a window has reason to ask.
+    /// </summary>
+    private const string TwoOrMore = @"\bSelection\s*\.\s*Count\s*(?:[<>]=?|[=!]=)\s*[1-9]|\b(Selection|SelectedRows\s*\(\s*\))\s+is\s*(not\s*)?\{\s*Count\s*:\s*(?:[<>]=?\s*)?[1-9]";
+
+    /// <summary>The check is itself checked: the ways the fault was and could be written are found, and what the windows rightly write is not.</summary>
+    [Theory]
+    [InlineData("var rows = SelectedRows() is { Count: > 1 } selected ? selected : [row];", true)]
+    [InlineData("var rows = Selection.Count > 1 ? RowsInHand() : [row];", true)]
+    [InlineData("if (Selection.Count >= 2)", true)]
+    [InlineData("return Selection.Count==1 ? [current] : RowsInHand();", true)]
+    [InlineData("var several = Selection is { Count: >= 2 };", true)]
+    [InlineData("var mine = rows.Where(row => Selection.Contains(row.Key)).ToList();", true)]
+    [InlineData("var mine = Selection.Keys.Select(key => Find(key)).ToList();", true)]
+    [InlineData("if (Selection.Count == 0)", false)]
+    [InlineData("only = Selection.Count > 0 ? [.. RowsInHand().Select(row => row.Key)] : [];", false)]
+    [InlineData("text += $\", {Selection.Count} selected\";", false)]
+    [InlineData("var rows = RowsInHand();", false)]
+    public void The_check_finds_the_faults_shape(string line, bool found) => Assert.Equal(found, AnotherWay().IsMatch(line));
 
     [Fact]
     public void The_item_window_keeps_its_list_of_the_selected_rows_to_itself()

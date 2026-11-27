@@ -32,7 +32,8 @@ section 8. The window is `src/AxPass`, with its own `CLAUDE.md`. The item format
 - `PassBin`, `DeleteFate` and `Removed` (PW-6.4b, 2026-11-27): what axPass knows of the Recycle Bin from the tool's
   own output and no more, since the tool never says which group it is: `IsOn` (`db-info`'s line,
   `KeePassCliTexts.RecycleBinOn`, with the command `Info`), `Known` (the group a deleted entry was seen to arrive
-  in, else the tool's own name's top group when the bin is on), `Holds`, `Fate` (to the bin, for good, or not known,
+  in, and no other: until the review's second pass the tool's own name's top group was taken too when the bin is
+  on, which with the real bin under another name beside it deleted for good without the question), `Holds`, `Fate` (to the bin, for good, or not known,
   for which the delete asks first, `Question`), `MovedTo` and `Outcome` (what became of what was removed, from the
   listing before and after: the group that gained it, and whether it is the one of its name there, which is what
   lets `mv` reach it), `Said` (the sentence after a delete), `StepSaid` and `NotSole` (Ctrl+Z's words). Never take

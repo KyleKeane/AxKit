@@ -10,13 +10,21 @@ public sealed partial class GitForm
 
     /// <summary>
     /// F5, and every command's end: the status read again, and the list shown with it; at the repository's level
-    /// all three, so that each row has its count. The list is filled on the row you are on.
+    /// all three, so that each row has its count. The list is filled on the row you are on. Before any of it
+    /// what the repository would run is checked again (AG-1.6b, <see cref="CheckAgainAsync"/>): a status is where
+    /// git runs itself inside a repository inside, and a filter on a changed file. <paramref name="checkedNow"/>:
+    /// the check was made a moment ago, as the repository opened.
     /// </summary>
-    private async Task RefreshAsync(bool announce)
+    private async Task RefreshAsync(bool announce, bool checkedNow = false)
     {
-        if (_root is null)
+        if (_root is not { } root)
         {
             Refuse("No repository");
+            return;
+        }
+
+        if (!checkedNow && !await CheckAgainAsync(root))
+        {
             return;
         }
 
@@ -33,7 +41,9 @@ public sealed partial class GitForm
 
         Fill(SelectedKey());
         UpdateStatusBar();
-        if (announce)
+        // Not over a notice the check has just shown (AG-1.6b): "Refreshed" would cut off the reading of it, and
+        // the notice is what there is to hear.
+        if (announce && !NoticeOpen)
         {
             Announce("Refreshed: " + Navigator.AccessibleName, true);
         }

@@ -689,7 +689,7 @@ public sealed partial class TaskForm
             return;
         }
 
-        var written = result.Output + (result.Error.Length == 0 ? string.Empty : (result.Output.Length == 0 ? string.Empty : "\r\n\r\n") + "What it wrote as errors:\r\n" + result.Error);
+        var written = result.Printed + (result.Error.Length == 0 ? string.Empty : (result.Printed.Length == 0 ? string.Empty : "\r\n\r\n") + "What it wrote as errors:\r\n" + result.Error);
         _lastOutput = (name, written.Length <= OutputKept ? written : "(The start is cut: the last 64 KB.)\r\n" + written[^OutputKept..]);
         // Stopped at its time limit, the program did not end well whatever it wrote until then (the output kept above
         // is that part, since 2026-11-27); one that ended by itself is judged by its own exit code.

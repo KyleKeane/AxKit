@@ -31,9 +31,10 @@ public sealed record Removed(PassNode Node, string? To, bool Sole);
 /// another name (made by a KeePassXC in another language), had entries deleted for good under "Moved to the
 /// Recycle Bin; Ctrl+Z brings it back". Now:
 /// <list type="bullet">
-/// <item>the bin is known (<see cref="Known"/>) when the tool says the database has one and the group of the
-/// tool's own name for it is there, or when axPass has seen a deleted entry arrive in a group since the database
-/// was unlocked;</item>
+/// <item>the bin is known (<see cref="Known"/>) in one way: axPass has seen a deleted entry arrive in a group
+/// since the database was unlocked. Until the review's second pass the top group of the tool's own name for it
+/// was taken too, when the tool said the database has a bin; with the real bin under another name beside a
+/// group of that name, an entry in the real bin was then deleted for good without the question;</item>
 /// <item>a delete whose end is not known asks first, saying so (<see cref="Fate"/>, <see cref="Question"/>);</item>
 /// <item>after every delete the listing is read again and what is said is what it shows (<see cref="MovedTo"/>,
 /// <see cref="Said"/>): moved, and to which group, or deleted for good;</item>
@@ -50,13 +51,12 @@ public static class PassBin
 
     /// <summary>
     /// The group axPass takes for the Recycle Bin: the group it saw a deleted entry arrive in (<paramref name="seen"/>),
-    /// while that group is there; else, when the tool says the database has a bin (<paramref name="on"/>), the top
-    /// group of the tool's own name for it, when there is one. Null: not known.
+    /// while that group is there. Null: not known, which it is from each unlock until the first delete was seen.
+    /// A group is never the bin by its name, also not the tool's own name for it in a database the tool says has
+    /// one: the bin may be another group beside it.
     /// </summary>
-    public static string? Known(bool on, PassTree tree, string? seen) =>
-        seen is { Length: > 0 } && tree.Nodes.Any(node => node.IsGroup && node.Path == seen) ? seen
-        : on && tree.Nodes.Any(node => node.IsGroup && node.Path == KeePassCliTexts.RecycleBin) ? KeePassCliTexts.RecycleBin
-        : null;
+    public static string? Known(PassTree tree, string? seen) =>
+        seen is { Length: > 0 } && tree.Nodes.Any(node => node.IsGroup && node.Path == seen) ? seen : null;
 
     /// <summary>Whether a path is the bin or in it; never, while the bin is not known.</summary>
     public static bool Holds(string? bin, string path) =>

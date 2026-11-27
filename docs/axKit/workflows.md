@@ -619,6 +619,8 @@ Steps and keys: `docs/axKit/workflows/axGIT.md` (in Claude's working folder: `wo
 6. **Open a repository that runs programs of its own**
     - Open a repository with its own programs kept off
     - Trust a repository
+7. **Open a repository with settings axGIT does not know, and start no fetch or push git cannot name a server for**
+    - Open a repository with a setting axGIT does not know, kept off
 
 ## axHelp
 

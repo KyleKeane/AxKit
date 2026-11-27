@@ -46,6 +46,20 @@ public static class SystemInfo
     /// <summary>The process that started a running one, by the id Windows kept for it (<see cref="ThisProgram.ParentOf"/>); null when Windows refuses or it has ended. For <see cref="ProcessEnd.StartedBy"/>.</summary>
     public static int? ParentOf(int processId) => processId < 0 ? null : ThisProgram.ParentOf((uint)processId) is { } parent ? (int)parent : null;
 
+    /// <summary>When a running process started; null when Windows refuses (a protected process) or it has ended. For <see cref="ProcessEnd.StartedBy"/>, which tells a parent from a later process under the parent's old id by it.</summary>
+    public static DateTime? StartedOf(int processId)
+    {
+        try
+        {
+            using var process = Process.GetProcessById(processId);
+            return process.StartTime;
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or Win32Exception or NotSupportedException)
+        {
+            return null;
+        }
+    }
+
     /// <summary>The lines of a process's details notice (PR-3.4): what Windows lets the user read, each on its own line.</summary>
     public static IReadOnlyList<string> Details(ProcessRow row)
     {

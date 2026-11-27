@@ -361,9 +361,9 @@ public sealed partial class GitForm
         }, emptyMessage: "Type the branch name");
     }
 
-    private async Task FetchAsync()
+    private async Task FetchAsync(string remote)
     {
-        var result = await RunGitAsync(GitTexts.FetchArguments, GitRunner.Long, "fetch");
+        var result = await RunGitAsync(GitTexts.FetchArguments(remote), GitRunner.Long, "fetch");
         if (result is null)
         {
             return;
@@ -380,9 +380,9 @@ public sealed partial class GitForm
         await RefreshAsync(announce: false);
     }
 
-    private async Task PullAsync()
+    private async Task PullAsync(string remote)
     {
-        var result = await RunGitAsync(GitTexts.PullArguments, GitRunner.Long, "pull");
+        var result = await RunGitAsync(GitTexts.PullArguments(remote), GitRunner.Long, "pull");
         if (result is null)
         {
             return;
@@ -399,9 +399,15 @@ public sealed partial class GitForm
         await RefreshAsync(announce: false);
     }
 
-    private async Task PushAsync()
+    private async Task PushAsync(string remote)
     {
-        var result = await RunGitAsync(GitTexts.PushArguments(_repo.Upstream, _repo.Branch), GitRunner.Long, "push");
+        // A push is of a branch (GitReach says so before a server is asked about when HEAD is on none).
+        if (_repo.Branch is not { } branch)
+        {
+            return;
+        }
+
+        var result = await RunGitAsync(GitTexts.PushArguments(remote, _repo.Upstream, branch), GitRunner.Long, "push");
         if (result is null)
         {
             return;

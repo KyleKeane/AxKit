@@ -10,12 +10,44 @@ namespace AxKit.Core;
 /// only a program it started still held its output open (a credential helper, a hook's daemon): then the exit code
 /// is the program's and the output is all it printed. After a timeout that ended the program (<see cref="Finished"/>
 /// false) the exit code is -1 and the output is what it had printed until then, a part: never a result to read as
-/// the whole. <see cref="Stopped"/> is that case, and every caller asks it before it reads the output
-/// (<c>ProcessRunTests.Every_caller_asks_whether_the_run_was_stopped</c>).
+/// the whole. <see cref="Stopped"/> is that case, and the compiler holds every caller to asking it: of a stopped
+/// run <see cref="Output"/> is null, so that it can be read only after <see cref="Stopped"/> was asked (or the null
+/// itself). Until the review's second pass of 2026-11-27 a test read the sources for the word and accepted it
+/// anywhere in a caller's file, which held nothing. A caller that wants what was printed whatever became of the
+/// run, to show it as that, says so by asking for <see cref="Printed"/>.
 /// </summary>
-public sealed record ProcessResult(int ExitCode, string Output, string Error, bool TimedOut, bool Finished)
+public sealed record ProcessResult
 {
+    /// <summary>A run's result; <paramref name="Output"/> is what the program printed, whole or, for a run ended at its limit, the part until then.</summary>
+    public ProcessResult(int ExitCode, string Output, string Error, bool TimedOut, bool Finished)
+    {
+        this.ExitCode = ExitCode;
+        Printed = Output;
+        this.Error = Error;
+        this.TimedOut = TimedOut;
+        this.Finished = Finished;
+    }
+
+    /// <summary>The program's own exit code; -1 for a run ended at its limit, which is never a success.</summary>
+    public int ExitCode { get; }
+
+    /// <summary>Everything the program printed, of a run that came to its own end; null of one ended at its limit, whose output is a part and no result.</summary>
+    public string? Output => Stopped ? null : Printed;
+
+    /// <summary>What the program printed, whatever became of the run: all of it, or the part until the limit. For showing as what it is, never for reading a result from.</summary>
+    public string Printed { get; }
+
+    /// <summary>What the program wrote as errors, whole or until the limit.</summary>
+    public string Error { get; }
+
+    /// <summary>The time ran out, whether or not the program itself had finished.</summary>
+    public bool TimedOut { get; }
+
+    /// <summary>The program itself came to its end.</summary>
+    public bool Finished { get; }
+
     /// <summary>The program was ended at the time limit before it had finished: its output is a part, its exit code none, and nothing of it is a result.</summary>
+    [System.Diagnostics.CodeAnalysis.MemberNotNullWhen(false, nameof(Output))]
     public bool Stopped => TimedOut && !Finished;
 }
 

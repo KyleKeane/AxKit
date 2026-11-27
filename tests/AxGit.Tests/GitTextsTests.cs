@@ -85,9 +85,10 @@ public sealed partial class GitTextsTests
         Assert.Equal(["add", "-A"], GitTexts.StageAllArguments);
         Assert.Equal(["restore", "--staged", "."], GitTexts.UnstageAllArguments);
         Assert.Equal(["commit", "-m", "Fix the thing"], GitTexts.CommitArguments("Fix the thing"));
-        // Never into the submodules, whose remotes are servers the consent did not name (2026-11-27).
-        Assert.Equal(["fetch", "--prune", "--no-recurse-submodules"], GitTexts.FetchArguments);
-        Assert.Equal(["pull", "--ff-only", "--no-recurse-submodules"], GitTexts.PullArguments);
+        // Never into the submodules, whose remotes are servers the consent did not name (2026-11-27). The remote
+        // the consent was read for is on the command line, after "--", and fetch.all is not obeyed (AG-5.4a).
+        Assert.Equal(["fetch", "--prune", "--no-recurse-submodules", "--no-all", "--", "origin"], GitTexts.FetchArguments("origin"));
+        Assert.Equal(["pull", "--ff-only", "--no-recurse-submodules", "--no-all", "--", "-x"], GitTexts.PullArguments("-x"));
     }
 
     /// <summary>
@@ -108,23 +109,21 @@ public sealed partial class GitTextsTests
     [Fact]
     public void A_push_ties_a_branch_without_an_upstream_to_origin()
     {
-        Assert.Equal(["push", "--no-recurse-submodules"], GitTexts.PushArguments("origin/main", "main"));
-        Assert.Equal(["push", "--no-recurse-submodules", "--set-upstream", "origin", "topic"], GitTexts.PushArguments(null, "topic"));
-        // A detached HEAD: plain, and git refuses in its own words.
-        Assert.Equal(["push", "--no-recurse-submodules"], GitTexts.PushArguments(null, null));
+        // The remote is always on the command line (AG-5.4a): git chooses none itself.
+        Assert.Equal(["push", "--no-recurse-submodules", "--", "backup"], GitTexts.PushArguments("backup", "origin/main", "main"));
+        Assert.Equal(["push", "--no-recurse-submodules", "--set-upstream", "--", "origin", "topic"], GitTexts.PushArguments("origin", null, "topic"));
     }
 
     /// <summary>The remote the consent before a push is asked for is the one the push reaches (AX-11.5, 2026-11-27).</summary>
     [Fact]
-    public void The_remote_of_a_push_is_origin_where_the_push_names_it_and_gits_own_choice_otherwise()
+    public void The_remote_of_a_push_is_origin_where_the_push_names_it_and_the_settings_choice_otherwise()
     {
+        var settings = GitRemote.Settings("local\0branch.main.remote\norigin\0local\0branch.main.pushremote\nbackup\0local\0branch.topic.pushremote\nbackup\0");
         // A branch without an upstream is pushed to origin by name, whatever else is set.
-        Assert.Equal("origin", GitTexts.PushRemote(null, "topic", "\tbackup\n"));
-        // With an upstream the push is plain, and git chooses: the branch's pushRemote or remote.pushDefault first.
-        Assert.Equal("backup", GitTexts.PushRemote("origin/main", "main", "origin\tbackup\n"));
-        Assert.Equal("origin", GitTexts.PushRemote("origin/main", "main", "origin\torigin\n"));
-        // A detached HEAD: no branch was asked about.
-        Assert.Equal("origin", GitTexts.PushRemote(null, null, null));
+        Assert.Equal("origin", GitTexts.PushRemote(null, "topic", settings));
+        // With an upstream: the branch's pushRemote or remote.pushDefault first.
+        Assert.Equal("backup", GitTexts.PushRemote("origin/main", "main", settings));
+        Assert.Equal("origin", GitTexts.PushRemote("origin/other", "other", settings));
     }
 
     [Fact]

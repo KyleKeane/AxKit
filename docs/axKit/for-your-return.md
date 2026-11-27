@@ -16,7 +16,10 @@ Updated 2026-11-28, early morning.
 - **A second look at each fix batch**: a fresh reader checks every batch's commit for faults the fixes brought.
   It found 11 in the apps' batch (one a data-loss path in a list conversion on a full disk), 13 small ones in
   the privacy batch, and 8 in axClaude's (one grave: a doubled Enter could approve the next question unheard).
-  Each set is its own fix batch, running now, before the window base, the automation engine and the seal's counter.
+  Each set is its own fix batch. The second look at the access layers found four ways a repository's own program
+  could still run in axGIT, and six ways a fetch or push could reach a server other than the one asked about;
+  all fixed (the next decisions below). The second look at axClaude's corrections found that the one-second hold
+  ended just as the window moved the focus onto a question; that fix batch is next.
 - **Then**: questions as lists; the shortenings with their keys; 6.0.0 prepared and not published; then, on branches,
   the workflow graph's remaining steps, axChat, axAutomate's macro launcher.
 
@@ -72,9 +75,28 @@ Each is one line to undo unless it says otherwise.
 - **A network drive with a Recycle Bin of its own (a redirected folder) is treated as having none**: the question
   says "for good" although Windows would have kept it. Windows gives no sure answer for such a drive.
 - **A sound file of your own over 64 MB is not read.**
-- **axPass asks before the first delete in a new database.** KeePassXC's tool does not say which group its
-  Recycle Bin will be until the bin exists, so axPass cannot promise that the entry is kept. It asks once in a
-  database's life. To turn back: `PassBin.Fate` treats "on, group not known" as recycled.
+- **axPass asks before the first Delete in a group after each unlock.** KeePassXC's tool does not say which group
+  is its Recycle Bin, and a group can merely be named so; axPass knows the bin only by seeing a deleted entry
+  arrive in it, and until then cannot promise that an entry is kept. Remembering the seen bin per database would
+  cut that to once in a database's life, at the price of trusting a memory. To turn back: `PassBin.Fate`.
+- **axGIT passes over only settings it knows to be harmless** (`GitTrust.Inert`, 44 names, each with its reason).
+  A list of the settings that run a program can never be complete, as the second look showed four times. So any
+  other setting of a repository's own is named in the notice until you trust the repository: likely once each in
+  repositories of yours with `commit.gpgsign`, `user.signingkey`, an alias, an `http.` or `url.` setting. A trust
+  you gave earlier is asked again once where such a setting exists. A harmless name is added to the table with
+  its one-line reason.
+- **axGIT checks again before every refresh** (four git runs at once, about 0.15 seconds here), so a hook that
+  appears while the window is open is asked about; with hundreds of submodules that is seconds per command.
+- **While a repository is not trusted, axGIT runs no credential helper** (a private server then refuses), and
+  no filters when a setting is not known (Git LFS files can show as changed; the notice says so). Git's
+  automatic maintenance never runs through axGIT.
+- **Fetch, Pull and Push run only when git can name the server**: on a branch whose remote is written as an
+  address (as `gh pr checkout` of a fork's pull request writes it), with a group of remotes, and for a push
+  without a branch, nothing runs and the notice says "Fetch not started" with the reason. Item written for the
+  address case.
+- **A command handed to a PowerShell window is refused when a part holds a double quote, is empty, or has a
+  space and ends in a backslash**: Windows PowerShell 5.1 would split or join it, shown by a real run.
+- **What a server that ended by itself had started lives until the axMCP window closes.**
 - **axGIT's fetch, pull and push no longer go into submodules** (`--no-recurse-submodules`): the reminder before
   a server is contacted could not name the submodules' servers. With `submodule.recurse` set, Pull no longer
   updates them.

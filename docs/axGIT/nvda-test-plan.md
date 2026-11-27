@@ -63,3 +63,13 @@ The runner's script for 1 is `tests/scripts/axGIT/07-own-programs.txt`.
 2. While a large repository opens, F5 at once: "Working…", and the Changes list comes after the notice or by itself; nothing ran in between.
 3. Enter on an untracked file of several megabytes: the details come at once, "Untracked file, the first N lines", and end with "(cut after 200 KB)".
 4. With a remote whose push address is on another server (`git remote set-url --push origin <address>`): Push asks "Before axGIT connects to <that server>", not the fetch address's.
+
+## 7. The review's second pass of 2026-11-27 (AG-1.6b, AG-1.6c, AG-5.4a, AG-5.4b)
+
+The runner's script for 1 to 4 is `tests/scripts/axGIT/08-settings-and-servers.txt`.
+
+1. A repository with a setting axGIT does not know and no program (`git config http.sslVerify false`): the notice is "This repository has settings axGIT does not know" and names "http.sslverify"; Enter keeps them off, and the Changes list comes. An ordinary clone opens with no notice.
+2. In a trusted repository, add a hook file in a console while the window is open, then F5: the notice comes again, starting "What axGIT finds in this repository differs from what you trusted", before "Refreshed" is said. F5 once more: no notice a second time for the same hook.
+3. With `git config branch.<branch>.pushRemote https://example.invalid/x.git`: Ctrl+P shows the notice "Push not started", which says Git could not say where the remote leads, and ends "Nothing was sent and nothing was fetched."; Enter closes it.
+4. With HEAD on no branch (`git checkout --detach`): Ctrl+P: "Push not started", "HEAD is on no branch (detached), and axGIT pushes a branch."
+5. By ear, with a real remote: Ctrl+R the first time says "Connecting to <server>; if Git asks you to sign in…" and then "Fetched"; in a repository that is not trusted and on a private server, the fetch fails with git's own words about the sign-in, since no credential helper runs.

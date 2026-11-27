@@ -106,7 +106,11 @@ off and on again there as Task Manager does it (PR-5.4). Nothing refreshes by it
   through the processes between, is refused in the question's place, since ending that tree would end the window
   that asks: "<name> started this window, so ending it with the processes it started would end axProcess too. End
   process ends <name> alone" (the review of 2026-11-27; `ProcessEnd`; Windows' own end of a tree refuses it too,
-  which read "<name> has already ended" until then). When Windows could not end every process of a tree: "Not
+  which read "<name> has already ended" until then). Who started whom is Windows' record of the starting
+  process's id, and an id alone is not enough: the process that started one may have ended and its id gone to a
+  process started later, on which End process tree was then refused wrongly. So a process counts as the one that
+  started another only when it was running first (the review's second pass, by the two start times; where
+  Windows gives no time the id counts, and the tree is not ended). When Windows could not end every process of a tree: "Not
   every process <name> started could be ended: 2 could not, <Windows' first reason>" (an error nobody caught
   until then).
 - PR-3.3a **Several processes** (2026-11-22, AX-8.16). With processes selected, Delete acts on the selected ones,

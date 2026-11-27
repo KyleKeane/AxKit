@@ -291,3 +291,10 @@ You hear: Before axGIT connects to Git.
 3. Press Space.
     You hear: Trusted.
 4. Close the window.
+
+## Open a repository with settings axGIT does not know, and start no fetch or push git cannot name a server for
+
+### Open a repository with a setting axGIT does not know, kept off
+
+1. Open axGIT with the folder repo.
+2. Press Enter.

@@ -328,16 +328,29 @@ public sealed class StartupChangeTests : IDisposable
         // 40 started 30, which started 20, which started 10; 50 is nobody's.
         var parents = new Dictionary<int, int> { [10] = 20, [20] = 30, [30] = 40 };
         int? Parent(int id) => parents.TryGetValue(id, out var parent) ? parent : null;
-        Assert.True(ProcessEnd.StartedBy(10, 20, Parent));
-        Assert.True(ProcessEnd.StartedBy(10, 40, Parent));
-        Assert.False(ProcessEnd.StartedBy(10, 50, Parent));
-        Assert.False(ProcessEnd.StartedBy(30, 10, Parent));
+        // Each started a minute before the one it started: 40 first, 10 last.
+        var noon = new DateTime(2026, 11, 27, 12, 0, 0);
+        DateTime? Started(int id) => noon.AddMinutes(-id);
+        Assert.True(ProcessEnd.StartedBy(10, 20, Parent, Started));
+        Assert.True(ProcessEnd.StartedBy(10, 40, Parent, Started));
+        Assert.False(ProcessEnd.StartedBy(10, 50, Parent, Started));
+        Assert.False(ProcessEnd.StartedBy(30, 10, Parent, Started));
         // A process is not started by itself.
-        Assert.False(ProcessEnd.StartedBy(10, 10, Parent));
+        Assert.False(ProcessEnd.StartedBy(10, 10, Parent, Started));
         // Ids Windows gave out again can run in a circle: the walk ends.
         var circle = new Dictionary<int, int> { [1] = 2, [2] = 3, [3] = 1 };
-        Assert.False(ProcessEnd.StartedBy(1, 9, id => circle[id]));
-        Assert.True(ProcessEnd.StartedBy(1, 3, id => circle[id]));
+        Assert.False(ProcessEnd.StartedBy(1, 9, id => circle[id], _ => null));
+        Assert.True(ProcessEnd.StartedBy(1, 3, id => circle[id], _ => null));
+
+        // The review's second pass: the process that started 20 has ended, and its id, 30, is another process's
+        // now, started after 20. That one started nothing here, and neither did what started it: the walk ends.
+        DateTime? Reused(int id) => id == 30 ? noon.AddMinutes(5) : Started(id);
+        Assert.True(ProcessEnd.StartedBy(10, 20, Parent, Reused));
+        Assert.False(ProcessEnd.StartedBy(10, 30, Parent, Reused));
+        Assert.False(ProcessEnd.StartedBy(10, 40, Parent, Reused));
+        // Where Windows gives no time the id counts, the careful way: the tree is not ended.
+        Assert.True(ProcessEnd.StartedBy(10, 40, Parent, _ => null));
+        Assert.True(ProcessEnd.StartedBy(10, 40, Parent, id => id == 30 ? null : Started(id)));
 
         Assert.Equal("explorer started this window, so ending it with the processes it started would end axProcess too. End process ends explorer alone", ProcessEnd.HoldsThisWindow("explorer"));
         Assert.Equal("Not every process setup started could be ended: 2 could not, Access is denied", ProcessEnd.NotAllEnded("setup", ["Access is denied.", "Access is denied."]));

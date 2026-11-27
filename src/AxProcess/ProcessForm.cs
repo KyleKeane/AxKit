@@ -541,7 +541,7 @@ public sealed class ProcessForm : ItemForm
         }
 
         // PR-3.3: a tree that holds this window is not ended, and that is said in place of the question.
-        if (tree && ProcessEnd.StartedBy(Environment.ProcessId, row.Id, SystemInfo.ParentOf))
+        if (tree && ProcessEnd.StartedBy(Environment.ProcessId, row.Id, SystemInfo.ParentOf, SystemInfo.StartedOf))
         {
             Announce(ProcessEnd.HoldsThisWindow(row.Name), true);
             return;

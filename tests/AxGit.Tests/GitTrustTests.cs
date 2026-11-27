@@ -2,14 +2,138 @@ using AxGit.Core;
 
 namespace AxGit.Tests;
 
-/// <summary>A repository's own programs (SPEC.md AG-1.6, security audit S-2): what is found, and how it is set aside.</summary>
+/// <summary>A repository's own programs and settings (SPEC.md AG-1.6, AG-1.6c; security audit S-2): what is found, and how it is set aside.</summary>
 public sealed class GitTrustTests
 {
     [Fact]
-    public void The_names_that_run_a_program_are_found_and_the_rest_left()
+    public void Every_name_that_is_not_known_to_be_harmless_is_a_risk_and_the_harmless_ones_are_left()
     {
-        const string names = "core.repositoryformatversion\ncore.fsmonitor\ndiff.pdf.textconv\nfilter.lfs.clean\nremote.origin.url\nuser.name\ncore.sshCommand\ncredential.helper\n";
-        Assert.Equal(["core.fsmonitor", "diff.pdf.textconv", "filter.lfs.clean", "core.sshCommand", "credential.helper"], GitTrust.Risks(names, null));
+        const string names = "core.repositoryformatversion\ncore.fsmonitor\ndiff.pdf.textconv\nfilter.lfs.clean\nremote.origin.url\nuser.name\ncore.sshCommand\ncredential.helper\nlfs.extension.x.clean\ngc.recentObjectsHook\n";
+        IReadOnlyList<string> risks = ["core.fsmonitor", "diff.pdf.textconv", "filter.lfs.clean", "core.sshCommand", "credential.helper", "lfs.extension.x.clean", "gc.recentObjectsHook"];
+        Assert.Equal(risks, GitTrust.Risks(names, null));
+        // The notice says which of them it knows to run a program, and which it does not know.
+        Assert.Equal(["core.fsmonitor", "diff.pdf.textconv", "filter.lfs.clean", "core.sshCommand", "credential.helper"], GitTrust.Programs(risks));
+        Assert.Equal(["lfs.extension.x.clean", "gc.recentObjectsHook"], GitTrust.NotKnown(risks));
+    }
+
+    // ---- The table of the harmless settings (AG-1.6c; the review's second pass of 2026-11-27) ----
+
+    /// <summary>
+    /// The form of the table: every name in lower case, in the shape a setting is looked up by (a section, a
+    /// star for a middle part, a variable), once, and with a reason that is a sentence. A name without a reason
+    /// has not been shown to be harmless.
+    /// </summary>
+    [Fact]
+    public void Every_harmless_setting_is_written_in_the_tables_form_once_and_with_its_reason()
+    {
+        Assert.NotEmpty(GitTrust.Inert);
+        foreach (var setting in GitTrust.Inert)
+        {
+            Assert.Equal(setting.Name, GitTrust.Shape(setting.Name));
+            Assert.Matches(@"^[a-z]+(\.\*)?\.[a-z0-9-]+$", setting.Name);
+            Assert.True(setting.Reason.Length >= 20 && char.IsUpper(setting.Reason[0]) && setting.Reason.EndsWith('.'), $"{setting.Name} needs a reason, a sentence: \"{setting.Reason}\"");
+            Assert.DoesNotContain('\n', setting.Reason);
+        }
+
+        Assert.Equal(GitTrust.Inert.Count, GitTrust.Inert.Select(setting => setting.Name).Distinct(StringComparer.Ordinal).Count());
+    }
+
+    /// <summary>
+    /// No name the table calls harmless is one that runs a program, names a proxy or brings another file in:
+    /// an entry added by mistake fails here. The includes are never harmless: what they bring in changes with
+    /// the branch (includeIf onbranch) and with any file they name.
+    /// </summary>
+    [Fact]
+    public void No_harmless_setting_runs_a_program_names_a_proxy_or_includes_a_file()
+    {
+        foreach (var setting in GitTrust.Inert)
+        {
+            var name = setting.Name.Replace("*", "x", StringComparison.Ordinal);
+            Assert.False(GitTrust.RunsAProgram(name), setting.Name);
+            Assert.False(GitTrust.NamesAProxy(name), setting.Name);
+            Assert.False(name.StartsWith("include", StringComparison.Ordinal), setting.Name);
+        }
+
+        Assert.False(GitTrust.IsInert("include.path"));
+        Assert.False(GitTrust.IsInert("includeif.onbranch:other.path"));
+        Assert.False(GitTrust.IsInert("includeIf.gitdir:C:/work/.path"));
+    }
+
+    /// <summary>
+    /// What an everyday repository carries, so that it opens without the notice: the names git 2.53 wrote for
+    /// git init, git clone (also shallow, without tags), git submodule add (in the repository and in the
+    /// submodule's own under .git/modules), git worktree add, git sparse-checkout, git branch with an upstream
+    /// and a description, and Git LFS's own number; and the notes GitHub's gh and Visual Studio Code keep. Listed
+    /// from repositories made for this (the names alone, 2026-11-27).
+    /// </summary>
+    [Theory]
+    [InlineData("core.repositoryformatversion")]
+    [InlineData("core.filemode")]
+    [InlineData("core.bare")]
+    [InlineData("core.logallrefupdates")]
+    [InlineData("core.symlinks")]
+    [InlineData("core.ignorecase")]
+    [InlineData("core.autocrlf")]
+    [InlineData("core.longpaths")]
+    [InlineData("core.sparsecheckout")]
+    [InlineData("core.sparsecheckoutcone")]
+    [InlineData("extensions.worktreeconfig")]
+    [InlineData("remote.origin.url")]
+    [InlineData("remote.origin.fetch")]
+    [InlineData("remote.origin.pushurl")]
+    [InlineData("remote.origin.tagopt")]
+    [InlineData("remote.upstream.gh-resolved")]
+    [InlineData("remote.pushdefault")]
+    [InlineData("branch.main.remote")]
+    [InlineData("branch.main.merge")]
+    [InlineData("branch.feature/one.two.pushremote")]
+    [InlineData("branch.topic.description")]
+    [InlineData("branch.main.vscode-merge-base")]
+    [InlineData("branch.main.gh-merge-base")]
+    [InlineData("branch.main.github-pr-owner-number")]
+    [InlineData("submodule.libs/zip.url")]
+    [InlineData("submodule.libs/zip.active")]
+    [InlineData("user.name")]
+    [InlineData("user.email")]
+    [InlineData("lfs.repositoryformatversion")]
+    [InlineData("lfs.https://github.com/a/b.git/info/lfs.access")]
+    // A name's section and variable are in any case; the middle part is as written.
+    [InlineData("Remote.Origin.URL")]
+    public void A_setting_of_an_everyday_repository_is_harmless(string name) => Assert.True(GitTrust.IsInert(name), name);
+
+    [Theory]
+    [InlineData("lfs.extension.x.clean")]
+    [InlineData("lfs.customtransfer.x.path")]
+    [InlineData("lfs.url")]
+    [InlineData("gc.recentObjectsHook")]
+    [InlineData("filter.a=b.clean")]
+    [InlineData("core.gitProxy")]
+    [InlineData("http.proxy")]
+    [InlineData("http.https://github.com/.proxy")]
+    [InlineData("http.sslVerify")]
+    [InlineData("http.curloptResolve")]
+    [InlineData("url.https://example.org/.insteadOf")]
+    [InlineData("remotes.origin")]
+    [InlineData("remote.origin.promisor")]
+    [InlineData("remote.origin.push")]
+    [InlineData("extensions.partialClone")]
+    [InlineData("fetch.all")]
+    [InlineData("alias.co")]
+    [InlineData("submodule.libs/zip.update")]
+    [InlineData("uploadpack.allowFilter")]
+    [InlineData("commit.gpgsign")]
+    [InlineData("remote..url")]
+    [InlineData("core")]
+    // In the repository opened a work tree elsewhere is no ordinary thing; in a submodule git writes it for each.
+    [InlineData("core.worktree")]
+    public void A_setting_that_is_not_in_the_table_is_not_harmless(string name) => Assert.False(GitTrust.IsInert(name), name);
+
+    [Fact]
+    public void A_submodules_work_tree_setting_is_harmless_in_a_repository_inside_alone()
+    {
+        Assert.True(GitTrust.IsInert("core.worktree", inside: true));
+        Assert.Empty(GitTrust.Risks("local\tcore.worktree\nlocal\tcore.bare\n", null, inside: true));
+        Assert.Equal(["core.worktree"], GitTrust.Risks("local\tcore.worktree\nlocal\tcore.bare\n", null));
     }
 
     [Fact]
@@ -20,20 +144,102 @@ public sealed class GitTrustTests
         File.WriteAllText(Path.Combine(hooks, "pre-commit.sample"), string.Empty);
         File.WriteAllText(Path.Combine(hooks, "post-checkout"), string.Empty);
         Assert.Equal(["hook post-checkout"], GitTrust.Risks(string.Empty, hooks));
+        Assert.Equal(["hook post-checkout"], GitTrust.Programs(["hook post-checkout"]));
+    }
+
+    // ---- What git is run with while a repository is not trusted ----
+
+    private static GitSetting Empty(string name) => new(name, string.Empty);
+
+    /// <summary>No hooks and no credential helper, for every repository that is not trusted, last in the list (an empty helper empties git's list of them).</summary>
+    private static readonly GitSetting[] Careful = [new("credential.helper", string.Empty), new("core.hooksPath", "NUL")];
+
+    [Fact]
+    public void An_untrusted_repository_runs_git_with_each_program_set_to_nothing_and_without_hooks_or_credential_helpers()
+    {
+        Assert.Equal(Careful, GitTrust.Careful);
+        Assert.Equal([Empty("diff.pdf.textconv"), Empty("core.sshCommand"), .. Careful], GitTrust.Overrides(["diff.pdf.textconv", "hook pre-commit", "core.sshCommand"], ["lfs"]));
+        // The hooks folder a repository names is not set to nothing: it is set to the folder that holds none.
+        Assert.Equal(Careful, GitTrust.Overrides(["core.hookspath"], []));
+        // A repository that holds no risk, and a trusted one, runs with nothing of axGIT's.
+        Assert.Empty(GitTrust.Overrides([], ["lfs"]));
+    }
+
+    /// <summary>
+    /// The review's second pass, finding 1: a setting axGIT does not know cannot be set aside by its name, and a
+    /// filter of the user's own (Git LFS) is a program that would obey it. So with such a setting no filter
+    /// runs: each one's three programs set to nothing, and none required.
+    /// </summary>
+    [Fact]
+    public void With_a_setting_that_is_not_known_every_filter_is_off()
+    {
+        Assert.Equal(
+            [Empty("filter.lfs.clean"), Empty("filter.lfs.smudge"), Empty("filter.lfs.process"), new GitSetting("filter.lfs.required", "false"),
+                Empty("filter.a=b.clean"), Empty("filter.a=b.smudge"), Empty("filter.a=b.process"), new GitSetting("filter.a=b.required", "false"), .. Careful],
+            GitTrust.Overrides(["lfs.extension.x.clean"], ["lfs", "a=b"]));
+        // A repository inside whose settings could not be read is not known either.
+        Assert.Contains(Empty("filter.lfs.process"), GitTrust.Overrides(GitTrust.Inside("gone", [GitTrust.NotRead]), ["lfs"]));
+        // Hooks and known programs alone leave the user's filters running: nothing unknown is there for them to obey.
+        Assert.DoesNotContain(Empty("filter.lfs.process"), GitTrust.Overrides(["hook pre-push", "core.sshcommand"], ["lfs"]));
+    }
+
+    /// <summary>
+    /// Finding 3: git takes the first proxy command it reads, the repository's, so an empty one after it sets
+    /// nothing aside; the transport that would start it is refused instead. A proxy for http is set to nothing by
+    /// its name (finding 10).
+    /// </summary>
+    [Fact]
+    public void A_proxy_command_stops_the_git_transport_and_an_http_proxy_is_set_to_nothing()
+    {
+        Assert.Equal([Empty("core.gitProxy"), new GitSetting("protocol.git.allow", "never"), .. Careful], GitTrust.Overrides(["core.gitProxy"], []));
+        Assert.Equal([Empty("http.proxy"), Empty("http.https://a.example/.proxy"), Empty("remote.origin.proxy"), .. Careful],
+            GitTrust.Overrides(["http.proxy", "http.https://a.example/.proxy", "remote.origin.proxy"], ["lfs"]));
+        Assert.True(GitTrust.NamesAProxy("HTTP.https://a.example/.Proxy"));
+        Assert.False(GitTrust.NamesAProxy("http.proxyAuthMethod"));
     }
 
     [Fact]
-    public void An_untrusted_repository_runs_git_with_each_program_set_to_nothing()
+    public void The_filters_git_knows_are_those_of_every_file_each_once()
     {
-        Assert.Equal(["-c", "diff.pdf.textconv=", "-c", "core.sshCommand=", "-c", "core.hooksPath=NUL"], GitTrust.Overrides(["diff.pdf.textconv", "hook pre-commit", "core.sshCommand"]));
-        Assert.Empty(GitTrust.Overrides([]));
+        const string listed = "system\tfilter.lfs.clean\nsystem\tfilter.lfs.smudge\nsystem\tfilter.lfs.process\nsystem\tfilter.lfs.required\nglobal\tfilter.Crypt.Smudge\nlocal\tfilter.a=b.clean\nlocal\tfilter.dotted.name.process\nlocal\tfilter.only.required\nlocal\tcore.bare\n";
+        Assert.Equal(["lfs", "Crypt", "a=b", "dotted.name"], GitTrust.Filters(listed));
+        Assert.Empty(GitTrust.Filters(string.Empty));
+    }
+
+    /// <summary>
+    /// Every command keeps the file monitor and the ext transport off, and git's automatic maintenance (finding
+    /// 2: it runs the program of gc.recentObjectsHook, which an empty value does not set aside). What is set
+    /// aside for a repository is no argument (finding 3): it is in the environment.
+    /// </summary>
+    [Fact]
+    public void Every_command_keeps_the_file_monitor_the_ext_transport_and_automatic_maintenance_off()
+    {
+        var command = GitRunner.Command(@"C:\repo", ["status"]);
+        Assert.Equal(
+            ["-C", @"C:\repo", "-c", "core.quotepath=false", "-c", "color.ui=never", "-c", "core.fsmonitor=false", "-c", "protocol.ext.allow=never", "-c", "maintenance.auto=false", "-c", "gc.auto=0", "status"],
+            command);
     }
 
     [Fact]
-    public void Every_command_keeps_the_file_monitor_and_the_ext_transport_off()
+    public void What_is_set_aside_goes_into_the_environment_after_what_the_user_has_there()
     {
-        var command = GitRunner.Command(@"C:\repo", ["status"], ["-c", "core.sshCommand="]);
-        Assert.Equal(["-C", @"C:\repo", "-c", "core.quotepath=false", "-c", "color.ui=never", "-c", "core.fsmonitor=false", "-c", "protocol.ext.allow=never", "-c", "core.sshCommand=", "status"], command);
+        var environment = new Dictionary<string, string?>();
+        GitRunner.SetOverrides(environment, []);
+        Assert.Empty(environment);
+
+        GitRunner.SetOverrides(environment, [new GitSetting("filter.a=b.clean", string.Empty), new GitSetting("core.hooksPath", "NUL")]);
+        Assert.Equal("2", environment["GIT_CONFIG_COUNT"]);
+        Assert.Equal("filter.a=b.clean", environment["GIT_CONFIG_KEY_0"]);
+        Assert.Equal(string.Empty, environment["GIT_CONFIG_VALUE_0"]);
+        Assert.Equal("core.hooksPath", environment["GIT_CONFIG_KEY_1"]);
+        Assert.Equal("NUL", environment["GIT_CONFIG_VALUE_1"]);
+
+        // The user's own, set outside axKit, stay, and axGIT's come after them, so that they win.
+        var users = new Dictionary<string, string?> { ["GIT_CONFIG_COUNT"] = "1", ["GIT_CONFIG_KEY_0"] = "core.hooksPath", ["GIT_CONFIG_VALUE_0"] = "C:/mine" };
+        GitRunner.SetOverrides(users, [new GitSetting("core.hooksPath", "NUL")]);
+        Assert.Equal("2", users["GIT_CONFIG_COUNT"]);
+        Assert.Equal("C:/mine", users["GIT_CONFIG_VALUE_0"]);
+        Assert.Equal("NUL", users["GIT_CONFIG_VALUE_1"]);
     }
 
     // ---- The review of 2026-11-27: the work tree's own settings, the names that were missing, the submodules ----
@@ -77,11 +283,14 @@ public sealed class GitTrustTests
     [InlineData("remote.origin.receivepack")]
     [InlineData("remote.origin.vcs")]
     [InlineData("uploadpack.packObjectsHook")]
-    public void A_name_that_makes_git_run_a_program_is_one(string name) => Assert.True(GitTrust.RunsAProgram(name));
+    public void A_name_that_makes_git_run_a_program_is_one(string name)
+    {
+        Assert.True(GitTrust.RunsAProgram(name));
+        Assert.False(GitTrust.IsInert(name));
+    }
 
+    /// <summary>These run no program by their name, so the notice calls them settings axGIT does not know; each is a risk all the same.</summary>
     [Theory]
-    [InlineData("remote.origin.url")]
-    [InlineData("remote.origin.pushurl")]
     [InlineData("url.https://example.org/.insteadOf")]
     [InlineData("include.path")]
     [InlineData("includeIf.gitdir:C:/work/.path")]
@@ -89,10 +298,16 @@ public sealed class GitTrustTests
     [InlineData("gpg.ssh.allowedSignersFile")]
     [InlineData("diff.tool")]
     [InlineData("user.signingkey")]
-    // No command axGIT runs reaches these (GitTrust's regex says why), so they are not set aside.
     [InlineData("alias.co")]
     [InlineData("submodule.libs/zip.update")]
-    public void A_name_that_runs_no_program_in_axGITs_commands_is_none(string name) => Assert.False(GitTrust.RunsAProgram(name));
+    // Plain settings the older rule named as programs (every name under uploadpack and receivepack).
+    [InlineData("uploadpack.allowFilter")]
+    [InlineData("receivepack.denyCurrentBranch")]
+    public void A_name_that_is_no_program_by_its_name_is_not_called_one(string name)
+    {
+        Assert.False(GitTrust.RunsAProgram(name));
+        Assert.Equal([name], GitTrust.NotKnown(GitTrust.Risks(name + "\n", null)));
+    }
 
     [Fact]
     public void The_entries_of_the_index_that_are_another_repository_are_found()
@@ -104,6 +319,18 @@ public sealed class GitTrustTests
         Assert.Equal(["libs/zip", "vendor/a b\tc"], GitTrust.Links(index));
         Assert.Empty(GitTrust.Links(string.Empty));
         Assert.Equal(["ls-files", "--stage", "-z"], GitTrust.LinksArguments);
+    }
+
+    /// <summary>
+    /// Finding 4: a folder with a repository of its own that the index does not hold. git lists it as one entry
+    /// with a slash at its end, since it does not go into it; an untracked file never ends in one.
+    /// </summary>
+    [Fact]
+    public void The_untracked_folders_that_are_a_repository_of_their_own_are_found()
+    {
+        Assert.Equal(["ls-files", "--others", "--exclude-standard", "-z"], GitTrust.OthersArguments);
+        Assert.Equal(["vendor", "deep/in side/tool"], GitTrust.Nested("notes.txt\0vendor/\0src/new.cs\0deep/in side/tool/\0/\0"));
+        Assert.Empty(GitTrust.Nested(string.Empty));
     }
 
     [Fact]
@@ -142,27 +369,59 @@ public sealed class GitTrustTests
         var plain = Repository("plain");
         // A folder inside a repository that is not its modules folder is not looked into.
         Repository("plain", "objects", "not-one");
-        Assert.Equal([zip, inner, plain], GitTrust.ModuleFolders(temp.Path));
-        Assert.Empty(GitTrust.ModuleFolders(Path.Combine(temp.Path, "no-such-folder")));
+        var (found, tooDeep) = GitTrust.ModuleFolders(temp.Path);
+        Assert.Equal([zip, inner, plain], found);
+        Assert.Empty(tooDeep);
+        Assert.Empty(GitTrust.ModuleFolders(Path.Combine(temp.Path, "no-such-folder")).Found);
     }
 
     /// <summary>
-    /// A name found in a submodule is set to nothing once for every run, since the command line's settings reach
-    /// git's runs inside a submodule; a submodule's hook, and one whose settings could not be read, turn the hooks off.
+    /// The folders are followed a bounded number of levels down (the review's second pass: the walk had no end
+    /// but the disk's). What lies deeper is not passed over in silence: the folder where the walk stopped is
+    /// given, and the scan names it as not read.
+    /// </summary>
+    [Fact]
+    public void The_walk_through_the_submodules_folder_ends_at_its_depth_and_says_where()
+    {
+        using var temp = new TempFolder("axgit-deep");
+        var parts = Enumerable.Range(0, GitTrust.Deep + 2).Select(level => "d" + level).ToArray();
+        var deepest = Directory.CreateDirectory(Path.Combine([temp.Path, .. parts])).FullName;
+        File.WriteAllText(Path.Combine(deepest, "config"), string.Empty);
+        File.WriteAllText(Path.Combine(deepest, "HEAD"), string.Empty);
+        var (found, tooDeep) = GitTrust.ModuleFolders(temp.Path);
+        Assert.Empty(found);
+        Assert.Equal([Path.Combine([temp.Path, .. parts.Take(GitTrust.Deep)])], tooDeep);
+    }
+
+    /// <summary>
+    /// A name found in a submodule is set to nothing once for every run, since axGIT's settings reach git's runs
+    /// inside a submodule; a submodule's hook, and one whose settings could not be read, are named with it.
     /// </summary>
     [Fact]
     public void What_a_submodule_would_run_is_named_with_it_and_set_aside_with_the_rest()
     {
         var inside = GitTrust.Inside("libs/zip", ["core.sshCommand", "hook post-checkout"]);
         Assert.Equal(["submodule libs/zip: core.sshCommand", "submodule libs/zip: hook post-checkout"], inside);
+        Assert.Equal(inside, GitTrust.Programs(inside));
         Assert.Equal(
-            ["-c", "core.sshcommand=", "-c", "filter.x.smudge=", "-c", "core.hooksPath=NUL"],
-            GitTrust.Overrides(["core.sshcommand", "submodule libs/zip: core.sshcommand", "submodule libs/zip: filter.x.smudge", "submodule libs/zip: hook post-checkout"]));
+            [Empty("core.sshcommand"), Empty("filter.x.smudge"), .. Careful],
+            GitTrust.Overrides(["core.sshcommand", "submodule libs/zip: core.sshcommand", "submodule libs/zip: filter.x.smudge", "submodule libs/zip: hook post-checkout"], []));
         // A name's middle part is another name in other case, so both are set aside.
-        Assert.Equal(["-c", "diff.pdf.textconv=", "-c", "diff.PDF.textconv="], GitTrust.Overrides(["diff.pdf.textconv", "diff.PDF.textconv"]));
+        Assert.Equal([Empty("diff.pdf.textconv"), Empty("diff.PDF.textconv"), .. Careful], GitTrust.Overrides(["diff.pdf.textconv", "diff.PDF.textconv"], []));
         Assert.Equal(["diff.pdf.textconv", "diff.PDF.textconv"], GitTrust.Risks("local\tdiff.pdf.textconv\nlocal\tdiff.PDF.textconv\nworktree\tdiff.pdf.textconv\n", null));
-        Assert.Equal(["-c", "core.hooksPath=NUL"], GitTrust.Overrides(GitTrust.Inside("gone", [GitTrust.NotRead])));
+        Assert.Equal(GitTrust.Inside("gone", [GitTrust.NotRead]), GitTrust.NotKnown(GitTrust.Inside("gone", [GitTrust.NotRead])));
         // A trust is for exactly these: a submodule's risk is in the mark.
         Assert.NotEqual(GitTrust.Mark(["core.sshCommand"]), GitTrust.Mark(["core.sshCommand", .. inside]));
+    }
+
+    /// <summary>
+    /// A trust given before this rule stays good for a repository that holds nothing the older rule did not name:
+    /// the mark is of the same names, written the same way.
+    /// </summary>
+    [Fact]
+    public void The_mark_of_hooks_and_programs_is_what_it_was()
+    {
+        Assert.Equal("A233B165D8D6FC569F9D9A8C10FF20BEB2AE4D2D562C7ADA13685A0BED426A94", GitTrust.Mark(["core.hookspath", "hook pre-push"]));
+        Assert.Equal(GitTrust.Mark(["core.hookspath", "hook pre-push"]), GitTrust.Mark(GitTrust.Risks("local\tcore.hookspath\nlocal\tcore.bare\nlocal\tbranch.main.remote\n", null).Append("hook pre-push").ToList()));
     }
 }

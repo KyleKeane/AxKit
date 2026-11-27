@@ -35,7 +35,22 @@ internal sealed class TempFolder : IDisposable
     {
         try
         {
-            Directory.Delete(Path, recursive: true);
+            try
+            {
+                Directory.Delete(Path, recursive: true);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // A read-only file stops the delete, and git writes every object so: the tests that ran git
+                // left their folders behind (28 of one test class's were found, review of 2026-11-27). The
+                // mark is taken off every file, and the folder deleted again.
+                foreach (var file in Directory.EnumerateFiles(Path, "*", SearchOption.AllDirectories))
+                {
+                    System.IO.File.SetAttributes(file, FileAttributes.Normal);
+                }
+
+                Directory.Delete(Path, recursive: true);
+            }
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {

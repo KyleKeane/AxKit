@@ -162,7 +162,7 @@ internal static class Program
         // Outside call, program, gh: reads the open issues of the reports repository from GitHub, with their bodies,
         // under the maintainer's own sign-in to gh; the sealed bodies are opened on this computer.
         var result = ProcessRun.Run(start, [], TimeSpan.FromSeconds(60));
-        if (result.TimedOut || result.ExitCode != 0)
+        if (result.Stopped || result.TimedOut || result.ExitCode != 0)
         {
             throw new InvalidOperationException("GitHub could not be asked through gh: " + (result.TimedOut ? "it took too long" : result.Error.Trim()));
         }

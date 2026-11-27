@@ -48,11 +48,29 @@ public sealed partial class PassForm : ItemForm
     private bool _backedUp;
 
     /// <summary>
-    /// Counts the unlocks, the locks and the databases opened: what the tool answers is taken only while this is
-    /// what it was when the tool was asked (<c>Cli</c>, <c>ReadEntry</c>, the password's Generate), so that nothing
-    /// of a database reaches the window, a field or the clipboard after the lock (PW-4.3).
+    /// Counts the unlocks asked for and made, the locks (Windows' own too, whatever the window's state) and the
+    /// databases opened: what the tool answers is taken only while this is what it was when the tool was asked, so
+    /// that nothing of a database reaches the window, a field or the clipboard after the lock (PW-4.3). The one
+    /// place that compares it is <see cref="Tool"/>, which every wait of this window goes through.
     /// </summary>
     private int _unlock;
+
+    /// <summary>
+    /// The one way this window waits for work off its thread (KeePassXC's tool, a backup's copy): the answer, or
+    /// null when the window was locked, unlocked again, pointed at another database or closed while the work ran,
+    /// which is an answer for a state that is gone and is dropped. The review's second pass of 2026-11-27: the
+    /// count was compared in three places by hand, and the unlock itself and the new database were outside it,
+    /// so the password of one database, answered late, opened it under the unlock notice of another, and an
+    /// unlock answered after Windows locked left the database open. With one way to wait there is no place to
+    /// forget the comparison; <c>PassWindowTests</c> holds that no wait goes around it.
+    /// </summary>
+    private async Task<T?> Tool<T>(Func<T> work)
+        where T : class
+    {
+        var unlock = _unlock;
+        var result = await Task.Run(work);
+        return unlock == _unlock && !IsDisposed ? result : null;
+    }
 
     /// <summary>Whether KeePassXC's tool said, at this unlock or the last refresh, that the database has a Recycle Bin (PW-6.4, <see cref="PassBin.IsOn"/>).</summary>
     private bool _binOn;
@@ -61,7 +79,7 @@ public sealed partial class PassForm : ItemForm
     private string? _binSeen;
 
     /// <summary>The group axPass takes for the Recycle Bin (<see cref="PassBin.Known"/>); null while it is not known, and while locked.</summary>
-    private string? Bin => _tree is null ? null : PassBin.Known(_binOn, _tree, _binSeen);
+    private string? Bin => _tree is null ? null : PassBin.Known(_tree, _binSeen);
 
     public PassForm(string? path, PassSettings settings, string? settingsError)
         : base(AxPassApp.Name, settings, PassSettings.DefaultPath, settingsError)
@@ -237,6 +255,9 @@ public sealed partial class PassForm : ItemForm
 
         BeginInvoke(() =>
         {
+            // Counted whatever the window's state: an unlock the tool is still answering must not open the
+            // database after Windows locked (while it ran there was no password yet, and nothing was done).
+            _unlock++;
             if (_password is not null)
             {
                 Log.Info($"Locked: {reason}");
@@ -357,9 +378,7 @@ public sealed partial class PassForm : ItemForm
 
         try
         {
-            var unlock = _unlock;
-            var result = await Task.Run(() => KeePassCli.Run(cli, KeePassCli.On(KeePassCliTexts.Show, database, null, path), [password]));
-            if (unlock != _unlock)
+            if (await Tool(() => KeePassCli.Run(cli, KeePassCli.On(KeePassCliTexts.Show, database, null, path), [password])) is not { } result)
             {
                 return;
             }
@@ -428,6 +447,12 @@ public sealed partial class PassForm : ItemForm
         });
     }
 
+    /// <summary>
+    /// PW-4.2: the database unlocked with the password typed. The unlock is counted as it is asked for, so that an
+    /// earlier one still being answered (of this database or another) is dropped, and each of the tool's two
+    /// answers is taken only while nothing else happened meanwhile (<see cref="Tool"/>): another database
+    /// chosen, a lock, Windows locking. Until the review's second pass of 2026-11-27 this was outside the count.
+    /// </summary>
     private async Task UnlockAsync(string database, string password)
     {
         if (ToolPath() is not { } cli)
@@ -435,8 +460,14 @@ public sealed partial class PassForm : ItemForm
             return;
         }
 
+        _unlock++;
         Announce("Unlocking " + PassTree.DatabaseName(database), true);
-        var result = await Task.Run(() => KeePassCli.Run(cli, KeePassCli.On(KeePassCliTexts.List, database, KeePassCliTexts.ListOptions), [password]));
+        if (await Tool(() => KeePassCli.Run(cli, KeePassCli.On(KeePassCliTexts.List, database, KeePassCliTexts.ListOptions), [password])) is not { } result)
+        {
+            NotUnlocked(database);
+            return;
+        }
+
         if (!result.Succeeded)
         {
             ShowUnlock(result.SaidNothing ? $"The password does not open {PassTree.DatabaseName(database)}." : result.Why);
@@ -445,7 +476,12 @@ public sealed partial class PassForm : ItemForm
 
         // PW-6.4: whether the database has a Recycle Bin, in the tool's own words; a tool that does not say so in the
         // words known leaves it not known, and a delete then asks first.
-        var info = await Task.Run(() => KeePassCli.Run(cli, KeePassCli.On(KeePassCliTexts.Info, database), [password]));
+        if (await Tool(() => KeePassCli.Run(cli, KeePassCli.On(KeePassCliTexts.Info, database), [password])) is not { } info)
+        {
+            NotUnlocked(database);
+            return;
+        }
+
         _unlock++;
         _database = database;
         _password = password;
@@ -462,11 +498,26 @@ public sealed partial class PassForm : ItemForm
         AnnounceLevel();
     }
 
+    /// <summary>
+    /// An unlock whose answer was dropped (<see cref="Tool"/>): when this database is still the window's and locked,
+    /// with no notice showing, which is Windows having locked meanwhile, the unlock notice comes back and says so,
+    /// for the user to find on return. After another database was chosen, or Ctrl+L, a notice shows already.
+    /// </summary>
+    private void NotUnlocked(string database)
+    {
+        if (!IsDisposed && _password is null && _database == database && !NoticeOpen)
+        {
+            ShowUnlock("Not unlocked: the window was locked while KeePassXC's tool was answering. Type the master password again.");
+        }
+    }
+
     /// <summary>Ctrl+L (PW-4.3): the password and everything read dropped, the unlock notice shown.</summary>
     private void Lock()
     {
         if (_password is null)
         {
+            // Locked already; an unlock still being answered is dropped, since Lock was asked for after it.
+            _unlock++;
             if (_database is not null)
             {
                 ShowUnlock(null);
@@ -511,12 +562,14 @@ public sealed partial class PassForm : ItemForm
     {
         var before = _tree;
         // Whether the database has a Recycle Bin is asked again too (PW-6.4): KeePassXC's own window may have changed it.
-        if (await Cli(KeePassCliTexts.Info, null) is not { } info)
+        // A tool that does not answer that leaves it not known to be on, as at the unlock, and the list is read
+        // all the same (the review's second pass: F5 stopped there, where the unlock went on).
+        if (await Ran(KeePassCliTexts.Info, null) is not { } info)
         {
             return;
         }
 
-        _binOn = PassBin.IsOn(info.Output);
+        _binOn = info.Succeeded && PassBin.IsOn(info.Output);
         await ReloadAsync();
         if (!ReferenceEquals(before, _tree))
         {
@@ -538,6 +591,27 @@ public sealed partial class PassForm : ItemForm
     /// and <paramref name="input"/> after it; null after saying why it did not run or failed.
     /// </summary>
     private async Task<CliResult?> Cli(string command, IEnumerable<string>? options, string[]? rest = null, string[]? input = null)
+    {
+        if (await Ran(command, options, rest, input) is not { } result)
+        {
+            return null;
+        }
+
+        if (!result.Succeeded)
+        {
+            Announce(result.Why, true);
+            return null;
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// <see cref="Cli"/> without the last step: the tool's answer whether it succeeded or not, for the one caller
+    /// that goes on after a failure (F5's question about the Recycle Bin); null after saying why it did not run,
+    /// and, in silence, for an answer that came back after a lock.
+    /// </summary>
+    private async Task<CliResult?> Ran(string command, IEnumerable<string>? options, string[]? rest = null, string[]? input = null)
     {
         if (_password is not { } password || _database is not { } database)
         {
@@ -565,7 +639,12 @@ public sealed partial class PassForm : ItemForm
                 // PW-4.5: the file as it was, copied before the first change after unlocking; no change without it.
                 try
                 {
-                    await Task.Run(() => Backups.Make(database, DateTime.Now));
+                    // Locked while the copy was made: the change does not run after the lock.
+                    if (await Tool(() => Backups.Make(database, DateTime.Now)) is null)
+                    {
+                        return null;
+                    }
+
                     _backedUp = true;
                 }
                 catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
@@ -575,24 +654,11 @@ public sealed partial class PassForm : ItemForm
                 }
             }
 
-            var unlock = _unlock;
-            var result = await Task.Run(() => KeePassCli.Run(cli, KeePassCli.On(command, database, options, rest ?? []), [password, .. input ?? []]));
             // PW-4.3 (the review of 2026-11-27): an answer that comes after the window locked, or after another
-            // database was opened or this one unlocked again, is dropped here, for every command: until then a
+            // database was opened or this one unlocked again, is dropped (Tool), for every command: until then a
             // password asked for just before the lock was put on the clipboard after it, where the lock's own
             // clearing had already passed.
-            if (unlock != _unlock)
-            {
-                return null;
-            }
-
-            if (!result.Succeeded)
-            {
-                Announce(result.Why, true);
-                return null;
-            }
-
-            return result;
+            return await Tool(() => KeePassCli.Run(cli, KeePassCli.On(command, database, options, rest ?? []), [password, .. input ?? []]));
         }
         finally
         {
@@ -611,8 +677,11 @@ public sealed partial class PassForm : ItemForm
 
         try
         {
-            var copy = await Task.Run(() => Backups.Make(database, DateTime.Now));
-            Announce($"Backed up: {Path.GetFileName(copy)}, in {Path.GetFileName(Backups.FolderFor(database))}", true);
+            // The copy is made either way; its name is said only while the window is as it was when it was asked for.
+            if (await Tool(() => Backups.Make(database, DateTime.Now)) is { } copy)
+            {
+                Announce($"Backed up: {Path.GetFileName(copy)}, in {Path.GetFileName(Backups.FolderFor(database))}", true);
+            }
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {

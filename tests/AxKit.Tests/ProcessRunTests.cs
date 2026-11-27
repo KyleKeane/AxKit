@@ -18,7 +18,7 @@ public class ProcessRunTests
         var result = await ProcessRun.RunAsync(start, [], TimeSpan.FromSeconds(20));
         Assert.False(result.TimedOut);
         Assert.Equal(3, result.ExitCode);
-        Assert.Equal("hello", result.Output.Trim());
+        Assert.Equal("hello", result.Output?.Trim());
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public class ProcessRunTests
         var result = await ProcessRun.RunAsync(start, [.. Enumerable.Repeat(line, 200)], TimeSpan.FromSeconds(20));
         Assert.False(result.TimedOut);
         Assert.Equal(5, result.ExitCode);
-        Assert.Equal("refused", result.Output.Trim());
+        Assert.Equal("refused", result.Output?.Trim());
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class ProcessRunTests
         var start = new ProcessStartInfo(System32("findstr.exe"));
         start.ArgumentList.Add("x");
         var result = await ProcessRun.RunAsync(start, ["x one", "two", "x three"], TimeSpan.FromSeconds(20));
-        Assert.Equal(["x one", "x three"], result.Output.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
+        Assert.Equal(["x one", "x three"], (result.Output ?? string.Empty).Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
     }
 
     [Fact]
@@ -75,7 +75,8 @@ public class ProcessRunTests
         var result = await ProcessRun.RunAsync(start, [], TimeSpan.FromSeconds(2));
         Assert.True(result.TimedOut);
         Assert.False(result.Finished);
-        Assert.Equal("so far", result.Output.Trim());
+        Assert.Null(result.Output);
+        Assert.Equal("so far", result.Printed.Trim());
         Assert.Equal("oops", result.Error.Trim());
     }
 
@@ -92,7 +93,7 @@ public class ProcessRunTests
         Assert.True(result.TimedOut);
         Assert.True(result.Finished);
         Assert.Equal(4, result.ExitCode);
-        Assert.Equal("early", result.Output.Trim());
+        Assert.Equal("early", result.Output?.Trim());
         Assert.True(watch.Elapsed < TimeSpan.FromSeconds(15));
         Assert.False(result.Stopped);
     }
@@ -107,13 +108,44 @@ public class ProcessRunTests
 
     /// <summary>
     /// A run ended at its time limit gives exit code -1 and a part of the output, which no caller may read as a
-    /// result (review of 2026-11-27: git's runner read an empty output with exit code 0 as an empty status). Read
-    /// off the sources, as <see cref="SecondWindowTests"/> reads them: every file under <c>src</c> and <c>tools</c>
-    /// that runs a program through <see cref="ProcessRun"/> asks the result whether it was stopped, or whether its
-    /// time ran out, in that file.
+    /// result (review of 2026-11-27: git's runner read an empty output with exit code 0 as an empty status). The
+    /// compiler holds the callers (the review's second pass: a test that read the sources for the word "Stopped"
+    /// held nothing, since the word anywhere in a file satisfied it): the output of a stopped run is null, so a
+    /// caller reads <see cref="ProcessResult.Output"/> only after it asked <see cref="ProcessResult.Stopped"/>,
+    /// and a caller that reads it unasked does not build.
     /// </summary>
     [Fact]
-    public void Every_caller_asks_whether_the_run_was_stopped()
+    public void The_output_of_a_run_ended_at_its_limit_is_no_output_and_what_it_printed_is_kept_apart()
+    {
+        var stopped = new ProcessResult(-1, "part", "complaint", TimedOut: true, Finished: false);
+        Assert.Null(stopped.Output);
+        Assert.Equal("part", stopped.Printed);
+        Assert.Equal("complaint", stopped.Error);
+        Assert.NotEqual(0, stopped.ExitCode);
+
+        // Finished, with its output held open by a program it started: the output is whole.
+        var held = new ProcessResult(0, "all", string.Empty, TimedOut: true, Finished: true);
+        Assert.Equal("all", held.Output);
+        Assert.Equal("all", held.Printed);
+        Assert.Equal("all", new ProcessResult(0, "all", string.Empty, TimedOut: false, Finished: true).Output);
+    }
+
+    /// <summary>The files that take what a run printed whatever became of it, each for its reason.</summary>
+    private static readonly string[] MayTakeThePart =
+    [
+        // git's own result carries the stop on (GitResult.TimedOut, never Ok), and the window shows the part as git's words.
+        Path.Combine("src", "AxGit.Core", "GitRunner.cs"),
+        // An action's output is kept for the user to read, said as what the program wrote until its limit.
+        Path.Combine("src", "AxTask", "TaskForm.Actions.cs"),
+        Path.Combine("src", "AxKit.Core", "ProcessRun.cs"),
+    ];
+
+    /// <summary>
+    /// The one way around the compiler's hold is <see cref="ProcessResult.Printed"/>, the part of a stopped run:
+    /// it is taken in the places listed with their reasons and nowhere else under <c>src</c> and <c>tools</c>.
+    /// </summary>
+    [Fact]
+    public void What_a_stopped_run_printed_is_taken_only_where_that_is_meant()
     {
         var root = SourceTexts.RepositoryRoot();
         var separator = Path.DirectorySeparatorChar;
@@ -124,20 +156,18 @@ public class ProcessRunTests
             {
                 var relative = Path.GetRelativePath(root, file);
                 if (relative.Contains($"{separator}obj{separator}", StringComparison.Ordinal) || relative.Contains($"{separator}bin{separator}", StringComparison.Ordinal)
-                    || relative == Path.Combine("src", "AxKit.Core", "ProcessRun.cs"))
+                    || MayTakeThePart.Contains(relative))
                 {
                     continue;
                 }
 
-                var text = File.ReadAllText(file);
-                if ((text.Contains("ProcessRun.RunAsync(", StringComparison.Ordinal) || text.Contains("ProcessRun.Run(", StringComparison.Ordinal))
-                    && !text.Contains(".Stopped", StringComparison.Ordinal) && !text.Contains(".TimedOut", StringComparison.Ordinal))
+                if (File.ReadAllText(file).Contains(".Printed", StringComparison.Ordinal))
                 {
                     offenders.Add(relative);
                 }
             }
         }
 
-        Assert.True(offenders.Count == 0, "A program run through ProcessRun whose result is read without asking Stopped (or TimedOut): a run ended at its limit would be taken for a result: " + string.Join(", ", offenders));
+        Assert.True(offenders.Count == 0, "What a run printed taken without asking whether it was stopped (ProcessResult.Printed); read Output after asking Stopped, or list the file here with its reason: " + string.Join(", ", offenders));
     }
 }

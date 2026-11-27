@@ -22,7 +22,7 @@ installed; axPass never decrypts the file itself.
 - The notice "Unlock mine" asks the master password. Its field hides what you type; NVDA calls it protected.
 - A wrong password says "The password does not open mine" and asks again.
 - Ctrl+L locks: axPass forgets the master password and everything it read, and asks again. It also locks after ten
-  minutes without a key or a mouse move anywhere in Windows (Options, Lock after), when you lock Windows (Windows+L) or switch user, when the computer goes to sleep, and when the window closes.
+  minutes without a key or a mouse move anywhere in Windows (Options, Lock after), when you lock Windows (Windows+L) or switch user, when the computer goes to sleep, and when the window closes. A lock that comes while the database is still being unlocked wins: the database stays locked, and the unlock notice says "Not unlocked: the window was locked while KeePassXC's tool was answering".
 
 ## The window
 
@@ -75,8 +75,10 @@ in a password field rather than in the notes.
 - What axPass says after Delete is what it then finds in the database: "Moved Gmail to the Recycle Bin; Ctrl+Z
   brings it back", or, in a database whose Recycle Bin is turned off, "Deleted Gmail for good: it went to no
   Recycle Bin". KeePassXC's tool says whether a database has a Recycle Bin and never which group it is, so where
-  axPass cannot know what Delete will do it asks first, "Delete Gmail?", saying why, with Cancel the default. In a
-  new database that is the first delete of an entry inside a group; after it axPass knows the group.
+  axPass cannot know what Delete will do it asks first, "Delete Gmail?", saying why, with Cancel the default. That
+  is the first delete of an entry inside a group after each unlock: axPass takes no group for the Recycle Bin by
+  its name, only the group it has seen a deleted entry arrive in, and after that first delete it knows the group
+  until the window locks. An entry at the top of the database is deleted without the question.
 - Ctrl+Z brings an entry back from the Recycle Bin only while it is the one entry of its name there: the tool finds
   an entry by its name alone and would move the older one. When a second entry of a name arrives there, axPass
   says that Ctrl+Z cannot bring it back; KeePassXC's own window moves it back.

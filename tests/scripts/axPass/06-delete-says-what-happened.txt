@@ -99,3 +99,30 @@ refuse list Bank one
 wait 1100
 type recycle
 expect focus Recycle Bin, group
+
+# Check: After a lock, a group is not taken for the Recycle Bin by its name
+# PW-6.4b (the review's second pass of 2026-11-27): the bin is known by a deleted entry seen to arrive in it since
+# the unlock, and in no other way. The database has a group called Recycle Bin and says it has a bin; until then
+# that was enough, and with the real bin under another name beside such a group an entry in the real bin was
+# deleted for good without the question. So after a lock and a new unlock, Delete in a group asks first again.
+keys ctrl+l
+expect said ! Locked
+expect state Unlock test
+type test-master-1
+keys enter
+expect said ! test, 3 items, Email, group, 1 item
+wait 500
+keys enter
+expect said ! Email, 1 item, Gmail
+keys delete
+expect state "notice":"Delete Gmail?"
+expect state This database has a Recycle Bin, but KeePassXC
+wait 1200
+keys enter
+expect state "notice":null
+expect list Gmail
+
+# Check: Refresh reads the list again after the lock and the unlock
+# F5 asks the tool about the Recycle Bin and then for the list; the list is read whatever the first answer is.
+keys f5
+expect said ! Refreshed: Email, 1 item

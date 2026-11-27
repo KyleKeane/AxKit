@@ -57,7 +57,15 @@ forgets the master password and shows only the notice that asks for it.
   locked, after another database was opened or after this one was unlocked again is dropped where every run comes
   back (`Cli`, the entry's read, the password's Generate), each by the count of unlocks it started under. Until
   then a password asked for with Ctrl+C just before the lock was put on the clipboard after it, where the lock's
-  own clearing had already passed, and a generated password could land in the unlock notice's field.
+  own clearing had already passed, and a generated password could land in the unlock notice's field. The review's
+  second pass of the same day: the unlock itself and a new database's making were outside that count. With the
+  password of one database typed and another database opened (Ctrl+O) while the tool worked, the first one's
+  answer made it the window's under the other's unlock notice; and Windows locking during an unlock did nothing,
+  since no password was held yet, so the database was open afterwards. Now the window waits for the tool, and for
+  a backup's copy, in one way (`PassForm.Tool`), which gives no answer when the count has moved; an unlock is
+  counted as it is asked for; and Windows' lock counts whatever the window's state. An unlock whose answer was
+  dropped by a lock shows the unlock notice again, with "Not unlocked: the window was locked while KeePassXC's
+  tool was answering. Type the master password again." `PassWindowTests` holds that no wait goes around the one way.
 - **PW-4.4** axPass never keeps a copy of the database or of any entry on disk but the backups of PW-4.5, which are
   the encrypted file itself.
 - **PW-4.5 Backups** (asked 2026-10-24): before the first change after each unlock, the `.kdbx` file is copied as it
@@ -113,10 +121,15 @@ forgets the master password and shows only the notice that asks for it.
   `-q`. Until this review axPass took the top group named "Recycle Bin" for the bin, so that in a database with
   the bin off, or with its bin under another name (made by a KeePassXC in another language), Delete removed an
   entry for good under "Moved … to the Recycle Bin; Ctrl+Z brings it back". Now:
-  - *The bin is known* when `db-info`, read at each unlock and each F5, has the tool's line for it and the top
-    group of the tool's own name for the bin ("Recycle Bin") is there; or when axPass has seen a deleted entry
-    arrive in a group since the unlock, whatever that group is called. A tool that words its line otherwise makes
-    axPass know less and ask more, never the other way.
+  - *The bin is known* in one way: axPass has seen a deleted entry arrive in a group since the unlock, whatever
+    that group is called. (Until the review's second pass the top group of the tool's own name for the bin,
+    "Recycle Bin", was taken too when `db-info` said the database has a bin; with the real bin under another name
+    beside a group of that name, an entry in the real bin was then deleted for good without the question.) So
+    after each unlock the first delete of an entry inside a group asks, and from then on the group it arrived in
+    is the bin. Whether the database has a bin at all is `db-info`'s line, read at each unlock and each F5; an F5
+    whose `db-info` fails goes on to read the list, with the bin not known to be on, as an unlock does (F5
+    stopped there until the second pass). A tool that words its line otherwise makes axPass know less and ask
+    more, never the other way.
   - *A delete whose end is not known asks first*, Cancel the default: "Delete <name>?" with "This database has a
     Recycle Bin, but KeePassXC's tool does not say which group it is. If <name> is in it already, it is deleted
     for good, and nothing brings it back." or, where the tool did not say the database has one, "KeePassXC's tool

@@ -154,7 +154,7 @@ The keys here are the defaults; a user's own `app-keys.json` may give an app ano
 - Code: `src/AxGit` (the window), `src/AxGit.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxGit.Tests`.
 - Documents: `docs/axGIT/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axGIT/`, 7 scripts (their workflows are in `docs/axKit/workflows/axGIT.md`).
+- Automated checks: `tests/scripts/axGIT/`, 8 scripts (their workflows are in `docs/axKit/workflows/axGIT.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axGIT.ps1`, or `run.ps1 -App git`.
 
 ### axPass
@@ -202,5 +202,5 @@ The keys here are the defaults; a user's own `app-keys.json` may give an app ano
 - Code: `src/AxMCP` (the window), `src/AxMCP.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxMCP.Tests`.
 - Documents: `docs/axMCP/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axMCP/`, 4 scripts (their workflows are in `docs/axKit/workflows/axMCP.md`).
+- Automated checks: `tests/scripts/axMCP/`, 5 scripts (their workflows are in `docs/axKit/workflows/axMCP.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axMCP.ps1`, or `run.ps1 -App mcpclient`.

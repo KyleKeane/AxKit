@@ -548,12 +548,10 @@ public sealed partial class PassForm
                     return;
                 }
 
-                var unlock = _unlock;
-                var result = await Task.Run(() => KeePassCli.Run(cli, KeePassCliTexts.GenerateArguments, []));
                 // The password goes into the field it was asked for and no other (PW-4.3; the review of
-                // 2026-11-27): after a lock the field shown is the master password's, and after Escape and another
-                // command it may be one that shows what it holds.
-                if (unlock != _unlock || !NoticeOpen || !ReferenceEquals(Overlay.Shown, asked))
+                // 2026-11-27): after a lock the field shown is the master password's (Tool drops the answer), and
+                // after Escape and another command it may be one that shows what it holds.
+                if (await Tool(() => KeePassCli.Run(cli, KeePassCliTexts.GenerateArguments, [])) is not { } result || !NoticeOpen || !ReferenceEquals(Overlay.Shown, asked))
                 {
                     return;
                 }
@@ -806,7 +804,13 @@ public sealed partial class PassForm
                                 File.Delete(path);
                             }
 
-                            var result = await Task.Run(() => KeePassCli.Run(cli, KeePassCli.On(KeePassCliTexts.CreateDatabase, path, [KeePassCliTexts.PasswordPromptOption]), [first, first]));
+                            // The database is made either way; it becomes the window's only while nothing else was
+                            // asked for meanwhile (another database opened, a lock): Tool gives no answer then.
+                            if (await Tool(() => KeePassCli.Run(cli, KeePassCli.On(KeePassCliTexts.CreateDatabase, path, [KeePassCliTexts.PasswordPromptOption]), [first, first])) is not { } result)
+                            {
+                                return;
+                            }
+
                             if (!result.Succeeded)
                             {
                                 Fail(PassTree.DatabaseName(path) + " could not be made: " + result.Why);

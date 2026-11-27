@@ -13,16 +13,31 @@ public static class ProcessEnd
     /// processes between: its parent, that one's parent and so on, each asked of <paramref name="parentOf"/>
     /// (Windows keeps the id of the process that started each one; null where it cannot be asked). An id met twice
     /// ends the walk: Windows gives an ended process's id to a new one, so the ids can run in a circle.
+    ///
+    /// The id alone does not say who started a process (the review's second pass of 2026-11-27): the one that did
+    /// may have ended, and its id gone to a process started later, which then stood as an ancestor and had End
+    /// process tree refused on it wrongly. A process is started by one that was there before it, so each step of
+    /// the walk asks <paramref name="startedOf"/> for both times, and the walk ends at a parent that started after
+    /// its child: that is another process under an old id. Where a time cannot be asked (null) the id counts, the
+    /// careful way: End process tree is refused, and End process still ends the one process.
     /// </summary>
-    public static bool StartedBy(int process, int ancestor, Func<int, int?> parentOf)
+    public static bool StartedBy(int process, int ancestor, Func<int, int?> parentOf, Func<int, DateTime?> startedOf)
     {
         var seen = new HashSet<int> { process };
+        var child = process;
         for (var at = parentOf(process); at is { } id && seen.Add(id); at = parentOf(id))
         {
+            if (startedOf(id) is { } parentStarted && startedOf(child) is { } childStarted && parentStarted > childStarted)
+            {
+                return false;
+            }
+
             if (id == ancestor)
             {
                 return true;
             }
+
+            child = id;
         }
 
         return false;

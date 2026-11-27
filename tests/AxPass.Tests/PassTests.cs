@@ -54,15 +54,21 @@ public class PassTests
 
         var withBin = PassTree.Parse(Listing);
         var without = PassTree.Parse("Top entry\r\nEmail/\r\nEmail/Gmail\r\nPapierkorb/\r\nPapierkorb/Old\r\n");
-        // On, and the group of the tool's own name is there: that group.
-        Assert.Equal("Recycle Bin", PassBin.Known(on: true, withBin, seen: null));
-        // The same group in a database that is not known to have a bin is a group like any other.
-        Assert.Null(PassBin.Known(on: false, withBin, seen: null));
-        // On, but no group of that name: not known which group it is, whatever the groups are called.
-        Assert.Null(PassBin.Known(on: true, without, seen: null));
+        // A group of the tool's own name for the bin is a group like any other until a deleted entry was seen to
+        // arrive in it (the review's second pass: with the real bin under another name beside it, an entry in
+        // the real bin was deleted for good without the question).
+        Assert.Null(PassBin.Known(withBin, seen: null));
+        Assert.Null(PassBin.Known(without, seen: null));
         // A deleted entry was seen to arrive in a group: that group, while it is there.
-        Assert.Equal("Papierkorb", PassBin.Known(on: false, without, seen: "Papierkorb"));
-        Assert.Equal("Recycle Bin", PassBin.Known(on: true, withBin, seen: "Papierkorb"));
+        Assert.Equal("Papierkorb", PassBin.Known(without, seen: "Papierkorb"));
+        Assert.Equal("Recycle Bin", PassBin.Known(withBin, seen: "Recycle Bin"));
+        Assert.Null(PassBin.Known(withBin, seen: "Papierkorb"));
+
+        // The case itself: the real bin is Papierkorb, beside a group called Recycle Bin, and nothing was seen
+        // yet. An entry in the real bin is not said to go to a bin: the delete asks first.
+        var both = PassTree.Parse("Recycle Bin/\r\nRecycle Bin/Notes\r\nPapierkorb/\r\nPapierkorb/Old\r\n");
+        var old = both.Nodes.Single(node => node.Path == "Papierkorb/Old");
+        Assert.Equal(DeleteFate.NotKnown, PassBin.Fate(true, PassBin.Known(both, seen: null), old));
     }
 
     [Fact]
@@ -342,7 +348,7 @@ public class PassTests
 
         // A new database has no group for the bin yet: on, and not known which group.
         var start = List();
-        Assert.Null(PassBin.Known(on: true, start, seen: null));
+        Assert.Null(PassBin.Known(start, seen: null));
         var first = start.Nodes.Single(node => node.Path == "Gmail");
         Assert.Equal(DeleteFate.Recycled, PassBin.Fate(true, null, first));
         Assert.Equal(DeleteFate.NotKnown, PassBin.Fate(true, null, start.Nodes.Single(node => node.Path == "Email/Gmail")));
@@ -351,7 +357,8 @@ public class PassTests
         var one = List();
         var moved = Assert.Single(PassBin.Outcome(start, one, [first]));
         Assert.Equal(new Removed(first, KeePassCliTexts.RecycleBin, Sole: true), moved);
-        Assert.Equal(KeePassCliTexts.RecycleBin, PassBin.Known(on: true, one, seen: null));
+        Assert.Null(PassBin.Known(one, seen: null));
+        Assert.Equal(KeePassCliTexts.RecycleBin, PassBin.Known(one, seen: moved.To));
 
         // A second entry of the same name: two in the bin, one path.
         var second = one.Nodes.Single(node => node.Path == "Email/Gmail");

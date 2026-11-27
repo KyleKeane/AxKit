@@ -1,0 +1,33 @@
+# Workflow: Stop a server that had started a program of its own
+# axMCP: what ends with a server (docs/axMCP/SPEC.md MP-2.3; the review's second pass of 2026-11-27). A server that
+# ends by itself when its input is closed ends alone: what it had started stays, as a browser it opened for a
+# sign-in would. Until then every Stop ended everything the server had ever started. The server is the fake of
+# 01-start with one line more: as it starts, it starts a second PowerShell, which waits for the file go.txt and then
+# writes left.txt; it gives up by itself after thirty seconds. The script stops the server, gives it its two
+# seconds, writes go.txt, and looks for left.txt: it is there only when the second program outlived the server.
+file home\AxKit\axMCP.json {"servers": [{"name": "leaver", "commandLine": "powershell -NoProfile -ExecutionPolicy Bypass -File leaver.ps1"}]}
+file leaver.ps1 Start-Process powershell -WindowStyle Hidden -ArgumentList '-NoProfile', '-Command', 'for ($i = 0; $i -lt 120 -and -not (Test-Path go.txt); $i++) { Start-Sleep -Milliseconds 250 }; if (Test-Path go.txt) { Set-Content left.txt alive }'\n[Console]::Error.WriteLine('axkitfake warns of nothing')\n$in = [Console]::In\n$out = [Console]::Out\nwhile ($true) {\n  $line = $in.ReadLine()\n  if ($null -eq $line) { break }\n  if ($line.Trim().Length -eq 0) { continue }\n  $m = $line | ConvertFrom-Json\n  if ($null -eq $m.id) { continue }\n  $r = $null\n  switch ($m.method) {\n    'initialize' { $r = '{"protocolVersion":"2025-06-18","capabilities":{"tools":{},"resources":{},"prompts":{}},"serverInfo":{"name":"fake","version":"1"}}' }\n    'tools/list' { $r = '{"tools":[{"name":"echo","description":"Says the text back. Nothing else.","inputSchema":{"type":"object","properties":{"text":{"type":"string","description":"What to say"},"loud":{"type":"boolean"}},"required":["text"]}}]}' }\n    'tools/call' { $t = [string]$m.params.arguments.text; if ($m.params.arguments.loud) { $t = $t.ToUpper() }; $r = '{"content":[{"type":"text","text":"' + $t + '"}]}' }\n    'resources/list' { $r = '{"resources":[{"name":"readme","uri":"fake://readme","mimeType":"text/plain","description":"A greeting."}]}' }\n    'resources/templates/list' { $r = '{"resourceTemplates":[]}' }\n    'resources/read' { $r = '{"contents":[{"uri":"fake://readme","mimeType":"text/plain","text":"Hello from the fake server."}]}' }\n    'prompts/list' { $r = '{"prompts":[]}' }\n  }\n  if ($null -eq $r) { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"error":{"code":-32601,"message":"Method not found"}}') } else { $out.WriteLine('{"jsonrpc":"2.0","id":' + $m.id + ',"result":' + $r + '}') }\n}\n
+
+start mcpclient {temp}
+type leaver
+expect focus leaver, stdio, stopped
+keys right
+# MP-2.1a: the agreement first; the box, then Connect.
+expect said Before axMCP starts leaver
+keys tab
+expect said I understand that axMCP
+keys space
+expect said ! checked
+keys enter
+expect said ! leaver, running, Tools 1, Resources 1, Prompts 0
+
+# Check: A server that ends by itself leaves what it had started running
+# MP-2.3: Stop closes the server's input, and this server ends at that. The program it started is not ended with it.
+keys ctrl+shift+s
+expect said ! Stopped leaver
+# The server's two seconds, after which a server that had not ended is ended with all it started.
+wait 3000
+file go.txt go
+wait 3000
+run cmd /c if exist left.txt (exit 0) else (exit 1)
+close

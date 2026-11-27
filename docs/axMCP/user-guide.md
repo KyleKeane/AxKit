@@ -33,7 +33,9 @@ environment variables (never their values) and its state.
   Tools 8, Resources 2, Prompts 0".
 - Right on Tools, Resources or Prompts shows its list. Left or Backspace goes back up; the server keeps running.
 - Ctrl+Shift+S stops the server of the level you are in, or the one selected at the top. Closing the window stops
-  every server.
+  every server. A server that ends by itself when it is told to stop ends alone: what it had started, a browser it
+  opened for you to sign in for example, stays open. A server that does not end within two seconds is ended with
+  everything it started. Whatever a server left running ends when you close the axMCP window.
 - A remote server (http or sse in Claude Code's file) is listed and not started in this version; Right says so.
 
 ## Tools

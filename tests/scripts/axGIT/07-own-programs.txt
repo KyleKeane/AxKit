@@ -60,7 +60,7 @@ close
 file repo\.git\hooks\pre-commit #!/bin/sh\nexit 0
 start git {temp}\repo
 expect state "notice":"This repository runs programs of its own"
-expect state What this repository would run has changed since you trusted it, so it is not trusted now. Its settings or hooks name programs git would run: hook post-checkout, hook pre-commit.
+expect state What axGIT finds in this repository differs from what you trusted, so it is not trusted now. Its settings or hooks name programs git would run: hook post-checkout, hook pre-commit.
 wait 1200
 keys enter
 expect state "notice":null

@@ -134,6 +134,11 @@ with Enter; a prompt is filled and fetched like a tool.
   starts are in a Windows job of their own from the start (`AxKit.Core/ChildJob`), so that when the window
   closes, or axKit ends in any other way, Windows ends whatever of them is still there: a server that ignores
   its closed input no longer stays behind, and has until axMCP's process is gone rather than two seconds.
+  **What ends with a server** (the review's second pass of 2026-11-27): a server that ends by itself when its
+  input is closed, as a server should, ends alone, and what it had started stays, a browser it opened for a
+  sign-in among it. A server that does not end in its two seconds is ended with everything it started. What is
+  left of any server ends when the axMCP window closes. Until the second pass every Stop ended everything the
+  server had ever started, also for a server that had ended by itself.
 - MP-2.4 Every request waits at most 60 s; after that the call is abandoned with "No answer from axkit in 60 s", a
   `notifications/cancelled` is sent, and the server is left running. One call at a time, whatever the request (a
   tool's call, a prompt, a resource's read): a second one meanwhile says "A call is running; it is given 60

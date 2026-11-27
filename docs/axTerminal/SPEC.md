@@ -127,7 +127,9 @@ gets its page shown in place of the transcript while it holds the screen, and no
   parts as the process's own arguments, one each, whatever they look like; the one folder stands before the option
   (`HandedCommand.Parse`). The window makes one line of them for the shell it starts, each part quoted by that
   shell's rule so that it stays one part (`HandedCommand.Line` over the bundle's `ShellQuote`: PowerShell, single
-  quotes with a single quote doubled; Command Prompt, a part with a character cmd.exe acts on refused; Git Bash, a
+  quotes with a single quote doubled, and three kinds of part refused that Windows PowerShell 5.1 does not hand
+  to a program whole whatever the quotes, found by a real run on 2026-11-27: a part with a double quote, an empty
+  one, one with a space and a backslash at its end; Command Prompt, a part with a character cmd.exe acts on refused; Git Bash, a
   custom shell and a shell of the user's own have no rule; a line break in a part refused for every shell), puts
   the line into the command field with the caret after it, and sends nothing: Enter is the user's. **The caution
   is the field's own name** while the line stands in it as it came (2026-11-22, `HandedCommand.FieldName`):

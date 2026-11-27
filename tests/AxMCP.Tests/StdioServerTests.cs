@@ -73,6 +73,52 @@ public sealed class StdioServerTests : IDisposable
         running.Dispose();
     }
 
+    /// <summary>The one ping this test's server starts, known by a count no other test asks for.</summary>
+    private static System.Diagnostics.Process? LeftBehind() =>
+        System.Diagnostics.Process.GetProcessesByName("PING").FirstOrDefault(process => AxKit.Core.ThisProgram.CommandLineOf((uint)process.Id)?.Contains("-n 47 ", StringComparison.Ordinal) == true);
+
+    /// <summary>
+    /// MP-2.3 (the review's second pass of 2026-11-27): a server that ends by itself ends alone. What it started
+    /// stays, as a browser it opened for a sign-in would, through Stop and through the server's being let go;
+    /// until then every Stop ended everything the server had ever started. Here the server is a command that
+    /// starts a ping and ends at once.
+    /// </summary>
+    [Fact]
+    public async Task What_a_server_that_ended_by_itself_had_started_is_left_running()
+    {
+        var cmd = Path.Combine(Environment.SystemDirectory, "cmd.exe");
+        var server = new McpServer("leaves", ServerKind.Stdio, cmd, ["/d", "/c", "start /b ping -n 47 127.0.0.1 >nul"], new Dictionary<string, string>(), null, "test", _temp.Path, Own: true);
+        var running = StdioServer.Start(server, _temp.Path, _ => { });
+        System.Diagnostics.Process? left = null;
+        try
+        {
+            for (var tries = 0; tries < 200 && (left is null || !running.HasExited); tries++)
+            {
+                await Task.Delay(50);
+                left ??= LeftBehind();
+            }
+
+            Assert.True(running.HasExited, "The server did not end by itself");
+            Assert.NotNull(left);
+
+            running.Stop();
+            await running.Ending.WaitAsync(TimeSpan.FromSeconds(20));
+            running.Dispose();
+            await Task.Delay(1000);
+            Assert.False(left.HasExited, "What the server had started was ended with it, though the server ended by itself");
+        }
+        finally
+        {
+            // The test's own process, by its id; gone already when the assertion above failed.
+            if (left is { HasExited: false })
+            {
+                left.Kill();
+            }
+
+            left?.Dispose();
+        }
+    }
+
     [Fact]
     public void A_bare_name_is_found_in_the_PATH_s_full_folders_with_exe_then_cmd_then_bat()
     {

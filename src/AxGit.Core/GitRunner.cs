@@ -11,9 +11,18 @@ namespace AxGit.Core;
 /// and the run is never <see cref="Ok"/>. <see cref="OutputHeldOpen"/>: git itself finished, with its own exit code
 /// and all of its output, and only a program it started (a signing agent, a hook's daemon) kept the output open
 /// until the limit; the complaint says so after git's own.
+///
+/// What goes to the log or to the user is the complaint, <see cref="FirstLine"/> and <see cref="AllText"/>, and
+/// none of the three ever holds the sign-in of an address (<see cref="GitRemote.WithoutSignIn"/>; the review's second
+/// pass of 2026-11-27: git names a remote it does not know with its whole address, the user and the password in
+/// it, and the first line of a failed command is written to the log). <see cref="Output"/> is as git printed it,
+/// for the parsers and for a file's own text.
 /// </summary>
 public sealed record GitResult(int ExitCode, string Output, string Error, bool TimedOut = false, bool OutputHeldOpen = false)
 {
+    /// <summary>What git complained, without the sign-in of any address in it.</summary>
+    public string Error { get; init; } = GitRemote.WithoutSignIn(Error);
+
     /// <summary>git ran to its own end and gave exit code 0; never true for a run stopped at the time limit.</summary>
     public bool Ok => ExitCode == 0 && !TimedOut;
 
@@ -29,7 +38,7 @@ public sealed record GitResult(int ExitCode, string Output, string Error, bool T
                     var trimmed = line.Trim();
                     if (trimmed.Length > 0)
                     {
-                        return trimmed;
+                        return GitRemote.WithoutSignIn(trimmed);
                     }
                 }
             }
@@ -39,8 +48,11 @@ public sealed record GitResult(int ExitCode, string Output, string Error, bool T
     }
 
     /// <summary>Everything git said, the complaint first, for a notice.</summary>
-    public string AllText => string.Join("\n", new[] { Error.Trim(), Output.Trim() }.Where(text => text.Length > 0));
+    public string AllText => string.Join("\n", new[] { Error.Trim(), GitRemote.WithoutSignIn(Output.Trim()) }.Where(text => text.Length > 0));
 }
+
+/// <summary>One setting git is run with: its name as git lists it, and the value; an empty value sets most programs to nothing.</summary>
+public sealed record GitSetting(string Name, string Value);
 
 /// <summary>git is not on the PATH (SPEC.md AG-1.5).</summary>
 public sealed class GitNotFoundException(string message, Exception inner) : Exception(message, inner);
@@ -72,13 +84,16 @@ public static class GitRunner
     private static string? _program;
 
     /// <summary>
-    /// The whole argument list of a command: the repository, the fixed configuration, the repository's own programs
-    /// set to nothing while it is not trusted (<paramref name="overrides"/>, <see cref="GitTrust.Overrides"/>), then
-    /// <paramref name="arguments"/>. The fixed configuration never lets a repository's file monitor run (it would on
-    /// every <c>git status</c>) nor the <c>ext::</c> transport, which runs a command named in a remote's address
-    /// (security audit S-2). Pure, tested.
+    /// The whole argument list of a command: the repository, the fixed configuration, then
+    /// <paramref name="arguments"/>. The fixed configuration, for every run in every repository: a repository's
+    /// file monitor never runs (it would on every <c>git status</c>), nor the <c>ext::</c> transport, which runs a
+    /// command named in a remote's address (security audit S-2), nor git's automatic maintenance after a commit or
+    /// a fetch (the review's second pass of 2026-11-27: it runs the program of <c>gc.recentObjectsHook</c>, a
+    /// setting with several values, which an empty one does not set aside; a repository is tidied by git in a
+    /// console, or by <c>git maintenance</c>). What is set aside for a repository that is not trusted is no
+    /// argument: it goes through the environment (<see cref="SetOverrides"/>). Pure, tested.
     /// </summary>
-    public static IReadOnlyList<string> Command(string? repository, IReadOnlyList<string> arguments, IReadOnlyList<string>? overrides = null)
+    public static IReadOnlyList<string> Command(string? repository, IReadOnlyList<string> arguments)
     {
         var list = new List<string>();
         if (repository is not null)
@@ -87,20 +102,48 @@ public static class GitRunner
             list.Add(repository);
         }
 
-        list.AddRange(["-c", "core.quotepath=false", "-c", "color.ui=never", "-c", "core.fsmonitor=false", "-c", "protocol.ext.allow=never"]);
-        list.AddRange(overrides ?? []);
+        list.AddRange(["-c", "core.quotepath=false", "-c", "color.ui=never", "-c", "core.fsmonitor=false", "-c", "protocol.ext.allow=never", "-c", "maintenance.auto=false", "-c", "gc.auto=0"]);
         list.AddRange(arguments);
         return list;
     }
 
-    public static async Task<GitResult> RunAsync(string? repository, IReadOnlyList<string> arguments, TimeSpan timeout, CancellationToken cancellation = default, IReadOnlyList<string>? overrides = null)
+    /// <summary>How many settings the environment gives git: git reads <c>GIT_CONFIG_KEY_0</c> and <c>GIT_CONFIG_VALUE_0</c> up to this number.</summary>
+    private const string OverrideCount = "GIT_CONFIG_COUNT";
+
+    /// <summary>
+    /// Puts <paramref name="overrides"/> into a run's environment as git reads settings from it
+    /// (<c>GIT_CONFIG_COUNT</c>, <c>GIT_CONFIG_KEY_n</c>, <c>GIT_CONFIG_VALUE_n</c>), after any the user's own
+    /// environment holds. A name is given whole there, whatever it holds: as an argument, <c>-c name=value</c>, a
+    /// name with an equals sign in its middle part (<c>filter.a=b.clean</c>) is cut at the wrong sign and sets
+    /// nothing aside (tried with git 2.53). git counts these as the command's own settings, after every file's,
+    /// and its runs inside a submodule get them too. Pure, tested.
+    /// </summary>
+    public static void SetOverrides(IDictionary<string, string?> environment, IReadOnlyList<GitSetting> overrides)
+    {
+        if (overrides.Count == 0)
+        {
+            return;
+        }
+
+        var at = environment.TryGetValue(OverrideCount, out var held) && int.TryParse(held, out var count) && count > 0 ? count : 0;
+        foreach (var setting in overrides)
+        {
+            environment[$"GIT_CONFIG_KEY_{at}"] = setting.Name;
+            environment[$"GIT_CONFIG_VALUE_{at}"] = setting.Value;
+            at++;
+        }
+
+        environment[OverrideCount] = at.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    }
+
+    public static async Task<GitResult> RunAsync(string? repository, IReadOnlyList<string> arguments, TimeSpan timeout, CancellationToken cancellation = default, IReadOnlyList<GitSetting>? overrides = null)
     {
         var info = new ProcessStartInfo(Program)
         {
             StandardOutputEncoding = new UTF8Encoding(false),
             StandardErrorEncoding = new UTF8Encoding(false),
         };
-        foreach (var argument in Command(repository, arguments, overrides))
+        foreach (var argument in Command(repository, arguments))
         {
             info.ArgumentList.Add(argument);
         }
@@ -109,6 +152,7 @@ public static class GitRunner
         info.Environment["GIT_TERMINAL_PROMPT"] = "0";
         info.Environment["LC_ALL"] = "C.UTF-8";
         info.Environment["GIT_PAGER"] = "cat";
+        SetOverrides(info.Environment, overrides ?? []);
 
         // The run is the bundle's (AxKit.Core/ProcessRun, since 2026-10-25): the reads under the timeout as well as the
         // wait, since a program git started that outlives it (an agent, a hook's daemon) keeps the pipes open after git
@@ -141,14 +185,14 @@ public static class GitRunner
     {
         if (!result.TimedOut)
         {
-            return new GitResult(result.ExitCode, result.Output, result.Error);
+            return new GitResult(result.ExitCode, result.Printed, result.Error);
         }
 
         var reason = result.Stopped
             ? $"git did not finish within {timeout.TotalSeconds:0} seconds and was stopped."
             : "git finished, but a program it started kept its output open until the time limit.";
         var error = result.Error.Trim().Length == 0 ? reason : result.Error.TrimEnd() + "\n" + reason;
-        return new GitResult(result.Stopped ? -1 : result.ExitCode, result.Output, error, TimedOut: result.Stopped, OutputHeldOpen: !result.Stopped);
+        return new GitResult(result.Stopped ? -1 : result.ExitCode, result.Printed, error, TimedOut: result.Stopped, OutputHeldOpen: !result.Stopped);
     }
 
     /// <summary>

@@ -151,8 +151,11 @@ public sealed class StdioServer : IDisposable
 
     private int _stopAsked;
 
-    /// <summary>The end <see cref="Stop"/> started, done once the process and what it started are gone; done from the start for a server never stopped.</summary>
+    /// <summary>The end <see cref="Stop"/> started, done once the server is gone; done from the start for a server never stopped.</summary>
     public Task Ending { get; private set; } = Task.CompletedTask;
+
+    /// <summary>Whether the server did not end by itself in its two seconds and was ended, with everything it had started.</summary>
+    private volatile bool _ended;
 
     /// <summary>
     /// MP-2.3: the input closed, two seconds, then the process tree ended. The input is closed at once and the call
@@ -160,6 +163,12 @@ public sealed class StdioServer : IDisposable
     /// the window's thread (rule 3; the review of 2026-11-27: the wait was the caller's until then, so that Stop
     /// held the window for two seconds, and removing or closing with several servers for two seconds each). Asked
     /// twice, it is the one end.
+    ///
+    /// What ends with a server (the review's second pass of 2026-11-27): a server that ends by itself when its
+    /// input closes, as a server should, ends alone, and what it started stays, a browser it opened for a sign-in
+    /// among it; until then every Stop ended the whole job, everything the server had ever started. Only a server
+    /// that had to be ended after its two seconds takes what it started with it. Whatever is left ends when axMCP
+    /// itself does, with the job (<see cref="Dispose"/>).
     /// </summary>
     public void Stop()
     {
@@ -174,24 +183,33 @@ public sealed class StdioServer : IDisposable
         {
             try
             {
-                if (!_process.WaitForExit(Grace))
+                if (_process.WaitForExit(Grace))
                 {
-                    _process.Kill(entireProcessTree: true);
+                    return;
                 }
+
+                _ended = true;
+                _process.Kill(entireProcessTree: true);
             }
             catch (Exception ex) when (ex is InvalidOperationException or Win32Exception or AggregateException)
             {
                 // Gone already, or a part of its tree Windows would not end: the job ends what is left.
             }
 
-            // What the server started and left behind, which no tree reaches once the server itself is gone.
-            _job?.Terminate();
+            if (_ended)
+            {
+                // What it started and left behind, which no tree reaches once the server itself is gone.
+                _job?.Terminate();
+            }
         });
     }
 
     /// <summary>
-    /// The server stopped and let go, without a wait: the process and its job are released once the end is done.
-    /// Should this program end before that (the window closing), Windows ends the server with the job.
+    /// The server stopped and let go, without a wait: the process is released once the end is done, and the job
+    /// with it when the server had to be ended. The job of a server that ended by itself stays open, with what
+    /// that server started still in it, until this program ends: Windows closes it then, which ends what is left
+    /// (closing it here would end it now). Should this program end before the two seconds are over (the window
+    /// closing), Windows ends the server with the job in the same way.
     /// </summary>
     public void Dispose()
     {
@@ -199,7 +217,10 @@ public sealed class StdioServer : IDisposable
         Ending.ContinueWith(_ =>
         {
             _process.Dispose();
-            _job?.Dispose();
+            if (_ended)
+            {
+                _job?.Dispose();
+            }
         }, TaskScheduler.Default);
     }
 

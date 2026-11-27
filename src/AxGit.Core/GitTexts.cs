@@ -50,29 +50,37 @@ public static partial class GitTexts
     /// <summary>What keeps a fetch, a pull and a push out of the submodules, whatever the repository's settings say.</summary>
     private const string NoSubmodules = "--no-recurse-submodules";
 
-    /// <summary>Fetch from the branch's remote, and forget the remote branches that are gone there.</summary>
-    public static readonly IReadOnlyList<string> FetchArguments = ["fetch", "--prune", NoSubmodules];
+    // The remote is on the command line of every fetch, pull and push (the review's second pass of 2026-11-27,
+    // AG-5.4a): the one the reminder was read for (GitReach), after "--", so that a name like an option is a name.
+    // Run without one, git chose for itself, and not always the remote that had been asked about.
 
-    /// <summary>Pull only when the branch can be moved forward: never a merge commit or a rebase made by axGIT.</summary>
-    public static readonly IReadOnlyList<string> PullArguments = ["pull", "--ff-only", NoSubmodules];
+    /// <summary>What keeps a fetch to the one remote named, whatever <c>fetch.all</c> says.</summary>
+    private const string OneRemote = "--no-all";
+
+    /// <summary>Fetch from the remote named, and forget the remote branches that are gone there.</summary>
+    public static IReadOnlyList<string> FetchArguments(string remote) => ["fetch", "--prune", NoSubmodules, OneRemote, "--", remote];
+
+    /// <summary>Pull from the remote named, only when the branch can be moved forward: never a merge commit or a rebase made by axGIT.</summary>
+    public static IReadOnlyList<string> PullArguments(string remote) => ["pull", "--ff-only", NoSubmodules, OneRemote, "--", remote];
 
     /// <summary>The remote a branch without an upstream is pushed to, and tied to.</summary>
-    public const string DefaultRemote = "origin";
+    public const string DefaultRemote = GitRemote.Default;
 
     /// <summary>
-    /// Push: plain when the branch has an upstream (or HEAD is detached, which git then refuses in its own words);
-    /// a branch without one is pushed to <see cref="DefaultRemote"/> and tied to it.
+    /// Push the branch: to <paramref name="remote"/> when it has an upstream, the branches git itself chooses
+    /// (<c>push.default</c>); a branch without one is pushed to <see cref="DefaultRemote"/> and tied to it. There
+    /// is no push without a branch: <see cref="GitReach"/> says so before one is asked for.
     /// </summary>
-    public static IReadOnlyList<string> PushArguments(string? upstream, string? branch) =>
-        upstream is null && branch is not null ? ["push", NoSubmodules, "--set-upstream", DefaultRemote, branch] : ["push", NoSubmodules];
+    public static IReadOnlyList<string> PushArguments(string remote, string? upstream, string branch) =>
+        upstream is null ? ["push", NoSubmodules, "--set-upstream", "--", DefaultRemote, branch] : ["push", NoSubmodules, "--", remote];
 
     /// <summary>
-    /// The remote <see cref="PushArguments"/> reaches, for the consent before it (<see cref="GitRemote"/>):
-    /// <see cref="DefaultRemote"/> where the push names it, otherwise the one git itself would choose, read from its
-    /// answer to <see cref="GitRemote.RemotesArguments"/>.
+    /// The remote <see cref="PushArguments"/> reaches, for the consent before it (<see cref="GitReach"/>):
+    /// <see cref="DefaultRemote"/> for a branch without an upstream, otherwise the one the settings give
+    /// (<see cref="GitRemote.PushRemote"/>).
     /// </summary>
-    public static string PushRemote(string? upstream, string? branch, string? remotes) =>
-        upstream is null && branch is not null ? DefaultRemote : GitRemote.Remote(remotes, push: true);
+    public static string PushRemote(string? upstream, string branch, IReadOnlyList<ListedSetting> settings) =>
+        upstream is null ? DefaultRemote : GitRemote.PushRemote(settings, branch);
 
     // ---- What is read from a command's output outside the parsers ----
 
