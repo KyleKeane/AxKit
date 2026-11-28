@@ -1019,9 +1019,36 @@ public abstract partial class AxKitForm : Form
     /// The common keys (AX-8.2): the text size keys and Say the status (F9, AX-7.10) work everywhere, a notice included; while a notice shows, its text
     /// takes the find keys (AX-7.2) and every other shortcut waits (not calling the base skips the menu shortcuts;
     /// Enter and Escape reach the notice's buttons through AcceptButton and CancelButton); F1 and Ctrl+Comma the
-    /// palette, Ctrl+S saves; then the window's own keys.
+    /// palette, Ctrl+S saves; then the window's own keys. While the key is handled, in the same breath, the window
+    /// knows which key of the user's it is handling (<see cref="_userKey"/>), so that a notice it opens knows whether
+    /// the user's own key opened it (<see cref="ShowNotice"/>).
     /// </summary>
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+        var outer = _userKey;
+        _userKey = keyData;
+        try
+        {
+            return ProcessUsersKey(ref msg, keyData);
+        }
+        finally
+        {
+            _userKey = outer;
+        }
+    }
+
+    /// <summary>
+    /// The key of the user's whose handling runs now, synchronously, from <see cref="ProcessCmdKey"/>: the key
+    /// dispatch of the window, its commands and the menu bar's keys in menu mode included; null at every other time
+    /// (a click, a menu item chosen in an open drop-down, a timer, a post, the code after an await, a command run for
+    /// an AI tool or by the palette's Enter, which pass no key of the user's here). A fact of the moment, not of the
+    /// source (the fifth review of 2026-11-27, E3): until then a notice was the user's when the code that made it
+    /// said so (<see cref="Notice.ByUser"/>), and a confirmation reached through a menu's Enter took a doubled Enter.
+    /// </summary>
+    private Keys? _userKey;
+
+    /// <summary>The body of <see cref="ProcessCmdKey"/>, with <see cref="UserKey"/> set around it.</summary>
+    private bool ProcessUsersKey(ref Message msg, Keys keyData)
     {
         switch (keyData)
         {

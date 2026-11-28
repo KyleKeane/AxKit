@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.RegularExpressions;
 using AxKit.Core.Transcript;
 
@@ -465,39 +466,89 @@ public sealed partial class SessionModel : ClaudeModel
     }
 
     /// <summary>
-    /// Whether Claude's prompt row still holds the text sent: the nearest row starting with <c>$</c> at or above the
-    /// cursor, within four rows (the cursor sits under the prompt row, and a long draft wraps), holding the text's first
-    /// line, up to forty characters. Claude drops an Enter in its first seconds after the prompt shows, leaving the
-    /// message typed and unsent (found by tools/QaRun, 2026-10-23); the window sends Enter again while this holds (FR-2.1).
+    /// Whether Claude's prompt row holds the text sent, whole (<see cref="DraftAt"/>): the draft on the nearest prompt
+    /// row at or above the cursor, read from its start to the cursor's row, is the text, blanks aside, since a draft
+    /// wraps at the width wherever the screen breaks it. Claude drops an Enter in its first seconds after the prompt
+    /// shows, leaving the message typed and unsent (found by tools/QaRun, 2026-10-23); the window sends Enter again
+    /// while this holds (FR-2.1), and since the fourth review of 2026-11-27 a message's Enter waits for it
+    /// (<see cref="QueuedWrite.MessageEnter"/>). Until the fifth review of that day any row that began with a dollar
+    /// sign and a blank and held the text's first forty characters anywhere passed: a reply's row quoting a command,
+    /// a row that held the message and more, a row that held the start of a longer one (L5).
     /// </summary>
     public override bool PromptHolds(string text)
     {
         var lines = text.Trim().Replace("\r\n", "\n").Split('\n');
-        var first = lines[0].Trim();
-        if (first.Length == 0)
+        var wanted = WithoutBlanks(text);
+        if (wanted.Length == 0)
         {
             return false;
         }
 
         // The cursor stands on the draft's last line: its prompt row is up to one row per line above, and one more for
-        // each screen width the text wraps over, a few more besides (since the fourth review of 2026-11-27 a message's
-        // Enter waits for this, QueuedWrite.MessageEnterGoes, so a long message must be found on its row too).
+        // each screen width the text wraps over, a few more besides.
         var wrapped = Columns > 0 ? text.Length / Columns : 0;
-        // A ! line puts Claude Code's prompt into its shell mode, whose row may start with the mark instead of the
-        // dollar sign (ClaudeCodeTexts.PromptBang, LineClassifier.IsPromptRow; not yet in a recording): the command
-        // after the mark is looked for too.
-        var command = first.Length > 1 && first[0] == ClaudeCodeTexts.PromptBang ? first[1..].Trim() : null;
-        for (var row = _screen.CursorRow; row >= 0 && row >= _screen.CursorRow - 4 - lines.Length - wrapped; row--)
+        return DraftAt(4 + lines.Length + wrapped) is { } draft && WithoutBlanks(draft) == wanted;
+    }
+
+    /// <summary>What a draft on Claude Code's prompt row holds, empty for a bare prompt, null when no prompt row stands at or above the cursor (<see cref="DraftAt"/>).</summary>
+    public override string? PromptDraft => DraftAt(8);
+
+    /// <summary>
+    /// The draft on the nearest prompt row within <paramref name="depth"/> rows at or above the cursor, read from the
+    /// prompt row's text after its mark down to the cursor's row, the rows joined by line ends; empty for a bare
+    /// prompt; null when the nearest such row is none of Claude Code's drafts. A dollar sign's row counts only in the
+    /// draft's own form, the dollar sign and the no-break space Claude Code puts after it
+    /// (<see cref="LineClassifier.IsDraftRow"/>; every recording under tests/fixtures draws a draft so, a blank
+    /// after the no-break space), never a row that starts with a dollar sign and a plain blank, as a reply's quoted
+    /// command does. A row of the shell mode's mark (<see cref="ClaudeCodeTexts.PromptBang"/>, not yet in a
+    /// recording) holds its line with the mark. The question rows that start with "&gt; " are none.
+    /// </summary>
+    private string? DraftAt(int depth)
+    {
+        for (var row = _screen.CursorRow; row >= 0 && row >= _screen.CursorRow - depth; row--)
         {
-            if (_screen.LineAt(row) is { } line && line.Text.Length > 0 && LineClassifier.IsPromptRow(line.Text))
+            if (_screen.LineAt(row) is not { } line || line.Text.Length == 0)
             {
-                return line.Text.Contains(first[..Math.Min(first.Length, 40)], StringComparison.Ordinal)
-                    || (command is { Length: > 0 } && line.Text.Contains(command[..Math.Min(command.Length, 40)], StringComparison.Ordinal));
+                continue;
             }
+
+            var text = line.Text;
+            string first;
+            if (LineClassifier.IsBarePrompt(text))
+            {
+                first = string.Empty;
+            }
+            else if (LineClassifier.IsDraftRow(text))
+            {
+                first = text[2..];
+            }
+            else if (text[0] == ClaudeCodeTexts.PromptBang && char.IsWhiteSpace(text[1]))
+            {
+                first = text;
+            }
+            else if (LineClassifier.IsPromptRow(text))
+            {
+                return null;
+            }
+            else
+            {
+                continue;
+            }
+
+            var draft = new StringBuilder(first);
+            for (var below = row + 1; below <= _screen.CursorRow; below++)
+            {
+                draft.Append('\n').Append(_screen.LineAt(below)?.Text);
+            }
+
+            return draft.ToString().Trim();
         }
 
-        return false;
+        return null;
     }
+
+    /// <summary>The text with every blank taken out: a draft breaks where the screen's width ends, wherever that falls.</summary>
+    private static string WithoutBlanks(string text) => string.Concat(text.Where(c => !char.IsWhiteSpace(c)));
 
     /// <summary>A line of the app's own (<c>System: …</c>, FR-4.5), above Claude's live block.</summary>
     public override void AddSystemLine(string text)

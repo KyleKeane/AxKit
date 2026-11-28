@@ -1,3 +1,5 @@
+using AxKit.Core.Pty;
+
 namespace AxClaude.Core.Transcript;
 
 /// <summary>
@@ -19,22 +21,28 @@ public static class QueuedWrite
     /// message sent into a question on purpose (the kept message sent again, D33) is bound to that question by its
     /// identity (<paramref name="waitedFor"/> against <paramref name="waitingNow"/>, as a typed answer is,
     /// <see cref="AnswerOver"/>): a question that replaced it takes none of its keys. Until the fourth review of
-    /// 2026-11-27 only the first half was asked, and a kept message went into whatever was asked next.
+    /// 2026-11-27 only the first half was asked, and a kept message went into whatever was asked next. A question the
+    /// window could not read (null) is the same as no other (the fifth review of that day, L4): two that cannot be
+    /// read were taken for one.
     /// </summary>
     public static bool MessageGoes(bool askedThen, string? waitedFor, bool asksNow, string? waitingNow) =>
-        askedThen ? asksNow && waitingNow == waitedFor : !asksNow;
+        askedThen ? asksNow && waitedFor is not null && waitingNow == waitedFor : !asksNow;
 
     /// <summary>
     /// A message's Enter: only on a positive check (the fourth review of 2026-11-27, N3), since the window reads
     /// Claude Code's screen as of the last frame it took in and an Enter answers whatever stands there by the time it
-    /// arrives. As the message's other writes (<see cref="MessageGoes"/>), and for a message queued while nothing
-    /// was asked, only once the frame shows the message on Claude Code's prompt row (<paramref name="promptHolds"/>):
-    /// then the Enter is the message's. When not yet, the window asks again a tenth of a second later, for a few
-    /// seconds, and writes the Enter once this holds. Until that day the Enter went unless a question had been seen,
-    /// a negative check as old as the last frame.
+    /// arrives. Over when the message's other writes no longer go (<see cref="MessageGoes"/>). Goes for a message
+    /// sent into a question, and for one queued while nothing was asked once the frame shows it on Claude Code's
+    /// prompt row (<paramref name="promptHolds"/>): then the Enter is the message's. Not yet while the row does not
+    /// show it and it has waited less than <paramref name="longestMs"/> (<paramref name="waitedMs"/> since it was
+    /// first asked): the Enter stays first in the window's queue and everything behind it waits (the fifth review of
+    /// that day, M1: one message in flight). Over once it has waited that long: the window takes the message back.
     /// </summary>
-    public static bool MessageEnterGoes(bool askedThen, string? waitedFor, bool asksNow, string? waitingNow, bool promptHolds) =>
-        MessageGoes(askedThen, waitedFor, asksNow, waitingNow) && (askedThen || promptHolds);
+    public static WriteCheck MessageEnter(bool askedThen, string? waitedFor, bool asksNow, string? waitingNow, bool promptHolds, long waitedMs, int longestMs) =>
+        !MessageGoes(askedThen, waitedFor, asksNow, waitingNow) ? WriteCheck.Over
+        : askedThen || promptHolds ? WriteCheck.Goes
+        : waitedMs < longestMs ? WriteCheck.NotYet
+        : WriteCheck.Over;
 
     /// <summary>
     /// The Enter of a message sent again, a second and a half after the last (SPEC.md FR-2.1; Claude Code drops an

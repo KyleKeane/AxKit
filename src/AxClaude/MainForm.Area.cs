@@ -2,6 +2,7 @@ using System.Text;
 using AxClaude.Core.Flow;
 using AxClaude.Core.Transcript;
 using AxKit.Core.Events;
+using AxKit.Core.Pty;
 using AxKit.Forms;
 
 namespace AxClaude;
@@ -1263,7 +1264,7 @@ internal sealed partial class MainForm
     /// the one it was for. When it is over, the key and those behind it are dropped, the user's act ends here (as
     /// after an interrupt) and the window says that it was not sent.
     /// </summary>
-    private Func<bool> AnswerStill()
+    private Func<WriteCheck> AnswerStill()
     {
         var typedFor = WaitIdentity();
         long goneAt = 0;
@@ -1274,7 +1275,7 @@ internal sealed partial class MainForm
             goneAt = waiting is not null ? 0 : goneAt == 0 ? now : goneAt;
             if (!QueuedWrite.AnswerOver(typedFor, waiting, goneAt == 0 ? 0 : now - goneAt, SettleMs))
             {
-                return true;
+                return WriteCheck.Goes;
             }
 
             AxKit.Core.Log.Info("The rest of a typed answer was not written: what it was typed for no longer waits");
@@ -1283,7 +1284,7 @@ internal sealed partial class MainForm
             Refuse(waiting is not null ? QuestionOpensWords : NoLongerAskedWords);
             _attention.Stop();
             _attention.Start();
-            return false;
+            return WriteCheck.Over;
         };
     }
 

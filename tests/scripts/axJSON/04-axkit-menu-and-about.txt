@@ -26,6 +26,8 @@ menu Version
 expect state "notice":"axKit
 expect state Standalone apps, which need only Windows: axStart, axFile, axClip, axTemplate, axDown, axJSON, axPreview, axMedia, axTask, axCalc, axProcess, axAutomate.
 expect state axTerminal for your shell, axGIT for Git, axPass for KeePassXC, axClaude for Claude Code, axHelp for Claude Code, axMCP for MCP servers.
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus settings.json

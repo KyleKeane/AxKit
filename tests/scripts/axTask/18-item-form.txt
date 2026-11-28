@@ -49,6 +49,8 @@ expect focus Cancel"
 keys shift+tab shift+tab shift+tab shift+tab
 expect focus "name":"Type Room"
 type  and more
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus Fix the tap, due 30 October 2099
@@ -60,6 +62,8 @@ run findstr /l /c:"\"Room\":\"Kitchen\"" "tasks\Home\Fix the tap.json"
 keys enter
 expect focus "name":"Type the title"
 keys tab
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys space
 keys tab
 keys ctrl+a
@@ -96,6 +100,8 @@ keys tab
 keys tab
 keys ctrl+a
 type 30 Febuary
+# A form that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys ctrl+enter
 expect said ! Due: Not a date: 30 Febuary
 expect state "notice":"Fields of Fix the tap"
@@ -107,10 +113,14 @@ type Nothing like it
 keys enter
 expect said ! Waits on: No item is called Nothing like it
 expect focus "name":"Type the title of the item Waits on links to
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 
 # Check: A form saved with nothing changed says so
 keys enter
+# A form that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys ctrl+enter
 expect said ! Nothing changed
 expect state "notice":null
@@ -120,6 +130,8 @@ expect state "notice":null
 keys enter
 keys tab tab tab tab tab tab
 type Washer
+# A form that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys ctrl+enter
 expect said ! Saved
 keys down
@@ -128,6 +140,8 @@ keys enter
 expect focus "name":"Type the title","role":"Text","value":"Washer"
 keys ctrl+a
 type Washer 15 mm
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Saved
 expect focus Washer 15 mm
@@ -148,6 +162,8 @@ expect state "notice":"Fields of Fix the tap"
 expect focus "name":"Type Room","role":"Text","value":"Kitchen"
 keys ctrl+a
 type Bathroom
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Saved
 # The focus is back where the form was opened from, on the field, with its new value.
@@ -163,4 +179,6 @@ keys end
 expect focus 1 more field kept: Sprint
 keys enter
 expect state "notice":"Fields kept"
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape

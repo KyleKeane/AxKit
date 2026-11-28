@@ -131,8 +131,9 @@ public static class DisplayText
     /// and "&gt;", "|", "=" are symbols; a joiner between two "&gt;" hid an append): U+FE0F right after a picture
     /// (<see cref="Pictographic"/>) or as the middle of a keycap; U+200D between two pictures, the first of which may
     /// carry its U+FE0F or a skin tone; U+200C between two letters of a script that writes with it; the tag
-    /// characters of the three flags Unicode recommends (England, Scotland, Wales). And two that are seen yet look
-    /// like nothing: the braille blank, and a combining mark with no character to sit on.
+    /// characters of the three flags Unicode recommends (England, Scotland, Wales); U+20E3 as the end of a keycap.
+    /// And two that are seen yet hide what they stand on, in every text: the braille blank, and a combining mark
+    /// whose cluster does not begin with a letter (<see cref="OnNoLetter"/>).
     /// </summary>
     private static bool WrittenOut(string text, int index, int code, int length, bool command)
     {
@@ -161,9 +162,12 @@ public static class DisplayText
                 return !InFlag(text, index);
             case BrailleBlank:
                 return true;
+            case Keycap when !command && CodeBefore(text, index, out var selector) == PictureSelector
+                && CodeBefore(text, selector, out _) is >= '0' and <= '9' or '#' or '*':
+                return false;
         }
 
-        return Hidden(code) || OnNothing(text, index, code);
+        return Hidden(code) || OnNoLetter(text, index, code);
     }
 
     /// <summary>The picture a joiner at <paramref name="index"/> follows: the code before it, past a picture selector and a skin tone that the picture carries.</summary>
@@ -281,12 +285,15 @@ public static class DisplayText
     }
 
     /// <summary>
-    /// A combining mark (Mn, Mc, Me) with no character to sit on: at the start of the text, or after a line's end, a
-    /// control or format character, or the braille blank, past the other marks and variation selectors before it. It
-    /// shows as nothing, or on whatever the window puts in front of the text. A mark on a space is seen, an accent
-    /// alone, and stays.
+    /// A combining mark (Mn, Mc, Me) whose cluster does not begin with a letter (category L): at the start of the
+    /// text, or on a sign, a digit, a space, a picture, a control or format character, the braille blank, past the
+    /// other marks and variation selectors before it (the fifth review of 2026-11-27: "&gt;U+0338&gt;" looked like
+    /// "&gt;&gt;" crossed out, or like an append, and bash ran it as a truncation into a file named by the mark). On
+    /// a sign a mark makes it look like another sign, or like itself; a shell reads it as a word of its own. Marks on
+    /// letters stay: a decomposed accent, the vowel signs of Devanagari and Arabic. The one exception, in ordinary
+    /// text only, is a keycap's U+20E3 after a digit, # or * with its picture selector (<see cref="WrittenOut"/>).
     /// </summary>
-    private static bool OnNothing(string text, int index, int code)
+    private static bool OnNoLetter(string text, int index, int code)
     {
         if (CharUnicodeInfo.GetUnicodeCategory(code) is not (UnicodeCategory.NonSpacingMark or UnicodeCategory.SpacingCombiningMark or UnicodeCategory.EnclosingMark))
         {
@@ -306,7 +313,9 @@ public static class DisplayText
             at = start;
         }
 
-        return before < 0 || before == BrailleBlank || Hidden(before);
+        return before < 0
+            || CharUnicodeInfo.GetUnicodeCategory(before) is not (UnicodeCategory.UppercaseLetter or UnicodeCategory.LowercaseLetter
+                or UnicodeCategory.TitlecaseLetter or UnicodeCategory.ModifierLetter or UnicodeCategory.OtherLetter);
     }
 
     /// <summary>

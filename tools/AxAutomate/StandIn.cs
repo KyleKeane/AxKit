@@ -33,7 +33,13 @@
 // one line). Its keys: "version" (what --version prints; "0.0.0 (stand-in)" when left out, which the hooks' version
 // gate refuses), "session" (the session id, the file's name; a new one for each start when left out, and --prepare
 // needs it), "home" (a folder under the scenario's own, "home" when
-// left out: the run's AXKIT_HOME), "steps" and "history" (arrays of steps). The session file is
+// left out: the run's AXKIT_HOME), "steps" and "history" (arrays of steps), and three for what is typed (the fifth
+// review of 2026-11-27, docs/axClaude/SPEC.md D33, "One message in flight"): "echoAfter" (milliseconds: the first
+// character of a draft is drawn this long after it was read, the keys typed meanwhile waiting in the console's input,
+// so that a message's Enter waits for its row), "echo" (false: nothing typed is drawn, the row never shows a message)
+// and "keys" (a file name: every key read is appended to that file in the working folder, a character as itself,
+// Enter as <Enter> and a line end, Ctrl+J as <Ctrl+J>, Ctrl+U as <Ctrl+U>, any other control as <U+XXXX>, so that a
+// script compares what reached Claude Code's prompt, in order, with a file of its own). The session file is
 //   <the scenario's folder>\<home>\.claude\projects\<the working folder's full path, every character not an ASCII
 //   letter or digit as ->\<session>.jsonl
 // A step is an object; the first of these keys it holds says what it does:
@@ -178,6 +184,9 @@ internal static class StandIn
 
         PrepareConsole();
         using var output = Console.OpenStandardOutput();
+        _echoAfterMs = root.TryGetProperty("echoAfter", out _) ? Number(root, "echoAfter") : 0;
+        _echo = !root.TryGetProperty("echo", out var echo) || echo.ValueKind != JsonValueKind.False;
+        _keysFile = StringOf(root, "keys") is { Length: > 0 } keys ? Path.Combine(folder, keys) : null;
         new Thread(() => EchoTyped(output)) { IsBackground = true, Name = "typed" }.Start();
         for (var i = 0; i < steps.Count; i++)
         {
@@ -390,6 +399,22 @@ internal static class StandIn
             while (true)
             {
                 var typed = Console.ReadKey(intercept: true).KeyChar;
+                if (_keysFile is not null)
+                {
+                    File.AppendAllText(_keysFile, KeyWritten(typed), Utf8);
+                }
+
+                if (!_echo)
+                {
+                    continue;
+                }
+
+                if (_echoAfterMs > 0 && !_drafting && _atPrompt && !char.IsControl(typed) && typed != '\0')
+                {
+                    // The draft's first character drawn late: the keys after it wait in the console's input meanwhile.
+                    Thread.Sleep(_echoAfterMs);
+                }
+
                 lock (Writing)
                 {
                     if (!_atPrompt)
@@ -450,6 +475,25 @@ internal static class StandIn
             // No console to read (a test from a pipe), or the window closed it: nothing more is typed.
         }
     }
+
+    /// <summary>A key read as the scenario's "keys" file holds it: a character as itself, the keys a window sends as names.</summary>
+    private static string KeyWritten(char typed) => typed switch
+    {
+        '\r' => "<Enter>\r\n",
+        '\n' => "<Ctrl+J>",
+        (char)21 => "<Ctrl+U>",
+        _ when char.IsControl(typed) || typed == '\0' => $"<U+{(int)typed:X4}>",
+        _ => typed.ToString(),
+    };
+
+    /// <summary>The scenario's "echoAfter": how long the first character of a draft waits before it is drawn.</summary>
+    private static int _echoAfterMs;
+
+    /// <summary>The scenario's "echo": false when nothing typed is drawn.</summary>
+    private static bool _echo = true;
+
+    /// <summary>The scenario's "keys": the file in the working folder every key read is appended to, or null.</summary>
+    private static string? _keysFile;
 
     private static void WaitForFile(string path)
     {

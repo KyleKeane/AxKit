@@ -75,6 +75,8 @@ expect said ! text is required
 keys enter
 expect state "notice":"Change text (required)"
 type hello
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! text (required): hello
 expect focus text (required), text, hello

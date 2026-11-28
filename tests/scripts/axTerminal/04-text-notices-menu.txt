@@ -77,6 +77,8 @@ do Find
 expect focus "name":"Text to find"
 keys ctrl+a
 type zzzz
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Not found
 expect focus "name":"Terminal"
@@ -90,6 +92,8 @@ expect state "notice":"Keyboard shortcuts"
 expect focus "name":"Keyboard shortcuts"
 keys h
 expect said heading level 2
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus "name":"Terminal"
@@ -99,6 +103,8 @@ expect state "notice":"User guide"
 expect focus "name":"User guide"
 keys h
 expect said heading level 2
+# A field or list the focus comes back to after a notice that held holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus "name":"Terminal"
@@ -115,6 +121,8 @@ expect commands axTerminal, access layer for your shell, axKit, Access layers
 do Command field
 expect focus "name":"Command"
 type ping -n 30 127.0.0.1
+# A field or list the focus comes back to after a notice that held holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said Sent
 expect state Running: ping

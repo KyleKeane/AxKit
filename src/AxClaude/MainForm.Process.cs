@@ -428,6 +428,8 @@ internal sealed partial class MainForm
         // A Claude Code over its stream (MainForm.Stream.cs) is let go of first: the base's status bar and music ask
         // whether Claude runs. Nothing in a window the screen feeds.
         StopStream(terminateAtOnce);
+        // A message whose Enter had not gone is given back silently: out of the conversation, into the field.
+        GiveBackUnsentOnStop();
         base.StopProcess(terminateAtOnce);
         // What an AI tool offered in this run goes with it (MainForm.Mcp.cs).
         ForgetOffers();

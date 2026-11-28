@@ -33,6 +33,8 @@ expect focus Changes, 1 file
 menu Licence
 expect state What you have agreed to on this computer
 expect state axGIT, Git,
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect focus Changes, 1 file
 close

@@ -23,6 +23,8 @@ expect focus Approve: axStart: said nothing on its first launch
 keys tab
 expect focus Type your approval passphrase to approve
 type not the passphrase at all
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ♪ Edge
 expect said That is not the approval passphrase
@@ -31,6 +33,8 @@ menu Approve this report
 expect state "notice":"Approve: axStart: said nothing on its first launch"
 keys tab
 type a long test passphrase
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said Approved: axStart: said nothing on its first launch
 # The scripts that hold the work to approvals verify what the window signed, with the key pinned in the run's own
@@ -44,6 +48,8 @@ expect said This entry is Approved, not awaiting your approval
 menu Approval passphrase
 expect state "notice":"Change the approval passphrase"
 type not the current one
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect state "notice":"New approval passphrase"
 type another long passphrase

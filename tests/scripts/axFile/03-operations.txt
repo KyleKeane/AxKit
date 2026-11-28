@@ -27,6 +27,8 @@ expect said Type a name
 expect state "notice":"New folder"
 # A refused name is said and the notice stays (AF-4.1, 2026-11-09).
 type a?b
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! A name cannot contain
 expect state "notice":"New folder"
@@ -34,6 +36,8 @@ keys backspace
 keys backspace
 keys backspace
 type notes
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Created notes
 expect focus "value":"notes, folder"
@@ -70,6 +74,8 @@ expect state "notice":"Move to folder"
 expect state 2 items will move into the folder typed
 expect focus "name":"Folder"
 type bundle
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Moved 2 items into bundle
 expect focus "value":"bundle, folder"
@@ -140,6 +146,8 @@ type a?b
 keys enter
 expect said ! A name cannot contain
 expect focus "name":"New name"
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect focus "value":"a.txt"
 # Another entry's name with a doubled space inside (the plan's trailing space cannot be typed: the runner trims a step's line).
@@ -149,6 +157,8 @@ type two  words
 keys enter
 expect said ! Reads the same as two words.txt, which is already here
 expect focus "name":"New name"
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect focus "value":"a.txt"
 
@@ -359,6 +369,8 @@ expect focus "value":"move-two-then-undo-2.txt, selected"
 menu Move to folder, Context
 expect focus "name":"Folder"
 type bundle
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Moved 2 items into bundle
 expect focus "value":"bundle, folder"

@@ -90,16 +90,16 @@ public sealed partial class NoticeHoldTests : IDisposable
     public void A_notice_made_by_the_user_holds_after_an_answer_and_inside_an_AI_tools_run()
     {
         var mine = Notice.Plain("Keyboard shortcuts", "F1: the palette.").ByUser();
-        Assert.True(Notice.AsShown(mine, followsAnswer: false, forAiTool: false).OpenedByUser);
-        Assert.False(Notice.AsShown(mine, followsAnswer: true, forAiTool: false).OpenedByUser);
-        Assert.False(Notice.AsShown(mine, followsAnswer: false, forAiTool: true).OpenedByUser);
+        Assert.True(Notice.AsShown(mine, followsAnswer: false, forAiTool: false, userKey: Keys.F1).OpenedByUser);
+        Assert.False(Notice.AsShown(mine, followsAnswer: true, forAiTool: false, userKey: Keys.F1).OpenedByUser);
+        Assert.False(Notice.AsShown(mine, followsAnswer: false, forAiTool: true, userKey: Keys.F1).OpenedByUser);
         // Nothing makes a notice the user's that was not made so.
-        Assert.False(Notice.AsShown(ClearHistory(), followsAnswer: false, forAiTool: false).OpenedByUser);
+        Assert.False(Notice.AsShown(ClearHistory(), followsAnswer: false, forAiTool: false, userKey: Keys.F1).OpenedByUser);
         // The last word of its maker counts, and only ByUser makes it the user's.
         Assert.False(mine.ByItself().OpenedByUser);
         Assert.False(ClearHistory().ByUser().ByItself().OpenedByUser);
 
-        var held = Notice.AsShown(mine, followsAnswer: false, forAiTool: true);
+        var held = Notice.AsShown(mine, followsAnswer: false, forAiTool: true, userKey: Keys.F1);
         Show(held);
         KeyMessages.Press(_panel.Body, Keys.Enter);
         Assert.Empty(_chosen);
@@ -107,10 +107,98 @@ public sealed partial class NoticeHoldTests : IDisposable
 
         var window = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms", "AxKitForm.Notices.cs")).ReplaceLineEndings("\n");
         var show = window[window.IndexOf("protected internal void ShowNotice(Notice notice)", StringComparison.Ordinal)..];
-        var first = show.IndexOf("notice = Notice.AsShown(notice, followsAnswer: _answeringNotice || _chaining, forAiTool: ClickedForAiTool);", StringComparison.Ordinal);
+        var first = show.IndexOf("notice = Notice.AsShown(notice, followsAnswer: _answeringNotice || _chaining, forAiTool: ClickedForAiTool, userKey: _userKey);", StringComparison.Ordinal);
         var populate = show.IndexOf("Overlay.Populate(notice);", StringComparison.Ordinal);
         Assert.True(first > 0 && populate > first, "ShowNotice asks Notice.AsShown before anything else uses the notice");
         Assert.Contains("_answeringNotice = true;", window, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// The fifth review of 2026-11-27 (E3, M3, L1): "opened by the user" is a fact of the moment. A notice made
+    /// <see cref="Notice.ByUser"/> takes its keys at once only while the key dispatch handles a key of the user's that
+    /// can answer no notice: one with Ctrl or Alt, or a function key. Opened by Enter (a menu item chosen with it, a
+    /// list's line), Space, Ctrl+Enter, a letter or a button's Alt letter, or by no key at all (a click, a post, after
+    /// an await), it holds, whatever its maker said: a doubled press would answer it unheard. Until then the maker's
+    /// word alone counted, and axCalc's Clear the history?, reached through the Actions menu with Enter, took the
+    /// Enter pressed twice.
+    /// </summary>
+    [Theory]
+    [InlineData(Keys.Control | Keys.Shift | Keys.Delete, true)]
+    [InlineData(Keys.F1, true)]
+    [InlineData(Keys.Shift | Keys.F10, true)]
+    [InlineData(Keys.Control | Keys.F, true)]
+    [InlineData(Keys.Alt | Keys.F4, true)]
+    [InlineData(Keys.Control | Keys.Alt | Keys.R, true)]
+    [InlineData(Keys.Enter, false)]
+    [InlineData(Keys.Shift | Keys.Enter, false)]
+    [InlineData(Keys.Control | Keys.Enter, false)]
+    [InlineData(Keys.Space, false)]
+    [InlineData(Keys.Escape, false)]
+    [InlineData(Keys.H, false)]
+    [InlineData(Keys.D3, false)]
+    [InlineData(Keys.Delete, false)]
+    [InlineData(Keys.Alt | Keys.L, false)]
+    [InlineData(Keys.Alt | Keys.Shift | Keys.L, false)]
+    [InlineData(Keys.Alt | Keys.D2, false)]
+    public void Only_a_key_that_answers_no_notice_opens_one_that_takes_its_keys_at_once(Keys key, bool atOnce)
+    {
+        var mine = ClearHistory().ByUser();
+        Assert.Equal(atOnce, Notice.AsShown(mine, followsAnswer: false, forAiTool: false, userKey: key).OpenedByUser);
+        // No key of the user's handled now: a click, a menu item chosen in a drop-down, a post, the code after an await.
+        Assert.False(Notice.AsShown(mine, followsAnswer: false, forAiTool: false, userKey: null).OpenedByUser);
+
+        // The panel as the window base shows it: Enter at once after a menu item's Enter is held and heard.
+        Show(Notice.AsShown(mine, followsAnswer: false, forAiTool: false, userKey: key));
+        KeyMessages.Press(_panel.Body, Keys.Enter);
+        Assert.Equal(atOnce ? new List<string> { "C&lear" } : [], _chosen);
+        Assert.Equal(atOnce ? 0 : 1, _heard);
+    }
+
+    /// <summary>
+    /// The fifth review of 2026-11-27 (L7): a notice that comes by itself in place of a question the user has not
+    /// answered runs that question's cancel first, as Escape would, and its text begins with the title it replaced.
+    /// Not for a question the user's own key, a button or the action after one replaces, not for a notice the user
+    /// opened, and not for one that only informs or shows progress, which its flow replaces with its result.
+    /// </summary>
+    [Fact]
+    public void A_notice_that_comes_by_itself_over_an_unanswered_question_cancels_it_and_says_so()
+    {
+        var question = ClearHistory();
+        Assert.True(Notice.ReplacesUnanswered(question, byItself: true));
+        Assert.False(Notice.ReplacesUnanswered(question, byItself: false));
+        Assert.False(Notice.ReplacesUnanswered(question.ByUser(), byItself: true));
+        Assert.False(Notice.ReplacesUnanswered(Notice.Plain("Installing Git", "This takes a minute.") with { Progress = true }, byItself: true));
+        Assert.False(Notice.ReplacesUnanswered(new Notice("Downloading", "40%", [new OverlayChoice("&Cancel", IsDefault: true, IsCancel: true, StaysOpen: true)]), byItself: true));
+        Assert.False(Notice.ReplacesUnanswered(null, byItself: true));
+
+        var error = Notice.Plain("Failed", "The disk is full.").ByItself().Replacing(question);
+        Assert.Equal("Replaces: Clear the history?\r\nThe disk is full.", error.Text);
+        Assert.Equal("Replaces: Update.\r\nx", Notice.Plain("t", "x").Replacing(Notice.Plain("Update", string.Empty)).Text);
+
+        var window = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms", "AxKitForm.Notices.cs")).ReplaceLineEndings("\n");
+        var show = window[window.IndexOf("protected internal void ShowNotice(Notice notice)", StringComparison.Ordinal)..];
+        var asked = show.IndexOf("Notice.ReplacesUnanswered(shown, byItself: !_answeringNotice && !_chaining && _userKey is null)", StringComparison.Ordinal);
+        var cancelled = show.IndexOf("shown.Choices.First(choice => choice.IsCancel).Action?.Invoke();", StringComparison.Ordinal);
+        var populate = show.IndexOf("Overlay.Populate(notice);", StringComparison.Ordinal);
+        Assert.True(asked > 0 && cancelled > asked && populate > cancelled, "ShowNotice cancels an unanswered question it replaces before the new notice is shown");
+    }
+
+    /// <summary>The key dispatch is where the key is known: the window base sets it around the whole of its key handling, and the notice is asked with it.</summary>
+    [Fact]
+    public void The_window_base_knows_the_users_key_for_the_length_of_its_handling()
+    {
+        var window = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms", "AxKitForm.cs")).ReplaceLineEndings("\n");
+        var dispatch = window[window.IndexOf("protected override bool ProcessCmdKey(ref Message msg, Keys keyData)", StringComparison.Ordinal)..];
+        dispatch = dispatch[..dispatch.IndexOf("\n    }\n", StringComparison.Ordinal)];
+        Assert.Contains("_userKey = keyData;", dispatch, StringComparison.Ordinal);
+        Assert.Contains("return ProcessUsersKey(ref msg, keyData);", dispatch, StringComparison.Ordinal);
+        Assert.Contains("_userKey = outer;", dispatch, StringComparison.Ordinal);
+        // Set nowhere else: no other place can say that a key of the user's is being handled.
+        Assert.Equal(2, window.Split("_userKey = ").Length - 1);
+        // A key of the whole window pressed in menu mode, on the bar or in an open drop-down, runs once the menus have
+        // closed: posted, after its handling, so the palette or the report it opens holds (a menu's keys cannot be
+        // driven on the run's desktop, so this is read here, and AsShown's null above is the rule it meets).
+        Assert.Equal(2, window.Split("BeginInvoke(() => RunWindowKey(keyData));").Length - 1);
     }
 
     /// <summary>
@@ -143,6 +231,8 @@ public sealed partial class NoticeHoldTests : IDisposable
 
         var mcp = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms", "AxKitForm.Mcp.cs"));
         Assert.Contains("Overlay.Fill(text);", mcp, StringComparison.Ordinal);
+        // Only a notice shown since the click is filled, on the second pass too (the fifth review of 2026-11-27, L2).
+        Assert.Contains("Overlay.Shown is { Input: { } input } shown && !ReferenceEquals(shown, noticeBefore)", mcp, StringComparison.Ordinal);
         Assert.DoesNotContain("Overlay.PressDefault();", mcp, StringComparison.Ordinal);
     }
 

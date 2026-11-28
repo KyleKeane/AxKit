@@ -43,6 +43,8 @@ keys enter
 expect state Claude's plan
 expect state Claude, an AI model, wrote this plan, and everything in it is Claude's own. It can be wrong, and axKit has checked none of it.
 expect state Plan: create plan-probe.txt
+# The text Enter opened holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect focus 4. Read the whole plan
 expect state Claude: waiting for your answer
@@ -51,8 +53,9 @@ expect state Claude: waiting for your answer
 keys up
 keys up
 expect focus 2. Yes, and manually approve edits
-# The plan's text was the user's own to open from the list they had heard: the list's second is not started again
-# as the focus comes back (bundle AX-6.4, N4 of the fourth review of 2026-11-27; until then a wait of a second here).
+# The plan's text held its keys (opened by Enter, E3 of the fifth review of 2026-11-27), so the list's second starts
+# again as the focus comes back to it (bundle AX-6.4 point 4): the wait of a second is back.
+wait 1100
 keys enter
 expect said Sent: 2, Yes, and manually approve edits
 expect said manual mode on

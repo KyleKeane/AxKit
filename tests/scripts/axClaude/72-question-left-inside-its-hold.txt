@@ -1,0 +1,39 @@
+# Workflow: Leave a question for the palette at once and find it holding its keys again
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code; no Claude Code, no network and no model.
+# axClaude and the window base, docs/axKit/SPEC.md AX-6.4 (N4 of the fourth review of 2026-11-27, narrowed by the
+# fifth review of that day, M2). A question of Claude's holds its answering keys for a second from when it is shown,
+# and again from when the focus comes back to it. N4 spared the user that second wait when he comes back from a
+# notice of his own (an explanation, the palette) to a question he had heard: its hold is not started again. It was
+# spared also when he left the question inside its hold, before he could have heard it: a palette opened and closed at
+# once gave the question back with its hold run out, and Enter answered it. Now the hold starts again on the way
+# back unless it had already ended when the notice opened.
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir ph
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.332 (stand-in)","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"waitFile":"go1"},{"frame":["claude: started","you: Make a file","claude: One file.","tool: Write (alpha.txt)","Permission Required: Create file","alpha.txt","Do you want to create alpha.txt?","1. Yes","2. Yes, allow all edits during this session","3. No","Select with numbers [1-3]. Then Enter to submit or Escape to cancel:"],"clear":true},{"idle":true}]}
+start claude {temp}\ph --claude {temp}\claude.cmd -- --model haiku --effort low
+expect said Ready
+wait 1000
+
+# Check: A question left for the palette inside its hold holds its keys again when the focus comes back
+# The question comes and takes the focus; half a second later, inside its hold, F1 opens the palette and Escape
+# closes it at once. Enter 0.6 seconds after that, when the question's first hold would have run out, is held and
+# heard, and answers nothing.
+file ph\go1 x
+expect focus 1. Yes, Create file alpha.txt
+wait 500
+keys f1
+expect state "notice":"Command palette"
+keys escape
+expect focus 1. Yes, Create file alpha.txt
+wait 600
+keys enter
+expect said ♪ Edge
+refuse said Sent: 1, Yes
+expect state Claude: waiting for your answer
+
+# Check: Once its moment is over the question takes its answer
+wait 1100
+keys enter
+expect said Sent: 1, Yes

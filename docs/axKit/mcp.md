@@ -409,8 +409,9 @@ menu, the palette and the automated checks in the table of `command-language.md`
   a command that asks for one (Find, Find first, Go to line, a filter, a name). The command runs as before; the field
   it then opens, a notice's field or a field in the window's control area, gets the text and its main button or Enter
   is pressed, as the user would (`AxKitForm.FillForMcp`). Only a field the run's own click opened is filled: a field
-  that was already asking the user something (axClaude's question) never is, and a notice is always the command's
-  own, since no run starts while one is open. A list or a field that a command run for an AI tool put into a
+  that was already asking the user something (axClaude's question) never is, and a notice only when it was not the
+  one shown before the click, on the pass after the posted messages too (the fifth review of 2026-11-27, L2: until
+  then any notice that stood on that pass was filled), since no run starts while one is open. A list or a field that a command run for an AI tool put into a
   window's control area holds its answering keys for a moment, as everything does that the user did not open with a
   key of their own (bundle AX-6.4; `AxKitForm.RunForMcp`, 2026-11-27), though the command's own code starts no hold
   for the user's key: a stray Enter of the user's does not answer a list an AI tool just opened. It counts as
@@ -422,7 +423,10 @@ menu, the palette and the automated checks in the table of `command-language.md`
   command's own code says `Notice.ByUser` for the user's key (`AxKitForm.ShowNotice` asks `ClickedForAiTool`), again
   from when the focus comes to it, in a window behind too when the user comes to it, and the message field it gives
   the focus back to holds its Enter for a moment. Until then a doubled Enter confirmed what an AI tool's run asked,
-  and Ctrl+Enter sent its drafted report, unheard. The text a run carries is entered by the run itself and passes
+  and Ctrl+Enter sent its drafted report, unheard. Since the fifth review of that day the rule is the same for the
+  user's own commands: a notice takes its keys at once only while the window handles a key of the user's that can
+  answer no notice (bundle AX-6.4, E3), and a run for an AI tool passes no key of the user's, so whatever it opens
+  holds by that rule too. The text a run carries is entered by the run itself and passes
   no hold (`ControlArea.Fill`, `OverlayPanel.Fill`). A password field is never filled ("The command asks for a password,
   which AI tools never type"); a command that opened no field ran, and the answer's `text` says the text was not used.
   The user hears "Claude ran Find with the text budget" (`McpRun.Said`), and an act command's question names the
@@ -582,7 +586,10 @@ which overwrote what the user had there. Now it offers the command through a too
   such a character stood in the question unseen. In the command nothing is excepted (the fourth review of
   2026-11-27, bundle AX-6.4, "No hidden character in a command, ever"): an emoji's joiner and picture selector, a
   non-joiner and every variation selector are written out too, since a joiner between two "&gt;" showed an append
-  that bash ran as a truncation; the reason and the breakdown, which are read, keep an emoji whole.
+  that bash ran as a truncation; the reason and the breakdown, which are read, keep an emoji whole. A combining mark
+  on anything but a letter is written out everywhere, the command, the reason and the breakdown alike (the fifth
+  review of that day, E1: "echo added &gt;U+0338&gt; target.txt" showed two signs, one crossed out, and bash ran a
+  truncation into a file named by the mark); marks on letters stay.
 - MC-9.4 **The question** is a list in the control area, in the message field's place, as Claude's own questions are
   (the user's decision of 2026-11-13, after hearing the first version, a notice that covered the window): the
   conversation stays there to read for context (Tab, Alt+2), and the question is told from a notice by where it is.

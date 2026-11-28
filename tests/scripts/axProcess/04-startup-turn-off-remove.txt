@@ -113,6 +113,8 @@ keys enter
 expect state "notice":"Check Morning"
 expect state Set in your Startup folder
 expect state Disabled
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys alt+n
 expect said ! Check Morning turned on: it starts with Windows again
 expect state "notice":null

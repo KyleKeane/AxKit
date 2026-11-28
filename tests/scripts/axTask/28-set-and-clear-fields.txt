@@ -35,6 +35,8 @@ keys down
 expect focus "value":"High"
 keys tab
 type Garage
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys ctrl+enter
 expect said ! Fields set: 2 items
 run findstr /l /c:"\"Priority\": \"High\"" "tasks\Home\Buy paint.json"
@@ -51,6 +53,8 @@ run findstr /l /c:"\"Room\":\"Kitchen\"" "tasks\Home\Fix the tap.json"
 # Check: A form left as it started changes nothing
 do Set fields
 expect state "notice":"Set fields"
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys ctrl+enter
 expect said ! Nothing changed
 
@@ -60,6 +64,8 @@ do Clear fields
 expect state "notice":"Clear fields"
 expect said Clear fields, form
 # With nothing checked the form says what it needs and stays.
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys ctrl+enter
 expect said Check at least one field to empty
 keys end

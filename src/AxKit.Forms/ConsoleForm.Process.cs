@@ -13,7 +13,7 @@ public abstract partial class ConsoleForm
     /// <summary>The exit is reported after this long, so that output still in the pipe arrives first.</summary>
     private readonly System.Windows.Forms.Timer _exitSettle = new() { Interval = 300 };
 
-    private readonly Queue<(string Text, int DelayAfter, Func<bool>? Still)> _writes = new();
+    private readonly Queue<(string Text, int DelayAfter, Func<WriteCheck>? Still)> _writes = new();
 
     /// <summary>The one timer between two paced writes: a restart stops it, so that no second pump runs on (two ran after a restart until 2026-10-23).</summary>
     private readonly System.Windows.Forms.Timer _pump = new();
@@ -221,12 +221,28 @@ public abstract partial class ConsoleForm
     /// <summary>
     /// A write for the queue, with the pause that follows it before the next; <see cref="StartWrites"/> sends them.
     /// <paramref name="still"/> is asked right before this write goes to the program, which can be seconds after it
-    /// was queued: false when what the write was for is over (axClaude: a question was drawn under a message's Enter;
-    /// the question an answer was typed for was replaced). The write is then dropped with everything queued behind
-    /// it, and the one who asked says so. Until the third review of 2026-11-27 a write was judged when it was queued
-    /// and never again. Required, null written out for a write that needs no check (<see cref="Write"/>).
+    /// was queued, and answers one of three (<see cref="WriteCheck"/>). Over when what the write was for is over
+    /// (axClaude: a question was drawn under a message's Enter; the question an answer was typed for was replaced):
+    /// the write is dropped with everything queued behind it, the one who asked says so, and
+    /// <see cref="WritesDropped"/> is told. Not yet when it may still go (axClaude: a message's Enter while Claude
+    /// Code's prompt row does not show the message yet): it stays first, everything behind it waits in order, and it
+    /// is asked again <see cref="NotYetMs"/> later; the check itself says when waiting is over. Until the third review
+    /// of 2026-11-27 a write was judged when it was queued and never again; until the fifth review of that day the
+    /// check was a yes or no, and a "not yet" dropped what stood behind it. Required, null written out for a write
+    /// that needs no check (<see cref="Write"/>).
     /// </summary>
-    protected void Enqueue(string text, int delayAfter, Func<bool>? still) => _writes.Enqueue((text, delayAfter, still));
+    protected void Enqueue(string text, int delayAfter, Func<WriteCheck>? still) => _writes.Enqueue((text, delayAfter, still));
+
+    /// <summary>How long a write that was told "not yet" waits before it is asked again.</summary>
+    protected const int NotYetMs = 100;
+
+    /// <summary>
+    /// The queue was dropped with writes still in it (a check said over, or <see cref="ClearWrites"/>): a window that
+    /// counts on writes it queued (axClaude: a message not yet sent) takes them back here. Nothing by default.
+    /// </summary>
+    protected virtual void WritesDropped()
+    {
+    }
 
     /// <summary>Starts the write pump when it is idle; a pump already running takes what was queued after it.</summary>
     protected void StartWrites()
@@ -237,8 +253,16 @@ public abstract partial class ConsoleForm
         }
     }
 
-    /// <summary>What is still queued goes (an interrupt: an answer typed out a key at a time must not land after it).</summary>
-    protected void ClearWrites() => _writes.Clear();
+    /// <summary>What is still queued goes (an interrupt: an answer typed out a key at a time must not land after it), and the window is told (<see cref="WritesDropped"/>).</summary>
+    protected void ClearWrites()
+    {
+        var had = _writes.Count > 0;
+        _writes.Clear();
+        if (had)
+        {
+            WritesDropped();
+        }
+    }
 
     private void PumpWrites()
     {
@@ -248,11 +272,31 @@ public abstract partial class ConsoleForm
             return;
         }
 
-        var (text, delay, still) = _writes.Dequeue();
-        if (still is not null && !still())
+        var (text, delay, still) = _writes.Peek();
+        switch (still?.Invoke() ?? WriteCheck.Goes)
         {
-            // What this write was for is over: it and what waits behind it go unwritten.
-            _writes.Clear();
+            case WriteCheck.Over:
+                // What this write was for is over: it and what waits behind it go unwritten.
+                _writes.Clear();
+                _writing = false;
+                WritesDropped();
+                return;
+            case WriteCheck.NotYet:
+                // It stays first, and nothing behind it goes before it.
+                _writing = true;
+                _pump.Interval = NotYetMs;
+                _pump.Start();
+                return;
+            case WriteCheck.Skip:
+                // This one alone is not needed: the next one is asked now.
+                _writes.TryDequeue(out _);
+                PumpWrites();
+                return;
+        }
+
+        if (!_writes.TryDequeue(out _))
+        {
+            // The check emptied the queue itself (it stopped the program): nothing is written.
             _writing = false;
             return;
         }

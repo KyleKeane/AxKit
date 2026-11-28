@@ -90,6 +90,8 @@ keys home
 keys down
 keys enter
 type sam2
+# The field Enter opened holds its Enter for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! UserName: sam2
 # Check: The first change after unlocking makes a backup beside the database
@@ -206,6 +208,8 @@ type w
 expect focus Work, group
 keys delete
 expect state Move the group
+# A notice that Delete opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect state "title":"test, axPass, 
 

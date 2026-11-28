@@ -37,12 +37,16 @@ keys right
 expect state "notice":"Convert Home?"
 expect state A copy is kept among the Archived lists
 expect state A copy of axKit older than this one does not read a converted list
+# A notice that Right opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus Home, list, earlier format: Enter converts it
 run findstr /l /c:"axkit-item 1" "tasks\Home\Fix the tap.json"
 keys enter
 expect state "notice":"Convert Home?"
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Converted Home: 2 items. A copy is among the Archived lists
 expect state "notice":null
@@ -93,6 +97,8 @@ expect state "notice":"Convert Home?"
 keys tab
 keys tab
 expect focus all 2 lists"
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Converted 2 lists: 3 items. A copy is among the Archived lists
 # Check: Each list converted is there with its copy, and All tasks gathers them

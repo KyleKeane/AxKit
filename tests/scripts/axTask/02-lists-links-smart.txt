@@ -32,6 +32,8 @@ keys enter
 expect said new line
 type Second line
 keys tab
+# A field that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Notes: First line, and 1 more line
 run findstr /l /c:"First line\nSecond line" "tasks\Home\list.json"
@@ -49,12 +51,16 @@ keys end
 expect focus Waits on, link, empty
 keys enter
 type Washer
+# A field that Enter opens holds its Enter for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Saved
 run findstr /l /c:"../Shopping/Washer.json" "tasks\Home\Fix the tap.json"
 # Check: A link to an item that does not exist is refused
 keys enter
 type Nothing like it
+# A field that Enter opens holds its Enter for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! No item is called Nothing like it
 keys escape

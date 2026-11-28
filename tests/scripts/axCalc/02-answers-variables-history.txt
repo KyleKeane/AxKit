@@ -120,9 +120,13 @@ expect focus rate = 1.25
 menu Variables
 expect state "notice":"Variables"
 expect state rate = 1.25
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 # Goal: Clear the variables
 menu Clear variables
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said Variables cleared
 
@@ -158,6 +162,8 @@ expect focus "name":"History","role":"Text","value":""
 # 5.2 Keep history between runs off: the next start has none.
 keys tab
 type 1+1
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! 2
 menu Keep history between runs

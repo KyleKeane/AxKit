@@ -104,14 +104,41 @@ public sealed record Notice(string Title, string Text, IReadOnlyList<OverlayChoi
     public Notice ByUser() => this with { OpenedByUser = true, Unprompted = false };
 
     /// <summary>
-    /// The notice as the window base shows it (<c>AxKitForm.ShowNotice</c>, the one place): held after all, though
-    /// made <see cref="ByUser"/>, where it cannot be the first result of the user's own command:
-    /// <paramref name="followsAnswer"/>, shown by a notice's button or by the action after one closed (what follows
-    /// an answer arrives by itself, <see cref="KeyHold"/> rule 1); <paramref name="forAiTool"/>, shown inside a
-    /// command clicked for an AI tool (docs/axKit/mcp.md MC-7.9). Every other notice as it is.
+    /// The notice as the window base shows it (<c>AxKitForm.ShowNotice</c>, the one place). A notice made
+    /// <see cref="ByUser"/> takes its keys at once only when it is, at this moment, the first result of a key of the
+    /// user's that can answer no notice (the fifth review of 2026-11-27, E3: a fact of the moment, not of the source):
+    /// <paramref name="userKey"/> is the key whose handling runs now, null when none does (a click, a menu item chosen
+    /// in a drop-down, a timer, a post, after an await), and it must be one that <see cref="AnswerKeys.CannotAnswer"/>
+    /// (a key with Ctrl or Alt, a function key). Held after all, whatever its maker said, when the key could answer
+    /// (Enter, Space, Ctrl+Enter, a letter: a doubled press would answer what it opened), when no key of the user's
+    /// is being handled, when <paramref name="followsAnswer"/> (shown by a notice's button or by the action after one
+    /// closed, <see cref="KeyHold"/> rule 1), and when <paramref name="forAiTool"/> (inside a command clicked for an
+    /// AI tool, docs/axKit/mcp.md MC-7.9). A notice not made ByUser is never the user's.
     /// </summary>
-    public static Notice AsShown(Notice notice, bool followsAnswer, bool forAiTool) =>
-        notice.OpenedByUser && (followsAnswer || forAiTool) ? notice with { OpenedByUser = false } : notice;
+    public static Notice AsShown(Notice notice, bool followsAnswer, bool forAiTool, Keys? userKey) =>
+        notice.OpenedByUser && (followsAnswer || forAiTool || userKey is not { } key || !AnswerKeys.CannotAnswer(key))
+            ? notice with { OpenedByUser = false }
+            : notice;
+
+    /// <summary>
+    /// Whether a notice that comes by itself (<paramref name="byItself"/>: no key of the user's handled, not from a
+    /// notice's button or the action after one) in place of <paramref name="shown"/> takes the place of a question
+    /// the user has not answered: a notice that holds its keys and asks (a default answer that is not its cancel). Then
+    /// that question's cancel runs first, as Escape would, so that what waited on it hears a no, and the new notice
+    /// says which one it replaced (<see cref="Replacing"/>). The fifth review of 2026-11-27 (L7): until then the
+    /// question was gone without an answer and without a word. A notice that only informs or shows progress (a Close
+    /// or a Cancel and nothing else) is the flow's own, which replaces it with its result.
+    /// </summary>
+    public static bool ReplacesUnanswered(Notice? shown, bool byItself) =>
+        byItself && shown is { OpenedByUser: false } held
+        && held.Choices.Any(choice => choice.IsDefault && !choice.IsCancel) && held.Choices.Any(choice => choice.IsCancel);
+
+    /// <summary>The notice that replaces the unanswered question <paramref name="replaced"/>: its text begins with the question's title, so that its opening says it ("Replaces: Clear the history?").</summary>
+    public Notice Replacing(Notice replaced)
+    {
+        var title = replaced.Title.Trim();
+        return this with { Text = $"Replaces: {title}{(title.EndsWith('?') || title.EndsWith('.') || title.EndsWith('!') ? string.Empty : ".")}\r\n{Text}" };
+    }
 
     /// <summary>
     /// Which kind of event the notice is when it opens by itself (docs/axKit/events.md EV-3), for the sound the

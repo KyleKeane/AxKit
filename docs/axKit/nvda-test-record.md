@@ -818,6 +818,31 @@ axGIT's scripts. Still owed, `docs/axGIT/nvda-test-plan.md` sections 1.7, 7 and 
    pass `tests/scripts/axGIT/04-log-branches` pushed to a folder, which axGIT no longer does, and no script reaches a
    server.
 
+## Owed: one message in flight, a notice the user's own key opened, no mark on a sign (the fifth review of 2026-11-27)
+
+The fifth review of that day (`docs/axKit/SPEC.md` AX-6.4, point 3 and "Nothing unseen in what is asked";
+`docs/axClaude/SPEC.md` D33, point 4; `docs/axKit/mcp.md` MC-7.9, MC-9.3). A notice takes its keys at once only
+when a key of the user's that can answer no notice opened it (Ctrl or Alt, a function key), so a confirmation
+reached through a menu holds its second; a list left inside its hold holds again on the way back; a message's Enter
+waits first in the queue with everything behind it, "Sent" from its check alone, and a message the row never shows
+comes back into the field; a combining mark on anything but a letter is written out. Played on the hidden desktop,
+without NVDA, on 2026-11-27: the new `tests/scripts/axClaude/70`, `71`, `72` and `axCalc/06`, and the whole of
+`tests/scripts` with `-Record`. Still owed:
+
+1. With NVDA listening (`.\nvda-pass.ps1 axClaude axCalc mcp`): those scripts; above all the short sound of an Enter
+   held back at Clear the history? chosen from the menu, and that the question is read to its end first.
+2. With Claude Code itself (no live script was run): a message of several lines and one long enough to wrap are
+   found on the prompt row in Claude Code's draft form (no recording draws either; if one is not, "Not sent yet"
+   comes three seconds after Enter and the message is back in the field); a second message sent at once goes after
+   the first with its own "Sent"; an offered command's `!` line on the shell mode's row.
+3. By the maintainer's ear and hands:
+   - a confirmation he opens from a menu (Clear history, Delete, End process) waits its second before Enter takes,
+     and the same reached by its own Ctrl or function key takes at once: whether the menu's second is felt too often;
+   - an Explain or a help text opened with Enter waits its second before Escape closes it;
+   - "Not sent yet" and "Not sent: the message is back in the message field" are heard without a sound: whether the
+     kind NotSent wants one;
+   - a notice that came by itself over a question he had not answered begins "Replaces:" and the question's title.
+
 ## Owed: every notice holds, nothing hidden in a command, a message's Enter on a positive check (the fourth review of 2026-11-27)
 
 The fourth review of that day (`docs/axKit/SPEC.md` AX-6.4, points 3 and 4 and "Nothing unseen in what is asked";

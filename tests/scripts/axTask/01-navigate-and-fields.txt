@@ -89,6 +89,8 @@ keys enter
 expect said ! Home, 2 items
 keys enter
 expect state "notice":"Fields of Fix the tap"
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 keys tab
@@ -135,6 +137,8 @@ expect state "notice":"Fields of Fix the tap"
 expect focus "name":"Type Due
 keys ctrl+a
 type friday
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said , Friday
 expect state "notice":null
@@ -142,9 +146,13 @@ expect state "notice":null
 keys enter
 keys ctrl+a
 type 30 Febuary
+# A field that Enter opens holds its Enter for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said Due: Not a date: 30 Febuary
 expect state "notice":"Fields of Fix the tap"
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect focus Due, date,
 expect focus , Friday
@@ -174,6 +182,8 @@ expect focus "name":"Choose Priority","role":"List","value":"Not chosen"
 keys down
 expect focus "value":"High"
 keys down
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said Saved
 expect focus Priority, choice, Low

@@ -208,6 +208,15 @@
           "note": "In axClaude the sound plays a second time, with no words, when axClaude itself confirms the review after your last answer."
         },
         {
+          "id": "not-sent",
+          "when": "A message you sent was given back a moment later, by itself: the program began to ask while it was typed, never showed it on its prompt row, or you interrupted before its Enter.",
+          "starts": ["program", "key"],
+          "sounds": [],
+          "words": "'Not sent yet: the message is back in the message field; Enter sends it again', or 'Not sent: Claude asks something, and its question opens in a moment'. The conversation gets a line that says the same.",
+          "apps": "axClaude.",
+          "note": "The fifth review of 2026-11-27 (L6): until then said as refused, the sound of a key the window held back, though it came seconds after the key and by itself. The kind has no sound until the maintainer has chosen one by ear."
+        },
+        {
           "id": "recalled",
           "when": "An earlier command came back into the field from the history.",
           "starts": ["key"],

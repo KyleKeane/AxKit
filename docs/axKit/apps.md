@@ -110,7 +110,7 @@ The keys here are the defaults; a user's own `app-keys.json` may give an app ano
 - Code: `src/AxCalc` (the window), `src/AxCalc.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxCalc.Tests`.
 - Documents: `docs/axCalc/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axCalc/`, 5 scripts (their workflows are in `docs/axKit/workflows/axCalc.md`).
+- Automated checks: `tests/scripts/axCalc/`, 6 scripts (their workflows are in `docs/axKit/workflows/axCalc.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axCalc.ps1`, or `run.ps1 -App calc`.
 
 ### axProcess
@@ -178,7 +178,7 @@ The keys here are the defaults; a user's own `app-keys.json` may give an app ano
 - Code: `src/AxClaude` (the window), `src/AxClaude.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxClaude.Tests`.
 - Documents: `docs/axClaude/` (`claude-screens.md`, `events-and-grounding.md`, `nvda-test-plan.md`, `SPEC.md`, `stream-mode.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axClaude/`, 69 scripts (their workflows are in `docs/axKit/workflows/axClaude.md`).
+- Automated checks: `tests/scripts/axClaude/`, 72 scripts (their workflows are in `docs/axKit/workflows/axClaude.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axClaude.ps1`, or `run.ps1 -App claude`.
 
 ## Access layers: utilities

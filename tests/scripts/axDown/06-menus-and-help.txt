@@ -76,6 +76,8 @@ expect said heading level 2
 # Check: A table the guide does not have is said as none
 keys ctrl+t
 expect said ! No next table
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect focus a.md
 # Goal: Hear the version of axKit
@@ -88,22 +90,30 @@ expect state Standalone apps, which need only Windows: axStart, axFile, axClip, 
 expect state axTerminal for your shell, axGIT for Git, axPass for KeePassXC, axClaude for Claude Code, axHelp for Claude Code, axMCP for MCP servers.
 expect state Settings: 
 expect state Logs: 
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect focus a.md
 # Goal: Read the licence, the attribution and the axKit guide
 # About, Licence, Attribution and axKit guide open their notices; Escape closes each.
 menu Licence
 expect state "notice":"Licence"
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 # Goal: Read the attribution
 menu Attribution
 expect state "notice":"Attribution"
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 # Goal: Read the axKit guide
 menu axKit guide
 expect state "notice":"axKit guide"
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus a.md
@@ -179,6 +189,8 @@ expect said No commands match xyz
 keys enter
 expect said No commands match xyz
 expect state "notice":"Command palette"
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus a.md
@@ -193,6 +205,8 @@ expect commands "axDown, axKit, Apps, Ctrl+F5"
 # the commands alone.
 menu Version
 expect state "notice":"axKit
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 keys f4

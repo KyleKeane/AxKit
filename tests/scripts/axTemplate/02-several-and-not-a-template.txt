@@ -64,6 +64,8 @@ keys space
 expect focus Beta, selected
 keys delete
 expect state "notice":"Archive 2 templates?"
+# A notice that Delete opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said Archived 2 templates
 expect state Templates, 1 template

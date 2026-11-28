@@ -35,6 +35,8 @@ expect focus zzalpha, stdio, stopped
 do Filter
 expect focus "name":"Name contains"
 type zz
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! filter zz, 3 shown
 expect list "zzbeta, stdio, stopped","zzalpha, stdio, stopped"

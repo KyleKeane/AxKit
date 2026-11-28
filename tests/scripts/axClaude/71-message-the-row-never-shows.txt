@@ -1,0 +1,46 @@
+# Workflow: Get a message back when Claude's prompt row never shows it
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code; no Claude Code, no network and no model.
+# axClaude, docs/axClaude/SPEC.md D33 ("One message in flight", the fifth review of 2026-11-27, M4 and L6). A message's
+# Enter goes only once Claude Code's prompt row shows the message, and waits three seconds for it. Until that review
+# a row that never showed it ended in "Not sent yet: Enter in the empty message field sends it": the message stayed
+# in the conversation as sent, and the empty field's Enter was a bare Enter, checked against nothing. Now the message
+# is taken back as a dropped one is: its block leaves the conversation, its text comes back into the field, a message
+# sent after it is not typed either and comes back with it, and the next send empties the row first.
+# The stand-in (tools/AxAutomate/StandIn.cs) draws nothing typed ("echo" false) and writes every key it reads to a
+# file ("keys"), which the script compares with what it expects.
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir nv
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.332 (stand-in)","echo":false,"keys":"keys.txt","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"idle":true}]}
+file expected1.txt first message
+file expected2.txt first message<Ctrl+U>first message<Ctrl+J><Ctrl+J>second message
+start claude {temp}\nv --claude {temp}\claude.cmd -- --model haiku --effort low
+expect said Ready
+wait 1000
+
+# Check: A message the row never shows comes back into the field, with the one sent after it
+# The first message is typed and its Enter waits; the second waits behind it and is never typed. After three seconds
+# both come back into the message field, nothing more is typed, no Enter goes, and the window says so once.
+type first message
+keys enter
+type second message
+keys enter
+expect said Not sent yet
+refuse said Sent
+expect focus "name":"Message to Claude"
+expect text first message
+expect text second message
+run fc /b nv\keys.txt expected1.txt
+
+# Check: A message that came back leaves no block in the conversation
+do Conversation
+expect text Not sent yet: Claude's prompt row did not show your message, so its Enter was not sent. The message is back in the message field. The message sent after it was not typed either and is in the field after it. Enter sends it again.
+refuse text # Input 1
+
+# Check: The next send empties Claude Code's prompt row first
+# What was typed of the message that came back may stand on the row: the next message empties it before it is typed.
+do Message field
+keys enter
+wait 1000
+run fc /b nv\keys.txt expected2.txt

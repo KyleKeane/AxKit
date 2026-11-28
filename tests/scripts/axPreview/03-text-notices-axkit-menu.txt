@@ -30,6 +30,8 @@ expect said heading level 2
 # Check: Each Ctrl+H goes on to the next heading of the guide
 keys ctrl+h
 expect said heading level 2
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus {"name":"README.md","role":"Text","value":"## Install"}

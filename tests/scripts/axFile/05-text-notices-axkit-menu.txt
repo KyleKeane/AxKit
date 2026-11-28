@@ -25,6 +25,8 @@ expect said ! Windows text size
 menu User guide
 expect focus "name":"User guide"
 expect focus # axFile user guide
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus "value":"docs, folder"
@@ -35,6 +37,8 @@ expect commands "axFile, axKit, Apps, Ctrl+F2"
 expect commands "Close all windows, Window"
 menu Version, Help, About
 expect state axKit
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect focus "value":"docs, folder"
 # Manual (5.3): Recently closed, Open windows and Open windows by type are filled as the menu opens (not in the palette).
@@ -64,6 +68,8 @@ expect focus "role":"Text"
 keys escape
 expect focus "name":"Favorites"
 expect focus "value":"No favorites yet"
+# A field or list the focus comes back to after a notice that held holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect focus "value":"docs, folder"
 

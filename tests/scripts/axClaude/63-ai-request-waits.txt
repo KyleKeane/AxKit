@@ -19,6 +19,8 @@ expect focus "name":"Message to Claude"
 # The access and the run switch on, the runner paired, as in mcp\05-run-asks-in-a-list.
 menu Let AI tools read and open axKit
 expect state "notice":"Turn on AI tools?"
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said AI tools on
 try said Not in a test run

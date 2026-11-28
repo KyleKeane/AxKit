@@ -153,14 +153,16 @@ public sealed partial class WindowLastResortTests
     public static TheoryData<string, string, int, string> ConsoleWrites() => new()
     {
         // The message field's Enter: not while what waits was not put to the user; with the list on, the field is hidden while Claude asks.
-        { "MainForm.Input.cs", "private void SendInput()", 2, "if (FieldWaitsForQuestion(text.Length > 0))" },
+        { "MainForm.Input.cs", "private void SendInput()", 1, "if (FieldWaitsForQuestion(text.Length > 0))" },
+        // The empty field's Enter (the fifth review of 2026-11-27): bound to the question it was pressed for, or only
+        // while the frame shows a draft on Claude Code's prompt row and nothing is asked, asked again as it goes.
+        { "MainForm.Input.cs", "private void EmptyFieldEnter()", 1, "QueuedWrite.MessageGoes(true, waitedFor, _model.PromptPending, WaitIdentity()) : !_model.PromptPending && _model.PromptDraft is { Length: > 0 }" },
         // A message's writes, each bound: over when Claude Code has begun to ask since it was queued; its Enter only on a
-        // positive check, the message on Claude Code's prompt row (QueuedWrite.MessageEnterGoes).
+        // positive check, the message on Claude Code's prompt row (QueuedWrite.MessageEnter), not yet while it waits.
         { "MainForm.Input.cs", "private void QueueWrites(string text, bool fromField = false, Action? sent = null)", 3, "Enqueue(ClaudeCodeKeys.Enter, 50, enter);" },
-        { "MainForm.Input.cs", "private (Func<bool> Text, Func<bool> Enter) MessageStill(string text, bool fromField, Action sent)", 1, "Enqueue(ClaudeCodeKeys.Enter, 50, () => EnterGoes() || (!Goes() && Dropped()));" },
-        { "MainForm.Input.cs", "private void ClearRestoredMessage(Func<bool> still)", 2, "Enqueue(ClaudeCodeKeys.CtrlU, 30, still);" },
+        { "MainForm.Input.cs", "private void ClearRestoredMessage(Func<WriteCheck> still)", 2, "Enqueue(ClaudeCodeKeys.CtrlU, 30, still);" },
         // The Enter sent again for one Claude Code dropped or one held back: only while the row shows the message and nothing is asked, asked again as it goes.
-        { "MainForm.Input.cs", "private void ResendEnterWhileHeld(string text, int attempt)", 1, "Enqueue(ClaudeCodeKeys.Enter, 50, () => QueuedWrite.EnterAgain(_model.PromptHolds(text), _model.PromptPending, _interruptedSinceSend));" },
+        { "MainForm.Input.cs", "private void ResendEnterWhileHeld(string text, int attempt)", 1, "Enqueue(ClaudeCodeKeys.Enter, 50, () => QueuedWrite.EnterAgain(_model.PromptHolds(text), _model.PromptPending, _interruptedSinceSend) ? WriteCheck.Goes : WriteCheck.Skip);" },
         { "MainForm.Input.cs", "private void SendNow()", 2, "if (!KeyMayGoToClaude())" },
         // The stop key: the one command that sends a key whatever Claude Code asks; its Escape is a no, never a yes.
         { "MainForm.Input.cs", "private void Interrupt()", 1, "Write(ClaudeCodeKeys.Escape, still: null);" },

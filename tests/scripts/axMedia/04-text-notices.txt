@@ -26,12 +26,16 @@ do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 # (a text with "+" cannot be matched in a state answer: the runner matches the escaped JSON, see the report)
 expect state faster or slower by a quarter, the voice
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect focus alpha.wav (playing)
 expect state "notice":null
 # Goal: Read the user guide
 menu User guide
 expect state "notice":"User guide"
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect focus alpha.wav (playing)
 # Check: Save has nothing to save here

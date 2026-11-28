@@ -76,6 +76,8 @@ expect focus count (required), number, empty
 keys enter
 expect state "notice":"Change count (required)","noticeText":"A number. Empty for none."
 type three
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Not a number: three
 expect state "notice":"Change count (required)"
@@ -84,6 +86,8 @@ expect focus {"name":"count (required)","role":"Text","value":"three"}
 # A number typed over the word, Enter: the field's line reads it.
 keys ctrl+a
 type 3
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! count (required): 3
 expect focus count (required), number, 3
@@ -112,6 +116,8 @@ expect said ♪ ListOpen
 expect state Now medium. Up and Down move through the list, Enter chooses.
 expect list "items":["small","medium","large"],"selected":1
 keys down
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! size: large
 expect focus size, choice, large

@@ -2,7 +2,7 @@
 
 Written by `tools/families.ps1` from `docs/axKit/families.json`; never by hand. One data structure for the four families of axKit and the links between them, asked by the maintainer on 2026-11-16 so that he and the assistant name the same things by the same short names. It describes what the code does today, read from the code that day; it changes no behaviour. Since 2026-11-17 the kinds of event and the sounds are in code too (AxKit.Core/Events: EventKind, EventSound and the table EventPresenter), held to this file both ways by EventKindTests, and every sound is played by raising its kind at the door (AxKit.Forms/EventDoor; docs/axKit/events.md, section 10). Each of the four lists has the same shape, a family with its members. The keys stay in docs/axKit/key-families.json and the commands in docs/axKit/window-commands.json; this file names them and does not copy them. Where the same kind of event sounds one way in one place and another way elsewhere, the event's note says so: those are the open choices, and a sound is added or changed only when the maintainer has chosen it by ear (docs/axKit/earcons.md).
 
-Status: proposed. In numbers: 58 kinds of event, 31 with a sound, 27 without; 24 sounds; 10 families of functions; 13 kinds of start.
+Status: proposed. In numbers: 59 kinds of event, 31 with a sound, 28 without; 24 sounds; 10 families of functions; 13 kinds of start.
 
 ## How to read it
 
@@ -179,6 +179,12 @@ You pressed a key, typed, or chose a command, and this is how it ended. Every co
   - Said: 'Sent', 'Queued', 'Sent, not recorded', 'Sent: 1, Green'. In axClaude the word is a setting; in axTerminal it is always said.
   - In: axClaude and axTerminal.
   - Note: In axClaude the sound plays a second time, with no words, when axClaude itself confirms the review after your last answer.
+- `not-sent`: A message you sent was given back a moment later, by itself: the program began to ask while it was typed, never showed it on its prompt row, or you interrupted before its Enter.
+  - Started by: `program`, `key`.
+  - Heard: no sound.
+  - Said: 'Not sent yet: the message is back in the message field; Enter sends it again', or 'Not sent: Claude asks something, and its question opens in a moment'. The conversation gets a line that says the same.
+  - In: axClaude.
+  - Note: The fifth review of 2026-11-27 (L6): until then said as refused, the sound of a key the window held back, though it came seconds after the key and by itself. The kind has no sound until the maintainer has chosen one by ear.
 - `recalled`: An earlier command came back into the field from the history.
   - Started by: `key`.
   - Heard: sound `Recall`.
@@ -737,6 +743,7 @@ Every kind of event that has words or a change on the screen and no sound of its
   - `question-read-again`: The question the program asks was read again: you typed a character in its list of answers (any but Space, which ticks an answer), or pressed the key that reads it again.
   - `changed`: A setting or a state of the window changed.
   - `done`: The command did its work at once.
+  - `not-sent`: A message you sent was given back a moment later, by itself: the program began to ask while it was typed, never showed it on its prompt row, or you interrupted before its Enter.
   - `asked`: The command asks before it acts: 'Delete a.txt?', 'Save changes to notes.md?', a consent before the first connection.
   - `opened`: Something opened at your command: a help text, the palette, a field or a form in the window, another axKit window, an outside program.
   - `busy`: The command started work that takes time.

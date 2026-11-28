@@ -1,0 +1,40 @@
+# Workflow: Confirm Clear history only once it has been heard, however it was opened
+# axCalc and the window base, docs/axKit/SPEC.md AX-6.4 (the fifth review of 2026-11-27, E3). A notice the user's own
+# command opens took its Enter at once when the code that made it said so, whatever key opened it: Clear the history?,
+# reached through the Actions menu with Enter, was confirmed by that Enter pressed twice. Whether the user opened it is
+# now a fact of the moment: only a key that can answer no notice (one with Ctrl or Alt, a function key), handled by
+# the window's own key dispatch in the same breath, opens a notice that takes its keys at once. An answering key
+# (Enter, a letter, Space), a menu item chosen, and anything posted or awaited open one that holds its keys for a
+# moment, and a press inside that moment is heard and answers nothing.
+file home\AxKit\axCalc.json {"keepHistory": false}
+
+start calc
+expect focus Expression
+type 6*7
+keys enter
+expect said ! 42
+type 1+1
+keys enter
+expect said ! 2
+
+# Check: The confirmation a menu item chosen opens holds its keys for a moment
+# Clear history chosen in the Actions menu (as Enter on the item chooses it; a menu's own keys cannot be driven on
+# the run's desktop, docs/axKit/automation.md): the question opens, and Enter pressed again at once clears nothing;
+# it is heard as held. The moment over, Escape keeps the history.
+menu Clear history
+expect state "notice":"Clear the history?"
+keys enter
+expect said ♪ Edge
+expect state "notice":"Clear the history?"
+refuse said History cleared
+wait 1100
+keys escape
+expect state "notice":null
+
+# Check: The confirmation the command's own key opens takes Enter at once
+# Ctrl+Shift+Delete can answer no notice: the question it opens is its first result, and Enter clears.
+do Clear history
+expect state "notice":"Clear the history?"
+keys enter
+expect said History cleared
+expect state "notice":null

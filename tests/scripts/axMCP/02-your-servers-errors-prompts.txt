@@ -70,6 +70,8 @@ expect focus "name":"Type the folder to start it in, or leave it empty","role":"
 keys tab
 expect focus Add
 keys shift+tab
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys ctrl+enter
 expect said ! Added probe
 expect focus probe, stdio, stopped
@@ -91,6 +93,8 @@ keys enter
 expect said ! There is a server named fake already
 expect state "notice":"Add server"
 expect focus "name":"Type the name of the server"
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus probe, stdio, stopped
@@ -217,6 +221,8 @@ expect focus text (required), text
 keys enter
 expect state "notice":"Change text (required)"
 type hello
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! text (required): hello
 keys ctrl+enter
@@ -318,6 +324,8 @@ expect state "notice":null
 keys enter
 expect state "notice":"Change who (required)"
 type Ada
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! who (required): Ada
 keys ctrl+enter

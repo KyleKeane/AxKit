@@ -15,7 +15,9 @@
   after a picture (`Pictographic`, Extended_Pictographic from `PictureRanges`, emoji-data.txt) or in a keycap, 200D
   between two pictures (the first may carry FE0F or a skin tone), 200C between letters of the Arabic, Syriac and Indic
   scripts (`JoinsLetters`), the tags of the three recommended flags (`FlagTags`, `InFlag`); and two seen characters
-  that look like nothing are written out, the braille blank and a combining mark on nothing (`OnNothing`).
+  that hide what they stand on are written out in every text, the braille blank and a combining mark whose cluster
+  does not begin with a letter (`OnNoLetter`; the fifth review of 2026-11-27, E1: a mark on "&gt;" made a truncation
+  look like two signs, one crossed out), a keycap's U+20E3 after a digit, # or * with its FE0F aside, outside commands.
   `VisibleCommand`, for a command offered to run and a permission question's label, writes out every hidden
   character with no exception (N2: a command is run, not read) and every space that is not the plain one;
   `VisibleLine` keeps such spaces (its summary says why). Each rule has its rows in `DisplayTextTests`. `VisibleLine` keeps a tab, for a question's name and answers: `AxKit.Forms/ControlArea` applies

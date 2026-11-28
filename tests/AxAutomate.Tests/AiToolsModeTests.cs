@@ -27,7 +27,7 @@ public sealed class AiToolsModeTests
         }
 
         var script = File.ReadAllLines(Path.Combine(root, "tests", "scripts", "mcp", "02-run-commands.txt"));
-        Assert.Equal(20, AiToolsMode.Preamble.Count);
+        Assert.Equal(21, AiToolsMode.Preamble.Count);
         var at = 0;
         foreach (var line in AiToolsMode.Preamble)
         {

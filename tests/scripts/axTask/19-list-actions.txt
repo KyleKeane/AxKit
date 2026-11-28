@@ -66,6 +66,8 @@ expect state "notice":null
 menu Read the last output
 expect state "notice":"Output of Find the kind"
 expect state Bug of Fix the tap
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 
 # Check: A program that fails says so with its exit code and opens its output
@@ -73,11 +75,15 @@ menu Miss
 expect state "notice":"Run Miss? An AI may have written it: read the explanation before you run it"
 keys tab tab
 expect focus Run it &once"
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Running Miss
 expect said ! Miss failed, exit code 1
 expect state "notice":"Output of Miss"
 expect state It wrote nothing.
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 
 # Goal: Fill in an action's form
@@ -86,10 +92,14 @@ keys escape
 menu Find what I type
 expect state "notice":"Find what I type"
 expect focus "name":"Type the word to look for"
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said Type the word to look for: this is needed
 expect state "notice":"Find what I type"
 type the tap
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect state "notice":"Run Find what I type? An AI may have written it: read the explanation before you run it"
 expect state /c:the tap
@@ -102,6 +112,8 @@ expect said ! Find what I type: done
 expect said ♪ Done
 menu Read the last output
 expect state Fix the tap
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 
 # Goal: Stop a running action
@@ -110,6 +122,8 @@ keys escape
 menu Wait
 expect state "notice":"Run Wait? An AI may have written it: read the explanation before you run it"
 keys tab tab
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Running Wait
 # Check: The status bar says what runs
@@ -130,12 +144,16 @@ expect state "notice":"Put Look in the terminal into axTerminal? An AI may have 
 expect state Look in the terminal puts a command of 3 parts into axTerminal's command field, for you to send: findstr, /c:x, {file}
 expect state Fix the tap.json
 expect state axTerminal puts the command into its command field and does not send it
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect state "notice":null
 menu Look in the terminal
 expect state "notice":"Put Look in the terminal into axTerminal? An AI may have written it: read the explanation before you run it"
 keys tab tab
 expect focus Put it there &once
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Look in the terminal is in axTerminal's command field
 adopt

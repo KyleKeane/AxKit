@@ -136,21 +136,56 @@ public class SessionModelTests
     [Fact]
     public void The_prompt_row_holding_a_sent_message_is_told_from_an_empty_one()
     {
-        // FR-2.1: an Enter Claude dropped leaves the message on the prompt row, where the cursor is.
+        // FR-2.1: an Enter Claude dropped leaves the message on the prompt row, where the cursor is. The draft's form
+        // as every recording draws it: the dollar sign, the no-break space, a blank, the text.
         var model = new SessionModel(80, 6);
-        Feed(model, $"{Esc}[?25lclaude: Hi.\r\n\r\n$  Reply with the single word hello.{Esc}[?25h");
+        Feed(model, $"{Esc}[?25lclaude: Hi.\r\n\r\n$  Reply with the single word hello.{Esc}[?25h");
         Assert.True(model.PromptHolds("Reply with the single word hello."));
-        Assert.True(model.PromptHolds("Reply with the single word hello.\nand a second line"));
+        Assert.Equal("Reply with the single word hello.", model.PromptDraft);
         Assert.False(model.PromptHolds("Something else"));
 
         // As Claude draws it: the cursor on the blank row under the prompt row.
         var under = new SessionModel(80, 6);
-        Feed(under, $"{Esc}[?25lclaude: Hi.\r\n$  Reply with the single word hello.\r\n{Esc}[?25h");
+        Feed(under, $"{Esc}[?25lclaude: Hi.\r\n$  Reply with the single word hello.\r\n{Esc}[?25h");
         Assert.True(under.PromptHolds("Reply with the single word hello."));
 
         var empty = new SessionModel(80, 6);
         Feed(empty, $"{Esc}[?25lclaude: Reply with the single word hello.\r\n\r\n$ {Esc}[?25h");
         Assert.False(empty.PromptHolds("Reply with the single word hello."));
+        Assert.Equal(string.Empty, empty.PromptDraft);
+    }
+
+    /// <summary>
+    /// The fifth review of 2026-11-27 (L5): the row holds the message whole, from its start, in the draft's own form.
+    /// Until then a row that began with a dollar sign and a blank and held the message's first forty characters
+    /// anywhere passed: a reply's row quoting a command, a draft that held more than the message, a draft that held
+    /// the start of a longer one, the first line of a message of two.
+    /// </summary>
+    [Theory]
+    [InlineData("$ Reply with the single word hello.")]
+    [InlineData("$  Reply with the single word hello. And more")]
+    [InlineData("$  Reply with the single word")]
+    [InlineData("$  Please: Reply with the single word hello.")]
+    [InlineData("> Reply with the single word hello.")]
+    public void A_row_that_holds_less_or_more_than_the_message_or_is_no_draft_does_not_hold_it(string row)
+    {
+        var model = new SessionModel(80, 6);
+        Feed(model, $"{Esc}[?25lclaude: Hi.\r\n\r\n{row}{Esc}[?25h");
+        Assert.False(model.PromptHolds("Reply with the single word hello."));
+
+        var two = new SessionModel(80, 6);
+        Feed(two, $"{Esc}[?25lclaude: Hi.\r\n\r\n$  Reply with the single word hello.{Esc}[?25h");
+        Assert.False(two.PromptHolds("Reply with the single word hello.\nand a second line"));
+    }
+
+    /// <summary>A message of two lines as the early-two-lines recording draws its draft: the second line on the row under the first.</summary>
+    [Fact]
+    public void A_message_of_two_lines_is_held_by_the_rows_of_its_draft()
+    {
+        var model = new SessionModel(80, 6);
+        Feed(model, $"{Esc}[?25lclaude: Hi.\r\n$  What is 2 plus 2?\r\nAnswer in one line.{Esc}[?25h");
+        Assert.True(model.PromptHolds("What is 2 plus 2?\nAnswer in one line."));
+        Assert.False(model.PromptHolds("What is 2 plus 2?"));
     }
 
     /// <summary>
@@ -164,7 +199,7 @@ public class SessionModelTests
         // Four hundred characters on a screen sixty wide: seven rows, the prompt row six above the cursor.
         var message = string.Concat(Enumerable.Repeat("abcdefghij", 40));
         var wide = new SessionModel(60, 20);
-        Feed(wide, $"{Esc}[?25l$ {message}{Esc}[?25h");
+        Feed(wide, $"{Esc}[?25l$  {message}{Esc}[?25h");
         Assert.True(wide.PromptHolds(message));
 
         var bang = new SessionModel(80, 6);

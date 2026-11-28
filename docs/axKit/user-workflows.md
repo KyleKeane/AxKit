@@ -1844,8 +1844,8 @@ Risks:
   and the converter pass over axClaude and axHelp, an app without rows is not checked, and both join in WP-B17. If
   the redesign changes a menu of the console window that axTerminal shares, a run of axTerminal's scripts ends with
   exit code 3 and the words that say what to do; WP-B17 rewrites axTerminal's rows as well.
-- **The AI tools mode turns the access on in the script's own window**, with twenty steps before the first input
-  step. A script whose first input depends on the exact state its start left (a notice already open, a field in
+- **The AI tools mode turns the access on in the script's own window**, with twenty-one steps before the first input
+  step (a wait of a second added on 2026-11-27: the menu's notice holds its keys, bundle AX-6.4). A script whose first input depends on the exact state its start left (a notice already open, a field in
   hand) may play differently in the mode; such a failure is the tier's finding, not the script's (WF-9.6). Scripts
   of several windows are not covered. The refusal for a user at work (MC-7.8) counts the whole session's last key
   press, so the mode waits it out; a run made while the user types is slower, not wrong.

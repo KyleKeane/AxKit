@@ -443,6 +443,8 @@ do Filter
 expect state "notice":"Filter"
 expect focus "name":"Name contains"
 type chap
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! 9 items, filter chap, 5 shown, chapter-01-notes.txt
 expect list "count":5
@@ -460,6 +462,8 @@ expect focus chapter-02-notes.txt
 do Filter
 expect focus "name":"Name contains"
 type zzz
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! 9 items, filter zzz, 0 shown, No names contain zzz
 keys enter
@@ -493,6 +497,8 @@ keys ctrl+s
 expect said ! Nothing to save here
 do Keyboard shortcuts
 expect focus "name":"Keyboard shortcuts"
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect focus chapter-01-notes.txt
 expect state "notice":null
@@ -584,6 +590,8 @@ expect quiet 1000
 do Filter
 expect focus "name":"Name contains"
 type select-0
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! 14 items, filter select-0, 9 shown
 keys space
@@ -597,6 +605,8 @@ expect said ! Filter cleared
 # A mark is gone when another folder is shown: Space, Enter on a folder, Backspace.
 keys home
 keys down down
+# A field or list the focus comes back to after a notice that held holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys space
 expect said ! Selected
 keys home
@@ -644,6 +654,8 @@ expect said ! Selected, 2 selected
 do Filter
 expect focus "name":"Name contains"
 type select-01
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! 14 items, filter select-01, 1 shown, select-01.txt
 do Information

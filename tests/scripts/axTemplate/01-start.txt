@@ -13,6 +13,8 @@ expect focus No templates yet: Ctrl+N makes one
 # Check: The keys are read with Help, Keyboard shortcuts (F1 until 2026-11-26)
 do Keyboard shortcuts
 expect state Keyboard shortcuts
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect focus No templates yet: Ctrl+N makes one
 
@@ -39,6 +41,8 @@ type thanks
 keys enter
 expect said ! There is a template called thanks already
 expect state "notice":"New template"
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect focus Thanks
 
@@ -51,6 +55,8 @@ expect focus Type the title
 keys tab
 expect focus Type Text; Enter makes a new line
 type Thank you, {clipboard}.{caret}
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys ctrl+enter
 expect said Saved
 expect state "notice":null
@@ -82,6 +88,8 @@ expect said Navigation mode
 # One letter cycles from the line you are on, as in every list: from axDown to axJSON.
 keys a
 expect focus axJSON, not checked
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys space
 expect said checked
 keys 1
@@ -130,6 +138,8 @@ expect focus Thank you note
 # 4.2 Delete asks, and moves the template into the Archive folder; Ctrl+Z brings it back (TP-8.4, TP-D9).
 keys delete
 expect state "notice":"Archive Thank you note?"
+# A notice that Delete opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said Archived Thank you note
 expect focus No templates yet: Ctrl+N makes one
@@ -155,6 +165,8 @@ expect state "notice":"Fields of Thanks"
 expect focus Type the title
 keys ctrl+a
 type Greeting
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys ctrl+enter
 expect said Saved
 # Check: Escape goes back to the renamed template in the list

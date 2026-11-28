@@ -19,12 +19,16 @@ expect focus Queue, 3 items
 do Filter
 expect focus "name":"Name contains"
 type amm
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Queue, 3 items, filter amm, 1 shown, gamma.wav
 expect focus "name":"Queue, 3 items, filter amm, 1 shown"
 
 # Check: A row under the filter is its own file of the queue
 # Enter plays the file shown, not the first of the queue; Information says its place among all three.
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Playing gamma.wav
 menu Information, Context

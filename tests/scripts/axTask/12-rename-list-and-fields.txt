@@ -29,6 +29,8 @@ expect focus Fields of its items: Room
 keys enter
 expect state "notice":"Fields of its items"
 expect state Ctrl+J on the list opens it in axJSON
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 keys shift+tab
@@ -50,6 +52,8 @@ expect focus 1 more field kept: Room
 keys enter
 expect state "notice":"Fields kept"
 expect state Room: Kitchen
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 run findstr /l /c:"\"Room\":\"Kitchen\"" "tasks\House\Fix the tap.json"
@@ -59,6 +63,8 @@ keys up
 expect focus Place, text, empty
 keys enter
 type Hall
+# A field that Enter opens holds its Enter for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Saved
 expect focus Place, text, Hall

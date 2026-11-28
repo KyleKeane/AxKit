@@ -25,8 +25,11 @@ Updated 2026-11-28, early morning.
   the axGIT fixes found two more ways a repository's program could run (at opening, in a partial clone; on a
   push to a folder), so axGIT now works by rules that need no list: a repository not trusted is never
   connected, and git never fetches by itself. The look after that still found ways (a submodule's settings,
-  a folder push into the wrong repository), so the batch now running moves the line: before you trust a
-  repository, axGIT runs no git in it at all, and it pushes only to a server.
+  a folder push into the wrong repository), so the line moved: before you trust a repository, axGIT runs no
+  git in it at all, and it pushes only to a server. The fifth look at axClaude's question area found that a
+  quick second message could be joined to the first and that a notice opened from a menu did not hold; fixed:
+  one message is in flight at a time, and only a Ctrl or function key opens a notice that answers at once.
+  The fifth look at axGIT (git pinned to the repository read, paths read only on this computer) runs now.
 - **Fable and Opus**: on 2026-11-28 you said Fable's credits were nearly spent. Every remaining fix batch has
   its written brief with the decisions in it, and the state, the order and the process are in
   `C:\Temp\axkit-tools\HANDOFF.md`, so that Opus can run them; the design work on branches (the graph's
@@ -94,6 +97,20 @@ Each is one line to undo unless it says otherwise.
 - **A message's Enter goes only when Claude Code shows the message on its prompt row** and asks nothing: axClaude
   looks every tenth of a second for up to 3 seconds, then says "Not sent yet". An offered command's `!` row is
   not in any recording yet: checked live before the release.
+- **A notice holds unless the key that opened it cannot answer one.** Only a Ctrl or Alt key (not Ctrl+Enter, not
+  Alt with a letter) or a function key opens a notice that answers at once. Everything opened from a menu, by Enter
+  on a line, by Delete, help texts and About included, waits its second. So the list an explanation closes back to
+  holds again too, where B2d had it answer at once. To turn back: `AnswerKeys.CannotAnswer`.
+- **"Not sent yet" gives the message back**: it leaves the conversation and returns to the field, with any message
+  queued behind it, joined by a blank line, so the next Enter sends them as one. If you were typing something else,
+  the message goes into the conversation line instead and the field is left alone. A second message waits until
+  the first is on Claude Code's row. Every message given back is the new kind `NotSent`, with no sound yet (the
+  "Claude asked" case had the refused sound before).
+- **Enter in the empty message field says "Nothing to send"** unless Claude Code's row shows a draft of yours.
+- **A notice that comes by itself over a question you have not answered answers it no** and begins "Replaces:"
+  with its title, rather than waiting behind it. Progress and plain information notices are left alone.
+- **A combining mark on anything but a letter is written out as its code**, in every text; a keycap emoji stays an
+  emoji outside commands.
 - **A command to approve writes out every hidden joiner and selector, emoji or not**; no-break spaces in
   Claude's own lines stay as they are (it writes them after its bullets).
 - **A day and month typed without a year is the next such day**, today included; 29 February is the next leap year's.
@@ -171,6 +188,8 @@ Kept in `docs/axKit/nvda-test-record.md` and `docs/axKit/owed.md`; here only wha
 
 - The kinds without a sound yet: question-read-again, not-with-source.
 - The edge sound on a key pressed within a question's first second (new; see the decision above).
+- The kind not-sent (a message given back) has no sound; before, "Claude asked" gave the refused sound.
+- How a held menu confirmation and a held explanation feel, and "Not sent yet" 3 seconds after Enter.
 - (More as the passes run.)
 
 ## What to try first

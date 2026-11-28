@@ -1,0 +1,32 @@
+# Workflow: Send a second message while the first one waits for Claude's prompt row
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code; no Claude Code, no network and no model.
+# axClaude, docs/axClaude/SPEC.md D33 ("One message in flight", the fifth review of 2026-11-27, M1). A message's Enter
+# goes only once Claude Code's prompt row shows the message; until it does, the Enter waits. Until that review the
+# Enter's check said "not yet" with the same answer as "over", so the queue dropped what stood behind it, and a second
+# message sent meanwhile was typed onto the same row: both went as one, with the first one's Enter, and the second's
+# Enter was never sent. Now the Enter waits first in the queue, everything behind it waits in order, and each message
+# goes with its own Enter.
+# The stand-in (tools/AxAutomate/StandIn.cs) draws the first character of each draft 1.2 seconds late ("echoAfter")
+# and writes every key it reads to a file ("keys"), which the script compares with the order it expects.
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir of
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.332 (stand-in)","echoAfter":1200,"keys":"keys.txt","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"idle":true}]}
+file expected.txt first message<Enter>\nsecond message<Enter>\n
+start claude {temp}\of --claude {temp}\claude.cmd -- --model haiku --effort low
+expect said Ready
+wait 1000
+
+# Check: A message sent while the one before waits for its row goes after it, with its own Enter
+# The first message's Enter waits while the row does not show it yet; the second is sent meanwhile. Both reach Claude
+# Code, each typed alone and followed by its own Enter, in order, and "Sent" is said for each when its Enter goes.
+type first message
+keys enter
+type second message
+keys enter
+expect said Sent
+expect said Sent
+wait 1000
+run fc /b of\keys.txt expected.txt
+refuse said Not sent

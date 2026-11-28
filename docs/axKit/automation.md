@@ -437,7 +437,12 @@ when the hook says `async`. It needs no Claude Code, no network and no model, an
   It names the `version`, the `session` id and the `home` folder, and holds `steps`: `frame` (rows, `clear`), `mark`,
   `bell`, `hook` (the event's name, `fields`, `last`, `tasks`), `user`, `assistant` (`cut`), `toolUse`, `toolResult`,
   `turnEnd`, `queue`, `raw`, `wait`, `waitFile` (a file the script makes in the working folder: the moment Claude
-  would take the message up) and `idle`. `tests/scripts/axClaude/29-stand-in-turn.txt` plays one whole turn.
+  would take the message up) and `idle`. `tests/scripts/axClaude/29-stand-in-turn.txt` plays one whole turn. Three
+  keys for what the window types (2026-11-27, the fifth review, docs/axClaude/SPEC.md D33 "One message in flight"):
+  `echoAfter` (milliseconds: a draft's first character is drawn that late, so a message's Enter waits for its row),
+  `echo` (false: nothing typed is drawn) and `keys` (a file in the working folder that gets every key read, a
+  character as itself and Enter, Ctrl+J, Ctrl+U by name), which a script compares with a file of its own
+  (`run fc /b <folder>\keys.txt expected.txt`; scripts 70 and 71).
 - **The session file** is `<the scenario's folder>\home\.claude\projects\<the working folder's project name>\<session>.jsonl`:
   with `home` the run's own folder (`AXKIT_HOME`, `{temp}\home`), whose `.claude\projects` axClaude counts as a
   projects folder in a test run alone (EG-3.1), so nothing of a run lands among the user's sessions. A script reads it

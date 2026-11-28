@@ -39,6 +39,8 @@ keys ctrl+s
 expect said Nothing to save here
 do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus "name":"Search programs and recently closed","role":"Text","value":"win power"
@@ -62,16 +64,22 @@ keys a
 expect said Use Ctrl, Alt or the Windows key with it
 keys ctrl+alt+shift+f9
 expect focus Ctrl+Alt+Shift+F9
+# A field or list the focus comes back to after a notice that held holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said Hotkey Ctrl+Alt+Shift+F9
 # Check: Escape in the hotkey notice keeps the key in use
 # 4.6 Escape keeps the key in use.
 menu Hotkey
 expect focus Ctrl+Alt+Shift+F9
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 menu Hotkey
 expect focus Ctrl+Alt+Shift+F9
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 
 # Goal: Quit axStart

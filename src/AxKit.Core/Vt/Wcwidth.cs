@@ -2,8 +2,8 @@ using System.Globalization;
 
 namespace AxKit.Core.Vt;
 
-/// <summary>Terminal cell width of a code point: 0 for combining and format characters, 2 for wide characters, else 1.</summary>
-internal static class Wcwidth
+/// <summary>Terminal cell width of a code point: 0 for combining and format characters, 2 for wide characters, else 1. Public since 2026-11-27 (the fifth review, L3): axClaude's reader of a permission question measures a wrapped path's row by it, as the screen counts the row.</summary>
+public static class Wcwidth
 {
     private static readonly (int Start, int End)[] Wide =
     [

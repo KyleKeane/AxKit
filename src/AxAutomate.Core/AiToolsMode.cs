@@ -27,6 +27,8 @@ public static class AiToolsMode
     [
         "menu Let AI tools read and open axKit",
         "expect state \"notice\":\"Turn on AI tools?\"",
+        // A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+        "wait 1100",
         "keys enter",
         "expect said AI tools on",
         "try said Not in a test run",

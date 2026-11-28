@@ -21,6 +21,8 @@ expect said docs, folder, 1 of 1
 keys up
 expect said ♪ Edge
 expect said docs, folder, 1 of 1
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Moved a.txt into docs
 expect list "count":2
@@ -37,6 +39,8 @@ keys home
 expect focus docs, folder
 menu Move to folder, Context
 type docs
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said Cannot move a folder into itself
 keys ctrl+a

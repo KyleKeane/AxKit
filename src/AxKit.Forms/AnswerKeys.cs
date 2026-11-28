@@ -30,6 +30,31 @@ internal static class AnswerKeys
         message.Msg is User32.WM_KEYDOWN or WM_SYSKEYDOWN or WM_CHAR && (message.LParam.ToInt64() & WasDown) != 0;
 
     /// <summary>
+    /// Whether a key of the user's can answer no notice, so that a notice it opens may take its keys at once
+    /// (<see cref="Notice.AsShown"/>; the fifth review of 2026-11-27, E3): a key with Ctrl or Alt, or a function key.
+    /// Not Ctrl+Enter, the main action of every notice, and not a letter or a digit with Alt (Shift or not), which
+    /// presses the notice's button of that letter (<see cref="OverlayPanel"/>'s answering keys). Enter, Escape, Space, a letter, a
+    /// digit and every other plain key can: a notice such a key opens holds its keys for its moment, whatever its
+    /// maker said, so that a doubled press answers nothing unheard.
+    /// </summary>
+    public static bool CannotAnswer(Keys key)
+    {
+        var code = key & Keys.KeyCode;
+        var modifiers = key & Keys.Modifiers;
+        if (key == BundleKeys.MainAction)
+        {
+            return false;
+        }
+
+        if ((modifiers & ~Keys.Shift) == Keys.Alt && code is >= Keys.A and <= Keys.Z or >= Keys.D0 and <= Keys.D9)
+        {
+            return false;
+        }
+
+        return (modifiers & (Keys.Control | Keys.Alt)) != 0 || code is >= Keys.F1 and <= Keys.F24;
+    }
+
+    /// <summary>
     /// A fresh press of an answering key that a hold took is heard: the refusal raised at the door, whose sound is the
     /// kind's own (bundle rule 13; no words, which would cut off NVDA's reading of the question that has just come).
     /// Each press, with no limit: a key that did nothing is never silence.

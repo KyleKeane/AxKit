@@ -180,6 +180,38 @@ public sealed class PermissionCoreTests
         Assert.Equal("Create file Butt", PermissionCore.OfScreen("Permission Required: Create file", [first, "Do you want to create it?"], width: first.Length));
     }
 
+    /// <summary>
+    /// The fifth review of 2026-11-27 (L3): the same rule read through <see cref="QuestionReader"/>, with the rows as
+    /// the recording permission-prompt-claude2.1.281 draws a file's question (the path's row from the first column,
+    /// the preview's rows one blank in, the closing question, the answers, the prompt row). QuestionReader trims the
+    /// text, so the preview's "1 hello" never started with a blank there: a path that exactly filled the width took the
+    /// preview's first row into the file's name. And a path of wide characters fills the width by its display width,
+    /// two columns a character, not by its count of characters.
+    /// </summary>
+    [Fact]
+    public void A_wrapped_path_is_read_from_the_rows_the_screen_has_by_their_display_width()
+    {
+        const int width = 40;
+        var exact = @"C:\" + new string('a', width - 3 - @"\permission-test.txt".Length) + @"\permission-test.txt";
+        Assert.Equal(width, exact.Length);
+        Assert.Equal("Create file permission-test.txt", Read(width, "Permission Required: Create file", exact, " 1 hello", "Do you want to create permission-test.txt?"));
+
+        var cut = @"C:\work\repos\project\src\Forms\Butt" + new string('x', width - 36);
+        Assert.Equal("Edit file " + cut[(cut.LastIndexOf('\\') + 1)..] + "on.cs, and more", Read(width, "Permission Required: Edit file", cut, "on.cs", " 1 one", "Do you want to make this edit?"));
+
+        // Eighteen wide characters and four narrow ones: forty columns, twenty-two characters.
+        var wide = @"C:\" + new string('作', 18) + @"\";
+        Assert.Equal("Edit file メモ.txt, and more", Read(width, "Permission Required: Edit file", wide, "メモ.txt", " 1 one", "Do you want to make this edit?"));
+        // Shorter than the width by its columns: the path ends there.
+        Assert.Equal("Edit file " + new string('作', 16), Read(width, "Permission Required: Edit file", @"C:\" + new string('作', 16), "メモ.txt", " 1 one", "Do you want to make this edit?"));
+
+        static string? Read(int columns, string title, params string[] text)
+        {
+            string[] rows = [title, .. text, "1. Yes", "2. Yes, allow all edits during this session", "3. No", "Select with numbers [1-3]. Then Enter to submit or Escape to cancel:"];
+            return QuestionReader.Read(rows, rows.Length - 1, columns)?.Core;
+        }
+    }
+
     [Fact]
     public void A_long_word_is_cut_and_the_words_stop_before_the_limit()
     {

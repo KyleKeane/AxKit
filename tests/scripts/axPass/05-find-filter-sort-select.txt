@@ -52,6 +52,8 @@ expect focus Bank two
 do Filter
 expect focus "name":"Name contains"
 type bank
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! filter bank, 2 shown
 refuse list Alarm code

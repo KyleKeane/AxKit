@@ -10,6 +10,8 @@ expect focus notes.md
 # The access and the run switch on, the runner paired, as in 03-run-asks-first.
 menu Let AI tools read and open axKit
 expect state "notice":"Turn on AI tools?"
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said AI tools on
 try said Not in a test run
@@ -48,13 +50,16 @@ keys enter
 expect state "notice":"Command offer: about this window command"
 expect state "noticeText":"# Read this first\n\naxAutomate, an AI model, asks to run a command of this window
 expect state The request comes from an AI tool, which can be wrong
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect focus 1. Explain this command
 
 # Goal: Deny a command an AI tool asks to run
-# Escape is No: nothing runs, the text has the focus again. The explanation was the user's own to open from the list
-# they had heard: the list's second is not started again as the focus comes back (bundle AX-6.4, N4 of the fourth
-# review of 2026-11-27; until then a wait of a second here).
+# Escape is No: nothing runs, the text has the focus again. The explanation held its keys (opened by Enter, E3 of the
+# fifth review of 2026-11-27), so the list's second starts again as the focus comes back to it (bundle AX-6.4 point
+# 4): the wait of a second is back.
+wait 1100
 keys escape
 expect said Check for updates at start not run
 refuse said axAutomate ran Check for updates at start

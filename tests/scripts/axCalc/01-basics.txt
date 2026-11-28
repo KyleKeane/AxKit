@@ -37,6 +37,8 @@ expect said ! Cleared
 # Goal: Go on from the last answer
 # An expression starting with an operator continues from the last answer (AC-3).
 type /2
+# A field or list the focus comes back to after a notice that held holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! 4147200
 
@@ -60,12 +62,16 @@ expect focus "name":"Expression","role":"Text","value":"/2"
 # is a text, and Clear history empties it (AC-5.6).
 keys tab
 expect focus "name":"History"
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect focus "name":"Expression","role":"Text","value":"/2"
 # Check: Delete in the history removes nothing
 keys tab
 keys delete
 expect focus "name":"History","role":"Text","value":"/2 = 4147200"
+# A field or list the focus comes back to after a notice that held holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 keys ctrl+delete
 expect said ! Cleared
@@ -82,6 +88,8 @@ expect state "notice":null
 do Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 expect text Notices
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 
@@ -95,6 +103,8 @@ expect said A key alone moves and reads
 keys enter
 expect said A key alone moves and reads
 expect state "notice":"Command palette"
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 # Check: Ctrl+Comma opens the same palette

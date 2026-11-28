@@ -88,7 +88,6 @@ public sealed class DisplayTextTests
     [InlineData(0x007E)]
     [InlineData(0x00A0)]
     [InlineData(0x00E9)]
-    [InlineData(0x0301)]
     [InlineData(0x2010)]
     [InlineData(0x2027)]
     [InlineData(0x202F)]
@@ -172,6 +171,7 @@ public sealed class DisplayTextTests
     [InlineData(new[] { 0x2211, 0x200D, 0x221E }, "∑‹U+200D›∞")]
     [InlineData(new[] { '$', 0x200D, 0x20AC }, "$‹U+200D›€")]
     [InlineData(new[] { 'a', 0xFE0F, 0x20E3 }, "a‹U+FE0F›⃣")]
+    [InlineData(new[] { '1', 0x20E3 }, "1‹U+20E3›")]
     [InlineData(new[] { 0x1F3F4, 0xE0068, 0xE0069, 0xE007F }, "🏴‹U+E0068›‹U+E0069›‹U+E007F›")]
     [InlineData(new[] { 'a', 0xE0067, 0xE0062, 0xE0065, 0xE006E, 0xE0067, 0xE007F }, "a‹U+E0067›‹U+E0062›‹U+E0065›‹U+E006E›‹U+E0067›‹U+E007F›")]
     [InlineData(new[] { 'a', 0x200C, 'b' }, "a‹U+200C›b")]
@@ -213,7 +213,7 @@ public sealed class DisplayTextTests
     [Theory]
     [InlineData(new[] { 0x2764, 0xFE0F }, "❤‹U+FE0F›")]
     [InlineData(new[] { 0x1F468, 0x200D, 0x1F469 }, "👨‹U+200D›👩")]
-    [InlineData(new[] { '1', 0xFE0F, 0x20E3 }, "1‹U+FE0F›⃣")]
+    [InlineData(new[] { '1', 0xFE0F, 0x20E3 }, "1‹U+FE0F›‹U+20E3›")]
     [InlineData(new[] { 0x1F3F4, 0xE0067, 0xE0062, 0xE0065, 0xE006E, 0xE0067, 0xE007F }, "🏴‹U+E0067›‹U+E0062›‹U+E0065›‹U+E006E›‹U+E0067›‹U+E007F›")]
     [InlineData(new[] { 0x0645, 0x200C, 0x062E }, "م‹U+200C›خ")]
     [InlineData(new[] { 'a', 0xFE0E }, "a‹U+FE0E›")]
@@ -245,5 +245,71 @@ public sealed class DisplayTextTests
         Assert.Same(command, DisplayText.VisibleLine(command));
         Assert.Equal("rm -rf notes ‹U+202E›", DisplayText.VisibleCommand("rm -rf notes ‮"));
         Assert.Same("git status", DisplayText.VisibleCommand("git status"));
+    }
+
+    /// <summary>
+    /// What the fifth review of 2026-11-27 found (H1 of round five): a combining mark rides on the sign before it and
+    /// leaves it looking like another sign, or like nothing changed, while the shell reads the mark as a word of its
+    /// own. Bash ran "echo added &gt;U+0338&gt; target.txt" as a truncation and made a file named by the mark. A mark
+    /// whose cluster does not begin with a letter is written out in every text (E1).
+    /// </summary>
+    [Theory]
+    [InlineData(new[] { '>', 0x0338, '>' }, ">‹U+0338›>")]
+    [InlineData(new[] { '&', 0x0338, '&' }, "&‹U+0338›&")]
+    [InlineData(new[] { '|', 0x20DD, '|' }, "|‹U+20DD›|")]
+    [InlineData(new[] { ' ', 0x0301 }, " ‹U+0301›")]
+    [InlineData(new[] { '1', 0x0332 }, "1‹U+0332›")]
+    [InlineData(new[] { 0x2764, 0x20E0 }, "❤‹U+20E0›")]
+    [InlineData(new[] { '>', 0x0338, 0x0301, '>' }, ">‹U+0338›‹U+0301›>")]
+    public void A_mark_on_anything_but_a_letter_is_written_out_in_every_text(int[] codes, string expected)
+    {
+        var text = "echo a" + string.Concat(codes.Select(char.ConvertFromUtf32)) + " b";
+        Assert.True(DisplayText.Hides(text));
+        Assert.Equal("echo a" + expected + " b", DisplayText.Visible(text));
+        Assert.Equal("echo a" + expected + " b", DisplayText.VisibleLine(text));
+        Assert.Equal("echo a" + expected + " b", DisplayText.VisibleCommand(text));
+    }
+
+    /// <summary>A mark after each of bash's metacharacters, its quotes, its dollar sign and backtick and the other signs of a word's syntax: none may look like the sign alone.</summary>
+    [Fact]
+    public void A_mark_after_every_sign_of_a_shell_is_written_out()
+    {
+        foreach (var sign in " |&;()<>'\"`$\\=*?[]{}#~!%^-+,./:@")
+        {
+            foreach (var mark in new[] { 0x0338, 0x20DD, 0x0903, 0x0301 })
+            {
+                var text = "echo a" + sign + char.ConvertFromUtf32(mark) + sign + "b";
+                var expected = "echo a" + sign + $"‹U+{mark:X4}›" + sign + "b";
+                Assert.Equal(expected, DisplayText.Visible(text));
+                Assert.Equal(expected, DisplayText.VisibleCommand(text));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Marks on letters stay, in every text: a decomposed French word (e and U+0301), a Hindi word with its vowel
+    /// signs and virama, an Arabic word with its vowel marks, a letter with two accents.
+    /// </summary>
+    [Theory]
+    [InlineData(new[] { 'c', 'a', 'f', 'e', 0x0301 })]
+    [InlineData(new[] { 0x0939, 0x093F, 0x0928, 0x094D, 0x0926, 0x0940 })]
+    [InlineData(new[] { 0x0643, 0x064E, 0x062A, 0x064E, 0x0628, 0x064E })]
+    [InlineData(new[] { 'a', 0x0301, 0x0323 })]
+    public void A_mark_on_a_letter_stays_in_every_text(int[] codes)
+    {
+        var text = "echo " + string.Concat(codes.Select(char.ConvertFromUtf32)) + " done";
+        Assert.False(DisplayText.Hides(text));
+        Assert.Same(text, DisplayText.Visible(text));
+        Assert.Same(text, DisplayText.VisibleLine(text));
+        Assert.Same(text, DisplayText.VisibleCommand(text));
+    }
+
+    /// <summary>A keycap (a digit, its picture selector, U+20E3) stays an emoji in an answer, and shows its parts in a command.</summary>
+    [Fact]
+    public void A_keycap_stays_in_an_answer_and_is_written_out_in_a_command()
+    {
+        var answer = "2. Yes " + "3" + char.ConvertFromUtf32(0xFE0F) + char.ConvertFromUtf32(0x20E3) + " go";
+        Assert.Same(answer, DisplayText.VisibleLine(answer));
+        Assert.Equal("echo 3‹U+FE0F›‹U+20E3›", DisplayText.VisibleCommand("echo 3" + char.ConvertFromUtf32(0xFE0F) + char.ConvertFromUtf32(0x20E3)));
     }
 }

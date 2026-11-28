@@ -48,6 +48,8 @@ expect focus "value":"favorite-me, folder"
 
 # Goal: Add a folder to the Favorites list
 # 6.2 Ctrl+D in a folder: "Added to Favorites", the focus stays in the folder list; Tab lands on the favorite just added.
+# A field or list the focus comes back to after a notice that held holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! favorite-me, 1 item, readme.txt
 keys ctrl+d
@@ -134,6 +136,8 @@ expect focus "value":"Renamed temp to notes,
 expect list "count":2
 keys down
 expect focus "value":"Created temp,
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus "value":"notes, folder"
@@ -142,6 +146,8 @@ expect focus "value":"notes, folder"
 do Recent operations
 keys down
 expect focus "value":"Created temp,
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect focus "value":"notes, folder"
 refuse said ! act,
@@ -158,6 +164,8 @@ expect focus "value":"temp, folder"
 # Check: Recent operations reads the operation as undone
 do Recent operations
 expect focus "value":"Renamed temp to notes, undone,
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 # Check: A folder that has files now is not undone, and Recent operations says so
 # 6.8 A file put in temp from outside: "Not undone: temp has files now"; then nothing is left to undo.
@@ -167,6 +175,8 @@ expect said ! Not undone: temp has files now
 do Recent operations
 keys down
 expect focus "value":"Created temp, not undone: temp has files now,
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 do Undo
 expect said ! Nothing to undo
@@ -190,6 +200,8 @@ keys backspace
 expect said ! act, 9 items, subfolder-for-inner, folder
 do Recent operations
 expect focus "value":"Created inner,
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 # Manual (6.6): that the focus moves before the announcement, so that NVDA does not cut it short, is NVDA's (tier 3).
 expect said ! subfolder-for-inner, 2 items, inner, folder
@@ -233,6 +245,8 @@ keys enter
 expect said ! favorite-me, 1 item, readme.txt
 do Recent operations
 expect focus "value":"Deleted 2 items,
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! act, 8 items, favorite-me, folder
 expect focus "name":"8 items"
@@ -241,6 +255,8 @@ expect focus "name":"8 items"
 do Find
 expect focus "name":"Name contains"
 type start-here
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect focus "value":"start-here.txt"
 do Rename
@@ -252,6 +268,8 @@ keys escape
 do Recent operations
 expect focus "value":"Deleted 2 items,
 expect list "count":5
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 # Goal: Undo the newest operation from the folder list
 # Ctrl+Z in the folder list: the newest undoable operation, here the delete of two.
@@ -266,8 +284,12 @@ keys tab
 expect focus "name":"Favorites"
 do Keyboard shortcuts
 expect focus "name":"Keyboard shortcuts"
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect focus "name":"Favorites"
+# A field or list the focus comes back to after a notice that held holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 # Check: Nothing is said for an operation but its own words
 # Nothing is spoken for an operation's line in the status bar: only the operation's own words.
@@ -289,6 +311,8 @@ keys space
 expect said ! Selected
 do Recent operations
 expect focus "value":"Created quiet,
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 # Check: Space again deselects the entry
 keys space
@@ -601,7 +625,9 @@ do Recent operations
 expect focus "value":"Renamed q50.txt to q51.txt, 
 expect list "count":50
 keys end
-expect focus "value":"Renamed q1.txt to q2.txt, 
+expect focus "value":"Renamed q1.txt to q2.txt,
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 close
 start file {temp}\fifty

@@ -4,7 +4,10 @@ From AxClaude.Core on their second use, axTerminal (2026-10-18; docs/axTerminal/
 `src/AxClaude.Core/CLAUDE.md`.
 
 - `Pty/PtyHost`: ConPTY through P/Invoke, the one implementation; `tools/PtyCapture` records through it.
-  `Pty/StreamRecorder`: the raw stream to a `.vt` file plus chunk index.
+  `Pty/StreamRecorder`: the raw stream to a `.vt` file plus chunk index. `Pty/WriteCheck`: the answers a write of
+  a console window's paced queue gets right before its turn (goes; not yet, which keeps it first and everything
+  behind it waiting; over, which drops it and all behind it; skip, which drops it alone), one type so that "not yet"
+  is never read as "over" (the fifth review of 2026-11-27, M1).
 - `Vt/VtParser`: byte stream to print, control, CSI and OSC, written into the `Screen` it is given. `Vt/Wcwidth`.
 - `Vt/Screen`: cells, cursor, scroll region; rows carry their transcript `Line`, found again by identity with `RowOf`
   and made ahead of text with `EnsureLine`; `PullRowText` at a frame's end; `DetachRows` commits every row's line and

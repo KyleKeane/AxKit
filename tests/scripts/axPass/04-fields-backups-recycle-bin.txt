@@ -78,6 +78,8 @@ keys enter
 expect state "notice":"Change Notes"
 expect focus {"name":"Notes","role":"Text","value":""}
 type First line of the notes
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said new line
 type Second line
@@ -94,6 +96,8 @@ keys enter
 expect state "notice":"Change URL"
 expect focus {"name":"URL","role":"Text","value":"https://mail.example.com"}
 type https://example.org/login
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! URL: https://example.org/login
 expect focus URL, text, https://example.org/login
@@ -105,6 +109,8 @@ keys enter
 expect state "notice":"Change URL"
 keys ctrl+a
 keys delete
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! URL cannot be emptied here: KeePassXC's tool takes an empty value as no change. Empty it in KeePassXC's own window
 expect focus URL, text, https://example.org/login
@@ -157,6 +163,8 @@ keys enter
 expect state "notice":"Change Title"
 expect focus {"name":"Title","role":"Text","value":"Gmail"}
 type Gmail work
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Renamed Gmail work
 expect focus Title, text, Gmail work

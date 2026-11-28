@@ -54,6 +54,9 @@ public enum EventKind
     /// <summary>Your message, command or answer went out to the program underneath.</summary>
     Sent,
 
+    /// <summary>A message you sent was given back a moment later, by itself: the program began to ask, never showed it, or you interrupted before its Enter.</summary>
+    NotSent,
+
     /// <summary>An earlier command came back into the field from the history.</summary>
     Recalled,
 

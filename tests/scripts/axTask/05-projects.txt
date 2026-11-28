@@ -112,6 +112,8 @@ expect said ♪ Edge
 menu Add a project folder
 expect state "notice":"Add a project folder"
 type {temp}\nowhere
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! No folder is there
 keys ctrl+a

@@ -1,4 +1,5 @@
 using AxKit.Core;
+using AxKit.Core.Vt;
 
 namespace AxClaude.Core.Transcript;
 
@@ -46,14 +47,17 @@ public static class PermissionCore
     /// columns wide (a row that fills the width goes on in the next, unless that row starts with a blank or is
     /// Claude Code's closing question), joined as one path; a path that took more than one row is marked, since where
     /// it was cut is read off the screen, not known (the fourth review of 2026-11-27, L1: "Edit file Butt" for a
-    /// path cut at "...\Butt|on.cs"). Without a width, the first row alone. Every other kind is read as a command, whatever its title says: all the rows between the
+    /// path cut at "...\Butt|on.cs"). Without a width, the first row alone. Whether a row fills the width and the next
+    /// starts with a blank is read off <paramref name="raw"/>, the same rows as the screen has them, only their right
+    /// end trimmed, and by display width (the fifth review of 2026-11-27, L3: QuestionReader trims the text, so a
+    /// preview's row never started with a blank there, and a path of wide characters never filled the width). Every other kind is read as a command, whatever its title says: all the rows between the
     /// title and Claude Code's own closing question (<see cref="ClaudeCodeTexts.ClosingQuestionStart"/>) are taken
     /// for what a yes runs, since nothing on the screen tells a further line of a command from Claude's description
     /// of it, so a second row marks the label (a mark too many costs a look at the question, a mark too few hides a
     /// command). Until the third review of 2026-11-27 only a kind that ended in "command" was read so, and a
     /// question titled "Monitor" with a command of two rows was labelled by its first.
     /// </summary>
-    public static string? OfScreen(string title, IReadOnlyList<string> text, int width = 0)
+    public static string? OfScreen(string title, IReadOnlyList<string> text, int width = 0, IReadOnlyList<string>? raw = null)
     {
         if (!title.StartsWith(ClaudeCodeTexts.PermissionRequired, StringComparison.Ordinal))
         {
@@ -68,12 +72,15 @@ public static class PermissionCore
 
         if (ClaudeCodeTexts.PathKinds.Contains(kind, StringComparer.Ordinal))
         {
+            // The rows as the screen has them: QuestionReader trims the text, and a preview's row starts with a blank
+            // only before that, and fills the width by its display width, a wide character two columns (L3).
+            var screen = raw is not null && raw.Count == text.Count ? raw : text;
             var path = text.Count > 0 ? text[0] : string.Empty;
             var taken = 1;
-            while (width > 0 && taken < text.Count && text[taken - 1].Length >= width && text[taken] is { Length: > 0 } next
+            while (width > 0 && taken < text.Count && Columns(screen[taken - 1]) >= width && screen[taken] is { Length: > 0 } next
                 && !char.IsWhiteSpace(next[0]) && !(next.StartsWith(ClaudeCodeTexts.ClosingQuestionStart, StringComparison.Ordinal) && next.EndsWith('?')))
             {
-                path += next;
+                path += text[taken];
                 taken++;
             }
 
@@ -103,6 +110,9 @@ public static class PermissionCore
         var named = shown.Length == 0 ? tool.Trim() : $"{tool.Trim()} {shown}";
         return DisplayText.VisibleCommand(left || more ? named + MoreMark : named);
     }
+
+    /// <summary>How many columns of the console a row takes, as the screen counts them (<see cref="Wcwidth"/>): a wide character two, a mark none.</summary>
+    private static int Columns(string row) => row.EnumerateRunes().Sum(rune => Math.Max(0, Wcwidth.Of(rune.Value)));
 
     /// <summary>After a command of which not all is shown: the label never reads as the whole of what is asked.</summary>
     public const string MoreMark = ", and more";

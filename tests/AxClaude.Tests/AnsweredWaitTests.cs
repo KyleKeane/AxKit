@@ -1,4 +1,5 @@
 using AxClaude.Core.Transcript;
+using AxKit.Core.Pty;
 
 namespace AxClaude.Tests;
 
@@ -190,24 +191,36 @@ public sealed class AnsweredWaitTests
         // nor once nothing is asked, when its Enter would go to the prompt as a message the user did not send so.
         Assert.False(QueuedWrite.MessageGoes(askedThen: true, waitedFor: question, asksNow: true, waitingNow: other));
         Assert.False(QueuedWrite.MessageGoes(askedThen: true, waitedFor: question, asksNow: false, waitingNow: null));
+        // A question the window could not read is no other one (the fifth review of 2026-11-27, L4): until then two
+        // such were taken for the same, and a kept message went into whatever unreadable question came next.
+        Assert.False(QueuedWrite.MessageGoes(askedThen: true, waitedFor: null, asksNow: true, waitingNow: null));
+        Assert.False(QueuedWrite.MessageGoes(askedThen: true, waitedFor: null, asksNow: true, waitingNow: question));
     }
 
     /// <summary>
     /// A message's Enter only on a positive check (the fourth review of 2026-11-27, N3, M2): the frame shows the
     /// message on Claude Code's prompt row and nothing is asked. Until then it went unless a question had been seen,
     /// and the window reads the screen only as of the last frame it took in. Not yet on the row: the Enter waits for
-    /// the check of a dropped Enter, which asks the same.
+    /// the check of a dropped Enter, which asks the same. Since the fifth review of that day (M1) "not yet" is an
+    /// answer of its own, never "over": the Enter stays first in the queue and what stands behind it waits; over only
+    /// once it has waited its longest, or when Claude Code began to ask.
     /// </summary>
     [Fact]
     public void A_messages_Enter_goes_only_when_the_prompt_row_shows_it_and_nothing_is_asked()
     {
+        const int longest = 3000;
         var question = "question\n" + Create("alpha.txt").Content;
-        Assert.True(QueuedWrite.MessageEnterGoes(askedThen: false, waitedFor: null, asksNow: false, waitingNow: null, promptHolds: true));
-        // The old check let these two go: nothing seen asked, and nothing seen on the row either.
-        Assert.False(QueuedWrite.MessageEnterGoes(askedThen: false, waitedFor: null, asksNow: false, waitingNow: null, promptHolds: false));
-        Assert.False(QueuedWrite.MessageEnterGoes(askedThen: false, waitedFor: null, asksNow: true, waitingNow: question, promptHolds: true));
+        Assert.Equal(WriteCheck.Goes, QueuedWrite.MessageEnter(askedThen: false, waitedFor: null, asksNow: false, waitingNow: null, promptHolds: true, waitedMs: 0, longest));
+        // The old check let this go: nothing seen asked, and nothing seen on the row either. Not yet, until the longest wait.
+        Assert.Equal(WriteCheck.NotYet, QueuedWrite.MessageEnter(askedThen: false, waitedFor: null, asksNow: false, waitingNow: null, promptHolds: false, waitedMs: 0, longest));
+        Assert.Equal(WriteCheck.NotYet, QueuedWrite.MessageEnter(askedThen: false, waitedFor: null, asksNow: false, waitingNow: null, promptHolds: false, waitedMs: 2999, longest));
+        Assert.Equal(WriteCheck.Over, QueuedWrite.MessageEnter(askedThen: false, waitedFor: null, asksNow: false, waitingNow: null, promptHolds: false, waitedMs: 3000, longest));
+        Assert.Equal(WriteCheck.Goes, QueuedWrite.MessageEnter(askedThen: false, waitedFor: null, asksNow: false, waitingNow: null, promptHolds: true, waitedMs: 2999, longest));
+        // Claude Code began to ask: over at once, whatever the row shows.
+        Assert.Equal(WriteCheck.Over, QueuedWrite.MessageEnter(askedThen: false, waitedFor: null, asksNow: true, waitingNow: question, promptHolds: true, waitedMs: 0, longest));
         // A message sent into a question on purpose goes while that very question stands, whatever its row shows.
-        Assert.True(QueuedWrite.MessageEnterGoes(askedThen: true, waitedFor: question, asksNow: true, waitingNow: question, promptHolds: false));
+        Assert.Equal(WriteCheck.Goes, QueuedWrite.MessageEnter(askedThen: true, waitedFor: question, asksNow: true, waitingNow: question, promptHolds: false, waitedMs: 0, longest));
+        Assert.Equal(WriteCheck.Over, QueuedWrite.MessageEnter(askedThen: true, waitedFor: null, asksNow: true, waitingNow: null, promptHolds: false, waitedMs: 0, longest));
 
         Assert.True(QueuedWrite.EnterAgain(promptHolds: true, asksNow: false, interrupted: false));
         Assert.False(QueuedWrite.EnterAgain(promptHolds: false, asksNow: false, interrupted: false));

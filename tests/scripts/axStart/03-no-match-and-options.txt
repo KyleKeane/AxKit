@@ -55,6 +55,8 @@ keys shift+a
 expect said ! Use Ctrl, Alt or the Windows key with it
 expect focus "value":"Ctrl+Alt+Shift+F8"
 
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 

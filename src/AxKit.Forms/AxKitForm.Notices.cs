@@ -30,11 +30,33 @@ public abstract partial class AxKitForm
     /// </summary>
     protected internal void ShowNotice(Notice notice)
     {
+        // L7 (the fifth review of 2026-11-27): a notice that comes by itself in place of a question the user has not
+        // answered runs that question's cancel first, as Escape would, and says which one it replaced. The plainer of
+        // the two ways the review offered: no queue of notices waiting behind one another.
+        if (NoticeOpen && Overlay.Shown is { } shown && Notice.ReplacesUnanswered(shown, byItself: !_answeringNotice && !_chaining && _userKey is null))
+        {
+            Log.Info("A notice came by itself in place of a question not answered: the question's cancel runs");
+            var outer = _answeringNotice;
+            _answeringNotice = true;
+            try
+            {
+                shown.Choices.First(choice => choice.IsCancel).Action?.Invoke();
+            }
+            finally
+            {
+                _answeringNotice = outer;
+            }
+
+            notice = notice.Replacing(shown);
+        }
+
         // N1 (the fourth review of 2026-11-27): a notice holds its answering keys unless it is the first result of the
-        // user's own command (Notice.ByUser). Even then it holds when it cannot be: opened from a notice's button or
-        // in the action after one closed (what follows an answer arrives by itself, KeyHold rule 1), or inside a
-        // command clicked for an AI tool (MC-7.9), whose own code says ByUser for the user's key.
-        notice = Notice.AsShown(notice, followsAnswer: _answeringNotice || _chaining, forAiTool: ClickedForAiTool);
+        // user's own command (Notice.ByUser). E3 (the fifth review of that day): and only while a key of the user's
+        // that can answer no notice is being handled (_userKey, set by the key dispatch): a menu's Enter, a click, a
+        // post or an await holds. Also when it cannot be: opened from a notice's button or in the action after one
+        // closed (what follows an answer arrives by itself, KeyHold rule 1), or inside a command clicked for an AI tool
+        // (MC-7.9), whose own code says ByUser for the user's key.
+        notice = Notice.AsShown(notice, followsAnswer: _answeringNotice || _chaining, forAiTool: ClickedForAiTool, userKey: _userKey);
         _paletteSpeak.Stop();
         // AX-8.12: a notice that arrives while a key is tested ends the test, so that its keys answer the notice.
         EndKeyTest();
@@ -66,7 +88,9 @@ public abstract partial class AxKitForm
         if (!NoticeOpen && !_chaining)
         {
             _focusBeforeNotice = FocusedControl();
-            _chainHeld = false;
+            // The narrowed N4 (the fifth review of 2026-11-27, M2): a list left for a notice while its own hold still
+            // ran gets its hold again when the focus comes back (FocusBackAfterNotice).
+            _chainHeld = _focusBeforeNotice?.Parent is ControlArea { Holding: true };
             OnNoticeOpened(_focusBeforeNotice);
         }
 
@@ -114,8 +138,10 @@ public abstract partial class AxKitForm
 
     /// <summary>
     /// Whether a notice of the chain that shows or showed last held its answering keys (any notice not
-    /// <see cref="Notice.OpenedByUser"/>): when the chain ends, the control that gets the focus back is told
-    /// (<see cref="FocusBackAfterNotice"/>). False between chains.
+    /// <see cref="Notice.OpenedByUser"/>), or the list of a question area the chain was opened from still held its own
+    /// when the first notice opened (the fifth review of 2026-11-27, M2: the user had not heard it out): when the
+    /// chain ends, the control that gets the focus back is told (<see cref="FocusBackAfterNotice"/>). False between
+    /// chains.
     /// </summary>
     private bool _chainHeld;
 
@@ -184,7 +210,10 @@ public abstract partial class AxKitForm
     /// (the fourth review of 2026-11-27): a list of a question area the user went from into notices of their own
     /// (Explain, a help text) and comes back to is the same list, heard before the user left it, and its hold is
     /// not started again (<see cref="ControlArea.FocusReturned"/>); every other arrival starts it, as the focus
-    /// rule of KeyHold says. A conversation window adds the message field's hold after a notice that held.
+    /// rule of KeyHold says, and so does this one when the list still held its keys as the user left it
+    /// (<paramref name="held"/> then, the fifth review of 2026-11-27, M2: until then a palette opened inside the hold
+    /// and closed at once gave the list back with its hold run out). A conversation window adds the message field's
+    /// hold after a notice that held.
     /// </summary>
     protected virtual void FocusBackAfterNotice(Control target, bool held, bool same)
     {

@@ -2,6 +2,7 @@ using AxClaude.Core.Flow;
 using AxClaude.Core.Transcript;
 using AxKit.Core;
 using AxKit.Core.Events;
+using AxKit.Core.Pty;
 using AxKit.Forms;
 
 namespace AxClaude;
@@ -167,7 +168,7 @@ internal sealed partial class MainForm
                 return;
             }
 
-            Write(ClaudeCodeKeys.Enter, still: null);
+            EmptyFieldEnter();
             return;
         }
 
@@ -246,31 +247,34 @@ internal sealed partial class MainForm
     /// since the message was queued (<see cref="MessageStill"/>): its Enter goes a tenth of a second after its text,
     /// and a permission question drawn in between took that Enter as its answer until the third review of
     /// 2026-11-27. <paramref name="fromField"/> for the message field's own message, which is put back into the
-    /// field when it was not sent. The Enter goes only on a positive check (<see cref="QueuedWrite.MessageEnterGoes"/>,
+    /// field when it was not sent. The Enter goes only on a positive check (<see cref="QueuedWrite.MessageEnter"/>,
     /// the fourth review of the same day): the frame shows the message on Claude Code's prompt row and nothing is
-    /// asked; when the row does not show it yet, the Enter is left to <see cref="ResendEnterWhileHeld"/>, which asks
-    /// the same. The message counts as sent when its Enter goes, not before (L4): then the core learns of it
-    /// (<see cref="FlowSent"/>) and <paramref name="sent"/> says so; a message whose writes are dropped is taken
-    /// back from the conversation (<see cref="ClaudeModel.TakeBack"/>) and says "Not sent" alone.
+    /// asked. One message is in flight at a time (the fifth review of that day, M1): while the row does not show it
+    /// yet, its Enter waits first in the queue and every write queued after it (a second message, an offered command's
+    /// line, a menu's command) waits behind it, in order. The message counts as sent when its Enter goes, from inside
+    /// that check and nowhere else: then the core learns of it (<see cref="FlowSent"/>) and <paramref name="sent"/>
+    /// says so. A message whose Enter never goes is given back (<see cref="WritesDropped"/>): out of the conversation
+    /// (<see cref="ClaudeModel.TakeBack"/>), back into the field, and said once.
     /// </summary>
     private void QueueWrites(string text, bool fromField = false, Action? sent = null)
     {
-        void Sent()
-        {
-            FlowSent(text);
-            sent?.Invoke();
-        }
-
         if (Streams)
         {
             StreamMessage(text);
-            Sent();
+            FlowSent(text);
+            sent?.Invoke();
             return;
         }
 
-        var (still, enter) = MessageStill(text, fromField, Sent);
+        var message = new Unsent(text, fromField);
+        var (still, enter) = MessageStill(message, () =>
+        {
+            FlowSent(text);
+            sent?.Invoke();
+        });
         ClearRestoredMessage(still);
         _lastMessage = text;
+        _unsent.Add(message);
         var lines = text.Split('\n');
         for (var i = 0; i < lines.Length; i++)
         {
@@ -285,125 +289,202 @@ internal sealed partial class MainForm
         StartWrites();
     }
 
+    /// <summary>A message queued whose Enter has not gone yet: its text, and whether it is the message field's own, which goes back into the field when it is not sent.</summary>
+    private sealed record Unsent(string Text, bool FromField);
+
+    /// <summary>The messages queued whose Enter has not gone yet, oldest first (one message in flight, the fifth review of 2026-11-27, M1).</summary>
+    private readonly List<Unsent> _unsent = [];
+
+    /// <summary>Why the messages not yet sent were given back, said in one sentence (<see cref="WritesDropped"/>).</summary>
+    private enum GivenBack { Asked, NotShown, Interrupted, Stopped }
+
+    /// <summary>The reason a check that said over gave (<see cref="MessageStill"/>), or that the user's interrupt gave; asked asks by default, as an answer's keys dropped in front of a message mean.</summary>
+    private GivenBack _givenBack = GivenBack.Asked;
+
+    /// <summary>The text of a message given back, whose typed part may stand on Claude Code's prompt row: the next message empties the row of its lines first (<see cref="ClearRestoredMessage"/>).</summary>
+    private string? _rowHoldsUnsent;
+
     /// <summary>
     /// What every write of a queued message asks right before it is written (<see cref="ConsoleForm.Enqueue"/>): its
     /// text and line breaks whether the message still goes where it was meant to (<see cref="QueuedWrite.MessageGoes"/>),
-    /// its Enter whether the frame shows it on Claude Code's prompt row as well (<see cref="QueuedWrite.MessageEnterGoes"/>).
+    /// its Enter whether the frame shows it on Claude Code's prompt row as well (<see cref="QueuedWrite.MessageEnter"/>).
     /// When Claude Code has begun to ask something meanwhile, or asks something else than the question a message sent
-    /// into it was for, the write and those behind it are dropped: nothing more is typed, no Enter answers the
-    /// question, the message's block leaves the conversation, and the window says that it was not sent, with a line in
-    /// the conversation. The message field's own message goes back into the field when the field is empty. What was
-    /// typed so far stays on Claude Code's prompt row; the next message empties the row first when it still holds
-    /// this one (<see cref="ClearRestoredMessage"/>, by the same flag as after an interrupt). An Enter whose message
-    /// the frame does not show yet is not written then: the window looks again every tenth of a second
-    /// (<see cref="EnterWaitMs"/>) and writes it, asked once more as it goes, as soon as the row shows the message, and
-    /// counts the message as sent then (<paramref name="sent"/>); a question drawn meanwhile drops it as above; a row
-    /// that never shows it within <see cref="EnterWaitTries"/> looks is said, with what sends it, since the message
-    /// stands typed and unsent on Claude Code's prompt row.
+    /// into it was for, the check says over: nothing more is typed, no Enter answers the question, and the message
+    /// and those queued after it are given back (<see cref="WritesDropped"/>). While the row does not show the message
+    /// yet, the Enter's check says not yet, and the queue asks again a tenth of a second later with everything else
+    /// behind it waiting; after <see cref="EnterWaitMs"/> it says over, and the message is given back as "Not sent
+    /// yet" (the fifth review of 2026-11-27: until then the message stayed in the conversation as sent and the
+    /// sentence offered a bare Enter of the empty field). The message counts as sent only here, when the Enter's check
+    /// says it goes (<paramref name="sent"/>), and its Enter is then watched for again (<see cref="ResendEnterWhileHeld"/>).
     /// </summary>
-    private (Func<bool> Text, Func<bool> Enter) MessageStill(string text, bool fromField, Action sent)
+    private (Func<WriteCheck> Text, Func<WriteCheck> Enter) MessageStill(Unsent message, Action sent)
+    {
+        var text = message.Text;
+        var askedThen = _model.PromptPending;
+        var waitedFor = WaitIdentity();
+        long firstAsked = 0;
+        bool Goes() => QueuedWrite.MessageGoes(askedThen, waitedFor, _model.PromptPending, WaitIdentity());
+
+        WriteCheck Over(GivenBack why)
+        {
+            _givenBack = why;
+            return WriteCheck.Over;
+        }
+
+        WriteCheck Enter()
+        {
+            var now = Environment.TickCount64;
+            firstAsked = firstAsked == 0 ? now : firstAsked;
+            switch (QueuedWrite.MessageEnter(askedThen, waitedFor, _model.PromptPending, WaitIdentity(), _model.PromptHolds(text), now - firstAsked, EnterWaitMs))
+            {
+                case WriteCheck.Goes:
+                    _unsent.Remove(message);
+                    sent();
+                    // Claude Code may still drop it in its first seconds (FR-2.1): looked at again in a second and a half.
+                    ResendEnterWhileHeld(text, attempt: 1);
+                    return WriteCheck.Goes;
+                case WriteCheck.NotYet:
+                    return WriteCheck.NotYet;
+                default:
+                    return Over(Goes() ? GivenBack.NotShown : GivenBack.Asked);
+            }
+        }
+
+        return (() => Goes() ? WriteCheck.Goes : Over(GivenBack.Asked), Enter);
+    }
+
+    /// <summary>How long a message's Enter waits for Claude Code's prompt row to show the message before the message is given back.</summary>
+    private const int EnterWaitMs = 3000;
+
+    /// <summary>
+    /// The queue was dropped with writes in it (ConsoleForm): every message whose Enter had not gone is given back
+    /// (the fifth review of 2026-11-27, E2), in one place whatever dropped it. Its block leaves the conversation
+    /// (<see cref="ClaudeModel.TakeBack"/>), the message field's own messages come back into the field when it is
+    /// empty, in order, a blank line between two, the next message empties Claude Code's prompt row of what was typed
+    /// of the first (<see cref="ClearRestoredMessage"/>), and one sentence says why, raised as
+    /// <see cref="EventKind.NotSent"/>, an outcome that came by itself (L6; until then as Refused, the sound of a key
+    /// the window held back). Nothing is said when Claude stopped. An answer's keys dropped with no message behind them
+    /// leave this to their own check, which said so.
+    /// </summary>
+    protected override void WritesDropped()
+    {
+        var why = _givenBack;
+        _givenBack = GivenBack.Asked;
+        if (_unsent.Count == 0)
+        {
+            return;
+        }
+
+        var dropped = _unsent.ToList();
+        _unsent.Clear();
+        foreach (var one in dropped)
+        {
+            _model.TakeBack(one.Text);
+        }
+
+        // The Enter of a message sent before is not sent again, and the row is emptied before the next one.
+        _interruptedSinceSend = true;
+        _rowHoldsUnsent = dropped[0].Text;
+        _lastMessage = dropped[0].Text;
+        var own = dropped.Where(one => one.FromField).Select(one => one.Text).ToList();
+        var restored = own.Count > 0 && Input.TextLength == 0;
+        if (restored)
+        {
+            Input.Text = string.Join("\n\n", own).Replace("\n", "\r\n");
+            Input.Select(Input.TextLength, 0);
+        }
+
+        Log.Info(why switch
+        {
+            GivenBack.Asked => "The rest of a message was not written: Claude Code began to ask something while it was typed",
+            GivenBack.NotShown => "A message's Enter was never written: Claude's prompt row did not show the message",
+            GivenBack.Interrupted => "A message's Enter was not written: interrupted before it went",
+            _ => "A message's Enter was not written: Claude stopped",
+        } + $"; {dropped.Count} message(s) given back, {(restored ? "into the message field" : "not into the field")}");
+        if (why == GivenBack.Stopped)
+        {
+            return;
+        }
+
+        var single = dropped.Count == 2;
+        var after = dropped.Count > 1
+            ? $" The {(single ? "message" : $"{dropped.Count - 1} messages")} sent after it {(single ? "was" : "were")} not typed either{(restored && own.Count > 1 ? (single ? " and is" : " and are") + " in the field after it" : string.Empty)}."
+            : string.Empty;
+        // Where the text is now: back in the field; or, when the user had begun another message there, in this line, so
+        // that nothing typed is lost and nothing is typed into the field under the caret.
+        var field = restored ? " The message is back in the message field."
+            : own.Count > 0 ? " The message field held other text, so the message is here: " + string.Join(" / ", own.Select(text => text.Replace("\n", " / "))) + "."
+            : string.Empty;
+        var what = own.Count > 0 ? "your message" : $"the line {dropped[0].Text.Replace("\n", " / ")}";
+        _model.AddSystemLine(why switch
+        {
+            GivenBack.NotShown => $"Not sent yet: Claude's prompt row did not show {what}, so its Enter was not sent." + field + after + (restored ? " Enter sends it again." : string.Empty),
+            GivenBack.Interrupted => "Not sent: you interrupted before its Enter went." + field + after,
+            _ => $"Not sent: Claude asked something while {what} was being typed to it." + field + after,
+        });
+        var said = why switch
+        {
+            GivenBack.NotShown => restored ? "Not sent yet: the message is back in the message field; Enter sends it again" : "Not sent yet: Claude's prompt row did not show it",
+            GivenBack.Interrupted => restored ? "Not sent: the message is back in the message field" : "Not sent",
+            _ => QuestionOpensWords,
+        };
+        Announce(EventKind.NotSent, dropped.Count > 1 ? $"{said}; the one after it was not typed either" : said, true);
+    }
+
+    /// <summary>The messages not yet sent given back when Claude stops, with nothing said: the stop says its own.</summary>
+    private void GiveBackUnsentOnStop()
+    {
+        _givenBack = GivenBack.Stopped;
+        WritesDropped();
+    }
+
+    /// <summary>
+    /// Enter in the empty message field (FR-2.1): never a bare Enter checked against nothing (the fifth review of
+    /// 2026-11-27, E2). While Claude Code asks (Answer from a list off, where the keys work Claude Code's own list),
+    /// it goes only to that very question, asked right before it is written (<see cref="QueuedWrite.MessageGoes"/>).
+    /// While nothing is asked, only when the frame shows a draft on Claude Code's prompt row, which the Enter then
+    /// sends (one whose Enter Claude Code dropped); else "Nothing to send".
+    /// </summary>
+    private void EmptyFieldEnter()
     {
         var askedThen = _model.PromptPending;
         var waitedFor = WaitIdentity();
-        bool Goes() => QueuedWrite.MessageGoes(askedThen, waitedFor, _model.PromptPending, WaitIdentity());
-        bool EnterGoes() => QueuedWrite.MessageEnterGoes(askedThen, waitedFor, _model.PromptPending, WaitIdentity(), _model.PromptHolds(text));
-
-        void Entered()
+        if (!askedThen && _model.PromptDraft is not { Length: > 0 })
         {
-            sent();
-            // Claude Code may still drop it in its first seconds (FR-2.1): looked at again in a second and a half.
-            ResendEnterWhileHeld(text, attempt: 1);
+            Refuse("Nothing to send");
+            return;
         }
 
-        void WaitForRow(int looks) => After(EnterWaitMs, () =>
+        Enqueue(ClaudeCodeKeys.Enter, 50, () =>
         {
-            if (IsDisposed || !ProcessRunning || _interruptedSinceSend)
+            if (askedThen ? QueuedWrite.MessageGoes(true, waitedFor, _model.PromptPending, WaitIdentity()) : !_model.PromptPending && _model.PromptDraft is { Length: > 0 })
             {
-                return;
+                return WriteCheck.Goes;
             }
 
-            if (!Goes())
-            {
-                Dropped();
-                return;
-            }
-
-            if (EnterGoes())
-            {
-                // Asked again right before it goes, as every Enter of a message (the queue may hold other writes first).
-                Enqueue(ClaudeCodeKeys.Enter, 50, () => EnterGoes() || (!Goes() && Dropped()));
-                StartWrites();
-                Entered();
-                return;
-            }
-
-            if (looks < EnterWaitTries)
-            {
-                WaitForRow(looks + 1);
-                return;
-            }
-
-            Log.Info("A message's Enter was never written: Claude's prompt row did not show the message");
-            _model.AddSystemLine("Not sent yet: Claude's prompt row did not show your message. Enter in the empty message field sends what the row holds.");
-            Refuse("Not sent yet: Enter in the empty message field sends it");
+            Refuse(askedThen ? QuestionOpensWords : "Nothing to send");
+            return WriteCheck.Over;
         });
-
-        bool Dropped()
-        {
-            Log.Info("The rest of a message was not written: Claude Code began to ask something while it was typed");
-            _interruptedSinceSend = true;
-            _model.TakeBack(text);
-            var restored = fromField && Input.TextLength == 0;
-            if (restored)
-            {
-                Input.Text = text.Replace("\n", "\r\n");
-                Input.Select(Input.TextLength, 0);
-            }
-
-            _model.AddSystemLine(restored
-                ? "Not sent: Claude asked something while your message was being typed to it. The message is back in the message field."
-                : "Not sent: Claude asked something while the line above was being typed to it.");
-            Refuse(QuestionOpensWords);
-            return false;
-        }
-
-        return (
-            () => Goes() || Dropped(),
-            () =>
-            {
-                if (!Goes())
-                {
-                    return Dropped();
-                }
-
-                if (EnterGoes())
-                {
-                    Entered();
-                    return true;
-                }
-
-                WaitForRow(1);
-                return false;
-            });
+        StartWrites();
     }
-
-    /// <summary>How often a message's Enter that waits for Claude Code's prompt row to show the message looks again, and how many times (three seconds in all).</summary>
-    private const int EnterWaitMs = 100;
-
-    private const int EnterWaitTries = 30;
 
     /// <summary>
     /// FR-2.3a: since Claude Code 2.1.331 an interrupt can put the interrupted message back on Claude's prompt row,
     /// where the next message was typed after it and both went as one (the NVDA pass of 2026-11-24). After an
     /// interrupt, while the row still holds the last message, it is emptied first: Ctrl+U for each of its lines, with
     /// Backspace between them. Only then: a message the row holds for another reason (an Enter Claude dropped) stays.
-    /// Nothing is said; the window behaves as before that version. The stream has no prompt row.
+    /// Nothing is said; the window behaves as before that version. The stream has no prompt row. After a message was
+    /// given back (<see cref="WritesDropped"/>) the row is emptied of its lines whatever it shows: what was typed of it
+    /// may stand there in part, or drawn after the last frame (the fifth review of 2026-11-27, E2).
     /// </summary>
-    private void ClearRestoredMessage(Func<bool> still)
+    private void ClearRestoredMessage(Func<WriteCheck> still)
     {
         var interrupted = _interruptedSinceSend;
+        var given = _rowHoldsUnsent;
         _interruptedSinceSend = false;
-        if (Streams || !interrupted || _lastMessage is not { } last || !_model.PromptHolds(last))
+        _rowHoldsUnsent = null;
+        var last = given ?? (interrupted && _lastMessage is { } message && _model.PromptHolds(message) ? message : null);
+        if (Streams || last is null)
         {
             return;
         }
@@ -449,7 +530,7 @@ internal sealed partial class MainForm
 
             Log.Info($"Enter sent again ({attempt}): the message was still on Claude's prompt row");
             // Asked again right before it goes, as every Enter of a message (the queue may hold other writes first).
-            Enqueue(ClaudeCodeKeys.Enter, 50, () => QueuedWrite.EnterAgain(_model.PromptHolds(text), _model.PromptPending, _interruptedSinceSend));
+            Enqueue(ClaudeCodeKeys.Enter, 50, () => QueuedWrite.EnterAgain(_model.PromptHolds(text), _model.PromptPending, _interruptedSinceSend) ? WriteCheck.Goes : WriteCheck.Skip);
             StartWrites();
             if (attempt < EnterAttempts)
             {
@@ -512,7 +593,10 @@ internal sealed partial class MainForm
             return;
         }
 
+        // A message whose Enter had not gone yet is given back with what was dropped (WritesDropped).
+        _givenBack = GivenBack.Interrupted;
         ClearWrites();
+        _givenBack = GivenBack.Asked;
         // The keys of an answer still being typed out were just dropped: the user's act ends now, not when its last
         // key would have gone (UserActedNow(typing) in SendAnswer). Until 2026-11-27 the settle went on waiting for
         // those keys (AnsweredWait.SettleWaits), and after an interrupted answer of seventy characters nothing Claude

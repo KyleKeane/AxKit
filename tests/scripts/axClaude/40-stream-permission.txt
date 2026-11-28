@@ -52,7 +52,9 @@ expect state Claude, an AI model, asks to do this, and everything below is Claud
 expect state Tool: Bash
 expect state command: ping -n 2 127.0.0.1
 expect state description: Ping localhost twice
-# The text closes and the question is still there, unanswered.
+# The text closes and the question is still there, unanswered. The text Enter opened holds its keys for a second
+# (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect focus 5. Explain what Claude asks to do
 expect state Claude: waiting for your answer
@@ -61,8 +63,9 @@ expect state Claude: waiting for your answer
 keys up
 keys up
 expect focus 3. Yes, once
-# The user opened the explanation from the list, which they had heard: its second is not started again as the focus
-# comes back (bundle AX-6.4, N4 of the fourth review of 2026-11-27; until then a wait of a second here).
+# The explanation held its keys (opened by Enter, E3 of the fifth review of 2026-11-27), so the list's second starts
+# again as the focus comes back to it (bundle AX-6.4 point 4): the wait of a second is back.
+wait 1100
 keys enter
 expect said Sent: 3, Yes, once
 expect said Done. claude: pinged

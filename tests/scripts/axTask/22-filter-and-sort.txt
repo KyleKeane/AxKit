@@ -17,6 +17,8 @@ expect focus Your lists, heading level 1, 2 lists
 do Filter
 expect focus "name":"Name contains"
 type shop
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! filter shop, 1 shown
 expect list "items":["Your lists, heading level 1, 2 lists","Shopping, list, 1 item"]

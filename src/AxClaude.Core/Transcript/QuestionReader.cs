@@ -90,6 +90,9 @@ public static class QuestionReader
         // A single blank row can sit inside a question (/resume has one between its search row and the answers);
         // two in a row end it, as do the rows that came before it.
         var text = new List<string>();
+        // The same rows as the screen has them, only their right end trimmed: where a path wrapped is told by them
+        // (PermissionCore.OfScreen; the fifth review of 2026-11-27, L3: the preview's rows start with a blank only here).
+        var raw = new List<string>();
         var blanks = 0;
         (int, int)? step = null;
         // The first row: the top answer until a text row above it is found.
@@ -122,6 +125,7 @@ public static class QuestionReader
             blanks = 0;
             // The "> " that marks a question's row since 2.1.316 (its own, and each one the review lists) is not read.
             text.Add(line.StartsWith(ClaudeCodeTexts.QuoteMark, StringComparison.Ordinal) ? line[ClaudeCodeTexts.QuoteMark.Length..] : line);
+            raw.Add(rows[row].TrimEnd());
             first = row;
             if (ClaudeCodeTexts.CheckBox().IsMatch(rows[row]) || line.StartsWith(ClaudeCodeTexts.PermissionRequired, StringComparison.Ordinal))
             {
@@ -132,6 +136,7 @@ public static class QuestionReader
         }
 
         text.Reverse();
+        raw.Reverse();
 
         // The trust dialog puts its title on a prompt row itself ("Permission Required: …"); a question without
         // text rows is titled by its prompt row.
@@ -139,13 +144,14 @@ public static class QuestionReader
         if (text.Count > 0)
         {
             text.RemoveAt(0);
+            raw.RemoveAt(0);
         }
 
         title = ClaudeCodeTexts.CheckBox().Replace(title, string.Empty).TrimEnd(':', ' ');
         // "Select with numbers [1-4] (comma- or space-separated for several)": more than one answer may be given.
         var several = rows[promptRow].Contains(ClaudeCodeTexts.ForSeveral, StringComparison.Ordinal);
         // A permission question's tool and target, which each answer's label carries (PermissionCore, D33).
-        return new Question(title, text, options) { AllowsSeveral = several, FirstRow = first, Step = step, Core = PermissionCore.OfScreen(title, text, width) };
+        return new Question(title, text, options) { AllowsSeveral = several, FirstRow = first, Step = step, Core = PermissionCore.OfScreen(title, text, width, raw) };
     }
 
     /// <summary>

@@ -34,6 +34,8 @@ expect focus 03-apricot, workflow, 2 steps
 do Filter
 expect focus "name":"Name contains"
 type ap
+# A notice a menu item opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! filter ap, 2 shown
 expect list "items":["02-apple, workflow, 2 steps","03-apricot, workflow, 2 steps"]

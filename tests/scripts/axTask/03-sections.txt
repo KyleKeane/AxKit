@@ -31,6 +31,8 @@ expect said ! Type the section's name
 expect state "notice":"Move Work"
 expect focus "name":"Type the new section's name, when you chose A new section"
 type Jobs
+# A notice that Enter opens holds its keys for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Moved Work to Jobs
 expect focus Work, list, 1 item
@@ -75,6 +77,8 @@ keys tab
 expect focus Section, text, empty
 keys enter
 type Jobs
+# A field that Enter opens holds its Enter for a second (bundle AX-6.4, E3 of the fifth review of 2026-11-27).
+wait 1100
 keys enter
 expect said ! Section: Jobs
 keys escape
