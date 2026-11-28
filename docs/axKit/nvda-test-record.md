@@ -796,6 +796,28 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: axGIT runs nothing before trust, pushes only to a server (the review's fourth pass of 2026-11-28)
+
+What a read-only review found in axGIT's trust check of the third pass, repaired on 2026-11-28 (`docs/axGIT/SPEC.md`
+AG-1.6 to AG-1.6c, AG-5.4, AG-5.4c): before the user trusts a repository that holds a risk, axGIT runs no git command
+in it (its files are read by axKit's own code and git's parser of one file), and Keep it off closes it; a push goes
+to a server alone; a fetch and a pull name their own line; a trust holds the content of every hook and named file,
+and a hooks folder or a program in the work tree runs on no changing command. Played on the hidden desktop, without
+NVDA, on 2026-11-28: the changed `tests/scripts/axGIT/07-own-programs` and `08-settings-and-servers`, with the rest of
+axGIT's scripts. Still owed, `docs/axGIT/nvda-test-plan.md` sections 1.7, 7 and 9, with NVDA listening:
+
+1. The trust notice as a repository opens: whether "axGIT has run nothing in <path>." with the full path, the lists of
+   programs, settings and places, and "Keep it off closes the repository." is read whole and is not too long to hear
+   at each opening; and that "Not opened" after Keep it off, and "Trusted" followed by the Changes list, are each
+   heard once and in that order.
+2. A refresh that finds a new hook in an open repository: the notice, then "Repository closed" after Keep it off, and
+   the window's title and list then saying that no repository is open.
+3. "Push not started: This remote is a folder; push to it in a terminal. Nothing was sent." and "Pull not started",
+   each read at once on Ctrl+P and Ctrl+L.
+4. A live check with a remote on a server, section 4.4: Ctrl+P with a commit to push says "Pushed". Until the fourth
+   pass `tests/scripts/axGIT/04-log-branches` pushed to a folder, which axGIT no longer does, and no script reaches a
+   server.
+
 ## Owed: every notice holds, nothing hidden in a command, a message's Enter on a positive check (the fourth review of 2026-11-27)
 
 The fourth review of that day (`docs/axKit/SPEC.md` AX-6.4, points 3 and 4 and "Nothing unseen in what is asked";

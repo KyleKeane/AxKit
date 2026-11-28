@@ -33,7 +33,7 @@ public sealed class MediaSettingsTests
     [Fact]
     public void Nonsense_in_the_file_falls_back_and_a_round_trip_keeps_the_values()
     {
-        var path = Path.Combine(Path.GetTempPath(), "axmedia-settings-" + Guid.NewGuid().ToString("N") + ".json");
+        var path = Path.Combine(Path.GetTempPath(), "axmedia-settings-" + TempFolder.Run + Guid.NewGuid().ToString("N") + ".json");
         File.WriteAllText(path, """{ "speed": 9, "seekSeconds": 0, "recent": ["", "C:\\x"], "fontSize": 500 }""");
         try
         {

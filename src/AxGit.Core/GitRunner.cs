@@ -90,8 +90,13 @@ public static class GitRunner
     /// command named in a remote's address (security audit S-2), nor git's automatic maintenance after a commit or
     /// a fetch (the review's second pass of 2026-11-27: it runs the program of <c>gc.recentObjectsHook</c>, a
     /// setting with several values, which an empty one does not set aside; a repository is tidied by git in a
-    /// console, or by <c>git maintenance</c>). What is set aside for a repository that is not trusted is no
-    /// argument: it goes through the environment (<see cref="SetOverrides"/>). Pure, tested.
+    /// console, or by <c>git maintenance</c>). Since the review's fourth pass (2026-11-28): the variables Git for
+    /// Windows clears for the programs it starts are its own default alone, <c>core.unsetenvvars=PERL5LIB</c>, so
+    /// that a repository's own core.unsetenvvars cannot clear what axGIT gives a submodule's run through the
+    /// environment (H1: it cleared <c>GIT_CONFIG_COUNT</c>, and a submodule's file monitor ran); and no fetch,
+    /// pull or push follows an http redirect to another server than the one the reminder named (L1). What is set
+    /// aside where a program lies in the work tree is no argument: it goes through the environment
+    /// (<see cref="SetOverrides"/>). Pure, tested.
     /// </summary>
     public static IReadOnlyList<string> Command(string? repository, IReadOnlyList<string> arguments)
     {
@@ -102,7 +107,8 @@ public static class GitRunner
             list.Add(repository);
         }
 
-        list.AddRange(["-c", "core.quotepath=false", "-c", "color.ui=never", "-c", "core.fsmonitor=false", "-c", "protocol.ext.allow=never", "-c", "maintenance.auto=false", "-c", "gc.auto=0"]);
+        list.AddRange(["-c", "core.quotepath=false", "-c", "color.ui=never", "-c", "core.fsmonitor=false", "-c", "protocol.ext.allow=never", "-c", "maintenance.auto=false", "-c", "gc.auto=0",
+            "-c", "core.unsetenvvars=PERL5LIB", "-c", "http.followRedirects=false"]);
         list.AddRange(arguments);
         return list;
     }
@@ -193,10 +199,12 @@ public static class GitRunner
         ProcessResult result;
         try
         {
-            // Outside call, program, Git: runs the user's installed git on the repository for one command and reads
-            // what it prints, one process per command, its terminal prompts off; fetch, pull and push alone reach
-            // the repository's remotes, every other command works on disk: git fetches no missing object by itself
-            // and Git LFS neither fetches nor sends a file (FixedEnvironment; AX-11.11).
+            // Outside call, program, Git: runs the user's installed git for one command and reads what it prints, one
+            // process per command, its terminal prompts off; in a repository only once the user has trusted it or it
+            // holds no risk, and before that only as the parser of one settings file with no repository (AG-1.6);
+            // fetch, pull and push alone reach the repository's remotes, a push only a server and never a folder or
+            // a share, every other command works on disk: git fetches no missing object by itself and Git LFS
+            // neither fetches nor sends a file (FixedEnvironment; AX-11.11).
             result = await ProcessRun.RunAsync(info, [], timeout, cancellation);
         }
         catch (Win32Exception ex)
@@ -226,27 +234,5 @@ public static class GitRunner
             : "git finished, but a program it started kept its output open until the time limit.";
         var error = result.Error.Trim().Length == 0 ? reason : result.Error.TrimEnd() + "\n" + reason;
         return new GitResult(result.Stopped ? -1 : result.ExitCode, result.Printed, error, TimedOut: result.Stopped, OutputHeldOpen: !result.Stopped);
-    }
-
-    /// <summary>
-    /// The repository that holds <paramref name="path"/> (a folder, or a file whose folder is taken), as the full
-    /// path of its root; null when the path is in none (AG-1.2).
-    /// </summary>
-    public static async Task<string?> RootAsync(string path, CancellationToken cancellation = default)
-    {
-        var folder = Directory.Exists(path) ? path : Path.GetDirectoryName(path);
-        if (folder is null || !Directory.Exists(folder))
-        {
-            return null;
-        }
-
-        var result = await RunAsync(folder, ["rev-parse", "--show-toplevel"], Short, cancellation);
-        if (!result.Ok)
-        {
-            return null;
-        }
-
-        var root = result.Output.Trim();
-        return root.Length == 0 ? null : Path.GetFullPath(root.Replace('/', Path.DirectorySeparatorChar));
     }
 }

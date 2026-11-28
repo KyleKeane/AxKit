@@ -41,15 +41,36 @@ public sealed class TempFolderTests
         }
 
         var own = new List<string>();
+        var unmarked = new List<string>();
         foreach (var file in Directory.EnumerateFiles(Path.Combine(root, "tests"), "*.cs", SearchOption.AllDirectories).Where(path => !path.Contains(@"\bin\", StringComparison.Ordinal) && !path.Contains(@"\obj\", StringComparison.Ordinal)))
         {
-            foreach (System.Text.RegularExpressions.Match match in System.Text.RegularExpressions.Regex.Matches(File.ReadAllText(file), @"GetTempPath\(\), ""([^""]+-)"" \+"))
+            foreach (System.Text.RegularExpressions.Match match in System.Text.RegularExpressions.Regex.Matches(File.ReadAllText(file), @"GetTempPath\(\), ""([^""]+-)"" \+( TempFolder\.Run \+)?"))
             {
                 own.Add(match.Groups[1].Value);
+                if (!match.Groups[2].Success)
+                {
+                    unmarked.Add($"{Path.GetFileName(file)}: {match.Groups[1].Value}");
+                }
             }
         }
 
         var missing = own.Distinct().Where(prefix => !table.Any(start => prefix.StartsWith(start, StringComparison.OrdinalIgnoreCase))).ToList();
         Assert.True(missing.Count == 0, "Folders the tests make that test.ps1 does not count: " + string.Join(", ", missing));
+        // L4 (the fourth pass): test.ps1 counts its own run's folders by the run's mark right after the beginning.
+        Assert.True(unmarked.Count == 0, "Folders the tests make without the run's mark after their beginning (TempFolder.Run): " + string.Join(", ", unmarked));
+        Assert.Contains("axGIT-no-hooks-", table);
+    }
+
+    /// <summary>L4: the run's mark comes from the variable test.ps1 sets, and stands right after the beginning of a TempFolder's name.</summary>
+    [Fact]
+    public void A_folder_carries_the_runs_mark_after_its_beginning()
+    {
+        var run = Environment.GetEnvironmentVariable("AXKIT_TEST_RUN");
+        Assert.Equal(string.IsNullOrEmpty(run) ? string.Empty : run + "-", TempFolder.Run);
+        using var probe = new TempFolder("axkit-tempfolder");
+        Assert.StartsWith(TempFolder.Mark + TempFolder.Run + "axkit-tempfolder-", Path.GetFileName(probe.Path), StringComparison.Ordinal);
+        var script = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "test.ps1"));
+        Assert.Contains("$env:AXKIT_TEST_RUN = $testRun", script, StringComparison.Ordinal);
+        Assert.Contains("$name.StartsWith($_ + $testRun + '-'", script, StringComparison.Ordinal);
     }
 }

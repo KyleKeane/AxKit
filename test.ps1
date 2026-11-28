@@ -71,17 +71,20 @@ if ($Only -eq '') {
 
 # The tests' own folders in the temporary folder (the review's third pass of 2026-11-27, L7: 1,027 folders of one test
 # class were found left there, unnoticed for a week). Every test's TempFolder starts with axkit-test-; the others are
-# the few tests that make a folder of their own. The count after the run must not be higher than before: a leak shows
-# at once. TempFolderTests holds this table against the tests' sources.
-$testFolderPrefixes = @('axkit-test-', 'axAutomate-tests-', 'axkit-failedlogs-test-', 'axhelp-tests-', 'axclaude-nowhere-', 'axmcp-tests-', 'axmedia-settings-', 'axkit-startup-', 'axTemplate-tests-', 'axterminal-tests-')
+# the few tests that make a folder of their own, and axGIT's hooks folder for a run when its own cannot be emptied.
+# Each name has this run's mark right after its beginning (AXKIT_TEST_RUN, tests\Shared\TempFolder.cs, the fourth
+# pass, L4), and after the run none of this run's may be left: a leak shows at once, and another run beside this one
+# (the push check on a clean copy) is never counted. TempFolderTests holds this table against the tests' sources.
+$testFolderPrefixes = @('axkit-test-', 'axAutomate-tests-', 'axkit-failedlogs-test-', 'axhelp-tests-', 'axclaude-nowhere-', 'axmcp-tests-', 'axmedia-settings-', 'axkit-startup-', 'axTemplate-tests-', 'axterminal-tests-', 'axGIT-no-hooks-')
+$testRun = 'r' + [Guid]::NewGuid().ToString('N').Substring(0, 8)
+$env:AXKIT_TEST_RUN = $testRun
 function Get-TestFolderCount {
     $temp = [IO.Path]::GetTempPath()
     @(Get-ChildItem -LiteralPath $temp -Directory -ErrorAction SilentlyContinue | Where-Object {
         $name = $_.Name
-        @($testFolderPrefixes | Where-Object { $name.StartsWith($_, [StringComparison]::OrdinalIgnoreCase) }).Count -gt 0
+        @($testFolderPrefixes | Where-Object { $name.StartsWith($_ + $testRun + '-', [StringComparison]::OrdinalIgnoreCase) }).Count -gt 0
     }).Count
 }
-$foldersBefore = Get-TestFolderCount
 
 try {
     # The runner writes a failing test to stderr; when this script's output is redirected (a log, a gate run), Windows
@@ -120,11 +123,12 @@ try {
     # The build servers (the compiler server, any MSBuild node) end with the run instead of idling for minutes on
     # several hundred megabytes, whichever way the run ended (Directory.Build.rsp; 2026-11-08).
     dotnet build-server shutdown | Out-Null
+    Remove-Item Env:AXKIT_TEST_RUN -ErrorAction SilentlyContinue
 }
 
-$foldersAfter = Get-TestFolderCount
-if ($foldersAfter -gt $foldersBefore) {
-    Write-Host "The tests passed, but left $($foldersAfter - $foldersBefore) folders of their own in $([IO.Path]::GetTempPath()) (names starting with $($testFolderPrefixes -join ', ')): a test does not clean up after itself."
+$foldersLeft = Get-TestFolderCount
+if ($foldersLeft -gt 0) {
+    Write-Host "The tests passed, but left $foldersLeft folders of their own in $([IO.Path]::GetTempPath()) (names starting with one of $($testFolderPrefixes -join ', ') and then $testRun-): a test does not clean up after itself."
     exit 1
 }
 

@@ -2,90 +2,80 @@ using System.Text.RegularExpressions;
 
 namespace AxGit.Core;
 
+/// <summary>One setting of a settings file as git's parser read it (<see cref="GitTrust.ParseSettings"/>): its name as git lists it, and its value; null for a name written without one, which git reads as true.</summary>
+public sealed record FileSetting(string Name, string? Value);
+
 /// <summary>
 /// A repository's own programs (SPEC.md AG-1.6; the security audit of 2026-10-24 S-2). A repository that comes in
 /// an archive, on a USB stick or a share brings its own <c>.git/config</c> and <c>.git/hooks</c>, which git obeys: a
-/// file monitor run by <c>git status</c>, diff and filter programs, hooks on commit and switch, an ssh command on fetch.
-/// axGIT reads which of these the repository names (reading the configuration runs nothing) and, until the user trusts
-/// the repository, runs every git command with each of them set to nothing. Pure, tested; the reads themselves, in
-/// their order, are <see cref="GitTrustScan"/>.
+/// file monitor run by <c>git status</c>, diff and filter programs, hooks on commit and switch, an ssh command on
+/// fetch, a settings file or an object store on another computer. This class holds the rules: what is a risk, how
+/// a risk is named and said, what is set aside; the reads of a repository's files, in their order, are
+/// <see cref="GitTrustScan"/>.
 ///
-/// What is read (the review of 2026-11-27): every setting git takes from the repository itself, which is its own
-/// file, what that includes, and the work tree's own file when the repository has one
-/// (<c>extensions.worktreeConfig</c>; <c>--local</c>, asked until then, left that file out); the hooks folder; and
-/// the same for every repository inside it, a submodule's, since git runs itself inside a submodule on a plain
-/// <c>git status</c> and obeys that repository's settings there (tried with git 2.53: the submodule's file monitor
-/// ran). The settings axGIT gives reach those runs too, so a name found in a submodule is set to nothing for all
-/// of them.
+/// The line since the review's fourth pass (2026-11-28, AG-1.6): before the user trusts a repository that holds a
+/// risk, axGIT runs no git command in it at all. Three rounds had each found a way in which git, run in such a
+/// repository with its programs set aside by name, still ran one or reached another computer (core.unsetenvvars
+/// cleared every setting given to a submodule's run; a push into a folder ran that other repository's hooks; a
+/// legacy remotes file; an include on a share). What the check needs is read by axKit's own code from the files on
+/// disk, and the settings files with git as a parser of one file given by its path
+/// (<see cref="ParserArguments"/>), which runs nothing of the repository. Whatever cannot be read that way is a
+/// risk named in the notice.
 ///
-/// What counts (the review's second pass of 2026-11-27, AG-1.6c): every setting whose name is not in the table of
-/// the harmless ones (<see cref="Inert"/>), since a list of the names that run a program can never be complete
-/// (Git LFS's <c>lfs.extension.name.clean</c> and <c>gc.recentObjectsHook</c> were not on it, and ran). What is
-/// set aside is given to git through its environment (<see cref="Overrides"/>), never as <c>-c name=value</c>.
+/// What counts (the review's second pass, AG-1.6c): every setting whose name is not in the table of the harmless
+/// ones (<see cref="Inert"/>), since a list of the names that run a program can never be complete; every hook; and
+/// the places (<see cref="Places"/>): a link, an object store or a settings file elsewhere, a legacy remotes file,
+/// a value that names another computer.
 /// </summary>
 public static partial class GitTrust
 {
-    /// <summary>
-    /// The configuration's names with where each comes from, one per line, the scope, a tab, the name: every file
-    /// git would read for this repository, the repository's own, what it includes and the work tree's own among them.
-    /// </summary>
-    public static readonly IReadOnlyList<string> ConfigArguments = ["config", "--show-scope", "--includes", "--name-only", "--list"];
-
-    /// <summary>The scopes that are not the repository's: the computer's file, the user's file, and what axGIT itself gives on the command line.</summary>
-    private static readonly string[] OtherScopes = ["system", "global", "command"];
+    // ---- git as a parser of one file (AG-1.6, the review's fourth pass, T1) ----
 
     /// <summary>
-    /// The names the repository itself sets, from git's answer to <see cref="ConfigArguments"/>: every line whose
-    /// scope is not the computer's, the user's or the command line's. A line without a scope counts as the
-    /// repository's, so that nothing is passed over for its form.
+    /// git as a parser of the settings file at <paramref name="file"/>, a full path: every setting in it, its
+    /// includes not followed, each ended by a zero character (name, a line break, the value). Run with no
+    /// repository at all (<see cref="GitTrustScan"/> gives <c>GIT_DIR</c> a folder that does not exist), it reads
+    /// that one file and runs nothing (tried with git 2.53 on a file that set every name of
+    /// <c>git help --config</c> to a program, core.unsetenvvars and core.fsmonitor among them; the class test in
+    /// <c>GitTrustScanTests</c> holds it).
     /// </summary>
-    public static IReadOnlyList<string> OwnNames(string output)
+    public static IReadOnlyList<string> ParserArguments(string file) => ["config", "--file", file, "--no-includes", "--list", "-z"];
+
+    /// <summary>The settings of git's answer to <see cref="ParserArguments"/>, in the order of the file.</summary>
+    public static IReadOnlyList<FileSetting> ParseSettings(string output)
     {
-        var names = new List<string>();
-        foreach (var line in output.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        var settings = new List<FileSetting>();
+        foreach (var entry in output.Split('\0'))
         {
-            var tab = line.IndexOf('\t');
-            if (tab < 0)
+            if (entry.Trim().Length == 0)
             {
-                names.Add(line);
+                continue;
             }
-            else if (!OtherScopes.Contains(line[..tab], StringComparer.OrdinalIgnoreCase))
-            {
-                names.Add(line[(tab + 1)..].Trim());
-            }
+
+            var line = entry.IndexOf('\n');
+            settings.Add(line < 0 ? new FileSetting(entry.Trim(), null) : new FileSetting(entry[..line].Trim(), entry[(line + 1)..]));
         }
 
-        return names;
+        return settings;
     }
 
-    /// <summary>The folders git keeps the hooks and the submodules' repositories in: two lines.</summary>
-    public static readonly IReadOnlyList<string> FoldersArguments = ["rev-parse", "--git-path", "hooks", "--git-path", "modules"];
+    // ---- The hooks folder of a run that must run none ----
 
     /// <summary>
-    /// The hooks folder and the folder of the submodules' repositories as full paths, from git's answer to
-    /// <see cref="FoldersArguments"/>: two lines, each a path that is relative to the repository's root unless the
-    /// configuration names another; null for a line git did not print.
-    /// </summary>
-    public static (string? Hooks, string? Modules) Folders(string output, string root)
-    {
-        var lines = output.Split('\n', StringSplitOptions.TrimEntries);
-        string? Full(int at) => lines.Length > at && lines[at].Length > 0 ? Path.GetFullPath(lines[at], root) : null;
-        return (Full(0), Full(1));
-    }
-
-    /// <summary>
-    /// The hooks folder every run in a repository that is not trusted is given (<see cref="Careful"/>): a folder of
-    /// axKit's own under the local application data, <c>%LOCALAPPDATA%\AxKit\axGIT-no-hooks</c>, a full path,
-    /// made when missing and emptied before each use (<see cref="EmptyHooksFolder"/>). Until the review's third
-    /// pass (L4) it was <c>NUL</c>, which git takes for a path relative to the work tree, so a folder of that
-    /// name in it would have been the hooks folder.
+    /// The hooks folder a run is given when it must run no hook (<see cref="Careful"/>): a folder of axKit's own
+    /// under the local application data, <c>%LOCALAPPDATA%\AxKit\axGIT-no-hooks</c>, a full path, made when missing
+    /// and emptied before each use (<see cref="EmptyHooksFolder"/>). The tests point it at a folder of their own.
     /// </summary>
     public static string NoHooksFolder { get; set; } = Path.Combine(Path.GetDirectoryName(AxKit.Core.AppPaths.LogsFolder)!, "axGIT-no-hooks");
 
+    /// <summary>What the name of the fresh hooks folder starts with that is given when <see cref="NoHooksFolder"/> cannot be emptied, in the temporary folder; the tests add their run's mark (test.ps1 counts them).</summary>
+    public static string FallbackPrefix { get; set; } = "axGIT-no-hooks-";
+
     /// <summary>
     /// <see cref="NoHooksFolder"/>, made when missing and with anything found in it removed, as a full path. When
-    /// what is in it cannot be removed, a fresh empty folder under the temporary folder is given instead: a
-    /// folder that holds a file is never a hooks folder of axGIT's.
+    /// what is in it cannot be removed, a fresh empty folder under the temporary folder is given instead, which
+    /// <see cref="ReleaseHooksFolder"/> deletes after the run: a folder that holds a file is never a hooks folder of
+    /// axGIT's.
     /// </summary>
     public static string EmptyHooksFolder()
     {
@@ -115,41 +105,39 @@ public static partial class GitTrust
             // A file another program holds: a fresh folder below.
         }
 
-        return Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "axGIT-no-hooks-" + Guid.NewGuid().ToString("N"))).FullName;
+        return Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), FallbackPrefix + Guid.NewGuid().ToString("N"))).FullName;
+    }
+
+    /// <summary>A hooks folder of <see cref="EmptyHooksFolder"/> after its run: the fresh one of the temporary folder deleted, <see cref="NoHooksFolder"/> left.</summary>
+    public static void ReleaseHooksFolder(string folder)
+    {
+        if (!Path.GetFileName(folder).StartsWith(FallbackPrefix, StringComparison.Ordinal)
+            || !string.Equals(Path.GetDirectoryName(Path.GetFullPath(folder)), Path.GetFullPath(Path.GetTempPath()).TrimEnd(Path.DirectorySeparatorChar), StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        try
+        {
+            Directory.Delete(folder, recursive: true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // Left for the next start's own fallback; it holds nothing of the repository's.
+        }
     }
 
     // ---- The repositories inside a repository (submodules) ----
-
-    /// <summary>The index with each entry's kind, the entries ended by a zero character so that no path is quoted.</summary>
-    public static readonly IReadOnlyList<string> LinksArguments = ["ls-files", "--stage", "-z"];
-
-    /// <summary>What the index calls an entry that is another repository's commit: a submodule's place.</summary>
-    private const string LinkMode = "160000";
-
-    /// <summary>The paths, with forward slashes as git prints them, of the entries that are another repository (git's answer to <see cref="LinksArguments"/>: "mode object stage", a tab, the path).</summary>
-    public static IReadOnlyList<string> Links(string output)
-    {
-        var paths = new List<string>();
-        foreach (var entry in output.Split('\0', StringSplitOptions.RemoveEmptyEntries))
-        {
-            var tab = entry.IndexOf('\t');
-            if (tab > 0 && entry.StartsWith(LinkMode + " ", StringComparison.Ordinal))
-            {
-                paths.Add(entry[(tab + 1)..]);
-            }
-        }
-
-        return paths;
-    }
 
     /// <summary>What a work tree's <c>.git</c> file starts with when the repository lies elsewhere.</summary>
     private const string GitFileMark = "gitdir:";
 
     /// <summary>
-    /// The repository of a folder that may be a submodule's work tree: its <c>.git</c> folder, or the folder its
-    /// <c>.git</c> file names (a path relative to the work tree); null when it has neither, which is a submodule
-    /// that was never fetched, where git runs nothing. A <c>.git</c> file that cannot be read is given as it is,
-    /// so that the read of its settings fails and is named.
+    /// The repository of a folder that may be a work tree: its <c>.git</c> folder, or the folder its <c>.git</c>
+    /// file names (a path relative to the work tree); null when it has neither, which is a submodule that was never
+    /// fetched, where git runs nothing, or a <c>.git</c> file that names no folder. The caller has made sure that
+    /// the <c>.git</c> entry is no link (<see cref="GitTrustScan"/>); the path it names is only worked out, never
+    /// touched here.
     /// </summary>
     public static string? GitFolderOf(string worktree)
     {
@@ -244,36 +232,44 @@ public static partial class GitTrust
         return (found, tooDeep);
     }
 
-    /// <summary>How many levels of folders, and of repositories inside each other, the scan follows; what lies deeper is named as not read.</summary>
+    /// <summary>How many levels of folders under <c>.git/modules</c>, and of repositories inside each other, the scan follows; what lies deeper is named as not read.</summary>
     public const int Deep = 12;
 
-    /// <summary>
-    /// The untracked entries of a work tree that git itself would show, ended by a zero character: a folder that
-    /// is a repository of its own comes as one entry with a slash at its end, since git does not go into it.
-    /// Reading them runs nothing.
-    /// </summary>
-    public static readonly IReadOnlyList<string> OthersArguments = ["ls-files", "--others", "--exclude-standard", "-z"];
+    /// <summary>How many levels of folders of a work tree and of a <c>.git</c> folder the scan walks; a folder deeper than this that holds folders is a risk (<see cref="TooDeep"/>).</summary>
+    public const int TreeDeep = 64;
 
-    /// <summary>
-    /// The folders that are a repository of their own with no entry in the index, from git's answer to
-    /// <see cref="OthersArguments"/>: the entries that end in a slash, without it. Nothing runs in one yet; the
-    /// first Stage all makes it an entry of the index, and from then on git runs itself inside it on every
-    /// status. So it is read with the submodules, and the notice comes when the repository is opened.
-    /// </summary>
-    public static IReadOnlyList<string> Nested(string output) =>
-        [.. output.Split('\0', StringSplitOptions.RemoveEmptyEntries).Where(entry => entry.Length > 1 && entry.EndsWith('/')).Select(entry => entry[..^1])];
+    // ---- How a risk is named ----
 
     /// <summary>What a risk inside a submodule starts with: "submodule libs/zip: core.sshcommand".</summary>
     private const string SubmoduleMark = "submodule ";
 
-    /// <summary>A submodule whose settings git itself could not list: nothing of it can be set to nothing by name, so it is named as it is, and its hooks are set aside.</summary>
+    /// <summary>A repository inside whose settings git's parser could not read: nothing of it is known, so it is named as it is.</summary>
     public const string NotRead = "settings that could not be read";
+
+    /// <summary>Folders deeper than the scan walks (<see cref="TreeDeep"/>): what is in them is not known.</summary>
+    public const string TooDeep = "folders deeper than axGIT looks";
+
+    /// <summary>An object store of another repository that git reads (<c>objects/info/alternates</c>).</summary>
+    public const string Alternates = "object stores of other repositories (alternates)";
+
+    /// <summary>A <c>.git</c> file, or a <c>commondir</c> file, that names a folder outside the work tree: git reads the repository there.</summary>
+    public const string OutsideTheWorkTree = "a .git file or commondir file that names a folder outside the work tree";
+
+    /// <summary>A link (a symbolic link or a junction) in the <c>.git</c> folder or the work tree, which the scan does not follow: "a link at .git/hooks".</summary>
+    public static string Link(string place) => $"a link at {place}";
+
+    /// <summary>A file of git's older way of naming remotes (<c>.git/remotes</c>, <c>.git/branches</c>), which git still obeys: "a legacy remotes file origin".</summary>
+    public static string Legacy(string kind, string name) => $"a legacy {kind} file {name}";
+
+    /// <summary>A place that is not on this computer, in a setting's value or a <c>.git</c> file: "core.excludesfile names another computer, server".</summary>
+    public static string OnAnotherComputer(string what, string host) =>
+        host == "." ? $"{what} names a device path" : $"{what} names another computer, {host}";
 
     /// <summary>The risks of a repository inside the one opened, each named with it: "submodule libs/zip: hook post-checkout".</summary>
     public static IReadOnlyList<string> Inside(string submodule, IEnumerable<string> risks) =>
         [.. risks.Select(risk => $"{SubmoduleMark}{submodule}: {risk}")];
 
-    /// <summary>The risk without the submodule it is in: the configuration name, "hook name", or <see cref="NotRead"/>. A path on Windows holds no colon, so the first one ends the submodule's.</summary>
+    /// <summary>The risk without the submodule it is in. A path on Windows holds no colon after a drive, so the first ": " ends the submodule's name.</summary>
     private static string Own(string risk) =>
         risk.StartsWith(SubmoduleMark, StringComparison.Ordinal) && risk.IndexOf(": ", StringComparison.Ordinal) is > 0 and var colon ? risk[(colon + 2)..] : risk;
 
@@ -291,11 +287,12 @@ public static partial class GitTrust
     /// Until then the rule was a list of the names that run a program, and such a list is never complete: git and
     /// the programs it starts (Git LFS, maintenance, credential helpers) gain names without notice. So the rule is
     /// turned around: a setting is harmless only when its name is here, each with its reason, and every other name
-    /// is a risk (<see cref="Risks"/>). What an everyday repository carries is here, as made by <c>git init</c>,
+    /// is a risk (<see cref="SettingRisks"/>). What an everyday repository carries is here, as made by <c>git init</c>,
     /// <c>git clone</c>, <c>git submodule</c>, Git for Windows, GitHub's gh, Visual Studio Code and Git LFS, so that
     /// an ordinary repository opens without the notice. <c>include.path</c> and <c>includeIf</c> are never here:
     /// what they bring in changes with the branch and with any file they name. A new entry needs a reason that
     /// shows it runs no program, reaches no server and moves no file's place; <c>GitTrustTests</c> holds the form.
+    /// A value of a harmless name that names another computer is a risk all the same (<see cref="ValueRisks"/>).
     /// </summary>
     public static readonly IReadOnlyList<InertSetting> Inert =
     [
@@ -318,7 +315,7 @@ public static partial class GitTrust
         new("core.worktree", "Where a submodule's work tree lies, written by git for each one; git only reads through it, since axGIT writes nothing in a repository inside.", InsideOnly: true),
         new("remote.*.url", "A remote's address: read through git and named in the reminder before axGIT reaches it (AG-5.4a)."),
         new("remote.*.pushurl", "A remote's address for a push: read through git and named in the reminder (AG-5.4a)."),
-        new("remote.*.fetch", "Which branches of the remote a fetch brings, and under which names."),
+        new("remote.*.fetch", "Which branches of the remote a fetch brings, and under which names; axGIT's fetch names its own (AG-5.4)."),
         new("remote.*.tagopt", "Whether a fetch brings the remote's tags."),
         new("remote.*.gh-resolved", "A note of GitHub's gh tool; git does not read it."),
         new("remote.pushdefault", "Which remote a push goes to: axGIT reads it, names that remote's servers and puts it on the command line."),
@@ -377,12 +374,12 @@ public static partial class GitTrust
     public static bool IsInert(string name, bool inside = false) =>
         InertByName.TryGetValue(Shape(name), out var setting) && (inside || !setting.InsideOnly);
 
-    // ---- What runs a program, and what is set to nothing by its name ----
+    // ---- What runs a program, and how the notice says the risks ----
 
-    /// <summary>Whether a configuration name makes git run a program: said so in the notice, and set to nothing by its name.</summary>
+    /// <summary>Whether a configuration name makes git run a program: said so in the notice, and set to nothing by its name where it lies in the work tree (<see cref="Overrides"/>).</summary>
     public static bool RunsAProgram(string name) => ProgramNames.IsMatch(name.Trim());
 
-    /// <summary>Whether a configuration name sends git's connection through a proxy: set to nothing by its name while the repository is not trusted (AG-5.4b).</summary>
+    /// <summary>Whether a configuration name sends git's connection through a proxy (AG-5.4b).</summary>
     public static bool NamesAProxy(string name) => ProxyNames().IsMatch(name.Trim());
 
     /// <summary>What a risk that is a hook starts with: "hook pre-commit".</summary>
@@ -390,77 +387,75 @@ public static partial class GitTrust
 
     /// <summary>
     /// The risks that are a program git would run, for the notice: a hook, or a setting whose name runs one
-    /// (<see cref="RunsAProgram"/>). The rest (<see cref="NotKnown"/>) are settings axGIT does not know to be harmless.
+    /// (<see cref="RunsAProgram"/>).
     /// </summary>
     public static IReadOnlyList<string> Programs(IReadOnlyList<string> risks) => [.. risks.Where(IsProgram)];
 
-    /// <summary>The risks that are no program by their name: a setting that is not in <see cref="Inert"/>, or a repository inside whose settings could not be read.</summary>
-    public static IReadOnlyList<string> NotKnown(IReadOnlyList<string> risks) => [.. risks.Where(risk => !IsProgram(risk))];
+    /// <summary>
+    /// The risks that are a place git would go to that the scan does not read: a link, an object store or a
+    /// settings file elsewhere, a legacy remotes file, a value on another computer, a repository inside that could
+    /// not be read, folders too deep. Each is named in words that are no setting's name (a setting's name has its
+    /// first dot before any space), or as a setting's name followed by what its value names.
+    /// </summary>
+    public static IReadOnlyList<string> Places(IReadOnlyList<string> risks) => [.. risks.Where(risk => !IsProgram(risk) && IsPlace(Own(risk)))];
+
+    /// <summary>The risks that are neither: settings that are not in <see cref="Inert"/>.</summary>
+    public static IReadOnlyList<string> NotKnown(IReadOnlyList<string> risks) => [.. risks.Where(risk => !IsProgram(risk) && !IsPlace(Own(risk)))];
 
     private static bool IsProgram(string risk) =>
         Own(risk) is var own && (own.StartsWith(HookMark, StringComparison.Ordinal) || RunsAProgram(own));
 
+    private static bool IsPlace(string own) =>
+        own.IndexOf('.') is var dot && own.IndexOf(' ') is var space && (dot < 0 || (space >= 0 && space < dot)
+            || own.Contains(" names another computer, ", StringComparison.Ordinal) || own.EndsWith(" names a device path", StringComparison.Ordinal));
+
     /// <summary>
-    /// What in a repository is a risk (AG-1.6c): every setting the repository itself sets
-    /// (<paramref name="config"/>, git's answer to <see cref="ConfigArguments"/>) whose name is not known to be
-    /// harmless (<see cref="IsInert"/>), and "hook name" for each hook in <paramref name="hooksFolder"/> that is
-    /// not one of git's own samples. <paramref name="inside"/>: the repository is one inside the one opened.
+    /// The names of the settings of one repository (<paramref name="settings"/>, from its own files) that are not
+    /// known to be harmless (<see cref="IsInert"/>), each once by its exact text: a name's middle part ("pdf" in
+    /// diff.pdf.textconv) is another name in other case. <paramref name="inside"/>: a repository inside the one opened.
     /// </summary>
-    public static IReadOnlyList<string> Risks(string config, string? hooksFolder, bool inside = false)
-    {
-        // Each once, by its exact text: a name's middle part ("pdf" in diff.pdf.textconv) is another name in other case.
-        var risks = OwnNames(config)
-            .Where(name => !IsInert(name, inside))
-            .Distinct(StringComparer.Ordinal)
-            .ToList();
-        if (hooksFolder is not null && Directory.Exists(hooksFolder))
-        {
-            risks.AddRange(Directory.EnumerateFiles(hooksFolder)
-                .Select(Path.GetFileName)
-                .Where(name => name is not null && !name.EndsWith(".sample", StringComparison.OrdinalIgnoreCase))
-                .Order(StringComparer.OrdinalIgnoreCase)
-                .Select(name => HookMark + name));
-        }
+    public static IReadOnlyList<string> SettingRisks(IReadOnlyList<FileSetting> settings, bool inside = false) =>
+        [.. settings.Select(setting => setting.Name).Where(name => !IsInert(name, inside)).Distinct(StringComparer.Ordinal)];
 
-        return risks;
-    }
+    /// <summary>Whether a hooks folder's entry is a hook: every file but git's own samples.</summary>
+    public static bool IsHook(string fileName) => !fileName.EndsWith(".sample", StringComparison.OrdinalIgnoreCase);
 
-    // ---- Where the value decides the harm (the review's third pass of 2026-11-27, D5) ----
+    /// <summary>A hook as a risk: "hook pre-commit".</summary>
+    public static string Hook(string fileName) => HookMark + fileName;
+
+    // ---- Where the value decides the harm (D5; the review's fourth pass, M2) ----
 
     /// <summary>
-    /// The values of the harmless names whose value decides whether they are harmless, with the kind of file each
-    /// comes from: <c>remote.name.fetch</c> and <c>core.worktree</c>. Every other name of <see cref="Inert"/> was
-    /// gone through with the question what its value can do: a number or a switch, a text git does not read, an
-    /// address read before anything reaches it (AG-5.4a), a remote's name axGIT reads and puts on the command line,
-    /// a branch's name a push now names itself (AG-5.4); <c>pull.rebase</c> and <c>branch.name.rebase</c>, even
-    /// set to interactive, open nothing under the <c>--ff-only</c> of axGIT's pull (tried with git 2.53).
-    /// Exit code 1 and nothing printed when the repository sets none of them.
-    /// </summary>
-    public static readonly IReadOnlyList<string> ValueArguments = ["config", "--show-scope", "--includes", "--null", "--get-regexp", @"^(remote\..+\.fetch|core\.worktree)$"];
-
-    /// <summary>
-    /// The risks in the values of git's answer to <see cref="ValueArguments"/>, of the repository's own files:
+    /// The risks in the values of a repository's settings:
     /// <list type="bullet">
-    /// <item>a fetch that writes outside <c>refs/remotes/</c>: "remote.origin.fetch writes outside refs/remotes".
-    /// With <c>+refs/heads/*:refs/heads/*</c> axGIT's fetch with <c>--prune</c> deleted every local branch
-    /// (M3). A line without a destination fetches into FETCH_HEAD alone, and one with a caret leaves branches
-    /// out: both harmless.</item>
-    /// <item>a work tree of a repository inside on another computer: "core.worktree lies on another computer"
-    /// (git reads every file of it on a status). In the repository opened core.worktree is a risk by its name.</item>
+    /// <item>a fetch line that writes outside <c>refs/remotes/</c>: "remote.origin.fetch writes outside
+    /// refs/remotes". axGIT's own fetch names its line since the fourth pass (T3), so such a line no longer moves
+    /// a branch; it is still asked about, since a fetch in a console obeys it.</item>
+    /// <item>any value that names a place on another computer (<see cref="ElsewhereOf"/>): a share, a path through
+    /// <c>\\?\</c> other than a drive's, a drive that is a network drive, a <c>file://</c> address with a host.
+    /// git reads such a place at its first command (tried with git 2.53 through <c>//localhost/C$</c>:
+    /// core.excludesFile, an include, the work tree, the attributes, the mail map, the commit template).</item>
     /// </list>
+    /// <paramref name="own"/>: the computer the repository itself lies on (<see cref="ComputerOf"/>), whose places
+    /// are its own; <paramref name="isNetworkDrive"/> says whether a drive letter is a network drive.
     /// </summary>
-    public static IReadOnlyList<string> ValueRisks(string output)
+    public static IReadOnlyList<string> ValueRisks(IReadOnlyList<FileSetting> settings, string? own, Func<char, bool> isNetworkDrive)
     {
         var risks = new List<string>();
-        foreach (var setting in GitRemote.Settings(output).Where(setting => !OtherScopes.Contains(setting.Scope, StringComparer.OrdinalIgnoreCase)))
+        foreach (var setting in settings)
         {
             var name = setting.Name.Trim();
-            var risk = Shape(name) switch
+            var value = setting.Value ?? string.Empty;
+            string? risk = null;
+            if (Shape(name) == "remote.*.fetch" && !FetchesUnderRemotes(value))
             {
-                "remote.*.fetch" when !FetchesUnderRemotes(setting.Value) => $"{name} writes outside refs/remotes",
-                "core.worktree" when OtherComputer(setting.Value.Trim()) is not null => $"{name} lies on another computer",
-                _ => null,
-            };
+                risk = $"{name} writes outside refs/remotes";
+            }
+            else if (ElsewhereOf(value, own, isNetworkDrive) is { } host)
+            {
+                risk = OnAnotherComputer(name, host);
+            }
+
             if (risk is not null && !risks.Contains(risk, StringComparer.Ordinal))
             {
                 risks.Add(risk);
@@ -489,11 +484,12 @@ public static partial class GitTrust
         return destination.StartsWith("refs/remotes/", StringComparison.Ordinal) && !destination.Split('/').Contains("..");
     }
 
-    // ---- Files on another computer (the review's third pass of 2026-11-27, D9) ----
+    // ---- Places on another computer (D9; the fourth pass, M2) ----
 
     /// <summary>
     /// The computer a path names when it is a share (<c>\\host\share</c>, <c>//host/share</c>, <c>\\?\UNC\host</c>),
-    /// in lower case; null for a path on this computer. Read from the text alone: the path is never touched.
+    /// in lower case; "." for a device path (<c>\\?\</c> other than a drive's, <c>\\.\</c>); null for a path on
+    /// this computer. Read from the text alone: the path is never touched.
     /// </summary>
     public static string? OtherComputer(string path)
     {
@@ -518,205 +514,107 @@ public static partial class GitTrust
     }
 
     /// <summary>
-    /// A guard before the first git run in a folder (D9; tried with git 2.53 through <c>//localhost/c$</c>: at its
-    /// first command git read a work tree's <c>.git</c> file, an include of the settings and an alternate object
-    /// store through the share): the computer, other than the one the repository lies on, that the repository's
-    /// own files point git at, or null. What is read, in C#, of files on this computer alone: the <c>.git</c> file
-    /// of the work tree that holds <paramref name="folder"/> (or the folder itself when it is a repository with no
-    /// work tree), its <c>commondir</c>, the <c>path</c> lines of its settings files and of the files they include,
-    /// and its <c>objects/info/alternates</c> and theirs. A guard, not a reader of git's settings: a line that
-    /// only looks like an include counts too, and what cannot be read is left to git, which reads it on this
-    /// computer.
+    /// The computer a value names when it is not <paramref name="own"/>'s: <see cref="OtherComputer"/> of the
+    /// value, of the path in a <c>file://</c> address (a host there is another computer, also localhost, which is
+    /// reached through a share), or "drive Z:" for a path on a drive <paramref name="isNetworkDrive"/> calls a
+    /// network drive; null for a value that names nothing elsewhere. Read from the text alone.
     /// </summary>
-    public static string? PointsElsewhere(string folder)
+    public static string? ElsewhereOf(string value, string? own, Func<char, bool> isNetworkDrive)
     {
-        try
+        var text = value.Trim().Trim('"', '\'');
+        if (text.StartsWith("file://", StringComparison.OrdinalIgnoreCase))
         {
-            return Elsewhere(folder);
+            var rest = text[7..];
+            if (!rest.StartsWith('/') && rest.IndexOf('/') is var slash && (slash < 0 ? rest : rest[..slash]) is { Length: > 0 } host)
+            {
+                return host.ToLowerInvariant() == own ? null : host.ToLowerInvariant();
+            }
+
+            text = rest.Length > 2 && rest[0] == '/' && rest[2] == ':' ? rest[1..] : rest;
         }
-        catch (Exception ex) when (ex is ArgumentException or NotSupportedException or IOException or UnauthorizedAccessException)
+
+        var computer = OtherComputer(text);
+        if (computer is null && text.Length >= 2 && text[1] == ':' && char.IsAsciiLetter(text[0]) && isNetworkDrive(char.ToUpperInvariant(text[0])))
         {
-            // A path git itself could not use either: left to git, which reads it on this computer.
-            return null;
+            computer = $"drive {char.ToUpperInvariant(text[0])}:";
         }
+
+        return computer is not null && computer != own ? computer : null;
     }
 
-    private static string? Elsewhere(string folder)
-    {
-        var own = OtherComputer(folder);
-        string? Away(string path) => OtherComputer(path) is { } host && host != own ? host : null;
-        if (Away(folder) is { } first)
-        {
-            return first;
-        }
-
-        if (GitDirectoryOf(folder) is not { } gitDir)
-        {
-            return null;
-        }
-
-        if (Away(gitDir) is { } dotGit)
-        {
-            return dotGit;
-        }
-
-        var directories = new List<string> { gitDir };
-        if (ReadSmall(Path.Combine(gitDir, "commondir")) is { } common && common.Split('\n')[0].Trim() is { Length: > 0 } commonPath)
-        {
-            if (Away(commonPath) is { } host)
-            {
-                return host;
-            }
-
-            directories.Add(Path.GetFullPath(commonPath, gitDir));
-        }
-
-        var settings = new Queue<string>(directories.SelectMany(directory => new[] { Path.Combine(directory, "config"), Path.Combine(directory, "config.worktree") }));
-        var stores = new Queue<string>(directories.Select(directory => Path.Combine(directory, "objects")));
-        var read = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        while ((settings.Count > 0 || stores.Count > 0) && read.Count < 4 * Deep)
-        {
-            if (settings.TryDequeue(out var file))
-            {
-                if (!read.Add(file) || ReadSmall(file) is not { } text)
-                {
-                    continue;
-                }
-
-                foreach (var included in IncludedPaths(text))
-                {
-                    if (Away(included) is { } host)
-                    {
-                        return host;
-                    }
-
-                    if (!included.StartsWith('~') && !included.StartsWith("%(", StringComparison.Ordinal))
-                    {
-                        settings.Enqueue(Path.GetFullPath(included, Path.GetDirectoryName(file)!));
-                    }
-                }
-            }
-            else if (stores.TryDequeue(out var store))
-            {
-                if (!read.Add(store) || ReadSmall(Path.Combine(store, "info", "alternates")) is not { } list)
-                {
-                    continue;
-                }
-
-                foreach (var line in list.Split('\n').Select(line => line.Trim().Trim('"')).Where(line => line.Length > 0 && !line.StartsWith('#')))
-                {
-                    if (Away(line) is { } host)
-                    {
-                        return host;
-                    }
-
-                    stores.Enqueue(Path.GetFullPath(line, store));
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /// <summary>The repository folder of the work tree that holds <paramref name="folder"/>, as git finds it going up; the folder itself when it is a repository without a work tree; null when there is none.</summary>
-    private static string? GitDirectoryOf(string folder)
-    {
-        for (var at = Path.GetFullPath(folder); at is not null; at = Path.GetDirectoryName(at))
-        {
-            if (Directory.Exists(Path.Combine(at, ".git")) || File.Exists(Path.Combine(at, ".git")))
-            {
-                return GitFolderOf(at);
-            }
-
-            if (File.Exists(Path.Combine(at, "HEAD")) && Directory.Exists(Path.Combine(at, "objects")))
-            {
-                return at;
-            }
-        }
-
-        return null;
-    }
-
-    /// <summary>A file of this computer's, its first 64 KB as text, or null when it is not there or cannot be read; a path on a share is never read.</summary>
-    private static string? ReadSmall(string path)
-    {
-        if (OtherComputer(path) is not null)
-        {
-            return null;
-        }
-
-        try
-        {
-            using var reader = new StreamReader(path);
-            var buffer = new char[65536];
-            return new string(buffer, 0, reader.ReadBlock(buffer, 0, buffer.Length)).Replace("\r", string.Empty, StringComparison.Ordinal);
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
-        {
-            return null;
-        }
-    }
-
-    /// <summary>The value of every line of a settings file that sets a variable named path: what an include or an includeIf brings in, and some lines that only look like it.</summary>
-    private static IEnumerable<string> IncludedPaths(string text) =>
-        text.Split('\n')
-            .Select(line => line.Trim())
-            .Where(line => line.StartsWith("path", StringComparison.OrdinalIgnoreCase) && line[4..].TrimStart().StartsWith('='))
-            .Select(line => line[(line.IndexOf('=') + 1)..].Trim().Trim('"'))
-            .Where(path => path.Length > 0);
-
-    /// <summary>The parts of a filter's settings that name its programs.</summary>
-    private static readonly string[] FilterPrograms = ["clean", "smudge", "process"];
+    /// <summary>The computer a repository's own folder lies on, as <see cref="ElsewhereOf"/> names one; null for this computer.</summary>
+    public static string? ComputerOf(string root, Func<char, bool> isNetworkDrive) => ElsewhereOf(root, null, isNetworkDrive);
 
     /// <summary>
-    /// The filters git knows here, from its answer to <see cref="ConfigArguments"/>: the middle part of every
-    /// <c>filter.name.clean</c>, <c>smudge</c> and <c>process</c>, of every scope, the user's and the computer's
-    /// too (Git LFS is set up there), each once by its exact text.
+    /// The words of a setting's value that may name a file: those with a slash or a backslash in them, the quotes
+    /// taken off (<c>sh "./tools/clean.sh" --x</c> gives <c>./tools/clean.sh</c>). A bare program name is looked
+    /// for by git in the PATH, whose folders are the user's.
     /// </summary>
-    public static IReadOnlyList<string> Filters(string output)
+    public static IReadOnlyList<string> PathWords(string value)
     {
-        var filters = new List<string>();
-        foreach (var line in output.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        var words = new List<string>();
+        var word = new System.Text.StringBuilder();
+        char? quote = null;
+        void End()
         {
-            var name = line[(line.IndexOf('\t') + 1)..].Trim();
-            var first = name.IndexOf('.');
-            var last = name.LastIndexOf('.');
-            if (first > 0 && last > first + 1 && name[..first].Equals("filter", StringComparison.OrdinalIgnoreCase)
-                && FilterPrograms.Contains(name[(last + 1)..], StringComparer.OrdinalIgnoreCase)
-                && name[(first + 1)..last] is var filter && !filters.Contains(filter, StringComparer.Ordinal))
+            if (word.Length > 0 && word.ToString() is var text && (text.Contains('/') || text.Contains('\\')))
             {
-                filters.Add(filter);
+                words.Add(text);
+            }
+
+            word.Clear();
+        }
+
+        foreach (var c in value)
+        {
+            if (quote is null && (c == '"' || c == '\''))
+            {
+                quote = c;
+            }
+            else if (c == quote)
+            {
+                quote = null;
+            }
+            else if (quote is null && char.IsWhiteSpace(c))
+            {
+                End();
+            }
+            else
+            {
+                word.Append(c);
             }
         }
 
-        return filters;
+        End();
+        return words;
     }
 
-    /// <summary>
-    /// What every run of git gets in a repository that is not trusted: no hooks (an empty folder of axKit's own,
-    /// <see cref="EmptyHooksFolder"/>, emptied again for each list asked for) and no credential helper (an empty
-    /// value empties git's list of them, the user's own among them). The scan's question for the hooks folder gets
-    /// neither: asked with this one given, git names this one (<see cref="GitTrustScan"/>).
-    /// </summary>
-    public static IReadOnlyList<GitSetting> Careful => [new("credential.helper", string.Empty), new("core.hooksPath", EmptyHooksFolder())];
+    // ---- What git is run with where a program lies in the work tree (T4) ----
 
     /// <summary>
-    /// The settings git is run with while the repository is not trusted (AG-1.6, AG-1.6c), given through the
-    /// environment (<see cref="GitRunner.SetOverrides"/>), where a name may hold an equals sign; as <c>-c</c>
-    /// arguments, until the review's second pass, <c>filter.a=b.clean=</c> set nothing aside. Empty when
-    /// <paramref name="risks"/> is, which is also what a trusted repository runs with.
+    /// No hooks for a run (an empty folder of axKit's own, <see cref="EmptyHooksFolder"/>, emptied again for each
+    /// run, the caller giving it back with <see cref="ReleaseHooksFolder"/>). Until the fourth pass this held an
+    /// empty credential helper too, for the runs of a repository that was not trusted; there are none now (T1).
+    /// </summary>
+    public static IReadOnlyList<GitSetting> Careful => [new("core.hooksPath", EmptyHooksFolder())];
+
+    /// <summary>
+    /// The settings a run is given to set <paramref name="risks"/> aside, through the environment
+    /// (<see cref="GitRunner.SetOverrides"/>), where a name may hold an equals sign; empty when
+    /// <paramref name="risks"/> is. The second line behind T1: since the fourth pass no run is made in a repository
+    /// the user has not trusted, and this is what a trusted repository's changing commands run with when a program
+    /// or its hooks folder lies in its work tree (<see cref="TrustScan.InTree"/>, T4), where a switch or a pull can
+    /// change them while git runs (a switch brought a post-checkout hook and ran it, M3).
     /// <list type="bullet">
     /// <item>Every name that runs a program or names a proxy, set to nothing, once, whichever repository it was
-    /// found in (the settings reach git's runs inside a submodule, tried with git 2.53).</item>
+    /// found in (the settings reach git's runs inside a submodule; with core.unsetenvvars given on the command line
+    /// by every run, <see cref="GitRunner.Command"/>, a repository's own can no longer clear them, H1).</item>
     /// <item><c>protocol.git.allow=never</c> when <c>core.gitProxy</c> is named: git takes the first proxy command
-    /// it reads, the repository's, so an empty one after it sets nothing aside; without the transport none starts.</item>
-    /// <item>When a risk is no hook and no such name (a setting axGIT does not know, a repository inside that
-    /// could not be read): every filter of <paramref name="filters"/> set to nothing and not required. A filter
-    /// is a program of the user's own, and it may obey the repository's settings: Git LFS runs the programs of
-    /// <c>lfs.extension.name.clean</c>. No filter runs, so none can.</item>
-    /// <item><see cref="Careful"/>: no hooks, no credential helper.</item>
+    /// it reads, the repository's, so an empty one after it sets nothing aside.</item>
+    /// <item>When a risk is no hook and no such name: every filter of <paramref name="filters"/> set to nothing and
+    /// not required (a filter may obey the repository's settings, as Git LFS does).</item>
+    /// <item><see cref="Careful"/>: no hooks.</item>
     /// </list>
-    /// Automatic maintenance, which runs <c>gc.recentObjectsHook</c>, is off for every run (<see cref="GitRunner.Command"/>).
     /// </summary>
     public static IReadOnlyList<GitSetting> Overrides(IReadOnlyList<string> risks, IReadOnlyList<string> filters)
     {
@@ -743,7 +641,7 @@ public static partial class GitTrust
             }
 
             gitProxy |= risk.Equals("core.gitproxy", StringComparison.OrdinalIgnoreCase);
-            // The hooks folder is set below, for every repository that is not trusted.
+            // The hooks folder is set below.
             if (!risk.Equals("core.hookspath", StringComparison.OrdinalIgnoreCase) && names.Add(risk))
             {
                 list.Add(new GitSetting(risk, string.Empty));
@@ -768,15 +666,20 @@ public static partial class GitTrust
         return list;
     }
 
+    /// <summary>The parts of a filter's settings that name its programs.</summary>
+    private static readonly string[] FilterPrograms = ["clean", "smudge", "process"];
+
     /// <summary>
-    /// The mark of what a repository would run (AG-1.6, repairs.md R-53): the SHA-256, as hexadecimal, of the risks in
-    /// lower case and sorted, each with its length in front. A trust is kept with it, so that a repository that gains
-    /// or loses a hook, a configured program or a setting axGIT does not know is asked about again. It marks the
-    /// names, not what a hook's file or a setting holds.
+    /// The mark of what a repository would run (AG-1.6, repairs.md R-53; the fourth pass, T4): the SHA-256, as
+    /// hexadecimal, of the lines given in lower case and sorted, each with its length in front. The scan gives
+    /// the risks and, beside them, the value of every setting that is not harmless, the content's hash of every
+    /// hook and of every file such a setting names (included settings files among them), and each hooks folder's
+    /// listing (<see cref="TrustScan.Mark"/>). A trust is kept with it, so that a repository whose hook, program
+    /// or included file changed is asked about again; until the fourth pass it marked the names alone.
     /// </summary>
-    public static string Mark(IReadOnlyList<string> risks) =>
+    public static string Mark(IEnumerable<string> lines) =>
         Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(
-            AxKit.Core.SettingsSeal.Text(risks.Select(risk => risk.ToLowerInvariant()).Order(StringComparer.Ordinal)))));
+            AxKit.Core.SettingsSeal.Text(lines.Select(line => line.ToLowerInvariant()).Order(StringComparer.Ordinal)))));
 
     /// <summary>A kind of setting that names a program: its pattern (a regular expression over the whole name, without case) and names of that kind, written out.</summary>
     public sealed record ProgramName(string Pattern, IReadOnlyList<string> Examples);
@@ -791,11 +694,11 @@ public static partial class GitTrust
     /// external diff; diff, merge and filter drivers and the tools' commands; a pager for one command; credential
     /// helpers; the signing programs and the command that finds an ssh signing key; the editors; a commit
     /// trailer's command; a hook set in the configuration; the remote's own programs and its helper
-    /// (<c>vcs</c>). Since the review's second pass this list decides no longer whether a repository is asked
-    /// about (every name outside <see cref="Inert"/> is): it says which risks the notice calls programs, and which
-    /// are set to nothing by their name. Each kind carries names of it written out, and the test that closes the
-    /// class (<c>GitSessionTests</c>) sets every one of them to a program that leaves a mark and runs every command
-    /// axGIT has in a repository that is not trusted: the mark never comes.
+    /// (<c>vcs</c>). This list decides no longer whether a repository is asked about (every name outside
+    /// <see cref="Inert"/> is): it says which risks the notice calls programs, and which are set to nothing by
+    /// their name where they lie in the work tree (T4). Each kind carries names of it written out, and the test of
+    /// the second line (<c>GitSessionTests</c>) sets every one of them to a program that leaves a mark and runs
+    /// every command axGIT has with <see cref="Overrides"/>: the mark never comes.
     /// </summary>
     public static readonly IReadOnlyList<ProgramName> ProgramNamesTable =
     [

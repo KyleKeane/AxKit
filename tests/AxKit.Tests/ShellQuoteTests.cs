@@ -65,7 +65,7 @@ public sealed class ShellQuoteTests
     {
         foreach (var shell in new[] { SystemPrograms.PowerShell, Pwsh })
         {
-            foreach (var program in new[] { "sc", "curl", "where", "SORT", "exit", "Return" })
+            foreach (var program in new[] { "sc", "curl", "where", "SORT", "exit", "Return", "more", "mkdir", "Help", "C:" })
             {
                 var (line, refused) = ShellQuote.CommandLine(shell, [program, "query"]);
                 Assert.Null(line);
@@ -82,6 +82,46 @@ public sealed class ShellQuoteTests
         Assert.Equal("Write-Output 'two words'", PowerShell("Write-Output", "two words"));
         // The Command Prompt has no such names: sc there is the program.
         Assert.Equal("sc query", ShellQuote.CommandLine(SystemPrograms.Cmd, ["sc", "query"]).Line);
+    }
+
+    /// <summary>A test of Windows PowerShell itself, said as skipped where it is not installed, never passed in silence.</summary>
+    private sealed class WindowsPowerShellFactAttribute : FactAttribute
+    {
+        public WindowsPowerShellFactAttribute()
+        {
+            if (!File.Exists(SystemPrograms.PowerShell))
+            {
+                Skip = "Windows PowerShell (powershell.exe) is not installed where axKit finds it: its own functions were not read on this computer.";
+            }
+        }
+    }
+
+    /// <summary>
+    /// L5 (the review's fourth pass): Windows PowerShell 5.1 defines functions of its own (more, mkdir, help, a drive
+    /// letter), and a program of such a name, written bare, is the function. The list is held against a real run of
+    /// the shell without a profile: every function of no module it defines is known, and each bare one is refused.
+    /// </summary>
+    [WindowsPowerShellFact]
+    public void Every_function_Windows_PowerShell_defines_by_itself_is_refused_as_a_program()
+    {
+        var start = new System.Diagnostics.ProcessStartInfo(SystemPrograms.PowerShell);
+        foreach (var argument in new[] { "-NoProfile", "-NonInteractive", "-Command", "Get-Command -CommandType Function | Where-Object { -not $_.Source } | ForEach-Object { $_.Name }" })
+        {
+            start.ArgumentList.Add(argument);
+        }
+
+        var result = ProcessRun.Run(start, [], TimeSpan.FromSeconds(120));
+        Assert.False(result.Stopped, "The shell did not end");
+        var functions = result.Output.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Contains("more", functions);
+        var unknown = functions.Where(name => !ShellQuote.WindowsPowerShellFunctions.Contains(name, StringComparer.OrdinalIgnoreCase)).ToList();
+        Assert.True(unknown.Count == 0, "Functions Windows PowerShell 5.1 defines by itself that ShellQuote does not know: " + string.Join(", ", unknown));
+        foreach (var name in functions.Where(name => name.IndexOfAny(['\\', '/', '.']) < 0))
+        {
+            var (line, refused) = ShellQuote.CommandLine(SystemPrograms.PowerShell, [name, "x"]);
+            Assert.Null(line);
+            Assert.Contains("write the program's file name", refused, StringComparison.Ordinal);
+        }
     }
 
     [Fact]

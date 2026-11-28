@@ -113,7 +113,7 @@ public class ClaudeLauncherTests
     [Fact]
     public async Task A_claude_that_cannot_start_gives_no_version()
     {
-        var nowhere = Path.Combine(Path.GetTempPath(), "axclaude-nowhere-" + Guid.NewGuid().ToString("N"), "claude.exe");
+        var nowhere = Path.Combine(Path.GetTempPath(), "axclaude-nowhere-" + TempFolder.Run + Guid.NewGuid().ToString("N"), "claude.exe");
         Assert.Null(await ClaudeLauncher.VersionAsync(nowhere, TimeSpan.FromSeconds(5)));
     }
 

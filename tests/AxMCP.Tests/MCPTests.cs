@@ -9,7 +9,7 @@ namespace AxMCP.Tests;
 /// <summary>axMCP's pure code (docs/axMCP/SPEC.md): the servers from the three files, a command line split, a schema to fields and back, a result to text, and the client against a fake server in memory.</summary>
 public sealed class MCPTests : IDisposable
 {
-    private readonly string _folder = Path.Combine(Path.GetTempPath(), "axmcp-tests-" + Guid.NewGuid().ToString("N"));
+    private readonly string _folder = Path.Combine(Path.GetTempPath(), "axmcp-tests-" + TempFolder.Run + Guid.NewGuid().ToString("N"));
 
     public void Dispose()
     {

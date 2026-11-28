@@ -190,12 +190,12 @@ Starts with: Open axGIT with the folder repo.
 2. Press Ctrl+L (Pull; Actions menu).
     You hear: Pulled.
 
-### Push a commit
+### Push a commit to a folder in a terminal
 
 1. Press F5 (Refresh; Session menu).
     You hear: Refreshed.
 2. Press Ctrl+P (Push; Actions menu).
-    You hear: Pushed.
+3. Press Enter.
 
 ## Use axGIT's text, notices and axKit menu
 
@@ -278,10 +278,11 @@ You hear: Before axGIT connects to Git.
 
 ## Open a repository that runs programs of its own
 
-### Open a repository with its own programs kept off
+### Keep a repository with its own programs off
 
 1. Open axGIT with the folder repo.
 2. Press Enter.
+    You hear: Not opened.
 3. Close the window.
 
 ### Trust a repository
@@ -294,7 +295,16 @@ You hear: Before axGIT connects to Git.
 
 ## Open a repository with settings axGIT does not know, and start no fetch or push git cannot name a server for
 
-### Open a repository with a setting axGIT does not know, kept off
+### Keep a repository with a setting axGIT does not know off
 
 1. Open axGIT with the folder repo.
 2. Press Enter.
+    You hear: Not opened.
+3. Close the window.
+
+### Trust a repository with a setting axGIT does not know
+
+1. Open axGIT with the folder repo.
+2. Press Tab twice.
+3. Press Space.
+    You hear: Trusted.

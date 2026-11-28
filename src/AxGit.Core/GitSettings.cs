@@ -5,8 +5,10 @@ namespace AxGit.Core;
 
 /// <summary>
 /// A repository whose own programs the user chose to let git run (SPEC.md AG-1.6): its root, and the mark of what it
-/// would run when it was trusted (<see cref="GitTrust.Mark"/>); an empty mark is a trust from a file written before
-/// 2026-11-16, bound at the repository's next opening.
+/// would run when it was trusted (<see cref="TrustScan.Mark"/>: the risks, the values of the settings that are not
+/// harmless, and the content of every hook and of every file such a setting names); an empty mark is a trust from a
+/// file written before 2026-11-16, bound at the repository's next opening. A mark made before the review's fourth pass
+/// (2026-11-28) marked the names alone and no longer matches: such a repository is asked about once more.
 /// </summary>
 public sealed record TrustedRepository(string Path, string Risks);
 
@@ -38,19 +40,19 @@ public sealed class GitSettings : WindowSettings
 
     /// <summary>
     /// Whether the user trusts the repository's own programs as they are now (AG-1.6): trusted, and what it would run
-    /// (<paramref name="risks"/>, <see cref="GitTrust.Risks"/>) is what it ran when it was trusted. A trust from before
+    /// (<paramref name="mark"/>, <see cref="TrustScan.Mark"/>) is the mark it had when it was trusted. A trust from before
     /// the marks counts once, and <see cref="Trust"/> then binds it.
     /// </summary>
-    public bool Trusts(string root, IReadOnlyList<string> risks) =>
-        Find(root) is { } trusted && (trusted.Risks.Length == 0 || trusted.Risks == GitTrust.Mark(risks));
+    public bool Trusts(string root, string mark) =>
+        Find(root) is { } trusted && (trusted.Risks.Length == 0 || trusted.Risks == mark);
 
     /// <summary>Whether the repository was trusted at all, with whatever it ran then: the notice says that its programs changed.</summary>
     public bool WasTrusted(string root) => Find(root) is not null;
 
     /// <summary>The repository trusted with what it would run now; false when it is trusted so already and nothing is to be saved.</summary>
-    public bool Trust(string root, IReadOnlyList<string> risks)
+    public bool Trust(string root, string mark)
     {
-        var entry = new TrustedRepository(root, GitTrust.Mark(risks));
+        var entry = new TrustedRepository(root, mark);
         if (Find(root) == entry)
         {
             return false;

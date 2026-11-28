@@ -5,7 +5,7 @@ namespace AxHelp.Tests;
 /// <summary>axHelp's pure code (docs/axHelp/SPEC.md HE-3.3, HE-5): the settings file with its two hotkeys and model, and the picture files it passes on.</summary>
 public sealed class HelpTests : IDisposable
 {
-    private readonly string _folder = Path.Combine(Path.GetTempPath(), "axhelp-tests-" + Guid.NewGuid().ToString("N"));
+    private readonly string _folder = Path.Combine(Path.GetTempPath(), "axhelp-tests-" + TempFolder.Run + Guid.NewGuid().ToString("N"));
 
     public void Dispose()
     {

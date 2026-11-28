@@ -99,7 +99,7 @@ run git -C repo branch -d scratch-test
 
 # Goal: Fetch, pull and push
 # 4.4 Fetch: "Working: fetch…" on the status bar while it runs, then "Fetched" and one behind; Pull; Pull again;
-# Push with a commit to push, and with nothing to push. (Reading the status bar with NVDA+End is manual.)
+# Push to this remote, a folder, refused (T2). (Reading the status bar with NVDA+End is manual.)
 keys ctrl+r
 expect state Working: fetch
 expect said ! Fetched
@@ -112,19 +112,27 @@ keys ctrl+l
 expect said ! Already up to date
 # Each command ends with a refresh; "changed," is on the status bar only when no command runs.
 expect state changed,
-# Goal: Push a commit
+# Goal: Push a commit to a folder in a terminal
+# AG-5.4c (the review's fourth pass, T2): axGIT pushes only to a server, and this remote is a folder; the push is
+# refused before anything is sent, and the commit stays to send. A push to a server is heard with a real remote
+# (docs/axGIT/nvda-test-plan.md 4.4), since no script here reaches a network.
 file repo\a.txt hello\nagain\nand again
 run git -C repo commit -q -am "to push"
 keys f5
 expect said ! Refreshed
 expect state 1 ahead
 keys ctrl+p
-expect said ! Pushed
+expect state "notice":"Push not started"
+expect state This remote is a folder; push to it in a terminal. Nothing was sent.
+wait 1200
+keys enter
+expect state "notice":null
+expect state 1 ahead
+# Check: The commit a terminal pushes is up to date in axGIT after a fetch
+run git -C repo push -q origin main
+keys ctrl+r
+expect said ! Fetched
 expect state up to date
-expect state changed,
-# Check: Push with nothing to send says Pushed
-keys ctrl+p
-expect said ! Pushed
 expect state changed,
 
 # Check: A pull asked while a fetch runs says Working

@@ -5,7 +5,7 @@ using AxKit.Core;
 namespace AxGit.Tests;
 
 /// <summary>
-/// The review's third pass of 2026-11-27 (docs/axGIT/SPEC.md AG-1.6, AG-1.6b, AG-5.4, AG-5.4c), against git itself,
+/// The review's third and fourth passes (docs/axGIT/SPEC.md AG-1.6, AG-1.6b, AG-5.4, AG-5.4c), against git itself,
 /// in repositories the test makes: a repository's program is a script that writes a line into a file of the
 /// test's, and each test runs what axGIT runs and looks whether the line is there. Each also runs once the way
 /// that did run the script, so that it is known to be able to fail. Nothing leaves this computer: the addresses
@@ -23,8 +23,6 @@ public sealed class GitSessionTests : IDisposable
     public void Dispose() => _dir.Dispose();
 
     // ---- git as a console runs it, and the marks ----
-
-    private string Slashes => _dir.Path.Replace('\\', '/');
 
     private ProcessResult Plain(string folder, IReadOnlyDictionary<string, string>? more, params string[] arguments)
     {
@@ -99,55 +97,7 @@ public sealed class GitSessionTests : IDisposable
 
     private GitSession Trusted(string root) => new(root, _ => true, _env);
 
-    // ---- H1, the class: every program name, every command, untrusted ----
-
-    /// <summary>
-    /// What the window does with a repository it was asked to open, every command of it in its order, with what
-    /// the session sets aside (or, trusted, nothing): the check, the three lists, a file's diff, a commit, stage,
-    /// unstage, stage all, unstage all, a commit of everything, a new branch and a switch back, a discard; and
-    /// the three that reach a remote, which do not start while the repository is not trusted (D1).
-    /// </summary>
-    private async Task EveryCommandAsync(GitSession session)
-    {
-        var scan = await session.CheckAsync();
-        Assert.True(scan.Known, scan.Problem ?? scan.Elsewhere);
-        File.AppendAllText(Path.Combine(session.Root, "a.txt"), "changed\n");
-        var status = GitStatus.Parse((await session.RunAsync(GitStatus.Arguments, GitRunner.Short)).Output);
-        var log = GitLog.Parse((await session.RunAsync(GitLog.Arguments, GitRunner.Short)).Output);
-        await session.RunAsync(GitBranches.Arguments, GitRunner.Short);
-        if (status.Files.FirstOrDefault() is { } file)
-        {
-            await session.RunAsync(file.DiffArguments, GitRunner.Short);
-        }
-
-        if (log.FirstOrDefault() is { } commit)
-        {
-            await session.RunAsync(commit.ShowArguments, GitRunner.Short);
-        }
-
-        await session.RunAsync(GitTexts.StageArguments(["a.txt"]), GitRunner.Short);
-        await session.RunAsync(GitTexts.UnstageArguments(["a.txt"]), GitRunner.Short);
-        await session.RunAsync(GitTexts.StageAllArguments, GitRunner.Short);
-        await session.RunAsync(GitTexts.UnstageAllArguments, GitRunner.Short);
-        await session.RunAsync(GitTexts.StageAllArguments, GitRunner.Short);
-        await session.RunAsync(GitTexts.CommitArguments("three"), GitRunner.Short);
-        await session.RunAsync(GitBranches.CreateArguments("topic"), GitRunner.Short);
-        var branches = GitBranches.Parse((await session.RunAsync(GitBranches.Arguments, GitRunner.Short)).Output);
-        if (branches.FirstOrDefault(branch => !branch.Current) is { } other)
-        {
-            await session.RunAsync(other.SwitchArguments, GitRunner.Short);
-        }
-
-        File.AppendAllText(Path.Combine(session.Root, "b.txt"), "changed\n");
-        await session.RunAsync(GitTexts.DiscardArguments(["b.txt"]), GitRunner.Short);
-        foreach (var what in new[] { "Fetch", "Pull", "Push" })
-        {
-            if (session.NotConnected(what) is null)
-            {
-                await session.RunAsync(what == "Push" ? GitTexts.PushArguments(GitRemote.Default, null, "main") : what == "Fetch" ? GitTexts.FetchArguments(GitRemote.Default) : GitTexts.PullArguments(GitRemote.Default), GitRunner.Short);
-            }
-        }
-    }
+    // ---- The second line: every program name set aside, every command (T4's settings; H1) ----
 
     /// <summary>The settings a program name needs beside it to be reached at all: signing for the signing programs, an event for a hook of the settings.</summary>
     private static IEnumerable<(string Name, string Value)> Companions(string name) => name.ToLowerInvariant() switch
@@ -161,63 +111,91 @@ public sealed class GitSessionTests : IDisposable
     };
 
     /// <summary>
-    /// The test that closes H1's class (the review's third pass): every name of every kind of
-    /// <see cref="GitTrust.ProgramNamesTable"/>, each in a clone of its own with the remote origin, set to a program
-    /// that leaves a mark (core.hooksPath to a folder of such hooks), and every command axGIT has run with what the
-    /// session sets aside: no mark comes. Until then the override list was asserted, never its effect, and
-    /// remote.origin.uploadpack, whose first value git takes, was set aside by a second, empty one, which did
-    /// nothing. The half that shows the test can fail: three of the names, with the repository trusted, leave
-    /// their marks (a diff driver's text conversion would not: axGIT's own diff asks for none, AG-3.3).
+    /// The test of the second line (the review's third pass, and H1 of the fourth): every name of every kind of
+    /// <see cref="GitTrust.ProgramNamesTable"/>, each in a clone of its own with a submodule, set in the clone and
+    /// in the submodule to a program that leaves a mark (core.hooksPath to a folder of such hooks), with the
+    /// clone's own core.unsetenvvars clearing the variables axGIT's settings travel in; every command axGIT has run
+    /// with that name set aside (<see cref="GitTrust.Overrides"/>, what a trusted repository's changing commands get
+    /// for a program in its work tree, T4): no mark comes, and every command succeeds but a signed commit, whose
+    /// program is set aside, and a fetch, pull or push whose remote's helper (remote.name.vcs) is set to nothing,
+    /// which reaches nothing. The half that shows the test can fail: three of the names, with nothing set aside,
+    /// leave their marks.
     /// </summary>
     [GitFact]
-    public async Task No_program_a_repository_names_runs_in_any_command_while_it_is_not_trusted()
+    public async Task No_program_set_aside_runs_in_any_command_also_in_a_submodule()
     {
         var origin = Origin("origin");
+        var library = Origin("library");
         var names = GitTrust.ProgramNamesTable.SelectMany(kind => kind.Examples).Append("hooks").ToList();
         var marked = new List<string>();
+        var failed = new List<string>();
 
-        async Task<string[]> OneAsync(string name, int number, bool trusted)
+        async Task<string[]> OneAsync(string name, int number, bool aside)
         {
-            var root = Path.Combine(_dir.Path, $"{(trusted ? "t" : "n")}{number}");
-            Git(_dir.Path, "clone", "-q", origin, root);
+            // Each clone with a bare origin of its own, which its push goes to.
+            var root = Path.Combine(_dir.Path, $"{(aside ? "n" : "t")}{number}");
+            var bare = root + ".git";
+            Git(_dir.Path, "clone", "-q", "--bare", origin, bare);
+            Git(_dir.Path, "clone", "-q", bare, root);
+            Git(root, "submodule", "--quiet", "add", library, "libs/zip");
+            Git(root, "commit", "-q", "-m", "a submodule");
+            Git(root, "push", "-q", "origin", "main");
+            Git(root, "config", "core.unsetenvvars", "GIT_CONFIG_COUNT,GIT_CONFIG_PARAMETERS");
+            var module = Path.Combine(root, ".git", "modules", "libs", "zip");
             var marks = MarksOf(root);
-            if (name == "hooks")
+            foreach (var place in new[] { root, module })
             {
-                foreach (var hook in new[] { "pre-commit", "post-commit", "post-checkout", "post-index-change", "reference-transaction", "prepare-commit-msg", "commit-msg", "post-rewrite" })
+                if (name == "hooks")
                 {
-                    MarkerFile(Path.Combine(root, ".git", "hooks", hook), marks, $"hooks-{hook}");
+                    foreach (var hook in new[] { "pre-commit", "post-commit", "post-checkout", "post-index-change", "reference-transaction", "prepare-commit-msg", "commit-msg", "post-rewrite", "pre-push" })
+                    {
+                        MarkerFile(Path.Combine(place == root ? Path.Combine(root, ".git") : module, "hooks", hook), marks, $"hooks-{hook}");
+                    }
+                }
+                else if (name.Equals("core.hooksPath", StringComparison.OrdinalIgnoreCase))
+                {
+                    var folder = Path.Combine(_dir.Path, $"hooks{(aside ? "n" : "t")}{number}");
+                    foreach (var hook in new[] { "pre-commit", "post-commit", "post-checkout", "post-index-change", "reference-transaction" })
+                    {
+                        MarkerFile(Path.Combine(folder, hook), marks, $"n{number}");
+                    }
+
+                    Git(place, "config", name, folder.Replace('\\', '/'));
+                }
+                else
+                {
+                    Git(place, "config", name, Marker(marks, $"n{number}"));
+                }
+
+                foreach (var (companion, value) in Companions(name))
+                {
+                    Git(place, "config", companion, value);
                 }
             }
-            else if (name.Equals("core.hooksPath", StringComparison.OrdinalIgnoreCase))
+
+            Ran(marks);
+            var risks = name == "hooks" ? ["hook pre-commit"] : new[] { name };
+            var results = await GitTests.EveryCommandAsync(root, "origin", (arguments, _) =>
+                GitRunner.RunAsync(root, arguments, GitRunner.Short, overrides: aside ? GitTrust.Overrides(risks, []) : null, environment: _env));
+            if (aside)
             {
-                var folder = Path.Combine(_dir.Path, $"hooks{(trusted ? "t" : "n")}{number}");
-                foreach (var hook in new[] { "pre-commit", "post-commit", "post-checkout", "post-index-change", "reference-transaction" })
+                // A signed commit fails with its program set aside; a remote's helper set to nothing is the helper
+                // "remote-", which git does not find, so that remote is reached by nothing.
+                var signing = Companions(name).Any(companion => companion.Name == "commit.gpgSign");
+                var helper = name.EndsWith(".vcs", StringComparison.OrdinalIgnoreCase);
+                foreach (var (arguments, result) in results.Where(one => !one.Result.Ok && !(signing && one.Arguments[0] == "commit") && !(helper && one.Arguments[0] is "fetch" or "pull" or "push")))
                 {
-                    MarkerFile(Path.Combine(folder, hook), marks, $"n{number}");
+                    failed.Add($"{name}: git {string.Join(' ', arguments)}: {result.FirstLine}");
                 }
-
-                Git(root, "config", name, folder.Replace('\\', '/'));
-            }
-            else
-            {
-                Git(root, "config", name, Marker(marks, $"n{number}"));
             }
 
-            foreach (var (companion, value) in Companions(name))
-            {
-                Git(root, "config", companion, value);
-            }
-
-            var session = trusted ? Trusted(root) : Untrusted(root);
-            await EveryCommandAsync(session);
-            Assert.Equal(!trusted, !session.Trusted);
             return Ran(marks);
         }
 
-        // Four at a time, each in its own repository with its own marks.
-        foreach (var some in names.Select((name, number) => (name, number)).Chunk(4))
+        // Eight at a time, each in its own repository with its own marks.
+        foreach (var some in names.Select((name, number) => (name, number)).Chunk(8))
         {
-            var found = await Task.WhenAll(some.Select(one => OneAsync(one.name, one.number, trusted: false)));
+            var found = await Task.WhenAll(some.Select(one => OneAsync(one.name, one.number, aside: true)));
             for (var at = 0; at < some.Length; at++)
             {
                 if (found[at].Length > 0)
@@ -227,18 +205,62 @@ public sealed class GitSessionTests : IDisposable
             }
         }
 
-        Assert.True(marked.Count == 0, "Programs of an untrusted repository ran: " + string.Join("; ", marked));
+        Assert.True(marked.Count == 0, "Programs set aside ran: " + string.Join("; ", marked));
+        Assert.True(failed.Count == 0, "Commands that failed with a program set aside: " + string.Join("; ", failed));
 
-        // The way it ran: trusted, the same commands leave the marks of a filter's two sides and of the hooks.
-        var trustedMarks = await Task.WhenAll(new[] { "filter.x.clean", "filter.x.smudge", "hooks" }.Select(name => OneAsync(name, names.IndexOf(name), trusted: true)));
-        Assert.All(trustedMarks, found => Assert.NotEmpty(found));
+        // The way it ran: with nothing set aside, the same commands leave the marks of a filter's two sides and of the hooks.
+        var plainMarks = await Task.WhenAll(new[] { "filter.x.clean", "filter.x.smudge", "hooks" }.Select(name => OneAsync(name, names.IndexOf(name), aside: false)));
+        Assert.All(plainMarks, found => Assert.NotEmpty(found));
+    }
+
+    // ---- T1: nothing runs before trust ----
+
+    /// <summary>
+    /// T1 (the review's fourth pass): a repository that holds a risk the user has not trusted runs nothing: every
+    /// command is refused with the reason, fetch, pull and push among them, and so no git process starts in it; a
+    /// repository with no risk runs as it is; the user's trust for the mark the check found lets it run, and a
+    /// trust for another mark does not.
+    /// </summary>
+    [GitFact]
+    public async Task A_repository_that_is_not_trusted_runs_nothing()
+    {
+        var root = Origin("untrusted");
+        var marks = MarksOf(root);
+        Git(root, "config", "filter.x.clean", Marker(marks, "filter"));
+        var session = Untrusted(root);
+        await session.CheckAsync();
+        Assert.False(session.Trusted);
+        Assert.Equal("axGIT runs nothing in this repository until you trust it.", session.Refused);
+        File.AppendAllText(Path.Combine(root, "a.txt"), "changed\n");
+        foreach (var arguments in new[] { GitStatus.Arguments, GitTexts.StageAllArguments, GitTexts.FetchArguments("origin") })
+        {
+            var result = await session.ChangeAsync(arguments, GitRunner.Short);
+            Assert.False(result.Ok);
+            Assert.Equal(session.Refused, result.Error);
+        }
+
+        Assert.Empty(Ran(marks));
+        // Trusted for another mark: still nothing; for the one found: git runs.
+        session.TrustNow(GitTrust.Mark(["something else"]));
+        Assert.False(session.Trusted);
+        session.TrustNow(session.Scan.Mark);
+        Assert.True((await session.RunAsync(GitStatus.Arguments, GitRunner.Short)).Ok);
+
+        // A repository with no risk runs as it is.
+        var plain = Untrusted(Origin("plain"));
+        await plain.CheckAsync();
+        Assert.True(plain.Trusted);
+        Assert.Null(plain.Refused);
+
+        // The way it ran: the stage with nothing set aside runs the filter.
+        await GitRunner.RunAsync(root, GitTexts.StageAllArguments, GitRunner.Short, environment: _env);
+        Assert.Equal(["filter"], Ran(marks));
     }
 
     /// <summary>
-    /// H1, D2: a partial clone fetched a missing object by itself on its first status, running the remote's
-    /// upload program before the notice was answered, whatever was set aside: git takes the first
-    /// remote.origin.uploadpack, the repository's. Every run now forbids the lazy fetch; the status fails with
-    /// git's own words, and nothing runs.
+    /// H1, D2: a partial clone fetched a missing object by itself on its first status, running the remote's upload
+    /// program; git takes the first remote.origin.uploadpack, the repository's. Every run forbids the lazy fetch,
+    /// also in a trusted repository: the status fails with git's own words, and nothing runs.
     /// </summary>
     [GitFact]
     public async Task A_partial_clone_fetches_nothing_by_itself()
@@ -250,18 +272,16 @@ public sealed class GitSessionTests : IDisposable
         var program = _dir.File("upload.sh", $"#!/bin/sh\necho upload-pack >> \"{marks.Replace('\\', '/')}\"\nexec git-upload-pack \"$@\"\n");
         Git(root, "config", "remote.origin.uploadpack", $"sh \"{program.Replace('\\', '/')}\"");
 
-        var session = Untrusted(root);
+        var session = Trusted(root);
         await session.CheckAsync();
-        Assert.Contains(new GitSetting("remote.origin.uploadpack", string.Empty), session.Overrides);
+        Assert.True(session.Trusted);
         var status = await session.RunAsync(GitStatus.Arguments, GitRunner.Short);
         await session.RunAsync(GitLog.Arguments, GitRunner.Short);
         Assert.False(status.Ok);
         Assert.Empty(Ran(marks));
 
-        // The way it ran: the same status with the old overrides in the environment and the lazy fetch allowed.
-        var old = new Dictionary<string, string?>();
-        GitRunner.SetOverrides(old, session.Overrides);
-        Plain(root, old.ToDictionary(pair => pair.Key, pair => pair.Value ?? string.Empty), [.. GitStatus.Arguments]);
+        // The way it ran: the same status with the lazy fetch allowed.
+        Plain(root, null, [.. GitStatus.Arguments]);
         Assert.Equal(["upload-pack"], Ran(marks));
     }
 
@@ -269,9 +289,9 @@ public sealed class GitSessionTests : IDisposable
 
     /// <summary>
     /// D8, L7: the session checks again after a command that changes the repository, also after one that failed,
-    /// and what it found is in force for the next command, without the test making the check itself (the test of
-    /// the second pass made its own second scan, and passed with the window's check taken out). Here the ground
-    /// moves under a repository that held no risk (a filter appears in its settings), and the next command fails.
+    /// and what it found is in force for the next command, without the test making the check itself. Here the
+    /// ground moves under a repository that held no risk (a filter appears in its settings), the command fails,
+    /// and since the fourth pass nothing runs after it until the user trusts what is there now.
     /// </summary>
     [GitFact]
     public async Task After_a_failed_command_the_check_is_made_and_what_it_found_is_in_force()
@@ -281,8 +301,6 @@ public sealed class GitSessionTests : IDisposable
         var session = Untrusted(root);
         await session.CheckAsync();
         Assert.True(session.Trusted);
-        Assert.Empty(session.Overrides);
-        var before = session.Overrides;
         var checks = session.Checks;
 
         Git(root, "config", "filter.x.clean", Marker(marks, "moved-filter"));
@@ -290,64 +308,124 @@ public sealed class GitSessionTests : IDisposable
         Assert.False(failed.Ok);
         Assert.Equal(checks + 1, session.Checks);
         Assert.False(session.Trusted);
-        Assert.Contains(new GitSetting("filter.x.clean", string.Empty), session.Overrides);
 
         File.AppendAllText(Path.Combine(root, "a.txt"), "changed\n");
-        await session.RunAsync(GitTexts.StageAllArguments, GitRunner.Short);
+        Assert.False((await session.ChangeAsync(GitTexts.StageAllArguments, GitRunner.Short)).Ok);
         Assert.Empty(Ran(marks));
 
-        // The way it ran: the next command with what was in force before the failed one.
-        File.AppendAllText(Path.Combine(root, "b.txt"), "changed\n");
-        await GitRunner.RunAsync(root, GitTexts.StageAllArguments, GitRunner.Short, overrides: before, environment: _env);
+        // The way it ran: the next command as before the failed one.
+        await GitRunner.RunAsync(root, GitTexts.StageAllArguments, GitRunner.Short, environment: _env);
         Assert.Equal(["moved-filter"], Ran(marks));
     }
 
-    /// <summary>The settings file that counts on another branch alone (the second pass's finding 4), through the session: its own switch brings the check.</summary>
+    // ---- T4: trusted means the same files ----
+
+    /// <summary>
+    /// M3, T4 (tried with git 2.53): in a trusted repository whose hooks folder is in its work tree, a switch brought
+    /// a post-checkout hook and ran it, before the check after it could see the new hook. A changing command of such
+    /// a repository runs with no hooks; the check after it finds the new hook, and the repository is not trusted
+    /// for it.
+    /// </summary>
     [GitFact]
-    public async Task A_switch_to_a_branch_whose_settings_name_a_filter_sets_it_aside_by_itself()
+    public async Task A_hook_a_switch_brings_into_the_work_tree_is_not_run()
     {
-        var root = Origin("branches");
+        var root = Origin("m3");
         var marks = MarksOf(root);
-        Git(root, "branch", "other");
-        File.WriteAllText(Path.Combine(root, ".git", "extra.cfg"), $"[filter \"x\"]\n\tclean = {Marker(marks, "branch-filter").Replace("\"", "\\\"", StringComparison.Ordinal)}\n");
-        Git(root, "config", "includeIf.onbranch:other.path", "extra.cfg");
-        var session = Untrusted(root);
-        await session.CheckAsync();
-        Assert.DoesNotContain(new GitSetting("filter.x.clean", string.Empty), session.Overrides);
+        Directory.CreateDirectory(Path.Combine(root, ".githooks"));
+        File.WriteAllText(Path.Combine(root, ".githooks", "pre-commit.sample"), "a sample, which is no hook\n");
+        Git(root, "add", ".githooks");
+        Git(root, "commit", "-q", "-m", "hooks folder");
+        Git(root, "switch", "-q", "-c", "other");
+        MarkerFile(Path.Combine(root, ".githooks", "post-checkout"), marks, "brought-hook");
+        Git(root, "add", ".githooks/post-checkout");
+        Git(root, "commit", "-q", "-m", "a hook");
+        Git(root, "switch", "-q", "main");
+        Git(root, "config", "core.hooksPath", ".githooks");
+        Ran(marks);
+
+        string? trusted = null;
+        var session = new GitSession(root, mark => mark == trusted, _env);
+        var scan = await session.CheckAsync();
+        Assert.Equal(["core.hookspath"], scan.Risks);
+        Assert.Equal(["core.hookspath"], scan.InTree!);
+        trusted = scan.Mark;
+        session.TrustNow(scan.Mark);
+
         Assert.True((await session.ChangeAsync(["switch", "other"], GitRunner.Short)).Ok);
-        Assert.Contains(new GitSetting("filter.x.clean", string.Empty), session.Overrides);
-        File.AppendAllText(Path.Combine(root, "a.txt"), "changed\n");
-        await session.RunAsync(["diff"], GitRunner.Short);
         Assert.Empty(Ran(marks));
+        Assert.Contains("hook post-checkout", session.Scan.Risks);
+        Assert.False(session.Trusted);
+
+        // The way it ran: the switch of a trusted repository with nothing set aside.
+        Git(root, "switch", "-q", "main");
+        Ran(marks);
+        await GitRunner.RunAsync(root, ["switch", "other"], GitRunner.Short, environment: _env);
+        Assert.Equal(["brought-hook"], Ran(marks));
     }
 
-    // ---- D1: no connection while not trusted ----
-
+    /// <summary>T4: the mark holds each hook's content, each file a setting names, an included settings file's content and the hooks folder's listing: a change of any of them is asked about again.</summary>
     [GitFact]
-    public async Task A_repository_that_is_not_trusted_is_never_connected()
+    public async Task A_change_of_a_hook_or_a_file_a_setting_names_changes_the_mark()
     {
-        var root = Origin("connect");
-        Git(root, "config", "core.sshCommand", "never-run");
-        var untrusted = Untrusted(root);
-        await untrusted.CheckAsync();
-        Assert.Equal("Fetch not started: this repository has settings you have not trusted.", untrusted.NotConnected("Fetch"));
-        Assert.NotNull(untrusted.NotConnected("Push"));
+        var root = Origin("marks");
+        var hook = Path.Combine(root, ".git", "hooks", "pre-commit");
+        File.WriteAllText(hook, "#!/bin/sh\necho one\n");
+        var program = _dir.File("tool.sh", "#!/bin/sh\n");
+        Git(root, "config", "core.sshCommand", $"sh {program.Replace('\\', '/')}");
+        var included = _dir.File("extra.cfg", "[user]\n\tname = one\n");
+        Git(root, "config", "include.path", included.Replace('\\', '/'));
 
-        var trusted = Trusted(root);
-        await trusted.CheckAsync();
-        Assert.Null(trusted.NotConnected("Fetch"));
+        async Task<string> MarkAsync() => (await GitTrustScan.ReadAsync(root, default, _env)).Mark;
+        var first = await MarkAsync();
+        Assert.Equal(first, await MarkAsync());
 
-        // Trusted from the notice, for the risks it named.
-        untrusted.TrustNow(untrusted.Scan.Risks);
-        Assert.Null(untrusted.NotConnected("Pull"));
-        Assert.Empty(untrusted.Overrides);
+        File.WriteAllText(hook, "#!/bin/sh\necho two\n");
+        var second = await MarkAsync();
+        Assert.NotEqual(first, second);
+
+        File.WriteAllText(program, "#!/bin/sh\necho changed\n");
+        var third = await MarkAsync();
+        Assert.NotEqual(second, third);
+
+        File.WriteAllText(included, "[user]\n\tname = two\n");
+        var fourth = await MarkAsync();
+        Assert.NotEqual(third, fourth);
+
+        // A sample more changes the folder's listing, though a sample is no hook.
+        File.WriteAllText(Path.Combine(root, ".git", "hooks", "another.sample"), "a sample\n");
+        Assert.NotEqual(fourth, await MarkAsync());
+
+        // A value of a setting that is not harmless is marked too.
+        var fifth = await MarkAsync();
+        Git(root, "config", "core.sshCommand", "ssh -v");
+        Assert.NotEqual(fifth, await MarkAsync());
     }
 
-    // ---- D3: a remote that is a folder is a second repository ----
+    /// <summary>T4: a program in the work tree (a filter's, tracked) is set aside on a changing command of a trusted repository, and runs on its reads, whose check made after every change saw it as it is.</summary>
+    [GitFact]
+    public async Task A_program_in_the_work_tree_is_set_aside_on_a_changing_command()
+    {
+        var root = Origin("tree-program");
+        var marks = MarksOf(root);
+        var tool = Path.Combine(root, "tools", "clean.sh");
+        Directory.CreateDirectory(Path.GetDirectoryName(tool)!);
+        File.WriteAllText(tool, $"#!/bin/sh\necho tree-filter >> \"{marks.Replace('\\', '/')}\"\ncat\n");
+        Git(root, "config", "filter.x.clean", "sh ./tools/clean.sh");
+        var session = new GitSession(root, _ => true, _env);
+        var scan = await session.CheckAsync();
+        Assert.Equal(["filter.x.clean"], scan.InTree!);
 
-    /// <summary>The reads before a push into folders, through git itself.</summary>
-    private Task<string?> FolderProblemAsync(GitSession session, Reach reach) =>
-        GitReach.FolderProblemAsync(session.RunInAsync, session.Root, reach.Folders ?? []);
+        File.AppendAllText(Path.Combine(root, "a.txt"), "changed\n");
+        Assert.True((await session.ChangeAsync(GitTexts.StageAllArguments, GitRunner.Short)).Ok);
+        Assert.Empty(Ran(marks));
+
+        // The way it ran: the stage with nothing set aside.
+        File.AppendAllText(Path.Combine(root, "b.txt"), "changed\n");
+        await GitRunner.RunAsync(root, GitTexts.StageAllArguments, GitRunner.Short, environment: _env);
+        Assert.Equal(["tree-filter"], Ran(marks));
+    }
+
+    // ---- T2: a push goes to a server alone ----
 
     private async Task<Reach> ReachAsync(GitSession session, bool push)
     {
@@ -358,72 +436,49 @@ public sealed class GitSessionTests : IDisposable
     }
 
     /// <summary>
-    /// H2, Experiment D: a bare repository in the work tree, named by remote.origin.url as ./vendor/mirror, with a
-    /// pre-receive hook. The repository opened held no risk, and git's own transport for a folder clears what
-    /// axGIT gives through the environment: the hook ran. Now the push reads the other repository first, finds
-    /// the hook, and nothing is pushed. A bare repository with git's samples alone takes the push.
+    /// H2, T2 (tried with git 2.53): with the address ./vendor/mirror, a plain folder of that name beside a bare
+    /// repository vendor/mirror.git, the reads before the push (git -C vendor/mirror) read the repository above,
+    /// which held nothing, and the push entered vendor/mirror.git and ran its receive hook. Since the fourth pass a
+    /// push to any folder is refused before it starts: that one, a bare repository in the work tree, the
+    /// repository itself, a path elsewhere on this computer and a share. A fetch from a folder stays.
     /// </summary>
     [GitFact]
-    public async Task A_push_into_a_folder_whose_repository_has_hooks_does_not_start()
+    public async Task A_push_to_a_folder_is_refused()
     {
         var root = Origin("pusher");
         var marks = MarksOf(root);
-        Git(root, "init", "-q", "--bare", "vendor/mirror");
-        MarkerFile(Path.Combine(root, "vendor", "mirror", "hooks", "pre-receive"), marks, "target-hook");
+        Directory.CreateDirectory(Path.Combine(root, "vendor", "mirror"));
+        Git(root, "init", "-q", "--bare", "vendor/mirror.git");
+        MarkerFile(Path.Combine(root, "vendor", "mirror.git", "hooks", "pre-receive"), marks, "target-hook");
         Git(root, "remote", "add", "origin", "./vendor/mirror");
-        var session = Untrusted(root);
-        await session.CheckAsync();
-        Assert.True(session.Trusted);
-
-        var reach = await ReachAsync(session, push: true);
-        Assert.Null(reach.Problem);
-        Assert.Empty(reach.Hosts);
-        Assert.Equal(["./vendor/mirror"], reach.Folders);
-        var problem = await FolderProblemAsync(session, reach);
-        Assert.Contains("./vendor/mirror", problem);
-        Assert.Contains("hook pre-receive", problem);
-        Assert.Empty(Ran(marks));
-
-        // The way it ran: the push itself.
-        await session.RunAsync(GitTexts.PushArguments(reach.Remote, null, "main"), GitRunner.Short);
-        Assert.Equal(["target-hook"], Ran(marks));
-
-        // A bare repository as git makes one takes the push, which names its branch on both sides.
-        Git(_dir.Path, "init", "-q", "--bare", "clean.git");
-        Git(root, "remote", "set-url", "origin", Path.Combine(_dir.Path, "clean.git"));
-        var clean = await ReachAsync(session, push: true);
-        Assert.Null(await FolderProblemAsync(session, clean));
-        Assert.True((await session.RunAsync(GitTexts.PushArguments(clean.Remote, "origin/main", "main"), GitRunner.Short)).Ok);
-        Assert.Contains("main", Git(Path.Combine(_dir.Path, "clean.git"), "branch", "--list"));
-    }
-
-    /// <summary>
-    /// H2, Experiment C: only harmless settings (the branch follows another branch of this repository, by
-    /// push.default=upstream) and hooks in .git/hooks, trusted: a push into "." ran every receive hook. Now a branch
-    /// that follows one of another name is not pushed (D6), and a push into the repository itself reads it first
-    /// and finds its hooks.
-    /// </summary>
-    [GitFact]
-    public async Task A_push_into_the_repository_itself_reads_it_first()
-    {
-        var root = Origin("itself");
-        var marks = MarksOf(root);
-        Git(root, "branch", "other");
-        Git(root, "config", "branch.main.remote", ".");
-        Git(root, "config", "branch.main.merge", "refs/heads/other");
-        Git(root, "config", "push.default", "upstream");
-        MarkerFile(Path.Combine(root, ".git", "hooks", "pre-receive"), marks, "own-hook");
         var session = Trusted(root);
         await session.CheckAsync();
 
         var reach = await ReachAsync(session, push: true);
-        Assert.Contains("another name, other", reach.Problem);
-
-        Git(root, "config", "branch.main.merge", "refs/heads/main");
-        var here = await ReachAsync(session, push: true);
-        Assert.Equal([GitRemote.Here], here.Folders);
-        Assert.Contains("hook pre-receive", await FolderProblemAsync(session, here));
+        Assert.Null(reach.Problem);
+        Assert.Equal(["./vendor/mirror"], reach.Folders);
+        Assert.Equal("This remote is a folder; push to it in a terminal.", GitReach.PushRefused(reach));
         Assert.Empty(Ran(marks));
+
+        foreach (var address in new[] { Path.Combine(_dir.Path, "elsewhere.git"), "//localhost/C$/repo.git", @"\\server.invalid\share\repo.git", "file:///C:/repo.git" })
+        {
+            Git(root, "remote", "set-url", "origin", address);
+            Assert.NotNull(GitReach.PushRefused(await ReachAsync(session, push: true)));
+        }
+
+        Git(root, "config", "branch.main.remote", ".");
+        Git(root, "config", "branch.main.merge", "refs/heads/main");
+        Assert.NotNull(GitReach.PushRefused(await ReachAsync(session, push: true)));
+
+        // A server is pushed to.
+        Git(root, "config", "--unset", "branch.main.remote");
+        Git(root, "remote", "set-url", "origin", "https://server.example.invalid/a.git");
+        Assert.Null(GitReach.PushRefused(await ReachAsync(session, push: true)));
+
+        // The way it ran: the push itself into ./vendor/mirror.
+        Git(root, "remote", "set-url", "origin", "./vendor/mirror");
+        await session.ChangeAsync(GitTexts.PushArguments("origin", null, "main"), GitRunner.Short);
+        Assert.Equal(["target-hook"], Ran(marks));
     }
 
     /// <summary>D3: a fetch and a pull from a folder whose repository holds hooks and programs of its own run nothing of it, with git's upload program named on the command line.</summary>
@@ -445,21 +500,22 @@ public sealed class GitSessionTests : IDisposable
         Git(root, "remote", "add", "origin", target);
         var session = Untrusted(root);
         await session.CheckAsync();
-        Assert.True((await session.RunAsync(GitTexts.FetchArguments("origin"), GitRunner.Short)).Ok);
+        Assert.True(session.Trusted);
+        Assert.True((await session.ChangeAsync(GitTexts.FetchArguments("origin"), GitRunner.Short)).Ok);
         Git(root, "config", "branch.main.remote", "origin");
         Git(root, "config", "branch.main.merge", "refs/heads/main");
-        Assert.True((await session.RunAsync(GitTexts.PullArguments("origin"), GitRunner.Short)).Ok, "pull");
+        Assert.True((await session.ChangeAsync(GitTexts.PullArguments("origin", "refs/heads/main")!, GitRunner.Short)).Ok, "pull");
         Assert.Empty(Ran(marks));
     }
 
-    // ---- M3, M4, D7 ----
+    // ---- M3 of the third pass with T3, M4, D7 ----
 
-    /// <summary>M3: a fetch line that writes outside refs/remotes is a risk, so such a repository is not connected until trusted; with axGIT's --prune it deleted every local branch.</summary>
+    /// <summary>A fetch line that writes outside refs/remotes is a risk; and since T3 axGIT's fetch names its own line, so that a trusted repository with one keeps its local branches. With axGIT's --prune it deleted them.</summary>
     [GitFact]
-    public async Task A_fetch_that_writes_into_the_local_branches_is_a_risk()
+    public async Task A_fetch_that_writes_into_the_local_branches_is_a_risk_and_axgits_fetch_obeys_it_not()
     {
         Git(_dir.Path, "init", "-q", "--bare", "m3.git");
-        var root = Origin("m3");
+        var root = Origin("m3-fetch");
         Git(root, "remote", "add", "origin", Path.Combine(_dir.Path, "m3.git"));
         Git(root, "push", "-q", "origin", "main");
         Git(root, "branch", "keep");
@@ -467,11 +523,14 @@ public sealed class GitSessionTests : IDisposable
         var session = Untrusted(root);
         await session.CheckAsync();
         Assert.Contains("remote.origin.fetch writes outside refs/remotes", session.Scan.Risks);
-        Assert.NotNull(session.NotConnected("Fetch"));
+        Assert.NotNull(session.Refused);
 
-        // The way it ran: the fetch, from a detached HEAD.
         Git(root, "checkout", "-q", "--detach");
-        await GitRunner.RunAsync(root, GitTexts.FetchArguments("origin"), GitRunner.Short, environment: _env);
+        Assert.True((await GitRunner.RunAsync(root, GitTexts.FetchArguments("origin"), GitRunner.Short, environment: _env)).Ok);
+        Assert.Contains("keep", Git(root, "branch", "--list"));
+
+        // The way it ran: the fetch of the third pass, from a detached HEAD.
+        await GitRunner.RunAsync(root, ["fetch", "--prune", "--no-recurse-submodules", "--no-all", "--upload-pack=git-upload-pack", "--", "origin"], GitRunner.Short, environment: _env);
         Assert.DoesNotContain("keep", Git(root, "branch", "--list"));
     }
 
@@ -485,7 +544,6 @@ public sealed class GitSessionTests : IDisposable
         Git(root, "remote", "add", "origin", bare);
         Git(root, "push", "-q", "origin", "main");
         var main = Git(bare, "rev-parse", "main").Trim();
-        // The local main one commit behind the remote's, so that a forced push of it shows.
         Git(root, "reset", "-q", "--hard", "HEAD~1");
         Git(root, "switch", "-q", "--orphan", "+main");
         File.WriteAllText(Path.Combine(root, "c.txt"), "unrelated\n");
@@ -528,7 +586,7 @@ public sealed class GitSessionTests : IDisposable
         Assert.True(session.Trusted);
         Assert.Null(session.LfsPushRefused());
         var trace = new Dictionary<string, string>(_env) { ["GIT_TRACE"] = "1" };
-        var switched = await GitRunner.RunAsync(root, ["switch", "other"], GitRunner.Short, overrides: session.Overrides, environment: trace);
+        var switched = await GitRunner.RunAsync(root, ["switch", "other"], GitRunner.Short, environment: trace);
         Assert.True(switched.Ok, switched.AllText);
         Assert.DoesNotContain("lfs-host", switched.AllText);
         Assert.StartsWith("version https://git-lfs", File.ReadAllText(Path.Combine(root, "p.bin")));
@@ -544,11 +602,11 @@ public sealed class GitSessionTests : IDisposable
         Assert.Contains("Git LFS", session.LfsPushRefused());
     }
 
-    // ---- L3, D9 ----
+    // ---- L3 of the third pass, D9 ----
 
-    /// <summary>L3: the hooks of a repository inside are those of the folder git names for it, not its hooks folder by its usual name.</summary>
+    /// <summary>L3: the hooks of a repository inside are those of the folder its core.hooksPath names, relative to its work tree, where git runs them.</summary>
     [GitFact]
-    public async Task The_hooks_of_a_repository_inside_are_found_where_git_says_they_are()
+    public async Task The_hooks_of_a_repository_inside_are_found_where_git_runs_them()
     {
         var library = Origin("library");
         var root = Origin("top");
@@ -556,23 +614,24 @@ public sealed class GitSessionTests : IDisposable
         Git(root, "commit", "-q", "-m", "a submodule");
         var module = Path.Combine(root, ".git", "modules", "libs", "zip");
         Git(module, "config", "core.hooksPath", "myhooks");
-        MarkerFile(Path.Combine(module, "myhooks", "post-checkout"), MarksOf(root), "inside-hook");
+        MarkerFile(Path.Combine(root, "libs", "zip", "myhooks", "post-checkout"), MarksOf(root), "inside-hook");
         var scan = await GitTrustScan.ReadAsync(root, default, _env);
         Assert.Contains("submodule libs/zip: core.hookspath", scan.Risks);
         Assert.Contains("submodule libs/zip: hook post-checkout", scan.Risks);
+        Assert.Contains("submodule libs/zip: core.hookspath", scan.InTree!);
     }
 
-    /// <summary>D9: a repository whose settings include a file on another computer is not read by git at all: the scan names the computer, and the session runs nothing.</summary>
+    /// <summary>D9, M2: a repository whose settings include a file on another computer names it as a risk, and nothing runs in it until it is trusted.</summary>
     [GitFact]
-    public async Task A_repository_that_points_at_another_computer_runs_nothing()
+    public async Task A_repository_that_points_at_another_computer_runs_nothing_until_trusted()
     {
         var root = Origin("away");
         Git(root, "config", "include.path", "//elsewhere.invalid/share/x.cfg");
         var session = Untrusted(root);
         var scan = await session.CheckAsync();
-        Assert.Equal("elsewhere.invalid", scan.Elsewhere);
-        Assert.True(session.Closed);
+        Assert.Contains("include.path names another computer, elsewhere.invalid", scan.Risks);
+        Assert.Contains("include.path", scan.Risks);
+        Assert.False(session.Closed);
         Assert.False((await session.RunAsync(GitStatus.Arguments, GitRunner.Short)).Ok);
-        Assert.NotNull(session.NotConnected("Fetch"));
     }
 }

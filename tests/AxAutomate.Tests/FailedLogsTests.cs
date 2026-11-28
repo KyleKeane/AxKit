@@ -5,7 +5,7 @@ namespace AxAutomate.Tests;
 /// <summary>A failed script's logs kept although the run's folder is deleted (FailedLogs), in a folder of the test's own.</summary>
 public sealed class FailedLogsTests : IDisposable
 {
-    private readonly string _root = Path.Combine(Path.GetTempPath(), "axkit-failedlogs-test-" + Guid.NewGuid().ToString("N"));
+    private readonly string _root = Path.Combine(Path.GetTempPath(), "axkit-failedlogs-test-" + TempFolder.Run + Guid.NewGuid().ToString("N"));
 
     public void Dispose()
     {

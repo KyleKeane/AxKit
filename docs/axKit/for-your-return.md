@@ -118,21 +118,30 @@ Each is one line to undo unless it says otherwise.
   its one-line reason.
 - **axGIT checks again before every refresh** (four git runs at once, about 0.15 seconds here), so a hook that
   appears while the window is open is asked about; with hundreds of submodules that is seconds per command.
-- **While a repository is not trusted, axGIT runs no credential helper** (a private server then refuses), and
-  no filters when a setting is not known (Git LFS files can show as changed; the notice says so). Git's
-  automatic maintenance never runs through axGIT.
+- **Git's automatic maintenance never runs through axGIT.**
 - **Fetch, Pull and Push run only when git can name the server**: on a branch whose remote is written as an
   address (as `gh pr checkout` of a fork's pull request writes it), with a group of remotes, and for a push
   without a branch, nothing runs and the notice says "Fetch not started" with the reason. Item written for the
   address case.
-- **A repository you have not trusted is never connected.** While any setting of its own is kept off, Fetch,
-  Pull and Push do not start ("Fetch not started", with Show its settings), even for one harmless-looking setting.
-  Overriding a setting kept failing (a name whose first value wins; a folder push that clears the environment).
+- **Before you trust a repository, axGIT runs no git in it at all, and Keep it off closes it.** Overriding
+  settings failed in four rounds in a row (a submodule's own settings cleared every override), so the check reads
+  the files itself, with git only as the parser of one settings file. A repository with nothing of concern opens
+  as before; one with a risk opens only after Trust. There is no read-only look at an untrusted repository: to
+  turn back, a reading mode would need its own review. More repositories now get the notice: a linked worktree,
+  a submodule opened by itself, a share in a remote's address, a nested repository in an ignored folder.
+- **Your trust covers the files as they are**: each hook's content, each file a setting names, and the program
+  files outside the repository that its settings name. So after a Git update, a repository whose settings name
+  one of Git's own programs is asked about once more. Every trust given before this update is asked once.
+- **Hooks kept in the repository's own files (husky and the like) never run through axGIT**, also when trusted:
+  they are set aside on stage, commit, switch, fetch, pull and push. Run such a commit in a terminal.
+- **No git command follows a redirect.** A GitHub repository that was renamed then fails to fetch until its
+  remote's address is changed to the new name. To turn back: allow a redirect to the same host.
 - **Git LFS never reaches its server through axGIT**: LFS files stay pointer files after a switch or pull (run
   `git lfs pull` in a terminal), and a push in a repository whose pre-push hook is Git LFS's is refused, since
   that hook posts to the host `.lfsconfig` names. To turn back: a reminder for the LFS host in place of the refusal.
-- **A push into a folder or into the repository itself is refused when that repository has programs of its own**,
-  also when you trusted yours. Fetch and pull from a folder run nothing of the folder's and stay allowed.
+- **axGIT pushes only to a server**: a push to a folder, a share or the repository itself is refused ("push to it in
+  a terminal"), also when trusted, since the check could read another repository than the push entered. Fetch and
+  pull from a folder stay. A pull of a branch that follows nothing is refused, and a fetch names its branches.
 - **A branch that follows a branch of another name is not pushed**, and a push names exactly `refs/heads/<branch>`.
 - **Addresses are read by a strict form**; anything else is "not read" and nothing runs. A sign-in before the host
   (an Azure DevOps address, a token) is accepted in https addresses. A share counts as another computer, `localhost`

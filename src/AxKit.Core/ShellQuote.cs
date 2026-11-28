@@ -38,6 +38,22 @@ public static class ShellQuote
         "wget", "where", "wjb", "write",
     ];
 
+    /// <summary>
+    /// The functions Windows PowerShell 5.1 defines by itself (<c>Get-Command -CommandType Function</c> with no
+    /// profile, those of no module, 2026-11-28; the review's fourth pass, L5): a program of one of these names,
+    /// written bare, is the function (<c>more</c>, <c>mkdir</c>, <c>help</c>, a drive letter such as <c>C:</c>).
+    /// <c>ShellQuoteTests</c> holds the list against a real run of the shell. A name with a full stop or a
+    /// backslash (<c>cd..</c>, <c>cd\</c>) is never taken as a bare program name anyway.
+    /// </summary>
+    private static readonly string[] PowerShellFunctions =
+    [
+        "A:", "B:", "C:", "D:", "E:", "F:", "G:", "H:", "I:", "J:", "K:", "L:", "M:", "N:", "O:", "P:", "Q:", "R:", "S:", "T:", "U:", "V:", "W:",
+        "X:", "Y:", "Z:", "cd..", @"cd\", "Clear-Host", "Get-Verb", "help", "ImportSystemModules", "mkdir", "more", "oss", "Pause", "prompt", "TabExpansion2",
+    ];
+
+    /// <summary>The functions of <see cref="PowerShellFunctions"/>, for the test that holds the list against the shell.</summary>
+    public static IReadOnlyList<string> WindowsPowerShellFunctions => PowerShellFunctions;
+
     /// <summary>PowerShell's own words, which as the first word of a line are no command at all (<c>exit</c> ends the shell).</summary>
     private static readonly string[] PowerShellKeywords =
     [
@@ -97,7 +113,8 @@ public static class ShellQuote
         // tried by a real run: "sc query" ran Set-Content, and "& 'sc'" did too, the call operator looks for an alias
         // first; "exit" ends the shell): refused, with the program's own name to write.
         var program = elements[0].Trim();
-        if (program.IndexOfAny(['\\', '/', '.']) < 0 && (PowerShellAliases.Contains(program, StringComparer.OrdinalIgnoreCase) || PowerShellKeywords.Contains(program, StringComparer.OrdinalIgnoreCase)))
+        if (program.IndexOfAny(['\\', '/', '.']) < 0
+            && (PowerShellAliases.Contains(program, StringComparer.OrdinalIgnoreCase) || PowerShellKeywords.Contains(program, StringComparer.OrdinalIgnoreCase) || PowerShellFunctions.Contains(program, StringComparer.OrdinalIgnoreCase)))
         {
             return (null, $"{program} is also a command or a word of PowerShell's own, which it would run in place of a program: write the program's file name, as {program}.exe");
         }

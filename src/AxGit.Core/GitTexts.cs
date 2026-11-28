@@ -68,11 +68,54 @@ public static partial class GitTexts
     /// <summary>The receive program a push runs on the other side: git's own.</summary>
     private const string ReceivePack = "--receive-pack=git-receive-pack";
 
-    /// <summary>Fetch from the remote named, and forget the remote branches that are gone there.</summary>
-    public static IReadOnlyList<string> FetchArguments(string remote) => ["fetch", "--prune", NoSubmodules, OneRemote, UploadPack, "--", remote];
+    // A fetch and a pull name what they bring and where it goes (the review's fourth pass of 2026-11-28, T3): the
+    // remote's branches under refs/remotes/<remote>/, and no line of the repository's settings or of a legacy
+    // .git/remotes file applies, not even to the remote branches git would otherwise update by the way (the empty
+    // refmap). A legacy file with "Pull: +refs/heads/*:refs/heads/*" made axGIT's fetch with --prune delete every
+    // local branch the remote did not have (M1, tried with git 2.53).
 
-    /// <summary>Pull from the remote named, only when the branch can be moved forward: never a merge commit or a rebase made by axGIT.</summary>
-    public static IReadOnlyList<string> PullArguments(string remote) => ["pull", "--ff-only", NoSubmodules, OneRemote, UploadPack, "--", remote];
+    /// <summary>What keeps a fetch's and a pull's lines to those of the command line: no remote.name.fetch, no legacy file.</summary>
+    private const string NoRefmap = "--refmap=";
+
+    /// <summary>
+    /// Fetch every branch of the remote named into its remote branches, and forget the remote branches that are
+    /// gone there. From the repository itself (<see cref="GitRemote.Here"/>) nothing is fetched into a branch: no
+    /// remote branch has its name, and a line with a star needs a place to write (git refuses one without), so its
+    /// HEAD alone is read, into FETCH_HEAD.
+    /// </summary>
+    public static IReadOnlyList<string> FetchArguments(string remote) =>
+        ["fetch", "--prune", NoSubmodules, OneRemote, UploadPack, NoRefmap, "--", remote, remote == GitRemote.Here ? "HEAD" : $"+refs/heads/*:refs/remotes/{remote}/*"];
+
+    /// <summary>
+    /// Pull the branch the current one follows (<paramref name="merge"/>, <see cref="MergeOf"/>) from the remote
+    /// named, only when the current branch can be moved forward: never a merge commit or a rebase made by axGIT.
+    /// The remote branch is updated with it, as a fetch would. Null when the branch follows none: there is
+    /// nothing named to pull.
+    /// </summary>
+    public static IReadOnlyList<string>? PullArguments(string remote, string? merge) =>
+        merge is null ? null
+        : ["pull", "--ff-only", NoSubmodules, OneRemote, UploadPack, NoRefmap, "--", remote, remote == GitRemote.Here ? merge : $"+{merge}:refs/remotes/{remote}/{Tracked(merge)}"];
+
+    /// <summary>The name a branch of a remote has under refs/remotes/remote/: refs/heads/main as main.</summary>
+    private static string Tracked(string merge) =>
+        merge.StartsWith("refs/heads/", StringComparison.Ordinal) ? merge["refs/heads/".Length..]
+        : merge.StartsWith("refs/", StringComparison.Ordinal) ? merge["refs/".Length..]
+        : merge;
+
+    /// <summary>
+    /// The branch of its remote that <paramref name="branch"/> follows (<c>branch.name.merge</c>, read from
+    /// <paramref name="settings"/>); null when it follows none, or names one in a form no plain branch has (a
+    /// colon, a star, a caret, a space, a leading plus or dash, a step up), which would be read as more than one
+    /// branch on the command line.
+    /// </summary>
+    public static string? MergeOf(IReadOnlyList<ListedSetting> settings, string branch)
+    {
+        var merge = settings.LastOrDefault(setting => setting.Name.Equals($"branch.{branch}.merge", StringComparison.Ordinal))?.Value.Trim();
+        return merge is null or { Length: 0 } || merge.StartsWith('+') || merge.StartsWith('-') || merge.Contains("..", StringComparison.Ordinal)
+            || merge.Any(c => char.IsWhiteSpace(c) || char.IsControl(c) || c is ':' or '*' or '^' or '~' or '?' or '[' or '\\')
+            ? null
+            : merge;
+    }
 
     /// <summary>The remote a branch without an upstream is pushed to, and tied to.</summary>
     public const string DefaultRemote = GitRemote.Default;

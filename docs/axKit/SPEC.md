@@ -1782,9 +1782,10 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   process of the window (Claude Code and the shells in a ConPTY pseudo console, git and `keepassxc-cli.exe` as
   processes with their standard streams on pipes) and talks to it over that pseudo console or those pipes, on the
   computer, never over the network. The program's network use is its own, as from a terminal: Claude Code talks to
-  Anthropic's service and checks for its own updates; git reaches a remote on fetch, pull and push alone, in a trusted
-  repository or one that names no program of its own, never by itself for a missing object, and Git LFS through it
-  never (docs/axGIT/SPEC.md AG-5.4; AX-11.5 asks the server's consent first; its credential helper may ask for a
+  Anthropic's service and checks for its own updates; git runs in a repository only once it is trusted or names nothing
+  axGIT does not know to be harmless (before that only as the parser of one settings file, with no repository,
+  docs/axGIT/SPEC.md AG-1.6), and reaches a remote on fetch, pull and push alone, a push only a server, never by
+  itself for a missing object, and Git LFS through it never (docs/axGIT/SPEC.md AG-5.4, AG-5.4c; AX-11.5 asks the server's consent first; its credential helper may ask for a
   sign-in in its own window, AX-11.6); a shell's commands reach what they reach; KeePassXC's tool has no network feature. axKit does not see, record or change that
   traffic; it reads what the program prints and passes on what the user types. axKit's own code makes network requests
   in two places (AX-12; three from 2026-11-07 to 2026-11-14, while axTask had GitHub lists, docs/axKit/reports.md

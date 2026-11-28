@@ -1,8 +1,9 @@
 # Workflow: Open a repository that runs programs of its own
 # Needs: Git installed.
-# axGIT: a repository with a hook of its own (docs/axGIT/nvda-test-plan.md 1.7; SPEC AG-6): the notice names the hook,
-# Enter keeps the programs off and the Changes list comes; opened again, Trust this repository says "Trusted", and the
-# opening after that shows no notice.
+# axGIT: a repository with a hook of its own (docs/axGIT/nvda-test-plan.md 1.7 and section 9; SPEC AG-1.6): the notice
+# names the hook before anything runs in the repository; Keep it off, the default, opens nothing; opened again, Trust
+# this repository says "Trusted" and the Changes list comes, and the opening after that shows no notice. A hook that
+# changes under the same name is asked about again (T4).
 # The last check has the window refuse trusts written into its settings file: that refusal is logged as an error.
 allow error were changed outside axKit and are not used
 file home\AxKit\axGIT.json {"checkForUpdates": false}
@@ -15,29 +16,41 @@ run git -C repo -c user.name=Test -c user.email=none commit -q -m first
 file repo\a.txt hello\nchanged
 file repo\.git\hooks\post-checkout #!/bin/sh\nexit 0
 
-# Goal: Open a repository with its own programs kept off
-# 1.7 The notice names the hook; Enter keeps the programs off, and the Changes list comes.
+# Goal: Keep a repository with its own programs off
+# 1.7 The notice names the hook before anything ran; Enter keeps it off, and the repository is not opened.
 start git {temp}\repo
 expect state "notice":"This repository runs programs of its own"
-expect state Its settings or hooks name programs git would run: hook post-checkout. axGIT runs git without them.
+expect state Its settings or hooks name programs git would run: hook post-checkout.
+expect state Keep it off closes the repository.
 expect focus "name":"This repository runs programs of its own"
-expect text Enter or Escape: Keep them off.
+expect text Enter or Escape: Keep it off.
 # The notice holds the answering keys for a second after it appears (KeyHold).
 wait 1200
 keys enter
+expect said Not opened
 expect state "notice":null
-expect focus Changes, 1 file
-expect focus Modified a.txt, unstaged
-refuse said Trusted
+expect state "title":"axGIT"
+refuse said Changes, 1 file
+close
+
+# Check: Nothing of a repository kept off is read
+# AG-1.6 (T1): no status ran, so the window has no list of the repository: its status bar says so.
+start git {temp}\repo
+expect state "notice":"This repository runs programs of its own"
+expect state axGIT has run nothing in
+wait 1200
+keys escape
+expect said Not opened
+expect state No repository
 close
 
 # Goal: Trust a repository
-# Opened again: the notice again, since nothing was trusted; Trust this repository.
+# Opened again: the notice again, since nothing was trusted; Trust this repository opens it.
 start git {temp}\repo
 expect state "notice":"This repository runs programs of its own"
 wait 1200
 keys tab
-expect focus Keep them &off
+expect focus Keep it &off
 keys tab
 expect focus &Trust this repository
 keys space
@@ -54,24 +67,38 @@ expect state "notice":null
 refuse said This repository runs programs of its own
 close
 
+# Check: A trusted repository whose hook changed is asked about again
+# AG-1.6 (T4): the trust is for the content of each hook too; the same hook with other content is not what was trusted.
+file repo\.git\hooks\post-checkout #!/bin/sh\necho changed\nexit 0
+start git {temp}\repo
+expect state "notice":"This repository runs programs of its own"
+expect state What axGIT finds in this repository differs from what you trusted, so it is not trusted now.
+expect state Its settings or hooks name programs git would run: hook post-checkout.
+wait 1200
+keys tab
+keys tab
+keys space
+expect said Trusted
+expect focus Changes, 1 file
+close
+
 # Check: A trusted repository that gains a hook is asked about again
-# AG-1.6: the trust was for the hook the repository had; with one more, its programs are set aside again and the
-# notice says that what it would run has changed.
+# AG-1.6: the trust was for the hook the repository had; with one more, nothing runs until the user chooses.
 file repo\.git\hooks\pre-commit #!/bin/sh\nexit 0
 start git {temp}\repo
 expect state "notice":"This repository runs programs of its own"
-expect state What axGIT finds in this repository differs from what you trusted, so it is not trusted now. Its settings or hooks name programs git would run: hook post-checkout, hook pre-commit.
+expect state What axGIT finds in this repository differs from what you trusted, so it is not trusted now.
+expect state Its settings or hooks name programs git would run: hook post-checkout, hook pre-commit.
 wait 1200
 keys enter
+expect said Not opened
 expect state "notice":null
 close
 
 # Check: A program named in the work tree's own settings file or in a repository inside is found too
-# AG-1.6 (the review of 2026-11-27): git also reads the work tree's own settings file (extensions.worktreeConfig)
-# and, running itself inside a submodule, that repository's settings; until then only the repository's own file was
-# asked about. Here an ssh command in the work tree's file, and a repository inside, vendor, that names a pager:
-# both are named, the second with the repository it is in. The names are never run: every git command of this
-# window sets them to nothing, and nothing here reaches a server.
+# AG-1.6a: git also reads the work tree's own settings file (extensions.worktreeConfig) and, running itself inside a
+# submodule, that repository's settings. Here an ssh command in the work tree's file, and a repository inside,
+# vendor, that names a pager: both are named, the second with the repository it is in. Nothing ran to find them.
 run git -C repo config extensions.worktreeConfig true
 run git -C repo config --worktree core.sshCommand never-run
 run git init -q -b main repo\vendor
@@ -82,11 +109,27 @@ run git -C repo\vendor config core.pager never-run
 run git -C repo -c advice.addEmbeddedRepo=false add vendor
 start git {temp}\repo
 expect state "notice":"This repository runs programs of its own"
-expect state name programs git would run: core.sshcommand, hook post-checkout, hook pre-commit, submodule vendor: core.pager. axGIT runs git without them.
+expect state name programs git would run: core.sshcommand, hook post-checkout, hook pre-commit, submodule vendor: core.pager.
 wait 1200
 keys enter
+expect said Not opened
 expect state "notice":null
-expect focus Changes,
+close
+
+# Check: A hooks folder in the work tree is said, and runs on no changing command
+# AG-1.6b (T4): a switch or a pull can change a hooks folder that is checked in while git runs; the notice says so.
+run git init -q -b main tracked
+file tracked\.githooks\pre-commit #!/bin/sh\nexit 0
+run git -C tracked add .
+run git -C tracked -c user.name=Test -c user.email=none commit -q -m hooks
+run git -C tracked config core.hooksPath .githooks
+start git {temp}\tracked
+expect state "notice":"This repository runs programs of its own"
+expect state Its settings or hooks name programs git would run: core.hookspath, hook pre-commit.
+expect state Its hooks folder or programs lie in its work tree, where a switch or a pull can change them while git runs (core.hookspath)
+wait 1200
+keys enter
+expect said Not opened
 close
 
 # Check: Repositories another program trusted in the settings file are not used

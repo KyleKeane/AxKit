@@ -23,7 +23,7 @@ public sealed partial class GitForm
     /// that had been asked about). When git cannot name the server nothing runs, and a notice says why;
     /// <paramref name="what"/> names the command in it ("Fetch").
     /// </summary>
-    private async Task ToServerAsync(bool push, string what, Func<string, Task> command)
+    private async Task ToServerAsync(bool push, string what, Func<Reach, Task> command)
     {
         if (_root is not { } root || _session is not { } session)
         {
@@ -31,17 +31,11 @@ public sealed partial class GitForm
             return;
         }
 
-        // D1 (the review's third pass of 2026-11-27): a repository that is not trusted is never connected.
-        if (session.NotConnected(what) is { } notConnected)
+        // T4 (the review's fourth pass of 2026-11-28): the check before every fetch, pull and push, so that a hook
+        // or an included file changed since the last one is asked about before anything is reached; a repository
+        // that is not trusted is never connected (D1), since nothing runs in it at all (T1).
+        if (!await CheckAgainAsync(root))
         {
-            Log.Info($"{what} not started: the repository is not trusted");
-            var risks = session.Scan.Risks;
-            ShowNotice(new Notice($"{what} not started",
-                $"{notConnected} Fetch, Pull and Push start once you trust it: Show its settings names them, with Trust this repository. Nothing was sent and nothing was fetched.",
-            [
-                new OverlayChoice("&Show its settings", () => AskTrust(root, risks), IsDefault: true),
-                new OverlayChoice("&Close", IsCancel: true),
-            ]));
             return;
         }
 
@@ -57,6 +51,14 @@ public sealed partial class GitForm
         {
             Log.Info($"{what} not started: the server could not be named");
             ShowNotice(Notice.Plain($"{what} not started", $"{problem} Nothing was sent and nothing was fetched."));
+            return;
+        }
+
+        // T2: a push goes to a server alone, never into a folder, a share or the repository itself.
+        if (push && GitReach.PushRefused(reach) is { } folder)
+        {
+            Log.Info("Push not started: the remote is a folder");
+            ShowNotice(Notice.Plain("Push not started", $"{folder} Nothing was sent."));
             return;
         }
 
@@ -80,58 +82,15 @@ public sealed partial class GitForm
             }
         }
 
-        if (push && await PushProblemAsync(root, session, reach) is { } stopped)
+        // D7: Git LFS's pre-push hook would send to a server of its own; the hook's text is read off the window's
+        // thread, since the repository may lie on a share (rule 3).
+        if (push && await Task.Run(session.LfsPushRefused) is { } lfs)
         {
-            Log.Info("Push not started: the place it goes runs programs of its own");
-            ShowNotice(Notice.Plain("Push not started", $"{stopped} Nothing was sent."));
+            Log.Info("Push not started: the pre-push hook is Git LFS's");
+            ShowNotice(Notice.Plain("Push not started", $"{lfs} Nothing was sent."));
             return;
         }
 
-        await command(reach.Remote);
-    }
-
-    /// <summary>
-    /// What stops a push after its servers are agreed to: Git LFS's pre-push hook, which sends to a server of its
-    /// own (D7, <see cref="GitSession.LfsPushRefused"/>), and a remote that is a folder or a share whose repository
-    /// has programs or settings of its own (D3, <see cref="GitReach.FolderProblemAsync"/>), read as one piece of
-    /// work; null when nothing does, and when another command runs (said by the work's refusal).
-    /// </summary>
-    private async Task<string?> PushProblemAsync(string root, GitSession session, Reach reach)
-    {
-        // The hook's own text, read off the window's thread: the repository may lie on a share (rule 3).
-        if (await Task.Run(session.LfsPushRefused) is { } lfs)
-        {
-            return lfs;
-        }
-
-        if (reach.Folders is not { Count: > 0 } folders)
-        {
-            return null;
-        }
-
-        if (!BeginWork("Working: reading the remote's repository…"))
-        {
-            return "Another command is still running.";
-        }
-
-        SetGitItems(false);
-        UpdateStatusBar();
-        try
-        {
-            return await GitReach.FolderProblemAsync(session.RunInAsync, root, folders);
-        }
-        catch (GitNotFoundException)
-        {
-            return "git was not found.";
-        }
-        finally
-        {
-            EndWork();
-            if (!IsDisposed)
-            {
-                SetGitItems(true);
-                UpdateStatusBar();
-            }
-        }
+        await command(reach);
     }
 }

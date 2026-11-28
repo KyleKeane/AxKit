@@ -2,18 +2,48 @@ using AxGit.Core;
 
 namespace AxGit.Tests;
 
-/// <summary>A repository's own programs and settings (SPEC.md AG-1.6, AG-1.6c; security audit S-2): what is found, and how it is set aside.</summary>
+/// <summary>
+/// A repository's own programs and settings (SPEC.md AG-1.6, AG-1.6c; security audit S-2): what is a risk, how it
+/// is named and said, and what is set aside. In the collection of the tests that run git (L3 of the review's fourth
+/// pass): <see cref="GitTrust.NoHooksFolder"/> is one setting for the process.
+/// </summary>
+[Collection(GitProgram.Collection)]
 public sealed class GitTrustTests
 {
+    public GitTrustTests() => GitTests.UseOwnHooksFolder();
+
+    private static IReadOnlyList<FileSetting> Settings(params string[] names) => [.. names.Select(name => new FileSetting(name, "x"))];
+
+    private static readonly Func<char, bool> NoNetworkDrive = _ => false;
+
     [Fact]
     public void Every_name_that_is_not_known_to_be_harmless_is_a_risk_and_the_harmless_ones_are_left()
     {
-        const string names = "core.repositoryformatversion\ncore.fsmonitor\ndiff.pdf.textconv\nfilter.lfs.clean\nremote.origin.url\nuser.name\ncore.sshCommand\ncredential.helper\nlfs.extension.x.clean\ngc.recentObjectsHook\n";
+        var settings = Settings("core.repositoryformatversion", "core.fsmonitor", "diff.pdf.textconv", "filter.lfs.clean", "remote.origin.url", "user.name", "core.sshCommand", "credential.helper", "lfs.extension.x.clean", "gc.recentObjectsHook");
         IReadOnlyList<string> risks = ["core.fsmonitor", "diff.pdf.textconv", "filter.lfs.clean", "core.sshCommand", "credential.helper", "lfs.extension.x.clean", "gc.recentObjectsHook"];
-        Assert.Equal(risks, GitTrust.Risks(names, null));
+        Assert.Equal(risks, GitTrust.SettingRisks(settings));
         // The notice says which of them it knows to run a program, and which it does not know.
         Assert.Equal(["core.fsmonitor", "diff.pdf.textconv", "filter.lfs.clean", "core.sshCommand", "credential.helper"], GitTrust.Programs(risks));
         Assert.Equal(["lfs.extension.x.clean", "gc.recentObjectsHook"], GitTrust.NotKnown(risks));
+        Assert.Empty(GitTrust.Places(risks));
+    }
+
+    // ---- The parser of one settings file (T1) ----
+
+    /// <summary>
+    /// T1: git as a parser of one file given by its path, its includes not followed, each setting ended by a zero
+    /// character: the name, a line break, the value, which may hold line breaks; a name without a value is one git
+    /// reads as true.
+    /// </summary>
+    [Fact]
+    public void The_parser_reads_one_file_without_its_includes_and_its_answer_is_read_whole()
+    {
+        Assert.Equal(["config", "--file", @"C:\repo\.git\config", "--no-includes", "--list", "-z"], GitTrust.ParserArguments(@"C:\repo\.git\config"));
+        var settings = GitTrust.ParseSettings("core.bare\nfalse\0core.fsmonitor\0alias.two\nline one\nline two\0include.path\n//host.invalid/x\0\0");
+        Assert.Equal(
+            [new FileSetting("core.bare", "false"), new FileSetting("core.fsmonitor", null), new FileSetting("alias.two", "line one\nline two"), new FileSetting("include.path", "//host.invalid/x")],
+            settings);
+        Assert.Empty(GitTrust.ParseSettings(string.Empty));
     }
 
     // ---- The table of the harmless settings (AG-1.6c; the review's second pass of 2026-11-27) ----
@@ -108,6 +138,7 @@ public sealed class GitTrustTests
     [InlineData("gc.recentObjectsHook")]
     [InlineData("filter.a=b.clean")]
     [InlineData("core.gitProxy")]
+    [InlineData("core.unsetenvvars")]
     [InlineData("http.proxy")]
     [InlineData("http.https://github.com/.proxy")]
     [InlineData("http.sslVerify")]
@@ -132,36 +163,34 @@ public sealed class GitTrustTests
     public void A_submodules_work_tree_setting_is_harmless_in_a_repository_inside_alone()
     {
         Assert.True(GitTrust.IsInert("core.worktree", inside: true));
-        Assert.Empty(GitTrust.Risks("local\tcore.worktree\nlocal\tcore.bare\n", null, inside: true));
-        Assert.Equal(["core.worktree"], GitTrust.Risks("local\tcore.worktree\nlocal\tcore.bare\n", null));
+        Assert.Empty(GitTrust.SettingRisks(Settings("core.worktree", "core.bare"), inside: true));
+        Assert.Equal(["core.worktree"], GitTrust.SettingRisks(Settings("core.worktree", "core.bare")));
     }
 
     [Fact]
     public void A_hook_is_a_risk_and_a_sample_is_not()
     {
-        using var temp = new TempFolder("axgit-hooks");
-        var hooks = temp.Path;
-        File.WriteAllText(Path.Combine(hooks, "pre-commit.sample"), string.Empty);
-        File.WriteAllText(Path.Combine(hooks, "post-checkout"), string.Empty);
-        Assert.Equal(["hook post-checkout"], GitTrust.Risks(string.Empty, hooks));
+        Assert.True(GitTrust.IsHook("post-checkout"));
+        Assert.False(GitTrust.IsHook("pre-commit.sample"));
+        Assert.Equal("hook post-checkout", GitTrust.Hook("post-checkout"));
         Assert.Equal(["hook post-checkout"], GitTrust.Programs(["hook post-checkout"]));
     }
 
-    // ---- What git is run with while a repository is not trusted ----
+    // ---- What a changing command is run with where a program lies in the work tree (T4) ----
 
     private static GitSetting Empty(string name) => new(name, string.Empty);
 
-    /// <summary>No hooks and no credential helper, for every repository that is not trusted, last in the list (an empty helper empties git's list of them).</summary>
-    private static readonly GitSetting[] Careful = [new("credential.helper", string.Empty), new("core.hooksPath", Path.GetFullPath(GitTrust.NoHooksFolder))];
+    /// <summary>No hooks, last in the list. Since the fourth pass no empty credential helper: no run is made in a repository that is not trusted, and a trusted one signs in with the user's own.</summary>
+    private static GitSetting[] Careful => [new("core.hooksPath", Path.GetFullPath(GitTrust.NoHooksFolder))];
 
     [Fact]
-    public void An_untrusted_repository_runs_git_with_each_program_set_to_nothing_and_without_hooks_or_credential_helpers()
+    public void A_program_set_aside_is_set_to_nothing_and_no_hook_runs()
     {
         Assert.Equal(Careful, GitTrust.Careful);
         Assert.Equal([Empty("diff.pdf.textconv"), Empty("core.sshCommand"), .. Careful], GitTrust.Overrides(["diff.pdf.textconv", "hook pre-commit", "core.sshCommand"], ["lfs"]));
         // The hooks folder a repository names is not set to nothing: it is set to the folder that holds none.
         Assert.Equal(Careful, GitTrust.Overrides(["core.hookspath"], []));
-        // A repository that holds no risk, and a trusted one, runs with nothing of axGIT's.
+        // Nothing to set aside, nothing of axGIT's.
         Assert.Empty(GitTrust.Overrides([], ["lfs"]));
     }
 
@@ -177,9 +206,7 @@ public sealed class GitTrustTests
             [Empty("filter.lfs.clean"), Empty("filter.lfs.smudge"), Empty("filter.lfs.process"), new GitSetting("filter.lfs.required", "false"),
                 Empty("filter.a=b.clean"), Empty("filter.a=b.smudge"), Empty("filter.a=b.process"), new GitSetting("filter.a=b.required", "false"), .. Careful],
             GitTrust.Overrides(["lfs.extension.x.clean"], ["lfs", "a=b"]));
-        // A repository inside whose settings could not be read is not known either.
         Assert.Contains(Empty("filter.lfs.process"), GitTrust.Overrides(GitTrust.Inside("gone", [GitTrust.NotRead]), ["lfs"]));
-        // Hooks and known programs alone leave the user's filters running: nothing unknown is there for them to obey.
         Assert.DoesNotContain(Empty("filter.lfs.process"), GitTrust.Overrides(["hook pre-push", "core.sshcommand"], ["lfs"]));
     }
 
@@ -198,25 +225,19 @@ public sealed class GitTrustTests
         Assert.False(GitTrust.NamesAProxy("http.proxyAuthMethod"));
     }
 
-    [Fact]
-    public void The_filters_git_knows_are_those_of_every_file_each_once()
-    {
-        const string listed = "system\tfilter.lfs.clean\nsystem\tfilter.lfs.smudge\nsystem\tfilter.lfs.process\nsystem\tfilter.lfs.required\nglobal\tfilter.Crypt.Smudge\nlocal\tfilter.a=b.clean\nlocal\tfilter.dotted.name.process\nlocal\tfilter.only.required\nlocal\tcore.bare\n";
-        Assert.Equal(["lfs", "Crypt", "a=b", "dotted.name"], GitTrust.Filters(listed));
-        Assert.Empty(GitTrust.Filters(string.Empty));
-    }
-
     /// <summary>
-    /// Every command keeps the file monitor and the ext transport off, and git's automatic maintenance (finding
-    /// 2: it runs the program of gc.recentObjectsHook, which an empty value does not set aside). What is set
-    /// aside for a repository is no argument (finding 3): it is in the environment.
+    /// Every command keeps the file monitor and the ext transport off, git's automatic maintenance (finding 2),
+    /// and since the fourth pass a repository's own core.unsetenvvars (H1: it cleared what a submodule's run was
+    /// given through the environment) and http redirects (L1). What is set aside is no argument: it is in the
+    /// environment.
     /// </summary>
     [Fact]
-    public void Every_command_keeps_the_file_monitor_the_ext_transport_and_automatic_maintenance_off()
+    public void Every_command_has_its_fixed_settings_on_the_command_line()
     {
         var command = GitRunner.Command(@"C:\repo", ["status"]);
         Assert.Equal(
-            ["-C", @"C:\repo", "-c", "core.quotepath=false", "-c", "color.ui=never", "-c", "core.fsmonitor=false", "-c", "protocol.ext.allow=never", "-c", "maintenance.auto=false", "-c", "gc.auto=0", "status"],
+            ["-C", @"C:\repo", "-c", "core.quotepath=false", "-c", "color.ui=never", "-c", "core.fsmonitor=false", "-c", "protocol.ext.allow=never", "-c", "maintenance.auto=false", "-c", "gc.auto=0",
+                "-c", "core.unsetenvvars=PERL5LIB", "-c", "http.followRedirects=false", "status"],
             command);
     }
 
@@ -240,24 +261,6 @@ public sealed class GitTrustTests
         Assert.Equal("2", users["GIT_CONFIG_COUNT"]);
         Assert.Equal("C:/mine", users["GIT_CONFIG_VALUE_0"]);
         Assert.Equal("NUL", users["GIT_CONFIG_VALUE_1"]);
-    }
-
-    // ---- The review of 2026-11-27: the work tree's own settings, the names that were missing, the submodules ----
-
-    /// <summary>
-    /// The settings are asked with their scope, and the repository's are every scope but the computer's, the user's
-    /// and the command line's: the work tree's own file (extensions.worktreeConfig) is the repository's too, which
-    /// "--local", asked until then, left out.
-    /// </summary>
-    [Fact]
-    public void The_work_trees_own_settings_count_and_the_users_and_the_command_lines_do_not()
-    {
-        Assert.Equal(["config", "--show-scope", "--includes", "--name-only", "--list"], GitTrust.ConfigArguments);
-        const string listed = "system\tcore.editor\nglobal\tcredential.helper\nlocal\tcore.bare\nlocal\textensions.worktreeconfig\nworktree\tcore.sshcommand\ncommand\tcore.fsmonitor\nlocal\tfilter.lfs.clean\r\n";
-        Assert.Equal(["core.bare", "extensions.worktreeconfig", "core.sshcommand", "filter.lfs.clean"], GitTrust.OwnNames(listed));
-        Assert.Equal(["core.sshcommand", "filter.lfs.clean"], GitTrust.Risks(listed, null));
-        // A scope this code does not know is the repository's, never passed over.
-        Assert.Equal(["core.pager"], GitTrust.Risks("somewhere\tcore.pager\n", null));
     }
 
     [Theory]
@@ -300,37 +303,29 @@ public sealed class GitTrustTests
     [InlineData("user.signingkey")]
     [InlineData("alias.co")]
     [InlineData("submodule.libs/zip.update")]
-    // Plain settings the older rule named as programs (every name under uploadpack and receivepack).
+    [InlineData("remote.my origin.url.x")]
     [InlineData("uploadpack.allowFilter")]
     [InlineData("receivepack.denyCurrentBranch")]
     public void A_name_that_is_no_program_by_its_name_is_not_called_one(string name)
     {
         Assert.False(GitTrust.RunsAProgram(name));
-        Assert.Equal([name], GitTrust.NotKnown(GitTrust.Risks(name + "\n", null)));
+        Assert.Equal([name], GitTrust.NotKnown(GitTrust.SettingRisks(Settings(name))));
     }
 
+    /// <summary>The places the scan names without reading them are said as places, apart from the programs and the settings, also inside a submodule.</summary>
     [Fact]
-    public void The_entries_of_the_index_that_are_another_repository_are_found()
+    public void A_place_the_scan_does_not_read_is_said_as_a_place()
     {
-        var index = "100644 587be6b4c3f93f93c489c0111bba5596147a26cb 0\t.gitmodules\0"
-            + "160000 e6701ffa59157d27c7ab2f8e25cc97b87fa5512b 0\tlibs/zip\0"
-            + "100755 587be6b4c3f93f93c489c0111bba5596147a26cb 0\tbuild 160000 notes.txt\0"
-            + "160000 e6701ffa59157d27c7ab2f8e25cc97b87fa5512b 0\tvendor/a b\tc\0";
-        Assert.Equal(["libs/zip", "vendor/a b\tc"], GitTrust.Links(index));
-        Assert.Empty(GitTrust.Links(string.Empty));
-        Assert.Equal(["ls-files", "--stage", "-z"], GitTrust.LinksArguments);
-    }
-
-    /// <summary>
-    /// Finding 4: a folder with a repository of its own that the index does not hold. git lists it as one entry
-    /// with a slash at its end, since it does not go into it; an untracked file never ends in one.
-    /// </summary>
-    [Fact]
-    public void The_untracked_folders_that_are_a_repository_of_their_own_are_found()
-    {
-        Assert.Equal(["ls-files", "--others", "--exclude-standard", "-z"], GitTrust.OthersArguments);
-        Assert.Equal(["vendor", "deep/in side/tool"], GitTrust.Nested("notes.txt\0vendor/\0src/new.cs\0deep/in side/tool/\0/\0"));
-        Assert.Empty(GitTrust.Nested(string.Empty));
+        IReadOnlyList<string> places =
+        [
+            GitTrust.Link(".git/hooks"), GitTrust.Alternates, GitTrust.OutsideTheWorkTree, GitTrust.Legacy("remotes", "origin"),
+            GitTrust.OnAnotherComputer("core.excludesfile", "server.invalid"), GitTrust.OnAnotherComputer("include.path", "."),
+            GitTrust.NotRead, GitTrust.TooDeep, .. GitTrust.Inside("libs/zip", [GitTrust.Legacy("branches", "old.one")]),
+        ];
+        Assert.Equal(places, GitTrust.Places(places));
+        Assert.Empty(GitTrust.Programs(places));
+        Assert.Empty(GitTrust.NotKnown(places));
+        Assert.Equal(["remote.origin.fetch writes outside refs/remotes"], GitTrust.NotKnown(["remote.origin.fetch writes outside refs/remotes"]));
     }
 
     [Fact]
@@ -408,21 +403,8 @@ public sealed class GitTrustTests
             GitTrust.Overrides(["core.sshcommand", "submodule libs/zip: core.sshcommand", "submodule libs/zip: filter.x.smudge", "submodule libs/zip: hook post-checkout"], []));
         // A name's middle part is another name in other case, so both are set aside.
         Assert.Equal([Empty("diff.pdf.textconv"), Empty("diff.PDF.textconv"), .. Careful], GitTrust.Overrides(["diff.pdf.textconv", "diff.PDF.textconv"], []));
-        Assert.Equal(["diff.pdf.textconv", "diff.PDF.textconv"], GitTrust.Risks("local\tdiff.pdf.textconv\nlocal\tdiff.PDF.textconv\nworktree\tdiff.pdf.textconv\n", null));
-        Assert.Equal(GitTrust.Inside("gone", [GitTrust.NotRead]), GitTrust.NotKnown(GitTrust.Inside("gone", [GitTrust.NotRead])));
-        // A trust is for exactly these: a submodule's risk is in the mark.
-        Assert.NotEqual(GitTrust.Mark(["core.sshCommand"]), GitTrust.Mark(["core.sshCommand", .. inside]));
-    }
-
-    /// <summary>
-    /// A trust given before this rule stays good for a repository that holds nothing the older rule did not name:
-    /// the mark is of the same names, written the same way.
-    /// </summary>
-    [Fact]
-    public void The_mark_of_hooks_and_programs_is_what_it_was()
-    {
-        Assert.Equal("A233B165D8D6FC569F9D9A8C10FF20BEB2AE4D2D562C7ADA13685A0BED426A94", GitTrust.Mark(["core.hookspath", "hook pre-push"]));
-        Assert.Equal(GitTrust.Mark(["core.hookspath", "hook pre-push"]), GitTrust.Mark(GitTrust.Risks("local\tcore.hookspath\nlocal\tcore.bare\nlocal\tbranch.main.remote\n", null).Append("hook pre-push").ToList()));
+        Assert.Equal(["diff.pdf.textconv", "diff.PDF.textconv"], GitTrust.SettingRisks(Settings("diff.pdf.textconv", "diff.PDF.textconv", "diff.pdf.textconv")));
+        Assert.Equal(GitTrust.Inside("gone", [GitTrust.NotRead]), GitTrust.Places(GitTrust.Inside("gone", [GitTrust.NotRead])));
     }
 
     // ---- The review's third pass of 2026-11-27 ----
@@ -447,44 +429,78 @@ public sealed class GitTrustTests
             }
         }
 
-        // Every driver section with every variable that names a program.
         Assert.Contains("mergetool.x.cmd", GitTrust.ProgramNamesTable.SelectMany(kind => kind.Examples));
     }
 
-    /// <summary>L4: the hooks folder of an untrusted repository is a full path of axKit's own, and is emptied before it is given.</summary>
+    /// <summary>L4 of the third pass: the hooks folder of a run without hooks is a full path of the tests' own here (L3 of the fourth), emptied before it is given.</summary>
     [Fact]
-    public void The_hooks_folder_of_an_untrusted_repository_is_a_full_path_and_empty()
+    public void The_hooks_folder_of_a_run_without_hooks_is_a_full_path_and_empty()
     {
         var folder = GitTrust.EmptyHooksFolder();
         Assert.True(Path.IsPathFullyQualified(folder), folder);
+        Assert.DoesNotContain(@"\AxKit\axGIT-no-hooks", folder, StringComparison.OrdinalIgnoreCase);
         File.WriteAllText(Path.Combine(folder, "pre-commit"), "#!/bin/sh\n");
         Directory.CreateDirectory(Path.Combine(folder, "inside"));
         Assert.Equal(folder, GitTrust.EmptyHooksFolder());
         Assert.Empty(Directory.EnumerateFileSystemEntries(folder));
-        Assert.Equal(new GitSetting("core.hooksPath", folder), GitTrust.Careful[1]);
+        Assert.Equal(new GitSetting("core.hooksPath", folder), GitTrust.Careful[0]);
+        // The folder of axKit's own is kept after a run.
+        GitTrust.ReleaseHooksFolder(folder);
+        Assert.True(Directory.Exists(folder));
+    }
+
+    /// <summary>L3 of the fourth pass: when the folder cannot be emptied, a fresh one of the temporary folder is given, with the run's mark, and is deleted after its run.</summary>
+    [Fact]
+    public void A_fresh_hooks_folder_for_one_run_is_deleted_after_it()
+    {
+        var folder = GitTrust.EmptyHooksFolder();
+        using (var held = File.Open(Path.Combine(folder, "held"), FileMode.Create, FileAccess.ReadWrite, FileShare.None))
+        {
+            var fresh = GitTrust.EmptyHooksFolder();
+            Assert.NotEqual(folder, fresh);
+            Assert.StartsWith(GitTrust.FallbackPrefix, Path.GetFileName(fresh), StringComparison.Ordinal);
+            Assert.StartsWith("axGIT-no-hooks-" + TempFolder.Run, Path.GetFileName(fresh), StringComparison.Ordinal);
+            Assert.Empty(Directory.EnumerateFileSystemEntries(fresh));
+            GitTrust.ReleaseHooksFolder(fresh);
+            Assert.False(Directory.Exists(fresh));
+        }
+
+        Assert.Equal(folder, GitTrust.EmptyHooksFolder());
     }
 
     /// <summary>
-    /// D5, M3: where the value decides the harm, the value is read. A fetch line is harmless only when it writes
-    /// under refs/remotes/; a submodule's work tree only on this computer. The user's own and the computer's files
-    /// are not the repository's.
+    /// D5, M3 of the third pass and M2 of the fourth: where the value decides the harm, the value is read. A fetch
+    /// line is harmless only when it writes under refs/remotes/; a value on another computer is a risk whatever
+    /// its name, harmless or not, in each form a path to another computer takes.
     /// </summary>
     [Fact]
-    public void A_fetch_that_writes_outside_refs_remotes_and_a_work_tree_on_another_computer_are_risks()
+    public void A_fetch_that_writes_outside_refs_remotes_and_a_value_on_another_computer_are_risks()
     {
-        Assert.Equal(["config", "--show-scope", "--includes", "--null", "--get-regexp", @"^(remote\..+\.fetch|core\.worktree)$"], GitTrust.ValueArguments);
-        var output = "local\0remote.origin.fetch\n+refs/heads/*:refs/remotes/origin/*\0"
-            + "local\0remote.origin.fetch\n^refs/heads/secret\0"
-            + "local\0remote.origin.fetch\nrefs/tags/v1\0"
-            + "local\0remote.mirror.fetch\n+refs/heads/*:refs/heads/*\0"
-            + "local\0remote.Odd.fetch\nrefs/heads/a:refs/remotes/../heads/a\0"
-            + "global\0remote.mine.fetch\n+refs/heads/*:refs/heads/*\0"
-            + "local\0core.worktree\n../../../libs/zip\0"
-            + "local\0core.worktree\n//server.invalid/share/zip\0";
+        IReadOnlyList<FileSetting> settings =
+        [
+            new("remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*"),
+            new("remote.origin.fetch", "^refs/heads/secret"),
+            new("remote.origin.fetch", "refs/tags/v1"),
+            new("remote.mirror.fetch", "+refs/heads/*:refs/heads/*"),
+            new("remote.Odd.fetch", "refs/heads/a:refs/remotes/../heads/a"),
+            new("core.worktree", "../../../libs/zip"),
+            new("core.worktree", "//server.invalid/share/zip"),
+            new("core.excludesfile", @"\\server.invalid\share\ignore"),
+            new("core.attributesfile", @"\\?\UNC\attributes.invalid\share\a"),
+            new("mailmap.file", "file://mail.invalid/share/map"),
+            new("commit.template", "Z:/share/template"),
+            new("remote.origin.url", "//origin.invalid/share/repo.git"),
+            new("user.name", "Someone"),
+            new("core.hookspath", @"\\.\pipe\x"),
+        ];
         Assert.Equal(
-            ["remote.mirror.fetch writes outside refs/remotes", "remote.Odd.fetch writes outside refs/remotes", "core.worktree lies on another computer"],
-            GitTrust.ValueRisks(output));
-        Assert.Empty(GitTrust.ValueRisks(string.Empty));
+            [
+                "remote.mirror.fetch writes outside refs/remotes", "remote.Odd.fetch writes outside refs/remotes", "core.worktree names another computer, server.invalid",
+                "core.excludesfile names another computer, server.invalid", "core.attributesfile names another computer, attributes.invalid", "mailmap.file names another computer, mail.invalid",
+                "commit.template names another computer, drive Z:", "remote.origin.url names another computer, origin.invalid", "core.hookspath names a device path",
+            ],
+            GitTrust.ValueRisks(settings, null, letter => letter == 'Z'));
+        Assert.Empty(GitTrust.ValueRisks([], null, NoNetworkDrive));
     }
 
     [Theory]
@@ -492,42 +508,44 @@ public sealed class GitTrustTests
     [InlineData("//Server.Invalid/share", "server.invalid")]
     [InlineData(@"\\?\UNC\host\share", "host")]
     [InlineData(@"\\?\C:\repo", null)]
+    [InlineData(@"\\?\GLOBALROOT\Device\Mup\host\share", ".")]
     [InlineData(@"C:\repo", null)]
     [InlineData("../x", null)]
     [InlineData("/c/repo", null)]
     public void A_share_names_its_computer_and_a_path_here_none(string path, string? host) => Assert.Equal(host, GitTrust.OtherComputer(path));
 
-    /// <summary>
-    /// D9: the guard before the first git run reads, in C#, a work tree's .git file, the includes of the settings
-    /// (also of a file included) and the alternate object stores, and names the other computer any of them points
-    /// at. The share is never touched: these hosts do not exist.
-    /// </summary>
+    /// <summary>M2: a value names another computer as a share, a file address with a host, or a path on a network drive; the computer the repository lies on is its own.</summary>
+    [Theory]
+    [InlineData("//host/share/x", null, "host")]
+    [InlineData("//host/share/x", "host", null)]
+    [InlineData("\"//host/share/x\"", null, "host")]
+    [InlineData("file://host/share/x", null, "host")]
+    [InlineData("file://localhost/C$/x", null, "localhost")]
+    [InlineData("file:////host/share/x", null, "host")]
+    [InlineData("file:///C:/work/x", null, null)]
+    [InlineData("Z:/x", null, "drive Z:")]
+    [InlineData("z:/x", "drive Z:", null)]
+    [InlineData("C:/x", null, null)]
+    [InlineData("https://example.invalid/x", null, null)]
+    [InlineData("true", null, null)]
+    public void A_value_on_another_computer_is_known_from_its_text(string value, string? own, string? host) =>
+        Assert.Equal(host, GitTrust.ElsewhereOf(value, own, letter => letter == 'Z'));
+
     [Fact]
-    public void A_repository_whose_own_files_point_at_another_computer_is_known_before_git_runs()
+    public void The_words_of_a_value_that_may_name_a_file_are_those_with_a_slash()
     {
-        using var temp = new TempFolder("axgit-elsewhere");
-        var plain = Directory.CreateDirectory(Path.Combine(temp.Path, "plain", ".git", "objects")).Parent!.Parent!.FullName;
-        File.WriteAllText(Path.Combine(plain, ".git", "HEAD"), "ref: refs/heads/main\n");
-        File.WriteAllText(Path.Combine(plain, ".git", "config"), "[core]\n\tbare = false\n[include]\n\tpath = local.cfg\n");
-        File.WriteAllText(Path.Combine(plain, ".git", "local.cfg"), "[user]\n\tname = x\n");
-        Directory.CreateDirectory(Path.Combine(plain, "src"));
-        Assert.Null(GitTrust.PointsElsewhere(Path.Combine(plain, "src")));
+        Assert.Equal(["./tools/clean.sh"], GitTrust.PathWords("sh \"./tools/clean.sh\" --x %f"));
+        Assert.Equal([@"C:\Program Files\x\y.exe", "a/b"], GitTrust.PathWords(@"'C:\Program Files\x\y.exe' a/b"));
+        Assert.Empty(GitTrust.PathWords("ssh -v"));
+        Assert.Empty(GitTrust.PathWords(string.Empty));
+    }
 
-        // An include of a file included.
-        File.WriteAllText(Path.Combine(plain, ".git", "local.cfg"), "[includeIf \"onbranch:main\"]\n\tpath = \"//included.invalid/share/x.cfg\"\n");
-        Assert.Equal("included.invalid", GitTrust.PointsElsewhere(Path.Combine(plain, "src")));
-        File.WriteAllText(Path.Combine(plain, ".git", "local.cfg"), "[user]\n\tname = x\n");
-
-        // An alternate object store.
-        Directory.CreateDirectory(Path.Combine(plain, ".git", "objects", "info"));
-        File.WriteAllText(Path.Combine(plain, ".git", "objects", "info", "alternates"), "# a note\n\\\\objects.invalid\\share\\objects\n");
-        Assert.Equal("objects.invalid", GitTrust.PointsElsewhere(plain));
-        File.Delete(Path.Combine(plain, ".git", "objects", "info", "alternates"));
-
-        // A work tree whose .git file names a repository on a share.
-        var tree = Directory.CreateDirectory(Path.Combine(temp.Path, "tree")).FullName;
-        File.WriteAllText(Path.Combine(tree, ".git"), "gitdir: //gitdir.invalid/share/real.git\n");
-        Assert.Equal("gitdir.invalid", GitTrust.PointsElsewhere(tree));
-        Assert.Null(GitTrust.PointsElsewhere(plain));
+    /// <summary>T4: the mark is of the lines given, whatever their order and case: a hook's hash among them changes it.</summary>
+    [Fact]
+    public void The_mark_changes_with_any_line()
+    {
+        Assert.Equal(GitTrust.Mark(["hook a 01", "risk b"]), GitTrust.Mark(["RISK B", "hook a 01"]));
+        Assert.NotEqual(GitTrust.Mark(["hook a 01", "risk b"]), GitTrust.Mark(["hook a 02", "risk b"]));
+        Assert.Equal(64, GitTrust.Mark([]).Length);
     }
 }

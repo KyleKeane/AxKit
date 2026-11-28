@@ -26,7 +26,9 @@ public sealed partial class GitTextsTests
         ("%x09", ["GitLog.cs"]),
         ("%(refname", ["GitBranches.cs"]),
         ("get-url", ["GitRemote.cs"]),
-        ("rev-parse", ["GitRunner.cs", "GitTrust.cs"]),
+        ("--no-includes", ["GitTrust.cs"]),
+        ("--refmap=", ["GitTexts.cs"]),
+        ("GIT_DIR", ["GitTrustScan.cs"]),
         ("GIT_TERMINAL_PROMPT", ["GitRunner.cs"]),
         ("core.quotepath", ["GitRunner.cs"]),
         ("--no-ext-diff", ["GitStatus.cs", "GitLog.cs"]),
@@ -88,8 +90,28 @@ public sealed partial class GitTextsTests
         // Never into the submodules, whose remotes are servers the consent did not name (2026-11-27). The remote
         // the consent was read for is on the command line, after "--", and fetch.all is not obeyed (AG-5.4a).
         // The upload program is git's own on the command line, which comes before a remote's setting (D2).
-        Assert.Equal(["fetch", "--prune", "--no-recurse-submodules", "--no-all", "--upload-pack=git-upload-pack", "--", "origin"], GitTexts.FetchArguments("origin"));
-        Assert.Equal(["pull", "--ff-only", "--no-recurse-submodules", "--no-all", "--upload-pack=git-upload-pack", "--", "-x"], GitTexts.PullArguments("-x"));
+        // Since the fourth pass (T3) each names its own line with an empty refmap: no line of the repository's
+        // settings or of a legacy remotes file applies (M1).
+        Assert.Equal(["fetch", "--prune", "--no-recurse-submodules", "--no-all", "--upload-pack=git-upload-pack", "--refmap=", "--", "origin", "+refs/heads/*:refs/remotes/origin/*"], GitTexts.FetchArguments("origin"));
+        Assert.Equal(["pull", "--ff-only", "--no-recurse-submodules", "--no-all", "--upload-pack=git-upload-pack", "--refmap=", "--", "-x", "+refs/heads/main:refs/remotes/-x/main"], GitTexts.PullArguments("-x", "refs/heads/main"));
+        // From the repository itself no remote branch has the name: the branches are read, and the pull names the branch followed.
+        Assert.Equal("HEAD", GitTexts.FetchArguments(".")[^1]);
+        Assert.Equal("refs/heads/main", GitTexts.PullArguments(".", "refs/heads/main")![^1]);
+        // A branch that follows none is not pulled: nothing names what to pull.
+        Assert.Null(GitTexts.PullArguments("origin", null));
+    }
+
+    /// <summary>T3: the branch a pull names is read from the settings, and one in a form no plain branch has is no branch to pull.</summary>
+    [Fact]
+    public void The_branch_a_pull_names_is_the_one_followed_in_a_plain_form()
+    {
+        var settings = GitRemote.Settings("local\0branch.main.merge\nrefs/heads/main\0local\0branch.odd.merge\nrefs/heads/a:refs/heads/b\0local\0branch.plus.merge\n+refs/heads/x\0local\0branch.star.merge\nrefs/heads/*\0local\0branch.tag.merge\nrefs/tags/v1\0");
+        Assert.Equal("refs/heads/main", GitTexts.MergeOf(settings, "main"));
+        Assert.Null(GitTexts.MergeOf(settings, "odd"));
+        Assert.Null(GitTexts.MergeOf(settings, "plus"));
+        Assert.Null(GitTexts.MergeOf(settings, "star"));
+        Assert.Null(GitTexts.MergeOf(settings, "none"));
+        Assert.Equal("+refs/tags/v1:refs/remotes/origin/tags/v1", GitTexts.PullArguments("origin", GitTexts.MergeOf(settings, "tag"))![^1]);
     }
 
     /// <summary>
@@ -147,15 +169,6 @@ public sealed partial class GitTextsTests
         Assert.True(GitTexts.SaysUpToDate("Already up-to-date.\nAlready up to date.\n"));
         Assert.True(GitTexts.SaysUpToDate("already up to date"));
         Assert.False(GitTexts.SaysUpToDate("Updating 3a1f2c0..9b8e7d6\nFast-forward\n a.txt | 1 +\n"));
-    }
-
-    [Fact]
-    public void The_hooks_folder_and_the_submodules_folder_are_read_from_gits_two_lines()
-    {
-        Assert.Equal((@"C:\repo\.git\hooks", @"C:\repo\.git\modules"), GitTrust.Folders(".git/hooks\n.git/modules\n", @"C:\repo"));
-        Assert.Equal((@"D:\shared\hooks", @"C:\repo\.git\modules"), GitTrust.Folders("D:/shared/hooks\r\n.git/modules\r\n", @"C:\repo"));
-        Assert.Equal((null, null), GitTrust.Folders(" \n", @"C:\repo"));
-        Assert.Equal((@"C:\repo\.git\hooks", null), GitTrust.Folders(".git/hooks\n", @"C:\repo"));
     }
 
     [Fact]

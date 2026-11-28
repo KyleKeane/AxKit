@@ -2,32 +2,34 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using AxGit.Core;
 using AxKit.Core;
+using Xunit.Abstractions;
 
 namespace AxGit.Tests;
 
 /// <summary>
 /// The reads that say what a repository would run and which servers a fetch, pull or push reaches
-/// (docs/axGIT/SPEC.md AG-1.6, AG-5.4a; the review of 2026-11-27 and its second pass), against git itself, in
-/// repositories the test makes. The second pass's experiments are here as tests: a program the repository names
-/// is a script that writes a line into a file of the test's, and the test runs the commands axGIT runs, with
-/// what axGIT sets aside, and looks whether the line is there; each also runs once the way that did run the
-/// script, so that the test is known to be able to fail. The addresses are of the reserved name "invalid", and
-/// every run goes through a proxy on a closed port of this computer (<see cref="GitTests.Environment"/>), so that
-/// nothing leaves it even where a resolver answers for "invalid". Where git is not installed the tests are said
-/// as skipped (<see cref="GitFactAttribute"/>). In one collection with the tests that put a fake in git's place,
-/// so that the two never run at once.
+/// (docs/axGIT/SPEC.md AG-1.6, AG-5.4a; the reviews of 2026-11-27 and 2026-11-28), against git itself, in
+/// repositories the test makes. A program the repository names is a script that writes a line into a file of the
+/// test's, and the test looks whether the line is there; each also runs once the way that did run the script, so
+/// that the test is known to be able to fail. The addresses are of the reserved name "invalid", and every run goes
+/// through a proxy on a closed port of this computer (<see cref="GitTests.Environment"/>), so that nothing leaves
+/// it even where a resolver answers for "invalid"; a share is this computer's own, //localhost/C$. Where git is not
+/// installed the tests are said as skipped (<see cref="GitFactAttribute"/>). In one collection with the tests that
+/// put a fake in git's place, so that the two never run at once.
 /// </summary>
 [Collection(GitProgram.Collection)]
 public sealed partial class GitTrustScanTests : IDisposable
 {
     private readonly TempFolder _dir = new("axgit-scan");
     private readonly string _marks;
+    private readonly ITestOutputHelper _output;
 
     /// <summary>The variables of every git run of this class's (<see cref="GitTests.Environment"/>), given per run: nothing is set for the process.</summary>
     private readonly Dictionary<string, string> _env;
 
-    public GitTrustScanTests()
+    public GitTrustScanTests(ITestOutputHelper output)
     {
+        _output = output;
         _marks = Path.Combine(_dir.Path, "marks.log");
         _env = GitTests.Environment(_dir);
     }
@@ -61,10 +63,13 @@ public sealed partial class GitTrustScanTests : IDisposable
         var folder = Directory.CreateDirectory(Path.Combine(_dir.Path, name)).FullName;
         Git(folder, "init", "-q");
         File.WriteAllText(Path.Combine(folder, "a.txt"), "one\n");
-        Git(folder, "add", "a.txt");
+        File.WriteAllText(Path.Combine(folder, "b.txt"), "two\n");
+        Git(folder, "add", "a.txt", "b.txt");
         Git(folder, "commit", "-q", "-m", "one");
         return folder;
     }
+
+    private Task<TrustScan> ScanAsync(string root) => GitTrustScan.ReadAsync(root, default, _env);
 
     // ---- The programs a repository names: scripts that leave a line ----
 
@@ -78,7 +83,6 @@ public sealed partial class GitTrustScanTests : IDisposable
     private string Marker(string line)
     {
         _dir.File("marker.sh", $"#!/bin/sh\necho \"$1\" >> \"{Slashes}/marks.log\"\ncat\n");
-        // Without quotes where the path needs none: Git LFS splits an extension's command at its spaces alone.
         return Slashes.Contains(' ') ? $"sh \"{Slashes}/marker.sh\" {line}" : $"sh {Slashes}/marker.sh {line}";
     }
 
@@ -103,27 +107,18 @@ public sealed partial class GitTrustScanTests : IDisposable
         return lines;
     }
 
-    /// <summary>What the window does with a repository: the scan, and what git is run with while the user has not trusted it.</summary>
-    private async Task<IReadOnlyList<GitSetting>> NotTrustedAsync(string root)
-    {
-        var scan = await GitTrustScan.ReadAsync(root, default, _env);
-        Assert.Null(scan.Problem);
-        Assert.NotEmpty(scan.Risks);
-        return GitTrust.Overrides(scan.Risks, scan.Filters);
-    }
-
-    /// <summary>A command of the window's, as the window runs it.</summary>
-    private Task<GitResult> AxGit(string root, IReadOnlyList<string> arguments, IReadOnlyList<GitSetting>? overrides) =>
+    /// <summary>A command of the window's, as a session of a trusted repository runs it.</summary>
+    private Task<GitResult> AxGit(string root, IReadOnlyList<string> arguments, IReadOnlyList<GitSetting>? overrides = null) =>
         GitRunner.RunAsync(root, arguments, GitRunner.Short, overrides: overrides, environment: _env);
 
     [GitFact]
-    public async Task A_plain_repository_runs_nothing()
+    public async Task A_plain_repository_holds_no_risk()
     {
-        var scan = await GitTrustScan.ReadAsync(Repository("plain"), default, _env);
+        var scan = await ScanAsync(Repository("plain"));
         Assert.Null(scan.Problem);
         Assert.Empty(scan.Risks);
-        // The filters are those of every file: Git LFS's, from the user's own settings.
-        Assert.Equal(["lfs"], scan.Filters);
+        Assert.Equal(64, scan.Mark.Length);
+        Assert.Empty(scan.InTree!);
     }
 
     /// <summary>
@@ -147,28 +142,28 @@ public sealed partial class GitTrustScanTests : IDisposable
         Git(root, "config", "user.name", "Someone");
         Git(root, "sparse-checkout", "init", "--cone");
 
-        var scan = await GitTrustScan.ReadAsync(root, default, _env);
+        var scan = await ScanAsync(root);
         Assert.Null(scan.Problem);
         Assert.Empty(scan.Risks);
     }
 
-    /// <summary>
-    /// The hooks are those of the folder git itself names: the repository's own, or the one its settings point at
-    /// (core.hooksPath, which is a risk by its name too). The scan asks with nothing set aside: asked with the
-    /// hooks folder axGIT gives an untrusted repository, git named that one, and no hook was found (caught by the
-    /// window's script while this was built).
-    /// </summary>
+    /// <summary>The hooks are those of the folder git uses: the repository's own, or the one core.hooksPath names, which is a risk by its name too and, in the work tree, is noted for T4.</summary>
     [GitFact]
-    public async Task The_hooks_of_the_folder_git_names_are_found()
+    public async Task The_hooks_of_the_folder_git_uses_are_found()
     {
         var root = Repository("hooks");
         File.WriteAllText(Path.Combine(root, ".git", "hooks", "post-checkout"), "#!/bin/sh\n");
-        Assert.Equal(["hook post-checkout"], (await GitTrustScan.ReadAsync(root, default, _env)).Risks);
+        var first = await ScanAsync(root);
+        Assert.Equal(["hook post-checkout"], first.Risks);
+        Assert.Empty(first.InTree!);
+        Assert.Equal(Path.Combine(root, ".git", "hooks"), first.Hooks);
 
         Directory.CreateDirectory(Path.Combine(root, "tools", "hooks"));
         File.WriteAllText(Path.Combine(root, "tools", "hooks", "pre-push"), "#!/bin/sh\n");
         Git(root, "config", "core.hooksPath", "tools/hooks");
-        Assert.Equal(["core.hookspath", "hook pre-push"], (await GitTrustScan.ReadAsync(root, default, _env)).Risks);
+        var second = await ScanAsync(root);
+        Assert.Equal(["core.hookspath", "hook pre-push"], second.Risks);
+        Assert.Equal(["core.hookspath"], second.InTree!);
     }
 
     [GitFact]
@@ -178,17 +173,17 @@ public sealed partial class GitTrustScanTests : IDisposable
         Git(root, "config", "extensions.worktreeConfig", "true");
         Git(root, "config", "--worktree", "core.sshCommand", "never-run");
         Git(root, "config", "gpg.ssh.defaultKeyCommand", "never-run");
-        var scan = await GitTrustScan.ReadAsync(root, default, _env);
+        var scan = await ScanAsync(root);
         Assert.Null(scan.Problem);
         Assert.Equal(["core.sshcommand", "gpg.ssh.defaultkeycommand"], scan.Risks.Order(StringComparer.Ordinal));
     }
 
     /// <summary>
-    /// A repository inside another, with no .gitmodules to say so: the entry of the index is enough for git to run
-    /// itself there on a plain status, and so for the scan to read its settings and hooks.
+    /// A repository inside another, kept in its work tree or under .git/modules, also with its work tree taken
+    /// away, and one in a folder git does not track yet: each is found and read.
     /// </summary>
     [GitFact]
-    public async Task What_a_repository_inside_would_run_is_found_whether_git_keeps_it_inside_or_under_modules()
+    public async Task What_a_repository_inside_would_run_is_found_wherever_git_keeps_it()
     {
         var library = Repository("library");
         var root = Repository("top");
@@ -201,33 +196,63 @@ public sealed partial class GitTrustScanTests : IDisposable
         Git(root, "submodule", "--quiet", "add", library, "libs/zip");
         Git(Path.Combine(root, "libs", "zip"), "config", "filter.x.smudge", "never-run");
         Git(root, "commit", "-q", "-m", "two inside");
+        // Not tracked at all, in an ignored folder: git would track it once the ignore goes, and the walk reads no ignore.
+        File.WriteAllText(Path.Combine(root, ".gitignore"), "ignored/\n");
+        Git(Directory.CreateDirectory(Path.Combine(root, "ignored", "tool")).FullName, "init", "-q");
+        Git(Path.Combine(root, "ignored", "tool"), "config", "core.pager", "never-run");
 
-        var scan = await GitTrustScan.ReadAsync(root, default, _env);
+        var scan = await ScanAsync(root);
         Assert.Null(scan.Problem);
         Assert.Equal(
-            ["submodule libs/zip: filter.x.smudge", "submodule vendor: core.fsmonitor", "submodule vendor: hook post-checkout"],
+            ["submodule ignored/tool: core.pager", "submodule libs/zip: filter.x.smudge", "submodule vendor: core.fsmonitor", "submodule vendor: hook post-checkout"],
             scan.Risks.Order(StringComparer.Ordinal));
-        // The filters are every repository's: the user's Git LFS, and the one the submodule names.
-        Assert.Equal(["lfs", "x"], scan.Filters);
-        Assert.Equal(
-            [new GitSetting("filter.x.smudge", string.Empty), new GitSetting("core.fsmonitor", string.Empty), .. GitTrust.Careful],
-            GitTrust.Overrides(scan.Risks, scan.Filters));
 
         // The submodule's work tree taken away, its repository stays under .git/modules, and is still read.
         Git(root, "submodule", "--quiet", "deinit", "-f", "libs/zip");
-        var after = await GitTrustScan.ReadAsync(root, default, _env);
-        Assert.Contains("submodule libs/zip: filter.x.smudge", after.Risks);
+        Assert.Contains("submodule libs/zip: filter.x.smudge", (await ScanAsync(root)).Risks);
+    }
+
+    /// <summary>A repository inside another inside another is followed, each named from the repository opened.</summary>
+    [GitFact]
+    public async Task A_repository_inside_one_that_is_inside_is_found()
+    {
+        var root = Repository("levels");
+        var outer = Directory.CreateDirectory(Path.Combine(root, "outer")).FullName;
+        Git(outer, "init", "-q");
+        var inner = Directory.CreateDirectory(Path.Combine(outer, "inner")).FullName;
+        Git(inner, "init", "-q");
+        Git(inner, "config", "core.sshCommand", "never-run");
+        var scan = await ScanAsync(root);
+        Assert.Null(scan.Problem);
+        Assert.Equal(["submodule outer/inner: core.sshcommand"], scan.Risks);
     }
 
     [GitFact]
     public async Task A_folder_that_is_no_repository_is_a_problem_and_never_nothing_to_run()
     {
         var folder = Directory.CreateDirectory(Path.Combine(_dir.Path, "not-one")).FullName;
-        // Kept from finding a repository above the temporary folder, should there be one.
         File.WriteAllText(Path.Combine(folder, ".git"), "gitdir: nowhere\n");
-        var scan = await GitTrustScan.ReadAsync(folder, default, _env);
+        var scan = await ScanAsync(folder);
         Assert.NotNull(scan.Problem);
         Assert.Empty(scan.Risks);
+        Assert.NotNull((await ScanAsync(Directory.CreateDirectory(Path.Combine(_dir.Path, "no-git")).FullName)).Problem);
+    }
+
+    /// <summary>The root of a folder inside a repository is found by axKit's own code, as git finds it; a repository's own folder and a bare one have none.</summary>
+    [GitFact]
+    public void The_root_is_found_going_up_without_git()
+    {
+        var root = Repository("roots");
+        var deep = Directory.CreateDirectory(Path.Combine(root, "src", "deep")).FullName;
+        Assert.Equal(root, GitTrustScan.RootOf(deep));
+        Assert.Equal(root, GitTrustScan.RootOf(Path.Combine(root, "a.txt")));
+        Assert.Null(GitTrustScan.RootOf(Path.Combine(root, ".git", "hooks")));
+        Git(_dir.Path, "init", "-q", "--bare", "bare.git");
+        Assert.Null(GitTrustScan.RootOf(Path.Combine(_dir.Path, "bare.git")));
+        // A submodule's work tree is a root of its own, by its .git file.
+        var library = Repository("roots-library");
+        Git(root, "submodule", "--quiet", "add", library, "libs/zip");
+        Assert.Equal(Path.Combine(root, "libs", "zip"), GitTrustScan.RootOf(Path.Combine(root, "libs", "zip")));
     }
 
     /// <summary>A context that counts what is sent back to it, as a window's thread would be sent the scan's steps.</summary>
@@ -248,12 +273,7 @@ public sealed partial class GitTrustScanTests : IDisposable
         }
     }
 
-    /// <summary>
-    /// Root CLAUDE.md rule 3 (the second pass, finding 8): nothing of the scan comes back to the caller's thread
-    /// between its steps, where the folder reads were (200 submodules took 18 seconds on the window's thread).
-    /// The scan is asked from a thread with a context of its own, as the window's is; before, each of its steps
-    /// was sent to that context.
-    /// </summary>
+    /// <summary>Root CLAUDE.md rule 3 (L2 of the fourth pass): nothing of the scan comes back to the caller's thread between its steps, the walk and the reads of files among them.</summary>
     [GitFact]
     public async Task Nothing_of_the_scan_runs_on_the_callers_thread()
     {
@@ -275,43 +295,191 @@ public sealed partial class GitTrustScanTests : IDisposable
         Assert.Equal(0, context.Count);
     }
 
-    // ---- The second pass's experiments (2026-11-27): what ran, and runs no longer ----
+    // ---- H1, T1: the class, every name of git help --config, every command before trust ----
+
+    /// <summary>The fixture of the names git knows, with the version of git it was made with on its first line (H1).</summary>
+    private const string NamesFixture = "git/help-config.txt";
+
+    /// <summary>The command that makes the fixture again, from the repository's folder.</summary>
+    private const string RenewFixture = @"& { git version; git help --config } | Out-File -Encoding utf8 tests\fixtures\git\help-config.txt";
+
+    /// <summary>The names of a list git help --config prints: a placeholder for a middle part (&lt;name&gt;, *) as "x"; a line that is no name (an include's condition, the closing words) left out.</summary>
+    private static IReadOnlyList<string> Names(IEnumerable<string> lines) =>
+        [.. lines.Select(line => line.Trim()).Where(line => Regex.IsMatch(line, @"^[A-Za-z0-9.<>*_-]+$") && line.Contains('.'))
+            .Select(line => Regex.Replace(line, "<[^>]+>|\\*", "x")).Distinct(StringComparer.Ordinal)];
 
     /// <summary>
-    /// Finding 1: Git LFS runs the program of lfs.extension.name.clean, a setting of the repository's, on every
-    /// add and diff of a file that goes through its filter; the name was on no list. Now the name is not known,
-    /// so the repository is asked about, and while it is not trusted no filter runs. Passes without running
-    /// where Git LFS is not installed.
+    /// The names to set for the class test, from the fixture and the git installed: with the same version, every
+    /// name the installed git knows must be in the fixture (a name the fixture lacks fails); with another version,
+    /// the names both know, said loudly, and the test fails afterwards off CI alone, with the command that renews
+    /// the fixture (GitHub's build runs a newer git, which must not turn it red).
     /// </summary>
-    [GitLfsFact]
-    public async Task An_extension_of_git_lfs_in_the_repositorys_settings_runs_nothing()
+    private (IReadOnlyList<string> Names, string? Differs) NamesToSet()
     {
-        var root = Repository("lfs");
-        File.WriteAllText(Path.Combine(root, ".gitattributes"), "*.bin filter=lfs\n");
-        File.WriteAllText(Path.Combine(root, "x.bin"), "binary");
-        Git(root, "config", "lfs.extension.x.clean", Marker("lfs-extension"));
-        Git(root, "config", "lfs.extension.x.smudge", Marker("lfs-extension"));
-        Git(root, "config", "lfs.extension.x.priority", "0");
+        var fixture = File.ReadAllLines(Path.Combine(Fixtures.Folder(), NamesFixture.Replace('/', Path.DirectorySeparatorChar)));
+        var fixtureVersion = fixture[0].Trim();
+        var known = Names(fixture.Skip(1));
+        var installedVersion = Git(_dir.Path, "version").Trim();
+        var installed = Names(Git(_dir.Path, "help", "--config").Split('\n'));
+        if (installedVersion == fixtureVersion)
+        {
+            var missing = installed.Except(known, StringComparer.Ordinal).ToList();
+            Assert.True(missing.Count == 0, $"{installedVersion} knows names the fixture {NamesFixture} lacks: {string.Join(", ", missing)}. Renew it: {RenewFixture}");
+            return (known, null);
+        }
 
-        var scan = await GitTrustScan.ReadAsync(root, default, _env);
-        Assert.Equal(["lfs.extension.x.clean", "lfs.extension.x.priority", "lfs.extension.x.smudge"], scan.Risks.Order(StringComparer.Ordinal));
-        Assert.Equal(scan.Risks, GitTrust.NotKnown(scan.Risks));
-        var overrides = GitTrust.Overrides(scan.Risks, scan.Filters);
+        var both = known.Intersect(installed, StringComparer.Ordinal).ToList();
+        var differs = $"The fixture {NamesFixture} is of {fixtureVersion} and the git installed is {installedVersion}: the class test ran the {both.Count} names both know, of {known.Count} in the fixture and {installed.Count} installed. Renew the fixture on the development computer: {RenewFixture}";
+        _output.WriteLine("LOUD: " + differs);
+        Console.WriteLine("::warning title=axGIT's git fixture::" + differs);
+        return (both, differs);
+    }
 
-        Assert.True((await AxGit(root, GitTexts.StageAllArguments, overrides)).Ok);
-        File.WriteAllText(Path.Combine(root, "x.bin"), "binary, changed");
-        Assert.True((await AxGit(root, ["diff"], overrides)).Ok);
-        Assert.Empty(Ran());
+    /// <summary>A settings file's text with each name set to the value <paramref name="value"/> gives it: a name whose variable git takes in no file (gitweb's with an underscore) left out.</summary>
+    private static string SettingsText(IEnumerable<string> names, Func<string, string> value)
+    {
+        var text = new System.Text.StringBuilder();
+        foreach (var name in names)
+        {
+            var first = name.IndexOf('.');
+            var last = name.LastIndexOf('.');
+            var variable = name[(last + 1)..];
+            if (!Regex.IsMatch(variable, "^[A-Za-z][A-Za-z0-9-]*$"))
+            {
+                continue;
+            }
 
-        // The way it ran: the same command with nothing set aside, as for a repository that held no risk.
-        await AxGit(root, ["diff"], null);
-        Assert.Equal(["lfs-extension"], Ran());
+            var header = last > first ? $"[{name[..first]} \"{name[(first + 1)..last]}\"]" : $"[{name[..first]}]";
+            var written = value(name).Replace("\\", "\\\\", StringComparison.Ordinal).Replace("\"", "\\\"", StringComparison.Ordinal);
+            text.Append(header).Append("\n\t").Append(variable).Append(" = ").Append(written).Append('\n');
+        }
+
+        return text.ToString();
     }
 
     /// <summary>
-    /// Finding 2: gc.recentObjectsHook is run by git's automatic maintenance after a commit, and an empty value
-    /// does not set it aside, since it is a setting with several values. Every run of axGIT's has the automatic
-    /// maintenance off. The repository is made ripe for it: loose objects over its limit, to be pruned at once.
+    /// The test that closes H1's class and T1's (the review's fourth pass): every name of git help --config set to a
+    /// program that leaves a mark, core.unsetenvvars to the variables axGIT's settings travel in, core.fsmonitor and
+    /// core.hooksPath to programs, an include of a file that names more, in the repository opened, in its work
+    /// tree's own file and in a submodule's: the check before trust runs git only as the parser of one file with no
+    /// repository, each run of it succeeds and lists every name, no mark comes, every name not known to be harmless
+    /// is a risk; and every command axGIT has is refused in the session, so that nothing runs. The half that shows
+    /// the test can fail: a plain status in a console leaves the marks.
+    /// </summary>
+    [GitFact]
+    public async Task Before_trust_no_git_command_runs_in_the_repository_and_the_parser_runs_nothing()
+    {
+        var (names, differs) = NamesToSet();
+        var library = Repository("every-library");
+        var root = Repository("every");
+        Git(root, "submodule", "--quiet", "add", library, "libs/zip");
+        Git(root, "commit", "-q", "-m", "a submodule");
+        var program = MarkerFile(Path.Combine(_dir.Path, "program"), "program");
+        var hooks = Path.Combine(_dir.Path, "every-hooks");
+        foreach (var hook in new[] { "pre-commit", "post-checkout", "post-index-change", "reference-transaction" })
+        {
+            MarkerFile(Path.Combine(hooks, hook), "hook-" + hook);
+        }
+
+        var included = _dir.File("included.cfg", SettingsText(["core.fsmonitor", "filter.x.clean"], name => Marker("included-" + name)));
+        string Value(string name) => name.ToLowerInvariant() switch
+        {
+            "core.unsetenvvars" => "GIT_CONFIG_COUNT,GIT_CONFIG_PARAMETERS",
+            "core.fsmonitor" or "core.askpass" or "core.editor" or "core.sshcommand" => program,
+            "core.hookspath" => hooks.Replace('\\', '/'),
+            "include.path" or "includeif.x.path" => included.Replace('\\', '/'),
+            _ => Marker(name),
+        };
+
+        var text = SettingsText(names, Value);
+        var module = Path.Combine(root, ".git", "modules", "libs", "zip");
+        File.AppendAllText(Path.Combine(root, ".git", "config"), text);
+        File.WriteAllText(Path.Combine(root, ".git", "config.worktree"), text);
+        File.AppendAllText(Path.Combine(module, "config"), text);
+        File.WriteAllText(Path.Combine(root, ".gitattributes"), "*.txt filter=x diff=x merge=x\n");
+        Ran();
+
+        var record = new List<IReadOnlyList<string>>();
+        GitTrustScan.Record = record;
+        TrustScan scan;
+        try
+        {
+            scan = await ScanAsync(root);
+        }
+        finally
+        {
+            GitTrustScan.Record = null;
+        }
+
+        Assert.Null(scan.Problem);
+        Assert.Empty(Ran());
+        // The only git runs: the parser, of one file each, with no repository (no -C), and each succeeded (no settings unread).
+        Assert.NotEmpty(record);
+        foreach (var run in record)
+        {
+            Assert.DoesNotContain("-C", run);
+            var at = run.ToList().IndexOf("config");
+            Assert.True(at > 0, string.Join(' ', run));
+            Assert.Equal(GitTrust.ParserArguments(run[at + 2]), run.Skip(at));
+        }
+
+        Assert.DoesNotContain(scan.Risks, risk => risk.EndsWith(GitTrust.NotRead, StringComparison.Ordinal));
+        var shapes = scan.Risks.Where(risk => !risk.StartsWith("submodule ", StringComparison.Ordinal)).Select(GitTrust.Shape).ToHashSet(StringComparer.Ordinal);
+        var written = names.Where(name => Regex.IsMatch(name[(name.LastIndexOf('.') + 1)..], "^[A-Za-z][A-Za-z0-9-]*$")).ToList();
+        var unnamed = written.Where(name => !GitTrust.IsInert(name) && !shapes.Contains(GitTrust.Shape(name))).ToList();
+        Assert.True(unnamed.Count == 0, "Names set in the repository that are not risks: " + string.Join(", ", unnamed));
+        Assert.Contains("submodule libs/zip: core.fsmonitor", scan.Risks);
+        Assert.Contains("core.unsetenvvars", scan.Risks);
+
+        // Every command axGIT has, in the session of a repository the user has not trusted: each refused, none run.
+        var session = new GitSession(root, _ => false, _env);
+        await session.CheckAsync();
+        Assert.False(session.Trusted);
+        var results = await GitTests.EveryCommandAsync(root, "origin", (arguments, change) => change ? session.ChangeAsync(arguments, GitRunner.Short) : session.RunAsync(arguments, GitRunner.Short));
+        Assert.All(results, one => Assert.Equal("axGIT runs nothing in this repository until you trust it.", one.Result.Error));
+        Assert.Empty(Ran());
+
+        // The way it ran (H1): the status of the third pass at the opening, in a repository whose own
+        // core.unsetenvvars clears the variables axGIT's settings travel in, with a submodule's file monitor (git
+        // stops at the first value of the wrong kind in the repository above, so this one holds those two alone).
+        var h1 = Repository("h1");
+        var h1Library = Repository("h1-library");
+        Git(h1, "submodule", "--quiet", "add", h1Library, "libs/zip");
+        Git(h1, "config", "core.unsetenvvars", "GIT_CONFIG_COUNT,GIT_CONFIG_PARAMETERS");
+        Git(Path.Combine(h1, ".git", "modules", "libs", "zip"), "config", "core.fsmonitor", program);
+        File.AppendAllText(Path.Combine(h1, "libs", "zip", "a.txt"), "changed\n");
+        string[] thirdPass = ["-c", "core.quotepath=false", "-c", "color.ui=never", "-c", "core.fsmonitor=false", "-c", "protocol.ext.allow=never", "-c", "maintenance.auto=false", "-c", "gc.auto=0"];
+        var aside = new Dictionary<string, string> { ["GIT_CONFIG_COUNT"] = "1", ["GIT_CONFIG_KEY_0"] = "core.fsmonitor", ["GIT_CONFIG_VALUE_0"] = string.Empty };
+        PlainWith(h1, aside, [.. thirdPass, .. GitStatus.Arguments]);
+        Assert.Equal(["program"], Ran());
+        // And the second line of the fourth pass: git's own default given on the command line, the same status sets the monitor aside.
+        PlainWith(h1, aside, [.. thirdPass, "-c", "core.unsetenvvars=PERL5LIB", .. GitStatus.Arguments]);
+        Assert.Empty(Ran());
+
+        Assert.True(differs is null || System.Environment.GetEnvironmentVariable("GITHUB_ACTIONS") is { Length: > 0 }, differs);
+    }
+
+    /// <summary>git as a console runs it, with more variables for this run.</summary>
+    private ProcessResult PlainWith(string folder, IReadOnlyDictionary<string, string> more, IReadOnlyList<string> arguments)
+    {
+        var start = new ProcessStartInfo(GitRunner.Program) { WorkingDirectory = folder };
+        foreach (var argument in arguments)
+        {
+            start.ArgumentList.Add(argument);
+        }
+
+        GitTests.Put(start, _env);
+        GitTests.Put(start, more);
+        return ProcessRun.Run(start, [], TimeSpan.FromSeconds(60));
+    }
+
+    // ---- What every run has, trusted or not ----
+
+    /// <summary>
+    /// The second pass, finding 2: gc.recentObjectsHook is run by git's automatic maintenance after a commit, and an
+    /// empty value does not set it aside, since it is a setting with several values. Every run of axGIT's has the
+    /// automatic maintenance off, in a trusted repository too. The repository is made ripe for it: loose objects over
+    /// its limit, to be pruned at once.
     /// </summary>
     [GitFact]
     public async Task The_recent_objects_hook_of_automatic_maintenance_runs_nothing()
@@ -319,7 +487,6 @@ public sealed partial class GitTrustScanTests : IDisposable
         var root = Repository("maintenance");
         var blobs = Directory.CreateDirectory(Path.Combine(_dir.Path, "blobs")).FullName;
         var paths = Enumerable.Range(0, 1500).Select(number => Path.Combine(blobs, number + ".txt")).ToList();
-        // The same texts in every run, so the same objects: enough of them in the folder git counts (objects/17).
         paths.ForEach(path => File.WriteAllText(path, "blob " + Path.GetFileName(path) + "\n"));
         var start = new ProcessStartInfo(GitRunner.Program) { WorkingDirectory = root };
         start.ArgumentList.Add("hash-object");
@@ -332,112 +499,41 @@ public sealed partial class GitTrustScanTests : IDisposable
         Git(root, "config", "gc.autoPackLimit", "1");
         Git(root, "config", "gc.pruneExpire", "now");
 
-        var overrides = await NotTrustedAsync(root);
         File.AppendAllText(Path.Combine(root, "a.txt"), "two\n");
-        Assert.True((await AxGit(root, GitTexts.StageAllArguments, overrides)).Ok);
-        Assert.True((await AxGit(root, GitTexts.CommitArguments("two"), overrides)).Ok);
+        Assert.True((await AxGit(root, GitTexts.StageAllArguments)).Ok);
+        Assert.True((await AxGit(root, GitTexts.CommitArguments("two"))).Ok);
         Assert.Empty(Ran());
 
-        // The same with the repository trusted: the maintenance is off for every run, not for an untrusted one alone.
-        File.AppendAllText(Path.Combine(root, "a.txt"), "three\n");
-        Assert.True((await AxGit(root, ["commit", "-a", "-m", "three"], null)).Ok);
-        Assert.Empty(Ran());
-
-        // The way it ran: git's own automatic gc in a console, in the foreground. A commit started it up to git 2.53;
-        // later versions' automatic maintenance may repack without gc, or run detached, so the baseline asks gc itself.
+        // The way it ran: git's own automatic gc in a console, in the foreground.
         Git(root, "-c", "gc.autoDetach=false", "gc", "--auto");
         Assert.Equal(["recent-objects"], Ran());
     }
 
     /// <summary>
-    /// Finding 3: a filter whose name holds an equals sign. As an argument, "-c filter.a=b.clean=", git cut the
-    /// name at the first sign and set nothing aside; through the environment the name is whole.
+    /// The second line (T4's settings, <see cref="GitTrust.Overrides"/>), the second pass's finding 3:
+    /// core.gitProxy. git takes the first proxy command it reads, the repository's, so an empty one given after it
+    /// set nothing aside; without the git transport none is started.
     /// </summary>
     [GitFact]
-    public async Task A_filter_with_an_equals_sign_in_its_name_runs_nothing()
-    {
-        var root = Repository("equals");
-        File.WriteAllText(Path.Combine(root, ".gitattributes"), "*.txt filter=a=b\n");
-        Git(root, "config", "filter.a=b.clean", Marker("equals-filter"));
-        File.WriteAllText(Path.Combine(root, "a.txt"), "one\nchanged\n");
-
-        var overrides = await NotTrustedAsync(root);
-        Assert.Contains(new GitSetting("filter.a=b.clean", string.Empty), overrides);
-        Assert.True((await AxGit(root, ["diff"], overrides)).Ok);
-        Assert.True((await AxGit(root, GitTexts.StageAllArguments, overrides)).Ok);
-        Assert.Empty(Ran());
-
-        // The way it ran: the name set to nothing as an argument, which git reads as another name.
-        File.WriteAllText(Path.Combine(root, "a.txt"), "one\nchanged again\n");
-        Plain(root, "-c", "filter.a=b.clean=", "diff");
-        Assert.Equal(["equals-filter"], Ran());
-    }
-
-    /// <summary>
-    /// Finding 3: core.gitProxy. git takes the first proxy command it reads, the repository's, so an empty one
-    /// given after it set nothing aside; without the git transport none is started.
-    /// </summary>
-    [GitFact]
-    public async Task A_proxy_command_of_the_repositorys_runs_nothing()
+    public async Task A_proxy_command_set_aside_runs_nothing()
     {
         var root = Repository("proxy-command");
         Git(root, "config", "core.gitProxy", MarkerFile(Path.Combine(_dir.Path, "proxy-program"), "git-proxy"));
         Git(root, "remote", "add", "origin", "git://host.example.invalid/x.git");
 
-        var overrides = await NotTrustedAsync(root);
-        var fetched = await AxGit(root, GitTexts.FetchArguments("origin"), overrides);
+        var fetched = await AxGit(root, GitTexts.FetchArguments("origin"), GitTrust.Overrides(["core.gitProxy"], []));
         Assert.False(fetched.Ok);
         Assert.Empty(Ran());
 
-        // The way it ran: the empty proxy command alone, which is what was given until now.
+        // The way it ran: the empty proxy command alone.
         await AxGit(root, GitTexts.FetchArguments("origin"), [new GitSetting("core.gitproxy", string.Empty)]);
         Assert.Equal(["git-proxy"], Ran());
     }
 
     /// <summary>
-    /// Finding 4: a settings file included for one branch alone (includeIf onbranch). The look when the
-    /// repository opened saw no filter; after axGIT's own switch the file counts, and its filter ran on the
-    /// next diff. The scan is made again before the lists are read after every command (AG-1.6b), and what git
-    /// is run with is worked out from what is there then.
-    /// </summary>
-    [GitFact]
-    public async Task A_settings_file_that_counts_on_another_branch_runs_nothing_after_the_switch()
-    {
-        var root = Repository("branches");
-        File.WriteAllText(Path.Combine(root, ".gitattributes"), "*.txt filter=x\n");
-        Git(root, "add", ".gitattributes");
-        Git(root, "commit", "-q", "-m", "attributes");
-        Git(root, "branch", "other");
-        File.WriteAllText(Path.Combine(root, ".git", "extra.cfg"), $"[filter \"x\"]\n\tclean = {Marker("branch-filter").Replace("\"", "\\\"", StringComparison.Ordinal)}\n");
-        Git(root, "config", "includeIf.onbranch:other.path", "extra.cfg");
-
-        // As the repository opens: the include is the one risk, and no filter of its file is known yet.
-        var opened = await GitTrustScan.ReadAsync(root, default, _env);
-        Assert.Equal(["includeif.onbranch:other.path"], opened.Risks);
-        var first = GitTrust.Overrides(opened.Risks, opened.Filters);
-        Assert.True((await AxGit(root, ["switch", "other"], first)).Ok);
-        Assert.Empty(Ran());
-
-        // Before the lists are read after the switch: the scan again, and the mark is another, so the user is asked again.
-        var again = await GitTrustScan.ReadAsync(root, default, _env);
-        Assert.Contains("filter.x.clean", again.Risks);
-        Assert.NotEqual(GitTrust.Mark(opened.Risks), GitTrust.Mark(again.Risks));
-        File.WriteAllText(Path.Combine(root, "a.txt"), "one\nchanged\n");
-        var second = GitTrust.Overrides(again.Risks, again.Filters);
-        Assert.True((await AxGit(root, ["diff"], second)).Ok);
-        Assert.True((await AxGit(root, GitTexts.StageAllArguments, second)).Ok);
-        Assert.Empty(Ran());
-
-        // The way it ran: what was set aside when the repository opened, used after the switch.
-        File.WriteAllText(Path.Combine(root, "a.txt"), "one\nchanged again\n");
-        await AxGit(root, ["diff"], first);
-        Assert.Equal(["branch-filter"], Ran());
-    }
-
-    /// <summary>
-    /// Finding 4: a folder with a repository of its own and no entry in the index. Stage all makes it an entry,
-    /// and from then on git runs itself inside it on every status, with that repository's hooks. The scan finds
-    /// it before anything is staged, and no hook runs in a repository that is not trusted.
+    /// The second pass's finding 4: a folder with a repository of its own and no entry in the index; Stage all
+    /// makes it an entry, and from then on git runs itself inside it on every status, with that repository's hooks.
+    /// The scan finds it, and nothing runs in a repository that is not trusted.
     /// </summary>
     [GitFact]
     public async Task A_hook_of_a_repository_in_a_folder_git_does_not_track_runs_nothing()
@@ -451,38 +547,144 @@ public sealed partial class GitTrustScanTests : IDisposable
         MarkerFile(Path.Combine(vendor, ".git", "hooks", "post-index-change"), "nested-hook");
         Ran();
 
-        var scan = await GitTrustScan.ReadAsync(root, default, _env);
+        var session = new GitSession(root, _ => false, _env);
+        var scan = await session.CheckAsync();
         Assert.Equal(["submodule vendor: hook post-index-change"], scan.Risks);
-        var overrides = GitTrust.Overrides(scan.Risks, scan.Filters);
-
-        // A file of the repository inside with another time, and the same text: its status writes its index again, which is when the hook runs.
+        Assert.False((await session.ChangeAsync(GitTexts.StageAllArguments, GitRunner.Short)).Ok);
         var time = DateTime.UtcNow;
         void Touch() => File.SetLastWriteTimeUtc(Path.Combine(vendor, "v.txt"), time = time.AddSeconds(3));
-
-        Assert.True((await AxGit(root, GitTexts.StageAllArguments, overrides)).Ok);
         Touch();
-        Assert.True((await AxGit(root, GitStatus.Arguments, overrides)).Ok);
+        Assert.False((await session.RunAsync(GitStatus.Arguments, GitRunner.Short)).Ok);
         Assert.Empty(Ran());
 
-        // The way it ran: the status with nothing set aside, as for a repository whose one look had found nothing.
+        // The way it ran: the stage and the status as a session that found nothing runs them.
+        Assert.True((await AxGit(root, GitTexts.StageAllArguments)).Ok);
         Touch();
-        await AxGit(root, GitStatus.Arguments, null);
+        await AxGit(root, GitStatus.Arguments);
         Assert.Equal(["nested-hook"], Ran());
     }
 
-    /// <summary>A repository inside another inside another is followed, each named from the repository opened.</summary>
+    // ---- M1: a legacy remotes file; T3: the fetch names its line ----
+
+    /// <summary>
+    /// M1 (tried with git 2.53): a legacy .git/remotes file with "Pull: +refs/heads/*:refs/heads/*" made the fetch
+    /// with --prune delete every local branch the remote did not have. Such a file is a risk the scan names (and a
+    /// legacy branches file too), and the fetch names its own line with an empty refmap, so that the file applies to
+    /// nothing even in a trusted repository.
+    /// </summary>
     [GitFact]
-    public async Task A_repository_inside_one_that_is_inside_is_found()
+    public async Task A_legacy_remotes_file_is_a_risk_and_a_fetch_obeys_none()
     {
-        var root = Repository("levels");
-        var outer = Directory.CreateDirectory(Path.Combine(root, "outer")).FullName;
-        Git(outer, "init", "-q");
-        var inner = Directory.CreateDirectory(Path.Combine(outer, "inner")).FullName;
-        Git(inner, "init", "-q");
-        Git(inner, "config", "core.sshCommand", "never-run");
-        var scan = await GitTrustScan.ReadAsync(root, default, _env);
-        Assert.Null(scan.Problem);
-        Assert.Equal(["submodule outer/inner: core.sshcommand"], scan.Risks);
+        Git(_dir.Path, "init", "-q", "--bare", "m1.git");
+        var root = Repository("m1");
+        Git(root, "push", "-q", Path.Combine(_dir.Path, "m1.git"), "main");
+        Git(root, "branch", "keep");
+        File.WriteAllText(_dir.File(Path.Combine("m1", ".git", "remotes", "leg"), string.Empty), $"URL: {Slashes}/m1.git\nPull: +refs/heads/*:refs/heads/*\n");
+        _dir.File(Path.Combine("m1", ".git", "branches", "old"), $"{Slashes}/m1.git\n");
+        var scan = await ScanAsync(root);
+        Assert.Equal([GitTrust.Legacy("remotes", "leg"), GitTrust.Legacy("branches", "old")], scan.Risks);
+
+        Git(root, "checkout", "-q", "--detach");
+        Assert.True((await AxGit(root, GitTexts.FetchArguments("leg"))).Ok);
+        Assert.Contains("keep", Git(root, "branch", "--list"));
+        Assert.Contains("leg/main", Git(root, "branch", "-r"));
+
+        // The way it ran: the fetch of the third pass, without its line.
+        await AxGit(root, ["fetch", "--prune", "--no-recurse-submodules", "--no-all", "--upload-pack=git-upload-pack", "--", "leg"]);
+        Assert.DoesNotContain("keep", Git(root, "branch", "--list"));
+    }
+
+    // ---- M2, D9: places on another computer, every form ----
+
+    /// <summary>A path of the test's folder through this computer's own share, as another computer's would be reached.</summary>
+    private string Share(string relative) => "//localhost/C$" + Path.Combine(_dir.Path, relative)[2..].Replace('\\', '/');
+
+    /// <summary>
+    /// M2 (tried with git 2.53 through //localhost/C$): the guard of the third pass read syntax, and an include on
+    /// one line with its section, a value split over two lines, a .git link to a share, and core.excludesFile,
+    /// core.worktree, core.attributesFile, mailmap.file, commit.template, core.hooksPath, an alternate object store,
+    /// a .git file and a commondir on a share all reached the share before any notice. Now git's own parser reads
+    /// the settings, every value that names another computer is a risk, and nothing on the share is read: a hooks
+    /// folder there with a hook in it gives no hook risk. The half that shows git reaches it: a status as a console
+    /// runs it reads core.excludesFile through the share.
+    /// </summary>
+    [GitFact]
+    public async Task Every_form_that_names_another_computer_is_a_risk_and_nothing_there_is_read()
+    {
+        _dir.File(Path.Combine("far", "inc.cfg"), "[user]\n\tname = far\n");
+        _dir.File(Path.Combine("far", "ignore"), "secret.txt\n");
+        MarkerFile(Path.Combine(_dir.Path, "far", "hooks", "pre-commit"), "far-hook");
+        Directory.CreateDirectory(Path.Combine(_dir.Path, "far", "objects"));
+        var far = Share("far");
+        // The share is this computer's own administrative one; where it is not open (a computer without it), the
+        // halves that go through it are said as not tried, and the rest, which reads the text alone, runs.
+        var reachable = Directory.Exists(far.Replace('/', '\\'));
+        if (!reachable)
+        {
+            _output.WriteLine("LOUD: this computer's share C$ is not reachable: the .git link and the console's read through the share were not tried.");
+        }
+
+        async Task<IReadOnlyList<string>> RisksOf(string name, string config)
+        {
+            var root = Repository(name);
+            File.AppendAllText(Path.Combine(root, ".git", "config"), config);
+            var scan = await ScanAsync(root);
+            Assert.Null(scan.Problem);
+            return scan.Risks;
+        }
+
+        Assert.Contains("include.path names another computer, localhost", await RisksOf("one-line", $"[include] path = {far}/inc.cfg\n"));
+        Assert.Contains("include.path names another computer, localhost", await RisksOf("split", $"[include]\n\tpath = \"//local\\\nhost/C$\"{far[14..]}/inc.cfg\n"));
+        Assert.Contains("includeif.onbranch:main.path names another computer, localhost", await RisksOf("include-if", $"[includeIf \"onbranch:main\"]\n\tpath = {far}/inc.cfg\n"));
+        foreach (var setting in new[] { "core.excludesFile", "core.worktree", "core.attributesFile", "mailmap.file", "commit.template" })
+        {
+            var section = setting[..setting.IndexOf('.')];
+            var variable = setting[(setting.IndexOf('.') + 1)..];
+            Assert.Contains($"{setting.ToLowerInvariant()} names another computer, localhost", await RisksOf("value-" + variable, $"[{section}]\n\t{variable} = {far}/ignore\n"));
+        }
+
+        var hooksRisks = await RisksOf("far-hooks", $"[core]\n\thooksPath = {far}/hooks\n");
+        Assert.Contains("core.hookspath names another computer, localhost", hooksRisks);
+        Assert.DoesNotContain("hook pre-commit", hooksRisks);
+
+        // An alternate object store, a .git file and a commondir file on the share.
+        var alternates = Repository("alternates");
+        _dir.File(Path.Combine("alternates", ".git", "objects", "info", "alternates"), $"{far}/objects\n");
+        Assert.Contains(GitTrust.Alternates, (await ScanAsync(alternates)).Risks);
+        var tree = Directory.CreateDirectory(Path.Combine(_dir.Path, "far-tree")).FullName;
+        File.WriteAllText(Path.Combine(tree, ".git"), $"gitdir: {far}/real.git\n");
+        Assert.Equal(["its .git file names another computer, localhost"], (await ScanAsync(tree)).Risks);
+        var linked = Repository("far-common");
+        File.WriteAllText(Path.Combine(linked, ".git", "commondir"), $"{far}\n");
+        Assert.Contains("its commondir file names another computer, localhost", (await ScanAsync(linked)).Risks);
+
+        // A .git that is a link to the share: named, and never followed (the repository there has a hook).
+        var real = Repository("far-real");
+        MarkerFile(Path.Combine(real, ".git", "hooks", "post-checkout"), "real-hook");
+        var link = Directory.CreateDirectory(Path.Combine(_dir.Path, "link-tree")).FullName;
+        if (!reachable)
+        {
+            return;
+        }
+
+        try
+        {
+            Directory.CreateSymbolicLink(Path.Combine(link, ".git"), Share(Path.Combine("far-real", ".git")).Replace('/', '\\'));
+            var risks = (await ScanAsync(link)).Risks;
+            Assert.Equal([GitTrust.Link(".git")], risks);
+            Assert.Equal(link, GitTrustScan.RootOf(link));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            _output.WriteLine("LOUD: a symbolic link could not be made on this computer (" + ex.Message + "): the .git link was not tried.");
+        }
+
+        // The way git reaches it: core.excludesFile on the share, read at a status.
+        var console = Repository("console");
+        File.WriteAllText(Path.Combine(console, "secret.txt"), "x\n");
+        Assert.Contains("secret.txt", Git(console, "status", "--porcelain"));
+        Git(console, "config", "core.excludesFile", far + "/ignore");
+        Assert.DoesNotContain("secret.txt", Git(console, "status", "--porcelain"));
     }
 
     // ---- The server asked about is the one reached (AG-5.4a; the second pass, findings 5 and 10) ----
@@ -506,18 +708,18 @@ public sealed partial class GitTrustScanTests : IDisposable
     }
 
     /// <summary>
-    /// A fetch, pull or push as the window makes it: the status, the questions of <see cref="GitReach"/>, and,
-    /// unless they gave a problem, the command with the remote they gave on its command line. Returns what was
-    /// asked about and the hosts git then tried to reach, read from what it said.
+    /// A fetch, pull or push as the window makes it in a trusted repository: the status, the questions of
+    /// <see cref="GitReach"/>, and, unless they gave a problem, the command with the remote they gave on its
+    /// command line (a pull with the branch it follows; one that follows none is not made). Returns what was asked
+    /// about and the hosts git then tried to reach, read from what it said.
     /// </summary>
-    private async Task<(Reach Asked, IReadOnlyList<string> Reached, string Said)> ToServerAsync(string root, string what, IReadOnlyList<GitSetting>? overrides = null)
+    private async Task<(Reach Asked, IReadOnlyList<string> Reached, string Said)> ToServerAsync(string root, string what)
     {
-        var status = GitStatus.Parse((await AxGit(root, GitStatus.Arguments, overrides)).Output);
-        var asked = await GitReach.ReadAsync(async arguments => await AxGit(root, arguments, overrides), push: what == "push", status.Branch, status.Upstream);
+        var status = GitStatus.Parse((await AxGit(root, GitStatus.Arguments)).Output);
+        var asked = await GitReach.ReadAsync(async arguments => await AxGit(root, arguments), push: what == "push", status.Branch, status.Upstream);
         Assert.NotNull(asked);
         if (asked.Problem is not null)
         {
-            // Nothing runs: no remote to put on a command line.
             Assert.Empty(asked.Remote);
             Assert.Empty(asked.Hosts);
             return (asked, [], string.Empty);
@@ -526,12 +728,17 @@ public sealed partial class GitTrustScanTests : IDisposable
         var arguments = what switch
         {
             "fetch" => GitTexts.FetchArguments(asked.Remote),
-            "pull" => GitTexts.PullArguments(asked.Remote),
+            "pull" => GitTexts.PullArguments(asked.Remote, asked.Merge),
             _ => GitTexts.PushArguments(asked.Remote, status.Upstream, status.Branch!),
         };
+        if (arguments is null)
+        {
+            return (asked, [], string.Empty);
+        }
+
         // Where git went is read from its own trace (the remote helper's command line names the address), and the
         // run ends at the proxy on a closed port of this computer: nothing leaves it.
-        var result = await GitRunner.RunAsync(root, arguments, GitRunner.Short, overrides: overrides, environment: new Dictionary<string, string>(_env) { ["GIT_TRACE"] = "1" });
+        var result = await GitRunner.RunAsync(root, arguments, GitRunner.Short, environment: new Dictionary<string, string>(_env) { ["GIT_TRACE"] = "1" });
         Assert.False(result.Ok);
         return (asked, [.. ReservedHost().Matches(result.AllText).Select(match => match.Value).Distinct()], result.AllText);
     }
@@ -562,7 +769,7 @@ public sealed partial class GitTrustScanTests : IDisposable
         await ReachesAsync(root, "push", "origin.example.invalid");
     }
 
-    /// <summary>Row 1: branch.main.remote without branch.main.merge. git was asked for the upstream's remote, which there is none of, so origin was asked about; git, run without a remote, fetched from the branch's.</summary>
+    /// <summary>Row 1: branch.main.remote without branch.main.merge. The fetch reaches the branch's remote, which is asked about; a pull names the branch it follows (T3), and this one follows none, so nothing is pulled.</summary>
     [GitFact]
     public async Task A_branch_with_a_remote_and_no_branch_to_follow_reaches_the_server_asked_about()
     {
@@ -570,7 +777,9 @@ public sealed partial class GitTrustScanTests : IDisposable
         Git(root, "config", "branch.main.remote", "evil");
         Git(root, "config", "--unset", "branch.main.merge");
         await ReachesAsync(root, "fetch", "evil.example.invalid");
-        await ReachesAsync(root, "pull", "evil.example.invalid");
+        var (pull, reached, _) = await ToServerAsync(root, "pull");
+        Assert.Null(pull.Merge);
+        Assert.Empty(reached);
         // Without an upstream a push goes to origin by name, and ties the branch to it.
         await ReachesAsync(root, "push", "origin.example.invalid");
     }
@@ -601,7 +810,7 @@ public sealed partial class GitTrustScanTests : IDisposable
         await ReachesAsync(root, "fetch", "origin.example.invalid");
         await ReachesAsync(root, "pull", "origin.example.invalid");
         // The way it ran: a fetch with no remote on its command line.
-        Assert.Equal(3, ReservedHost().Matches((await AxGit(root, ["fetch"], null)).AllText).Select(match => match.Value).Distinct().Count());
+        Assert.Equal(3, ReservedHost().Matches((await AxGit(root, ["fetch"])).AllText).Select(match => match.Value).Distinct().Count());
     }
 
     /// <summary>Row 4: a remote named like an option. The question stopped at a complaint about a switch, nobody was asked, and the push ran.</summary>
@@ -622,11 +831,9 @@ public sealed partial class GitTrustScanTests : IDisposable
         var root = WithRemotes("detached");
         Git(root, "config", "remote.pushDefault", "evil");
         Git(root, "config", "push.default", "matching");
-        // On the branch the default remote is the one asked about and reached.
         await ReachesAsync(root, "push", "evil.example.invalid");
         Git(root, "checkout", "-q", "--detach");
         await RunsNothingAsync(root, "push");
-        // A fetch needs no branch: the one remote of the name origin.
         await ReachesAsync(root, "fetch", "origin.example.invalid");
     }
 
@@ -638,8 +845,8 @@ public sealed partial class GitTrustScanTests : IDisposable
         Git(root, "config", "remotes.origin", "evil third");
         await RunsNothingAsync(root, "fetch");
         await RunsNothingAsync(root, "pull");
-        // The way it ran: the fetch itself, the remote on its command line.
-        var hosts = ReservedHost().Matches((await AxGit(root, GitTexts.FetchArguments("origin"), null)).AllText).Select(match => match.Value).Distinct().Order();
+        // The way it ran: the fetch of the third pass, the remote on its command line and no line of its own.
+        var hosts = ReservedHost().Matches((await AxGit(root, ["fetch", "--prune", "--no-recurse-submodules", "--no-all", "--upload-pack=git-upload-pack", "--", "origin"])).AllText).Select(match => match.Value).Distinct().Order();
         Assert.Equal(["evil.example.invalid", "third.example.invalid"], hosts);
     }
 
@@ -658,28 +865,29 @@ public sealed partial class GitTrustScanTests : IDisposable
         Assert.Empty(Ran());
     }
 
-    /// <summary>A branch that follows another branch of the same repository reaches no server, and its pull runs.</summary>
+    /// <summary>A branch that follows another branch of the same repository reaches no server, and its pull runs, naming that branch.</summary>
     [GitFact]
     public async Task A_branch_that_follows_a_branch_of_this_repository_asks_about_no_server()
     {
         var root = WithRemotes("here");
         Git(root, "switch", "-q", "-c", "topic", "--track", "main");
-        var status = GitStatus.Parse((await AxGit(root, GitStatus.Arguments, null)).Output);
-        var asked = await GitReach.ReadAsync(async arguments => await AxGit(root, arguments, null), push: false, status.Branch, status.Upstream);
+        var status = GitStatus.Parse((await AxGit(root, GitStatus.Arguments)).Output);
+        var asked = await GitReach.ReadAsync(async arguments => await AxGit(root, arguments), push: false, status.Branch, status.Upstream);
         Assert.NotNull(asked);
         Assert.Null(asked.Problem);
         Assert.Equal(".", asked.Remote);
+        Assert.Equal("refs/heads/main", asked.Merge);
         Assert.Empty(asked.Hosts);
-        Assert.True((await AxGit(root, GitTexts.PullArguments(asked.Remote), null)).Ok);
+        Assert.True((await AxGit(root, GitTexts.PullArguments(asked.Remote, asked.Merge)!)).Ok);
+        Assert.True((await AxGit(root, GitTexts.FetchArguments(asked.Remote))).Ok);
     }
 
     /// <summary>
-    /// Finding 10: a proxy the repository's own settings name is where the bytes go first. In a trusted
-    /// repository it is asked about and said; in one that is not trusted it is set to nothing, and git, asked
-    /// with the same settings, names none.
+    /// Finding 10: a proxy the repository's own settings name is where the bytes go first. In a trusted repository
+    /// it is asked about and said; it is a risk by its name, so in one that is not trusted nothing runs at all.
     /// </summary>
     [GitFact]
-    public async Task A_proxy_of_the_repositorys_own_settings_is_named_or_set_to_nothing()
+    public async Task A_proxy_of_the_repositorys_own_settings_is_named_and_a_risk()
     {
         var root = WithRemotes("proxy");
         // The repository's proxy is this computer at another address of its own, 127.0.0.2, apart from the test's own proxy at 127.0.0.1.
@@ -692,12 +900,9 @@ public sealed partial class GitTrustScanTests : IDisposable
         // curl names the proxy it failed at in words that change between versions ("via 127.0.0.2", "to 127.0.0.2").
         Assert.Contains("127.0.0.2", said);
 
-        var overrides = await NotTrustedAsync(root);
-        Assert.Contains(new GitSetting("http.https://origin.example.invalid/.proxy", string.Empty), overrides);
-        var (kept, direct, saidDirect) = await ToServerAsync(root, "fetch", overrides);
-        Assert.Empty(kept.Proxies);
-        Assert.Equal(["origin.example.invalid"], direct);
-        Assert.DoesNotContain("127.0.0.2", saidDirect);
+        var session = new GitSession(root, _ => false, _env);
+        Assert.Contains("http.https://origin.example.invalid/.proxy", (await session.CheckAsync()).Risks);
+        Assert.False((await session.ChangeAsync(GitTexts.FetchArguments("origin"), GitRunner.Short)).Ok);
 
         // The user's own proxy is the user's: not named.
         Git(root, "config", "--unset", "http.https://origin.example.invalid/.proxy");
@@ -721,21 +926,18 @@ public sealed partial class GitTrustScanTests : IDisposable
 
         async Task<IReadOnlyList<string>> Hosts(bool push)
         {
-            var asked = await GitReach.ReadAsync(async arguments => await AxGit(root, arguments, null), push, "main", "origin/main");
+            var asked = await GitReach.ReadAsync(async arguments => await AxGit(root, arguments), push, "main", "origin/main");
             Assert.Null(asked!.Problem);
             return asked.Hosts;
         }
 
-        // Nothing else set: a push goes where a fetch comes from.
         Assert.Equal(["fetch.example.invalid"], await Hosts(push: false));
         Assert.Equal(["fetch.example.invalid"], await Hosts(push: true));
 
-        // A push address of the remote's own.
         Git(root, "remote", "set-url", "--push", "origin", "https://push.example.invalid/a/b.git");
         Assert.Equal(["fetch.example.invalid"], await Hosts(push: false));
         Assert.Equal(["push.example.invalid"], await Hosts(push: true));
 
-        // The branch pushed to another remote, which has two push addresses, one of them rewritten.
         Git(root, "config", "branch.main.pushRemote", "backup");
         Git(root, "remote", "set-url", "--add", "--push", "backup", "https://old.example.invalid/a/b.git");
         Git(root, "remote", "set-url", "--add", "--push", "backup", "https://second.example.invalid/a/b.git");
@@ -743,7 +945,6 @@ public sealed partial class GitTrustScanTests : IDisposable
         Assert.Equal(["rewritten.example.invalid", "second.example.invalid"], await Hosts(push: true));
         Assert.Equal(["fetch.example.invalid"], await Hosts(push: false));
 
-        // remote.pushDefault, where the branch names none.
         Git(root, "config", "--unset", "branch.main.pushRemote");
         Git(root, "config", "remote.pushDefault", "backup");
         Assert.Equal(["rewritten.example.invalid", "second.example.invalid"], await Hosts(push: true));

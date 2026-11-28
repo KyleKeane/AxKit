@@ -1,4 +1,5 @@
 using AxGit.Core;
+using AxKit.Core;
 using AxKit.Forms;
 
 namespace AxGit;
@@ -361,9 +362,9 @@ public sealed partial class GitForm
         }, emptyMessage: "Type the branch name", byUser: true);
     }
 
-    private async Task FetchAsync(string remote)
+    private async Task FetchAsync(Reach reach)
     {
-        var result = await ChangeGitAsync(GitTexts.FetchArguments(remote), GitRunner.Long, "fetch");
+        var result = await ChangeGitAsync(GitTexts.FetchArguments(reach.Remote), GitRunner.Long, "fetch");
         if (result is null)
         {
             return;
@@ -380,9 +381,17 @@ public sealed partial class GitForm
         await RefreshAsync(announce: false, checkedNow: true);
     }
 
-    private async Task PullAsync(string remote)
+    /// <summary>Pull (AG-5.4): the branch the current one follows, named on the command line (T3); none followed, and nothing is fetched.</summary>
+    private async Task PullAsync(Reach reach)
     {
-        var result = await ChangeGitAsync(GitTexts.PullArguments(remote), GitRunner.Long, "pull");
+        if (GitTexts.PullArguments(reach.Remote, reach.Merge) is not { } arguments)
+        {
+            Log.Info("Pull not started: the branch follows no branch of a remote");
+            ShowNotice(Notice.Plain("Pull not started", "This branch follows no branch of a remote, so there is nothing named to pull. Nothing was fetched."));
+            return;
+        }
+
+        var result = await ChangeGitAsync(arguments, GitRunner.Long, "pull");
         if (result is null)
         {
             return;
@@ -399,7 +408,7 @@ public sealed partial class GitForm
         await RefreshAsync(announce: false, checkedNow: true);
     }
 
-    private async Task PushAsync(string remote)
+    private async Task PushAsync(Reach reach)
     {
         // A push is of a branch (GitReach says so before a server is asked about when HEAD is on none).
         if (_repo.Branch is not { } branch)
@@ -407,7 +416,7 @@ public sealed partial class GitForm
             return;
         }
 
-        var result = await ChangeGitAsync(GitTexts.PushArguments(remote, _repo.Upstream, branch), GitRunner.Long, "push");
+        var result = await ChangeGitAsync(GitTexts.PushArguments(reach.Remote, _repo.Upstream, branch), GitRunner.Long, "push");
         if (result is null)
         {
             return;

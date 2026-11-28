@@ -6,11 +6,14 @@ namespace AxGit.Tests;
 /// <summary>
 /// The seal over axGIT's trusted repositories and what each trust is for (SPEC.md AG-1.6, AG-8.1a, bundle AX-5.6;
 /// repairs.md R-53): a repository something other than axKit wrote into the list is not trusted, and a trusted one
-/// that would run something else than when it was trusted is asked about again.
+/// that would run something else than when it was trusted is asked about again. A trust is kept with the scan's
+/// mark (<see cref="TrustScan.Mark"/>); here marks of lines stand for it.
 /// </summary>
 public sealed class GitSealTests
 {
-    private static readonly string[] Hook = ["hook post-checkout"];
+    private static string M(params string[] lines) => GitTrust.Mark(lines);
+
+    private static readonly string Hook = M("hook post-checkout");
 
     private static string Saved(TempFolder temp)
     {
@@ -35,11 +38,11 @@ public sealed class GitSealTests
         Assert.True(settings.Trusts(@"c:\REPO", Hook));
 
         // Trusting another repository through the window is sealed again by its save.
-        Assert.True(settings.Trust(@"C:\other", ["core.fsmonitor"]));
+        Assert.True(settings.Trust(@"C:\other", M("core.fsmonitor")));
         settings.Save(path);
         settings = GitSettings.Load(path, out error);
         Assert.Null(error);
-        Assert.True(settings.Trusts(@"C:\other", ["core.fsmonitor"]));
+        Assert.True(settings.Trusts(@"C:\other", M("core.fsmonitor")));
         Assert.True(settings.Trusts(@"C:\repo", Hook));
     }
 
@@ -52,30 +55,28 @@ public sealed class GitSealTests
 
         Assert.True(settings.Trust(@"C:\repo", Hook));
         Assert.True(settings.Trusts(@"C:\repo", Hook));
-        // The same programs in another order or case are the same programs.
-        Assert.True(settings.Trusts(@"C:\repo", ["Hook Post-Checkout"]));
         Assert.False(settings.Trust(@"C:\repo", Hook));
 
         // One hook more, one configured program more, or another hook in its place: not what was trusted.
-        Assert.False(settings.Trusts(@"C:\repo", ["hook post-checkout", "hook pre-commit"]));
-        Assert.False(settings.Trusts(@"C:\repo", ["core.fsmonitor", "hook post-checkout"]));
-        Assert.False(settings.Trusts(@"C:\repo", ["hook pre-push"]));
+        Assert.False(settings.Trusts(@"C:\repo", M("hook post-checkout", "hook pre-commit")));
+        Assert.False(settings.Trusts(@"C:\repo", M("core.fsmonitor", "hook post-checkout")));
+        Assert.False(settings.Trusts(@"C:\repo", M("hook pre-push")));
         Assert.True(settings.WasTrusted(@"C:\repo"));
 
-        // Trusted again with what it runs now: one entry, for the new set.
-        Assert.True(settings.Trust(@"C:\repo", ["hook post-checkout", "hook pre-commit"]));
+        // Trusted again with what it runs now: one entry, for the new mark.
+        Assert.True(settings.Trust(@"C:\repo", M("hook post-checkout", "hook pre-commit")));
         Assert.Single(settings.Trusted);
-        Assert.True(settings.Trusts(@"C:\repo", ["hook pre-commit", "hook post-checkout"]));
+        Assert.True(settings.Trusts(@"C:\repo", M("hook pre-commit", "hook post-checkout")));
         Assert.False(settings.Trusts(@"C:\repo", Hook));
     }
 
     [Fact]
-    public void The_mark_is_of_the_programs_whatever_their_order_and_fields_cannot_run_together()
+    public void The_mark_is_of_the_lines_whatever_their_order_and_fields_cannot_run_together()
     {
-        Assert.Equal(GitTrust.Mark(["a", "b"]), GitTrust.Mark(["B", "A"]));
-        Assert.NotEqual(GitTrust.Mark(["ab"]), GitTrust.Mark(["a", "b"]));
-        Assert.NotEqual(GitTrust.Mark([]), GitTrust.Mark(["a"]));
-        Assert.Equal(64, GitTrust.Mark(Hook).Length);
+        Assert.Equal(M("a", "b"), M("B", "A"));
+        Assert.NotEqual(M("ab"), M("a", "b"));
+        Assert.NotEqual(M(), M("a"));
+        Assert.Equal(64, Hook.Length);
     }
 
     [Fact]
@@ -103,10 +104,10 @@ public sealed class GitSealTests
 
         // A mark changed by hand, to make the trust fit other programs: refused.
         path = Saved(temp);
-        SettingsText.Change(path, whole => whole["trusted"]![0]!["risks"] = GitTrust.Mark(["hook pre-push"]));
+        SettingsText.Change(path, whole => whole["trusted"]![0]!["risks"] = M("hook pre-push"));
         settings = GitSettings.Load(path, out error);
         Assert.Equal(GitSettings.TrustNotUsed + " " + AxKit.Core.SettingsSeal.CopyKept, error);
-        Assert.False(settings.Trusts(@"C:\repo", ["hook pre-push"]));
+        Assert.False(settings.Trusts(@"C:\repo", M("hook pre-push")));
     }
 
     [Fact]
@@ -121,7 +122,7 @@ public sealed class GitSealTests
         // A trust from before the marks counts for what the repository runs at its next opening, and is bound to it.
         Assert.True(settings.Trusts(@"C:\repo", Hook));
         Assert.True(settings.Trust(@"C:\repo", Hook));
-        Assert.False(settings.Trusts(@"C:\repo", ["hook pre-push"]));
+        Assert.False(settings.Trusts(@"C:\repo", M("hook pre-push")));
 
         settings.Save(path);
         Assert.True(SettingsText.HasSeal(path));

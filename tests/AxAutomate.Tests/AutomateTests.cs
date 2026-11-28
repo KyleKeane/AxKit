@@ -5,7 +5,7 @@ namespace AxAutomate.Tests;
 /// <summary>axAutomate's pure code (docs/axAutomate/SPEC.md): a script and a workflow file read as steps, the rows and their words, the folder and the settings.</summary>
 public sealed class AutomateTests : IDisposable
 {
-    private readonly string _folder = Path.Combine(Path.GetTempPath(), "axAutomate-tests-" + Guid.NewGuid().ToString("N"));
+    private readonly string _folder = Path.Combine(Path.GetTempPath(), "axAutomate-tests-" + TempFolder.Run + Guid.NewGuid().ToString("N"));
 
     public AutomateTests() => Directory.CreateDirectory(_folder);
 

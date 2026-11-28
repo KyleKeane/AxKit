@@ -1,19 +1,28 @@
 namespace AxKit.TestShared;
 
 /// <summary>
-/// A fresh folder under the temporary path for one test or one test class ("axkit-test-&lt;prefix&gt;-&lt;guid&gt;"), made at
-/// once and deleted with everything in it on Dispose. Compiled into every test project through
+/// A fresh folder under the temporary path for one test or one test class ("axkit-test-&lt;run&gt;-&lt;prefix&gt;-&lt;guid&gt;"),
+/// made at once and deleted with everything in it on Dispose. Compiled into every test project through
 /// tests/Directory.Build.props. Every such folder starts with <see cref="Mark"/>, which is in test.ps1's table of
-/// the tests' own folders, counted before and after a run (the review's third pass of 2026-11-27, L7).
+/// the tests' own folders (the review's third pass of 2026-11-27, L7), and then the run's own mark
+/// (<see cref="Run"/>, the fourth pass, L4): test.ps1 counts the folders of its own run after it, so that another
+/// run beside it (the push check on a clean copy) never makes a clean run fail.
 /// </summary>
 internal sealed class TempFolder : IDisposable
 {
     /// <summary>What the name of every test's temporary folder starts with.</summary>
     public const string Mark = "axkit-test-";
 
+    /// <summary>
+    /// The run's own mark with a hyphen after it, from the variable test.ps1 sets for its run (<c>AXKIT_TEST_RUN</c>);
+    /// empty for a run without it. Every folder a test makes in the temporary folder has it right after its
+    /// table's beginning (TempFolderTests holds that).
+    /// </summary>
+    public static string Run { get; } = Environment.GetEnvironmentVariable("AXKIT_TEST_RUN") is { Length: > 0 } run ? run + "-" : string.Empty;
+
     public TempFolder(string prefix)
     {
-        Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Mark + prefix + "-" + Guid.NewGuid().ToString("N"));
+        Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Mark + Run + prefix + "-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(Path);
     }
 

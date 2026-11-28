@@ -9,7 +9,7 @@ namespace AxTemplate.Tests;
 /// </summary>
 public sealed class TemplateTests : IDisposable
 {
-    private readonly string _folder = Path.Combine(Path.GetTempPath(), "axTemplate-tests-" + Guid.NewGuid().ToString("N"));
+    private readonly string _folder = Path.Combine(Path.GetTempPath(), "axTemplate-tests-" + TempFolder.Run + Guid.NewGuid().ToString("N"));
 
     public void Dispose()
     {

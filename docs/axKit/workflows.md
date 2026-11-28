@@ -614,7 +614,7 @@ Steps and keys: `docs/axKit/workflows/axGIT.md` (in Claude's working folder: `wo
     - Switch branches
     - Make a new branch
     - Fetch, pull and push
-    - Push a commit
+    - Push a commit to a folder in a terminal
 4. **Use axGIT's text, notices and axKit menu**
     - Find a word in a diff
     - Move down the details by page
@@ -627,10 +627,11 @@ Steps and keys: `docs/axKit/workflows/axGIT.md` (in Claude's working folder: `wo
     - Agree to the reminder and open the repository
     - Read what was agreed to on this computer
 6. **Open a repository that runs programs of its own**
-    - Open a repository with its own programs kept off
+    - Keep a repository with its own programs off
     - Trust a repository
 7. **Open a repository with settings axGIT does not know, and start no fetch or push git cannot name a server for**
-    - Open a repository with a setting axGIT does not know, kept off
+    - Keep a repository with a setting axGIT does not know off
+    - Trust a repository with a setting axGIT does not know
 
 ## axHelp
 

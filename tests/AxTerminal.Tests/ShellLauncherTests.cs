@@ -83,7 +83,7 @@ public sealed class ShellLauncherTests
     public void Command_prompt_comes_from_System32_whatever_ComSpec_says()
     {
         // S-1: ComSpec can be pointed at any program by a profile or a program that ran before; axTerminal never reads it.
-        var planted = Path.Combine(Path.GetTempPath(), "axkit-test-comspec-" + Guid.NewGuid().ToString("N") + ".exe");
+        var planted = Path.Combine(Path.GetTempPath(), "axkit-test-comspec-" + TempFolder.Run + Guid.NewGuid().ToString("N") + ".exe");
         var before = Environment.GetEnvironmentVariable("ComSpec");
         try
         {

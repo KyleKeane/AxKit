@@ -6,10 +6,12 @@ namespace AxGit.Core;
 /// settings send the connection through, which need it too and are said. With a <paramref name="Problem"/>, a
 /// sentence for the user, nothing is known for certain and the command must not run.
 /// <paramref name="Folders"/>: the addresses git reaches as a folder, with its own transport (a path on this
-/// computer, a share, and "." for the repository itself), which a push reads first (AG-5.4c);
-/// <paramref name="Ports"/>: the port an address gives for a host, said in the reminder.
+/// computer, a share, and "." for the repository itself), to which axGIT never pushes (AG-5.4c);
+/// <paramref name="Ports"/>: the port an address gives for a host, said in the reminder; <paramref name="Merge"/>:
+/// for a fetch or pull, the branch of the remote the current branch follows (<see cref="GitTexts.MergeOf"/>), which
+/// a pull names.
 /// </summary>
-public sealed record Reach(string Remote, IReadOnlyList<string> Hosts, IReadOnlyList<string> Proxies, string? Problem, IReadOnlyList<string>? Folders = null, IReadOnlyDictionary<string, int>? Ports = null)
+public sealed record Reach(string Remote, IReadOnlyList<string> Hosts, IReadOnlyList<string> Proxies, string? Problem, IReadOnlyList<string>? Folders = null, IReadOnlyDictionary<string, int>? Ports = null, string? Merge = null)
 {
     /// <summary>The words for a host in the reminder: "host", or "host, port 2222" when the address gives a port.</summary>
     public string Place(string host) => GitRemote.Place(host, Ports is not null && Ports.TryGetValue(host, out var port) ? port : null);
@@ -61,10 +63,11 @@ public static class GitReach
         }
 
         var remote = push ? GitTexts.PushRemote(upstream, branch!, settings) : GitRemote.FetchRemote(settings, branch);
+        var merge = push || branch is null ? null : GitTexts.MergeOf(settings, branch);
         if (remote == GitRemote.Here)
         {
-            // A branch that follows another branch of this repository: no server; a push goes into the repository itself, which is read first.
-            return new Reach(remote, [], [], null, [GitRemote.Here]);
+            // A branch that follows another branch of this repository: no server; a push into the repository itself is not made (T2).
+            return new Reach(remote, [], [], null, [GitRemote.Here], Merge: merge);
         }
 
         if (GitRemote.IsGroup(settings, remote))
@@ -140,51 +143,24 @@ public static class GitReach
 
         return lines.Length == 0
             ? Stopped($"Git named no address for the remote {remote}.")
-            : new Reach(remote, hosts, proxies, null, folders, ports);
+            : new Reach(remote, hosts, proxies, null, folders, ports, merge);
     }
 
-    // ---- A remote that is a folder: a second repository (AG-5.4c; the review's third pass of 2026-11-27, D3) ----
+    // ---- A remote that is a folder (AG-5.4c; the review's third and fourth passes, D3, H2, M4) ----
 
     /// <summary>
-    /// Why a push into the repositories of <paramref name="folders"/> (<see cref="Reach.Folders"/>) does not start;
-    /// null when none of them has a program or a setting of its own. A push into a folder or a share runs the
+    /// Why a push does not start: the remote is a folder (<see cref="Reach.Folders"/>: a path on this computer, a
+    /// share, the repository itself); null for a push to servers alone. A push into a folder or a share runs the
     /// other repository's receive hooks with git's own transport, which clears what axGIT gives through the
-    /// environment (tried with git 2.53: a push to "." with only harmless settings, and to a bare repository in
-    /// the work tree with no risk found at all, ran every receive hook). So each is read as a repository inside
-    /// is read: the D9 guard, its settings, the hooks folder git names for it and the values that decide
-    /// (<see cref="GitTrust.Risks"/>); anything found, or a repository that cannot be read, and nothing is pushed.
-    /// No trust is asked for it. A fetch or pull from a folder runs nothing of the other repository's (tried: its
-    /// hooks, uploadpack.packObjectsHook, core.fsmonitor and core.alternateRefsCommand, with the upload program
-    /// named on the command line) and stays allowed. <paramref name="runIn"/> runs git in a folder with nothing
-    /// set aside; <paramref name="root"/> is the repository's root, which relative paths start from.
+    /// environment, and which repository it enters is git's to decide: with the address ./vendor/mirror it
+    /// entered vendor/mirror.git, while the reads before it, made with git -C there, read the repository above
+    /// (H2, tried with git 2.53); a share can change between a read and the push (M4). So axGIT pushes only to a
+    /// server (T2), and a folder is pushed to in a terminal. A fetch or pull from a folder runs nothing of the
+    /// other repository's (tried: its hooks, uploadpack.packObjectsHook, core.fsmonitor and
+    /// core.alternateRefsCommand, with the upload program named on the command line) and stays allowed.
     /// </summary>
-    public static async Task<string?> FolderProblemAsync(Func<string, IReadOnlyList<string>, Task<GitResult>> runIn, string root, IReadOnlyList<string> folders)
-    {
-        foreach (var address in folders)
-        {
-            var folder = address == GitRemote.Here ? root : Path.GetFullPath(address.Replace('/', Path.DirectorySeparatorChar), root);
-            if (GitTrust.PointsElsewhere(folder) is { } away)
-            {
-                return $"The repository this remote names, {address}, points at files on another computer, {away}.";
-            }
-
-            var config = await runIn(folder, GitTrust.ConfigArguments);
-            var places = await runIn(folder, GitTrust.FoldersArguments);
-            var values = await runIn(folder, GitTrust.ValueArguments);
-            if (!config.Ok || !places.Ok || !(values.Ok || values is { ExitCode: 1, Output.Length: 0 }))
-            {
-                return $"The repository this remote names, {address}, could not be read, so what it would run is not known. Git said: {(config.Ok ? places.Ok ? values.FirstLine : places.FirstLine : config.FirstLine)}";
-            }
-
-            var risks = GitTrust.Risks(config.Output, GitTrust.Folders(places.Output, folder).Hooks, inside: true).Concat(GitTrust.ValueRisks(values.Ok ? values.Output : string.Empty)).ToList();
-            if (risks.Count > 0)
-            {
-                return $"The repository this remote names, {address}, has programs or settings of its own: {string.Join(", ", risks)}. A push runs them there; push in a terminal if you mean to.";
-            }
-        }
-
-        return null;
-    }
+    public static string? PushRefused(Reach reach) =>
+        reach.Folders is { Count: > 0 } ? "This remote is a folder; push to it in a terminal." : null;
 
     /// <summary>Nothing may run, for the reason given; the sentence goes to the user and the log, so without the sign-in of any address in it (a remote's name can be an address).</summary>
     private static Reach Stopped(string problem) => new(string.Empty, [], [], GitRemote.WithoutSignIn(problem));

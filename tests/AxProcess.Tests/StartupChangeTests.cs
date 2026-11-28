@@ -18,7 +18,7 @@ public sealed class StartupChangeTests : IDisposable
     private static readonly StartupEntry FolderEntry = new("Morning", "C:\\Startup\\Morning.lnk", StartupPlace.UserFolder, false);
 
     private readonly string _root = StartupPlaces.StandInParent + @"Tests\Startup-" + Guid.NewGuid().ToString("N");
-    private readonly string _folder = Path.Combine(Path.GetTempPath(), "axkit-startup-" + Guid.NewGuid().ToString("N"));
+    private readonly string _folder = Path.Combine(Path.GetTempPath(), "axkit-startup-" + TempFolder.Run + Guid.NewGuid().ToString("N"));
 
     public void Dispose()
     {

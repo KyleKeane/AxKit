@@ -73,7 +73,7 @@ Calls (7):
 
 Calls (2):
 
-- **axGIT**, `src/AxGit.Core/GitRunner.cs`, in `GitRunner.RunAsync`, by `ProcessRun.RunAsync`: runs the user's installed git on the repository for one command and reads what it prints, one process per command, its terminal prompts off; fetch, pull and push alone reach the repository's remotes, every other command works on disk: git fetches no missing object by itself and Git LFS neither fetches nor sends a file (FixedEnvironment; AX-11.11).
+- **axGIT**, `src/AxGit.Core/GitRunner.cs`, in `GitRunner.RunAsync`, by `ProcessRun.RunAsync`: runs the user's installed git for one command and reads what it prints, one process per command, its terminal prompts off; in a repository only once the user has trusted it or it holds no risk, and before that only as the parser of one settings file with no repository (AG-1.6); fetch, pull and push alone reach the repository's remotes, a push only a server and never a folder or a share, every other command works on disk: git fetches no missing object by itself and Git LFS neither fetches nor sends a file (FixedEnvironment; AX-11.11).
   Code: `result = await ProcessRun.RunAsync(info, [], timeout, cancellation);`
 - **shared by every app**, `src/AxKit.Core/ProcessRun.cs`, in `ProcessRun.RunAsync`, by `new Process`: the one place a program is started without a window and run to its end with both outputs read; which program and why is said at each call of Run and RunAsync, in its own comment.
   Code: `using var process = new Process { StartInfo = start };`

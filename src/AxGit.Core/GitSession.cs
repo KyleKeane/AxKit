@@ -1,34 +1,32 @@
 namespace AxGit.Core;
 
 /// <summary>
-/// One repository open in axGIT and what git is run with in it (SPEC.md AG-1.6, AG-1.6b, AG-5.4; the review's third
-/// pass of 2026-11-27): the last check of what it would run (<see cref="Scan"/>), whether it is trusted, the
-/// settings set aside while it is not (<see cref="Overrides"/>), and the three rules that hold whatever the
-/// window does:
+/// One repository open in axGIT and what git is run with in it (SPEC.md AG-1.6, AG-1.6b, AG-5.4; the review's
+/// third and fourth passes of 2026-11-27 and 2026-11-28): the last check of what it would run (<see cref="Scan"/>),
+/// whether it is trusted, and the rules that hold whatever the window does:
 /// <list type="bullet">
-/// <item>Every run of git in the repository goes through <see cref="RunAsync"/>, with what is set aside now.</item>
+/// <item>Nothing runs in a repository that is not trusted (T1): every run goes through <see cref="RunAsync"/> or
+/// <see cref="ChangeAsync"/>, which refuse while the last check found risks the user has not trusted, or could not
+/// read the repository's files. A repository that holds no risk is trusted as it is.</item>
 /// <item>A command that changes the repository goes through <see cref="ChangeAsync"/>, which checks again after
-/// it, whether it succeeded or failed, before anything else can run (D8): no command runs on what was set aside
-/// before the command ahead of it. Until then the check came with the lists read after a command that
-/// succeeded, and a failed command (a pull that stopped halfway, a switch that wrote some files) left the old
-/// overrides in place.</item>
-/// <item>A repository that is not trusted is never connected (D1, <see cref="NotConnected"/>): while a risk is
-/// kept off, fetch, pull and push do not start, since a transport's settings are where setting aside by name
-/// kept failing (a name whose first value wins, a transport that clears the environment).</item>
+/// it, whether it succeeded or failed, before anything else can run (D8).</item>
+/// <item>A changing command of a trusted repository whose hooks folder or a program lies in its work tree runs
+/// without them (<see cref="TrustScan.InTree"/>, <see cref="GitTrust.Overrides"/>, T4): a switch or a pull can
+/// change them while git runs, and the check after it would come too late.</item>
 /// </list>
 /// Plain and tested against git itself (<c>GitSessionTests</c>); the window holds one and asks it.
 /// </summary>
 public sealed class GitSession
 {
-    private readonly Func<IReadOnlyList<string>, bool> _trusts;
+    private readonly Func<string, bool> _trusts;
     private readonly IReadOnlyDictionary<string, string>? _environment;
 
     /// <summary>
     /// A session on <paramref name="root"/>, before its first check. <paramref name="trusts"/> says whether the
-    /// user trusts the repository with exactly these risks (the window binds an older trust to them and saves it);
-    /// <paramref name="environment"/>: variables for every run (the tests' settings files).
+    /// user trusts the repository with exactly this mark (<see cref="TrustScan.Mark"/>; the window binds an older
+    /// trust to it and saves it); <paramref name="environment"/>: variables for every run (the tests' settings files).
     /// </summary>
-    public GitSession(string root, Func<IReadOnlyList<string>, bool> trusts, IReadOnlyDictionary<string, string>? environment = null)
+    public GitSession(string root, Func<string, bool> trusts, IReadOnlyDictionary<string, string>? environment = null)
     {
         Root = root;
         _trusts = trusts;
@@ -38,89 +36,90 @@ public sealed class GitSession
     public string Root { get; }
 
     /// <summary>The last check; a problem in it until the first (<see cref="CheckAsync"/>).</summary>
-    public TrustScan Scan { get; private set; } = new([], [], "not checked yet");
+    public TrustScan Scan { get; private set; } = new([], "not checked yet");
 
-    /// <summary>Whether the repository runs as it is: it holds no risk, or the user trusts it for exactly these.</summary>
+    /// <summary>Whether git may run in the repository: its files could be read, and it holds no risk or the user trusts it for exactly this mark.</summary>
     public bool Trusted { get; private set; }
 
-    /// <summary>What git is run with while the repository is not trusted (<see cref="GitTrust.Overrides"/>); empty while it is.</summary>
-    public IReadOnlyList<GitSetting> Overrides { get; private set; } = [];
-
-    /// <summary>Whether nothing may run any more: the last check could not be made, or the repository points at another computer.</summary>
+    /// <summary>Whether nothing may run any more: the last check could not be made.</summary>
     public bool Closed => !Scan.Known;
 
     /// <summary>How many checks were made, for the tests of D8.</summary>
     public int Checks { get; private set; }
 
-    /// <summary>The check: what the repository would run read again (<see cref="GitTrustScan"/>), and what git is run with worked out from it.</summary>
+    /// <summary>The check: what the repository would run read again (<see cref="GitTrustScan"/>), and whether it is trusted.</summary>
     public async Task<TrustScan> CheckAsync(CancellationToken cancellation = default)
     {
-        Take(await GitTrustScan.ReadAsync(Root, cancellation, _environment));
+        var scan = await GitTrustScan.ReadAsync(Root, cancellation, _environment);
+        Checks++;
+        Scan = scan;
+        Trusted = scan.Known && (scan.Risks.Count == 0 || _trusts(scan.Mark));
         return Scan;
     }
 
-    /// <summary>What git is run with from a scan: nothing set aside for a repository that holds no risk or that the user trusts for these, <see cref="GitTrust.Overrides"/> otherwise.</summary>
-    private void Take(TrustScan scan)
+    /// <summary>The user trusted the repository for <paramref name="mark"/>: git runs in it from now on, when that is the mark the last check found (a notice answered after another check is for what that one found).</summary>
+    public void TrustNow(string mark)
     {
-        Checks++;
-        Scan = scan;
-        Trusted = scan.Known && (scan.Risks.Count == 0 || _trusts(scan.Risks));
-        Overrides = Trusted || !scan.Known ? [] : GitTrust.Overrides(scan.Risks, scan.Filters);
-    }
-
-    /// <summary>The user trusted the repository for <paramref name="risks"/>: nothing set aside from now on, when they are what the last check found (a notice answered after another check is for the risks it named).</summary>
-    public void TrustNow(IReadOnlyList<string> risks)
-    {
-        if (Scan.Known && GitTrust.Mark(Scan.Risks) == GitTrust.Mark(risks))
+        if (Scan.Known && Scan.Mark == mark)
         {
             Trusted = true;
-            Overrides = [];
         }
     }
 
-    /// <summary>One git command in the repository, with what is set aside now. Refused while <see cref="Closed"/>: then nothing runs, and the result says why.</summary>
+    /// <summary>Why nothing runs now; null when git may run.</summary>
+    public string? Refused =>
+        Closed ? "axGIT runs nothing in this repository: what it would run is not known."
+        : !Trusted ? "axGIT runs nothing in this repository until you trust it."
+        : null;
+
+    /// <summary>One git command that reads the repository. Refused while <see cref="Refused"/> says so: then nothing runs, and the result says why.</summary>
     public async Task<GitResult> RunAsync(IReadOnlyList<string> arguments, TimeSpan timeout, CancellationToken cancellation = default)
     {
-        if (Closed)
+        if (Refused is { } refused)
         {
-            return new GitResult(-1, string.Empty, "axGIT runs nothing in this repository: what it would run is not known.");
+            return new GitResult(-1, string.Empty, refused);
         }
 
-        return await GitRunner.RunAsync(Root, arguments, timeout, cancellation, Overrides, _environment);
+        return await GitRunner.RunAsync(Root, arguments, timeout, cancellation, environment: _environment);
     }
 
     /// <summary>
-    /// A command that changes the repository: run with what is set aside now, then the check again, always, also
-    /// when git failed or could not start (D8). The result is git's; <see cref="Scan"/> is the check after it.
+    /// A command that changes the repository: refused as <see cref="RunAsync"/> is; run with what lies in the work
+    /// tree set aside (T4); then the check again, always, also when git failed, could not start or was refused
+    /// (D8). The result is git's; <see cref="Scan"/> is the check after it.
     /// </summary>
     public async Task<GitResult> ChangeAsync(IReadOnlyList<string> arguments, TimeSpan timeout, CancellationToken cancellation = default)
     {
         try
         {
-            return await RunAsync(arguments, timeout, cancellation);
+            if (Refused is { } refused)
+            {
+                return new GitResult(-1, string.Empty, refused);
+            }
+
+            // The empty hooks folder is made and given back on a task: it is a folder on disk (rule 3, L2).
+            var inTree = Scan.InTree ?? [];
+            var aside = await Task.Run(() => GitTrust.Overrides(inTree, []));
+            try
+            {
+                return await GitRunner.RunAsync(Root, arguments, timeout, cancellation, aside, _environment);
+            }
+            finally
+            {
+                await Task.Run(() =>
+                {
+                    foreach (var hooks in aside.Where(setting => setting.Name == "core.hooksPath"))
+                    {
+                        GitTrust.ReleaseHooksFolder(hooks.Value);
+                    }
+                });
+            }
         }
         finally
         {
             await CheckAsync(CancellationToken.None);
         }
     }
-
-    /// <summary>
-    /// A git command in another folder: the reads of a remote's own repository before a push
-    /// (<see cref="GitReach.FolderProblemAsync"/>), with the empty hooks folder, but the question for the hooks
-    /// folder, which would be told that one (as in the scan).
-    /// </summary>
-    public Task<GitResult> RunInAsync(string folder, IReadOnlyList<string> arguments) =>
-        GitRunner.RunAsync(folder, arguments, GitRunner.Short,
-            overrides: ReferenceEquals(arguments, GitTrust.FoldersArguments) ? null : [new GitSetting("core.hooksPath", GitTrust.EmptyHooksFolder())],
-            environment: _environment);
-
-    /// <summary>
-    /// D1: why a fetch, pull or push (<paramref name="what"/>) does not start; null when the repository is trusted
-    /// or holds no risk. Reading, staging, committing and switching go on with what is set aside.
-    /// </summary>
-    public string? NotConnected(string what) =>
-        Trusted ? null : $"{what} not started: this repository has settings you have not trusted.";
 
     /// <summary>
     /// D7: why a push does not start in a repository whose pre-push hook is Git LFS's: the hook would send the

@@ -214,7 +214,7 @@ every proof and every sentence named here to the code (`docs/axKit/SPEC.md` AX-5
 
 **C-22, axGIT.**
 
-- Does: A trusted repository whose own programs are not the ones it named when it was trusted is not trusted for them: its programs stay off and the notice asks again.
+- Does: A trusted repository whose own programs are not the ones it named when it was trusted, or whose hook or named file changed, is not trusted for them: nothing runs in it and the notice asks again.
 - Says: This repository runs programs of its own (the notice's title, then the programs by name)
 - Proved by: `AxGit.Tests/GitSealTests.A_trusted_repository_that_gains_a_hook_is_asked_about_again`.
 - From: R-53.

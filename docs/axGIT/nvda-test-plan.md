@@ -15,7 +15,7 @@ Run with NVDA before a release, on a repository with a remote (the axKit reposit
 4b. The levels (AG-2.2, since 2026-11-22): in Changes, Left: "<repository>, 3 lists, Changes, N files"; Left again: the edge sound. Down, Right: "Log, N commits. <commit>". Backspace: "<repository>, 3 lists, Log, N commits". Up, Enter: "Changes, N files. <the file it was left on>". Right on a file: the edge sound.
 5. Start axGIT on a folder that is not a repository: "Not a git repository" notice naming the folder; Enter closes it; the title is "axGIT"; Ctrl+O opens the folder picker. With a repository open, Ctrl+O on a folder outside any repository: the same notice, and the repository stays open, its title unchanged.
 6. Alt+F4 closes the window without a question.
-7. A repository with a hook of its own (`manual_tests/axGIT/scratch-repository-with-a-hook`, made by `prepare.ps1 axgit`): opening it shows the notice "This repository runs programs of its own" naming "hook post-checkout"; Enter keeps them off and the Changes list comes. Open it again and choose Trust this repository: "Trusted"; the next opening shows no notice.
+7. A repository with a hook of its own (`manual_tests/axGIT/scratch-repository-with-a-hook`, made by `prepare.ps1 axgit`): opening it shows the notice "This repository runs programs of its own" naming "hook post-checkout", before anything else; Enter (Keep it off) says "Not opened", and no list of it comes. Open it again and choose Trust this repository: "Trusted", and the Changes list comes; the next opening shows no notice.
 
 ## 2. From and to the other windows (AG-1.4)
 
@@ -42,7 +42,7 @@ Run with NVDA before a release, on a repository with a remote (the axKit reposit
 1. Alt+2, Enter on the first commit: "Commit <hash>, N lines", the focus in the details on "commit <full hash>"; Down Arrow reads the author, the date, the message and the files. Ctrl+Tab: the list.
 2. Alt+3: the branches; the current one reads "…, current". Enter on it: "Already on <name>". Enter on another: "Switched to <name>"; NVDA+End: the status bar names it; Alt+1: the Changes of that branch. Switch back.
 3. Ctrl+N: the notice "New branch" with the field "Name"; type "scratch-test", Enter: "Switched to scratch-test"; Alt+3 lists it as current. Switch back to the branch you had (Enter on it) and delete the test branch in a terminal (`git branch -d scratch-test`).
-4. Ctrl+R: the status bar says "Working: fetch…" (F9), then "Fetched". Ctrl+L: "Pulled" or "Already up to date". Ctrl+P on a branch with nothing to push: "Pushed" or git's "Everything up-to-date" read as "Pushed". With the network off, Ctrl+R: the notice "Fetch failed" with git's message.
+4. Ctrl+R: the status bar says "Working: fetch…" (F9), then "Fetched". Ctrl+L: "Pulled" or "Already up to date". Ctrl+P, by ear with a remote on a server (the scripts' remote is a folder, to which axGIT pushes nothing since the fourth pass, section 9): a commit to push, "Pushed"; nothing to push, "Pushed" too. With the network off, Ctrl+R: the notice "Fetch failed" with git's message.
 5. Press Ctrl+R and at once Ctrl+L: "Working…" for the second; the first finishes on its own.
 
 ## 5. Text, notices, the Window, axKit and Help menus (AG-2.4, AG-6)
@@ -59,7 +59,7 @@ Run with NVDA before a release, on a repository with a remote (the axKit reposit
 
 The runner's script for 1 is `tests/scripts/axGIT/07-own-programs.txt`.
 
-1. A repository with `git config --worktree core.sshCommand x` (after `git config extensions.worktreeConfig true`) and a repository inside it with a hook: the notice "This repository runs programs of its own" names "core.sshcommand" and "submodule <path>: hook <name>"; Enter keeps them off.
+1. A repository with `git config --worktree core.sshCommand x` (after `git config extensions.worktreeConfig true`) and a repository inside it with a hook: the notice "This repository runs programs of its own" names "core.sshcommand" and "submodule <path>: hook <name>"; Enter keeps it off: "Not opened".
 2. While a large repository opens, F5 at once: "Working…", and the Changes list comes after the notice or by itself; nothing ran in between.
 3. Enter on an untracked file of several megabytes: the details come at once, "Untracked file, the first N lines", and end with "(cut after 200 KB)".
 4. With a remote whose push address is on another server (`git remote set-url --push origin <address>`): Push asks "Before axGIT connects to <that server>", not the fetch address's.
@@ -68,20 +68,29 @@ The runner's script for 1 is `tests/scripts/axGIT/07-own-programs.txt`.
 
 The runner's script for 1 to 4 is `tests/scripts/axGIT/08-settings-and-servers.txt`.
 
-1. A repository with a setting axGIT does not know and no program (`git config http.sslVerify false`): the notice is "This repository has settings axGIT does not know" and names "http.sslverify"; Enter keeps them off, and the Changes list comes. An ordinary clone opens with no notice.
-2. In a trusted repository, add a hook file in a console while the window is open, then F5: the notice comes again, starting "What axGIT finds in this repository differs from what you trusted", before "Refreshed" is said. F5 once more: no notice a second time for the same hook.
+1. A repository with a setting axGIT does not know and no program (`git config http.sslVerify false`): the notice is "This repository has settings axGIT does not know" and names "http.sslverify"; Enter keeps it off: "Not opened". An ordinary clone opens with no notice.
+2. In a trusted repository, add a hook file in a console while the window is open, then F5: the notice comes again, starting "What axGIT finds in this repository differs from what you trusted", before "Refreshed" is said; Enter (Keep it off) says "Repository closed", and the window has no repository.
 3. With `git config branch.<branch>.pushRemote https://example.invalid/x.git`: Ctrl+P shows the notice "Push not started", which says Git could not say where the remote leads, and ends "Nothing was sent and nothing was fetched."; Enter closes it.
 4. With HEAD on no branch (`git checkout --detach`): Ctrl+P: "Push not started", "HEAD is on no branch (detached), and axGIT pushes a branch."
-5. By ear, with a real remote: Ctrl+R the first time says "Connecting to <server>; if Git asks you to sign in…" and then "Fetched"; in a repository that is not trusted the fetch does not start (section 8).
+5. By ear, with a real remote: Ctrl+R the first time says "Connecting to <server>; if Git asks you to sign in…" and then "Fetched".
 
-## 8. The review's third pass of 2026-11-27 (AG-1.6a to AG-1.6c, AG-5.4, AG-5.4a, AG-5.4c)
+## 8. The review's third pass of 2026-11-27 (AG-1.6a to AG-1.6c, AG-5.4, AG-5.4a)
 
-The runner's script for 1 to 4 is `tests/scripts/axGIT/08-settings-and-servers.txt`.
+The runner's script for 1 is `tests/scripts/axGIT/08-settings-and-servers.txt`. Its folder push (D3) and its "Fetch not started" for a repository kept off (D1) went with the fourth pass (section 9): a repository kept off is not open, and a push to a folder does not start.
 
-1. In a repository that is not trusted (a setting axGIT does not know, kept off), Ctrl+R: the notice "Fetch not started" says "Fetch not started: this repository has settings you have not trusted." and that Fetch, Pull and Push start once you trust it; Enter (Show its settings) brings the trust notice back, Tab Tab Space trusts it: "Trusted". Ctrl+L and Ctrl+P say the same before the trust.
-2. A remote whose address is `c:nul` (`git remote add origin c:nul`): Ctrl+R shows "Fetch not started", "The remote origin has an address axGIT does not read: c:nul.", and which forms it reads.
-3. A remote that is a bare repository with a hook of its own (`git init --bare ../mirror.git`, a file in its `hooks` folder named `pre-receive`, the remote set to `../mirror.git`): Ctrl+P shows "Push not started", "The repository this remote names, ../mirror.git, has programs or settings of its own: hook pre-receive."; nothing arrives there. A bare repository as `git init --bare` makes one takes the push.
-4. A branch that follows a branch of another name (`git config branch.main.merge refs/heads/other` with an upstream): Ctrl+P shows "Push not started", "This branch follows a branch of another name, other".
-5. By ear, with git and Git LFS: a repository with LFS files, trusted, after Enter on another branch: the LFS files are pointer files (Enter on one in Changes after a change shows the three lines of the pointer), and nothing is fetched; Ctrl+P in a repository where `git lfs install` ran: "Push not started: this repository's pre-push hook is Git LFS's".
-6. By ear: a folder whose `.git` file names a repository on a share (`gitdir: //server/share/x.git`): opening it shows the notice "Not opened", naming the server; nothing waits on the network.
-7. By ear, with a real remote on a port of its own (an ssh address with the port 2222 after its host): the first Ctrl+R says "Connecting to host, port 2222; …".
+1. A remote whose address is `c:nul` (`git remote add origin c:nul`): Ctrl+R shows "Fetch not started", "The remote origin has an address axGIT does not read: c:nul.", and which forms it reads.
+2. A branch that follows a branch of another name (`git config branch.main.merge refs/heads/other` with an upstream): Ctrl+P shows "Push not started", "This branch follows a branch of another name, other".
+3. By ear, with git and Git LFS: a repository with LFS files, trusted, after Enter on another branch: the LFS files are pointer files (Enter on one in Changes after a change shows the three lines of the pointer), and nothing is fetched; Ctrl+P in a repository where `git lfs install` ran: "Push not started: this repository's pre-push hook is Git LFS's".
+4. By ear, with a real remote on a port of its own (an ssh address with the port 2222 after its host): the first Ctrl+R says "Connecting to host, port 2222; …".
+
+## 9. The review's fourth pass of 2026-11-28 (AG-1.6 to AG-1.6c, AG-5.4, AG-5.4c)
+
+The runner's scripts are `tests/scripts/axGIT/07-own-programs.txt` (1 to 3) and `08-settings-and-servers.txt` (4 to 6).
+
+1. A repository with a hook: the notice comes before anything of the repository is read by git, and says "axGIT has run nothing in <path>." and "Keep it off closes the repository."; Escape or Enter says "Not opened", and the status bar says "No repository".
+2. A trusted repository whose hook file changed under the same name, opened again: the notice comes, starting "What axGIT finds in this repository differs from what you trusted".
+3. A repository whose hooks folder is checked in (`git config core.hooksPath .githooks`): the notice also says "Its hooks folder or programs lie in its work tree, where a switch or a pull can change them while git runs", and, trusted, a switch to a branch that brings a new hook there does not run it, and the notice comes after the switch.
+4. In a trusted repository, change a hook file in a console, then Ctrl+R: the notice comes before anything is fetched.
+5. A remote that is a folder (`git init --bare ../mirror.git`, the remote set to `../mirror.git`): Ctrl+P shows "Push not started", "This remote is a folder; push to it in a terminal. Nothing was sent."; nothing arrives there. A fetch from it works.
+6. A branch with a remote and no branch to follow: Ctrl+L shows "Pull not started", "This branch follows no branch of a remote, so there is nothing named to pull."
+7. By ear: a folder whose `.git` file names a repository on a share (`gitdir: //server/share/x.git`): opening it shows the notice "This repository leads git elsewhere", naming "its .git file names another computer, server"; nothing waits on the network, and Keep it off opens nothing.

@@ -1,13 +1,13 @@
 # Workflow: Open a repository with settings axGIT does not know, and start no fetch or push git cannot name a server for
 # Needs: Git installed.
-# axGIT: the review's second pass of 2026-11-27 (docs/axGIT/nvda-test-plan.md section 7; SPEC AG-1.6b, AG-1.6c,
-# AG-5.4a). Only a setting axGIT knows to be harmless is passed over: any other is named in the notice, here one that
-# is no program. The check is made again at every refresh, so a hook that appears while the window is open is
-# asked about then, and the same risks are asked about once. A repository that is not trusted is never connected
-# (the review's third pass, D1), and is trusted from that notice. A push without a branch, a fetch from a remote git
-# does not know (an address in place of a name), a fetch from an address in no form axGIT reads (D4), and a push
-# into a folder whose repository has a hook of its own (D3) are not started, and a notice says why. Nothing here
-# reaches a server: the one address is of the reserved name "invalid", and no command is run with it.
+# axGIT: the reviews' second to fourth passes (docs/axGIT/nvda-test-plan.md sections 7 to 9; SPEC AG-1.6 to AG-1.6c,
+# AG-5.4 to AG-5.4c). Only a setting axGIT knows to be harmless is passed over: any other is named in the notice, here
+# one that is no program, and nothing runs in the repository until it is trusted (T1). The check is made again at
+# every refresh and before every fetch, pull and push (T4), so a hook that appears or changes while the window is open
+# is asked about then. A push without a branch, a fetch from a remote git does not know (an address in place of a
+# name), a fetch from an address in no form axGIT reads (D4), a pull of a branch that follows none (T3) and a push to
+# a folder (T2) are not started, and a notice says why. Nothing here reaches a server: the one address is of the
+# reserved name "invalid", and no command is run with it.
 file home\AxKit\axGIT.json {"checkForUpdates": false}
 # The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
@@ -20,49 +20,63 @@ run git clone -q {temp}\repo clone
 # A setting that runs no program and is in no table of the harmless ones.
 run git -C repo config http.sslVerify false
 
-# Goal: Open a repository with a setting axGIT does not know, kept off
-# 7.1 The notice has its own title, names the setting and says what is off meanwhile; Enter keeps it off.
+# Goal: Keep a repository with a setting axGIT does not know off
+# 7.1 The notice has its own title and names the setting; Enter keeps it off, and nothing is opened.
 start git {temp}\repo
 expect state "notice":"This repository has settings axGIT does not know"
-expect state It has settings axGIT does not know to be harmless: http.sslverify. While it is not trusted git
-expect state Until then no hook and no credential helper runs
-expect text Enter or Escape: Keep them off.
+expect state It has settings axGIT does not know to be harmless: http.sslverify.
+expect state Keep it off closes the repository.
+expect text Enter or Escape: Keep it off.
 # The notice holds the answering keys for a second after it appears (KeyHold).
 wait 1200
 keys enter
+expect said Not opened
 expect state "notice":null
+close
+
+# Goal: Trust a repository with a setting axGIT does not know
+start git {temp}\repo
+expect state "notice":"This repository has settings axGIT does not know"
+wait 1200
+keys tab
+expect focus Keep it &off
+keys tab
+expect focus &Trust this repository
+keys space
+expect said Trusted
 expect focus Changes, no changes
 
-# Check: The same setting is asked about once, also when the check is made again
-# AG-1.6b: F5 makes the check again; what it finds is what the user kept off, so no notice comes.
-keys f5
-expect said ! Refreshed: Changes, no changes
-expect state "notice":null
-
-# Check: A hook that appears while the window is open is asked about at the next refresh
-# AG-1.6b: the check was one look as the repository opened; now the hook is found before the lists are read.
+# Check: A hook that appears while the window is open is asked about at the next refresh, and Keep it off closes
+# AG-1.6b: the check was one look as the repository opened; now the hook is found before the lists are read, and
+# nothing runs until the user chooses.
 file repo\.git\hooks\pre-commit #!/bin/sh\nexit 0
 keys f5
 expect state "notice":"This repository runs programs of its own"
-expect state Its settings or hooks name programs git would run: hook pre-commit. axGIT runs git without them. It also has settings axGIT does not know to be harmless: http.sslverify.
+expect state What axGIT finds in this repository differs from what you trusted, so it is not trusted now. axGIT runs nothing more in this repository until you choose. Its settings or hooks name programs git would run: hook pre-commit. It has settings axGIT does not know to be harmless: http.sslverify.
 wait 1200
 keys enter
+expect said Repository closed
 expect state "notice":null
+expect state "title":"axGIT"
+close
 
-# Check: A repository that is not trusted is never connected
-# AG-1.6c (the review's third pass, D1): while a risk is kept off, Fetch, Pull and Push do not start; the notice says
-# why and shows the settings again, with the way to trust the repository, which is taken here.
-keys ctrl+r
-expect state "notice":"Fetch not started"
-expect state Fetch not started: this repository has settings you have not trusted.
-wait 1200
-keys enter
+# Check: A hook changed outside the window is asked about before a fetch
+# AG-5.4 (T4): the check comes before every fetch, pull and push, so the fetch does not start, and the notice asks first.
+start git {temp}\repo
 expect state "notice":"This repository runs programs of its own"
 wait 1200
 keys tab
-expect focus Keep them &off
 keys tab
-expect focus &Trust this repository
+keys space
+expect said Trusted
+expect focus Changes, no changes
+file repo\.git\hooks\pre-commit #!/bin/sh\necho changed\nexit 0
+keys ctrl+r
+expect state "notice":"This repository runs programs of its own"
+expect state What axGIT finds in this repository differs from what you trusted
+wait 1200
+keys tab
+keys tab
 keys space
 expect said Trusted
 expect state "notice":null
@@ -107,20 +121,29 @@ wait 1200
 keys enter
 expect state "notice":null
 
-# Check: A push into a folder whose repository has hooks of its own is not started
-# AG-5.4c (D3): git's transport for a folder runs the other repository's receive hooks and clears what axGIT gives;
-# the repository there is read first, and nothing is pushed.
+# Check: A push to a folder is not started
+# AG-5.4c (the fourth pass, T2): git's transport for a folder runs the other repository's receive hooks, and which
+# repository it enters is git's to decide; axGIT pushes only to a server, and nothing arrives in the folder.
 run git init -q --bare mirror.git
 file mirror.git\hooks\pre-receive #!/bin/sh\nexit 0
 run git -C repo remote set-url origin ../mirror.git
 keys ctrl+p
 expect state "notice":"Push not started"
-expect state The repository this remote names, ../mirror.git, has programs or settings of its own: hook pre-receive.
+expect state This remote is a folder; push to it in a terminal. Nothing was sent.
 wait 1200
 keys enter
 expect state "notice":null
 # Nothing arrived there.
 run git -C mirror.git rev-parse --verify --quiet refs/heads/main && exit 1 || exit 0
+
+# Check: A pull of a branch that follows none is not started
+# AG-5.4 (T3): a pull names the branch it brings; this one follows no branch of the remote, so nothing is named.
+keys ctrl+l
+expect state "notice":"Pull not started"
+expect state This branch follows no branch of a remote, so there is nothing named to pull. Nothing was fetched.
+wait 1200
+keys enter
+expect state "notice":null
 close
 
 # Check: An everyday repository opens without the notice

@@ -7,7 +7,7 @@ public sealed class TerminalSettingsTests
     [Fact]
     public void Missing_file_gives_the_defaults()
     {
-        var path = Path.Combine(Path.GetTempPath(), "axterminal-tests-" + Guid.NewGuid().ToString("N"), "axTerminal.json");
+        var path = Path.Combine(Path.GetTempPath(), "axterminal-tests-" + TempFolder.Run + Guid.NewGuid().ToString("N"), "axTerminal.json");
         var settings = TerminalSettings.Load(path, out var error);
         Assert.Null(error);
         Assert.Null(settings.Shell);
