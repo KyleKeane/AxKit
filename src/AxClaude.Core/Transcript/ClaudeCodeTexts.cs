@@ -295,12 +295,15 @@ public static partial class ClaudeCodeTexts
     public const string PermissionRequired = "Permission Required:";
 
     /// <summary>
-    /// How the kind in a permission question's title ends when it asks about one file or folder, which its first row
-    /// names by its path ("Permission Required: Create file", "Edit file", "Accessing workspace", Claude Code
-    /// 2.1.281 and 2.1.332, the permission rows in <c>QuestionTests</c>). Every other kind is read as a command,
-    /// "Bash command" among them (<see cref="PermissionCore.OfScreen"/>).
+    /// The kinds of a permission question's title that ask about one file or folder, which its first row names by
+    /// its path, whole and exact (the fourth review of 2026-11-27, L1: until then the kind's end, "file", which an
+    /// MCP tool named ..._file matched as well). Recorded: "Create file" (the permission-prompt fixture, Claude Code
+    /// 2.1.281) and "Accessing workspace" (the trust fixtures, 2.1.281 to 2.1.332). Not yet in a recording, the
+    /// titles of Claude Code's other file tools as its own interface writes them: "Edit file", "Read file", "Write
+    /// file". Every other kind is read as a command, "Bash command" among them (<see cref="PermissionCore.OfScreen"/>),
+    /// which marks a label of more than one row: a kind missing here costs a mark, never a hidden command.
     /// </summary>
-    public static readonly string[] PathKindEnds = ["file", "workspace"];
+    public static readonly string[] PathKinds = ["Create file", "Edit file", "Read file", "Write file", "Accessing workspace"];
 
     /// <summary>
     /// How the last row of a permission question begins, Claude Code's own question under what it asks about ("Do

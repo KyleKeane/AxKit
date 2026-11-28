@@ -52,9 +52,9 @@ keys enter
 expect focus 1. Explain this command
 
 # Goal: Deny a command an AI tool asks to run
-# Escape is No: nothing runs, the text has the focus again. The list's second counts again from when the focus
-# came back to it from the explanation (bundle AX-6.4, 2026-11-27).
-wait 1100
+# Escape is No: nothing runs, the text has the focus again. The explanation was the user's own to open from the list
+# they had heard: the list's second is not started again as the focus comes back (bundle AX-6.4, N4 of the fourth
+# review of 2026-11-27; until then a wait of a second here).
 keys escape
 expect said Check for updates at start not run
 refuse said axAutomate ran Check for updates at start

@@ -173,7 +173,7 @@ public sealed partial class GitForm
 
             Announce($"Discarded {file.Path}", true);
             await RefreshAsync(announce: false, checkedNow: true);
-        })));
+        })).ByUser());
     }
 
     /// <summary>
@@ -220,7 +220,7 @@ public sealed partial class GitForm
             Announce(tracked.Count == 1 ? $"Discarded {tracked[0].Path}" : $"Discarded {tracked.Count} files", true);
             Selection.Clear();
             await RefreshAsync(announce: false, checkedNow: true);
-        }), cancelIsDefault: true));
+        }), cancelIsDefault: true).ByUser());
     }
 
     /// <summary>Changes → Commit… (Ctrl+Enter, AG-3.5): the message in a notice, then git commit.</summary>
@@ -267,7 +267,7 @@ public sealed partial class GitForm
                 Stale(View.Log, View.Branches);
                 await RefreshAsync(announce: false, checkedNow: true);
             });
-        }, emptyMessage: "Type the commit message", cancel: "C&ancel");
+        }, emptyMessage: "Type the commit message", cancel: "C&ancel", byUser: true);
     }
 
     // ---- history (AG-4) ----
@@ -358,7 +358,7 @@ public sealed partial class GitForm
                 Stale(View.Log, View.Branches);
                 await RefreshAsync(announce: false, checkedNow: true);
             });
-        }, emptyMessage: "Type the branch name");
+        }, emptyMessage: "Type the branch name", byUser: true);
     }
 
     private async Task FetchAsync(string remote)

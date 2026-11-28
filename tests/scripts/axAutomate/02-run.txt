@@ -99,6 +99,8 @@ keys ctrl+r
 expect state "notice":"Run commands"
 expect state This workflow runs commands on your computer: echo one > the run's folder\one.txt. Run it?
 expect quiet 500
+# The question comes from the run's own thread and holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys enter
 expect state "notice":null
 expect said Not run
@@ -107,6 +109,8 @@ expect quiet 500
 # Ctrl+Enter, the main action, is Run's second key (AX-8.10, AU-4.4, 2026-11-26).
 keys ctrl+enter
 expect state "notice":"Run commands"
+# The question comes from the run's own thread and holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys tab
 expect focus Run
 keys space

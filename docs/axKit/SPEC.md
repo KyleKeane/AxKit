@@ -620,14 +620,29 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
        `hold: false`: a control the user opened with a command of their own a moment ago, whose first keys are meant
        for it (Go to line, an editor's offer, axTerminal's recent commands). `ControlAreaHoldTests` lists those
        callers and fails on any other, and on a hold that is worked out instead of written. One opened by a command
-       run for an AI tool is held all the same (`AxKitForm.RunForMcp`, `ControlArea.HoldAsArrived`). A notice is
-       held when it is made with `Notice.ByItself()`, which is the only way: whether a notice holds cannot be handed
-       a value worked out, so everything a program, a job or a timer shows is written `.ByItself()`, whatever the
-       user did before it, and what may be worked out is only its chime (`Notice.Silent`). (Until the third review
-       of 2026-11-27 it was a switch, and three places worked it out: axClaude's information screen from whether
-       the user had acted in the last three seconds, the update notice from whether the user had asked for the
-       check, axGIT's missing git from whether it was the first time. A screen of Claude Code's that followed the
-       user's own key had no hold, and Enter was the update notice's install.)
+       run for an AI tool is held all the same (`AxKitForm.RunForMcp`, `ControlArea.HoldAsArrived`). *Every notice
+       holds too*, a form (`ShowForm`) and a notice with a field (`AskText`) among them, with the same kind of
+       exception, written out: `Notice.ByUser()` (`AskText`'s and `ShowForm`'s `byUser: true`), for the first result
+       of the user's own key or command shown in the same breath: a help or a read-only text, the details of what is
+       selected, an explanation chosen from a list, the Find notice and the command palette, a field or a form the
+       command opens, the command's own confirmation (Clear the history?, Delete?). What a program, a job, a flow or
+       an AI tool asks is never one, nor a question a flow can bring (the closing question, Save changes?).
+       `NoticeHoldTests` lists the callers and fails on any other, and on one made after an await, a timer, a task or
+       a post. The window base takes the
+       exception away again where it cannot hold: a notice shown by a notice's button or in the action after one
+       closed (what follows an answer arrives by itself, point 1), and one shown inside a command clicked for an AI
+       tool (`ClickedForAiTool`; docs/axKit/mcp.md MC-7.9), whose own code says `ByUser` for the user's key
+       (`Notice.AsShown`, which `AxKitForm.ShowNotice` asks first). `Notice.ByItself()` adds the chime of a notice
+       that arrived by itself (`Notice.Unprompted`), and what may be worked out is only that chime (`Notice.Silent`).
+       (Until the fourth review of 2026-11-27 a notice held only when its maker wrote `.ByItself()`, and five kinds
+       did not: the confirmation a command run for an AI tool opened, axCalc's Clear history, axClip's clear,
+       axProcess's End process, axMCP's Remove, Restart now, each confirmed by a doubled Enter; the report form an
+       AI tool drafted, which Ctrl+Enter sent; the notices of a job, of the update's closing question, of AI help's
+       answer and of the installer. Until the third review of that day it was a switch, and three places worked it
+       out: axClaude's information screen from whether the user had acted in the last three seconds, the update
+       notice from whether the user had asked for the check, axGIT's missing git from whether it was the first time.)
+       The text an AI tool's run carries is typed into the field the run opened and its button run without the
+       hold (`OverlayPanel.Fill`, as `ControlArea.Fill`): no key of the user's, which is what the hold is for.
     4. *The hold counts again from when the focus arrives.* The moment is there so that the question is heard before
        a key answers it, and NVDA says a question when the focus reaches it, not when it is drawn. What arrived by
        itself therefore starts its second when it is shown and again each time the focus comes to it, whoever moved
@@ -637,13 +652,20 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
        `tests/scripts/axClaude/66-question-while-reading.txt`), a notice that closes and hands the focus to the
        question under it (script 67), the window becoming the active one again, a menu that closes, and the user's
        own focus key. The last is accepted: after F6 or Tab into a question that arrived by itself, its answering
-       keys wait the second once more; the arrows move at once. A notice does the same when the focus comes back
-       into it or its window becomes the active one. A control the user opened themselves (`hold: false`) starts no
-       hold when the focus arrives either. And the field of a conversation window holds its Enter for the same
-       second when the window itself puts the focus back into it because a question that arrived by itself has
-       closed (`ConversationForm.CloseArea`, an AI's request answered): an Enter meant for the question's list would
-       otherwise send whatever the field holds, in axTerminal a command. After a list the user opened (axTerminal's
-       recent commands, whose Enter puts a command into the field for the next Enter to run) the field holds nothing.
+       keys wait the second once more; the arrows move at once. One arrival starts nothing (N4 of the fourth review
+       of 2026-11-27): when the user went from a list into notices of their own (Explain, a help text, each
+       `ByUser`) and the last of them closes, the focus handed back to that same list starts no second, since the
+       user heard the list before they opened the notice (`ControlArea.FocusReturned`, called by the window base
+       alone, `AxKitForm.FocusBackAfterNotice`); after a notice of the chain that held, or to another control, it
+       starts as always. A notice does the same when the focus comes back into it or its window becomes the active
+       one. A control the user opened themselves (`hold: false`) starts no hold when the focus arrives either. And
+       the field of a conversation window holds its Enter for the same second when the window itself puts the focus
+       back into it because a question that arrived by itself has closed (`ConversationForm.CloseArea`, an AI's
+       request answered), and, since the fourth review of 2026-11-27, because a notice that held its keys has closed
+       (`ConversationForm.FocusBackAfterNotice`; until then a doubled Enter on a notice sent the message field): an
+       Enter meant for the question would otherwise send whatever the field holds, in axTerminal a command. After a
+       list or a notice the user opened (axTerminal's recent commands, whose Enter puts a command into the field for
+       the next Enter to run; a help text) the field holds nothing.
     5. *The hold is asked where an answer is taken, not only where a key is read.* In the question area every
        callback that takes an answer (the list's choice, its Escape, a letter of the list's own, a typed character,
        a field's Enter and Escape) passes one gate after its key was read (`ControlArea.Takes`), and in a notice the
@@ -674,8 +696,10 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     AI's request). These rules are then the one thing between a doubled, held or typed-ahead Enter and a yes the
     user never heard, so a change to them is a change to that protection, and a new way for a question to appear
     goes through the question area or a notice and nowhere else: a question built on them has rules 4 and 5
-    without writing them. A notice the window opens for the user's own command, and which is that command's first
-    result, is shown as it is and holds nothing.
+    without writing them. A notice the window opens for the user's own command, which is that command's first
+    result, holds nothing, and says so with `Notice.ByUser()` (point 3); everything else holds.
+    A tick of a list with check boxes is an answer too: inside the hold a click or UI Automation's Toggle, which pass
+    no key, change no box and are heard (the fourth review of 2026-11-27, L7).
   - **Nothing unseen in what is asked.** The name and the answers of every question in the question area are shown
     with each character that is neither seen nor heard written out as its code (`AxKit.Core/DisplayText`,
     `DisplayTextTests`), by the area itself, so that it holds for every window. Which characters these are is said
@@ -683,11 +707,22 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     code point whose general category is Format, Control, Surrogate (half a pair, alone), PrivateUse or
     OtherNotAssigned, the line and paragraph separators, and the default ignorable code points that have another
     category (the fillers, the variation selectors, the combining grapheme joiner; the Unicode Character Database,
-    DerivedCoreProperties.txt). One exception keeps an emoji an emoji: U+FE0F passes right after a symbol, and
-    U+200D passes between two symbols, the first of which may carry its U+FE0F; anywhere else both are written out.
-    In a command offered to run and in the label of a permission question, a space that is not the plain one (a
-    no-break space, an em space) is written as its code as well (`DisplayText.VisibleCommand`), since it reads as a
-    space and a shell may take it for part of a word.
+    DerivedCoreProperties.txt). A few exceptions keep an emoji an emoji and a word a word, each between characters
+    that make it seen and never next to ASCII or a sign of mathematics, money or a modifier (the fourth review of
+    2026-11-27, H1: the exception was "between two symbols", and "&gt;", "|", "=" are symbols by their class, so a
+    joiner between two "&gt;" showed "echo added &gt;&gt; target.txt" for what bash runs as a truncation): U+FE0F
+    right after a picture of Unicode's Extended_Pictographic set (one table of ranges, emoji-data.txt) or in a
+    keycap; U+200D between two such pictures, the first of which may carry its U+FE0F or a skin tone; U+200C
+    between two letters of a script that writes with it (Arabic, Syriac, the Indic scripts); the tag characters of
+    the three recommended flags (England, Scotland, Wales). Two characters that are seen yet look like nothing are
+    written out as well: the braille blank (U+2800) and a combining mark with no character to sit on.
+    **No hidden character in a command, ever** (N2 of the same review): in a command offered to run and in the label
+    of a permission question (`DisplayText.VisibleCommand`) none of these exceptions holds, every joiner, non-joiner,
+    variation selector and tag character is written out, emoji or not, since a command is run and not read, and so is
+    a space that is not the plain one (a no-break space, an em space), since it reads as a space and a shell may take
+    it for part of a word. A question's name and its answers keep such spaces (`DisplayText.VisibleLine`): they are
+    sentences, Claude Code itself writes a no-break space after its bullets, and the command a permission question
+    names is in its label, which every answer carries.
 - AX-6.5 **The window base.** Every window of an app derives from `AxKit.Forms/AxKitForm`, which holds what the
   windows share and no app copies: the notice flow (`ShowNotice`, `CloseNotice`, `Fail`, `ShowError`; Alt, F10 and
   the window's shortcuts swallowed while a notice shows), `Announce`, the text font with its size keys and the
@@ -1790,7 +1825,10 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   caution is the first thing in their explanation and part of the question's name, heard every time it is read; it
   says that a command may be offered because the AI's own permission or safety checks refused it, to run it with
   care, to read every detail first and not to run what is not understood; running is never the answer a list starts
-  on or a notice's default; and the AI's own words about its command are labelled as the AI's. Where it stands today:
+  on or a notice's default; the AI's own words about its command are labelled as the AI's; and the command itself is
+  shown with no character hidden, every joiner, selector and space that is not the plain one written out as its code
+  (`DisplayText.VisibleCommand`, AX-6.4, "No hidden character in a command, ever", the fourth review of 2026-11-27:
+  an emoji's joiner between two "&gt;" hid that an append was a truncation). Where it stands today:
   a command Claude offers (`docs/axKit/mcp.md` MC-9: the question's name and "Read this first" in the explanation);
   an AI tool's run of a window's command (MC-7.3: asked through the same list as an offered command, named "Asked by
   Claude, an AI: read the explanation before you allow it", its explanation starting with "Read this first" and showing the text the command is run with whole, MC-7.9, since 2026-11-27); AI help's answers ("Claude says" ends with who wrote it and that it can be wrong; `docs/axKit/ai-help.md`

@@ -122,7 +122,7 @@ public sealed partial class FileForm
         ])
         {
             Input = new OverlayInput("Path:", "Path", PathToComplete(), "Type a path", KeyHook: OnPathKey),
-        });
+        }.ByUser());
     }
 
     /// <summary>Folder → Refresh (F5): the folder read again, the selection kept by name (AF-3.4).</summary>

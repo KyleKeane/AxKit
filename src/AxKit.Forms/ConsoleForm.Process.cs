@@ -204,18 +204,29 @@ public abstract partial class ConsoleForm
 
     // ---- the writes (axClaude §7.3, axTerminal AT-3.1): one paced queue, one pump ----
 
-    /// <summary>Text straight to the program, now.</summary>
-    protected void Write(string text) => _host?.Write(text);
+    /// <summary>
+    /// Text straight to the program, now, when <paramref name="still"/> says so: the check the write asks right
+    /// before it goes, or null, written out, for a write that needs none (the stop key). Required, as for
+    /// <see cref="Enqueue"/>, so that the compiler has every caller state its check (the fourth review of
+    /// 2026-11-27, L3: a table of the callers in a test, read off the sources by a pattern, could be passed by).
+    /// </summary>
+    protected void Write(string text, Func<bool>? still)
+    {
+        if (still is null || still())
+        {
+            _host?.Write(text);
+        }
+    }
 
     /// <summary>
     /// A write for the queue, with the pause that follows it before the next; <see cref="StartWrites"/> sends them.
-    /// <paramref name="still"/>, when given, is asked right before this write goes to the program, which can be
-    /// seconds after it was queued: false when what the write was for is over (axClaude: a question was drawn under
-    /// a message's Enter; the question an answer was typed for was replaced). The write is then dropped with
-    /// everything queued behind it, and the one who asked says so. Until the third review of 2026-11-27 a write was
-    /// judged when it was queued and never again.
+    /// <paramref name="still"/> is asked right before this write goes to the program, which can be seconds after it
+    /// was queued: false when what the write was for is over (axClaude: a question was drawn under a message's Enter;
+    /// the question an answer was typed for was replaced). The write is then dropped with everything queued behind
+    /// it, and the one who asked says so. Until the third review of 2026-11-27 a write was judged when it was queued
+    /// and never again. Required, null written out for a write that needs no check (<see cref="Write"/>).
     /// </summary>
-    protected void Enqueue(string text, int delayAfter, Func<bool>? still = null) => _writes.Enqueue((text, delayAfter, still));
+    protected void Enqueue(string text, int delayAfter, Func<bool>? still) => _writes.Enqueue((text, delayAfter, still));
 
     /// <summary>Starts the write pump when it is idle; a pump already running takes what was queued after it.</summary>
     protected void StartWrites()
@@ -247,7 +258,7 @@ public abstract partial class ConsoleForm
         }
 
         _writing = true;
-        Write(text);
+        _host?.Write(text);
         _pump.Interval = delay;
         _pump.Start();
     }

@@ -24,13 +24,17 @@ check commands
 expect state Unlock test
 expect focus Type the master password to unlock test
 type wrong
+# The unlock notice comes by itself as the window opens and holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys enter
 expect said ! Unlocking test
 expect state The password does not open test.
 
 # Goal: Unlock a password database
-# 1.2 The right one: the top level.
+# 1.2 The right one: the top level. The unlock notice was shown again after the tool's answer and holds its keys for
+# a second (bundle AX-6.4).
 type test-master-1
+wait 1100
 keys enter
 expect said ! test, 3 items, Email, group, 1 item
 expect state "title":"test, axPass, 
@@ -176,15 +180,20 @@ keys down
 expect focus Password, password, hidden
 keys enter
 expect focus Type a new password for Gmail personal
+# The password's notice holds its keys for a second, Generate's letter with Alt among them (bundle AX-6.4).
+wait 1100
 keys alt+g
 expect said ! Generated a password of 20 characters
 keys enter
 expect said ! Password set for Gmail personal
 # Check: Two typed passwords that differ change nothing
+# Each of the two notices holds its keys for a second (bundle AX-6.4).
 keys enter
 type one
+wait 1100
 keys enter
 type two
+wait 1100
 keys enter
 expect said ! The two passwords differ: nothing changed
 keys escape
@@ -224,5 +233,7 @@ keys left
 keys ctrl+l
 expect said ! Locked
 expect state Unlock test
+# The unlock notice holds its keys for a second (bundle AX-6.4): it comes by itself as the window opens or locks.
+wait 1100
 keys escape
 expect focus test, locked: Enter unlocks

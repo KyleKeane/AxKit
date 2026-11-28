@@ -54,7 +54,7 @@ internal sealed partial class MainForm
             Custom = controls,
             Accepts = controls.Ready,
             HeadLine = controls.FolderLine,
-        });
+        }.ByUser());
     }
 
     private void StartNewSession(SessionControls controls)

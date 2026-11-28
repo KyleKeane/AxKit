@@ -140,6 +140,18 @@ public sealed class ControlArea : Panel
             {
                 boxes.SetItemChecked(i, true);
             }
+
+            // A tick is an answer too (the fourth review of 2026-11-27, L7): inside the hold a click or UI
+            // Automation's Toggle, which pass no key, change nothing and are heard, as Space is. The boxes ticked
+            // above were set before the list was the control shown, and are the program's, not the user's.
+            boxes.ItemCheck += (_, e) =>
+            {
+                if (ReferenceEquals(Current, boxes) && Holding)
+                {
+                    e.NewValue = e.CurrentValue;
+                    _heldKeyHeard();
+                }
+            };
         }
 
         if (items.Count > 0)
@@ -310,9 +322,33 @@ public sealed class ControlArea : Panel
     /// </summary>
     private void FocusArrived(Control control)
     {
-        if (_arrived && ReferenceEquals(Current, control))
+        if (_arrived && !_returning && ReferenceEquals(Current, control))
         {
             _hold.Start(_clock());
+        }
+    }
+
+    /// <summary>Inside <see cref="FocusReturned"/>: the focus that arrives now is the user's own way back to a control they heard.</summary>
+    private bool _returning;
+
+    /// <summary>
+    /// The focus put back on the control shown, by <paramref name="moveFocus"/> (the window base selects it), after
+    /// a notice the user opened from it with a command of their own (an explanation, a help text) has closed: the
+    /// user heard the control before they left it, so its moment is not started again (the fourth review of
+    /// 2026-11-27, N4; the hold that already runs runs on). Any other arrival starts it (<see cref="FocusArrived"/>).
+    /// Only the focus that arrives inside this call counts: a window that is not the active one gets it later, on
+    /// its activation, which is an arrival like any other.
+    /// </summary>
+    public void FocusReturned(Action moveFocus)
+    {
+        _returning = true;
+        try
+        {
+            moveFocus();
+        }
+        finally
+        {
+            _returning = false;
         }
     }
 

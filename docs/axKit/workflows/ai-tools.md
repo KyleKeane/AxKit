@@ -102,7 +102,6 @@ Starts with: Open axFile with the folder files.
 1. Press Down.
 2. Press Enter.
     You hear: axAutomate ran New folder.
-3. Press Escape.
 
 ### Deny a command an AI tool asks to run
 
@@ -211,3 +210,11 @@ Starts with: Open axTemplate.
 1. Ask Claude to put the focus on the field Text.
     The tool answers with focused: Text.
     You hear: axAutomate moved to Text.
+
+## Answer the question a command an AI tool ran asks you
+
+Starts with: Open axCalc.
+
+### Keep the history when a command an AI tool ran asks to clear it
+
+1. Press Escape.

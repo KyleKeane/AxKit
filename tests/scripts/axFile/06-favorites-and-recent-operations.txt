@@ -224,6 +224,8 @@ keys space shift+down
 expect focus "value":"delete-two-2.txt, selected"
 keys delete
 expect state "notice":"Delete 2 items?"
+# The question comes after the drive was asked about its Recycle Bin, off the window's thread: it holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys enter
 expect said ! Deleted 2 items
 keys home

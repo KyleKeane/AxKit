@@ -10,7 +10,7 @@
 # The second half is a screen of Claude Code's that only informs, which follows the user's own answer: its notice
 # was shown as "the user's doing" and held no keys, so the same doubled Enter closed it unheard. A notice a program
 # shows always holds now (Notice.ByItself); whether a chime plays is decided apart.
-# The stand-in (tools/AxAutomate/StandIn.cs) draws each frame at a file of the script's and reads no key.
+# The stand-in (tools/AxAutomate/StandIn.cs) draws each frame at a file of the script's and acts on no key.
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir nq
 file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*

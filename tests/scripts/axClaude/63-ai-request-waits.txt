@@ -6,7 +6,7 @@
 # answer, further runs of AI tools went on in the window under it: axClaude's own list was not reported to the gate,
 # as every other window's is. And a request or an offered command left unanswered when Claude stopped stayed: the
 # one shown, its list closed with Claude, kept every later one from ever being asked. The stand-in draws an idle
-# Claude Code and reads no key; the runner is the AI tool.
+# Claude Code and acts on no key; the runner is the AI tool.
 file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir rq

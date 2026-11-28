@@ -58,11 +58,19 @@ expect focus 1. Explain this command
 # follows, which the user answers).
 keys down
 expect focus 2. Yes, run it
-# The list's second counts again from when the focus came back to it from the explanation (bundle AX-6.4, 2026-11-27).
-wait 1100
+# The explanation was the user's own to open from the list they had heard: the list's second is not started again
+# as the focus comes back (bundle AX-6.4, N4 of the fourth review of 2026-11-27; until then a wait of a second here).
 keys enter
 expect said axAutomate ran New folder
 expect focus Name
+
+# Check: The notice a command run for an AI tool opens holds its keys
+# The fourth review of 2026-11-27 (H2): the field New folder opens was opened by the AI tool's run, not by a key of
+# the user's, so Enter and Escape wait a second there as in every notice that arrived by itself, and a press is heard.
+keys escape
+expect said ♪ Edge
+expect state "notice":"New folder"
+wait 1100
 keys escape
 expect focus notes.md
 

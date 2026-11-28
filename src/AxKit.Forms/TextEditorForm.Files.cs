@@ -175,7 +175,7 @@ public sealed partial class TextEditorForm
         ScheduleStatus();
     }
 
-    private void NewDocument() => AskToSave(() => LoadDocument(null));
+    private void NewDocument() => AskToSave(() => LoadDocument(null), byUser: true);
 
     /// <summary>File → Open recent file (AD-4.1): the last ten files opened or saved under a name, from the settings; one that no longer exists is left out, or, on a share listed without the check (AX-9.5), said when chosen rather than opened as a new file.</summary>
     private void FillRecentFiles() =>
@@ -189,7 +189,7 @@ public sealed partial class TextEditorForm
             {
                 Fail($"{target} no longer exists.");
             }
-        }));
+        }, byUser: true));
 
     /// <summary>File → Show current file in → File Explorer (AD-4.1; Ctrl+W until 2026-11-26): the file selected in File Explorer, one of the system's own windows (AX-7.2).</summary>
     private void ShowInExplorer()
@@ -226,7 +226,7 @@ public sealed partial class TextEditorForm
         {
             LoadDocument(dialog.FileName);
         }
-    });
+    }, byUser: true);
 
     /// <summary>Ctrl+S: into the file, after a name (AD-3.5) and, when the file changed behind the editor, a question (AD-3.6).</summary>
     private void Save(Action? then = null)
@@ -245,7 +245,7 @@ public sealed partial class TextEditorForm
                     new OverlayChoice("&Write over", () => WriteFile(_path, then), IsDefault: true),
                     new OverlayChoice("&Reload and lose mine", () => Reload("Reloaded")),
                     new OverlayChoice("&Cancel", IsCancel: true),
-                ]));
+                ]).ByUser());
             return;
         }
 
@@ -345,7 +345,7 @@ public sealed partial class TextEditorForm
                     [
                         new OverlayChoice("&Save as UTF-8", () => WriteFile(path, then, remember, asUtf8: true), IsDefault: true),
                         new OverlayChoice("&Cancel", IsCancel: true),
-                    ]));
+                    ]).ByUser());
                 return false;
             }
 
@@ -402,8 +402,13 @@ public sealed partial class TextEditorForm
         }
     }
 
-    /// <summary>AD-6.1: runs <paramref name="then"/> at once without changes, otherwise after Save or Don't save; Cancel runs <paramref name="cancelled"/>.</summary>
-    private void AskToSave(Action then, Action? cancelled = null)
+    /// <summary>
+    /// AD-6.1: runs <paramref name="then"/> at once without changes, otherwise after Save or Don't save; Cancel runs
+    /// <paramref name="cancelled"/>. The question holds its keys for a moment (bundle AX-6.4) unless
+    /// <paramref name="byUser"/>: New, Open and a recent file ask it as the first result of the user's own command;
+    /// the window's closing asks it held, since Windows or an update's restart can close the window.
+    /// </summary>
+    private void AskToSave(Action then, Action? cancelled = null, bool byUser = false)
     {
         if (!_changed)
         {
@@ -411,11 +416,12 @@ public sealed partial class TextEditorForm
             return;
         }
 
-        ShowNotice(new Notice($"Save changes to {DocumentName}?", string.Empty,
+        var question = new Notice($"Save changes to {DocumentName}?", string.Empty,
         [
             new OverlayChoice("&Save", () => Save(then), IsDefault: true),
             new OverlayChoice("&Don't save", then),
             new OverlayChoice("&Cancel", cancelled, IsCancel: true),
-        ]));
+        ]);
+        ShowNotice(byUser ? question.ByUser() : question);
     }
 }

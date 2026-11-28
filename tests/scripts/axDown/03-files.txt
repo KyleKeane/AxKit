@@ -184,12 +184,16 @@ expect focus wide.txt
 type More.
 close
 expect state "notice":"Save changes to wide.txt?"
+# Asked as the window closes, which Windows or an update can do too: the question holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys escape
 expect state "notice":null
 expect state , axDown, *
 expect state \wide.txt","notice"
 close
 expect state "notice":"Save changes to wide.txt?"
+# Asked as the window closes, which Windows or an update can do too: the question holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys tab tab
 expect focus Don\u0027t save
 keys enter

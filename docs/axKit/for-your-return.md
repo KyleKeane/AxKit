@@ -19,10 +19,14 @@ Updated 2026-11-28, early morning.
   Each set is its own fix batch. The second look at the access layers found four ways a repository's own program
   could still run in axGIT, and six ways a fetch or push could reach a server other than the one asked about;
   all fixed (the next decisions below). The second look at axClaude's corrections found that the one-second hold
-  ended just as the window moved the focus onto a question; that fix batch is running. A second look at the
-  axGIT fixes then found two more ways a repository's program could run (at opening, in a partial clone; on a
-  push to a folder), so the next axGIT batch works by rules that need no list: a repository not trusted is
-  never connected, git never fetches by itself, a folder remote is checked before a push.
+  ended just as the window moved the focus onto a question; fixed. The look after that found that a notice an
+  AI tool's command opened did not hold, and that a command could hide a joiner between two symbols; fixed
+  as well, by turning the default around: every notice holds unless your own key opened it. A second look at
+  the axGIT fixes found two more ways a repository's program could run (at opening, in a partial clone; on a
+  push to a folder), so axGIT now works by rules that need no list: a repository not trusted is never
+  connected, and git never fetches by itself. The look after that still found ways (a submodule's settings,
+  a folder push into the wrong repository), so the batch now running moves the line: before you trust a
+  repository, axGIT runs no git in it at all, and it pushes only to a server.
 - **Fable and Opus**: on 2026-11-28 you said Fable's credits were nearly spent. Every remaining fix batch has
   its written brief with the decisions in it, and the state, the order and the process are in
   `C:\Temp\axkit-tools\HANDOFF.md`, so that Opus can run them; the design work on branches (the graph's
@@ -82,6 +86,16 @@ Each is one line to undo unless it says otherwise.
   without the chime.
 - **An offered command with characters that cannot be seen is shown with their codes, not refused**: emoji use
   such characters too.
+- **Every notice holds its keys for a second, unless your own key or command opened it at once.** A confirmation
+  you open yourself (Clear history, Delete, End process) takes Enter at once; the same one opened by an AI
+  tool's command holds. Some that follow your command still hold: those shown after a wait (axFile's Delete,
+  which first asks the drive about its Recycle Bin; axMCP's call results; axProcess's details), the closing
+  questions, the consent notice and axPass's unlock. To turn back: hold your own confirmations too.
+- **A message's Enter goes only when Claude Code shows the message on its prompt row** and asks nothing: axClaude
+  looks every tenth of a second for up to 3 seconds, then says "Not sent yet". An offered command's `!` row is
+  not in any recording yet: checked live before the release.
+- **A command to approve writes out every hidden joiner and selector, emoji or not**; no-break spaces in
+  Claude's own lines stay as they are (it writes them after its bullets).
 - **A day and month typed without a year is the next such day**, today included; 29 February is the next leap year's.
 - **A save that would turn a character into a question mark asks "Save as UTF-8?"**, and Enter saves as UTF-8.
   The other way would be to refuse the save; this one keeps your text whole and says in the status bar what it did.

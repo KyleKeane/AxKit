@@ -47,10 +47,14 @@ type not the current one
 keys enter
 expect state "notice":"New approval passphrase"
 type another long passphrase
+# The notice follows the button of the one before and holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys enter
 expect state "notice":"Confirm the approval passphrase"
 expect said Confirm the approval passphrase. Re-enter the new approval passphrase to confirm it
 type another long passphrase
+# The notice follows the button of the one before and holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys enter
 expect said ♪ Edge
 expect said That is not the current approval passphrase: nothing changed

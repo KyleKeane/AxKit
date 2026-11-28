@@ -14,6 +14,8 @@ keys tab
 expect focus Start Claude Code
 keys enter
 expect said Ready
+# The folder's question held its keys, so the message field's Enter waits a second after it closes (bundle AX-6.4).
+wait 1100
 
 # Goal: Refuse a command Claude asks to run
 # The question starts on No (SM-7.4); Enter on it refuses, and Claude answers the refusal with words of its own.

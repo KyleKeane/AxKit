@@ -1191,6 +1191,8 @@ Steps and keys: `docs/axKit/workflows/ai-tools.md` (in Claude's working folder: 
 7. **Let an AI tool read a form's fields and move to one**
     - Let an AI tool read the fields of a form
     - Let an AI tool move to a field of a form
+8. **Answer the question a command an AI tool ran asks you**
+    - Keep the history when a command an AI tool ran asks to clear it
 
 ## NVDA only
 

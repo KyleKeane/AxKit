@@ -47,7 +47,7 @@ public abstract partial class ItemForm
         if (row is { IsList: false } && field.Title.Equals(ItemDocument.TitleField, StringComparison.OrdinalIgnoreCase))
         {
             AskText("Change Title", string.Empty, "Title:", "Title", FieldTypes.TextOf(field.Value), "&Change", title => RenameItem(row, title.Trim()),
-                typed => typed.Trim().Length == 0 ? "Type the item's title" : null);
+                typed => typed.Trim().Length == 0 ? "Type the item's title" : null, byUser: true);
             return;
         }
 
@@ -97,7 +97,7 @@ public abstract partial class ItemForm
             {
                 parsed = FieldTypes.Parse(field.Type, typed, field.Options, DateOnly.FromDateTime(DateTime.Now));
                 return parsed.Refused;
-            }, required: false);
+            }, required: false, byUser: true);
     }
 
     /// <summary>A field's new value, saved and said ("Due: 30 October 2026, Friday").</summary>
@@ -156,7 +156,7 @@ public abstract partial class ItemForm
         ])
         {
             Custom = list,
-        });
+        }.ByUser());
         list.Select();
     }
 
@@ -186,7 +186,7 @@ public abstract partial class ItemForm
             Custom = box,
             // The text says the keys: "Enter: Save." would be untrue in the box.
             KeyLine = false,
-        });
+        }.ByUser());
         box.Select();
         box.Select(box.TextLength, 0);
     }

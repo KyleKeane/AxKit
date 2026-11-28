@@ -143,7 +143,7 @@ public sealed partial class TaskForm
                     AddChosenProjectFolder(chosen, afterDialog: true);
                 });
             },
-            typed => typed.Trim().Length == 0 ? null : _settings.RefusedProjectFolder(typed), required: false);
+            typed => typed.Trim().Length == 0 ? null : _settings.RefusedProjectFolder(typed), required: false, byUser: true);
     }
 
     /// <summary>The folder kept, looked in, and its section selected on the user's own top level (TK-7b.1).</summary>
@@ -365,7 +365,7 @@ public sealed partial class TaskForm
             "Words to find in the titles and text fields of the items of every list: your own lists and every project's. An item holding every word is found.",
             "Type the words to find in every list:", "Type the words to find in every list", _lastWords, "&Find",
             typed => RunSearch(typed.Trim()),
-            typed => Projects.Words(typed).Count == 0 ? "Type a word to find" : null, emptyMessage: "Type a word to find");
+            typed => Projects.Words(typed).Count == 0 ? "Type a word to find" : null, emptyMessage: "Type a word to find", byUser: true);
     }
 
     /// <summary>

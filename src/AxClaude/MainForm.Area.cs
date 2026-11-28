@@ -1124,7 +1124,7 @@ internal sealed partial class MainForm
     private void SendScreenKey(string key)
     {
         ScreenKeySent();
-        Write(key);
+        Write(key, still: null);
     }
 
     /// <summary>
@@ -1166,7 +1166,7 @@ internal sealed partial class MainForm
         }
 
         MarkWaitAnswered();
-        Write(ClaudeCodeKeys.Escape);
+        Write(ClaudeCodeKeys.Escape, still: null);
         FlowActed(UserAction.Escaped);
     }
 
@@ -1364,7 +1364,7 @@ internal sealed partial class MainForm
             _draft = null;
             Handled(question.Signature, mark: false);
             UserActedNow();
-            Write(ClaudeCodeKeys.Escape);
+            Write(ClaudeCodeKeys.Escape, still: null);
             FlowActed(UserAction.Escaped);
             return true;
         }

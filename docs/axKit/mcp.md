@@ -416,7 +416,14 @@ menu, the palette and the automated checks in the table of `command-language.md`
   for the user's key: a stray Enter of the user's does not answer a list an AI tool just opened. It counts as
   arrived by itself in every way (`ControlArea.HoldAsArrived`, the third review of that day): the moment starts
   again when the focus comes to it, and the field that gets the focus back when it closes holds its Enter for a
-  moment too. The text a run carries is entered by the run itself and passes no hold (`ControlArea.Fill`). A password field is never filled ("The command asks for a password,
+  moment too. The same holds for a notice or a form the run opened (the fourth review of 2026-11-27, H2 and M1: a
+  confirmation such as axCalc's Clear history, axClip's clear, axProcess's End process, axMCP's Remove or Restart
+  now, and the report form `axkit_draft_report` opens): it holds its answering keys for a moment though the
+  command's own code says `Notice.ByUser` for the user's key (`AxKitForm.ShowNotice` asks `ClickedForAiTool`), again
+  from when the focus comes to it, in a window behind too when the user comes to it, and the message field it gives
+  the focus back to holds its Enter for a moment. Until then a doubled Enter confirmed what an AI tool's run asked,
+  and Ctrl+Enter sent its drafted report, unheard. The text a run carries is entered by the run itself and passes
+  no hold (`ControlArea.Fill`, `OverlayPanel.Fill`). A password field is never filled ("The command asks for a password,
   which AI tools never type"); a command that opened no field ran, and the answer's `text` says the text was not used.
   The user hears "Claude ran Find with the text budget" (`McpRun.Said`), and an act command's question names the
   text, its explanation under a heading of its own (`McpRun.AskName`, `ExplainText`). The explanation shows the
@@ -572,7 +579,10 @@ which overwrote what the user had there. Now it offers the command through a too
   `DisplayText`'s table) is written out as its code, "‹U+202E›", wherever the command is shown, in the question's
   name and in the explanation, so that what the user judges is what runs; the AI tool's reason and breakdown
   likewise. The line that is sent and the copy for the clipboard are the command as it was offered. Until then
-  such a character stood in the question unseen.
+  such a character stood in the question unseen. In the command nothing is excepted (the fourth review of
+  2026-11-27, bundle AX-6.4, "No hidden character in a command, ever"): an emoji's joiner and picture selector, a
+  non-joiner and every variation selector are written out too, since a joiner between two "&gt;" showed an append
+  that bash ran as a truncation; the reason and the breakdown, which are read, keep an emoji whole.
 - MC-9.4 **The question** is a list in the control area, in the message field's place, as Claude's own questions are
   (the user's decision of 2026-11-13, after hearing the first version, a notice that covered the window): the
   conversation stays there to read for context (Tab, Alt+2), and the question is told from a notice by where it is.

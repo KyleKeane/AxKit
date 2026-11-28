@@ -183,6 +183,8 @@ expect focus fake, stdio, stopped
 keys right
 expect said Before axMCP starts fake
 keys tab
+# The agreement holds its keys for a second, as every notice does that is no first result of a key (bundle AX-6.4).
+wait 1100
 keys space
 expect said ! checked
 keys enter
@@ -220,6 +222,8 @@ expect said ! text (required): hello
 keys ctrl+enter
 expect said ! Calling echo
 expect state "notice":"Result of echo","noticeText":"HELLO"
+# A result comes after the server's answer, off the window's thread: it holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys escape
 expect state "notice":null
 # Check: Escape goes back from the arguments to the tool
@@ -235,6 +239,8 @@ expect said ! Calling fail
 expect state "notice":"Result of fail"
 expect focus "name":"Result of fail","role":"Text","value":"The tool reported an error"
 expect text It went wrong.
+# A result comes after the server's answer, off the window's thread: it holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus fail, tool
@@ -285,6 +291,8 @@ wait 1100
 keys enter
 expect said ! Reading page
 expect state "notice":"page","noticeText":"Text of fake://page/1"
+# A result comes after the server's answer, off the window's thread: it holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus page, resource template
@@ -317,6 +325,8 @@ expect said ! Fetching greet
 expect state "notice":"greet"
 expect text A greeting.
 expect text user: Say hello to Ada
+# A result comes after the server's answer, off the window's thread: it holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus who (required), text, Ada

@@ -753,7 +753,7 @@ public sealed partial class TaskForm : ItemForm
     private void ReadKept(ItemFile item) =>
         ShowNotice(Notice.Plain("Fields kept",
             string.Join("\r\n", item.Kept.Select(kept => $"{kept.Name}: {FieldTypes.PlainText(kept.Value)}"))
-            + $"\r\n\r\nThese values are in the item's file, and no field of the list's configuration has their names, so they are kept and not shown among the fields. A field of that name in the configuration shows its value again. {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} on the list opens the configuration in axJSON."));
+            + $"\r\n\r\nThese values are in the item's file, and no field of the list's configuration has their names, so they are kept and not shown among the fields. A field of that name in the configuration shows its value again. {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} on the list opens the configuration in axJSON.").ByUser());
 
     /// <summary>
     /// A list's detail: its details as fields (Section first, TK-3a.3), then the fields of its items, on which Enter
@@ -813,5 +813,5 @@ public sealed partial class TaskForm : ItemForm
 
     /// <summary>Enter on a list's "Fields of its items" line: how they change.</summary>
     private void ExplainFields() =>
-        ShowNotice(Notice.Plain("Fields of its items", (ShownDetail.Lines.FirstOrDefault()?.Label ?? string.Empty) + $".\r\n\r\nThe fields of a list's items are written once, in the list's configuration: {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} on the list opens it in axJSON, where \"item fields\" names each field with its title, its type and the value a new item starts with. A field added there shows in every item, empty until it is given a value. A field taken out is hidden and its values are kept in the items: put it back and they show again. Actions, Add Done to every item or Remove Done from every item makes the list a checklist or a plain list."));
+        ShowNotice(Notice.Plain("Fields of its items", (ShownDetail.Lines.FirstOrDefault()?.Label ?? string.Empty) + $".\r\n\r\nThe fields of a list's items are written once, in the list's configuration: {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} on the list opens it in axJSON, where \"item fields\" names each field with its title, its type and the value a new item starts with. A field added there shows in every item, empty until it is given a value. A field taken out is hidden and its values are kept in the items: put it back and they show again. Actions, Add Done to every item or Remove Done from every item makes the list a checklist or a plain list.").ByUser());
 }

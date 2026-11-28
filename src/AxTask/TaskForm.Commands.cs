@@ -216,7 +216,7 @@ public sealed partial class TaskForm
             return;
         }
 
-        AskText("New item", $"In {listName}.", "Title:", "Title", string.Empty, "&Add", title => AddItem(folder, listName, title, inList), typed => typed.Trim().Length == 0 ? "Type the item's title" : null);
+        AskText("New item", $"In {listName}.", "Title:", "Title", string.Empty, "&Add", title => AddItem(folder, listName, title, inList), typed => typed.Trim().Length == 0 ? "Type the item's title" : null, byUser: true);
     }
 
     /// <summary>The new item written in <paramref name="folder"/>, from the notice or from the title typed in place.</summary>
@@ -295,7 +295,7 @@ public sealed partial class TaskForm
             _smart = null;
             _folder = TopFolder;
             Commit(new Step([FileChange.WriteInNewFolder(listFile, details.ToText())], "Made " + trimmed), Path.Combine(folder, trimmed));
-        }, typed => ItemFolder.RefusedListName(folder, typed) ?? (typed.Trim().Equals(ItemFolder.ArchiveName, StringComparison.OrdinalIgnoreCase) ? "Archive is the archive's own name" : null));
+        }, typed => ItemFolder.RefusedListName(folder, typed) ?? (typed.Trim().Equals(ItemFolder.ArchiveName, StringComparison.OrdinalIgnoreCase) ? "Archive is the archive's own name" : null), byUser: true);
     }
 
     /// <summary>Why no list is made here: in the search's level (TK-7b.4), or on a project's row or section (TK-7b.3); null where lists are made.</summary>
@@ -333,7 +333,7 @@ public sealed partial class TaskForm
             () => !IsNew() ? null
                 : name.Text.Trim().Length == 0 ? (name, "Type the section's name")
                 : choices.Contains(name.Text.Trim(), StringComparer.OrdinalIgnoreCase) ? (name, $"There is a section called {name.Text.Trim()} already")
-                : null);
+                : null, byUser: true);
     }
 
     /// <summary>The list's Section field written (TK-3a.3).</summary>
@@ -375,7 +375,7 @@ public sealed partial class TaskForm
             }
 
             return File.Exists(Path.Combine(TopFolder, trimmed + ItemFolder.FilterExtension)) ? $"There is a smart list called {trimmed} already" : null;
-        });
+        }, byUser: true);
     }
 
     /// <summary>F2 in the navigator (AX-8.7): an item's Title (its file renamed with it, IA-4.5) or a list's name, in place; the links to them kept (IA-D3).</summary>
@@ -616,7 +616,7 @@ public sealed partial class TaskForm
                 var details = ListConfig.New(template).WithDetail(ItemFolder.SectionField, JsonValue.Create(section));
                 MoveItemsTo(items, Path.Combine(top, trimmed), string.Empty, FileChange.WriteInNewFolder(Path.Combine(top, trimmed, ItemDocument.ListFile), details.ToText()));
             },
-            () => IsNew() && NameRefused() is { } refused ? (name, refused) : null);
+            () => IsNew() && NameRefused() is { } refused ? (name, refused) : null, byUser: true);
     }
 
     /// <summary>
@@ -706,7 +706,7 @@ public sealed partial class TaskForm
                     1 => null,
                     _ => $"{matches.Count} items are called {title}: rename one first",
                 };
-            }, required: false);
+            }, required: false, byUser: true);
         return true;
     }
 

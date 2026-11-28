@@ -6,7 +6,7 @@
 # apart by the three words of the label, "git push origin", so "git push origin main" replaced by "git push origin
 # main --force" was one question: the list stayed, nothing was said, and Enter on "1. Yes" allowed a command of
 # which no word had been heard. The two are now compared by every row between the title and the answers.
-# The stand-in (tools/AxAutomate/StandIn.cs) draws each frame at a file of the script's and reads no key.
+# The stand-in (tools/AxAutomate/StandIn.cs) draws each frame at a file of the script's and acts on no key.
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir cq
 file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*

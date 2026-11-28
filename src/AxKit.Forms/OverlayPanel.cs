@@ -57,7 +57,7 @@ public sealed record Notice(string Title, string Text, IReadOnlyList<OverlayChoi
     /// A notice that arrived by itself and brings no chime of its own: the window sounds its own rule for it
     /// (axClaude's information screens), it follows the user's own command and was heard before (the notice shown
     /// again after a find in its text), or it is the second of its kind (axGIT's missing git). The chime alone:
-    /// whether the notice holds its keys is <see cref="Unprompted"/>'s to say, and nothing here changes it.
+    /// whether the notice holds its keys is <see cref="OpenedByUser"/>'s to say, and nothing here changes it.
     /// </summary>
     public bool Silent { get; init; }
 
@@ -65,23 +65,53 @@ public sealed record Notice(string Title, string Text, IReadOnlyList<OverlayChoi
     public string? HeadLine { get; init; }
 
     /// <summary>
-    /// Opened by something other than the user's own command a moment ago: an update offer, an error, a screen a
-    /// program shows, the result of a job or a timer. It holds its answering keys for a moment after it is shown and
-    /// after the focus comes back into it (<see cref="KeyHold"/>, the one rule), since the user has heard nothing of
-    /// it yet, and it plays the notice chime unless it is <see cref="Silent"/>. Set by <see cref="ByItself"/> alone:
-    /// there is no way to hand it a value worked out. Until the third review of 2026-11-27 it was a plain switch,
-    /// and three places worked it out from whether the user had acted lately or had asked for the check, which says
-    /// nothing about whether the notice was heard: a screen of Claude Code's that followed the user's own key had no
-    /// hold. What may be worked out is the chime (<see cref="Silent"/>).
+    /// Opened by something other than the user's own command a moment ago, and said so by its maker: an update offer,
+    /// an error, a screen a program shows, the result of a job or a timer. It plays the notice chime unless it is
+    /// <see cref="Silent"/>. Set by <see cref="ByItself"/> alone. The chime alone since the fourth review of
+    /// 2026-11-27: every notice holds its answering keys unless it is <see cref="OpenedByUser"/>, whether its maker
+    /// said ByItself or nothing.
     /// </summary>
     public bool Unprompted { get; private init; }
 
     /// <summary>
-    /// The notice as one that arrives by itself (<see cref="Unprompted"/>): everything a program, a job or a timer
-    /// shows, whatever the user did before it. A notice the user opened with a command of their own, and reads as the
-    /// command's first result, is shown as it is.
+    /// Opened at once by the user's own key or command, and read as that command's first result: a help text, the
+    /// details of what is selected, the Find notice, the command palette, an explanation the user chose from a list,
+    /// a field, a form or a confirmation the command opens.
+    /// Only such a notice takes its answering keys the moment it is shown. Every other notice holds them for a
+    /// moment after it is shown and after the focus comes back into it (<see cref="KeyHold"/>, the one rule; the
+    /// fourth review of 2026-11-27, N1: the default turned around, as the question area's <c>hold:</c> was, since a
+    /// notice a job, a flow, a timer or a command run for an AI tool opened had no hold unless its maker remembered
+    /// to say <see cref="ByItself"/>, and five places did not). Set by <see cref="ByUser"/> alone, whose callers
+    /// <c>NoticeHoldTests</c> lists; and the window base takes it away again where the notice cannot have been the
+    /// user's own command's: opened from a notice's button or after one closed (what follows an answer arrives by
+    /// itself), or inside a command an AI tool ran.
     /// </summary>
-    public Notice ByItself() => this with { Unprompted = true };
+    public bool OpenedByUser { get; private init; }
+
+    /// <summary>
+    /// The notice as one that arrives by itself (<see cref="Unprompted"/>): everything a program, a job or a timer
+    /// shows, whatever the user did before it, with the chime. It holds as every notice does that is not
+    /// <see cref="ByUser"/>.
+    /// </summary>
+    public Notice ByItself() => this with { Unprompted = true, OpenedByUser = false };
+
+    /// <summary>
+    /// The notice as the first result of the user's own key or command, shown in the same breath (<see cref="OpenedByUser"/>):
+    /// no hold, no chime. A help text, the details of what is selected, a field or a form the command opens, the
+    /// command's own confirmation. Never for a notice shown after an await, by a timer, a job or a flow, nor for what
+    /// a program or an AI tool asks. <c>NoticeHoldTests</c> lists every caller.
+    /// </summary>
+    public Notice ByUser() => this with { OpenedByUser = true, Unprompted = false };
+
+    /// <summary>
+    /// The notice as the window base shows it (<c>AxKitForm.ShowNotice</c>, the one place): held after all, though
+    /// made <see cref="ByUser"/>, where it cannot be the first result of the user's own command:
+    /// <paramref name="followsAnswer"/>, shown by a notice's button or by the action after one closed (what follows
+    /// an answer arrives by itself, <see cref="KeyHold"/> rule 1); <paramref name="forAiTool"/>, shown inside a
+    /// command clicked for an AI tool (docs/axKit/mcp.md MC-7.9). Every other notice as it is.
+    /// </summary>
+    public static Notice AsShown(Notice notice, bool followsAnswer, bool forAiTool) =>
+        notice.OpenedByUser && (followsAnswer || forAiTool) ? notice with { OpenedByUser = false } : notice;
 
     /// <summary>
     /// Which kind of event the notice is when it opens by itself (docs/axKit/events.md EV-3), for the sound the
@@ -147,7 +177,7 @@ public sealed record Notice(string Title, string Text, IReadOnlyList<OverlayChoi
 public sealed class OverlayPanel : Panel
 {
     /// <summary>
-    /// A notice the user did not open takes no answer for a moment (docs/axKit/SPEC.md AX-6.4; <see cref="KeyHold"/>,
+    /// A notice that is not <see cref="Notice.OpenedByUser"/> takes no answer for a moment (docs/axKit/SPEC.md AX-6.4; <see cref="KeyHold"/>,
     /// the one rule): it can open while the user is typing a message, and the next keys were meant for the message
     /// field. The moment starts when the notice is shown (<see cref="Populate"/>) and again when the focus comes back
     /// into it (<see cref="FocusCameBack"/>). A hold that runs is never shortened: a notice shown while one runs
@@ -433,7 +463,7 @@ public sealed class OverlayPanel : Panel
         Shown = notice;
         var (title, text, choices) = (notice.Title, notice.Text, notice.Choices);
         var input = notice.Input;
-        if (notice.Unprompted)
+        if (!notice.OpenedByUser)
         {
             _hold.Start(_clock());
         }
@@ -511,6 +541,7 @@ public sealed class OverlayPanel : Panel
 
         DefaultButton = null;
         CancelButton = null;
+        _defaultChoice = null;
         foreach (var choice in choices)
         {
             var button = new Button
@@ -528,6 +559,7 @@ public sealed class OverlayPanel : Panel
             if (choice.IsDefault && DefaultButton is null)
             {
                 DefaultButton = button;
+                _defaultChoice = choice;
             }
 
             if (choice.IsCancel && CancelButton is null)
@@ -609,13 +641,13 @@ public sealed class OverlayPanel : Panel
 
     /// <summary>
     /// The focus came back into the notice from outside it, or the window became the active one again while the
-    /// notice shows: a notice that arrived by itself starts its moment again (<see cref="KeyHold"/>, rule 3), since
+    /// notice shows: a notice that holds (any that is not <see cref="Notice.OpenedByUser"/>) starts its moment again (<see cref="KeyHold"/>, rule 3), since
     /// NVDA reads it now and the key that follows at once was meant for where the user came from. The window base
     /// calls it on its activation; the panel itself when the focus enters it.
     /// </summary>
     internal void FocusCameBack()
     {
-        if (Visible && Shown is { Unprompted: true })
+        if (Visible && Shown is { OpenedByUser: false })
         {
             _hold.Start(_clock());
         }
@@ -725,6 +757,31 @@ public sealed class OverlayPanel : Panel
             return;
         }
 
+        Run(choice);
+    }
+
+    /// <summary>
+    /// The field typed into and the default button run, as the user's Enter would (docs/axKit/mcp.md MC-7.9: the
+    /// text an AI tool's run of a command carries, for the notice that command opened). No key of the user's and no
+    /// answer of theirs, so it passes no hold, as <see cref="ControlArea.Fill"/> does not: the notice holds against
+    /// the user's keys, which are what the hold is for, and the run that opened it fills it in the same breath. The
+    /// checks of the button all apply: an empty required field, the consent's box, the window's own.
+    /// </summary>
+    internal void Fill(string text)
+    {
+        SetInputText(text);
+        if (_defaultChoice is { } choice)
+        {
+            Run(choice);
+        }
+    }
+
+    /// <summary>The choice of the default button, for <see cref="Fill"/>; null when there is none.</summary>
+    private OverlayChoice? _defaultChoice;
+
+    /// <summary>What a button does once the hold has let it through (<see cref="Choose"/>), or for a fill (<see cref="Fill"/>).</summary>
+    private void Run(OverlayChoice choice)
+    {
         if (choice.IsDefault && _inputSpec is { Required: true } spec && _input.Text.Length == 0)
         {
             // Nothing to act on yet (Find with an empty field): say so and stay. Refused as everywhere (AX-7.3c): the

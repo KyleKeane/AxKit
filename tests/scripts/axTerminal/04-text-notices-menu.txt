@@ -121,10 +121,13 @@ expect state Running: ping
 keys alt+f4
 expect state "notice":"A command is still running"
 expect state ping -n 30 127.0.0.1 is still running.
+# The closing question holds its keys for a second: an update's restart can ask it too (bundle AX-6.4, 2026-11-27).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus "name":"Command"
 expect state Running: ping
 close
 expect state "notice":"A command is still running"
+wait 1100
 keys enter

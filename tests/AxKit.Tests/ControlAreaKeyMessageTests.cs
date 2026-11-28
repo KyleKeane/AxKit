@@ -306,4 +306,68 @@ public sealed class ControlAreaKeyMessageTests
         Assert.Equal(1, source.Split("enter(field.Text);").Length - 1);
         Assert.Equal(1, source.Split("enter(text);").Length - 1);
     }
+
+    /// <summary>
+    /// N4 (the fourth review of 2026-11-27): a list the user went from into a notice of their own (Explain, a help
+    /// text) and comes back to is the same list, heard before; its hold is not started again by the focus that the
+    /// closing notice hands back (<see cref="ControlArea.FocusReturned"/>). Any other arrival starts it, as before.
+    /// Until then the user waited a second at a list they had heard, after every Explain (scripts 40, 59, mcp 03, 05).
+    /// </summary>
+    [Fact]
+    public void The_focus_handed_back_by_a_notice_the_user_opened_starts_no_hold()
+    {
+        using var area = Area();
+        var chosen = 0;
+        area.ShowList("Claude asks to run git status", ["Explain", "Yes", "No"], 0, null, focus: false, hold: true, (_, _) => chosen++, () => { });
+        var list = Shown(area);
+        _now += 5_000;
+        Assert.False(area.Holding);
+
+        // The focus arrives by its message inside the call, as the window base's Select makes it arrive.
+        area.FocusReturned(() => KeyMessages.Focus(list));
+        Assert.False(area.Holding);
+        KeyMessages.Press(list, Keys.Enter);
+        Assert.Equal(1, chosen);
+
+        // Any other arrival starts the moment again.
+        KeyMessages.Focus(list);
+        Assert.True(area.Holding);
+
+        // One caller: the window base, as the last notice of a chain closes, when no notice of the chain held its keys
+        // and the focus goes back to the very control that had it. No other code may skip an arrival.
+        var root = SourceTexts.RepositoryRoot();
+        var callers = Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories)
+            .Where(file => !file.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}", StringComparison.Ordinal))
+            .SelectMany(file => File.ReadAllLines(file).Where(line => line.Contains(".FocusReturned(", StringComparison.Ordinal)).Select(line => (Path.GetFileName(file), line.Trim())))
+            .ToList();
+        Assert.Equal([("AxKitForm.Notices.cs", "area.FocusReturned(() => target.Select());")], callers);
+        var notices = File.ReadAllText(Path.Combine(root, "src", "AxKit.Forms", "AxKitForm.Notices.cs")).ReplaceLineEndings("\n");
+        Assert.Contains("if (!held && same && target.Parent is ControlArea area)", notices, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// L7 (the fourth review of 2026-11-27): a tick is an answer of a list with check boxes, and inside the hold a
+    /// click or UI Automation's Toggle, which pass no key, tick nothing and are heard, as Space is. The boxes the
+    /// question showed ticked stay ticked, and after the hold a tick changes as always.
+    /// </summary>
+    [Fact]
+    public void A_tick_inside_the_hold_is_set_back_and_heard()
+    {
+        using var area = Area();
+        area.ShowList("Which fruits?", ["1. Apple", "2. Cherry"], 0, [1], focus: false, hold: true, (_, _) => { }, () => { });
+        var boxes = (CheckedListBox)Shown(area);
+        Assert.True(boxes.GetItemChecked(1));
+
+        // As a click or Toggle changes it: through the control's own setter, which raises ItemCheck.
+        boxes.SetItemChecked(0, true);
+        boxes.SetItemChecked(1, false);
+        Assert.False(boxes.GetItemChecked(0));
+        Assert.True(boxes.GetItemChecked(1));
+        Assert.Equal(2, _heard);
+
+        _now += KeyHold.DefaultMs;
+        boxes.SetItemChecked(0, true);
+        Assert.True(boxes.GetItemChecked(0));
+        Assert.Equal(2, _heard);
+    }
 }

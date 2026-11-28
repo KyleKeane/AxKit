@@ -167,7 +167,7 @@ internal sealed partial class MainForm
                 return;
             }
 
-            Write(ClaudeCodeKeys.Enter);
+            Write(ClaudeCodeKeys.Enter, still: null);
             return;
         }
 
@@ -204,11 +204,6 @@ internal sealed partial class MainForm
         var queued = ClaudeInTurn;
         _model.Send(text, evenWhilePrompting: true);
         _messageSent = true;
-        QueueWrites(text, fromField: true);
-        if (!queued)
-        {
-            ResendEnterWhileHeld(text, attempt: 1);
-        }
 
         // Bundle AX-11.6: signing in goes to Anthropic through Claude Code, said once in the window's own words. Not over
         // the stream, which cannot sign in (stream-mode.md SM-6.2): there it would not be true.
@@ -218,16 +213,22 @@ internal sealed partial class MainForm
             _model.AddSystemLine(signIn);
         }
 
-        // FR-7.3a: "Sent" and "Queued" can be switched off; the sign-in reminder is said whatever the switch.
+        // FR-7.3a: "Sent" and "Queued" can be switched off; the sign-in reminder is said whatever the switch. Said when
+        // the message's Enter goes (QueueWrites), never before: a message whose writes are dropped says "Not sent"
+        // alone (D33, the fourth review of 2026-11-27, L4; until then "Sent", then "Not sent").
         var sent = _settings.AnnounceSent ? (queued && !answer ? "Queued" : "Sent") : null;
-        if (string.Join(". ", new[] { sent, signIn }.OfType<string>()) is { Length: > 0 } said)
+        QueueWrites(text, fromField: true, () =>
         {
-            Announce(said, false);
-        }
-        if (_settings.SoundOnBell)
-        {
-            EventDoor.Raise(EventKind.Sent);
-        }
+            if (string.Join(". ", new[] { sent, signIn }.OfType<string>()) is { Length: > 0 } said)
+            {
+                Announce(said, false);
+            }
+
+            if (_settings.SoundOnBell)
+            {
+                EventDoor.Raise(EventKind.Sent);
+            }
+        });
     }
 
     /// <summary>
@@ -245,17 +246,29 @@ internal sealed partial class MainForm
     /// since the message was queued (<see cref="MessageStill"/>): its Enter goes a tenth of a second after its text,
     /// and a permission question drawn in between took that Enter as its answer until the third review of
     /// 2026-11-27. <paramref name="fromField"/> for the message field's own message, which is put back into the
-    /// field when it was not sent.
+    /// field when it was not sent. The Enter goes only on a positive check (<see cref="QueuedWrite.MessageEnterGoes"/>,
+    /// the fourth review of the same day): the frame shows the message on Claude Code's prompt row and nothing is
+    /// asked; when the row does not show it yet, the Enter is left to <see cref="ResendEnterWhileHeld"/>, which asks
+    /// the same. The message counts as sent when its Enter goes, not before (L4): then the core learns of it
+    /// (<see cref="FlowSent"/>) and <paramref name="sent"/> says so; a message whose writes are dropped is taken
+    /// back from the conversation (<see cref="ClaudeModel.TakeBack"/>) and says "Not sent" alone.
     /// </summary>
-    private void QueueWrites(string text, bool fromField = false)
+    private void QueueWrites(string text, bool fromField = false, Action? sent = null)
     {
+        void Sent()
+        {
+            FlowSent(text);
+            sent?.Invoke();
+        }
+
         if (Streams)
         {
             StreamMessage(text);
+            Sent();
             return;
         }
 
-        var still = MessageStill(text, fromField);
+        var (still, enter) = MessageStill(text, fromField, Sent);
         ClearRestoredMessage(still);
         _lastMessage = text;
         var lines = text.Split('\n');
@@ -268,32 +281,78 @@ internal sealed partial class MainForm
             }
         }
 
-        Enqueue(ClaudeCodeKeys.Enter, 50, still);
+        Enqueue(ClaudeCodeKeys.Enter, 50, enter);
         StartWrites();
-        FlowSent(text);
     }
 
     /// <summary>
-    /// What every write of a queued message asks right before it is written (<see cref="ConsoleForm.Enqueue"/>):
-    /// whether the message still goes where it was meant to (<see cref="QueuedWrite.MessageOver"/>). When Claude Code
-    /// has begun to ask something meanwhile, the write and those behind it are dropped: nothing more is typed, no
-    /// Enter answers the question, and the window says that it was not sent, with a line in the conversation. The
-    /// message field's own message goes back into the field when the field is empty. What was typed so far stays on
-    /// Claude Code's prompt row; the next message empties the row first when it still holds this one
-    /// (<see cref="ClearRestoredMessage"/>, by the same flag as after an interrupt).
+    /// What every write of a queued message asks right before it is written (<see cref="ConsoleForm.Enqueue"/>): its
+    /// text and line breaks whether the message still goes where it was meant to (<see cref="QueuedWrite.MessageGoes"/>),
+    /// its Enter whether the frame shows it on Claude Code's prompt row as well (<see cref="QueuedWrite.MessageEnterGoes"/>).
+    /// When Claude Code has begun to ask something meanwhile, or asks something else than the question a message sent
+    /// into it was for, the write and those behind it are dropped: nothing more is typed, no Enter answers the
+    /// question, the message's block leaves the conversation, and the window says that it was not sent, with a line in
+    /// the conversation. The message field's own message goes back into the field when the field is empty. What was
+    /// typed so far stays on Claude Code's prompt row; the next message empties the row first when it still holds
+    /// this one (<see cref="ClearRestoredMessage"/>, by the same flag as after an interrupt). An Enter whose message
+    /// the frame does not show yet is not written then: the window looks again every tenth of a second
+    /// (<see cref="EnterWaitMs"/>) and writes it, asked once more as it goes, as soon as the row shows the message, and
+    /// counts the message as sent then (<paramref name="sent"/>); a question drawn meanwhile drops it as above; a row
+    /// that never shows it within <see cref="EnterWaitTries"/> looks is said, with what sends it, since the message
+    /// stands typed and unsent on Claude Code's prompt row.
     /// </summary>
-    private Func<bool> MessageStill(string text, bool fromField)
+    private (Func<bool> Text, Func<bool> Enter) MessageStill(string text, bool fromField, Action sent)
     {
-        var asked = _model.PromptPending;
-        return () =>
+        var askedThen = _model.PromptPending;
+        var waitedFor = WaitIdentity();
+        bool Goes() => QueuedWrite.MessageGoes(askedThen, waitedFor, _model.PromptPending, WaitIdentity());
+        bool EnterGoes() => QueuedWrite.MessageEnterGoes(askedThen, waitedFor, _model.PromptPending, WaitIdentity(), _model.PromptHolds(text));
+
+        void Entered()
         {
-            if (!QueuedWrite.MessageOver(asked, _model.PromptPending))
+            sent();
+            // Claude Code may still drop it in its first seconds (FR-2.1): looked at again in a second and a half.
+            ResendEnterWhileHeld(text, attempt: 1);
+        }
+
+        void WaitForRow(int looks) => After(EnterWaitMs, () =>
+        {
+            if (IsDisposed || !ProcessRunning || _interruptedSinceSend)
             {
-                return true;
+                return;
             }
 
+            if (!Goes())
+            {
+                Dropped();
+                return;
+            }
+
+            if (EnterGoes())
+            {
+                // Asked again right before it goes, as every Enter of a message (the queue may hold other writes first).
+                Enqueue(ClaudeCodeKeys.Enter, 50, () => EnterGoes() || (!Goes() && Dropped()));
+                StartWrites();
+                Entered();
+                return;
+            }
+
+            if (looks < EnterWaitTries)
+            {
+                WaitForRow(looks + 1);
+                return;
+            }
+
+            Log.Info("A message's Enter was never written: Claude's prompt row did not show the message");
+            _model.AddSystemLine("Not sent yet: Claude's prompt row did not show your message. Enter in the empty message field sends what the row holds.");
+            Refuse("Not sent yet: Enter in the empty message field sends it");
+        });
+
+        bool Dropped()
+        {
             Log.Info("The rest of a message was not written: Claude Code began to ask something while it was typed");
             _interruptedSinceSend = true;
+            _model.TakeBack(text);
             var restored = fromField && Input.TextLength == 0;
             if (restored)
             {
@@ -306,8 +365,32 @@ internal sealed partial class MainForm
                 : "Not sent: Claude asked something while the line above was being typed to it.");
             Refuse(QuestionOpensWords);
             return false;
-        };
+        }
+
+        return (
+            () => Goes() || Dropped(),
+            () =>
+            {
+                if (!Goes())
+                {
+                    return Dropped();
+                }
+
+                if (EnterGoes())
+                {
+                    Entered();
+                    return true;
+                }
+
+                WaitForRow(1);
+                return false;
+            });
     }
+
+    /// <summary>How often a message's Enter that waits for Claude Code's prompt row to show the message looks again, and how many times (three seconds in all).</summary>
+    private const int EnterWaitMs = 100;
+
+    private const int EnterWaitTries = 30;
 
     /// <summary>
     /// FR-2.3a: since Claude Code 2.1.331 an interrupt can put the interrupted message back on Claude's prompt row,
@@ -350,19 +433,23 @@ internal sealed partial class MainForm
     /// While the row still holds the text and Claude neither works nor asks, Enter goes again, three times at most,
     /// silently, with a log line. Not after an interrupt (since 2026-11-27): Claude Code 2.1.331 puts an interrupted
     /// message back on its prompt row (FR-2.3a), which reads here as an Enter that was dropped, and a message
-    /// interrupted within the first second and a half was sent again.
+    /// interrupted within the first second and a half was sent again. Since the fourth review of the same day it asks
+    /// the same positive check as a message's own Enter (<see cref="QueuedWrite.EnterAgain"/>: the row shows the
+    /// message, nothing is asked), again right before the Enter goes, and whether Claude works is not asked: a message
+    /// queued behind Claude's work waits on the same row.
     /// </summary>
     private void ResendEnterWhileHeld(string text, int attempt)
     {
         After(EnterCheckMs, () =>
         {
-            if (!ProcessRunning || ClaudeWorks || _model.PromptPending || _interruptedSinceSend || !_model.PromptHolds(text))
+            if (!ProcessRunning || !QueuedWrite.EnterAgain(_model.PromptHolds(text), _model.PromptPending, _interruptedSinceSend))
             {
                 return;
             }
 
             Log.Info($"Enter sent again ({attempt}): the message was still on Claude's prompt row");
-            Enqueue(ClaudeCodeKeys.Enter, 50);
+            // Asked again right before it goes, as every Enter of a message (the queue may hold other writes first).
+            Enqueue(ClaudeCodeKeys.Enter, 50, () => QueuedWrite.EnterAgain(_model.PromptHolds(text), _model.PromptPending, _interruptedSinceSend));
             StartWrites();
             if (attempt < EnterAttempts)
             {
@@ -396,8 +483,8 @@ internal sealed partial class MainForm
             return;
         }
 
-        Enqueue(ClaudeCodeKeys.CtrlX, 30);
-        Enqueue(ClaudeCodeKeys.CtrlS, 30);
+        Enqueue(ClaudeCodeKeys.CtrlX, 30, still: null);
+        Enqueue(ClaudeCodeKeys.CtrlS, 30, still: null);
         StartWrites();
         FlowActed(UserAction.SentNow);
 
@@ -434,7 +521,7 @@ internal sealed partial class MainForm
         Area.Hold(UserActionMs);
         // A question the screen shows ends with this key as with an answer (MarkWaitAnswered).
         MarkWaitAnswered();
-        Write(ClaudeCodeKeys.Escape);
+        Write(ClaudeCodeKeys.Escape, still: null);
         _interruptedSinceSend = true;
         FlowActed(UserAction.Escaped);
     }
@@ -470,7 +557,7 @@ internal sealed partial class MainForm
             return;
         }
 
-        Write(ClaudeCodeKeys.ShiftTab);
+        Write(ClaudeCodeKeys.ShiftTab, still: null);
     }
 
     /// <summary>
@@ -498,7 +585,7 @@ internal sealed partial class MainForm
 
         // With the list off, a key of Claude Code's own can answer the question its screen shows (MarkWaitAnswered).
         MarkWaitAnswered();
-        Write(key);
+        Write(key, still: null);
         _interruptedSinceSend |= key == ClaudeCodeKeys.CtrlC;
     }
 }

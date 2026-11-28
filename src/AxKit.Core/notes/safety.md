@@ -9,9 +9,16 @@
   characters are neither seen nor heard (`Hidden`; `Hides` asks it): by Unicode's own classes since the third review of
   2026-11-27, in place of a list that each review found short: the general categories Format, Control, Surrogate,
   PrivateUse and OtherNotAssigned, the line and paragraph separators, and the default ignorable code points of
-  another category (`DefaultIgnorable`, from the Unicode Character Database). One exception keeps an emoji whole: FE0F
-  right after a symbol, and 200D between two symbols. `VisibleCommand` also writes out a space that is not the plain
-  one, for a command offered to run and a permission question's label. Each rule has its rows in `DisplayTextTests`. `VisibleLine` keeps a tab, for a question's name and answers: `AxKit.Forms/ControlArea` applies
+  another category (`DefaultIgnorable`, from the Unicode Character Database). A few exceptions keep an emoji whole and
+  a word a word, each between characters that make it seen, never next to ASCII or a sign of class Sm, Sc or Sk (the
+  fourth review of 2026-11-27, H1: "between two symbols" let a joiner stand between two "&gt;" of a shell): FE0F right
+  after a picture (`Pictographic`, Extended_Pictographic from `PictureRanges`, emoji-data.txt) or in a keycap, 200D
+  between two pictures (the first may carry FE0F or a skin tone), 200C between letters of the Arabic, Syriac and Indic
+  scripts (`JoinsLetters`), the tags of the three recommended flags (`FlagTags`, `InFlag`); and two seen characters
+  that look like nothing are written out, the braille blank and a combining mark on nothing (`OnNothing`).
+  `VisibleCommand`, for a command offered to run and a permission question's label, writes out every hidden
+  character with no exception (N2: a command is run, not read) and every space that is not the plain one;
+  `VisibleLine` keeps such spaces (its summary says why). Each rule has its rows in `DisplayTextTests`. `VisibleLine` keeps a tab, for a question's name and answers: `AxKit.Forms/ControlArea` applies
   it to every question it shows, `McpOffer.Shown` to an offered command. A new place that puts a program's or an AI's
   text in front of the user to decide on goes through here.
 - `Signatures` (S-19): whether a program file carries a valid Authenticode signature (`WinVerifyTrust`, the file alone,

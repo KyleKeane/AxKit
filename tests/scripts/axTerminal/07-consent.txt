@@ -9,6 +9,8 @@ start terminal {temp}\myproject
 expect said Before axTerminal connects to
 keys tab
 expect said I understand that axTerminal
+# The reminder holds its keys for a second, as every notice does that is no first result of a key (bundle AX-6.4).
+wait 1100
 keys enter
 expect said ! Check the box first
 keys space
@@ -35,6 +37,8 @@ keys enter
 expect said Before axTerminal connects to Command Prompt
 keys tab
 expect said I understand that axTerminal
+# The reminder holds its keys for a second, as every notice does that is no first result of a key (bundle AX-6.4).
+wait 1100
 keys space
 expect said ! checked
 keys enter

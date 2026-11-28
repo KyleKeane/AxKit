@@ -8,8 +8,9 @@
 // It plays a scenario as Claude Code would, in the window's pseudo console: frames, the turn's marks and bells on the
 // console, entries appended to a session file under the run's own folder, and the command hooks of the --settings
 // file it was given, each started with the event on its standard input. It needs no Claude Code, no network and no
-// model. It never reads standard input: the keys the window sends stay unread in the console, and a waitFile step
-// stands for the moment Claude would take them up. Only tools/AxAutomate sets AXKIT_STANDIN; a workflow played in
+// model. It acts on no key the window sends: what is typed is only drawn on the prompt row, as Claude Code draws a
+// draft, while the last frame ends on a bare prompt row (EchoTyped), and a waitFile step stands for the moment Claude
+// would take it up. Only tools/AxAutomate sets AXKIT_STANDIN; a workflow played in
 // axAutomate's window has no stand-in.
 //
 // Usage:
@@ -177,6 +178,7 @@ internal static class StandIn
 
         PrepareConsole();
         using var output = Console.OpenStandardOutput();
+        new Thread(() => EchoTyped(output)) { IsBackground = true, Name = "typed" }.Start();
         for (var i = 0; i < steps.Count; i++)
         {
             var step = steps[i];
@@ -185,7 +187,18 @@ internal static class StandIn
             switch (kind)
             {
                 case "frame":
-                    Write(output, Frame(step));
+                    lock (Writing)
+                    {
+                        Write(output, Frame(step));
+                        var rows = Lines(step.GetProperty("frame"));
+                        var last = rows.Count > 0 ? rows[^1].TrimEnd() : string.Empty;
+                        _atPrompt = last.Length > 0 && last[0] is '$' or '>' or '!' && (last.Length == 1 || char.IsWhiteSpace(last[1]));
+                        _promptMark = _atPrompt ? last[0] : '$';
+                        _drafting = _atPrompt && last.Length > 1;
+                        _draftBreaks = 0;
+                        _typedSinceFrame = false;
+                    }
+
                     break;
                 case "mark":
                     Write(output, Mark(step));
@@ -334,8 +347,108 @@ internal static class StandIn
 
     private static void Write(Stream output, string text)
     {
-        output.Write(Utf8.GetBytes(text));
-        output.Flush();
+        lock (Writing)
+        {
+            output.Write(Utf8.GetBytes(text));
+            output.Flush();
+        }
+    }
+
+    /// <summary>One writer at a time to the console: the steps' and the echo of what is typed.</summary>
+    private static readonly object Writing = new();
+
+    /// <summary>Whether the last frame ended on a prompt row ("$", "&gt;" or "!", bare or with a draft on it), where Claude Code draws what is typed; until an Enter.</summary>
+    private static bool _atPrompt;
+
+    /// <summary>The mark the prompt row starts with.</summary>
+    private static char _promptMark = '$';
+
+    /// <summary>Whether the prompt row holds a draft (drawn by the frame, or typed since).</summary>
+    private static bool _drafting;
+
+    /// <summary>How many line ends (Ctrl+J) the draft typed since the last frame has, so that an Enter clears all its rows.</summary>
+    private static int _draftBreaks;
+
+    /// <summary>Whether a character was typed onto the prompt row since the last frame (or the last Enter): only such a draft is taken by an Enter.</summary>
+    private static bool _typedSinceFrame;
+
+    /// <summary>
+    /// What the window types, read and drawn on the prompt row as Claude Code draws a draft (the fourth review of
+    /// 2026-11-27, docs/axClaude/SPEC.md D33: the window sends a message's Enter only once the frame shows the message
+    /// there): while the last frame ends on a prompt row, each typed character at the cursor, the first of a draft
+    /// after the no-break space Claude Code puts after the prompt's mark, Ctrl+J as a line end, Ctrl+U as the row
+    /// emptied to its mark; an Enter empties the rows of a draft typed since the last frame back to the mark, as
+    /// Claude Code does when it takes a message (the next frame draws what it did with it), and leaves a draft the
+    /// frame drew, which stands for an Enter Claude Code dropped. Nothing is drawn while a frame ends on anything else (a
+    /// question, a screen), so an answer's keys change no row a script reads; other keys are read and dropped. Until
+    /// that day the stand-in read no key.
+    /// </summary>
+    private static void EchoTyped(Stream output)
+    {
+        try
+        {
+            while (true)
+            {
+                var typed = Console.ReadKey(intercept: true).KeyChar;
+                lock (Writing)
+                {
+                    if (!_atPrompt)
+                    {
+                        continue;
+                    }
+
+                    if (typed == '\r')
+                    {
+                        // Claude Code takes the draft and empties its prompt row: the draft's rows cleared, the mark left.
+                        // A draft the frame drew itself stays: it stands for a message whose Enter Claude Code dropped.
+                        if (!_typedSinceFrame)
+                        {
+                            continue;
+                        }
+
+                        _typedSinceFrame = false;
+                        var clear = new StringBuilder();
+                        for (var i = 0; i < _draftBreaks; i++)
+                        {
+                            clear.Append('\r').Append(Escape).Append("[2K").Append(Escape).Append("[1A");
+                        }
+
+                        Write(output, clear.Append('\r').Append(Escape).Append("[2K").Append(_promptMark).ToString());
+                        _drafting = false;
+                        _draftBreaks = 0;
+                    }
+                    else if (typed == '\n')
+                    {
+                        if (_drafting)
+                        {
+                            Write(output, "\r\n");
+                            _draftBreaks++;
+                        }
+                    }
+                    else if (typed == (char)21)
+                    {
+                        // Ctrl+U: the row emptied back to its mark.
+                        Write(output, $"\r{Escape}[2K{_promptMark}");
+                        _drafting = false;
+                    }
+                    else if (!char.IsControl(typed) && typed != '\0')
+                    {
+                        if (!_drafting)
+                        {
+                            Write(output, " ");
+                            _drafting = true;
+                        }
+
+                        Write(output, typed.ToString());
+                        _typedSinceFrame = true;
+                    }
+                }
+            }
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or IOException)
+        {
+            // No console to read (a test from a pipe), or the window closed it: nothing more is typed.
+        }
     }
 
     private static void WaitForFile(string path)

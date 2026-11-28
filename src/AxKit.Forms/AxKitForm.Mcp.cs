@@ -130,9 +130,9 @@ public abstract partial class AxKitForm
                 return;
             }
 
-            Overlay.SetInputText(text);
+            // As the area's Fill: no key of the user's, so it passes no hold; the notice holds against the user's keys.
             noted(null);
-            Overlay.PressDefault();
+            Overlay.Fill(text);
             return;
         }
 
@@ -337,6 +337,8 @@ public abstract partial class AxKitForm
     private void RunForMcp(string client, string label, ToolStripMenuItem item, string? text = null, Action<string?>? noted = null)
     {
         IReadOnlyList<(ControlArea Area, Control? Shown)> before = ShownInAreas();
+        // A notice the click opens holds though the command's code says ByUser for the user's key (ShowNotice asks
+        // ClickedForAiTool), and when the window is behind it waits there held, again from when the focus comes.
         ClickFor(CommandOrigin.AiTool, item, label, client, text);
         // A list or a field the click put into a control area was opened for an AI tool, not by a key of the user's:
         // it holds its answering keys as everything does that arrives by itself (KeyHold, the one rule), from now and
@@ -572,7 +574,7 @@ public abstract partial class AxKitForm
         {
             if (answer == request.Explain)
             {
-                ShowNotice(Notice.Plain(request.ExplainTitle, request.ExplainText));
+                ShowNotice(Notice.Plain(request.ExplainTitle, request.ExplainText).ByUser());
                 return;
             }
 

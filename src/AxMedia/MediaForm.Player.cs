@@ -233,7 +233,7 @@ public sealed partial class MediaForm
                 UpdateStatusBar();
                 Announce(MediaFiles.FormatTime(reached), true);
             }
-        }, refused: typed => MediaFiles.ParseTime(typed) is null ? "Not a time" : null, emptyMessage: "Type a time");
+        }, refused: typed => MediaFiles.ParseTime(typed) is null ? "Not a time" : null, emptyMessage: "Type a time", byUser: true);
     }
 
     /// <summary>Ctrl+Q: what plays, where it is and how fast; "Nothing playing" otherwise.</summary>

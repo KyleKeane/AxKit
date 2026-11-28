@@ -14,6 +14,8 @@ expect said Before axGIT connects to Git
 keys tab
 expect said I understand that axGIT
 # Enter before the box is checked connects nothing.
+# The reminder holds its keys for a second, as every notice does that is no first result of a key (bundle AX-6.4).
+wait 1100
 keys enter
 expect said ! Check the box first
 # Space checks and unchecks, each said (AX-8.8).

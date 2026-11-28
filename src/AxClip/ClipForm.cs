@@ -354,7 +354,7 @@ public sealed class ClipForm : HotkeyForm
         }
 
         var lines = entry.LineCount;
-        ShowNotice(Notice.Plain($"Clipboard text, {lines} {(lines == 1 ? "line" : "lines")}", entry.Text));
+        ShowNotice(Notice.Plain($"Clipboard text, {lines} {(lines == 1 ? "line" : "lines")}", entry.Text).ByUser());
     }
 
     private void RemoveSelected()
@@ -402,7 +402,7 @@ public sealed class ClipForm : HotkeyForm
 
             Fill();
             Announce("Clipboard history cleared", true);
-        }));
+        }).ByUser());
     }
 
     // ---- the clipboard's own calls (CP-3); the paste's keys are AxKit.Forms/KeySender (CP-D3) ----

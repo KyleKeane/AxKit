@@ -15,6 +15,8 @@ start pass {temp}\test.kdbx
 expect said Before axPass connects to KeePassXC
 keys tab
 expect said I understand that axPass
+# The reminder holds its keys for a second, as every notice does that is no first result of a key (bundle AX-6.4).
+wait 1100
 keys enter
 expect said ! Check the box first
 keys space
@@ -24,6 +26,8 @@ keys enter
 expect state Unlock test
 expect focus Type the master password to unlock test
 type test-master-1
+# The unlock follows the reminder's button and holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys enter
 expect said ! test, 1 item, Email, group, 0 items
 close

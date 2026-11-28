@@ -19,6 +19,8 @@ keys enter
 
 # Goal: Send a message and hear the reply and Done
 expect said Ready
+# The folder's question held its keys, so the message field's Enter waits a second after it closes (bundle AX-6.4).
+wait 1100
 expect state Claude: ready | manual mode on
 type Say ok
 keys enter

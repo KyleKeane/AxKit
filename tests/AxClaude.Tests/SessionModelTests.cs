@@ -153,6 +153,52 @@ public class SessionModelTests
         Assert.False(empty.PromptHolds("Reply with the single word hello."));
     }
 
+    /// <summary>
+    /// Since a message's Enter waits for this (the fourth review of 2026-11-27, N3), a message must be found on its
+    /// row however it stands there: wrapped over more rows than the old four, and a ! line on the shell mode's row,
+    /// which starts with its mark. A row that merely starts with a dollar sign and a word is no prompt row.
+    /// </summary>
+    [Fact]
+    public void A_long_message_and_a_shell_line_are_found_on_the_prompt_row()
+    {
+        // Four hundred characters on a screen sixty wide: seven rows, the prompt row six above the cursor.
+        var message = string.Concat(Enumerable.Repeat("abcdefghij", 40));
+        var wide = new SessionModel(60, 20);
+        Feed(wide, $"{Esc}[?25l$ {message}{Esc}[?25h");
+        Assert.True(wide.PromptHolds(message));
+
+        var bang = new SessionModel(80, 6);
+        Feed(bang, $"{Esc}[?25lclaude: Hi.\r\n\r\n! echo hello{Esc}[?25h");
+        Assert.True(bang.PromptHolds("! echo hello"));
+        Assert.False(bang.PromptHolds("! echo other"));
+
+        var reply = new SessionModel(80, 6);
+        Feed(reply, $"{Esc}[?25l$HOME holds Reply with the single word hello.{Esc}[?25h");
+        Assert.False(reply.PromptHolds("Reply with the single word hello."));
+    }
+
+    /// <summary>
+    /// A message whose writes were dropped (Claude asked something while it was typed) is taken back (L4, the fourth
+    /// review of 2026-11-27): its block leaves the conversation and its number is given to the next message. Until
+    /// then the conversation showed it as sent, and the next one was numbered after it.
+    /// </summary>
+    [Fact]
+    public void A_message_taken_back_leaves_the_conversation_and_gives_its_number_again()
+    {
+        var model = new SessionModel(80, 10);
+        Feed(model, $"{Esc}[?25lauto mode on (shift+tab to cycle)\r\n${Esc}[?25h");
+        Assert.True(model.Send("hi"));
+        Assert.Equal(["# Input 1", "hi", "", "# Output 1 Reply from Claude", ""], Visible(model));
+
+        model.TakeBack("hi");
+        Assert.Empty(Visible(model));
+        // Another text, or the same twice, takes nothing more.
+        model.TakeBack("hi");
+        model.TakeBack("other");
+        Assert.True(model.Send("again"));
+        Assert.Equal(["# Input 1", "again", "", "# Output 1 Reply from Claude", ""], Visible(model));
+    }
+
     [Fact]
     public void A_replay_printed_while_hiding_stays_hidden_and_live_rows_show_again()
     {

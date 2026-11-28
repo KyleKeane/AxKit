@@ -18,6 +18,8 @@ keys enter
 
 # Goal: Go to Claude Code's next permission mode
 expect said Ready
+# The folder's question held its keys, so the message field's Enter waits a second after it closes (bundle AX-6.4).
+wait 1100
 expect state Claude: ready | manual mode on
 do Next permission mode
 expect said accept edits on

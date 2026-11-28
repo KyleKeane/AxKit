@@ -133,7 +133,7 @@ public sealed partial class WindowLastResortTests
         Assert.True(dropped >= 0 && stamped > dropped, "Interrupt stamps the user's act as ending now, after the queued keys were dropped");
         Assert.Contains("Area.Hold(UserActionMs);", interrupt, StringComparison.Ordinal);
 
-        var queue = Body("MainForm.Input.cs", "private void QueueWrites(string text, bool fromField = false)");
+        var queue = Body("MainForm.Input.cs", "private void QueueWrites(string text, bool fromField = false, Action? sent = null)");
         var cleared = queue.IndexOf("ClearRestoredMessage(still);", StringComparison.Ordinal);
         var typed = queue.IndexOf("Enqueue(", StringComparison.Ordinal);
         Assert.True(cleared >= 0 && typed > cleared, "QueueWrites empties a restored message before it types the next one");
@@ -154,14 +154,16 @@ public sealed partial class WindowLastResortTests
     {
         // The message field's Enter: not while what waits was not put to the user; with the list on, the field is hidden while Claude asks.
         { "MainForm.Input.cs", "private void SendInput()", 2, "if (FieldWaitsForQuestion(text.Length > 0))" },
-        // A message's writes, each bound: over when Claude Code has begun to ask since it was queued.
-        { "MainForm.Input.cs", "private void QueueWrites(string text, bool fromField = false)", 3, "var still = MessageStill(text, fromField);" },
+        // A message's writes, each bound: over when Claude Code has begun to ask since it was queued; its Enter only on a
+        // positive check, the message on Claude Code's prompt row (QueuedWrite.MessageEnterGoes).
+        { "MainForm.Input.cs", "private void QueueWrites(string text, bool fromField = false, Action? sent = null)", 3, "Enqueue(ClaudeCodeKeys.Enter, 50, enter);" },
+        { "MainForm.Input.cs", "private (Func<bool> Text, Func<bool> Enter) MessageStill(string text, bool fromField, Action sent)", 1, "Enqueue(ClaudeCodeKeys.Enter, 50, () => EnterGoes() || (!Goes() && Dropped()));" },
         { "MainForm.Input.cs", "private void ClearRestoredMessage(Func<bool> still)", 2, "Enqueue(ClaudeCodeKeys.CtrlU, 30, still);" },
-        // The Enter sent again for one Claude Code dropped: only while it neither works nor asks.
-        { "MainForm.Input.cs", "private void ResendEnterWhileHeld(string text, int attempt)", 1, "_model.PromptPending" },
+        // The Enter sent again for one Claude Code dropped or one held back: only while the row shows the message and nothing is asked, asked again as it goes.
+        { "MainForm.Input.cs", "private void ResendEnterWhileHeld(string text, int attempt)", 1, "Enqueue(ClaudeCodeKeys.Enter, 50, () => QueuedWrite.EnterAgain(_model.PromptHolds(text), _model.PromptPending, _interruptedSinceSend));" },
         { "MainForm.Input.cs", "private void SendNow()", 2, "if (!KeyMayGoToClaude())" },
         // The stop key: the one command that sends a key whatever Claude Code asks; its Escape is a no, never a yes.
-        { "MainForm.Input.cs", "private void Interrupt()", 1, "Write(ClaudeCodeKeys.Escape);" },
+        { "MainForm.Input.cs", "private void Interrupt()", 1, "Write(ClaudeCodeKeys.Escape, still: null);" },
         { "MainForm.Input.cs", "private void NextPermissionMode()", 1, "if (_model.PromptPending)" },
         { "MainForm.Input.cs", "private void SendKey(string key)", 1, "if (!KeyMayGoToClaude())" },
         // The area's own: every list and field is held and bound (AreaList, AreaField; the test above), and what it sends is typed bound to what waits.
@@ -178,20 +180,46 @@ public sealed partial class WindowLastResortTests
         { "MainForm.ClaudeCodeSettings.cs", "private void SendClaudeCodeCommand(ClaudeCodeSetting setting)", 1, "if (!ClaudeIdle)" },
         // An offered command's line and a concern's line: their callers send only while Claude is idle (AnswerOffer, AskConcern).
         { "MainForm.Mcp.cs", "private void AskConcern(Offer offer)", 1, "if (!ClaudeIdle)" },
-        { "MainForm.Mcp.cs", "private void SendOffered(string command)", 1, "QueueWrites(line);" },
+        { "MainForm.Mcp.cs", "private void SendOffered(string command)", 1, "QueueWrites(line, sent: () =>" },
         // Over the stream a chosen value goes as its slash command; nothing is typed there (QueueWrites writes one line).
         { "MainForm.Stream.cs", "private void StreamAnswer(string given)", 1, "StreamChoiceOver();" },
         // The detailed view's guard: the key goes only to close the view when it is open, which shows no question's rows.
         { "MainForm.cs", "protected override bool ProcessConsoleKey(Keys keyData)", 1, "if (_model.TranscriptViewOpen)" },
     };
 
-    [System.Text.RegularExpressions.GeneratedRegex(@"(?<![\w.])(?:Write|Enqueue|QueueWrites|TypeAnswer)\(")]
+    /// <summary>
+    /// A call of one of the four, bare or through <c>this.</c> or <c>base.</c> (the fourth review of 2026-11-27, L3:
+    /// those two passed the pattern, and so did a call on a line that began with "private" or "public", an
+    /// expression-bodied member). Since then the compiler holds the rest: <c>ConsoleForm.Write</c> and
+    /// <c>Enqueue</c> take the check as a required argument, so a write with none says <c>still: null</c> where it
+    /// stands; this table says why that is right for each method, and that nothing writes outside it.
+    /// </summary>
+    [System.Text.RegularExpressions.GeneratedRegex(@"(?:(?<![\w.])|(?<=\b(?:this|base)\.))(?:Write|Enqueue|QueueWrites|TypeAnswer)\(")]
     private static partial System.Text.RegularExpressions.Regex ConsoleWrite();
+
+    /// <summary>A definition of one of the four, which is no write.</summary>
+    [System.Text.RegularExpressions.GeneratedRegex(@"\b(?:void|int)\s+(?:Write|Enqueue|QueueWrites|TypeAnswer)\(")]
+    private static partial System.Text.RegularExpressions.Regex WriteDefinition();
 
     /// <summary>The lines of a text that write to the console: a call of one of the four, outside a comment and outside the four's own definitions.</summary>
     private static int WritesIn(string text) => text.Split('\n').Select(line => line.Trim())
-        .Count(line => !line.StartsWith("//", StringComparison.Ordinal) && !line.StartsWith("private ", StringComparison.Ordinal) && !line.StartsWith("public ", StringComparison.Ordinal)
-            && ConsoleWrite().IsMatch(line));
+        .Count(line => !line.StartsWith("//", StringComparison.Ordinal) && !WriteDefinition().IsMatch(line) && ConsoleWrite().IsMatch(line));
+
+    /// <summary>The pattern finds the ways around it that it missed until the fourth review of 2026-11-27.</summary>
+    [Theory]
+    [InlineData("Write(key, still: null);", 1)]
+    [InlineData("this.Write(key, still: null);", 1)]
+    [InlineData("base.Enqueue(key, 30, still: null);", 1)]
+    [InlineData("private void Go() => Write(key, still: null);", 1)]
+    [InlineData("public void X() => QueueWrites(line);", 1)]
+    [InlineData("private void QueueWrites(string text, bool fromField = false)", 0)]
+    [InlineData("private int TypeAnswer(string key, bool enter = true)", 0)]
+    [InlineData("writer.Write(bytes);", 0)]
+    [InlineData("// Write(key);", 0)]
+    public void The_pattern_of_a_console_write_finds_every_call(string line, int writes)
+    {
+        Assert.Equal(writes, WritesIn(line));
+    }
 
     [Theory]
     [MemberData(nameof(ConsoleWrites))]

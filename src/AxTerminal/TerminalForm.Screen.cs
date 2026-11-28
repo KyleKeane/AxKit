@@ -43,12 +43,12 @@ internal sealed partial class TerminalForm
         {
             if (ProcessRunning)
             {
-                Write(sequence);
+                Write(sequence, still: null);
             }
         };
         _screen.ModeKey += ToggleScreenMode;
         // AT-9.10: a full-screen program's colour questions, answered by the model, go to the shell's input as they are.
-        _model.Answer += Write;
+        _model.Answer += answer => Write(answer, still: null);
         Controls.Add(_screen);
     }
 

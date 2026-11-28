@@ -15,6 +15,8 @@ expect said Start Claude Code in this folder?
 wait 1500
 keys enter
 expect state Claude: stopped
+# The folder's question held its keys, so the message field's Enter waits a second after it closed (bundle AX-6.4).
+wait 1100
 do Conversation
 expect text System: Claude Code was not started in this folder. Press Ctrl+Shift+R to be asked again.
 # A message has nowhere to go.
@@ -30,6 +32,8 @@ wait 1500
 keys tab
 keys enter
 expect said Ready
+# The folder's question held its keys, so the message field's Enter waits a second after it closes (bundle AX-6.4).
+wait 1100
 
 # Goal: Refuse what Claude asks to do
 # The message field still holds Hello, which was not sent.

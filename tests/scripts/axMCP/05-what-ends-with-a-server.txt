@@ -18,6 +18,8 @@ keys right
 expect said Before axMCP starts leaver
 keys tab
 expect said I understand that axMCP
+# The agreement holds its keys for a second, as every notice does that is no first result of a key (bundle AX-6.4).
+wait 1100
 keys space
 expect said ! checked
 keys enter

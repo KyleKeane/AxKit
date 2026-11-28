@@ -66,7 +66,7 @@ public sealed partial class TaskForm
             Input = new OverlayInput("Passphrase:", $"Type your approval passphrase to {verb}", string.Empty, $"Type your approval passphrase to {verb}", Hidden: true),
             // The entry is read before it is signed: the focus starts in the text, the passphrase field is the next stop (OR-5.1).
             FocusText = true,
-        });
+        }.ByUser());
     }
 
     /// <summary>The signature made off the UI thread (PBKDF2 takes about half a second), then the entry written as one undo step (OR-5.2).</summary>
@@ -159,7 +159,7 @@ public sealed partial class TaskForm
         ])
         {
             Input = new OverlayInput("Current passphrase:", "Type your current approval passphrase", string.Empty, "Type your current approval passphrase", Hidden: true),
-        });
+        }.ByUser());
     }
 
     private void AskNewPassphrase(string keyFile, string? oldKeyText, string? oldPassphrase)
@@ -202,7 +202,7 @@ public sealed partial class TaskForm
         ])
         {
             Input = new OverlayInput("New passphrase:", "Type a new approval passphrase", string.Empty, "Type a new approval passphrase", Hidden: true),
-        });
+        }.ByUser());
     }
 
     /// <summary>The key made off the UI thread; the old key, when there is one, signs the new key's fingerprint first, so a wrong old passphrase changes nothing.</summary>

@@ -245,7 +245,7 @@ internal sealed class AiHelpFlow
             "Claude gets this window's name and title, the name and place of the control you are in, your last actions here, the keyboard shortcuts and the user guide; never the text of what you are working on. Type your question and press Enter.",
             "Your question:", "Your question about this window", string.Empty, "&Ask",
             question => AskClaude(AiPrompts.AboutWindow(_form.ContextOfThisWindow(), question), [], null, answer => ShowAnswer(answer, [])),
-            emptyMessage: "Type a question first");
+            emptyMessage: "Type a question first", byUser: true);
     }
 
     /// <summary>
@@ -407,7 +407,7 @@ internal sealed class AiHelpFlow
         }
 
         choices.Add(new OverlayChoice("&Close", IsCancel: true));
-        _form.ShowNotice(new Notice("Folders Claude may read", text, choices));
+        _form.ShowNotice(new Notice("Folders Claude may read", text, choices).ByUser());
     }
 
     private void AddAiFolder()

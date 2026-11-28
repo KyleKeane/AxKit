@@ -21,6 +21,8 @@ keys tab
 expect focus Start Claude Code
 keys enter
 expect said Ready
+# The folder's question held its keys, so the message field's Enter waits a second after it closes (bundle AX-6.4).
+wait 1100
 
 # Goal: Hear what Claude asks to do, with no first
 type Run the ping
@@ -59,8 +61,8 @@ expect state Claude: waiting for your answer
 keys up
 keys up
 expect focus 3. Yes, once
-# The list's second counts again from when the focus came back to it from the explanation (bundle AX-6.4, 2026-11-27).
-wait 1100
+# The user opened the explanation from the list, which they had heard: its second is not started again as the focus
+# comes back (bundle AX-6.4, N4 of the fourth review of 2026-11-27; until then a wait of a second here).
 keys enter
 expect said Sent: 3, Yes, once
 expect said Done. claude: pinged

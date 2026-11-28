@@ -143,6 +143,16 @@ public abstract class ClaudeModel : LineStore
     public abstract bool Send(string text, bool evenWhilePrompting = false);
 
     /// <summary>
+    /// A message <see cref="Send"/> gave a block, taken back because it was never sent whole (SPEC.md D33, the fourth
+    /// review of 2026-11-27, L4: Claude Code began to ask something while it was typed, and its Enter was dropped):
+    /// its block leaves the conversation and its number is given again, so that the conversation holds what Claude
+    /// was sent and nothing else. Nothing here for a source that writes a message whole (the stream).
+    /// </summary>
+    public virtual void TakeBack(string text)
+    {
+    }
+
+    /// <summary>
     /// The exchange block of a sent message (SPEC.md FR-4.1), the same whatever the source: the input marker, the
     /// message's lines, a blank line, the output marker and a blank line, with the next number and, when asked for,
     /// the time. Both markers are level 1 headings, so that the heading keys stop at every exchange; Claude's own

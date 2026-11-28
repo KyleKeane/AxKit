@@ -164,7 +164,7 @@ public sealed partial class FileForm
         // Recycle Bin").
         if (!confirmed && operation.UndoQuestion is { } question)
         {
-            ShowNotice(Notice.Ask(question.Title, question.Text, "&Delete", () => UndoAction(entry, confirmed: true), cancelIsDefault: true));
+            ShowNotice(Notice.Ask(question.Title, question.Text, "&Delete", () => UndoAction(entry, confirmed: true), cancelIsDefault: true).ByUser());
             return;
         }
 
@@ -238,7 +238,7 @@ public sealed partial class FileForm
                 Do(() => RunAtOnceAsync(folder, "New folder failed", () =>
                     new Outcome($"Created {name}", new Operation(OperationKind.NewFolder, [], [FileOperations.CreateFolder(folder, name)]), name)));
             },
-            typed => CheckNewName(typed.Trim()), emptyMessage: "Type a name", cancel: "C&ancel");
+            typed => CheckNewName(typed.Trim()), emptyMessage: "Type a name", cancel: "C&ancel", byUser: true);
     }
 
     /// <summary>
@@ -365,7 +365,7 @@ public sealed partial class FileForm
         ])
         {
             Input = new OverlayInput("Folder:", "Folder", string.Empty, "Type a name", KeyHook: OnPathKey),
-        });
+        }.ByUser());
     }
 
     /// <summary>Why a name typed for a new entry cannot be used (AF-4.1, AF-4.2): the name check, or an entry here that reads the same; null when it can.</summary>

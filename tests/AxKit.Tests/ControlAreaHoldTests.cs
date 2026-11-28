@@ -518,9 +518,13 @@ public sealed partial class ControlAreaHoldTests
         close = close[..close.IndexOf("Area.Clear();", StringComparison.Ordinal)];
         Assert.Contains("var arrived = Area.Arrived;", close, StringComparison.Ordinal);
         Assert.Contains("if (focus && arrived)\n        {\n            FocusFieldByItself();", close, StringComparison.Ordinal);
-        // The hold starts nowhere else but there and where an AI's request gives the focus back.
+        // The hold starts nowhere else but there, where an AI's request gives the focus back, and where a notice that
+        // held its keys gives it back (the fourth review of 2026-11-27: a doubled Enter on a notice sent the field).
         Assert.Equal(1, window.Split("_fieldHold.Start(").Length - 1);
-        Assert.Equal(2, window.Split("FocusFieldByItself();").Length - 1);
+        Assert.Equal(3, window.Split("FocusFieldByItself();").Length - 1);
+        Assert.Contains("if (held && ReferenceEquals(target, Input))\n        {\n            FocusFieldByItself();", window, StringComparison.Ordinal);
+        var notices = File.ReadAllText(Path.Combine(folder, "AxKitForm.Notices.cs")).ReplaceLineEndings("\n");
+        Assert.Contains("FocusBackAfterNotice(target, held, ReferenceEquals(target, back));", notices, StringComparison.Ordinal);
 
         var field = File.ReadAllText(Path.Combine(folder, "ConsoleForm.Field.cs")).ReplaceLineEndings("\n");
         Assert.Contains("BundleKeys.MainAction, SendFieldUnlessHeld)", field, StringComparison.Ordinal);

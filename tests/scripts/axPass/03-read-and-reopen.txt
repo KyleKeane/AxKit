@@ -16,6 +16,8 @@ run "C:\Program Files\KeePassXC\keepassxc-cli.exe" add -q -u sam --url https://m
 start pass {temp}\test.kdbx
 expect state Unlock test
 type test-master-1
+# The unlock notice holds its keys for a second (bundle AX-6.4): it comes by itself as the window opens or locks.
+wait 1100
 keys enter
 expect said ! test, 1 item, Email, group, 1 item
 keys right
@@ -41,6 +43,8 @@ expect said ! Gmail. UserName: sam. Password: hidden. URL: https://mail.example.
 # 1.3, 5.3 Locked, the Lock after setting says what it does.
 keys ctrl+l
 expect said ! Locked
+# The unlock notice comes by itself as the window locks and holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys escape
 expect focus test, locked: Enter unlocks
 menu 5 minutes
@@ -56,5 +60,7 @@ start pass
 expect state Unlock test
 expect focus Type the master password to unlock test
 type test-master-1
+# The unlock notice comes by itself as the window opens and holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys enter
 expect said ! test, 1 item, Email, group, 1 item

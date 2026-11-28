@@ -20,6 +20,8 @@ keys tab
 expect focus Start Claude Code
 keys enter
 expect said Ready
+# The folder's question held its keys, so the message field's Enter waits a second after it closes (bundle AX-6.4).
+wait 1100
 
 # Goal: Answer Claude Code's own question for a command
 type Use your shell tool to run exactly this command, then tell me in one short sentence what happened: ping -n 2 127.0.0.1

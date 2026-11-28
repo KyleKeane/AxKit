@@ -447,7 +447,7 @@ public sealed class MCPForm : ItemForm
                 SaveSettings();
                 ReadAndFill(removed.Count > 0 ? removed[0].Server.Key : null);
             }, $"removed {Count(removed.Count, "server")}");
-        }));
+        }).ByUser());
     }
 
     /// <summary>
@@ -482,7 +482,7 @@ public sealed class MCPForm : ItemForm
                         SaveSettings();
                         ReadAndFill(server.Key);
                     }, $"removed {server.Name}");
-                }));
+                }).ByUser());
                 break;
             case McpServer:
                 Announce("Only Your servers are removed here; a server of Claude Code's goes with claude mcp remove", true);
@@ -530,7 +530,7 @@ public sealed class MCPForm : ItemForm
             () => RefusedOwnName(name.Text) is { } refused ? (name, refused)
                 : CommandLines.Split(command.Text).Count == 0 ? (command, "Type the program and its arguments")
                 : folder.Text.Trim().Length > 0 && !Directory.Exists(folder.Text.Trim()) ? (folder, "There is no folder " + folder.Text.Trim())
-                : null);
+                : null, byUser: true);
     }
 
     protected override void NewList() => Announce($"Servers are added with {BundleKeys.Text(ItemKeys.New)} at the top level", true);
@@ -801,7 +801,7 @@ public sealed class MCPForm : ItemForm
 
         if (resource.IsTemplate)
         {
-            AskText("Read a resource", "The address, with the template's variables filled in.", "Address:", "Address", resource.Uri, "&Read", uri => ReadResource(running, resource.Name, uri.Trim()));
+            AskText("Read a resource", "The address, with the template's variables filled in.", "Address:", "Address", resource.Uri, "&Read", uri => ReadResource(running, resource.Name, uri.Trim()), byUser: true);
             return;
         }
 

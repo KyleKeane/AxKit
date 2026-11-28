@@ -8,7 +8,7 @@
 # focus arrived: an Enter pressed in the conversation at that moment (Enter there takes a line into the message)
 # reached the list, which starts on "1. Yes", and approved the file before a word of the question was said. Scripts
 # 61, 62 and 64 run with Go to them at once on and 65 with Answer from a list off, so none of them played it.
-# The stand-in (tools/AxAutomate/StandIn.cs) draws each frame at a file of the script's and reads no key: what
+# The stand-in (tools/AxAutomate/StandIn.cs) draws each frame at a file of the script's and acts on no key: what
 # reaches Claude is the window's to say ("Sent: ...").
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir wr

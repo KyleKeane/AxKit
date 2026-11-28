@@ -381,7 +381,7 @@ public sealed partial class SessionModel : ClaudeModel
         PlaceBlocksWithoutEcho();
         var promptRow = PromptRowAtCursor();
         PromptPending = promptRow >= 0;
-        PendingQuestion = PromptPending ? QuestionReader.Read(ScreenRows(), promptRow) : null;
+        PendingQuestion = PromptPending ? QuestionReader.Read(ScreenRows(), promptRow, Columns) : null;
         TextPrompt = PromptPending && _screen.LineAt(promptRow) is { } prompt && LineClassifier.IsTextPrompt(prompt.Text) ? LineClassifier.TextPromptOf(prompt.Text) : null;
         if (!PromptPending && DetectScreens && !working && SurveyAboveCursor())
         {
@@ -431,6 +431,40 @@ public sealed partial class SessionModel : ClaudeModel
     }
 
     /// <summary>
+    /// The newest send of <paramref name="text"/> that Claude has not echoed, taken back (<see cref="ClaudeModel.TakeBack"/>):
+    /// out of the sends waiting for their echo, its block out of the conversation when it was put there, and its
+    /// number given again when no block was made after it.
+    /// </summary>
+    public override void TakeBack(string text)
+    {
+        var trimmed = text.Trim();
+        var index = _pending.FindLastIndex(send => send.Text == trimmed);
+        if (index < 0)
+        {
+            return;
+        }
+
+        var send = _pending[index];
+        _pending.RemoveAt(index);
+        if (send.Placed)
+        {
+            foreach (var line in send.Block)
+            {
+                _lines.Remove(line);
+            }
+        }
+
+        var marker = send.Block[0].Text;
+        var last = $"# Input {ExchangeCount}";
+        if (marker == last || marker.StartsWith(last + " (", StringComparison.Ordinal))
+        {
+            ExchangeCount--;
+        }
+
+        RaiseChanged();
+    }
+
+    /// <summary>
     /// Whether Claude's prompt row still holds the text sent: the nearest row starting with <c>$</c> at or above the
     /// cursor, within four rows (the cursor sits under the prompt row, and a long draft wraps), holding the text's first
     /// line, up to forty characters. Claude drops an Enter in its first seconds after the prompt shows, leaving the
@@ -445,12 +479,20 @@ public sealed partial class SessionModel : ClaudeModel
             return false;
         }
 
-        // The cursor stands on the draft's last line: its prompt row is up to one row per line above, a few more for wrapping.
-        for (var row = _screen.CursorRow; row >= 0 && row >= _screen.CursorRow - 4 - lines.Length; row--)
+        // The cursor stands on the draft's last line: its prompt row is up to one row per line above, and one more for
+        // each screen width the text wraps over, a few more besides (since the fourth review of 2026-11-27 a message's
+        // Enter waits for this, QueuedWrite.MessageEnterGoes, so a long message must be found on its row too).
+        var wrapped = Columns > 0 ? text.Length / Columns : 0;
+        // A ! line puts Claude Code's prompt into its shell mode, whose row may start with the mark instead of the
+        // dollar sign (ClaudeCodeTexts.PromptBang, LineClassifier.IsPromptRow; not yet in a recording): the command
+        // after the mark is looked for too.
+        var command = first.Length > 1 && first[0] == ClaudeCodeTexts.PromptBang ? first[1..].Trim() : null;
+        for (var row = _screen.CursorRow; row >= 0 && row >= _screen.CursorRow - 4 - lines.Length - wrapped; row--)
         {
-            if (_screen.LineAt(row) is { } line && line.Text.StartsWith(ClaudeCodeTexts.PromptDollar))
+            if (_screen.LineAt(row) is { } line && line.Text.Length > 0 && LineClassifier.IsPromptRow(line.Text))
             {
-                return line.Text.Contains(first[..Math.Min(first.Length, 40)], StringComparison.Ordinal);
+                return line.Text.Contains(first[..Math.Min(first.Length, 40)], StringComparison.Ordinal)
+                    || (command is { Length: > 0 } && line.Text.Contains(command[..Math.Min(command.Length, 40)], StringComparison.Ordinal));
             }
         }
 

@@ -910,7 +910,7 @@ internal sealed partial class MainForm
             return false;
         }
 
-        ShowNotice(Notice.Plain(asking.ExplainTitle, asking.ExplainText));
+        ShowNotice(Notice.Plain(asking.ExplainTitle, asking.ExplainText).ByUser());
         return true;
     }
 

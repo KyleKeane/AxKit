@@ -335,7 +335,7 @@ public sealed class BrowserForm : ItemForm
             var last = Rows.ToList().FindLastIndex(one => gone.Contains(one.Key));
             var next = Rows.Skip(last + 1).FirstOrDefault() ?? Rows.LastOrDefault(one => !gone.Contains(one.Key));
             Commit(new Step(parts, "Archived " + what), next?.Key);
-        }));
+        }).ByUser());
     }
 
     protected override void Undo()

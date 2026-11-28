@@ -65,6 +65,8 @@ keys enter
 expect state "notice":"axkitscript01"
 expect state Process ID
 expect state Memory
+# The details are read from the system first, off the window's thread: they hold their keys for a second (bundle AX-6.4).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus "value":"axkitscript01,

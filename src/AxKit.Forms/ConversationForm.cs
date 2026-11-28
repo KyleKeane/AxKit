@@ -194,7 +194,24 @@ public abstract class ConversationForm : AxKitForm
     /// </summary>
     private readonly KeyHold _fieldHold = new();
 
-    /// <summary>The focus put into the field by the window, in place of a control that arrived by itself: Enter there waits a moment (<see cref="_fieldHold"/>).</summary>
+    /// <summary>
+    /// A notice that held its keys (a question, an error, what an AI tool's run opened) closes and gives the focus
+    /// back to the field: the Enter that answered it, pressed twice, must not send the field either (the fourth review
+    /// of 2026-11-27; until then only a control of the area did this, and a doubled Enter on a notice sent the
+    /// message field). After a notice the user opened, the focus goes back as it came.
+    /// </summary>
+    protected override void FocusBackAfterNotice(Control target, bool held, bool same)
+    {
+        if (held && ReferenceEquals(target, Input))
+        {
+            FocusFieldByItself();
+            return;
+        }
+
+        base.FocusBackAfterNotice(target, held, same);
+    }
+
+    /// <summary>The focus put into the field by the window, in place of a control that arrived by itself or a notice that held: Enter there waits a moment (<see cref="_fieldHold"/>).</summary>
     private void FocusFieldByItself()
     {
         _fieldHold.Start(Environment.TickCount64);

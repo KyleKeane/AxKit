@@ -128,7 +128,7 @@ public sealed class OverlayPanelHoldTests : IDisposable
         Assert.Equal(0, _heard);
 
         // The same holds for a notice the user opened, which has no hold at all.
-        Show(TwoWays());
+        Show(TwoWays().ByUser());
         Assert.True(KeyMessages.Press(_panel.Body, key, repeat: true));
         Assert.Empty(_chosen);
     }
@@ -168,7 +168,7 @@ public sealed class OverlayPanelHoldTests : IDisposable
         // A notice the user opened starts no hold when shown and none when the focus comes back.
         _chosen.Clear();
         _now += 60_000;
-        Show(TwoWays());
+        Show(TwoWays().ByUser());
         typeof(Control).GetMethod("OnEnter", BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(_panel, [EventArgs.Empty]);
         KeyMessages.Press(_panel.Body, Keys.Enter);
         Assert.Equal(["&Install"], _chosen);
@@ -200,10 +200,11 @@ public sealed class OverlayPanelHoldTests : IDisposable
     }
 
     /// <summary>
-    /// Whether a notice holds cannot be handed a value worked out (M5): the one way to make a notice hold is
-    /// <see cref="Notice.ByItself"/>, the property has no setter a caller can reach, and no file of the sources
+    /// Whether a notice arrived by itself (its chime) cannot be handed a value worked out (M5): the one way to say
+    /// it is <see cref="Notice.ByItself"/>, the property has no setter a caller can reach, and no file of the sources
     /// writes it. Until that day three places set it from whether the user had acted lately or had asked for the
-    /// check, and a screen of Claude Code's that followed the user's own key had no hold.
+    /// check, and a screen of Claude Code's that followed the user's own key had no hold. Since the fourth review of
+    /// that day the hold is every notice's but one the user opened (<see cref="NoticeHoldTests"/>).
     /// </summary>
     [Fact]
     public void Whether_a_notice_holds_is_never_a_value_worked_out()

@@ -7,7 +7,7 @@
 # question of which nothing had been said, and a bare Enter went to whatever the screen showed. The window now says
 # "Not sent: Claude asks something, and its question opens in a moment" and keeps the text; once the question was
 # said ("Claude asks", since this script runs with Answer from a list off), the same Enter sends it.
-# The stand-in (tools/AxAutomate/StandIn.cs) draws each question at a file of the script's and reads no key. Until
+# The stand-in (tools/AxAutomate/StandIn.cs) draws each question at a file of the script's and acts on no key. Until
 # the third review of that day a long answer made that moment six seconds wide, since its keys go out one at a time
 # and the settle waited for them, and this script typed its "1" into it. That review found the other half of the
 # same moment: the rest of the long answer, and its Enter, went on into the question that had replaced the one it

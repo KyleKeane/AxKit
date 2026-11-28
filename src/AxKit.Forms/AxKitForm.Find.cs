@@ -28,7 +28,7 @@ public abstract partial class AxKitForm
     /// <paramref name="cancel"/> is what Cancel does then. An empty field keeps the notice open (OverlayPanel).
     /// </summary>
     private Notice FindNotice(string label, string accessibleName, Action search, bool staysOpen = false, Action? cancel = null) =>
-        new("Find", string.Empty,
+        new Notice("Find", string.Empty,
         [
             new OverlayChoice("&Find next", () =>
             {
@@ -39,7 +39,7 @@ public abstract partial class AxKitForm
         ])
         {
             Input = new OverlayInput(label, accessibleName, _findText, "Type the text to find"),
-        };
+        }.ByUser();
 
     /// <summary>
     /// The next match after the selection (or the previous one before it), wrapping once; the match is selected and

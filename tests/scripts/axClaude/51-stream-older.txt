@@ -17,6 +17,8 @@ keys tab
 keys enter
 # A folder with no session yet: a new conversation, and nothing older to show.
 expect said Ready
+# The folder's question held its keys, so the message field's Enter waits a second after it closes (bundle AX-6.4).
+wait 1100
 close
 wait 2000
 
@@ -27,6 +29,8 @@ wait 1500
 keys tab
 keys enter
 expect said Ready
+# The folder's question held its keys, so the message field's Enter waits a second after it closed (bundle AX-6.4).
+wait 1100
 do Conversation
 expect text # Input 1 from previous session
 expect text you: Remember this word for later: kiwi.

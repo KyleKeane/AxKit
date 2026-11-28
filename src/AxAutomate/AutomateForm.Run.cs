@@ -366,7 +366,7 @@ public sealed partial class AutomateForm
         }
 
         var title = _workflow?.Title ?? WorkflowFolder.ReadWorkflow(path).Title;
-        ShowNotice(Notice.Plain("Report of " + title, report));
+        ShowNotice(Notice.Plain("Report of " + title, report).ByUser());
     }
 
     /// <summary>

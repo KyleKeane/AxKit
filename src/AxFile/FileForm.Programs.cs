@@ -122,7 +122,7 @@ public sealed partial class FileForm
                 SaveSettings();
                 Announce($"Added {name}", true);
             },
-            typed => typed.Trim().Length == 0 ? "Type a name" : null, emptyMessage: "Type a name");
+            typed => typed.Trim().Length == 0 ? "Type a name" : null, emptyMessage: "Type a name", byUser: true);
     }
 
     /// <summary>Remove a program ▸ one program: taken off the list; "Removed <name>".</summary>

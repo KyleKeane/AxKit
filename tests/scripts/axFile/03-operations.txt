@@ -170,12 +170,16 @@ expect focus "value":"Notes, folder"
 keys delete
 expect state "notice":"Delete Notes?"
 expect state It goes to the Recycle Bin with everything in it.
+# The question comes after the drive was asked about its Recycle Bin, off the window's thread: it holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus "value":"Notes, folder"
 expect list "Notes, folder"
 keys delete
 expect state "notice":"Delete Notes?"
+# The question comes after the drive was asked about its Recycle Bin, off the window's thread: it holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys enter
 expect said ! Deleted Notes
 expect focus "value":"a.txt"
@@ -384,6 +388,8 @@ expect focus "value":"delete-then-undo.txt"
 keys delete
 expect state "notice":"Delete delete-then-undo.txt?"
 expect state It goes to the Recycle Bin.
+# The question comes after the drive was asked about its Recycle Bin, off the window's thread: it holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys enter
 expect said ! Deleted delete-then-undo.txt
 do Undo
@@ -401,6 +407,8 @@ expect focus "value":"delete-two-then-undo-2.txt, selected"
 keys delete
 expect state "notice":"Delete 2 items?"
 expect state They go to the Recycle Bin.
+# The question comes after the drive was asked about its Recycle Bin, off the window's thread: it holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys enter
 expect said ! Deleted 2 items
 expect list "count":7

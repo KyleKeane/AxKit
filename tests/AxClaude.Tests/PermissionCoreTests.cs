@@ -158,6 +158,28 @@ public sealed class PermissionCoreTests
         Assert.Equal("Accessing workspace example", PermissionCore.OfScreen("Permission Required: Accessing workspace:", [@"C:\Temp\example", "Quick safety check: Is this a project you created or one you trust?"]));
     }
 
+    /// <summary>
+    /// The fourth review of 2026-11-27 (L1): a file's kind is one of Claude Code's titles, whole, never a title that
+    /// merely ends in "file" (an MCP tool named ..._file is read as a command, with its rows); and a path that wrapped
+    /// over the screen's width is joined, and marked, since where it was cut is read off the screen ("Edit file Butt"
+    /// for "...\Butt" and "on.cs" until then).
+    /// </summary>
+    [Fact]
+    public void A_files_kind_is_matched_whole_and_a_wrapped_path_is_joined_and_marked()
+    {
+        Assert.Equal("mcp__store__save_file notes.txt, and more",
+            PermissionCore.OfScreen("Permission Required: mcp__store__save_file", ["notes.txt", "rm -rf build"]));
+        Assert.Equal("Read file notes.txt", PermissionCore.OfScreen("Permission Required: Read file", [@"C:\work\notes.txt", "Do you want to proceed?"]));
+
+        var first = @"C:\work\repos\project\src\Forms\Butt";
+        Assert.Equal("Edit file Button.cs, and more",
+            PermissionCore.OfScreen("Permission Required: Edit file", [first, "on.cs", " 1 one", "Do you want to make this edit to Button.cs?"], width: first.Length));
+        // A row shorter than the width ends the path; the preview's rows start with a blank; the closing question is no path.
+        Assert.Equal("Create file Butt", PermissionCore.OfScreen("Permission Required: Create file", [first, "on.cs"], width: first.Length + 1));
+        Assert.Equal("Create file Butt", PermissionCore.OfScreen("Permission Required: Create file", [first, " 1 one"], width: first.Length));
+        Assert.Equal("Create file Butt", PermissionCore.OfScreen("Permission Required: Create file", [first, "Do you want to create it?"], width: first.Length));
+    }
+
     [Fact]
     public void A_long_word_is_cut_and_the_words_stop_before_the_limit()
     {

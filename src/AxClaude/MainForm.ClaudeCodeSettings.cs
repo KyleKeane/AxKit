@@ -201,11 +201,13 @@ internal sealed partial class MainForm
         _lastCommand = SlashCommands.Find(command);
         _model.Send(command, evenWhilePrompting: false);
         _messageSent = true;
-        QueueWrites(command);
-        ResendEnterWhileHeld(command, attempt: 1);
-        if (_settings.AnnounceSent)
+        // "Sent" when its Enter goes (QueueWrites), which also looks again for an Enter Claude Code dropped.
+        QueueWrites(command, sent: () =>
         {
-            Announce("Sent", false);
-        }
+            if (_settings.AnnounceSent)
+            {
+                Announce("Sent", false);
+            }
+        });
     }
 }

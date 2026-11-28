@@ -96,7 +96,7 @@ public sealed partial class TaskForm
             }
 
             SetFields([.. items.Select(item => (item, set))], "Fields set");
-        }, () => Typed() is { Refused: { } refused, Control: var at } ? (made[at], refused) : null);
+        }, () => Typed() is { Refused: { } refused, Control: var at } ? (made[at], refused) : null, byUser: true);
     }
 
     /// <summary>Item → Clear fields…: a list of the list's fields; the checked ones are emptied in every item.</summary>
@@ -124,6 +124,6 @@ public sealed partial class TaskForm
         {
             var chosen = titles.Where((_, index) => list.IsChecked(index)).ToList();
             SetFields([.. items.Select(item => (item, ManyFields.Cleared(item.Document, chosen)))], "Fields cleared");
-        }, () => titles.Where((_, index) => list.IsChecked(index)).Any() ? null : (list, "Check at least one field to empty"));
+        }, () => titles.Where((_, index) => list.IsChecked(index)).Any() ? null : (list, "Check at least one field to empty"), byUser: true);
     }
 }

@@ -28,8 +28,11 @@ namespace AxKit.Core;
 ///    in the conversation answered it unheard), a notice that closes and hands the focus back to the question under
 ///    it, the window becoming the active one again, a menu that closes, and the user's own focus key. The last is
 ///    accepted: after F6 or Tab into a question that arrived by itself, its answering keys wait the moment once
-///    more. A notice does the same when the focus comes back into it. A control the user opened with a command of
-///    their own starts no hold when shown and none when the focus arrives. The message field, when the window itself
+///    more. One arrival starts nothing (the fourth review of 2026-11-27, N4): the focus handed back to a list by
+///    the close of notices the user opened from it (an explanation, a help text), since the user heard the list
+///    before they left it. A notice does the same when the focus comes back into it. A control or a notice the
+///    user opened with a command of their own starts no hold when shown and none when the focus arrives; every
+///    other notice holds (N1), whoever made it. The message field, when the window itself
 ///    puts the focus back into it because a question that arrived by itself has closed, holds its Enter for the
 ///    moment too: an Enter meant for the question's list would otherwise send whatever the field holds.
 /// 4. The hold is asked where an answer is taken, not only where a key is read (R2, the same review). In the

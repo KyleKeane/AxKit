@@ -55,7 +55,7 @@ public abstract partial class ConsoleForm
     {
         if (RestartQuestion() is { } question)
         {
-            ShowNotice(Notice.Ask(question.Title, question.Text, "&Restart now", RestartSaid, question.Keep));
+            ShowNotice(Notice.Ask(question.Title, question.Text, "&Restart now", RestartSaid, question.Keep).ByUser());
             return;
         }
 

@@ -294,7 +294,7 @@ public sealed class LauncherForm : HotkeyForm
             new OverlayChoice("Put it in on &one line", () => PutIn(takeSelection, LineBreaks.OneLine), IsDefault: true),
             new OverlayChoice("Put it in &as it is, each line runs", () => PutIn(takeSelection, LineBreaks.Kept)),
             new OverlayChoice("&Cancel", IsCancel: true),
-        ]));
+        ]).ByUser());
     }
 
     /// <summary>
@@ -525,7 +525,7 @@ public sealed class LauncherForm : HotkeyForm
         }
 
         var lines = template.Text.ReplaceLineEndings("\n").Split('\n').Length;
-        ShowNotice(Notice.Plain($"{template.Title}, {lines} {(lines == 1 ? "line" : "lines")}", template.Text));
+        ShowNotice(Notice.Plain($"{template.Title}, {lines} {(lines == 1 ? "line" : "lines")}", template.Text).ByUser());
     }
 
     /// <summary>Ctrl+B (TP-4.6): the browser, a window of its own; the launcher hides and leaves the front to it.</summary>

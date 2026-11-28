@@ -39,14 +39,19 @@ internal sealed class ReportFlow
     /// report into the Reports list and sends it (RP-5, RP-6); Enter in the words is a new line; Escape cancels the
     /// form whole and keeps nothing (RP-D13, which reversed RP-D6 on 2026-11-14).
     /// </summary>
-    public void ShowReport() => ShowReport(null, null, null);
+    public void ShowReport() => Show(null, null, null, byUser: true);
 
     /// <summary>
     /// The report form with an AI tool's draft (docs/axKit/mcp.md MC-9.11): the words filled, the kind chosen, and the
     /// form's text starting with <see cref="AiCaution.Drafted"/>, said as the form opens; the rest as F4's. Only the
-    /// user's Send sends. False, with nothing shown, while a notice is open.
+    /// user's Send sends. False, with nothing shown, while a notice is open. The form holds its keys for a moment as
+    /// every notice does that the user did not open (bundle AX-6.4; the fourth review of 2026-11-27, M1: until then
+    /// Ctrl+Enter, the form's Send from any field, sent an AI tool's draft before a word of it was heard).
     /// </summary>
-    public bool ShowReport(string? draft, ReportKind? kind, string? drafter)
+    public bool ShowReport(string? draft, ReportKind? kind, string? drafter) => Show(draft, kind, drafter, byUser: false);
+
+    /// <summary>The report form, F4's (<paramref name="byUser"/>) or an AI tool's draft.</summary>
+    private bool Show(string? draft, ReportKind? kind, string? drafter, bool byUser)
     {
         if (_form.NoticeOpen)
         {
@@ -73,7 +78,7 @@ internal sealed class ReportFlow
         // disclaimer, said once as it opens (rule 10), Send the default button, Ctrl+Enter from any control.
         var controls = new ReportControls(plain, full, draft, kind);
         var text = drafter is null ? ReportText : AiCaution.Drafted(drafter) + " " + ReportText;
-        _form.ShowForm(ReportTitle, text, controls.Panel, "&Send", () => SaveReport(controls), controls.Missing, Cancelled, sayText: true);
+        _form.ShowForm(ReportTitle, text, controls.Panel, "&Send", () => SaveReport(controls), controls.Missing, Cancelled, sayText: true, byUser: byUser);
         return true;
     }
 

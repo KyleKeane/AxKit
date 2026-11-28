@@ -9,7 +9,7 @@
 # writes still waiting are dropped, the window says "Not sent", the conversation gets a line that says so, and the
 # message is back in the message field.
 # A message of many lines is what makes the moment wide enough to play: its lines go out for a second and a half.
-# The stand-in (tools/AxAutomate/StandIn.cs) draws each frame at a file of the script's and reads no key.
+# The stand-in (tools/AxAutomate/StandIn.cs) draws each frame at a file of the script's and acts on no key.
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir mq
 file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
@@ -74,8 +74,9 @@ expect focus keep this line
 # Check: The rest of a message, and its Enter, do not go to a question drawn while it is typed
 # Enter sends: the lines go out one by one. Claude Code asks about a file meanwhile. The lines still waiting and
 # the message's Enter are dropped, and the window says so; the log has the line of it, without a word of the message.
+# "Sent" is said when a message's Enter goes, so it is not said here: "Not sent" is the one word of it (the fourth
+# review of 2026-11-27; until then "Sent" came first, then "Not sent").
 keys enter
-expect said Sent
 file mq\go1 x
 expect said Not sent: Claude asks something, and its question opens in a moment
 run findstr /s /c:"The rest of a message was not written" home\AxKit\*.log
@@ -95,3 +96,7 @@ expect focus keep this line
 # Check: The conversation says that the message was not sent
 do Conversation
 expect text Not sent: Claude asked something while your message was being typed to it. The message is back in the message field.
+# Check: A message that was not sent leaves no block in the conversation
+# Its block, "# Input 1" with its lines, was put in as it was sent and is taken out again with the writes (the
+# fourth review of 2026-11-27, L4): the conversation holds what Claude was sent.
+refuse text line 24

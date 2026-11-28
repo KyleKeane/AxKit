@@ -796,6 +796,37 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: every notice holds, nothing hidden in a command, a message's Enter on a positive check (the fourth review of 2026-11-27)
+
+The fourth review of that day (`docs/axKit/SPEC.md` AX-6.4, points 3 and 4 and "Nothing unseen in what is asked";
+`docs/axClaude/SPEC.md` D33, point 4; `docs/axKit/mcp.md` MC-7.9). Every notice holds its answering keys unless the
+user's own command opened it at once (`Notice.ByUser`, the callers in `NoticeHoldTests`), and one an AI tool's run
+opened holds whatever its code says; a list the user left for an explanation of their own takes its answer at once
+when they come back; the message field holds its Enter after a notice that held; a command shows every joiner and
+selector as its code; a message's Enter goes only when Claude Code's prompt row shows the message, and "Sent" comes
+then. Played on the hidden desktop, without NVDA, on 2026-11-27: the new `tests/scripts/mcp/08-run-opens-a-question`
+(axCalc's Clear history run by an AI tool), the changed `mcp/03`, `mcp/05`, `axClaude/40`, `59`, `68` and the
+stream scripts' second after the folder's question, and the scripts of the apps named in the batch. Still owed:
+
+1. With NVDA listening (`.\nvda-pass.ps1 mcp axClaude axCalc`): those scripts; above all the short sound of an Enter
+   held back at a confirmation an AI tool's run opened, and that the question is read to its end first.
+2. With Claude Code itself (no live script was run): that a typed message's "Sent" comes within a moment of Enter,
+   that a long message of several screen rows and an offered command's `!` line are found on the prompt row (the
+   shell mode's row is not yet in a recording; if it reads otherwise, "Not sent yet" is said three seconds after
+   Enter, and Enter in the empty field sends it); that a message Claude Code's question cut off leaves no block in
+   the conversation; a permission question about a file whose path wraps over the screen's width ("Edit file
+   Button.cs, and more"); the titles "Edit file", "Read file", "Write file", as Claude Code writes them, which no
+   recording holds yet.
+3. By the maintainer's ear and hands:
+   - a notice he opens himself (a help text, a confirmation of his own Delete) takes Enter at once, and one a job or a
+     timer opened (an update, an error, AI help's answer, the installer's result) holds its second;
+   - Escape at a form or a field he opened takes at once; at the report form an AI tool drafted, Ctrl+Enter waits;
+   - after the explanation of an AI's request or an offered command, Enter on the list takes at once;
+   - after a notice that held closes into the message field, Enter waits its second: whether that is felt too often
+     (the folder's question of the stream, an error, the closing question);
+   - an emoji in a command offered by an AI shows its parts as codes, and an emoji in an answer of Claude's stays an
+     emoji; a word of Persian with its non-joiner reads as a word.
+
 ## Owed: the access layers after the review's third pass of 2026-11-27 (axGIT, axPass, axMCP, axTerminal)
 
 What a read-only review found in the repairs of the second pass, repaired the same day: axGIT connects no

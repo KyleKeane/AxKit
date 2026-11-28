@@ -67,7 +67,7 @@ internal sealed partial class TerminalForm
             Custom = controls,
             Accepts = controls.Ready,
             HeadLine = controls.FolderLine,
-        });
+        }.ByUser());
     }
 
     private void StartSession(SessionControls controls)
@@ -117,7 +117,7 @@ internal sealed partial class TerminalForm
         {
             ShowNotice(Notice.Ask("Switch the shell?",
                 $"{_model.RunningCommand} is still running. Switching ends it and starts {name} in the same folder. The transcript stays in the window.",
-                "&Switch now", () => ForceSwitch(kind, user), "&Keep it running"));
+                "&Switch now", () => ForceSwitch(kind, user), "&Keep it running").ByUser());
             return;
         }
 
@@ -201,7 +201,7 @@ internal sealed partial class TerminalForm
             },
             () => _settings.RefusedShellName(name.Text) is { } refused ? (name, refused)
                 : line.Text.Trim().Length == 0 ? (line, "Type the command line")
-                : null);
+                : null, byUser: true);
     }
 
     /// <summary>
@@ -223,7 +223,7 @@ internal sealed partial class TerminalForm
         {
             ShowNotice(Notice.Ask("Remove the shell?",
                 $"{_model.RunningCommand} is still running in {shell.Name}. Removing the shell ends it and starts {ShellLauncher.Describe(fallback)} in the same folder. The transcript stays in the window.",
-                "&Remove now", () => RemoveShellInUse(shell, fallback), "&Keep it"));
+                "&Remove now", () => RemoveShellInUse(shell, fallback), "&Keep it").ByUser());
             return;
         }
 

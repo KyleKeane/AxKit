@@ -173,7 +173,7 @@ public abstract partial class ItemForm
         var text = $"The fields of {source.Name}. Tab moves from one to the next. {save} or the Save button saves them all as one step, which {BundleKeys.Text(ItemKeys.Undo)} takes back. Escape leaves, and nothing is changed."
             + (form.EnterMakesNewLine ? " In a box of several lines Enter makes a new line." : string.Empty)
             + (source.Note is { } note ? " " + note : string.Empty);
-        ShowForm(source.Title ?? "Fields of " + source.Name, text, form, source.Button, () => SaveItemForm(source, Typed().Changed), Refused);
+        ShowForm(source.Title ?? "Fields of " + source.Name, text, form, source.Button, () => SaveItemForm(source, Typed().Changed), Refused, byUser: true);
     }
 
     /// <summary>The form saved: nothing when nothing changed, said; otherwise the app's save with the words of what changed.</summary>

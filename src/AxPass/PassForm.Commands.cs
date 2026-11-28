@@ -236,7 +236,7 @@ public sealed partial class PassForm
             if (nodes.Any(entry => PassBin.Fate(_binOn, bin, entry) == DeleteFate.NotKnown))
             {
                 var (title, text) = PassBin.Question(_binOn, nodes);
-                ShowNotice(Notice.Ask(title, text, "&Delete", () => Do(() => RemoveAsync(nodes, inBin: false)), cancelIsDefault: true));
+                ShowNotice(Notice.Ask(title, text, "&Delete", () => Do(() => RemoveAsync(nodes, inBin: false)), cancelIsDefault: true).ByUser());
                 return;
             }
 
@@ -259,16 +259,16 @@ public sealed partial class PassForm
             case DeleteFate.Recycled:
                 ShowNotice(Notice.Ask("Move the group",
                     $"Move the group {node.Name} and its {Count(tree.CountIn(node.Path), "item")} to the Recycle Bin? {BundleKeys.Text(ItemKeys.Undo)} cannot bring a group back: KeePassXC's own window can.",
-                    "&Move", () => Do(() => RemoveAsync(nodes, inBin: false)), cancelIsDefault: true));
+                    "&Move", () => Do(() => RemoveAsync(nodes, inBin: false)), cancelIsDefault: true).ByUser());
                 return;
             case DeleteFate.ForGood:
                 ShowNotice(Notice.Ask("Delete for good",
                     $"Delete {node.Name} for good? It is in the Recycle Bin, and nothing brings it back.",
-                    "&Delete", () => Do(() => RemoveAsync(nodes, inBin: true)), cancelIsDefault: true));
+                    "&Delete", () => Do(() => RemoveAsync(nodes, inBin: true)), cancelIsDefault: true).ByUser());
                 return;
             default:
                 var (unknownTitle, unknownText) = PassBin.Question(_binOn, nodes, node.IsGroup && tree.CountIn(node.Path) > 0 ? Count(tree.CountIn(node.Path), "item") : string.Empty);
-                ShowNotice(Notice.Ask(unknownTitle, unknownText, "&Delete", () => Do(() => RemoveAsync(nodes, inBin: false)), cancelIsDefault: true));
+                ShowNotice(Notice.Ask(unknownTitle, unknownText, "&Delete", () => Do(() => RemoveAsync(nodes, inBin: false)), cancelIsDefault: true).ByUser());
                 return;
         }
     }
@@ -349,7 +349,7 @@ public sealed partial class PassForm
             Remember(new Step("Added " + title.Trim(), [new Call(KeePassCliTexts.Remove, [], [path]) { Purge = true }], null));
             await ReloadAsync(path);
             Announce($"Added {title.Trim()}; Tab, then Enter on Password sets its password", true);
-        }), typed => PassTree.RefusedName(typed) ?? (_tree?.HasEntry(PassTree.Join(group, typed.Trim())) == true ? $"There is an entry called {typed.Trim()} here already" : null));
+        }), typed => PassTree.RefusedName(typed) ?? (_tree?.HasEntry(PassTree.Join(group, typed.Trim())) == true ? $"There is an entry called {typed.Trim()} here already" : null), byUser: true);
     }
 
     /// <summary>Ctrl+Shift+N: a new group in the group shown.</summary>
@@ -373,7 +373,7 @@ public sealed partial class PassForm
             Remember(new Step("Made " + name.Trim(), [new Call(KeePassCliTexts.RemoveGroup, [], [path]) { Purge = true }], null));
             await ReloadAsync(GroupKey(path));
             Announce("Made " + name.Trim(), true);
-        }), typed => PassTree.RefusedName(typed) ?? (_tree?.HasGroup(PassTree.Join(group, typed.Trim())) == true ? $"There is a group called {typed.Trim()} here already" : null));
+        }), typed => PassTree.RefusedName(typed) ?? (_tree?.HasGroup(PassTree.Join(group, typed.Trim())) == true ? $"There is a group called {typed.Trim()} here already" : null), byUser: true);
     }
 
     /// <summary>Ctrl+Z: the last step's runs, in order.</summary>
@@ -830,7 +830,7 @@ public sealed partial class PassForm
         ])
         {
             Input = new OverlayInput("Master password:", $"Type a master password for the new database {PassTree.DatabaseName(path)}", string.Empty, "Type a master password", Hidden: true),
-        });
+        }.ByUser());
     }
 
     /// <summary>Options, KeePassXC's tool: where <c>keepassxc-cli.exe</c> is, when KeePassXC is not where it installs.</summary>

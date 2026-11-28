@@ -257,7 +257,7 @@ public sealed partial class TaskForm
             () => Typed() is { Lacking: { } lacking, Said: { } said } ? (lacking, said) : null,
             // What the action will do is said at opening, after the word "form": it is written in a file, and
             // is not an explanation of how a form is used (bundle rule 11, AX-7.11).
-            sayText: true);
+            sayText: true, byUser: true);
     }
 
     /// <summary>The action done: on every one of <paramref name="items"/> when it sets fields or moves (the selected items, or the current one alone, TK-4.7), on the first, the current item, otherwise.</summary>
@@ -495,7 +495,7 @@ public sealed partial class TaskForm
             .AppendLine($"The command as it is for {ItemFolder.NameOf(item)}, one part on a line:");
         foreach (var part in terminal.Command)
         {
-            text.AppendLine(DisplayText.Visible(part));
+            text.AppendLine(DisplayText.VisibleCommand(part));
         }
 
         text.AppendLine().Append("axTerminal puts the command into its command field and does not send it: you read it there and press Enter yourself. axKit does not know what the command does or reaches. Sending it is your own choice.");
@@ -512,7 +512,7 @@ public sealed partial class TaskForm
 
                 HandOver();
             }),
-        ]));
+        ]).ByUser());
     }
 
     /// <summary>The option of axTerminal's command line after which every argument is a part of the command (axTerminal's SPEC AT-1.5a).</summary>
@@ -583,7 +583,7 @@ public sealed partial class TaskForm
             .AppendLine(run.Arguments.Count == 0 ? "It gets no arguments." : $"Its arguments as they are for {ItemFolder.NameOf(item)}, one on a line:");
         foreach (var argument in run.Arguments)
         {
-            text.AppendLine(DisplayText.Visible(argument));
+            text.AppendLine(DisplayText.VisibleCommand(argument));
         }
 
         if (run.Input is not null)
@@ -614,7 +614,7 @@ public sealed partial class TaskForm
 
                 RunNow(action, item, program, line, run);
             }),
-        ]));
+        ]).ByUser());
     }
 
     /// <summary>
@@ -743,7 +743,7 @@ public sealed partial class TaskForm
             return;
         }
 
-        ShowNotice(Notice.Plain($"Output of {last.Name}", last.Text.Trim().Length == 0 ? "It wrote nothing." : DisplayText.Visible(last.Text)));
+        ShowNotice(Notice.Plain($"Output of {last.Name}", last.Text.Trim().Length == 0 ? "It wrote nothing." : DisplayText.Visible(last.Text)).ByUser());
     }
 
     /// <summary>The programs the actions started end with the window.</summary>

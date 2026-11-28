@@ -193,7 +193,7 @@ internal sealed partial class MainForm
                     1 => "1 word keeps a line silent",
                     var count => $"{count} words keep a line silent",
                 }, false);
-            }, required: false);
+            }, required: false, byUser: true);
 
     /// <summary>Options → Speech → Speak replies: a mode (FR-7.4): speech starts with what arrives next.</summary>
     private void SetReplySpeech(ReplySpeechMode mode)

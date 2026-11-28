@@ -276,7 +276,7 @@ public sealed class CalcForm : ConversationForm
             UpdateStatus();
             SaveState();
             Announce("History cleared", true);
-        }));
+        }).ByUser());
     }
 
     /// <summary>Ctrl+S (AC-5.5): one entry per line through the Windows save dialog.</summary>
@@ -326,7 +326,7 @@ public sealed class CalcForm : ConversationForm
         var text = variables.Count == 0
             ? "No variables. Set one with name = value"
             : string.Join("\n", variables.Select(pair => $"{pair.Key} = {NumberText.Format(pair.Value)}"));
-        ShowNotice(Notice.Plain("Variables", text));
+        ShowNotice(Notice.Plain("Variables", text).ByUser());
     }
 
     private void ClearVariables()
@@ -344,7 +344,7 @@ public sealed class CalcForm : ConversationForm
             UpdateStatus();
             SaveState();
             Announce("Variables cleared", true);
-        }));
+        }).ByUser());
     }
 
     // ---- settings (AC-9) ----

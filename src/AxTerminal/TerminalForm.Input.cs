@@ -81,7 +81,7 @@ internal sealed partial class TerminalForm
         Input.Clear();
         if (text.Trim().Length == 0)
         {
-            Write(ShellTexts.Enter);
+            Write(ShellTexts.Enter, still: null);
             return;
         }
 
@@ -110,13 +110,13 @@ internal sealed partial class TerminalForm
         var lines = text.Split('\n');
         foreach (var line in lines)
         {
-            Enqueue(line, 60);
-            Enqueue(ShellTexts.Enter, 120);
+            Enqueue(line, 60, still: null);
+            Enqueue(ShellTexts.Enter, 120, still: null);
         }
 
         if (lines.Length > 1 && ShellTexts.EndsBlockOnEmptyLine(_shell))
         {
-            Enqueue(ShellTexts.Enter, 120);
+            Enqueue(ShellTexts.Enter, 120, still: null);
         }
 
         StartWrites();
@@ -132,7 +132,7 @@ internal sealed partial class TerminalForm
         }
 
         ClearWrites();
-        Write(ShellTexts.Interrupt);
+        Write(ShellTexts.Interrupt, still: null);
         Announce("Interrupt sent", true);
     }
 
@@ -148,7 +148,7 @@ internal sealed partial class TerminalForm
             return;
         }
 
-        Write(sequence);
+        Write(sequence, still: null);
         Announce(said, true);
     }
 

@@ -93,6 +93,8 @@ type the tap
 keys enter
 expect state "notice":"Run Find what I type? An AI may have written it: read the explanation before you run it"
 expect state /c:the tap
+# The question follows the form's own answer, and holds its keys for a second (bundle AX-6.4, 2026-11-27).
+wait 1100
 keys tab tab
 keys enter
 expect said ! Find what I type: done

@@ -1,0 +1,69 @@
+# Workflow: Answer the question a command an AI tool ran asks you
+# axkit_window_run (docs/axKit/mcp.md MC-7.9, the fourth review of 2026-11-27, H2): a command an AI tool runs may ask
+# the user something of its own, as axCalc's Clear history asks whether to clear. That question was opened by the AI
+# tool's run, not by a key of the user's: it holds its answering keys for a moment as every notice does that arrived
+# by itself, so that an Enter pressed twice, or meant for what stood there before, does not clear the history unheard.
+# And when the question closes, the expression field's Enter waits that moment too.
+file home\AxKit\axCalc.json {"keepHistory": false}
+start calc
+expect focus Expression
+type 1+1
+keys enter
+expect said ! 2
+
+menu Let AI tools read and open axKit
+expect state "notice":"Turn on AI tools?"
+keys enter
+expect said AI tools on
+try said Not in a test run
+menu Let AI tools run commands
+expect said AI tools may run commands
+mcp start
+mcp call axkit_windows
+expect state "notice":"axAutomate asks to use axKit"
+wait 1500
+keys tab
+expect focus I understand
+keys space
+expect said ! checked
+keys tab
+expect focus &Allow
+keys enter
+expect said axAutomate may read axKit
+expect mcp "app": "axCalc"
+
+# Clear history acts outside the window's text (marked act): the user is asked first, in the list at the bottom.
+# Under NVDA the keys are real input: the window in front runs a command only after 3 s without one (MC-7.8).
+wait 3500
+mcp call axkit_window_run {"window":"{window}","command":"Clear history"}
+expect mcp The window asks the user whether to run Clear history
+expect focus 1. Explain this command
+wait 1500
+keys down
+expect focus 2. Yes, run it
+keys enter
+expect said axAutomate ran Clear history
+expect state "notice":"Clear the history?"
+
+# Check: The question a command run for an AI tool asks holds its keys for a moment
+# Enter at once, the doubled Enter of the Yes, clears nothing: it is heard, and the question stays.
+keys enter
+expect said ♪ Edge
+expect state "notice":"Clear the history?"
+
+# Goal: Keep the history when a command an AI tool ran asks to clear it
+# A moment later the question takes its answer: Escape keeps the history.
+wait 1100
+keys escape
+expect focus Expression
+
+# Check: The field's Enter waits a moment after a question that held its keys
+# The question closed and the window gave the focus back to the field: an Enter meant for the question would answer
+# the field. For a moment it answers nothing and is heard; then it answers.
+type 2+2
+keys enter
+expect said ♪ Edge
+refuse said ! 4
+wait 1100
+keys enter
+expect said ! 4

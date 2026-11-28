@@ -24,6 +24,8 @@ expect state "notice":"Keyboard shortcuts"
 expect focus {"name":"Keyboard shortcuts","role":"Text","value":"## How the keys go
 # Goal: Move through the keyboard shortcuts by heading
 # h and Ctrl+H alike: the next section's heading; Shift+H back.
+# The shortcuts came back by the Find notice's button and hold their keys for a second (bundle AX-6.4).
+wait 1100
 keys h
 expect said ! In every window of axKit, heading level 2
 # Check: Ctrl+H moves by heading as H does, and Shift+H goes back
@@ -48,6 +50,9 @@ expect focus Keyboard shortcuts
 keys f3
 expect focus Keyboard shortcuts
 # Check: Escape in the find field brings the shortcuts back
+# The shortcuts came back by the Find notice's button and hold their keys for a second, and so does the Find notice
+# shown over them (bundle AX-6.4, 2026-11-27).
+wait 1100
 keys ctrl+f
 expect focus Text to find
 keys escape
@@ -55,6 +60,8 @@ expect focus Keyboard shortcuts
 expect state "notice":"Keyboard shortcuts"
 # Goal: Close the keyboard shortcuts and go back to the text
 # Escape closes the notice and the focus is back in the editor at the same place.
+# The shortcuts came back by the Find notice's button and hold their keys for a second (bundle AX-6.4).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus {"name":"a.md","role":"Text","value":"Some text here."}

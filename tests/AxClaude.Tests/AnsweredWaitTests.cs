@@ -180,11 +180,39 @@ public sealed class AnsweredWaitTests
     [Fact]
     public void A_queued_message_is_over_when_Claude_has_begun_to_ask_since_it_was_queued()
     {
-        Assert.False(QueuedWrite.MessageOver(askedWhenQueued: false, asksNow: false));
-        Assert.True(QueuedWrite.MessageOver(askedWhenQueued: false, asksNow: true));
-        // Sent into a question on purpose (the kept message sent again, "Enter again sends"): it goes.
-        Assert.False(QueuedWrite.MessageOver(askedWhenQueued: true, asksNow: true));
-        Assert.False(QueuedWrite.MessageOver(askedWhenQueued: true, asksNow: false));
+        var question = "question\n" + Create("alpha.txt").Content;
+        var other = "question\n" + Create("beta.txt").Content;
+        Assert.True(QueuedWrite.MessageGoes(askedThen: false, waitedFor: null, asksNow: false, waitingNow: null));
+        Assert.False(QueuedWrite.MessageGoes(askedThen: false, waitedFor: null, asksNow: true, waitingNow: question));
+        // Sent into a question on purpose (the kept message sent again, "Enter again sends"): it goes into that one.
+        Assert.True(QueuedWrite.MessageGoes(askedThen: true, waitedFor: question, asksNow: true, waitingNow: question));
+        // Bound to it by its identity (the fourth review of 2026-11-27, N3): not into the question that replaced it,
+        // nor once nothing is asked, when its Enter would go to the prompt as a message the user did not send so.
+        Assert.False(QueuedWrite.MessageGoes(askedThen: true, waitedFor: question, asksNow: true, waitingNow: other));
+        Assert.False(QueuedWrite.MessageGoes(askedThen: true, waitedFor: question, asksNow: false, waitingNow: null));
+    }
+
+    /// <summary>
+    /// A message's Enter only on a positive check (the fourth review of 2026-11-27, N3, M2): the frame shows the
+    /// message on Claude Code's prompt row and nothing is asked. Until then it went unless a question had been seen,
+    /// and the window reads the screen only as of the last frame it took in. Not yet on the row: the Enter waits for
+    /// the check of a dropped Enter, which asks the same.
+    /// </summary>
+    [Fact]
+    public void A_messages_Enter_goes_only_when_the_prompt_row_shows_it_and_nothing_is_asked()
+    {
+        var question = "question\n" + Create("alpha.txt").Content;
+        Assert.True(QueuedWrite.MessageEnterGoes(askedThen: false, waitedFor: null, asksNow: false, waitingNow: null, promptHolds: true));
+        // The old check let these two go: nothing seen asked, and nothing seen on the row either.
+        Assert.False(QueuedWrite.MessageEnterGoes(askedThen: false, waitedFor: null, asksNow: false, waitingNow: null, promptHolds: false));
+        Assert.False(QueuedWrite.MessageEnterGoes(askedThen: false, waitedFor: null, asksNow: true, waitingNow: question, promptHolds: true));
+        // A message sent into a question on purpose goes while that very question stands, whatever its row shows.
+        Assert.True(QueuedWrite.MessageEnterGoes(askedThen: true, waitedFor: question, asksNow: true, waitingNow: question, promptHolds: false));
+
+        Assert.True(QueuedWrite.EnterAgain(promptHolds: true, asksNow: false, interrupted: false));
+        Assert.False(QueuedWrite.EnterAgain(promptHolds: false, asksNow: false, interrupted: false));
+        Assert.False(QueuedWrite.EnterAgain(promptHolds: true, asksNow: true, interrupted: false));
+        Assert.False(QueuedWrite.EnterAgain(promptHolds: true, asksNow: false, interrupted: true));
     }
 
     /// <summary>

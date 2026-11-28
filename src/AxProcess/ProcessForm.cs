@@ -503,21 +503,29 @@ public sealed class ProcessForm : ItemForm
                 ShowServiceDetails(service);
                 return;
             case StartupEntry entry:
-                ShowNotice(new Notice(entry.Name, string.Join("\n", entry.Details),
-                [
-                    entry.Enabled
-                        ? new OverlayChoice("Turn &off", () => ChangeStartup(entry, StartupAction.TurnOff))
-                        : new OverlayChoice("Turn o&n", () => ChangeStartup(entry, StartupAction.TurnOn)),
-                    new OverlayChoice("&Remove...", () => ChangeStartup(entry, StartupAction.Remove)),
-                    new OverlayChoice("Show program in ax&File", () => ShowProgramOf(entry)),
-                    new OverlayChoice("&Close", IsDefault: true, IsCancel: true),
-                ]));
+                ShowStartupDetails(entry);
                 return;
             default:
                 Refuse("Nothing selected");
                 return;
         }
     }
+
+    /// <summary>
+    /// The details of a startup program (PR-5.3), with Turn off or Turn on, Remove and Show program in axFile: read from
+    /// the list as it was read, so shown at once, as the first result of the user's Enter. A process's details are
+    /// read from the system first, and hold their keys for a moment as everything does that comes after an await.
+    /// </summary>
+    private void ShowStartupDetails(StartupEntry entry) =>
+        ShowNotice(new Notice(entry.Name, string.Join("\n", entry.Details),
+        [
+            entry.Enabled
+                ? new OverlayChoice("Turn &off", () => ChangeStartup(entry, StartupAction.TurnOff))
+                : new OverlayChoice("Turn o&n", () => ChangeStartup(entry, StartupAction.TurnOn)),
+            new OverlayChoice("&Remove...", () => ChangeStartup(entry, StartupAction.Remove)),
+            new OverlayChoice("Show program in ax&File", () => ShowProgramOf(entry)),
+            new OverlayChoice("&Close", IsDefault: true, IsCancel: true),
+        ]).ByUser());
 
     /// <summary>Delete on a process, Context → End process tree (PR-3.3): the process you are on.</summary>
     private void EndProcess(bool tree)
@@ -553,7 +561,7 @@ public sealed class ProcessForm : ItemForm
             var (_, said) = await Task.Run(() => Kill(row, tree));
             Announce(said, true);
             await RefreshAsync(announce: false);
-        })));
+        })).ByUser());
     }
 
     /// <summary>
@@ -578,7 +586,7 @@ public sealed class ProcessForm : ItemForm
             Announce(failed.Count == 0 ? $"Ended {ended} processes" : $"Ended {ended} of {rows.Count} processes. {string.Join(". ", failed)}", true);
             Selection.Clear();
             await RefreshAsync(announce: false);
-        })));
+        })).ByUser());
     }
 
     /// <summary>The end itself, off the UI thread: whether it ended, and what to say about it. The ID must still be the same program's, since Windows reuses IDs.</summary>
@@ -707,7 +715,7 @@ public sealed class ProcessForm : ItemForm
         }
 
         choices.Add(new OverlayChoice("&Close", IsDefault: true, IsCancel: true));
-        ShowNotice(new Notice(row.DisplayName, string.Join("\n", row.Details), choices));
+        ShowNotice(new Notice(row.DisplayName, string.Join("\n", row.Details), choices).ByUser());
     }
 
     private void ControlSelectedService(ServiceAction action)
@@ -797,7 +805,7 @@ public sealed class ProcessForm : ItemForm
             return;
         }
 
-        ShowNotice(Notice.Ask(StartupChange.RemoveQuestion(entry), StartupChange.RemoveText(entry), "&Remove", () => ApplyStartup(entry, action), cancelIsDefault: true));
+        ShowNotice(Notice.Ask(StartupChange.RemoveQuestion(entry), StartupChange.RemoveText(entry), "&Remove", () => ApplyStartup(entry, action), cancelIsDefault: true).ByUser());
     }
 
     /// <summary>
@@ -901,7 +909,7 @@ public sealed class ProcessForm : ItemForm
             {
                 Fill(SelectedKey());
             }
-        }), cancelIsDefault: true));
+        }), cancelIsDefault: true).ByUser());
     }
 
     // ---- the status bar (PR-2.4) ----

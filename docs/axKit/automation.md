@@ -424,7 +424,7 @@ EG-11.3, section 6.7, decision EG-D-17): a mode of the runner itself, `tools/AxA
 its manual. It plays a scenario as Claude Code would in the window's pseudo console: frames, the turn's marks (OSC 133
 A, C, D) and bells on the console, entries appended to a session file, and the command hooks of the `--settings` file
 the window gave it, each started without a shell or a window with the event on its standard input, not waited for
-when the hook says `async`. It needs no Claude Code, no network and no model, and never reads standard input.
+when the hook says `async`. It needs no Claude Code, no network and no model, and acts on no key it is sent: what the window types is only drawn on the prompt row, as Claude Code draws a draft, while a frame ends on one (since 2026-11-27, when a message's Enter came to wait for that row, docs/axClaude/SPEC.md D33).
 
 - **`AXKIT_STANDIN`.** The runner puts its own program's path into this variable as it starts (`Program.Main`), so
   every window of the run, and the cmd.exe and the stand-in under them, inherit it. A script's `claude.cmd` is one

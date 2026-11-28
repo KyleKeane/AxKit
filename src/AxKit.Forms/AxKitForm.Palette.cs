@@ -43,7 +43,7 @@ public abstract partial class AxKitForm
         {
             Input = new OverlayInput("&Search commands:", "Search commands", string.Empty, string.Empty, Required: false,
                 KeyHook: OnPaletteKey, Changed: OnPaletteTyped, ListName: "Commands"),
-        });
+        }.ByUser());
         FillPalette();
     }
 

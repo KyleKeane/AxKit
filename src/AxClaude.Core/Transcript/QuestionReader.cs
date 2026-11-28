@@ -26,9 +26,9 @@ public static class QuestionReader
 
     /// <summary>
     /// The question whose prompt row (the row the cursor sits on) is <paramref name="promptRow"/>, or null when
-    /// that row is not a prompt row. <paramref name="rows"/> are the screen's rows, top to bottom.
+    /// that row is not a prompt row. <paramref name="rows"/> are the screen's rows, top to bottom, <paramref name="width"/> columns wide (0 when not known), by which a permission question's path that wrapped is read whole (<see cref="PermissionCore.OfScreen"/>).
     /// </summary>
-    public static Question? Read(IReadOnlyList<string> rows, int promptRow)
+    public static Question? Read(IReadOnlyList<string> rows, int promptRow, int width = 0)
     {
         // "Enter text for option 4 (Other)" asks for the user's own words, not for one of the answers still above it.
         if (promptRow < 0 || promptRow >= rows.Count || !LineClassifier.IsPromptText(rows[promptRow].Trim())
@@ -145,7 +145,7 @@ public static class QuestionReader
         // "Select with numbers [1-4] (comma- or space-separated for several)": more than one answer may be given.
         var several = rows[promptRow].Contains(ClaudeCodeTexts.ForSeveral, StringComparison.Ordinal);
         // A permission question's tool and target, which each answer's label carries (PermissionCore, D33).
-        return new Question(title, text, options) { AllowsSeveral = several, FirstRow = first, Step = step, Core = PermissionCore.OfScreen(title, text) };
+        return new Question(title, text, options) { AllowsSeveral = several, FirstRow = first, Step = step, Core = PermissionCore.OfScreen(title, text, width) };
     }
 
     /// <summary>

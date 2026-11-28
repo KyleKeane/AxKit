@@ -190,7 +190,9 @@ so that a person and the assistant can both write an action by hand and know wha
   configuration file. axKit did not write it and checked nothing of it; you, another program or an AI may have
   written it."), the sentence of AF-7.1, the
   program as it was found with its full path, and every argument as it is filled for the item selected, one on a
-  line, with hidden characters written out (`DisplayText.Visible`); "axKit does not know what this program does or
+  line, with every hidden character and every space that is not the plain one written out, an emoji's joiner too
+  (`DisplayText.VisibleCommand`, since the fourth review of 2026-11-27: what is run is shown with nothing hidden,
+  bundle AX-6.4; the input, which is text, keeps `DisplayText.Visible`); "axKit does not know what this program does or
   reaches". The answers: Cancel, where Enter is; Run it once; Run it, and do not ask again for this action. The
   acceptance is the bundle's seal over the list's folder and the whole action as the file holds it
   (`TaskSettings.AcceptedActionKeys`, grown), so that a changed argument asks again and a line written into the

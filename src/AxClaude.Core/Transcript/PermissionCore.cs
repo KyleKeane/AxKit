@@ -41,15 +41,19 @@ public static class PermissionCore
     /// file"), the kind the title names and what its rows name ("Create file permission-test.txt", "Bash command
     /// echo hello-permission, and more", "Accessing workspace example"); null for any other question, and for plan
     /// approval, whose title is a question of its own ("Ready to code?") and whose first line names no target.
-    /// A kind that asks about one file or folder (<see cref="ClaudeCodeTexts.PathKindEnds"/>) names it by its first
-    /// row, as a path. Every other kind is read as a command, whatever its title says: all the rows between the
+    /// A kind that asks about one file or folder, by its whole name (<see cref="ClaudeCodeTexts.PathKinds"/>), names
+    /// it by its path: its first row, and the rows it wrapped onto when the screen is <paramref name="width"/>
+    /// columns wide (a row that fills the width goes on in the next, unless that row starts with a blank or is
+    /// Claude Code's closing question), joined as one path; a path that took more than one row is marked, since where
+    /// it was cut is read off the screen, not known (the fourth review of 2026-11-27, L1: "Edit file Butt" for a
+    /// path cut at "...\Butt|on.cs"). Without a width, the first row alone. Every other kind is read as a command, whatever its title says: all the rows between the
     /// title and Claude Code's own closing question (<see cref="ClaudeCodeTexts.ClosingQuestionStart"/>) are taken
     /// for what a yes runs, since nothing on the screen tells a further line of a command from Claude's description
     /// of it, so a second row marks the label (a mark too many costs a look at the question, a mark too few hides a
     /// command). Until the third review of 2026-11-27 only a kind that ended in "command" was read so, and a
     /// question titled "Monitor" with a command of two rows was labelled by its first.
     /// </summary>
-    public static string? OfScreen(string title, IReadOnlyList<string> text)
+    public static string? OfScreen(string title, IReadOnlyList<string> text, int width = 0)
     {
         if (!title.StartsWith(ClaudeCodeTexts.PermissionRequired, StringComparison.Ordinal))
         {
@@ -62,9 +66,18 @@ public static class PermissionCore
             return null;
         }
 
-        if (ClaudeCodeTexts.PathKindEnds.Any(end => kind.EndsWith(end, StringComparison.OrdinalIgnoreCase)))
+        if (ClaudeCodeTexts.PathKinds.Contains(kind, StringComparer.Ordinal))
         {
-            return Of(kind, text.Count > 0 ? text[0] : string.Empty, path: true);
+            var path = text.Count > 0 ? text[0] : string.Empty;
+            var taken = 1;
+            while (width > 0 && taken < text.Count && text[taken - 1].Length >= width && text[taken] is { Length: > 0 } next
+                && !char.IsWhiteSpace(next[0]) && !(next.StartsWith(ClaudeCodeTexts.ClosingQuestionStart, StringComparison.Ordinal) && next.EndsWith('?')))
+            {
+                path += next;
+                taken++;
+            }
+
+            return Of(kind, path, more: taken > 1, path: true);
         }
 
         var rows = text.ToList();

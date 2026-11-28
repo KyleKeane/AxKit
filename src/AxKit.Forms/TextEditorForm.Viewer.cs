@@ -263,7 +263,7 @@ public sealed partial class TextEditorForm
         {
             // S-46: a viewer shows a stranger's file; opening a program, a script or a shortcut would run it.
             ShowNotice(Notice.Plain("Not run from axPreview",
-                $"{Path.GetFileName(path)} is a program, a script or a shortcut: opening it runs it. axPreview only shows files. If you trust it, run it from axFile or File Explorer; Open with, Choose another program, opens it in a program you pick."));
+                $"{Path.GetFileName(path)} is a program, a script or a shortcut: opening it runs it. axPreview only shows files. If you trust it, run it from axFile or File Explorer; Open with, Choose another program, opens it in a program you pick.").ByUser());
             return;
         }
 

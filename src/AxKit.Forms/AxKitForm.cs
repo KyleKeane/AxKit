@@ -567,7 +567,7 @@ public abstract partial class AxKitForm : Form
         // The F1 text as a text of its own, with its heading keys and find (AX-7.2a): F1 is the palette since
         // 2026-11-26, whose list with nothing typed gives the same lines.
         help.DropDownItems.Add(Item("&Keyboard shortcuts", ShowShortcuts, Keys.None, CommandMark.Read));
-        help.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("User &guide", null, (_, _) => ShowNotice(Notice.Plain("User guide", userGuide()))), CommandMark.Read));
+        help.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("User &guide", null, (_, _) => ShowNotice(Notice.Plain("User guide", userGuide()).ByUser())), CommandMark.Read));
         var resources = new ToolStripMenuItem(resourcesLabel);
         foreach (var (label, url) in pages)
         {
@@ -588,12 +588,12 @@ public abstract partial class AxKitForm : Form
         help.DropDownItems.Add(_checkItem);
         help.DropDownItems.Add(_updateItem);
         var about = new ToolStripMenuItem("&About");
-        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Version", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.VersionTitle, BundleAbout.Version(LatestReleaseState)))), CommandMark.Read));
-        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Licence", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.LicenceTitle, BundleAbout.LicenceWithAgreements(Consent.Read(AppPaths.ConsentFile))))), CommandMark.Read));
-        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Attribution", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.AttributionTitle, BundleAbout.Attribution))), CommandMark.Read));
-        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Privacy", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.PrivacyTitle, BundleAbout.Privacy()))), CommandMark.Read));
-        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Third-party &notices", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.NoticesTitle, BundleAbout.Notices()))), CommandMark.Read));
-        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("axKit &guide", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.GuideTitle, BundleAbout.Guide()))), CommandMark.Read));
+        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Version", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.VersionTitle, BundleAbout.Version(LatestReleaseState)).ByUser())), CommandMark.Read));
+        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Licence", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.LicenceTitle, BundleAbout.LicenceWithAgreements(Consent.Read(AppPaths.ConsentFile))).ByUser())), CommandMark.Read));
+        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Attribution", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.AttributionTitle, BundleAbout.Attribution).ByUser())), CommandMark.Read));
+        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("&Privacy", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.PrivacyTitle, BundleAbout.Privacy()).ByUser())), CommandMark.Read));
+        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("Third-party &notices", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.NoticesTitle, BundleAbout.Notices()).ByUser())), CommandMark.Read));
+        about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("axKit &guide", null, (_, _) => ShowNotice(Notice.Plain(BundleAbout.GuideTitle, BundleAbout.Guide()).ByUser())), CommandMark.Read));
         about.DropDownItems.Add(CommandPalette.Marked(new ToolStripMenuItem("axKit on Git&Hub", null, (_, _) => OpenUrl(UpdateCheck.RepositoryPage)), CommandMark.Act));
         help.DropDownItems.Add(about);
         return help;
@@ -882,7 +882,7 @@ public abstract partial class AxKitForm : Form
     /// as it stands (<see cref="KeyReference"/>), so that no key the window has is missing from what it reads. F1 showed
     /// it until 2026-11-26; F1 is the palette now, which gives the same lines with nothing typed.
     /// </summary>
-    private void ShowShortcuts() => ShowNotice(Notice.Plain("Keyboard shortcuts", ShortcutsText()));
+    private void ShowShortcuts() => ShowNotice(Notice.Plain("Keyboard shortcuts", ShortcutsText()).ByUser());
 
     /// <summary>The whole F1 text: <see cref="Shortcuts"/> and the section made from the commands; Ask about this window reads it too.</summary>
     protected internal string ShortcutsText() => (Shortcuts.TrimEnd('\r', '\n') + "\n\n" + KeyReference.Section(CommandRows().Commands)).ReplaceLineEndings("\r\n");

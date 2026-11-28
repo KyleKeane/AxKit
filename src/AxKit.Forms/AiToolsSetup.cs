@@ -52,7 +52,7 @@ internal sealed class AiToolsSetup
             ? [new OverlayChoice("&Turn on", () => TurnMcpOn(addToClaude: false), IsDefault: true)]
             : [new OverlayChoice("&Turn on and add to Claude Code", () => TurnMcpOn(addToClaude: true), IsDefault: true), new OverlayChoice("Turn on &only", () => TurnMcpOn(addToClaude: false))];
         choices.Add(new OverlayChoice("&Cancel", IsCancel: true));
-        _form.ShowNotice(new Notice("Turn on AI tools?", text, choices));
+        _form.ShowNotice(new Notice("Turn on AI tools?", text, choices).ByUser());
     }
 
     /// <summary>

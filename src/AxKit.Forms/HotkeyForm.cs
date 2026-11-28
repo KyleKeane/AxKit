@@ -566,7 +566,7 @@ public abstract class HotkeyForm : AxKitForm
             ])
         {
             Input = new OverlayInput("Press the new key:", "Press the new key", CurrentHotkey.ToString(), "Press a key first", KeyHook: OnHotkeyField),
-        });
+        }.ByUser());
     }
 
     /// <summary>A key in the Hotkey field: taken as the new hotkey, or refused with the reason; Enter, Escape and Tab stay the notice's.</summary>

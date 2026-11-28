@@ -17,6 +17,8 @@ keys enter
 
 # Goal: Learn that Claude Code ended and stay in the window
 expect said Ready
+# The folder's question held its keys, so the message field's Enter waits a second after it closes (bundle AX-6.4).
+wait 1100
 type Say ok
 keys enter
 expect said Sent
@@ -27,6 +29,8 @@ expect state You can open this folder with the screen instead
 wait 1500
 keys escape
 expect state Claude: stopped
+# The notice held its keys, so the message field's Enter waits a second after it closed (bundle AX-6.4, 2026-11-27).
+wait 1100
 do Conversation
 expect text System: Claude stopped (exit code 1). Press Ctrl+Shift+R to start it again.
 

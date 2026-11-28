@@ -4,7 +4,7 @@
 # Enter in its first seconds, so the window sends Enter again while its prompt row still holds the message a second
 # and a half after it was sent. Since Claude Code 2.1.331 an interrupt puts the interrupted message back on that row,
 # which reads the same: a message interrupted within that second and a half was sent again. After an interrupt the
-# Enter is not sent again. The stand-in (tools/AxAutomate/StandIn.cs) reads no key: it draws the prompt row with the
+# Enter is not sent again. The stand-in (tools/AxAutomate/StandIn.cs) acts on no key: it draws the prompt row with the
 # message on it at a file of the script's, and the window's log says whether Enter went again (the count of its
 # lines, never a text of the user's).
 file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}

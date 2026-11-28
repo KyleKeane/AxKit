@@ -24,6 +24,8 @@ run "C:\Program Files\KeePassXC\keepassxc-cli.exe" add -q -u inner test.kdbx "Em
 start pass {temp}\test.kdbx
 expect focus Type the master password to unlock test
 type test-master-1
+# The unlock notice comes by itself as the window opens and holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys enter
 expect said ! test, 3 items, Email, group, 2 items
 # A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
@@ -110,6 +112,8 @@ keys ctrl+l
 expect said ! Locked
 expect state Unlock test
 type test-master-1
+# The unlock notice holds its keys for a second (bundle AX-6.4): it comes by itself as the window opens or locks.
+wait 1100
 keys enter
 expect said ! test, 3 items, Email, group, 1 item
 wait 500
@@ -141,6 +145,8 @@ keys ctrl+l
 expect said ! Locked
 expect state Unlock test
 type test-master-1
+# The unlock notice holds its keys for a second (bundle AX-6.4): it comes by itself as the window opens or locks.
+wait 1100
 keys enter
 expect said ! test, 3 items
 wait 500

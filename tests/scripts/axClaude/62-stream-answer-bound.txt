@@ -29,6 +29,8 @@ wait 1500
 keys tab
 keys enter
 expect said Ready
+# The folder's question held its keys, so the message field's Enter waits a second after it closes (bundle AX-6.4).
+wait 1100
 
 # Goal: Refuse a first call
 type Change the notes

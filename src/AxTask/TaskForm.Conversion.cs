@@ -46,7 +46,7 @@ public sealed partial class TaskForm
             "This list is written in axTask's earlier format, and is not opened until it is converted. Convert it? A copy is kept among the Archived lists, named with \", before conversion\" after the list's name.\r\n\r\n"
             + $"What changes: an item's file then holds only its values, and the list's configuration says which fields its items have, in which order and of which type. {BundleKeys.Text(AxTaskKeys.OpenInAxJson)} on the list opens that configuration. Nothing an item holds is dropped, and {BundleKeys.Text(ItemKeys.Undo)} takes the conversion back.\r\n\r\n"
             + "A copy of axKit older than this one does not read a converted list.",
-            choices));
+            choices).ByUser());
     }
 
     /// <summary>

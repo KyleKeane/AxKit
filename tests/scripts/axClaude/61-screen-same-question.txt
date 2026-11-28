@@ -77,7 +77,7 @@ expect said Answer Claude first; the permission mode stays as it is while it ask
 expect focus 3. No, Create file gamma.txt
 
 # Check: An answer that Claude Code did not take does not make the standing question be asked again
-# SPEC.md D33 (the second review of 2026-11-27). The stand-in reads no key, so the answer is not taken and the
+# SPEC.md D33 (the second review of 2026-11-27). The stand-in acts on no key, so the answer is not taken and the
 # question stands. The window had marked it answered for good, so a single blank frame later, as Claude Code
 # draws in passing, read as "the answered question has left": the same question came again with its chime, its list
 # back on the first answer. A key stops counting as an answer when the question still stands three seconds after it.

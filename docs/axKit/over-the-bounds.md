@@ -7,7 +7,7 @@ from any of its places. A goal's actions are counted as WG-3.3 says: the app's o
 only prepare or look are not counted, and neither is the example's text a goal types before its first command.
 The counts are held in `docs/axKit/goal-counts.json`: a goal may get shorter, never longer (WG-3.4).
 
-880 goals counted: 87 over four actions, 77 at four, 716 within three.
+881 goals counted: 87 over four actions, 77 at four, 717 within three.
 The map covers 7 apps and 58 nodes: 0 nodes with a waypoint more than two actions away (0 in all, a node and a waypoint each).
 
 ## axAutomate

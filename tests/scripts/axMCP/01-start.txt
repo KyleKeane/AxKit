@@ -33,6 +33,8 @@ expect said Before axMCP starts fake
 expect said -NoProfile -ExecutionPolicy Bypass -File fake.ps1
 keys tab
 expect said I understand that axMCP
+# The agreement holds its keys for a second, as every notice does that is no first result of a key (bundle AX-6.4).
+wait 1100
 keys space
 expect said ! checked
 keys enter
@@ -80,6 +82,8 @@ keys ctrl+enter
 expect said ! Calling echo
 expect state "notice":"Result of echo"
 expect focus "value":"hello"
+# A result comes after the server's answer, off the window's thread: it holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus text (required), text, hello
@@ -105,6 +109,8 @@ keys enter
 expect said ! Reading readme
 expect state "notice":"readme"
 expect focus Hello from the fake server.
+# A result comes after the server's answer, off the window's thread: it holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus readme, resource

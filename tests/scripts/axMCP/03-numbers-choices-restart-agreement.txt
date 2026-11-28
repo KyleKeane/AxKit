@@ -41,6 +41,8 @@ expect state Its definition sets the environment variables ZZ_MADE_UP_TOKEN; the
 refuse state made-up-secret-value
 keys tab
 expect said I understand that axMCP
+# The agreement holds its keys for a second, as every notice does that is no first result of a key (bundle AX-6.4).
+wait 1100
 keys space
 expect said ! checked
 keys enter
@@ -121,6 +123,8 @@ expect said ! Calling order
 expect state "notice":"Result of order"
 expect state You asked for 3 of size large.
 expect focus "value":"# Order"
+# A result comes after the server's answer, off the window's thread: it holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys h
 expect said ! Thanks, heading level 2
 expect focus "value":"## Thanks"
@@ -128,12 +132,16 @@ keys h
 expect said ! No next heading
 
 # Goal: Find a word in a result
+# The result came by itself and holds its keys for a second, and so does the Find notice shown over it (bundle AX-6.4).
+wait 1100
 keys ctrl+f
 expect state "notice":"Find"
 expect focus Text to find
 type made up
 keys enter
 expect focus {"name":"Result of order","role":"Text","value":"The order is made up."}
+# The result comes back by the Find notice's button and holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys escape
 expect state "notice":null
 expect focus size, choice, large
@@ -144,6 +152,8 @@ keys ctrl+enter
 expect said ! Calling order
 expect state "notice":"Result of order"
 expect state You asked for 3 of size large.
+# A result comes after the server's answer, off the window's thread: it holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys escape
 expect state "notice":null
 
@@ -223,6 +233,8 @@ keys right
 expect state "notice":"Before axMCP starts zzfake"
 keys tab
 expect said I understand that axMCP
+# The agreement holds its keys for a second, as every notice does that is no first result of a key (bundle AX-6.4).
+wait 1100
 keys space
 expect said ! checked
 keys enter

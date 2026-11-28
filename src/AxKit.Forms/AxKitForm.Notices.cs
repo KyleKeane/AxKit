@@ -30,6 +30,11 @@ public abstract partial class AxKitForm
     /// </summary>
     protected internal void ShowNotice(Notice notice)
     {
+        // N1 (the fourth review of 2026-11-27): a notice holds its answering keys unless it is the first result of the
+        // user's own command (Notice.ByUser). Even then it holds when it cannot be: opened from a notice's button or
+        // in the action after one closed (what follows an answer arrives by itself, KeyHold rule 1), or inside a
+        // command clicked for an AI tool (MC-7.9), whose own code says ByUser for the user's key.
+        notice = Notice.AsShown(notice, followsAnswer: _answeringNotice || _chaining, forAiTool: ClickedForAiTool);
         _paletteSpeak.Stop();
         // AX-8.12: a notice that arrives while a key is tested ends the test, so that its keys answer the notice.
         EndKeyTest();
@@ -61,9 +66,11 @@ public abstract partial class AxKitForm
         if (!NoticeOpen && !_chaining)
         {
             _focusBeforeNotice = FocusedControl();
+            _chainHeld = false;
             OnNoticeOpened(_focusBeforeNotice);
         }
 
+        _chainHeld |= !notice.OpenedByUser;
         NoticeOpen = true;
         Overlay.Populate(notice);
         PaintTheme(Overlay);
@@ -83,14 +90,34 @@ public abstract partial class AxKitForm
 
     private void OnNoticeChoice(OverlayChoice choice)
     {
-        if (choice.StaysOpen)
+        // Whatever the button's action shows follows an answer, and holds (ShowNotice).
+        var outer = _answeringNotice;
+        _answeringNotice = true;
+        try
         {
-            choice.Action?.Invoke();
-            return;
-        }
+            if (choice.StaysOpen)
+            {
+                choice.Action?.Invoke();
+                return;
+            }
 
-        CloseNotice(choice.Action);
+            CloseNotice(choice.Action);
+        }
+        finally
+        {
+            _answeringNotice = outer;
+        }
     }
+
+    /// <summary>Inside a notice button's action, a StaysOpen one included: a notice it shows follows the user's answer and holds, whatever its maker said (<see cref="ShowNotice"/>).</summary>
+    private bool _answeringNotice;
+
+    /// <summary>
+    /// Whether a notice of the chain that shows or showed last held its answering keys (any notice not
+    /// <see cref="Notice.OpenedByUser"/>): when the chain ends, the control that gets the focus back is told
+    /// (<see cref="FocusBackAfterNotice"/>). False between chains.
+    /// </summary>
+    private bool _chainHeld;
 
     /// <summary>Closes the notice, runs <paramref name="then"/>, and gives the focus back unless the action opened the next notice of the chain or closed the window.</summary>
     protected internal void CloseNotice(Action? then)
@@ -139,12 +166,35 @@ public abstract partial class AxKitForm
         OnNoticeClosed();
         var back = _focusBeforeNotice;
         _focusBeforeNotice = null;
+        var held = _chainHeld;
+        _chainHeld = false;
         if (ActiveControl is null || Overlay.Contains(ActiveControl))
         {
-            (back is { IsDisposed: false, Visible: true, Enabled: true } ? back : FocusTarget).Select();
+            var target = back is { IsDisposed: false, Visible: true, Enabled: true } ? back : FocusTarget;
+            FocusBackAfterNotice(target, held, ReferenceEquals(target, back));
         }
 
         Overlay.Visible = false;
+    }
+
+    /// <summary>
+    /// The focus handed back as the last notice of a chain closes (the one focus rule, AX-6.5), to
+    /// <paramref name="target"/>: the control that had it when the chain opened (<paramref name="same"/>), or the
+    /// window's FocusTarget when that is gone. <paramref name="held"/> when a notice of the chain held its keys. N4
+    /// (the fourth review of 2026-11-27): a list of a question area the user went from into notices of their own
+    /// (Explain, a help text) and comes back to is the same list, heard before the user left it, and its hold is
+    /// not started again (<see cref="ControlArea.FocusReturned"/>); every other arrival starts it, as the focus
+    /// rule of KeyHold says. A conversation window adds the message field's hold after a notice that held.
+    /// </summary>
+    protected virtual void FocusBackAfterNotice(Control target, bool held, bool same)
+    {
+        if (!held && same && target.Parent is ControlArea area)
+        {
+            area.FocusReturned(() => target.Select());
+            return;
+        }
+
+        target.Select();
     }
 
     /// <summary>The innermost control with the focus, outside the notice and the menu bar; null when none has it.</summary>
@@ -227,11 +277,13 @@ public abstract partial class AxKitForm
     /// acts, its reason said and the notice kept; then <paramref name="act"/> with the text, the notice closed. A field
     /// that may be left empty passes <paramref name="required"/> false; <paramref name="emptyMessage"/> is what an empty
     /// required field says; <paramref name="hidden"/> makes a password field; <paramref name="cancel"/> is the cancel's
-    /// label where &C is the button's.
+    /// label where &C is the button's. Like every notice it holds its Enter and Escape for a moment (what is typed
+    /// goes in meanwhile), unless <paramref name="byUser"/>: a field the user's own command opens at once, as
+    /// <see cref="Notice.ByUser"/>; <c>NoticeHoldTests</c> lists the callers.
     /// </summary>
-    protected internal void AskText(string title, string text, string label, string name, string initial, string button, Action<string> act, Func<string, string?>? refused = null, bool required = true, string emptyMessage = "Type something first", bool hidden = false, string cancel = "&Cancel")
+    protected internal void AskText(string title, string text, string label, string name, string initial, string button, Action<string> act, Func<string, string?>? refused = null, bool required = true, string emptyMessage = "Type something first", bool hidden = false, string cancel = "&Cancel", bool byUser = false)
     {
-        ShowNotice(new Notice(title, text,
+        var notice = new Notice(title, text,
         [
             new OverlayChoice(button, () => act(Overlay.InputText), IsDefault: true),
             new OverlayChoice(cancel, IsCancel: true),
@@ -249,7 +301,8 @@ public abstract partial class AxKitForm
 
                 return true;
             },
-        });
+        };
+        ShowNotice(byUser ? notice.ByUser() : notice);
     }
 
     /// <summary>
@@ -266,9 +319,11 @@ public abstract partial class AxKitForm
     /// lines (the text then says the keys itself, and no line made from the buttons follows it); Ctrl+Enter presses
     /// the default button from any control (<see cref="BundleKeys.MainAction"/>); Escape cancels and nothing is kept.
     /// <paramref name="missing"/>, asked before the button acts, names the control that still needs something and
-    /// what to say: the focus goes there with the edge sound, and the form stays open.
+    /// what to say: the focus goes there with the edge sound, and the form stays open. Like every notice it holds its
+    /// Enter, Escape and Ctrl+Enter for a moment (what is typed goes in), unless <paramref name="byUser"/>: a form the
+    /// user's own command opened at once (<see cref="Notice.ByUser"/>; <c>NoticeHoldTests</c> lists the callers).
     /// </summary>
-    protected internal void ShowForm(string title, string text, FormControls controls, string button, Action act, Func<(Control Field, string Said)?>? missing = null, Action? cancelled = null, bool sayText = false)
+    protected internal void ShowForm(string title, string text, FormControls controls, string button, Action act, Func<(Control Field, string Said)?>? missing = null, Action? cancelled = null, bool sayText = false, bool byUser = false)
     {
         // TP-5.5: the templates on Shift+F10 in its text fields, in an app whose templates have a check; off until
         // NVDA is heard reading the menu (three passes of 2026-11-24 heard nothing open), so that a form's field keeps
@@ -278,7 +333,7 @@ public abstract partial class AxKitForm
             OfferTemplatesInForm(controls);
         }
         // AX-8.10 rules 15 and 18: the keys every form has, at the end of its explanation, from the key table.
-        ShowNotice(new Notice(title, text + " " + FormControls.KeysLine,
+        var form = new Notice(title, text + " " + FormControls.KeysLine,
         [
             new OverlayChoice(button, act, IsDefault: true),
             new OverlayChoice("&Cancel", cancelled, IsCancel: true),
@@ -297,7 +352,10 @@ public abstract partial class AxKitForm
                 lacking.Field.Select();
                 return false;
             },
-        });
+        };
+        // A form holds its keys as every notice does (AX-6.4), unless the user's own command opened it at once
+        // (byUser: true, which NoticeHoldTests lists): one an AI tool drafted (the report) or a run for it opened holds.
+        ShowNotice(byUser ? form.ByUser() : form);
         // The notice's own FocusStart put the focus in the form's first control; here, once that has happened and
         // NVDA reads the control, the title and the word, queued after it and never over it.
         BeginInvoke(() =>

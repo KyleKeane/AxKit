@@ -27,6 +27,8 @@ run "C:\Program Files\KeePassXC\keepassxc-cli.exe" add -q -u kim --url C:\made-u
 start pass {temp}\test.kdbx
 expect state Unlock test
 type test-master-1
+# The unlock notice holds its keys for a second (bundle AX-6.4): it comes by itself as the window opens or locks.
+wait 1100
 keys enter
 expect said ! test, 2 items, Email, group, 2 items
 
@@ -121,9 +123,13 @@ expect focus Password, password, hidden
 keys enter
 expect focus Type a new password for Gmail
 type made-up-pass-1
+# The password's notice holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys enter
 expect focus Re-enter the password for Gmail
 type made-up-pass-1
+# The notice follows the button of the one before and holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys enter
 expect said ! Password set for Gmail
 expect focus Password, password, hidden

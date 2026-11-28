@@ -172,7 +172,7 @@ internal sealed partial class MainForm
         {
             if (answer == request.Explain)
             {
-                ShowNotice(Notice.Plain(request.ExplainTitle, request.ExplainText));
+                ShowNotice(Notice.Plain(request.ExplainTitle, request.ExplainText).ByUser());
                 return;
             }
 
@@ -186,7 +186,7 @@ internal sealed partial class MainForm
         if (answer == McpOffer.Explain)
         {
             // A text with one button; the list is still there under it, and the focus comes back to it (the notice rule).
-            ShowNotice(Notice.Plain(McpOffer.ExplainTitle, McpOffer.ExplainText(offer.Client, offer.Command, offer.Reason, offer.Details)));
+            ShowNotice(Notice.Plain(McpOffer.ExplainTitle, McpOffer.ExplainText(offer.Client, offer.Command, offer.Reason, offer.Details)).ByUser());
             return;
         }
 
@@ -318,13 +318,15 @@ internal sealed partial class MainForm
         _lastCommand = null;
         _model.Send(line, evenWhilePrompting: true);
         _messageSent = true;
-        QueueWrites(line);
-        ResendEnterWhileHeld(line, attempt: 1);
         Log.Info("A command an AI tool offered was sent as a ! line at the user's Yes");
-        Announce("Sent", false);
-        if (_settings.SoundOnBell)
+        // "Sent" when its Enter goes (QueueWrites), which also looks again for an Enter Claude Code dropped.
+        QueueWrites(line, sent: () =>
         {
-            EventDoor.Raise(EventKind.Sent);
-        }
+            Announce("Sent", false);
+            if (_settings.SoundOnBell)
+            {
+                EventDoor.Raise(EventKind.Sent);
+            }
+        });
     }
 }

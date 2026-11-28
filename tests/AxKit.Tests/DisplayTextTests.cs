@@ -122,9 +122,12 @@ public sealed class DisplayTextTests
     }
 
     /// <summary>
-    /// The one exception, so that an emoji in an answer stays an emoji: U+FE0F passes right after a symbol, and
-    /// U+200D passes between two symbols, the first of which may carry its U+FE0F. Written as code points: a heart,
-    /// a flag made of two symbols, a family of three, a person with a sign and its picture selector.
+    /// The exceptions, so that an emoji in an answer stays an emoji and a word stays a word: U+FE0F right after a
+    /// picture of Extended_Pictographic or in a keycap, U+200D between two pictures (the first of which may carry
+    /// its U+FE0F or a skin tone), the tags of the three recommended flags, U+200C between two letters of a script
+    /// that writes with it. Written as code points: a heart, a rainbow flag, a family of three, a person with a sign
+    /// and its picture selector, a wave with a skin tone, an astronaut with a skin tone, a family with skin tones, a
+    /// flag of two letters, a keycap, England's flag, and the Persian word "mi-khaham" with its non-joiner.
     /// </summary>
     [Theory]
     [InlineData(new[] { 0x2764, 0xFE0F })]
@@ -133,15 +136,27 @@ public sealed class DisplayTextTests
     [InlineData(new[] { 0x1F937, 0x200D, 0x2640, 0xFE0F })]
     [InlineData(new[] { 0x1F44B, 0x1F3FD })]
     [InlineData(new[] { 0x1F469, 0x1F3FD, 0x200D, 0x1F680 })]
-    public void A_picture_selector_after_a_symbol_and_a_joiner_between_two_symbols_pass(int[] codes)
+    [InlineData(new[] { 0x1F468, 0x1F3FB, 0x200D, 0x1F469, 0x1F3FF, 0x200D, 0x1F466 })]
+    [InlineData(new[] { 0x1F1EB, 0x1F1F7 })]
+    [InlineData(new[] { '1', 0xFE0F, 0x20E3 })]
+    [InlineData(new[] { '#', 0xFE0F, 0x20E3 })]
+    [InlineData(new[] { 0x1F3F4, 0xE0067, 0xE0062, 0xE0065, 0xE006E, 0xE0067, 0xE007F })]
+    [InlineData(new[] { 0x0645, 0x06CC, 0x200C, 0x062E, 0x0648, 0x0627, 0x0647, 0x0645 })]
+    [InlineData(new[] { 0x0915, 0x094D, 0x200C, 0x0937 })]
+    public void An_emoji_and_a_word_that_needs_its_non_joiner_stay_as_they_are(int[] codes)
     {
         var emoji = "1. Yes " + string.Concat(codes.Select(char.ConvertFromUtf32)) + " go";
         Assert.False(DisplayText.Hides(emoji));
         Assert.Same(emoji, DisplayText.Visible(emoji));
-        Assert.Same(emoji, DisplayText.VisibleCommand(emoji));
+        Assert.Same(emoji, DisplayText.VisibleLine(emoji));
     }
 
-    /// <summary>Anywhere else the two are written out like every character that is not seen: after a letter, between letters, with a symbol on one side only, at an end, or doubled.</summary>
+    /// <summary>
+    /// Anywhere else they are written out like every character that is not seen: after a letter, between letters,
+    /// with a picture on one side only, at an end, doubled; and next to ASCII and to signs of mathematics, which are
+    /// symbols by their class but no pictures (the fourth review of 2026-11-27: a joiner between two "&gt;" passed).
+    /// A run of tags that spells no recommended flag carries a text unseen.
+    /// </summary>
     [Theory]
     [InlineData(new[] { 'a', 0xFE0F }, "a‹U+FE0F›")]
     [InlineData(new[] { 0xFE0F, 'a' }, "‹U+FE0F›a")]
@@ -152,9 +167,60 @@ public sealed class DisplayTextTests
     [InlineData(new[] { 0x2764, 0x200D }, "❤‹U+200D›")]
     [InlineData(new[] { 0x200D, 0x2764 }, "‹U+200D›❤")]
     [InlineData(new[] { 0x2764, 0x200D, 0x200D, 0x2764 }, "❤‹U+200D›‹U+200D›❤")]
-    public void A_picture_selector_or_a_joiner_anywhere_else_is_written_out(int[] codes, string expected)
+    [InlineData(new[] { '>', 0x200D, '>' }, ">‹U+200D›>")]
+    [InlineData(new[] { '|', 0xFE0F }, "|‹U+FE0F›")]
+    [InlineData(new[] { 0x2211, 0x200D, 0x221E }, "∑‹U+200D›∞")]
+    [InlineData(new[] { '$', 0x200D, 0x20AC }, "$‹U+200D›€")]
+    [InlineData(new[] { 'a', 0xFE0F, 0x20E3 }, "a‹U+FE0F›⃣")]
+    [InlineData(new[] { 0x1F3F4, 0xE0068, 0xE0069, 0xE007F }, "🏴‹U+E0068›‹U+E0069›‹U+E007F›")]
+    [InlineData(new[] { 'a', 0xE0067, 0xE0062, 0xE0065, 0xE006E, 0xE0067, 0xE007F }, "a‹U+E0067›‹U+E0062›‹U+E0065›‹U+E006E›‹U+E0067›‹U+E007F›")]
+    [InlineData(new[] { 'a', 0x200C, 'b' }, "a‹U+200C›b")]
+    [InlineData(new[] { 0x0645, 0x200C, 'b' }, "م‹U+200C›b")]
+    [InlineData(new[] { 0x2800 }, "‹U+2800›")]
+    [InlineData(new[] { 0x0301, 'a' }, "‹U+0301›a")]
+    [InlineData(new[] { 'a', '\n', 0x0301, 0x0302 }, "a‹U+000A›‹U+0301›‹U+0302›")]
+    public void A_picture_selector_a_joiner_and_a_tag_anywhere_else_are_written_out(int[] codes, string expected)
     {
         Assert.Equal(expected, DisplayText.Visible(string.Concat(codes.Select(char.ConvertFromUtf32))));
+    }
+
+    /// <summary>
+    /// What the fourth review of 2026-11-27 found (H1): an AI's command with a joiner or a picture selector between
+    /// ASCII signs looked like another command, and bash ran it as written. Each is written out, as a command, as a
+    /// question's answer and as a screen's label, and <see cref="DisplayText.Hides"/> says so.
+    /// </summary>
+    [Theory]
+    [InlineData("echo x >‍> f", "echo x >‹U+200D›> f")]
+    [InlineData("a |‍| b", "a |‹U+200D›| b")]
+    [InlineData("cat <‍< EOF", "cat <‹U+200D›< EOF")]
+    [InlineData("i+‍+", "i+‹U+200D›+")]
+    [InlineData("a |️ b", "a |‹U+FE0F› b")]
+    [InlineData("echo >‍> .bashrc", "echo >‹U+200D›> .bashrc")]
+    [InlineData("x=‍$(id)", "x=‹U+200D›$(id)")]
+    [InlineData("echo `‍`", "echo `‹U+200D›`")]
+    public void A_joiner_or_a_picture_selector_between_signs_of_a_shell_is_written_out(string text, string expected)
+    {
+        Assert.True(DisplayText.Hides(text));
+        Assert.Equal(expected, DisplayText.Visible(text));
+        Assert.Equal(expected, DisplayText.VisibleLine(text));
+        Assert.Equal(expected, DisplayText.VisibleCommand(text));
+    }
+
+    /// <summary>
+    /// In a command nothing is left unseen, an emoji's own joiner and selectors included (N2: a command is run, not
+    /// read): an emoji in a command shows its parts, and the non-joiner of a Persian word is written out too.
+    /// </summary>
+    [Theory]
+    [InlineData(new[] { 0x2764, 0xFE0F }, "❤‹U+FE0F›")]
+    [InlineData(new[] { 0x1F468, 0x200D, 0x1F469 }, "👨‹U+200D›👩")]
+    [InlineData(new[] { '1', 0xFE0F, 0x20E3 }, "1‹U+FE0F›⃣")]
+    [InlineData(new[] { 0x1F3F4, 0xE0067, 0xE0062, 0xE0065, 0xE006E, 0xE0067, 0xE007F }, "🏴‹U+E0067›‹U+E0062›‹U+E0065›‹U+E006E›‹U+E0067›‹U+E007F›")]
+    [InlineData(new[] { 0x0645, 0x200C, 0x062E }, "م‹U+200C›خ")]
+    [InlineData(new[] { 'a', 0xFE0E }, "a‹U+FE0E›")]
+    [InlineData(new[] { 0x2800 }, "‹U+2800›")]
+    public void In_a_command_every_joiner_selector_and_tag_is_written_out(int[] codes, string expected)
+    {
+        Assert.Equal(expected, DisplayText.VisibleCommand("echo " + string.Concat(codes.Select(char.ConvertFromUtf32)))[5..]);
     }
 
     /// <summary>
@@ -175,6 +241,8 @@ public sealed class DisplayTextTests
         var command = "rm" + char.ConvertFromUtf32(code) + "-rf notes";
         Assert.Equal($"rm‹U+{code:X4}›-rf notes", DisplayText.VisibleCommand(command));
         Assert.Same(command, DisplayText.Visible(command));
+        // A question's line keeps them, as a sentence does (VisibleLine's summary says why).
+        Assert.Same(command, DisplayText.VisibleLine(command));
         Assert.Equal("rm -rf notes ‹U+202E›", DisplayText.VisibleCommand("rm -rf notes ‮"));
         Assert.Same("git status", DisplayText.VisibleCommand("git status"));
     }

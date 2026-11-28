@@ -14,29 +14,37 @@ namespace AxKit.Core;
 /// </summary>
 public static class DisplayText
 {
-    public static string Visible(string text) => Written(text, spaces: false);
+    public static string Visible(string text) => Written(text, command: false);
 
     /// <summary>
     /// One line as it is put into a control that shows a tab as a gap (a question's name, an answer): as
-    /// <see cref="Visible"/>, a tab kept, since a command may hold one and it hides nothing.
+    /// <see cref="Visible"/>, a tab kept, since a command may hold one and it hides nothing. A space that is not the
+    /// plain one is left here, as in <see cref="Visible"/> (the fourth review of 2026-11-27 asked; the answer is no):
+    /// a question's name and answers are sentences, Claude Code itself writes a no-break space after its bullets and
+    /// its prompt's dollar sign, and French and Japanese text hold them as a matter of course; the one place where
+    /// such a space decides what runs, the command a permission question names, is its label, which every answer
+    /// carries and which is <see cref="VisibleCommand"/>'s.
     /// </summary>
     public static string VisibleLine(string line) =>
         line.Contains('\t', StringComparison.Ordinal) ? string.Join('\t', line.Split('\t').Select(Visible)) : Visible(line);
 
     /// <summary>
-    /// A command offered to run, or the label of a permission question, as it is shown: as <see cref="Visible"/>, and
-    /// every space that is not the plain one (U+0020) written as its code too: a no-break space, an em space, the
-    /// ideographic space. They look like a space and are read as one, and a shell may take them for part of a word
-    /// or for a blank between two: where the user decides whether a command runs, they see which it is.
+    /// A command offered to run, or the label of a permission question, as it is shown: a command is run, not read,
+    /// so nothing in it is left unseen, an emoji's joiner and picture selector included (the fourth review of
+    /// 2026-11-27: "echo added &gt;&gt; target.txt" with a joiner between its two signs showed as an append, and bash
+    /// ran it as a truncation). Every character <see cref="Hidden"/> names, every U+200D, U+200C and variation
+    /// selector, every tag character, and every space that is not the plain one (U+0020: a no-break space, an em
+    /// space, the ideographic space, which look and read as a space and which a shell may take for part of a word)
+    /// is written as its code. None of the exceptions of <see cref="Visible"/> holds here.
     /// </summary>
-    public static string VisibleCommand(string text) => Written(text, spaces: true);
+    public static string VisibleCommand(string text) => Written(text, command: true);
 
     /// <summary>Whether <paramref name="text"/> holds a character that <see cref="Visible"/> writes out.</summary>
-    public static bool Hides(string text) => FirstWritten(text, spaces: false) >= 0;
+    public static bool Hides(string text) => FirstWritten(text, command: false) >= 0;
 
-    private static string Written(string text, bool spaces)
+    private static string Written(string text, bool command)
     {
-        var first = FirstWritten(text, spaces);
+        var first = FirstWritten(text, command);
         if (first < 0)
         {
             return text;
@@ -47,7 +55,7 @@ public static class DisplayText
         for (var i = first; i < text.Length; i++)
         {
             var code = CodeAt(text, i, out var length);
-            if (WrittenOut(text, i, code, length, spaces))
+            if (WrittenOut(text, i, code, length, command))
             {
                 builder.Append($"‹U+{code:X4}›");
             }
@@ -63,12 +71,12 @@ public static class DisplayText
     }
 
     /// <summary>The place of the first character that is written out, or -1 when the text is shown as it is.</summary>
-    private static int FirstWritten(string text, bool spaces)
+    private static int FirstWritten(string text, bool command)
     {
         for (var i = 0; i < text.Length; i++)
         {
             var code = CodeAt(text, i, out var length);
-            if (WrittenOut(text, i, code, length, spaces))
+            if (WrittenOut(text, i, code, length, command))
             {
                 return i;
             }
@@ -105,16 +113,28 @@ public static class DisplayText
         return index >= 1 ? text[index - 1] : -1;
     }
 
-    /// <summary>The variation selector that asks for a symbol's picture form, and the joiner that makes one picture of two.</summary>
-    private const int PictureSelector = 0xFE0F, Joiner = 0x200D;
+    /// <summary>The variation selector that asks for a symbol's picture form, the joiner that makes one picture of two, and the non-joiner that keeps two letters apart.</summary>
+    private const int PictureSelector = 0xFE0F, Joiner = 0x200D, NonJoiner = 0x200C;
+
+    /// <summary>The keycap that encloses a digit, # or * with its picture selector (U+20E3), and the braille blank, which looks like a space and is a symbol (U+2800).</summary>
+    private const int Keycap = 0x20E3, BrailleBlank = 0x2800;
+
+    /// <summary>The tag characters (U+E0020 to U+E007E) and the one that ends a run of them (U+E007F).</summary>
+    private const int TagFirst = 0xE0020, TagLast = 0xE007E, TagEnd = 0xE007F;
 
     /// <summary>
-    /// Whether the character at <paramref name="index"/> is written as its code. The one exception to
-    /// <see cref="Hidden"/>, so that an emoji in an answer stays an emoji: U+FE0F passes right after a symbol, and
-    /// U+200D passes between two symbols, the first of which may carry its U+FE0F; anywhere else both are written
-    /// out like every other character that is not seen.
+    /// Whether the character at <paramref name="index"/> is written as its code. In a command (<paramref name="command"/>)
+    /// every character that is not seen is, with no exception, and every space but the plain one. Elsewhere, so that
+    /// an emoji in an answer stays an emoji and a word of Persian stays a word, a few exceptions to
+    /// <see cref="Hidden"/>, each between characters that make it seen and never next to ASCII or a sign of
+    /// mathematics, money or a modifier (the fourth review of 2026-11-27: the exception was "between two symbols",
+    /// and "&gt;", "|", "=" are symbols; a joiner between two "&gt;" hid an append): U+FE0F right after a picture
+    /// (<see cref="Pictographic"/>) or as the middle of a keycap; U+200D between two pictures, the first of which may
+    /// carry its U+FE0F or a skin tone; U+200C between two letters of a script that writes with it; the tag
+    /// characters of the three flags Unicode recommends (England, Scotland, Wales). And two that are seen yet look
+    /// like nothing: the braille blank, and a combining mark with no character to sit on.
     /// </summary>
-    private static bool WrittenOut(string text, int index, int code, int length, bool spaces)
+    private static bool WrittenOut(string text, int index, int code, int length, bool command)
     {
         // The plain characters of most text, without a look at the tables.
         if (code is >= 0x20 and < 0x7F)
@@ -122,30 +142,172 @@ public static class DisplayText
             return false;
         }
 
-        if (code == PictureSelector)
+        if (command && (Hidden(code) || code == BrailleBlank || CharUnicodeInfo.GetUnicodeCategory(code) == UnicodeCategory.SpaceSeparator))
         {
-            return !IsSymbol(CodeBefore(text, index, out _));
+            return true;
         }
 
-        if (code == Joiner)
+        var after = index + length < text.Length ? CodeAt(text, index + length, out _) : -1;
+        switch (code)
         {
-            var before = CodeBefore(text, index, out var start);
-            if (before == PictureSelector)
-            {
-                before = CodeBefore(text, start, out _);
-            }
-
-            var after = index + length < text.Length ? CodeAt(text, index + length, out _) : -1;
-            return !(IsSymbol(before) && IsSymbol(after));
+            case PictureSelector:
+                var before = CodeBefore(text, index, out _);
+                return !(Pictographic(before) || (before is >= '0' and <= '9' or '#' or '*' && after == Keycap));
+            case Joiner:
+                return !(Pictographic(PictureBefore(text, index)) && Pictographic(after));
+            case NonJoiner:
+                return !(JoinsLetters(CodeBefore(text, index, out _)) && JoinsLetters(after));
+            case >= TagFirst and <= TagEnd:
+                return !InFlag(text, index);
+            case BrailleBlank:
+                return true;
         }
 
-        return Hidden(code) || (spaces && CharUnicodeInfo.GetUnicodeCategory(code) == UnicodeCategory.SpaceSeparator);
+        return Hidden(code) || OnNothing(text, index, code);
     }
 
-    /// <summary>A symbol by Unicode's own classes (So, Sm, Sc, Sk): the emoji, the arrows and signs that have a picture form, and the skin tones.</summary>
-    private static bool IsSymbol(int code) =>
-        code >= 0 && CharUnicodeInfo.GetUnicodeCategory(code) is UnicodeCategory.OtherSymbol or UnicodeCategory.MathSymbol
-            or UnicodeCategory.CurrencySymbol or UnicodeCategory.ModifierSymbol;
+    /// <summary>The picture a joiner at <paramref name="index"/> follows: the code before it, past a picture selector and a skin tone that the picture carries.</summary>
+    private static int PictureBefore(string text, int index)
+    {
+        var before = CodeBefore(text, index, out var start);
+        if (before == PictureSelector || before is >= 0x1F3FB and <= 0x1F3FF)
+        {
+            before = CodeBefore(text, start, out _);
+        }
+
+        return before;
+    }
+
+    /// <summary>
+    /// A picture of Unicode's Extended_Pictographic property, from <see cref="PictureRanges"/>, that is seen itself
+    /// and is no sign of mathematics, money or a modifier (the property holds the double arrow and the squares of
+    /// class Sm, which stand in commands and formulas as signs): what an emoji's joiner and picture selector may
+    /// stand beside. No ASCII character is one.
+    /// </summary>
+    private static bool Pictographic(int code)
+    {
+        if (code < 0xA9 || Hidden(code)
+            || CharUnicodeInfo.GetUnicodeCategory(code) is UnicodeCategory.MathSymbol or UnicodeCategory.CurrencySymbol or UnicodeCategory.ModifierSymbol)
+        {
+            return false;
+        }
+
+        foreach (var (first, last) in PictureRanges)
+        {
+            if (code < first)
+            {
+                return false;
+            }
+
+            if (code <= last)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// The code points of the property Extended_Pictographic, as ranges in order (the Unicode Character Database,
+    /// emoji/emoji-data.txt, Unicode 15.1; written as numbers, the file's own lines). It includes code points not yet
+    /// given a picture, which <see cref="Hidden"/> writes out as no character until they are.
+    /// </summary>
+    private static readonly (int First, int Last)[] PictureRanges =
+    [
+        (0x00A9, 0x00A9), (0x00AE, 0x00AE), (0x203C, 0x203C), (0x2049, 0x2049), (0x2122, 0x2122), (0x2139, 0x2139),
+        (0x2194, 0x2199), (0x21A9, 0x21AA), (0x231A, 0x231B), (0x2328, 0x2328), (0x2388, 0x2388), (0x23CF, 0x23CF),
+        (0x23E9, 0x23F3), (0x23F8, 0x23FA), (0x24C2, 0x24C2), (0x25AA, 0x25AB), (0x25B6, 0x25B6), (0x25C0, 0x25C0),
+        (0x25FB, 0x25FE), (0x2600, 0x2605), (0x2607, 0x2612), (0x2614, 0x2685), (0x2690, 0x2705), (0x2708, 0x2712),
+        (0x2714, 0x2714), (0x2716, 0x2716), (0x271D, 0x271D), (0x2721, 0x2721), (0x2728, 0x2728), (0x2733, 0x2734),
+        (0x2744, 0x2744), (0x2747, 0x2747), (0x274C, 0x274C), (0x274E, 0x274E), (0x2753, 0x2755), (0x2757, 0x2757),
+        (0x2763, 0x2767), (0x2795, 0x2797), (0x27A1, 0x27A1), (0x27B0, 0x27B0), (0x27BF, 0x27BF), (0x2934, 0x2935),
+        (0x2B05, 0x2B07), (0x2B1B, 0x2B1C), (0x2B50, 0x2B50), (0x2B55, 0x2B55), (0x3030, 0x3030), (0x303D, 0x303D),
+        (0x3297, 0x3297), (0x3299, 0x3299), (0x1F000, 0x1F0FF), (0x1F10D, 0x1F10F), (0x1F12F, 0x1F12F),
+        (0x1F16C, 0x1F171), (0x1F17E, 0x1F17F), (0x1F18E, 0x1F18E), (0x1F191, 0x1F19A), (0x1F1AD, 0x1F1E5),
+        (0x1F201, 0x1F20F), (0x1F21A, 0x1F21A), (0x1F22F, 0x1F22F), (0x1F232, 0x1F23A), (0x1F23C, 0x1F23F),
+        (0x1F249, 0x1F3FA), (0x1F400, 0x1F53D), (0x1F546, 0x1F64F), (0x1F680, 0x1F6FF), (0x1F774, 0x1F77F),
+        (0x1F7D5, 0x1F7FF), (0x1F80C, 0x1F80F), (0x1F848, 0x1F84F), (0x1F85A, 0x1F85F), (0x1F888, 0x1F88F),
+        (0x1F8AE, 0x1F8FF), (0x1F90C, 0x1F93A), (0x1F93C, 0x1F945), (0x1F947, 0x1FAFF), (0x1FC00, 0x1FFFD),
+    ];
+
+    /// <summary>
+    /// A letter or a mark of a script that writes with U+200C between its letters (Persian, Urdu, Kurdish in the
+    /// Arabic script; Syriac; the Indic scripts from Devanagari to Sinhala), which a non-joiner between two of them
+    /// changes the look of and so is seen.
+    /// </summary>
+    private static bool JoinsLetters(int code) =>
+        code >= 0 && (code is >= 0x0600 and <= 0x074F or >= 0x0750 and <= 0x077F or >= 0x08A0 and <= 0x08FF
+            or >= 0x0900 and <= 0x0DFF or >= 0xFB50 and <= 0xFDFF or >= 0xFE70 and <= 0xFEFF)
+        && CharUnicodeInfo.GetUnicodeCategory(code) is UnicodeCategory.UppercaseLetter or UnicodeCategory.LowercaseLetter
+            or UnicodeCategory.OtherLetter or UnicodeCategory.ModifierLetter or UnicodeCategory.NonSpacingMark or UnicodeCategory.SpacingCombiningMark;
+
+    /// <summary>The tag sequences Unicode recommends, the flags of England, Scotland and Wales (emoji-sequences.txt, RGI_Emoji_Tag_Sequence): a black flag, these letters as tag characters, and the end tag. Any other run of tags can carry a text unseen.</summary>
+    private static readonly string[] FlagTags = ["gbeng", "gbsct", "gbwls"];
+
+    /// <summary>Whether the tag character at <paramref name="index"/> is part of one of the <see cref="FlagTags"/> flags.</summary>
+    private static bool InFlag(string text, int index)
+    {
+        // Back to the first tag of the run, which must follow the black flag (U+1F3F4).
+        var start = index;
+        while (CodeBefore(text, start, out var previous) is >= TagFirst and <= TagLast)
+        {
+            start = previous;
+        }
+
+        if (CodeBefore(text, start, out _) != 0x1F3F4)
+        {
+            return false;
+        }
+
+        var letters = new StringBuilder();
+        for (var i = start; i < text.Length; i += 2)
+        {
+            var code = CodeAt(text, i, out _);
+            if (code == TagEnd)
+            {
+                return index <= i && FlagTags.Contains(letters.ToString(), StringComparer.Ordinal);
+            }
+
+            if (code is < TagFirst or > TagLast || letters.Length == 5)
+            {
+                return false;
+            }
+
+            letters.Append((char)(code - 0xE0000));
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// A combining mark (Mn, Mc, Me) with no character to sit on: at the start of the text, or after a line's end, a
+    /// control or format character, or the braille blank, past the other marks and variation selectors before it. It
+    /// shows as nothing, or on whatever the window puts in front of the text. A mark on a space is seen, an accent
+    /// alone, and stays.
+    /// </summary>
+    private static bool OnNothing(string text, int index, int code)
+    {
+        if (CharUnicodeInfo.GetUnicodeCategory(code) is not (UnicodeCategory.NonSpacingMark or UnicodeCategory.SpacingCombiningMark or UnicodeCategory.EnclosingMark))
+        {
+            return false;
+        }
+
+        var at = index;
+        int before;
+        while (true)
+        {
+            before = CodeBefore(text, at, out var start);
+            if (before < 0 || !(CharUnicodeInfo.GetUnicodeCategory(before) is UnicodeCategory.NonSpacingMark or UnicodeCategory.SpacingCombiningMark or UnicodeCategory.EnclosingMark))
+            {
+                break;
+            }
+
+            at = start;
+        }
+
+        return before < 0 || before == BrailleBlank || Hidden(before);
+    }
 
     /// <summary>
     /// The characters that are not seen or heard themselves, by Unicode's own classes in place of a list of them

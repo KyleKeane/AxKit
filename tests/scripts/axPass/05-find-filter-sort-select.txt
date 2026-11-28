@@ -18,6 +18,8 @@ run "C:\Program Files\KeePassXC\keepassxc-cli.exe" add -q -u top test.kdbx "Alar
 start pass {temp}\test.kdbx
 expect focus Type the master password to unlock test
 type test-master-1
+# The unlock notice comes by itself as the window opens and holds its keys for a second (bundle AX-6.4).
+wait 1100
 keys enter
 expect said ! test, 4 items, Email, group
 # A modifier key sent while the window still settles can lose its modifier (the channel); let it settle.
