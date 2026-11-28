@@ -205,6 +205,15 @@ public sealed class PermissionCoreTests
         // Shorter than the width by its columns: the path ends there.
         Assert.Equal("Edit file " + new string('作', 16), Read(width, "Permission Required: Edit file", @"C:\" + new string('作', 16), "メモ.txt", " 1 one", "Do you want to make this edit?"));
 
+        // The sixth review of 2026-11-27 (L4): 39 of 40 columns, and the next character is wide, two columns, which
+        // did not fit into the last one: the screen wrapped it, and the path goes on.
+        var folder = @"C:\" + new string('a', 35) + @"\";
+        Assert.Equal(39, folder.Length);
+        Assert.Equal("Edit file メモ.txt, and more", Read(width, "Permission Required: Edit file", folder, "メモ.txt", " 1 one", "Do you want to make this edit?"));
+        // A narrow character would have fitted into the last column: the path ends at the row's end.
+        var file = @"C:\" + new string('a', 36);
+        Assert.Equal("Edit file " + new string('a', 36), Read(width, "Permission Required: Edit file", file, "notes.txt", " 1 one", "Do you want to make this edit?"));
+
         static string? Read(int columns, string title, params string[] text)
         {
             string[] rows = [title, .. text, "1. Yes", "2. Yes, allow all edits during this session", "3. No", "Select with numbers [1-3]. Then Enter to submit or Escape to cancel:"];

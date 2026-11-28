@@ -473,13 +473,19 @@ public sealed partial class SessionModel : ClaudeModel
     /// while this holds (FR-2.1), and since the fourth review of 2026-11-27 a message's Enter waits for it
     /// (<see cref="QueuedWrite.MessageEnter"/>). Until the fifth review of that day any row that began with a dollar
     /// sign and a blank and held the text's first forty characters anywhere passed: a reply's row quoting a command,
-    /// a row that held the message and more, a row that held the start of a longer one (L5).
+    /// a row that held the message and more, a row that held the start of a longer one (L5). Both sides are compared as
+    /// Claude Code draws them (the sixth review of that day, F4): without blanks and without every character
+    /// <see cref="AxKit.Core.DisplayText"/> calls hidden, which Claude Code takes out of a prompt ("Removed 1
+    /// invisible character from your prompt", <see cref="ClaudeCodeTexts.RemovedFromPrompt"/>); and a line of the
+    /// message, which the window writes in one piece, may stand on the row as the mark of a paste
+    /// (<see cref="ClaudeCodeTexts.PastedWithoutBlanks"/>, the one form a recording shows). The shell mode's row is
+    /// in no recording yet; its form here is the one the fifth review assumed, and it is to be recorded before the
+    /// release.
     /// </summary>
     public override bool PromptHolds(string text)
     {
         var lines = text.Trim().Replace("\r\n", "\n").Split('\n');
-        var wanted = WithoutBlanks(text);
-        if (wanted.Length == 0)
+        if (Comparable(text).Length == 0)
         {
             return false;
         }
@@ -487,7 +493,35 @@ public sealed partial class SessionModel : ClaudeModel
         // The cursor stands on the draft's last line: its prompt row is up to one row per line above, and one more for
         // each screen width the text wraps over, a few more besides.
         var wrapped = Columns > 0 ? text.Length / Columns : 0;
-        return DraftAt(4 + lines.Length + wrapped) is { } draft && WithoutBlanks(draft) == wanted;
+        return DraftAt(4 + lines.Length + wrapped) is { } draft && DraftIs(Comparable(draft), lines);
+    }
+
+    /// <summary>
+    /// Whether a draft, read as <see cref="Comparable"/>, is the message's lines in order, each as typed or as the
+    /// mark of a paste in its place (<see cref="ClaudeCodeTexts.PastedWithoutBlanks"/>): the window writes each line
+    /// in one write, which Claude Code may take for a paste and draw collapsed.
+    /// </summary>
+    private static bool DraftIs(string draft, IReadOnlyList<string> lines)
+    {
+        var at = 0;
+        foreach (var line in lines)
+        {
+            var wanted = Comparable(line);
+            if (at + wanted.Length <= draft.Length && string.CompareOrdinal(draft, at, wanted, 0, wanted.Length) == 0)
+            {
+                at += wanted.Length;
+            }
+            else if (ClaudeCodeTexts.PastedWithoutBlanks().Match(draft, at) is { Success: true } paste)
+            {
+                at += paste.Length;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        return at == draft.Length;
     }
 
     /// <summary>What a draft on Claude Code's prompt row holds, empty for a bare prompt, null when no prompt row stands at or above the cursor (<see cref="DraftAt"/>).</summary>
@@ -547,8 +581,8 @@ public sealed partial class SessionModel : ClaudeModel
         return null;
     }
 
-    /// <summary>The text with every blank taken out: a draft breaks where the screen's width ends, wherever that falls.</summary>
-    private static string WithoutBlanks(string text) => string.Concat(text.Where(c => !char.IsWhiteSpace(c)));
+    /// <summary>The text as a draft is compared: every blank taken out, since a draft breaks where the screen's width ends, wherever that falls, and every hidden character, which Claude Code takes out of a prompt.</summary>
+    private static string Comparable(string text) => string.Concat(AxKit.Core.DisplayText.WithoutHidden(text).Where(c => !char.IsWhiteSpace(c)));
 
     /// <summary>A line of the app's own (<c>System: …</c>, FR-4.5), above Claude's live block.</summary>
     public override void AddSystemLine(string text)

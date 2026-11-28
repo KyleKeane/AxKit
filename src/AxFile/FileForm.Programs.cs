@@ -149,7 +149,7 @@ public sealed partial class FileForm
             return;
         }
 
-        if (WindowsOpenWith.Show(Handle, entry.Path) is { } reason)
+        if (InModalLoop(() => WindowsOpenWith.Show(Handle, entry.Path)) is { } reason)
         {
             Failed("Open with failed", reason);
         }
@@ -163,7 +163,7 @@ public sealed partial class FileForm
             return;
         }
 
-        if (Shell.Properties(Handle, entry.Path) is { } reason)
+        if (InModalLoop(() => Shell.Properties(Handle, entry.Path)) is { } reason)
         {
             Failed("Properties failed", reason);
         }
@@ -192,7 +192,7 @@ public sealed partial class FileForm
 
             try
             {
-                if (Shell.ShowMenu(Handle, entry.Path, at) is { } reason)
+                if (InModalLoop(() => Shell.ShowMenu(Handle, entry.Path, at)) is { } reason)
                 {
                     Failed("Windows menu failed", reason);
                 }

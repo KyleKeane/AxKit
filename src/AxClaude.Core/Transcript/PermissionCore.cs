@@ -77,7 +77,7 @@ public static class PermissionCore
             var screen = raw is not null && raw.Count == text.Count ? raw : text;
             var path = text.Count > 0 ? text[0] : string.Empty;
             var taken = 1;
-            while (width > 0 && taken < text.Count && Columns(screen[taken - 1]) >= width && screen[taken] is { Length: > 0 } next
+            while (width > 0 && taken < text.Count && screen[taken] is { Length: > 0 } next && Wrapped(screen[taken - 1], next, width)
                 && !char.IsWhiteSpace(next[0]) && !(next.StartsWith(ClaudeCodeTexts.ClosingQuestionStart, StringComparison.Ordinal) && next.EndsWith('?')))
             {
                 path += text[taken];
@@ -110,6 +110,15 @@ public static class PermissionCore
         var named = shown.Length == 0 ? tool.Trim() : $"{tool.Trim()} {shown}";
         return DisplayText.VisibleCommand(left || more ? named + MoreMark : named);
     }
+
+    /// <summary>
+    /// Whether a row went on in the next because the width ended: it fills the width, or the next row's first character
+    /// would not have fitted into what was left of it, as a wide character two columns wide in the last column (the
+    /// sixth review of 2026-11-27, L4: a path of 39 columns on a screen 40 wide, whose next character was wide, was
+    /// read as its first row alone).
+    /// </summary>
+    private static bool Wrapped(string row, string next, int width) =>
+        Columns(row) is var used && (used >= width || used + Math.Max(0, Wcwidth.Of(next.EnumerateRunes().First().Value)) > width);
 
     /// <summary>How many columns of the console a row takes, as the screen counts them (<see cref="Wcwidth"/>): a wide character two, a mark none.</summary>
     private static int Columns(string row) => row.EnumerateRunes().Sum(rune => Math.Max(0, Wcwidth.Of(rune.Value)));

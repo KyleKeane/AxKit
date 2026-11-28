@@ -791,7 +791,7 @@ public sealed partial class FileForm
         }
         catch (Win32Exception ex) when (ex.NativeErrorCode == ErrorNoAssociation)
         {
-            if (WindowsOpenWith.Show(Handle, entry.Path) is { } reason)
+            if (InModalLoop(() => WindowsOpenWith.Show(Handle, entry.Path)) is { } reason)
             {
                 Failed("Open with failed", reason);
             }

@@ -3,50 +3,51 @@
 # axClaude, docs/axClaude/SPEC.md FR-2.1 and FR-2.3a (2026-11-27, found by the review of that day). Claude Code drops an
 # Enter in its first seconds, so the window sends Enter again while its prompt row still holds the message a second
 # and a half after it was sent. Since Claude Code 2.1.331 an interrupt puts the interrupted message back on that row,
-# which reads the same: a message interrupted within that second and a half was sent again. After an interrupt the
-# Enter is not sent again. The stand-in (tools/AxAutomate/StandIn.cs) acts on no key: it draws the prompt row with the
-# message on it at a file of the script's, and the window's log says whether Enter went again (the count of its
-# lines, never a text of the user's). The frames draw the message as every recording draws a draft, the dollar sign,
-# a no-break space and a blank before the text: since the fifth review of 2026-11-27 (L5) a row is the prompt's draft
-# only in that form.
+# which reads the same: a message interrupted within that second and a half was sent again. Since the sixth review of
+# 2026-11-27 (F1) a message is in flight until the row is bare again: once Claude Code has taken it, nothing of it
+# goes again, whatever the row shows later. The stand-in (tools/AxAutomate/StandIn.cs) draws what is typed, drops the
+# first Enter ("dropEnters"), and draws the prompt row with the message on it at a file of the script's; the window's
+# log says whether Enter went again (the count of its lines, never a text of the user's). The frame draws the message
+# as every recording draws a draft, the dollar sign, a no-break space and a blank before the text: since the fifth
+# review of 2026-11-27 (L5) a row is the prompt's draft only in that form.
 file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
 file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
 mkdir im
 file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
-file scenario.json {"version":"2.1.332 (stand-in)","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"waitFile":"go1"},{"frame":["claude: started","auto mode on (shift+tab to cycle)","$  first words"],"clear":true},{"waitFile":"go2"},{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"waitFile":"go3"},{"frame":["claude: started","auto mode on (shift+tab to cycle)","$  second words"],"clear":true},{"idle":true}]}
+file scenario.json {"version":"2.1.332 (stand-in)","dropEnters":1,"steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"waitFile":"go3"},{"frame":["claude: started","auto mode on (shift+tab to cycle)","$  second words"],"clear":true},{"idle":true}]}
 start claude {temp}\im --claude {temp}\claude.cmd -- --model haiku --effort low
 expect said Ready
 wait 1000
 
 # Check: An Enter that Claude Code dropped is sent again
-# The message stays on the prompt row with no interrupt: Enter goes again, three times at most, a second and a half apart.
+# The message stays on the prompt row: Enter goes once more a second and a half later, and Claude Code takes it.
 type first words
 keys enter
 expect said Sent
-file im\go1 x
-wait 6000
-run findstr /c:"Enter sent again (3)" home\AxKit\logs\axClaude.log
-file im\go2 x
-wait 1000
+wait 2500
+run findstr /c:"Enter sent again" home\AxKit\logs\axClaude.log | find /c /v "" | findstr /x 1
+refuse said Not sent
 
 # Goal: Interrupt a message right after sending it
-# The interrupt, then the message back on the prompt row, as Claude Code 2.1.331 puts it: no Enter goes again.
+# Claude Code takes the message, then the interrupt, then the message back on the prompt row, as Claude Code 2.1.331
+# puts it: no Enter goes again.
 type second words
 keys enter
 expect said Sent
 keys ctrl+i
 file im\go3 x
 wait 3000
-run findstr /c:"Enter sent again" home\AxKit\logs\axClaude.log | find /c /v "" | findstr /x 3
+run findstr /c:"Enter sent again" home\AxKit\logs\axClaude.log | find /c /v "" | findstr /x 1
 
 # Check: A command of the menus sent after the interrupt empties the prompt row first
 # FR-2.3a (the second review of 2026-11-27). The interrupted message stands on Claude Code's prompt row again. Only the
 # message field's own send emptied the row first; a command of the menus, an offered command's line and the window's
 # own /feedback were typed after the restored message, and both went as one. Every message empties the row now, in
-# the one place they all pass (the window's log says so, in a line that holds no text of the user's).
+# the one place they all pass, while the row holds exactly that message (the window's log says so, in a line that
+# holds no text of the user's).
 menu Choose the model
 expect said Sent
 run findstr /c:"emptied before the next one" home\AxKit\logs\axClaude.log
-# Its own Enter is watched for again as any message's is, and nothing here was dropped: the count stays.
+# Nothing here was dropped: the count stays.
 wait 2500
-run findstr /c:"Enter sent again" home\AxKit\logs\axClaude.log | find /c /v "" | findstr /x 3
+run findstr /c:"Enter sent again" home\AxKit\logs\axClaude.log | find /c /v "" | findstr /x 1

@@ -26,7 +26,65 @@ public static class QueuedWrite
     /// read were taken for one.
     /// </summary>
     public static bool MessageGoes(bool askedThen, string? waitedFor, bool asksNow, string? waitingNow) =>
-        askedThen ? asksNow && waitedFor is not null && waitingNow == waitedFor : !asksNow;
+        askedThen ? asksNow && StillWaitsOn(waitedFor, waitingNow) : !asksNow;
+
+    /// <summary>
+    /// The one rule for a write bound to what Claude Code waited on when it was queued, a message sent into a question
+    /// and a typed answer alike (the sixth review of 2026-11-27, L2): it goes only while that very thing waits, and a
+    /// question the window could not read (null) is bound to nothing, so nothing is written into it. Until then a
+    /// message was refused there and a typed answer went, into whatever replaced it.
+    /// </summary>
+    public static bool StillWaitsOn(string? waitedFor, string? waitingNow) => waitedFor is not null && waitingNow == waitedFor;
+
+    /// <summary>
+    /// The first write of a message's text (the sixth review of 2026-11-27, F1: a message's text goes only onto a bare
+    /// prompt row). Over when the message no longer goes (<see cref="MessageGoes"/>). Goes for a message sent into a
+    /// question on purpose, whose keys are that question's, and for one queued while nothing was asked once the frame
+    /// shows Claude Code's prompt row bare (<paramref name="draft"/> empty, <c>ClaudeModel.PromptDraft</c>). Not yet
+    /// while the row holds other text or is not drawn, for <paramref name="longestMs"/>; then over, and the window
+    /// gives the message back. Until then a message was typed onto whatever the row held: a message whose Enter Claude
+    /// Code had dropped, and the two went as one.
+    /// </summary>
+    public static WriteCheck MessageFirst(bool askedThen, string? waitedFor, bool asksNow, string? waitingNow, string? draft, long waitedMs, int longestMs) =>
+        !MessageGoes(askedThen, waitedFor, asksNow, waitingNow) ? WriteCheck.Over
+        : askedThen || draft is { Length: 0 } ? WriteCheck.Goes
+        : waitedMs < longestMs ? WriteCheck.NotYet
+        : WriteCheck.Over;
+
+    /// <summary>
+    /// The keys that empty Claude Code's prompt row of a message given back, before the next message is typed (FR-2.3a;
+    /// the sixth review of 2026-11-27, F1): asked once, at the first of them. Over when the next message no longer goes;
+    /// goes only while the row holds exactly the text given back (<paramref name="rowHoldsIt"/>, the same comparison
+    /// as <c>ClaudeModel.PromptHolds</c>); else skipped, and nothing is cleared: the row holds other text, which the
+    /// next message's first write then waits on (<see cref="MessageFirst"/>). Until then the row was emptied whatever it
+    /// showed, and a Ctrl+U cleared a message the window had counted as sent along with the one given back.
+    /// </summary>
+    public static WriteCheck ClearGivenBack(bool messageGoes, bool rowHoldsIt) =>
+        !messageGoes ? WriteCheck.Over : rowHoldsIt ? WriteCheck.Goes : WriteCheck.Skip;
+
+    /// <summary>
+    /// A message after its Enter (the sixth review of 2026-11-27, F1: a message is in flight until Claude Code has
+    /// taken it): the Enter sent again once, <paramref name="againMs"/> after the first, while Claude Code's prompt
+    /// row still holds the message (FR-2.1: Claude Code drops an Enter in its first seconds). Skipped when the row no
+    /// longer holds it, Claude Code asks something, or the message was sent into a question.
+    /// </summary>
+    public static WriteCheck EnterAgain(bool askedThen, bool asksNow, bool promptHolds, long sinceEnterMs, int againMs) =>
+        askedThen || asksNow || !promptHolds ? WriteCheck.Skip
+        : sinceEnterMs < againMs ? WriteCheck.NotYet
+        : WriteCheck.Goes;
+
+    /// <summary>
+    /// Whether Claude Code has taken a message whose Enter went (the sixth review of 2026-11-27, F1): skipped, and the
+    /// queue goes on, once its prompt row is bare again (<paramref name="draft"/> empty) or it asks something, and at
+    /// once for a message sent into a question. Not yet while the row is not bare, for <paramref name="longestMs"/>
+    /// after the Enter, with everything queued behind it waiting; then over, and the message and everything behind it
+    /// are given back. Until then the message counted as sent when its Enter went, and the next one was typed onto
+    /// the row that still held it.
+    /// </summary>
+    public static WriteCheck Taken(bool askedThen, bool asksNow, string? draft, long sinceEnterMs, int longestMs) =>
+        askedThen || asksNow || draft is { Length: 0 } ? WriteCheck.Skip
+        : sinceEnterMs < longestMs ? WriteCheck.NotYet
+        : WriteCheck.Over;
 
     /// <summary>
     /// A message's Enter: only on a positive check (the fourth review of 2026-11-27, N3), since the window reads
@@ -45,22 +103,15 @@ public static class QueuedWrite
         : WriteCheck.Over;
 
     /// <summary>
-    /// The Enter of a message sent again, a second and a half after the last (SPEC.md FR-2.1; Claude Code drops an
-    /// Enter in its first seconds): only while Claude Code's prompt row holds the message, nothing is asked, and no interrupt came since the
-    /// message was sent. Whether Claude works is not asked: a message queued behind Claude's work is typed on the
-    /// same prompt row, which empties when its Enter is taken.
-    /// </summary>
-    public static bool EnterAgain(bool promptHolds, bool asksNow, bool interrupted) => promptHolds && !asksNow && !interrupted;
-
-    /// <summary>
     /// A key of a typed answer: over when Claude Code waits on something else than the answer was typed for
     /// (<paramref name="typedFor"/> against <paramref name="waiting"/>, each what waited as the window identifies it:
     /// a question by all it shows, a screen by its title), or on nothing for as long as a settle
     /// (<paramref name="goneForMs"/> against <paramref name="settleMs"/>). Not at once when nothing waits: Claude Code
     /// clears a question's rows for a frame while it draws them again, and a key dropped then would leave an answer
-    /// half typed. Never over for an answer typed when nothing the window could read waited (null): it is bound to
-    /// nothing.
+    /// half typed. An answer typed when nothing the window could read waited (null) is bound to nothing, as a message
+    /// is (<see cref="StillWaitsOn"/>, the sixth review of 2026-11-27, L2): over at once. Until then it was never
+    /// over, and its keys went into whatever was asked by then.
     /// </summary>
     public static bool AnswerOver(string? typedFor, string? waiting, long goneForMs, int settleMs) =>
-        typedFor is not null && (waiting is null ? goneForMs >= settleMs : waiting != typedFor);
+        typedFor is null || (waiting is null ? goneForMs >= settleMs : !StillWaitsOn(typedFor, waiting));
 }

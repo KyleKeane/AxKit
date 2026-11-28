@@ -42,6 +42,28 @@ public static class DisplayText
     /// <summary>Whether <paramref name="text"/> holds a character that <see cref="Visible"/> writes out.</summary>
     public static bool Hides(string text) => FirstWritten(text, command: false) >= 0;
 
+    /// <summary>
+    /// The text with every character <see cref="Hidden"/> names taken out: for comparing a text with what a program
+    /// drew of it, since a program that shows a text may drop such characters (Claude Code: "Removed 1 invisible
+    /// character from your prompt"; axClaude's prompt row check, the sixth review of 2026-11-27, F4).
+    /// </summary>
+    public static string WithoutHidden(string text)
+    {
+        var builder = new StringBuilder(text.Length);
+        for (var i = 0; i < text.Length; i++)
+        {
+            var code = CodeAt(text, i, out var length);
+            if (!Hidden(code))
+            {
+                builder.Append(text, i, length);
+            }
+
+            i += length - 1;
+        }
+
+        return builder.ToString();
+    }
+
     private static string Written(string text, bool command)
     {
         var first = FirstWritten(text, command);
@@ -155,9 +177,9 @@ public static class DisplayText
                 var before = CodeBefore(text, index, out _);
                 return !(Pictographic(before) || (before is >= '0' and <= '9' or '#' or '*' && after == Keycap));
             case Joiner:
-                return !(Pictographic(PictureBefore(text, index)) && Pictographic(after));
+                return !(Pictographic(PictureBefore(text, index)) && Pictographic(after)) && !Virama(CodeBefore(text, index, out _));
             case NonJoiner:
-                return !(JoinsLetters(CodeBefore(text, index, out _)) && JoinsLetters(after));
+                return !(JoinsLetters(CodeBefore(text, index, out _)) && JoinsLetters(after)) && !Virama(CodeBefore(text, index, out _));
             case >= TagFirst and <= TagEnd:
                 return !InFlag(text, index);
             case BrailleBlank:
@@ -246,6 +268,22 @@ public static class DisplayText
         && CharUnicodeInfo.GetUnicodeCategory(code) is UnicodeCategory.UppercaseLetter or UnicodeCategory.LowercaseLetter
             or UnicodeCategory.OtherLetter or UnicodeCategory.ModifierLetter or UnicodeCategory.NonSpacingMark or UnicodeCategory.SpacingCombiningMark;
 
+    /// <summary>
+    /// A virama, the sign that kills a consonant's vowel in the Indic scripts and their kin (canonical combining class
+    /// 9 in the Unicode Character Database, UnicodeData.txt; written as numbers, Unicode 15.1). A joiner or non-joiner
+    /// right after one asks for a half form or keeps a conjunct apart, and so is seen (the sixth review of
+    /// 2026-11-27, L6: KA, VIRAMA, ZERO WIDTH JOINER, SSA lost its half form to a written-out code). Ordinary text only: a command writes every
+    /// joiner out (<see cref="WrittenOut"/>).
+    /// </summary>
+    private static bool Virama(int code) =>
+        code is 0x094D or 0x09CD or 0x0A4D or 0x0ACD or 0x0B4D or 0x0BCD or 0x0C4D or 0x0CCD or 0x0D3B or 0x0D3C or 0x0D4D
+            or 0x0DCA or 0x0E3A or 0x0EBA or 0x0F84 or 0x1039 or 0x103A or 0x1714 or 0x1715 or 0x1734 or 0x17D2 or 0x1A60
+            or 0x1B44 or 0x1BAA or 0x1BAB or 0x1BF2 or 0x1BF3 or 0x2D7F or 0xA806 or 0xA82C or 0xA8C4 or 0xA953 or 0xA9C0
+            or 0xAAF6 or 0xABED or 0x10A3F or 0x11046 or 0x11070 or 0x1107F or 0x110B9 or 0x11133 or 0x11134 or 0x111C0
+            or 0x11235 or 0x112EA or 0x1134D or 0x11442 or 0x114C2 or 0x115BF or 0x1163F or 0x116B6 or 0x1172B or 0x11839
+            or 0x1193D or 0x1193E or 0x119E0 or 0x11A34 or 0x11A47 or 0x11A99 or 0x11C3F or 0x11D44 or 0x11D45 or 0x11D97
+            or 0x11F41 or 0x11F42;
+
     /// <summary>The tag sequences Unicode recommends, the flags of England, Scotland and Wales (emoji-sequences.txt, RGI_Emoji_Tag_Sequence): a black flag, these letters as tag characters, and the end tag. Any other run of tags can carry a text unseen.</summary>
     private static readonly string[] FlagTags = ["gbeng", "gbsct", "gbwls"];
 
@@ -313,7 +351,10 @@ public static class DisplayText
             at = start;
         }
 
+        // Hidden first (the sixth review of 2026-11-27, L6): the Hangul fillers are letters by their category and are
+        // seen as nothing, so a mark on one sat on nothing seen and stayed.
         return before < 0
+            || Hidden(before)
             || CharUnicodeInfo.GetUnicodeCategory(before) is not (UnicodeCategory.UppercaseLetter or UnicodeCategory.LowercaseLetter
                 or UnicodeCategory.TitlecaseLetter or UnicodeCategory.ModifierLetter or UnicodeCategory.OtherLetter);
     }

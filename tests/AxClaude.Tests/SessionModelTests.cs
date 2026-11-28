@@ -178,6 +178,134 @@ public class SessionModelTests
         Assert.False(two.PromptHolds("Reply with the single word hello.\nand a second line"));
     }
 
+    /// <summary>
+    /// The sixth review of 2026-11-27 (F4): the row is compared as Claude Code draws it. A hidden character Claude Code
+    /// takes out of a prompt ("Removed 1 invisible character from your prompt") is taken out of both sides, and blanks
+    /// as before; anything seen still counts.
+    /// </summary>
+    [Fact]
+    public void The_prompt_row_is_compared_without_hidden_characters()
+    {
+        var model = new SessionModel(80, 6);
+        Feed(model, $"{Esc}[?25lclaude: Hi.\r\n\r\n$  Reply with the single word hello.{Esc}[?25h");
+        Assert.True(model.PromptHolds("Reply with the single​ word hello.⁠"));
+        Assert.True(model.PromptHolds("Reply with the single word hello."));
+        Assert.False(model.PromptHolds("Reply with the single word hello!"));
+
+        var drawn = new SessionModel(80, 6);
+        Feed(drawn, $"{Esc}[?25lclaude: Hi.\r\n\r\n$  Reply with the‍ single word hello.{Esc}[?25h");
+        Assert.True(drawn.PromptHolds("Reply with the single word hello."));
+    }
+
+    /// <summary>
+    /// F4: a line the window writes in one piece may stand on the row as the mark of a paste. The wrapped-answers
+    /// recording (Claude Code 2.1.282) sent one line of about a thousand characters, and the row showed
+    /// "[Pasted text #1]" alone: held to that recording, the message is on the row. Until then the Enter waited for a
+    /// row that would never show the text, and the message came back. A message of two lines is not held by one mark.
+    /// </summary>
+    [Fact]
+    public void A_line_drawn_as_a_paste_is_on_the_prompt_row_as_the_recording_shows_it()
+    {
+        const string name = "wrapped-answers-claude2.1.282-120x40.vt";
+        var script = File.ReadLines(Path.Combine(SourceTexts.RepositoryRoot(), "tests", "fixtures", "wrapped-answers.script")).First(line => line.StartsWith("send ", StringComparison.Ordinal));
+        var message = script["send ".Length..];
+        var (columns, rows) = FixtureSize(name);
+        var model = new SessionModel(columns, rows);
+        var bytes = Fixture(name);
+        var held = false;
+        foreach (var (offset, length, _) in Chunks(name))
+        {
+            model.Feed(bytes[offset..(offset + length)]);
+            model.EndFrame();
+            if (model.PromptHolds(message))
+            {
+                held = true;
+                Assert.False(model.PromptHolds(message + "\nand a second line"));
+                break;
+            }
+        }
+
+        Assert.True(held, "the recording's prompt row, drawn as a paste, holds the message sent");
+    }
+
+    /// <summary>
+    /// The sixth review of 2026-11-27 (F1) keeps a message in flight until Claude Code's prompt row is bare again after
+    /// its Enter. Held to the recordings: in each, every message is found on the row whole once typed, and the row is
+    /// bare again (or Claude Code asks) after its Enter, before the next one is typed, a message sent while Claude
+    /// works (steering) and two longer than the row (long-message) included. Were it not, the window would give back a
+    /// message Claude Code had taken.
+    /// </summary>
+    [Theory]
+    [InlineData("steering-claude2.1.278-240x50.vt", "steering.script")]
+    [InlineData("long-message-claude2.1.278-240x50.vt", "long-message.script")]
+    public void Every_recorded_message_is_on_the_row_whole_and_the_row_is_bare_again_after_its_Enter(string name, string script)
+    {
+        var lines = File.ReadAllLines(Path.Combine(SourceTexts.RepositoryRoot(), "tests", "fixtures", script));
+        var messages = new List<string>();
+        for (var i = 0; i < lines.Length; i++)
+        {
+            var text = lines[i].StartsWith("send ", StringComparison.Ordinal) ? lines[i]["send ".Length..] : null;
+            if (text is null || text.StartsWith('/') || text.StartsWith('\\'))
+            {
+                continue;
+            }
+
+            // A line sent after a lone newline write belongs to the message before it (Ctrl+J).
+            if (i >= 2 && lines[i - 2] == @"send \n")
+            {
+                messages[^1] += "\n" + text;
+            }
+            else if (text.Length > 20)
+            {
+                messages.Add(text);
+            }
+        }
+
+        var (columns, rows) = FixtureSize(name);
+        var model = new SessionModel(columns, rows);
+        var bytes = Fixture(name);
+        var current = 0;
+        var held = false;
+        var taken = 0;
+        string? seen = null;
+        // As the window reads the row: after each chunk, and after each frame its quiet timer ends.
+        void Look()
+        {
+            if (current >= messages.Count)
+            {
+                return;
+            }
+
+            if (!held && model.PromptHolds(messages[current]))
+            {
+                held = true;
+            }
+            else if (!held && model.PromptDraft is { Length: > 0 } draft && draft.Length >= (seen?.Length ?? 0))
+            {
+                seen = draft;
+            }
+            else if (held && (model.PromptDraft is { Length: 0 } || model.PromptPending))
+            {
+                taken++;
+                current++;
+                held = false;
+            }
+        }
+
+        // Each chunk read as a frame of its own: the recordings sent the Enter 150 ms after the text whatever the row
+        // showed, and long-message's draft was followed by Claude Code's output within 89 ms, before the window's quiet
+        // timer would end a frame; the window itself sends the Enter only once a frame shows the draft.
+        foreach (var (offset, length, _) in Chunks(name))
+        {
+            model.Feed(bytes[offset..(offset + length)]);
+            model.EndFrame();
+            Look();
+        }
+
+        Assert.True(messages.Count >= 2, "the script's messages are read");
+        Assert.True(taken == messages.Count, $"{taken} of {messages.Count} messages taken; message {current + 1} {(held ? "was on the row and the row never bare again" : "was never on the row whole")}; the longest draft read: {seen}");
+    }
+
     /// <summary>A message of two lines as the early-two-lines recording draws its draft: the second line on the row under the first.</summary>
     [Fact]
     public void A_message_of_two_lines_is_held_by_the_rows_of_its_draft()
@@ -232,6 +360,34 @@ public class SessionModelTests
         model.TakeBack("other");
         Assert.True(model.Send("again"));
         Assert.Equal(["# Input 1", "again", "", "# Output 1 Reply from Claude", ""], Visible(model));
+    }
+
+    /// <summary>
+    /// The sixth review of 2026-11-27 (L5): several messages given back at once leave the conversation newest first, so
+    /// that each gives its number again. Taken back oldest first, as the window did until then, the first one's
+    /// number was not given again (a block was made after it), and the next message was numbered 2.
+    /// </summary>
+    [Fact]
+    public void Messages_given_back_together_give_every_number_again()
+    {
+        var model = new SessionModel(80, 10);
+        Feed(model, $"{Esc}[?25lauto mode on (shift+tab to cycle)\r\n${Esc}[?25h");
+        Assert.True(model.Send("first"));
+        Assert.True(model.Send("second"));
+        model.TakeBackAll(["first", "second"]);
+        Assert.Empty(Visible(model));
+        Assert.True(model.Send("again"));
+        Assert.Equal(["# Input 1", "again", "", "# Output 1 Reply from Claude", ""], Visible(model));
+
+        // The order the window used until then, for the record of what it did.
+        var old = new SessionModel(80, 10);
+        Feed(old, $"{Esc}[?25lauto mode on (shift+tab to cycle)\r\n${Esc}[?25h");
+        old.Send("first");
+        old.Send("second");
+        old.TakeBack("first");
+        old.TakeBack("second");
+        old.Send("again");
+        Assert.Equal("# Input 2", Visible(old)[0]);
     }
 
     [Fact]

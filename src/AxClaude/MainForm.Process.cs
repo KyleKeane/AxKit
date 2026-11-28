@@ -428,7 +428,8 @@ internal sealed partial class MainForm
         // A Claude Code over its stream (MainForm.Stream.cs) is let go of first: the base's status bar and music ask
         // whether Claude runs. Nothing in a window the screen feeds.
         StopStream(terminateAtOnce);
-        // A message whose Enter had not gone is given back silently: out of the conversation, into the field.
+        // A message Claude Code had not taken is given back silently: out of the conversation, into the field, or
+        // written out in the conversation when the field holds other text (F2).
         GiveBackUnsentOnStop();
         base.StopProcess(terminateAtOnce);
         // What an AI tool offered in this run goes with it (MainForm.Mcp.cs).
@@ -455,6 +456,12 @@ internal sealed partial class MainForm
         if (clearConversation)
         {
             _model.Clear();
+            // A message given back as Claude stopped that is not in the field stays written out (F2, the sixth review of
+            // 2026-11-27): the emptied window keeps its line.
+            if (_givenBackOnStop is { } kept)
+            {
+                _model.AddSystemLine(kept);
+            }
         }
         else
         {

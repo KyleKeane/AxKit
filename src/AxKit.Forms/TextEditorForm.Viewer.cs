@@ -287,7 +287,7 @@ public sealed partial class TextEditorForm
     /// <summary>Windows' own "How do you want to open this file?" dialog, whose Always sets the default (AP-7.3).</summary>
     private void ChooseProgram(string path)
     {
-        if (WindowsOpenWith.Show(Handle, path) is { } reason)
+        if (InModalLoop(() => WindowsOpenWith.Show(Handle, path)) is { } reason)
         {
             Fail($"Open with failed: {reason}");
         }

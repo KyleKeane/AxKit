@@ -796,6 +796,29 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: a message in flight until Claude Code takes it, nothing given back lost, a dialog ends the user's key (the sixth review of 2026-11-27)
+
+The sixth review of that day, repaired on 2026-11-28 (`docs/axClaude/SPEC.md` D33, point 4, "A message is in flight
+until Claude Code has taken it"; `docs/axKit/SPEC.md` AX-6.4; `docs/axKit/mcp.md` MC-7.9): a message is typed only
+onto a bare prompt row and stays in flight until the row is bare again, the Enter sent once more meanwhile, and comes
+back with everything behind it three seconds after its Enter; the row is emptied only of exactly the text given back;
+a text given back that does not go into the field is written out in the conversation, a stop included; a Windows
+dialog inside a key's command ends "opened by the user"; the prompt row is compared without blanks and hidden
+characters, a paste's mark included. Played on the hidden desktop, without NVDA, on 2026-11-28: the new
+`tests/scripts/axClaude/73`, `74`, `75` and `76`, the changed `64` and `71`, and the recorded scripts app by app.
+Still owed:
+
+1. With NVDA listening (`.\nvda-pass.ps1 axClaude`): scripts 73 to 76; whether "Not sent: Claude did not take the
+   message; it is back in the message field; the one after it was not typed either" is heard whole, and whether the
+   conversation's line naming an offered command's line is read whole.
+2. With Claude Code itself (no live script was run; the coordinating session records these before the release): the
+   shell mode's `!` draft row and a collapsed paste with a count of lines, neither in a recording; a message typed
+   while Claude works, which Claude Code queues: that its row is bare again after the Enter, so that the message is
+   taken and not given back three seconds later; a message long enough for Claude Code to take it for a paste, which
+   the wrapped-answers recording shows as "[Pasted text #1]".
+3. By the maintainer's hands: Save as in axDown on a file whose code page cannot hold a character, Enter in the Save
+   dialog pressed twice: "Save as UTF-8?" holds its second; axFile's Add a program the same with the name field.
+
 ## Owed: axGIT trusts only what was seen, on the repository it read (the review's fifth pass of 2026-11-28)
 
 What a read-only review found in axGIT's trust check of the fourth pass, repaired on 2026-11-28 (`docs/axGIT/SPEC.md`

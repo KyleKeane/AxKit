@@ -312,4 +312,42 @@ public sealed class DisplayTextTests
         Assert.Same(answer, DisplayText.VisibleLine(answer));
         Assert.Equal("echo 3‹U+FE0F›‹U+20E3›", DisplayText.VisibleCommand("echo 3" + char.ConvertFromUtf32(0xFE0F) + char.ConvertFromUtf32(0x20E3)));
     }
+
+    /// <summary>
+    /// The sixth review of 2026-11-27 (L6): the Hangul fillers are letters by their category and are seen as nothing,
+    /// so a mark on one sat on nothing seen and stayed. Hidden is asked before the letter: the filler and the mark on it
+    /// are written out, in every text.
+    /// </summary>
+    [Theory]
+    [InlineData(0x3164)]
+    [InlineData(0x115F)]
+    [InlineData(0x1160)]
+    [InlineData(0xFFA0)]
+    public void A_mark_on_a_hidden_filler_is_written_out(int filler)
+    {
+        var text = "echo a>" + char.ConvertFromUtf32(filler) + char.ConvertFromUtf32(0x0338) + "> b";
+        var expected = $"echo a>‹U+{filler:X4}›‹U+0338›> b";
+        Assert.Equal(expected, DisplayText.Visible(text));
+        Assert.Equal(expected, DisplayText.VisibleCommand(text));
+    }
+
+    /// <summary>
+    /// L6: in ordinary text a joiner or a non-joiner right after a virama stays, since it asks for a half form or keeps
+    /// a conjunct apart (Devanagari KA, VIRAMA, ZWJ, SSA; Bengali KA, VIRAMA, ZWNJ, SSA). In a command every joiner is
+    /// written out, whatever stands before it, and so is one after anything but a virama.
+    /// </summary>
+    [Theory]
+    [InlineData(new[] { 0x0915, 0x094D, 0x200D, 0x0937 })]
+    [InlineData(new[] { 0x0995, 0x09CD, 0x200C, 0x09B7 })]
+    [InlineData(new[] { 0x0D15, 0x0D4D, 0x200D })]
+    public void A_joiner_after_a_virama_stays_in_ordinary_text(int[] codes)
+    {
+        var word = string.Concat(codes.Select(char.ConvertFromUtf32));
+        var text = "Hindi " + word + " text";
+        Assert.False(DisplayText.Hides(text));
+        Assert.Same(text, DisplayText.Visible(text));
+        Assert.Contains("‹U+200", DisplayText.VisibleCommand(text), StringComparison.Ordinal);
+        // After a letter that is no virama it is written out as before.
+        Assert.Equal("a‹U+200D›b", DisplayText.Visible("a" + char.ConvertFromUtf32(0x200D) + "b"));
+    }
 }

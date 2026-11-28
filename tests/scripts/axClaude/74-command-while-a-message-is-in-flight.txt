@@ -1,0 +1,36 @@
+# Workflow: Have a command of the menus wait until Claude Code has taken the message before it
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code; no Claude Code, no network and no model.
+# axClaude, docs/axClaude/SPEC.md D33 ("One message in flight", the sixth review of 2026-11-27, F1). A command of the
+# menus (Choose the model sends /model) goes only while Claude is idle, which it is not while a message is in flight.
+# Until that review a message counted as sent once its Enter went, and the command, chosen while Claude Code still
+# held the message on its prompt row, was typed after it there. Now it is refused until the row is bare again.
+# The stand-in (tools/AxAutomate/StandIn.cs) draws what is typed, drops the first Enter ("dropEnters") and writes every
+# key it reads to a file ("keys").
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir cf
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.332 (stand-in)","dropEnters":1,"keys":"keys.txt","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"idle":true}]}
+file expected1.txt first message<Enter>\n
+file expected2.txt first message<Enter>\n<Enter>\n/model<Enter>\n
+start claude {temp}\cf --claude {temp}\claude.cmd -- --model haiku --effort low
+expect said Ready
+wait 1000
+
+# Check: A command of the menus is not typed onto a row that still holds a message
+# The first Enter is dropped; the command chosen then is refused, and nothing more reaches Claude Code's prompt.
+type first message
+keys enter
+expect said Sent
+menu Choose the model
+expect said Not sent: Claude is busy
+run fc /b cf\keys.txt expected1.txt
+
+# Goal: Choose the model once Claude Code has taken the message
+# The Enter sent again a second and a half later is taken, the row is bare, and the command goes with its own Enter.
+wait 2000
+menu Choose the model
+expect said Sent
+wait 500
+run fc /b cf\keys.txt expected2.txt
+refuse said Not sent

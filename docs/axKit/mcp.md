@@ -409,9 +409,12 @@ menu, the palette and the automated checks in the table of `command-language.md`
   a command that asks for one (Find, Find first, Go to line, a filter, a name). The command runs as before; the field
   it then opens, a notice's field or a field in the window's control area, gets the text and its main button or Enter
   is pressed, as the user would (`AxKitForm.FillForMcp`). Only a field the run's own click opened is filled: a field
-  that was already asking the user something (axClaude's question) never is, and a notice only when it was not the
-  one shown before the click, on the pass after the posted messages too (the fifth review of 2026-11-27, L2: until
-  then any notice that stood on that pass was filled), since no run starts while one is open. A list or a field that a command run for an AI tool put into a
+  that was already asking the user something (axClaude's question) never is, and a notice only when it is the very
+  notice the click showed, recorded as it was shown, on the pass after the posted messages too (the sixth review of
+  2026-11-27, L3, `Notice.ShownForRun`: until the fifth review any notice that stood on that pass was filled, and
+  until the sixth one that was not shown before the click, which could be one that came by itself in between); a
+  control area's field that a command opens a moment later is filled on that pass. No run starts while a notice is
+  open. A list or a field that a command run for an AI tool put into a
   window's control area holds its answering keys for a moment, as everything does that the user did not open with a
   key of their own (bundle AX-6.4; `AxKitForm.RunForMcp`, 2026-11-27), though the command's own code starts no hold
   for the user's key: a stray Enter of the user's does not answer a list an AI tool just opened. It counts as

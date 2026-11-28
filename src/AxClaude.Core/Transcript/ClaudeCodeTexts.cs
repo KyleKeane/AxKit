@@ -62,6 +62,15 @@ public static partial class ClaudeCodeTexts
     /// <summary>The no-break space Claude prints after the dollar sign of a draft, which tells the draft row from a command line quoted in a reply.</summary>
     public const char DraftSpace = ' ';
 
+    /// <summary>
+    /// What Claude Code's prompt row shows in place of a write it took for a paste, read with every blank taken out
+    /// ("[Pasted text #1]" in the wrapped-answers recording, Claude Code 2.1.282: one write of a single line some
+    /// thousand characters long, its draft drawn as this and nothing else). Only this form is recorded; one with a
+    /// count of lines is not, and none is guessed (the sixth review of 2026-11-27, F4).
+    /// </summary>
+    [GeneratedRegex(@"\G\[Pastedtext#\d+\]")]
+    public static partial Regex PastedWithoutBlanks();
+
     /// <summary>What a slash command starts with.</summary>
     public const char CommandStart = '/';
 

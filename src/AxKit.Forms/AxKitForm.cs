@@ -693,7 +693,7 @@ public abstract partial class AxKitForm : Form
             (strip.Tag as Action)?.Invoke();
             var caret = box.GetPositionFromCharIndex(Math.Min(box.SelectionStart, Math.Max(0, box.TextLength - 1)));
             var at = box.PointToScreen(new Point(Math.Max(0, caret.X), Math.Max(0, caret.Y) + box.Font.Height));
-            NativeMenu.Choose(this, strip.Items.OfType<ToolStripMenuItem>().ToList(), at);
+            InModalLoop(() => NativeMenu.Choose(this, strip.Items.OfType<ToolStripMenuItem>().ToList(), at));
         };
         timer.Start();
         return true;
@@ -1025,29 +1025,33 @@ public abstract partial class AxKitForm : Form
     /// </summary>
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
-        var outer = _userKey;
-        _userKey = keyData;
-        try
-        {
-            return ProcessUsersKey(ref msg, keyData);
-        }
-        finally
-        {
-            _userKey = outer;
-        }
+        var message = msg;
+        var handled = _userKey.Handle(keyData, () => ProcessUsersKey(ref message, keyData));
+        msg = message;
+        return handled;
     }
 
     /// <summary>
     /// The key of the user's whose handling runs now, synchronously, from <see cref="ProcessCmdKey"/>: the key
-    /// dispatch of the window, its commands and the menu bar's keys in menu mode included; null at every other time
+    /// dispatch of the window, its commands and the menu bar's keys in menu mode included; none at every other time
     /// (a click, a menu item chosen in an open drop-down, a timer, a post, the code after an await, a command run for
-    /// an AI tool or by the palette's Enter, which pass no key of the user's here). A fact of the moment, not of the
-    /// source (the fifth review of 2026-11-27, E3): until then a notice was the user's when the code that made it
-    /// said so (<see cref="Notice.ByUser"/>), and a confirmation reached through a menu's Enter took a doubled Enter.
+    /// an AI tool or by the palette's Enter, which pass no key of the user's here), and none for the rest of a key's
+    /// handling once a modal loop ran in it (<see cref="InModalLoop{T}"/>). A fact of the moment, not of the source
+    /// (the fifth review of 2026-11-27, E3): until then a notice was the user's when the code that made it said so
+    /// (<see cref="Notice.ByUser"/>), and a confirmation reached through a menu's Enter took a doubled Enter.
     /// </summary>
-    private Keys? _userKey;
+    private readonly UserKeyMoment _userKey = new();
 
-    /// <summary>The body of <see cref="ProcessCmdKey"/>, with <see cref="UserKey"/> set around it.</summary>
+    /// <summary>
+    /// Every modal loop of a window runs here: the Windows pickers (<see cref="ShowSystemDialog"/>), the shell's
+    /// dialogs and menu, any other ShowDialog (<c>ModalLoopTests</c> reads the sources for them). From the loop's start
+    /// on, no key of the user's is being handled (<see cref="UserKeyMoment.ModalLoop{T}"/>), so that a notice the
+    /// command shows after the dialog holds its keys: the Enter that closed the dialog, pressed twice, would answer it
+    /// (the sixth review of 2026-11-27, F3: Save as, then "Save as UTF-8?"; axFile's program picker, then its name).
+    /// </summary>
+    protected internal T InModalLoop<T>(Func<T> loop) => _userKey.ModalLoop(loop);
+
+    /// <summary>The body of <see cref="ProcessCmdKey"/>, with <see cref="_userKey"/> set around it.</summary>
     private bool ProcessUsersKey(ref Message msg, Keys keyData)
     {
         switch (keyData)
@@ -1543,6 +1547,7 @@ public abstract partial class AxKitForm : Form
     /// <see cref="DialogShowing"/> set meanwhile, and puts the focus back where it was when the dialog closes, OK or
     /// cancel alike, one rule for every window (2026-11-09; each caller did its own before, the editor's Open only after
     /// OK and its Save as only after cancel). A dialog opened from a notice's button leaves the focus to the notice.
+    /// A modal loop (<see cref="InModalLoop{T}"/>): what the command shows after it is no first result of the user's key.
     /// </summary>
     protected DialogResult ShowSystemDialog(CommonDialog dialog)
     {
@@ -1550,7 +1555,7 @@ public abstract partial class AxKitForm : Form
         DialogShowing = true;
         try
         {
-            return dialog.ShowDialog(this);
+            return InModalLoop(() => dialog.ShowDialog(this));
         }
         finally
         {

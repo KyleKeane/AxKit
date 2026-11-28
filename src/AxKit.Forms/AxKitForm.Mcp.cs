@@ -112,20 +112,21 @@ public abstract partial class AxKitForm
     /// MC-7.9: the text of a run typed into the field the command asked for, and the field's main button pressed, as the
     /// user would: the notice the click opened with its field, at once or, for a command that opens it a moment later,
     /// after the messages already posted. <paramref name="noted"/> gets null when the text was used, else why not: the
-    /// command asked for no text, or its field hides what is typed (a password), which an AI tool never fills. Only a
-    /// notice shown since the click (<paramref name="noticeBefore"/>, what the panel showed before it, compared with
-    /// what it shows now; the fifth review of 2026-11-27, L2): on the pass after the posted messages, a notice that
-    /// stands then may be one that came by itself in between, or one that was there before.
+    /// command asked for no text, or its field hides what is typed (a password), which an AI tool never fills. Only the
+    /// notice shown inside the run's click, recorded there (<see cref="_runNotice"/>, <see cref="Notice.ShownForRun"/>;
+    /// the sixth review of 2026-11-27, L3): until then a notice shown since the click was taken for the click's, and on
+    /// the pass after the posted messages that could be one that came by itself in between. A field of a control area
+    /// may come a moment later and is filled on that pass.
     /// </summary>
-    private void FillForMcp(string text, IReadOnlyList<(ControlArea Area, Control? Shown)> before, Notice? noticeBefore, Action<string?> noted, bool again = true)
+    private void FillForMcp(string text, IReadOnlyList<(ControlArea Area, Control? Shown)> before, Action<string?> noted, bool again = true)
     {
         if (IsDisposed)
         {
             return;
         }
 
-        // No run starts while a notice is open (the gate's Notice): one shown now that was not shown before is the click's.
-        if (NoticeOpen && Overlay.Shown is { Input: { } input } shown && !ReferenceEquals(shown, noticeBefore))
+        // No run starts while a notice is open (the gate's Notice): the one the click showed, and no other, is filled.
+        if (NoticeOpen && Notice.ShownForRun(Overlay.Shown, _runNotice) is { Input: { } input })
         {
             if (input.Hidden)
             {
@@ -154,7 +155,7 @@ public abstract partial class AxKitForm
 
         if (again && !NoticeOpen)
         {
-            BeginInvoke(() => FillForMcp(text, before, noticeBefore, noted, again: false));
+            BeginInvoke(() => FillForMcp(text, before, noted, again: false));
         }
         else
         {
@@ -340,7 +341,8 @@ public abstract partial class AxKitForm
     private void RunForMcp(string client, string label, ToolStripMenuItem item, string? text = null, Action<string?>? noted = null)
     {
         IReadOnlyList<(ControlArea Area, Control? Shown)> before = ShownInAreas();
-        var noticeBefore = Overlay.Shown;
+        // The notice the click shows is recorded as it is shown (ShowNotice); none before the click.
+        _runNotice = null;
         // A notice the click opens holds though the command's code says ByUser for the user's key (ShowNotice asks
         // ClickedForAiTool), and when the window is behind it waits there held, again from when the focus comes.
         ClickFor(CommandOrigin.AiTool, item, label, client, text);
@@ -358,9 +360,12 @@ public abstract partial class AxKitForm
 
         if (text is not null)
         {
-            FillForMcp(text, before, noticeBefore, noted ?? (_ => { }));
+            FillForMcp(text, before, noted ?? (_ => { }));
         }
     }
+
+    /// <summary>The notice shown inside the last run's click for an AI tool (<see cref="ClickedForAiTool"/>, set by <see cref="ShowNotice"/>), the only one <see cref="FillForMcp"/> fills; null when the click showed none.</summary>
+    private Notice? _runNotice;
 
     /// <summary>When a run in this window behind last chimed (<see cref="Environment.TickCount64"/>), -1 for never.</summary>
     private long _mcpLastChime = -1;

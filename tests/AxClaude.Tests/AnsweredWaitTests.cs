@@ -222,10 +222,109 @@ public sealed class AnsweredWaitTests
         Assert.Equal(WriteCheck.Goes, QueuedWrite.MessageEnter(askedThen: true, waitedFor: question, asksNow: true, waitingNow: question, promptHolds: false, waitedMs: 0, longest));
         Assert.Equal(WriteCheck.Over, QueuedWrite.MessageEnter(askedThen: true, waitedFor: null, asksNow: true, waitingNow: null, promptHolds: false, waitedMs: 0, longest));
 
-        Assert.True(QueuedWrite.EnterAgain(promptHolds: true, asksNow: false, interrupted: false));
-        Assert.False(QueuedWrite.EnterAgain(promptHolds: false, asksNow: false, interrupted: false));
-        Assert.False(QueuedWrite.EnterAgain(promptHolds: true, asksNow: true, interrupted: false));
-        Assert.False(QueuedWrite.EnterAgain(promptHolds: true, asksNow: false, interrupted: true));
+    }
+
+    /// <summary>
+    /// The sixth review of 2026-11-27 (F1): a message is in flight until Claude Code has taken it. Its first write goes
+    /// only onto a bare prompt row, and waits for one; the row is emptied of a message given back only while it holds
+    /// exactly that; after its Enter the Enter goes once more while the row still holds it, and the queue waits until
+    /// the row is bare again, then gives the message back.
+    /// </summary>
+    [Fact]
+    public void A_message_is_in_flight_until_Claude_Code_has_taken_it()
+    {
+        const int longest = 3000;
+        var question = "question\n" + Create("alpha.txt").Content;
+        // The first write: a bare row goes; a row that holds another message or is not drawn waits, then is over.
+        Assert.Equal(WriteCheck.Goes, QueuedWrite.MessageFirst(askedThen: false, waitedFor: null, asksNow: false, waitingNow: null, draft: string.Empty, waitedMs: 0, longest));
+        Assert.Equal(WriteCheck.NotYet, QueuedWrite.MessageFirst(askedThen: false, waitedFor: null, asksNow: false, waitingNow: null, draft: "first message", waitedMs: 0, longest));
+        Assert.Equal(WriteCheck.NotYet, QueuedWrite.MessageFirst(askedThen: false, waitedFor: null, asksNow: false, waitingNow: null, draft: null, waitedMs: 2999, longest));
+        Assert.Equal(WriteCheck.Over, QueuedWrite.MessageFirst(askedThen: false, waitedFor: null, asksNow: false, waitingNow: null, draft: "first message", waitedMs: 3000, longest));
+        Assert.Equal(WriteCheck.Over, QueuedWrite.MessageFirst(askedThen: false, waitedFor: null, asksNow: true, waitingNow: question, draft: string.Empty, waitedMs: 0, longest));
+        // Sent into a question on purpose: the question's keys, whatever a row shows.
+        Assert.Equal(WriteCheck.Goes, QueuedWrite.MessageFirst(askedThen: true, waitedFor: question, asksNow: true, waitingNow: question, draft: null, waitedMs: 0, longest));
+
+        // The row emptied of a message given back: only while it holds exactly that text; else nothing is cleared.
+        Assert.Equal(WriteCheck.Goes, QueuedWrite.ClearGivenBack(messageGoes: true, rowHoldsIt: true));
+        Assert.Equal(WriteCheck.Skip, QueuedWrite.ClearGivenBack(messageGoes: true, rowHoldsIt: false));
+        Assert.Equal(WriteCheck.Over, QueuedWrite.ClearGivenBack(messageGoes: false, rowHoldsIt: true));
+
+        // The Enter again: once, a second and a half after the Enter, while the row still holds the message.
+        Assert.Equal(WriteCheck.NotYet, QueuedWrite.EnterAgain(askedThen: false, asksNow: false, promptHolds: true, sinceEnterMs: 1499, againMs: 1500));
+        Assert.Equal(WriteCheck.Goes, QueuedWrite.EnterAgain(askedThen: false, asksNow: false, promptHolds: true, sinceEnterMs: 1500, againMs: 1500));
+        Assert.Equal(WriteCheck.Skip, QueuedWrite.EnterAgain(askedThen: false, asksNow: false, promptHolds: false, sinceEnterMs: 0, againMs: 1500));
+        Assert.Equal(WriteCheck.Skip, QueuedWrite.EnterAgain(askedThen: false, asksNow: true, promptHolds: true, sinceEnterMs: 1500, againMs: 1500));
+        Assert.Equal(WriteCheck.Skip, QueuedWrite.EnterAgain(askedThen: true, asksNow: true, promptHolds: false, sinceEnterMs: 1500, againMs: 1500));
+
+        // Taken: once the row is bare or Claude Code asks; until then everything behind it waits; then over.
+        Assert.Equal(WriteCheck.Skip, QueuedWrite.Taken(askedThen: false, asksNow: false, draft: string.Empty, sinceEnterMs: 0, longest));
+        Assert.Equal(WriteCheck.Skip, QueuedWrite.Taken(askedThen: false, asksNow: true, draft: null, sinceEnterMs: 0, longest));
+        Assert.Equal(WriteCheck.NotYet, QueuedWrite.Taken(askedThen: false, asksNow: false, draft: "first message", sinceEnterMs: 2999, longest));
+        Assert.Equal(WriteCheck.NotYet, QueuedWrite.Taken(askedThen: false, asksNow: false, draft: null, sinceEnterMs: 0, longest));
+        Assert.Equal(WriteCheck.Over, QueuedWrite.Taken(askedThen: false, asksNow: false, draft: "first message", sinceEnterMs: 3000, longest));
+        Assert.Equal(WriteCheck.Skip, QueuedWrite.Taken(askedThen: true, asksNow: true, draft: null, sinceEnterMs: 0, longest));
+    }
+
+    /// <summary>
+    /// The reviewer's sequence of the sixth review of 2026-11-27 (F1), played through the window's own queue
+    /// (<see cref="WriteQueue"/>) with the checks the window gives a message, on a row that never takes an Enter: the
+    /// first message's text and Enter go, the Enter once more, and three seconds after the Enter both messages are
+    /// given back. Nothing of the second is written, nothing is cleared.
+    /// </summary>
+    [Fact]
+    public void A_second_message_is_never_written_onto_a_row_that_holds_the_first()
+    {
+        var now = 0L;
+        var row = string.Empty;
+        var queue = new WriteQueue();
+        var written = new List<string>();
+        void Queue(string text)
+        {
+            long first = 0, enter = 0, entered = 0;
+            queue.Add(text, 100, () =>
+            {
+                first = first == 0 ? Math.Max(now, 1) : first;
+                return QueuedWrite.MessageFirst(false, null, false, null, row, now - first, 3000);
+            });
+            queue.Add("\r", 50, () =>
+            {
+                enter = enter == 0 ? Math.Max(now, 1) : enter;
+                var check = QueuedWrite.MessageEnter(false, null, false, null, row == text, now - enter, 3000);
+                entered = check == WriteCheck.Goes ? now : entered;
+                return check;
+            });
+            queue.Add("\r", 50, () => QueuedWrite.EnterAgain(false, false, row == text, now - entered, 1500));
+            queue.Add(string.Empty, 50, () => QueuedWrite.Taken(false, false, row, now - entered, 3000));
+        }
+
+        Queue("first message");
+        Queue("second message");
+        var dropped = false;
+        while (!dropped && now < 10_000)
+        {
+            var step = queue.Next();
+            switch (step.Kind)
+            {
+                case WriteStepKind.Write:
+                    written.Add(step.Text);
+                    // The row takes no Enter: what is typed stays, and an Enter leaves it there.
+                    row = step.Text == "\r" ? row : row + step.Text;
+                    break;
+                case WriteStepKind.Dropped:
+                    dropped = true;
+                    break;
+                case WriteStepKind.Idle:
+                    Assert.Fail("the queue ran dry with a message not taken");
+                    break;
+            }
+
+            now += Math.Max(step.WaitMs, 1);
+        }
+
+        Assert.True(dropped);
+        Assert.Equal(["first message", "\r", "\r"], written);
+        Assert.Equal("first message", row);
+        Assert.InRange(now, 3000, 3700);
     }
 
     /// <summary>
@@ -247,8 +346,11 @@ public sealed class AnsweredWaitTests
         Assert.False(QueuedWrite.AnswerOver(first, waiting: null, goneForMs: 0, settle));
         Assert.False(QueuedWrite.AnswerOver(first, waiting: null, goneForMs: 399, settle));
         Assert.True(QueuedWrite.AnswerOver(first, waiting: null, goneForMs: 400, settle));
-        // Typed when nothing the window could read waited: bound to nothing, and written whatever comes.
-        Assert.False(QueuedWrite.AnswerOver(typedFor: null, first, goneForMs: 0, settle));
-        Assert.False(QueuedWrite.AnswerOver(typedFor: null, waiting: null, goneForMs: 9_000, settle));
+        // Typed when nothing the window could read waited: bound to nothing, so nothing of it is written (the sixth
+        // review of 2026-11-27, L2: one rule with a message sent into a question; until then it went whatever came).
+        Assert.True(QueuedWrite.AnswerOver(typedFor: null, first, goneForMs: 0, settle));
+        Assert.True(QueuedWrite.AnswerOver(typedFor: null, waiting: null, goneForMs: 0, settle));
+        Assert.False(QueuedWrite.StillWaitsOn(null, null));
+        Assert.True(QueuedWrite.StillWaitsOn(first, first));
     }
 }

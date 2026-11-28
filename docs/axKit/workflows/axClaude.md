@@ -1886,6 +1886,15 @@ Starts with: Open axClaude with the folder cq.
 1. Press Enter.
     You hear: Sent: 2, No.
 
+## Have a command of the menus wait until Claude Code has taken the message before it
+
+Starts with: Open axClaude with the folder cf.
+
+### Choose the model once Claude Code has taken the message
+
+1. Choose Choose the model in the Actions menu.
+    You hear: Sent.
+
 ## Have a short exchange with Claude
 
 Starts with: Open axClaude with the folder a.

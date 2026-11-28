@@ -134,10 +134,10 @@ public sealed partial class WindowLastResortTests
         Assert.Contains("Area.Hold(UserActionMs);", interrupt, StringComparison.Ordinal);
 
         var queue = Body("MainForm.Input.cs", "private void QueueWrites(string text, bool fromField = false, Action? sent = null)");
-        var cleared = queue.IndexOf("ClearRestoredMessage(still);", StringComparison.Ordinal);
+        var cleared = queue.IndexOf("ClearRestoredMessage(checks.Goes);", StringComparison.Ordinal);
         var typed = queue.IndexOf("Enqueue(", StringComparison.Ordinal);
         Assert.True(cleared >= 0 && typed > cleared, "QueueWrites empties a restored message before it types the next one");
-        var elsewhere = WindowFiles().Where(file => file.Text.Split("ClearRestoredMessage(still);").Length - 1 > (file.Name == "MainForm.Input.cs" ? 1 : 0)).Select(file => file.Name);
+        var elsewhere = WindowFiles().Where(file => file.Text.Split("ClearRestoredMessage(checks.Goes);").Length - 1 > (file.Name == "MainForm.Input.cs" ? 1 : 0)).Select(file => file.Name);
         Assert.Empty(elsewhere);
     }
 
@@ -157,12 +157,10 @@ public sealed partial class WindowLastResortTests
         // The empty field's Enter (the fifth review of 2026-11-27): bound to the question it was pressed for, or only
         // while the frame shows a draft on Claude Code's prompt row and nothing is asked, asked again as it goes.
         { "MainForm.Input.cs", "private void EmptyFieldEnter()", 1, "QueuedWrite.MessageGoes(true, waitedFor, _model.PromptPending, WaitIdentity()) : !_model.PromptPending && _model.PromptDraft is { Length: > 0 }" },
-        // A message's writes, each bound: over when Claude Code has begun to ask since it was queued; its Enter only on a
-        // positive check, the message on Claude Code's prompt row (QueuedWrite.MessageEnter), not yet while it waits.
-        { "MainForm.Input.cs", "private void QueueWrites(string text, bool fromField = false, Action? sent = null)", 3, "Enqueue(ClaudeCodeKeys.Enter, 50, enter);" },
-        { "MainForm.Input.cs", "private void ClearRestoredMessage(Func<WriteCheck> still)", 2, "Enqueue(ClaudeCodeKeys.CtrlU, 30, still);" },
-        // The Enter sent again for one Claude Code dropped or one held back: only while the row shows the message and nothing is asked, asked again as it goes.
-        { "MainForm.Input.cs", "private void ResendEnterWhileHeld(string text, int attempt)", 1, "Enqueue(ClaudeCodeKeys.Enter, 50, () => QueuedWrite.EnterAgain(_model.PromptHolds(text), _model.PromptPending, _interruptedSinceSend) ? WriteCheck.Goes : WriteCheck.Skip);" },
+        // A message's writes, each bound: over when Claude Code has begun to ask since it was queued; its first only onto a bare row, its Enter only on a
+        // positive check, the message on Claude Code's prompt row (QueuedWrite.MessageEnter), not yet while it waits; the Enter again and the wait until it is taken (the sixth review of 2026-11-27, F1). The row emptied only while it holds exactly the message given back.
+        { "MainForm.Input.cs", "private void QueueWrites(string text, bool fromField = false, Action? sent = null)", 5, "Enqueue(ClaudeCodeKeys.Enter, 50, checks.Enter);" },
+        { "MainForm.Input.cs", "private void ClearRestoredMessage(Func<bool> messageGoes)", 2, "Enqueue(ClaudeCodeKeys.CtrlU, 30, Clear);" },
         { "MainForm.Input.cs", "private void SendNow()", 2, "if (!KeyMayGoToClaude())" },
         // The stop key: the one command that sends a key whatever Claude Code asks; its Escape is a no, never a yes.
         { "MainForm.Input.cs", "private void Interrupt()", 1, "Write(ClaudeCodeKeys.Escape, still: null);" },

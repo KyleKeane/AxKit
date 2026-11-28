@@ -156,6 +156,17 @@ internal sealed partial class MainForm
     /// <summary>Said when an answer is held back because the question it was given to is not the one that waits now.</summary>
     private const string QuestionOpensWords = "Not sent: Claude asks something, and its question opens in a moment";
 
+    /// <summary>Said when nothing is sent because Claude Code asks something the window cannot read, which nothing typed is bound to (QueuedWrite.StillWaitsOn; the sixth review of 2026-11-27, L2).</summary>
+    private const string UnreadableWords = "Not sent: Claude asks something the window cannot read. Send key or Interrupt answers it";
+
+    /// <summary>
+    /// Why a write or a key of the area's was not sent, the one choice of words for it (the sixth review of
+    /// 2026-11-27, L2): nothing is asked any more; or Claude Code asks something the window cannot read, which never
+    /// "opens in a moment"; or it asks something else, whose question opens.
+    /// </summary>
+    private string NotSentWords() =>
+        !_model.PromptPending ? NoLongerAskedWords : WaitIdentity() is null ? UnreadableWords : QuestionOpensWords;
+
     /// <summary>
     /// Whether what a control of the area was shown for still waits (<see cref="ClaudeModel.StillAsks"/>); when not,
     /// nothing is sent and the window says so. Every list and field of the area asks this before it hands its answer
@@ -178,7 +189,7 @@ internal sealed partial class MainForm
             return true;
         }
 
-        Refuse(_model.PromptPending ? QuestionOpensWords : NoLongerAskedWords);
+        Refuse(NotSentWords());
         return false;
     }
 
@@ -208,7 +219,7 @@ internal sealed partial class MainForm
             return true;
         }
 
-        Refuse(WaitSignature is not null ? QuestionOpensWords : NoLongerAskedWords);
+        Refuse(NotSentWords());
         return false;
     }
 
@@ -998,7 +1009,7 @@ internal sealed partial class MainForm
             return true;
         }
 
-        Refuse(WaitSignature is not null ? QuestionOpensWords : NoLongerAskedWords);
+        Refuse(NotSentWords());
         return false;
     }
 
@@ -1281,7 +1292,7 @@ internal sealed partial class MainForm
             AxKit.Core.Log.Info("The rest of a typed answer was not written: what it was typed for no longer waits");
             // The keys still waiting are dropped: the act ends now, not when its last key would have gone.
             UserActedNow();
-            Refuse(waiting is not null ? QuestionOpensWords : NoLongerAskedWords);
+            Refuse(NotSentWords());
             _attention.Stop();
             _attention.Start();
             return WriteCheck.Over;

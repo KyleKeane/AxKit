@@ -1,0 +1,63 @@
+# Workflow: Get an offered command and a message back when Claude Code keeps the command on its prompt row
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code; no Claude Code, no network and no model.
+# axClaude, docs/axClaude/SPEC.md D33 ("One message in flight", the sixth review of 2026-11-27, F1 and F2). A command an
+# AI tool offered goes as a ! line when the user says yes, and is in flight as a message is until Claude Code has taken
+# it. Until that review a message sent behind it was typed onto the row that still held the line, and the line, given
+# back, was not in the field and was named nowhere but in the first words. Now the message waits, and when the row
+# still holds the line three seconds after its Enter both come back: the message into the field, the line written
+# out in the conversation, so that nothing is lost.
+# The stand-in (tools/AxAutomate/StandIn.cs) draws what is typed, drops every Enter ("dropEnters") and writes every key
+# it reads to a file ("keys"); the runner is the AI tool.
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir ol
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.332 (stand-in)","dropEnters":99,"keys":"keys.txt","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"idle":true}]}
+file expected.txt ! echo offered<Enter>\n<Enter>\n
+start claude {temp}\ol --claude {temp}\claude.cmd -- --model haiku --effort low
+expect said Ready
+expect focus "name":"Message to Claude"
+
+# The access on and the runner paired, as in mcp\01-read-and-pair.
+menu Let AI tools read and open axKit
+expect state "notice":"Turn on AI tools?"
+wait 1100
+keys enter
+expect said AI tools on
+try said Not in a test run
+mcp start
+mcp call axkit_windows
+expect state "notice":"axAutomate asks to use axKit"
+wait 1500
+keys tab
+expect focus I understand
+keys space
+expect said ! checked
+keys tab
+expect focus &Allow
+keys enter
+expect said axAutomate may read axKit
+expect mcp "app": "axClaude"
+
+# Check: A message sent while Claude Code still holds an offered command is never typed onto its row
+mcp call axkit_offer_command {"window":"{window}","command":"echo offered"}
+expect mcp "offered": true
+expect focus 1. Explain this command
+wait 1500
+keys down
+expect focus 2. Yes, run it
+keys enter
+expect said Sent
+expect focus "name":"Message to Claude"
+# The field the list gave the focus back to holds its Enter for a moment (bundle AX-6.4); the line is in flight meanwhile.
+type a message
+wait 1100
+keys enter
+expect said Not sent: Claude did not take the line; your message is back in the message field; the one after it was not typed either
+expect focus "name":"Message to Claude"
+expect text a message
+run fc /b ol\keys.txt expected.txt
+
+# Check: The offered command that did not go is written out in the conversation
+do Conversation
+expect text Not sent: Claude's prompt row still held the line three seconds after its Enter. Your message is back in the message field. The message sent after it was not typed either. Not put into the field: ! echo offered.

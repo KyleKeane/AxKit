@@ -32,22 +32,21 @@ public abstract partial class AxKitForm
     {
         // L7 (the fifth review of 2026-11-27): a notice that comes by itself in place of a question the user has not
         // answered runs that question's cancel first, as Escape would, and says which one it replaced. The plainer of
-        // the two ways the review offered: no queue of notices waiting behind one another.
-        if (NoticeOpen && Overlay.Shown is { } shown && Notice.ReplacesUnanswered(shown, byItself: !_answeringNotice && !_chaining && _userKey is null))
+        // the two ways the review offered: no queue of notices waiting behind one another. Every held question with a
+        // cancel and a second choice, the AI tools' requests included (the sixth review of that day, L1).
+        if (NoticeOpen && Overlay.Shown is { } shown && Notice.ReplacesUnanswered(shown, byItself: !_answeringNotice && !_chaining && _userKey.Current is null))
         {
             Log.Info("A notice came by itself in place of a question not answered: the question's cancel runs");
             var outer = _answeringNotice;
             _answeringNotice = true;
             try
             {
-                shown.Choices.First(choice => choice.IsCancel).Action?.Invoke();
+                notice = Notice.InPlaceOf(shown, notice, byItself: true);
             }
             finally
             {
                 _answeringNotice = outer;
             }
-
-            notice = notice.Replacing(shown);
         }
 
         // N1 (the fourth review of 2026-11-27): a notice holds its answering keys unless it is the first result of the
@@ -56,7 +55,7 @@ public abstract partial class AxKitForm
         // post or an await holds. Also when it cannot be: opened from a notice's button or in the action after one
         // closed (what follows an answer arrives by itself, KeyHold rule 1), or inside a command clicked for an AI tool
         // (MC-7.9), whose own code says ByUser for the user's key.
-        notice = Notice.AsShown(notice, followsAnswer: _answeringNotice || _chaining, forAiTool: ClickedForAiTool, userKey: _userKey);
+        notice = Notice.AsShown(notice, followsAnswer: _answeringNotice || _chaining, forAiTool: ClickedForAiTool, userKey: _userKey.Current);
         _paletteSpeak.Stop();
         // AX-8.12: a notice that arrives while a key is tested ends the test, so that its keys answer the notice.
         EndKeyTest();
@@ -97,6 +96,12 @@ public abstract partial class AxKitForm
         _chainHeld |= !notice.OpenedByUser;
         NoticeOpen = true;
         Overlay.Populate(notice);
+        // Shown inside a run's click for an AI tool: the one notice the run's text may fill (FillForMcp, L3).
+        if (ClickedForAiTool)
+        {
+            _runNotice = Overlay.Shown;
+        }
+
         PaintTheme(Overlay);
         Overlay.Visible = true;
         Overlay.BringToFront();

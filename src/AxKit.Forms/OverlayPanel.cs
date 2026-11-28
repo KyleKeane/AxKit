@@ -123,15 +123,43 @@ public sealed record Notice(string Title, string Text, IReadOnlyList<OverlayChoi
     /// <summary>
     /// Whether a notice that comes by itself (<paramref name="byItself"/>: no key of the user's handled, not from a
     /// notice's button or the action after one) in place of <paramref name="shown"/> takes the place of a question
-    /// the user has not answered: a notice that holds its keys and asks (a default answer that is not its cancel). Then
-    /// that question's cancel runs first, as Escape would, so that what waited on it hears a no, and the new notice
-    /// says which one it replaced (<see cref="Replacing"/>). The fifth review of 2026-11-27 (L7): until then the
-    /// question was gone without an answer and without a word. A notice that only informs or shows progress (a Close
-    /// or a Cancel and nothing else) is the flow's own, which replaces it with its result.
+    /// the user has not answered: a notice that holds its keys and asks, a cancel and a second choice, whatever its
+    /// default (the sixth review of 2026-11-27, L1: an AI tool's request to run a command and the pairing request,
+    /// whose default is their No, were left out, and the pairing's call waited its two minutes). Then that question's
+    /// cancel runs first, as Escape would, so that what waited on it hears a no at once, and the new notice says which
+    /// one it replaced (<see cref="Replacing"/>). The fifth review of 2026-11-27 (L7): until then the question was gone
+    /// without an answer and without a word. A notice that only informs or shows progress (a Close or a Cancel and
+    /// nothing else) is the flow's own, which replaces it with its result.
     /// </summary>
     public static bool ReplacesUnanswered(Notice? shown, bool byItself) =>
         byItself && shown is { OpenedByUser: false } held
-        && held.Choices.Any(choice => choice.IsDefault && !choice.IsCancel) && held.Choices.Any(choice => choice.IsCancel);
+        && held.Choices.Any(choice => choice.IsCancel) && held.Choices.Any(choice => !choice.IsCancel);
+
+    /// <summary>
+    /// The notice an AI tool's run may type its text into (docs/axKit/mcp.md MC-7.9): <paramref name="shown"/>, only when
+    /// it is the very notice the run's click showed (<paramref name="shownInClick"/>, recorded as it was shown); null
+    /// for any other, one that came by itself after the click above all (the sixth review of 2026-11-27, L3).
+    /// </summary>
+    public static Notice? ShownForRun(Notice? shown, Notice? shownInClick) =>
+        shown is not null && ReferenceEquals(shown, shownInClick) ? shown : null;
+
+    /// <summary>
+    /// <paramref name="incoming"/> as it is shown in place of <paramref name="shown"/>: when it replaces a question the
+    /// user has not answered (<see cref="ReplacesUnanswered"/>), that question's cancel runs first, as Escape would, so
+    /// that what waits on it hears a no at once (an AI tool's pairing call ends then, not after its two minutes), and
+    /// the incoming notice says which one it replaced (<see cref="Replacing"/>); else it is shown as it is. The window
+    /// base calls it while it marks itself as answering a notice, so that what the cancel opens follows an answer.
+    /// </summary>
+    public static Notice InPlaceOf(Notice? shown, Notice incoming, bool byItself)
+    {
+        if (!ReplacesUnanswered(shown, byItself))
+        {
+            return incoming;
+        }
+
+        shown!.Choices.First(choice => choice.IsCancel).Action?.Invoke();
+        return incoming.Replacing(shown);
+    }
 
     /// <summary>The notice that replaces the unanswered question <paramref name="replaced"/>: its text begins with the question's title, so that its opening says it ("Replaces: Clear the history?").</summary>
     public Notice Replacing(Notice replaced)

@@ -369,8 +369,10 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
 65. **Be asked again when the command changes under the same question**
     - Hear a command's question and move to No
     - Refuse the command that was asked last
-66. **Have a short exchange with Claude**
-67. **Answer a set of two questions from Claude**
+66. **Have a command of the menus wait until Claude Code has taken the message before it**
+    - Choose the model once Claude Code has taken the message
+67. **Have a short exchange with Claude**
+68. **Answer a set of two questions from Claude**
 
 ## axClip
 

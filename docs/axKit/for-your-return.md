@@ -30,7 +30,9 @@ Updated 2026-11-28, early morning.
   quick second message could be joined to the first and that a notice opened from a menu did not hold; fixed:
   one message is in flight at a time, and only a Ctrl or function key opens a notice that answers at once.
   The fifth look at axGIT pinned git to the repository read and reads paths only on this computer; fixed. The
-  sixth look at axClaude's message path found a message Claude Code had not taken counted as sent; its batch is next.
+  sixth look at axClaude's message path found a message Claude Code had not taken counted as sent; fixed: a message is in flight until Claude
+  Code has taken it, and nothing sent is lost. axGIT's next batch asks you about every repository once, whatever
+  its scan finds: a reading of git's files can never be complete, so the trust is yours, said plainly.
 - **Fable and Opus**: on 2026-11-28 you said Fable's credits were nearly spent. Every remaining fix batch has
   its written brief with the decisions in it, and the state, the order and the process are in
   `C:\Temp\axkit-tools\HANDOFF.md`, so that Opus can run them; the design work on branches (the graph's
@@ -112,6 +114,20 @@ Each is one line to undo unless it says otherwise.
   with its title, rather than waiting behind it. Progress and plain information notices are left alone.
 - **A combining mark on anything but a letter is written out as its code**, in every text; a keycap emoji stays an
   emoji outside commands.
+- **A message is in flight until Claude Code has taken it**: typed only onto a bare prompt row, its Enter once the
+  row shows it, the Enter pressed once more after 1.5 seconds (three times over 4.5 seconds before), and the next
+  message waits until the row is bare again or Claude asks. Each step waits 3 seconds at most; then the message and
+  everything behind it come back. Meanwhile Choose the model and an offered command say "Not sent: Claude is busy".
+  The row is emptied only while it holds exactly the text given back. To turn back: `QueuedWrite` and
+  `AxKit.Core/Pty/WriteQueue`.
+- **Nothing you send is lost**: a message that cannot go back into the field is written in the conversation on
+  every path, a stop and a restart included. On a stop, a message put back into an empty field is not said (the
+  stop says its own); an item weighs whether it should be.
+- **Typing y, n or a number into a question axClaude cannot read no longer goes to Claude Code**: the field says it
+  cannot read the question; the Send key menu and Interrupt remain.
+- **An AI tool's run fills only the notice its own click showed**, not one a command opens a moment later.
+- **A question after a Windows dialog holds**: the key that opened Save as or a program picker no longer counts as
+  your opening of the question after it.
 - **A command to approve writes out every hidden joiner and selector, emoji or not**; no-break spaces in
   Claude's own lines stay as they are (it writes them after its bullets).
 - **A day and month typed without a year is the next such day**, today included; 29 February is the next leap year's.
@@ -206,6 +222,7 @@ Kept in `docs/axKit/nvda-test-record.md` and `docs/axKit/owed.md`; here only wha
 - The edge sound on a key pressed within a question's first second (new; see the decision above).
 - The kind not-sent (a message given back) has no sound; before, "Claude asked" gave the refused sound.
 - How a held menu confirmation and a held explanation feel, and "Not sent yet" 3 seconds after Enter.
+- Whether the long given-back sentences are heard whole, and "Not sent: Claude is busy".
 - (More as the passes run.)
 
 ## What to try first

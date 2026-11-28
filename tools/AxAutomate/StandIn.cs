@@ -39,7 +39,9 @@
 // so that a message's Enter waits for its row), "echo" (false: nothing typed is drawn, the row never shows a message)
 // and "keys" (a file name: every key read is appended to that file in the working folder, a character as itself,
 // Enter as <Enter> and a line end, Ctrl+J as <Ctrl+J>, Ctrl+U as <Ctrl+U>, any other control as <U+XXXX>, so that a
-// script compares what reached Claude Code's prompt, in order, with a file of its own). The session file is
+// script compares what reached Claude Code's prompt, in order, with a file of its own), and one for an Enter
+// Claude Code drops (the sixth review of that day, F1): "dropEnters" (a number: so many Enters on a typed draft
+// leave it on the row, as Claude Code leaves a message whose Enter it dropped in its first seconds). The session file is
 //   <the scenario's folder>\<home>\.claude\projects\<the working folder's full path, every character not an ASCII
 //   letter or digit as ->\<session>.jsonl
 // A step is an object; the first of these keys it holds says what it does:
@@ -187,6 +189,7 @@ internal static class StandIn
         _echoAfterMs = root.TryGetProperty("echoAfter", out _) ? Number(root, "echoAfter") : 0;
         _echo = !root.TryGetProperty("echo", out var echo) || echo.ValueKind != JsonValueKind.False;
         _keysFile = StringOf(root, "keys") is { Length: > 0 } keys ? Path.Combine(folder, keys) : null;
+        _dropEnters = root.TryGetProperty("dropEnters", out _) ? Number(root, "dropEnters") : 0;
         new Thread(() => EchoTyped(output)) { IsBackground = true, Name = "typed" }.Start();
         for (var i = 0; i < steps.Count; i++)
         {
@@ -431,6 +434,13 @@ internal static class StandIn
                             continue;
                         }
 
+                        // An Enter Claude Code drops in its first seconds (FR-2.1): the typed draft stays on the row.
+                        if (_dropEnters > 0)
+                        {
+                            _dropEnters--;
+                            continue;
+                        }
+
                         _typedSinceFrame = false;
                         var clear = new StringBuilder();
                         for (var i = 0; i < _draftBreaks; i++)
@@ -494,6 +504,9 @@ internal static class StandIn
 
     /// <summary>The scenario's "keys": the file in the working folder every key read is appended to, or null.</summary>
     private static string? _keysFile;
+
+    /// <summary>The scenario's "dropEnters": how many Enters on a typed draft are still to be dropped, the draft left on the row.</summary>
+    private static int _dropEnters;
 
     private static void WaitForFile(string path)
     {

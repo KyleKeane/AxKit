@@ -714,11 +714,19 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     without writing them. A notice the window opens for the user's own command, which is that command's first
     result, holds nothing, and says so with `Notice.ByUser()` (point 3); everything else holds.
     A notice that comes by itself (no key of the user's handled, not from a notice's button) in place of a question
-    the user has not answered (a notice that holds and has a default answer besides its cancel) runs that question's
-    cancel first, as Escape would, so that what waited on it hears a no, and its text begins with "Replaces:" and the
-    question's title (the fifth review of 2026-11-27, L7; `Notice.ReplacesUnanswered`, `Notice.Replacing`). Until
-    then the question went without an answer and without a word. The plainer of the two ways: no queue of notices; a
-    notice that only informs or shows progress is its flow's own, which replaces it with its result.
+    the user has not answered (a notice that holds and has a cancel and a second choice, whatever its default: an AI
+    tool's pairing request and its request to run a command included, the sixth review of 2026-11-27, L1) runs that
+    question's cancel first, as Escape would, so that what waited on it hears a no at once, and its text begins with
+    "Replaces:" and the question's title (the fifth review of 2026-11-27, L7; `Notice.ReplacesUnanswered`,
+    `Notice.Replacing`, `Notice.InPlaceOf`). Until then the question went without an answer and without a word. The
+    plainer of the two ways: no queue of notices; a notice that only informs or shows progress is its flow's own,
+    which replaces it with its result.
+    A modal loop ends "opened by the user" (the sixth review of 2026-11-27, F3): a Windows dialog, the shell's
+    dialogs and menu, any dialog of the system's inside the command of a key runs keys of its own, and the notice the
+    command shows after it is no first result of that key any more; it holds. Every modal loop of a window goes
+    through the window base's one place for it (`AxKitForm.InModalLoop`, `ShowSystemDialog`; `ModalLoopTests` reads
+    every source for one outside it). Until then the Enter that closed Save as, pressed twice, answered "Save as
+    UTF-8?", which Ctrl+Shift+S had "opened" seconds before.
     A tick of a list with check boxes is an answer too: inside the hold a click or UI Automation's Toggle, which pass
     no key, change no box and are heard (the fourth review of 2026-11-27, L7).
   - **Nothing unseen in what is asked.** The name and the answers of every question in the question area are shown
@@ -742,7 +750,10 @@ The apps are named ax and a word, the ax in lower case and the word as it is wri
     the sign before it: "&gt;U+0338&gt;" reads as two signs, one crossed out, and bash ran "echo added &gt;U+0338&gt;
     target.txt" as a truncation into a file named by the mark. Marks on letters stay (a decomposed accent, the vowel
     signs of Devanagari and Arabic); a keycap's U+20E3 after a digit, # or * with its picture selector stays an emoji
-    in a question's answer, and shows its parts in a command.
+    in a question's answer, and shows its parts in a command. A hidden character is no letter for this rule, though
+    its category says so (the sixth review of 2026-11-27, L6: the Hangul fillers U+3164, U+115F, U+1160, U+FFA0
+    carried a mark unseen). In ordinary text a U+200D or U+200C right after a virama (canonical combining class 9)
+    stays, since it asks for an Indic half form or keeps a conjunct apart (L6).
     **No hidden character in a command, ever** (N2 of the same review): in a command offered to run and in the label
     of a permission question (`DisplayText.VisibleCommand`) none of these exceptions holds, every joiner, non-joiner,
     variation selector and tag character is written out, emoji or not, since a command is run and not read, and so is

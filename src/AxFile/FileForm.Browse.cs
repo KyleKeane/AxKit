@@ -403,7 +403,7 @@ public sealed partial class FileForm
             return;
         }
 
-        if (Shell.Properties(Handle, drive.Path) is { } reason)
+        if (InModalLoop(() => Shell.Properties(Handle, drive.Path)) is { } reason)
         {
             Failed("Properties failed", reason);
         }

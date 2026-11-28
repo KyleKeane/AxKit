@@ -1,0 +1,42 @@
+# Workflow: Keep a message Claude never took when Claude stops or restarts
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code; no Claude Code, no network and no model.
+# axClaude, docs/axClaude/SPEC.md D33 ("One message in flight", the sixth review of 2026-11-27, F2). A message Claude
+# Code has not taken when it stops is given back: into the message field, or, when the field holds other text, written
+# out in the conversation. Until that review a stop gave it back silently into the field alone, and with the user's
+# next words in the field the message was lost, on a restart and when Claude Code ended by itself alike.
+# The stand-in (tools/AxAutomate/StandIn.cs) draws nothing typed ("echo" false), so a message's Enter waits for its
+# row; it ends by itself at a file of the script's.
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir ks
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.332 (stand-in)","echo":false,"steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"waitFile":"end"},{"wait":100}]}
+start claude {temp}\ks --claude {temp}\claude.cmd -- --model haiku --effort low
+expect said Ready
+wait 1000
+
+# Check: A restart keeps the message when the field holds other text
+# The message's Enter waits for the row; the user types the next words, then restarts Claude.
+type first words
+keys enter
+type the next words
+keys ctrl+shift+r
+expect state "notice":"Force Claude to restart?"
+keys enter
+expect said Restarting
+expect said Ready
+do Conversation
+expect text Not sent: Claude stopped before it took your message. The message field held other text, so it is here: first words.
+refuse text # Input 1
+do Message field
+expect text the next words
+
+# Check: Claude ending by itself keeps the message too
+keys ctrl+a
+type second words
+keys enter
+type more words
+file ks\end x
+expect said Claude stopped
+do Conversation
+expect text Not sent: Claude stopped before it took your message. The message field held other text, so it is here: second words.

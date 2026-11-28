@@ -276,6 +276,7 @@
     {"workflow": "Keep a message that Claude's question cut off as it was being typed", "goal": "Answer the question and find the message in the field again", "script": "tests/scripts/axClaude/68-message-kept-when-claude-asks.txt", "actions": 1},
     {"workflow": "Be asked again when the command changes under the same question", "goal": "Hear a command's question and move to No", "script": "tests/scripts/axClaude/69-command-changed-under-a-question.txt", "actions": 1},
     {"workflow": "Be asked again when the command changes under the same question", "goal": "Refuse the command that was asked last", "script": "tests/scripts/axClaude/69-command-changed-under-a-question.txt", "actions": 1},
+    {"workflow": "Have a command of the menus wait until Claude Code has taken the message before it", "goal": "Choose the model once Claude Code has taken the message", "script": "tests/scripts/axClaude/74-command-while-a-message-is-in-flight.txt", "actions": 2},
     {"workflow": "Have a short exchange with Claude", "goal": "Have a short exchange with Claude", "script": "tests/scripts/axClaude/message.txt", "actions": 2},
     {"workflow": "Answer a set of two questions from Claude", "goal": "Answer a set of two questions from Claude", "script": "tests/scripts/axClaude/two-questions.txt", "actions": 3},
     {"workflow": "Find and paste something you copied earlier", "goal": "Move through the copied items", "script": "tests/scripts/axClip/01-basics.txt", "actions": 2},

@@ -5,7 +5,8 @@
 # a row that never showed it ended in "Not sent yet: Enter in the empty message field sends it": the message stayed
 # in the conversation as sent, and the empty field's Enter was a bare Enter, checked against nothing. Now the message
 # is taken back as a dropped one is: its block leaves the conversation, its text comes back into the field, a message
-# sent after it is not typed either and comes back with it, and the next send empties the row first.
+# sent after it is not typed either and comes back with it, and the next send empties the row first, only of exactly
+# the message given back (the sixth review of 2026-11-27, F1).
 # The stand-in (tools/AxAutomate/StandIn.cs) draws nothing typed ("echo" false) and writes every key it reads to a
 # file ("keys"), which the script compares with what it expects.
 file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
@@ -14,7 +15,7 @@ mkdir nv
 file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
 file scenario.json {"version":"2.1.332 (stand-in)","echo":false,"keys":"keys.txt","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"idle":true}]}
 file expected1.txt first message
-file expected2.txt first message<Ctrl+U>first message<Ctrl+J><Ctrl+J>second message
+file expected2.txt first messagefirst message<Ctrl+J><Ctrl+J>second message
 start claude {temp}\nv --claude {temp}\claude.cmd -- --model haiku --effort low
 expect said Ready
 wait 1000
@@ -38,8 +39,10 @@ do Conversation
 expect text Not sent yet: Claude's prompt row did not show your message, so its Enter was not sent. The message is back in the message field. The message sent after it was not typed either and is in the field after it. Enter sends it again.
 refuse text # Input 1
 
-# Check: The next send empties Claude Code's prompt row first
-# What was typed of the message that came back may stand on the row: the next message empties it before it is typed.
+# Check: The next send empties Claude Code's prompt row only of exactly the message given back
+# What was typed of the message that came back may stand on the row: the next message empties it before it is typed,
+# but only while the row holds exactly that text (the sixth review of 2026-11-27, F1). This row shows none of it, so
+# nothing is cleared, and the message is typed onto the bare row.
 do Message field
 keys enter
 wait 1000

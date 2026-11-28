@@ -17,7 +17,7 @@
   scripts (`JoinsLetters`), the tags of the three recommended flags (`FlagTags`, `InFlag`); and two seen characters
   that hide what they stand on are written out in every text, the braille blank and a combining mark whose cluster
   does not begin with a letter (`OnNoLetter`; the fifth review of 2026-11-27, E1: a mark on "&gt;" made a truncation
-  look like two signs, one crossed out), a keycap's U+20E3 after a digit, # or * with its FE0F aside, outside commands.
+  look like two signs, one crossed out), a keycap's U+20E3 after a digit, # or * with its FE0F aside, outside commands; a hidden character before the mark counts as no letter (L6 of the sixth review: the Hangul fillers), and outside commands a joiner or non-joiner right after a virama stays (`Virama`, combining class 9, for the Indic half forms). `WithoutHidden` takes every hidden character out, for comparing a text with what a program drew of it (axClaude's prompt row, F4).
   `VisibleCommand`, for a command offered to run and a permission question's label, writes out every hidden
   character with no exception (N2: a command is run, not read) and every space that is not the plain one;
   `VisibleLine` keeps such spaces (its summary says why). Each rule has its rows in `DisplayTextTests`. `VisibleLine` keeps a tab, for a question's name and answers: `AxKit.Forms/ControlArea` applies

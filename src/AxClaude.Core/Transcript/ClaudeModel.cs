@@ -156,6 +156,19 @@ public abstract class ClaudeModel : LineStore
     }
 
     /// <summary>
+    /// Several messages given back at once, oldest first as they were sent, taken back newest first (the sixth review
+    /// of 2026-11-27, L5): a number is given again only when no block was made after it, so oldest first left the
+    /// count one too high for each message before the last, and the next block skipped their numbers.
+    /// </summary>
+    public void TakeBackAll(IReadOnlyList<string> oldestFirst)
+    {
+        for (var i = oldestFirst.Count - 1; i >= 0; i--)
+        {
+            TakeBack(oldestFirst[i]);
+        }
+    }
+
+    /// <summary>
     /// The exchange block of a sent message (SPEC.md FR-4.1), the same whatever the source: the input marker, the
     /// message's lines, a blank line, the output marker and a blank line, with the next number and, when asked for,
     /// the time. Both markers are level 1 headings, so that the heading keys stop at every exchange; Claude's own

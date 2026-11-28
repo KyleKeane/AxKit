@@ -107,7 +107,7 @@ public sealed partial class NoticeHoldTests : IDisposable
 
         var window = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms", "AxKitForm.Notices.cs")).ReplaceLineEndings("\n");
         var show = window[window.IndexOf("protected internal void ShowNotice(Notice notice)", StringComparison.Ordinal)..];
-        var first = show.IndexOf("notice = Notice.AsShown(notice, followsAnswer: _answeringNotice || _chaining, forAiTool: ClickedForAiTool, userKey: _userKey);", StringComparison.Ordinal);
+        var first = show.IndexOf("notice = Notice.AsShown(notice, followsAnswer: _answeringNotice || _chaining, forAiTool: ClickedForAiTool, userKey: _userKey.Current);", StringComparison.Ordinal);
         var populate = show.IndexOf("Overlay.Populate(notice);", StringComparison.Ordinal);
         Assert.True(first > 0 && populate > first, "ShowNotice asks Notice.AsShown before anything else uses the notice");
         Assert.Contains("_answeringNotice = true;", window, StringComparison.Ordinal);
@@ -177,10 +177,69 @@ public sealed partial class NoticeHoldTests : IDisposable
 
         var window = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms", "AxKitForm.Notices.cs")).ReplaceLineEndings("\n");
         var show = window[window.IndexOf("protected internal void ShowNotice(Notice notice)", StringComparison.Ordinal)..];
-        var asked = show.IndexOf("Notice.ReplacesUnanswered(shown, byItself: !_answeringNotice && !_chaining && _userKey is null)", StringComparison.Ordinal);
-        var cancelled = show.IndexOf("shown.Choices.First(choice => choice.IsCancel).Action?.Invoke();", StringComparison.Ordinal);
+        var asked = show.IndexOf("Notice.ReplacesUnanswered(shown, byItself: !_answeringNotice && !_chaining && _userKey.Current is null)", StringComparison.Ordinal);
+        var cancelled = show.IndexOf("notice = Notice.InPlaceOf(shown, notice, byItself: true);", StringComparison.Ordinal);
         var populate = show.IndexOf("Overlay.Populate(notice);", StringComparison.Ordinal);
         Assert.True(asked > 0 && cancelled > asked && populate > cancelled, "ShowNotice cancels an unanswered question it replaces before the new notice is shown");
+    }
+
+    /// <summary>
+    /// The sixth review of 2026-11-27 (L1, L7): every held question with a cancel and a second choice is cancelled
+    /// when a notice comes by itself in its place, whatever its default: the AI tools' pairing request and run request,
+    /// whose default is their No, included. Run, as the window base runs it (<see cref="Notice.InPlaceOf"/>): the
+    /// pairing's call, which waits on its answer, hears its no at once instead of after its two minutes.
+    /// </summary>
+    [Fact]
+    public async Task A_notice_by_itself_over_an_ai_tools_request_ends_its_wait_at_once()
+    {
+        var answer = new TaskCompletionSource<bool>();
+        var pairing = new Notice("axAutomate asks to use axKit", "It can read what the windows show.",
+        [
+            new OverlayChoice("&Allow", () => answer.TrySetResult(true)),
+            new OverlayChoice("&Deny", () => answer.TrySetResult(false), IsDefault: true, IsCancel: true),
+        ]).ByItself();
+        var failure = Notice.Plain("Failed", "The disk is full.").ByItself();
+        var shown = Notice.InPlaceOf(pairing, failure, byItself: true);
+        Assert.True(answer.Task.IsCompletedSuccessfully);
+        Assert.False(await answer.Task);
+        Assert.StartsWith("Replaces: axAutomate asks to use axKit.", shown.Text, StringComparison.Ordinal);
+
+        var ran = false;
+        var request = new Notice("axAutomate asks to run Next permission mode", "x",
+            [new OverlayChoice("&Yes, run it", () => ran = true, StaysOpen: true), new OverlayChoice("&No", () => ran = false, IsDefault: true, IsCancel: true)]).ByItself();
+        Assert.True(Notice.ReplacesUnanswered(request, byItself: true));
+        Assert.False(ran);
+
+        // Not a notice with one choice, not one the user's key replaces, and nothing is run then.
+        var close = Notice.Plain("Keyboard shortcuts", "F1.");
+        Assert.Same(failure, Notice.InPlaceOf(close, failure, byItself: true));
+        var untouched = new TaskCompletionSource<bool>();
+        var again = new Notice("Pair?", "x", [new OverlayChoice("&Allow"), new OverlayChoice("&Deny", () => untouched.TrySetResult(false), IsDefault: true, IsCancel: true)]);
+        Assert.Same(failure, Notice.InPlaceOf(again, failure, byItself: false));
+        Assert.False(untouched.Task.IsCompleted);
+    }
+
+    /// <summary>
+    /// The sixth review of 2026-11-27 (L3): an AI tool's run types its text only into the notice its click showed,
+    /// recorded as it was shown, never into one that came by itself after it, though that one has a field and stands
+    /// when the run looks again after the messages already posted.
+    /// </summary>
+    [Fact]
+    public void Only_the_notice_the_runs_click_showed_is_filled()
+    {
+        var clicked = new Notice("Go to line", "Line:", [OverlayChoice.Close]);
+        var byItself = new Notice("Name the file", "Name:", [OverlayChoice.Close]).ByItself();
+        Assert.Same(clicked, Notice.ShownForRun(clicked, clicked));
+        Assert.Null(Notice.ShownForRun(byItself, clicked));
+        Assert.Null(Notice.ShownForRun(byItself, null));
+        Assert.Null(Notice.ShownForRun(null, clicked));
+        // A notice equal to the click's but not the same one is not the click's.
+        Assert.Null(Notice.ShownForRun(clicked with { }, clicked));
+
+        var notices = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms", "AxKitForm.Notices.cs")).ReplaceLineEndings("\n");
+        var populate = notices.IndexOf("Overlay.Populate(notice);", StringComparison.Ordinal);
+        var recorded = notices.IndexOf("_runNotice = Overlay.Shown;", StringComparison.Ordinal);
+        Assert.True(populate > 0 && recorded > populate, "ShowNotice records the notice a run's click showed, as it is shown");
     }
 
     /// <summary>The key dispatch is where the key is known: the window base sets it around the whole of its key handling, and the notice is asked with it.</summary>
@@ -190,15 +249,27 @@ public sealed partial class NoticeHoldTests : IDisposable
         var window = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms", "AxKitForm.cs")).ReplaceLineEndings("\n");
         var dispatch = window[window.IndexOf("protected override bool ProcessCmdKey(ref Message msg, Keys keyData)", StringComparison.Ordinal)..];
         dispatch = dispatch[..dispatch.IndexOf("\n    }\n", StringComparison.Ordinal)];
-        Assert.Contains("_userKey = keyData;", dispatch, StringComparison.Ordinal);
-        Assert.Contains("return ProcessUsersKey(ref msg, keyData);", dispatch, StringComparison.Ordinal);
-        Assert.Contains("_userKey = outer;", dispatch, StringComparison.Ordinal);
-        // Set nowhere else: no other place can say that a key of the user's is being handled.
-        Assert.Equal(2, window.Split("_userKey = ").Length - 1);
+        Assert.Contains("_userKey.Handle(keyData, () => ProcessUsersKey(ref message, keyData));", dispatch, StringComparison.Ordinal);
+        // Handled nowhere else: no other place can say that a key of the user's is being handled (UserKeyMoment sets
+        // it around the handling and gives back what it found; ModalLoopTests runs it).
+        var forms = Directory.GetFiles(Path.Combine(SourceTexts.RepositoryRoot(), "src"), "*.cs", SearchOption.AllDirectories)
+            .Where(file => !file.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}", StringComparison.Ordinal));
+        Assert.Equal(1, forms.Sum(file => File.ReadAllText(file).Split("_userKey.Handle(").Length - 1));
         // A key of the whole window pressed in menu mode, on the bar or in an open drop-down, runs once the menus have
         // closed: posted, after its handling, so the palette or the report it opens holds (a menu's keys cannot be
-        // driven on the run's desktop, so this is read here, and AsShown's null above is the rule it meets).
-        Assert.Equal(2, window.Split("BeginInvoke(() => RunWindowKey(keyData));").Length - 1);
+        // driven on the run's desktop, so this is read here, and AsShown's null above is the rule it meets). Read
+        // over every partial file of the window base (the sixth review of 2026-11-27, L7: a call in another file
+        // went unseen): posted twice, and run at once only inside the key's own handling.
+        var partials = Directory.GetFiles(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms"), "AxKitForm*.cs");
+        Assert.True(partials.Length > 5, "the window base's partial files are read");
+        var calls = partials.SelectMany(file => File.ReadAllLines(file)).Select(line => line.Trim())
+            .Where(line => line.Contains("RunWindowKey(", StringComparison.Ordinal) && !line.StartsWith("private bool RunWindowKey(", StringComparison.Ordinal) && !line.StartsWith("//", StringComparison.Ordinal) && !line.StartsWith("///", StringComparison.Ordinal))
+            .ToList();
+        Assert.Equal(2, calls.Count(line => line == "BeginInvoke(() => RunWindowKey(keyData));"));
+        Assert.Equal(3, calls.Count);
+        var body = window[window.IndexOf("private bool ProcessUsersKey(ref Message msg, Keys keyData)", StringComparison.Ordinal)..];
+        body = body[..body.IndexOf("\n    }\n", StringComparison.Ordinal)];
+        Assert.Contains("if (RunWindowKey(keyData))", body, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -231,8 +302,9 @@ public sealed partial class NoticeHoldTests : IDisposable
 
         var mcp = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxKit.Forms", "AxKitForm.Mcp.cs"));
         Assert.Contains("Overlay.Fill(text);", mcp, StringComparison.Ordinal);
-        // Only a notice shown since the click is filled, on the second pass too (the fifth review of 2026-11-27, L2).
-        Assert.Contains("Overlay.Shown is { Input: { } input } shown && !ReferenceEquals(shown, noticeBefore)", mcp, StringComparison.Ordinal);
+        // Only the notice shown inside the click, recorded there, is filled, on the second pass too (the sixth review of
+        // 2026-11-27, L3; the rule itself is run below, Only_the_notice_the_runs_click_showed_is_filled).
+        Assert.Contains("Notice.ShownForRun(Overlay.Shown, _runNotice) is { Input: { } input }", mcp, StringComparison.Ordinal);
         Assert.DoesNotContain("Overlay.PressDefault();", mcp, StringComparison.Ordinal);
     }
 

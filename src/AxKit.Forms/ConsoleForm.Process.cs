@@ -13,7 +13,8 @@ public abstract partial class ConsoleForm
     /// <summary>The exit is reported after this long, so that output still in the pipe arrives first.</summary>
     private readonly System.Windows.Forms.Timer _exitSettle = new() { Interval = 300 };
 
-    private readonly Queue<(string Text, int DelayAfter, Func<WriteCheck>? Still)> _writes = new();
+    /// <summary>The paced writes, with what each answer of a write's check makes of them (<see cref="WriteQueue"/>, pure and tested in AxKit.Core).</summary>
+    private readonly WriteQueue _writes = new();
 
     /// <summary>The one timer between two paced writes: a restart stops it, so that no second pump runs on (two ran after a restart until 2026-10-23).</summary>
     private readonly System.Windows.Forms.Timer _pump = new();
@@ -229,12 +230,14 @@ public abstract partial class ConsoleForm
     /// is asked again <see cref="NotYetMs"/> later; the check itself says when waiting is over. Until the third review
     /// of 2026-11-27 a write was judged when it was queued and never again; until the fifth review of that day the
     /// check was a yes or no, and a "not yet" dropped what stood behind it. Required, null written out for a write
-    /// that needs no check (<see cref="Write"/>).
+    /// that needs no check (<see cref="Write"/>). What the queue does with each answer is <see cref="WriteQueue.Next"/>'s
+    /// (the sixth review of that day, L7). A write with an empty text is never written: it is a point where the queue
+    /// waits on its check (axClaude: until Claude Code has taken a message).
     /// </summary>
-    protected void Enqueue(string text, int delayAfter, Func<WriteCheck>? still) => _writes.Enqueue((text, delayAfter, still));
+    protected void Enqueue(string text, int delayAfter, Func<WriteCheck>? still) => _writes.Add(text, delayAfter, still);
 
     /// <summary>How long a write that was told "not yet" waits before it is asked again.</summary>
-    protected const int NotYetMs = 100;
+    protected const int NotYetMs = WriteQueue.NotYetMs;
 
     /// <summary>
     /// The queue was dropped with writes still in it (a check said over, or <see cref="ClearWrites"/>): a window that
@@ -256,54 +259,34 @@ public abstract partial class ConsoleForm
     /// <summary>What is still queued goes (an interrupt: an answer typed out a key at a time must not land after it), and the window is told (<see cref="WritesDropped"/>).</summary>
     protected void ClearWrites()
     {
-        var had = _writes.Count > 0;
-        _writes.Clear();
-        if (had)
+        if (_writes.Clear())
         {
             WritesDropped();
         }
     }
 
+    /// <summary>One turn of the pump: what the queue says (<see cref="WriteQueue.Next"/>), done.</summary>
     private void PumpWrites()
     {
-        if (_writes.Count == 0)
+        var step = _writes.Next();
+        switch (step.Kind)
         {
-            _writing = false;
-            return;
-        }
-
-        var (text, delay, still) = _writes.Peek();
-        switch (still?.Invoke() ?? WriteCheck.Goes)
-        {
-            case WriteCheck.Over:
-                // What this write was for is over: it and what waits behind it go unwritten.
-                _writes.Clear();
+            case WriteStepKind.Idle:
+                _writing = false;
+                return;
+            case WriteStepKind.Dropped:
+                // What a write was for is over: it and what waited behind it went unwritten.
                 _writing = false;
                 WritesDropped();
                 return;
-            case WriteCheck.NotYet:
-                // It stays first, and nothing behind it goes before it.
-                _writing = true;
-                _pump.Interval = NotYetMs;
-                _pump.Start();
-                return;
-            case WriteCheck.Skip:
-                // This one alone is not needed: the next one is asked now.
-                _writes.TryDequeue(out _);
-                PumpWrites();
-                return;
+            case WriteStepKind.Write:
+                _host?.Write(step.Text);
+                break;
         }
 
-        if (!_writes.TryDequeue(out _))
-        {
-            // The check emptied the queue itself (it stopped the program): nothing is written.
-            _writing = false;
-            return;
-        }
-
+        // A write's pause, or a write told "not yet" asked again: nothing behind it goes before it.
         _writing = true;
-        _host?.Write(text);
-        _pump.Interval = delay;
+        _pump.Interval = step.WaitMs;
         _pump.Start();
     }
 }

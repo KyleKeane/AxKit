@@ -1,0 +1,46 @@
+# Workflow: Get two messages back when Claude Code keeps the first on its prompt row
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code; no Claude Code, no network and no model.
+# axClaude, docs/axClaude/SPEC.md D33 ("One message in flight", the sixth review of 2026-11-27, F1). Claude Code drops
+# an Enter in its first seconds and leaves the message on its prompt row. Until that review the message counted as
+# sent once its Enter went, and a second message sent within a second and a half was typed onto the same row, after
+# the first; given back, its Ctrl+U then cleared both, and the first stayed in the conversation as sent. Now a
+# message is in flight until Claude Code's row is bare again: the Enter goes once more after a second and a half,
+# everything sent behind it waits, and when the row still holds it three seconds after its Enter, both come back.
+# A message is typed only onto a bare row, and the row is emptied only of exactly the text given back.
+# The stand-in (tools/AxAutomate/StandIn.cs) draws what is typed, drops every Enter ("dropEnters") and writes every
+# key it reads to a file ("keys"), which the script compares with what it expects.
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir nt
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.332 (stand-in)","dropEnters":99,"keys":"keys.txt","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"idle":true}]}
+file expected1.txt first message<Enter>\n<Enter>\n
+file expected2.txt first message<Enter>\n<Enter>\n<Ctrl+U>first message<Ctrl+J><Ctrl+J>second message<Enter>\n
+start claude {temp}\nt --claude {temp}\claude.cmd -- --model haiku --effort low
+expect said Ready
+wait 1000
+
+# Check: A message sent while Claude Code still holds the one before is never typed onto its row
+# The first message's Enter goes and is dropped; the second waits behind it. The Enter goes once more, and three
+# seconds after the first one both messages come back into the field: nothing of the second reached the row.
+type first message
+keys enter
+expect said Sent
+type second message
+keys enter
+expect said Not sent: Claude did not take the message; it is back in the message field; the one after it was not typed either
+expect focus "name":"Message to Claude"
+expect text first message
+expect text second message
+run fc /b nt\keys.txt expected1.txt
+
+# Check: A message Claude Code did not take leaves the conversation
+do Conversation
+expect text Not sent: Claude's prompt row still held your message three seconds after its Enter. The message is back in the message field. The message sent after it was not typed either and is in the field after it.
+refuse text # Input 1
+
+# Check: The next send empties the row of exactly the message given back, then types onto the bare row
+do Message field
+keys enter
+wait 1000
+run fc /b nt\keys.txt expected2.txt
