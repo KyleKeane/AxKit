@@ -6,7 +6,7 @@ Run with NVDA before a release, on a repository with a remote (the axKit reposit
 
 ## 1. Start (AG-1, AG-2)
 
-1. Start axGIT on the repository for the first time: the notice "This repository is not trusted yet" comes first (every repository is asked about once, AG-1.6, since the review's sixth pass), and NVDA reads its text: "axGIT found nothing of concern in it. It reads the repository's files itself and cannot promise that it found everything.", then what trust means, "Until you trust a repository, axGIT runs no git in it and reaches nothing. …". Alt+T (after the second of the hold): "Trusted"; NVDA reads "<folder name> - axGIT window", then "Changes, 2 files list, Modified <file>, unstaged, 1 of 2" (or similar). Nothing else is spoken. The next start on it shows no notice.
+1. Start axGIT on the repository for the first time: the notice "This repository is not trusted yet" comes first (every repository is asked about once, AG-1.6, since the review's sixth pass), and NVDA reads its text: "axGIT found nothing of concern in it. It reads the repository's files itself and cannot promise that it found everything.", then what trust means, "Until you trust a repository, axGIT runs no git in it and reaches no server: …". Alt+T (after the second of the hold): "Trusted"; NVDA reads "<folder name> - axGIT window", then "Changes, 2 files list, Modified <file>, unstaged, 1 of 2" (or similar). Nothing else is spoken. The next start on it shows no notice.
 2. Down Arrow: the next item, nothing else. Tab: "Details, edit, read only", empty. Shift+Tab: the list, the same item as before. F6: the details again; Ctrl+Tab: the list.
 3. NVDA+End: the status bar: "main · no upstream · 2 changed, 0 staged" in a repository without a remote (or the branch's state: "up to date", "2 ahead"), then the path.
 4. Alt+1 while the Changes list shows: "Changes, 2 files". Alt+2: "Log, 200 commits list, <hash> <date> <author>: <subject>, 1 of 200". Alt+3: "Branches, N list, <branch>, current, …". Alt+1: back to Changes on the item you had. No menu opens and Windows makes no sound for Alt and the number; the menu bar stays closed when Alt is let go.
@@ -100,7 +100,7 @@ The runner's scripts are `tests/scripts/axGIT/07-own-programs.txt` (1 to 3) and 
 The runner's script is `tests/scripts/axGIT/09-what-was-seen.txt` (1 to 4).
 
 1. A folder inside a repository whose `.git` folder has a HEAD that is no reference (`garbage`): Ctrl+O on it says "Not a git repository", naming the folder; the repository above is not opened and nothing runs in it.
-2. A repository with a hook and a program setting (`core.sshCommand` set to a command line): the notice writes out "The programs as its settings write them: core.sshcommand: …" with the whole value, and says what trust means (since the sixth pass), "Until you trust a repository, axGIT runs no git in it and reaches nothing. Once you trust it, git works in it as git does: …"
+2. A repository with a hook and a program setting (`core.sshCommand` set to a command line): the notice writes out "The programs as its settings write them: core.sshcommand: …" with the whole value, and says what trust means (since the sixth pass; its first sentence since the seventh), "Until you trust a repository, axGIT runs no git in it and reaches no server: it reads only the repository's own files, where they lie (a repository on a share is read on the share), and the files on this computer its settings name. Once you trust it, git works in it as git does: …"
 3. The same repository, notice open; in a console add a setting (`git config filter.x.clean cat`), then Trust this repository: the notice comes again, starting "What axGIT finds in this repository changed while you were asked", naming filter.x.clean; no list comes.
 4. In a trusted repository, add a filter in a console, then Ctrl+Shift+S on a changed file: the notice comes, without "Stage failed", and the file is not staged.
 5. By ear: an untracked repository in the work tree (a folder with `git init` in it) is not asked about at the opening; after Stage all the notice comes naming "submodule <folder>: …" for what it holds.
@@ -113,3 +113,13 @@ The runner's scripts are `tests/scripts/axGIT/01-start.txt` (1, 2) and `08-setti
 2. The same, Alt+T: "Trusted", and the Changes list comes; closed and opened again: no notice.
 3. A fresh clone: the same notice, naming no setting; trusted once, it opens without the notice.
 4. By ear: a submodule whose `core.worktree` was set in a console to another folder: the notice names "submodule <path>: core.worktree".
+
+## 12. The review's seventh pass of 2026-11-28 (AG-1.6, AG-8.1a)
+
+The runner's script is `tests/scripts/axGIT/10-trust-shown.txt` (1, 2); the repositories of the review are the unit tests' (`GitTrustShownTests`).
+
+1. A repository trusted and closed; in a console move it aside and make a new repository at the same path; opened again: the notice comes, starting "The repository in this folder is not the one you trusted here, so nothing is trusted for it yet."; Enter (Keep it off) says "Not opened".
+2. The first repository moved back to its path and opened: no notice, the Changes list comes.
+3. By ear: a repository on a USB stick formatted FAT32 or exFAT: the notice says "Its drive (FAT32) gives a folder no lasting identity, so axGIT keeps no trust of it: …"; trusted, it opens, F5 asks nothing; opened again after another repository: the notice comes again.
+4. By ear: a repository opened through a junction (`mklink /J` to its folder): trusted, it opens (until the seventh pass: "git opens another git folder").
+5. By ear, after the update: a repository trusted in an earlier version is asked about once more, starting "What axGIT finds in this repository differs from what you trusted".

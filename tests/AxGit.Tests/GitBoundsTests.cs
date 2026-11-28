@@ -328,7 +328,7 @@ public sealed class GitBoundsTests : IDisposable
     }
 
     /// <summary>A junction, made with mklink /J, which needs no privilege; false where it could not be made.</summary>
-    private static bool Junction(string at, string target)
+    internal static bool Junction(string at, string target)
     {
         var start = new ProcessStartInfo(Path.Combine(Environment.SystemDirectory, "cmd.exe"));
         start.ArgumentList.Add("/c");
@@ -385,14 +385,14 @@ public sealed class GitBoundsTests : IDisposable
         Assert.False(session.Trusted);
 
         Git(root, "config", "filter.x.clean", Marker("race-filter"));
-        Assert.False(await session.TrustAsync(shown.Mark));
+        Assert.False(await session.TrustAsync(shown));
         Assert.False(session.Trusted);
         File.AppendAllText(Path.Combine(root, "a.txt"), "more\n");
         await session.ChangeAsync(GitTexts.StageAllArguments, GitRunner.Short);
         Assert.Empty(Ran());
 
         // Trusted for what is there now, it runs.
-        Assert.True(await session.TrustAsync(session.Scan.Mark));
+        Assert.True(await session.TrustAsync(session.Scan));
         Assert.True((await session.ChangeAsync(GitTexts.StageAllArguments, GitRunner.Short)).Ok);
         Assert.Equal(["race-filter"], Ran());
     }
@@ -408,7 +408,7 @@ public sealed class GitBoundsTests : IDisposable
         File.WriteAllText(Path.Combine(root, ".gitattributes"), "*.txt filter=x\n");
         var session = new GitSession(root, _ => false, _env);
         await session.CheckAsync();
-        Assert.True(await session.TrustAsync(session.Scan.Mark));
+        Assert.True(await session.TrustAsync(session.Scan));
 
         Git(root, "config", "filter.x.clean", Marker("between"));
         File.AppendAllText(Path.Combine(root, "a.txt"), "more\n");
@@ -555,7 +555,7 @@ public sealed class GitBoundsTests : IDisposable
         var session = new GitSession(root, _ => false, _env);
         var scan = await session.CheckAsync();
         Assert.Empty(scan.Risks);
-        Assert.True(await session.TrustAsync(scan.Mark));
+        Assert.True(await session.TrustAsync(scan));
 
         Assert.True((await session.ChangeAsync(GitTexts.StageAllArguments, GitRunner.Short)).Ok);
         Assert.Equal(["submodule vendor: core.sshcommand"], session.Scan.Risks);

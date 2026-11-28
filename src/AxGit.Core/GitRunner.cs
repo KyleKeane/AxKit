@@ -253,12 +253,14 @@ public static class GitRunner
         {
             // Outside call, program, Git: runs the user's installed git for one command and reads what it prints, one
             // process per command, its terminal prompts off; in a repository only once the user has trusted it, every
-            // repository asked once, and before that only as the parser of one settings file with no repository,
-            // reaching nothing (AG-1.6); once trusted, on the git folder the check read and no other, git works as git
-            // does: it runs the programs and hooks the repository's settings name and reads the files and places they
-            // and its index name, which can be on another computer;
+            // repository asked once, and before that only as the parser of one settings file with no repository
+            // (AG-1.6): until you trust a repository, axGIT runs no git in it and reaches no server: it reads only the
+            // repository's own files, where they lie (a repository on a share is read on the share), and the files on
+            // this computer its settings name; once trusted, on the git folder the check read and no other, git works
+            // as git does: it runs the programs and hooks the repository's settings name and reads the files and places
+            // they and its index name, which can be on another computer;
             // fetch, pull and push alone reach the repository's remotes, a push only a server and never a folder or
-            // a share, every other command works on disk: git fetches no missing object by itself and Git LFS
+            // a share, and every other command reaches no remote: git fetches no missing object by itself and Git LFS
             // neither fetches nor sends a file (FixedEnvironment; AX-11.11).
             result = await ProcessRun.RunAsync(info, [], timeout, cancellation);
         }

@@ -10,9 +10,11 @@ namespace AxGit.Core;
 /// switch or a pull can change it while git runs (T4); a changing command runs with them set aside
 /// (<see cref="GitTrust.Overrides"/>). <paramref name="GitDir"/>: the git folder that was read for the repository
 /// opened, which every run of git is given (P1). <paramref name="Programs"/>: each setting that names a program, with
-/// its whole value, "core.sshcommand: ssh -v", for the notice (P5).
+/// its whole value, "core.sshcommand: ssh -v", for the notice (P5). <paramref name="Identity"/>: which folder the git
+/// folder read is (<see cref="FolderIdentity"/>; the seventh pass, T1), null where it could not be read; a trust holds
+/// only for the folder it was given in.
 /// </summary>
-public sealed record TrustScan(IReadOnlyList<string> Risks, string? Problem, string Mark = "", IReadOnlyList<string>? Hooks = null, IReadOnlyList<string>? InTree = null, string? GitDir = null, IReadOnlyList<string>? Programs = null)
+public sealed record TrustScan(IReadOnlyList<string> Risks, string? Problem, string Mark = "", IReadOnlyList<string>? Hooks = null, IReadOnlyList<string>? InTree = null, string? GitDir = null, IReadOnlyList<string>? Programs = null, FolderIdentity? Identity = null)
 {
     /// <summary>Whether what the repository would run is known: its files could be read.</summary>
     public bool Known => Problem is null;
@@ -306,6 +308,20 @@ public static class GitTrustScan
             }
         }
 
+        /// <summary>A file's content for the mark (T2 of the seventh pass): "file &lt;path&gt; &lt;hash&gt;", a risk that names the file then changes the mark with it.</summary>
+        public void Content(string path) => Line($"file {path} {RepositoryFiles.Hash(path, Root)}");
+
+        /// <summary>A setting's value for the mark: "value &lt;repository&gt; &lt;name&gt;=&lt;value&gt;", the name in git's own form and the value as written (T3).</summary>
+        public void Value(string name, FileSetting setting) => Line($"value {name} {GitTrust.NameOfSetting(setting.Name)}={setting.Value}");
+
+        /// <summary>A link as a risk, with its target as written in it for the mark (T2): another target, another mark.</summary>
+        public string Link(string path)
+        {
+            var risk = GitTrust.Link(Shown(path));
+            Line($"link {path} {RepositoryFiles.LinkTarget(path, Root)}");
+            return risk;
+        }
+
         public void Tree(string name, string setting)
         {
             lock (_gate)
@@ -410,8 +426,16 @@ public static class GitTrustScan
         }
 
         var risks = reading.Risks.Distinct(StringComparer.Ordinal).ToList();
+
+        // T2 (the seventh pass): every risk is of a kind whose source the mark holds; one of no kind is not opened.
+        if (risks.FirstOrDefault(risk => GitTrust.KindOf(risk) is null) is { } unknown)
+        {
+            return new TrustScan([], $"axGIT found something it cannot mark, {unknown}, so it does not open it.");
+        }
+
         var lines = reading.Lines.Concat(risks.Select(risk => "risk " + risk));
-        return new TrustScan(risks, null, GitTrust.Mark(lines), reading.Hooks, [.. reading.InTree.Distinct(StringComparer.Ordinal)], gitDir, [.. reading.Programs.Distinct(StringComparer.Ordinal)]);
+        return new TrustScan(risks, null, GitTrust.Mark(lines), reading.Hooks, [.. reading.InTree.Distinct(StringComparer.Ordinal)], gitDir, [.. reading.Programs.Distinct(StringComparer.Ordinal)],
+            RepositoryFiles.Identity(gitDir, root));
     }
 
     /// <summary>
@@ -448,7 +472,7 @@ public static class GitTrustScan
 
         if (kind.HasFlag(FileAttributes.ReparsePoint))
         {
-            Refuse(top ? "its .git is a link, which axGIT does not follow" : GitTrust.Link(reading.Shown(dot)));
+            Refuse(top ? "its .git is a link, which axGIT does not follow" : reading.Link(dot));
             return null;
         }
 
@@ -456,6 +480,9 @@ public static class GitTrustScan
         {
             return Path.GetFullPath(dot);
         }
+
+        // T2 (the seventh pass): a .git file's content is in the mark, so that every risk it gives changes with it.
+        reading.Content(dot);
 
         // A .git file: the folder it names, worked out from its bytes alone, by git's rule (setup.c,
         // read_gitfile_gently): "gitdir: " with its one space, then the whole rest less its line ends (H6, G3).
@@ -551,7 +578,8 @@ public static class GitTrustScan
         var common = gitDir;
         if (RepositoryFiles.Attributes(Path.Combine(gitDir, "commondir"), reading.Root) is not null)
         {
-            // Read as git reads it (H6, G3); one written otherwise is not opened.
+            // Its content in the mark (T2 of the seventh pass), then read as git reads it (H6, G3); one written otherwise is not opened.
+            reading.Content(Path.Combine(gitDir, "commondir"));
             if (CommonText(gitDir, reading.Root) is not { } commonPath)
             {
                 reading.Add(name, [.. risks, GitTrust.NotReadPlace("its commondir file")]);
@@ -583,17 +611,25 @@ public static class GitTrustScan
             risks.AddRange(LinksIn(reading, folder));
         }
 
+        // Each with its file's content in the mark (T2 of the seventh pass): another object store, another mark.
         foreach (var folder in new[] { gitDir, common }.Distinct(StringComparer.OrdinalIgnoreCase))
         {
-            if (RepositoryFiles.Attributes(Path.Combine(folder, "objects", "info", "alternates"), reading.Root) is not null
-                || RepositoryFiles.Attributes(Path.Combine(folder, "objects", "info", "http-alternates"), reading.Root) is not null)
+            foreach (var alternates in new[] { "alternates", "http-alternates" }.Select(file => Path.Combine(folder, "objects", "info", file)))
             {
-                risks.Add(GitTrust.Alternates);
+                if (RepositoryFiles.Attributes(alternates, reading.Root) is not null)
+                {
+                    risks.Add(GitTrust.Alternates);
+                    reading.Content(alternates);
+                }
             }
 
             foreach (var legacy in new[] { "remotes", "branches" })
             {
-                risks.AddRange(FileNames(reading, Path.Combine(folder, legacy)).Select(file => GitTrust.Legacy(legacy, file)));
+                foreach (var file in FileNames(reading, Path.Combine(folder, legacy)))
+                {
+                    risks.Add(GitTrust.Legacy(legacy, file));
+                    reading.Content(Path.Combine(folder, legacy, file));
+                }
             }
         }
 
@@ -625,13 +661,24 @@ public static class GitTrustScan
         risks.AddRange(GitTrust.SettingRisks(settings, inside));
         risks.AddRange(GitTrust.ValueRisks(settings, reading.Computer, RepositoryFiles.IsNetworkDrive));
 
+        // T2 (the seventh pass): a risk in a value, of a harmless name too, marks that value.
+        foreach (var setting in settings.Where(setting => GitTrust.ValueRisks([setting], reading.Computer, RepositoryFiles.IsNetworkDrive).Count > 0))
+        {
+            reading.Value(name, setting);
+        }
+
         // H3 (the sixth pass): a repository inside works on the folder its core.worktree names, which git resolves from
         // its git folder; harmless only where that is the folder of the gitlink it was reached from, as git writes it.
+        // Its values are marked (T2).
         if (inside && named.Any(IsWorkTree) && !named.Where(IsWorkTree).All(setting => setting.Value is { } value && workTree is not null
             && Readable(value, byGit: true) && Resolve(value, gitDir, byGit: true) is { } path
             && string.Equals(Path.TrimEndingDirectorySeparator(path), Path.TrimEndingDirectorySeparator(Path.GetFullPath(workTree)), StringComparison.OrdinalIgnoreCase)))
         {
             risks.Add(GitTrust.WorkTreeElsewhere);
+            foreach (var setting in named.Where(IsWorkTree))
+            {
+                reading.Value(name, setting);
+            }
         }
 
         reading.Add(name, risks);
@@ -639,7 +686,7 @@ public static class GitTrustScan
         // For the mark: every setting that is not harmless with its value; for the notice, each program with its value (P5).
         foreach (var setting in named.Where(setting => !GitTrust.IsInert(setting.Name, inside)))
         {
-            reading.Line($"value {name} {setting.Name}={setting.Value}");
+            reading.Value(name, setting);
             if (GitTrust.RunsAProgram(setting.Name) && setting.Value is not null)
             {
                 reading.Program(name, $"{setting.Name}: {setting.Value}");
@@ -809,6 +856,7 @@ public static class GitTrustScan
             else
             {
                 reading.Add(name, [GitTrust.NotReadPlace(setting.Name)]);
+                reading.Value(name, setting);
             }
         }
 
@@ -867,7 +915,7 @@ public static class GitTrustScan
         {
             if (RepositoryFiles.Attributes(folder, reading.Root) is { } link && link.HasFlag(FileAttributes.ReparsePoint))
             {
-                reading.Add(name, [GitTrust.Link(reading.Shown(folder))]);
+                reading.Add(name, [reading.Link(folder)]);
             }
             else
             {
@@ -911,7 +959,7 @@ public static class GitTrustScan
                 var path = Path.Combine(at, entry);
                 if (attributes.HasFlag(FileAttributes.ReparsePoint))
                 {
-                    risks.Add(GitTrust.Link(reading.Shown(path)));
+                    risks.Add(reading.Link(path));
                 }
                 else if (isFolder && !(depth == 0 && entry.Equals("modules", StringComparison.OrdinalIgnoreCase)))
                 {

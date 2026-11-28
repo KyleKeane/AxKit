@@ -1,5 +1,8 @@
+using System.Globalization;
 using System.IO.Enumeration;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using Microsoft.Win32.SafeHandles;
 
 namespace AxGit.Core;
 
@@ -299,4 +302,98 @@ public static class RepositoryFiles
             return "unread";
         }
     }
+
+    /// <summary>
+    /// A link's target as it is written in the link, never followed (the review's seventh pass, T2: a link's risk is
+    /// marked with it): "none" when there is no link there, "unread" when it cannot be read, "not read" for a place axGIT
+    /// does not read.
+    /// </summary>
+    public static string LinkTarget(string path, string? root)
+    {
+        if (Place(path, root, lastMayBeLink: true) is not { } full)
+        {
+            return "not read";
+        }
+
+        try
+        {
+            if (Attributes(full, root) is not { } kind)
+            {
+                return "none";
+            }
+
+            return (kind.HasFlag(FileAttributes.Directory) ? new DirectoryInfo(full).LinkTarget : new FileInfo(full).LinkTarget) ?? "none";
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return "unread";
+        }
+    }
+
+    // ---- A folder's identity (the review's seventh pass, T1) ----
+
+    /// <summary>
+    /// Which folder <paramref name="path"/> is (<see cref="FolderIdentity"/>): its file system's name, from
+    /// <c>GetVolumeInformationByHandleW</c>, and its volume's serial number and file ID, from
+    /// <c>GetFileInformationByHandleEx</c> with <c>FileIdInfo</c> (128 bits, which ReFS needs; the 64 bits of
+    /// <c>GetFileInformationByHandle</c> are not unique there). The handle is opened for its attributes alone, with
+    /// backup semantics, which a folder needs, and on the entry itself, never what a final link points at. Null when it
+    /// is a place axGIT does not read or cannot be opened; an identity with no file ID when the volume gives none.
+    /// </summary>
+    public static FolderIdentity? Identity(string path, string? root)
+    {
+        if (Place(path, root, lastMayBeLink: true) is not { } full)
+        {
+            return null;
+        }
+
+        using var handle = CreateFileW(full, FileReadAttributes, FileShareAll, IntPtr.Zero, OpenExisting, FileFlagBackupSemantics | FileFlagOpenReparsePoint, IntPtr.Zero);
+        if (handle.IsInvalid)
+        {
+            return null;
+        }
+
+        var name = new char[MaxPath + 1];
+        var fileSystem = GetVolumeInformationByHandleW(handle, null, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, name, name.Length)
+            ? new string(name, 0, Array.IndexOf(name, '\0') is >= 0 and var end ? end : name.Length)
+            : string.Empty;
+        if (!GetFileInformationByHandleEx(handle, FileIdInfoClass, out var id, Marshal.SizeOf<FileIdInfo>()) || (id.Low == 0 && id.High == 0))
+        {
+            return new FolderIdentity(fileSystem, string.Empty, string.Empty);
+        }
+
+        return new FolderIdentity(fileSystem, id.Volume.ToString("X16", CultureInfo.InvariantCulture), id.High.ToString("X16", CultureInfo.InvariantCulture) + id.Low.ToString("X16", CultureInfo.InvariantCulture));
+    }
+
+    private const uint FileReadAttributes = 0x80;
+
+    private const uint FileShareAll = 0x7;
+
+    private const uint OpenExisting = 3;
+
+    private const uint FileFlagBackupSemantics = 0x02000000;
+
+    private const uint FileFlagOpenReparsePoint = 0x00200000;
+
+    private const int FileIdInfoClass = 18;
+
+    private const int MaxPath = 260;
+
+    /// <summary>FILE_ID_INFO: the volume's serial number and the 128 bits of the file ID, low half first.</summary>
+    [StructLayout(LayoutKind.Sequential)]
+    private struct FileIdInfo
+    {
+        public ulong Volume;
+        public ulong Low;
+        public ulong High;
+    }
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern SafeFileHandle CreateFileW(string fileName, uint desiredAccess, uint shareMode, IntPtr securityAttributes, uint creationDisposition, uint flagsAndAttributes, IntPtr templateFile);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern bool GetVolumeInformationByHandleW(SafeFileHandle file, char[]? volumeName, int volumeNameSize, IntPtr serialNumber, IntPtr maximumComponentLength, IntPtr fileSystemFlags, [Out] char[] fileSystemName, int fileSystemNameSize);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool GetFileInformationByHandleEx(SafeFileHandle file, int informationClass, out FileIdInfo information, int size);
 }

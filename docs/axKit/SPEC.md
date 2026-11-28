@@ -1821,8 +1821,10 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   processes with their standard streams on pipes) and talks to it over that pseudo console or those pipes, on the
   computer, never over the network. The program's network use is its own, as from a terminal: Claude Code talks to
   Anthropic's service and checks for its own updates; git runs in a repository only once the user has trusted it,
-  every repository asked about once (before that only as the parser of one settings file, with no repository, and
-  it reaches nothing; docs/axGIT/SPEC.md AG-1.6), then works there as git does, running the programs and hooks the
+  every repository asked about once (until you trust a repository, axGIT runs no git in it and reaches no server:
+  it reads only the repository's own files, where they lie (a repository on a share is read on the share), and the
+  files on this computer its settings name; git runs only as the parser of one settings file with no repository;
+  docs/axGIT/SPEC.md AG-1.6), then works there as git does, running the programs and hooks the
   repository's settings name and reading the files and places those settings and its index name, which can be on
   another computer, and reaches a remote on fetch, pull and push alone, a push only a server, never by
   itself for a missing object, and Git LFS through it never (docs/axGIT/SPEC.md AG-5.4, AG-5.4c; AX-11.5 asks the server's consent first; its credential helper may ask for a

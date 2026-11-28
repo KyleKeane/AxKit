@@ -1,0 +1,49 @@
+# Workflow: Trust a repository as it was shown
+# Needs: Git installed.
+# axGIT: the review's seventh pass of 2026-11-28 (docs/axGIT/nvda-test-plan.md section 12; SPEC AG-1.6, T1): a trust
+# is for the git folder it was given in, not only its path. Another repository made at the same path is asked about
+# as a new one, and the notice says that nothing was trusted for it; the trusted one, back at its path, opens without
+# the notice.
+file home\AxKit\axGIT.json {"checkForUpdates": false}
+# The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+run git init -q -b main repo
+file repo\a.txt hello
+run git -C repo add .
+run git -C repo -c user.name=Test -c user.email=none commit -q -m first
+
+# Goal: Trust a repository
+start git {temp}\repo
+expect state "notice":"This repository is not trusted yet"
+wait 1200
+keys alt+t
+expect said ! Trusted
+expect focus Changes, no changes
+close
+
+# Check: Another repository at the same path is asked about as a new one
+# T1: the first repository moved aside and a new one made at its path, with the same mark (nothing of concern in
+# either): the notice comes, saying that nothing was trusted for this one; Keep it off opens nothing.
+wait 1000
+run ren repo repo-first
+run git init -q -b main repo
+file repo\a.txt hello
+run git -C repo add .
+run git -C repo -c user.name=Test -c user.email=none commit -q -m first
+start git {temp}\repo
+expect state "notice":"This repository is not trusted yet"
+expect state The repository in this folder is not the one you trusted here, so nothing is trusted for it yet.
+refuse state What axGIT finds in this repository differs from what you trusted
+wait 1200
+keys enter
+expect said Not opened
+close
+
+# Check: The repository trusted, back at its path, opens without the notice
+wait 1000
+run ren repo repo-second
+run ren repo-first repo
+start git {temp}\repo
+expect focus Changes, no changes
+expect state "notice":null
+close

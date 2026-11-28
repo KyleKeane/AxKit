@@ -37,7 +37,8 @@ close
 start git {temp}\repo
 expect state "notice":"This repository runs programs of its own"
 expect state The programs as its settings write them: core.sshcommand: ssh -v -o BatchMode=yes.
-expect state Until you trust a repository, axGIT runs no git in it and reaches nothing. Once you trust it, git works in it as git does: it runs the programs and hooks the repository
+expect state Until you trust a repository, axGIT runs no git in it and reaches no server: it reads only the repository
+expect state the files on this computer its settings name. Once you trust it, git works in it as git does: it runs the programs and hooks the repository
 expect state on the commands that change the repository; and git reads the files and places those settings and its index name, which can be on another computer.
 wait 1200
 keys enter

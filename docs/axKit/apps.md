@@ -154,7 +154,7 @@ The keys here are the defaults; a user's own `app-keys.json` may give an app ano
 - Code: `src/AxGit` (the window), `src/AxGit.Core` (pure code); notes in each folder's `CLAUDE.md`.
 - Tests: `tests/AxGit.Tests`.
 - Documents: `docs/axGIT/` (`nvda-test-plan.md`, `SPEC.md`, `user-guide.md`).
-- Automated checks: `tests/scripts/axGIT/`, 9 scripts (their workflows are in `docs/axKit/workflows/axGIT.md`).
+- Automated checks: `tests/scripts/axGIT/`, 10 scripts (their workflows are in `docs/axKit/workflows/axGIT.md`).
 - Run from the sources: `scripts to run-individual-apps/run-axGIT.ps1`, or `run.ps1 -App git`.
 
 ### axPass

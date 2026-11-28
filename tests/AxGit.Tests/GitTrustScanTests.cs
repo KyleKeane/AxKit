@@ -64,6 +64,11 @@ public sealed partial class GitTrustScanTests : IDisposable
         Git(folder, "init", "-q");
         File.WriteAllText(Path.Combine(folder, "a.txt"), "one\n");
         File.WriteAllText(Path.Combine(folder, "b.txt"), "two\n");
+        // Written an hour back, so that git never takes them for racily clean: a split index then writes such an
+        // entry again with an empty name, which the strict reading refuses, and the index test failed one run in
+        // three (2026-11-28).
+        File.SetLastWriteTimeUtc(Path.Combine(folder, "a.txt"), DateTime.UtcNow.AddHours(-1));
+        File.SetLastWriteTimeUtc(Path.Combine(folder, "b.txt"), DateTime.UtcNow.AddHours(-1));
         Git(folder, "add", "a.txt", "b.txt");
         Git(folder, "commit", "-q", "-m", "one");
         return folder;
@@ -604,7 +609,7 @@ public sealed partial class GitTrustScanTests : IDisposable
         var session = new GitSession(root, _ => false, _env);
         var scan = await session.CheckAsync();
         Assert.Empty(scan.Risks);
-        Assert.True(await session.TrustAsync(scan.Mark));
+        Assert.True(await session.TrustAsync(scan));
         Assert.True((await session.ChangeAsync(GitTexts.StageAllArguments, GitRunner.Short)).Ok);
         Assert.Equal(["submodule vendor: hook post-index-change"], session.Scan.Risks);
         Assert.False(session.Trusted);

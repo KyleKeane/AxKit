@@ -418,7 +418,7 @@ public sealed partial class GitForm : ItemForm
 
         SetGitItems(false);
         UpdateStatusBar();
-        var session = new GitSession(root, mark => TrustsNow(root, mark));
+        var session = new GitSession(root, scan => _settings.Trusts(root, scan.Mark, scan.Identity));
         TrustScan? scan = null;
         try
         {
@@ -578,25 +578,6 @@ public sealed partial class GitForm : ItemForm
     }
 
     /// <summary>
-    /// AG-1.6: whether the user trusts the repository with exactly this mark (the session asks at each check). A
-    /// trust from before the marks (2026-11-16) is bound to what the repository runs now, and saved.
-    /// </summary>
-    private bool TrustsNow(string root, string mark)
-    {
-        if (!_settings.Trusts(root, mark))
-        {
-            return false;
-        }
-
-        if (_settings.Trust(root, mark))
-        {
-            SaveSettings();
-        }
-
-        return true;
-    }
-
-    /// <summary>
     /// AG-1.6: the notice for a repository the user has not trusted for what its last check found (T1; G1: also when it found nothing): what it
     /// holds, and the two answers. Nothing runs in it meanwhile. Keep it off, the default, closes it (as it opens,
     /// <paramref name="opening"/>, it is never opened); Trust this repository opens it, or reads its lists again.
@@ -610,8 +591,12 @@ public sealed partial class GitForm : ItemForm
         Log.Info($"Untrusted repository: {risks.Count} risks, {GitTrust.Programs(risks).Count} of them programs; nothing runs in it");
         // A trust is for what axGIT found when it was given; anything else is asked about again. The sentence
         // does not say the repository changed: after an update of axGIT the check may be the thing that did.
+        // T1 (the seventh pass): a trust is for the git folder it was given in; another one at the same path is new.
         var changed = changedWhileAsked ? "What axGIT finds in this repository changed while you were asked, so it is not trusted; here is what it holds now. "
+            : _settings.TrustedAnother(root, scan.Identity) ? "The repository in this folder is not the one you trusted here, so nothing is trusted for it yet. "
             : _settings.WasTrusted(root) ? "What axGIT finds in this repository differs from what you trusted, so it is not trusted now. " : string.Empty;
+        var kept = scan.Identity is { Lasting: true } ? string.Empty
+            : $"Its drive ({FolderIdentity.NameOf(scan.Identity)}) gives a folder no lasting identity, so axGIT keeps no trust of it: a trust holds while this repository stays open, and you are asked again when you next open it. ";
         var programs = GitTrust.Programs(risks);
         var places = GitTrust.Places(risks);
         var notKnown = GitTrust.NotKnown(risks);
@@ -633,7 +618,7 @@ public sealed partial class GitForm : ItemForm
         ShowNotice(new Notice(
             programs.Count > 0 ? "This repository runs programs of its own" : places.Count > 0 ? "This repository leads git elsewhere"
             : notKnown.Count > 0 ? "This repository has settings axGIT does not know" : "This repository is not trusted yet",
-            $"{(failed is null ? string.Empty : failed + "\n\n")}{changed}{start}{nothing}{runs}{values}{other}{elsewhere}{inTree}{limit}Trust it only if you know where it comes from. Keep it off closes the repository.",
+            $"{(failed is null ? string.Empty : failed + "\n\n")}{changed}{start}{nothing}{runs}{values}{other}{elsewhere}{inTree}{limit}{kept}Trust it only if you know where it comes from. Keep it off closes the repository.",
         [
             new OverlayChoice("Keep it &off", () => KeepOff(root, session, opening), IsDefault: true, IsCancel: true),
             new OverlayChoice("&Trust this repository", () => TrustRepository(root, session, opening)),
@@ -665,7 +650,7 @@ public sealed partial class GitForm : ItemForm
     /// </summary>
     private void TrustRepository(string root, GitSession session, bool opening)
     {
-        var mark = session.Scan.Mark;
+        var shown = session.Scan;
         Do(async () =>
         {
             if (!BeginWork("Working: checking…"))
@@ -677,7 +662,7 @@ public sealed partial class GitForm : ItemForm
             bool? trusted = null;
             try
             {
-                trusted = await session.TrustAsync(mark);
+                trusted = await session.TrustAsync(shown);
             }
             catch (GitNotFoundException)
             {
@@ -722,8 +707,12 @@ public sealed partial class GitForm : ItemForm
                 return;
             }
 
-            _settings.Trust(root, session.Scan.Mark);
-            SaveSettings();
+            // T1: kept in the settings where the git folder's identity lasts; elsewhere the session alone holds it.
+            if (_settings.Trust(root, session.Scan.Mark, session.Scan.Identity))
+            {
+                SaveSettings();
+            }
+
             Announce("Trusted", true);
             if (opening)
             {

@@ -482,6 +482,7 @@
     {"workflow": "Open a repository that runs programs of its own", "goal": "Trust a repository", "script": "tests/scripts/axGIT/07-own-programs.txt", "actions": 4},
     {"workflow": "Open a repository with settings axGIT does not know, and start no fetch or push git cannot name a server for", "goal": "Keep a repository with a setting axGIT does not know off", "script": "tests/scripts/axGIT/08-settings-and-servers.txt", "actions": 2},
     {"workflow": "Open a repository with settings axGIT does not know, and start no fetch or push git cannot name a server for", "goal": "Trust a repository with a setting axGIT does not know", "script": "tests/scripts/axGIT/08-settings-and-servers.txt", "actions": 3},
+    {"workflow": "Trust a repository as it was shown", "goal": "Trust a repository", "script": "tests/scripts/axGIT/10-trust-shown.txt", "actions": 2},
     {"workflow": "Ask Claude for help from anywhere, with a picture of the screen", "goal": "Turn on the AI tools", "script": "tests/scripts/axHelp/01-start.txt", "actions": 3},
     {"workflow": "Ask Claude for help from anywhere, with a picture of the screen", "goal": "Open a conversation with Claude", "script": "tests/scripts/axHelp/01-start.txt", "actions": 1},
     {"workflow": "Ask Claude for help from anywhere, with a picture of the screen", "goal": "Hand a picture to a new conversation", "script": "tests/scripts/axHelp/01-start.txt", "actions": 0},

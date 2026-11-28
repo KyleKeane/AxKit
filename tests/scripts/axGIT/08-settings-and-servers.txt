@@ -153,7 +153,8 @@ start git {temp}\clone
 expect state "notice":"This repository is not trusted yet"
 expect state axGIT found nothing of concern in it.
 expect state files itself and cannot promise that it found everything.
-expect state Until you trust a repository, axGIT runs no git in it and reaches nothing.
+expect state Until you trust a repository, axGIT runs no git in it and reaches no server: it reads only the repository
+expect state own files, where they lie (a repository on a share is read on the share), and the files on this computer its settings name.
 refuse said This repository has settings axGIT does not know
 refuse said This repository runs programs of its own
 wait 1200

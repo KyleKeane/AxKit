@@ -139,7 +139,8 @@ opens in the editor for its type (AG-1.4, AG-D1).
   - **Keep it off** (Enter, Escape) closes the repository: as it opens, it is never opened ("Not opened"); open,
     it is closed ("Repository closed"): no status, no list, nothing runs;
   - **Trust this repository** checks the repository again ("Working: checking…", P3 of the fifth pass: trusted is
-    what was seen) and, when it holds what the notice showed, keeps it in the settings (`trusted`, AG-8.1a), says
+    what was seen) and, when it holds what the notice showed, keeps it in the settings (`trusted`, AG-8.1a; where
+    the git folder's identity lasts, T1 below, and otherwise for the session alone), says
     "Trusted", opens it (or reads its lists again), and from then on git works in it as git does (G2). Alt+T
     answers so from anywhere in the notice, once its keys' hold is over. When it
     changed while the notice was open (a filter added meanwhile), nothing is kept and nothing runs: the notice
@@ -152,12 +153,16 @@ opens in the editor for its type (AG-1.4, AG-D1).
   - *What trust means* (G2 of the sixth pass; `GitTrust.TrustLimit`, said in the notice every time, and in these
     terms in the bundle's statements of rule 8, `PRIVACY.md`, `README.md`, `docs/axKit/README.md`, `SECURITY.md`
     and the Outside call comment of `GitRunner`): "Until you trust a repository, axGIT runs no git in it and
-    reaches nothing. Once you trust it, git works in it as git does: it runs the programs and hooks the
+    reaches no server: it reads only the repository's own files, where they lie (a repository on a share is read
+    on the share), and the files on this computer its settings name. Once you trust it, git works in it as git does: it runs the programs and hooks the
     repository's settings name, whatever they run in turn, and axGIT sets aside only those whose path is in the
     work tree, on the commands that change the repository; and git reads the files and places those settings and
     its index name, which can be on another computer." So after trust a status reads an untracked folder's `.git`
     file and the place it names (H4, through a share), and every file the settings and the index name, wherever
     they lie; the scan names what it reads, and a miss of the scan is no longer a door to running before trust.
+    Until the seventh pass (T4, M1 and M2) the first sentence said "and reaches nothing", which was not exact: a
+    repository on a share is read there, and a file on this computer a setting names (an include, a hooks folder,
+    a program) is read for the mark.
   - *The limits that need a program writing at the same moment* (L1 of the sixth pass), said and not closed in
     code: the check and git's start are two steps, so a file changed between them, or a link put on a path after
     the check looked at it and before it is opened by its path, is seen at the next check only; and the parse kept
@@ -171,7 +176,35 @@ opens in the editor for its type (AG-1.4, AG-D1).
   program's file changed, an included file changed, another setting) is not trusted, and the notice comes back,
   starting "What axGIT finds in this repository differs from what you trusted, so it is not trusted now." (the
   sentence does not say the repository changed: after an update of axGIT the check may be what did; a trust kept
-  before the fourth pass marked the names alone and is asked about once more). `GitTrust.Overrides`, the setting
+  before the fourth pass marked the names alone and is asked about once more). Since the review's seventh pass
+  (2026-11-28) **a trust covers the repository the user was shown, as it was shown**:
+  - *the git folder itself* (T1): the trust keeps the git folder's identity (`FolderIdentity`: the file system's
+    name from `GetVolumeInformationByHandleW`, the volume's serial number and the 128-bit file ID from
+    `GetFileInformationByHandleEx` with `FileIdInfo`, through a handle opened for its attributes, with backup
+    semantics and not through a final link; `RepositoryFiles.Identity`), and holds only when the path, the mark and
+    the identity all match, in the settings and within a session. Another git folder at the same path (a
+    repository moved there, a clone made again) is asked about as a new repository, starting "The repository in this
+    folder is not the one you trusted here, so nothing is trusted for it yet." (the reviewer's case: two clean
+    repositories at one path have one mark). Where the volume gives no lasting identity, no trust is kept between
+    openings: the rule is by the file system's name, NTFS and ReFS last and every other does not (FAT, FAT32, exFAT,
+    UDF, a share that names none, or no name read); there the notice says "Its drive (FAT32) gives a folder no lasting
+    identity, so axGIT keeps no trust of it: a trust holds while this repository stays open, and you are asked again
+    when you next open it." A trust kept before the seventh pass has no identity and is asked about once more.
+  - *every source of a risk* (T2): a risk that names a file marks its content (`file <path> <hash>`: the alternates
+    and http-alternates, a legacy remotes or branches file, a `.git` file, a `commondir` file), a link marks its
+    target as written in it, read without following it (`link <path> <target>`), and a risk in a value marks the
+    value, of a harmless name too (a fetch line outside refs/remotes, a value on another computer, a submodule's
+    `core.worktree` elsewhere, a `.gitmodules` path that is not read). Until then an alternates file, a legacy remotes
+    file or a link could point elsewhere with the trust kept. Three kinds say that axGIT did not read something and
+    are trusted as such, not by a content (`GitTrust.NotMarked`): a repository inside that could not be read, an
+    index axGIT does not read (it changes at every command git runs), folders deeper than it looks. The kinds are one
+    list, `GitTrust.RiskKind`, told from the risk's words by `GitTrust.KindOf`; a risk of no kind is not opened, and
+    the class test (`GitTrustShownTests`) changes the source of every kind and sees the mark change.
+  - *values as written* (T3): the mark's lines are kept as they are, sorted with ordinal comparison; a setting's name
+    is in git's form (`GitTrust.NameOfSetting`: section and variable in lower case, the middle part as written).
+    Until then every line was put in lower case, so that "echo ABC" and "echo abc" were one mark. Every mark of an
+    earlier version differs, so each repository is asked about once more after the update.
+  `GitTrust.Overrides`, the setting
   aside by name of the passes before, stays as a second line, used where a trusted repository's program lies in
   its work tree (AG-1.6b).
 - AG-1.6a **What the read covers, and when it runs** (the reviews of 2026-11-27 and 2026-11-28; `GitTrustScan`).
@@ -199,9 +232,11 @@ opens in the editor for its type (AG-1.4, AG-D1).
     repository is trusted in a window git is asked once whether it opens it itself, `git rev-parse
     --absolute-git-dir` finding it from the root with nothing above it; when git refuses (a repository another
     account owns), it is not opened, with git's words, and the folder git prints must be the one the read found,
-    compared as full paths, or it is not opened: "git opens another git folder, <printed>, than the one axGIT read,
-    <read>." (H6 of the sixth pass: git, rejecting a `.git` the scan had read, took the folder above for a bare
-    repository and read its settings).
+    or it is not opened: "git opens another git folder, <printed>, than the one axGIT read, <read>." (H6 of the
+    sixth pass: git, rejecting a `.git` the scan had read, took the folder above for a bare repository and read its
+    settings). Since the seventh pass (L1) the two are compared by their identities (AG-1.6, T1) where both last,
+    and as full paths otherwise, so that a root reached through a junction or a subst drive, which git prints by its
+    real path, opens after Trust.
   - *A path of the repository's is read only in a positive local form* (P2 of the fifth pass; `RepositoryFiles`,
     the one way every read below goes): its full path is a plain path on a drive of this computer (not a network
     drive) with no link on its way from the drive's root, or it lies under the repository's own folder with no link
@@ -652,7 +687,10 @@ one). A failure that git explains in one line is announced as "Failed: <line>"; 
   `checkForUpdates`, `recentRepositories` (ten, newest first), `trusted`, `seal`, `window`. The defaults are the
   Windows font, the update check on, no repositories.
 - AG-8.1a **The trusted repositories are sealed** (bundle AX-5.6, 2026-11-16): `trusted` is a list of `{"path",
-  "risks"}`, the repository's root and the mark of AG-1.6, and `seal` covers the list. A file whose seal does not
+  "risks", "identity"}`, the repository's root, the mark of AG-1.6 and, since the seventh pass (T1), its git
+  folder's identity ("NTFS 9CC676A6C6768076 0000…"), and `seal` covers the list; a trust with an identity is sealed
+  as its own form, so that a file of an earlier version keeps its seal (its trusts, with no identity, are asked
+  about once more), and an identity changed or taken out by hand is refused like a mark. A file whose seal does not
   check trusts no repository, keeps every other setting, and says once: "The repositories you trusted in axGIT's
   settings were changed outside axKit and are not used: git runs none of their own programs. To trust one again, open
   it and choose Trust this repository." A file of 5.9.0 or earlier holds `trustedRepositories`, bare paths: read while

@@ -629,8 +629,22 @@ public sealed class GitTrustTests
     [Fact]
     public void The_mark_changes_with_any_line()
     {
-        Assert.Equal(GitTrust.Mark(["hook a 01", "risk b"]), GitTrust.Mark(["RISK B", "hook a 01"]));
+        Assert.Equal(GitTrust.Mark(["hook a 01", "risk b"]), GitTrust.Mark(["risk b", "hook a 01"]));
         Assert.NotEqual(GitTrust.Mark(["hook a 01", "risk b"]), GitTrust.Mark(["hook a 02", "risk b"]));
         Assert.Equal(64, GitTrust.Mark([]).Length);
+
+        // T3 (the seventh pass): the lines as they are; until then every line was put in lower case.
+        Assert.NotEqual(GitTrust.Mark(["value  core.fsmonitor=echo ABC"]), GitTrust.Mark(["value  core.fsmonitor=echo abc"]));
     }
+
+    /// <summary>T3: a setting's name in git's form for the mark: its section and variable without case, its middle part as written, which git tells by case.</summary>
+    [Theory]
+    [InlineData("core.FSMonitor", "core.fsmonitor")]
+    [InlineData("Filter.X.Clean", "filter.X.clean")]
+    [InlineData("filter.x.clean", "filter.x.clean")]
+    [InlineData("credential.https://Host.Example.invalid/Path.helper", "credential.https://Host.Example.invalid/Path.helper")]
+    [InlineData("Remote.Origin.URL", "remote.Origin.url")]
+    [InlineData("nodot", "nodot")]
+    public void A_settings_name_for_the_mark_is_git_s_form_of_it(string name, string form) =>
+        Assert.Equal(form, GitTrust.NameOfSetting(name));
 }

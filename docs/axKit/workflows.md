@@ -638,6 +638,8 @@ Steps and keys: `docs/axKit/workflows/axGIT.md` (in Claude's working folder: `wo
 7. **Open a repository with settings axGIT does not know, and start no fetch or push git cannot name a server for**
     - Keep a repository with a setting axGIT does not know off
     - Trust a repository with a setting axGIT does not know
+8. **Trust a repository as it was shown**
+    - Trust a repository
 
 ## axHelp
 

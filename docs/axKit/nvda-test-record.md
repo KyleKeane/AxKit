@@ -796,6 +796,23 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: axGIT trusts the repository it showed, as it showed it (the review's seventh pass of 2026-11-28)
+
+What a read-only review found in axGIT's trust check of the sixth pass, repaired on 2026-11-28 (`docs/axGIT/SPEC.md`
+AG-1.6, AG-8.1a): a trust holds only in the git folder it was given in, by its identity on its volume, and on a
+volume whose identities do not last (FAT, exFAT) only while the repository stays open; every risk that names a file,
+a link or a value marks its source; the mark keeps values as written; what trust means says exactly what is read
+before it; a root through a junction opens after Trust. Played on the hidden desktop, without NVDA, on 2026-11-28:
+the new `tests/scripts/axGIT/10-trust-shown.txt`, the changed 01, 08 and 09, and the recorded scripts of axGIT,
+axTerminal and the AI tools. Still owed, `docs/axGIT/nvda-test-plan.md` section 12:
+
+1. With NVDA listening (`.\nvda-pass.ps1 axGIT`): script 10; whether "The repository in this folder is not the one
+   you trusted here, so nothing is trusted for it yet." is heard whole before the notice's other sentences, and
+   whether what trust means, longer by its first sentence, is still heard whole.
+2. By the maintainer's hands: a repository on a USB stick formatted FAT32 or exFAT (the sentence about the drive and
+   the trust that holds while it stays open); a repository opened through a junction; after the update, a repository
+   trusted in an earlier version asked about once more.
+
 ## Owed: a message given back only on positive evidence, every check one frame (the seventh review of 2026-11-27)
 
 The seventh review of that day, repaired on 2026-11-28 (`docs/axClaude/SPEC.md` D33, point 4, "Given back only on

@@ -35,7 +35,9 @@ Updated 2026-11-28, early morning.
   whatever its scan finds: a reading of git's files can never be complete, so the trust is yours, said plainly. The
   seventh look at the message path found a taken message given back when Claude Code hides its row; fixed: a
   message comes back only while the row still shows it. The seventh look at axGIT found a trust kept by path alone;
-  its batch is next: a trust covers the git folder you were shown, as it was shown.
+  fixed: a trust covers the git folder you were shown, as it was shown.
+  The eighth look at the message path found a slash command given back after its screen took it; its batch is next:
+  once a message's Enter has gone, axClaude never gives it back, and a draft left on Claude Code's row is only said.
 - **Fable and Opus**: on 2026-11-28 you said Fable's credits were nearly spent. Every remaining fix batch has
   its written brief with the decisions in it, and the state, the order and the process are in
   `C:\Temp\axkit-tools\HANDOFF.md`, so that Opus can run them; the design work on branches (the graph's
@@ -172,6 +174,18 @@ Each is one line to undo unless it says otherwise.
   address (as `gh pr checkout` of a fork's pull request writes it), with a group of remotes, and for a push
   without a branch, nothing runs and the notice says "Fetch not started" with the reason. Item written for the
   address case.
+- **A trust names the git folder itself** (its volume and 128-bit file ID, `FileIdInfo`, which also holds on ReFS
+  and a Dev Drive): a repository made again in a trusted folder, a re-clone included, is asked about as a new one.
+  Where the drive gives no lasting identity (anything but NTFS and ReFS: FAT32, exFAT, a share that names no file
+  system), no trust is kept between openings; the notice says so. To turn back: `FolderIdentity.IsLasting`.
+- **A trust covers the content behind every risk**: alternates and old remotes files by their hash, links by their
+  target, settings by their value with its case (only the section and variable names are case-blind, as in git).
+  Three kinds are not marked by content, each because axGIT did not read the thing (above all the index, which
+  changes with every stage). A risk of no known kind refuses the repository. So every repository you trusted is
+  asked about once more after the update.
+- **The trust text says exactly what is read before trust**: "axGIT runs no git in it and reaches no server: it
+  reads only the repository's own files, where they lie (a repository on a share is read on the share), and the
+  files on this computer its settings name".
 - **Every repository is asked about once, whatever the scan finds.** In six rounds the scan missed a form git reads
   (a split index, a mark before HEAD, a submodule's core.worktree, a .git file in an untracked folder) and each miss
   let a repository be trusted without asking. A reading of git's formats in C# is never complete, so the guarantee no
@@ -257,7 +271,8 @@ Kept in `docs/axKit/nvda-test-record.md` and `docs/axKit/owed.md`; here only wha
 - The kind not-sent (a message given back) has no sound; before, "Claude asked" gave the refused sound.
 - How a held menu confirmation and a held explanation feel, and "Not sent yet" 3 seconds after Enter.
 - Whether the long given-back sentences are heard whole, and "Not sent: Claude is busy".
-- Whether axGIT's trust notice, now heard at every new repository, is too long.
+- Whether axGIT's trust notice, now heard at every new repository, is too long; by hand, a FAT32 or exFAT stick
+  and a repository you trusted before, asked about once more.
 - (More as the passes run.)
 
 ## What to try first

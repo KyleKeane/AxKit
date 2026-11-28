@@ -169,7 +169,10 @@ public static partial class GitTrust
     public const string OutsideTheWorkTree = "a .git file or commondir file that names a folder outside the work tree";
 
     /// <summary>A link (a symbolic link or a junction) in the <c>.git</c> folder or the work tree, which the scan does not follow: "a link at .git/hooks".</summary>
-    public static string Link(string place) => $"a link at {place}";
+    public static string Link(string place) => LinkMark + place;
+
+    /// <summary>What a risk that is a link starts with: "a link at ".</summary>
+    private const string LinkMark = "a link at ";
 
     /// <summary>A file of git's older way of naming remotes (<c>.git/remotes</c>, <c>.git/branches</c>), which git still obeys: "a legacy remotes file origin".</summary>
     public static string Legacy(string kind, string name) => $"a legacy {kind} file {name}";
@@ -293,13 +296,15 @@ public static partial class GitTrust
     /// <summary>
     /// What trust means, said plainly and once, in these words wherever it is said (the review's sixth pass,
     /// 2026-11-28, G2; the notice says it every time, AG-1.6 and the statements of the bundle's rule 8 in the same
-    /// terms). Before trust axGIT runs no git in the repository and reaches nothing; after it git works there as git
+    /// terms). Before trust axGIT runs no git in the repository and reaches no server, and it says exactly what it
+    /// reads then (the seventh pass, T4: "reaches nothing" was not so for a repository on a share, whose files are
+    /// read there, nor for the files on this computer its settings name, which the scan hashes); after it git works there as git
     /// does: it runs what the repository's settings and hooks name, and it reads the files and places its settings
     /// and its index name, which may lie on another computer. axGIT's scan reads the repository's files itself and
     /// names what it finds, and a reading of git's formats in C# is never complete, so the trust is the line, not the
     /// scan (until the fifth pass a repository with nothing found was trusted without asking).
     /// </summary>
-    public const string TrustLimit = "Until you trust a repository, axGIT runs no git in it and reaches nothing. Once you trust it, git works in it as git does: it runs the programs and hooks the repository's settings name, whatever they run in turn, and axGIT sets aside only those whose path is in the work tree, on the commands that change the repository; and git reads the files and places those settings and its index name, which can be on another computer.";
+    public const string TrustLimit = "Until you trust a repository, axGIT runs no git in it and reaches no server: it reads only the repository's own files, where they lie (a repository on a share is read on the share), and the files on this computer its settings name. Once you trust it, git works in it as git does: it runs the programs and hooks the repository's settings name, whatever they run in turn, and axGIT sets aside only those whose path is in the work tree, on the commands that change the repository; and git reads the files and places those settings and its index name, which can be on another computer.";
 
     /// <summary>What the notice says of a repository whose scan found nothing (G1): asked about all the same.</summary>
     public const string NothingFound = "axGIT found nothing of concern in it. It reads the repository's files itself and cannot promise that it found everything.";
@@ -621,15 +626,129 @@ public static partial class GitTrust
 
     /// <summary>
     /// The mark of what a repository would run (AG-1.6, repairs.md R-53; the fourth pass, T4): the SHA-256, as
-    /// hexadecimal, of the lines given in lower case and sorted, each with its length in front. The scan gives
-    /// the risks and, beside them, the value of every setting that is not harmless, the content's hash of every
+    /// hexadecimal, of the lines as they are, sorted with ordinal comparison, each with its length in front. The scan
+    /// gives the risks and, beside them, the value of every setting that is not harmless, the content's hash of every
     /// hook and of every file such a setting names (included settings files among them), and each hooks folder's
-    /// listing (<see cref="TrustScan.Mark"/>). A trust is kept with it, so that a repository whose hook, program
-    /// or included file changed is asked about again; until the fourth pass it marked the names alone.
+    /// listing (<see cref="TrustScan.Mark"/>), and since the seventh pass (T2) the source of every other risk that
+    /// names a file, a link or a value (<see cref="Marked"/>). A trust is kept with it, so that a repository whose hook,
+    /// program or included file changed is asked about again; until the fourth pass it marked the names alone. Until
+    /// the seventh pass (T3) every line was put in lower case, so that a value differing in case alone
+    /// ("echo ABC", "echo abc") kept the mark; now only a setting's name is put in git's own form
+    /// (<see cref="NameOfSetting"/>), where git itself does not tell case.
     /// </summary>
     public static string Mark(IEnumerable<string> lines) =>
         Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(
-            AxKit.Core.SettingsSeal.Text(lines.Select(line => line.ToLowerInvariant()).Order(StringComparer.Ordinal)))));
+            AxKit.Core.SettingsSeal.Text(lines.Order(StringComparer.Ordinal)))));
+
+    /// <summary>
+    /// A setting's name for the mark (T3): its section and its variable in lower case, which git reads without case,
+    /// and its middle part as written, which git tells by case ([filter "X"] is another filter than [filter "x"]).
+    /// git's parser lists names so already; this holds the mark to it whatever a version of git lists.
+    /// </summary>
+    public static string NameOfSetting(string name)
+    {
+        var first = name.IndexOf('.');
+        var last = name.LastIndexOf('.');
+        return first < 0 ? name.ToLowerInvariant()
+            : first == last ? name.ToLowerInvariant()
+            : $"{name[..first].ToLowerInvariant()}{name[first..(last + 1)]}{name[(last + 1)..].ToLowerInvariant()}";
+    }
+
+    // ---- The kinds of risk, and what marks each (the seventh pass, T2) ----
+
+    /// <summary>
+    /// Every kind of risk the scan names (<see cref="KindOf"/>). A new kind of risk joins this list, its words in
+    /// <see cref="KindOf"/>, and a row in the class test of <c>GitTrustScanTests</c> that changes its source and sees the
+    /// mark change; a risk of no kind here fails the scan closed (<see cref="GitTrustScan"/>).
+    /// </summary>
+    public enum RiskKind
+    {
+        /// <summary>A setting not known to be harmless: its value is marked.</summary>
+        Setting,
+
+        /// <summary>A fetch line that writes outside refs/remotes: the setting's value is marked.</summary>
+        FetchOutside,
+
+        /// <summary>A value or a .git or commondir file that names another computer or a device path: the value, or the file's content, is marked.</summary>
+        OnAnotherComputer,
+
+        /// <summary>A path the scan does not read: the value that names it, or the file's content, is marked.</summary>
+        NotReadPlace,
+
+        /// <summary>A hook: its content is marked.</summary>
+        Hook,
+
+        /// <summary>A link: its target, as written in the link, is marked.</summary>
+        Link,
+
+        /// <summary>The alternates: the content of both files is marked.</summary>
+        Alternates,
+
+        /// <summary>A .git or commondir file that names a folder outside the work tree: the file's content is marked.</summary>
+        OutsideTheWorkTree,
+
+        /// <summary>A legacy remotes or branches file: its content is marked.</summary>
+        Legacy,
+
+        /// <summary>A .git file axGIT does not read: its content is marked.</summary>
+        GitFileNotRead,
+
+        /// <summary>A submodule's core.worktree elsewhere: its value is marked.</summary>
+        WorkTreeElsewhere,
+
+        /// <summary>A repository inside that could not be read: not marked (<see cref="NotMarked"/>).</summary>
+        NotRead,
+
+        /// <summary>An index axGIT does not read: not marked (<see cref="NotMarked"/>).</summary>
+        IndexNotRead,
+
+        /// <summary>Folders deeper than axGIT looks: not marked (<see cref="NotMarked"/>).</summary>
+        TooDeep,
+    }
+
+    /// <summary>
+    /// The kind of a risk the scan named, the submodule's name taken off; null for words of no kind, which the scan
+    /// takes for its problem (a risk it cannot say what marks). Told by the words each kind is written with.
+    /// </summary>
+    public static RiskKind? KindOf(string risk)
+    {
+        var own = Own(risk);
+        return own switch
+        {
+            NotRead => RiskKind.NotRead,
+            IndexNotRead => RiskKind.IndexNotRead,
+            GitFileNotRead => RiskKind.GitFileNotRead,
+            TooDeep => RiskKind.TooDeep,
+            Alternates => RiskKind.Alternates,
+            OutsideTheWorkTree => RiskKind.OutsideTheWorkTree,
+            WorkTreeElsewhere => RiskKind.WorkTreeElsewhere,
+            _ when own.EndsWith(" names " + RepositoryFiles.NotRead, StringComparison.Ordinal) => RiskKind.NotReadPlace,
+            _ when own.Contains(" names another computer, ", StringComparison.Ordinal) || own.EndsWith(" names a device path", StringComparison.Ordinal) => RiskKind.OnAnotherComputer,
+            _ when own.EndsWith(" writes outside refs/remotes", StringComparison.Ordinal) => RiskKind.FetchOutside,
+            _ when own.StartsWith(HookMark, StringComparison.Ordinal) && own.Length > HookMark.Length => RiskKind.Hook,
+            _ when own.StartsWith(LinkMark, StringComparison.Ordinal) && own.Length > LinkMark.Length => RiskKind.Link,
+            _ when own.StartsWith("a legacy remotes file ", StringComparison.Ordinal) || own.StartsWith("a legacy branches file ", StringComparison.Ordinal) => RiskKind.Legacy,
+            _ when own.IndexOf('.') is > 0 and var dot && (own.IndexOf(' ') is var space && (space < 0 || space > dot)) => RiskKind.Setting,
+            _ => null,
+        };
+    }
+
+    /// <summary>
+    /// Why a kind of risk is not marked by its source: each says that axGIT did not read what is there, so the trust
+    /// is given for what it cannot know (the notice names it), and git's own behaviour with it. An index changes at
+    /// every command git runs, so marking its content would ask again after every stage and commit. Null for a kind
+    /// that is marked.
+    /// </summary>
+    public static string? NotMarked(RiskKind kind) => kind switch
+    {
+        RiskKind.NotRead => "Nothing of that repository could be read: what is there is what the trust was given for, not known.",
+        RiskKind.IndexNotRead => "The index changes at every command git runs; the trust is given for an index axGIT does not read.",
+        RiskKind.TooDeep => "What lies deeper is not read: the trust is given for folders axGIT does not look into.",
+        _ => null,
+    };
+
+    /// <summary>Whether a kind of risk marks its source (<see cref="NotMarked"/>).</summary>
+    public static bool Marked(RiskKind kind) => NotMarked(kind) is null;
 
     /// <summary>A kind of setting that names a program: its pattern (a regular expression over the whole name, without case) and names of that kind, written out.</summary>
     public sealed record ProgramName(string Pattern, IReadOnlyList<string> Examples);

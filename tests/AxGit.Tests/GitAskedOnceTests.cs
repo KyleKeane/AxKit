@@ -113,16 +113,18 @@ public sealed class GitAskedOnceTests : IDisposable
         var results = await GitTests.EveryCommandAsync(root, "origin", (arguments, change) => change ? session.ChangeAsync(arguments, GitRunner.Short) : session.RunAsync(arguments, GitRunner.Short));
         Assert.All(results, one => Assert.True(one.Result.NotRun, string.Join(' ', one.Arguments)));
         Assert.Empty(Ran());
-        foreach (var started in Started(trace))
+        foreach (var started in Started(trace, "start"))
         {
             Assert.True(started.Contains("config") && started.Contains("--file") && started.Contains("--no-includes") && !started.Contains("-C"), "a git that is no parser ran: " + string.Join(' ', started));
         }
 
+        // L2 (the review's seventh pass): and none of them started a program of its own.
+        Assert.Empty(Started(trace, "child_start"));
         return scan;
     }
 
-    /// <summary>The argument lists of every git process git's trace says started.</summary>
-    private static List<List<string>> Started(string trace)
+    /// <summary>The argument lists of every event of <paramref name="kind"/> in git's trace: "start" for a git process, "child_start" for a program a git started.</summary>
+    private static List<List<string>> Started(string trace, string kind)
     {
         var started = new List<List<string>>();
         if (!File.Exists(trace))
@@ -133,9 +135,9 @@ public sealed class GitAskedOnceTests : IDisposable
         foreach (var line in File.ReadAllLines(trace))
         {
             using var json = JsonDocument.Parse(line);
-            if (json.RootElement.TryGetProperty("event", out var kind) && kind.GetString() == "start")
+            if (json.RootElement.TryGetProperty("event", out var name) && name.GetString() == kind)
             {
-                started.Add([.. json.RootElement.GetProperty("argv").EnumerateArray().Select(argument => argument.GetString() ?? string.Empty)]);
+                started.Add([.. json.RootElement.TryGetProperty("argv", out var argv) ? argv.EnumerateArray().Select(argument => argument.GetString() ?? string.Empty) : []]);
             }
         }
 
@@ -162,11 +164,11 @@ public sealed class GitAskedOnceTests : IDisposable
 
         var session = new GitSession(root, _ => false, _env);
         await session.CheckAsync();
-        Assert.True(await session.TrustAsync(session.Scan.Mark));
+        Assert.True(await session.TrustAsync(session.Scan));
         Assert.True((await session.RunAsync(GitStatus.Arguments, GitRunner.Short)).Ok);
 
         var kept = session.Scan.Mark;
-        var again = new GitSession(root, mark => mark == kept, _env);
+        var again = new GitSession(root, scan => scan.Mark == kept, _env);
         await again.CheckAsync();
         Assert.True(again.Trusted);
     }

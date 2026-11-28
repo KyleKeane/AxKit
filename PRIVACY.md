@@ -120,9 +120,10 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   the folder, since Claude Code itself does not ask then.
 - **axGIT, access layer for Git** runs git, your own installed program, one process per command, with its prompts
   turned off (`GIT_TERMINAL_PROMPT=0`). Every repository is asked about once. Until you trust a repository, axGIT
-  runs no git in it and reaches nothing: it reads the repository's files itself, never one on another computer
-  than the repository's own or through a link, and runs git only as the parser of one settings file, with no
-  repository, which reads that file and reaches nothing. Once you trust it, git works in it as git does: it runs the
+  runs no git in it and reaches no server: it reads only the repository's own files, where they lie (a repository
+  on a share is read on the share), and the files on this computer its settings name, never one on another
+  computer than the repository's own or through a link, and it runs git only as the parser of one settings file,
+  with no repository, which reads that file and nothing else. Once you trust it, git works in it as git does: it runs the
   programs and hooks the repository's settings name, whatever they run in turn (axGIT sets aside only those whose
   path is in the work tree, on the commands that change the repository), and it reads the files and places those
   settings and the repository's index name, which can be on another computer, a share among them.

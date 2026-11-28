@@ -7,7 +7,7 @@ namespace AxGit.Core;
 /// <list type="bullet">
 /// <item>Nothing runs in a repository that is not trusted (T1): every run goes through <see cref="RunAsync"/> or
 /// <see cref="ChangeAsync"/>, which refuse while the last check found risks the user has not trusted, or could not
-/// read the repository's files. Since the review's sixth pass (G1) no repository is trusted without the user: one whose check found nothing is asked about once too, and a trust is kept with the mark of what was found.</item>
+/// read the repository's files. Since the review's sixth pass (G1) no repository is trusted without the user: one whose check found nothing is asked about once too, and a trust is kept with the mark of what was found and, since the seventh pass (T1), the identity of the git folder it was found in.</item>
 /// <item>git works on the repository that was read and no other (P1 of the fifth pass): every run names the git
 /// folder the check read (<see cref="TrustScan.GitDir"/>) and the root as the work tree.</item>
 /// <item>Trusted is what was seen (P3): a trust the user gives is checked again (<see cref="TrustAsync"/>) and holds
@@ -22,21 +22,22 @@ namespace AxGit.Core;
 /// </summary>
 public sealed class GitSession
 {
-    private readonly Func<string, bool> _trusts;
+    private readonly Func<TrustScan, bool> _trusts;
     private readonly IReadOnlyDictionary<string, string>? _environment;
 
-    /// <summary>The mark the user trusted in this session, once a check after it found the same (<see cref="TrustAsync"/>).</summary>
-    private string? _trustedMark;
+    /// <summary>What the user trusted in this session, once a check after it found the same (<see cref="TrustAsync"/>): its mark and its git folder's identity.</summary>
+    private TrustScan? _trustedScan;
 
     /// <summary>The git folder git itself agreed to open by its ownership check (<see cref="CheckAsync"/>).</summary>
     private string? _agreed;
 
     /// <summary>
     /// A session on <paramref name="root"/>, before its first check. <paramref name="trusts"/> says whether the
-    /// user trusts the repository with exactly this mark (<see cref="TrustScan.Mark"/>; the window asks its
-    /// settings); <paramref name="environment"/>: variables for every run (the tests' settings files).
+    /// user trusts the repository as this check found it, with exactly its mark (<see cref="TrustScan.Mark"/>) and in
+    /// exactly its git folder (<see cref="TrustScan.Identity"/>, the seventh pass, T1; the window asks its settings);
+    /// <paramref name="environment"/>: variables for every run (the tests' settings files).
     /// </summary>
-    public GitSession(string root, Func<string, bool> trusts, IReadOnlyDictionary<string, string>? environment = null)
+    public GitSession(string root, Func<TrustScan, bool> trusts, IReadOnlyDictionary<string, string>? environment = null)
     {
         Root = root;
         _trusts = trusts;
@@ -67,7 +68,15 @@ public sealed class GitSession
     /// </summary>
     public async Task<TrustScan> CheckAsync(CancellationToken cancellation = default) => await CheckAsync(null, cancellation);
 
-    private async Task<TrustScan> CheckAsync(string? trusting, CancellationToken cancellation)
+    /// <summary>
+    /// Whether a check shows what <paramref name="shown"/> showed (T1 of the seventh pass): the same mark, in the same
+    /// git folder. Where no identity lasts (<see cref="FolderIdentity.Lasting"/>) the ones read are compared as they
+    /// are, within this session alone; a git folder whose identity could be read once and not again is another.
+    /// </summary>
+    public static bool Shows(TrustScan scan, TrustScan? shown) =>
+        shown is not null && scan.Known && shown.Known && scan.Mark == shown.Mark && Equals(scan.Identity, shown.Identity);
+
+    private async Task<TrustScan> CheckAsync(TrustScan? trusting, CancellationToken cancellation)
     {
         Trusted = false;
         Checks++;
@@ -86,8 +95,9 @@ public sealed class GitSession
             return Scan;
         }
 
-        // G1 (the sixth pass): trusted only for a mark the user trusted, also when the scan found nothing.
-        var trusted = Scan.Known && (Scan.Mark == trusting || Scan.Mark == _trustedMark || _trusts(Scan.Mark));
+        // G1 (the sixth pass): trusted only for a mark the user trusted, also when the scan found nothing; T1 (the
+        // seventh): and in the git folder it was trusted in.
+        var trusted = Scan.Known && (Shows(Scan, trusting) || Shows(Scan, _trustedScan) || _trusts(Scan));
         if (trusted && Scan.GitDir is { } gitDir && !string.Equals(_agreed, gitDir, StringComparison.OrdinalIgnoreCase))
         {
             var asked = await GitRunner.RunAsync(Root, ["rev-parse", "--absolute-git-dir"], GitRunner.Short, cancellation, environment: _environment, findRepository: true);
@@ -97,8 +107,12 @@ public sealed class GitSession
                 return Scan;
             }
 
-            // H6 (the sixth pass): the git folder git finds itself is the one the scan read, or nothing runs.
-            if (OpenedFolder(asked.Output) is not { } opened || !string.Equals(opened, Path.TrimEndingDirectorySeparator(Path.GetFullPath(gitDir)), StringComparison.OrdinalIgnoreCase))
+            // H6 (the sixth pass): the git folder git finds itself is the one the scan read, or nothing runs; L1 (the
+            // seventh): the same folder by its identity, so that a root reached through a junction or a subst drive,
+            // which git prints by its real path, opens.
+            // The identity is read on a task: the folder may lie on a share (root CLAUDE.md rule 3).
+            var read = Scan.Identity;
+            if (OpenedFolder(asked.Output) is not { } opened || !await Task.Run(() => SameFolder(opened, gitDir, read), cancellation))
             {
                 Scan = new TrustScan([], $"git opens another git folder, {asked.Output.Trim()}, than the one axGIT read, {gitDir}.");
                 return Scan;
@@ -116,15 +130,30 @@ public sealed class GitSession
     /// fifth pass): it is checked again, and git runs in it only when what is there now has that mark. False when it
     /// does not (a filter added while the notice was open): then the notice comes again, with what is there now.
     /// </summary>
-    public async Task<bool> TrustAsync(string mark, CancellationToken cancellation = default)
+    public async Task<bool> TrustAsync(TrustScan shown, CancellationToken cancellation = default)
     {
-        await CheckAsync(mark, cancellation);
+        await CheckAsync(shown, cancellation);
         if (Trusted)
         {
-            _trustedMark = Scan.Mark;
+            _trustedScan = Scan;
         }
 
         return Trusted;
+    }
+
+    /// <summary>
+    /// Whether the folder git printed is the git folder the scan read (L1 of the seventh pass): by their identities
+    /// where both last (<see cref="FolderIdentity.Lasting"/>), the folder git printed read through
+    /// <see cref="RepositoryFiles"/> like any other; by their full paths otherwise.
+    /// </summary>
+    private bool SameFolder(string opened, string gitDir, FolderIdentity? read)
+    {
+        if (read is { Lasting: true } && RepositoryFiles.Identity(opened, Root) is { Lasting: true } printed)
+        {
+            return printed == read;
+        }
+
+        return string.Equals(opened, Path.TrimEndingDirectorySeparator(Path.GetFullPath(gitDir)), StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>The git folder git printed for <c>rev-parse --absolute-git-dir</c> (one line), as a full path; null for anything else.</summary>

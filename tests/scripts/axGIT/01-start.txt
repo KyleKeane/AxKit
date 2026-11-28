@@ -29,7 +29,8 @@ expect state "notice":"This repository is not trusted yet"
 # repository, the Changes list focused on its first item.
 expect state axGIT found nothing of concern in it.
 expect state files itself and cannot promise that it found everything.
-expect state Until you trust a repository, axGIT runs no git in it and reaches nothing.
+expect state Until you trust a repository, axGIT runs no git in it and reaches no server: it reads only the repository
+expect state own files, where they lie (a repository on a share is read on the share), and the files on this computer its settings name.
 expect state Keep it off closes the repository.
 wait 1200
 keys alt+t

@@ -10,8 +10,10 @@ namespace AxGit.Core;
 /// file written before 2026-11-16, which since the review's fifth pass (L5) trusts nothing: the repository is asked
 /// about once more. A mark made before the review's fourth pass
 /// (2026-11-28) marked the names alone and no longer matches: such a repository is asked about once more.
+/// <paramref name="Identity"/> (the review's seventh pass, T1): which git folder it was trusted in
+/// (<see cref="FolderIdentity.Text"/>); a trust without one, from before, trusts nothing and is asked about once more.
 /// </summary>
-public sealed record TrustedRepository(string Path, string Risks);
+public sealed record TrustedRepository(string Path, string Risks, string? Identity = null);
 
 /// <summary>
 /// Everything axGIT remembers between runs (SPEC.md AG-8.1), in <c>%APPDATA%\AxKit\axGIT.json</c> through the bundle's
@@ -44,17 +46,34 @@ public sealed class GitSettings : WindowSettings
     /// (<paramref name="mark"/>, <see cref="TrustScan.Mark"/>) is the mark it had when it was trusted. A trust from before
     /// the marks, with none, is no trust (the review's fifth pass, L5: until then it counted for whatever the
     /// repository ran at its next opening): the repository is asked about once more, as one that was trusted.
+    /// Since the seventh pass (T1) also in the same git folder, <paramref name="identity"/>, one whose identity lasts
+    /// (<see cref="FolderIdentity.Lasting"/>): another repository at the same path, a clone made again among them, is
+    /// asked about as a new one, and on a volume whose identities do not last no trust is kept.
     /// </summary>
-    public bool Trusts(string root, string mark) =>
-        Find(root) is { } trusted && trusted.Risks.Length > 0 && trusted.Risks == mark;
+    public bool Trusts(string root, string mark, FolderIdentity? identity) =>
+        Find(root) is { } trusted && trusted.Risks.Length > 0 && trusted.Risks == mark
+        && identity is { Lasting: true } && trusted.Identity == identity.Text;
 
     /// <summary>Whether the repository was trusted at all, with whatever it ran then: the notice says that its programs changed.</summary>
     public bool WasTrusted(string root) => Find(root) is not null;
 
-    /// <summary>The repository trusted with what it would run now; false when it is trusted so already and nothing is to be saved.</summary>
-    public bool Trust(string root, string mark)
+    /// <summary>Whether what was trusted at this path was another git folder than <paramref name="identity"/>'s (T1): the notice says that nothing was trusted for this one.</summary>
+    public bool TrustedAnother(string root, FolderIdentity? identity) =>
+        Find(root) is { Identity: { } kept } && kept != identity?.Text;
+
+    /// <summary>
+    /// The repository trusted with what it would run now, in its git folder; false when it is trusted so already, and
+    /// when its folder's identity does not last (T1), where nothing is kept: the trust holds while the repository stays
+    /// open (<see cref="GitSession"/>).
+    /// </summary>
+    public bool Trust(string root, string mark, FolderIdentity? identity)
     {
-        var entry = new TrustedRepository(root, mark);
+        if (identity is not { Lasting: true })
+        {
+            return false;
+        }
+
+        var entry = new TrustedRepository(root, mark, identity.Text);
         if (Find(root) == entry)
         {
             return false;
@@ -68,10 +87,20 @@ public sealed class GitSettings : WindowSettings
     private TrustedRepository? Find(string root) =>
         Trusted.FirstOrDefault(trusted => string.Equals(trusted.Path, root, StringComparison.OrdinalIgnoreCase));
 
-    /// <summary>The sealed fields: each trusted repository as its path and its mark, then the bare paths of an older file.</summary>
+    /// <summary>
+    /// The sealed fields: each trusted repository as its path and its mark, then the bare paths of an older file. A
+    /// trust with its git folder's identity (T1 of the seventh pass) is written as <see cref="WithIdentity"/>, its path,
+    /// its mark and its identity, so that a file written before, with none, keeps the seal it has; read as a trust of
+    /// the older form, the same fields give paths that are no repository's (the words, a mark, an identity).
+    /// </summary>
     private string SealedText() =>
-        SettingsSeal.Text((Trusted ?? []).SelectMany(trusted => new[] { trusted?.Path, trusted?.Risks })
+        SettingsSeal.Text((Trusted ?? []).SelectMany(trusted => trusted?.Identity is { } identity
+                ? new[] { WithIdentity, trusted.Path, trusted.Risks, identity }
+                : new[] { trusted?.Path, trusted?.Risks })
             .Concat((TrustedRepositories ?? []).SelectMany(path => new[] { path, null })));
+
+    /// <summary>The field in front of a trust with its git folder's identity, in the sealed text.</summary>
+    private const string WithIdentity = "trusted in the git folder";
 
     public static GitSettings Load(string path, out string? error)
     {

@@ -308,3 +308,12 @@ You hear: Before axGIT connects to Git.
 2. Press Tab twice.
 3. Press Space.
     You hear: Trusted.
+
+## Trust a repository as it was shown
+
+### Trust a repository
+
+1. Open axGIT with the folder repo.
+2. Press Alt+T.
+    You hear: Trusted.
+3. Close the window.

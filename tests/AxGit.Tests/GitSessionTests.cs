@@ -267,9 +267,9 @@ public sealed class GitSessionTests : IDisposable
 
         Assert.Empty(Ran(marks));
         // Trusted for another mark: still nothing; for the one found: git runs.
-        Assert.False(await session.TrustAsync(GitTrust.Mark(["something else"])));
+        Assert.False(await session.TrustAsync(session.Scan with { Mark = GitTrust.Mark(["something else"]) }));
         Assert.False(session.Trusted);
-        Assert.True(await session.TrustAsync(session.Scan.Mark));
+        Assert.True(await session.TrustAsync(session.Scan));
         Assert.True((await session.RunAsync(GitStatus.Arguments, GitRunner.Short)).Ok);
 
         // A repository with no risk is asked about too (G1 of the sixth pass), and runs once trusted.
@@ -278,7 +278,7 @@ public sealed class GitSessionTests : IDisposable
         Assert.Empty(plain.Scan.Risks);
         Assert.False(plain.Trusted);
         Assert.NotNull(plain.Refused);
-        Assert.True(await plain.TrustAsync(plain.Scan.Mark));
+        Assert.True(await plain.TrustAsync(plain.Scan));
         Assert.Null(plain.Refused);
 
         // The way it ran: the stage with nothing set aside runs the filter.
@@ -330,7 +330,7 @@ public sealed class GitSessionTests : IDisposable
         var marks = MarksOf(root);
         var session = Untrusted(root);
         await session.CheckAsync();
-        Assert.True(await session.TrustAsync(session.Scan.Mark));
+        Assert.True(await session.TrustAsync(session.Scan));
         var checks = session.Checks;
 
         var failed = await session.ChangeAsync(["switch", "no-such-branch"], GitRunner.Short);
@@ -377,12 +377,12 @@ public sealed class GitSessionTests : IDisposable
         Ran(marks);
 
         string? trusted = null;
-        var session = new GitSession(root, mark => mark == trusted, _env);
+        var session = new GitSession(root, scan => scan.Mark == trusted, _env);
         var scan = await session.CheckAsync();
         Assert.Equal(["core.hookspath"], scan.Risks);
         Assert.Equal(["core.hookspath"], scan.InTree!);
         trusted = scan.Mark;
-        Assert.True(await session.TrustAsync(scan.Mark));
+        Assert.True(await session.TrustAsync(scan));
 
         Assert.True((await session.ChangeAsync(["switch", "other"], GitRunner.Short)).Ok);
         Assert.Empty(Ran(marks));
@@ -533,7 +533,7 @@ public sealed class GitSessionTests : IDisposable
         Git(root, "remote", "add", "origin", target);
         var session = Untrusted(root);
         await session.CheckAsync();
-        Assert.True(await session.TrustAsync(session.Scan.Mark));
+        Assert.True(await session.TrustAsync(session.Scan));
         Assert.True((await session.ChangeAsync(GitTexts.FetchArguments("origin"), GitRunner.Short)).Ok);
         Git(root, "config", "branch.main.remote", "origin");
         Git(root, "config", "branch.main.merge", "refs/heads/main");
@@ -616,7 +616,7 @@ public sealed class GitSessionTests : IDisposable
 
         var session = Untrusted(root);
         await session.CheckAsync();
-        Assert.True(await session.TrustAsync(session.Scan.Mark));
+        Assert.True(await session.TrustAsync(session.Scan));
         Assert.Null(session.LfsPushRefused());
         var trace = new Dictionary<string, string>(_env) { ["GIT_TRACE"] = "1" };
         var switched = await GitRunner.RunAsync(root, ["switch", "other"], GitRunner.Short, environment: trace);

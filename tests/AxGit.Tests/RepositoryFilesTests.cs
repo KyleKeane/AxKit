@@ -13,7 +13,7 @@ namespace AxGit.Tests;
 public sealed partial class RepositoryFilesTests
 {
     /// <summary>The ways .NET reaches a file or a folder's content or attributes, handles and memory maps among them.</summary>
-    [GeneratedRegex(@"\b(File|Directory|FileInfo|DirectoryInfo|FileStream|StreamReader|FileSystemEnumerable|DriveInfo|RandomAccess|MemoryMappedFile|FileSystemWatcher)\s*[.(<]|new\s+(StreamReader|FileStream|FileInfo|DirectoryInfo|DriveInfo|FileSystemWatcher)\b|\bPath\s*\.\s*Exists\b|\bFileSystemInfo\b|\bSafeFileHandle\b")]
+    [GeneratedRegex(@"\b(File|Directory|FileInfo|DirectoryInfo|FileStream|StreamReader|FileSystemEnumerable|DriveInfo|RandomAccess|MemoryMappedFile|FileSystemWatcher)\s*[.(<]|new\s+(StreamReader|FileStream|FileInfo|DirectoryInfo|DriveInfo|FileSystemWatcher)\b|\bPath\s*\.\s*Exists\b|\bFileSystemInfo\b|\bSafeFileHandle\b|\bCreateFile[AW]?\s*\(")]
     private static partial Regex DiskWay();
 
     /// <summary>What a window's line that touches a path not of the repository's ends with, before its reason.</summary>
@@ -32,6 +32,7 @@ public sealed partial class RepositoryFilesTests
     [InlineData("AxGit.Core", "UntrackedFile.cs")]
     [InlineData("AxGit.Core", "GitReach.cs")]
     [InlineData("AxGit.Core", "GitRemote.cs")]
+    [InlineData("AxGit.Core", "FolderIdentity.cs")]
     public void The_reads_of_a_repositorys_paths_go_through_the_one_function(string project, string file)
     {
         var ways = Code(Source(project, file)).Where(line => DiskWay().IsMatch(line)).ToList();
@@ -81,5 +82,6 @@ public sealed partial class RepositoryFilesTests
     [InlineData("var watcher = new FileSystemWatcher(folder);")]
     [InlineData("SafeFileHandle handle = null;")]
     [InlineData("foreach (FileSystemInfo entry in list)")]
+    [InlineData("var handle = CreateFileW(path, 0x80, 7, IntPtr.Zero, 3, flags, IntPtr.Zero);")]
     public void Every_way_to_the_disk_is_caught(string line) => Assert.Matches(DiskWay(), line);
 }
