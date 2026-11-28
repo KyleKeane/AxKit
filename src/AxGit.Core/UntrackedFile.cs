@@ -13,11 +13,15 @@ public static class UntrackedFile
 
     /// <summary>
     /// The start of the file as text, at most <paramref name="limit"/> characters, and whether the file goes on
-    /// after them; UTF-8 unless the file starts with another encoding's mark. Throws as a file read does.
+    /// after them; UTF-8 unless the file starts with another encoding's mark. Throws as a file read does. A path
+    /// that is a place axGIT does not read (<see cref="RepositoryFiles.Place"/>, from the repository's
+    /// <paramref name="root"/>: an untracked link to a share, the fifth pass, P2) is not opened: an
+    /// <see cref="IOException"/> says so.
     /// </summary>
-    public static async Task<(string Text, bool Cut)> ReadAsync(string path, int limit = Limit, CancellationToken cancellation = default)
+    public static async Task<(string Text, bool Cut)> ReadAsync(string path, string root, int limit = Limit, CancellationToken cancellation = default)
     {
-        using var reader = new StreamReader(path, detectEncodingFromByteOrderMarks: true);
+        using var reader = await Task.Run(() => RepositoryFiles.Reader(path, root), cancellation).ConfigureAwait(false)
+            ?? throw new IOException($"it is a link or {RepositoryFiles.NotRead}");
         // One character more than is shown, to know whether there is more.
         var buffer = new char[limit + 1];
         var count = await reader.ReadBlockAsync(buffer.AsMemory(), cancellation).ConfigureAwait(false);

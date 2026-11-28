@@ -111,7 +111,7 @@ public sealed class GitSealTests
     }
 
     [Fact]
-    public void A_file_from_before_the_seal_keeps_its_trusts_binds_them_and_is_sealed_by_the_next_save()
+    public void A_file_from_before_the_seal_keeps_its_repositories_asks_about_them_again_and_is_sealed_by_the_next_save()
     {
         using var temp = new TempFolder("axgit-seal");
         var path = temp.File("axGIT.json", """{"recentRepositories":["C:\\repo"],"trustedRepositories":["C:\\repo","c:\\REPO"," "]}""");
@@ -119,8 +119,11 @@ public sealed class GitSealTests
         var settings = GitSettings.Load(path, out var error);
         Assert.Null(error);
         Assert.Equal([new TrustedRepository(@"C:\repo", string.Empty)], settings.Trusted);
-        // A trust from before the marks counts for what the repository runs at its next opening, and is bound to it.
-        Assert.True(settings.Trusts(@"C:\repo", Hook));
+        // L5 (the fifth pass): a trust from before the marks, with no mark, is no trust: the repository is asked about
+        // once more, as one that was trusted, and the trust given then is bound to its mark.
+        Assert.False(settings.Trusts(@"C:\repo", Hook));
+        Assert.False(settings.Trusts(@"C:\repo", string.Empty));
+        Assert.True(settings.WasTrusted(@"C:\repo"));
         Assert.True(settings.Trust(@"C:\repo", Hook));
         Assert.False(settings.Trusts(@"C:\repo", M("hook pre-push")));
 

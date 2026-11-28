@@ -23,6 +23,9 @@ public sealed record GitResult(int ExitCode, string Output, string Error, bool T
     /// <summary>What git complained, without the sign-in of any address in it.</summary>
     public string Error { get; init; } = GitRemote.WithoutSignIn(Error);
 
+    /// <summary>Nothing ran: the session refused the command (<see cref="GitSession.Refused"/>), and <see cref="Error"/> says why.</summary>
+    public bool NotRun { get; init; }
+
     /// <summary>git ran to its own end and gave exit code 0; never true for a run stopped at the time limit.</summary>
     public bool Ok => ExitCode == 0 && !TimedOut;
 
@@ -85,7 +88,11 @@ public static class GitRunner
 
     /// <summary>
     /// The whole argument list of a command: the repository, the fixed configuration, then
-    /// <paramref name="arguments"/>. The fixed configuration, for every run in every repository: a repository's
+    /// <paramref name="arguments"/>. The repository is named three times (the review's fifth pass, P1): <c>-C</c> the
+    /// root, <c>--git-dir</c> the git folder that was read (<paramref name="gitDir"/>, <c>.git</c> under the root when
+    /// none is given) and <c>--work-tree</c> the root, so that git looks for no repository of its own: run in a folder
+    /// whose <c>.git</c> it did not take for one, git went up to the repository above and ran its hooks.
+    /// The fixed configuration, for every run in every repository: a repository's
     /// file monitor never runs (it would on every <c>git status</c>), nor the <c>ext::</c> transport, which runs a
     /// command named in a remote's address (security audit S-2), nor git's automatic maintenance after a commit or
     /// a fetch (the review's second pass of 2026-11-27: it runs the program of <c>gc.recentObjectsHook</c>, a
@@ -98,13 +105,18 @@ public static class GitRunner
     /// aside where a program lies in the work tree is no argument: it goes through the environment
     /// (<see cref="SetOverrides"/>). Pure, tested.
     /// </summary>
-    public static IReadOnlyList<string> Command(string? repository, IReadOnlyList<string> arguments)
+    public static IReadOnlyList<string> Command(string? repository, string? gitDir, IReadOnlyList<string> arguments, bool findRepository = false)
     {
         var list = new List<string>();
         if (repository is not null)
         {
             list.Add("-C");
             list.Add(repository);
+            if (!findRepository)
+            {
+                list.Add("--git-dir=" + (gitDir ?? Path.Combine(repository, ".git")));
+                list.Add("--work-tree=" + repository);
+            }
         }
 
         list.AddRange(["-c", "core.quotepath=false", "-c", "color.ui=never", "-c", "core.fsmonitor=false", "-c", "protocol.ext.allow=never", "-c", "maintenance.auto=false", "-c", "gc.auto=0",
@@ -164,32 +176,72 @@ public static class GitRunner
     ];
 
     /// <summary>
-    /// One git command. <paramref name="overrides"/>: what is set aside for a repository that is not trusted.
-    /// <paramref name="environment"/>: variables of the caller's for this run alone, put in after the
-    /// process's own and before <see cref="FixedEnvironment"/> (the tests' settings files; never process-wide).
+    /// git's own variables that name a repository's folders, its index, its object stores or a namespace in it
+    /// (the review's fifth pass, P1): taken out of every run in a repository, whatever the environment axKit was
+    /// started with or the caller holds, so that git works on the folders axGIT read and no other. With GIT_DIR
+    /// naming another repository, Stage all ran that repository's hook.
     /// </summary>
-    public static async Task<GitResult> RunAsync(string? repository, IReadOnlyList<string> arguments, TimeSpan timeout, CancellationToken cancellation = default, IReadOnlyList<GitSetting>? overrides = null, IReadOnlyDictionary<string, string>? environment = null)
+    public static readonly IReadOnlyList<string> RepositoryVariables =
+        ["GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY", "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_NAMESPACE"];
+
+    /// <summary>
+    /// A run's environment (pure, tested): the process's own, then <paramref name="caller"/>'s, then
+    /// <see cref="FixedEnvironment"/>. In a repository (<paramref name="repository"/>), without
+    /// <see cref="RepositoryVariables"/>, and with <c>GIT_CEILING_DIRECTORIES</c> the folder above it, so that git,
+    /// and any git a program it starts runs, looks for no repository above the one axGIT read (P1).
+    /// </summary>
+    public static void SetEnvironment(IDictionary<string, string?> environment, string? repository, IReadOnlyDictionary<string, string>? caller)
+    {
+        foreach (var (name, value) in caller ?? new Dictionary<string, string>())
+        {
+            environment[name] = value;
+        }
+
+        foreach (var (name, value) in FixedEnvironment)
+        {
+            environment[name] = value;
+        }
+
+        if (repository is null)
+        {
+            return;
+        }
+
+        foreach (var name in RepositoryVariables)
+        {
+            environment.Remove(name);
+        }
+
+        if (Path.GetDirectoryName(Path.GetFullPath(repository)) is { } above)
+        {
+            environment["GIT_CEILING_DIRECTORIES"] = above;
+        }
+        else
+        {
+            environment.Remove("GIT_CEILING_DIRECTORIES");
+        }
+    }
+
+    /// <summary>
+    /// One git command. <paramref name="gitDir"/>: the git folder that was read (P1). <paramref name="overrides"/>:
+    /// what is set aside. <paramref name="environment"/>: variables of the caller's for this run alone, put in after
+    /// the process's own (the tests' settings files, the parser's <c>GIT_DIR</c>; never process-wide).
+    /// <paramref name="findRepository"/>: git finds the repository itself from the root, with no folder above it
+    /// (<see cref="GitSession"/>'s one question of git's ownership check, which a named git folder passes over).
+    /// </summary>
+    public static async Task<GitResult> RunAsync(string? repository, IReadOnlyList<string> arguments, TimeSpan timeout, CancellationToken cancellation = default, IReadOnlyList<GitSetting>? overrides = null, IReadOnlyDictionary<string, string>? environment = null, string? gitDir = null, bool findRepository = false)
     {
         var info = new ProcessStartInfo(Program)
         {
             StandardOutputEncoding = new UTF8Encoding(false),
             StandardErrorEncoding = new UTF8Encoding(false),
         };
-        foreach (var argument in Command(repository, arguments))
+        foreach (var argument in Command(repository, gitDir, arguments, findRepository))
         {
             info.ArgumentList.Add(argument);
         }
 
-        foreach (var (name, value) in environment ?? new Dictionary<string, string>())
-        {
-            info.Environment[name] = value;
-        }
-
-        foreach (var (name, value) in FixedEnvironment)
-        {
-            info.Environment[name] = value;
-        }
-
+        SetEnvironment(info.Environment, repository, environment);
         SetOverrides(info.Environment, overrides ?? []);
 
         // The run is the bundle's (AxKit.Core/ProcessRun, since 2026-10-25): the reads under the timeout as well as the
@@ -201,7 +253,8 @@ public static class GitRunner
         {
             // Outside call, program, Git: runs the user's installed git for one command and reads what it prints, one
             // process per command, its terminal prompts off; in a repository only once the user has trusted it or it
-            // holds no risk, and before that only as the parser of one settings file with no repository (AG-1.6);
+            // holds no risk, and then on the git folder the check read and no other, and before that only as the
+            // parser of one settings file with no repository (AG-1.6);
             // fetch, pull and push alone reach the repository's remotes, a push only a server and never a folder or
             // a share, every other command works on disk: git fetches no missing object by itself and Git LFS
             // neither fetches nor sends a file (FixedEnvironment; AX-11.11).

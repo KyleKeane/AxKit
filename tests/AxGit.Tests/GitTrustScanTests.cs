@@ -156,7 +156,8 @@ public sealed partial class GitTrustScanTests : IDisposable
         var first = await ScanAsync(root);
         Assert.Equal(["hook post-checkout"], first.Risks);
         Assert.Empty(first.InTree!);
-        Assert.Equal(Path.Combine(root, ".git", "hooks"), first.Hooks);
+        Assert.Equal([Path.Combine(root, ".git", "hooks")], first.Hooks!);
+        Assert.Equal(Path.Combine(root, ".git"), first.GitDir);
 
         Directory.CreateDirectory(Path.Combine(root, "tools", "hooks"));
         File.WriteAllText(Path.Combine(root, "tools", "hooks", "pre-push"), "#!/bin/sh\n");
@@ -179,8 +180,9 @@ public sealed partial class GitTrustScanTests : IDisposable
     }
 
     /// <summary>
-    /// A repository inside another, kept in its work tree or under .git/modules, also with its work tree taken
-    /// away, and one in a folder git does not track yet: each is found and read.
+    /// A repository inside another that git enters, kept in its work tree or under .git/modules, also with its work
+    /// tree taken away: each is found and read. One in an ignored folder that git does not track git never enters
+    /// (P4 of the fifth pass, tried with git 2.53 on every command axGIT has), and is not asked about.
     /// </summary>
     [GitFact]
     public async Task What_a_repository_inside_would_run_is_found_wherever_git_keeps_it()
@@ -196,7 +198,7 @@ public sealed partial class GitTrustScanTests : IDisposable
         Git(root, "submodule", "--quiet", "add", library, "libs/zip");
         Git(Path.Combine(root, "libs", "zip"), "config", "filter.x.smudge", "never-run");
         Git(root, "commit", "-q", "-m", "two inside");
-        // Not tracked at all, in an ignored folder: git would track it once the ignore goes, and the walk reads no ignore.
+        // Not tracked at all, in an ignored folder: git never enters it.
         File.WriteAllText(Path.Combine(root, ".gitignore"), "ignored/\n");
         Git(Directory.CreateDirectory(Path.Combine(root, "ignored", "tool")).FullName, "init", "-q");
         Git(Path.Combine(root, "ignored", "tool"), "config", "core.pager", "never-run");
@@ -204,7 +206,7 @@ public sealed partial class GitTrustScanTests : IDisposable
         var scan = await ScanAsync(root);
         Assert.Null(scan.Problem);
         Assert.Equal(
-            ["submodule ignored/tool: core.pager", "submodule libs/zip: filter.x.smudge", "submodule vendor: core.fsmonitor", "submodule vendor: hook post-checkout"],
+            ["submodule libs/zip: filter.x.smudge", "submodule vendor: core.fsmonitor", "submodule vendor: hook post-checkout"],
             scan.Risks.Order(StringComparer.Ordinal));
 
         // The submodule's work tree taken away, its repository stays under .git/modules, and is still read.
@@ -212,19 +214,70 @@ public sealed partial class GitTrustScanTests : IDisposable
         Assert.Contains("submodule libs/zip: filter.x.smudge", (await ScanAsync(root)).Risks);
     }
 
-    /// <summary>A repository inside another inside another is followed, each named from the repository opened.</summary>
+    /// <summary>A repository inside another inside another is followed through each one's index, each named from the repository opened; the same two untracked are not entered by git and not asked about.</summary>
     [GitFact]
     public async Task A_repository_inside_one_that_is_inside_is_found()
     {
         var root = Repository("levels");
-        var outer = Directory.CreateDirectory(Path.Combine(root, "outer")).FullName;
-        Git(outer, "init", "-q");
-        var inner = Directory.CreateDirectory(Path.Combine(outer, "inner")).FullName;
-        Git(inner, "init", "-q");
+        var outer = Repository(Path.Combine("levels", "outer"));
+        var inner = Repository(Path.Combine("levels", "outer", "inner"));
         Git(inner, "config", "core.sshCommand", "never-run");
+        Assert.Empty((await ScanAsync(root)).Risks);
+
+        Git(outer, "add", "inner");
+        Git(outer, "commit", "-q", "-m", "inner");
+        Git(root, "add", "outer");
         var scan = await ScanAsync(root);
         Assert.Null(scan.Problem);
         Assert.Equal(["submodule outer/inner: core.sshcommand"], scan.Risks);
+    }
+
+    /// <summary>
+    /// P4: the repositories inside are those the index holds as gitlinks, read from the index in every form git
+    /// writes (versions 2, 3 and 4, a split index with its shared index) and from .gitmodules; a gitlink inside a
+    /// submodule is followed into its index.
+    /// </summary>
+    [GitFact]
+    public async Task The_gitlinks_of_every_form_of_index_are_found()
+    {
+        foreach (var form in new[] { "2", "3", "4", "split" })
+        {
+            var root = Repository("index-" + form);
+            var vendor = Repository(Path.Combine("index-" + form, "vendor"));
+            Git(vendor, "config", "core.sshCommand", "never-run");
+            if (form == "split")
+            {
+                Git(root, "config", "core.splitIndex", "true");
+                Git(root, "update-index", "--split-index");
+            }
+            else
+            {
+                Git(root, "update-index", "--index-version", form);
+            }
+
+            Git(root, "add", "vendor");
+            if (form == "3")
+            {
+                // An entry with the extended flags of version 3: intent to add.
+                File.WriteAllText(Path.Combine(root, "later.txt"), "later\n");
+                Git(root, "add", "--intent-to-add", "later.txt");
+            }
+
+            var entries = GitIndex.Read(File.ReadAllBytes(Path.Combine(root, ".git", "index")), 20);
+            Assert.True(entries.Known, form);
+            Assert.Contains("submodule vendor: core.sshcommand", (await ScanAsync(root)).Risks);
+            if (form == "split")
+            {
+                Assert.NotNull(entries.SharedIndex);
+            }
+        }
+
+        // Named by .gitmodules alone, with no gitlink in the index.
+        var modules = Repository("index-modules");
+        var listed = Repository(Path.Combine("index-modules", "listed"));
+        Git(listed, "config", "core.pager", "never-run");
+        File.WriteAllText(Path.Combine(modules, ".gitmodules"), "[submodule \"listed\"]\n\tpath = listed\n\turl = ./listed\n");
+        Assert.Contains("submodule listed: core.pager", (await ScanAsync(modules)).Risks);
     }
 
     [GitFact]
@@ -533,7 +586,8 @@ public sealed partial class GitTrustScanTests : IDisposable
     /// <summary>
     /// The second pass's finding 4: a folder with a repository of its own and no entry in the index; Stage all
     /// makes it an entry, and from then on git runs itself inside it on every status, with that repository's hooks.
-    /// The scan finds it, and nothing runs in a repository that is not trusted.
+    /// Untracked, git does not enter it (P4 of the fifth pass), and it is not asked about; Stage all runs nothing of
+    /// it, the check after it finds the gitlink and its hook, and the status after it is refused.
     /// </summary>
     [GitFact]
     public async Task A_hook_of_a_repository_in_a_folder_git_does_not_track_runs_nothing()
@@ -549,13 +603,16 @@ public sealed partial class GitTrustScanTests : IDisposable
 
         var session = new GitSession(root, _ => false, _env);
         var scan = await session.CheckAsync();
-        Assert.Equal(["submodule vendor: hook post-index-change"], scan.Risks);
-        Assert.False((await session.ChangeAsync(GitTexts.StageAllArguments, GitRunner.Short)).Ok);
+        Assert.Empty(scan.Risks);
+        Assert.True((await session.ChangeAsync(GitTexts.StageAllArguments, GitRunner.Short)).Ok);
+        Assert.Equal(["submodule vendor: hook post-index-change"], session.Scan.Risks);
+        Assert.False(session.Trusted);
         var time = DateTime.UtcNow;
         void Touch() => File.SetLastWriteTimeUtc(Path.Combine(vendor, "v.txt"), time = time.AddSeconds(3));
         Touch();
         Assert.False((await session.RunAsync(GitStatus.Arguments, GitRunner.Short)).Ok);
         Assert.Empty(Ran());
+        Git(root, "reset", "-q");
 
         // The way it ran: the stage and the status as a session that found nothing runs them.
         Assert.True((await AxGit(root, GitTexts.StageAllArguments)).Ok);
@@ -651,14 +708,18 @@ public sealed partial class GitTrustScanTests : IDisposable
         var alternates = Repository("alternates");
         _dir.File(Path.Combine("alternates", ".git", "objects", "info", "alternates"), $"{far}/objects\n");
         Assert.Contains(GitTrust.Alternates, (await ScanAsync(alternates)).Risks);
+        // Since the fifth pass (P1) the repository opened through either is not opened at all: git would work on a
+        // folder that was not read.
         var tree = Directory.CreateDirectory(Path.Combine(_dir.Path, "far-tree")).FullName;
         File.WriteAllText(Path.Combine(tree, ".git"), $"gitdir: {far}/real.git\n");
-        Assert.Equal(["its .git file names another computer, localhost"], (await ScanAsync(tree)).Risks);
+        Assert.Equal("Its .git file names another computer, localhost, so axGIT does not open it.", (await ScanAsync(tree)).Problem);
         var linked = Repository("far-common");
         File.WriteAllText(Path.Combine(linked, ".git", "commondir"), $"{far}\n");
-        Assert.Contains("its commondir file names another computer, localhost", (await ScanAsync(linked)).Risks);
+        Assert.Contains("is not a repository as git reads one", (await ScanAsync(linked)).Problem);
+        Assert.Null(GitTrustScan.RootOf(linked));
 
-        // A .git that is a link to the share: named, and never followed (the repository there has a hook).
+        // A .git that is a link to the share: never followed (the repository there has a hook), and since the fifth
+        // pass (P1) not opened.
         var real = Repository("far-real");
         MarkerFile(Path.Combine(real, ".git", "hooks", "post-checkout"), "real-hook");
         var link = Directory.CreateDirectory(Path.Combine(_dir.Path, "link-tree")).FullName;
@@ -670,8 +731,8 @@ public sealed partial class GitTrustScanTests : IDisposable
         try
         {
             Directory.CreateSymbolicLink(Path.Combine(link, ".git"), Share(Path.Combine("far-real", ".git")).Replace('/', '\\'));
-            var risks = (await ScanAsync(link)).Risks;
-            Assert.Equal([GitTrust.Link(".git")], risks);
+            var scan = await ScanAsync(link);
+            Assert.Equal("Its .git is a link, which axGIT does not follow, so axGIT does not open it.", scan.Problem);
             Assert.Equal(link, GitTrustScan.RootOf(link));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)

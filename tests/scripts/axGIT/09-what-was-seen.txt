@@ -1,0 +1,86 @@
+# Workflow: Trust only what was seen
+# Needs: Git installed.
+# axGIT: the review's fifth pass of 2026-11-28 (docs/axGIT/nvda-test-plan.md section 10; SPEC AG-1.6a, AG-1.6b): a
+# folder whose git folder git does not take for a repository is none for axGIT, even with a repository above it (P1);
+# the notice writes out each program with its whole value and says the limit of trust (P5); a trust is checked again,
+# and a setting added while the notice was open is asked about (P3); a changing command is checked before it runs (P3).
+file home\AxKit\axGIT.json {"checkForUpdates": false}
+# The access layers' reminders agreed to already (AX-11.5): this script is about what comes after them.
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"},{"app":"axGIT","target":"Git","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Windows PowerShell","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"PowerShell 7","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Command Prompt","version":"0","when":"2026-10-31T00:00:00"},{"app":"axTerminal","target":"Git Bash","version":"0","when":"2026-10-31T00:00:00"},{"app":"axPass","target":"KeePassXC","version":"0","when":"2026-10-31T00:00:00"}]}
+run git init -q -b main outer
+file outer\o.txt outer
+run git -C outer add .
+run git -C outer -c user.name=Test -c user.email=none commit -q -m outer
+file outer\.git\hooks\post-index-change #!/bin/sh\nexit 0
+run git init -q -b main outer\inner
+file outer\inner\a.txt inner
+run git -C outer\inner add .
+run git -C outer\inner -c user.name=Test -c user.email=none commit -q -m inner
+file outer\inner\.git\HEAD garbage
+run git init -q -b main repo
+file repo\a.txt hello
+run git -C repo add .
+run git -C repo -c user.name=Test -c user.email=none commit -q -m first
+run git -C repo config core.sshCommand "ssh -v -o BatchMode=yes"
+
+# Check: A folder whose git folder git does not take for a repository is none for axGIT
+# P1: the inner .git's HEAD is no reference, so git, run there, would work on the repository above; axGIT opens
+# neither, and says the folder is not in a repository.
+start git {temp}\outer\inner
+expect state "notice":"Not a git repository"
+expect state is not inside a git repository.
+refuse said This repository runs programs of its own
+close
+
+# Check: The notice writes out each program and says the limit of trust
+# P5: the setting with its whole value, and what trust lets run.
+start git {temp}\repo
+expect state "notice":"This repository runs programs of its own"
+expect state The programs as its settings write them: core.sshcommand: ssh -v -o BatchMode=yes.
+expect state Trust lets the programs these settings name run, and whatever they run in turn, files of the work tree included; axGIT sets aside a hook or program only where its path is in the work tree.
+wait 1200
+keys enter
+expect said Not opened
+close
+
+# Check: A setting added while the notice is open is asked about again
+# P3: Trust checks again; the repository gained a filter while the notice was open, so it is not trusted, nothing
+# ran, and the notice comes with what it holds now.
+start git {temp}\repo
+expect state "notice":"This repository runs programs of its own"
+run git -C repo config filter.x.clean cat
+wait 1200
+keys tab
+expect focus Keep it &off
+keys tab
+expect focus &Trust this repository
+keys space
+expect state What axGIT finds in this repository changed while you were asked, so it is not trusted; here is what it holds now.
+expect state filter.x.clean
+# Nothing opened: no list of the repository came (the notice's own words hold "trusted").
+refuse focus Changes,
+expect state No repository
+wait 1200
+keys tab
+keys tab
+keys space
+expect said Trusted
+expect focus Changes, no changes
+close
+
+# Check: A changing command is checked before it runs
+# P3: the trusted repository gains another setting in a console; Stage on a changed file asks first, nothing is
+# staged, and no failure is said, since nothing ran.
+file repo\a.txt hello\nchanged
+start git {temp}\repo
+expect focus Changes, 1 file
+run git -C repo config diff.x.textconv cat
+keys ctrl+shift+s
+expect state "notice":"This repository runs programs of its own"
+expect state What axGIT finds in this repository differs from what you trusted, so it is not trusted now.
+refuse said Staged a.txt
+refuse state Stage failed
+wait 1200
+keys enter
+expect said Repository closed
+close

@@ -111,14 +111,17 @@ public sealed class GitSessionTests : IDisposable
     };
 
     /// <summary>
-    /// The test of the second line (the review's third pass, and H1 of the fourth): every name of every kind of
-    /// <see cref="GitTrust.ProgramNamesTable"/>, each in a clone of its own with a submodule, set in the clone and
-    /// in the submodule to a program that leaves a mark (core.hooksPath to a folder of such hooks), with the
-    /// clone's own core.unsetenvvars clearing the variables axGIT's settings travel in; every command axGIT has run
-    /// with that name set aside (<see cref="GitTrust.Overrides"/>, what a trusted repository's changing commands get
-    /// for a program in its work tree, T4): no mark comes, and every command succeeds but a signed commit, whose
+    /// The test of the second line (the review's third pass, H1 of the fourth, L3 and L7 of the fifth): every name of
+    /// every kind of <see cref="GitTrust.ProgramNamesTable"/>, each in a clone of its own with a submodule, set in the
+    /// clone and in the submodule to a program in the clone's work tree that leaves a mark (core.hooksPath to a folder
+    /// of such hooks there), with the clone's own core.unsetenvvars clearing the variables axGIT's settings travel in;
+    /// every command axGIT has, through a trusted <see cref="GitSession"/> exactly as the window calls it: the reads
+    /// as they are (they may run the program: trusted), the changing commands with what the check found in the work
+    /// tree set aside (T4). No changing command leaves a mark, and every one succeeds but a signed commit, whose
     /// program is set aside, and a fetch, pull or push whose remote's helper (remote.name.vcs) is set to nothing,
-    /// which reaches nothing. The half that shows the test can fail: three of the names, with nothing set aside,
+    /// which reaches nothing; a hook of the settings (hook.x.command, git 2.54 and later) is set aside by its event
+    /// and its switch, under which the commit succeeds (git 2.53 does not know such hooks, and on it this case runs
+    /// nothing either way). The half that shows the test can fail: three of the names, run with nothing set aside,
     /// leave their marks.
     /// </summary>
     [GitFact]
@@ -126,7 +129,7 @@ public sealed class GitSessionTests : IDisposable
     {
         var origin = Origin("origin");
         var library = Origin("library");
-        var names = GitTrust.ProgramNamesTable.SelectMany(kind => kind.Examples).Append("hooks").ToList();
+        var names = GitTrust.ProgramNamesTable.SelectMany(kind => kind.Examples).ToList();
         var marked = new List<string>();
         var failed = new List<string>();
 
@@ -143,18 +146,16 @@ public sealed class GitSessionTests : IDisposable
             Git(root, "config", "core.unsetenvvars", "GIT_CONFIG_COUNT,GIT_CONFIG_PARAMETERS");
             var module = Path.Combine(root, ".git", "modules", "libs", "zip");
             var marks = MarksOf(root);
+            // The program lies in the clone's work tree, as T4 sets aside.
+            var script = Path.Combine(root, "tools", "marker.sh");
+            Directory.CreateDirectory(Path.GetDirectoryName(script)!);
+            File.WriteAllText(script, "#!/bin/sh\necho \"$1\" >> \"$2\"\ncat\n");
+            var program = $"sh \"{script.Replace('\\', '/')}\" n{number} \"{marks.Replace('\\', '/')}\"";
             foreach (var place in new[] { root, module })
             {
-                if (name == "hooks")
+                if (name.Equals("core.hooksPath", StringComparison.OrdinalIgnoreCase))
                 {
-                    foreach (var hook in new[] { "pre-commit", "post-commit", "post-checkout", "post-index-change", "reference-transaction", "prepare-commit-msg", "commit-msg", "post-rewrite", "pre-push" })
-                    {
-                        MarkerFile(Path.Combine(place == root ? Path.Combine(root, ".git") : module, "hooks", hook), marks, $"hooks-{hook}");
-                    }
-                }
-                else if (name.Equals("core.hooksPath", StringComparison.OrdinalIgnoreCase))
-                {
-                    var folder = Path.Combine(_dir.Path, $"hooks{(aside ? "n" : "t")}{number}");
+                    var folder = Path.Combine(root, "tools", "hooks");
                     foreach (var hook in new[] { "pre-commit", "post-commit", "post-checkout", "post-index-change", "reference-transaction" })
                     {
                         MarkerFile(Path.Combine(folder, hook), marks, $"n{number}");
@@ -164,7 +165,7 @@ public sealed class GitSessionTests : IDisposable
                 }
                 else
                 {
-                    Git(place, "config", name, Marker(marks, $"n{number}"));
+                    Git(place, "config", name, program);
                 }
 
                 foreach (var (companion, value) in Companions(name))
@@ -174,25 +175,47 @@ public sealed class GitSessionTests : IDisposable
             }
 
             Ran(marks);
-            var risks = name == "hooks" ? ["hook pre-commit"] : new[] { name };
-            var results = await GitTests.EveryCommandAsync(root, "origin", (arguments, _) =>
-                GitRunner.RunAsync(root, arguments, GitRunner.Short, overrides: aside ? GitTrust.Overrides(risks, []) : null, environment: _env));
-            if (aside)
+            if (!aside)
             {
-                // A signed commit fails with its program set aside; a remote's helper set to nothing is the helper
-                // "remote-", which git does not find, so that remote is reached by nothing.
-                var signing = Companions(name).Any(companion => companion.Name == "commit.gpgSign");
-                var helper = name.EndsWith(".vcs", StringComparison.OrdinalIgnoreCase);
-                // A hook of the settings (hook.<name>.command, git 2.54 and later) set to nothing is a hook git cannot
-                // start: the command stops with "cannot spawn" and nothing runs. Older git does not know the setting.
-                var settingsHook = name.StartsWith("hook.", StringComparison.OrdinalIgnoreCase) && name.EndsWith(".command", StringComparison.OrdinalIgnoreCase);
-                foreach (var (arguments, result) in results.Where(one => !one.Result.Ok && !(signing && one.Arguments[0] == "commit") && !(helper && one.Arguments[0] is "fetch" or "pull" or "push") && !(settingsHook && one.Result.AllText.Contains("cannot spawn", StringComparison.Ordinal))))
-                {
-                    failed.Add($"{name}: git {string.Join(' ', arguments)}: {result.FirstLine}");
-                }
+                // The way it ran: the same commands with nothing set aside.
+                await GitTests.EveryCommandAsync(root, "origin", (arguments, _) => GitRunner.RunAsync(root, arguments, GitRunner.Short, environment: _env));
+                return Ran(marks);
             }
 
-            return Ran(marks);
+            var session = Trusted(root);
+            var scan = await session.CheckAsync();
+            Assert.True(scan.InTree!.Any(setting => setting.EndsWith(name, StringComparison.OrdinalIgnoreCase)), $"{name}: not found in the work tree ({string.Join(", ", scan.InTree!)})");
+            // A signed commit fails with its program set aside; a remote's helper set to nothing is the helper
+            // "remote-", which git does not find, so that remote is reached by nothing.
+            var signing = Companions(name).Any(companion => companion.Name == "commit.gpgSign");
+            var helper = name.EndsWith(".vcs", StringComparison.OrdinalIgnoreCase);
+            var changed = new List<string>();
+            await GitTests.EveryCommandAsync(root, "origin", async (arguments, change) =>
+            {
+                Ran(marks);
+                var result = change ? await session.ChangeAsync(arguments, GitRunner.Short) : await session.RunAsync(arguments, GitRunner.Short);
+                if (!change)
+                {
+                    return result;
+                }
+
+                if (Ran(marks) is { Length: > 0 } left)
+                {
+                    changed.Add($"git {arguments[0]}: {string.Join(", ", left)}");
+                }
+
+                if (!result.Ok && !(signing && arguments[0] == "commit") && !(helper && arguments[0] is "fetch" or "pull" or "push"))
+                {
+                    lock (failed)
+                    {
+                        failed.Add($"{name}: git {string.Join(' ', arguments)}: {result.FirstLine}");
+                    }
+                }
+
+                return result;
+            });
+
+            return [.. changed];
         }
 
         // Eight at a time, each in its own repository with its own marks.
@@ -212,7 +235,7 @@ public sealed class GitSessionTests : IDisposable
         Assert.True(failed.Count == 0, "Commands that failed with a program set aside: " + string.Join("; ", failed));
 
         // The way it ran: with nothing set aside, the same commands leave the marks of a filter's two sides and of the hooks.
-        var plainMarks = await Task.WhenAll(new[] { "filter.x.clean", "filter.x.smudge", "hooks" }.Select(name => OneAsync(name, names.IndexOf(name), aside: false)));
+        var plainMarks = await Task.WhenAll(new[] { "filter.x.clean", "filter.x.smudge", "core.hooksPath" }.Select(name => OneAsync(name, names.IndexOf(name), aside: false)));
         Assert.All(plainMarks, found => Assert.NotEmpty(found));
     }
 
@@ -244,9 +267,9 @@ public sealed class GitSessionTests : IDisposable
 
         Assert.Empty(Ran(marks));
         // Trusted for another mark: still nothing; for the one found: git runs.
-        session.TrustNow(GitTrust.Mark(["something else"]));
+        Assert.False(await session.TrustAsync(GitTrust.Mark(["something else"])));
         Assert.False(session.Trusted);
-        session.TrustNow(session.Scan.Mark);
+        Assert.True(await session.TrustAsync(session.Scan.Mark));
         Assert.True((await session.RunAsync(GitStatus.Arguments, GitRunner.Short)).Ok);
 
         // A repository with no risk runs as it is.
@@ -292,9 +315,10 @@ public sealed class GitSessionTests : IDisposable
 
     /// <summary>
     /// D8, L7: the session checks again after a command that changes the repository, also after one that failed,
-    /// and what it found is in force for the next command, without the test making the check itself. Here the
-    /// ground moves under a repository that held no risk (a filter appears in its settings), the command fails,
-    /// and since the fourth pass nothing runs after it until the user trusts what is there now.
+    /// and what it found is in force for the next command, without the test making the check itself; since the
+    /// fifth pass (P3) it checks before it too. Here the command fails, and the ground moves under a repository that
+    /// held no risk (a filter appears in its settings) after the check that followed it: since the fourth pass
+    /// nothing runs after it until the user trusts what is there now.
     /// </summary>
     [GitFact]
     public async Task After_a_failed_command_the_check_is_made_and_what_it_found_is_in_force()
@@ -306,14 +330,17 @@ public sealed class GitSessionTests : IDisposable
         Assert.True(session.Trusted);
         var checks = session.Checks;
 
-        Git(root, "config", "filter.x.clean", Marker(marks, "moved-filter"));
         var failed = await session.ChangeAsync(["switch", "no-such-branch"], GitRunner.Short);
         Assert.False(failed.Ok);
-        Assert.Equal(checks + 1, session.Checks);
-        Assert.False(session.Trusted);
+        Assert.False(failed.NotRun);
+        Assert.Equal(checks + 2, session.Checks);
+        Assert.True(session.Trusted);
+
+        Git(root, "config", "filter.x.clean", Marker(marks, "moved-filter"));
 
         File.AppendAllText(Path.Combine(root, "a.txt"), "changed\n");
-        Assert.False((await session.ChangeAsync(GitTexts.StageAllArguments, GitRunner.Short)).Ok);
+        Assert.True((await session.ChangeAsync(GitTexts.StageAllArguments, GitRunner.Short)).NotRun);
+        Assert.False(session.Trusted);
         Assert.Empty(Ran(marks));
 
         // The way it ran: the next command as before the failed one.
@@ -352,7 +379,7 @@ public sealed class GitSessionTests : IDisposable
         Assert.Equal(["core.hookspath"], scan.Risks);
         Assert.Equal(["core.hookspath"], scan.InTree!);
         trusted = scan.Mark;
-        session.TrustNow(scan.Mark);
+        Assert.True(await session.TrustAsync(scan.Mark));
 
         Assert.True((await session.ChangeAsync(["switch", "other"], GitRunner.Short)).Ok);
         Assert.Empty(Ran(marks));

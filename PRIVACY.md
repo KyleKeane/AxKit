@@ -120,8 +120,9 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   the folder, since Claude Code itself does not ask then.
 - **axGIT, access layer for Git** runs git, your own installed program, one process per command, with its prompts
   turned off (`GIT_TERMINAL_PROMPT=0`). Before you trust a repository that names a program, a setting axGIT does not
-  know or a place on another computer, axGIT runs no git command in it: it reads the repository's files itself, and
-  runs git only as the parser of one settings file, with no repository, which reads that file and reaches nothing.
+  know or a place on another computer, axGIT runs no git command in it: it reads the repository's files itself,
+  never one on another computer than the repository's own or through a link, and runs git only as the parser of
+  one settings file, with no repository, which reads that file and reaches nothing.
   Three commands reach a remote (GitHub, or wherever your repository's remotes point, a computer that holds a share
   among them): fetch, pull and push, each only when you choose it, only in a repository you trust or that names
   nothing of the kind, and, the first time axKit reaches that server, after your consent; a push goes only to a

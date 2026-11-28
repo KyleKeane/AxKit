@@ -211,6 +211,22 @@ public sealed class GitTrustTests
     }
 
     /// <summary>
+    /// L7 (the fifth pass; git 2.54 and later, docs of 2.54.0 and 2.56.1): a hook of the settings set to nothing is a
+    /// hook git cannot start, and the command stopped. It is set aside by the two switches git documents for it: an
+    /// empty event, which empties its list of events, and enabled set to false; its command is left as it is.
+    /// </summary>
+    [Fact]
+    public void A_hook_of_the_settings_is_set_aside_by_its_event_and_its_switch()
+    {
+        Assert.Equal(
+            [new GitSetting("hook.Lint.event", string.Empty), new GitSetting("hook.Lint.enabled", "false"), .. Careful],
+            GitTrust.Overrides(["hook.Lint.command"], []));
+        Assert.Equal(
+            [new GitSetting("hook.a.b.event", string.Empty), new GitSetting("hook.a.b.enabled", "false"), .. Careful],
+            GitTrust.Overrides(["submodule libs/zip: hook.a.b.command"], []));
+    }
+
+    /// <summary>
     /// Finding 3: git takes the first proxy command it reads, the repository's, so an empty one after it sets
     /// nothing aside; the transport that would start it is refused instead. A proxy for http is set to nothing by
     /// its name (finding 10).
@@ -234,9 +250,9 @@ public sealed class GitTrustTests
     [Fact]
     public void Every_command_has_its_fixed_settings_on_the_command_line()
     {
-        var command = GitRunner.Command(@"C:\repo", ["status"]);
+        var command = GitRunner.Command(@"C:\repo", null, ["status"]);
         Assert.Equal(
-            ["-C", @"C:\repo", "-c", "core.quotepath=false", "-c", "color.ui=never", "-c", "core.fsmonitor=false", "-c", "protocol.ext.allow=never", "-c", "maintenance.auto=false", "-c", "gc.auto=0",
+            ["-C", @"C:\repo", @"--git-dir=C:\repo\.git", @"--work-tree=C:\repo", "-c", "core.quotepath=false", "-c", "color.ui=never", "-c", "core.fsmonitor=false", "-c", "protocol.ext.allow=never", "-c", "maintenance.auto=false", "-c", "gc.auto=0",
                 "-c", "core.unsetenvvars=PERL5LIB", "-c", "http.followRedirects=false", "status"],
             command);
     }
@@ -328,23 +344,92 @@ public sealed class GitTrustTests
         Assert.Equal(["remote.origin.fetch writes outside refs/remotes"], GitTrust.NotKnown(["remote.origin.fetch writes outside refs/remotes"]));
     }
 
+    /// <summary>
+    /// P1 (the fifth pass): a folder is a repository by git's own rule alone: a HEAD that is a reference or an object
+    /// id, and objects and refs in its common folder, the one its commondir names when it has one, which must exist.
+    /// </summary>
     [Fact]
-    public void A_work_trees_repository_is_its_git_folder_or_the_folder_its_git_file_names()
+    public void A_git_folder_is_a_repository_by_gits_own_rule()
     {
-        using var temp = new TempFolder("axgit-links");
-        var embedded = Directory.CreateDirectory(Path.Combine(temp.Path, "embedded", ".git")).FullName;
-        Assert.Equal(embedded, GitTrust.GitFolderOf(Path.Combine(temp.Path, "embedded")));
+        using var temp = new TempFolder("axgit-rule");
+        string Folder(string name, string head, string? commondir = null)
+        {
+            var folder = Directory.CreateDirectory(Path.Combine(temp.Path, name)).FullName;
+            Directory.CreateDirectory(Path.Combine(folder, "objects"));
+            Directory.CreateDirectory(Path.Combine(folder, "refs"));
+            File.WriteAllText(Path.Combine(folder, "HEAD"), head);
+            if (commondir is not null)
+            {
+                File.WriteAllText(Path.Combine(folder, "commondir"), commondir);
+            }
 
-        var modules = Directory.CreateDirectory(Path.Combine(temp.Path, ".git", "modules", "libs", "zip")).FullName;
-        temp.File(Path.Combine("libs", "zip", ".git"), "gitdir: ../../.git/modules/libs/zip\n");
-        Assert.Equal(modules, GitTrust.GitFolderOf(Path.Combine(temp.Path, "libs", "zip")));
+            return folder;
+        }
 
-        // Never fetched: no .git at all, and git runs nothing there.
-        Directory.CreateDirectory(Path.Combine(temp.Path, "empty"));
-        Assert.Null(GitTrust.GitFolderOf(Path.Combine(temp.Path, "empty")));
-        // A .git file that names no folder is no repository to git either.
-        temp.File(Path.Combine("odd", ".git"), "something else\n");
-        Assert.Null(GitTrust.GitFolderOf(Path.Combine(temp.Path, "odd")));
+        Assert.True(GitTrustScan.IsGitDirectory(Folder("ref", "ref: refs/heads/main\n"), temp.Path));
+        Assert.True(GitTrustScan.IsGitDirectory(Folder("spaced", "ref:   refs/heads/main\n"), temp.Path));
+        Assert.True(GitTrustScan.IsGitDirectory(Folder("sha1", new string('a', 40) + "\n"), temp.Path));
+        Assert.True(GitTrustScan.IsGitDirectory(Folder("sha256", new string('b', 64) + "\n"), temp.Path));
+        Assert.False(GitTrustScan.IsGitDirectory(Folder("garbage", "garbage\n"), temp.Path));
+        Assert.False(GitTrustScan.IsGitDirectory(Folder("short", new string('a', 39) + "\n"), temp.Path));
+        Assert.False(GitTrustScan.IsGitDirectory(Folder("outside-refs", "ref: heads/main\n"), temp.Path));
+        Assert.False(GitTrustScan.IsGitDirectory(Folder("common-nowhere", "ref: refs/heads/main\n", "../nowhere\n"), temp.Path));
+        Assert.True(GitTrustScan.IsGitDirectory(Folder("common-there", "ref: refs/heads/main\n", "../ref\n"), temp.Path));
+        Assert.False(GitTrustScan.IsGitDirectory(Folder("common-share", "ref: refs/heads/main\n", @"\\localhost\C$" + Path.Combine(temp.Path, "ref")[2..] + "\n"), temp.Path));
+        Directory.Delete(Path.Combine(temp.Path, "sha1", "refs"));
+        Assert.False(GitTrustScan.IsGitDirectory(Path.Combine(temp.Path, "sha1"), temp.Path));
+    }
+
+    /// <summary>
+    /// P2 (the fifth pass): the one function every read of a repository's path goes through, and its answers for every
+    /// form of the brief: a plain path on a drive of this computer, and one under the repository's own folder, are
+    /// read; a share in every spelling, a device path, a stream, a device name and a junction on the way are not.
+    /// </summary>
+    [Fact]
+    public void A_path_is_read_only_in_a_positive_local_form()
+    {
+        using var temp = new TempFolder("axgit-place");
+        var file = temp.File(Path.Combine("far", "x.cfg"), "x");
+        var share = @"\\localhost\C$" + file[2..];
+        Assert.Equal(file, RepositoryFiles.Place(file, null));
+        Assert.Equal(file, RepositoryFiles.Place(file.Replace('\\', '/'), null));
+        Assert.Equal(file, RepositoryFiles.Place(Path.Combine(temp.Path, "far", ".", "x.cfg"), temp.Path));
+        foreach (var form in new[]
+        {
+            share, share.Replace('\\', '/'), @"\??\UNC\localhost\C$" + file[2..], @"\\?\UNC\localhost\C$" + file[2..], @"//?/UNC/localhost/C$" + file[2..].Replace('\\', '/'),
+            @"\\.\" + file, @"\\?\" + file, @"\??\" + file, "//./" + file.Replace('\\', '/'),
+            file + ":stream", file + "::$DATA", Path.Combine(temp.Path, "NUL"), Path.Combine(temp.Path, "com1.txt"), Path.Combine(temp.Path, "aux", "x"), string.Empty,
+        })
+        {
+            Assert.True(RepositoryFiles.Place(form, temp.Path) is null, form);
+            Assert.Null(RepositoryFiles.Attributes(form, temp.Path));
+            Assert.Null(RepositoryFiles.Text(form, temp.Path));
+            Assert.Equal("not read", RepositoryFiles.Hash(form, temp.Path));
+        }
+
+        // A junction on the way, from the drive's root or from the repository's folder: not read, its own attributes alone told.
+        var junction = Path.Combine(temp.Path, "junction");
+        var start = new System.Diagnostics.ProcessStartInfo(Path.Combine(Environment.SystemDirectory, "cmd.exe"));
+        foreach (var argument in new[] { "/c", "mklink", "/J", junction, Path.Combine(temp.Path, "far") })
+        {
+            start.ArgumentList.Add(argument);
+        }
+
+        Assert.Equal(0, AxKit.Core.ProcessRun.Run(start, [], TimeSpan.FromSeconds(30)).ExitCode);
+        Assert.Null(RepositoryFiles.Place(Path.Combine(junction, "x.cfg"), null));
+        Assert.Null(RepositoryFiles.Place(Path.Combine(junction, "x.cfg"), temp.Path));
+        Assert.Null(RepositoryFiles.Place(junction, temp.Path));
+        Assert.True(RepositoryFiles.Attributes(junction, temp.Path)!.Value.HasFlag(FileAttributes.ReparsePoint));
+        Assert.Null(RepositoryFiles.Attributes(Path.Combine(junction, "x.cfg"), temp.Path));
+        Assert.Empty(RepositoryFiles.Entries(junction, temp.Path));
+
+        // A repository opened on a share reads its own files there, under its own folder alone.
+        var root = @"\\localhost\C$" + temp.Path[2..];
+        if (Directory.Exists(root))
+        {
+            Assert.Equal(Path.Combine(root, "far", "x.cfg"), RepositoryFiles.Place(Path.Combine(root, "far", "x.cfg"), root));
+            Assert.Null(RepositoryFiles.Place(@"\\localhost\C$\Windows\win.ini", root));
+        }
     }
 
     [Fact]
@@ -364,10 +449,10 @@ public sealed class GitTrustTests
         var plain = Repository("plain");
         // A folder inside a repository that is not its modules folder is not looked into.
         Repository("plain", "objects", "not-one");
-        var (found, tooDeep) = GitTrust.ModuleFolders(temp.Path);
+        var (found, tooDeep) = GitTrustScan.ModuleFolders(temp.Path, temp.Path);
         Assert.Equal([zip, inner, plain], found);
         Assert.Empty(tooDeep);
-        Assert.Empty(GitTrust.ModuleFolders(Path.Combine(temp.Path, "no-such-folder")).Found);
+        Assert.Empty(GitTrustScan.ModuleFolders(Path.Combine(temp.Path, "no-such-folder"), temp.Path).Found);
     }
 
     /// <summary>
@@ -383,7 +468,7 @@ public sealed class GitTrustTests
         var deepest = Directory.CreateDirectory(Path.Combine([temp.Path, .. parts])).FullName;
         File.WriteAllText(Path.Combine(deepest, "config"), string.Empty);
         File.WriteAllText(Path.Combine(deepest, "HEAD"), string.Empty);
-        var (found, tooDeep) = GitTrust.ModuleFolders(temp.Path);
+        var (found, tooDeep) = GitTrustScan.ModuleFolders(temp.Path, temp.Path);
         Assert.Empty(found);
         Assert.Equal([Path.Combine([temp.Path, .. parts.Take(GitTrust.Deep)])], tooDeep);
     }

@@ -127,115 +127,12 @@ public static partial class GitTrust
         }
     }
 
-    // ---- The repositories inside a repository (submodules) ----
-
-    /// <summary>What a work tree's <c>.git</c> file starts with when the repository lies elsewhere.</summary>
-    private const string GitFileMark = "gitdir:";
-
-    /// <summary>
-    /// The repository of a folder that may be a work tree: its <c>.git</c> folder, or the folder its <c>.git</c>
-    /// file names (a path relative to the work tree); null when it has neither, which is a submodule that was never
-    /// fetched, where git runs nothing, or a <c>.git</c> file that names no folder. The caller has made sure that
-    /// the <c>.git</c> entry is no link (<see cref="GitTrustScan"/>); the path it names is only worked out, never
-    /// touched here.
-    /// </summary>
-    public static string? GitFolderOf(string worktree)
-    {
-        var dot = Path.Combine(worktree, ".git");
-        if (Directory.Exists(dot))
-        {
-            return Path.GetFullPath(dot);
-        }
-
-        if (!File.Exists(dot))
-        {
-            return null;
-        }
-
-        try
-        {
-            // The first line alone, and no more than a path can be long: the file is the repository's own.
-            using var reader = new StreamReader(dot);
-            var buffer = new char[4096];
-            var line = new string(buffer, 0, reader.ReadBlock(buffer, 0, buffer.Length)).Split('\n')[0].Trim();
-            return line.StartsWith(GitFileMark, StringComparison.Ordinal) && line[GitFileMark.Length..].Trim() is { Length: > 0 } path
-                ? Path.GetFullPath(path, Path.GetFullPath(worktree))
-                : null;
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
-        {
-            return Path.GetFullPath(dot);
-        }
-    }
-
-    /// <summary>
-    /// The repositories under the folder git keeps the submodules' in (<c>.git/modules</c>), also one that has no
-    /// work tree now: a folder with a <c>config</c> and a <c>HEAD</c> file is one, and below it only its own
-    /// <c>modules</c> folder is looked into. A link to another folder is not followed. The folders are followed
-    /// <see cref="Deep"/> levels down and no further (a submodule's name with slashes is as many folders, and a
-    /// repository's own <c>modules</c> folder one more); a folder at that depth that holds folders still is
-    /// given in <c>TooDeep</c>, so that it is named and never taken as holding nothing.
-    /// </summary>
-    public static (IReadOnlyList<string> Found, IReadOnlyList<string> TooDeep) ModuleFolders(string modules)
-    {
-        var found = new List<string>();
-        var tooDeep = new List<string>();
-        void Look(string folder, int depth)
-        {
-            IEnumerable<string> inside;
-            try
-            {
-                inside = Directory.GetDirectories(folder).Order(StringComparer.OrdinalIgnoreCase);
-            }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-            {
-                return;
-            }
-
-            if (depth > Deep)
-            {
-                if (inside.Any())
-                {
-                    tooDeep.Add(Path.GetFullPath(folder));
-                }
-
-                return;
-            }
-
-            foreach (var one in inside)
-            {
-                if (new DirectoryInfo(one).Attributes.HasFlag(FileAttributes.ReparsePoint))
-                {
-                    continue;
-                }
-
-                if (File.Exists(Path.Combine(one, "config")) && File.Exists(Path.Combine(one, "HEAD")))
-                {
-                    found.Add(Path.GetFullPath(one));
-                    if (Directory.Exists(Path.Combine(one, "modules")))
-                    {
-                        Look(Path.Combine(one, "modules"), depth + 1);
-                    }
-                }
-                else
-                {
-                    Look(one, depth + 1);
-                }
-            }
-        }
-
-        if (Directory.Exists(modules))
-        {
-            Look(modules, 1);
-        }
-
-        return (found, tooDeep);
-    }
+    // ---- How deep the scan goes ----
 
     /// <summary>How many levels of folders under <c>.git/modules</c>, and of repositories inside each other, the scan follows; what lies deeper is named as not read.</summary>
     public const int Deep = 12;
 
-    /// <summary>How many levels of folders of a work tree and of a <c>.git</c> folder the scan walks; a folder deeper than this that holds folders is a risk (<see cref="TooDeep"/>).</summary>
+    /// <summary>How many levels of folders of a <c>.git</c> folder the scan walks for links; a folder deeper than this that holds folders is a risk (<see cref="TooDeep"/>).</summary>
     public const int TreeDeep = 64;
 
     // ---- How a risk is named ----
@@ -246,7 +143,13 @@ public static partial class GitTrust
     /// <summary>A repository inside whose settings git's parser could not read: nothing of it is known, so it is named as it is.</summary>
     public const string NotRead = "settings that could not be read";
 
-    /// <summary>Folders deeper than the scan walks (<see cref="TreeDeep"/>): what is in them is not known.</summary>
+    /// <summary>An index whose form axGIT does not read (<see cref="GitIndex"/>; the fifth pass, P4): which repositories inside git would enter is not known.</summary>
+    public const string IndexNotRead = "an index axGIT does not read";
+
+    /// <summary>A path of the repository's that is not in a positive local form, which is never read (<see cref="RepositoryFiles"/>; the fifth pass, P2): "include.path names a place axGIT does not read".</summary>
+    public static string NotReadPlace(string what) => $"{what} names {RepositoryFiles.NotRead}";
+
+    /// <summary>Folders or repositories deeper than the scan goes (<see cref="TreeDeep"/>, <see cref="Deep"/>): what is in them is not known.</summary>
     public const string TooDeep = "folders deeper than axGIT looks";
 
     /// <summary>An object store of another repository that git reads (<c>objects/info/alternates</c>).</summary>
@@ -376,6 +279,13 @@ public static partial class GitTrust
 
     // ---- What runs a program, and how the notice says the risks ----
 
+    /// <summary>
+    /// The limit of trust, said in the notice and in AG-1.6b as it is (the review's fifth pass, P5): a program's
+    /// value is a command line, which may run anything, files of the work tree among them, and no reading of its
+    /// text can tell that it stays outside; axGIT sets a program aside only by where the path it names lies.
+    /// </summary>
+    public const string TrustLimit = "Trust lets the programs these settings name run, and whatever they run in turn, files of the work tree included; axGIT sets aside a hook or program only where its path is in the work tree.";
+
     /// <summary>Whether a configuration name makes git run a program: said so in the notice, and set to nothing by its name where it lies in the work tree (<see cref="Overrides"/>).</summary>
     public static bool RunsAProgram(string name) => ProgramNames.IsMatch(name.Trim());
 
@@ -407,7 +317,8 @@ public static partial class GitTrust
 
     private static bool IsPlace(string own) =>
         own.IndexOf('.') is var dot && own.IndexOf(' ') is var space && (dot < 0 || (space >= 0 && space < dot)
-            || own.Contains(" names another computer, ", StringComparison.Ordinal) || own.EndsWith(" names a device path", StringComparison.Ordinal));
+            || own.Contains(" names another computer, ", StringComparison.Ordinal) || own.EndsWith(" names a device path", StringComparison.Ordinal)
+            || own.EndsWith(" names " + RepositoryFiles.NotRead, StringComparison.Ordinal));
 
     /// <summary>
     /// The names of the settings of one repository (<paramref name="settings"/>, from its own files) that are not
@@ -641,6 +552,20 @@ public static partial class GitTrust
             }
 
             gitProxy |= risk.Equals("core.gitproxy", StringComparison.OrdinalIgnoreCase);
+            if (SettingsHook().Match(risk) is { Success: true } hook)
+            {
+                // L7 (the fifth pass): a hook of the settings (git 2.54 and later) with an empty command is one git
+                // cannot start, and the command stopped; git documents two switches for it instead (2.54.0, 2.56.1):
+                // an empty event empties its list of events, and enabled=false turns it off. Older git knows neither.
+                if (names.Add(risk))
+                {
+                    list.Add(new GitSetting($"hook.{hook.Groups[1].Value}.event", string.Empty));
+                    list.Add(new GitSetting($"hook.{hook.Groups[1].Value}.enabled", "false"));
+                }
+
+                continue;
+            }
+
             // The hooks folder is set below.
             if (!risk.Equals("core.hookspath", StringComparison.OrdinalIgnoreCase) && names.Add(risk))
             {
@@ -725,4 +650,8 @@ public static partial class GitTrust
     /// <summary>A proxy for http and https, for every address or for those under one (<c>http.proxy</c>, <c>http.address.proxy</c>); a remote's own, <c>remote.name.proxy</c>, is among the program names.</summary>
     [GeneratedRegex(@"^http(\..+)?\.proxy$", RegexOptions.IgnoreCase)]
     private static partial Regex ProxyNames();
+
+    /// <summary>A hook of the settings, <c>hook.&lt;name&gt;.command</c>, with its name (which may hold dots) as git lists it.</summary>
+    [GeneratedRegex(@"^hook\.(.+)\.command$", RegexOptions.IgnoreCase)]
+    private static partial Regex SettingsHook();
 }

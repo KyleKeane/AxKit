@@ -29,7 +29,8 @@ Updated 2026-11-28, early morning.
   git in it at all, and it pushes only to a server. The fifth look at axClaude's question area found that a
   quick second message could be joined to the first and that a notice opened from a menu did not hold; fixed:
   one message is in flight at a time, and only a Ctrl or function key opens a notice that answers at once.
-  The fifth look at axGIT (git pinned to the repository read, paths read only on this computer) runs now.
+  The fifth look at axGIT pinned git to the repository read and reads paths only on this computer; fixed. The
+  sixth look at axClaude's message path found a message Claude Code had not taken counted as sent; its batch is next.
 - **Fable and Opus**: on 2026-11-28 you said Fable's credits were nearly spent. Every remaining fix batch has
   its written brief with the decisions in it, and the state, the order and the process are in
   `C:\Temp\axkit-tools\HANDOFF.md`, so that Opus can run them; the design work on branches (the graph's
@@ -145,10 +146,25 @@ Each is one line to undo unless it says otherwise.
   the files itself, with git only as the parser of one settings file. A repository with nothing of concern opens
   as before; one with a risk opens only after Trust. There is no read-only look at an untrusted repository: to
   turn back, a reading mode would need its own review. More repositories now get the notice: a linked worktree,
-  a submodule opened by itself, a share in a remote's address, a nested repository in an ignored folder.
+  a submodule opened by itself, a share in a remote's address.
 - **Your trust covers the files as they are**: each hook's content, each file a setting names, and the program
   files outside the repository that its settings name. So after a Git update, a repository whose settings name
   one of Git's own programs is asked about once more. Every trust given before this update is asked once.
+- **git is pinned to the repository axGIT read** (`--git-dir`, `--work-tree`, a ceiling, GIT_DIR and its kin removed
+  from the environment). A `.git` that is a link, or a .git file or commondir on another computer, is "not opened"
+  rather than a risk you could trust. Since `--git-dir` skips git's ownership check, the first trust of a git folder
+  asks git once to find the repository itself, so git's own "dubious ownership" refusal still holds.
+- **Trust looks again, and every change is checked before it runs**: two checks per change, about 40 ms on an
+  ordinary repository, 370 ms with 50 submodules, 1.9 s on the first check of a session (a cache of parsed settings
+  files, by content hash, makes the rest fast). To turn back: the check before a change.
+- **The limit of trust is said, not guessed**: the notice lists every program setting with its whole command line and
+  says "Trust lets the programs these settings name run, and whatever they run in turn, files of the work tree
+  included". The notice is longer for it.
+- **Paths a repository names are read only on this computer, with no link on the way**; the repository's own files
+  are read wherever you opened it (a repository on a share still opens).
+- **Only the repositories git enters are checked**: the index's submodules and embedded repositories, found by
+  reading the index itself. An untracked or ignored repository inside the folder is not asked about until Stage all
+  adds it. The walk of the work tree is gone.
 - **Hooks kept in the repository's own files (husky and the like) never run through axGIT**, also when trusted:
   they are set aside on stage, commit, switch, fetch, pull and push. Run such a commit in a terminal.
 - **No git command follows a redirect.** A GitHub repository that was renamed then fails to fetch until its

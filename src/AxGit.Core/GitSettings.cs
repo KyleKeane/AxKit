@@ -7,7 +7,8 @@ namespace AxGit.Core;
 /// A repository whose own programs the user chose to let git run (SPEC.md AG-1.6): its root, and the mark of what it
 /// would run when it was trusted (<see cref="TrustScan.Mark"/>: the risks, the values of the settings that are not
 /// harmless, and the content of every hook and of every file such a setting names); an empty mark is a trust from a
-/// file written before 2026-11-16, bound at the repository's next opening. A mark made before the review's fourth pass
+/// file written before 2026-11-16, which since the review's fifth pass (L5) trusts nothing: the repository is asked
+/// about once more. A mark made before the review's fourth pass
 /// (2026-11-28) marked the names alone and no longer matches: such a repository is asked about once more.
 /// </summary>
 public sealed record TrustedRepository(string Path, string Risks);
@@ -41,10 +42,11 @@ public sealed class GitSettings : WindowSettings
     /// <summary>
     /// Whether the user trusts the repository's own programs as they are now (AG-1.6): trusted, and what it would run
     /// (<paramref name="mark"/>, <see cref="TrustScan.Mark"/>) is the mark it had when it was trusted. A trust from before
-    /// the marks counts once, and <see cref="Trust"/> then binds it.
+    /// the marks, with none, is no trust (the review's fifth pass, L5: until then it counted for whatever the
+    /// repository ran at its next opening): the repository is asked about once more, as one that was trusted.
     /// </summary>
     public bool Trusts(string root, string mark) =>
-        Find(root) is { } trusted && (trusted.Risks.Length == 0 || trusted.Risks == mark);
+        Find(root) is { } trusted && trusted.Risks.Length > 0 && trusted.Risks == mark;
 
     /// <summary>Whether the repository was trusted at all, with whatever it ran then: the notice says that its programs changed.</summary>
     public bool WasTrusted(string root) => Find(root) is not null;

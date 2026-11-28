@@ -28,7 +28,8 @@ public sealed partial class GitTextsTests
         ("get-url", ["GitRemote.cs"]),
         ("--no-includes", ["GitTrust.cs"]),
         ("--refmap=", ["GitTexts.cs"]),
-        ("GIT_DIR", ["GitTrustScan.cs"]),
+        // The parser's run with no repository, and the variables a run in a repository is given none of (P1).
+        ("GIT_DIR", ["GitTrustScan.cs", "GitRunner.cs"]),
         ("GIT_TERMINAL_PROMPT", ["GitRunner.cs"]),
         ("core.quotepath", ["GitRunner.cs"]),
         ("--no-ext-diff", ["GitStatus.cs", "GitLog.cs"]),

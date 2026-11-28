@@ -96,12 +96,12 @@ public sealed partial class GitForm
         if (file.Kind == ChangeKind.Untracked)
         {
             var path = Path.Combine(_root, file.Path.Replace('/', Path.DirectorySeparatorChar));
-            // Its first 200 KB, and no more of it read (AxGit.Core/UntrackedFile).
+            // Its first 200 KB, and no more of it read, and nothing through a link or on another computer (AxGit.Core/UntrackedFile).
             string text;
             bool cut;
             try
             {
-                (text, cut) = await UntrackedFile.ReadAsync(path);
+                (text, cut) = await UntrackedFile.ReadAsync(path, _root);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
@@ -364,7 +364,7 @@ public sealed partial class GitForm
 
     private async Task FetchAsync(Reach reach)
     {
-        var result = await ChangeGitAsync(GitTexts.FetchArguments(reach.Remote), GitRunner.Long, "fetch");
+        var result = await ChangeGitAsync(GitTexts.FetchArguments(reach.Remote), GitRunner.Long, "fetch", GitReach.NoRedirects(reach));
         if (result is null)
         {
             return;
@@ -391,7 +391,7 @@ public sealed partial class GitForm
             return;
         }
 
-        var result = await ChangeGitAsync(arguments, GitRunner.Long, "pull");
+        var result = await ChangeGitAsync(arguments, GitRunner.Long, "pull", GitReach.NoRedirects(reach));
         if (result is null)
         {
             return;
@@ -416,7 +416,7 @@ public sealed partial class GitForm
             return;
         }
 
-        var result = await ChangeGitAsync(GitTexts.PushArguments(reach.Remote, _repo.Upstream, branch), GitRunner.Long, "push");
+        var result = await ChangeGitAsync(GitTexts.PushArguments(reach.Remote, _repo.Upstream, branch), GitRunner.Long, "push", GitReach.NoRedirects(reach));
         if (result is null)
         {
             return;

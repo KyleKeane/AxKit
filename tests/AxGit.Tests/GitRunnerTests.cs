@@ -9,10 +9,41 @@ public sealed class GitRunnerTests
     [Fact]
     public void A_command_names_the_repository_and_turns_colour_and_quoting_off()
     {
+        string[] fixedPart = ["-c", "core.quotepath=false", "-c", "color.ui=never", "-c", "core.fsmonitor=false", "-c", "protocol.ext.allow=never", "-c", "maintenance.auto=false", "-c", "gc.auto=0", "-c", "core.unsetenvvars=PERL5LIB", "-c", "http.followRedirects=false"];
+        // P1 (the fifth pass): the git folder that was read and the root as the work tree, on every run.
         Assert.Equal(
-            ["-C", @"C:\repo", "-c", "core.quotepath=false", "-c", "color.ui=never", "-c", "core.fsmonitor=false", "-c", "protocol.ext.allow=never", "-c", "maintenance.auto=false", "-c", "gc.auto=0", "-c", "core.unsetenvvars=PERL5LIB", "-c", "http.followRedirects=false", "status", "--porcelain=v2"],
-            GitRunner.Command(@"C:\repo", ["status", "--porcelain=v2"]));
-        Assert.Equal(["-c", "core.quotepath=false", "-c", "color.ui=never", "-c", "core.fsmonitor=false", "-c", "protocol.ext.allow=never", "-c", "maintenance.auto=false", "-c", "gc.auto=0", "-c", "core.unsetenvvars=PERL5LIB", "-c", "http.followRedirects=false", "--version"], GitRunner.Command(null, ["--version"]));
+            ["-C", @"C:\repo", @"--git-dir=C:\repo\.git", @"--work-tree=C:\repo", .. fixedPart, "status", "--porcelain=v2"],
+            GitRunner.Command(@"C:\repo", null, ["status", "--porcelain=v2"]));
+        Assert.Equal(
+            ["-C", @"C:\repo\libs\zip", @"--git-dir=C:\repo\.git\modules\libs\zip", @"--work-tree=C:\repo\libs\zip", .. fixedPart, "status"],
+            GitRunner.Command(@"C:\repo\libs\zip", @"C:\repo\.git\modules\libs\zip", ["status"]));
+        Assert.Equal(["-C", @"C:\repo", .. fixedPart, "rev-parse"], GitRunner.Command(@"C:\repo", @"C:\repo\.git", ["rev-parse"], findRepository: true));
+        Assert.Equal([.. fixedPart, "--version"], GitRunner.Command(null, null, ["--version"]));
+    }
+
+    /// <summary>
+    /// P1 (the fifth pass): a run in a repository passes on none of git's variables that name another repository's
+    /// folders, from the user's environment or the caller's, and git looks for no repository above it; the parser's
+    /// own GIT_DIR, with no repository, stays.
+    /// </summary>
+    [Fact]
+    public void A_run_in_a_repository_passes_on_no_variable_that_names_another()
+    {
+        var environment = new Dictionary<string, string?>
+        {
+            ["GIT_DIR"] = @"C:\other\.git", ["GIT_WORK_TREE"] = @"C:\other", ["GIT_COMMON_DIR"] = "x", ["GIT_INDEX_FILE"] = "x",
+            ["GIT_OBJECT_DIRECTORY"] = "x", ["GIT_ALTERNATE_OBJECT_DIRECTORIES"] = "x", ["GIT_NAMESPACE"] = "x", ["PATH"] = @"C:\Windows",
+        };
+        GitRunner.SetEnvironment(environment, @"C:\work\repo", new Dictionary<string, string> { ["GIT_INDEX_FILE"] = "y" });
+        Assert.All(GitRunner.RepositoryVariables, name => Assert.False(environment.ContainsKey(name), name));
+        Assert.Equal(@"C:\work", environment["GIT_CEILING_DIRECTORIES"]);
+        Assert.Equal(@"C:\Windows", environment["PATH"]);
+        Assert.Equal("1", environment["GIT_NO_LAZY_FETCH"]);
+
+        var parser = new Dictionary<string, string?>();
+        GitRunner.SetEnvironment(parser, null, new Dictionary<string, string> { ["GIT_DIR"] = @"C:\none" });
+        Assert.Equal(@"C:\none", parser["GIT_DIR"]);
+        Assert.False(parser.ContainsKey("GIT_CEILING_DIRECTORIES"));
     }
 
     [Fact]
@@ -62,20 +93,26 @@ public sealed class GitRunnerTests
     {
         using var temp = new TempFolder("axgit-untracked");
         var small = temp.File("small.txt", "one\ntwo\nthree");
-        var (text, cut) = await UntrackedFile.ReadAsync(small);
+        var (text, cut) = await UntrackedFile.ReadAsync(small, temp.Path);
         Assert.Equal(("one\ntwo\nthree", false), (text, cut));
         Assert.Equal("Untracked file, 3 lines\none\ntwo\nthree", UntrackedFile.Details(text, cut));
         Assert.Equal("Untracked file, 0 lines\n", UntrackedFile.Details(string.Empty, false));
 
         // Longer than the limit: the limit's characters, and that there is more.
         var large = temp.File("large.txt", string.Concat(Enumerable.Repeat("0123456789\n", 100)));
-        (text, cut) = await UntrackedFile.ReadAsync(large, limit: 22);
+        (text, cut) = await UntrackedFile.ReadAsync(large, temp.Path, limit: 22);
         Assert.Equal(("0123456789\n0123456789\n", true), (text, cut));
         Assert.Equal("Untracked file, the first 3 lines\n0123456789\n0123456789\n\n(cut after 200 KB)", UntrackedFile.Details(text, cut));
         // Exactly the limit: all of it, nothing cut.
-        (text, cut) = await UntrackedFile.ReadAsync(small, limit: 13);
+        (text, cut) = await UntrackedFile.ReadAsync(small, temp.Path, limit: 13);
         Assert.Equal(("one\ntwo\nthree", false), (text, cut));
         Assert.Equal(200 * 1024, UntrackedFile.Limit);
+
+        // P2 (the fifth pass): a file through a share or a stream is not opened.
+        foreach (var far in new[] { @"\\localhost\C$" + small[2..], small + ":hidden", @"\??\" + small })
+        {
+            await Assert.ThrowsAsync<IOException>(() => UntrackedFile.ReadAsync(far, temp.Path));
+        }
     }
 
     [Fact]

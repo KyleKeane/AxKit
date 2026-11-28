@@ -603,18 +603,24 @@ public sealed partial class GitForm : ItemForm
     /// <paramref name="failed"/>: a failed command's sentence, said first in it, since a second notice would take
     /// this one's place.
     /// </summary>
-    private void AskTrust(string root, GitSession session, bool opening, string? failed = null)
+    private void AskTrust(string root, GitSession session, bool opening, string? failed = null, bool changedWhileAsked = false)
     {
         var scan = session.Scan;
         var risks = scan.Risks;
         Log.Info($"Untrusted repository: {risks.Count} risks, {GitTrust.Programs(risks).Count} of them programs; nothing runs in it");
         // A trust is for what axGIT found when it was given; anything else is asked about again. The sentence
         // does not say the repository changed: after an update of axGIT the check may be the thing that did.
-        var changed = _settings.WasTrusted(root) ? "What axGIT finds in this repository differs from what you trusted, so it is not trusted now. " : string.Empty;
+        var changed = changedWhileAsked ? "What axGIT finds in this repository changed while you were asked, so it is not trusted; here is what it holds now. "
+            : _settings.WasTrusted(root) ? "What axGIT finds in this repository differs from what you trusted, so it is not trusted now. " : string.Empty;
         var programs = GitTrust.Programs(risks);
         var places = GitTrust.Places(risks);
         var notKnown = GitTrust.NotKnown(risks);
         var runs = programs.Count == 0 ? string.Empty : $"Its settings or hooks name programs git would run: {string.Join(", ", programs)}. ";
+        // P5 (the review's fifth pass): each program setting with its whole value, written out as a command is, and
+        // the limit of trust said as it is.
+        var values = scan.Programs is not { Count: > 0 } named ? string.Empty
+            : $"The programs as its settings write them: {string.Join("; ", named.Select(DisplayText.VisibleCommand))}. ";
+        var limit = programs.Count == 0 ? string.Empty : GitTrust.TrustLimit + " ";
         var other = notKnown.Count == 0 ? string.Empty : $"It has settings axGIT does not know to be harmless: {string.Join(", ", notKnown)}. ";
         var elsewhere = places.Count == 0 ? string.Empty : $"Its files lead git to places axGIT does not read: {string.Join(", ", places)}. ";
         // T4: said once, here, since a repository with a program in its work tree is asked about by that setting.
@@ -623,7 +629,7 @@ public sealed partial class GitForm : ItemForm
         var start = opening ? $"axGIT has run nothing in {root}. " : "axGIT runs nothing more in this repository until you choose. ";
         ShowNotice(new Notice(
             programs.Count > 0 ? "This repository runs programs of its own" : places.Count > 0 ? "This repository leads git elsewhere" : "This repository has settings axGIT does not know",
-            $"{(failed is null ? string.Empty : failed + "\n\n")}{changed}{start}{runs}{other}{elsewhere}{inTree}Trust it only if you know where it comes from: then git runs all of it as it would in a console. Keep it off closes the repository.",
+            $"{(failed is null ? string.Empty : failed + "\n\n")}{changed}{start}{runs}{values}{other}{elsewhere}{inTree}{limit}Trust it only if you know where it comes from: then git runs all of it as it would in a console. Keep it off closes the repository.",
         [
             new OverlayChoice("Keep it &off", () => KeepOff(root, session, opening), IsDefault: true, IsCancel: true),
             new OverlayChoice("&Trust this repository", () => TrustRepository(root, session, opening)),
@@ -647,21 +653,83 @@ public sealed partial class GitForm : ItemForm
         }
     }
 
-    /// <summary>Trust this repository: kept with the mark of what the session's last check found, then the repository opened, or its lists read again.</summary>
+    /// <summary>
+    /// Trust this repository (P3 of the review's fifth pass): what the notice showed is checked again, and the trust
+    /// holds only when the repository is still what it showed; then it is kept with that mark, and the repository
+    /// opened, or its lists read again. When the repository changed while the notice was open (a filter added), the
+    /// notice comes again with what it holds now, and nothing has run.
+    /// </summary>
     private void TrustRepository(string root, GitSession session, bool opening)
     {
-        _settings.Trust(root, session.Scan.Mark);
-        SaveSettings();
-        session.TrustNow(session.Scan.Mark);
-        Announce("Trusted", true);
-        if (opening)
+        var mark = session.Scan.Mark;
+        Do(async () =>
         {
-            Do(() => BecomeAsync(root, session));
-        }
-        else if (_root == root && ReferenceEquals(_session, session))
-        {
-            Do(() => RefreshAsync(announce: false, checkedNow: true));
-        }
+            if (!BeginWork("Working: checking…"))
+            {
+                return;
+            }
+
+            SetGitItems(false);
+            bool? trusted = null;
+            try
+            {
+                trusted = await session.TrustAsync(mark);
+            }
+            catch (GitNotFoundException)
+            {
+                // Said below, once the work is over.
+            }
+            finally
+            {
+                EndWork();
+                if (!IsDisposed)
+                {
+                    SetGitItems(true);
+                }
+            }
+
+            if (IsDisposed || (!opening && (_root != root || !ReferenceEquals(_session, session))))
+            {
+                return;
+            }
+
+            if (trusted is null)
+            {
+                GitMissing();
+                return;
+            }
+
+            if (!session.Scan.Known)
+            {
+                if (!opening)
+                {
+                    AfterCheck(root, session);
+                    return;
+                }
+
+                Log.Info("A repository was not opened: what it would run is not known");
+                ShowNotice(Notice.Plain("Repository not opened", $"What {root} would run could not be read, so axGIT runs nothing in it. {session.Scan.Problem}").ByItself());
+                return;
+            }
+
+            if (trusted == false)
+            {
+                AskTrust(root, session, opening, changedWhileAsked: true);
+                return;
+            }
+
+            _settings.Trust(root, session.Scan.Mark);
+            SaveSettings();
+            Announce("Trusted", true);
+            if (opening)
+            {
+                await BecomeAsync(root, session);
+            }
+            else
+            {
+                await RefreshAsync(announce: false, checkedNow: true);
+            }
+        });
     }
 
     /// <summary>The repository open no longer the window's: no list, no title, the status bar says so.</summary>

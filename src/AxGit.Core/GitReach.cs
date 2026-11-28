@@ -9,9 +9,10 @@ namespace AxGit.Core;
 /// computer, a share, and "." for the repository itself), to which axGIT never pushes (AG-5.4c);
 /// <paramref name="Ports"/>: the port an address gives for a host, said in the reminder; <paramref name="Merge"/>:
 /// for a fetch or pull, the branch of the remote the current branch follows (<see cref="GitTexts.MergeOf"/>), which
-/// a pull names.
+/// a pull names; <paramref name="Addresses"/>: the addresses as git said them, each of which the command runs with
+/// redirects off (<see cref="GitReach.NoRedirects"/>).
 /// </summary>
-public sealed record Reach(string Remote, IReadOnlyList<string> Hosts, IReadOnlyList<string> Proxies, string? Problem, IReadOnlyList<string>? Folders = null, IReadOnlyDictionary<string, int>? Ports = null, string? Merge = null)
+public sealed record Reach(string Remote, IReadOnlyList<string> Hosts, IReadOnlyList<string> Proxies, string? Problem, IReadOnlyList<string>? Folders = null, IReadOnlyDictionary<string, int>? Ports = null, string? Merge = null, IReadOnlyList<string>? Addresses = null)
 {
     /// <summary>The words for a host in the reminder: "host", or "host, port 2222" when the address gives a port.</summary>
     public string Place(string host) => GitRemote.Place(host, Ports is not null && Ports.TryGetValue(host, out var port) ? port : null);
@@ -143,7 +144,7 @@ public static class GitReach
 
         return lines.Length == 0
             ? Stopped($"Git named no address for the remote {remote}.")
-            : new Reach(remote, hosts, proxies, null, folders, ports, merge);
+            : new Reach(remote, hosts, proxies, null, folders, ports, merge, lines);
     }
 
     // ---- A remote that is a folder (AG-5.4c; the review's third and fourth passes, D3, H2, M4) ----
@@ -161,6 +162,35 @@ public static class GitReach
     /// </summary>
     public static string? PushRefused(Reach reach) =>
         reach.Folders is { Count: > 0 } ? "This remote is a folder; push to it in a terminal." : null;
+
+    /// <summary>
+    /// L1 (the review's fifth pass): what a fetch, pull or push is run with so that it follows no redirect from any
+    /// address it reaches, <c>http.&lt;address&gt;.followRedirects=false</c> for each http and https address of
+    /// <see cref="Reach.Addresses"/>. git takes the setting of the most particular address that fits (git-config,
+    /// http.&lt;url&gt;.*: the host, then the longest path, then the user), so the general
+    /// <c>http.followRedirects=false</c> of every run lost to a repository's setting for its own address; this one
+    /// is the whole address, with its user and without a password, given as the command's own setting, which git
+    /// reads last. Given through the environment (<see cref="GitRunner.SetOverrides"/>), where an address with an
+    /// equals sign in it stays whole.
+    /// </summary>
+    public static IReadOnlyList<GitSetting> NoRedirects(Reach reach) =>
+        [.. (reach.Addresses ?? []).Where(GitRemote.UsesHttp).Select(address => new GitSetting($"http.{WithoutPassword(address.Trim())}.followRedirects", "false")).Distinct()];
+
+    /// <summary>An address with the password of its sign-in taken out and its user kept: "https://user@host/a.git".</summary>
+    private static string WithoutPassword(string address)
+    {
+        var scheme = address.IndexOf("://", StringComparison.Ordinal) + 3;
+        var slash = address.IndexOf('/', scheme);
+        var authority = slash < 0 ? address[scheme..] : address[scheme..slash];
+        var at = authority.LastIndexOf('@');
+        var colon = at < 0 ? -1 : authority.IndexOf(':', 0, at);
+        if (colon < 0)
+        {
+            return address;
+        }
+
+        return address[..scheme] + authority[..colon] + authority[at..] + (slash < 0 ? string.Empty : address[slash..]);
+    }
 
     /// <summary>Nothing may run, for the reason given; the sentence goes to the user and the log, so without the sign-in of any address in it (a remote's name can be an address).</summary>
     private static Reach Stopped(string problem) => new(string.Empty, [], [], GitRemote.WithoutSignIn(problem));

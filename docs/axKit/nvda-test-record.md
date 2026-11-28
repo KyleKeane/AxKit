@@ -796,6 +796,24 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: axGIT trusts only what was seen, on the repository it read (the review's fifth pass of 2026-11-28)
+
+What a read-only review found in axGIT's trust check of the fourth pass, repaired on 2026-11-28 (`docs/axGIT/SPEC.md`
+AG-1.5, AG-1.6 to AG-1.6c): git works on the git folder the check read and no other; a path of the repository's is
+read only in a positive local form; a trust is checked again before it holds, and every changing command is checked
+before it runs; the notice writes out each program with its value and says the limit of trust; the repositories inside
+are those the index holds. Played on the hidden desktop, without NVDA, on 2026-11-28: the new
+`tests/scripts/axGIT/09-what-was-seen`, with the rest of axGIT's scripts. Still owed, `docs/axGIT/nvda-test-plan.md`
+section 10, with NVDA listening:
+
+1. The notice with "The programs as its settings write them: …" and the sentence of the limit of trust: whether a
+   long command line, with its hidden characters written out, is still heard whole, and whether the notice is now too
+   long to hear at each opening.
+2. Trust after the repository changed while the notice was open: "Working: checking…", then the notice again starting
+   "What axGIT finds in this repository changed while you were asked", with no "Trusted" before it.
+3. Ctrl+Shift+S in a trusted repository whose settings changed in a console: the notice at once, and no "Stage
+   failed" and no "Staged" heard.
+
 ## Owed: axGIT runs nothing before trust, pushes only to a server (the review's fourth pass of 2026-11-28)
 
 What a read-only review found in axGIT's trust check of the third pass, repaired on 2026-11-28 (`docs/axGIT/SPEC.md`

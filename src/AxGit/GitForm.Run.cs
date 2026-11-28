@@ -20,24 +20,27 @@ public sealed partial class GitForm
 
     /// <summary>
     /// A command that changes the repository (stage, unstage, discard, commit, switch, a new branch, fetch, pull,
-    /// push): run through the session's one way for it, which checks what the repository would run again after
-    /// the command, whether it succeeded or failed (AG-1.6b, D8), and then what that check found is acted on: the
-    /// repository closed when it is no longer known, the notice when the risks are other ones. Null when nothing
-    /// ran, or when the check closed the repository.
+    /// push): run through the session's one way for it, which checks what the repository would run before the
+    /// command and runs it only when the check holds (P3 of the review's fifth pass), and again after it, whether it
+    /// succeeded or failed (AG-1.6b, D8); then what the last check found is acted on: the repository closed when it
+    /// is no longer known, the notice when the risks are other ones. Null when nothing ran, or when the check closed
+    /// the repository or asks. <paramref name="settings"/>: the command's own (a fetch's addresses with no redirect, L1).
     /// </summary>
-    private async Task<GitResult?> ChangeGitAsync(IReadOnlyList<string> arguments, TimeSpan timeout, string verb)
+    private async Task<GitResult?> ChangeGitAsync(IReadOnlyList<string> arguments, TimeSpan timeout, string verb, IReadOnlyList<GitSetting>? settings = null)
     {
         var (root, session) = (_root, _session);
-        var result = await RunGitAsync(arguments, timeout, verb, changes: true);
+        var result = await RunGitAsync(arguments, timeout, verb, changes: true, settings);
         if (root is null || session is null || result is null)
         {
             return null;
         }
 
-        return AfterCheck(root, session, result.Ok ? null : $"{char.ToUpperInvariant(verb[0])}{verb[1..]} failed. Git said: {result.FirstLine}") ? result : null;
+        // A command the check before it refused ran nothing: the notice says what is there now, and no failure.
+        var failed = result.Ok || result.NotRun ? null : $"{char.ToUpperInvariant(verb[0])}{verb[1..]} failed. Git said: {result.FirstLine}";
+        return AfterCheck(root, session, failed) && !result.NotRun ? result : null;
     }
 
-    private async Task<GitResult?> RunGitAsync(IReadOnlyList<string> arguments, TimeSpan timeout, string verb, bool changes)
+    private async Task<GitResult?> RunGitAsync(IReadOnlyList<string> arguments, TimeSpan timeout, string verb, bool changes, IReadOnlyList<GitSetting>? settings = null)
     {
         if (_root is null || _session is not { } session)
         {
@@ -62,7 +65,7 @@ public sealed partial class GitForm
         var watch = Stopwatch.StartNew();
         try
         {
-            var result = changes ? await session.ChangeAsync(arguments, timeout) : await session.RunAsync(arguments, timeout);
+            var result = changes ? await session.ChangeAsync(arguments, timeout, default, settings) : await session.RunAsync(arguments, timeout);
             // The subcommand alone (AG-8.2): the arguments hold the commit message and the paths.
             Log.Info($"git {arguments[0]}: exit {result.ExitCode} in {watch.ElapsedMilliseconds} ms{(result.Ok ? string.Empty : ", " + result.FirstLine)}");
             return result;

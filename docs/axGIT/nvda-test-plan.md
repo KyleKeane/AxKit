@@ -93,4 +93,14 @@ The runner's scripts are `tests/scripts/axGIT/07-own-programs.txt` (1 to 3) and 
 4. In a trusted repository, change a hook file in a console, then Ctrl+R: the notice comes before anything is fetched.
 5. A remote that is a folder (`git init --bare ../mirror.git`, the remote set to `../mirror.git`): Ctrl+P shows "Push not started", "This remote is a folder; push to it in a terminal. Nothing was sent."; nothing arrives there. A fetch from it works.
 6. A branch with a remote and no branch to follow: Ctrl+L shows "Pull not started", "This branch follows no branch of a remote, so there is nothing named to pull."
-7. By ear: a folder whose `.git` file names a repository on a share (`gitdir: //server/share/x.git`): opening it shows the notice "This repository leads git elsewhere", naming "its .git file names another computer, server"; nothing waits on the network, and Keep it off opens nothing.
+7. By ear: a folder whose `.git` file names a repository on a share (`gitdir: //server/share/x.git`): opening it shows the notice "Repository not opened", saying "Its .git file names another computer, server, so axGIT does not open it."; nothing waits on the network, and nothing opens (since the fifth pass; a notice to trust it until then).
+
+## 10. The review's fifth pass of 2026-11-28 (AG-1.5, AG-1.6 to AG-1.6c)
+
+The runner's script is `tests/scripts/axGIT/09-what-was-seen.txt` (1 to 4).
+
+1. A folder inside a repository whose `.git` folder has a HEAD that is no reference (`garbage`): Ctrl+O on it says "Not a git repository", naming the folder; the repository above is not opened and nothing runs in it.
+2. A repository with a hook and a program setting (`core.sshCommand` set to a command line): the notice writes out "The programs as its settings write them: core.sshcommand: …" with the whole value, and says "Trust lets the programs these settings name run, and whatever they run in turn, files of the work tree included; axGIT sets aside a hook or program only where its path is in the work tree."
+3. The same repository, notice open; in a console add a setting (`git config filter.x.clean cat`), then Trust this repository: the notice comes again, starting "What axGIT finds in this repository changed while you were asked", naming filter.x.clean; no list comes.
+4. In a trusted repository, add a filter in a console, then Ctrl+Shift+S on a changed file: the notice comes, without "Stage failed", and the file is not staged.
+5. By ear: an untracked repository in the work tree (a folder with `git init` in it) is not asked about at the opening; after Stage all the notice comes naming "submodule <folder>: …" for what it holds.
