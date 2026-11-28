@@ -57,11 +57,11 @@ public abstract class ClaudeModel : LineStore
     /// </summary>
     public virtual bool StillAsks(int asked) => true;
 
-    /// <summary>Whether Claude Code's prompt row still holds this text, sent a moment ago; never without a screen.</summary>
-    public virtual bool PromptHolds(string text) => false;
+    /// <summary>Whether Claude Code's prompt row still holds this text, sent a moment ago; <paramref name="hiddenAside"/> for the user's own message, compared without its hidden characters (D33, the eighth review of 2026-11-28, M1); never without a screen.</summary>
+    public virtual bool PromptHolds(string text, bool hiddenAside = false) => false;
 
-    /// <summary>Whether Claude Code's prompt row held this text in the last frame that asked nothing, read when it has begun to ask (D33, the seventh review of 2026-11-27, K2); never without a screen.</summary>
-    public virtual bool PromptHeldBeforeAsk(string text) => false;
+    /// <summary>Claude Code's own line about the draft on its prompt row ("Removed 1 invisible character · review and press Enter to send"), as the last frame showed it; null when none stands, and without a screen (D33, the eighth review of 2026-11-28, M-A).</summary>
+    public virtual string? PromptRemark => null;
 
     /// <summary>The text a draft on Claude Code's prompt row holds, empty for a bare prompt, null when no prompt row is drawn there; null without a screen.</summary>
     public virtual string? PromptDraft => null;

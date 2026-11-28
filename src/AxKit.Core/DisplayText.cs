@@ -67,6 +67,28 @@ public static class DisplayText
         return builder.ToString();
     }
 
+    /// <summary>
+    /// Whether <paramref name="text"/> holds a character <see cref="WithoutHidden"/> takes out, a line end and a tab
+    /// aside: the one test of "holds a hidden character" for comparing a text with what a program drew of it
+    /// (axClaude's prompt row check and its second Enter, the eighth review of 2026-11-28, M1: until then every
+    /// message of two lines counted as one that holds a hidden character).
+    /// </summary>
+    public static bool HoldsHidden(string text)
+    {
+        for (var i = 0; i < text.Length; i++)
+        {
+            var code = CodeAt(text, i, out var length);
+            if (Hidden(code) && code is not ('\r' or '\n' or '\t'))
+            {
+                return true;
+            }
+
+            i += length - 1;
+        }
+
+        return false;
+    }
+
     private static string Written(string text, bool command)
     {
         var first = FirstWritten(text, command);

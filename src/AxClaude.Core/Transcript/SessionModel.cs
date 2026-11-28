@@ -395,7 +395,6 @@ public sealed partial class SessionModel : ClaudeModel
         // A screen of Claude's that waits on its hint row waits for the user just as a question does (D33).
         PendingScreen = PromptPending || !DetectScreens ? null : ReadPendingScreen();
         PromptPending |= PendingScreen is not null;
-        KeepAskFree();
         CheckResponseStarted();
         Trim();
         RaiseChanged();
@@ -485,24 +484,15 @@ public sealed partial class SessionModel : ClaudeModel
     /// The seventh review of that day: the row is read as the last frame's end showed it (K3, <see cref="KeepFrame"/>);
     /// a text that holds a hidden character is held only by a row that shows it with that character (K4: no Enter
     /// goes for a text the row was not seen with), the comparison without them staying for a text that has none; and
-    /// a blank between two words on one row counts, only a row join may lose one (L3, <see cref="DraftIs"/>).
+    /// a blank between two words on one row counts, only a row join may lose one (L3, <see cref="DraftIs"/>). The eighth
+    /// review of 2026-11-28 (M1): a line end or a tab is no hidden character (<see cref="AxKit.Core.DisplayText.HoldsHidden"/>),
+    /// and the user's own message (<paramref name="hiddenAside"/>) is compared without its hidden characters, as until
+    /// the seventh review: the user wrote them, and Claude Code taking one out harms nothing; its second Enter is never
+    /// sent (<see cref="QueuedWrite.EnterAgain"/>).
     /// </summary>
-    public override bool PromptHolds(string text) => HoldsIn(_frameRows, _frameCursor, text);
-
-    /// <summary>
-    /// Whether the prompt row held <paramref name="text"/> in the last frame that asked nothing (the seventh review of
-    /// 2026-11-27, K2): when Claude Code begins to ask before the row was seen without a message whose Enter went, the
-    /// row's last reading before the question decides whether the message is given back.
-    /// </summary>
-    public override bool PromptHeldBeforeAsk(string text) => HoldsIn(_askFreeRows, _askFreeCursor, text);
-
-    /// <summary>
-    /// Whether the draft of the frame's rows given shows the text sent, whole, as <see cref="PromptHolds"/> says. Not
-    /// on the frame path: a check of the window's queue asks it.
-    /// </summary>
-    private bool HoldsIn(string?[] rows, int cursor, string text)
+    public override bool PromptHolds(string text, bool hiddenAside = false)
     {
-        var keepHidden = AxKit.Core.DisplayText.WithoutHidden(text).Length != text.Length;
+        var keepHidden = !hiddenAside && AxKit.Core.DisplayText.HoldsHidden(text);
         var lines = text.Trim().Replace("\r\n", "\n").Split('\n').Select(line => Squeezed(line, keepHidden)).ToList();
         if (lines.All(line => line.Length == 0))
         {
@@ -512,7 +502,29 @@ public sealed partial class SessionModel : ClaudeModel
         // The cursor stands on the draft's last line: its prompt row is up to one row per line above, and one more for
         // each screen width the text wraps over, a few more besides.
         var wrapped = Columns > 0 ? text.Length / Columns : 0;
-        return DraftAt(rows, cursor, 4 + lines.Count + wrapped) is { } draft && DraftIs(draft, lines, keepHidden);
+        return DraftAt(_frameRows, _frameCursor, 4 + lines.Count + wrapped) is { } draft && DraftIs(draft, lines, keepHidden);
+    }
+
+    /// <summary>
+    /// Claude Code's own line about the draft on its prompt row, as the last frame's end showed it (the eighth review
+    /// of 2026-11-28, M-A): <see cref="ClaudeCodeTexts.RemovedForReview"/> above the row, or
+    /// <see cref="ClaudeCodeTexts.RemovedFromPrompt"/> under the mode line; null when none stands. Read off the kept
+    /// rows when a check asks, never on the frame path.
+    /// </summary>
+    public override string? PromptRemark
+    {
+        get
+        {
+            for (var r = _frameRows.Length - 1; r >= 0; r--)
+            {
+                if (_frameRows[r]?.Trim() is { Length: > 0 } row && (ClaudeCodeTexts.RemovedForReview().IsMatch(row) || ClaudeCodeTexts.RemovedFromPrompt().IsMatch(row)))
+                {
+                    return row;
+                }
+            }
+
+            return null;
+        }
     }
 
     /// <summary>
@@ -610,19 +622,12 @@ public sealed partial class SessionModel : ClaudeModel
 
     private int _frameCursor = -1;
 
-    /// <summary>The same as of the last frame that asked nothing (<see cref="PromptHeldBeforeAsk"/>, K2).</summary>
-    private string?[] _askFreeRows = [];
-
-    private int _askFreeCursor = -1;
-
     /// <summary>The frame's rows and cursor kept, right after the row text is pulled (<see cref="CompleteFrame"/>).</summary>
     private void KeepFrame()
     {
         if (_frameRows.Length != Rows)
         {
             _frameRows = new string?[Rows];
-            _askFreeRows = new string?[Rows];
-            _askFreeCursor = -1;
         }
 
         _frameCursor = _screen.CursorRow;
@@ -631,16 +636,6 @@ public sealed partial class SessionModel : ClaudeModel
             // A row without a line is read off its cells when it kept them: the prompt row after /clear keeps its dollar
             // sign but has no line until something is printed on it (ClearConversation). Nothing is made for any other.
             _frameRows[r] = _screen.LineAt(r)?.Text ?? (r <= _frameCursor ? _screen.UnlinedText(r) : null);
-        }
-    }
-
-    /// <summary>The frame kept as the last that asked nothing, when it asks nothing (the end of <see cref="CompleteFrame"/>).</summary>
-    private void KeepAskFree()
-    {
-        if (!PromptPending)
-        {
-            Array.Copy(_frameRows, _askFreeRows, _frameRows.Length);
-            _askFreeCursor = _frameCursor;
         }
     }
 
@@ -944,7 +939,6 @@ public sealed partial class SessionModel : ClaudeModel
         AttachScreen();
         // The new run's screen has drawn no frame yet: no prompt row is read until it has (K3).
         _frameCursor = -1;
-        _askFreeCursor = -1;
         _banner = null;
         Epoch++;
         Working = false;

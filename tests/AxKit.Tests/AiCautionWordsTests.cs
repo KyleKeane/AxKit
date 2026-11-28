@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using AxKit.Core;
 
 namespace AxKit.Tests;
 
@@ -22,5 +23,23 @@ public class AiCautionWordsTests
                 .Select(pair => $"{Path.GetRelativePath(root, file)}:{pair.index + 1}: {pair.line.Trim()}"))
             .ToList();
         Assert.True(found.Count == 0, "Caution words written outside AxKit.Core/AiCaution (rule 11: take them from there):\n" + string.Join("\n", found));
+    }
+
+    /// <summary>
+    /// The eighth review of 2026-11-28, M4: the one sentence in front of a line with an offered command that axClaude
+    /// writes out unsent holds all of rule 11, with a command's care (docs/axKit/SPEC.md AX-11.12). Until then two
+    /// sentences said it, and the one of the /feedback line said neither that axKit checked nothing nor whose choice
+    /// running it is.
+    /// </summary>
+    [Fact]
+    public void The_line_not_sent_says_all_of_rule_11()
+    {
+        var words = AiCaution.LineNotSent("Claude");
+        Assert.Contains("Claude wrote the command", words, StringComparison.Ordinal);
+        Assert.Contains("it can be wrong", words, StringComparison.Ordinal);
+        Assert.Contains("axKit has checked none of it", words, StringComparison.Ordinal);
+        Assert.Contains("permission or safety checks refused it", words, StringComparison.Ordinal);
+        Assert.Contains("read every detail before you run it", words, StringComparison.Ordinal);
+        Assert.Contains("running it is your own choice", words, StringComparison.Ordinal);
     }
 }

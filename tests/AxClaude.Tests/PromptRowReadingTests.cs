@@ -115,6 +115,20 @@ public sealed class PromptRowReadingTests
         Feed(repeated, $"{Esc}[?25lclaude: Hi.\r\n\r\n${ClaudeCodeTexts.DraftSpace} [Pasted text #1]\r\n[Pasted text #1]{Esc}[?25h");
         Assert.False(repeated.PromptHolds("first line\nsecond line"));
     }
+
+    /// <summary>
+    /// L1 of the eighth review (2026-11-28): a paste mark's number too long for a number is no mark, and reading it
+    /// throws nothing. Until then it was read with a parse that threw, the check of the window's queue failed, and
+    /// every message in it came back.
+    /// </summary>
+    [Fact]
+    public void A_paste_marks_number_too_long_throws_nothing()
+    {
+        var model = new SessionModel(80, 8);
+        Feed(model, $"{Esc}[?25lclaude: Hi.\r\n\r\n${ClaudeCodeTexts.DraftSpace} [Pasted text #99999999999]{Esc}[?25h");
+        Assert.False(model.PromptHolds("first line"));
+        Assert.True(model.PromptHolds("[Pasted text #99999999999]"));
+    }
 }
 
 /// <summary>

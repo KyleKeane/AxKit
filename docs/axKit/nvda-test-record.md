@@ -796,6 +796,28 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: a message whose Enter went is never given back, a draft left on the row is said (the eighth review of 2026-11-28)
+
+The eighth review of axClaude's message path, repaired on 2026-11-28 (`docs/axClaude/SPEC.md` D33, point 4, "Once its
+Enter went, a message is Claude Code's"; FR-2.1; `docs/axKit/mcp.md` MC-9.3; `docs/axKit/SPEC.md` AX-11.12): once a
+message's Enter went it is never given back or sent again; a draft still on Claude Code's prompt row three seconds
+after the Enter is said once, with Claude Code's own line about it, and the conversation says Claude Code had not taken
+it yet; a question after the Enter is simply shown; a message of two lines gets the second Enter again; the user's own
+message is compared without its hidden characters; a row not drawn has its own words; the line of an offered command
+written out unsent carries rule 11's caution whole. Played on the hidden desktop, without NVDA, on 2026-11-28: the new
+`tests/scripts/axClaude/79`, the changed `73`, `75` and `78`, and the recorded scripts of axClaude and the AI tools.
+Still owed:
+
+1. With NVDA listening (`.\nvda-pass.ps1 axClaude`): scripts 73, 75, 78 and 79; whether "Claude's prompt row still
+   shows a draft after your Enter: Enter in the empty field sends it, the Send key menu can clear it" is heard whole
+   and, said without cutting in, is not lost under other speech; whether the conversation's line "Claude Code had not
+   taken this yet when axClaude last looked." reads well under the message's block; whether the longer caution in
+   front of an offered line written out is read whole.
+2. With Claude Code itself (the coordinating session's live runs): whether a permission dialog over a dropped-Enter
+   draft hides the draft; whether Enter accepts an @ or / completion on the row; whether ConPTY and Claude Code keep
+   ZWJ, FE0F and ZWSP on the row; the shell mode's `!` row; the 2.1.33x model picker and `/model` on the row; and
+   that `/permissions` and `/tasks` open with nothing given back.
+
 ## Owed: axGIT trusts the repository it showed, as it showed it (the review's seventh pass of 2026-11-28)
 
 What a read-only review found in axGIT's trust check of the sixth pass, repaired on 2026-11-28 (`docs/axGIT/SPEC.md`
@@ -825,10 +847,8 @@ under the AI caution's words; closing asks while a message is on its way or back
 desktop, without NVDA, on 2026-11-28: the new `tests/scripts/axClaude/77` and `78`, the changed `73` and `75`, and
 the recorded scripts app by app. Still owed:
 
-1. With NVDA listening (`.\nvda-pass.ps1 axClaude`): scripts 77 and 78; whether "Not sent: Claude asks something
-   while its prompt row still showed the message; the message is back in the message field" comes after the
-   question's reading without cutting into it, and whether the conversation's line naming the command an AI tool
-   offered, with its caution, is read whole.
+1. With NVDA listening (`.\nvda-pass.ps1 axClaude`): script 77. Script 78 and the words of a question over a held
+   message, and the caution's line, changed with the eighth review (the section above).
 2. With Claude Code itself (the coordinating session's live runs, on Haiku in a temporary folder): its prompt row
    during and after /clear and /compact with axKit's hooks (drawn again bare, and a first message after /clear on the
    row that kept its dollar sign); its row during a `!` command; whether a `!` line loses a hidden character; whether

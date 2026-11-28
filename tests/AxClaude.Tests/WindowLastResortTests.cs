@@ -126,8 +126,8 @@ public sealed partial class WindowLastResortTests
     /// <c>shown</c>, and the words come from <c>AiCaution</c> and <c>McpOffer.Shown</c>.
     /// </summary>
     [Theory]
-    [InlineData("private void SendOffered(Offer offer)", "AiCaution.OfferedNotSent(")]
-    [InlineData("private void AskConcern(Offer offer)", "AiCaution.ConcernNotSent(")]
+    [InlineData("private void SendOffered(Offer offer)", "AiCaution.LineNotSent(")]
+    [InlineData("private void AskConcern(Offer offer)", "AiCaution.LineNotSent(")]
     public void An_offered_line_given_back_is_written_under_the_AI_caution(string method, string words)
     {
         var body = Body("MainForm.Mcp.cs", method);
@@ -158,6 +158,22 @@ public sealed partial class WindowLastResortTests
         var typed = queue.IndexOf("Enqueue(", StringComparison.Ordinal);
         Assert.True(cleared >= 0 && typed > cleared, "QueueWrites empties a restored message before it types the next one");
         var elsewhere = WindowFiles().Where(file => file.Text.Split("ClearRestoredMessage(message.Flight.Goes);").Length - 1 > (file.Name == "MainForm.Input.cs" ? 1 : 0)).Select(file => file.Name);
+        Assert.Empty(elsewhere);
+    }
+
+    /// <summary>
+    /// The eighth review of 2026-11-28 (M-A, L1): a message whose Enter went is never given back, whatever drops the
+    /// queue (a check over, the interrupt, a stop, a check that failed). The one place that gives back takes only the
+    /// messages whose Enter had not gone, and nothing else in the window takes a message back from the conversation.
+    /// </summary>
+    [Fact]
+    public void Only_a_message_whose_Enter_had_not_gone_is_given_back()
+    {
+        var dropped = Body("MainForm.Input.cs", "protected override void WritesDropped(bool failed)");
+        var chosen = dropped.IndexOf("var dropped = _unsent.Where(one => !one.Flight.Entered).ToList();", StringComparison.Ordinal);
+        var taken = dropped.IndexOf("_model.TakeBackAll([.. dropped.Select(one => one.Text)]);", StringComparison.Ordinal);
+        Assert.True(chosen >= 0 && taken > chosen, "WritesDropped gives back the messages whose Enter had not gone, and no other");
+        var elsewhere = WindowFiles().Where(file => file.Text.Split("_model.TakeBack").Length - 1 > (file.Name == "MainForm.Input.cs" ? 1 : 0)).Select(file => file.Name);
         Assert.Empty(elsewhere);
     }
 

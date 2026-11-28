@@ -1,10 +1,11 @@
-# Workflow: Get a message back when Claude asks while its prompt row still shows it
+# Workflow: Answer a question Claude asks while its prompt row still shows the message just sent
 # Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code; no Claude Code, no network and no model.
-# axClaude, docs/axClaude/SPEC.md D33 ("One message in flight", the seventh review of 2026-11-27, K2). Claude Code can
-# drop a message's Enter and then draw a question under the draft that still holds it. Until that review a question
-# counted as Claude Code having taken the message: "Sent" stood, the conversation showed it as sent, and it was not.
-# Now the last reading of the row before the question decides: it still showed the message, so the message comes
-# back into the field, and the conversation shows it as not sent; a row seen bare before the question means taken.
+# axClaude, docs/axClaude/SPEC.md D33 ("One message in flight", the eighth review of 2026-11-28, M-A). Claude Code can
+# drop a message's Enter and then draw a question under the draft that still holds it. Until that review the last
+# reading of the row before the question gave the message back into the field (K2 of the seventh): a guess, which a
+# screen drawn in the row's place in one frame made wrong (/permissions), and the message was sent twice. Now a
+# message whose Enter went is Claude Code's: the question is shown as any question, nothing comes back, no second Enter
+# goes into it, and the message stays in the conversation.
 # The stand-in (tools/AxAutomate/StandIn.cs) draws what is typed, drops every Enter ("dropEnters"), writes every key it
 # reads to a file ("keys"), and draws a question at a file of the script's, under the draft, without clearing.
 file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
@@ -17,18 +18,20 @@ start claude {temp}\qh --claude {temp}\claude.cmd -- --model haiku --effort low
 expect said Ready
 wait 1000
 
-# Goal: Get a message back that Claude asked over before it took it
-# A question drawn while the row still shows the message gives the message back.
+# Goal: Answer a question Claude asks right after a message, with nothing given back
+# A question drawn while the row still shows the message is shown as any question; the message is not given back.
 type held message
 keys enter
 expect said Sent
 file qh\go1 x
-expect said Not sent: Claude asks something while its prompt row still showed the message; the message is back in the message field
 expect focus 1. Yes, Create file alpha.txt
 expect state Claude: waiting for your answer
+wait 3500
+refuse said Not sent
+refuse said still shows a draft
 run fc /b qh\keys.txt expected.txt
 
-# Check: The conversation shows the message as not sent
+# Check: The conversation keeps the message as sent
 do Conversation
-expect text Not sent: Claude began to ask something while its prompt row still showed your message after its Enter. The message is back in the message field.
-refuse text # Input 1
+expect text # Input 1
+refuse text Not sent

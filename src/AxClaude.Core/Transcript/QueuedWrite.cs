@@ -68,8 +68,8 @@ public static class QueuedWrite
     /// row still holds the message (FR-2.1: Claude Code drops an Enter in its first seconds). Skipped when the row no
     /// longer holds it, Claude Code asks something, or the message was sent into a question. Never for a text that
     /// holds a hidden character (<paramref name="hides"/>; the seventh review of 2026-11-27, K4): Claude Code takes
-    /// such a character out of its prompt and may send a text the user did not hear; the first Enter went only for a
-    /// row that showed the text with it, and a second is not risked.
+    /// such a character out of its prompt and may send a text the user did not hear, so a second is not risked. A
+    /// line end and a tab are none (the eighth review, M1: a message of two lines got no second Enter).
     /// </summary>
     public static WriteCheck EnterAgain(bool askedThen, bool asksNow, bool promptHolds, bool hides, long sinceEnterMs, int againMs) =>
         askedThen || asksNow || !promptHolds || hides ? WriteCheck.Skip
@@ -77,25 +77,20 @@ public static class QueuedWrite
         : WriteCheck.Goes;
 
     /// <summary>
-    /// Whether Claude Code has taken a message whose Enter went (the sixth review of 2026-11-27, F1): skipped, and the
-    /// queue goes on, once its prompt row is bare again (<paramref name="draft"/> empty), and at once for a message
-    /// sent into a question. Not yet while the row is not bare, for <paramref name="longestMs"/> after the Enter, with
-    /// everything queued behind it waiting. The seventh review of that day: a message is given back only on positive
-    /// evidence that Claude Code did not take it, and a time limit alone is none (the sixth gave back on a row that
-    /// was "not bare", and a message taken was given back and sent a second time: the /clear recording shows no row
-    /// at all from 13448 ms to 16144 ms after its Enter). At the limit it is over, and given back, only while the row
-    /// still shows the message (<paramref name="promptHolds"/>, K1); a row not drawn or holding other text counts as
-    /// taken, and the next message still waits for a bare row before it is typed (<see cref="MessageFirst"/>). When
-    /// Claude Code asks before the row was seen without the message, the row's last reading before the question
-    /// decides (<paramref name="heldBeforeAsk"/>, K2): it still showed the message, over; else taken.
+    /// Whether the flight of a message whose Enter went is over (the sixth review of 2026-11-27, F1): skipped, and the
+    /// queue goes on, once its prompt row is bare again (<paramref name="draft"/> empty), at once for a message sent
+    /// into a question or when Claude Code asks, and at <paramref name="longestMs"/> after the Enter whatever the row
+    /// shows. Not yet before that while the row is not bare, with everything queued behind it waiting. Never over: the
+    /// eighth review of 2026-11-28 (M-A) gives back no message whose Enter went. The sixth and seventh reviews gave
+    /// one back on what the row showed after the Enter (a row not bare; a row that still showed the message, K1; the
+    /// last row before a question, K2), and each guess sent a message Claude Code had taken a second time: the /clear
+    /// recording draws no row from 13448 ms to 16144 ms after its Enter, and /permissions draws its screen in the
+    /// row's place in the frame that takes it. The next message still waits for a bare row before it is typed
+    /// (<see cref="MessageFirst"/>), so nothing is joined; a draft left on the row is said by the window.
     /// </summary>
-    public static WriteCheck Taken(bool askedThen, bool asksNow, bool heldBeforeAsk, string? draft, bool promptHolds, long sinceEnterMs, int longestMs) =>
-        askedThen ? WriteCheck.Skip
-        : asksNow ? (heldBeforeAsk ? WriteCheck.Over : WriteCheck.Skip)
-        : draft is { Length: 0 } ? WriteCheck.Skip
-        : sinceEnterMs < longestMs ? WriteCheck.NotYet
-        : promptHolds ? WriteCheck.Over
-        : WriteCheck.Skip;
+    public static WriteCheck Taken(bool askedThen, bool asksNow, string? draft, long sinceEnterMs, int longestMs) =>
+        askedThen || asksNow || draft is { Length: 0 } || sinceEnterMs >= longestMs ? WriteCheck.Skip
+        : WriteCheck.NotYet;
 
     /// <summary>
     /// A message's Enter: only on a positive check (the fourth review of 2026-11-27, N3), since the window reads

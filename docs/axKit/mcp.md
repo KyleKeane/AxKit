@@ -599,7 +599,11 @@ which overwrote what the user had there. Now it offers the command through a too
   of its prompt ("Removed 1 invisible character from your prompt"), so the `!` line it would run was not the one the
   user heard, and axClaude's check of its prompt row could tell neither apart. What is written out above still holds
   for the reason, the breakdown and a command axClaude writes out in its conversation when it was not sent (K5: under
-  `AiCaution.OfferedNotSent`, as the question would have shown it).
+  `AiCaution.LineNotSent`, one sentence for the command's line and the feedback line about it with all of rule 11,
+  who wrote it, that it can be wrong, that axKit checked none of it, that the AI's own checks may have refused it so
+  every detail is read first, and that running it is the user's own choice, the eighth review of 2026-11-28, M4; as
+  the question would have shown it). A line whose Enter went is Claude Code's and is never given back or sent again
+  (D33, M-A).
 - MC-9.4 **The question** is a list in the control area, in the message field's place, as Claude's own questions are
   (the user's decision of 2026-11-13, after hearing the first version, a notice that covered the window): the
   conversation stays there to read for context (Tab, Alt+2), and the question is told from a notice by where it is.

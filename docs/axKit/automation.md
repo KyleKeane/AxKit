@@ -444,7 +444,10 @@ when the hook says `async`. It needs no Claude Code, no network and no model, an
   character as itself and Enter, Ctrl+J, Ctrl+U by name), which a script compares with a file of its own
   (`run fc /b <folder>\keys.txt expected.txt`; scripts 70 and 71). A fourth since the sixth review of that day:
   `dropEnters` (a number: so many Enters on a typed draft leave it on the row, as Claude Code leaves a message whose
-  Enter it dropped in its first seconds; scripts 64, 73 to 75).
+  Enter it dropped in its first seconds; scripts 64, 73 to 75). A fifth and a sixth since the seventh and eighth
+  reviews: `hideAfterTake` (milliseconds: after an Enter takes a draft the row is not drawn that long, as during
+  /clear; script 77) and `takeFrame` (a frame step drawn by the first Enter that takes a draft, in the row's place in
+  the same write, so that no frame shows the row bare, as /permissions draws its screen; script 79).
 - **The session file** is `<the scenario's folder>\home\.claude\projects\<the working folder's project name>\<session>.jsonl`:
   with `home` the run's own folder (`AXKIT_HOME`, `{temp}\home`), whose `.claude\projects` axClaude counts as a
   projects folder in a test run alone (EG-3.1), so nothing of a run lands among the user's sessions. A script reads it

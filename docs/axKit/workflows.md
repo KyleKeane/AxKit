@@ -369,14 +369,18 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
 65. **Be asked again when the command changes under the same question**
     - Hear a command's question and move to No
     - Refuse the command that was asked last
-66. **Have a command of the menus wait until Claude Code has taken the message before it**
+66. **Hear that Claude Code keeps a message on its prompt row, and send it from there**
+    - Send the draft Claude Code kept
+67. **Have a command of the menus wait until Claude Code has taken the message before it**
     - Choose the model once Claude Code has taken the message
-67. **Send two messages while Claude Code's prompt row is not drawn after it took the first**
+68. **Send two messages while Claude Code's prompt row is not drawn after it took the first**
     - Send a message, and the next one at once, while Claude Code's prompt row is not drawn
-68. **Get a message back when Claude asks while its prompt row still shows it**
-    - Get a message back that Claude asked over before it took it
-69. **Have a short exchange with Claude**
-70. **Answer a set of two questions from Claude**
+69. **Answer a question Claude asks while its prompt row still shows the message just sent**
+    - Answer a question Claude asks right after a message, with nothing given back
+70. **Open a screen of Claude Code's with a slash command that draws it in place of the prompt row**
+    - Open the permissions screen, drawn in the prompt row's place, with nothing given back
+71. **Have a short exchange with Claude**
+72. **Answer a set of two questions from Claude**
 
 ## axClip
 

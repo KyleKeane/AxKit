@@ -44,8 +44,11 @@
 // leave it on the row, as Claude Code leaves a message whose Enter it dropped in its first seconds), and one for a row
 // Claude Code does not draw after it took a message (the seventh review, K1): "hideAfterTake" (milliseconds: after an
 // Enter takes a typed draft the row is emptied, its mark drawn again this long later, unless a frame came meanwhile,
-// as Claude Code leaves its row during /clear). A frame step without "clear" is drawn where the cursor stands, so a
-// question drawn by one after a held draft stands under the draft (K2). The session file is
+// as Claude Code leaves its row during /clear), and "takeFrame" (a frame step, {"frame": rows, "clear": ...}: the
+// first Enter that takes a typed draft draws it in the same write as the emptied row, so that no frame shows the row
+// bare, as /permissions draws its screen in the row's place; the eighth review, L4). A frame step without "clear" is
+// drawn where the cursor stands, so a question drawn by one after a held draft stands under the draft. The session
+// file is
 //   <the scenario's folder>\<home>\.claude\projects\<the working folder's full path, every character not an ASCII
 //   letter or digit as ->\<session>.jsonl
 // A step is an object; the first of these keys it holds says what it does:
@@ -195,6 +198,7 @@ internal static class StandIn
         _keysFile = StringOf(root, "keys") is { Length: > 0 } keys ? Path.Combine(folder, keys) : null;
         _dropEnters = root.TryGetProperty("dropEnters", out _) ? Number(root, "dropEnters") : 0;
         _hideAfterTakeMs = root.TryGetProperty("hideAfterTake", out _) ? Number(root, "hideAfterTake") : 0;
+        _takeFrame = root.TryGetProperty("takeFrame", out var take) && take.ValueKind == JsonValueKind.Object ? take.Clone() : null;
         new Thread(() => EchoTyped(output)) { IsBackground = true, Name = "typed" }.Start();
         for (var i = 0; i < steps.Count; i++)
         {
@@ -206,15 +210,7 @@ internal static class StandIn
                 case "frame":
                     lock (Writing)
                     {
-                        Write(output, Frame(step));
-                        var rows = Lines(step.GetProperty("frame"));
-                        var last = rows.Count > 0 ? rows[^1].TrimEnd() : string.Empty;
-                        _atPrompt = last.Length > 0 && last[0] is '$' or '>' or '!' && (last.Length == 1 || char.IsWhiteSpace(last[1]));
-                        _promptMark = _atPrompt ? last[0] : '$';
-                        _drafting = _atPrompt && last.Length > 1;
-                        _draftBreaks = 0;
-                        _typedSinceFrame = false;
-                        _frames++;
+                        Draw(output, step);
                     }
 
                     break;
@@ -343,6 +339,20 @@ internal static class StandIn
         return name.ToString();
     }
 
+    /// <summary>A frame step drawn, in one write after <paramref name="before"/>, and what the echo of typed keys knows of it: whether it ends on a prompt row, and with a draft. The caller holds <see cref="Writing"/>.</summary>
+    private static void Draw(Stream output, JsonElement step, string before = "")
+    {
+        Write(output, before + Frame(step));
+        var rows = Lines(step.GetProperty("frame"));
+        var last = rows.Count > 0 ? rows[^1].TrimEnd() : string.Empty;
+        _atPrompt = last.Length > 0 && last[0] is '$' or '>' or '!' && (last.Length == 1 || char.IsWhiteSpace(last[1]));
+        _promptMark = _atPrompt ? last[0] : '$';
+        _drafting = _atPrompt && last.Length > 1;
+        _draftBreaks = 0;
+        _typedSinceFrame = false;
+        _frames++;
+    }
+
     private static string Frame(JsonElement step)
     {
         var frame = new StringBuilder().Append(Escape).Append("[?25l");
@@ -456,6 +466,15 @@ internal static class StandIn
 
                         _drafting = false;
                         _draftBreaks = 0;
+                        if (_takeFrame is { } take)
+                        {
+                            // The take's own frame in the row's place, in the same write: no frame shows the row bare
+                            // (the permissions recording: /permissions' screen, the eighth review, L4).
+                            _takeFrame = null;
+                            Draw(output, take, clear.Append('\r').Append(Escape).Append("[2K").ToString());
+                            continue;
+                        }
+
                         if (_hideAfterTakeMs > 0)
                         {
                             // The row not drawn for a while after the take, as Claude Code leaves it during /clear (the
@@ -527,6 +546,9 @@ internal static class StandIn
 
     /// <summary>The scenario's "hideAfterTake": how long, in milliseconds, the prompt row stays not drawn after an Enter took a typed draft (0: drawn bare at once).</summary>
     private static int _hideAfterTakeMs;
+
+    /// <summary>The scenario's "takeFrame": a frame step drawn by the first Enter that takes a typed draft, in place of the emptied row; null when there is none, or once drawn.</summary>
+    private static JsonElement? _takeFrame;
 
     /// <summary>How many frames the steps have drawn: a mark drawn later is drawn only while no frame came since.</summary>
     private static int _frames;

@@ -1,0 +1,32 @@
+# Workflow: Open a screen of Claude Code's with a slash command that draws it in place of the prompt row
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code; no Claude Code, no network and no model.
+# axClaude, docs/axClaude/SPEC.md D33 ("One message in flight", the eighth review of 2026-11-28, M-A and L4). Claude
+# Code 2.1.327 draws the /permissions screen in the prompt row's place in the very frame that takes the command (the
+# permissions recording), so that no frame shows the row bare. Until that review the last frame before the screen,
+# which still showed the command, gave the command back into the field as not taken, for a second run. Now a command
+# whose Enter went is Claude Code's: the screen is shown, nothing comes back, no second Enter goes into the screen.
+# The stand-in (tools/AxAutomate/StandIn.cs) draws what is typed, draws the screen in the row's place with the Enter
+# that takes it ("takeFrame") and writes every key it reads to a file ("keys").
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir sr
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.332 (stand-in)","keys":"keys.txt","takeFrame":{"frame":["claude: started","Permissions  Recently blocked   Allow   Ask   Deny   Auto mode   Workspace","Claude Code won't ask for these. Rules off in auto mode aren't listed.","Search…","1. Add a new rule…","↓ to navigate · ←/→ to switch · / to search · Esc to close"],"clear":true},"steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"idle":true}]}
+file expected.txt /permissions<Enter>\n
+start claude {temp}\sr --claude {temp}\claude.cmd -- --model haiku --effort low
+expect said Ready
+wait 1000
+
+# Goal: Open the permissions screen, drawn in the prompt row's place, with nothing given back
+type /permissions
+keys enter
+expect focus Add a new rule
+wait 3500
+refuse said Not sent
+run fc /b sr\keys.txt expected.txt
+
+# Check: Closing the screen leaves the message field empty: the command did not come back
+# The stand-in draws nothing after the Escape, so the screen stays on Claude Code's side; the field is read at once.
+keys escape
+expect focus "name":"Message to Claude"
+refuse text /permissions

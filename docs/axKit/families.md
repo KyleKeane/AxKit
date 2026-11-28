@@ -179,10 +179,10 @@ You pressed a key, typed, or chose a command, and this is how it ended. Every co
   - Said: 'Sent', 'Queued', 'Sent, not recorded', 'Sent: 1, Green'. In axClaude the word is a setting; in axTerminal it is always said.
   - In: axClaude and axTerminal.
   - Note: In axClaude the sound plays a second time, with no words, when axClaude itself confirms the review after your last answer.
-- `not-sent`: A message you sent was given back a moment later, by itself: the program began to ask while it was typed, never showed it on its prompt row, or you interrupted before its Enter.
+- `not-sent`: A message you sent was given back a moment later, by itself: the program began to ask while it was typed, never showed it on its prompt row, or you interrupted before its Enter. Also when the program's prompt row still shows a draft three seconds after a message's Enter: that message is never given back, and you decide.
   - Started by: `program`, `key`.
   - Heard: no sound.
-  - Said: 'Not sent yet: the message is back in the message field; Enter sends it again', or 'Not sent: Claude asks something, and its question opens in a moment'. The conversation gets a line that says the same.
+  - Said: 'Not sent yet: the message is back in the message field; Enter sends it again', or 'Not sent: Claude asks something, and its question opens in a moment', or 'Claude's prompt row still shows a draft after your Enter: Enter in the empty field sends it, the Send key menu can clear it'. The conversation gets a line that says the same.
   - In: axClaude.
   - Note: The fifth review of 2026-11-27 (L6): until then said as refused, the sound of a key the window held back, though it came seconds after the key and by itself. The kind has no sound until the maintainer has chosen one by ear.
 - `recalled`: An earlier command came back into the field from the history.
@@ -743,7 +743,7 @@ Every kind of event that has words or a change on the screen and no sound of its
   - `question-read-again`: The question the program asks was read again: you typed a character in its list of answers (any but Space, which ticks an answer), or pressed the key that reads it again.
   - `changed`: A setting or a state of the window changed.
   - `done`: The command did its work at once.
-  - `not-sent`: A message you sent was given back a moment later, by itself: the program began to ask while it was typed, never showed it on its prompt row, or you interrupted before its Enter.
+  - `not-sent`: A message you sent was given back a moment later, by itself: the program began to ask while it was typed, never showed it on its prompt row, or you interrupted before its Enter. Also when the program's prompt row still shows a draft three seconds after a message's Enter: that message is never given back, and you decide.
   - `asked`: The command asks before it acts: 'Delete a.txt?', 'Save changes to notes.md?', a consent before the first connection.
   - `opened`: Something opened at your command: a help text, the palette, a field or a form in the window, another axKit window, an outside program.
   - `busy`: The command started work that takes time.

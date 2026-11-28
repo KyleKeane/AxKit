@@ -67,9 +67,10 @@ public static partial class ClaudeCodeTexts
     /// ("[Pasted text #1]" in the wrapped-answers recording, Claude Code 2.1.282: one write of a single line some
     /// thousand characters long, its draft drawn as this and nothing else), the paste's number its group. Only this
     /// form is recorded; one with a count of lines is not, and none is guessed (the sixth review of 2026-11-27, F4).
-    /// Read without every blank until the seventh review of that day, which keeps the blanks of a row (L3).
+    /// Read without every blank until the seventh review of that day, which keeps the blanks of a row (L3). The number
+    /// has nine digits at most, so that it is always read (the eighth review, L1: a longer one threw).
     /// </summary>
-    [GeneratedRegex(@"\G\[Pasted text #(\d+)\]")]
+    [GeneratedRegex(@"\G\[Pasted text #(\d{1,9})\]")]
     public static partial Regex PastedMark();
 
     /// <summary>What a slash command starts with.</summary>
@@ -257,6 +258,16 @@ public static partial class ClaudeCodeTexts
     /// </summary>
     [GeneratedRegex(@"^Removed \d+ invisible characters? from your prompt$")]
     public static partial Regex RemovedFromPrompt();
+
+    /// <summary>
+    /// Claude Code's line above its prompt row when it took invisible characters out of a draft and kept the draft
+    /// for the user to send: "Removed 1 invisible character · review and press Enter to send" (Claude Code 2.1.309,
+    /// the trust-banner-fast fixture; SPEC.md section 4.4 item 23). With <see cref="RemovedFromPrompt"/>, the line a
+    /// draft left on the row after its Enter is said with (<c>SessionModel.PromptRemark</c>; D33, the eighth review
+    /// of 2026-11-28, M-A).
+    /// </summary>
+    [GeneratedRegex(@"^Removed \d+ invisible characters? · review and press Enter to send$")]
+    public static partial Regex RemovedForReview();
 
     /// <summary>
     /// A row under the mode line, in the place of the effort row, once the account has used much of a usage limit:

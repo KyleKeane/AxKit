@@ -1886,6 +1886,16 @@ Starts with: Open axClaude with the folder cq.
 1. Press Enter.
     You hear: Sent: 2, No.
 
+## Hear that Claude Code keeps a message on its prompt row, and send it from there
+
+Starts with: Open axClaude with the folder nt.
+
+### Send the draft Claude Code kept
+
+1. Press Ctrl+A.
+2. Press Delete.
+3. Press Enter.
+
 ## Have a command of the menus wait until Claude Code has taken the message before it
 
 Starts with: Open axClaude with the folder cf.
@@ -1908,16 +1918,24 @@ Starts with: Open axClaude with the folder nd.
 4. Press Enter.
     You hear the sound Sent.
 
-## Get a message back when Claude asks while its prompt row still shows it
+## Answer a question Claude asks while its prompt row still shows the message just sent
 
 Starts with: Open axClaude with the folder qh.
 
-### Get a message back that Claude asked over before it took it
+### Answer a question Claude asks right after a message, with nothing given back
 
 1. Type "held message".
 2. Press Enter.
     You hear: Sent.
-    You hear: Not sent: Claude asks something while its prompt row still showed the message; the message is back in the message field.
+
+## Open a screen of Claude Code's with a slash command that draws it in place of the prompt row
+
+Starts with: Open axClaude with the folder sr.
+
+### Open the permissions screen, drawn in the prompt row's place, with nothing given back
+
+1. Type "/permissions".
+2. Press Enter.
 
 ## Have a short exchange with Claude
 

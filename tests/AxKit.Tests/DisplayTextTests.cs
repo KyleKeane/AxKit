@@ -350,4 +350,17 @@ public sealed class DisplayTextTests
         // After a letter that is no virama it is written out as before.
         Assert.Equal("a‹U+200D›b", DisplayText.Visible("a" + char.ConvertFromUtf32(0x200D) + "b"));
     }
+
+    /// <summary>
+    /// The eighth review of 2026-11-28, M1: a line end or a tab is no hidden character for a comparison with what a
+    /// program drew, every character <see cref="DisplayText.WithoutHidden"/> takes out besides is one.
+    /// </summary>
+    [Fact]
+    public void A_line_end_or_a_tab_is_no_hidden_character()
+    {
+        Assert.False(DisplayText.HoldsHidden("first line\r\nsecond line\nthird\tcolumn"));
+        Assert.True(DisplayText.HoldsHidden("first​line"));
+        Assert.True(DisplayText.HoldsHidden("first line\nsecond⁠"));
+        Assert.True(DisplayText.HoldsHidden("bell\u0007"));
+    }
 }

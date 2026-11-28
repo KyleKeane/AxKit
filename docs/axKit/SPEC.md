@@ -1898,9 +1898,11 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   it, that it can be wrong, that axKit checked none of it, what manual approval and auto mode let happen, and that
   approving is the user's own act); a command Claude offered, or the feedback line about one, that axClaude writes
   out in its conversation because it was not sent (`docs/axClaude/SPEC.md` D33, the seventh review of 2026-11-27, K5:
-  the line as the question showed it, after `AiCaution.OfferedNotSent` or `ConcernNotSent`, who offered it, that it
-  can be wrong, that axKit checked none of it and that running it is the user's own choice; until then the line
-  stood raw, in axKit's voice). An offered command that holds a character no one sees or hears is refused, so that
+  the line as the question showed it, after `AiCaution.LineNotSent`, one sentence for both since the eighth review of
+  2026-11-28, M4: who offered it, that it can be wrong, that axKit checked none of it, that a command can be offered
+  because the AI's own permission or safety checks refused it so every detail is read before it runs, and that
+  running it is the user's own choice; until the seventh review the line stood raw, in axKit's voice, and until the
+  eighth the feedback line's sentence said neither that axKit checked none of it nor whose choice running it is). An offered command that holds a character no one sees or hears is refused, so that
   what runs is what the user heard (MC-9). With the screen, Claude Code draws
   that question itself, and the window shows it as Claude Code wrote it. axClaude's conversation itself is Claude
   Code's own output, shown as it comes, under the access layer's consent (AX-11.4). These are reminders in plain

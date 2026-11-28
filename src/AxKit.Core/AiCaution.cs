@@ -25,17 +25,16 @@ public static class AiCaution
         + "Running it is your own act, as if you had typed it: what it does to your files, your accounts and your computer is yours to answer for, not axKit's and not its maker's.";
 
     /// <summary>
-    /// In front of a command an AI offered, where axClaude writes it out in the conversation because it was not sent
-    /// (docs/axClaude/SPEC.md D33; the seventh review of 2026-11-27, K5): who wrote it, that it can be wrong and that
-    /// nothing of it was checked, so that the line is never read as axKit's own; the command follows as
-    /// <c>McpOffer.Shown</c> writes it.
+    /// In front of a line that holds a command an AI offered, the command itself as a ! line or the /feedback line
+    /// about it (MC-9.8), where axClaude writes it out in the conversation because it was not sent (docs/axClaude/SPEC.md
+    /// D33; the seventh review of 2026-11-27, K5; one sentence for both since the eighth, M4, with all of rule 11):
+    /// who wrote it, that it can be wrong, that axKit checked none of it, the care a command needs (it may be offered
+    /// because the AI's own checks refused it; read every detail first) and that running it is the user's own choice,
+    /// so that the line is never read as axKit's own; the line follows as <c>McpOffer.Shown</c> writes it.
     /// </summary>
-    public static string OfferedNotSent(string who) =>
-        $"the line of the command {who}, an AI model, offered, which can be wrong and which axKit has checked none of; running it is your own choice";
-
-    /// <summary>The same in front of the line that would have opened Claude Code's feedback about such a command (MC-9.8): the command in it is the AI's, the concern the user's.</summary>
-    public static string ConcernNotSent(string who) =>
-        $"the feedback line about a command {who}, an AI model, offered; the command in it is {who}'s and can be wrong";
+    public static string LineNotSent(string who) =>
+        $"a line with a command {who}, an AI model, offered: {who} wrote the command, it can be wrong, and axKit has checked none of it. "
+        + $"A command can be offered because {who}'s own permission or safety checks refused it, so read every detail before you run it; running it is your own choice";
 
     /// <summary>In the name of the question an AI tool's run of a window command asks, heard every time the question is read.</summary>
     public static string Asked(string who) => $"Asked by {who}, an AI: read the explanation before you allow it";

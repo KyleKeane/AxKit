@@ -6,13 +6,15 @@ namespace AxClaude.Core.Transcript;
 /// One message in flight to Claude Code's screen (docs/axClaude/SPEC.md D33, "One message in flight"): the checks its
 /// writes in the window's queue ask right before each goes, with what they remember between them. Pure, so that the
 /// very checks the window wires (src/AxClaude/MainForm.Input.cs, <c>MessageChecks</c>) are run by the tests over the
-/// recordings, a frame at a time and with the recorded clock (the seventh review of 2026-11-27, L9: until then the
-/// tests counted the window's wiring and ran a copy of the rule). The rules are <see cref="QueuedWrite"/>'s:
-/// the text typed only onto a bare row (<see cref="First"/>), the rest while it still goes where it was meant to
-/// (<see cref="Rest"/>), the Enter once the row shows it (<see cref="Enter"/>), the Enter once more after
-/// <see cref="AgainMs"/> (<see cref="Again"/>), and the wait until Claude Code has taken it (<see cref="Taken"/>).
-/// A check that says over leaves its reason in <see cref="Why"/>. What the window does with it (the words, the
-/// conversation, the field) stays the window's. The model is asked as of the last frame's end (K3).
+/// recordings, a frame at a time and with the recorded clock (the seventh review of 2026-11-27, L9). The rules are
+/// <see cref="QueuedWrite"/>'s: the text typed only onto a bare row (<see cref="First"/>), the rest while it still
+/// goes where it was meant to (<see cref="Rest"/>), the Enter once the row shows it (<see cref="Enter"/>), the Enter
+/// once more after <see cref="AgainMs"/> (<see cref="Again"/>), and the wait until Claude Code has taken it or the
+/// limit has come (<see cref="Taken"/>). Once its Enter went the message is Claude Code's: no check says over any more
+/// (the eighth review of 2026-11-28, M-A), and a draft still on the row at the limit is left there
+/// (<see cref="LeftOnRow"/>) for the window to say. A check that says over, before the Enter, leaves its reason in
+/// <see cref="Why"/>. What the window does with it (the words, the conversation, the field) stays the window's. The
+/// model is asked as of the last frame's end (K3).
 /// </summary>
 public sealed class MessageFlight
 {
@@ -27,33 +29,47 @@ public sealed class MessageFlight
     private readonly Func<long> _clock;
     private readonly bool _askedThen;
     private readonly string? _waitedFor;
-    private readonly bool _hides;
+    private readonly bool _own;
     private long _firstAsked = -1;
     private long _enterAsked = -1;
     private long _enteredAt;
 
-    /// <summary>A message queued now: what Claude Code waits on now is what it is bound to (<see cref="QueuedWrite.MessageGoes"/>).</summary>
-    public MessageFlight(ClaudeModel model, string text, Func<string?> waitIdentity, Func<long> clock)
+    /// <summary>
+    /// A message queued now: what Claude Code waits on now is what it is bound to (<see cref="QueuedWrite.MessageGoes"/>).
+    /// <paramref name="own"/> for the user's own message from the message field, which the row is compared with
+    /// without its hidden characters (M1); any other text, an offered line among them, only with them.
+    /// </summary>
+    public MessageFlight(ClaudeModel model, string text, Func<string?> waitIdentity, Func<long> clock, bool own = false)
     {
         _model = model;
         Text = text;
         _waitIdentity = waitIdentity;
         _clock = clock;
+        _own = own;
         _askedThen = model.PromptPending;
         _waitedFor = waitIdentity();
-        _hides = AxKit.Core.DisplayText.WithoutHidden(text).Length != text.Length;
+        Hides = AxKit.Core.DisplayText.HoldsHidden(text);
     }
 
     public string Text { get; }
 
+    /// <summary>Whether the text holds a hidden character, a line end and a tab aside (<see cref="AxKit.Core.DisplayText.HoldsHidden"/>): it gets no second Enter (K4, M1).</summary>
+    public bool Hides { get; }
+
     /// <summary>Whether its first write went, so that Claude Code's row may hold it.</summary>
     public bool Typed { get; private set; }
 
-    /// <summary>Whether its Enter went: from then on the window counts it as sent.</summary>
+    /// <summary>Whether its Enter went: from then on the window counts it as sent, and it is never given back (M-A).</summary>
     public bool Entered { get; private set; }
 
-    /// <summary>Whether Claude Code has taken it: its flight is over.</summary>
+    /// <summary>Whether its flight is over: Claude Code has taken it, or the limit after its Enter has come.</summary>
     public bool Done { get; private set; }
+
+    /// <summary>Whether the limit after its Enter came while Claude Code's prompt row still showed a draft (any draft), which the window says once (M-A).</summary>
+    public bool LeftOnRow { get; private set; }
+
+    /// <summary>Claude Code's own line about that draft, as the frame showed it (<see cref="ClaudeModel.PromptRemark"/>); null when none stood.</summary>
+    public string? Remark { get; private set; }
 
     /// <summary>Why the check that said over said it.</summary>
     public GivenBack Why { get; private set; } = GivenBack.Asked;
@@ -90,14 +106,15 @@ public sealed class MessageFlight
     /// <summary>Whether the Enter was sent once more, the row still holding the message after <see cref="AgainMs"/>.</summary>
     public bool EnteredAgain { get; private set; }
 
-    /// <summary>Its first write: only onto a bare prompt row (<see cref="QueuedWrite.MessageFirst"/>).</summary>
+    /// <summary>Its first write: only onto a bare prompt row (<see cref="QueuedWrite.MessageFirst"/>); a row not drawn by the limit is a reason of its own (M3).</summary>
     public WriteCheck First()
     {
         var now = _clock();
         _firstAsked = _firstAsked < 0 ? now : _firstAsked;
-        var check = QueuedWrite.MessageFirst(_askedThen, _waitedFor, _model.PromptPending, _waitIdentity(), _model.PromptDraft, now - _firstAsked, WaitMs);
+        var draft = _model.PromptDraft;
+        var check = QueuedWrite.MessageFirst(_askedThen, _waitedFor, _model.PromptPending, _waitIdentity(), draft, now - _firstAsked, WaitMs);
         Typed |= check == WriteCheck.Goes;
-        return check == WriteCheck.Over ? Over(Goes() ? GivenBack.NotBare : GivenBack.Asked) : check;
+        return check == WriteCheck.Over ? Over(!Goes() ? GivenBack.Asked : draft is null ? GivenBack.NotDrawn : GivenBack.NotBare) : check;
     }
 
     /// <summary>Its other lines and line breaks: while it still goes where it was meant to.</summary>
@@ -108,43 +125,38 @@ public sealed class MessageFlight
     {
         var now = _clock();
         _enterAsked = _enterAsked < 0 ? now : _enterAsked;
-        var check = QueuedWrite.MessageEnter(_askedThen, _waitedFor, _model.PromptPending, _waitIdentity(), _model.PromptHolds(Text), now - _enterAsked, WaitMs);
+        var check = QueuedWrite.MessageEnter(_askedThen, _waitedFor, _model.PromptPending, _waitIdentity(), _model.PromptHolds(Text, hiddenAside: _own), now - _enterAsked, WaitMs);
         if (check == WriteCheck.Goes)
         {
             _enteredAt = now;
             Entered = true;
-            SeenDraft = _askedThen ? null : _model.PromptDraft;
         }
 
         return check == WriteCheck.Over ? Over(Goes() ? GivenBack.NotShown : GivenBack.Asked) : check;
     }
 
-    /// <summary>
-    /// The prompt row's draft as it was last seen holding the message, paste marks and their numbers as drawn; null
-    /// when it was never seen so. The window empties the row of a message given back only while the row is exactly
-    /// this (the seventh review of 2026-11-27, L3: a paste mark matches its own number when the window knows it).
-    /// </summary>
-    public string? SeenDraft { get; private set; }
-
     /// <summary>The Enter once more while the row still holds it, never for a text with a hidden character (<see cref="QueuedWrite.EnterAgain"/>).</summary>
     public WriteCheck Again()
     {
-        var holds = _model.PromptHolds(Text);
-        SeenDraft = holds && !_askedThen ? _model.PromptDraft : SeenDraft;
-        var check = QueuedWrite.EnterAgain(_askedThen, _model.PromptPending, holds, _hides, _clock() - _enteredAt, AgainMs);
+        var check = QueuedWrite.EnterAgain(_askedThen, _model.PromptPending, _model.PromptHolds(Text, hiddenAside: _own), Hides, _clock() - _enteredAt, AgainMs);
         EnteredAgain |= check == WriteCheck.Goes;
         return check;
     }
 
-    /// <summary>Whether Claude Code has taken it (<see cref="QueuedWrite.Taken"/>): skipped once it has, over when it has not.</summary>
+    /// <summary>
+    /// Whether Claude Code has taken it (<see cref="QueuedWrite.Taken"/>): not yet while the row is not bare, until the
+    /// limit; then skipped, whatever the row shows, and the flight is over. A draft still on the row then is
+    /// <see cref="LeftOnRow"/>, with Claude Code's line about it.
+    /// </summary>
     public WriteCheck Taken()
     {
         var asks = _model.PromptPending;
-        var holds = _model.PromptHolds(Text);
-        SeenDraft = holds && !asks && !_askedThen ? _model.PromptDraft : SeenDraft;
-        var check = QueuedWrite.Taken(_askedThen, asks, asks && _model.PromptHeldBeforeAsk(Text), _model.PromptDraft, holds, _clock() - _enteredAt, WaitMs);
+        var draft = _model.PromptDraft;
+        var check = QueuedWrite.Taken(_askedThen, asks, draft, _clock() - _enteredAt, WaitMs);
         Done = check == WriteCheck.Skip;
-        return check == WriteCheck.Over ? Over(asks ? GivenBack.AskedOverIt : GivenBack.StillShown) : check;
+        LeftOnRow = Done && !_askedThen && !asks && draft is { Length: > 0 };
+        Remark = LeftOnRow ? _model.PromptRemark : null;
+        return check;
     }
 
     private WriteCheck Over(GivenBack why)
@@ -155,9 +167,9 @@ public sealed class MessageFlight
 }
 
 /// <summary>
-/// Why messages Claude Code had not taken were given back (D33): it began to ask while one was typed; its row did not
-/// show the message; its row held other text, so nothing was typed; its row still showed the message at the limit
-/// after its Enter (the one time limit that gives back, the seventh review of 2026-11-27, K1); it began to ask while
-/// its row still showed the message (K2); the user interrupted; Claude stopped; a check failed (L2).
+/// Why messages whose Enter had not gone were given back (D33): Claude Code began to ask while one was typed; its row
+/// did not show the message; its row held other text, so nothing was typed; its row was not drawn, so nothing was
+/// typed (the eighth review of 2026-11-28, M3); the user interrupted; Claude stopped; a check failed (the seventh
+/// review, L2). A message whose Enter went is never given back (the eighth review, M-A).
 /// </summary>
-public enum GivenBack { Asked, NotShown, NotBare, StillShown, AskedOverIt, Interrupted, Stopped, Failed }
+public enum GivenBack { Asked, NotShown, NotBare, NotDrawn, Interrupted, Stopped, Failed }
