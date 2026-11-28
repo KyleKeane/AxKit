@@ -91,17 +91,17 @@ public sealed partial class NotesTests
     {
         var root = SourceTexts.RepositoryRoot();
         var large = new List<string>();
-        var rootNotes = new FileInfo(Path.Combine(root, "CLAUDE.md"));
-        if (rootNotes.Length > RootAtMost)
+        var rootLength = LengthWithoutReturns(Path.Combine(root, "CLAUDE.md"));
+        if (rootLength > RootAtMost)
         {
-            large.Add($"CLAUDE.md is {rootNotes.Length} bytes, at most {RootAtMost}: move what is not a rule or a gotcha to docs/axKit (commands.md, documents.md)");
+            large.Add($"CLAUDE.md is {rootLength} bytes, at most {RootAtMost}: move what is not a rule or a gotcha to docs/axKit (commands.md, documents.md)");
         }
 
         var files = Directory.GetFiles(Path.Combine(root, "src"), "CLAUDE.md", SearchOption.AllDirectories)
             .Concat(Directory.GetDirectories(Path.Combine(root, "src"), "notes", SearchOption.AllDirectories).SelectMany(folder => Directory.GetFiles(folder, "*.md")));
         foreach (var file in files)
         {
-            var length = new FileInfo(file).Length;
+            var length = LengthWithoutReturns(file);
             if (length > NotesAtMost)
             {
                 large.Add($"{Path.GetRelativePath(root, file)} is {length} bytes, at most {NotesAtMost}: split it by kind into a notes folder under a short index, as src/AxKit.Forms is");
@@ -109,6 +109,17 @@ public sealed partial class NotesTests
         }
 
         Assert.True(large.Count == 0, string.Join("; ", large));
+    }
+
+    /// <summary>
+    /// A file's length in bytes without its carriage returns, so that the limit reads the same on every checkout:
+    /// GitHub's build checks the files out with CRLF line ends and this computer with LF, and the same notes were
+    /// 51 bytes longer there (2026-11-28).
+    /// </summary>
+    private static long LengthWithoutReturns(string file)
+    {
+        var bytes = File.ReadAllBytes(file);
+        return bytes.LongLength - bytes.LongCount(one => one == (byte)'\r');
     }
 
     [GeneratedRegex(@"[A-Za-z_][A-Za-z0-9_]*")]
