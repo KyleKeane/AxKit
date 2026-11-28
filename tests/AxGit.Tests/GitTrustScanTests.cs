@@ -343,9 +343,9 @@ public sealed partial class GitTrustScanTests : IDisposable
         Assert.True((await AxGit(root, ["commit", "-a", "-m", "three"], null)).Ok);
         Assert.Empty(Ran());
 
-        // The way it ran: a commit as a console makes it.
-        File.AppendAllText(Path.Combine(root, "a.txt"), "four\n");
-        Git(root, "commit", "-q", "-a", "-m", "four");
+        // The way it ran: git's own automatic gc in a console, in the foreground. A commit started it up to git 2.53;
+        // later versions' automatic maintenance may repack without gc, or run detached, so the baseline asks gc itself.
+        Git(root, "-c", "gc.autoDetach=false", "gc", "--auto");
         Assert.Equal(["recent-objects"], Ran());
     }
 
@@ -689,7 +689,8 @@ public sealed partial class GitTrustScanTests : IDisposable
         Assert.Equal(["origin.example.invalid"], trusted.Hosts);
         Assert.Equal(["127.0.0.2"], trusted.Proxies);
         Assert.Equal(["origin.example.invalid"], reached);
-        Assert.Contains("via 127.0.0.2", said);
+        // curl names the proxy it failed at in words that change between versions ("via 127.0.0.2", "to 127.0.0.2").
+        Assert.Contains("127.0.0.2", said);
 
         var overrides = await NotTrustedAsync(root);
         Assert.Contains(new GitSetting("http.https://origin.example.invalid/.proxy", string.Empty), overrides);
