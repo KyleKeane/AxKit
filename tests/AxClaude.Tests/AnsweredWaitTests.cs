@@ -250,19 +250,27 @@ public sealed class AnsweredWaitTests
         Assert.Equal(WriteCheck.Over, QueuedWrite.ClearGivenBack(messageGoes: false, rowHoldsIt: true));
 
         // The Enter again: once, a second and a half after the Enter, while the row still holds the message.
-        Assert.Equal(WriteCheck.NotYet, QueuedWrite.EnterAgain(askedThen: false, asksNow: false, promptHolds: true, sinceEnterMs: 1499, againMs: 1500));
-        Assert.Equal(WriteCheck.Goes, QueuedWrite.EnterAgain(askedThen: false, asksNow: false, promptHolds: true, sinceEnterMs: 1500, againMs: 1500));
-        Assert.Equal(WriteCheck.Skip, QueuedWrite.EnterAgain(askedThen: false, asksNow: false, promptHolds: false, sinceEnterMs: 0, againMs: 1500));
-        Assert.Equal(WriteCheck.Skip, QueuedWrite.EnterAgain(askedThen: false, asksNow: true, promptHolds: true, sinceEnterMs: 1500, againMs: 1500));
-        Assert.Equal(WriteCheck.Skip, QueuedWrite.EnterAgain(askedThen: true, asksNow: true, promptHolds: false, sinceEnterMs: 1500, againMs: 1500));
+        Assert.Equal(WriteCheck.NotYet, QueuedWrite.EnterAgain(askedThen: false, asksNow: false, promptHolds: true, hides: false, sinceEnterMs: 1499, againMs: 1500));
+        Assert.Equal(WriteCheck.Goes, QueuedWrite.EnterAgain(askedThen: false, asksNow: false, promptHolds: true, hides: false, sinceEnterMs: 1500, againMs: 1500));
+        Assert.Equal(WriteCheck.Skip, QueuedWrite.EnterAgain(askedThen: false, asksNow: false, promptHolds: false, hides: false, sinceEnterMs: 0, againMs: 1500));
+        Assert.Equal(WriteCheck.Skip, QueuedWrite.EnterAgain(askedThen: false, asksNow: true, promptHolds: true, hides: false, sinceEnterMs: 1500, againMs: 1500));
+        Assert.Equal(WriteCheck.Skip, QueuedWrite.EnterAgain(askedThen: true, asksNow: true, promptHolds: false, hides: false, sinceEnterMs: 1500, againMs: 1500));
+        // K4 (the seventh review): never a second Enter for a text with a hidden character.
+        Assert.Equal(WriteCheck.Skip, QueuedWrite.EnterAgain(askedThen: false, asksNow: false, promptHolds: true, hides: true, sinceEnterMs: 1500, againMs: 1500));
 
-        // Taken: once the row is bare or Claude Code asks; until then everything behind it waits; then over.
-        Assert.Equal(WriteCheck.Skip, QueuedWrite.Taken(askedThen: false, asksNow: false, draft: string.Empty, sinceEnterMs: 0, longest));
-        Assert.Equal(WriteCheck.Skip, QueuedWrite.Taken(askedThen: false, asksNow: true, draft: null, sinceEnterMs: 0, longest));
-        Assert.Equal(WriteCheck.NotYet, QueuedWrite.Taken(askedThen: false, asksNow: false, draft: "first message", sinceEnterMs: 2999, longest));
-        Assert.Equal(WriteCheck.NotYet, QueuedWrite.Taken(askedThen: false, asksNow: false, draft: null, sinceEnterMs: 0, longest));
-        Assert.Equal(WriteCheck.Over, QueuedWrite.Taken(askedThen: false, asksNow: false, draft: "first message", sinceEnterMs: 3000, longest));
-        Assert.Equal(WriteCheck.Skip, QueuedWrite.Taken(askedThen: true, asksNow: true, draft: null, sinceEnterMs: 0, longest));
+        // Taken: once the row is bare; until then everything behind it waits.
+        Assert.Equal(WriteCheck.Skip, QueuedWrite.Taken(askedThen: false, asksNow: false, heldBeforeAsk: false, draft: string.Empty, promptHolds: false, sinceEnterMs: 0, longest));
+        Assert.Equal(WriteCheck.NotYet, QueuedWrite.Taken(askedThen: false, asksNow: false, heldBeforeAsk: false, draft: "first message", promptHolds: true, sinceEnterMs: 2999, longest));
+        Assert.Equal(WriteCheck.NotYet, QueuedWrite.Taken(askedThen: false, asksNow: false, heldBeforeAsk: false, draft: null, promptHolds: false, sinceEnterMs: 0, longest));
+        Assert.Equal(WriteCheck.Skip, QueuedWrite.Taken(askedThen: true, asksNow: true, heldBeforeAsk: true, draft: null, promptHolds: false, sinceEnterMs: 0, longest));
+        // K1 (the seventh review): at the limit, given back only while the row still shows the message; a row not
+        // drawn, or holding other text, counts as taken.
+        Assert.Equal(WriteCheck.Over, QueuedWrite.Taken(askedThen: false, asksNow: false, heldBeforeAsk: false, draft: "first message", promptHolds: true, sinceEnterMs: 3000, longest));
+        Assert.Equal(WriteCheck.Skip, QueuedWrite.Taken(askedThen: false, asksNow: false, heldBeforeAsk: false, draft: null, promptHolds: false, sinceEnterMs: 3000, longest));
+        Assert.Equal(WriteCheck.Skip, QueuedWrite.Taken(askedThen: false, asksNow: false, heldBeforeAsk: false, draft: "something else", promptHolds: false, sinceEnterMs: 3000, longest));
+        // K2: Claude Code asks before the row was seen without the message: the last reading before the question decides.
+        Assert.Equal(WriteCheck.Over, QueuedWrite.Taken(askedThen: false, asksNow: true, heldBeforeAsk: true, draft: null, promptHolds: false, sinceEnterMs: 0, longest));
+        Assert.Equal(WriteCheck.Skip, QueuedWrite.Taken(askedThen: false, asksNow: true, heldBeforeAsk: false, draft: null, promptHolds: false, sinceEnterMs: 0, longest));
     }
 
     /// <summary>
@@ -293,8 +301,8 @@ public sealed class AnsweredWaitTests
                 entered = check == WriteCheck.Goes ? now : entered;
                 return check;
             });
-            queue.Add("\r", 50, () => QueuedWrite.EnterAgain(false, false, row == text, now - entered, 1500));
-            queue.Add(string.Empty, 50, () => QueuedWrite.Taken(false, false, row, now - entered, 3000));
+            queue.Add("\r", 50, () => QueuedWrite.EnterAgain(false, false, row == text, false, now - entered, 1500));
+            queue.Add(string.Empty, 50, () => QueuedWrite.Taken(false, false, false, row, row == text, now - entered, 3000));
         }
 
         Queue("first message");

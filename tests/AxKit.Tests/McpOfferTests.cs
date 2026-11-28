@@ -61,7 +61,12 @@ public sealed class McpOfferTests
     public void A_character_of_an_offered_command_that_is_neither_seen_nor_heard_is_written_out_where_it_is_shown()
     {
         var command = "del notes" + char.ConvertFromUtf32(0x202E) + "txt.exe" + char.ConvertFromUtf32(0x200B) + char.ConvertFromUtf32(0xE0041);
-        Assert.Null(McpOffer.Refusal(command));
+        // The seventh review of that day (K4): such an offer is refused, nothing of it runs, and the AI tool is told
+        // why. Shown, as the AI tool is told it, and written out wherever a command is written (a line given back).
+        Assert.Contains("nothing of it runs", McpOffer.Refusal(command));
+        Assert.Contains("nothing of it runs", McpOffer.Refusal("echo a b"));
+        Assert.Contains("nothing of it runs", McpOffer.Refusal("echo a‍b"));
+        Assert.Null(McpOffer.Refusal("echo plain words"));
         const string shown = "del notes‹U+202E›txt.exe‹U+200B›‹U+E0041›";
         Assert.Equal(shown, McpOffer.Shown(" " + command + " "));
         Assert.Contains($"offers a command for you to run: {shown}. ", McpOffer.AskName("claude-code", command));

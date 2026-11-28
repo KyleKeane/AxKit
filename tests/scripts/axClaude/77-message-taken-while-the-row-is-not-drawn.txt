@@ -1,0 +1,54 @@
+# Workflow: Send two messages while Claude Code's prompt row is not drawn after it took the first
+# Needs: tools/AxAutomate, which puts its own program in AXKIT_STANDIN for the stand-in of Claude Code; no Claude Code, no network and no model.
+# axClaude, docs/axClaude/SPEC.md D33 ("One message in flight", the seventh review of 2026-11-27, K1 and L1). A message
+# is given back only on positive evidence that Claude Code did not take it: its prompt row still showing the message
+# three seconds after its Enter. Claude Code draws no prompt row for seconds after some messages (the clear recording:
+# none from 13448 ms to 16144 ms after /clear's Enter). Until that review a row not drawn at the limit gave the message
+# back, taken as it was, and its next send was a second one. Now such a row counts as taken; the next message waits
+# for the bare row before it is typed, so nothing is joined. And while a message is on its way, closing the window
+# asks first: the message would be lost.
+# The stand-in (tools/AxAutomate/StandIn.cs) draws what is typed, takes each Enter and then leaves the row not drawn for
+# four seconds ("hideAfterTake"), and writes every key it reads to a file ("keys").
+file home\AxKit\axClaude.json {"replySpeech":"none","interruptForQuestions":true,"workingMusic":false,"backgroundAlert":false}
+file home\AxKit\consent.json {"items":[{"app":"axClaude","target":"Claude Code","version":"0","when":"2026-10-31T00:00:00"}]}
+mkdir nd
+file claude.cmd @"%AXKIT_STANDIN%" standin "%~dp0scenario.json" %*
+file scenario.json {"version":"2.1.332 (stand-in)","hideAfterTake":4000,"keys":"keys.txt","steps":[{"frame":["claude: started","auto mode on (shift+tab to cycle)","$"],"clear":true},{"idle":true}]}
+file expected.txt first message<Enter>\nsecond message<Enter>\n
+start claude {temp}\nd --claude {temp}\claude.cmd -- --model haiku --effort low
+expect said Ready
+wait 1000
+
+# Goal: Send a message, and the next one at once, while Claude Code's prompt row is not drawn
+# A message whose row is not drawn three seconds after its Enter is taken, not given back. The second message waits
+# for the bare row; it is typed once the row is drawn again, and taken the same way.
+type first message
+keys enter
+expect said ♪ Sent
+type second message
+keys enter
+wait 4000
+expect said ♪ Sent
+wait 4500
+refuse said Not sent
+run fc /b nd\keys.txt expected.txt
+
+# Check: A message taken while its row was not drawn stays in the conversation
+do Conversation
+expect text # Input 1
+expect text # Input 2
+refuse text Not sent
+
+# Check: Closing the window while a message is on its way asks first
+do Message field
+type third message
+keys enter
+expect said ♪ Sent
+keys alt+f4
+expect state "notice":"Close axClaude?"
+expect focus still on its way to Claude
+# The notice holds its keys for a moment (bundle AX-6.4).
+wait 1100
+keys escape
+expect state "notice":null
+expect focus "name":"Message to Claude"

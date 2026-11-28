@@ -206,7 +206,7 @@ internal sealed partial class MainForm
             }
             else
             {
-                SendOffered(offer.Command);
+                SendOffered(offer);
             }
         }
         else if (answer == McpOffer.Copy)
@@ -252,7 +252,8 @@ internal sealed partial class MainForm
                 _lastCommand = SlashCommands.Find(ClaudeCodeTexts.FeedbackCommand);
                 _model.Send(line, evenWhilePrompting: true);
                 _messageSent = true;
-                QueueWrites(line);
+                // Written out under the AI caution's words when it is given back (K5): the command in it is the AI's.
+                QueueWrites(line, shown: $"{AiCaution.ConcernNotSent(McpRun.Speaker(offer.Client))}: {McpOffer.Shown(line)}");
                 Announce("Not run. Claude Code's feedback opens with your concern", true);
             }, () => AskOffer(offer, McpOffer.Concern, unprompted: false)));
         // The offer's question still waits, in this field: the gate holds as under its list.
@@ -312,14 +313,16 @@ internal sealed partial class MainForm
     /// the interrupt taken down, where every message passes (<see cref="QueueWrites"/>, since 2026-11-27): until then
     /// the line was typed after the restored message, and its Enter, when Claude Code dropped it, was never sent again.
     /// </summary>
-    private void SendOffered(string command)
+    private void SendOffered(Offer offer)
     {
-        var line = McpOffer.Line(command);
+        var line = McpOffer.Line(offer.Command);
         _lastCommand = null;
         _model.Send(line, evenWhilePrompting: true);
         _messageSent = true;
         Log.Info("A command an AI tool offered was sent as a ! line at the user's Yes");
-        // "Sent" when its Enter goes (QueueWrites), which also looks again for an Enter Claude Code dropped.
+        // "Sent" when its Enter goes (QueueWrites), which also looks again for an Enter Claude Code dropped. Given back,
+        // the line is written out as the question showed it, under the AI caution's words (the seventh review of
+        // 2026-11-27, K5): never raw, and never in axKit's voice.
         QueueWrites(line, sent: () =>
         {
             Announce("Sent", false);
@@ -327,6 +330,6 @@ internal sealed partial class MainForm
             {
                 EventDoor.Raise(EventKind.Sent);
             }
-        });
+        }, shown: $"{AiCaution.OfferedNotSent(McpRun.Speaker(offer.Client))}: {McpOffer.Shown(line)}");
     }
 }

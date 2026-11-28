@@ -52,6 +52,9 @@ refuse said ♪ Sent
 type 1
 keys enter
 expect said ♪ Sent
+# The "1" and its Enter go out first, before the next question is drawn (2026-11-28: the step above can take a
+# "Sent" said earlier, and the next question then met the answer's Enter, on the old build and the new alike).
+wait 2000
 
 # Check: After an interrupt during a long answer the next question is said at once
 # The words again, and the interrupt right after their Enter: the keys still waiting are dropped. Claude Code asks

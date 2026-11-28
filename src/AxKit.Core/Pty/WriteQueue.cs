@@ -43,7 +43,21 @@ public sealed class WriteQueue
         while (_writes.Count > 0)
         {
             var (text, delay, check) = _writes.Peek();
-            switch (check?.Invoke() ?? WriteCheck.Goes)
+            WriteCheck answer;
+            try
+            {
+                answer = check?.Invoke() ?? WriteCheck.Goes;
+            }
+            catch (Exception ex) when (ex is not OutOfMemoryException)
+            {
+                // A check that throws never stops the pump (the seventh review of 2026-11-27, L2): nothing more is
+                // written, the queue is dropped as for an over, and the one who queued is told it failed. Until then
+                // the exception left the pump marked as writing, and nothing queued afterwards was ever written.
+                _writes.Clear();
+                return new WriteStep(WriteStepKind.Failed, ex.GetType().Name, 0);
+            }
+
+            switch (answer)
             {
                 case WriteCheck.Over:
                     _writes.Clear();
@@ -90,4 +104,7 @@ public enum WriteStepKind
 
     /// <summary>A check said over: every write that stood in the queue was dropped, and the one who queued them is told.</summary>
     Dropped,
+
+    /// <summary>A check threw: every write that stood in the queue was dropped, and the one who queued them is told that it failed; the step's text is the exception's type, never a text that was queued.</summary>
+    Failed,
 }

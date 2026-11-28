@@ -358,6 +358,7 @@ public sealed partial class SessionModel : ClaudeModel
         }
 
         _screen.PullRowText();
+        KeepFrame();
         _anchor = ApplyChrome(out var spinner, out var mode, out var background, out var drafts, out var working);
         HideRepeatedBanner();
         HideDraftRows();
@@ -394,6 +395,7 @@ public sealed partial class SessionModel : ClaudeModel
         // A screen of Claude's that waits on its hint row waits for the user just as a question does (D33).
         PendingScreen = PromptPending || !DetectScreens ? null : ReadPendingScreen();
         PromptPending |= PendingScreen is not null;
+        KeepAskFree();
         CheckResponseStarted();
         Trim();
         RaiseChanged();
@@ -478,14 +480,31 @@ public sealed partial class SessionModel : ClaudeModel
     /// <see cref="AxKit.Core.DisplayText"/> calls hidden, which Claude Code takes out of a prompt ("Removed 1
     /// invisible character from your prompt", <see cref="ClaudeCodeTexts.RemovedFromPrompt"/>); and a line of the
     /// message, which the window writes in one piece, may stand on the row as the mark of a paste
-    /// (<see cref="ClaudeCodeTexts.PastedWithoutBlanks"/>, the one form a recording shows). The shell mode's row is
-    /// in no recording yet; its form here is the one the fifth review assumed, and it is to be recorded before the
-    /// release.
+    /// (<see cref="ClaudeCodeTexts.PastedMark"/>, the one form a recording shows). The shell mode's row is in no
+    /// recording yet; its form here is the one the fifth review assumed, and it is to be recorded before the release.
+    /// The seventh review of that day: the row is read as the last frame's end showed it (K3, <see cref="KeepFrame"/>);
+    /// a text that holds a hidden character is held only by a row that shows it with that character (K4: no Enter
+    /// goes for a text the row was not seen with), the comparison without them staying for a text that has none; and
+    /// a blank between two words on one row counts, only a row join may lose one (L3, <see cref="DraftIs"/>).
     /// </summary>
-    public override bool PromptHolds(string text)
+    public override bool PromptHolds(string text) => HoldsIn(_frameRows, _frameCursor, text);
+
+    /// <summary>
+    /// Whether the prompt row held <paramref name="text"/> in the last frame that asked nothing (the seventh review of
+    /// 2026-11-27, K2): when Claude Code begins to ask before the row was seen without a message whose Enter went, the
+    /// row's last reading before the question decides whether the message is given back.
+    /// </summary>
+    public override bool PromptHeldBeforeAsk(string text) => HoldsIn(_askFreeRows, _askFreeCursor, text);
+
+    /// <summary>
+    /// Whether the draft of the frame's rows given shows the text sent, whole, as <see cref="PromptHolds"/> says. Not
+    /// on the frame path: a check of the window's queue asks it.
+    /// </summary>
+    private bool HoldsIn(string?[] rows, int cursor, string text)
     {
-        var lines = text.Trim().Replace("\r\n", "\n").Split('\n');
-        if (Comparable(text).Length == 0)
+        var keepHidden = AxKit.Core.DisplayText.WithoutHidden(text).Length != text.Length;
+        var lines = text.Trim().Replace("\r\n", "\n").Split('\n').Select(line => Squeezed(line, keepHidden)).ToList();
+        if (lines.All(line => line.Length == 0))
         {
             return false;
         }
@@ -493,39 +512,137 @@ public sealed partial class SessionModel : ClaudeModel
         // The cursor stands on the draft's last line: its prompt row is up to one row per line above, and one more for
         // each screen width the text wraps over, a few more besides.
         var wrapped = Columns > 0 ? text.Length / Columns : 0;
-        return DraftAt(4 + lines.Length + wrapped) is { } draft && DraftIs(Comparable(draft), lines);
+        return DraftAt(rows, cursor, 4 + lines.Count + wrapped) is { } draft && DraftIs(draft, lines, keepHidden);
     }
 
     /// <summary>
-    /// Whether a draft, read as <see cref="Comparable"/>, is the message's lines in order, each as typed or as the
-    /// mark of a paste in its place (<see cref="ClaudeCodeTexts.PastedWithoutBlanks"/>): the window writes each line
-    /// in one write, which Claude Code may take for a paste and draw collapsed.
+    /// Whether a draft, its rows as the screen has them joined by line ends, is the message's lines in order, each as
+    /// typed or as the mark of a paste in its place (<see cref="ClaudeCodeTexts.PastedMark"/>): the window writes each
+    /// line in one write, which Claude Code may take for a paste and draw collapsed. Both sides are read as
+    /// <see cref="Squeezed"/> makes them, so that a run of blanks is one blank; a blank between two words on one row
+    /// must be a blank of the message (the seventh review of 2026-11-27, L3: "a b" is not "ab"; until then every blank
+    /// was taken out of both sides); a row join stands for a line end of the message, or for the blank the width broke
+    /// the draft at, or for nothing, a word broken in two. The marks of one draft are numbered in order, so that one
+    /// paste drawn twice does not stand for two lines.
     /// </summary>
-    private static bool DraftIs(string draft, IReadOnlyList<string> lines)
+    private static bool DraftIs(string draft, IReadOnlyList<string> lines, bool keepHidden)
     {
+        var wanted = string.Join('\n', lines);
         var at = 0;
-        foreach (var line in lines)
+        var paste = 0;
+        var rows = draft.Split('\n');
+        for (var r = 0; r < rows.Length; r++)
         {
-            var wanted = Comparable(line);
-            if (at + wanted.Length <= draft.Length && string.CompareOrdinal(draft, at, wanted, 0, wanted.Length) == 0)
+            if (r > 0 && at < wanted.Length && wanted[at] is '\n' or ' ')
             {
-                at += wanted.Length;
+                at++;
             }
-            else if (ClaudeCodeTexts.PastedWithoutBlanks().Match(draft, at) is { Success: true } paste)
+
+            var row = Squeezed(rows[r], keepHidden);
+            for (var i = 0; i < row.Length;)
             {
-                at += paste.Length;
-            }
-            else
-            {
-                return false;
+                var lineStart = at == 0 || (at <= wanted.Length && wanted[at - 1] == '\n');
+                if (lineStart && ClaudeCodeTexts.PastedMark().Match(row, i) is { Success: true } mark
+                    && int.Parse(mark.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture) is var number && number > paste)
+                {
+                    // The mark stands for one whole line of the message.
+                    paste = number;
+                    i += mark.Length;
+                    var end = wanted.IndexOf('\n', at);
+                    at = end < 0 ? wanted.Length : end;
+                    continue;
+                }
+
+                if (at >= wanted.Length || wanted[at] != row[i])
+                {
+                    return false;
+                }
+
+                at++;
+                i++;
             }
         }
 
-        return at == draft.Length;
+        return at == wanted.Length;
     }
 
-    /// <summary>What a draft on Claude Code's prompt row holds, empty for a bare prompt, null when no prompt row stands at or above the cursor (<see cref="DraftAt"/>).</summary>
-    public override string? PromptDraft => DraftAt(8);
+    /// <summary>
+    /// A text as a draft is compared: every run of blanks one blank, none at the ends, and every hidden character taken
+    /// out (Claude Code takes them out of a prompt) unless <paramref name="keepHidden"/>, for a text that holds one
+    /// (the seventh review of 2026-11-27, K4).
+    /// </summary>
+    private static string Squeezed(string text, bool keepHidden)
+    {
+        var source = keepHidden ? text : AxKit.Core.DisplayText.WithoutHidden(text);
+        var builder = new StringBuilder(source.Length);
+        var blank = false;
+        foreach (var c in source)
+        {
+            if (char.IsWhiteSpace(c))
+            {
+                blank = builder.Length > 0;
+                continue;
+            }
+
+            if (blank)
+            {
+                builder.Append(' ');
+                blank = false;
+            }
+
+            builder.Append(c);
+        }
+
+        return builder.ToString();
+    }
+
+    /// <summary>What a draft on Claude Code's prompt row holds, empty for a bare prompt, null when no prompt row stands at or above the cursor (<see cref="DraftAt"/>), as the last frame's end showed it (K3).</summary>
+    public override string? PromptDraft => DraftAt(_frameRows, _frameCursor, 8);
+
+    /// <summary>
+    /// The rows' text and the cursor's row as of the last frame's end (<see cref="KeepFrame"/>), which every reading of
+    /// the prompt row for a message in flight reads (the seventh review of 2026-11-27, K3): the window asks between two
+    /// chunks, inside a frame, and until then read the live cursor, which the parser had already moved into the next
+    /// frame, over rows of the one before (trust-banner-fast at 8119 ms read the message and the banner under it while
+    /// the frame showed the row bare). Arrays reused frame after frame: a frame allocates nothing for them (D24).
+    /// </summary>
+    private string?[] _frameRows = [];
+
+    private int _frameCursor = -1;
+
+    /// <summary>The same as of the last frame that asked nothing (<see cref="PromptHeldBeforeAsk"/>, K2).</summary>
+    private string?[] _askFreeRows = [];
+
+    private int _askFreeCursor = -1;
+
+    /// <summary>The frame's rows and cursor kept, right after the row text is pulled (<see cref="CompleteFrame"/>).</summary>
+    private void KeepFrame()
+    {
+        if (_frameRows.Length != Rows)
+        {
+            _frameRows = new string?[Rows];
+            _askFreeRows = new string?[Rows];
+            _askFreeCursor = -1;
+        }
+
+        _frameCursor = _screen.CursorRow;
+        for (var r = 0; r < Rows; r++)
+        {
+            // A row without a line is read off its cells when it kept them: the prompt row after /clear keeps its dollar
+            // sign but has no line until something is printed on it (ClearConversation). Nothing is made for any other.
+            _frameRows[r] = _screen.LineAt(r)?.Text ?? (r <= _frameCursor ? _screen.UnlinedText(r) : null);
+        }
+    }
+
+    /// <summary>The frame kept as the last that asked nothing, when it asks nothing (the end of <see cref="CompleteFrame"/>).</summary>
+    private void KeepAskFree()
+    {
+        if (!PromptPending)
+        {
+            Array.Copy(_frameRows, _askFreeRows, _frameRows.Length);
+            _askFreeCursor = _frameCursor;
+        }
+    }
 
     /// <summary>
     /// The draft on the nearest prompt row within <paramref name="depth"/> rows at or above the cursor, read from the
@@ -537,16 +654,15 @@ public sealed partial class SessionModel : ClaudeModel
     /// command does. A row of the shell mode's mark (<see cref="ClaudeCodeTexts.PromptBang"/>, not yet in a
     /// recording) holds its line with the mark. The question rows that start with "&gt; " are none.
     /// </summary>
-    private string? DraftAt(int depth)
+    private static string? DraftAt(string?[] rows, int cursor, int depth)
     {
-        for (var row = _screen.CursorRow; row >= 0 && row >= _screen.CursorRow - depth; row--)
+        for (var row = Math.Min(cursor, rows.Length - 1); row >= 0 && row >= cursor - depth; row--)
         {
-            if (_screen.LineAt(row) is not { } line || line.Text.Length == 0)
+            if (rows[row] is not { Length: > 0 } text)
             {
                 continue;
             }
 
-            var text = line.Text;
             string first;
             if (LineClassifier.IsBarePrompt(text))
             {
@@ -570,9 +686,9 @@ public sealed partial class SessionModel : ClaudeModel
             }
 
             var draft = new StringBuilder(first);
-            for (var below = row + 1; below <= _screen.CursorRow; below++)
+            for (var below = row + 1; below <= cursor && below < rows.Length; below++)
             {
-                draft.Append('\n').Append(_screen.LineAt(below)?.Text);
+                draft.Append('\n').Append(rows[below]);
             }
 
             return draft.ToString().Trim();
@@ -580,9 +696,6 @@ public sealed partial class SessionModel : ClaudeModel
 
         return null;
     }
-
-    /// <summary>The text as a draft is compared: every blank taken out, since a draft breaks where the screen's width ends, wherever that falls, and every hidden character, which Claude Code takes out of a prompt.</summary>
-    private static string Comparable(string text) => string.Concat(AxKit.Core.DisplayText.WithoutHidden(text).Where(c => !char.IsWhiteSpace(c)));
 
     /// <summary>A line of the app's own (<c>System: …</c>, FR-4.5), above Claude's live block.</summary>
     public override void AddSystemLine(string text)
@@ -803,7 +916,9 @@ public sealed partial class SessionModel : ClaudeModel
     /// </summary>
     private void ClearConversation()
     {
-        _screen.DetachRows();
+        // The cursor's row, Claude Code's prompt row, keeps its dollar sign: Claude Code draws the next draft after it
+        // and never draws it again (the seventh review of 2026-11-27; the clear recording's last message).
+        _screen.DetachRows(keepCells: _screen.CursorRow);
         _lines.Clear();
         _pending.Clear();
         _runBoundary = null;
@@ -827,6 +942,9 @@ public sealed partial class SessionModel : ClaudeModel
     private void StartRun()
     {
         AttachScreen();
+        // The new run's screen has drawn no frame yet: no prompt row is read until it has (K3).
+        _frameCursor = -1;
+        _askFreeCursor = -1;
         _banner = null;
         Epoch++;
         Working = false;

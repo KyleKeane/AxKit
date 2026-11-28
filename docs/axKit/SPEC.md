@@ -1894,7 +1894,12 @@ terms are theirs to know. `NOTICE.md` ("Who is responsible for what") is the ful
   `AiCaution.PlanAsked`, who wrote the plan and that approving lets Claude carry it out, heard every time, then the
   plan; the list starts on "No, keep planning"; "Read the whole plan" opens it with `AiCaution.Plan` first: who wrote
   it, that it can be wrong, that axKit checked none of it, what manual approval and auto mode let happen, and that
-  approving is the user's own act). With the screen, Claude Code draws
+  approving is the user's own act); a command Claude offered, or the feedback line about one, that axClaude writes
+  out in its conversation because it was not sent (`docs/axClaude/SPEC.md` D33, the seventh review of 2026-11-27, K5:
+  the line as the question showed it, after `AiCaution.OfferedNotSent` or `ConcernNotSent`, who offered it, that it
+  can be wrong, that axKit checked none of it and that running it is the user's own choice; until then the line
+  stood raw, in axKit's voice). An offered command that holds a character no one sees or hears is refused, so that
+  what runs is what the user heard (MC-9). With the screen, Claude Code draws
   that question itself, and the window shows it as Claude Code wrote it. axClaude's conversation itself is Claude
   Code's own output, shown as it comes, under the access layer's consent (AX-11.4). These are reminders in plain
   words, as the consent notices are (AX-11.10), not legal advice. A new feature of this kind brings its caution in

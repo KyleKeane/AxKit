@@ -53,11 +53,11 @@ expect focus "name":"Message to Claude"
 type a message
 wait 1100
 keys enter
-expect said Not sent: Claude did not take the line; your message is back in the message field; the one after it was not typed either
+expect said Not sent: Claude's prompt row still showed the line; your message is back in the message field; the one after it was not typed either
 expect focus "name":"Message to Claude"
 expect text a message
 run fc /b ol\keys.txt expected.txt
 
 # Check: The offered command that did not go is written out in the conversation
 do Conversation
-expect text Not sent: Claude's prompt row still held the line three seconds after its Enter. Your message is back in the message field. The message sent after it was not typed either. Not put into the field: ! echo offered.
+expect text Not sent: Claude's prompt row still showed the line three seconds after its Enter. Your message is back in the message field. The message sent after it was not typed either. Not put into the field: the line of the command axAutomate, an AI model, offered, which can be wrong and which axKit has checked none of; running it is your own choice: ! echo offered.

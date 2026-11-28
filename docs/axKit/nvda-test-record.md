@@ -796,6 +796,27 @@ What it found:
   (R-54), the AI tools submenu after a change from outside (R-56), the count of waiting reports (R-57) and the
   command line in axMCP's notice before a server starts (R-61), as on 2026-11-16.
 
+## Owed: a message given back only on positive evidence, every check one frame (the seventh review of 2026-11-27)
+
+The seventh review of that day, repaired on 2026-11-28 (`docs/axClaude/SPEC.md` D33, point 4, "Given back only on
+positive evidence"; FR-1.7, FR-2.1; `docs/axKit/mcp.md` MC-9.3; `docs/axKit/SPEC.md` AX-11.12): at the three seconds'
+limit a message is given back only while Claude Code's prompt row still shows it, a row not drawn or holding other
+text counting as taken; a question drawn while the row still showed the message gives it back; every check reads one
+frame, and after /clear the prompt row keeps its dollar sign; a text with a hidden character gets no Enter it was not
+seen with, and an offered command that holds one is refused; an offered line written out in the conversation stands
+under the AI caution's words; closing asks while a message is on its way or back in the field. Played on the hidden
+desktop, without NVDA, on 2026-11-28: the new `tests/scripts/axClaude/77` and `78`, the changed `73` and `75`, and
+the recorded scripts app by app. Still owed:
+
+1. With NVDA listening (`.\nvda-pass.ps1 axClaude`): scripts 77 and 78; whether "Not sent: Claude asks something
+   while its prompt row still showed the message; the message is back in the message field" comes after the
+   question's reading without cutting into it, and whether the conversation's line naming the command an AI tool
+   offered, with its caution, is read whole.
+2. With Claude Code itself (the coordinating session's live runs, on Haiku in a temporary folder): its prompt row
+   during and after /clear and /compact with axKit's hooks (drawn again bare, and a first message after /clear on the
+   row that kept its dollar sign); its row during a `!` command; whether a `!` line loses a hidden character; whether
+   a draft Claude Code holds stays on its row under a permission question and comes back after it.
+
 ## Owed: a message in flight until Claude Code takes it, nothing given back lost, a dialog ends the user's key (the sixth review of 2026-11-27)
 
 The sixth review of that day, repaired on 2026-11-28 (`docs/axClaude/SPEC.md` D33, point 4, "A message is in flight
@@ -808,8 +829,9 @@ characters, a paste's mark included. Played on the hidden desktop, without NVDA,
 `tests/scripts/axClaude/73`, `74`, `75` and `76`, the changed `64` and `71`, and the recorded scripts app by app.
 Still owed:
 
-1. With NVDA listening (`.\nvda-pass.ps1 axClaude`): scripts 73 to 76; whether "Not sent: Claude did not take the
-   message; it is back in the message field; the one after it was not typed either" is heard whole, and whether the
+1. With NVDA listening (`.\nvda-pass.ps1 axClaude`): scripts 73 to 76; whether "Not sent: Claude's prompt row still
+   showed the message; it is back in the message field; the one after it was not typed either" (the words since the
+   seventh review) is heard whole, and whether the
    conversation's line naming an offered command's line is read whole.
 2. With Claude Code itself (no live script was run; the coordinating session records these before the release): the
    shell mode's `!` draft row and a collapsed paste with a count of lines, neither in a recording; a message typed

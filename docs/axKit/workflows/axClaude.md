@@ -1895,6 +1895,30 @@ Starts with: Open axClaude with the folder cf.
 1. Choose Choose the model in the Actions menu.
     You hear: Sent.
 
+## Send two messages while Claude Code's prompt row is not drawn after it took the first
+
+Starts with: Open axClaude with the folder nd.
+
+### Send a message, and the next one at once, while Claude Code's prompt row is not drawn
+
+1. Type "first message".
+2. Press Enter.
+    You hear the sound Sent.
+3. Type "second message".
+4. Press Enter.
+    You hear the sound Sent.
+
+## Get a message back when Claude asks while its prompt row still shows it
+
+Starts with: Open axClaude with the folder qh.
+
+### Get a message back that Claude asked over before it took it
+
+1. Type "held message".
+2. Press Enter.
+    You hear: Sent.
+    You hear: Not sent: Claude asks something while its prompt row still showed the message; the message is back in the message field.
+
 ## Have a short exchange with Claude
 
 Starts with: Open axClaude with the folder a.

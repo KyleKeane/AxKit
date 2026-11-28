@@ -28,7 +28,7 @@ keys enter
 expect said Sent
 type second message
 keys enter
-expect said Not sent: Claude did not take the message; it is back in the message field; the one after it was not typed either
+expect said Not sent: Claude's prompt row still showed the message; it is back in the message field; the one after it was not typed either
 expect focus "name":"Message to Claude"
 expect text first message
 expect text second message
@@ -36,7 +36,7 @@ run fc /b nt\keys.txt expected1.txt
 
 # Check: A message Claude Code did not take leaves the conversation
 do Conversation
-expect text Not sent: Claude's prompt row still held your message three seconds after its Enter. The message is back in the message field. The message sent after it was not typed either and is in the field after it.
+expect text Not sent: Claude's prompt row still showed your message three seconds after its Enter. The message is back in the message field. The message sent after it was not typed either and is in the field after it.
 refuse text # Input 1
 
 # Check: The next send empties the row of exactly the message given back, then types onto the bare row

@@ -33,7 +33,9 @@ Updated 2026-11-28, early morning.
   sixth look at axClaude's message path found a message Claude Code had not taken counted as sent; fixed: a message is in flight until Claude
   Code has taken it, and nothing sent is lost. axGIT now asks you about every repository once,
   whatever its scan finds: a reading of git's files can never be complete, so the trust is yours, said plainly. The
-  seventh look at the message path found a taken message given back when Claude Code hides its row; its batch is next.
+  seventh look at the message path found a taken message given back when Claude Code hides its row; fixed: a
+  message comes back only while the row still shows it. The seventh look at axGIT found a trust kept by path alone;
+  its batch is next: a trust covers the git folder you were shown, as it was shown.
 - **Fable and Opus**: on 2026-11-28 you said Fable's credits were nearly spent. Every remaining fix batch has
   its written brief with the decisions in it, and the state, the order and the process are in
   `C:\Temp\axkit-tools\HANDOFF.md`, so that Opus can run them; the design work on branches (the graph's
@@ -129,6 +131,18 @@ Each is one line to undo unless it says otherwise.
 - **An AI tool's run fills only the notice its own click showed**, not one a command opens a moment later.
 - **A question after a Windows dialog holds**: the key that opened Save as or a program picker no longer counts as
   your opening of the question after it.
+- **A message comes back only on evidence that Claude Code did not take it**: at the 3 seconds, only while the
+  prompt row still shows it. A row that is not drawn, or shows other text, counts as taken (B2f gave such a message
+  back, and Enter then sent it twice after /clear). So a message whose Enter Claude Code dropped while its row was
+  not drawn is not given back by itself; the next message then waits and comes back with "holds other text". When
+  Claude asks before taking it, the last frame before the question decides, and the words come after the question,
+  without cutting it off. Every reading is one whole frame's. To turn back: `MessageFlight`, `QueuedWrite.Taken`.
+- **An offered command with any character written out as a code is refused**, no-break and other unusual spaces
+  included, and the AI tool is told nothing ran. To turn back: `DisplayText.HidesInCommand` in `McpOffer.Refusal`.
+- **After /clear, Claude Code's prompt row keeps its `$`** for axClaude (`Screen.DetachRows`), found by replaying
+  the /clear recording: the first message after /clear would have come back "Not sent yet". Owed a live check.
+- **"Nothing you send is lost" now says "while the window stays open"**, and closing the window with a message on
+  its way, or one given back in the field, asks first.
 - **A command to approve writes out every hidden joiner and selector, emoji or not**; no-break spaces in
   Claude's own lines stay as they are (it writes them after its bullets).
 - **A day and month typed without a year is the next such day**, today included; 29 February is the next leap year's.

@@ -63,13 +63,14 @@ public static partial class ClaudeCodeTexts
     public const char DraftSpace = ' ';
 
     /// <summary>
-    /// What Claude Code's prompt row shows in place of a write it took for a paste, read with every blank taken out
+    /// What Claude Code's prompt row shows in place of a write it took for a paste, its blanks as the row has them
     /// ("[Pasted text #1]" in the wrapped-answers recording, Claude Code 2.1.282: one write of a single line some
-    /// thousand characters long, its draft drawn as this and nothing else). Only this form is recorded; one with a
-    /// count of lines is not, and none is guessed (the sixth review of 2026-11-27, F4).
+    /// thousand characters long, its draft drawn as this and nothing else), the paste's number its group. Only this
+    /// form is recorded; one with a count of lines is not, and none is guessed (the sixth review of 2026-11-27, F4).
+    /// Read without every blank until the seventh review of that day, which keeps the blanks of a row (L3).
     /// </summary>
-    [GeneratedRegex(@"\G\[Pastedtext#\d+\]")]
-    public static partial Regex PastedWithoutBlanks();
+    [GeneratedRegex(@"\G\[Pasted text #(\d+)\]")]
+    public static partial Regex PastedMark();
 
     /// <summary>What a slash command starts with.</summary>
     public const char CommandStart = '/';

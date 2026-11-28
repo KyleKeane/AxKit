@@ -319,13 +319,24 @@ internal sealed partial class MainForm : ConsoleForm
     /// </summary>
     protected override ConsoleQuestion? ClosingQuestion()
     {
-        if (!ClaudeBusy && ClaudeBackground is null)
+        if (!ClaudeBusy && ClaudeBackground is null && !MessageAtStake)
         {
             return null;
         }
 
         var background = ClaudeBackground;
         string state;
+        if (!ClaudeBusy && ClaudeBackground is null)
+        {
+            // Nothing runs, but a message would be lost (L1, the seventh review of 2026-11-27): one is still on its way
+            // to Claude Code, or the field holds one that was given back.
+            return new ConsoleQuestion("Close axClaude?",
+                (_unsent.Count > 0 ? "A message you sent is still on its way to Claude, which has not taken it yet."
+                    : "The message field holds a message that was not sent.")
+                + " If you close now, it is lost.\nWhat is done so far is saved.",
+                "&Keep working");
+        }
+
         if (ClaudeBusy)
         {
             state = _model.PromptPending ? "Claude is waiting for your answer" : "Claude is still working";

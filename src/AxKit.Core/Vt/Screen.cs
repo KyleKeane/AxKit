@@ -234,6 +234,13 @@ public sealed class Screen
     /// <summary>The line of a row of the main screen (the alternate one's rows have none).</summary>
     public Line? LineAt(int row) => _main[row].Line;
 
+    /// <summary>
+    /// What a main screen's row without a line shows, when it kept cells written before its line was let go (axClaude's
+    /// prompt row after /clear, <see cref="DetachRows"/>'s kept row), made from its cells; null for any other row, a
+    /// row with a line (<see cref="LineAt"/> reads it) or a blank one, so that nothing is made for them.
+    /// </summary>
+    public string? UnlinedText(int row) => _main[row] is { Line: null, Dirty: true } kept ? kept.Text() : null;
+
     /// <summary>The row the line is on now, or -1 when it is not on the screen (scrolled off, let go, or never a row's): a model that keeps a line from an earlier frame finds its row again by identity, since the rows move as the screen scrolls (docs/axTerminal/SPEC.md AT-4.2).</summary>
     public int RowOf(Line line)
     {
@@ -889,17 +896,28 @@ public sealed class Screen
     /// they had at the last frame end, not what was written on their rows since, and what is printed on the rows
     /// next gets lines of its own. The rows start blank: a row the program does not rewrite would otherwise come
     /// back as a new line with the old text, and a shorter rewrite would read the old tail after the new text
-    /// (2026-10-23).
+    /// (2026-10-23). The row <paramref name="keepCells"/> keeps what it shows, its line let go all the same, so that
+    /// what the program prints on it next is read with it: axClaude's prompt row after /clear, where Claude Code
+    /// draws a draft after its dollar sign and never draws the dollar sign again (the clear recording, 2.1.319: until
+    /// the seventh review of 2026-11-27 the row read without it, and the first message after /clear was never on the
+    /// row for the window).
     /// </summary>
-    public void DetachRows()
+    public void DetachRows(int keepCells = -1)
     {
-        foreach (var row in _main)
+        for (var r = 0; r < _main.Length; r++)
         {
+            var row = _main[r];
             if (row.Line is { } line)
             {
                 row.Dirty = false;
                 _store.Commit(line);
                 row.Line = null;
+            }
+
+            if (r == keepCells)
+            {
+                row.Dirty = true;
+                continue;
             }
 
             row.Clear(0, Columns, 0);

@@ -120,6 +120,26 @@ public sealed partial class WindowLastResortTests
     }
 
     /// <summary>
+    /// Every line an AI tool offered that the window queues carries how it is written out when it is given back: as the
+    /// question showed it, under the AI caution's words (SPEC.md D33; the seventh review of 2026-11-27, K5; root rule
+    /// 11). Until then it was written raw, in axKit's voice. Every <c>QueueWrites</c> of the offers' file names its
+    /// <c>shown</c>, and the words come from <c>AiCaution</c> and <c>McpOffer.Shown</c>.
+    /// </summary>
+    [Theory]
+    [InlineData("private void SendOffered(Offer offer)", "AiCaution.OfferedNotSent(")]
+    [InlineData("private void AskConcern(Offer offer)", "AiCaution.ConcernNotSent(")]
+    public void An_offered_line_given_back_is_written_under_the_AI_caution(string method, string words)
+    {
+        var body = Body("MainForm.Mcp.cs", method);
+        var queued = body.IndexOf("QueueWrites(", StringComparison.Ordinal);
+        Assert.True(queued >= 0, $"{method} queues its line");
+        var shown = body.IndexOf("shown: $\"{" + words, queued, StringComparison.Ordinal);
+        Assert.True(shown > queued && body.IndexOf("McpOffer.Shown(line)", shown, StringComparison.Ordinal) > shown, $"{method}: the line given back is written as {words} and McpOffer.Shown make it");
+        var mcp = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxClaude", "MainForm.Mcp.cs"));
+        Assert.Equal(2, mcp.Split("QueueWrites(").Length - 1);
+    }
+
+    /// <summary>
     /// An interrupt ends the user's act at once (SPEC.md D33): the keys of an answer still being typed out were
     /// dropped, and the settle must not wait for them. And every message typed to Claude Code's prompt empties a
     /// message the interrupt put back there first, in the one place every message passes (FR-2.3a).
@@ -133,11 +153,11 @@ public sealed partial class WindowLastResortTests
         Assert.True(dropped >= 0 && stamped > dropped, "Interrupt stamps the user's act as ending now, after the queued keys were dropped");
         Assert.Contains("Area.Hold(UserActionMs);", interrupt, StringComparison.Ordinal);
 
-        var queue = Body("MainForm.Input.cs", "private void QueueWrites(string text, bool fromField = false, Action? sent = null)");
-        var cleared = queue.IndexOf("ClearRestoredMessage(checks.Goes);", StringComparison.Ordinal);
+        var queue = Body("MainForm.Input.cs", "private void QueueWrites(string text, bool fromField = false, Action? sent = null, string? shown = null)");
+        var cleared = queue.IndexOf("ClearRestoredMessage(message.Flight.Goes);", StringComparison.Ordinal);
         var typed = queue.IndexOf("Enqueue(", StringComparison.Ordinal);
         Assert.True(cleared >= 0 && typed > cleared, "QueueWrites empties a restored message before it types the next one");
-        var elsewhere = WindowFiles().Where(file => file.Text.Split("ClearRestoredMessage(checks.Goes);").Length - 1 > (file.Name == "MainForm.Input.cs" ? 1 : 0)).Select(file => file.Name);
+        var elsewhere = WindowFiles().Where(file => file.Text.Split("ClearRestoredMessage(message.Flight.Goes);").Length - 1 > (file.Name == "MainForm.Input.cs" ? 1 : 0)).Select(file => file.Name);
         Assert.Empty(elsewhere);
     }
 
@@ -159,7 +179,7 @@ public sealed partial class WindowLastResortTests
         { "MainForm.Input.cs", "private void EmptyFieldEnter()", 1, "QueuedWrite.MessageGoes(true, waitedFor, _model.PromptPending, WaitIdentity()) : !_model.PromptPending && _model.PromptDraft is { Length: > 0 }" },
         // A message's writes, each bound: over when Claude Code has begun to ask since it was queued; its first only onto a bare row, its Enter only on a
         // positive check, the message on Claude Code's prompt row (QueuedWrite.MessageEnter), not yet while it waits; the Enter again and the wait until it is taken (the sixth review of 2026-11-27, F1). The row emptied only while it holds exactly the message given back.
-        { "MainForm.Input.cs", "private void QueueWrites(string text, bool fromField = false, Action? sent = null)", 5, "Enqueue(ClaudeCodeKeys.Enter, 50, checks.Enter);" },
+        { "MainForm.Input.cs", "private void QueueWrites(string text, bool fromField = false, Action? sent = null, string? shown = null)", 1, "Enqueue(write, delay, MessageChecks(message, check, () =>" },
         { "MainForm.Input.cs", "private void ClearRestoredMessage(Func<bool> messageGoes)", 2, "Enqueue(ClaudeCodeKeys.CtrlU, 30, Clear);" },
         { "MainForm.Input.cs", "private void SendNow()", 2, "if (!KeyMayGoToClaude())" },
         // The stop key: the one command that sends a key whatever Claude Code asks; its Escape is a no, never a yes.
@@ -180,7 +200,7 @@ public sealed partial class WindowLastResortTests
         { "MainForm.ClaudeCodeSettings.cs", "private void SendClaudeCodeCommand(ClaudeCodeSetting setting)", 1, "if (!ClaudeIdle)" },
         // An offered command's line and a concern's line: their callers send only while Claude is idle (AnswerOffer, AskConcern).
         { "MainForm.Mcp.cs", "private void AskConcern(Offer offer)", 1, "if (!ClaudeIdle)" },
-        { "MainForm.Mcp.cs", "private void SendOffered(string command)", 1, "QueueWrites(line, sent: () =>" },
+        { "MainForm.Mcp.cs", "private void SendOffered(Offer offer)", 1, "QueueWrites(line, sent: () =>" },
         // Over the stream a chosen value goes as its slash command; nothing is typed there (QueueWrites writes one line).
         { "MainForm.Stream.cs", "private void StreamAnswer(string given)", 1, "StreamChoiceOver();" },
         // The detailed view's guard: the key goes only to close the view when it is open, which shows no question's rows.

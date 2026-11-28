@@ -381,7 +381,8 @@ public sealed partial class FileForm
             return;
         }
 
-        if (Shell.Eject(Handle, drive.Path) is { } reason)
+        // The shell's Eject may show the shell's own dialog (in use, safe to remove): a modal loop (ModalLoopTests).
+        if (InModalLoop(() => Shell.Eject(Handle, drive.Path)) is { } reason)
         {
             Failed("Eject failed", reason);
             return;

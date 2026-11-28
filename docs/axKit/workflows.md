@@ -371,8 +371,12 @@ Steps and keys: `docs/axKit/workflows/axClaude.md` (in Claude's working folder: 
     - Refuse the command that was asked last
 66. **Have a command of the menus wait until Claude Code has taken the message before it**
     - Choose the model once Claude Code has taken the message
-67. **Have a short exchange with Claude**
-68. **Answer a set of two questions from Claude**
+67. **Send two messages while Claude Code's prompt row is not drawn after it took the first**
+    - Send a message, and the next one at once, while Claude Code's prompt row is not drawn
+68. **Get a message back when Claude asks while its prompt row still shows it**
+    - Get a message back that Claude asked over before it took it
+69. **Have a short exchange with Claude**
+70. **Answer a set of two questions from Claude**
 
 ## axClip
 

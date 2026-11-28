@@ -41,7 +41,11 @@
 // Enter as <Enter> and a line end, Ctrl+J as <Ctrl+J>, Ctrl+U as <Ctrl+U>, any other control as <U+XXXX>, so that a
 // script compares what reached Claude Code's prompt, in order, with a file of its own), and one for an Enter
 // Claude Code drops (the sixth review of that day, F1): "dropEnters" (a number: so many Enters on a typed draft
-// leave it on the row, as Claude Code leaves a message whose Enter it dropped in its first seconds). The session file is
+// leave it on the row, as Claude Code leaves a message whose Enter it dropped in its first seconds), and one for a row
+// Claude Code does not draw after it took a message (the seventh review, K1): "hideAfterTake" (milliseconds: after an
+// Enter takes a typed draft the row is emptied, its mark drawn again this long later, unless a frame came meanwhile,
+// as Claude Code leaves its row during /clear). A frame step without "clear" is drawn where the cursor stands, so a
+// question drawn by one after a held draft stands under the draft (K2). The session file is
 //   <the scenario's folder>\<home>\.claude\projects\<the working folder's full path, every character not an ASCII
 //   letter or digit as ->\<session>.jsonl
 // A step is an object; the first of these keys it holds says what it does:
@@ -190,6 +194,7 @@ internal static class StandIn
         _echo = !root.TryGetProperty("echo", out var echo) || echo.ValueKind != JsonValueKind.False;
         _keysFile = StringOf(root, "keys") is { Length: > 0 } keys ? Path.Combine(folder, keys) : null;
         _dropEnters = root.TryGetProperty("dropEnters", out _) ? Number(root, "dropEnters") : 0;
+        _hideAfterTakeMs = root.TryGetProperty("hideAfterTake", out _) ? Number(root, "hideAfterTake") : 0;
         new Thread(() => EchoTyped(output)) { IsBackground = true, Name = "typed" }.Start();
         for (var i = 0; i < steps.Count; i++)
         {
@@ -209,6 +214,7 @@ internal static class StandIn
                         _drafting = _atPrompt && last.Length > 1;
                         _draftBreaks = 0;
                         _typedSinceFrame = false;
+                        _frames++;
                     }
 
                     break;
@@ -448,9 +454,20 @@ internal static class StandIn
                             clear.Append('\r').Append(Escape).Append("[2K").Append(Escape).Append("[1A");
                         }
 
-                        Write(output, clear.Append('\r').Append(Escape).Append("[2K").Append(_promptMark).ToString());
                         _drafting = false;
                         _draftBreaks = 0;
+                        if (_hideAfterTakeMs > 0)
+                        {
+                            // The row not drawn for a while after the take, as Claude Code leaves it during /clear (the
+                            // clear recording: 13448 ms to 16144 ms): the row emptied, its mark drawn again later.
+                            Write(output, clear.Append('\r').Append(Escape).Append("[2K").ToString());
+                            _atPrompt = false;
+                            var frames = _frames;
+                            new Thread(() => DrawMarkLater(output, frames)) { IsBackground = true, Name = "mark" }.Start();
+                            continue;
+                        }
+
+                        Write(output, clear.Append('\r').Append(Escape).Append("[2K").Append(_promptMark).ToString());
                     }
                     else if (typed == '\n')
                     {
@@ -507,6 +524,28 @@ internal static class StandIn
 
     /// <summary>The scenario's "dropEnters": how many Enters on a typed draft are still to be dropped, the draft left on the row.</summary>
     private static int _dropEnters;
+
+    /// <summary>The scenario's "hideAfterTake": how long, in milliseconds, the prompt row stays not drawn after an Enter took a typed draft (0: drawn bare at once).</summary>
+    private static int _hideAfterTakeMs;
+
+    /// <summary>How many frames the steps have drawn: a mark drawn later is drawn only while no frame came since.</summary>
+    private static int _frames;
+
+    /// <summary>The prompt row's mark drawn again, bare, <see cref="_hideAfterTakeMs"/> after a take, unless a frame of the steps came meanwhile.</summary>
+    private static void DrawMarkLater(Stream output, int frames)
+    {
+        Thread.Sleep(_hideAfterTakeMs);
+        lock (Writing)
+        {
+            if (_frames != frames)
+            {
+                return;
+            }
+
+            Write(output, $"\r{Escape}[2K{_promptMark}");
+            _atPrompt = true;
+        }
+    }
 
     private static void WaitForFile(string path)
     {

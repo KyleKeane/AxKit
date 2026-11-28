@@ -180,15 +180,17 @@ public class SessionModelTests
 
     /// <summary>
     /// The sixth review of 2026-11-27 (F4): the row is compared as Claude Code draws it. A hidden character Claude Code
-    /// takes out of a prompt ("Removed 1 invisible character from your prompt") is taken out of both sides, and blanks
-    /// as before; anything seen still counts.
+    /// takes out of a prompt ("Removed 1 invisible character from your prompt") is taken out of a row, for a text that
+    /// holds none; anything seen still counts. A text that holds one is held only by a row that shows it (the seventh
+    /// review, K4; <see cref="PromptRowReadingTests"/>).
     /// </summary>
     [Fact]
     public void The_prompt_row_is_compared_without_hidden_characters()
     {
         var model = new SessionModel(80, 6);
         Feed(model, $"{Esc}[?25lclaude: Hi.\r\n\r\n$  Reply with the single word hello.{Esc}[?25h");
-        Assert.True(model.PromptHolds("Reply with the single​ word hello.⁠"));
+        // The seventh review (K4): a text with a hidden character is held only by a row that shows it.
+        Assert.False(model.PromptHolds("Reply with the single​ word hello.⁠"));
         Assert.True(model.PromptHolds("Reply with the single word hello."));
         Assert.False(model.PromptHolds("Reply with the single word hello!"));
 
@@ -226,84 +228,6 @@ public class SessionModelTests
         }
 
         Assert.True(held, "the recording's prompt row, drawn as a paste, holds the message sent");
-    }
-
-    /// <summary>
-    /// The sixth review of 2026-11-27 (F1) keeps a message in flight until Claude Code's prompt row is bare again after
-    /// its Enter. Held to the recordings: in each, every message is found on the row whole once typed, and the row is
-    /// bare again (or Claude Code asks) after its Enter, before the next one is typed, a message sent while Claude
-    /// works (steering) and two longer than the row (long-message) included. Were it not, the window would give back a
-    /// message Claude Code had taken.
-    /// </summary>
-    [Theory]
-    [InlineData("steering-claude2.1.278-240x50.vt", "steering.script")]
-    [InlineData("long-message-claude2.1.278-240x50.vt", "long-message.script")]
-    public void Every_recorded_message_is_on_the_row_whole_and_the_row_is_bare_again_after_its_Enter(string name, string script)
-    {
-        var lines = File.ReadAllLines(Path.Combine(SourceTexts.RepositoryRoot(), "tests", "fixtures", script));
-        var messages = new List<string>();
-        for (var i = 0; i < lines.Length; i++)
-        {
-            var text = lines[i].StartsWith("send ", StringComparison.Ordinal) ? lines[i]["send ".Length..] : null;
-            if (text is null || text.StartsWith('/') || text.StartsWith('\\'))
-            {
-                continue;
-            }
-
-            // A line sent after a lone newline write belongs to the message before it (Ctrl+J).
-            if (i >= 2 && lines[i - 2] == @"send \n")
-            {
-                messages[^1] += "\n" + text;
-            }
-            else if (text.Length > 20)
-            {
-                messages.Add(text);
-            }
-        }
-
-        var (columns, rows) = FixtureSize(name);
-        var model = new SessionModel(columns, rows);
-        var bytes = Fixture(name);
-        var current = 0;
-        var held = false;
-        var taken = 0;
-        string? seen = null;
-        // As the window reads the row: after each chunk, and after each frame its quiet timer ends.
-        void Look()
-        {
-            if (current >= messages.Count)
-            {
-                return;
-            }
-
-            if (!held && model.PromptHolds(messages[current]))
-            {
-                held = true;
-            }
-            else if (!held && model.PromptDraft is { Length: > 0 } draft && draft.Length >= (seen?.Length ?? 0))
-            {
-                seen = draft;
-            }
-            else if (held && (model.PromptDraft is { Length: 0 } || model.PromptPending))
-            {
-                taken++;
-                current++;
-                held = false;
-            }
-        }
-
-        // Each chunk read as a frame of its own: the recordings sent the Enter 150 ms after the text whatever the row
-        // showed, and long-message's draft was followed by Claude Code's output within 89 ms, before the window's quiet
-        // timer would end a frame; the window itself sends the Enter only once a frame shows the draft.
-        foreach (var (offset, length, _) in Chunks(name))
-        {
-            model.Feed(bytes[offset..(offset + length)]);
-            model.EndFrame();
-            Look();
-        }
-
-        Assert.True(messages.Count >= 2, "the script's messages are read");
-        Assert.True(taken == messages.Count, $"{taken} of {messages.Count} messages taken; message {current + 1} {(held ? "was on the row and the row never bare again" : "was never on the row whole")}; the longest draft read: {seen}");
     }
 
     /// <summary>A message of two lines as the early-two-lines recording draws its draft: the second line on the row under the first.</summary>

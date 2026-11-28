@@ -71,6 +71,25 @@ public sealed class WriteQueueTests
         Assert.Equal(new WriteStep(WriteStepKind.Write, "next", 30), queue.Next());
     }
 
+    /// <summary>
+    /// A check that throws never stops the pump (the seventh review of 2026-11-27, L2): the queue is dropped, the step
+    /// says it failed and names the exception's type alone, and what is queued afterwards is written. Until then the
+    /// exception left the window's pump marked as writing, and nothing queued after it ever went.
+    /// </summary>
+    [Fact]
+    public void A_check_that_throws_drops_the_queue_and_the_pump_goes_on()
+    {
+        var queue = new WriteQueue();
+        queue.Add("secret text", 30, () => throw new InvalidOperationException("boom"));
+        queue.Add("behind it", 30, check: null);
+        var step = queue.Next();
+        Assert.Equal(WriteStepKind.Failed, step.Kind);
+        Assert.Equal(nameof(InvalidOperationException), step.Text);
+        Assert.Equal(0, queue.Count);
+        queue.Add("next", 30, check: null);
+        Assert.Equal(new WriteStep(WriteStepKind.Write, "next", 30), queue.Next());
+    }
+
     /// <summary>A check that empties the queue itself (it stopped the program) writes nothing, whatever it answers.</summary>
     [Fact]
     public void A_check_that_empties_the_queue_writes_nothing()

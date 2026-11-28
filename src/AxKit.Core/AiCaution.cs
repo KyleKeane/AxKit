@@ -24,6 +24,19 @@ public static class AiCaution
         + "Read all the details here, and the conversation that led to it, before you run anything. If you do not understand what it does, do not run it. "
         + "Running it is your own act, as if you had typed it: what it does to your files, your accounts and your computer is yours to answer for, not axKit's and not its maker's.";
 
+    /// <summary>
+    /// In front of a command an AI offered, where axClaude writes it out in the conversation because it was not sent
+    /// (docs/axClaude/SPEC.md D33; the seventh review of 2026-11-27, K5): who wrote it, that it can be wrong and that
+    /// nothing of it was checked, so that the line is never read as axKit's own; the command follows as
+    /// <c>McpOffer.Shown</c> writes it.
+    /// </summary>
+    public static string OfferedNotSent(string who) =>
+        $"the line of the command {who}, an AI model, offered, which can be wrong and which axKit has checked none of; running it is your own choice";
+
+    /// <summary>The same in front of the line that would have opened Claude Code's feedback about such a command (MC-9.8): the command in it is the AI's, the concern the user's.</summary>
+    public static string ConcernNotSent(string who) =>
+        $"the feedback line about a command {who}, an AI model, offered; the command in it is {who}'s and can be wrong";
+
     /// <summary>In the name of the question an AI tool's run of a window command asks, heard every time the question is read.</summary>
     public static string Asked(string who) => $"Asked by {who}, an AI: read the explanation before you allow it";
 

@@ -60,6 +60,9 @@ public abstract class ClaudeModel : LineStore
     /// <summary>Whether Claude Code's prompt row still holds this text, sent a moment ago; never without a screen.</summary>
     public virtual bool PromptHolds(string text) => false;
 
+    /// <summary>Whether Claude Code's prompt row held this text in the last frame that asked nothing, read when it has begun to ask (D33, the seventh review of 2026-11-27, K2); never without a screen.</summary>
+    public virtual bool PromptHeldBeforeAsk(string text) => false;
+
     /// <summary>The text a draft on Claude Code's prompt row holds, empty for a bare prompt, null when no prompt row is drawn there; null without a screen.</summary>
     public virtual string? PromptDraft => null;
 

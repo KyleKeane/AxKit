@@ -1086,6 +1086,8 @@ internal sealed partial class MainForm
         {
             // The chime is the area's rule, not the notice's (FR-2.11).
             Silent = true,
+            // Its Close sends the screen's key to Claude Code: never run by a notice that comes by itself (L4).
+            CancelReachesProgram = true,
             // The hint row's letters typed in the text, as the buttons (c to copy, f to fork; FR-2.11).
             Letter = letter =>
             {

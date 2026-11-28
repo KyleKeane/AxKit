@@ -79,33 +79,41 @@ public sealed class ModalLoopTests
         Assert.Contains("protected internal T InModalLoop<T>(Func<T> loop) => _userKey.ModalLoop(loop);", window, StringComparison.Ordinal);
     }
 
-    /// <summary>The ways into a modal loop a window has: a Windows dialog, the shell's Open with and Properties, the shell's menu and a native popup menu, a message box.</summary>
-    private static readonly string[] Loops = [".ShowDialog(", "WindowsOpenWith.Show(", "Shell.Properties(", "Shell.ShowMenu(", "NativeMenu.Choose(", "NativeMenu.Track(", "MessageBox.Show("];
+    /// <summary>
+    /// The ways into a modal loop a window has: a Windows dialog, the shell's Open with and Properties, the shell's
+    /// menu and a native popup menu, a message box, and the shell's Eject and Restore, which may show the shell's own
+    /// dialog (the seventh review of 2026-11-27, L5: axFile's Eject ran outside the loop).
+    /// </summary>
+    private static readonly string[] Loops = [".ShowDialog(", "WindowsOpenWith.Show(", "Shell.Properties(", "Shell.ShowMenu(", "Shell.Eject(", "Shell.Undelete(", "NativeMenu.Choose(", "NativeMenu.Track(", "MessageBox.Show("];
 
     /// <summary>
-    /// The places that may enter a loop outside <c>InModalLoop</c>, each with why: the host's message boxes come before
-    /// any window exists (the usage, the version, a start that failed), and the shell's menu tracks its popup inside
-    /// Shell.ShowMenu, which every caller runs inside the loop.
+    /// The calls that may enter a loop outside <c>InModalLoop</c>, one by one (the seventh review of 2026-11-27, L5:
+    /// until then a whole file was let off, and a second call in it would have passed unseen): the file, the way in,
+    /// how many such calls it holds, and why. The host's message boxes come before any window exists (the usage, the
+    /// version, a start that failed, the background start's question); the shell's menu tracks its popup inside
+    /// Shell.ShowMenu, which every caller runs inside the loop; Restore runs on the shell's own thread
+    /// (FileOperations.OnShellThreadAsync), whose dialog the window's key moment, a thing of the window's thread,
+    /// does not reach: the notice after it comes when the task ends, which no key of the user's is handling.
     /// </summary>
-    private static readonly Dictionary<string, string> Outside = new(StringComparer.OrdinalIgnoreCase)
-    {
-        [Path.Combine("src", "AxKit.Forms", "AppHost.cs")] = "before any window exists",
-        [Path.Combine("src", "AxKit", "Program.cs")] = "before any window exists",
-        [Path.Combine("src", "AxFile", "Shell.cs")] = "inside Shell.ShowMenu, which its callers run in the loop",
-        [Path.Combine("src", "AxKit.Forms", "NativeMenu.cs")] = "its own definition",
-        [Path.Combine("src", "AxKit.Forms", "WindowsOpenWith.cs")] = "its own definition",
-    };
+    private static readonly (string File, string Loop, int Calls, string Why)[] Outside =
+    [
+        (Path.Combine("src", "AxKit.Forms", "AppHost.cs"), "MessageBox.Show(", 6, "before any window exists"),
+        (Path.Combine("src", "AxKit", "Program.cs"), "MessageBox.Show(", 2, "before any window exists"),
+        (Path.Combine("src", "AxFile", "Shell.cs"), "NativeMenu.Track(", 1, "inside Shell.ShowMenu, which its callers run in the loop"),
+        (Path.Combine("src", "AxFile", "FileForm.Operations.cs"), "Shell.Undelete(", 1, "on the shell's own thread, after which nothing is the key's first result"),
+    ];
 
-    /// <summary>Every modal loop of a window, in every partial file of every app, runs inside <c>InModalLoop</c>, on the line that enters it.</summary>
+    /// <summary>Every modal loop of a window, in every partial file of every app, runs inside <c>InModalLoop</c>, on the line that enters it; each call outside it is one <see cref="Outside"/> counts.</summary>
     [Fact]
     public void Every_modal_loop_of_a_window_goes_through_the_base()
     {
         var root = SourceTexts.RepositoryRoot();
         var offenders = new List<string>();
+        var counted = new Dictionary<(string, string), int>();
         foreach (var file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
         {
             var relative = Path.GetRelativePath(root, file);
-            if (relative.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}", StringComparison.Ordinal) || Outside.ContainsKey(relative))
+            if (relative.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}", StringComparison.Ordinal))
             {
                 continue;
             }
@@ -114,19 +122,41 @@ public sealed class ModalLoopTests
             for (var i = 0; i < lines.Length; i++)
             {
                 var line = lines[i].Trim();
-                if (line.StartsWith("//", StringComparison.Ordinal) || !Loops.Any(loop => line.Contains(loop, StringComparison.Ordinal)))
+                if (line.StartsWith("//", StringComparison.Ordinal) || line.StartsWith("///", StringComparison.Ordinal)
+                    || Loops.FirstOrDefault(loop => line.Contains(loop, StringComparison.Ordinal)) is not { } loop)
                 {
                     continue;
                 }
 
-                if (!line.Contains("InModalLoop(", StringComparison.Ordinal))
+                if (line.Contains("InModalLoop(", StringComparison.Ordinal))
                 {
-                    offenders.Add($"{relative}:{i + 1}");
+                    continue;
                 }
+
+                if (Outside.Any(one => string.Equals(one.File, relative, StringComparison.OrdinalIgnoreCase) && one.Loop == loop))
+                {
+                    var key = (relative.ToUpperInvariant(), loop);
+                    counted[key] = counted.GetValueOrDefault(key) + 1;
+                    continue;
+                }
+
+                offenders.Add($"{relative}:{i + 1}");
             }
         }
 
         Assert.True(offenders.Count == 0, "A modal loop outside InModalLoop keeps the user's key as the opener of what follows it: " + string.Join(", ", offenders));
+        foreach (var (file, loop, calls, why) in Outside)
+        {
+            Assert.True(counted.GetValueOrDefault((file.ToUpperInvariant(), loop)) == calls, $"{file} holds {calls} calls of {loop} outside the loop ({why}): a call more or less is to be looked at and counted here");
+        }
+    }
+
+    /// <summary>axFile's Eject, which may show the shell's own dialog, runs inside the loop (L5; FileForm.Browse.cs).</summary>
+    [Fact]
+    public void AxFiles_eject_runs_inside_the_loop()
+    {
+        var browse = Read("src", "AxFile", "FileForm.Browse.cs");
+        Assert.Contains("InModalLoop(() => Shell.Eject(Handle, drive.Path))", browse, StringComparison.Ordinal);
     }
 
     /// <summary>A source file of the repository, its line ends as LF.</summary>

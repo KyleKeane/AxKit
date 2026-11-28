@@ -592,7 +592,14 @@ which overwrote what the user had there. Now it offers the command through a too
   that bash ran as a truncation; the reason and the breakdown, which are read, keep an emoji whole. A combining mark
   on anything but a letter is written out everywhere, the command, the reason and the breakdown alike (the fifth
   review of that day, E1: "echo added &gt;U+0338&gt; target.txt" showed two signs, one crossed out, and bash ran a
-  truncation into a file named by the mark); marks on letters stay.
+  truncation into a file named by the mark); marks on letters stay. Since the seventh review of that day (K4) a
+  command that holds any character `DisplayText.VisibleCommand` writes out is refused, by the broker and the window
+  alike (`DisplayText.HidesInCommand`): the tool is told that the user could not judge what would run, so it is not
+  offered and nothing of it runs, with the command as it would have been shown. Claude Code takes such characters out
+  of its prompt ("Removed 1 invisible character from your prompt"), so the `!` line it would run was not the one the
+  user heard, and axClaude's check of its prompt row could tell neither apart. What is written out above still holds
+  for the reason, the breakdown and a command axClaude writes out in its conversation when it was not sent (K5: under
+  `AiCaution.OfferedNotSent`, as the question would have shown it).
 - MC-9.4 **The question** is a list in the control area, in the message field's place, as Claude's own questions are
   (the user's decision of 2026-11-13, after hearing the first version, a notice that covered the window): the
   conversation stays there to read for context (Tab, Alt+2), and the question is told from a notice by where it is.

@@ -61,6 +61,15 @@ public sealed record Notice(string Title, string Text, IReadOnlyList<OverlayChoi
     /// </summary>
     public bool Silent { get; init; }
 
+    /// <summary>
+    /// Its cancel sends a key to the program the window runs (axClaude's notice of an information screen, whose Close
+    /// sends Claude Code the screen's own key): only the user's own Escape or button may run it, never a notice that
+    /// comes by itself in its place (<see cref="ReplacesUnanswered"/>; the seventh review of 2026-11-27, L4: nothing
+    /// is sent outside the window that the user did not ask for). Such a notice is replaced as before, its cancel
+    /// unrun, and what it stood for still waits in the program.
+    /// </summary>
+    public bool CancelReachesProgram { get; init; }
+
     /// <summary>A first line of the text that the window changes while the notice shows (the folder of New session, <see cref="OverlayPanel.SetHeadLine"/>); null for none.</summary>
     public string? HeadLine { get; init; }
 
@@ -129,10 +138,11 @@ public sealed record Notice(string Title, string Text, IReadOnlyList<OverlayChoi
     /// cancel runs first, as Escape would, so that what waited on it hears a no at once, and the new notice says which
     /// one it replaced (<see cref="Replacing"/>). The fifth review of 2026-11-27 (L7): until then the question was gone
     /// without an answer and without a word. A notice that only informs or shows progress (a Close or a Cancel and
-    /// nothing else) is the flow's own, which replaces it with its result.
+    /// nothing else) is the flow's own, which replaces it with its result. Never one whose cancel sends a key to the
+    /// program the window runs (<see cref="CancelReachesProgram"/>, the seventh review of that day, L4).
     /// </summary>
     public static bool ReplacesUnanswered(Notice? shown, bool byItself) =>
-        byItself && shown is { OpenedByUser: false } held
+        byItself && shown is { OpenedByUser: false, CancelReachesProgram: false } held
         && held.Choices.Any(choice => choice.IsCancel) && held.Choices.Any(choice => !choice.IsCancel);
 
     /// <summary>

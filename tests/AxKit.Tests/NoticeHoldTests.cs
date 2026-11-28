@@ -170,6 +170,15 @@ public sealed partial class NoticeHoldTests : IDisposable
         Assert.False(Notice.ReplacesUnanswered(Notice.Plain("Installing Git", "This takes a minute.") with { Progress = true }, byItself: true));
         Assert.False(Notice.ReplacesUnanswered(new Notice("Downloading", "40%", [new OverlayChoice("&Cancel", IsDefault: true, IsCancel: true, StaysOpen: true)]), byItself: true));
         Assert.False(Notice.ReplacesUnanswered(null, byItself: true));
+        // L4 (the seventh review of 2026-11-27): a notice whose cancel sends a key to the program (axClaude's
+        // information screen) is never cancelled by one that comes by itself; nothing goes outside the window unasked.
+        var screen = new Notice("Status", "Version 2.1.332", [new OverlayChoice("&Close", IsDefault: true, IsCancel: true), new OverlayChoice("&Copy", StaysOpen: true)]) { CancelReachesProgram = true };
+        Assert.False(Notice.ReplacesUnanswered(screen, byItself: true));
+        Assert.True(Notice.ReplacesUnanswered(screen with { CancelReachesProgram = false }, byItself: true));
+        var area = File.ReadAllText(Path.Combine(SourceTexts.RepositoryRoot(), "src", "AxClaude", "MainForm.Area.cs")).ReplaceLineEndings("\n");
+        var open = area[area.IndexOf("private void OpenScreenNotice(", StringComparison.Ordinal)..];
+        Assert.True(open.IndexOf("CancelReachesProgram = true,", StringComparison.Ordinal) is var marked and > 0
+            && marked < open.IndexOf("ShowNotice(notice);", StringComparison.Ordinal), "the information screen's notice says that its Close sends a key to Claude Code");
 
         var error = Notice.Plain("Failed", "The disk is full.").ByItself().Replacing(question);
         Assert.Equal("Replaces: Clear the history?\r\nThe disk is full.", error.Text);

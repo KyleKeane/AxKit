@@ -241,9 +241,10 @@ public abstract partial class ConsoleForm
 
     /// <summary>
     /// The queue was dropped with writes still in it (a check said over, or <see cref="ClearWrites"/>): a window that
-    /// counts on writes it queued (axClaude: a message not yet sent) takes them back here. Nothing by default.
+    /// counts on writes it queued (axClaude: a message not yet sent) takes them back here. <paramref name="failed"/>
+    /// when a check threw (<see cref="WriteStepKind.Failed"/>). Nothing by default.
     /// </summary>
-    protected virtual void WritesDropped()
+    protected virtual void WritesDropped(bool failed)
     {
     }
 
@@ -261,7 +262,7 @@ public abstract partial class ConsoleForm
     {
         if (_writes.Clear())
         {
-            WritesDropped();
+            WritesDropped(failed: false);
         }
     }
 
@@ -277,7 +278,14 @@ public abstract partial class ConsoleForm
             case WriteStepKind.Dropped:
                 // What a write was for is over: it and what waited behind it went unwritten.
                 _writing = false;
-                WritesDropped();
+                WritesDropped(failed: false);
+                return;
+            case WriteStepKind.Failed:
+                // A check threw (L2): the pump is free again, and the window is told; the log names the exception's
+                // type alone, never a text that was queued.
+                _writing = false;
+                Log.Error($"{AppName}: a check of the write queue failed ({step.Text}); what was queued was dropped");
+                WritesDropped(failed: true);
                 return;
             case WriteStepKind.Write:
                 _host?.Write(step.Text);

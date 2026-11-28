@@ -15,7 +15,15 @@ public static class McpOffer
     /// <summary>How many offers one window holds for the user at a time; more are refused, so that no client buries the user in questions.</summary>
     public const int MaxWaiting = 3;
 
-    /// <summary>Why a command is not offered, or null: empty, more than one line, a control character (which could hide part of it from the listener or press a key in Claude Code), or too long.</summary>
+    /// <summary>
+    /// Why a command is not offered, or null: empty, more than one line, a control character (which could hide part of
+    /// it from the listener or press a key in Claude Code), a character that is neither seen nor heard, or too long.
+    /// The seventh review of 2026-11-27 (K4): a character <see cref="DisplayText.VisibleCommand"/> writes out as its
+    /// code (a zero-width or direction character, a space that is not the plain one) is refused too, nothing of the
+    /// offer runs, and the AI tool is told why in the AI caution's terms. Claude Code takes such characters out of its
+    /// prompt, so the line it would run is not the one the user heard, and the window's check of its prompt row can
+    /// tell neither apart; until then such an offer was shown with the codes written out and sent.
+    /// </summary>
     public static string? Refusal(string? command)
     {
         if (string.IsNullOrWhiteSpace(command))
@@ -26,6 +34,11 @@ public static class McpOffer
         if (command.Any(char.IsControl))
         {
             return "The command must be one line without control characters: the user hears it whole before it runs. Join several commands on one line, or offer them one by one.";
+        }
+
+        if (DisplayText.HidesInCommand(command.Trim()))
+        {
+            return $"The command holds a character that is neither seen nor heard (it would be shown as {DisplayText.VisibleCommand(command.Trim())}): the user could not judge what would run, so it is not offered and nothing of it runs. Offer it with plain characters and plain spaces only.";
         }
 
         return command.Trim().Length > MaxLength

@@ -42,6 +42,9 @@ public static class DisplayText
     /// <summary>Whether <paramref name="text"/> holds a character that <see cref="Visible"/> writes out.</summary>
     public static bool Hides(string text) => FirstWritten(text, command: false) >= 0;
 
+    /// <summary>Whether <paramref name="text"/> holds a character that <see cref="VisibleCommand"/> writes out: one a command offered to run may not hold (axKit's McpOffer, the seventh review of 2026-11-27, K4).</summary>
+    public static bool HidesInCommand(string text) => FirstWritten(text, command: true) >= 0;
+
     /// <summary>
     /// The text with every character <see cref="Hidden"/> names taken out: for comparing a text with what a program
     /// drew of it, since a program that shows a text may drop such characters (Claude Code: "Removed 1 invisible
